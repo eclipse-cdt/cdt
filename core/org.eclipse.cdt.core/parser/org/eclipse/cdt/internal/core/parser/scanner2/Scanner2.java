@@ -34,222 +34,224 @@ import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
  */
 public class Scanner2 extends BaseScanner {
 
-    /**
-     * @param reader
-     * @param info
-     * @param requestor
-     * @param parserMode
-     * @param language
-     * @param log
-     * @param workingCopies
-     * @param configuration
-     */
-    public Scanner2(CodeReader reader, IScannerInfo info,
-            ISourceElementRequestor requestor, ParserMode parserMode,
-            ParserLanguage language, IParserLogService log, List workingCopies,
-            IScannerExtensionConfiguration configuration) {
-        super(reader, info, parserMode, language, log, configuration);
-        this.requestor = requestor;
-        this.callbackManager = new ScannerCallbackManager(requestor);
-        this.expressionEvaluator = new ExpressionEvaluator(callbackManager, spf);
-        this.workingCopies = workingCopies;
-        postConstructorSetup(reader, info);
-    }
+   /**
+    * @param reader
+    * @param info
+    * @param requestor
+    * @param parserMode
+    * @param language
+    * @param log
+    * @param workingCopies
+    * @param configuration
+    */
+   public Scanner2(CodeReader reader, IScannerInfo info,
+         ISourceElementRequestor requestor, ParserMode parserMode,
+         ParserLanguage language, IParserLogService log, List workingCopies,
+         IScannerExtensionConfiguration configuration) {
+      super(reader, info, parserMode, language, log, configuration);
+      this.requestor = requestor;
+      this.callbackManager = new ScannerCallbackManager(requestor);
+      this.expressionEvaluator = new ExpressionEvaluator(callbackManager, spf);
+      this.workingCopies = workingCopies;
+      postConstructorSetup(reader, info);
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getASTFactory()
-     */
-    protected IASTFactory getASTFactory() {
-        if (astFactory == null)
-            astFactory = ParserFactory.createASTFactory(parserMode, language);
-        return astFactory;
-    }
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getASTFactory()
+    */
+   protected IASTFactory getASTFactory() {
+      if (astFactory == null)
+         astFactory = ParserFactory.createASTFactory(parserMode, language);
+      return astFactory;
+   }
 
-    protected IASTFactory astFactory;
+   protected IASTFactory             astFactory;
 
-    // callbacks
-    protected ScannerCallbackManager callbackManager;
+   // callbacks
+   protected ScannerCallbackManager  callbackManager;
 
-    protected ISourceElementRequestor requestor;
+   protected ISourceElementRequestor requestor;
 
-    protected List workingCopies;
+   protected List                    workingCopies;
 
-    public final void setASTFactory(IASTFactory f) {
-        astFactory = f;
-    }
+   public final void setASTFactory(IASTFactory f) {
+      astFactory = f;
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#createInclusionConstruct(char[],
-     *      char[], boolean, int, int, int, int, int, int, int, boolean)
-     */
-    protected Object createInclusionConstruct(char[] fileName,
-            char[] filenamePath, boolean local, int startOffset,
-            int startingLineNumber, int nameOffset, int nameEndOffset,
-            int nameLine, int endOffset, int endLine, boolean isForced) {
-        return getASTFactory().createInclusion(fileName, filenamePath, local,
-                startOffset, startingLineNumber, nameOffset, nameEndOffset,
-                nameLine, endOffset, endLine, getCurrentFilename(), isForced);
-    }
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#createInclusionConstruct(char[],
+    *      char[], boolean, int, int, int, int, int, int, int, boolean)
+    */
+   protected Object createInclusionConstruct(char[] fileName,
+         char[] filenamePath, boolean local, int startOffset,
+         int startingLineNumber, int nameOffset, int nameEndOffset,
+         int nameLine, int endOffset, int endLine, boolean isForced) {
+      return getASTFactory().createInclusion(fileName, filenamePath, local,
+            startOffset, startingLineNumber, nameOffset, nameEndOffset,
+            nameLine, endOffset, endLine, getCurrentFilename(), isForced);
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processMacro(char[],
-     *      int, int, int, int, int, int, int)
-     */
-    protected void processMacro(char[] name, int startingOffset,
-            int startingLineNumber, int idstart, int idend, int nameLine,
-            int textEnd, int endingLine,
-            org.eclipse.cdt.core.parser.IMacro macro) {
-        callbackManager.pushCallback(getASTFactory().createMacro(name,
-                startingOffset, startingLineNumber, idstart, idend, nameLine,
-                textEnd, endingLine, getCurrentFilename(), !isInitialized));
-    }
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processMacro(char[],
+    *      int, int, int, int, int, int, int)
+    */
+   protected void processMacro(char[] name, int startingOffset,
+         int startingLineNumber, int idstart, int idend, int nameLine,
+         int textEnd, int endingLine, org.eclipse.cdt.core.parser.IMacro macro) {
+      callbackManager.pushCallback(getASTFactory().createMacro(name,
+            startingOffset, startingLineNumber, idstart, idend, nameLine,
+            textEnd, endingLine, getCurrentFilename(), !isInitialized));
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#pushInclusion(java.lang.Object)
-     */
-    protected void pushInclusion(Object data) {
-        callbackManager.pushCallback(data);
-        super.pushInclusion(data);
-    }
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#pushContext(char[],
+    *      java.lang.Object)
+    */
+   protected void pushContext(char[] buffer, Object data) {
+      super.pushContext(buffer, data);
+      if (data instanceof InclusionData) {
+         callbackManager.pushCallback(data);
+         if (log.isTracing()) {
+            StringBuffer b = new StringBuffer("Entering inclusion "); //$NON-NLS-1$
+            b.append(((InclusionData) data).reader.filename);
+            log.traceLog(b.toString());
+         }
+      }
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#popInclusion()
-     */
-    protected void popInclusion(java.lang.Object data) {
-        super.popInclusion(data);
-        callbackManager
-                .pushCallback(((InclusionData) bufferData[bufferStackPos]).inclusion);
-    }
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#beforeSecondFetchToken()
+    */
+   protected void beforeSecondFetchToken() {
+      if (callbackManager.hasCallbacks())
+         callbackManager.popCallbacks();
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#beforeSecondFetchToken()
-     */
-    protected void beforeSecondFetchToken() {
-        if (callbackManager.hasCallbacks())
-            callbackManager.popCallbacks();
-    }
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#quickParsePushPopInclusion(java.lang.Object)
+    */
+   protected void quickParsePushPopInclusion(Object inclusion) {
+      callbackManager.pushCallback(new InclusionData(null, inclusion));
+      callbackManager.pushCallback(inclusion);
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#pushProblem(org.eclipse.cdt.core.parser.IProblem)
-     */
-    protected void pushProblem(IProblem p) {
-        callbackManager.pushCallback(p);
-    }
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#createReaderDuple(java.lang.String)
+    */
+   protected CodeReader createReaderDuple(String finalPath) {
+      return ScannerUtility.createReaderDuple(finalPath, requestor,
+            getWorkingCopies());
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#quickParsePushPopInclusion(java.lang.Object)
-     */
-    protected void quickParsePushPopInclusion(Object inclusion) {
-        callbackManager.pushCallback(new InclusionData(null, inclusion));
-        callbackManager.pushCallback(inclusion);
-    }
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.eclipse.cdt.core.parser.IScanner#getLocationResolver()
+    */
+   public ILocationResolver getLocationResolver() {
+      return null;
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#createReaderDuple(java.lang.String)
-     */
-    protected CodeReader createReaderDuple(String finalPath) {
-        return ScannerUtility.createReaderDuple(finalPath, requestor,
-                getWorkingCopies());
-    }
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getWorkingCopies()
+    */
+   protected Iterator getWorkingCopies() {
+      if (workingCopies == null)
+         return EmptyIterator.EMPTY_ITERATOR;
+      return workingCopies.iterator();
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IScanner#getLocationResolver()
-     */
-    public ILocationResolver getLocationResolver() {
-        return null;
-    }
+   /**
+    * @return
+    */
+   protected IToken newToken(int signal) {
+      if (bufferData[bufferStackPos] instanceof MacroData) {
+         int mostRelevant;
+         for (mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant)
+            if (bufferData[mostRelevant] instanceof InclusionData
+                  || bufferData[mostRelevant] instanceof CodeReader)
+               break;
+         MacroData data = (MacroData) bufferData[mostRelevant + 1];
+         return new SimpleExpansionToken(signal, data.startOffset,
+               data.endOffset - data.startOffset + 1, getCurrentFilename(),
+               getLineNumber(bufferPos[mostRelevant] + 1));
+      }
+      return new SimpleToken(signal, bufferPos[bufferStackPos] + 1,
+            getCurrentFilename(), getLineNumber(bufferPos[bufferStackPos] + 1));
+   }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getWorkingCopies()
-     */
-    protected Iterator getWorkingCopies() {
-        if (workingCopies == null)
-            return EmptyIterator.EMPTY_ITERATOR;
-        return workingCopies.iterator();
-    }
+   protected IToken newToken(int signal, char[] buffer) {
+      if (bufferData[bufferStackPos] instanceof MacroData) {
+         int mostRelevant;
+         for (mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant)
+            if (bufferData[mostRelevant] instanceof InclusionData
+                  || bufferData[mostRelevant] instanceof CodeReader)
+               break;
+         MacroData data = (MacroData) bufferData[mostRelevant + 1];
+         return new ImagedExpansionToken(signal, buffer, data.startOffset,
+               data.endOffset - data.startOffset + 1, getCurrentFilename(),
+               getLineNumber(bufferPos[mostRelevant] + 1));
+      }
+      IToken i = new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1,
+            getCurrentFilename(), getLineNumber(bufferPos[bufferStackPos] + 1));
+      if (buffer != null && buffer.length == 0 && signal != IToken.tSTRING
+            && signal != IToken.tLSTRING)
+         bufferPos[bufferStackPos] += 1; // TODO - remove this hack at some
+      // point
 
-    /**
-     * @return
-     */
-    protected IToken newToken(int signal) {
-        if (bufferData[bufferStackPos] instanceof MacroData) {
-            int mostRelevant;
-            for (mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant)
-                if (bufferData[mostRelevant] instanceof InclusionData
-                        || bufferData[mostRelevant] instanceof CodeReader)
-                    break;
-            MacroData data = (MacroData) bufferData[mostRelevant + 1];
-            return new SimpleExpansionToken(signal, data.startOffset,
-                    data.endOffset - data.startOffset + 1,
-                    getCurrentFilename(),
-                    getLineNumber(bufferPos[mostRelevant] + 1));
-        }
-        return new SimpleToken(signal, bufferPos[bufferStackPos] + 1,
-                getCurrentFilename(),
-                getLineNumber(bufferPos[bufferStackPos] + 1));
-    }
+      return i;
+   }
 
-    protected IToken newToken(int signal, char[] buffer) {
-        if (bufferData[bufferStackPos] instanceof MacroData) {
-            int mostRelevant;
-            for (mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant)
-                if (bufferData[mostRelevant] instanceof InclusionData
-                        || bufferData[mostRelevant] instanceof CodeReader)
-                    break;
-            MacroData data = (MacroData) bufferData[mostRelevant + 1];
-            return new ImagedExpansionToken(signal, buffer, data.startOffset,
-                    data.endOffset - data.startOffset + 1,
-                    getCurrentFilename(),
-                    getLineNumber(bufferPos[mostRelevant] + 1));
-        }
-        IToken i = new ImagedToken(signal, buffer,
-                bufferPos[bufferStackPos] + 1, getCurrentFilename(),
-                getLineNumber(bufferPos[bufferStackPos] + 1));
-        if (buffer != null && buffer.length == 0 && signal != IToken.tSTRING
-                && signal != IToken.tLSTRING)
-            bufferPos[bufferStackPos] += 1; // TODO - remove this hack at some
-                                            // point
+   protected static final ScannerProblemFactory spf = new ScannerProblemFactory();
 
-        return i;
-    }
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#handleProblem(int,
+    *      int, char[])
+    */
+   protected void handleProblem(int id, int offset, char[] arg) {
+      if (parserMode == ParserMode.COMPLETION_PARSE)
+         return;
+      IProblem p = spf.createProblem(id, offset, bufferPos[bufferStackPos],
+            getLineNumber(bufferPos[bufferStackPos]), getCurrentFilename(),
+            arg != null ? arg : EMPTY_CHAR_ARRAY, false, true);
+      callbackManager.pushCallback(p);
+   }
 
-    protected static final ScannerProblemFactory spf = new ScannerProblemFactory();
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#handleProblem(int,
-     *      int, char[])
-     */
-    protected void handleProblem(int id, int offset, char[] arg) {
-        if (parserMode == ParserMode.COMPLETION_PARSE)
-            return;
-        IProblem p = spf.createProblem(id, offset,
-                bufferPos[bufferStackPos],
-                getLineNumber(bufferPos[bufferStackPos]), getCurrentFilename(),
-                arg != null ? arg : EMPTY_CHAR_ARRAY, false, true);
-        pushProblem(p);
-    }
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#popContext()
+    */
+   protected Object popContext() {
+      if (bufferData[bufferStackPos] instanceof InclusionData) {
+         if (log.isTracing()) {
+            StringBuffer buffer = new StringBuffer("Exiting inclusion "); //$NON-NLS-1$
+            buffer
+                  .append(((InclusionData) bufferData[bufferStackPos]).reader.filename);
+            log.traceLog(buffer.toString());
+         }
+         callbackManager
+               .pushCallback(((InclusionData) bufferData[bufferStackPos]).inclusion);
+      }
+      return super.popContext();
+   }
 
 }

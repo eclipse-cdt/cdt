@@ -31,7 +31,6 @@ public interface ILocationResolver {
     public IASTProblem[] getScannerProblems();
 
     public String getTranslationUnitPath();
-    public String [] getInclusionsPaths();
     
     public void cleanup();
     

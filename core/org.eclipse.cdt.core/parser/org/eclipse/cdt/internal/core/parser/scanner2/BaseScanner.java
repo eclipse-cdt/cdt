@@ -1278,26 +1278,11 @@ abstract class BaseScanner implements IScanner {
       }
       pushContext(buffer);
       bufferData[bufferStackPos] = data;
-      if (data instanceof InclusionData)
-         pushInclusion(data);
 
-   }
-
-   /**
-    * @param data
-    */
-   protected void pushInclusion(Object data) {
-      if (log.isTracing()) {
-         StringBuffer b = new StringBuffer("Entering inclusion "); //$NON-NLS-1$
-         b.append(((InclusionData) data).reader.filename);
-         log.traceLog(b.toString());
-      }
    }
 
    protected Object popContext() {
       bufferStack[bufferStackPos] = null;
-      if (bufferData[bufferStackPos] instanceof InclusionData)
-         popInclusion(((InclusionData) bufferData[bufferStackPos]).inclusion);
 
       Object result = bufferData[bufferStackPos];
       bufferData[bufferStackPos] = null;
@@ -1306,20 +1291,6 @@ abstract class BaseScanner implements IScanner {
       if (preIncludeFiles.hasNext())
          pushForcedInclusion();
       return result;
-   }
-
-   /**
-    * @param data
-    *           TODO
-    *  
-    */
-   protected void popInclusion(java.lang.Object data) {
-      if (log.isTracing()) {
-         StringBuffer buffer = new StringBuffer("Exiting inclusion "); //$NON-NLS-1$
-         buffer
-               .append(((InclusionData) bufferData[bufferStackPos]).reader.filename);
-         log.traceLog(buffer.toString());
-      }
    }
 
    /**
@@ -1991,7 +1962,7 @@ abstract class BaseScanner implements IScanner {
                pushContext(expText);
          }
          if (expanding)
-            return new MacroExpansionToken();
+            return EXPANSION_TOKEN;
       }
 
       char[] result = escapedNewline ? removedEscapedNewline(buffer, start, len)
@@ -2683,12 +2654,11 @@ abstract class BaseScanner implements IScanner {
                      fileCache.put(reader.filename, reader);
                }
                if (reader != null) {
-                  Object inclusion = createInclusionConstruct(fileNameArray,
+                  pushContext(reader.buffer, new InclusionData(reader,
+                        createInclusionConstruct(fileNameArray,
                         reader.filename, local, startOffset,
                         startingLineNumber, nameOffset, nameEndOffset,
-                        nameLine, endOffset, endLine, false);
-                  pushContext(reader.buffer, new InclusionData(reader,
-                        inclusion));
+                        nameLine, endOffset, endLine, false)));
                   return;
                }
             }
@@ -4377,6 +4347,7 @@ abstract class BaseScanner implements IScanner {
 
    protected static final char[]    TAB            = { '\t' };
    protected static final char[]    SPACE          = { ' ' };
+   private static final MacroExpansionToken EXPANSION_TOKEN = new MacroExpansionToken();
 
    static {
       CharArrayIntMap words = new CharArrayIntMap(IToken.tLAST, -1);

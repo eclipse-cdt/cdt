@@ -27,8 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
  */
 public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
-   public static class Location implements IASTNodeLocation
-   {
+   public static class Location implements IASTNodeLocation {
       private final int nodeOffset;
       private final int nodeLength;
 
@@ -41,28 +40,31 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          nodeLength = length;
       }
 
-
-      /* (non-Javadoc)
+      /*
+       * (non-Javadoc)
+       * 
        * @see org.eclipse.cdt.core.dom.ast.IASTNodeLocation#getNodeOffset()
        */
       public int getNodeOffset() {
          return nodeOffset;
       }
 
-
-      /* (non-Javadoc)
+      /*
+       * (non-Javadoc)
+       * 
        * @see org.eclipse.cdt.core.dom.ast.IASTNodeLocation#getNodeLength()
        */
       public int getNodeLength() {
          return nodeLength;
       }
 
-      
    }
+
    /**
     * @author jcamelon
     */
-   public static class FileLocation extends Location implements IASTFileLocation {
+   public static class FileLocation extends Location implements
+         IASTFileLocation {
 
       private String fileName;
 
@@ -70,14 +72,16 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
        * @param length
        * @param offset
        * @param tu_filename
-       * 
+       *  
        */
       public FileLocation(char[] tu_filename, int offset, int length) {
-         super( offset, length );
-         fileName = new String( tu_filename );
+         super(offset, length);
+         fileName = new String(tu_filename);
       }
 
-      /* (non-Javadoc)
+      /*
+       * (non-Javadoc)
+       * 
        * @see org.eclipse.cdt.core.dom.ast.IASTFileLocation#getFileName()
        */
       public String getFileName() {
@@ -85,17 +89,102 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       }
 
    }
-   private static final char [] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
-   private List                       problems             = Collections.EMPTY_LIST;
-   private List						  inclusions = Collections.EMPTY_LIST;
-   private List						  macroExpansions = Collections.EMPTY_LIST;
-   private static final IASTProblem[] EMPTY_PROBLEMS_ARRAY = new IASTProblem[0];
-   private static final IASTNodeLocation [] EMPTY_LOCATION_ARRAY = new IASTNodeLocation[0];
-   
-   
-   private char[]                     tu_filename = EMPTY_CHAR_ARRAY ;
-   private static final String[] EMPTY_STRING_ARRAY = new String[0];
-   private int finalOffset = 0;
+
+   private static final IASTProblem[]      EMPTY_PROBLEMS_ARRAY = new IASTProblem[0];
+   private static final IASTNodeLocation[] EMPTY_LOCATION_ARRAY = new IASTNodeLocation[0];
+
+   public static class Context {
+      /**
+       * @param startOffset
+       * @param endOffset
+       */
+      public Context(CompositeContext parent, int startOffset, int endOffset) {
+         this.context_directive_start = startOffset;
+         this.context_directive_end = endOffset;
+         this.parent = parent;
+      }
+
+      public final int               context_directive_start;
+      public final int               context_directive_end;
+      public int                     context_ends = -1;
+      private final CompositeContext parent;
+
+      public CompositeContext getParent() {
+         return parent;
+      }
+   }
+
+   public static class CompositeContext extends Context {
+
+      public CompositeContext(CompositeContext parent, int startOffset,
+            int endOffset) {
+         super(parent, startOffset, endOffset);
+      }
+
+      private static final int DEFAULT_SUBCONTEXT_ARRAY_SIZE = 8;
+
+      protected List           subContexts                   = Collections.EMPTY_LIST;
+
+      public List getSubContexts() {
+         return subContexts;
+      }
+
+      public void addSubContext(Context c) {
+         if (subContexts == Collections.EMPTY_LIST)
+            subContexts = new ArrayList(DEFAULT_SUBCONTEXT_ARRAY_SIZE);
+         subContexts.add(c);
+      }
+
+      /**
+       * @return
+       */
+      public boolean hasSubContexts() {
+         return subContexts != Collections.EMPTY_LIST;
+      }
+
+   }
+
+   public static class Inclusion extends CompositeContext {
+      public final char[] path;
+
+      public Inclusion(CompositeContext parent, char[] path, int startOffset,
+            int endOffset) {
+         super(parent, startOffset, endOffset);
+         this.path = path;
+      }
+   }
+
+   public static class TranslationUnit extends CompositeContext {
+      public final char[] path;
+
+      /**
+       * @param startOffset
+       * @param endOffset
+       */
+      public TranslationUnit(char[] path) {
+         super(null, 0, 0);
+         this.path = path;
+      }
+   }
+
+   public static class Problem extends Context {
+      public final IASTProblem problem;
+
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       */
+      public Problem(CompositeContext parent, int startOffset, int endOffset,
+            IASTProblem problem) {
+         super(parent, startOffset, endOffset);
+         this.problem = problem;
+      }
+
+   }
+
+   protected TranslationUnit  tu;
+   protected CompositeContext currentContext;
 
    /**
     *  
@@ -142,15 +231,96 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     *      int)
     */
    public IASTNodeLocation[] getLocations(int offset, int length) {
-      if( tu_filename == EMPTY_CHAR_ARRAY ) return EMPTY_LOCATION_ARRAY;
-      if( macroExpansions.isEmpty() && inclusions.isEmpty() )
-      {
-         if( offset + length > finalOffset ) return EMPTY_LOCATION_ARRAY;
-         IASTNodeLocation [] result = new IASTNodeLocation[1];
-         result[0] = new FileLocation( tu_filename, offset, length );
+      if (tu == null)
+         return EMPTY_LOCATION_ARRAY;
+      Context c = findContextForOffset(offset);
+      if (c.context_ends >= offset + length)
+         return createSoleLocation(c, offset, length);
+
+      return EMPTY_LOCATION_ARRAY;
+   }
+
+   /**
+    * @param c
+    * @param offset
+    * @param length
+    * @return
+    */
+   protected IASTNodeLocation[] createSoleLocation(Context c, int offset,
+         int length) {
+      IASTNodeLocation[] result = new IASTNodeLocation[1];
+      if (c instanceof TranslationUnit) {
+         result[0] = new FileLocation(((TranslationUnit) c).path, reconcileOffset( c, offset ),
+               length);
          return result;
       }
-      return EMPTY_LOCATION_ARRAY; 
+      if( c instanceof Inclusion )
+      {
+         result[0] = new FileLocation(((Inclusion) c).path, reconcileOffset( c, offset ),
+               length);
+         return result;
+      }
+      return EMPTY_LOCATION_ARRAY;
+   }
+
+   /**
+    * @param c
+    * @param offset
+    * @return
+    */
+   protected static int reconcileOffset(Context c, int offset) {
+      int subtractOff = 0;
+      if( c instanceof CompositeContext )
+      {
+         List subs = ((CompositeContext)c).getSubContexts();
+         for( int i = 0; i < subs.size(); ++i )
+         {
+            Context subC = (Context) subs.get(i);
+            if( subC.context_ends < offset )
+               subtractOff += subC.context_ends - subC.context_directive_end;
+            else
+               break;
+         }
+      }
+      return offset - c.context_directive_end - subtractOff;
+   }
+
+   /**
+    * @param offset
+    * @return
+    */
+   protected Context findContextForOffset(int offset) {
+      return findContextForOffset(tu, offset);
+   }
+
+   protected static Context findContextForOffset(CompositeContext context,
+         int offset) {
+      if (!context.hasSubContexts() )
+      {
+         if( context.context_ends >= offset)
+            return context;
+         return null;
+      }
+      List subContexts = context.getSubContexts();
+      //check first
+      Context bestContext = (Context) subContexts.get(0);
+      if (bestContext.context_directive_end > offset)
+         return context;
+      
+      for (int i = 1; i < subContexts.size(); ++i) {
+         Context nextContext = (Context) subContexts.get(i);
+         if (nextContext.context_directive_end < offset)
+            bestContext = nextContext;
+         else
+            break;
+      }
+      
+      if ( bestContext.context_ends < offset )
+         return context;
+      
+      if (bestContext instanceof CompositeContext)
+         return findContextForOffset((CompositeContext) bestContext, offset);
+      return bestContext;
    }
 
    /*
@@ -169,7 +339,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#startTranslationUnit()
     */
    public void startTranslationUnit(char[] filename) {
-      this.tu_filename = filename;
+      tu = new TranslationUnit(filename);
+      currentContext = tu;
    }
 
    /*
@@ -178,7 +349,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#endTranslationUnit(int)
     */
    public void endTranslationUnit(int offset) {
-      this.finalOffset  = offset;
+      tu.context_ends = offset;
    }
 
    /*
@@ -187,8 +358,11 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#startInclusion(char[],
     *      int)
     */
-   public void startInclusion(char[] includePath, int offset) {
-      inclusions.add( new String( includePath ));
+   public void startInclusion(char[] includePath, int offset, int endOffset) {
+      Inclusion i = new Inclusion(currentContext, includePath, offset,
+            endOffset);
+      currentContext.addSubContext(i);
+      currentContext = i;
    }
 
    /*
@@ -197,9 +371,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#endInclusion(char[],
     *      int)
     */
-   public void endInclusion(char[] includePath, int offset) {
-      // TODO Auto-generated method stub
-
+   public void endInclusion(int offset) {
+      ((Inclusion) currentContext).context_ends = offset;
+      currentContext = currentContext.getParent();
    }
 
    /*
@@ -366,19 +540,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getTranslationUnitPath()
     */
    public String getTranslationUnitPath() {
-      if( tu_filename == EMPTY_CHAR_ARRAY ) return ""; //$NON-NLS-1$
-      return new String( tu_filename );
+      return new String(tu.path);
    }
-
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getInclusionsPaths()
-    */
-   public String[] getInclusionsPaths() {
-      if (inclusions == Collections.EMPTY_LIST)
-         return EMPTY_STRING_ARRAY;
-      return (String[]) inclusions.toArray(new String[inclusions.size()]);   }
 
    /*
     * (non-Javadoc)
@@ -395,9 +558,15 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getScannerProblems()
     */
    public IASTProblem[] getScannerProblems() {
-      if (problems == Collections.EMPTY_LIST)
+      List contexts = new ArrayList(8);
+      LocationMap.collectContexts(V_PROBLEMS, tu, contexts);
+      if (contexts.isEmpty())
          return EMPTY_PROBLEMS_ARRAY;
-      return (IASTProblem[]) problems.toArray(new IASTProblem[problems.size()]);
+      IASTProblem[] result = new IASTProblem[contexts.size()];
+      for (int i = 0; i < contexts.size(); ++i)
+         result[i] = ((Problem) contexts.get(i)).problem;
+
+      return result;
    }
 
    /*
@@ -406,9 +575,35 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterIProblem(org.eclipse.cdt.core.parser.IProblem)
     */
    public void encounterProblem(IASTProblem problem) {
-      if (problems == Collections.EMPTY_LIST)
-         problems = new ArrayList(4);
-      problems.add(problem);
+      ScannerASTProblem p = (ScannerASTProblem) problem;
+      Problem pr = new Problem(currentContext, p.getOffset(), p.getOffset()
+            + p.getLength(), problem);
+      pr.context_ends = p.getOffset() + p.getLength();
+   }
+
+   protected static final int V_ALL        = 1;
+   protected static final int V_INCLUSIONS = 2;
+   protected static final int V_PROBLEMS   = 3;
+
+   protected static void collectContexts(int key, Context source, List result) {
+      switch (key) {
+         case V_ALL:
+            result.add(source);
+            break;
+         case V_INCLUSIONS:
+            if (source instanceof Inclusion)
+               result.add(source);
+            break;
+         case V_PROBLEMS:
+            if (source instanceof Problem)
+               result.add(source);
+            break;
+      }
+      if (source instanceof CompositeContext) {
+         List l = ((CompositeContext) source).getSubContexts();
+         for (int i = 0; i < l.size(); ++i)
+            collectContexts(key, (Context) l.get(i), result);
+      }
    }
 
 }

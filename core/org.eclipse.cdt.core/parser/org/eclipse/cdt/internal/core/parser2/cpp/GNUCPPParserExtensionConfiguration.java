@@ -71,4 +71,11 @@ public class GNUCPPParserExtensionConfiguration implements
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration#supportLongLongs()
+     */
+    public boolean supportLongLongs() {
+        return true;
+    }
+
 }

@@ -718,5 +718,10 @@ public class AST2Tests extends AST2BaseTest {
         buffer.append( "int f( X x );"); //$NON-NLS-1$
         parse( buffer.toString(), ParserLanguage.C );
     }
+    
+    public void testLongLong() throws ParserException
+    {
+        parse( "long long x;\n", ParserLanguage.C ); //$NON-NLS-1$
+    }
 }
 

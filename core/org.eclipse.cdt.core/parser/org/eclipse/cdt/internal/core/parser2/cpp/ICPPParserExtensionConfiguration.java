@@ -27,5 +27,6 @@ public interface ICPPParserExtensionConfiguration {
 	public boolean supportStatementsInExpressions();
 	public boolean supportComplexNumbers();
 	public boolean supportRestrictKeyword();
+    public boolean supportLongLongs();
 
 }

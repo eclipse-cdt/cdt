@@ -21,5 +21,8 @@ public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier,
 	public static final int t_Complex = ICPPASTSimpleDeclSpecifier.t_last + 1;
 	public static final int t_Imaginary = ICPPASTSimpleDeclSpecifier.t_last + 2;
 	public static final int t_last = t_Imaginary;
+	
+	public boolean isLongLong();
+	public void setLongLong( boolean value );
 
 }

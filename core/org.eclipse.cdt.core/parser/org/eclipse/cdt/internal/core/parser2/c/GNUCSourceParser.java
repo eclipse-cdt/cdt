@@ -1134,7 +1134,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         int storageClass = IASTDeclSpecifier.sc_unspecified;
         boolean isInline = false;
         boolean isConst = false, isRestrict = false, isVolatile = false;
-        boolean isShort = false, isLong = false, isUnsigned = false, isIdentifier = false, isSigned = false;
+        boolean isShort = false, isLong = false, isUnsigned = false, isIdentifier = false, isSigned = false, isLongLong = false;
         int simpleType = IASTSimpleDeclSpecifier.t_unspecified;
         IToken identifier = null;
         IASTCompositeTypeSpecifier structSpec = null;
@@ -1209,7 +1209,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.t_long:
                 flags.setEncounteredRawType(true);
                 consume();
-                isLong = true;
+                if( isLong )
+                {
+                    isLongLong = true;
+                    isLong = false;
+                }
+                else
+                    isLong = true;
                 break;
             case IToken.t_float:
                 flags.setEncounteredRawType(true);
@@ -1360,6 +1366,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         declSpec.setType(simpleType);
         declSpec.setLong(isLong);
+        declSpec.setLongLong( isLongLong );
         declSpec.setUnsigned(isUnsigned);
         declSpec.setSigned(isSigned);
         declSpec.setShort(isShort);

@@ -71,5 +71,12 @@ public class ANSICPPParserExtensionConfiguration implements
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration#supportLongLongs()
+     */
+    public boolean supportLongLongs() {
+        return false;
+    }
+
 
 }

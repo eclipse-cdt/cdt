@@ -1700,12 +1700,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private final boolean supportMinAndMaxOperators;
     private final boolean supportComplex;
     private final boolean supportRestrict;
-
+    private final boolean supportLongLong;
+    
     private static final int DEFAULT_PARM_LIST_SIZE = 4;
     private static final int DEFAULT_DECLARATOR_LIST_SIZE = 4;
     private static final int DEFAULT_POINTEROPS_LIST_SIZE = 4;
     private static final int DEFAULT_SIZE_EXCEPTIONS_LIST = 2;
     private static final int DEFAULT_CONSTRUCTOR_CHAIN_LIST_SIZE = 4;
+    
 
     /**
      * This is the standard cosntructor that we expect the Parser to be
@@ -1725,6 +1727,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         supportMinAndMaxOperators = config.supportMinAndMaxOperators();
         supportRestrict = config.supportRestrictKeyword();
         supportComplex = config.supportComplexNumbers();
+        supportLongLong = config.supportLongLongs();
     }
 
  
@@ -2739,7 +2742,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         
         boolean isInline= false, isVirtual= false, isExplicit= false, isFriend= false;
         boolean isConst = false, isVolatile= false, isRestrict= false;
-        boolean isLong= false, isShort= false, isUnsigned= false, isSigned= false;
+        boolean isLong= false, isShort= false, isUnsigned= false, isSigned= false, isLongLong = false;
         boolean isTypename= false;
         
         int storageClass = IASTDeclSpecifier.sc_unspecified;
@@ -2824,7 +2827,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 consume();
                 break;
             case IToken.t_long:
-                isLong = true;
+                if( isLong && supportLongLong )
+                {
+                    isLong = false;
+                    isLongLong = true;
+                }
+                else
+                    isLong = true;
                 flags.setEncounteredRawType(true);
                 consume();
                 break;
@@ -2998,7 +3007,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             nameSpec.setExplicit( isExplicit );
             return nameSpec;
         }
-        ICPPASTSimpleDeclSpecifier simpleDeclSpec = createSimpleDeclSpecifier();
+        ICPPASTSimpleDeclSpecifier simpleDeclSpec = null;
+        if( isLongLong )
+        {
+            simpleDeclSpec = createGPPSimpleDeclSpecifier();
+            ((IGPPASTSimpleDeclSpecifier)simpleDeclSpec).setLongLong( isLongLong );
+        }
+        else
+            simpleDeclSpec = createSimpleDeclSpecifier();
         ((ASTNode)simpleDeclSpec).setOffset( firstToken.getOffset() ); 
         simpleDeclSpec.setConst( isConst );
         simpleDeclSpec.setVolatile( isVolatile );
@@ -3018,6 +3034,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         simpleDeclSpec.setSigned( isSigned );
         
         return simpleDeclSpec;
+    }
+
+    /**
+     * @return
+     */
+    private ICPPASTSimpleDeclSpecifier createGPPSimpleDeclSpecifier() {
+        return new GPPASTSimpleDeclSpecifier();
     }
 
     /**

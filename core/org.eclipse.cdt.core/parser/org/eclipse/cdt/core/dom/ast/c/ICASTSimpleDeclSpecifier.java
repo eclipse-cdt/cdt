@@ -23,6 +23,10 @@ public interface ICASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier, ICAST
 	public static final int t_Bool = IASTSimpleDeclSpecifier.t_last + 1;
 	public static final int t_Complex = IASTSimpleDeclSpecifier.t_last + 2;
 	public static final int t_Imaginary = IASTSimpleDeclSpecifier.t_last + 3;
+	
+	public boolean isLongLong();
+	public void setLongLong( boolean value );
+	
 	public static final int t_last = t_Imaginary;
 	
 }

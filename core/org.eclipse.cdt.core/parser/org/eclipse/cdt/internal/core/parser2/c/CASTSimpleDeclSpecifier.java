@@ -21,6 +21,7 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     private boolean isUnsigned;
     private boolean isShort;
     private boolean isLong;
+    private boolean longlong;
 
 
     /* (non-Javadoc)
@@ -91,6 +92,20 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
      */
     public void setSigned(boolean value) {
         isSigned = value;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier#isLongLong()
+     */
+    public boolean isLongLong() {
+        return longlong;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier#setLongLong(boolean)
+     */
+    public void setLongLong(boolean value) {
+        longlong = value;
     }
 
 }

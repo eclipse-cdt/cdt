@@ -1,3 +1,37 @@
+2003-02-09 Alain Magloire
+
+	in GDB/MI 5.3 and below, the -data-list-register-xxx can bring gdb down with
+	an assert().  The problem is that code like this
+	ui_out_list_begin();
+	for () {
+		if(error)
+			return ERROR;
+	}
+	ui_out_list_end();
+	The ui_out_list_end() is never call.
+	However gdb offers the varobj to deal cleanly with register but calling
+	"-var-update *" seems to make gdb misbehave and hang after a while.
+	So we use a mixed of -data-list-register-xxx calls and var-object to deal
+	with registers and do not call "-var-update *" but rather call it for
+	each time for individual objects to see the updates.
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Register.java:
+	Reimplemented to use the var obj.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/RegisterValue.java:
+	New file implement ICDIValue.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/EventManagero.java (processSuspendedEvent):
+	Call each manager.update().
+	* src/org/eclipse/cdt/debug/mi/core/cdi/ExpressionManager.java (update):
+	Reimplemented.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java (update):
+	Reimplemented
+	* src/org/eclipse/cdt/debug/mi/core/cdi/UpdateManager.java:
+	Removed.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/IUpdateListener.java:
+	Removed.
+	* src/org/eclipse/cdt/debug/mi/core/CLIProcessor.java:
+	Catch the cli "run" command.
+
 2003-02-06 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java (getVariableArrayObject):

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
+import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -31,5 +32,5 @@ public interface IExternalScannerInfoProvider {
 	public boolean invokeProvider(IProgressMonitor monitor, 
 								  IProject currentProject,
 								  IScannerConfigBuilderInfo buildInfo, 
-								  String[] targetSpecificOptions); 
+								  List targetSpecificOptions); 
 }

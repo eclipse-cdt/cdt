@@ -139,4 +139,8 @@ public class SymbolEntry {
 		}
 		return rv;
 	}
+	
+	public int numberOfValues() {
+		return values.size();
+	}
 }

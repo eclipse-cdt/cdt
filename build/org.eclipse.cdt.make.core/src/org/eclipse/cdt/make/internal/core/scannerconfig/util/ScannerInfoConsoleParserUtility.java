@@ -372,33 +372,43 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 		StringBuffer buf = new StringBuffer(path);
 		int len = buf.length();
 		StringBuffer newBuf = new StringBuffer(buf.length());
-		int i = 0;
-		int sp = 0;
+		int scp = 0; // starting copy point
+		int ssp = 0;	// starting search point
 		int sdot;
-		while (sp < len && (sdot = buf.indexOf(".", sp)) != -1) {	//$NON-NLS-1$
-			int ddot = buf.indexOf("..", sp);//$NON-NLS-1$
+		boolean validPrefix;
+		while (ssp < len && (sdot = buf.indexOf(".", ssp)) != -1) {	//$NON-NLS-1$
+			validPrefix = false;
+			int ddot = buf.indexOf("..", ssp);//$NON-NLS-1$
 			if (sdot < ddot || ddot == -1) {
-				newBuf.append(buf.substring(i, sdot));
-				i = sdot + 1;
-				if (i < len) {
-					char nextChar = buf.charAt(i);
-					if (nextChar == '/') {
-						++i;
+				newBuf.append(buf.substring(scp, sdot));
+				ssp = sdot + 1;
+				if (ssp < len) {
+					if (sdot == 0 || buf.charAt(sdot - 1) == '/' || buf.charAt(sdot - 1) == '\\') {
+						validPrefix = true;
 					}
-					else if (nextChar == '\\') {
-						++i;
-						if (i < len - 1 && buf.charAt(i) == '\\') {
-							++i;
+					char nextChar = buf.charAt(ssp);
+					if (validPrefix && nextChar == '/') {
+						++ssp;
+						scp = ssp;
+					}
+					else if (validPrefix && nextChar == '\\') {
+						++ssp;
+						if (ssp < len - 1 && buf.charAt(ssp) == '\\') {
+							++ssp;
 						}
+						scp = ssp;
+					}
+					else {
+						// no path delimiter, must be '.' inside the path
+						scp = ssp - 1;
 					}
 				}
-				sp = i;
 			}
 			else if (sdot == ddot) {
-				sp = sdot + 2;
+				ssp = sdot + 2;
 			}
 		}
-		newBuf.append(buf.substring(i, len));
+		newBuf.append(buf.substring(scp, len));
 					 
 		IPath orgPath = new Path(newBuf.toString());
 		return orgPath.toString();

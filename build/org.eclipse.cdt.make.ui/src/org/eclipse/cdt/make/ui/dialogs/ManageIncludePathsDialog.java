@@ -75,6 +75,8 @@ public class ManageIncludePathsDialog extends Dialog {
 	private static final String DISC_COMMON_PREFIX = "ManageScannerConfigDialogCommon"; //$NON-NLS-1$
 	private static final String SELECTED_LABEL = DISC_COMMON_PREFIX + ".discoveredGroup.selected.label"; //$NON-NLS-1$
 	private static final String REMOVED_LABEL = DISC_COMMON_PREFIX + ".discoveredGroup.removed.label"; //$NON-NLS-1$
+	private static final String UP_DISCOVERED = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.up.label"; //$NON-NLS-1$
+	private static final String DOWN_DISCOVERED = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.down.label"; //$NON-NLS-1$
 	private static final String REMOVE_DISCOVERED = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.remove.label"; //$NON-NLS-1$
 	private static final String RESTORE_DISCOVERED = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.restore.label"; //$NON-NLS-1$
 	private static final String DELETE_DISCOVERED = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.delete.label"; //$NON-NLS-1$
@@ -89,8 +91,12 @@ public class ManageIncludePathsDialog extends Dialog {
 	private static final int DO_REMOVE = 0;
 	private static final int DO_RESTORE = 1;
 	
+	private static final int DISC_UP = 0;
+	private static final int DISC_DOWN = 1;
+	
 	private ArrayList returnPaths;
 	private ArrayList userPaths;
+	private ArrayList deletedDiscoveredPaths;
 	private LinkedHashMap discoveredPaths;
 	private LinkedHashMap workingDiscoveredPaths; // working copy of discoveredPaths, until either OK or CANCEL is pressed
 	private boolean fDirty;
@@ -113,6 +119,8 @@ public class ManageIncludePathsDialog extends Dialog {
 	private Label removedLabel;
 	private List discActiveList;
 	private List discRemovedList;
+	private Button upDiscPath;
+	private Button downDiscPath;
 	private Button removeDiscPath;
 	private Button restoreDiscPath;
 	private Button deleteDiscPath;
@@ -181,8 +189,10 @@ public class ManageIncludePathsDialog extends Dialog {
 		
 		setListContents();
 		userList.select(0);
+		userList.setFocus();
 		enableUserButtons();
 		discActiveList.select(0);
+		discActiveList.setFocus();
 		enableDiscoveredButtons();
 		
 		return composite;
@@ -475,6 +485,24 @@ public class ManageIncludePathsDialog extends Dialog {
 		Composite pathButtonComp = ControlFactory.createComposite(discoveredGroup, 1);
 
 		// Add the buttons
+		upDiscPath = ControlFactory.createPushButton(pathButtonComp, getTitle(UP_DISCOVERED));
+		upDiscPath.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleUpDownDiscPath(DISC_UP);
+			}
+		});
+		upDiscPath.setEnabled(true);
+		SWTUtil.setButtonDimensionHint(upDiscPath);
+
+		downDiscPath = ControlFactory.createPushButton(pathButtonComp, getTitle(DOWN_DISCOVERED));
+		downDiscPath.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleUpDownDiscPath(DISC_DOWN);
+			}
+		});
+		downDiscPath.setEnabled(true);
+		SWTUtil.setButtonDimensionHint(downDiscPath);
+
 		removeDiscPath = ControlFactory.createPushButton(pathButtonComp, getTitle(REMOVE_DISCOVERED));
 		removeDiscPath.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -531,6 +559,58 @@ public class ManageIncludePathsDialog extends Dialog {
 	}
 
 	/**
+	 * @param direction (DISC_UP or DISC_DOWN)
+	 */
+	protected void handleUpDownDiscPath(int direction) {
+		int delta = (direction == DISC_UP) ? -1 : 1;
+		List selectedList;
+		boolean removed;
+		int selectedSet;
+		if (discActiveList.getSelectionIndex() == -1) {
+			selectedList = discRemovedList;
+			removed = true;
+			selectedSet = REMOVED;
+		}
+		else {
+			selectedList = discActiveList;
+			removed = false;
+			selectedSet = ACTIVE;
+		}
+		int selectedItem = selectedList.getFocusIndex();
+		String selected = selectedList.getItem(selectedItem); 
+		ArrayList pathKeyList = new ArrayList(workingDiscoveredPaths.keySet());
+		int curIndex = pathKeyList.indexOf(selected);
+		int otherIndex = curIndex + delta;
+		boolean found = false;
+		for (; otherIndex >= 0 && otherIndex < pathKeyList.size(); otherIndex+=delta) {
+			Boolean val = (Boolean) workingDiscoveredPaths.get(pathKeyList.get(otherIndex));
+			if (val != null && val.booleanValue() == removed) {
+				found = true;
+				break;
+			}
+		}
+		if (found) {
+			// swap the entries in the working copy
+			String temp = (String) pathKeyList.get(curIndex);
+			pathKeyList.add(curIndex, pathKeyList.get(otherIndex));
+			pathKeyList.add(otherIndex, temp);
+			
+			LinkedHashMap newWorkingDiscoveredPaths = new LinkedHashMap(workingDiscoveredPaths.size());
+			for (Iterator i = pathKeyList.iterator(); i.hasNext(); ) {
+				String key = (String) i.next();
+				newWorkingDiscoveredPaths.put(key, workingDiscoveredPaths.get(key));
+			}
+			workingDiscoveredPaths = newWorkingDiscoveredPaths;
+			// update UI
+			selectedList.setItems(getDiscIncludePaths(workingDiscoveredPaths, selectedSet));
+			selectedList.setSelection(selectedItem + delta);
+			selectedList.setFocus();
+			enableDiscoveredButtons();
+			setDirty(true);
+		}
+	}
+
+	/**
 	 * 
 	 */
 	protected void handleRemoveRestoreDiscPath(int type) {
@@ -584,6 +664,12 @@ public class ManageIncludePathsDialog extends Dialog {
 		int id = discList.getSelectionIndex();
 		if (id >= 0) {
 			String path = discList.getItem(id);
+			// add it to the deleted list
+			if (deletedDiscoveredPaths == null) {
+				deletedDiscoveredPaths = new ArrayList();
+			}
+			deletedDiscoveredPaths.add(path);
+			
 			workingDiscoveredPaths.remove(path);
 			discList.setItems(getDiscIncludePaths(workingDiscoveredPaths, type));
 			int items = discList.getItemCount();
@@ -621,19 +707,17 @@ public class ManageIncludePathsDialog extends Dialog {
 		discRemovedList.setEnabled(fProject != null);
 
 		int activeItems = discActiveList.getItemCount();
-		int activeSeclection = discActiveList.getSelectionIndex();
+		int activeSelection = discActiveList.getSelectionIndex();
 		int removedItems = discRemovedList.getItemCount();
 		int removedSelection = discRemovedList.getSelectionIndex();
-		// To maintain the proper TAB order of enabled buttons 
-		if (activeItems > 0 && activeSeclection >= 0) {
-			removeDiscPath.setEnabled(activeItems > 0 && activeSeclection >= 0);
-			restoreDiscPath.setEnabled(removedItems > 0 && removedSelection >= 0);
-		}
-		else {
-			restoreDiscPath.setEnabled(removedItems > 0 && removedSelection >= 0);
-			removeDiscPath.setEnabled(activeItems > 0 && activeSeclection >= 0);
-		}
-		deleteDiscPath.setEnabled((activeItems > 0 && activeSeclection >= 0) ||
+		// To maintain the proper TAB order of enabled buttons
+		upDiscPath.setEnabled((activeItems > 0 && activeSelection > 0) || 
+				(removedItems > 0 && removedSelection > 0));
+		downDiscPath.setEnabled((activeItems > 0 && activeSelection >= 0 && activeSelection < activeItems-1) || 
+				(removedItems > 0 && removedSelection >= 0 && removedSelection < removedItems-1));
+		removeDiscPath.setEnabled(activeItems > 0 && activeSelection >= 0);
+		restoreDiscPath.setEnabled(removedItems > 0 && removedSelection >= 0);
+		deleteDiscPath.setEnabled((activeItems > 0 && activeSelection >= 0) ||
 				(removedItems > 0 && removedSelection >= 0));
 		deleteAllDiscPaths.setEnabled(activeItems > 0 || removedItems > 0);
 	}
@@ -681,6 +765,7 @@ public class ManageIncludePathsDialog extends Dialog {
 			fDirty = fWorkingDirty;
 		}
 		else if (IDialogConstants.CANCEL_ID == buttonId) {
+			deletedDiscoveredPaths = null;
 			workingDiscoveredPaths = null;
 			setDirty(false);
 		}
@@ -699,6 +784,13 @@ public class ManageIncludePathsDialog extends Dialog {
 		if (fDirty || (fProject == null && fContainer.getProject() != null)) {// New Standard Make project wizard
 			info.setUserIncludePaths(userPaths);
 			info.setDiscoveredIncludePaths(discoveredPaths);
+			// remove deleted paths from discovered SC
+			if (deletedDiscoveredPaths != null) {
+				for (Iterator i = deletedDiscoveredPaths.iterator(); i.hasNext(); ) {
+					ScannerInfoCollector.getInstance().deletePath(fProject, (String) i.next());
+				}
+				deletedDiscoveredPaths = null;
+			}
 		}
 		setDirty(false);
 		fDirty = false;
@@ -711,11 +803,14 @@ public class ManageIncludePathsDialog extends Dialog {
 		if (fProject != null) {
 			userPaths = new ArrayList(Arrays.asList(BuildPathInfoBlock.getIncludes(
 					MakeCorePlugin.getDefault().getPluginPreferences())));
+			// remove discovered paths
+			ScannerInfoCollector.getInstance().deleteAllPaths(fProject);
 		}
 		else {
 			userPaths = new ArrayList();
 		}
 		discoveredPaths = new LinkedHashMap();
+		deletedDiscoveredPaths = null;
 		fDirty = true;
 	}
 }

@@ -14,10 +14,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.model.ICModelMarker;
@@ -26,6 +29,7 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
+import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerConfigUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -51,10 +55,13 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 	private String fCompileArguments;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider#invokeProvider(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.resources.IProject, org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo, java.lang.String[])
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider#invokeProvider(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.resources.IProject, org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo, java.util.List)
 	 */
-	public boolean invokeProvider(IProgressMonitor monitor, IProject currentProject, IScannerConfigBuilderInfo buildInfo, String[] targetSpecificOptions) {
-		if (!initialize(currentProject, buildInfo)) {
+	public boolean invokeProvider(IProgressMonitor monitor, IProject currentProject, IScannerConfigBuilderInfo buildInfo, List targetSpecificOptions) {
+		if (targetSpecificOptions == null) {
+			targetSpecificOptions = new ArrayList();
+		}
+		if (!initialize(currentProject, buildInfo, targetSpecificOptions)) {
 			return false;
 		}
 		if (monitor == null) {
@@ -125,12 +132,31 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 	/**
 	 * @param currentProject
 	 * @param buildInfo
+	 * @param targetSpecificOptions
 	 * @return boolean
 	 */
-	private boolean initialize(IProject currentProject, IScannerConfigBuilderInfo buildInfo) {
+	private boolean initialize(IProject currentProject, IScannerConfigBuilderInfo buildInfo, List targetSpecificOptions) {
 		boolean rc = false;
+		
 		if (buildInfo.isDefaultESIProviderCmd()) {
 			fWorkingDirectory = MakeCorePlugin.getWorkingDirectory();
+			String targetFile = "dummy";	//$NON-NLS-1$
+			try {
+				if (currentProject.hasNature(CCProjectNature.CC_NATURE_ID)) {
+					targetFile = GCCScannerConfigUtil.CPP_SPECS_FILE;
+				}
+				else if (currentProject.hasNature(CProjectNature.C_NATURE_ID)) {
+					targetFile = GCCScannerConfigUtil.C_SPECS_FILE;
+				}
+			} catch (CoreException e) {
+				//TODO VMIR better error handling
+				MakeCorePlugin.log(e.getStatus());
+			}
+			IPath path2File = fWorkingDirectory.append(targetFile);
+			if (!path2File.toFile().exists()) {
+				GCCScannerConfigUtil.createSpecs();
+			}
+			targetSpecificOptions.add(targetFile);
 		}
 		else {
 			fWorkingDirectory = currentProject.getLocation();
@@ -144,10 +170,10 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 	}
 
 	/**
-	 * @param tso
+	 * @param tso - target specific options
 	 * @return
 	 */
-	private String[] prepareArguments(String[] tso) {
+	private String[] prepareArguments(List tso) {
 		String[] rv = null;
 		// commandArguments may have multiple arguments; tokenizing
 		int nTokens = 0;
@@ -155,17 +181,17 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 			StringTokenizer tokenizer = new StringTokenizer(fCompileArguments, " ");//$NON-NLS-1$
 			nTokens = tokenizer.countTokens();
 			if (nTokens > 0) {
-				rv = new String[nTokens + tso.length];
+				rv = new String[nTokens + tso.size()];
 				for (int i = 0; tokenizer.hasMoreTokens(); ++i) {
 					rv[i] = tokenizer.nextToken();
 				}
 			}
 		}
 		if (rv == null) {
-			rv = new String[tso.length];
+			rv = new String[tso.size()];
 		}
-		for (int i = 0; i < tso.length; ++i) {
-			rv[nTokens + i] = tso[i];
+		for (int i = 0; i < tso.size(); ++i) {
+			rv[nTokens + i] = (String) tso.get(i);
 		}
 		return rv;
 	}

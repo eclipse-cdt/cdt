@@ -13,6 +13,7 @@ package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -168,5 +169,83 @@ public final class ScannerConfigUtil {
 			}
 		}
 		return rc;
+	}
+
+	/**
+	 * Returns a symbol key (i.e. for DEF=1 returns DEF)
+	 * 
+	 * @param symbol - in
+	 * @param key - out
+	 */
+	public static String getSymbolKey(String symbol) {
+		int index = symbol.indexOf('=');
+		if (index != -1) {
+			return symbol.substring(0, index);
+		}
+		return symbol;
+	}
+	
+	/**
+	 * Returns a symbol value (i.e. for DEF=1 returns 1)
+	 * 
+	 * @param symbol - in
+	 * @param key - out (may be null)
+	 */
+	public static String getSymbolValue(String symbol) {
+		int index = symbol.indexOf('=');
+		if (index != -1) {
+			return symbol.substring(index+1);
+		}
+		return null;
+	}
+
+	/**
+	 * Removes a symbol value from the symbol entry. If it was an only value than
+	 * it symbol entry will be removed alltogether.
+	 * 
+	 * @param symbol
+	 * @param symbolEntryMap map of [symbol's key, symbolEntry]
+	 */
+	public static void removeSymbolEntryValue(String symbol, Map symbolEntryMap) {
+		String key = getSymbolKey(symbol);
+		String value = getSymbolValue(symbol);
+		// find it in the discoveredSymbols Map of SymbolEntries
+		SymbolEntry se = (SymbolEntry) symbolEntryMap.get(key);
+		if (se != null) {
+			se.remove(value);
+			if (se.numberOfValues() == 0) {
+				symbolEntryMap.remove(key);
+			}
+		}
+	}
+	
+	/**
+	 * Swaps two include paths in the include paths Map.
+	 * Used by Up/Down discovered paths
+	 *  
+	 * @param sumPaths
+	 * @param index1
+	 * @param index2
+	 * @return new map of include paths
+	 */
+	public static LinkedHashMap swapIncludePaths(LinkedHashMap sumPaths, int index1, int index2) {
+		int size = sumPaths.size();
+		if (index1 == index2 ||
+			!(index1 >= 0 && index1 < size && 
+			  index2 >= 0 && index2 < size)) {
+			return sumPaths;
+		}
+		ArrayList pathKeyList = new ArrayList(sumPaths.keySet());
+		String temp1 = (String) pathKeyList.get(index1);
+		String temp2 = (String) pathKeyList.get(index2);
+		pathKeyList.set(index1, temp2);
+		pathKeyList.set(index2, temp1);
+		
+		LinkedHashMap newSumPaths = new LinkedHashMap(sumPaths.size());
+		for (Iterator i = pathKeyList.iterator(); i.hasNext(); ) {
+			String key = (String) i.next();
+			newSumPaths.put(key, sumPaths.get(key));
+		}
+		return newSumPaths;
 	}
 }

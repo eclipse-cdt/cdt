@@ -23,6 +23,7 @@ import org.eclipse.cdt.make.core.MakeScannerInfo;
 import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfo;
 import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfoProvider;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.MessageLine;
@@ -94,6 +95,7 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 	boolean alreadyCreated;	// Set when dialog is created for the first time (vs. reopened)
 	private ArrayList returnSymbols;
 	private ArrayList userSymbols;
+	private ArrayList deletedDiscoveredSymbols;
 	private LinkedHashMap discoveredSymbols;
 	private LinkedHashMap workingDiscoveredSymbols; // working copy of discoveredSymbols, until either OK or CANCEL is pressed
 	private boolean fDirty;
@@ -497,8 +499,8 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 			int id = discList.getSelectionIndex();
 			if (id != -1) {
 				String symbol = discList.getItem(id);
-				String key = getSymbolKey(symbol);
-				String value = getSymbolValue(symbol);
+				String key = ScannerConfigUtil.getSymbolKey(symbol);
+				String value = ScannerConfigUtil.getSymbolValue(symbol);
 				// find it in the discoveredSymbols Map of SymbolEntries
 				SymbolEntry se = (SymbolEntry) workingDiscoveredSymbols.get(key);
 				if (se != null) {
@@ -535,17 +537,14 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 		int id = discList.getSelectionIndex();
 		if (id >= 0) {
 			String symbol = discList.getItem(id);
+			// add it to the deleted list
+			if (deletedDiscoveredSymbols == null) {
+				deletedDiscoveredSymbols = new ArrayList();
+			}
+			deletedDiscoveredSymbols.add(symbol);
+			
 			// remove it from the Map of SymbolEntries 
-			String key = getSymbolKey(symbol);
-			String value = getSymbolValue(symbol);
-			// find it in the discoveredSymbols Map of SymbolEntries
-			SymbolEntry se = (SymbolEntry) workingDiscoveredSymbols.get(key);
-			if (se != null) {
-				se.remove(value);
-			}
-			else {
-				//TODO VMIR generate an error
-			}
+			ScannerConfigUtil.removeSymbolEntryValue(symbol, workingDiscoveredSymbols);
 
 			int items = discList.getItemCount();
 			discList.setItems(getDiscDefinedSymbols(workingDiscoveredSymbols, type));
@@ -558,34 +557,6 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 				setDirty(true);
 			}
 		}
-	}
-	
-	/**
-	 * Returns a symbol key (i.e. for DEF=1 returns DEF)
-	 * 
-	 * @param symbol - in
-	 * @param key - out
-	 */
-	private String getSymbolKey(String symbol) {
-		int index = symbol.indexOf('=');
-		if (index != -1) {
-			return symbol.substring(0, index);
-		}
-		return symbol;
-	}
-	
-	/**
-	 * Returns a symbol value (i.e. for DEF=1 returns 1)
-	 * 
-	 * @param symbol - in
-	 * @param key - out (may be null)
-	 */
-	private String getSymbolValue(String symbol) {
-		int index = symbol.indexOf('=');
-		if (index != -1) {
-			return symbol.substring(index+1);
-		}
-		return null;
 	}
 	
 	/**
@@ -671,6 +642,7 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 			fDirty = fWorkingDirty;
 		}
 		else if (IDialogConstants.CANCEL_ID == buttonId) {
+			deletedDiscoveredSymbols = null;
 			workingDiscoveredSymbols = null;
 			setDirty(false);
 		}
@@ -689,6 +661,13 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 		if (fDirty || (fProject == null && fContainer.getProject() != null)) {// New Standard Make project wizard
 			info.setUserDefinedSymbols(userSymbols);
 			info.setDiscoveredSymbolDefinitions(discoveredSymbols);
+			// remove deleted symbols from discovered SC
+			if (deletedDiscoveredSymbols != null) {
+				for (Iterator i = deletedDiscoveredSymbols.iterator(); i.hasNext(); ) {
+					ScannerInfoCollector.getInstance().deleteSymbol(fProject, (String) i.next());
+				}
+				deletedDiscoveredSymbols = null;
+			}
 		}
 		setDirty(false);
 		fDirty = false;
@@ -701,11 +680,14 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 		if (fProject != null) {
 			userSymbols = new ArrayList(Arrays.asList(BuildPathInfoBlock.getSymbols(
 					MakeCorePlugin.getDefault().getPluginPreferences())));
+			// remove discovered symbols
+			ScannerInfoCollector.getInstance().deleteAllSymbols(fProject);
 		}
 		else {
 			userSymbols = new ArrayList();
 		}
 		discoveredSymbols = new LinkedHashMap();
+		deletedDiscoveredSymbols = null;
 		fDirty = true;
 	}
 }

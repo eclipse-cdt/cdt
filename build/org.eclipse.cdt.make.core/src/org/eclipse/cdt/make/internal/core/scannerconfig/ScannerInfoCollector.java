@@ -96,9 +96,9 @@ public class ScannerInfoCollector {
 					 project.hasNature(CCProjectNature.CC_NATURE_ID))) { 
 
 				String projectName = project.getName();
-				contribute(projectName, discoveredIncludes, includes);
-				contribute(projectName, discoveredSymbols, symbols);
-				contribute(projectName, discoveredTSO, targetSpecificOptions);
+				contribute(projectName, discoveredIncludes, includes, true);
+				contribute(projectName, discoveredSymbols, symbols, false);
+				contribute(projectName, discoveredTSO, targetSpecificOptions, false);
 			}
 		} 
 		catch (CoreException e) {
@@ -110,9 +110,10 @@ public class ScannerInfoCollector {
 	 * @param project
 	 * @param discovered symbols | includes | targetSpecificOptions
 	 * @param delta symbols | includes | targetSpecificOptions
+	 * @param ordered - to preserve order or append at the end
 	 * @return true if there is a change in discovered symbols | includes | targetSpecificOptions
 	 */
-	private boolean contribute(String projectName, Map discovered, List delta) {
+	private boolean contribute(String projectName, Map discovered, List delta, boolean ordered) {
 		if (delta == null || delta.isEmpty())
 			return false;
 		List projectDiscovered = (List) discovered.get(projectName);
@@ -121,14 +122,29 @@ public class ScannerInfoCollector {
 			discovered.put(projectName, projectDiscovered);
 			return true;
 		}
-		boolean added = false;
-		for (Iterator i = delta.iterator(); i.hasNext(); ) {
+		return addItemsWithOrder(delta, projectDiscovered, ordered);
+	}
+
+	/**
+	 * Adds new items to the already accumulated ones preserving order
+	 *  
+	 * @param includes - items to be added
+	 * @param sumIncludes - previously accumulated items
+	 * @param ordered - to preserve order or append at the end
+	 * @return boolean - true if added
+	 */
+	private boolean addItemsWithOrder(List includes, List sumIncludes, boolean ordered) {
+		boolean addedIncludes = false;
+		int prev = sumIncludes.size() - 1;	// index of previously added/found contribution in already discovered list
+		for (Iterator i = includes.iterator(); i.hasNext(); ) {
 			String item = (String) i.next();
-			if (!projectDiscovered.contains(item)) {
-				added |= projectDiscovered.add(item);
+			if (!sumIncludes.contains(item)) {
+				sumIncludes.add(prev + 1, item);
+				addedIncludes = true;
 			}
+			prev = ordered ? sumIncludes.indexOf(item) : sumIncludes.size() - 1;
 		}
-		return added;
+		return addedIncludes;
 	}
 
 	/**
@@ -200,12 +216,7 @@ public class ScannerInfoCollector {
 				addedIncludes = true;
 			}
 			else {
-				for (Iterator i = includes.iterator(); i.hasNext(); ) {
-					String include = (String) i.next();
-					if (!sumIncludes.contains(include)) {
-						addedIncludes |= sumIncludes.add(include);
-					}
-				}
+				addedIncludes = addItemsWithOrder(includes, sumIncludes, true);
 			}
 			// try to translate cygpaths to absolute paths
 			List finalSumIncludes = translateIncludePaths(sumIncludes);
@@ -214,17 +225,30 @@ public class ScannerInfoCollector {
 			LinkedHashMap persistedIncludes = discScanInfo.getDiscoveredIncludePaths();
 	
 			// Step 3. Merge scanner config from steps 1 and 2
-			for (Iterator i = finalSumIncludes.iterator(); i.hasNext(); ) {
-				String include = (String) i.next();
-				if (!persistedIncludes.containsKey(include)) {
-					persistedIncludes.put(include, 
-							((new Path(include)).toFile().exists()) ? Boolean.FALSE : Boolean.TRUE);
-					addedIncludes |= true;
+			// order is important, use list to preserve it
+			ArrayList persistedKeyList = new ArrayList(persistedIncludes.keySet());
+			addedIncludes = addItemsWithOrder(finalSumIncludes, persistedKeyList, true);
+			
+			LinkedHashMap newPersistedIncludes;
+			if (addedIncludes) {
+				newPersistedIncludes = new LinkedHashMap(persistedKeyList.size());
+				for (Iterator i = persistedKeyList.iterator(); i.hasNext(); ) {
+					String include = (String) i.next();
+					if (persistedIncludes.containsKey(include)) {
+						newPersistedIncludes.put(include, persistedIncludes.get(include));
+					}
+					else {
+						newPersistedIncludes.put(include, 
+								((new Path(include)).toFile().exists()) ? Boolean.FALSE : Boolean.TRUE);
+					}
 				}
+			}
+			else {
+				newPersistedIncludes = persistedIncludes;
 			}
 			
 			// Step 4. Set resulting scanner config
-			discScanInfo.setDiscoveredIncludePaths(persistedIncludes);
+			discScanInfo.setDiscoveredIncludePaths(newPersistedIncludes);
 			
 			// Step 5. Invalidate discovered include paths and symbol definitions
 			discoveredIncludes.put(projectName, null);
@@ -331,14 +355,7 @@ public class ScannerInfoCollector {
 			if (esiProvider != null) {
 				ISafeRunnable runnable = new ISafeRunnable() {
 					public void run() {
-						String[] tsoArray;
-						if (tso == null) {
-							tsoArray = new String[0];
-						}
-						else {
-							tsoArray = (String[])tso.toArray(new String[tso.size()]);
-						}
-						esiProvider.invokeProvider(monitor, project, buildInfo, tsoArray);
+						esiProvider.invokeProvider(monitor, project, buildInfo, tso);
 					}
 		
 					public void handleException(Throwable exception) {
@@ -390,5 +407,36 @@ public class ScannerInfoCollector {
 			sumDiscoveredSymbols.put(project.getName(), null);
 		}
 		// TODO VMIR define error message
+	}
+
+	/**
+	 * Delete a specific include path
+	 * 
+	 * @param project
+	 * @param path
+	 */
+	public void deletePath(IProject project, String path) {
+		if (project != null) {
+			List sumIncludes = (List) sumDiscoveredIncludes.get(project.getName());
+			if (sumIncludes != null) {
+				sumIncludes.remove(path);
+			}
+		}
+	}
+
+	/**
+	 * Delete a specific symbol definition
+	 * 
+	 * @param project
+	 * @param path
+	 */
+	public void deleteSymbol(IProject project, String symbol) {
+		if (project != null) {
+			Map sumSymbols = (Map) sumDiscoveredSymbols.get(project.getName());
+			if (sumSymbols != null) {
+				// remove it from the Map of SymbolEntries 
+				ScannerConfigUtil.removeSymbolEntryValue(symbol, sumSymbols);
+			}
+		}
 	}
 }

@@ -12,13 +12,8 @@ package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
@@ -43,29 +38,6 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 	public void startup(IProject project, IScannerInfoConsoleParserUtility util) {
 		fProject = project;
 		fUtil = util;
-		
-		IPath workingDirectory = MakeCorePlugin.getWorkingDirectory();
-		String targetFile = "dummy";	//$NON-NLS-1$
-		try {
-			if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-				targetFile = GCCScannerConfigUtil.CPP_SPECS_FILE;
-			}
-			else if (project.hasNature(CProjectNature.C_NATURE_ID)) {
-				targetFile = GCCScannerConfigUtil.C_SPECS_FILE;
-			}
-		} catch (CoreException e) {
-			//TODO VMIR better error handling
-			MakeCorePlugin.log(e.getStatus());
-		}
-		IPath path2File = workingDirectory.append(targetFile);
-		if (!path2File.toFile().exists()) {
-			GCCScannerConfigUtil.createSpecs();
-		}
-		List targetSpecificOptions = new ArrayList();
-		targetSpecificOptions.add(targetFile);
-		
-		ScannerInfoCollector.getInstance().
-			contributeToScannerConfig(project, null, null, targetSpecificOptions);
 	}
 
 	/* (non-Javadoc)
@@ -104,13 +76,24 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 
 			rc = true;
 			String fileName = null;
+			String cashedToken = null;
 			while (scanner.hasMoreTokens()) {
-				token = scanner.nextToken();
+				if (cashedToken == null) {
+					token = scanner.nextToken();
+				}
+				else {
+					token = cashedToken;
+					cashedToken = null;
+				}
 				if (token.startsWith("-D")) {//$NON-NLS-1$
 					String symbol = token.substring(2);
 					if (symbol.length() == 0) {
 						if (scanner.hasMoreTokens()) {
 							symbol = scanner.nextToken();
+							if (symbol.startsWith("-")) {	// $NON-NLS-1$
+								cashedToken = symbol;
+								continue;
+							}
 						}
 						else {
 							continue;
@@ -124,6 +107,10 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 					if (iPath.length() == 0) {
 						if (scanner.hasMoreTokens()) {
 							iPath = scanner.nextToken();
+							if (iPath.startsWith("-")) {	// $NON-NLS-1$
+								cashedToken = iPath;
+								continue;
+							}
 						}
 						else {
 							continue;

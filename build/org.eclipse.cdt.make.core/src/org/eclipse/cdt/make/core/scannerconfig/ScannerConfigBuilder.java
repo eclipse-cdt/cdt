@@ -10,11 +10,11 @@
  **********************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
+import java.util.Map;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.internal.core.scannerconfig.*;
+import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
 import org.eclipse.core.resources.IProject;
-import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.SubProgressMonitor;

@@ -80,7 +80,6 @@ Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv * env, jobject jobj,
     const char *dirpath = (*env)->GetStringUTFChars(env, jdir, NULL);
     char **cmd;
     char **envp;
-    int fd[3];
     pid_t pid = -1;
 
     cmd = alloc_c_array(env, jcmd);

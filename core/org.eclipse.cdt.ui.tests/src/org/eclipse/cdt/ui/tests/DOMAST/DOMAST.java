@@ -103,6 +103,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.PropertySheet;
 
 /**
  * This is a simple DOM AST View used for development testing.
@@ -930,6 +931,7 @@ public class DOMAST extends ViewPart {
    }
       
    private class ASTHighlighterAction extends Action {
+	private static final String PROPERTIES_VIEW = "org.eclipse.ui.views.PropertySheet"; //$NON-NLS-1$
 	IEditorPart aPart = null;
 
       public ASTHighlighterAction(IEditorPart part) {
@@ -988,6 +990,11 @@ public class DOMAST extends ViewPart {
                   ((TreeObject) obj).getLength());
 
             aPart.getSite().getPage().activate(aPart.getSite().getPage().findView(OpenDOMViewAction.VIEW_ID));
+			
+			IViewPart part = getSite().getPage().findView(PROPERTIES_VIEW);
+			if (part instanceof PropertySheet) {
+				((PropertySheet)part).selectionChanged(getSite().getPart(), selection);
+			}
          }
       }
    }

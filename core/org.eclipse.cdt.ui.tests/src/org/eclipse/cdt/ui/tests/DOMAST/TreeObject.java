@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
+import java.lang.reflect.Method;
+
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -31,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
@@ -38,7 +41,11 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 /**
  * @author dsteffle
@@ -256,6 +263,9 @@ public class TreeObject implements IAdaptable {
 	}
 	
 	public Object getAdapter(Class key) {
+		if (key == IPropertySource.class)
+			return new ASTPropertySource(getNode());
+		
 		return null;
 	}
 	
@@ -293,4 +303,114 @@ public class TreeObject implements IAdaptable {
 	public int getFiltersFlag() {
 		return filterFlag;
 	}
+	
+	private class ASTPropertySource implements IPropertySource {
+		
+		private static final String COLON_SEPARATOR = ": "; //$NON-NLS-1$
+		private static final String IBINDING_TAG = "IBinding: "; //$NON-NLS-1$
+		private static final String EMPTY_PARAMETER = "()"; //$NON-NLS-1$
+		private static final String NODE_PREFIX = "Node: "; //$NON-NLS-1$
+		private static final String BINDING_PREFIX = "Binding: "; //$NON-NLS-1$
+		private static final int DEFAULT_DESCRIPTOR_SIZE = 4;
+		IASTNode node = null;
+		
+		public ASTPropertySource(IASTNode node) {
+			this.node = node;
+		}
+		
+		public Object getEditableValue() {
+			return null;
+		}
+		public IPropertyDescriptor[] getPropertyDescriptors() {
+			IPropertyDescriptor[] descriptors = new IPropertyDescriptor[DEFAULT_DESCRIPTOR_SIZE];
+			
+			if (node instanceof IASTName) {
+				IPropertyDescriptor[] desc = getPropertyDescriptors(((IASTName)node).resolveBinding());
+				if (desc != null)
+					for(int i=0; i<desc.length; i++)
+						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, desc[i]);
+				desc = getPropertyDescriptors(node);
+				if (desc != null)
+					for(int i=0; i<desc.length; i++)
+						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, desc[i]);
+				
+			} else {
+				IPropertyDescriptor[] desc = getPropertyDescriptors(node);
+				if (desc != null)
+					for(int i=0; i<desc.length; i++)
+						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, desc[i]);
+			}
+			
+			return (IPropertyDescriptor[])ArrayUtil.trim(IPropertyDescriptor.class, descriptors);
+		}
+		
+		private IPropertyDescriptor[] getPropertyDescriptors(Object obj) {
+			IPropertyDescriptor[] desc = new IPropertyDescriptor[DEFAULT_DESCRIPTOR_SIZE];
+			Class objClass = obj.getClass();
+			Class[] interfaces = objClass.getInterfaces();
+			
+			for(int i=0; i<interfaces.length; i++) {
+				Method[] methods = interfaces[i].getMethods();
+				for(int j=0; j<methods.length; j++) {
+					if (methods[j].getParameterTypes().length > 0) continue; // only do getters
+					
+					TextPropertyDescriptor text = null;
+					if (obj instanceof IBinding)
+						text = new TextPropertyDescriptor(BINDING_PREFIX + methods[j].getName(), methods[j].getName() + EMPTY_PARAMETER);
+					else
+						text = new TextPropertyDescriptor(NODE_PREFIX + methods[j].getName(), methods[j].getName() + EMPTY_PARAMETER);
+					
+					if (text != null) {
+						if (obj instanceof IBinding)
+							text.setCategory(IBINDING_TAG + ((IASTName)node).resolveBinding().getClass().getName().substring(((IASTName)node).resolveBinding().getClass().getName().lastIndexOf(FILENAME_SEPARATOR) + 1) + COLON_SEPARATOR + ((IASTName)node).resolveBinding().toString());
+						else
+							text.setCategory(objClass.getName().substring(objClass.getName().lastIndexOf(FILENAME_SEPARATOR) + 1) + COLON_SEPARATOR + node.toString());
+						desc = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, desc, text);
+					}
+				}
+			}
+			
+			return (IPropertyDescriptor[])ArrayUtil.trim(IPropertyDescriptor.class, desc);
+		}
+		
+		public Object getPropertyValue(Object id) {
+			if (!(id instanceof String))
+				return BLANK_STRING;
+			
+			Class nodeClass = node.getClass();
+			
+			String value = BLANK_STRING;
+			
+			try {
+				Object result = null;
+				if (node instanceof IASTName && ((String)id).startsWith(BINDING_PREFIX)) {
+					String methodName = id.toString();
+					methodName = methodName.replaceAll(BINDING_PREFIX, BLANK_STRING);
+					Method method = ((IASTName)node).resolveBinding().getClass().getMethod(methodName, new Class[0]); // only going to be getter methods...
+					result = method.invoke(((IASTName)node).resolveBinding(), null);
+				} else {
+					String methodName = id.toString();
+					methodName = methodName.replaceAll(NODE_PREFIX, BLANK_STRING);
+					Method method = nodeClass.getMethod(methodName, new Class[0]); // only going to be getter methods...
+					result = method.invoke(node, null);
+				}
+				
+				if (result != null)
+					value = result.toString();
+			} catch (Exception e) {
+				e.printStackTrace(); // display all exceptions to developers
+				return e.toString();
+			}
+			
+			return value;
+		}
+		public boolean isPropertySet(Object id) {
+			return false;
+		}
+		public void resetPropertyValue(Object id) {
+		}
+		public void setPropertyValue(Object id, Object value) {
+		}
+	}
+
 }

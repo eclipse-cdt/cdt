@@ -452,6 +452,12 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 				param = getParamString( (IASTParameterDeclaration)parameters.next() );
 				list.add( param );
 			}
+			
+			if (param == null){
+				//This means that no params have been added (i.e. empty brackets - void case)
+				param = "void ".toCharArray();
+				list.add (param); 
+			}
 		}
 		
 		return list;

@@ -27,6 +27,8 @@ void forwardFunction();
 
 class Direction{
    void turn();
+   void turn(int);
+   void turnAgain(void);
 };
 class Right : public Direction  {
    void turn() { }

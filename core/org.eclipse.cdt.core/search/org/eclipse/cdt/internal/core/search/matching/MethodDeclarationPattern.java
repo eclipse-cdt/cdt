@@ -96,11 +96,17 @@ public class MethodDeclarationPattern extends CSearchPattern {
 			}
 		}
 		
+		
 		//parameters
 		if( parameterNames != null && parameterNames.length > 0  &&	parameterNames[0].length > 0 ){
 
 			Iterator params = function.getParameters();
 				
+			if (!params.hasNext() && CharOperation.equals(parameterNames[0], "void ".toCharArray())){
+			//All empty lists have transformed to void, this function has no parms
+				return ACCURATE_MATCH;
+			}
+			
 			for( int i = 0; i < parameterNames.length; i++ ){
 			
 				//if this function doesn't have this many parameters, it is not a match.

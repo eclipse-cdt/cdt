@@ -1,3 +1,6 @@
+2004-02-06 Bogdan Gheorghe
+	Added FunctionMethodPatternTests.testMethodDeclarationWithNoParameters
+
 2004-02-08 John Camelon
 	Moved testErrorHandling_1() from failed tests to CompleteParseASTTest.  
 	Moved testBug44340() from failed tests to CompleteParseASTTest.

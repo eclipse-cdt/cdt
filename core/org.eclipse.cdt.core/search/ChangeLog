@@ -1,3 +1,10 @@
+2004-02-06 Bogdan Gheorghe
+
+	- Modified CSearchPattern.scanforParameters. If no parameters are passed in
+	  as part of a function/method search, void is assigned as a parameter type.
+	  
+	- Modified MethodDeclarationPattern to check for void parameter types
+	
 2004-02-05 Alain Magloire
 	PR 51221
 	Reformat Patch from Bogdan base on Thomas Fletcher original patch

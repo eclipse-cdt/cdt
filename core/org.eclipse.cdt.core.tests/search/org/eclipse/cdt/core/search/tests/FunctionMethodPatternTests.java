@@ -105,6 +105,27 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 1 );
 	}
 	
+	public void testMethodWithNoParameters(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "turn( )", METHOD, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 2 );
+		
+		pattern = SearchEngine.createSearchPattern( "turn(void)", METHOD, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 2 );
+		
+		pattern = SearchEngine.createSearchPattern( "turnAgain()", METHOD, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+	}
+	
 	public void testOperators_bug43063_bug42979(){
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "operator \\*", METHOD, DECLARATIONS, true );
 		
@@ -196,7 +217,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "turn", METHOD, DECLARATIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 2 );
+		assertEquals( matches.size(), 3 );
 		
 		pattern = SearchEngine.createSearchPattern( "Direction::turn", METHOD, DEFINITIONS, true );
 		search( workspace, pattern, scope, resultCollector );

@@ -6275,6 +6275,7 @@ public class Parser implements IParserData, IParser
 	 */
 	public synchronized void cancel() {
 		isCancelled = true;
+		scanner.cancel();
 	}
 	
 	/* (non-Javadoc)

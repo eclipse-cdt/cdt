@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
+import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -380,8 +381,13 @@ public class Scanner2 implements IScanner, IScannerData {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final char[] EMPTY_STRING_CHAR_ARRAY = new char[0];
 
+	private boolean isCancelled = false;
 	
-
+	public synchronized void cancel() {
+		isCancelled = true;
+		int index = bufferStackPos < 0 ? 0 : bufferStackPos; 
+		bufferPos[index] = bufferLimit[index];
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#nextToken()
@@ -397,6 +403,8 @@ public class Scanner2 implements IScanner, IScannerData {
 			{
 			    if( e instanceof OffsetLimitReachedException )
 			        throw (OffsetLimitReachedException) e;
+			    if( e instanceof ArrayIndexOutOfBoundsException && isCancelled ) 
+			    	throw new ParseError( ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
 
 			    exception = true;
 				errorHandle();
@@ -413,6 +421,9 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		if (finished)
 		{
+			if (isCancelled == true)
+				throw new ParseError(ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
+			
 			if( offsetBoundary == -1 )
 				throw EOF;			
 			throwOLRE();
@@ -491,7 +502,9 @@ public class Scanner2 implements IScanner, IScannerData {
 		++count;
 		contextLoop:
 		while (bufferStackPos >= 0) {
-
+			if (isCancelled == true)
+				throw new ParseError(ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
+			
 			// Find the first thing we would care about
 			skipOverWhiteSpace();
 			

@@ -1608,4 +1608,41 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	parse("int c = a >? b;");
     }
 
+    public void testULong() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "#ifndef ASMINCLUDE\n");
+    	writer.write( "typedef unsigned short         ushort;\n");
+    	writer.write( "typedef volatile unsigned long semaphore;\n");
+    	writer.write( "typedef unsigned long          ulong;\n");
+    	writer.write( "#ifndef _NO_LONGLONG\n");
+    	writer.write( "typedef long long              longlong;\n");
+    	writer.write( "typedef unsigned long long     ulonglong;\n");
+    	writer.write( "#endif  /* _NO_LONGLONG */\n");
+    	writer.write( "#endif  /*  ASMINCLUDE  */\n");
+    	writer.write( "typedef struct section_type_ {\n");
+    	writer.write( "ulong source;\n");
+    	writer.write( "ulong dest;\n");
+    	writer.write( "ulong bytes;\n");
+    	writer.write( "} section_type;\n");
+    	Iterator i = parse( writer.toString() ).getDeclarations();
+    	IASTTypedefDeclaration ushort = (IASTTypedefDeclaration) i.next();
+    	IASTTypedefDeclaration semaphore = (IASTTypedefDeclaration) i.next();
+    	IASTTypedefDeclaration ulong = (IASTTypedefDeclaration) i.next();
+    	IASTTypedefDeclaration longlong = (IASTTypedefDeclaration) i.next();
+    	IASTTypedefDeclaration ulonglong = (IASTTypedefDeclaration) i.next();
+    	IASTTypedefDeclaration section_type = (IASTTypedefDeclaration) i.next();
+    	IASTClassSpecifier section_type_ = (IASTClassSpecifier) section_type.getAbstractDeclarator().getTypeSpecifier();
+    	Iterator fields = getDeclarations(section_type_);
+    	IASTField source = (IASTField) fields.next();
+    	assertEquals( ((IASTSimpleTypeSpecifier)source.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), ulong );
+    	IASTField dest = (IASTField) fields.next();
+    	assertEquals( ((IASTSimpleTypeSpecifier)dest.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), ulong );
+    	IASTField bytes = (IASTField) fields.next();
+    	assertEquals( ((IASTSimpleTypeSpecifier)bytes.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), ulong );
+    	
+    	assertFalse( i.hasNext() );
+    	
+	}
+    
 }

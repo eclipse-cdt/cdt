@@ -29,6 +29,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
@@ -94,6 +95,7 @@ import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
@@ -654,10 +656,31 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		super.createActions();
 			
 		// Default text editing menu items
-		setAction("Comment", new TextOperationAction(CEditorMessages.getResourceBundle(), "Comment.", this, ITextOperationTarget.PREFIX)); //$NON-NLS-1$ //$NON-NLS-2$
-		setAction("Uncomment", new TextOperationAction(CEditorMessages.getResourceBundle(), "Uncomment.", this, ITextOperationTarget.STRIP_PREFIX)); //$NON-NLS-1$ //$NON-NLS-2$
-		setAction("Format", new TextOperationAction(CEditorMessages.getResourceBundle(), "Format.", this, ISourceViewer.FORMAT)); //$NON-NLS-1$ //$NON-NLS-2$
-		setAction("ContentAssistProposal", new TextOperationAction(CEditorMessages.getResourceBundle(), "ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS));		//$NON-NLS
+
+		IAction action= new TextOperationAction(CEditorMessages.getResourceBundle(), "Comment.", this, ITextOperationTarget.PREFIX); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.COMMENT);		
+		setAction("Comment", action); //$NON-NLS-1$
+		markAsStateDependentAction("Comment", true); //$NON-NLS-1$
+
+		action= new TextOperationAction(CEditorMessages.getResourceBundle(), "Uncomment.", this, ITextOperationTarget.STRIP_PREFIX); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.UNCOMMENT);		
+		setAction("Uncomment", action); //$NON-NLS-1$
+		markAsStateDependentAction("Uncomment", true); //$NON-NLS-1$
+	
+		action= new TextOperationAction(CEditorMessages.getResourceBundle(), "Format.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);		
+		setAction("Format", action); //$NON-NLS-1$
+		markAsStateDependentAction("Format", true); //$NON-NLS-1$
+
+		action = new ContentAssistAction(CEditorMessages.getResourceBundle(), "ContentAssistProposal.", this); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		setAction("ContentAssistProposal", action); 
+		markAsStateDependentAction("ContentAssistProposal", true); //$NON-NLS-1$
+                 
+		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION);  //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
+		setAction("ContentAssistTip", action); 
+
 		
 		setAction("AddIncludeOnSelection", new AddIncludeOnSelectionAction(this));		 //$NON-NLS-1$
 		setAction("OpenOnSelection", new OpenOnSelectionAction(this));

@@ -745,6 +745,8 @@ public class CModelManager implements IResourceChangeListener {
 	 */
 	public void shutdown() {
 		// Do any shutdown of services.
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(factory);	
+
 		BinaryRunner[] runners = (BinaryRunner[])binaryRunners.values().toArray(new BinaryRunner[0]);
 		for (int i = 0; i < runners.length; i++) {
 			if (runners[i].isAlive()) {

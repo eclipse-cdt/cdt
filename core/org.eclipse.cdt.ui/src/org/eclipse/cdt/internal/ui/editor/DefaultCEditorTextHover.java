@@ -60,9 +60,14 @@ public class DefaultCEditorTextHover implements ITextHover
 
 			IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(expression);
 			if(fs != null) {
-				buffer.append("<b>" + HTMLPrinter.convertToHTMLContent(expression) + 
-							  "()</b> - " + HTMLPrinter.convertToHTMLContent(fs.getSummary()) +
-							  "<br><br>" + HTMLPrinter.convertToHTMLContent(fs.getSynopsis()));
+				buffer.append("<b>");
+				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getName()));
+				buffer.append("()</b>");
+				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getPrototype().getPrototypeString(false)));
+				if(fs.getDescription() != null) {
+					buffer.append("<br><br>");
+					buffer.append(HTMLPrinter.convertToHTMLContent(fs.getDescription()));
+				}
 				int i;
 				for(i = 0; i < buffer.length(); i++) {
 					if(buffer.charAt(i) == '\\') {

@@ -26,6 +26,7 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.ContentFormatter;
 import org.eclipse.jface.text.formatter.IContentFormatter;
@@ -158,7 +159,6 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 		reconciler.setDamager(dr, CPartitionScanner.C_MULTILINE_COMMENT);
 		reconciler.setRepairer(dr, CPartitionScanner.C_MULTILINE_COMMENT);
 
-
 		return reconciler;
 	}
 
@@ -167,14 +167,29 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @see SourceViewerConfiguration#getContentAssistant(ISourceViewer)
 	 */
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+		if(getEditor() == null) {
+			return null;
+		}
+
 		ContentAssistant assistant = new ContentAssistant();
-	//	IFile file = (sourceViewer).
-		assistant.setContentAssistProcessor(new CCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
+		
+		IContentAssistProcessor processor = new CCompletionProcessor(getEditor());
+		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+
+		//Will this work as a replacement for the configuration lines below?
+		//ContentAssistPreference.configure(assistant, getPreferenceStore());
+		
+		assistant.enableAutoInsert(CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.AUTOINSERT));
 		assistant.enableAutoActivation(true);
 		assistant.setAutoActivationDelay(500);
 		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+		
+		assistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_ABOVE);
+		assistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
+
 		return assistant;
 	}
+	
 	
 	/**
 	 * @see SourceViewerConfiguration#getReconciler(ISourceViewer)
@@ -367,7 +382,7 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer, final boolean cutDown) {
 			return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				int style= cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
+				int style = cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
 				return new DefaultInformationControl(parent, style, new HTMLTextPresenter(cutDown));
 				// return new HoverBrowserControl(parent);
 			}

@@ -20,6 +20,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.FunctionPrototypeSummary;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -28,6 +29,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.contentassist.ContextInformation;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -46,8 +48,10 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	private CEditor fEditor;
 	private char[] fProposalAutoActivationSet;
 	private CCompletionProposalComparator fComparator;
-	private TemplateEngine[] fTemplateEngine;
+	private IContextInformationValidator fValidator;
 
+	private TemplateEngine[] fTemplateEngine;
+	
 	private boolean fRestrictToMatchingCase;
 	private boolean fAllowAddIncludes;
 
@@ -56,7 +60,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 
 	public CCompletionProcessor(IEditorPart editor) {
 		fEditor = (CEditor) editor;
-
+		
 		//Determine if this is a C or a C++ file for the context completion       +        //This is _totally_ ugly and likely belongs in the main editor class.
 		String contextNames[] = new String[2];
 		ArrayList templateList = new ArrayList(2);
@@ -123,13 +127,23 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	 * @see IContentAssistProcessor#getContextInformationValidator()
 	 */
 	public IContextInformationValidator getContextInformationValidator() {
-		return null;
+		if(fValidator == null) {
+			fValidator = new CParameterListValidator();
+		}
+		return fValidator;
 	}
 
 	/**
 	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
 	public char[] getContextInformationAutoActivationCharacters() {
+		return null;
+	}
+
+	/**
+	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
+	 */
+	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		return null;
 	}
 
@@ -148,13 +162,6 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
 		fProposalAutoActivationSet = activationSet;
-	}
-
-	/**
-	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
-	 */
-	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
-		return null;
 	}
 
 	/**
@@ -238,14 +245,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		 * applies to all proposals and not just those of the compilation unit. 
 		 */
 		order(results);
-		if ((results.length == 1)
-			&& (CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.AUTOINSERT))) {
-			results[0].apply(document);
-			// Trick the content assistant into thinking we have no proposals
-			return new ICCompletionProposal[0];
-		} else {
-			return results;
-		}
+		return results;
 	}
 
 	/**
@@ -256,102 +256,140 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		return proposals;
 	}
 
-	private void addProjectCompletions(IProject project, IRegion region, String frag, ArrayList completions) {
-		IndexModel model = IndexModel.getDefault();
-
-		ITagEntry[] tags = model.query(project, frag + "*", false, false);
-		if (tags != null && tags.length > 0) {
-			// We have some matches!
-			for (int i = 0; i < tags.length; i++) {
-
-				String fname = tags[i].getTagName();
-
-				int kind = tags[i].getKind();
-
-				if (kind == TagFlags.T_FUNCTION || kind == TagFlags.T_PROTOTYPE) {
-					fname = fname + "()";
-				}
-				String proto = fname + " - " + tags[i].getPattern();
-				//System.out.println("tagmatch " + fname + " proto " + proto + " type" + tags[i].getKind());
-				if (tags[i].getKind() != TagFlags.T_MEMBER) {
-					completions.add(new CCompletionProposal(fname, region.getOffset(), region.getLength(),
-					//fname.length() + 1,
-					getTagImage(kind), proto.equals("") ? (fname + "()") : proto,
-					//null,
-					//null));
-					3));
-				}
-			}
-		}
-	}
-
 	/**
 	 * Evaluate the actual proposals for C
 	 */
 	private ICCompletionProposal[] evalProposals(IDocument document, int pos, int length) {
-		IRegion region;
+		boolean isDereference = false;
+		IRegion region; 
 		String frag = "";
-
+		
 		// Move back the pos by one the position is 0-based
 		if (pos > 0) {
 			pos--;
 		}
 
-		// First, check if we're on a space or trying to open a struct/union
+		// TODO: Check to see if we are trying to open for a structure/class, then
+		// provide that structure's completion instead of the function/variable
+		// completions. This needs to be properly dealt with so that we can
+		// offer completion proposals.
 		if (pos > 1) {
+			int struct_pos = pos;
+			
 			try {
-				// If we're on a space and the previous character is valid text,
-				// parse the previous word.
-				if (!Character.isJavaIdentifierPart(document.getChar(pos))) {
-					pos--;
-					if (!Character.isJavaIdentifierPart(document.getChar(pos))) {
-						pos--;
-						// Comment out the dereference code, only useful once we can
-						// know variable types to go fish back structure members
-						//if (document.getChar(offset) == '.') {
-						//	isDereference = true;
-						//	offset--;
-						//} else if ((document.getChar(offset) == '>') && (document.getChar(offset - 1) == '-')) {
-						//	isDereference = true;
-						//	offset -= 2;
-						//}
-					}
+				//While we aren't on a space, then go back and look for
+				// . or a -> then determine the structure variable type.
+				while(document.getChar(struct_pos) == ' ') {	
+					struct_pos--;
 				}
-			} catch (BadLocationException e) {
+				
+				if (document.getChar(struct_pos) == '.') {
+					isDereference = true;
+					pos -= struct_pos - 1;
+				} else if ((document.getChar(struct_pos) == '>') && (document.getChar(struct_pos - 1) == '-')) {
+					isDereference = true;
+					pos -= struct_pos - 2;
+				} else {
+					isDereference = false;
+				}
+			} catch (BadLocationException ex) {
 				return null;
 			}
 		}
 
-		// Get the current "word"
+		// Get the current "word", it might be a variable or another starter
 		region = CWordFinder.findWord(document, pos);
-
-		// If we're currently
-		try {
-			if (region != null) {
-				frag = document.get(region.getOffset(), region.getLength());
-				frag = frag.trim();
-				// No word is selected
-				if (frag.length() == 0) {
-					return null;
-				}
-			} else {
-				return null;
-			}
-		} catch (BadLocationException x) {
-			// ignore
+		if(region == null) {
+			return null;	//Bail out on error
+		}
+		
+		//@@@ TODO: Implement the structure member completion
+		if(isDereference) {
 			return null;
 		}
-		// Based on the frag name, build a list of completion proposals
-		// We look in two places: the content outline and the libs
+				
+		try {
+			frag = document.get(region.getOffset(), region.getLength());
+			frag = frag.trim();
+		} catch (BadLocationException ex) {
+			return null;		//Bail out on error
+		}
+		
+		//If there is no fragment, then see if we are in a function
+		if(frag.length() == 0) { 
+			IRegion funcregion;
+			String  funcfrag = "";
 
+			funcregion = CWordFinder.findFunction(document, pos + 1);
+			if(funcregion != null) {			
+				try {
+					funcfrag = document.get(funcregion.getOffset(), funcregion.getLength());
+					funcfrag = funcfrag.trim();
+				} catch(Exception ex) {
+					funcfrag = "";
+				}
+				if(funcfrag.length() == 0) {
+					return null;			
+				} else {
+					//@@@ Add some marker here to indicate different path!
+					region = funcregion;
+					frag = funcfrag;
+				}
+			}
+		}
+		
+		// Based on the frag name, build a list of completion proposals
 		ArrayList completions = new ArrayList();
 
 		// Look in index manager
+		addProposalsFromModel(region, frag, completions);
+		
+		// Loot in the contributed completions
+		addProposalsFromCompletionContributors(region, frag, completions);
+		
+		return (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]);
+	}
+
+	private void addProposalsFromCompletionContributors(IRegion region, String frag, ArrayList completions) {
+		IFunctionSummary[] summary;
+
+		summary = CCompletionContributorManager.getDefault().getMatchingFunctions(frag);
+		if(summary == null) {
+			return;
+		}
+		
+		for (int i = 0; i < summary.length; i++) {
+			String fname = summary[i].getName() + "()";
+			String fdesc = summary[i].getDescription();
+			IFunctionSummary.IFunctionPrototypeSummary fproto = summary[i].getPrototype();
+			String fargs = fproto.getArguments();
+			
+			CCompletionProposal proposal;
+			proposal = new CCompletionProposal(fname, 
+											   region.getOffset(), 
+											   region.getLength(),
+											   getTagImage(TagFlags.T_FUNCTION), 
+											   fproto.getPrototypeString(true),
+											   2);
+
+			if(fdesc != null) {
+				proposal.setAdditionalProposalInfo(fdesc);
+			}
+			
+			if(fargs != null && fargs.length() > 0) {
+				proposal.setContextInformation(new ContextInformation(fname, fargs));
+			}
+
+			completions.add(proposal);
+		}
+	}
+	
+	private void addProposalsFromModel(IRegion region, String frag, ArrayList completions) {
 		IProject project = null;
 		IEditorInput input = fEditor.getEditorInput();
 		if (input instanceof IFileEditorInput) {
 			project = ((IFileEditorInput) input).getFile().getProject();
-
+	
 			// Bail out quickly, if the project was deleted.
 			if (!project.exists()) {
 				project = null;
@@ -370,26 +408,54 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 				}
 			} catch (CoreException e) {
 			}
-
 		}
+	}
 
-		IFunctionSummary[] summary;
+	private void addProjectCompletions(IProject project, IRegion region, String frag, ArrayList completions) {
+		IndexModel model = IndexModel.getDefault();
 
-		//UserHelpFunctionInfo inf = plugin.getFunctionInfo();
-		summary = CCompletionContributorManager.getDefault().getMatchingFunctions(frag);
-		if (summary != null) {
-			for (int i = 0; i < summary.length; i++) {
-				String fname = summary[i].getName();
-				String proto = summary[i].getPrototype();
-				completions.add(new CCompletionProposal(fname + "()", region.getOffset(), region.getLength(),
-				//fname.length() + 1,
-				CPluginImages.get(CPluginImages.IMG_OBJS_FUNCTION), proto.equals("") ? (fname + "()") : proto,
-				//null,
-				//null));
-				2));
+		ITagEntry[] tags = model.query(project, frag + "*", false, false);
+		if (tags != null && tags.length > 0) {
+			for (int i = 0; i < tags.length; i++) {
+				String fname = tags[i].getTagName();
+				FunctionPrototypeSummary fproto = null;
+				int kind = tags[i].getKind();
+
+				if (kind == TagFlags.T_FUNCTION || kind == TagFlags.T_PROTOTYPE) {
+					fname = fname + "()";
+				}
+				
+				if(tags[i].getPattern() != null) {
+					try {
+						fproto = new FunctionPrototypeSummary(tags[i].getPattern());
+					} catch(Exception ex) {
+						fproto = null;
+					}
+				} 				
+				if(fproto == null) {
+					fproto = new FunctionPrototypeSummary(fname);
+				}
+
+				//System.out.println("tagmatch " + fname + " proto " + proto + " type" + tags[i].getKind());
+				if (kind != TagFlags.T_MEMBER) {
+					CCompletionProposal proposal;
+					proposal = new CCompletionProposal(fname, 
+													   region.getOffset(), 
+													   region.getLength(),
+													   getTagImage(kind), 
+													   fproto.getPrototypeString(true),
+													   3);
+					completions.add(proposal);
+
+					//No summary information available yet
+
+					String fargs = fproto.getArguments();
+					if(fargs != null && fargs.length() > 0) {
+						proposal.setContextInformation(new ContextInformation(fname, fargs));
+					}
+				}
 			}
 		}
-		return (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]);
 	}
 
 	private Image getTagImage(int kind) {

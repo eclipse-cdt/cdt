@@ -1,3 +1,21 @@
+2003-06-24 Thomas Fletcher
+
+	- Proposals will now include additional help information with them
+	if it is available (same as JDT).  This opens the door for being 
+	able to write a Javadoc/Doxygen parser and integrating live, 
+	context specific, help.
+	- On function completions a hover is now shown above the function
+	(same as JDT) with the argument information as it is being filled in.
+
+	* src/org/eclipse/cdt/internal/ui/editor/DefaultCEditorTextHover.java
+	* src/org/eclipse/cdt/internal/ui/text/CCompletionProcessor.java
+	* src/org/eclipse/cdt/internal/ui/text/CCompletionProposal.java
+	* src/org/eclipse/cdt/internal/ui/text/CParameterListValidator.java
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java
+	* src/org/eclipse/cdt/internal/ui/text/CWordFinder.java
+	* src/org/eclipse/cdt/ui/IFunctionSummary.java
+	* src/org/eclipse/cdt/ui/FunctionPrototypeSummary.java
+
 2003-06-23 John Camelon
 	Updated Factory infrastructure, constructors, etc. 
 	Introduced Preprocessor class for transitive closure calc. client.  

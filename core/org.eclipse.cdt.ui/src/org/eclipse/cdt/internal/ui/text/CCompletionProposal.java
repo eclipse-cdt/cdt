@@ -7,22 +7,22 @@ package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
-
-public class CCompletionProposal implements ICCompletionProposal {
+public class CCompletionProposal implements ICCompletionProposal, ICompletionProposalExtension {
 	private String fDisplayString;
 	private String fReplacementString;
+	private String fAdditionalInfoString;
 	private int fReplacementOffset;
 	private int fReplacementLength;
 	private int fCursorPosition;
 	private Image fImage;
 	private IContextInformation fContextInformation;
 	private int fContextInformationPosition;
-	//private ProposalInfo fProposalInfo;
 	//private IImportDeclaration fImportDeclaration;
 	private char[] fTriggerCharacters;
 	
@@ -50,13 +50,20 @@ public class CCompletionProposal implements ICCompletionProposal {
 		fDisplayString= displayString != null ? displayString : replacementString;
 		fRelevance= relevance;
 
-		fCursorPosition= replacementString.length();
+		//@@@ Is this the best way to do this, likely it isn't
+		if(replacementString.indexOf("()") == -1) {		//Not replacing with a function
+			fCursorPosition = replacementString.length();
+		} else if(displayString.indexOf("()") == -1) { 	//Assume that there are arguments between ()
+			fCursorPosition = replacementString.length() - 1;
+		} else {
+			fCursorPosition = replacementString.length();
+		}
 	
+		fAdditionalInfoString = null;
 		fContextInformation= null;
 		fContextInformationPosition= -1;
 		//fIncludeDeclaration= null;
 		fTriggerCharacters= null;
-		//fProposalInfo= null;
 	}
 	
 	/**
@@ -84,14 +91,6 @@ public class CCompletionProposal implements ICCompletionProposal {
 	public void setTriggerCharacters(char[] triggerCharacters) {
 		fTriggerCharacters= triggerCharacters;
 	}
-	
-	/**
-	 * Sets the proposal info.
-	 * @param additionalProposalInfo The additional information associated with this proposal or <code>null</code>
-	 *
-	public void setProposalInfo(ProposalInfo proposalInfo) {
-		fProposalInfo= proposalInfo;
-	}*/
 	
 	/**
 	 * Sets the cursor position relative to the insertion offset. By default this is the length of the completion string
@@ -146,22 +145,49 @@ public class CCompletionProposal implements ICCompletionProposal {
 			}
 		} */
 	}
+
+	/*
+	 * @see ICompletionProposal#apply
+	 */
+	public void apply(IDocument document) {
+		apply(document, (char) 0, fReplacementOffset + fReplacementLength);
+	}
 	
 	/*
+	 * In this case we need to apply the completion proposal intelligently.
+	 * This means that if we are applying it to a function, we don't wipe
+	 * out the internal arguments, and if the proposal is a function, and it
+	 * already is bracketed, then don't put those brackets in.
+	 * 
 	 * @see ICompletionProposalExtension#apply(IDocument, char, int)
 	 */
 	public void apply(IDocument document, char trigger, int offset) {
+		int     functionBracketIndex;
+		boolean isBeforeBracket;
+		String  replacementStringCopy = fReplacementString;
+
+		//If just providing context information, then don't move the cursor
+		if(offset != (fReplacementOffset + fReplacementLength)) {
+			fCursorPosition = offset - fReplacementOffset; 
+		}
+		
 		try {
+			functionBracketIndex = fReplacementString.indexOf("()");
+			isBeforeBracket = document.getChar(fReplacementOffset + fReplacementLength) == '(';
 			
-			// patch replacement length
-			int delta= offset - (fReplacementOffset + fReplacementLength);
-			if (delta > 0)
-				fReplacementLength += delta;
-			
+			//Strip the brackets off the function if inserting right before brackets
+			if(functionBracketIndex != -1 && isBeforeBracket) {
+				replacementStringCopy = fReplacementString.substring(0, functionBracketIndex);
+			}
+		} catch(Exception ex) {
+			/* Ignore */
+		}
+						
+		try {		
 			if (trigger == (char) 0) {
-				replace(document, fReplacementOffset, fReplacementLength, fReplacementString);
+				replace(document, fReplacementOffset, fReplacementLength, replacementStringCopy);
 			} else {
-				StringBuffer buffer= new StringBuffer(fReplacementString);
+				StringBuffer buffer= new StringBuffer(replacementStringCopy);
 
 				// fix for PR #5533. Assumes that no eating takes place.
 				if ((fCursorPosition > 0 && fCursorPosition <= buffer.length() && buffer.charAt(fCursorPosition - 1) != trigger)) {
@@ -172,6 +198,12 @@ public class CCompletionProposal implements ICCompletionProposal {
 				replace(document, fReplacementOffset, fReplacementLength, buffer.toString());
 			}
 			
+			/*
+			 * The replacement length is used to calculate the new cursor position,
+			 * so after we update the includes adjust the replacement offset.
+			 * NOTE: This won't work if the include is added after the offset,
+			 * such as might be the case with #include completions.
+			 */
 			int oldLen= document.getLength();
 			applyIncludes(document);
 			fReplacementOffset += document.getLength() - oldLen;
@@ -185,13 +217,6 @@ public class CCompletionProposal implements ICCompletionProposal {
 	private void replace(IDocument document, int offset, int length, String string) throws BadLocationException {
 		if (!document.get(offset, length).equals(string))
 			document.replace(offset, length, string);
-	}
-
-	/*
-	 * @see ICompletionProposal#apply
-	 */
-	public void apply(IDocument document) {
-		apply(document, (char) 0, fReplacementOffset + fReplacementLength);
 	}
 	
 	/*
@@ -222,14 +247,20 @@ public class CCompletionProposal implements ICCompletionProposal {
 		return fDisplayString;
 	}
 
+	/**
+	 * Set the additional information which will be shown when this
+	 * proposal is selected in the popup list.
+	 * @param infoString
+	 */
+	public void setAdditionalProposalInfo(String infoString) {
+		fAdditionalInfoString = infoString;
+	}
+
 	/*
 	 * @see ICompletionProposal#getAdditionalProposalInfo()
 	 */
 	public String getAdditionalProposalInfo() {
-		//if (fProposalInfo != null) {
-		//	return fProposalInfo.getInfo();
-		//}
-		return null;
+		return fAdditionalInfoString;
 	}
 	
 	/*
@@ -244,6 +275,27 @@ public class CCompletionProposal implements ICCompletionProposal {
 	 */
 	public int getContextInformationPosition() {
 		return fReplacementOffset + fContextInformationPosition;
+	}
+
+	/*
+	 * @see ICompletionProposalExtension#isValidFor(IDocument, int)
+	 */
+	public boolean isValidFor(IDocument document, int offset) {
+		if (offset < fReplacementOffset)
+			return false;
+		
+		int replacementLength= fReplacementString == null ? 0 : fReplacementString.length();
+		if (offset >=  fReplacementOffset + replacementLength)
+			return false;
+		
+		try {
+			int length= offset - fReplacementOffset;
+			String start= document.get(fReplacementOffset, length);
+			return fReplacementString.substring(0, length).equalsIgnoreCase(start);
+		} catch (BadLocationException x) {
+		}		
+		
+		return false;
 	}
 	
 	/**
@@ -302,28 +354,6 @@ public class CCompletionProposal implements ICCompletionProposal {
 	 */
 	public void setImage(Image image) {
 		fImage= image;
-	}
-
-	/*
-	 * @see ICompletionProposalExtension#isValidFor(IDocument, int)
-	 */
-	public boolean isValidFor(IDocument document, int offset) {
-		
-		if (offset < fReplacementOffset)
-			return false;
-		
-		int replacementLength= fReplacementString == null ? 0 : fReplacementString.length();
-		if (offset >=  fReplacementOffset + replacementLength)
-			return false;
-		
-		try {
-			int length= offset - fReplacementOffset;
-			String start= document.get(fReplacementOffset, length);
-			return fReplacementString.substring(0, length).equalsIgnoreCase(start);
-		} catch (BadLocationException x) {
-		}		
-		
-		return false;
 	}
 	
 	/**

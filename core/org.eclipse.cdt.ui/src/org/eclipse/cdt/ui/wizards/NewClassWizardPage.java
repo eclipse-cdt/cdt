@@ -213,7 +213,13 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			eSelection = null;
 			defaultSourceFolder = null;
 			StatusInfo status = new StatusInfo();
-			status.setError(NewWizardMessages.getString("NewClassWizardPage.error.NotAvailableForNonCppProjects")); //$NON-NLS-1$
+			if(!hasCppNature){
+				status.setError(NewWizardMessages.getString("NewClassWizardPage.error.NotAvailableForNonCppProjects")); //$NON-NLS-1$
+			}else if (fSelectedProject == null){
+				status.setError(NewWizardMessages.getString("NewClassWizardPage.error.SelectedProjectError")); //$NON-NLS-1$
+			} else {
+				status.setError(NewWizardMessages.getString("NewClassWizardPage.error.DefaultSourceFolderError")); //$NON-NLS-1$				
+			}
 			updateStatus(status);
 		}
 	}	
@@ -497,7 +503,11 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			Object selectedElement= selection.getFirstElement();
 			if (selectedElement instanceof IAdaptable) {
 				IAdaptable adaptable= (IAdaptable) selectedElement;
-				resource= (IResource) adaptable.getAdapter(IResource.class);
+				if(adaptable instanceof ICElement){
+					resource = ((ICElement)adaptable).getUnderlyingResource();
+				}else {
+					resource= (IResource) adaptable.getAdapter(IResource.class);
+				}
 				if (resource != null && resource instanceof IFile)
 					resource= resource.getParent();
 			}
@@ -510,7 +520,12 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			Object selectedElement= selection.getFirstElement();
 			if (selectedElement instanceof IAdaptable) {
 				IAdaptable adaptable= (IAdaptable) selectedElement;
-				IResource resource= (IResource) adaptable.getAdapter(IResource.class);
+				IResource resource = null;
+				if(adaptable instanceof ICElement){
+					resource = ((ICElement)adaptable).getUnderlyingResource();
+				}else {
+					resource= (IResource) adaptable.getAdapter(IResource.class);
+				}
 				if (resource != null) {
 					return resource.getProject();
 				}

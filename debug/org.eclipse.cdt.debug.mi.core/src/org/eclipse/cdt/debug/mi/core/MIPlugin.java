@@ -290,27 +290,6 @@ public class MIPlugin extends Plugin {
 	}
 
 	/**
-	 * Retrieve the session timeout.
-	 * 
-	 * Allow at least one second per megabyte as a minimum on the timeout
-	 * (note one second is an arbitrary choice based on swapping performance).
-	 * This is required for loading the symbols from very large programs.
-	 */
-	private int getAdjustedTimeout(File program) {
-		Preferences prefs = plugin.getPluginPreferences();
-		int timeout = prefs.getInt(IMIConstants.PREF_REQUEST_TIMEOUT); //milliseconds
-		if(program != null && program.exists()) {
-			long programSize = program.length();
-			int minimumTimeout = (int)(programSize / 1000L);
-			if(timeout < minimumTimeout) {
-				//debugLog("Adjusting timeout from " + timeout + "ms to " + minimumTimeout + "ms");
-				timeout = minimumTimeout;			
-			}
-		}
-		return timeout;		
-	}
-
-	/**
 	 * Do some basic synchronisation, gdb make take some time to load
 	 * for whatever reasons.
 	 * @param args
@@ -348,9 +327,6 @@ public class MIPlugin extends Plugin {
 			MIPlugin plugin = getDefault();
 			Preferences prefs = plugin.getPluginPreferences();
 			int launchTimeout = prefs.getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);
-			if (launchTimeout <= 0) {
-				launchTimeout = getAdjustedTimeout(program);
-			}
 			while (syncStartup.isAlive()) {
 				try {
 					pgdb.wait(launchTimeout);
@@ -378,7 +354,8 @@ public class MIPlugin extends Plugin {
 	 * @see org.eclipse.core.runtime.Plugin#initializeDefaultPluginPrefrences()
 	 */
 	protected void initializeDefaultPluginPreferences() {
-		getPluginPreferences().setDefault(IMIConstants.PREF_REQUEST_TIMEOUT, MISession.REQUEST_TIMEOUT);
+		getPluginPreferences().setDefault(IMIConstants.PREF_REQUEST_TIMEOUT, IMIConstants.DEF_REQUEST_TIMEOUT);
+		getPluginPreferences().setDefault(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT, IMIConstants.DEF_REQUEST_LAUNCH_TIMEOUT);
 	}
 
 	/* (non-Javadoc)

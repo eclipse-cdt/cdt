@@ -25,6 +25,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -37,6 +38,7 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 	protected Text fHostText;
 	protected Text fHostPort;
 	protected Text fAsyncDev;
+	protected Combo fAsyncDevSpeedCombo;
 	private Button fAutoSoLibButton;
 
 	public void createControl(Composite parent) {
@@ -83,6 +85,7 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		fAsyncButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fAsyncDev.setEnabled(fAsyncButton.getSelection());
+				fAsyncDevSpeedCombo.setEnabled(fAsyncButton.getSelection());
 				updateLaunchConfigurationDialog();
 			}
 		});
@@ -112,6 +115,8 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 			}
 		});
 
+		
+
 		Label asyncDevLabel= new Label(comp, SWT.NONE);
 		asyncDevLabel.setText("Serial device:");
 		
@@ -124,6 +129,26 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 			}
 		});
 
+		Label asyncDevSpeedLabel= new Label(comp, SWT.NONE);
+		asyncDevSpeedLabel.setText("Serial speed:");
+	
+			  
+		fAsyncDevSpeedCombo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
+		String choices [] = {"9600", "19200","38400", "57600", "115200"};
+		fAsyncDevSpeedCombo.setItems(choices);
+		fAsyncDevSpeedCombo.select(choices.length-1);
+			
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+				  fAsyncDevSpeedCombo.setLayoutData(gd);
+				  fAsyncDevSpeedCombo.addSelectionListener(new SelectionAdapter() {
+					  
+					public void widgetSelected(SelectionEvent arg0) {
+							
+						updateLaunchConfigurationDialog();
+							
+					}
+				  });
+
 		fTCPButton.setSelection(true);
 		fAsyncButton.setSelection(false);
 		fHostText.setEnabled(true);
@@ -131,7 +156,7 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		fAsyncDev.setEnabled(false);
 		fHostPort.setEnabled(true);
 		fHostText.setEnabled(true);
-		fAsyncDev.setEnabled(false);
+		fAsyncDevSpeedCombo.setEnabled(false);
 
 		createVerticalSpacer(comp, 2);
 
@@ -212,6 +237,14 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		if (attr == null) {
 			configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "/dev/ttyS0");
 		}
+		attr = null;
+		try {	
+			attr = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, (String) null);
+		} catch (CoreException e) {
+		}
+		if (attr == null) {
+			configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "115200");
+		}
 	}
 
 	/**
@@ -236,9 +269,9 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 					setMessage(null);
 				}
 			} else {
-				valid = fAsyncDev.getText().length() != 0;
+				valid = ((fAsyncDev.getText().length() != 0) && (fAsyncDevSpeedCombo.getSelectionIndex()!=-1)) ;
 				if (!valid) {
-					setErrorMessage("If Async is selected, device must be specified");
+					setErrorMessage("If Async is selected, device and speed must be specified");
 					setMessage(null);
 				}
 			}
@@ -253,6 +286,7 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		String hostText = "";
 		String hostPort = "";
 		String asyncDev = "/dev/ttyS0";
+		String asyncDevSpeed = "115200";
 		boolean autosolib = false;
 		try {
 			debuggerCommand = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
@@ -264,6 +298,7 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 			hostText = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "");
 			hostPort = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "");
 			asyncDev = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "");
+			asyncDevSpeed = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "");
 		} catch (CoreException e) {
 		}
 		fDebuggerCommandText.setText(debuggerCommand);
@@ -272,9 +307,11 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		fHostText.setText(hostText);
 		fHostPort.setText(hostPort);
 		fAsyncDev.setText(asyncDev);
+		fAsyncDevSpeedCombo.select(fAsyncDevSpeedCombo.indexOf(asyncDevSpeed));
 		fHostText.setEnabled(isTcp);
 		fHostPort.setEnabled(isTcp);
 		fAsyncDev.setEnabled(!isTcp);
+		fAsyncDevSpeedCombo.setEnabled(!isTcp);
 		fAutoSoLibButton.setSelection(autosolib);		
 	}
 
@@ -283,6 +320,7 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		String hostText = fHostText.getText();
 		String hostPort = fHostPort.getText();
 		String asyncDev = fAsyncDev.getText();
+		String asyncDevSpeed = fAsyncDevSpeedCombo.getItem(fAsyncDevSpeedCombo.getSelectionIndex());
 		debuggerCommand.trim();
 		hostText.trim();
 		hostPort.trim();
@@ -293,6 +331,7 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, hostText);
 		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, hostPort);
 		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, asyncDev);
+		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, asyncDevSpeed);
 	}
 
 	public String getName() {

@@ -44,11 +44,6 @@ public class MISession extends Observable {
 	 */
 	public final static int CORE = 2;
 
-	/**
-	 * Default wait() period for an answer after a query, 10 seconds.
-	 */
-	public static long REQUEST_TIMEOUT = 10000; // 10 * 1000 (~ 10 secs);
-
 	boolean terminated;
 
 	// hold the type of the session(post-mortem, attach etc ..)

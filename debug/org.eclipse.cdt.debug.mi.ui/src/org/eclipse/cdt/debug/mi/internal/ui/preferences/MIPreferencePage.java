@@ -36,8 +36,11 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class MIPreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
-	// Timeout preference widgets
-	IntegerFieldEditor fTimeoutText;
+	// Debugger timeout preference widgets
+	IntegerFieldEditor fDebugTimeoutText;
+
+	// Launch timeout preference widgets
+	IntegerFieldEditor fLaunchTimeoutText;
 
 	/**
 	 * Constructor for MIPreferencePage.
@@ -95,7 +98,8 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	 */
 	private void setValues()
 	{
-		fTimeoutText.setStringValue( new Integer( MIPlugin.getDefault().getPluginPreferences().getInt( IMIConstants.PREF_REQUEST_TIMEOUT ) ).toString() );
+		fDebugTimeoutText.setStringValue( new Integer( MIPlugin.getDefault().getPluginPreferences().getInt( IMIConstants.PREF_REQUEST_TIMEOUT ) ).toString() );
+		fLaunchTimeoutText.setStringValue( new Integer( MIPlugin.getDefault().getPluginPreferences().getInt( IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT ) ).toString() );
 	}
 
 	/**
@@ -121,7 +125,8 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 
 	private void setDefaultValues()
 	{
-		fTimeoutText.setStringValue( new Integer( IMIConstants.DEF_REQUEST_TIMEOUT ).toString() );
+		fDebugTimeoutText.setStringValue( new Integer( IMIConstants.DEF_REQUEST_TIMEOUT ).toString() );
+		fLaunchTimeoutText.setStringValue( new Integer( IMIConstants.DEF_REQUEST_LAUNCH_TIMEOUT ).toString() );
 	}
 
 	/* (non-Javadoc)
@@ -150,25 +155,25 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		data.horizontalSpan = 2;
 		spacingComposite.setLayoutData( data );
 
-		fTimeoutText = new IntegerFieldEditor( IMIConstants.PREF_REQUEST_TIMEOUT, "Debugger &timeout (ms):", spacingComposite );
-		data = new GridData();
-		data.widthHint = convertWidthInCharsToPixels( 10 );
-		fTimeoutText.getTextControl( spacingComposite ).setLayoutData( data );
-		fTimeoutText.setPreferenceStore( MIUIPlugin.getDefault().getPreferenceStore() );
-		fTimeoutText.setPreferencePage( this );
-		fTimeoutText.setValidateStrategy( StringFieldEditor.VALIDATE_ON_KEY_STROKE );
-		fTimeoutText.setValidRange( IMIConstants.MIN_REQUEST_TIMEOUT, IMIConstants.MAX_REQUEST_TIMEOUT );
-		String minValue = Integer.toString( IMIConstants.MIN_REQUEST_TIMEOUT );
-		String maxValue = Integer.toString( IMIConstants.MAX_REQUEST_TIMEOUT );
-		fTimeoutText.setErrorMessage( MessageFormat.format( "The valid value range is [{0},{1}].", new String[]{ minValue, maxValue } ) );
-		fTimeoutText.load();
-		fTimeoutText.setPropertyChangeListener( 
+		fDebugTimeoutText = createTimeoutField( IMIConstants.PREF_REQUEST_TIMEOUT, "&Debugger timeout (ms):", spacingComposite );
+		fDebugTimeoutText.setPropertyChangeListener( 
 					new IPropertyChangeListener()
 						{
 							public void propertyChange( PropertyChangeEvent event )
 							{
 								if ( event.getProperty().equals( FieldEditor.IS_VALID ) )
-									setValid( fTimeoutText.isValid() );
+									setValid( fDebugTimeoutText.isValid() );
+							}
+						} );
+
+		fLaunchTimeoutText = createTimeoutField( IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT, "&Launch &timeout (ms):", spacingComposite );
+		fLaunchTimeoutText.setPropertyChangeListener( 
+					new IPropertyChangeListener()
+						{
+							public void propertyChange( PropertyChangeEvent event )
+							{
+								if ( event.getProperty().equals( FieldEditor.IS_VALID ) )
+									setValid( fLaunchTimeoutText.isValid() );
 							}
 						} );
 	}
@@ -179,6 +184,24 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	 */
 	private void storeValues()
 	{
-		MIPlugin.getDefault().getPluginPreferences().setValue( IMIConstants.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue() );
+		MIPlugin.getDefault().getPluginPreferences().setValue( IMIConstants.PREF_REQUEST_TIMEOUT, fDebugTimeoutText.getIntValue() );
+		MIPlugin.getDefault().getPluginPreferences().setValue( IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT, fLaunchTimeoutText.getIntValue() );
+	}
+
+	private IntegerFieldEditor createTimeoutField( String preference, String label, Composite parent )
+	{
+		IntegerFieldEditor toText = new IntegerFieldEditor( preference, label, parent );
+		GridData data = new GridData();
+		data.widthHint = convertWidthInCharsToPixels( 10 );
+		toText.getTextControl( parent ).setLayoutData( data );
+		toText.setPreferenceStore( MIUIPlugin.getDefault().getPreferenceStore() );
+		toText.setPreferencePage( this );
+		toText.setValidateStrategy( StringFieldEditor.VALIDATE_ON_KEY_STROKE );
+		toText.setValidRange( IMIConstants.MIN_REQUEST_TIMEOUT, IMIConstants.MAX_REQUEST_TIMEOUT );
+		String minValue = Integer.toString( IMIConstants.MIN_REQUEST_TIMEOUT );
+		String maxValue = Integer.toString( IMIConstants.MAX_REQUEST_TIMEOUT );
+		toText.setErrorMessage( MessageFormat.format( "The valid value range is [{0},{1}].", new String[]{ minValue, maxValue } ) );
+		toText.load();
+		return toText;
 	}
 }

@@ -1,4 +1,7 @@
-2003-05-13
+2003-05-26 John Camelon
+	Rollback PST/Parser integration.
+
+2003-05-13 Andrew Niefer
 	Moved symbol table to org.eclipse.cdt.internal.core.pst
 	Created interface for symbol table: ISymbol, IContainerSymbol, IDerivableContainerSymbol, 
 	IParameterizedSymbol, and ISpecializedSymbol.  These are all implemented by Declaration

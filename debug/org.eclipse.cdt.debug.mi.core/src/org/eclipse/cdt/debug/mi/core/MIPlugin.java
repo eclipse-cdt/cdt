@@ -68,7 +68,7 @@ public class MIPlugin extends Plugin {
 		MIPlugin plugin = getDefault();
 		Preferences prefs = plugin.getPluginPreferences();
 		int timeout = prefs.getInt(IMIConstants.PREF_REQUEST_TIMEOUT);
-		return createMISession(process, pty, timeout, 0);
+		return createMISession(process, pty, timeout, type);
 	}
 
 	/**
@@ -81,7 +81,6 @@ public class MIPlugin extends Plugin {
 		PTY pty = null;
 		try {
 			pty = new PTY();
-			String ttyName = pty.getSlaveName();
 		} catch (IOException e) {
 		}
 		return createCSession(gdb, program, pty);

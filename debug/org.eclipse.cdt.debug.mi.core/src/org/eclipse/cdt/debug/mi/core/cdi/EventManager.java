@@ -62,7 +62,6 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					cdiEvent = new DestroyedEvent(session, (MIVarChangedEvent)miEvent);
 				}
 			} else if (miEvent instanceof MIRegisterChangedEvent) {
-				MIRegisterChangedEvent eventChanged = (MIRegisterChangedEvent)miEvent;
 				cdiEvent = new ChangedEvent(session, (MIRegisterChangedEvent)miEvent);
 			}
 		} else if (miEvent instanceof MIThreadExitEvent) {
@@ -151,7 +150,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	}
 
 	void processRunningEvent() {
-		CTarget target = getCSession().getCTarget();
+		//CTarget target = getCSession().getCTarget();
 		//target.clearState();
 	}
 

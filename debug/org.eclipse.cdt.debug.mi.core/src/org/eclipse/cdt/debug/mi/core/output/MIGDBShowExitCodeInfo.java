@@ -4,8 +4,7 @@
  */
 package org.eclipse.cdt.debug.mi.core.output;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 
 /**

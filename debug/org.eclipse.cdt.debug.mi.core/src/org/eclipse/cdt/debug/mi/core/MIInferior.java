@@ -13,11 +13,9 @@ import java.io.PipedOutputStream;
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
-import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.Spawner;
 
@@ -169,7 +167,7 @@ public class MIInferior extends Process {
 				// Try to interrupt the inferior, first.
 				interrupt();
 				session.postCommand(abort);
-				MIInfo info = abort.getMIInfo();
+				abort.getMIInfo();
 				setTerminated(true);
 			} catch (MIException e) {
 			}

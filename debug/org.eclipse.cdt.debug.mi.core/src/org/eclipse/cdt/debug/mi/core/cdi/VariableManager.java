@@ -21,7 +21,6 @@ import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
 import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
-import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
 import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
@@ -162,7 +161,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		MIVarDelete var = factory.createMIVarDelete(miVar.getVarName());
 		try {
 			mi.postCommand(var);
-			MIInfo info = var.getMIInfo();
+			var.getMIInfo();
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}

@@ -13,13 +13,10 @@ import java.util.Observable;
 
 import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
-import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBExit;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
-import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIParser;
 import org.eclipse.cdt.utils.pty.PTY;
@@ -115,19 +112,18 @@ public class MISession extends Observable {
 
 		// Disable a certain number of irritations from gdb.
 		// Like confirmation and screen size.
-		MIInfo info;
 
 		MIGDBSet confirm = new MIGDBSet(new String[]{"confirm", "off"});
 		postCommand(confirm);
-		info = confirm.getMIInfo(); 
+		confirm.getMIInfo(); 
 
 		MIGDBSet width = new MIGDBSet(new String[]{"width", "0"});
 		postCommand(width);
-		info = confirm.getMIInfo(); 
+		confirm.getMIInfo(); 
 
 		MIGDBSet height = new MIGDBSet(new String[]{"height", "0"});
 		postCommand(height);
-		info = confirm.getMIInfo(); 
+		confirm.getMIInfo(); 
 	}
 
 	/**

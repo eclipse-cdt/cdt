@@ -24,7 +24,6 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
-import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 
 /**
  * @see org.eclipse.cdt.debug.core.cdi.ICDISession
@@ -203,7 +202,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 		MIEnvironmentDirectory dir = factory.createMIEnvironmentDirectory(dirs);
 		try {
 			session.postCommand(dir);
-			MIInfo info = dir.getMIInfo();
+		 	dir.getMIInfo();
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}

@@ -21,7 +21,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MICommand;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
 import org.eclipse.cdt.debug.mi.core.command.MIExecFinish;
@@ -356,7 +355,6 @@ public class CTarget  implements ICDITarget {
 	public void suspend() throws CDIException {
 		// send a noop to see if we get an aswer.
 		MISession mi = session.getMISession();
-		MICommand noop = new MICommand("");
 		try {
 			mi.getMIInferior().interrupt();
 		} catch (MIException e) {

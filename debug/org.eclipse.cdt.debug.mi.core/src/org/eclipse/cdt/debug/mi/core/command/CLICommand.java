@@ -6,8 +6,7 @@
  
 package org.eclipse.cdt.debug.mi.core.command;
 
-import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+
 
 /**
  * Represents a CLI command.

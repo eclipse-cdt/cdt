@@ -5,8 +5,6 @@
 
 package org.eclipse.cdt.debug.mi.core;
 
-import java.io.IOException;
-
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 
 /**

@@ -19,7 +19,6 @@ import org.eclipse.cdt.debug.mi.core.command.MIGDBShowDirectories;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowSolibSearchPath;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowDirectoriesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowSolibSearchPathInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 
 
 /**
@@ -58,7 +57,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		MIEnvironmentDirectory dir = factory.createMIEnvironmentDirectory(dirs);
 		try {
 			mi.postCommand(dir);
-			MIInfo info = dir.getMIInfo();
+			dir.getMIInfo();
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
@@ -86,7 +85,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		MIGDBSetSolibSearchPath solib = factory.createMIGDBSetSolibSearchPath(libPaths);
 		try {
 			mi.postCommand(solib);
-			MIInfo info = solib.getMIInfo();
+			solib.getMIInfo();
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
@@ -111,7 +110,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		MIGDBSetAutoSolib solib = factory.createMIGDBSetAutoSolib(true);
 		try {
 			mi.postCommand(solib);
-			MIInfo info = solib.getMIInfo();
+			solib.getMIInfo();
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}

@@ -55,7 +55,6 @@ public class CThread extends CObject implements ICDIThread {
 
 		StackFrame[] stack = noStack;
 		CSession session = getCTarget().getCSession();
-		VariableManager mgr = (VariableManager)session.getVariableManager();
 
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();

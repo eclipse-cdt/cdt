@@ -276,4 +276,64 @@ public class DOMScanner extends BaseScanner {
       super.throwEOF();
    }
 
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processIfdef(int, int, boolean, boolean)
+    */
+   protected void processIfdef(int startPos, int endPos, boolean positive, boolean taken) {
+      if( positive )
+         locationMap.encounterPoundIfdef( resolveOffset(startPos), resolveOffset(endPos), taken );
+      else
+         locationMap.encounterPoundIfndef( resolveOffset(startPos), resolveOffset(endPos), taken );
+      
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processIf(int, int, boolean)
+    */
+   protected void processIf(int startPos, int endPos, boolean taken) {
+      locationMap.encounterPoundIf( resolveOffset( startPos ), resolveOffset( endPos ), taken );
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processElsif(int, int, boolean)
+    */
+   protected void processElsif(int startPos, int endPos, boolean taken) {
+      locationMap.encounterPoundElif( resolveOffset( startPos ), resolveOffset( endPos ), taken );
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processElse(int, int, boolean)
+    */
+   protected void processElse(int startPos, int endPos, boolean taken) {
+      locationMap.encounterPoundElse( resolveOffset( startPos ), resolveOffset( endPos ), taken );     
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processUndef(int, int)
+    */
+   protected void processUndef(int pos, int endPos) {
+      locationMap.encounterPoundUndef( resolveOffset( pos ), resolveOffset( endPos ));
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processError(int, int)
+    */
+   protected void processError(int startPos, int endPos) {
+      locationMap.encounterPoundError( resolveOffset( startPos), resolveOffset( endPos ));
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processEndif(int, int)
+    */
+   protected void processEndif(int startPos , int endPos ) {
+      locationMap.encounterPoundEndIf( resolveOffset( startPos  ), resolveOffset( endPos  ));
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processPragma(int, int)
+    */
+   protected void processPragma(int startPos, int endPos) {
+      locationMap.encounterPoundPragma( resolveOffset( startPos ), resolveOffset(endPos));
+   }
+
 }

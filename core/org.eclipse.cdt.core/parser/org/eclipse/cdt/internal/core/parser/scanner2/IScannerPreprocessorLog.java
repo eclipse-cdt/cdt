@@ -38,13 +38,14 @@ public interface IScannerPreprocessorLog {
             int nameOffset, int nameEndOffset, int endOffset);
 
     public void encounterPoundIf(int startOffset, int endOffset, boolean taken);
-    public void encounterPoundPragma(int startOffset, int endOffset);
-    public void encounterPoundError(int startOffset, int endOffset);
     public void encounterPoundIfdef(int startOffset, int endOffset, boolean taken);
-    public void encounterPoundUndef(int startOffset, int endOffset);
-    public void encounterPoundElse(int startOffset, int endOffset);
+    public void encounterPoundIfndef( int startOffset, int endOffset,  boolean taken );
+    public void encounterPoundElse(int startOffset, int endOffset, boolean taken );
     public void encounterPoundElif(int startOffset, int endOffset, boolean taken);
     public void encounterPoundEndIf(int startOffset, int endOffset);
+    public void encounterPoundPragma(int startOffset, int endOffset);
+    public void encounterPoundError(int startOffset, int endOffset);
+    public void encounterPoundUndef(int startOffset, int endOffset);
     
     public void encounterProblem( IASTProblem problem );
 }

@@ -2444,13 +2444,13 @@ abstract class BaseScanner implements IScanner {
                   handlePPDefine(pos, startingLineNumber);
                   return;
                case ppUndef:
-                  handlePPUndef();
+                  handlePPUndef(pos);
                   return;
                case ppIfdef:
-                  handlePPIfdef(true);
+                  handlePPIfdef(pos, true);
                   return;
                case ppIfndef:
-                  handlePPIfdef(false);
+                  handlePPIfdef(pos, false);
                   return;
                case ppIf:
                   start = bufferPos[bufferStackPos] + 1;
@@ -2466,13 +2466,19 @@ abstract class BaseScanner implements IScanner {
                      skipOverConditionalCode(true);
                      if (isLimitReached())
                         handleInvalidCompletion();
+                     processIf( pos, bufferPos[bufferStackPos], true );
                   }
+                  processIf( pos, bufferPos[bufferStackPos], false );
                   return;
                case ppElse:
                case ppElif:
                   // Condition must have been true, skip over the rest
 
                   if (branchState(type == ppElse ? BRANCH_ELSE : BRANCH_ELIF)) {
+                     if( type == ppElse )
+                        processElse( pos, bufferPos[bufferStackPos], false );
+                     else
+                        processElsif( pos, bufferPos[bufferStackPos], false );
                      skipToNewLine();
                      skipOverConditionalCode(false);
                   } else {
@@ -2495,12 +2501,17 @@ abstract class BaseScanner implements IScanner {
                      len = bufferPos[bufferStackPos] - start;
                   handleProblem(IProblem.PREPROCESSOR_POUND_ERROR, start,
                         CharArrayUtils.extract(buffer, start, len));
+                  processError( pos, pos + len );
                   break;
                case ppEndif:
                   if (!branchState(BRANCH_END))
                      handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION,
                            start, ppKeywords.findKey(buffer, start, len));
+                  processEndif( pos, bufferPos[bufferStackPos ] );
                   break;
+               case ppPragma:
+                  skipToNewLine();
+                  processPragma( pos, bufferPos[bufferStackPos ]);
                default:
                   problem = true;
                   break;
@@ -2516,6 +2527,33 @@ abstract class BaseScanner implements IScanner {
       // includes endif which is immatereal at this point
       skipToNewLine();
    }
+
+   /**
+    * @param startPos
+    * @param endPos
+    */
+   protected abstract void processPragma(int startPos, int endPos);
+
+   /**
+    * @param pos
+    * @param i
+    */
+   protected abstract void processEndif(int pos, int i);
+
+   /**
+    * @param startPos
+    * @param endPos
+    */
+   protected abstract void processError(int startPos, int endPos);
+   protected abstract void processElsif(int startPos, int endPos, boolean taken);
+   protected abstract void processElse(int startPos, int endPos, boolean taken);
+   
+   /**
+    * @param pos
+    * @param i
+    * @param b
+    */
+   protected abstract void processIf(int startPos, int endPos, boolean taken );
 
    protected void handlePPInclude(int pos2, boolean include_next, int startingLineNumber) {
       char[] buffer = bufferStack[bufferStackPos];
@@ -3026,7 +3064,7 @@ abstract class BaseScanner implements IScanner {
       return CharArrayUtils.trim(result);
    }
 
-   protected void handlePPUndef() throws EndOfFileException {
+   protected void handlePPUndef(int pos) throws EndOfFileException {
       char[] buffer = bufferStack[bufferStackPos];
       int limit = bufferLimit[bufferStackPos];
 
@@ -3063,11 +3101,18 @@ abstract class BaseScanner implements IScanner {
          handleCompletionOnDefinition(new String(buffer, idstart, idlen));
 
       skipToNewLine();
+      processUndef( pos, bufferPos[bufferStackPos] );
 
       definitions.remove(buffer, idstart, idlen);
    }
 
-   protected void handlePPIfdef(boolean positive) throws EndOfFileException {
+   /**
+    * @param pos
+    * @param endPos
+    */
+   protected abstract void processUndef(int pos, int endPos);
+
+   protected void handlePPIfdef(int pos, boolean positive) throws EndOfFileException {
       char[] buffer = bufferStack[bufferStackPos];
       int limit = bufferLimit[bufferStackPos];
 
@@ -3114,15 +3159,18 @@ abstract class BaseScanner implements IScanner {
       branchState(BRANCH_IF);
 
       if ((definitions.get(buffer, idstart, idlen) != null) == positive) {
-         // continue on
+         processIfdef( pos, bufferPos[bufferStackPos], positive, true );
          return;
       }
 
+      processIfdef( pos, bufferPos[bufferStackPos], positive, false );
       // skip over this group
       skipOverConditionalCode(true);
       if (isLimitReached())
          handleInvalidCompletion();
    }
+
+   protected abstract void processIfdef(int startPos, int endPos, boolean positive, boolean taken);
 
    // checkelse - if potential for more, otherwise skip to endif
    protected void skipOverConditionalCode(boolean checkelse) {
@@ -3139,6 +3187,7 @@ abstract class BaseScanner implements IScanner {
 
          char c = buffer[bufferPos[bufferStackPos]];
          if (c == '#') {
+            int startPos = bufferPos[bufferStackPos];
             skipOverWhiteSpace();
 
             // find the directive
@@ -3166,13 +3215,22 @@ abstract class BaseScanner implements IScanner {
                      case ppIf:
                         ++nesting;
                         branchState(BRANCH_IF);
+                        skipToNewLine();
+                        if( type == ppIfdef )
+                           processIfdef( startPos, bufferPos[bufferStackPos], true, false );
+                        else if( type == ppIfndef )
+                           processIfdef( startPos, bufferPos[bufferStackPos], false, false );
+                        else
+                           processIf( startPos, bufferPos[bufferStackPos], false );
                         break;
                      case ppElse:
                         if (branchState(BRANCH_ELSE)) {
+                           skipToNewLine();
                            if (checkelse && nesting == 0) {
-                              skipToNewLine();
+                              processElse( startPos, bufferPos[ bufferStackPos], true );
                               return;
                            }
+                           processElse( startPos, bufferPos[ bufferStackPos], false );
                         } else {
                            //problem, ignore this one.
                            handleProblem(
@@ -3192,8 +3250,17 @@ abstract class BaseScanner implements IScanner {
                                     len, definitions,
                                     getLineNumber(bufferPos[bufferStackPos]),
                                     getCurrentFilename()) != 0)
+                              {
                                  // condition passed, we're good
+                                 processElsif( start, bufferPos[bufferStackPos], true);
                                  return;
+                              }
+                              processElsif( start, bufferPos[bufferStackPos], false );
+                           }
+                           else
+                           {
+                              skipToNewLine();
+                              processElsif( start, bufferPos[bufferStackPos], false );
                            }
                         } else {
                            //problem, ignore this one.
@@ -3205,6 +3272,7 @@ abstract class BaseScanner implements IScanner {
                         break;
                      case ppEndif:
                         if (branchState(BRANCH_END)) {
+                           processEndif( startPos, bufferPos[ bufferStackPos ]);
                            if (nesting > 0) {
                               --nesting;
                            } else {
@@ -4375,6 +4443,7 @@ abstract class BaseScanner implements IScanner {
    protected static final int       ppUndef        = 8;
    protected static final int       ppError        = 9;
    protected static final int       ppInclude_next = 10;
+   protected static final int       ppPragma = 11;
 
    protected static final char[]    TAB            = { '\t' };
    protected static final char[]    SPACE          = { ' ' };

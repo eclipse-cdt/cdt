@@ -40,7 +40,148 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
    /**
     * @author jcamelon
     */
-   protected static class _InclusionStatement extends ScannerASTNode implements
+   protected static class _Endif extends _Context implements
+   _IPreprocessorDirective{
+
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       */
+      public _Endif(_CompositeContext parent, int startOffset, int endOffset) {
+         super(parent, startOffset, endOffset);
+         // TODO Auto-generated constructor stub
+      }
+
+   }
+   /**
+    * @author jcamelon
+    */
+   protected static class _Elif extends _Context implements
+         _IPreprocessorDirective {
+
+      public final boolean taken;
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       */
+      public _Elif(_CompositeContext parent, int startOffset, int endOffset, boolean taken ) {
+         super(parent, startOffset, endOffset);
+         this.taken = taken;
+      }
+
+   }
+   /**
+    * @author jcamelon
+    */
+   protected static class _Ifdef extends _Context implements
+         _IPreprocessorDirective {
+
+      public final boolean taken;
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       */
+      public _Ifdef(_CompositeContext parent, int startOffset, int endOffset, boolean taken) {
+         super(parent, startOffset, endOffset);
+         this.taken = taken;
+      }
+
+   }
+   /**
+    * @author jcamelon
+    */
+   protected static class _Ifndef extends _Context implements
+         _IPreprocessorDirective {
+
+      public final boolean taken;
+
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       */
+      public _Ifndef(_CompositeContext parent, int startOffset, int endOffset, boolean taken ) {
+         super(parent, startOffset, endOffset);
+         this.taken = taken;
+      }
+
+   }
+   /**
+    * @author jcamelon
+    */
+   protected static class _Error extends _Context implements
+         _IPreprocessorDirective {
+
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       */
+      public _Error(_CompositeContext parent, int startOffset, int endOffset) {
+         super(parent, startOffset, endOffset);
+         // TODO Auto-generated constructor stub
+      }
+
+   }
+   /**
+    * @author jcamelon
+    */
+   protected static class _Pragma extends _Context implements
+         _IPreprocessorDirective {
+
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       */
+      public _Pragma(_CompositeContext parent, int startOffset, int endOffset) {
+         super(parent, startOffset, endOffset);
+      }
+
+   }
+   /**
+    * @author jcamelon
+    */
+   protected class _If extends _Context implements _IPreprocessorDirective {
+
+      public final boolean taken;
+
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       */
+      public _If(_CompositeContext parent, int startOffset, int endOffset, boolean taken) {
+         super(parent, startOffset, endOffset);
+         this.taken = taken;
+      }
+
+   }
+   /**
+    * @author jcamelon
+    */
+   protected static class _Else extends _Context implements
+         _IPreprocessorDirective {
+
+      public final boolean taken;
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       */
+      public _Else(_CompositeContext parent, int startOffset, int endOffset, boolean taken) {
+         super(parent, startOffset, endOffset);
+         this.taken = taken;
+      }
+
+   }
+   /**
+    * @author jcamelon
+    */
+   protected static class ASTInclusionStatement extends ScannerASTNode implements
          IASTPreprocessorIncludeStatement {
 
       private final char[] path;
@@ -48,7 +189,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       /**
        * @param cs
        */
-      public _InclusionStatement(char[] cs) {
+      public ASTInclusionStatement(char[] cs) {
          this.path = cs;
       }
 
@@ -160,7 +301,25 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
    }
 
-   public static class ScannerASTNode extends ASTNode {
+   public static interface _IPreprocessorDirective 
+   {
+   }
+   
+   protected static class _Undef extends _Context implements _IPreprocessorDirective
+   {
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       */
+      public _Undef(_CompositeContext parent, int startOffset, int endOffset) {
+         super(parent, startOffset, endOffset);
+      }
+      
+   }
+
+   
+   private static class ScannerASTNode extends ASTNode {
       private IASTNode        parent;
       private ASTNodeProperty property;
 
@@ -436,7 +595,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
    }
 
-   protected static class _Inclusion extends _CompositeContext {
+   protected static class _Inclusion extends _CompositeContext implements _IPreprocessorDirective {
       public final CodeReader reader;
 
       public _Inclusion(_CompositeContext parent, CodeReader reader,
@@ -481,7 +640,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       public final int    nameOffset;
    }
 
-   protected static class _ObjectMacroDefinition extends _MacroDefinition {
+   protected static class _ObjectMacroDefinition extends _MacroDefinition implements _IPreprocessorDirective {
       /**
        * @param parent
        * @param startOffset
@@ -498,7 +657,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
    }
 
-   protected static class _FunctionMacroDefinition extends _MacroDefinition {
+   protected static class _FunctionMacroDefinition extends _MacroDefinition implements _IPreprocessorDirective {
 
       public final char[][] parms;
 
@@ -552,14 +711,15 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getMacroDefinitions()
     */
    public IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
-      List contexts = new ArrayList(8);
-      LocationMap.collectContexts(V_MACRODEFS, tu, contexts);
-      if (contexts.isEmpty())
-         return EMPTY_MACRO_DEFINITIONS_ARRAY;
+      int size = collectContexts(V_MACRODEFS, tu, null, 0);
+      if( size == 0 ) return EMPTY_MACRO_DEFINITIONS_ARRAY;  
+      _Context [] contexts = new _Context[size];
+      collectContexts(V_MACRODEFS, tu, contexts, 0);
+         
       IASTPreprocessorMacroDefinition[] result = new IASTPreprocessorMacroDefinition[contexts
-            .size()];
-      for (int i = 0; i < contexts.size(); ++i) 
-         result[i] = createASTMacroDefinition((_MacroDefinition) contexts.get(i));
+            .length];
+      for (int i = 0; i < contexts.length; ++i) 
+         result[i] = createASTMacroDefinition((_MacroDefinition) contexts[i]);
       
 
       return result;
@@ -603,16 +763,16 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * 
     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getIncludeDirectives()
     */
-   public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
-      List contexts = new ArrayList(8);
-      collectContexts(V_INCLUSIONS, tu, contexts);
-      if (contexts.isEmpty())
+   public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {      
+      int size = collectContexts(V_INCLUSIONS, tu, null, 0);
+      if (size == 0 )
          return EMPTY_INCLUDES_ARRAY;
-      IASTPreprocessorIncludeStatement[] result = new IASTPreprocessorIncludeStatement[contexts
-            .size()];
-      for (int i = 0; i < contexts.size(); ++i) {
-         _Inclusion inc = ((_Inclusion) contexts.get(i));
-         result[i] = new _InclusionStatement(inc.reader.filename);
+      _Context [] contexts = new _Context[size];
+      collectContexts(V_INCLUSIONS, tu, contexts, 0);
+      IASTPreprocessorIncludeStatement[] result = new IASTPreprocessorIncludeStatement[size];
+      for (int i = 0; i < size; ++i) {
+         _Inclusion inc = ((_Inclusion) contexts[i]);
+         result[i] = new ASTInclusionStatement(inc.reader.filename);
          ((ScannerASTNode) result[i]).setOffsetAndLength(
                inc.context_directive_start, inc.context_directive_end
                      - inc.context_directive_start);
@@ -877,7 +1037,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     *      int)
     */
    public void encounterPoundIf(int startOffset, int endOffset, boolean taken) {
-      // TODO Auto-generated method stub
+      currentContext.addSubContext( new _If( currentContext, startOffset, endOffset, taken ) );
 
    }
 
@@ -888,8 +1048,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     *      int)
     */
    public void encounterPoundPragma(int startOffset, int endOffset) {
-      // TODO Auto-generated method stub
-
+      currentContext.addSubContext( new _Pragma( currentContext, startOffset, endOffset ) );
    }
 
    /*
@@ -899,8 +1058,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     *      int)
     */
    public void encounterPoundError(int startOffset, int endOffset) {
-      // TODO Auto-generated method stub
-
+      currentContext.addSubContext( new _Error( currentContext, startOffset, endOffset ) );
    }
 
    /*
@@ -910,8 +1068,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     *      int)
     */
    public void encounterPoundIfdef(int startOffset, int endOffset, boolean taken) {
-      // TODO Auto-generated method stub
-
+      currentContext.addSubContext( new _Ifdef( currentContext, startOffset, endOffset, taken ) );
    }
 
    /*
@@ -921,8 +1078,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     *      int)
     */
    public void encounterPoundUndef(int startOffset, int endOffset) {
-      // TODO Auto-generated method stub
-
+      currentContext.addSubContext( new _Undef( currentContext, startOffset, endOffset ) );
    }
 
    /*
@@ -931,9 +1087,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundElse(int,
     *      int)
     */
-   public void encounterPoundElse(int startOffset, int endOffset) {
-      // TODO Auto-generated method stub
-
+   public void encounterPoundElse(int startOffset, int endOffset, boolean taken) {
+      currentContext.addSubContext( new _Else( currentContext, startOffset, endOffset, taken ));
    }
 
    /*
@@ -943,7 +1098,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     *      int)
     */
    public void encounterPoundElif(int startOffset, int endOffset, boolean taken) {
-      // TODO Auto-generated method stub
+      currentContext.addSubContext( new _Elif( currentContext, startOffset, endOffset, taken ) );
 
    }
 
@@ -954,8 +1109,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     *      int)
     */
    public void encounterPoundEndIf(int startOffset, int endOffset) {
-      // TODO Auto-generated method stub
-
+      currentContext.addSubContext( new _Endif( currentContext, startOffset, endOffset) );
    }
 
    /*
@@ -982,13 +1136,13 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getScannerProblems()
     */
    public IASTProblem[] getScannerProblems() {
-      List contexts = new ArrayList(8);
-      LocationMap.collectContexts(V_PROBLEMS, tu, contexts);
-      if (contexts.isEmpty())
-         return EMPTY_PROBLEMS_ARRAY;
-      IASTProblem[] result = new IASTProblem[contexts.size()];
-      for (int i = 0; i < contexts.size(); ++i)
-         result[i] = ((_Problem) contexts.get(i)).problem;
+      int size = LocationMap.collectContexts(V_PROBLEMS, tu, null, 0);
+      if( size == 0 ) return EMPTY_PROBLEMS_ARRAY;
+      _Context [] contexts = new _Context[size];
+      LocationMap.collectContexts(V_PROBLEMS, tu, contexts, 0);
+      IASTProblem[] result = new IASTProblem[size];
+      for (int i = 0; i < size; ++i)
+         result[i] = ((_Problem) contexts[i]).problem;
 
       return result;
    }
@@ -1003,37 +1157,69 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       _Problem pr = new _Problem(currentContext, p.getOffset(), p.getOffset()
             + p.getLength(), problem);
       pr.context_ends = p.getOffset() + p.getLength();
+      currentContext.addSubContext( pr );
    }
 
    protected static final int V_ALL        = 1;
    protected static final int V_INCLUSIONS = 2;
    protected static final int V_PROBLEMS   = 3;
    protected static final int V_MACRODEFS  = 4;
+   protected static final int V_PREPROCESSOR = 5;
    private static final char[] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 
-   protected static void collectContexts(int key, _Context source, List result) {
+   protected static int collectContexts(int key, _Context source, _Context[] result, int s ) {
+      int startAt = s;
+      int count = 0;
       switch (key) {
          case V_ALL:
-            result.add(source);
+            if( result != null )
+               result[startAt++] = source;
+            ++count;
             break;
          case V_INCLUSIONS:
             if (source instanceof _Inclusion)
-               result.add(source);
+            {
+               if( result != null )
+                  result[startAt++] = source;
+               ++count;
+            }
             break;
          case V_PROBLEMS:
             if (source instanceof _Problem)
-               result.add(source);
+            {
+               
+               if( result != null )
+                  result[startAt++] = source;
+               ++count;
+            }
             break;
          case V_MACRODEFS:
             if (source instanceof _MacroDefinition)
-               result.add(source);
+            {
+               if( result != null )               
+                  result[startAt++] = source;
+               ++count;
+            }
+            break;
+         case V_PREPROCESSOR:
+            if( source instanceof _IPreprocessorDirective )
+            {               
+               if( result != null )
+                  result[startAt++] = source;
+               ++count;
+            }
             break;
       }
       if (source instanceof _CompositeContext) {
          List l = ((_CompositeContext) source).getSubContexts();
          for (int i = 0; i < l.size(); ++i)
-            collectContexts(key, (_Context) l.get(i), result);
+         {
+            int value = collectContexts(key, (_Context) l.get(i), result, startAt);
+            count += value;
+            startAt += value;
+         }
       }
+      return count;
    }
 
    /* (non-Javadoc)
@@ -1050,11 +1236,14 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                char [] name = ((IASTFileLocation)nodeLocation).getFileName().toCharArray();
                if( readerCompatable( nodeLocation, tu.reader, name ) )
                      return CharArrayUtils.extract( tu.reader.buffer, nodeLocation.getNodeOffset(), nodeLocation.getNodeLength() );
-               List inclusions = new ArrayList();
-               collectContexts( V_INCLUSIONS, tu, inclusions );
-               for( int i = 0; i < inclusions.size(); ++i )
+               
+               int size = collectContexts( V_INCLUSIONS, tu, null, 0 );
+               if( size == 0 ) return EMPTY_CHAR_ARRAY;
+               _Context [] inclusions = new _Context[size];
+               collectContexts( V_INCLUSIONS, tu, inclusions, 0 );
+               for( int i = 0; i < size; ++i )
                {
-                  _Inclusion inc = (_Inclusion) inclusions.get(i);
+                  _Inclusion inc = (_Inclusion) inclusions[i];
                   if( readerCompatable( nodeLocation, inc.reader, name ) )
                      return CharArrayUtils.extract( inc.reader.buffer, nodeLocation.getNodeOffset(), nodeLocation.getNodeLength() );
                }
@@ -1079,6 +1268,13 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       if( nodeLocation.getNodeOffset() > reader.buffer.length ) return false;
       if( nodeLocation.getNodeOffset() + nodeLocation.getNodeLength() > reader.buffer.length ) return false;
       return true;
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundIfndef(int, int, boolean)
+    */
+   public void encounterPoundIfndef(int startOffset, int endOffset, boolean taken) {
+      currentContext.addSubContext( new _Ifndef( currentContext, startOffset, endOffset, taken ) );
    }
 
 }

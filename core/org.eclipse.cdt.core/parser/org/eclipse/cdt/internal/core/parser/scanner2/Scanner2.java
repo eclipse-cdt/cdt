@@ -254,4 +254,52 @@ public class Scanner2 extends BaseScanner {
       return super.popContext();
    }
 
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processIfdef(int, int, boolean, boolean)
+    */
+   protected void processIfdef(int startPos, int endPos, boolean positive, boolean taken) {
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processIf(int, int, boolean)
+    */
+   protected void processIf(int startPos, int endPos, boolean taken) {
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processElsif(int, int, boolean)
+    */
+   protected void processElsif(int startPos, int endPos, boolean taken) {
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processElse(int, int, boolean)
+    */
+   protected void processElse(int startPos, int endPos, boolean taken) {
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processUndef(int, int)
+    */
+   protected void processUndef(int pos, int endPos) {
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processError(int, int)
+    */
+   protected void processError(int startPos, int endPos) {
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processEndif(int, int)
+    */
+   protected void processEndif(int pos, int i) {
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processPragma(int, int)
+    */
+   protected void processPragma(int startPos, int endPos) {
+   }
+
 }

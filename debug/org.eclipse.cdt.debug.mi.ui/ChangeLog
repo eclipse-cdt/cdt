@@ -1,3 +1,7 @@
+2004-07-19 Mikhail Khodjaiants
+	Dave's fix for the auto-solib option.
+	* GDBDebuggerPage.java
+
 2004-06-22 Mikhail Khodjaiants
 	Replaced global resource bundles by messages.
 

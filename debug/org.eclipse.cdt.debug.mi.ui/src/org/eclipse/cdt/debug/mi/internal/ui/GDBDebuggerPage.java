@@ -97,10 +97,10 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 		catch( CoreException e ) 
 		{
 		}
-		fGDBCommandText.setText( gdbCommand );
-		fGDBInitText.setText( gdbInit );
 		if ( fSolibBlock != null )
 			fSolibBlock.initializeFrom( configuration );		
+		fGDBCommandText.setText( gdbCommand );
+		fGDBInitText.setText( gdbInit );
 	}
 
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) 

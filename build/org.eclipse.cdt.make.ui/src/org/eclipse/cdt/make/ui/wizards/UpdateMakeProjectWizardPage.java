@@ -32,8 +32,8 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 
-	private static final String MAKE_UPDATE_TITLE = "MakeWizardUpdatePage.title";
-	private static final String MAKE_UPDATE_DESCRIPTION = "MakeWizardUpdatePage.description";
+	private static final String MAKE_UPDATE_TITLE = "MakeWizardUpdatePage.title"; //$NON-NLS-1$
+	private static final String MAKE_UPDATE_DESCRIPTION = "MakeWizardUpdatePage.description"; //$NON-NLS-1$
 
 	private IProject[] selected;
 	private CheckboxTableViewer makeProjectListViewer;
@@ -66,7 +66,7 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 	}
 
 	public UpdateMakeProjectWizardPage(IProject[] selected) {
-		super("UpdateMakeProjectWizardPage", true);
+		super("UpdateMakeProjectWizardPage", true); //$NON-NLS-1$
 		setTitle(MakeUIPlugin.getResourceString(MAKE_UPDATE_TITLE));
 		setDescription(MakeUIPlugin.getResourceString(MAKE_UPDATE_DESCRIPTION));
 		this.selected = selected;
@@ -107,7 +107,7 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		return tablePart.getSelection();
 	}
 
-	private void dialogChanged() {
+	void dialogChanged() {
 		IStatus genStatus = validatePlugins();
 		updateStatus(genStatus);
 	}
@@ -141,6 +141,6 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		if (tablePart.getSelectionCount() == 0) {
 			return createStatus(IStatus.ERROR, "No projects selected");
 		}
-		return createStatus(IStatus.OK, "");
+		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}
 }

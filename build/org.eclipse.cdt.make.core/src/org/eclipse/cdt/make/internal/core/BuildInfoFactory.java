@@ -1,4 +1,4 @@
-package org.eclipse.cdt.make.core;
+package org.eclipse.cdt.make.internal.core;
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
@@ -13,6 +13,9 @@ package org.eclipse.cdt.make.core;
 
 import java.util.Map;
 
+import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -30,17 +33,17 @@ public class BuildInfoFactory {
 
 	private static final String PREFIX = MakeCorePlugin.getUniqueIdentifier();
 
-	private static final String BUILD_COMMAND = PREFIX + ".buildCommand";
-	private static final String BUILD_LOCATION = PREFIX + ".buildLocation";
-	private static final String STOP_ON_ERROR = PREFIX + ".stopOnError";
-	private static final String USE_DEFAULT_BUILD_CMD = PREFIX + ".useDefaultBuildCmd";
-	private static final String BUILD_TARGET_AUTO = PREFIX + ".autoBuildTarget";
-	private static final String BUILD_TARGET_INCREMENTAL = PREFIX + ".incrementalBuildTarget";
-	private static final String BUILD_TARGET_FULL = PREFIX + ".fullBuildTarget";
-	private static final String BUILD_FULL_ENABLED = PREFIX + ".enableFullBuild";
-	private static final String BUILD_INCREMENTAL_ENABLED = PREFIX + ".enabledIncrementalBuild";
-	private static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild";
-	private static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments";
+	static final String BUILD_COMMAND = PREFIX + ".buildCommand"; //$NON-NLS-1$
+	static final String BUILD_LOCATION = PREFIX + ".buildLocation"; //$NON-NLS-1$
+	static final String STOP_ON_ERROR = PREFIX + ".stopOnError"; //$NON-NLS-1$
+	static final String USE_DEFAULT_BUILD_CMD = PREFIX + ".useDefaultBuildCmd"; //$NON-NLS-1$
+	static final String BUILD_TARGET_AUTO = PREFIX + ".autoBuildTarget"; //$NON-NLS-1$
+	static final String BUILD_TARGET_INCREMENTAL = PREFIX + ".incrementalBuildTarget"; //$NON-NLS-1$
+	static final String BUILD_TARGET_FULL = PREFIX + ".fullBuildTarget"; //$NON-NLS-1$
+	static final String BUILD_FULL_ENABLED = PREFIX + ".enableFullBuild"; //$NON-NLS-1$
+	static final String BUILD_INCREMENTAL_ENABLED = PREFIX + ".enabledIncrementalBuild"; //$NON-NLS-1$
+	static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild"; //$NON-NLS-1$
+	static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments"; //$NON-NLS-1$
 
 	private abstract static class Store implements IMakeBuilderInfo {
 
@@ -61,9 +64,9 @@ public class BuildInfoFactory {
 
 		public IPath getBuildCommand() {
 			if (isDefaultBuildCmd()) {
-				String command = getBuildParameter("defaultCommand");
+				String command = getBuildParameter("defaultCommand"); //$NON-NLS-1$
 				if (command == null) {
-					return new Path("make");
+					return new Path("make"); //$NON-NLS-1$
 				}
 				return new Path(command);
 			}
@@ -82,11 +85,11 @@ public class BuildInfoFactory {
 			if (configs.length == 0)
 				return null;
 			//The nature exists, or this builder doesn't specify a nature
-			IConfigurationElement[] runElement = configs[0].getChildren("run");
-			IConfigurationElement[] paramElement = runElement[0].getChildren("parameter");
+			IConfigurationElement[] runElement = configs[0].getChildren("run"); //$NON-NLS-1$
+			IConfigurationElement[] paramElement = runElement[0].getChildren("parameter"); //$NON-NLS-1$
 			for (int i = 0; i < paramElement.length; i++) {
-				if (paramElement[i].getAttribute("name").equals(name)) {
-					return paramElement[i].getAttribute("value");
+				if (paramElement[i].getAttribute("name").equals(name)) { //$NON-NLS-1$
+					return paramElement[i].getAttribute("value"); //$NON-NLS-1$
 				}
 			}
 			return null;
@@ -100,7 +103,7 @@ public class BuildInfoFactory {
 
 		public IPath getBuildLocation() {
 			String location = getString(BUILD_LOCATION);
-			return new Path(location == null ? "" : location);
+			return new Path(location == null ? "" : location); //$NON-NLS-1$
 		}
 
 		public void setStopOnError(boolean enabled) throws CoreException {
@@ -233,7 +236,7 @@ public class BuildInfoFactory {
 
 		public String getString(String name) {
 			String value = (String)args.get(name);
-			return value == null ? "" : value;
+			return value == null ? "" : value; //$NON-NLS-1$
 		}
 
 		public String getBuilderID() {

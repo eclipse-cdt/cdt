@@ -26,7 +26,7 @@ public abstract class StatusWizardPage extends WizardPage {
 	public StatusWizardPage(String name, boolean noErrorOnStartup) {
 		super(name);
 		fPageVisible= false;
-		fCurrStatus= createStatus(IStatus.OK, "");
+		fCurrStatus= createStatus(IStatus.OK, ""); //$NON-NLS-1$
 		fNoErrorOnStartup= noErrorOnStartup;
 	}
 		
@@ -41,7 +41,7 @@ public abstract class StatusWizardPage extends WizardPage {
 		// policy: wizards are not allowed to come up with an error message
 		if (visible && fNoErrorOnStartup && fCurrStatus.matches(IStatus.ERROR)) {
 			// keep the error state, but remove the message
-			fCurrStatus= createStatus(IStatus.ERROR, "");
+			fCurrStatus= createStatus(IStatus.ERROR, ""); //$NON-NLS-1$
 		} 
 		updateStatus(fCurrStatus);
 	}	

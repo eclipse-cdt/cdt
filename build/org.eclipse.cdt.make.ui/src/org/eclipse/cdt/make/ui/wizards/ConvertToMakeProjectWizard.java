@@ -97,7 +97,7 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 	}
 
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("Converting to Make Project", 2);
+		monitor.beginTask("Converting to Make Project...", 2);
 		super.doRun(new SubProgressMonitor(monitor, 1));
 		optionsPage.performApply(new SubProgressMonitor(monitor, 1));
 	}

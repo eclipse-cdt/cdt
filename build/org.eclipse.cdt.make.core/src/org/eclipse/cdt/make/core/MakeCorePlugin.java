@@ -12,20 +12,24 @@ package org.eclipse.cdt.make.core;
 ***********************************************************************/
 
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
 
 /**
  * The main plugin class to be used in the desktop.
  */
 public class MakeCorePlugin extends Plugin {
-	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder";
+	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder"; //$NON-NLS-1$
 	//The shared instance.
 	private static MakeCorePlugin plugin;
 	//Resource bundle.
@@ -38,7 +42,7 @@ public class MakeCorePlugin extends Plugin {
 		super(descriptor);
 		plugin = this;
 		try {
-			resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.make.core.PluginResources");
+			resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.make.core.PluginResources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -86,20 +90,32 @@ public class MakeCorePlugin extends Plugin {
 	}
 
 	protected void initializeDefaultPluginPreferences() {
-		IMakeBuilderInfo info = BuildInfoFactory.create(getPluginPreferences(), MakeBuilder.BUILDER_ID, true);
+		IMakeBuilderInfo info = create(getPluginPreferences(), MakeBuilder.BUILDER_ID, true);
 		try {
-			info.setBuildCommand(new Path("make"));
-			info.setBuildLocation(new Path(""));
+			info.setBuildCommand(new Path("make")); //$NON-NLS-1$
+			info.setBuildLocation(new Path("")); //$NON-NLS-1$
 			info.setStopOnError(false);
 			info.setUseDefaultBuildCmd(true);
 			info.setAutoBuildEnable(false);
-			info.setAutoBuildTarget("all");
+			info.setAutoBuildTarget("all"); //$NON-NLS-1$
 			info.setIncrementalBuildEnable(true);
-			info.setIncrementalBuildTarget("all");
+			info.setIncrementalBuildTarget("all"); //$NON-NLS-1$
 			info.setFullBuildEnable(true);
-			info.setFullBuildTarget("clean all");
+			info.setFullBuildTarget("clean all"); //$NON-NLS-1$
 		} catch (CoreException e) {
 		}
-		getPluginPreferences().setDefault(CCorePlugin.PREF_BINARY_PARSER, CCorePlugin.PLUGIN_ID + ".ELF");
+		getPluginPreferences().setDefault(CCorePlugin.PREF_BINARY_PARSER, CCorePlugin.PLUGIN_ID + ".ELF"); //$NON-NLS-1$
+	}
+	
+	public static IMakeBuilderInfo create(Preferences prefs, String builderID, boolean useDefaults) {
+		return BuildInfoFactory.create(prefs, builderID, useDefaults);
+	}
+
+	public static IMakeBuilderInfo create(IProject project, String builderID) throws CoreException {
+		return BuildInfoFactory.create(project, builderID);
+	}
+
+	public static IMakeBuilderInfo create(Map args, String builderID) {
+		return BuildInfoFactory.create(args, builderID);
 	}
 }

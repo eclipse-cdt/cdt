@@ -329,7 +329,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	/*
 	 * Enables the buttons on the path control if the right conditions are met
 	 */
-	private void enablePathButtons() {
+	void enablePathButtons() {
 		// Enable the remove button if there is at least 1 item in the list
 		int items = pathList.getItemCount();
 		if (items > 0) {
@@ -345,7 +345,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		}
 	}
 
-	private void enableSymbolButtons() {
+	void enableSymbolButtons() {
 		// Enable the remove button if there is at least 1 item in the list
 		int items = symbolList.getItemCount();
 		if (items > 0) {
@@ -424,7 +424,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	protected void handleAddPath() {
 		// Popup an entry dialog
 		InputDialog dialog =
-			new InputDialog(shell, CUIPlugin.getResourceString(PATH_TITLE), CUIPlugin.getResourceString(PATH_LABEL), "", null);
+			new InputDialog(shell, CUIPlugin.getResourceString(PATH_TITLE), CUIPlugin.getResourceString(PATH_LABEL), "", null); //$NON-NLS-1$
 		String path = null;
 		if (dialog.open() == InputDialog.OK) {
 			path = dialog.getValue();
@@ -442,7 +442,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	protected void handleAddSymbol() {
 		// Popup an entry dialog
 		InputDialog dialog =
-			new InputDialog(shell, CUIPlugin.getResourceString(SYMBOL_TITLE), CUIPlugin.getResourceString(SYMBOL_LABEL), "", null);
+			new InputDialog(shell, CUIPlugin.getResourceString(SYMBOL_TITLE), CUIPlugin.getResourceString(SYMBOL_LABEL), "", null); //$NON-NLS-1$
 		String symbol = null;
 		if (dialog.open() == InputDialog.OK) {
 			symbol = dialog.getValue();

@@ -29,9 +29,9 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public class MakePropertyPage extends PropertyPage implements ICOptionContainer {
 
-	private MakeProjectOptionBlock fOptionBlock;
+	MakeProjectOptionBlock fOptionBlock;
 
-	private static final String MSG_CLOSEDPROJECT = "MakeProjectPropertyPage.closedproject";
+	private static final String MSG_CLOSEDPROJECT = "MakeProjectPropertyPage.closedproject"; //$NON-NLS-1$
 
 	public MakePropertyPage() {
 		super();

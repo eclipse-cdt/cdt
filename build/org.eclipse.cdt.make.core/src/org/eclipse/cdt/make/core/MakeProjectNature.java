@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class MakeProjectNature implements IProjectNature {
 	
-	public final static String NATURE_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeNature";
+	public final static String NATURE_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeNature"; //$NON-NLS-1$
 	private IProject fProject;
 
 	public static void addNature(IProject project, SubProgressMonitor monitor) throws CoreException {
@@ -101,8 +101,8 @@ public class MakeProjectNature implements IProjectNature {
 		*/
 	public void configure() throws CoreException {
 		addBuildSpec();
-		IMakeBuilderInfo info = BuildInfoFactory.create(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, false);
-		IMakeBuilderInfo projectInfo = BuildInfoFactory.create(getProject(), MakeBuilder.BUILDER_ID);
+		IMakeBuilderInfo info = MakeCorePlugin.create(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, false);
+		IMakeBuilderInfo projectInfo = MakeCorePlugin.create(getProject(), MakeBuilder.BUILDER_ID);
 		projectInfo.setBuildLocation(info.getBuildLocation());
 
 

@@ -72,7 +72,7 @@ public class MakeScannerInfo implements IScannerInfo {
 			}
 			String key = new String();
 			String value = new String();
-			int index = symbol.indexOf("=");
+			int index = symbol.indexOf("="); //$NON-NLS-1$
 			if (index != -1) {
 				key = symbol.substring(0, index).trim();
 				value = symbol.substring(index + 1).trim();

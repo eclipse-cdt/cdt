@@ -61,14 +61,4 @@
             class="org.eclipse.cdt.make.internal.core.MakeProject">
       </cproject>
    </extension>
-<!-- Not really used but could be in the future -->
-   <extension
-         id="makeBuilder"
-         name="%makebuildmodel.name"
-         point="org.eclipse.cdt.core.CBuildModel">
-      <run
-            class="org.eclipse.cdt.make.internal.core.MakeBuilder">
-      </run>
-   </extension>
-
 </plugin>

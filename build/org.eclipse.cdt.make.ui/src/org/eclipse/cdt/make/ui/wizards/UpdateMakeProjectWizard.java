@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.Wizard;
 
 public class UpdateMakeProjectWizard extends Wizard {
-	private static final String MAKE_UPDATE_WINDOW_TITLE = "MakeWizardUpdate.window_title"; 
+	private static final String MAKE_UPDATE_WINDOW_TITLE = "MakeWizardUpdate.window_title";  //$NON-NLS-1$
 
 	private UpdateMakeProjectWizardPage page1;
 	private IProject[] selected;

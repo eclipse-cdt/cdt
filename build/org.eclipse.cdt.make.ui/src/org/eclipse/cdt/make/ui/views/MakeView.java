@@ -5,7 +5,6 @@ package org.eclipse.cdt.make.ui.views;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.make.ui.actions.MakeBuildAction;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -49,8 +48,8 @@ public class MakeView extends ViewPart {
 		//System.out.println ("Double click on " + element);
 		if (element instanceof MakeTarget) {
 			MakeTarget ta = (MakeTarget) element;
-			Action build = new MakeBuildAction(new MakeTarget[] { ta }, getViewSite().getShell(), "Build");
-			build.run();
+//			Action build = new MakeBuildAction(new MakeTarget[] { ta }, getViewSite().getShell(), "Build");
+//			build.run();
 		}
 		//if (viewer.isExpandable(element)) {
 		//	viewer.setExpandedState(element, !viewer.getExpandedState(element));
@@ -112,13 +111,13 @@ public class MakeView extends ViewPart {
 				}
 			};
 
-			Action build = new MakeBuildAction(new MakeTarget[] { ta }, getViewSite().getShell(), "Build");
+//			Action build = new MakeBuildAction(new MakeTarget[] { ta }, getViewSite().getShell(), "Build");
 
 			menu.add(add);
 			menu.add(edit);
 			menu.add(del);
 			//menu.add (new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-			menu.add(build);
+//			menu.add(build);
 			if (ta.isLeaf()) {
 				add.setEnabled(false);
 			} else {

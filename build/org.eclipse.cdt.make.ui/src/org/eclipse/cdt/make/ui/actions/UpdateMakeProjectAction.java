@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.make.core.BuildInfoFactory;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -119,7 +118,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 				MakeProjectNature.addNature(project[i], new SubProgressMonitor(monitor, 1));
 				QualifiedName qlocation = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildLocation");
 				String location = project[i].getPersistentProperty(qlocation);
-				IMakeBuilderInfo newInfo = BuildInfoFactory.create(project[i], MakeBuilder.BUILDER_ID);
+				IMakeBuilderInfo newInfo = MakeCorePlugin.create(project[i], MakeBuilder.BUILDER_ID);
 				newInfo.setBuildCommand(new Path(location));
 				
 				//remove old properties

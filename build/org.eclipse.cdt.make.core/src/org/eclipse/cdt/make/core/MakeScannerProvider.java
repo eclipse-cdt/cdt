@@ -36,16 +36,16 @@ import org.w3c.dom.Node;
 public class MakeScannerProvider extends AbstractCExtension implements IScannerInfoProvider {
 
 	// This is the id of the IScannerInfoProvider extension point entry
-	public static final String INTERFACE_IDENTITY = MakeCorePlugin.getUniqueIdentifier() + ".MakeScannerProvider";
+	public static final String INTERFACE_IDENTITY = MakeCorePlugin.getUniqueIdentifier() + ".MakeScannerProvider"; //$NON-NLS-1$
 
 	// Name we will use to store build property with the project
-	private static final QualifiedName scannerInfoProperty = new QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "makeBuildInfo");
-	private static final String CDESCRIPTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeScannerInfo";
+	private static final QualifiedName scannerInfoProperty = new QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "makeBuildInfo"); //$NON-NLS-1$
+	private static final String CDESCRIPTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeScannerInfo"; //$NON-NLS-1$
 
-	public static final String INCLUDE_PATH = "includePath";
-	public static final String PATH = "path";
-	public static final String DEFINED_SYMBOL = "definedSymbol";
-	public static final String SYMBOL = "symbol";
+	public static final String INCLUDE_PATH = "includePath"; //$NON-NLS-1$
+	public static final String PATH = "path"; //$NON-NLS-1$
+	public static final String DEFINED_SYMBOL = "definedSymbol"; //$NON-NLS-1$
+	public static final String SYMBOL = "symbol"; //$NON-NLS-1$
 
 	// Listeners interested in build model changes
 	private static Map listeners;

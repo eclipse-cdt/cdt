@@ -41,9 +41,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class MakeBuilder extends ACBuilder {
 
-	private static final String BUILD_ERROR = "MakeBuilder.buildError";
+	private static final String BUILD_ERROR = "MakeBuilder.buildError"; //$NON-NLS-1$
 
-	public final static String BUILDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeBuilder";
+	public final static String BUILDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeBuilder"; //$NON-NLS-1$
 
 	public MakeBuilder() {
 	}
@@ -68,7 +68,7 @@ public class MakeBuilder extends ACBuilder {
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		boolean bPerformBuild = true;
-		IMakeBuilderInfo info = BuildInfoFactory.create(args, MakeBuilder.BUILDER_ID);
+		IMakeBuilderInfo info = MakeCorePlugin.create(args, MakeBuilder.BUILDER_ID);
 		if (!shouldBuild(kind, info)) {
 			return new IProject[0];
 		}
@@ -100,7 +100,7 @@ public class MakeBuilder extends ACBuilder {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask("Invoking the C Builder: " + currProject.getName(), IProgressMonitor.UNKNOWN);
+		monitor.beginTask("Invoking Make Builder: " + currProject.getName(), IProgressMonitor.UNKNOWN);
 
 		try {
 			IPath buildCommand = info.getBuildCommand();
@@ -115,7 +115,7 @@ public class MakeBuilder extends ACBuilder {
 
 				IPath workingDirectory = info.getBuildLocation();
 				String[] targets = getTargets(kind, info);
-				if (targets.length != 0 && targets[targets.length - 1].equals("clean"))
+				if (targets.length != 0 && targets[targets.length - 1].equals("clean")) //$NON-NLS-1$
 					isClean = true;
 				// Before launching give visual cues via the monitor
 				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
@@ -128,15 +128,15 @@ public class MakeBuilder extends ACBuilder {
 
 				// Set the environmennt, some scripts may need the CWD var to be set.
 				Properties props = launcher.getEnvironment();
-				props.put("CWD", workingDirectory.toOSString());
-				props.put("PWD", workingDirectory.toOSString());
+				props.put("CWD", workingDirectory.toOSString()); //$NON-NLS-1$
+				props.put("PWD", workingDirectory.toOSString()); //$NON-NLS-1$
 				String[] env = null;
 				ArrayList envList = new ArrayList();
 				Enumeration names = props.propertyNames();
 				if (names != null) {
 					while (names.hasMoreElements()) {
 						String key = (String) names.nextElement();
-						envList.add(key + "=" + props.getProperty(key));
+						envList.add(key + "=" + props.getProperty(key)); //$NON-NLS-1$
 					}
 					env = (String[]) envList.toArray(new String[envList.size()]);
 				}
@@ -149,12 +149,12 @@ public class MakeBuilder extends ACBuilder {
 				if (info.isDefaultBuildCmd()) {
 					if ( !info.isStopOnError()) {
 						buildArguments = new String[targets.length + 1];
-						buildArguments[0] = "-k";
+						buildArguments[0] = "-k"; //$NON-NLS-1$
 						System.arraycopy(targets, 0, buildArguments, 1, targets.length);
 					}
 				} else {
 					String args = info.getBuildArguments();
-					if ( args != null && !args.equals("")) {
+					if ( args != null && !args.equals("")) { //$NON-NLS-1$
 						String[] newArgs = makeArray(args);						
 						buildArguments = new String[targets.length + newArgs.length];
 						System.arraycopy(newArgs, 0, buildArguments, 0, newArgs.length);
@@ -175,21 +175,18 @@ public class MakeBuilder extends ACBuilder {
 					isCanceled = monitor.isCanceled();
 					monitor.setCanceled(false);
 					subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-					subMonitor.subTask("Refresh From Local");
+					subMonitor.subTask("Updating project...");
 
 					try {
 						currProject.refreshLocal(IResource.DEPTH_INFINITE, subMonitor);
 					} catch (CoreException e) {
 					}
-
-					subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-					subMonitor.subTask("Parsing");
 				} else {
 					errMsg = launcher.getErrorMessage();
 				}
 
 				if (errMsg != null) {
-					StringBuffer buf = new StringBuffer(buildCommand.toString() + " ");
+					StringBuffer buf = new StringBuffer(buildCommand.toString() + " "); //$NON-NLS-1$
 					for (int i = 0; i < buildArguments.length; i++) {
 						buf.append(buildArguments[i]);
 						buf.append(' ');
@@ -197,8 +194,8 @@ public class MakeBuilder extends ACBuilder {
 
 					String errorDesc = MakeCorePlugin.getFormattedString(BUILD_ERROR, buf.toString());
 					buf = new StringBuffer(errorDesc);
-					buf.append(System.getProperty("line.separator", "\n"));
-					buf.append("(").append(errMsg).append(")");
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
+					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 					cos.write(buf.toString().getBytes());
 					cos.flush();
 				}
@@ -239,7 +236,7 @@ public class MakeBuilder extends ACBuilder {
 	}
 
 	protected String[] getTargets(int kind, IMakeBuilderInfo info) {
-		String targets = "";
+		String targets = ""; //$NON-NLS-1$
 		switch (kind) {
 			case IncrementalProjectBuilder.AUTO_BUILD :
 				targets = info.getAutoBuildTarget();

@@ -1,110 +1,46 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.make.ui.actions;
 
-/*
- * (c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
- */
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.views.MakeTarget;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.BuildAction;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
-
-public class MakeBuildAction extends Action  {
-	static final String PREFIX = "BuildAction.";
-
-	MakeTarget[] targets;
-	Shell shell;
-
-	public MakeBuildAction (MakeTarget[] targets, Shell shell, String s) {
-		super (s);
-		this.shell = shell;
-		this.targets = targets;
-	
-		setToolTipText(PREFIX);
-		setImageDescriptor(CPluginImages.DESC_BUILD_MENU);
-	}
-
+public abstract class MakeBuildAction extends AbstractMakeBuilderAction {
+	protected final String makeActionID = "org.eclipse.cdt.make.ui.makeBuildAction."; //$NON-NLS-1$
 	/**
-	 * Causes all editors to save any modified resources depending on the user's
-	 * preference.
+	 * @see IActionDelegate#run(IAction)
 	 */
-	void saveAllResources() {
-
-		if (!BuildAction.isSaveAllSet())
-			return;
-
-		List projects = new ArrayList();
-		for (int i = 0; i < targets.length; ++i ) {
-			MakeTarget target = targets[i];
-			projects.add(target.getResource().getProject());	
-		}
-
-		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchPage [] pages = windows[i].getPages();
-			for (int j = 0; j < pages.length; j++) {
-				IWorkbenchPage page = pages[j];
-				IEditorReference[] editorReferences = page.getEditorReferences();
-				for (int k = 0; k < editorReferences.length; k++) {
-					IEditorPart editor = editorReferences[k].getEditor(false);
-					if (editor != null && editor.isDirty()) {
-						IEditorInput input = editor.getEditorInput();
-						if (input instanceof IFileEditorInput) {
-							IFile inputFile = ((IFileEditorInput)input).getFile();
-							if (projects.contains(inputFile.getProject())) {
-								page.saveEditor(editor, false);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	public void run() {
-		try {
-			saveAllResources();
-			IRunnableWithProgress op = new IRunnableWithProgress () {
-				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-					for (int i = 0; i < targets.length; ++i ) {
-//						MakeTarget target = targets[i];
-//						IResource res = target.getResource();
-//						IProject project = res.getProject();
-
-//						try {
-//							if (! project.equals(res) || target.isLeaf()) {
-//								String dir = res.getLocation().toOSString();
-//							}
-//							project.build (IncrementalProjectBuilder.FULL_BUILD, MakeBuilder.BUILDER_ID, monitor);
-//						} catch (CoreException e) {
-//						} 
-					}
+	public void run(IAction action) {
+		if (fSelection instanceof IStructuredSelection
+			&& ((IStructuredSelection) fSelection).getFirstElement() instanceof IProject) {
+			IProject project = (IProject) ((IStructuredSelection) fSelection).getFirstElement();
+			MakeTarget target = null;
+			String id = action.getId();
+			if ( id.startsWith(makeActionID) ) {
+				String targets = id.substring(makeActionID.length());
+				if ( targets.length() > 0) {
+					
 				}
 			};
-			new ProgressMonitorDialog(shell).run(true, true, op);
-		} catch (InvocationTargetException e) {
-			// handle exception
-		} catch (InterruptedException e) {
-			// handle cancelation
-		}
+			if ( target != null ) {
+				ProgressMonitorDialog pd = new ProgressMonitorDialog(MakeUIPlugin.getActiveWorkbenchShell());
+				MakeBuild.run(true, pd, new MakeTarget[] {target});
+			} else {
+				MakeUIPlugin.errorDialog(getShell(), "Make Build Contribution Error", "build target not defined", (IStatus)null);
+			}
+ 		}
 	}
 }

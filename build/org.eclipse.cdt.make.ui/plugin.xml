@@ -91,7 +91,7 @@
          </menu>
          <action
                label="%ActionMakeBuildCreate.label"
-               class="org.eclipse.cdt.make.ui.actions.CreateBuildAction"
+               class="org.eclipse.cdt.make.internal.ui.actions.MakeCreateBuildAction"
                menubarPath="org.eclipse.cdt.make.ui.menu/group1"
                enablesFor="1"
                id="org.eclipse.cdt.make.ui.createBuildAction">
@@ -99,26 +99,26 @@
          <action
                label="%ActionMakeAll.label"
                icon="icons/ctool16/make.gif"
-               class="org.eclipse.cdt.make.ui.actions.BuildAction"
+               class="org.eclipse.cdt.make.internal.ui.actions.MakeBuilderAction"
                menubarPath="org.eclipse.cdt.make.ui.menu/group2"
                enablesFor="1"
-               id="org.eclipse.cdt.make.ui.makeAction.all">
+               id="org.eclipse.cdt.make.ui.makeBuildAction.all">
          </action>
          <action
                label="%ActionMakeClean.label"
                icon="icons/ctool16/make.gif"
-               class="org.eclipse.cdt.make.ui.actions.BuildAction"
+               class="org.eclipse.cdt.make.internal.ui.actions.MakeBuilderAction"
                menubarPath="org.eclipse.cdt.make.ui.menu/group2"
                enablesFor="1"
-               id="org.eclipse.cdt.make.ui.makeAction.clean">
+               id="org.eclipse.cdt.make.ui.makeBuildAction.clean">
          </action>
          <action
                label="%ActionMakeRebuild.label"
                icon="icons/ctool16/make.gif"
-               class="org.eclipse.cdt.make.ui.actions.BuildAction"
+               class="org.eclipse.cdt.make.internal.ui.actions.MakeBuilderAction"
                menubarPath="org.eclipse.cdt.make.ui.menu/group2"
                enablesFor="1"
-               id="org.eclipse.cdt.make.ui.makeAction.rebuild">
+               id="org.eclipse.cdt.make.ui.makeBuildAction.clean.all">
          </action>
          <filter
                name="nature"

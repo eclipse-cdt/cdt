@@ -42,7 +42,7 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 	}
 
 	public MakeProjectWizardOptionPage(String title, String description) {
-		super("MakeProjectSettingsPage");
+		super("MakeProjectSettingsPage"); //$NON-NLS-1$
 		setTitle(title);
 		setDescription(description);
 	}

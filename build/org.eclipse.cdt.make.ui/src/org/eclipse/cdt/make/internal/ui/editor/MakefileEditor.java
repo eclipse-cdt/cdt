@@ -40,7 +40,7 @@ public class MakefileEditor extends TextEditor {
 	 * The page that shows the outline.
 	 */
 	protected MakefileContentOutlinePage page;
-	protected IMakefile makefile;
+	private IMakefile makefile;
 
 	private MakefileContentOutlinePage getOutlinePage() {
 		if (page == null) {
@@ -102,6 +102,7 @@ public class MakefileEditor extends TextEditor {
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
+		makefile = null;
 		if (page != null) {
 			page.update();
 		}

@@ -876,6 +876,8 @@ public class Parser implements IParser
                 declaration.enterScope( requestor );
    
                 handleFunctionBody(declarator);
+				((IASTOffsetableElement)declaration).setEndingOffset(
+					lastToken.getEndOffset());
   
   				declaration.exitScope( requestor );
             }

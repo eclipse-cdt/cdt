@@ -304,9 +304,9 @@ public class CDebugModel
 														 boolean add ) throws DebugException
 	{
 		HashMap attributes = new HashMap( 10 );
-		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
+		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
-		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		return new CLineBreakpoint( resource, attributes, add );
@@ -353,13 +353,13 @@ public class CDebugModel
 															   boolean add ) throws DebugException
 	{
 		HashMap attributes = new HashMap( 10 );
-		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
+		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
 		attributes.put( IMarker.CHAR_START, new Integer( 0 ) );
 		attributes.put( IMarker.CHAR_END, new Integer( 0 ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
 		attributes.put( ICAddressBreakpoint.ADDRESS, Long.toString( address ) );
-		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		return new CAddressBreakpoint( resource, attributes, add );
@@ -399,7 +399,7 @@ public class CDebugModel
 																 boolean add ) throws DebugException
 	{
 		HashMap attributes = new HashMap( 10 );
-		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
+		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
 		int lineNumber = -1;
 		int charStart = -1;
 		int charEnd = -1;
@@ -423,7 +423,7 @@ public class CDebugModel
 		attributes.put( IMarker.CHAR_END, new Integer( charEnd ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
 		attributes.put( ICFunctionBreakpoint.FUNCTION, CDebugUtils.getFunctionName( function ) );
-		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		return new CFunctionBreakpoint( CDebugUtils.getFunctionResource( function ), attributes, add );
@@ -463,7 +463,7 @@ public class CDebugModel
 															   boolean add ) throws DebugException
 	{
 		HashMap attributes = new HashMap( 10 );
-		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
+		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
 		int lineNumber = -1;
 		int charStart = -1;
 		int charEnd = -1;
@@ -487,7 +487,7 @@ public class CDebugModel
 		attributes.put( IMarker.CHAR_END, new Integer( charEnd ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
 		attributes.put( ICFunctionBreakpoint.FUNCTION, CDebugUtils.getMethodQualifiedName( method ) );
-		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		return new CFunctionBreakpoint( CDebugUtils.getMethodResource( method ), attributes, add );
@@ -528,8 +528,8 @@ public class CDebugModel
 												 boolean add ) throws DebugException
 	{
 		HashMap attributes = new HashMap( 10 );
-		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
-		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
+		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICWatchpoint.EXPRESSION, expression );

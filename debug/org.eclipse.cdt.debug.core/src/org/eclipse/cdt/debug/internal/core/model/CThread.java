@@ -735,7 +735,7 @@ public class CThread extends CDebugElement
 			CStackFrame frame = (CStackFrame)(((IAdaptable)it.next()).getAdapter( CStackFrame.class ));
 			if ( frame != null )
 			{
-				((CStackFrame)frame).dispose();
+				frame.dispose();
 			}
 		}
 		fStackFrames.clear();

@@ -1,3 +1,15 @@
+2003-11-26 Mikhail Khodjaiants
+	Cleanup.
+	* CDebugModel.java
+	* CDebugUtils.java
+	* CRegisterManager.java
+	* CSharedLibraryManager.java
+	* CSignalManager.java
+	* CUpdateManager.java
+	* CDebugTarget.java
+	* CThread.java
+	* CVariable.java
+
 2003-11-10 Mikhail Khodjaiants
 	Ensure that all breakpoint creation and modification operations are running in the UI thread.
 	* CBreakpointManager.java

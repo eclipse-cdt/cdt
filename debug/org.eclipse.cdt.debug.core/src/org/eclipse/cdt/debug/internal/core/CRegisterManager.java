@@ -144,7 +144,7 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 	{
 		if ( getDebugTarget() != null )
 		{
-			return ((CDebugTarget)getDebugTarget()).getCDISession().getRegisterManager();
+			return getDebugTarget().getCDISession().getRegisterManager();
 		}
 		return null;
 	}

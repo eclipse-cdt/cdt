@@ -196,14 +196,14 @@ public class CDebugUtils
 	{
 		if ( bytes.length != 8 )
 			return 0;
-		return (long)Long.parseLong( bytesToString( bytes, le, false ), 16 );
+		return Long.parseLong( bytesToString( bytes, le, false ), 16 );
 	}  
 	
 	public static long toLongLong( char[] bytes, boolean le )
 	{
 		if ( bytes.length != 16 )
 			return 0;
-		return (long)Long.parseLong( bytesToString( bytes, le, false ), 16 );
+		return Long.parseLong( bytesToString( bytes, le, false ), 16 );
 	}
 	
 	public static long toUnsignedLongLong( char[] bytes, boolean le )

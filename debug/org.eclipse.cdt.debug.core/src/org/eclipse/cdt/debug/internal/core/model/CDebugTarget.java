@@ -200,16 +200,6 @@ public class CDebugTarget extends CDebugElement
 	private ICDIConfiguration fConfig;	
 
 	/**
-	 * Whether terminate is supported.
-	 */
-	private boolean fSupportsTerminate;
-
-	/**
-	 * Whether disconnect is supported.
-	 */
-	private boolean fSupportsDisconnect;
-
-	/**
 	 * The current state identifier.
 	 */
 	private int fCurrentStateId = IState.UNKNOWN;
@@ -289,8 +279,6 @@ public class CDebugTarget extends CDebugElement
 		setCDITarget( cdiTarget );
 		setExecFile( file );
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
-		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
-		fSupportsDisconnect = allowsDisconnect & getConfiguration().supportsDisconnect();
 		setThreadList( new ArrayList( 5 ) );
 		setDisassemblyManager( new DisassemblyManager( this ) );
 		setSharedLibraryManager( new CSharedLibraryManager( this ) );
@@ -351,7 +339,7 @@ public class CDebugTarget extends CDebugElement
 	public void setBreakpoints()
 	{
 		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
-		IBreakpoint[] bps = (IBreakpoint[])manager.getBreakpoints( CDebugModel.getPluginIdentifier() );
+		IBreakpoint[] bps = manager.getBreakpoints( CDebugModel.getPluginIdentifier() );
 		for ( int i = 0; i < bps.length; i++ )
 		{
 			if ( bps[i] instanceof ICBreakpoint && 
@@ -369,7 +357,7 @@ public class CDebugTarget extends CDebugElement
 					{
 					}
 				}
-				breakpointAdded( (ICBreakpoint)bps[i] );
+				breakpointAdded( bps[i] );
 			}
 		}
 	}

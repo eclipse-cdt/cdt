@@ -134,7 +134,7 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 	{
 		if ( getDebugTarget() != null )
 		{
-			return ((CDebugTarget)getDebugTarget()).getCDISession().getSharedLibraryManager();
+			return getDebugTarget().getCDISession().getSharedLibraryManager();
 		}
 		return null;
 	}
@@ -158,7 +158,7 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 			}
 			catch( CDIException e )
 			{
-				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.getMessage(), null );
+				getDebugTarget().targetRequestFailed( e.getMessage(), null );
 			}
 		}
 	}
@@ -177,13 +177,13 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 			}
 			catch( CDIException e )
 			{
-				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.getMessage(), null );
+				getDebugTarget().targetRequestFailed( e.getMessage(), null );
 			}
 		}
 	}
 
 	private void setBreakpoints()
 	{
-		((CDebugTarget)getDebugTarget()).setBreakpoints();
+		getDebugTarget().setBreakpoints();
 	}
 }

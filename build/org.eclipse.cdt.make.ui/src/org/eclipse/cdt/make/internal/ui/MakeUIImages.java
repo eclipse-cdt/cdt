@@ -37,6 +37,7 @@ public class MakeUIImages {
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
 
 	public static final String OBJ = "obj16/"; //$NON-NLS-1$
+	public static final String T_TOOL= "tool16/"; //$NON-NLS-1$
 
 	// For the build image
 	public static final String IMG_OBJS_BUILD_TARGET = NAME_PREFIX + "target_obj.gif"; //$NON-NLS-1$
@@ -51,6 +52,13 @@ public class MakeUIImages {
 	public static final String IMG_TOOLS_MAKE_TARGET_DELETE = NAME_PREFIX + "target_delete.gif"; //$NON-NLS-1$
 	public static final String IMG_TOOLS_MAKE_TARGET_EDIT = NAME_PREFIX + "target_edit.gif"; //$NON-NLS-1$
 
+	public static final String IMG_OBJS_MAKEFILE_MACRO = NAME_PREFIX + "macro_obj.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_MAKEFILE_MACRO = createManaged(OBJ, IMG_OBJS_MAKEFILE_MACRO);
+	public static final String IMG_OBJS_MAKEFILE_TARGET_RULE = NAME_PREFIX + "trule_obj.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_MAKEFILE_TARGET_RULE = createManaged(OBJ, IMG_OBJS_MAKEFILE_TARGET_RULE);
+	public static final String IMG_OBJS_MAKEFILE_INFERENCE_RULE = NAME_PREFIX + "irule_obj.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_MAKEFILE_INFERENCE_RULE = createManaged(OBJ, IMG_OBJS_MAKEFILE_INFERENCE_RULE);
+	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif";
 
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);

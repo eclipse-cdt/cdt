@@ -81,10 +81,25 @@ public class ProjectCreator extends TestCase {
 		return project;
 	}
 
+	public static IProject createCManagedProject(String projectName) throws Exception {
+		return createProject(new Path("resources/zips/CManaged.zip"), projectName);
+	}
+	
+	public static IProject createCPPManagedProject(String projectName) throws Exception {
+		return createProject(new Path("resources/zips/CPPManaged.zip"), projectName);
+	}
+	
+	public static IProject createCStandardProject(String projectName) throws Exception {
+		return createProject(new Path("resources/zips/CStandard.zip"), projectName);
+	}
+	
+	public static IProject createCPPStandardProject(String projectName) throws Exception {
+		return createProject(new Path("resources/zips/CPPStandard.zip"), projectName);
+	}
+	
 	public void test() throws Exception {
-		IProject project = createProject(
-				new Path("resources/zips/CPPManaged.zip"),
-				"TestProject");
+		IProject project = createCPPManagedProject("TestProject");
+		assertNotNull(project);
 	}
 	
 }

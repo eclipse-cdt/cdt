@@ -59,7 +59,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		radioComp.setLayoutData(gd);
-		fRunButton = createRadioButton(radioComp, "Run program in debugger.");
+		fRunButton = createRadioButton(radioComp, "Run program in debugger");
 		fRunButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fRunButton.getSelection() == true) {
@@ -71,7 +71,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		fAttachButton = createRadioButton(radioComp, "Attach to running process.");
+		fAttachButton = createRadioButton(radioComp, "Attach to running process");
 		fAttachButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -79,7 +79,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		});
 
 		fStopInMain = new Button(comp, SWT.CHECK);
-		fStopInMain.setText("Stop at main() on startup.");
+		fStopInMain.setText("Stop at main() on startup");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fStopInMain.setLayoutData(gd);

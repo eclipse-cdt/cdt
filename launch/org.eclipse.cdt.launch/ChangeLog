@@ -1,3 +1,7 @@
+2002-11-13 Thomas Fletcher
+	* src/.../launch/ui/CDebuggerTab.java
+	Updated punctuation.
+	
 2002-11-13 David Inglis
 	* src/.../launch/ui/CDebuggerTab.java
 	* src/.../launch/ui/CLaunchConfigurationTab.java

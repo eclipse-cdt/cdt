@@ -1,6 +1,12 @@
 2002-11-13 Alain Magloire
 
 	* src/.../internal/errorparsers/GCCErrorParser.java (processLine):
+	Remove the "warning :" prepend substring since the error is already mark.
+	Remove debuging println()s.
+
+2002-11-13 Alain Magloire
+
+	* src/.../internal/errorparsers/GCCErrorParser.java (processLine):
 	Fix check if the column is valid i.e. a number.
 
 2002-11-13 Judy Green

@@ -1,3 +1,18 @@
+2004-11-10 Alain Magloire
+	Fix for PR 51113 and PR 66268
+	It allow more flexibility in the GDB console, for example
+	when gdb require interactive questions.
+
+	* mi/org/eclipse/cdt/debug/mi/core/CLIProcessor.java
+	* mi/org/eclipse/cdt/debug/mi/core/MISession.java
+	* mi/org/eclipse/cdt/debug/mi/core/RxThread.java
+	* mi/org/eclipse/cdt/debug/mi/core/SessionProcess.java
+	* mi/org/eclipse/cdt/debug/mi/core/TxThread.java
+	* mi/org/eclipse/cdt/debug/core/command/MIGDBShowPrompt.java
+	* mi/org/eclipse/cdt/debug/core/command/RawCommand.java
+	* mi/org/eclipse/cdt/debug/core/output/MIOutput.java
+	* mi/org/eclipse/cdt/debug/core/output/MIParser.java
+
 2004-11-09 Alain Magloire
 	Throw not implemented exception for exception breakpoint
 

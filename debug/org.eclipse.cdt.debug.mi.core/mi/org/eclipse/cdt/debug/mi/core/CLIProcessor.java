@@ -35,19 +35,19 @@ public class CLIProcessor {
 	 * An attempt to discover the command type and
 	 * fire an event if necessary.
 	 */
-	void process(CLICommand cmd) {
+	void processStateChanges(CLICommand cmd) {
 		String operation = cmd.getOperation().trim();
-		process(cmd.getToken(), operation);
+		processStateChanges(cmd.getToken(), operation);
 	}
 
-	void process(MIInterpreterExecConsole exec) {
+	void processStateChanges(MIInterpreterExecConsole exec) {
 		String[] operations = exec.getParameters();
 		if (operations != null && operations.length > 0) {
-			process(exec.getToken(), operations[0]);
+			processStateChanges(exec.getToken(), operations[0]);
 		}
 	}
 
-	void process(int token, String operation) {
+	void processStateChanges(int token, String operation) {
 		// Get the command name.
 		int indx = operation.indexOf(' ');
 		if (indx != -1) {
@@ -64,10 +64,40 @@ public class CLIProcessor {
 			session.getMIInferior().setRunning();
 			MIEvent event = new MIRunningEvent(session, token, type);
 			session.fireEvent(event);
-		} else if (isSettingBreakpoint(operation) ||
-				   isSettingWatchpoint(operation) ||
-				   isChangeBreakpoint(operation) ||
-				   isDeletingBreakpoint(operation)) {
+		}
+	}
+
+	/**
+	 * An attempt to discover the command type and
+	 * fire an event if necessary.
+	 */
+	void processSettingChanges(CLICommand cmd) {
+		String operation = cmd.getOperation().trim();
+		processSettingChanges(cmd.getToken(), operation);
+	}
+
+	void processSettingChanges(MIInterpreterExecConsole exec) {
+		String[] operations = exec.getParameters();
+		if (operations != null && operations.length > 0) {
+			processSettingChanges(exec.getToken(), operations[0]);
+		}
+	}
+
+	void processSettingChanges(int token, String operation) {
+		// Get the command name.
+		int indx = operation.indexOf(' ');
+		if (indx != -1) {
+			operation = operation.substring(0, indx).trim();
+		} else {
+			operation = operation.trim();
+		}
+
+		// Check the type of command
+
+		if (isSettingBreakpoint(operation) ||
+				isSettingWatchpoint(operation) ||
+				isChangeBreakpoint(operation) ||
+				isDeletingBreakpoint(operation)) {
 			// We know something change, we just do not know what.
 			// So the easiest way is to let the top layer handle it. 
 			session.fireEvent(new MIBreakpointChangedEvent(session, 0));

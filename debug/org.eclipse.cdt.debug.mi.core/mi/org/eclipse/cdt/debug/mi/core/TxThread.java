@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
+import org.eclipse.cdt.debug.mi.core.command.RawCommand;
 
 /**
  * Transmission command thread blocks on the command Queue
@@ -35,6 +36,8 @@ public class TxThread extends Thread {
 
 	public void run () {
 		try {
+			RxThread rxThread = session.getRxThread();
+
 			// signal by the session of time to die.
 			OutputStream out;
 			while ((out = session.getChannelOutputStream()) != null) {
@@ -53,7 +56,7 @@ public class TxThread extends Thread {
 					if (str.length() > 0) {
 						// Move to the RxQueue only if RxThread is alive.
 						Thread rx = session.getRxThread();
-						if (rx != null && rx.isAlive()) {
+						if (rx != null && rx.isAlive() && !(cmd instanceof RawCommand)) {
 							CommandQueue rxQueue = session.getRxQueue();
 							rxQueue.addCommand(cmd);
 						} else {
@@ -65,11 +68,11 @@ public class TxThread extends Thread {
 					
 						// Process the Command line to recognise patterns we may need to fire event.
 						if (cmd instanceof CLICommand) {
-							cli.process((CLICommand)cmd);
+							cli.processStateChanges((CLICommand)cmd);
 						} else if (cmd instanceof MIInterpreterExecConsole) {
-							cli.process((MIInterpreterExecConsole)cmd);
+							cli.processStateChanges((MIInterpreterExecConsole)cmd);
 						}
-				
+
 						// shove in the pipe
 						if (out != null) {
 							out.write(str.getBytes());

@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
+import org.eclipse.cdt.debug.mi.core.command.RawCommand;
 
 /**
  */
@@ -78,15 +79,26 @@ public class SessionProcess extends Process {
 					String str = buf.toString().trim();
 					buf.setLength(0);
 					Command cmd = null;
+					// 1-
+					// if We have the secondary prompt it means
+					// that GDB is waiting for more feedback, use a RawCommand
+					// 2-
 					// Do not use the interpreterexec for stepping operation
 					// the UI will fall out of step.
-					if (session.useExecConsole() && str.length() > 0 && !CLIProcessor.isSteppingOperation(str)) {
+					// 3-
+					// Normal Command Line Interface.
+					boolean secondary = session.inSecondaryPrompt();
+					if (secondary) {
+						cmd = new RawCommand(str);
+					} else if (session.useExecConsole() && str.length() > 0 
+							&& !CLIProcessor.isSteppingOperation(str)) {
 						cmd = new MIInterpreterExecConsole(str);
 					} else {
 						cmd = new CLICommand(str);
 					}
 					try {
-						session.postCommand(cmd);
+						// Do not wait around for the answer.
+						session.postCommand(cmd, -1);
 					} catch (MIException e) {
 						//e.printStackTrace();
 						throw new IOException(e.getMessage());

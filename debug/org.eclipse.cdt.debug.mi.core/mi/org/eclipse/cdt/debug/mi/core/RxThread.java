@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
 import org.eclipse.cdt.debug.mi.core.command.MIExecFinish;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecReturn;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
+import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointHitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIErrorEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
@@ -48,6 +50,7 @@ import org.eclipse.cdt.debug.mi.core.output.MILogStreamOutput;
 import org.eclipse.cdt.debug.mi.core.output.MINotifyAsyncOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIOOBRecord;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIParser;
 import org.eclipse.cdt.debug.mi.core.output.MIResult;
 import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
 import org.eclipse.cdt.debug.mi.core.output.MIStatusAsyncOutput;
@@ -62,10 +65,13 @@ public class RxThread extends Thread {
 
 	final MISession session;
 	List oobList;
+	CLIProcessor cli;
+	int prompt = 1; // 1 --> Primary prompt "(gdb)"; 2 --> Secondary Prompt ">"
 
 	public RxThread(MISession s) {
 		super("MI RX Thread"); //$NON-NLS-1$
 		session = s;
+		cli = new CLIProcessor(session);
 		oobList = new ArrayList();
 	}
 
@@ -80,6 +86,7 @@ public class RxThread extends Thread {
 			while ((line = reader.readLine()) != null) {
 				// TRACING: print the output.
 				MIPlugin.getDefault().debugLog(line);
+				setPrompt(line);
 				processMIOutput(line + "\n"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
@@ -111,6 +118,26 @@ public class RxThread extends Thread {
 				}
 			}
 		}
+	}
+
+	void setPrompt(String line) {
+		line = line.trim();
+		MIParser parser = session.getMIParser();
+		if (line.equals(parser.primaryPrompt)) {
+			prompt = 1;
+		} else if (line.equals(parser.secondaryPrompt)) {
+			prompt = 2;
+		} else {
+			prompt = 0;
+		}
+	}
+
+	public boolean inPrimaryPrompt() {
+		return prompt == 1;
+	}
+
+	public boolean inSecondaryPrompt() {
+		return prompt == 2;
 	}
 
 	/**
@@ -184,6 +211,13 @@ public class RxThread extends Thread {
 
 				// Notify the waiting command.
 				if (cmd != null) {
+					// Process the Command line to recognise patterns we may need to fire event.
+					if (cmd instanceof CLICommand) {
+						cli.processSettingChanges((CLICommand)cmd);
+					} else if (cmd instanceof MIInterpreterExecConsole) {
+						cli.processSettingChanges((MIInterpreterExecConsole)cmd);
+					}
+
 					synchronized (cmd) {
 						// Set the accumulate console Stream
 						response.setMIOOBRecords(oobRecords);
@@ -283,6 +317,8 @@ public class RxThread extends Thread {
 			if (console != null) {
 				MIConsoleStreamOutput out = (MIConsoleStreamOutput) stream;
 				String str = out.getString();
+				// Process the console stream too.
+				setPrompt(str);
 				if (str != null) {
 					try {
 						console.write(str.getBytes());

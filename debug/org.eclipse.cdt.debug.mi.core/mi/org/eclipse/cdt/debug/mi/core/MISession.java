@@ -24,9 +24,11 @@ import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBExit;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBShowPrompt;
 import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
+import org.eclipse.cdt.debug.mi.core.output.MIGDBShowInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIParser;
 
@@ -157,6 +159,7 @@ public class MISession extends Observable {
 			postCommand(height, launchTimeout);
 			height.getMIInfo();
 
+			// Try to discover is "-interpreter-exec" is supported.
 			try {
 				MIInterpreterExecConsole echo = new  MIInterpreterExecConsole("echo"); //$NON-NLS-1$
 				postCommand(echo, launchTimeout);
@@ -166,6 +169,14 @@ public class MISession extends Observable {
 				//
 			}
 
+			// Get GDB's prompt
+			MIGDBShowPrompt prompt = new MIGDBShowPrompt();
+			postCommand(prompt);
+			MIGDBShowInfo infoPrompt = prompt.getMIGDBShowInfo();
+			String value = infoPrompt.getValue();
+			if (value != null && value.length() > 0) {
+				parser.primaryPrompt = value.trim();
+			}
 		} catch (MIException exc) {
 			// Kill the Transmition thread.
 			if (txThread.isAlive()) {
@@ -258,9 +269,17 @@ public class MISession extends Observable {
 	}
 
 	public boolean useExecConsole() {
-		return useInterpreterExecConsole;
+		return false;
+		//return useInterpreterExecConsole;
 	}
 
+	public boolean inPrimaryPrompt() {
+		return rxThread.inPrimaryPrompt();
+	}
+
+	public boolean inSecondaryPrompt() {
+		return rxThread.inSecondaryPrompt();
+	}
 	/**
 	 * The debug session is a program being debug.
 	 */
@@ -306,6 +325,8 @@ public class MISession extends Observable {
 
 	/**
 	 * Sends a command to gdb, and wait(timeout) for a response.
+	 * if timeout < 0 the wait will be skipped.
+	 * 
 	 */
 	public void postCommand(Command cmd, long timeout) throws MIException {
 
@@ -329,12 +350,24 @@ public class MISession extends Observable {
 		postCommand0(cmd, timeout);
 	}
 
+	/**
+	 * if timeout < 0 the operation will not try to way for
+	 * answer from gdb.
+	 * 
+	 * @param cmd
+	 * @param timeout
+	 * @throws MIException
+	 */
 	public synchronized void postCommand0(Command cmd, long timeout) throws MIException {
 		// TRACING: print the command;
 		MIPlugin.getDefault().debugLog(cmd.toString());
 
 		txQueue.addCommand(cmd);
 
+		// do not wait around the answer.
+		if (timeout < 0) {
+			return;
+		}
 		// Wait for the response or timedout
 		synchronized (cmd) {
 			// RxThread will set the MIOutput on the cmd

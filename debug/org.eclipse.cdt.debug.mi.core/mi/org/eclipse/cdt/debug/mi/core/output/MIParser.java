@@ -90,6 +90,9 @@ import java.util.StringTokenizer;
  */
 public class MIParser {
 
+	public String primaryPrompt = "(gdb)"; //$NON-NLS-1$
+	public String secondaryPrompt = ">"; //$NON-NLS-1$
+
 	/**
 	 * Point of entry to create an AST for MI.
 	 *
@@ -127,7 +130,7 @@ public class MIParser {
 				if (token.charAt(0) == '^') {
 					token.deleteCharAt(0);
 					rr = processMIResultRecord(token, id);
-				} else if (token.toString().startsWith(MIOutput.terminator)) {
+				} else if (token.toString().startsWith(primaryPrompt)) {
 					//break; // Do nothing.
 				} else {
 					MIOOBRecord band = processMIOOBRecord(token, id);

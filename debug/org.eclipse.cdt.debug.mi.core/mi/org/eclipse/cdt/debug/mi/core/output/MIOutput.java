@@ -15,7 +15,6 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIOutput {
 
-	public static final String terminator = "(gdb)"; //$NON-NLS-1$
 	public static final MIOOBRecord[] nullOOBRecord = new MIOOBRecord[0];
 	MIResultRecord rr = null;
 	MIOOBRecord[] oobs = nullOOBRecord;

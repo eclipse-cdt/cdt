@@ -1,5 +1,10 @@
 2003-01-09 Alain Magloire
 
+	* src/.../mi/core/cdi/BreakpointManager.java (hasBreakpointChanged):
+	Implemented.
+
+2003-01-09 Alain Magloire
+
 	* src/.../mi/core/cdi/model/CTarget.java (setCurrentThread): takes
 	a new argument to decide if the events should be fired.
 	* src/.../mi/core/cdi/model/CThread.java (getStackFrameCount): use

@@ -1,3 +1,12 @@
+2003-09-22 Alain Magloire
+
+	Disable the C-Task Property and Preference page.
+	The generation of those tasks was inadvertly remove any in the
+	parser.  The UI code is still there since it is a feature
+	that we will want for CDT-2.0
+
+	* plugin.xml
+
 2003-09-21 Alain Magloire
 
 	Patch contributed by Keith Campbell.

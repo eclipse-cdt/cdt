@@ -235,12 +235,14 @@
             class="org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage"
             id="org.eclipse.cdt.ui.preferneces.CBuildConsolePreferernces">
       </page>
+<!-- This code is disable for CDT-1.2: Alain
       <page
             name="%todoTaskPrefName"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPreferencePage"
             id="org.eclipse.cdt.ui.preferences.TodoTaskPreferencePage">
       </page>
+-->
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
@@ -255,6 +257,7 @@
                value="org.eclipse.cdt.core.cnature">
          </filter>
       </page>
+<!-- This code is disable for CDT-1.2, does not work correctly: Alain
       <page
             objectClass="org.eclipse.core.resources.IProject"
             name="%todoPageName"
@@ -265,6 +268,7 @@
                value="org.eclipse.cdt.core.cnature">
          </filter>
       </page>
+-->
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">

@@ -1,4 +1,11 @@
 2003-09-03 David Inglis
+	Fixed parser block to save ids properly.
+	Use shared preference key for error parsers.
+	
+	* src/org/eclipse/cdt/internal/ui/CPluginResources.properties
+	* src/org/eclipse/cdt/ui/dialogs/ErrorParserBlock.java
+
+2003-09-03 David Inglis
 	- src/org/eclipse/cdt/ui/TabFolderOptionBlock.java
 	- src/org/eclipse/cdt/ui/AbstractCOptionPage.java
 	- src/org/eclipse/cdt/ui/BinaryParserBlock.java

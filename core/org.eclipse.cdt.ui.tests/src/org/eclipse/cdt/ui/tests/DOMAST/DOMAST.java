@@ -110,6 +110,7 @@ import org.eclipse.ui.views.properties.PropertySheet;
  */
 
 public class DOMAST extends ViewPart {
+   public static final String VIEW_ID = "org.eclipse.cdt.ui.tests.DOMAST.DOMAST"; //$NON-NLS-1$
    private static final String PROPERTIES_VIEW = "org.eclipse.ui.views.PropertySheet"; //$NON-NLS-1$
    private static final String ASTUTIL_MENU_LABEL = "ASTUtil#"; //$NON-NLS-1$
    private static final String DISPLAY_TYPE = "getNodeType(IASTNode)"; //$NON-NLS-1$
@@ -168,8 +169,8 @@ public class DOMAST extends ViewPart {
    public class ViewContentProvider implements IStructuredContentProvider,
          ITreeContentProvider {
       private static final String POPULATING_AST_VIEW = "Populating AST View"; //$NON-NLS-1$
-	  private TreeParent invisibleRoot;
-      private TreeParent tuTreeParent = null;
+	  private DOMASTNodeParent invisibleRoot;
+      private DOMASTNodeParent tuTreeParent = null;
       private IASTTranslationUnit tu = null;
 	  private IASTProblem[] astProblems = null;
 
@@ -186,11 +187,11 @@ public class DOMAST extends ViewPart {
 
      }
       
-      public TreeParent getTUTreeParent() {
+      public DOMASTNodeParent getTUTreeParent() {
       	if (tuTreeParent == null && invisibleRoot != null) {
       		for(int i=0; i<invisibleRoot.getChildren().length; i++) {
-      			if (invisibleRoot.getChildren()[i] instanceof TreeParent && invisibleRoot.getChildren()[i].getNode() instanceof IASTTranslationUnit){
-      	      		tuTreeParent = (TreeParent)invisibleRoot.getChildren()[i];
+      			if (invisibleRoot.getChildren()[i] instanceof DOMASTNodeParent && invisibleRoot.getChildren()[i].getNode() instanceof IASTTranslationUnit){
+      	      		tuTreeParent = (DOMASTNodeParent)invisibleRoot.getChildren()[i];
       	      		return tuTreeParent;
       			}
       		}
@@ -202,7 +203,7 @@ public class DOMAST extends ViewPart {
       public IASTTranslationUnit getTU() {
       	if (tu == null && invisibleRoot != null) {
       		for(int i=0; i<invisibleRoot.getChildren().length; i++) {
-      			if (invisibleRoot.getChildren()[i] instanceof TreeParent && invisibleRoot.getChildren()[i].getNode() instanceof IASTTranslationUnit){
+      			if (invisibleRoot.getChildren()[i] instanceof DOMASTNodeParent && invisibleRoot.getChildren()[i].getNode() instanceof IASTTranslationUnit){
       	      		tu = (IASTTranslationUnit)invisibleRoot.getChildren()[i].getNode();
       			}
       		}
@@ -224,22 +225,22 @@ public class DOMAST extends ViewPart {
       }
 
       public Object getParent(Object child) {
-         if (child instanceof TreeObject) {
-            return ((TreeObject) child).getParent();
+         if (child instanceof DOMASTNodeLeaf) {
+            return ((DOMASTNodeLeaf) child).getParent();
          }
          return null;
       }
 
       public Object[] getChildren(Object parent) {
-         if (parent instanceof TreeParent) {
-            return ((TreeParent) parent).getChildren();
+         if (parent instanceof DOMASTNodeParent) {
+            return ((DOMASTNodeParent) parent).getChildren();
          }
          return new Object[0];
       }
 
       public boolean hasChildren(Object parent) {
-         if (parent instanceof TreeParent)
-            return ((TreeParent) parent).hasChildren();
+         if (parent instanceof DOMASTNodeParent)
+            return ((DOMASTNodeParent) parent).hasChildren();
          return false;
       }
 
@@ -280,10 +281,10 @@ public class DOMAST extends ViewPart {
 					private void expandTreeIfNecessary(TreeItem[] tree, Object[] expanded) {
 			     		for( int i=0; i<tree.length; i++) {
 			     			for( int j=0; j<expanded.length; j++) {
-				     			if (expanded[j] instanceof TreeObject &&
-				     					tree[i].getData() instanceof TreeObject &&
-				     					((TreeObject)expanded[j]).toString().equals(((TreeObject)tree[i].getData()).toString()) && 
-				     					((TreeObject)expanded[j]).getOffset() == (((TreeObject)tree[i].getData()).getOffset())) {
+				     			if (expanded[j] instanceof DOMASTNodeLeaf &&
+				     					tree[i].getData() instanceof DOMASTNodeLeaf &&
+				     					((DOMASTNodeLeaf)expanded[j]).toString().equals(((DOMASTNodeLeaf)tree[i].getData()).toString()) && 
+				     					((DOMASTNodeLeaf)expanded[j]).getOffset() == (((DOMASTNodeLeaf)tree[i].getData()).getOffset())) {
 				     				tree[i].setExpanded(true);
 				     				viewer.refresh();
 				     				expandTreeIfNecessary(tree[i].getItems(), expanded);
@@ -309,7 +310,7 @@ public class DOMAST extends ViewPart {
 		private static final String GENERATING_INITIAL_TREE = "Generating initial AST Tree for the View"; //$NON-NLS-1$
 		private static final String PARSING_TRANSLATION_UNIT = "Parsing Translation Unit"; //$NON-NLS-1$
 		String name = null;
-      	TreeParent root = null;
+      	DOMASTNodeParent root = null;
       	ViewContentProvider provider = null;
       	TreeViewer view = null;
       	IFile file = null;
@@ -326,7 +327,7 @@ public class DOMAST extends ViewPart {
 			this.file = file;
 		}
 		
-	    public TreeParent getInvisibleRoot() {
+	    public DOMASTNodeParent getInvisibleRoot() {
 	      	return root;
 	    }
 
@@ -380,7 +381,7 @@ public class DOMAST extends ViewPart {
              System.out.println("[DOM AST View] done " + GENERATING_INITIAL_TREE + ": " + (System.currentTimeMillis()- start) );
 	         
 	         // display roots
-	         root = new TreeParent(null); //$NON-NLS-1$
+	         root = new DOMASTNodeParent(null); //$NON-NLS-1$
 	         
 	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
 	         monitor.subTask(RETRIEVING_PREPROCESSOR_STATEMENTS);
@@ -442,10 +443,10 @@ public class DOMAST extends ViewPart {
 	  }
       
       private void initialize() {
-      	invisibleRoot = new TreeParent(); // blank the AST View, when the job above is complete it will update the AST View with the proper tree
+      	invisibleRoot = new DOMASTNodeParent(); // blank the AST View, when the job above is complete it will update the AST View with the proper tree
       }
       
-      protected void setInvisibleRoot(TreeParent root) {
+      protected void setInvisibleRoot(DOMASTNodeParent root) {
       	invisibleRoot = root;
       }
 
@@ -478,13 +479,13 @@ public class DOMAST extends ViewPart {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 		
-		private TreeItem expandTreeToTreeObject(TreeItem[] treeItems, TreeObject treeObj) {
+		private TreeItem expandTreeToTreeObject(TreeItem[] treeItems, DOMASTNodeLeaf treeObj) {
 			for (int i=0; i<treeItems.length; i++) {
 				if (treeItems[i].getData() == treeObj) {
 	 				return treeItems[i];
 	 			}
 	 			
-	 			TreeParent parent = treeObj.getParent();
+	 			DOMASTNodeParent parent = treeObj.getParent();
 	 			
 	 			if (parent == null) return null; 
 
@@ -504,7 +505,7 @@ public class DOMAST extends ViewPart {
 	 		return null; // nothing found
 		}
 		
-	 	private TreeItem expandTreeToTreeObject(TreeObject treeObj) {
+	 	private TreeItem expandTreeToTreeObject(DOMASTNodeLeaf treeObj) {
 	 		return expandTreeToTreeObject(viewer.getTree().getItems(), treeObj);
 	 	}
 		
@@ -521,14 +522,14 @@ public class DOMAST extends ViewPart {
 		 * @return
 		 */
 		public boolean findAndSelect(IASTNode node, boolean useOffset) {
-			// get the TreeObject from the AST View's model corresponding to the IASTNode
-			TreeObject treeNode = null;
+			// get the DOMASTNodeLeaf from the AST View's model corresponding to the IASTNode
+			DOMASTNodeLeaf treeNode = null;
 			TreeItem treeItem = null;
 			
 			treeNode =  getTUTreeParent().findTreeObject(node, useOffset);
 
 			if (treeNode != null && treeNode.getParent() != null) {
-				// found a matching TreeObject, so expand the tree to that object
+				// found a matching DOMASTNodeLeaf, so expand the tree to that object
 				treeItem = expandTreeToTreeObject(treeNode);
 			}
 			
@@ -556,8 +557,8 @@ public class DOMAST extends ViewPart {
          String imageKey = DOMASTPluginImages.IMG_DEFAULT;
 
          IASTNode node = null;
-         if (obj instanceof TreeObject) {
-            node = ((TreeObject) obj).getNode();
+         if (obj instanceof DOMASTNodeLeaf) {
+            node = ((DOMASTNodeLeaf) obj).getNode();
          }
 
          if (node instanceof IASTArrayModifier) {
@@ -693,8 +694,8 @@ public class DOMAST extends ViewPart {
 					  IASTNode selectedNode = null;
 					  if (viewer.getSelection() instanceof StructuredSelection
 							  && ((StructuredSelection) viewer.getSelection())
-							  .getFirstElement() instanceof TreeObject) {
-						  selectedNode = ((TreeObject) ((StructuredSelection) viewer
+							  .getFirstElement() instanceof DOMASTNodeLeaf) {
+						  selectedNode = ((DOMASTNodeLeaf) ((StructuredSelection) viewer
 								  .getSelection()).getFirstElement()).getNode(); 
 					  }
 					  
@@ -881,9 +882,9 @@ public class DOMAST extends ViewPart {
 		  public void run() {
 			  ISelection selection = viewer.getSelection();
 		     	if (selection instanceof IStructuredSelection &&
-		     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
-		     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
-					showMessage("ASTUtil#getNodeType(IASTNode): \"" + ASTTypeUtil.getNodeType(((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
+		     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
+					showMessage("ASTUtil#getNodeType(IASTNode): \"" + ASTTypeUtil.getNodeType(((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		     	}
 		  } };
 	  displayNodeTypeAction.setText(DISPLAY_TYPE);
@@ -894,9 +895,9 @@ public class DOMAST extends ViewPart {
 		  public void run() {
 			  ISelection selection = viewer.getSelection();
 		     	if (selection instanceof IStructuredSelection &&
-		     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
-		     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
-					showMessage("ASTSignatureUtil#getNodeSignature(IASTNode): \"" + ASTSignatureUtil.getNodeSignature(((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
+		     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
+					showMessage("ASTSignatureUtil#getNodeSignature(IASTNode): \"" + ASTSignatureUtil.getNodeSignature(((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		     	}
 		  } };
       displayNodeSignatureAction.setText(DISPLAY_SIGNATURE);
@@ -907,9 +908,9 @@ public class DOMAST extends ViewPart {
 		  public void run() {
 			  ISelection selection = viewer.getSelection();
 		     	if (selection instanceof IStructuredSelection &&
-		     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
-		     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTExpression) {
-					showMessage("ASTSignatureUtil#getExpressionString(IASTExpression): \"" + ASTSignatureUtil.getExpressionString((IASTExpression)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
+		     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTExpression) {
+					showMessage("ASTSignatureUtil#getExpressionString(IASTExpression): \"" + ASTSignatureUtil.getExpressionString((IASTExpression)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		     	}
 		  } };
 	  displayExpressionAction.setText(DISPLAY_EXPRESSION);
@@ -920,9 +921,9 @@ public class DOMAST extends ViewPart {
 		  public void run() {
 			  ISelection selection = viewer.getSelection();
 		     	if (selection instanceof IStructuredSelection &&
-		     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
-		     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTInitializer) {
-					showMessage("ASTSignatureUtil#getInitializerString(IASTInitializer): \"" + ASTSignatureUtil.getInitializerString((IASTInitializer)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
+		     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTInitializer) {
+					showMessage("ASTSignatureUtil#getInitializerString(IASTInitializer): \"" + ASTSignatureUtil.getInitializerString((IASTInitializer)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		     	}
 		  } };
 	  displayInitializerAction.setText(DISPLAY_INITIALIZER);
@@ -974,10 +975,10 @@ public class DOMAST extends ViewPart {
       public void run() {
          ISelection selection = viewer.getSelection();
          Object obj = ((IStructuredSelection) selection).getFirstElement();
-         if (aPart instanceof CEditor && obj instanceof TreeObject) {
-            String filename = ((TreeObject) obj).getFilename();
+         if (aPart instanceof CEditor && obj instanceof DOMASTNodeLeaf) {
+            String filename = ((DOMASTNodeLeaf) obj).getFilename();
             
-            if (filename.equals(TreeObject.BLANK_STRING))
+            if (filename.equals(DOMASTNodeLeaf.BLANK_STRING))
             	return;
             
             IResource r = ParserUtil.getResourceForFilename(filename);
@@ -1000,10 +1001,10 @@ public class DOMAST extends ViewPart {
                   return;
                }
             }
-            ((CEditor) aPart).selectAndReveal(((TreeObject) obj).getOffset(),
-                  ((TreeObject) obj).getLength());
+            ((CEditor) aPart).selectAndReveal(((DOMASTNodeLeaf) obj).getOffset(),
+                  ((DOMASTNodeLeaf) obj).getLength());
 
-            aPart.getSite().getPage().activate(aPart.getSite().getPage().findView(OpenDOMViewAction.VIEW_ID));
+            aPart.getSite().getPage().activate(aPart.getSite().getPage().findView(VIEW_ID));
          }
       }
    }
@@ -1013,19 +1014,19 @@ public class DOMAST extends ViewPart {
 	public void run() {
      	ISelection selection = viewer.getSelection();
      	if (selection instanceof IStructuredSelection &&
-     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
-     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTName) {
-     		IASTName name = (IASTName)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode();
+     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
+     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTName) {
+     		IASTName name = (IASTName)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode();
      		StringBuffer pattern = new StringBuffer(STRING_QUOTE);
      		if (name.toString() != null)
      			pattern.append(name.toString());
      		pattern.append(STRING_QUOTE);
      		
      		if (lang == ParserLanguage.CPP) {
-     			IASTName[] names = ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getDeclarations(name.resolveBinding());
+     			IASTName[] names = ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getDeclarations(name.resolveBinding());
      			displayNames(names, OPEN_DECLARATIONS, pattern.toString());
      		} else {
-     			IASTName[] names = ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getDeclarations(name.resolveBinding());
+     			IASTName[] names = ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getDeclarations(name.resolveBinding());
      			displayNames(names, OPEN_DECLARATIONS, pattern.toString());
      		}
      	}
@@ -1037,19 +1038,19 @@ public class DOMAST extends ViewPart {
     public void run() {
      	ISelection selection = viewer.getSelection();
      	if (selection instanceof IStructuredSelection &&
-     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
-     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTName) {
-     		IASTName name = (IASTName)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode();
+     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
+     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTName) {
+     		IASTName name = (IASTName)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode();
      		StringBuffer pattern = new StringBuffer(STRING_QUOTE);
      		if (name.toString() != null)
      			pattern.append(name.toString());
      		pattern.append(STRING_QUOTE);
      		
      		if (lang == ParserLanguage.CPP) {
-     			IASTName[] names = ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getReferences(name.resolveBinding());
+     			IASTName[] names = ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getReferences(name.resolveBinding());
      			displayNames(names, OPEN_REFERENCES, pattern.toString());
      		} else {
-     			IASTName[] names = ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getReferences(name.resolveBinding());
+     			IASTName[] names = ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getReferences(name.resolveBinding());
      			displayNames(names, OPEN_REFERENCES, pattern.toString());
      		}
      	}
@@ -1187,7 +1188,7 @@ public class DOMAST extends ViewPart {
     	if (editor instanceof CEditor) {
 
     		try {
-    			tempView = site.getPage().showView(OpenDOMViewAction.VIEW_ID);
+    			tempView = site.getPage().showView(VIEW_ID);
     		} catch (PartInitException pie) {}
     		
     		if (tempView != null) {

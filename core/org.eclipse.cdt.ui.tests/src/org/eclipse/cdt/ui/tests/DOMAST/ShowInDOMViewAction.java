@@ -84,7 +84,7 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 		if (file == null) return false;
 
 		try {
-			view = editor.getSite().getPage().showView(OpenDOMViewAction.VIEW_ID);
+			view = editor.getSite().getPage().showView(DOMAST.VIEW_ID);
 		} catch (PartInitException pie) {}
 		
 		if (view instanceof DOMAST) {

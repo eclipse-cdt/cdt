@@ -23,10 +23,10 @@ public class PreprocessorFilter extends ViewerFilter {
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (element instanceof TreeObject) {
-			int flag = ((TreeObject)element).getFiltersFlag() & TreeObject.FLAG_PREPROCESSOR;
+		if (element instanceof DOMASTNodeLeaf) {
+			int flag = ((DOMASTNodeLeaf)element).getFiltersFlag() & DOMASTNodeLeaf.FLAG_PREPROCESSOR;
 			if (flag > 0) {
-				if (((TreeObject)element).getNode() instanceof IASTPreprocessorStatement)
+				if (((DOMASTNodeLeaf)element).getNode() instanceof IASTPreprocessorStatement)
 					return false;
 
 				return true;

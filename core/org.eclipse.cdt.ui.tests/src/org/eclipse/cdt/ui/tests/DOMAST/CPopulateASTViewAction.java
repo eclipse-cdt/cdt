@@ -58,12 +58,12 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 		shouldVisitEnumerators    = true;
 	}
 
-	TreeParent root = null;
+	DOMASTNodeParent root = null;
 	IProgressMonitor monitor = null;
 	IASTProblem[] astProblems = new IASTProblem[INITIAL_PROBLEM_SIZE];
 	
 	public CPopulateASTViewAction(IASTTranslationUnit tu, IProgressMonitor monitor) {
-		root = new TreeParent(tu);
+		root = new DOMASTNodeParent(tu);
 		this.monitor = monitor;
 	}
 	
@@ -77,17 +77,17 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 				nodeLocations[0].getNodeLength() > 0))
 			return PROCESS_CONTINUE;
 		
-		TreeParent parent = root.findTreeParentForNode(node);
+		DOMASTNodeParent parent = root.findTreeParentForNode(node);
 		
 		if (parent == null)
 			parent = root;
 		
-		TreeParent tree = new TreeParent(node);
+		DOMASTNodeParent tree = new DOMASTNodeParent(node);
 		parent.addChild(tree);
 		
 		// set filter flags
 		if (node instanceof IASTProblemHolder || node instanceof IASTProblem) { 
-			tree.setFiltersFlag(TreeObject.FLAG_PROBLEM);
+			tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PROBLEM);
 			
 			if (node instanceof IASTProblemHolder)
 				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, ((IASTProblemHolder)node).getProblem());
@@ -95,9 +95,9 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, node);
 		}
 		if (node instanceof IASTPreprocessorStatement)
-			tree.setFiltersFlag(TreeObject.FLAG_PREPROCESSOR);
+			tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PREPROCESSOR);
 		if (node instanceof IASTPreprocessorIncludeStatement)
-			tree.setFiltersFlag(TreeObject.FLAG_INCLUDE_STATEMENTS);
+			tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_INCLUDE_STATEMENTS);
 		
 	
 		
@@ -221,7 +221,7 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 		}
 	}
 	
-	public TreeParent getTree() {
+	public DOMASTNodeParent getTree() {
 		return root;
 	}
 	
@@ -242,7 +242,7 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 		}
 		
 		// get the tree model elements corresponding to the includes
-		TreeParent[] treeIncludes = new TreeParent[index];
+		DOMASTNodeParent[] treeIncludes = new DOMASTNodeParent[index];
 		for (int i=0; i<treeIncludes.length; i++) {
 			if (monitor != null && monitor.isCanceled()) return;
 			treeIncludes[i] = root.findTreeObject(includes[i], false);
@@ -250,7 +250,7 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 		
 		// loop through the includes and make sure that all of the nodes 
 		// that are children of the TU are in the proper include (based on offset)
-		TreeObject child = null;
+		DOMASTNodeLeaf child = null;
 		outerLoop: for (int i=treeIncludes.length-1; i>=0; i--) {
 			if (treeIncludes[i] == null) continue;
 

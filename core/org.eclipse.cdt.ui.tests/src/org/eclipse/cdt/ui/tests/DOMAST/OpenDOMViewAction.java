@@ -35,7 +35,6 @@ import org.eclipse.ui.PartInitException;
  */
 public class OpenDOMViewAction implements IViewActionDelegate, IEditorActionDelegate, IObjectActionDelegate {
 
-	public static final String VIEW_ID = "org.eclipse.cdt.ui.tests.DOMAST.DOMAST"; //$NON-NLS-1$
 	IViewPart viewPart = null;
 	ISelection selection = null;
 	IFile file = null;
@@ -76,7 +75,7 @@ public class OpenDOMViewAction implements IViewActionDelegate, IEditorActionDele
 		IViewPart tempView = null;
 
 		try {
-			tempView = viewPart.getSite().getPage().showView(VIEW_ID);
+			tempView = viewPart.getSite().getPage().showView(DOMAST.VIEW_ID);
 		} catch (PartInitException pie) {}
 		
 		if (tempView != null) {

@@ -50,7 +50,7 @@ public class DOMASTPluginImages {
 	public static final String PLUGIN_ID = "org.eclipse.cdt.testplugin.CTestPlugin"; //$NON-NLS-1$
 	private static final String NAME_PREFIX= PLUGIN_ID + '.';
 	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
-	public static final String ICON_PREFIX= "used/"; //$NON-NLS-1$
+	public static final String ICON_PREFIX= "dom_view/"; //$NON-NLS-1$
 
 	public static final String IMG_IASTArrayModifier= NAME_PREFIX + "showasarray_co.gif"; //$NON-NLS-1$
 	public static final String IMG_IASTDeclaration= NAME_PREFIX + "cdeclaration_obj.gif"; //$NON-NLS-1$

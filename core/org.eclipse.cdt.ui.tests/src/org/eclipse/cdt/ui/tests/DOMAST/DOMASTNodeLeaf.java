@@ -54,7 +54,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 /**
  * @author dsteffle
  */
-public class TreeObject implements IAdaptable {
+public class DOMASTNodeLeaf implements IAdaptable {
 	private static final String VARIABLE_SIZED_ = "* "; //$NON-NLS-1$
 	private static final String VOLATILE_ = "volatile "; //$NON-NLS-1$
 	private static final String STATIC_ = "static "; //$NON-NLS-1$
@@ -73,25 +73,25 @@ public class TreeObject implements IAdaptable {
 	private static final String LIST_SEPARATOR = ", "; //$NON-NLS-1$
 	private static final String PERIOD = "."; //$NON-NLS-1$
 	private IASTNode node = null;
-	private TreeParent parent;
+	private DOMASTNodeParent parent;
 	
 	// used for applying filters to the tree, since it is lazily populated
 	// all parents of the desired tree object to display need to have a flag as well
 	private int filterFlag = 0; 
-	public static final int FLAG_PROBLEM = 0x1;
-	public static final int FLAG_PREPROCESSOR = 0x2;
-	public static final int FLAG_INCLUDE_STATEMENTS = 0x2;
+	public static final int FLAG_PROBLEM = 1<<0;
+	public static final int FLAG_PREPROCESSOR = 1<<1;
+	public static final int FLAG_INCLUDE_STATEMENTS = 1<<2;
 	
-	public TreeObject(IASTNode node) {
+	public DOMASTNodeLeaf(IASTNode node) {
 		this.node = node;
 	}
 	public IASTNode getNode() {
 		return node;
 	}
-	public void setParent(TreeParent parent) {
+	public void setParent(DOMASTNodeParent parent) {
 		this.parent = parent;
 	}
-	public TreeParent getParent() {
+	public DOMASTNodeParent getParent() {
 		return parent;
 	}
 	

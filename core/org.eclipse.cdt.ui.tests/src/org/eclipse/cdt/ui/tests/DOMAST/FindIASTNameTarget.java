@@ -36,10 +36,10 @@ import org.eclipse.swt.widgets.TreeItem;
 public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTargetExtension3 {
 
 	IASTTranslationUnit tu = null;
-	TreeParent tuTreeParent = null;
+	DOMASTNodeParent tuTreeParent = null;
 	ParserLanguage lang = null;
 	TreeViewer viewer = null;
-	TreeObject startingNode = null;
+	DOMASTNodeLeaf startingNode = null;
 	IASTName[] matchingNames = null;
 	boolean wasForward = true;
 	int index = 0;
@@ -306,13 +306,13 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		return null;
 	}
 		
-	private TreeItem expandTreeToTreeObject(TreeItem[] treeItems, TreeObject treeObj) {
+	private TreeItem expandTreeToTreeObject(TreeItem[] treeItems, DOMASTNodeLeaf treeObj) {
 		for (int i=0; i<treeItems.length; i++) {
 			if (treeItems[i].getData() == treeObj) {
  				return treeItems[i];
  			}
  			
- 			TreeParent parent = treeObj.getParent();
+ 			DOMASTNodeParent parent = treeObj.getParent();
  			
  			if (parent == null) return null; 
 
@@ -332,7 +332,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
  		return null; // nothing found
 	}
 	
- 	private TreeItem expandTreeToTreeObject(TreeObject treeObj) {
+ 	private TreeItem expandTreeToTreeObject(DOMASTNodeLeaf treeObj) {
  		return expandTreeToTreeObject(viewer.getTree().getItems(), treeObj);
  	}
 	
@@ -351,14 +351,14 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 		
 		if (selection.isEmpty()) {
-			if (viewer.getTree().getItems()[0].getData() instanceof TreeObject);
-				startingNode = (TreeObject)viewer.getTree().getItems()[0].getData();
+			if (viewer.getTree().getItems()[0].getData() instanceof DOMASTNodeLeaf);
+				startingNode = (DOMASTNodeLeaf)viewer.getTree().getItems()[0].getData();
 			
 			return new Point(0, 0);
 		}
 		
-		startingNode = (TreeObject)selection.getFirstElement();
-		return new Point(((ASTNode)((TreeObject)selection.getFirstElement()).getNode()).getOffset(), 0);
+		startingNode = (DOMASTNodeLeaf)selection.getFirstElement();
+		return new Point(((ASTNode)((DOMASTNodeLeaf)selection.getFirstElement()).getNode()).getOffset(), 0);
 	}
 
 	/* (non-Javadoc)
@@ -398,13 +398,13 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		IASTName foundName = null;
 		foundName = findNextMatchingName( findString, searchForward, caseSensitive, wholeWord, regExSearch );
 		
-		// get the TreeObject from the AST View's model corresponding to that name
-		TreeObject treeNode = null;
+		// get the DOMASTNodeLeaf from the AST View's model corresponding to that name
+		DOMASTNodeLeaf treeNode = null;
 		TreeItem treeItem = null;
 		treeNode =  tuTreeParent.findTreeObject(foundName, true);
 
 		if (treeNode != null && treeNode.getParent() != null) {
-			// found a matching TreeObject, so expand the tree to that object
+			// found a matching DOMASTNodeLeaf, so expand the tree to that object
 			treeItem = expandTreeToTreeObject(treeNode);
 		}
 		
@@ -416,7 +416,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 			treeNode =  tuTreeParent.findTreeObject(foundName, true);
 			
 			if (treeNode != null && treeNode.getParent() != null) {
-				// found a matching TreeObject, so expand the tree to that object
+				// found a matching DOMASTNodeLeaf, so expand the tree to that object
 				treeItem = expandTreeToTreeObject(treeNode);
 			}
 		}

@@ -24,10 +24,10 @@ public class IncludeStatementFilter extends ViewerFilter {
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (element instanceof TreeObject) {
-			int flag = ((TreeObject)element).getFiltersFlag() & TreeObject.FLAG_INCLUDE_STATEMENTS;
+		if (element instanceof DOMASTNodeLeaf) {
+			int flag = ((DOMASTNodeLeaf)element).getFiltersFlag() & DOMASTNodeLeaf.FLAG_INCLUDE_STATEMENTS;
 			if (flag > 0) {
-				IASTNode node = ((TreeObject)element).getNode();
+				IASTNode node = ((DOMASTNodeLeaf)element).getNode();
 				if (node instanceof IASTPreprocessorIncludeStatement)
 					return false;
 				

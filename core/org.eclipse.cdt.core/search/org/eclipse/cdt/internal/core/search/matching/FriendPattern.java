@@ -41,7 +41,7 @@ public class FriendPattern extends ClassDeclarationPattern {
 	 * @param caseSensitive
 	 */
 	public FriendPattern(char[] name, char[][] containers, SearchFor searchFor, LimitTo limit, int mode, boolean caseSensitive) {
-		super(name, containers, searchFor, limit, mode, caseSensitive);
+		super(name, containers, searchFor, limit, mode, caseSensitive, false);
 	}
 	
 	public char[] indexEntryPrefix() {

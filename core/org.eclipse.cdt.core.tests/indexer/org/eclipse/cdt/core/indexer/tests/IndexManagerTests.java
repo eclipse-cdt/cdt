@@ -425,7 +425,7 @@ public class IndexManagerTests extends TestCase {
 		  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
 		  assertTrue("Index exists for project",ind != null);
 		  
-		  String [] typeRefEntryResultModel ={"EntryResult: word=typeRef/C/C/B/A, refs={ 1 }", "EntryResult: word=typeRef/C/ForwardA/A, refs={ 1 }", "EntryResult: word=typeRef/E/e1/B/A, refs={ 1 }", "EntryResult: word=typeRef/V/x/B/A, refs={ 1 }"};
+		  String [] typeRefEntryResultModel ={"EntryResult: word=typeRef/C/C/B/A, refs={ 1 }", "EntryResult: word=typeRef/E/e1/B/A, refs={ 1 }", "EntryResult: word=typeRef/G/ForwardA/A, refs={ 1 }", "EntryResult: word=typeRef/V/x/B/A, refs={ 1 }"};
 		  IEntryResult[] typerefresults = ind.queryEntries(IIndexConstants.TYPE_REF);
 		  assertTrue("Entry exists",typerefresults != null);
 		  
@@ -558,10 +558,10 @@ public class IndexManagerTests extends TestCase {
 	 assertTrue("Index exists for project",ind != null);
 
 	//IEntryResult[] fwdDclResults = ind.queryEntries("typeDecl/C/ForwardA/A".toCharArray());
-	 IEntryResult[] fwdDclResults = ind.queryEntries("typeDecl/C/ForwardA/A".toCharArray());
+	 IEntryResult[] fwdDclResults = ind.queryEntries("typeDecl/G/ForwardA/A".toCharArray());
 	 assertTrue("Entry exists",fwdDclResults != null);
 	 
-	 String [] fwdDclModel = {"EntryResult: word=typeDecl/C/ForwardA/A, refs={ 1 }"};
+	 String [] fwdDclModel = {"EntryResult: word=typeDecl/G/ForwardA/A, refs={ 1 }"};
 	
 	 if (fwdDclResults.length != fwdDclModel.length)
 		fail("Entry Result length different from model for forward declarations");
@@ -571,10 +571,10 @@ public class IndexManagerTests extends TestCase {
 	   assertEquals(fwdDclModel[i],fwdDclResults[i].toString());
 	 }
 
-	IEntryResult[] fwdDclRefResults = ind.queryEntries("typeRef/C/ForwardA/A".toCharArray());
+	IEntryResult[] fwdDclRefResults = ind.queryEntries("typeRef/G/ForwardA/A".toCharArray());
 	assertTrue("Entry exists", fwdDclRefResults!= null);
 	
-	String [] fwdDclRefModel = {"EntryResult: word=typeRef/C/ForwardA/A, refs={ 1 }"};
+	String [] fwdDclRefModel = {"EntryResult: word=typeRef/G/ForwardA/A, refs={ 1 }"};
 
 	if (fwdDclRefResults.length != fwdDclRefModel.length)
 	   fail("Entry Result length different from model for forward declarations refs");

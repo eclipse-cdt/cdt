@@ -1,3 +1,6 @@
+2004-08-11 Bogdan Gheorghe
+	Modified indexer test to work with new forward declaration encoding.
+	
 2004-08-03 Bogdan Gheorghe
 	Updated indexer and dependency tests to work for indexing standalone headers
 

@@ -364,8 +364,8 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 			indexer.addClassReference((IASTClassSpecifier)reference.getReferencedElement());
 		else if (reference.getReferencedElement() instanceof IASTElaboratedTypeSpecifier)
 		{
-		    indexer.addClassReference((IASTTypeSpecifier) reference.getReferencedElement());
-		}
+		    indexer.addForwardClassReference((IASTTypeSpecifier) reference.getReferencedElement());
+		} 
 	}
 
 	/* (non-Javadoc)

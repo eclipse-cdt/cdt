@@ -1,3 +1,12 @@
+2004-08-11 Bogdan Gheorghe
+	Fix for Bug 59493: need to refine index query for open-type 
+	
+	* search/org/eclipse/cdt/internal/core/search/ICSearchConstants.java
+	* search/org/eclipse/cdt/internal/core/search/matching/ClassDeclarationPattern.java
+	* search/org/eclipse/cdt/internal/core/search/matching/CSearchPattern.java
+	* search/org/eclipse/cdt/internal/core/search/matching/DerivedTypesPattern.java
+	* search/org/eclipse/cdt/internal/core/search/matching/FriendPattern.java
+	
 2004-06-25 Bogdan Gheorghe
 	Indirect fix for Bug 65551: [Search] Search for Variable references should not include parameters
 	Instead of excluding parameter references from searches, added parm declarations to the index (for

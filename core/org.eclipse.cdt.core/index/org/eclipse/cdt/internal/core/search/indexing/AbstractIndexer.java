@@ -51,6 +51,9 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	final static int TYPEDEF = 6;
 	final static int DERIVED = 7;
 	final static int FRIEND = 8;
+	final static int FWD_CLASS = 9;
+	final static int FWD_STRUCT = 10;
+	final static int FWD_UNION = 11;
 	
 	public static boolean VERBOSE = false;
 	
@@ -241,15 +244,15 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	public void addElaboratedForwardDeclaration(IASTElaboratedTypeSpecifier elaboratedType) {
 		if (elaboratedType.getClassKind().equals(ASTClassKind.CLASS))
 		{
-			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),CLASS, ICSearchConstants.DECLARATIONS));
+			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),FWD_CLASS, ICSearchConstants.DECLARATIONS));
 		}		
 		else if (elaboratedType.getClassKind().equals(ASTClassKind.STRUCT))
 		{
-			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),STRUCT, ICSearchConstants.DECLARATIONS));
+			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),FWD_STRUCT, ICSearchConstants.DECLARATIONS));
 		}
 		else if (elaboratedType.getClassKind().equals(ASTClassKind.UNION))
 		{
-			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),UNION, ICSearchConstants.DECLARATIONS));			
+			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),FWD_UNION, ICSearchConstants.DECLARATIONS));			
 		}
 	}
 	
@@ -336,6 +339,32 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			this.output.addRef(encodeTypeEntry(fullyQualifiedName,UNION,ICSearchConstants.REFERENCES));			
 		}
 	}
+	public void addForwardClassReference(IASTTypeSpecifier reference){
+		char[][] fullyQualifiedName = null;
+		ASTClassKind classKind = null;
+		
+		if (reference instanceof IASTElaboratedTypeSpecifier){
+		  IASTElaboratedTypeSpecifier typeRef = (IASTElaboratedTypeSpecifier) reference;
+		  fullyQualifiedName = typeRef.getFullyQualifiedNameCharArrays();
+		  classKind = typeRef.getClassKind();
+		}
+	
+		if (classKind == null)
+			return;
+		
+		if (classKind.equals(ASTClassKind.CLASS))
+		{  
+			this.output.addRef(encodeTypeEntry(fullyQualifiedName,FWD_CLASS, ICSearchConstants.REFERENCES));
+		}		
+		else if (classKind.equals(ASTClassKind.STRUCT))
+		{
+			this.output.addRef(encodeTypeEntry(fullyQualifiedName,FWD_STRUCT,ICSearchConstants.REFERENCES));
+		}
+		else if (classKind.equals(ASTClassKind.UNION))
+		{
+			this.output.addRef(encodeTypeEntry(fullyQualifiedName,FWD_UNION,ICSearchConstants.REFERENCES));			
+		}
+	}
 	/**
 	 * Type entries are encoded as follow: 'typeDecl/' ('C' | 'S' | 'U' | 'E' ) '/'  TypeName ['/' Qualifier]* 
 	 */
@@ -390,6 +419,18 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			
 			case(FRIEND):
 			result[pos++]=FRIEND_SUFFIX;
+			break;
+			
+			case(FWD_CLASS):
+			result[pos++]=FWD_CLASS_SUFFIX;
+			break;
+			
+			case (FWD_STRUCT):
+			result[pos++]=FWD_STRUCT_SUFFIX;
+			break;
+			
+			case (FWD_UNION):
+			result[pos++]=FWD_UNION_SUFFIX;
 			break;
 		}
 		result[pos++] = SEPARATOR;
@@ -509,6 +550,12 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			classType = DERIVED_SUFFIX;
 		} else if ( searchFor == ICSearchConstants.FRIEND){
 			classType = FRIEND_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.FWD_CLASS) {
+			classType = FWD_CLASS_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.FWD_STRUCT) {
+			classType = FWD_STRUCT_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.FWD_UNION) {
+			classType = FWD_UNION_SUFFIX;
 		} else {
 			//could be TYPE or CLASS_STRUCT, best we can do for these is the prefix
 			return prefix;

@@ -16,19 +16,19 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICRoot;
 
-public class ElfRunner implements Runnable {
+public class BinaryRunner implements Runnable {
 	ArchiveContainer clib;
 	BinaryContainer cbin;
 	CProject cproject;
 
-	public ElfRunner(CProject cprj) {
+	public BinaryRunner(CProject cprj) {
 		cproject = cprj;
 		cbin = (BinaryContainer)cprj.getBinaryContainer();
 		clib = (ArchiveContainer)cprj.getArchiveContainer();
 	}
 
 	public void run() {
-		cproject.setRunElf(true);
+		cproject.setStartBinaryRunner(true);
 		clib.removeChildren();
 		cbin.removeChildren();
 		try {
@@ -57,9 +57,9 @@ public class ElfRunner implements Runnable {
 		}
 	}
 
-	void addChildIfElf(CoreModel factory, IFile file) {
+	void addChildIfBinary(CoreModel factory, IFile file) {
 		// Attempt to speed things up by rejecting up front
-		// Things we know should not be Elf/Binary files.
+		// Things we know should not be Binary files.
 		if (!factory.isTranslationUnit(file)) {
 			if (factory.isBinary(file)) {
 				ICElement celement = factory.create(file);
@@ -82,15 +82,15 @@ public class ElfRunner implements Runnable {
 
 	class Visitor implements IResourceVisitor {
 		CoreModel factory = CoreModel.getDefault();
-		ElfRunner runner;
+		BinaryRunner runner;
 
-		public Visitor (ElfRunner r) {
+		public Visitor (BinaryRunner r) {
 			runner = r;
 		}
 
 		public boolean visit(IResource res) throws CoreException {
 			if (res instanceof IFile) {
-				runner.addChildIfElf(factory, (IFile)res);
+				runner.addChildIfBinary(factory, (IFile)res);
 				return false;
 			}
 			return true;

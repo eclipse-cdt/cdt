@@ -69,11 +69,11 @@ public class CViewContentProvider extends CElementContentProvider {
 	private Object[] getProjectChildren(ICProject cproject) {
 		Object[] extras = null;
 		IArchiveContainer archive = cproject.getArchiveContainer(); 
-		if (archive.hasChildren()) {
+		if (getArchives(archive).length > 0) {
 			extras = new Object[] {archive};
 		}
 		IBinaryContainer bin = cproject.getBinaryContainer(); 
-		if (bin.hasChildren()) {
+		if (getExecutables(bin).length > 0) {
 			Object[] o = new Object[] {bin};
 			if (extras != null && extras.length > 0) {
 				extras = concatenate(extras, o);

@@ -46,4 +46,6 @@ public interface ICElementPropertyConstants {
 	 */
 	public static final String  P_ELF_NEEDED = "needed"; //$NON-NLS-1$
 
+	public static final String P_BINARY_FILE_CATEGORY = CUIMessages.getString("ICElementPropertyConstants.catagory"); //$NON-NLS-1$
+
 }

@@ -39,42 +39,50 @@ public class BinaryPropertySource extends FilePropertySource implements IPropert
 		String cpuName= CUIPlugin.getResourceString(ELF_CPU);
 		PropertyDescriptor cpuDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_CPU, cpuName);
 		cpuDescriptor.setAlwaysIncompatible(true);
+		cpuDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
 
 		// elf text
 		String textName = CUIPlugin.getResourceString(ELF_TEXT);
 		PropertyDescriptor textDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_TEXT, textName);
 		textDescriptor.setAlwaysIncompatible(true);
+		textDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
 		
 		// elf data
 		String dataName = CUIPlugin.getResourceString(ELF_DATA);
 		PropertyDescriptor dataDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_DATA, dataName);
 		dataDescriptor.setAlwaysIncompatible(true);
-
+		dataDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
+		
 		// elf bss
 		String bssName = CUIPlugin.getResourceString(ELF_BSS);
 		PropertyDescriptor bssDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_BSS, bssName);
 		bssDescriptor.setAlwaysIncompatible(true);
-
+		bssDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
+		
 		// elf type
 		String typeName = CUIPlugin.getResourceString(ELF_TYPE);
 		PropertyDescriptor typeDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_TYPE, typeName);
-		bssDescriptor.setAlwaysIncompatible(true);
-
+		typeDescriptor.setAlwaysIncompatible(true);
+		typeDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
+		
 		// elf needed
 		String neededName = CUIPlugin.getResourceString(ELF_NEEDED);
 		PropertyDescriptor neededDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_NEEDED, neededName);
-		bssDescriptor.setAlwaysIncompatible(true);
-
+		neededDescriptor.setAlwaysIncompatible(true);
+		neededDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
+		
 		// elf soname
 		String sonameName = CUIPlugin.getResourceString(ELF_SONAME);
 		PropertyDescriptor sonameDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_SONAME, sonameName);
-		bssDescriptor.setAlwaysIncompatible(true);
-
+		sonameDescriptor.setAlwaysIncompatible(true);
+		sonameDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
+		
 		// elf debug
 		String debugName = CUIPlugin.getResourceString(ELF_HAS_DEBUG);
 		PropertyDescriptor debugDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_HAS_DEBUG, debugName);
-		bssDescriptor.setAlwaysIncompatible(true);
-
+		debugDescriptor.setAlwaysIncompatible(true);
+		debugDescriptor.setCategory(ICElementPropertyConstants.P_BINARY_FILE_CATEGORY);
+		
 		return new IPropertyDescriptor[] { cpuDescriptor, textDescriptor, dataDescriptor,
 			bssDescriptor, typeDescriptor, sonameDescriptor, debugDescriptor, neededDescriptor };
 	}

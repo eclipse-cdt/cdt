@@ -1,3 +1,15 @@
+2004-04-16 David Inglis
+
+	Update properties page binary catagory name.
+	
+	* src/org/eclipse/cdt/internal/ui/BinaryPropertySource.java
+	* src/org/eclipse/cdt/internal/ui/CUIMessages.properties
+	* src/org/eclipse/cdt/internal/ui/ICElementPropertyConstants.java
+
+	Fixed cview to not show bin containers when empty
+	
+	* src/org/eclipse/cdt/internal/ui/cview/CViewContentProvider.java
+
 2004-04-16 Hoda Amer
 	Fix for bug#58563 : [RenameRefactoring] renaming #include statements
 	Fix for bug#55764 : [Content Assist] trigger needs more then one character per trigger

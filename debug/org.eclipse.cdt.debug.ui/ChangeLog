@@ -1,3 +1,7 @@
+2003-01-03 Mikhail Khodjaiants
+	Fix for bug 28977: Unable to set breakpoint properties from the Breakpoint view.
+	* plugin.xml
+
 2002-12-17 Mikhail Khodjaiants
 	Disable the association controls in the 'Attach Source Location" dialog if path is not absolute.
 	* AttachSourceLocationBlock.java

@@ -341,7 +341,7 @@
          </action>
       </viewerContribution>
       <objectContribution
-            objectClass="org.eclipse.cdt.debug.core.ICBreakpoint"
+            objectClass="org.eclipse.cdt.debug.core.model.ICBreakpoint"
             id="org.eclipse.cdt.debug.ui.CBreakpointActions">
          <action
                label="%BreakpointPropertiesAction.label"

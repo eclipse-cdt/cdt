@@ -292,9 +292,10 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			if ( cdiBreakpoint == null )
 				return;
 			breakpoint.setTargetFilter( getDebugTarget() );
-			if ( !breakpoint.isEnabled() )
-				cdiBreakpoint.setEnabled( false );
+			boolean enabled = breakpoint.isEnabled();
 			setBreakpointCondition( breakpoint );
+			if ( !enabled )
+				cdiBreakpoint.setEnabled( false );
 		}
 		catch( CoreException e ) {
 			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.0" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$

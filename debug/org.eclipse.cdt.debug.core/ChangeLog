@@ -1,3 +1,7 @@
+2004-09-07 Mikhail Khodjaiants
+	Fix for bug 73498: Condition is cleared when disabled conditional breakpoint is set.
+	* CBreakpointManager.java	
+
 2004-09-07 Alain Magloire
 	Remove ICDIBreakpointManager.java
 	Remove ICDICatchEvent/ICDICatchpoint

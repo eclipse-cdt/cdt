@@ -155,7 +155,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNewDescriptor()
 	 */
-	public IASTNewExpressionDescriptor createNewDescriptor() {
+	public IASTNewExpressionDescriptor createNewDescriptor(List expressions) {
 		return new ASTNewDescriptor();
 	}
 

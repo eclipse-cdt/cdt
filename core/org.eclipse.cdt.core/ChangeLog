@@ -30,6 +30,11 @@
 	* build/org/eclipse/cdt/internal/core/build/managed/Option.java
 	* build/org/eclipse/cdt/internal/core/build/managed/OptionReference.java
 
+2003-08-20 Hoda Amer
+	Modified the parser's newExpression() to send all its sub expressions
+	to the newDescriptor and check on each expression to find references 
+	in the CompleteParserASTFactory.createExpression().
+
 2003-08-13 Sean Evoy
 	Changed text generated into makefile comments from the rather abstract 
 	term 'module' to the more meaningful 'subdirectory'.

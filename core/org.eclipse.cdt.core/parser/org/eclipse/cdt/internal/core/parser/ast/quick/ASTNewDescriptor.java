@@ -10,11 +10,21 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 
 /**
  * @author jcamelon
  */
 public class ASTNewDescriptor implements IASTNewExpressionDescriptor {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor#getExpressions()
+	 */
+	public List getExpressions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

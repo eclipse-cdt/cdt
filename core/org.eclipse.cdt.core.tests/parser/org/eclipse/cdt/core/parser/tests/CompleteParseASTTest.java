@@ -980,5 +980,24 @@ public class CompleteParseASTTest extends TestCase
 		assertEquals( callback.getReferences().size(), 1 );
 		IASTClassReference ref = (IASTClassReference)callback.getReferences().get(0);
 		assertEquals( ref.getReferencedElement(), classA );		
-	} 
+	}
+	 
+	public void testNewExpressions() throws Exception
+	{
+		Iterator declarations = parse( "int A; int B; int C; int D; int P; int*p = new  (P) (A)[B][C][D];" ).getDeclarations();
+		IASTVariable variableA = (IASTVariable)declarations.next();
+		IASTVariable variableB = (IASTVariable)declarations.next();
+		IASTVariable variableC = (IASTVariable)declarations.next();
+		IASTVariable variableD = (IASTVariable)declarations.next();
+		IASTVariable variableP = (IASTVariable)declarations.next();
+		IASTVariable variablep = (IASTVariable)declarations.next();
+		assertEquals( callback.getReferences().size(), 5 );
+		Iterator references = callback.getReferences().iterator();
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableP );
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableB );
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableC ); 
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableD ); 
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), variableA );
+	}
+
 }

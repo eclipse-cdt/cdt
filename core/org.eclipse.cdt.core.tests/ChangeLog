@@ -19,6 +19,9 @@
 	are properly read and dealt with during project creation and persisting settings.
 	* build/org/eclipse/cdt/core/build/managed/tests/ManagedBuildTests.java
 
+2003-08-20 Hoda Amer
+	Added testNewExpressions() to CompleteParseASTTest to test new expression's references.
+	
 2003-08-14 John Camelon
 	Removed warnings from AutomatedIntegrationSuite.java (removing implicit accessor generation).
 

@@ -3531,6 +3531,9 @@ public class Parser implements IParser
         boolean placementParseFailure = true;
         IToken beforeSecondParen = null;
         IToken backtrackMarker = null;
+        ITokenDuple typeId = null;
+		ArrayList expressions = new ArrayList();
+				
         if (LT(1) == IToken.tLPAREN)
         {
             consume(IToken.tLPAREN);
@@ -3539,7 +3542,7 @@ public class Parser implements IParser
                 // Try to consume placement list
                 // Note: since expressionList and expression are the same...
                 backtrackMarker = mark();
-                expression(scope);
+                expressions.add(expression(scope));
                 consume(IToken.tRPAREN);
                 placementParseFailure = false;
                 if (LT(1) == IToken.tLPAREN)
@@ -3558,7 +3561,7 @@ public class Parser implements IParser
                 // CASE: new (typeid-not-looking-as-placement) ...
                 // the first expression in () is not a placement
                 // - then it has to be typeId
-                typeId();
+                typeId = typeId();
                 consume(IToken.tRPAREN);
             }
             else
@@ -3582,14 +3585,15 @@ public class Parser implements IParser
                         try
                         {
                             backtrackMarker = mark();
-                            typeId();
+                            typeId = typeId();
                         }
                         catch (Backtrack e)
                         {
                             // Hmmm, so it wasn't typeId after all... Then it is
                             // CASE: new (typeid-looking-as-placement)
                             backup(backtrackMarker);
-                            return null; // TODO fix this
+							// TODO fix this
+                            return null; 
                         }
                     }
                 }
@@ -3600,7 +3604,7 @@ public class Parser implements IParser
                     // The problem is, the first expression might as well be a typeid
                     try
                     {
-                        typeId();
+                        typeId = typeId();
                         consume(IToken.tRPAREN);
                         if (LT(1) == IToken.tLPAREN
                             || LT(1) == IToken.tLBRACKET)
@@ -3617,7 +3621,18 @@ public class Parser implements IParser
                             // Worst-case scenario - this cannot be resolved w/o more semantic information.
                             // Luckily, we don't need to know what was that - we only know that 
                             // new-expression ends here.
-                            return null; // TODO fix this
+							try
+							{
+							return astFactory.createExpression(
+								scope, IASTExpression.Kind.NEW_TYPEID, 
+								null, null,	null, null, typeId, "", 
+								astFactory.createNewDescriptor(expressions));
+							}
+							catch (ASTSemanticException e)
+							{
+								failParse();
+								return null;
+							}
                         }
                     }
                     catch (Backtrack e)
@@ -3634,13 +3649,13 @@ public class Parser implements IParser
             // CASE: new typeid ...
             // new parameters do not start with '('
             // i.e it has to be a plain typeId
-            typeId();
+            typeId = typeId();
         }
         while (LT(1) == IToken.tLBRACKET)
         {
             // array new
             consume();
-            assignmentExpression(scope);
+            expressions.add(assignmentExpression(scope));
             consume(IToken.tRBRACKET);
         }
         // newinitializer
@@ -3648,10 +3663,21 @@ public class Parser implements IParser
         {
             consume(IToken.tLPAREN);
             if (LT(1) != IToken.tRPAREN)
-                expression(scope);
+                expressions.add(expression(scope));
             consume(IToken.tRPAREN);
         }
-        return null; //TODO fix this 
+		try
+		{
+        return astFactory.createExpression(
+        	scope, IASTExpression.Kind.NEW_TYPEID, 
+			null, null,	null, null, typeId, "", 
+			astFactory.createNewDescriptor(expressions));
+		}
+		catch (ASTSemanticException e)
+		{
+			failParse();
+			return null;
+		}
     }
     protected IASTExpression unaryOperatorCastExpression( IASTScope scope,
         IASTExpression.Kind kind,

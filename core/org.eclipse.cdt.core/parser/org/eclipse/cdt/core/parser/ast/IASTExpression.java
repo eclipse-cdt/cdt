@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 
@@ -122,7 +124,7 @@ public interface IASTExpression extends ISourceElementCallbackDelegate
 	
 	public interface IASTNewExpressionDescriptor
 	{
-		
+		public List getExpressions();
 	}
 	
 	

@@ -107,8 +107,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	                    result = startingScope.lookup( firstSymbol.getImage());
 	                    if( result != null ) 
 							references.add( createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
-						else
-							throw new ASTSemanticException();    
+						//else
+						//	throw new ASTSemanticException();    
 	                }
 	                catch (ParserSymbolTableException e)
 	                {
@@ -641,6 +641,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         getExpressionReferences(rhs, references);
         getExpressionReferences(thirdExpression,references);
     	
+    	// if there is a newDescriptor, check related expressions
+    	if(newDescriptor != null){
+    		Iterator i  = newDescriptor.getExpressions().iterator();
+			while (i.hasNext()){
+				getExpressionReferences((IASTExpression)i.next(), references);    			
+    		}
+    	}
+    	
         //look up id & add to references
         IContainerSymbol startingScope = scopeToSymbol( scope );
         
@@ -682,10 +690,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNewDescriptor()
      */
-    public IASTNewExpressionDescriptor createNewDescriptor()
+    public IASTNewExpressionDescriptor createNewDescriptor(List expressions)
     {
         // TODO FIX THIS
-        return null;
+        // return null;
+		return new ASTNewDescriptor(expressions);
     }
 
     /* (non-Javadoc)

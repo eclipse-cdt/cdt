@@ -97,7 +97,7 @@ public interface IASTFactory
         IToken id,
         ITokenDuple typeId,
         String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException;
-    public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor();
+    public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor(List expressions);
     public IASTInitializerClause createInitializerClause(
         IASTInitializerClause.Kind kind,
         IASTExpression assignmentExpression,

@@ -52,6 +52,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IStackFrame;
 
 /**
@@ -838,6 +839,9 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			catch( DebugException e ) {
 				// do nothing
 			}
+		}
+		if ( adapter == IMemoryBlockRetrieval.class ) {
+			return getDebugTarget().getAdapter( adapter );
 		}
 		return super.getAdapter( adapter );
 	}

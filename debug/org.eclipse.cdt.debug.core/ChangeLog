@@ -1,3 +1,11 @@
+2004-09-30 Mikhail Khodjaiants
+	Implementing adapters for the platform's Memory view.
+	* CExtendedMemoryBlockRetrieval.java: new
+	* CDebugTarget.java
+	* CExtendedMemoryBlock.java: new
+	* CThread.java
+	* InternalDebugCoreMessages.properties
+
 2004-09-29 Mikhail Khodjaiants
 	Use the new "createAddress(BigInteger)" method of "IAddressFactory".
 	* CBreakpointManager.java

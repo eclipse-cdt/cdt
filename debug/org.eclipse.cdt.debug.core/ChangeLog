@@ -1,4 +1,9 @@
 2004-07-09 Mikhail Khodjaiants
+	Cleanup. Added support of "CDebugElementState".
+	* ICDebugElement.java
+	* CDebugElement.java
+
+2004-07-09 Mikhail Khodjaiants
 	Renamed "ICDebugElementErrorStatus" to "ICDebugElementStatus".
 	Added comments to ICDebugElementStatus.java.
 	* ICDebugElementStatus.java

@@ -10,17 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.model.IDebugElement;
 
 /**
- * C/C++ specific extension of <code>ICDebugElement</code>.
+ * C/C++ specific extension of <code>IDebugElement</code>.
  */
 public interface ICDebugElement extends IDebugElement {
 
 	public CDebugElementState getState();
-	
-	public IStatus getStatus();
-	
-	public String getSubModelIdentifier();
 }

@@ -8,7 +8,6 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
@@ -29,96 +28,85 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Aug 1, 2002
+ * The super class of all C/C++ debug model elements.
  */
-public class CDebugElement extends PlatformObject 
-						   implements ICDebugElement,
-						   			  ICDebugElementStatus
-{
+abstract public class CDebugElement extends PlatformObject implements ICDebugElement, ICDebugElementStatus {
+
+	/**
+	 * Debug target associated with this element
+	 */
 	private CDebugTarget fDebugTarget;
 
+	/**
+	 * The severity code of this element's status 
+	 */
 	private int fSeverity = ICDebugElementStatus.OK;
+
+	/**
+	 * The message of this element's status 
+	 */
 	private String fMessage = null;
+
+	/**
+	 * The state of this element.
+	 */
+	private CDebugElementState fState = CDebugElementState.UNDEFINED;
 
 	/**
 	 * Constructor for CDebugElement.
 	 */
-	public CDebugElement( CDebugTarget target )
-	{
+	public CDebugElement( CDebugTarget target ) {
 		setDebugTarget( target );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
-	public String getModelIdentifier()
-	{
+	public String getModelIdentifier() {
 		return CDebugModel.getPluginIdentifier();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
-	public IDebugTarget getDebugTarget()
-	{
+	public IDebugTarget getDebugTarget() {
 		return fDebugTarget;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
-	public ILaunch getLaunch()
-	{
+	public ILaunch getLaunch() {
 		return getDebugTarget().getLaunch();
 	}
 
-	protected void setDebugTarget( CDebugTarget target )
-	{
+	protected void setDebugTarget( CDebugTarget target ) {
 		fDebugTarget = target;
 	}
 
 	/**
-	 * Logs the given exception.
-	 * 
-	 * @param e the internal exception
+	 * Convenience method to log errors
 	 */
-	public void internalError( Exception e )
-	{
-		logError( e );
-	}
-
-	/**
-	 * Logs the given message.
-	 * 
-	 * @param message the message
-	 */
-	public void internalError( String message )
-	{
-		logError( message );
+	protected void logError( Exception e ) {
+		DebugPlugin.log( e );
 	}
 
 	/**
 	 * Convenience method to log errors
-	 * 
+	 *  
 	 */
-	protected void logError( Exception e ) 
-	{
-		CDebugCorePlugin.log( e );
-	}
-
-	/**
-	 * Convenience method to log errors
-	 * 
-	 */
-	protected void logError( String message ) 
-	{
-		CDebugCorePlugin.log( message );
+	protected void logError( String message ) {
+		DebugPlugin.logMessage( message, null );
 	}
 
 	/**
@@ -127,89 +115,75 @@ public class CDebugElement extends PlatformObject
 	 * @param event The debug event to be fired to the listeners
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
-	protected void fireEvent( DebugEvent event )
-	{
-		DebugPlugin.getDefault().fireDebugEventSet( new DebugEvent[] { event } );
+	protected void fireEvent( DebugEvent event ) {
+		DebugPlugin.getDefault().fireDebugEventSet( new DebugEvent[]{ event } );
 	}
 
-	protected void fireEventSet( DebugEvent[] events )
-	{
+	protected void fireEventSet( DebugEvent[] events ) {
 		DebugPlugin.getDefault().fireDebugEventSet( events );
 	}
 
 	/**
 	 * Fires a debug event marking the creation of this element.
 	 */
-	public void fireCreationEvent()
-	{
+	public void fireCreationEvent() {
 		fireEvent( new DebugEvent( this, DebugEvent.CREATE ) );
 	}
 
-	public DebugEvent createCreateEvent()
-	{
+	public DebugEvent createCreateEvent() {
 		return new DebugEvent( this, DebugEvent.CREATE );
 	}
 
 	/**
-	 * Fires a debug event marking the RESUME of this element with
-	 * the associated detail.
+	 * Fires a debug event marking the RESUME of this element with the associated detail.
 	 * 
 	 * @param detail The int detail of the event
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
-	public void fireResumeEvent( int detail )
-	{
+	public void fireResumeEvent( int detail ) {
 		fireEvent( new DebugEvent( this, DebugEvent.RESUME, detail ) );
 	}
 
-	public DebugEvent createResumeEvent( int detail )
-	{
+	public DebugEvent createResumeEvent( int detail ) {
 		return new DebugEvent( this, DebugEvent.RESUME, detail );
 	}
 
 	/**
-	 * Fires a debug event marking the SUSPEND of this element with
-	 * the associated detail.
+	 * Fires a debug event marking the SUSPEND of this element with the associated detail.
 	 * 
 	 * @param detail The int detail of the event
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
-	public void fireSuspendEvent( int detail )
-	{
+	public void fireSuspendEvent( int detail ) {
 		fireEvent( new DebugEvent( this, DebugEvent.SUSPEND, detail ) );
 	}
 
-	public DebugEvent createSuspendEvent( int detail )
-	{
+	public DebugEvent createSuspendEvent( int detail ) {
 		return new DebugEvent( this, DebugEvent.SUSPEND, detail );
 	}
 
 	/**
 	 * Fires a debug event marking the termination of this element.
 	 */
-	public void fireTerminateEvent()
-	{
+	public void fireTerminateEvent() {
 		fireEvent( new DebugEvent( this, DebugEvent.TERMINATE ) );
 	}
 
-	public DebugEvent createTerminateEvent()
-	{
+	public DebugEvent createTerminateEvent() {
 		return new DebugEvent( this, DebugEvent.TERMINATE );
 	}
 
 	/**
-	 * Fires a debug event marking the CHANGE of this element
-	 * with the specifed detail code.
+	 * Fires a debug event marking the CHANGE of this element with the specifed detail code.
 	 * 
-	 * @param detail one of <code>STATE</code> or <code>CONTENT</code>
+	 * @param detail
+	 *            one of <code>STATE</code> or <code>CONTENT</code>
 	 */
-	public void fireChangeEvent( int detail )
-	{
+	public void fireChangeEvent( int detail ) {
 		fireEvent( new DebugEvent( this, DebugEvent.CHANGE, detail ) );
 	}
 
-	public DebugEvent createChangeEvent( int detail )
-	{
+	public DebugEvent createChangeEvent( int detail ) {
 		return new DebugEvent( this, DebugEvent.CHANGE, detail );
 	}
 
@@ -218,8 +192,7 @@ public class CDebugElement extends PlatformObject
 	 * 
 	 * @return the CDI session
 	 */
-	public ICDISession getCDISession() 
-	{
+	public ICDISession getCDISession() {
 		return getCDITarget().getSession();
 	}
 
@@ -228,8 +201,7 @@ public class CDebugElement extends PlatformObject
 	 * 
 	 * @return the underlying CDI target
 	 */
-	public ICDITarget getCDITarget() 
-	{
+	public ICDITarget getCDITarget() {
 		return (ICDITarget)getDebugTarget().getAdapter( ICDITarget.class );
 	}
 
@@ -240,23 +212,19 @@ public class CDebugElement extends PlatformObject
 	 * @param e Exception that has occurred (<code>can be null</code>)
 	 * @throws DebugException The exception with a status code of <code>REQUEST_FAILED</code>
 	 */
-	public void requestFailed( String message, Exception e ) throws DebugException
-	{
+	public void requestFailed( String message, Exception e ) throws DebugException {
 		requestFailed( message, e, DebugException.REQUEST_FAILED );
 	}
-	
+
 	/**
-	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>
-	 * with the given underlying exception. If the underlying exception is not a JDI
-	 * exception, the original exception is thrown.
+	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code> with the given underlying exception. 
 	 * 
 	 * @param message Failure message
 	 * @param e underlying exception that has occurred
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
-	public void targetRequestFailed( String message, CDIException e ) throws DebugException
-	{
-		requestFailed( MessageFormat.format( "Target request failed: {0}.", new String[] { message } ), e, DebugException.TARGET_REQUEST_FAILED ); //$NON-NLS-1$
+	public void targetRequestFailed( String message, CDIException e ) throws DebugException {
+		requestFailed( MessageFormat.format( "Target request failed: {0}.", new String[]{ message } ), e, DebugException.TARGET_REQUEST_FAILED ); //$NON-NLS-1$
 	}
 
 	/**
@@ -267,11 +235,10 @@ public class CDebugElement extends PlatformObject
 	 * @param code status code
 	 * @throws DebugException a new exception with given status code
 	 */
-	public void requestFailed( String message, Throwable e, int code ) throws DebugException
-	{
+	public void requestFailed( String message, Throwable e, int code ) throws DebugException {
 		throwDebugException( message, code, e );
 	}
-		
+
 	/**
 	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>.
 	 * 
@@ -279,64 +246,59 @@ public class CDebugElement extends PlatformObject
 	 * @param e Throwable that has occurred
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
-	public void targetRequestFailed( String message, Throwable e ) throws DebugException
-	{
-		throwDebugException( MessageFormat.format( "Target request failed: {0}.", new String[] { message } ), DebugException.TARGET_REQUEST_FAILED, e ); //$NON-NLS-1$
+	public void targetRequestFailed( String message, Throwable e ) throws DebugException {
+		throwDebugException( MessageFormat.format( "Target request failed: {0}.", new String[]{ message } ), DebugException.TARGET_REQUEST_FAILED, e ); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Throws a new debug exception with a status code of <code>NOT_SUPPORTED</code>.
 	 * 
 	 * @param message Failure message
 	 * @throws DebugException The exception with a status code of <code>NOT_SUPPORTED</code>.
 	 */
-	public void notSupported(String message) throws DebugException {
-		throwDebugException(message, DebugException.NOT_SUPPORTED, null);
+	public void notSupported( String message ) throws DebugException {
+		throwDebugException( message, DebugException.NOT_SUPPORTED, null );
 	}
-	
+
 	/**
-	 * Throws a debug exception with the given message, error code, and underlying
-	 * exception.
+	 * Throws a debug exception with the given message, error code, and underlying exception.
 	 */
-	protected void throwDebugException( String message, int code, Throwable exception ) throws DebugException 
-	{
-		throw new DebugException( new Status( IStatus.ERROR, 
-											  CDebugModel.getPluginIdentifier(),
-											  code, 
-											  message, 
-											  exception ) );
+	protected void throwDebugException( String message, int code, Throwable exception ) throws DebugException {
+		throw new DebugException( new Status( IStatus.ERROR, CDebugModel.getPluginIdentifier(), code, message, exception ) );
 	}
-	
-	protected void infoMessage( Throwable e )
-	{
-		IStatus newStatus = new Status( IStatus.INFO, 
-										CDebugCorePlugin.getUniqueIdentifier(), 
-										ICDebugInternalConstants.STATUS_CODE_INFO, 
-										e.getMessage(),
-										null );
+
+	protected void infoMessage( Throwable e ) {
+		IStatus newStatus = new Status( IStatus.INFO, CDebugCorePlugin.getUniqueIdentifier(), ICDebugInternalConstants.STATUS_CODE_INFO, e.getMessage(), null );
 		CDebugUtils.info( newStatus, getDebugTarget() );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
-	public Object getAdapter( Class adapter )
-	{
+	public Object getAdapter( Class adapter ) {
+		if ( adapter.equals( IDebugElement.class ) )
+			return this;
+		if ( adapter.equals( ICDebugElement.class ) )
+			return this;
+		if ( adapter.equals( CDebugElement.class ) )
+			return this;
+		if ( adapter.equals( ICDebugElementStatus.class ) )
+			return this;
 		if ( adapter.equals( ICDISession.class ) )
-			return getCDISession(); 
-		return super.getAdapter(adapter);
+			return getCDISession();
+		return super.getAdapter( adapter );
 	}
 
-	protected void setStatus( int severity, String message )
-	{
+	protected void setStatus( int severity, String message ) {
 		fSeverity = severity;
 		fMessage = message;
 		if ( fMessage != null )
 			fMessage.trim();
 	}
 
-	protected void resetStatus()
-	{
+	protected void resetStatus() {
 		fSeverity = ICDebugElementStatus.OK;
 		fMessage = null;
 	}
@@ -344,24 +306,21 @@ public class CDebugElement extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementStatus#isOK()
 	 */
-	public boolean isOK()
-	{
-		return ( fSeverity == ICDebugElementStatus.OK );
+	public boolean isOK() {
+		return (fSeverity == ICDebugElementStatus.OK);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementStatus#getSeverity()
 	 */
-	public int getSeverity()
-	{
+	public int getSeverity() {
 		return fSeverity;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementStatus#getMessage()
 	 */
-	public String getMessage()
-	{
+	public String getMessage() {
 		return fMessage;
 	}
 
@@ -369,21 +328,17 @@ public class CDebugElement extends PlatformObject
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugElement#getState()
 	 */
 	public CDebugElementState getState() {
-		// TODO Auto-generated method stub
-		return null;
+		return fState;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICDebugElement#getStatus()
-	 */
-	public IStatus getStatus() {
-		// TODO Auto-generated method stub
-		return null;
+
+	protected boolean isValidState( CDebugElementState state ) {
+		return true;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICDebugElement#getSubModelIdentifier()
-	 */
-	public String getSubModelIdentifier() {
-		// TODO Auto-generated method stub
-		return null;
+
+	protected void setState( CDebugElementState state ) throws IllegalArgumentException {
+		if ( !isValidState( state ) ) {
+			throw new IllegalArgumentException( state.toString() );
+		}
+		fState = state;
 	}
 }

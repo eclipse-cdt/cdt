@@ -1,4 +1,9 @@
 2002-10-31 Mikhail Khodjaiants
+	Replaced the 'IProject' argument by 'IFile' in the debug target factory methods - second phase.
+	* CDebugModel.java: removed unused debug target factory methods.
+	* CDebugTarget.java: removed unused constructor.
+
+2002-10-31 Mikhail Khodjaiants
 	Replaced the 'IProject' argument by 'IFile' in the debug target factory methods.
 	* CDebugModel.java
 	* CDebugTarget.java

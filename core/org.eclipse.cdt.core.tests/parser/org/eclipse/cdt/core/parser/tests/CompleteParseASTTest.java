@@ -1837,4 +1837,34 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	{
     	parse( "int widths[] = { [0 ... 9] = 1, [10 ... 99] = 2, [100] = 3 };", true, ParserLanguage.C ); //$NON-NLS-1$
 	}
+    
+    public void testBug60939() throws Exception
+	{
+    	for( int i = 0; i < 2; ++i )
+    	{
+	    	Writer writer = new StringWriter();
+	    	writer.write( "namespace ABC { class DEF { }; }\n"); //$NON-NLS-1$
+	    	if( i == 0 )
+	    		writer.write( "using namespace ABC;\n"); //$NON-NLS-1$
+	    	else
+	    		writer.write( "using ABC::DEF;\n"); //$NON-NLS-1$
+	    	writer.write( "class GHI : public DEF { };"); //$NON-NLS-1$
+	    	Iterator d = parse( writer.toString() ).getDeclarations();
+	    	IASTNamespaceDefinition ABC = (IASTNamespaceDefinition) d.next();
+	    	if( i == 0 )
+	    		assertTrue( d.next() instanceof IASTUsingDirective );
+	    	else
+	    		assertTrue( d.next() instanceof IASTUsingDeclaration );
+	    	IASTClassSpecifier GHI = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)d.next()).getTypeSpecifier();
+	    	Iterator baseClauses = GHI.getBaseClauses();
+	    	IASTBaseSpecifier baseClause = (IASTBaseSpecifier) baseClauses.next();
+	    	IASTClassSpecifier DEF = (IASTClassSpecifier) baseClause.getParentClassSpecifier();
+	    	String [] theTruth = new String[2];
+	    	theTruth[0] = "ABC"; //$NON-NLS-1$
+	    	theTruth[1] = "DEF"; //$NON-NLS-1$
+	    	qualifiedNamesEquals( DEF.getFullyQualifiedName(), theTruth );
+    	}
+    	
+
+	}
 }

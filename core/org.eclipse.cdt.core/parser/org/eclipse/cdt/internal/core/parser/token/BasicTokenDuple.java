@@ -355,6 +355,16 @@ public class BasicTokenDuple implements ITokenDuple {
 		IToken iter = firstToken;
 		while( iter != lastToken)
 		{
+		    if( iter.getType() == IToken.tLT ){
+				iter = TokenFactory.consumeTemplateIdArguments( iter, lastToken );
+				if( iter.getType() == IToken.tGT ){
+				    if( iter == lastToken ) break;
+				    iter = iter.getNext();
+				    continue;
+				}
+				continue;
+		    }
+		    
 			if( iter.isOperator() )
 			{
 				iter = iter.getNext();

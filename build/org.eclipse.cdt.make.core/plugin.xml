@@ -21,6 +21,8 @@
 
 
    <extension-point id="MakeTargetBuilder" name="%extensionTargetBuilder.name" schema="schema/MakeTargetBuilder.exsd"/>
+   <extension-point id="ExternalScannerInfoProvider" name="%extensionExternalScannerInfoProvider.name" schema="schema/ExternalScannerInfoProvider.exsd"/>
+   <extension-point id="ScannerInfoConsoleParser" name="%extensionScannerInfoConsoleParser.name" schema="schema/ScannerInfoConsoleParser.exsd"/>
 
    <extension
          id="MakeScannerProvider"
@@ -76,6 +78,69 @@
             builderID="org.eclipse.cdt.make.core.makeBuilder"
             id="org.eclipse.cdt.make.MakeTargetBuilder">
       </builder>
+   </extension>
+   <extension
+         id="ScannerConfigNature"
+         name="%epScannerConfigNature.name"
+         point="org.eclipse.core.resources.natures">
+      <requires-nature
+            id="org.eclipse.cdt.make.core.makeNature">
+      </requires-nature>
+      <runtime>
+         <run
+               class="org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.eclipse.cdt.make.core.ScannerConfigBuilder">
+      </builder>
+   </extension>
+   <extension
+         id="ScannerConfigBuilder"
+         name="%epScannerConfigBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="DefaultExternalScannerInfoProvider"
+         name="%epDefaultExternalScannerInfoProvider.name"
+         point="org.eclipse.cdt.make.core.ExternalScannerInfoProvider">
+      <externalScannerInfoProvider>
+         <run
+               class="org.eclipse.cdt.make.internal.core.scannerconfig.DefaultExternalScannerInfoProvider">
+            <parameter
+                  name="defaultCommand"
+                  value="gcc">
+            </parameter>
+            <parameter
+                  name="defaultAttributes"
+                  value="-c -v">
+            </parameter>
+         </run>
+      </externalScannerInfoProvider>
+   </extension>
+   <extension
+         id="GCCScannerInfoConsoleParser"
+         name="%epGCCCommandLineParser.name"
+         point="org.eclipse.cdt.make.core.ScannerInfoConsoleParser">
+      <scannerInfoConsoleParser
+            commandId="makeBuilder"
+            class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerInfoConsoleParser">
+      </scannerInfoConsoleParser>
+   </extension>
+   <extension
+         id="GCCSpecsConsoleParser"
+         name="%epGCCSpecsParser.name"
+         point="org.eclipse.cdt.make.core.ScannerInfoConsoleParser">
+      <scannerInfoConsoleParser
+            commandId="externalScannerInfoProvider"
+            class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser">
+      </scannerInfoConsoleParser>
    </extension>
 
 </plugin>

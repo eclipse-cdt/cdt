@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
+import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -179,6 +180,9 @@ public class MakeBuilder extends ACBuilder {
 				epm.setOutputStream(streamMon);
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();
+				// Sniff console output for scanner info
+				OutputStream sniffer = ScannerInfoConsoleParserFactory.getMakeBuilderOutputSniffer(
+						epm.getOutputStream(), getProject(), workingDirectory, this);
 				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory);
 				if (p != null) {
 					try {
@@ -189,7 +193,7 @@ public class MakeBuilder extends ACBuilder {
 					}
 					// Before launching give visual cues via the monitor
 					monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Invoking_Command") + launcher.getCommandLine()); //$NON-NLS-1$
-					if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(monitor, 0))
+					if (launcher.waitAndRead(sniffer, sniffer, new SubProgressMonitor(monitor, 0))
 						!= CommandLauncher.OK)
 						errMsg = launcher.getErrorMessage();
 					monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Updating_project")); //$NON-NLS-1$
@@ -225,6 +229,7 @@ public class MakeBuilder extends ACBuilder {
 				stderr.close();
 
 				monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
+				sniffer.close();
 				epm.reportProblems();
 				cos.close();
 			}

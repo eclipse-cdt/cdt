@@ -5,8 +5,9 @@ package org.eclipse.cdt.make.ui.wizards;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
-import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.dialogs.ScannerConfigPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.ReferenceBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
@@ -40,6 +41,7 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 		protected void addTabs() {
 			addTab(new ReferenceBlock());
 			super.addTabs();
+			addTab(new ScannerConfigPage());
 		}
 	}
 
@@ -61,7 +63,7 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getPreference()
 	 */
 	public Preferences getPreferences() {
-		return MakeUIPlugin.getDefault().getPluginPreferences();
+		return MakeCorePlugin.getDefault().getPluginPreferences();
 	}
 
 }

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * Copyright (c) 2002,2004 QNX Software Systems and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,19 +13,30 @@ package org.eclipse.cdt.make.core;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
 import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
 import org.eclipse.cdt.make.internal.core.MakeTargetManager;
 import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefile;
+import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigInfoFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -40,6 +51,13 @@ public class MakeCorePlugin extends Plugin {
 	public static final String MAKE_PROJECT_ID = MakeCorePlugin.getUniqueIdentifier() + ".make"; //$NON-NLS-1$
 	private MakeTargetManager fTargetManager;
 	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder"; //$NON-NLS-1$
+
+	public static final String EXTERNAL_SI_PROVIDER_SIMPLE_ID = "ExternalScannerInfoProvider"; //$NON-NLS-1$
+	public static final String SI_CONSOLE_PARSER_SIMPLE_ID = "ScannerInfoConsoleParser";	//$NON-NLS-1$
+	public static final String DEFAULT_EXTERNAL_SI_PROVIDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".DefaultExternalScannerInfoProvider"; //$NON-NLS-1$
+	public static final String GCC_SPECS_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCSpecsConsoleParser"; //$NON-NLS-1$
+	public static final String GCC_SCANNER_INFO_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCScannerInfoConsoleParser"; //$NON-NLS-1$
+	
 	//The shared instance.
 	private static MakeCorePlugin plugin;
 	//Resource bundle.
@@ -131,6 +149,20 @@ public class MakeCorePlugin extends Plugin {
 		} catch (CoreException e) {
 		}
 		getPluginPreferences().setDefault(CCorePlugin.PREF_BINARY_PARSER, CCorePlugin.PLUGIN_ID + ".ELF"); //$NON-NLS-1$
+
+		// default plugin preferences for scanner configuration discovery
+		IScannerConfigBuilderInfo scInfo = createScannerConfigBuildInfo(getPluginPreferences(), ScannerConfigBuilder.BUILDER_ID, true);
+		try {
+			scInfo.setAutoDiscoveryEnabled(false);
+			scInfo.setMakeBuilderConsoleParserEnabled(true);
+			scInfo.setESIProviderCommandEnabled(true);
+			scInfo.setUseDefaultESIProviderCmd(true);
+			scInfo.setESIProviderCommand(new Path("gcc")); //$NON-NLS-1$
+			scInfo.setESIProviderArguments("-c -v");	//$NON-NLS-1$
+			scInfo.setESIProviderConsoleParserId(GCC_SPECS_CONSOLE_PARSER_ID);
+			scInfo.setMakeBuilderConsoleParserId(GCC_SCANNER_INFO_CONSOLE_PARSER_ID);
+		} catch (CoreException e) {
+		}
 	}
 	
 	public static IMakeBuilderInfo createBuildInfo(Preferences prefs, String builderID, boolean useDefaults) {
@@ -179,4 +211,109 @@ public class MakeCorePlugin extends Plugin {
 		}
 	}
 
+	/*
+	 * Following methods create IScannerConfigBuilderInfo
+	 * Delegating requests to ScannerConfigInfoFactory
+	 */
+	public static IScannerConfigBuilderInfo createScannerConfigBuildInfo(
+			Preferences prefs, String builderID, boolean useDefaults) {
+		return ScannerConfigInfoFactory.create(prefs, builderID, useDefaults);
+	}
+
+	public static IScannerConfigBuilderInfo createScannerConfigBuildInfo(
+			IProject project, String builderID) throws CoreException {
+		return ScannerConfigInfoFactory.create(project, builderID);
+	}
+
+	public static IScannerConfigBuilderInfo createScannerConfigBuildInfo(
+			Map args, String builderID) {
+		return ScannerConfigInfoFactory.create(args, builderID);
+	}
+	
+	public static IPath getWorkingDirectory() {
+		return MakeCorePlugin.getDefault().getStateLocation();
+	}
+
+	/**
+	 * @param id - id specifying external scanner info provider
+	 * @return provider - new instance of an external scanner info provider
+	 */
+	public IExternalScannerInfoProvider getExternalScannerInfoProvider(String id) {
+		try {
+			IExtensionPoint extension = getDescriptor().getExtensionPoint(EXTERNAL_SI_PROVIDER_SIMPLE_ID);
+			if (extension != null) {
+				IExtension[] extensions = extension.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					String tool = extensions[i].getUniqueIdentifier();
+					if (tool != null && tool.equals(id)) {
+						IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
+						for (int j = 0; j < configElements.length; j++) {
+							IConfigurationElement[] runElement = configElements[j].getChildren("run"); //$NON-NLS-1$
+							if (runElement.length > 0) { 
+								IExternalScannerInfoProvider builder = (IExternalScannerInfoProvider) runElement[0].createExecutableExtension("class");
+								return builder;
+							}
+						}
+					}
+				}
+			}
+		} 
+		catch (CoreException e) {
+			log(e);
+		}
+		return null;
+	}
+
+	/**
+	 * @param commandId
+	 * @return String[] - array of parserIds associated with the commandId or 'all'
+	 */
+	public String[] getScannerInfoConsoleParserIds(String commandId) {
+		String[] empty = new String[0];
+		if (commandId == null || commandId.length() == 0) {
+			commandId = "all";	//$NON-NLS-1$
+		}
+		IExtensionPoint extension = getDescriptor().getExtensionPoint(SI_CONSOLE_PARSER_SIMPLE_ID);
+		if (extension != null) {
+			IExtension[] extensions = extension.getExtensions();
+			List parserIds = new ArrayList(extensions.length);
+			for (int i = 0; i < extensions.length; i++) {
+				String parserId = extensions[i].getUniqueIdentifier();
+				if (parserId != null) {
+					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
+					String id = configElements[0].getAttribute("commandId");//$NON-NLS-1$
+					if (id != null && (id.equals(commandId) || id.equals("all"))) {	//$NON-NLS-1$
+						parserIds.add(parserId);
+					}
+				}							
+			}
+			return (String[])parserIds.toArray(empty);
+		}
+		return empty;
+	}
+	
+	/**
+	 * @param parserId
+	 * @return parser - parser object identified by the parserId
+	 */
+	public IScannerInfoConsoleParser getScannerInfoConsoleParser(String parserId) {
+		try {
+			IExtensionPoint extension = getDescriptor().getExtensionPoint(SI_CONSOLE_PARSER_SIMPLE_ID);
+			if (extension != null) {
+				IExtension[] extensions = extension.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					String id = extensions[i].getUniqueIdentifier();
+					if (id != null && id.equals(parserId)) {
+						IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
+						IScannerInfoConsoleParser parser = (IScannerInfoConsoleParser)configElements[0].createExecutableExtension("class");//$NON-NLS-1$
+						return parser;
+					}
+				}
+			}
+		}
+		catch (CoreException e) {
+			log(e);
+		}
+		return null;
+	}
 }

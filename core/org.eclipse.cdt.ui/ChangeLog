@@ -1,5 +1,11 @@
 2004-03-05 Alain Magloire
 
+	New icons.
+	* icons/full/{c,d,e}lcl16/refresh_nav.gif
+	* icons/full/{c,d,e}lcl16/synced.gif
+
+2004-03-05 Alain Magloire
+
 	Support for ToggleEditor link action.
 	This action was only in the preference page.
 	Now it is also in the toolbar.  It permits the CView

@@ -1,3 +1,8 @@
+2003-10-17 Tom Tromey
+	
+	Changed -werror to -Werror
+	* plugin.xml
+
 2003-10-14  Alain Magloire
 
 	ICOptionPage was added a new method

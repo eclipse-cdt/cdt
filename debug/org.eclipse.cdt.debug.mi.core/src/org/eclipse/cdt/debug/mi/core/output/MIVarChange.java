@@ -8,13 +8,17 @@ package org.eclipse.cdt.debug.mi.core.output;
  * GDB/MI var-update.
  */
 
-public class MIChange {
+public class MIVarChange {
 	String name;
 	boolean inScope;
 	boolean changed;
 
-	public MIChange(String n) {
+	public MIVarChange(String n) {
 		name = n;
+	}
+
+	public String getVarName() {
+		return name;
 	}
 
 	public boolean isInScope() {

@@ -20,6 +20,10 @@ public class MIVarShowAttributesInfo extends MIInfo {
 		return attr;
 	}
 
+	public boolean isEditable() {
+		return attr.equals("editable");
+	}
+
 	void parse() {
 		if (isDone()) {
 			MIOutput out = getMIOutput();

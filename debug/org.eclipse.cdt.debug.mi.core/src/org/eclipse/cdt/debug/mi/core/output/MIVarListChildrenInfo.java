@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class MIVarListChildrenInfo extends MIInfo {
 
-	MIChild[] children;
+	MIVar[] children;
 	int numchild;
 
 	public MIVarListChildrenInfo(MIOutput record) {
@@ -23,7 +23,7 @@ public class MIVarListChildrenInfo extends MIInfo {
 		parse();
 	}
 
-	public MIChild[] getChildren() {
+	public MIVar[] getMIVars() {
 		return children;
 	}
 
@@ -54,7 +54,7 @@ public class MIVarListChildrenInfo extends MIInfo {
 				}
 			}
 		}
-		children = (MIChild[])aList.toArray(new MIChild[aList.size()]);
+		children = (MIVar[])aList.toArray(new MIVar[aList.size()]);
 	}
 
 	void parseChildren(MITuple tuple, List aList) {
@@ -64,7 +64,7 @@ public class MIVarListChildrenInfo extends MIInfo {
 			if (var.equals("child")) {
 				MIValue value = results[i].getMIValue();
 				if (value instanceof MITuple) {
-					aList.add(new MIChild((MITuple)value));
+					aList.add(new MIVar((MITuple)value));
 				}
 			}
 		}

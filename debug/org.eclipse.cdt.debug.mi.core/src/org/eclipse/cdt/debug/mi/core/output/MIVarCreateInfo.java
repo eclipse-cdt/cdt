@@ -15,16 +15,16 @@ public class MIVarCreateInfo extends MIInfo {
 	String name = "";
 	int numChild;
 	String type = "";
-	MIChild child;
+	MIVar child;
 
 	public MIVarCreateInfo(MIOutput record) {
 		super(record);
 		parse();
 	}
 
-	public MIChild getMIChild() {
+	public MIVar getMIVar() {
 		if (child == null) {
-			child = new MIChild(name, numChild, type);
+			child = new MIVar(name, numChild, type);
 		}
 		return child;
 	}

@@ -10,24 +10,25 @@ package org.eclipse.cdt.debug.mi.core.output;
  *  ^done,numchild="6",children={child={name="var2.0",exp="0",numchild="0",type="char"},child={name="var2.1",exp="1",numchild="0",type="char"},child={name="var2.2",exp="2",numchild="0",type="char"},child={name="var2.3",exp="3",numchild="0",type="char"},child={name="var2.4",exp="4",numchild="0",type="char"},child={name="var2.5",exp="5",numchild="0",type="char"}}
  *
  */
-public class MIChild {
+public class MIVar {
 
 	String name = "";
 	String type = "";
+	String exp = "";
 	int numchild;
 
 
-	public MIChild(String n, int num, String t) {
+	public MIVar(String n, int num, String t) {
 		name = n;
 		numchild = num;
 		type = t;
 	}
 
-	public MIChild(MITuple tuple) {
+	public MIVar(MITuple tuple) {
 		parse(tuple);
 	}
 
-	public String getName() {
+	public String getVarName() {
 		return name;
 	}
 
@@ -37,6 +38,10 @@ public class MIChild {
 
 	public int getNumChild() {
 		return numchild;
+	}
+
+	public String getExp() {
+		return exp;
 	}
 
 	void parse(MITuple tuple) {
@@ -58,6 +63,8 @@ public class MIChild {
 				name = str;
 			} else if (var.equals("type")) {
 				type = str;
+			} else if (var.equals("exp")) {
+				exp = str;
 			}
 		}
 	}

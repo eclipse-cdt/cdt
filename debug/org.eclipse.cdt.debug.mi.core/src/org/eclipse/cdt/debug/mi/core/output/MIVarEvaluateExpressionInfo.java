@@ -28,7 +28,7 @@ public class MIVarEvaluateExpressionInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("name")) {
+					if (var.equals("value")) {
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
 							value = ((MIConst)val).getString();

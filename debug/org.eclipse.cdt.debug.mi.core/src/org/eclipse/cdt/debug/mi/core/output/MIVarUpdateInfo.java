@@ -14,20 +14,14 @@ import java.util.List;
  */
 public class MIVarUpdateInfo extends MIInfo {
 
-	public class Change {
-		String name;
-		boolean inScope;
-		boolean changed;
-	}
-
-	MIChange[] changeList;
+	MIVarChange[] changeList;
 
 	public MIVarUpdateInfo(MIOutput record) {
 		super(record);
 		parse();
 	}
 
-	public MIChange[] getChangeList () {
+	public MIVarChange[] getMIVarChanges() {
 		return changeList;
 	}
 
@@ -49,12 +43,12 @@ public class MIVarUpdateInfo extends MIInfo {
 				}
 			}
 		}
-		changeList = (MIChange[])aList.toArray(new MIChange[aList.size()]);
+		changeList = (MIVarChange[])aList.toArray(new MIVarChange[aList.size()]);
 	}
 
 	void parseChangeList(MITuple tuple, List aList) {
 		MIResult[] results = tuple.getMIResults();
-		MIChange change = null;
+		MIVarChange change = null;
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			MIValue value = results[i].getMIValue();
@@ -63,7 +57,8 @@ public class MIVarUpdateInfo extends MIInfo {
 				str = ((MIConst)value).getString();
 			}
 			if (var.equals("name")) {
-				change = new MIChange(str);
+				change = new MIVarChange(str);
+System.out.println("Changelist " + str);
 				aList.add(change);
 			} else if (var.equals("in_scope")) {
 				if (change != null) {

@@ -17,7 +17,7 @@ package org.eclipse.cdt.ui.dialogs;
  * 
  * @author vhirsl
  */
-public class GNUElfBinaryParserPage extends AbstractGNUBinaryParserPage {
+public class GNUSomBinaryParserPage extends AbstractGNUBinaryParserPage {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.AbstractGNUBinaryParserPage#getRealBinaryParserPage()

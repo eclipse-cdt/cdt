@@ -1,3 +1,11 @@
+2004-07-16 Vladimir Hirsl
+	Implementation of HP-UX SOM binary parser page.
+ 
+	* src/org/eclipse/cdt/ui/dialogs/AbstractGNUBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/GNUSomBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/GNUElfBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/GNUXCoffBinaryParserPage.java
+
 2004-07-16 Chris Wiebe
 
 	Fixing numerous warnings.

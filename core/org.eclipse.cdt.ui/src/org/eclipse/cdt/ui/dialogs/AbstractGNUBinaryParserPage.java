@@ -42,16 +42,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
+ * Abstract base binary parser page for GNU binutils based binary parsers
  */
-public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
+public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 
 	public final static String PREF_ADDR2LINE_PATH = CUIPlugin.PLUGIN_ID + ".addr2line"; //$NON-NLS-1$
 	public final static String PREF_CPPFILT_PATH = CUIPlugin.PLUGIN_ID + ".cppfilt"; //$NON-NLS-1$
-	public final static String PREF_CYGPATH_PATH = CUIPlugin.PLUGIN_ID + ".cygpath"; //$NON-NLS-1$
 
 	protected Text fAddr2LineCommandText;
 	protected Text fCPPFiltCommandText;
-	protected Text fCygPathCommandText;
+	private String parserID = null;
 
 	/*
 	 * (non-Javadoc)
@@ -65,26 +65,14 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 
 		String addr2line = fAddr2LineCommandText.getText().trim();
 		String cppfilt = fCPPFiltCommandText.getText().trim();
-		String cygpath = fCygPathCommandText.getText().trim();
 
 		monitor.beginTask(CUIMessages.getString("BinaryParserPage.task.savingAttributes"), 1); //$NON-NLS-1$
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
-			String parserID = ""; //$NON-NLS-1$
 			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj, false);
 			ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 			if (cext.length > 0) {
-				IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
-				IConfigurationElement[] infos = point.getConfigurationElements();
-				for (int i = 0; i < infos.length; i++) {
-					String id = infos[i].getAttribute("parserID"); //$NON-NLS-1$
-					String clazz = infos[i].getAttribute("class"); //$NON-NLS-1$
-					String ego = getClass().getName();
-					if (clazz != null && clazz.equals(ego)) {
-						parserID = id;
-						break;
-					}
-				}
+				initializeParserId();
 				for (int i = 0; i < cext.length; i++) {
 					if (cext[i].getID().equals(parserID)) {
 						String orig = cext[i].getExtensionData("addr2line"); //$NON-NLS-1$
@@ -95,10 +83,6 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 						if (orig == null || !orig.equals(cppfilt)) {
 							cext[i].setExtensionData("c++filt", cppfilt); //$NON-NLS-1$
 						}
-						orig = cext[i].getExtensionData("cygpath"); //$NON-NLS-1$
-						if (orig == null || !orig.equals(cygpath)) {
-							cext[i].setExtensionData("cygpath", cygpath); //$NON-NLS-1$
-						}
 					}
 				}
 			}
@@ -107,10 +91,32 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 			if (store != null) {
 				store.setValue(PREF_ADDR2LINE_PATH, addr2line);
 				store.setValue(PREF_CPPFILT_PATH, cppfilt);
-				store.setValue(PREF_CYGPATH_PATH, cygpath);
 			}
 		}
 	}
+
+	private void initializeParserId() {
+		if (parserID == null) {
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
+			IConfigurationElement[] infos = point.getConfigurationElements();
+			for (int i = 0; i < infos.length; i++) {
+				String id = infos[i].getAttribute("parserID"); //$NON-NLS-1$
+				String clazz = infos[i].getAttribute("class"); //$NON-NLS-1$
+				String ego = getRealBinaryParserPage().getClass().getName();
+				if (clazz != null && clazz.equals(ego)) {
+					parserID = id;
+					return;
+				}
+			}
+			parserID = "";	//$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * If this class is inherited from then this method MUST be implemented
+	 * in the derived class.
+	 */
+	abstract protected AbstractGNUBinaryParserPage getRealBinaryParserPage();
 
 	/*
 	 * (non-Javadoc)
@@ -120,22 +126,18 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 	public void performDefaults() {
 		String addr2line = null;
 		String cppfilt = null;
-		String cygpath = null;
 		IProject proj = getContainer().getProject();
 		Preferences store = getContainer().getPreferences();
 		if (store != null) {
 			if (proj != null) {
 				addr2line = store.getString(PREF_ADDR2LINE_PATH);
 				cppfilt = store.getString(PREF_CPPFILT_PATH);
-				cygpath = store.getString(PREF_CYGPATH_PATH);
 			} else {
 				addr2line = store.getDefaultString(PREF_ADDR2LINE_PATH);
 				cppfilt = store.getDefaultString(PREF_CPPFILT_PATH);
-				cygpath = store.getDefaultString(PREF_CYGPATH_PATH);
 			}
-			fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line); //$NON-NLS-1$;
-			fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$;
-			fCygPathCommandText.setText((cygpath == null || cygpath.length() == 0) ? "cygpath" : cygpath); //$NON-NLS-1$;
+			fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line); //$NON-NLS-1$
+			fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$
 		}
 	}
 
@@ -144,14 +146,13 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 	 * 
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
-	public void createControl(Composite composite) {
-		Group comp = new Group(composite, SWT.SHADOW_ETCHED_IN);
+	public void createControl(Composite parent) {
+		Group comp = new Group(parent, SWT.SHADOW_ETCHED_IN);
 		comp.setText(CUIMessages.getString("BinaryParserBlock.binaryParserOptions")); //$NON-NLS-1$
-		
 		comp.setLayout(new GridLayout(2, true));
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
-
+		
 		Label label = ControlFactory.createLabel(comp, CUIMessages.getString("BinaryParserPage.label.addr2lineCommand")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -227,61 +228,27 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 			}
 		});
 
-		label = ControlFactory.createLabel(comp, CUIMessages.getString("BinaryParserPage.label.cygpathCommand")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-
-		fCygPathCommandText = ControlFactory.createTextField(comp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fCygPathCommandText.setLayoutData(gd);
-		fCygPathCommandText.addModifyListener(new ModifyListener() {
-
-			public void modifyText(ModifyEvent evt) {
-				//updateLaunchConfigurationDialog();
-			}
-		});
-		button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse2")); //$NON-NLS-1$
-		button.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent evt) {
-				handleCygPathButtonSelected();
-				//updateLaunchConfigurationDialog();
-			}
-
-			private void handleCygPathButtonSelected() {
-				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText(CUIMessages.getString("BinaryParserPage.label.cygpathCommand")); //$NON-NLS-1$
-				String command = fCygPathCommandText.getText().trim();
-				int lastSeparatorIndex = command.lastIndexOf(File.separator);
-				if (lastSeparatorIndex != -1) {
-					dialog.setFilterPath(command.substring(0, lastSeparatorIndex));
-				}
-				String res = dialog.open();
-				if (res == null) {
-					return;
-				}
-				fCygPathCommandText.setText(res);
-			}
-		});
-
 		setControl(comp);
-		initializeValues();
+		initialziedValues();
 	}
-
-	private void initializeValues() {
+	
+	private void initialziedValues() {
 		String addr2line = null;
 		String cppfilt = null;
-		String cygpath = null;
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			try {
 				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj, false);
 				ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 				if (cext.length > 0) {
-					addr2line = cext[0].getExtensionData("addr2line"); //$NON-NLS-1$;
-					cppfilt = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$;
-					cygpath = cext[0].getExtensionData("cygpath"); //$NON-NLS-1$;
+					initializeParserId();
+					for (int i = 0; i < cext.length; i++) {
+						if (cext[i].getID().equals(parserID)) {
+							addr2line = cext[0].getExtensionData("addr2line"); //$NON-NLS-1$
+							cppfilt = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$
+							break;
+						}
+					}
 				}
 			} catch (CoreException e) {
 			}
@@ -290,11 +257,10 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 			if (store != null) {
 				addr2line = store.getString(PREF_ADDR2LINE_PATH);
 				cppfilt = store.getString(PREF_CPPFILT_PATH);
-				cygpath = store.getString(PREF_CYGPATH_PATH);
 			}
 		}
-		fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line); //$NON-NLS-1$;
-		fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$;
-		fCygPathCommandText.setText((cygpath == null || cygpath.length() == 0) ? "cygpath" : cygpath); //$NON-NLS-1$;
+		fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line); //$NON-NLS-1$
+		fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$
 	}
+
 }

@@ -11,18 +11,18 @@
 package org.eclipse.cdt.ui.dialogs;
 
 /**
- * Reusing GNUElfBinaryParserPage.
+ * Reusing AbstractGNUBinaryParserPage.
  * New class is required for the algorithm in method performApply.
  * Must implement getRealBinaryParserPage method. 
  * 
  * @author vhirsl
  */
-public class GNUXCoffBinaryParserPage extends GNUElfBinaryParserPage {
+public class GNUXCoffBinaryParserPage extends AbstractGNUBinaryParserPage {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.GNUElfBinaryParserPage#getRealBinaryParserPage()
 	 */
-	protected Object getRealBinaryParserPage() {
+	protected AbstractGNUBinaryParserPage getRealBinaryParserPage() {
 		return this;
 	}
 }

@@ -14,6 +14,7 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICBreakpoint;
+import org.eclipse.cdt.debug.core.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.ICSourceLocator;
 import org.eclipse.cdt.debug.core.ICWatchpoint;
@@ -77,7 +78,8 @@ public class CDebugTarget extends CDebugElement
 						  			 IRestart,
 						  			 IFormattedMemoryRetrieval,
 						  			 IState,
-						  			 ILaunchListener
+						  			 ILaunchListener,
+						  			 ICExpressionEvaluator
 {
 	/**
 	 * Threads contained in this debug target. When a thread
@@ -739,6 +741,8 @@ public class CDebugTarget extends CDebugElement
 		if ( adapter.equals( ICDITarget.class ) )
 			return fCDITarget;
 		if ( adapter.equals( IState.class ) )
+			return this;
+		if ( adapter.equals( ICExpressionEvaluator.class ) )
 			return this;
 		return super.getAdapter( adapter );
 	}
@@ -1567,5 +1571,29 @@ public class CDebugTarget extends CDebugElement
 				return breakpoint;
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICExpressionEvaluator#evaluateExpressionToString(String)
+	 */
+	public String evaluateExpressionToString( String expression ) throws DebugException
+	{
+		try
+		{
+			return getCDITarget().evaluateExpressionToString( expression );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICExpressionEvaluator#canEvaluate()
+	 */
+	public boolean canEvaluate()
+	{
+		return isAvailable() && isSuspended();
 	}
 }

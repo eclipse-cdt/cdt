@@ -1,3 +1,9 @@
+2004-07-14 Mikhail Khodjaiants
+	Fix for bug 69977: TVT3.0: Non-externalized strings in Launching Debug.
+	Applied patch from Tanya Wollf.
+	* CApplicationLaunchShortcut.java
+	* LaunchUIPluginResources.properties
+
 2004-06-21 Mikhail Khodjaiants
 	Fix for bug 60872. Accessibility: Run/Debug configuration dialog has duplicate mnemonics.
 	Warning cleanup.

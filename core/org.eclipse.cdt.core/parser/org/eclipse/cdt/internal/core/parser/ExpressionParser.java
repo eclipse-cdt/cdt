@@ -227,7 +227,6 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		try {
 			if (firstErrorOffset == FIRST_ERROR_OFFSET_UNSET)
 				firstErrorOffset = LA(1).getOffset();
-			consume(); // get past this token
 		} catch (EndOfFileException eof) {
 			// do nothing
 		} finally {
@@ -2770,5 +2769,32 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 */
 	protected void throwBacktrack(BacktrackException bt) throws BacktrackException {
 		throw bt;
+	}
+
+	/**
+	 * @throws EndOfFileException
+	 */
+	protected void errorHandling() throws EndOfFileException {
+		int depth = ( LT(1) == IToken.tLBRACE ) ? 1 : 0;
+	    consume();    
+	    while (!((LT(1) == IToken.tSEMI && depth == 0)
+	        || (LT(1) == IToken.tRBRACE && depth == 1)))
+	    {
+	        switch (LT(1))
+	        {
+	            case IToken.tLBRACE :
+	                ++depth;
+	                break;
+	            case IToken.tRBRACE :
+	                --depth;
+	                break;
+	        }
+	        if( depth < 0 )
+	        	return;
+	        
+	        consume();
+	    }
+	    // eat the SEMI/RBRACE as well
+	    consume();
 	}
 }

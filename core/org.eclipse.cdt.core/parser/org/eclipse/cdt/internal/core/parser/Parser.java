@@ -199,7 +199,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 int checkOffset = LA(1).hashCode();
                 declaration(compilationUnit, null, null, KeywordSetKey.DECLARATION);
                 if (LA(1).hashCode() == checkOffset)
-                    errorHandling();
+                    failParseWithErrorHandling();
             }
             catch (EndOfFileException e)
             {
@@ -216,7 +216,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     {
                         // we haven't progressed from the last backtrack
                         // try and find tne next definition
-                        errorHandling();
+                        failParseWithErrorHandling();
                     }
                     else
                     {
@@ -232,7 +232,10 @@ public abstract class Parser extends ExpressionParser implements IParser
             catch( Exception e )
 			{
             	logException( "translationUnit", e ); //$NON-NLS-1$
-            	failParse();
+            	try {
+					failParseWithErrorHandling();
+				} catch (EndOfFileException e3) {
+				}
 			}
             catch( ParseError perr )
 			{
@@ -241,7 +244,10 @@ public abstract class Parser extends ExpressionParser implements IParser
             catch (Throwable e)
             {
             	logThrowable( "translationUnit", e ); //$NON-NLS-1$
-				failParse();
+				try {
+					failParseWithErrorHandling();
+				} catch (EndOfFileException e3) {
+				}
             }
         }
         compilationUnit.exitScope( requestor, astFactory.getReferenceManager() );
@@ -265,7 +271,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			log.traceLog( buffer.toString() );
 //			log.errorLog( buffer.toString() );
 		}
-}
+	}
 
 
 
@@ -278,30 +284,10 @@ public abstract class Parser extends ExpressionParser implements IParser
 	 *             We can potentially hit EndOfFile here as we are skipping
 	 *             ahead.
 	 */
-    protected void errorHandling() throws EndOfFileException
+    protected void failParseWithErrorHandling() throws EndOfFileException
     {
         failParse();
-        int depth = ( LT(1) == IToken.tLBRACE ) ? 1 : 0;
-        consume();    
-        while (!((LT(1) == IToken.tSEMI && depth == 0)
-            || (LT(1) == IToken.tRBRACE && depth == 1)))
-        {
-            switch (LT(1))
-            {
-                case IToken.tLBRACE :
-                    ++depth;
-                    break;
-                case IToken.tRBRACE :
-                    --depth;
-                    break;
-            }
-            if( depth < 0 )
-            	return;
-            
-            consume();
-        }
-        // eat the SEMI/RBRACE as well
-        consume();
+        errorHandling();
     }
     /**
 	 * The merger of using-declaration and using-directive in ANSI C++ grammar.
@@ -457,11 +443,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                         {
                             failParse(bt);
                             if (checkToken == LA(1).hashCode())
-                                errorHandling();
+                                failParseWithErrorHandling();
                         }
                 }
                 if (checkToken == LA(1).hashCode())
-                    errorHandling();
+                    failParseWithErrorHandling();
             }
             // consume the }
             IToken lastTokenConsumed = consume();
@@ -1002,11 +988,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                         {
                             failParse(bt);
                             if (checkToken == LA(1).hashCode())
-                                errorHandling();
+                                failParseWithErrorHandling();
                         }
                 }
                 if (checkToken == LA(1).hashCode())
-                    errorHandling();
+                    failParseWithErrorHandling();
             }
             setCompletionValues(scope, CompletionKind.NO_SUCH_KIND,KeywordSetKey.EMPTY );
             // consume the }
@@ -2762,11 +2748,11 @@ public abstract class Parser extends ExpressionParser implements IParser
 									KeywordSetKey.MEMBER);
 						} catch (BacktrackException bt) {
 							if (checkToken == LA(1).hashCode())
-								errorHandling();
+								failParseWithErrorHandling();
 						}
 				}
 				if (checkToken == LA(1).hashCode())
-					errorHandling();
+					failParseWithErrorHandling();
 			}
 			// consume the }
 			IToken lt = consume(IToken.tRBRACE);
@@ -3192,7 +3178,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			} catch (BacktrackException b) {
 				failParse(b);
 				if (LA(1).hashCode() == checkToken)
-					errorHandling();
+					failParseWithErrorHandling();
 			}
 			setCompletionValues(((createNewScope ? newScope : scope)),
 					CompletionKind.SINGLE_NAME_REFERENCE,

@@ -7,6 +7,7 @@
       os="linux,qnx,solaris,win32"
       ws="gtk,motif,photon,win32"
       nl="en_US"
+      arch="sparc,x86"
       image="eclipse_update_120.jpg"
       primary="true">
 

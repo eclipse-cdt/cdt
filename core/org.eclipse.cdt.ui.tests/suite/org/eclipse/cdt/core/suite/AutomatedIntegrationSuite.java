@@ -12,8 +12,12 @@ import junit.framework.TestSuite;
 import junit.framework.TestResult;
 import junit.framework.TestListener;
 import junit.framework.AssertionFailedError;
+import junit.textui.TestRunner;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+
+import org.eclipse.core.boot.IPlatformRunnable;
 
 import org.eclipse.cdt.core.build.managed.tests.AllBuildTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
@@ -30,13 +34,11 @@ import org.eclipse.cdt.core.model.failedTests.*;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class AutomatedIntegrationSuite extends TestSuite implements TestListener {
+public class AutomatedIntegrationSuite extends TestSuite 
+									   implements TestListener, IPlatformRunnable {
 
+	private TestResult testResult = null;
 	private String currentTestName;
-	// Statistical information
-	private int numberOfRuns = 0;
-	private int numberOfFailures = 0;
-	private int numberOfErrors = 0;
 	// success tests
 	private int numberOfSuccessTests = 0;
 	private int numberOfFailedSuccessTests = 0;
@@ -65,6 +67,9 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 	public static Test suite() {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
 		
+		// First test to trigger report generation
+		suite.addTest(suite.new GenerateReport("startSuccessTests"));
+
 		// Add all success tests
 		suite.addTest(AllBuildTests.suite());
 		suite.addTest(ParserTestSuite.suite());
@@ -93,6 +98,8 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 	 * Overloaded method
 	 */
 	public void run(TestResult result) {
+		// To get counts from the result
+		testResult = result;
 		// Add oneself as a listener
 		result.addListener(this);
 		// Call a base class method
@@ -106,27 +113,25 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 	 * An error occurred.
 	 */
 	public void addError(Test test, Throwable t) {
-		++numberOfErrors;
-		System.out.println("Error : " + test);
-		System.out.println("\tReason : " + t);
-		System.out.println("\tStack trace : ");
-		t.printStackTrace(System.out);
+//		System.out.println("Error : " + test);
+//		System.out.println("\tReason : " + t);
+//		System.out.println("\tStack trace : ");
+//		t.printStackTrace(System.out);
 	}
 	/**
 	 * A failure occurred.
 	 */
 	public void addFailure(Test test, AssertionFailedError t) {
-		++numberOfFailures;
 		if (failedTests) {
 			++numberOfFailedFailedTests;  
 		}
 		else {
 			++numberOfFailedSuccessTests;
 		}
-		System.out.println("Failure : " + test);
-		System.out.println("\tReason : " + t);
-		System.out.println("\tStackTrace : ");
-		t.printStackTrace(System.out);
+//		System.out.println("Failure : " + test);
+//		System.out.println("\tReason : " + t);
+//		System.out.println("\tStackTrace : ");
+//		t.printStackTrace(System.out);
 	}
 	/**
 	 * A test ended.
@@ -140,15 +145,14 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 				skipTest = false;
 			}
 			else {
-				++numberOfRuns;
 				if (failedTests) {
 					++numberOfFailedTests;
-					System.out.println(test);
+					// System.out.println(test);
 				}
 				else {
 					++numberOfSuccessTests;
 				}
-				// System.out.println(test);
+				System.out.println(test);
 			}
 			currentTestName = null;
 		}
@@ -174,11 +178,17 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 	 * Window>Preferences>Java>Code Generation>Code and Comments
 	 */
 	protected void generateReport() {
-	 	System.out.println("\n*** Generating report: ***\n");
+		int numberOfRuns = testResult.runCount();
+		int numberOfFailures = testResult.failureCount();
+		int numberOfErrors = testResult.errorCount();
+
+		System.out.println();
+	 	System.out.println("*** Generating report: ***");
+		System.out.println();
 	 	System.out.println("\tNumber of runs: " + numberOfRuns);
 		System.out.println("\tNumber of failures: " + numberOfFailures);
 		System.out.println("\tNumber of errors: " + numberOfErrors);
-		float successRate = (numberOfRuns-numberOfFailures)/(float)numberOfRuns;
+		float successRate = (numberOfRuns-numberOfFailures-numberOfErrors)/(float)numberOfRuns;
 		DecimalFormat df = new DecimalFormat("##.##%");
 		System.out.println("Sanity success rate : " + df.format(successRate));
 		System.out.println("\tNumber of success tests: " + numberOfSuccessTests);
@@ -189,12 +199,23 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 					  (float)(numberOfSuccessTests+numberOfFailedTests-numberOfFailedFailedTests);
 		System.out.print("Observed success test rate : " + df.format(successRate)); 
 		System.out.println(" (failed success tests = " + numberOfFailedSuccessTests + ", failed failed tests = " + numberOfFailedFailedTests + ")");
+		System.out.println();
 	}
 	
-	private void startFailedTests() {
-		failedTests = true;
-		System.out.println("\n*** Starting failed tests ***\n");
-	}
+		private void startSuccessTests() {
+			failedTests = false;
+			System.out.println();
+			System.out.println("*** Starting success tests ***");
+			System.out.println();
+		}
+	
+		private void startFailedTests() {
+			failedTests = true;
+			System.out.println();
+			System.out.println("*** Starting failed tests ***");
+			System.out.println();
+		}
+		
 	/*
 	 * Public inner class to invoke generateReport
 	 * 
@@ -217,6 +238,14 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 			AutomatedIntegrationSuite.this.generateReport();
 		}
 		
+		public void startSuccessTests() {
+			// skip this one
+			AutomatedIntegrationSuite.this.skipTest = true;
+			
+			// Calls a method of the outer class
+			AutomatedIntegrationSuite.this.startSuccessTests();
+		}
+
 		public void startFailedTests() {
 			// skip this one
 			AutomatedIntegrationSuite.this.skipTest = true;
@@ -224,5 +253,54 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 			// Calls a method of the outer class
 			AutomatedIntegrationSuite.this.startFailedTests();
 		}
+
+		/* (non-Javadoc)
+		 * @see junit.framework.Test#countTestCases()
+		 * We don't want these test cases to be counted
+		 */
+		public int countTestCases() {
+			return 0;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.boot.IPlatformRunnable#run(java.lang.Object)
+	 */
+	public Object run(Object args) throws Exception {
+		// Used when started from as a regression test suite after the build
+		TestRunner testRunner = new TestRunner(new AISResultPrinter(System.out));
+		TestResult testResult = testRunner.doRun(suite());
+		
+		return prepareReport(testResult);
+	}
+
+	protected ArrayList prepareReport(TestResult testResult) {	
+		// TestRunner.run(suite());
+		ArrayList efMessages = new ArrayList();
+		int errorCount = testResult.errorCount();
+		int failureCount = testResult.failureCount();
+		if (errorCount > 0) {
+			String em = new String("There ");
+			em += (errorCount == 1)?"is ":"are ";
+			em += Integer.toString(errorCount);
+			em += " error";
+			em += (errorCount == 1)?"!":"s!";
+			efMessages.add(em);
+		}
+		if (failureCount > 0) {
+			String fm = new String("There ");
+			fm += (failureCount == 1)?"is ":"are ";
+			fm += Integer.toString(failureCount);
+			fm += " failure";
+			fm += (failureCount == 1)?"!":"s!";
+			efMessages.add(fm);
+		}
+		if (efMessages.isEmpty()) {
+			efMessages.add(new String("Regression test run SUCCESSFUL!"));
+		}
+		else {
+			efMessages.add(new String("Please see raw test suite output for details."));
+		}
+		return efMessages;
 	}
 }

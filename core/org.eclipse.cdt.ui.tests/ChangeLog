@@ -3,6 +3,13 @@
 	Added testPointersToMembers() and testPointersToMemberFunctions() to DOMTests.
 	Added testBug36290() and testBug36931() to DOMTests.
 
+2003-06-16 Vladimir Hirsl
+	Added /build, /parser, /failures and /suite directories to the library. 
+	Copied resources from /model/org.eclipse.cdt.core.model.tests.resources
+	                 to /model/org/clipse/cdt/core/model/tests/resources/cmodel.
+	Added class AISResultPrinter to format test results.  
+	Class AutomatedIntegrationSuite now implements IPlatformRunnable.
+
 2003-06-13 John Camelon
 	Added Class/Base infrastructure to public interfaces & requestor callback. 
 	Moved many internal interfaces to external packages. 

@@ -43,7 +43,7 @@ public class IMacroTests extends IntegratedCModelTest {
 	 * @see org.eclipse.cdt.internal.core.model.IntegratedCModelTest
 	 */
 	public String getSourcefileSubdir() {
-		return "model/org.eclipse.cdt.core.model.tests.resources/";
+		return "model/org/eclipse/cdt/core/model/tests/resources/cmodel/";
 	}
 
 	/**

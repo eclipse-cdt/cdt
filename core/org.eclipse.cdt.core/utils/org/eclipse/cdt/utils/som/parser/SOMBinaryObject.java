@@ -18,11 +18,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.Addr32;
+import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.IGnuToolFactory;
@@ -45,6 +47,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 	ISymbol[] symbols;
 	long starttime;
 	private ARHeader header;
+	private IAddressFactory addressFactory;
 
 	/**
 	 * @param parser
@@ -314,4 +317,15 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		}
 		return super.getAdapter(adapter);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
+	 */
+	public IAddressFactory getAddressFactory() {
+		if (addressFactory == null) {
+			addressFactory = new Addr32Factory();
+		}
+		return addressFactory;
+	}
+	
 }

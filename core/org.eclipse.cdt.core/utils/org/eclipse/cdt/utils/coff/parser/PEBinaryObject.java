@@ -17,11 +17,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.Addr32;
+import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.coff.Coff;
@@ -33,6 +35,7 @@ import org.eclipse.core.runtime.IPath;
 public class PEBinaryObject extends BinaryObjectAdapter {
 
 	BinaryObjectInfo info;
+	IAddressFactory addressFactory;
 	ISymbol[] symbols;
 	AR.ARHeader header;
 
@@ -132,7 +135,6 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		info.isLittleEndian = attribute.isLittleEndian();
 		info.hasDebug = attribute.hasDebug();
 		info.cpu = attribute.getCPU();
-		info.addressFactory = attribute.getAddressFactory(); 
 	}
 
 	protected void loadSymbols(PE pe) throws IOException {
@@ -159,5 +161,16 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 				list.add(new Symbol(this, name, type, new Addr32(peSyms[i].n_value), 1));
 			}
 		}
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
+	 */
+	public IAddressFactory getAddressFactory() {
+		if (addressFactory == null) {
+			addressFactory = new Addr32Factory();
+		}
+		return addressFactory;
 	}
 }

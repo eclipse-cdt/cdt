@@ -107,11 +107,6 @@ public class PE {
 		public int getWord() {
 			return word;
 		}
-		
-		public IAddressFactory getAddressFactory(){
-			return addrFactory;
-		}
-		
 	}
 
 	/**

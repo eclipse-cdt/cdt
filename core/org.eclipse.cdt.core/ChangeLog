@@ -1,3 +1,14 @@
+2004-12-10 David Inglis
+	Fixed bug #80713
+	
+	* utils/org/eclipse/cdt/utils/BinaryObjectAdapter.java
+	* utils/org/eclipse/cdt/utils/coff/PE.java
+	* utils/org/eclipse/cdt/utils/coff/parser/PEBinaryObject.java
+	* utils/org/eclipse/cdt/utils/elf/parser/ElfBinaryObject.java
+	* utils/org/eclipse/cdt/utils/macho/parser/MachOBinaryObject.java
+	* utils/org/eclipse/cdt/utils/som/parser/SOMBinaryObject.java
+	* utils/org/eclipse/cdt/utils/xcoff/parser/XCOFFBinaryParser.java	
+	
 2004-12-09 Alain Magloire
 	Fix for 80620
 	* utils/org/eclipse/cdt/utils/coff/parser/CygwinPEBinaryObject.java

@@ -177,13 +177,6 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="platform" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
@@ -224,12 +217,13 @@
    <element name="target">
       <annotation>
          <documentation>
-            Represents a type of resource that is the target of the build process, for example, a Linux Library.  A target contains a sequence of tool definitions.  Targets are arranged in an inheritance hierarchy where a target inherits the list of tools from it&apos;s parent and can add to or override tools in this list.
+            Represents a type of resource that is the target of the build process, for example, a Linux Library.  A target contains a sequence of tool definitions and configurations.  Targets are arranged in an inheritance hierarchy where a target inherits the list of tools from it&apos;s parent and can add to or override tools in this list.
          </documentation>
       </annotation>
       <complexType>
          <sequence>
             <element ref="tool"/>
+            <element ref="configuration"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>

@@ -45,8 +45,8 @@
                   id="linux.compiler.flags">
             </option>
             <option
-                  default="-O"
                   name="Optimization Flags"
+                  default="-O"
                   type="string"
                   category="linux.compiler.optimization"
                   id="linux.compiler.optimizationFlags">
@@ -62,6 +62,14 @@
                name="Linker"
                id="org.eclipse.cdt.ui.tests.tool.linux.link">
          </tool>
+         <configuration
+               name="Release"
+               id="linux.exec.release">
+         </configuration>
+         <configuration
+               name="Debug"
+               id="linux.exec.debug">
+         </configuration>
       </target>
       <target
             name="Linux Shared Library"

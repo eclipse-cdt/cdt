@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.core.build.managed;
 
+import org.eclipse.core.resources.IProject;
+
 /**
  * This class represents targets for the managed build process.  A target
  * is some type of resource built using a given collection of tools.
@@ -37,5 +39,11 @@ public interface ITarget {
 	 * @return
 	 */
 	public ITool[] getTools();
+
+	/**
+	 * Returns all of the configurations defined by this target.
+	 * @return
+	 */
+	public IConfiguration[] getAvailableConfigurations(IProject project);
 
 }

@@ -30,7 +30,6 @@ public class Tool implements ITool {
 	public Tool(String name, Target target) {
 		this(name);
 		this.target = target;
-		target.addTool(this);
 	}
 	
 	public String getName() {

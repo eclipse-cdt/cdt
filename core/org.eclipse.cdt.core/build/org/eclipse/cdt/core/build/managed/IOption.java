@@ -20,7 +20,15 @@ public interface IOption {
 	public static final int STRING_LIST = 1;
 	
 	/**
+	 * Returns the tool defining this option.
+	 * 
+	 * @return
+	 */
+	public ITool getTool();
+	
+	/**
 	 * Returns the category for this option.
+	 * 
 	 * @return
 	 */
 	public IOptionCategory getCategory();
@@ -62,4 +70,24 @@ public interface IOption {
 	 */
 	public String [] getStringListValue();
 	
+	/**
+	 * Sets the value for this option in a given configuration.
+	 * A new instance of the option for the configuration may be created.
+	 * The appropriate new option is returned.
+	 * 
+	 * @param config
+	 * @param value
+	 */
+	public IOption setStringValue(IConfiguration config, String value);
+
+	/**
+	 * Sets the value for this option in a given configuration.
+	 * A new instance of the option for the configuration may be created.
+	 * The appropriate new option is returned.
+	 * 
+	 * @param config
+	 * @param value
+	 */
+	public IOption setStringValue(IConfiguration config, String[] value);
+
 }

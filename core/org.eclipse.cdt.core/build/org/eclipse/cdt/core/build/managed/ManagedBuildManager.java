@@ -14,13 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.core.build.managed.Configuration;
 import org.eclipse.cdt.internal.core.build.managed.Target;
 import org.eclipse.cdt.internal.core.build.managed.Tool;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * This is the main entry point for getting at the build information
@@ -28,20 +32,23 @@ import org.eclipse.core.runtime.IExtensionPoint;
  */
 public class ManagedBuildManager {
 
+	private static final QualifiedName configProperty
+		= new QualifiedName(CCorePlugin.PLUGIN_ID, "config");
+		
 	/**
-	 * Returns the list of platforms that are available to be used in
-	 * conjunction with the given resource.  Generally this will include
-	 * platforms defined by extensions as well as platforms defined by
+	 * Returns the list of targets that are available to be used in
+	 * conjunction with the given project.  Generally this will include
+	 * targets defined by extensions as well as targets defined by
 	 * the project and all projects this project reference.
 	 * 
 	 * @param project
 	 * @return
 	 */
-	public static ITarget[] getAvailableTargets(IProject project) {
+	public static ITarget[] getTargets(IProject project) {
 		// Make sure the extensions are loaded
 		loadExtensions();
 
-		// Get the platforms for this project and all referenced projects
+		// Get the targets for this project and all referenced projects
 		
 		// Create the array and copy the elements over
 		ITarget[] targets = new ITarget[extensionTargets.size()];
@@ -53,26 +60,13 @@ public class ManagedBuildManager {
 	}
 
 	/**
-	 * Returns the list of configurations belonging to the given platform
-	 * that can be applied to the given project.  This does not include
-	 * the configurations already applied to the project.
-	 * 
-	 * @param resource
-	 * @param platform
-	 * @return
-	 */
-	public static IConfiguration [] getAvailableConfigurations(IProject project, ITarget platform) {
-		return null;
-	}
-	
-	/**
 	 * Returns the list of configurations associated with the given project.
 	 * 
 	 * @param project
 	 * @return
 	 */
-	public static IConfiguration [] getConfigurations(IProject project) {
-		return null;
+	public static IConfiguration[] getConfigurations(IProject project) {
+		return getResourceConfigs(project);
 	}
 
 	/**
@@ -82,53 +76,40 @@ public class ManagedBuildManager {
 	 * @return
 	 */
 	public static IConfiguration[] getConfigurations(IFile file) {
-		return null;
+		// TODO not ready for prime time...
+		return getResourceConfigs(file);
 	}
-	
+
 	/**
-	 * Creates a configuration containing the tools defined by the target.
+	 * Adds a configuration containing the tools defined by the target to
+	 * the given project.
 	 * 
 	 * @param target
 	 * @param project
 	 * @return
 	 */
-	public static IConfiguration createConfiguration(IProject project, ITarget target) {
-		return null;
-	}
-	
-	/**
-	 * Creates a configuration that inherits from the parent configuration.
-	 *  
-	 * @param origConfig
-	 * @param resource
-	 * @return
-	 */
-	public static IConfiguration createConfiguration(IProject project, IConfiguration parentConfig) {
+	public static IConfiguration addConfiguration(IProject project, ITarget target) {
+		Configuration config = new Configuration(project, target);
 		return null;
 	}
 
 	/**
-	 * Sets the String value for an option.
+	 * Adds a configuration inheriting from the given configuration.
 	 * 
-	 * @param project
-	 * @param config
-	 * @param option
-	 * @param value
+	 * @param origConfig
+	 * @param resource
+	 * @return
 	 */
-	public static void setOptionValue(IProject project, IConfiguration config, IOption option, String value) {
+	public static IConfiguration addConfiguration(IProject project, IConfiguration parentConfig) {
+		if (parentConfig.getProject() != null)
+			// Can only inherit from target configs
+			return null;
+		
+		Configuration config = new Configuration(project, parentConfig);
+		addResourceConfig(project, config);
+		return config;
 	}
-	
-	/**
-	 * Sets the String List value for an option.
-	 * 
-	 * @param project
-	 * @param config
-	 * @param option
-	 * @param value
-	 */
-	public static void setOptionValue(IProject project, IConfiguration config, IOption option, String[] value) {
-	}
-	
+
 	// Private stuff
 	
 	private static List extensionTargets;
@@ -151,15 +132,56 @@ public class ManagedBuildManager {
 					Target target = new Target(element.getAttribute("name"));
 					extensionTargets.add(target);
 					
+					List configs = null;
 					IConfigurationElement[] targetElements = element.getChildren();
 					for (int k = 0; k < targetElements.length; ++k) {
-						IConfigurationElement platformElement = targetElements[k];
-						if (platformElement.getName().equals("tool")) {
-							Tool tool = new Tool(platformElement.getAttribute("name"), target);
+						IConfigurationElement targetElement = targetElements[k];
+						if (targetElement.getName().equals("tool")) {
+							Tool tool = new Tool(targetElement.getAttribute("name"), target);
+						} else if (targetElement.getName().equals("configuration")) {
+							if (configs == null)
+								configs = new ArrayList();
+							configs.add(new Configuration(target));
 						}
+					}
+					
+					if (configs != null) {
+						IConfiguration[] configArray = new IConfiguration[configs.size()];
+						configArray = (IConfiguration[])configs.toArray(configArray);
+						target.setConfigurations(configArray);
 					}
 				}
 			}
 		}
 	}
+	
+	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
+	
+	private static IConfiguration[] getResourceConfigs(IResource resource) {
+		IConfiguration[] configs = null;
+		
+		try {
+			configs = (IConfiguration[])resource.getSessionProperty(configProperty);
+		} catch (CoreException e) {
+		}
+		
+		return (configs != null) ? configs : emptyConfigs;
+	}
+
+	private static void addResourceConfig(IResource resource, IConfiguration config) {
+		IConfiguration[] configs = getResourceConfigs(resource);
+		
+		IConfiguration[] newConfigs = new IConfiguration[configs.length + 1];
+		for (int i = 0; i < configs.length; ++i)
+			newConfigs[i] = configs[i];
+		newConfigs[configs.length] = config;
+		
+		try {
+			resource.setSessionProperty(configProperty, newConfigs);
+		} catch (CoreException e) {
+		}
+
+		// TODO save the config info to the project build file
+	}
+
 }

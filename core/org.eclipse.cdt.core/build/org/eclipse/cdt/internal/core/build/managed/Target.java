@@ -10,11 +10,10 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.build.managed;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
+import org.eclipse.core.resources.IProject;
 
 /**
  * 
@@ -23,7 +22,8 @@ public class Target implements ITarget {
 
 	private String name;
 	private Target parent;
-	private List tools;
+	private ITool[] tools;
+	private IConfiguration[] configurations;
 
 	public Target(String name) {
 		this.name = name;
@@ -47,7 +47,7 @@ public class Target implements ITarget {
 	}
 
 	private int getNumTools() {
-		int n = (tools == null) ? 0 : tools.size();
+		int n = (tools == null) ? 0 : tools.length;
 		if (parent != null)
 			n += parent.getNumTools();
 		return n;
@@ -59,22 +59,30 @@ public class Target implements ITarget {
 			n = parent.addToolsToArray(toolArray, start);
 
 		if (tools != null) {
-			for (int i = 0; i < tools.size(); ++i)
-				toolArray[n++] = (ITool)tools.get(i); 
+			for (int i = 0; i < tools.length; ++i)
+				toolArray[n++] = (ITool)tools[i]; 
 		}
 		
 		return n;
 	}
+	
 	public ITool[] getTools() {
 		ITool[] toolArray = new ITool[getNumTools()];
 		addToolsToArray(toolArray, 0);
 		return toolArray;
 	}
+
+	public void setTools(ITool[] tools) {
+		this.tools = tools;
+	}
 	
-	public void addTool(Tool tool) {
-		if (tools == null)
-			tools = new ArrayList();
-		tools.add(tool);
+	public void setConfigurations(IConfiguration [] configurations) {
+		this.configurations = configurations;
+	}
+	
+	public IConfiguration[] getAvailableConfigurations(IProject project) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

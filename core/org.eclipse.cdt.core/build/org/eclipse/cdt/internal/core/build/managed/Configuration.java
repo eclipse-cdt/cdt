@@ -10,9 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.build.managed;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
+import org.eclipse.core.resources.IProject;
 
 /**
  * 
@@ -20,17 +23,30 @@ import org.eclipse.cdt.core.build.managed.ITool;
 public class Configuration implements IConfiguration {
 
 	private String name;
-	private ITarget platform;
+	private ITarget target;
+	private IProject project;
+	private IConfiguration parent;
+	private List toolReference;
 	
-	public Configuration(ITarget platform) {
-		this.platform = platform;
+	public Configuration(Target target) {
+		this.target = target;
+	}
+
+	public Configuration(IProject project, ITarget target) {
+		this.project = project;
+		this.target = target;
 	}
 	
+	public Configuration(IProject project, IConfiguration parent) {
+		this.project = project;
+		this.parent = parent;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getName()
 	 */
 	public String getName() {
-		return name;
+		return (name == null && parent != null) ? parent.getName() : name;
 	}
 
 	/* (non-Javadoc)
@@ -38,13 +54,6 @@ public class Configuration implements IConfiguration {
 	 */
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPlatform()
-	 */
-	public ITarget getPlatform() {
-		return platform;
 	}
 
 	/* (non-Javadoc)
@@ -59,16 +68,21 @@ public class Configuration implements IConfiguration {
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getParent()
 	 */
 	public IConfiguration getParent() {
-		// TODO Auto-generated method stub
-		return null;
+		return parent;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getTarget()
 	 */
 	public ITarget getTarget() {
-		// TODO Auto-generated method stub
-		return null;
+		return (target == null && parent != null) ? parent.getTarget() : target;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getProject()
+	 */
+	public IProject getProject() {
+		return (project == null && parent != null) ? parent.getProject() : project;
 	}
 
 }

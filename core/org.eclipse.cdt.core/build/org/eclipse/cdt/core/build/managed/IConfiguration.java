@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.core.build.managed;
 
+import org.eclipse.core.resources.IProject;
+
 /**
  * 
  */
@@ -27,6 +29,13 @@ public interface IConfiguration {
 	 * @return
 	 */
 	public ITarget getTarget();
+	
+	/**
+	 * Returns the project owning this configuration
+	 * or null if this configuration is not associated with a project.
+	 * @return
+	 */
+	public IProject getProject();
 	
 	/**
 	 * Returns the configuration from which this configuration inherits

@@ -45,8 +45,8 @@ public class AllBuildTests extends TestCase {
 	 */
 	public void testExtensions() {
 		// Note secret null parameter which means just extensions
-		ITarget[] targets = ManagedBuildManager.getAvailableTargets(null);
-		
+		ITarget[] targets = ManagedBuildManager.getTargets(null);
+
 		ITarget target = targets[0];
 		assertEquals(target.getName(), "Linux");
 		ITool[] tools = target.getTools();

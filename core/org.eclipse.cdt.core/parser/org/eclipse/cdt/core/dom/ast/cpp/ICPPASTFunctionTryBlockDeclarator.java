@@ -25,7 +25,7 @@ public interface ICPPASTFunctionTryBlockDeclarator extends
 	 * this interface.
 	 */
 	public static final ASTNodeProperty CATCH_HANDLER = new ASTNodeProperty(
-			"Catch Handler"); //$NON-NLS-1$
+			"ICPPASTFunctionTryBlockDeclarator.CATCH_HANDLER - role of an ICPPASTCatchHandler"); //$NON-NLS-1$
 
 	/**
 	 * Add a catch handler.

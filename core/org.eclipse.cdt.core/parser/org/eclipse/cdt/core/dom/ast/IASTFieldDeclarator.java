@@ -23,7 +23,7 @@ public interface IASTFieldDeclarator extends IASTDeclarator {
 	 * <code>IASTFieldDeclarator</code> and its <code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty FIELD_SIZE = new ASTNodeProperty(
-			"BitField Size"); //$NON-NLS-1$
+			"IASTFieldDeclarator.FIELD_SIZE - BitField Size of IASTFieldDeclarator"); //$NON-NLS-1$
 
 	/**
 	 * This returns the number of bits if this is a bit field. If it is not a

@@ -23,7 +23,7 @@ public interface IASTStandardFunctionDeclarator extends IASTFunctionDeclarator {
 	 * <code>IASTParameterDeclaration</code>.
 	 */
 	public final static ASTNodeProperty FUNCTION_PARAMETER = new ASTNodeProperty(
-			"Parameter"); //$NON-NLS-1$
+			"IASTStandardFunctionDeclarator.FUNCTION_PARAMETER - IASTParameterDeclaration for IASTStandardFunctionDeclarator"); //$NON-NLS-1$
 
 	/**
 	 * Gets the parameter declarations for the function

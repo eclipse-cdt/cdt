@@ -44,7 +44,7 @@ public interface IASTCastExpression extends IASTExpression {
 	 * <code>OPERAND</code> represents the relationship between a cast
 	 * expression and the expression it is casting (operand).
 	 */
-	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("Operand"); //$NON-NLS-1$
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("IASTCastExpression.OPERAND - expression being cast"); //$NON-NLS-1$
 
 	/**
 	 * Get expression being cast.
@@ -65,7 +65,7 @@ public interface IASTCastExpression extends IASTExpression {
 	 * <code>TYPE_ID</code> represents the relationship between a cast
 	 * expression and the type cast to.
 	 */
-	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("Type Id"); //$NON-NLS-1$
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("IASTCastExpression.TYPE_ID - Type Id expression is cast to"); //$NON-NLS-1$
 
 	/**
 	 * Set the typeId.

@@ -31,7 +31,7 @@ public interface ICPPASTUsingDirective extends IASTDeclaration, IASTNameOwner {
 	 * scope.
 	 */
 	public static final ASTNodeProperty QUALIFIED_NAME = new ASTNodeProperty(
-			"Name"); //$NON-NLS-1$
+			"ICPPASTUsingDirective.QUALIFIED_NAME - Name brought into local scope"); //$NON-NLS-1$
 
 	/**
 	 * Get the qualified name.

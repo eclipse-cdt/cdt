@@ -111,7 +111,7 @@ public interface IASTUnaryExpression extends IASTExpression {
 	 * <code>OPERAND</code> represents the relationship between an <code>IASTUnaryExpression</code> and
 	 * it's nested <code>IASTExpression</code>.
 	 */
-	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("Operand"); //$NON-NLS-1$
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("IASTUnaryExpression.OPERAND - IASTExpression (operand) for IASTUnaryExpression"); //$NON-NLS-1$
 
 	/**
 	 * Get the operand.

@@ -28,14 +28,14 @@ public interface ICPPASTNamespaceAlias extends IASTDeclaration, IASTNameOwner {
 	 * introduced.
 	 */
 	public static final ASTNodeProperty ALIAS_NAME = new ASTNodeProperty(
-			"Alias name"); //$NON-NLS-1$
+			"ICPPASTNamespaceAlias.ALIAS_NAME - New namespace name introduced"); //$NON-NLS-1$
 
 	/**
 	 * <code>MAPPING_NAME</code> represents the pre-existing namespace which
 	 * the new symbol aliases.
 	 */
 	public static final ASTNodeProperty MAPPING_NAME = new ASTNodeProperty(
-			"Mapping name"); //$NON-NLS-1$
+			"ICPPASTNamespaceAlias.MAPPING_NAME - Pre-existing namespace the new symbol aliases"); //$NON-NLS-1$
 
 	/**
 	 * Get the new alias name.

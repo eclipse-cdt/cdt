@@ -25,7 +25,7 @@ public interface IASTCaseStatement extends IASTStatement {
 	 * case statement and the expression it contains.
 	 */
 	public static final ASTNodeProperty EXPRESSION = new ASTNodeProperty(
-			"expression"); //$NON-NLS-1$
+			"IASTCaseStatement.EXPRESSION - expression for case statement"); //$NON-NLS-1$
 
 	/**
 	 * The expression that determines whether this case should be taken.

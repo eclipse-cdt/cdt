@@ -28,14 +28,14 @@ public interface IGCCASTArrayRangeDesignator extends ICASTDesignator {
 	 * the range of expressions.
 	 */
 	public static final ASTNodeProperty SUBSCRIPT_FLOOR_EXPRESSION = new ASTNodeProperty(
-			"Subscript Floor Expression"); //$NON-NLS-1$
+			"IGCCASTArrayRangeDesignator.SUBSCRIPT_FLOOR_EXPRESSION - lower value in range"); //$NON-NLS-1$
 
 	/**
 	 * <code>SUSBCRIPT_CEILING_EXPRESSION</code> represents the higher value
 	 * in the range of expressions.
 	 */
 	public static final ASTNodeProperty SUBSCRIPT_CEILING_EXPRESSION = new ASTNodeProperty(
-			"Subscript Ceiling Expression"); //$NON-NLS-1$
+			"IGCCASTArrayRangeDesignator.SUBSCRIPT_CEILING_EXPRESSION - higher value in range"); //$NON-NLS-1$
 
 	/**
 	 * Get the floor expression of the range.

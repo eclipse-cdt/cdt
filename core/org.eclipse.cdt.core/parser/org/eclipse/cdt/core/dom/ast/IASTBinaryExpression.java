@@ -23,7 +23,7 @@ public interface IASTBinaryExpression extends IASTExpression {
 	 * representing the lhs.
 	 */
 	public static final ASTNodeProperty OPERAND_ONE = new ASTNodeProperty(
-			"Operand 1"); //$NON-NLS-1$
+			"IASTBinaryExpression.OPERAND_ONE - IASTExpression for LHS"); //$NON-NLS-1$
 
 	/**
 	 * Node property that describes the relationship between an
@@ -31,7 +31,7 @@ public interface IASTBinaryExpression extends IASTExpression {
 	 * representing the rhs.
 	 */
 	public static final ASTNodeProperty OPERAND_TWO = new ASTNodeProperty(
-			"Operand 2"); //$NON-NLS-1$
+			"IASTBinaryExpression.OPERAND_TWO - IASTExpression for RHS"); //$NON-NLS-1$
 
 	/**
 	 * Set the operator.

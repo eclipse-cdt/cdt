@@ -23,14 +23,14 @@ public interface IASTSwitchStatement extends IASTStatement {
 	 * <code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty CONTROLLER = new ASTNodeProperty(
-			"controller"); //$NON-NLS-1$
+			"IASTSwitchStatement.CONTROLLER - IASTExpression (controller) for IASTSwitchExpression"); //$NON-NLS-1$
 
 	/**
 	 * <code>BODY</code> represents the relationship between an
 	 * <code>IASTSwitchStatement</code> and it's nested
 	 * <code>IASTStatement</code>.
 	 */
-	public static final ASTNodeProperty BODY = new ASTNodeProperty("body"); //$NON-NLS-1$
+	public static final ASTNodeProperty BODY = new ASTNodeProperty("IASTSwitchStatement.BODY - IASTStatment (body) for IASTSwitchStatement"); //$NON-NLS-1$
 
 	/**
 	 * This returns the expression which determines which case to take.

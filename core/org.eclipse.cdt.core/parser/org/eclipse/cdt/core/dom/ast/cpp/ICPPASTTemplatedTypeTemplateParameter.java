@@ -27,7 +27,7 @@ public interface ICPPASTTemplatedTypeTemplateParameter extends
 	 * PARAMETER
 	 */
 	public static final ASTNodeProperty PARAMETER = new ASTNodeProperty(
-			"Template Parameter"); //$NON-NLS-1$
+			"ICPPASTTemplateTypeTemplateParameter.PARAMETER - Template Parameter"); //$NON-NLS-1$
 
 	/**
 	 * Get all template parameters.
@@ -48,7 +48,7 @@ public interface ICPPASTTemplatedTypeTemplateParameter extends
 	 * This parameter's name.
 	 */
 	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty(
-			"Name"); //$NON-NLS-1$
+			"ICPPASTTemplateTypeTemplateParameter.PARAMETER_NAME - Template Parameter's Name"); //$NON-NLS-1$
 
 	/**
 	 * Get name.
@@ -69,7 +69,7 @@ public interface ICPPASTTemplatedTypeTemplateParameter extends
 	 * DEFAULT_VALUE is an expession.
 	 */
 	public static final ASTNodeProperty DEFAULT_VALUE = new ASTNodeProperty(
-			"Default Value"); //$NON-NLS-1$
+			"ICPPASTTemplateTypeTemplateParameter.DEFAULT_VALUE - Default Value is an expression"); //$NON-NLS-1$
 
 	/**
 	 * Get default value for template type.

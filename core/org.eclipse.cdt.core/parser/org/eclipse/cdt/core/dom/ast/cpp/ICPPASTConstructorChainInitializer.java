@@ -30,7 +30,7 @@ public interface ICPPASTConstructorChainInitializer extends IASTNode, IASTNameOw
 	 * initialized.
 	 */
 	public static final ASTNodeProperty MEMBER_ID = new ASTNodeProperty(
-			"Member Initializer Id"); //$NON-NLS-1$
+			"ICPPASTConstructorChainInitializer.MEMBER_ID - Class field name initialized"); //$NON-NLS-1$
 
 	/**
 	 * Get the field name.
@@ -51,7 +51,7 @@ public interface ICPPASTConstructorChainInitializer extends IASTNode, IASTNameOw
 	 * <code>Expression field is being initialized to.</code>
 	 */
 	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
-			"Expression Initializer"); //$NON-NLS-1$
+			"ICPPASTConstructorChainInitializer.INITIALIZER - Expression Field Initializer"); //$NON-NLS-1$
 
 	/**
 	 * Get the initializer value.

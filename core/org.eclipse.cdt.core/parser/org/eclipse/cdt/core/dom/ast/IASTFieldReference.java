@@ -25,7 +25,7 @@ public interface IASTFieldReference extends IASTExpression, IASTNameOwner {
 	 * field owner.
 	 */
 	public static final ASTNodeProperty FIELD_OWNER = new ASTNodeProperty(
-			"Field Owner"); //$NON-NLS-1$
+			"IASTFieldReference.FIELD_OWNER - IASTFieldReference's Owner"); //$NON-NLS-1$
 
 	/**
 	 * <code>FIELD_NAME</code> represents the relationship between a
@@ -33,7 +33,7 @@ public interface IASTFieldReference extends IASTExpression, IASTNameOwner {
 	 * name.
 	 */
 	public static final ASTNodeProperty FIELD_NAME = new ASTNodeProperty(
-			"Field Name"); //$NON-NLS-1$
+			"IASTFieldReference.FIELD_NAME - IASTName for IASTFieldReference"); //$NON-NLS-1$
 
 	/**
 	 * This returns an expression for the object containing the field.

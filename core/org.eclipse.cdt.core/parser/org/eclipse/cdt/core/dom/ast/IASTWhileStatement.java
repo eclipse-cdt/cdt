@@ -22,13 +22,13 @@ public interface IASTWhileStatement extends IASTStatement {
 	 * it's nested <code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty CONDITIONEXPRESSION = new ASTNodeProperty(
-			"condition"); //$NON-NLS-1$
+			"IASTWhileStatement.CONDITIONEXPRESSION - IASTExpression (condition) for IASTWhileStatement"); //$NON-NLS-1$
 
 	/**
 	 * <code>BODY</code> represents the relationship between an <code>IASTWhileStatement</code> and
 	 * it's nested <code>IASTStatement</code>.
 	 */
-	public static final ASTNodeProperty BODY = new ASTNodeProperty("body"); //$NON-NLS-1$
+	public static final ASTNodeProperty BODY = new ASTNodeProperty("IASTWhileStatement.BODY - IASTStatement (body) for IASTWhileStatement"); //$NON-NLS-1$
 
 	/**
 	 * Get the condition on the while loop

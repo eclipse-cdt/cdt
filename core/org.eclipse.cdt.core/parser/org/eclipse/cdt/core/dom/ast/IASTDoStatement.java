@@ -22,7 +22,7 @@ public interface IASTDoStatement extends IASTStatement {
 	 * <code>IASTDoStatement</code> and its nested body
 	 * <code>IASTStatement</code>.
 	 */
-	public static final ASTNodeProperty BODY = new ASTNodeProperty("body"); //$NON-NLS-1$
+	public static final ASTNodeProperty BODY = new ASTNodeProperty("IASTDoStatement.BODY - nested body for IASTDoStatement"); //$NON-NLS-1$
 
 	/**
 	 * <code>CONDITION</code> represents the relationship between a
@@ -30,7 +30,7 @@ public interface IASTDoStatement extends IASTStatement {
 	 * <code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty CONDITION = new ASTNodeProperty(
-			"condition"); //$NON-NLS-1$
+			"IASTDoStatement.CONDITION - IASTExpression condition for IASTDoStatement"); //$NON-NLS-1$
 
 	/**
 	 * Get the body of the loop.

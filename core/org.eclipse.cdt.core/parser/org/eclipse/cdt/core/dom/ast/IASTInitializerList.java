@@ -22,7 +22,7 @@ public interface IASTInitializerList extends IASTInitializer {
 	 * <code>IASTInitializerList</code> and its sub-<code>IASTInitializer</code>s.
 	 */
 	public static final ASTNodeProperty NESTED_INITIALIZER = new ASTNodeProperty(
-			"Nested Initializer"); //$NON-NLS-1$
+			"IASTInitializerList.NESTED_INITIALIZER - sub-IASTInitializer for IASTInitializerList"); //$NON-NLS-1$
 
 	/**
 	 * Get the list of initializers.

@@ -22,7 +22,7 @@ public interface IASTIdExpression extends IASTExpression, IASTNameOwner {
 	 * <code>IASTIdExpression</code> and a <code>IASTName</code>.
 	 */
 	public static final ASTNodeProperty ID_NAME = new ASTNodeProperty(
-			"IdExpression Name"); //$NON-NLS-1$
+			"IASTIdExpression.ID_NAME - IASTName for IASTIdExpression"); //$NON-NLS-1$
 
 	/**
 	 * Returns the name used in the expression.

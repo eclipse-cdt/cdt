@@ -20,7 +20,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public class ASTNodeProperty {
 
-	private String name;
+	private String name = ""; //$NON-NLS-1$
 
 	/**
 	 * @param n
@@ -46,5 +46,9 @@ public class ASTNodeProperty {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String toString() {
+		return getName();
 	}
 }

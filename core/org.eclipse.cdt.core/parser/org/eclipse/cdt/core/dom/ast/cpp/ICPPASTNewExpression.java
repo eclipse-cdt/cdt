@@ -41,7 +41,7 @@ public interface ICPPASTNewExpression extends IASTExpression {
 	 * where the memory should be allocated.
 	 */
 	public static final ASTNodeProperty NEW_PLACEMENT = new ASTNodeProperty(
-			"New Placement"); //$NON-NLS-1$
+			"ICPPASTNewExpression.NEW_PLACEMENT - Location where memory should be allocated"); //$NON-NLS-1$
 
 	/**
 	 * Get the new placement (optional).
@@ -62,7 +62,7 @@ public interface ICPPASTNewExpression extends IASTExpression {
 	 * <code>NEW_INITIALIZER</code>
 	 */
 	public static final ASTNodeProperty NEW_INITIALIZER = new ASTNodeProperty(
-			"New Initializer"); //$NON-NLS-1$
+			"ICPPASTNewExpression.NEW_INITIALIZER - New Initializer"); //$NON-NLS-1$
 
 	/**
 	 * @return <code>IASTExpression</code>
@@ -78,7 +78,7 @@ public interface ICPPASTNewExpression extends IASTExpression {
 	/**
 	 * TYPE_ID is the type being 'newed'.
 	 */
-	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("Type Id"); //$NON-NLS-1$
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("ICPPASTNewExpression.TYPE_ID - The type being 'newed'"); //$NON-NLS-1$
 
 	/**
 	 * Get the type Id.
@@ -114,7 +114,7 @@ public interface ICPPASTNewExpression extends IASTExpression {
 	 * Expressions that go inside array brackets.
 	 */
 	public static final ASTNodeProperty NEW_TYPEID_ARRAY_EXPRESSION = new ASTNodeProperty(
-			"Array Size Expression"); //$NON-NLS-1$
+			"ICPPASTNewExpression.NEW_TYPEID_ARRAY_EXPRESSION - Expressions inside array brackets"); //$NON-NLS-1$
 
 	/**
 	 * Get the new array size expressions.

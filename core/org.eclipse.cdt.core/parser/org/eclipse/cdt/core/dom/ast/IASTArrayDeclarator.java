@@ -22,7 +22,7 @@ public interface IASTArrayDeclarator extends IASTDeclarator {
 	 * <code>IASTArrayDeclarator</code> and an <code>IASTArrayModifier</code>.
 	 */
 	public static final ASTNodeProperty ARRAY_MODIFIER = new ASTNodeProperty(
-			"Array Modifier"); //$NON-NLS-1$
+			"IASTArrayDeclarator.ARRAY_MODIFIER - IASTArrayModifier for IASTArrayDeclarator"); //$NON-NLS-1$
 
 	/**
 	 * Get all <code>IASTArrayModifier</code>'s for this declarator.

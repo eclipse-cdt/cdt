@@ -25,7 +25,7 @@ public interface ICPPASTUsingDeclaration extends IASTDeclaration, IASTNameOwner 
 	/**
 	 * <code>NAME</code> is the qualified name brought into scope.
 	 */
-	public static final ASTNodeProperty NAME = new ASTNodeProperty("Name"); //$NON-NLS-1$
+	public static final ASTNodeProperty NAME = new ASTNodeProperty("ICPPASTUsingDeclaration.NAME - Qualified Name brought into scope"); //$NON-NLS-1$
 
 	/**
 	 * Was the typename keyword used?

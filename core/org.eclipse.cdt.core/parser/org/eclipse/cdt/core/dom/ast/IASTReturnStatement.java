@@ -21,7 +21,7 @@ public interface IASTReturnStatement extends IASTStatement {
 	 * <code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty RETURNVALUE = new ASTNodeProperty(
-			"returnValue"); //$NON-NLS-1$
+			"IASTReturnValue.RETURNVALUE - IASTExpression (returnValue) for IASTReturnStatement"); //$NON-NLS-1$
 
 	/**
 	 * This is the optional return value for this function.

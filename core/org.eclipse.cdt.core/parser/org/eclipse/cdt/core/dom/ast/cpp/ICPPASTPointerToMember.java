@@ -25,7 +25,7 @@ public interface ICPPASTPointerToMember extends IASTPointer, IASTNameOwner {
 	/**
 	 * This property refers to the nested name.
 	 */
-	public static final ASTNodeProperty NAME = new ASTNodeProperty("Name"); //$NON-NLS-1$
+	public static final ASTNodeProperty NAME = new ASTNodeProperty("ICPPASTPointerToMember.NAME - The nested Name"); //$NON-NLS-1$
 
 	/**
 	 * Set the name.

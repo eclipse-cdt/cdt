@@ -57,7 +57,7 @@ public interface ICPPASTFunctionDeclarator extends
 	 * exception specification.
 	 */
 	public static final ASTNodeProperty EXCEPTION_TYPEID = new ASTNodeProperty(
-			"Exception TypeId"); //$NON-NLS-1$
+			"ICPPASTFunctionDeclarator.EXCEPTION_TYPEID - TypeId throws in the exception specification"); //$NON-NLS-1$
 
 	/**
 	 * Get the exception specification.
@@ -94,7 +94,7 @@ public interface ICPPASTFunctionDeclarator extends
 	 * chain initializer.
 	 */
 	public static final ASTNodeProperty CONSTRUCTOR_CHAIN_MEMBER = new ASTNodeProperty(
-			"Constructor Chain Member"); //$NON-NLS-1$
+			"ICPPASTFunctionDeclarator.CONSTRUCTOR_CHAIN_MEMBER - Role of a Constructor Chain Initializer"); //$NON-NLS-1$
 
 	/**
 	 * Get constructor chain.

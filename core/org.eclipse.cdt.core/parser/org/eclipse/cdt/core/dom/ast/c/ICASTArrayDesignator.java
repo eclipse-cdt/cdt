@@ -25,7 +25,7 @@ public interface ICASTArrayDesignator extends ICASTDesignator {
 	 * the designator and the subscript expression.
 	 */
 	public static final ASTNodeProperty SUBSCRIPT_EXPRESSION = new ASTNodeProperty(
-			"Subscript Expression"); //$NON-NLS-1$
+			"ICASTArrayDesignator.SUBSCRIPT_EXPRESSION - relationship between designator and subscript expression"); //$NON-NLS-1$
 
 	/**
 	 * Get the subsript expression.

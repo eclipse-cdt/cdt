@@ -26,7 +26,7 @@ public interface ICPPASTTryBlockStatement extends IASTStatement {
 	/**
 	 * <code>BODY</code> is the body of the try block.
 	 */
-	public static final ASTNodeProperty BODY = new ASTNodeProperty("Body"); //$NON-NLS-1$
+	public static final ASTNodeProperty BODY = new ASTNodeProperty("ICPPASTTryBlockStatement.BODY - Body of try block"); //$NON-NLS-1$
 
 	/**
 	 * Set try body.
@@ -47,7 +47,7 @@ public interface ICPPASTTryBlockStatement extends IASTStatement {
 	 * <code>CATCH_HANDLER</code> are the exception catching handlers.
 	 */
 	public static final ASTNodeProperty CATCH_HANDLER = new ASTNodeProperty(
-			"Catch Handler"); //$NON-NLS-1$
+			"ICPPASTTryBlockStatement.CATCH_HANDLER - Exception catching handlers"); //$NON-NLS-1$
 
 	/**
 	 * Add catch handler.

@@ -27,28 +27,28 @@ public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 	 * <code>IASTDeclarator</code> and an <code>IASTPointerOperator</code>.
 	 */
 	public static final ASTNodeProperty POINTER_OPERATOR = new ASTNodeProperty(
-			"Pointer Operator"); //$NON-NLS-1$
+			"IASTDeclarator.POINTER_OPERATOR - IASTPointerOperator for IASTDeclarator"); //$NON-NLS-1$
 
 	/**
 	 * <code>INITIALIZER</code> represents the relationship between an
 	 * <code>IASTDeclarator</code> and an <code>IASTInitializer</code>.
 	 */
 	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
-			"Initializer"); //$NON-NLS-1$
+			"IASTDeclarator.INITIALIZER - IASTInitializer for IASTDeclarator"); //$NON-NLS-1$
 
 	/**
 	 * <code>NESTED_DECLARATOR</code> represents the relationship between an
 	 * <code>IASTDeclarator</code> and a nested <code>IASTDeclarator</code>.
 	 */
 	public static final ASTNodeProperty NESTED_DECLARATOR = new ASTNodeProperty(
-			"Nested Declarator"); //$NON-NLS-1$
+			"IASTDeclarator.NESTED_DECLARATOR - Nested IASTDeclarator"); //$NON-NLS-1$
 
 	/**
 	 * <code>DECLARATOR_NAME</code> represents the relationship between an
 	 * <code>IASTDeclarator</code> and an <code>IASTName</code>.
 	 */
 	public static final ASTNodeProperty DECLARATOR_NAME = new ASTNodeProperty(
-			"Declarator Name"); //$NON-NLS-1$
+			"IASTDeclarator.DECLARATOR_NAME - IASTName for IASTDeclarator"); //$NON-NLS-1$
 
 	/**
 	 * This is the list of pointer operators applied to the type for the

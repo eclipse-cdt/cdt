@@ -22,7 +22,7 @@ public interface IASTArraySubscriptExpression extends IASTExpression {
 	 * <code>IASTArraySubscriptExpression</code> and an
 	 * <code>IASTExpression</code> representing the subscript.
 	 */
-	public static final ASTNodeProperty ARRAY = new ASTNodeProperty("Array"); //$NON-NLS-1$
+	public static final ASTNodeProperty ARRAY = new ASTNodeProperty("IASTArraySubscriptExpression.ARRAY - IASTExpression representing the Array"); //$NON-NLS-1$
 
 	/**
 	 * Get the expression that represents the array.
@@ -45,7 +45,7 @@ public interface IASTArraySubscriptExpression extends IASTExpression {
 	 * <code>IASTExpression</code> representing the array.
 	 */
 	public static final ASTNodeProperty SUBSCRIPT = new ASTNodeProperty(
-			"Subscript"); //$NON-NLS-1$
+			"IASTArraySubscriptExpression.SUBSCRIPT - IASTExpression representing the Subscript"); //$NON-NLS-1$
 
 	/**
 	 * Get the subscript expression.

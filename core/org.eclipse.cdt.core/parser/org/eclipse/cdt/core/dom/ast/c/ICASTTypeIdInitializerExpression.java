@@ -26,7 +26,7 @@ public interface ICASTTypeIdInitializerExpression extends IASTExpression {
 	 * <code>ICASTTypeIdInitializerExpression</code> and
 	 * <code>IASTTypeId</code>.
 	 */
-	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("TypeId"); //$NON-NLS-1$
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("ICASTTypeIdInitializerExpression.TYPE_ID - IASTTypeId for ICASTTypeIdInitializerExpression"); //$NON-NLS-1$
 
 	/**
 	 * <code>INITIALIZER</code> represents the relationship between an
@@ -34,7 +34,7 @@ public interface ICASTTypeIdInitializerExpression extends IASTExpression {
 	 * <code>IASTInitializer</code>.
 	 */
 	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
-			"Initializer"); //$NON-NLS-1$
+			"ICASTTypeIdInitializerExpression.INITIALIZER - IASTInitializer for ICASTTypeIdInitializerExpression"); //$NON-NLS-1$
 
 	/**
 	 * Get the type-id.

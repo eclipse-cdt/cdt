@@ -22,7 +22,7 @@ public interface IASTInitializerExpression extends IASTInitializer {
 	 * an <code>IASTInitializerExpression</code>. and its <code></code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty INITIALIZER_EXPRESSION = new ASTNodeProperty(
-			"Initializer Expression"); //$NON-NLS-1$
+			"IASTInitializerExpression.INITIALIZER_EXPRESSION - IASTExpression for IASTInitializerExpression"); //$NON-NLS-1$
 
 	/**
 	 * Get the expression for the initializer.

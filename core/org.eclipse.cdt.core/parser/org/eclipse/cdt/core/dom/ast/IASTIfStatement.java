@@ -22,21 +22,21 @@ public interface IASTIfStatement extends IASTStatement {
 	 * <code>IASTIfStatement</code> and its nested <code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty CONDITION = new ASTNodeProperty(
-			"condition"); //$NON-NLS-1$
+			"IASTIfStatement.CONDITION - IASTExpression condition for IASTIfStatement"); //$NON-NLS-1$
 
 	/**
 	 * <code>THEN</code> represents the relationship between an
 	 * <code>IASTIfStatement</code> and its nested <code>IASTStatement</code>
 	 * (then).
 	 */
-	public static final ASTNodeProperty THEN = new ASTNodeProperty("then"); //$NON-NLS-1$
+	public static final ASTNodeProperty THEN = new ASTNodeProperty("IASTIfStatement.THEN - IASTStatement (then) for IASTIfStatement"); //$NON-NLS-1$
 
 	/**
 	 * <code>ELSE</code> represents the relationship between an
 	 * <code>IASTIfStatement</code> and its nested <code>IASTStatement</code>
 	 * (else).
 	 */
-	public static final ASTNodeProperty ELSE = new ASTNodeProperty("else"); //$NON-NLS-1$
+	public static final ASTNodeProperty ELSE = new ASTNodeProperty("IASTIfStatement.ELSE - IASTStatement (else) for IASTIfStatement"); //$NON-NLS-1$
 
 	/**
 	 * Get the condition in the if statement.

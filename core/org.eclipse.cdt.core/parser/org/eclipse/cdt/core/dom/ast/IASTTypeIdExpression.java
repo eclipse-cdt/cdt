@@ -41,7 +41,7 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	 * <code>TYPEID</code> represents the relationship between an <code>IASTTypeIdExpression</code> and
 	 * it's nested <code>IASTTypeId</code>.
 	 */
-	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("Type Id"); //$NON-NLS-1$
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("IASTTypeIdExpression.TYPE_ID - IASTTypeId for IASTTypeIdExpression"); //$NON-NLS-1$
 
 	/**
 	 * Set the type Id.

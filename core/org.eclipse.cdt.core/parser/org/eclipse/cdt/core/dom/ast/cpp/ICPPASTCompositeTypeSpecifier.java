@@ -38,13 +38,13 @@ public interface ICPPASTCompositeTypeSpecifier extends
 	 * visibility label "declaration".
 	 */
 	public static final ASTNodeProperty VISIBILITY_LABEL = new ASTNodeProperty(
-			"Visibility Label"); //$NON-NLS-1$
+			"ICPPASTCompositeTypeSpecifier.VISIBILITY_LABEL - Visibility label \"declaration\""); //$NON-NLS-1$
 
 	/**
 	 * <code>BASE_SPECIFIER</code> expresses the subclass role.
 	 */
 	public static final ASTNodeProperty BASE_SPECIFIER = new ASTNodeProperty(
-			"Base Specifier"); //$NON-NLS-1$
+			"ICPPASTCompositeTypeSpecifier.BASE_SPECIFIER - Expresses the subclass role"); //$NON-NLS-1$
 
 	/**
 	 * Base Specifiers are where a class expresses from whom it inherits.
@@ -108,7 +108,7 @@ public interface ICPPASTCompositeTypeSpecifier extends
 		 * <code>NAME</code> is the name of the base class.
 		 */
 		public static final ASTNodeProperty NAME = new ASTNodeProperty(
-				"BaseSpec Name"); //$NON-NLS-1$
+				"ICPPASTBaseSpecifier.NAME - Name of base class"); //$NON-NLS-1$
 
 		/**
 		 * Get the name.

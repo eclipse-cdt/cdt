@@ -22,7 +22,7 @@ public interface IASTExpressionList extends IASTExpression {
 	 * <code>IASTExpression</code>s.
 	 */
 	public static final ASTNodeProperty NESTED_EXPRESSION = new ASTNodeProperty(
-			"Nested Expression"); //$NON-NLS-1$
+			"IASTExpressionList.NESTED_EXPRESSION - Nested IASTExpression for IASTExpressionList"); //$NON-NLS-1$
 
 	/**
 	 * Get nested expressions.

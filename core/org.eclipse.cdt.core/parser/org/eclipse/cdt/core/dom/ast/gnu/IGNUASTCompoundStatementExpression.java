@@ -27,7 +27,7 @@ public interface IGNUASTCompoundStatementExpression extends IASTExpression {
 	 * <code>IASTCompoundStatement</code>.
 	 */
 	public static final ASTNodeProperty STATEMENT = new ASTNodeProperty(
-			"Statement"); //$NON-NLS-1$
+			"IGNUASTCompoundStatementExpression.STATEMENT - IASTCompoundStatement for IGNUASTCompoundStatementExpression"); //$NON-NLS-1$
 
 	/**
 	 * Get the compound statement.

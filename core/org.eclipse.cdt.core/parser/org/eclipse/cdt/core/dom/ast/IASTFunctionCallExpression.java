@@ -23,7 +23,7 @@ public interface IASTFunctionCallExpression extends IASTExpression {
 	 * <code>IASTExpression</code> (function name).
 	 */
 	public static final ASTNodeProperty FUNCTION_NAME = new ASTNodeProperty(
-			"Function Name"); //$NON-NLS-1$
+			"IASTFunctionCallExpression.FUNCTION_Name - IASTExpression (name) for IASTFunctionCallExpression"); //$NON-NLS-1$
 
 	/**
 	 * Set the function name expression.
@@ -46,7 +46,7 @@ public interface IASTFunctionCallExpression extends IASTExpression {
 	 * <code>IASTExpression</code> (parameters).
 	 */
 	public static final ASTNodeProperty PARAMETERS = new ASTNodeProperty(
-			"Parameters"); //$NON-NLS-1$
+			"IASTFunctionCallExpression.PARAMETERS - IASTExpression (parameters) for IASTFunctionCallExpression"); //$NON-NLS-1$
 
 	/**
 	 * Set the parameters expression.

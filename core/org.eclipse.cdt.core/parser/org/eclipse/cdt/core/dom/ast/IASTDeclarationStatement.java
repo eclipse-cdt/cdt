@@ -22,7 +22,7 @@ public interface IASTDeclarationStatement extends IASTStatement {
 	 * declaration statement and the declaration it wraps.
 	 */
 	public static final ASTNodeProperty DECLARATION = new ASTNodeProperty(
-			"Declaration"); //$NON-NLS-1$
+			"IASTDeclarationStatement.DECLARATION - Declaration for DeclarationStatement"); //$NON-NLS-1$
 
 	/**
 	 * Gets the declaration introduced by this statement.

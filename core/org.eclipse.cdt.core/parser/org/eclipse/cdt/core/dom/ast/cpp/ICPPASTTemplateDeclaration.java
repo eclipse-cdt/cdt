@@ -40,7 +40,7 @@ public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
 	 * grammatically.
 	 */
 	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
-			"Owned Declaration"); //$NON-NLS-1$
+			"ICPPASTTemplateDeclaration.OWNED_DECLARATION - Subdeclaration maintained grammatically"); //$NON-NLS-1$
 
 	/**
 	 * Get templated declaration.
@@ -61,7 +61,7 @@ public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
 	 * <code>PARAMETER</code> is used for template parameters.
 	 */
 	public static final ASTNodeProperty PARAMETER = new ASTNodeProperty(
-			"Template Parameter"); //$NON-NLS-1$
+			"ICPPASTTemplateDeclaration.PARAMETER - Template Parameter"); //$NON-NLS-1$
 
 	/**
 	 * Get template parameters.

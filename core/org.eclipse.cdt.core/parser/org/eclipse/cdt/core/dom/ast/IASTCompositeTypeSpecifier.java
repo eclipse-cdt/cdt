@@ -23,14 +23,14 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier , IASTName
 	 * <code>IASTCompositeTypeSpecifier</code> and its <code>IASTName</code>.
 	 */
 	public static final ASTNodeProperty TYPE_NAME = new ASTNodeProperty(
-			"Type Name"); //$NON-NLS-1$
+			"IASTCompositeTypeSpecifier.TYPE_NAME - IASTName for IASTCompositeTypeSpecifier"); //$NON-NLS-1$
 
 	/**
 	 * <code>MEMBER_DECLARATION</code> represents the relationship between an
 	 * <code>IASTCompositeTypeSpecifier</code> and its nested<code>IASTDeclaration</code>s.
 	 */
 	public static final ASTNodeProperty MEMBER_DECLARATION = new ASTNodeProperty(
-			"Member Declaration"); //$NON-NLS-1$
+			"IASTCompositeTypeSpecifier.MEMBER_DECLARATION - Nested IASTDeclaration for IASTCompositeTypeSpecifier"); //$NON-NLS-1$
 
 	/**
 	 * Get the type (key) of this composite specifier.

@@ -28,14 +28,14 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwn
 	 * declarations.
 	 */
 	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
-			"Owned"); //$NON-NLS-1$
+			"ICPPASTNamespaceDefinition.OWNED_DECLARATION - Role served by nested declarations"); //$NON-NLS-1$
 
 	/**
 	 * <code>NAMESPACE_NAME</code> is the role served by the name in this
 	 * interface.
 	 */
 	public static final ASTNodeProperty NAMESPACE_NAME = new ASTNodeProperty(
-			"Name"); //$NON-NLS-1$
+			"ICPPASTNamespaceDefinition.NAMESPACE_NAME - Role served by name"); //$NON-NLS-1$
 
 	/**
 	 * Get the name.

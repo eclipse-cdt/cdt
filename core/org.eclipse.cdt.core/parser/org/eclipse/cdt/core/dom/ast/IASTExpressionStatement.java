@@ -22,7 +22,7 @@ public interface IASTExpressionStatement extends IASTStatement {
 	 * <code>IASTExpressionStatement</code> and an <code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty EXPFRESSION = new ASTNodeProperty(
-			"Expression"); //$NON-NLS-1$
+			"IASTExpressionStatement.IASTStatement - IASTExpression for IASTExpressionStatement"); //$NON-NLS-1$
 
 	/**
 	 * Get the expression in this statement.

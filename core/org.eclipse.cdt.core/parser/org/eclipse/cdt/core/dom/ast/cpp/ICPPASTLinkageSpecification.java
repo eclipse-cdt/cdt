@@ -40,7 +40,7 @@ public interface ICPPASTLinkageSpecification extends IASTDeclaration {
 	 * linkages.
 	 */
 	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
-			"Owned Declaration"); //$NON-NLS-1$
+			"ICPPASTLinkageSpecification.OWNED_DECLARATION - Owned Declaration role for linkages"); //$NON-NLS-1$
 
 	/**
 	 * Get all of the declarations.

@@ -27,7 +27,7 @@ public interface IASTParameterDeclaration extends IASTNode {
 	 * <code>IASTDeclSpecifier</code>.
 	 */
 	public static final ASTNodeProperty DECL_SPECIFIER = new ASTNodeProperty(
-			"Decl Specifier"); //$NON-NLS-1$
+			"IASTParameterDeclaration.DECL_SPECIFIER - IASTDeclSpecifier for IASTParameterDeclaration"); //$NON-NLS-1$
 
 	/**
 	 * <code>DECLARATOR</code> represents the relationship between an
@@ -35,7 +35,7 @@ public interface IASTParameterDeclaration extends IASTNode {
 	 * <code>IASTDeclarator</code>.
 	 */
 	public static final ASTNodeProperty DECLARATOR = new ASTNodeProperty(
-			"Declarator"); //$NON-NLS-1$
+			"IASTParameterDeclaration.DECLARATOR - IASTDeclarator for IASTParameterDeclaration"); //$NON-NLS-1$
 
 	/**
 	 * Get the decl specifier.

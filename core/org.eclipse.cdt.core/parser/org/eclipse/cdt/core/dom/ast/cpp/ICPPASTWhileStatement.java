@@ -25,7 +25,7 @@ public interface ICPPASTWhileStatement extends IASTWhileStatement {
 	 * In C++ conditions can be declarations w/side effects.
 	 */
 	public static final ASTNodeProperty CONDITIONDECLARATION = new ASTNodeProperty(
-			"initDeclaration"); //$NON-NLS-1$
+			"ICPPASTWhileStatement.CONDITIONDECLARATION - C++ condition/declaration"); //$NON-NLS-1$
 
 	/**
 	 * Get the condition declaration.

@@ -24,7 +24,7 @@ public interface IASTForStatement extends IASTStatement {
 	 * initializer.
 	 */
 	public static final ASTNodeProperty INITEXPRESSION = new ASTNodeProperty(
-			"initExpression"); //$NON-NLS-1$
+			"IASTForStatement.INITEXPRESSION - IASTExpression initializer for IASTForStatement"); //$NON-NLS-1$
 
 	/**
 	 * <code>INITDECLARATION</code> represents the relationship between a
@@ -32,7 +32,7 @@ public interface IASTForStatement extends IASTStatement {
 	 * initializer.
 	 */
 	public static final ASTNodeProperty INITDECLARATION = new ASTNodeProperty(
-			"initDeclaration"); //$NON-NLS-1$
+			"IASTForStatement.INITDECLARATION - IASTDeclaration initializer for IASTForStatement"); //$NON-NLS-1$
 
 	/**
 	 * <code>CONDITION</code> represents the relationship between a
@@ -40,7 +40,7 @@ public interface IASTForStatement extends IASTStatement {
 	 * condition.
 	 */
 	public static final ASTNodeProperty CONDITION = new ASTNodeProperty(
-			"condition"); //$NON-NLS-1$
+			"IASTForStatement.CONDITION - IASTExpression condition of IASTForStatement"); //$NON-NLS-1$
 
 	/**
 	 * <code>ITERATION</code> represents the relationship between a
@@ -48,14 +48,14 @@ public interface IASTForStatement extends IASTStatement {
 	 * iteration expression.
 	 */
 	public static final ASTNodeProperty ITERATION = new ASTNodeProperty(
-			"iteration"); //$NON-NLS-1$
+			"IASTForStatement.ITERATION - IASTExpression iteration of IASTForStatement"); //$NON-NLS-1$
 
 	/**
 	 * <code>BODY</code> represents the relationship between a
 	 * <code>IASTForStatement</code> and its <code>IASTStatement</code>
 	 * body.
 	 */
-	public static final ASTNodeProperty BODY = new ASTNodeProperty("body"); //$NON-NLS-1$
+	public static final ASTNodeProperty BODY = new ASTNodeProperty("IASTForStatement.BODY - IASTStatement body of IASTForStatement"); //$NON-NLS-1$
 
 	/**
 	 * Get the initial expression for the loop. Returns null if there is none.

@@ -21,7 +21,7 @@ public interface IASTProblemHolder {
 	 * <code>PROBLEM</code> represents the relationship between a
 	 * <code>IASTProblemHolder</code> and its <code>IASTProblem</code>.
 	 */
-	public static final ASTNodeProperty PROBLEM = new ASTNodeProperty("Problem"); //$NON-NLS-1$
+	public static final ASTNodeProperty PROBLEM = new ASTNodeProperty("IASTProblemHolder.PROBLEM - IASTProblem for IASTProblemHolder"); //$NON-NLS-1$
 
 	/**
 	 * Get the problem.

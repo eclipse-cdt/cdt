@@ -33,7 +33,7 @@ public interface ICASTDesignatedInitializer extends IASTInitializer {
 	 * <code>ICASTDesignator</code>.
 	 */
 	public static final ASTNodeProperty DESIGNATOR = new ASTNodeProperty(
-			"Designator"); //$NON-NLS-1$
+			"ICASTDesignatedInitializer.DESIGNATOR - relationship between ICASTDesignatedInitializer and ICASTDesignator"); //$NON-NLS-1$
 
 	/**
 	 * Add a designator to this initializer.
@@ -56,7 +56,7 @@ public interface ICASTDesignatedInitializer extends IASTInitializer {
 	 * <code>IASTInitializer</code>.
 	 */
 	public static final ASTNodeProperty OPERAND = new ASTNodeProperty(
-			"RHS Initializer"); //$NON-NLS-1$
+			"ICASTDesignatedInitializer.OPERAND - RHS IASTInitializer for ICASTDesignatedInitializer"); //$NON-NLS-1$
 
 	/**
 	 * Get the nested initializer.

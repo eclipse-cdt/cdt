@@ -47,7 +47,7 @@ public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier,
 	 * decl spec & the expression for typeof().
 	 */
 	public static final ASTNodeProperty TYPEOF_EXPRESSION = new ASTNodeProperty(
-			"Typeof Expression"); //$NON-NLS-1$
+			"IGPPASTSimpleDeclSpecifier.TYPEOF_EXPRESSION - typeof() Expression"); //$NON-NLS-1$
 
 	/**
 	 * Did we encounter "long long" as a modifier?

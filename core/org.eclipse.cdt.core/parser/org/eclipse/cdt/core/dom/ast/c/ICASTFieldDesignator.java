@@ -24,7 +24,7 @@ public interface ICASTFieldDesignator extends ICASTDesignator {
 	 * <code>ICASTFieldDesignator</code> and an <code>IASTName</code>.
 	 */
 	public static final ASTNodeProperty FIELD_NAME = new ASTNodeProperty(
-			"Designator Field Name"); //$NON-NLS-1$
+			"ICASTFieldDesignator.FIELD_NAME - ICASTFieldDesignator Field Name"); //$NON-NLS-1$
 
 	/**
 	 * Get the field name.

@@ -25,7 +25,7 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 	 * Each IASTName segment has property being <code>SEGMENT_NAME</code>.
 	 */
 	public static final ASTNodeProperty SEGMENT_NAME = new ASTNodeProperty(
-			"Segment"); //$NON-NLS-1$
+			"ICPPASTQualifiedName.SEGMENT_NAME - An IASTName segment"); //$NON-NLS-1$
 
 	/**
 	 * Add a subname.

@@ -32,7 +32,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 		 * <code>IASTEnumerator</code> and <code>IASTName</code>.
 		 */
 		public static final ASTNodeProperty ENUMERATOR_NAME = new ASTNodeProperty(
-				"Enumerator Name"); //$NON-NLS-1$
+				"IASTEnumerator.ENUMERATOR_NAME - IASTName for IASTEnumerator"); //$NON-NLS-1$
 
 		/**
 		 * Set the enumerator's name.
@@ -53,7 +53,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 		 * <code>IASTEnumerator</code> and <code>IASTExpression</code>.
 		 */
 		public static final ASTNodeProperty ENUMERATOR_VALUE = new ASTNodeProperty(
-				"Enumerator Value"); //$NON-NLS-1$
+				"IASTEnumerator.ENUMERATOR_VALUE - IASTExpression (value) for IASTEnumerator"); //$NON-NLS-1$
 
 		/**
 		 * Set enumerator value.
@@ -77,7 +77,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 	 * <code>IASTEnumerator</code>s.
 	 */
 	public static final ASTNodeProperty ENUMERATOR = new ASTNodeProperty(
-			"Enumerator"); //$NON-NLS-1$
+			"IASTEnumerationSpecifier.ENUMERATOR - nested IASTEnumerator for IASTEnumerationSpecifier"); //$NON-NLS-1$
 
 	/**
 	 * Add an enumerator.
@@ -99,7 +99,7 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 	 * <code>IASTEnumerationSpecifier</code> and its <code>IASTName</code>.
 	 */
 	public static final ASTNodeProperty ENUMERATION_NAME = new ASTNodeProperty(
-			"Enum Name"); //$NON-NLS-1$
+			"IASTEnumerationSpecifier.ENUMERATION_NAME - IASTName for IASTEnumerationSpecifier"); //$NON-NLS-1$
 
 	/**
 	 * Set the enum's name.

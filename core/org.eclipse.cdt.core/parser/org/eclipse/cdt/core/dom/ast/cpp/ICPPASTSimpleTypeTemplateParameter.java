@@ -52,7 +52,7 @@ public interface ICPPASTSimpleTypeTemplateParameter extends
 	 * The parameter name.
 	 */
 	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty(
-			"Name"); //$NON-NLS-1$
+			"ICPPASTSimpleTypeTemplateParameter.PARAMETER_NAME - The Parameter's Name"); //$NON-NLS-1$
 
 	/**
 	 * Get the name.
@@ -73,7 +73,7 @@ public interface ICPPASTSimpleTypeTemplateParameter extends
 	 * DEFAULT_TYPE is the optional default typeId value
 	 */
 	public static final ASTNodeProperty DEFAULT_TYPE = new ASTNodeProperty(
-			"Default Type"); //$NON-NLS-1$
+			"ICPPASTSimpleTypeTemplateParameter.DEFAULT_TYPE - Optional default TypeId value"); //$NON-NLS-1$
 
 	/**
 	 * Get the default type.

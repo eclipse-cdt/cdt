@@ -24,7 +24,7 @@ public interface ICPPASTDeleteExpression extends IASTExpression {
 	 * <code>OPERAND</code> is the expression representing the pointer being
 	 * deleted.
 	 */
-	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("Operand"); //$NON-NLS-1$
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty("ICPPASTDeleteExpression.OPERAND - Expression of poniter being deleted"); //$NON-NLS-1$
 
 	/**
 	 * Get the operand.

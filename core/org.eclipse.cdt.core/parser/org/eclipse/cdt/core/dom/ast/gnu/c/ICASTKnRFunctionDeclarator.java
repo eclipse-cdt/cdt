@@ -29,7 +29,7 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator, IAST
 	 * function definition.
 	 */
 	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty(
-			"Parameter Name"); //$NON-NLS-1$
+			"ICASTKnRFunctionDeclarator.PARAMETER_NAME - K&R Parameter Name"); //$NON-NLS-1$
 
 	/**
 	 * Overwrite the parameter names. TODO - this should change to add
@@ -51,7 +51,7 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator, IAST
 	 * K&R function declarator and the full parameter declarations.
 	 */
 	public static final ASTNodeProperty FUNCTION_PARAMETER = new ASTNodeProperty(
-			"Parameter"); //$NON-NLS-1$
+			"ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER - Full K&R Parameter Declaration"); //$NON-NLS-1$
 
 	/**
 	 * Overrwrite the parameter lists.

@@ -23,7 +23,7 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	 * <code>IASTDeclSpecifier</code>.
 	 */
 	public static final ASTNodeProperty DECL_SPECIFIER = new ASTNodeProperty(
-			"Decl Specifier"); //$NON-NLS-1$
+			"IASTFunctionDefinition.DECL_SPECIFIER - IASTDeclSpecifier for IASTFunctionDefinition"); //$NON-NLS-1$
 
 	/**
 	 * <code>DECLARATOR</code> represents the relationship between a
@@ -31,14 +31,14 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	 * <code>IASTFunctionDeclarator</code>.
 	 */
 	public static final ASTNodeProperty DECLARATOR = new ASTNodeProperty(
-			"Declarator"); //$NON-NLS-1$
+			"IASTFunctionDefinition.DECLARATOR - IASTFunctionDeclarator for IASTFunctionDefinition"); //$NON-NLS-1$
 
 	/**
 	 * <code>FUNCTION_BODY</code> represents the relationship between a
 	 * <code>IASTFunctionDefinition</code> and its <code>IASTStatement</code>.
 	 */
 	public static final ASTNodeProperty FUNCTION_BODY = new ASTNodeProperty(
-			"Function Body"); //$NON-NLS-1$
+			"IASTFunctionDefinition.FUNCTION_BODY - Function Body for IASTFunctionDefinition"); //$NON-NLS-1$
 
 	/**
 	 * Get the decl specifier for the function.

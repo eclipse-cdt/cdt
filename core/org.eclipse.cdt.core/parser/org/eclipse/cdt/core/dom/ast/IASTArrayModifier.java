@@ -22,7 +22,7 @@ public interface IASTArrayModifier extends IASTNode {
 	 * <code>IASTArrayModifier</code> and an <code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty CONSTANT_EXPRESSION = new ASTNodeProperty(
-			"Constant Expression"); //$NON-NLS-1$
+			"IASTArrayModifier.CONSTANT_EXPRESSION - IASTExpression for IASTArrayModifier"); //$NON-NLS-1$
 
 	/**
 	 * <code>EMPTY_ARRAY</code> is referred to in implementations

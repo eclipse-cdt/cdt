@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTGotoStatement extends IASTStatement, IASTNameOwner {
 
-	public static final ASTNodeProperty NAME = new ASTNodeProperty("name"); //$NON-NLS-1$
+	public static final ASTNodeProperty NAME = new ASTNodeProperty("IASTGotoStatement.NAME - Name for IASTGotoStatement"); //$NON-NLS-1$
 
 	/**
 	 * Returns the name of the label. The name resolves to a ILabel binding.

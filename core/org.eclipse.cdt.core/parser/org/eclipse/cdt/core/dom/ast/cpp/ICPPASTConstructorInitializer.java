@@ -26,7 +26,7 @@ public interface ICPPASTConstructorInitializer extends IASTInitializer {
 	 * constructor.
 	 */
 	public static final ASTNodeProperty EXPRESSION = new ASTNodeProperty(
-			"Expression"); //$NON-NLS-1$
+			"ICPPASTConstructorInitializer.EXPRESSION - Expression consumed in constructor"); //$NON-NLS-1$
 
 	/**
 	 * Get the arguments to the constructor.

@@ -23,7 +23,7 @@ public interface IASTPreprocessorMacroDefinition extends
 	 * definition and it's name.
 	 */
 	public static final ASTNodeProperty MACRO_NAME = new ASTNodeProperty(
-			"Macro Name"); //$NON-NLS-1$
+			"IASTPreprocessorMacroDefinition.MACRO_NAME - Macro Name"); //$NON-NLS-1$
 
 	/**
 	 * Get the macro name.

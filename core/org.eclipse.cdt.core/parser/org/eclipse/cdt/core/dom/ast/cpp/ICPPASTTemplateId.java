@@ -26,7 +26,7 @@ public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
 	 * TEMPLATE_NAME is the IASTName.
 	 */
 	public static final ASTNodeProperty TEMPLATE_NAME = new ASTNodeProperty(
-			"TemplateId Name"); //$NON-NLS-1$
+			"ICPPASTTemplateId.TEMPLATE_NAME - TemplateId Name"); //$NON-NLS-1$
 
 	/**
 	 * Get the name.
@@ -47,7 +47,7 @@ public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
 	 * TEMPLATE_ID_ARGUMENT = template id argument.
 	 */
 	public static final ASTNodeProperty TEMPLATE_ID_ARGUMENT = new ASTNodeProperty(
-			"TemplateId Arg"); //$NON-NLS-1$
+			"ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT - TemplateId Argument"); //$NON-NLS-1$
 
 	/**
 	 * Constant.

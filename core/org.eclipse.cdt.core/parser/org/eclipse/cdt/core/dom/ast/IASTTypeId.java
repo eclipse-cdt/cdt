@@ -24,14 +24,14 @@ public interface IASTTypeId extends IASTNode {
 	 * it's nested <code>IASTDeclSpecifier</code>.
 	 */
 	public static final ASTNodeProperty DECL_SPECIFIER = new ASTNodeProperty(
-			"Decl Specifier"); //$NON-NLS-1$
+			"IASTTypeId.DECL_SPECIFIER - IASTDeclSpecifier for IASTTypeId"); //$NON-NLS-1$
 
 	/**
 	 * <code>ABSTRACT_DECLARATOR</code> represents the relationship between an <code>IASTTypeId</code> and
 	 * it's nested <code>IASTDeclarator</code>.
 	 */
 	public static final ASTNodeProperty ABSTRACT_DECLARATOR = new ASTNodeProperty(
-			"Abstract Declarator"); //$NON-NLS-1$
+			"IASTTypeId.ABSTRACT_DECLARATOR - IASTDeclarator for IASTTypeId"); //$NON-NLS-1$
 
 	/**
 	 * Get the decl specifier.

@@ -24,7 +24,7 @@ public interface IASTPreprocessorFunctionStyleMacroDefinition extends
 	 * definition and one of its parameters.
 	 */
 	public static final ASTNodeProperty PARAMETER = new ASTNodeProperty(
-			"Function Macro Parameter"); //$NON-NLS-1$
+			"IASTPreprocessorFunctionStyleMacroDefinition.PARAMETER - Function Macro Parameter"); //$NON-NLS-1$
 
 	/**
 	 * Get the macro parameters.

@@ -23,7 +23,7 @@ public interface IASTNamedTypeSpecifier extends IASTDeclSpecifier, IASTNameOwner
 	 * <code>IASTNamedTypeSpecifier</code> and its nested
 	 * <code>IASTName</code>.
 	 */
-	public static final ASTNodeProperty NAME = new ASTNodeProperty("Name"); //$NON-NLS-1$
+	public static final ASTNodeProperty NAME = new ASTNodeProperty("IASTNamedTypeSpecifier.NAME - IASTName for IASTNamedTypeSpecifier"); //$NON-NLS-1$
 
 	/**
 	 * Get the name.

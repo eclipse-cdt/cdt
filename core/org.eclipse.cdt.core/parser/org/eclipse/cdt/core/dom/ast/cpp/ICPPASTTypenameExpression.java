@@ -39,7 +39,7 @@ public interface ICPPASTTypenameExpression extends IASTExpression, IASTNameOwner
 	 * <code>TYPENAME</code> is the name of the type.
 	 */
 	public static final ASTNodeProperty TYPENAME = new ASTNodeProperty(
-			"Typename"); //$NON-NLS-1$
+			"ICPPASTTypenameExpression.TYPENAME - The name of the type"); //$NON-NLS-1$
 
 	/**
 	 * Set the name.
@@ -60,7 +60,7 @@ public interface ICPPASTTypenameExpression extends IASTExpression, IASTNameOwner
 	 * <code>INITIAL_VALUE</code> is an expression.
 	 */
 	public static final ASTNodeProperty INITIAL_VALUE = new ASTNodeProperty(
-			"Initial Value"); //$NON-NLS-1$
+			"ICPPASTTypenameExpression.INITIAL_VALUE - Initial Value is an expression"); //$NON-NLS-1$
 
 	/**
 	 * Set initial value.

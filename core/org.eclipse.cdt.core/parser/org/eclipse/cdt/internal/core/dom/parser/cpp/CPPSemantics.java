@@ -106,7 +106,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  */
 public class CPPSemantics {
 
-    protected static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("STRING_LOOKUP"); //$NON-NLS-1$
+    protected static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("CPPSemantics.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	public static final char[] EMPTY_NAME_ARRAY = new char[0];
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
 	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  //$NON-NLS-1$

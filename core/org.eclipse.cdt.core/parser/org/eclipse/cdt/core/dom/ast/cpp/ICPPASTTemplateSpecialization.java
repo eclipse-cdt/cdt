@@ -24,7 +24,7 @@ public interface ICPPASTTemplateSpecialization extends IASTDeclaration {
 	 * The declaration that the specialization affects.
 	 */
 	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
-			"Owned Declaration"); //$NON-NLS-1$
+			"ICPPASTTemplateSpecialization.OWNED_DECLARATION - Declaration that the specialization affects"); //$NON-NLS-1$
 
 	/**
 	 * Get the declaration.

@@ -22,21 +22,21 @@ public interface IASTTranslationUnit extends IASTNode {
 	 * it's nested <code>IASTDeclaration</code>'s.
 	 */
 	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
-			"Owned"); //$NON-NLS-1$
+			"IASTTranslationUnit.OWNED_DECLARATION - IASTDeclaration for IASTTranslationUnit"); //$NON-NLS-1$
 
 	/**
 	 * <code>SCANNER_PROBLEM</code> represents the relationship between an <code>IASTTranslationUnit</code> and
 	 * it's nested <code>IASTProblem</code>.
 	 */
 	public static final ASTNodeProperty SCANNER_PROBLEM = new ASTNodeProperty(
-			"Scanner Problem"); //$NON-NLS-1$
+			"IASTTranslationUnit.SCANNER_PROBLEM - IASTProblem (scanner caused) for IASTTranslationUnit"); //$NON-NLS-1$
 
 	/**
 	 * <code>PREPROCESSOR_STATEMENT</code> represents the relationship between an <code>IASTTranslationUnit</code> and
 	 * it's nested <code>IASTPreprocessorStatement</code>.
 	 */
 	public static final ASTNodeProperty PREPROCESSOR_STATEMENT = new ASTNodeProperty(
-			"PP Statement"); //$NON-NLS-1$
+			"IASTTranslationUnit.PREPROCESSOR_STATEMENT - IASTPreprocessorStatement for IASTTranslationUnit"); //$NON-NLS-1$
 
 	/**
 	 * A translation unit contains an ordered sequence of declarations.

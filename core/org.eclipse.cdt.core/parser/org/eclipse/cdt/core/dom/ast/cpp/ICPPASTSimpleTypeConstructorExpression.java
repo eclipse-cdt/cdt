@@ -104,7 +104,7 @@ public interface ICPPASTSimpleTypeConstructorExpression extends IASTExpression {
 	 * INITIALIZER_VALUE is the value passed into the constructor.
 	 */
 	public static final ASTNodeProperty INITIALIZER_VALUE = new ASTNodeProperty(
-			"Initializer Value"); //$NON-NLS-1$
+			"ICPPASTSimpleTypeConstructorExpression.INITIALIZER_VALUE - Value passed into constructor"); //$NON-NLS-1$
 
 	/**
 	 * Get the initial value.

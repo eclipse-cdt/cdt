@@ -25,7 +25,7 @@ public interface ICPPASTExplicitTemplateInstantiation extends IASTDeclaration {
 	 * declaration that this template refers to.
 	 */
 	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
-			"Owned Declaration"); //$NON-NLS-1$
+			"ICPPASTExplicitTemplateInstantiation.OWNED_DECLARATION - Role of inner declaration template refers to"); //$NON-NLS-1$
 
 	/**
 	 * Get the owned declaration.

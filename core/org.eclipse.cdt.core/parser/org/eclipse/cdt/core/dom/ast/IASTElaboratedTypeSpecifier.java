@@ -56,7 +56,7 @@ public interface IASTElaboratedTypeSpecifier extends IASTDeclSpecifier, IASTName
 	 * <code>IASTElaboratedTypeSpecifier</code> and <code>IASTName</code>.
 	 */
 	public static final ASTNodeProperty TYPE_NAME = new ASTNodeProperty(
-			"Type Name"); //$NON-NLS-1$
+			"IASTElaboratedTypeSpecifier.TYPE_NAME - IASTName for IASTElaboratedTypeSpecifier"); //$NON-NLS-1$
 
 	/**
 	 * Get the name.

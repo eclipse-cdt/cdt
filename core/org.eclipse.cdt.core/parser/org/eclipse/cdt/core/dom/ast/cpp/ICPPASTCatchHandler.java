@@ -31,13 +31,13 @@ public interface ICPPASTCatchHandler extends IASTStatement {
 	 * catch handler.
 	 */
 	public static final ASTNodeProperty DECLARATION = new ASTNodeProperty(
-			"Declaration"); //$NON-NLS-1$
+			"ICPPASTCatchHandler.DECLARATION - Nested declaration within catch handler"); //$NON-NLS-1$
 
 	/**
 	 * <code>CATCH_BODY</code> represents the nested (compound) statement.
 	 */
 	public static final ASTNodeProperty CATCH_BODY = new ASTNodeProperty(
-			"Catch Body"); //$NON-NLS-1$
+			"ICPPASTCatchHandler.CATCH_BODY - Nested compound statement for catch body"); //$NON-NLS-1$
 
 	/**
 	 * Set is catch all handler.

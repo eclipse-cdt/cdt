@@ -22,7 +22,7 @@ public interface IASTConditionalExpression extends IASTExpression {
 	 * <code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty LOGICAL_CONDITION = new ASTNodeProperty(
-			"Logical Condition"); //$NON-NLS-1$
+			"IASTConditionalExpression.LOGICAL_CONDITION - Logical Condition"); //$NON-NLS-1$
 
 	/**
 	 * <code>POSITIVE_RESULT</code> represents the relationship between an
@@ -30,7 +30,7 @@ public interface IASTConditionalExpression extends IASTExpression {
 	 * <code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty POSITIVE_RESULT = new ASTNodeProperty(
-			"Positive Result"); //$NON-NLS-1$
+			"IASTConditionalExpression.POSITIVE_RESULT - Positive Result"); //$NON-NLS-1$
 
 	/**
 	 * <code>NEGATIVE_RESULT</code> represents the relationship between an
@@ -38,7 +38,7 @@ public interface IASTConditionalExpression extends IASTExpression {
 	 * <code>IASTExpression</code>.
 	 */
 	public static final ASTNodeProperty NEGATIVE_RESULT = new ASTNodeProperty(
-			"Negative Result"); //$NON-NLS-1$
+			"IASTConditionalExpression.NEGATIVE_RESULT - Negative Result"); //$NON-NLS-1$
 
 	/**
 	 * Get the logical condition expression.

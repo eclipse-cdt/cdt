@@ -23,7 +23,7 @@ public interface IASTCompoundStatement extends IASTStatement {
 	 * <code>IASTStatement</code>
 	 */
 	public static final ASTNodeProperty NESTED_STATEMENT = new ASTNodeProperty(
-			"Nested Statement"); //$NON-NLS-1$
+			"IASTCompoundStatement.NESTED_STATEMENT - nested IASTStatement for IASTCompoundStatement"); //$NON-NLS-1$
 
 	/**
 	 * Gets the statements in this block.

@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTLocationFactory;
 import org.eclipse.cdt.core.dom.ast.IASTResourceLocation;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.dom.parser.location.ASTFileLocation;
+import org.eclipse.cdt.internal.core.dom.parser.ASTFileLocation;
 import org.eclipse.core.resources.IResource;
 
 /**

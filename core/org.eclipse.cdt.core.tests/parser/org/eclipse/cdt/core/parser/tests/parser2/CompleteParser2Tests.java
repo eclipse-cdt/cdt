@@ -25,16 +25,16 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.c.GCCParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
+import org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.cdt.internal.core.parser2.ISourceCodeParser;
-import org.eclipse.cdt.internal.core.parser2.c.ANSICParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.c.GCCParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.c.GNUCSourceParser;
-import org.eclipse.cdt.internal.core.parser2.c.ICParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.cpp.ANSICPPParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.cpp.GNUCPPParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.cpp.GNUCPPSourceParser;
-import org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration;
 
 /**
  * @author jcamelon

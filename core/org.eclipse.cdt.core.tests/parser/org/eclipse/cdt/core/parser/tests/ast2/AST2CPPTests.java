@@ -37,7 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.parser2.cpp.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 
 /**
  * @author aniefer

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.internal.core.parser2.IProblemRequestor;
+import org.eclipse.cdt.internal.core.dom.parser.IProblemRequestor;
 
 
 /**

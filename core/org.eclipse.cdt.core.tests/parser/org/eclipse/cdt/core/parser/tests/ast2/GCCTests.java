@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.parser2.c.CVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 
 /**
  * @author aniefer

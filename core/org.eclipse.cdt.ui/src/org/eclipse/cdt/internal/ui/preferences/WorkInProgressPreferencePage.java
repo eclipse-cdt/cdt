@@ -151,7 +151,7 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		editorCorrectionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		editorCorrectionGroup.setText("Editor"); //$NON-NLS-1$
 
-		fEditorCorrection = createCheckButton(editorCorrectionGroup, "Enable editor problem marker"); //$NON-NLS-1$
+		fEditorCorrection = createCheckButton(editorCorrectionGroup, "Enable editor problem annotation"); //$NON-NLS-1$
 		fEditorCorrection.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}

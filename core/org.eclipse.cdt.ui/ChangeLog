@@ -1,6 +1,6 @@
 2003-04-16 Alain Magloire
 
-	Bug 36584
+	Bug 36582
 	
 	* src/org/eclipse.cdt.internal/ui/cview/CView.java
 	linkToEditor() check is we have a valid ITranslationUnit.

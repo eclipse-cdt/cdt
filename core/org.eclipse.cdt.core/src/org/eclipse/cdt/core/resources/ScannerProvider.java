@@ -77,36 +77,6 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		}
 	}
 
-	private void addInfoFromEntry(IPathEntry entry, IPath resPath, List includeList, Map symbolMap) {
-		switch(entry.getEntryKind()) {
-			case IPathEntry.CDT_INCLUDE: {
-				IIncludeEntry include = (IIncludeEntry)entry;
-				IPath entryPath = include.getPath();
-				if (entryPath.equals(resPath) ||
-						entryPath.isPrefixOf(resPath) && include.isExported()) {
-					includeList.add(include.getFullIncludePath().toOSString());
-				}
-				break;
-			}
-			case IPathEntry.CDT_MACRO: {
-				IMacroEntry macro = (IMacroEntry)entry;
-				IPath entryPath = macro.getPath();
-				if (entryPath.equals(resPath) ||
-						entryPath.isPrefixOf(resPath) && macro.isExported()) {
-					String name = macro.getMacroName();
-					if (name != null && name.length() > 0) {
-						String value = macro.getMacroValue();
-						if (value == null) {
-							value = new String();
-						}
-						symbolMap.put(name, value);
-					}
-				}
-				break;
-			}
-		}
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -117,30 +87,72 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		ICProject cproject = CoreModel.getDefault().create(resource.getProject());
 		try {
 			if (cproject != null) {
+				IPathEntry[] entries = cproject.getResolvedPathEntries();
+				
+				// We need to reorder the include/macros:
+				// includes the closest match to the resource will come first
+				// /project/src/file.c  --> /usr/local/include
+				// /project/src         --> /usr/include
+				// 
+				//  /usr/local/include must come first.
+				//
+				// For the macros the closest symbol will override 
+				// /projec/src/file.c --> NDEBUG=1
+				// /project/src       --> NDEBUG=0
+				//
+				// We will use NDEBUG=1 only
+				int count = resPath.segmentCount();
 				ArrayList includeList = new ArrayList();
 				Map symbolMap = new HashMap();
-				IPathEntry[] entries = cproject.getResolvedPathEntries();
+				for (int i = 0; i < count; i++) {
+					IPath newPath = resPath.removeLastSegments(i);
+					for (int j = 0; j < entries.length; j++) {
+						IPathEntry entry = entries[j];
+						IPath otherPath = entry.getPath();
+						if (newPath.equals(otherPath)) {
+							if (entry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+								IIncludeEntry include = (IIncludeEntry)entry;
+								includeList.add(include.getFullIncludePath().toOSString());
+							} else if (entry.getEntryKind() == IPathEntry.CDT_MACRO) {
+								IMacroEntry macro = (IMacroEntry)entry;
+								String key = macro.getMacroName();
+								if (!symbolMap.containsKey(key)) {
+									symbolMap.put(key, macro.getMacroValue());
+								}
+							}
+						}
+					}
+				}
+
+				// Add the Project contributions last.
 				for (int i = 0; i < entries.length; i++) {
-					switch (entries[i].getEntryKind()) {
-						case IPathEntry.CDT_PROJECT: {
-							IResource res = resource.getWorkspace().getRoot().findMember(entries[i].getPath());
-							if (res != null && res.getType() == IResource.PROJECT) {
-								ICProject refCProject = CoreModel.getDefault().create((IProject)res);
-								if (refCProject != null) {
-									IPathEntry[] projEntries = refCProject.getResolvedPathEntries();
-									for (int j = 0; j < projEntries.length; j++) {
-										if (entries[i].isExported()) {
-											addInfoFromEntry(projEntries[j], resPath, includeList, symbolMap);
+					IPathEntry entry = entries[i];
+					if (entry.getEntryKind() == IPathEntry.CDT_PROJECT) {
+						IResource res = resource.getWorkspace().getRoot().findMember(entry.getPath());
+						if (res != null && res.getType() == IResource.PROJECT) {
+							ICProject refCProject = CoreModel.getDefault().create((IProject)res);
+							if (refCProject != null) {
+								IPathEntry[] projEntries = refCProject.getResolvedPathEntries();
+								for (int j = 0; j < projEntries.length; j++) {
+									IPathEntry projEntry = projEntries[j];
+									if (projEntry.isExported()) {
+										if (projEntry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+											IIncludeEntry include = (IIncludeEntry)projEntry;
+											includeList.add(include.getFullIncludePath().toOSString());
+										} else if (projEntry.getEntryKind() == IPathEntry.CDT_MACRO) {
+											IMacroEntry macro = (IMacroEntry)entry;
+											String key = macro.getMacroName();
+											if (!symbolMap.containsKey(key)) {
+												symbolMap.put(key, macro.getMacroValue());
+											}
 										}
 									}
 								}
 							}
-							break;
 						}
-						default:
-							addInfoFromEntry(entries[i], resPath, includeList, symbolMap);
 					}
 				}
+
 				String[] includes = new String[includeList.size()];
 				includeList.toArray(includes);
 				return new ScannerInfo(includes, symbolMap);

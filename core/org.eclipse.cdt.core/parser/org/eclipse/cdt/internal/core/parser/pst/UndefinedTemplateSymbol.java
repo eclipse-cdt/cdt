@@ -709,9 +709,9 @@ public class UndefinedTemplateSymbol extends BasicSymbol implements ITemplateSym
 				}
 				return symbol;
 			}
-			else {
-				throw new ParserSymbolTableException(ParserSymbolTableException.r_BadTemplateArgument);
-			}
+			
+			throw new ParserSymbolTableException(ParserSymbolTableException.r_BadTemplateArgument);
+			
 		}
 		else if (isType(ITypeInfo.t_templateParameter) && argMap.containsKey(this)) {
 			return ((ITypeInfo)argMap.get(this)).getTypeSymbol();

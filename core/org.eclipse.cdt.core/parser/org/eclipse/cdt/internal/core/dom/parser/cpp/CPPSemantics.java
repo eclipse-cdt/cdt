@@ -121,6 +121,16 @@ public class CPPSemantics {
 			astName = null;
 			this.name = n;
 		}
+		public boolean includeBlockItem( IASTNode item ){
+		    if( astName == null ) return false;
+		    if( astName.getParent() instanceof IASTIdExpression || 
+		        item instanceof IASTNamespaceDefinition  ||
+	           (item instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration)item).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ) )
+		    {
+		        return true;
+		    }
+		    return false;
+		}
 		public boolean typesOnly(){
 			if( astName == null ) return false;
 			IASTNode parent = astName.getParent();
@@ -649,8 +659,14 @@ public class CPPSemantics {
 		List found = null;
 		
 		if( parent instanceof IASTCompoundStatement ){
-			IASTCompoundStatement compound = (IASTCompoundStatement) parent;
-			nodes = compound.getStatements();
+		    if( parent.getParent() instanceof IASTFunctionDefinition ){
+		        ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) ((IASTFunctionDefinition)parent.getParent()).getDeclarator();
+		        nodes = dtor.getParameters();
+		    } 
+		    if( nodes == null || nodes.length == 0 ){
+				IASTCompoundStatement compound = (IASTCompoundStatement) parent;
+				nodes = compound.getStatements();
+		    }
 		} else if ( parent instanceof IASTTranslationUnit ){
 			IASTTranslationUnit translation = (IASTTranslationUnit) parent;
 			nodes = translation.getDeclarations();
@@ -664,6 +680,9 @@ public class CPPSemantics {
 		    
 			nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[0].getParent()).getDeclarations();
 			namespaceIdx = -1;
+		} else if( parent instanceof ICPPASTFunctionDeclarator ){
+		    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
+	        nodes = dtor.getParameters();
 		}
 	
 		if( scope instanceof ICPPClassScope ){
@@ -676,14 +695,8 @@ public class CPPSemantics {
 		while( item != null ) {
 			if( item == null || ( blockItem != null && ((ASTNode)item).getOffset() > ((ASTNode) blockItem).getOffset() ))
 				break;
-			if( item == blockItem ){
-			    if( !(item instanceof IASTNamespaceDefinition)  &&
-			        !(item instanceof IASTSimpleDeclaration && 
-			           ((IASTSimpleDeclaration)item).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) )
-			    {
-			        break;
-			    }
-			}
+			if( item == blockItem && !data.includeBlockItem( item ) )
+			    break;
 			
 			if( item instanceof ICPPASTUsingDirective && !data.ignoreUsingDirectives ) {
 				if( usingDirectives != null )
@@ -696,18 +709,32 @@ public class CPPSemantics {
 					found.add( possible );
 				}
 			}
+			if( item == blockItem )
+				break;
 			if( idx > -1 && ++idx < nodes.length ){
 				item = nodes[idx];
 			} else {
 			    item = null;
 			
-			    while( namespaceIdx > -1 && namespaceDefs.length > ++namespaceIdx ){
-			        nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[0].getParent()).getDeclarations();
-				    if( nodes.length > 0 ){
+			    if( namespaceIdx > -1 ) {
+			        //check all definitions of this namespace
+				    while( namespaceIdx > -1 && namespaceDefs.length > ++namespaceIdx ){
+				        nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[0].getParent()).getDeclarations();
+					    if( nodes.length > 0 ){
+					        idx = 0;
+					        item = nodes[0];
+					        break;
+					    }     
+				    }
+			    } else if( parent instanceof IASTCompoundStatement && nodes instanceof IASTParameterDeclaration [] ){
+			    	//function body, we were looking at parameters, now check the body itself
+			        IASTCompoundStatement compound = (IASTCompoundStatement) parent;
+					nodes = compound.getStatements(); 
+					if( nodes.length > 0 ){
 				        idx = 0;
 				        item = nodes[0];
 				        break;
-				    }     
+				    }  
 			    }
 			}
 		}
@@ -760,7 +787,13 @@ public class CPPSemantics {
 			declaration = ((IASTDeclarationStatement)node).getDeclaration();
 		else if( node instanceof IASTForStatement )
 			declaration = ((IASTForStatement)node).getInitDeclaration();
-		
+		else if( node instanceof IASTParameterDeclaration && !data.typesOnly() ){
+		    IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) node;
+			IASTName declName = parameterDeclaration.getDeclarator().getName();
+			if( CharArrayUtils.equals( declName.toCharArray(), data.name ) ){
+				return declName;
+			}
+		}
 		if( declaration == null )
 			return null;
 		

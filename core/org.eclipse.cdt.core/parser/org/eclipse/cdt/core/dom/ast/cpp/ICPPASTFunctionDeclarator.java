@@ -41,4 +41,5 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
     public ICPPASTConstructorChainInitializer[] getConstructorChain();
     public void addConstructorToChain( ICPPASTConstructorChainInitializer initializer );
 
+    public ICPPFunctionScope getFunctionScope();
 }

@@ -1054,5 +1054,33 @@ public class AST2CPPTests extends AST2BaseTest {
 	    s = (ICompositeType) col.getName(0).resolveBinding();
 	    assertNotNull( s );
 	}
+	
+	public void testBug84228() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "void f( int m, int c[m][m] );        \n" ); //$NON-NLS-1$
+		buffer.append( "void f( int m, int c[m][m] ){        \n" ); //$NON-NLS-1$
+		buffer.append( "   int x;                            \n" ); //$NON-NLS-1$
+		buffer.append( "   { int x = x; }                    \n" ); //$NON-NLS-1$
+		buffer.append( "}                                    \n" ); //$NON-NLS-1$
+		   
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit(tu, col);
+		
+		assertEquals(col.size(), 13);
+		
+		IParameter m = (IParameter) col.getName(3).resolveBinding();
+		IVariable x3 = (IVariable) col.getName(12).resolveBinding();
+		IVariable x2 = (IVariable) col.getName(11).resolveBinding();
+		IVariable x1 = (IVariable) col.getName(10).resolveBinding();
+
+		assertSame( x2, x3 );
+		assertNotSame( x1, x2 );
+		
+		assertInstances( col, m, 6 );
+		assertInstances( col, x1, 1 );
+		assertInstances( col, x2, 2 );
+	}
+
 }
 

@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 
 /**
  * @author jcamelon
@@ -26,7 +26,6 @@ public class CPPASTFunctionDefinition extends CPPASTNode implements
     private IASTDeclSpecifier declSpecifier;
     private IASTFunctionDeclarator declarator;
     private IASTStatement bodyStatement;
-    private ICPPFunctionScope scope;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition#getDeclSpecifier()
@@ -74,9 +73,7 @@ public class CPPASTFunctionDefinition extends CPPASTNode implements
 	 * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition#getScope()
 	 */
 	public IScope getScope() {
-		if( scope == null )
-			scope = new CPPFunctionScope( this );
-		return scope;
+		return ((ICPPASTFunctionDeclarator)declarator).getFunctionScope();
 	}
 
     

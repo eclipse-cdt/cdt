@@ -2788,7 +2788,7 @@ public class AST2Tests extends AST2BaseTest {
 		
 		assertEquals(col.size(), 13);
 		
-		IParameter m = (IParameter) col.getName(1).resolveBinding();
+		IParameter m = (IParameter) col.getName(3).resolveBinding();
 		IVariable x3 = (IVariable) col.getName(12).resolveBinding();
 		IVariable x2 = (IVariable) col.getName(11).resolveBinding();
 		IVariable x1 = (IVariable) col.getName(10).resolveBinding();

@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -488,7 +489,7 @@ public class CPPVisitor {
 	    } else if( parent instanceof IASTCompoundStatement ){
 	        return ((IASTCompoundStatement)parent).getScope();
 	    } else if( parent instanceof ICPPASTConstructorChainInitializer ){
-	    	IASTNode node = getContainingBlockItem( parent );
+	    	IASTNode node = getContainingBlockItem( parent.getParent() );
 	    	if( node instanceof IASTFunctionDefinition ){
 	    		IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition)node).getBody();
 	    		return body.getScope();
@@ -555,44 +556,27 @@ public class CPPVisitor {
 		} else if( parent instanceof IASTStatement ){
 			scope = getContainingScope( (IASTStatement)parent );
 		} else if( parent instanceof IASTFunctionDefinition ){
-			IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent ).getDeclarator();
+		    IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent ).getDeclarator();
 			IFunction function = (IFunction) fnDeclarator.getName().resolveBinding();
+			
 			try {
-                scope = function.getFunctionScope();
-            } catch ( DOMException e ) {
-                return e.getProblem();
-            }
+                scope = function.getScope();
+			} catch ( DOMException e ) {
+            }           
 		}
 		
 		if( statement instanceof IASTGotoStatement || statement instanceof IASTLabelStatement ){
-		    //labels have function scope
-		    while( scope != null && !(scope instanceof ICPPFunctionScope) ){
-		        try {
-                    scope = scope.getParent();
-                } catch ( DOMException e ) {
-                    return e.getProblem();
-                }
+		    while( !(parent instanceof IASTFunctionDefinition) ){
+		        parent = parent.getParent();
 		    }
+		    IASTFunctionDefinition fdef = (IASTFunctionDefinition) parent;
+		    return ((ICPPASTFunctionDeclarator)fdef.getDeclarator()).getFunctionScope();
 		}
 		
 		return scope;
 	}
 	
 	public static IScope getContainingScope( IASTDeclSpecifier typeSpec ){
-//		if( typeSpec instanceof ICPPASTCompositeTypeSpecifier ){
-//			ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) typeSpec;
-//			IASTName name = compTypeSpec.getName();
-//			if( name instanceof ICPPASTQualifiedName ){
-//				IASTName [] names = ((ICPPASTQualifiedName)name).getNames();
-//				if( names.length > 1 ){
-//					IBinding binding = names[ names.length - 2 ].resolveBinding();
-//					if( binding instanceof ICPPClassType )
-//						return ((ICPPClassType)binding).getCompositeScope();
-//					else if( binding instanceof ICPPNamespace )
-//						return ((ICPPNamespace)binding).getNamespaceScope();
-//				}
-//			}
-//		}
 	    IASTNode parent = typeSpec.getParent();
 	    if( parent instanceof IASTSimpleDeclaration )
 	        return getContainingScope( (IASTSimpleDeclaration) parent );
@@ -607,12 +591,10 @@ public class CPPVisitor {
 	 */
 	public static IScope getContainingScope(IASTParameterDeclaration parameterDeclaration) {
 		ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parameterDeclaration.getParent();
-		IASTName name = dtor.getName();
-		if( name instanceof ICPPASTQualifiedName ) {
-			IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-			if( ns.length > 0 )
-				return getContainingScope( ns [ ns.length - 1 ] );
-		} 
+		ASTNodeProperty prop = dtor.getPropertyInParent();
+		if( prop == IASTSimpleDeclaration.DECLARATOR || prop == IASTFunctionDefinition.DECLARATOR )
+		    return dtor.getFunctionScope();
+		
 		return getContainingScope( dtor );
 	}
 	
@@ -632,6 +614,8 @@ public class CPPVisitor {
 				return p;
 		} else if ( parent instanceof IASTStatement || parent instanceof IASTTranslationUnit ) {
 			return parent;
+		} else if( parent instanceof IASTFunctionDeclarator ){
+		    return node;
 		}
 		
 		return getContainingBlockItem( parent );

@@ -10,10 +10,14 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 
 /**
  * @author jcamelon
@@ -23,7 +27,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
     
     private IASTParameterDeclaration [] parameters = null;
     private static final int DEFAULT_PARAMETERS_LIST_SIZE = 2;
-    
+    private ICPPFunctionScope scope = null;
     private int currentIndex = 0;
     private boolean varArgs;
     private boolean pureVirtual;
@@ -232,6 +236,14 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
         constructorChain[ currentConstructorChainIndex++ ] = initializer;
     }
 
-
+    public ICPPFunctionScope getFunctionScope(){
+        if( scope != null )
+            return scope;
+        
+        ASTNodeProperty prop = getPropertyInParent();
+        if( prop == IASTSimpleDeclaration.DECLARATOR || prop == IASTFunctionDefinition.DECLARATOR )
+            scope = new CPPFunctionScope( this );
+        return scope;
+    }
     
 }

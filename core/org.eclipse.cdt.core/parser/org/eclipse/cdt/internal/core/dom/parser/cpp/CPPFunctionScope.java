@@ -16,14 +16,15 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
@@ -36,7 +37,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	/**
 	 * @param physicalNode
 	 */
-	public CPPFunctionScope(IASTFunctionDefinition physicalNode) {
+	public CPPFunctionScope(IASTFunctionDeclarator physicalNode) {
 		super(physicalNode);
 	}
 
@@ -71,12 +72,23 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	}
 	
 	public IScope getParent() throws DOMException {
-		IASTFunctionDefinition fn = (IASTFunctionDefinition) getPhysicalNode();
-		IFunction function = (IFunction) fn.getDeclarator().getName().resolveBinding();
-		if( function instanceof ICPPMethod ){
-			return function.getScope();
-		}
-		return super.getParent();
+	    //we can't just resolve the function and get its parent scope, since there are cases where that 
+	    //could loop since resolving functions requires resolving their parameter types
+	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) getPhysicalNode();
+	    IASTName name = fdtor.getName();
+	    if( name instanceof ICPPASTQualifiedName ){
+	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+	        if( ns.length > 1){
+	            IBinding binding = ns[ ns.length - 2 ].resolveBinding();
+	            if( binding instanceof ICPPClassType )
+	                return ((ICPPClassType)binding).getCompositeScope();
+	            else if( binding instanceof ICPPNamespace )
+	                return ((ICPPNamespace)binding).getNamespaceScope();
+	            return binding.getScope();
+	        }
+	    } 
+	        
+	    return CPPVisitor.getContainingScope( fdtor );
 	}
 
 }

@@ -1,3 +1,6 @@
+2004-04-21 Bogdan Gheorghe
+	Fixed external markers not working with new Search UI problem. 
+	
 2004-04-21 Alain Magloire
 	Disable the PathEntry property page.
 

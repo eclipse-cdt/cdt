@@ -58,10 +58,11 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		} else if (element instanceof IFile) {
 			editor= IDE.openEditor(CUIPlugin.getActivePage(), (IFile) element, false);
 		} else if (element instanceof BasicSearchMatch){
-			BasicSearchMatch x = (BasicSearchMatch) element;
-			editor = IDE.openEditor(CUIPlugin.getActivePage(), (IFile) x.resource, false);
-			showWithMarker(editor, (IFile) x.resource, currentOffset, currentLength);
-		}
+			BasicSearchMatch searchMatch = (BasicSearchMatch) element;
+			if (searchMatch.resource != null){
+				editor = IDE.openEditor(CUIPlugin.getActivePage(), (IFile) searchMatch.resource, false);
+				showWithMarker(editor, (IFile) searchMatch.resource, currentOffset, currentLength);
+			}}
 		if (editor instanceof ITextEditor) {
 		ITextEditor textEditor= (ITextEditor) editor;
 			textEditor.selectAndReveal(currentOffset, currentLength);

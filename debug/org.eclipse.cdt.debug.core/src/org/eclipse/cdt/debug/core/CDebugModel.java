@@ -6,8 +6,13 @@
 
 package org.eclipse.cdt.debug.core;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.internal.core.CDebugElement;
 import org.eclipse.cdt.debug.internal.core.CDebugTarget;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -17,8 +22,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-
-
 
 /**
  * 
@@ -99,15 +102,25 @@ public class CDebugModel
 		{
 			CDebugCorePlugin.log( e );
 		}
-
+		// Temporary
 		if ( stopInMain )
-			breakInMain( cdiTarget );
+		{
+			ICDILocation location = cdiTarget.getSession().getSourceManager().createLocation( "", "main", 0 );
+			try
+			{
+				ICDIBreakpoint bkpt = cdiTarget.getSession().getBreakpointManager().
+											setLocationBreakpoint( ICDIBreakpoint.TEMPORARY,
+																   location,
+																   null,
+																   null );
+			}
+			catch( CDIException e )
+			{
+				((CDebugElement)target[0]).targetRequestFailed( MessageFormat.format( "{0} occurred setting temporary breakpoint.", new String[] { e.toString() } ), e );
+			}
+		}
 		target[0].resume();
 
 		return target[0];
-	}
-	
-	private static void breakInMain( ICDITarget cdiTarget ) throws DebugException
-	{
 	}
 }

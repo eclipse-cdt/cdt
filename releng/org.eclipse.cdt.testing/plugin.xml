@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.cdt.testing"
    name="%pluginName"
-   version="1.2.0"
+   version="1.2.1"
    provider-name="%providerName">
 
    <runtime>

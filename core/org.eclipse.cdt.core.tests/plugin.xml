@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.cdt.core.tests"
    name="org.eclipse.cdt.core.tests"
-   version="1.2.0"
+   version="1.2.1"
    class="org.eclipse.cdt.testplugin.CTestPlugin">
 
    <runtime>
@@ -203,7 +203,7 @@
                      builtIn="false">
                </listOptionValue>
                <listOptionValue
-		             value="&quot;../includes&quot;"
+                     value="&quot;../includes&quot;"
                      builtIn="false">
                </listOptionValue>
             </option>

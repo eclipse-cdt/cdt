@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt"
       label="%featureName"
-      version="1.2.0"
+      version="1.2.1"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 
@@ -19,61 +19,69 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.platform" version="2.1.0" match="compatible"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.search"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.debug.ui"/>
    </requires>
 
    <plugin
          id="org.eclipse.cdt.core"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
    <plugin
          id="org.eclipse.cdt.ui"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
    <plugin
          id="org.eclipse.cdt"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
    <plugin
          id="org.eclipse.cdt.debug.core"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
    <plugin
          id="org.eclipse.cdt.debug.mi.core"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
    <plugin
          id="org.eclipse.cdt.debug.ui"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
    <plugin
          id="org.eclipse.cdt.launch"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
    <plugin
          id="org.eclipse.cdt.debug.mi.ui"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
    <plugin
          id="org.eclipse.cdt.doc.user"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
 </feature>

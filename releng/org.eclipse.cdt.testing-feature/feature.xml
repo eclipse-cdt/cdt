@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.testing"
       label="%featureName"
-      version="1.2.0"
+      version="1.2.1"
       provider-name="%providerName"
       os=""
       ws=""
@@ -22,8 +22,8 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.platform" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt" version="1.2.0" match="equivalent"/>
+      <import plugin="org.eclipse.platform" version="2.1.2" match="compatible"/>
+      <import plugin="org.eclipse.cdt" version="1.2.1" match="equivalent"/>
       <import plugin="org.eclipse.test" version="2.1.0" match="equivalent"/>
    </requires>
 
@@ -31,24 +31,24 @@
          id="org.eclipse.cdt.debug.ui.tests"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
    <plugin
          id="org.eclipse.cdt.ui.tests"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
    <plugin
          id="org.eclipse.cdt.testing"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
    <plugin
          id="org.eclipse.cdt.core.tests"
          download-size="0"
          install-size="0"
-         version="1.2.0"/>
+         version="1.2.1"/>
 
 </feature>

@@ -2,14 +2,14 @@
 <plugin
    id="org.eclipse.cdt.doc.user"
    name="C/C++ Development User Guide"
-   version="1.2.0"
+   version="1.2.1"
    provider-name="eclipse.org">
 
    <runtime>
    </runtime>
 
-<!-- Configure the help contribution for this plugin -->
 <!-- This part should be in a documentation plugin -->
+<!-- Configure the help contribution for this plugin -->
    <extension
          point="org.eclipse.help.toc">
       <toc

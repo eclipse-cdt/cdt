@@ -22,7 +22,7 @@
 #include "jni.h"
 #include "io.h"
 
-#define DEBUG_MONITOR
+// #define DEBUG_MONITOR
 
 #define PIPE_SIZE 512
 #define MAX_CMD_SIZE 1024
@@ -156,15 +156,18 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 		jsize    len = (*env) -> GetStringUTFLength(env, item);
 		int nCpyLen;
 		const char *  str = (*env) -> GetStringUTFChars(env, item, 0);	
-		if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
+		if(NULL != str)
 			{
-			ThrowByName(env, "java/Exception", "Too long command line");
-			return 0;
+			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
+				{
+				ThrowByName(env, "java/Exception", "Too long command line");
+				return 0;
+				}
+			nPos += nCpyLen;
+			szCmdLine[nPos] = ' ';
+			++nPos;
+			(*env) -> ReleaseStringUTFChars(env, item, str);
 			}
-		nPos += nCpyLen;
-		szCmdLine[nPos] = ' ';
-		++nPos;
-		(*env) -> ReleaseStringUTFChars(env, item, str);
 		}
 
 	szCmdLine[nPos] = '\0';
@@ -178,15 +181,18 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 			jsize    len = (*env) -> GetStringUTFLength(env, item);
 			int nCpyLen;
 			const char *  str = (*env) -> GetStringUTFChars(env, item, 0);	
-			if(0 > (nCpyLen = copyTo(szEnvBlock + nPos, str, len, MAX_ENV_SIZE - nPos - 1)))
+			if(NULL != str)
 				{
-				ThrowByName(env, "java/Exception", "Too many environment variables");
-				return 0;
+				if(0 > (nCpyLen = copyTo(szEnvBlock + nPos, str, len, MAX_ENV_SIZE - nPos - 1)))
+					{
+					ThrowByName(env, "java/Exception", "Too many environment variables");
+					return 0;
+					}
+				nPos += nCpyLen;
+				szEnvBlock[nPos] = '\0';
+				++nPos;
+				(*env) -> ReleaseStringUTFChars(env, item, str);
 				}
-			nPos += nCpyLen;
-			szEnvBlock[nPos] = '\0';
-			++nPos;
-			(*env) -> ReleaseStringUTFChars(env, item, str);
 			}
     	szEnvBlock[nPos] = '\0';
 		envBlk = szEnvBlock;
@@ -196,9 +202,12 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
     if (dir != 0) 
 		{ 
-		const char * str = NULL;
-		cwd = strdup((*env) -> GetStringUTFChars(env, dir, 0));
-		(*env) -> ReleaseStringUTFChars(env, dir, str);
+		const char * str = (*env) -> GetStringUTFChars(env, dir, 0);
+		if(NULL != str)
+			{
+			cwd = strdup(str);
+			(*env) -> ReleaseStringUTFChars(env, dir, str);
+			}
 		}
 
 
@@ -355,15 +364,18 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 		jsize    len = (*env) -> GetStringUTFLength(env, item);
 		int nCpyLen;
 		const char *  str = (*env) -> GetStringUTFChars(env, item, 0);	
-		if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
+		if(NULL != str)
 			{
-			ThrowByName(env, "java/Exception", "Too long command line");
-			return 0;
+			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
+				{
+				ThrowByName(env, "java/Exception", "Too long command line");
+				return 0;
+				}
+			nPos += nCpyLen;
+			szCmdLine[nPos] = ' ';
+			++nPos;
+			(*env) -> ReleaseStringUTFChars(env, item, str);
 			}
-		nPos += nCpyLen;
-		szCmdLine[nPos] = ' ';
-		++nPos;
-		(*env) -> ReleaseStringUTFChars(env, item, str);
 		}
 
 	szCmdLine[nPos] = '\0';
@@ -377,15 +389,18 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 			jsize    len = (*env) -> GetStringUTFLength(env, item);
 			int nCpyLen;
 			const char *  str = (*env) -> GetStringUTFChars(env, item, 0);	
-			if(0 > (nCpyLen = copyTo(szEnvBlock + nPos, str, len, MAX_ENV_SIZE - nPos - 1)))
+			if(NULL != str)
 				{
-				ThrowByName(env, "java/Exception", "Too many environment variables");
-				return 0;
+				if(0 > (nCpyLen = copyTo(szEnvBlock + nPos, str, len, MAX_ENV_SIZE - nPos - 1)))
+					{
+					ThrowByName(env, "java/Exception", "Too many environment variables");
+					return 0;
+					}
+				nPos += nCpyLen;
+				szEnvBlock[nPos] = '\0';
+				++nPos;
+				(*env) -> ReleaseStringUTFChars(env, item, str);
 				}
-			nPos += nCpyLen;
-			szEnvBlock[nPos] = '\0';
-			++nPos;
-			(*env) -> ReleaseStringUTFChars(env, item, str);
 			}
     	szEnvBlock[nPos] = '\0';
 		envBlk = szEnvBlock;
@@ -395,9 +410,12 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
     if (dir != 0) 
 		{ 
-		const char * str = NULL;
-		cwd = strdup((*env) -> GetStringUTFChars(env, dir, 0));
-		(*env) -> ReleaseStringUTFChars(env, dir, str);
+		const char * str = (*env) -> GetStringUTFChars(env, dir, 0);
+		if(NULL != str) 
+			{
+			cwd = strdup(str);
+			(*env) -> ReleaseStringUTFChars(env, dir, str);
+			}
 		}
 
 

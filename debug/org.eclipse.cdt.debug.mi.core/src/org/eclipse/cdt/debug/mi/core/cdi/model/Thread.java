@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -231,14 +232,6 @@ public class Thread extends CObject implements ICDIThread {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#finish()
-	 */
-	public void finish() throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().finish();
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#resume()
 	 */
 	public void resume() throws CDIException {
@@ -287,6 +280,14 @@ public class Thread extends CObject implements ICDIThread {
 	}
 
 	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepReturn(boolean)
+	 */
+	public void stepReturn(boolean execute) throws CDIException {
+		getTarget().setCurrentThread(this);
+		getTarget().stepReturn(execute);
+	}
+
+	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#runUntil(ICDILocation)
 	 */
 	public void runUntil(ICDILocation location) throws CDIException {
@@ -300,6 +301,30 @@ public class Thread extends CObject implements ICDIThread {
 	public void suspend() throws CDIException {
 		getTarget().setCurrentThread(this);
 		getTarget().suspend();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#jump(org.eclipse.cdt.debug.core.cdi.ICDILocation)
+	 */
+	public void jump(ICDILocation location) throws CDIException {
+		getTarget().setCurrentThread(this);
+		getTarget().jump(location);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#signal()
+	 */
+	public void signal() throws CDIException {
+		getTarget().setCurrentThread(this);
+		getTarget().signal();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#signal(org.eclipse.cdt.debug.core.cdi.model.ICDISignal)
+	 */
+	public void signal(ICDISignal signal) throws CDIException {
+		getTarget().setCurrentThread(this);
+		getTarget().signal(signal);
 	}
 
 	/**

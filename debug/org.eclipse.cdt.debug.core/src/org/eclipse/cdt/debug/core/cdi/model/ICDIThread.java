@@ -91,12 +91,20 @@ public interface ICDIThread extends ICDIObject {
 	void suspend() throws CDIException;
 
 	/**
-	 * Steps to the next return statement in the current scope. Can 
-	 * only be called when the associated thread is suspended. 
-	 * 
+	 * Equivalent to stepReturn(true)
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepReturn() throws CDIException;
+
+	/**
+	 * If execute is true, continue running until just after function. if
+	 * If execute is false, cancel execution of the function and stop the
+	 * program after the function.
+	 * Can  only be called when the associated target is suspended.
+	 * 
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	void stepReturn(boolean execute) throws CDIException;
 
 	/**
 	 * Steps over the current source line. Can only be called
@@ -139,13 +147,28 @@ public interface ICDIThread extends ICDIObject {
 	void runUntil(ICDILocation location) throws CDIException;
 
 	/**
-	 * Continues running until just after function in the current 
-	 * stack frame returns. Can only be called when the associated 
-	 * thread is suspended.
+	 * Resume execution at location. Note the jump() does not change stackframe.
+	 * The result is undefined if jump outside of the stacframe i.e function.
+	 * Can  only be called when the associated target is suspended.
 	 * 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	void finish() throws CDIException;
+	void jump(ICDILocation location) throws CDIException;
+
+	/**
+	 * Method signal, resume execution without giving a signal.
+	 * @throws CDIException
+	 */
+	void signal() throws CDIException;
+
+	/**
+	 * Resume execution where the program stopped but immediately give the
+	 * signal.
+	 * 
+	 * @param signal
+	 * @throws CDIException
+	 */
+	void signal(ICDISignal signal) throws CDIException;
 
 	/**
 	 * Returns true if the threads are the same.

@@ -15,6 +15,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
+import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -28,11 +29,14 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
 import org.eclipse.cdt.debug.mi.core.command.MIExecFinish;
 import org.eclipse.cdt.debug.mi.core.command.MIExecNext;
 import org.eclipse.cdt.debug.mi.core.command.MIExecNextInstruction;
+import org.eclipse.cdt.debug.mi.core.command.MIExecReturn;
 import org.eclipse.cdt.debug.mi.core.command.MIExecRun;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoThreads;
+import org.eclipse.cdt.debug.mi.core.command.MIJump;
+import org.eclipse.cdt.debug.mi.core.command.MISignal;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
 import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
@@ -420,6 +424,23 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepReturn()
 	 */
 	public void stepReturn() throws CDIException {
+		stepReturn(true);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepReturn(boolean)
+	 */
+	public void stepReturn(boolean execute) throws CDIException {
+		if (execute) {
+			finish();
+		} else {
+			execReturn();
+		}
+	}
+
+	/**
+	 */
+	protected void finish() throws CDIException {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIExecFinish finish = factory.createMIExecFinish();
@@ -433,6 +454,24 @@ public class Target  implements ICDITarget {
 			throw new MI2CDIException(e);
 		}
 		lastExecutionToken = finish.getToken();
+	}
+
+	/**
+	 */
+	protected void execReturn() throws CDIException {
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIExecReturn ret = factory.createMIExecReturn();
+		try {
+			mi.postCommand(ret);
+			MIInfo info = ret.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+		lastExecutionToken = ret.getToken();
 	}
 
 	/**
@@ -472,25 +511,6 @@ public class Target  implements ICDITarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#finish()
-	 */
-	public void finish() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		MIExecFinish finish = factory.createMIExecFinish();
-		try {
-			mi.postCommand(finish);
-			MIInfo info = finish.getMIInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
-			}
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		}
-		lastExecutionToken = finish.getToken();
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#runUntil(ICDILocation)
 	 */
 	public void runUntil(ICDILocation location) throws CDIException {
@@ -516,6 +536,33 @@ public class Target  implements ICDITarget {
 		}
 		lastExecutionToken = until.getToken();
 
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#jump(ICDILocation)
+	 */
+	public void jump(ICDILocation location) throws CDIException {
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		String loc = "";
+		if (location.getFile() != null && location.getFile().length() > 0) {
+			loc = location.getFile() + ":" + location.getLineNumber();
+		} else if (location.getFunction() != null && location.getFunction().length() > 0) {
+			loc = location.getFunction();
+		} else if (location.getAddress() != 0) {
+			loc = "*" + location.getAddress();
+		}
+		MIJump jump = factory.createMIJump(loc);
+		try {
+			mi.postCommand(jump);
+			MIInfo info = jump.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+		lastExecutionToken = jump.getToken();
 	}
 
 	/**
@@ -606,6 +653,44 @@ public class Target  implements ICDITarget {
 	 */
 	public Process getProcess() {
 		return session.getMISession().getMIInferior();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#signal()
+	 */
+	public void signal() throws CDIException {
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MISignal signal = factory.createMISignal("0");
+		try {
+			mi.postCommand(signal);
+			MIInfo info = signal.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#signal(ICDISignal)
+	 */
+	public void signal(ICDISignal signal) throws CDIException {
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MISignal sig = factory.createMISignal(signal.getName());
+		try {
+			mi.postCommand(sig);
+			MIInfo info = sig.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
 	}
 
 }

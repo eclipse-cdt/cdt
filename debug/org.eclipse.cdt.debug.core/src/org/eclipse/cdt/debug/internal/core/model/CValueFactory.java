@@ -28,7 +28,7 @@ public class CValueFactory {
 	}
 
 	static public CIndexedValue createIndexedValue( AbstractCVariable parent, ICDIArrayValue cdiValue, int start, int end ) {
-		return new CIndexedValue( parent, cdiValue, start, end - start );
+		return new CIndexedValue( parent, cdiValue, start, end - start + 1 );
 	}
 
 	static public CValue createGlobalValue( CVariable parent, ICDIValue cdiValue ) {

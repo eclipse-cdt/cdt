@@ -59,6 +59,13 @@ public class MakeUIPlugin extends AbstractUIPlugin implements IStartup {
 	}
 
 	/**
+	 * Returns the Uniqu idenetifier for this plugin.
+	 */
+	public static String getPluginId() {
+		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
+ 
+	/**
 	 * Returns the workspace instance.
 	 */
 	public static IWorkspace getWorkspace() {

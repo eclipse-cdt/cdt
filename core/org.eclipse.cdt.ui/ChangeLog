@@ -1,3 +1,8 @@
+2004-05-18 Alain Magloire
+
+	Fix PR 61498
+	Removing the Annotation Page from the CEditor preference.
+
 2004-05-16 Bogdan Gheorghe 
 	Added sorters to the search results
 	

@@ -70,6 +70,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
@@ -358,7 +359,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		super.initializeDefaultPreferences(store);
 		MarkerAnnotationPreferences.initializeDefaultValues(store);	
         PreferenceConstants.initializeDefaultValues(store);
-        
+        EditorsUI.useAnnotationsPreferencePage(store);
 		runUI(new Runnable() {
 			public void run() {
 				CPluginPreferencePage.initDefaults(store);

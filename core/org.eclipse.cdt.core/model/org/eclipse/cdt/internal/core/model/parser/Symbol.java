@@ -41,7 +41,7 @@ public class Symbol implements ISymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getAdress()
 	 */
-	public long getAdress() {
+	public long getAddress() {
 		return addr;
 	}
 

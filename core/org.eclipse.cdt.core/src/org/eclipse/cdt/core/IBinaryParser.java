@@ -79,7 +79,7 @@ public interface IBinaryParser {
 		static final int VARIABLE = 0x02;
 	
 		String getName();
-		long getAdress();
+		long getAddress();
 		int getStartLine();
 		int getEndLine();
 		String getFilename();

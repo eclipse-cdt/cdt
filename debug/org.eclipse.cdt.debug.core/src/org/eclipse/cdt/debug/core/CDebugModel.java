@@ -290,7 +290,7 @@ public class CDebugModel
 	
 	private static void stopInMain( CDebugTarget target ) throws DebugException
 	{
-		ICDILocation location = target.getCDISession().getBreakpointManager().createLocation( "", "xxxxmain", 0 );
+		ICDILocation location = target.getCDISession().getBreakpointManager().createLocation( "", "main", 0 );
 		try
 		{
 			target.setInternalTemporaryBreakpoint( location );

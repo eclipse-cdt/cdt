@@ -326,7 +326,7 @@ public class CProjectWizardPage extends WizardPage {
 			// Give a chance to the wizard to do its own validation
 			IStatus validLocation = wizard.isValidLocation(projectFieldContents);
 			if (!validLocation.isOK()) {
-				setErrorMessage(validName.getMessage());
+				setErrorMessage(validLocation.getMessage());
 				return false;		
 			}
 

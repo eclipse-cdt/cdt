@@ -3,7 +3,7 @@
    id="org.eclipse.cdt.core"
    name="%pluginName"
    version="1.0.0"
-   provider-name="QNX Software Systems Ltd."
+   provider-name="%providerName"
    class="org.eclipse.cdt.internal.CCorePlugin">
 
    <runtime>

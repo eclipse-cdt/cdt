@@ -1,3 +1,8 @@
+2002-10-31 Alain Magloire
+
+	* src/.../ErrorParserManager.java (findFilePath):
+	Check if the file exists to not to return a phantom resource.
+ 
 2002-10-30 Alain Magloire
 
 	* src/.../CProjectNature.java (removeNature): Utility

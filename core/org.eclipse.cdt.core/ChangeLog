@@ -1,3 +1,9 @@
+2004-03-29 David Inglis
+
+	Fixed shutdown problems. https://bugs.eclipse.org/bugs/show_bug.cgi?id=56584
+	
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	
 2004-03-26 David Inglis
 	
 	Fixed NPE on path reorder

@@ -207,7 +207,6 @@ public class CCorePlugin extends Plugin {
 	 * @see Plugin#shutdown
 	 */
 	public void shutdown() throws CoreException {
-		super.shutdown();
 		if (fDescriptorManager != null) {
 			fDescriptorManager.shutdown();
 		}
@@ -219,6 +218,7 @@ public class CCorePlugin extends Plugin {
 		if (cdtLog != null) {
 		   cdtLog.shutdown();
 		}
+		super.shutdown();
 	}
 
 	/**

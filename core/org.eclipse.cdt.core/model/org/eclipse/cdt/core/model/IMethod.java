@@ -8,7 +8,7 @@ package org.eclipse.cdt.core.model;
 /**
  * Represents the definition method of a class.
  */
-public interface IMethod extends IMember {
+public interface IMethod extends IMember, IFunction {
 
 	/**
 	 * Returns the type signatures of the exceptions this method throws,

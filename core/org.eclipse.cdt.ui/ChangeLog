@@ -1,3 +1,11 @@
+2003-04-16 Alain Magloire
+
+	Bug 36584
+	
+	* src/org/eclipse.cdt.internal/ui/cview/CView.java
+	linkToEditor() check is we have a valid ITranslationUnit.
+	The isOpenEditor() has a nasty side effect of calling "objdump"
+
 2003-04-14 Alain Magloire
 
 	The problem: the old parser can still hangs and bring chaos, this

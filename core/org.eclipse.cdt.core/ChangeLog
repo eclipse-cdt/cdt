@@ -1,4 +1,11 @@
 2004-02-24 Alain Magloire
+	Fix for PR 52790
+	For "Windows 98" fall back to Runtime.exec(..)
+	Spawner does not work on this platfrom
+
+	* utils/org/eclipse/cdt/utils/spawner.java
+
+2004-02-24 Alain Magloire
 
 	Bug fix the binary runner thread could get interrupted
 	on shutdown we should check:

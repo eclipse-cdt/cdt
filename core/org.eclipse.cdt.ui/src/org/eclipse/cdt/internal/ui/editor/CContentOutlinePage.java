@@ -8,11 +8,16 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.core.model.WorkingCopy;
+import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
+import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
+import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -25,29 +30,21 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.IDocumentProvider;
-
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
-import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
-import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
-import org.eclipse.cdt.ui.CElementContentProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
 	private CEditor fEditor;
-	private CFileElementWorkingCopy fInput;
+	private WorkingCopy fInput;
 	private ProblemTreeViewer treeViewer;
 	private ListenerList selectionChangedListeners = new ListenerList();
 	
@@ -73,7 +70,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	public void contentUpdated() {
 		if (fInput != null) {
 			try {
-				fInput.update();
+				//fInput.update();
+				fInput.reconcile();				
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e.getStatus());
 				fInput= null;
@@ -154,13 +152,15 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		IEditorInput editorInput= (IEditorInput)fEditor.getEditorInput();
 		IDocumentProvider provider= fEditor.getDocumentProvider();
 		try {
-			if (editorInput instanceof IFileEditorInput)
-				//fInput = ((CUIPlugin.ElementFactory)plugin.getCCore()).createWorkingCopy((IFileEditorInput)editorInput, provider);
-				fInput = new CFileElementWorkingCopy((IFileEditorInput)editorInput, provider);
-			else if (editorInput instanceof IStorageEditorInput)
+			if (editorInput instanceof IFileEditorInput){				
+				//fInput = new CFileElementWorkingCopy((IFileEditorInput)editorInput, provider);
+				IWorkingCopyManager wcManager = CUIPlugin.getDefault().getWorkingCopyManager();
+				fInput = (WorkingCopy)wcManager.getWorkingCopy(editorInput);
+			} else if (editorInput instanceof IStorageEditorInput){
+				// CHECKPOINT: do we create a CFileElementWorkingCopy or just a working copy for the IStorageEditorInput?
 				//fInput = ((CUIPlugin.ElementFactory)plugin.getCCore()).createWorkingCopy((IStorageEditorInput)editorInput, provider);
 				fInput = new CFileElementWorkingCopy((IStorageEditorInput)editorInput, provider);
-			else
+			} else
 				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "no Editor Input", null));
 
 			treeViewer.setInput(fInput);

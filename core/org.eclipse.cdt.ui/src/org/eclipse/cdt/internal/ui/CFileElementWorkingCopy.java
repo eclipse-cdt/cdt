@@ -7,19 +7,17 @@ package org.eclipse.cdt.internal.ui;
  
 import java.io.IOException;
 
+import org.eclipse.cdt.internal.core.model.WorkingCopy;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
-
-public class CFileElementWorkingCopy extends TranslationUnit {
+public class CFileElementWorkingCopy extends WorkingCopy {
 	
 	private IDocumentProvider fProvider;
 	//private IFileEditorInput input;
@@ -29,7 +27,7 @@ public class CFileElementWorkingCopy extends TranslationUnit {
 	 * Creates a working copy of this element
 	 */
 	public CFileElementWorkingCopy(IFileEditorInput fileInput, IDocumentProvider provider) throws CoreException {
-		super(null, fileInput.getFile());
+		super(null, fileInput.getFile(), null);
 		input= fileInput;
 		fProvider= provider;
 	}
@@ -38,7 +36,7 @@ public class CFileElementWorkingCopy extends TranslationUnit {
 	 * Creates a working copy of this element
 	 */
 	public CFileElementWorkingCopy(IStorageEditorInput StoreInput, IDocumentProvider provider) throws CoreException {
-		super(null, new Path(StoreInput.getName()));
+		super(null, new Path(StoreInput.getName()), null);
 		input = StoreInput;
 		fProvider = provider;
 		IStorage storage = StoreInput.getStorage();

@@ -5,12 +5,19 @@ package org.eclipse.cdt.internal.ui.text;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.IWorkingCopyManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 
 public class CReconcilingStrategy implements IReconcilingStrategy {
@@ -18,11 +25,18 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 
 	private CContentOutlinePage fOutliner;
 	private int fLastRegionOffset;
+	private ITextEditor fEditor;	
+	private IWorkingCopyManager fManager;
+	private IDocumentProvider fDocumentProvider;
+	private IProgressMonitor fProgressMonitor;
 
 
 	public CReconcilingStrategy(CEditor editor) {
 		fOutliner= editor.getOutlinePage();
 		fLastRegionOffset = Integer.MAX_VALUE;
+		fEditor= editor;
+		fManager= CUIPlugin.getDefault().getWorkingCopyManager();
+		fDocumentProvider= CUIPlugin.getDefault().getDocumentProvider();
 	}
 	
 	/**
@@ -31,6 +45,13 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 	public void setDocument(IDocument document) {
 	}	
 
+
+	/*
+	 * @see IReconcilingStrategyExtension#setProgressMonitor(IProgressMonitor)
+	 */
+	public void setProgressMonitor(IProgressMonitor monitor) {
+		fProgressMonitor= monitor;
+	}
 
 	/**
 	 * @see IReconcilingStrategy#reconcile(region)
@@ -57,6 +78,17 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 	}
 	
 	private void reconcile() {
-		fOutliner.contentUpdated();
-	}	
+		try {
+			IWorkingCopy workingCopy = fManager.getWorkingCopy(fEditor.getEditorInput());		
+			if (workingCopy != null) {
+				// reconcile
+				synchronized (workingCopy) {
+					workingCopy.reconcile(true, fProgressMonitor);
+				}
+			}
+			fOutliner.contentUpdated();
+		} catch(CModelException e) {
+				
+		}
+ 	}	
 }

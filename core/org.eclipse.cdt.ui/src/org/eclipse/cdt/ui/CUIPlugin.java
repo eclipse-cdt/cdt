@@ -18,6 +18,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.cview.CView;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
+import org.eclipse.cdt.internal.ui.editor.IWorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage;
@@ -149,6 +150,14 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fDocumentProvider = new CDocumentProvider();
 		}
 		return fDocumentProvider;
+	}
+
+	/**
+	 * Returns the working copy manager
+	 * @return IWorkingCopyManager
+	 */
+	public synchronized IWorkingCopyManager getWorkingCopyManager() {
+		return getDocumentProvider();
 	}
 
 	/**

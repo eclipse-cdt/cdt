@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIBreakAfter;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakCondition;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakDelete;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakDisable;
@@ -172,23 +173,38 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 
 		// We only suppor expression not ignore count reset.
 		String exprCond = condition.getExpression();
-		if (exprCond == null) {
-			throw new CDIException("ignore count not supported");
-		}
-		CSession s = getCSession();
-		CommandFactory factory = s.getMISession().getCommandFactory();
-		MIBreakCondition breakCondition =
-			factory.createMIBreakCondition(number, exprCond);
-		try {
-			s.getMISession().postCommand(breakCondition);
-			MIInfo info = breakCondition.getMIInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
+		if (exprCond != null) {
+			CSession s = getCSession();
+			CommandFactory factory = s.getMISession().getCommandFactory();
+			MIBreakCondition breakCondition =
+				factory.createMIBreakCondition(number, exprCond);
+			try {
+				s.getMISession().postCommand(breakCondition);
+				MIInfo info = breakCondition.getMIInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
+			} catch (MIException e) {
+				throw new CDIException(e.toString());
 			}
-		} catch (MIException e) {
-			throw new CDIException(e.toString());
+		} else {
+			int ignoreCount = condition.getIgnoreCount();
+			CSession s = getCSession();
+			CommandFactory factory = s.getMISession().getCommandFactory();
+			MIBreakAfter breakAfter =
+				factory.createMIBreakAfter(number, ignoreCount);
+			try {
+				s.getMISession().postCommand(breakAfter);
+				MIInfo info = breakAfter.getMIInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
+			} catch (MIException e) {
+				throw new CDIException(e.toString());
+			}
 		}
 	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#getBreakpoints()
 	 */

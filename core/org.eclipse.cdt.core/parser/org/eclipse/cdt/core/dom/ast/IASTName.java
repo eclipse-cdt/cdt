@@ -21,6 +21,8 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTName extends IASTNode {
 	
+	public static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
+
 	/**
 	 * Return the semantic object this name is referring to.
 	 * 

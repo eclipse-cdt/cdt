@@ -9,58 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 /*
- * Created on Nov 29, 2004
+ * Created on Dec 1, 2004
  */
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
  * @author aniefer
  */
-public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope, IBinding{
-	private CharArrayObjectMap bindings = CharArrayObjectMap.EMPTY_MAP;
-	
-	public CPPNamespaceScope( IASTNode physicalNode ) {
-		super( physicalNode );
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#addBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-	 */
-	public void addBinding(IBinding binding) {
-		if( bindings == CharArrayObjectMap.EMPTY_MAP )
-			bindings = new CharArrayObjectMap(1);
-		bindings.put( binding.getNameCharArray(), binding );
-	}
+public class CPPNamespace implements ICPPNamespace {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace#getNamespaceScope()
 	 */
-	public IBinding getBinding(int namespaceType, char[] name) {
-		return (IBinding) bindings.get( name );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-	 */
-	public List find(String name) {
+	public ICPPNamespaceScope getNamespaceScope() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#getUsingDirectives()
-	 */
-	public ICPPASTUsingDirective[] getUsingDirectives() {
-		// TODO Auto-generated method stub
-		return ICPPASTUsingDirective.EMPTY_USINGDIRECTIVE_ARRAY;
-	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
@@ -68,6 +38,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope, I
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
@@ -75,6 +46,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope, I
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
@@ -82,4 +54,13 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope, I
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
+	 */
+	public IASTNode getPhysicalNode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

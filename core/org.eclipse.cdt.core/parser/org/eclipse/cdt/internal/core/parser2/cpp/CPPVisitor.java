@@ -43,17 +43,18 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
-import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
-import org.eclipse.cdt.internal.core.parser.pst.TypeFilter;
 import org.eclipse.cdt.internal.core.parser2.c.CASTFunctionDeclarator;
 
 /**
@@ -72,7 +73,9 @@ public class CPPVisitor {
 			return createBinding( (IASTDeclarator) parent );
 		} else if( parent instanceof ICPPASTElaboratedTypeSpecifier ){
 			return createBinding( (ICPPASTElaboratedTypeSpecifier) parent );
-		} else if( parent instanceof IASTNamedTypeSpecifier ){
+		} else if( parent instanceof IASTNamedTypeSpecifier  ||
+				   parent instanceof ICPPASTQualifiedName  ) 
+		{
 			return resolveBinding( name );
 		}
 		return null;
@@ -80,10 +83,10 @@ public class CPPVisitor {
 	
 	private static IBinding createBinding( ICPPASTElaboratedTypeSpecifier elabType ){
 		ICPPScope scope = (ICPPScope) getContainingScope( elabType );
-		CPPCompositeType binding = (CPPCompositeType) scope.getBinding( 0, elabType.getName().toCharArray() );
+		CPPClassType binding = (CPPClassType) scope.getBinding( 0, elabType.getName().toCharArray() );
 		if( binding == null ){
 			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum )
-				binding = new CPPCompositeType( elabType );
+				binding = new CPPClassType( elabType );
 			scope.addBinding( binding );
 		} else {
 			binding.addDeclaration( elabType );
@@ -92,9 +95,9 @@ public class CPPVisitor {
 	}
 	private static IBinding createBinding( ICPPASTCompositeTypeSpecifier compType ){
 		ICPPScope scope = (ICPPScope) getContainingScope( compType );
-		CPPCompositeType binding = (CPPCompositeType) scope.getBinding( 0, compType.getName().toCharArray() );
+		CPPClassType binding = (CPPClassType) scope.getBinding( 0, compType.getName().toCharArray() );
 		if( binding == null ){
-			binding = new CPPCompositeType( compType );
+			binding = new CPPClassType( compType );
 			scope.addBinding( binding );
 		} else {
 			binding.addDefinition( compType );
@@ -105,23 +108,33 @@ public class CPPVisitor {
 	private static IBinding createBinding( IASTDeclarator declarator ){
 		IBinding binding = null;
 		IASTNode parent = declarator.getParent();
-		if( parent instanceof IASTSimpleDeclaration ){
-			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;
-			if( simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier ){
-				binding = new CPPField( declarator );
-			} else {
-				binding = new CPPVariable( declarator );
+		if( declarator instanceof ICPPASTFunctionDeclarator ){
+			IScope scope = getContainingScope( parent );
+			if( scope instanceof ICPPClassScope )
+				binding = new CPPMethod( (ICPPASTFunctionDeclarator) declarator );
+			else
+				binding = new CPPFunction( (ICPPASTFunctionDeclarator) declarator );
+		} else {
+			if( parent instanceof IASTSimpleDeclaration ){
+				IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;
+				if( simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier ){
+					binding = new CPPField( declarator );
+				} else {
+					binding = new CPPVariable( declarator );
+				}
+			} else if( parent instanceof IASTParameterDeclaration ){
+				
+			} else if( parent instanceof IASTFunctionDefinition ){
+				
 			}
-		} else if( parent instanceof IASTParameterDeclaration ){
-			
-		} else if( parent instanceof IASTFunctionDefinition ){
-			
 		}
 		return binding;
 	}
 
 	public static IScope getContainingScope( IASTNode node ){
-	    if( node instanceof IASTDeclaration )
+		if( node instanceof IASTName )
+			return getContainingScope( (IASTName) node );
+		else if( node instanceof IASTDeclaration )
 	        return getContainingScope( (IASTDeclaration) node );
 	    else if( node instanceof IASTStatement )
 	        return getContainingScope( (IASTStatement) node );
@@ -134,7 +147,27 @@ public class CPPVisitor {
 	        return getContainingScope( (IASTEnumerationSpecifier) node.getParent() );
 	    }
 	    
-	    return null;
+	    return getContainingScope( node.getParent() );
+	}
+	
+	public static IScope getContainingScope( IASTName name ){
+		IASTNode parent = name.getParent();
+		if( parent instanceof ICPPASTQualifiedName ){
+			IASTName [] names = ((ICPPASTQualifiedName) parent).getNames();
+			int i = 0;
+			for( ; i < names.length; i++ ){
+				if( names[i] == name ) break;
+			}
+			if( i > 0 ){
+				IBinding binding = names[i - 1].resolveBinding();
+				if( binding instanceof ICPPClassType ){
+					return ((ICPPClassType)binding).getCompositeScope();
+				} else if( binding instanceof ICPPNamespace ){
+					return ((ICPPNamespace)binding).getNamespaceScope();
+				}
+			}
+		} 
+		return getContainingScope( parent );
 	}
 	/**
 	 * @param declaration
@@ -221,10 +254,6 @@ public class CPPVisitor {
 	
 	static protected class LookupData
 	{
-		protected static final TypeFilter ANY_FILTER = new TypeFilter( ITypeInfo.t_any );
-		protected static final TypeFilter CONSTRUCTOR_FILTER = new TypeFilter( ITypeInfo.t_constructor );
-		protected static final TypeFilter FUNCTION_FILTER = new TypeFilter( ITypeInfo.t_function );
-		
 		public char[] name;
 		public ObjectMap usingDirectives; 
 		public ObjectSet visited = ObjectSet.EMPTY_SET;	//used to ensure we don't visit things more than once
@@ -234,26 +263,13 @@ public class CPPVisitor {
 		public boolean qualified = false;
 		public boolean ignoreUsingDirectives = false;
 		public boolean usingDirectivesOnly = false;
-		public boolean forUserDefinedConversion = false;
-		public boolean exactFunctionsOnly = false;
-		public boolean returnInvisibleSymbols = false;
+		public boolean forDefinition = false;
 		
 		public List foundItems = null;
 		
 		public LookupData( char[] n ){
 			name = n;
 		}
-
-		//the following function are optionally overloaded by anonymous classes deriving from 
-		//this LookupData
-		public boolean isPrefixLookup(){ return false;}       //prefix lookup
-		public CharArraySet getAmbiguities()    { return null; }       
-		public void addAmbiguity(char[] n ) { /*nothing*/ }
-		public List getParameters()    { return null; }       //parameter info for resolving functions
-		public ObjectSet getAssociated() { return null; }     //associated namespaces for argument dependant lookup
-		public ISymbol getStopAt()     { return null; }       //stop looking along the stack once we hit this declaration
-		public List getTemplateParameters() { return null; }  //template parameters
-		public TypeFilter getFilter() { return ANY_FILTER; }
 	}
 	
 	static private IBinding resolveBinding( IASTName name ){
@@ -272,8 +288,18 @@ public class CPPVisitor {
 		return null;
 	}
 	static private LookupData createLookupData( IASTName name ){
-		//TODO
-		return new LookupData( name.toCharArray() );
+		LookupData data = new LookupData( name.toCharArray() );
+		IASTNode parent = name.getParent();
+		if( parent instanceof ICPPASTQualifiedName ){
+			data.qualified = true;
+			parent = parent.getParent();
+			if( parent instanceof IASTDeclarator ){
+				data.forDefinition = true;
+			}
+		} else if( parent instanceof IASTDeclarator ){
+			data.forDefinition = true;
+		}
+		return data;
 	}
 	
 	static private IASTName collectResult( LookupData data, IASTNode declaration, boolean checkAux ){
@@ -354,12 +380,12 @@ public class CPPVisitor {
 		IASTNode node = name; 
 		
 		while( node != null ){
-			IASTNode blockItem = getContainingBlockItem( name );
-			ICPPScope scope = (ICPPScope) getContainingScope( blockItem );
+			IASTNode blockItem = getContainingBlockItem( node );
+			ICPPScope scope = (ICPPScope) getContainingScope( node );
 			
 			List directives = null;
 			if( !data.usingDirectivesOnly )
-				directives = lookupInScope( data, blockItem, blockItem.getParent() );
+				directives = lookupInScope( data, scope, blockItem );
 			
 			if( !data.ignoreUsingDirectives ) {
 				data.visited.clear();
@@ -367,7 +393,7 @@ public class CPPVisitor {
 					List transitives = lookupInNominated( data, scope, null );
 					
 					processDirectives( data, scope, transitives );
-					if( directives.size() != 0 )
+					if( directives != null && directives.size() != 0 )
 						processDirectives( data, scope, directives );
 					
 					while( data.usingDirectives != null && data.usingDirectives.get( scope ) != null ){
@@ -453,20 +479,22 @@ public class CPPVisitor {
 	 * @param scope
 	 * @return List of encountered using directives
 	 */
-	static private List lookupInScope( LookupData data, IASTNode blockItem, IASTNode parent ) {
+	static private List lookupInScope( LookupData data, ICPPScope scope, IASTNode blockItem ) {
 		IASTName possible = null;
 		IASTNode [] nodes = null;
+		IASTNode parent = scope.getPhysicalNode();
 
 		List usingDirectives = null;
 		
 		if( parent instanceof IASTCompoundStatement ){
 			IASTCompoundStatement compound = (IASTCompoundStatement) parent;
 			nodes = compound.getStatements();
-//			scope = (ICPPScope) compound.getScope();
 		} else if ( parent instanceof IASTTranslationUnit ){
 			IASTTranslationUnit translation = (IASTTranslationUnit) parent;
 			nodes = translation.getDeclarations();
-//			scope = (ICPPScope) translation.getScope();
+		} else if ( parent instanceof ICPPASTCompositeTypeSpecifier ){
+			ICPPASTCompositeTypeSpecifier comp = (ICPPASTCompositeTypeSpecifier) parent;
+			nodes = comp.getMembers();
 		}
 
 		int idx = -1;
@@ -490,6 +518,8 @@ public class CPPVisitor {
 			}
 			if( idx > -1 && ++idx < nodes.length ){
 				item = nodes[idx];
+			} else {
+				item = null;
 			}
 		}
 		return usingDirectives;
@@ -514,7 +544,7 @@ public class CPPVisitor {
 				}
 				data.visited.put( temp );
 				int pre = ( data.foundItems != null ) ? 0 : data.foundItems.size();
-				List usings = lookupInScope( data, null, scope.getPhysicalNode() );
+				List usings = lookupInScope( data, scope, null );
 				int post = ( data.foundItems != null ) ? 0 : data.foundItems.size();
 				
 				//only consider the transitive using directives if we are an unqualified

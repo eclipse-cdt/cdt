@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 
@@ -22,5 +20,5 @@ public interface ICPPASTQualifiedName extends IASTName {
 
     public static final ASTNodeProperty SEGMENT_NAME = new ASTNodeProperty( "Segment"); //$NON-NLS-1$
     public void addName( IASTName name );
-    public List getNames();
+    public IASTName [] getNames();
 }

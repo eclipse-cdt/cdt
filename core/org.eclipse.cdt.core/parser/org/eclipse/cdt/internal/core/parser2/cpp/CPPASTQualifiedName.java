@@ -10,10 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -33,8 +29,9 @@ public class CPPASTQualifiedName extends CPPASTNode implements ICPPASTQualifiedN
      * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
      */
     public IBinding resolveBinding() {
-        // TODO Auto-generated method stub
-        return null;
+    	//The full qualified name resolves to the same thing as the last name
+    	removeNullNames();
+    	return names[ names.length - 1 ].resolveBinding();
     }
 
     
@@ -102,10 +99,10 @@ public class CPPASTQualifiedName extends CPPASTNode implements ICPPASTQualifiedN
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#getNames()
      */
-    public List getNames() {
-        if( names == null ) return Collections.EMPTY_LIST;
+    public IASTName[] getNames() {
+        if( names == null ) return IASTName.EMPTY_NAME_ARRAY;
         removeNullNames();
-        return Arrays.asList( names );
+        return names;
     }
 
     /* (non-Javadoc)

@@ -17,20 +17,20 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 
 /**
  * @author aniefer
  */
-public class CPPCompositeType implements ICompositeType {
+public class CPPClassType implements ICPPClassType {
 	private ICPPASTCompositeTypeSpecifier definition;
 	private ICPPASTElaboratedTypeSpecifier [] declarations;
 	
-	public CPPCompositeType( IASTDeclSpecifier declSpec ){
+	public CPPClassType( IASTDeclSpecifier declSpec ){
 		if( declSpec instanceof ICPPASTCompositeTypeSpecifier )
 			definition = (ICPPASTCompositeTypeSpecifier) declSpec;
 		else 
@@ -71,10 +71,16 @@ public class CPPCompositeType implements ICompositeType {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		// TODO Auto-generated method stub
-		return null;
+		return (definition != null ) ? CPPVisitor.getContainingScope( definition ) : CPPVisitor.getContainingScope( declarations[0] );
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
+	 */
+	public IScope getCompositeScope() {
+		return (definition != null ) ? definition.getScope() : null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
 	 */
@@ -108,5 +114,45 @@ public class CPPCompositeType implements ICompositeType {
         System.arraycopy( declarations, 0, tmp, 0, declarations.length );
         tmp[ declarations.length ] = elabSpec;
         declarations = tmp;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
+	 */
+	public List getBases() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredFields()
+	 */
+	public List getDeclaredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getMethods()
+	 */
+	public List getMethods() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getAllDeclaredMethods()
+	 */
+	public List getAllDeclaredMethods() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredMethods()
+	 */
+	public List getDeclaredMethods() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

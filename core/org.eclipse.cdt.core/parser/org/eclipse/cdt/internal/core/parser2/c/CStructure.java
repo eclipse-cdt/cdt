@@ -153,4 +153,11 @@ public class CStructure implements ICompositeType {
 	public int getKey() {
 		return ( definition != null ) ? definition.getKey() : declarations[0].getKind();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
+	 */
+	public IScope getCompositeScope() {
+		return (definition != null ) ? definition.getScope() : null;
+	}
 }

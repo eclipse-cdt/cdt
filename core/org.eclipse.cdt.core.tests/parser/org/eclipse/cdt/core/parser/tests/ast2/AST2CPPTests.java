@@ -16,12 +16,19 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
@@ -96,4 +103,86 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame( A, A1 );
 		assertSame( A1, A2 );
 	}
+	
+	public void testField() throws Exception {
+		StringBuffer buffer = new StringBuffer( "class A {  int f; };" ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+		assertEquals( decl.getDeclarators().length, 0 );
+		ICPPASTCompositeTypeSpecifier comp = (ICPPASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+		IASTName name_A = comp.getName();
+		
+		decl = (IASTSimpleDeclaration) comp.getMembers()[0];
+		IASTDeclarator dtor = decl.getDeclarators()[0];
+		IASTName name_f = dtor.getName();
+		
+		ICPPClassType A = (ICPPClassType) name_A.resolveBinding();
+		IField f = (IField) name_f.resolveBinding();
+		
+		assertNotNull( A );
+		assertNotNull( f );
+		assertSame( f.getScope(), A.getCompositeScope() );
+	}
+	
+	public void testMethodDeclaration() throws Exception {
+		StringBuffer buffer = new StringBuffer( "class A { int f(); };" ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+		assertEquals( decl.getDeclarators().length, 0 );
+		IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+		IASTName name_A = comp.getName();
+		
+		decl = (IASTSimpleDeclaration) comp.getMembers()[0];
+		IASTDeclarator dtor = decl.getDeclarators()[0];
+		IASTName name_f = dtor.getName();
+		
+		ICPPClassType A = (ICPPClassType) name_A.resolveBinding();
+		ICPPMethod f = (ICPPMethod) name_f.resolveBinding();
+		
+		assertNotNull( A );
+		assertNotNull( f );
+		assertSame( f.getScope(), A.getCompositeScope() );
+	}
+	
+	public void testMethodDefinition() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( " class A { void f();  };      \n" ); //$NON-NLS-1$
+		buffer.append( " void A::f() { }              \n" ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+		assertEquals( decl.getDeclarators().length, 0 );
+		IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+		IASTName name_A = comp.getName();
+		
+		decl = (IASTSimpleDeclaration) comp.getMembers()[0];
+		IASTDeclarator dtor = decl.getDeclarators()[0];
+		IASTName name_f1 = dtor.getName();
+		
+		IASTFunctionDefinition def = (IASTFunctionDefinition) tu.getDeclarations()[1];
+		IASTFunctionDeclarator fdtor = def.getDeclarator();
+		ICPPASTQualifiedName name_f2 = (ICPPASTQualifiedName) fdtor.getName();
+		
+		ICPPClassType A = (ICPPClassType) name_A.resolveBinding();
+		ICPPMethod f1 = (ICPPMethod) name_f1.resolveBinding();
+		ICPPMethod f2 = (ICPPMethod) name_f2.resolveBinding();
+		
+		IASTName[] names = name_f2.getNames();
+		assertEquals( names.length, 2 );
+		IASTName qn1 = names[0];
+		IASTName qn2 = names[1];
+		
+		ICPPClassType A2 = (ICPPClassType) qn1.resolveBinding();
+		ICPPMethod f3 = (ICPPMethod) qn2.resolveBinding();
+		
+		assertNotNull( A );
+		assertNotNull( f1 );
+		assertSame( f1, f2 );
+		assertSame( f2, f3 );
+		assertSame( A, A2 );
+	}
+	
+	
 }

@@ -69,8 +69,7 @@ public class CPPVariable implements IVariable {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		// TODO Auto-generated method stub
-		return null;
+		return CPPVisitor.getContainingScope( declarator );
 	}
 
 	/* (non-Javadoc)

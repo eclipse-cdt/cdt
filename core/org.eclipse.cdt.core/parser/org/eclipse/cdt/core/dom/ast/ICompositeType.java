@@ -38,4 +38,6 @@ public interface ICompositeType extends IType {
 	 * @return
 	 */
 	public IField findField( String name );
+	
+	public IScope getCompositeScope();
 }

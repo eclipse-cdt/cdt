@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @author Doug Schaefer
  */
-public interface ICASTTranslationUnit {
+public interface ICASTTranslationUnit extends ICASTNode {
 
 	/**
 	 * Return the declarations in this translation unit.

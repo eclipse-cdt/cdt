@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @author Doug Schaefer
  */
-public interface ICASTDeclarator {
+public interface ICASTDeclarator extends ICASTNode {
 
 	/**
 	 * @return the name of the declarator

@@ -13,6 +13,6 @@ package org.eclipse.cdt.core.parser.ast2.c;
 /**
  * @author Doug Schaefer
  */
-public interface ICASTStatement {
+public interface ICASTStatement extends ICASTNode {
 
 }

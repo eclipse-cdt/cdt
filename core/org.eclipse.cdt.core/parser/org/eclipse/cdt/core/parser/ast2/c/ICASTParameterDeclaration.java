@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.parser.ast2.c;
 /**
  * @author Doug Schaefer
  */
-public interface ICASTParameterDeclaration {
+public interface ICASTParameterDeclaration extends ICASTNode {
 
 	/**
 	 * @return the decl specifiers for this parameter

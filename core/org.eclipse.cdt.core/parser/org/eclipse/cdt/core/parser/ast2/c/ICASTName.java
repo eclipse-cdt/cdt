@@ -16,6 +16,6 @@ package org.eclipse.cdt.core.parser.ast2.c;
  * 
  * @author Doug Schaefer
  */
-public interface ICASTName {
+public interface ICASTName extends ICASTNode {
 
 }

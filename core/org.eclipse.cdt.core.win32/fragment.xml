@@ -4,7 +4,7 @@
    id="org.eclipse.cdt.core.win32"
    name="%fragmentName.win32"
    version="3.0.0"
-   provider-name="Eclipse.org"
+   provider-name="%providerName"
    plugin-id="org.eclipse.cdt.core"
    plugin-version="3.0.0">
 

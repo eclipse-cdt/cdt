@@ -1,4 +1,7 @@
 2004-04-09 Andrew Niefer
+	added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testTemplateMemberTemplateDefinition()
+
+2004-04-09 Andrew Niefer
 	fixed bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=57754
 	  added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testBug57754()
 	  added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testBug57754()

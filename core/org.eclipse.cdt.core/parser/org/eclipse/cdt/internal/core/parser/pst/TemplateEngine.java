@@ -443,6 +443,8 @@ public final class TemplateEngine {
 		if( p.isType( TypeInfo.t_type ) ){
 			symbol = p.getTypeSymbol();
 			ISymbol aSymbol = a.getTypeSymbol();
+			if( symbol == null || ( a.isType( TypeInfo.t_type) && aSymbol == null ) )
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 			if( symbol instanceof IDeferredTemplateInstance || symbol.isTemplateInstance() ){
 				return deduceFromTemplateTemplateArguments(map, symbol, aSymbol);	
 			} else {
@@ -1272,5 +1274,31 @@ public final class TemplateEngine {
 			symbol = symbol.getContainingSymbol();
 		}
 		return (ITemplateSymbol) symbol.getContainingSymbol();
+	}
+
+	/**
+	 * @param instance
+	 * @param instance2
+	 * @return
+	 */
+	protected static boolean deferedInstancesAreEquivalent(IDeferredTemplateInstance instance, IDeferredTemplateInstance instance2) {
+		if( instance.getTemplate() != instance2.getTemplate() )
+			return false;
+		
+		List args = instance.getArguments();
+		List args2 = instance2.getArguments();
+		
+		if( args.size() != args2.size() )
+			return false;
+		
+		Iterator iter1 = args.iterator(), iter2 = args2.iterator();
+		while( iter1.hasNext() ){
+			TypeInfo info1 = (TypeInfo) iter1.next();
+			TypeInfo info2 = (TypeInfo) iter2.next();
+			
+			if( ! info1.equals( info2 ) )
+				return false;
+		}
+		return true;
 	}
 }

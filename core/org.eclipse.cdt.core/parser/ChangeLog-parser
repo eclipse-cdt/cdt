@@ -1,4 +1,8 @@
 2004-04-09 Andrew Niefer
+	handle NPE during template argument deduction
+	fix bug in definitions of certain template member templates  (fixes a ClassCastException encountered in <list>)
+
+2004-04-09 Andrew Niefer
 	fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=57754
 	Fixed problems found after parsing iostream with discovered symbols, once 57754 was fixed:
   		fixed some problems with explicit specializations

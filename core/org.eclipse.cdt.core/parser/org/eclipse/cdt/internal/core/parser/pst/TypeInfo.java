@@ -492,10 +492,15 @@ public class TypeInfo {
 				else
 					result &= (f1.getReturnType() == f2.getReturnType());
 			} else if( _typeDeclaration.isType( TypeInfo.t_templateParameter ) &&
-					   type._typeDeclaration.isType( TypeInfo.t_templateParameter ) ){
+					   type._typeDeclaration.isType( TypeInfo.t_templateParameter ) )
+			{
 				//template parameters
 				result &= TemplateEngine.templateParametersAreEquivalent( _typeDeclaration, type._typeDeclaration );
-			} else {
+			} else if ( _typeDeclaration instanceof IDeferredTemplateInstance &&
+					    type._typeDeclaration instanceof IDeferredTemplateInstance )
+			{
+				result &= TemplateEngine.deferedInstancesAreEquivalent( (IDeferredTemplateInstance) _typeDeclaration, (IDeferredTemplateInstance)type._typeDeclaration );
+			}else {
 				//otherwise, its a user defined type, need the decls the same
 				result &= ( _typeDeclaration == type._typeDeclaration );
 			}	

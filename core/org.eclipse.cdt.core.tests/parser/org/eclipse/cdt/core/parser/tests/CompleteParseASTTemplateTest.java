@@ -735,4 +735,24 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
 		IASTTemplateSpecialization spec = (IASTTemplateSpecialization) i.next();
 	}
+	
+	public void testTemplateMemberTemplateDefinition() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template< typename _Tp >  						");
+		writer.write( "class list										");
+		writer.write( "{												");
+		writer.write( "   template<typename _S> void merge(list&, _S);  ");
+		writer.write( "};												");        
+	
+		writer.write( "template < typename _Tp >						");
+		writer.write( "template < typename _S  >						");
+		writer.write( "void list<_Tp>::merge(list<_Tp>& __x, _S __comp)	");
+		writer.write( "{}												");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration temp2 = (IASTTemplateDeclaration) i.next();
+	}
 }

@@ -18,6 +18,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateInstantiation;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;

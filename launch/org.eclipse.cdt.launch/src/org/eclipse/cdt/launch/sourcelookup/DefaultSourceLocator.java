@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.ui.sourcelookup.CUISourceLocator;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -198,6 +199,10 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 		if ( fSourceLocator != null )
 		{
 			if ( adapter.equals( ICSourceLocator.class ) )
+			{
+				return fSourceLocator.getAdapter( adapter );
+			}
+			if ( adapter.equals( IResourceChangeListener.class ) )
 			{
 				return fSourceLocator.getAdapter( adapter );
 			}

@@ -1,4 +1,9 @@
-2003-07-09 David Inglis
+2003-07-17 Thomas Fletcher
+	* src/org/eclipse/cdt/launch/sourcelookup/DefaultSourceLocator.java
+ 	Applied source locator patch to expand the scope of source lookups.
+ 	Patch from Mikhail Khodjaiants
+
+2003-07-09 Thomas Fletcher
 	* src/org/eclipse/cdt/launch/internal/ui/LaunchImages.java
  	Filled out this class which previously wasn't loading images ... now it is.
 

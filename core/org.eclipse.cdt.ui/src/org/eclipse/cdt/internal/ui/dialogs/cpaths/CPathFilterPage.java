@@ -8,10 +8,17 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -31,12 +38,14 @@ public class CPathFilterPage extends WizardPage {
 	private final int fFilterType;
 
 	private CheckboxTableViewer viewer;
-	private IPathEntry fContainerPath;
+	private IPathEntry fParentEntry;
 	private List fPaths;
+	private ICProject fCProject;
 			
-	protected CPathFilterPage(int filterType) {
+	protected CPathFilterPage(ICProject cProject, int filterType) {
 		super("CPathFilterPage"); //$NON-NLS-1$
 		fFilterType = filterType;
+		fCProject = cProject;
 	}
 	
 
@@ -85,8 +94,24 @@ public class CPathFilterPage extends WizardPage {
 	protected void handleSelectionChanged(IStructuredSelection selection) {
 	}
 
-	public void setEntries(IPathEntry entry) {
-		fContainerPath = entry;
+	public void setParentEntry(IPathEntry entry) {
+		fParentEntry = entry;
+		if (fParentEntry.getEntryKind() == IPathEntry.CDT_PROJECT) {
+			IProject project = CUIPlugin.getWorkspace().getRoot().getProject(fParentEntry.getPath().segment(0));
+			if (project.isAccessible()) {
+				ICProject cProject = CoreModel.getDefault().create(project);
+				try {
+					fPaths = Arrays.asList(cProject.getRawPathEntries());
+				} catch (CModelException e) {
+				}
+			}
+		} else if (fParentEntry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
+			try {
+				IPathEntryContainer container = CoreModel.getPathEntryContainer(fParentEntry.getPath(), fCProject);
+				fPaths = Arrays.asList(container.getPathEntries());
+			} catch (CModelException e) {
+			}
+		}
 	}
 	
 	public IPathEntry[] getSelectedEntries() {

@@ -126,7 +126,7 @@ public class CPathContainerWizard extends Wizard {
 			addPage(fContainerPage);
 		}
 		if (fFilterType != -1) {
-			fFilterPage = new CPathFilterPage(fFilterType);
+			fFilterPage = new CPathFilterPage(fCurrProject, fFilterType);
 		}
 		super.addPages();
 	}
@@ -162,7 +162,9 @@ public class CPathContainerWizard extends Wizard {
 			fContainerPage = getContainerPage(selected);
 			return fContainerPage;
 		} else if (page == fContainerPage) {
-			fFilterPage.setEntries(fContainerPage.getContainerEntries()[0]);
+			if ( fContainerPage.getContainerEntries().length > 0 ) {
+				fFilterPage.setParentEntry(fContainerPage.getContainerEntries()[0]);
+			}
 		}
 		return super.getNextPage(page);
 	}
@@ -193,13 +195,14 @@ public class CPathContainerWizard extends Wizard {
 				return false;
 			}
 		}
+		boolean canFinish = false;
 		if (fContainerPage != null) {
-			return fContainerPage.isPageComplete();
+			canFinish = fContainerPage.isPageComplete();
 		}
-		if (fFilterPage != null) {
-			return fFilterPage.isPageComplete();
+		if (canFinish == true && fFilterPage != null) {
+			canFinish = fFilterPage.isPageComplete();
 		}
-		return false;
+		return canFinish;
 	}
 
 	public static int openWizard(Shell shell, CPathContainerWizard wizard) {

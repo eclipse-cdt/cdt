@@ -73,6 +73,7 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IRegisterGroup;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IThread;
 
 /**
@@ -351,7 +352,16 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !getConfiguration().supportsBreakpoints() )
 			return false;
-		return true;
+		if ( breakpoint instanceof ICBreakpoint )
+		{
+			ISourceLocator sl =  getSourceLocator();
+			if ( sl != null && sl instanceof ICSourceLocator )
+			{
+				return ((ICSourceLocator)sl).contains( breakpoint.getMarker().getResource() );
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

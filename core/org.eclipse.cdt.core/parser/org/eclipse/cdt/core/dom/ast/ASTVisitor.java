@@ -43,6 +43,8 @@ public abstract class ASTVisitor {
 
 	public boolean shouldVisitTranslationUnit = false;
 
+	public boolean shouldVisitProblems = false;
+	
 	/**
 	 * @return continue to continue visiting, abort to stop, skip to not descend
 	 *         into this node.
@@ -99,6 +101,10 @@ public abstract class ASTVisitor {
 	}
 
 	public int visit(IASTEnumerator enumerator) {
+		return PROCESS_CONTINUE;
+	}
+	
+	public int visit( IASTProblem problem ){
 		return PROCESS_CONTINUE;
 	}
 }

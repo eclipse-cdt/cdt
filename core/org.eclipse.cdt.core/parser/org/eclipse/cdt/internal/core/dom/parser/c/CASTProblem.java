@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -318,4 +319,14 @@ public class CASTProblem extends CASTNode implements IASTProblem {
         return (IASTTranslationUnit) node;
     }
 
+    public boolean accept( ASTVisitor action ){
+    	if( action.shouldVisitProblems ){
+		    switch( action.visit( this ) ){
+	            case ASTVisitor.PROCESS_ABORT : return false;
+	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
+        return true;
+    }
 }

@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -189,13 +190,15 @@ public class CModelBuilder {
 		IASTDeclaration declaration = (IASTDeclaration)templateDeclaration.getOwnedDeclaration();
 		if(declaration instanceof IASTAbstractTypeSpecifierDeclaration){
 			IASTAbstractTypeSpecifierDeclaration abstractDeclaration = (IASTAbstractTypeSpecifierDeclaration)declaration ;
-			CElement element = createAbstractElement(parent, abstractDeclaration , true);			
-			// set the element position		
-			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
-			// set the template parameters				
-			String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
-			ITemplate classTemplate = (ITemplate) element;
-			classTemplate.setTemplateParameterTypes(parameterTypes);				
+			CElement element = createAbstractElement(parent, abstractDeclaration , true);
+			if(element != null){			
+				// set the element position		
+				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
+				// set the template parameters				
+				String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
+				ITemplate classTemplate = (ITemplate) element;
+				classTemplate.setTemplateParameterTypes(parameterTypes);				
+			}
 		}
 		ITemplate template = null;
 		template = (ITemplate) createSimpleElement(parent, declaration, true);
@@ -239,6 +242,9 @@ public class CModelBuilder {
 					IASTDeclaration subDeclaration = (IASTDeclaration)j.next();
 					generateModelElements((Parent)classElement, subDeclaration);					
 				} // end while j
+			} else if (typeSpec instanceof IASTElaboratedTypeSpecifier){
+				// This is not a model element, so we don't create anything here.
+				// However, do we need to do anything else?
 			}
 		}				
 		return element;		
@@ -266,7 +272,7 @@ public class CModelBuilder {
 		// add to parent
 		parent.addChild((CElement) element);
 		// set position
-		element.setIdPos(inclusion.getNameOffset(), inclusion.getName().length());
+		element.setIdPos(inclusion.getNameOffset(), inclusion.getNameEndOffset() - inclusion.getNameOffset());
 		element.setPos(inclusion.getStartingOffset(), inclusion.getEndingOffset() - inclusion.getStartingOffset());
 
 		this.newElements.put(element, element.getElementInfo());
@@ -279,7 +285,7 @@ public class CModelBuilder {
 		// add to parent
 		parent.addChild((CElement) element);		
 		// set position
-		element.setIdPos(macro.getNameOffset(), macro.getName().length());
+		element.setIdPos(macro.getNameOffset(), macro.getNameEndOffset() - macro.getNameOffset());
 		element.setPos(macro.getStartingOffset(), macro.getEndingOffset() - macro.getStartingOffset());
 
 		this.newElements.put(element, element.getElementInfo());
@@ -295,7 +301,8 @@ public class CModelBuilder {
 		Namespace element = new Namespace ((ICElement)parent, nsName );
 		// add to parent
 		parent.addChild((ICElement)element);
-		element.setIdPos(nsDef.getNameOffset(), (nsName.length() == 0) ? type.length() : nsName.length());
+		element.setIdPos(nsDef.getNameOffset(), 
+		(nsName.length() == 0) ? type.length() : (nsDef.getNameEndOffset() - nsDef.getNameOffset()));
 		element.setPos(nsDef.getStartingOffset(), nsDef.getEndingOffset() - nsDef.getStartingOffset());
 		element.setTypeName(type);
 		
@@ -319,7 +326,8 @@ public class CModelBuilder {
 			createEnumerator(element, enumDef);
 		}
 		// set enumeration position
-		element.setIdPos(enumSpecifier.getNameOffset(), (enumName.length() == 0) ? type.length() : enumName.length());
+		element.setIdPos(enumSpecifier.getNameOffset(), 
+		(enumName.length() == 0) ? type.length() : (enumSpecifier.getNameEndOffset() - enumSpecifier.getNameOffset() ));
 		element.setPos(enumSpecifier.getStartingOffset(), enumSpecifier.getEndingOffset() - enumSpecifier.getStartingOffset());
 		element.setTypeName(type);
 		 
@@ -332,7 +340,7 @@ public class CModelBuilder {
 		// add to parent
 		enum.addChild(element);
 		// set enumerator position
-		element.setIdPos(enumDef.getStartingOffset(), enumDef.getName().length());
+		element.setIdPos(enumDef.getStartingOffset(), (enumDef.getNameEndOffset() - enumDef.getNameOffset()));
 		element.setPos(enumDef.getStartingOffset(), enumDef.getEndingOffset() - enumDef.getStartingOffset());
 
 		this.newElements.put(element, element.getElementInfo());
@@ -395,7 +403,8 @@ public class CModelBuilder {
 		// add to parent
 		parent.addChild((ICElement) element);
 		// set element position 
-		element.setIdPos( classSpecifier.getNameOffset(), (className.length() == 0) ? type.length() : className.length() );
+		element.setIdPos( classSpecifier.getNameOffset(), 
+		(className.length() == 0) ? type.length() : (classSpecifier.getNameEndOffset() - classSpecifier.getNameOffset() ));
 		element.setTypeName( type );
 		if(!isTemplate){
 			// set the element position
@@ -419,7 +428,7 @@ public class CModelBuilder {
 		parent.addChild((CElement)element);
 
 		// set positions
-		element.setIdPos(typeDefDeclaration.getNameOffset(),name.length());	
+		element.setIdPos(typeDefDeclaration.getNameOffset(), (typeDefDeclaration.getNameEndOffset() - typeDefDeclaration.getNameOffset()));	
 		element.setPos(typeDefDeclaration.getStartingOffset(), typeDefDeclaration.getEndingOffset() - typeDefDeclaration.getStartingOffset());
 
 		this.newElements.put(element, element.getElementInfo());
@@ -472,7 +481,7 @@ public class CModelBuilder {
 		parent.addChild( element ); 	
 
 		// set position
-		element.setIdPos( varDeclaration.getNameOffset(), variableName.length() );
+		element.setIdPos( varDeclaration.getNameOffset(), (varDeclaration.getNameEndOffset() - varDeclaration.getNameOffset()) );
 		if(!isTemplate){
 			// set element position
 			element.setPos(varDeclaration.getStartingOffset(), varDeclaration.getEndingOffset() - varDeclaration.getStartingOffset());
@@ -572,7 +581,7 @@ public class CModelBuilder {
 		parent.addChild( element ); 	
 
 		// hook up the offsets
-		element.setIdPos( functionDeclaration.getNameOffset(), functionDeclaration.getNameEndOffset() - functionDeclaration.getNameOffset() );
+		element.setIdPos( functionDeclaration.getNameOffset(), (functionDeclaration.getNameEndOffset() - functionDeclaration.getNameOffset()) );
 		if(!isTemplate){
 			// set the element position		
 			element.setPos(functionDeclaration.getStartingOffset(), functionDeclaration.getEndingOffset() - functionDeclaration.getStartingOffset());	

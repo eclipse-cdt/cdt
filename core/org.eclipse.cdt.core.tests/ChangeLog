@@ -1,3 +1,6 @@
+2003-10-22 Hoda Amer
+	Added offset checking in CModelElementsTest
+	
 2003-10-21 John Camelon
 	Moved testBug40007() from ASTFailedTests to QuickParseASTTests.  
 	Added QuickParseASTTests::testBug40759().  

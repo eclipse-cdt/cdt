@@ -1,3 +1,7 @@
+2003-10-22 Hoda Amer
+	Fix for bug#40759: Offsets of macroexpansions are not correct 
+	Fix for bug#44633: Outline View : CModelBuilder quits on templated friends 
+	
 2003-10-21 Alain Magloire
 
 	Moving the implementation of the ICPathEntry in the Core Model

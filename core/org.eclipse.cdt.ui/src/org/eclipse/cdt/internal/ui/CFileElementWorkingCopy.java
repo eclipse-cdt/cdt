@@ -5,10 +5,6 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.IBufferChangedListener;
@@ -209,25 +205,6 @@ public class CFileElementWorkingCopy extends WorkingCopy {
 		fProvider = provider;
 		IStorage storage = StoreInput.getStorage();
 		super.setLocation(storage.getFullPath());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#parse()
-	 */
-	public Map parse() {
-		IDocument doc = fProvider.getDocument(input);
-		if (doc != null) {
-			DocumentInputStream dis = new DocumentInputStream(doc);
-			try {
-				return parse(dis);
-			} finally {
-				try {
-					dis.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-		return new HashMap();
 	}
 
 	/* (non-Javadoc)

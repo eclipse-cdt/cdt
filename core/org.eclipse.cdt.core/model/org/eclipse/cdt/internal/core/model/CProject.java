@@ -585,6 +585,7 @@ public class CProject extends Openable implements ICProject {
 	public Object[] getNonCResources() throws CModelException {
 		return ((CProjectInfo) getElementInfo()).getNonCResources(getResource());
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#closing(java.lang.Object)
 	 */

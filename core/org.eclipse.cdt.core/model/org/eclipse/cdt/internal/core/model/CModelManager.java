@@ -288,17 +288,18 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			}
 
 			// try in the outputEntry and save in the container
+			// But do not create an ICElement since they are not in the Model per say
 			if (celement == null && !checkIfBinary && cproject.isOnOutputEntry(file)) {
 				IBinaryFile bin = createBinaryFile(file);
 				if (bin != null) {
 					if (bin.getType() == IBinaryFile.ARCHIVE) {
 						ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
-						ICElement archive = new Archive(vlib, file, (IBinaryArchive)bin);
-						vlib.addChild(archive);
+						celement = new Archive(vlib, file, (IBinaryArchive)bin);
+						vlib.addChild(celement);
 					} else {
 						BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
-						IBinary binary = new Binary(vbin, file, (IBinaryObject)bin);
-						vbin.addChild(binary);
+						celement = new Binary(vbin, file, (IBinaryObject)bin);
+						vbin.addChild(celement);
 					}
 				}
 			}
@@ -349,15 +350,16 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			}
 
 			// try in the outputEntry and save in the container
+			// But do not create a ICElement since they are not in the Model per say
 			if (celement == null) {
 				if (bin.getType() == IBinaryFile.ARCHIVE) {
 					ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
-					ICElement archive = new Archive(vlib, file, (IBinaryArchive)bin);
-					vlib.addChild(archive);
+					celement = new Archive(vlib, file, (IBinaryArchive)bin);
+					vlib.addChild(celement);
 				} else {
 					BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
-					IBinary binary = new Binary(vbin, file, (IBinaryObject)bin);
-					vbin.addChild(binary);
+					celement = new Binary(vbin, file, (IBinaryObject)bin);
+					vbin.addChild(celement);
 				}
 			}
 		} catch (CModelException e) {
@@ -375,87 +377,65 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 //System.out.println("RELEASE " + celement.getElementName());
 
 		// Remove from the containers.
-		int type = celement.getElementType();
-		if (type == ICElement.C_ARCHIVE) {
-//System.out.println("RELEASE Archive " + cfile.getElementName());
-			CProject cproj = (CProject)celement.getCProject();
-			ArchiveContainer container = (ArchiveContainer)cproj.getArchiveContainer();
-			container.removeChild(celement);
-			CElementDelta delta = new CElementDelta(getCModel());
-			delta.changed(container, ICElementDelta.CHANGED); 
-			registerCModelDelta(delta); 
-		} else if (type == ICElement.C_BINARY) {
-//System.out.println("RELEASE Binary " + celement.getElementName());
-			CProject cproj = (CProject)celement.getCProject();
-			BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
-			container.removeChild(celement);
-			CElementDelta delta = new CElementDelta(getCModel());
-			delta.changed(container, ICElementDelta.CHANGED); 
-			registerCModelDelta(delta); 
-		}
-
 		if (celement instanceof IParent) {
-			if (peekAtInfo(celement) != null) {
-				CElementInfo info = ((CElement)celement).getElementInfo();
-				if (info != null) {
-					ICElement[] children = info.getChildren();
-					for (int i = 0; i < children.length; i++) {
-						releaseCElement(children[i]);
-					}
-					// Make sure we destroy the BinaryContainer and ArchiveContainer
-					// Since they are not part of the children.
-					if (info instanceof CProjectInfo) {
-						CProjectInfo pinfo = (CProjectInfo) info;
-						if (pinfo.vBin != null) {
-							releaseCElement(pinfo.vBin);
-						}
-						if (pinfo.vLib != null) {
-							releaseCElement(pinfo.vLib);
-						}
-						pinfo.resetCaches();
-						IProject project = celement.getCProject().getProject();
-						removeBinaryRunner(project);
+			CElementInfo info = (CElementInfo)peekAtInfo(celement);
+			if (info != null) {
+				ICElement[] children = info.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					releaseCElement(children[i]);
+				}
+				// Make sure any object specifics not part of the children be destroy
+				// For example the CProject needs to destroy the BinaryContainer and ArchiveContainer
+				if (celement instanceof CElement) {
+					try {
+						((CElement)celement).closing(info);
+					} catch (CModelException e) {
+						//
 					}
 				}
-			} else {
-				// If an entire folder was deleted we need to update the
-				// BinaryContainer/ArchiveContainer also.
+			}
+
+			// If an entire folder was deleted we need to update the
+			// BinaryContainer/ArchiveContainer also.
+			if (celement.getElementType() == ICElement.C_CCONTAINER) {
 				ICProject cproject = celement.getCProject();
-				CProjectInfo info = (CProjectInfo)peekAtInfo(cproject);
-				if (info != null && info.vBin != null) {
-					if (peekAtInfo(info.vBin) != null) {
-						ICElement[] bins = info.vBin.getChildren();
+				CProjectInfo pinfo = (CProjectInfo)peekAtInfo(cproject);
+				ArrayList list = new ArrayList(5);
+				if (pinfo != null && pinfo.vBin != null) {
+					if (peekAtInfo(pinfo.vBin) != null) {
+						ICElement[] bins = pinfo.vBin.getChildren();
 						for (int i = 0; i < bins.length; i++) {
 							if (celement.getPath().isPrefixOf(bins[i].getPath())) {
-								CElementDelta delta = new CElementDelta(getCModel());
-								delta.changed(info.vBin, ICElementDelta.CHANGED); 
-								registerCModelDelta(delta); 
-								info.vBin.removeChild(bins[i]);
+								//pinfo.vBin.removeChild(bins[i]);
+								list.add(bins[i]);
 							}
 						}
 					}
 				}
-				if (info != null && info.vLib != null) {
-					if (peekAtInfo(info.vLib) != null) {
-						ICElement[] ars = info.vLib.getChildren();
+				if (pinfo != null && pinfo.vLib != null) {
+					if (peekAtInfo(pinfo.vLib) != null) {
+						ICElement[] ars = pinfo.vLib.getChildren();
 						for (int i = 0; i < ars.length; i++) {
 							if (celement.getPath().isPrefixOf(ars[i].getPath())) {
-								CElementDelta delta = new CElementDelta(getCModel());
-								delta.changed(info.vLib, ICElementDelta.CHANGED); 
-								registerCModelDelta(delta); 
-								info.vLib.removeChild(ars[i]);
+								//pinfo.vLib.removeChild(ars[i]);
+								list.add(ars[i]);
 							}
 						}
 					}
+				}
+				// release any binary/archive that was in the path
+				for (int i = 0; i < list.size(); i++) {
+					ICElement b = (ICElement)list.get(i);
+					releaseCElement(b);
 				}
 			}
 		}
 
 		// Remove the child from the parent list.
-		Parent parent = (Parent)celement.getParent();
-		if (parent != null && peekAtInfo(parent) != null) {
-			parent.removeChild(celement);
-		}
+		//Parent parent = (Parent)celement.getParent();
+		//if (parent != null && peekAtInfo(parent) != null) {
+		//	parent.removeChild(celement);
+		//}
 
 		removeInfo(celement);
 	}

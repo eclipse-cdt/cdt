@@ -125,22 +125,14 @@ public class DeltaProcessor {
 			}				
 		}
 
+		//  It is not a C resource if the parent is a Binary/ArchiveContainer
+		if (celement != null && resource.getType() == IResource.FILE) {
+			ICElement parent = celement.getParent();
+			if (parent instanceof IArchiveContainer || parent instanceof IBinaryContainer) {
+				celement = null;
+			}
+		}
 		return celement;
-	}
-
-	/**
-	 * Creates the create corresponding to this resource.
-	 * Returns null if none was found.
-	 */
-	protected ICElement createElement(IPath path) {
-		return CModelManager.getDefault().create(path);
-	}
-
-	/**
-	 * Release the Element and cleaning.
-	 */
-	protected void releaseCElement(ICElement celement) {
-		CModelManager.getDefault().releaseCElement(celement);
 	}
 
 	/**
@@ -152,6 +144,73 @@ public class DeltaProcessor {
 			CElementInfo info = parent.getElementInfo();
 			info.addChild(child);
 		}
+	}
+
+	/**
+	 * Removes the given element from its parents cache of children. If the
+	 * element does not have a parent, or the parent is not currently open,
+	 * this has no effect. 
+	 */
+	private void removeFromParentInfo(ICElement child) {
+		CModelManager factory = CModelManager.getDefault();
+
+		// Remove the child from the parent list.
+		ICElement parent = child.getParent();
+		if (parent != null && parent instanceof Parent && factory.peekAtInfo(parent) != null) {
+			((Parent)parent).removeChild(child);
+		}
+	}
+
+	/**
+	 * Release the Element and cleaning.
+	 */
+	protected void releaseCElement(ICElement celement) {
+		CModelManager factory = CModelManager.getDefault();
+		int type = celement.getElementType();
+		if (type == ICElement.C_ARCHIVE) {
+			ICProject cproject = celement.getCProject();
+			IArchiveContainer container = cproject.getArchiveContainer();
+			fCurrentDelta.changed(container, ICElementDelta.CHANGED);		
+		} else if (type == ICElement.C_BINARY) {
+			ICProject cproject = celement.getCProject();
+			IBinaryContainer container = cproject.getBinaryContainer();
+			fCurrentDelta.changed(container, ICElementDelta.CHANGED);
+		} else {
+			// If an entire folder was deleted we need to update the
+			// BinaryContainer/ArchiveContainer also.
+			ICProject cproject = celement.getCProject();
+			CProjectInfo pinfo = (CProjectInfo)factory.peekAtInfo(cproject);
+			if (pinfo != null && pinfo.vBin != null) {
+				if (factory.peekAtInfo(pinfo.vBin) != null) {
+					ICElement[] bins = pinfo.vBin.getChildren();
+					for (int i = 0; i < bins.length; i++) {
+						if (celement.getPath().isPrefixOf(bins[i].getPath())) {
+							fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
+						}
+					}
+				}
+			}
+			if (pinfo != null && pinfo.vLib != null) {
+				if (factory.peekAtInfo(pinfo.vLib) != null) {
+					ICElement[] ars = pinfo.vLib.getChildren();
+					for (int i = 0; i < ars.length; i++) {
+						if (celement.getPath().isPrefixOf(ars[i].getPath())) {
+							fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
+						}
+					}
+				}
+			}
+		}
+		removeFromParentInfo(celement);
+		factory.releaseCElement(celement);
+	}
+
+	/**
+	 * Creates the create corresponding to this resource.
+	 * Returns null if none was found.
+	 */
+	protected ICElement createElement(IPath path) {
+		return CModelManager.getDefault().create(path);
 	}
 
 	/**

@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.core.model;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -21,6 +23,7 @@ import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 /**
  * IncludeReference
@@ -28,6 +31,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class IncludeReference extends Openable implements IIncludeReference {
 	
 	IIncludeEntry fIncludeEntry;
+	IPath fPath;
 
 	/**
 	 * @param parent
@@ -35,8 +39,13 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	 * @param type
 	 */
 	public IncludeReference(ICProject cproject, IIncludeEntry entry) {
-		super(cproject, null, entry.getIncludePath().toString(), ICElement.C_VCONTAINER);
+		this(cproject, entry, entry.getIncludePath());
+	}
+
+	public IncludeReference(ICElement celement, IIncludeEntry entry, IPath path) {
+		super(celement, null, path.toString(), ICElement.C_VCONTAINER);
 		fIncludeEntry = entry;
+		fPath = path;
 	}
 
 	/* (non-Javadoc)
@@ -64,7 +73,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	 * @see org.eclipse.cdt.internal.core.model.Openable#generateInfos(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
 	protected boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
-		return false;
+		return computeChildren(info, underlyingResource);
 	}
 
 	/* (non-Javadoc)
@@ -73,4 +82,38 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	public IPath getAffectedPath() {
 		return fIncludeEntry.getPath();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CContainer#computeChildren(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.resources.IResource)
+	 */
+	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
+			ArrayList vChildren = new ArrayList();
+			final CModelManager factory = CModelManager.getDefault();
+			File file = fIncludeEntry.getIncludePath().toFile();
+			String[] names = null;
+			if (file != null && file.isDirectory()) {
+				names = file.list();
+			}
+	
+			if (names != null) {
+				IPath path = new Path(file.getAbsolutePath());
+				for (int i = 0; i < names.length; i++) {
+					File child = new File(file, names[i]);
+					ICElement celement = null;
+					if (child.isDirectory()) {
+						celement = new IncludeReference(this, fIncludeEntry, new Path(child.getAbsolutePath()));
+					} else if (child.isFile()) {
+						celement = new ExternalTranslationUnit(this, path.append(names[i]));
+					}
+					if (celement != null) {
+						vChildren.add(celement);
+					}
+				}
+			}
+			ICElement[] children = new ICElement[vChildren.size()];
+			vChildren.toArray(children);
+			info.setChildren(children);
+			return true;
+	}
+
 }

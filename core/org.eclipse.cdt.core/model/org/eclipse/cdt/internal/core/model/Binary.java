@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -356,5 +357,16 @@ public class Binary extends Openable implements IBinary {
 	 */
 	public boolean exists() {
 		return getResource() != null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CElement#closing(java.lang.Object)
+	 */
+	protected void closing(Object info) throws CModelException {
+		ICProject cproject = getCProject();
+		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(cproject);
+		if (pinfo != null && pinfo.vBin != null) {
+			pinfo.vBin.removeChild(this);
+		}
+		super.closing(info);
 	}
 }

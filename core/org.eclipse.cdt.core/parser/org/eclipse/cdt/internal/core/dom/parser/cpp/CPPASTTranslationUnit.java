@@ -20,9 +20,11 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
@@ -38,6 +40,8 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     private ICPPNamespace binding = null;
 
     private ICPPScope scope = null;
+    
+    private ICPPASTVisitor visitor = null;
 
     private static final int DEFAULT_CHILDREN_LIST_SIZE = 8;
 
@@ -256,5 +260,14 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     public String getUnpreprocessedSignature(IASTNodeLocation[] locations) {
        if( resolver == null ) return EMPTY_STRING;
        return new String( resolver.getUnpreprocessedSignature(locations) );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getVisitor()
+     */
+    public IASTVisitor getVisitor() {
+        if( visitor == null )
+            visitor = new CPPVisitor( this );
+        return visitor;
     }
 }

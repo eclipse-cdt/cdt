@@ -78,7 +78,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
@@ -1137,7 +1136,7 @@ public class AST2Tests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
 
         CNameCollector collector = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, collector);
+        tu.getVisitor().visitTranslationUnit( collector);
 
         assertEquals(collector.size(), 3);
         IFunction function = (IFunction) collector.getName(0).resolveBinding();
@@ -2503,7 +2502,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         IVariable a = (IVariable) col.getName(1).resolveBinding();
         assertNotNull(a);
@@ -2524,7 +2523,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         IVariable a = (IVariable) col.getName(1).resolveBinding();
         IFunction g = (IFunction) col.getName(2).resolveBinding();
@@ -2547,7 +2546,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 9);
         IField x = (IField) col.getName(1).resolveBinding();
@@ -2569,7 +2568,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 6);
         IEnumerator one = (IEnumerator) col.getName(1).resolveBinding();
@@ -2616,7 +2615,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 3);
         ILabel end = (ILabel) col.getName(1).resolveBinding();
@@ -2633,7 +2632,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector collector = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, collector);
+        tu.getVisitor().visitTranslationUnit( collector);
 
         assertEquals(collector.size(), 5);
         IEnumeration col = (IEnumeration) collector.getName(0).resolveBinding();
@@ -2647,7 +2646,7 @@ public class AST2Tests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(
                 "struct s { int a; } ss = { .a = 1 }; \n", ParserLanguage.C); //$NON-NLS-1$
         CNameCollector collector = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, collector);
+        tu.getVisitor().visitTranslationUnit( collector);
 
         assertEquals(collector.size(), 4);
         IField a = (IField) collector.getName(1).resolveBinding();
@@ -2673,7 +2672,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 3);
         IEnumeration e = (IEnumeration) col.getName(0).resolveBinding();
@@ -2693,7 +2692,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 3);
         IVariable p = (IVariable) col.getName(1).resolveBinding();
@@ -2714,7 +2713,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 3);
 
@@ -2745,7 +2744,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 7);
 
@@ -2765,7 +2764,7 @@ public class AST2Tests extends AST2BaseTest {
     public void testBug84266_2() throws Exception {
         IASTTranslationUnit tu = parse("struct s f(void);", ParserLanguage.C); //$NON-NLS-1$
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 3);
 
@@ -2774,7 +2773,7 @@ public class AST2Tests extends AST2BaseTest {
 
         tu = parse("struct s f(void){}", ParserLanguage.C); //$NON-NLS-1$
         col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 3);
 
@@ -2794,7 +2793,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 6);
 
@@ -2821,7 +2820,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 11);
 
@@ -2850,7 +2849,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        CVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 13);
 
@@ -2900,7 +2899,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        CPPVisitor.visitTranslationUnit(tu, col);
+        tu.getVisitor().visitTranslationUnit( col);
 
         assertEquals(col.size(), 26);
 

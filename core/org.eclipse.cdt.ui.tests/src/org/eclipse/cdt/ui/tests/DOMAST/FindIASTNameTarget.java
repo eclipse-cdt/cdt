@@ -276,11 +276,11 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		if (matchingNames == null && tu != null) {
 			if (lang == ParserLanguage.CPP) {
 				CPPNameCollector col = new CPPNameCollector(findString, caseSensitive, wholeWord, regExSearch);
-				CPPVisitor.visitTranslationUnit(tu, col);
+				tu.getVisitor().visitTranslationUnit(col);
 				matchingNames = col.getNameArray(tu.getAllPreprocessorStatements());
 			} else {
 				CNameCollector col = new CNameCollector(findString, caseSensitive, wholeWord, regExSearch);
-				CVisitor.visitTranslationUnit(tu, col);
+				tu.getVisitor().visitTranslationUnit(col);
 				matchingNames = col.getNameArray(tu.getAllPreprocessorStatements());
 			}
 		}

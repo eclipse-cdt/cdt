@@ -85,7 +85,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -111,10 +110,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -135,7 +136,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 /**
  * @author aniefer
  */
-public class CPPVisitor {
+public class CPPVisitor implements ICPPASTVisitor {
 
 	/**
 	 * @param name
@@ -681,41 +682,6 @@ public class CPPVisitor {
 		return null;
 	}
 	
-	public static abstract class CPPBaseVisitorAction {
-		public boolean processNames          = false;
-		public boolean processDeclarations   = false;
-		public boolean processInitializers   = false;
-		public boolean processParameterDeclarations = false;
-		public boolean processDeclarators    = false;
-		public boolean processDeclSpecifiers = false;
-		public boolean processExpressions    = false;
-		public boolean processStatements     = false;
-		public boolean processTypeIds        = false;
-		public boolean processEnumerators    = false;
-		public boolean processBaseSpecifiers = false;
-		public boolean processNamespaces     = false;
-		
-		/**
-		 * @return true to continue visiting, return false to stop
-		 */
-		public final static int PROCESS_SKIP     = 1;
-		public final static int PROCESS_ABORT    = 2;
-		public final static int PROCESS_CONTINUE = 3;
-		
-		public int processName( IASTName name ) 					{ return PROCESS_CONTINUE; }
-		public int processDeclaration( IASTDeclaration declaration ){ return PROCESS_CONTINUE; }
-		public int processInitializer( IASTInitializer initializer ){ return PROCESS_CONTINUE; }
-		public int processParameterDeclaration( IASTParameterDeclaration parameterDeclaration ) { return PROCESS_CONTINUE; }
-		public int processDeclarator( IASTDeclarator declarator )   { return PROCESS_CONTINUE; }
-		public int processDeclSpecifier( IASTDeclSpecifier declSpec ){return PROCESS_CONTINUE; }
-		public int processExpression( IASTExpression expression )   { return PROCESS_CONTINUE; }
-		public int processStatement( IASTStatement statement )      { return PROCESS_CONTINUE; }
-		public int processTypeId( IASTTypeId typeId )               { return PROCESS_CONTINUE; }
-		public int processEnumerator( IASTEnumerator enumerator )   { return PROCESS_CONTINUE; }
-		public int processBaseSpecifier(ICPPASTBaseSpecifier specifier) { return PROCESS_CONTINUE; }
-		public int processNamespace( ICPPASTNamespaceDefinition namespace) { return PROCESS_CONTINUE; }
-	}
-	
 	public static class CollectProblemsAction extends CPPBaseVisitorAction {
 		{
 			processDeclarations = true;
@@ -974,7 +940,6 @@ public class CPPVisitor {
 				case KIND_OBJ_FN:
 					if( prop == IASTIdExpression.ID_NAME || 
 						prop == IASTFieldReference.FIELD_NAME || 
-						prop == ICASTFieldDesignator.FIELD_NAME ||
 						prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
 						prop == ICPPASTUsingDeclaration.NAME ||
 						prop == IASTFunctionCallExpression.FUNCTION_NAME ||
@@ -1017,19 +982,23 @@ public class CPPVisitor {
 		}
 	}
 
+	private IASTTranslationUnit tu = null;
+	public CPPVisitor( ICPPASTTranslationUnit tu ){
+	    this.tu = tu; 
+	}
 	
-	public static void visitTranslationUnit( IASTTranslationUnit tu, CPPBaseVisitorAction action ){
+	public void visitTranslationUnit( BaseVisitorAction action ){
 		IASTDeclaration [] decls = tu.getDeclarations();
 		for( int i = 0; i < decls.length; i++ ){
 			if( !visitDeclaration( decls[i], action ) ) return;
 		}
 	}
 
-	public static boolean visitNamespaceDefinition( ICPPASTNamespaceDefinition namespace, CPPBaseVisitorAction action ){
-	    if( action.processNamespaces ){
-	        switch( action.processNamespace( namespace ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	public boolean visitNamespaceDefinition( ICPPASTNamespaceDefinition namespace, BaseVisitorAction action ){
+	    if( action instanceof CPPBaseVisitorAction && ((CPPBaseVisitorAction)action).processNamespaces ){
+	        switch( ((CPPBaseVisitorAction)action).processNamespace( namespace ) ){
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 	    }
@@ -1046,14 +1015,14 @@ public class CPPVisitor {
 	 * @param action
 	 * @return
 	 */
-	public static boolean visitDeclaration(IASTDeclaration declaration, CPPBaseVisitorAction action) {
+	public boolean visitDeclaration(IASTDeclaration declaration, BaseVisitorAction action) {
 	    if( declaration instanceof ICPPASTNamespaceDefinition )
 	        return visitNamespaceDefinition( (ICPPASTNamespaceDefinition) declaration, action );
 	    
 		if( action.processDeclarations ) {
 		    switch( action.processDeclaration( declaration ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1101,11 +1070,11 @@ public class CPPVisitor {
 	 * @param action
 	 * @return
 	 */
-	public static boolean visitName(IASTName name, CPPBaseVisitorAction action) {
+	public boolean visitName(IASTName name, BaseVisitorAction action) {
 		if( action.processNames ){
 		    switch( action.processName( name ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1126,11 +1095,11 @@ public class CPPVisitor {
 	 * @param action
 	 * @return
 	 */
-	public static boolean visitDeclSpecifier(IASTDeclSpecifier declSpecifier, CPPBaseVisitorAction action) {
+	public boolean visitDeclSpecifier(IASTDeclSpecifier declSpecifier, BaseVisitorAction action) {
 		if( action.processDeclSpecifiers ){
 		    switch( action.processDeclSpecifier( declSpecifier ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1170,11 +1139,11 @@ public class CPPVisitor {
 	 * @param action
 	 * @return
 	 */
-	public static boolean visitDeclarator(IASTDeclarator declarator, CPPBaseVisitorAction action) {
+	public boolean visitDeclarator(IASTDeclarator declarator, BaseVisitorAction action) {
 		if( action.processDeclarators ){
 		    switch( action.processDeclarator( declarator ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1237,12 +1206,12 @@ public class CPPVisitor {
 		return true;
 	}
 	
-	private static boolean visitIfStatement( IASTIfStatement ifStatement, CPPBaseVisitorAction action ){
+	private boolean visitIfStatement( IASTIfStatement ifStatement, BaseVisitorAction action ){
 		while( ifStatement != null ){
 			if( action.processStatements ){
 			    switch( action.processStatement( ifStatement ) ){
-			        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-			        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+			        case BaseVisitorAction.PROCESS_ABORT : return false;
+			        case BaseVisitorAction.PROCESS_SKIP  : return true;
 			        default : break;
 			    }
 		    }	
@@ -1265,15 +1234,15 @@ public class CPPVisitor {
 	 * @param action
 	 * @return
 	 */
-	public static boolean visitStatement(IASTStatement statement, CPPBaseVisitorAction action) {
+	public boolean visitStatement(IASTStatement statement, BaseVisitorAction action) {
 		//handle if's in a non-recursive manner to avoid stack overflows in case of huge number of elses
 		if( statement instanceof IASTIfStatement )
 			return visitIfStatement( (IASTIfStatement) statement, action );
 		
 		if( action.processStatements ){
 		    switch( action.processStatement( statement ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1333,11 +1302,11 @@ public class CPPVisitor {
 	 * @param action
 	 * @return
 	 */
-	public static boolean visitExpression(IASTExpression expression, CPPBaseVisitorAction action) {
+	public boolean visitExpression(IASTExpression expression, BaseVisitorAction action) {
 		if( action.processExpressions ){
 		    switch( action.processExpression( expression ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1404,11 +1373,11 @@ public class CPPVisitor {
 	 * @param action
 	 * @return
 	 */
-	public static boolean visitTypeId(IASTTypeId typeId, CPPBaseVisitorAction action) {
+	public boolean visitTypeId(IASTTypeId typeId, BaseVisitorAction action) {
 		if( action.processTypeIds ){
 		    switch( action.processTypeId( typeId ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1422,11 +1391,11 @@ public class CPPVisitor {
 	 * @param action
 	 * @return
 	 */
-	public static boolean visitInitializer(IASTInitializer initializer, CPPBaseVisitorAction action) {
+	public boolean visitInitializer(IASTInitializer initializer, BaseVisitorAction action) {
 		if( action.processInitializers ){
 		    switch( action.processInitializer( initializer ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1449,11 +1418,11 @@ public class CPPVisitor {
 	 * @param action
 	 * @return
 	 */
-	public static boolean visitEnumerator(IASTEnumerator enumerator, CPPBaseVisitorAction action) {
+	public boolean visitEnumerator(IASTEnumerator enumerator, BaseVisitorAction action) {
 		if( action.processEnumerators ){
 		    switch( action.processEnumerator( enumerator ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1469,11 +1438,11 @@ public class CPPVisitor {
 	 * @param action
 	 * @return
 	 */
-	public static boolean visitBaseSpecifier(ICPPASTBaseSpecifier specifier, CPPBaseVisitorAction action) {
-		if( action.processBaseSpecifiers ){
-		    switch( action.processBaseSpecifier( specifier ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	public boolean visitBaseSpecifier(ICPPASTBaseSpecifier specifier, BaseVisitorAction action) {
+		if( action instanceof CPPBaseVisitorAction && ((CPPBaseVisitorAction)action).processBaseSpecifiers ){
+		    switch( ((CPPBaseVisitorAction)action).processBaseSpecifier( specifier ) ){
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1482,11 +1451,11 @@ public class CPPVisitor {
 	    return true;
 	}
 
-	public static boolean visitParameterDeclaration( IASTParameterDeclaration parameterDeclaration, CPPBaseVisitorAction action ){
+	public boolean visitParameterDeclaration( IASTParameterDeclaration parameterDeclaration, BaseVisitorAction action ){
 	    if( action.processParameterDeclarations ){
 	    	switch( action.processParameterDeclaration( parameterDeclaration ) ){
-		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        case BaseVisitorAction.PROCESS_ABORT : return false;
+		        case BaseVisitorAction.PROCESS_SKIP  : return true;
 		        default : break;
 		    }
 	    }
@@ -1501,7 +1470,7 @@ public class CPPVisitor {
 	 * @param action
 	 * @return
 	 */
-	public static boolean visitTemplateParameter(ICPPASTTemplateParameter parameter, CPPBaseVisitorAction action) {
+	public boolean visitTemplateParameter(ICPPASTTemplateParameter parameter, BaseVisitorAction action) {
 		return true;
 	}
 
@@ -1857,7 +1826,7 @@ public class CPPVisitor {
 	
 	public static IASTProblem[] getProblems(IASTTranslationUnit tu) {
 		CollectProblemsAction action = new CollectProblemsAction();
-		visitTranslationUnit(tu, action);
+		tu.getVisitor().visitTranslationUnit(action);
 		
 		return action.getProblems();
 	}
@@ -1869,13 +1838,13 @@ public class CPPVisitor {
 	 */
 	public static IASTName[] getReferences(IASTTranslationUnit tu, IBinding binding) {
 		CollectReferencesAction action = new CollectReferencesAction( binding );
-		visitTranslationUnit( tu, action );
+		tu.getVisitor().visitTranslationUnit( action );
 		return action.getReferences();
 	}
 	
 	public static IASTName[] getDeclarations( IASTTranslationUnit tu, IBinding binding ){
 	    CollectDeclarationsAction action = new CollectDeclarationsAction( binding );
-	    visitTranslationUnit( tu, action );
+	    tu.getVisitor().visitTranslationUnit( action );
 	    return action.getDeclarations();
 	}
 }

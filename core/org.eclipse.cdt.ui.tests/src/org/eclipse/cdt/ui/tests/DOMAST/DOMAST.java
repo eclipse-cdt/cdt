@@ -32,8 +32,10 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor.CBaseVisitorAction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor.CPPBaseVisitorAction;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.model.CModelException;
@@ -41,10 +43,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
@@ -358,10 +356,10 @@ public class DOMAST extends ViewPart {
 	         start=System.currentTimeMillis();
 	         if (lang == ParserLanguage.CPP) {
 	            action = new CPPPopulateASTViewAction(tu, monitor);
-	            CPPVisitor.visitTranslationUnit(tu, (CPPBaseVisitorAction) action);
+	            tu.getVisitor().visitTranslationUnit( (CPPBaseVisitorAction) action);
 	         } else {
 	            action = new CPopulateASTViewAction(tu, monitor);
-	            CVisitor.visitTranslationUnit(tu, (CBaseVisitorAction) action);
+	            tu.getVisitor().visitTranslationUnit( (CBaseVisitorAction) action);
 	         }
 	         monitor.worked(2);
              System.out.println("[DOM AST View] done " + GENERATING_INITIAL_TREE + ": " + (System.currentTimeMillis()- start) );

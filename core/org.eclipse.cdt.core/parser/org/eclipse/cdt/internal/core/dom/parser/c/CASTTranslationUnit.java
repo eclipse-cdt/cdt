@@ -12,14 +12,15 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
@@ -37,6 +38,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     
     //Binding
     private CScope compilationUnit = null;
+    private CVisitor visitor = null;
     private ILocationResolver resolver;
     private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
     private static final IASTNodeLocation[] EMPTY_PREPROCESSOR_LOCATION_ARRAY = new IASTNodeLocation[0];
@@ -226,5 +228,15 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
    public String getUnpreprocessedSignature(IASTNodeLocation[] locations) {
       if( resolver == null ) return EMPTY_STRING;
       return new String( resolver.getUnpreprocessedSignature(locations) );
+   }
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getVisitor()
+	 */
+   public IASTVisitor getVisitor() {
+       if( visitor == null )
+           visitor = new CVisitor( this );
+       return visitor;
    }
 }

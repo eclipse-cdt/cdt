@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -37,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -160,22 +160,18 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	private void checkForDefinition(){
 		FindDefinitionAction action = new FindDefinitionAction();
 		IASTNode node = CPPVisitor.getContainingBlockItem( getPhysicalNode() ).getParent();
+		ICPPASTVisitor visitor = (ICPPASTVisitor) node.getTranslationUnit().getVisitor();
 		if( node instanceof ICPPASTNamespaceDefinition ){
-		    CPPVisitor.visitNamespaceDefinition( (ICPPASTNamespaceDefinition) node, action );
+		    visitor.visitNamespaceDefinition( (ICPPASTNamespaceDefinition) node, action );
 		    definition = action.result;
 		} else if( node instanceof IASTCompoundStatement ){
 		    //a local class, nowhere else to look if we don't find it here...
-		    CPPVisitor.visitStatement( (IASTStatement) node, action );
+		    visitor.visitStatement( (IASTStatement) node, action );
 		    definition = action.result;
 		    return;
 		}
 		if( definition == null ){
-		    IASTTranslationUnit tu = null;
-		    while( !(node instanceof IASTTranslationUnit) ) {
-		        node = node.getParent();
-		    }
-		    tu = (IASTTranslationUnit) node;
-		    CPPVisitor.visitTranslationUnit( tu, action );
+		    visitor.visitTranslationUnit( action );
 		    definition = action.result;
 		}
 		

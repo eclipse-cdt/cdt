@@ -21,9 +21,9 @@ import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
+import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor.CBaseVisitorAction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction;
 
 /**
  * Created on Nov 8, 2004
@@ -85,7 +85,8 @@ public class CFunctionScope implements ICFunctionScope {
 
 	public ILabel[] getLabels(){
 	    FindLabelsAction action = new FindLabelsAction();
-        CVisitor.visitDeclaration( function, action );
+	    
+        function.getTranslationUnit().getVisitor().visitDeclaration( function, action );
 	    
 	    ILabel [] result = null;
 	    if( action.labels != null ){

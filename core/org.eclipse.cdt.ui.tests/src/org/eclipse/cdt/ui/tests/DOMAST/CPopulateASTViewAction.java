@@ -32,8 +32,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor.CBaseVisitorAction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction;
 import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTInclusionStatement;
 import org.eclipse.core.runtime.IProgressMonitor;
 

@@ -74,5 +74,7 @@ public interface IASTTranslationUnit extends IASTNode {
    public IASTProblem[] getPreprocesorProblems();
    
    public String getUnpreprocessedSignature( IASTNodeLocation [] locations );
+   
+   public IASTVisitor getVisitor();
 
 }

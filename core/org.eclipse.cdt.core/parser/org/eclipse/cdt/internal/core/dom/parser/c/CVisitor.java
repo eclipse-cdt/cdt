@@ -90,6 +90,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
@@ -100,46 +101,12 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction;
 
 /**
  * Created on Nov 5, 2004
  * @author aniefer
  */
-public class CVisitor {
-	public static abstract class CBaseVisitorAction {
-		public boolean processNames          = false;
-		public boolean processDeclarations   = false;
-		public boolean processInitializers   = false;
-		public boolean processParameterDeclarations = false;
-		public boolean processDeclarators    = false;
-		public boolean processDeclSpecifiers = false;
-		public boolean processExpressions    = false;
-		public boolean processStatements     = false;
-		public boolean processTypeIds        = false;
-		public boolean processEnumerators    = false;
-		public boolean processDesignators    = false;
-		/**
-		 * @return true to continue visiting, abort to stop, skip to not descend into this node. 
-		 */
-		public final static int PROCESS_SKIP     = 1;
-		public final static int PROCESS_ABORT    = 2;
-		public final static int PROCESS_CONTINUE = 3;
-        
-		
-		public int processName( IASTName name ) 					{ return PROCESS_CONTINUE; }
-		public int processDeclaration( IASTDeclaration declaration ){ return PROCESS_CONTINUE; }
-		public int processInitializer( IASTInitializer initializer ){ return PROCESS_CONTINUE; }
-		public int processParameterDeclaration( IASTParameterDeclaration parameterDeclaration ) { return PROCESS_CONTINUE; }
-		public int processDeclarator( IASTDeclarator declarator )   { return PROCESS_CONTINUE; }
-		public int processDeclSpecifier( IASTDeclSpecifier declSpec ){return PROCESS_CONTINUE; }
-		public int processExpression( IASTExpression expression )   { return PROCESS_CONTINUE; }
-		public int processStatement( IASTStatement statement )      { return PROCESS_CONTINUE; }
-		public int processTypeId( IASTTypeId typeId )               { return PROCESS_CONTINUE; }
-		public int processEnumerator( IASTEnumerator enumerator )   { return PROCESS_CONTINUE; }
-        public int processDesignator( ICASTDesignator designator )  { return PROCESS_CONTINUE; }
-	}
-	
+public class CVisitor implements ICASTVisitor {
 	public static class ClearBindingAction extends CBaseVisitorAction {
 		{
 			processNames = true;
@@ -1364,32 +1331,37 @@ public class CVisitor {
 	}
 	
 	public static void clearBindings( IASTTranslationUnit tu ){
-		visitTranslationUnit( tu, new ClearBindingAction() );
+		tu.getVisitor().visitTranslationUnit( new ClearBindingAction() );
 	}
 	
-	public static void visitTranslationUnit( IASTTranslationUnit tu, CBaseVisitorAction action ){
+	private IASTTranslationUnit tu = null;
+	public CVisitor( IASTTranslationUnit tu ) {
+	    this.tu = tu;
+	}
+	
+	public void visitTranslationUnit(  BaseVisitorAction action ){
 		IASTDeclaration[] decls = tu.getDeclarations();
 		for( int i = 0; i < decls.length; i++ ){
 			if( !visitDeclaration( decls[i], action ) ) return;
 		}
 	}
 	
-	public static boolean visitName( IASTName name, CBaseVisitorAction action ){
+	public boolean visitName( IASTName name, BaseVisitorAction action ){
 		if( action.processNames ) {
 		    switch( action.processName( name ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
 		return true;
 	}
 	
-	public static boolean visitDeclaration( IASTDeclaration declaration, CBaseVisitorAction action ){
+	public boolean visitDeclaration( IASTDeclaration declaration, BaseVisitorAction action ){
 		if( action.processDeclarations ) {
 		    switch( action.processDeclaration( declaration ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1409,11 +1381,11 @@ public class CVisitor {
 		}
 		return true;
 	}
-	public static boolean visitDeclarator( IASTDeclarator declarator, CBaseVisitorAction action ){
+	public boolean visitDeclarator( IASTDeclarator declarator, BaseVisitorAction action ){
 		if( action.processDeclarators ){
 			switch( action.processDeclarator( declarator ) ){
-	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            case BaseVisitorAction.PROCESS_ABORT : return false;
+	            case BaseVisitorAction.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
@@ -1462,14 +1434,14 @@ public class CVisitor {
 		return true;
 	}
 	
-	public static boolean visitInitializer( IASTInitializer initializer, CBaseVisitorAction action ){
+	public boolean visitInitializer( IASTInitializer initializer, BaseVisitorAction action ){
 	    if( initializer == null )
 	        return true;
 	    
 	    if( action.processInitializers ){
 			switch( action.processInitializer( initializer ) ){
-		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        case BaseVisitorAction.PROCESS_ABORT : return false;
+		        case BaseVisitorAction.PROCESS_SKIP  : return true;
 		        default : break;
 		    }
 	    }
@@ -1491,11 +1463,11 @@ public class CVisitor {
 	    }
 	    return true;
 	}
-	public static boolean visitDesignator( ICASTDesignator designator, CBaseVisitorAction action ){
-	    if( action.processDesignators ){
-	    	switch( action.processDesignator( designator ) ){
-		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	public boolean visitDesignator( ICASTDesignator designator, BaseVisitorAction action ){
+	    if( action instanceof CBaseVisitorAction && ((CBaseVisitorAction)action).processDesignators ){
+	    	switch( ((CBaseVisitorAction)action).processDesignator( designator ) ){
+		        case BaseVisitorAction.PROCESS_ABORT : return false;
+		        case BaseVisitorAction.PROCESS_SKIP  : return true;
 		        default : break;
 		    }
 	    }
@@ -1509,11 +1481,11 @@ public class CVisitor {
 	    }
 	    return true;
 	}
-	public static boolean visitParameterDeclaration( IASTParameterDeclaration parameterDeclaration, CBaseVisitorAction action ){
+	public boolean visitParameterDeclaration( IASTParameterDeclaration parameterDeclaration, BaseVisitorAction action ){
 	    if( action.processParameterDeclarations ){
 	    	switch( action.processParameterDeclaration( parameterDeclaration ) ){
-		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        case BaseVisitorAction.PROCESS_ABORT : return false;
+		        case BaseVisitorAction.PROCESS_SKIP  : return true;
 		        default : break;
 		    }
 	    }
@@ -1523,11 +1495,11 @@ public class CVisitor {
 	    return true;
 	}
 	
-	public static boolean visitDeclSpecifier( IASTDeclSpecifier declSpec, CBaseVisitorAction action ){
+	public boolean visitDeclSpecifier( IASTDeclSpecifier declSpec, BaseVisitorAction action ){
 		if( action.processDeclSpecifiers ){
 	    	switch( action.processDeclSpecifier( declSpec ) ){
-		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        case BaseVisitorAction.PROCESS_ABORT : return false;
+		        case BaseVisitorAction.PROCESS_SKIP  : return true;
 		        default : break;
 		    }
 	    }
@@ -1554,11 +1526,11 @@ public class CVisitor {
 		}
 		return true;
 	}
-	public static boolean visitEnumerator( IASTEnumerator enumerator, CBaseVisitorAction action ){
+	public boolean visitEnumerator( IASTEnumerator enumerator, BaseVisitorAction action ){
 	    if( action.processEnumerators ){
 		    switch( action.processEnumerator( enumerator ) ){
-		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        case BaseVisitorAction.PROCESS_ABORT : return false;
+		        case BaseVisitorAction.PROCESS_SKIP  : return true;
 		        default : break;
 		    }
 	    }
@@ -1569,12 +1541,12 @@ public class CVisitor {
 	    return true;
 	}
 	
-	private static boolean visitIfStatement( IASTIfStatement ifStatement, CBaseVisitorAction action ){
+	private boolean visitIfStatement( IASTIfStatement ifStatement, BaseVisitorAction action ){
 		while( ifStatement != null ){
 			if( action.processStatements ){
 			    switch( action.processStatement( ifStatement ) ){
-			        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-			        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+			        case BaseVisitorAction.PROCESS_ABORT : return false;
+			        case BaseVisitorAction.PROCESS_SKIP  : return true;
 			        default : break;
 			    }
 		    }	
@@ -1592,15 +1564,15 @@ public class CVisitor {
 		}
 		return true;
 	}
-	public static boolean visitStatement( IASTStatement statement, CBaseVisitorAction action ){
+	public boolean visitStatement( IASTStatement statement, BaseVisitorAction action ){
 		//handle if's in a non-recursive manner to avoid stack overflows in case of huge number of elses
 		if( statement instanceof IASTIfStatement )
 			return visitIfStatement( (IASTIfStatement) statement, action );
 		
 		if( action.processStatements ){
 		    switch( action.processStatement( statement ) ){
-		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        case BaseVisitorAction.PROCESS_ABORT : return false;
+		        case BaseVisitorAction.PROCESS_SKIP  : return true;
 		        default : break;
 		    }
 	    }
@@ -1645,11 +1617,11 @@ public class CVisitor {
 		}
 		return true;
 	}
-	public static boolean visitTypeId( IASTTypeId typeId, CBaseVisitorAction action ){
+	public boolean visitTypeId( IASTTypeId typeId, BaseVisitorAction action ){
 		if( action.processTypeIds ){
 		    switch( action.processTypeId( typeId ) ){
-		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        case BaseVisitorAction.PROCESS_ABORT : return false;
+		        case BaseVisitorAction.PROCESS_SKIP  : return true;
 		        default : break;
 		    }
 	    }
@@ -1658,13 +1630,13 @@ public class CVisitor {
 		if( !visitDeclSpecifier( typeId.getDeclSpecifier(), action ) ) return false;
 		return true;
 	}
-	public static boolean visitExpression( IASTExpression expression, CBaseVisitorAction action ){
+	public boolean visitExpression( IASTExpression expression, BaseVisitorAction action ){
 		if (expression == null) return true;
 		
 		if( action.processExpressions ){
 		    switch( action.processExpression( expression ) ){
-		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
-		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        case BaseVisitorAction.PROCESS_ABORT : return false;
+		        case BaseVisitorAction.PROCESS_SKIP  : return true;
 		        default : break;
 		    }
 	    }
@@ -1950,14 +1922,14 @@ public class CVisitor {
 	
 	public static IASTProblem[] getProblems(IASTTranslationUnit tu) {
 		CollectProblemsAction action = new CollectProblemsAction();
-		visitTranslationUnit(tu, action);
+		tu.getVisitor().visitTranslationUnit(action);
 		
 		return action.getProblems();
 	}
 	
 	public static IASTName[] getDeclarations(IASTTranslationUnit tu, IBinding binding) {
 		CollectDeclarationsAction action = new CollectDeclarationsAction(binding);
-		visitTranslationUnit(tu, action);
+		tu.getVisitor().visitTranslationUnit(action);
 
 		return action.getDeclarationNames();
 	}
@@ -1969,7 +1941,7 @@ public class CVisitor {
 	 */
 	public static IASTName[] getReferences(IASTTranslationUnit tu, IBinding binding) {
 		CollectReferencesAction action = new CollectReferencesAction( binding );
-		visitTranslationUnit( tu, action );
+		tu.getVisitor().visitTranslationUnit(action);
 		return action.getReferences();
 	}
 

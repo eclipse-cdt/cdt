@@ -22,8 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IASTVisitor.BaseVisitorAction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -91,11 +93,12 @@ public class CPPNamespace implements ICPPNamespace, ICPPBinding {
 	    ICPPASTNamespaceDefinition nsDef = (ICPPASTNamespaceDefinition) namespaceName.getParent();
 	    IASTNode node = nsDef.getParent();
 	    
+	    ICPPASTVisitor visitor = (ICPPASTVisitor) node.getTranslationUnit().getVisitor();
 	    if( node instanceof IASTTranslationUnit )
-	        CPPVisitor.visitTranslationUnit( (IASTTranslationUnit) node, collector );
+	        visitor.visitTranslationUnit( collector );
 	    else if( node instanceof ICPPASTNamespaceDefinition ){
-	        collector.processResult = CPPVisitor.CPPBaseVisitorAction.PROCESS_CONTINUE;
-	        CPPVisitor.visitNamespaceDefinition( (ICPPASTNamespaceDefinition) node, collector );
+	        collector.processResult = BaseVisitorAction.PROCESS_CONTINUE;
+	        visitor.visitNamespaceDefinition( (ICPPASTNamespaceDefinition) node, collector );
 	    }
 	    
 	    int size = collector.namespaces.size();

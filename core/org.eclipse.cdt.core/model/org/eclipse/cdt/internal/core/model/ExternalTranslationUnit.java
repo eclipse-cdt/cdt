@@ -19,6 +19,7 @@ import java.io.InputStream;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -34,7 +35,7 @@ public class ExternalTranslationUnit extends TranslationUnit {
 	 * @param path
 	 */
 	public ExternalTranslationUnit(ICElement parent, IPath path) {
-		super(parent, path);
+		super(parent, (IResource)null, path.toString());
 		fPath = path;
 	}
 

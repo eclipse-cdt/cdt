@@ -54,6 +54,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		super(parent, path, ICElement.C_UNIT);
 	}
 
+	public TranslationUnit(ICElement parent, IResource res, String name) {
+		super(parent, res, name, ICElement.C_UNIT);
+	}
+
 	public ITranslationUnit getTranslationUnit () {
 		return this;
 	}

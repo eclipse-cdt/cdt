@@ -1,3 +1,9 @@
+2004-08-31 Alain Magloire
+
+	Fix for 72198
+	* model/org/eclipse/cdt/internal/core/ExternalTranslationUnit.java
+	* model/org/eclipse/cdt/internal/core/TranslationUnit.java
+
 2004-08-27 Alain Magloire
 
 	Fix for 72550.

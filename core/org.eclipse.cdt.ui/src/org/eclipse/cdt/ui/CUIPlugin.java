@@ -140,7 +140,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	private CoreModel fCoreModel;
 	private CDocumentProvider fDocumentProvider;
-	private IWorkingCopyManager fWorkingCopyManager;
+	private WorkingCopyManager fWorkingCopyManager;
 	private CTextTools fTextTools;
 	private AsmTextTools fAsmTextTools;
 	private ProblemMarkerManager fProblemMarkerManager;
@@ -203,7 +203,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		}
 		return fBuildConsoleManager;
 	}
-	
+
 	/**
 	 * @see Plugin#shutdown
 	 */

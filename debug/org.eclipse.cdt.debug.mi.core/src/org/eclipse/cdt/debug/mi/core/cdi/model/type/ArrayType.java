@@ -5,12 +5,9 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
-import org.eclipse.cdt.debug.mi.core.cdi.Session;
-import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
 
 /**
  */
@@ -35,27 +32,14 @@ public class ArrayType extends DerivedType implements ICDIArrayType {
 			int lbracket = orig.lastIndexOf('[');
 			int rbracket = orig.lastIndexOf(']');
 			if (lbracket != -1 && rbracket != -1 && (rbracket > lbracket)) {
-				String dim = name.substring(lbracket + 1, rbracket).trim();
 				try {
+					String dim = name.substring(lbracket + 1, rbracket).trim();
 					dimension = Integer.parseInt(dim);
-					name = orig.substring(0, lbracket).trim();
-					Session session = (Session)(getTarget().getSession());
-					SourceManager sourceMgr = (SourceManager)session.getSourceManager();
-					derivedType = sourceMgr.getType(getTarget(), name);
-				} catch (CDIException e) {
-//					// Try after ptype.
-//					String ptype = sourceMgr.getDetailTypeName(type);
-//					try {
-//						type = sourceMgr.getType(ptype);
-//					} catch (CDIException ex) {
-//						type = new IncompleteType(typename);
-//					}
 				} catch (NumberFormatException e) {
 				}
+				name = orig.substring(0, lbracket).trim();
 			}
-			if (derivedType == null) {
-				derivedType = new IncompleteType(getTarget(), name);
-			}
+			setDerivedType(name);
 		}
 		return derivedType;
 	}
@@ -64,6 +48,10 @@ public class ArrayType extends DerivedType implements ICDIArrayType {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType#getDimension()
 	 */
 	public int getDimension() {
+		// Need to initialize.
+		if (derivedType == null) {
+			getComponentType();
+		}
 		return dimension;
 	}
 

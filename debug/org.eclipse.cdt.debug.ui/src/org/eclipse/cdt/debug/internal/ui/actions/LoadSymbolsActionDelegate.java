@@ -10,18 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Enter type comment.
@@ -38,52 +40,35 @@ public class LoadSymbolsActionDelegate implements IObjectActionDelegate {
 	public LoadSymbolsActionDelegate() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run( IAction action ) {
-		if ( getSharedLibrary() != null ) {
-			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(),
-													DebugException.REQUEST_FAILED,
-													ActionMessages.getString( "LoadSymbolsActionDelegate.Unable_to_load_symbols_of_shared_library_1" ), //$NON-NLS-1$
-													null );
-			BusyIndicator.showWhile( Display.getCurrent(), 
-									new Runnable() {
-										public void run() {
-											try {
-												doAction( getSharedLibrary() );
-											}
-											catch( DebugException e ) {
-												ms.merge( e.getStatus() );
-											}
-										}
-									} );
-			if ( !ms.isOK() ) {
-				IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
-				if ( window != null ) {
-					CDebugUIPlugin.errorDialog( ActionMessages.getString( "LoadSymbolsActionDelegate.Operation_failed_1" ), ms ); //$NON-NLS-1$
-				}
-				else {
-					CDebugUIPlugin.log( ms );
-				}
-			}
+		final ICSharedLibrary library = getSharedLibrary(); 
+		if ( library != null ) {
+			
+			DebugPlugin.getDefault().asyncExec( 
+					new Runnable() {
+						public void run() {
+							try {
+								doAction( getSharedLibrary() );
+							}
+							catch( DebugException e ) {
+								failed( e );
+							}
+						}
+					} );
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged( IAction action, ISelection selection ) {
 		if ( selection instanceof IStructuredSelection ) {
@@ -115,5 +100,11 @@ public class LoadSymbolsActionDelegate implements IObjectActionDelegate {
 
 	protected ICSharedLibrary getSharedLibrary() {
 		return fLibrary;
+	}
+
+	protected void failed( Throwable e ) {
+		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString( "LoadSymbolsActionDelegate.Operation_failed_1" ), null ); //$NON-NLS-1$
+		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
+		CDebugUtils.error( ms, this );
 	}
 }

@@ -10,9 +10,16 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jface.action.IAction;
 
@@ -39,9 +46,20 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#doAction()
 	 */
 	protected void doAction() throws DebugException {
-		ICDebugTarget target = getDebugTarget( getView().getViewer().getInput() );
+		final ICDebugTarget target = getDebugTarget( getView().getViewer().getInput() );
 		if ( target != null ) {
-			target.loadSymbols();
+			DebugPlugin.getDefault().asyncExec( 
+				new Runnable() {
+					
+					public void run() {
+						try {
+							target.loadSymbols();
+						}
+						catch( DebugException e ) {
+							failed( e );
+						}
+					}
+				} );
 		}
 	}
 
@@ -67,5 +85,11 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 			return (ICDebugTarget)((IDebugElement)element).getDebugTarget().getAdapter( ICDebugTarget.class );
 		}
 		return null;
+	}
+
+	protected void failed( Throwable e ) {
+		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString( "LoadSymbolsForAllActionDelegate.0" ), null ); //$NON-NLS-1$
+		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
+		CDebugUtils.error( ms, this );
 	}
 }

@@ -1,3 +1,9 @@
+2005-01-21 Mikhail Khodjaiants
+	Fix for bug 83437: Loading symbols should be run in the background.
+	* ActionMessages.properties
+	* LoadSymbolsActionDelegate.java
+	* LoadSymbolsForAllActionDelegate.java
+
 2005-01-20 Mikhail Khodjaiants
 	Fix for bug 83412: Run to line and resume at line should run in the background.
 	* ResumeAtLineActionDelegate.java

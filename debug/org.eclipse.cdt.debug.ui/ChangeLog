@@ -1,3 +1,8 @@
+2002-12-19 Mikhail Khodjaiants
+	Added new utility class - PixelConverter
+	* PixelCoverter.java
+	* AttachSourceLocationBlock.java
+
 2002-12-18 Mikhail Khodjaiants
 	Implementing the "Source Lookup" property page.
 	* SourceLookupBlock.java: common control block.

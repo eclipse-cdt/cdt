@@ -17,8 +17,6 @@ import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-// import org.eclipse.jdt.internal.ui.preferences.formatter.ProfileManager;
-// import org.eclipse.jdt.internal.ui.preferences.formatter.ProfileStore;
 
 
 public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {

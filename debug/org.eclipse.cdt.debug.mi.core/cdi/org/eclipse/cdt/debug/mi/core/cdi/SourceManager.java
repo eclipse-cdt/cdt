@@ -288,6 +288,27 @@ public class SourceManager extends Manager {
 			return new IntType(target, typename); // ????
 		}
 
+		if (typename.equals("int8_t")) { //$NON-NLS-1$
+			return new CharType(target, typename);
+		} else if (typename.equals("uint8_t")) { //$NON-NLS-1$
+			return new CharType(target, typename, true);
+		} else if (typename.equals("int16_t")) { //$NON-NLS-1$
+			return new ShortType(target, typename);
+		} else if (typename.equals("uint16_t")) { //$NON-NLS-1$
+			return new ShortType(target, typename, true);
+		} else if (typename.equals("int32_t")) { //$NON-NLS-1$
+			return new LongType(target, typename);
+		} else if (typename.equals("uint31_t")) { //$NON-NLS-1$
+			return new LongType(target, typename, true);
+		} else if (typename.equals("int64_t")) { //$NON-NLS-1$
+			return new LongLongType(target, typename);
+		} else if (typename.equals("uint64_t")) { //$NON-NLS-1$
+			return new LongLongType(target, typename, true);
+		} else if (typename.equals("int128_t")) { //$NON-NLS-1$
+			return new IntType(target, typename); // ????
+		} else if (typename.equals("uint128_t")) { //$NON-NLS-1$
+			return new IntType(target, typename, true); // ????			
+		}
 
 		StringTokenizer st = new StringTokenizer(typename);
 		int count = st.countTokens();

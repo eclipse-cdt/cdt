@@ -1,3 +1,6 @@
+2003-11-19 Hoda Amer
+	Added a completion engine class.
+
 2003-11-18 Alain Magloire
 
 	Attempt to address performance problems from the binary parser

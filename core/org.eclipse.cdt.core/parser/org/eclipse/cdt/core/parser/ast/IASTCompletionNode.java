@@ -20,10 +20,24 @@ public interface IASTCompletionNode {
 
 	public static class CompletionKind extends Enum
 	{
-		public static final CompletionKind TYPE = new CompletionKind( 0 );
-		public static final CompletionKind DOT_MEMBER = new CompletionKind( 1 );
-		public static final CompletionKind ARROW_MEMBER = new CompletionKind( 2 );
-		public static final CompletionKind QUALIFIEDNAME_MEMBER = new CompletionKind( 3 );
+		public static final CompletionKind DOT_MEMBER = new CompletionKind( 0 );
+		public static final CompletionKind ARROW_MEMBER = new CompletionKind( 1 );
+		public static final CompletionKind QUALIFIEDNAME_MEMBER = new CompletionKind( 2 );
+		public static final CompletionKind FIELD_TYPE = new CompletionKind( 3 );
+		public static final CompletionKind VARIABLE_TYPE = new CompletionKind( 4 );
+		public static final CompletionKind ARGUMENT_TYPE = new CompletionKind( 5 );
+		public static final CompletionKind METHOD_RETURN_TYPE = new CompletionKind( 6 );
+		public static final CompletionKind FUNCTIOND_RETURN_TYPE = new CompletionKind( 7 );
+		public static final CompletionKind SINGLE_NAME_REFERENCE = new CompletionKind( 8 );
+		public static final CompletionKind QUALIFIED_NAME_REFERENCE = new CompletionKind( 9 );
+		public static final CompletionKind STRUCTURE_REFERENCE = new CompletionKind( 10 );
+		public static final CompletionKind CLASS_REFERENCE = new CompletionKind( 11 );
+		public static final CompletionKind EXCEPTION_REFERENCE = new CompletionKind( 12 );
+		public static final CompletionKind MACRO_REFERENCE = new CompletionKind( 13 );
+		public static final CompletionKind MESSAGE_SEND = new CompletionKind( 14 );
+		public static final CompletionKind QUALIFIED_ALLOCATION_EXPRESSION = new CompletionKind( 15 );
+		public static final CompletionKind KEYWORD = new CompletionKind( 16 );
+		
 		//TODO MORE TO COME
 		/**
 		 * @param enumValue

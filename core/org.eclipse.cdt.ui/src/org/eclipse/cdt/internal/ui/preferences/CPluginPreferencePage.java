@@ -21,9 +21,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class CPluginPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
-	private static final String PREF_LINK_TO_EDITOR= "linkToEditor";
+	private static final String PREF_LINK_TO_EDITOR= "linkToEditor"; //$NON-NLS-1$
 	public static final String PREF_SHOW_CU_CHILDREN= "CUChildren"; //$NON-NLS-1$
-	private static final String PREF_USE_NEW_PARSER= "useNewParser";
+	private static final String PREF_USE_NEW_PARSER= "useNewParser"; //$NON-NLS-1$
 
 	private static final String LINK_TO_EDITOR_LABEL= "CBasePreferencePage.linkToEditor.label";
 	private static final String SHOW_CU_CHILDREN_LABEL= "CBasePreferencePage.CUChildren.label";
@@ -75,8 +75,6 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	 * @see IWorkbenchPreferencePage#init
 	 */
 	public void init(IWorkbench workbench) {
-		CUIPlugin.getDefault().getPreferenceStore().setValue(PREF_USE_NEW_PARSER,
-			CCorePlugin.getDefault().useNewParser());
 	}
 	
 	/**
@@ -85,8 +83,8 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	public static void initDefaults(IPreferenceStore prefs) {
 		prefs.setDefault(PREF_LINK_TO_EDITOR, true);
 		prefs.setDefault(PREF_SHOW_CU_CHILDREN, true);
-		prefs.setDefault(PREF_USE_NEW_PARSER, CCorePlugin.getDefault().useNewParser());
-	}	
+		prefs.setDefault(PREF_USE_NEW_PARSER, false);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()

@@ -5,7 +5,6 @@ import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -58,8 +57,6 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		} catch (CDIException e) {
 			abort("Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
-
-		ICDITarget dtarget = dsession.getTargets()[0];
 
 		CDebugModel.newCoreFileDebugTarget(
 			launch,

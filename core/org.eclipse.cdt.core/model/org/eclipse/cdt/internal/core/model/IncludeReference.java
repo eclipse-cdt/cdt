@@ -45,7 +45,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	}
 
 	public IncludeReference(ICElement celement, IIncludeEntry entry, IPath path) {
-		super(celement, null, path.lastSegment(), ICElement.C_VCONTAINER);
+		super(celement, null, path.toString(), ICElement.C_VCONTAINER);
 		fIncludeEntry = entry;
 		fPath = path;
 	}

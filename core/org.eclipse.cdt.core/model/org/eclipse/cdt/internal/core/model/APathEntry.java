@@ -108,6 +108,12 @@ public abstract class APathEntry extends PathEntry {
 					return false;
 				}
 			}
+			IPath otherBaseRef = otherEntry.getBaseReference();
+			if (baseRef != null) {
+				if (otherBaseRef != null && !baseRef.equals(otherBaseRef)) {
+					return false;
+				}
+			}
 			return true;
 		}
 		return super.equals(obj);

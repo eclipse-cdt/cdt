@@ -34,14 +34,14 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#isReadType()
 	 */
 	public boolean isReadType() {
-		return getMIBreakPoint().isReadWatchpoint();
+		return getMIBreakPoint().isReadWatchpoint() || getMIBreakPoint().isAccessWatchpoint();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#isWriteType()
 	 */
 	public boolean isWriteType() {
-		return getMIBreakPoint().isAccessWatchpoint();
+		return getMIBreakPoint().isAccessWatchpoint() || getMIBreakPoint().isWriteWatchpoint();
 	}
 
 }

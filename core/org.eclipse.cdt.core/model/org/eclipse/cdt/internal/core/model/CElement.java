@@ -149,9 +149,8 @@ public abstract class CElement extends PlatformObject implements ICElement {
 						if (child instanceof Parent) {
 							ICElement[] elements = ((Parent)child).getSourceElementsAtOffset(offset);
 							list.addAll(Arrays.asList(elements));
-						} else {
-							list.add(child);
 						}
+						list.add(child);
 					}
 				}
 			}

@@ -1,4 +1,9 @@
-2003-0213 Thomas Fletcher
+2003-02-13 Alain Magloire
+
+	* src/org/eclipse/cdt/internal/ui/editor/OpenIncludeAction.java:
+	Comment out old the reference to the builder.
+
+2003-02-13 Thomas Fletcher
 	* src/org/eclipse/cdt/internal/ui/cview/CView.java
 	* src/org/eclipse/cdt/internal/ui/cview/FilterSelectionAction.java
 	Cleaned up some text strings.

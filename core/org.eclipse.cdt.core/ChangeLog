@@ -1,3 +1,12 @@
+2003-02-13 Alain Magloire
+
+	* src/org/eclipse/cdt/core/CCorePlugin.java:
+	* src/org/eclipse/cdt/internal/core/make/Makebuilder.java:
+	Comment out reference to the Builder, for now.
+
+	* builder/org/eclipse/cdt/core/builder/CIncrementalBuilder.java:
+	Comment reference to the CCorePlugin.
+
 2003-02-05 Doug Schaefer
 
     * src/org/eclipse/cdt/internal/parser.generated:

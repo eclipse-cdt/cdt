@@ -49,7 +49,7 @@ public class ContextStack {
 	private final IParserLogService log;
 	private int current_size = 8;
 
-	private IScannerContext [] cs = new IScannerContext[current_size];;
+	private IScannerContext [] cs = new IScannerContext[current_size];
 	private int cs_pos = 0;
 	
 	
@@ -59,7 +59,7 @@ public class ContextStack {
 
 	private final void cs_push(IScannerContext c) {
 		try {
-			cs[cs_pos++] = c;;
+			cs[cs_pos++] = c;
 		}
 		catch (ArrayIndexOutOfBoundsException a)
 		{

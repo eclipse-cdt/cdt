@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.Parser.Flags;
-import org.eclipse.cdt.internal.core.parser.ast.complete.gcc.ASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 
@@ -44,8 +43,6 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 public class GCCParserExtension implements IParserExtension {
 
 	private static final String EMPTY_STRING = "";//$NON-NLS-1$
-	protected static BacktrackException backtrack = new BacktrackException();
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#isValidCVModifier(org.eclipse.cdt.core.parser.ParserLanguage, int)
 	 */
@@ -266,7 +263,7 @@ public class GCCParserExtension implements IParserExtension {
 						flags.setEncounteredRawType(true);
 						Hashtable params = new Hashtable();
 						params.put( IASTGCCSimpleTypeSpecifier.TYPEOF_EXRESSION, typeOfExpression );
-						sdw.setExtensionParameter( ASTGCCSimpleTypeSpecifier.TYPEOF_EXRESSION, typeOfExpression );
+						sdw.setExtensionParameter( IASTGCCSimpleTypeSpecifier.TYPEOF_EXRESSION, typeOfExpression );
 						return new GCCDeclSpecifierExtensionResult( startingPoint, data.getLastToken(), flags, params );
 					}
 					data.backup( startingPoint );
@@ -388,7 +385,7 @@ public class GCCParserExtension implements IParserExtension {
 		{
 			data.backup( mark );
 			return null;
-		} catch( BacktrackException backtrack )
+		} catch( BacktrackException bt )
 		{
 			data.backup( mark );
 			return null;			

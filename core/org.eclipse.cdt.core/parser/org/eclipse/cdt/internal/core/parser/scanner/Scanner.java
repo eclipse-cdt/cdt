@@ -646,7 +646,6 @@ public class Scanner implements IScanner {
 	private static final int NOCHAR = -1;
 
 	private static final String TEXT = "<text>"; //$NON-NLS-1$
-	private static final String START = "<initial reader>"; //$NON-NLS-1$
 	private static final String EXPRESSION = "<expression>"; //$NON-NLS-1$
 	private static final String PASTING = "<pasting>"; //$NON-NLS-1$
 

@@ -38,8 +38,7 @@ public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDec
 	private NamedOffsets offsets = new NamedOffsets();
 	
 	private ITemplateSymbol getTemplateSymbol(){
-		ISymbol symbol = getSymbol();
-		return (ITemplateSymbol) (( symbol instanceof ITemplateSymbol ) ? symbol : null);
+		return (ITemplateSymbol) (( getSymbol() instanceof ITemplateSymbol ) ? getSymbol() : null);
 	}
     /**
      * 
@@ -90,9 +89,9 @@ public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDec
     		return ( node instanceof IASTDeclaration ) ? (IASTDeclaration)node : null;
     	}
     	
-    	IContainerSymbol owned = getTemplateSymbol().getTemplatedSymbol();
-    	if( owned != null && owned.getASTExtension() != null ){
-    		ASTNode node = owned.getASTExtension().getPrimaryDeclaration();
+    	IContainerSymbol ownedSymbol = getTemplateSymbol().getTemplatedSymbol();
+    	if( ownedSymbol != null && ownedSymbol.getASTExtension() != null ){
+    		ASTNode node = ownedSymbol.getASTExtension().getPrimaryDeclaration();
     		return ( node instanceof IASTDeclaration ) ? (IASTDeclaration)node : null;
     	}
         return null;

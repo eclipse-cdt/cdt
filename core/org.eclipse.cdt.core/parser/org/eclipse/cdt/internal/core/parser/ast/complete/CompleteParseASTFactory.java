@@ -639,40 +639,40 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     
     protected void attachSymbolExtension( IExtensibleSymbol symbol, ASTNode astNode )
     {
-    	ISymbolASTExtension extension = new ExtensibleSymbolExtension( symbol, astNode );
-    	symbol.setASTExtension( extension );
+    	ISymbolASTExtension symbolExtension = new ExtensibleSymbolExtension( symbol, astNode );
+    	symbol.setASTExtension( symbolExtension );
     }
     
 	protected void attachSymbolExtension(
 		ISymbol symbol,
 		ASTSymbol astSymbol, boolean asDefinition )
 	{
-		ISymbolASTExtension extension = symbol.getASTExtension();
-		if( extension == null )
+		ISymbolASTExtension symbolExtension = symbol.getASTExtension();
+		if( symbolExtension == null )
 		{
 			if( astSymbol instanceof IASTNamespaceDefinition ) 
-				extension = new NamespaceSymbolExtension( symbol, astSymbol );
+				symbolExtension = new NamespaceSymbolExtension( symbol, astSymbol );
 			else if( astSymbol instanceof IASTFunction || astSymbol instanceof IASTMethod || 
 					astSymbol instanceof IASTEnumerationSpecifier || 
 					astSymbol instanceof IASTClassSpecifier || 
 					astSymbol instanceof IASTElaboratedTypeSpecifier )
 			{
-				extension = new ForewardDeclaredSymbolExtension( symbol, astSymbol );
+				symbolExtension = new ForewardDeclaredSymbolExtension( symbol, astSymbol );
 			}
 			else if( astSymbol instanceof IASTTemplateDeclaration ){
-				extension = new TemplateSymbolExtension( symbol, astSymbol );
+				symbolExtension = new TemplateSymbolExtension( symbol, astSymbol );
 			}
 			else 
 			{
-				extension = new StandardSymbolExtension( symbol, astSymbol );
+				symbolExtension = new StandardSymbolExtension( symbol, astSymbol );
 			}
-			symbol.setASTExtension( extension );
+			symbol.setASTExtension( symbolExtension );
 		}
 		else
 		{
 			if( asDefinition )
 				try {
-					extension.addDefinition( astSymbol );
+					symbolExtension.addDefinition( astSymbol );
 				} catch (ExtensionException e) {
 //					assert false : ExtensionException.class;
 				}
@@ -3294,8 +3294,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		
 		if( context != null ){
-			ISymbolASTExtension extension = context.getASTExtension();
-			return ( extension != null ) ? extension.getPrimaryDeclaration() : null;
+			ISymbolASTExtension symbolExtension = context.getASTExtension();
+			return ( symbolExtension != null ) ? symbolExtension.getPrimaryDeclaration() : null;
 		}
 		
 		return null;

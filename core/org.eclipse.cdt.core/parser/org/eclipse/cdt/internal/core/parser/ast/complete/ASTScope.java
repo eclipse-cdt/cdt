@@ -42,9 +42,8 @@ public abstract class ASTScope extends ASTSymbol implements IASTScope
 	 */
 	public Iterator getDeclarations()
 	{
-		IContainerSymbol symbol = getContainerSymbol();
-		if( symbol != null ){
-			return new SymbolIterator( symbol.getContentsIterator() );
+		if( getContainerSymbol() != null ){
+			return new SymbolIterator( getContainerSymbol().getContentsIterator() );
 		}
 		return null;
 	}

@@ -333,7 +333,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 	 * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getFriends()
 	 */
 	public Iterator getFriends() {
-		IDerivableContainerSymbol symbol = (IDerivableContainerSymbol) getSymbol();
-		return new SymbolIterator( symbol.getFriends().iterator() );
+		IDerivableContainerSymbol s = (IDerivableContainerSymbol) getSymbol();
+		return new SymbolIterator( s.getFriends().iterator() );
 	}
 }

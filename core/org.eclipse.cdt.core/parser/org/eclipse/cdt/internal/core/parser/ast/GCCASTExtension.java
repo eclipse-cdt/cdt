@@ -134,7 +134,7 @@ public class GCCASTExtension implements IASTFactoryExtension {
 	public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(ParserSymbolTable pst, IASTScope scope, Type kind, ITokenDuple typeName, boolean isShort, boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, boolean isComplex, boolean isImaginary, boolean isGlobal, Hashtable extensionParms) {
 		if( kind == IASTGCCSimpleTypeSpecifier.Type.TYPEOF )
 		{
-			ASTExpression typeOfExpression = (ASTExpression) extensionParms.get( ASTGCCSimpleTypeSpecifier.TYPEOF_EXRESSION );
+			ASTExpression typeOfExpression = (ASTExpression) extensionParms.get( IASTGCCSimpleTypeSpecifier.TYPEOF_EXRESSION );
 			ISymbol s = pst.newSymbol( EMPTY_STRING );
 			s.setTypeInfo( typeOfExpression.getResultType().getResult() );
 			return new ASTGCCSimpleTypeSpecifier( s, isTypename, ( typeName == null ? EMPTY_STRING : typeName.toString()), EMPTY_LIST, typeOfExpression );

@@ -180,7 +180,7 @@ public class StructuralParseCallback extends QuickParseCallback{
 	 */
 	public void exitCompilationUnit(IASTCompilationUnit compilationUnit) {
 		exitScope(compilationUnit);
-		this.compilationUnit = compilationUnit;
+		this.compUnit = compilationUnit;
 	}
 	
 	/* (non-Javadoc)
@@ -195,7 +195,8 @@ public class StructuralParseCallback extends QuickParseCallback{
 	 * @see org.eclipse.cdt.core.parser.IQuickParseCallback#getCompilationUnit()
 	 */
 	public IASTCompilationUnit getCompilationUnit() {
-		return compilationUnit;	}
+		return compUnit;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier)

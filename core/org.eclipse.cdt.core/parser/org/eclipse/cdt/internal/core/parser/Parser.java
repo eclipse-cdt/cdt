@@ -380,8 +380,8 @@ public abstract class Parser extends ExpressionParser implements IParser
                     errorHandling();
             }
             // consume the }
-            IToken lastToken = consume();
-            linkage.setEndingOffsetAndLineNumber(lastToken.getEndOffset(), lastToken.getLineNumber());
+            IToken lastTokenConsumed = consume();
+            linkage.setEndingOffsetAndLineNumber(lastTokenConsumed.getEndOffset(), lastTokenConsumed.getLineNumber());
             linkage.exitScope( requestor );
         }
         else // single declaration

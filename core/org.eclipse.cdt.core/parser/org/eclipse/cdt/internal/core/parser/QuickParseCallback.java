@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 
 public class QuickParseCallback extends NullSourceElementRequestor implements IQuickParseCallback
 {
-	protected IASTCompilationUnit compilationUnit = null;
+	protected IASTCompilationUnit compUnit = null;
 	protected List inclusions = new ArrayList(); 
 	protected List macros = new ArrayList(); 
 	protected boolean hasNoProblems = true;
@@ -45,7 +45,7 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 	
 	public Iterator getDeclarations(){
 		try{
-			return compilationUnit.getDeclarations();
+			return compUnit.getDeclarations();
 		}
 		catch (ASTNotImplementedException ne )
 		{
@@ -68,7 +68,7 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 	
 	public void exitCompilationUnit( IASTCompilationUnit compilationUnit )
 	{
-		this.compilationUnit = compilationUnit;
+		this.compUnit = compilationUnit;
 	}
 	
 	public void exitInclusion( IASTInclusion inclusion )
@@ -86,7 +86,7 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
      */
     public IASTCompilationUnit getCompilationUnit()
     {
-        return compilationUnit;
+        return compUnit;
     }
 
 	public class OffsetableIterator implements Iterator 

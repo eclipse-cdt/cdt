@@ -346,9 +346,9 @@ public class DeclarationWrapper implements IDeclaratorOwner
     /**
      * @param requestor
      */
-    public List createASTNodes(IASTFactory astFactory) throws ASTSemanticException, BacktrackException
+    public List createASTNodes(IASTFactory astFactoryToWorkWith) throws ASTSemanticException, BacktrackException
     {
-        this.astFactory = astFactory;
+        this.astFactory = astFactoryToWorkWith;
         Iterator i = declarators.iterator();
         List l = new ArrayList();
         while (i.hasNext())
@@ -360,13 +360,11 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     private IASTDeclaration createASTNode(Declarator declarator) throws ASTSemanticException, BacktrackException
     {
-    	IASTScope scope = getScope();
-    	
         boolean isWithinClass = false;//(getScope() instanceof IASTClassSpecifier); //TODO fix this for COMPLETE_PARSE
-    	if( scope instanceof IASTClassSpecifier ){
+    	if( getScope() instanceof IASTClassSpecifier ){
     		isWithinClass = true;
-    	} else if ( scope instanceof IASTTemplateDeclaration ){
-    		isWithinClass = (((IASTTemplateDeclaration)scope).getOwnerScope() instanceof IASTClassSpecifier);
+    	} else if ( getScope() instanceof IASTTemplateDeclaration ){
+    		isWithinClass = (((IASTTemplateDeclaration)getScope()).getOwnerScope() instanceof IASTClassSpecifier);
     	}
     	
         boolean isFunction = declarator.isFunction();
@@ -445,18 +443,18 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         convertedParms,
                         (ASTPointerOperator)i.next());
             
-        	ITokenDuple name = ( d.getPointerOperatorNameDuple() != null ) ? new TokenDuple( d.getPointerOperatorNameDuple(), d.getNameDuple() ) : d.getNameDuple(); 
+        	ITokenDuple nameDuple = ( d.getPointerOperatorNameDuple() != null ) ? new TokenDuple( d.getPointerOperatorNameDuple(), d.getNameDuple() ) : d.getNameDuple(); 
         	
         	if( typedef )
-				return astFactory.createTypedef(scope, name.toString(), abs,
+				return astFactory.createTypedef(scope, nameDuple.toString(), abs,
 						getStartingOffset(), getStartingLine(), d
 								.getNameStartOffset(), d.getNameEndOffset(), d
 								.getNameLine());
         	else {
         		if( isWithinClass )
-        			return astFactory.createField( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode() );
+        			return astFactory.createField( scope, nameDuple, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode() );
         		else 
-        			return astFactory.createVariable( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );
+        			return astFactory.createVariable( scope, nameDuple, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );
         	}
         	
         }

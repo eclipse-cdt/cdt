@@ -51,22 +51,22 @@ public class ContextualParser extends CompleteParser {
 		super(scanner, callback, language, log, extension );
 	}
 
-	protected IASTScope scope;
+	protected IASTScope contextualScope;
 
 	/**
 	 * @return
 	 */
 	protected IASTScope getCompletionScope() {
-		return scope;
+		return contextualScope;
 	}
 
-	protected CompletionKind kind;
+	protected CompletionKind completionKind;
 
 	/**
 	 * @return
 	 */
 	protected IASTCompletionNode.CompletionKind getCompletionKind() {
-		return kind;
+		return completionKind;
 	}
 
 	protected IASTNode context;
@@ -93,7 +93,7 @@ public class ContextualParser extends CompleteParser {
 	}
 
 	protected void setCompletionKind(IASTCompletionNode.CompletionKind kind) {
-		this.kind = kind;
+		this.completionKind = kind;
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class ContextualParser extends CompleteParser {
 	}
 
 	protected void setCompletionScope(IASTScope scope) {
-		this.scope = scope;
+		this.contextualScope = scope;
 	}
 
 	/* (non-Javadoc)

@@ -51,38 +51,38 @@ public class KeywordSets {
 	public static Set getKeywords( Key kind, ParserLanguage language )
 	{
 		if( kind == Key.EMPTY )
-			return EMPTY;
+			return EMPTY_TABLE;
 		if( kind == Key.DECL_SPECIFIER_SEQUENCE )
-			return (Set) DECL_SPECIFIER_SEQUENCE.get( language );
+			return (Set) DECL_SPECIFIER_SEQUENCE_TABLE.get( language );
 		if( kind == Key.DECLARATION )
-			return (Set) DECLARATION.get( language );
+			return (Set) DECLARATION_TABLE.get( language );
 		if( kind == Key.STATEMENT )
-			return (Set) STATEMENT.get( language );
+			return (Set) STATEMENT_TABLE.get( language );
 		if( kind == Key.BASE_SPECIFIER )
 			return BASE_SPECIFIER_CPP;
 		if( kind == Key.POST_USING )
 			return POST_USING_CPP;
 		if( kind == Key.FUNCTION_MODIFIER )
-			return (Set) FUNCTION_MODIFIER.get( language );
+			return (Set) FUNCTION_MODIFIER_TABLE.get( language );
 		if( kind == Key.NAMESPACE_ONLY )	
-			return NAMESPACE_ONLY;
+			return NAMESPACE_ONLY_SET;
 		if( kind == Key.MACRO )
 			return MACRO_ONLY;
 		if( kind == Key.PP_DIRECTIVE )
 			return PP_DIRECTIVES;
 		if( kind == Key.EXPRESSION )
-			return (Set) EXPRESSION.get( language );
+			return (Set) EXPRESSION_TABLE.get( language );
 		//TODO finish this
 		return null;
 	}
 	
-	private static final Set EMPTY = new HashSet();
+	private static final Set EMPTY_TABLE = new HashSet();
 	
-	private static final Set NAMESPACE_ONLY;
+	private static final Set NAMESPACE_ONLY_SET;
 	static 
 	{
-		NAMESPACE_ONLY = new HashSet();
-		NAMESPACE_ONLY.add(Keywords.NAMESPACE );
+		NAMESPACE_ONLY_SET = new HashSet();
+		NAMESPACE_ONLY_SET.add(Keywords.NAMESPACE );
 	}
 	
 	private static final Set MACRO_ONLY;
@@ -143,12 +143,12 @@ public class KeywordSets {
 		DECL_SPECIFIER_SEQUENCE_CPP.add( Keywords.CLASS);
 	}
 	
-	private static final Hashtable DECL_SPECIFIER_SEQUENCE; 
+	private static final Hashtable DECL_SPECIFIER_SEQUENCE_TABLE; 
 	static
 	{
-		DECL_SPECIFIER_SEQUENCE = new Hashtable(); 
-		DECL_SPECIFIER_SEQUENCE.put( ParserLanguage.CPP, DECL_SPECIFIER_SEQUENCE_CPP );
-		DECL_SPECIFIER_SEQUENCE.put( ParserLanguage.C, DECL_SPECIFIER_SEQUENCE_C );
+		DECL_SPECIFIER_SEQUENCE_TABLE = new Hashtable(); 
+		DECL_SPECIFIER_SEQUENCE_TABLE.put( ParserLanguage.CPP, DECL_SPECIFIER_SEQUENCE_CPP );
+		DECL_SPECIFIER_SEQUENCE_TABLE.put( ParserLanguage.C, DECL_SPECIFIER_SEQUENCE_C );
 	}
 	
 	private static final Set DECLARATION_CPP; 
@@ -169,12 +169,12 @@ public class KeywordSets {
 		// more to come
 	}
 	
-	private static final Hashtable DECLARATION; 
+	private static final Hashtable DECLARATION_TABLE; 
 	static
 	{
-		DECLARATION = new Hashtable();
-		DECLARATION.put( ParserLanguage.CPP, DECLARATION_CPP );
-		DECLARATION.put( ParserLanguage.C, DECLARATION_C );
+		DECLARATION_TABLE = new Hashtable();
+		DECLARATION_TABLE.put( ParserLanguage.CPP, DECLARATION_CPP );
+		DECLARATION_TABLE.put( ParserLanguage.C, DECLARATION_C );
 	}
 	
 	private static final Set STATEMENT_C;
@@ -194,12 +194,12 @@ public class KeywordSets {
 		//TODO finish this
 	}
 	
-	private static final Hashtable STATEMENT;
+	private static final Hashtable STATEMENT_TABLE;
 	static
 	{
-		STATEMENT = new Hashtable(); 
-		STATEMENT.put( ParserLanguage.CPP, STATEMENT_CPP);
-		STATEMENT.put( ParserLanguage.C, STATEMENT_C );
+		STATEMENT_TABLE = new Hashtable(); 
+		STATEMENT_TABLE.put( ParserLanguage.CPP, STATEMENT_CPP);
+		STATEMENT_TABLE.put( ParserLanguage.C, STATEMENT_C );
 	}
 	
 	private static final Set BASE_SPECIFIER_CPP;
@@ -235,12 +235,12 @@ public class KeywordSets {
 		FUNCTION_MODIFIER_CPP.add( Keywords.VOLATILE );
 	}
 	
-	private static final Hashtable FUNCTION_MODIFIER;
+	private static final Hashtable FUNCTION_MODIFIER_TABLE;
 	static
 	{
-		FUNCTION_MODIFIER= new Hashtable();
-		FUNCTION_MODIFIER.put( ParserLanguage.CPP, FUNCTION_MODIFIER_CPP );
-		FUNCTION_MODIFIER.put( ParserLanguage.C, FUNCTION_MODIFIER_C );
+		FUNCTION_MODIFIER_TABLE= new Hashtable();
+		FUNCTION_MODIFIER_TABLE.put( ParserLanguage.CPP, FUNCTION_MODIFIER_CPP );
+		FUNCTION_MODIFIER_TABLE.put( ParserLanguage.C, FUNCTION_MODIFIER_C );
 	}
 	
 	private static final Set PP_DIRECTIVES;
@@ -299,11 +299,11 @@ public class KeywordSets {
 		EXPRESSION_CPP.add( Keywords.THROW );
 	}
 	
-	private static final Hashtable EXPRESSION;
+	private static final Hashtable EXPRESSION_TABLE;
 	static
 	{
-		EXPRESSION = new Hashtable();
-		EXPRESSION.put( ParserLanguage.CPP, EXPRESSION_CPP );
-		EXPRESSION.put( ParserLanguage.C, EXPRESSION_C );
+		EXPRESSION_TABLE = new Hashtable();
+		EXPRESSION_TABLE.put( ParserLanguage.CPP, EXPRESSION_CPP );
+		EXPRESSION_TABLE.put( ParserLanguage.C, EXPRESSION_C );
 	}
 }

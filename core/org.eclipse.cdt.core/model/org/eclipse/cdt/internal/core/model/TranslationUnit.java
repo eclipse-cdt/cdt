@@ -573,6 +573,17 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		String lid = type.getLanguage().getId();
 		return lid != null && lid.equals(ICFileTypeConstants.LANG_ASM);
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICElement#exists()
+	 */
+	public boolean exists() {
+		IResource res = getResource();
+		if (res != null)
+			return res.exists();
+		return super.exists();
+	}
 
 	
 }

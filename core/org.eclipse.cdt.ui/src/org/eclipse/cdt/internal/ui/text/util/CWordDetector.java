@@ -12,13 +12,12 @@ import org.eclipse.jface.text.rules.IWordDetector;
  * A C aware word detector.
  */
 public class CWordDetector implements IWordDetector {
-
-
+			
 	/**
 	 * @see IWordDetector#isWordIdentifierStart
 	 */
 	public boolean isWordStart(char c) {
-		return Character.isJavaIdentifierStart(c);
+		return Character.isJavaIdentifierStart(c) || c == '#';
 	}
 	
 	/**

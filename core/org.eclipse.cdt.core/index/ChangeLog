@@ -1,3 +1,6 @@
+2005-03-15 Bogdan Gheorghe
+	Added a check for closed projects to update code
+	
 2005-03-14 Bogdan Gheorghe
 	Added update code for old indexer projects
 	

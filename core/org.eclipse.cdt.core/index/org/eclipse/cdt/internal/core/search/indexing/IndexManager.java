@@ -27,13 +27,18 @@ import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -66,6 +71,7 @@ public class IndexManager extends JobManager{
     private int		upgradeIndexProblems = 0;
    
 	private ReadWriteMonitor monitor = new ReadWriteMonitor();
+	private boolean enableUpdates = true;
 	
     /**
      * Create an indexer only on request
@@ -91,6 +97,29 @@ public class IndexManager extends JobManager{
         }
         
     }
+    
+    private class UpdateIndexVersionJob extends Job{
+		private final IProject project;
+		public UpdateIndexVersionJob( IProject project, String name ){
+			super( name );
+			this.project = project;
+		}
+
+		protected IStatus run(IProgressMonitor monitor) {
+			IWorkspaceRunnable job = new IWorkspaceRunnable( ){
+				public void run(IProgressMonitor monitor){
+					doProjectUpgrade(project);
+					doSourceIndexerUpgrade(project);
+				}
+			};
+			try {
+				CCorePlugin.getWorkspace().run(job, project, 0, null);
+			} catch (CoreException e) {
+			}
+			return Status.OK_STATUS;
+		}
+	}
+	
     
     
 	/**
@@ -121,7 +150,8 @@ public class IndexManager extends JobManager{
 		//where neccesary
 		for (int i=0; i<projects.length; i++){
 			try {
-				initializeIndexer(projects[i]);
+				if (projects[i].isAccessible())
+					initializeIndexer(projects[i]);
 			} catch (CoreException e) {}
 		}
 		
@@ -148,10 +178,18 @@ public class IndexManager extends JobManager{
 			}
 			
 			//Make sure that we have an indexer ID
-			if (indexerID == null) {
+			if (indexerID == null && 
+				enableUpdates) {
 				//No persisted info on file? Must be old project - run temp. upgrade
-				indexerID = doProjectUpgrade(project);
-				doSourceIndexerUpgrade(project);
+					UpdateIndexVersionJob job = new UpdateIndexVersionJob(project, "Update Index Version" ); //$NON-NLS-1$
+				
+					IProgressMonitor group = this.getIndexJobProgressGroup();
+					
+					job.setRule( project );
+					if( group != null )
+						job.setProgressGroup( group, 0 );
+					job.setPriority( Job.SHORT );
+					job.schedule();	
 			}
 			
 			//If we're asking for the null indexer,return null
@@ -386,10 +424,21 @@ public class IndexManager extends JobManager{
 				indexerID = (String) project.getSessionProperty(indexerIDKey);
 			} catch (CoreException e) {}
 			
-			//Any persisted indexders would have been loaded in the initialization
-			//Create the indexer and store it
-			indexer = getIndexer(indexerID);
-			indexerMap.put(project,indexer);
+			//Project was either closed at startup or imported
+			if (indexerID == null &&
+				project.isAccessible()){
+			   	try {
+					indexer=initializeIndexer(project);
+				} catch (CoreException e1) {}
+			}
+			else{
+				//Create the indexer and store it
+				indexer = getIndexer(indexerID);
+			}
+			
+			//Make sure we're not putting null in map
+			if (indexer != null)
+				indexerMap.put(project,indexer);
 			
 			monitor.exitRead();
 		}
@@ -429,9 +478,7 @@ public class IndexManager extends JobManager{
 			project.setSessionProperty(SourceIndexer.activationKey,new Boolean(upgradeIndexEnabled));
 			project.setSessionProperty(SourceIndexer.problemsActivationKey, new Integer( upgradeIndexProblems ));	
 	
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
+		} catch (CoreException e) {}
 	}
 
 	private static void saveIndexerEnabled (boolean indexerEnabled, Element rootElement, Document doc ) {
@@ -499,11 +546,9 @@ public class IndexManager extends JobManager{
 			project.setSessionProperty(IndexManager.indexerIDKey, indexerID);	
 			//project.setSessionProperty(indexerUIIDKey, indexerPageID);
 	
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
+		} catch (CoreException e) {}
 		
-		return null;
+		return indexerID;
 	}
 
 
@@ -593,4 +638,7 @@ protected ICDTIndexer getIndexer(String indexerId) {
    	}
    }
    
+	public void setEnableUpdates(boolean enableUpdates) {
+		this.enableUpdates = enableUpdates;
+	}
 }

@@ -51,6 +51,9 @@ public class AutomatedIntegrationSuite extends TestSuite {
 	public static Test suite() {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
 		
+		//TODO: BOG Take this out once null indexer id added to suite project creation
+		CCorePlugin.getDefault().getCoreModel().getIndexManager().setEnableUpdates(false);
+		
 		// Add all success tests
 		suite.addTest(CDescriptorTests.suite());
 		//suite.addTest(GCCErrorParserTests.suite());

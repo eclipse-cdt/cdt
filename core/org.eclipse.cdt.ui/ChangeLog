@@ -1,3 +1,9 @@
+2004-04-20 David Inglis
+
+	Enable wraping for build console
+	
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleViewer.java
+	
 2004-04-19 Bogdan Gheorghe
 	Fix for 58477 - Search UI does not work
 	Fix for 59077 - Selection Search does not work

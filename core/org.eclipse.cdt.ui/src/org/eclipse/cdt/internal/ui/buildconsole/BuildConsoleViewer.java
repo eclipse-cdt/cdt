@@ -85,6 +85,7 @@ public class BuildConsoleViewer extends TextViewer implements LineStyleListener 
 		getTextWidget().setFont(parent.getFont());
 		getTextWidget().addLineStyleListener(this);
 		getTextWidget().setEditable(false);
+		getTextWidget().setWordWrap(true);
 	}
 	
 

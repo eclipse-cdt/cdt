@@ -13,14 +13,61 @@ import org.eclipse.cdt.debug.mi.core.output.MIMemory;
 public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 
 	MIDataReadMemoryInfo mem;
+	String expression;
 	boolean frozen;
 
-	public MemoryBlock(CTarget target, MIDataReadMemoryInfo info) {
+	public MemoryBlock(CTarget target, String exp, MIDataReadMemoryInfo info) {
 		super(target);
+		expression = exp;
 		mem = info;
 		frozen = true;
 	}
-	
+
+	/**
+	 * @return the expression use to create the block.
+	 */
+	public String getExpression() {
+		return expression;
+	}
+
+	/**
+	 * Reset the internal MIDataReadMemoryInfo.
+	 */
+	public void setMIDataReadMemoryInfo(MIDataReadMemoryInfo m) {
+		mem = m;
+	}
+
+	/**
+	 * @return the internal MIDataReadMemoryInfo.
+	 */
+	public MIDataReadMemoryInfo getMIDataReadMemoryInfo() {
+		return mem;
+	}
+
+	/**
+	 * @return true if any address in the array is within the block.
+	 */
+	public boolean contains(Long[] adds) {
+		for (int i = 0; i < adds.length; i++) {
+			if (contains(adds[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @return true if the address is within the block.
+	 */
+	public boolean contains(Long addr) {
+		long start = getStartAddress();
+		long length = getLength();
+		if (start <= addr.longValue() && addr.longValue() <= start + length) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#getBytes()
 	 */

@@ -114,7 +114,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
     */
    public char[] toCharArray() {
       if (names == null)
-         return "".toCharArray();
+         return "".toCharArray(); //$NON-NLS-1$
       removeNullNames();
 
       //count first

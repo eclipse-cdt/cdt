@@ -1837,7 +1837,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         if_loop: while (true) {
             int so = consume(IToken.t_if).getOffset();
             consume(IToken.tLPAREN);
-            boolean passedCondition = true;
             IASTExpression condition = null;
             try {
                 condition = condition();
@@ -1851,20 +1850,27 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 p.setParent(ps);
                 p.setPropertyInParent(IASTProblemHolder.PROBLEM);
                 condition = ps;
-                failParseWithErrorHandling();
-                passedCondition = false;
+                if( LT(1) == IToken.tRPAREN )
+                	consume();
+                else if( LT(2) == IToken.tRPAREN )
+                {
+                	consume();
+                	consume();
+                }
+                else
+                	failParseWithErrorHandling();
             }
 
-            IASTStatement thenClause = null;
-            if (passedCondition) {
-                thenClause = statement();
-            }
+            IASTStatement thenClause = statement();
 
             IASTIfStatement new_if_statement = createIfStatement();
             ((ASTNode) new_if_statement).setOffset(so);
-            new_if_statement.setCondition(condition);
-            condition.setParent(new_if_statement);
-            condition.setPropertyInParent(IASTIfStatement.CONDITION);
+            if( condition != null ) // shouldn't be possible but failure in condition() makes it so
+            {
+	            new_if_statement.setCondition(condition);
+	            condition.setParent(new_if_statement);
+	            condition.setPropertyInParent(IASTIfStatement.CONDITION);
+            }
             if (thenClause != null) {
                 new_if_statement.setThenClause(thenClause);
                 thenClause.setParent(new_if_statement);
@@ -1914,8 +1920,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                     if_statement = new_if_statement;
                 }
             } else {
-                ((ASTNode) new_if_statement)
-                        .setLength(calculateEndOffset(thenClause) - start);
+            	if( thenClause != null )
+	                ((ASTNode) new_if_statement)
+	                        .setLength(calculateEndOffset(thenClause) - start);
                 if (if_statement != null) {
                     if_statement.setElseClause(new_if_statement);
                     new_if_statement.setParent(if_statement);
@@ -1956,8 +1963,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                         - r.getOffset());
             } else {
                 ASTNode then_clause = (ASTNode) current.getThenClause();
-                r.setLength(then_clause.getOffset() + then_clause.getLength()
-                        - r.getOffset());
+                if( then_clause != null )
+	                r.setLength(then_clause.getOffset() + then_clause.getLength()
+	                        - r.getOffset());
             }
             if (current.getParent() != null
                     && current.getParent() instanceof IASTIfStatement)

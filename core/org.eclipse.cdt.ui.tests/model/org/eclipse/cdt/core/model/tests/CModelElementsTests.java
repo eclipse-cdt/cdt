@@ -45,7 +45,6 @@ import org.eclipse.cdt.internal.core.model.MethodTemplate;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.model.VariableTemplate;
 import org.eclipse.cdt.testplugin.CProjectHelper;
-import org.eclipse.cdt.testplugin.TestPluginLauncher;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -58,10 +57,6 @@ public class CModelElementsTests extends TestCase {
 	private ICProject fCProject;
 	private IFile headerFile;
 	private NullProgressMonitor monitor;
-		
-	public static void main(String[] args) {
-		TestPluginLauncher.run(TestPluginLauncher.getLocationFromProperties(), WorkingCopyTests.class, args);
-	}
 		
 	public static Test suite() {
 		TestSuite suite= new TestSuite();
@@ -123,7 +118,7 @@ public class CModelElementsTests extends TestCase {
 		ArrayList tuPackages = tu.getChildrenOfType(ICElement.C_NAMESPACE);
 		INamespace namespace = (INamespace) tuPackages.get(0);
 		assertEquals(namespace.getElementName(), new String("MyPackage"));
-		checkLineNumbers((CElement)namespace, 8, 121);
+		checkLineNumbers((CElement)namespace, 8, 130);
 		checkClass(namespace);
 				
 		checkEnums(namespace);	
@@ -470,8 +465,9 @@ public class CModelElementsTests extends TestCase {
 		
 	}
 	private void checkLineNumbers(CElement element, int startLine, int endLine){
-//		assertEquals(element.getStartLine(), startLine);
-//		assertEquals(element.getEndLine(), endLine);		 		
+// Remove comments when testBug36379() is fixed
+//		assertEquals(startLine, element.getStartLine());
+//		assertEquals(endLine, element.getEndLine());		 		
 	}
 
 }

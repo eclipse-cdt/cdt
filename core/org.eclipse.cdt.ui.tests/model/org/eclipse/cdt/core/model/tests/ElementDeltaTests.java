@@ -91,7 +91,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		CModelManager.getDefault().addElementChangedListener(this);
 		addedElements = new Vector(10);
 		removedElements = new Vector(10);
-		changedElements = new Vector(100);
+		changedElements = new Vector(20);
 		CCorePlugin.getDefault().setUseNewParser(true);
 	}
 	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
@@ -122,79 +122,116 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		wcBuf.setContents ("\n class Hello{ \n};");
 		wc.reconcile();
 		wc.commit(true, monitor);
+		assertChangedElement(ICElement.C_MODEL, "");
+		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
 		assertAddedElement(ICElement.C_CLASS, "Hello");
+		assertRemovedElement(ICElement.C_INCLUDE, "stdio.h");
+		assertEmptyDelta();
 		
 		// add the field x		
 		wcBuf.setContents ("\n class Hello{\n int x; \n};");
 		wc.reconcile();		
 		wc.commit(true, monitor);
+		assertChangedElement(ICElement.C_MODEL, "");
+		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
+		assertChangedElement(ICElement.C_CLASS, "Hello");
 		assertAddedElement(ICElement.C_FIELD, "x");
+		assertEmptyDelta();
 		
 		// add the method setValue
 		wcBuf.setContents ("\n class Hello{\n int x; \n void setValue(int val); \n};");
 		wc.reconcile();		
 		wc.commit(true, monitor);
+		assertChangedElement(ICElement.C_MODEL, "");
+		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
+		assertChangedElement(ICElement.C_CLASS, "Hello");
 		assertAddedElement(ICElement.C_METHOD_DECLARATION, "setValue");
+		assertEmptyDelta();
 		
 		// rename x to y
 		// this is not a change, this is add and remove
 		wcBuf.setContents ("\n class Hello{\n int y; \n void setValue(int val); \n};");
 		wc.reconcile();		
 		wc.commit(true, monitor);
+		assertChangedElement(ICElement.C_MODEL, "");
+		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
+		assertChangedElement(ICElement.C_CLASS, "Hello");
 		assertAddedElement(ICElement.C_FIELD, "y");
 		assertRemovedElement(ICElement.C_FIELD, "x");
+		assertEmptyDelta();
 
 		// remove the method
 		wcBuf.setContents ("\n class Hello{\n String y; \n};");
 		wc.reconcile();		
 		wc.commit(true, monitor);
+		assertChangedElement(ICElement.C_MODEL, "");
+		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
+		assertChangedElement(ICElement.C_CLASS, "Hello");
+		assertChangedElement(ICElement.C_FIELD, "y");
 		assertRemovedElement(ICElement.C_METHOD_DECLARATION, "setValue");
+		assertEmptyDelta();
 				
 		// remove the field		
 		wcBuf.setContents ("\n class Hello{ \n};");
 		wc.reconcile();
 		wc.commit(true, monitor);
+		assertChangedElement(ICElement.C_MODEL, "");
+		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
+		assertChangedElement(ICElement.C_CLASS, "Hello");
 		assertRemovedElement(ICElement.C_FIELD, "y");
+		assertEmptyDelta();
 
 		// remove the class
 		wcBuf.setContents ("");
 		wc.reconcile();
 		wc.commit(true, monitor);
+		assertChangedElement(ICElement.C_MODEL, "");
+		assertChangedElement(ICElement.C_PROJECT, "TestProject1");
+		assertChangedElement(ICElement.C_UNIT, "WorkingCopyTest.h");
 		assertRemovedElement(ICElement.C_CLASS, "Hello");
+		assertEmptyDelta();
 
 		wc.destroy();
 		assertFalse(wc.exists());		
 	}
 	
 	public void assertAddedElement(int elementType, String elementName){
-		System.out.println("Printing Added List: ");
 		if(!isElementInList(elementType, elementName, addedElements))
 			fail("Element NOT found in Added list");
 	}
 	public void assertRemovedElement(int elementType, String elementName){
-		System.out.println("Printing Removed List: ");
 		if(!isElementInList(elementType, elementName, removedElements))
 			fail("Element NOT found in Removed list");
 	}
 	public void assertChangedElement(int elementType, String elementName){
-		System.out.println("Printing Changed List: ");
 		if(!isElementInList(elementType, elementName, changedElements))
 			fail("Element NOT found in Changed list");
+	}
+	public void assertEmptyDelta() {
+		assertTrue(addedElements.isEmpty());
+		assertTrue(removedElements.isEmpty());
+		assertTrue(changedElements.isEmpty());
 	}
 	public boolean isElementInList(int elementType, String elementName, Vector elementList) {
 		boolean found = false;
 		Iterator i = elementList.iterator();
 		while( i.hasNext()){
 			ICElement element = (ICElement)i.next();
-			
-			System.out.print("ElementName " + element.getElementName());
-			System.out.println("  ElementType " + element.getElementType());
 
 			if ((element.getElementName().equals(elementName)) && 
 				(element.getElementType() == elementType)){
 					// return true;
 					// just to print the whole list
 					found = true;
+					// Remove the element
+					elementList.remove(element);
+					break;
 				}
 		}
 		//return false;
@@ -218,37 +255,25 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		int flags= delta.getFlags();
 		ICElement element= delta.getElement();
 		
-		System.out.print("Processing " + element);
 		// handle open and closing of a solution or project
 		if ((flags & ICElementDelta.F_CLOSED) != 0) {
-			System.out.println("  Element Closed");
 		}
 		if ((flags & ICElementDelta.F_OPENED) != 0) {
-			System.out.println("  Element Opened");
 		}
-
 		if (kind == ICElementDelta.REMOVED) {
-			System.out.println("  Element Removed");
 			removedElements.add(element);			
 		}
-
 		if (kind == ICElementDelta.ADDED) {
-			System.out.println("  Element Added");
 			addedElements.add(element);			
 		}
-
 		if (kind == ICElementDelta.CHANGED) {
-			System.out.println("  Element Changed");
 			changedElements.add(element);
 				
 			if (flags == ICElementDelta.F_MODIFIERS)	{	
-				System.out.println("  Modifiers changed");	
 			}
 			if (flags == ICElementDelta.F_CONTENT)	{	
-				System.out.println("  Contents changed");	
 			}
 			if (flags == ICElementDelta.F_CHILDREN)	{	
-				System.out.println("  Children changed");	
 			}
 		}
 
@@ -257,5 +282,5 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 			processDelta(affectedChildren[i]);
 		}
 	}
-		
+	
 }

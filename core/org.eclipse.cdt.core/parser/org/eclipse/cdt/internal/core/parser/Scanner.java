@@ -347,12 +347,14 @@ public class Scanner implements IScanner {
 	// we can just leave it internal
 	private boolean throwExceptionPPError = true;
 	private boolean throwExceptionOnRedefinition = false;
-	private boolean throwExceptionOnBadPPDirective = true;
+	private boolean throwExceptionOnBadUndefinition = false; 
+	private boolean throwExceptionOnBadPreprocessorSyntax = true;
 	private boolean throwExceptionOnInclusionNotFound = true;
 	private boolean throwExceptionOnBadMacroExpansion = true;
 	private boolean throwExceptionOnUnboundedString = true;
 	private boolean throwExceptionOnEOFWithinMultilineComment = true;
 	private boolean throwExceptionOnEOFWithoutBalancedEndifs = true;
+	private boolean throwExceptionOnBadCharacterRead = true; 
 
 	private boolean quickScan = false;
 	public void setQuickScan(boolean qs) {
@@ -630,7 +632,7 @@ public class Scanner implements IScanner {
 
 				Object directive = ppDirectives.get(token);
 				if (directive == null) {
-					if (throwExceptionOnBadPPDirective)
+					if (throwExceptionOnBadPreprocessorSyntax)
 						throw new ScannerException(
 							BAD_PP + currentContext.getOffset());
 
@@ -669,9 +671,10 @@ public class Scanner implements IScanner {
 							skipOverWhitespace();
 							// definition 
 							String toBeUndefined = getNextIdentifier();
-							// TODO -- Should we throw an exception if we
-							// do not have this in our table?
-							definitions.remove(toBeUndefined);
+							
+							if( ( definitions.remove(toBeUndefined) == null ) && throwExceptionOnBadUndefinition ) 
+								throw new ScannerException( "Attempt to #undef symbol " + toBeUndefined + " when it was never defined");
+							
 							skipOverTextUntilNewline();
 							c = getChar();
 							continue;
@@ -702,8 +705,9 @@ public class Scanner implements IScanner {
 							}
 							continue;
 						case PreprocessorDirectives.ENDIF :
-							// TODO - make sure there is nothing after endif
-
+							String restOfLine = getRestOfPreprocessorLine().trim();
+							if( ! restOfLine.equals( "" ) && throwExceptionOnBadPreprocessorSyntax )
+								throw new ScannerException( BAD_PP + currentContext.getOffset() );
 							passOnToClient = branches.poundendif(); 
 							c = getChar();
 							continue;
@@ -736,7 +740,7 @@ public class Scanner implements IScanner {
 							String elsifExpression = getRestOfPreprocessorLine();
 
 							if (elsifExpression.equals(""))
-								if (throwExceptionOnBadPPDirective)
+								if (throwExceptionOnBadPreprocessorSyntax)
 									throw new ScannerException("Malformed #elsif clause");
 
 							boolean elsifResult =
@@ -774,7 +778,7 @@ public class Scanner implements IScanner {
 							String remainderOfLine =
 								getRestOfPreprocessorLine().trim();
 							if (!remainderOfLine.equals("")) {
-								if (throwExceptionOnBadPPDirective)
+								if (throwExceptionOnBadPreprocessorSyntax)
 									throw new ScannerException(
 										BAD_PP + currentContext.getOffset());
 							}
@@ -782,7 +786,7 @@ public class Scanner implements IScanner {
 							c = getChar();
 							continue;
 						default :
-							if (throwExceptionOnBadPPDirective)
+							if (throwExceptionOnBadPreprocessorSyntax)
 								throw new ScannerException(
 									BAD_PP + currentContext.getOffset());
 
@@ -1102,11 +1106,12 @@ public class Scanner implements IScanner {
 									currentContext);
 						}
 					default :
+						// Bad character
+						if( throwExceptionOnBadCharacterRead )
+							throw new ScannerException( "Invalid character read @ offset " + currentContext.getOffset() + " of file " + currentContext.getFilename() );
 						break;
 				}
 
-				// Bad character
-				// TODO - does this need it's own exception
 				throw Parser.endOfFile;
 			}
 		}
@@ -1259,7 +1264,7 @@ public class Scanner implements IScanner {
 						EXPRESSION,
 						definitions);
 				Parser parser = new Parser(trial, evaluator);
-				parser.expression();
+				parser.expression(null);  //TODO should this be null?
 				
 				expressionEvalResult = evaluator.getResult();
 	
@@ -1470,13 +1475,13 @@ public class Scanner implements IScanner {
 			} else {
 				// this is not a comment 
 				// it is a bad statement
-				if (throwExceptionOnBadPPDirective)
+				if (throwExceptionOnBadPreprocessorSyntax)
 					throw new ScannerException(
 						BAD_PP + currentContext.getOffset());
 			}
 		} else {
 			System.out.println("Unexpected character " + ((char) c));
-			if (throwExceptionOnBadPPDirective)
+			if (throwExceptionOnBadPreprocessorSyntax)
 				throw new ScannerException(BAD_PP + currentContext.getOffset());
 		}
 

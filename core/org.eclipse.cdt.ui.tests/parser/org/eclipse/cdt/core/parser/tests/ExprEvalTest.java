@@ -20,7 +20,7 @@ public class ExprEvalTest extends TestCase {
 	public void runTest(String code, int expectedValue) throws Exception {
 		ExpressionEvaluator evaluator = new ExpressionEvaluator();
 		Parser parser = new Parser(code, evaluator);
-		parser.expression();
+		parser.expression(null);
 		assertEquals(expectedValue, ((Integer)evaluator.getResult()).intValue());
 	}
 	

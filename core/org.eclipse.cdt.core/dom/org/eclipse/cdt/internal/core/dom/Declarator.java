@@ -4,7 +4,7 @@ import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 
-public class Declarator {
+public class Declarator implements IExpressionOwner {
 	
 	public Declarator(DeclSpecifier.Container declaration) {
 		this.declaration = declaration;
@@ -59,6 +59,22 @@ public class Declarator {
 	 */
 	public ParameterDeclarationClause getParms() {
 		return parms;
+	}
+
+	private Expression expression = null; 
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#getExpression()
+	 */
+	public Expression getExpression() {
+		return expression;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#setExpression(org.eclipse.cdt.internal.core.dom.Expression)
+	 */
+	public void setExpression(Expression exp) {
+		expression = exp;
 	}
 
 }

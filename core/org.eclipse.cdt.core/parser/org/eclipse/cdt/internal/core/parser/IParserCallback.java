@@ -54,8 +54,9 @@ public interface IParserCallback {
 	public void  	baseSpecifierEnd( Object baseSpecifier );
 	
 	public Object 	expressionBegin( Object container ); 
-	public void 	expressionOperator(Token operator) throws Exception;
-	public void 	expressionTerminal(Token terminal) throws Exception;
+	public void 	expressionOperator(Object expression, Token operator) throws Exception;
+	public void 	expressionTerminal(Object expression, Token terminal) throws Exception;
+	public void     expressionAbort( Object expression ); 
 	public void 	expressionEnd(Object expression );
 	
 	public Object	elaboratedTypeSpecifierBegin( Object container, Token classKey ); 

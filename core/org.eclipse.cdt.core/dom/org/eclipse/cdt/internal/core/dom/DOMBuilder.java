@@ -114,13 +114,17 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#expressionOperator(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void expressionOperator(Token operator) throws Exception {
+	public void expressionOperator(Object expression, Token operator) throws Exception {
+		Expression e = (Expression)expression;
+		e.add( operator ); 
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#expressionTerminal(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void expressionTerminal(Token terminal) throws Exception {
+	public void expressionTerminal(Object expression, Token terminal) throws Exception {
+		Expression e = (Expression)expression;
+		e.add( terminal );
 	}
 
 	/**
@@ -268,7 +272,10 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionBegin(java.lang.Object)
 	 */
 	public Object expressionBegin(Object container) {
-		return null;
+		IExpressionOwner owner = (IExpressionOwner)container;
+		Expression expression = new Expression();
+		owner.setExpression(expression); 
+		return expression;
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionEnd(java.lang.Object)
@@ -327,6 +334,12 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
 	 */
 	public void simpleDeclSpecifierName(Object declaration) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionAbort(java.lang.Object)
+	 */
+	public void expressionAbort(Object expression) {
 	}
 
 }

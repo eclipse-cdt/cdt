@@ -30,7 +30,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#expressionOperator(Token)
 	 */
-	public void expressionOperator(Token operator) throws Exception {
+	public void expressionOperator(Object expression, Token operator) throws Exception {
 		
 		int second = popInt(); 
 		int first; 
@@ -95,7 +95,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#expressionTerminal(Token)
 	 */
-	public void expressionTerminal(Token terminal) throws Exception {
+	public void expressionTerminal(Object expression, Token terminal) throws Exception {
 		switch (terminal.getType()) {
 			case Token.tINTEGER:
 				stack.push(new Integer(terminal.getImage()));
@@ -304,6 +304,14 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
 	 */
 	public void simpleDeclSpecifierName(Object declaration) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionAbort(java.lang.Object)
+	 */
+	public void expressionAbort(Object expression) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

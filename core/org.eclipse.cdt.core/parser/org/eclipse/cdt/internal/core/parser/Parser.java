@@ -74,7 +74,7 @@ c, quick);
 	 * : (declaration)*
 	 * 
 	 */
-	public void translationUnit() throws Exception {
+	protected void translationUnit() throws Exception {
 		Object translationUnit = callback.translationUnitBegin();
 		Token lastBacktrack = null;
 		Token lastToken;
@@ -130,7 +130,7 @@ c, quick);
 	 *   - explicitInstantiation and explicitSpecialization into
 	 *       templateDeclaration
 	 */
-	public void declaration( Object container ) throws Exception {
+	protected void declaration( Object container ) throws Exception {
 		switch (LT(1)) {
 			case Token.t_asm:
 				// asmDefinition( );
@@ -176,7 +176,7 @@ c, quick);
 	 * To do:
 	 * - work in ctorInitializer and functionTryBlock
 	 */
-	public void simpleDeclaration( Object container ) throws Exception {
+	protected void simpleDeclaration( Object container ) throws Exception {
 		Object simpleDecl = callback.simpleDeclarationBegin( container);
 		declSpecifierSeq(simpleDecl, false);
 
@@ -239,7 +239,7 @@ c, quick);
 	}
 	
 	
-	public void parameterDeclaration( Object containerObject ) throws Exception
+	protected void parameterDeclaration( Object containerObject ) throws Exception
 	{
 		Object parameterDecl = callback.parameterDeclarationBegin( containerObject );
 		declSpecifierSeq( parameterDecl, true );
@@ -273,7 +273,7 @@ c, quick);
 	 * - folded elaboratedTypeSpecifier into classSpecifier and enumSpecifier
 	 * - find template names in name
 	 */
-	public void declSpecifierSeq( Object decl, boolean parm ) throws Exception {
+	protected void declSpecifierSeq( Object decl, boolean parm ) throws Exception {
 		boolean encounteredTypename = false;
 		boolean encounteredRawType = false;
 		declSpecifiers:		
@@ -366,7 +366,7 @@ c, quick);
 	 * - Handle template ids
 	 * - Handle unqualifiedId
 	 */
-	public boolean name() throws Exception {
+	protected boolean name() throws Exception {
 		Token first = LA(1);
 		Token last = null;
 		
@@ -408,7 +408,7 @@ c, quick);
 	 * cvQualifier
 	 * : "const" | "volatile"
 	 */
-	public Object cvQualifier() throws Exception {
+	protected Object cvQualifier() throws Exception {
 		switch (LT(1)) {
 			case Token.t_const:
 			case Token.t_volatile:
@@ -426,7 +426,7 @@ c, quick);
 	 * To Do:
 	 * - handle initializers
 	 */
-	public void initDeclarator( Object owner ) throws Exception {
+	protected void initDeclarator( Object owner ) throws Exception {
 		Object declarator = declarator( owner );
 		
 		// handle = initializerClause
@@ -434,13 +434,17 @@ c, quick);
 			consume(); 
 			
 			// assignmentExpression || { initializerList , } || { }
+			Object expression = null; 
 			try
 			{
-				assignmentExpression();  
+				expression = callback.expressionBegin( declarator ); 
+				assignmentExpression( expression );
+				callback.expressionEnd( expression );   
 			}
 			catch( Backtrack b )
 			{
-				// doNothing
+				if( expression != null )
+					callback.expressionAbort( expression ); 
 			}
 			
 			if (LT(1) == Token.tLBRACE) {
@@ -463,7 +467,18 @@ c, quick);
 		{
 			consume();  // EAT IT!
 			
-			constantExpression();
+			Object expression = null; 
+			try
+			{
+				expression = callback.expressionBegin( declarator ); 
+				constantExpression( expression );
+				callback.expressionEnd( expression );   
+			}
+			catch( Backtrack b )
+			{
+				if( expression != null )
+					callback.expressionAbort( expression ); 
+			}
 			
 			if( LT(1) == Token.tRPAREN )
 				consume();
@@ -487,7 +502,7 @@ c, quick);
 	 * declaratorId
 	 * : name
 	 */
-	public Object declarator( Object container ) throws Exception {
+	protected Object declarator( Object container ) throws Exception {
 		
 		do
 		{
@@ -569,7 +584,7 @@ c, quick);
 	 * | "&"
 	 * | name "*" (cvQualifier)*
 	 */
-	public Object ptrOperator() throws Exception {
+	protected Object ptrOperator() throws Exception {
 		int t = LT(1);
 		
 		if (t == Token.tAMPER) {					
@@ -604,7 +619,7 @@ c, quick);
 	 * enumSpecifier
 	 * 		"enum" (name)? "{" (enumerator-list) "}" 
 	 */
-	public void enumSpecifier( Object owner ) throws Exception
+	protected void enumSpecifier( Object owner ) throws Exception
 	{
 		if( LT(1) != Token.t_enum )
 			throw backtrack; 
@@ -640,7 +655,7 @@ c, quick);
 	 * classSpecifier
 	 * : classKey name (baseClause)? "{" (memberSpecification)* "}"
 	 */
-	public void classSpecifier( Object owner ) throws Exception {
+	protected void classSpecifier( Object owner ) throws Exception {
 		Token classKey = null;
 		
 		Token mark = mark();
@@ -717,7 +732,7 @@ c, quick);
 		callback.classSpecifierEnd(classSpec);
 	}
 
-	public void baseSpecifier( Object classSpecOwner ) throws Exception {
+	protected void baseSpecifier( Object classSpecOwner ) throws Exception {
 
 		Object baseSpecifier = callback.baseSpecifierBegin( classSpecOwner ); 		
 		
@@ -751,16 +766,19 @@ c, quick);
 		callback.baseSpecifierEnd( baseSpecifier ); 
 	}
 	
-	public void functionBody() throws Exception {
+	protected void functionBody() throws Exception {
 		compoundStatement();
 	}
 	
 	// Statements
-	public void statement() throws Exception {
+	protected void statement() throws Exception {
+		Object expression = null; 
 		switch (LT(1)) {
 			case Token.t_case:
 				consume();
-				constantExpression();
+				expression = callback.expressionBegin( null ); //TODO regarding this null
+				constantExpression(expression);
+				callback.expressionEnd( expression );
 				consume(Token.tCOLON);
 				statement();
 				return;
@@ -813,7 +831,11 @@ c, quick);
 					condition();
 				consume(Token.tSEMI);
 				if (LT(1) != Token.tRPAREN)
-					expression();
+				{
+					expression = callback.expressionBegin( null ); //TODO get rid of NULL  
+					expression(expression);
+					callback.expressionEnd( expression );
+				}
 				consume(Token.tRPAREN);
 				statement();
 				return;
@@ -828,7 +850,11 @@ c, quick);
 			case Token.t_return:
 				consume();
 				if (LT(1) != Token.tSEMI)
-					expression();
+				{
+					expression = callback.expressionBegin( null ); //TODO get rid of NULL  
+					expression(expression);
+					callback.expressionEnd( expression );
+				}
 				consume(Token.tSEMI);
 				return;
 			case Token.t_goto:
@@ -864,7 +890,9 @@ c, quick);
 				// Note: the function style cast ambiguity is handled in expression
 				// Since it only happens when we are in a statement
 				try {
-					expression();
+					expression = callback.expressionBegin( null ); //TODO get rid of NULL  
+					expression(expression);
+					callback.expressionEnd( expression );
 					consume(Token.tSEMI);
 					return;
 				} catch (Backtrack b) {
@@ -875,15 +903,15 @@ c, quick);
 		}
 	}
 	
-	public void condition() throws Exception {
+	protected void condition() throws Exception {
 		// TO DO
 	}
 	
-	public void forInitStatement() throws Exception {
+	protected void forInitStatement() throws Exception {
 		// TO DO
 	}
 	
-	public void compoundStatement() throws Exception {
+	protected void compoundStatement() throws Exception {
 		consume(Token.tLBRACE);
 		while (LT(1) != Token.tRBRACE)
 			statement();
@@ -891,28 +919,28 @@ c, quick);
 	}
 	
 	// Expressions
-	public void constantExpression() throws Exception {
-		conditionalExpression();
+	protected void constantExpression( Object expression ) throws Exception {
+		conditionalExpression( expression );
 	}
 	
-	public void expression() throws Exception {
-		assignmentExpression();
+	public void expression( Object expression ) throws Exception {
+		assignmentExpression( expression );
 		
 		while (LT(1) == Token.tCOMMA) {
 			Token t = consume();
-			assignmentExpression();
-			callback.expressionOperator(t);
+			assignmentExpression( expression );
+			callback.expressionOperator(expression, t);
 		}
 	}
 	
-	public void assignmentExpression() throws Exception {
+	protected void assignmentExpression( Object expression ) throws Exception {
 		if (LT(1) == Token.t_throw) {
-			throwExpression();
+			throwExpression(expression);
 			return;
 		}
 		
 		// if the condition not taken, try assignment operators
-		if (!conditionalExpression()) {
+		if (!conditionalExpression(expression)) {
 			switch (LT(1)) {
 				case Token.tASSIGN:
 				case Token.tSTARASSIGN:
@@ -926,95 +954,95 @@ c, quick);
 				case Token.tXORASSIGN:
 				case Token.tBITORASSIGN:
 					Token t = consume();
-					conditionalExpression();
-					callback.expressionOperator(t);
+					conditionalExpression(expression);
+					callback.expressionOperator(expression, t);
 					break;
 			}
 		}
 	}
 	
-	public void throwExpression() throws Exception {
+	protected void throwExpression( Object expression ) throws Exception {
 		consume(Token.t_throw);
 		
 		try {
-			expression();
+			expression(expression);
 		} catch (Backtrack b) {
 		}
 	}
 	
-	public boolean conditionalExpression() throws Exception {
-		logicalOrExpression();
+	protected boolean conditionalExpression( Object expression ) throws Exception {
+		logicalOrExpression( expression );
 		
 		if (LT(1) == Token.tQUESTION) {
 			consume();
-			expression();
+			expression(expression);
 			consume(Token.tCOLON);
-			assignmentExpression();
+			assignmentExpression(expression);
 			return true;
 		} else
 			return false;
 	}
 	
-	public void logicalOrExpression() throws Exception {
-		logicalAndExpression();
+	protected void logicalOrExpression( Object expression ) throws Exception {
+		logicalAndExpression( expression );
 		
 		while (LT(1) == Token.tOR) {
 			Token t = consume();
-			logicalAndExpression();
-			callback.expressionOperator(t);
+			logicalAndExpression( expression );
+			callback.expressionOperator(expression, t);
 		}
 	}
 	
-	public void logicalAndExpression() throws Exception {
-		inclusiveOrExpression();
+	protected void logicalAndExpression( Object expression ) throws Exception {
+		inclusiveOrExpression( expression );
 		
 		while (LT(1) == Token.tAND) {
 			Token t = consume();
-			inclusiveOrExpression();
-			callback.expressionOperator(t);
+			inclusiveOrExpression(expression );
+			callback.expressionOperator(expression, t);
 		}
 	}
 	
-	public void inclusiveOrExpression() throws Exception {
-		exclusiveOrExpression();
+	protected void inclusiveOrExpression( Object expression ) throws Exception {
+		exclusiveOrExpression(expression);
 		
 		while (LT(1) == Token.tBITOR) {
 			Token t = consume();
-			exclusiveOrExpression();
-			callback.expressionOperator(t);
+			exclusiveOrExpression(expression);
+			callback.expressionOperator(expression, t);
 		}
 	}
 	
-	public void exclusiveOrExpression() throws Exception {
-		andExpression();
+	protected void exclusiveOrExpression( Object expression ) throws Exception {
+		andExpression( expression );
 		
 		while (LT(1) == Token.tXOR) {
 			Token t = consume();
-			andExpression();
-			callback.expressionOperator(t);
+			andExpression(expression);
+			callback.expressionOperator(expression, t);
 		}
 	}
 	
-	public void andExpression() throws Exception {
-		equalityExpression();
+	protected void andExpression( Object expression ) throws Exception {
+		equalityExpression(expression);
 		
 		while (LT(1) == Token.tAMPER) {
 			Token t = consume();
-			equalityExpression();
-			callback.expressionOperator(t);
+			equalityExpression(expression);
+			callback.expressionOperator(expression, t);
 		}
 	}
 	
-	public void equalityExpression() throws Exception {
-		relationalExpression();
+	protected void equalityExpression(Object expression) throws Exception {
+		relationalExpression(expression);
 		
 		for (;;) {
 			switch (LT(1)) {
 				case Token.tEQUAL:
 				case Token.tNOTEQUAL:
 					Token t = consume();
-					relationalExpression();
-					callback.expressionOperator(t);
+					relationalExpression(expression);
+					callback.expressionOperator(expression, t);
 					break;
 				default:
 					return;
@@ -1022,8 +1050,8 @@ c, quick);
 		}
 	}
 	
-	public void relationalExpression() throws Exception {
-		shiftExpression();
+	protected void relationalExpression(Object expression) throws Exception {
+		shiftExpression(expression);
 		
 		for (;;) {
 			switch (LT(1)) {
@@ -1035,8 +1063,8 @@ c, quick);
 				case Token.tLTEQUAL:
 				case Token.tGTEQUAL:
 					Token t = consume();
-					shiftExpression();
-					callback.expressionOperator(t);
+					shiftExpression(expression);
+					callback.expressionOperator(expression, t);
 					break;
 				default:
 					return;
@@ -1044,16 +1072,16 @@ c, quick);
 		}
 	}
 	
-	public void shiftExpression() throws Exception {
-		additiveExpression();
+	protected void shiftExpression( Object expression ) throws Exception {
+		additiveExpression(expression);
 		
 		for (;;) {
 			switch (LT(1)) {
 				case Token.tSHIFTL:
 				case Token.tSHIFTR:
 					Token t = consume();
-					additiveExpression();
-					callback.expressionOperator(t);
+					additiveExpression(expression);
+					callback.expressionOperator(expression, t);
 					break;
 				default:
 					return;
@@ -1061,16 +1089,16 @@ c, quick);
 		}
 	}
 	
-	public void additiveExpression() throws Exception {
-		multiplicativeExpression();
+	protected void additiveExpression( Object expression ) throws Exception {
+		multiplicativeExpression(expression);
 		
 		for (;;) {
 			switch (LT(1)) {
 				case Token.tPLUS:
 				case Token.tMINUS:
 					Token t = consume();
-					multiplicativeExpression();
-					callback.expressionOperator(t);
+					multiplicativeExpression(expression);
+					callback.expressionOperator(expression, t);
 					break;
 				default:
 					return;
@@ -1078,8 +1106,8 @@ c, quick);
 		}
 	}
 	
-	public void multiplicativeExpression() throws Exception {
-		pmExpression();
+	protected void multiplicativeExpression( Object expression ) throws Exception {
+		pmExpression( expression );
 		
 		for (;;) {
 			switch (LT(1)) {
@@ -1087,8 +1115,8 @@ c, quick);
 				case Token.tDIV:
 				case Token.tMOD:
 					Token t = consume();
-					pmExpression();
-					callback.expressionOperator(t);
+					pmExpression(expression );
+					callback.expressionOperator(expression , t);
 					break;
 				default:
 					return;
@@ -1096,16 +1124,16 @@ c, quick);
 		}
 	}
 	
-	public void pmExpression() throws Exception {
-		castExpression();
+	protected void pmExpression( Object expression ) throws Exception {
+		castExpression( expression );
 		
 		for (;;) {
 			switch (LT(1)) {
 				case Token.tDOTSTAR:
 				case Token.tARROWSTAR:
 					Token t = consume();
-					castExpression();
-					callback.expressionOperator(t);
+					castExpression( expression );
+					callback.expressionOperator(expression, t);
 					break;
 				default:
 					return;
@@ -1118,7 +1146,7 @@ c, quick);
 	 * : unaryExpression
 	 * | "(" typeId ")" castExpression
 	 */
-	public void castExpression() throws Exception {
+	protected void castExpression( Object expression ) throws Exception {
 		// TO DO: we need proper symbol checkint to ensure type name
 		if (false && LT(1) == Token.tLPAREN) {
 			Token mark = mark();
@@ -1128,17 +1156,17 @@ c, quick);
 			try {
 				typeId();
 				consume(Token.tRPAREN);
-				castExpression();
+				castExpression( expression );
 				return;
 			} catch (Backtrack b) {
 				backup(mark);
 			}
 		}
 
-		unaryExpression();
+		unaryExpression(expression);
 	}
 	
-	public void typeId() throws Exception {
+	protected void typeId() throws Exception {
 		try {
 			name();
 			return;
@@ -1146,7 +1174,7 @@ c, quick);
 		}
 	}
 	
-	public void deleteExpression() throws Exception {
+	protected void deleteExpression( Object expression ) throws Exception {
 		if (LT(1) == Token.tCOLONCOLON) {
 			// global scope
 			consume();
@@ -1160,10 +1188,10 @@ c, quick);
 			consume(Token.tRBRACKET);
 		}
 		
-		castExpression();
+		castExpression( expression );
 	}
 	
-	public void newExpression() throws Exception {
+	protected void newExpression( Object expression ) throws Exception {
 		if (LT(1) == Token.tCOLONCOLON) {
 			// global scope
 			consume();
@@ -1171,10 +1199,10 @@ c, quick);
 		
 		consume (Token.t_new);
 		
-		// TO DO: finish this horrible mess...
+		//TODO: finish this horrible mess...
 	}
 	
-	public void unaryExpression() throws Exception {
+	protected void unaryExpression( Object expression ) throws Exception {
 		switch (LT(1)) {
 			case Token.tSTAR:
 			case Token.tAMPER:
@@ -1185,8 +1213,8 @@ c, quick);
 			case Token.tINCR:
 			case Token.tDECR:
 				Token t = consume();
-				castExpression();
-				callback.expressionOperator(t);
+				castExpression(expression);
+				callback.expressionOperator(expression, t);
 				return;
 			case Token.t_sizeof:
 				if (LT(1) == Token.tLPAREN) {
@@ -1194,34 +1222,34 @@ c, quick);
 					typeId();
 					consume(Token.tRPAREN);
 				} else {
-					unaryExpression();
+					unaryExpression( expression );
 				}
 				return;
 			case Token.t_new:
-				newExpression();
+				newExpression( expression );
 				return;
 			case Token.t_delete:
-				deleteExpression();
+				deleteExpression( expression );
 				return;
 			case Token.tCOLONCOLON:
 				switch (LT(2)) {
 					case Token.t_new:
-						newExpression();
+						newExpression(expression);
 						return;
 					case Token.t_delete:
-						deleteExpression();
+						deleteExpression(expression);
 						return;
 					default:
-						postfixExpression();
+						postfixExpression(expression);
 						return;			
 				}
 			default:
-				postfixExpression();
+				postfixExpression(expression);
 				return;
 		}
 	}
 
-	public void postfixExpression() throws Exception {
+	protected void postfixExpression( Object expression) throws Exception {
 		switch (LT(1)) {
 			case Token.t_typename:
 				consume();
@@ -1236,7 +1264,7 @@ c, quick);
 				typeId();
 				consume(Token.tGT);
 				consume(Token.tLPAREN);
-				expression();
+				expression(expression);
 				consume(Token.tRPAREN);
 				break;
 			case Token.t_typeid:
@@ -1245,13 +1273,13 @@ c, quick);
 				try {
 					typeId();
 				} catch (Backtrack b) {
-					expression();
+					expression(expression);
 				}
 				consume(Token.tRPAREN);
 				break;
 			default:
 				// TO DO: try simpleTypeSpecifier "(" expressionList ")"
-				primaryExpression();
+				primaryExpression(expression);
 		}
 		
 		for (;;) {
@@ -1259,14 +1287,14 @@ c, quick);
 				case Token.tLBRACKET:
 					// array access
 					consume();
-					expression();
+					expression(expression);
 					consume(Token.tRBRACKET);
 					break;
 				case Token.tLPAREN:
 					// function call
 					consume();
 					// Note: since expressionList and expression are the same...
-					expression();
+					expression(expression);
 					consume(Token.tRPAREN);
 					break;
 				case Token.tINCR:
@@ -1287,25 +1315,25 @@ c, quick);
 		}
 	}
 	
-	public void primaryExpression() throws Exception {
+	protected void primaryExpression( Object expression ) throws Exception {
 		int type = LT(1);
 		switch (type) {
 			// TO DO: we need more literals...
 			case Token.tINTEGER:
-				callback.expressionTerminal(consume());
+				callback.expressionTerminal(expression, consume());
 				return;
 			case Token.tSTRING:
-				callback.expressionTerminal(consume());
+				callback.expressionTerminal(expression, consume());
 				return;
 			case Token.tIDENTIFIER:
-				callback.expressionTerminal(consume());
+				callback.expressionTerminal(expression, consume());
 				return;
 			case Token.t_this:
 				consume();
 				return;
 			case Token.tLPAREN:
 				consume();
-				expression();
+				expression(expression);
 				consume(Token.tRPAREN);
 				return;
 			default:
@@ -1315,7 +1343,7 @@ c, quick);
 		}
 	}
 	
-	public void varName() throws Exception {
+	protected void varName() throws Exception {
 		if (LT(1) == Token.tCOLONCOLON)
 			consume();
 		
@@ -1430,7 +1458,7 @@ c, quick);
 	}
 
 	// Utility routines that require a knowledge of the grammar
-	public static String generateName(Token startToken) throws Exception {
+	protected static String generateName(Token startToken) throws Exception {
 		Token currToken = startToken.getNext();
 		
 		if (currToken == null || currToken.getType() != Token.tCOLONCOLON)

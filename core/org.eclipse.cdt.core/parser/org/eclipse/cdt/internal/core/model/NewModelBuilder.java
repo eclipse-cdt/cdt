@@ -242,13 +242,13 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#expressionOperator(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void expressionOperator(Token operator) throws Exception {
+	public void expressionOperator(Object expression, Token operator) throws Exception {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#expressionTerminal(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void expressionTerminal(Token terminal) throws Exception {
+	public void expressionTerminal(Object expression, Token terminal) throws Exception {
 	}
 
 	/**
@@ -356,6 +356,14 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	public void simpleDeclSpecifierName(Object declaration) {
 		DeclSpecifier declSpecifier = (DeclSpecifier)declaration;  
 		declSpecifier.setName( currName ); 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionAbort(java.lang.Object)
+	 */
+	public void expressionAbort(Object expression) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

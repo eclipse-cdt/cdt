@@ -1,3 +1,8 @@
+2003-03-19	John Camelon
+	Updated Parser method visibility to solidify external interface.  
+	Solved and removed TODO's from Scanner implementation.
+	Updated Parser and callbacks to handle basic expressions.  
+
 2003-03-18 John Camelon
 	Updated IParserCallback (and implementations) to add a typeName to DeclSpecifier. 
 	Updated IParserCallback and NewModelBuilder to distinguish between Function declarations and definitions. 

@@ -11,12 +11,14 @@ import org.eclipse.cdt.internal.core.dom.BaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
 import org.eclipse.cdt.internal.core.dom.Declarator;
+import org.eclipse.cdt.internal.core.dom.Expression;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
@@ -39,12 +41,12 @@ public class DOMTests extends TestCase {
 	}
 	
 	/**
-	 * Test code: int x;
+	 * Test code: int x = 5;
 	 * Purpose: to test the simple decaration in it's simplest form.
 	 */
 	public void testIntGlobal() throws Exception {
 		// Parse and get the translation Unit
-		TranslationUnit translationUnit = parse("int x;");
+		TranslationUnit translationUnit = parse("int x = 5;");
 		
 		// Get the simple declaration
 		List declarations = translationUnit.getDeclarations();
@@ -60,6 +62,13 @@ public class DOMTests extends TestCase {
 		Declarator declarator = (Declarator)declarators.get(0);
 		Name name = declarator.getName();
 		assertEquals("x", name.toString());
+		
+		Expression exp = declarator.getExpression(); 
+		assertNotNull( exp );
+		assertEquals( 1, exp.tokens().size() ); 
+		Token t = (Token)exp.tokens().get(0); 
+		assertEquals( t.getImage(), "5" );
+		assertEquals( t.getType(), Token.tINTEGER);
 	}
 	
 	/**
@@ -243,14 +252,14 @@ public class DOMTests extends TestCase {
 	}
 	
 	/**
-	 * Test code: bool myFunction( int parm1, double parm2 );
+	 * Test code: bool myFunction( int parm1 = 3 * 4, double parm2 );
 	 * @throws Exception
 	 */
 	public void testFunctionDeclarationWithParameters() throws Exception
 	{
 		// Parse and get the translaton unit
 		Writer code = new StringWriter();
-		code.write("bool myFunction( int parm1, double parm2 );");
+		code.write("bool myFunction( int parm1 = 3 * 4, double parm2 );");
 		TranslationUnit translationUnit = parse(code.toString());
 
 		// Get the declaration
@@ -271,7 +280,17 @@ public class DOMTests extends TestCase {
 		List parm1Decls = parm1.getDeclarators(); 
 		assertEquals( 1, parm1Decls.size() ); 
 		Declarator parm1Declarator = (Declarator) parm1Decls.get(0); 
-		assertEquals( "parm1", parm1Declarator.getName().toString() );  
+		assertEquals( "parm1", parm1Declarator.getName().toString() );
+		Expression initialValueParm1 = parm1Declarator.getExpression();
+		assertEquals( initialValueParm1.tokens().size(), 3 );
+		Token t1 = (Token)initialValueParm1.tokens().get( 0 );
+		Token t2 = (Token)initialValueParm1.tokens().get( 1 ); 
+		Token t3 = (Token)initialValueParm1.tokens().get( 2 );
+		assertEquals( t1.getType(), Token.tINTEGER );
+		assertEquals( t1.getImage(), "3" ); 
+		assertEquals( t3.getType(), Token.tSTAR ); 
+		assertEquals( t2.getType(), Token.tINTEGER );
+		assertEquals( t2.getImage(), "4" );   
 
 		ParameterDeclaration parm2 = (ParameterDeclaration)parameterDecls.get( 1 );
 		assertEquals( DeclSpecifier.t_double, parm2.getDeclSpecifier().getType() );

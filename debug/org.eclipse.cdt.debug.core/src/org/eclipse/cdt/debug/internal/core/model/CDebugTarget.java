@@ -2066,13 +2066,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.core.model.CDebugElement#isValidState(org.eclipse.cdt.debug.core.model.CDebugElementState)
-	 */
-	protected boolean isValidState( CDebugElementState state ) {
-		return super.isValidState( state );
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#isPostMortem()
 	 */
 	public boolean isPostMortem() {

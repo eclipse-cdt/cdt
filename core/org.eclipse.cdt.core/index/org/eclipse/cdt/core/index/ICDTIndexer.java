@@ -94,6 +94,14 @@ public interface ICDTIndexer extends IIndexer {
 	 * @param idlingTime
 	 */
 	public void notifyIdle(long idlingTime);
+	
+	/**
+	 * Called by the index manager when a project has switched indexers to this
+	 * type of indexer - can be used by the indexer to schedule initial jobs
+	 * @param project - the project that has changed indexers
+	 */
+	public void notifyIndexerChange(IProject project);
+
 
     /**
      * Returns if this indexer is enabled

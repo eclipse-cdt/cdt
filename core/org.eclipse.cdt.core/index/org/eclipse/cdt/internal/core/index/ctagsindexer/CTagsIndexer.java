@@ -41,7 +41,6 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 	
 	private HashSet 			jobSet = null;
 	
-	
 	public CTagsIndexer(){
 	    this.indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
     	this.indexStorage = (CIndexStorage) indexManager.getIndexStorageForIndexer(this);
@@ -317,6 +316,13 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
      */
     public IIndexStorage getIndexStorage() {
         return indexStorage;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.index.ICDTIndexer#notifyIndexerChange(org.eclipse.core.resources.IProject)
+     */
+    public void notifyIndexerChange(IProject project) {
+       this.indexAll(project);
     }
 	
 	

@@ -333,9 +333,14 @@ public class IndexManager extends JobManager{
 	public void indexerChangeNotification(IProject project) {
 	    monitor.enterWrite();
 	    try{
+	        //Get rid of any jobs scheduled by the old indexer
+	        this.discardJobs(project.getName());
+	        //Purge the old indexer from the indexer map
 	        Object e = indexerMap.remove(project);   
 	    } finally { 
 	        monitor.exitWrite();
+	        ICDTIndexer indexer = this.getIndexerForProject(project);
+	        indexer.notifyIndexerChange(project);
 	    }
 	}
 }

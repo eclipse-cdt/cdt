@@ -61,6 +61,10 @@ public class IndexAllProject extends IndexRequest {
 		if (monitor == null) return true; // index got deleted since acquired
 
 		try {
+		    if (AbstractIndexer.TIMING)
+		        //reset the total index timer
+		        indexer.setTotalIndexTime(0);
+		    
 			monitor.enterRead(); // ask permission to read
 			saveIfNecessary(index, monitor);
 

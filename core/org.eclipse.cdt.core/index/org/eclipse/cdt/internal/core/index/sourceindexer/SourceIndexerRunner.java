@@ -120,7 +120,12 @@ public class SourceIndexerRunner extends AbstractIndexer {
 			boolean retVal = parser.parse();
 			
 	        if (AbstractIndexer.TIMING){
-	            System.out.println("Source Indexer - Total Index Time: " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
+	            long currentTime = System.currentTimeMillis() - startTime;
+	            System.out.println("Source Indexer - Index Time for " + resourceFile.getName() + ": " + currentTime + " ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	            long tempTotaltime = indexer.getTotalIndexTime() + currentTime;
+	            indexer.setTotalIndexTime(tempTotaltime);
+	            System.out.println("Source Indexer - Total Index Time: " + tempTotaltime + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+	            
 	        }
 	        
 			if (AbstractIndexer.VERBOSE){

@@ -87,12 +87,13 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	
 	
 	private CIndexStorage		indexStorage = null;
-	public 	ReadWriteMonitor	storageMonitor = null;
+	protected 	ReadWriteMonitor	storageMonitor = null;
     protected IndexManager  	indexManager = null; 
 	
 	protected HashSet 			jobSet = null;
 	private boolean				indexEnabled = false;
 	
+    protected long		    	totalIndexTime = 0;
 	
     public SourceIndexer(){
     	this.indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
@@ -549,6 +550,7 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 			storageMonitor.exitWrite();
 		}
 	}
+	
 
 	/**
 	 * @param path
@@ -638,4 +640,23 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 			//storageMonitor.exitWrite();
 		}
 	}
+    /**
+     * @return Returns the totalIndexTime.
+     */
+    public long getTotalIndexTime() {
+        return totalIndexTime;
+    }
+    /**
+     * @param totalIndexTime The totalIndexTime to set.
+     */
+    public void setTotalIndexTime(long totalIndexTime) {
+        this.totalIndexTime = totalIndexTime;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.index.ICDTIndexer#notifyIndexerChange()
+     */
+    public void notifyIndexerChange(IProject project) {
+        this.indexAll(project);
+    }
 }

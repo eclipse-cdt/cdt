@@ -112,7 +112,12 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                 endTime = System.currentTimeMillis();
                 System.out.println("DOM Indexer - Total Parse Time for " + resourceFile.getName()  + ": " + (parseTime - startTime)); //$NON-NLS-1$ //$NON-NLS-2$
                 System.out.println("DOM Indexer - Total Visit Time for " + resourceFile.getName()  + ": " + (endTime - parseTime)); //$NON-NLS-1$  //$NON-NLS-2$
-                System.out.println("DOM Indexer - Total Index Time for " + resourceFile.getName()  + ": " + (endTime - startTime)); //$NON-NLS-1$  //$NON-NLS-2$
+                long currentTime = endTime - startTime;
+                System.out.println("DOM Indexer - Total Index Time for " + resourceFile.getName()  + ": " + currentTime); //$NON-NLS-1$  //$NON-NLS-2$
+                long tempTotaltime = indexer.getTotalIndexTime() + currentTime;
+	            indexer.setTotalIndexTime(tempTotaltime);
+                System.out.println("DOM Indexer - Overall Index Time: " + tempTotaltime); //$NON-NLS-1$
+                System.out.flush();
             }
             if (AbstractIndexer.VERBOSE){
                 AbstractIndexer.verbose("DOM AST TRAVERSAL FINISHED " + resourceFile.getName().toString()); //$NON-NLS-1$

@@ -122,6 +122,7 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			if (AbstractIndexer.TIMING){
 			    cTagsEndTime = System.currentTimeMillis();
 			    System.out.println("CTags Run: " + (cTagsEndTime - startTime)); //$NON-NLS-1$
+			    System.out.flush();
 			}
 			
 			 if (success) {
@@ -137,6 +138,7 @@ class CTagsIndexAll extends CTagsIndexRequest {
 				     endTime = System.currentTimeMillis();
 				     System.out.println("CTags Encoding Time: " + (endTime - cTagsEndTime)); //$NON-NLS-1$
 				     System.out.println("CTagsIndexer Total Time: " + (endTime - startTime)); //$NON-NLS-1$
+				     System.out.flush();
 			     }
 			 }
 			 

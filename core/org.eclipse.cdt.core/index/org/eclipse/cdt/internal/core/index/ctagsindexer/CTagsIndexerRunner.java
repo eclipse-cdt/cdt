@@ -112,6 +112,7 @@ public class CTagsIndexerRunner extends AbstractIndexer {
             
             if (AbstractIndexer.TIMING){
                 System.out.println("CTagsIndexer Total Time: " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
+                System.out.flush();
             }  
                
         }

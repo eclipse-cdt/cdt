@@ -1,4 +1,7 @@
-2002-10-24 Mikhail Khodjaiants
+2002-10-27 Mikhail Khodjaiants
+	* MemoryPresentation.java: adding editing features to the memory view.
+
+2002-10-25 Mikhail Khodjaiants
 	Implementation of the 'Number Of Columns' action.
 	* MemoryNumberOfColumnAction.java: the action class
 	* MemoryViewer.java: support of the action

@@ -13,7 +13,6 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow;
-import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.swt.graphics.Point;
@@ -260,7 +259,7 @@ public class MemoryPresentation
 	{
 		return getAddressLength() + 
 			   INTERVAL_BETWEEN_ADDRESS_AND_DATA +
-			   (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) * getNumberOfDataItems() + 
+			   (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) * getNumberOfDataItemsInRow() + 
 			   ( ( displayASCII() ) ? INTERVAL_BETWEEN_DATA_AND_ASCII +
 			   getDataBytesPerRow() : 0 ) + 1;
 	}
@@ -287,7 +286,7 @@ public class MemoryPresentation
 			int pos = offset % getRowLength();
 			int asciiColumn = getAddressLength() + 
 			   				  INTERVAL_BETWEEN_ADDRESS_AND_DATA +
-			   				  (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS ) * getNumberOfDataItems() + 
+			   				  (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS ) * getNumberOfDataItemsInRow() + 
 			   				  INTERVAL_BETWEEN_DATA_AND_ASCII;
 			return ( pos >=  asciiColumn && pos < getRowLength() - 1 ); 
 		}
@@ -300,7 +299,7 @@ public class MemoryPresentation
 		{
 			int pos = offset % getRowLength();
 			int dataBegin = getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA;
-			int dataEnd = dataBegin + ((getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS ) * getNumberOfDataItems());
+			int dataEnd = dataBegin + ((getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS ) * getNumberOfDataItemsInRow());
 			if ( pos >= dataBegin && pos < dataEnd )
 				return isInDataItem( pos - dataBegin );
 		}
@@ -309,7 +308,7 @@ public class MemoryPresentation
 
 	private boolean isInDataItem( int pos )
 	{
-		for ( int i = 0; i < getNumberOfDataItems(); ++i )
+		for ( int i = 0; i < getNumberOfDataItemsInRow(); ++i )
 		{
 			if ( pos < i * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) )
 				return false;
@@ -327,7 +326,7 @@ public class MemoryPresentation
 		return 0;
 	}
 	
-	private int getNumberOfDataItems()
+	private int getNumberOfDataItemsInRow()
 	{
 		if ( getMemoryBlock() != null )
 			return getMemoryBlock().getNumberOfColumns();
@@ -449,24 +448,74 @@ public class MemoryPresentation
 	
 	protected void textChanged( int offset, char newChar, char[] replacedText )
 	{
-		byte b = 0;
-		if ( isInDataArea( offset ) )
-		{
-		}
-		if ( isInAsciiArea( offset ) )
-		{
-			b = CDebugUtils.charToByte( newChar );
-		}
 		if ( getMemoryBlock() != null )
 		{
-			try
+			int index = -1;
+			if ( isInDataArea( offset ) )
 			{
-				getMemoryBlock().setValue( offset, new byte[] { b } );
+				index = getDataItemIndex( offset );
 			}
-			catch( DebugException e )
+			if ( isInAsciiArea( offset ) )
 			{
-				// ignore
+				index = offset;
+			}
+			if ( index != -1 )
+			{
+				char[] chars = getDataItemChars( index );
+				int itemOffset = getDataItemOffset( index );
+				chars[offset - itemOffset] = newChar;
+				try
+				{
+					getMemoryBlock().setItemValue( index, new String( chars ) );
+				}
+				catch( DebugException e )
+				{
+					// ignore
+				}
 			}
 		}
+	}
+
+	private int getDataItemIndex( int offset )
+	{
+		int row = offset / getRowLength();
+		int pos = offset % getRowLength();
+		for ( int i = 0; i < getNumberOfDataItemsInRow(); ++i )
+		{
+			if ( pos < i * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) )
+				return -1;
+			if ( pos >= i * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) &&
+				 pos < (i * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS)) + getDataItemLength() )
+				return i + (row * getNumberOfDataItemsInRow());
+		}
+		return -1;
+	}
+
+	private int getDataItemOffset( int index )
+	{
+		int row = index / getNumberOfDataItemsInRow();
+		int pos = index % getDataItemLength();
+		return row * getRowLength() + 
+			   getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA +
+			   pos * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS); 
+	}
+
+	private char[] getDataItemChars( int index )
+	{
+		if ( getMemoryBlock() != null )
+		{
+			int rowNumber = index / (getMemoryBlock().getNumberOfColumns() * getMemoryBlock().getWordSize());
+			int pos = index % (getMemoryBlock().getNumberOfColumns() * getMemoryBlock().getWordSize());
+			IFormattedMemoryBlockRow[] rows = getMemoryBlock().getRows();
+			if ( rowNumber < rows.length )
+			{
+				String[] data = rows[rowNumber].getData();
+				if ( pos < data.length )
+				{
+					return data[pos].toCharArray();
+				}
+			}
+		}
+		return new char[0];
 	}
 }

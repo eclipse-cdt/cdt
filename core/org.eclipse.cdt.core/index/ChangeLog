@@ -1,4 +1,7 @@
 2004-03-31 Bogdan Gheorghe
+	Added a check to SourceIndexRequestor.removeMarkers to prevent hang.
+	
+2004-03-31 Bogdan Gheorghe
 	Modified SourceIndexer and SourceIndexerRequestor to place IProblem markers
 	on resources.
 	

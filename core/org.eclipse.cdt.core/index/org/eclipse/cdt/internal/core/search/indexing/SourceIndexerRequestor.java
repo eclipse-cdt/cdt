@@ -538,7 +538,11 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	public void removeMarkers(IFile resource) {
 		 int depth = IResource.DEPTH_INFINITE;
 	   try {
+	   	  IMarker[] markers = resource.findMarkers(ICModelMarker.INDEXER_MARKER,true,depth);
+	   	  if (markers.length > 0){
 	      resource.deleteMarkers(ICModelMarker.INDEXER_MARKER, true, depth); 
+	   	  }
+	   	  
 	   } catch (CoreException e) {
 	      // something went wrong
 	   }

@@ -10,11 +10,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.core.browser.AllTypesCache.IWorkingCopyProvider;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 
 
@@ -26,15 +29,15 @@ import org.eclipse.core.runtime.jobs.Job;
 public class TypeCacheDeltaListener implements IElementChangedListener {
 	
 	private TypeCache fTypeCache;
-	private TypeCacherJob fTypeCacherJob;
+	private IWorkingCopyProvider fWorkingCopyProvider;
 	private Set fPaths= new HashSet(5);
 	private Set fPrefixes= new HashSet(5);
 	private boolean fFlushAll= false;
 	private boolean fCreateBackgroundJob= true;
 	
-	public TypeCacheDeltaListener(TypeCache cache, boolean createBackgroundJob, TypeCacherJob job) {
+	public TypeCacheDeltaListener(TypeCache cache, IWorkingCopyProvider workingCopyProvider, boolean createBackgroundJob) {
 		fTypeCache= cache;
-		fTypeCacherJob= job;
+		fWorkingCopyProvider = workingCopyProvider;
 		fCreateBackgroundJob= createBackgroundJob;
 	}
 	
@@ -53,32 +56,26 @@ public class TypeCacheDeltaListener implements IElementChangedListener {
 		boolean needsFlushing= processDelta(event.getDelta());
 		if (needsFlushing) {
 			// cancel background job
-			if (fTypeCacherJob.getState() == Job.RUNNING) {
-				// wait for job to finish?
-				try {
-					fTypeCacherJob.cancel();
-					fTypeCacherJob.join();
-				} catch (InterruptedException ex) {
-				}
-			}
-			
+			IJobManager jobMgr = Platform.getJobManager();
+			jobMgr.cancel(TypeCacherJob.FAMILY);
+			TypeCacherJob typeCacherJob = new TypeCacherJob(fTypeCache, fWorkingCopyProvider);
 			if (fFlushAll) {
 				// flush the entire cache
-				fTypeCacherJob.setSearchPaths(null);
+				typeCacherJob.setSearchPaths(null);
 				fTypeCache.flushAll();
 			} else {
 				// flush affected files from cache
 				Set searchPaths= new HashSet(10);
 				getPrefixMatches(fPrefixes, searchPaths);
 				searchPaths.addAll(fPaths);
-				fTypeCacherJob.setSearchPaths(searchPaths);
+				typeCacherJob.setSearchPaths(searchPaths);
 				fTypeCache.flush(searchPaths);
 			}
 
 			// restart the background job
 			if (fCreateBackgroundJob) {
-				fTypeCacherJob.setPriority(Job.BUILD);
-				fTypeCacherJob.schedule();
+				typeCacherJob.setPriority(Job.BUILD);
+				typeCacherJob.schedule();
 			}
 		}
 	}

@@ -45,7 +45,7 @@ public class AllTypesCache {
 	
 	private static final int INITIAL_DELAY= 5000;
 	private static TypeCache fgCache;
-	private static TypeCacherJob fgJob;
+	private static IWorkingCopyProvider fWorkingCopyProvider;
 	private static TypeCacheDeltaListener fgDeltaListener;
 	private static IPropertyChangeListener fgPropertyChangeListener;
 	private static boolean fBackgroundJobEnabled;
@@ -81,8 +81,8 @@ public class AllTypesCache {
 		}
 
 		fgCache= new TypeCache();
-		fgJob= new TypeCacherJob(fgCache, provider);
-		fgDeltaListener= new TypeCacheDeltaListener(fgCache, fBackgroundJobEnabled, fgJob);
+		fWorkingCopyProvider = provider;
+		fgDeltaListener= new TypeCacheDeltaListener(fgCache, fWorkingCopyProvider, fBackgroundJobEnabled);
 
 		fgPropertyChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -102,17 +102,14 @@ public class AllTypesCache {
 		// add property change listener
 		prefs.addPropertyChangeListener(fgPropertyChangeListener);
 
+		if (fBackgroundJobEnabled) {
+			TypeCacherJob typeCacherJob = new TypeCacherJob(fgCache, fWorkingCopyProvider);
+			typeCacherJob.setSearchPaths(null);
+			typeCacherJob.setPriority(Job.BUILD);
+			typeCacherJob.schedule(INITIAL_DELAY);
+		}
 		// add delta listener
 		CoreModel.getDefault().addElementChangedListener(fgDeltaListener);
-
-		if (fBackgroundJobEnabled) {
-			// schedule job to run after INITIAL_DELAY
-			if (fgJob.getState() != Job.RUNNING) {
-				fgJob.setSearchPaths(null);
-				fgJob.setPriority(Job.BUILD);
-				fgJob.schedule(INITIAL_DELAY);
-			}
-		}
 	}
 	
 	/**
@@ -122,8 +119,9 @@ public class AllTypesCache {
 		// remove delta listener
 		CoreModel.getDefault().removeElementChangedListener(fgDeltaListener);
 		
-		// terminate background job
-		fgJob.cancel();
+		// terminate all background jobs
+		IJobManager jobMgr = Platform.getJobManager();
+		jobMgr.cancel(TypeCacherJob.FAMILY);
 	}
 	
 	/*
@@ -151,16 +149,23 @@ public class AllTypesCache {
 	public static void getTypes(ICSearchScope scope, int[] kinds, IProgressMonitor monitor, Collection typesFound) {
 		if (!isCacheUpToDate()) {
 			// start job if not already running
-			if (fgJob.getState() != Job.RUNNING) {
+			IJobManager jobMgr = Platform.getJobManager();
+			Job[] jobs = jobMgr.find(TypeCacherJob.FAMILY);
+			if (jobs.length == 0) {
 				// boost priority since action was user-initiated
-				fgJob.setSearchPaths(null);
-				fgJob.setPriority(Job.SHORT);
-				fgJob.schedule();
+				TypeCacherJob typeCacherJob = new TypeCacherJob(fgCache, fWorkingCopyProvider);
+				typeCacherJob.setSearchPaths(null);
+				typeCacherJob.setPriority(Job.SHORT);
+				typeCacherJob.schedule();
 			}
 			
 			// wait for job to finish
+			jobs = jobMgr.find(TypeCacherJob.FAMILY);
 			try {
-				fgJob.join(monitor);
+				for (int i = 0; i < jobs.length; ++i) {
+					TypeCacherJob job = (TypeCacherJob) jobs[i];
+					job.join(monitor);
+				}
 				if (monitor != null)
 					monitor.done();
 			} catch (InterruptedException ex) {

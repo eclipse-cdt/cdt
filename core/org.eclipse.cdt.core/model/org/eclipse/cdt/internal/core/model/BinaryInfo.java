@@ -93,6 +93,14 @@ class BinaryInfo extends CFileInfo {
 		return false;
 	}
 
+	public boolean isCore() {
+		IBinaryObject bin = getBinaryObject();
+		if (bin != null) {
+			return bin.getType() == IBinaryObject.CORE;
+		}
+		return false;
+	}
+
 	public boolean hasDebug() {
 		IBinaryObject bin = getBinaryObject();
 		if (bin != null) {

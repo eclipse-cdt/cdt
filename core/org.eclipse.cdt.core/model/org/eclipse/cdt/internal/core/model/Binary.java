@@ -45,6 +45,13 @@ public class Binary extends CFile implements IBinary {
 		return ((BinaryInfo)getElementInfo()).isSharedLib();
 	}
 
+	/**
+	 * @see org.eclipse.cdt.core.model.IBinary#isCore()
+	 */
+	public boolean isCore() {
+		return ((BinaryInfo)getElementInfo()).isCore();
+	}
+
 	public String [] getNeededSharedLibs() {
 		return ((BinaryInfo)getElementInfo()).getNeededSharedLibs();
 	}

@@ -1,3 +1,11 @@
+2004-01-13 Alain Magloire
+
+	Small fix on in the elf parser, we have to check for 
+	Elf.Symbol.SHN_HIPROC, Elf.Symbol.SHN_LOPROC
+	that the st_shndx field is not is in this range.
+
+	* utils/org/eclipse/cdt/utils/elf/ElfHelper.java
+
 2004-1-5 David Inglis
 	
 	PR 49851

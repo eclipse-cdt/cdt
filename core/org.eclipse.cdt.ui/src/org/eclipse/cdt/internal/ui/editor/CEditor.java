@@ -8,7 +8,6 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -47,8 +46,10 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
@@ -96,6 +97,7 @@ import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -850,9 +852,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		return null;
 	}
 
+	private void configureTabConverter() {
+		if (fTabConverter != null) {
+			IDocumentProvider provider= getDocumentProvider();
+			if (provider instanceof CDocumentProvider) {
+				CDocumentProvider prov= (CDocumentProvider) provider;
+				fTabConverter.setLineTracker(prov.createLineTracker(getEditorInput()));
+			} else {
+				fTabConverter.setLineTracker(new DefaultLineTracker());
+			}
+		}
+	}
+
 	private void startTabConversion() {
 		if (fTabConverter == null) {
 			fTabConverter = new TabConverter();
+			configureTabConverter();
 			fTabConverter.setNumberOfSpacesPerTab(getPreferenceStore().getInt(CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH));
 			AdaptedSourceViewer asv = (AdaptedSourceViewer) getSourceViewer();
 			asv.addTextConverter(fTabConverter);
@@ -877,54 +892,79 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	}
 
 	static class TabConverter implements ITextConverter {
-
-		private String fTabString = ""; //$NON-NLS-1$
-		private int tabRatio = 0;
-
+		private int fTabRatio;
+		private ILineTracker fLineTracker;
+		
+		public TabConverter() {
+		} 
+		
 		public void setNumberOfSpacesPerTab(int ratio) {
-			tabRatio = ratio;
-			StringBuffer buffer = new StringBuffer();
-			for (int i = 0; i < ratio; i++)
-				buffer.append(' ');
-			fTabString = buffer.toString();
+			fTabRatio= ratio;
 		}
-
+		
+		public void setLineTracker(ILineTracker lineTracker) {
+			fLineTracker= lineTracker;
+		}
+		
+		private int insertTabString(StringBuffer buffer, int offsetInLine) {
+			
+			if (fTabRatio == 0)
+				return 0;
+				
+			int remainder= offsetInLine % fTabRatio;
+			remainder= fTabRatio - remainder;
+			for (int i= 0; i < remainder; i++)
+				buffer.append(' ');
+			return remainder;
+		}
+		
 		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
-			String text = command.text;
-			StringBuffer buffer = new StringBuffer();
-			final String TAB = "\t"; //$NON-NLS-1$
-			// create tokens including the tabs
-			StringTokenizer tokens = new StringTokenizer(text, TAB, true);
-
-			int charCount = 0;
-			try {
-				// get offset of insertion less start of line
-				// buffer to determine how many characters
-				// are already on this line and adjust tabs accordingly
-				charCount = command.offset - (document.getLineInformationOfOffset(command.offset).getOffset());
-			} catch (Exception ex) {
-
-			}
-
-			String nextToken = null;
-			int spaces = 0;
-			while (tokens.hasMoreTokens()) {
-				nextToken = tokens.nextToken();
-				if (TAB.equals(nextToken)) {
-					spaces = tabRatio - (charCount % tabRatio);
-
-					for (int i = 0; i < spaces; i++) {
-						buffer.append(' ');
-					}
-
-					charCount += spaces;
-				} else {
-					buffer.append(nextToken);
-					charCount += nextToken.length();
+			String text= command.text;
+			if (text == null)
+				return;
+				
+			int index= text.indexOf('\t');
+			if (index > -1) {
+				
+				StringBuffer buffer= new StringBuffer();
+				
+				fLineTracker.set(command.text);
+				int lines= fLineTracker.getNumberOfLines();
+				
+				try {
+						
+						for (int i= 0; i < lines; i++) {
+							
+							int offset= fLineTracker.getLineOffset(i);
+							int endOffset= offset + fLineTracker.getLineLength(i);
+							String line= text.substring(offset, endOffset);
+							
+							int position= 0;
+							if (i == 0) {
+								IRegion firstLine= document.getLineInformationOfOffset(command.offset);
+								position= command.offset - firstLine.getOffset();	
+							}
+							
+							int length= line.length();
+							for (int j= 0; j < length; j++) {
+								char c= line.charAt(j);
+								if (c == '\t') {
+									position += insertTabString(buffer, position);
+								} else {
+									buffer.append(c);
+									++ position;
+								}
+							}
+							
+						}
+						
+						command.text= buffer.toString();
+						
+				} catch (BadLocationException x) {
 				}
 			}
-			command.text = buffer.toString();
 		}
+
 	}
 
 	/* Source code language to display */

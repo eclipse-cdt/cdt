@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 
 
@@ -17,5 +18,12 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
  */
 public interface ICDIIntegralValue extends ICDIValue {
 
-	// Implement type conversion here
+	public long longValue() throws CDIException;
+
+	public int intValue() throws CDIException;
+	
+	public short shortValue() throws CDIException;
+
+	public int byteValue() throws CDIException;
+
 }

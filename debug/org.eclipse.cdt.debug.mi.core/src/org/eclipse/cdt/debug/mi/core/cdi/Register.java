@@ -19,7 +19,9 @@ import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterValues;
+import org.eclipse.cdt.debug.mi.core.command.MIDataWriteRegisterValues;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterValuesInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIRegisterValue;
 
 /**
@@ -198,7 +200,21 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(String)
 	 */
 	public void setValue(String expression) throws CDIException {
-		throw new CDIException("Register setting is not supported");
+		MISession mi = getCTarget().getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		int[] regnos = new int[]{((RegisterObject)regObject).getId()};
+		String[] values = new String[]{expression};
+		MIDataWriteRegisterValues registers =
+				factory.createMIDataWriteRegisterValues(format, regnos, values);
+		try {
+			mi.postCommand(registers);
+			MIInfo info = registers.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
 	}
 
 	/**

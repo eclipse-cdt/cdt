@@ -5,7 +5,13 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIFormat;
+import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIDataWriteMemory;
 import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIMemory;
 
 /**
@@ -120,7 +126,23 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#setValue(long, byte[])
 	 */
 	public void setValue(long offset, byte[] bytes) throws CDIException {
-		throw new CDIException("Not supported");
+		MISession mi = getCTarget().getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		for (int i = 0; i < bytes.length; i++) {
+			long l = new Byte(bytes[i]).longValue();
+			String value = "0x" + Long.toHexString(l);
+			MIDataWriteMemory mem = factory.createMIDataWriteMemory(offset + i,
+				expression, MIFormat.HEXADECIMAL, 1, value);
+			try {
+				mi.postCommand(mem);
+				MIInfo info = mem.getMIInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
+			} catch (MIException e) {
+				throw new CDIException(e.getMessage());
+			}
+		}
 	}
 
 }

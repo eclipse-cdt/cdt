@@ -184,7 +184,7 @@ public class ResourceToItemsMapper {
 	private static IResource getCorrespondingResource(Object element) {
 		if (element instanceof ICElement) {
 			ICElement elem= (ICElement) element;
-			if (!elem.isReadOnly()) { // only modifieable elements can get error ticks
+			if (elem.exists() && !elem.isReadOnly()) { // only modifieable elements can get error ticks
 				IResource res= elem.getResource();
 				if (res == null) {
 					ITranslationUnit cu= (ITranslationUnit) elem.getAncestor(ICElement.C_UNIT);

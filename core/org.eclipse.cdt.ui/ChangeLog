@@ -1,4 +1,12 @@
 2005-01-07 Alain Magloire
+	Part of Fix 82323.
+	The "New" action was not shown when workspace was empty
+	or no selection.
+	* src/org/eclipse/cdt/internal/ui/cview/MainActionGroup.java
+	And make sure we do not put problem icons on resources that !exist() && isReadOnly().
+	* src/org/eclipse/cdt/internal/ui/util/ResourceToItemsMapper.java
+	
+2005-01-07 Alain Magloire
 	Fix PR 82202
 	* src/org/eclipse/cdt/internal/ui/cview/CViewDropAdapter.java
 	* src/org/eclipse/cdt/internal/ui/editor/DocumentAdapter.java

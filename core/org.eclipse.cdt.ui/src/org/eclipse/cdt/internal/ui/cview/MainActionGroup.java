@@ -78,7 +78,9 @@ public class MainActionGroup extends CViewActionGroup {
 
 	SelectionSearchGroup selectionSearchGroup;
 	RefactoringActionGroup refactoringActionGroup;
-	
+
+    private NewWizardMenu newWizardMenu;
+
 	public MainActionGroup(CView cview) {
 		super(cview);
 	}
@@ -114,6 +116,8 @@ public class MainActionGroup extends CViewActionGroup {
 		gotoGroup = new GotoActionGroup(getCView());
 		buildGroup = new BuildGroup(getCView());
 		refactorGroup = new RefactorActionGroup(getCView());
+
+        newWizardMenu = new NewWizardMenu(getCView().getSite().getWorkbenchWindow());
 
 		openIncludeAction = new OpenIncludeAction(viewer);
 
@@ -167,8 +171,9 @@ public class MainActionGroup extends CViewActionGroup {
 		IStructuredSelection celements = (IStructuredSelection) getCView().getViewer().getSelection();
 		IStructuredSelection resources = SelectionConverter.convertSelectionToResources(celements);
 
+		addNewMenu(menu, resources);
+
 		if (resources.isEmpty()) {
-			new NewWizardMenu(getCView().getSite().getWorkbenchWindow());
 			menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
 			refactoringActionGroup.fillContextMenu(menu);						
 			menu.add(new Separator());
@@ -184,7 +189,6 @@ public class MainActionGroup extends CViewActionGroup {
 			return;
 		}
 
-		addNewMenu(menu, resources);
 		menu.add(new Separator());
 		gotoGroup.fillContextMenu(menu);
 		menu.add(new Separator());
@@ -223,8 +227,8 @@ public class MainActionGroup extends CViewActionGroup {
 
 	void addNewMenu(IMenuManager menu, IStructuredSelection selection) {
 		MenuManager newMenu = new MenuManager(CViewMessages.getString("NewWizardsActionGroup.new")); //$NON-NLS-1$
-		new NewWizardMenu(getCView().getSite().getWorkbenchWindow());
-		menu.add(newMenu);
+        menu.add(newMenu);
+        newMenu.add(newWizardMenu);
 	}
 
 	void addBookMarkMenu(IMenuManager menu, IStructuredSelection selection) {
@@ -339,6 +343,7 @@ public class MainActionGroup extends CViewActionGroup {
 		openProjectGroup.dispose();
 		gotoGroup.dispose();
 		buildGroup.dispose();
+		newWizardMenu.dispose();
 		super.dispose();
 	}
 

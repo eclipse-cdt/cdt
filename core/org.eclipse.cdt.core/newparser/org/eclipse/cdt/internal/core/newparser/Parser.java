@@ -149,21 +149,22 @@ c, quick);
 		callback.simpleDeclarationBegin(LA(1));
 		declSpecifierSeq();
 
-		try {
-			initDeclarator();
-			
-			while (LT(1) == Token.tCOMMA) {
-				consume();
+		if (LT(1) != Token.tSEMI)
+			try {
+				initDeclarator();
 				
-				try {
-					initDeclarator();
-				} catch (Backtrack b) {
-					throw b;
+				while (LT(1) == Token.tCOMMA) {
+					consume();
+					
+					try {
+						initDeclarator();
+					} catch (Backtrack b) {
+						throw b;
+					}
 				}
+			} catch (Backtrack b) {
+				// allowed to be empty
 			}
-		} catch (Backtrack b) {
-			// allowed to be empty
-		}
 		
 		switch (LT(1)) {
 			case Token.tSEMI:

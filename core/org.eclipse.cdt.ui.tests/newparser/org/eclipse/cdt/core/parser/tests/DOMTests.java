@@ -27,12 +27,23 @@ public class DOMTests extends TestCase {
 		return domBuilder.getTranslationUnit();
 	}
 	
+	/**
+	 * Test code: int x;
+	 * Purpose: to test the simple decaration in it's simplest form.
+	 */
 	public void testIntGlobal() throws Exception {
+		// Parse and get the translation Unit
 		TranslationUnit translationUnit = parse("int x;");
+		
+		// Get the simple declaration
 		List declarations = translationUnit.getDeclarations();
 		assertEquals(1, declarations.size());
 		SimpleDeclaration declaration = (SimpleDeclaration)declarations.get(0);
+		
+		// Make sure it is only an int
 		assertEquals(SimpleDeclaration.t_int, declaration.getDeclSpecifierSeq());
+		
+		// Get the declarator and check its name
 		List declarators = declaration.getDeclarators();
 		assertEquals(1, declarators.size());
 		Declarator declarator = (Declarator)declarators.get(0);
@@ -40,17 +51,30 @@ public class DOMTests extends TestCase {
 		assertEquals("x", name.getName());
 	}
 	
+	/**
+	 * Test code: class A { } a;
+	 * Purpose: tests the use of a classSpecifier in 
+	 */
 	public void testEmptyClass() throws Exception {
+		// Parse and get the translation unit
 		Writer code = new StringWriter();
 		code.write("class A { } a;");
 		TranslationUnit translationUnit = parse(code.toString());
+		
+		// Get the simple declaration
 		List declarations = translationUnit.getDeclarations();
 		assertEquals(1, declarations.size());
 		SimpleDeclaration declaration = (SimpleDeclaration)declarations.get(0);
+		
+		// Make sure it is a type specifier
 		assertEquals(0, declaration.getDeclSpecifierSeq());
+		
+		// Get the class specifier and check its name
 		ClassSpecifier classSpecifier = (ClassSpecifier)declaration.getTypeSpecifier();
 		Name className = classSpecifier.getName();
 		assertEquals("A", className.getName());
+		
+		// Get the declarator and check it's name
 		List declarators = declaration.getDeclarators();
 		assertEquals(1, declarators.size());
 		Declarator declarator = (Declarator)declarators.get(0);
@@ -58,4 +82,46 @@ public class DOMTests extends TestCase {
 		assertEquals("a", name.getName());
 	}
 
+	/**
+	 * Test code: class A { public: int x; };
+	 * Purpose: tests a declaration in a class scope.
+	 */
+	public void testSimpleClassMember() throws Exception {
+		// Parse and get the translaton unit
+		Writer code = new StringWriter();
+		code.write("class A { public: int x; };");
+		TranslationUnit translationUnit = parse(code.toString());
+		
+		// Get the declaration
+		List declarations = translationUnit.getDeclarations();
+		assertEquals(1, declarations.size());
+		SimpleDeclaration declaration = (SimpleDeclaration)declarations.get(0);
+
+		// Make sure there is no declarator
+		assertEquals(0, declaration.getDeclarators().size());
+
+		// Make sure it's a type specifier
+		assertEquals(0, declaration.getDeclSpecifierSeq());
+		
+		// Get the class specifier and check its name
+		ClassSpecifier classSpecifier = (ClassSpecifier)declaration.getTypeSpecifier();
+		Name className = classSpecifier.getName();
+		assertEquals("A", className.getName());
+		
+		// Get the member declaration
+		declarations = classSpecifier.getDeclarations();
+		assertEquals(1, declarations.size());
+		declaration = (SimpleDeclaration)declarations.get(0);
+		
+		// Make sure it's an int
+		assertEquals(SimpleDeclaration.t_int, declaration.getDeclSpecifierSeq());
+		
+		// Get the declarator and check it's name
+		List declarators = declaration.getDeclarators();
+		assertEquals(1, declarators.size());
+		Declarator declarator = (Declarator)declarators.get(0);
+		Name name = declarator.getName();
+		assertEquals("x", name.getName());
+	}
+	
 }

@@ -2,6 +2,7 @@ package org.eclipse.cdt.internal.core.dom;
 
 import java.util.Stack;
 
+import org.eclipse.cdt.core.dom.IScope;
 import org.eclipse.cdt.internal.core.newparser.IParserCallback;
 import org.eclipse.cdt.internal.core.newparser.Token;
 
@@ -219,7 +220,7 @@ public class DOMBuilder implements IParserCallback {
 	 */
 	public void simpleDeclarationBegin(Token firstToken) {
 		SimpleDeclaration decl = new SimpleDeclaration();
-		((TranslationUnit)stack.peek()).addDeclaration(decl);
+		((IScope)stack.peek()).addDeclaration(decl);
 		stack.push(decl);
 	}
 

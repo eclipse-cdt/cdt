@@ -3,7 +3,9 @@ package org.eclipse.cdt.internal.core.dom;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ClassSpecifier extends TypeSpecifier {
+import org.eclipse.cdt.core.dom.IScope;
+
+public class ClassSpecifier extends TypeSpecifier implements IScope {
 
 	public static final int t_class = 0;
 	public static final int t_struct = 1;
@@ -27,9 +29,13 @@ public class ClassSpecifier extends TypeSpecifier {
 	}
 	public List getBaseSpecifiers() { return baseSpecifiers; }
 	
-	private List memberDeclarations = new LinkedList();
-	public void addMemberDeclaration(MemberDeclaration memberDeclaration) {
-		memberDeclarations.add(memberDeclaration);
+	private List declarations = new LinkedList();
+	
+	public void addDeclaration(Declaration declaration) {
+		declarations.add(declaration);
 	}
-	public List getMemberDeclarations() { return memberDeclarations; }
+
+	public List getDeclarations() {
+		return declarations;
+	}
 }

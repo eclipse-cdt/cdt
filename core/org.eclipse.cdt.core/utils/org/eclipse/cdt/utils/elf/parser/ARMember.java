@@ -27,7 +27,7 @@ public class ARMember extends BinaryObject {
 	AR.ARHeader header;
 
 	public ARMember(IPath p, AR.ARHeader h) throws IOException {
-		super(p);
+		super(p, new ElfHelper(h.getElf()));
 		header = h;
 	}
 

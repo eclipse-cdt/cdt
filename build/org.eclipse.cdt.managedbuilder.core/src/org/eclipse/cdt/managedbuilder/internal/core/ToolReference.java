@@ -444,9 +444,9 @@ public class ToolReference implements IToolReference {
 					break;
 				
 				case IOption.ENUMERATED :
-					String enum = option.getEnumCommand(option.getSelectedEnum());
-					if (enum.length() > 0) {
-						buf.append(enum + WHITE_SPACE);
+					String enumVal = option.getEnumCommand(option.getSelectedEnum());
+					if (enumVal.length() > 0) {
+						buf.append(enumVal + WHITE_SPACE);
 					}
 					break;
 				

@@ -1340,9 +1340,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				break;
 			
 			case IOption.ENUMERATED :
-				String enum = option.getEnumCommand(option.getSelectedEnum());
-				if (enum.length() > 0) {
-					sb.append(enum);
+				String enumVal = option.getEnumCommand(option.getSelectedEnum());
+				if (enumVal.length() > 0) {
+					sb.append(enumVal);
 				}
 				break;
 			

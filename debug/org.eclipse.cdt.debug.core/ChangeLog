@@ -1,3 +1,7 @@
+2004-11-22 Mikhail Khodjaiants
+	Check if the pointer value is not null before pass it to the address factory.
+	* CValue.java
+ 
 2004-11-18 Mikhail Khodjaiants
 	Worker threads can try to evaluate expressions on the stack frames that 
 	have already been disposed. A flag is added to identify that the stack 

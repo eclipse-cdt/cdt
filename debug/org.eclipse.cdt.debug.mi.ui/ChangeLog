@@ -1,3 +1,20 @@
+2003-09-11 Mikhail Khodjaiants
+	Added the 'org.eclipse.cdt.debug.mi.internal.ui.dialogfields' package.
+	* CheckedListDialogField.java: new
+	* ComboDialogField.java: new
+	* DialogField.java: new
+	* IDialogFieldListener.java: new
+	* IListAdapter.java: new
+	* IStringButtonAdapter.java: new
+	* LayoutUtil.java: new
+	* ListDialogField.java: new
+	* SelectionButtonDialogField.java: new
+	* SelectionButtonDialogFieldGroup.java: new
+	* Separator.java: new
+	* StringButtonDialogField.java: new
+	* StringButtonStatusDialogField.java: new
+	* StringDialogField.java: new
+
 2003-09-09 Mikhail Khodjaiants
 	New UI for the 'Debugger' page of launch configuration.
 	* CygwinDebuggerPage.java

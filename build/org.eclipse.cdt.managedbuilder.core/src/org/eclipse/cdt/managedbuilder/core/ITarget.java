@@ -149,6 +149,14 @@ public interface ITarget extends IBuildObject {
 	 */
 	public ITool[] getTools();
 
+	/**
+	 * Answers the tool in the receiver with the ID specified in the argument, 
+	 * or <code>null</code> 
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public ITool getTool(String id);
 	
 	/**
 	 * Answers true if the receiver has a make command that differs from its 

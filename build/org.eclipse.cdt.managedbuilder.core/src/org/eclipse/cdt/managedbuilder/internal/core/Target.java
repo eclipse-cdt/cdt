@@ -475,9 +475,8 @@ public class Target extends BuildObject implements ITarget {
 			|| (makeArguments != null && !makeArguments.equals(parent.getMakeArguments())));
 	}
 
-	/**
-	 * @param id
-	 * @return ITool
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTool(java.lang.String)
 	 */
 	public ITool getTool(String id) {
 		ITool result = null;

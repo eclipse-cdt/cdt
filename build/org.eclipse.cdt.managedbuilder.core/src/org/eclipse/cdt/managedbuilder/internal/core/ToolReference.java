@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.managedbuilder.core.AbstractToolReference;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
@@ -26,11 +26,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class ToolReference implements ITool {
+public class ToolReference extends AbstractToolReference {
 	private String command;
 	private List optionReferences;
 	private IBuildObject owner;
-	private ITool parent;
 	
 	/**
 	 * Create a new tool reference based on information contained in 
@@ -44,11 +43,15 @@ public class ToolReference implements ITool {
 		this.owner = owner;
 		
 		if (owner instanceof Configuration) {
-			Target parentTarget = (Target) ((Configuration)owner).getTarget();
-			parent = ((Target)parentTarget.getParent()).getTool(element.getAttribute(ID));
+			if (parent == null) {
+				Target parentTarget = (Target) ((Configuration)owner).getTarget();
+				parent = ((Target)parentTarget.getParent()).getTool(element.getAttribute(ID));
+			}
 			((Configuration)owner).addToolReference(this);
 		} else if (owner instanceof Target) {
-			parent = ((Target)((Target)owner).getParent()).getTool(element.getAttribute(ID));
+   			if (parent == null) {
+   				parent = ((Target)((Target)owner).getParent()).getTool(element.getAttribute(ID));
+   			}
 			((Target)owner).addToolReference(this);
 		}
 
@@ -99,8 +102,8 @@ public class ToolReference implements ITool {
 	 * @param parent The <code>ITool</code>tool the reference will be based on.
 	 */
 	public ToolReference(BuildObject owner, ITool parent) {
+		super(parent);
 		this.owner = owner;
-		this.parent = parent;
 		
 		if (owner instanceof Configuration) {
 			((Configuration)owner).addToolReference(this);
@@ -118,14 +121,6 @@ public class ToolReference implements ITool {
 		getOptionReferenceList().add(optionRef);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#handlesFileType(java.lang.String)
-	 */
-	public boolean buildsFileType(String extension) {
-		// The tool reference does not override this value
-		return parent.buildsFileType(extension);
-	}
-
 	/**
 	 * Answers a reference to the option. If the reference does not exist, 
 	 * a new reference is created. 
@@ -140,15 +135,6 @@ public class ToolReference implements ITool {
 			ref = new OptionReference(this, option); 
 		}
 		return ref;
-	}
-	
-	/**
-	 * Answers the tool the receiver is a reference to.
-	 * 
-	 * @return
-	 */
-	public ITool getTool() {
-		return parent;
 	}
 	
 	/* (non-Javadoc)
@@ -240,58 +226,11 @@ public class ToolReference implements ITool {
 		return options;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputFlag()
-	 */
-	public String getOutputFlag() {
-		// The tool reference does not override this value
-		return parent.getOutputFlag();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputPrefix()
-	 */
-	public String getOutputPrefix() {
-		// The tool reference does not override this value
-		return parent.getOutputPrefix();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getTopOptionCategory()
-	 */
-	public IOptionCategory getTopOptionCategory() {
-		return parent.getTopOptionCategory();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isHeaderFile(java.lang.String)
-	 */
-	public boolean isHeaderFile(String ext) {
-		// The tool reference does not override this value
-		return parent.isHeaderFile(ext);
-	}
-
 	protected List getAllOptionRefs() {
 		// First get all the option references this tool reference contains
 		return ((Configuration)owner).getOptionReferences(parent);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getId()
-	 */
-	public String getId() {
-		// The tool reference does not override this value
-		return parent.getId();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getName()
-	 */
-	public String getName() {
-		// The tool reference does not override this value
-		return parent.getName();
-	}
-
 	/* (non-javadoc)
 	 * Answers an option reference that overrides the option, or <code>null</code>
 	 * 
@@ -318,13 +257,6 @@ public class ToolReference implements ITool {
 		return optionReferences;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getNatureFilter()
-	 */
-	public int getNatureFilter() {
-		// The tool reference does not override this value
-		return parent.getNatureFilter();
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
@@ -332,14 +264,6 @@ public class ToolReference implements ITool {
 	public IOption getOption(String id) {
 		//TODO Implement this
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutput(java.lang.String)
-	 */
-	public String getOutputExtension(String inputExtension) {
-		// The tool reference does not override this value
-		return parent.getOutputExtension(inputExtension);
 	}
 
 	/**
@@ -354,39 +278,6 @@ public class ToolReference implements ITool {
 			return ((IConfiguration)owner).equals(config);
 		}
 		return false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
-	 */
-	public boolean producesFileType(String outputExtension) {
-		// The tool reference does not override this value
-		return parent.producesFileType(outputExtension);
-	}
-
-	/**
-	 * Answers <code>true</code> if the reference is a reference to the 
-	 * tool specified in the argument.
-	 * 
-	 * @param target the tool that should be tested
-	 * @return boolean
-	 */
-	public boolean references(ITool target) {
-		if (equals(target)) {
-			// we are the target
-			return true;
-		}
-		else if (parent instanceof ToolReference) {
-			// check the reference we are overriding
-			return ((ToolReference)parent).references(target);
-		}
-		else if (target instanceof ToolReference) {
-			return parent.equals(((ToolReference)target).parent); 
-		}
-		else {
-			// the real reference
-			return parent.equals(target);
-		}
 	}
 	
 	/**

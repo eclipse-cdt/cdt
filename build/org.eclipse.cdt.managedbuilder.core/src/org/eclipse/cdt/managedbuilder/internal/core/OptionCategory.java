@@ -17,6 +17,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
@@ -95,8 +96,8 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 			// TODO don't like this much
 			ITool[] tools = configuration.getTools();
 			for (int i = 0; i < tools.length; ++i) {
-				if (tools[i] instanceof ToolReference) {
-					if (((ToolReference)tools[i]).references(tool)) {
+				if (tools[i] instanceof IToolReference) {
+					if (((IToolReference)tools[i]).references(tool)) {
 						tool = tools[i];
 						break;
 					}

@@ -1,3 +1,13 @@
+2004-03-08 Sean Evoy
+	Committing the changes needed by our partners to better support a variety 
+	of tool references. A class hierarchy of tool references has been introduced. 
+	The base class is an abstract tool reference. Unqualified tool references, 
+	like those used in the manifest or project files will be continue to be 
+	treated as tool references. However, we now have some flexibility for the 
+	future should a more refined type of tool reference be needed; for example, 
+	a dynamic tool that reads a configuration file to determine what environment 
+	it is targetting.
+
 2004-03-05 Sean Evoy
 	Fix for bug 53856: "Option reference not reporting built-in includes 
 	paths to scanner"

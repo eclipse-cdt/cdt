@@ -583,10 +583,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				
 				// Remove all markers for this project
 				removeAllMarkers(currentProject);
-				for (int i = 0; i < referencedProjects.length; i++) {
-					IProject project = referencedProjects[i];
-					removeAllMarkers(project);
-				} 
 
 				// Get the arguments to be passed to make from build model
 				ArrayList makeArgs = new ArrayList();

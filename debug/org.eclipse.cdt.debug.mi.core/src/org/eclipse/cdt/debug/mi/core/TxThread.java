@@ -20,10 +20,12 @@ import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 public class TxThread extends Thread {
 
 	MISession session;
+	CLIProcessor cli;
 
 	public TxThread(MISession s) {
 		super("MI TX Thread");
 		session = s;
+		cli = new CLIProcessor(session);
 	}
 
 	public void run () {
@@ -54,7 +56,7 @@ public class TxThread extends Thread {
 					
 					// May need to fire event.
 					if (cmd instanceof CLICommand) {
-						processCLICommand((CLICommand)cmd);
+						cli.process((CLICommand)cmd);
 					}
 				
 					// shove in the pipe

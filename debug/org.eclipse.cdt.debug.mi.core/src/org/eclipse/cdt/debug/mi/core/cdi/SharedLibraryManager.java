@@ -37,27 +37,17 @@ import org.eclipse.cdt.debug.mi.core.output.MIShared;
 public class SharedLibraryManager extends SessionObject implements ICDISharedLibraryManager {
 
 	List sharedList;
-	List unloadedList;
 	boolean autoupdate;
 
 	public SharedLibraryManager (Session session) {
 		super(session);
 		sharedList = new ArrayList(1);
-		unloadedList = new ArrayList(1);
 		autoupdate = true;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#update()
-	 */
-	public void update() throws CDIException {
-		Session session = (Session)getSession();
-		ICDIConfiguration conf = session.getConfiguration();
-		if (!conf.supportsSharedLibrary()) {
-			return; // Bail out early;
-		}
-
+	MIShared[] getMIShareds() throws CDIException {
 		MIShared[] miLibs = new MIShared[0];
+		Session session = (Session)getSession();
 		CommandFactory factory = session.getMISession().getCommandFactory();
 		MIInfoSharedLibrary infoShared = factory.createMIInfoSharedLibrary();
 		try {
@@ -70,13 +60,27 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
+		return miLibs;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#update()
+	 */
+	public void update() throws CDIException {
+		Session session = (Session)getSession();
+		ICDIConfiguration conf = session.getConfiguration();
+		if (!conf.supportsSharedLibrary()) {
+			return; // Bail out early;
+		}
+
+		MIShared[] miLibs = getMIShareds();
 		List eventList = new ArrayList(miLibs.length);
 		for (int i = 0; i < miLibs.length; i++) {
-			if (containsSharedLib(miLibs[i])) {
-				if (hasSharedLibChanged(miLibs[i])) {
+			ICDISharedLibrary sharedlib = getSharedLibrary(miLibs[i].getName());
+			if (sharedlib != null) {
+				if (hasSharedLibChanged(sharedlib, miLibs[i])) {
 					// Fire ChangedEvent
-					SharedLibrary sharedlib = (SharedLibrary)getSharedLibrary(miLibs[i].getName());
-					sharedlib.setMIShared(miLibs[i]);
+					((SharedLibrary)sharedlib).setMIShared(miLibs[i]);
 					eventList.add(new MISharedLibChangedEvent(miLibs[i].getName())); 
 				}
 			} else {
@@ -97,8 +101,6 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			}
 			if (!found) {
 				// Fire destroyed Events.
-				sharedList.remove(oldlibs[i]);
-				unloadedList.add(oldlibs[i]);
 				eventList.add(new MISharedLibUnloadedEvent(oldlibs[i].getFileName())); 
 			}
 		}
@@ -107,45 +109,15 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 		mi.fireEvents(events);
 	}
 
-	public boolean containsSharedLib(MIShared miLib) {
-		ICDISharedLibrary[] libs = (ICDISharedLibrary[])sharedList.toArray(new ICDISharedLibrary[0]);
-		for (int i = 0; i < libs.length; i++) {
-			if (miLib.getName().equals(libs[i].getFileName())) {
-					return true;
-			}
-		}
-		return false;
+	public boolean hasSharedLibChanged(ICDISharedLibrary lib, MIShared miLib) {
+		return !miLib.getName().equals(lib.getFileName()) ||
+			miLib.getFrom() != lib.getStartAddress() ||
+			miLib.getTo() != lib.getEndAddress() ||
+			miLib.isRead() != lib.areSymbolsLoaded();
 	}
 
-	public boolean hasSharedLibChanged(MIShared miLib) {
-		ICDISharedLibrary[] libs = (ICDISharedLibrary[])sharedList.toArray(new ICDISharedLibrary[0]);
-		for (int i = 0; i < libs.length; i++) {
-			if (miLib.getName().equals(libs[i].getFileName())) {
-				return miLib.getFrom() != libs[i].getStartAddress() ||
-					miLib.getTo() != libs[i].getEndAddress() ||
-					miLib.isRead() != libs[i].areSymbolsLoaded();
-			}
-		}
-		return false;
-	}
-
-	public ICDISharedLibrary getUnloadedLibrary(String name) {
-		ICDISharedLibrary[] libs = (ICDISharedLibrary[])unloadedList.toArray(new ICDISharedLibrary[0]);
-		for (int i = 0; i < libs.length; i++) {
-			if (name.equals(libs[i].getFileName())) {
-					return libs[i];
-			}
-		}
-		return null;
-	}
-
-	public void removeFromUnloadedList(String name) {
-		ICDISharedLibrary[] libs = (ICDISharedLibrary[])unloadedList.toArray(new ICDISharedLibrary[0]);
-		for (int i = 0; i < libs.length; i++) {
-			if (name.equals(libs[i].getFileName())) {
-				unloadedList.remove(libs[i]);
-			}
-		}
+	public void deleteSharedLibrary(ICDISharedLibrary lib) {
+		sharedList.remove(lib);
 	}
 
 	public ICDISharedLibrary getSharedLibrary(String name) {
@@ -211,7 +183,6 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#getSharedLibraries()
 	 */
 	public ICDISharedLibrary[] getSharedLibraries() throws CDIException {
-		update();
 		return (ICDISharedLibrary[])sharedList.toArray(new ICDISharedLibrary[0]);
 	}
 
@@ -239,7 +210,6 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#loadSymbols(ICDISharedLibrary[])
 	 */
 	public void loadSymbols(ICDISharedLibrary[] libs) throws CDIException {
-		// FIXME: use the command factory for this so we can overload.
 		Session session = (Session)getSession();
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -257,8 +227,8 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			}
+			mi.fireEvent(new MISharedLibChangedEvent(libs[i].getFileName()));
 		}
-		update();
 	}
 
 	/**

@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 
 public class TextManipulationMessages {
 
-	private static final String BUNDLE_NAME= "org.eclipse.jdt.internal.corext.textmanipulation.Messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME= "org.eclipse.cdt.internal.corext.textmanipulation.Messages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE= ResourceBundle.getBundle(BUNDLE_NAME);
 

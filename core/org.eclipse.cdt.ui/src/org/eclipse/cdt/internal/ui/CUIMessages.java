@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 
 public class CUIMessages {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.jdt.internal.ui.JavaUIMessages";//$NON-NLS-1$
+	private static final String RESOURCE_BUNDLE= "org.eclipse.cdt.internal.ui.CUIMessages";//$NON-NLS-1$
 
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 

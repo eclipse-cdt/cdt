@@ -427,49 +427,42 @@ public class GDBTypeParser {
 		System.out.println("char **argv"); //$NON-NLS-1$
 		parser.parse("char **argv"); //$NON-NLS-1$
 		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
-		//System.out.println(parser.getGDBType().toString());
 		System.out.println(parser.getGDBType().verbose());
 		System.out.println();
 
 		System.out.println("int (*daytab)[13]"); //$NON-NLS-1$
 		parser.parse("int (*daytab)[13]"); //$NON-NLS-1$
 		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
-		//System.out.println(parser.getGDBType().toString());
 		System.out.println(parser.getGDBType().verbose());
 		System.out.println();
 
 		System.out.println("int *daytab[13]"); //$NON-NLS-1$
 		parser.parse("int *daytab[13]"); //$NON-NLS-1$
 		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
-		//System.out.println(parser.getGDBType().toString());
 		System.out.println(parser.getGDBType().verbose());
 		System.out.println();
 
 		System.out.println("void *comp()"); //$NON-NLS-1$
 		parser.parse("void *comp()"); //$NON-NLS-1$
 		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
-		//System.out.println(parser.getGDBType().toString());
 		System.out.println(parser.getGDBType().verbose());
 		System.out.println();
 
 		System.out.println("void (*comp)()"); //$NON-NLS-1$
 		parser.parse("void (*comp)()"); //$NON-NLS-1$
 		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
-		//System.out.println(parser.getGDBType().toString());
 		System.out.println(parser.getGDBType().verbose());
 		System.out.println();
 
 		System.out.println("int (*func[15])()"); //$NON-NLS-1$
 		parser.parse("int (*func[15])()"); //$NON-NLS-1$
 		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
-		//System.out.println(parser.getGDBType().toString());
 		System.out.println(parser.getGDBType().verbose());
 		System.out.println();
 
 		System.out.println("char (*(*x())[])()"); //$NON-NLS-1$
 		parser.parse("char (*(*x())[])()"); //$NON-NLS-1$
 		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
-		//System.out.println(parser.getGDBType().toString());
 		System.out.println(parser.getGDBType().verbose());
 		System.out.println();
 
@@ -482,7 +475,6 @@ public class GDBTypeParser {
 		System.out.println("char *[5]"); //$NON-NLS-1$
 		parser.parse("char *[5]"); //$NON-NLS-1$
 		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
-		//System.out.println(parser.getGDBType().toString());
 		System.out.println(parser.getGDBType().verbose());
 		System.out.println();
 

@@ -319,6 +319,17 @@ public class CModelManager implements IResourceChangeListener {
 				for (int i = 0; i < children.length; i++) {
 					releaseCElement(children[i]);
 				}
+				// Make sure we destroy the BinaryContainer and ArchiveContainer
+				// Since they are not part of the children.
+				if (info instanceof CProjectInfo) {
+					CProjectInfo pinfo = (CProjectInfo) info;
+					if (pinfo.vBin != null) {
+						releaseCElement(pinfo.vBin);
+					}
+					if (pinfo.vLib != null) {
+						releaseCElement(pinfo.vLib);
+					}
+				}
 			}
 		}
 

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.ui.ConsoleEvent;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsole;

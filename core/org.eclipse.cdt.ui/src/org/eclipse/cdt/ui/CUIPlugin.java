@@ -72,7 +72,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.cdt.ui"; //$NON-NLS-1$
 	public static final String PLUGIN_CORE_ID = "org.eclipse.cdt.core"; //$NON-NLS-1$
 	public static final String EDITOR_ID = PLUGIN_ID + ".editor.CEditor"; //$NON-NLS-1$
-	public static final String CONSOLE_ID = PLUGIN_ID + ".BuildConsoleView"; //$NON-NLS-1$
 	public static final String CVIEW_ID = PLUGIN_ID + ".CView"; //$NON-NLS-1$
 	public static final String C_PROBLEMMARKER = PLUGIN_CORE_ID + ".problem"; //$NON-NLS-1$
 

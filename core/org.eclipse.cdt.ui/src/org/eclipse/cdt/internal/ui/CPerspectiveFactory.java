@@ -10,6 +10,7 @@ import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.console.IConsoleConstants;
 
 public class CPerspectiveFactory implements IPerspectiveFactory {
 		
@@ -27,13 +28,13 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
  		String editorArea = layout.getEditorArea();
 		
 		IFolderLayout folder1= layout.createFolder("topLeft", IPageLayout.LEFT, (float)0.25, editorArea); //$NON-NLS-1$
+		folder1.addView(CUIPlugin.CVIEW_ID);
 		folder1.addView(IPageLayout.ID_RES_NAV);
 		folder1.addPlaceholder(IPageLayout.ID_BOOKMARKS);
-		folder1.addView(CUIPlugin.CVIEW_ID);
 		
 		IFolderLayout folder2= layout.createFolder("bottom", IPageLayout.BOTTOM, (float)0.75, editorArea); //$NON-NLS-1$
 		folder2.addView(IPageLayout.ID_TASK_LIST);
-		folder2.addView(CUIPlugin.CONSOLE_ID);
+		folder2.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		folder2.addView(IPageLayout.ID_PROP_SHEET);
 		
 		IFolderLayout folder3= layout.createFolder("topRight", IPageLayout.RIGHT,(float)0.75, editorArea); //$NON-NLS-1$
@@ -43,7 +44,7 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		layout.addActionSet(CUIPlugin.FOLDER_ACTION_SET_ID);
 		
 		// views - build console
-		layout.addShowViewShortcut(CUIPlugin.CONSOLE_ID);
+		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
 		
 		// views - searching
 		layout.addShowViewShortcut(SearchUI.SEARCH_RESULT_VIEW_ID);

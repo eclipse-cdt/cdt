@@ -30,5 +30,11 @@ public class MIPlugin extends Plugin {
 	public static MIPlugin getDefault() {
 		return plugin;
 	}
-}
 
+	/**
+	 * Create a MI Session.
+	 */
+	public MISession createSession(Process proc) {
+		return new MISession(proc);
+	}
+}

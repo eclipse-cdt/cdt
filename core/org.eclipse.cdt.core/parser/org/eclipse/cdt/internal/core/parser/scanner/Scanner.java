@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -465,6 +466,18 @@ public class Scanner implements IScanner {
 		return currentToken;
 	}
 
+	protected IToken newConstantToken(int t) {
+		setCurrentToken(
+				new Token(
+						t, 
+						scannerData.getContextStack().getCurrentContext(),
+						scannerData.getContextStack().getCurrentLineNumber()
+						)
+				);
+		return currentToken;
+	}
+
+
 	protected IToken newToken(int t, String i) {
 		setCurrentToken(new Token(t, i));
 		return currentToken;
@@ -494,79 +507,59 @@ public class Scanner implements IScanner {
 	}
 
 	protected void handleInclusion(String fileName, boolean useIncludePaths, int beginOffset, int startLine, int nameOffset, int nameLine, int endOffset, int endLine ) throws ScannerException {
-
-		FileReader inclusionReader = null;
-		String newPath = null;
+// if useIncludePaths is true then 
+//     #include <foo.h>
+//  else
+//     #include "foo.h"
 		
-		totalLoop:	for( int i = 0; i < 2; ++i )
-		{
-			if( useIncludePaths ) // search include paths for this file
-			{
-				// iterate through the include paths 
-				Iterator iter = scannerData.getIncludePathNames().iterator();
+		Reader inclusionReader = null;
+		File includeFile = null;
 		
-				while (iter.hasNext()) {
-		
-					String path = (String)iter.next();
-					File pathFile = new File(path);
-					//TODO assert pathFile.isDirectory();				
-					StringBuffer buffer = new StringBuffer( pathFile.getPath() );
-					buffer.append( File.separatorChar );
-					buffer.append( fileName );
-					newPath = buffer.toString();
-					//TODO remove ".." and "." segments
-					File includeFile = new File(newPath);
-					if (includeFile.exists() && includeFile.isFile()) {
-						try {
-							inclusionReader = new FileReader(includeFile);
-							break totalLoop;
-						} catch (FileNotFoundException fnf) {
-							continue;
-						}
-					}
-				}
-				
-				if (inclusionReader == null )
-					handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, fileName, beginOffset, false, true );
-	
-			}
-			else // local inclusion
-			{
-				String currentFilename = scannerData.getContextStack().getCurrentContext().getFilename(); 
-				File currentIncludeFile = new File( currentFilename );
-				String parentDirectory = currentIncludeFile.getParentFile().getAbsolutePath();
-				currentIncludeFile = null; 
-				
-				StringBuffer buffer = new StringBuffer( parentDirectory );
-				buffer.append( File.separatorChar );
-				buffer.append( fileName );
-				newPath = buffer.toString();
-				//TODO remove ".." and "." segments 
-				File includeFile = new File( newPath );
-				if (includeFile.exists() && includeFile.isFile()) {
-					try {
-						inclusionReader = new FileReader(includeFile);
-						break totalLoop;
-					} catch (FileNotFoundException fnf) {
-						useIncludePaths = true;
-						continue totalLoop;
-					}
-				}
-				else
-				{
-					useIncludePaths = true;
-					continue totalLoop;
+		if( !useIncludePaths ) {  // local inclusion is checked first 			
+			String currentFilename = scannerData.getContextStack().getCurrentContext().getFilename(); 
+			File currentIncludeFile = new File( currentFilename );
+			String parentDirectory = currentIncludeFile.getParentFile().getAbsolutePath();
+			currentIncludeFile = null; 
+			
+			//TODO remove ".." and "." segments 
+			includeFile = new File( parentDirectory, fileName );
+			if (includeFile.exists() && includeFile.isFile()) {
+				try {
+					inclusionReader = new BufferedReader(new FileReader(includeFile));
+				} catch (FileNotFoundException fnf) {
+					inclusionReader = null;
 				}
 			}
 		}
-		if (inclusionReader != null) {
+			
+		// search include paths for this file
+		// iterate through the include paths 
+		Iterator iter = scannerData.getIncludePathNames().iterator();
+
+		while ((inclusionReader == null) && iter.hasNext()) {
+			String path = (String)iter.next();
+			//TODO remove ".." and "." segments
+			includeFile = new File (path, fileName);
+			if (includeFile.exists() && includeFile.isFile()) {
+				try {
+					inclusionReader = new BufferedReader(new FileReader(includeFile));
+				} catch (FileNotFoundException fnf) {
+					inclusionReader = null;
+				}
+			}
+		}
+		
+		if (inclusionReader == null )
+			handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, fileName, beginOffset, false, true );
+
+		else {
 			IASTInclusion inclusion = null;
             try
             {
                 inclusion =
                     scannerData.getASTFactory().createInclusion(
                         fileName,
-                        newPath,
+                        includeFile.getPath(),
                         !useIncludePaths,
                         beginOffset,
                         startLine,
@@ -580,7 +573,7 @@ public class Scanner implements IScanner {
 			
 			try
 			{
-				scannerData.getContextStack().updateContext(inclusionReader, newPath, ScannerContext.ContextKind.INCLUSION, inclusion, scannerData.getClientRequestor() );
+				scannerData.getContextStack().updateContext(inclusionReader, includeFile.getPath(), ScannerContext.ContextKind.INCLUSION, inclusion, scannerData.getClientRequestor() );
 			}
 			catch (ContextException e1)
 			{
@@ -655,8 +648,7 @@ public class Scanner implements IScanner {
 			return c;
 
         c = accountForUndo(c);
-		
-		int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
+    	int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
 		
 		if (enableTrigraphReplacement && (!insideString || enableTrigraphReplacementInStrings)) {
 			// Trigraph processing
@@ -719,24 +711,7 @@ public class Scanner implements IScanner {
 		
 		if (!insideString)
 		{
-			if (c == '\\') {
-				c = getChar(false);
-				if (c == '\r') {
-					c = getChar(false);
-					if (c == '\n')
-					{
-						c = getChar(false);
-					}
-				} else if (c == '\n')
-				{
-					c = getChar(false);
- 
-				} else // '\' is not the last character on the line
-				{
-					ungetChar(c);
-					c = '\\';
-				}
-			} else if (enableDigraphReplacement) {
+			if (enableDigraphReplacement) {
 				enableDigraphReplacement = false;
 				// Digraph processing
 				if (c == '<') {
@@ -779,11 +754,8 @@ public class Scanner implements IScanner {
 				enableDigraphReplacement = true;
 			}
 		}
-			
 		return c;
 	}
-
-
 
     protected int accountForUndo(int c)
     {
@@ -856,14 +828,578 @@ public class Scanner implements IScanner {
 	}
 
 	public IToken nextToken() throws ScannerException, EndOfFileException {
-		return nextToken( true, false ); 
+		return nextToken( true ); 
 	}
+	
+	public boolean pasteIntoInputStream(StringBuffer buff) throws ScannerException, EndOfFileException
+	{
+		// we have found ## in the input stream -- so save the results
+		if( lookAheadForTokenPasting() )
+		{
+			if( storageBuffer == null )
+				storageBuffer = buff;
+			else
+				storageBuffer.append( buff.toString() ); 
+			return true;
+		}
 
-	public IToken nextToken(boolean pasting) throws ScannerException, EndOfFileException {
-		return nextToken( pasting, false ); 
+		// a previous call has stored information, so we will add to it
+		if( storageBuffer != null )
+		{
+			storageBuffer.append( buff.toString() );
+			try
+			{
+				scannerData.getContextStack().updateContext( new StringReader( storageBuffer.toString()), PASTING, IScannerContext.ContextKind.MACROEXPANSION, null, scannerData.getClientRequestor() );
+			}
+			catch (ContextException e)
+			{
+				handleProblem( e.getId(), scannerData.getContextStack().getCurrentContext().getFilename(), getCurrentOffset(), false, true  );
+			}
+			storageBuffer = null; 
+			return true;
+		}
+	
+		// there is no need to save the results -- we will not concatenate
+		return false;
 	}
+	
+	public int consumeNewlineAfterSlash() throws ScannerException
+	{
+		int c;
+		c = getChar(false);
+		if (c == '\r') 
+		{
+			c = getChar(false);
+			if (c == '\n')
+			{
+				// consume \ \r \n and then continue
+				return getChar(true);
+			}
+			else
+			{
+				// consume the \ \r and then continue
+				return c;
+			}
+		}
+		
+		if (c == '\n')
+		{
+			// consume \ \n and then continue
+			return getChar(true);
+		} 
+ 
+		// '\' is not the last character on the line
+		ungetChar(c);
+		return '\\';	
+	}
+	
+	public IToken processStringLiteral(boolean wideLiteral) throws ScannerException, EndOfFileException
+	{
+		int beginOffset = getCurrentOffset();
+		StringBuffer buff = new StringBuffer(); 
+		int beforePrevious = NOCHAR;
+		int previous = '"';
+		int c = getChar(true);
 
-	public IToken nextToken( boolean pasting, boolean lookingForNextAlready ) throws ScannerException, EndOfFileException 
+		for( ; ; ) {
+			if (c == '\\') 
+				c = consumeNewlineAfterSlash();
+
+			
+			if ( ( c == '"' ) && ( previous != '\\' || beforePrevious == '\\') ) break;
+			if ( ( c == NOCHAR ) || (( c == '\n' ) && ( previous != '\\' || beforePrevious == '\\')) )
+			{
+				// TODO : we could probably return the partial string -- it might cause 
+				// the parse to get by...
+				
+				handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true );
+				return null;
+			}
+
+			buff.append((char) c);
+			beforePrevious = previous;
+			previous = c;
+			c = getChar(true);
+		}
+
+		int type = wideLiteral ? IToken.tLSTRING : IToken.tSTRING;
+							
+		//If the next token is going to be a string as well, we need to concatenate
+		//it with this token.  This will be recursive for as many strings as need to be concatenated
+		
+		IToken returnToken = newToken( type, buff.toString(), scannerData.getContextStack().getCurrentContext());
+			
+		IToken next = null;
+		try{
+			next = nextToken( true );
+			if ( next != null && 
+					(next.getType() == IToken.tSTRING || 
+				     next.getType() == IToken.tLSTRING ))  {
+				StringBuffer buffer = new StringBuffer( returnToken.getImage() );
+				buffer.append( next.getImage() );
+				returnToken.setImage( buffer.toString() ); 
+			}	
+			else
+				cachedToken = next;
+		} catch( EndOfFileException e ){ 
+			next = null;
+		}
+		
+		currentToken = returnToken;
+		returnToken.setNext( null );									
+		return returnToken; 		
+	}
+	public IToken processNumber(int c, boolean pasting) throws ScannerException, EndOfFileException
+	{
+		// pasting happens when a macro appears in the middle of a number
+		// we will "store" the first part of the number in the "pasting" buffer
+		// until we have the full monty to evaluate
+		// for example 
+		// #define F1 3
+		// #define F2 F1##F1
+		// int x = F2;
+
+		int beginOffset = getCurrentOffset();
+		StringBuffer buff = new StringBuffer();
+		
+		boolean hex = false;
+		boolean floatingPoint = ( c == '.' ) ? true : false;
+		boolean firstCharZero = ( c== '0' )? true : false; 
+			
+		buff.append((char) c);
+
+		c = getChar();
+		
+		if( ! firstCharZero && floatingPoint && !(c >= '0' && c <= '9') ){
+			//if pasting, there could actually be a float here instead of just a .
+			if( buff.toString().equals( "." ) ){ //$NON-NLS-1$
+				if( c == '*' ){
+					return newConstantToken( IToken.tDOTSTAR );
+				} else if( c == '.' ){
+					if( getChar() == '.' )
+						return newConstantToken( IToken.tELLIPSIS );
+					else
+						handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, null, beginOffset, false, true );				
+				} else {
+					ungetChar( c );
+					return newConstantToken( IToken.tDOT ); 
+				}
+			}
+		} else if (c == 'x') {
+			if( ! firstCharZero ) 
+			{
+				handleProblem( IProblem.SCANNER_BAD_HEX_FORMAT, null, beginOffset, false, true );
+				return null;
+//				c = getChar(); 
+//				continue;
+			}
+			buff.append( (char)c );
+			hex = true;
+			c = getChar();
+		}
+
+		while ((c >= '0' && c <= '9')
+			|| (hex
+				&& ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')))) {
+			buff.append((char) c);
+			c = getChar();
+		}
+		
+		if( c == '.' )
+		{
+			buff.append( (char)c);
+			
+			floatingPoint = true;
+			c= getChar(); 
+			while ((c >= '0' && c <= '9')
+			|| (hex
+				&& ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))))
+			{
+				buff.append((char) c);
+				c = getChar();
+			}
+		}
+		
+
+		if (c == 'e' || c == 'E' || (hex && (c == 'p' || c == 'P')))
+		{
+			if( ! floatingPoint ) floatingPoint = true; 
+			// exponent type for floating point 
+			buff.append((char)c);
+			c = getChar(); 
+			
+			// optional + or - 
+			if( c == '+' || c == '-' )
+			{
+				buff.append( (char)c );
+				c = getChar(); 
+			}
+			
+			// digit sequence of exponent part 
+			while ((c >= '0' && c <= '9') )
+			{
+				buff.append((char) c);
+				c = getChar();
+			}
+			
+			// optional suffix 
+			if( c == 'l' || c == 'L' || c == 'f' || c == 'F' )
+			{
+				buff.append( (char)c );
+				c = getChar(); 
+			}
+		} else {
+			if( floatingPoint ){
+				//floating-suffix
+				if( c == 'l' || c == 'L' || c == 'f' || c == 'F' ){
+					c = getChar();
+				}
+			} else {
+				//integer suffix
+				if( c == 'u' || c == 'U' ){
+					c = getChar();
+					if( c == 'l' || c == 'L')
+						c = getChar();
+					if( c == 'l' || c == 'L')
+						c = getChar();
+				} else if( c == 'l' || c == 'L' ){
+					c = getChar();
+					if( c == 'l' || c == 'L')
+						c = getChar();
+					if( c == 'u' || c == 'U' )
+						c = getChar();
+				}
+			}
+		}
+
+		ungetChar( c );
+		
+		if( pasting && pasteIntoInputStream(buff))
+			return null;
+		
+		int tokenType;
+		String result = buff.toString(); 
+		
+		if( floatingPoint && result.equals(".") ) //$NON-NLS-1$
+			tokenType = IToken.tDOT;
+		else
+			tokenType = floatingPoint ? IToken.tFLOATINGPT : IToken.tINTEGER; 
+		
+		return newToken(
+			tokenType,
+			result,
+			scannerData.getContextStack().getCurrentContext());
+	}
+	public IToken processPreprocessor() throws ScannerException, EndOfFileException
+	{
+		int c;
+		int beginningOffset = scannerData.getContextStack().getCurrentContext().getOffset() - 1;
+		int beginningLine = scannerData.getContextStack().getCurrentLineNumber();
+		// lets prepare for a preprocessor statement
+		StringBuffer buff = new StringBuffer();
+		buff.append('#');
+
+		// we are allowed arbitrary whitespace after the '#' and before the rest of the text
+		boolean skipped = skipOverWhitespace();
+
+		c = getChar();
+		
+		if( c == '#' )
+		{
+			if( skipped )
+				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#  #", beginningOffset, false, true );  //$NON-NLS-1$
+			else 
+				return newConstantToken( tPOUNDPOUND ); //$NON-NLS-1$
+		} else if( tokenizingMacroReplacementList ) {
+			ungetChar( c ); 
+			return newConstantToken( tPOUND ); //$NON-NLS-1$
+		}
+		
+		while (((c >= 'a') && (c <= 'z'))
+			|| ((c >= 'A') && (c <= 'Z')) || (c == '_') ) {
+			buff.append((char) c);
+			c = getChar();
+		}
+		
+		ungetChar(c);
+
+		String token = buff.toString();
+
+		if( isLimitReached() )
+			handleCompletionOnPreprocessorDirective(token);
+		
+		Object directive = ppDirectives.get(token);
+		if (directive == null) {
+			if( scannerExtension.canHandlePreprocessorDirective( token ) )
+				scannerExtension.handlePreprocessorDirective( token, getRestOfPreprocessorLine() );
+			StringBuffer buffer = new StringBuffer( "#"); //$NON-NLS-1$
+			buffer.append( token );
+			handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
+			return null;
+		}
+
+		int type = ((Integer) directive).intValue();
+		switch (type) {
+			case PreprocessorDirectives.DEFINE :
+				if ( ! passOnToClient ) {
+					skipOverTextUntilNewline();
+					if( isLimitReached() )
+						handleInvalidCompletion();
+					return null;
+				}
+				poundDefine(beginningOffset, beginningLine);
+				return null;
+
+			case PreprocessorDirectives.INCLUDE :
+				if (! passOnToClient ) {
+					skipOverTextUntilNewline();
+					if( isLimitReached() )
+						handleInvalidCompletion();
+					return null;
+				}
+				poundInclude( beginningOffset, beginningLine );
+				return null;
+				
+			case PreprocessorDirectives.UNDEFINE :
+				if (! passOnToClient) {
+					
+					skipOverTextUntilNewline();
+					if( isLimitReached() )
+						handleInvalidCompletion();
+					return null;
+				}
+				skipOverWhitespace();
+				removeSymbol(getNextIdentifier());
+				skipOverTextUntilNewline();
+				return null;
+				
+			case PreprocessorDirectives.IF :
+				//TODO add in content assist stuff here
+				// get the rest of the line		
+				int currentOffset = getCurrentOffset();
+				String expression = getRestOfPreprocessorLine();
+
+				
+				if( isLimitReached() )
+					handleCompletionOnExpression( expression );
+				
+				if (expression.trim().equals("")) //$NON-NLS-1$
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#if", beginningOffset, false, true  ); //$NON-NLS-1$
+				
+				boolean expressionEvalResult = false;
+				
+				if( scannerData.getBranchTracker().queryCurrentBranchForIf() )
+				    expressionEvalResult = evaluateExpression(expression, currentOffset);
+				
+				passOnToClient = scannerData.getBranchTracker().poundIf( expressionEvalResult ); 
+				return null;
+
+			case PreprocessorDirectives.IFDEF :
+				//TODO add in content assist stuff here
+				skipOverWhitespace();
+				
+				String definition = getNextIdentifier();
+				if( isLimitReached() )
+					handleCompletionOnDefinition( definition );
+					
+				if (getDefinition(definition) == null) {
+					// not defined	
+					passOnToClient = scannerData.getBranchTracker().poundIf( false );
+					skipOverTextUntilNewline();
+				} else 
+					// continue along, act like nothing is wrong :-)
+					passOnToClient = scannerData.getBranchTracker().poundIf( true ); 
+				return null;
+				
+			case PreprocessorDirectives.ENDIF :
+				String restOfLine = getRestOfPreprocessorLine().trim();
+				if( isLimitReached() )
+					handleInvalidCompletion();
+				
+				if( ! restOfLine.equals( "" )  ) //$NON-NLS-1$
+				{	
+					StringBuffer buffer = new StringBuffer("#endif "); //$NON-NLS-1$
+					buffer.append( restOfLine );
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
+				}
+				passOnToClient = scannerData.getBranchTracker().poundEndif(); 
+				return null;
+				
+			case PreprocessorDirectives.IFNDEF :
+				//TODO add in content assist stuff here
+				skipOverWhitespace();
+				
+				String definition2 = getNextIdentifier();
+				if( isLimitReached() )
+					handleCompletionOnDefinition( definition2 );
+				
+				if (getDefinition(definition2) != null) {
+					// not defined	
+					skipOverTextUntilNewline();
+					passOnToClient = scannerData.getBranchTracker().poundIf( false );
+					if( isLimitReached() )
+						handleInvalidCompletion();
+					
+				} else
+					// continue along, act like nothing is wrong :-)
+					passOnToClient = scannerData.getBranchTracker().poundIf( true ); 		
+				return null;
+
+			case PreprocessorDirectives.ELSE :
+				try
+				{
+					passOnToClient = scannerData.getBranchTracker().poundElse();
+				}
+				catch( EmptyStackException ese )
+				{
+					handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, 
+						token, 
+						beginningOffset, 
+						false, true );  
+				}
+
+				skipOverTextUntilNewline();
+				if( isLimitReached() )
+					handleInvalidCompletion();
+				return null;
+
+			case PreprocessorDirectives.ELIF :
+				//TODO add in content assist stuff here
+				int co = getCurrentOffset();
+				String elifExpression = getRestOfPreprocessorLine();
+				if( isLimitReached() )
+					handleCompletionOnExpression( elifExpression );
+				
+				
+				if (elifExpression.equals("")) //$NON-NLS-1$
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#elif", beginningOffset, false, true  ); //$NON-NLS-1$
+
+				boolean elsifResult = false;
+				if( scannerData.getBranchTracker().queryCurrentBranchForElif() )
+					elsifResult = evaluateExpression(elifExpression, co );
+
+				try
+				{
+					passOnToClient = scannerData.getBranchTracker().poundElif( elsifResult );
+				}
+				catch( EmptyStackException ese )
+				{
+					StringBuffer buffer = new StringBuffer( token );
+					buffer.append( ' ' );
+					buffer.append( elifExpression );
+					handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, 
+						buffer.toString(), 
+						beginningOffset, 
+						false, true );  
+				}
+				return null;
+
+			case PreprocessorDirectives.LINE :
+				skipOverTextUntilNewline();
+				if( isLimitReached() )
+					handleInvalidCompletion();
+				return null;
+				
+			case PreprocessorDirectives.ERROR :
+				if (! passOnToClient) {
+					skipOverTextUntilNewline();
+					if( isLimitReached() )
+						handleInvalidCompletion();	
+					return null;
+				}
+				handleProblem( IProblem.PREPROCESSOR_POUND_ERROR, getRestOfPreprocessorLine(), beginningOffset, false, true );
+				return null;
+				
+			case PreprocessorDirectives.PRAGMA :
+				skipOverTextUntilNewline();
+				if( isLimitReached() )
+					handleInvalidCompletion();
+				return null;
+				
+			case PreprocessorDirectives.BLANK :
+				String remainderOfLine =
+					getRestOfPreprocessorLine().trim();
+				if (!remainderOfLine.equals("")) { //$NON-NLS-1$
+					StringBuffer buffer = new StringBuffer( "# "); //$NON-NLS-1$
+					buffer.append( remainderOfLine );
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true);
+				}
+				return null;
+				
+			default :
+				StringBuffer buffer = new StringBuffer( "# "); //$NON-NLS-1$
+				buffer.append( token );
+				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
+				return null;
+		}
+	}
+	
+	public IToken processKeywordOrLiteral(int c, boolean pasting) throws ScannerException, EndOfFileException
+	{       
+        int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
+				
+		// String buffer is slow, we need a better way such as memory mapped files
+		StringBuffer buff = new StringBuffer(); 
+		buff.append((char) c);
+
+		c = getChar();				
+		
+		while (
+				Character.isUnicodeIdentifierPart( (char)c)
+//			((c >= 'a') && (c <= 'z'))
+//			|| ((c >= 'A') && (c <= 'Z'))
+//			|| ((c >= '0') && (c <= '9'))
+//			|| (c == '_')
+			) {
+			buff.append((char) c);
+			c = getChar();
+			if (c == '\\') {
+				c = consumeNewlineAfterSlash();
+
+			}
+		}
+
+		ungetChar(c);
+
+		String ident = buff. toString();
+
+		if (ident.equals(DEFINED))
+			return newToken(IToken.tINTEGER, handleDefinedMacro());
+		
+		if( ident.equals(_PRAGMA) && scannerData.getLanguage() == ParserLanguage.C )
+		{
+			handlePragmaOperator(); 
+			return null;
+		}
+			
+		IMacroDescriptor mapping = getDefinition(ident);
+
+		if (mapping != null) {
+			StringBuffer buffer = new StringBuffer(POUND_DEFINE); 
+			buffer.append( ident );
+			if( scannerData.getContextStack().shouldExpandDefinition( buffer.toString()  ) ) {					
+				expandDefinition(ident, mapping, baseOffset);
+				return null;
+			}
+		}
+
+		if( pasting && pasteIntoInputStream(buff)){
+			return null;
+		}
+		
+		Object tokenTypeObject;
+		if( scannerData.getLanguage() == ParserLanguage.CPP )
+		 	tokenTypeObject = cppKeywords.get(ident);
+		else
+			tokenTypeObject = cKeywords.get(ident);
+
+		if (tokenTypeObject != null)
+			return newConstantToken(((Integer) tokenTypeObject).intValue());
+		else
+			return newToken(IToken.tIDENTIFIER, ident, scannerData.getContextStack().getCurrentContext());
+	}
+	
+	public IToken nextToken( boolean pasting ) throws ScannerException, EndOfFileException 
 	{
 		if( ! initialContextInitialized )
 			setupInitialContext();
@@ -874,9 +1410,9 @@ public class Scanner implements IScanner {
 			return currentToken;	
 		}
 		
+		IToken token;
 		count++;
-		boolean possibleWideLiteral = true;
-		boolean wideLiteral = false; 
+		
 		int c = getChar();
 
 		while (c != NOCHAR) {
@@ -911,936 +1447,339 @@ public class Scanner implements IScanner {
 				}
 			}
 
-			if ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n')) {
-				c = getChar();
-				continue;
-			} else if (c == 'L' && possibleWideLiteral ) { 
-				int oldChar = c;
-				c = getChar(); 
-				if(!(c == '"' || c == '\'')) {
-					// we have made a mistake
-					ungetChar(c);
-					c = oldChar;
-					possibleWideLiteral = false; 
+			switch (c) {
+				case ' ' :
+				case '\r' :
+				case '\t' :
+				case '\n' :
+					c = getChar();
 					continue;
-				}
-				wideLiteral = true;
-				continue;
-			} else if (c == '"') {
-				int beginOffset = getCurrentOffset();
-				// string
-				StringBuffer buff = new StringBuffer(); 
-				int beforePrevious = NOCHAR;
-				int previous = c;
-				c = getChar(true);
-
-				for( ; ; )
-				{
-					if ( ( c =='"' ) && ( previous != '\\' || beforePrevious == '\\') ) break;
-					if ( ( c == '\n' ) && ( previous != '\\' || beforePrevious == '\\') )
-					{
-						handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true );
-					}
-						
-					if( c == NOCHAR) break;  
-					buff.append((char) c);
-					beforePrevious = previous;
-					previous = c;
-					c = getChar(true);
-				}
-
-				if (c != NOCHAR ) 
-				{
-					int type = wideLiteral ? IToken.tLSTRING : IToken.tSTRING;
-										
-					//If the next token is going to be a string as well, we need to concatenate
-					//it with this token.
-					IToken returnToken = newToken( type, buff.toString(), scannerData.getContextStack().getCurrentContext());
-					
-					if (!lookingForNextAlready) {
-						IToken next = null;
-						try{
-							next = nextToken( true, true );
-						} catch( EndOfFileException e ){ 
-							next = null;
-						}
-						
-						while( next != null && ( next.getType()  == IToken.tSTRING || 
-							next.getType() == IToken.tLSTRING ) ){
-							StringBuffer buffer = new StringBuffer( returnToken.getImage() );
-							buffer.append( next.getImage() );
-							returnToken.setImage( buffer.toString() ); 
-							returnToken.setNext( null );
-							currentToken = returnToken; 
-							try{
-								next = nextToken( true, true );
-							} catch( EndOfFileException e ){ 
-								next = null;
-							}
-						}
-						
-						cachedToken = next;
-					
-					}
-					
-					currentToken = returnToken;
-					returnToken.setNext( null );
-									
-					return returnToken; 
-	
-				} else 
-					handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true  );
-				
-		
-			} else if (
-					// JOHNC - Accept non-ASCII Input
-//				((c >= 'a') && (c <= 'z'))
-//					|| ((c >= 'A') && (c <= 'Z')) || (c == '_')) {
-					Character.isLetter((char)c) || ( c == '_') 
-			)
-			{
-                        
-                int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
-						
-				// String buffer is slow, we need a better way such as memory mapped files
-				StringBuffer buff = new StringBuffer(); 
-				buff.append((char) c);
-
-				c = getChar();				
-				
-				while (
-						Character.isUnicodeIdentifierPart( (char)c)
-//					((c >= 'a') && (c <= 'z'))
-//					|| ((c >= 'A') && (c <= 'Z'))
-//					|| ((c >= '0') && (c <= '9'))
-//					|| (c == '_')
-					) {
-					buff.append((char) c);
+				case ':' :
 					c = getChar();
-				}
-
-				ungetChar(c);
-
-				String ident = buff.toString();
-
-				if (ident.equals(DEFINED)) 
-					return newToken(IToken.tINTEGER, handleDefinedMacro());
-				
-				if( ident.equals(_PRAGMA) && scannerData.getLanguage() == ParserLanguage.C )
-				{
-					handlePragmaOperator(); 
-					c = getChar(); 
-					continue;
-				}
-					
-				IMacroDescriptor mapping = getDefinition(ident);
-
-				if (mapping != null) {
-					StringBuffer buffer = new StringBuffer(POUND_DEFINE); 
-					buffer.append( ident );
-					if( scannerData.getContextStack().shouldExpandDefinition( buffer.toString()  ) ) {					
-						expandDefinition(ident, mapping, baseOffset);
-						c = getChar();
-						continue;
-					}
-				}
-
-				Object tokenTypeObject;
-				
-				if( scannerData.getLanguage() == ParserLanguage.CPP )
-				 	tokenTypeObject = cppKeywords.get(ident);
-				else
-					tokenTypeObject = cKeywords.get(ident);
-					
-				int tokenType = IToken.tIDENTIFIER;
-				if (tokenTypeObject != null)
-					tokenType = ((Integer) tokenTypeObject).intValue();
-
-				if( pasting )
-				{
-					if( lookAheadForTokenPasting() )
-					{
-						if( storageBuffer == null )
-							storageBuffer = buff;
-						else
-							storageBuffer.append( ident ); 
-							 
-						c = getChar(); 
-						continue; 	
-					}
-					else
-					{
-						if( storageBuffer != null )
-						{
-							storageBuffer.append( ident );
-							try
-							{
-								scannerData.getContextStack().updateContext( new StringReader( storageBuffer.toString()), PASTING, IScannerContext.ContextKind.MACROEXPANSION, null, scannerData.getClientRequestor() );
-							}
-							catch (ContextException e)
-							{
-								handleProblem( e.getId(), scannerData.getContextStack().getCurrentContext().getFilename(), getCurrentOffset(), false, true  );
-							}
-							storageBuffer = null;  
-							c = getChar(); 
-							continue;
-						}
-					}
-				}
-
-				return newToken(tokenType, ident, scannerData.getContextStack().getCurrentContext());
-			} else if ((c >= '0') && (c <= '9') || c == '.' ) {
-				int beginOffset = getCurrentOffset();
-				StringBuffer buff;
-				
-				if( pasting )
-				{
-					if( storageBuffer != null )
-						buff = storageBuffer;
-					else
-						buff = new StringBuffer();
-				}
-				else
-					buff = new StringBuffer();
-				
-				
-				boolean hex = false;
-				boolean floatingPoint = ( c == '.' ) ? true : false;
-				boolean firstCharZero = ( c== '0' )? true : false; 
-					
-				buff.append((char) c);
-
-				c = getChar();
-				
-				if( ! firstCharZero && floatingPoint && !(c >= '0' && c <= '9') ){
-					//if pasting, there could actually be a float here instead of just a .
-					if( buff.toString().equals( "." ) ){ //$NON-NLS-1$
-						if( c == '*' ){
-							return newToken( IToken.tDOTSTAR, ".*", scannerData.getContextStack().getCurrentContext() ); //$NON-NLS-1$
-						} else if( c == '.' ){
-							if( getChar() == '.' )
-								return newToken( IToken.tELLIPSIS, "...", scannerData.getContextStack().getCurrentContext() ); //$NON-NLS-1$
-							else
-								handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, null, beginOffset, false, true );				
-						} else {
-							ungetChar( c );
-							return newToken( IToken.tDOT, ".", scannerData.getContextStack().getCurrentContext() ); //$NON-NLS-1$
-						}
-					}
-				} else if (c == 'x') {
-					if( ! firstCharZero ) 
-					{
-						handleProblem( IProblem.SCANNER_BAD_HEX_FORMAT, null, beginOffset, false, true );
-						c = getChar(); 
-						continue;
-					}
-					buff.append( (char)c );
-					hex = true;
-					c = getChar();
-				}
-
-				while ((c >= '0' && c <= '9')
-					|| (hex
-						&& ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')))) {
-					buff.append((char) c);
-					c = getChar();
-				}
-				
-				if( c == '.' )
-				{
-					buff.append( (char)c);
-					
-					floatingPoint = true;
-					c= getChar(); 
-					while ((c >= '0' && c <= '9')
-					|| (hex
-						&& ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))))
-					{
-						buff.append((char) c);
-						c = getChar();
-					}
-				}
-				
-
-				if (c == 'e' || c == 'E' || (hex && (c == 'p' || c == 'P')))
-				{
-					if( ! floatingPoint ) floatingPoint = true; 
-					// exponent type for floating point 
-					buff.append((char)c);
-					c = getChar(); 
-					
-					// optional + or - 
-					if( c == '+' || c == '-' )
-					{
-						buff.append( (char)c );
-						c = getChar(); 
-					}
-					
-					// digit sequence of exponent part 
-					while ((c >= '0' && c <= '9') )
-					{
-						buff.append((char) c);
-						c = getChar();
-					}
-					
-					// optional suffix 
-					if( c == 'l' || c == 'L' || c == 'f' || c == 'F' )
-					{
-						buff.append( (char)c );
-						c = getChar(); 
-					}
-				} else {
-					if( floatingPoint ){
-						//floating-suffix
-						if( c == 'l' || c == 'L' || c == 'f' || c == 'F' ){
-							c = getChar();
-						}
-					} else {
-						//integer suffix
-						if( c == 'u' || c == 'U' ){
-							c = getChar();
-							if( c == 'l' || c == 'L')
-								c = getChar();
-							if( c == 'l' || c == 'L')
-								c = getChar();
-						} else if( c == 'l' || c == 'L' ){
-							c = getChar();
-							if( c == 'l' || c == 'L')
-								c = getChar();
-							if( c == 'u' || c == 'U' )
-								c = getChar();
-						}
-					}
-				}
-
-				ungetChar( c );
-				
-				if( pasting )
-				{
-					if( lookAheadForTokenPasting() )
-					{
-						storageBuffer = buff; 
-						c = getChar(); 
-						continue; 	
-					}
-					else
-					{
-						if( storageBuffer != null )
-						{
-							try
-							{
-								scannerData.getContextStack().updateContext( new StringReader( buff.toString()), PASTING, IScannerContext.ContextKind.MACROEXPANSION, null, scannerData.getClientRequestor() );
-							}
-							catch (ContextException e)
-							{
-								handleProblem( e.getId(), scannerData.getContextStack().getCurrentContext().getFilename(), getCurrentOffset(), false, true );
-							}
-							storageBuffer = null;  
-							c = getChar(); 
-							continue;
-						}
-					}
-				}
-				
-				int tokenType;
-				String result = buff.toString(); 
-				
-				if( floatingPoint && result.equals(".") ) //$NON-NLS-1$
-					tokenType = IToken.tDOT;
-				else
-					tokenType = floatingPoint ? IToken.tFLOATINGPT : IToken.tINTEGER; 
-				
-				return newToken(
-					tokenType,
-					result,
-					scannerData.getContextStack().getCurrentContext());
-				
-			} else if (c == '#') {
-				
-				int beginningOffset = scannerData.getContextStack().getCurrentContext().getOffset() - 1;
-				int beginningLine = scannerData.getContextStack().getCurrentLineNumber();
-				// lets prepare for a preprocessor statement
-				StringBuffer buff = new StringBuffer();
-				buff.append((char) c);
-
-				// we are allowed arbitrary whitespace after the '#' and before the rest of the text
-				boolean skipped = skipOverWhitespace();
-
-				c = getChar();
-				
-				if( c == '#' )
-				{
-					if( skipped )
-						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#  #", beginningOffset, false, true );  //$NON-NLS-1$
-					else 
-						return newToken( tPOUNDPOUND, "##" ); //$NON-NLS-1$
-				} else if( tokenizingMacroReplacementList ) {
-					ungetChar( c ); 
-					return newToken( tPOUND, "#" ); //$NON-NLS-1$
-				}
-				
-				while (((c >= 'a') && (c <= 'z'))
-					|| ((c >= 'A') && (c <= 'Z')) || (c == '_') ) {
-					buff.append((char) c);
-					c = getChar();
-				}
-				
-				ungetChar(c);
-
-				String token = buff.toString();
-
-				if( isLimitReached() )
-					handleCompletionOnPreprocessorDirective(token);
-				
-				Object directive = ppDirectives.get(token);
-				if (directive == null) {
-					if( scannerExtension.canHandlePreprocessorDirective( token ) )
-						scannerExtension.handlePreprocessorDirective( token, getRestOfPreprocessorLine() );
-					StringBuffer buffer = new StringBuffer( "#"); //$NON-NLS-1$
-					buffer.append( token );
-					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
-				} else {
-					int type = ((Integer) directive).intValue();
-					switch (type) {
-						case PreprocessorDirectives.DEFINE :
-							if ( ! passOnToClient ) {
-								skipOverTextUntilNewline();
-								if( isLimitReached() )
-									handleInvalidCompletion();
-								c = getChar();
-								continue;
-							}
-
-							poundDefine(beginningOffset, beginningLine);
-
-							c = getChar();
-							continue;
-
-						case PreprocessorDirectives.INCLUDE :
-							if (! passOnToClient ) {
-								skipOverTextUntilNewline();
-								if( isLimitReached() )
-									handleInvalidCompletion();
-								c = getChar();
-								continue;
-							}
-
-							poundInclude( beginningOffset, beginningLine );
-
-							c = getChar();
-							continue;
-						case PreprocessorDirectives.UNDEFINE :
-							if (! passOnToClient) {
-								
-								skipOverTextUntilNewline();
-								if( isLimitReached() )
-									handleInvalidCompletion();
-								c = getChar();
-								continue;
-							}
-							skipOverWhitespace();
-							removeSymbol(getNextIdentifier());
-							skipOverTextUntilNewline();
-							c = getChar();
-							continue;
-						case PreprocessorDirectives.IF :
-							//TODO add in content assist stuff here
-							// get the rest of the line		
-							int currentOffset = getCurrentOffset();
-							String expression = getRestOfPreprocessorLine();
-
-							
-							if( isLimitReached() )
-								handleCompletionOnExpression( expression );
-							
-							if (expression.trim().equals("")) //$NON-NLS-1$
-								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#if", beginningOffset, false, true  ); //$NON-NLS-1$
-							
-							boolean expressionEvalResult = false;
-							
-							if( scannerData.getBranchTracker().queryCurrentBranchForIf() )
-							    expressionEvalResult = evaluateExpression(expression, currentOffset);
-							
-							passOnToClient = scannerData.getBranchTracker().poundIf( expressionEvalResult ); 
-							c = getChar();
-							continue;
-
-						case PreprocessorDirectives.IFDEF :
-							//TODO add in content assist stuff here
-							skipOverWhitespace();
-							
-							String definition = getNextIdentifier();
-							if( isLimitReached() )
-								handleCompletionOnDefinition( definition );
-								
-							if (getDefinition(definition) == null) {
-								// not defined	
-								passOnToClient = scannerData.getBranchTracker().poundIf( false );
-								skipOverTextUntilNewline();
-							} else {
-								passOnToClient = scannerData.getBranchTracker().poundIf( true ); 
-								// continue along, act like nothing is wrong :-)
-								c = getChar();
-							}
-							continue;
-						case PreprocessorDirectives.ENDIF :
-							String restOfLine = getRestOfPreprocessorLine().trim();
-							if( isLimitReached() )
-								handleInvalidCompletion();
-							
-							if( ! restOfLine.equals( "" )  ) //$NON-NLS-1$
-							{	
-								StringBuffer buffer = new StringBuffer("#endif "); //$NON-NLS-1$
-								buffer.append( restOfLine );
-								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
-							}
-							passOnToClient = scannerData.getBranchTracker().poundEndif(); 
-							c = getChar();
-							continue;
-
-						case PreprocessorDirectives.IFNDEF :
-							//TODO add in content assist stuff here
-							skipOverWhitespace();
-							
-							String definition2 = getNextIdentifier();
-							if( isLimitReached() )
-								handleCompletionOnDefinition( definition2 );
-							
-							if (getDefinition(definition2) != null) {
-								// not defined	
-								skipOverTextUntilNewline();
-								passOnToClient = scannerData.getBranchTracker().poundIf( false );
-								if( isLimitReached() )
-									handleInvalidCompletion();
-								
-							} else {
-								passOnToClient = scannerData.getBranchTracker().poundIf( true ); 
-								// continue along, act like nothing is wrong :-)
-								c = getChar();
-							}
-							continue;
-
-						case PreprocessorDirectives.ELSE :
-							try
-							{
-								passOnToClient = scannerData.getBranchTracker().poundElse();
-							}
-							catch( EmptyStackException ese )
-							{
-								handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, 
-									token, 
-									beginningOffset, 
-									false, true );  
-							}
-
-							skipOverTextUntilNewline();
-							if( isLimitReached() )
-								handleInvalidCompletion();
-							
-							c = getChar();
-							continue;
-
-						case PreprocessorDirectives.ELIF :
-							//TODO add in content assist stuff here
-							int co = getCurrentOffset();
-							String elifExpression = getRestOfPreprocessorLine();
-							if( isLimitReached() )
-								handleCompletionOnExpression( elifExpression );
-							
-							
-							if (elifExpression.equals("")) //$NON-NLS-1$
-								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#elif", beginningOffset, false, true  ); //$NON-NLS-1$
-
-							boolean elsifResult = false;
-							if( scannerData.getBranchTracker().queryCurrentBranchForElif() )
-								elsifResult = evaluateExpression(elifExpression, co );
-
-							try
-							{
-								passOnToClient = scannerData.getBranchTracker().poundElif( elsifResult );
-							}
-							catch( EmptyStackException ese )
-							{
-								StringBuffer buffer = new StringBuffer( token );
-								buffer.append( ' ' );
-								buffer.append( elifExpression );
-								handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, 
-									buffer.toString(), 
-									beginningOffset, 
-									false, true );  
-							}
-							c = getChar();
-							continue;
-
-						case PreprocessorDirectives.LINE :
-							skipOverTextUntilNewline();
-							if( isLimitReached() )
-								handleInvalidCompletion();
-							c = getChar();
-							continue;
-						case PreprocessorDirectives.ERROR :
-							if (! passOnToClient) {
-								skipOverTextUntilNewline();
-								if( isLimitReached() )
-									handleInvalidCompletion();
-								
-								c = getChar();
-								continue;
-							}
-							handleProblem( IProblem.PREPROCESSOR_POUND_ERROR, getRestOfPreprocessorLine(), beginningOffset, false, true );
-							c = getChar();
-							continue;
-						case PreprocessorDirectives.PRAGMA :
-							skipOverTextUntilNewline();
-							if( isLimitReached() )
-								handleInvalidCompletion();
-							
-							c = getChar();
-							continue;
-						case PreprocessorDirectives.BLANK :
-							String remainderOfLine =
-								getRestOfPreprocessorLine().trim();
-							if (!remainderOfLine.equals("")) { //$NON-NLS-1$
-								StringBuffer buffer = new StringBuffer( "# "); //$NON-NLS-1$
-								buffer.append( remainderOfLine );
-								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true);
-							}
-							c = getChar();
-							continue;
+					switch (c) {
+						case ':' : return newConstantToken(IToken.tCOLONCOLON);
+						// Diagraph
+						case '>' :  return newConstantToken(IToken.tRBRACKET);
 						default :
-							StringBuffer buffer = new StringBuffer( "# "); //$NON-NLS-1$
-							buffer.append( token );
-							handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
+							ungetChar(c);
+							return newConstantToken(IToken.tCOLON);
 					}
-				}
-			} else {
-				switch (c) {
-					case '\'' :
-						return processCharacterLiteral( c, wideLiteral );
-					case ':' :
+				case ';' : return newConstantToken(IToken.tSEMI); 
+				case ',' : return newConstantToken(IToken.tCOMMA); 
+				case '?' : 
+					c = getChar();
+					if (c == '?')
+					{
+						// trigraph
 						c = getChar();
 						switch (c) {
-							case ':' :
-								return newToken(
-									IToken.tCOLONCOLON,
-									"::", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								return newToken(
-									IToken.tCOLON,
-									":", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-						}
-					case ';' :
-						return newToken(IToken.tSEMI, ";", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-					case ',' :
-						return newToken(IToken.tCOMMA, ",", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-					case '?' :
-						return newToken(IToken.tQUESTION, "?", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-					case '(' :
-						return newToken(IToken.tLPAREN, "(", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-					case ')' :
-						return newToken(IToken.tRPAREN, ")", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-					case '[' :
-						return newToken(IToken.tLBRACKET, "[", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-					case ']' :
-						return newToken(IToken.tRBRACKET, "]", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-					case '{' :
-						return newToken(IToken.tLBRACE, "{", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-					case '}' :
-						return newToken(IToken.tRBRACE, "}", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-					case '+' :
-						c = getChar();
-						switch (c) {
-							case '=' :
-								return newToken(
-									IToken.tPLUSASSIGN,
-									"+=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							case '+' :
-								return newToken(
-									IToken.tINCR,
-									"++", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								return newToken(
-									IToken.tPLUS,
-									"+", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-						}
-					case '-' :
-						c = getChar();
-						switch (c) {
-							case '=' :
-								return newToken(
-									IToken.tMINUSASSIGN,
-									"-=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							case '-' :
-								return newToken(
-									IToken.tDECR,
-									"--", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							case '>' :
-								c = getChar();
-								switch (c) {
-									case '*' :
-										return newToken(
-											IToken.tARROWSTAR,
-											"->*", //$NON-NLS-1$
-											scannerData.getContextStack().getCurrentContext());
-									default :
-										ungetChar(c);
-										return newToken(
-											IToken.tARROW,
-											"->", //$NON-NLS-1$
-											scannerData.getContextStack().getCurrentContext());
+							case '=':
+								// this is the same as the # case
+								token = processPreprocessor();
+								if (token == null) 
+								{
+									c = getChar();
+									continue;
 								}
-							default :
+								return token;
+
+//							case '/':
+//								expandDefinition("??/", "\\", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+//								c = getChar(insideString);
+//								break;
+							default:
+								// Not a trigraph
 								ungetChar(c);
-								return newToken(
-									IToken.tMINUS,
-									"-", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
+								ungetChar('?');
+								return newConstantToken(IToken.tQUESTION); 
 						}
-					case '*' :
-						c = getChar();
-						switch (c) {
-							case '=' :
-								return newToken(
-									IToken.tSTARASSIGN,
-									"*=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								return newToken(
-									IToken.tSTAR,
-									"*", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-						}
-					case '%' :
-						c = getChar();
-						switch (c) {
-							case '=' :
-								return newToken(
-									IToken.tMODASSIGN,
-									"%=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								return newToken(
-									IToken.tMOD,
-									"%", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-						}
-					case '^' :
-						c = getChar();
-						switch (c) {
-							case '=' :
-								return newToken(
-									IToken.tXORASSIGN,
-									"^=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								return newToken(
-									IToken.tXOR,
-									"^", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-						}
-					case '&' :
-						c = getChar();
-						switch (c) {
-							case '=' :
-								return newToken(
-									IToken.tAMPERASSIGN,
-									"&=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							case '&' :
-								return newToken(
-									IToken.tAND,
-									"&&", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								return newToken(
-									IToken.tAMPER,
-									"&", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-						}
-					case '|' :
-						c = getChar();
-						switch (c) {
-							case '=' :
-								return newToken(
-									IToken.tBITORASSIGN,
-									"|=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							case '|' :
-								return newToken(
-									IToken.tOR,
-									"||", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								return newToken(
-									IToken.tBITOR,
-									"|", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-						}
-					case '~' :
-						return newToken(IToken.tCOMPL, "~", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-					case '!' :
-						c = getChar();
-						switch (c) {
-							case '=' :
-								return newToken(
-									IToken.tNOTEQUAL,
-									"!=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								return newToken(
-									IToken.tNOT,
-									"!", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-						}
-					case '=' :
-						c = getChar();
-						switch (c) {
-							case '=' :
-								return newToken(
-									IToken.tEQUAL,
-									"==", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								return newToken(
-									IToken.tASSIGN,
-									"=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-						}
-					case '<' :
-						c = getChar();
-						switch (c) {
-							case '<' :
-								c = getChar();
-								switch (c) {
-									case '=' :
-										return newToken(
-											IToken.tSHIFTLASSIGN,
-											"<<=", //$NON-NLS-1$
-											scannerData.getContextStack().getCurrentContext());
-									default :
-										ungetChar(c);
-										return newToken(
-											IToken.tSHIFTL,
-											"<<", //$NON-NLS-1$
-											scannerData.getContextStack().getCurrentContext());
-								}
-							case '=' :
-								return newToken(
-									IToken.tLTEQUAL,
-									"<=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								if( forInclusion )
-									temporarilyReplaceDefinitionsMap();
-								return newToken(IToken.tLT, "<", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-						}
-					case '>' :
-						c = getChar();
-						switch (c) {
-							case '>' :
-								c = getChar();
-								switch (c) {
-									case '=' :
-										return newToken(
-											IToken.tSHIFTRASSIGN,
-											">>=", //$NON-NLS-1$
-											scannerData.getContextStack().getCurrentContext());
-									default :
-										ungetChar(c);
-										return newToken(
-											IToken.tSHIFTR,
-											">>", //$NON-NLS-1$
-											scannerData.getContextStack().getCurrentContext());
-								}
-							case '=' :
-								return newToken(
-									IToken.tGTEQUAL,
-									">=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								if( forInclusion )
-									restoreDefinitionsMap();
-								return newToken(IToken.tGT, ">", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
-						}
-					case '.' :
-						c = getChar();
-						switch (c) {
-							case '.' :
-								c = getChar();
-								switch (c) {
-									case '.' :
-										return newToken(
-											IToken.tELLIPSIS,
-											"...", //$NON-NLS-1$
-											scannerData.getContextStack().getCurrentContext());
-									default :
-										break;
-								}
-								break;
-							case '*' :
-								return newToken(
-									IToken.tDOTSTAR,
-									".*", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								return newToken(
-									IToken.tDOT,
-									".", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-						}
-						break;
-					case '/' :
-						c = getChar();
-						switch (c) {
-							case '/' :
-								skipOverSinglelineComment();
+					} 
+
+					ungetChar(c);
+					return newConstantToken(IToken.tQUESTION); 
+					
+				case '(' : return newConstantToken(IToken.tLPAREN); 
+				case ')' : return newConstantToken(IToken.tRPAREN); 
+				case '[' : return newConstantToken(IToken.tLBRACKET); 
+				case ']' : return newConstantToken(IToken.tRBRACKET); 
+				case '{' : return newConstantToken(IToken.tLBRACE); 
+				case '}' : return newConstantToken(IToken.tRBRACE); 
+				case '+' :
+					c = getChar();
+					switch (c) {
+						case '=' : return newConstantToken(IToken.tPLUSASSIGN);
+						case '+' : return newConstantToken(IToken.tINCR);
+						default :
+							ungetChar(c);
+							return newConstantToken(IToken.tPLUS);
+					}
+				case '-' :
+					c = getChar();
+					switch (c) {
+						case '=' : return newConstantToken(IToken.tMINUSASSIGN);
+						case '-' : return newConstantToken(IToken.tDECR);
+						case '>' :
+							c = getChar();
+							switch (c) {
+								case '*' : return newConstantToken(IToken.tARROWSTAR);
+								default :
+									ungetChar(c);
+									return newConstantToken(IToken.tARROW);
+							}
+						default :
+							ungetChar(c);
+							return newConstantToken(IToken.tMINUS);
+					}
+				case '*' :
+					c = getChar();
+					switch (c) {
+						case '=' : return newConstantToken(IToken.tSTARASSIGN);
+						default :
+							ungetChar(c);
+							return newConstantToken(IToken.tSTAR);
+					}
+				case '%' :
+					c = getChar();
+					switch (c) {			
+						case '=' : return newConstantToken(IToken.tMODASSIGN);
+						
+						// Diagraph
+						case '>' : return newConstantToken(IToken.tRBRACE); 
+						case ':' :
+							// this is the same as the # case
+							token = processPreprocessor();
+							if (token == null) 
+							{
 								c = getChar();
 								continue;
-							case '*' :
-								skipOverMultilineComment();
-								c = getChar();
-								continue;
-							case '=' :
-								return newToken(
-									IToken.tDIVASSIGN,
-									"/=", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-							default :
-								ungetChar(c);
-								return newToken(
-									IToken.tDIV,
-									"/", //$NON-NLS-1$
-									scannerData.getContextStack().getCurrentContext());
-						}
-					default :
-						handleProblem( IProblem.SCANNER_BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead ); 
+							}
+							return token;
+						default :
+							ungetChar(c);
+							return newConstantToken(IToken.tMOD);
+					}
+				case '^' :
+					c = getChar();
+					switch (c) {
+						case '=' : return newConstantToken(IToken.tXORASSIGN);
+						default :
+							ungetChar(c);
+							return newConstantToken(IToken.tXOR);
+					}
+				case '&' :
+					c = getChar();
+					switch (c) {
+						case '=' : return newConstantToken(IToken.tAMPERASSIGN);
+						case '&' : return newConstantToken(IToken.tAND);
+						default :
+							ungetChar(c);
+							return newConstantToken(IToken.tAMPER);
+					}
+				case '|' :
+					c = getChar();
+					switch (c) {
+						case '=' : return newConstantToken(IToken.tBITORASSIGN);
+						case '|' : return newConstantToken(IToken.tOR);
+						default :
+							ungetChar(c);
+							return newConstantToken(IToken.tBITOR);
+					}
+				case '~' : return newConstantToken(IToken.tCOMPL);
+				case '!' :
+					c = getChar();
+					switch (c) {
+						case '=' : return newConstantToken(IToken.tNOTEQUAL);
+						default :
+							ungetChar(c);
+							return newConstantToken(IToken.tNOT);
+					}
+				case '=' :
+					c = getChar();
+					switch (c) {
+						case '=' : return newConstantToken(IToken.tEQUAL);
+						default :
+							ungetChar(c);
+							return newConstantToken(IToken.tASSIGN);
+					}
+				case '<' :					
+					c = getChar();
+					switch (c) {
+						case '<' :
+							c = getChar();
+							switch (c) {
+								case '=' : return newConstantToken(IToken.tSHIFTLASSIGN);
+								default :
+									ungetChar(c);
+									return newConstantToken(IToken.tSHIFTL);
+							}
+						case '=' : return newConstantToken(IToken.tLTEQUAL);
+						
+						// Diagraphs
+						case '%' : return newConstantToken(IToken.tLBRACE);
+						case ':' : return newConstantToken(IToken.tLBRACKET); 
+								
+						default :
+							ungetChar(c);
+							if( forInclusion )
+								temporarilyReplaceDefinitionsMap();
+							return newConstantToken(IToken.tLT);
+					}
+				case '>' :
+					c = getChar();
+					switch (c) {
+						case '>' :
+							c = getChar();
+							switch (c) {
+								case '=' : return newConstantToken(IToken.tSHIFTRASSIGN);
+								default :
+									ungetChar(c);
+									return newConstantToken(IToken.tSHIFTR);
+							}
+						case '=' : return newConstantToken(IToken.tGTEQUAL);
+						default :
+							ungetChar(c);
+							if( forInclusion )
+								restoreDefinitionsMap();
+							return newConstantToken(IToken.tGT);
+					}
+				case '.' :
+					c = getChar();
+					switch (c) {
+						case '.' :
+							c = getChar();
+							switch (c) {
+								case '.' : return newConstantToken(IToken.tELLIPSIS);
+								default :
+									// TODO : there is something missing here!
+									break;
+							}
+							break;
+						case '*' : return newConstantToken(IToken.tDOTSTAR);
+						case '0' :	
+						case '1' :	
+						case '2' :	
+						case '3' :	
+						case '4' :	
+						case '5' :	
+						case '6' :	
+						case '7' :	
+						case '8' :	
+						case '9' :	
+							ungetChar(c);
+							return processNumber('.', pasting);
+						default :
+							ungetChar(c);
+							return newConstantToken(IToken.tDOT);
+					}
+					break;
+					
+//				The logic around the escape \ is fuzzy.   There is code in getChar(boolean) and
+//					in consumeNewLineAfterSlash().  It currently works, but is fragile.
+//				case '\\' :
+//					c = consumeNewlineAfterSlash();
+//					
+//					// if we are left with the \ we can skip it.
+//					if (c == '\\')
+//						c = getChar();
+//					continue;
+					
+				case '/' :
+					c = getChar();
+					switch (c) {
+						case '/' :
+							skipOverSinglelineComment();
+							c = getChar();
+							continue;
+						case '*' :
+							skipOverMultilineComment();
+							c = getChar();
+							continue;
+						case '=' : return newConstantToken(IToken.tDIVASSIGN);
+						default :
+							ungetChar(c);
+							return newConstantToken(IToken.tDIV);
+					}
+				case '0' :	
+				case '1' :	
+				case '2' :	
+				case '3' :	
+				case '4' :	
+				case '5' :	
+				case '6' :	
+				case '7' :	
+				case '8' :	
+				case '9' :	
+					token = processNumber(c, pasting);
+					if (token == null)
+					{
 						c = getChar();
 						continue;
-				}
-
-				throwEOF(null);
+					}
+					return token;
+						
+				case 'L' :
+					// check for wide literal
+					c = getChar(); 
+					if (c == '"')
+						token = processStringLiteral(true);
+					else if (c == '\'')
+						return processCharacterLiteral( c, true );
+					else
+					{
+						// This is not a wide literal -- it must be a token or keyword
+						ungetChar(c);
+						token = processKeywordOrLiteral('L', pasting);
+					}
+					if (token == null) 
+					{
+						c = getChar();
+						continue;
+					}
+					return token;
+				case '"' :
+					token = processStringLiteral(false);
+					if (token == null) 
+					{
+						c = getChar();
+						continue;
+					}
+					return token;
+				case '\'' : return processCharacterLiteral( c, false );
+				case '#':
+					// This is a special case -- the preprocessor is integrated into 
+					// the scanner.  If we get a null token, it means that everything
+					// was handled correctly and we can go on to the next characgter.
+					
+					token = processPreprocessor();
+					if (token == null) 
+					{
+						c = getChar();
+						continue;
+					}
+					return token;
+						
+				default:
+					if (
+							// JOHNC - Accept non-ASCII Input
+//						((c >= 'a') && (c <= 'z'))
+//							|| ((c >= 'A') && (c <= 'Z')) || (c == '_')) {
+							Character.isLetter((char)c) || ( c == '_') 
+					) 
+					{
+						token = processKeywordOrLiteral(c, pasting);
+						if (token == null) 
+						{
+							c = getChar();
+							continue;
+						}
+						return token;
+					}
+					
+					handleProblem( IProblem.SCANNER_BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead ); 
+					c = getChar();
+					continue;			
 			}
 		}
-
 		if (( getDepth() != 0) && !atEOF )
 		{
 			atEOF = true;

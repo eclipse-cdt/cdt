@@ -1,3 +1,9 @@
+2004-05-19 Alain Magloire
+
+	Comply with Eclipse-3.0 and use the theme
+	extension to change the CEditor text font.
+	Move the CBuildConsole font in the same category.
+
 2004-05-18 Bogdan Gheorghe
 	Got rid of deprecated methods in CSearchResultPage and MouseClickListener.
 	

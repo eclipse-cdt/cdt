@@ -60,7 +60,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 
 /*
  * The page for setting the editor options.
@@ -118,7 +117,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 	};
 
-	private WorkbenchChainedTextFontFieldEditor fFontEditor;
 	protected List fList;
 	protected ColorEditor fForegroundColorEditor;
 	protected ColorEditor fBackgroundColorEditor;
@@ -214,8 +212,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, true);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
 		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, new RGB(176, 180, 185));
-
-		WorkbenchChainedTextFontFieldEditor.startPropagate(store, JFaceResources.TEXT_FONT);
 
 		color = display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		PreferenceConverter.setDefault(store, CEditor.PREFERENCE_COLOR_FOREGROUND, color.getRGB());
@@ -569,10 +565,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.numColumns = 2;
 		behaviorComposite.setLayout(layout);
 
-		String label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.textFont"); //$NON-NLS-1$
-		addTextFontEditor(behaviorComposite, label, JFaceResources.TEXT_FONT);
-
-		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.tabWidth"); //$NON-NLS-1$
+		String label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.tabWidth"); //$NON-NLS-1$
 		addTextField(behaviorComposite, label, CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH, 2, 0, true);
 
 		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.marginColumn"); //$NON-NLS-1$
@@ -793,10 +786,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private void initialize() {
 
-		fFontEditor.setPreferenceStore(getPreferenceStore());
-		fFontEditor.setPreferencePage(this);
-		fFontEditor.load();
-
 		initializeFields();
 
 		for (int i = 0; i < fListModel.length; i++)
@@ -858,7 +847,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		fFontEditor.store();
 		fOverlayStore.propagate();
 		return true;
 	}
@@ -867,8 +855,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-
-		fFontEditor.loadDefault();
 
 		fOverlayStore.loadDefaults();
 		initializeFields();
@@ -888,9 +874,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		if (fCTextTools != null) {
 			fCTextTools = null;
 		}
-
-		fFontEditor.setPreferencePage(null);
-		fFontEditor.setPreferenceStore(null);
 
 		if (fOverlayStore != null) {
 			fOverlayStore.stop();
@@ -1006,8 +989,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		editorComposite.setLayout(layout);
-		fFontEditor = new WorkbenchChainedTextFontFieldEditor(key, label, editorComposite);
-		fFontEditor.setChangeButtonText(PreferencesMessages.getString("CEditorPreferencePage.textFont.changeButton")); //$NON-NLS-1$
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;

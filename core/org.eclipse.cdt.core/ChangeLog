@@ -1,3 +1,9 @@
+2004-08-09 Bogdan Gheorghe
+	Fix for Bug 71115: Double Indexing
+	Added CContainer support to updateIndexAdd/RemoveResource
+	
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	
 2004-07-28 Tanya Wolff
 
 	Fix for PR 70161: Assembly untranslated in C++ File Types

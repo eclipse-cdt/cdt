@@ -539,9 +539,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	/**
 	 * Remove the content of the given source folder from the index.
 	 */
-	public void removeSourceFolderFromIndex(CProject cProject, IPath sourceFolder, char[][] exclusionPatterns) {
-		IProject project = cProject.getProject();
-	
+	public void removeSourceFolderFromIndex(IProject project, IPath sourceFolder, char[][] exclusionPatterns) {
+		
 		if( !isIndexEnabled( project ) )
 			return;
 		

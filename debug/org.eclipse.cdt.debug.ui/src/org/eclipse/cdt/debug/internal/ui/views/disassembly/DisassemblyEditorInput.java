@@ -213,8 +213,9 @@ public class DisassemblyEditorInput implements IEditorInput {
 					String opcode = instructions[i].getOpcode();
 					if ( opcode.length() > maxOpcodeLength )
 						maxOpcodeLength = opcode.length();
-					if ( instructions[i].getOffset() > maxOffset ) {
-						maxOffset = instructions[i].getOffset();
+					long offset = Math.abs( instructions[i].getOffset() );
+					if (  offset > maxOffset ) {
+						maxOffset = offset;
 					}
 				}
 			}
@@ -249,8 +250,10 @@ public class DisassemblyEditorInput implements IEditorInput {
 			if ( functionName != null && functionName.length() > 0 ) {
 				sb.append( '<' );
 				sb.append( functionName );
-				if ( instruction.getOffset() != 0 ) {
-					sb.append( '+' );
+				long offset = instruction.getOffset(); 
+				if ( offset != 0 ) {
+					if ( offset > 0 )
+						sb.append( '+' );
 					sb.append( instruction.getOffset() );
 				}
 				sb.append( ">:" ); //$NON-NLS-1$

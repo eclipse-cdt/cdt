@@ -235,5 +235,14 @@
             id="test.sub.sub">
       </target>
    </extension>
+   <extension
+         id="runTests"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.cdt.core.suite.RunTests">
+         </run>
+      </application>
+   </extension>
 
 </plugin>

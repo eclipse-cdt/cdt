@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIStepEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
@@ -70,12 +71,18 @@ public class RxThread extends Thread {
 						// discard termination
 						processMIOutput(buffer.toString());
 						buffer = new StringBuffer();
+					} else if (line.startsWith(MITargetStreamOutput.startTag)) {
+						// Process Target output immediately.
+						processMIOutput(line + "\n");
 					} else {
 						buffer.append(line).append('\n');
 					}
 				}
 			}
 		} catch (IOException e) {
+			MIEvent event = new MIExitEvent();
+			Thread eventTread = new EventThread(session, new MIEvent[]{event});
+			eventTread.start();
 			//e.printStackTrace();
 		}
 	}
@@ -98,9 +105,9 @@ public class RxThread extends Thread {
 				// Check if the state changed.
 				String state = rr.getResultClass();
 				if ("running".equals(state)) {
-					session.setRunning();
+					session.getMIProcess().setRunning();
 				} else if ("exit".equals(state)) {
-					session.setStopped();
+					session.getMIProcess().setTerminated();
 				}
 
 				int id = rr.geToken();
@@ -149,7 +156,7 @@ public class RxThread extends Thread {
 			// Change of state.
 			String state = exec.getAsyncClass();
 			if ("stopped".equals(state)) {
-				session.setSuspended();
+				session.getMIProcess().setSuspended();
 			}
 
 			MIResult[] results = exec.getMIResults();
@@ -175,7 +182,7 @@ public class RxThread extends Thread {
 
 	void processMIOOBRecord(MIStreamRecord stream) {
 		if (stream instanceof MIConsoleStreamOutput) {
-			OutputStream console = session.getConsoleStream();
+			OutputStream console = session.getConsolePipe();
 			if (console != null) {
 				MIConsoleStreamOutput out = (MIConsoleStreamOutput)stream;
 				String str = out.getString();
@@ -188,7 +195,7 @@ public class RxThread extends Thread {
 				}
 			}
 		} else if (stream instanceof MITargetStreamOutput) {
-			OutputStream target = session.getTargetStream();
+			OutputStream target = session.getTargetPipe();
 			if (target != null) {
 				MITargetStreamOutput out = (MITargetStreamOutput)stream;
 				String str = out.getString();
@@ -201,7 +208,7 @@ public class RxThread extends Thread {
 				}
 			}
 		} else if (stream instanceof MILogStreamOutput) {
-			OutputStream log = session.getLogStream();
+			OutputStream log = session.getLogPipe();
 			if (log != null) {
 				MILogStreamOutput out = (MILogStreamOutput)stream;
 				String str = out.getString();
@@ -252,45 +259,39 @@ public class RxThread extends Thread {
 			} else if (rr != null) {
 				event = new MIBreakpointEvent(rr);
 			}
-			session.setSuspended();
 		} else if ("watchpoint-trigger".equals(reason)) {
 			if (exec != null) {
 				event = new MIWatchpointEvent(exec);
 			} else if (rr != null) {
 				event = new MIWatchpointEvent(rr);
 			}
-			session.setSuspended();
 		} else if ("end-stepping-range".equals(reason)) {
 			if (exec != null) {
 				event = new MIStepEvent(exec);
 			} else if (rr != null) {
 				event = new MIStepEvent(rr);
 			}
-			session.setSuspended();
 		} else if ("signal-received".equals(reason)) {
 			if (exec != null) {
 				event = new MISignalEvent(exec);
 			} else if (rr != null) {
 				event = new MISignalEvent(rr);
 			}
-			session.setStopped();
 		} else if ("location-reached".equals(reason)) {
 			if (exec != null) {
 				event = new MISignalEvent(exec);
 			} else if (rr != null) {
 				event = new MISignalEvent(rr);
 			}
-			session.setSuspended();
 		} else if ("function-finished".equals(reason)) {
 			if (exec != null) {
 				event = new MIFunctionFinishedEvent(exec);
 			} else if (rr != null) {
 				event = new MIFunctionFinishedEvent(rr);
 			}
-			session.setSuspended();
 		} else if ("exited-normally".equals(reason)) {
-			event = new MIExitEvent();
-			session.setStopped();
+			session.getMIProcess().setTerminated();
+			event = new MIInferiorExitEvent();
 		}
 		return event;
 	}

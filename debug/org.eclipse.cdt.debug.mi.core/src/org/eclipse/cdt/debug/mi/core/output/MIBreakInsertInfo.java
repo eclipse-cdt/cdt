@@ -12,6 +12,12 @@ import java.util.List;
 /**
  * -break-insert main
  * ^done,bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x08048468",func="main",file="hello.c",line="4",times="0"}
+ * -break-insert -a p
+ * ^done,hw-awpt={number="2",exp="p"}
+ * -break-watch -r p
+ * ^done,hw-rwpt={number="4",exp="p"}
+ * -break-watch p
+ * ^done,wpt={number="6",exp="p"}
  */
 public class MIBreakInsertInfo extends MIInfo {
 
@@ -26,11 +32,28 @@ public class MIBreakInsertInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
+					MIValue val = results[i].getMIValue();
+					MIBreakPoint bpt = null;
 					if (var.equals("bkpt")) {
-						MIValue val = results[i].getMIValue();
 						if (val instanceof MITuple) {
-							aList.add(new MIBreakPoint((MITuple)val));
+							bpt = new MIBreakPoint((MITuple)val);
+							bpt.setEnabled(true);
 						}
+					} else if (var.equals("hw-awpt")) {
+						if (val instanceof MITuple) {
+							bpt = new MIBreakPoint((MITuple)val);
+							bpt.setAccessWatchpoint(true);
+							bpt.setEnabled(true);
+						}
+					} else if (var.equals("hw-rwpt")) {
+						if (val instanceof MITuple) {
+							bpt = new MIBreakPoint((MITuple)val);
+							bpt.setReadWatchpoint(true);
+							bpt.setEnabled(true);
+						}
+					}
+					if (bpt != null) {
+						aList.add(bpt);
 					}
 				}
 			}

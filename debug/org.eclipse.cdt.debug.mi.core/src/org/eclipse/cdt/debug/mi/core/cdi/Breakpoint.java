@@ -1,9 +1,12 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICCatchEvent;
+import org.eclipse.cdt.debug.core.cdi.ICCatchpoint;
 import org.eclipse.cdt.debug.core.cdi.ICCondition;
 import org.eclipse.cdt.debug.core.cdi.ICLocation;
 import org.eclipse.cdt.debug.core.cdi.ICLocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.ICWatchpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICInstruction;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
 
@@ -15,11 +18,11 @@ import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class Breakpoint extends SessionObject implements ICLocationBreakpoint {
+public class Breakpoint extends SessionObject implements ICLocationBreakpoint,
+	ICCatchpoint, ICWatchpoint {
 
 	ICLocation location;
 	ICCondition condition;
-	String threadId = "";
 	MIBreakPoint miBreakPoint;
 	BreakpointManager mgr;
 
@@ -60,7 +63,7 @@ public class Breakpoint extends SessionObject implements ICLocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpoint#getThreadId()
 	 */
 	public String getThreadId() throws CDIException {
-		return threadId;
+		return miBreakPoint.getThreadId();
 	}
 
 	/**
@@ -74,14 +77,14 @@ public class Breakpoint extends SessionObject implements ICLocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpoint#isHardware()
 	 */
 	public boolean isHardware() {
-		return miBreakPoint.getType().startsWith("hw");
+		return miBreakPoint.isHardware();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpoint#isTemporary()
 	 */
 	public boolean isTemporary() {
-		return miBreakPoint.getDisposition().equals("del");
+		return miBreakPoint.isTemporary();
 	}
 
 	/**
@@ -150,6 +153,34 @@ public class Breakpoint extends SessionObject implements ICLocationBreakpoint {
 			};
 		}
 		return location;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICCatchpoint#getEvent()
+	 */
+	public ICCatchEvent getEvent() throws CDIException {
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICWatchpoint#getWatchExpression()
+	 */
+	public String getWatchExpression() throws CDIException {
+		return miBreakPoint.getWhat();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICWatchpoint#isReadType()
+	 */
+	public boolean isReadType() {
+		return miBreakPoint.isReadWatchpoint();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICWatchpoint#isWriteType()
+	 */
+	public boolean isWriteType() {
+		return miBreakPoint.isAccessWatchpoint();
 	}
 
 }

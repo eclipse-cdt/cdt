@@ -7,7 +7,7 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIException;
-import org.eclipse.cdt.debug.mi.core.output.MIGDBShowInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
@@ -18,16 +18,19 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  *   Show the current value of a GDB variable.
  * 
  */
-public class MIGDBShow extends MICommand {
-	public MIGDBShow(String[] params) {
-		super("-gdb-show", params);
+public class MIGDBShowExitCode extends MIGDBShow {
+	public MIGDBShowExitCode() {
+		super(new String[] { "convenience", "$_exitcode" });
 	}
 
+	public MIGDBShowExitCodeInfo getMIGDBShowExitCodeInfo() throws MIException {
+		return (MIGDBShowExitCodeInfo)getMIInfo();
+	}
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();
 		if (out != null) {
-			info = new MIGDBShowInfo(out);
+			info = new MIGDBShowExitCodeInfo(out);
 			if (info.isError()) {
 				throw new MIException(info.getErrorMsg());
 			}

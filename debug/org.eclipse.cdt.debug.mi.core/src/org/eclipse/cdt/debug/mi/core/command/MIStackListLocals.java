@@ -31,6 +31,10 @@ public class MIStackListLocals extends MICommand
 		}
 	}
 
+	public MIStackListLocalsInfo getMIStackListLocalsInfo() throws MIException {
+		return (MIStackListLocalsInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

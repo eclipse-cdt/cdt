@@ -27,8 +27,15 @@ public class CLICommand extends Command
 	 * @return the text representation of this command
 	 */
 	public String toString(){
-		if (operation.endsWith("\n"))
-			return operation;
-		return operation + "\n";
+		String str = null;
+		int t = getToken();
+		if (t > 0) {
+			str = Integer.toString(t) + " " + operation;
+		} else {
+			str = operation;
+		}  
+		if (str.endsWith("\n"))
+			return str;
+		return str + "\n";
 	}
 }

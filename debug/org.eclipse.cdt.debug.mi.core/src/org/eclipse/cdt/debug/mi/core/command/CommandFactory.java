@@ -94,6 +94,10 @@ public class CommandFactory {
 		return new MIEnvironmentPWD();
 	}
 
+	public MIExecAbort createMIExecAbort() {
+		return new MIExecAbort();
+	}
+
 	public MIExecArguments createMIExecArguments(String[] args) {
 		return new MIExecArguments(args);
 	}
@@ -158,6 +162,10 @@ public class CommandFactory {
 		return new MIGDBShow(params);
 	}
 
+	public MIGDBShowExitCode createMIGDBShowExitCode() {
+		return new MIGDBShowExitCode();
+	}
+
 	public MIStackInfoDepth createMIStackInfoDepth(int depth) {
 		return new MIStackInfoDepth(depth);
 	}
@@ -180,6 +188,10 @@ public class CommandFactory {
 
 	public MIStackSelectFrame createMIStackSelectFrame(int frameNum) {
 		return new MIStackSelectFrame(frameNum);
+	}
+
+	public MITargetAttach createMITargetAttach(int pid) {
+		return new MITargetAttach(pid);
 	}
 
 	public MITargetDetach createMITargetDetach() {

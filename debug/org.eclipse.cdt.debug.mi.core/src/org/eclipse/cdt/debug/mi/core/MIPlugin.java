@@ -4,9 +4,15 @@
  */
 package org.eclipse.cdt.debug.mi.core;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eclipse.cdt.debug.core.cdi.ICSession;
+import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 
@@ -38,5 +44,37 @@ public class MIPlugin extends Plugin {
 	 */
 	public MISession createMISession(InputStream in, OutputStream out) {
 		return new MISession(in, out);
+	}
+
+	public ICSession createCSession(String program) throws IOException {
+		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program};
+		Process gdb = Runtime.getRuntime().exec(args);
+		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());
+		return new CSession(session);
+	}
+
+	public ICSession createCSession(String program, String core) throws IOException {
+		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program, core};
+		Process gdb = Runtime.getRuntime().exec(args);
+		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());
+		return new CSession(session);
+	}
+
+	public ICSession createCSession(String program, int pid) throws IOException {
+		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program};
+		Process gdb = Runtime.getRuntime().exec(args);
+		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());
+		try {
+			CommandFactory factory = session.getCommandFactory();
+			MITargetAttach attach = factory.createMITargetAttach(pid);
+			session.postCommand(attach);
+			MIInfo info = attach.getMIInfo();
+			if (info == null) {
+				throw new IOException("Failed to attach");
+			}
+		} catch (MIException e) {
+			throw new IOException("Failed to attach");
+		}
+		return new CSession(session);
 	}
 }

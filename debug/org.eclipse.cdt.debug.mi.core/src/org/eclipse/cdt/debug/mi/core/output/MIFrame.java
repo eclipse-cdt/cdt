@@ -11,8 +11,8 @@ public class MIFrame {
 
 	int level;
 	long addr;
-	String func;
-	String file;
+	String func = "";
+	String file = "";
 	int line;
 	MIArg[] args = new MIArg[0];
 
@@ -24,8 +24,20 @@ public class MIFrame {
 		return args;
 	}
 
+	public String getFile() {
+		return file;
+	}
+
 	public String getFunction() {
 		return func;
+	}
+
+	public int getLine() {
+		return line;
+	}
+
+	public long getAddress() {
+		return addr;
 	}
 
 	public int getLevel() {

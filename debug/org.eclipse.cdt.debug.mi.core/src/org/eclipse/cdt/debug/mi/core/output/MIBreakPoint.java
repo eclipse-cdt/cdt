@@ -7,12 +7,40 @@ package org.eclipse.cdt.debug.mi.core.output;
 
 /**
  * Contain info about the GDB/MI breakpoint info.
- * -break-insert -t -c 2 main
- * ^done,bkpt={number="1",type="breakpoint",disp="del",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",cond="2",times="0"}
- * (gdb) 
- * -break-insert -h -i 2 main
- * ^done,bkpt={number="2",type="hw breakpoint",disp="keep",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",times="0",ignore="2"}
- * (gdb) 
+ *<ul>
+ * <li>
+ * -break-insert main
+ * ^done,bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",times="0"}
+ * (gdb)
+ * </li>
+ * <li>
+ * -break-insert -t main
+ * ^done,bkpt={number="2",type="breakpoint",disp="del",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",times="0"}
+ * </li>
+ * <li>
+ * -break-insert -c 1 main
+^done,bkpt={number="3",type="breakpoint",disp="keep",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",cond="1",times="0"}
+ * </li>
+ * <li>
+ * -break-insert -h main
+ * ^done,bkpt={number="4",type="hw breakpoint",disp="keep",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",times="0"}
+ * <li>
+ * -break-insert -p 0 main
+ * ^done,bkpt={number="5",type="breakpoint",disp="keep",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",thread="0",thread="0",times="0"}
+ * </li>
+ * <li>
+ * -break-insert -a p
+ * ^done,hw-awpt={number="2",exp="p"}
+ * </li>
+ * <li>
+ * -break-watch -r p
+ * ^done,hw-rwpt={number="4",exp="p"}
+ * </li>
+ * <li>
+ * -break-watch p
+ * ^done,wpt={number="6",exp="p"}
+ * </li>
+ *</ul>
  */
 public class MIBreakPoint {
 
@@ -24,10 +52,15 @@ public class MIBreakPoint {
 	String func = ""; 
 	String file = "";
 	int line;
+	String cond = "";
 	int times;
 	String what = "";
-	String cond = "";
+	String threadId = "";
 	int ignore;
+
+	boolean isWpt;
+	boolean isAWpt;
+	boolean isRWpt;
 
 	public MIBreakPoint(MITuple tuple) {
 		parse(tuple);
@@ -39,6 +72,40 @@ public class MIBreakPoint {
 
 	public String getType() {
 		return type;
+	}
+
+	public boolean isHardware() {
+		return getType().startsWith("hw") || isWatchpoint();
+	}
+
+	public boolean isTemporary() {
+		return getDisposition().equals("del");
+	}
+
+	public boolean isWatchpoint() {
+		return isWpt;
+	}
+
+	public void setWatcpoint(boolean w) {
+		isWpt = w;
+	}
+
+	public boolean isAccessWatchpoint() {
+		return isAWpt;
+	}
+
+	public void setAccessWatchpoint(boolean a) {
+		isWpt = a;
+		isAWpt = a;
+	}
+
+	public boolean isReadWatchpoint() {
+		return isRWpt;
+	}
+
+	public void setReadWatchpoint(boolean r) {
+		isWpt = r;
+		isRWpt = r;
 	}
 
 	public String getDisposition() {
@@ -85,6 +152,10 @@ public class MIBreakPoint {
 		return cond;
 	}
 
+	public String getThreadId() {
+		return threadId;
+	}
+
 	void parse(MITuple tuple) {
 		MIResult[] results = tuple.getMIResults();
 		for (int i = 0; i < results.length; i++) {
@@ -115,6 +186,8 @@ public class MIBreakPoint {
 				func = str;
 			} else if (var.equals("file")) {
 				file = str;
+			} else if (var.equals("thread")) {
+				threadId = str;
 			} else if (var.equals("line")) {
 				try {
 					line = Integer.parseInt(str.trim());

@@ -7,6 +7,8 @@ package org.eclipse.cdt.debug.mi.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.Observable;
 
 import org.eclipse.cdt.debug.mi.core.command.Command;
@@ -31,9 +33,12 @@ public class MISession extends Observable {
 	Queue txQueue;
 	Queue rxQueue;
 
-	OutputStream consoleStream = null;
-	OutputStream targetStream = null;
-	OutputStream logStream = null;
+	PipedInputStream miInPipe;
+	PipedOutputStream miOutPipe;
+	PipedInputStream targetInPipe;
+	PipedOutputStream targetOutPipe;
+	PipedInputStream logInPipe;
+	PipedOutputStream logOutPipe;
 
 	CommandFactory factory;
 
@@ -41,10 +46,7 @@ public class MISession extends Observable {
 
 	long cmdTimeout = 10000; // 10 * 1000 (~ 10 secs);
 
-	final int STOPPED = 0;
-	final int RUNNING = 1;
-	final int SUSPENDED = 1;
-	int state = STOPPED;
+	MIProcess process;
 
 	/**
 	 * Create the gdb session.
@@ -63,48 +65,40 @@ public class MISession extends Observable {
 		rxThread = new RxThread(this);
 		txThread.start();
 		rxThread.start();
-	}
 
-	/**
-	 * Set Console Stream.
-	 */
-	public void setConsoleStream(OutputStream console) {
-		consoleStream = console;
+		try {
+			miOutPipe = new PipedOutputStream();
+			miInPipe = new PipedInputStream(miOutPipe);
+			targetOutPipe = new PipedOutputStream();
+			targetInPipe = new PipedInputStream(targetOutPipe);
+			logOutPipe = new PipedOutputStream();
+			logInPipe = new PipedInputStream(logOutPipe);
+		} catch (IOException e) {
+		}
+
+		process = new MIProcess(this);
 	}
 
 	/**
 	 * get Console Stream.
 	 */
-	OutputStream getConsoleStream() {
-		return consoleStream;
+	public InputStream getMIStream() {
+		return miInPipe;
 	}
 
-	/**
-	 * Set Target Stream.
-	 */
-	public void setTargetStream(OutputStream target) {
-		targetStream = target;
-	}
 
 	/**
 	 * Get Target Stream.
 	 */
-	OutputStream getTargetStream() {
-		return targetStream;
-	}
-
-	/**
-	 * Set Log Stream
-	 */
-	public void setLogStream(OutputStream log) {
-		logStream = log;
+	public InputStream getTargetStream() {
+		return targetInPipe;
 	}
 
 	/**
 	 * Get Log Stream
 	 */
-	OutputStream getLogStream() {
-		return logStream;
+	public InputStream getLogStream() {
+		return logInPipe;
 	}
 
 	/**
@@ -179,6 +173,10 @@ public class MISession extends Observable {
 		}
 	}
 
+	public MIProcess getMIProcess() {
+		return process;
+	}
+
 	public boolean isTerminated() {
 		return (!txThread.isAlive() || !rxThread.isAlive());
 	}
@@ -187,6 +185,8 @@ public class MISession extends Observable {
 	 * Close the MISession.
 	 */
 	public void terminate() {
+
+		process.destroy();
 
 		// Closing the channel will kill the RxThread.
 		try {
@@ -199,7 +199,8 @@ public class MISession extends Observable {
 			outChannel.close();
 		} catch (IOException e) {
 		}
-		outChannel = null; // This is needed to stop the txThread.
+		// This is __needed__ to stop the txThread.
+		outChannel = null;
 		
 		try {
 			if (txThread.isAlive()) {
@@ -219,58 +220,24 @@ public class MISession extends Observable {
 	}
 
 	/**
-	 * The session is in STOPPED state.
-	 * It means the 'run/-exec-run' command was not issued.
-	 * Or the program exited, via a signal or normally.
-	 * It is not the same as gdb/MI *stopped async-class
-	 * gdb/MI stopped means suspended here.
-	 */
-	public boolean isStopped() {
-		return state == STOPPED;
-	}
-
-	/**
-	 * The session is in SUSPENDED state.
-	 * State after hitting a breakpoint or after attach.
-	 */
-	public boolean isSuspended() {
-		return state == SUSPENDED;
-	}
-
-	/**
-	 * The session is in RUNNING state.
-	 */
-	public boolean isRunning() {
-		return state == RUNNING;
-	}
-
-	/**
-	 * Set the state STOPPED.
-	 */
-	public void setStopped() {
-		state = STOPPED;
-	}
-
-	/**
-	 * Set the state SUSPENDED.
-	 */
-	public void setSuspended() {
-		state = SUSPENDED;
-	}
-
-	/**
-	 * Set the state STOPPED.
-	 */
-	public void setRunning() {
-		state = RUNNING;
-	}
-
-	/**
 	 * Notify the observers of new MI OOB events.
 	 */
 	public void notifyObservers(Object arg) {
 		setChanged();
 		super.notifyObservers(arg);
+	}
+
+
+	OutputStream getConsolePipe() {
+		return miOutPipe;
+	}
+
+	OutputStream getTargetPipe() {
+		return targetOutPipe;
+	}
+
+	OutputStream getLogPipe() {
+		return logOutPipe;
 	}
 
 	Queue getTxQueue() {

@@ -3,8 +3,7 @@ package org.eclipse.cdt.debug.mi.core.event;
 
 
 /**
- * *stopped,reason="exited-normally"
- *
+ * Gdb Session terminated.
  */
 public class MIExitEvent extends MIEvent {
 }

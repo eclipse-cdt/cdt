@@ -40,6 +40,10 @@ public class MIBreakWatch extends MICommand
 		setParameters(new String[]{expr});
 	}
 
+	public MIBreakWatchInfo getMIBreakWatchInfo() throws MIException {
+		return (MIBreakWatchInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

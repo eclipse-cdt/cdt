@@ -7,6 +7,8 @@ package org.eclipse.cdt.debug.mi.core.output;
 
 /**
  * GDB/MI stack list locals parsing.
+ * -stack-list-locals 1
+ * ^done,locals=[{name="p",value="0x8048600 \"ghislaine\""},{name="buf",value="\"'\", 'x' <repeats 24 times>, \"i,xxxxxxxxx\", 'a' <repeats 24 times>"},{name="buf2",value="\"\\\"?'\\\\()~\""},{name="buf3",value="\"alain\""},{name="buf4",value="\"\\t\\t\\n\\f\\r\""},{name="i",value="0"}]
  */
 public class MIStackListLocalsInfo extends MIInfo {
 

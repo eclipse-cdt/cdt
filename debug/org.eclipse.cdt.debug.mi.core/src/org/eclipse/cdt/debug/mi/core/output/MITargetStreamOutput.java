@@ -8,4 +8,6 @@ package org.eclipse.cdt.debug.mi.core.output;
  * @see MIStreamRecord
  */
 public class MITargetStreamOutput extends MIStreamRecord {
+
+	public static final String startTag = "@";
 }

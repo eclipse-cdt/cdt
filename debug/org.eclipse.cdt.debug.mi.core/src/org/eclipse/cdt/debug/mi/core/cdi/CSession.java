@@ -108,6 +108,10 @@ public class CSession implements ICSession {
 		return new ICTarget[]{ctarget};
 	}
 
+	public ICTarget getCTarget() {
+		return ctarget;
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#isTerminated()
 	 */

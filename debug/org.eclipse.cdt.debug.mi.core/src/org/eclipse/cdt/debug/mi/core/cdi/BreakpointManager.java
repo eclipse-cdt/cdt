@@ -19,11 +19,14 @@ import org.eclipse.cdt.debug.core.cdi.ICLocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.ICWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIBreakDelete;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakDisable;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakEnable;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakInsert;
+import org.eclipse.cdt.debug.mi.core.command.MIBreakWatch;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakInsertInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
+import org.eclipse.cdt.debug.mi.core.output.MIBreakWatchInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 
 /**
@@ -56,11 +59,35 @@ public class BreakpointManager extends SessionObject implements ICBreakpointMana
 	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpointManager#deleteBreakpoints(ICBreakpoint[])
 	 */
 	public void deleteBreakpoints(ICBreakpoint[] breakpoints) throws CDIException {
+		int[] numbers = new int[breakpoints.length];
+		for (int i = 0; i < numbers.length; i++) {
+			if (breakpoints[i] instanceof Breakpoint
+				&& breakList.contains(breakpoints[i])) {
+				numbers[i] = ((Breakpoint)breakpoints[i]).getMIBreakPoint().getNumber();
+			} else {
+				//throw new CDIException();
+			}
+		}
+		CSession s = getCSession();
+		CommandFactory factory = s.getMISession().getCommandFactory();
+		MIBreakDelete breakDelete = factory.createMIBreakDelete(numbers);
+		try {
+			s.getMISession().postCommand(breakDelete);
+			MIInfo info = breakDelete.getMIInfo();
+			if (info == null) {
+				//throw new CDIException();
+			}
+		} catch (MIException e) {
+			// throw new CDIException(e);
+		}
+		for (int i = 0; i < breakpoints.length; i++) {
+			breakList.remove(breakpoints[i]);
+		}
 	}
 
 	public void enableBreakpoint(ICBreakpoint breakpoint) throws CDIException {
 		int number = 0;
-		if (breakpoint instanceof Breakpoint) {
+		if (breakpoint instanceof Breakpoint && breakList.contains(breakpoint)) {
 			number = ((Breakpoint)breakpoint).getMIBreakPoint().getNumber();
 		} else {
 			//throw new CDIException();
@@ -82,7 +109,7 @@ public class BreakpointManager extends SessionObject implements ICBreakpointMana
 
 	public void disableBreakpoint(ICBreakpoint breakpoint) throws CDIException {
 		int number = 0;
-		if (breakpoint instanceof Breakpoint) {
+		if (breakpoint instanceof Breakpoint && breakList.contains(breakpoint)) {
 			number = ((Breakpoint)breakpoint).getMIBreakPoint().getNumber();
 		} else {
 			// throw new CDIException();
@@ -114,6 +141,7 @@ public class BreakpointManager extends SessionObject implements ICBreakpointMana
 	 */
 	public ICCatchpoint setCatchpoint(int type, ICCatchEvent event, String expression,
 		ICCondition condition) throws CDIException {
+		// throw new CDIException();
 		return null;
 	}
 
@@ -176,6 +204,29 @@ public class BreakpointManager extends SessionObject implements ICBreakpointMana
 	 */
 	public ICWatchpoint setWatchpoint(int type, int watchType, String expression,
 		ICCondition condition) throws CDIException {
-		return null;
+		boolean access = (type == ICWatchpoint.WRITE);
+		boolean read = (type == ICWatchpoint.READ);
+
+		CSession s = getCSession();
+		CommandFactory factory = s.getMISession().getCommandFactory();
+		MIBreakWatch breakWatch = factory.createMIBreakWatch(access, read, expression);
+		MIBreakPoint[] points = null;
+		try {
+			s.getMISession().postCommand(breakWatch);
+			MIBreakWatchInfo info = breakWatch.getMIBreakWatchInfo();
+			if (info == null) {
+				//throw new CDIException();
+			}
+			points = info.getBreakPoints();
+			if (points == null || points.length == 0) {
+				//throw new CDIException();
+			}
+		} catch (MIException e) {
+			// throw new CDIException(e);
+		}
+
+		Breakpoint bkpt= new Breakpoint(this, points[0]);
+		breakList.add(bkpt);
+		return bkpt;
 	}
 }

@@ -22,6 +22,7 @@ public class TxThread extends Thread {
 	public TxThread(MISession s) {
 		super("MI TX Thread");
 		session = s;
+		// start at one, zero is special means no token.
 		token = 1;
 	}
 
@@ -49,9 +50,13 @@ public class TxThread extends Thread {
 					OutputStream out = session.getChannelOutputStream();
 					out.write(str.getBytes());
 					out.flush();
-					// Move to the RxQueue
-					Queue rxQueue = session.getRxQueue();
-					rxQueue.addCommand(cmd);
+					// Move to the RxQueue only if we have
+					// a valid token, this is to permit input(HACK!)
+					// or commands that do not want to wait for responses.
+					if (cmd.getToken() > 0) {
+						Queue rxQueue = session.getRxQueue();
+						rxQueue.addCommand(cmd);
+					}
 				}
 			}
 		} catch (IOException e) {

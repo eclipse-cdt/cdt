@@ -39,7 +39,7 @@ public class MIBreakpointEvent extends MIEvent {
 		return threadId;
 	}
 
-	public MIFrame getFrame() {
+	public MIFrame getMIFrame() {
 		return frame;
 	}
 

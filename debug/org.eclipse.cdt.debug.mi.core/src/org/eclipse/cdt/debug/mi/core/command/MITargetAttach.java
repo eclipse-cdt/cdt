@@ -14,9 +14,9 @@ package org.eclipse.cdt.debug.mi.core.command;
  *  Attach to a process PID or a file FILE outside of GDB.
  * 
  */
-public class MITargetAttach extends MICommand 
+public class MITargetAttach extends CLICommand 
 {
 	public MITargetAttach(int pid) {
-		super("-target-attach", new String[]{Integer.toString(pid)});
+		super("attach " + Integer.toString(pid));
 	}
 }

@@ -1756,13 +1756,9 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		
 		ISymbol look = Y2.lookup( "Y" ); //$NON-NLS-1$
 		assertTrue( look != null );
-		assertTrue( look instanceof IDeferredTemplateInstance );
-		IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) look;
-		assertEquals( deferred.getTemplate(), spec );	
+		assertTrue( look.isTemplateInstance() );
+		assertEquals( look.getInstantiatedSymbol(), Y2 );	
 		
-		Iterator iter = deferred.getArguments().iterator();
-		TypeInfo type = (TypeInfo) iter.next();
-		assertTrue( type.isType( TypeInfo.t_int ) );
 		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 

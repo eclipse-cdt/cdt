@@ -655,23 +655,16 @@ public class ParserSymbolTable {
 				if( wrapper.isVirtual() ){
 					data.visited.add( parent );
 				}
-				
+
+				if( parent instanceof IDeferredTemplateInstance ){
+					parent = ((IDeferredTemplateInstance)parent).getTemplate().getTemplatedSymbol();
+				} else if( parent instanceof ITemplateSymbol ){
+					parent = ((ITemplateSymbol)parent).getTemplatedSymbol();
+				}
+
 				//if the inheritanceChain already contains the parent, then that 
 				//is circular inheritance
 				if( ! data.inheritanceChain.contains( parent ) ){
-					if( parent instanceof IDeferredTemplateInstance || parent instanceof ITemplateSymbol ){
-						if( parent instanceof IDeferredTemplateInstance ){
-							parent = ((IDeferredTemplateInstance)parent).getTemplate().getTemplatedSymbol();
-						} else if( parent instanceof ITemplateSymbol ){
-							parent = ((ITemplateSymbol)parent).getTemplatedSymbol();
-						}
-						if( data.inheritanceChain.contains( parent ) ){
-							//bug 64919, might not really be circular inheritance, it just looks that way
-							//don't throw an exception, just ignore this parent.
-							continue;
-						}
-					}
-					
 					//is this name define in this scope?
 					if( parent instanceof IDerivableContainerSymbol ){
 						temp = lookupInContained( data, (IDerivableContainerSymbol) parent );
@@ -952,6 +945,9 @@ public class ParserSymbolTable {
 					!symbol.isType( TypeInfo.t_templateParameter ) && symbol.getContainingSymbol().isType( TypeInfo.t_template ))
 				{
 					resolvedSymbol = symbol.getContainingSymbol();
+					if( resolvedSymbol instanceof ISpecializedSymbol ){
+						resolvedSymbol = ((ISpecializedSymbol)resolvedSymbol).getPrimaryTemplate();
+					}
 				} else {
 					resolvedSymbol = symbol;
 				}

@@ -1081,35 +1081,38 @@ public final class TemplateEngine {
 	 * 
 	 * @param symbol
 	 * @return
+	 * @throws ParserSymbolTableException
 	 */
-	static protected ISymbol instantiateWithinTemplateScope( IContainerSymbol container, ITemplateSymbol symbol )
+	static protected ISymbol instantiateWithinTemplateScope( IContainerSymbol container, ITemplateSymbol symbol ) throws ParserSymbolTableException
 	{
 		if( symbol.getTemplatedSymbol().isType( TypeInfo.t_function ) ){
 			return symbol;
 		}
 		
-		IDeferredTemplateInstance instance = null;
-		
+		ISymbol instance = null;
+		ITemplateSymbol template = null;
 		IContainerSymbol containing = container.getContainingSymbol();
 		boolean instantiate = false;
 		while( containing != null ){
-			if( containing == symbol ){
+			if( containing == symbol  || 
+				( containing instanceof ISpecializedSymbol && ((ISpecializedSymbol)containing).getPrimaryTemplate() == symbol ) )
+			{
 				instantiate = true;
+				template = (ITemplateSymbol) containing;
 				break;
 			}
-			
 			containing = containing.getContainingSymbol();
+			
 			if( containing != null && !containing.isTemplateMember() || !containing.isType( TypeInfo.t_template ) ){
-				containing = null;
+				break;
 			}
 		}
 		
 		if( instantiate ){
-			if( symbol instanceof ISpecializedSymbol ){
-				ISpecializedSymbol spec = (ISpecializedSymbol) symbol;
-				instance = spec.deferredInstance( spec.getArgumentList() );
+			if( template instanceof ISpecializedSymbol ){
+				ISpecializedSymbol spec = (ISpecializedSymbol) template;
+				instance = spec.instantiate( spec.getArgumentList() );
 			} else {
-				ITemplateSymbol template = symbol;
 				List params = template.getParameterList();
 				int size = params.size();
 				List args = new ArrayList( size );
@@ -1117,7 +1120,7 @@ public final class TemplateEngine {
 					args.add( new TypeInfo( TypeInfo.t_type, 0, (ISymbol) params.get(i) ) );
 				}
 				
-				instance = template.deferredInstance( args );
+				instance = template.instantiate( args );
 			}
 		}
 		

@@ -18,6 +18,7 @@ import java.io.Writer;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -948,13 +950,22 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		writer.write("template < class X > class A < X, Foo > : public A< X, X >     ");
 		writer.write("{   void f ( TYPE );  };                                       ");
 
-		//success is no stack overflow
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
 		IASTClassSpecifier Foo = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTClassSpecifier Bar = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		IASTTemplateDeclaration A1 = (IASTTemplateDeclaration) i.next();
-		IASTTemplateDeclaration A2 = (IASTTemplateDeclaration) i.next();
-		IASTTemplateDeclaration A3 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration T1 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration T2 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration T3 = (IASTTemplateDeclaration) i.next();
+		
+		IASTClassSpecifier A1 = (IASTClassSpecifier) T1.getOwnedDeclaration();
+		IASTClassSpecifier A2 = (IASTClassSpecifier) T2.getOwnedDeclaration();
+		IASTClassSpecifier A3 = (IASTClassSpecifier) T3.getOwnedDeclaration();
+		
+		IASTBaseSpecifier parent = (IASTBaseSpecifier) A2.getBaseClauses().next();
+		assertEquals( parent.getParentClassSpecifier(), A1 );
+		
+		parent = (IASTBaseSpecifier) A3.getBaseClauses().next();
+		assertEquals( parent.getParentClassSpecifier(), A2 );
 	}
 }

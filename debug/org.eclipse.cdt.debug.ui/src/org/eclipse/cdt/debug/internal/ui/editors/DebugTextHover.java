@@ -90,11 +90,11 @@ public class DebugTextHover implements ITextHover
 					ICExpressionEvaluator ee = (ICExpressionEvaluator)target.getAdapter( ICExpressionEvaluator.class );
 					if ( ee.canEvaluate() )
 					{
-						String result = evaluateExpression( ee, expression ).trim();
+						String result = evaluateExpression( ee, expression );
 						try
 						{
 							if ( result != null )
-								appendVariable( buffer, expression, result, showDebugTarget ? target.getName() : null );
+								appendVariable( buffer, expression, result.trim(), showDebugTarget ? target.getName() : null );
 						}
 						catch( DebugException x )
 						{

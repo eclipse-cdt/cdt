@@ -1,3 +1,11 @@
+2004-11-19 Alain Magloire
+
+	Clear the confusion about sublist of stackframes.
+	PR 78611
+
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Thread.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java
+
 2004-11-17 David Inglis
 	
 	ICDIDebugger change to use IBinaryObject instead of IBnaryExecutable

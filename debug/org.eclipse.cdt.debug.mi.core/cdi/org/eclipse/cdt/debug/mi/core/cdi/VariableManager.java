@@ -69,7 +69,7 @@ public class VariableManager extends Manager {
 	// We put a restriction on how deep we want to
 	// go when doing update of the variables.
 	// If the number is to high, gdb will just hang.
-	int MAX_STACK_DEPTH = 200;
+	int MAX_STACK_DEPTH = Thread.STACKFRAME_DEFAULT_DEPTH;
 	Map variablesMap;
 	MIVarChange[] noChanges = new MIVarChange[0];
 
@@ -574,8 +574,8 @@ public class VariableManager extends Manager {
 	 *
 	 */
 	public void update(Target target) throws CDIException {
-		int high = 0;
-		int low = 0;
+		int highLevel = 0;
+		int lowLevel = 0;
 		List eventList = new ArrayList();
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -586,20 +586,20 @@ public class VariableManager extends Manager {
 		if (currentThread != null) {
 			currentStack = currentThread.getCurrentStackFrame();
 			if (currentStack != null) {
-				high = currentStack.getLevel();
+				highLevel = currentStack.getLevel();
 			}
-			if (high > 0) {
-				high--;
+			if (highLevel > MAX_STACK_DEPTH) {
+				highLevel = MAX_STACK_DEPTH;
 			}
-			low = high - MAX_STACK_DEPTH;
-			if (low < 0) {
-				low = 0;
+			lowLevel = highLevel - MAX_STACK_DEPTH;
+			if (lowLevel < 0) {
+				lowLevel = 0;
 			}
-			frames = currentThread.getStackFrames(low, high);
+			frames = currentThread.getStackFrames(0, highLevel);
 		}
 		for (int i = 0; i < vars.length; i++) {
 			Variable variable = vars[i];
-			if (isVariableNeedsToBeUpdate(variable, currentStack, frames, low)) {
+			if (isVariableNeedsToBeUpdate(variable, currentStack, frames, lowLevel)) {
 				String varName = variable.getMIVar().getVarName();
 				MIVarChange[] changes = noChanges;
 				MIVarUpdate update = factory.createMIVarUpdate(varName);
@@ -639,7 +639,7 @@ public class VariableManager extends Manager {
 	 * @param frames
 	 * @return
 	 */
-	boolean isVariableNeedsToBeUpdate(Variable variable, ICDIStackFrame current, ICDIStackFrame[] frames, int low)
+	boolean isVariableNeedsToBeUpdate(Variable variable, ICDIStackFrame current, ICDIStackFrame[] frames, int lowLevel)
 		throws CDIException {
 		ICDIStackFrame varStack = variable.getStackFrame();
 		boolean inScope = false;
@@ -656,7 +656,7 @@ public class VariableManager extends Manager {
 			// The variable is in the current selected frame it should be updated
 			return true;
 		} else {
-			if (varStack.getLevel() >= low) {
+			if (varStack.getLevel() >= lowLevel) {
 				// Check if the Variable is still in Scope 
 				// if it is no longer in scope so update() can call "-var-delete".
 				for (int i = 0; i < frames.length; i++) {

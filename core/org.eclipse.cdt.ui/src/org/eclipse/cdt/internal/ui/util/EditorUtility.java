@@ -110,17 +110,17 @@ public class EditorUtility {
 		}
 	}
 
-//	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
-//		if (file != null) {
-//			IWorkbenchPage p= CUIPlugin.getActivePage();
-//			if (p != null) {
-//				IEditorPart editorPart = IDE.openEditor(p, file, activate);
-//				initializeHighlightRange(editorPart);
-//				return editorPart;
-//			}
-//		}
-//		return null;
-//	}
+	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
+		if (file != null) {
+		try {
+				IEditorInput input = getEditorInput(file);
+				if (input != null) {
+					return openInEditor(input, getEditorID(input, file), activate);
+				}
+			} catch (CModelException e) {}
+		}
+		return null;
+	}
 
 	private static IEditorPart openInEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {
 		if (input != null) {
@@ -265,7 +265,7 @@ public class EditorUtility {
 	public static String getEditorID(IEditorInput input, Object inputObject) {
 		String ID =  getEditorID(input.getName());
 
-		if (!"org.eclipse.ui.DefaultTextEditor".equals(ID)) { // $NON-NLS-1$
+		if (!"org.eclipse.ui.DefaultTextEditor".equals(ID)) { //$NON-NLS-1$
 			return ID;
 		}
 

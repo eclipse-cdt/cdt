@@ -1,3 +1,9 @@
+2004-06-29 Alain Magloire
+
+	Fix for PR 68820.
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+
 2004-06-27 Bogdan Gheorghe
 	Fix for Bug 67987: [Search] C Search results do no show up as editor annotations
 	

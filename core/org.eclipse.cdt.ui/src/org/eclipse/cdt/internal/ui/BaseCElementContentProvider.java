@@ -336,8 +336,14 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	}
 	
 	private Object[] filterNonCResources(Object[] objects, ICProject cproject) throws CModelException {
-		ICElement[] binaries = getBinaries(cproject);
-		ICElement[] archives = getArchives(cproject);
+		ICElement[] binaries = null;
+		ICElement[] archives = null;
+		try {
+			binaries = getBinaries(cproject);
+			archives = getArchives(cproject);
+		} catch (CModelException e) {
+			archives = binaries = new ICElement[0];
+		}
 		ISourceRoot[] roots = null;
 		try {
 			roots = cproject.getSourceRoots();

@@ -103,7 +103,7 @@ public class CElementImageProvider {
 		} else if (element instanceof IFile) {
 			// Check for Non Translation Unit.
 			IFile file = (IFile)element;
-			if (CoreModel.isTranslationUnit(file)) {
+			if (CoreModel.isValidTranslationUnitName(file.getProject(), file.getName())) {
 				descriptor = CPluginImages.DESC_OBJS_TUNIT_RESOURCE;
 				Point size= useSmallSize(flags) ? SMALL_SIZE : BIG_SIZE;
 				descriptor = new CElementImageDescriptor(descriptor, 0, size);

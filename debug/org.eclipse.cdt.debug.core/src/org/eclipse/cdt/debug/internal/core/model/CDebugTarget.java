@@ -690,10 +690,8 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void breakpointAdded( IBreakpoint breakpoint )
 	{
-		if ( !isAvailable() )
-		{
+		if ( !isTargetBreakpoint( breakpoint ) || !isAvailable() )
 			return;
-		}
 		if ( getConfiguration().supportsBreakpoints() )
 		{
 			try
@@ -718,7 +716,6 @@ public class CDebugTarget extends CDebugElement
 			}
 			catch( DebugException e )
 			{
-//				CDebugCorePlugin.log( e );
 			}
 		}
 	}
@@ -728,6 +725,8 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void breakpointRemoved( IBreakpoint breakpoint, IMarkerDelta delta )
 	{
+		if ( !isTargetBreakpoint( breakpoint ) || !isAvailable() )
+			return;
 		try
 		{
 			if ( breakpoint instanceof CBreakpoint )
@@ -735,7 +734,6 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( DebugException e )
 		{
-			CDebugCorePlugin.log( e );
 		}
 	}
 
@@ -744,6 +742,8 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void breakpointChanged( IBreakpoint breakpoint, IMarkerDelta delta )
 	{
+		if ( !isTargetBreakpoint( breakpoint ) || !isAvailable() )
+			return;
 		try
 		{
 			if ( breakpoint instanceof CBreakpoint )
@@ -751,7 +751,6 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( DebugException e )
 		{
-			CDebugCorePlugin.log( e );
 		}
 	}
 

@@ -1,3 +1,8 @@
+2003-05-27 Mikhail Khodjaiants
+	Check if the location of breakpoint is eligible for the target 
+	when setting, removing or changing the propeties.
+	* CDebugTarget.java
+
 2003-03-23 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/core/cdi/model/type/ICDIVariable.java:

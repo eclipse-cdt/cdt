@@ -32,12 +32,12 @@ import org.eclipse.cdt.debug.mi.core.output.MIShared;
 public class SharedLibraryManager extends SessionObject implements ICDISharedLibraryManager {
 
 	List sharedList;
-	List delList;
+	List unloadedList;
 
 	public SharedLibraryManager (CSession session) {
 		super(session);
 		sharedList = new ArrayList(1);
-		delList = new ArrayList(1);
+		unloadedList = new ArrayList(1);
 	}
 
 	public void update() throws CDIException {
@@ -83,7 +83,7 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			if (!found) {
 				// Fire destroyed Events.
 				sharedList.remove(oldlibs[i]);
-				delList.add(oldlibs[i]);
+				unloadedList.add(oldlibs[i]);
 				eventList.add(new MISharedLibUnloadedEvent(oldlibs[i].getFileName())); 
 			}
 		}
@@ -112,6 +112,25 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			}
 		}
 		return false;
+	}
+
+	public ICDISharedLibrary getUnloadedLibrary(String name) {
+		ICDISharedLibrary[] libs = (ICDISharedLibrary[])unloadedList.toArray(new ICDISharedLibrary[0]);
+		for (int i = 0; i < libs.length; i++) {
+			if (name.equals(libs[i].getFileName())) {
+					return libs[i];
+			}
+		}
+		return null;
+	}
+
+	public void removeFromUnloadedList(String name) {
+		ICDISharedLibrary[] libs = (ICDISharedLibrary[])unloadedList.toArray(new ICDISharedLibrary[0]);
+		for (int i = 0; i < libs.length; i++) {
+			if (name.equals(libs[i].getFileName())) {
+				unloadedList.remove(libs[i]);
+			}
+		}
 	}
 
 	public ICDISharedLibrary getSharedLibrary(String name) {

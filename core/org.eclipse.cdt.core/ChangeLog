@@ -1,3 +1,15 @@
+2003-10-07 Alain Magloire
+
+	More work on the GNU Elf Binary parser.
+	Move some calls that extends the Addr2line class.
+
+	* utils/org/eclipse/cdt/utils/elf/BinaryFile.java
+	* utils/org/eclipse/cdt/utils/elf/BinaryObject.java
+	* utils/org/eclipse/cdt/utils/elf/BinaryArchive.java
+	* utils/org/eclipse/cdt/utils/elf/ElfParser.java
+	* utils/org/eclipse/cdt/utils/elf/GNUElfParser.java
+	* utils/org/eclipse/cdt/utils/Addr2line.java
+
 2003-10-06 Alain Magloire
 
 	Implementation of the GNU Elf parser, where you can

@@ -1,3 +1,18 @@
+2004-01-09 Alain Magloire
+
+	* src/org/eclipse/cdt/core/IBinaryParser.java
+	Added ISymbol.getSize().
+	* utils/org/eclipse/cdt/utils/elf/Elf.java
+	Fix bug in finding the symbols.
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryObject.java
+	Fix bug in finding the symbols.
+	* utils/org/eclipse/cdt/utils/elf/parser/Symbol.java
+	Implement ISymbol.java
+	* utils/org/eclipse/cdt/utils/stabs/Stabs.java
+	New Methods.
+	* utils/org/eclipse/cdt/utils/stabs/StabAddre2line.java
+	Work in progress.
+
 2004-01-08 Hoda Amer
 	Added Content assist log capabilities
 	

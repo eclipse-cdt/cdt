@@ -792,8 +792,8 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitInstantiationBegin(java.lang.Object)
 	 */
 	public Object explicitInstantiationBegin(Object container) {
-		IScope scope = (IScope)container;
-		ExplicitTemplateDeclaration etd = new ExplicitTemplateDeclaration( scope, ExplicitTemplateDeclaration.k_instantiation ); 
+		ExplicitTemplateDeclaration etd = new ExplicitTemplateDeclaration( getCurrentDOMScope(), ExplicitTemplateDeclaration.k_instantiation );
+		domScopes.push( etd ); 
 		return etd;
 	}
 
@@ -801,7 +801,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitInstantiationEnd(java.lang.Object)
 	 */
 	public void explicitInstantiationEnd(Object instantiation) {
-		ExplicitTemplateDeclaration declaration = (ExplicitTemplateDeclaration)instantiation;
+		ExplicitTemplateDeclaration declaration = (ExplicitTemplateDeclaration)domScopes.pop();
 		declaration.getOwnerScope().addDeclaration(declaration);
 	}
 
@@ -809,8 +809,8 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitSpecializationBegin(java.lang.Object)
 	 */
 	public Object explicitSpecializationBegin(Object container) {
-		IScope scope = (IScope)container;
-		ExplicitTemplateDeclaration etd = new ExplicitTemplateDeclaration( scope, ExplicitTemplateDeclaration.k_specialization); 
+		ExplicitTemplateDeclaration etd = new ExplicitTemplateDeclaration( getCurrentDOMScope(), ExplicitTemplateDeclaration.k_specialization);
+		domScopes.push( etd ); 
 		return etd;
 	}
 
@@ -818,7 +818,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitSpecializationEnd(java.lang.Object)
 	 */
 	public void explicitSpecializationEnd(Object instantiation) {
-		ExplicitTemplateDeclaration etd = (ExplicitTemplateDeclaration)instantiation;
+		ExplicitTemplateDeclaration etd = (ExplicitTemplateDeclaration)domScopes.pop();
 		etd.getOwnerScope().addDeclaration(etd);
 	}
 
@@ -838,6 +838,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 		if( container instanceof IAccessable )
 			d.setVisibility( ((IAccessable)container).getVisibility() );
 		d.setStartingOffset( exported.getOffset() );
+		domScopes.push( d ); 
 		return d;
 	}
 
@@ -845,14 +846,14 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationAbort(java.lang.Object)
 	 */
 	public void templateDeclarationAbort(Object templateDecl) {
-		templateDecl = null; 
+		domScopes.pop(); 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationEnd(java.lang.Object)
 	 */
 	public void templateDeclarationEnd(Object templateDecl, Token lastToken) {
-		TemplateDeclaration decl = (TemplateDeclaration)templateDecl;
+		TemplateDeclaration decl = (TemplateDeclaration)domScopes.pop();
 		decl.setLastToken(lastToken);
 		decl.getOwnerScope().addDeclaration(decl);
 		decl.setTotalLength(lastToken.getOffset() + lastToken.getLength() - decl.getStartingOffset() );

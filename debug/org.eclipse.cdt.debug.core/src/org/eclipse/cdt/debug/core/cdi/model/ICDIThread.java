@@ -29,6 +29,25 @@ public interface ICDIThread extends ICDIObject {
 	ICDIStackFrame[] getStackFrames() throws CDIException;
 
 	/**
+	 * Returns the stack frames contained in this thread whose levels
+	 * are between the two arguments(inclusive).
+	 * An empty collection is returned if this thread contains
+	 * no stack frames, or is not currently suspended. Stack frames
+	 * are returned in top down order.
+	 * 
+	 * @return  a collection of stack frames
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	ICDIStackFrame[] getStackFrames(int lowFrame, int highFrame) throws CDIException;
+
+	/**
+	 * Returns the depth of the stack frames 
+	 * @return  depth of stack frames
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	int getStackFrameCount() throws CDIException;
+
+	/**
 	 * Set the curretn Stack for the thread.
 	 * @param - ICDIStackFrame
 	 */

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
+import org.eclipse.cdt.debug.core.cdi.ICDISignal;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -229,6 +230,17 @@ public class CDTDebugModelPresentation extends LabelProvider
 						label += ". Exit code = " + ((ICDIExitInfo)info).getCode();
 					}
 					return label + ")";
+				}
+				case IState.SUSPENDED:
+				{
+					Object info = state.getCurrentStateInfo();
+					if ( info != null && info instanceof ICDISignal )
+					{
+						String label = target.getName() + 
+									   MessageFormat.format( " (Signal \'{0}\' received. Meaning: {1})", 
+									   						 new String[] { ((ICDISignal)info).getName(), ((ICDISignal)info).getMeaning() } );
+						return label;
+					}
 				}
 			}
 		}

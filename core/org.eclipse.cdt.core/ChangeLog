@@ -1,5 +1,15 @@
 2003-01-29 Alain Magloire
 
+	* index/org/eclipse/cdt/internal/core/index/IndexManager.java (shutdown):
+	Typo was calling Thread.interrupted() instead of Thread.interrupt().
+	(delay): No longer static.
+	* src/org/eclipse/cdt/core/ErrorParserManger.java (readPreferences):
+	Use Class.forName().
+	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java (resourceChanged):
+	Remove useless declarations.
+
+2003-01-29 Alain Magloire
+
 	* utils/org/eclipse/cdt/utils/elf/Elf.java:
 	* utils/org/eclipse/cdt/utils/coff/Coff.java
 	* utils/org/eclipse/cdt/utils/coff/PE.java

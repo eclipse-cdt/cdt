@@ -762,12 +762,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 			remaining++;
 			oldResolvedEntries[i] = removeCachedResolvedPathEntries(affectedProject);
-//			ArrayList listEntries = (ArrayList)resolvedMap.remove(affectedProject);
-//			if (listEntries != null) {
-//				oldResolvedEntries[i] = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES);
-//			} else {
-//				oldResolvedEntries[i] = null;
-//			}
 			containerPut(affectedProject, containerPath, newContainer);
 		}
 

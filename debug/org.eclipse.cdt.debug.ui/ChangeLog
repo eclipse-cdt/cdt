@@ -1,4 +1,8 @@
 2004-09-01 Mikhail Khodjaiants
+	Fix for bug 73197: DisassemblyEditorInput.getAddress can crash.
+	* DisassemblyEditorInput.java
+
+2004-09-01 Mikhail Khodjaiants
 	Breakpoint filtering by targets (ui).
 	* PropertyPageMessages.properties
 	* CBreakpointFilteringPage.java

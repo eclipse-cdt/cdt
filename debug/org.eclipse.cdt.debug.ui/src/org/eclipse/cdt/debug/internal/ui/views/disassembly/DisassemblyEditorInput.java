@@ -165,7 +165,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 			for ( int i = 0; i < lines.length; ++i ) {
 				IAsmInstruction[] instructions = lines[i].getInstructions();
 				++current;
-				if ( lineNumber == current )
+				if ( lineNumber == current && instructions.length > 0 )
 					return instructions[0].getAdress();
 				if ( lineNumber > current && lineNumber <= current + instructions.length )
 					return instructions[lineNumber - current - 1].getAdress();

@@ -312,7 +312,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * Create the pattern rule in the format:
 	 * <relative_path>/<name>.<outputExtension>: $(ROOT)/<relative_path>/<name>.<inputExtension>
 	 * 		@echo 'Building file: $<'
-	 * 		@<tool> <flags> <output_flag> $@ $< && \
+	 * 		@echo <tool> <flags> <output_flag><output_extension>$@ $<
+	 * 		@<tool> <flags> <output_flag><output_extension>$@ $< && \
 	 * 		echo -n '<relative_path>/<name>.d <relative_path>/' >> <relative_path>/<name>.d && \
 	 * 		<tool> -P -MM -MG <flags> $< >> <relative_path>/<name>.d
 	 * 		@echo 'Finished building: $<'
@@ -323,7 +324,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * makefile, so a real command might look something like:
 	 * source1/foo.o: $(ROOT)/source1/foo.cpp
 	 * 		@echo 'Building file: $<'
-	 * 		@ g++ -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers -o $@ $< && \
+	 * 		@echo g++ -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers -o$@ $<
+	 * 		@ g++ -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers -o$@ $< && \
 	 * 		echo -n 'source1/foo.d source1/' >> source1/foo.d && \
 	 * 		g++ -P -MM -MG -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers $< >> source1/foo.d
 	 * 		@echo 'Finished building: $<'
@@ -351,8 +353,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		outputPrefix = info.getOutputPrefix(outputExtension);
 		
 		// The command to build
-		buffer.append(TAB + AT + ECHO + WHITESPACE + cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO + NEWLINE);
-		buffer.append(TAB + AT + cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO);
+		String buildCmd = cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO;
+		buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
+		buffer.append(TAB + AT + buildCmd);
 		
 		// TODO determine if there are any deps to calculate
 		if (true) {
@@ -576,7 +579,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		 * Write out the target rule as:
 		 * targ_<prefix><target>.<extension>: $(OBJS) <refd_project_1 ... refd_project_n>
 		 * 		@echo 'Building target: $@'
-		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $(OBJS) $(USER_OBJS) $(LIB_DEPS)
+		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG)$@ $(OBJS) $(USER_OBJS) $(LIB_DEPS)
 		 * 		@echo 'Finished building: $@'
 		 * 		@echo
 		 */

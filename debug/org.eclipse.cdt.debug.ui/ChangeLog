@@ -1,3 +1,21 @@
+2004-04-27 Mikhail Khodjaiants
+	Breakpoints presentation in the Disassembly view.
+	* HTML2TextReader.java: new
+	* HTMLPrinter.java: new
+	* HTMLTextPresenter.java: new
+	* LineBreakingReader.java: new
+	* SingleCharReader.java: new
+	* SubstitutionTextReader.java: new
+	* ToggleBreakpointAdapter.java
+	* DisassemblyMessages.properties
+	* DisassemblyAnnotationHover.java: new
+	* DisassemblyAnnotationModel.java: new
+	* DisassemblyDocumentProvider.java
+	* DisassemblyEditorInput.java
+	* DisassemblyMarkerAnnotationModel.java: deleted
+	* DisassemblyView.java
+	* DisassemblyViewerConfiguration.java: new
+
 2004-04-23 Mikhail Khodjaiants
 	Fix for bug 58711: Breakpoint race condition.
 	Notify the Breakpoint Manager when the install count of breakpoint is changed.

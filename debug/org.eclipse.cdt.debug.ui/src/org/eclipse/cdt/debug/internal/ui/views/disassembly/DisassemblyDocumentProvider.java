@@ -25,7 +25,8 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
 
 	private IDocument fDocument;
 
-	private DisassemblyMarkerAnnotationModel fAnnotationModel;
+//	private DisassemblyMarkerAnnotationModel fAnnotationModel;
+	private DisassemblyAnnotationModel fAnnotationModel;
 	
 	/**
 	 * Constructor for DisassemblyDocumentProvider.
@@ -121,7 +122,8 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
 	 */
 	public IAnnotationModel getAnnotationModel( Object element ) {
 		if ( fAnnotationModel == null ) {
-			fAnnotationModel = new DisassemblyMarkerAnnotationModel();
+//			fAnnotationModel = new DisassemblyMarkerAnnotationModel( getDocument( element ) );
+			fAnnotationModel = new DisassemblyAnnotationModel( getDocument( element ) );
 		}
 		fAnnotationModel.setInput( ( element instanceof DisassemblyEditorInput ) ? (DisassemblyEditorInput)element : null );
 		return fAnnotationModel;
@@ -156,5 +158,8 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
 	}
 
 	protected void dispose() {
+		if ( fAnnotationModel != null ) {
+			fAnnotationModel.dispose();
+		}
 	}
 }

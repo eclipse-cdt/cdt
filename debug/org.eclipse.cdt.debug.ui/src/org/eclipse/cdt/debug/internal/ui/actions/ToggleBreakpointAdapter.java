@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInpu
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -250,6 +251,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		}
 		if ( input instanceof IStorageEditorInput ) {
 			return ((IStorageEditorInput)input).getStorage().getName();
+		}
+		if ( input instanceof DisassemblyEditorInput ) {
+			IFile file = ((DisassemblyEditorInput)input).getModuleFile();
+			return ( file != null ) ? file.getLocation().toOSString() : ""; //$NON-NLS-1$
 		}
 		return ""; //$NON-NLS-1$
 	}

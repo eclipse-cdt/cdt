@@ -13,11 +13,14 @@ package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
+import org.eclipse.cdt.debug.core.model.IBreakpointTarget;
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
@@ -70,6 +73,21 @@ public class DisassemblyEditorInput implements IEditorInput {
 				}
 			}
 			return result;
+		}
+
+		public long getBreakpointAddress( ICLineBreakpoint breakpoint ) {
+			IDisassembly dis = getDisassembly();
+			if ( dis != null ) {
+				IBreakpointTarget bt = (IBreakpointTarget)dis.getDebugTarget().getAdapter( IBreakpointTarget.class );
+				if ( bt != null ) {
+					try {
+						return bt.getBreakpointAddress( breakpoint );
+					}
+					catch( DebugException e ) {
+					}
+				}
+			}
+			return 0;
 		}
 
 		private void createContent() {
@@ -234,7 +252,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 		return ( fStorage != null ) ? fStorage.getContents() : ""; //$NON-NLS-1$
 	}
 
-	public int getLineNumber( long address ) {
+	public int getInstructionNumber( long address ) {
 		return ( fStorage != null ) ? fStorage.getLineNumber( address ) : 0;
 	}
 
@@ -244,5 +262,9 @@ public class DisassemblyEditorInput implements IEditorInput {
 
 	public IFile getModuleFile() {
 		return ( fStorage != null ) ? fStorage.getModuleFile() : null;
+	}
+
+	public long getBreakpointAddress( ICLineBreakpoint breakpoint ) {
+		return ( fStorage != null ) ? fStorage.getBreakpointAddress( breakpoint ) : 0;
 	}
 }

@@ -74,6 +74,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 										IDebugExceptionHandler,
 										IDisassemblyListener {
 
+
 	/**
 	 * The width of the vertical ruler.
 	 */
@@ -140,6 +141,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		fVerticalRuler = createVerticalRuler();
 		
 		SourceViewer viewer = createSourceViewer( parent, fVerticalRuler );
+		viewer.configure( new DisassemblyViewerConfiguration() );
 		getSourceViewerDecorationSupport( viewer );
 		
 		EditorsPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
@@ -402,7 +404,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 */
 	private IRegion getLineInformation( long address, IEditorInput input ) {
 		if ( input instanceof DisassemblyEditorInput ) {
-			int line = ((DisassemblyEditorInput)input).getLineNumber( address );
+			int line = ((DisassemblyEditorInput)input).getInstructionNumber( address );
 			if ( line > 0 ) {
 				try {
 					return getSourceViewer().getDocument().getLineInformation( --line );

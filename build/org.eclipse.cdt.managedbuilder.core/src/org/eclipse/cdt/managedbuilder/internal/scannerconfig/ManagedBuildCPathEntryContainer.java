@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004,2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -216,6 +216,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
                 getSCProfileInstance(project, MM_PP_DISCOVERY_PROFILE_ID);
         IScannerInfoCollector collector = profileInstance.createScannerInfoCollector();
         
+        synchronized(this) {
 		if (collector instanceof IManagedScannerInfoCollector) {
             IManagedScannerInfoCollector mCollector = (IManagedScannerInfoCollector) collector;
             mCollector.setProject(project);
@@ -234,6 +235,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			}
 		}
 		return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+        }  // end synchronized
 	}
 	
 	/* (non-Javadoc)

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ITokenDuple;
@@ -24,16 +25,33 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
  */
 public class TypeId implements IDeclarator
 {
+	private static final int DEFAULT_ARRAYLIST_SIZE = 4;
     private ITokenDuple name;
-    private List arrayModifiers = new ArrayList();
-    private List pointerOperators = new ArrayList();
-	private final IASTScope scope;
+    private List arrayModifiers;
+    private List pointerOperators;
+	private IASTScope scope;
+	private static TypeId instance = new TypeId();
+	
+	public static TypeId getInstance(IASTScope scope)
+	{
+		instance.reset(scope);
+		return instance;
+	}
     /**
+	 * @param scope2
+	 */
+	private void reset(IASTScope s) {
+		this.scope = s;
+	    arrayModifiers = Collections.EMPTY_LIST;
+	    pointerOperators = Collections.EMPTY_LIST;
+		name = null;
+	}
+	/**
      * 
      */
-    public TypeId(IASTScope scope )
+    private TypeId()
     {
-       this.scope = scope;  
+    	reset( null );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IDeclarator#getPointerOperators()
@@ -47,6 +65,8 @@ public class TypeId implements IDeclarator
      */
     public void addPointerOperator(ASTPointerOperator ptrOp)
     {
+    	if( pointerOperators == Collections.EMPTY_LIST )
+    		pointerOperators = new ArrayList( DEFAULT_ARRAYLIST_SIZE );
         pointerOperators.add( ptrOp );
     }
     /* (non-Javadoc)
@@ -54,6 +74,8 @@ public class TypeId implements IDeclarator
      */
     public void addArrayModifier(IASTArrayModifier arrayMod)
     {
+       	if( arrayModifiers == Collections.EMPTY_LIST )
+       		arrayModifiers = new ArrayList( DEFAULT_ARRAYLIST_SIZE );
         arrayModifiers.add( arrayMod );
     }
     /* (non-Javadoc)

@@ -908,10 +908,10 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTTypeId, org.eclipse.cdt.core.parser.ITokenDuple, int, org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#constructExpressions(boolean)
 	 */
-	public IASTExpression createExpression(Kind kind, long literal, boolean isHex) throws ASTSemanticException {
-		return ExpressionFactory.createExpression( kind, literal, isHex ); 	
+	public void constructExpressions(boolean flag) {
+		//ignore
 	}
 
 }

@@ -17,7 +17,6 @@ import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
-import org.eclipse.cdt.core.parser.INumericToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
@@ -388,76 +387,85 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 */
 	protected ITokenDuple name(IASTScope scope, IASTCompletionNode.CompletionKind kind, Key key ) throws BacktrackException, EndOfFileException {
 		
-	    IToken first = LA(1);
-	    IToken last = null;
-	    IToken mark = mark();
-	    
-	    List argumentList = new LinkedList();
-	    boolean hasTemplateId = false;
-	    boolean startsWithColonColon = false;
-        
-        if (LT(1) == IToken.tCOLONCOLON){
-        	argumentList.add( null );
-            last = consume( IToken.tCOLONCOLON );
-            setCompletionValues( scope, kind, Key.EMPTY, getCompliationUnit() );
-            startsWithColonColon = true;
-        }
-
-        if (LT(1) == IToken.tCOMPL)
-            consume();
-        
-        switch (LT(1))
-        {
-            case IToken.tIDENTIFIER :
-            	IToken prev = last;
-            	last = consume(IToken.tIDENTIFIER);
-            	if( startsWithColonColon )
-            		setCompletionValues( scope, kind, getCompliationUnit() );
-            	else if( prev != null )
-            		setCompletionValues(scope, kind, first, prev, Key.EMPTY );
-            	else
-            		setCompletionValuesNoContext(scope, kind, key );
-            	
-                last = consumeTemplateArguments(scope, last, argumentList);
-                if( last.getType() == IToken.tGT )
-                	hasTemplateId = true;
-                break;
-        
-            default :
-                backup(mark);
-                throw backtrack;
-        }
-
-        while (LT(1) == IToken.tCOLONCOLON)
-        {
-        	IToken prev = last;
-            last = consume(IToken.tCOLONCOLON);
-            setCompletionValues( scope, kind, first, prev, Key.EMPTY );
-            
-            if (queryLookaheadCapability() && LT(1) == IToken.t_template)
-                consume();
-            
-            if (queryLookaheadCapability() && LT(1) == IToken.tCOMPL)
-                consume();
-
-            switch (LT(1))
-            {
-                case IToken.t_operator :
-                    backup(mark);
-                    throw backtrack;
-                case IToken.tIDENTIFIER :
-                	prev = last;
-                    last = consume();
-                    setCompletionValues( scope, kind, first, prev, Key.EMPTY );
-		            last = consumeTemplateArguments(scope, last, argumentList);
-		            if( last.getType() == IToken.tGT )
-		            	hasTemplateId = true;
-            }
-        }
-
-        ITokenDuple tokenDuple = new TokenDuple(first, last, ( hasTemplateId ? argumentList : null ) );
-        setGreaterNameContext( tokenDuple );
-		return tokenDuple;
+		TemplateParameterManager argumentList = TemplateParameterManager.getInstance();
+		
+		try
+		{
+		    IToken first = LA(1);
+		    IToken last = null;
+		    IToken mark = mark();
+		    
+		    
+		    boolean hasTemplateId = false;
+		    boolean startsWithColonColon = false;
+	        
+	        if (LT(1) == IToken.tCOLONCOLON){
+	        	argumentList.addSegment( null );
+	            last = consume( IToken.tCOLONCOLON );
+	            setCompletionValues( scope, kind, Key.EMPTY, getCompliationUnit() );
+	            startsWithColonColon = true;
+	        }
+	
+	        if (LT(1) == IToken.tCOMPL)
+	            consume();
+	        
+	        switch (LT(1))
+	        {
+	            case IToken.tIDENTIFIER :
+	            	IToken prev = last;
+	            	last = consume(IToken.tIDENTIFIER);
+	            	if( startsWithColonColon )
+	            		setCompletionValues( scope, kind, getCompliationUnit() );
+	            	else if( prev != null )
+	            		setCompletionValues(scope, kind, first, prev, Key.EMPTY );
+	            	else
+	            		setCompletionValuesNoContext(scope, kind, key );
+	            	
+	                last = consumeTemplateArguments(scope, last, argumentList);
+	                if( last.getType() == IToken.tGT )
+	                	hasTemplateId = true;
+	                break;
+	        
+	            default :
+	                backup(mark);
+	                throw backtrack;
+	        }
+	
+	        while (LT(1) == IToken.tCOLONCOLON)
+	        {
+	        	IToken prev = last;
+	            last = consume(IToken.tCOLONCOLON);
+	            setCompletionValues( scope, kind, first, prev, Key.EMPTY );
+	            
+	            if (queryLookaheadCapability() && LT(1) == IToken.t_template)
+	                consume();
+	            
+	            if (queryLookaheadCapability() && LT(1) == IToken.tCOMPL)
+	                consume();
+	
+	            switch (LT(1))
+	            {
+	                case IToken.t_operator :
+	                    backup(mark);
+	                    throw backtrack;
+	                case IToken.tIDENTIFIER :
+	                	prev = last;
+	                    last = consume();
+	                    setCompletionValues( scope, kind, first, prev, Key.EMPTY );
+			            last = consumeTemplateArguments(scope, last, argumentList);
+			            if( last.getType() == IToken.tGT )
+			            	hasTemplateId = true;
+	            }
+	        }
+	
+	        ITokenDuple tokenDuple = new TokenDuple(first, last, ( hasTemplateId ? argumentList.getTemplateArgumentsList() : null ) );
+	        setGreaterNameContext( tokenDuple );
+			return tokenDuple;
+		}
+		finally
+		{
+			TemplateParameterManager.returnInstance( argumentList );
+		}
 
 	}
 
@@ -514,22 +522,22 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @throws EndOfFileException
 	 * @throws BacktrackException
 	 */
-	protected IToken consumeTemplateArguments(IASTScope scope, IToken last, List argumentList) throws EndOfFileException, BacktrackException {
+	protected IToken consumeTemplateArguments(IASTScope scope, IToken last, TemplateParameterManager argumentList) throws EndOfFileException, BacktrackException {
 		if( LT(1) == IToken.tLT ){
 			IToken secondMark = mark();
 			consume( IToken.tLT );
 		    try
 		    {
 		    	List list = templateArgumentList( scope );
-		    	argumentList.add( list );
+		    	argumentList.addSegment( list );
 		    	last = consume( IToken.tGT );
 		    } catch( BacktrackException bt )
 		    {
-		    	argumentList.add( null );
+		    	argumentList.addSegment( null );
 		    	backup( secondMark );
 		    }
 		} else {
-			argumentList.add( null );
+			argumentList.addSegment( null );
 		}
 		return last;
 	}
@@ -608,7 +616,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    }
 	}
 
-	protected void operatorId(Declarator d, IToken originalToken, List templateArgs) throws BacktrackException, EndOfFileException {
+	protected void operatorId(Declarator d, IToken originalToken, TemplateParameterManager templateArgs) throws BacktrackException, EndOfFileException {
 	    // we know this is an operator
 	    IToken operatorToken = consume(IToken.t_operator);
 	    IToken toSend = null;
@@ -648,18 +656,31 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        toSend = lastToken;
 	    }
 	    
-	    List args = ( templateArgs != null ) ? templateArgs : new LinkedList();
 	    boolean hasTemplateId = ( templateArgs != null );
-
-	    toSend = consumeTemplateArguments( d.getDeclarationWrapper().getScope(), toSend, args );
-	    if( toSend.getType() == IToken.tGT ){
-	    	hasTemplateId = true;
+	    boolean grabbedNewInstance = false;
+	    if( templateArgs == null ) 
+	    {
+	    	templateArgs = TemplateParameterManager.getInstance();
+	    	grabbedNewInstance = true;
 	    }
 	    
-	    ITokenDuple duple =
-	        new TokenDuple( originalToken == null ? operatorToken : originalToken, toSend, (hasTemplateId ? args : null ) );
-	
-	    d.setName(duple);
+	    try
+		{
+		    toSend = consumeTemplateArguments( d.getDeclarationWrapper().getScope(), toSend, templateArgs );
+		    if( toSend.getType() == IToken.tGT ){
+		    	hasTemplateId = true;
+		    }
+		    
+		    ITokenDuple duple =
+		        new TokenDuple( originalToken == null ? operatorToken : originalToken, toSend, (hasTemplateId ? templateArgs.getTemplateArgumentsList() : null ) );
+		
+		    d.setName(duple);
+		}
+	    finally
+		{
+	    	if( grabbedNewInstance )
+	    		TemplateParameterManager.returnInstance( templateArgs );
+		}
 	}
 
 	/**
@@ -1495,6 +1516,9 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	private CompletionKind getCastExpressionKind(CompletionKind kind) {
 		return ((kind == CompletionKind.SINGLE_NAME_REFERENCE || kind == CompletionKind.FUNCTION_REFERENCE)? kind : CompletionKind.TYPE_REFERENCE);
 	}
+	
+
+	
 	/**
 	 * @param completionKind TODO
 	 * @throws BacktrackException
@@ -1658,7 +1682,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		if( kind == null )
 			throw backtrack;
 		
-		TypeId id = new TypeId(scope); 
+		TypeId id = TypeId.getInstance(scope); 
 		IToken last = lastToken;
 		
 		//template parameters are consumed as part of name
@@ -2013,7 +2037,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	            {
 	                unaryExpression = unaryExpression(scope,kind, key);
 	            }
-	            if (d != null & unaryExpression == null)
+	            if (unaryExpression == null)
 	                try
 	                {
 	                    return astFactory.createExpression(
@@ -2033,28 +2057,25 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                	logException( "unaryExpression_1::createExpression()", e ); //$NON-NLS-1$
 	                    throw backtrack;
 	                }
-	            else if (unaryExpression != null && d == null)
-	                try
-	                {
-	                    return astFactory.createExpression(
-	                        scope,
-	                        IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION,
-	                        unaryExpression,
-	                        null,
-	                        null,
-	                        null,
-	                        null, EMPTY_STRING, null); 
-	                }
-	                catch (ASTSemanticException e1)
-	                {
-	                    throw backtrack;
-	                } catch (Exception e)
-	                {
-	                	logException( "unaryExpression_1::createExpression()", e ); //$NON-NLS-1$
-	                    throw backtrack;
-	                }
-	            else
-	                throw backtrack;
+                try
+                {
+                    return astFactory.createExpression(
+                        scope,
+                        IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION,
+                        unaryExpression,
+                        null,
+                        null,
+                        null,
+                        null, EMPTY_STRING, null); 
+                }
+                catch (ASTSemanticException e1)
+                {
+                    throw backtrack;
+                } catch (Exception e)
+                {
+                	logException( "unaryExpression_1::createExpression()", e ); //$NON-NLS-1$
+                    throw backtrack;
+                }
 	        case IToken.t_new :
 	            return newExpression(scope,key);
 	        case IToken.t_delete :
@@ -2535,15 +2556,9 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    {
 	        // TO DO: we need more literals...
 	        case IToken.tINTEGER :
-	        case IToken.tHEXINT:
 	            t = consume();
-	        	boolean isHex = ( t.getType() == IToken.tHEXINT );
 	            try
 	            {
-	            	if( t instanceof INumericToken )
-		                return astFactory.createExpression(
-		                    IASTExpression.Kind.PRIMARY_INTEGER_LITERAL,
-		                    ((INumericToken)t).getIntegerValue(), isHex);
             		return astFactory.createExpression( scope, IASTExpression.Kind.PRIMARY_INTEGER_LITERAL, null, null, null, null, null, t.getImage(), null ); 
 	            }
 	            catch (ASTSemanticException e1)

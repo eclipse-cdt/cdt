@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
  */
 public class Declarator implements IParameterCollection, IDeclaratorOwner, IDeclarator
 {
+	private static final int DEFAULT_ARRAYLIST_SIZE = 4; 
 	private boolean hasFunctionTryBlock;
     private ITokenDuple pointerOperatorNameDuple;
     private ITokenDuple namedDuple;
@@ -41,17 +42,16 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
 	private Declarator ownedDeclarator = null; 
 	private String name = "";  //$NON-NLS-1$
 	private IASTInitializerClause initializerClause = null;
-	private List ptrOps = new ArrayList();
-	private List parameters = new ArrayList();
-	private List arrayModifiers = new ArrayList();
-	private List constructorMemberInitializers = new ArrayList();  
 	private IASTExceptionSpecification exceptionSpecification = null;
 	private IASTExpression bitFieldExpression = null;
 	private boolean isConst = false; 
 	private boolean isVolatile = false;
 	private boolean isKandR = false;  
-	
-	
+
+	private List ptrOps = Collections.EMPTY_LIST;
+	private List parameters = Collections.EMPTY_LIST;
+	private List arrayModifiers = Collections.EMPTY_LIST;
+	private List constructorMemberInitializers = Collections.EMPTY_LIST;
 	private int nameStartOffset, nameEndOffset;
 	private boolean varArgs;
 	private int nameLine; 
@@ -132,6 +132,9 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
 
 	public void addPointerOperator( ASTPointerOperator ptrOp )
 	{
+    	if( ptrOps == Collections.EMPTY_LIST )
+    		ptrOps = new ArrayList( DEFAULT_ARRAYLIST_SIZE );
+
 		ptrOps.add( ptrOp ); 
 	}
     /**
@@ -144,6 +147,9 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
 
 	public void addParameter( DeclarationWrapper param )
 	{
+    	if( parameters == Collections.EMPTY_LIST )
+    		parameters = new ArrayList( DEFAULT_ARRAYLIST_SIZE );
+
 		parameters.add( param );
 	}
     /**
@@ -271,6 +277,8 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public void addArrayModifier(IASTArrayModifier arrayMod)
     {
+    	if( arrayModifiers == Collections.EMPTY_LIST )
+    		arrayModifiers = new ArrayList( DEFAULT_ARRAYLIST_SIZE );
 		arrayModifiers.add( arrayMod );        
     }
 
@@ -319,6 +327,9 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public void addConstructorMemberInitializer(IASTConstructorMemberInitializer initializer)
     {
+    	if( constructorMemberInitializers == Collections.EMPTY_LIST )
+    		constructorMemberInitializers = new ArrayList( DEFAULT_ARRAYLIST_SIZE );
+
         constructorMemberInitializers.add( initializer );
     }
 

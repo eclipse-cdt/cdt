@@ -2222,10 +2222,6 @@ public class QuickParseASTTests extends BaseASTTest
     	parse("struct file_operations driver_fops = {  open: device_open, release: device_release	};", true, true, ParserLanguage.C ).getDeclarations(); //$NON-NLS-1$
 	}
     
-    public void testBug39676_tough() throws Exception
-	{
-    	parse( "int widths[] = { [0 ... 9] = 1, [10 ... 99] = 2, [100] = 3 };", true, true, ParserLanguage.C ); //$NON-NLS-1$
-	}
     
     public void testBug60142() throws Exception
 	{

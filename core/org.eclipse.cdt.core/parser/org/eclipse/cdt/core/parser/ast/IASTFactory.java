@@ -121,11 +121,6 @@ public interface IASTFactory
         IASTExpression thirdExpression,
         IASTTypeId typeId,
         ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException;
-
-    public IASTExpression createExpression(
-            IASTExpression.Kind kind,
-            long literal,
-            boolean isHex) throws ASTSemanticException;
     
     public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor(List newPlacementExpressions,List newTypeIdExpressions,List newInitializerExpressions);
 
@@ -277,5 +272,6 @@ public interface IASTFactory
 	 */
 	public boolean validateDirectMemberOperation(IASTNode node);
 
+	public void constructExpressions( boolean flag );
 
 }

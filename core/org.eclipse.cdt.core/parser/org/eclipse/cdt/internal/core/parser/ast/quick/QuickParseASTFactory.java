@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
-import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
@@ -69,6 +68,8 @@ import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionFactory;
  *
  */
 public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory {
+
+	private boolean temporarilyDisableNodeConstruction = true;
 
 	public QuickParseASTFactory( IASTFactoryExtension extension )
 	{
@@ -158,7 +159,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.ExpressionKind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {
-		return ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor );  //$NON-NLS-1$
+		return temporarilyDisableNodeConstruction ? ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor ) : null;  //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -323,8 +324,8 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     public IASTTypeId createTypeId(IASTScope scope, Type kind, boolean isConst, boolean isVolatile, boolean isShort, 
 	boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods, String completeSignature)
     {
-        return new ASTTypeId( kind, name == null ? "" : name.toString(), pointerOps, arrayMods, isConst,  //$NON-NLS-1$
-        	isVolatile, isUnsigned, isSigned, isShort, isLong, isTypename, completeSignature );
+        return ( temporarilyDisableNodeConstruction ?  new ASTTypeId( kind, name == null ? "" : name.toString(), pointerOps, arrayMods, isConst,  //$NON-NLS-1$
+        	isVolatile, isUnsigned, isSigned, isShort, isLong, isTypename, completeSignature ) : null );
     }
 
     /* (non-Javadoc)
@@ -385,9 +386,9 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, long, boolean)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#constructExpressions(boolean)
 	 */
-	public IASTExpression createExpression(Kind kind, long literal, boolean isHex) throws ASTSemanticException {
-		return ExpressionFactory.createExpression(kind, literal, isHex );
+	public void constructExpressions(boolean flag) {
+		temporarilyDisableNodeConstruction = flag;
 	}
 }

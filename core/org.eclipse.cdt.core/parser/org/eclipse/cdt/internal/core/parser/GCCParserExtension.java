@@ -436,7 +436,6 @@ public class GCCParserExtension implements IParserExtension {
 				Map extensionParms = new Hashtable();
 				extensionParms.put( IASTGCCDesignator.SECOND_EXRESSION, constantExpression2 );
 				return parserData.getAstFactory().createDesignator( IASTGCCDesignator.DesignatorKind.SUBSCRIPT_RANGE, constantExpression1, null, extensionParms );
-
 			}
 		}
 		catch( EndOfFileException eof )

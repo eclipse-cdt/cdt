@@ -10,8 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 
 /**
@@ -47,7 +48,7 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
      */
     public Iterator getTemplateParameters()
     {
-        return ( templateParameters != null ) ? templateParameters.iterator() : new LinkedList().iterator();
+        return ( templateParameters != null ) ? templateParameters.iterator() : EmptyIterator.EMPTY_ITERATOR;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration#getOwnedDeclaration()
@@ -157,7 +158,7 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
 	 * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()
 	 */
 	public Iterator getDeclarations() throws ASTNotImplementedException {
-		List decls = new LinkedList();
+		List decls = new ArrayList(1);
 		decls.add( getOwnedDeclaration() );
 		return decls.iterator();
 	}

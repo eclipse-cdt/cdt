@@ -470,13 +470,7 @@ public class Scanner implements IScanner {
 	}
 
 	protected IToken newToken(int t, String i) {
-		IToken token = null;
-		if( t == IToken.tINTEGER )
-			token = TokenFactory.createIntegerToken( i, scannerData );
-		else if( t == IToken.tHEXINT )
-			token = TokenFactory.createHexadecimalIntegerToken( i, scannerData );
-		else
-			token = TokenFactory.createUniquelyImagedToken(t, i, scannerData );
+		IToken token = TokenFactory.createUniquelyImagedToken(t, i, scannerData );
 		setCurrentToken(token);
 		return currentToken;
 	}
@@ -1122,12 +1116,11 @@ public class Scanner implements IScanner {
 		int tokenType = floatingPoint ? IToken.tFLOATINGPT : IToken.tINTEGER;
 		if( tokenType == IToken.tINTEGER && hex )
 		{
-			if( result.equals( HEX_PREFIX) )
+			if( result.equals( HEX_PREFIX ) )
 			{
 				handleProblem( IProblem.SCANNER_BAD_HEX_FORMAT, HEX_PREFIX, beginOffset, false, true );
 				return null;
 			}
-			tokenType = IToken.tHEXINT;
 		}
 		
 		return newToken(

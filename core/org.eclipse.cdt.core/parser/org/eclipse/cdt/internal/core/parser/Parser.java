@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
@@ -75,7 +74,8 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
  */
 public abstract class Parser extends ExpressionParser implements IParser 
 {
-    protected ISourceElementRequestor requestor = null;
+    private static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;
+	protected ISourceElementRequestor requestor = null;
     
     /**
      * This is the standard cosntructor that we expect the Parser to be instantiated 
@@ -1810,12 +1810,21 @@ public abstract class Parser extends ExpressionParser implements IParser
         throws EndOfFileException, BacktrackException
     {
         Declarator d = declarator(sdw, sdw.getScope(), strategy, kind );
-        if( language == ParserLanguage.CPP )
-        	optionalCPPInitializer(d, constructInitializers);
-        else if( language == ParserLanguage.C )
-        	optionalCInitializer(d, constructInitializers);
-        sdw.addDeclarator(d);
-        return d;
+        
+        try
+		{
+        	astFactory.constructExpressions(constructInitializers);
+	        if( language == ParserLanguage.CPP )
+	        	optionalCPPInitializer(d, constructInitializers);
+	        else if( language == ParserLanguage.C )
+	        	optionalCInitializer(d, constructInitializers);
+	        sdw.addDeclarator(d);
+	        return d;
+		} 
+        finally
+		{
+        	astFactory.constructExpressions( true );
+		}
     }
     
     protected void optionalCPPInitializer(Declarator d, boolean constructInitializers)
@@ -2046,7 +2055,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     
     protected List designatorList(IASTScope scope) throws EndOfFileException, BacktrackException
     {
-        List designatorList = new ArrayList();
+        List designatorList = Collections.EMPTY_LIST;
         // designated initializers for C
         
     	if( LT(1) == IToken.tDOT || LT(1) == IToken.tLBRACKET )
@@ -2075,7 +2084,11 @@ public abstract class Parser extends ExpressionParser implements IParser
     		    		{
     		    			IASTDesignator d = extension.parseDesignator( this, scope );
     		    			if( d != null )
+    		    			{
+    		    				if( designatorList == Collections.EMPTY_LIST )
+    		    					designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
     		    				designatorList.add( d );
+    		    			}
     		    			break;
     		    		}
     				}
@@ -2085,6 +2098,8 @@ public abstract class Parser extends ExpressionParser implements IParser
     			
     			IASTDesignator d = 
     				astFactory.createDesignator( kind, constantExpression, id, null );
+    			if( designatorList == Collections.EMPTY_LIST )
+    				designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
     			designatorList.add( d );
     				
     		}
@@ -2095,7 +2110,11 @@ public abstract class Parser extends ExpressionParser implements IParser
     		{
     			IASTDesignator d = extension.parseDesignator( this, scope );
     			if( d != null )
+    			{
+    				if( designatorList == Collections.EMPTY_LIST )
+    					designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
     				designatorList.add( d );
+    			}
     		}
     	}
 		return designatorList;
@@ -2338,58 +2357,65 @@ public abstract class Parser extends ExpressionParser implements IParser
     protected void consumeTemplatedOperatorName(Declarator d, CompletionKind kind)
         throws EndOfFileException, BacktrackException
     {
-        if (LT(1) == IToken.t_operator)
-            operatorId(d, null, null);
-        else
-        {
-            try
-            {
-                ITokenDuple duple = name(d.getDeclarationWrapper().getScope(), kind, Key.EMPTY );
-                d.setName(duple);
-        
-            }
-            catch (BacktrackException bt)
-            {
-                Declarator d1 = d;
-                Declarator d11 = d1;
-                IToken start = null;
-                
-                List argumentList = new LinkedList();
-                boolean hasTemplateId = false;
-                
-                IToken mark = mark();
-                if (LT(1) == IToken.tCOLONCOLON
-                    || LT(1) == IToken.tIDENTIFIER)
-                {
-                    start = consume();
-                    IToken end = null;
-                    
-                    if (start.getType() == IToken.tIDENTIFIER){
-                      	end = consumeTemplateArguments(d.getDeclarationWrapper().getScope(), end, argumentList);
-                    	if( end != null && end.getType() == IToken.tGT )
-                    		hasTemplateId = true;
-                    }
-                    
-                    while (LT(1) == IToken.tCOLONCOLON
-                        || LT(1) == IToken.tIDENTIFIER)
-                    {
-                        end = consume();
-                        if (end.getType() == IToken.tIDENTIFIER){
-                          	end = consumeTemplateArguments(d.getDeclarationWrapper().getScope(), end, argumentList);
-                        	if( end.getType() == IToken.tGT )
-                        		hasTemplateId = true;
-                        }
-                    }
-                    if (LT(1) == IToken.t_operator)
-                        operatorId(d11, start, ( hasTemplateId ? argumentList : null ) );
-                    else
-                    {
-                        backup(mark);
-                        throw backtrack;
-                    }
-                }
-            }
-        }
+    	TemplateParameterManager argumentList = TemplateParameterManager.getInstance();
+    	try
+		{
+	        if (LT(1) == IToken.t_operator)
+	            operatorId(d, null, null);
+	        else
+	        {
+	            try
+	            {
+	                ITokenDuple duple = name(d.getDeclarationWrapper().getScope(), kind, Key.EMPTY );
+	                d.setName(duple);
+	        
+	            }
+	            catch (BacktrackException bt)
+	            {
+	                Declarator d1 = d;
+	                Declarator d11 = d1;
+	                IToken start = null;
+	                
+	                boolean hasTemplateId = false;
+	                
+	                IToken mark = mark();
+	                if (LT(1) == IToken.tCOLONCOLON
+	                    || LT(1) == IToken.tIDENTIFIER)
+	                {
+	                    start = consume();
+	                    IToken end = null;
+	                    
+	                    if (start.getType() == IToken.tIDENTIFIER){
+	                      	end = consumeTemplateArguments(d.getDeclarationWrapper().getScope(), end, argumentList);
+	                    	if( end != null && end.getType() == IToken.tGT )
+	                    		hasTemplateId = true;
+	                    }
+	                    
+	                    while (LT(1) == IToken.tCOLONCOLON
+	                        || LT(1) == IToken.tIDENTIFIER)
+	                    {
+	                        end = consume();
+	                        if (end.getType() == IToken.tIDENTIFIER){
+	                          	end = consumeTemplateArguments(d.getDeclarationWrapper().getScope(), end, argumentList);
+	                        	if( end.getType() == IToken.tGT )
+	                        		hasTemplateId = true;
+	                        }
+	                    }
+	                    if (LT(1) == IToken.t_operator)
+	                        operatorId(d11, start, ( hasTemplateId ? argumentList : null ) );
+	                    else
+	                    {
+	
+	                        backup(mark);
+	                        throw backtrack;
+	                    }
+	                }
+	            }
+	        }
+		} finally
+		{
+			TemplateParameterManager.returnInstance(argumentList );
+		}
     }
     /**
      * Parse an enumeration specifier, as according to the ANSI specs in C & C++.  

@@ -1832,4 +1832,9 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertFalse( localVariables.hasNext() );
 		assertAllReferences( 4, createTaskList( new Task( ABC, 2 ), new Task( variable ), new Task( destructor )));
     }
+    
+    public void testBug39676_tough() throws Exception
+	{
+    	parse( "int widths[] = { [0 ... 9] = 1, [10 ... 99] = 2, [100] = 3 };", true, ParserLanguage.C ); //$NON-NLS-1$
+	}
 }

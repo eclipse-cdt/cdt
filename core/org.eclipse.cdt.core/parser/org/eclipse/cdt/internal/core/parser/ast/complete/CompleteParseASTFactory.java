@@ -2641,7 +2641,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         {
 			ISymbol variableSymbol = ((ASTVariable)clause.getOwnerVariableDeclaration()).getSymbol();
 			ISymbol currentSymbol = variableSymbol.getTypeSymbol();
-				
+			if( currentSymbol == null )
+				return;
+			
 			TypeInfo currentTypeInfo = new TypeInfo( currentSymbol.getTypeInfo() ); 
 			Iterator designators = clause.getDesignators();
 			while( designators.hasNext() )
@@ -3552,21 +3554,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, long, boolean)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#constructExpressions(boolean)
 	 */
-	public IASTExpression createExpression(Kind kind, long literal, boolean isHex) throws ASTSemanticException {
-        
-        // Try to figure out the result that this expression evaluates to
-		ExpressionResult expressionResult = getExpressionResultType(null, kind, null, null, null, null, Long.toString(literal), null);
-		
-		// expression results could be empty, but should not be null
-//		assert expressionResult != null  : expressionResult; //throw new ASTSemanticException();
-			
-		// create the ASTExpression	
-		ASTExpression expression =  (ASTExpression) ExpressionFactory.createExpression( kind, literal, isHex );
-		// Assign the result to the created expression										
-		expression.setResultType (expressionResult);
-		return expression;			
+	public void constructExpressions(boolean flag) {
+		//ignore
 	}
 
 }

@@ -584,4 +584,22 @@ public class CFormattedMemoryBlock extends CDebugElement
 			Arrays.fill( fDirtyBytes, false );
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#refresh()
+	 */
+	public void refresh() throws DebugException
+	{
+		if ( getCDIMemoryBlock() != null )
+		{
+			try
+			{
+				getCDIMemoryBlock().refresh();
+			}
+			catch( CDIException e )
+			{
+				targetRequestFailed( e.getMessage(), null );
+			}
+		}
+	}
 }

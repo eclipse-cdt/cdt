@@ -8,7 +8,6 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewer;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -38,18 +37,18 @@ public class RefreshMemoryAction extends SelectionProviderAction implements IUpd
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(IStructuredSelection)
-	 */
-	public void selectionChanged( IStructuredSelection selection )
-	{
-		super.selectionChanged( selection );
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update()
 	{
 		setEnabled( fMemoryViewer.canUpdate() );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
+	 */
+	public void run()
+	{
+		fMemoryViewer.refreshMemoryBlock();
 	}
 }

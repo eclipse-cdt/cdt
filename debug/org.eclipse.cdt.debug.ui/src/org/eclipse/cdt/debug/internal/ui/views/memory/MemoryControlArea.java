@@ -371,6 +371,21 @@ public class MemoryControlArea extends Composite
 			tabItems[fIndex].setText( title );
 		}
 	}
+
+	protected void refreshMemoryBlock()
+	{
+		if ( getMemoryBlock() != null )
+		{
+			try
+			{
+				getMemoryBlock().refresh();
+			}
+			catch( DebugException e )
+			{
+				CDebugUIPlugin.errorDialog( "Unable to refresh memory.", e.getStatus() );
+			}
+		}
+	}
 	
 	protected void saveChanges()
 	{

@@ -128,4 +128,6 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 	boolean isDirty();
 	
 	void saveChanges() throws DebugException;
+	
+	void refresh() throws DebugException;
 }

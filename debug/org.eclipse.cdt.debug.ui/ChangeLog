@@ -1,4 +1,10 @@
 2002-10-30 Mikhail Khodjaiants
+	Implementing the 'Refresh Memory' action.
+	* RefreshMemoryAction.java
+	* MemoryControlArea.java
+	* MemoryViewer.java
+
+2002-10-30 Mikhail Khodjaiants
 	Implementation of the 'SaveMemoryChanges' action.
 	* SaveMemoryChangesAction.java
 	* CDebugImages.java

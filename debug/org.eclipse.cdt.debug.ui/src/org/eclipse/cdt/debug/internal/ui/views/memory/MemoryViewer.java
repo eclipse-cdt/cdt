@@ -205,6 +205,11 @@ public class MemoryViewer extends ContentViewer
 		((MemoryControlArea)fTabFolder.getSelection().getControl()).saveChanges();
 	}
 	
+	public void refreshMemoryBlock()
+	{
+		((MemoryControlArea)fTabFolder.getSelection().getControl()).refreshMemoryBlock();
+	}
+	
 	public boolean showAscii()
 	{
 		return ((MemoryControlArea)fTabFolder.getSelection().getControl()).getPresentation().displayASCII();

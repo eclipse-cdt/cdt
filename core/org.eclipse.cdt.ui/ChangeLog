@@ -1,3 +1,17 @@
+2003-08-30 Alain Magloire
+
+	Remove completely the Old C Parser references and the ComparatorBuilder class.
+	The Struture comparator is now base entirely on ISourceElemenRequestor.
+	Making things more stable: Fix part of 39090, Fix 39725, 41006 
+
+	* src/org/eclipse/cdt/internal/ui/compare.CNode.java
+	* src/org/eclipse/cdt/internal/ui/compare.CParseTreeBuilder.java
+	* src/org/eclipse/cdt/internal/ui/compare.CStructureCreator.java
+	* src/org/eclipse/cdt/internal/ui/compare.SourceElementRequestorAdaptor.java
+
+	* src/org/eclipse/cdt/internal/ui/compare.ComparatorModelBuilder.java
+	Removed.
+
 2003-08-28 Hoda Amer
  	Solution to Bug	#39968:
 	-Template Union missing an icon

@@ -1,3 +1,16 @@
+2003-02-01 Alain Magloire
+
+	Cleanups and suggestions for Hoda.
+
+	* mode/org/eclipse/cdt/core/model/ITemplate.java:
+	New File.
+	* model/org/eclipse/cdt/core/model/IField.java:
+	Now extedns IVariableDeclaration.
+	* model/org/eclipse/cdt/core/model/IMethodDeclaration.java:
+	Extends IFunctionDeclaration.
+	* model/org/eclipse/cdt/core/model/IVariableLocal.java:
+	Removed.
+
 2003-01-29 Alain Magloire
 
 	* index/org/eclipse/cdt/internal/core/index/IndexManager.java (shutdown):

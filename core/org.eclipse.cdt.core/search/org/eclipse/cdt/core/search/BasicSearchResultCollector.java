@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
@@ -106,7 +107,7 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 			names = enumerator.getOwnerEnumerationSpecifier().getFullyQualifiedName();
 		} else if( offsetable instanceof IASTQualifiedNameElement ) {
 			names = ((IASTQualifiedNameElement) offsetable).getFullyQualifiedName();
-		}
+		} 
 	
 		if( names != null ){
 			for( int i = 0; i < names.length - 1; i++ ){
@@ -205,6 +206,9 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 			match.type = ICElement.C_VARIABLE;
 			IASTVariable variable = (IASTVariable)node;
 			match.isConst  = variable.getAbstractDeclaration().isConst();
+		} else if (node instanceof IASTParameterDeclaration){
+			match.type = ICElement.C_VARIABLE;
+			match.isConst = ((IASTParameterDeclaration) node).isConst();
 		} else if ( node instanceof IASTEnumerator ){
 			match.type = ICElement.C_ENUMERATOR;
 		} else if ( node instanceof IASTMethod ){

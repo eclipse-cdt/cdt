@@ -1,4 +1,12 @@
 2004-06-25 Bogdan Gheorghe
+	Indirect fix for Bug 65551: [Search] Search for Variable references should not include parameters
+	Instead of excluding parameter references from searches, added parm declarations to the index (for
+	both functions and methods)
+	
+	* search/org/eclipse/cdt/core/search/BasicSearchResultCollector.java
+	* index/org/eclipse/cdt/internal/core/search/matching/MatchLocator.java
+	
+2004-06-25 Bogdan Gheorghe
 	Fix for 68550: [Indexer] Cannot restart indexer by touching .c/.cpp/.cc files
 	
 	* search/org/eclipse/cdt/internal/core/search/processing/JobManager.java

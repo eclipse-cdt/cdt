@@ -163,6 +163,18 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertTrue( match.getParentName().equals( "" ) );		
 	}
 	
+	public void testParameterDeclaration(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "index", VAR, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 3 );
+		
+		IMatch match = (IMatch) matches.iterator().next();
+		assertTrue( match.getParentName().equals( "" ) );	
+	}
+	
 	public void testOrPattern(){
 		OrPattern orPattern = new OrPattern();
 		orPattern.addPattern( SearchEngine.createSearchPattern( "::NS::B::e", ENUM, REFERENCES, true ) );

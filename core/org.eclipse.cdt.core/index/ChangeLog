@@ -1,3 +1,10 @@
+2004-06-25 Bogdan Gheorghe
+	Indirect fix for Bug 65551: [Search] Search for Variable references should not include parameters
+	Instead of excluding parameter references from searches, added parm declarations to the index (for
+	both functions and methods)
+	
+	* index/org/eclipse/cdt/internal/core/search/indexing/AbstractIndexer.java
+	
 2004-06-22 Alain Magloire
 
 	Part of PR 68246.

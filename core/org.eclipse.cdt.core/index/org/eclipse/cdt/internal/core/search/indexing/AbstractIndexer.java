@@ -224,6 +224,15 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	
 	public void addMethodDeclaration(IASTMethod method) {
 		this.output.addRef(encodeEntry(method.getFullyQualifiedName(),METHOD_DECL,METHOD_DECL_LENGTH));
+	
+		Iterator i=method.getParameters();
+		while (i.hasNext()){
+			Object parm = i.next();
+			if (parm instanceof IASTParameterDeclaration){
+				IASTParameterDeclaration parmDecl = (IASTParameterDeclaration) parm;
+				this.output.addRef(encodeTypeEntry(new String[]{parmDecl.getName()}, VAR, ICSearchConstants.DECLARATIONS));
+			}
+		}
 	}
 	
 	public void addMethodReference(IASTMethod method) {
@@ -261,6 +270,15 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 
 	public void addFunctionDeclaration(IASTFunction function){
 		this.output.addRef(encodeEntry(function.getFullyQualifiedName(),FUNCTION_DECL,FUNCTION_DECL_LENGTH));
+		
+		Iterator i=function.getParameters();
+		while (i.hasNext()){
+			Object parm = i.next();
+			if (parm instanceof IASTParameterDeclaration){
+				IASTParameterDeclaration parmDecl = (IASTParameterDeclaration) parm;
+				this.output.addRef(encodeTypeEntry(new String[]{parmDecl.getName()}, VAR, ICSearchConstants.DECLARATIONS));
+			}
+		}
 	}
 	
 	public void addFunctionReference(IASTFunction function){

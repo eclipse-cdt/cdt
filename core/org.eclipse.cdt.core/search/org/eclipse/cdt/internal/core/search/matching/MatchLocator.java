@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -251,6 +252,15 @@ public class MatchLocator implements IMatchLocator{
 			check( DECLARATIONS, function );
 			
 		check( DEFINITIONS, function );
+		
+		Iterator parms =function.getParameters();
+		while (parms.hasNext()){
+			Object tempParm = parms.next();
+			if (tempParm instanceof IASTParameterDeclaration){
+				check( DECLARATIONS, ((IASTParameterDeclaration)tempParm));
+			}
+		}
+		
 		pushScope( function );
 	}
 	
@@ -260,6 +270,17 @@ public class MatchLocator implements IMatchLocator{
 			check( DECLARATIONS, method );
 			
 		check( DEFINITIONS, method );
+		
+		
+		Iterator parms =method.getParameters();
+		while (parms.hasNext()){
+			Object tempParm = parms.next();
+			if (tempParm instanceof IASTParameterDeclaration){
+				check( DECLARATIONS, ((IASTParameterDeclaration)tempParm));
+			}
+		}
+		
+
 		pushScope( method );
 	}
 	

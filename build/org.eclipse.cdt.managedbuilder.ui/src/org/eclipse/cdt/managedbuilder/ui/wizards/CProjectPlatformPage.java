@@ -18,6 +18,7 @@ import java.util.ListIterator;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -33,12 +34,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CProjectPlatformPage extends WizardPage {
 	/*
 	 * Bookeeping variables
 	 */
-//	private CProjectWizard wizard;
 	private ArrayList selectedConfigurations;
 	protected ITarget selectedTarget;
 	protected String[] targetNames;
@@ -61,10 +62,9 @@ public class CProjectPlatformPage extends WizardPage {
 	 * @param wizard
 	 * @param pageName
 	 */
-	public CProjectPlatformPage(/*CProjectWizard wizard,*/ String pageName) {
+	public CProjectPlatformPage(String pageName) {
 		super(pageName);
 		setPageComplete(false);
-//		this.wizard = wizard;
 		populateTargets();
 		selectedTarget = null;
 		selectedConfigurations = new ArrayList(0);
@@ -128,6 +128,9 @@ public class CProjectPlatformPage extends WizardPage {
 		
 		// Select the first target in the list
 		handleTargetSelection();
+		
+		// Setup the help information
+		WorkbenchHelp.setHelp(composite, ManagedBuilderHelpContextIds.MAN_PROJ_PLATFORM_HELP);
 		
 		// Do the nasty
 		setErrorMessage(null);

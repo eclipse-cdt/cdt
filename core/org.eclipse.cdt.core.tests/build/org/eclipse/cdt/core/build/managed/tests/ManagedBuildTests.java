@@ -46,7 +46,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public class ManagedBuildTests extends TestCase {
 	private static final boolean boolVal = true;
 	private static final String PROJECT_ID = CCorePlugin.PLUGIN_ID + ".make";
-	private static final String testConfigName = "test.config.override";
+	private static final String testConfigId = "test.config.override";
+	private static final String testConfigName = "Tester";
 	private static final String enumVal = "Another Enum";
 	private static final String[] listVal = {"_DEBUG", "/usr/include", "libglade.a"};
 	private static final String projectName = "ManagedBuildTest";
@@ -65,7 +66,8 @@ public class ManagedBuildTests extends TestCase {
 		suite.addTest(new ManagedBuildTests("testProjectCreation"));
 		suite.addTest(new ManagedBuildTests("testConfigurations"));
 		suite.addTest(new ManagedBuildTests("testConfigurationReset"));
-		suite.addTest(new ManagedBuildTests("testTargetArtifacts"));
+		suite.addTest(new ManagedBuildTests("testTargetBuildArtifact"));
+		suite.addTest(new ManagedBuildTests("testMakeCommandManipulation"));
 		suite.addTest(new ManagedBuildTests("testScannerInfoInterface"));
 		suite.addTest(new ManagedBuildTests("cleanup"));
 		
@@ -105,7 +107,43 @@ public class ManagedBuildTests extends TestCase {
 		assertNotNull(testSubSub);
 	}
 
-
+	/**
+	 * This test exercises the interface the <code>ITarget</code> exposes to manipulate 
+	 * its make command.
+	 */
+	public void testMakeCommandManipulation () {
+		String oldMakeCmd = "make";
+		String newMakeCmd = "Ant";
+		
+		// Open the test project
+		IProject project = null;
+		try {
+			project = createProject(projectName);
+		} catch (CoreException e) {
+			fail("Failed to open project in 'testMakeCommandManipulation': " + e.getLocalizedMessage());
+		}
+		assertNotNull(project);
+		
+		// Now open the root target
+		ITarget[] targets = ManagedBuildManager.getTargets(project);
+		assertEquals(1, targets.length);
+		
+		// Does it have a default make command
+		assertFalse(targets[0].hasOverridenMakeCommand());
+		assertEquals(oldMakeCmd, targets[0].getMakeCommand());
+		
+		// Change it
+		targets[0].setMakeCommand(newMakeCmd);
+		assertEquals(newMakeCmd, targets[0].getMakeCommand());
+		assertTrue(targets[0].hasOverridenMakeCommand());
+		
+		// Reset it
+		targets[0].resetMakeCommand();
+		assertFalse(targets[0].hasOverridenMakeCommand());
+		assertEquals(oldMakeCmd, targets[0].getMakeCommand());
+	}
+	
+	
 	/**
 	 * The purpose of this test is to exercise the build path info interface.
 	 * To get to that point, a new target/config has to be created in the test
@@ -122,7 +160,7 @@ public class ManagedBuildTests extends TestCase {
 		try {
 			project = createProject(projectName);
 		} catch (CoreException e) {
-			fail("Failed to open project: " + e.getLocalizedMessage());
+			fail("Failed to open project in 'testScannerInfoInterface': " + e.getLocalizedMessage());
 		}
 		
 		// Create a new target in the project based on the sub target
@@ -227,6 +265,11 @@ public class ManagedBuildTests extends TestCase {
 	 * 
 	 */
 	public void testConfigurations() throws CoreException, BuildException {
+		String rootConfigId = "test.root.1.0";
+		String rootName = "Root Config";
+		String overrideConfigId = "test.root.1.1";
+		String overrideName = "Root Override Config";
+		
 		// Open the test project
 		IProject project = createProject(projectName);
 		
@@ -237,10 +280,17 @@ public class ManagedBuildTests extends TestCase {
 		IConfiguration[] definedConfigs = rootTarget.getConfigurations(); 		
 		assertEquals(2, definedConfigs.length);
 		IConfiguration baseConfig = definedConfigs[0];
+		assertEquals(definedConfigs[0].getId(), rootConfigId);
+		assertEquals(definedConfigs[0].getName(), rootName);
+		assertEquals(definedConfigs[1].getId(), overrideConfigId);
+		assertEquals(definedConfigs[1].getName(), overrideName);
 		
-		// Create a new configuration
-		IConfiguration newConfig = rootTarget.createConfiguration(baseConfig, testConfigName);
+		// Create a new configuration and test the rename function
+		IConfiguration newConfig = rootTarget.createConfiguration(baseConfig, testConfigId);
 		assertEquals(3, rootTarget.getConfigurations().length);
+		newConfig.setName(testConfigName);
+		assertEquals(newConfig.getId(), testConfigId);
+		assertEquals(newConfig.getName(), testConfigName);
 
 		// There is only one tool
 		ITool[] definedTools = newConfig.getTools();
@@ -270,6 +320,20 @@ public class ManagedBuildTests extends TestCase {
 
 		// Test the values in the new configuration
 		checkOptionReferences(project);
+		
+		// Now delete the new configuration and test the target
+		definedTargets = ManagedBuildManager.getTargets(project);
+		assertEquals(1, definedTargets.length);
+		rootTarget = definedTargets[0];
+		definedConfigs = rootTarget.getConfigurations(); 		
+		assertEquals(3, definedConfigs.length);
+		rootTarget.removeConfiguration(testConfigId);
+		definedConfigs = rootTarget.getConfigurations(); 		
+		assertEquals(2, definedConfigs.length);
+		assertEquals(definedConfigs[0].getId(), rootConfigId);
+		assertEquals(definedConfigs[0].getName(), rootName);
+		assertEquals(definedConfigs[1].getId(), overrideConfigId);
+		assertEquals(definedConfigs[1].getName(), overrideName);
 	}
 	
 	public void testConfigurationReset() {
@@ -485,7 +549,7 @@ public class ManagedBuildTests extends TestCase {
 		// Now get the configs
 		IConfiguration[] definedConfigs = rootTarget.getConfigurations(); 		
 		assertEquals(3, definedConfigs.length);
-		IConfiguration newConfig = rootTarget.getConfiguration(testConfigName);
+		IConfiguration newConfig = rootTarget.getConfiguration(testConfigId);
 		assertNotNull(newConfig);
 
 		// Now get the tool options and make sure the values are correct		
@@ -532,12 +596,11 @@ public class ManagedBuildTests extends TestCase {
 	private void checkRootTarget(ITarget target, String oicValue) throws BuildException {
 		// Target stuff
 		String expectedCleanCmd = "del /myworld";
-		String expectedMakeCommand = "make";
 		String expectedParserId = "org.eclipse.cdt.core.PE";
 		assertTrue(target.isTestTarget());
 		assertEquals(target.getDefaultExtension(), rootExt);
 		assertEquals(expectedCleanCmd, target.getCleanCommand());
-		assertEquals(expectedMakeCommand, target.getMakeCommand());
+		assertEquals("make", target.getMakeCommand());
 		assertEquals(expectedParserId, target.getBinaryParserId());
 		
 		// Tools
@@ -651,7 +714,9 @@ public class ManagedBuildTests extends TestCase {
 	private void checkSubSubTarget(ITarget target) {
 		// Check the inherited clean command
 		assertEquals("rm -yourworld", target.getCleanCommand());
+		// Check that the make command is overridden from parent
 		assertEquals("nmake", target.getMakeCommand());
+		// Make sure we get the proper binary parser
 		assertEquals("org.eclipse.cdt.core.ELF", target.getBinaryParserId());
 	}
 
@@ -663,9 +728,11 @@ public class ManagedBuildTests extends TestCase {
 	 * in the sub target, the test does a sanity check just to be complete.
 	 */
 	private void checkSubTarget(ITarget target) throws BuildException {
-		// Check the overridden clan command
+		// Check the overridden clean command
 		assertEquals("rm -yourworld", target.getCleanCommand());
-		assertEquals("gmake", target.getMakeCommand());
+		// Make sure the target inherits the make command
+		assertEquals("make", target.getMakeCommand());
+		// Make sure the binary parser is hard-coded and available
 		assertEquals("org.eclipse.cdt.core.PE", target.getBinaryParserId());
 
 		// Make sure this is a test target
@@ -788,7 +855,7 @@ public class ManagedBuildTests extends TestCase {
 	 * Test that the build artifact of a <code>ITarget</code> can be modified
 	 * programmatically.
 	 */
-	public void testTargetArtifacts () throws CoreException {
+	public void testTargetBuildArtifact () throws CoreException {
 		// Open the test project
 		IProject project = createProject(projectName);
 		

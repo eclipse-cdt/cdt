@@ -1,3 +1,13 @@
+2003-09-23 Sean Evoy
+	All the work in this patch is for critical bug 43292. In order to manage 
+	configurations, there had to be a method through ITarget to remove 
+	configurations. Also, to support the naming of newly created configurations, 
+	I added a name method to the IConfiguration interface. Finally, the ITarget 
+	needed to support setting (and resetting) the make command to use when building.
+	* src/org/eclipse/cdt/managedbuilder/core/IConfiguration.java
+	* src/org/eclipse/cdt/managedbuilder/core/ITarget.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Target.java
+
 2003-09-19 Sean Evoy
 	Added a new field to the target specification in the build model to 
 	hard-code the binary parser for project creation. There is a new getter 

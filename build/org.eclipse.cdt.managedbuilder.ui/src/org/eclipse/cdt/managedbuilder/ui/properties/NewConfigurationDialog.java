@@ -53,13 +53,15 @@ public class NewConfigurationDialog extends Dialog {
 	private ITarget target;
 	private String newName;
 	private String [] allNames;
+	private String title = "";
 
 	
 	/**
 	 * @param parentShell
 	 */
-	protected NewConfigurationDialog(Shell parentShell, IConfiguration[] configs, ITarget managedTarget) {
+	protected NewConfigurationDialog(Shell parentShell, IConfiguration[] configs, ITarget managedTarget, String title) {
 		super(parentShell);
+		this.title = title;
 		setShellStyle(getShellStyle()|SWT.RESIZE);
 		newName = new String();
 		parentConfig = null;
@@ -92,7 +94,16 @@ public class NewConfigurationDialog extends Dialog {
 	}
 
 	/* (non-Javadoc)
-	 * Method declared on Dialog. Create OK and Cancel buttons and hold onto the OK button handle.
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		if (title != null)
+			shell.setText(title);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		btnOk = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);

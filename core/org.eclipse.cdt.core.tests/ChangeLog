@@ -10,6 +10,16 @@
 	Added CompleteParseASTTest.testBug43373()
 	Added QuickParseASTTests.testBug43371()
 
+2003-09-23 Sean Evoy
+	As part of the fix for critical bug 43292, I had to add functionality to 
+	the build model to remove configurations through an ITarget, and to set, 
+	reset, and flag as default the make command associated with an ITarget. I 
+	have updated the managed build test "testConfigurations" to exercise the 
+	remove functionality. I added a test, "testMakeCommandManipulation" to 
+	exercise the new make command functions in the interface.
+	* plugin.xml
+	* build/org/eclipse/cdt/core/build/managed/tests/ManagedBuildTests.java
+
 2003-09-22 Bogdan Gheorghe
 	- modified CompletionProposalsTests, BaseSearchTest
 	 to avoid using isEnabled for the IndexManager

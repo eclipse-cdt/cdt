@@ -13,14 +13,19 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -403,9 +408,29 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		// Recreate the settings store for the configuration
 		settingsStore = new BuildToolsSettingsStore(selectedConfiguration);
 		
-		// Select the first option in the list
+		// Select the first tool or option category in the list that has options
 		Object[] elements = provider.getElements(selectedConfiguration);
 		Object primary = elements.length > 0 ? elements[0] : null;
+		
+		if (primary != null && primary instanceof ITool) {
+			// Check to see if there are any options.
+			ITool tool = (ITool)primary;
+			IOptionCategory top = tool.getTopOptionCategory();
+			IOption[] topOpts = top.getOptions(selectedConfiguration);
+			if (topOpts != null && topOpts.length == 0) {
+				// Get the children categories and start looking
+				IOptionCategory[] children = top.getChildCategories();
+				for (int i = 0; i < children.length; i++) {
+					IOptionCategory category = children[i];
+					IOption[] catOpts = category.getOptions(selectedConfiguration);
+					if (catOpts != null && catOpts.length > 0) {
+						primary = category;
+						break;
+					}
+				}
+			}
+		}
+		
 		if (primary != null) {
 			optionList.setSelection(new StructuredSelection(primary));
 		}
@@ -415,13 +440,66 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	private void handleManageConfig () {
 		ManageConfigDialog manageDialog = new ManageConfigDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(MANAGE_TITLE), selectedTarget);
 		if (manageDialog.open() == ManageConfigDialog.OK) {
-			// Check to see if any configurations have to be deleted
-			ArrayList deleteMe = manageDialog.getDeletedConfigs();
-			ListIterator iter = deleteMe.listIterator();
-			while (iter.hasNext()) {
+			boolean updateConfigs = false;
+			
+			// Get the build output name
+			String newBuildOutput = manageDialog.getBuildArtifactName();
+			if (!selectedTarget.getArtifactName().equals(newBuildOutput)) {
+				selectedTarget.setBuildArtifact(newBuildOutput);
 			}
-			return;
+			
+			// Get the new make command
+			if (manageDialog.useDefaultMakeCommand()) {
+				// This is a cheap assignment to null so do it to be doubly sure
+				selectedTarget.resetMakeCommand();
+			} else {
+				String makeCommand = manageDialog.getMakeCommand();
+				selectedTarget.setMakeCommand(makeCommand);
+			}
+			
+			// Check to see if any configurations have to be deleted
+			List deletedConfigs = manageDialog.getDeletedConfigIds();
+			Iterator iter = deletedConfigs.listIterator();
+			while (iter.hasNext()) {
+				String id = (String)iter.next();
+				
+				// Remove the configurations from the target 
+				selectedTarget.removeConfiguration(id);
+				
+				// Clean up the UI
+				configurations = selectedTarget.getConfigurations();
+				configSelector.removeAll();
+				configSelector.setItems(getConfigurationNames());
+				configSelector.select(0);
+				updateConfigs = true;
+			}
+			
+			// Check to see if any have to be added
+			SortedMap newConfigs = manageDialog.getNewConfigs();
+			Set keys = newConfigs.keySet();
+			Iterator keyIter = keys.iterator();
+			int index = selectedTarget.getConfigurations().length;
+			while (keyIter.hasNext()) {
+				String name = (String) keyIter.next();
+				IConfiguration parent = (IConfiguration) newConfigs.get(name);
+				if (parent != null) {
+					++index;
+					String newId = parent.getId() + "." + index;
+					IConfiguration newConfig = selectedTarget.createConfiguration(parent, newId);
+					newConfig.setName(name);
+					// Update the config lists
+					configurations = selectedTarget.getConfigurations();
+					configSelector.removeAll();
+					configSelector.setItems(getConfigurationNames());
+					configSelector.select(configSelector.indexOf(name));
+					updateConfigs = true;
+				}
+			}
+			if (updateConfigs){
+				handleConfigSelection();
+			}
 		}
+		return;
 	}
 
 	private void handleOptionSelection() {

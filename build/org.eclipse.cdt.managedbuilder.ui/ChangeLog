@@ -1,3 +1,25 @@
+2003-09-23 Sean Evoy
+	I added a fix for critical bug 43439. The new project wizard is ready to be hooked 
+	up to the help system content on F1. There is a new file with the string constant 
+	the doc project will use to map the widget to a help file.
+	* src/org/eclipse/cdt/managedbuilder/ui/wizards/CProjectPlatformPage.java
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/ManagedBuilderHelpContextIds.java
+	
+	In support of the fix for critical bug 43292, I added a new set of widgets to 
+	the ManageConfigDialog implementation. I added new string literals in the properties 
+	file for the plugin. There are obviously new event handlers for the Manage dialog. 
+	It displays the make command for the target, the name of the build artifact, and 
+	a list of current and deleted configurations. There is no way to add new targets. 
+	Users can restore deleted configurations up until they click OK. The client of this 
+	dialog has been changed to properly respond to the changes. The NewConfigurationDialog 
+	now displays an externalized string in the title bar.
+	* plugin.xml
+	* plugin.properties
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/PluginResources.properties
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildPropertyPage.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/ManageConfigDialog.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/NewConfigurationDialog.java
+
 2003-09-19 Sean Evoy
 	Removed the binary parser selection tab from the new class wizard. Updated the
 	page description externalized string.

@@ -33,8 +33,8 @@ public interface ITarget extends IBuildObject {
 	 * change in the parent, unoverridden values are updated in the child
 	 * config as well.
 	 * 
-	 * @param parent
-	 * @param id
+	 * @param parent The <code>IConfiguration</code> to use as a settings template
+	 * @param id The unique id the new configuration will have
 	 * @return
 	 */
 	public IConfiguration createConfiguration(IConfiguration parent, String id);
@@ -91,7 +91,7 @@ public interface ITarget extends IBuildObject {
 	public String getMakeCommand();
 
 	/**
-	 * Returns the configuration with the given id, or null if not found.
+	 * Returns the configuration with the given id, or <code>null</code> if not found.
 	 * 
 	 * @param id
 	 * @return
@@ -118,6 +118,15 @@ public interface ITarget extends IBuildObject {
 	 */
 	public ITool[] getTools();
 
+	
+	/**
+	 * Answers true if the receiver has a make command that differs from its 
+	 * parent specification.
+	 * 
+	 * @return
+	 */
+	public boolean hasOverridenMakeCommand();
+	
 	/**
 	 * Returns whether this target is abstract.
 	 * @return 
@@ -134,12 +143,31 @@ public interface ITarget extends IBuildObject {
 	public boolean isTestTarget();
 
 	/**
+	 * Removes the configuration with the ID specified in the argument.
+	 * 
+	 * @param id
+	 */
+	public void removeConfiguration(String id);
+	
+	/**
+	 * Resets the make command in the receiver to the value specified in 
+	 * its parent.
+	 * 
+	 */
+	public void resetMakeCommand();
+
+	/**
 	 * Set the name of the artifact that will be produced when the receiver
 	 * is built.
 	 * 
-	 * @param name The name of the build artifact.
+	 * @param name
 	 */
 	public void setBuildArtifact(String name);
 
-	
+	/**
+	 * Sets the make command for the receiver to the value in the argument.
+	 * 
+	 * @param command
+	 */
+	public void setMakeCommand(String command);
 }

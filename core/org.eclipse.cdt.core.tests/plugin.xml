@@ -126,7 +126,6 @@
             isTest="true"
             defaultExtension="bus"
             isAbstract="false"
-            makeCommand="gmake"
             binaryParser="org.eclipse.cdt.core.PE"
             makeFlags="-d"
             parent="test.root">

@@ -46,6 +46,13 @@ public interface IConfiguration extends IBuildObject {
 	public ITool[] getTools();
 
 	/**
+	 * Sets the name of the receiver to the value specified in the argument
+	 * 
+	 * @param name
+	 */
+	public void setName(String name);
+
+	/**
 	 * Sets the value of a boolean option for this configuration.
 	 * 
 	 * @param option The option to change.
@@ -72,4 +79,5 @@ public interface IConfiguration extends IBuildObject {
 	 */
 	public void setOption(IOption option, String[] value)
 		throws BuildException;
+
 }

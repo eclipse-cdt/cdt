@@ -1,3 +1,5 @@
+package org.eclipse.cdt.managedbuilder.internal.core;
+
 /**********************************************************************
  * Copyright (c) 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -8,10 +10,10 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,11 +28,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/**
- * 
- */
 public class Target extends BuildObject implements ITarget {
 
+	// Build model elements that come from the plugin or project files	
 	private String artifactName;
 	private String binaryParserId;
 	private String cleanCommand;
@@ -71,7 +71,6 @@ public class Target extends BuildObject implements ITarget {
 		this.defaultExtension = parent.getDefaultExtension();
 		this.isTest = parent.isTestTarget();
 		this.cleanCommand = parent.getCleanCommand();
-		this.makeCommand = parent.getMakeCommand();
 
 		// Hook me up
 		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner, true);
@@ -190,7 +189,9 @@ public class Target extends BuildObject implements ITarget {
 		cleanCommand = element.getAttribute(CLEAN_COMMAND);
 		
 		// Get the make command
-		makeCommand = element.getAttribute(MAKE_COMMAND);
+		if (element.hasAttribute(MAKE_COMMAND)) {
+			makeCommand = element.getAttribute(MAKE_COMMAND);
+		}
 	
 		Node child = element.getFirstChild();
 		while (child != null) {
@@ -199,6 +200,29 @@ public class Target extends BuildObject implements ITarget {
 			}
 			child = child.getNextSibling();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#removeConfiguration(java.lang.String)
+	 */
+	public void removeConfiguration(String id) {
+		// Remove the specified configuration from the list and map
+		Iterator iter = configurations.listIterator();
+		while (iter.hasNext()) {
+			 IConfiguration config = (IConfiguration)iter.next();
+			 if (config.getId().equals(id)) {
+			 	configurations.remove(config);
+				configMap.remove(id);
+			 	break;
+			 }
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#resetMakeCommand()
+	 */
+	public void resetMakeCommand() {
+		makeCommand = null;
 	}
 	
 	/**
@@ -218,7 +242,9 @@ public class Target extends BuildObject implements ITarget {
 		element.setAttribute(DEFAULT_EXTENSION, getDefaultExtension());
 		element.setAttribute(IS_TEST, isTest ? "true" : "false");
 		element.setAttribute(CLEAN_COMMAND, getCleanCommand());
-		element.setAttribute(MAKE_COMMAND, getMakeCommand());
+		if (makeCommand != null) {
+			element.setAttribute(MAKE_COMMAND, makeCommand);
+		}
 				
 		if (configurations != null)
 			for (int i = 0; i < configurations.size(); ++i) {
@@ -234,17 +260,26 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	public String getMakeCommand() {
 		// Return the name of the make utility
-		return makeCommand == null ? EMPTY_STRING : makeCommand;
+		return (makeCommand == null) ? parent.getMakeCommand() : makeCommand;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
+	 */
 	public String getName() {
 		return (name == null && parent != null) ? parent.getName() : name;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getParent()
+	 */
 	public ITarget getParent() {
 		return parent;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getOwner()
+	 */
 	public IResource getOwner() {
 		return owner;
 	}
@@ -269,12 +304,26 @@ public class Target extends BuildObject implements ITarget {
 		return n;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTools()
+	 */
 	public ITool[] getTools() {
 		ITool[] toolArray = new ITool[getNumTools()];
 		addToolsToArray(toolArray, 0);
 		return toolArray;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#hasMakeCommandOverride()
+	 */
+	public boolean hasOverridenMakeCommand() {
+		return (makeCommand != null && !makeCommand.equals(parent.getMakeCommand()));
+	}
+
+	/**
+	 * @param id
+	 * @return
+	 */
 	public ITool getTool(String id) {
 		ITool result = null;
 		// See if receiver has it in list
@@ -286,6 +335,9 @@ public class Target extends BuildObject implements ITarget {
 		return result;
 	}
 
+	/**
+	 * @param tool
+	 */
 	public void addTool(ITool tool) {
 		if (tools == null) {
 			tools = new ArrayList();
@@ -296,6 +348,9 @@ public class Target extends BuildObject implements ITarget {
 		toolMap.put(tool.getId(), tool);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getConfigurations()
+	 */
 	public IConfiguration[] getConfigurations() {
 		if (configurations != null)
 			return (IConfiguration[])configurations.toArray(new IConfiguration[configurations.size()]);
@@ -340,6 +395,9 @@ public class Target extends BuildObject implements ITarget {
 		return (IConfiguration)configMap.get(id);
 	}
 
+	/**
+	 * @param configuration
+	 */
 	public void addConfiguration(IConfiguration configuration) {
 		if (configurations == null) {
 			configurations = new ArrayList();
@@ -381,8 +439,18 @@ public class Target extends BuildObject implements ITarget {
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#setBuildArtifact(java.lang.String)
 	 */
 	public void setBuildArtifact(String name) {
-		artifactName = name;		
+		if (name != null) {
+			artifactName = name;		
+		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setMakeCommand(java.lang.String)
+	 */
+	public void setMakeCommand(String command) {
+		if (command != null && !getMakeCommand().equals(command)) {
+			makeCommand = command;
+		}
+	}
 
 }

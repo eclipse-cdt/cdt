@@ -96,7 +96,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Preprocess only (-E)"
+                  name="%Option.Posix.PreprocOnly"
                   category="cygwin.compiler.category.preprocessor"
                   command="-E"
                   valueType="boolean"
@@ -115,7 +115,7 @@
                   id="cygwin.gnu.compiler.category.symbols">
             </optionCategory>
             <option
-                  name="Defined symbols (-D)"
+                  name="%Option.Posix.DefSym"
                   category="cygwin.gnu.compiler.category.symbols"
                   command="-D"
                   valueType="definedSymbols"
@@ -338,14 +338,14 @@
                   id="cygwin.link.ld.flags">
             </option>
             <option
-                  name="Libraries"
+                  name="%Option.Posix.Libs"
                   category="cygwin.linker.category.general"
                   command="-l"
                   valueType="libs"
                   id="cygwin.link.libs">
             </option>
             <option
-                  name="Library Paths"
+                  name="%Option.Posix.Libsearch"
                   category="cygwin.linker.category.general"
                   command="-L"
                   valueType="stringList"
@@ -389,18 +389,18 @@
                   id="cygwin.solink.ld.flags">
             </option>
             <option
-                  name="Library Paths"
-                  category="cygwin.solink.category.general"
-                  command="-L"
-                  valueType="stringList"
-                  id="cygwin.solink.ld.paths">
-            </option>
-            <option
-                  name="Libraries"
+                  name="%Option.Posix.Libs"
                   category="cygwin.solink.category.general"
                   command="-l"
                   valueType="libs"
                   id="cygwin.solink.libs">
+            </option>
+            <option
+                  name="%Option.Posix.Libsearch"
+                  category="cygwin.solink.category.general"
+                  command="-L"
+                  valueType="stringList"
+                  id="cygwin.solink.ld.paths">
             </option>
          </tool>
       </target>
@@ -440,18 +440,18 @@
                   id="cygwin.explink.ld.flags">
             </option>
             <option
-                  name="Library Paths"
-                  category="cygwin.explink.category.general"
-                  command="-L"
-                  valueType="stringList"
-                  id="cygwin.explink.ld.paths">
-            </option>
-            <option
-                  name="Libraries"
+                  name="%Option.Posix.Libs"
                   category="cygwin.explink.category.general"
                   command="-l"
                   valueType="libs"
                   id="cygwin.explink.libs">
+            </option>
+            <option
+                  name="%Option.Posix.Libsearch"
+                  category="cygwin.explink.category.general"
+                  command="-L"
+                  valueType="stringList"
+                  id="cygwin.explink.ld.paths">
             </option>
          </tool>
       </target>
@@ -522,14 +522,14 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Preprocess only (-E)"
+                  name="%Option.Posix.PreprocOnly"
                   category="linux.gnu.compiler.category.preprocessor"
                   command="-E"
                   valueType="boolean"
                   id="linux.gnu.compiler.preprocessor.preprocess">
             </option>
             <option
-                  name="Defined Symbols (-D)"
+                  name="%Option.Posix.DefSym"
                   category="linux.gnu.compiler.category.preprocessor"
                   command="-D"
                   valueType="definedSymbols"
@@ -862,14 +862,14 @@
                   id="linux.gnu.linker.category.libs">
             </optionCategory>
             <option
-                  name="Libraries"
+                  name="%Option.Posix.Libs"
                   category="linux.gnu.linker.category.libs"
                   command="-l"
                   valueType="libs"
                   id="linux.gnu.linker.libs.libs">
             </option>
             <option
-                  name="Library search path"
+                  name="%Option.Posix.Libsearch"
                   category="linux.gnu.linker.category.libs"
                   command="-L"
                   valueType="stringList"
@@ -967,14 +967,14 @@
                   id="linux.gnu.solink.category.libs">
             </optionCategory>
             <option
-                  name="Libraries"
+                  name="%Option.Posix.Libs"
                   category="linux.gnu.solink.category.libs"
                   command="-l"
                   valueType="libs"
                   id="linux.gnu.solink.libs.libs">
             </option>
             <option
-                  name="Library search path"
+                  name="%Option.Posix.Libsearch"
                   category="linux.gnu.solink.category.libs"
                   command="-L"
                   valueType="stringList"
@@ -1050,14 +1050,14 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Preprocess only (-E)"
+                  name="%Option.Posix.PreprocOnly"
                   category="solaris.gnu.compiler.category.preprocessor"
                   command="-E"
                   valueType="boolean"
                   id="solaris.gnu.compiler.preprocessor.preprocess">
             </option>
             <option
-                  name="Defined Symbols (-D)"
+                  name="%Option.Posix.DefSym"
                   category="solaris.gnu.compiler.category.preprocessor"
                   command="-D"
                   valueType="definedSymbols"
@@ -1382,14 +1382,14 @@
                   id="solaris.gnu.linker.category.libs">
             </optionCategory>
             <option
-                  name="Libraries"
+                  name="%Option.Posix.Libs"
                   category="solaris.gnu.linker.category.libs"
                   command="-l"
                   valueType="libs"
                   id="solaris.gnu.linker.libs.libs">
             </option>
             <option
-                  name="Library search path"
+                  name="%Option.Posix.Libsearch"
                   category="solaris.gnu.linker.category.libs"
                   command="-L"
                   valueType="stringList"
@@ -1487,14 +1487,14 @@
                   id="solaris.gnu.solink.category.libs">
             </optionCategory>
             <option
-                  name="Libraries"
+                  name="%Option.Posix.Libs"
                   category="solaris.gnu.solink.category.libs"
                   command="-l"
                   valueType="libs"
                   id="solaris.gnu.solink.libs.libs">
             </option>
             <option
-                  name="Library search path"
+                  name="%Option.Posix.Libsearch"
                   category="solaris.gnu.solink.category.libs"
                   command="-L"
                   valueType="stringList"

@@ -42,7 +42,7 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 		}
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIExecArguments arguments =  factory.createMIExecArguments(args);
+		MIExecArguments arguments =  factory.createMIExecArguments(new String[]{args});
 		try {
 			mi.postCommand(arguments);
 			MIInfo info = arguments.getMIInfo();

@@ -72,7 +72,6 @@ public class CDebugModel
 											   final ICTarget cdiTarget,
 											   final String name,
 											   final IProcess process,
-											   final IDebugConfiguration config,
 											   final boolean allowTerminate,
 											   final boolean allowDisconnect,
 											   final boolean resume )
@@ -86,7 +85,6 @@ public class CDebugModel
 											  cdiTarget, 
 											  name,
 											  process,
-											  config,
 											  allowTerminate,
 											  allowDisconnect,
 											  resume );

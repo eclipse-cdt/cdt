@@ -7,11 +7,9 @@ package org.eclipse.cdt.debug.internal.core;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
-import org.eclipse.cdt.debug.core.IDebugConfiguration;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.IInstructionStep;
@@ -20,7 +18,6 @@ import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.ICEndSteppingRange;
-import org.eclipse.cdt.debug.core.cdi.ICSession;
 import org.eclipse.cdt.debug.core.cdi.ICSessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICSignal;
 import org.eclipse.cdt.debug.core.cdi.event.ICChangedEvent;
@@ -136,7 +133,6 @@ public class CDebugTarget extends CDebugElement
 						 ICTarget cdiTarget, 
 						 String name,
 						 IProcess process,
-						 IDebugConfiguration config,
 						 boolean allowsTerminate,
 						 boolean allowsDisconnect, 
 						 boolean resume )

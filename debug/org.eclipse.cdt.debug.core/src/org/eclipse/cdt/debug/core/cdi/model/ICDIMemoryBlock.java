@@ -64,7 +64,22 @@ public interface ICDIMemoryBlock extends ICDIObject
 	 */
 	void setValue(long offset, byte[] bytes) throws CDIException;
 
+	/**
+	 * @return true if the block does not update.
+	 */
 	boolean isFrozen();
-	
+
+	/**
+	 * A memoryBlock set frozen means that the block will
+	 * not update and check for new data.
+	 * @param frozen the block is frozen by default.
+	 */
 	void setFrozen(boolean frozen);
+
+	/**
+	 * Refresh the data, this may cause events to be trigger
+	 * if the data values changed.
+	 */
+	void refresh() throws CDIException;
+
 }

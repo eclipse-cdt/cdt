@@ -1,3 +1,10 @@
+2003-10-01 Bogdan Gheorghe
+
+	Modified CDTLogWriter: increased max log file size to 10MB; got rid of
+	the stack dumps/
+	
+	* src/org/eclipse/cdt/internal/core/CDTLogWriter.java
+	
 2003-10-01 Rob Jackson
 
 	Avoid a NPE when processing non-absolute FILE references in elf binaries

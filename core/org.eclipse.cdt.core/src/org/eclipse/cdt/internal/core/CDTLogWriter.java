@@ -34,14 +34,14 @@ public class CDTLogWriter {
 	protected boolean newSession = true;
 	
 	protected static final String SESSION = "*** SESSION";//$NON-NLS-1$
-	protected static final String ENTRY = "*** ENTRY";//$NON-NLS-1$
-	protected static final String SUBENTRY = "*** SUBENTRY";//$NON-NLS-1$
-	protected static final String MESSAGE = "*** MESSAGE";//$NON-NLS-1$
-	protected static final String STACK = "*** STACK";//$NON-NLS-1$
+	protected static final String ENTRY = "ENTRY";//$NON-NLS-1$
+	protected static final String SUBENTRY = "SUBENTRY";//$NON-NLS-1$
+	protected static final String MESSAGE = "MESSAGE";//$NON-NLS-1$
+	protected static final String STACK = "STACK";//$NON-NLS-1$
 
 	protected static final String LINE_SEPARATOR;
 	protected static final String TAB_STRING = "\t";//$NON-NLS-1$
-	protected static final long MAXLOG_SIZE = 5000000;
+	protected static final long MAXLOG_SIZE = 10000000;
 	static {
 		String s = System.getProperty("line.separator");//$NON-NLS-1$
 		LINE_SEPARATOR = s == null ? "\n" : s;//$NON-NLS-1$
@@ -185,7 +185,8 @@ public class CDTLogWriter {
 		writeSpace();
 		writeln(status.getMessage());
 
-		write(status.getException());
+		//Took out the stack dump - too much space
+		//write(status.getException());
 
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();

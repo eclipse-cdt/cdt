@@ -121,7 +121,7 @@ public class BlocksIndexOutput extends IndexOutput {
 			if (includeIndexBlock.isEmpty()) {
 				return;
 			}
-			flushWords();
+			flushIncludes();
 			addInclude(entry);
 		}
 	}
@@ -179,7 +179,7 @@ public class BlocksIndexOutput extends IndexOutput {
 	/**
 	 * 
 	 */
-	public void flushIncludes() throws IOException {
+	protected void flushIncludes() throws IOException {
 		if (!firstInBlock 
 			&& includeIndexBlock != null) { // could have added a document without any indexed word, no block created yet
 		includeIndexBlock.flush();

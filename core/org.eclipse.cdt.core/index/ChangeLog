@@ -1,3 +1,7 @@
+2003-10-01 Bogdan Gheorghe
+	Modified BlockIndexOutput.addInclude to properly flush an
+	include block once it's full.
+	
 2003-09-30 Bogdan Gheorghe
 	Changed logging for SourceIndexer to log file in cdt.core
 	

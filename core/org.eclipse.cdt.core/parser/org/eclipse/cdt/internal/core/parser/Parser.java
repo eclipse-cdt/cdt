@@ -4988,7 +4988,7 @@ public class Parser implements IParser
         catch (ScannerException e)
         {
             Util.debugLog( "ScannerException thrown : " + e.getMessage(), IDebugLogConstants.PARSER );
-			org.eclipse.cdt.internal.core.model.Util.log(e, "Scanner Exception", ICLogConstants.CDT); //$NON-NLS-1$h
+			org.eclipse.cdt.internal.core.model.Util.log(e, "Scanner Exception: " + e.getMessage() , ICLogConstants.CDT); //$NON-NLS-1$h
             if( e.isSeriousError(mode) )
             {
             	failParse(); 

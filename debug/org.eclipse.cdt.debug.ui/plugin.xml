@@ -668,14 +668,6 @@
       </textHover>
    </extension>
    <extension
-         point="org.eclipse.debug.core.sourceLocators">
-      <sourceLocator
-            name="Prompting C/C++ Source Locator"
-            class="org.eclipse.cdt.debug.ui.CUISourceLocator"
-            id="org.eclipse.cdt.debug.ui.cSourceLocator">
-      </sourceLocator>
-   </extension>
-   <extension
          point="org.eclipse.debug.core.statusHandlers">
       <statusHandler
             plugin="org.eclipse.cdt.debug.core"

@@ -32,7 +32,7 @@ import org.eclipse.ui.actions.ActionDelegate;
 public class CastToTypeActionDelegate extends ActionDelegate
 									  implements IObjectActionDelegate
 {
-	protected class CastToTypeInputValidator implements IInputValidator
+	static protected class CastToTypeInputValidator implements IInputValidator
 	{
 		public CastToTypeInputValidator()
 		{

@@ -74,6 +74,7 @@ import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -175,6 +176,15 @@ public class FileBasePluginTest extends TestCase {
 //		return file;
 //    }
     
+    protected IFolder importFolder(String folderName) throws Exception {
+    	IFolder folder = project.getProject().getFolder(folderName);
+		
+		//Create file input stream
+		if( !folder.exists() )
+			folder.create( false, false, monitor );
+		
+		return folder;
+    }
     protected IFile importFile(String fileName, String contents ) throws Exception{
 		//Obtain file handle
 		IFile file = project.getProject().getFile(fileName);

@@ -1,3 +1,11 @@
+2002-11-22 Alex Chapiro
+
+	* src/.../wizards/CProjectWizard.java:
+	The problem appears in ConversionWizard that inherits to CProjectWizard. The
+	first one does not initialize fmainPage which causes NullpointerException.
+	Actually, ConversionWizard doesn't have this page, so it is unsupported
+	operation for it.
+
 2002-11-22 Alain Magloire
 
 	* src/.../internal/ui/BinaryPropertySource.java (getPropertyValue):

@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * **********************************************************************/
 
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIImages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -24,15 +25,12 @@ class ToolListLabelProvider extends LabelProvider {
 	private static final String ERROR_UNKNOWN_ELEMENT = "BuildPropertyPage.error.Unknown_tree_element";	//$NON-NLS-1$
 
 	public Image getImage(Object element) {
-		// If the element is a configuration, return the folder image
-		if (element instanceof IOptionCategory) {
-			IOptionCategory cat = (IOptionCategory)element;
-			IOptionCategory [] children = cat.getChildCategories();
-			if (children.length > 0){
-				return IMG_TOOL;
-			} else {
-				return IMG_CAT;
-			}
+		// Return a tool image for a tool or tool reference
+		if (element instanceof ITool) {
+			return IMG_TOOL;
+		}
+		else if (element instanceof IOptionCategory) {
+			return IMG_CAT;
 		} else {
 			throw unknownElement(element);
 		}
@@ -43,7 +41,12 @@ class ToolListLabelProvider extends LabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(Object)
 	 */
 	public String getText(Object element) {
-		if (element instanceof IOptionCategory) {
+		if (element instanceof ITool) {
+			// Handles tool references as well
+			ITool tool = (ITool)element;
+			return tool.getName();
+		}
+		else if (element instanceof IOptionCategory) {
 			IOptionCategory cat = (IOptionCategory)element;
 			return cat.getName();
 		}

@@ -35,27 +35,16 @@ public class ToolListContentProvider implements ITreeContentProvider{
 		// If parent is configuration, return a list of its option categories
 		if (parentElement instanceof IConfiguration) {
 			IConfiguration config = (IConfiguration)parentElement;
-			ITool [] tools = config.getTools();
-			IOptionCategory [] categories = new IOptionCategory[tools.length];
-			// The categories are accessed through the tool
-			for (int index = 0; index < tools.length; ++index) {
-				categories[index] = tools[index].getTopOptionCategory();
-			}
-			return categories;
+			// the categories are all accessed through the tools
+			return config.getTools();
 		} else if (parentElement instanceof ITool) {
 			// If this is a tool, return the categories it contains
 			ITool tool = (ITool)parentElement;
-			IOptionCategory[] children = tool.getTopOptionCategory().getChildCategories();
-			return (children == null) ? EMPTY_ARRAY : children; 
+			return tool.getTopOptionCategory().getChildCategories();
 		} else if (parentElement instanceof IOptionCategory) {
 			// Categories can have child categories
 			IOptionCategory cat = (IOptionCategory)parentElement;
-			IOptionCategory [] children = cat.getChildCategories();
-			if (children == null) {
-				return EMPTY_ARRAY;
-			} else {
-				return children;
-			}
+			return cat.getChildCategories();
 		} else {
 			return EMPTY_ARRAY;
 		}
@@ -78,7 +67,6 @@ public class ToolListContentProvider implements ITreeContentProvider{
 			IOptionCategory parent = cat.getOwner();
 			// Then we need to get the configuration we belong to
 			if (parent == null) {
-				ITool tool = cat.getTool();
 				return root;
 			}
 			return parent;

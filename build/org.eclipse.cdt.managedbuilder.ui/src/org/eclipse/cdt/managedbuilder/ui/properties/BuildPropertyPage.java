@@ -113,6 +113,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	private BuildSettingsPage currentSettingsPage;
 	private Map configToPageListMap;
 	private BuildToolsSettingsStore settingsStore;
+	private Map settingsStoreMap;
 	private IOptionCategory selectedCategory;
 	private Point lastShellSize;
 	private ITool selectedTool;
@@ -123,6 +124,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	 * @see #setMinimumPageSize
 	 */
 	private Point minimumPageSize = new Point(200, 200);
+	private ToolListContentProvider provider;
 
 	/**
 	 * Layout for the page container.
@@ -395,6 +397,8 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			if (children[i] != currentControl)
 				children[i].setVisible(false);
 		}
+		
+		// Make the current page visible
 		currentSettingsPage.setVisible(true);
 
 		// save the last page build options.
@@ -484,6 +488,17 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		return selectedConfiguration;
 	}
 
+	/* (non-Javadoc)
+	 * Safe accessor method
+	 * 
+	 * @return Returns the Map of configurations to preference stores.
+	 */
+	protected Map getSettingsStoreMap() {
+		if (settingsStoreMap == null) {
+			settingsStoreMap = new HashMap();
+		}
+		return settingsStoreMap;
+	}
 	/*
 	 * Event Handlers
 	 */
@@ -493,7 +508,9 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		
 		// Check if the user has selected the "all" configuration
 		int selectionIndex = configSelector.getSelectionIndex();
-		if (selectionIndex >= configurations.length) {
+		if (selectionIndex == -1) return;
+		String configName = configSelector.getItem(selectionIndex);
+		if (configName.equals(ManagedBuilderUIPlugin.getResourceString(ALL_CONFS))) {
 			// This is the all config
 			return;
 		} else {
@@ -501,23 +518,29 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			selectedConfiguration = configurations[selectionIndex];
 		}
 		
-		// Set the content provider for the list viewer
-		ToolListContentProvider provider = new ToolListContentProvider();
-		optionList.setContentProvider(provider);
+		if (provider == null) {
+			provider = new ToolListContentProvider();
+			optionList.setContentProvider(provider);
+		}
 		optionList.setInput(selectedConfiguration);
 		optionList.expandAll();
 		
-		// Recreate the settings store for the configuration
-		settingsStore = new BuildToolsSettingsStore(selectedConfiguration);
+		// Create (or retrieve) the settings store for the configuration
+		BuildToolsSettingsStore store = (BuildToolsSettingsStore) getSettingsStoreMap().get(selectedConfiguration.getId());
+		if (store == null) {
+			store = new BuildToolsSettingsStore(selectedConfiguration);
+			getSettingsStoreMap().put(selectedConfiguration.getId(), store);
+		}
+		settingsStore = store; 
 		
-		// Select the first tool or option category in the list that has options
+		// Select the first tool in the list
 		Object[] elements = provider.getElements(selectedConfiguration);
 		Object primary = elements.length > 0 ? elements[0] : null;
 		
-		if (primary != null && primary instanceof ITool) {
+/*		if (primary != null && primary instanceof ITool) {
 			// set the tool as primary selection in the tree hence it displays all the build options.
 			ITool tool = (ITool)primary;
-		/*	IOptionCategory top = tool.getTopOptionCategory();
+			IOptionCategory top = tool.getTopOptionCategory();
 			IOption[] topOpts = top.getOptions(selectedConfiguration);
 			if (topOpts != null && topOpts.length == 0) {
 				// Get the children categories and start looking
@@ -530,9 +553,9 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 						break;
 					}
 				}
-			}*/
+			}
 		}
-		
+*/		
 		if (primary != null) {
 			optionList.setSelection(new StructuredSelection(primary));
 		}
@@ -575,6 +598,9 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 				
 				// Remove the configurations from the target 
 				selectedTarget.removeConfiguration(id);
+				
+				// Remove any settings stores
+				getSettingsStoreMap().remove(id);
 				
 				// Clean up the UI
 				configurations = selectedTarget.getConfigurations();

@@ -72,7 +72,7 @@ public class CommandFactory {
 		return new MIDataListRegisterNames(regno);
 	}
 
-	public MIDataListRegisterValues createMIDataLIstRegisterValues(int fmt, int[] regno) {
+	public MIDataListRegisterValues createMIDataListRegisterValues(int fmt, int[] regno) {
 		return new MIDataListRegisterValues(fmt, regno);
 	}
 

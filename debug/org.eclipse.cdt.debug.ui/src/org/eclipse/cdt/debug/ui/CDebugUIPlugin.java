@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
+import org.eclipse.cdt.debug.internal.ui.preferences.RegistersViewPreferencePage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -135,6 +136,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	protected void initializeDefaultPreferences( IPreferenceStore pstore ) 
 	{
 		MemoryViewPreferencePage.initDefaults( pstore );
+		RegistersViewPreferencePage.initDefaults( pstore );
 	}
 	
 	public static CDTDebugModelPresentation getDebugModelPresentation()

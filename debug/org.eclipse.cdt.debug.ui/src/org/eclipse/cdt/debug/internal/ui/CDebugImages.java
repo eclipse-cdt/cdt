@@ -58,6 +58,11 @@ public class CDebugImages
 	public static final String IMG_OBJS_VARIABLE_AGGREGATE = NAME_PREFIX + "var_aggr.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_VARIABLE_POINTER = NAME_PREFIX + "var_pointer.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_VARIABLE_STRING = NAME_PREFIX + "var_string.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_REGISTER_GROUP = NAME_PREFIX + "registergroup_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_REGISTER = NAME_PREFIX + "register_obj.gif";	//$NON-NLS-1$
+
+	public static final String IMG_LCL_TYPE_NAMES = NAME_PREFIX + "tnames_co.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_CHANGE_REGISTER_VALUE = NAME_PREFIX + "change_reg_value_co.gif";	//$NON-NLS-1$
 
 	/*
 	 * Set of predefined Image Descriptors.
@@ -65,7 +70,7 @@ public class CDebugImages
 	private static final String T_OBJ = "obj16"; //$NON-NLS-1$
 	private static final String T_OVR = "ovr16"; //$NON-NLS-1$
 	private static final String T_WIZBAN = "wizban"; //$NON-NLS-1$
-	private static final String T_LCL = "clcl16"; //$NON-NLS-1$
+	private static final String T_LCL = "lcl16"; //$NON-NLS-1$
 	private static final String T_CTOOL = "ctool16"; //$NON-NLS-1$
 	private static final String T_CVIEW = "cview16"; //$NON-NLS-1$
 	private static final String T_DTOOL = "dtool16"; //$NON-NLS-1$
@@ -83,6 +88,8 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_VARIABLE_AGGREGATE = createManaged( T_OBJ, IMG_OBJS_VARIABLE_AGGREGATE );
 	public static final ImageDescriptor DESC_OBJS_VARIABLE_POINTER = createManaged( T_OBJ, IMG_OBJS_VARIABLE_POINTER );
 	public static final ImageDescriptor DESC_OBJS_VARIABLE_STRING = createManaged( T_OBJ, IMG_OBJS_VARIABLE_STRING );
+	public static final ImageDescriptor DESC_OBJS_REGISTER_GROUP = createManaged( T_OBJ, IMG_OBJS_REGISTER_GROUP );
+	public static final ImageDescriptor DESC_OBJS_REGISTER = createManaged( T_OBJ, IMG_OBJS_REGISTER );
 
 	/**
 	 * Returns the image managed under the given key in this registry.
@@ -110,7 +117,7 @@ public class CDebugImages
 	 */
 	public static void setLocalImageDescriptors( IAction action, String iconName )
 	{
-		setImageDescriptors( action, "lcl16", iconName ); //$NON-NLS-1$
+		setImageDescriptors( action, T_LCL, iconName );
 	}
 
 	/*
@@ -126,6 +133,7 @@ public class CDebugImages
 
 	private static void setImageDescriptors( IAction action, String type, String relPath )
 	{
+		relPath = relPath.substring( NAME_PREFIX_LENGTH );
 		try
 		{
 			ImageDescriptor id = ImageDescriptor.createFromURL( makeIconFileURL( "d" + type, relPath ) ); //$NON-NLS-1$

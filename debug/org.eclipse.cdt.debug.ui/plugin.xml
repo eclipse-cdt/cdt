@@ -75,6 +75,12 @@
             class="org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage"
             id="org.eclipse.cdt.debug.ui.MemoryViewPreferencePage">
       </page>
+      <page
+            name="%RegistersPreferencePage.name"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.cdt.debug.internal.ui.preferences.RegistersViewPreferencePage"
+            id="org.eclipse.cdt.debug.ui.RegistersViewPreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -231,4 +237,5 @@
             id="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover">
       </textHover>
    </extension>
+
 </plugin>

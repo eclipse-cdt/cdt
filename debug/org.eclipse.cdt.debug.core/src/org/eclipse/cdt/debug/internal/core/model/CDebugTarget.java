@@ -29,6 +29,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
@@ -64,6 +65,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IThread;
 
 /**
@@ -174,6 +176,11 @@ public class CDebugTarget extends CDebugElement
 	private HashMap fBreakpoints;
 
 	/**
+	 * Collection of register groups added to this target. Values are of type <code>CRegisterGroup</code>.
+	 */
+	private List fRegisterGroups;
+
+	/**
 	 * Constructor for CDebugTarget.
 	 * @param target
 	 */
@@ -211,6 +218,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		initializeState();
 		initializeBreakpoints();
+		initializeRegisters();
 		getLaunch().addDebugTarget( this );
 		fireCreationEvent();
 	}
@@ -255,6 +263,12 @@ public class CDebugTarget extends CDebugElement
 				breakpointAdded( (ICBreakpoint)bps[i] );
 			}
 		}
+	}
+
+	protected void initializeRegisters()
+	{
+		fRegisterGroups = new ArrayList( 20 );
+		createMainRegisterGroup();
 	}
 
 	/* (non-Javadoc)
@@ -974,6 +988,7 @@ public class CDebugTarget extends CDebugElement
 	protected void cleanup()
 	{
 		removeAllThreads();
+		removeAllRegisterGroups();
 		getCDISession().getEventManager().removeEventListener( this );
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
@@ -1595,5 +1610,41 @@ public class CDebugTarget extends CDebugElement
 	public boolean canEvaluate()
 	{
 		return isAvailable() && isSuspended();
+	}
+
+	protected IRegisterGroup[] getRegisterGroups( CStackFrame stackFrame ) throws DebugException
+	{
+		Iterator it = fRegisterGroups.iterator();
+		while( it.hasNext() )
+		{
+			((CRegisterGroup)it.next()).refresh( stackFrame );
+		}
+		return (IRegisterGroup[])fRegisterGroups.toArray( new IRegisterGroup[fRegisterGroups.size()] );
+	}
+	
+	protected void createMainRegisterGroup()
+	{
+		ICDIRegisterObject[] regObjects = null;
+		try
+		{
+			regObjects = getCDITarget().getRegisterObjects();
+		}
+		catch( CDIException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
+		if ( regObjects != null )
+		{
+			fRegisterGroups.add( new CRegisterGroup( this, "Main", regObjects ) );
+		}
+	}
+
+	protected void removeAllRegisterGroups()
+	{
+		Iterator it = fRegisterGroups.iterator();
+		while( it.hasNext() )
+		{
+			((CRegisterGroup)it.next()).dispose();
+		}
 	}
 }

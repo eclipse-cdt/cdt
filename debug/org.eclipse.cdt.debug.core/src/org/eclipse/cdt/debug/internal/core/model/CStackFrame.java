@@ -220,7 +220,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public IRegisterGroup[] getRegisterGroups() throws DebugException
 	{
-		return new IRegisterGroup[0];
+		return ((CDebugTarget)getDebugTarget()).getRegisterGroups( this );
 	}
 
 	/* (non-Javadoc)
@@ -228,7 +228,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean hasRegisterGroups() throws DebugException
 	{
-		return getRegisterGroups().length > 0;
+		return ((CDebugTarget)getDebugTarget()).getRegisterGroups( this ).length > 0;
 	}
 
 	/* (non-Javadoc)

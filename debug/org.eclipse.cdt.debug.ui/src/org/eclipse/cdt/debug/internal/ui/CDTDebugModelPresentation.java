@@ -35,6 +35,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
+import org.eclipse.debug.core.model.IRegister;
+import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
@@ -175,6 +177,14 @@ public class CDTDebugModelPresentation extends LabelProvider
 			{
 				return getBreakpointImage( (ICBreakpoint)element );
 			}
+			if ( element instanceof IRegisterGroup ) 
+			{
+				return getRegisterGroupImage( (IRegisterGroup)element );
+			}
+			if ( element instanceof IRegister ) 
+			{
+				return getRegisterImage( (IRegister)element );
+			}
 			if ( element instanceof IVariable ) 
 			{
 				return getVariableImage( (IVariable)element );
@@ -195,6 +205,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 		StringBuffer label = new StringBuffer();
 		try
 		{
+			if ( element instanceof IRegisterGroup )
+			{
+				label.append( ((IRegisterGroup)element).getName() );
+				return label.toString();
+			}
+
 			if ( element instanceof IVariable )
 			{
 				label.append( getVariableText( (IVariable)element ) );
@@ -644,5 +660,15 @@ public class CDTDebugModelPresentation extends LabelProvider
 				return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_VARIABLE_SIMPLE, 0 ) );
 		}
 		return null;
+	}
+
+	protected Image getRegisterGroupImage( IRegisterGroup element ) throws DebugException
+	{
+		return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_REGISTER_GROUP,  0 ) );
+	}
+
+	protected Image getRegisterImage( IRegister element ) throws DebugException
+	{
+		return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_REGISTER,  0 ) );
 	}
 }

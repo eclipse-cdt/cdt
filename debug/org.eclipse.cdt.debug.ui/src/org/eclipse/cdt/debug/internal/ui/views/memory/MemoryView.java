@@ -10,7 +10,6 @@ import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
@@ -18,6 +17,7 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -78,6 +79,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	 */
 	protected void fillContextMenu( IMenuManager menu )
 	{
+		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
 	}
 
 	/* (non-Javadoc)

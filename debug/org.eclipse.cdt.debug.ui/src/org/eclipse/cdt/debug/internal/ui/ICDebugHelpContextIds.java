@@ -22,10 +22,15 @@ public interface ICDebugHelpContextIds
 {
 	public static final String PREFIX = ICDebugUIConstants.PLUGIN_ID + "."; //$NON-NLS-1$
 
+	// Actions
+	public static final String CHANGE_REGISTER_VALUE_ACTION = PREFIX + "change_register_value_action_context"; //$NON-NLS-1$
+	public static final String SHOW_TYPES_ACTION = PREFIX + "show_types_action_context"; //$NON-NLS-1$
+
 	// Views
 	public static final String REGISTERS_VIEW = PREFIX + "registers_view_context"; //$NON-NLS-1$
 	public static final String MEMORY_VIEW = PREFIX + "memory_view_context"; //$NON-NLS-1$
 
 	// Preference pages
 	public static final String MEMORY_PREFERENCE_PAGE = PREFIX + "memory_preference_page_context"; //$NON-NLS-1$
+	public static final String REGISTERS_PREFERENCE_PAGE = PREFIX + "registers_preference_page_context"; //$NON-NLS-1$
 }

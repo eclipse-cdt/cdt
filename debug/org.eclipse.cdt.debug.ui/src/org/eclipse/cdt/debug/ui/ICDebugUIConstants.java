@@ -37,4 +37,15 @@ public interface ICDebugUIConstants
 	 * Status code indicating an unexpected internal error.
 	 */
 	public static final int INTERNAL_ERROR = 150;
+
+	/** 
+	 * Identifier for an empty group preceeding a
+	 * register group in a menu (value <code>"emptyRegisterGroup"</code>).
+	 */
+	public static final String EMPTY_REGISTER_GROUP = "emptyRegisterGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a register group in a menu (value <code>"registerGroup"</code>).
+	 */
+	public static final String REGISTER_GROUP = "registerGroup"; //$NON-NLS-1$
 }

@@ -47,9 +47,10 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
+import org.eclipse.jface.text.source.ImageUtilities;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -187,15 +188,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		public void paint(GC gc, Canvas canvas, Rectangle r) {
 			initializeImages();
 			if (fImage != null) {
-				//drawImage(fImage, gc, canvas, r, SWT.CENTER, SWT.TOP);
-				Rectangle bounds = fImage.getBounds();
-				
-				int x = (r.width - bounds.width) / 2;
-				
-				FontMetrics fontMetrics = gc.getFontMetrics();
-				int y = (fontMetrics.getHeight() - bounds.height) / 2;
-				
-				gc.drawImage(fImage, r.x + x, r.y + y);
+				ImageUtilities.drawImage(fImage, gc, canvas, r, SWT.CENTER, SWT.TOP);
 			}
 		}
 		

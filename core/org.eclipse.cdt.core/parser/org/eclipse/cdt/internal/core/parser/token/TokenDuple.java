@@ -425,4 +425,16 @@ public class TokenDuple implements ITokenDuple {
 		}
 		return true;
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object other) {
+		if( !(other instanceof ITokenDuple ) ) return false;
+		if( ((ITokenDuple) other).getFirstToken().equals( getFirstToken() ) &&
+			((ITokenDuple) other).getLastToken().equals( getLastToken() ) )
+			return true;
+		return false;
+	}
 }

@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import java.util.Iterator;
+
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -35,6 +37,8 @@ public class SelectionParser extends ContextualParser {
 	private IASTScope ourScope = null;
 	private IASTCompletionNode.CompletionKind ourKind = null;
 	private IASTNode ourContext = null;
+	private ITokenDuple greaterContextDuple = null;
+	private boolean pastPointOfSelection = false;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleNewToken(org.eclipse.cdt.core.parser.IToken)
@@ -53,7 +57,7 @@ public class SelectionParser extends ContextualParser {
 				TraceUtil.outputTrace(log, "Offset Ceiling Hit w/token \"", null, value.getImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
 				lastTokenOfDuple = value;
 			}
-			if( scanner.isOnTopContext() && lastTokenOfDuple != null && lastTokenOfDuple.getEndOffset() >= offsetRange.getCeilingOffset() )
+			if( lastTokenOfDuple != null && lastTokenOfDuple.getEndOffset() >= offsetRange.getCeilingOffset() )
 			{
 				if ( ourScope == null )
 					ourScope = getCompletionScope();
@@ -61,11 +65,12 @@ public class SelectionParser extends ContextualParser {
 					ourContext = getCompletionContext();
 				if( ourKind == null )
 					ourKind = getCompletionKind();
-				
 			}
 		}
 	}
 
+	
+	
 	
 	/**
 	 * @param scanner
@@ -102,8 +107,47 @@ public class SelectionParser extends ContextualParser {
 		if( ! duple.syntaxOfName() )
 			throw new ParseError( ParseError.ParseErrorKind.OFFSET_RANGE_NOT_NAME );
 		
-		return duple.lookup( astFactory, ourScope );
+		return provideSelectionNode(duple);
 	}
+
+	/**
+	 * @param duple
+	 * @return
+	 */
+	protected IASTNode provideSelectionNode(ITokenDuple duple) {
+		
+		ITokenDuple finalDuple = null;
+		// reconcile the name to look up first
+		if( ! duple.equals( greaterContextDuple ))
+		{
+			// 3 cases
+			
+			// duple is prefix of greaterContextDuple
+			if( duple.getFirstToken().equals( greaterContextDuple.getFirstToken() ))
+			{
+				//	=> do not use greaterContextDuple
+				finalDuple = duple;
+			}
+			// duple is suffix of greaterContextDuple
+			else if( duple.getLastToken().equals( greaterContextDuple.getLastToken() ))
+			{
+				//  => use greaterContextDuple
+				finalDuple = greaterContextDuple;
+			}
+			// duple is a sub-duple of greaterContextDuple
+			else
+			{
+				//	=> throw ParseError
+				throw new ParseError( ParseError.ParseErrorKind.OFFSET_RANGE_NOT_NAME );
+			}
+		}
+		else
+			finalDuple = greaterContextDuple;
+		return finalDuple.lookup( astFactory, ourScope );
+	}
+
+
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int)
@@ -119,4 +163,29 @@ public class SelectionParser extends ContextualParser {
 	protected void checkEndOfFile() throws EndOfFileException {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setGreaterNameContext(org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	protected void setGreaterNameContext(ITokenDuple tokenDuple) {
+		
+		if( pastPointOfSelection ) return;
+		if( greaterContextDuple == null && scanner.isOnTopContext() && lastTokenOfDuple != null && firstTokenOfDuple != null )
+		{
+			if( tokenDuple.getStartOffset() > lastTokenOfDuple.getEndOffset() )
+			{
+				pastPointOfSelection = true;
+				return;
+			}
+			int tokensFound = 0;
+			Iterator i = tokenDuple.iterator();
+			while( i.hasNext() )
+			{
+				IToken token = (IToken) i.next();
+				if( token == firstTokenOfDuple ) ++tokensFound;
+				if( token == lastTokenOfDuple ) ++tokensFound;
+			}
+			if( tokensFound == 2 )
+				greaterContextDuple = tokenDuple;
+		}
+	}
 }

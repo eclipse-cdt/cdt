@@ -1,3 +1,6 @@
+2004-04-10 John Camelon
+	Partial fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=57898
+
 2004-04-09 Andrew Niefer
 	handle NPE during template argument deduction
 	fix bug in definitions of certain template member templates  (fixes a ClassCastException encountered in <list>)

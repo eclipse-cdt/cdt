@@ -336,8 +336,17 @@ public class ExpressionParser implements IExpressionParser {
             }
         }
 
-        return new TokenDuple(first, last, ( hasTemplateId ? argumentList : null ) );
+        ITokenDuple tokenDuple = new TokenDuple(first, last, ( hasTemplateId ? argumentList : null ) );
+        setGreaterNameContext( tokenDuple );
+		return tokenDuple;
 
+	}
+
+	/**
+	 * @param tokenDuple
+	 */
+	protected void setGreaterNameContext(ITokenDuple tokenDuple) {
+		//do nothing in this implementation
 	}
 
 	/**
@@ -2548,8 +2557,7 @@ public class ExpressionParser implements IExpressionParser {
 		
 	    try
 	    {
-	    	IToken value = scanner.nextToken(); 
-	    	handleNewToken( value );
+	    	IToken value = scanner.nextToken();
 	        return value; 
 	    }
 	    catch( OffsetLimitReachedException olre )
@@ -2629,6 +2637,7 @@ public class ExpressionParser implements IExpressionParser {
 	    if (currToken != null)
 	        lastToken = currToken;
 	    currToken = currToken.getNext();
+    	handleNewToken( lastToken );
 	    return lastToken;
 	}
 

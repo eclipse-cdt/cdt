@@ -1473,15 +1473,6 @@ public class ScannerTestCase extends BaseScannerTest
     	assertEquals( callback.problems.size(), 1 );
     }
    
- 
-//    public void testGerman() throws ScannerException
-//	{
-//    	initializeScanner("\"Liﬂ‰\" 'ﬂ' /* Liﬂ‰ */ Liﬂ‰ ");
-//    	validateString("Liﬂ‰");
-//    	validateChar( 'ﬂ' );
-//    	validateIdentifier( "Liﬂ‰");
-//    	validateEOF();
-//    }
     
     public void test54778() throws ScannerException
 	{
@@ -1562,5 +1553,13 @@ public class ScannerTestCase extends BaseScannerTest
     	initializeScanner( writer.toString() );
     	validateString( "ab"); //$NON-NLS-1$
     	validateEOF();
+	}
+    
+    public void testBug62042() throws Exception
+	{
+    	Callback callback = new Callback(ParserMode.QUICK_PARSE);
+    	initializeScanner( "0x", ParserMode.QUICK_PARSE,  callback ); //$NON-NLS-1$
+    	validateEOF();
+    	assertFalse( callback.problems.isEmpty() );
 	}
 }

@@ -69,6 +69,7 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 public class Scanner implements IScanner {
 
+	protected static final String HEX_PREFIX = "0x"; //$NON-NLS-1$
 	private static final ObjectMacroDescriptor CPLUSPLUS_MACRO = new ObjectMacroDescriptor( __CPLUSPLUS, "199711L"); //$NON-NLS-1$
 	private static final ObjectMacroDescriptor STDC_VERSION_MACRO = new ObjectMacroDescriptor( __STDC_VERSION__, "199001L"); //$NON-NLS-1$
 	protected static final ObjectMacroDescriptor STDC_HOSTED_MACRO = new ObjectMacroDescriptor( __STDC_HOSTED__, "0"); //$NON-NLS-1$
@@ -1131,7 +1132,14 @@ public class Scanner implements IScanner {
 		
 		int tokenType = floatingPoint ? IToken.tFLOATINGPT : IToken.tINTEGER;
 		if( tokenType == IToken.tINTEGER && hex )
+		{
+			if( result.equals( HEX_PREFIX) )
+			{
+				handleProblem( IProblem.SCANNER_BAD_HEX_FORMAT, HEX_PREFIX, beginOffset, false, true );
+				return null;
+			}
 			tokenType = IToken.tHEXINT;
+		}
 		
 		return newToken(
 			tokenType,

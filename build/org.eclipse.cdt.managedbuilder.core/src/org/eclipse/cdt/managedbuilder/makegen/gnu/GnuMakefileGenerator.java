@@ -316,7 +316,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * 		echo -n '<relative_path>/<name>.d <relative_path>/' >> <relative_path>/<name>.d && \
 	 * 		<tool> -P -MM -MG <flags> $< >> <relative_path>/<name>.d
 	 * 		@echo 'Finished building: $<'
-	 * 		@echo
+	 * 		@echo ' '
 	 * 
 	 * Note that the macros all come from the build model and are 
 	 * resolved to a real command before writing to the module
@@ -327,7 +327,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * 		echo -n 'source1/foo.d source1/' >> source1/foo.d && \
 	 * 		g++ -P -MM -MG -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers $< >> source1/foo.d
 	 * 		@echo 'Finished building: $<'
-	 * 		@echo
+	 * 		@echo ' '
 	 * 
 	 * @param relativePath
 	 * @param buffer
@@ -368,6 +368,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		// Say goodbye to the nice user
 		buffer.append(NEWLINE);
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE);
+		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE + NEWLINE);
 	}
 
 
@@ -1142,7 +1143,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			}
 
 			// Put the generated comments in
-			outBuffer = addDefaultHeader();
+			if (!firstLine.startsWith(COMMENT_SYMBOL)) {
+				outBuffer = addDefaultHeader();
+			} else {
+				outBuffer = new StringBuffer();
+			}
 			
 			// Some echo implementations misbehave and put the -n and newline in the output
 			if (firstLine.startsWith("-n")) {

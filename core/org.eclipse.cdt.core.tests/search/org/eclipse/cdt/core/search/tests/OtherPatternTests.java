@@ -330,7 +330,7 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 4 );
 	}
 	
-	public void testBug42911(){
+	public void testBug42911_43988(){
 		BasicSearchMatch match1 = new BasicSearchMatch();
 		BasicSearchMatch match2 = new BasicSearchMatch();
 		
@@ -344,5 +344,10 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertFalse( match1.equals( match2 ) );
 		assertFalse( match2.equals( match1 ) );
 		
+		match2.setName( "IWasSaying" );
+		match2.setParentName( "boo" );
+		match2.setReturnType( "urns" );
+		
+		assertTrue( match1.equals( match2 ) );
 	}
 }

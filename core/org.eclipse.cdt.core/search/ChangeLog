@@ -1,3 +1,6 @@
+2003-10-01 Andrew Niefer
+	- fix BasicSearchMatch.equals() for bug43988
+
 2003-09-30 Bogdan Gheorghe
 	- changed logging in JobManager to use new ICLogConstants
 	

@@ -67,17 +67,26 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		if( type != match.getElementType() || visibility != match.getVisibility() )
 			return false;
 			
-		if( ( name != null && match.getName() != null && !name.equals( match.getName() ) ) 
-		 ||	name != match.getName() )
-			return false; 
+		if( name != null && match.getName() != null){
+			if( !name.equals( match.getName() ) ) 
+		 		return false; 
+		} else if( name != match.getName() ){
+			return false;
+		}
 		 	
-		if( ( parentName != null && match.getParentName() != null && !parentName.equals( match.getParentName() ) ) 
-		 ||	parentName != match.getParentName() )
-			return false; 
-					 	
-		if( ( returnType != null && match.getReturnType() != null && !returnType.equals( match.getReturnType() ) ) 
-		 ||	returnType != match.getReturnType() )
-			return false; 
+		if( parentName != null && match.getParentName() != null){
+			if( !parentName.equals( match.getParentName() ) ) 
+				return false; 
+		} else if( parentName != match.getParentName() ){
+			return false;
+		}
+		
+		if( returnType != null && match.getReturnType() != null){
+			if( !returnType.equals( match.getReturnType() ) ) 
+				return false; 
+		} else if( returnType != match.getReturnType() ){
+			return false;
+		}
 		
 		IPath thisPath = getLocation();
 		IPath matchPath = match.getLocation();

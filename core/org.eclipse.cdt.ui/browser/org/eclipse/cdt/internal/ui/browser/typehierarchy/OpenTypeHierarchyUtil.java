@@ -60,9 +60,8 @@ public class OpenTypeHierarchyUtil {
 		try {
 			if (PreferenceConstants.OPEN_TYPE_HIERARCHY_IN_PERSPECTIVE.equals(PreferenceConstants.getPreferenceStore().getString(PreferenceConstants.OPEN_TYPE_HIERARCHY))) {
 				return openInPerspective(window, input);
-			} else {
-				return openInViewPart(window, input);
 			}
+			return openInViewPart(window, input);
 				
 		} catch (WorkbenchException e) {
 			ExceptionHandler.handle(e, window.getShell(),

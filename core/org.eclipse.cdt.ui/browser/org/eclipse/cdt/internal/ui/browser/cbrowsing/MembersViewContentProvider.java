@@ -79,14 +79,13 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 				ICElement elem = AllTypesCache.getElementForType(info, true, true, null);
 				if (elem == null) {
 				    return ERROR_NO_CHILDREN;
-				} else {
-					if (elem instanceof IParent) {
-						ICElement[] children = ((IParent)elem).getChildren();
-						if (children != null && children.length > 0)
-						    return children;
-					}
-					return EMPTY_CHILDREN;
 				}
+				if (elem instanceof IParent) {
+					ICElement[] children = ((IParent)elem).getChildren();
+					if (children != null && children.length > 0)
+						return children;
+				}
+				return EMPTY_CHILDREN;
 			}
 			
 			if (element instanceof IParent) {

@@ -32,13 +32,12 @@ public class TypeInfoSorter extends CBrowsingViewerSorter {
 					return NAMESPACES_RESERVED;
 				}
 	            return NAMESPACES;
-	        } else {
-				if (name.startsWith("__")) { //$NON-NLS-1$
-					return CELEMENTS_SYSTEM;
-				}
-				if (name.charAt(0) == '_') {
-					return CELEMENTS_RESERVED;
-				}
+	        }
+	        if (name.startsWith("__")) { //$NON-NLS-1$
+	        	return CELEMENTS_SYSTEM;
+	        }
+	        if (name.charAt(0) == '_') {
+	        	return CELEMENTS_RESERVED;
 	        }
 			return CELEMENTS;
 	    }

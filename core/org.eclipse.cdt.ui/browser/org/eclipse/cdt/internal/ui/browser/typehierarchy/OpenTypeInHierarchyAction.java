@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
-import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeDialog;
 import org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeMessages;

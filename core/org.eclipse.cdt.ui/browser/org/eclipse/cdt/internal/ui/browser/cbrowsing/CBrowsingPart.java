@@ -142,7 +142,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	 * Ensure selection changed events being processed only if
 	 * initiated by user interaction with this part.
 	 */
-	private boolean fProcessSelectionEvents= true;
+	boolean fProcessSelectionEvents= true;
 
 	private IPartListener2 fPartListener= new IPartListener2() {
 		public void partActivated(IWorkbenchPartReference ref) {
@@ -552,7 +552,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		fToggleLinkingAction= new ToggleLinkingAction(this);
 	}
 	
-	private void doWorkingSetChanged(PropertyChangeEvent event) {
+	void doWorkingSetChanged(PropertyChangeEvent event) {
 		String property= event.getProperty();
 		if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property))
 			updateTitle();
@@ -685,8 +685,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 
 		if((newInput instanceof List) && (part instanceof NamespacesView))
 			return true;
-		else
-			return false;
+		return false;
 	}
 
 	private boolean isInputResetBy(IWorkbenchPart part) {
@@ -704,8 +703,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		if ((thisInput instanceof ICElement || thisInput instanceof ITypeInfo)
 			&& (partInput instanceof ICElement || partInput instanceof ITypeInfo))
 			return getTypeComparator().compare(partInput, thisInput) > 0;
-		else
-			return true;
+		return true;
 	}
 
 	protected boolean isAncestorOf(Object ancestor, Object element) {
@@ -729,8 +727,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	private boolean internalIsAncestorOf(ICElement ancestor, ICElement element) {
 		if (element != null)
 			return element.equals(ancestor) || internalIsAncestorOf(ancestor, element.getParent());
-		else
-			return false;
+		return false;
 	}
 
 	private boolean isSearchResultView(IWorkbenchPart part) {
@@ -1300,8 +1297,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		    ICElement[] types = TypeUtil.getTypes(tu);
 			if (types.length > 0)
 				return types[0];
-			else
-				return null;
+			return null;
 		} catch (CModelException ex) {
 			return null;
 		}
@@ -1326,21 +1322,21 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 					IContainer parent= ((IFile)firstElement).getParent();
 					if (parent != null)
 						return (ICElement)parent.getAdapter(ICElement.class);
-					else return null;
-				} else 
-					return je;
-				
-			} else
-				return firstElement;
+					return null;
+				} 
+				return je;	
+			}
+			return firstElement;
 		}
 		Object currentInput= getViewer().getInput();
-		if (currentInput == null || !currentInput.equals(findInputForElement(firstElement)))
-			if (iter.hasNext())
+		if (currentInput == null || !currentInput.equals(findInputForElement(firstElement))) {
+			if (iter.hasNext()) {
 				// multi selection and view is empty
 				return null;
-			else
-				// ok: single selection and view is empty 
-				return firstElement;
+			}
+			// ok: single selection and view is empty 
+			return firstElement;
+		}
 
 		// be nice to multi selection
 		while (iter.hasNext()) {
@@ -1365,7 +1361,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	/**
 	 * Links to editor (if option enabled)
 	 */
-	private void linkToEditor(IStructuredSelection selection) {	
+	void linkToEditor(IStructuredSelection selection) {	
 		Object obj= selection.getFirstElement();
 
 		if (selection.size() == 1) {
@@ -1379,7 +1375,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		}
 	}
 
-	private void setSelectionFromEditor(IWorkbenchPartReference ref) {
+	void setSelectionFromEditor(IWorkbenchPartReference ref) {
 			IWorkbenchPart part= ref.getPart(false);
 			setSelectionFromEditor(part);
 	}
@@ -1486,15 +1482,14 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		ITranslationUnit unit= manager.getWorkingCopy(input);
 		if (unit != null)
 			try {
-				if (unit.isConsistent())
+				if (unit.isConsistent()) {
 					return unit.getElementAtOffset(offset);
-				else {
-					/*
-					 * XXX: We should set the selection later when the
-					 *      CU is reconciled.
-					 *      see https://bugs.eclipse.org/bugs/show_bug.cgi?id=51290 
-					 */
 				}
+				/*
+				 * XXX: We should set the selection later when the
+				 *      CU is reconciled.
+				 *      see https://bugs.eclipse.org/bugs/show_bug.cgi?id=51290 
+				 */
 			} catch (CModelException ex) {
 				// fall through
 			}

@@ -237,9 +237,8 @@ public class NamespacesView extends CBrowsingPart {
 			ITypeInfo info = (ITypeInfo) element;
 			if (info.getCElementType() == ICElement.C_NAMESPACE && info.exists()) {
 				return info;
-			} else {
-			    return info.getEnclosingNamespace(true);
 			}
+			return info.getEnclosingNamespace(true);
 		}
 
 		return null;

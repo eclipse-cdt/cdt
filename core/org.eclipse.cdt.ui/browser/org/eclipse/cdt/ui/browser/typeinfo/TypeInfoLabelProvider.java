@@ -107,17 +107,16 @@ public class TypeInfoLabelProvider extends LabelProvider {
 			ITypeInfo parentInfo = typeRef.getEnclosingType();
 			if (parentInfo != null) {
 				return getTypeIcon(parentInfo.getCElementType());
-			} else {
-				IPath path = null;
-				ITypeReference ref = typeRef.getResolvedReference();
-				if (ref != null) {
-					path = ref.getPath();
-					if (CoreModel.isValidHeaderUnitName(typeRef.getEnclosingProject(), path.lastSegment())) {
-						return HEADER_ICON;
-					}
-				}
-				return SOURCE_ICON;
 			}
+			IPath path = null;
+			ITypeReference ref = typeRef.getResolvedReference();
+			if (ref != null) {
+				path = ref.getPath();
+				if (CoreModel.isValidHeaderUnitName(typeRef.getEnclosingProject(), path.lastSegment())) {
+					return HEADER_ICON;
+				}
+			}
+			return SOURCE_ICON;
 		}
 
 		return getTypeIcon(typeRef.getCElementType());

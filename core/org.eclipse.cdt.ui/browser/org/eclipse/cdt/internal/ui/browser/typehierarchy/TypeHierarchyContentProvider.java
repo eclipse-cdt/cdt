@@ -224,9 +224,8 @@ public abstract class TypeHierarchyContentProvider implements ITreeContentProvid
 		if (isInScope(type)) {
 			if (fMemberFilter != null) {
 				return hasMemberFilterChildren(type) || hasTypeChildren(type);
-			} else {
-				return true;
 			}
+			return true;
 		}
 		return hasTypeChildren(type);
 	}

@@ -113,10 +113,9 @@ class NamespacesViewContentProvider extends CBrowsingContentProvider {
 				ITypeInfo info = (ITypeInfo)element;
 				if (info.isEnclosedType()) {
 					return info.getEnclosingType();
-				} else {
-//					return info.getEnclosingProject();
-					return null;
 				}
+//				return info.getEnclosingProject();
+				return null;
 			}
 
 			return null;

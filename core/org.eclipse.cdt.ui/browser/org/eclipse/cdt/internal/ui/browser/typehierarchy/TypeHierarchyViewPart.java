@@ -987,9 +987,8 @@ public class TypeHierarchyViewPart extends ViewPart implements ITypeHierarchyVie
 	private ICElement getSelectableType(ICElement elem) {
 	    if (!TypeUtil.isClassOrStruct(elem)) {
 			return getCurrentViewer().getTreeRootType();
-		} else {
-			return elem;
 		}
+		return elem;
 	}
 	
 	private void internalSelectType(ICElement elem, boolean reveal) {	

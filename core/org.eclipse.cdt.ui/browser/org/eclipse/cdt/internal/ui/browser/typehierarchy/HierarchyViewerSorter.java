@@ -133,11 +133,10 @@ public class HierarchyViewerSorter extends ViewerSorter {
 				}
 			}
 			return fNormalSorter.compare(viewer, e1, e2); // use appearance pref page settings
-		} else {
-			String name1= ((ICElement) e1).getElementName(); //$NON-NLS-1$
-			String name2= ((ICElement) e2).getElementName(); //$NON-NLS-1$
-			return getCollator().compare(name1, name2);
 		}
+		String name1= ((ICElement) e1).getElementName(); //$NON-NLS-1$
+		String name2= ((ICElement) e2).getElementName(); //$NON-NLS-1$
+		return getCollator().compare(name1, name2);
 	}
 	
 	private ICElement getDefiningType(ITypeHierarchy hierarchy, IMethodDeclaration method) throws CModelException {

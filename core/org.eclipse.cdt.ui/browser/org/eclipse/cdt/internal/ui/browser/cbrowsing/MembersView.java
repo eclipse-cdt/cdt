@@ -242,8 +242,7 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 				ICElement type= TypeUtil.getDeclaringType(celem);
 				if (type == null || type instanceof INamespace)
 			        return AllTypesCache.getTypeForElement(celem, true, true, null);
-				else
-					return findInputForElement(type);
+				return findInputForElement(type);
 		    } else if (TypeUtil.isMemberType(celem)) {
 		        return findInputForElement(TypeUtil.getDeclaringType(celem));
 		    } else {

@@ -186,12 +186,11 @@ public class TypeHierarchyLifeCycle implements ITypeHierarchyChangedListener, IE
 		
 		if (fHierarchyRefreshNeeded) {
 			return;
-		} else {
-			ArrayList changedTypes= new ArrayList();
-			processDelta(event.getDelta(), changedTypes);
-			if (changedTypes.size() > 0) {
-				fireChange((ICElement[]) changedTypes.toArray(new ICElement[changedTypes.size()]));
-			}
+		}
+		ArrayList changedTypes= new ArrayList();
+		processDelta(event.getDelta(), changedTypes);
+		if (changedTypes.size() > 0) {
+			fireChange((ICElement[]) changedTypes.toArray(new ICElement[changedTypes.size()]));
 		}
 	}
 	

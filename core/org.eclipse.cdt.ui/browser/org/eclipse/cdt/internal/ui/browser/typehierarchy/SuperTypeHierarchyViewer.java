@@ -35,9 +35,8 @@ public class SuperTypeHierarchyViewer extends TypeHierarchyViewer {
 	public String getTitle() {
 		if (isMethodFiltering()) {
 			return TypeHierarchyMessages.getString("SuperTypeHierarchyViewer.filtered.title"); //$NON-NLS-1$
-		} else {
-			return TypeHierarchyMessages.getString("SuperTypeHierarchyViewer.title"); //$NON-NLS-1$
 		}
+		return TypeHierarchyMessages.getString("SuperTypeHierarchyViewer.title"); //$NON-NLS-1$
 	}
 
 	/*

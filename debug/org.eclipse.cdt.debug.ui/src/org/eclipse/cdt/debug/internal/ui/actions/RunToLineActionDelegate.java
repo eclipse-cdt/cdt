@@ -14,11 +14,14 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -74,6 +77,31 @@ public class RunToLineActionDelegate extends AbstractEditorActionDelegate
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
+	 */
+	public void selectionChanged( IWorkbenchPart part, ISelection selection )
+	{
+		IDebugTarget target = null;
+		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
+		{
+			if ( selection != null && selection instanceof IStructuredSelection )
+			{
+				Object element = ((IStructuredSelection)selection).getFirstElement();
+				if ( element != null && element instanceof IDebugElement )
+				{
+					IDebugTarget target1 = ((IDebugElement)element).getDebugTarget();
+					if ( target1 != null && target1 instanceof IRunToLine )
+					{
+						target = target1;
+					}
+				}
+			}
+			setDebugTarget( target );
+			update();
+		}
+	}
+
 	protected void runToLine( IResource resource, int lineNumber )
 	{
 		if ( !((IRunToLine)getDebugTarget()).canRunToLine( resource, lineNumber ) )

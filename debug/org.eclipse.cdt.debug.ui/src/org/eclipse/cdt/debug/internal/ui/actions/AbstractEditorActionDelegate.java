@@ -136,12 +136,7 @@ public abstract class AbstractEditorActionDelegate implements IWorkbenchWindowAc
 	{
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
-	 */
-	public void selectionChanged( IWorkbenchPart part, ISelection selection )
-	{
-	}
+	public abstract void selectionChanged( IWorkbenchPart part, ISelection selection );
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)

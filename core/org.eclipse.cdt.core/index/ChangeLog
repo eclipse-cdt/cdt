@@ -1,3 +1,9 @@
+2004-06-21 Alain Magloire
+
+	IndexManager, call CCorePlugin.getCDescriptor(.., false).
+	The boolean says to the DescriptorManager to not create the file
+	if it does not exists.
+
 2004-06-18 Alain Magloire
 	- The call CCorePlugin.getCDescriptor(..) seems to return null.
 	This should be fix but meanwhile give the indexer a break by catching it.

@@ -755,8 +755,9 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	}
 	
 	private Boolean loadIndexerEnabledFromCDescriptor(IProject project) throws CoreException {
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true );
-		// FIXME: descriptor should not be null ... but ... lets catch here for now.
+		// Check if we have the property in the descriptor
+		// We pass false since we do not want to create the descriptor if it does not exists.
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
 		Boolean strBool = null;
 		if (descriptor != null) {
 			Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
@@ -773,15 +774,17 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		return strBool;
 	}
 	private Boolean loadIndexerProblemsEnabledFromCDescriptor(IProject project) throws CoreException {
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
-		
-		Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
+		// we are only checking for the settings do not create the descriptor.
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
 		Boolean strBool = null;
-		
-		while (child != null) {
-			if (child.getNodeName().equals(INDEXER_PROBLEMS_ENABLED)) 
-				 strBool = Boolean.valueOf(((Element)child).getAttribute(INDEXER_PROBLEMS_VALUE));
-			child = child.getNextSibling();
+		if (descriptor != null) {
+			Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
+
+			while (child != null) {
+				if (child.getNodeName().equals(INDEXER_PROBLEMS_ENABLED)) 
+					strBool = Boolean.valueOf(((Element)child).getAttribute(INDEXER_PROBLEMS_VALUE));
+				child = child.getNextSibling();
+			}
 		}
 		
 		return strBool;

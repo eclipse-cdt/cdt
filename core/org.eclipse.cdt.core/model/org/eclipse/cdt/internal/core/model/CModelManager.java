@@ -650,7 +650,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * Model. Deltas created as translations of <code>IResourceDeltas</code>
 	 * are to be registered with <code>#registerResourceDelta</code>.
 	 */
-	public synchronized void registerCModelDelta(ICElementDelta delta) {
+	public void registerCModelDelta(ICElementDelta delta) {
 		fCModelDeltas.add(delta);
 	}
 
@@ -855,8 +855,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	/**
 	 * Flushes all deltas without firing them.
 	 */
-	protected synchronized void flush() {
-		fCModelDeltas= new ArrayList();
+	protected void flush() {
+		fCModelDeltas.clear();
 	}
 
 	private ICElementDelta mergeDeltas(Collection deltas) {

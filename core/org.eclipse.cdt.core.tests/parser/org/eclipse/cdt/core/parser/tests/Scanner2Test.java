@@ -373,7 +373,6 @@ public class Scanner2Test extends BaseScanner2Test
 		{
 
 			initializeScanner("#define SYMBOL 5\n#ifdef SYMBOL\nint counter(SYMBOL);\n#endif"); //$NON-NLS-1$
-
 			validateToken(IToken.t_int);
 			validateIdentifier("counter"); //$NON-NLS-1$
 			validateToken(IToken.tLPAREN);
@@ -397,7 +396,6 @@ public class Scanner2Test extends BaseScanner2Test
 
 			initializeScanner("#ifndef DEFINED\n#define DEFINED 100\n#endif\nint count = DEFINED;"); //$NON-NLS-1$
 			scanner.addDefinition("DEFINED", "101"); //$NON-NLS-1$ //$NON-NLS-2$
-
 			validateDefinition("DEFINED", "101"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateToken(IToken.t_int);
 			validateIdentifier("count"); //$NON-NLS-1$
@@ -490,7 +488,24 @@ public class Scanner2Test extends BaseScanner2Test
 			validateDefinition("ONE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("TWO", "ONE + ONE"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			initializeScanner("#ifndef ONE\n#   define ONE 1\n#   ifndef TWO\n#       define TWO ONE + ONE \n#   else\n#       undef TWO\n#       define TWO 2 \n#   endif\n#else\n#   ifndef TWO\n#      define TWO ONE + ONE \n#   else\n#       undef TWO\n#       define TWO 2 \n#   endif\n#endif\n"); //$NON-NLS-1$
+			initializeScanner(
+					"#ifndef ONE\n" +
+					"#   define ONE 1\n" + 
+					"#   ifndef TWO\n" + 
+					"#       define TWO ONE + ONE \n" +
+					"#   else\n" + 
+					"#       undef TWO\n" +
+					"#       define TWO 2 \n" + 
+					"#   endif\n" + 
+					"#else\n" + 
+					"#   ifndef TWO\n" + 
+					"#      define TWO ONE + ONE \n" + 
+					"#   else\n" + 
+					"#       undef TWO\n" + 
+					"#       define TWO 2 \n" + 
+					"#   endif\n" + 
+					"#endif\n"); //$NON-NLS-1$" +
+
 			scanner.addDefinition("ONE", "one"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
 			validateBalance();

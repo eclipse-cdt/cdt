@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 
 /**
@@ -57,5 +59,15 @@ public class ASTNewExpression extends ASTExpression {
 		super.processCallbacks(requestor);
 		typeId.acceptElement(requestor);
 		newDescriptor.acceptElement(requestor);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ASTExpression#findNewDescriptor(org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public IASTExpression findNewDescriptor(ITokenDuple finalDuple) {
+		if( ((ASTTypeId)typeId).getTokenDuple().contains( finalDuple ))
+			return this;
+		return null;
 	}
 }

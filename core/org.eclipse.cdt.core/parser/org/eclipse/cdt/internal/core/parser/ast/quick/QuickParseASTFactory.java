@@ -390,4 +390,11 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	public IASTExpression createExpression(Kind kind, long literal, boolean isHex) throws ASTSemanticException {
 		return ExpressionFactory.createExpression(kind, literal, isHex );
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#lookupConstructor(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public IASTNode lookupConstructor(IASTScope ourScope, IASTNewExpressionDescriptor newDescriptor) {		
+		return null;
+	}
 }

@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+import org.eclipse.cdt.core.parser.ITokenDuple;
 
 /**
  * @author jcamelon
@@ -43,5 +44,10 @@ public interface IASTInitializerClause extends ISourceElementCallbackDelegate{
 	
 	public void setOwnerVariableDeclaration( IASTVariable declaration );
 	public IASTVariable getOwnerVariableDeclaration();
+	/**
+	 * @param finalDuple
+	 * @return
+	 */
+	public IASTExpression findExpressionForDuple(ITokenDuple finalDuple) throws ASTNotImplementedException;
 	
 }

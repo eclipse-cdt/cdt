@@ -914,5 +914,12 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		return ExpressionFactory.createExpression( kind, literal, isHex ); 	
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#lookupConstructor(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public IASTNode lookupConstructor(IASTScope ourScope, IASTNewExpressionDescriptor newDescriptor) {
+		return null;
+	}
+
 
 }

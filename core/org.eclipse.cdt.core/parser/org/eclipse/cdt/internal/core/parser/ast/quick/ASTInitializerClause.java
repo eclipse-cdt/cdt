@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -99,5 +101,12 @@ public class ASTInitializerClause implements IASTInitializerClause {
     {
         return ownerDeclaration;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#findExpressionForDuple(org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public IASTExpression findExpressionForDuple(ITokenDuple finalDuple) throws ASTNotImplementedException {
+		throw new ASTNotImplementedException();
+	}
 
 }

@@ -46,7 +46,6 @@ import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.ui.views.tasklist.TaskList;
 
 
 /**
@@ -1809,4 +1808,28 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 
     	assertFalse( i.hasNext() );
 	}
+    
+    public void testDestructorReference() throws Exception
+    {
+    	Writer writer = new StringWriter();
+    	writer.write( "class ABC {\n"); //$NON-NLS-1$
+    	writer.write( " public:\n"); //$NON-NLS-1$
+    	writer.write( " ~ABC(){ }\n"); //$NON-NLS-1$
+    	writer.write( "};\n"); //$NON-NLS-1$
+    	writer.write( "int main() { ABC * abc = new ABC();\n"); //$NON-NLS-1$
+    	writer.write( "abc->~ABC();\n"); //$NON-NLS-1$
+    	writer.write( "}\n"); //$NON-NLS-1$
+    	
+		Iterator declarations = parse( writer.toString() ).getDeclarations();  
+		IASTClassSpecifier ABC = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		IASTFunction main = (IASTFunction) declarations.next();
+		assertFalse( declarations.hasNext() );
+		Iterator members = getDeclarations(ABC);
+		IASTFunction destructor = (IASTFunction) members.next();
+		assertFalse( members.hasNext() );
+		Iterator localVariables = getDeclarations( main );
+		IASTVariable variable = (IASTVariable) localVariables.next();
+		assertFalse( localVariables.hasNext() );
+		assertAllReferences( 4, createTaskList( new Task( ABC, 2 ), new Task( variable ), new Task( destructor )));
+    }
 }

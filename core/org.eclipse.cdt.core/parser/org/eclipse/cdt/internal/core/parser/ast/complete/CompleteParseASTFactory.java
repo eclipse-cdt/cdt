@@ -1256,13 +1256,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	}
 
     private IContainerSymbol getSearchScope (Kind kind, IASTExpression lhs, IContainerSymbol startingScope) throws ASTSemanticException{
-		if((kind == IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION) 
-		|| (kind == IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION)
-		|| (kind == IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS)
-		|| (kind == IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP)		
-		|| (kind == IASTExpression.Kind.PM_DOTSTAR)
-		|| (kind == IASTExpression.Kind.PM_ARROWSTAR)
-		){
+		if( kind.isPostfixMemberReference() )
+		{
 			TypeInfo lhsInfo = ((ASTExpression)lhs).getResultType().getResult();
 			if(lhsInfo != null){
 				TypeInfo info = null;
@@ -3166,6 +3161,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     }
 
     protected ParserSymbolTable pst;
+	protected static final List DUD_LIST = new ArrayList( 64 );
 
 
     /*
@@ -3426,6 +3422,40 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					} catch (ASTSemanticException e1) {
 					}
 				}
+				else if( expression.getExpressionKind() == IASTExpression.Kind.NEW_NEWTYPEID || 
+						expression.getExpressionKind() == IASTExpression.Kind.NEW_TYPEID )
+				{
+					IContainerSymbol classSymbol = null;
+					try {
+						classSymbol = (IContainerSymbol) lookupQualifiedName(scopeToSymbol( scope ), duple, DUD_LIST, false );
+					} catch (ASTSemanticException e) {
+					}
+					if( classSymbol != null && classSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
+						TypeInfo info = classSymbol.getTypeInfo().getFinalType();
+						classSymbol = (IContainerSymbol) info.getTypeSymbol();
+					}
+					if( classSymbol == null || ! (classSymbol instanceof IDerivableContainerSymbol ) ){
+						return null;
+					}
+					
+					List parameters = new LinkedList();
+					Iterator newInitializerExpressions = expression.getNewExpressionDescriptor().getNewInitializerExpressions();
+					if( newInitializerExpressions.hasNext() )
+					{
+						ASTExpression expressionList = (ASTExpression) newInitializerExpressions.next();
+						while( expressionList != null ){
+							parameters.add( expressionList.getResultType().getResult() );
+							expressionList = (ASTExpression) expressionList.getRHSExpression();
+						}
+					}
+					
+					try {
+						s = ((IDerivableContainerSymbol)classSymbol).lookupConstructor( parameters );
+					} catch (ParserSymbolTableException e1) {
+						return null;
+					}
+
+				}
 				else
 				{
 					ASTExpression ownerExpression = expression.findOwnerExpressionForIDExpression( duple );
@@ -3539,5 +3569,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		// Assign the result to the created expression										
 		expression.setResultType (expressionResult);
 		return expression;			
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#lookupConstructor(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor)
+	 */
+	public IASTNode lookupConstructor(IASTScope ourScope, IASTNewExpressionDescriptor newDescriptor) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -215,7 +215,6 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 		IASTNamespaceDefinition namespace = (IASTNamespaceDefinition) node;
 		assertEquals( namespace.getName(), "Muppets"); //$NON-NLS-1$
 		assertEquals( namespace.getStartingLine(), 1 );
-
 	}
 	
 	public void testBug61613() throws Exception
@@ -235,7 +234,58 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 		assertTrue( node instanceof IASTClassSpecifier );
 		IASTClassSpecifier foo = (IASTClassSpecifier) node;
 		assertEquals( foo.getName(), "Foo"); //$NON-NLS-1$
-
+	}
+	
+	public void testBug60038() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "class Gonzo {\n");		 //$NON-NLS-1$
+		writer.write( "public:\n"); //$NON-NLS-1$
+		writer.write( "Gonzo( const Gonzo & other ){}\n"); //$NON-NLS-1$
+		writer.write( "Gonzo()	{}\n"); //$NON-NLS-1$
+		writer.write( "~Gonzo(){}\n"); //$NON-NLS-1$
+		writer.write( "};\n"); //$NON-NLS-1$
+		writer.write( "int main(int argc, char **argv) {\n"); //$NON-NLS-1$
+		writer.write( " Gonzo * g = new Gonzo();\n"); //$NON-NLS-1$
+		writer.write( " Gonzo * g2 = new Gonzo( *g );\n"); //$NON-NLS-1$
+		writer.write( " g->~Gonzo();\n"); //$NON-NLS-1$
+		writer.write( " return (int) g2;\n"); //$NON-NLS-1$
+		writer.write( "}\n"); //$NON-NLS-1$
+		String code = writer.toString();
+		for( int i = 0; i < 3; ++i )
+		{
+			int startOffset = 0, endOffset = 0;
+			switch( i )
+			{
+				case 0:
+					startOffset = code.indexOf( "new Gonzo()") + 4; //$NON-NLS-1$
+					endOffset = startOffset + 5;
+					break;
+				case 1:
+					startOffset = code.indexOf( "new Gonzo( ") + 4; //$NON-NLS-1$
+					endOffset = startOffset + 5;
+					break;
+				default:
+					startOffset = code.indexOf( "->~") + 2; //$NON-NLS-1$
+					endOffset = startOffset + 6;
+			}
+			IASTNode node = parse( code, startOffset, endOffset );
+			assertTrue( node instanceof IASTMethod );
+			IASTMethod method = (IASTMethod) node;
+			switch( i )
+			{
+				case 0:
+				case 1: 
+					assertTrue( method.isConstructor() );
+					assertFalse( method.isDestructor() );
+					break;
+				default: 
+					assertFalse( method.isConstructor() );
+					assertTrue( method.isDestructor() );
+					break;
+					
+			}
+		}
 	}
 	
 }

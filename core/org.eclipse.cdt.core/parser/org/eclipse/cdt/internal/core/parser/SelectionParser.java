@@ -29,10 +29,12 @@ import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.OffsetDuple;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
@@ -61,17 +63,20 @@ public class SelectionParser extends ContextualParser {
 		if( value != null && scanner.isOnTopContext() )
 		{
 			TraceUtil.outputTrace(log, "IToken provided w/offsets ", null, value.getOffset(), " & ", value.getEndOffset() ); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean change = false;
 			if( value.getOffset() == offsetRange.getFloorOffset() )
 			{
 				TraceUtil.outputTrace(log, "Offset Floor Hit w/token \"", null, value.getImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
 				firstTokenOfDuple = value;
+				change = true;
 			}
 			if( value.getEndOffset() == offsetRange.getCeilingOffset() )
 			{
 				TraceUtil.outputTrace(log, "Offset Ceiling Hit w/token \"", null, value.getImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
+				change = true;
 				lastTokenOfDuple = value;
 			}
-			if( tokenDupleCompleted() )
+			if( change && tokenDupleCompleted() )
 			{
 				if ( ourScope == null )
 					ourScope = getCompletionScope();
@@ -194,6 +199,19 @@ public class SelectionParser extends ContextualParser {
 					return contextNode;
 			}
 			try {
+				if( ourKind == IASTCompletionNode.CompletionKind.NEW_TYPE_REFERENCE )
+				{
+					if( contextNode instanceof IASTVariable )
+					{
+						IASTInitializerClause initializer = ((IASTVariable)contextNode).getInitializerClause();
+						if( initializer != null )
+						{
+							IASTExpression ownerExpression = initializer.findExpressionForDuple( finalDuple );
+							return astFactory.lookupSymbolInContext( ourScope, finalDuple, ownerExpression );
+						}
+					}
+				}
+					
 				return astFactory.lookupSymbolInContext( ourScope, finalDuple, null );
 			} catch (ASTNotImplementedException e) {
 				return null;

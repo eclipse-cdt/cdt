@@ -267,4 +267,12 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 	public IASTNewExpressionDescriptor getNewExpressionDescriptor() {
 		return null;
 	}
+
+	/**
+	 * @param finalDuple
+	 * @return
+	 */
+	public IASTExpression findNewDescriptor(ITokenDuple finalDuple) {
+		return null;
+	}
 }

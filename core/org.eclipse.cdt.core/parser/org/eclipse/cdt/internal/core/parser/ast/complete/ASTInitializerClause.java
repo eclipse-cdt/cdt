@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -127,4 +129,21 @@ public class ASTInitializerClause implements IASTInitializerClause
     {
     	return references;
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#findExpressionForDuple(org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public IASTExpression findExpressionForDuple(ITokenDuple finalDuple) throws ASTNotImplementedException {
+		if( kind == IASTInitializerClause.Kind.EMPTY ) return null;
+		if( kind == IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION || 
+			kind == Kind.DESIGNATED_ASSIGNMENT_EXPRESSION )
+			return ((ASTExpression)assignmentExpression).findNewDescriptor( finalDuple );
+		Iterator i = getInitializers();
+		while( i.hasNext() )
+		{
+			IASTInitializerClause clause = (IASTInitializerClause) i.next();
+			IASTExpression e = clause.findExpressionForDuple(finalDuple);
+			if( e != null ) return e;
+		}
+		return null;
+	}
 }

@@ -2389,6 +2389,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		                															
 		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, memberCompletionKind  );
 	                secondExpression = primaryExpression(scope, CompletionKind.MEMBER_REFERENCE, key);
+	                if( secondExpression != null && secondExpression.getExpressionKind() == Kind.ID_EXPRESSION && secondExpression.getIdExpression().indexOf( '~') != -1 )
+	                	memberCompletionKind = Kind.POSTFIX_DOT_DESTRUCTOR;
 	                
 	                try
 	                {
@@ -2429,7 +2431,9 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 
 		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, arrowCompletionKind );	                															
 	                secondExpression = primaryExpression(scope, CompletionKind.MEMBER_REFERENCE, key);                 
-	
+
+	                if( secondExpression != null && secondExpression.getExpressionKind() == Kind.ID_EXPRESSION && secondExpression.getIdExpression().indexOf( '~') != -1 )
+	                	arrowCompletionKind = Kind.POSTFIX_ARROW_DESTRUCTOR;
 	                try
 	                {
 						firstExpression =
@@ -2679,7 +2683,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	            }
 	        case IToken.tIDENTIFIER :
 	        case IToken.tCOLONCOLON :
-	        case IToken.t_operator : 
+	        case IToken.t_operator :
+	        case IToken.tCOMPL:
 	            ITokenDuple duple = null; 
 	            
 	            IToken mark = mark();

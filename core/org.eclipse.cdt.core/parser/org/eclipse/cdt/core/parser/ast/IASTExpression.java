@@ -230,7 +230,9 @@ public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode
         	if( this == IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION ||  
         		this ==	IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION ||
         		this ==	IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS ||
-        		this ==	IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP ||	
+        		this ==	IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP ||
+				this == IASTExpression.Kind.POSTFIX_ARROW_DESTRUCTOR || 
+				this == IASTExpression.Kind.POSTFIX_DOT_DESTRUCTOR ||
         		this ==	IASTExpression.Kind.PM_DOTSTAR ||
         		this ==	IASTExpression.Kind.PM_ARROWSTAR )
         		return true;

@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
+
 
 
 /**
@@ -38,7 +40,7 @@ public interface IParser {
 	 * @throws Backtrack	thrown if the Scanner/Stream provided does not yield a valid
 	 * 						expression	
 	 */
-	public void expression(Object expression) throws Backtrack;
+	public IASTExpression expression(Object expression) throws Backtrack;
 	
 	/**
 	 * Is the parser configured for ANSI C or ANSI C++?

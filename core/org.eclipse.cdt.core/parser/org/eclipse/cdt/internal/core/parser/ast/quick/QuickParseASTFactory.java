@@ -10,7 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.parser.Backtrack;
+import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.AccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
@@ -20,7 +23,9 @@ import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -28,7 +33,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
-import org.eclipse.cdt.internal.core.parser.TokenDuple;
+import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
+import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 
 /**
@@ -40,7 +46,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createUsingDirective(org.eclipse.cdt.internal.core.parser.ast.IASTScope, org.eclipse.cdt.internal.core.parser.TokenDuple)
 	 */
-	public IASTUsingDirective createUsingDirective(IASTScope scope, TokenDuple duple) throws Backtrack {
+	public IASTUsingDirective createUsingDirective(IASTScope scope, ITokenDuple duple) throws Backtrack {
 		return new ASTUsingDirective( scope, duple.toString() );
 	}
 
@@ -81,7 +87,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createUsingDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, boolean, org.eclipse.cdt.internal.core.parser.TokenDuple)
 	 */
-	public IASTUsingDeclaration createUsingDeclaration(IASTScope scope, boolean isTypeName, TokenDuple name) {
+	public IASTUsingDeclaration createUsingDeclaration(IASTScope scope, boolean isTypeName, ITokenDuple name) {
 		return new ASTUsingDeclaration( scope, isTypeName, name.toString() );
 	}
 
@@ -126,5 +132,26 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     {
      	IASTEnumerator enumerator = new ASTEnumerator( enumeration, string, startingOffset, endingOffset );
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.ExpressionKind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public IASTExpression createExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, String id, String typeId, String literal, IASTNewExpressionDescriptor newDescriptor) {
+		return new ASTExpression( kind, lhs, rhs, thirdExpression, id, typeId, literal, newDescriptor );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNewDescriptor()
+	 */
+	public IASTNewExpressionDescriptor createNewDescriptor() {
+		return new ASTNewDescriptor();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createIASTInitializerClause()
+	 */
+	public IASTInitializerClause createIASTInitializerClause(IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses) {
+		return new ASTInitializerClause( kind, assignmentExpression, initializerClauses );
+	}
 
 }

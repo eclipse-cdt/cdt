@@ -1,3 +1,7 @@
+2003-06-28 John Camelon
+	Completed Quickparse expression representation.  
+	Updated ExpressionEvaluation and associated tests.  
+
 2003-06-26 John Camelon
 	Update IASTExpression. 
 	Move Parser.Backtrack and Parser.EndOfFile to external interface. 

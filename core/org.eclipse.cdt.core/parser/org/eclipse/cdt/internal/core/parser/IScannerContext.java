@@ -1,4 +1,4 @@
-package org.eclipse.cdt.core.parser;
+package org.eclipse.cdt.internal.core.parser;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -6,11 +6,6 @@ import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 /**
  * @author jcamelon
  *
- * To change this generated comment edit the template variable 
-"typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public interface IScannerContext {
 	
@@ -24,10 +19,9 @@ public interface IScannerContext {
      * 
      * @param macroOffset   Offset of the expanding macro
      * @param macroLength   Length of the macro identifier
-     * @param line			Initial line counter for the context
      * @return
      */
-    public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i, int macroOffset, int macroLength, int line);
+    public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i, int macroOffset, int macroLength, int line );
     
 	public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i);
 	public int read() throws IOException;
@@ -56,13 +50,7 @@ public interface IScannerContext {
      * @return int
      */
     public int getRelativeOffset();
-
-	/**
-	 * Returns current line counter.
-	 * @return int
-	 */
-	public int getLine();
-
+    
 	public Reader getReader();
 	
 	public int undoStackSize();  
@@ -73,6 +61,11 @@ public interface IScannerContext {
 	public void setKind( int kind ); 
 
 	public IASTInclusion getExtension(); 
-	public void setExtension( IASTInclusion ext );	
+	public void setExtension( IASTInclusion ext );
+
+	/**
+	 * @return
+	 */
+	public int getLine();	
 	
 }

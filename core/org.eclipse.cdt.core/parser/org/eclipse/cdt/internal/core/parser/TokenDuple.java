@@ -12,13 +12,14 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.*;
 import org.eclipse.cdt.core.parser.IToken;
 
 /**
  * @author jcamelon
  *
  */
-public class TokenDuple {
+public class TokenDuple implements ITokenDuple {
 
 	public TokenDuple( IToken first, IToken last )
 	{

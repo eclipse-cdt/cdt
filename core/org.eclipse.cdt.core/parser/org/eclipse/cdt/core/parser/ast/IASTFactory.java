@@ -10,9 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.parser.Backtrack;
+import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
-import org.eclipse.cdt.internal.core.parser.TokenDuple;
+import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 
 /**
  * @author jcamelon
@@ -25,13 +28,13 @@ public interface IASTFactory {
 
 	public IASTUsingDirective createUsingDirective(
 		IASTScope scope,
-		TokenDuple duple)
+		ITokenDuple duple)
 		throws Backtrack;
 		
 	public IASTUsingDeclaration createUsingDeclaration( 
 		IASTScope scope, 
 		boolean isTypeName, 
-		TokenDuple name );
+		ITokenDuple name );
 		
 		
 	public IASTASMDefinition createASMDefinition(
@@ -67,5 +70,11 @@ public interface IASTFactory {
     public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(ClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset );
     public IASTEnumerationSpecifier createEnumerationSpecifier(String name, int startingOffset, int nameOffset );
     public void addEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int endingOffset);
+    
+    public IASTExpression createExpression( IASTExpression.Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, String id, String typeId, String literal, IASTNewExpressionDescriptor newDescriptor );
+    
+    public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor();
+    
+    public IASTInitializerClause createIASTInitializerClause(IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses);  
 	
 }

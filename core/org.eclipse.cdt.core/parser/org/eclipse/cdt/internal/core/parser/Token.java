@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-import org.eclipse.cdt.core.parser.IScannerContext;
 import org.eclipse.cdt.core.parser.IToken;
 
 public class Token implements IToken {

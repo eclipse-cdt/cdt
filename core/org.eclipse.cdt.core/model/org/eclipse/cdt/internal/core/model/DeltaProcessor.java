@@ -337,7 +337,7 @@ public class DeltaProcessor {
 			// get the workspace delta, and start processing there.
 			IResourceDelta[] deltas = changes.getAffectedChildren();
 			ICElementDelta[] translatedDeltas = new CElementDelta[deltas.length];
-			System.out.println("delta.length: " + deltas.length);
+			//System.out.println("delta.length: " + deltas.length);
 			for (int i = 0; i < deltas.length; i++) {
 				IResourceDelta delta = deltas[i];
 				fCurrentDelta = new CElementDelta(root);

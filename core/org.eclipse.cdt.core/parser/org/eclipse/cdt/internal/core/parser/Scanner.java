@@ -25,20 +25,22 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserCallback;
 import org.eclipse.cdt.core.parser.IProblemReporter;
 import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.IScannerContext;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.ITranslationResult;
 import org.eclipse.cdt.core.parser.ITranslationOptions;
+import org.eclipse.cdt.core.parser.ITranslationResult;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
+import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
@@ -1652,51 +1654,35 @@ public class Scanner implements IScanner {
 		}
 		else
 		{	
-			Object expressionEvalResult = null;
-			try {
-				ExpressionEvaluator evaluator = new ExpressionEvaluator();
-				IScanner trial =
-					ParserFactory.createScanner(
-						new StringReader(expression + ";"),
+			IScanner trial =
+				ParserFactory.createScanner(
+					new StringReader(expression + ";"),
 						EXPRESSION,
 						definitions, 
-						null, ParserMode.COMPLETE_PARSE,
-                        problemReporter, translationResult );
-				IParser parser = ParserFactory.createParser(trial, evaluator, ParserMode.COMPLETE_PARSE, problemReporter, translationResult );
-				parser.expression(null); 
-				
-				expressionEvalResult = evaluator.getResult();
-	
-			} catch (Exception e ) {
-				throw new ScannerException(
-					"Expression "
-						+ expression
-						+ " evaluates to an undefined value");			
-			} finally
-			{
-				if (expressionEvalResult == null)
-					throw new ScannerException(
-						"Expression "
-							+ expression
-							+ " evaluates to an undefined value");			
-			}
-	
-			
-			if (expressionEvalResult instanceof Integer ) {
-				int i = ((Integer) expressionEvalResult).intValue();
-				if (i == 0) {
+						null, ParserMode.QUICK_PARSE );
+			IParser parser = ParserFactory.createParser(trial, new NullSourceElementRequestor(), ParserMode.QUICK_PARSE );
+ 
+			try {
+				IASTExpression exp = parser.expression(null);
+				if( exp.evaluateExpression() == 0 )
 					return false;
-				}
-				return true;
-			} else if (
-				expressionEvalResult instanceof Boolean ) {
-				return ((Boolean) expressionEvalResult).booleanValue();
-			} else {
-				throw new ScannerException(
-					"Unexpected expression type - we do not expect "
-						+ expressionEvalResult.getClass().getName());
+			} catch( Backtrack b )
+			{
+				throwExpressionEvaluationError(expression);
 			}
+			catch (ExpressionEvaluationException e) {
+				throwExpressionEvaluationError(expression);
+			}
+			return true; 
+	
 		}
+	}
+
+	protected void throwExpressionEvaluationError(String expression) throws ScannerException {
+		throw new ScannerException(
+				"Expression "
+					+ expression
+					+ " evaluates to an undefined value");			 					
 	}
 	
 	protected void skipOverSinglelineComment() throws ScannerException {

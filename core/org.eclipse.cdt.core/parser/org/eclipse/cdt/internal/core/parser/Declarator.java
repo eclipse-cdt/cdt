@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 
 /**
  * @author jcamelon
@@ -25,7 +25,7 @@ public class Declarator implements IParameterCollection
 	private final DeclarationWrapper owner1;
 	private final Declarator owner2;
 	private String name; 
-	private IASTExpression initialValueExpression;
+	private IASTInitializerClause initializerClause;
 	private List ptrOps = new ArrayList();
 	private List parameters = new ArrayList();  
 	
@@ -133,17 +133,17 @@ public class Declarator implements IParameterCollection
     /**
      * @return
      */
-    public IASTExpression getInitialValueExpression()
+    public IASTInitializerClause getInitializerClause()
     {
-        return initialValueExpression;
+        return initializerClause;
     }
 
     /**
      * @param expression
      */
-    public void setInitialValueExpression(IASTExpression expression)
+    public void setInitializerClause(IASTInitializerClause expression)
     {
-        initialValueExpression = expression;
+        initializerClause = expression;
     }
 
 }

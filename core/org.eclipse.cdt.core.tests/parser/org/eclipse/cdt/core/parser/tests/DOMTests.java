@@ -1130,7 +1130,6 @@ public class DOMTests extends BaseDOMTest {
 		writer.write( "A(const A&);\n" ); 
 		writer.write( "};\n" ); 
 		writer.write( "A::A(const A&v) : x(v.x) { }\n" );
-		TranslationUnit tu = parse( writer.toString() ); 
 	}
 	
 	public void testBug36288() throws Exception
@@ -1534,6 +1533,11 @@ public class DOMTests extends BaseDOMTest {
 		EnumeratorDefinition enumerator = (EnumeratorDefinition )enumerators.get(0);
 		assertEquals( enumerator.getName().toString(), "isPointer");
 		assertNotNull( enumerator.getExpression() );
+	}
+
+	public void testWeirdExpression() throws Exception
+	{
+		parse( "int x = rhs.spImpl_.get();");
 	}
 
 	public void testBug36690() throws Exception {

@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.core.runtime.Path;
@@ -29,7 +30,7 @@ public class CygwinMIEnvironmentCD extends MIEnvironmentCD {
 
 		// Use the cygpath utility to convert the path
 		CommandLauncher launcher = new CommandLauncher();
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ByteArrayOutputStream err = new ByteArrayOutputStream();
 
 		String newPath = null;
@@ -38,14 +39,23 @@ public class CygwinMIEnvironmentCD extends MIEnvironmentCD {
 			new String[] { "-u", path }, //$NON-NLS-1$
 			new String[0],
 			new Path(".")); //$NON-NLS-1$
-		if (launcher.waitAndRead(output, err) == CommandLauncher.OK) {
-			newPath = output.toString().trim();
-			if (newPath != null && newPath.length() > 0) {
-				path = newPath;
+		if (launcher.waitAndRead(out, err) == CommandLauncher.OK) {
+			newPath = out.toString();
+			if (newPath != null) {
+				newPath = newPath.trim();
+				if (newPath.length() > 0) {
+					path = newPath;
+				}
 			}
 		}
+		try {
+			out.close();
+			err.close();
+		} catch (IOException e) {
+			// ignore.
+		}
 
-		setParameters(new String[]{newPath});
+		setParameters(new String[]{path});
 
 	}
 

@@ -1,3 +1,8 @@
+2004-06-22 Alain Magloire
+
+	Fix PR 68176
+	* mi/org/eclipse/cdt/debug/mi/core/command/CygwinMIEnvironmentCD.java
+
 2004-06-09 Alain Magloire
 	Fix for PR 66338
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java

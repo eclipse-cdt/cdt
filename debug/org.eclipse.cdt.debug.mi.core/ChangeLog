@@ -1,3 +1,13 @@
+2003-03-06 Alain Magloire
+
+    GDB on certain platform is very susceptible to register probing
+    and on some platform it will simply crash, we will try to accomodate.
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/CTarget.java: New method
+	setCurrentThread with a boolean to not call the data-list-register
+	* src/org/eclipse/cdt/debug/mi/core/cdi/CThread.java:
+	* src/org/eclipse/cdt/debug/mi/core/cdi/StackFrame.java
+
 2003-01-02 Alain Magloire
 
 	Bug when using recursive:

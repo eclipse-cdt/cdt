@@ -1,4 +1,10 @@
-2003-09-3 Alain Magloire
+2003-09-03 Alain Magloire
+
+	Change to abstract and let the client provides the saving algorithm.
+
+	* src/org/eclipse/cdt/uui/ErroParserBlock.java
+
+2003-09-03 Alain Magloire
 
 	Wrong fix to a warning the call is needed but not the variable.
 	Thanks to Hoda for noticing.

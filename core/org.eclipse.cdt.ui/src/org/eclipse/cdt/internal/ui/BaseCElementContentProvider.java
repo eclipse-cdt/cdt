@@ -123,8 +123,9 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 					for( int i = 0; i < children.length; i++ ) {
 						// Note, here we are starting the Archive and binary containers thread upfront.
 						if (children[i] instanceof IArchiveContainer || children[i] instanceof IBinaryContainer) {
-							((IParent)children[i]).getChildren();
-							continue;
+							if ( ((IParent)children[i]).getChildren().length == 0 ) {
+								continue;
+							}
 						}
 						list.add(children[i]);
 					}

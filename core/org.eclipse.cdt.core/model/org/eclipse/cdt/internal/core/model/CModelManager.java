@@ -319,16 +319,17 @@ public class CModelManager implements IResourceChangeListener {
 	}
 
 	private void removeChildrenContainer(Parent container, IResource resource) {
-		ICElement[] children = container.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			try {
-				IResource r = children[i].getUnderlyingResource();
-				if (r.equals(resource)) {
-//System.out.println("RELEASE Archive/binary " + children[i].getElementName());
-					container.removeChild(children[i]);
-					break;
+		if ( container.hasChildren() ) {
+			ICElement[] children = container.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				try {
+					IResource r = children[i].getUnderlyingResource();
+					if (r.equals(resource)) {
+						container.removeChild(children[i]);
+						break;
+					}
+				} catch (CModelException e) {
 				}
-			} catch (CModelException e) {
 			}
 		}
 	}

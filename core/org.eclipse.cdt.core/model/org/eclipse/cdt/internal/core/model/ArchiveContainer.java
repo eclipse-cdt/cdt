@@ -28,18 +28,18 @@ public class ArchiveContainer extends Parent implements IArchiveContainer {
 	}
 
 	public IArchive[] getArchives() {
-		ICElement[] e = getChildren(false);
+		ICElement[] e = getChildren(true);
 		IArchive[] a = new IArchive[e.length];
 		System.arraycopy(e, 0, a, 0, e.length);
 		return a;
 	}
 
 	public boolean hasChildren() {
-		return (getChildren().length > 0);
+		return (getChildren(true).length > 0);
 	}
 
 	public ICElement [] getChildren() {
-		return getChildren(true);
+		return getChildren(false);
 	}
 
 	public ICElement [] getChildren(boolean sync) {
@@ -60,14 +60,6 @@ public class ArchiveContainer extends Parent implements IArchiveContainer {
 		}
 		return super.getChildren();
 	}
-
-	//public IResource getUnderlyingResource() {
-	//	return null;
-	//}
-
-//	public IResource getCorrespondingResource() {
-//		return null;
-//	}
 
 	void addChildIfLib(IFile file) {
 		CModelManager factory = CModelManager.getDefault();

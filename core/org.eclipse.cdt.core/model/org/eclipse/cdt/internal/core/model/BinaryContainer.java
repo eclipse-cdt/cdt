@@ -113,35 +113,4 @@ public class BinaryContainer extends Parent implements IBinaryContainer {
 			return true;
 		}
 	}
-
-	class BinaryRunnable implements Runnable {
-		BinaryContainer cbin;
-
-		public BinaryRunnable(BinaryContainer element) {
-			cbin = element;
-		}
-
-		public void run() {
-			try {
-				((IProject)cbin.getCProject().getUnderlyingResource()).accept(new Visitor(cbin));
-			} catch (CoreException e) {
-				//e.printStackTrace();
-			}
-			// Fired the event.
-			ICElement[] children = cbin.getChildren();
-			if (children.length > 0) {
-				CModelManager factory = CModelManager.getDefault();
-				ICElement root = (ICRoot)factory.getCRoot();
-				CElementDelta cdelta = new CElementDelta(root);
-				cdelta.added(cbin.getCProject());
-				cdelta.added(cbin);
-				for (int i = 0; i < children.length; i++) {
-					ICElement child = children[i];
-					cdelta.added(child);
-				}
-				factory.registerCModelDelta(cdelta);
-				factory.fire();
-			}
-		}
-	}
 }

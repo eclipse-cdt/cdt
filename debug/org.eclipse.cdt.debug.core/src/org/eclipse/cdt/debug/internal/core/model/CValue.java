@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -34,7 +33,6 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIWCharValue;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
-import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
@@ -181,6 +179,9 @@ public class CValue extends AbstractCValue {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#dispose()
+	 */
 	public void dispose() {
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() ) {
@@ -422,26 +423,6 @@ public class CValue extends AbstractCValue {
 		catch( DebugException e ) {
 		}
 		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICValue#evaluateAsExpression()
-	 */
-	public String evaluateAsExpression() {
-		String valueString = null;
-		AbstractCVariable parent = getParentVariable();
-		if ( parent != null ) {
-			ICStackFrame frame = parent.getStackFrame(); 
-			if ( frame != null && frame.canEvaluate() ) {
-				try {
-					valueString = frame.evaluateExpressionToString( parent.getExpressionString() );
-				}
-				catch( DebugException e ) {
-					valueString = e.getMessage();
-				}
-			}
-		}
-		return valueString;
 	}
 
 	/**

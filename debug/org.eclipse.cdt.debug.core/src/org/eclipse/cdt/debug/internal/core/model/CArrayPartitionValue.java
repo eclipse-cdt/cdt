@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
-import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -129,27 +128,13 @@ public class CArrayPartitionValue extends AbstractCValue {
 		}
 	}
 
-	public String evaluateAsExpression() {
-		String valueString = null;
-		AbstractCVariable parent = getParentVariable();
-		if ( parent != null ) {
-			ICStackFrame frame = parent.getStackFrame(); 
-			if ( frame != null && frame.canEvaluate() ) {
-				try {
-					valueString = frame.evaluateExpressionToString( parent.getExpressionString() );
-				}
-				catch( DebugException e ) {
-					valueString = e.getMessage();
-				}
-			}
-		}
-		return valueString;
-	}
-
 	protected ICDIVariable getCDIVariable() {
 		return fCDIVariable;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#dispose()
+	 */
 	public void dispose() {
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() ) {

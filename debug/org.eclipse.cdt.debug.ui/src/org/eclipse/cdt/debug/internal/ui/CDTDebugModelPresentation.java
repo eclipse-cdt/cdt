@@ -133,7 +133,7 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
 	 */
 	public void computeDetail( IValue value, IValueDetailListener listener ) {
-		CDTValueDetailProvider.getDefault().computeDetail( value, listener );
+		CValueDetailProvider.getDefault().computeDetail( value, listener );
 	}
 
 	/*

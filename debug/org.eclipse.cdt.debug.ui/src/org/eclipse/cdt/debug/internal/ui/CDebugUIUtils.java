@@ -8,64 +8,47 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.ui;
 
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Jul 30, 2002
+ * Utility methods for C/C++ Debug UI.
  */
-public class CDebugUIUtils
-{
+public class CDebugUIUtils {
 
-
-	static public IRegion findWord( IDocument document, int offset ) 
-	{
+	static public IRegion findWord( IDocument document, int offset ) {
 		int start = -1;
 		int end = -1;
-				
-		try 
-		{	
+		try {
 			int pos = offset;
 			char c;
-			
-			while( pos >= 0 ) 
-			{
+			while( pos >= 0 ) {
 				c = document.getChar( pos );
 				if ( !Character.isJavaIdentifierPart( c ) )
 					break;
 				--pos;
 			}
-			
 			start = pos;
-			
 			pos = offset;
 			int length = document.getLength();
-			
-			while( pos < length ) 
-			{
+			while( pos < length ) {
 				c = document.getChar( pos );
 				if ( !Character.isJavaIdentifierPart( c ) )
 					break;
 				++pos;
 			}
-			
 			end = pos;
-			
-		} 
-		catch( BadLocationException x ) 
-		{
 		}
-		
-		if ( start > -1 && end > -1 ) 
-		{
+		catch( BadLocationException x ) {
+		}
+		if ( start > -1 && end > -1 ) {
 			if ( start == offset && end == offset )
 				return new Region( offset, 0 );
 			else if ( start == offset )
@@ -73,7 +56,20 @@ public class CDebugUIUtils
 			else
 				return new Region( start + 1, end - start - 1 );
 		}
-		
 		return null;
+	}
+
+	/**
+	 * Returns the currently selected stack frame or the topmost frame 
+	 * in the currently selected thread in the Debug view 
+	 * of the current workbench page. Returns <code>null</code> 
+	 * if no stack frame or thread is selected, or if not called from the UI thread.
+	 *  
+	 * @return the currently selected stack frame or the topmost frame 
+	 * 		   in the currently selected thread
+	 */
+	static public ICStackFrame getCurrentStackFrame() {
+		IAdaptable context = DebugUITools.getDebugContext();
+		return ( context != null ) ? (ICStackFrame)context.getAdapter( ICStackFrame.class ) : null;
 	}
 }

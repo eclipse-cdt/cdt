@@ -20,5 +20,5 @@ public interface ICValue extends IValue, ICDebugElement {
 	
 	ICType getType() throws DebugException;
 
-	String evaluateAsExpression();
+	String evaluateAsExpression( ICStackFrame frame );
 }

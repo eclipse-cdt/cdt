@@ -49,7 +49,9 @@ public class DebugTextHover implements ICEditorTextHover, ITextHoverExtension, I
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	public String getHoverInfo( ITextViewer textViewer, IRegion hoverRegion ) {
@@ -65,7 +67,7 @@ public class DebugTextHover implements ICEditorTextHover, ITextHoverExtension, I
 				expression = expression.trim();
 				if ( expression.length() == 0 )
 					return null;
-				StringBuffer buffer= new StringBuffer();	
+				StringBuffer buffer = new StringBuffer();
 				String result = evaluateExpression( frame, expression );
 				if ( result == null )
 					return null;
@@ -87,7 +89,9 @@ public class DebugTextHover implements ICEditorTextHover, ITextHoverExtension, I
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
 	public IRegion getHoverRegion( ITextViewer viewer, int offset ) {
@@ -119,12 +123,14 @@ public class DebugTextHover implements ICEditorTextHover, ITextHoverExtension, I
 			value = value.substring( 0, MAX_HOVER_INFO_SIZE ) + " ..."; //$NON-NLS-1$
 		buffer.append( "<p>" ); //$NON-NLS-1$
 		buffer.append( "<pre>" ).append( expression ).append( "</pre>" ); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append( " =" ); //$NON-NLS-1$
+		buffer.append( " = " ); //$NON-NLS-1$
 		buffer.append( "<b><pre>" ).append( value ).append( "</pre></b>" ); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append( "</p>" ); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
 	 */
 	public void setEditor( IEditorPart editor ) {
@@ -144,26 +150,34 @@ public class DebugTextHover implements ICEditorTextHover, ITextHoverExtension, I
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
 		fSelection = selection;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partActivated( IWorkbenchPart part ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partBroughtToTop( IWorkbenchPart part ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partClosed( IWorkbenchPart part ) {
@@ -176,13 +190,17 @@ public class DebugTextHover implements ICEditorTextHover, ITextHoverExtension, I
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partDeactivated( IWorkbenchPart part ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partOpened( IWorkbenchPart part ) {
@@ -206,7 +224,9 @@ public class DebugTextHover implements ICEditorTextHover, ITextHoverExtension, I
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
 	public IInformationControlCreator getHoverControlCreator() {
@@ -214,36 +234,27 @@ public class DebugTextHover implements ICEditorTextHover, ITextHoverExtension, I
 	}
 
 	/**
-	 * Replace any characters in the given String that would confuse an HTML 
-	 * parser with their escape sequences.
+	 * Replace any characters in the given String that would confuse an HTML parser with their escape sequences.
 	 */
-	private static String makeHTMLSafe( String string ) 
-	{
+	private static String makeHTMLSafe( String string ) {
 		StringBuffer buffer = new StringBuffer( string.length() );
-	
-		for ( int i = 0; i != string.length(); i++ ) 
-		{
+		for( int i = 0; i != string.length(); i++ ) {
 			char ch = string.charAt( i );
-			
-			switch( ch ) 
-			{
+			switch( ch ) {
 				case '&':
 					buffer.append( "&amp;" ); //$NON-NLS-1$
 					break;
-					
 				case '<':
 					buffer.append( "&lt;" ); //$NON-NLS-1$
 					break;
-
 				case '>':
 					buffer.append( "&gt;" ); //$NON-NLS-1$
 					break;
-
 				default:
 					buffer.append( ch );
 					break;
 			}
 		}
-		return buffer.toString();		
+		return buffer.toString();
 	}
 }

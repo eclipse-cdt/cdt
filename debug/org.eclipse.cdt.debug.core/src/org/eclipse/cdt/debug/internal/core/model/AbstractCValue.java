@@ -10,7 +10,9 @@
  ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.core.model; 
 
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICValue;
+import org.eclipse.debug.core.DebugException;
 
 /**
  * The abstract super class for the C/C++ value types.
@@ -32,6 +34,25 @@ public abstract class AbstractCValue extends CDebugElement implements ICValue {
 
 	public AbstractCVariable getParentVariable() {
 		return fParent;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#evaluateAsExpression(org.eclipse.cdt.debug.core.model.ICStackFrame)
+	 */
+	public String evaluateAsExpression( ICStackFrame frame ) {
+		String valueString = null;
+		AbstractCVariable parent = getParentVariable();
+		if ( parent != null ) {
+			if ( frame != null && frame.canEvaluate() ) {
+				try {
+					valueString = frame.evaluateExpressionToString( parent.getExpressionString() );
+				}
+				catch( DebugException e ) {
+					valueString = e.getMessage();
+				}
+			}
+		}
+		return valueString;
 	}
 
 	abstract protected void setChanged( boolean changed );

@@ -1,3 +1,10 @@
+2004-10-07 Mikhail Khodjaiants
+	Provide a context for expression evaluation.
+	* CDebugUIUtils.java
+	* CDTDebugModelPresentation.java
+	* CDTValueDetailProvider.java renamed to CValueDetailProvider.java
+	* DebugTextHover.java
+
 2004-10-06 Mikhail Khodjaiants
 	Use the same approach to generate expressions and variables labels.
 	* CDTDebugModelPresentation.java

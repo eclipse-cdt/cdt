@@ -1,3 +1,10 @@
+2004-10-07 Mikhail Khodjaiants
+	Provide a context for expression evaluation.
+	* ICValue.java
+	* AbstractCValue.java
+	* CArrayPartitionValue.java
+	* CValue.java
+
 2004-10-06 Mikhail Khodjaiants
 	Added the "getType" method to ICValue.
 	* ICValue.java

@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <welcomePage 
 	title="Eclipse C/C++ Development Tools (CDT)">
-	<intro>This page will help familiarize you with the Eclipse C/C++ development tooling.
+	<intro>The CDT project provides a set of plugins that implement a C/C++ IDE.
+It adds a C/C++ Perspective to the Eclipse Workbench that supports C/C++ development
+with a number of views, wizards, a powerful editor, and a debugger. The CDT is designed
+to provide an extensible architecture, that will provide support for integration of tools
+provided by Independent Software Vendors. 
+
+This page will help familiarize you with the Eclipse C/C++ development tooling.
 To get started, read the sections below and click on the related links. </intro>
 
 	<item><b>The C/C++ Perspectives </b>
-To do C/C++ development open to the C/C++ Perspective: Window > Open Perspective > C.</item>
-	
+To open the C/C++ Perspective: Window > Open Perspective > C/C++ Development. </item>
+
+	<item><b>What's New </b> 
+This quick tutorial guides you through the basic steps to get started. 
+  <topic id="/org.eclipse.cdt.doc.user/toc.xml">What's new </topic> 
+	</item>
+
+	<item><b>CDT Tutorial </b> 
+This quick tutorial guides you through the basic steps to get started. 
+  <topic id="/org.eclipse.cdt.doc.user/toc.xml">Tutorial </topic> 
+	</item>
 </welcomePage>

@@ -1,3 +1,11 @@
+2003-09-25 Alain Magloire
+
+	Fix for PR 43496.
+	In the event of an error we should Process.destroy()
+	after creating the Process.
+
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+
 2003-11-10 Mikhail Khodjaiants
 	Moving the shared library search paths block to mi UI.
 	* IMILaunchConfigurationConstants.java: added the 'ATTR_DEBUGGER_SOLIB_PATH' attribute.
@@ -6,7 +14,7 @@
 
 	Fix to info shared parsing.
 
-	* src/org/eclipse/cdt/debug/mi/core/outpu/MIInfoSharedLibary.java
+	* src/org/eclipse/cdt/debug/mi/core/output/MIInfoSharedLibary.java
 
 2003-09-09 Mikhail Khodjaiants
 	Regrouping the launch configuration constants.

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PEArchive;
+import org.eclipse.cdt.utils.coff.PEConstants;
 import org.eclipse.cdt.utils.coff.PE.Attribute;
 import org.eclipse.core.runtime.IPath;
 
@@ -75,7 +76,33 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
 	 */
 	public boolean isBinary(byte[] array, IPath path) {
-		return PE.isExeHeader(array) || PEArchive.isARHeader(array);
+		boolean isBin = PE.isExeHeader(array) || PEArchive.isARHeader(array);
+		// It maybe an object file try the known machine types.
+		if (!isBin && array.length > 1) {
+			int f_magic = (((array[1] & 0xff) << 8) | (array[0] & 0xff));
+			switch (f_magic) {
+				case PEConstants.IMAGE_FILE_MACHINE_ALPHA:
+				case PEConstants.IMAGE_FILE_MACHINE_ARM:
+				case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
+				case PEConstants.IMAGE_FILE_MACHINE_I386:
+				case PEConstants.IMAGE_FILE_MACHINE_IA64:
+				case PEConstants.IMAGE_FILE_MACHINE_M68K:
+				case PEConstants.IMAGE_FILE_MACHINE_MIPS16:
+				case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU:
+				case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU16:
+				case PEConstants.IMAGE_FILE_MACHINE_POWERPC:
+				case PEConstants.IMAGE_FILE_MACHINE_R3000:
+				case PEConstants.IMAGE_FILE_MACHINE_R4000:
+				case PEConstants.IMAGE_FILE_MACHINE_R10000:
+				case PEConstants.IMAGE_FILE_MACHINE_SH3:
+				case PEConstants.IMAGE_FILE_MACHINE_SH4:
+				case PEConstants.IMAGE_FILE_MACHINE_THUMB:
+					// Ok;
+					isBin = true;
+					break;
+			}
+		}
+		return isBin;
 	}
 
 }

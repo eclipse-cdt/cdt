@@ -17,10 +17,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.AR;
+import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.elf.Elf;
@@ -35,6 +37,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	private BinaryObjectInfo info;
 	private ISymbol[] symbols;
 	private final AR.ARHeader header;
+	private IAddressFactory addressFactory;
 
 	public ElfBinaryObject(IBinaryParser parser, IPath p, AR.ARHeader h){
 		super(parser, p, IBinaryFile.OBJECT);
@@ -146,7 +149,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		info.isLittleEndian = attribute.isLittleEndian();
 		info.hasDebug = attribute.hasDebug();
 		info.cpu = attribute.getCPU();
-		info.addressFactory = attribute.getAddressFactory(); 
+		addressFactory = attribute.getAddressFactory(); 
 	}
 
 	protected void loadSymbols(ElfHelper helper) throws IOException {
@@ -183,4 +186,18 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		return super.getAdapter(adapter);
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
+	 */
+	public IAddressFactory getAddressFactory() {
+		if (addressFactory == null) {
+			try {
+				loadInfo();
+			} catch (IOException e) {
+				return new Addr32Factory();
+			}
+		}
+		return addressFactory;
+	}
 }

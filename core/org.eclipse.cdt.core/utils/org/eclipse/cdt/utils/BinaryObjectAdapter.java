@@ -34,7 +34,6 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 		public String soname;
 		public String[] needed;
 		public String cpu;
-		public IAddressFactory addressFactory;
 
 		public BinaryObjectInfo() {
 			cpu = soname = ""; //$NON-NLS-1$
@@ -153,14 +152,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 		}
 		return ""; //$NON-NLS-1$
 	}
-	public IAddressFactory getAddressFactory()
-	{
-		BinaryObjectInfo info = getBinaryObjectInfo();
-		if (info != null) {
-			return info.addressFactory;
-		}
-		return null; //$NON-NLS-1$
-	}
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getName()
 	 */
@@ -176,6 +168,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getSymbols()
 	 */
 	public abstract ISymbol[] getSymbols();
+	public abstract IAddressFactory getAddressFactory();
 
 	protected abstract BinaryObjectInfo getBinaryObjectInfo();
 

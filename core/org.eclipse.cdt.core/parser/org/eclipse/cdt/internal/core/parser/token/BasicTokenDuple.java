@@ -101,6 +101,11 @@ public class BasicTokenDuple implements ITokenDuple {
 		for( ;; ){
 		    if( token == last )
 		        break;
+		    if( startOfSegment == last.getNext() )
+		    {
+		    	startOfSegment = null;
+		    	break;
+		    }
 		    prev = token;
 			token = ( token != null ) ? token.getNext() : getFirstToken();
 			if( token.getType() == IToken.tLT )
@@ -112,8 +117,11 @@ public class BasicTokenDuple implements ITokenDuple {
 				continue;
 			}
 		}
-		ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, last );
-		r.add( d );
+		if( startOfSegment != null )
+		{
+			ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, last );
+			r.add( d );
+		}
 		return (ITokenDuple[]) r.toArray( new ITokenDuple[ r.size() ]);
 
 	}

@@ -2069,24 +2069,19 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertTrue( r.getReturnValue() instanceof IASTCastExpression );
     }
     
-    public void testBug86336() throws Exception {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("struct T1 {                   \n"); //$NON-NLS-1$
-        buffer.append("   T1 operator() ( int x ) {  \n"); //$NON-NLS-1$
-        buffer.append("      return T1(x);           \n"); //$NON-NLS-1$
-        buffer.append("   }                          \n"); //$NON-NLS-1$
-        buffer.append("   T1( int ) {}               \n"); //$NON-NLS-1$
-        buffer.append("};                            \n"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-        CPPNameCollector col = new CPPNameCollector();
-        tu.getVisitor().visitTranslationUnit(col);
-        
-        ICPPConstructor T1_ctor = (ICPPConstructor) col.getName(6).resolveBinding();
-        ICPPClassType T1 = (ICPPClassType) col.getName(0).resolveBinding();
-        
-        assertInstances( col, T1_ctor, 2 );
-        assertInstances( col, T1, 2 );
+    public void testBug84476() throws Exception
+    {
+    	StringBuffer buffer = new StringBuffer();
+//    	buffer.append( "struct B {	int f();};\n"); //$NON-NLS-1$
+//    	buffer.append( "int (B::*pb)() = &B::f; \n"); //$NON-NLS-1$
+    	buffer.append( "void foo() {\n"); //$NON-NLS-1$
+    	buffer.append( "struct B {\n"); //$NON-NLS-1$
+    	buffer.append( "int f();\n"); //$NON-NLS-1$
+    	buffer.append( "};    			\n"); //$NON-NLS-1$
+    	buffer.append( "int (B::*pb)() = &B::f;\n");  //$NON-NLS-1$
+    	buffer.append( "}\n" ); //$NON-NLS-1$
+    	String code = buffer.toString();
+    	parse( code, ParserLanguage.CPP );
     }
 }
 

@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -903,7 +904,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @throws BacktrackException
      */
-    protected Object typeId(boolean skipArrayModifiers)
+    protected IASTTypeId typeId(boolean skipArrayModifiers)
             throws EndOfFileException, BacktrackException {
         IToken mark = mark();
         ITokenDuple name = null;

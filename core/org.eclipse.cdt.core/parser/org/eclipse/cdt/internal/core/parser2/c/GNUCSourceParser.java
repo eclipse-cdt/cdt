@@ -41,7 +41,10 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
@@ -657,13 +660,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             BacktrackException {
         // TO DO: we need proper symbol checkint to ensure type name
         if (LT(1) == IToken.tLPAREN) {
-            IToken la = LA(1);
-            int startingOffset = la.getOffset();
-            int line = la.getLineNumber();
-            char[] fn = la.getFilename();
             IToken mark = mark();
+            int startingOffset = mark.getOffset();
             consume();
-            Object typeId = null;
+            IASTTypeId typeId = null;
             // If this isn't a type name, then we shouldn't be here
             try {
                 try {
@@ -671,41 +671,42 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     consume(IToken.tRPAREN);
                 } catch (BacktrackException bte) {
                     backup(mark);
-                    //					if (typeId != null)
-                    //						typeId.freeReferences();
                     throwBacktrack(bte);
                 }
 
-                Object castExpression = castExpression();
-                //				if( castExpression != null &&
-                // castExpression.getExpressionKind() ==
-                // IASTExpression.Kind.PRIMARY_EMPTY )
-                //				{
-                //					backup( mark );
-                //					if (typeId != null)
-                //						typeId.freeReferences();
-                //					return unaryExpression(scope);
-                //				}
-                int endOffset = (lastToken != null) ? lastToken.getEndOffset()
-                        : 0;
-                mark = null; // clean up mark so that we can garbage collect
-                try {
-                    return null; /*
-                                  * astFactory.createExpression(scope,
-                                  * IASTExpression.Kind.CASTEXPRESSION,
-                                  * castExpression, null, null, typeId, null,
-                                  * EMPTY_STRING, null); } catch
-                                  * (ASTSemanticException e) {
-                                  * throwBacktrack(e.getProblem());
-                                  */
-                } catch (Exception e) {
-                    logException("castExpression::createExpression()", e); //$NON-NLS-1$
-                    throwBacktrack(startingOffset, endOffset, line, fn);
-                }
+                IASTExpression castExpression = castExpression();
+                return buildTypeIdUnaryExpression( IASTUnaryTypeIdExpression.op_cast, typeId, castExpression, startingOffset );
             } catch (BacktrackException b) {
             }
         }
         return unaryExpression();
+    }
+
+    /**
+     * @param op
+     * @param typeId
+     * @param subExpression
+     * @param startingOffset
+     * @return
+     */
+    protected IASTExpression buildTypeIdUnaryExpression(int op, IASTTypeId typeId, IASTExpression subExpression, int startingOffset) {
+        IASTUnaryTypeIdExpression result = createUnaryTypeIdExpression();
+        result.setOperator( op );
+        result.setOffset( startingOffset );
+        result.setTypeId(typeId);
+        typeId.setParent( result );
+        typeId.setPropertyInParent( IASTUnaryTypeIdExpression.TYPE_ID );
+        result.setOperand( subExpression );
+        subExpression.setParent( result );
+        subExpression.setPropertyInParent( IASTUnaryTypeIdExpression.OPERAND );
+        return result;
+    }
+
+    /**
+     * @return
+     */
+    protected IASTUnaryTypeIdExpression createUnaryTypeIdExpression() {
+        return new CASTUnaryTypeIdExpression();
     }
 
     /**
@@ -714,71 +715,47 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTExpression unaryExpression() throws EndOfFileException,
             BacktrackException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
+        int startingOffset = LA(1).getOffset();
         switch (LT(1)) {
         case IToken.tSTAR:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_star );//IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_star );
         case IToken.tAMPER:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_amper);//IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_amper);
         case IToken.tPLUS:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_plus );//IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_plus );
         case IToken.tMINUS:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_minus );//IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_minus );
         case IToken.tNOT:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_not );//IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_not );
         case IToken.tCOMPL:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_tilde);//IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_tilde);
         case IToken.tINCR:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixIncr);//IASTExpression.Kind.UNARY_INCREMENT);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixIncr);
         case IToken.tDECR:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixDecr);//IASTExpression.Kind.UNARY_DECREMENT);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixDecr);
         case IToken.t_sizeof:
-            consume(IToken.t_sizeof);
+            startingOffset = consume(IToken.t_sizeof).getOffset();
             IToken mark = LA(1);
-            Object d = null;
-            Object unaryExpression = null;
+            IASTExpression unaryExpression = null;
+            IASTTypeId typeId = null;
             if (LT(1) == IToken.tLPAREN) {
                 try {
                     consume(IToken.tLPAREN);
-                    d = typeId(false);
+                    typeId = typeId(false);
                     consume(IToken.tRPAREN);
                 } catch (BacktrackException bt) {
                     backup(mark);
+                    typeId = null;
                     unaryExpression = unaryExpression();
                 }
             } else {
                 unaryExpression = unaryExpression();
             }
-            int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            if (unaryExpression == null)
-                try {
-                    return null; /*
-                                  * astFactory.createExpression(scope,
-                                  * IASTExpression.Kind.UNARY_SIZEOF_TYPEID,
-                                  * null, null, null, d, null, EMPTY_STRING,
-                                  * null); } catch (ASTSemanticException e) {
-                                  * throwBacktrack(e.getProblem());
-                                  */
-                } catch (Exception e) {
-                    logException("unaryExpression_1::createExpression()", e); //$NON-NLS-1$
-                    throwBacktrack(startingOffset, endOffset, line, fn);
-                }
-            try {
-                return null; /*
-                              * astFactory.createExpression(scope,
-                              * IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION,
-                              * unaryExpression, null, null, null, null,
-                              * EMPTY_STRING, null); } catch
-                              * (ASTSemanticException e1) {
-                              * throwBacktrack(e1.getProblem());
-                              */
-            } catch (Exception e) {
-                logException("unaryExpression_1::createExpression()", e); //$NON-NLS-1$
-                throwBacktrack(startingOffset, endOffset, line, fn);
-            }
+            mark = null;
+            if (typeId == null && unaryExpression != null )
+                return buildUnaryExpression( IASTUnaryExpression.op_sizeof, unaryExpression, startingOffset );
+            return buildTypeIdExpression( IASTTypeIdExpression.op_sizeof, typeId, startingOffset ); 
+            
         default:
             if (LT(1) == IGCCToken.t_typeof && supportTypeOfUnaries) {
                 IASTExpression unary = unaryTypeofExpression();
@@ -792,6 +769,29 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             }
             return postfixExpression();
         }
+    }
+
+    /**
+     * @param op_sizeof
+     * @param typeId
+     * @param startingOffset
+     * @return
+     */
+    protected IASTExpression buildTypeIdExpression(int op_sizeof, IASTTypeId typeId, int startingOffset) {
+        IASTTypeIdExpression result = createTypeIdExpression();
+        result.setOperator( op_sizeof );
+        result.setOffset( startingOffset );
+        result.setTypeId( typeId );
+        typeId.setParent( result );
+        typeId.setPropertyInParent( IASTTypeIdExpression.TYPE_ID );
+        return result;
+    }
+
+    /**
+     * @return
+     */
+    protected IASTTypeIdExpression createTypeIdExpression() {
+        return new CASTTypeIdExpression();
     }
 
     /**
@@ -1231,216 +1231,52 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTDeclarationStatement();
     }
 
-    protected Object typeId(boolean skipArrayModifiers)
+    protected IASTTypeId typeId(boolean skipArrayModifiers)
             throws EndOfFileException, BacktrackException {
         IToken mark = mark();
-        IToken name = null;
-        boolean isConst = false, isVolatile = false;
-        boolean isSigned = false, isUnsigned = false;
-        boolean isShort = false, isLong = false;
-        boolean isTypename = false;
+        int startingOffset = mark.getOffset();
+        char [] filename = mark.getFilename();
+        int lineNumber = mark.getLineNumber();
+        IASTDeclSpecifier declSpecifier = null;
+        IASTDeclarator declarator = null;
 
-        boolean encountered = false;
-        Object kind = null;
-        do {
-            try {
-                name = identifier();
-                kind = null; //IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
-                encountered = true;
-                break;
-            } catch (BacktrackException b) {
-                // do nothing
-            }
-
-            boolean encounteredType = false;
-            simpleMods: for (;;) {
-                switch (LT(1)) {
-                case IToken.t_signed:
-                    consume();
-                    isSigned = true;
-                    break;
-
-                case IToken.t_unsigned:
-                    consume();
-                    isUnsigned = true;
-                    break;
-
-                case IToken.t_short:
-                    consume();
-                    isShort = true;
-                    break;
-
-                case IToken.t_long:
-                    consume();
-                    isLong = true;
-                    break;
-
-                case IToken.t_const:
-                    consume();
-                    isConst = true;
-                    break;
-
-                case IToken.t_volatile:
-                    consume();
-                    isVolatile = true;
-                    break;
-
-                case IToken.tIDENTIFIER:
-                    if (encounteredType)
-                        break simpleMods;
-                    encounteredType = true;
-                    name = identifier();
-                    kind = null; //IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
-                    encountered = true;
-                    break;
-
-                case IToken.t_int:
-                    if (encounteredType)
-                        break simpleMods;
-                    encounteredType = true;
-                    kind = null; //IASTSimpleTypeSpecifier.Type.INT;
-                    encountered = true;
-                    consume();
-                    break;
-
-                case IToken.t_char:
-                    if (encounteredType)
-                        break simpleMods;
-                    encounteredType = true;
-                    kind = null; //IASTSimpleTypeSpecifier.Type.CHAR;
-                    encountered = true;
-                    consume();
-                    break;
-
-                case IToken.t_bool:
-                    if (encounteredType)
-                        break simpleMods;
-                    encounteredType = true;
-                    kind = null; //IASTSimpleTypeSpecifier.Type.BOOL;
-                    encountered = true;
-                    consume();
-                    break;
-
-                case IToken.t_double:
-                    if (encounteredType)
-                        break simpleMods;
-                    encounteredType = true;
-                    kind = null; //IASTSimpleTypeSpecifier.Type.DOUBLE;
-                    encountered = true;
-                    consume();
-                    break;
-
-                case IToken.t_float:
-                    if (encounteredType)
-                        break simpleMods;
-                    encounteredType = true;
-                    kind = null; //IASTSimpleTypeSpecifier.Type.FLOAT;
-                    encountered = true;
-                    consume();
-                    break;
-
-                case IToken.t_wchar_t:
-                    if (encounteredType)
-                        break simpleMods;
-                    encounteredType = true;
-                    kind = null; //IASTSimpleTypeSpecifier.Type.WCHAR_T;
-                    encountered = true;
-                    consume();
-                    break;
-
-                case IToken.t_void:
-                    if (encounteredType)
-                        break simpleMods;
-                    encounteredType = true;
-                    kind = null; //IASTSimpleTypeSpecifier.Type.VOID;
-                    encountered = true;
-                    consume();
-                    break;
-
-                case IToken.t__Bool:
-                    if (encounteredType)
-                        break simpleMods;
-                    encounteredType = true;
-                    kind = null; //IASTSimpleTypeSpecifier.Type._BOOL;
-                    encountered = true;
-                    consume();
-                    break;
-
-                default:
-                    break simpleMods;
-                }
-            }
-
-            if (encountered)
-                break;
-
-            if (isShort || isLong || isUnsigned || isSigned) {
-                encountered = true;
-                kind = null; //IASTSimpleTypeSpecifier.Type.INT;
-                break;
-            }
-
-            if (LT(1) == IToken.t_struct || LT(1) == IToken.t_enum
-                    || LT(1) == IToken.t_union) {
-                consume();
-                try {
-                    name = identifier();
-                    kind = null; //IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
-                    encountered = true;
-                } catch (BacktrackException b) {
-                    backup(mark);
-                    throwBacktrack(b);
-                }
-            }
-
-        } while (false);
-
-        int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-        if (!encountered)
-            throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(),
-                    mark.getFilename());
-
-        //        TypeId id = getTypeIdInstance(scope);
-        IToken last = lastToken;
-        IToken temp = last;
-
-        //template parameters are consumed as part of name
-        //lastToken = consumeTemplateParameters( last );
-        //if( lastToken == null ) lastToken = last;
-
-        temp = consumePointerOperators(null);
-        if (temp != null)
-            last = temp;
-
-        if (!skipArrayModifiers) {
-            temp = consumeArrayModifiers(null);
-            if (temp != null)
-                last = temp;
+        try
+        {
+	        declSpecifier = declSpecifierSeq(false);
+	        declarator = declarator();
         }
-
-        endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-        try {
-            char[] signature = EMPTY_STRING;
-            if (last != null) {
-                if (lastToken == null)
-                    lastToken = last;
-                signature = TokenFactory.createCharArrayRepresentation(mark,
-                        last);
-            }
-            return null; /*
-                          * astFactory.createTypeId(scope, kind, isConst,
-                          * isVolatile, isShort, isLong, isSigned, isUnsigned,
-                          * isTypename, name, id .getPointerOperators(),
-                          * id.getArrayModifiers(), signature); } catch
-                          * (ASTSemanticException e) { backup(mark);
-                          * throwBacktrack(e.getProblem());
-                          */
-        } catch (Exception e) {
-            logException("typeId::createTypeId()", e); //$NON-NLS-1$
-            throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(),
-                    mark.getFilename());
+        catch( BacktrackException bt )
+        {
+            int endingOffset = lastToken == null ? 0 : lastToken.getEndOffset();
+            backup( mark );
+            throwBacktrack( startingOffset, endingOffset, lineNumber, filename );            
         }
-        return null;
+        if( declarator == null || declarator.getName().toString() != null )   //$NON-NLS-1$
+        {
+            int endingOffset = lastToken == null ? 0 : lastToken.getEndOffset();
+            backup( mark );
+            throwBacktrack( startingOffset, endingOffset, lineNumber, filename );
+        }
+        
+        IASTTypeId result = createTypeId();
+        result.setOffset( startingOffset );
+        
+        result.setDeclSpecifier( declSpecifier );
+        declSpecifier.setParent( result );
+        declSpecifier.setPropertyInParent( IASTTypeId.DECL_SPECIFIER );
+        
+        result.setAbstractDeclarator( declarator );
+        declarator.setParent( result );
+        declarator.setPropertyInParent( IASTTypeId.ABSTRACT_DECLARATOR );
+        
+        return result;
+    }
+
+    /**
+     * @return
+     */
+    protected IASTTypeId createTypeId() {
+        return new CASTTypeId();
     }
 
     /**
@@ -2198,7 +2034,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     }
                 } while (true);
             }
-            Object exp = null;
+            IASTExpression exp = null;
 
             if (LT(1) != IToken.tRBRACKET) {
                 if (encounteredModifier)

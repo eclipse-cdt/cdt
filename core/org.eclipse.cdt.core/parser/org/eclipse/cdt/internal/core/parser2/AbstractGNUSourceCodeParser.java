@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -80,7 +81,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     protected IToken currToken;
-
     protected IToken lastToken;
 
     /**
@@ -571,7 +571,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTExpression multiplicativeExpression()
             throws BacktrackException, EndOfFileException;
 
-    protected abstract Object typeId(boolean skipArrayMods)
+    protected abstract IASTTypeId typeId(boolean skipArrayMods)
             throws BacktrackException, EndOfFileException;
 
     protected abstract IASTExpression castExpression()
@@ -805,17 +805,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     
     /**
      * @param operator
-     * @param castExpression
+     * @param operand
      * @param offset TODO
      * @return
      */
-    protected IASTExpression buildUnaryExpression(int operator, IASTExpression castExpression, int offset) {
+    protected IASTExpression buildUnaryExpression(int operator, IASTExpression operand, int offset) {
         IASTUnaryExpression result = createUnaryExpression();
         result.setOffset( offset );
         result.setOperator( operator );
-        result.setOperand( castExpression );
-        castExpression.setParent( result );
-        castExpression.setPropertyInParent( IASTUnaryExpression.OPERAND );
+        result.setOperand( operand );
+        operand.setParent( result );
+        operand.setPropertyInParent( IASTUnaryExpression.OPERAND );
         return result;
     }
 

@@ -35,8 +35,10 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -296,9 +298,9 @@ public class AST2Tests extends TestCase {
         validateSimpleUnaryExpressionC( "~x", IASTUnaryExpression.op_tilde ); //$NON-NLS-1$
         validateSimpleUnaryExpressionC( "*x", IASTUnaryExpression.op_star ); //$NON-NLS-1$
         validateSimpleUnaryExpressionC( "&x", IASTUnaryExpression.op_amper ); //$NON-NLS-1$
-        
-        
-        
+        validateSimpleUnaryExpressionC( "sizeof x", IASTUnaryExpression.op_sizeof ); //$NON-NLS-1$
+        validateSimpleTypeIdExpressionC( "sizeof( int )", IASTTypeIdExpression.op_sizeof ); //$NON-NLS-1$
+        validateSimpleUnaryTypeIdExpression( "(int)x", IASTUnaryTypeIdExpression.op_cast ); //$NON-NLS-1$
         
         validateSimpleBinaryExpressionC("x=y", IASTBinaryExpression.op_assign ); //$NON-NLS-1$
         validateSimpleBinaryExpressionC("x*=y", IASTBinaryExpression.op_multiplyAssign ); //$NON-NLS-1$
@@ -332,6 +334,33 @@ public class AST2Tests extends TestCase {
         validateConditionalExpressionC( "x ? y : x" ); //$NON-NLS-1$
     }
     
+    /**
+     * @param string
+     * @throws ParserException
+     */
+    protected void validateSimpleUnaryTypeIdExpression(String code, int op ) throws ParserException {
+        IASTUnaryTypeIdExpression e = (IASTUnaryTypeIdExpression) getExpressionFromStatementInCode( code, ParserLanguage.C );
+        assertNotNull( e );
+        assertEquals( e.getOperator(), op );
+        assertNotNull( e.getTypeId() );
+        IASTIdExpression x = (IASTIdExpression) e.getOperand();
+        assertEquals( x.getName().toString(), "x"); //$NON-NLS-1$
+    }
+
+
+    /**
+     * @param code
+     * @param op
+     * @throws ParserException
+     */
+    protected void validateSimpleTypeIdExpressionC(String code, int op ) throws ParserException {
+        IASTTypeIdExpression e = (IASTTypeIdExpression) getExpressionFromStatementInCode( code, ParserLanguage.C );
+        assertNotNull( e );
+        assertEquals( e.getOperator(), op );
+        assertNotNull( e.getTypeId() );
+    }
+
+
     /**
      * @param string
      * @param op_prefixIncr

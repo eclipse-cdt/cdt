@@ -12,25 +12,21 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * @author jcamelon
  */
-public interface IASTUnaryExpression extends IASTExpression {
+public interface IASTUnaryTypeIdExpression extends IASTExpression {
 
-    public static final int op_prefixIncr = 0;
-    public static final int op_prefixDecr = 1;
-    public static final int op_plus       = 2;
-    public static final int op_minus      = 3;
-    public static final int op_star       = 4;
-    public static final int op_amper      = 5;
-    public static final int op_tilde      = 6;
-    public static final int op_not        = 7;
-    public static final int op_sizeof     = 8;
-    public static final int op_last       = op_sizeof;
+    public static final int op_cast   = 0;
+    public static final int op_last   = op_cast;
     
     public int getOperator();
     public void setOperator( int value );
     
     public static final ASTNodeProperty OPERAND = new ASTNodeProperty( "Operand" ); //$NON-NLS-1$
-    
     public IASTExpression getOperand();
     public void setOperand( IASTExpression expression );
+    
+    public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty( "Type Id"); //$NON-NLS-1$
+    
+    public void setTypeId( IASTTypeId typeId );
+    public IASTTypeId getTypeId();
     
 }

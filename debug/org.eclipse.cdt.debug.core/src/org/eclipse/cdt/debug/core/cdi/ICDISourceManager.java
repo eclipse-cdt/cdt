@@ -38,9 +38,5 @@ public interface ICDISourceManager extends ICDISessionObject
 	 * @throws CDIException on failure. Reasons include:
 	 */
 	void reset() throws CDIException;
-	
-	/**
-	 * Returns a ICDILocation
-	 */
-	ICDILocation createLocation(String file, String function, int line);
+
 }

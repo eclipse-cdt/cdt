@@ -1,3 +1,9 @@
+2002-10-16 Alain Magloire
+
+	* src/.../mi/core/cdi/MemoryManager.java (createMemoryBlock):
+	New method that takes a string instead of a long, rearrange
+	the method for it.
+
 2002-10-12 Alain Magloire
 
 	There are some serious problems with gdb/mi, for example

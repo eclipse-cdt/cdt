@@ -34,4 +34,15 @@ public class CCorePreferenceConstants {
 	 */
 	public static final String TRANSLATION_TASK_PRIORITIES = CCorePlugin.PLUGIN_ID + ".translation.taskPriorities"; //$NON-NLS-1$
 
+	/**
+	 * Active code formatter ID.
+	 * @see #getDefaultOptions
+	 */
+	public static final String CODE_FORMATTER = CCorePlugin.PLUGIN_ID + ".code_formatter"; //$NON-NLS-1$
+	
+	/**
+	 * Default code formatter
+	 */
+	public static final String DEFAULT_CODE_FORMATTER = CCorePlugin.PLUGIN_ID + ".defaultCodeFormatter"; //$NON-NLS-1$
+	
 }

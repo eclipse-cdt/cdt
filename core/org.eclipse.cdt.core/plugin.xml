@@ -19,6 +19,7 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.text"/>
    </requires>
 
 
@@ -53,6 +54,7 @@
    <extension-point id="CFileType" name="CFileType" schema="schema/CFileType.exsd"/>
    <extension-point id="CFileTypeAssociation" name="CFileTypeAssociation" schema="schema/CFileTypeAssociation.exsd"/>
    <extension-point id="PathEntryContainerInitializer" name="%PathEntryContainerInitializer" schema="schema/PathEntryContainerInitializer.exsd"/>
+   <extension-point id="CodeFormatter" name="CodeFormatter.name" schema="schema/CodeFormatter.exsd"/>
 
 <!-- =================================================================================== -->
 <!-- Define the list of the Binary Parser provided by the CDT                            -->
@@ -438,6 +440,15 @@
             type="org.eclipse.core.resources.problemmarker">
       </super>
    </extension>
+   <!--extension
+         id="codeFormatters"
+         name="%CodeFormatters.name"
+         point="org.eclipse.cdt.core.CodeFormatter">
+      <codeFormatter
+            class="org.eclipse.cdt.internal.formatter.DefaultCodeFormatter"
+            name="%DefaultCodeFormatter.name"
+            id="org.eclipse.cdt.core.defaultCodeFormatter"/>
+   </extension-->
 
 <!-- =================================================================================== -->
 <!-- Initialize the preference for the Core Plugin                                       -->

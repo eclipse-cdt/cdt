@@ -17,6 +17,8 @@ import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+// import org.eclipse.jdt.internal.ui.preferences.formatter.ProfileManager;
+// import org.eclipse.jdt.internal.ui.preferences.formatter.ProfileStore;
 
 
 public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
@@ -34,6 +36,10 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 
         preferences.setDefault(CCorePreferenceConstants.TRANSLATION_TASK_PRIORITIES, CCorePreferenceConstants.DEFAULT_TASK_PRIORITY); 
         optionNames.add(CCorePreferenceConstants.TRANSLATION_TASK_PRIORITIES);
+        
+        preferences.setDefault(CCorePreferenceConstants.CODE_FORMATTER, CCorePreferenceConstants.DEFAULT_CODE_FORMATTER); 
+        optionNames.add(CCorePreferenceConstants.CODE_FORMATTER);
+                
 	}
 
 }

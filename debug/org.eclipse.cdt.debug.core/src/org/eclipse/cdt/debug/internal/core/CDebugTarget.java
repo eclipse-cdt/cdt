@@ -413,18 +413,13 @@ public class CDebugTarget extends CDebugElement
 	public void resume() throws DebugException
 	{
 		if ( !isSuspended() ) 
-		{
 			return;
-		}
 		try 
 		{
-			setSuspended( false );
 			getCDITarget().resume();
-			resumeThreads();
 		} 
 		catch( CDIException e ) 
 		{
-			setSuspended( true );
 			targetRequestFailed( MessageFormat.format( "{0} occurred resuming target.", new String[] { e.toString() } ), e );
 		}	
 	}
@@ -435,18 +430,13 @@ public class CDebugTarget extends CDebugElement
 	public void suspend() throws DebugException
 	{
 		if ( isSuspended() )
-		{
 			return;
-		}
 		try
 		{
-			setSuspended( true );
 			getCDITarget().suspend();
-			suspendThreads();
 		}
 		catch( CDIException e )
 		{
-			setSuspended( false );
 			targetRequestFailed( MessageFormat.format( "{0} occurred suspending target.", new String[] { e.toString()} ), e );
 		}
 	}
@@ -507,7 +497,7 @@ public class CDebugTarget extends CDebugElement
 	/**
 	 * Notifies threads that they have been resumed
 	 */
-	protected void resumeThreads()
+	protected void resumeThreads( ICDIResumedEvent event )
 	{
 	}
 
@@ -1032,6 +1022,7 @@ public class CDebugTarget extends CDebugElement
 		setSuspended( false );
 		setCurrentStateId( IState.RUNNING );
 		setCurrentStateInfo( null );
+		resumeThreads( event );
 		fireResumeEvent( DebugEvent.UNSPECIFIED );
 	}
 	

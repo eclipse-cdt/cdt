@@ -30,6 +30,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -157,12 +158,8 @@ public class CThread extends CDebugElement
 				if ( fStackFrames.isEmpty() )
 				{
 					fStackFrames = createAllStackFrames();
-					if ( fStackFrames.isEmpty() )
-					{
-						fRefreshChildren = false; // ????
-						//leave fRefreshChildren == true
-						return fStackFrames;
-					}
+					setRefreshChildren( false );
+					return fStackFrames;
 				}
 				ICDIStackFrame[] frames = getCDIStackFrames();
 				// compute new or removed stack frames
@@ -173,8 +170,7 @@ public class CThread extends CDebugElement
 					offset = length - fStackFrames.size();
 					for ( int i = offset - 1; i >= 0; i-- )
 					{
-						CStackFrame newStackFrame = new CStackFrame( this, frames[i] );
-						fStackFrames.add( 0, newStackFrame );
+						fStackFrames.add( 0, new CStackFrame( this, frames[i] ) );
 					}
 					length = fStackFrames.size() - offset;
 				}
@@ -184,6 +180,7 @@ public class CThread extends CDebugElement
 					int removed = fStackFrames.size() - length;
 					for ( int i = 0; i < removed; i++ )
 					{
+						((CStackFrame)fStackFrames.get( 0 )).dispose();
 						fStackFrames.remove( 0 );
 					}
 				}
@@ -199,9 +196,14 @@ public class CThread extends CDebugElement
 						// method, replace all frames
 						ICDIStackFrame newTop = frames[0];
 						ICDIStackFrame oldTop = ((CStackFrame)fStackFrames.get( 0 ) ).getLastCDIStackFrame();
-						if (!CStackFrame.equalFrame( newTop, oldTop ) )
+						if ( !CStackFrame.equalFrame( newTop, oldTop ) )
 						{
-							fStackFrames = createAllStackFrames();
+							disposeStackFrames();
+							fStackFrames = new ArrayList( frames.length );
+							for ( int i = 0; i < frames.length; ++i )
+							{
+								fStackFrames.add( new CStackFrame( this, frames[i] ) );
+							}
 							offset = fStackFrames.size();
 						}
 					}
@@ -212,11 +214,7 @@ public class CThread extends CDebugElement
 					updateStackFrames( frames, offset, fStackFrames, length );
 				}
 			}
-			fRefreshChildren = false;
-		}
-		else
-		{
-			return Collections.EMPTY_LIST;
+			setRefreshChildren( false );
 		}
 		return fStackFrames;
 	}
@@ -265,6 +263,7 @@ public class CThread extends CDebugElement
 		{
 			CStackFrame frame = (CStackFrame)oldFrames.get( offset );
 			frame.setCDIStackFrame( newFrames[offset] );
+			frame.fireChangeEvent( DebugEvent.STATE );
 			offset++;
 		}
 	}
@@ -296,7 +295,7 @@ public class CThread extends CDebugElement
 	 */	
 	public List computeStackFrames() throws DebugException
 	{
-		return computeStackFrames( fRefreshChildren );
+		return computeStackFrames( refreshChildren() );
 	}
 	
 	/**
@@ -330,8 +329,7 @@ public class CThread extends CDebugElement
 		List list= new ArrayList( frames.length );
 		for ( int i = 0; i < frames.length; ++i )
 		{
-			CStackFrame newStackFrame = new CStackFrame( this, frames[i] );
-			list.add( newStackFrame );
+			list.add( new CStackFrame( this, frames[i] ) );
 		}
 		return list;
 	}
@@ -388,7 +386,8 @@ public class CThread extends CDebugElement
 			}
 			else if ( event instanceof ICDIResumedEvent )
 			{
-				if ( source instanceof ICDIThread )
+				if ( ( source instanceof ICDIThread && source.equals( getCDIThread() ) ) ||
+					   source instanceof ICDITarget )
 				{
 					handleResumedEvent( (ICDIResumedEvent)event );
 				}
@@ -454,20 +453,13 @@ public class CThread extends CDebugElement
 	public void resume() throws DebugException
 	{
 		if ( !isSuspended() )
-		{
 			return;
-		}
 		try
 		{
-			setRunning( true );
-			disposeStackFrames();
-			fireResumeEvent( DebugEvent.CLIENT_REQUEST );
 			getCDIThread().resume();
 		}
 		catch( CDIException e )
 		{
-			setRunning( false );
-			fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
 			targetRequestFailed( MessageFormat.format( "{0} occurred resuming thread.", new String[] { e.toString()} ), e );
 		}
 	}
@@ -483,14 +475,10 @@ public class CThread extends CDebugElement
 		}
 		try
 		{
-			setRunning( false );
 			getCDIThread().suspend();
-			fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
 		}
 		catch( CDIException e )
 		{
-			setRunning( true );
-			fireResumeEvent( DebugEvent.CLIENT_REQUEST );
 			targetRequestFailed( MessageFormat.format( "{0} occurred suspending thread.", new String[] { e.toString()} ), e );
 		}
 	}
@@ -552,20 +540,13 @@ public class CThread extends CDebugElement
 	public void stepInto() throws DebugException
 	{
 		if ( !canStepInto() )
-		{
 			return;
-		}
 		try
 		{
-			setRunning( true );
-			preserveStackFrames();
-			fireResumeEvent( DebugEvent.STEP_INTO );
 			getCDIThread().stepInto();
 		}		
 		catch( CDIException e )
 		{
-			setRunning( false );
-			fireSuspendEvent( DebugEvent.STEP_INTO );
 			targetRequestFailed( MessageFormat.format( "{0} occurred stepping in thread.", new String[] { e.toString()} ), e );
 		}
 	}
@@ -576,20 +557,13 @@ public class CThread extends CDebugElement
 	public void stepOver() throws DebugException
 	{
 		if ( !canStepOver() )
-		{
 			return;
-		}
 		try
 		{
-			setRunning( true );
-			preserveStackFrames();
-			fireResumeEvent( DebugEvent.STEP_OVER );
-			getCDIThread().stepInto();
+			getCDIThread().stepOver();
 		}		
 		catch( CDIException e )
 		{
-			setRunning( false );
-			fireSuspendEvent( DebugEvent.STEP_OVER );
 			targetRequestFailed( MessageFormat.format( "{0} occurred stepping in thread.", new String[] { e.toString()} ), e );
 		}
 	}
@@ -600,20 +574,13 @@ public class CThread extends CDebugElement
 	public void stepReturn() throws DebugException
 	{
 		if ( !canStepReturn() )
-		{
 			return;
-		}
 		try
 		{
-			setRunning( true );
-			preserveStackFrames();
-			fireResumeEvent( DebugEvent.STEP_RETURN );
-			getCDIThread().stepInto();
+			getCDIThread().stepReturn();
 		}		
 		catch( CDIException e )
 		{
-			setRunning( false );
-			fireSuspendEvent( DebugEvent.STEP_RETURN );
 			targetRequestFailed( MessageFormat.format( "{0} occurred stepping in thread.", new String[] { e.toString()} ), e );
 		}
 	}
@@ -685,12 +652,7 @@ public class CThread extends CDebugElement
 	 */
 	protected void preserveStackFrames()
 	{
-		fRefreshChildren = true;
-		Iterator frames = fStackFrames.iterator();
-		while( frames.hasNext() )
-		{
-			((CStackFrame)frames.next()).setCDIStackFrame( null );
-		}
+		setRefreshChildren( true );
 	}
 
 	/**
@@ -707,8 +669,8 @@ public class CThread extends CDebugElement
 		{
 			((CStackFrame)it.next()).dispose();
 		}
-		fStackFrames = Collections.EMPTY_LIST;
-		fRefreshChildren = true;
+		fStackFrames.clear();
+		setRefreshChildren( true );
 	}
 
 	/**
@@ -780,20 +742,13 @@ public class CThread extends CDebugElement
 	public void stepIntoInstruction() throws DebugException
 	{
 		if ( !canStepIntoInstruction() )
-		{
 			return;
-		}
 		try
 		{
-			setRunning( true );
-			preserveStackFrames();
-			fireResumeEvent( DebugEvent.STEP_INTO );
 			getCDIThread().stepIntoInstruction();
 		}		
 		catch( CDIException e )
 		{
-			setRunning( false );
-			fireSuspendEvent( DebugEvent.STEP_INTO );
 			targetRequestFailed( MessageFormat.format( "{0} occurred stepping in thread.", new String[] { e.toString()} ), e );
 		}
 	}
@@ -804,20 +759,13 @@ public class CThread extends CDebugElement
 	public void stepOverInstruction() throws DebugException
 	{
 		if ( !canStepOverInstruction() )
-		{
 			return;
-		}
 		try
 		{
-			setRunning( true );
-			preserveStackFrames();
-			fireResumeEvent( DebugEvent.STEP_OVER );
 			getCDIThread().stepOverInstruction();
 		}		
 		catch( CDIException e )
 		{
-			setRunning( false );
-			fireSuspendEvent( DebugEvent.STEP_OVER );
 			targetRequestFailed( MessageFormat.format( "{0} occurred stepping in thread.", new String[] { e.toString()} ), e );
 		}
 	}
@@ -840,6 +788,10 @@ public class CThread extends CDebugElement
 		{
 			handleSuspendedBySignal( (ICDISignal)reason );
 		}
+		else
+		{
+			fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
+		}
 	}
 
 	private void handleResumedEvent( ICDIResumedEvent event )
@@ -847,12 +799,34 @@ public class CThread extends CDebugElement
 		setRunning( true );
 		setCurrentStateId( IState.RUNNING );
 		setCurrentStateInfo( null );
-		fireResumeEvent( DebugEvent.UNSPECIFIED );
+		int detail = DebugEvent.UNSPECIFIED;
+		switch( event.getType() )
+		{
+			case ICDIResumedEvent.CONTINUE:
+				detail = DebugEvent.CLIENT_REQUEST;
+				disposeStackFrames();
+				break;
+			case ICDIResumedEvent.STEP_INTO:
+			case ICDIResumedEvent.STEP_INTO_INSTRUCTION:
+				detail = DebugEvent.STEP_INTO;
+				preserveStackFrames();
+				break;
+			case ICDIResumedEvent.STEP_OVER:
+			case ICDIResumedEvent.STEP_OVER_INSTRUCTION:
+				detail = DebugEvent.STEP_OVER;
+				preserveStackFrames();
+				break;
+			case ICDIResumedEvent.STEP_RETURN:
+				detail = DebugEvent.STEP_RETURN;
+				preserveStackFrames();
+				break;
+		}
+		fireResumeEvent( detail );
 	}
 	
 	private void handleEndSteppingRange( ICDIEndSteppingRange endSteppingRange )
 	{
-		fireSuspendEvent( DebugEvent.UNSPECIFIED );
+		fireSuspendEvent( DebugEvent.STEP_END );
 	}
 
 	private void handleBreakpointHit( ICDIBreakpoint breakpoint )
@@ -911,9 +885,15 @@ public class CThread extends CDebugElement
 	 */
 	protected synchronized void stepToFrame( IStackFrame frame ) throws DebugException
 	{
-		if ( !canStepReturn() )
-		{
-			return;
-		}
 	}
+	
+	private void setRefreshChildren( boolean refresh )
+	{
+		fRefreshChildren = refresh;
+	}
+	
+	private boolean refreshChildren()
+	{
+		return fRefreshChildren;
+	} 
 }

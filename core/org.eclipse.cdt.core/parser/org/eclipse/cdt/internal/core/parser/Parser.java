@@ -2260,11 +2260,22 @@ public class Parser implements IParser
                                             consume();
                                             done = true;
                                             break;
-                                        case IToken.tIDENTIFIER :
-                                            duple = typeId();
-                                            exceptionSpecIds.add( duple );
-                                            try
-                                            {
+										case IToken.tCOMMA :
+											consume();
+											break;
+                                        default :
+                                        	String image = LA(1).getImage();
+                                        	try {
+                                            	duple = typeId();
+                                            	exceptionSpecIds.add( duple );
+                                        	} catch (Backtrack e) {
+												failParse();
+												Util.debugLog( "Unexpected Token =" + image );
+												consume(); // eat this token anyway
+												continue;
+                                        	}
+                                            
+                                            try {	
                                                 callback
                                                     .declaratorThrowExceptionName(
                                                     declarator);
@@ -2273,13 +2284,6 @@ public class Parser implements IParser
                                             {
                                             }
                                             break;
-                                        case IToken.tCOMMA :
-                                            consume();
-                                            break;
-                                        default :
-                                            Util.debugLog( "Unexpected Token =" + LA(1).getImage() );
-                                            failParse();
-                                            continue;
                                     }
                                 }
                                 if( exceptionSpecIds != null )
@@ -2303,24 +2307,28 @@ public class Parser implements IParser
                                 }
                             }
  
-                            if ( ( afterCVModifier != LA(1) ||  LT(1) == IToken.tSEMI ) && cvModifier != null  )
+                            if ( afterCVModifier != LA(1) ||  LT(1) == IToken.tSEMI )
                             {
                                 // There were C++-specific clauses after const/volatile modifier
                                 // Then it is a marker for the method
-                                try
-                                {
-                                    callback.declaratorCVModifier(
-                                        declarator,
-                                        cvModifier);
+                                if ( cvModifier != null ) {
+	                                try
+	                                {
+	                                    callback.declaratorCVModifier(
+	                                        declarator,
+	                                        cvModifier);
+	                                }
+	                                catch (Exception e)
+	                                {
+	                                }
+	                                
+	                                if( cvModifier.getType() == IToken.t_const )
+	                                	d.setConst( true );
+									if( cvModifier.getType() == IToken.t_volatile )
+										d.setVolatile( true );
                                 }
-                                catch (Exception e)
-                                {
-                                }
-                                
-                                if( cvModifier.getType() == IToken.t_const )
-                                	d.setConst( true );
-								if( cvModifier.getType() == IToken.t_volatile )
-									d.setVolatile( true );
+									
+								afterCVModifier = mark();
                                 
                                 // In this case (method) we can't expect K&R parameter declarations,
                                 // but we'll check anyway, for errorhandling
@@ -2328,7 +2336,7 @@ public class Parser implements IParser
                             else
                             {
                                 // let's try this modifier as part of K&R parameter declaration
-                                backup(beforeCVModifier);
+                                if (cvModifier != null) backup(beforeCVModifier);
                             }
                             
                             if (LT(1) != IToken.tSEMI)

@@ -1,3 +1,6 @@
+2003-07-02 Victor Mozgin
+	Fixed PR 39501 : Parser problems with throw clauses.
+
 2003-06-30 John Camelon
 	Further restructuring of Parser for ISourceElementRequestor. 
 	Added interfaces/implementation for Simple Declarations.  

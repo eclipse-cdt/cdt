@@ -1,3 +1,7 @@
+2003-07-02 Victor Mozgin
+	Added DOMTests::testBug39501().
+	Improved filtering of expected failures/inconclusives in TortureTest.
+
 2003-06-30 John Camelon
 	Added DOMTests::testAssignmentExpression()
 	Added PreprocessorConditionalTest to ParserTestSuite.  

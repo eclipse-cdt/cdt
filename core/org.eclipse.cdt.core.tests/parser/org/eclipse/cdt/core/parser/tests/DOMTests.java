@@ -2195,4 +2195,8 @@ public class DOMTests extends BaseDOMTest {
 		parse("unsigned char a[sizeof (struct sss)];");
 	}
 	
+	public void testBug39501() throws Exception
+	{
+		parse("struct A { A() throw (int); };");
+	}
 }

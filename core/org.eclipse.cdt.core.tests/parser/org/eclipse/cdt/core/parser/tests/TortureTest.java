@@ -18,7 +18,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
@@ -89,7 +88,7 @@ public class TortureTest extends FractionalAutomatedTest {
 			
 			}
 		} catch (FileNotFoundException e){
-			testSources.put(resourcePath + "/default", "cpp");
+			testSources.put(resourcePath, "cpp");
 		}
 		
 		if (!isEnabled) testSources.clear();
@@ -126,19 +125,84 @@ public class TortureTest extends FractionalAutomatedTest {
 
 		fail(output);
 	}
+
 	
-	
-	static protected boolean isExpectedToPass (String testCode) 
-	{
+	static protected boolean isExpectedToPass (String testCode, File file) 
+	{	
+		String fileName = file.getName();
+		
+		// Filter out gcc-specific tests that are not easy to detect automatically
+		if (   fileName.equals("init-2.c")
+			|| fileName.equals("init-3.c")
+			|| fileName.equals("struct-ini-4.c")) {
+				
+				// gcc-specific (and deprecated) designated initializers
+				// struct { int e1, e2; } v = { e2: 0 };
+				
+				return false;
+		}
+		
+		if (   fileName.equals("stmtexpr3.C")) {
+		
+				// statements in expressions
+				// B() : a(({ 1; })) {}
+		
+				return false;
+		}
+		
+		if (   fileName.equals("widechar-1.c")) {
+		
+				// concatenation of incompatible literals
+				// char *s = L"a" "b";
+
+				return false;
+		}
+		
+		if (   fileName.equals("bf-common.h")
+		    || fileName.equals("class-tests-1.h")
+			|| fileName.equals("unclaimed-category-1.h")) {
+		
+				// ObjectiveC header file
+
+				return false;
+		}
+		
 		// Process some DejaGNU instructions	
-		if (testCode.indexOf("{ dg-do run") >= 0) return true;
-		if (testCode.indexOf("{ dg-do link") >= 0) return true;
 		if (testCode.indexOf("{ dg-error") >= 0) return false;
 		if (testCode.indexOf("// ERROR") >= 0) return false;
 		if (testCode.indexOf("- ERROR") >= 0) return false;
 		if (testCode.indexOf("// XFAIL") >= 0) return false;
+		if (testCode.indexOf("- XFAIL") >= 0) return false;
 		if (testCode.indexOf("{ xfail") >= 0) return false;
 		if (testCode.indexOf("{ dg-preprocess") >= 0) return false;
+		if (testCode.indexOf("{ dg-do preprocess") >= 0) return false;
+	
+		// gcc extensions
+		if (testCode.indexOf("__attribute") >= 0) return false;
+		if (testCode.indexOf("__extension") >= 0) return false;
+		if (testCode.indexOf("__restrict") >= 0) return false;
+		if (testCode.indexOf("__const") >= 0) return false;
+		if (testCode.indexOf("__declspec") >= 0) return false;
+		if (testCode.indexOf("__alignof") >= 0) return false;
+		if (testCode.indexOf("__label") >= 0) return false;
+		if (testCode.indexOf("__real") >= 0) return false;
+		if (testCode.indexOf("__imag") >= 0) return false;
+		if (testCode.indexOf("extern template") >= 0) return false;
+		if (testCode.indexOf("inline template") >= 0) return false;
+		if (testCode.indexOf("static template") >= 0) return false;
+		if (testCode.indexOf("typeof") >= 0) return false;
+		if (testCode.indexOf(" asm") >= 0) return false;
+		if (testCode.indexOf(") return") >= 0) return false;
+		if (testCode.indexOf("#ident") >= 0) return false;
+		
+		// These are expected errors (not marked in the code)
+		if (testCode.indexOf("#include_next") >= 0) return false;
+		
+		// Long long literals are part of ANSI C99
+		// if (containsLongLongLiterals(testCode)) return false;
+	
+		if (testCode.indexOf("{ dg-do run") >= 0) return true;
+		if (testCode.indexOf("{ dg-do link") >= 0) return true;
 		
 		return true;
 	}
@@ -164,7 +228,7 @@ public class TortureTest extends FractionalAutomatedTest {
 		
 		String testCode = code.toString();
 		
-		if (isExpectedToPass(testCode)) {
+		if (isExpectedToPass(testCode, file)) {
 			ParseThread thread = new ParseThread();
 
 			thread.quickParse = quickParse;

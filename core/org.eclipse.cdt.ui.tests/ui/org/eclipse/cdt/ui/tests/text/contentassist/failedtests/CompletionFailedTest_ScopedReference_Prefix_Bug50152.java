@@ -24,8 +24,8 @@ import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
  */
 public class CompletionFailedTest_ScopedReference_Prefix_Bug50152  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionFailedTestStart2.cpp";
-	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
+	private final String fileName = "CompletionTestStart31.cpp";
+	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod";

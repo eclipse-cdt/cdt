@@ -17,14 +17,14 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Namespace_Reference, with no prefix
+ * Testing Type_Reference, with no prefix
  * Bug#50471 : Wrong completion kind after the "using" keyword
  *
  */
 public class CompletionTest_TypeRef_NoPrefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionFailedTestStart3.cpp";
-	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
+	private final String fileName = "CompletionTestStart24.cpp";
+	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTCompilationUnit";

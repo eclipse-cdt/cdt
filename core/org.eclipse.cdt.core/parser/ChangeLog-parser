@@ -1,3 +1,6 @@
+2004-01-29 Hoda Amer
+	Put CompletionKind.FUNCTION_REFERENCE back.
+	
 2004-01-28 John Camelon
 	Fixed Bug 50821 - Freezes when opening / saving .c file 
 

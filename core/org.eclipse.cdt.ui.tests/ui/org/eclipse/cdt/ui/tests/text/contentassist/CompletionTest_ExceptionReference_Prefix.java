@@ -25,8 +25,8 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
  */
 public class CompletionTest_ExceptionReference_Prefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionFailedTestStart9.cpp";
-	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
+	private final String fileName = "CompletionTestStart22.cpp";
+	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod";
@@ -34,13 +34,11 @@ public class CompletionTest_ExceptionReference_Prefix  extends CompletionProposa
 	private final CompletionKind expectedKind = CompletionKind.EXCEPTION_REFERENCE;
 	private final String expectedPrefix = "a"; 
 	private final String[] expectedResults = {
-			//TODO Hoda please validate/verify this list
-// Should be 			
-//			"aClass",
-//			"anotherClass",
-//			"aNamespace",
-//			"anEnumeration",
-//			"AStruct"
+			"aClass",
+			"anotherClass",
+			"aNamespace",
+			"anEnumeration",
+			"AStruct"
 	};
 	
 	public CompletionTest_ExceptionReference_Prefix(String name) {

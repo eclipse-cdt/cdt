@@ -24,8 +24,8 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
  */
 public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionFailedTestStart7.h";
-	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
+	private final String fileName = "CompletionTestStart20.h";
+	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTCompilationUnit";
@@ -33,9 +33,8 @@ public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBa
 	private final CompletionKind expectedKind = CompletionKind.CLASS_REFERENCE; 
 	private final String expectedPrefix = "a"; 
 	private final String[] expectedResults = {
-// Should be 			
-//			"aClass",
-//			"anotherClass"
+			"aClass",
+			"anotherClass"
 	};
 	
 	public CompletionTest_ClassReference_Prefix(String name) {

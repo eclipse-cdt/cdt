@@ -56,20 +56,24 @@ public class AutomatedSuite extends TestSuite {
 		addTest(CompletionTest_MemberReference_Arrow_Prefix.suite());
 		addTest(CompletionTest_MemberReference_Arrow_Prefix2.suite());
 		addTest(CompletionTest_MemberReference_Arrow_NoPrefix.suite());
+		addTest(CompletionTest_NamespaceRef_Prefix.suite());
+		addTest(CompletionTest_NamespaceRef_NoPrefix.suite());
+		addTest(CompletionTest_TypeRef_NoPrefix.suite());		
+		addTest(CompletionTest_TypeRef_Prefix.suite());		
+		addTest(CompletionTest_ClassReference_NoPrefix.suite());
+		addTest(CompletionTest_ClassReference_Prefix.suite());
+		addTest(CompletionTest_NewTypeReference_NoPrefix.suite());
+		addTest(CompletionTest_NewTypeReference_Prefix.suite());
+		addTest(CompletionTest_ExceptionReference_NoPrefix.suite());
+		addTest(CompletionTest_ExceptionReference_Prefix.suite());
 		
 		// Failed Tests
 		addTest(CompletionFailedTest_ScopedReference_NoPrefix_Bug50152.suite());
 		addTest(CompletionFailedTest_ScopedReference_Prefix_Bug50152.suite());
-		addTest(CompletionTest_TypeRef_NoPrefix.suite());		
-		addTest(CompletionTest_TypeRef_Prefix.suite());		
 		addTest(CompletionFailedTest_MacroRef_NoPrefix_Bug50487.suite());		
 		addTest(CompletionFailedTest_MacroRef_Prefix_Bug50487.suite());
-		addTest(CompletionTest_ClassReference_NoPrefix.suite());
-		addTest(CompletionTest_ClassReference_Prefix.suite());
-		addTest(CompletionTest_ExceptionReference_NoPrefix.suite());
-		addTest(CompletionTest_ExceptionReference_Prefix.suite());
-		addTest(CompletionTest_NewTypeReference_NoPrefix.suite());
-		addTest(CompletionTest_NewTypeReference_Prefix.suite());
+		addTest(CompletionFailedTest_FunctionReference_Bug50807.suite());
+		addTest(CompletionFailedTest_ConstructorReference_Bug50808.suite());
 	}
 	
 }

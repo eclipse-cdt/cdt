@@ -55,7 +55,7 @@ public interface IASTCompletionNode {
 		// any place where exclusively a preprocessor macro name would be expected  
 		public static final CompletionKind MACRO_REFERENCE = new CompletionKind( 10 );
 		
-		// any place where constructor arguments are expected 
+		// any place where constructor parameters are expected 
 		public static final CompletionKind CONSTRUCTOR_REFERENCE = new CompletionKind( 12 );
 		
 		// any place where exclusively a keyword is expected 
@@ -66,7 +66,10 @@ public interface IASTCompletionNode {
 		
 		// any place where a type or variable name is expected to be introduced
 		public static final CompletionKind USER_SPECIFIED_NAME = new CompletionKind( 15 );
-						
+
+		// any place where function parameters are expected 
+		public static final CompletionKind FUNCTION_REFERENCE = new CompletionKind( 16 );
+		
 		// after a new expression
 		public static final CompletionKind NEW_TYPE_REFERENCE = new CompletionKind( 17 );
 		

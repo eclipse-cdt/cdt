@@ -25,8 +25,8 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
  */
 public class CompletionTest_ExceptionReference_NoPrefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionFailedTestStart10.cpp";
-	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
+	private final String fileName = "CompletionTestStart23.cpp";
+	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod"; 
@@ -34,14 +34,7 @@ public class CompletionTest_ExceptionReference_NoPrefix  extends CompletionPropo
 	private final CompletionKind expectedKind = CompletionKind.EXCEPTION_REFERENCE;
 	private final String expectedPrefix = ""; 
 	private final String[] expectedResults = {
-			//TODO Hoda is this right?  namespaces should not be allowed, unless you mean for qualified type
-// Should be 			
-//			"aClass",
-//			"anotherClass",
-//			"aNamespace",
-//			"anEnumeration",
-//			"AStruct",
-//			"..."
+			"..."
 	};
 	
 	public CompletionTest_ExceptionReference_NoPrefix(String name) {

@@ -24,8 +24,8 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
  */
 public class CompletionTest_NewTypeReference_NoPrefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionFailedTestStart12.cpp";
-	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
+	private final String fileName = "CompletionTestStart29.cpp";
+	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod";
@@ -33,9 +33,6 @@ public class CompletionTest_NewTypeReference_NoPrefix  extends CompletionProposa
 	private final CompletionKind expectedKind = CompletionKind.NEW_TYPE_REFERENCE; 
 	private final String expectedPrefix = ""; 
 	private final String[] expectedResults = {
-			//TODO - Hoda please look into why these results do not resolve
-	// should be
-//			"aClass"
 	};
 	
 	public CompletionTest_NewTypeReference_NoPrefix(String name) {

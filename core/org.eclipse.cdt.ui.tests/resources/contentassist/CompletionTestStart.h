@@ -52,8 +52,11 @@ public:
 
 class xOtherClass {
 public:
+	xOtherClass(char*);
+	xOtherClass(int);
 	int xOtherField;
 	void xOtherMethod();
+	void xOtherMethod(int);
 };
 
 namespace aNamespace {

@@ -8,42 +8,45 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist;
+package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
+
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
  * 
- * Testing Type_Reference, with prefix
- * Bug#50471 : Wrong completion kind after the "using" keyword
+ * Testing Function_Reference
+ * Bug#
  *
  */
-public class CompletionTest_TypeRef_Prefix  extends CompletionProposalsBaseTest{
+public class CompletionFailedTest_FunctionReference_Bug50807  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionTestStart25.cpp";
+	private final String fileName = "CompletionTestStart34.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTCompilationUnit";
-	private final String expectedContextName = "null"; 
-	private final CompletionKind expectedKind = CompletionKind.TYPE_REFERENCE; 
-	private final String expectedPrefix = "a"; 
+	private final String expectedScopeName = "ASTMethod";
+	private final String expectedContextName = "null"; // either the context or the prefix should be meaningful "ASTMethod"
+	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE; // should be CompletionKind.FUNCTION_REFERENCE; 
+	private final String expectedPrefix = ""; // should be "xAClassMethod"
 	private final String[] expectedResults = {
-// Should be 			
-//			"aNamespace"
+	// should be
+	//		"xOtherMethod() void",
+	//		"xOtherMethod(int) void"
 	};
 	
-	public CompletionTest_TypeRef_Prefix(String name) {
+	public CompletionFailedTest_FunctionReference_Bug50807(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_TypeRef_Prefix.class.getName());
-		suite.addTest(new CompletionTest_TypeRef_Prefix("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionFailedTest_FunctionReference_Bug50807.class.getName());
+		suite.addTest(new CompletionFailedTest_FunctionReference_Bug50807("testCompletionProposals"));
 		return suite;
 	}		
 	
@@ -51,7 +54,7 @@ public class CompletionTest_TypeRef_Prefix  extends CompletionProposalsBaseTest{
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("using a ") + 7;
+		return getBuffer().indexOf("(      ") + 2;
 	}
 
 	/* (non-Javadoc)

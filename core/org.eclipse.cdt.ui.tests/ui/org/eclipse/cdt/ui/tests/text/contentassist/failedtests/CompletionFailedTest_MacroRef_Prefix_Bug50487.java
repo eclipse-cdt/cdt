@@ -24,8 +24,8 @@ import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
  */
 public class CompletionFailedTest_MacroRef_Prefix_Bug50487  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionFailedTestStart6.cpp";
-	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
+	private final String fileName = "CompletionTestStart27.cpp";
+	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTCompilationUnit";

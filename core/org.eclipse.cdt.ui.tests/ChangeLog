@@ -1,3 +1,7 @@
+2004-01-29 Hoda Amer
+	Added two more tests, namely Function_Reference and Constructor_Reference.
+	Moved tests starts resources all to one directory.
+	
 2004-01-28 John Camelon
 	Updated and renamed CompletionFailedTest_NewTypeReference_NoPrefix_Bug50711 to CompletionTest_NewTypeReference_NoPrefix, moving it to the success tests directory.
 	Updated and renamed CompletionFailedTest_NewTypeReference_Prefix_Bug50711 to CompletionTest_NewTypeReference_Prefix, moving it to the success tests directory.

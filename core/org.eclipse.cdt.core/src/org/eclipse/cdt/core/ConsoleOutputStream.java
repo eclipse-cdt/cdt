@@ -21,7 +21,7 @@ public class ConsoleOutputStream extends OutputStream {
 	}
 
 		
-	public String readBuffer() {
+	public synchronized String readBuffer() {
 		String buf = fBuffer.toString();
 		fBuffer.setLength(0);
 		return buf;

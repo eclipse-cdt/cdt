@@ -1,4 +1,9 @@
 2002-11-20 David Inglis
+	* src/.../internal/core/CBuilder.java
+	fix AUTO_BUILDs so that the builder only builds when the resources change
+	in the project.
+	
+2002-11-20 David Inglis
 	* plugin.xml
 	fixed bug #26640
 

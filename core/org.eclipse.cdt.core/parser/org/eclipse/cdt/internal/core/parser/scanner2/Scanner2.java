@@ -1985,6 +1985,11 @@ public class Scanner2 implements IScanner, IScannerData {
 				arg = new char[arglen];
 				System.arraycopy(buffer, argstart, arg, 0, arglen);
 			}
+			
+			//TODO 16.3.1 We are supposed to completely macro replace the arguments before
+			//substituting them in, this is only a partial replacement of object macros,
+			//we may need a full solution later.
+			arg = replaceArgumentMacros( arg );
 			argmap.put(arglist[currarg], arg);
 			
 			if (c == ')')
@@ -1999,6 +2004,37 @@ public class Scanner2 implements IScanner, IScannerData {
 		return result;
 	}
 
+	private char[] replaceArgumentMacros( char [] arg ){
+		// Check for macro expansion
+		Object expObject = definitions.get(arg, 0, arg.length);
+		
+		// but not if it has been expanded on the stack already
+		// i.e. recursion avoidance
+		if (expObject != null){
+			for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos){
+				if (bufferData[stackPos] != null
+						&& bufferData[stackPos] instanceof ObjectStyleMacro
+						&& CharArrayUtils.equals(arg, ((ObjectStyleMacro)bufferData[stackPos]).name)) 
+				{
+					expObject = null;
+					break;
+				}
+			}
+		}
+		
+		if( expObject == null )
+		    return arg;
+		
+		if (expObject instanceof ObjectStyleMacro) {
+			ObjectStyleMacro expMacro = (ObjectStyleMacro)expObject;
+			return expMacro.expansion;
+		} else if (expObject instanceof char[]) {
+			return (char[])expObject;
+		}
+		
+		return arg;
+	}
+	
 	private int expandFunctionStyleMacro(
 			char[] expansion,
 			CharArrayObjectMap argmap,

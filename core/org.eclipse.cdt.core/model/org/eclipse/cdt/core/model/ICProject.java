@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IPath;
  * @see CCore#create(org.eclipse.core.resources.IProject)
  * @see IBuildEntry
  */
-public interface ICProject extends IParent, ICResource, ICElement {
+public interface ICProject extends IParent, ICResource {
 
 	/**
 	 * Returns the <code>ICElement</code> corresponding to the given

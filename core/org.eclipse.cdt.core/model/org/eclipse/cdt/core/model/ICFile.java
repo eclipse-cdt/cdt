@@ -10,7 +10,7 @@ import org.eclipse.core.resources.IFile;
 /**
  * A C File Resource.
  */
-public interface ICFile extends IParent, ICResource, ICElement {
+public interface ICFile extends IParent, ICResource {
 
 	public boolean isBinary();
 

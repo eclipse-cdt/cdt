@@ -179,6 +179,10 @@ public abstract class CElement extends PlatformObject implements ICElement {
 			return true;
 		if (o instanceof CElement) {
 			CElement other = (CElement) o;
+			if( fName == null  || other.fName == null ) 
+				return false;
+			if( fName.length() == 0  || other.fName.length() == 0 ) 
+				return false;
 			if (fType != other.fType)
 				return false;
 			if (other.fName != null && fName.equals(other.fName)) {

@@ -179,7 +179,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			resolvedEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES);
 			if (generateMarkers) {
 				final ICProject finalCProject = cproject;
-				final IPathEntry[] finalEntries = resolvedEntries; 
+				final IPathEntry[] finalEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES); 
 				Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
 					/* (non-Javadoc)
 					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -566,8 +566,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			if (runInitializer) {
 				// remove the lock.
 				final PathEntryContainerInitializer initializer = getPathEntryContainerInitializer(containerPath.segment(0));
+				final boolean[] ok = {false};
 				if (initializer != null) {
-					final boolean[] ok = {true};
 					// wrap initializer call with Safe runnable in case
 					// initializer would be
 					// causing some grief
@@ -577,16 +577,16 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR,
 									"Exception occurred in container initializer: "+initializer, exception); //$NON-NLS-1$
 							CCorePlugin.log(status);
-							ok[0] = false;
 						}
 							
 						public void run() throws Exception {
 							initializer.initialize(containerPath, project);
+							ok[0] = true;
 						}
 					});
-					if (!ok[0]) {
-						containerPut(project, containerPath, null); // flush and notify
-					}
+				}
+				if (!ok[0]) {
+					containerPut(project, containerPath, null); // flush and notify
 				}
 			} 
 			// retrieve new value

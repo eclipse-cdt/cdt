@@ -147,8 +147,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	public IToken consume(int type) throws EndOfFileException, BacktrackException {
 	    if (LT(1) == type)
 	        return consume();
-	    else
-	        throw backtrack;
+	    throw backtrack;
 	}
 
 	/**
@@ -565,16 +564,14 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					declarator.addPointerOperator(ASTPointerOperator.RESTRICT_POINTER);
 					break;
 	        	}
-	        	else
-	        	{
-	        		if( extension.isValidCVModifier( language, IToken.t_restrict ))
-	        		{
-		        		result = consume( IToken.t_restrict );
-						declarator.addPointerOperator( extension.getPointerOperator(language, IToken.t_restrict ));
-						break;	        			
-	        		}
-	        		throw backtrack;
-	        	}
+        		if( extension.isValidCVModifier( language, IToken.t_restrict ))
+        		{
+	        		result = consume( IToken.t_restrict );
+					declarator.addPointerOperator( extension.getPointerOperator(language, IToken.t_restrict ));
+					break;	        			
+        		}
+        		throw backtrack;
+
 	        	
 	        default :
 	            if( extension.isValidCVModifier( language, LT(1)))
@@ -925,8 +922,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	            throw backtrack;
 	        }
 	    }
-	    else
-	        return firstExpression;
+	    return firstExpression;
 	}
 
 	/**
@@ -1199,52 +1195,49 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                    backup(mark);
 	                    return firstExpression;
 	                }
-	                else
-	                {
-	                    IASTExpression.Kind expressionKind = null;
-	                    switch (t.getType())
-	                    {
-	                        case IToken.tGT :
-	                            expressionKind =
-	                                IASTExpression.Kind.RELATIONAL_GREATERTHAN;
-	                            break;
-	                        case IToken.tLT :
-	                            expressionKind = IASTExpression.Kind.RELATIONAL_LESSTHAN;
-	                            break;
-	                        case IToken.tLTEQUAL :
-	                            expressionKind =
-	                                IASTExpression
-	                                    .Kind
-	                                    .RELATIONAL_LESSTHANEQUALTO;
-	                            break;
-	                        case IToken.tGTEQUAL :
-	                            expressionKind =
-	                                IASTExpression
-	                                    .Kind
-	                                    .RELATIONAL_GREATERTHANEQUALTO;
-	                            break;
-	                    }
-	                    try
-	                    {
-	                        firstExpression =
-	                            astFactory.createExpression(
-	                                scope,
-	                                expressionKind,
-	                                firstExpression,
-	                                secondExpression,
-	                                null,
-	                                null,
-	                                null, EMPTY_STRING, null); 
-	                    }
-	                    catch (ASTSemanticException e)
-	                    {
-	                        throw backtrack;
-	                    } catch (Exception e)
-	                    {
-	                    	logException( "relationalExpression::createExpression()", e ); //$NON-NLS-1$
-	                        throw backtrack;
-	                    }
-	                }
+                    IASTExpression.Kind expressionKind = null;
+                    switch (t.getType())
+                    {
+                        case IToken.tGT :
+                            expressionKind =
+                                IASTExpression.Kind.RELATIONAL_GREATERTHAN;
+                            break;
+                        case IToken.tLT :
+                            expressionKind = IASTExpression.Kind.RELATIONAL_LESSTHAN;
+                            break;
+                        case IToken.tLTEQUAL :
+                            expressionKind =
+                                IASTExpression
+                                    .Kind
+                                    .RELATIONAL_LESSTHANEQUALTO;
+                            break;
+                        case IToken.tGTEQUAL :
+                            expressionKind =
+                                IASTExpression
+                                    .Kind
+                                    .RELATIONAL_GREATERTHANEQUALTO;
+                            break;
+                    }
+                    try
+                    {
+                        firstExpression =
+                            astFactory.createExpression(
+                                scope,
+                                expressionKind,
+                                firstExpression,
+                                secondExpression,
+                                null,
+                                null,
+                                null, EMPTY_STRING, null); 
+                    }
+                    catch (ASTSemanticException e)
+                    {
+                        throw backtrack;
+                    } catch (Exception e)
+                    {
+                    	logException( "relationalExpression::createExpression()", e ); //$NON-NLS-1$
+                        throw backtrack;
+                    }
 	                break;
 	            default :
 	            	if( extension.isValidRelationalExpressionStart(language, LT(1)))
@@ -2548,15 +2541,10 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	            try
 	            {
 	            	if( t instanceof INumericToken )
-	            	{
 		                return astFactory.createExpression(
 		                    IASTExpression.Kind.PRIMARY_INTEGER_LITERAL,
 		                    ((INumericToken)t).getIntegerValue(), isHex);
-	            	}
-	            	else
-	            	{
-	            		return astFactory.createExpression( scope, IASTExpression.Kind.PRIMARY_INTEGER_LITERAL, null, null, null, null, null, t.getImage(), null ); 
-	            	}
+            		return astFactory.createExpression( scope, IASTExpression.Kind.PRIMARY_INTEGER_LITERAL, null, null, null, null, null, t.getImage(), null ); 
 	            }
 	            catch (ASTSemanticException e1)
 	            {

@@ -154,22 +154,25 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 		
 			// case 3: 1 is null
 			if( currentMacro == null )
+			{
 				if( currentDeclaration.getStartingOffset() < currentInclusion.getStartingOffset() )
 					return updateDeclarationIterator(); 
-				else
-					return updateInclusionIterator(); 
+				return updateInclusionIterator();
+			}
 
 			if( currentInclusion == null )
+			{
 				if( currentDeclaration.getStartingOffset() < currentMacro.getStartingOffset() )
 					return updateDeclarationIterator(); 
-				else
-					return updateMacroIterator(); 
+				return updateMacroIterator();
+			}
 
 			if( currentDeclaration == null )
+			{
 				if( currentInclusion.getStartingOffset() < currentMacro.getStartingOffset() )
 					return updateInclusionIterator(); 
-				else
-					return updateMacroIterator(); 
+				return updateMacroIterator(); 
+			}
 		
 			// case 4: none are null 
 			if( currentInclusion.getStartingOffset() < currentMacro.getStartingOffset() && 

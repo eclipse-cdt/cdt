@@ -385,15 +385,13 @@ public class DeclarationWrapper implements IDeclaratorOwner
         			throw new ASTSemanticException( (IProblem)null );
             	return createFieldASTNode(declarator, false );
         }
-        else 
-        {	
-        	if (isFunction)
-               		return createFunctionASTNode(declarator, false);
-        	else 
-        		if( declarator.hasFunctionBody() )
-        			throw new ASTSemanticException( (IProblem)null );
-            	return createVariableASTNode(declarator, false);
-        }
+       	if (isFunction)
+        	return createFunctionASTNode(declarator, false);
+       	else 
+       		if( declarator.hasFunctionBody() )
+       			throw new ASTSemanticException( (IProblem)null );
+           	return createVariableASTNode(declarator, false);
+
     }
     /**
      * @param declarator
@@ -418,18 +416,12 @@ public class DeclarationWrapper implements IDeclaratorOwner
 				{
 					if( isFunction)
 						return createMethodASTNode(declarator, true);
-					else 
-						return createFieldASTNode(declarator, true );
+					return createFieldASTNode(declarator, true );
 				}
-				else 
-				{	
-					if (isFunction)
-						return createFunctionASTNode(declarator, true);
-					else 
-						return createVariableASTNode(declarator, true);
-				}
-
-        	}
+				if (isFunction)
+					return createFunctionASTNode(declarator, true);
+				return createVariableASTNode(declarator, true);
+			}
         	
 			List convertedParms = createParameterList( declarator.getParameters() );        	
         	IASTAbstractDeclaration abs = null;
@@ -450,18 +442,15 @@ public class DeclarationWrapper implements IDeclaratorOwner
 						getStartingOffset(), getStartingLine(), d
 								.getNameStartOffset(), d.getNameEndOffset(), d
 								.getNameLine());
-        	else {
-        		if( isWithinClass )
-        			return astFactory.createField( scope, nameDuple, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode() );
-        		else 
-        			return astFactory.createVariable( scope, nameDuple, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );
-        	}
+        	
+        	if( isWithinClass )
+        		return astFactory.createField( scope, nameDuple, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode() );
+        	 
+        	return astFactory.createVariable( scope, nameDuple, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );        	
         	
         }
-        else
-        {
-        	throw new BacktrackException();
-        }
+       	throw new BacktrackException();
+
     }
     
     /**

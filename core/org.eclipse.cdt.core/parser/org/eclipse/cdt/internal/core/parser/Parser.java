@@ -267,62 +267,53 @@ public abstract class Parser extends ExpressionParser implements IParser
                 astUD.acceptElement(requestor);
                 return astUD;
             }
-            else
-            {
-                throw backtrack;
-            }
+            throw backtrack;
+        }
+        boolean typeName = false;
+        setCompletionValues(scope, CompletionKind.TYPE_REFERENCE, Key.POST_USING );
+        
+        if (LT(1) == IToken.t_typename)
+        {
+            typeName = true;
+            consume(IToken.t_typename);
+        }
+
+        setCompletionValues(scope, CompletionKind.TYPE_REFERENCE, Key.NAMESPACE_ONLY );
+        ITokenDuple name = null;
+        if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
+        {
+            //	optional :: and nested classes handled in name
+            name = name(scope, CompletionKind.TYPE_REFERENCE, Key.EMPTY);
         }
         else
         {
-            boolean typeName = false;
-            setCompletionValues(scope, CompletionKind.TYPE_REFERENCE, Key.POST_USING );
-            
-            if (LT(1) == IToken.t_typename)
-            {
-                typeName = true;
-                consume(IToken.t_typename);
-                
-            }
-
-            setCompletionValues(scope, CompletionKind.TYPE_REFERENCE, Key.NAMESPACE_ONLY );
-            ITokenDuple name = null;
-            if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
-            {
-                //	optional :: and nested classes handled in name
-                name = name(scope, CompletionKind.TYPE_REFERENCE, Key.EMPTY);
-            }
-            else
-            {
-                throw backtrack;
-            }
-            if (LT(1) == IToken.tSEMI)
-            {
-                IToken last = consume(IToken.tSEMI);
-                IASTUsingDeclaration declaration = null;
-                try
-                {
-                    declaration =
-                        astFactory.createUsingDeclaration(
-                            scope,
-                            typeName,
-                            name,
-                            firstToken.getOffset(),
-                            firstToken.getLineNumber(), last.getEndOffset(), last.getLineNumber());
-                }
-                catch (Exception e1)
-                {
-                	logException( "usingClause:createUsingDeclaration", e1 ); //$NON-NLS-1$
-                    throw backtrack;
-                }
-                declaration.acceptElement( requestor );
-                setCompletionValues(scope, getCompletionKindForDeclaration(scope, null), Key.DECLARATION );
-                return declaration;
-            }
-            else
-            {
-                throw backtrack;
-            }
+            throw backtrack;
         }
+        if (LT(1) == IToken.tSEMI)
+        {
+            IToken last = consume(IToken.tSEMI);
+            IASTUsingDeclaration declaration = null;
+            try
+            {
+                declaration =
+                    astFactory.createUsingDeclaration(
+                        scope,
+                        typeName,
+                        name,
+                        firstToken.getOffset(),
+                        firstToken.getLineNumber(), last.getEndOffset(), last.getLineNumber());
+            }
+            catch (Exception e1)
+            {
+            	logException( "usingClause:createUsingDeclaration", e1 ); //$NON-NLS-1$
+                throw backtrack;
+            }
+            declaration.acceptElement( requestor );
+            setCompletionValues(scope, getCompletionKindForDeclaration(scope, null), Key.DECLARATION );
+            return declaration;
+        }
+            throw backtrack;
+    
     }
     /**
      * Implements Linkage specification in the ANSI C++ grammar. 
@@ -391,27 +382,27 @@ public abstract class Parser extends ExpressionParser implements IParser
             linkage.exitScope( requestor );
             return linkage;
         }
-        else // single declaration
-            {
-            IASTLinkageSpecification linkage;
-            try
-            {
-                linkage =
-                    astFactory.createLinkageSpecification(
-                        scope,
-                        spec.getImage(),
-                        firstToken.getOffset(), firstToken.getLineNumber());
-            }
-            catch (Exception e)
-            {
-            	logException( "linkageSpecification_2:createLinkageSpecification", e ); //$NON-NLS-1$
-                throw backtrack;
-            }
-			linkage.enterScope( requestor );
-            declaration(linkage, null, null);
-			linkage.exitScope( requestor );
-			return linkage;
+        // single declaration
+
+        IASTLinkageSpecification linkage;
+        try
+        {
+            linkage =
+                astFactory.createLinkageSpecification(
+                    scope,
+                    spec.getImage(),
+                    firstToken.getOffset(), firstToken.getLineNumber());
         }
+        catch (Exception e)
+        {
+        	logException( "linkageSpecification_2:createLinkageSpecification", e ); //$NON-NLS-1$
+            throw backtrack;
+        }
+		linkage.enterScope( requestor );
+        declaration(linkage, null, null);
+		linkage.exitScope( requestor );
+		return linkage;
+
     }
     /**
      * 
@@ -464,36 +455,34 @@ public abstract class Parser extends ExpressionParser implements IParser
  
             return templateInstantiation;
         }
-        else
+        consume(IToken.tLT);
+        if (LT(1) == IToken.tGT)
         {
-            consume(IToken.tLT);
-            if (LT(1) == IToken.tGT)
+            consume(IToken.tGT);
+            // explicit-specialization
+            
+            IASTTemplateSpecialization templateSpecialization;
+            try
             {
-                consume(IToken.tGT);
-                // explicit-specialization
-                
-                IASTTemplateSpecialization templateSpecialization;
-                try
-                {
-                    templateSpecialization =
-                        astFactory.createTemplateSpecialization(
-                            scope,
-                            firstToken.getOffset(), firstToken.getLineNumber());
-                }
-                catch (Exception e)
-                {
-                	logException( "templateDeclaration:createTemplateSpecialization", e ); //$NON-NLS-1$
-                	backup( mark );
-                    throw backtrack;
-                }
-				templateSpecialization.enterScope(requestor);
-                declaration(templateSpecialization, templateSpecialization, null);
-                templateSpecialization.setEndingOffsetAndLineNumber(
-                    lastToken.getEndOffset(), lastToken.getLineNumber());
-                templateSpecialization.exitScope(requestor);
-                return templateSpecialization;
+                templateSpecialization =
+                    astFactory.createTemplateSpecialization(
+                        scope,
+                        firstToken.getOffset(), firstToken.getLineNumber());
             }
+            catch (Exception e)
+            {
+            	logException( "templateDeclaration:createTemplateSpecialization", e ); //$NON-NLS-1$
+            	backup( mark );
+                throw backtrack;
+            }
+			templateSpecialization.enterScope(requestor);
+            declaration(templateSpecialization, templateSpecialization, null);
+            templateSpecialization.setEndingOffsetAndLineNumber(
+                lastToken.getEndOffset(), lastToken.getLineNumber());
+            templateSpecialization.exitScope(requestor);
+            return templateSpecialization;
         }
+
         
         try
         {
@@ -1110,52 +1099,47 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 return declaration;
             }
-            else
-            {
-                IASTDeclaration declaration = (IASTDeclaration)i.next();
-                endDeclaration( declaration );
-                declaration.enterScope( requestor );
+            IASTDeclaration declaration = (IASTDeclaration)i.next();
+            endDeclaration( declaration );
+            declaration.enterScope( requestor );
    			
-   				if ( !( declaration instanceof IASTScope ) ) 
-   					throw backtrack;
+   			if ( !( declaration instanceof IASTScope ) ) 
+   				throw backtrack;
  
-				handleFunctionBody((IASTScope)declaration );
-				((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
-					lastToken.getEndOffset(), lastToken.getLineNumber());
+			handleFunctionBody((IASTScope)declaration );
+			((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
+				lastToken.getEndOffset(), lastToken.getLineNumber());
   
-  				declaration.exitScope( requestor );
+  			declaration.exitScope( requestor );
   				
-  				if( hasFunctionTryBlock )
-					catchHandlerSequence( scope );
+ 			if( hasFunctionTryBlock )
+				catchHandlerSequence( scope );
   				
-  				return declaration;
+  			return declaration;
   				
-            }
         }
-        else
-        {
         	
-            try
-            {
-            	if( sdw.getTypeSpecifier() != null )
-            	{
-	           		IASTAbstractTypeSpecifierDeclaration declaration = astFactory.createTypeSpecDeclaration(
-	                        sdw.getScope(),
-	                        sdw.getTypeSpecifier(),
-	                        ownerTemplate,
-	                        sdw.getStartingOffset(),
-	                        sdw.getStartingLine(), lastToken.getEndOffset(), lastToken.getLineNumber(),
-							sdw.isFriend());
-					declaration.acceptElement(requestor);
-					return declaration;
-            	}
-            }
-            catch (Exception e1)
-            {
-            	logException( "simpleDeclaration:createTypeSpecDeclaration", e1 ); //$NON-NLS-1$
-                throw backtrack;
-            }
+        try
+        {
+        	if( sdw.getTypeSpecifier() != null )
+        	{
+           		IASTAbstractTypeSpecifierDeclaration declaration = astFactory.createTypeSpecDeclaration(
+                        sdw.getScope(),
+                        sdw.getTypeSpecifier(),
+                        ownerTemplate,
+                        sdw.getStartingOffset(),
+                        sdw.getStartingLine(), lastToken.getEndOffset(), lastToken.getLineNumber(),
+						sdw.isFriend());
+				declaration.acceptElement(requestor);
+				return declaration;
+        	}
         }
+        catch (Exception e1)
+        {
+        	logException( "simpleDeclaration:createTypeSpecDeclaration", e1 ); //$NON-NLS-1$
+            throw backtrack;
+        }
+
         return null;
     }
 
@@ -3203,9 +3187,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	protected void handleClassSpecifier( IASTClassSpecifier classSpecifier ) throws EndOfFileException
 	{
 		cleanupLastToken();
-		if( classSpecifier instanceof IASTOffsetableNamedElement )
-			handleOffsetableNamedElement( classSpecifier );
-
+		handleOffsetableNamedElement( classSpecifier );
 	}
 
 

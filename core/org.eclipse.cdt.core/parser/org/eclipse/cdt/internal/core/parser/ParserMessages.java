@@ -41,14 +41,12 @@ public class ParserMessages {
 	 * @return
 	 */
 	public static String getString(String key) {
-		if( resourceBundle == null ){
+		if( resourceBundle == null )
 			return '#' + key +'#';
-		} else {
-			try {
-				return resourceBundle.getString(key);
-			} catch (MissingResourceException e) {
-				return '!' + key + '!';
-			}
+		try {
+			return resourceBundle.getString(key);
+		} catch (MissingResourceException e) {
+			return '!' + key + '!';
 		}
 	}
 	

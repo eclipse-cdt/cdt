@@ -496,12 +496,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			iterator.next();
 			return pst.getCompilationUnit();
 		}
-		else
-		{
-			return scopeToSymbol(currentScope);
-		}
-        	
-        
+		return scopeToSymbol(currentScope);
     }
     protected IContainerSymbol scopeToSymbol(IASTScope currentScope)
     {
@@ -935,9 +930,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			ASTNode referenced = (definition != null) ? definition : declaration;
 			if( referenced instanceof IASTMethod )
+			
 				return new ASTMethodReference( offset, referenceElementName, (IASTMethod)referenced ); 
-			else
-				return new ASTFunctionReference( offset, referenceElementName, (IASTFunction)referenced );
+			return new ASTFunctionReference( offset, referenceElementName, (IASTFunction)referenced );
 		}
 		else if( ( symbol.getType() == TypeInfo.t_type ) || 
 				( symbol.getType() == TypeInfo.t_bool )||
@@ -1279,9 +1274,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 //			assert lhsInfo != null : "Malformed Expression";
 			return null;
 		}
-		else { 
-			return startingScope;
-		}		
+		return startingScope;		
     }
     	
     /*

@@ -400,8 +400,7 @@ public class Scanner implements IScanner {
 					// multiline comment
 					if (skipOverMultilineComment())
 						break;
-					else
-						c = getChar( true );
+					c = getChar( true );
 					continue;
 				} else {
 					// we are not in a comment
@@ -851,13 +850,8 @@ public class Scanner implements IScanner {
 		{
 			c = getChar(); 
 			if( c == '#' )
-			{
 				return true; 
-			}
-			else
-			{
-				ungetChar( c );
-			}
+			ungetChar( c );
 		}
 
 		ungetChar( c );
@@ -922,11 +916,8 @@ public class Scanner implements IScanner {
 				// consume \ \r \n and then continue
 				return getChar(true);
 			}
-			else
-			{
-				// consume the \ \r and then continue
-				return c;
-			}
+			// consume the \ \r and then continue
+			return c;
 		}
 		
 		if (c == '\n')
@@ -1024,8 +1015,7 @@ public class Scanner implements IScanner {
 				} else if( c == '.' ){
 					if( getChar() == '.' )
 						return newConstantToken( IToken.tELLIPSIS );
-					else
-						handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, null, beginOffset, false, true );				
+					handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, null, beginOffset, false, true );				
 				} else {
 					ungetChar( c );
 					return newConstantToken( IToken.tDOT ); 
@@ -1502,8 +1492,7 @@ public class Scanner implements IScanner {
 					if( buff == null )	return null;
 					continue; // back to top of loop
 				}
-				else
-					ungetChar( next );
+				ungetChar( next );
 			}
 			break;
 		}
@@ -1540,12 +1529,9 @@ public class Scanner implements IScanner {
 
 		if (tokenTypeObject != null)
 			return newConstantToken(((Integer) tokenTypeObject).intValue());
-		else
-		{
-			if( scannerExtension.isExtensionKeyword( scannerData.getLanguage(), ident ) )
-				return newExtensionToken( scannerExtension.createExtensionToken(scannerData, ident ));
-			return newToken(IToken.tIDENTIFIER, ident);
-		}
+		if( scannerExtension.isExtensionKeyword( scannerData.getLanguage(), ident ) )
+			return newExtensionToken( scannerExtension.createExtensionToken(scannerData, ident ));
+		return newToken(IToken.tIDENTIFIER, ident);
 	}
 	
 	/**
@@ -2023,22 +2009,16 @@ public class Scanner implements IScanner {
 								c = getChar();
 								continue;
 							}
-							else
+							token = processKeywordOrIdentifier( secondBuffer, pasting );
+							if (token == null) 
 							{
-								token = processKeywordOrIdentifier( secondBuffer, pasting );
-								if (token == null) 
-								{
-									c = getChar();
-									continue;
-								}
-								return token;
+								c = getChar();
+								continue;
 							}
+							return token;
 						}
-						else
-						{
-							ungetChar( next );
-							handleProblem( IProblem.SCANNER_BAD_CHARACTER, ucnBuffer.toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead );
-						}
+						ungetChar( next );
+						handleProblem( IProblem.SCANNER_BAD_CHARACTER, ucnBuffer.toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead );
 					}
 					
 					handleProblem( IProblem.SCANNER_BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead ); 
@@ -2259,11 +2239,10 @@ public class Scanner implements IScanner {
                 {
                     return newToken( IToken.tSTRING, buff.toString());
     
-                } else {
-                	handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true );
-                	c = getChar(); 
-                	continue;
                 }
+                handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true );
+                c = getChar(); 
+                continue;
         
             } else {
                 switch (c) {
@@ -2776,15 +2755,14 @@ public class Scanner implements IScanner {
 					if( c == '\n' ){
 						c = getChar();
 						continue;
-					} else {
-						StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
-						ungetChar( c );
-						potentialErrorMessage.append( buffer );
-						potentialErrorMessage.append( '\\');
-						potentialErrorMessage.append( (char)c );
-						handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, potentialErrorMessage.toString(), beginning, false, true);
-						return;
-					}
+					} 
+					StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
+					ungetChar( c );
+					potentialErrorMessage.append( buffer );
+					potentialErrorMessage.append( '\\');
+					potentialErrorMessage.append( (char)c );
+					handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, potentialErrorMessage.toString(), beginning, false, true);
+					return;
 				} else if( c == '\r' || c == '\n' || c == NOCHAR ){
 					StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
 					potentialErrorMessage.append( buffer );
@@ -3110,31 +3088,31 @@ public class Scanner implements IScanner {
 						if( index == -1 ){
 							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, expansion.getName(), getCurrentOffset(), false, true );
 							return;
-						} else {
-							buffer.append('\"');
-							String value = (String)parameterValuesForStringizing.elementAt(index);
-							char val [] = value.toCharArray();
-							char ch;
-							int length = value.length();
-							for( int j = 0; j < length; j++ ){
-								ch = val[j];
-								if( ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' ){
-									//Each occurance of whitespace becomes a single space character
-									while( ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' ){
-										ch = val[++j];
-									}
-									buffer.append(' ');
-								} 
-								//a \ character is inserted before each " and \
-								if( ch == '\"' || ch == '\\' ){
-									buffer.append('\\');
-									buffer.append(ch);
-								} else {
-									buffer.append(ch);
+						} 
+						buffer.append('\"');
+						String value = (String)parameterValuesForStringizing.elementAt(index);
+						char val [] = value.toCharArray();
+						char ch;
+						int length = value.length();
+						for( int j = 0; j < length; j++ ){
+							ch = val[j];
+							if( ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' ){
+								//Each occurance of whitespace becomes a single space character
+								while( ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' ){
+									ch = val[++j];
 								}
+								buffer.append(' ');
+							} 
+							//a \ character is inserted before each " and \
+							if( ch == '\"' || ch == '\\' ){
+								buffer.append('\\');
+								buffer.append(ch);
+							} else {
+								buffer.append(ch);
 							}
-							buffer.append('\"');
 						}
+						buffer.append('\"');
+						
 					} else {
 						switch( t.getType() )
 						{

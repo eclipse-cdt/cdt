@@ -56,11 +56,8 @@ public class BranchTracker {
 			
 			return taken;
 		}
-		else
-		{
-			branches.push( FALSE ); 
-			return false; 
-		}
+		branches.push( FALSE ); 
+		return false; 
 	}	
 	
 	public boolean queryCurrentBranchForElif()

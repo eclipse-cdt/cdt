@@ -118,6 +118,8 @@ public class ContextualParser extends CompleteParser {
 	protected void setCompletionFunctionName() {
 		functionOrConstructorName = currentFunctionName;
 	}
+	
+	
 
 	protected void setCompletionKeywords(KeywordSets.Key key) {
 		this.keywordSet = KeywordSets.getKeywords( key, language );
@@ -162,6 +164,7 @@ public class ContextualParser extends CompleteParser {
 	}
 
 	private String currentFunctionName = EMPTY_STRING;
+	protected IASTExpression parameterListExpression;
 	
 	
 	
@@ -253,5 +256,19 @@ public class ContextualParser extends CompleteParser {
 		setCompletionKeywords(key);
 		setCompletionKind(kind);
 		checkEndOfFile();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setParameterListExpression(org.eclipse.cdt.core.parser.ast.IASTExpression)
+	 */
+	protected void setParameterListExpression(
+			IASTExpression assignmentExpression) {
+		parameterListExpression = assignmentExpression;
+	}
+	/**
+	 * @return Returns the parameterListExpression.
+	 */
+	public final IASTExpression getParameterListExpression() {
+		return parameterListExpression;
 	}
 }

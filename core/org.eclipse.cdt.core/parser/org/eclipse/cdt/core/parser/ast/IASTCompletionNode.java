@@ -114,7 +114,14 @@ public interface IASTCompletionNode {
 	 * 					CONSTRUCTOR_REFERENCE
 	 * 					FUNCTION_REFERENCE
 	 */
-	public String			getFunctionName(); 
+	public String			getFunctionName();
+	
+	/**
+	 * 
+	 * @return		the IASTExpression representing the number of parameters
+	 * input in the CONSTRUCTOR_REFERENCE/FUNCTION_REFERENCE context.  
+	 */
+	public IASTExpression   getFunctionParameters();
 	
 	/**
 	 * @return		the prefix

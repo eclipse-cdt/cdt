@@ -931,4 +931,55 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 				                                                 node.getCompletionContext() );
 		assertEquals( result.getResultsSize(), 1 );
 	}
+	
+	public void testParameterListFunctionReference() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "int foo( int firstParam, int secondParam );\n"); //$NON-NLS-1$
+		writer.write( "void main() { \n"); //$NON-NLS-1$
+		writer.write( "  int abc;\n"); //$NON-NLS-1$
+		writer.write( "  int x;\n" ); //$NON-NLS-1$
+		writer.write( "  foo( x,a"); //$NON-NLS-1$
+		String code = writer.toString();
+		for( int i = 0; i < 2; ++i )
+		{
+			int index = code.indexOf( "x,a") + 2; //$NON-NLS-1$
+			if( i == 1 ) index++;
+			IASTCompletionNode node = parse( code, index );
+			validateCompletionNode(node, (( i == 0 ) ? "" : "a" ), CompletionKind.FUNCTION_REFERENCE, null, true ); //$NON-NLS-1$ //$NON-NLS-2$
+			assertNotNull( node.getFunctionParameters() );
+			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+                    new IASTNode.LookupKind[]{ IASTNode.LookupKind.LOCAL_VARIABLES },
+                    node.getCompletionContext() );
+			assertNotNull(result);
+			assertEquals( result.getResultsSize(), ( i == 0 ) ? 2 : 1 );
+		}
+	}
+	
+	public void testParameterListConstructorReference() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "class A { \n"); //$NON-NLS-1$
+		writer.write( "public:\n"); //$NON-NLS-1$
+		writer.write( "  A( int first, int second );\n"); //$NON-NLS-1$
+		writer.write( "};\n" ); //$NON-NLS-1$
+		writer.write( "void main() { \n"); //$NON-NLS-1$
+		writer.write( "  int four, x;"); //$NON-NLS-1$
+		writer.write( "  A * a = new A( x,f "); //$NON-NLS-1$
+		String code = writer.toString();
+		for( int i = 0; i < 2; ++i )
+		{
+			int index = code.indexOf( "x,f") + 2; //$NON-NLS-1$
+			if( i == 1 ) index++;
+			IASTCompletionNode node = parse( code, index );
+			validateCompletionNode(node, (( i == 0 ) ? "" : "f" ), CompletionKind.CONSTRUCTOR_REFERENCE, null, true ); //$NON-NLS-1$ //$NON-NLS-2$
+			assertNotNull( node.getFunctionParameters() );
+			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+                    new IASTNode.LookupKind[]{ IASTNode.LookupKind.LOCAL_VARIABLES },
+                    node.getCompletionContext() );
+			assertNotNull(result);
+			assertEquals( result.getResultsSize(), ( i == 0 ) ? 2 : 1 );
+		}
+	}
+
 }

@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 
@@ -28,8 +29,9 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	private final CompletionKind kind;
 	private final Set keywordSet;
 	private final String functionName;
+	private final IASTExpression parameterListExpression;
 
-	public ASTCompletionNode( CompletionKind kind, IASTScope scope, IASTNode context, String prefix, Set keywords, String functionName )
+	public ASTCompletionNode( CompletionKind kind, IASTScope scope, IASTNode context, String prefix, Set keywords, String functionName, IASTExpression expression )
 	{
 		this.kind = kind;
 		this.context = context;
@@ -37,6 +39,7 @@ public class ASTCompletionNode implements IASTCompletionNode {
 		this.prefix = prefix;
 		this.keywordSet = keywords;
 		this.functionName = functionName;
+		this.parameterListExpression = expression;
 	}
 	
 	/* (non-Javadoc)
@@ -87,6 +90,13 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	 */
 	public String getFunctionName() {
 		return functionName;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTCompletionNode#getFunctionParameters()
+	 */
+	public IASTExpression getFunctionParameters() {
+		return parameterListExpression;
 	}
 
 }

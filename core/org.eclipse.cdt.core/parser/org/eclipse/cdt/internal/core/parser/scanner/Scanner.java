@@ -2005,7 +2005,7 @@ public class Scanner implements IScanner {
 	 */
 	protected void handleCompletionOnDefinition(String definition) throws EndOfFileException {
 		IASTCompletionNode node = new ASTCompletionNode( IASTCompletionNode.CompletionKind.MACRO_REFERENCE, 
-				null, null, definition, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()), EMPTY_STRING );
+				null, null, definition, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()), EMPTY_STRING, null );
 		
 		throwEOF( node ); 
 	}
@@ -2064,19 +2064,19 @@ public class Scanner implements IScanner {
 		
 		IASTCompletionNode node = new ASTCompletionNode( kind, 
 				null, null, prefix, 
-				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSets.Key.EMPTY : KeywordSets.Key.MACRO), scannerData.getLanguage()), EMPTY_STRING );
+				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSets.Key.EMPTY : KeywordSets.Key.MACRO), scannerData.getLanguage()), EMPTY_STRING, null );
 		
 		throwEOF( node );
 	}
 
 	protected void handleInvalidCompletion() throws EndOfFileException
 	{
-		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, EMPTY_STRING, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()) , EMPTY_STRING)); 
+		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, EMPTY_STRING, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()) , EMPTY_STRING, null)); 
 	}
 	
 	protected void handleCompletionOnPreprocessorDirective( String prefix ) throws EndOfFileException 
 	{
-		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.NO_SUCH_KIND, null, null, prefix, KeywordSets.getKeywords(KeywordSets.Key.PP_DIRECTIVE, scannerData.getLanguage() ), EMPTY_STRING));
+		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.NO_SUCH_KIND, null, null, prefix, KeywordSets.getKeywords(KeywordSets.Key.PP_DIRECTIVE, scannerData.getLanguage() ), EMPTY_STRING, null));
 	}
 	/**
 	 * @param key

@@ -740,8 +740,10 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    IASTExpression assignmentExpression = assignmentExpression(scope,kind,key);
 	    while (LT(1) == IToken.tCOMMA)
 	    {
-	        consume();
+	        consume(IToken.tCOMMA);
+	        setParameterListExpression( assignmentExpression );
 	        IASTExpression secondExpression = assignmentExpression(scope,kind,key);
+	        setParameterListExpression( null );
 	        try
 	        {
 	            assignmentExpression =
@@ -766,6 +768,11 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    return assignmentExpression;
 	}
 
+	/**
+	 * @param assignmentExpression
+	 */
+	protected void setParameterListExpression(IASTExpression assignmentExpression) {
+	}
 	/**
 	 * @param expression
 	 * @throws BacktrackException

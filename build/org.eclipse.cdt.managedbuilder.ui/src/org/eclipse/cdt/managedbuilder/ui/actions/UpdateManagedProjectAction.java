@@ -13,6 +13,9 @@ package org.eclipse.cdt.managedbuilder.ui.actions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -24,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -73,6 +77,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 	private static final String ID_GNU = "gnu";	//$NON-NLS-1$
 	private static final String ID_INCPATHS = "incpaths";	//$NON-NLS-1$
 	private static final String ID_INCLUDE = "include";	//$NON-NLS-1$
+	private static final String ID_LIBS = "libs";	//$NON-NLS-1$
 	private static final String ID_LINUX = "linux";	//$NON-NLS-1$
 	private static final String ID_OPTION = "option";	//$NON-NLS-1$
 	private static final String ID_OPTIONS = "options";	//$NON-NLS-1$
@@ -103,6 +108,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 	private static final int TYPE_EXE = 0;
 	private static final int TYPE_SHARED = 1;
 	private static final int TYPE_STATIC = 2;
+	private static Map configIdMap;
 	
 	/* (non-Javadoc)
 	 * Create a back-up file containing the pre-2.0 project settings. 
@@ -189,6 +195,8 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		for (int refIndex = 0; refIndex < toolRefNodes.getLength(); ++refIndex) {
 			convertToolRef(newConfig, (Element) toolRefNodes.item(refIndex), monitor);
 		}
+		
+		getConfigIdMap().put(oldConfig.getAttribute(IConfiguration.ID), newConfig);
 		monitor.worked(1);
 	}
 	
@@ -259,6 +267,20 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		int dirIndex = newIdVector.indexOf(ID_DIRS);
 		if (dirIndex != -1) {
 			newIdVector.remove(dirIndex);
+		}
+		
+		// Another boundary condition to check is the case where the linker option
+		// has gnu.[c|cpp].link.option.libs.paths or gnu.[c|cpp].link.option.libs.paths 
+		// because the new option format does away with the libs in the second last element
+		try {
+			if ((newIdVector.lastElement().equals(ID_PATHS) || newIdVector.lastElement().equals(ID_LIBS)) 
+				&& newIdVector.get(newIdVector.size() - 2).equals(ID_LIBS)) {
+				newIdVector.remove(newIdVector.size() - 2);
+			}
+		} catch (NoSuchElementException e) {
+			// ignore this exception
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// ignore this exception too
 		}
 		
 		// Construct the new ID
@@ -338,8 +360,8 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 				type = TYPE_EXE;
 			} else if (token.equalsIgnoreCase(ID_SHARED)){
 				type = TYPE_SHARED;
-			} else if (token.equalsIgnoreCase(ID_SHARED)){
-				type = TYPE_SHARED;
+			} else if (token.equalsIgnoreCase(ID_STATIC)){
+				type = TYPE_STATIC;
 			}
 		}
 		// Create a target based on the new target type
@@ -366,7 +388,26 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		try {
 			// Create a new target based on the new parent
 			newTarget = ManagedBuildManager.createTarget(project, newParent);
-			newTarget.setArtifactName(oldTarget.getAttribute(ITarget.ARTIFACT_NAME));
+			// Old build goals made no distinction between the name and extension
+			String buildGoal = oldTarget.getAttribute(ITarget.ARTIFACT_NAME);
+			String[] nameElements = buildGoal.split("\\.");	//$NON-NLS-1$
+			String artifactName = null;
+			try {
+				// We should have a name (which may inlcude whitespaces)
+				artifactName = nameElements[0];
+			} catch (ArrayIndexOutOfBoundsException e) {
+				artifactName = "default";	//$NON-NLS-1$
+			}
+			// Now add back the extension
+			String artifactExtension = new String();
+			for (int index = 1; index < nameElements.length; ++index) {
+				artifactExtension += nameElements[index];
+				if (index < nameElements.length - 1) {
+					artifactExtension += ".";	//$NON-NLS-1$
+				}
+			}
+			newTarget.setArtifactName(artifactName);
+			newTarget.setArtifactExtension(artifactExtension);
 			
 			// Create new configurations
 			NodeList configNodes = oldTarget.getElementsByTagName(IConfiguration.CONFIGURATION_ELEMENT_NAME);
@@ -462,11 +503,12 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 			NodeList targetNodes = document.getElementsByTagName(ITarget.TARGET_ELEMENT_NAME);
 			// This is a guess, but typically the project has 1 target, 2 configs, and 6 tool defs
 			int listSize = targetNodes.getLength();
-			monitor.beginTask(ManagedBuilderUIMessages.getFormattedString("ManagedBuildConvert.12x.monitor.message.project", projectName), listSize * 9); //$NON-NLS-1$	
+			monitor.beginTask(ManagedBuilderUIMessages.getFormattedString("ManagedBuildConvert.12x.monitor.message.project", projectName), listSize * 9); //$NON-NLS-1$
+			ITarget newTarget = null;
 			for (int targIndex = 0; targIndex < listSize; ++targIndex) {
 				Element oldTarget = (Element) targetNodes.item(targIndex);
 				String oldTargetId = oldTarget.getAttribute(ITarget.ID);
-				ITarget newTarget = convertTarget(project, oldTarget, monitor);
+				newTarget = convertTarget(project, oldTarget, monitor);
 			
 				// Remove the old target
 				if (newTarget != null) {
@@ -474,6 +516,25 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 					monitor.worked(9);
 				}
 			}
+			
+			// Set the default configuration
+			NodeList defaultConfigNodes = document.getElementsByTagName(IManagedBuildInfo.DEFAULT_CONFIGURATION);
+			Element defaultConfig = (Element) defaultConfigNodes.item(0);
+			if (defaultConfig != null) {
+				// Find the new config corresponding to the old default ID
+				String oldDefConfigId = defaultConfig.getAttribute(IBuildObject.ID);
+				IConfiguration newDefaultConfig = (IConfiguration) getConfigIdMap().get(oldDefConfigId);
+				info.setDefaultConfiguration(newDefaultConfig);
+			} else {
+				// Otherwise just choose the first config in the list
+				IConfiguration[] newConfigs = newTarget.getConfigurations();
+				try {
+					info.setDefaultConfiguration(newConfigs[0]);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					// Should never get here
+				}
+			}
+			
 			// Upgrade the version
 			((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
 		} catch (ParserConfigurationException e) {
@@ -529,6 +590,16 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
+	}
+
+	/* (non-Javadoc)
+	 * @return Returns the configIdMap.
+	 */
+	protected static Map getConfigIdMap() {
+		if (configIdMap == null) {
+			configIdMap = new HashMap();
+		}
+		return configIdMap;
 	}
 
 	/* (non-Javadoc)

@@ -38,7 +38,9 @@ public class ContentAssistPreference {
 	public final static String PARAMETERS_BACKGROUND=  "content_assist_parameters_background"; //$NON-NLS-1$
 	/** Preference key for content assist auto insert */
 	public final static String AUTOINSERT=  "content_assist_autoinsert"; //$NON-NLS-1$
-	
+	/** Preference key for content assist to insert the common prefix */
+	public final static String CODEASSIST_PREFIX_COMPLETION= "content_assist_prefix_completion"; //$NON-NLS-1$
+
 	/** Preference key for C/CPP content assist auto activation triggers */
 	public final static String AUTOACTIVATION_TRIGGERS_DOT= "content_assist_autoactivation_trigger_dot"; //$NON-NLS-1$
 	public final static String AUTOACTIVATION_TRIGGERS_ARROW= "content_assist_autoactivation_trigger_arrow"; //$NON-NLS-1$
@@ -139,7 +141,10 @@ public class ContentAssistPreference {
 		
 		enabled= store.getBoolean(AUTOINSERT);
 		assistant.enableAutoInsert(enabled);
-			
+
+		enabled = store.getBoolean(CODEASSIST_PREFIX_COMPLETION);
+		assistant.enablePrefixCompletion(enabled);
+
 		configureCProcessor(assistant, store);
 	}
 	

@@ -1,3 +1,17 @@
+2005-01-29 Alain Magloire
+	Fix for 81403: Move the Code Assist preference page
+	out of the CEditor preference page.  It clean the CEditorPreferencePage
+	and takes less time to instantiate.
+	New checkbox in Code Assist to complete common prefix.
+	+ src/org/eclipse/cdt/internal/ui/preferences/AbstracPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/prefernces/CEditorPreferencePage.java
+	+ src/org/eclipse/cdt/internal/ui/preferences/CodeAssistPreferencge.java
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessage.java
+	* src/org/eclipse/cdt/internal/ui/text/contentassist/ContentAssistPreference.java
+	* src/org/eclipse/cdt/ui/CUIPrefernceInitializer.java
+	* plugin.xml
+	* plugin.properties
+
 2005-01-28 Alain Magloire
 	Add Indexer search in the Source Hover implementation.
 	* src/org/eclipse/cdt/intenal/ui/text/CSourceHover.java

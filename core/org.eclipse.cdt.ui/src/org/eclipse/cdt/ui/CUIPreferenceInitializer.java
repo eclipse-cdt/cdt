@@ -15,6 +15,7 @@ import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CSearchPreferencePage;
+import org.eclipse.cdt.internal.ui.preferences.CodeAssistPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -43,6 +44,7 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 		CSearchPreferencePage.initDefaults(store);
 		CView.initDefaults(store);
 		CEditorPreferencePage.initDefaults(store);
+		CodeAssistPreferencePage.initDefaults(store);
 	}
 
 }

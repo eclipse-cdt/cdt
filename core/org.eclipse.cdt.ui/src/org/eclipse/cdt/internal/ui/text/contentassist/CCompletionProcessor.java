@@ -329,19 +329,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		ICCompletionProposal[] results = null;
 
 		try {
-//			if (document != null) {
-//
-//				int offset = documentOffset;
-//				int length = 0;
-//
-//				Point selection = viewer.getSelectedRange();
-//				if (selection.y > 0) {
-//					offset = selection.x;
-//					length = selection.y;
-//				}
-
 			results = evalProposals(document, offset, unit, viewer);
-//			}
 		} catch (Exception e) {
 			CUIPlugin.getDefault().log(e);
 		}

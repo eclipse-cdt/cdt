@@ -22,7 +22,6 @@ import org.eclipse.cdt.ui.FunctionPrototypeSummary;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContextInformation;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -33,6 +32,14 @@ import org.eclipse.swt.graphics.Image;
  * 
  */
 public class ResultCollector extends CompletionRequestorAdaptor {
+	
+	private final static char[] METHOD_WITH_ARGUMENTS_TRIGGERS= new char[] { '(', '-', ' ' };
+	private final static char[] METHOD_TRIGGERS= new char[] { ';', ',', '.', '\t', '[', ' ' };
+	private final static char[] TYPE_TRIGGERS= new char[] { '.', '\t', '[', '(', ' ' };
+	private final static char[] VAR_TRIGGERS= new char[] { '\t', ' ', '[', '(', '=', '-', ';', ',', '.' };
+
+	private final String DEFINE ="#define ";  //$NON-NLS-1$
+	
 	private Set completions = new HashSet();
 	private ImageDescriptorRegistry registry = CUIPlugin.getImageDescriptorRegistry();
 	private IProblem fLastProblem;	
@@ -57,7 +64,7 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 	/*
 	 * Create a proposal
 	 */
-	public ICompletionProposal createProposal(String replaceString, String displayString, String infoString, String arguments, Image image, int offset, int length, int relevance){
+	public CCompletionProposal createProposal(String replaceString, String displayString, String infoString, String arguments, Image image, int offset, int length, int relevance){
 		CCompletionProposal proposal;
 			
 		proposal = new CCompletionProposal(
@@ -103,8 +110,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		image = registry.get( imageDescriptor );
 
 		// create proposal and add it to completions list
-		ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
+		CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 			null, image, completionStart, completionLength, relevance);
+		proposal.setTriggerCharacters(VAR_TRIGGERS);
 		completions.add(proposal);		
 	}
 	/* (non-Javadoc)
@@ -129,8 +137,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			image = registry.get( imageDescriptor );
 
 			// create proposal and add it to completions list
-			ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
+			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				null, image, completionStart, completionLength, relevance);
+			proposal.setTriggerCharacters(TYPE_TRIGGERS);
 			completions.add(proposal);		
 	}
 
@@ -178,8 +187,12 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			image = registry.get( imageDescriptor );
 
 			// create proposal and add it to completions list
-			ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
+			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				arguments, image, completionStart, completionLength, relevance);
+			
+			boolean userMustCompleteParameters= (parameterString != null && parameterString.length() > 0);
+			char[] triggers= userMustCompleteParameters ? METHOD_WITH_ARGUMENTS_TRIGGERS : METHOD_TRIGGERS;
+			proposal.setTriggerCharacters(triggers);
 			completions.add(proposal);		
 	}
 
@@ -209,7 +222,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		image = registry.get( imageDescriptor );
 
 		// create proposal and add it to completions list
-		ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), null, image, completionStart, completionLength, relevance);
+		CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), null, image, completionStart, completionLength, relevance);
+		proposal.setTriggerCharacters(VAR_TRIGGERS);
 		completions.add(proposal);		
 	}
 
@@ -230,9 +244,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			String prototype = ""; //$NON-NLS-1$
 			
 			// fill the replace, display and info strings
-			final String DEFINE ="#define ";  //$NON-NLS-1$
+			int bracket = name.indexOf('{');
 			if(name.startsWith(DEFINE)){
-				prototype = name.substring(DEFINE.length(), name.length());				
+				prototype = name.substring(DEFINE.length(), bracket == -1? name.length() : bracket);				
 			}else {
 				prototype = name;
 			}
@@ -258,8 +272,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			image = registry.get( imageDescriptor );
 
 			// create proposal and add it to completions list
-			ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
+			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				arguments, image, completionStart, completionLength, relevance);
+			proposal.setTriggerCharacters(VAR_TRIGGERS);
 			completions.add(proposal);		
 	}
 
@@ -308,8 +323,11 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			image = registry.get( imageDescriptor );
 
 			// create proposal and add it to completions list
-			ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
+			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				arguments, image, completionStart, completionLength, relevance);
+			boolean userMustCompleteParameters= (parameterString != null && parameterString.length() > 0);
+			char[] triggers= userMustCompleteParameters ? METHOD_WITH_ARGUMENTS_TRIGGERS : METHOD_TRIGGERS;
+			proposal.setTriggerCharacters(triggers);
 			completions.add(proposal);		
 	}
 
@@ -335,8 +353,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			image = registry.get( imageDescriptor );
 
 			// create proposal and add it to completions list
-			ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
+			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				null, image, completionStart, completionLength, relevance);
+			proposal.setTriggerCharacters(TYPE_TRIGGERS);
 			completions.add(proposal);		
 	}
 
@@ -362,7 +381,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			image = registry.get( imageDescriptor );
 
 			// create proposal and add it to completions list
-			ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), null, image, completionStart, completionLength, relevance);
+			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), null, image, completionStart, completionLength, relevance);
+			proposal.setTriggerCharacters(TYPE_TRIGGERS);
 			completions.add(proposal);		
 	}
 
@@ -388,7 +408,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			image = registry.get( imageDescriptor );
 
 			// create proposal and add it to completions list
-			ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), null, image, completionStart, completionLength, relevance);
+			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), null, image, completionStart, completionLength, relevance);
+			proposal.setTriggerCharacters(TYPE_TRIGGERS);
 			completions.add(proposal);		
 	}
 
@@ -417,7 +438,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			image = registry.get( imageDescriptor );
 
 			// create proposal and add it to completions list
-			ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), null, image, completionStart, completionLength, relevance);
+			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), null, image, completionStart, completionLength, relevance);
+			proposal.setTriggerCharacters(VAR_TRIGGERS);
 			completions.add(proposal);		
 	}
 	/* (non-Javadoc)
@@ -442,8 +464,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			image = registry.get( imageDescriptor );
 
 			// create proposal and add it to completions list
-			ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
+			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				null, image, completionStart, completionLength, relevance);
+			proposal.setTriggerCharacters(TYPE_TRIGGERS);
 			completions.add(proposal);		
 	}
 
@@ -470,8 +493,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			image = registry.get( imageDescriptor );
 
 			// create proposal and add it to completions list
-			ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
+			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				null, image, completionStart, completionLength, relevance);
+			proposal.setTriggerCharacters(VAR_TRIGGERS);
 			completions.add(proposal);		
 	}
 
@@ -496,8 +520,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		image = registry.get( imageDescriptor );
 
 		// create proposal and add it to completions list
-		ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
+		CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 			null, image, completionStart, completionLength, relevance);
+		proposal.setTriggerCharacters(TYPE_TRIGGERS);
 		completions.add(proposal);		
 	}
 
@@ -520,8 +545,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		
 		// no image for keywords 	
 		// create proposal and add it to completions list
-		ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
+		CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				null, image, completionStart, completionLength, relevance);
+		proposal.setTriggerCharacters(VAR_TRIGGERS);
 		completions.add(proposal);		
 	}
 

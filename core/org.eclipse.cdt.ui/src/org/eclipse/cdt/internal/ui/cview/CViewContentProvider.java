@@ -38,7 +38,6 @@ public class CViewContentProvider extends CElementContentProvider {
 	 */
 	public CViewContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
 		super(provideMembers, provideWorkingCopy);
-		setIncludesGrouping(true);
 	}
 
 	

@@ -5,6 +5,7 @@ package org.eclipse.cdt.ui.wizards.conversion;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
@@ -85,4 +86,8 @@ public class ConvertToStdMakeConversionWizard extends ConversionWizard {
         
         addPage(mainPage);
     }     
+
+	public String getProjectID() {
+		return CCorePlugin.PLUGIN_ID + ".make";//$NON-NLS-1$
+	}
 }

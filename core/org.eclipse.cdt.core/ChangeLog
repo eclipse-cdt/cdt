@@ -1,3 +1,15 @@
+2003-02-19 David Inglis
+
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/ICDescriptor.java
+	* src/org/eclipse/cdt/core/ICExtensionReference.java
+	* src/org/eclipse/cdt/core/ICOwner.java
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java
+	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java
+	* src/org/eclipse/cdt/internal/core/CExtensionReference.java
+	* src/org/eclipse/cdt/internal/core/make/MakeProject.java
+	General cleanup of CDT extensions interfaces from review with Alain.
+
 2003-02-17 Doug Schaefer
 
     Merged in Sam Robb's source for the build model.  The source can be

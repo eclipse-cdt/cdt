@@ -4,13 +4,10 @@
  */
 package org.eclipse.cdt.internal.core;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICExtension;
-import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -20,14 +17,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 public class CDescriptorManager implements IResourceChangeListener {
@@ -128,52 +118,43 @@ public class CDescriptorManager implements IResourceChangeListener {
 		COwner cowner = new COwner(id);
 		cowner.configure(project, cproject);
 		cproject.saveInfo();
+		cproject.setAutoSave(true);
 		fDescriptorMap.put(project, cproject);
 	}
 	
+    public synchronized void convert(IProject project, String id) throws CoreException {
+		CDescriptor cproject;
+		if ( fDescriptorMap == null ) {
+			fDescriptorMap = new HashMap();
+		}
+		COwner cowner = new COwner(id);
+		cproject = new CDescriptor(project, cowner);
+		cowner.configure(project, cproject);
+		cproject.saveInfo();
+		cproject.setAutoSave(true);
+		fDescriptorMap.put(project, cproject);
+	}
 	
-	public ICExtension[] createExtensions(String extensionID, IProject project) throws CoreException {
-		ArrayList extensionList = new ArrayList(1);
-		ICDescriptor cDescriptor = getDescriptor(project);
-		ICExtensionReference ext[] = cDescriptor.get(extensionID, true);
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		for( int i = 0; i < ext.length; i++ ) {
-			IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(ext[i].getExtension());
-			IExtension extension = extensionPoint.getExtension(ext[i].getID());
-			IConfigurationElement element[] = extension.getConfigurationElements();
-			for( int j = 0; j < element.length; j++ ) {
-				if ( element[j].getName().equalsIgnoreCase("run") ) {
-					InternalCExtension cExtension = (InternalCExtension) element[i].createExecutableExtension("class");
-					cExtension.setExtenionReference(ext[i]);
-					cExtension.setProject(project);
-					extensionList.add(cExtension);
-					break;
-				}
-			}
-		}		
-		return (ICExtension[]) extensionList.toArray(new ICExtension[extensionList.size()]);
-	}	
-
-    /**
+	/**
      * Must remove an existing .cdtproject file before we generate a new one when converting
      */
-    public static void removeExistingCdtProjectFile(IProject project){
-    	IFile file = project.getFile(CDescriptor.DESCRIPTION_FILE_NAME);
-    	IProgressMonitor monitor = new  NullProgressMonitor();
-    		
-		// update the resource content
-		if ((file != null) && file.exists()) {
-			try{
-				file.delete(true, monitor);
-				// remove reference from the fDescriptorMap
-				if (fDescriptorMap != null){
-					fDescriptorMap.remove(project);
-				}	
-
-				project.refreshLocal(1, monitor);		
-			}catch(CoreException ce){
-				CCorePlugin.log(ce);
-			}
-		}    	
-    }
+//    public static void removeExistingCdtProjectFile(IProject project){
+//    	IFile file = project.getFile(CDescriptor.DESCRIPTION_FILE_NAME);
+//    	IProgressMonitor monitor = new  NullProgressMonitor();
+//    		
+//		// update the resource content
+//		if ((file != null) && file.exists()) {
+//			try{
+//				file.delete(true, monitor);
+//				// remove reference from the fDescriptorMap
+//				if (fDescriptorMap != null){
+//					fDescriptorMap.remove(project);
+//				}	
+//
+//				project.refreshLocal(1, monitor);		
+//			}catch(CoreException ce){
+//				CCorePlugin.log(ce);
+//			}
+//		}    	
+//    }
 }

@@ -124,11 +124,12 @@ public abstract class ConversionWizard
      * 
      * @see org.eclipse.cdt.ui.wizards.CProjectWizard#doRun(IProgressMonitor)
      */
-    protected void doRun(IProgressMonitor monitor) {
+    protected void doRun(IProgressMonitor monitor) throws CoreException {
         try{
             mainPage.doRun(monitor, getProjectID());
         } catch (CoreException ce){
             CCorePlugin.log(ce);
+            throw ce;
         } finally{
             doRunEpilogue(monitor);
             monitor.isCanceled();
@@ -138,9 +139,7 @@ public abstract class ConversionWizard
      * Return the type of project that it is being converted to
      * The default if a make project
      */
-    public String getProjectID() {
-        return CCorePlugin.PLUGIN_ID + ".make";//$NON-NLS-1$
-    }
+    public abstract String getProjectID();
 
     /**
      * Method addPages allows subclasses to add as many pages as they need. Overwrite

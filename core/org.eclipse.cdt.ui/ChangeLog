@@ -1,3 +1,8 @@
+2003-02-19 David Inglis
+	* src/org/eclipse/cdt/ui/wizards/conversion/ConversionWizard.java
+	* src/org/eclipse/cdt/ui/wizards/conversion/ConvertToStdMakeConversionWizard.java
+	Due to CDT extensions interface cleanup.
+
 2003-02-17 Doug Schaefer
 
     Merged in Sam Robb's source for the build model.  The source can be

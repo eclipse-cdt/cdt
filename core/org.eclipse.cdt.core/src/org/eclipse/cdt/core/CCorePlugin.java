@@ -207,8 +207,12 @@ public class CCorePlugin extends Plugin {
 		return fDescriptorManager.getDescriptor(project);
 	}
 	
-	public void mapCProjectOwner(IProject project, String id) throws CoreException {
-		fDescriptorManager.configure(project, id);
+	public void mapCProjectOwner(IProject project, String id, boolean override) throws CoreException {
+		if ( !override ) {
+			fDescriptorManager.configure(project, id);
+		} else {
+			fDescriptorManager.convert(project, id);
+		}
 	}
         
     /**
@@ -242,7 +246,7 @@ public class CCorePlugin extends Plugin {
            
             // Add C Nature ... does not add duplicates
             CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
-            mapCProjectOwner(projectHandle, projectID);
+            mapCProjectOwner(projectHandle, projectID, false);
         } finally {
             //monitor.done();
         }

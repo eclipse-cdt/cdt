@@ -4,7 +4,9 @@
  */
 package org.eclipse.cdt.internal.core;
 
+import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.core.runtime.CoreException;
 
 public class CExtensionReference implements ICExtensionReference {
 	private CDescriptor fDescriptor;
@@ -35,6 +37,10 @@ public class CExtensionReference implements ICExtensionReference {
 
 	public String getExtensionData(String key) {
 		return getInfo().getAttribute(key);
+	}
+	
+	public ICExtension createExtension() throws CoreException {
+		return fDescriptor.createExtensions(this);
 	}
 
 }

@@ -27,7 +27,7 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
     private IASTName name;
     private IASTDeclarator nestedDeclarator;
     private IASTPointerOperator [] pointerOps = null;
-    private static final int DEFAULT_PTROPS_LIST_SIZE = 4;
+    private static final int DEFAULT_PTROPS_LIST_SIZE = 2;
     private int currentIndex;
 
     private void removeNullPointers() {

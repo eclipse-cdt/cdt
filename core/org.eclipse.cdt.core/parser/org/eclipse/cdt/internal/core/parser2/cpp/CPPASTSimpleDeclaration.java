@@ -71,7 +71,7 @@ public class CPPASTSimpleDeclaration extends CPPASTNode implements
 
     private int currentIndex = 0;    
     private IASTDeclarator [] declarators = null;
-    private static final int DEFAULT_DECLARATORS_LIST_SIZE = 4;
+    private static final int DEFAULT_DECLARATORS_LIST_SIZE = 2;
     private IASTDeclSpecifier declSpecifier;
 
     /**

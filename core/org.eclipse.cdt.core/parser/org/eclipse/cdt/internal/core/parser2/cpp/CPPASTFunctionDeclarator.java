@@ -26,7 +26,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
         ICPPASTFunctionDeclarator {
     
     private IASTParameterDeclaration [] parameters = null;
-    private static final int DEFAULT_PARAMETERS_LIST_SIZE = 4;
+    private static final int DEFAULT_PARAMETERS_LIST_SIZE = 2;
     
     private int currentIndex = 0;
     private boolean varArgs;

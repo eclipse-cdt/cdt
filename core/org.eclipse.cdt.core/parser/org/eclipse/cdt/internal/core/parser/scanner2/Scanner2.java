@@ -3431,5 +3431,17 @@ public class Scanner2 implements IScanner, IScannerData {
 	public int getCurrentOffset() {
 		return bufferPos[ bufferStackPos ];
 	}
+	
+	/* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        StringBuffer buffer = new StringBuffer( "Scanner @ file:"); //$NON-NLS-1$
+        buffer.append( getCurrentFilename() );
+        buffer.append( " line: "); //$NON-NLS-1$
+        buffer.append( getLineNumber( getCurrentOffset()));
+        return buffer.toString();
+    }
+	
 
 }

@@ -1,4 +1,8 @@
 2004-04-12 Mikhail Khodjaiants
+	Changed the labels of the ruler breakpoint actions.
+	* plugin.properties
+	
+2004-04-12 Mikhail Khodjaiants
 	Implementing retargettable breakpoint related actions.
 	* AddAddressBreakpointActionDelegate.java
 	* AddWatchpointActionDelegate.java

@@ -123,18 +123,18 @@ public class CContentProvider extends BaseCElementContentProvider implements ITr
 			}
 		}
 
-		if (element instanceof ITranslationUnit ||
-		    element instanceof IBinary || element instanceof IArchive) {
-			if (kind == ICElementDelta.CHANGED) {
+		if (kind == ICElementDelta.CHANGED) {
+			if ((flags & ICElementDelta.F_BINARY_PARSER_CHANGED) != 0) {
+				// throw the towel and do a full refresh of the affected C project. 
+				postRefresh(element.getCProject());
+				return;
+			} else if (element instanceof ITranslationUnit ||
+					element instanceof IBinary || element instanceof IArchive) {
 				postRefresh(element);
 				return;
 			}
-		}
 
-		//if (isBuildPathChange(delta)) {
-			// throw the towel and do a full refresh of the affected C project. 
-			//postRefresh(element.getCProject());
-		//}
+		}
 
 		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
 		for (int i= 0; i < affectedChildren.length; i++) {
@@ -142,9 +142,9 @@ public class CContentProvider extends BaseCElementContentProvider implements ITr
 		}
 
 		// Make sure that containers are updated.
-		if (element instanceof ICRoot) {
-			updateContainer((ICRoot)element);
-		}
+		//if (element instanceof ICRoot) {
+		//	updateContainer((ICRoot)element);
+		//}
 	}
 
 	private void updateContainer(ICRoot root) {

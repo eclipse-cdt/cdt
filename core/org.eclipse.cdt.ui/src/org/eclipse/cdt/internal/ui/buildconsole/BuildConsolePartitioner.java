@@ -149,7 +149,6 @@ public class BuildConsolePartitioner
 					return;
 				}
 				fLastStream = entry.getStream();
-				System.out.println(entry.getText().length());
 				try {
 					warnOfContentChange(fLastStream);
 					if (fLastStream == null) {

@@ -1,3 +1,9 @@
+2003-01-14 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIVariableManager.java: New file.
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIVariableObject.java: New file.
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIArgumentObject.java: New file.
+	
 2003-01-13 Mikhail Khodjaiants
 	Added the 'IRunToAddress' interface to support the 'Run To Line' action in disassembly.
 	* ICDebugTarget.java: extends IRunToAddress

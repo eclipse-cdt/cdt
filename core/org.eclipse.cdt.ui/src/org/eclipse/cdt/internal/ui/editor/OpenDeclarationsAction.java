@@ -27,12 +27,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
  * This action opens a java CEditor on the element represented by text selection of
@@ -105,6 +107,15 @@ public class OpenDeclarationsAction extends Action {
 			try {
 				ArrayList elementsFound = new ArrayList();
 				String sel = selection.getText();
+				if (sel.equals(""))
+				{
+					int selStart =  selection.getOffset();
+					
+					IDocumentProvider prov = fEditor.getDocumentProvider();
+					IDocument doc = prov.getDocument(fEditor.getEditorInput());
+					sel = getSelection(doc, selStart);
+				}
+				
 				IFile file = fEditor.getInputFile();
 				if(file == null)
 					return;
@@ -202,6 +213,39 @@ public class OpenDeclarationsAction extends Action {
 			}
 		}		
 		return null;
-	}					
+	}	
+	
+
+	public String getSelection(IDocument doc, int fPos){
+		int pos= fPos;
+		char c;
+		int fStartPos =0, fEndPos=0;
+		String selectedWord=null;
+		
+		try{
+			while (pos >= 0) {
+				c= doc.getChar(pos);
+				if (!Character.isJavaIdentifierPart(c))
+					break;
+				--pos;
+			}
+			fStartPos= pos + 1;
+			
+			pos= fPos;
+			int length= doc.getLength();
+			while (pos < length) {
+				c= doc.getChar(pos);
+				if (!Character.isJavaIdentifierPart(c))
+					break;
+				++pos;
+			}
+			fEndPos= pos;
+			selectedWord = doc.get(fStartPos, (fEndPos - fStartPos));
+		}
+		catch(BadLocationException e){
+		}
+	
+		return selectedWord;		
+	}
 }
 

@@ -1,3 +1,6 @@
+2003-11-10 Bogdan Gheorghe
+	fix bug 45688: must highlight keyword  to use "Open Declarations" or  "Add Include"
+	
 2003-11-05 John Camelon
 	Updated parser clients to use new IProblem strategy.  
 

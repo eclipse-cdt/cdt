@@ -1,3 +1,14 @@
+2002-11-18 Alain Magloire
+
+	* src/.../internal/ui/editor/CEditor.java (createCSourceViewer):
+	Check for null pointer, the file maybe an IStorage.
+	* src/.../internal/ui/cview/CViewSorter.java (category): Expand
+	the category to include member of a translationUnit. 
+	* src/.../internal/ui/cview/CContentProvider.java (processDelta):
+	postRefresh() for IBinary and IArchive files also.
+	* src/.../internal/ui/cview/CElementAdapterFactory.java (getAdapter):
+	Call getResource() instead of getUnderlyingResource().
+
 2002-11-15 Alain Magloire
 
 	* src/.../internal/ui/cview/CView.java (addBookMarkMenu):

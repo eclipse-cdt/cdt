@@ -109,6 +109,14 @@ public class CommandFactory {
 		return new MIEnvironmentPWD();
 	}
 
+	/**
+	 * @param params
+	 * @return
+	 */
+	public MIGDBSetEnvironment createMIGDBSetEnvironment(String[] params) {
+		return new MIGDBSetEnvironment(params);
+	}
+
 	public MIExecAbort createMIExecAbort() {
 		return new MIExecAbort();
 	}

@@ -81,27 +81,31 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 	}
 
 	public IPathEntry[] getRawPathEntries() throws CoreException {
-		ArrayList pathEntries = new ArrayList();
-		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(fProject);
-		Element element = cdesc.getProjectData(PATH_ENTRY_ID);
-		NodeList list = element.getChildNodes();
-		for (int i = 0; i < list.getLength(); i++) {
-			Node childNode = list.item(i);
-			if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-				if (childNode.getNodeName().equals(PATH_ENTRY)) {
-					pathEntries.add(decodePathEntry(fProject, (Element) childNode));
+		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(fProject, false);
+		if (cdesc != null) {
+			ArrayList pathEntries = new ArrayList();
+			Element element = cdesc.getProjectData(PATH_ENTRY_ID);
+			NodeList list = element.getChildNodes();
+			for (int i = 0; i < list.getLength(); i++) {
+				Node childNode = list.item(i);
+				if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+					if (childNode.getNodeName().equals(PATH_ENTRY)) {
+						pathEntries.add(decodePathEntry(fProject, (Element) childNode));
+					}
 				}
 			}
+			IPathEntry[] entries = new IPathEntry[pathEntries.size()]; 
+			pathEntries.toArray(entries);
+			return entries;
 		}
-
-		return (IPathEntry[]) pathEntries.toArray(NO_PATHENTRIES);
+		return NO_PATHENTRIES;
 	}
 
 	public void setRawPathEntries(IPathEntry[] newRawEntries) throws CoreException {
 		if (Arrays.equals(newRawEntries, getRawPathEntries())) {
 			return;
 		}	
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(fProject);
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		Element rootElement = descriptor.getProjectData(PATH_ENTRY_ID);
 		// Clear out all current children
 		Node child = rootElement.getFirstChild();

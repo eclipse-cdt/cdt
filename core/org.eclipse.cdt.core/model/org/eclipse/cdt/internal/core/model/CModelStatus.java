@@ -196,7 +196,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 						if (i > 0) {
 							buff.append(", "); //$NON-NLS-1$
 						}
-						buff.append(((ICElement)fElements[i]).toString());
+						buff.append((fElements[i]).toString());
 					}
 					return buff.toString();
 

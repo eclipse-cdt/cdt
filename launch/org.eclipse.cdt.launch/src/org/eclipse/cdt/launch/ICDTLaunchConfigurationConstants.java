@@ -76,17 +76,25 @@ public interface ICDTLaunchConfigurationConstants {
 	 * should be relaunched with the default working directory.
 	 * </p>
 	 */
-	public static final int ERR_WORKING_DIRECTORY_NOT_SUPPORTED = 115;
+	public static final int ERR_WORKING_DIRECTORY_NOT_SUPPORTED = 100;
 	
-	/**
-	 * Status code indicating an unexpected internal error.
-	 */
-	public static final int ERR_INTERNAL_ERROR = 150;			
-
 	/**
 	 * Status code indicating the specified working directory
 	 * does not exist.
 	 */
-	public static final int ERR_WORKING_DIRECTORY_DOES_NOT_EXIST = 108;	
+	public static final int ERR_WORKING_DIRECTORY_DOES_NOT_EXIST = 101;	
 
+	/**
+	 * Status code indicating that the CDT debugger is missing
+	 * <p>
+	 * A status handler may be registered for this error condition,
+	 * and should return a String indicating which debugger to use.
+	 * </p>
+	 */
+	public static final int ERR_DEBUGGER_NOT_INSTALLED = 102;
+
+	/**
+	 * Status code indicating an unexpected internal error.
+	 */
+	public static final int ERR_INTERNAL_ERROR = 150;			
 }

@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.ICDebuggerManager;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -74,8 +75,7 @@ public class LocalCLaunchConfigurationDelegate implements ILaunchConfigurationDe
 		}	
 		return buf.toString();
 	}
-	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
-		throws CoreException {
+	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -95,9 +95,30 @@ public class LocalCLaunchConfigurationDelegate implements ILaunchConfigurationDe
 
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			ICDebuggerManager dbgmanager = CDebugCorePlugin.getDefault().getDebuggerManager();
-			ICDebugger cdebugger = dbgmanager.createDebugger(configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_CDT_DEBUGGER_ID, ""));
+			ICDebugger cdebugger = null;
+			try {
+				cdebugger = dbgmanager.createDebugger(configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_CDT_DEBUGGER_ID, ""));
+			}
+			catch (CoreException e) {
+				IStatus status = new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED, "CDT Debubger not installed", e);
+				IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
+
+				if (handler != null) {
+					Object result = handler.handleStatus(status, this);
+					if (result instanceof String) {
+					}
+				}
+				throw e;
+			}
 			IFile exe = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(projectPath);
-			ICDISession dsession = cdebugger.createLaunchSession(configuration, exe);			
+			ICDISession dsession = null;
+			try {
+				dsession = cdebugger.createLaunchSession(configuration, exe);
+			}
+			catch (CDIException e) {
+				IStatus status = new Status(0, LaunchUIPlugin.getUniqueIdentifier(), ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR,"CDI Error", e);				
+				throw new CoreException(status);
+			}			
 			ICDIRuntimeOptions opt = dsession.getRuntimeOptions();
 			opt.setArguments(configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""));
 			File wd = getWorkingDir(configuration);
@@ -106,9 +127,9 @@ public class LocalCLaunchConfigurationDelegate implements ILaunchConfigurationDe
 			}
 			opt.setEnvironment(getEnvironmentProperty(configuration));
 			ICDITarget dtarget = dsession.getTargets()[0];
-//			Process process = dtarget.getProcess();
-//			IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel((String [])command.toArray(new String[command.size()])));
-//			CDebugModel.newDebugTarget(launch, dsession.getTargets()[0], renderDebugTarget(dsession), iprocess, true, false, false );
+			Process process = dtarget.getProcess();
+			IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel((String [])command.toArray(new String[command.size()])));
+			CDebugModel.newDebugTarget(launch, dsession.getTargets()[0], renderDebugTarget(dsession), iprocess, true, false, false );
 		}
 		else {
 			Process process = exec((String [])command.toArray(new String[command.size()]), getEnvironmentArray(configuration), getWorkingDir(configuration));

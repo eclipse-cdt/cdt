@@ -8,9 +8,42 @@ package org.eclipse.cdt.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.ui.tests.text.PartitionTokenScannerTest;
-import org.eclipse.cdt.ui.tests.text.contentassist.*;
-import org.eclipse.cdt.ui.tests.text.contentassist.failedtests.*;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_NoPrefix2;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ClassReference_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ClassReference_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ConstructorReference;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ExceptionReference_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ExceptionReference_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_FieldType_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_FieldType_NoPrefix2;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_FieldType_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_FunctionReference_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_FunctionReference_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MacroRef_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MacroRef_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MemberReference_Arrow_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MemberReference_Arrow_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MemberReference_Arrow_Prefix2;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MemberReference_Dot_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_MemberReference_Dot_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_NamespaceRef_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_NamespaceRef_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_NewTypeReference_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_NewTypeReference_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ScopedReference_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ScopedReference_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_SingleName_Method_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_SingleName_Method_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_SingleName_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_SingleName_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_SingleName_Prefix2;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_TypeDef_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_TypeRef_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_TypeRef_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_NoPrefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_Prefix;
 import org.eclipse.cdt.ui.tests.textmanipulation.TextBufferTest;
 
 
@@ -69,8 +102,8 @@ public class AutomatedSuite extends TestSuite {
 		addTest(CompletionTest_FunctionReference_Prefix.suite());
 		
 		// Failed Tests
-		addTest(CompletionFailedTest_ScopedReference_NoPrefix_Bug50152.suite());
-		addTest(CompletionTest_ScopedReference_Prefix_Bug50152.suite());
+		addTest(CompletionTest_ScopedReference_NoPrefix.suite());
+		addTest(CompletionTest_ScopedReference_Prefix.suite());
 		addTest(CompletionTest_MacroRef_NoPrefix.suite());		
 		addTest(CompletionTest_MacroRef_Prefix.suite());
 		addTest(CompletionTest_FunctionReference_NoPrefix.suite());

@@ -189,7 +189,7 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				arguments, image, completionStart, completionLength, relevance);
 			
-			boolean userMustCompleteParameters= (parameterString != null && parameterString.length() > 0);
+			boolean userMustCompleteParameters= (arguments != null && arguments.length() > 0);
 
 			char[] triggers= userMustCompleteParameters ? METHOD_WITH_ARGUMENTS_TRIGGERS : METHOD_TRIGGERS;
 			proposal.setTriggerCharacters(triggers);
@@ -332,7 +332,7 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				arguments, image, completionStart, completionLength, relevance);
 			
-			boolean userMustCompleteParameters= (parameterString != null && parameterString.length() > 0);
+			boolean userMustCompleteParameters= (arguments != null && arguments.length() > 0);
 			
 			char[] triggers= userMustCompleteParameters ? METHOD_WITH_ARGUMENTS_TRIGGERS : METHOD_TRIGGERS;
 			proposal.setTriggerCharacters(triggers);

@@ -1,3 +1,6 @@
+2004-04-12 Hoda Amer
+	Updated CompletionFailedTest_ScopedReference_NoPrefix_Bug50152, renamed it to CompletionTest_ScopedReference_NoPrefix and moved it out of the failed tests folder.
+	
 2004-04-07 John Camelon
 	Updated CompletionFailedTest_ConstructorReference_Bug50808, renamed it to CompletionTest_ConstructorReference and moved it out of the failed tests folder.
 	Updated CompletionFailedTest_TypeDef_Bug52948, renamed it to CompletionTest_TypeDef_Prefix and moved it out of the failed tests folder.

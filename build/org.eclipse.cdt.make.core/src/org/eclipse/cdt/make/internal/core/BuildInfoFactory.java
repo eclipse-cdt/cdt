@@ -235,12 +235,14 @@ public class BuildInfoFactory {
 		protected Map decodeMap(String value) {
 			Map map = new HashMap();
 			StringBuffer envStr = new StringBuffer(value);
+			String escapeChars = "|\\";
+			char escapeChar = '\\';
 			try {
 				while (envStr.length() > 0) {
 					int ndx = 0;
 					while (ndx < envStr.length() ) {
-						if (envStr.charAt(ndx) == '|') {
-							if (envStr.charAt(ndx - 1) == '\\') { // escaped '|' - remove '\' and continue on.
+						if (escapeChars.indexOf(envStr.charAt(ndx)) != -1) {
+							if (envStr.charAt(ndx - 1) == escapeChar) { // escaped '|' - remove '\' and continue on.
 								envStr.deleteCharAt(ndx - 1);
 							} else {
 								break;
@@ -252,7 +254,7 @@ public class BuildInfoFactory {
 					int lndx = 0;
 					while (lndx < line.length() ) {
 						if (line.charAt(lndx) == '=') {
-							if (line.charAt(lndx - 1) == '\\') { // escaped '=' - remove '\' and continue on.
+							if (line.charAt(lndx - 1) == escapeChar) { // escaped '=' - remove '\' and continue on.
 								line.deleteCharAt(lndx - 1);
 							} else {
 								break;
@@ -273,19 +275,19 @@ public class BuildInfoFactory {
 			Iterator entries = values.entrySet().iterator();
 			while (entries.hasNext()) {
 				Entry entry = (Entry) entries.next();
-				str.append(escapeChars((String) entry.getKey(), "=|")); //$NON-NLS-1$
+				str.append(escapeChars((String) entry.getKey(), "=|\\", '\\')); //$NON-NLS-1$
 				str.append("="); //$NON-NLS-1$
-				str.append(escapeChars((String) entry.getValue(), "|")); //$NON-NLS-1$
+				str.append(escapeChars((String) entry.getValue(), "|\\", '\\')); //$NON-NLS-1$
 				str.append("|"); //$NON-NLS-1$
 			}
 			return str.toString();
 		}
 
-		protected String escapeChars(String string, String escapeChars) {
+		protected String escapeChars(String string, String escapeChars, char escapeChar) {
 			StringBuffer str = new StringBuffer(string);
 			for(int i = 0; i < str.length(); i++) {
-				if ( escapeChars.indexOf(str.charAt(i)) != -1 ) {
-					str.insert(i, '\\');
+				if ( escapeChars.indexOf(str.charAt(i)) != -1) {
+					str.insert(i, escapeChar);
 					i++;
 				}
 			}

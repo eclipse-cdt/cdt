@@ -13,6 +13,9 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 
 /**
  * This class is used to perform operations on multiple <code>ICElement</code>.
@@ -260,9 +263,19 @@ public abstract class MultiOperation extends CModelOperation {
 	 * <code>element</code> and <code>destination</code>.
 	 */
 	protected void verifyDestination(ICElement element, ICElement destination) throws CModelException {
-		if (destination == null || !destination.exists())
+		if (destination == null || !destination.exists()) {
 			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, destination);
-	
+		}
+		if (element.getElementType() == ICElement.C_UNIT) {
+			IResource res = destination.getResource();
+			if (!(res instanceof IContainer)) {
+				error(ICModelStatusConstants.INVALID_DESTINATION, element);
+			}
+			ITranslationUnit tu = (ITranslationUnit)element;
+			if (isMove() && tu.isWorkingCopy() /*&& !cu.isPrimary() */) {
+				error(ICModelStatusConstants.INVALID_ELEMENT_TYPES, element);
+			}
+		}
 	}
 
 	/**

@@ -47,8 +47,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  */
 public class CopyElementsOperation extends MultiOperation {
 
-	//private Map fSources = new HashMap();
-
 	/**
 	 * When executed, this operation will copy the given elements to the
 	 * given containers.  The elements and destination containers must be in
@@ -84,32 +82,6 @@ public class CopyElementsOperation extends MultiOperation {
 		String name = element.getElementName();
 		int type = element.getElementType();
 		return new CreateSourceReferenceOperation(unit, name, type, getSourceFor(element));
-//		switch (element.getElementType()) {
-//			case ICElement.C_INCLUDE: {
-//				IInclude include = (IInclude)element;
-//				return new CreateIncludeOperation(include.getIncludeName(), include.isStandard(), unit);
-//			}
-//			case ICElement.C_FUNCTION_DECLARATION : {
-//				IFunctionDeclaration declaration = (IFunctionDeclaration)element;
-//				return new CreateFunctionDeclarationOperation(declaration.getElementName(), unit);
-//			}
-//			case ICElement.C_FUNCTION : {
-//				IFunction function = (IFunction)element;
-//				return new CreateFunctionOperation(function, unit);
-//			}
-//			case ICElement.C_STRUCTURE :
-//				return new CreateStructureOperation(element, dest, fForce);
-//			case ICElement.C_METHOD : {
-//				IMethod method = (IMethod)element;
-//				return new CreateMethodOperation(method, unit, fForce);
-//			}
-//			case ICElement.C_FIELD :
-//				return new CreateFieldOperation(element, dest, fForce);
-//			case ICElement.C_VARIABLE:
-//				return new CreateVariableOperation(element, dest);
-//			default :
-//				return null;
-//		}
 	}
 
 	/**
@@ -119,7 +91,12 @@ public class CopyElementsOperation extends MultiOperation {
 		if (element instanceof ISourceReference) {
 			ISourceReference source = (ISourceReference)element;
 			try {
-				return source.getSource();
+				String contents = source.getSource();
+				// TODO: remove this hack when we have ASTRewrite and doit properly
+				if (! contents.endsWith(Util.LINE_SEPARATOR)) {
+					contents += Util.LINE_SEPARATOR;
+				}
+				return contents;
 			} catch (CModelException e) {
 				//
 			}
@@ -157,10 +134,10 @@ public class CopyElementsOperation extends MultiOperation {
 		}
 		executeNestedOperation(op, 1);
 
-//		if (isInTUOperation && isMove()) {
-//			DeleteElementsOperation deleteOp = new DeleteElementsOperation(new ICElement[] { element }, fForce);
-//			executeNestedOperation(deleteOp, 1);
-//		}
+		if (isInTUOperation && isMove()) {
+			DeleteElementsOperation deleteOp = new DeleteElementsOperation(new ICElement[] { element }, fForce);
+			executeNestedOperation(deleteOp, 1);
+		}
 	}
 
 	/**

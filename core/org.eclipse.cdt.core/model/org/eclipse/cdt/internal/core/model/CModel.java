@@ -109,8 +109,7 @@ public class CModel extends Openable implements ICModel {
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT ) {
 			runOperation(new CopyResourceElementsOperation(elements, containers, replace), elements, siblings, renamings, monitor);
 		} else {
-			throw new CModelException (new CModelStatus());
-			//runOperation(new CopyElementsOperation(elements, containers, force), elements, siblings, renamings, monitor);
+			runOperation(new CopyElementsOperation(elements, containers, replace), elements, siblings, renamings, monitor);
 		}
 	}
 
@@ -119,8 +118,7 @@ public class CModel extends Openable implements ICModel {
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			runOperation(new DeleteResourceElementsOperation(elements, force), monitor);
 		} else {
-			throw new CModelException (new CModelStatus());
-			//runOperation(new DeleteElementsOperation(elements, force), monitor);
+			runOperation(new DeleteElementsOperation(elements, force), monitor);
 		}
 	}
 
@@ -129,8 +127,7 @@ public class CModel extends Openable implements ICModel {
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
 			runOperation(new MoveResourceElementsOperation(elements, containers, replace), elements, siblings, renamings, monitor);
 		} else {
-			throw new CModelException (new CModelStatus());
-			//runOperation(new MoveElementsOperation(elements, containers, force), elements, siblings, renamings, monitor);
+			runOperation(new MoveElementsOperation(elements, containers, replace), elements, siblings, renamings, monitor);
 		}
 	}
 
@@ -140,8 +137,7 @@ public class CModel extends Openable implements ICModel {
 			runOperation(new RenameResourceElementsOperation(elements, destinations,
 					renamings, force), monitor);
 		} else {
-			throw new CModelException (new CModelStatus());
-			//runOperation(new RenameElementsOperation(elements, containers, renamings, force), monitor);
+			runOperation(new RenameElementsOperation(elements, destinations, renamings, force), monitor);
 		}
 	}
 

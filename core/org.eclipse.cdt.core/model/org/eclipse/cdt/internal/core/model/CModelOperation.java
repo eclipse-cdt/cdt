@@ -15,6 +15,8 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -220,6 +222,21 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 			}
 		}
 		return CModelStatus.VERIFIED_OK;
+	}
+
+	/**
+	 * Returns the translation unit the given element is contained in,
+	 * or the element itself (if it is a compilation unit),
+	 * otherwise <code>null</code>.
+	 */
+	protected ITranslationUnit getTranslationUnitFor(ICElement element) {
+		if (element instanceof ITranslationUnit) {
+			return (ITranslationUnit)element;
+		} else if (element instanceof ISourceReference) {
+			ISourceReference ref = (ISourceReference)element;
+			return ref.getTranslationUnit();
+		}
+		return null;
 	}
 
 	/**

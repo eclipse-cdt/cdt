@@ -252,11 +252,11 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 				case INSERT_BEFORE:
 					fReplacementLength = 0;
 					fInsertionPosition = range.getStartPos();
+				break;
 
 				default:
 					fReplacementLength = range.getStartPos() + range.getLength();
 					fInsertionPosition = range.getStartPos();
-				break;
 			}
 			return;
 		}

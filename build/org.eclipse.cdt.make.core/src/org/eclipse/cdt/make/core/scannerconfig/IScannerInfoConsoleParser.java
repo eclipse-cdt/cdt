@@ -10,7 +10,9 @@
  **********************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Parses a line of command output looking for scanner info entries.
@@ -19,17 +21,15 @@ import org.eclipse.core.resources.IProject;
  */
 public interface IScannerInfoConsoleParser {
 	/**
-	 * Get a utility object to be initialized
-	 */
-	public IScannerInfoConsoleParserUtility getUtility();
-
-	/**
-	 * Optional one time initialization of a console parser.
+	 * One time initialization of a console parser.
 	 * 
 	 * @param project
+     * @param workingDirectory
 	 * @param collector - scanner info collector
+     * @param markerGenerator
 	 */
-	public void startup(IProject project, IScannerInfoCollector collector);
+	public void startup(IProject project, IPath workingDirectory,
+            			IScannerInfoCollector collector, IMarkerGenerator markerGenerator);
 	
 	/**
 	 * Parse one line of output.

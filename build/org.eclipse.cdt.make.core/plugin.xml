@@ -127,7 +127,7 @@
    </extension>
    <extension
          id="GCCStandardMakePerProjectProfile"
-         name="GNU C/C++ Scanner Info per project profile"
+         name="%extensionGCCPerProjectProfile.name"
          point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector class="org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector"/>
       <buildOutputProvider>
@@ -141,6 +141,16 @@
                class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
          <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
       </scannerInfoProvider>
+   </extension>
+   <extension
+         id="GCCStandardMakePerFileProfile"
+         name="%extensionGCCPerFileProfile.name"
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector class="org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector"/>
+      <buildOutputProvider>
+         <open/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCPerFileBOPConsoleParser"/>
+      </buildOutputProvider>
    </extension>
 
 </plugin>

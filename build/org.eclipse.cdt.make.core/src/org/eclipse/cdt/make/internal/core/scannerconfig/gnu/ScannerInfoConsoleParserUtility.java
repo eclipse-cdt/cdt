@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.make.internal.core.scannerconfig.util;
+package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,12 +17,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -38,38 +37,22 @@ import org.eclipse.core.runtime.Path;
  * 
  * @author vhirsl
  */
-public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParserUtility {
-	private IProject fProject;
-	private IPath fBaseDirectory;
-	private IMarkerGenerator fMarkerGenerator;
-	private ArrayList fErrors;
-
+public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParserUtility {
 	/*
 	 * For tracking the location of files being compiled
 	 */
 	private Map fFilesInProject;
 	private List fCollectedFiles;
 	private List fNameConflicts;
-	private Vector fDirectoryStack;
     
-    private boolean fInitialized = false;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility#initialize(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.core.IMarkerGenerator)
-	 */
-	public void initialize(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator) {
-        fInitialized = true;
-		fProject = project;
-		fMarkerGenerator = markerGenerator;
-		fBaseDirectory = fProject.getLocation();
-		fErrors = new ArrayList();
-
+	public ScannerInfoConsoleParserUtility(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator) {
+	    super(project, workingDirectory, markerGenerator);
+        
 		fFilesInProject = new HashMap();
 		fCollectedFiles = new ArrayList();
 		fNameConflicts = new ArrayList();
-		fDirectoryStack = new Vector();
 
-		collectFiles(fProject, fCollectedFiles);
+		collectFiles(getProject(), fCollectedFiles);
 
 		for (int i = 0; i < fCollectedFiles.size(); i++) {
 			IFile curr = (IFile) fCollectedFiles.get(i);
@@ -78,67 +61,8 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 				fNameConflicts.add(curr.getName());
 			}
 		}
-		if (workingDirectory != null) {
-			pushDirectory(workingDirectory);
-		}
 	}
 	
-	public boolean reportProblems() {
-        if (!fInitialized) 
-            return false;
-		boolean reset = false;
-		for (Iterator iter = fErrors.iterator(); iter.hasNext(); ) {
-			Problem problem = (Problem) iter.next();
-			if (problem.severity == IMarkerGenerator.SEVERITY_ERROR_BUILD) {
-				reset = true;
-			}
-			if (problem.file == null) {
-				fMarkerGenerator.addMarker(
-					fProject,
-					problem.lineNumber,
-					problem.description,
-					problem.severity,
-					problem.variableName);
-			} else {
-				fMarkerGenerator.addMarker(
-					problem.file,
-					problem.lineNumber,
-					problem.description,
-					problem.severity,
-					problem.variableName);
-			}
-		}
-		fErrors.clear();
-		return reset;
-	}
-
-	protected class Problem {
-		protected IResource file;
-		protected int lineNumber;
-		protected String description;
-		protected int severity;
-		protected String variableName;
-
-		public Problem(IResource file, int lineNumber, String desciption, int severity, String variableName) {
-			this.file = file;
-			this.lineNumber = lineNumber;
-			this.description = desciption;
-			this.severity = severity;
-			this.variableName = variableName;
-		}
-	}
-
-	/**
-	 * Called by the console line parsers to generate a problem marker.
-	 */
-	public void generateMarker(IResource file, int lineNumber, String desc, int severity, String varName) {
-		// No need to collect markers if marker generator is not present
-		if (fMarkerGenerator != null) {
-			Problem problem = new Problem(file, lineNumber, desc, severity, varName);
-			fErrors.add(problem);
-		}
-	}
-
 	/**
 	 * Called by the console line parsers to find a file with a given name.
 	 * @param fileName
@@ -157,7 +81,7 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 					// Create a problem marker
 					final String error = MakeMessages.getString("ConsoleParser.Ambiguous_Filepath_Error_Message"); //$NON-NLS-1$
 					TraceUtil.outputError(error, fileName);
-					generateMarker(fProject, -1, error+fileName, IMarkerGenerator.SEVERITY_WARNING, null);
+					generateMarker(getProject(), -1, error+fileName, IMarkerGenerator.SEVERITY_WARNING, null);
 				}
 			}
 		}
@@ -172,8 +96,8 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 		IPath path = null;
 		IPath fp = new Path(filePath);
 		if (fp.isAbsolute()) {
-			if (fBaseDirectory.isPrefixOf(fp)) {
-				int segments = fBaseDirectory.matchingFirstSegments(fp);
+			if (getBaseDirectory().isPrefixOf(fp)) {
+				int segments = getBaseDirectory().matchingFirstSegments(fp);
 				path = fp.removeFirstSegments(segments);
 			} else {
 				path = fp;
@@ -216,13 +140,13 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 	protected IFile findFileInWorkspace(IPath path) {
 		IFile file = null;
 		if (path.isAbsolute()) {
-			IWorkspaceRoot root = fProject.getWorkspace().getRoot();
+			IWorkspaceRoot root = getProject().getWorkspace().getRoot();
 			file =  root.getFileForLocation(path);
 			// It may be a link resource so we must check it also.
 			if (file == null) {
 				IFile[] files = root.findFilesForLocation(path);
 				for (int i = 0; i < files.length; i++) {
-					if (files[i].getProject().equals(fProject)) {
+					if (files[i].getProject().equals(getProject())) {
 						file = files[i];
 						break;
 					}
@@ -230,7 +154,7 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 			}
 
 		} else {
-			file = fProject.getFile(path);
+			file = getProject().getFile(path);
 		}
 		return file;
 	}
@@ -256,71 +180,6 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 		return fNameConflicts.contains(path.lastSegment());
 	}
 
-	public IPath getWorkingDirectory() {
-		if (fDirectoryStack.size() != 0) {
-			return (IPath) fDirectoryStack.lastElement();
-		}
-		// Fallback to the Project Location
-		// FIXME: if the build did not start in the Project ?
-		return fBaseDirectory;
-	}
-
-	protected void pushDirectory(IPath dir) {
-		if (dir != null) {
-			IPath pwd = null;
-			if (fBaseDirectory.isPrefixOf(dir)) {
-				pwd = dir.removeFirstSegments(fBaseDirectory.segmentCount());
-			} else {
-				// check if it is a cygpath
-				if (dir.toString().startsWith("/cygdrive/")) {	//$NON-NLS-1$
-					char driveLetter = dir.toString().charAt(10);
-					driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter) : driveLetter;
-					StringBuffer buf = new StringBuffer();
-					buf.append(driveLetter);
-					buf.append(':');
-					String drive = buf.toString();
-					pwd = dir.removeFirstSegments(2);
-					pwd = pwd.setDevice(drive);
-					pwd = pwd.makeAbsolute();
-				}
-				else {
-					pwd = dir;
-				}
-			}
-			fDirectoryStack.addElement(pwd);
-		}
-	}
-
-	protected IPath popDirectory() {
-		int i = getDirectoryLevel();
-		if (i != 0) {
-			IPath dir = (IPath) fDirectoryStack.lastElement();
-			fDirectoryStack.removeElementAt(i - 1);
-			return dir;
-		}
-		return new Path("");	//$NON-NLS-1$
-	}
-
-	protected int getDirectoryLevel() {
-		return fDirectoryStack.size();
-	}
-
-	public void changeMakeDirectory(String dir, int dirLevel, boolean enterDir) {
-    	if (enterDir) {
-    		/* Sometimes make screws up the output, so
-    		 * "leave" events can't be seen.  Double-check level
-    		 * here.
-    		 */
-			for (int parseLevel = getDirectoryLevel(); dirLevel < parseLevel; parseLevel = getDirectoryLevel()) {
-				popDirectory();
-			}
-    		pushDirectory(new Path(dir));
-    	} else {
-    		popDirectory();
-    		/* Could check to see if they match */
-    	}
-	}
-
 	public List translateRelativePaths(IFile file, String fileName, List includes) {
 		List translatedIncludes = new ArrayList(includes.size());
 		for (Iterator i = includes.iterator(); i.hasNext(); ) {
@@ -330,7 +189,7 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 				// First try the current working directory
 				IPath cwd = getWorkingDirectory();
 				if (!cwd.isAbsolute()) {
-					cwd = fProject.getLocation().append(cwd);
+					cwd = getProject().getLocation().append(cwd);
 				}
 				
 				IPath filePath = new Path(fileName);

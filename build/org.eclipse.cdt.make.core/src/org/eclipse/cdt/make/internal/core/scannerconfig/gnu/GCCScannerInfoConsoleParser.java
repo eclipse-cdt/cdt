@@ -10,17 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.cdt.core.IMarkerGenerator;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
-import org.eclipse.cdt.make.internal.core.MakeMessages;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerInfoConsoleParserUtility;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,75 +17,48 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
+
 /**
  * Parses gcc and g++ output for -I and -D parameters.
  * 
  * @author vhirsl
  */
-public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
+public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 	private final static String SINGLE_QUOTE_STRING = "\'"; //$NON-NLS-1$
 	private final static String DOUBLE_QUOTE_STRING = "\""; //$NON-NLS-1$
 	private final static char[] matchingChars = {'`', '\'', '\"'};
 	
-	private IProject fProject = null;
 	private ScannerInfoConsoleParserUtility fUtil = null;
-	private IScannerInfoCollector fCollector = null;
 	
-	private boolean bMultiline = false;
-	private String sMultiline = ""; //$NON-NLS-1$
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#getUtility()
-	 */
-	public IScannerInfoConsoleParserUtility getUtility() {
-        fUtil = new ScannerInfoConsoleParserUtility();
-		return fUtil;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
+     */
+    public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
+        fUtil = (project != null && workingDirectory != null && markerGenerator != null) ?
+                new ScannerInfoConsoleParserUtility(project, workingDirectory, markerGenerator) : null;
+        super.startup(project, collector);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility, org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes)
-	 */
-	public void startup(IProject project, IScannerInfoCollector collector) {
-		fProject = project;
-		fCollector = collector;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.internal.core.scannerconfig.gnu.AbstractGCCBOPConsoleParser#getUtility()
+     */
+    protected AbstractGCCBOPConsoleParserUtility getUtility() {
+        return fUtil;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.ScannerInfoConsoleParserUtility#processLine(java.lang.String)
-	 */
-	public boolean processLine(String line) {
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.internal.core.scannerconfig.gnu.AbstractGCCBOPConsoleParser#processSingleLine(java.lang.String)
+     */
+    protected boolean processSingleLine(String line) {
 		boolean rc = false;
-		// check for multiline commands (ends with '\')
-		if (line.endsWith("\\")) { //$NON-NLS-1$
-			sMultiline += line.substring(0, line.length()-1);// + " "; //$NON-NLS-1$
-			bMultiline = true;
-			return rc;
-		}
-		if (bMultiline) {
-			line = sMultiline + line;
-			bMultiline = false;
-			sMultiline = ""; //$NON-NLS-1$
-		}
-		TraceUtil.outputTrace("GCCScannerInfoConsoleParser parsing line:", TraceUtil.EOL, line);	//$NON-NLS-1$ //$NON-NLS-2$
-		// make\[[0-9]*\]:  error_desc
-		int firstColon= line.indexOf(':');
-		String make = line.substring(0, firstColon + 1);
-		if (firstColon != -1 && make.indexOf("make") != -1) { //$NON-NLS-1$
-			boolean enter = false;
-			String msg = line.substring(firstColon + 1).trim();		
-			if ((enter = msg.startsWith("Entering directory")) || //$NON-NLS-1$
-			    (msg.startsWith("Leaving directory"))) { //$NON-NLS-1$
-			    int s = msg.indexOf('`');
-			    int e = msg.indexOf('\'');
-			    if (s != -1 && e != -1) {
-			    	String dir = msg.substring(s+1, e);
-					if (fUtil != null) {
-						fUtil.changeMakeDirectory(dir, getDirectoryLevel(line), enter);
-					}
-			    	return rc;
-				}
-			}
-		}
 		// Known patterns:
 		// (a) gcc|g++ ... -Dxxx -Iyyy ...
 		List allTokens = tokenize(line);
@@ -151,7 +113,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 				}
 			}
 			
-			IProject project = fProject;   
+			IProject project = getProject();   
 			IFile file = null;
 			List translatedIncludes = includes;
 			if (includes.size() > 0) {
@@ -168,7 +130,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 					final String error = MakeMessages.getString("ConsoleParser.Filename_Missing_Error_Message"); //$NON-NLS-1$ 
 					TraceUtil.outputError(error, line);
 					if (fUtil != null) {
-						fUtil.generateMarker(fProject, -1, error + line, IMarkerGenerator.SEVERITY_WARNING, null);
+						fUtil.generateMarker(getProject(), -1, error + line, IMarkerGenerator.SEVERITY_WARNING, null);
 					}
 				}
 				if (file == null && fUtil != null) {	// real world case
@@ -182,7 +144,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 				scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, translatedIncludes);
 				scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
 				scannerInfo.put(ScannerInfoTypes.TARGET_SPECIFIC_OPTION, targetSpecificOptions);
-				fCollector.contributeToScannerConfig(project, scannerInfo);
+				getCollector().contributeToScannerConfig(project, scannerInfo);
 				
 				TraceUtil.outputTrace("Discovered scanner info for file \'" + fileName + '\'',	//$NON-NLS-1$
 						"Include paths", includes, translatedIncludes, "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$
@@ -346,29 +308,6 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 				symbols.add(symbol);
 			}
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#shutdown()
-	 */
-	public void shutdown() {
-		if (fUtil != null) {
-			fUtil.reportProblems();
-		}
-	}
-
-	private int getDirectoryLevel(String line) {
-		int s = line.indexOf('[');
-		int num = 0;
-		if (s != -1) {
-			int e = line.indexOf(']');
-			String number = line.substring(s + 1, e).trim();		
-			try {
-				num = Integer.parseInt(number);
-			} catch (NumberFormatException exc) {
-			}
-		}
-		return num;
 	}
 
 }

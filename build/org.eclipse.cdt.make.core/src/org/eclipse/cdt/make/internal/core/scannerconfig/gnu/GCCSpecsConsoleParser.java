@@ -15,12 +15,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Parses output of gcc -c -v specs.c or
@@ -34,24 +35,16 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	private final String DEFINE = "#define"; //$NON-NLS-1$
 
 	private IProject fProject = null;
-	private IScannerInfoConsoleParserUtility fUtil = null;
 	private IScannerInfoCollector fCollector = null;
 	
 	private boolean expectingIncludes = false;
 	private List symbols = new ArrayList();
 	private List includes = new ArrayList();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#getUtility()
-	 */
-	public IScannerInfoConsoleParserUtility getUtility() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector)
-	 */
-	public void startup(IProject project, IScannerInfoCollector collector) {
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
+     */
+    public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
 		this.fProject = project;
 		this.fCollector = collector;
 	}
@@ -107,4 +100,5 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 		TraceUtil.outputTrace("Scanner info from \'specs\' file",	//$NON-NLS-1$
 				"Include paths", includes, new ArrayList(), "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$);
 	}
+
 }

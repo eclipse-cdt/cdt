@@ -71,7 +71,7 @@ public class ScannerConfigConsoleParserTests extends TestCase {
             }
         }; 
         // initialize it with the utility
-		clParser.startup(null, collector);
+		clParser.startup(null, null, collector, null);
 		
 		clParser.processLine("gcc -I /dir/include -I C:\\dir\\include -ID:/dir/include -c test.c");	// absolute paths
 		clParser.processLine("gcc -I -I /dir2/include -c test.c");	// empty -I
@@ -129,7 +129,7 @@ public class ScannerConfigConsoleParserTests extends TestCase {
             }
         };
 		// initialize it with the utility
-		clParser.startup(null, collector);
+        clParser.startup(null, null, collector, null);
 		
 		clParser.processLine("gcc -DMACRO1 -D MACRO2=value2 -c test.c");	// simple definitions
 		clParser.processLine("gcc -D -DMACRO3 -c test.c");	// empty -D
@@ -175,7 +175,7 @@ public class ScannerConfigConsoleParserTests extends TestCase {
             }
         };
         // initialize it with the utility
-        clParser.startup(null, collector);
+        clParser.startup(null, null, collector, null);
 		
 		clParser.processLine("gcc -DMACRO1 -I ..\\inc -c ..\\source\\source.c");	// PR 80271
 

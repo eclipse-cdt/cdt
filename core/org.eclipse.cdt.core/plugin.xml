@@ -46,6 +46,7 @@
    <extension-point id="CLanguage" name="CLanguage" schema="schema/CLanguage.exsd"/>
    <extension-point id="CFileType" name="CFileType" schema="schema/CFileType.exsd"/>
    <extension-point id="CFileTypeAssociation" name="CFileTypeAssociation" schema="schema/CFileTypeAssociation.exsd"/>
+   <extension-point id="PathEntryContainerInitializer" name="%PathEntryContainerInitializer" schema="schema/PathEntryContainerInitializer.exsd"/>
 
 <!-- =================================================================================== -->
 <!-- Define the list of the Binary Parser provided by the CDT                            -->
@@ -196,32 +197,32 @@
       <fileType
             name="C Source File"
             type="source"
-            language="org.eclipse.cdt.core.language.c"
-            id="org.eclipse.cdt.core.fileType.c_source">
+            id="org.eclipse.cdt.core.fileType.c_source"
+            language="org.eclipse.cdt.core.language.c">
       </fileType>
       <fileType
             name="C Header File"
             type="header"
-            language="org.eclipse.cdt.core.language.c"
-            id="org.eclipse.cdt.core.fileType.c_header">
+            id="org.eclipse.cdt.core.fileType.c_header"
+            language="org.eclipse.cdt.core.language.c">
       </fileType>
       <fileType
             name="C++ Source File"
             type="source"
-            language="org.eclipse.cdt.core.language.cxx"
-            id="org.eclipse.cdt.core.fileType.cxx_source">
+            id="org.eclipse.cdt.core.fileType.cxx_source"
+            language="org.eclipse.cdt.core.language.cxx">
       </fileType>
       <fileType
             name="C++ Header File"
             type="header"
-            language="org.eclipse.cdt.core.language.cxx"
-            id="org.eclipse.cdt.core.fileType.cxx_header">
+            id="org.eclipse.cdt.core.fileType.cxx_header"
+            language="org.eclipse.cdt.core.language.cxx">
       </fileType>
       <fileType
             name="Assembly Source File"
             type="source"
-            language="org.eclipse.cdt.core.language.asm"
-            id="org.eclipse.cdt.core.fileType.asm_source">
+            id="org.eclipse.cdt.core.fileType.asm_source"
+            language="org.eclipse.cdt.core.language.asm">
       </fileType>
    </extension>
    <extension

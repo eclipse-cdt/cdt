@@ -194,7 +194,11 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
+		if ( e instanceof CoreException ) {
+			log(((CoreException)e).getStatus());
+		} else {
+			log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
+		}
 	}
 
 	public static void log(IStatus status) {

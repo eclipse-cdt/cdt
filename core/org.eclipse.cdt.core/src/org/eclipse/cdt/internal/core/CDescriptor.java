@@ -235,15 +235,24 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	synchronized public ICExtensionReference create(String extensionPoint, String extension) throws CoreException {
-		CExtensionReference extRef = createRef(extensionPoint, extension);
-		if (!isInitializing) {
-			updateOnDisk();
+		boolean fireEvent = false;
+		CExtensionReference extRef;
+		synchronized (this) {
+			extRef = createRef(extensionPoint, extension);
+			if (!isInitializing) {
+				updateOnDisk();
+				fireEvent = true;
+			}
+		}
+		if (fireEvent) {
 			fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
 		}
 		return extRef;
 	}
 
 	synchronized public void remove(ICExtensionReference ext) throws CoreException {
+		boolean fireEvent = false;
+		synchronized (this) {
 		CExtensionReference extensions[] = (CExtensionReference[]) extMap.get(ext.getExtension());
 		for (int i = 0; i < extensions.length; i++) {
 			if (extensions[i] == ext) {
@@ -257,22 +266,31 @@ public class CDescriptor implements ICDescriptor {
 				}
 				if (!isInitializing) {
 					updateOnDisk();
-					fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED,
-							CDescriptorEvent.EXTENSION_CHANGED));
+					fireEvent = true;
 				}
 			}
 		}
+		}
+		if (fireEvent) {
+			fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED,
+					CDescriptorEvent.EXTENSION_CHANGED));
+		}
 	}
 
-	synchronized public void remove(String extensionPoint) throws CoreException {
-		CExtensionReference extensions[] = (CExtensionReference[]) extMap.get(extensionPoint);
-		if (extensions != null) {
-			extMap.remove(extensionPoint);
-			if (!isInitializing) {
-				updateOnDisk();
-				fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED,
-						CDescriptorEvent.EXTENSION_CHANGED));
+	public void remove(String extensionPoint) throws CoreException {
+		boolean fireEvent = false;
+		synchronized (this) {
+			CExtensionReference extensions[] = (CExtensionReference[]) extMap.get(extensionPoint);
+			if (extensions != null) {
+				extMap.remove(extensionPoint);
+				if (!isInitializing) {
+					updateOnDisk();
+					fireEvent = true;
+				}
 			}
+		}
+		if (fireEvent) {
+			fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
 		}
 	}
 
@@ -346,35 +364,42 @@ public class CDescriptor implements ICDescriptor {
 		fManager.updateDescriptor(this);
 	}
 
-	synchronized void updateFromDisk() throws CoreException {
-		IPath projectLocation = fProject.getDescription().getLocation();
+	void updateFromDisk() throws CoreException {
+		COwner origOwner;
+		HashMap origExtMap;
+		HashMap origExtInfoMap;
+		Document origDataDoc;
+		synchronized (this) {
+			IPath projectLocation = fProject.getDescription().getLocation();
 
-		if (projectLocation == null) {
-			projectLocation = getProjectDefaultLocation(fProject);
-		}
-		IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
-		if (!descriptionPath.toFile().exists()) {
-			updateOnDisk();
-			return;
-		}
-		COwner origOwner = fOwner;
-		HashMap origExtMap = extMap;
-		HashMap origExtInfoMap = extInfoMap;
-		Document origDataDoc = dataDoc;
+			if (projectLocation == null) {
+				projectLocation = getProjectDefaultLocation(fProject);
+			}
+			IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
+			if (!descriptionPath.toFile().exists()) {
+				updateOnDisk();
+				return;
+			}
 
-		extMap = new HashMap(4);
-		extInfoMap = new HashMap(4);
-		dataDoc = null;
+			origOwner = fOwner;
+			origExtMap = extMap;
+			origExtInfoMap = extInfoMap;
+			origDataDoc = dataDoc;
 
-		try {
-			String ownerId = readCDTProjectFile(descriptionPath);
-			fOwner = new COwner(fManager.getOwnerConfiguration(ownerId));
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			fOwner = origOwner;
-			extMap = origExtMap;
-			extInfoMap = origExtInfoMap;
-			dataDoc = origDataDoc;
+			extMap = new HashMap(4);
+			extInfoMap = new HashMap(4);
+			dataDoc = null;
+
+			try {
+				String ownerId = readCDTProjectFile(descriptionPath);
+				fOwner = new COwner(fManager.getOwnerConfiguration(ownerId));
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fOwner = origOwner;
+				extMap = origExtMap;
+				extInfoMap = origExtInfoMap;
+				dataDoc = origDataDoc;
+			}
 		}
 		if (!fOwner.equals(origOwner)) {
 			fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.OWNER_CHANGED));

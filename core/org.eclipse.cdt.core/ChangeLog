@@ -1,4 +1,20 @@
 2004-04-19 David Inglis
+
+	Fixed dead lock - don't fire descriptor events with descriptor lock
+	
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java
+	
+	Added missing PathContainerInitializer extension point
+	
+	* schema/PathEntryContainerInitializer.exsd
+	* plugin.properties
+	* plugin.xml
+	
+	changed log to not wrap core exception in a IStatus but use the IStatus in the exception.
+	
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	
+2004-04-19 David Inglis
 	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=58232
 	
 	* src/org/eclipse/cdt/internal/core/CDescriptor.java

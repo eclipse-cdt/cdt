@@ -278,7 +278,9 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 					ICDILocation location = ((ICDILocationBreakpoint)cdiBreakpoint).getLocation();
 					if ( location != null ) {
 						IAddressFactory factory = getDebugTarget().getAddressFactory();
-						return factory.createAddress( location.getAddress() );
+						BigInteger address = location.getAddress();
+						if ( address != null )
+							return factory.createAddress( address );
 					}	
 				}
 				catch( CDIException e ) {

@@ -1,4 +1,8 @@
 2004-12-01 Mikhail Khodjaiants
+	Partial fix for bug 77444: CDT does not handle address breakpoints across sessions.
+	* CBreakpointManager.java
+	
+2004-12-01 Mikhail Khodjaiants
 	Fix for bug 80034: Expressions view does not display correct no. of elements in array.
 	* CValueFactory.java
 

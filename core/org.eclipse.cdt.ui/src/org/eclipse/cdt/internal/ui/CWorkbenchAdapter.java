@@ -56,7 +56,7 @@ public class CWorkbenchAdapter implements IWorkbenchAdapter {
 	 */
 	public String getLabel(Object o) {
 		if (o instanceof ICElement) {
-			return fLabelProvider.getText((ICElement) o);
+			return fLabelProvider.getText(o);
 		}
 		return null;
 	}

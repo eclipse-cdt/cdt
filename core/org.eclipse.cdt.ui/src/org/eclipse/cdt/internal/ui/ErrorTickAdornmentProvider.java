@@ -46,7 +46,7 @@ public class ErrorTickAdornmentProvider implements IAdornmentProvider {
 					case ICElement.C_STRUCT:
 					case ICElement.C_VARIABLE:
 					case ICElement.C_METHOD:
-						ITranslationUnit tu= (ITranslationUnit) ((ISourceReference)element).getTranslationUnit();
+						ITranslationUnit tu= ((ISourceReference)element).getTranslationUnit();
 						if (tu != null && tu.exists()) {
 							// I assume that only source elements in compilation unit can have markers
 							ISourceRange range= ((ISourceReference)element).getSourceRange();

@@ -33,7 +33,7 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		folder1.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 		
 		IFolderLayout folder2= layout.createFolder("bottom", IPageLayout.BOTTOM, (float)0.75, editorArea); //$NON-NLS-1$
-		folder2.addView(IPageLayout.ID_TASK_LIST);
+		folder2.addView(IPageLayout.ID_PROBLEM_VIEW);
 		folder2.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		folder2.addView(IPageLayout.ID_PROP_SHEET);
 		
@@ -51,7 +51,7 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		
 		// views - standard workbench
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
-		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
+		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
 		layout.addShowViewShortcut(CUIPlugin.CVIEW_ID);
 		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 		layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);

@@ -153,7 +153,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				return ((IParent)element).getChildren();
 			}
 		} else if (element instanceof IParent) {
-			return (Object[])((IParent)element).getChildren();
+			return ((IParent)element).getChildren();
 		} else if (element instanceof IFolder) {
 			return getResources((IFolder)element);
 		}

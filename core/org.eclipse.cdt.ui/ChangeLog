@@ -1,3 +1,12 @@
+2004-03-29 Alain Magloire
+
+	Put the Problem view as the default instead of Task view.
+
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvier.java
+	* src/org/eclipse/cdt/internal/ui/CPerspectiveFactory.java
+	* src/org/eclipse/cdt/internal/ui/CWorkbenchAdapter.java
+	* src/org/eclipse/cdt/internal/ui;/ErrorTickAdornmentProvider.java
+
 2004-03-28 Bogdan Gheorghe
 	Modified CSearchPage to use new CSearchQuery (which uses the new background 
 	jobs API)

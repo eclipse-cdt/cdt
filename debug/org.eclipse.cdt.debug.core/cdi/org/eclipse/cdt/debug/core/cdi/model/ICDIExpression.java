@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
-
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 /**
  * An expression is a snippet of code that can be evaluated to 
@@ -19,5 +19,31 @@ package org.eclipse.cdt.debug.core.cdi.model;
  *  
  * @since Jul 9, 2002
  */
-public interface ICDIExpression extends ICDIVariable {
+public interface ICDIExpression extends ICDIObject {
+
+
+	/**
+	 * Returns the expression snippet of code.
+	 * 
+	 * @return the expression
+	 */
+	String getExpressionText();
+
+	/**
+	 * Returns true if the variable Object are the same,
+	 * For example event if the name is the same because of
+	 * casting this may return false;
+	 * @return true if the same
+	 */
+	boolean equals(ICDIExpression expr);
+
+	/**
+	 * Returns the value of this expression.
+	 * 
+	 * @param ICDIStackFrame frame context
+	 * @return the value of this expression
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	ICDIValue getValue(ICDIStackFrame context) throws CDIException;
+
 }

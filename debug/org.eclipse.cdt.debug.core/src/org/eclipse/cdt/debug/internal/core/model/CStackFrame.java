@@ -633,7 +633,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public IValue evaluateExpression( String expression ) throws DebugException {
 		CExpressionTarget target = (CExpressionTarget)getDebugTarget().getAdapter( CExpressionTarget.class );
-		return (target != null) ? target.evaluateExpression( expression ) : null;
+		return (target != null) ? target.evaluateExpression( getCDIStackFrame(), expression ) : null;
 	}
 
 	private ICGlobalVariable[] getGlobals() {

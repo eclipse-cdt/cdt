@@ -60,13 +60,6 @@ public interface ICDISession {
 	ICDIVariableManager getVariableManager();
 
 	/**
-	 * Returns the expression manager of this debug session.
-	 * 
-	 * @return the expression manager
-	 */
-	ICDIExpressionManager getExpressionManager();
-
-	/**
 	 * Returns the register manager of this debug session.
 	 * 
 	 * @return the register manager

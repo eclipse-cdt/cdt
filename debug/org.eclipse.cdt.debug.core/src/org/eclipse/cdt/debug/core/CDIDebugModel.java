@@ -490,8 +490,9 @@ public class CDIDebugModel {
 	public static IExpression createExpression(IDebugTarget target, String text) throws DebugException {
 		if (target != null && target instanceof CDebugTarget) {
 			try {
-				ICDIExpression cdiExpression = ((CDebugTarget)target).getCDISession().getExpressionManager().createExpression(text);
-				return new CExpression((CDebugTarget)target, cdiExpression);
+				ICDIVariableObject vo = null;//((CDebugTarget)target).getCDISession().getVariableManager().getVariableObject(text);
+				ICDIExpression cdiExpression = ((CDebugTarget)target).getCDITarget().createExpression(text);
+				return new CExpression( (CDebugTarget)target, cdiExpression, vo );
 			} catch (CDIException e) {
 				throw new DebugException(new Status(IStatus.ERROR, getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED,
 						e.getMessage(), null));
@@ -506,9 +507,10 @@ public class CDIDebugModel {
 			ICDIVariableObject vo = null;
 			try {
 				vo = ((CDebugTarget)target).getCDISession().getVariableManager().getGlobalVariableObject(fileName.lastSegment(),
-																											null, name);
-				ICDIVariable cdiVariable = ((CDebugTarget)target).getCDISession().getVariableManager().createVariable(vo);
-				return new CExpression((CDebugTarget)target, cdiVariable);
+						null, name);
+				//ICDIVariable cdiVariable = ((CDebugTarget)target).getCDISession().getVariableManager().createVariable(vo);
+				ICDIExpression cdiExpression = ((CDebugTarget)target).getCDITarget().createExpression(name);
+				return new CExpression((CDebugTarget)target, cdiExpression, vo);
 			} catch (CDIException e) {
 				throw new DebugException(new Status(IStatus.ERROR, getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED,
 						(vo != null) ? vo.getName() + ": " + e.getMessage() : e.getMessage(), null)); //$NON-NLS-1$

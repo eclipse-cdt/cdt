@@ -12,13 +12,18 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
@@ -28,44 +33,22 @@ import org.eclipse.debug.core.model.IValue;
  */
 public class CExpression extends CVariable implements IExpression {
 
-	/**
-	 * Constructor for CExpression.
-	 */
-	public CExpression( CDebugTarget target, ICDIExpression cdiExpression ) {
-		super( target, cdiExpression );
-		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
-	}
+	ICDIExpression fCDIExpression;
 
 	/**
 	 * Constructor for CExpression.
 	 */
-	public CExpression( CDebugTarget target, ICDIVariableObject cdiVariableObject ) {
-		super( target, cdiVariableObject );
-		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
+	public CExpression( CDebugTarget target, ICDIExpression cdiExpression, ICDIVariableObject varObject ) {
+		super( target, varObject );
+		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ))) ;
+		fCDIExpression = cdiExpression;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IExpression#getExpressionText()
 	 */
 	public String getExpressionText() {
-		try {
-			return getName();
-		}
-		catch( DebugException e ) {
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IVariable#getValue()
-	 */
-	public IValue getValue() {
-		try {
-			return super.getValue();
-		}
-		catch( DebugException e ) {
-		}
-		return null;
+		return fCDIExpression.getExpressionText();
 	}
 
 	/* (non-Javadoc)
@@ -98,7 +81,7 @@ public class CExpression extends CVariable implements IExpression {
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#canEnableDisable()
 	 */
 	public boolean canEnableDisable() {
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -107,4 +90,23 @@ public class CExpression extends CVariable implements IExpression {
 	protected boolean isBookkeepingEnabled() {
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IExpression#getValue()
+	 */
+	public IValue getValue() {
+		CStackFrame frame = (CStackFrame)getStackFrame();
+		return getValue(frame.getCDIStackFrame());
+	}
+
+	public IValue getValue(ICDIStackFrame context) {
+		try {
+			ICDIValue value = fCDIExpression.getValue(context);
+			return CValueFactory.createValue(this, value);
+		} catch (CDIException e) {
+			// TODO Auto-generated catch block
+		}
+		return null;
+	}
+
 }

@@ -385,7 +385,8 @@ public class CFormattedMemoryBlock extends CDebugElement
 		{
 			try
 			{
-				((CDebugTarget)getDebugTarget()).getCDISession().getExpressionManager().destroyExpression( fAddressExpression );
+				ICDIExpression[] expressions = { fAddressExpression };
+				((CDebugTarget)getDebugTarget()).getCDITarget().destroyExpressions( expressions );
 			}
 			catch( CDIException e )
 			{
@@ -402,7 +403,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public String getAddressExpression()
 	{
-		return fAddressExpression.getName();
+		return fAddressExpression.getExpressionText();
 	}
 	
 	private String[] createData( byte[] bytes, int offset, int length )

@@ -96,8 +96,8 @@ public class CDebugModel {
 	public static IFormattedMemoryBlock createFormattedMemoryBlock( IDebugTarget target, String addressExpression, int format, int wordSize, int numberOfRows, int numberOfColumns, char paddingChar ) throws DebugException {
 		if ( target != null && target instanceof CDebugTarget ) {
 			try {
-				ICDIExpression expression = ((CDebugTarget)target).getCDISession().getExpressionManager().createExpression( addressExpression );
-				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDISession().getMemoryManager().createMemoryBlock( expression.getName(), wordSize * numberOfRows * numberOfColumns );
+				ICDIExpression expression = ((CDebugTarget)target).getCDITarget().createExpression( addressExpression );
+				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDISession().getMemoryManager().createMemoryBlock( expression.getExpressionText(), wordSize * numberOfRows * numberOfColumns );
 				return new CFormattedMemoryBlock( (CDebugTarget)target, cdiMemoryBlock, expression, format, wordSize, numberOfRows, numberOfColumns, paddingChar );
 			}
 			catch( CDIException e ) {
@@ -110,8 +110,8 @@ public class CDebugModel {
 	public static IFormattedMemoryBlock createFormattedMemoryBlock( IDebugTarget target, String addressExpression, int format, int wordSize, int numberOfRows, int numberOfColumns ) throws DebugException {
 		if ( target != null && target instanceof CDebugTarget ) {
 			try {
-				ICDIExpression expression = ((CDebugTarget)target).getCDISession().getExpressionManager().createExpression( addressExpression );
-				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDISession().getMemoryManager().createMemoryBlock( expression.getName(), wordSize * numberOfRows * numberOfColumns );
+				ICDIExpression expression = ((CDebugTarget)target).getCDITarget().createExpression( addressExpression );
+				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDISession().getMemoryManager().createMemoryBlock( expression.getExpressionText(), wordSize * numberOfRows * numberOfColumns );
 				return new CFormattedMemoryBlock( (CDebugTarget)target, cdiMemoryBlock, expression, format, wordSize, numberOfRows, numberOfColumns );
 			}
 			catch( CDIException e ) {

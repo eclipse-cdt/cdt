@@ -14,13 +14,9 @@ package org.eclipse.cdt.debug.core.cdi.model;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 /**
- * @author User
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public interface ICDIThreadGroup extends ICDIBreakpointManagement, ICDIExecuteStep, ICDIExecuteResume,
-	ICDISuspend, ICDIObject {
+	ICDISuspend, ICDIExpressionManagement, ICDIObject {
 
 	/**
 	 * Returns the threads contained in this target. 

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.debug.core.DebugException;
@@ -36,14 +37,15 @@ public class CExpressionTarget {
 		return fDebugTarget;
 	}
 
-	public IValue evaluateExpression( String expressionText ) throws DebugException {
+	public IValue evaluateExpression( ICDIStackFrame context, String expressionText ) throws DebugException {
 		CExpression expression = (CExpression)fExpressions.remove( expressionText );
 		if ( expression != null ) {
 			expression.dispose();
 		}
 		expression = (CExpression)CDIDebugModel.createExpression( getDebugTarget(), expressionText );
 		fExpressions.put( expressionText, expression );
-		return expression.getValue();
+		return expression.getValue(context);
+		
 	}
 
 	public void dispose() {

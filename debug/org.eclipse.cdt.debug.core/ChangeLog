@@ -1,3 +1,17 @@
+2004-10-25 Alain Magloire
+	Remove of the class ICDIExpressionManager.
+	instead new clas ICDIExpressionManagegment that is on the ICDITarget
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIExpression.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIThreadGroup.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIExpressionManagement.java
+
+	* CDebugModel.java
+	* CDIDebugModel.java
+	* CExpression.java
+	* CFormattedMemoryBlock.java
+	* CStackFrame.java
+
 2004-10-22 Mikhail Khodjaiants
 	Replaced the deprecated "evaluateExpressionTtoString" method of "ICDITarget.
 	* CDebugTarget.java

@@ -84,7 +84,7 @@
                id="org.eclipse.cdt.make.ui.CViewCreateBuildAction">
          </action>
          <filter
-               name="nature"
+               name="projectNature"
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
       </objectContribution>
@@ -100,7 +100,7 @@
                id="org.eclipse.cdt.make.ui.NavigatorCreateBuildAction">
          </action>
          <filter
-               name="nature"
+               name="projectNature"
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
       </objectContribution>

@@ -61,7 +61,7 @@ public class BuildTargetDialog extends TitleAreaDialog {
 		super(parentShell);
 		fTargetManager = MakeCorePlugin.getDefault().getTargetManager();
 		String[] id = fTargetManager.getTargetBuilders(container.getProject());
-		if (id != null) {
+		if (id.length > 0) {
 			fBuildInfo = MakeCorePlugin.createBuildInfo(new HashMap(), id[0]);
 		}
 	}

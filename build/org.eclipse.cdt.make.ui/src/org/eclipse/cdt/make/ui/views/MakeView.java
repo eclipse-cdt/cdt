@@ -23,7 +23,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 
@@ -131,7 +130,7 @@ public class MakeView extends ViewPart {
 		drillDownAdapter.addNavigationActions(manager);
 
 		// Other plug-ins can contribute there actions here
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+//		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	protected void handleDeleteKeyPressed() {
@@ -148,6 +147,7 @@ public class MakeView extends ViewPart {
 	}
 	
 	void updateActions(IStructuredSelection sel) {
+		addTargetAction.selectionChanged(sel);
 		buildTargetAction.selectionChanged(sel);		
 		deleteTargetAction.selectionChanged(sel);
 		editTargetAction.selectionChanged(sel);

@@ -1,3 +1,13 @@
+2004-03-31 Mikhail Khodjaiants
+	The Registers view has been contibuted and moved to the Eclipse platform.
+	* org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/registers/* - removed
+	* org.eclipse.cdt.debug.ui/icons/full/cview16/registers_view.gif - removed
+	* org.eclipse.cdt.debug.ui/icons/full/eview16/registers_view.gif - removed
+	* RegistersViewPreferencePage.java - removed
+	* CDebugUIPlugin.java
+	* plugin.properties
+	* plugin.xml
+	
 2004-03-23 Mikhail Khodjaiants
 	Fix for Bug 55777: I18N: Memory View is missing key for number_of_columns.
 	* CDebugUIPluginResources.properties

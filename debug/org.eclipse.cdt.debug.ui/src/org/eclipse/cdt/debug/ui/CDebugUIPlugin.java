@@ -1,7 +1,6 @@
 package org.eclipse.cdt.debug.ui;
 
 import java.text.MessageFormat;
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -19,7 +18,6 @@ import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyDocumentProvider;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
-import org.eclipse.cdt.debug.internal.ui.preferences.RegistersViewPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.SharedLibrariesViewPreferencePage;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.core.resources.IStorage;
@@ -58,7 +56,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -180,7 +177,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	protected void initializeDefaultPreferences( IPreferenceStore pstore ) 
 	{
 		MemoryViewPreferencePage.initDefaults( pstore );
-		RegistersViewPreferencePage.initDefaults( pstore );
 		SharedLibrariesViewPreferencePage.initDefaults( pstore );
 		CDebugPreferencePage.initDefaults( pstore );
 	}

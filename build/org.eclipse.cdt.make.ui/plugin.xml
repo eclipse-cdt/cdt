@@ -297,6 +297,18 @@
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
       </page>
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            name="C/C++ Project Paths"
+            nameFilter="*"
+            class="org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathPropertyPage"
+            id="org.eclipse.cdt.internal.ui.dialogs.cpath.CPathPropertyPage">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.make.core.makeNature">
+         </filter>
+      </page>      
    </extension>
    <extension
          point="org.eclipse.ui.views">

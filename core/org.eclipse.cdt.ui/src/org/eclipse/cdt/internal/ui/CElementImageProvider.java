@@ -106,7 +106,87 @@ public class CElementImageProvider {
 		}
 		return null;
 	}
+
+	/**
+ 	 * 
+	 * @param type
+	 * @return
+	 */
+	public static ImageDescriptor getImageDescriptor(int type) {
+		switch (type) {
+			case ICElement.C_VCONTAINER:
+				return CPluginImages.DESC_OBJS_CONTAINER;
+
+			case ICElement.C_BINARY:
+				return CPluginImages.DESC_OBJS_BINARY;
 	
+			case ICElement.C_ARCHIVE:
+				return CPluginImages.DESC_OBJS_ARCHIVE;
+
+			case ICElement.C_UNIT:
+				return CPluginImages.DESC_OBJS_TUNIT;
+				
+			case ICElement.C_CCONTAINER:
+				return DESC_OBJ_FOLDER;
+			
+			case ICElement.C_PROJECT:
+				return DESC_OBJ_PROJECT;
+					
+			case ICElement.C_STRUCT:
+			case ICElement.C_TEMPLATE_STRUCT:
+				return CPluginImages.DESC_OBJS_STRUCT;
+				
+			case ICElement.C_CLASS:
+			case ICElement.C_TEMPLATE_CLASS:
+				return CPluginImages.DESC_OBJS_CLASS;
+				
+			case ICElement.C_UNION:
+			case ICElement.C_TEMPLATE_UNION:
+				return CPluginImages.DESC_OBJS_UNION;
+
+			case ICElement.C_TYPEDEF:
+				return CPluginImages.DESC_OBJS_TYPEDEF;
+
+			case ICElement.C_ENUMERATION:
+				return CPluginImages.DESC_OBJS_ENUMERATION;
+
+			case ICElement.C_ENUMERATOR:
+				return CPluginImages.DESC_OBJS_ENUMERATOR;
+
+			case ICElement.C_FIELD:
+				return CPluginImages.DESC_OBJS_PUBLIC_FIELD;
+			
+			case ICElement.C_VARIABLE:
+			case ICElement.C_TEMPLATE_VARIABLE:
+				return CPluginImages.DESC_OBJS_FIELD;
+
+			case ICElement.C_METHOD:  
+			case ICElement.C_METHOD_DECLARATION:
+			case ICElement.C_TEMPLATE_METHOD:
+				return CPluginImages.DESC_OBJS_PUBLIC_METHOD;
+				
+			case ICElement.C_FUNCTION:
+				return CPluginImages.DESC_OBJS_FUNCTION;
+		
+			case ICElement.C_VARIABLE_DECLARATION:
+				return CPluginImages.DESC_OBJS_VAR_DECLARARION;
+			
+			case ICElement.C_FUNCTION_DECLARATION:
+			case ICElement.C_TEMPLATE_FUNCTION:
+				return CPluginImages.DESC_OBJS_DECLARARION;
+
+			case ICElement.C_INCLUDE:
+				return CPluginImages.DESC_OBJS_INCLUDE;
+
+			case ICElement.C_MACRO:
+				return CPluginImages.DESC_OBJS_MACRO;
+				
+			case ICElement.C_NAMESPACE:
+				return CPluginImages.DESC_OBJS_CONTAINER;
+		}
+		return null;
+	}
+
 	private boolean showOverlayIcons(int flags) {
 		return (flags & OVERLAY_ICONS) != 0;
 	}

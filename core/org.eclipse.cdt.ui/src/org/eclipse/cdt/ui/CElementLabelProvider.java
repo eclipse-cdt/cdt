@@ -68,15 +68,6 @@ public class CElementLabelProvider extends LabelProvider {
 					IFunctionDeclaration fdecl = (IFunctionDeclaration) celem;
 					name = fdecl.getSignature();		
 				break;
-				case ICElement.C_VARIABLE:
-					IVariable var = (IVariable) celem;
-					name = var.getTypeName() + " " + var.getElementName(); 					
-				break;
-				case ICElement.C_VARIABLE_DECLARATION:
-				case ICElement.C_FIELD:
-					IVariableDeclaration vdecl = (IVariableDeclaration) celem;
-					name = vdecl.getTypeName() + " " + vdecl.getElementName(); 					
-				break;					
 				default:
 					name= celem.getElementName();
 				break;				

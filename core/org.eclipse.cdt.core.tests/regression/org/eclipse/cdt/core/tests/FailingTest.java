@@ -29,6 +29,9 @@ public class FailingTest implements Test {
         this.test = test;
         this.bugNum = bugNumber;
     }
+    public FailingTest( Test test ){
+        this.test = test;
+    }
     /* (non-Javadoc)
      * @see junit.framework.Test#countTestCases()
      */

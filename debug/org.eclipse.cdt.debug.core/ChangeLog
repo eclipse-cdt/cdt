@@ -1,0 +1,4 @@
+2002-10-10 Alain Magloire
+
+	* ICDISourceManager.java: Changing the getInstructions()
+	method to take long instead of String.

@@ -151,9 +151,12 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(String, String)
 	 */
-	public ICDIInstruction[] getInstructions(String sa, String ea) throws CDIException {
+	public ICDIInstruction[] getInstructions(long start, long end) throws CDIException {
 		MISession mi = getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
+		String hex = "0x";
+		String sa = hex + Long.toHexString(start);
+		String ea = hex + Long.toHexString(end);
 		MIDataDisassemble dis = factory.createMIDataDisassemble(sa, ea, false);
 		try {
 			mi.postCommand(dis);

@@ -1,7 +1,7 @@
-<project default="test-build">
+<project default="build">
 
-	<target name="test-build" depends="zips,test"/>
-	<target name="build" depends="zips,test,upload,mail"/>
+	<target name="build" depends="zips,test"/>
+	<target name="cdtbuild" depends="zips,test,upload"/>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
@@ -24,6 +24,12 @@
 		<property name="cdtuser" value="nobody"/>
 		<property name="cdtpasswd" value="home"/>
 		<property name="remotedir" value="ftp://download1.eclipse.org/cdt/builds/${branchVersion}"/>
+		<property name="baseos" value="${osgi.os}"/>
+		<property name="basews" value="${osgi.ws}"/>
+		<property name="basearch" value="${osgi.arch}"/>
+		<condition property="onWindows">
+			<os family="windows"/>
+		</condition>
 	</target>
 
 	<target name="fetch" depends="init">
@@ -48,15 +54,10 @@
 	<target name="zips" depends="init,unzip">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/platform" />
-			<property name="baseos" value="${osgi.os}"/>
-			<property name="basews" value="${osgi.ws}"/>
-			<property name="basearch" value="${osgi.arch}"/>
+
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/sdk" />
-			<property name="baseos" value="${osgi.os}"/>
-			<property name="basews" value="${osgi.ws}"/>
-			<property name="basearch" value="${osgi.arch}"/>
 		</ant>
 		<concat destfile="${zipsdir}/compilelog.txt">
 			<fileset dir="${buildDirectory}/plugins" includes="**/*.bin.log"/>
@@ -72,14 +73,21 @@
 		</replace>
 	</target>
 
+	<target name="tunzip" if="onWindows">
+		<unzip src="${zipsdir}/org.eclipse.cdt-${branchVersion}-${buildId}-${osgi.os}.${osgi.arch}.zip" dest="${buildDirectory}"/>
+	</target>
+
+	<target name="tuntar" unless="onWindows">
+		<untar src="${zipsdir}/org.eclipse.cdt-${branchVersion}-${buildId}-${osgi.os}.${osgi.arch}.tar.gz" dest="${buildDirectory}"
+			compression="gzip"/>
+	</target>
+
 	<target name="test" depends="init" unless="hasErrors">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/testing" />
-			<property name="baseos" value="${osgi.os}"/>
-			<property name="basews" value="${osgi.ws}"/>
-			<property name="basearch" value="${osgi.arch}"/>
 		</ant>
-		<unzip src="${zipsdir}/org.eclipse.cdt-${branchVersion}-${buildId}-${osgi.os}.${osgi.arch}.zip" dest="${buildDirectory}"/>
+		<antcall target="tunzip"/>
+		<antcall target="tuntar"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt.testing-${buildId}.zip" dest="${buildDirectory}"/>
 		<copy todir="${buildDirectory}/eclipse/plugins/org.eclipse.test">
 			<fileset dir="../org.eclipse.test"/>
@@ -89,9 +97,9 @@
 		</copy>
 		<ant antfile="test.xml" dir="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}">
 			<property name="eclipse-home" value="${buildDirectory}/eclipse"/>
-			<property name="os" value="${osgi.os}"/>
-			<property name="ws" value="${osgi.ws}"/>
-			<property name="arch" value="${osgi.arch}"/>
+			<property name="os" value="${baseos}"/>
+			<property name="ws" value="${basews}"/>
+			<property name="arch" value="${basearch}"/>
 		</ant>
 		<xslt style="${buildDirectory}/eclipse/plugins/org.eclipse.test/JUNIT.XSL"
 			in="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"

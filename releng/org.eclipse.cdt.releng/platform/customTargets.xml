@@ -1,10 +1,5 @@
 <project name="Build specific targets and properties" default="noDefault" >
 
-<property name="basews" value="gtk" />
-<property name="baseos" value="linux" />
-<property name="basearch" value="x86" />
-<property name="basenl" value="en_US" />
-
 <!-- ===================================================================== -->
 <!-- Run a given ${target} on all elements being built -->
 <!-- Add on <ant> task for each top level element being built. -->
@@ -82,6 +77,7 @@
 <!-- Replace values for cvsRoot, package and mapVersionTag as desired. -->
 <!-- ===================================================================== -->
 <target name="getMapFiles">
+	<echo message="basews = ${basews}"/>
 	<copy file="${builder}/../maps/cdt.map" todir="${buildDirectory}/maps"/>
 </target>
 

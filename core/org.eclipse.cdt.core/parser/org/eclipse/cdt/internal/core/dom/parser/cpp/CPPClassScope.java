@@ -191,6 +191,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    	IASTName [] ns = ((ICPPASTQualifiedName)node).getNames();
 	    	if( ns[ ns.length - 1 ] == name )
 	    		node = node.getParent();
+	    	else
+	    		return false;
 	    }
 	    if( node instanceof IASTDeclSpecifier ){
 	        IASTNode parent = node.getParent();

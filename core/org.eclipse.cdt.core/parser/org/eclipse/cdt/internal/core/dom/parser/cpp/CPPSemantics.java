@@ -587,37 +587,56 @@ public class CPPSemantics {
 	            data.foundItems = ArrayUtil.addAll( Object.class, (Object[])data.foundItems, (Object[])results );
 	        }
 	    } else {
-	        Object [] objs = (Object[]) results;
-	        CharArrayObjectMap resultMap = (CharArrayObjectMap) data.foundItems;
-	        if( objs != null ) {
-	    		for( int i = 0; i < objs.length && objs[i] != null; i++ ){
-	    		    char [] n = null;
-	    		    if( objs[i] instanceof IBinding )
-	    		        n = ((IBinding)objs[i]).getNameCharArray();
-	    		    else
-	    		        n = ((IASTName)objs[i]).toCharArray();
-    		        if( !resultMap.containsKey( n ) ){
-	    				resultMap.put( n, objs[i] );
-	    			} else if( !scoped ) {
-	    			    Object obj = resultMap.get( n );
-	    			    if( obj instanceof Object [] ) {
-	    			        if( objs[i] instanceof IBinding )
-	    			            obj = ArrayUtil.append( Object.class, (Object[]) obj, objs[i] );
-	    			        else
-	    			            obj = ArrayUtil.addAll( Object.class, (Object[])obj, (Object[]) objs[i] );
-	    			    } else {
-	    			        if( objs[i] instanceof IBinding )
-	    			            obj = new Object [] { obj, objs[i] };
-	    			        else {
-	    			            Object [] temp = new Object [ ((Object[])objs[i]).length + 1 ];
-	    			            temp[0] = obj;
-	    			            obj = ArrayUtil.addAll( Object.class, temp, (Object[]) objs[i] );
-	    			        }
-	    			    } 
-	    			}
-	    		}
-	        }
+	        data.foundItems = mergePrefixResults( (CharArrayObjectMap) data.foundItems, results, scoped );
 	    }
+	}
+	
+	/**
+	 * @param dest
+	 * @param source : either Object[] or CharArrayObjectMap
+	 * @param scoped
+	 * @return
+	 */
+	private static Object mergePrefixResults( CharArrayObjectMap dest, Object source, boolean scoped ){
+		if( source == null ) return dest; 
+        CharArrayObjectMap resultMap = ( dest != null ) ? dest : new CharArrayObjectMap(2);
+        
+        CharArrayObjectMap map = null;
+        Object [] objs = null;
+        if( source instanceof CharArrayObjectMap )
+        	map = (CharArrayObjectMap) source;
+        else 
+        	objs = ArrayUtil.trim( Object.class, (Object[]) source );
+        
+        int size = map != null ? map.size() : objs.length;
+       
+        for( int i = 0; i < size; i ++ ) {
+        	char [] key = ( map != null ) ? map.keyAt(i) 
+        								  : ( objs[i] instanceof IBinding) ? ((IBinding)objs[i]).getNameCharArray() 
+        								  								   : ((IASTName)objs[i]).toCharArray();
+        	if( !resultMap.containsKey( key ) ){
+				resultMap.put( key, (map != null ) ? map.get( key ) : objs[i] );
+			} else if( !scoped ) {
+			    Object obj = resultMap.get( key );
+			    Object so = ( map != null ) ? map.get(key) : objs[i];
+			    if( obj instanceof Object [] ) {
+			        if( so instanceof IBinding )
+			            obj = ArrayUtil.append( Object.class, (Object[]) obj, so );
+			        else
+			            obj = ArrayUtil.addAll( Object.class, (Object[])obj, (Object[]) so );
+			    } else {
+			        if( so instanceof IBinding )
+			            obj = new Object [] { obj, so };
+			        else {
+			            Object [] temp = new Object [ ((Object[])so).length + 1 ];
+			            temp[0] = obj;
+			            obj = ArrayUtil.addAll( Object.class, temp, (Object[]) so );
+			        }
+			    } 
+			}
+        }
+
+        return resultMap;
 	}
 	static private void lookup( CPPSemantics.LookupData data, Object start ) throws DOMException{
 		IASTNode node = data.astName;
@@ -700,12 +719,12 @@ public class CPPSemantics {
 		}
 	}
 
-	private static IASTName[] lookupInParents( CPPSemantics.LookupData data, ICPPClassScope lookIn ) throws DOMException{
+	private static Object lookupInParents( CPPSemantics.LookupData data, ICPPClassScope lookIn ) throws DOMException{
 		ICPPASTCompositeTypeSpecifier compositeTypeSpec = (ICPPASTCompositeTypeSpecifier) lookIn.getPhysicalNode();
 		ICPPASTBaseSpecifier [] bases = compositeTypeSpec.getBaseSpecifiers();
 	
-		IASTName[] inherited = null;
-		IASTName[] result = null;
+		Object inherited = null;
+		Object result = null;
 		
 		if( bases.length == 0 )
 			return null;
@@ -719,6 +738,7 @@ public class CPPSemantics {
 		int size = bases.length;
 		for( int i = 0; i < size; i++ )
 		{
+			inherited = null;
 			ICPPClassType cls = null;
 			IBinding binding = bases[i].getName().resolveBinding();
 			while( binding instanceof ITypedef && ((ITypedef)binding).getType() instanceof IBinding ){
@@ -744,10 +764,19 @@ public class CPPSemantics {
 				//is circular inheritance
 				if( ! data.inheritanceChain.containsKey( parent ) ){
 					//is this name define in this scope?
-					inherited = lookupInScope( data, parent, null, null );
+					if( !data.prefixLookup && parent.isFullyCached() )
+						inherited = parent.getBinding( data.astName, true );
+					else 
+						inherited = lookupInScope( data, parent, null, null );
 					
-					if( inherited == null || inherited.length == 0 ){
-						inherited = lookupInParents( data, parent );
+					if( inherited == null || data.prefixLookup ){
+						Object temp = lookupInParents( data, parent );
+						if( inherited != null ){
+							inherited = mergePrefixResults( null, inherited, true );
+							inherited = mergePrefixResults( (CharArrayObjectMap)inherited, (CharArrayObjectMap)temp, true );
+						} else {
+							inherited = temp;
+						}
 					} else {
 					    visitVirtualBaseClasses( data, cls );
 					}
@@ -757,20 +786,40 @@ public class CPPSemantics {
 				}
 			}	
 			
-			if( inherited != null && inherited.length != 0 ){
-				if( result == null || result.length == 0 ){
+			if( inherited != null  ){
+				if( result == null ){
 					result = inherited;
-				} else if ( inherited != null && inherited.length != 0 ) {
-					for( int j = 0; j < result.length && result[j] != null; j++ ) {
-						IASTName n = result[j];
-						if( checkAmbiguity( n, inherited ) ){
-						    data.problem = new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, n.toCharArray() ); 
-						    return null;
+				} else if ( inherited != null ) {
+					if( !data.prefixLookup ) {
+						if( result instanceof Object [] ){
+							Object [] r = (Object[]) result;
+							for( int j = 0; j < r.length && r[j] != null; j++ ) {
+								if( checkForAmbiguity( r[j], inherited ) ){
+								    data.problem = new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name ); 
+								    return null;
+								}
+							}
+						} else {
+							if( checkForAmbiguity( result, inherited ) ){
+							    data.problem = new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name ); 
+							    return null;
+							}
+						}
+					} else {
+						CharArrayObjectMap temp = (CharArrayObjectMap) inherited;
+						CharArrayObjectMap r = (CharArrayObjectMap) result;
+						char[] key = null;
+						int tempSize = temp.size();
+						for( int ii = 0; ii < tempSize; ii++ ){
+						    key = temp.keyAt( ii );
+							if( !r.containsKey( key ) ){
+								r.put( key, temp.get(key) );
+							} else {
+								//TODO: prefixLookup ambiguity checking
+							}
 						}
 					}
 				}
-			} else {
-				inherited = null;	//reset temp for next iteration
 			}
 		}
 	
@@ -799,26 +848,34 @@ public class CPPSemantics {
             }
         }
 	}
-	private static boolean checkAmbiguity( IASTName n, IASTName []names ) throws DOMException{
-	    names = (IASTName[]) ArrayUtil.trim( IASTName.class, names );
-	    if( names.length == 0 )
-	        return false;
+	private static boolean checkForAmbiguity( Object n, Object names ) throws DOMException{
+		if( names instanceof Object[] ) {
+		    names = ArrayUtil.trim( Object.class, (Object[]) names );
+		    if( ((Object[])names).length == 0 )
+		        return false;
+		}
 
 	    //it is not ambiguous if they are the same thing and it is static or an enumerator
-	    IBinding binding = n.resolveBinding();
-	    for( int i = 0; i < names.length && names[i] != null; i++ ){
-	        
-	        IBinding b = names[i].resolveBinding();
+	    IBinding binding =  ( n instanceof IBinding) ? (IBinding)n : ((IASTName)n).resolveBinding();
+	    Object [] objs = ( names instanceof Object[] ) ? (Object[])names : null;
+	    int idx = ( objs != null && objs.length > 0 ) ? 0 : -1;
+	    Object o = ( idx != -1 ) ? objs[idx++] : names;
+	    while( o != null ) {       
+	        IBinding b = ( o instanceof IBinding ) ? (IBinding) o : ((IASTName)o).resolveBinding();
 	        
 	        if( binding != b )
 	            return true;
-	        if( binding instanceof IEnumerator )
-	            continue;
-	        else if( (binding instanceof IFunction && ((IFunction)binding).isStatic()) ||
-	                 (binding instanceof IVariable && ((IVariable)binding).isStatic()) )
-	            continue;
+	        if( !(binding instanceof IEnumerator) &&
+	        	!( (binding instanceof IFunction && ((IFunction)binding).isStatic()) ||
+		           (binding instanceof IVariable && ((IVariable)binding).isStatic()) ) )
+	        {
+	        	return true;
+	        }
 	        
-	        return true;
+	        if( idx > -1 && idx < objs.length )
+	        	o = objs[idx++];
+	        else
+	        	o = null;
 	    }
 		return false;
 	}

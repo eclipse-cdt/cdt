@@ -12,6 +12,9 @@ package org.eclipse.cdt.core.parser.failedTests;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.tests.BaseASTTest;
 
 /**
@@ -37,7 +40,11 @@ public class STLFailedTests extends BaseASTTest  {
 		Writer code = new StringWriter();
 		code.write("template <bool __threads, int __inst>\n");
 		code.write("char* default_alloc_template<__threads, __inst>::_S_start_free = 0;\n");
-		assertCodeFailsParse(code.toString());
+		IASTCompilationUnit cu = parse(code.toString());
+		IASTTemplateDeclaration templateDecl = (IASTTemplateDeclaration) cu.getDeclarations().next(); 
+		// should not get this exception 
+		IASTVariable v = (IASTVariable) templateDecl.getOwnedDeclaration();
+		assertEquals( v, null );
 	}
 	
 }

@@ -596,6 +596,20 @@
          </action>
       </objectContribution>
       <objectContribution
+            objectClass="org.eclipse.cdt.core.model.IMethod"
+            id="org.eclipse.cdt.debug.ui.FunctionBreakpointActions">
+         <action
+               label="%ManageFunctionBreakpointAction.label"
+               icon="icons/full/elcl16/function_brkpt_co.gif"
+               helpContextId="manage_function_breakpoint_action_context"
+               tooltip="%ManageFunctionBreakpointAction.tooltip"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate">
+         </action>
+      </objectContribution>
+      <objectContribution
             objectClass="org.eclipse.cdt.core.model.IVariable"
             id="org.eclipse.cdt.debug.ui.WatchpointActions">
          <action

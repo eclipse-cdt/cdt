@@ -1,3 +1,11 @@
+2002-10-16 Alain Magloire
+
+	In the memory manager a string should be allowed to
+	create a block since an expression can be use.
+	
+	* src/.../debug.core.cdi/ICDIMemoryManager.java (createMemoryBlock):
+	 New method that takes a string as the first argument.
+	
 2002-10-15 Mikhail Khodjaiants
 	* CDebugModel.java: Implementing the memory view support.
 	* ICMemoryManager: Implementing the memory view support.

@@ -1,3 +1,14 @@
+2004-07-15 Tanya Wolff
+
+	Fix for 70124: unexternalized strings
+	* org.eclipse.cdt.ui.wizards.conversion/ConvertProjectWizardPage.java
+	* org.eclipse.cdt.internal.ui/CUIMessages.properties
+
+	Fix for 70143: duplicate mnemonics in binary parser options
+	* org.eclipse.cdt.ui.dialogs.CygwinPEBinaryParserPage.java
+	* org.eclipse.cdt.ui.dialogs.GnuElfBinaryParserPage.java
+	* org.eclipse.cdt.internal.ui/CUIMessages.properties
+
 2004-07-15 Hoda Amer
 	Fix for PR 68500: [Outline View] After doing a rename of a class, the outline viewer does not display the new name (just the old name)
 

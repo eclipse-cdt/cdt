@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -129,4 +130,11 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
     public IBinding[] find( String name ) throws DOMException {
         throw new DOMException( this );
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
+	 */
+	public IASTName getScopeName() throws DOMException {
+		return null;
+	}
 }

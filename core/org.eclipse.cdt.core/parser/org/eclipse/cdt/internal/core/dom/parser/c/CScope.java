@@ -207,4 +207,14 @@ public class CScope implements ICScope {
     public boolean isFullyCached(){
         return isFullyCached;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
+	 */
+	public IASTName getScopeName() throws DOMException {
+		if( physicalNode instanceof IASTCompositeTypeSpecifier ){
+			return ((IASTCompositeTypeSpecifier) physicalNode).getName();
+		}
+		return null;
+	}
 }

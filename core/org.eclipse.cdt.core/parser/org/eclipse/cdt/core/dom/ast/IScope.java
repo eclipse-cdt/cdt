@@ -18,6 +18,13 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IScope {
 
 	/**
+     * Get the IASTName for this scope, may be null 
+     * @return
+     * @throws DOMException
+     */
+    public IASTName getScopeName() throws DOMException;
+    
+	/**
 	 * Scopes are arranged hierarchically. Lookups will generally
 	 * flow upward to find resolution.
 	 * 

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -36,9 +37,12 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 
 	public MakePropertyPage() {
 		super();
-		fOptionBlock = new MakeProjectOptionBlock(this);
 	}
-	
+
+	public void setContainer(IPreferencePageContainer preferencePageContainer) {
+	    super.setContainer(preferencePageContainer);
+	    fOptionBlock = new MakeProjectOptionBlock(this);
+	}	
 	
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);

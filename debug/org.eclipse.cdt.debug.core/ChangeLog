@@ -6,6 +6,11 @@
 	mimic gdb "return/finish".
 
 2003-02-03 Mikhail Khodjaiants
+	Filter out breakpoints set in unrelated projects.
+	* CDebugTarget.java
+	* CDebugUtils.java
+
+2003-02-03 Mikhail Khodjaiants
 	Implemention of the 'handle' command of the 'Signals' view.
 	* ICDISignal.java: added the 'handle' method
 	* CSignal.java: implementation of the 'handle' command.

@@ -82,6 +82,7 @@ import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -340,13 +341,36 @@ public class CDebugTarget extends CDebugElement
 			IBreakpoint[] bps = (IBreakpoint[])manager.getBreakpoints( CDebugModel.getPluginIdentifier() );
 			for ( int i = 0; i < bps.length; i++ )
 			{
-				if ( bps[i] instanceof ICBreakpoint && findCDIBreakpoint( bps[i] ) == null ) 
+				if ( bps[i] instanceof ICBreakpoint && isTargetBreakpoint( bps[i] ) && findCDIBreakpoint( bps[i] ) == null ) 
 				{
 					breakpointAdded( (ICBreakpoint)bps[i] );
 				}
 			}
 			setRetryBreakpoints( false );
 		}
+	}
+
+	private boolean isTargetBreakpoint( IBreakpoint bp )
+	{
+		IProject project = bp.getMarker().getResource().getProject();
+		if ( project != null && project.exists() )
+		{
+			if ( getSourceLocator() instanceof IAdaptable )
+			{
+				ICSourceLocator sl = (ICSourceLocator)((IAdaptable)getSourceLocator()).getAdapter( ICSourceLocator.class );
+				if ( sl != null )
+				{
+					return sl.contains( project );
+				}
+			}
+			else
+			{
+				if ( project.equals( getExecFile().getProject() ) )
+					return true;
+				return CDebugUtils.isReferencedProject( getExecFile().getProject(), project );
+			}
+		}
+		return false;
 	}
 
 	protected void initializeRegisters()

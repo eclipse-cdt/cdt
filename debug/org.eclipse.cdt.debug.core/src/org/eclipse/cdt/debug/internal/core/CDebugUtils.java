@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.core;
 
 import java.util.Arrays;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
@@ -222,5 +223,25 @@ public class CDebugUtils
 			sb.append( text );
 		}
 		return sb.toString();
-	}  
+	}
+
+	public static boolean isReferencedProject( IProject parent, IProject project )
+	{
+		if ( parent != null && parent.exists() )
+		{
+			try
+			{
+				IProject[] projects = parent.getReferencedProjects();
+				for ( int i = 0; i < projects.length; ++i )
+				{
+					if ( projects[i].exists() && ( projects[i].equals( project ) || isReferencedProject( projects[i], project ) ) )
+						return true;
+				}
+			}
+			catch( CoreException e )
+			{
+			}
+		}
+		return false;
+	}   
 }

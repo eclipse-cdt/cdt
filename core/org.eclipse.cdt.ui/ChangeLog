@@ -1,3 +1,8 @@
+2003-01-09 Alain Magloire
+
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java (getBaseImageDescriptor):
+	Provide the same icon for methods.
+
 2003-01-07 Alain Magloire
 
 	REMIND:More work needs to be done on the ContentAssist preferences

@@ -9,10 +9,13 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CDescriptorEvent;
@@ -22,6 +25,7 @@ import org.eclipse.cdt.core.ICDescriptorListener;
 import org.eclipse.cdt.core.ICDescriptorManager;
 import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -29,9 +33,11 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -41,9 +47,13 @@ import org.eclipse.core.runtime.jobs.Job;
 
 public class CDescriptorManager implements ICDescriptorManager, IResourceChangeListener {
 
-	HashMap fOperationMap = new HashMap();
-	HashMap fDescriptorMap = new HashMap();
+	Map fOperationMap = new HashMap(1);
+	Map fDescriptorMap = new HashMap();
+	Map fOwnerConfigMap = null;
 	List listeners = new Vector();
+
+	private static final COwnerConfiguration NULLCOwner = new COwnerConfiguration("", //$NON-NLS-1$
+			CCorePlugin.getResourceString("CDescriptorManager.internal_owner")); //$NON-NLS-1$
 
 	class CDescriptorUpdater extends Job {
 
@@ -59,13 +69,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
-				getWorkspace().run(new IWorkspaceRunnable() {
-
-					public void run(IProgressMonitor mon) throws CoreException {
-						fDescriptor.save();
-					}
-				}, getRule(), IWorkspace.AVOID_UPDATE, monitor);
-
+				fDescriptor.save();
 			} catch (CoreException e) {
 				return e.getStatus();
 			}
@@ -156,8 +160,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 										CDescriptor descriptor = (CDescriptor) fDescriptorMap.get(dResource.getProject());
 										if (descriptor != null) {
 											if ((delta.getKind() & IResourceDelta.REMOVED) != 0) {
-												// the file got deleted lets
-												// try
+												// the file got deleted lets try
 												// and restore for memory.
 												descriptor.updateOnDisk();
 											} else if ((delta.getFlags() & IResourceDelta.CONTENT) != 0) {
@@ -181,7 +184,56 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 		}
 	}
 
-	public /*synchronized */ ICDescriptor getDescriptor(IProject project) throws CoreException {
+	private void initializeOwnerConfiguration() {
+		IExtensionPoint extpoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("CProject"); //$NON-NLS-1$
+		IExtension extension[] = extpoint.getExtensions();
+		fOwnerConfigMap = new HashMap(extension.length);
+		for (int i = 0; i < extension.length; i++) {
+			IConfigurationElement element[] = extension[i].getConfigurationElements();
+			for (int j = 0; j < element.length; j++) {
+				if (element[j].getName().equalsIgnoreCase("cproject")) { //$NON-NLS-1$
+					fOwnerConfigMap.put(extension[i].getUniqueIdentifier(), new COwnerConfiguration(element[j]));
+					break;
+				}
+			}
+		}
+	}
+
+	COwnerConfiguration getOwnerConfiguration(String id) {
+		if (id.equals(NULLCOwner.getOwnerID())) { //$NON-NLS-1$
+			return NULLCOwner;
+		}
+		if (fOwnerConfigMap == null) {
+			initializeOwnerConfiguration();
+		}
+		COwnerConfiguration config = (COwnerConfiguration) fOwnerConfigMap.get(id);
+		if (config == null) { // no install owner, lets create place holder config for it.
+			config = new COwnerConfiguration(id, CCorePlugin.getResourceString("CDescriptorManager.owner_not_Installed")); //$NON-NLS-1$
+			fOwnerConfigMap.put(id, config);
+		}
+		return config;
+	}
+
+	COwnerConfiguration getOwnerConfiguration(IProject project) throws CoreException {
+		if (fOwnerConfigMap == null) {
+			initializeOwnerConfiguration();
+		}
+		IProjectDescription description = project.getDescription();
+		String natureIDs[] = description.getNatureIds();
+		Iterator configs = fOwnerConfigMap.entrySet().iterator();
+		while (configs.hasNext()) {
+			Entry entry = (Entry) configs.next();
+			COwnerConfiguration config = (COwnerConfiguration) entry.getValue();
+			if (config.getNature() != null) {
+				if (Arrays.asList(natureIDs).lastIndexOf(config.getNature()) != -1) {
+					return config;
+				}
+			}
+		}
+		return NULLCOwner;
+	}
+
+	synchronized public ICDescriptor getDescriptor(IProject project) throws CoreException {
 		CDescriptor descriptor = (CDescriptor) fDescriptorMap.get(project);
 		if (descriptor == null) {
 			descriptor = new CDescriptor(this, project);
@@ -192,26 +244,36 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 
 	public void configure(IProject project, String id) throws CoreException {
 		CDescriptor descriptor;
+		if (id.equals(NULLCOwner.getOwnerID())) { //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+					CCorePlugin.getResourceString("CDescriptorManager.exception.invalid_ownerID"), //$NON-NLS-1$
+					(Throwable) null);
+			throw new CoreException(status);
+		}
 		synchronized (this) {
 			descriptor = (CDescriptor) fDescriptorMap.get(project);
 			if (descriptor != null) {
-				if (!descriptor.getProjectOwner().getID().equals(id)) {
+				if (descriptor.getProjectOwner().getID().equals(NULLCOwner.getOwnerID())) { //$NON-NLS-1$
+					// non owned descriptors are simply configure to the new owner no questions ask!
+					descriptor = new CDescriptor(this, project, new COwner(getOwnerConfiguration(id)));
+				} else if (!descriptor.getProjectOwner().getID().equals(id)) {
 					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS,
 							CCorePlugin.getResourceString("CDescriptorManager.exception.alreadyConfigured"), //$NON-NLS-1$
 							(Throwable) null);
 					throw new CoreException(status);
+				} else {
+					return; // already configured with same owner.
 				}
-				return;
-			}
-			try {
-				descriptor = new CDescriptor(this, project, id);
-			} catch (CoreException e) { // if .cdtproject already exists will
-				// use that
-				IStatus status = e.getStatus();
-				if (status.getCode() == CCorePlugin.STATUS_CDTPROJECT_EXISTS) {
-					descriptor = new CDescriptor(this, project);
-				} else
-					throw e;
+			} else {
+				try {
+					descriptor = new CDescriptor(this, project, id);
+				} catch (CoreException e) { // if .cdtproject already exists we'll use that
+					IStatus status = e.getStatus();
+					if (status.getCode() == CCorePlugin.STATUS_CDTPROJECT_EXISTS) {
+						descriptor = new CDescriptor(this, project);
+					} else
+						throw e;
+				}
 			}
 			fDescriptorMap.put(project, descriptor);
 		}
@@ -221,7 +283,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	public void convert(IProject project, String id) throws CoreException {
 		CDescriptor descriptor;
 		synchronized (this) {
-			descriptor = new CDescriptor(this, project, new COwner(id));
+			descriptor = new CDescriptor(this, project, new COwner(getOwnerConfiguration(id)));
 			fDescriptorMap.put(project, descriptor);
 		}
 		fireEvent(new CDescriptorEvent(descriptor, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.OWNER_CHANGED));
@@ -238,7 +300,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	protected void fireEvent(final CDescriptorEvent event) {
 		if (fOperationMap.containsKey(event.getDescriptor())) {
 			// lets just hold on to the important event in order of;
-			// ADD/REMOVE shouldn' every receive the remove but....
+			// ADD/REMOVE should not receive the remove but....
 			// OWNER_CHANGED
 			// EXT_CHANGED
 			// other
@@ -299,11 +361,9 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	}
 
 	/*
-	 * Perform a update of the ondisk .cdtproject file. This is nessecary to
-	 * avoid deadlocking when the descriptor has change from a call to
-	 * ICDescriptor.get(project, true) which may update the descriptor via the
-	 * owner update method, while the workspace is locked (ie during a
-	 * resourceChange event).
+	 * Perform a update of the ondisk .cdtproject file. This is nessecary to avoid deadlocking when the descriptor has change from a
+	 * call to ICDescriptor.get(project, true) which may update the descriptor via the owner update method, while the workspace is
+	 * locked (ie during a resourceChange event).
 	 */
 	protected void updateDescriptor(CDescriptor descriptor) {
 		new CDescriptorUpdater(descriptor).schedule();

@@ -60,7 +60,7 @@ import org.w3c.dom.ProcessingInstruction;
 public class CDescriptor implements ICDescriptor {
 
 	final CDescriptorManager fManager;
-	private final IProject fProject;
+	final IProject fProject;
 	private COwner fOwner;
 
 	private HashMap extMap = new HashMap(4);
@@ -84,8 +84,8 @@ public class CDescriptor implements ICDescriptor {
 	private static final String PROJECT_DATA_ITEM = "item"; //$NON-NLS-1$
 	private static final String PROJECT_DATA_ID = "id"; //$NON-NLS-1$
 
-	private boolean fUpdating;
-	boolean isInitializing = false;
+	boolean fUpdating;
+	boolean isInitializing = true;
 
 	protected CDescriptor(CDescriptorManager manager, IProject project, String id) throws CoreException {
 		fProject = project;
@@ -101,7 +101,6 @@ public class CDescriptor implements ICDescriptor {
 			IStatus status;
 			String ownerID = readCDTProjectFile(descriptionPath);
 			if (ownerID.equals(id)) {
-				fOwner = new COwner(ownerID);
 				status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS,
 						CCorePlugin.getResourceString("CDescriptor.exception.projectAlreadyExists"), (Throwable) null); //$NON-NLS-1$
 			} else {
@@ -110,8 +109,7 @@ public class CDescriptor implements ICDescriptor {
 			}
 			throw new CoreException(status);
 		}
-		fOwner = new COwner(id);
-		isInitializing = true;
+		fOwner = new COwner(manager.getOwnerConfiguration(id));
 		fOwner.configure(project, this);
 		isInitializing = false;
 		save();
@@ -128,11 +126,14 @@ public class CDescriptor implements ICDescriptor {
 		IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
 
 		if (!descriptionPath.toFile().exists()) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
-					CCorePlugin.getResourceString("CDescriptor.exception.fileNotFound"), (Throwable) null); //$NON-NLS-1$
-			throw new CoreException(status);
+			fOwner = new COwner(manager.getOwnerConfiguration(project));
+			fOwner.configure(project, this);
+			isInitializing = false;
+			fManager.updateDescriptor(this);
+		} else {
+			String ownerId = readCDTProjectFile(descriptionPath);
+			fOwner = new COwner(manager.getOwnerConfiguration(ownerId));
 		}
-		fOwner = new COwner(readCDTProjectFile(descriptionPath));
 	}
 
 	protected CDescriptor(CDescriptorManager manager, IProject project, COwner owner) throws CoreException {
@@ -145,14 +146,10 @@ public class CDescriptor implements ICDescriptor {
 		}
 		IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
 
-		if (!descriptionPath.toFile().exists()) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
-					CCorePlugin.getResourceString("CDescriptor.exception.fileNotFound"), (Throwable) null); //$NON-NLS-1$
-			throw new CoreException(status);
+		if (descriptionPath.toFile().exists()) {
+			readCDTProjectFile(descriptionPath);
 		}
-		readCDTProjectFile(descriptionPath);
 		fOwner = owner;
-		isInitializing = true;
 		fOwner.configure(project, this);
 		isInitializing = false;
 		save();
@@ -160,6 +157,7 @@ public class CDescriptor implements ICDescriptor {
 
 	private String readCDTProjectFile(IPath descriptionPath) throws CoreException {
 		FileInputStream file = null;
+		String ownerID = ""; //$NON-NLS-1$
 		try {
 			file = new FileInputStream(descriptionPath.toFile());
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -167,14 +165,11 @@ public class CDescriptor implements ICDescriptor {
 			NodeList nodeList = document.getElementsByTagName(PROJECT_DESCRIPTION);
 			if (nodeList != null && nodeList.getLength() > 0) {
 				Node node = nodeList.item(0);
-				String ownerID = node.getAttributes().getNamedItem(PROJECT_OWNER_ID).getNodeValue();
-				if (ownerID != null) {
-					readProjectDescription(node);
-					return ownerID;
+				if (node.hasAttributes()) {
+					ownerID = node.getAttributes().getNamedItem(PROJECT_OWNER_ID).getNodeValue();
 				}
-				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
-						CCorePlugin.getResourceString("CDescriptor.exception.missingOwnerId"), null); //$NON-NLS-1$
-				throw new CoreException(status);
+				readProjectDescription(node);
+				return ownerID;
 			}
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
 					CCorePlugin.getResourceString("CDescriptor.exception.missingElement"), null); //$NON-NLS-1$
@@ -192,7 +187,7 @@ public class CDescriptor implements ICDescriptor {
 		}
 	}
 
-	private IPath getProjectDefaultLocation(IProject project) {
+	private static IPath getProjectDefaultLocation(IProject project) {
 		return Platform.getLocation().append(project.getFullPath());
 	}
 
@@ -216,8 +211,8 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	synchronized public ICExtensionReference[] get(String extensionID, boolean update) {
-		ICExtensionReference[] ext = get(extensionID);
-		if (ext.length == 0 && update) {
+		ICExtensionReference[] refs = get(extensionID);
+		if (refs.length == 0 && update) {
 			try {
 				boolean oldIsInitializing = isInitializing;
 				isInitializing = true;
@@ -226,11 +221,11 @@ public class CDescriptor implements ICDescriptor {
 				if (!isInitializing) {
 					updateOnDisk();
 				}
-				ext = get(extensionID);
+				refs = get(extensionID);
 			} catch (CoreException e) {
 			}
 		}
-		return ext;
+		return refs;
 	}
 
 	private CExtensionReference createRef(String extensionPoint, String extension) {
@@ -303,35 +298,44 @@ public class CDescriptor implements ICDescriptor {
 		return getProject().getFile(DESCRIPTION_FILE_NAME);
 	}
 
-	synchronized void save() throws CoreException {
-		String xml;
-		if (!fProject.isAccessible()) {
-			return;
-		}
-		fUpdating = true;
+	void save() throws CoreException {
+		fManager.getWorkspace().run(new IWorkspaceRunnable() {
 
-		try {
-			xml = getAsXML();
-		} catch (IOException e) {
-			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e);
-			throw new CoreException(s);
-		} catch (TransformerException e) {
-			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e);
-			throw new CoreException(s);
-		} catch (ParserConfigurationException e) {
-			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e);
-			throw new CoreException(s);
-		}
+			public void run(IProgressMonitor mon) throws CoreException {
+				String xml;
+				if (!fProject.isAccessible()) {
+					return;
+				}
+				fUpdating = true;
 
-		IFile rscFile = getFile();
-		InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
-		// update the resource content
-		if (rscFile.exists()) {
-			rscFile.setContents(inputStream, IResource.FORCE, null);
-		} else {
-			rscFile.create(inputStream, IResource.FORCE, null);
-		}
-		fUpdating = false;
+				try {
+					xml = getAsXML();
+				} catch (IOException e) {
+					IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e);
+					throw new CoreException(s);
+				} catch (TransformerException e) {
+					IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e);
+					throw new CoreException(s);
+				} catch (ParserConfigurationException e) {
+					IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e);
+					throw new CoreException(s);
+				}
+
+				IFile rscFile = getFile();
+				InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
+				// update the resource content
+				if (rscFile.exists()) {
+					if (rscFile.isReadOnly()) {
+						// provide opportunity to checkout read-only .cdtproject file
+						fManager.getWorkspace().validateEdit(new IFile[]{rscFile}, null);
+					}
+					rscFile.setContents(inputStream, IResource.FORCE, null);
+				} else {
+					rscFile.create(inputStream, IResource.FORCE, null);
+				}
+				fUpdating = false;
+			}
+		}, fProject, IWorkspace.AVOID_UPDATE, null);
 	}
 
 	boolean isUpdating() {
@@ -367,7 +371,8 @@ public class CDescriptor implements ICDescriptor {
 		dataDoc = null;
 
 		try {
-			fOwner = new COwner(readCDTProjectFile(descriptionPath));
+			String ownerId = readCDTProjectFile(descriptionPath);
+			fOwner = new COwner(fManager.getOwnerConfiguration(ownerId));
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			fOwner = origOwner;
@@ -466,7 +471,7 @@ public class CDescriptor implements ICDescriptor {
 		}
 	}
 
-	private String getAsXML() throws IOException, TransformerException, ParserConfigurationException {
+	String getAsXML() throws IOException, TransformerException, ParserConfigurationException {
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
 		Document doc = docBuilder.newDocument();
@@ -474,7 +479,9 @@ public class CDescriptor implements ICDescriptor {
 		doc.appendChild(version);
 		Element configRootElement = doc.createElement(PROJECT_DESCRIPTION);
 		doc.appendChild(configRootElement);
-		configRootElement.setAttribute(PROJECT_OWNER_ID, fOwner.getID());
+		if (fOwner.getID().length() > 0) {
+			configRootElement.setAttribute(PROJECT_OWNER_ID, fOwner.getID());
+		}
 		encodeProjectExtensions(doc, configRootElement);
 		encodeProjectData(doc, configRootElement);
 		return serializeDocument(doc);
@@ -534,12 +541,7 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	public void saveProjectData() throws CoreException {
-		fManager.getWorkspace().run(new IWorkspaceRunnable() {
-
-			public void run(IProgressMonitor mon) throws CoreException {
-				save();
-			}
-		}, fProject, IWorkspace.AVOID_UPDATE, null);
+		save();
 		fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, 0));
 	}
 

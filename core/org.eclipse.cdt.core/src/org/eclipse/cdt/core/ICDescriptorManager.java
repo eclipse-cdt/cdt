@@ -14,6 +14,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface ICDescriptorManager {
+	public void configure(IProject project, String id) throws CoreException;
+	public void convert(IProject project, String id) throws CoreException;
+		
 	public ICDescriptor getDescriptor(IProject project) throws CoreException;
 
 	public void runDescriptorOperation(IProject project, ICDescriptorOperation op, IProgressMonitor monitor) throws CoreException;

@@ -1,5 +1,16 @@
 2004-03-25 David Inglis
 
+	Update to allow non-owned projects and added better recovery of deleted .cdtprojects via nature id
+	
+	* src/org/eclipse/cdt/core/ICDescriptorManager.java
+	* src/org/eclipse/cdt/internal/core/CCorePluginResources.properties
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java
+	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java
+	* src/org/eclipse/cdt/internal/core/COwner.java
+	* src/org/eclipse/cdt/internal/core/COwnerConfiguration.java
+
+2004-03-25 David Inglis
+
 	Fixed up getProcessList to filter on platform.
 	
 	* src/org/eclipse/cdt/core/CCorePlugin.java

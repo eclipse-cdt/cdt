@@ -11,19 +11,30 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * Represents the use of a typedef name in an decl specifier.
+ * Represents the use of a typedef name in an decl specifier in C.
+ * Also used for class/struct/union names in C.
  * 
  * @author Doug Schaefer
  */
 public interface IASTNamedTypeSpecifier extends IASTDeclSpecifier {
 
+	/**
+	 * <code>NAME</code> describes the relationship between an <code>IASTNamedTypeSpecifier</code> and its nested <code>IASTName</code>.
+	 */
 	public static final ASTNodeProperty NAME = new ASTNodeProperty( "Name"); //$NON-NLS-1$
 
     /**
+     * Get the name. 
+     * 
 	 * @return the typedef name.
 	 */
 	public IASTName getName();
 	
+	/**
+	 * Set the name.
+	 * 
+	 * @param name
+	 */
 	public void setName( IASTName name );
 	
 }

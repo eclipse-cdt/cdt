@@ -11,6 +11,9 @@ package org.eclipse.cdt.core.dom.ast;
 
 
 /**
+ * This node represents a null statement. 
+ * ';'
+ * 
  * @author jcamelon
  */
 public interface IASTNullStatement extends IASTStatement {

@@ -21,12 +21,15 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTName extends IASTNode {
 	
+	/**
+	 * Constant sentinel. 
+	 */
 	public static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
 
 	/**
 	 * Return the semantic object this name is referring to.
 	 * 
-	 * @return binding
+	 * @return <code>IBinding</code> binding
 	 */
 	public IBinding resolveBinding();
 	
@@ -34,9 +37,14 @@ public interface IASTName extends IASTNode {
 	 * Return a list of bindings in the scope of the name that have the
 	 * name as a prefix.
 	 * 
-	 * @return bindings that start with this name
+	 * @return <code>IBinding []</code> bindings that start with this name
 	 */
 	public IBinding[] resolvePrefix();
 	
+	/**
+	 * Return a char array representation of the name.
+	 * 
+	 * @return ~ toString().toCharArray()
+	 */
 	public char[] toCharArray();
 }

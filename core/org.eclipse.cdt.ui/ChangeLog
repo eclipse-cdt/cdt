@@ -1,3 +1,11 @@
+2005-02-15 Alain Magloire
+	Fix PR 82856
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchAnnotationModel.java
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchDocumentProvider.java
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchFile.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CSearchPreferencePage.java
+
 2005-02-14 Alain Magloire
 	Fix from Javier Kohen PR 69157
 	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties

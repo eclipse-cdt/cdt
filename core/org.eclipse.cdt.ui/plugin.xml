@@ -324,6 +324,21 @@
             %NewWizards.class.description
          </description>
       </wizard>
+<!--
+      <wizard
+            name="New C++ Class"
+            icon="icons/full/ctool16/newclass_wiz.gif"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
+            <parameter name="ctype" value="true"/>
+         </class>
+         <description>
+            %NewWizards.class.description
+         </description>
+      </wizard>
+-->
    </extension>
 <!-- Define the document provider and partitionner for the CEditor -->
    <extension

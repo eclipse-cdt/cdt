@@ -16,6 +16,10 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IASTInitializer extends IASTNode {
-    public final static IASTInitializer[] EMPTY_INIALIZER_ARRAY = new IASTInitializer[0];
+	
+	/**
+	 * Constant.
+	 */
+    public final static IASTInitializer[] EMPTY_INITIALIZER_ARRAY = new IASTInitializer[0];
 
 }

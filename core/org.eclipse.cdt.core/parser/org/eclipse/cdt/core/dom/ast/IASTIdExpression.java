@@ -17,6 +17,9 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTIdExpression extends IASTExpression {
 
+    /**
+     * <code>ID_NAME</code> represents the relationship between an <code>IASTIdExpression</code> and a <code>IASTName</code>.
+     */
     public static final ASTNodeProperty ID_NAME = new ASTNodeProperty( "IdExpression Name");  //$NON-NLS-1$
 	/**
 	 * Returns the name used in the expression.
@@ -25,5 +28,10 @@ public interface IASTIdExpression extends IASTExpression {
 	 */
 	public IASTName getName();
 	
+	/**
+	 * Set the name to be used inthe expression.
+	 * 
+	 * @param name
+	 */
 	public void setName( IASTName name );
 }

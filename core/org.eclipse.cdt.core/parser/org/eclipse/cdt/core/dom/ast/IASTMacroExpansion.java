@@ -11,6 +11,10 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
+ * A Macro expansion is a node location.  
+ * Nodes that have locations that arrive through the expansion of preprocessor macros
+ * will refer to these type of objects.
+ * 
  * @author Doug Schaefer
  */
 public interface IASTMacroExpansion extends IASTNodeLocation {

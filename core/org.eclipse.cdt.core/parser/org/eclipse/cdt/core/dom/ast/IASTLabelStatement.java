@@ -26,6 +26,11 @@ public interface IASTLabelStatement extends IASTStatement {
 	 */
 	public IASTName getName();
 
+	/**
+	 * Set the name for a label.
+	 * 
+	 * @param name
+	 */
 	public void setName(IASTName name);
 	
 }

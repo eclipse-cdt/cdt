@@ -26,7 +26,7 @@ public class CASTInitializerList extends CASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration#getDeclarators()
      */
     public IASTInitializer[] getInitializers() {
-        if( initializers == null ) return IASTInitializer.EMPTY_INIALIZER_ARRAY;
+        if( initializers == null ) return IASTInitializer.EMPTY_INITIALIZER_ARRAY;
         removeNullInitializers();
         return initializers;
     }

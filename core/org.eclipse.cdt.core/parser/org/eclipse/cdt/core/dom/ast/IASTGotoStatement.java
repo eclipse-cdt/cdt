@@ -22,10 +22,15 @@ public interface IASTGotoStatement extends IASTStatement {
 	/**
 	 * Returns the name of the label. The name resolves to a ILabel binding.
 	 * 
-	 * @return
+	 * @return <code>IASTName</code>
 	 */
 	public IASTName getName();
 	
+	/**
+	 * Set the name for a goto statement label.  
+	 * 
+	 * @param name <code>IASTName</code>
+	 */
 	public void setName(IASTName name);
 	
 }

@@ -244,6 +244,11 @@ public class Target  implements ICDITarget {
 				cthreads = new Thread[]{new Thread(this, 0)};
 			}
 			currentThreadId = info.getCurrentThread();
+			//FIX: When attaching there is no thread selected
+			// We will choose the first one as a workaround.
+			if (currentThreadId == 0 && cthreads.length > 0) {
+				currentThreadId = cthreads[0].getId();
+			}
 		} catch (MIException e) {
 			// Do not throw anything in this case.
 			//throw new CDIException(e.getMessage());

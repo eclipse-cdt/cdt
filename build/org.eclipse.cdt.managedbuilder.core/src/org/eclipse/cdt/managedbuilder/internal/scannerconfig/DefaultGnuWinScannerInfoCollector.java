@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IResource;
  * 
  * @since 2.0
  */
-public class DefaultCygwinScannerInfoCollector extends DefaultGCCScannerInfoCollector {
+public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoCollector {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(org.eclipse.core.resources.IResource, java.util.List, java.util.List, java.util.List)
@@ -34,7 +34,12 @@ public class DefaultCygwinScannerInfoCollector extends DefaultGCCScannerInfoColl
 		while (pathIter.hasNext()) {
 			String path = (String) pathIter.next();
 			String convertedPath = convertPath(path);
-			getIncludePaths().add(convertedPath);
+			// On MinGW, there is no facility for converting paths
+			if (convertedPath.startsWith("/")) continue;	//$NON-NLS-1$
+			// Add it if it is not a duplicate
+			if (!getIncludePaths().contains(convertedPath)){
+					getIncludePaths().add(convertedPath);
+			}
 		}
 		
 		// Now add the macros

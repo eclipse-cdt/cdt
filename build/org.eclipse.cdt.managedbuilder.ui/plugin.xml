@@ -372,6 +372,71 @@
                id="gnu.both.lib.option.flags">
          </option>
       </tool>
+ <!-- Experimental
+      <tool
+            command="windres"
+            sources="rc"
+            outputs="res"
+            headerExtensions="h,H,hpp"
+            name="%ToolName.windres"
+            id="cdt.managedbuild.tool.gnu.windres"
+            outputFlag="-o"
+            natureFilter="both">
+         <optionCategory
+               owner="cdt.managedbuild.tool.gnu.windres"
+               name="%OptionCategory.General"
+               id="gnu.windres.category.general"/>
+         <option
+               valueType="enumerated"
+               category="gnu.windres.category.general"
+               browseType="none"
+               name="%Option.Windows.Windres.OutputFormat"
+               id="gnu.windres.option.output.format">
+            <enumeratedOptionValue
+                  isDefault="true"
+                  command="-O coff"
+                  name="%Option.Windows.Windres.OutputFormat.Coff"
+                  id="gnu.windres.option.output.format.coff"/>
+            <enumeratedOptionValue
+                  command="-O rc"
+                  name="%Option.Windows.Windres.OutputFormat.RC"
+                  id="gnu.windres.option.output.format.rc"/>
+            <enumeratedOptionValue
+                  isDefault="false"
+                  command="-O res"
+                  name="%Option.Windows.Windres.OutputFormat.Res"
+                  id="gnu.windres.option.output.format.res"/>
+         </option>
+         <option
+               command="-v"
+               defaultValue="false"
+               valueType="boolean"
+               category="gnu.windres.category.general"
+               name="%Option.Posix.Verbose"
+               id="gnu.windres.option.verbose"/>
+         <option
+               command="-I"
+               valueType="includePath"
+               category="gnu.windres.category.general"
+               browseType="directory"
+               name="%Option.Posix.InclPaths"
+               id="gnu.windres.option.preprocessor.include.paths"/>
+         <option
+               command="-D"
+               valueType="definedSymbols"
+               category="gnu.windres.category.general"
+               browseType="none"
+               name="%Option.Posix.DefSym"
+               id="gnu.windres.option.preprocessor.defined.symbols"/>
+         <option
+               command="-U"
+               valueType="stringList"
+               category="gnu.windres.category.general"
+               browseType="none"
+               name="%Option.Posix.UndefSym"
+               id="gnu.windres.option.preprocessor.undefined.symbols"/>
+      </tool>
+       -->
       <target
             name="%TargetName.gnu"
             id="cdt.managedbuild.target.gnu"
@@ -1061,7 +1126,7 @@
             id="cdt.managedbuild.target.gnu.cygwin.exe"
             isTest="false"
             defaultExtension="exe"
-            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultCygwinScannerInfoCollector"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
             makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
             isAbstract="false"
             binaryParser="org.eclipse.cdt.core.PE"
@@ -1133,7 +1198,7 @@
             id="cdt.managedbuild.target.gnu.cygwin.so"
             isTest="false"
             defaultExtension="dll"
-            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultCygwinScannerInfoCollector"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
             makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
             isAbstract="false"
             binaryParser="org.eclipse.cdt.core.PE"
@@ -1192,12 +1257,10 @@
             </toolReference>
          </configuration>
          <toolReference
-               outputPrefix="cyg"
                outputs="dll,a.dll"
                id="cdt.managedbuild.tool.gnu.c.linker">
          </toolReference>
          <toolReference
-               outputPrefix="cyg"
                outputs="dll,a.dll"
                id="cdt.managedbuild.tool.gnu.cpp.linker">
          </toolReference>
@@ -1208,7 +1271,7 @@
             isTest="false"
             makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
             defaultExtension="a"
-            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultCygwinScannerInfoCollector"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
             isAbstract="false"
             binaryParser="org.eclipse.cdt.core.PE"
             parent="cdt.managedbuild.target.gnu"
@@ -1268,225 +1331,6 @@
          <toolReference
                outputPrefix="lib"
                outputs="a"
-               id="cdt.managedbuild.tool.gnu.archiver">
-         </toolReference>
-      </target>
-      <target
-            isAbstract="false"
-            defaultExtension="exe"
-            osList="win32"
-            makeCommand="mingw32-make"
-            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultMinGWScannerInfoCollector"
-            makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
-            isTest="false"
-            binaryParser="org.eclipse.cdt.core.PE"
-            name="%TargetName.mingw.exe"
-            parent="cdt.managedbuild.target.gnu"
-            id="cdt.managedbuild.target.gnu.mingw.exe"
-            cleanCommand="del">
-         <configuration
-               name="%ConfigName.Dbg"
-               id="cdt.managedbuild.config.gnu.mingw.exe.debug">
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.c.compiler">
-               <optionReference
-                     defaultValue="gnu.c.optimization.level.none"
-                     id="gnu.c.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.c.debugging.level.max"
-                     id="gnu.c.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.cpp.compiler">
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.optimization.level.none"
-                     id="gnu.cpp.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.debugging.level.max"
-                     id="gnu.cpp.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-         </configuration>
-         <configuration
-               name="%ConfigName.Rel"
-               id="cdt.managedbuild.config.gnu.mingw.exe.release">
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.c.compiler">
-               <optionReference
-                     defaultValue="gnu.c.optimization.level.most"
-                     id="gnu.c.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.c.debugging.level.none"
-                     id="gnu.c.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.cpp.compiler">
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.optimization.level.most"
-                     id="gnu.cpp.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.debugging.level.none"
-                     id="gnu.cpp.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-         </configuration>
-         <toolReference
-               outputs="exe"
-               id="cdt.managedbuild.tool.gnu.c.linker">
-         </toolReference>
-         <toolReference
-               outputs="exe"
-               id="cdt.managedbuild.tool.gnu.cpp.linker">
-         </toolReference>
-      </target>
-      <target
-            isAbstract="false"
-            defaultExtension="dll"
-            osList="win32"
-            makeCommand="mingw32-make"
-            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultMinGWScannerInfoCollector"
-            isTest="false"
-            binaryParser="org.eclipse.cdt.core.PE"
-            makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
-            name="%TargetName.mingw.so"
-            parent="cdt.managedbuild.target.gnu"
-            id="cdt.managedbuild.target.gnu.mingw.so"
-            cleanCommand="del">
-         <configuration
-               name="%ConfigName.Dbg"
-               id="cdt.managedbuild.config.gnu.mingw.so.debug">
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.c.compiler">
-               <optionReference
-                     defaultValue="gnu.c.optimization.level.none"
-                     id="gnu.c.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.c.debugging.level.max"
-                     id="gnu.c.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.cpp.compiler">
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.optimization.level.none"
-                     id="gnu.cpp.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.debugging.level.max"
-                     id="gnu.cpp.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-         </configuration>
-         <configuration
-               name="%ConfigName.Rel"
-               id="cdt.managedbuild.config.gnu.mingw.so.release">
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.c.compiler">
-               <optionReference
-                     defaultValue="gnu.c.optimization.level.most"
-                     id="gnu.c.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.c.debugging.level.none"
-                     id="gnu.c.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.cpp.compiler">
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.optimization.level.most"
-                     id="gnu.cpp.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.debugging.level.none"
-                     id="gnu.cpp.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-         </configuration>
-         <toolReference
-               outputs="dll"
-               id="cdt.managedbuild.tool.gnu.c.linker">
-         </toolReference>
-         <toolReference
-               outputs="dll"
-               id="cdt.managedbuild.tool.gnu.cpp.linker">
-         </toolReference>
-      </target>
-      <target
-            isAbstract="false"
-            defaultExtension="lib"
-            osList="win32"
-            makeCommand="mingw32-make"
-            makefileGenerator="org.eclipse.cdt.managedbuilder.ui.properties.BrowseEntryDialog"
-            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultMinGWScannerInfoCollector"
-            isTest="false"
-            binaryParser="org.eclipse.cdt.core.PE"
-            name="%TargetName.mingw.lib"
-            parent="cdt.managedbuild.target.gnu"
-            id="cdt.managedbuild.target.gnu.mingw.lib"
-            cleanCommand="del">
-         <configuration
-               name="%ConfigName.Dbg"
-               id="cdt.managedbuild.config.gnu.mingw.lib.debug">
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.c.compiler">
-               <optionReference
-                     defaultValue="gnu.c.optimization.level.none"
-                     id="gnu.c.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.c.debugging.level.max"
-                     id="gnu.c.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.cpp.compiler">
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.optimization.level.none"
-                     id="gnu.cpp.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.debugging.level.max"
-                     id="gnu.cpp.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-         </configuration>
-         <configuration
-               name="%ConfigName.Rel"
-               id="cdt.managedbuild.config.gnu.mingw.lib.release">
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.c.compiler">
-               <optionReference
-                     defaultValue="gnu.c.optimization.level.most"
-                     id="gnu.c.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.c.debugging.level.none"
-                     id="gnu.c.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-            <toolReference
-                  id="cdt.managedbuild.tool.gnu.cpp.compiler">
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.optimization.level.most"
-                     id="gnu.cpp.compiler.option.optimization.level">
-               </optionReference>
-               <optionReference
-                     defaultValue="gnu.cpp.compiler.debugging.level.none"
-                     id="gnu.cpp.compiler.option.debugging.level">
-               </optionReference>
-            </toolReference>
-         </configuration>
-         <toolReference
-               outputPrefix="lib"
-               outputs="lib"
                id="cdt.managedbuild.tool.gnu.archiver">
          </toolReference>
       </target>

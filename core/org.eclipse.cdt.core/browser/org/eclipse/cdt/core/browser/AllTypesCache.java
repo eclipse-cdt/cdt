@@ -182,19 +182,27 @@ public class AllTypesCache {
 	 * @param qualifiedName The qualified type name
 	 * @param kinds Array containing CElement types: C_NAMESPACE, C_CLASS,
 	 *              C_UNION, C_ENUMERATION, C_TYPEDEF
+	 * @param matchEnclosed <code>true</code> if enclosed types count as matches (foo::bar == bar)
 	 */
-	public static ITypeInfo[] getTypes(ITypeSearchScope scope, IQualifiedTypeName qualifiedName, int[] kinds) {
+	public static ITypeInfo[] getTypes(ITypeSearchScope scope, IQualifiedTypeName qualifiedName, int[] kinds, boolean matchEnclosed) {
 		final Collection fTypesFound = new ArrayList();
 		final ITypeSearchScope fScope = scope;
 		final int[] fKinds = kinds;
 		final IQualifiedTypeName fQualifiedName = qualifiedName;
+		final boolean fMatchEnclosed = matchEnclosed;
 		IProject[] projects = scope.getEnclosingProjects();
 		ITypeInfoVisitor visitor = new ITypeInfoVisitor() {
 			public boolean visit(ITypeInfo info) {
 				if (ArrayUtil.contains(fKinds, info.getCElementType())
-						&& fQualifiedName.equals(info.getQualifiedTypeName())
 						&& (fScope != null && info.isEnclosed(fScope))) {
-					fTypesFound.add(info);
+					IQualifiedTypeName currName = info.getQualifiedTypeName();
+					if (fMatchEnclosed && currName.segmentCount() > fQualifiedName.segmentCount()
+					        && currName.lastSegment().equals(fQualifiedName.lastSegment())) {
+						currName = currName.removeFirstSegments(currName.segmentCount() - fQualifiedName.segmentCount());
+					}
+					if (currName.equals(fQualifiedName)) {
+						fTypesFound.add(info);
+					}
 				}
 				return true;
 			}
@@ -333,12 +341,13 @@ public class AllTypesCache {
 	 * 
 	 * @param project the enclosing project
 	 * @param qualifiedName The qualified type name
+	 * @param matchEnclosed <code>true</code> if enclosed types count as matches (foo::bar == bar)
 	 * @param ignoreCase <code>true</code> if case-insensitive
 	 * @return Array of types
 	 */
-	public static ITypeInfo[] getTypes(IProject project, IQualifiedTypeName qualifiedName, boolean ignoreCase) {
+	public static ITypeInfo[] getTypes(IProject project, IQualifiedTypeName qualifiedName, boolean matchEnclosed, boolean ignoreCase) {
 		ITypeCache cache = TypeCacheManager.getInstance().getCache(project);
-		return cache.getTypes(qualifiedName, ignoreCase);
+		return cache.getTypes(qualifiedName, matchEnclosed, ignoreCase);
 	}
 
 	/**

@@ -1,5 +1,14 @@
 2004-08-25 Chris Wiebe
 
+	support for matching enclosed type names
+	* browser/org/eclipse/cdt/browser/AllTypesCache.java
+	* browser/org/eclipse/cdt/browser/IQualifiedTypeName.java
+	* browser/org/eclipse/cdt/browser/QualifiedTypeName.java
+	* browser/org/eclipse/cdt/internal/core/browser/cache/ITypeCache.java
+	* browser/org/eclipse/cdt/internal/core/browser/cache/TypeCache.java
+
+2004-08-25 Chris Wiebe
+
 	add namespace validation to CConventions
 	* index/org/eclipse/cdt/internal/core/messages.properties
 	* src/org/eclipse/cdt/core/CConventions.java

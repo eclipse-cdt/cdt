@@ -103,9 +103,11 @@ public interface ITypeCache extends ISchedulingRule {
 	 *  name.  If no types are found, an empty array is returned.
 	 *
 	 * @param qualifiedName the qualified type name to match
+	 * @param matchEnclosed <code>true</code> if enclosed types count as matches (foo::bar == bar)
+	 * @param ignoreCase <code>true</code> if case-insensitive
 	 * @return Array of types
 	 */
-	public ITypeInfo[] getTypes(IQualifiedTypeName qualifiedName, boolean ignoreCase);
+	public ITypeInfo[] getTypes(IQualifiedTypeName qualifiedName, boolean matchEnclosed, boolean ignoreCase);
 
 	/** Returns first type in the cache which matches the given
 	 *  type and name.  If no type is found, <code>null</code>

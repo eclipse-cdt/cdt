@@ -97,10 +97,14 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		return null;
 	}
 
+	public boolean isQualified() {
+		return (fSegments.length > 1);
+	}
+
 	public boolean isEmpty() {
 		return fSegments.length == 0;
 	}
-
+	
 	public boolean isGlobal() {
 		if (fSegments.length <= 1) {
 			return true;

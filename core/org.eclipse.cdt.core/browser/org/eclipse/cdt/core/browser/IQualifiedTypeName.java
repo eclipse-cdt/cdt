@@ -16,12 +16,11 @@ public interface IQualifiedTypeName extends Comparable {
 
 	public String getName();
 
+	public String getFullyQualifiedName();
+	public IQualifiedTypeName getEnclosingTypeName();
 	public String[] getEnclosingNames();
 
-	public String getFullyQualifiedName();
-
-	public IQualifiedTypeName getEnclosingTypeName();
-
+	public boolean isQualified();
 	public boolean isEmpty();
 	public boolean isGlobal();
 	

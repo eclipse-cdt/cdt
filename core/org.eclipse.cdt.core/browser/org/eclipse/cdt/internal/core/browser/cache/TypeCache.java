@@ -149,6 +149,10 @@ public class TypeCache implements ITypeCache {
 		public boolean isGlobal() {
 			return true;
 		}
+
+		public boolean isQualified() {
+		    return false;
+		}
 		
 		public int segmentCount() {
 			return 1;
@@ -481,9 +485,9 @@ public class TypeCache implements ITypeCache {
 		return (ITypeInfo[]) results.toArray(new ITypeInfo[results.size()]);
 	}
 	
-	public synchronized ITypeInfo[] getTypes(IQualifiedTypeName qualifiedName, boolean ignoreCase) {
+	public synchronized ITypeInfo[] getTypes(IQualifiedTypeName qualifiedName, boolean matchEnclosed, boolean ignoreCase) {
 		Collection results = new ArrayList();
-		if (!ignoreCase) {
+		if (!ignoreCase && !matchEnclosed) {
 			for (int i = 0; i < ITypeInfo.KNOWN_TYPES.length; ++i) {
 				ITypeInfo info = (ITypeInfo) fTypeKeyMap.get(new HashKey(qualifiedName, ITypeInfo.KNOWN_TYPES[i]));
 				if (info != null) {
@@ -499,8 +503,24 @@ public class TypeCache implements ITypeCache {
 		    for (Iterator mapIter = fTypeKeyMap.entrySet().iterator(); mapIter.hasNext(); ) {
 				Map.Entry entry = (Map.Entry) mapIter.next();
 				ITypeInfo info = (ITypeInfo) entry.getValue();
-				if (info.getQualifiedTypeName().compareToIgnoreCase(qualifiedName) == 0) {
-				    results.add(info);
+				IQualifiedTypeName currName = info.getQualifiedTypeName();
+				
+				if (ignoreCase) {
+					if (matchEnclosed && currName.segmentCount() > qualifiedName.segmentCount()
+					        && currName.lastSegment().equalsIgnoreCase(qualifiedName.lastSegment())) {
+						currName = currName.removeFirstSegments(currName.segmentCount() - qualifiedName.segmentCount());
+					}
+					if (currName.equalsIgnoreCase(qualifiedName)) {
+						results.add(info);
+					}
+				} else {
+					if (matchEnclosed && currName.segmentCount() > qualifiedName.segmentCount()
+					        && currName.lastSegment().equals(qualifiedName.lastSegment())) {
+						currName = currName.removeFirstSegments(currName.segmentCount() - qualifiedName.segmentCount());
+					}
+					if (currName.equals(qualifiedName)) {
+						results.add(info);
+					}
 				}
 			}
 		}

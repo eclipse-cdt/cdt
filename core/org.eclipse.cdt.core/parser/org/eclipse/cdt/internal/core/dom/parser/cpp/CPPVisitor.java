@@ -312,7 +312,7 @@ public class CPPVisitor implements ICPPASTVisitor {
     			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum )
     				binding = new CPPClassType( elabType.getName() );
     			scope.addBinding( binding );
-    		} else {
+    		} else if( binding instanceof ICPPClassType ){
     			((CPPClassType)binding).addDeclaration( elabType );
     		}
         } catch ( DOMException e ) {
@@ -643,6 +643,8 @@ public class CPPVisitor implements ICPPASTVisitor {
 				return parent;
 			} else if( parent instanceof IASTExpression ){
 				IASTNode p = parent.getParent();
+				if( p instanceof IASTForStatement )
+				    return parent;
 				if( p instanceof IASTStatement )
 					return p;
 			} else if ( parent instanceof IASTStatement || parent instanceof IASTTranslationUnit ) {

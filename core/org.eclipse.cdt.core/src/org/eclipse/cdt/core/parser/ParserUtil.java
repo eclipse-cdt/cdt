@@ -86,6 +86,9 @@ public class ParserUtil
 		catch( IOException e )
 		{
 		}
+		catch( IllegalStateException e ) 
+		{
+		}
 		return InternalParserUtil.createFileReader(finalPath);
 	}
 

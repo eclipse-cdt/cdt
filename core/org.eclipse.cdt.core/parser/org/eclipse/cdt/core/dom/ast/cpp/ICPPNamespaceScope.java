@@ -13,9 +13,12 @@
  */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+
 
 /**
  * @author aniefer
  */
 public interface ICPPNamespaceScope extends ICPPScope {
+    boolean isFullyResolved( IASTName name );
 }

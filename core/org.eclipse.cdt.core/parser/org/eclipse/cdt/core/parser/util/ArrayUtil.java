@@ -59,6 +59,25 @@ public class ArrayUtil {
         return array;
     }
     
+    static public int [] setInt( int[] array, int idx, int val ){
+        if( array == null ){
+            array = new int [ DEFAULT_LENGTH > idx + 1 ? DEFAULT_LENGTH : idx + 1];
+            array[idx] = val;
+            return array;
+        }
+        
+        if( array.length <= idx ){
+            int newLen = array.length * 2;
+            while( newLen <= idx ) newLen *=2;
+            int [] temp = new int [newLen];
+            System.arraycopy( array, 0, temp, 0, array.length );
+            
+            array = temp;
+        }
+        array[idx] = val;
+        return array;
+    }
+    
     static public Object [] append( Object[] array, Object obj ){
         return append( Object.class, array, obj );
     }

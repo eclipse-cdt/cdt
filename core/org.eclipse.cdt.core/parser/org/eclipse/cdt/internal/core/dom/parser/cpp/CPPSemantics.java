@@ -647,8 +647,10 @@ public class CPPSemantics {
 			ArrayWrapper directives = null;
 			if( !data.usingDirectivesOnly ){
 				IBinding binding = data.prefixLookup ? null : scope.getBinding( data.astName );
-				if( binding == null || !( CPPSemantics.declaredBefore( binding, data.astName ) || 
-				                          (scope instanceof ICPPClassScope && data.checkWholeClassScope())) )
+				if( binding == null ||
+				   (scope instanceof ICPPNamespaceScope && !((ICPPNamespaceScope) scope).isFullyResolved( data.astName ) ) ||
+				   !( CPPSemantics.declaredBefore( binding, data.astName ) || 
+				      (scope instanceof ICPPClassScope && data.checkWholeClassScope()) ) )
 				{
 				    directives = new ArrayWrapper();
 				    mergeResults( data, lookupInScope( data, scope, blockItem, directives ), true );
@@ -900,11 +902,19 @@ public class CPPSemantics {
 		int idx = -1;
 		boolean checkWholeClassScope = ( scope instanceof ICPPClassScope ) && data.checkWholeClassScope();
 		IASTNode item = ( nodes != null ? (nodes.length > 0 ? nodes[++idx] : null ) : parent );
-	
+		IASTNode [][] nodeStack = null;
+		int [] nodeIdxStack = null;
+		int nodeStackPos = -1;
 		while( item != null ) {
 		    if( item instanceof ICPPASTLinkageSpecification ){
-			    nodes = (IASTNode[]) ArrayUtil.replace( IASTDeclaration.class, nodes, idx, ((ICPPASTLinkageSpecification)item).getDeclarations() );
-			    item = nodes[idx];
+		        IASTDeclaration [] decls = ((ICPPASTLinkageSpecification)item).getDeclarations();
+		        if( decls != null && decls.length > 0 ){
+			        nodeStack = (IASTNode[][]) ArrayUtil.append( IASTNode[].class, nodeStack, nodes );
+			        nodeIdxStack = ArrayUtil.setInt( nodeIdxStack, ++nodeStackPos, idx );
+			        nodes = ((ICPPASTLinkageSpecification)item).getDeclarations();
+			        idx = 0;
+				    item = nodes[idx];
+		        }
 			}
 			if( !checkWholeClassScope && blockItem != null && ((ASTNode)item).getOffset() > ((ASTNode) blockItem).getOffset() )
 				break;
@@ -930,26 +940,37 @@ public class CPPSemantics {
 				item = nodes[idx];
 			} else {
 			    item = null;
-			
-			    if( namespaceIdx > -1 ) {
-			        //check all definitions of this namespace
-				    while( namespaceIdx > -1 && namespaceDefs.length > ++namespaceIdx ){
-				        nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[namespaceIdx].getParent()).getDeclarations();
-					    if( nodes.length > 0 ){
+			    nullItem: while( item == null ){
+				    if( namespaceIdx > -1 ) {
+				        //check all definitions of this namespace
+					    while( namespaceIdx > -1 && namespaceDefs.length > ++namespaceIdx ){
+					        nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[namespaceIdx].getParent()).getDeclarations();
+						    if( nodes.length > 0 ){
+						        idx = 0;
+						        item = nodes[0];
+						        break;
+						    }     
+					    }
+				    } else if( parent instanceof IASTCompoundStatement && nodes instanceof IASTParameterDeclaration [] ){
+				    	//function body, we were looking at parameters, now check the body itself
+				        IASTCompoundStatement compound = (IASTCompoundStatement) parent;
+						nodes = compound.getStatements(); 
+						if( nodes.length > 0 ){
 					        idx = 0;
 					        item = nodes[0];
 					        break;
-					    }     
+					    }  
 				    }
-			    } else if( parent instanceof IASTCompoundStatement && nodes instanceof IASTParameterDeclaration [] ){
-			    	//function body, we were looking at parameters, now check the body itself
-			        IASTCompoundStatement compound = (IASTCompoundStatement) parent;
-					nodes = compound.getStatements(); 
-					if( nodes.length > 0 ){
-				        idx = 0;
-				        item = nodes[0];
-				        break;
-				    }  
+				    if( item == null && nodeStackPos >= 0 ){
+				        nodes = nodeStack[nodeStackPos];
+				        nodeStack[nodeStackPos] = null;
+				        idx = nodeIdxStack[nodeStackPos--];
+				        if( ++idx >= nodes.length )
+				            continue;
+				        
+			            item = nodes[idx];
+				    }
+				    break;
 			    }
 			}
 		}
@@ -991,9 +1012,9 @@ public class CPPSemantics {
 	    IASTDeclaration declaration = null;
 	    if( node instanceof IASTDeclaration ) 
 	        declaration = (IASTDeclaration) node;
-		if( node instanceof IASTDeclarationStatement )
+		else if( node instanceof IASTDeclarationStatement )
 			declaration = ((IASTDeclarationStatement)node).getDeclaration();
-		else if( node instanceof IASTForStatement )
+		else if( node instanceof IASTForStatement && checkAux )
 			declaration = ((IASTForStatement)node).getInitDeclaration();
 		else if( node instanceof IASTParameterDeclaration && !data.typesOnly() ){
 		    IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) node;
@@ -1010,7 +1031,7 @@ public class CPPSemantics {
 		
 		if( declaration instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
-			if( !data.typesOnly() ) { 
+			if( !data.typesOnly() || simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ) { 
 				IASTDeclarator [] declarators = simpleDeclaration.getDeclarators();
 				for( int i = 0; i < declarators.length; i++ ){
 					IASTDeclarator declarator = declarators[i];
@@ -1195,9 +1216,15 @@ public class CPPSemantics {
 	    Object [] items = (Object[]) data.foundItems;
 	    for( int i = 0; i < items.length && items[i] != null; i++ ){
 	        Object o = items[i];
-	        if( o instanceof IASTName )
+	        if( o instanceof IASTName ){
 	            temp = ((IASTName) o).resolveBinding();
-	        else if( o instanceof IBinding ){
+	            if( temp == null )
+	                continue;
+	            IScope scope = temp.getScope();
+	            if( scope instanceof CPPNamespaceScope ){
+	                ((CPPNamespaceScope)scope).setFullyResolved( (IASTName) o );
+	            }
+	        } else if( o instanceof IBinding ){
 	            temp = (IBinding) o;
 	            if( !( temp instanceof ICPPMember ) && !declaredBefore( temp, name ) )
 	                continue;

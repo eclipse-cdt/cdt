@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IASTVisitor.BaseVisitorAction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
@@ -84,6 +85,8 @@ public class CPPNamespace implements ICPPNamespace, ICPPBinding {
 	    }
 	    
 	    public int processDeclaration( IASTDeclaration declaration ){
+	        if( declaration instanceof ICPPASTLinkageSpecification )
+	            return PROCESS_CONTINUE;
 	        return PROCESS_SKIP;
 	    }
 	}
@@ -94,6 +97,8 @@ public class CPPNamespace implements ICPPNamespace, ICPPBinding {
 	    IASTNode node = nsDef.getParent();
 	    
 	    ICPPASTVisitor visitor = (ICPPASTVisitor) node.getTranslationUnit().getVisitor();
+	    while( node instanceof ICPPASTLinkageSpecification )
+	        node = node.getParent();
 	    if( node instanceof IASTTranslationUnit )
 	        visitor.visitTranslationUnit( collector );
 	    else if( node instanceof ICPPASTNamespaceDefinition ){

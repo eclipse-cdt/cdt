@@ -1,5 +1,29 @@
 2003-08-18 Alain Magloire
 
+	Patch from Chris Songer, excerpt from the email.
+	Using the phrase "To ensure consistency between a register name and its
+	number, the output list may include empty register names," the MI protocol
+	appears to allow gdb to return a "sparse" array of registers by giving a 0
+	length name in response to the -data-list-register-names-command. CDT 1.0.1
+	does not handle this especially well and subsequently exposes a bug in GDB
+	5.1.3 and crashes it if the debugger has more than 3  register names of 0
+	length.
+	
+	example:
+
+	8-data-list-register-names
+	(gdb)                                                                                                                          
+	8^done,register-names=["ar0","ar1",... ,"","","","","","","ur0",\
+	"ur1","ur2","ur3","ur4","ur5","ur6","ur7","","" ..]
+	
+
+	* src/org/eclipse/cdt/debug/mi/core/output/MIDataListRegisterNamesInfo.java:
+	New method getNumRealNames().
+	* src/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java:
+	Check if the register name is not empty.
+	
+2003-08-18 Alain Magloire
+
 	From the manual:
 	By default GDB will automatically keep track of objects as they are
 	loaded and unloaded by the dynamic linker.  By using the command `set

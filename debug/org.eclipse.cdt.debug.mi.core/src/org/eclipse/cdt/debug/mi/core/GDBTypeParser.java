@@ -105,6 +105,7 @@ public class GDBTypeParser {
 			if (gdbType instanceof GDBDerivedType) {
 				derived = (GDBDerivedType)gdbType;
 				gdbType = derived.getChild();
+				// respect the precedence of operators.
 				if (type == GDBType.FUNCTION) {
 					sb.append("()"); //$NON-NLS-1$
 				} else if (type == GDBType.ARRAY) {

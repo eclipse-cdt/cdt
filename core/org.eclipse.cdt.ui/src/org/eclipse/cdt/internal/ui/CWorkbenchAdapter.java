@@ -5,20 +5,21 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IActionFilter;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * An imlementation of the IWorkbenchAdapter for CElements.
  */
-public class CWorkbenchAdapter implements IWorkbenchAdapter {
+public class CWorkbenchAdapter implements IWorkbenchAdapter, IActionFilter {
 
 	private static final Object[] fgEmptyArray = new Object[0];
 	private CElementImageProvider fImageProvider;
@@ -76,5 +77,17 @@ public class CWorkbenchAdapter implements IWorkbenchAdapter {
 			return ((ICElement) o).getParent();
 		}
 		return null;
+	}
+
+	public boolean testAttribute(Object target, String name, String value) {
+		ICElement element = (ICElement)target;
+		IResource resource = element.getResource();
+		if (resource != null) {
+			IActionFilter filter = (IActionFilter)resource.getAdapter(IActionFilter.class);
+			if (filter != null) {
+				return filter.testAttribute(resource, name, value);
+			}
+		}
+		return false;
 	}
 }

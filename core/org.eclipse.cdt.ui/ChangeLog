@@ -1,3 +1,9 @@
+2005-04-06 David Inglis
+	Fixed bug# 90440
+	* plugin.xml
+	* src/org/eclipse/cdt/internal/ui/CElementAdapterFactory.java
+	* src/org/eclipse/cdt/internal/ui/CWorkbenchAdapter.java
+	
 2005-04-04 Alain Magloire
 	Move to Eclipse-31M6
 	* src/org/eclipse/cdt/internal/ui/cview/CopyAction.java

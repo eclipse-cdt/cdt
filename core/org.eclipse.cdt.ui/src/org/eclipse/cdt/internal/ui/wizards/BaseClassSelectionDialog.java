@@ -34,5 +34,6 @@ public class BaseClassSelectionDialog extends TypeSelectionDialog {
 		 		 setMessage(NewWizardMessages.getString("BaseClassSelectionDialog.message")); //$NON-NLS-1$
 		 		 setDialogSettings(DIALOG_SETTINGS);
 		 		 setVisibleTypes(fVisibleTypes);
+		 		 setFilter("*", true); //$NON-NLS-1$		 		 
 		 }
 }

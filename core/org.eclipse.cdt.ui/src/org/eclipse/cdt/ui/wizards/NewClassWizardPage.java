@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 
 import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.browser.AllTypesCache;
@@ -29,7 +28,6 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -61,6 +59,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -105,6 +104,8 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	private	IStructuredSelection currentSelection;
 	// cache of C Model current selection 
 	private ICElement eSelection = null;
+	// default location where source files will be created
+	private IPath defaultSourceFolder = null;
 	
 	// cache of newly-created files
 	private ITranslationUnit parentHeaderTU = null;
@@ -183,11 +184,16 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}
 	
 	public void init() {
-		if(hasCppNature){
+		eSelection = getSelectionCElement(currentSelection);
+		IResource resource = getSelectionResourceElement(currentSelection);
+		if (resource != null)
+			defaultSourceFolder = resource.getLocation().makeAbsolute();
+		if (hasCppNature && defaultSourceFolder != null) {
 			fAccessButtons.setEnabled(false);
 			setPageComplete(false);
-			eSelection = getSelectionCElement(currentSelection);						
-		}else {
+		} else {
+			eSelection = null;
+			defaultSourceFolder = null;
 			StatusInfo status = new StatusInfo();
 			status.setError(NewWizardMessages.getString("NewClassWizardPage.error.NotAvailableForNonCppProjects")); //$NON-NLS-1$
 			updateStatus(status);
@@ -379,46 +385,68 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}
 	
 	private boolean isSelectionCPP(IStructuredSelection sel){
-		IProject project = null;
-		ICElement element = getSelectionCElement(sel);
-		if (element == null){
-			IResource resource = getSelectionResourceElement(sel);
-			project = resource.getProject();
-		}else {
-			project = element.getCProject().getProject();
-		}
+		IProject project = getSelectionProject(sel);
 		if (project != null)
 			return CoreModel.getDefault().hasCCNature(project);
 		else
 			return false;
 	}
 	
-	private ICElement getSelectionCElement(IStructuredSelection sel) {
-		 		 if (!sel.isEmpty()) {
-		 		 		 List list= sel.toList();
-			if (list.size() == 1) {
-				Object element= list.get(0);
-				if (element instanceof ICElement) {
-					return (ICElement)element;
-				} 
+	private ICElement getSelectionCElement(IStructuredSelection selection) {
+		ICElement elem= null;
+		if (selection != null && !selection.isEmpty()) {
+			Object selectedElement= selection.getFirstElement();
+			if (selectedElement instanceof IAdaptable) {
+				IAdaptable adaptable= (IAdaptable) selectedElement;
+				elem= (ICElement) adaptable.getAdapter(ICElement.class);
+				if (elem == null) {
+					IResource resource= (IResource) adaptable.getAdapter(IResource.class);
+					if (resource != null && resource.getType() != IResource.ROOT) {
+						while (elem == null && resource.getType() != IResource.PROJECT) {
+							resource= resource.getParent();
+							elem= (ICElement) resource.getAdapter(ICElement.class);
+						}
+						if (elem == null) {
+							elem= CoreModel.getDefault().create(resource); // C project
+						}
+					}
+				}
 			}
 		}
-		return null;
+
+		if (elem == null || elem.getElementType() == ICElement.C_MODEL) {
+			ICProject[] projects= CoreModel.create(CUIPlugin.getWorkspace().getRoot()).getCProjects();
+			if (projects.length == 1) {
+				elem= projects[0];
+			}
+		}
+		return elem;
 	}
 
-	private IResource getSelectionResourceElement(IStructuredSelection sel) {
-		 		 if (!sel.isEmpty()) {
-		 		 		 List list= sel.toList();
-			if (list.size() == 1) {
-				Object element= list.get(0);
-				if (element instanceof IResource) {
-					if(element instanceof IFile){
-						IFile file = (IFile)element;
-						return (IResource) file.getParent();
-					}else {
-						return (IResource)element;
-					}
-				} 
+	private IResource getSelectionResourceElement(IStructuredSelection selection) {
+		IResource resource= null;
+		if (selection != null && !selection.isEmpty()) {
+			Object selectedElement= selection.getFirstElement();
+			if (selectedElement instanceof IAdaptable) {
+				IAdaptable adaptable= (IAdaptable) selectedElement;
+				resource= (IResource) adaptable.getAdapter(IResource.class);
+				if (resource != null && resource instanceof IFile)
+					resource= resource.getParent();
+			}
+		}
+		return resource;
+	}
+	
+	private IProject getSelectionProject(IStructuredSelection selection) {
+		IProject project= null;
+		if (selection != null && !selection.isEmpty()) {
+			Object selectedElement= selection.getFirstElement();
+			if (selectedElement instanceof IAdaptable) {
+				IAdaptable adaptable= (IAdaptable) selectedElement;
+				IResource resource= (IResource) adaptable.getAdapter(IResource.class);
+				if (resource != null) {
+					return resource.getProject();
+				}
 			}
 		}
 		return null;
@@ -686,34 +714,6 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			throw new OperationCanceledException();
 	}
 	
-	// -------------Helper methods for creating the class -------
-	protected IPath getSelectionPath(){
-		if(eSelection == null){
-			IResource resourceSelection = getSelectionResourceElement(currentSelection);
-			if(resourceSelection != null){
-				return resourceSelection.getLocation().makeAbsolute();
-			}
-			else
-				return null;
-		}		
-		// if it is a file, return the parent path
-		if(eSelection instanceof ITranslationUnit)
-			return (eSelection.getParent().getPath());
-		// if it is a root, project, or folder, return its path	
-		if(eSelection instanceof IOpenable){
-			return (eSelection.getPath());				
-		}else {
-			// if it is an element in a file, return its openable parent's path
-			ICElement current = eSelection.getParent();
-			while (current != null){
-				if ((current instanceof IOpenable) && !(current instanceof ITranslationUnit)){
-					return current.getPath();
-				}
-				current = current.getParent();
-			}
-			return null;
-		}									
-	}
 	
 	/*
 	 * returns the path without the file name
@@ -726,7 +726,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			IPath containerPath = new Path (pathName);
 			return containerPath.removeLastSegments(1).removeTrailingSeparator().makeAbsolute();
 		}else {
-			return (getSelectionPath());			
+			return defaultSourceFolder;			
 		}
 	}
 	
@@ -743,7 +743,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 				return (new Path(pathName)).makeAbsolute();
 		} else {
 			String pathName = linkedGroup.getText();
-			IPath containerPath = getSelectionPath();
+			IPath containerPath = defaultSourceFolder;
 			containerPath.addTrailingSeparator();
 			return ((containerPath.append(pathName)).makeAbsolute());						
 		}

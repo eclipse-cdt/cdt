@@ -53,7 +53,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	private ListenerList listeners = new ListenerList();
 	private HashMap projectMap = new HashMap();
 	private HashMap builderMap;
-	private Vector fProjects = new Vector();
+	protected Vector fProjects = new Vector();
 
 	public MakeTargetManager() {
 	}

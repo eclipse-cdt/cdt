@@ -17,7 +17,8 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.core.ICDescriptorOperation;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.index.AbstractIndexerPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -27,8 +28,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -37,9 +41,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * @author Bogdan Gheorghe
@@ -71,7 +72,8 @@ public class IndexerBlock extends AbstractCOptionPage {
 	private Composite 				parentComposite;
     private ICOptionPage 		 	currentPage;
     
-    
+	String initialSelected;
+	
     public IndexerBlock(){
 		super(INDEXER_LABEL);
 		setDescription(INDEXER_DESCRIPTION);
@@ -104,10 +106,6 @@ public class IndexerBlock extends AbstractCOptionPage {
         }
     }
 
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-     */
     public void createControl(Composite parent) {
        
         
@@ -147,9 +145,6 @@ public class IndexerBlock extends AbstractCOptionPage {
         }
         parent.layout(true);
     }
-
- 
-
 	/**
 	 * 
 	 */
@@ -176,7 +171,6 @@ public class IndexerBlock extends AbstractCOptionPage {
 		setCurrentPage(page);
 	}
 
-
 	/**
 	 * @param page
 	 */
@@ -184,15 +178,15 @@ public class IndexerBlock extends AbstractCOptionPage {
 		currentPage = page;
 	}
 
-
-
 	protected String getCurrentIndexPageId() {
         String selectedIndexPageName = getSelectedIndexerID();
         
         if (selectedIndexPageName == null)
         	return null;
         
+        
         String selectedIndexPageId = getIndexerPageId(selectedIndexPageName);
+
         return selectedIndexPageId;
     }
 	/**
@@ -239,9 +233,6 @@ public class IndexerBlock extends AbstractCOptionPage {
         return true;
     }
     
-    
-    
-    
     /**
      * Adds all the contributed Indexer Pages to a map
      */
@@ -252,7 +243,7 @@ public class IndexerBlock extends AbstractCOptionPage {
         IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
         for (int i = 0; i < infos.length; i++) {
             if (infos[i].getName().equals("indexerUI")) { //$NON-NLS-1$
-                String id = infos[i].getAttribute("id"); //$NON-NLS-1$
+                String id = infos[i].getAttribute("indexerID"); //$NON-NLS-1$
                 indexerPageMap.put(id, new IndexerPageConfiguration(infos[i]));
             }
         }
@@ -322,50 +313,6 @@ public class IndexerBlock extends AbstractCOptionPage {
     }
     
     public void performApply(IProgressMonitor monitor) throws CoreException {
-    	IProject newProject = null;
-		newProject = getContainer().getProject();
-	
-		persistIndexerSettings(newProject, monitor);
-    }
-
-    /**
-     * Persists BasicIndexerBlock settings to disk and allows current indexer page to persist settings
-     * This is needed since we need to pass in the project if we are trying to save changes made to the 
-     * property page.
-     */
-    public void persistIndexerSettings(IProject project, IProgressMonitor monitor) throws CoreException{
-    	
-    	persistIndexerValues(project);
-		
-    	if (currentPage instanceof AbstractIndexerPage)
-    		((AbstractIndexerPage)currentPage).setCurrentProject(project);
-    	
-		//Give the chosen indexer a chance to persist its values
-		if (currentPage != null){
-			currentPage.performApply(monitor);
-		}
-    }
-    
-    public void performDefaults() {
-        // TODO Auto-generated method stub
-        
-    }
-
-	/**
-	 * @return
-	 */
-	public boolean isIndexEnabled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	//Storage section
-	
-	public void persistIndexerValues(IProject project){
-		ICDescriptor descriptor = null;
-		Element rootElement = null;
-		IProject newProject = null;
-		
 		//Get the currently selected indexer from the UI
 		String indexerName = getSelectedIndexerID();
 		//If no indexer has been selected, return
@@ -380,33 +327,91 @@ public class IndexerBlock extends AbstractCOptionPage {
 			return;
 	
 		//Get the id of the indexer that goes along with this UI page - this gets persisted
-		String indexerID = getIndexerIdName(indexerPageID);
-		
-		try {
-			newProject = project;
-			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
-			rootElement = descriptor.getProjectData(IndexManager.CDT_INDEXER);
-		
-			// Clear out all current children
-			Node child = rootElement.getFirstChild();
-			while (child != null) {
-				rootElement.removeChild(child);
-				child = rootElement.getFirstChild();
-			}
-			Document doc = rootElement.getOwnerDocument();
-			
-			saveIndexerInfo(indexerID, indexerPageID, rootElement, doc);
-		
-			descriptor.saveProjectData();
-			
-			//Update project session property
-			
-			project.setSessionProperty(IndexManager.indexerIDKey, indexerID);	
-			project.setSessionProperty(indexerUIIDKey, indexerPageID);
-	
-		} catch (CoreException e) {
-			e.printStackTrace();
+		final String indexerID = getIndexerIdName(indexerPageID);
+    	//
+    	if (monitor == null) {
+			monitor = new NullProgressMonitor();
 		}
+		monitor.beginTask(CUIMessages.getString("IndexerOptions.task.savingAttributes"), 2); //$NON-NLS-1$
+		final String selected = indexerID;
+		
+		if (indexerID != null) {
+			ICOptionContainer container = getContainer();
+			IProject project = null;
+			if (container != null){
+				project=container.getProject();
+			} else {
+				project = ((AbstractIndexerPage) currentPage).getCurrentProject();
+			}
+		
+			if ( project != null) {
+				ICDescriptorOperation op = new ICDescriptorOperation() {
+
+					public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+						if (initialSelected == null || !selected.equals(initialSelected)) {
+							descriptor.remove(CCorePlugin.INDEXER_UNIQ_ID);
+							descriptor.create(CCorePlugin.INDEXER_UNIQ_ID,indexerID);
+						}
+						monitor.worked(1);
+						// Give a chance to the contributions to save.
+						// We have to do it last to make sure the indexer id
+						// is saved in .cdtproject
+						ICOptionPage page = currentPage; //egetBinaryParserPage(((BinaryParserConfiguration) selected.get(i)).getID());
+						if (page != null && page.getControl() != null) {
+							page.performApply(new SubProgressMonitor(monitor, 1));
+						}
+					
+					}
+				};
+ 				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, op, monitor);
+			} else {
+				if (initialSelected == null || !selected.equals(initialSelected)) {
+					if (container != null){
+						Preferences store = container.getPreferences();
+						if (store != null) {
+							store.setValue(CCorePlugin.PREF_INDEXER, indexerID);
+						}
+					}
+				}
+				monitor.worked(1);
+				// Give a chance to the contributions to save.
+				ICOptionPage page = currentPage;
+				if (page != null && page.getControl() != null) {
+					page.performApply(new SubProgressMonitor(monitor, 1));
+				}
+			
+			}
+			initialSelected = selected;
+		}
+		monitor.done();
+    }
+
+    /**
+     * Persists BasicIndexerBlock settings to disk and allows current indexer page to persist settings
+     * This is needed since we need to pass in the project if we are trying to save changes made to the 
+     * property page.
+     */
+    public void persistIndexerSettings(IProject project, IProgressMonitor monitor) throws CoreException{
+    	if (currentPage instanceof AbstractIndexerPage)
+    		((AbstractIndexerPage)currentPage).setCurrentProject(project);
+    	
+    	this.performApply(monitor);
+		/*//Give the chosen indexer a chance to persist its values
+		if (currentPage != null){
+			currentPage.performApply(monitor);*/
+		
+    }
+
+    public void performDefaults() {
+        // TODO Auto-generated method stub     
+    }
+
+	/**
+	 * @return
+	 */
+	public boolean isIndexEnabled() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	/**
@@ -416,7 +421,12 @@ public class IndexerBlock extends AbstractCOptionPage {
 	public void setIndexerID(String oldIndexerID, IProject project) {
 		//Get the corresponding text for the given indexer id
 		selectedIndexerId = getIndexerPageName(oldIndexerID);
-
+		
+		if (selectedIndexerId == null){
+			CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, CCorePlugin.DEFAULT_INDEXER_UNIQ_ID);
+			selectedIndexerId = CCorePlugin.DEFAULT_INDEXER_UNIQ_ID;
+		}
+		
 		//Set the appropriate indexer in the combo box
 		indexersComboBox.setText(selectedIndexerId);
 		//Load the appropriate page
@@ -428,19 +438,6 @@ public class IndexerBlock extends AbstractCOptionPage {
 	}
 	
 	 
-	private static void saveIndexerInfo (String indexerID, String indexerUIID, Element rootElement, Document doc ) {
-		
-		//Save the indexer id
-		Element indexerIDElement = doc.createElement(IndexManager.INDEXER_ID);
-		indexerIDElement.setAttribute(IndexManager.INDEXER_ID_VALUE,indexerID);
-		rootElement.appendChild(indexerIDElement);
-		
-		//Save the indexer UI id
-		Element indexerUIIDElement = doc.createElement(INDEXER_UI); 
-		indexerUIIDElement.setAttribute(INDEXER_UI_VALUE,indexerUIID);
-		rootElement.appendChild(indexerUIIDElement);
-	}
-	
 	public String getSelectedIndexerID(){
 		String indexerID = null;
 		

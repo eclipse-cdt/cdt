@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.core.model.ICElement;
@@ -27,21 +28,16 @@ import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * @author Bogdan Gheorghe
@@ -60,198 +56,30 @@ public class IndexManager extends JobManager{
 
 	public static boolean VERBOSE = false;
 	
-    //Map of Contributed Indexers; keyed by project
-    private HashMap contributedIndexerMap = null;
-   
     //Map of Persisted Indexers; keyed by project
     private HashMap indexerMap = null;
-   
-    //Upgrade index version
-    private boolean upgradeIndexEnabled = false;
-    private int		upgradeIndexProblems = 0;
-   
+
 	private ReadWriteMonitor monitor = new ReadWriteMonitor();
-	private boolean enableUpdates = true;
-	
-    /**
-     * Create an indexer only on request
-     */
-    protected static class CDTIndexer {
 
-        IConfigurationElement element;
-        ICDTIndexer indexer;
-        
-        public CDTIndexer(IConfigurationElement _element) {
-            element = _element;
-        }
-
-        public ICDTIndexer getIndexer() throws CoreException {
-            if (indexer == null) {
-            	indexer = (ICDTIndexer) element.createExecutableExtension("class"); //$NON-NLS-1$
-            }
-            return indexer;
-        }
-
-        public String getName() {
-            return element.getAttribute("name"); //$NON-NLS-1$
-        }
-        
-    }
-    
-    private class UpdateIndexVersionJob extends Job{
-		private final IProject project;
-		public UpdateIndexVersionJob( IProject project, String name ){
-			super( name );
-			this.project = project;
-		}
-
-		protected IStatus run(IProgressMonitor monitor) {
-			IWorkspaceRunnable job = new IWorkspaceRunnable( ){
-				public void run(IProgressMonitor monitor){
-					doProjectUpgrade(project);
-					doSourceIndexerUpgrade(project);
-				}
-			};
-			try {
-				CCorePlugin.getWorkspace().run(job, project, 0, null);
-			} catch (CoreException e) {
-			}
-			return Status.OK_STATUS;
-		}
-	}
-	
-    
-    
 	/**
 	 * Flush current state
 	 */
-	public synchronized void reset() {
-		super.reset();
-		
-		initializeIndexersMap();
-		this.indexerMap = new HashMap(5);
+	public void reset() {
 		try{
-		monitor.enterWrite();
-		initializeIndexerID();
-		} finally {
-		monitor.exitWrite();
+			monitor.enterWrite();
+			super.reset();
+			//Set default upgrade values
+			CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, CCorePlugin.DEFAULT_INDEXER_UNIQ_ID);
+			this.indexerMap = new HashMap(5);
+		} finally{
+			monitor.exitWrite();
 		}
 	}
-	
-
-
-	
-	/**
-	 * 
-	 */
-	private void initializeIndexerID() {
-		IProject[] projects = CCorePlugin.getWorkspace().getRoot().getProjects();
-		//Make sure that all projects are added to the indexer map and updated
-		//where neccesary
-		for (int i=0; i<projects.length; i++){
-			try {
-				if (projects[i].isAccessible())
-					initializeIndexer(projects[i]);
-			} catch (CoreException e) {}
-		}
-		
-	}
-
-	private ICDTIndexer initializeIndexer(IProject project) throws CoreException {
-
-		ICDTIndexer indexer = null;
-		indexer = (ICDTIndexer) indexerMap.get(project);
-		
-		if (indexer == null){
-			String indexerID = null;
-			try {
-				//Indexer has not been created yet for this session
-				//Check to see if the indexer has been set in a session property 
-				indexerID = (String) project.getSessionProperty(indexerIDKey);
-			} catch (CoreException e) {}
-			
-			if (indexerID == null){
-				try{
-				//Need to load the indexer from descriptor
-				indexerID = loadIndexerIDFromCDescriptor(project);
-				} catch (CoreException e){}
-			}
-			
-			//Make sure that we have an indexer ID
-			if (indexerID == null && 
-				enableUpdates) {
-				//No persisted info on file? Must be old project - run temp. upgrade
-					UpdateIndexVersionJob job = new UpdateIndexVersionJob(project, "Update Index Version" ); //$NON-NLS-1$
-				
-					IProgressMonitor group = this.getIndexJobProgressGroup();
-					
-					job.setRule( project );
-					if( group != null )
-						job.setProgressGroup( group, 0 );
-					job.setPriority( Job.SHORT );
-					job.schedule();	
-			}
-			
-			//If we're asking for the null indexer,return null
-			if (indexerID == null ||
-				indexerID.equals(nullIndexerID)) 
-				return null;
-			
-			//Create the indexer and store it
-			indexer = getIndexer(indexerID);
-			indexerMap.put(project,indexer);
-			
-		}
-		return indexer;
-	}
-	
-	/**
-	 * Loads indexerID from .cdtproject file
-	 * @param project
-	 * @param includes
-	 * @param symbols
-	 * @throws CoreException
-	 */
-	private String loadIndexerIDFromCDescriptor(IProject project) throws CoreException {
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
-		
-		Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
-		
-		String indexerID = null;
-		
-		while (child != null) {
-			if (child.getNodeName().equals(INDEXER_ID)) 
-				  indexerID = ((Element)child).getAttribute(INDEXER_ID_VALUE);
-			
-			child = child.getNextSibling();
-		}
-		
-		return indexerID;
-	}
-	
-	
-	  /**
-     * Adds all the contributed Indexer Pages to a map
-     */
-    private void initializeIndexersMap() {
-    	
-        contributedIndexerMap = new HashMap(5);
-        
-        IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, "CIndexer"); //$NON-NLS-1$
-        IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-        for (int i = 0; i < infos.length; i++) {
-            if (infos[i].getName().equals("indexer")) { //$NON-NLS-1$
-                String id = infos[i].getAttribute("id"); //$NON-NLS-1$
-                contributedIndexerMap.put(id, new CDTIndexer(infos[i]));
-            }
-        }
-    }
-
-	/**
+	 /**
 	 * Notify indexer which scheduled this job that the job has completed  
 	 * 
 	 */
-	protected synchronized void jobFinishedNotification(IIndexJob job) {
+	protected void jobFinishedNotification(IIndexJob job) {
 		if (job instanceof IndexRequest ){
 			IndexRequest indexRequest = (IndexRequest) job;
 			IPath path = indexRequest.getIndexPath();
@@ -262,10 +90,6 @@ public class IndexManager extends JobManager{
 				indexer.indexJobFinishedNotification(job);
 		}
 	}
-
-
-
-
 	/**
 	 * @param project
 	 * @param element
@@ -277,13 +101,6 @@ public class IndexManager extends JobManager{
 		
 		if (indexer != null)
 			indexer.addRequest(element, delta);
-		else{
-		//Maybe indexer hasn't been created for this project yet
-		//Scenarios:
-		//1) New Project created - UI has set env var telling which indexer to use
-		//2) Existing Project - the indexer has been persisted to file, need to load it up from CCorePlugin
-			
-		}
 	}
 
 	/**
@@ -375,26 +192,21 @@ public class IndexManager extends JobManager{
 		return new CIndexStorage(indexer);
 	}
 	
-	public synchronized int getJobStart(){
+	public int getJobStart(){
 		return jobStart;
 	}
 	
-	public synchronized int getJobEnd(){
+	public int getJobEnd(){
 		return jobEnd;
 	}
-
 	/**
 	 * Returns the job at position in the awaiting job queue
 	 * @param position
 	 * @return
 	 */
-	public synchronized IIndexJob getAwaitingJobAt(int position){
+	public IIndexJob getAwaitingJobAt(int position){
 		return this.awaitingJobs[position];
 	}
-
-
-
-
 	/**
 	 * Check to see if the indexer associated with this project
 	 * requires dependency update notifications
@@ -408,238 +220,95 @@ public class IndexManager extends JobManager{
 		
 	}
 	
-	public synchronized ICDTIndexer getIndexerForProject(IProject project){
-		//Make sure we're not updating list
-		monitor.enterRead();
-		//All indexers that were previously persisted should have been loaded at 
-		//this point
+	public ICDTIndexer getIndexerForProject(IProject project){
 		ICDTIndexer indexer = null;
-		indexer = (ICDTIndexer) indexerMap.get(project);
 		try {
-			if (indexer == null){
-				String indexerID = null;
+			//Make sure we're not updating list
+			monitor.enterRead();
+			
+			//See if indexer exists already
+			indexer = (ICDTIndexer) indexerMap.get(project);
+			
+			//Create the indexer and store it
+			if (indexer == null) {
+				monitor.exitRead();
 				try {
-					//Indexer has not been created yet for this session
-					//Check to see if the indexer has been set in a session property 
-					indexerID = (String) project.getSessionProperty(indexerIDKey);
-				} catch (CoreException e) {}
-				
-				//Project was either closed at startup or imported
-				if (indexerID == null &&
-						project.isAccessible()){
-					try {
-						indexer=initializeIndexer(project);
-					} catch (CoreException e1) {}
+					monitor.enterWrite();
+					indexer = getIndexer(project);
+					//Make sure we're not putting null in map
+					if (indexer != null)
+						indexerMap.put(project,indexer);
+				} finally{
+					monitor.exitWriteEnterRead();
 				}
-				else{
-					//Create the indexer and store it
-					indexer = getIndexer(indexerID);
-				}
-				
-				//Make sure we're not putting null in map
-				if (indexer != null)
-					indexerMap.put(project,indexer);
 			}
-		} finally {	
-			monitor.exitRead();
+			return indexer;
+				
+			}finally {
+				monitor.exitRead();
+			}
+	}
+	
+	public ICDTIndexer getDefaultIndexer(IProject project) throws CoreException {
+		ICDTIndexer indexer = null;
+		String id = CCorePlugin.getDefault().getPluginPreferences().getDefaultString(CCorePlugin.PREF_INDEXER);
+		if (id == null || id.length() == 0) {
+			id = CCorePlugin.DEFAULT_INDEXER_UNIQ_ID;
 		}
 		
+        IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.INDEXER_SIMPLE_ID);
+		IExtension extension = extensionPoint.getExtension(id);
+		if (extension != null) {
+			IConfigurationElement element[] = extension.getConfigurationElements();
+			for (int i = 0; i < element.length; i++) {
+				if (element[i].getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
+					indexer = (ICDTIndexer) element[i].createExecutableExtension("run"); //$NON-NLS-1$
+					break;
+				}
+			}
+		} else {
+			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,"No Indexer Found", null); //$NON-NLS-1$
+			throw new CoreException(s);
+		}
 		return indexer;
 	}
 	
-   /**
-	 * @param project
-	 */
-	private synchronized void doSourceIndexerUpgrade(IProject project) {
-		ICDescriptor descriptor = null;
-		Element rootElement = null;
-		IProject newProject = null;
+   protected ICDTIndexer getIndexer(IProject project) {
+   	ICDTIndexer indexer = null;
+   	try{
+		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project,true);
+		ICExtensionReference[] cextensions = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID, true);
 		
-		try {
-			newProject = project;
-			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
-			rootElement = descriptor.getProjectData(SourceIndexer.SOURCE_INDEXER);
-		
-			// Clear out all current children
-			Node child = rootElement.getFirstChild();
-			while (child != null) {
-				rootElement.removeChild(child);
-				child = rootElement.getFirstChild();
-			}
-			Document doc = rootElement.getOwnerDocument();
+		if (cextensions != null && cextensions.length > 0)
+			indexer = (ICDTIndexer) cextensions[0].createExtension();
 	
-					
-			saveIndexerEnabled(upgradeIndexEnabled, rootElement, doc);
-			saveIndexerProblemsEnabled( upgradeIndexProblems, rootElement, doc );
-			
-			descriptor.saveProjectData();
-			
-			//Update project session property
-			
-			project.setSessionProperty(SourceIndexer.activationKey,new Boolean(upgradeIndexEnabled));
-			project.setSessionProperty(SourceIndexer.problemsActivationKey, new Integer( upgradeIndexProblems ));	
-	
-		} catch (CoreException e) {}
-	}
-
-	private static void saveIndexerEnabled (boolean indexerEnabled, Element rootElement, Document doc ) {
-		
-		Element indexEnabled = doc.createElement(SourceIndexer.INDEXER_ENABLED);
-		Boolean tempValue= new Boolean(indexerEnabled);
-		
-		indexEnabled.setAttribute(SourceIndexer.INDEXER_VALUE,tempValue.toString());
-		rootElement.appendChild(indexEnabled);
-
-	}
-	private static void saveIndexerProblemsEnabled ( int problemValues, Element rootElement, Document doc ) {
-		
-		Element enabled = doc.createElement(SourceIndexer.INDEXER_PROBLEMS_ENABLED);
-		Integer tempValue= new Integer( problemValues );
-		
-		enabled.setAttribute(SourceIndexer.INDEXER_PROBLEMS_VALUE, tempValue.toString());
-		rootElement.appendChild(enabled);
-	}
-
-/**
-	 * @return
-	 */
-	private synchronized String doProjectUpgrade(IProject project) {
-		ICDescriptor descriptor = null;
-		Element rootElement = null;
-		IProject newProject = null;
-		
+   	} catch (CoreException e){}
+   	
+	if (indexer == null)
 		try {
-			//Get the old values from .cdtproject before upgrading
-			Boolean tempEnabled = loadIndexerEnabledFromCDescriptor(project);
-			if (tempEnabled != null)
-				upgradeIndexEnabled = tempEnabled.booleanValue();
-			
-			Integer tempProblems = loadIndexerProblemsEnabledFromCDescriptor(project);
-			if (tempProblems != null)
-				upgradeIndexProblems = tempProblems.intValue();
-			
+			indexer = getDefaultIndexer(project);
 		} catch (CoreException e1) {}
-		
-		
-		//For now all upgrades will be to the old source indexer
-		String indexerPageID = "org.eclipse.cdt.ui.originalSourceIndexerUI"; //$NON-NLS-1$
-		String indexerID = "org.eclipse.cdt.core.originalsourceindexer"; //$NON-NLS-1$
-		
-		try {
-			newProject = project;
-			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
-			rootElement = descriptor.getProjectData(IndexManager.CDT_INDEXER);
-		
-			// Clear out all current children
-			Node child = rootElement.getFirstChild();
-			while (child != null) {
-				rootElement.removeChild(child);
-				child = rootElement.getFirstChild();
-			}
-			Document doc = rootElement.getOwnerDocument();
-			
-			saveIndexerInfo(indexerID, indexerPageID, rootElement, doc);
-		
-			descriptor.saveProjectData();
-			
-			//Update project session property
-			
-			project.setSessionProperty(IndexManager.indexerIDKey, indexerID);	
-			//project.setSessionProperty(indexerUIIDKey, indexerPageID);
 	
-		} catch (CoreException e) {}
-		
-		return indexerID;
-	}
-
-
-	private static void saveIndexerInfo (String indexerID, String indexerUIID, Element rootElement, Document doc ) {
-		
-		//Save the indexer id
-		Element indexerIDElement = doc.createElement(IndexManager.INDEXER_ID);
-		indexerIDElement.setAttribute(IndexManager.INDEXER_ID_VALUE,indexerID);
-		rootElement.appendChild(indexerIDElement);
-		
-		//Save the indexer UI id
-		Element indexerUIIDElement = doc.createElement("indexerUI"); //$NON-NLS-1$
-		indexerUIIDElement.setAttribute("indexerUIValue",indexerUIID); //$NON-NLS-1$
-		rootElement.appendChild(indexerUIIDElement);
-	}
-
-	private Boolean loadIndexerEnabledFromCDescriptor(IProject project) throws CoreException {
-		// Check if we have the property in the descriptor
-		// We pass false since we do not want to create the descriptor if it does not exists.
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
-		Boolean strBool = null;
-		if (descriptor != null) {
-			Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
-		
-			while (child != null) {
-				if (child.getNodeName().equals(SourceIndexer.INDEXER_ENABLED)) 
-					strBool = Boolean.valueOf(((Element)child).getAttribute(SourceIndexer.INDEXER_VALUE));
-			
-			
-				child = child.getNextSibling();
-			}
-		}
-		
-		return strBool;
-	}
-	private Integer loadIndexerProblemsEnabledFromCDescriptor(IProject project) throws CoreException {
-	// we are only checking for the settings do not create the descriptor.
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
-		Integer strInt = null;
-		if( descriptor != null ){
-			Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
-			
-			while (child != null) {
-				if (child.getNodeName().equals(SourceIndexer.INDEXER_PROBLEMS_ENABLED)){
-					String val = ((Element)child).getAttribute(SourceIndexer.INDEXER_PROBLEMS_VALUE);
-					try{
-						strInt = Integer.valueOf( val );
-					} catch( NumberFormatException e ){
-						//some old projects might have a boolean stored, translate that into just preprocessors
-						Boolean bool = Boolean.valueOf( val );
-						if( bool.booleanValue() )
-							strInt = new Integer( SourceIndexer.PREPROCESSOR_PROBLEMS_BIT );
-						else 
-							strInt = new Integer( 0 );
-					}
-					break;
-				}
-				child = child.getNextSibling();
-			}
-		}
-		
-		return strInt;
-	}
-
-protected ICDTIndexer getIndexer(String indexerId) {
-	    CDTIndexer configElement = (CDTIndexer) contributedIndexerMap.get(indexerId);
-	    if (configElement != null) {
-	        try {
-	            return configElement.getIndexer();
-	        } catch (CoreException e) {}
-	    }
-	    return null;
+	 return indexer;
    }
    
    protected void notifyIdle(long idlingTime) {
    	//Notify all indexers
-   	if (indexerMap == null)
-   		return;
-   		
-   	Set mapKeys = indexerMap.keySet();
-   	Iterator i = mapKeys.iterator();
-   	while (i.hasNext()){
-   		IProject tempProject = (IProject) i.next();
-   		ICDTIndexer indexer = (ICDTIndexer) indexerMap.get(tempProject);
-   		if (indexer != null)
-   			indexer.notifyIdle(idlingTime);
+   	monitor.enterRead();
+   	try{
+	   	if (indexerMap == null)
+	   		return;
+	   		
+	   	Set mapKeys = indexerMap.keySet();
+	   	Iterator i = mapKeys.iterator();
+	   	while (i.hasNext()){
+	   		IProject tempProject = (IProject) i.next();
+	   		ICDTIndexer indexer = (ICDTIndexer) indexerMap.get(tempProject);
+	   		if (indexer != null)
+	   			indexer.notifyIdle(idlingTime);
+	   	}
+   	} finally{
+   		monitor.exitRead();
    	}
    }
-   
-	public void setEnableUpdates(boolean enableUpdates) {
-		this.enableUpdates = enableUpdates;
-	}
 }

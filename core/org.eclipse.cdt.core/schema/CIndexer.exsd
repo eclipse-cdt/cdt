@@ -39,38 +39,6 @@
       </complexType>
    </element>
 
-   <element name="indexer">
-      <complexType>
-         <sequence>
-            <element ref="indexer" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  a unique name for this indexer
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  a name that will be used for this indexer in the UI
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the class that implements &lt;code&gt;org.eclipse.cdt.core.index2.IIndexer&lt;/code&gt;
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.index2.IIndexer"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <annotation>
       <appInfo>
          <meta.section type="since"/>

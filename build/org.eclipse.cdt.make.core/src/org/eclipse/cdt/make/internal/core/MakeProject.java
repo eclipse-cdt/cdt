@@ -26,11 +26,16 @@ public class MakeProject implements ICOwner {
 		cDescriptor.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
 		cDescriptor.remove(CCorePlugin.BUILDER_MODEL_ID);
 		updateBinaryParsers(cDescriptor);
+		updateIndexers(cDescriptor);
 	}
 
 	public void update(ICDescriptor cDescriptor, String extensionID) throws CoreException {
 		if (extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
 			updateBinaryParsers(cDescriptor);
+		}
+		
+		if (extensionID.equals(CCorePlugin.INDEXER_UNIQ_ID)) {
+			updateIndexers(cDescriptor);
 		}
 	}
 
@@ -45,7 +50,18 @@ public class MakeProject implements ICOwner {
 			}
 		}
 	}
-
+ 
+	private void updateIndexers(ICDescriptor cDescriptor) throws CoreException {
+		cDescriptor.remove(CCorePlugin.INDEXER_UNIQ_ID);
+		Preferences corePrefs = CCorePlugin.getDefault().getPluginPreferences();
+		String id = corePrefs.getString(CCorePlugin.PREF_INDEXER);
+		if (id != null && id.length() != 0) {
+			String[] ids = parseStringToArray(id);
+			for (int i = 0; i < ids.length; i++) {
+				cDescriptor.create(CCorePlugin.INDEXER_UNIQ_ID, ids[i]);
+			}
+		}
+	}
 	
 	private String[] parseStringToArray(String syms) {
 		if (syms != null && syms.length() > 0) {

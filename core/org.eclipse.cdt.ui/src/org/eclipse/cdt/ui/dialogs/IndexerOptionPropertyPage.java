@@ -13,6 +13,7 @@ package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IProject;
@@ -116,23 +117,13 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 	}
 	
 	public String getIndexerID(IProject project) throws CoreException {
-		//See if there's already one associated with the resource for this session
-		 String indexerID = (String) project.getSessionProperty(IndexerBlock.indexerUIIDKey);
-
-		 if (indexerID != null)
-		 	return indexerID;
-		 
-		// Try to load one for the project
-		 indexerID = loadIndexerIDFromCDescriptor(project);
 		
-		// There is nothing persisted for the session, or saved in a file so
-		// create a build info object
-		if (indexerID != null) {
-			project.setSessionProperty(IndexerBlock.indexerUIIDKey, indexerID);
-		}
-		else{
-			//Hmm, no persisted indexer value. Could be an old project - need to run project
-			//update code here	
+	
+		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project, true);
+		ICExtensionReference[] ref = desc.get(CCorePlugin.INDEXER_UNIQ_ID);
+		String indexerID = null;
+		for (int i = 0; i < ref.length; i++) {
+			indexerID = ref[i].getID();
 		}
 		
 		return indexerID;

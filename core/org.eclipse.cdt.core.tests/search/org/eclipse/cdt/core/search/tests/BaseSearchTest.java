@@ -18,6 +18,8 @@ import java.io.FileInputStream;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
@@ -55,13 +57,14 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 	static protected SearchEngine				searchEngine;
 	static protected FileManager 				fileManager;
 	static final 	 String 					sourceIndexerID = "org.eclipse.cdt.core.originalsourceindexer"; //$NON-NLS-1$
-	
+	static protected SourceIndexer				sourceIndexer;
 	{
 		
 		//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 		monitor = new NullProgressMonitor();
 		
 		workspace = ResourcesPlugin.getWorkspace();
+		CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, CCorePlugin.DEFAULT_INDEXER_UNIQ_ID);
 		
 		try {
 			//Create temp project
@@ -71,7 +74,9 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 			
 			//Set the id of the source indexer extension point as a session property to allow
 			//index manager to instantiate it
-			testProject.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);
+			//testProject.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);
+			sourceIndexer = (SourceIndexer) CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(testProject);
+			int x=0;
 		} catch (CoreException e) {}
 		
 		
@@ -107,7 +112,6 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 	}
 
 	protected void setUp() throws Exception {
-	
 	}
 
 	protected void tearDown() {

@@ -16,8 +16,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
@@ -49,13 +51,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * @author Bogdan Gheorghe
  */
-public class SourceIndexer implements ICDTIndexer {
+public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	
 	public static boolean VERBOSE = false;
 	
@@ -73,21 +73,27 @@ public class SourceIndexer implements ICDTIndexer {
 	public final static QualifiedName activationKey = new QualifiedName(INDEX_MODEL_ID, ACTIVATION);
 	public final static QualifiedName problemsActivationKey = new QualifiedName( INDEX_MODEL_ID, PROBLEM_ACTIVATION );
 	
-	public static final String INDEXER_ENABLED = "indexEnabled"; //$NON-NLS-1$
+	/*public static final String INDEXER_ENABLED = "indexEnabled"; //$NON-NLS-1$
 	public static final String INDEXER_PROBLEMS_ENABLED = "indexerProblemsEnabled"; //$NON-NLS-1$
 	public static final String SOURCE_INDEXER = "cdt_source_indexer"; //$NON-NLS-1$
 	public static final String INDEXER_VALUE = "indexValue"; //$NON-NLS-1$
 	public static final String INDEXER_PROBLEMS_VALUE = "indexProblemsValue"; //$NON-NLS-1$
-	
+	*/
 	public static final int PREPROCESSOR_PROBLEMS_BIT = 1;
 	public static final int SEMANTIC_PROBLEMS_BIT = 1 << 1;
 	public static final int SYNTACTIC_PROBLEMS_BIT = 1 << 2;
 
+	public static final String SOURCE_INDEXER_ID = "originalsourceindexer"; //$NON-NLS-1$
+	public static final String SOURCE_INDEXER_UNIQUE_ID = CCorePlugin.PLUGIN_ID + "." + SOURCE_INDEXER_ID; //$NON-NLS-1$;
+	
+	
 	private CIndexStorage		indexStorage = null;
 	public 	ReadWriteMonitor	storageMonitor = null;
 	private IndexManager  		indexManager = null; 
 	
 	private HashSet 			jobSet = null;
+	private boolean				indexEnabled = false;
+	
 	
     public SourceIndexer(){
     	this.indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
@@ -211,10 +217,6 @@ public class SourceIndexer implements ICDTIndexer {
 		}
 	}
 	
-
-	
-	
-
 	/**
 	 * @param project
 	 * @return
@@ -227,59 +229,65 @@ public class SourceIndexer implements ICDTIndexer {
 		
 		try {
 			indexValue = (Boolean) project.getSessionProperty(activationKey);
-		} catch (CoreException e) {
-		}
+		} catch (CoreException e) {}
 		
 		if (indexValue != null)
 			return indexValue.booleanValue();
 		
 		try {
-			//Load value for project
-			indexValue = loadIndexerEnabledFromCDescriptor(project);
-			if (indexValue != null){
-				project.setSessionProperty(SourceIndexer.activationKey, indexValue);
-				return indexValue.booleanValue();
-			}
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+			if (cdesc == null)
+				return false;
 			
-//			TODO: Indexer Block Place holder for Managed Make - take out
-			indexValue = new Boolean(true);
-			project.setSessionProperty(SourceIndexer.activationKey, indexValue);
-			return indexValue.booleanValue();
-		} catch (CoreException e1) {
-		}
+			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+			if (cext.length > 0) {
+				//initializeIndexerId();
+				for (int i = 0; i < cext.length; i++) {
+					String id = cext[i].getID();
+						String orig = cext[i].getExtensionData("indexenabled"); //$NON-NLS-1$
+						if (orig != null){
+							Boolean tempBool = new Boolean(orig);
+							indexEnabled = tempBool.booleanValue();
+						}
+				}
+			}
 		
-		return false;
+			
+		} catch (CoreException e) {}
+		
+		return indexEnabled;
 	}
 	
 
 	
 	public int indexProblemsEnabled(IProject project) {
-		Integer value = null;
 		
+		if( project == null || !project.exists() || !project.isOpen() )
+			return 0;
+		
+		int indexProblemsEnabled = 0;
 		try {
-			value = (Integer) project.getSessionProperty(problemsActivationKey);
-		} catch (CoreException e) {
-		}
-		
-		if (value != null)
-			return value.intValue();
-		
-		try {
-			//Load value for project
-			value = loadIndexerProblemsEnabledFromCDescriptor(project);
-			if (value != null){
-				project.setSessionProperty(SourceIndexer.problemsActivationKey, value);
-				return value.intValue();
-			}
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+			if (cdesc == null)
+				return 0;
 			
-			//TODO: Indexer Block Place holder for Managed Make - take out
-			value = new Integer(0);
-			project.setSessionProperty(SourceIndexer.problemsActivationKey, value);
-			return value.intValue();
-		} catch (CoreException e1) {
-		}
+			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+			if (cext.length > 0) {
+				//initializeIndexerId();
+				for (int i = 0; i < cext.length; i++) {
+					String id = cext[i].getID();
+						String orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
+						if (orig != null){
+							Integer tempInt = new Integer(orig);
+							indexProblemsEnabled = tempInt.intValue();
+						}
+				}
+			}
 		
-		return 0;
+			
+		} catch (CoreException e) {}
+		
+		return indexProblemsEnabled;
 	}
 	/**
 	 * Index the content of the given source folder.
@@ -332,56 +340,6 @@ public class SourceIndexer implements ICDTIndexer {
 	public void jobFinishedNotification(IIndexJob job) {
 		this.indexJobFinishedNotification(job);
 		
-	}
-	
-
-	
-	private Boolean loadIndexerEnabledFromCDescriptor(IProject project) throws CoreException {
-		// Check if we have the property in the descriptor
-		// We pass false since we do not want to create the descriptor if it does not exists.
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
-		Boolean strBool = null;
-		if (descriptor != null) {
-			Node child = descriptor.getProjectData(SOURCE_INDEXER).getFirstChild();
-		
-			while (child != null) {
-				if (child.getNodeName().equals(INDEXER_ENABLED)) 
-					strBool = Boolean.valueOf(((Element)child).getAttribute(INDEXER_VALUE));
-			
-			
-				child = child.getNextSibling();
-			}
-		}
-		
-		return strBool;
-	}
-	private Integer loadIndexerProblemsEnabledFromCDescriptor(IProject project) throws CoreException {
-	// we are only checking for the settings do not create the descriptor.
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
-		Integer strInt = null;
-		if( descriptor != null ){
-			Node child = descriptor.getProjectData(SourceIndexer.SOURCE_INDEXER).getFirstChild();
-			
-			while (child != null) {
-				if (child.getNodeName().equals(INDEXER_PROBLEMS_ENABLED)){
-					String val = ((Element)child).getAttribute(INDEXER_PROBLEMS_VALUE);
-					try{
-						strInt = Integer.valueOf( val );
-					} catch( NumberFormatException e ){
-						//some old projects might have a boolean stored, translate that into just preprocessors
-						Boolean bool = Boolean.valueOf( val );
-						if( bool.booleanValue() )
-							strInt = new Integer( SourceIndexer.PREPROCESSOR_PROBLEMS_BIT );
-						else 
-							strInt = new Integer( 0 );
-					}
-					break;
-				}
-				child = child.getNextSibling();
-			}
-		}
-		
-		return strInt;
 	}
 	
 	static private class RemoveIndexMarkersJob extends Job{

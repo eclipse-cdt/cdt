@@ -13,24 +13,28 @@ package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.index.AbstractIndexerPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 
 public class SourceIndexerBlock extends AbstractIndexerPage {
+	
+	public final static String PREF_INDEX_ENABLED = CUIPlugin.PLUGIN_ID + ".indexenabled"; //$NON-NLS-1$
+	public final static String PREF_INDEX_MARKERS = CUIPlugin.PLUGIN_ID + ".indexmarkers"; //$NON-NLS-1$
 	
 	private static final String ENABLE_PREPROCESSOR_PROBLEMS = CUIMessages.getString( "IndexerOptions.enablePreprocessor" ); //$NON-NLS-1$
 	private static final String ENABLE_SEMANTIC_PROBLEMS = CUIMessages.getString( "IndexerOptions.enableSemantic" ); //$NON-NLS-1$
@@ -44,15 +48,63 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 	private Button syntacticProblemsEnabled;
 	private Button semanticProblemsEnabled;
 	
-	private boolean oldIndexerValue;
-	private int oldIndexerProblemsValue;
+	private boolean oldIndexerValue = false;
+	private int oldIndexerProblemsValue = 0;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 	
-		this.persistIndexerValues(currentProject);
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+
+		monitor.beginTask(CUIMessages.getString("IndexerOptiosn.task.savingAttributes "), 1);  //$NON-NLS-1$
+		ICOptionContainer container = getContainer();
+		IProject proj = null;
+		
+		if (container != null){
+			proj = container.getProject();
+		}
+		else{
+			proj = currentProject;
+		}
+		
+		if (proj != null) {
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj, false);
+			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+			if (cext.length > 0) {
+				//initializeIndexerId();
+				for (int i = 0; i < cext.length; i++) {
+					String id = cext[i].getID();
+					//if (cext[i].getID().equals(parserID)) {
+						String orig = cext[i].getExtensionData("indexenabled"); //$NON-NLS-1$
+						String indexEnabled = getIndexerEnabledString();
+						if (orig == null || !orig.equals(indexEnabled)) {
+							cext[i].setExtensionData("indexenabled", indexEnabled); //$NON-NLS-1$
+						}
+						orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
+						String indexProblems = getIndexerProblemsValuesString();
+						if (orig == null || !orig.equals(indexProblems)) {
+							cext[i].setExtensionData("indexmarkers", indexProblems); //$NON-NLS-1$
+						}
+					//}
+				}
+			}
+		} else {
+			Preferences store = null;
+			if (container != null){
+				store = container.getPreferences();
+			}
+			
+			if (store != null) {
+				String indexEnabled = getIndexerEnabledString();
+				String indexMarkers = getIndexerProblemsValuesString();
+				store.setValue(PREF_INDEX_ENABLED, indexEnabled);
+				store.setValue(PREF_INDEX_MARKERS, indexMarkers);
+			}
+		}
 		
 		boolean indexProject = getIndexerValue();
 		
@@ -102,82 +154,35 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 		
 	}
 	
-	public void persistIndexerValues(IProject project){
-		ICDescriptor descriptor = null;
-		Element rootElement = null;
-		IProject newProject = null;
-		
-		try {
-			newProject = project;
-			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
-			rootElement = descriptor.getProjectData(SourceIndexer.SOURCE_INDEXER);
-		
-			// Clear out all current children
-			Node child = rootElement.getFirstChild();
-			while (child != null) {
-				rootElement.removeChild(child);
-				child = rootElement.getFirstChild();
-			}
-			Document doc = rootElement.getOwnerDocument();
-	
-			boolean indexProject = getIndexerValue();
-			int problemValues = getIndexerProblemsValues();
-					
-			saveIndexerEnabled(indexProject, rootElement, doc);
-			saveIndexerProblemsEnabled( problemValues, rootElement, doc );
-			
-			descriptor.saveProjectData();
-			
-			//Update project session property
-			
-			project.setSessionProperty(SourceIndexer.activationKey,new Boolean(indexProject));
-			project.setSessionProperty(SourceIndexer.problemsActivationKey, new Integer( problemValues ));	
-	
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
 	public boolean getIndexerValue(){
 		return indexerEnabled.getSelection();
 	}
 	
-	public int getIndexerProblemsValues(){
+	public String getIndexerProblemsValuesString(){
 		int result = 0;
 		result |= preprocessorProblemsEnabled.getSelection() ? SourceIndexer.PREPROCESSOR_PROBLEMS_BIT : 0;
 		if( syntacticProblemsEnabled != null )
 			result |= syntacticProblemsEnabled.getSelection() ? SourceIndexer.SYNTACTIC_PROBLEMS_BIT : 0;
 		result |= semanticProblemsEnabled.getSelection() ? SourceIndexer.SEMANTIC_PROBLEMS_BIT : 0;
-		return result;
+		Integer tempInt = new Integer(result);
+		
+		return tempInt.toString();
 	}
 	
-	private static void saveIndexerEnabled (boolean indexerEnabled, Element rootElement, Document doc ) {
+	private String getIndexerEnabledString(){
+		if (indexerEnabled.getSelection())
+			return "true"; //$NON-NLS-1$
 		
-		Element indexEnabled = doc.createElement(SourceIndexer.INDEXER_ENABLED);
-		Boolean tempValue= new Boolean(indexerEnabled);
-		
-		indexEnabled.setAttribute(SourceIndexer.INDEXER_VALUE,tempValue.toString());
-		rootElement.appendChild(indexEnabled);
-
+		return "false"; //$NON-NLS-1$
 	}
-	private static void saveIndexerProblemsEnabled ( int problemValues, Element rootElement, Document doc ) {
 		
-		Element enabled = doc.createElement(SourceIndexer.INDEXER_PROBLEMS_ENABLED);
-		Integer tempValue= new Integer( problemValues );
-		
-		enabled.setAttribute(SourceIndexer.INDEXER_PROBLEMS_VALUE, tempValue.toString());
-		rootElement.appendChild(enabled);
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.index2.AbstractIndexerPage#initialize(org.eclipse.core.resources.IProject)
 	 */
 	public void initialize(IProject project) {
 		
 		try {
-			oldIndexerValue = getIndexerEnabled(project);
-			oldIndexerProblemsValue = getIndexerProblemsEnabled( project );
+			loadPersistedValues(project);
 			this.currentProject = project;
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -190,53 +195,30 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 		setIndexerProblemValues(oldIndexerProblemsValue);
 	}
 	
-	public boolean getIndexerEnabled(IProject project) throws CoreException {
-		// See if there's already one associated with the resource for this
-		// session
-		 Boolean indexValue = (Boolean) project.getSessionProperty(SourceIndexer.activationKey);
-
-		// Try to load one for the project
-		if (indexValue == null) {
-			indexValue = loadIndexerEnabledFromCDescriptor(project);
-		}
-	
-		// There is nothing persisted for the session, or saved in a file so
-		// create a build info object
-		if (indexValue != null) {
-			project.setSessionProperty(SourceIndexer.activationKey, indexValue);
-		}
-		else{
-			//Hmm, no persisted indexer value. Could be an old project - set to true and persist
-			indexValue = new Boolean(true);
-			setIndexerValue(true);
-			persistIndexerValues(project);
-		}
+	public void loadPersistedValues(IProject project) throws CoreException {
 		
-		return indexValue.booleanValue();
-	}
+		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+		ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+		if (cext.length > 0) {
+			//initializeIndexerId();
+			for (int i = 0; i < cext.length; i++) {
+				String id = cext[i].getID();
+				//if (cext[i].getID().equals(parserID)) {
+					String orig = cext[i].getExtensionData("indexenabled"); //$NON-NLS-1$
+					if (orig != null){
+						Boolean tempBool = new Boolean(orig);
+						oldIndexerValue = tempBool.booleanValue();
+					}
 	
-	public int getIndexerProblemsEnabled( IProject project ) throws CoreException 
-	{		
-		// See if there's already one associated with the resource for this session
-		 Integer value = (Integer) project.getSessionProperty( SourceIndexer.problemsActivationKey );
-
-		// Try to load one for the project
-		if (value == null) {
-			value = loadIndexerProblemsEnabledFromCDescriptor(project);
+					orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
+					if (orig != null){
+						Integer tempInt = new Integer(orig);
+						oldIndexerProblemsValue = tempInt.intValue();
+					}
+				//}
+			}
 		}
 	
-		// There is nothing persisted for the session, or saved in a file so
-		// create a build info object
-		if (value != null) {
-			project.setSessionProperty(SourceIndexer.problemsActivationKey, value);
-		} else {
-			//Hmm, no persisted indexer value. Could be an old project - set all to false and persist
-			value = new Integer( 0 );
-			setIndexerProblemValues( 0 );
-			persistIndexerValues(project);
-		}
-		
-		return value.intValue();
 	}
 	
 	public void setIndexerValue(boolean value){
@@ -250,55 +232,4 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 		semanticProblemsEnabled.setSelection( (value & SourceIndexer.SEMANTIC_PROBLEMS_BIT) != 0 );
 	}
 	
-	/**
-	 * Loads dis from .cdtproject file
-	 * @param project
-	 * @param includes
-	 * @param symbols
-	 * @throws CoreException
-	 */
-	private Boolean loadIndexerEnabledFromCDescriptor(IProject project) throws CoreException {
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
-		
-		Node child = descriptor.getProjectData(SourceIndexer.SOURCE_INDEXER).getFirstChild();
-		Boolean strBool = null;
-		
-		while (child != null) {
-			if (child.getNodeName().equals(SourceIndexer.INDEXER_ENABLED)) 
-				 strBool = Boolean.valueOf(((Element)child).getAttribute(SourceIndexer.INDEXER_VALUE));
-			
-			
-			child = child.getNextSibling();
-		}
-		
-		return strBool;
-	}
-	
-	private Integer loadIndexerProblemsEnabledFromCDescriptor( IProject project ) throws CoreException
-	{
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
-		
-		Node child = descriptor.getProjectData(SourceIndexer.SOURCE_INDEXER).getFirstChild();
-		Integer strInt = null;
-		
-		while (child != null) {
-			if (child.getNodeName().equals(SourceIndexer.INDEXER_PROBLEMS_ENABLED)) {
-				String val = ((Element)child).getAttribute(SourceIndexer.INDEXER_PROBLEMS_VALUE);
-				try{
-					strInt = Integer.valueOf( val );
-				} catch( NumberFormatException e ){
-					//some old projects might have a boolean stored, translate that into just preprocessors
-					Boolean bool = Boolean.valueOf( val );
-					if( bool.booleanValue() )
-						strInt = new Integer( SourceIndexer.PREPROCESSOR_PROBLEMS_BIT );
-					else 
-						strInt = new Integer( 0 );
-				}
-				break;
-			}
-			
-			child = child.getNextSibling();
-		}
-		return strInt;
-	}
 }

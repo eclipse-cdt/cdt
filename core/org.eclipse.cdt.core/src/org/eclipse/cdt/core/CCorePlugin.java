@@ -76,6 +76,12 @@ public class CCorePlugin extends Plugin {
 	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID; //$NON-NLS-1$
 	public final static String PREF_USE_STRUCTURAL_PARSE_MODE = "useStructualParseMode"; //$NON-NLS-1$
 	
+	public static final String INDEXER_SIMPLE_ID = "CIndexer"; //$NON-NLS-1$
+	public static final String INDEXER_UNIQ_ID = PLUGIN_ID + "." + INDEXER_SIMPLE_ID; //$NON-NLS-1$
+	public final static String PREF_INDEXER = "indexer"; //$NON-NLS-1$
+	public final static String DEFAULT_INDEXER_SIMPLE_ID = "originalsourceindexer"; //$NON-NLS-1$
+	public final static String DEFAULT_INDEXER_UNIQ_ID =  PLUGIN_ID + "." + DEFAULT_INDEXER_SIMPLE_ID; //$NON-NLS-1$
+	
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
 
 	// default store for pathentry

@@ -106,7 +106,7 @@ import org.eclipse.core.runtime.Platform;
 			indexFile.delete();
 		
 		testProject.setSessionProperty(IndexManager.indexerIDKey, SourceIndexerTests.sourceIndexerID);
-		testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
+	    testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
 		
 		if (testProject==null)
 			fail("Unable to create project");	

@@ -1,3 +1,16 @@
+2003-02023 Alain Magloire
+
+	Remove implementations of IResource and IContainer.
+
+	* model/org/eclipse/cdt/internal/core/model/Container.java:
+	* model/org/eclipse/cdt/internal/core/model/parser/BinaryContainerAdapter.java:
+	* model/org/eclipse/cdt/internal/core/model/parser/BinaryFileAdapter.java:
+	Files removed.
+	* model/org/eclipse/cdt/internal/core/model/Archive.java:
+	* model/org/eclipse/cdt/internal/core/model/ArchiveInfo.java:
+	* model/org/eclipse/cdt/internal/core/model/BinaryInfo.java:
+	Remove references to BinaryFileAdapter.
+
 2003-02-19 David Inglis
 
 	* src/org/eclipse/cdt/core/CCorePlugin.java

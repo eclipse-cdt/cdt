@@ -1,3 +1,7 @@
+2003-04-15 Andrew Niefer
+	Moved ScannerFailedTest::testBug36047 to ScannerTestCase::testBug36047
+	Added ScannerFailedTest::testBug36475
+
 2003-04-13 John Camelon
 	Added DOMTests::testPointersToFunctions.  
 

@@ -15,6 +15,7 @@ import java.util.List;
 public interface IScanner {
 	
 	public static final int tPOUNDPOUND = -6;
+	public static final int tPOUND      = -7;
 	
 	public IScanner initialize( Reader sourceToBeRead, String fileName );
 	

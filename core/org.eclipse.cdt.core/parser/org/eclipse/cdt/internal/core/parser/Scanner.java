@@ -315,6 +315,11 @@ public class Scanner implements IScanner {
 	private boolean throwExceptionOnBadCharacterRead = false; 
 	private boolean atEOF = false;
 
+	private boolean tokenizingMacroReplacementList = false;
+	public void setTokenizingMacroReplacementList( boolean mr ){
+		tokenizingMacroReplacementList = mr;
+	}
+	
 	private boolean quickScan = false;
 	public void setQuickScan(boolean qs) {
 		quickScan = qs;
@@ -714,7 +719,10 @@ public class Scanner implements IScanner {
 						throw new ScannerException(BAD_PP + contextStack.getCurrentContext().getOffset()); 
 					else 
 						return newToken( tPOUNDPOUND, "##" );
-				} 
+				} else if( tokenizingMacroReplacementList ) {
+					ungetChar( c ); 
+					return newToken( tPOUND, "#" );
+				}
 				
 				while (((c >= 'a') && (c <= 'z'))
 					|| ((c >= 'A') && (c <= 'Z')) || (c == '_') ) {
@@ -730,8 +738,6 @@ public class Scanner implements IScanner {
 					if (throwExceptionOnBadPreprocessorSyntax)
 						throw new ScannerException(
 							BAD_PP + contextStack.getCurrentContext().getOffset());
-					
-
 				} else {
 					int type = ((Integer) directive).intValue();
 					switch (type) {
@@ -1539,10 +1545,26 @@ public class Scanner implements IScanner {
 			helperScanner.initialize(
 				new StringReader(replacementString),
 				null);
+			helperScanner.setTokenizingMacroReplacementList( true );
 			Token t = helperScanner.nextToken(false);
 
 			try {
 				while (true) {
+					//each # preprocessing token in the replacement list shall be followed
+					//by a parameter as the next reprocessing token in the list
+					if( t.type == tPOUND ){
+						macroReplacementTokens.add( t );
+						t = helperScanner.nextToken(false);
+						int index = parameterIdentifiers.indexOf(t.image);
+						if (index == -1 ) {
+							//not found
+							if (throwExceptionOnBadPreprocessorSyntax)
+								throw new ScannerException(
+									BAD_PP + contextStack.getCurrentContext().getOffset());
+							return;
+						}
+					}
+					
 					macroReplacementTokens.add(t);
 					t = helperScanner.nextToken(false);
 				}
@@ -1627,14 +1649,39 @@ public class Scanner implements IScanner {
 					buffer.append((char) c);
 					c = getChar();
 				}
+				
 				String betweenTheBrackets = buffer.toString().trim();
-				StringTokenizer tokenizer =
-					new StringTokenizer(betweenTheBrackets, ",");
-				Vector parameterValues = new Vector(tokenizer.countTokens());
-				while (tokenizer.hasMoreTokens()) {
-					parameterValues.add(tokenizer.nextToken().trim());
-				}
 
+				Scanner tokenizer = new Scanner( new StringReader(betweenTheBrackets), TEXT, definitions );
+				Vector parameterValues = new Vector();
+				Token t = null;
+				String str = new String();
+				boolean space = false;
+				try{
+					while (true) {
+						t = tokenizer.nextToken(false);
+						if( t.type == Token.tCOMMA )
+						{
+							parameterValues.add( str );
+							str = "";
+							space = false;
+							continue;
+						}
+											
+						if( space )
+							str += ' ';
+							
+						if( t.type == Token.tSTRING )	
+							str += '\"' + t.image + '\"';							
+						else 
+							str += t.image;
+							
+						space = true;
+					}
+				} catch (Parser.EndOfFile e) {
+					// Good
+					parameterValues.add( str );
+				}
 				// create a string that represents what needs to be tokenized
 				buffer = new StringBuffer();
 				List tokens = macro.getTokenizedExpansion();
@@ -1649,7 +1696,7 @@ public class Scanner implements IScanner {
 				int numberOfTokens = tokens.size();
 
 				for (int i = 0; i < numberOfTokens; ++i) {
-					Token t = (Token) tokens.get(i);
+					t = (Token) tokens.get(i);
 					if (t.type == Token.tIDENTIFIER) {
 						String identifierName = t.image;
 
@@ -1663,6 +1710,39 @@ public class Scanner implements IScanner {
 						} else {
 							buffer.append(
 								(String) parameterValues.elementAt(index) );
+						}
+					} else if (t.type == tPOUND) {
+						//next token should be a parameter which needs to be turned into
+						//a string literal
+						t = (Token) tokens.get( ++i );
+						int index = parameterNames.indexOf(t.image);
+						if( index == -1 ){
+							if (throwExceptionOnBadMacroExpansion)
+								throw new ScannerException(	"Improper use of the # preprocessing token." );	
+						} else {
+							buffer.append('\"');
+							String value = (String)parameterValues.elementAt(index);
+							char val [] = value.toCharArray();
+							char ch;
+							int length = value.length();
+							for( int j = 0; j < length; j++ ){
+								ch = val[j];
+								if( ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' ){
+									//Each occurance of whitespace becomes a single space character
+									while( ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' ){
+										ch = val[++j];
+									}
+									buffer.append(' ');
+								} 
+								//a \ character is inserted before each " and \
+								if( ch == '\"' || ch == '\\' ){
+									buffer.append('\\');
+									buffer.append(ch);
+								} else {
+									buffer.append(ch);
+								}
+							}
+							buffer.append('\"');
 						}
 					} else {
 						buffer.append(t.image);

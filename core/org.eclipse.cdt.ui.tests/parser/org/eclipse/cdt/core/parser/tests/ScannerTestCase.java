@@ -1,6 +1,7 @@
 package org.eclipse.cdt.core.parser.tests;
 
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.List;
 
 import junit.framework.Test;
@@ -1301,5 +1302,32 @@ public class ScannerTestCase extends TestCase
 		validateToken(Token.tARROW);
 		validateIdentifier("A");
 		validateEOF();
+	}
+	
+	public void testBug36047() throws Exception
+	{
+		StringWriter writer = new StringWriter(); 
+		writer.write( "# define MAD_VERSION_STRINGIZE(str)	#str\n" ); 
+		writer.write( "# define MAD_VERSION_STRING(num)	MAD_VERSION_STRINGIZE(num)\n" ); 
+		writer.write( "# define MAD_VERSION		MAD_VERSION_STRING(MAD_VERSION_MAJOR) \".\" \\\n" );
+		writer.write( "                         MAD_VERSION_STRING(MAD_VERSION_MINOR) \".\" \\\n" );
+		writer.write( "                         MAD_VERSION_STRING(MAD_VERSION_PATCH) \".\" \\\n" );
+		writer.write( "                         MAD_VERSION_STRING(MAD_VERSION_EXTRA)\n" );
+		writer.write( "# define MAD_VERSION_MAJOR 2\n" );
+		writer.write( "# define MAD_VERSION_MINOR 1\n" );
+		writer.write( "# define MAD_VERSION_PATCH 3\n" );
+		writer.write( "# define MAD_VERSION_EXTRA boo\n" );
+		writer.write( "MAD_VERSION\n" );
+		initializeScanner( writer.toString() );
+		  
+		validateString( "2" );
+		validateString( "." );
+		validateString( "1" );
+		validateString( "." );
+		validateString( "3" );
+		validateString( "." );
+		validateString( "boo" );
+		
+		validateEOF(); 
 	}
 }

@@ -1,3 +1,6 @@
+2003-04-15 Andrew Niefer
+	Added scanner support to fix Bug36047
+
 2003-04-13 John Camelon
 	Minor cleanup of callbacks due to removal of NewModelBuilder.
 	Added parser support to partially fix bug36416 & bug36294.  Also added minimal C-Model support for these fixes. 

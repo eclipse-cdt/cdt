@@ -21,7 +21,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -122,7 +121,7 @@ public class ResolverModel implements IResolverModel {
 	private static final QualifiedName	QN_CUSTOM_RESOLVER = new QualifiedName(RESOLVER_MODEL_ID, TAG_CUSTOM);
 
 	// List of listeners on the model
-	private List fListeners = Collections.synchronizedList(new Vector());
+	private List fListeners = new Vector();
 	
 	// Private ctor to preserve singleton status
 	private ResolverModel() {

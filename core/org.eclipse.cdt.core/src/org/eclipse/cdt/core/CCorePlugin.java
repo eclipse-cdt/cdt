@@ -111,8 +111,6 @@ public class CCorePlugin extends Plugin {
 
 	private CoreModel fCoreModel;
 	
-	private ResolverModel fResolverModel;
-
 	// -------- static methods --------
 
 	static {
@@ -240,7 +238,6 @@ public class CCorePlugin extends Plugin {
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
 
 		// Start file type manager
-		fResolverModel = ResolverModel.getDefault();
 	}
     
     
@@ -623,7 +620,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public IResolverModel getResolverModel() {	
-		return fResolverModel;
+		return ResolverModel.getDefault();
 	}
 	
 	public CoreModel getCoreModel() {

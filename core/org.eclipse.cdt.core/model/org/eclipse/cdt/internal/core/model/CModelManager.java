@@ -28,6 +28,8 @@ import org.eclipse.cdt.core.ICDescriptorListener;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.filetype.IResolverChangeListener;
+import org.eclipse.cdt.core.filetype.ResolverChangeEvent;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -60,7 +62,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 
-public class CModelManager implements IResourceChangeListener, ICDescriptorListener {
+public class CModelManager implements IResourceChangeListener, ICDescriptorListener, IResolverChangeListener {
 
 	public static boolean VERBOSE = false;
 
@@ -159,6 +161,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			// Register the Core Model on the Descriptor
 			// Manager, it needs to know about changes.
 			CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(factory);
+			// Register the Core Model on the Resolver
+			// Manager, it needs to know about changes.
+			CCorePlugin.getDefault().getResolverModel().addResolverChangeListener(factory);
 		}
 		return factory;
 	}
@@ -729,6 +734,27 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.filetype.IResolverChangeListener#resolverChanged(org.eclipse.cdt.core.filetype.ResolverChangeEvent)
+	 */
+	public void resolverChanged(ResolverChangeEvent event) {
+		// TODO Auto-generated method stub
+//		boolean isProjectSpecific = false;
+//		ICElement element = null;
+//		ResolverDelta[] deltas = event.getDeltas();
+//		for (int i = 0; i < deltas.length; i++) {
+//			ResolverDelta delta = deltas[i];
+//			int type = delta.getElementType();
+//			if (type == ResolverDelta.ELEMENT_PROJECT) {
+//				IProject p = delta.getProject();
+//				element = create(p);
+//			} else if (type == ResolverDelta.ELEMENT_WORKSPACE) {
+//				element = getCModel();
+//			}
+//			System.out.println(delta);
+//		}
+	}
+
 	public void fire(int eventType) {
 		fire(null, eventType);
 	}
@@ -1054,10 +1080,15 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * 
 	 */
 	public void shutdown() {
-		if (this.fDeltaProcessor.indexManager != null){ // no more indexing
-					this.fDeltaProcessor.indexManager.shutdown();
+		if (this.fDeltaProcessor.indexManager != null) { // no more indexing
+			this.fDeltaProcessor.indexManager.shutdown();
 		}
-		
+
+		// Remove ourself from the DescriptorManager.
+		CCorePlugin.getDefault().getCDescriptorManager().removeDescriptorListener(factory);
+		// Remove ourself from the ResolverManager.
+		CCorePlugin.getDefault().getResolverModel().removeResolverChangeListener(factory);
+
 		// Do any shutdown of services.
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(factory);	
 

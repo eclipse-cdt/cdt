@@ -46,14 +46,22 @@ public class ControlFactory {
 	 * @return the newly-created coposite
 	 */
 	public static Composite createComposite(Composite parent, int numColumns) {
+		return createCompositeEx(parent, numColumns, GridData.FILL_HORIZONTAL);
+	}
+
+	/**
+	 * Creates composite control and sets the specified layout data.
+	 *
+	 * @param parent  the parent of the new composite
+	 * @param numColumns  the number of columns for the new composite
+	 * @param layoutMode - GridData modes that should be applied to this control
+	 * @return the newly-created coposite
+	 */
+	public static Composite createCompositeEx(Composite parent, int numColumns, int layoutMode) {
 		Composite composite = new Composite(parent, SWT.NULL);
 	
-		//GridLayout
-		GridLayout layout = new GridLayout();
-		layout.numColumns = numColumns;
-		layout.makeColumnsEqualWidth = true;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(new GridLayout(numColumns, true));
+		composite.setLayoutData(new GridData(layoutMode));
 		return composite;
 	}
 
@@ -89,6 +97,29 @@ public class ControlFactory {
 	}
 
 	/**
+	 * Creates an new label (basic method)
+	 * 
+	 *
+	 * @param parent  parent object
+	 * @param text  the label text
+	 * @param widthHint - recommended widget width
+	 * @param heightHint - recommended widget height
+	 * @param style - control style
+	 * @return the new label
+	 */ 
+	public static Label createLabel(Composite parent, String text, int widthHint, int heightHint, int style) {
+
+		Label label = new Label(parent, style);		
+		label.setText(text);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
+		gd.widthHint = widthHint;
+		gd.heightHint = heightHint;
+		label.setLayoutData(gd);
+		return label;
+	}
+
+	/**
 	 * Utility method that creates a label instance
 	 * and sets the default layout data.
 	 *
@@ -97,12 +128,7 @@ public class ControlFactory {
 	 * @return the new label
 	 */
 	public static Label createLabel(Composite parent, String text) {
-		Label label = new Label(parent, SWT.LEFT  );
-		label.setText(text);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 1;
-		label.setLayoutData(data);
-		return label;
+		return createLabel(parent, text, SWT.DEFAULT, SWT.DEFAULT, SWT.LEFT);
 	}
 
     /**
@@ -134,17 +160,8 @@ public class ControlFactory {
 	 * @param heightHint - recommended widget height
 	 * @return the new label
 	 */ 
-	public static Text createWrappedLabel(Composite parent, String text, int widthHint, int heightHint) {
-
-		Text wlabel = new Text(parent, SWT.WRAP | SWT.MULTI | SWT.READ_ONLY);		
-		wlabel.setText(text);
-		GridData data = new GridData(GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
-		data.heightHint = heightHint;
-		data.widthHint = widthHint;
-		wlabel.setLayoutData(data);
-	    wlabel.setBackground(parent.getBackground());
-	    wlabel.setForeground(parent.getForeground());
-		return wlabel;		
+	public static Label createWrappedLabel(Composite parent, String text, int widthHint, int heightHint) {
+		return createLabel(parent, text, widthHint, heightHint, SWT.LEFT | SWT.WRAP);
 	}
 
 	/**
@@ -300,7 +317,7 @@ public class ControlFactory {
 		List list = new List(parent, SWT.SINGLE);
 		GridData data = new GridData();
 		list.setLayoutData(data);
-		StringTokenizer st = new StringTokenizer(strdata, ",");
+		StringTokenizer st = new StringTokenizer(strdata, ","); //$NON-NLS-1$
 		while(st.hasMoreTokens())
 			list.add(st.nextToken());
 	    if(selData == null) {
@@ -311,6 +328,14 @@ public class ControlFactory {
 			selectList(list, selData);	    
 		return list;
 	}
+
+	public static void selectList(List list, String selData)	{
+		int n_sel = list.indexOf(selData);
+		if(0 > n_sel)
+			n_sel = 0;
+	    list.select(n_sel);
+	}
+	
 
 
 
@@ -439,16 +464,86 @@ public class ControlFactory {
 	 * @param string of comma separated tokens to fill selection list
 	 * @return the new combo
 	 */
-	public static CCombo createSelectCombo(Composite parent, String strdata, String selData) {
+	public static CCombo createSelectCCombo(Composite parent, String strdata, String selData) {
+		return createSelectCCombo(parent, strdata, selData, 
+			SWT.READ_ONLY | SWT.BORDER);
+	}
+		
+	public static CCombo createSelectCCombo(Composite parent, String strdata, String selData, int style) {
+		CCombo combo = new CCombo(parent, style);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		combo.setLayoutData(data);
+		StringTokenizer st = new StringTokenizer(strdata, ","); //$NON-NLS-1$
+		while(st.hasMoreTokens())
+			combo.add(st.nextToken());
+	    if(selData == null || selData.length() == 0) {
+	    	if(combo.getItemCount() > 0)
+				combo.select(0);
+	    }
+	    else
+			selectCCombo(combo, selData);	    
+		return combo;
+	}
+
+
+	/**
+	 * Create a selection combo
+	 *
+	 * @param parent  the parent of the new text field
+	 * @param array of elements + selected element
+	 * @return the new combo
+	 */
+	public static CCombo createSelectCCombo(Composite parent, String[] strdata, String selData) {
+		return createSelectCCombo(parent, strdata, selData, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
+	}
+	
+	public static CCombo createSelectCCombo(Composite parent, String[] strdata, String selData, int style) {
+		CCombo combo = new CCombo(parent, style);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		combo.setLayoutData(data);
+		for(int i = 0; i < strdata.length; ++i) {
+			combo.add(strdata[i]);
+		}
+	    if(selData == null)
+			combo.select(0);
+	    else
+			selectCCombo(combo, selData);	    
+		return combo;
+	}
+
+	public static void selectCCombo(CCombo combo, String selData)	{
+		int n_sel = combo.indexOf(selData);
+		if(0 > n_sel)
+			n_sel = 0;
+	    combo.select(n_sel);
+	} 
+
+
+
+
+
+
+
+
+
+
+	/**
+	 * Create a selection combo
+	 *
+	 * @param parent  the parent of the new text field
+	 * @param string of comma separated tokens to fill selection list
+	 * @return the new combo
+	 */
+	public static Combo createSelectCombo(Composite parent, String strdata, String selData) {
 		return createSelectCombo(parent, strdata, selData, 
 			SWT.READ_ONLY | SWT.BORDER);
 	}
 		
-	public static CCombo createSelectCombo(Composite parent, String strdata, String selData, int style) {
-		CCombo combo = new CCombo(parent, style);
+	public static Combo createSelectCombo(Composite parent, String strdata, String selData, int style) {
+		Combo combo = new Combo(parent, style);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		combo.setLayoutData(data);
-		StringTokenizer st = new StringTokenizer(strdata, ",");
+		StringTokenizer st = new StringTokenizer(strdata, ","); //$NON-NLS-1$
 		while(st.hasMoreTokens())
 			combo.add(st.nextToken());
 	    if(selData == null || selData.length() == 0) {
@@ -468,12 +563,12 @@ public class ControlFactory {
 	 * @param array of elements + selected element
 	 * @return the new combo
 	 */
-	public static CCombo createSelectCombo(Composite parent, String[] strdata, String selData) {
+	public static Combo createSelectCombo(Composite parent, String[] strdata, String selData) {
 		return createSelectCombo(parent, strdata, selData, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 	}
 	
-	public static CCombo createSelectCombo(Composite parent, String[] strdata, String selData, int style) {
-		CCombo combo = new CCombo(parent, style);
+	public static Combo createSelectCombo(Composite parent, String[] strdata, String selData, int style) {
+		Combo combo = new Combo(parent, style);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		combo.setLayoutData(data);
 		for(int i = 0; i < strdata.length; ++i) {
@@ -485,6 +580,27 @@ public class ControlFactory {
 			selectCombo(combo, selData);	    
 		return combo;
 	}
+
+	public static void selectCombo(Combo combo, String selData)	{
+		int n_sel = combo.indexOf(selData);
+		if(0 > n_sel) {
+			if( ( combo.getStyle() & SWT.READ_ONLY ) == 0 ) {
+				combo.setText( selData );
+				return;
+			}
+			n_sel = 0;
+		}
+	    combo.select(n_sel);
+	} 
+
+
+
+
+
+
+
+
+
 
 
     /**
@@ -501,21 +617,7 @@ public class ControlFactory {
     }
 
 	
-	public static void selectCombo(CCombo combo, String selData)	{
-		int n_sel = combo.indexOf(selData);
-		if(0 > n_sel)
-			n_sel = 0;
-	    combo.select(n_sel);
-	} 
 
-
-	public static void selectList(List list, String selData)	{
-		int n_sel = list.indexOf(selData);
-		if(0 > n_sel)
-			n_sel = 0;
-	    list.select(n_sel);
-	}
-	
 	public static Composite insertSpace(Composite parent, int nSpan, int height) {
 		Composite space = ControlFactory.createCompositeSeparator(parent, parent.getBackground(),
 			 (SWT.DEFAULT != height ? height : 5));

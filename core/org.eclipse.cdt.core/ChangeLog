@@ -1,5 +1,14 @@
 2003-04-01 Alain Magloire
 
+	Patch form Hoda.
+	IStructure extends IVariableDeclaration.
+	INamespace extends IParent.
+	
+	* model/org/eclipse/cdt/core/model/IStructure.java
+	* model/org/eclipse/cdt/core/model/INamespace.java
+	
+2003-04-01 Alain Magloire
+
 	Phasing out the classes ICResource and ICFile.
 	They were no longer part of the C Model.
 

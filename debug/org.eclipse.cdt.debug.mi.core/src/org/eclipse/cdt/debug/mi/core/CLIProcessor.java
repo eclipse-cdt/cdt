@@ -9,6 +9,7 @@ import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
+import org.eclipse.cdt.debug.mi.core.event.MISignalChangedEvent;
 
 /**
  * Transmission command thread blocks on the command Queue
@@ -51,6 +52,8 @@ public class CLIProcessor {
 			// We know something change, we just do not know what.
 			// So the easiest way is to let the top layer handle it. 
 			session.fireEvent(new MIBreakpointChangedEvent(0));
+		} else if (isSettingSignal(operation)) {
+			session.fireEvent(new MISignalChangedEvent(""));
 		}
 	}
 
@@ -121,6 +124,16 @@ public class CLIProcessor {
 		    (operation.equals("en") || (operation.startsWith("en") && "enable".indexOf(operation) != -1)) ||
 		    (operation.startsWith("ig") && "ignore".indexOf(operation) != -1) ||
 		    (operation.startsWith("cond") && "condition".indexOf(operation) != -1)) {
+			isChange = true;
+		}
+		return isChange;
+	}
+
+	boolean isSettingSignal(String operation) {
+		boolean isChange = false;
+		/* changing signal: handle, signal */
+		if ((operation.startsWith("ha")  && "handle".indexOf(operation) != -1) ||
+		    (operation.startsWith("sig") && "signal".indexOf(operation) != -1)) {
 			isChange = true;
 		}
 		return isChange;

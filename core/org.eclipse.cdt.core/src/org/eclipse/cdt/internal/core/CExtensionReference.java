@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core;
 import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 public class CExtensionReference implements ICExtensionReference {
 	private CDescriptor fDescriptor;
@@ -49,4 +50,7 @@ public class CExtensionReference implements ICExtensionReference {
 		return fDescriptor.createExtensions(this);
 	}
 
+    public IConfigurationElement[] getExtensionElements() throws CoreException {
+		return fDescriptor.getConfigurationElement(this);
+    }
 }

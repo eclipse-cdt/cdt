@@ -16,7 +16,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -60,12 +59,12 @@ public class CDescriptor implements ICDescriptor {
 	private HashMap extInfoMap = new HashMap(4);
 	private Document dataDoc;
 
+	static final String CEXTENSION_NAME = "cextension"; //$NON-NLS-1$
 	static final String DESCRIPTION_FILE_NAME = ".cdtproject"; //$NON-NLS-1$
 	private static final char[][] NO_CHAR_CHAR = new char[0][];
 	private static final String PROJECT_DESCRIPTION = "cdtproject"; //$NON-NLS-1$
 	private static final String PROJECT_EXTENSION = "extension"; //$NON-NLS-1$
 	private static final String PROJECT_EXTENSION_ATTRIBUTE = "attribute"; //$NON-NLS-1$
-	private static final String PATH_ENTRY = "cpathentry"; //$NON-NLS-1$
 	private static final String PROJECT_DATA = "data"; //$NON-NLS-1$
 	private static final String PROJECT_DATA_ITEM = "item"; //$NON-NLS-1$
 	private static final String PROJECT_DATA_ID = "id"; //$NON-NLS-1$
@@ -318,7 +317,6 @@ public class CDescriptor implements ICDescriptor {
 
 	private void readProjectDescription(Node node) {
 		Node childNode;
-		ArrayList pathEntries = new ArrayList();
 		NodeList list = node.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			childNode = list.item(i);
@@ -397,7 +395,7 @@ public class CDescriptor implements ICDescriptor {
 		}
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for (int i = 0; i < element.length; i++) {
-			if (element[i].getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
+			if (element[i].getName().equalsIgnoreCase(CEXTENSION_NAME)) {
 				cExtension = (InternalCExtension) element[i].createExecutableExtension("run"); //$NON-NLS-1$
 				cExtension.setExtenionReference(ext);
 				cExtension.setProject(fProject);
@@ -405,6 +403,22 @@ public class CDescriptor implements ICDescriptor {
 			}
 		}
 		return (ICExtension) cExtension;
+	}
+	
+	protected IConfigurationElement[] getConfigurationElement(ICExtensionReference ext) throws CoreException {
+		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
+		IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(ext.getExtension());
+		IExtension extension = extensionPoint.getExtension(ext.getID());
+		if ( extension == null) {
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,  CCorePlugin.getResourceString("CDescriptor.exception.providerNotFound"), null)); //$NON-NLS-1$
+		}
+		IConfigurationElement element[] = extension.getConfigurationElements();
+		for (int i = 0; i < element.length; i++) {
+			if (element[i].getName().equalsIgnoreCase(CEXTENSION_NAME)) {
+			    return element[i].getChildren();
+			}
+		}
+		return new IConfigurationElement[0];
 	}
 	
 	// The project data allows for the storage of any structured information

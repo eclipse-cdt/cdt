@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICBreakpointManager;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
+import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryEvent;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
@@ -54,6 +56,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
@@ -124,6 +127,28 @@ public class CDebugTarget extends CDebugElement
 						  			 ILaunchListener,
 						  			 IExpressionListener
 {
+	public class RunningInfo
+	{
+		private int fType = 0;
+		private int fStackDepth;
+		
+		public RunningInfo( int type, int stackDepth )
+		{
+			fType = type;
+			fStackDepth = stackDepth;
+		}
+
+		public int getType()
+		{
+			return fType;
+		}
+
+		public int getStackDepth()
+		{
+			return fStackDepth;
+		}
+	}
+
 	/**
 	 * The type of this target.
 	 */
@@ -257,6 +282,8 @@ public class CDebugTarget extends CDebugElement
 	 */
 	private boolean fSetBreakpoints = true;
 
+	private RunningInfo fRunningInfo = null;
+	
 	/**
 	 * Constructor for CDebugTarget.
 	 * @param target
@@ -988,7 +1015,14 @@ public class CDebugTarget extends CDebugElement
 			}
 			else if ( event instanceof ICDISuspendedEvent )
 			{
-				if ( source instanceof ICDITarget || source instanceof ICDIThread )
+				boolean pass = true;
+				if ( source instanceof ICDITarget && 
+					 ((ICDISuspendedEvent)event).getReason() instanceof ICDISharedLibraryEvent &&
+					 applyDeferredBreakpoints() )
+				{
+					pass = handleInternalSuspendedEvent( (ICDISuspendedEvent)event );
+				}
+				if ( pass && (source instanceof ICDITarget || source instanceof ICDIThread) )
 				{
 					handleSuspendedEvent( (ICDISuspendedEvent)event );
 				}
@@ -1369,6 +1403,7 @@ public class CDebugTarget extends CDebugElement
 		setCurrentStateId( IState.SUSPENDED );
 		ICDISessionObject reason = event.getReason();
 		setCurrentStateInfo( reason );
+		setRunningInfo( null );
 		List newThreads = refreshThreads();
 		if ( event.getSource() instanceof ICDITarget )
 		{
@@ -1411,6 +1446,107 @@ public class CDebugTarget extends CDebugElement
 		}
 	}
 
+	private boolean handleInternalSuspendedEvent( ICDISuspendedEvent event )
+	{
+		setRetryBreakpoints( true );
+		setBreakpoints();
+		RunningInfo info = getRunningInfo();
+		if ( info != null )
+		{
+			switch( info.getType() )
+			{
+				case ICDIResumedEvent.CONTINUE:
+					return internalResume();
+				case ICDIResumedEvent.STEP_INTO:
+					return internalStepInto( info.getStackDepth() );
+				case ICDIResumedEvent.STEP_OVER:
+					return internalStepOver( info.getStackDepth() );
+				case ICDIResumedEvent.STEP_RETURN:
+					return internalStepReturn( info.getStackDepth() );
+			}
+		}
+		return internalResume();
+	}
+
+	private boolean internalResume()
+	{
+		boolean result = false;
+		try
+		{
+			getCDITarget().resume();
+		}
+		catch( CDIException e )
+		{
+			result = true;
+		}
+		return result;
+	}
+
+	private boolean internalStepInto( int oldDepth )
+	{
+		return internalStepOver( oldDepth );
+	}
+
+	private boolean internalStepOver( int oldDepth )
+	{
+		boolean result = true;
+		try
+		{
+			CThread thread = (CThread)getCurrentThread();
+			if ( thread != null )
+			{
+				int depth = thread.getStackDepth();
+				if ( oldDepth < depth )
+				{
+					ICDIStackFrame[] frames = thread.getCDIStackFrames( depth - oldDepth - 1, depth - oldDepth - 1 );
+					if ( frames.length == 1 )
+					{
+						thread.getCDIThread().setCurrentStackFrame( frames[0] );
+						getCDITarget().stepReturn();
+						result = false;
+					}
+				}
+			}
+		}
+		catch( CDIException e )
+		{
+		}
+		catch( DebugException e )
+		{
+		}
+		return result;
+	}
+
+	private boolean internalStepReturn( int oldDepth )
+	{
+		boolean result = true;
+		try
+		{
+			CThread thread = (CThread)getCurrentThread();
+			if ( thread != null )
+			{
+				int depth = thread.getStackDepth();
+				if ( oldDepth < depth )
+				{
+					ICDIStackFrame[] frames = thread.getCDIStackFrames( depth - oldDepth, depth - oldDepth );
+					if ( frames.length == 1 )
+					{
+						thread.getCDIThread().setCurrentStackFrame( frames[0] );
+						getCDITarget().stepReturn();
+						result = false;
+					}
+				}
+			}
+		}
+		catch( CDIException e )
+		{
+		}
+		catch( DebugException e )
+		{
+		}
+		return result;
+	}
+
 	private void handleResumedEvent( ICDIResumedEvent event )
 	{
 		setSuspended( false );
@@ -1436,6 +1572,8 @@ public class CDebugTarget extends CDebugElement
 				detail = DebugEvent.STEP_RETURN;
 				break;
 		}
+		if ( getRunningInfo() == null )
+			setRunningInfo( event.getType() );
 		fireResumeEvent( detail );
 	}
 	
@@ -2608,5 +2746,49 @@ public class CDebugTarget extends CDebugElement
 			if ( listener != null )
 				CCorePlugin.getWorkspace().removeResourceChangeListener( listener );
 		}
+	}
+
+	protected RunningInfo getRunningInfo()
+	{
+		return fRunningInfo;
+	}
+
+	protected void setRunningInfo( RunningInfo info )
+	{
+		fRunningInfo = info;
+	}
+
+	protected void setRunningInfo( int type )
+	{
+		RunningInfo info = null;
+		try
+		{
+			CThread thread = (CThread)getCurrentThread();
+			if ( thread != null )
+			{
+				int depth = thread.getLastStackDepth();
+				if ( depth > 0 )
+				{
+					info = new RunningInfo( type, depth ); 
+				}
+			}
+		}
+		catch( DebugException e )
+		{
+		}
+		setRunningInfo( info );
+	}
+
+	private boolean applyDeferredBreakpoints()
+	{
+		boolean result = false;
+		try
+		{
+			result = getLaunch().getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_DEFERRED_BREAKPOINTS, false );
+		}
+		catch( CoreException e )
+		{
+		}
+		return result;
 	}
 }

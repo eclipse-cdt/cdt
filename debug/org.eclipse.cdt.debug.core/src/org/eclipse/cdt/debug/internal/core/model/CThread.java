@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
+import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryEvent;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
@@ -36,6 +38,7 @@ import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -425,9 +428,10 @@ public class CThread extends CDebugElement
 			if ( event instanceof ICDISuspendedEvent )
 			{
 				if ( ( source instanceof ICDIThread && getCDIThread().equals( (ICDIThread)source ) ) ||
-					   source instanceof ICDITarget )
+					 source instanceof ICDITarget )
 				{
-					handleSuspendedEvent( (ICDISuspendedEvent)event );
+					if ( !(((ICDISuspendedEvent)event).getReason() instanceof ICDISharedLibraryEvent && applyDeferredBreakpoints()) )
+						handleSuspendedEvent( (ICDISuspendedEvent)event );
 				}
 			}
 			else if ( event instanceof ICDIResumedEvent )
@@ -1097,7 +1101,7 @@ public class CThread extends CDebugElement
 		fLastStackDepth = depth;
 	}
 	
-	private int getLastStackDepth()
+	protected int getLastStackDepth()
 	{
 		return fLastStackDepth;
 	}
@@ -1140,5 +1144,18 @@ public class CThread extends CDebugElement
 		{
 			((IResumeWithoutSignal)getDebugTarget()).resumeWithoutSignal();
 		}
+	}
+
+	private boolean applyDeferredBreakpoints()
+	{
+		boolean result = false;
+		try
+		{
+			result = getLaunch().getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_DEFERRED_BREAKPOINTS, false );
+		}
+		catch( CoreException e )
+		{
+		}
+		return result;
 	}
 }

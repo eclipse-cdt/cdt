@@ -1,4 +1,8 @@
 2002-11-21 Mikhail Khodjaiants
+	The memory view does not display values if the address expression is '0xFFFFFFFF'.
+	* CFormattedMemoryBlock.java
+	
+2002-11-21 Mikhail Khodjaiants
 	Added the handler of ICDIDestroyedEvent to 'CFormattedMemoryBlock.
 	* CFormattedMemoryBlock.java
 

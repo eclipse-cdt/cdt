@@ -290,7 +290,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 				while( bytes != null && offset < bytes.length )
 				{
 					int length = Math.min( fWordSize * fNumberOfColumns, bytes.length - offset );
-					fRows.add( new CFormattedMemoryBlockRow( getStartAddress() + offset, 
+					fRows.add( new CFormattedMemoryBlockRow( getRowAddress( offset ), 
 															 createData( bytes, offset, length ),
 															 createAscii( bytes, offset, length ) ) );
 					offset += length;
@@ -790,5 +790,15 @@ public class CFormattedMemoryBlock extends CDebugElement
 	public boolean isStartAddressChanged()
 	{
 		return fStartAddressChanged;
-	}	
+	}
+	
+	private long getRowAddress( int offset )
+	{
+		long result = getStartAddress() + offset;		
+		if ( result > 0xFFFFFFFFL )
+		{
+			result -= 0xFFFFFFFFL;
+		}
+		return result;
+	}
 }

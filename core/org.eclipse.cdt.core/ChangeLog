@@ -1,5 +1,14 @@
 2003-10-29 Alain Magloire
 
+	Fix for PR 45733
+	When removing the CProject we have to remove
+	the BinaryContainers.
+
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	
+2003-10-29 Alain Magloire
+
 	Fix for PR 45609
 	When a resource is linked, IWorkspaceRoot.getFileForLocation();
 	Does not do the job righ, we have to use IWorkspaceRoot.findFilesForLocation().

@@ -16,7 +16,7 @@ public interface IMIConstants
 	/**
 	 * MI plug-in identifier (value <code>"org.eclipse.cdt.debug.mi"</code>).
 	 */
-	public static final String PLUGIN_ID = MIPlugin.getDefault().getDescriptor().getUniqueIdentifier();
+	public static final String PLUGIN_ID = MIPlugin.getUniqueIdentifier();
 
 	/**
 	 * Preference key for default MI request timeout value.

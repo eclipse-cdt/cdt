@@ -168,7 +168,7 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#getBlocks()
 	 */
 	public ICDIMemoryBlock[] getMemoryBlocks() throws CDIException {
-		return (ICDIMemoryBlock[])listMemoryBlocks();
+		return listMemoryBlocks();
 	}
 
 	/**

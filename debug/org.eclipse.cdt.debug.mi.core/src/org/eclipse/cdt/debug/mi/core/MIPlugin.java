@@ -24,10 +24,9 @@ import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
+import org.osgi.framework.BundleContext;
 
 /**
  * GDB/MI Plugin.
@@ -61,8 +60,8 @@ public class MIPlugin extends Plugin {
 	 * The constructor
 	 * @see org.eclipse.core.runtime.Plugin#Plugin(IPluginDescriptor)
 	 */
-	public MIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public MIPlugin() {
+		super();
 		plugin = this;
 	}
 
@@ -306,7 +305,7 @@ public class MIPlugin extends Plugin {
 			// match the plugin id defined in plugin.xml
 			return PLUGIN_ID;
 		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
 
 	public void debugLog(String message) {
@@ -406,8 +405,8 @@ public class MIPlugin extends Plugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#startup()
 	 */
-	public void startup() throws CoreException {
-		super.startup();
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 	}
 
 	/* (non-Javadoc)
@@ -421,9 +420,9 @@ public class MIPlugin extends Plugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */
-	public void shutdown() throws CoreException {
+	public void stop(BundleContext context) throws Exception {
 		savePluginPreferences();
-		super.shutdown();
+		super.stop(context);
 	}
 
 }

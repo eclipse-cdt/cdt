@@ -11,7 +11,7 @@ public class DisconnectedEvent implements ICDIDisconnectedEvent {
 	ICDIObject source;
 
 	public DisconnectedEvent(Session session) {
-		source = (ICDIObject)session.getCurrentTarget();
+		source = session.getCurrentTarget();
 	}
 
 	/**

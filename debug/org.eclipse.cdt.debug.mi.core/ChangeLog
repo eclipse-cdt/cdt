@@ -1,3 +1,8 @@
+2004-05-18 Alain Magloire
+
+	Remove dependencies on the compatibility plugin
+	and move to be more Eclipse-3.0 compliant.
+
 2004-05-07 Alain Magloire
 	PR 57127. Pass the stream verbatim
 	even if it has spaces.

@@ -14,9 +14,9 @@ import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
@@ -40,6 +40,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
@@ -341,16 +342,17 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		ICDITarget cdiTarget = getCDITarget();
 		try {
 			boolean enabled = breakpoint.isEnabled();
-			boolean oldEnabled = delta.getAttribute( IBreakpoint.ENABLED, true );
+			boolean oldEnabled = ( delta != null ) ? delta.getAttribute( IBreakpoint.ENABLED, true ) : enabled;
 			int ignoreCount = breakpoint.getIgnoreCount();
-			int oldIgnoreCount = delta.getAttribute( ICBreakpoint.IGNORE_COUNT, 0 );
+			int oldIgnoreCount = ( delta != null ) ? delta.getAttribute( ICBreakpoint.IGNORE_COUNT, 0 ) : ignoreCount;
 			String condition = breakpoint.getCondition();
-			String oldCondition = delta.getAttribute( ICBreakpoint.CONDITION, "" ); //$NON-NLS-1$
+			String oldCondition = ( delta != null ) ? delta.getAttribute( ICBreakpoint.CONDITION, "" ) : condition; //$NON-NLS-1$
+			String[] newThreadIs = getThreadNames( breakpoint );
 			if ( enabled != oldEnabled ) {
 				cdiBreakpoint.setEnabled( enabled );
 			}
-			if ( ignoreCount != oldIgnoreCount || !condition.equals( oldCondition ) ) {
-				ICDICondition cdiCondition = cdiTarget.createCondition( ignoreCount, condition );
+			if ( ignoreCount != oldIgnoreCount || condition.compareTo( oldCondition ) != 0 || areThreadFiltersChanged( newThreadIs, cdiBreakpoint ) ) {
+				ICDICondition cdiCondition = cdiTarget.createCondition( ignoreCount, condition, newThreadIs  );
 				cdiBreakpoint.setCondition( cdiCondition );
 			}
 		}
@@ -494,7 +496,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		String function = breakpoint.getFunction();
 		String fileName = (function != null && function.indexOf( "::" ) == -1) ? breakpoint.getFileName() : null; //$NON-NLS-1$
 		ICDILocation location = cdiTarget.createLocation( fileName, function, -1 );
-		ICDICondition condition = cdiTarget.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
+		ICDICondition condition = createCondition( breakpoint );
 		ICDIBreakpoint cdiBreakpoint = null;
 		synchronized ( getBreakpointMap() ) {
 			cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
@@ -509,7 +511,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		String address = breakpoint.getAddress();
 		if ( address.startsWith( "0x" ) ) { //$NON-NLS-1$
 			ICDILocation location = cdiTarget.createLocation( new BigInteger ( breakpoint.getAddress().substring( 2 ), 16 ) );
-			ICDICondition condition = cdiTarget.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
+			ICDICondition condition = createCondition( breakpoint );
 			synchronized ( getBreakpointMap() ) {
 				cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
 				getBreakpointMap().put( breakpoint, cdiBreakpoint );
@@ -521,7 +523,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	private ICDIBreakpoint setLineBreakpoint( ICLineBreakpoint breakpoint ) throws CDIException, CoreException {
 		ICDITarget cdiTarget = getCDITarget();
 		ICDILocation location = cdiTarget.createLocation( breakpoint.getMarker().getResource().getLocation().lastSegment(), null, breakpoint.getLineNumber() );
-		ICDICondition condition = cdiTarget.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
+		ICDICondition condition = createCondition( breakpoint );
 		ICDIBreakpoint cdiBreakpoint = null;
 		synchronized ( getBreakpointMap() ) {
 			cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
@@ -536,7 +538,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		accessType |= (watchpoint.isWriteType()) ? ICDIWatchpoint.WRITE : 0;
 		accessType |= (watchpoint.isReadType()) ? ICDIWatchpoint.READ : 0;
 		String expression = watchpoint.getExpression();
-		ICDICondition condition = cdiTarget.createCondition( watchpoint.getIgnoreCount(), watchpoint.getCondition() );
+		ICDICondition condition = createCondition( watchpoint );
 		ICDIWatchpoint cdiWatchpoint = null;
 		synchronized ( getBreakpointMap() ) {
 			cdiWatchpoint = cdiTarget.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
@@ -721,5 +723,44 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		catch( CoreException e1 ) {
 		}
 		return result;
+	}
+
+	private boolean areThreadFiltersChanged( String[] newIds, ICDIBreakpoint cdiBreakpoint ) {
+		try {
+			String[] oldIds = cdiBreakpoint.getCondition().getThreadIds();
+			if ( oldIds.length != newIds.length )
+				return true;
+			List list = Arrays.asList( oldIds );
+			for ( int i = 0; i < newIds.length; ++i ) {
+				if ( !list.contains( newIds[i] ) ) {
+					return true;
+				}
+			}
+		}
+		catch( CDIException e ) {
+		}
+		return false;
+	}
+
+	private String[] getThreadNames( ICBreakpoint breakpoint ) {
+		try {
+			ICThread[] threads = breakpoint.getThreadFilters( getDebugTarget() );
+			if ( threads == null )
+				return new String[0];				
+			String[] names = new String[threads.length];
+			for ( int i = 0; i < threads.length; ++i ) {
+				names[i] = threads[i].getName();
+			}
+			return names;
+		}
+		catch( DebugException e ) {
+		}
+		catch( CoreException e ) {
+		}
+		return new String[0];
+	}
+
+	private ICDICondition createCondition( ICBreakpoint breakpoint ) throws CoreException, CDIException {
+		return getCDITarget().createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition(), getThreadNames( breakpoint ) );
 	}
 }

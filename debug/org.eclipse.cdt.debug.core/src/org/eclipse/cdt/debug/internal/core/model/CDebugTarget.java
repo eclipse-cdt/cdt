@@ -454,7 +454,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 						targetRequestFailed( e.getMessage(), e );
 					}
 					catch( DebugException e1 ) {
-						CDebugUtils.error( e1.getStatus(), CDebugTarget.this );
+						failed( CoreModelMessages.getString( "CDebugTarget.2" ), e1 ); //$NON-NLS-1$
 					}
 				}
 			}
@@ -514,7 +514,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 						targetRequestFailed( e.getMessage(), e );
 					}
 					catch( DebugException e1 ) {
-						CDebugUtils.error( e1.getStatus(), CDebugTarget.this );
+						failed( CoreModelMessages.getString( "CDebugTarget.3" ), e1 ); //$NON-NLS-1$
 					}
 				}
 			}
@@ -541,7 +541,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 						targetRequestFailed( e.getMessage(), e );
 					}
 					catch( DebugException e1 ) {
-						CDebugUtils.error( e1.getStatus(), CDebugTarget.this );
+						failed( CoreModelMessages.getString( "CDebugTarget.4" ), e1 ); //$NON-NLS-1$
 					}
 				}
 			}
@@ -690,13 +690,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			catch( DebugException e ) {
 			}
 		}
-		if ( delta != null ) {
+//		if ( delta != null ) {
 			try {
 				getBreakpointManager().changeBreakpointProperties( b, delta );
 			}
 			catch( DebugException e ) {
 			}
-		}
+//		}
 	}
 
 	/**
@@ -748,7 +748,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 						targetRequestFailed( e.getMessage(), e );
 					}
 					catch( DebugException e1 ) {
-						CDebugUtils.error( e1.getStatus(), CDebugTarget.this );
+						failed( CoreModelMessages.getString( "CDebugTarget.5" ), e1 ); //$NON-NLS-1$
 					}
 				}
 			}
@@ -965,7 +965,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 						targetRequestFailed( e.getMessage(), e );
 					}
 					catch( DebugException e1 ) {
-						CDebugUtils.error( e1.getStatus(), CDebugTarget.this );
+						failed( CoreModelMessages.getString( "CDebugTarget.6" ), e1 ); //$NON-NLS-1$
 					}
 				}
 			}
@@ -1554,7 +1554,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 						targetRequestFailed( e.getMessage(), e );
 					}
 					catch( DebugException e1 ) {
-						CDebugUtils.error( e1.getStatus(), CDebugTarget.this );
+						failed( CoreModelMessages.getString( "CDebugTarget.7" ), e1 ); //$NON-NLS-1$
 					}
 				}
 			}
@@ -1870,5 +1870,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			targetRequestFailed( e.getMessage(), null );
 		}
 		return null;
+	}
+
+	protected void failed( String message, Throwable e ) {
+		MultiStatus ms = new MultiStatus( CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, message, null );
+		ms.add( new Status( IStatus.ERROR, CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
+		CDebugUtils.error( ms, this );
 	}
 }

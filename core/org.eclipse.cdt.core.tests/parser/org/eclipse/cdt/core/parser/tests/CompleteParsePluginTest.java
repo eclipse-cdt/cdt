@@ -160,4 +160,31 @@ public class CompleteParsePluginTest extends FileBasePluginTest {
         assertEquals( i.next(), CallbackTracker.EXIT_COMPILATION_UNIT );
         assertFalse( i.hasNext() );
     }
+    
+    public void testExpressionEvalProblems() throws Exception
+    {
+        String h = " #if 09 == 9    \n" + //$NON-NLS-1$   //bad octal
+        		   " #endif         \n"; //$NON-NLS-1$
+        
+        String code = "int i1;         \n" + //$NON-NLS-1$
+        		      "#include \"h.h\"\n" + //$NON-NLS-1$
+        		      "int i2;         \n"; //$NON-NLS-1$
+        
+        importFile( "h.h", h ); //$NON-NLS-1$
+        IFile cpp = importFile( "c.cpp", code ); //$NON-NLS-1$
+        
+        List calls = new ArrayList();
+        parse( cpp, calls );
+        
+        Iterator i = calls.iterator();
+        
+        assertEquals( i.next(), CallbackTracker.ENTER_COMPILATION_UNIT );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_VARIABLE );
+        assertEquals( i.next(), CallbackTracker.ENTER_INCLUSION );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_PROBLEM );
+        assertEquals( i.next(), CallbackTracker.EXIT_INCLUSION );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_VARIABLE );
+        assertEquals( i.next(), CallbackTracker.EXIT_COMPILATION_UNIT );
+        assertFalse( i.hasNext() );
+    }
 }

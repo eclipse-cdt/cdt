@@ -1930,25 +1930,25 @@ public class Scanner2Test extends BaseScanner2Test
     // when fixing 75532 several IProblems were added to ExpressionEvaluator and one to Scanner2, this is to test them
     public void testBug75532IProblems() throws Exception {
     	Writer writer = new StringWriter();
-    	writer.write("#if 09 == 9\n#endif\n"); // malformed octal
-    	writer.write("#if 1A == 0x1A\n#endif\n"); // malformed decimal
-    	writer.write("#if 0x == 0x0\n#endif\n"); // malformed hex
-    	writer.write("#if 0xAX == 0xA\n#endif\n"); // malformed hex
-    	writer.write("#if 1/0 == 1\n#endif\n"); // division by zero 
-    	writer.write("#if defined ( sadf a\n#endif\n"); // missing ')' in defined 
-    	writer.write("#if defined ( sadf\n#endif\n"); // missing ')' in defined 
-    	writer.write("#if defined ( 2sadf )\n#endif\n"); // illegal identifier in defined 
-    	writer.write("#if ( 1 == 1 ? 1\n#endif\n"); // bad conditional expression  
-    	writer.write("#if (  \n#endif\n"); // expression syntax error 
-    	writer.write("#if @\n#endif\n"); // expression syntax error 
-    	writer.write("#if \n#endif\n"); // expression syntax error 
-    	writer.write("#if -\n#endif\n"); // expression syntax error 
-    	writer.write("#if ( 1 == 1\n#endif\n"); // missing ')' 
-    	writer.write("#if 1 = 1\n#endif\n"); // assignment not allowed
+    	writer.write("#if 09 == 9\n#endif\n"); // malformed octal //$NON-NLS-1$
+    	writer.write("#if 1A == 0x1A\n#endif\n"); // malformed decimal //$NON-NLS-1$
+    	writer.write("#if 0x == 0x0\n#endif\n"); // malformed hex //$NON-NLS-1$
+    	writer.write("#if 0xAX == 0xA\n#endif\n"); // malformed hex //$NON-NLS-1$
+    	writer.write("#if 1/0 == 1\n#endif\n"); // division by zero  //$NON-NLS-1$
+    	writer.write("#if defined ( sadf a\n#endif\n"); // missing ')' in defined  //$NON-NLS-1$
+    	writer.write("#if defined ( sadf\n#endif\n"); // missing ')' in defined  //$NON-NLS-1$
+    	writer.write("#if defined ( 2sadf )\n#endif\n"); // illegal identifier in defined  //$NON-NLS-1$
+    	writer.write("#if ( 1 == 1 ? 1\n#endif\n"); // bad conditional expression   //$NON-NLS-1$
+    	writer.write("#if (  \n#endif\n"); // expression syntax error  //$NON-NLS-1$
+    	writer.write("#if @\n#endif\n"); // expression syntax error  //$NON-NLS-1$
+    	writer.write("#if \n#endif\n"); // expression syntax error  //$NON-NLS-1$
+    	writer.write("#if -\n#endif\n"); // expression syntax error  //$NON-NLS-1$
+    	writer.write("#if ( 1 == 1\n#endif\n"); // missing ')'  //$NON-NLS-1$
+    	writer.write("#if 1 = 1\n#endif\n"); // assignment not allowed //$NON-NLS-1$
     	
-    	writer.write("int main(int argc, char **argv) {\n");
-		writer.write("if ( 09 == 9 )\n"); // added while fixing this bug, IProblem on invalid octal number
-		writer.write("return 1;\nreturn 0;\n}\n");
+    	writer.write("int main(int argc, char **argv) {\n"); //$NON-NLS-1$
+		writer.write("if ( 09 == 9 )\n"); // added while fixing this bug, IProblem on invalid octal number //$NON-NLS-1$
+		writer.write("return 1;\nreturn 0;\n}\n"); //$NON-NLS-1$
 				
     	Callback callback = new Callback( ParserMode.COMPLETE_PARSE );
     	initializeScanner( writer.toString(), ParserMode.COMPLETE_PARSE, callback );
@@ -1972,5 +1972,34 @@ public class Scanner2Test extends BaseScanner2Test
     	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_MISSING_R_PAREN );
     	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED );
     	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_BAD_OCTAL_FORMAT );
+    }
+    
+    public void testExpressionEvalProblems() throws Exception
+    {
+        Writer writer = new StringWriter();
+        writer.write(" #if 1 == 1L       \n" ); //$NON-NLS-1$
+        writer.write(" #endif            \n" ); //$NON-NLS-1$
+        
+        Callback callback = new Callback( ParserMode.COMPLETE_PARSE );
+        initializeScanner( writer.toString(), ParserMode.COMPLETE_PARSE, callback );
+        validateEOF();
+        
+        assertEquals( 0, callback.problems.size() );
+    }
+    
+    public void testExpressionEvalProblems_2() throws Exception
+    {
+        Writer writer = new StringWriter();
+        writer.write( "#define FOO( a, b ) a##b    \n"); //$NON-NLS-1$
+        writer.write( "#if FOO ( 1, 0 ) == 10      \n"); //$NON-NLS-1$
+        writer.write( "1                           \n"); //$NON-NLS-1$
+        writer.write( "#endif                      \n"); //$NON-NLS-1$
+        
+        Callback callback = new Callback( ParserMode.COMPLETE_PARSE );
+        initializeScanner( writer.toString(), ParserMode.COMPLETE_PARSE, callback );
+        validateInteger( "1" ); //$NON-NLS-1$
+        validateEOF();
+        
+        assertEquals( 0, callback.problems.size() );
     }
 }

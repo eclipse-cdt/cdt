@@ -1085,22 +1085,6 @@
             </enablement>
          </action>
       </editorContribution>
-      <editorContribution
-            targetID="org.eclipse.cdt.debug.ui.DisassemblyEditor"
-            id="org.eclipse.cdt.debug.ui.DisassemblyEditor.BreakpointRulerActions">
-         <action
-               label="%Dummy.label"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
-               actionID="RulerDoubleClick"
-               id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-      </editorContribution>
    </extension>
    <extension
          point="org.eclipse.cdt.ui.textHovers">

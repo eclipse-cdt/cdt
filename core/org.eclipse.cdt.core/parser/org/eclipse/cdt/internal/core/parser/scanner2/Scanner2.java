@@ -823,6 +823,12 @@ public class Scanner2 implements IScanner, IScannerData {
 	private final boolean isLimitReached() {
 		if( offsetBoundary == -1 ) return false;
 		if( bufferPos[bufferStackPos] == offsetBoundary - 1 ) return true;
+		if( bufferPos[bufferStackPos] == offsetBoundary )
+		{
+			int c = bufferStack[bufferStackPos][bufferPos[bufferStackPos]];
+			if( c == '\n' || c == ' ' || c == '\t' || c == '\r')
+				return true;
+		}
 		return false;
 	}
 
@@ -1098,6 +1104,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		int limit = bufferLimit[bufferStackPos];
 		int startingLineNumber = bufferLineNums[ bufferStackPos ];
 		skipOverWhiteSpace();
+		if( isLimitReached() ) 
+			handleCompletionOnPreprocessorDirective( "#" ); //$NON-NLS-1$
 		
 		// find the directive
 		int start = ++bufferPos[bufferStackPos];
@@ -1144,9 +1152,13 @@ public class Scanner2 implements IScanner, IScannerData {
 						start = bufferPos[bufferStackPos];
 						skipToNewLine();
 						len = bufferPos[bufferStackPos] - start;
+						if( isLimitReached() )
+							handleCompletionOnExpression( CharArrayUtils.extract( buffer, start, len ) );
 						if (expressionEvaluator.evaluate(buffer, start, len, definitions) == 0) {
 							if (dlog != null) dlog.println("#if <FALSE> " + new String(buffer,start+1,len-1)); //$NON-NLS-1$
 							skipOverConditionalCode(true);
+							if( isLimitReached() )
+								handleInvalidCompletion();
 						} else
 							if (dlog != null) dlog.println("#if <TRUE> " + new String(buffer,start+1,len-1)); //$NON-NLS-1$
 						return;
@@ -1155,6 +1167,8 @@ public class Scanner2 implements IScanner, IScannerData {
 						// Condition must have been true, skip over the rest
 						skipToNewLine();
 						skipOverConditionalCode(false);
+						if( isLimitReached() )
+							handleInvalidCompletion();
 						return;
 					case ppError:
 						throw new ScannerException(null);
@@ -1513,7 +1527,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return CharArrayUtils.trim( result );
 	}
 
-	private void handlePPUndef() {
+	private void handlePPUndef() throws EndOfFileException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
@@ -1542,6 +1556,9 @@ public class Scanner2 implements IScanner, IScannerData {
 			
 		}
 		--bufferPos[bufferStackPos];
+
+		if( isLimitReached() )
+			handleCompletionOnDefinition( new String( buffer, idstart, idlen ));
 
 		skipToNewLine();
 		
@@ -1549,12 +1566,18 @@ public class Scanner2 implements IScanner, IScannerData {
 		if (dlog != null) dlog.println("#undef " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
 	}
 	
-	private void handlePPIfdef(boolean positive) {
+	private void handlePPIfdef(boolean positive) throws EndOfFileException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
-		
+
+		if( isLimitReached() )
+			handleCompletionOnDefinition( EMPTY_STRING );
+
 		skipOverWhiteSpace();
-		
+
+		if( isLimitReached() )
+			handleCompletionOnDefinition( EMPTY_STRING );
+
 		// get the Identifier
 		int idstart = ++bufferPos[bufferStackPos];
 		if (idstart >= limit)
@@ -1579,6 +1602,9 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 		--bufferPos[bufferStackPos];
 
+		if( isLimitReached() )
+			handleCompletionOnDefinition( new String( buffer, idstart, idlen ));
+		
 		skipToNewLine();
 
 		if ((definitions.get(buffer, idstart, idlen) != null) == positive) {
@@ -1592,6 +1618,8 @@ public class Scanner2 implements IScanner, IScannerData {
 				+ " <FALSE> " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
 		// skip over this group
 		skipOverConditionalCode(true);
+		if( isLimitReached() )
+			handleInvalidCompletion();
 	}
 
 	// checkelse - if potential for more, otherwise skip to endif
@@ -2756,6 +2784,9 @@ public class Scanner2 implements IScanner, IScannerData {
 	private static final int ppUndef	= 8;
 	private static final int ppError	= 9;
 	private static final int ppInclude_next = 10;
+
+	private static final char[] TAB = { '\t' };
+	private static final char[] SPACE = { ' ' };
 	
 	static {
 		keywords = new CharArrayIntMap(IToken.tLAST, -1);
@@ -2874,12 +2905,24 @@ public class Scanner2 implements IScanner, IScannerData {
 	/**
 	 * @param expression2
 	 */
-	protected void handleCompletionOnExpression(String expression) throws EndOfFileException {
-
+	protected void handleCompletionOnExpression(char [] buffer ) throws EndOfFileException {
 		
 		IASTCompletionNode.CompletionKind kind = IASTCompletionNode.CompletionKind.MACRO_REFERENCE;
+		int lastSpace = CharArrayUtils.lastIndexOf( SPACE, buffer );
+		int lastTab = CharArrayUtils.lastIndexOf( TAB, buffer );
+		int max = lastSpace > lastTab ? lastSpace : lastTab;
+		
+		char [] prefix = CharArrayUtils.trim( CharArrayUtils.extract( buffer, max, buffer.length - max ) );
+		for( int i = 0; i < prefix.length; ++i )
+		{
+			char c = prefix[i];
+			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+					|| c == '_' || (c >= '0' && c <= '9')) 
+				continue;
+			handleInvalidCompletion();
+		}
 		IASTCompletionNode node = new ASTCompletionNode( kind, 
-				null, null, EMPTY_STRING, 
+				null, null, new String( prefix ), 
 				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSetKey.EMPTY : KeywordSetKey.MACRO), language), EMPTY_STRING, null );
 		
 		throw new OffsetLimitReachedException( node );

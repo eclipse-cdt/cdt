@@ -1,3 +1,9 @@
+2004-02-01 John Camelon
+	Added CompletionKind.UNREACHABLE_CODE to IASTCompletionNode.  
+	Updated Scanner to handle unreachable code scenarios in content assist.  
+	Added Directives class to centralize preprocessor directive strings.  
+	Added keyword completion for preprocessor lines that start with #.  
+
 2004-01-30 John Camelon
 	Partial fix for Bug 47752 - Outline does not recognize functions with full body try/catch blocks 
 

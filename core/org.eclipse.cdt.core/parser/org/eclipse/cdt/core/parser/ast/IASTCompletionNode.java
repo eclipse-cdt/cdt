@@ -70,6 +70,9 @@ public interface IASTCompletionNode {
 		// after a new expression
 		public static final CompletionKind NEW_TYPE_REFERENCE = new CompletionKind( 16 );
 		
+		// inside something that does not reach the parser - (#ifdefed out/comment)
+		public static final CompletionKind UNREACHABLE_CODE = new CompletionKind( 17 );
+		
 		// error condition -- a place in the grammar where there is nothing to lookup
 		public static final CompletionKind NO_SUCH_KIND = new CompletionKind( 200 );
 		/**

@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
+import org.eclipse.cdt.core.parser.Directives;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
@@ -350,7 +351,7 @@ public class Scanner implements IScanner {
 
 	}
 
-	protected String getRestOfPreprocessorLine() throws ScannerException {
+	protected String getRestOfPreprocessorLine() throws ScannerException, EndOfFileException {
 		StringBuffer buffer = new StringBuffer();
 		skipOverWhitespace();
 		int c = getChar();
@@ -887,8 +888,7 @@ public class Scanner implements IScanner {
 
 		while (c != NOCHAR) {
 			if ( ! passOnToClient ) {
-			
-				
+							
 				while (c != NOCHAR && c != '#' ) 
 				{
 					c = getChar();
@@ -910,7 +910,12 @@ public class Scanner implements IScanner {
 					}
 				}
 				
-				if( c == NOCHAR ) continue;
+				if( c == NOCHAR )
+				{
+					if( isLimitReached() )
+						handleInvalidCompletion();
+					continue;
+				}
 			}
 
 			if ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n')) {
@@ -1251,6 +1256,7 @@ public class Scanner implements IScanner {
 					contextStack.getCurrentContext());
 				
 			} else if (c == '#') {
+				
 				int beginningOffset = contextStack.getCurrentContext().getOffset() - 1;
 				int beginningLine = contextStack.getCurrentLineNumber();
 				// lets prepare for a preprocessor statement
@@ -1278,10 +1284,14 @@ public class Scanner implements IScanner {
 					buff.append((char) c);
 					c = getChar();
 				}
+				
 				ungetChar(c);
 
 				String token = buff.toString();
 
+				if( isLimitReached() )
+					handleCompletionOnPreprocessorDirective(token);
+				
 				Object directive = ppDirectives.get(token);
 				if (directive == null) {
 					if (true)
@@ -1296,6 +1306,8 @@ public class Scanner implements IScanner {
 						case PreprocessorDirectives.DEFINE :
 							if ( ! passOnToClient ) {
 								skipOverTextUntilNewline();
+								if( isLimitReached() )
+									handleInvalidCompletion();
 								c = getChar();
 								continue;
 							}
@@ -1308,6 +1320,8 @@ public class Scanner implements IScanner {
 						case PreprocessorDirectives.INCLUDE :
 							if (! passOnToClient ) {
 								skipOverTextUntilNewline();
+								if( isLimitReached() )
+									handleInvalidCompletion();
 								c = getChar();
 								continue;
 							}
@@ -1318,7 +1332,10 @@ public class Scanner implements IScanner {
 							continue;
 						case PreprocessorDirectives.UNDEFINE :
 							if (! passOnToClient) {
+								
 								skipOverTextUntilNewline();
+								if( isLimitReached() )
+									handleInvalidCompletion();
 								c = getChar();
 								continue;
 							}
@@ -1369,6 +1386,9 @@ public class Scanner implements IScanner {
 							continue;
 						case PreprocessorDirectives.ENDIF :
 							String restOfLine = getRestOfPreprocessorLine().trim();
+							if( isLimitReached() )
+								handleInvalidCompletion();
+							
 							if( ! restOfLine.equals( "" )  )
 							{	
 								StringBuffer buffer = new StringBuffer("#endif ");
@@ -1390,7 +1410,10 @@ public class Scanner implements IScanner {
 							if (getDefinition(definition2) != null) {
 								// not defined	
 								skipOverTextUntilNewline();
-								passOnToClient = branches.poundIf( false ); 
+								passOnToClient = branches.poundIf( false );
+								if( isLimitReached() )
+									handleInvalidCompletion();
+								
 							} else {
 								passOnToClient = branches.poundIf( true ); 
 								// continue along, act like nothing is wrong :-)
@@ -1399,7 +1422,6 @@ public class Scanner implements IScanner {
 							continue;
 
 						case PreprocessorDirectives.ELSE :
-							//TODO add in content assist stuff here
 							try
 							{
 								passOnToClient = branches.poundElse();
@@ -1413,6 +1435,9 @@ public class Scanner implements IScanner {
 							}
 
 							skipOverTextUntilNewline();
+							if( isLimitReached() )
+								handleInvalidCompletion();
+							
 							c = getChar();
 							continue;
 
@@ -1450,11 +1475,16 @@ public class Scanner implements IScanner {
 
 						case PreprocessorDirectives.LINE :
 							skipOverTextUntilNewline();
+							if( isLimitReached() )
+								handleInvalidCompletion();
 							c = getChar();
 							continue;
 						case PreprocessorDirectives.ERROR :
 							if (! passOnToClient) {
 								skipOverTextUntilNewline();
+								if( isLimitReached() )
+									handleInvalidCompletion();
+								
 								c = getChar();
 								continue;
 							}
@@ -1463,6 +1493,9 @@ public class Scanner implements IScanner {
 							continue;
 						case PreprocessorDirectives.PRAGMA :
 							skipOverTextUntilNewline();
+							if( isLimitReached() )
+								handleInvalidCompletion();
+							
 							c = getChar();
 							continue;
 						case PreprocessorDirectives.BLANK :
@@ -1825,7 +1858,7 @@ public class Scanner implements IScanner {
     /**
 	 * @param definition
 	 */
-	private void handleCompletionOnDefinition(String definition) throws EndOfFileException {
+	protected void handleCompletionOnDefinition(String definition) throws EndOfFileException {
 		IASTCompletionNode node = new ASTCompletionNode( IASTCompletionNode.CompletionKind.MACRO_REFERENCE, 
 				null, null, definition, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, language) );
 		
@@ -1835,7 +1868,7 @@ public class Scanner implements IScanner {
 	/**
 	 * @param expression2
 	 */
-	private void handleCompletionOnExpression(String expression) throws EndOfFileException {
+	protected void handleCompletionOnExpression(String expression) throws EndOfFileException {
 		int completionPoint = expression.length() + 2;
 		IASTCompletionNode.CompletionKind kind = IASTCompletionNode.CompletionKind.MACRO_REFERENCE;
 		
@@ -1882,6 +1915,15 @@ public class Scanner implements IScanner {
 		throwEOF( node );
 	}
 
+	protected void handleInvalidCompletion() throws EndOfFileException
+	{
+		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, "", KeywordSets.getKeywords(KeywordSets.Key.EMPTY, language) ));
+	}
+	
+	protected void handleCompletionOnPreprocessorDirective( String prefix ) throws EndOfFileException 
+	{
+		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.NO_SUCH_KIND, null, null, prefix, KeywordSets.getKeywords(KeywordSets.Key.PP_DIRECTIVE, language )));
+	}
 	/**
 	 * @param key
 	 */
@@ -1892,7 +1934,7 @@ public class Scanner implements IScanner {
 	/**
 	 * 
 	 */
-	protected void handlePragmaOperator() throws ScannerException
+	protected void handlePragmaOperator() throws ScannerException, EndOfFileException
 	{
 		// until we know what to do with pragmas, do the equivalent as 
 		// to what we do for #pragma blah blah blah (ignore it)
@@ -2140,21 +2182,19 @@ public class Scanner implements IScanner {
 		cppKeywords.put( Keywords.XOR, new Integer(IToken.t_xor));
 		cppKeywords.put( Keywords.XOR_EQ, new Integer(IToken.t_xor_eq));
 
-		ppDirectives.put("#define", new Integer(PreprocessorDirectives.DEFINE));
-		ppDirectives.put("#undef",new Integer(PreprocessorDirectives.UNDEFINE));
-		ppDirectives.put("#if", new Integer(PreprocessorDirectives.IF));
-		ppDirectives.put("#ifdef", new Integer(PreprocessorDirectives.IFDEF));
-		ppDirectives.put("#ifndef", new Integer(PreprocessorDirectives.IFNDEF));
-		ppDirectives.put("#else", new Integer(PreprocessorDirectives.ELSE));
-		ppDirectives.put("#endif", new Integer(PreprocessorDirectives.ENDIF));
-		ppDirectives.put(
-			"#include",
-			new Integer(PreprocessorDirectives.INCLUDE));
-		ppDirectives.put("#line", new Integer(PreprocessorDirectives.LINE));
-		ppDirectives.put("#error", new Integer(PreprocessorDirectives.ERROR));
-		ppDirectives.put("#pragma", new Integer(PreprocessorDirectives.PRAGMA));
-		ppDirectives.put("#elif", new Integer(PreprocessorDirectives.ELIF));
-		ppDirectives.put("#", new Integer(PreprocessorDirectives.BLANK));
+		ppDirectives.put(Directives.POUND_DEFINE, new Integer(PreprocessorDirectives.DEFINE));
+		ppDirectives.put(Directives.POUND_UNDEF,new Integer(PreprocessorDirectives.UNDEFINE));
+		ppDirectives.put(Directives.POUND_IF, new Integer(PreprocessorDirectives.IF));
+		ppDirectives.put(Directives.POUND_IFDEF, new Integer(PreprocessorDirectives.IFDEF));
+		ppDirectives.put(Directives.POUND_IFNDEF, new Integer(PreprocessorDirectives.IFNDEF));
+		ppDirectives.put(Directives.POUND_ELSE, new Integer(PreprocessorDirectives.ELSE));
+		ppDirectives.put(Directives.POUND_ENDIF, new Integer(PreprocessorDirectives.ENDIF));
+		ppDirectives.put(Directives.POUND_INCLUDE, new Integer(PreprocessorDirectives.INCLUDE));
+		ppDirectives.put(Directives.POUND_LINE, new Integer(PreprocessorDirectives.LINE));
+		ppDirectives.put(Directives.POUND_ERROR, new Integer(PreprocessorDirectives.ERROR));
+		ppDirectives.put(Directives.POUND_PRAGMA, new Integer(PreprocessorDirectives.PRAGMA));
+		ppDirectives.put(Directives.POUND_ELIF, new Integer(PreprocessorDirectives.ELIF));
+		ppDirectives.put(Directives.POUND_BLANK, new Integer(PreprocessorDirectives.BLANK));
 
 		cKeywords.put( Keywords.AUTO, new Integer(IToken.t_auto));
 		cKeywords.put( Keywords.BREAK, new Integer(IToken.t_break));
@@ -2268,7 +2308,7 @@ public class Scanner implements IScanner {
 	}
 
 	
-	protected void skipOverSinglelineComment() throws ScannerException {
+	protected void skipOverSinglelineComment() throws ScannerException, EndOfFileException {
 		
 		StringBuffer comment = new StringBuffer("//");
 		int c;
@@ -2285,10 +2325,12 @@ public class Scanner implements IScanner {
 					break;
 			}
 		}
+		if( c== NOCHAR && isLimitReached() )
+			handleInvalidCompletion();
 		
 	}
 
-	protected boolean skipOverMultilineComment() throws ScannerException {
+	protected boolean skipOverMultilineComment() throws ScannerException, EndOfFileException {
 		int state = 0;
 		boolean encounteredNewline = false;
 		StringBuffer comment = new StringBuffer("/*");
@@ -2319,15 +2361,17 @@ public class Scanner implements IScanner {
 			comment.append((char)c);
 		}
 
-		if (c == NOCHAR)
+		if (c == NOCHAR && !isLimitReached() )
 			handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, getCurrentOffset(), false, true  );
+		else if( c== NOCHAR ) // limit reached
+			handleInvalidCompletion();
 		
 		ungetChar(c);
 
 		return encounteredNewline;
 	}
 
-	protected void poundInclude( int beginningOffset, int startLine ) throws ScannerException {
+	protected void poundInclude( int beginningOffset, int startLine ) throws ScannerException, EndOfFileException {
 		StringBuffer potentialErrorLine = new StringBuffer( "#include ");
 		skipOverWhitespace();				
 		int baseOffset = lastContext.getOffset() - lastContext.undoStackSize();
@@ -2539,7 +2583,7 @@ public class Scanner implements IScanner {
 	}
 	
 	
-	protected void poundDefine(int beginning, int beginningLine ) throws ScannerException {
+	protected void poundDefine(int beginning, int beginningLine ) throws ScannerException, EndOfFileException {
 		StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
 		skipOverWhitespace();
 		// definition 

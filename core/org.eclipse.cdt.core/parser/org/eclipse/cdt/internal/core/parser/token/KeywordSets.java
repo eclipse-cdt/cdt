@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.core.parser.Directives;
 import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -36,6 +37,7 @@ public class KeywordSets {
 		public static final Key FUNCTION_MODIFIER = new Key( 6 );
 		public static final Key NAMESPACE_ONLY = new Key(6);
 		public static final Key MACRO = new Key( 7 );
+		public static final Key PP_DIRECTIVE = new Key( 8 );
 		/**
 		 * @param enumValue
 		 */
@@ -65,6 +67,8 @@ public class KeywordSets {
 			return NAMESPACE_ONLY;
 		if( kind == Key.MACRO )
 			return MACRO_ONLY;
+		if( kind == Key.PP_DIRECTIVE )
+			return PP_DIRECTIVES;
 		
 		//TODO finish this
 		return null;
@@ -235,5 +239,24 @@ public class KeywordSets {
 		FUNCTION_MODIFIER= new Hashtable();
 		FUNCTION_MODIFIER.put( ParserLanguage.CPP, FUNCTION_MODIFIER_CPP );
 		FUNCTION_MODIFIER.put( ParserLanguage.C, FUNCTION_MODIFIER_C );
+	}
+	
+	private static final Set PP_DIRECTIVES;
+	static
+	{
+		PP_DIRECTIVES = new TreeSet();
+		PP_DIRECTIVES.add(Directives.POUND_BLANK);
+		PP_DIRECTIVES.add(Directives.POUND_DEFINE);
+		PP_DIRECTIVES.add(Directives.POUND_UNDEF);
+		PP_DIRECTIVES.add(Directives.POUND_IF);
+		PP_DIRECTIVES.add(Directives.POUND_IFDEF);
+		PP_DIRECTIVES.add(Directives.POUND_IFNDEF);
+		PP_DIRECTIVES.add(Directives.POUND_ELSE);
+		PP_DIRECTIVES.add(Directives.POUND_ENDIF);
+		PP_DIRECTIVES.add(Directives.POUND_INCLUDE);
+		PP_DIRECTIVES.add(Directives.POUND_LINE);
+		PP_DIRECTIVES.add(Directives.POUND_ERROR);
+		PP_DIRECTIVES.add(Directives.POUND_PRAGMA);
+		PP_DIRECTIVES.add(Directives.POUND_ELIF); 
 	}
 }

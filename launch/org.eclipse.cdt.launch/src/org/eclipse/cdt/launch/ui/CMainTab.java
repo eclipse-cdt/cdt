@@ -239,6 +239,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		filterPlatform = getPlatform(config);
 		updateProjectFromConfig(config);
 		updateProgramFromConfig(config);
+		updateTerminalFromConfig(config);
 	}
 	
 	protected void updateTerminalFromConfig(ILaunchConfiguration config) {

@@ -108,7 +108,7 @@
                   name="List Option in Top"
                   command="-L"
                   valueType="stringList"
-                  id="topOption">
+                  id="list.option">
                <optionValue
                      value="a">
                </optionValue>
@@ -121,20 +121,20 @@
                   name="Boolean Option in Top"
                   command="-b"
                   valueType="boolean"
-                  id="topBoolOption">
+                  id="boolean.option">
             </option>
             <option
                   defaultValue="x"
                   name="String Option in Category"
                   category="category"
                   valueType="string"
-                  id="childOption">
+                  id="string.option">
             </option>
             <option
                   name="Enumerated Option in Category"
                   category="category"
                   valueType="enumerated"
-                  id="child.enumerated.option">
+                  id="enumerated.option">
                <optionEnum
                      name="Default Enum"
                      value="s"
@@ -162,7 +162,11 @@
                <optionRef
                      defaultValue="y"
                      value="y"
-                     id="childOption">
+                     id="string.option">
+               </optionRef>
+               <optionRef
+                     defaultValue="true"
+                     id="boolean.option">
                </optionRef>
             </toolRef>
          </configuration>

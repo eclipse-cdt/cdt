@@ -91,6 +91,16 @@ public class ManagedBuildManager {
 	}
 
 	/**
+	 * @return
+	 */
+	public static Map getExtensionTargetMap() {
+		if (extensionTargetMap == null) {
+			extensionTargetMap = new HashMap();
+		}
+		return extensionTargetMap;
+	}
+
+	/**
 	 * Returns the targets owned by this project.  If none are owned,
 	 * an empty array is returned.
 	 * 
@@ -108,6 +118,7 @@ public class ManagedBuildManager {
 		}
 	}
 
+
 	public static ITarget getTarget(IResource resource, String id) {
 		if (resource != null) {
 			ResourceBuildInfo buildInfo = getBuildInfo(resource);
@@ -115,7 +126,7 @@ public class ManagedBuildManager {
 				return buildInfo.getTarget(id);
 		}
 
-		ITarget target = (ITarget)extensionTargetMap.get(id);
+		ITarget target = (ITarget)getExtensionTargetMap().get(id);
 		if (target != null)
 			return target;
 			
@@ -158,23 +169,48 @@ public class ManagedBuildManager {
 	/**
 	 * Set the string value for an option for a given config.
 	 * 
-	 * @param config
-	 * @param option
-	 * @param value
+	 * @param config The configuration the option belongs to.
+	 * @param option The option to set the value for.
+	 * @param value The boolean that the option should contain after the change.
+	 */
+	public static void setOption(IConfiguration config, IOption option, boolean value) {
+		try {
+			config.setOption(option, value);
+		} catch (BuildException e) {
+			return;
+		}
+	}
+
+	/**
+	 * Set the string value for an option for a given config.
+	 * 
+	 * @param config The configuration the option belongs to.
+	 * @param option The option to set the value for.
+	 * @param value The value that the option should contain after the change.
 	 */
 	public static void setOption(IConfiguration config, IOption option, String value) {
+		try {
+			config.setOption(option, value);
+		} catch (BuildException e) {
+			return;
+		}
 	}
 	
 	/**
 	 * Set the string array value for an option for a given config.
 	 * 
-	 * @param config
-	 * @param option
-	 * @param value
+	 * @param config The configuration the option belongs to.
+	 * @param option The option to set the value for.
+	 * @param value The values the option should contain after the change.
 	 */
 	public static void setOption(IConfiguration config, IOption option, String[] value) {
-		
+		try {
+			config.setOption(option, value);
+		} catch (BuildException e) {
+			return;
+		}
 	}
+
 	/**
 	 * Saves the build information associated with a project and all resources
 	 * in the project to the build info file.
@@ -229,11 +265,10 @@ public class ManagedBuildManager {
 	public static void addExtensionTarget(Target target) {
 		if (extensionTargets == null) {
 			extensionTargets = new ArrayList();
-			extensionTargetMap = new HashMap();
 		}
 		
 		extensionTargets.add(target);
-		extensionTargetMap.put(target.getId(), target);
+		getExtensionTargetMap().put(target.getId(), target);
 	}
 		
 	private static void loadExtensions() {
@@ -279,6 +314,8 @@ public class ManagedBuildManager {
 	}
 
 	public static ResourceBuildInfo getBuildInfo(IResource resource, boolean create) {
+		// Make sure the extension information is loaded first
+		loadExtensions();
 		ResourceBuildInfo buildInfo = null;
 		try {
 			buildInfo = (ResourceBuildInfo)resource.getSessionProperty(buildInfoProperty);
@@ -304,4 +341,6 @@ public class ManagedBuildManager {
 	public static ResourceBuildInfo getBuildInfo(IResource resource) {
 		return getBuildInfo(resource, false);
 	}
+
+
 }

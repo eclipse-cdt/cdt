@@ -51,11 +51,12 @@ public class Target extends BuildObject implements ITarget {
 	 * @param parent
 	 */
 	public Target(IResource owner, ITarget parent) {
+		// Make the owner of the target the project resource
 		this(owner);
-		this.parent = parent;
-
+		
 		// Copy the parent's identity
-		setId(parent.getId());		
+		this.parent = parent;
+		setId(parent.getId() + ".1");		
 		setName(parent.getName());
 
 		// Hook me up
@@ -136,13 +137,18 @@ public class Target extends BuildObject implements ITarget {
 			if (child.getNodeName().equals("configuration")) {
 				new Configuration(this, (Element)child);
 			}
-			
 			child = child.getNextSibling();
 		}
 
 
 	}
 	
+	/**
+	 * Persist receiver to project file.
+	 * 
+	 * @param doc
+	 * @param element
+	 */
 	public void serialize(Document doc, Element element) {
 		element.setAttribute("id", getId());
 		element.setAttribute("name", getName());
@@ -155,7 +161,7 @@ public class Target extends BuildObject implements ITarget {
 				Configuration config = (Configuration)configurations.get(i);
 				Element configElement = doc.createElement("configuration");
 				element.appendChild(configElement);
-				config.serealize(doc, configElement);
+				config.serialize(doc, configElement);
 			}
 	}
 
@@ -198,7 +204,14 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	public ITool getTool(String id) {
-		return (ITool)toolMap.get(id);
+		ITool result = null;
+		// See if receiver has it in list
+		result = (ITool)toolMap.get(id);
+		// If not, check if parent has it
+		if (result == null && parent != null) {
+			result = ((Target)parent).getTool(id);
+		}
+		return result;
 	}
 
 	public void addTool(ITool tool) {

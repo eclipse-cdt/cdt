@@ -30,6 +30,11 @@ public interface ITarget extends IBuildObject {
 	 * @return
 	 */
 	public IResource getOwner();
+
+	/**
+	 * @return the <code>ITarget</code> that is the parent of the receiver.
+	 */
+	public ITarget getParent();
 	
 	/**
 	 * Returns the list of platform specific tools associated with this

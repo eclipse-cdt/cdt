@@ -49,13 +49,6 @@ public interface IOption extends IBuildObject {
 	public String getCommand();
 	
 	/**
-	 * @return a <code>String</code> containing the default value for the 
-	 * enumerated option.
-	 */
-	public String getDefaultEnumName ();	
-
-	
-	/**
 	 * @return <code>String</code> containing the command associated with the 
 	 * enumeration name.
 	 */
@@ -75,6 +68,16 @@ public interface IOption extends IBuildObject {
 	 */
 	public String [] getStringListValue() throws BuildException;
 
+	/**
+	 * @return a <code>String</code> containing the selected enumeration in an
+	 * enumerated option. For an option that has not been changed by the user, 
+	 * the receiver will answer with the default defined in the plugin manifest.
+	 * If the user has modified the selection, the receiver will answer with the
+	 * overridden selection.
+	 */
+	public String getSelectedEnum ();	
+
+	
 	/**
 	 * Returns the current value for this option if it is a String
 	 * 

@@ -36,10 +36,10 @@ public class ToolReference implements ITool {
 	private Map optionRefMap;
 	
 	/**
-	 * Created on the fly.
+	 * Created a tool reference on the fly based on an existing tool.
 	 * 
-	 * @param owner
-	 * @param parent
+	 * @param owner The <code>Configuration</code> the receiver will be added to.
+	 * @param parent The <code>ITool</code>tool the reference will be based on.
 	 */
 	public ToolReference(Configuration owner, ITool parent) {
 		this.owner = owner;
@@ -49,10 +49,10 @@ public class ToolReference implements ITool {
 	}
 	
 	/**
-	 * Created from extension.
+	 * Created tool reference from an extension defined in a plugin manifest.
 	 * 
-	 * @param owner
-	 * @param element
+	 * @param owner The <code>Configuration</code> the receiver will be added to.
+	 * @param element The element containing build information for the reference.
 	 */
 	public ToolReference(Configuration owner, IConfigurationElement element) {
 		this.owner = owner;
@@ -70,6 +70,13 @@ public class ToolReference implements ITool {
 		}
 	}
 
+	/**
+	 * Create a new tool reference based on information contained in a project file.
+	 * 
+	 * @param owner The <code>Configuration</code> the receiver will be added to.
+	 * @param element The element defined in the project file containing build information
+	 * for the receiver.
+	 */
 	public ToolReference(Configuration owner, Element element) {
 		this.owner = owner;
 		
@@ -87,7 +94,14 @@ public class ToolReference implements ITool {
 		}
 	}
 
-	public void serealize(Document doc, Element element) {
+	/**
+	 * Persist receiver to project file.
+	 * 
+	 * @param doc The persistent store for the reference information.
+	 * @param element The root element in the store the receiver must use 
+	 * to persist settings.
+	 */
+	public void serialize(Document doc, Element element) {
 		element.setAttribute("id", parent.getId());
 		
 		if (optionReferences != null)
@@ -95,7 +109,7 @@ public class ToolReference implements ITool {
 				OptionReference optionRef = (OptionReference)optionReferences.get(i);
 				Element optionRefElement = doc.createElement("optionRef");
 				element.appendChild(optionRefElement);
-				optionRef.serealize(doc, optionRefElement);
+				optionRef.serialize(doc, optionRefElement);
 			}
 	}
 

@@ -115,6 +115,17 @@
       </builder>
    </extension>
    <extension
+         id="genmakebuilder"
+         name="%GeneratedMakefileCBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.cdt.internal.core.GeneratedMakefileBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
          id="problem"
          name="%CProblemMarker.name"
          point="org.eclipse.core.resources.markers">
@@ -144,6 +155,22 @@
                class="org.eclipse.cdt.core.CCProjectNature">
          </run>
       </runtime>
+   </extension>
+   <extension
+         id="managedBuildNature"
+         name="%ManagedBuildNature.name"
+         point="org.eclipse.core.resources.natures">
+      <requires-nature
+            id="org.eclipse.cdt.core.cnature">
+      </requires-nature>
+      <runtime>
+         <run
+               class="org.eclipse.cdt.core.ManagedCProjectNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.eclipse.cdt.core.genmakebuilder">
+      </builder>
    </extension>
    <extension
          point="org.eclipse.cdt.core.CBuildCommand">
@@ -251,30 +278,6 @@
             enabled="true"
             pattern="*.exe">
       </ignore>
-   </extension>
-   <extension
-         id="managedBuildNature"
-         name="%ManagedBuildNature.name"
-         point="org.eclipse.core.resources.natures">
-      <requires-nature
-            id="org.eclipse.cdt.core.cnature">
-      </requires-nature>
-      <runtime>
-         <run
-               class="org.eclipse.cdt.core.ManagedCProjectNature">
-         </run>
-      </runtime>
-   </extension>
-   <extension
-         id="generatedMakefileCBuilder"
-         name="%GeneratedMakefileCBuilder.name"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true">
-         <run
-               class="org.eclipse.cdt.internal.core.GeneratedMakefileCBuilder">
-         </run>
-      </builder>
    </extension>
 
 </plugin>

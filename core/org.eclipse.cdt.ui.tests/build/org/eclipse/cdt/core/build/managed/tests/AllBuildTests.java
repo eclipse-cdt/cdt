@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.core.build.managed.tests;
 
+import java.util.Arrays;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -32,6 +34,12 @@ import org.eclipse.core.runtime.CoreException;
  * 
  */
 public class AllBuildTests extends TestCase {
+	private static final boolean boolVal = true;
+	private static final String newConfigName = "test.config.override";
+	private static final String enumVal = "Another Enum";
+	private static final String[] listVal = {"_DEBUG", "/usr/include", "libglade.a"};
+	private static final String projectName = "BuildTest";
+	private static final String stringVal = "-c -wall";
 
 	public AllBuildTests(String name) {
 		super(name);
@@ -42,6 +50,7 @@ public class AllBuildTests extends TestCase {
 		
 		suite.addTest(new AllBuildTests("testExtensions"));
 		suite.addTest(new AllBuildTests("testProject"));
+		suite.addTest(new AllBuildTests("testConfigurations"));
 		
 		return suite;
 	}
@@ -96,10 +105,56 @@ public class AllBuildTests extends TestCase {
 		assertNotNull(testRoot);
 		assertNotNull(testSub);
 	}
+
+	public void testConfigurations() throws CoreException, BuildException {
+		// Open the test project
+		IProject project = createProject(projectName);
+		
+		// Make sure there is one and only one target with 2 configs
+		ITarget[] definedTargets = ManagedBuildManager.getTargets(project);
+		assertEquals(1, definedTargets.length);
+		ITarget rootTarget = definedTargets[0];
+		IConfiguration[] definedConfigs = rootTarget.getConfigurations(); 		
+		assertEquals(2, definedConfigs.length);
+		IConfiguration baseConfig = definedConfigs[0];
+		
+		// Create a new configuration
+		IConfiguration newConfig = rootTarget.createConfiguration(baseConfig, newConfigName);
+		assertEquals(3, rootTarget.getConfigurations().length);
+
+		// There is only one tool
+		ITool[] definedTools = newConfig.getTools();
+		assertEquals(1, definedTools.length);
+		ITool rootTool = definedTools[0];
+		
+		// Override options in the new configuration
+		IOptionCategory topCategory = rootTool.getTopOptionCategory();
+		assertEquals("Root Tool", topCategory.getName());
+		IOption[] options = topCategory.getOptions(null);
+		assertEquals(2, options.length);
+		ManagedBuildManager.setOption(newConfig, options[0], listVal);
+		ManagedBuildManager.setOption(newConfig, options[1], boolVal);
+
+		IOptionCategory[] categories = topCategory.getChildCategories();
+		assertEquals(1, categories.length);
+		options = categories[0].getOptions(null);
+		assertEquals(2, options.length);
+		ManagedBuildManager.setOption(newConfig, options[0], stringVal);
+		ManagedBuildManager.setOption(newConfig, options[1], enumVal);
+
+		// Save, close, reopen and test again
+		ManagedBuildManager.saveBuildInfo(project);
+		project.close(null);
+		ManagedBuildManager.removeBuildInfo(project);
+		project.open(null);
+
+		// Test the values in the new configuration
+		checkOptionReferences(project);
+	}
 	
 	public void testProject() throws CoreException, BuildException {
 		// Create new project
-		IProject project = createProject("BuildTest");
+		IProject project = createProject(projectName);
 		
 		assertEquals(0, ManagedBuildManager.getTargets(project).length);
 		
@@ -125,7 +180,7 @@ public class AllBuildTests extends TestCase {
 		
 		checkRootTarget(target, "x");
 		
-		// Override the "Option in Category" option value
+		// Override the "String Option in Category" option value
 		configs = target.getConfigurations();
 		ITool[] tools = configs[0].getTools();
 		IOptionCategory topCategory = tools[0].getTopOptionCategory();
@@ -166,6 +221,57 @@ public class AllBuildTests extends TestCase {
 		return project;	
 	}
 	
+	private void checkOptionReferences(IProject project) throws BuildException {
+		// Get the targets out of the project
+		ITarget[] definedTargets = ManagedBuildManager.getTargets(project);
+		assertEquals(1, definedTargets.length);
+		ITarget rootTarget = definedTargets[0];
+
+		// Now get the configs
+		IConfiguration[] definedConfigs = rootTarget.getConfigurations(); 		
+		assertEquals(3, definedConfigs.length);
+		IConfiguration newConfig = rootTarget.getConfiguration(newConfigName);
+		assertNotNull(newConfig);
+
+		// Now get the tool options and make sure the values are correct		
+		ITool[] definedTools = newConfig.getTools();
+		assertEquals(1, definedTools.length);
+		ITool rootTool = definedTools[0];
+
+		// Check that the options in the new config contain overridden values
+		IOption[] rootOptions = rootTool.getOptions();
+		assertEquals(4, rootOptions.length);
+		// First is the new list
+		assertEquals("List Option in Top", rootOptions[0].getName());
+		assertEquals(IOption.STRING_LIST, rootOptions[0].getValueType());
+		String[] list = rootOptions[0].getStringListValue();
+		assertEquals(3, list.length);
+		assertTrue(Arrays.equals(listVal, list));
+		assertEquals(rootOptions[0].getCommand(), "-L");
+		// Next option is a boolean in top
+		assertEquals("Boolean Option in Top", rootOptions[1].getName());
+		assertEquals(IOption.BOOLEAN, rootOptions[1].getValueType());
+		assertEquals(boolVal, rootOptions[1].getBooleanValue());
+		assertEquals("-b", rootOptions[1].getCommand());
+		// Next option is a string category
+		assertEquals("String Option in Category", rootOptions[2].getName());
+		assertEquals(IOption.STRING, rootOptions[2].getValueType());
+		assertEquals(stringVal, rootOptions[2].getStringValue());
+		// Final option is an enumerated
+		assertEquals("Enumerated Option in Category", rootOptions[3].getName());
+		assertEquals(IOption.ENUMERATED, rootOptions[3].getValueType());
+		String selEnum = rootOptions[3].getSelectedEnum();
+		assertEquals(enumVal, selEnum);
+		String[] enums = rootOptions[3].getApplicableValues();
+		assertEquals(2, enums.length);
+		assertEquals("Default Enum", enums[0]);
+		assertEquals("Another Enum", enums[1]);
+		assertEquals("-e1", rootOptions[3].getEnumCommand(enums[0]));
+		assertEquals("-e2", rootOptions[3].getEnumCommand(enums[1]));
+		assertEquals("-e2", rootOptions[3].getEnumCommand(selEnum));
+	}
+	
+	
 	private void checkRootTarget(ITarget target, String oicValue) throws BuildException {
 		// Tools
 		ITool[] tools = target.getTools();
@@ -195,7 +301,7 @@ public class AllBuildTests extends TestCase {
 		// Final option is an enumerated
 		assertEquals("Enumerated Option in Category", options[3].getName());
 		assertEquals(IOption.ENUMERATED, options[3].getValueType());
-		assertEquals("Default Enum", options[3].getDefaultEnumName());
+		assertEquals("Default Enum", options[3].getSelectedEnum());
 		valueList = options[3].getApplicableValues();
 		assertEquals(2, valueList.length);
 		assertEquals("Default Enum", valueList[0]);
@@ -241,6 +347,7 @@ public class AllBuildTests extends TestCase {
 		assertEquals("String Option in Category", options[0].getName());
 		assertEquals(oicValue, options[0].getStringValue());
 		assertEquals("Enumerated Option in Category", options[1].getName());
+
 		// Root Override Config
 		assertEquals("Root Override Config", configs[1].getName());
 		tools = configs[1].getTools();

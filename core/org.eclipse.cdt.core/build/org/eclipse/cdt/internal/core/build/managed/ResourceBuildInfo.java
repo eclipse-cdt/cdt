@@ -1,10 +1,15 @@
-/*
- * Created on Apr 13, 2003
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
 package org.eclipse.cdt.internal.core.build.managed;
+
+/**********************************************************************
+ * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM Rational Software - Initial API and implementation
+ * **********************************************************************/
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,12 +21,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/**
- * @author dschaefe
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
 public class ResourceBuildInfo {
 
 	private IResource owner;
@@ -41,7 +40,6 @@ public class ResourceBuildInfo {
 			if (child.getNodeName().equals("target")) {
 				new Target(this, (Element)child);
 			}
-			
 			child = child.getNextSibling();
 		}
 	}

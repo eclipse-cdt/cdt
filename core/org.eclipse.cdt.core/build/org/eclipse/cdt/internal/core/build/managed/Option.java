@@ -37,6 +37,7 @@ public class Option extends BuildObject implements IOption {
 	private String command;
 	
 	private static final String[] emptyStrings = new String[0];
+	private static final String EMPTY_STRING = new String();
 	 
 	public Option(ITool tool) {
 		this.tool = tool;
@@ -64,7 +65,9 @@ public class Option extends BuildObject implements IOption {
 		
 		// valueType
 		String valueTypeStr = element.getAttribute("valueType");
-		if (valueTypeStr == null || valueTypeStr.equals("string"))
+		if (valueTypeStr == null)
+			valueType = -1;
+		else if (valueTypeStr.equals("string"))
 			valueType = IOption.STRING;
 		else if (valueTypeStr.equals("stringList"))
 			valueType = IOption.STRING_LIST;
@@ -107,6 +110,8 @@ public class Option extends BuildObject implements IOption {
 				}
 				value = valueList;
 				break;
+			default :
+				break;
 		}
 	}
 
@@ -140,17 +145,18 @@ public class Option extends BuildObject implements IOption {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefaultEnumValue()
-	 */
-	public String getDefaultEnumName() {
-		return defaultEnumName;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumCommand(java.lang.String)
 	 */
 	public String getEnumCommand(String name) {
-		return (String) enumCommands.get(name);
+		String cmd = (String) enumCommands.get(name); 
+		return (cmd == null ? new String() : cmd);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefaultEnumValue()
+	 */
+	public String getSelectedEnum() {
+		return defaultEnumName;
 	}
 
 	/* (non-Javadoc)
@@ -167,7 +173,8 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getStringValue()
 	 */
 	public String getStringValue() {
-		return (String)value;
+		String v = (String) value;
+		return value == null ? EMPTY_STRING : v;
 	}
 
 	/* (non-Javadoc)

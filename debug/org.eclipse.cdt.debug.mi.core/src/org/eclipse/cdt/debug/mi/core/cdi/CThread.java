@@ -114,8 +114,8 @@ public class CThread extends CObject implements ICDIThread {
 			// Resetting threads may change the value of
 			// some variables like Register.  Send an update
 			// To generate changeEvents.
-			VariableManager varMgr = session.getVariableManager();
-			varMgr.update();
+			RegisterManager regMgr = session.getRegisterManager();
+			regMgr.update();
 
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());

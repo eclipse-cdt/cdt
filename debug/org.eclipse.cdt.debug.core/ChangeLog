@@ -1,3 +1,8 @@
+2004-11-24 Alain Magloire
+
+	Use the ICDITarget.deleteAllBreakpoints() for speed.
+	* org/eclipse/cdt/debug/internal/core/CBreakpointManager.java
+
 2004-11-24 Mikhail Khodjaiants
 	Do not request to dispose local variables when the target is resumed.
 	* CExpression.java

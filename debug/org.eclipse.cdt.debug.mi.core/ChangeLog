@@ -1,10 +1,20 @@
-2002-11-13
+2002-11-14 Alain Magloire
+
+	* src/.../mi/core/cdi/CThread.java (getStackFrame):
+	new method with a hi and low.
+	(getStackFrameCount): new method.
+	* src/.../mi/core/command/CommandFactory.java (createMIStackInfoDepth):
+	new method.
+	* src/.../mi/core/command/MIStackInfoDepth.java (getMIStackInfoDepthInfo):
+	new method.
+
+2002-11-13 Dave Inglis
 	* plugin.xml
 	Added "native" cpu support.
 	
 2002-11-06 Alain Magloire
 
-	* src/.../mi/core/StackFrame.java (getLocals):
+	* src/.../mi/core/cdi/StackFrame.java (getLocals):
 	If an exception was thrown, the array may contain null
 	entries.  Use a list and catch the exception.
 

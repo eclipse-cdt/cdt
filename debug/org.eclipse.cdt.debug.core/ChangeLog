@@ -1,3 +1,10 @@
+2002-11-14 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIThread.java (getStackFrames):
+	New method to provide a range lowFrame and highFrame.
+	(getStackFrameCount): New method returns the depth level
+	of the stackframes.
+	
 2002-11-13 Mikhail Khodjaiants
 	Fix for the stepping problem if the selected stack frame is not the topmost one.
 	* CStackFrame.java: The 'stepToFrame' method is temporary replaced by corresponding step method.

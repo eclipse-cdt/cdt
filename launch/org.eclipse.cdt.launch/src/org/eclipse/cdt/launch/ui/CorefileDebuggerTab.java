@@ -181,4 +181,11 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		return "Debugger";
 	}
 
+	/**
+	 * @see org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab#handleDebuggerChanged()
+	 */
+	protected void handleDebuggerChanged() {
+		super.handleDebuggerChanged();
+	}
+
 }

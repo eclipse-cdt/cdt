@@ -406,5 +406,12 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 		return fLaunchConfiguration;
 	}
 	
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
+	 */
+	protected void updateLaunchConfigurationDialog() {
+		super.updateLaunchConfigurationDialog();
+	}
+
 }
 

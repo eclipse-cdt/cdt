@@ -172,4 +172,11 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_ARGUMENTS_TAB);
 	}
 
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
+	 */
+	protected void updateLaunchConfigurationDialog() {
+		super.updateLaunchConfigurationDialog();
+	}
+
 }

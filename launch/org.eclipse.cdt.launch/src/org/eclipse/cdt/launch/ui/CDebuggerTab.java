@@ -282,4 +282,11 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	public Image getImage() {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_DEBUGGER_TAB);
 	}
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
+	 */
+	protected void updateLaunchConfigurationDialog() {
+		super.updateLaunchConfigurationDialog();
+	}
+
 }

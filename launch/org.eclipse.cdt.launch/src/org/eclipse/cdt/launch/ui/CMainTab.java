@@ -399,4 +399,11 @@ public class CMainTab extends CLaunchConfigurationTab {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_MAIN_TAB);
 	}
 
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
+	 */
+	protected void updateLaunchConfigurationDialog() {
+		super.updateLaunchConfigurationDialog();
+	}
+
 }

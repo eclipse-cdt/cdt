@@ -22,12 +22,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class GDBDebuggerPage extends AbstractLaunchConfigurationTab {
 
-	private Text fGDBCommandText;
-	private Text fGDBInitText;
+	protected Text fGDBCommandText;
+	protected Text fGDBInitText;
 	private Button fAutoSoLibButton;
 	private Button fGDBButton;
 
@@ -195,4 +196,18 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab {
 	public String getName() {
 		return "GDB Debugger Options";
 	}
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getShell()
+	 */
+	protected Shell getShell() {
+		return super.getShell();
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
+	 */
+	protected void updateLaunchConfigurationDialog() {
+		super.updateLaunchConfigurationDialog();
+	}
+
 }

@@ -84,8 +84,8 @@ public class RxThread extends Thread {
 		if (session.getChannelInputStream() != null) {
 			Runnable cleanup = new Runnable() {
 				public void run() {
-						// Change the state of the inferior.
-	session.getMIInferior().setTerminated();
+					// Change the state of the inferior.
+					session.getMIInferior().setTerminated();
 					session.terminate();
 				}
 			};

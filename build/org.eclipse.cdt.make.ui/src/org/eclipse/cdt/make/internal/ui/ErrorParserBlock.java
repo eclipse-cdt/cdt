@@ -24,9 +24,11 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 	// make builder enabled
 	IMakeBuilderInfo fBuildInfo;
 	boolean useBuildInfo = false;
-
-	public ErrorParserBlock(Preferences prefs) {
-		super(prefs);
+	Preferences fPrefs;
+	
+	public ErrorParserBlock(Preferences preferences) {
+		super();
+		fPrefs = preferences;
 	}
 
 	/*
@@ -82,6 +84,23 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 		}
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.dialogs.AbstractErrorParserBlock#saveErrorParsers(java.lang.String[])
+	 */
+	protected void saveErrorParsers(String[] parserIDs) throws CoreException {
+		fBuildInfo = MakeCorePlugin.createBuildInfo(fPrefs, MakeBuilder.BUILDER_ID, false);
+		fBuildInfo.setErrorParsers(parserIDs);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.dialogs.AbstractErrorParserBlock#getErrorParserIDs(boolean)
+	 */
+	protected String[] getErrorParserIDs(boolean defaults) {
+		fBuildInfo = MakeCorePlugin.createBuildInfo(fPrefs, MakeBuilder.BUILDER_ID, defaults);
+		return fBuildInfo.getErrorParsers();
+	}
+	
 	public void setContainer(ICOptionContainer container) {
 		super.setContainer(container);
 		if (getContainer().getProject() != null) {

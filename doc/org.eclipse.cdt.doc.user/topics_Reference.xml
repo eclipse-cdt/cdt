@@ -76,6 +76,12 @@
 			<topic label="Indexer" href="reference/cdt_u_mprop_indexer.htm"/>
 			<topic label="Project References" href="reference/cdt_u_mprop_ref.htm"/>
 		</topic>
+		<topic label="Managed Make File Properties" href="reference/cdt_o_mmake_file.htm">
+			<topic label="Info" href="reference/cdt_u_mfile_info.htm"/>
+			<topic label="C/C++ Build" href="reference/cdt_u_mfile_build.htm">
+				<topic label="Tool Settings" href="reference/cdt_u_mfile_tool_settings.htm"/>
+			</topic>
+		</topic>
 		<topic label="Standard Make Projects" href="reference/cdt_o_smake_proj.htm">
 			<topic label="Info" href="reference/cdt_u_sprop_info.htm"/>
 			<topic label="Builders" href="reference/cdt_u_sprop_builders.htm"/>

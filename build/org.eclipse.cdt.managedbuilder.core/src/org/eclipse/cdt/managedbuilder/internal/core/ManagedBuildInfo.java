@@ -123,7 +123,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// TODO:  There should only be 1?
 		for (int projIndex = projNodes.getLength() - 1; projIndex >= 0; --projIndex) {
 			ManagedProject proj = new ManagedProject(this, (Element)projNodes.item(projIndex));
-			proj.resolveReferences();
+			if (!proj.resolveReferences())
+				proj.setValid(false);
 		}
 
 		// Switch the rebuild off since this is an existing project

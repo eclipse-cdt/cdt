@@ -131,6 +131,21 @@ public interface IManagedProject extends IBuildObject {
 	public void setDirty(boolean isDirty);
 
 	/**
+	 * Returns <code>true</code> if this project is valid 
+	 * else <code>false</code>.
+	 * 
+	 * @return boolean 
+	 */
+	public boolean isValid();
+	
+	/**
+	 * Sets the element's "Valid" flag.
+	 * 
+	 * @param isValid
+	 */
+	public void setValid(boolean isValid);
+
+	/**
 	 * Persist the managed project to the project file (.cdtbuild).
 	 * 
 	 * @param doc

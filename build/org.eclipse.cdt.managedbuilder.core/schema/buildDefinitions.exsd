@@ -153,6 +153,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="parent" type="string">
+            <annotation>
+               <documentation>
+                  The configuration that this configuration was cloned from.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="artifactName" type="string">
             <annotation>
                <documentation>

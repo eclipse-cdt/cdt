@@ -355,6 +355,7 @@
             <option
                   name="Test Forward Option"
                   category="test.forward.child.category"
+                  valueType="boolean"
                   id="test.forward.option">
             </option>
             <optionCategory

@@ -47,6 +47,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	private Map configMap;
 	//  Miscellaneous
 	private boolean isDirty = false;
+	private boolean isValid = true;
 	private boolean resolved = true;
 
 	/*
@@ -95,15 +96,17 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		this(buildInfo.getOwner());
 		
 		// Initialize from the XML attributes
-		loadFromProject(element);
-
-		// Load children
-		NodeList configElements = element.getChildNodes();
-		for (int i = 0; i < configElements.getLength(); ++i) {
-			Node configElement = configElements.item(i);
-			if (configElement.getNodeName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
-				Configuration config = new Configuration(this, (Element)configElement);
+		if (loadFromProject(element)) {
+			// Load children
+			NodeList configElements = element.getChildNodes();
+			for (int i = 0; i < configElements.getLength(); ++i) {
+				Node configElement = configElements.item(i);
+				if (configElement.getNodeName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
+					Configuration config = new Configuration(this, (Element)configElement);
+				}
 			}
+		} else {
+			setValid(false);
 		}
 		
 		// hook me up
@@ -120,7 +123,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * 
 	 * @param element An XML element containing the project information 
 	 */
-	protected void loadFromProject(Element element) {
+	protected boolean loadFromProject(Element element) {
 		
 		// id
 		setId(element.getAttribute(IBuildObject.ID));
@@ -135,9 +138,10 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		if (projectTypeId != null && projectTypeId.length() > 0) {
 			projectType = ManagedBuildManager.getExtensionProjectType(projectTypeId);
 			if (projectType == null) {
-				// TODO:  Report error
+				return false;
 			}
 		}
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -348,14 +352,14 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	/* (non-Javadoc)
 	 *  Resolve the element IDs to interface references
 	 */
-	public void resolveReferences() {
+	public boolean resolveReferences() {
 		if (!resolved) {
 			resolved = true;
 			// Resolve project-type
 			if (projectTypeId != null && projectTypeId.length() > 0) {
 				projectType = ManagedBuildManager.getExtensionProjectType(projectTypeId);
 				if (projectType == null) {
-					// TODO:  Report error
+					return false;
 				}
 			}
 			
@@ -366,6 +370,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 				current.resolveReferences();
 			}
 		}
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -398,6 +403,22 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 				current.setDirty(false);
 			}		    
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#isValid()
+	 */
+	public boolean isValid() {
+		//  TODO:  In the future, children could also have a "valid" state that should be checked
+		return isValid;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#setValid(boolean)
+	 */
+	public void setValid(boolean isValid) {
+		//  TODO:  In the future, children could also have a "valid" state...
+		this.isValid = isValid;
 	}
 
 }

@@ -1135,6 +1135,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			// This is a 1.2 manifest and we are compatible for now
 			return true;
 		} else {
+			//  isCompatibleWith will return FALSE, if:
+			//   o  The major versions are not equal
+			//   o  The major versions are equal, but the remainder of the manifest version # is
+			//      greater than the MBS version #
 			return(buildInfoVersion.isCompatibleWith(version));
 		}
 	}
@@ -1184,8 +1188,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				// Make sure that the version is compatible with the manager
 				fileVersion = rootElement.getNodeValue();
 				PluginVersionIdentifier version = new PluginVersionIdentifier(fileVersion);
+				//  isCompatibleWith will return FALSE, if:
+				//   o  The major versions are not equal
+				//   o  The major versions are equal, but the remainder of the .cdtbuild version # is
+				//      greater than the MBS version #
 				if (!buildInfoVersion.isCompatibleWith(version)) {
-					throw new BuildException(ManagedMakeMessages.getResourceString(PROJECT_VERSION_ERROR)); 
+					throw new BuildException(ManagedMakeMessages.getFormattedString(PROJECT_VERSION_ERROR, project.getName())); 
 				}
 				if (buildInfoVersion.isGreaterThan(version)) {
 					// TODO Upgrade the project
@@ -1206,6 +1214,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					} catch(CoreException e){
 						throw e;
 					}
+				}
+				if (buildInfo.getManagedProject() == null ||
+					(!buildInfo.getManagedProject().isValid())) {
+					//  The load failed
+					throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName()));
 				}
 				project.setSessionProperty(buildInfoProperty, buildInfo);
 			}
@@ -1245,18 +1258,34 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					IExtension extension = extensions[i];
 					// Can we read this manifest
 					if (!isVersionCompatible(extension)) {
-						//The version of the Plug-in is greater than what the manager thinks it understands
-						throw new BuildException(ManagedMakeMessages.getResourceString(MANIFEST_VERSION_ERROR));
-					}			
-					// Get the "configuraton elements" defined in the plugin.xml file.
-					// Note that these "configuration elements" are not related to the
-					// managed build system "configurations".  
-					// From the PDE Guide:
-					//  A configuration element, with its attributes and children, directly 
-					//  reflects the content and structure of the extension section within the 
-					//  declaring plug-in's manifest (plugin.xml) file. 
-					IConfigurationElement[] elements = extension.getConfigurationElements();
-					loadConfigElements(DefaultManagedConfigElement.convertArray(elements));
+						//  The version of the Plug-in is greater than what the manager thinks it understands
+						//  Display error message
+						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+						if(window == null){
+							IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+							window = windows[0];
+						}
+
+						final Shell shell = window.getShell();
+						final String errMsg = ManagedMakeMessages.getFormattedString(MANIFEST_VERSION_ERROR, extension.getUniqueIdentifier());
+						shell.getDisplay().syncExec( new Runnable() {
+							public void run() {
+								MessageDialog.openError(shell, 
+										ManagedMakeMessages.getResourceString("ManagedBuildManager.error.manifest_load_failed_title"),	//$NON-NLS-1$
+										errMsg);
+							}
+						} );
+					} else {			
+						// Get the "configuraton elements" defined in the plugin.xml file.
+						// Note that these "configuration elements" are not related to the
+						// managed build system "configurations".  
+						// From the PDE Guide:
+						//  A configuration element, with its attributes and children, directly 
+						//  reflects the content and structure of the extension section within the 
+						//  declaring plug-in's manifest (plugin.xml) file. 
+						IConfigurationElement[] elements = extension.getConfigurationElements();
+						loadConfigElements(DefaultManagedConfigElement.convertArray(elements));
+					}
 				}
 				// Then call resolve.
 				//
@@ -1834,5 +1863,4 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static IManagedConfigElement getConfigElement(IBuildObject buildObj) {
 		return (IManagedConfigElement)getConfigElementMap().get(buildObj);
 	}
-
 }

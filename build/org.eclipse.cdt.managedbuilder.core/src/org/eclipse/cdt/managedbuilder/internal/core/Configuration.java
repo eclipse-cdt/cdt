@@ -111,7 +111,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * Create a new extension configuration based on one already defined.
 	 * 
 	 * @param projectType The <code>ProjectType</code> the configuration will be added to. 
-	 * @param parentConfig The <code>IConfiguration</code> to copy the settings from.
+	 * @param parentConfig The <code>IConfiguration</code> that is the parent configuration of this configuration
 	 * @param id A unique ID for the new configuration.
 	 */
 	public Configuration(ProjectType projectType, IConfiguration parentConfig, String id) {
@@ -144,6 +144,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * Create a new extension configuration and fill in the attributes and childen later.
 	 * 
 	 * @param projectType The <code>ProjectType</code> the configuration will be added to. 
+	 * @param parentConfig The <code>IConfiguration</code> that is the parent configuration of this configuration
 	 * @param id A unique ID for the new configuration.
 	 * @param name A name for the new configuration.
 	 */
@@ -196,8 +197,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * Create a new project, non-extension, configuration based on one already defined.
 	 * 
 	 * @param managedProject The <code>ManagedProject</code> the configuration will be added to. 
-	 * @param parentConfig The <code>IConfiguration</code> to copy the settings from.
+	 * @param cloneConfig The <code>IConfiguration</code> to copy the settings from.
 	 * @param id A unique ID for the new configuration.
+	 * @param cloneTools If <code>true</code>, the configuration's tools are cloned 
 	 */
 	public Configuration(ManagedProject managedProject, Configuration cloneConfig, String id, boolean cloneTools) {
 		setId(id);

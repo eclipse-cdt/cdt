@@ -1,3 +1,10 @@
+2004-07-14 Alain Magloire
+
+	Wrong call the to the Button widget it should have been
+	setSelection() not setEnabled()
+
+	* src/org/eclipse/cdt/debug/mi/internal/ui/GDBSolibBlock.java
+
 2004-07-02 Mikhail Khodjaiants
 	Fix for bug 68934: Debug into dll doesn't work.
 	The "solib-search-path" and "stop-on-solib-events" options are not supported by gdb on CygWin.

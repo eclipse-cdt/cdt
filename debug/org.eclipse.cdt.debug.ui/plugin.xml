@@ -1106,8 +1106,8 @@
    <extension
          point="org.eclipse.ui.contexts">
       <context
-            name="Debugging C/C++"
-            description="Debugging C/C++ Programs"
+            name="%DebuggingCContext.name"
+            description="%DebuggingCContext.description"
             parentId="org.eclipse.debug.ui.debugging"
             id="org.eclipse.cdt.debug.ui.debugging">
       </context>

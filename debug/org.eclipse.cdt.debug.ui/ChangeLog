@@ -1,7 +1,12 @@
+2004-08-10 Tanya Wolff
+	Fix for 70943 - externalized strings
+	* plugin.xml
+	* plugin.properties
+	
 2004-08-10 Mikhail Khodjaiants
 	Fix for bug 70902. TVT3.0: Customize Perspective C++ Debug has duplicated strings.
 	* plugin.xml
-
+	
 2004-08-05 Mikhail Khodjaiants
 	Cosmetic fix.
 	* CDebugUIMessages.properties

@@ -1874,7 +1874,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public ICGlobalVariable createGlobalVariable( IGlobalVariableDescriptor info ) throws DebugException {
 		ICDIVariableDescriptor vo = null;
 		try {
-			vo = getCDITarget().getGlobalVariableDescriptors(info.getPath().lastSegment(), null, info.getName());
+			vo = getCDITarget().getGlobalVariableDescriptors( info.getPath().lastSegment(), null, info.getName() );
 		}
 		catch( CDIException e ) {
 			throw new DebugException( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, (vo != null) ? vo.getName() + ": " + e.getMessage() : e.getMessage(), null ) ); //$NON-NLS-1$

@@ -69,6 +69,12 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String ATTR_PLATFORM = CDT_LAUNCH_ID + ".PLATFFORM"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute key. The value is a boolean specifiying whether
+	 * to connect a terminal to the processed stdin/stdout
+	 */
+	public static final String ATTR_USE_TERMINAL = CDT_LAUNCH_ID + ".use_terminal";
+
+	/**
 	 * Launch configuration attribute key. The value is the debugger id used
 	 * when launching a C/C++ application for debug.
 	 */
@@ -225,4 +231,5 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Status code indicating an unexpected internal error.
 	 */
 	public static final int ERR_INTERNAL_ERROR = 150;
+
 }

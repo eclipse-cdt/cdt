@@ -432,7 +432,8 @@
       <editor
             name="%MakefileEditor.name"
             icon="icons/ctool16/makefile.gif"
-            filenames="Makefile,makefile"
+            extensions="mk"
+            filenames="Makefile,makefile,GNUMakefile"
             contributorClass="org.eclipse.cdt.make.internal.ui.editor.MakefileEditorActionContributor"
             class="org.eclipse.cdt.make.internal.ui.editor.MakefileEditor"
             id="org.eclipse.cdt.make.editor">

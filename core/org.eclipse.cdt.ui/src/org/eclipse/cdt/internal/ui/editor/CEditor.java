@@ -51,7 +51,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
@@ -80,7 +79,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
@@ -88,9 +86,7 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ContentAssistAction;
-import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
-import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
@@ -657,6 +653,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 		if (nextError != null) {
 
+			
 			gotoMarker(nextError);
 
 			IWorkbenchPage page = getSite().getPage();
@@ -904,41 +901,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				c_file ? LANGUAGE_C : LANGUAGE_CPP);
 		fSourceViewerDecorationSupport =
 			new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
-		configureSourceViewerDecorationSupport();
+		
+		getSourceViewerDecorationSupport(sourceViewer);	
+		
 		return sourceViewer;
 	}
 
-	/**
-		 * Creates the annotation access for this editor.
-	 * @return the created annotation access
-	 */
-	protected IAnnotationAccess createAnnotationAccess() {
-		return new DefaultMarkerAnnotationAccess(fAnnotationPreferences);
-	}
-
-	protected void configureSourceViewerDecorationSupport() {
-		Iterator e = fAnnotationPreferences.getAnnotationPreferences().iterator();
-		while (e.hasNext())
-			fSourceViewerDecorationSupport.setAnnotationPreference((AnnotationPreference) e.next());
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(
-			DefaultMarkerAnnotationAccess.UNKNOWN,
-			TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR,
-			TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION,
-			TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER,
-			0);
-
-		fSourceViewerDecorationSupport.setCharacterPairMatcher(fBracketMatcher);
-		fSourceViewerDecorationSupport.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR);
-
-		fSourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(
-			ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE,
-			ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR);
-		fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(
-			ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN,
-			ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR,
-			ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN);
-		fSourceViewerDecorationSupport.setSymbolicFontName(getFontPropertyPreferenceKey());
-	}
 
 	/** Outliner context menu Id */
 	protected String fOutlinerContextMenuId;

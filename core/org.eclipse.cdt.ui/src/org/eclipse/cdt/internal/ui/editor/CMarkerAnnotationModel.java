@@ -7,13 +7,14 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
+
 public class CMarkerAnnotationModel extends ResourceMarkerAnnotationModel {
-	
+
 	/**
 	 * Constructor for CMarkerAnnotationModel
 	 */
@@ -25,6 +26,7 @@ public class CMarkerAnnotationModel extends ResourceMarkerAnnotationModel {
 	 * @see AbstractMarkerAnnotationModel#createMarkerAnnotation(IMarker)
 	 */
 	protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
+		String markerType = MarkerUtilities.getMarkerType(marker);
 		return new CMarkerAnnotation(marker, fDocument);
 	}
 	/**
@@ -40,37 +42,4 @@ public class CMarkerAnnotationModel extends ResourceMarkerAnnotationModel {
 		super.modifyMarkerAnnotation(marker);
 	}
 	
-	
-	/**
-	 * Adds the given annotation to this model. Associates the 
-	 * annotation with the given position. If requested, all annotation
-	 * model listeners are informed about this model change. If the annotation
-	 * is already managed by this model nothing happens.
-	 *
-	 * @param annotation the annotation to add
-	 * @param position the associate position
-	 * @param fireModelChange indicates whether to notify all model listeners
-	 */
-	protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged){ 
-		if (!fAnnotations.containsKey(annotation)) {
-			
-			// @@@ This is an unfortunate hack because we cannot override addAnnotationMarker() and if we
-			// update a marker position, there's no way to update the annotation
-			if(annotation instanceof CMarkerAnnotation) {
-				int start = ((CMarkerAnnotation)annotation).getErrorStart();
-				if(start != -1 && start != position.getOffset()) {
-					position.setOffset(start);
-					position.setLength(((CMarkerAnnotation)annotation).getErrorLength());
-				}
-			}
-			fAnnotations.put(annotation, position);
-			try {
-				addPosition(fDocument, position);
-			} catch (Exception e) {
-			}
-
-			if (fireModelChanged)
-				fireModelChanged();
-		}
-	}
 }

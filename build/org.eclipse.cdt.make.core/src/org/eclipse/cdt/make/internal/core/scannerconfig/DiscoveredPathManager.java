@@ -85,11 +85,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 	}
 
 	public void removeDiscoveredInfo(IProject project) {
-		IPath path = MakeCorePlugin.getWorkingDirectory();
-		path = path.append(project.getName() + ".sc"); //$NON-NLS-1$
-		if (path.toFile().exists()) {
-			path.toFile().delete();
-		}
+		ScannerConfigUtil.getDiscoveredScannerConfigStore(project, true);
 		DiscoveredPathInfo info = (DiscoveredPathInfo)fDiscoveredMap.remove(project);
 		fireUpdate(INFO_REMOVED, info);
 	}
@@ -104,8 +100,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 	private void loadDiscoveredScannerInfoFromState(IProject project, LinkedHashMap includes, LinkedHashMap symbols)
 			throws CoreException {
 		// Save the document
-		IPath path = MakeCorePlugin.getWorkingDirectory();
-		path = path.append(project.getName() + ".sc"); //$NON-NLS-1$
+		IPath path = ScannerConfigUtil.getDiscoveredScannerConfigStore(project, false);
 		if (path.toFile().exists()) {
 			try {
 				FileInputStream file = new FileInputStream(path.toFile());
@@ -118,15 +113,15 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 				}
 			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-						MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e)); //$NON-NLS-1$
+						MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
 			} catch (ParserConfigurationException e) {
 				MakeCorePlugin.log(e);
 				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-						MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e)); //$NON-NLS-1$
+						MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
 			} catch (SAXException e) {
 				MakeCorePlugin.log(e);
 				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-						MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e)); //$NON-NLS-1$
+						MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
 			}
 		}
 	}
@@ -218,15 +213,14 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 			transformer.transform(source, result);
 
 			// Save the document
-			IPath path = MakeCorePlugin.getWorkingDirectory();
-			path = path.append(info.getProject().getName() + ".sc"); //$NON-NLS-1$
 			try {
+				IPath path = ScannerConfigUtil.getDiscoveredScannerConfigStore(info.getProject(), false);
 				FileOutputStream file = new FileOutputStream(path.toFile());
 				file.write(stream.toByteArray());
 				file.close();
 			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-						MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e)); //$NON-NLS-1$
+						MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
 			}
 
 			// Close the streams
@@ -234,15 +228,15 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 		} catch (TransformerException e) {
 			MakeCorePlugin.log(e);
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-					MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e)); //$NON-NLS-1$
+					MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
 		} catch (IOException e) {
 			MakeCorePlugin.log(e);
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-					MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e)); //$NON-NLS-1$
+					MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
 		} catch (ParserConfigurationException e) {
 			MakeCorePlugin.log(e);
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-					MakeMessages.getString("GCCScannerConfigUtil.Error_Message"), e)); //$NON-NLS-1$
+					MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
 		}
 	}
 

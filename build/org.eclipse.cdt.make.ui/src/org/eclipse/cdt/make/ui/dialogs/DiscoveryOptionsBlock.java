@@ -33,6 +33,7 @@ import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -147,27 +148,34 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 			buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
 			if (fCreatePathContainer) {
 				createDiscoveredPathContainer(project);
+				// create a new discovered scanner config store
+				MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
 			}
 		}
 		else {
 			buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, false);
 		}
 
-		buildInfo.setAutoDiscoveryEnabled(isScannerConfigDiscoveryEnabled());
-		if (isScannerConfigDiscoveryEnabled()) {
-			buildInfo.setMakeBuilderConsoleParserEnabled(isBuilderParserEnabled());
-			if (isBuilderParserEnabled()) {
-				buildInfo.setMakeBuilderConsoleParserId((String) builderParsers.get(makeBuilderSIParserComboBox.getText()));
-			}
-			buildInfo.setESIProviderCommandEnabled(isProviderCommandEnabled());
-			if (isProviderCommandEnabled()) {
-				buildInfo.setUseDefaultESIProviderCmd(useDefaultESIProviderCmd());
-				if (!useDefaultESIProviderCmd()) {
-					storeSIProviderCommandLine(buildInfo);
+		final IScannerConfigBuilderInfo fInfo = buildInfo;
+		MakeUIPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				fInfo.setAutoDiscoveryEnabled(isScannerConfigDiscoveryEnabled());
+				if (isScannerConfigDiscoveryEnabled()) {
+					fInfo.setMakeBuilderConsoleParserEnabled(isBuilderParserEnabled());
+					if (isBuilderParserEnabled()) {
+						fInfo.setMakeBuilderConsoleParserId((String) builderParsers.get(makeBuilderSIParserComboBox.getText()));
+					}
+					fInfo.setESIProviderCommandEnabled(isProviderCommandEnabled());
+					if (isProviderCommandEnabled()) {
+						fInfo.setUseDefaultESIProviderCmd(useDefaultESIProviderCmd());
+						if (!useDefaultESIProviderCmd()) {
+							storeSIProviderCommandLine(fInfo);
+						}
+						fInfo.setESIProviderConsoleParserId((String) providerParsers.get(esiProviderParserComboBox.getText()));
+					}
 				}
-				buildInfo.setESIProviderConsoleParserId((String) providerParsers.get(esiProviderParserComboBox.getText()));
 			}
-		}
+		} /* IWorkspaceRunnable */, monitor);
 	}
 
 	/**
@@ -208,7 +216,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		makeBuilderSIParserComboBox.setText(getParserName(builderParsers, info.getMakeBuilderConsoleParserId()));
 		enableProviderCommandButton.setSelection(info.isESIProviderCommandEnabled());
 		defESIProviderCommandButton.setSelection(info.isDefaultESIProviderCmd());
-		setESIProviderCommand(info);
+		setESIProviderCommandFrom(info);
 		esiProviderParserComboBox.setText(getParserName(providerParsers, info.getESIProviderConsoleParserId()));
 		
 		enableAllControls();
@@ -302,7 +310,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	/**
 	 * Handles scanner configuration discovery selection change
 	 */
-	protected void handleScannerConfigEnable() {
+	private void handleScannerConfigEnable() {
 		boolean enable = scEnabledButton.getSelection();
 		if (enable && needsSCNature) {
 			// first install the SC nature
@@ -436,7 +444,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		esiProviderCommand = ControlFactory.createTextField(parent, SWT.SINGLE | SWT.BORDER);
 		((GridData) (esiProviderCommand.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (esiProviderCommand.getLayoutData())).grabExcessHorizontalSpace = true;
-		setESIProviderCommand(fBuildInfo);
+		setESIProviderCommandFrom(fBuildInfo);
 		if (fBuildInfo.isDefaultESIProviderCmd()) {
 			esiProviderCommand.setEnabled(false);
 		}
@@ -451,7 +459,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	/**
 	 * 
 	 */
-	private void setESIProviderCommand(IScannerConfigBuilderInfo buildInfo) {
+	private void setESIProviderCommandFrom(IScannerConfigBuilderInfo buildInfo) {
 		IPath sCommand = buildInfo.getESIProviderCommand();
 		if (sCommand != null) {
 			StringBuffer cmd = new StringBuffer(sCommand.toOSString());

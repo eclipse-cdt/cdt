@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,9 +18,14 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
+import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * Utility class that handles some Scanner Config specifig collection conversions
@@ -27,6 +33,9 @@ import org.eclipse.core.runtime.IPath;
  * @author vhirsl
  */
 public final class ScannerConfigUtil {
+	private static Random sRandom = new Random();
+	private static final QualifiedName discoveredScannerConfigFileNameProperty = new 
+			QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "discoveredScannerConfigFileName"); //$NON-NLS-1$
 	/**
 	 * Adds all new discovered symbols/values to the existing ones.
 	 *  
@@ -285,5 +294,30 @@ public final class ScannerConfigUtil {
 			rv[i] = paths[i].toString(); 
 		}
 		return rv;
+	}
+	
+	public static IPath getDiscoveredScannerConfigStore(IProject project, boolean delete) {
+		if (project != null) {
+			try {
+				String fileName = (String) project.getPersistentProperty(discoveredScannerConfigFileNameProperty);
+				if (fileName == null) {
+					fileName = String.valueOf(sRandom.nextLong()) + ".sc"; //$NON-NLS-1$
+					project.setPersistentProperty(discoveredScannerConfigFileNameProperty, fileName);
+				}
+
+				IPath path = MakeCorePlugin.getWorkingDirectory();
+				path = path.append(fileName);
+				if (delete) {
+					File file = path.toFile();
+					if (file.exists()) {
+						file.delete();
+					}
+				}
+				return path;
+			} catch (CoreException e) {
+				MakeCorePlugin.log(e.getStatus());
+			}
+		}
+		return null;
 	}
 }

@@ -68,7 +68,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 		if (targetSpecificOptions == null) {
 			targetSpecificOptions = new ArrayList();
 		}
-		if (!initialize(currentProject, buildInfo, targetSpecificOptions)) {
+		if (!initialize(currentProject, buildInfo)) {
 			return false;
 		}
 		if (monitor == null) {
@@ -90,7 +90,11 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 			launcher.showCommand(true);
 
 			// add file and TSO
-			String[] compileArguments = prepareArguments(targetSpecificOptions);
+			String[] compileArguments = fCompileArguments;
+			if (buildInfo.isDefaultESIProviderCmd()) {
+				// consider TSO only if default command
+				compileArguments = prepareArguments(targetSpecificOptions);
+			}
 
 			String ca = coligate(compileArguments);
 
@@ -140,10 +144,9 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 	/**
 	 * @param currentProject
 	 * @param buildInfo
-	 * @param targetSpecificOptions
 	 * @return boolean
 	 */
-	private boolean initialize(IProject currentProject, IScannerConfigBuilderInfo buildInfo, List targetSpecificOptions) {
+	private boolean initialize(IProject currentProject, IScannerConfigBuilderInfo buildInfo) {
 		boolean rc = false;
 		
 		fWorkingDirectory = currentProject.getLocation();

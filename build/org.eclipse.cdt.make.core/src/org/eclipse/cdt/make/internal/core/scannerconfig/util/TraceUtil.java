@@ -27,8 +27,10 @@ public class TraceUtil {
 	}
 	
 	public static void outputTrace(String prefix, String msg, String postfix) {
-		System.out.println();
-		System.out.println(prefix + ' ' + msg + ' ' + postfix);
+		if (isTracing()) {
+			System.out.println();
+			System.out.println(prefix + ' ' + msg + ' ' + postfix);
+		}
 	}
 	
 	/**

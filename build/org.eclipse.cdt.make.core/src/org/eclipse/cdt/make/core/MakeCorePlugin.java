@@ -127,7 +127,7 @@ public class MakeCorePlugin extends Plugin {
 		// default plugin preferences for scanner configuration discovery
 		IScannerConfigBuilderInfo scInfo = createScannerConfigBuildInfo(getPluginPreferences(), ScannerConfigBuilder.BUILDER_ID, true);
 		try {
-			scInfo.setAutoDiscoveryEnabled(false);
+			scInfo.setAutoDiscoveryEnabled(true);
 			scInfo.setMakeBuilderConsoleParserEnabled(true);
 			scInfo.setESIProviderCommandEnabled(true);
 			scInfo.setUseDefaultESIProviderCmd(true);

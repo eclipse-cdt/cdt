@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
@@ -271,7 +273,7 @@ public class ScannerConfigInfoFactory {
 		BuildProperty(IProject project, String builderID) throws CoreException {
 			this.project = project;
 			this.builderID = builderID;
-			ICommand builder = ScannerConfigNature.getBuildSpec(project, builderID);
+			ICommand builder = ScannerConfigNature.getBuildSpec(project.getDescription(), builderID);
 			if (builder == null) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						MakeCorePlugin.getUniqueIdentifier(), -1,
@@ -286,10 +288,14 @@ public class ScannerConfigInfoFactory {
 			if (curValue != null && curValue.equals(value)) {
 				return;
 			}
-			ICommand builder = ScannerConfigNature.getBuildSpec(project, builderID);
+			IProjectDescription description = project.getDescription();
+			ICommand builder = ScannerConfigNature.getBuildSpec(description, builderID);
 			args.put(name, value);
-			builder.setArguments(args);
-			project.setDescription(project.getDescription(), null);
+			ICommand newBuilder = description.newCommand();
+			newBuilder.setBuilderName(builder.getBuilderName());
+			newBuilder.setArguments(args);
+			description = MakeProjectNature.setBuildSpec(description, newBuilder);
+			project.setDescription(description, null);
 		}
 
 		protected String getString(String name) {

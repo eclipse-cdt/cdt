@@ -112,13 +112,12 @@ public class ScannerConfigNature implements IProjectNature {
 	/**
 	 * Returns build command as stored in .project file
 	 * 
-	 * @param project
+	 * @param description
 	 * @param builderID
 	 * @return ICommand
 	 * @throws CoreException
 	 */
-	public static ICommand getBuildSpec(IProject project, String builderID) throws CoreException {
-		IProjectDescription description = project.getDescription();
+	public static ICommand getBuildSpec(IProjectDescription description, String builderID) throws CoreException {
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
 			if (commands[i].getBuilderName().equals(builderID)) {
@@ -128,4 +127,37 @@ public class ScannerConfigNature implements IProjectNature {
 		return null;
 	}
 
+	/**
+	 * Stores a build command in .project file
+	 * 
+	 * @param description
+	 * @param newCommand
+	 * @return IProjecDescription
+	 * @throws CoreException
+	 */
+	public static IProjectDescription setBuildSpec(IProjectDescription description, ICommand newCommand) throws CoreException {
+		ICommand[] oldCommands = description.getBuildSpec();
+		ICommand oldCommand = getBuildSpec(description, newCommand.getBuilderName());
+		ICommand[] newCommands;
+
+		if (oldCommand == null) {
+			// Add the build spec at the end
+			newCommands = new ICommand[oldCommands.length + 1];
+			System.arraycopy(oldCommands, 0, newCommands, 0, oldCommands.length);
+			newCommands[oldCommands.length] = newCommand;
+		} 
+		else {
+			for (int i = 0; i < oldCommands.length; i++) {
+				if (oldCommands[i] == oldCommand) {
+					oldCommands[i] = newCommand;
+					break;
+				}
+			}
+			newCommands = oldCommands;
+		}
+
+		// Commit the spec change into the project
+		description.setBuildSpec(newCommands);
+		return description;
+	}
 }

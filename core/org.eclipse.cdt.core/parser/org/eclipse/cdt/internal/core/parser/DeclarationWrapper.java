@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
+import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 /**
  * @author jcamelon
  *
@@ -403,9 +404,11 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         declarator.getArrayModifiers(),
                         convertedParms,
                         (ASTPointerOperator)i.next());
-        	String name = ( d.getPointerOperatorNameDuple() != null ) ? d.getPointerOperatorNameDuple().toString() + d.getName() : d.getName(); 
+            
+        	ITokenDuple name = ( d.getPointerOperatorNameDuple() != null ) ? new TokenDuple( d.getPointerOperatorNameDuple(), d.getNameDuple() ) : d.getNameDuple(); 
+        	
         	if( typedef )
-				return astFactory.createTypedef(scope, name, abs,
+				return astFactory.createTypedef(scope, name.toString(), abs,
 						getStartingOffset(), getStartingLine(), d
 								.getNameStartOffset(), d.getNameEndOffset(), d
 								.getNameLine());
@@ -499,7 +502,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
        return astFactory.createField(
                 scope,
-            	nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
+            	nested ? declarator.getOwnedDeclarator().getNameDuple() : declarator.getNameDuple(),
                 auto,
                 declarator.getInitializerClause(),
                 declarator.getBitFieldExpression(),
@@ -551,7 +554,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return astFactory.createVariable(
             scope,
-        	nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
+        	nested ? declarator.getOwnedDeclarator().getNameDuple() : declarator.getNameDuple(),
             isAuto(),
             declarator.getInitializerClause(),
             declarator.getBitFieldExpression(),

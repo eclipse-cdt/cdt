@@ -625,7 +625,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	 */
 	public IASTVariable createVariable(
 		IASTScope scope,
-		String name,
+		ITokenDuple name,
 		boolean isAuto,
 		IASTInitializerClause initializerClause,
 		IASTExpression bitfieldExpression,
@@ -659,7 +659,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	 */
 	public IASTField createField(
 		IASTScope scope,
-		String name,
+		ITokenDuple name,
 		boolean isAuto,
 		IASTInitializerClause initializerClause,
 		IASTExpression bitfieldExpression,

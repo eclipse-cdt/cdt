@@ -1645,7 +1645,7 @@ public class QuickParseASTTests extends BaseASTTest
 	{
 		IASTVariable p2m  = (IASTVariable)parse("void (A::*name)(void);").getDeclarations().next();
 		assertSimpleType( p2m, IASTSimpleTypeSpecifier.Type.VOID );
-		assertEquals( p2m.getName(), "A::name");
+		assertEquals( p2m.getName(), "A::* name");
 		assertEquals( p2m.getAbstractDeclaration().getPointerToFunctionOperator(), ASTPointerOperator.POINTER);
 		Iterator parameters = p2m.getAbstractDeclaration().getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 

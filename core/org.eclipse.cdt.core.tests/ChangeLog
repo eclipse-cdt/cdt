@@ -1,3 +1,7 @@
+2003-04-25 Andrew Niefer
+	-added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testClassTemplateStaticMemberDefinition()
+	-modified parser/org/eclipse/cdt/core/parser/tests/QuickParseASTTests.testPointersToMemberFunctions
+
 2003-03-23 Andrew Niefer
 	bug 55673 & fix recursive loop in template instantiation
 	-parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testInstantiatingDeferredInstances()

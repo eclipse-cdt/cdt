@@ -1834,4 +1834,20 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertFalse( i.hasNext() );
 	}
 
+	public void testClassTemplateStaticMemberDefinition() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write( "template< class T > class A{                      \n" );
+		writer.write( "   typedef T * PT;                                \n" );
+		writer.write( "   static T member;                               \n" );
+		writer.write( "};                                                \n" );
+		writer.write( "template< class T> A<T>::PT A<T>::member = null;  \n" );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration template2 = (IASTTemplateDeclaration) i.next();
+		
+		IASTField member = (IASTField) getDeclarations( template2 ).next();
+		assertEquals( member.getName(), "member" );
+	}
 }

@@ -10,7 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.token;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -45,8 +47,31 @@ public class TokenDuple implements ITokenDuple {
 		}
 	}
 	
+	public TokenDuple( ITokenDuple firstDuple, ITokenDuple secondDuple ){
+		firstToken = firstDuple.getFirstToken();
+		lastToken = secondDuple.getLastToken();
+		
+		List [] a1 = firstDuple.getTemplateIdArgLists();
+		List [] a2 = secondDuple.getTemplateIdArgLists();
+		
+		if( a1 == null && a2 == null ){
+			argLists = null;
+		} else {
+			int l1 = ( a1 != null ) ? a1.length : firstDuple.getSegmentCount();
+			int l2 = ( a2 != null ) ? a2.length : firstDuple.getSegmentCount();
+
+			argLists = new List[ l1 + l2 ];
+			if( a1 != null )
+				System.arraycopy( a1, 0, argLists, 0, l1 );
+			if( a2 != null )
+				System.arraycopy( a2, 0, argLists, l1, l2 );
+		}
+	}
+	
 	protected final IToken firstToken, lastToken;
 	protected final List [] argLists;
+	private int numSegments = -1;
+	
 	/**
 	 * @return
 	 */
@@ -66,6 +91,153 @@ public class TokenDuple implements ITokenDuple {
 		return new TokenIterator(); 
 	}
 	
+	public ITokenDuple getLastSegment() {
+		Iterator iter = iterator();
+		if( !iter.hasNext() )
+			return null;
+		
+		IToken first = null, last = null, token = null;
+		while( iter.hasNext() ){
+			token = (IToken) iter.next();
+			if( first == null )
+				first = token;
+			if( token.getType() == IToken.tLT )
+				token = consumeTemplateIdArguments( token, iter );
+			else if( token.getType() == IToken.tCOLONCOLON ){
+				first = null;
+				continue;
+			}
+			last = token;
+		}
+		
+		List [] args = getTemplateIdArgLists();
+		if( args != null && args[ args.length - 1 ] != null ){
+			List newArgs = new ArrayList( 1 );
+			newArgs.add( args[ args.length - 1 ] );
+			return new TokenDuple( first, last, newArgs );
+		} else {
+			return new TokenDuple( first, last );
+		}
+	}
+	
+	public ITokenDuple getLeadingSegments(){
+		Iterator iter = iterator();
+		if( !iter.hasNext() )
+			return null;
+		
+		int num = getSegmentCount();
+		
+		if( num <= 1 )
+			return null;
+		
+		IToken first = null, last = null;
+		IToken previous = null, token = null;
+
+		while( iter.hasNext() ){
+			token = (IToken) iter.next();
+			if( first == null )
+				first = token;
+			if( token.getType() == IToken.tLT )
+				token = consumeTemplateIdArguments( token, iter );
+			else if( token.getType() == IToken.tCOLONCOLON ){
+				last = previous;
+				continue;
+			}
+			
+			previous = token;
+		}
+		
+		if( last == null ){
+			//"::A"
+			return null;
+		}
+		
+		if( getTemplateIdArgLists() != null ){
+			List[] args = getTemplateIdArgLists();
+			List newArgs = new ArrayList( args.length - 1 );
+			boolean foundArgs = false;
+			for( int i = 0; i < args.length - 1; i++ ){
+				newArgs.add( args[i] );
+				if( args[i] != null ) 
+					foundArgs = true;
+			}
+			return new TokenDuple( first, last, ( foundArgs ? newArgs : null ) );
+		} else {
+			return new TokenDuple( first, last );
+		}
+	}
+	
+	public int getSegmentCount()
+	{
+		if( numSegments > -1 )
+			return numSegments;
+		
+		numSegments = 1;
+		
+		if( firstToken == lastToken )
+			return numSegments;
+		
+		Iterator iter = iterator();
+		
+		IToken token = null;
+		while( iter.hasNext() ){
+			token = (IToken) iter.next();
+			if( token.getType() == IToken.tLT )
+				token = consumeTemplateIdArguments( token, iter );
+			if( token.getType() == IToken.tCOLONCOLON ){
+				numSegments++;
+				continue;
+			}
+		}
+		return numSegments;
+	}
+	
+	private static final Integer LT = new Integer( IToken.tLT );
+	private static final Integer LBRACKET = new Integer( IToken.tLBRACKET );
+	private static final Integer LPAREN = new Integer( IToken.tLPAREN );
+
+	public IToken consumeTemplateIdArguments( IToken name, Iterator iter ){
+	    IToken token = name;
+	    
+	    if( token.getType() == IToken.tLT )
+	    {
+	    	if( ! iter.hasNext() )
+	    		return token;
+	    	
+	    	token = (IToken) iter.next();
+	    	LinkedList scopes = new LinkedList();
+	        scopes.add( LT );
+	        
+	        while (!scopes.isEmpty() && iter.hasNext() )
+	        {
+	        	Integer top;
+	        	
+	        	token = (IToken) iter.next();
+	        	switch( token.getType() ){
+	        		case IToken.tGT:
+	        			if( scopes.getLast() == LT ) {
+							scopes.removeLast();
+						}
+	                    break;
+	        		case IToken.tRBRACKET :
+						do {
+							top = (Integer)scopes.removeLast();
+						} while (!scopes.isEmpty() && top == LT);
+						break;
+	        		case IToken.tRPAREN :
+						do {
+							top = (Integer)scopes.removeLast();
+						} while (!scopes.isEmpty() && top == LT);
+						break;
+	                case IToken.tLT:		scopes.add( LT );		break;
+					case IToken.tLBRACKET:	scopes.add( LBRACKET );	break;
+					case IToken.tLPAREN:	scopes.add( LPAREN );   break;
+	        	}
+	        }
+	    }
+	   
+	    return token;
+	}
 	private class TokenIterator implements Iterator
 	{
 		private IToken iter = TokenDuple.this.firstToken;

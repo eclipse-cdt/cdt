@@ -309,7 +309,7 @@ public final class TemplateEngine {
 	 * @param aInfo
 	 * @return
 	 */
-	static private TypeInfo getArgumentTypeForDeduction( TypeInfo aInfo, boolean pIsAReferenceType ){
+	static private TypeInfo getArgumentTypeForDeduction( TypeInfo aInfo, boolean pIsAReferenceType ) throws ParserSymbolTableException{
 		
 		TypeInfo a = ParserSymbolTable.getFlatTypeInfo( aInfo );
 		
@@ -317,8 +317,10 @@ public final class TemplateEngine {
 			List aPtrs = a.getPtrOperators();
 			ISymbol aSymbol = a.getTypeSymbol();
 			
-			if( a.getType() == TypeInfo.t_type && aSymbol.isType( TypeInfo.t_function ) ){
-				if( aPtrs.size() == 0 ){
+			if( a.getType() == TypeInfo.t_type ){
+				if( aSymbol == null ){
+					throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );
+				} else if( aSymbol.isType( TypeInfo.t_function ) &&  aPtrs.size() == 0 ){
 					aPtrs.add( new PtrOp( PtrOp.t_pointer ) );	
 				}
 			}
@@ -420,7 +422,7 @@ public final class TemplateEngine {
 		return aSymbol;
 	}
 	
-	static private boolean deduceTemplateArgument( Map map, ISymbol pSymbol, TypeInfo a ){//, Map argumentMap ){
+	static private boolean deduceTemplateArgument( Map map, ISymbol pSymbol, TypeInfo a ) throws ParserSymbolTableException{//, Map argumentMap ){
 		ISymbol symbol;
 		
 		boolean pIsAReferenceType = false;
@@ -612,8 +614,12 @@ public final class TemplateEngine {
 			}
 			
 			TypeInfo arg = transformTypeInfo( aIter.next(), null );
-
-			if( !deduceTemplateArgument( map, sym, arg ) ){
+			
+			try {
+				if( !deduceTemplateArgument( map, sym, arg ) ){
+					return false;
+				}
+			} catch (ParserSymbolTableException e) {
 				return false;
 			}
 		}
@@ -677,7 +683,11 @@ public final class TemplateEngine {
 		Iterator aIter = arguments.iterator();
 		
 		while( pIter.hasNext() ){
-			if( !deduceTemplateArgument( map, (ISymbol) pIter.next(), (TypeInfo) aIter.next() ) ){
+			try {
+				if( !deduceTemplateArgument( map, (ISymbol) pIter.next(), (TypeInfo) aIter.next() ) ){
+					return null;
+				}
+			} catch (ParserSymbolTableException e) {
 				return null;
 			}
 		}

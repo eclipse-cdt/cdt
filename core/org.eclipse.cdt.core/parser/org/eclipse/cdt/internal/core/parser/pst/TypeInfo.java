@@ -487,7 +487,10 @@ public class TypeInfo {
 				IParameterizedSymbol f2 = (IParameterizedSymbol) type._typeDeclaration;
 				
 				result &= f1.hasSameParameters( f2 );
-				result &= f1.getReturnType().getTypeInfo().equals( f2.getReturnType().getTypeInfo() );
+				if( f1.getReturnType() != null && f2.getReturnType() != null )
+					result &= f1.getReturnType().getTypeInfo().equals( f2.getReturnType().getTypeInfo() );
+				else
+					result &= (f1.getReturnType() == f2.getReturnType());
 			} else if( _typeDeclaration.isType( TypeInfo.t_templateParameter ) &&
 					   type._typeDeclaration.isType( TypeInfo.t_templateParameter ) ){
 				//template parameters

@@ -267,14 +267,16 @@ public class ExpressionParser implements IExpressionParser {
 	    IToken last = null;
 	    IToken mark = mark();
 	    
-        if (LT(1) == IToken.tCOLONCOLON)
+	    List argumentList = new LinkedList();
+	    boolean hasTemplateId = false;
+        
+        if (LT(1) == IToken.tCOLONCOLON){
+        	argumentList.add( null );
             last = consume( IToken.tCOLONCOLON );
+        }
 
         if (LT(1) == IToken.tCOMPL)
             consume();
-        
-        List argumentList = new LinkedList();
-        boolean hasTemplateId = false;
         
         switch (LT(1))
         {

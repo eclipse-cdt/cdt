@@ -96,7 +96,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	}
 	
 	public void addSymbol(ISymbol symbol) throws ParserSymbolTableException {
-		lastSymbol = (IContainerSymbol) (( symbols.size() > 0 ) ? symbols.get( symbols.size() - 1) : null);
+		lastSymbol = getLastSymbol();
 		
 		Iterator iter = symbols.iterator();
 		ListIterator tIter = templates.listIterator();
@@ -281,14 +281,27 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 //		}
 	}
 	
+	private IContainerSymbol getLastSymbol() {
+		if( lastSymbol != null )
+			return lastSymbol;
+		else if( !symbols.isEmpty() ) {
+			ISymbol symbol = (ISymbol) symbols.get( symbols.size() - 1 );
+			if( symbol instanceof IDeferredTemplateInstance )
+				return ((IDeferredTemplateInstance)symbol).getTemplate().getTemplatedSymbol();
+			else if( symbol instanceof IContainerSymbol )
+				return (IContainerSymbol) symbol;
+		}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ITemplateFactory#lookupMemberForDefinition(java.lang.String)
 	 */
 	public ISymbol lookupMemberForDefinition(String name) throws ParserSymbolTableException {
 		ISymbol look = null;
-		if( lastSymbol != null || !symbols.isEmpty() ){
-			IContainerSymbol symbol = (lastSymbol != null ) ? lastSymbol : (IContainerSymbol) symbols.get( symbols.size() - 1 );
-			look = ((IContainerSymbol)symbol).lookupMemberForDefinition( name );
+		IContainerSymbol last = getLastSymbol();
+		if( last != null ){
+			look = last.lookupMemberForDefinition( name );
 		} else {
 			look = getContainingSymbol().lookupMemberForDefinition( name );
 		}
@@ -401,9 +414,9 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupMethodForDefinition(java.lang.String, java.util.List)
 	 */
 	public IParameterizedSymbol lookupMethodForDefinition(String name, List parameters) throws ParserSymbolTableException {
-		if( lastSymbol != null || !symbols.isEmpty() ){
-			IContainerSymbol symbol = (lastSymbol != null ) ? lastSymbol : (IContainerSymbol) symbols.get( symbols.size() - 1 );
-			IParameterizedSymbol found = ((IContainerSymbol)symbol).lookupMethodForDefinition( name, parameters );
+		IContainerSymbol last = getLastSymbol();
+		if( last != null ){
+			IParameterizedSymbol found = last.lookupMethodForDefinition( name, parameters );
 			if( found != null ){
 				return found;
 			}
@@ -458,9 +471,9 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 */
 	public ISymbol lookupTemplateId(String name, List arguments) throws ParserSymbolTableException {
 		ISymbol look = null;
-		if( lastSymbol != null || !symbols.isEmpty() ){
-			IContainerSymbol symbol = (lastSymbol != null ) ? lastSymbol : (IContainerSymbol) symbols.get( symbols.size() - 1 );
-			look = ((IContainerSymbol)symbol).lookupTemplateId( name, arguments );
+		IContainerSymbol last = getLastSymbol();
+		if( last != null ){
+			look = last.lookupTemplateId( name, arguments );
 		} else {
 			look = getContainingSymbol().lookupTemplateId( name, arguments );
 		}
@@ -469,9 +482,9 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	
 	public IContainerSymbol lookupTemplateIdForDefinition(String name, List arguments) throws ParserSymbolTableException {
 		ISymbol look = null;
-		if( lastSymbol != null || !symbols.isEmpty() ){
-			IContainerSymbol symbol = (lastSymbol != null ) ? lastSymbol : (IContainerSymbol) symbols.get( symbols.size() - 1 );
-			look = ((IContainerSymbol)symbol).lookupMemberForDefinition( name );
+		IContainerSymbol last = getLastSymbol();
+		if( last != null ){
+			look = last.lookupMemberForDefinition( name );
 		} else {
 			look = getContainingSymbol().lookupMemberForDefinition( name );
 		}
@@ -772,15 +785,17 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#lookupConstructor(java.util.List)
 	 */
 	public IParameterizedSymbol lookupConstructor(List parameters) throws ParserSymbolTableException {
-		if( lastSymbol != null || !symbols.isEmpty() ){
-			IContainerSymbol symbol = (lastSymbol != null ) ? lastSymbol : (IContainerSymbol) symbols.get( symbols.size() - 1 );
-			if( symbol instanceof IDerivableContainerSymbol ){
-				IParameterizedSymbol found = ((IDerivableContainerSymbol)symbol).lookupConstructor( parameters );
-				if( found != null )
-					return found;
-			}
+		IContainerSymbol last = getLastSymbol();
+		if( last != null && last instanceof IDerivableContainerSymbol ){
+			IDerivableContainerSymbol derivable = (IDerivableContainerSymbol) last;
+			IParameterizedSymbol found = derivable.lookupConstructor( parameters );
+			if( found != null )
+				return found;
 		}
-		return ((IDerivableContainerSymbol) getContainingSymbol()).lookupConstructor( parameters );
+		if( getContainingSymbol() instanceof IDerivableContainerSymbol )
+			return ((IDerivableContainerSymbol) getContainingSymbol()).lookupConstructor( parameters );
+		
+		return null;
 	}
 
 	/* (non-Javadoc)

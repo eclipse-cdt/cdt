@@ -48,7 +48,12 @@ public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDec
     {
         super( template );
         
-        IContainerSymbol container = ((ASTScope)scope).getContainerSymbol();
+        IContainerSymbol container = null;
+        if( scope instanceof ASTTemplateDeclaration )
+        	container = ((ASTTemplateDeclaration)scope).getContainerSymbol();
+        else
+        	container = ((ASTScope)scope).getContainerSymbol();
+        
         if( container instanceof ITemplateFactory ){
         	factory = (ITemplateFactory) container;
         } else {

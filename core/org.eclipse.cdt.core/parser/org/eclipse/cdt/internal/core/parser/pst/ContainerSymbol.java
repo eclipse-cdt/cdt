@@ -201,7 +201,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError );
 			}
 		
-			boolean validOverride = ((origList == null) ? ParserSymbolTable.isValidOverload( origDecl, obj ) : ParserSymbolTable.isValidOverload( origList, obj ) );
+			boolean validOverride =  ( !unnamed ? ( (origList == null) ? ParserSymbolTable.isValidOverload( origDecl, obj ) 
+																	  : ParserSymbolTable.isValidOverload( origList, obj ) )
+											    : true );
+			
 			if( unnamed || validOverride )
 			{	
 				if( origList == null ){

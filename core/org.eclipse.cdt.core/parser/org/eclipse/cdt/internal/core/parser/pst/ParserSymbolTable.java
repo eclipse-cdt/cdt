@@ -770,7 +770,7 @@ public class ParserSymbolTable {
 		
 		if( origType == TypeInfo.t_template ){
 			ITemplateSymbol template = (ITemplateSymbol) origSymbol;
-			origSymbol = (ISymbol) template.getContainedSymbols().get( template.getName() );
+			origSymbol = (ISymbol) template.getTemplatedSymbol();
 			if( origSymbol == null )
 				return true;
 			else 
@@ -779,7 +779,7 @@ public class ParserSymbolTable {
 		
 		if( newType == TypeInfo.t_template ){
 			ITemplateSymbol template = (ITemplateSymbol) newSymbol;
-			newSymbol = (ISymbol) template.getContainedSymbols().get( template.getName() );
+			newSymbol = (ISymbol) template.getTemplatedSymbol();
 			if( newSymbol == null )
 				return true;
 			else 

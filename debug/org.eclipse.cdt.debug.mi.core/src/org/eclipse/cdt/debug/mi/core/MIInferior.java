@@ -127,8 +127,9 @@ public class MIInferior extends Process {
 					MIGDBShowExitCodeInfo info = code.getMIGDBShowExitCodeInfo();
 					return info.getCode();
 				} catch (MIException e) {
-					return 0;
+					// no rethrown.
 				}
+				return 0;
 			}
 		}
 		throw new IllegalThreadStateException();

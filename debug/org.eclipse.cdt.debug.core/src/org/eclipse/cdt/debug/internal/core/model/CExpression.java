@@ -5,11 +5,11 @@
  */
 package org.eclipse.cdt.debug.internal.core.model;
 
-import org.eclipse.cdt.debug.core.ICValue;
-import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
@@ -20,7 +20,7 @@ import org.eclipse.debug.core.model.IValue;
  * 
  * @since Sep 17, 2002
  */
-public class CExpression extends CVariable 
+public class CExpression extends CModificationVariable 
 						 implements IExpression
 {
 	/**
@@ -70,5 +70,27 @@ public class CExpression extends CVariable
 	protected ICDIExpression getCDIExpression()
 	{
 		return (ICDIExpression)getCDIVariable();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
+	 */
+	public void handleDebugEvent( ICDIEvent event )
+	{
+		if ( event instanceof ICDIResumedEvent )
+		{
+			if ( event.getSource() instanceof ICDITarget && getCDITarget().equals( event.getSource() ) )
+			{
+				try
+				{
+					setChanged( false );
+				}
+				catch( DebugException e )
+				{
+					CDebugCorePlugin.log( e );
+				}
+			}
+		}
+		super.handleDebugEvent(event);
 	}
 }

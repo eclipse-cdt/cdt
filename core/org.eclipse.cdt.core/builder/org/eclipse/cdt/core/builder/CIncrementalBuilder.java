@@ -73,6 +73,6 @@ public class CIncrementalBuilder extends IncrementalProjectBuilder {
 
 	//FIXME: Not implemented
 	private ICBuilder[] getCBuilder () throws CoreException {
-		return CCorePlugin.getDefault().getBuilders(getProject());
+		return new ICBuilder[0];
 	}
 }

@@ -1,8 +1,16 @@
+2002-10-30 Alain Magloire
+
+	* src/.../CProjectNature.java (removeNature): Utility
+	function to remove a nature from a project.
+	(removeCNature): Utility method to remove the C Nature.
+	* src/.../CCProjectNature.java (removeCCNature): Utility
+	method to remove the CC nature.
+
 2002-10-25 Alain Magloire
 
-	* index/.../interna/core/index/CTagsCmd.java: Indentation.
-	* index/.../interna/core/index/CTagsRunner.java: Implements Runnable.
-	* index/.../interna/core/index/IndexManager.java (init):
+	* index/.../internal/core/index/CTagsCmd.java: Indentation.
+	* index/.../internal/core/index/CTagsRunner.java: Implements Runnable.
+	* index/.../internal/core/index/IndexManager.java (init):
 	Set the indexer thread, thread.setDaemon(true).
 
 2002-10-28 David Inglis

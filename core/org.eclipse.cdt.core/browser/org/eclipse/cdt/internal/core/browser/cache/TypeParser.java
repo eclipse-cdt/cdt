@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserTimeOut;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -122,10 +123,14 @@ public class TypeParser implements ISourceElementRequestor {
 	private Set fProcessedTypes = new HashSet();
 	private boolean fFoundType;
 	IParser fParser = null;
-
+	ParserTimeOut fTimeoutThread = null;
+	
 	public TypeParser(ITypeCache typeCache, IWorkingCopyProvider provider) {
 		fTypeCache = typeCache;
 		fWorkingCopyProvider = provider;
+		
+		fTimeoutThread = new ParserTimeOut("TypeParser TimeOut Thread");  //$NON-NLS-1$
+		fTimeoutThread.setThreadPriority(Thread.MAX_PRIORITY);
 	}
 
 	public void parseTypes(TypeSearchScope scope, IProgressMonitor monitor) throws InterruptedException {
@@ -503,6 +508,23 @@ public class TypeParser implements ISourceElementRequestor {
 			IScanner scanner = ParserFactory.createScanner(reader, scanInfo,
 					ParserMode.STRUCTURAL_PARSE, language, this, ParserUtil.getScannerLogService(), null);
 			fParser = ParserFactory.createParser(scanner, this, ParserMode.STRUCTURAL_PARSE, language, ParserUtil.getParserLogService());
+			
+			// start timer
+			int timeout = getParserTimeout();
+			if (timeout > 0) {
+				fTimeoutThread.setTimeout(timeout);
+				fTimeoutThread.setParser(fParser);
+				while (!fTimeoutThread.isReadyToRun()){
+					try {
+						Thread.sleep(20);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				fTimeoutThread.startTimer();
+			}
+			
 			fParser.parse();
 		} catch (ParserFactoryError e) {
 			CCorePlugin.log(e);
@@ -514,6 +536,9 @@ public class TypeParser implements ISourceElementRequestor {
 		} catch (Exception e) {
 			CCorePlugin.log(e);
 		} finally {
+			// stop timer
+			fTimeoutThread.stopTimer();
+			fTimeoutThread.setParser(null);
 			fProgressMonitor = null;
 			fParser = null;
 		}
@@ -901,4 +926,11 @@ public class TypeParser implements ISourceElementRequestor {
 	public CodeReader createReader(String finalPath, Iterator workingCopies) {
 		return ParserUtil.createReader(finalPath, workingCopies);
 	}
+	
+	public int getParserTimeout() {
+		// here we just reuse the indexer timeout
+		String timeOut = CCorePlugin.getDefault().getPluginPreferences().getString("CDT_INDEXER_TIMEOUT");
+		return Integer.valueOf(timeOut).intValue();
+	}
+	
 }

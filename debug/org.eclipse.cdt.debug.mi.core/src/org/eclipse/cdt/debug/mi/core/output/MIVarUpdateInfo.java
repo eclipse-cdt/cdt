@@ -58,7 +58,6 @@ public class MIVarUpdateInfo extends MIInfo {
 			}
 			if (var.equals("name")) {
 				change = new MIVarChange(str);
-System.out.println("Changelist " + str);
 				aList.add(change);
 			} else if (var.equals("in_scope")) {
 				if (change != null) {

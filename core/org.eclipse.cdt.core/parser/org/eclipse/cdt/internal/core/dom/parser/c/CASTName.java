@@ -45,6 +45,11 @@ public class CASTName extends CASTNode implements IASTName {
         return binding;
     }
     
+	public IBinding[] resolvePrefix() {
+		// TODO hook this up to the CVisitor
+		return null;
+	}
+	
     protected boolean hasBinding(){
         return ( binding != null );
     }

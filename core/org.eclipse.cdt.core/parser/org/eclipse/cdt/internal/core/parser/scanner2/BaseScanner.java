@@ -55,7 +55,7 @@ abstract class BaseScanner implements IScanner {
 
     protected static final char[] VA_ARGS_CHARARRAY = "__VA_ARGS__".toCharArray(); //$NON-NLS-1$
 
-	protected static final IToken eocToken = new SimpleToken(IToken.tEOC, 0, null, 0);
+	protected final IToken eocToken = new SimpleToken(IToken.tEOC, 0, null, 0);
 	
     /**
      * @author jcamelon
@@ -1517,9 +1517,6 @@ abstract class BaseScanner implements IScanner {
 
         if (finished) {
         	if (contentAssistMode) {
-				if (lastToken == eocToken)
-					throwEOF();
-				
         		lastToken = nextToken;
         		nextToken = eocToken;
        			return lastToken;
@@ -1554,6 +1551,7 @@ abstract class BaseScanner implements IScanner {
             if (!exception)
                 finished = true;
         } else if (nextToken.getType() == IToken.tCOMPLETION) {
+			lastToken.setNext(nextToken);
         	finished = true;
         } else if (nextToken.getType() == IToken.tPOUNDPOUND) {
             // time for a pasting

@@ -432,12 +432,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             case IToken.tRBRACE:
                 --depth;
                 break;
+            case IToken.tEOC:
+				throw new EndOfFileException();
             }
             if (depth < 0)
                 return;
 
             consume();
         }
+		
         // eat the SEMI/RBRACE as well
         consume();
     }
@@ -1458,7 +1461,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         BacktrackException savedBt = null;
         try {
             IASTExpression expression = expression();
-            lastTokenOfExpression = consume(IToken.tSEMI);
+            lastTokenOfExpression = consume(); // SEMI or EOC
             expressionStatement = createExpressionStatement();
             expressionStatement.setExpression(expression);
             ((ASTNode) expressionStatement).setOffsetAndLength(

@@ -30,5 +30,13 @@ public interface IASTName extends IASTNode {
 	 */
 	public IBinding resolveBinding();
 	
+	/**
+	 * Return a list of bindings in the scope of the name that have the
+	 * name as a prefix.
+	 * 
+	 * @return bindings that start with this name
+	 */
+	public IBinding[] resolvePrefix();
+	
 	public char[] toCharArray();
 }

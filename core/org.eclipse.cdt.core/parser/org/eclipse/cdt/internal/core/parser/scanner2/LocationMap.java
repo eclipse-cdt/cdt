@@ -584,6 +584,11 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             return null;
         }
 
+		public IBinding[] resolvePrefix() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
         /*
          * (non-Javadoc)
          * 

@@ -112,6 +112,11 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
         return null;
     }
 
+	public IBinding[] resolvePrefix() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTName#toCharArray()
      */

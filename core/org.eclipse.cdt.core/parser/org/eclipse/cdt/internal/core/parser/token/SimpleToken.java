@@ -299,7 +299,8 @@ public class SimpleToken extends AbstractToken implements IToken {
 					return "#"; //$NON-NLS-1$
 				case IScanner.tPOUNDPOUND:
 					return "##"; //$NON-NLS-1$
-				
+				case IToken.tEOC:
+					return "EOC"; //$NON-NLS-1$
 				default :
 					// we should never get here!
 					// assert false : getType();

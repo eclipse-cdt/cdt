@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -88,12 +88,10 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 				
 				IASTName[] names = completionNode.getNames();
 				for (int i = 0; i < names.length; ++i) {
-					IBinding binding = names[i].resolveBinding();
-					
-					if (binding != null && !(binding instanceof IProblemBinding)) {
-						proposals.add(createBindingCompletionProposal(binding, repOffset, repLength));
-						proposals.add(createBindingCompletionProposal(binding, repOffset, repLength));
-					}
+					IBinding [] bindings = names[i].resolvePrefix();
+					if (bindings != null)
+						for (int j = 0; j < bindings.length; ++j)
+							proposals.add(createBindingCompletionProposal(bindings[j], repOffset, repLength));
 				}
 			}
 			
@@ -170,6 +168,8 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 					imageDescriptor = CElementImageProvider.getStructImageDescriptor();
 				else if (((ICompositeType)binding).getKey() == ICompositeType.k_union)
 					imageDescriptor = CElementImageProvider.getUnionImageDescriptor();
+			} else if (binding instanceof IFunction) {
+				imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
 			} else if (binding instanceof IVariable) {
 				imageDescriptor = CElementImageProvider.getVariableImageDescriptor();
 			}

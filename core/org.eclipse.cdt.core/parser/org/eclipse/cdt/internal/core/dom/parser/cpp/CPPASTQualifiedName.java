@@ -37,6 +37,11 @@ public class CPPASTQualifiedName extends CPPASTNode implements
       return names[names.length - 1].resolveBinding();
    }
 
+   public IBinding[] resolvePrefix() {
+	   removeNullNames();
+	   return names[names.length - 1].resolvePrefix();
+   }
+   
    /*
     * (non-Javadoc)
     * 

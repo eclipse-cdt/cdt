@@ -120,6 +120,18 @@ public class MemoryViewer extends ContentViewer
 		}
 	}
 
+	public void remove( Object element )
+	{		
+		if ( element instanceof IFormattedMemoryBlock )
+		{
+			MemoryControlArea mca = getMemoryControlArea( (IFormattedMemoryBlock)element );
+			if ( mca != null )
+			{
+				mca.clear();
+			}
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#setSelection(ISelection, boolean)
 	 */

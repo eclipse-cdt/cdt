@@ -1,4 +1,9 @@
 2002-11-20 Mikhail Khodjaiants
+	Added the TERMINATE event handler to MemoryViewEventHandler.
+	* MemoryViewer.java
+	* MemoryViewEventHandler.java
+
+2002-11-20 Mikhail Khodjaiants
 	Fix for bug 26595.
 	Highlight the addresses if the start address of a memory expression has changed.
 	*MemoryPresentation.java

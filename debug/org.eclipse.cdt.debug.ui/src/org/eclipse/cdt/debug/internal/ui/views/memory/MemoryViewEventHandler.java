@@ -46,6 +46,14 @@ public class MemoryViewEventHandler extends AbstractDebugEventHandler
 						return;
 					}
 					break;
+				case DebugEvent.TERMINATE:
+					if ( event.getSource() instanceof IFormattedMemoryBlock )
+					{
+						remove( event.getSource() );
+						getView().updateObjects();
+						return;
+					}
+					break;
 			}
 		}
 	}
@@ -72,5 +80,10 @@ public class MemoryViewEventHandler extends AbstractDebugEventHandler
 			getView().showViewer();
 			getViewer().refresh();
 		}
+	}
+
+	protected void remove( Object element )
+	{
+		((MemoryViewer)getViewer()).remove( element );
 	}
 }

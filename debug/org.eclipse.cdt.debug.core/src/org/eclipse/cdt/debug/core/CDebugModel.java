@@ -73,8 +73,8 @@ public class CDebugModel
 	/**
 	 * Creates and returns a debug target for the given CDI target, with
 	 * the specified name, and associates the debug target with the
-	 * given process for console I/O. The allow terminate flag specifies whether
-	 * the debug target will support termination (<code>ITerminate</code>).
+	 * given process for console I/O. The allow terminate flag specifies 
+	 * whether the debug target will support termination (<code>ITerminate</code>).
 	 * The allow disconnect flag specifies whether the debug target will
 	 * support disconnection (<code>IDisconnect</code>). The resume
 	 * flag specifies if the target process should be resumed on startup. 
@@ -111,6 +111,59 @@ public class CDebugModel
 											  cdiTarget, 
 											  name,
 											  process,
+											  null,
+											  project,
+											  allowTerminate,
+											  allowDisconnect );
+			}
+		};
+		try
+		{
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e )
+		{
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+
+		ICDIConfiguration config = cdiTarget.getSession().getConfiguration();
+
+		if ( config.supportsBreakpoints() && stopInMain )
+		{
+			stopInMain( (CDebugTarget)target[0] );
+		}
+
+		if ( config.supportsResume() )
+		{
+			target[0].resume();
+		}
+
+		return target[0];
+	}
+
+	public static IDebugTarget newDebugTarget( final ILaunch launch,
+											   final ICDITarget cdiTarget,
+											   final String name,
+											   final IProcess debuggeeProcess,
+											   final IProcess debuggerProcess,
+											   final IProject project,
+											   final boolean allowTerminate,
+											   final boolean allowDisconnect,
+											   final boolean stopInMain ) throws DebugException
+	{
+		final IDebugTarget[] target = new IDebugTarget[1];
+
+		IWorkspaceRunnable r = new IWorkspaceRunnable()
+		{
+			public void run( IProgressMonitor m )
+			{
+				target[0] = new CDebugTarget( launch,
+											  ICDebugTargetType.TARGET_TYPE_LOCAL_RUN, 
+											  cdiTarget, 
+											  name,
+											  debuggeeProcess,
+											  debuggerProcess,
 											  project,
 											  allowTerminate,
 											  allowDisconnect );
@@ -157,6 +210,57 @@ public class CDebugModel
 											  cdiTarget, 
 											  name,
 											  null,
+											  null,
+											  project,
+											  false,
+											  true );
+			}
+		};
+		try
+		{
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e )
+		{
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+
+		((CDebugTarget)target[0]).handleDebugEvent( new ICDISuspendedEvent()
+														{
+															public ICDISessionObject getReason()
+															{
+																return null;
+															}
+	
+															public ICDIObject getSource()
+															{
+																return cdiTarget;
+															}
+
+														} );
+
+		return target[0];
+	}
+
+	public static IDebugTarget newAttachDebugTarget( final ILaunch launch,
+													 final ICDITarget cdiTarget,
+													 final String name,
+													 final IProcess debuggerProcess,
+													 final IProject project ) throws DebugException
+	{
+		final IDebugTarget[] target = new IDebugTarget[1];
+
+		IWorkspaceRunnable r = new IWorkspaceRunnable()
+		{
+			public void run( IProgressMonitor m )
+			{
+				target[0] = new CDebugTarget( launch, 
+											  ICDebugTargetType.TARGET_TYPE_LOCAL_ATTACH, 
+											  cdiTarget, 
+											  name,
+											  null,
+											  debuggerProcess,
 											  project,
 											  false,
 											  true );
@@ -205,6 +309,57 @@ public class CDebugModel
 											  cdiTarget, 
 											  name,
 											  null,
+											  null,
+											  project,
+											  true,
+											  false );
+			}
+		};
+		try
+		{
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e )
+		{
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+
+		((CDebugTarget)target[0]).handleDebugEvent( new ICDISuspendedEvent()
+														{
+															public ICDISessionObject getReason()
+															{
+																return null;
+															}
+	
+															public ICDIObject getSource()
+															{
+																return cdiTarget;
+															}
+
+														} );
+
+		return target[0];
+	}
+
+	public static IDebugTarget newCoreFileDebugTarget( final ILaunch launch,
+													   final ICDITarget cdiTarget,
+													   final String name,
+													   final IProcess debuggerProcess,
+													   final IProject project ) throws DebugException
+	{
+		final IDebugTarget[] target = new IDebugTarget[1];
+
+		IWorkspaceRunnable r = new IWorkspaceRunnable()
+		{
+			public void run( IProgressMonitor m )
+			{
+				target[0] = new CDebugTarget( launch, 
+											  ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP, 
+											  cdiTarget, 
+											  name,
+											  null,
+											  debuggerProcess,
 											  project,
 											  true,
 											  false );

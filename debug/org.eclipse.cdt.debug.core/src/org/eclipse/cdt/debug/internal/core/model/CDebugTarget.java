@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.core.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.ICWatchpoint;
+import org.eclipse.cdt.debug.core.IDebuggerProcessSupport;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.IRestart;
@@ -101,7 +102,8 @@ public class CDebugTarget extends CDebugElement
 						  			 ILaunchListener,
 						  			 ISwitchToThread,
 						  			 IExpressionListener,
-						  			 ICExpressionEvaluator
+						  			 ICExpressionEvaluator,
+						  			 IDebuggerProcessSupport
 {
 	/**
 	 * The type of this target.
@@ -116,9 +118,14 @@ public class CDebugTarget extends CDebugElement
 	private ArrayList fThreads;
 
 	/**
-	 * Associated system process, or <code>null</code> if not available.
+	 * Associated inferrior process, or <code>null</code> if not available.
 	 */
-	private IProcess fProcess;
+	private IProcess fDebuggeeProcess = null;
+
+	/**
+	 * Associated debugger process, or <code>null</code> if not available.
+	 */
+	private IProcess fDebuggerProcess = null;
 
 	/**
 	 * The underlying CDI target.
@@ -206,6 +213,11 @@ public class CDebugTarget extends CDebugElement
 	private CMemoryManager fMemoryManager;
 
 	/**
+	 * A memory manager for this target.
+	 */
+	private boolean fIsDebuggerProcessDefault = false;
+
+	/**
 	 * Constructor for CDebugTarget.
 	 * @param target
 	 */
@@ -213,7 +225,8 @@ public class CDebugTarget extends CDebugElement
 						 int targetType, 
 						 ICDITarget cdiTarget, 
 						 String name,
-						 IProcess process,
+						 IProcess debuggeeProcess,
+						 IProcess debuggerProcess,
 						 IProject project,
 						 boolean allowsTerminate,
 						 boolean allowsDisconnect )
@@ -223,7 +236,7 @@ public class CDebugTarget extends CDebugElement
 		setTargetType( targetType );
 		setDebugTarget( this );
 		setName( name );
-		setProcess( process );
+		setProcesses( debuggeeProcess, debuggerProcess );
 		setCDITarget( cdiTarget );
 		setBreakpoints( new HashMap( 5 ) );
 		setTemporaryBreakpoints( new ArrayList() );
@@ -307,7 +320,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public IProcess getProcess()
 	{
-		return fProcess;
+		return ( fIsDebuggerProcessDefault ) ? fDebuggerProcess : fDebuggeeProcess;
 	}
 
 	/**
@@ -318,9 +331,10 @@ public class CDebugTarget extends CDebugElement
 	 * 	underlying CDI target, or <code>null</code> if no process is
 	 * 	associated with this debug target (for example, a core dump debugging).
 	 */
-	protected void setProcess( IProcess process )
+	protected void setProcesses( IProcess debuggeeProcess, IProcess debuggerProcess )
 	{
-		fProcess = process;
+		fDebuggeeProcess = debuggeeProcess;
+		fDebuggerProcess = debuggerProcess;
 	}
 
 	/* (non-Javadoc)
@@ -1920,4 +1934,29 @@ public class CDebugTarget extends CDebugElement
 	{
 		getMemoryManager().dispose();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IDebuggerProcessSupport#isDefault()
+	 */
+	public boolean isDebuggerProcessDefault()
+	{
+		return fIsDebuggerProcessDefault;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IDebuggerProcessSupport#setDefault(boolean)
+	 */
+	public void setDebuggerProcessDefault( boolean value )
+	{
+		fIsDebuggerProcessDefault = value;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IDebuggerProcessSupport#supportsDebuggerProcess()
+	 */
+	public boolean supportsDebuggerProcess()
+	{
+		return ( fDebuggerProcess != null );
+	}
+
 }

@@ -1,3 +1,11 @@
+2003-04-21 Alain Magloire
+
+	Fix NPE in the ComparatorModelBuilder when doing visual diffs
+	with the new Parser.
+	
+	* src/org/eclipse/cdt/internal/ui/compare/ComparatorModelBuilder.java:
+	Check for null.
+
 2003-04-21 David Inglis
 
 	Update CEditor to be 2.0/2.1 compliant.

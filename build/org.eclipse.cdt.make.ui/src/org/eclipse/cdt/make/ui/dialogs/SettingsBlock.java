@@ -20,10 +20,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -175,10 +181,19 @@ public class SettingsBlock extends AbstractCOptionPage {
 		autoButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_AUTO));
 		autoButton.addSelectionListener(selectionAdapter);
 		autoButton.setSelection(fBuildInfo.isAutoBuildEnable());
+//		if (!MakeUIPlugin.getWorkspace().isAutoBuilding()) {
+//			autoButton.setEnabled(false);
+//		}
 		targetAuto = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
 		targetAuto.setText(fBuildInfo.getAutoBuildTarget());
 		((GridData) (targetAuto.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetAuto.getLayoutData())).grabExcessHorizontalSpace = true;
+		String noteTitle= MakeUIPlugin.getResourceString("SettingsBlock.makeWorkbench.note"); //$NON-NLS-1$
+		String noteMessage= MakeUIPlugin.getResourceString("SettingsBlock.makeWorkbench.autobuildMessage"); //$NON-NLS-1$
+		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), group, noteTitle, noteMessage);
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		noteControl.setLayoutData(gd);
 		incrButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_INCR));
 		incrButton.addSelectionListener(selectionAdapter);
 		incrButton.setSelection(fBuildInfo.isIncrementalBuildEnabled());
@@ -202,7 +217,51 @@ public class SettingsBlock extends AbstractCOptionPage {
 		((GridData) (targetClean.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetClean.getLayoutData())).grabExcessHorizontalSpace = true;
 		selectionAdapter.widgetSelected(null);
+
 	}
+
+	protected Composite createNoteComposite(
+			Font font,
+			Composite composite,
+			String title,
+			String message) {
+			Composite messageComposite = new Composite(composite, SWT.NONE);
+			GridLayout messageLayout = new GridLayout();
+			messageLayout.numColumns = 2;
+			messageLayout.marginWidth = 0;
+			messageLayout.marginHeight = 0;
+			messageComposite.setLayout(messageLayout);
+			messageComposite.setLayoutData(
+				new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+			messageComposite.setFont(font);
+
+			final Label noteLabel = new Label(messageComposite, SWT.BOLD);
+			noteLabel.setText(title);
+			noteLabel.setFont(JFaceResources.getBannerFont());
+			noteLabel.setLayoutData(
+				new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+
+			final IPropertyChangeListener fontListener =
+				new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (JFaceResources.BANNER_FONT.equals(event.getProperty())) {
+						noteLabel.setFont(
+							JFaceResources.getFont(JFaceResources.BANNER_FONT));
+					}
+				}
+			};
+			JFaceResources.getFontRegistry().addListener(fontListener);
+			noteLabel.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent event) {
+					JFaceResources.getFontRegistry().removeListener(fontListener);
+				}
+			});
+
+			Label messageLabel = new Label(messageComposite, SWT.WRAP);
+			messageLabel.setText(message);
+			messageLabel.setFont(font);
+			return messageComposite;
+		}
 
 	protected void createBuilderWorkingDirControls(Composite parent) {
 		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_GROUP), 1);

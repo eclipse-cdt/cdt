@@ -11,23 +11,23 @@
 package org.eclipse.cdt.core.browser;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCache;
+import org.eclipse.cdt.internal.core.browser.cache.TypeCacheDeltaListener;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCacherJob;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -47,6 +47,11 @@ public class AllTypesCache {
 	private static TypeCache fgCache;
 	private static TypeCacherJob fgJob;
 	private static TypeCacheDeltaListener fgDeltaListener;
+	private static IPropertyChangeListener fgPropertyChangeListener;
+	private static boolean fBackgroundJobEnabled;
+
+	/** Preference key for enabling background cache */
+    public final static String ENABLE_BACKGROUND_TYPE_CACHE = "enableBackgroundTypeCache"; //$NON-NLS-1$
 	
 	/**
 	 * Defines a simple interface in order to provide
@@ -63,18 +68,50 @@ public class AllTypesCache {
 	 * @param provider A working copy provider.
 	 */
 	public static void initialize(IWorkingCopyProvider provider) {
+
+		// load prefs
+		Preferences prefs= CCorePlugin.getDefault().getPluginPreferences();
+		if (prefs.contains(ENABLE_BACKGROUND_TYPE_CACHE)) {
+			fBackgroundJobEnabled= prefs.getBoolean(ENABLE_BACKGROUND_TYPE_CACHE);
+		} else {
+			prefs.setDefault(ENABLE_BACKGROUND_TYPE_CACHE, true);
+			prefs.setValue(ENABLE_BACKGROUND_TYPE_CACHE, true);
+			CCorePlugin.getDefault().savePluginPreferences();
+			fBackgroundJobEnabled= true;
+		}
+
 		fgCache= new TypeCache();
 		fgJob= new TypeCacherJob(fgCache, provider);
-		fgDeltaListener= new TypeCacheDeltaListener(fgCache, fgJob);
-		
+		fgDeltaListener= new TypeCacheDeltaListener(fgCache, fBackgroundJobEnabled, fgJob);
+
+		fgPropertyChangeListener= new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				String property= event.getProperty();		
+				if (property.equals(ENABLE_BACKGROUND_TYPE_CACHE)) {
+					String value= (String)event.getNewValue();
+					fBackgroundJobEnabled= Boolean.valueOf(value).booleanValue();
+					fgDeltaListener.setBackgroundJobEnabled(fBackgroundJobEnabled);
+					if (!fBackgroundJobEnabled) {
+						// terminate all background jobs
+						IJobManager jobMgr = Platform.getJobManager();
+						jobMgr.cancel(TypeCacherJob.FAMILY);
+					}
+				}
+			}
+		};
+		// add property change listener
+		prefs.addPropertyChangeListener(fgPropertyChangeListener);
+
 		// add delta listener
 		CoreModel.getDefault().addElementChangedListener(fgDeltaListener);
 
-		// schedule job to run after INITIAL_DELAY
-		if (fgJob.getState() != Job.RUNNING) {
-			fgJob.setSearchPaths(null);
-			fgJob.setPriority(Job.BUILD);
-			fgJob.schedule(INITIAL_DELAY);
+		if (fBackgroundJobEnabled) {
+			// schedule job to run after INITIAL_DELAY
+			if (fgJob.getState() != Job.RUNNING) {
+				fgJob.setSearchPaths(null);
+				fgJob.setPriority(Job.BUILD);
+				fgJob.schedule(INITIAL_DELAY);
+			}
 		}
 	}
 	
@@ -140,156 +177,4 @@ public class AllTypesCache {
 			}
 		}
 	}
-	
-	/**
-	 * Listener for changes to CModel.
-	 * @see org.eclipse.cdt.core.model.IElementChangedListener
-	 * @since 3.0
-	 */
-	private static class TypeCacheDeltaListener implements IElementChangedListener {
-		
-		private TypeCache fTypeCache;
-		private TypeCacherJob fTypeCacherJob;
-		private Set fPaths= new HashSet(5);
-		private Set fPrefixes= new HashSet(5);
-		private boolean fFlushAll= false;
-		
-		public TypeCacheDeltaListener(TypeCache cache, TypeCacherJob job) {
-			fTypeCache= cache;
-			fTypeCacherJob= job;
-		}
-		
-		/*
-		 * @see IElementChangedListener#elementChanged
-		 */
-		public void elementChanged(ElementChangedEvent event) {
-			fPaths.clear();
-			fPrefixes.clear();
-			fFlushAll= false;
-
-			boolean needsFlushing= processDelta(event.getDelta());
-			if (needsFlushing) {
-				// cancel background job
-				if (fTypeCacherJob.getState() == Job.RUNNING) {
-					// wait for job to finish?
-					try {
-						fTypeCacherJob.cancel();
-						fTypeCacherJob.join();
-					} catch (InterruptedException ex) {
-					}
-				}
-				
-				if (fFlushAll) {
-					// flush the entire cache
-					fTypeCacherJob.setSearchPaths(null);
-					fTypeCache.flushAll();
-				} else {
-					// flush affected files from cache
-					Set searchPaths= new HashSet(10);
-					getPrefixMatches(fPrefixes, searchPaths);
-					searchPaths.addAll(fPaths);
-					fTypeCacherJob.setSearchPaths(searchPaths);
-					fTypeCache.flush(searchPaths);
-				}
-
-				// restart the background job
-				fTypeCacherJob.setPriority(Job.BUILD);
-				fTypeCacherJob.schedule();
-			}
-		}
-		
-		/*
-		 * returns true if the cache needs to be flushed
-		 */
-		private boolean processDelta(ICElementDelta delta) {
-			ICElement elem= delta.getElement();
-			int pathEntryChanged= ICElementDelta.F_ADDED_PATHENTRY_SOURCE | ICElementDelta.F_REMOVED_PATHENTRY_SOURCE |
-									ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE | ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
-			boolean isAddedOrRemoved= (delta.getKind() != ICElementDelta.CHANGED)
-			 || ((delta.getFlags() & pathEntryChanged) != 0);
-			
-			switch (elem.getElementType()) {
-				case ICElement.C_MODEL:
-				{
-					if (isAddedOrRemoved) {
-						// CModel has changed
-						// flush the entire cache
-						fFlushAll= true;
-						return true;
-					}
-					return processDeltaChildren(delta);
-				}
-				
-				case ICElement.C_PROJECT:
-				case ICElement.C_CCONTAINER:
-				{
-					if (isAddedOrRemoved) {
-						// project or folder has changed
-						// flush all files with matching prefix
-						IPath path= elem.getPath();
-						if (path != null)
-							fPrefixes.add(path);
-						return true;
-					}
-					return processDeltaChildren(delta);
-				}
-				
-				case ICElement.C_NAMESPACE:
-				case ICElement.C_TEMPLATE_CLASS:
-				case ICElement.C_CLASS:
-				case ICElement.C_STRUCT:
-				case ICElement.C_UNION:
-				case ICElement.C_ENUMERATION:
-				case ICElement.C_TYPEDEF:
-				case ICElement.C_INCLUDE:
-				case ICElement.C_UNIT:
-				{
-					if (isAddedOrRemoved) {
-						// CElement has changed
-						// flush file from cache
-						IPath path= elem.getPath();
-						if (path != null)
-							fPaths.add(path);
-						return true;
-					}
-					return processDeltaChildren(delta);
-				}
-					
-				default:
-					// fields, methods, imports ect
-					return false;
-			}	
-		}
-
-		private boolean processDeltaChildren(ICElementDelta delta) {
-			ICElementDelta[] children= delta.getAffectedChildren();
-			for (int i= 0; i < children.length; i++) {
-				if (processDelta(children[i])) {
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		private boolean getPrefixMatches(Set prefixes, Set results) {
-			Set pathSet= fTypeCache.getAllFiles();
-			if (pathSet.isEmpty() || prefixes == null || prefixes.isEmpty())
-				return false;
-
-			for (Iterator pathIter= pathSet.iterator(); pathIter.hasNext(); ) {
-				IPath path= (IPath) pathIter.next();
-
-				// find paths which match prefix
-				for (Iterator prefixIter= prefixes.iterator(); prefixIter.hasNext(); ) {
-					IPath prefix= (IPath) prefixIter.next();
-					if (prefix.isPrefixOf(path)) {
-						results.add(path);
-						break;
-					}
-				}
-			}
-
-			return !results.isEmpty();
-		}
-	}	
 }

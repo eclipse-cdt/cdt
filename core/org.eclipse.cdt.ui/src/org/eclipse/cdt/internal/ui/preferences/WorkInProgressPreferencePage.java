@@ -9,6 +9,7 @@ package org.eclipse.cdt.internal.ui.preferences;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.internal.core.search.indexing.SourceIndexer;
 import org.eclipse.cdt.internal.ui.search.CSearchPage;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -45,6 +46,7 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	private Combo fExternLinks;
 	private Button fExternEnabled;
 	private Button fIProblemMarkers;
+	private Button fBackgroundTypeCacheEnabled;
 	
 	protected OverlayPreferenceStore fOverlayStore;
 	private Text fTextControl;
@@ -59,6 +61,7 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CSearchPage.EXTERNALMATCH_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, CSearchPage.EXTERNALMATCH_VISIBLE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, SourceIndexer.CDT_INDEXER_TIMEOUT));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE));
 		
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -120,7 +123,22 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		indexerTimeoutGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		indexerTimeoutGroup.setText("Indexer Timeout"); //$NON-NLS-1$
 		
-		fTextControl = (Text) addTextField( indexerTimeoutGroup, "Time out (ms)","TimeOut",6,0,true);
+		fTextControl = (Text) addTextField( indexerTimeoutGroup, "Time out (ms)","TimeOut",6,0,true); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		Group backgroundTypeCacheGroup= new Group(result, SWT.NONE);
+		backgroundTypeCacheGroup.setLayout(new GridLayout());
+		backgroundTypeCacheGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		backgroundTypeCacheGroup.setText("Open Type"); //$NON-NLS-1$
+
+		fBackgroundTypeCacheEnabled = createCheckButton(backgroundTypeCacheGroup, "Cache types in background"); //$NON-NLS-1$
+		fBackgroundTypeCacheEnabled.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			public void widgetSelected(SelectionEvent e) {
+				Button button = (Button) e.widget;
+				fOverlayStore.setValue(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, button.getSelection());
+			}
+		});
 		
 		initialize(); 
 		
@@ -137,7 +155,7 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		
 		fTextControl.setText(fOverlayStore.getString(SourceIndexer.CDT_INDEXER_TIMEOUT));
 		
-
+		fBackgroundTypeCacheEnabled.setSelection(fOverlayStore.getBoolean(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE));
 	}
 	
 	/* (non-Javadoc)
@@ -199,6 +217,9 @@ public class WorkInProgressPreferencePage extends PreferencePage
 //		Store IProblem Marker value in CCorePlugin Preferences 
 		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
 		prefs.setValue(SourceIndexer.CDT_INDEXER_TIMEOUT,fOverlayStore.getString(SourceIndexer.CDT_INDEXER_TIMEOUT));
+
+		prefs.setValue(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, fOverlayStore.getString(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE));
+
 		CCorePlugin.getDefault().savePluginPreferences();
 		
 		return true;
@@ -210,7 +231,8 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	public static void initDefaults(IPreferenceStore store) {
 		store.setDefault(CSearchPage.EXTERNALMATCH_ENABLED, false);
 		store.setDefault(CSearchPage.EXTERNALMATCH_VISIBLE, 0);
-		store.setDefault(SourceIndexer.CDT_INDEXER_TIMEOUT, "20000");
+		store.setDefault(SourceIndexer.CDT_INDEXER_TIMEOUT, "20000"); //$NON-NLS-1$
+		store.setDefault(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, true);
 	}
 	
 	/*

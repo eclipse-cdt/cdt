@@ -127,7 +127,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	}
 	
 	protected Shell getShell() {
-		return CUIPlugin.getDefault().getActiveWorkbenchShell();
+		return CUIPlugin.getActiveWorkbenchShell();
 	}
 
 	/**

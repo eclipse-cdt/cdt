@@ -61,12 +61,12 @@ public class TypeCacherJob extends Job {
 	 * @see IJobManager#join(Object, IProgressMonitor)
 	 * @since 3.0
 	 */
-	private static final Object FAMILY= new Object();
+	public static final Object FAMILY= new Object();
 
-	private DelegatedProgressMonitor fProgressMonitor;
 	private Set fSearchPaths= new HashSet(50);
 	private TypeCache fTypeCache;
 	private IWorkingCopyProvider fWorkingCopyProvider;
+	private DelegatedProgressMonitor fProgressMonitor= new DelegatedProgressMonitor();
 
 	public TypeCacherJob(TypeCache cache, IWorkingCopyProvider provider) {
 		super(TypeCacheMessages.getString("TypeCacherJob.jobName")); //$NON-NLS-1$
@@ -94,7 +94,11 @@ public class TypeCacherJob extends Job {
 	 * @see org.eclipse.core.runtime.jobs.Job#run(IProgressMonitor)
 	 */
 	public IStatus run(IProgressMonitor monitor) {
-		fProgressMonitor= new DelegatedProgressMonitor(monitor);
+		if (monitor.isCanceled())
+			return Status.CANCEL_STATUS;
+
+		fProgressMonitor.init();
+		fProgressMonitor.addDelegate(monitor);
 		
 		try {
 			search(fProgressMonitor);
@@ -104,7 +108,8 @@ public class TypeCacherJob extends Job {
 		} catch (OperationCanceledException ex) {
 			return Status.CANCEL_STATUS;
 		} finally {
-			fProgressMonitor= null;
+			fProgressMonitor.removeAllDelegates();
+			fProgressMonitor.init();
 		}
 
 		return Status.OK_STATUS;
@@ -120,8 +125,7 @@ public class TypeCacherJob extends Job {
 	 * @see Job#join
 	 */
 	public void join(IProgressMonitor monitor) throws InterruptedException {
-		if (fProgressMonitor != null)
-			fProgressMonitor.addDelegate(monitor);
+		fProgressMonitor.addDelegate(monitor);
 		super.join();
 	}
 	

@@ -1,2 +1,6 @@
 2004-04-06 Chris Wiebe
 	initial placement of non-ui code into org.eclipse.cdt.core.browser
+
+2004-04-20 Chris Wiebe
+	refactored TypeCacheDeltaListener into standalone class
+	added option in Work In Progress prefs page to disable background cache

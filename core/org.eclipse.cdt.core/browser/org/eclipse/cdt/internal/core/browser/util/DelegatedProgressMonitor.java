@@ -28,22 +28,36 @@ public class DelegatedProgressMonitor implements IProgressMonitor, IProgressMoni
 	private final ArrayList fDelegateList = new ArrayList(INITIAL_DELEGATE_COUNT);
 	private String fTaskName;
 	private String fSubTask;
-	private int fTotalWork = IProgressMonitor.UNKNOWN;
+	private int fTotalWork;
 	private double fWorked;
-	private boolean fIsBlocked = false;
-	private boolean fIsCanceled = false;
+	private boolean fIsBlocked;
+	private boolean fIsCanceled;
 	
 	/**
 	 * Creates a new delegated monitor.
 	 */
 	public DelegatedProgressMonitor() {
+		init();
 	}
 	
 	/**
 	 * Creates a new delegated monitor, and adds a delegate.
 	 */
 	public DelegatedProgressMonitor(IProgressMonitor delegate) {
+		init();
 		addDelegate(delegate);
+	}
+	
+	/**
+	 * Resets delegated monitor to initial state.
+	 */
+	public synchronized void init() {
+		fTaskName= null;
+		fSubTask= null;
+		fTotalWork= IProgressMonitor.UNKNOWN;
+		fWorked= 0.0f;
+		fIsBlocked= false;
+		fIsCanceled= false;
 	}
 	
 	/*
@@ -196,6 +210,13 @@ public class DelegatedProgressMonitor implements IProgressMonitor, IProgressMoni
 		if (index != -1) {
 			fDelegateList.remove(index);
 		}
+	}
+
+	/**
+	 * Removes all delegates.
+	 */
+	public synchronized void removeAllDelegates() {
+		fDelegateList.clear();
 	}
 
 	/**

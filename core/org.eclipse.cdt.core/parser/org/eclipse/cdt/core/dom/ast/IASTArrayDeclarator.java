@@ -10,13 +10,19 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import java.util.List;
+
+
 /**
  * This is the declarator for an array.
  * 
  * @author Doug Schaefer
  */
-public interface IASTArrayDeclarator {
+public interface IASTArrayDeclarator extends IASTDeclarator {
 
-	// TODO add in the array dimensions
+    public static final ASTNodeProperty ARRAY_MODIFIER = new ASTNodeProperty( "Array Modifier"); //$NON-NLS-1$
+    
+	public List getArrayModifiers();
+	public void addArrayModifier( IASTArrayModifier arrayModifier );
 	
 }

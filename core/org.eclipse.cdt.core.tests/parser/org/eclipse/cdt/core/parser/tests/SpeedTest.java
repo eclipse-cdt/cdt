@@ -52,7 +52,8 @@ public class SpeedTest extends TestCase {
 		long totalTime;
 		parser.parse();
 		totalTime = System.currentTimeMillis() - startTime;
-		System.out.println( "Resulting parse took " + totalTime + " millisecs"); //$NON-NLS-1$ //$NON-NLS-2$
+		System.out.println( "Resulting parse took " + totalTime + " millisecs " +
+				scanner.getCount() + " tokens");
 	}
 
 	private static final QuickParseCallback CALLBACK = new QuickParseCallback();

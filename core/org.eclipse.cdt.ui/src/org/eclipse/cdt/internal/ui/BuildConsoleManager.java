@@ -74,7 +74,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	}
 
 	private class BuildConsole extends ConsoleOutputStream implements IConsole {
-		private BuildConsoleDocument fDocument;
+		protected BuildConsoleDocument fDocument;
 
 		public BuildConsole() {
 			fDocument = new BuildConsoleDocument(BuildConsolePreferencePage.buildConsoleLines());

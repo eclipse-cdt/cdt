@@ -25,7 +25,6 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import sun.security.krb5.internal.crypto.e;
 
 /**
  * @see org.eclipse.cdt.debug.core.cdi.ICDISession

@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -42,6 +43,9 @@ import org.eclipse.swt.widgets.Text;
  */
 public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 
+	public final static String PREF_ADDR2LINE_PATH = CUIPlugin.PLUGIN_ID + ".addr2line"; //$NON-NLS-1$
+	public final static String PREF_CPPFILT_PATH = CUIPlugin.PLUGIN_ID + ".cppfilt"; //$NON-NLS-1$
+
 	protected Text fAddr2LineCommandText;
 	protected Text fCPPFiltCommandText;
 
@@ -52,12 +56,14 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
+
+		String addr2line = fAddr2LineCommandText.getText().trim();
+		String cppfilt = fCPPFiltCommandText.getText().trim();
+
 		monitor.beginTask("Saving Attributes", 1);
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj);
-			String addr2line = fAddr2LineCommandText.getText().trim();
-			String cppfilt = fCPPFiltCommandText.getText().trim();
 			ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 			if (cext.length == 0) {
 				// The value was not save yet and we need to save it now
@@ -87,6 +93,12 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 					cext[0].setExtensionData("c++filt", cppfilt);
 				}
 			} 
+		} else {
+			Preferences store = getContainer().getPreferences();
+			if (store != null) {
+				store.setValue(PREF_ADDR2LINE_PATH, addr2line);
+				store.setValue(PREF_CPPFILT_PATH, cppfilt);
+			}
 		}
 	}
 
@@ -107,9 +119,15 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 				}
 			} catch (CoreException e) {
 			}
+		} else {
+			Preferences store = getContainer().getPreferences();
+			if (store != null) {
+				addr2line = store.getString(PREF_ADDR2LINE_PATH);
+				cppfilt = store.getString(PREF_CPPFILT_PATH);
+			}
 		}
-		fAddr2LineCommandText.setText((addr2line == null) ? "addr2line" : addr2line);
-		fCPPFiltCommandText.setText((cppfilt == null) ? "c++filt" : cppfilt);
+		fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line);
+		fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt);
 	}
 
 	/* (non-Javadoc)

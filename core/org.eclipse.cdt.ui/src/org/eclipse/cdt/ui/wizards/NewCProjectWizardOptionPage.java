@@ -12,6 +12,7 @@ import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
@@ -56,17 +57,11 @@ public abstract class NewCProjectWizardOptionPage extends WizardPage implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getPreferenceStore()
 	 */
-	public IPreferenceStore getPreferenceStore() {
-		return preferenceStore;
-	}
+	public abstract Preferences getPreferences();
 
-	/**
-	 * @param store
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getProject()
 	 */
-	public void setPreferenceStore(IPreferenceStore store) {
-		preferenceStore = store;
-	}
-
 	public abstract IProject getProject();
 
 }

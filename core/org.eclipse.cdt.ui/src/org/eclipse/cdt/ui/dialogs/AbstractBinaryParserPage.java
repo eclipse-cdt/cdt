@@ -99,6 +99,9 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 	public void setContainer(ICOptionContainer container) {
 		super.setContainer(container);
 		initializeParserPageMap();
+		ICOptionPage page = getCurrentBinaryParserPage();
+		if (page != null)
+			page.setContainer(container);
 	}
 
 	public ICOptionPage getBinaryParserPage(String parserID) {

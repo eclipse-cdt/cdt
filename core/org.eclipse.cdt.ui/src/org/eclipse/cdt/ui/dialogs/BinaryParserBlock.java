@@ -116,7 +116,6 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 					ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(getContainer().getProject());
 					desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 					desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, (String) idMap.get(selected));
-					CCorePlugin.getDefault().getCoreModel().resetBinaryParser(getContainer().getProject());
 				} else {
 					fPrefs.setValue(CCorePlugin.PREF_BINARY_PARSER, (String) idMap.get(selected));
 				}
@@ -128,11 +127,17 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		// We have to do it last to make sure the parser id is save
 		// in .cdtproject
 		super.performApply(new SubProgressMonitor(monitor, 1));
+
+		// Reset the binary parser the paths may have change.
+		if (getContainer().getProject() != null)
+			CCorePlugin.getDefault().getCoreModel().resetBinaryParser(getContainer().getProject());
+
 		monitor.done();
 	}
 
 	public void setContainer(ICOptionContainer container) {
 		super.setContainer(container);
+
 		IExtensionPoint point = CCorePlugin.getDefault().getDescriptor().getExtensionPoint(CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
@@ -181,6 +186,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		// Give a change to the UI contributors to react.
 		// But do it last after the comboBox is set.
 		handleBinaryParserChanged();
+		super.performDefaults();
 		getContainer().updateContainer();
 	}
 

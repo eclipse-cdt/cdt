@@ -90,9 +90,9 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 			tree.setFiltersFlag(TreeObject.FLAG_PROBLEM);
 			
 			if (node instanceof IASTProblemHolder)
-				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblemHolder.class, astProblems, ((IASTProblemHolder)node).getProblem());
+				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, ((IASTProblemHolder)node).getProblem());
 			else
-				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblemHolder.class, astProblems, node);
+				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, node);
 		}
 		if (node instanceof IASTPreprocessorStatement)
 			tree.setFiltersFlag(TreeObject.FLAG_PREPROCESSOR);

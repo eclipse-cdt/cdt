@@ -80,16 +80,23 @@ public abstract class Command
 	 * throw an MIException.
 	 */
 	protected void throwMIException (MIInfo info, MIOutput out) throws MIException {
-		String mesg = info.getErrorMsg();
+		String mesg = info.getErrorMsg().trim();
 		StringBuffer sb = new StringBuffer();
 		MIOOBRecord[] oobs = out.getMIOOBRecords();
 		for (int i = 0; i < oobs.length; i++) {
 			if (oobs[i] instanceof MILogStreamOutput) {
 				MIStreamRecord o = (MIStreamRecord) oobs[i];
-				sb.append(o.getString());
+				String s = o.getString();
+				if (!s.trim().equalsIgnoreCase(mesg)) {
+					sb.append(s);
+				}
 			}
 		}
-		throw new MIException(mesg, sb.toString());
+		String details = sb.toString();
+		if (details.trim().length() == 0) {
+			details = mesg;
+		}
+		throw new MIException(mesg, details);
 	}
 
 }

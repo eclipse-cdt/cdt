@@ -24,7 +24,11 @@ public class NewMakeCProjectWizard extends NewMakeProjectWizard {
 	private static final String WZ_SETTINGS_DESC = "MakeCWizardSettings.description"; //$NON-NLS-1$'
 
 	public NewMakeCProjectWizard() {
-		super(MakeUIPlugin.getResourceString(WZ_TITLE), MakeUIPlugin.getResourceString(WZ_DESC));
+		this(MakeUIPlugin.getResourceString(WZ_TITLE), MakeUIPlugin.getResourceString(WZ_DESC));
+	}
+
+	public NewMakeCProjectWizard(String title, String desc) {
+		super(title, desc);
 	}
 
 	public void addPages() {

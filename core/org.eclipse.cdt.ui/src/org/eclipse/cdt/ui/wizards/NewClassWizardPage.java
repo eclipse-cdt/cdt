@@ -908,7 +908,8 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 				IPath projectPath = fSelectedProject.getFullPath();
 				IPath relativePath = location.getRelativeIncludePath(fSelectedProject);
 				if (!relativePath.equals(location.getLocation())) {
-					systemIncludePath = true;
+				    if (!projectPath.isPrefixOf(location.getPath()))
+			            systemIncludePath = true;
 				} else {
 					if (projectPath.isPrefixOf(location.getPath()) && projectPath.isPrefixOf(header.getPath()))
 						relativePath = location.getRelativePath(header.getPath());

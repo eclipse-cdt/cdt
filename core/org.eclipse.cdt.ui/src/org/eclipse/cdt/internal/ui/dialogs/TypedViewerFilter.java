@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.wizards;
+package org.eclipse.cdt.internal.ui.dialogs;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.Viewer;

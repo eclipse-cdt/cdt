@@ -13,9 +13,9 @@ import java.util.List;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
+import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
+import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
-import org.eclipse.cdt.internal.ui.wizards.TypedElementSelectionValidator;
-import org.eclipse.cdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;

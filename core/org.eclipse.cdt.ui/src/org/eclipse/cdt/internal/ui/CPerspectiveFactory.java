@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.internal.ui.wizards.CWizardRegistry;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IFolderLayout;
@@ -61,12 +62,20 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowInPart(IPageLayout.ID_RES_NAV);
 
 		// new actions - C project creation wizard
-		String[] wizIDs = CUIPlugin.getCProjectWizardIDs();
+		String[] wizIDs = CWizardRegistry.getProjectWizardIDs();
 		for (int i = 0; i < wizIDs.length; ++i) {
 			layout.addNewWizardShortcut(wizIDs[i]);
 		}
-		layout.addNewWizardShortcut(CUIPlugin.CLASS_WIZARD_ID);
 		layout.addNewWizardShortcut(CUIPlugin.FOLDER_WIZARD_ID);
-		layout.addNewWizardShortcut(CUIPlugin.FILE_WIZARD_ID);
+		// new actions - C type creation wizard
+		wizIDs = CWizardRegistry.getTypeWizardIDs();
+		for (int i = 0; i < wizIDs.length; ++i) {
+			layout.addNewWizardShortcut(wizIDs[i]);
+		}
+		// new actions - C file creation wizard
+		wizIDs = CWizardRegistry.getFileWizardIDs();
+		for (int i = 0; i < wizIDs.length; ++i) {
+			layout.addNewWizardShortcut(wizIDs[i]);
+		}
 	}
 }

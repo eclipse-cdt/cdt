@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.wizards;
+package org.eclipse.cdt.internal.ui.dialogs;
 
 import java.util.Collection;
 
@@ -18,7 +18,6 @@ import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 
 /**
  * Implementation of a <code>ISelectionValidator</code> to validate the

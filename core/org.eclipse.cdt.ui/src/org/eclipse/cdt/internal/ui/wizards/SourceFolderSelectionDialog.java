@@ -6,13 +6,13 @@
  * 
  * Contributors: QNX Software Systems - initial API and implementation
  ******************************************************************************/
-package org.eclipse.cdt.internal.ui.wizards.classwizard;
+package org.eclipse.cdt.internal.ui.wizards;
 
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.ui.wizards.TypedElementSelectionValidator;
-import org.eclipse.cdt.internal.ui.wizards.TypedViewerFilter;
+import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
+import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CElementSorter;
@@ -61,7 +61,7 @@ public class SourceFolderSelectionDialog extends ElementTreeSelectionDialog {
         setValidator(fValidator);
         setSorter(fSorter);
         addFilter(fFilter);
-        setTitle(NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseSourceFolderDialog.title")); //$NON-NLS-1$
-        setMessage(NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseSourceFolderDialog.description")); //$NON-NLS-1$
+        setTitle(NewWizardMessages.getString("SourceFolderSelectionDialog.title")); //$NON-NLS-1$
+        setMessage(NewWizardMessages.getString("SourceFolderSelectionDialog.description")); //$NON-NLS-1$
     }
 }

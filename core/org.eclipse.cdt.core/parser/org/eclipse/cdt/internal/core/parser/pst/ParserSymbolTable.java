@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -290,7 +291,7 @@ public class ParserSymbolTable {
 	 * Look for data.name in our collection _containedDeclarations
 	 */
 	protected static Map lookupInContained( LookupData data, IContainerSymbol lookIn ) throws ParserSymbolTableException{
-		Map found = new HashMap();
+		Map found = new LinkedHashMap();
 		
 		boolean foundSomething = false;
 		ISymbol temp  = null;

@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
+import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 /**
  * @author jcamelon
  *
@@ -232,5 +233,11 @@ public interface IASTFactory
     /**
      * @param astClassSpecifier
      */
-    public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier); 						
+    public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier);
+
+	/**
+	 * @param kind
+	 * @param firstExpression
+	 */
+	public IASTNode getCompletionContext(Kind kind, IASTExpression expression); 						
 }

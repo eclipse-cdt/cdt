@@ -2891,7 +2891,8 @@ public abstract class Parser implements IParser
      */
     protected void statement(IASTScope scope) throws EndOfFileException, BacktrackException
     {
-        
+    	setCurrentScope(scope);
+    	
         switch (LT(1))
         {
             case IToken.t_case :
@@ -3028,6 +3029,11 @@ public abstract class Parser implements IParser
                 // declarationStatement
                 declaration(scope, null);
         }
+        
+        if( scope instanceof IASTScopedElement )
+        	setCurrentScope( ((IASTScopedElement)scope).getOwnerScope() ); 
+        else
+        	setCurrentScope( null );
     }
     protected void catchHandlerSequence(IASTScope scope)
         throws EndOfFileException, BacktrackException
@@ -4719,11 +4725,20 @@ public abstract class Parser implements IParser
                 case IToken.tDOT :
                     // member access
                     consume(IToken.tDOT);
+                	
                     if (LT(1) == IToken.t_template)
                     {
                         consume(IToken.t_template);
                         isTemplate = true;
                     }
+                    
+                    IASTNode context = astFactory.getCompletionContext( (isTemplate
+                                                                            ? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
+                                                                            : IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION), 
+                                                                        firstExpression );
+                    setCompletionContext( context );
+                    setCompletionKind( IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
+                    															
                     secondExpression = primaryExpression(scope);
                     try
                     {
@@ -4746,6 +4761,9 @@ public abstract class Parser implements IParser
                     } catch (Exception e)
                     {
                         throw backtrack;
+                    } finally 
+                    {
+                    	setCompletionContext( null );
                     }
                     break;
                 case IToken.tARROW :
@@ -4756,6 +4774,14 @@ public abstract class Parser implements IParser
                         consume(IToken.t_template);
                         isTemplate = true;
                     }
+                    
+                    context = astFactory.getCompletionContext( (isTemplate
+                                                                    ? IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP
+                                                                    : IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION), 
+                                                               firstExpression );
+                    setCompletionContext( context );
+                    setCompletionKind( IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
+                    
                     secondExpression = primaryExpression(scope);
                     try
                     {
@@ -4778,6 +4804,9 @@ public abstract class Parser implements IParser
                     } catch (Exception e)
                     {
                         throw backtrack;
+                    }finally 
+                    {
+                    	setCompletionContext( null );
                     }
                     break;
                 default :
@@ -4785,6 +4814,9 @@ public abstract class Parser implements IParser
             }
         }
     }
+    
+    
+
     protected IASTExpression specialCastExpression( IASTScope scope,
         IASTExpression.Kind kind)
         throws EndOfFileException, BacktrackException

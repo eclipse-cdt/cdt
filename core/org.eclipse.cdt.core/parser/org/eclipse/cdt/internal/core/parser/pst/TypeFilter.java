@@ -96,7 +96,8 @@ public class TypeFilter {
 	 * @param lookupKind
 	 */
 	private void populatedFilteredTypes(LookupKind kind) {
-             if ( kind == LookupKind.STRUCTURES )  { acceptedTypes.add( TypeInfo.t_class );
+             if ( kind == LookupKind.ALL )         { acceptedTypes.add( TypeInfo.t_any );         }
+        else if ( kind == LookupKind.STRUCTURES )  { acceptedTypes.add( TypeInfo.t_class );
                                                      acceptedTypes.add( TypeInfo.t_struct );
                                                      acceptedTypes.add( TypeInfo.t_union );       }
         else if ( kind == LookupKind.STRUCS )      { acceptedTypes.add( TypeInfo.t_struct );      }

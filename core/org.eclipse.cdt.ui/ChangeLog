@@ -1,3 +1,6 @@
+2003-12-15 Andrew Niefer
+	Updated CompletionEngine to match new signature for IASTNode.lookup
+
 2003-12-15 Alain Magloire
 
 	Header icon provide by  Mirza Hadzic PR 26486.  Thanks.

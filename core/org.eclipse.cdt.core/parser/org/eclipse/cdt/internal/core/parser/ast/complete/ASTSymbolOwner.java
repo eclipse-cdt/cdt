@@ -17,7 +17,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
  * @author jcamelon
  *
  */
-public class ASTSymbolOwner implements ISymbolOwner
+public class ASTSymbolOwner extends ASTNode implements ISymbolOwner
 {
     protected ISymbol symbol;
     /**

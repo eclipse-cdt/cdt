@@ -301,7 +301,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// 2. lookup fields & add to completion proposals
 		try
 		{
-			result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.FIELDS);
+			result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.FIELDS, completionNode.getCompletionContext());
 			addToCompletions (result);
 		}
 		catch( IASTNode.LookupException ilk )
@@ -312,7 +312,7 @@ public class CompletionEngine implements RelevanceConstants{
 		try
 		{
 			// 3. looup methods & add to completion proposals
-			result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.METHODS);
+			result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.METHODS, completionNode.getCompletionContext());
 			addToCompletions (result);
 		}
 		catch( IASTNode.LookupException ilk )
@@ -323,7 +323,7 @@ public class CompletionEngine implements RelevanceConstants{
 		
 		try {
 			// 4. lookup nested structures & add to completion proposals
-			result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.STRUCTURES);
+			result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.STRUCTURES, completionNode.getCompletionContext());
 			addToCompletions (result);
 		} catch (LookupException e) {
 		}
@@ -338,7 +338,7 @@ public class CompletionEngine implements RelevanceConstants{
 			// 2. Lookup all types that could be used here
 			LookupResult result;
 			try {
-				result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.STRUCTURES);
+				result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.STRUCTURES, completionNode.getCompletionContext());
 				addToCompletions(result);
 			} catch (LookupException e) {
 			}
@@ -363,7 +363,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// We have to lookup functions that could be overridden here.
 		LookupResult result;
 		try {
-			result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.METHODS);
+			result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.METHODS, completionNode.getCompletionContext());
 			addToCompletions(result);
 		} catch (LookupException e) {
 			// TODO Auto-generated catch block
@@ -385,7 +385,7 @@ public class CompletionEngine implements RelevanceConstants{
 			// 1. lookup local variables, global variables, functions, methods, structures, enums, macros, and namespaces
 			try
 			{
-				LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.ALL);
+				LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.ALL, completionNode.getCompletionContext());
 				addToCompletions(result);
 			}
 			catch( LookupException ilk )
@@ -397,7 +397,7 @@ public class CompletionEngine implements RelevanceConstants{
 			// 1. look only for local variables
 			try
 			{
-				LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.LOCAL_VARIABLES);
+				LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.LOCAL_VARIABLES, completionNode.getCompletionContext());
 				addToCompletions(result);
 			}
 			catch( LookupException ilk )
@@ -417,7 +417,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// 1. lookup local variables, global variables, functions, methods, structures, enums, macros, and namespaces
 		try
 		{
-			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.ALL);
+			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.ALL, completionNode.getCompletionContext());
 			addToCompletions(result);
 		}
 		catch( LookupException ilk )
@@ -432,7 +432,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// only look for classes
 		try
 		{
-			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.CLASSES);
+			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.CLASSES, completionNode.getCompletionContext());
 			addToCompletions(result);
 		}
 		catch( LookupException ilk )
@@ -445,7 +445,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// only look for classes
 		try
 		{
-			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.NAMESPACES);
+			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.NAMESPACES, completionNode.getCompletionContext());
 			addToCompletions(result);
 		}
 		catch( LookupException ilk )
@@ -466,7 +466,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// only look for macros
 		try
 		{
-			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.MACROS);
+			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.MACROS, completionNode.getCompletionContext());
 			addToCompletions(result);
 		}
 		catch( LookupException ilk )
@@ -482,7 +482,7 @@ public class CompletionEngine implements RelevanceConstants{
 		// only lookup constructors
 		try
 		{
-			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.CONSTRUCTORS);
+			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.CONSTRUCTORS, completionNode.getCompletionContext());
 		}
 		catch( LookupException ilk )
 		{

@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
@@ -148,7 +149,7 @@ public class ASTNamespaceAlias extends ASTDeclaration implements IASTNamespaceAl
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
 	 */
-	public LookupResult lookup(String prefix, LookupKind kind) {
+	public LookupResult lookup(String prefix, LookupKind kind, IASTNode context) {
 		// TODO Auto-generated method stub
 		return null;
 	}

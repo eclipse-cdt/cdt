@@ -155,12 +155,4 @@ public class ASTEnumerationSpecifier
 	{
 		offsets.setNameEndOffset(o);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
-	 */
-	public LookupResult lookup(String prefix, LookupKind kind) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

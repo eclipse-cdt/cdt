@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
@@ -315,5 +316,13 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     {
     	return new ASTInitializerClause( kind, assignmentExpression, initializerClauses, designators );
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getCompletionContext(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression)
+	 */
+	public IASTNode getCompletionContext(Kind kind, IASTExpression expression) {
+		//we have no cross-reference information about the type of the expression
+		return null;
+	}
 
 }

@@ -1,3 +1,9 @@
+2003-12-15 Andrew Niefer
+	Changed IASTNode.lookup to take the context as a parameter
+	created ASTNode to implement IASTNode, ASTSymbolOwner extends it.
+	Set Completion Scope for statements
+	Set Completion context for . and -> expressions
+
 2003-12-15 Hoda Amer
 	Fixed [Bug 47234] new ParserMode required for a better CModel :
 	- Added a core plugin preference to build the CModel in Structural mode

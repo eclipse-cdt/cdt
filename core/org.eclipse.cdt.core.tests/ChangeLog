@@ -1,3 +1,8 @@
+2003-12-15 Andrew Niefer
+	added ContextualParseTest.testCompletionLookup_Unqualified
+	added ContextualParseTest.testCompletionLookup_Qualified
+	added ContextualParseTest.testCompletionLookup_Pointer
+	
 2003-12-12 John Camelon
 	Updated testBaseCase_SimpleDeclaration() for keyword assertions.  
 

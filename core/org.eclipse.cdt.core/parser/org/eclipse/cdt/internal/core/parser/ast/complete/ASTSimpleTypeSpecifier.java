@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
@@ -151,7 +152,7 @@ public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
 	 */
-	public LookupResult lookup(String prefix, LookupKind kind) {
+	public LookupResult lookup(String prefix, LookupKind kind, IASTNode context) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -2736,4 +2737,24 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {
     	return new ASTInitializerClause( kind, assignmentExpression, initializerClauses, designators );
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getCompletionContext(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression)
+	 */
+	public IASTNode getCompletionContext(Kind kind, IASTExpression expression) {
+		IContainerSymbol context = null;
+		try {
+			context = getSearchScope( kind, expression, null );
+		} catch (ASTSemanticException e) {
+			return null;
+		}
+		
+		if( context != null ){
+			ISymbolASTExtension extension = context.getASTExtension();
+			return ( extension != null ) ? extension.getPrimaryDeclaration() : null;
+		}
+		
+		return null;
+		
+	}
 }

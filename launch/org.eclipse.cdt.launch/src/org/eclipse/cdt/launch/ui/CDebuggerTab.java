@@ -273,7 +273,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 
-		if (fDCombo.getSelectionIndex() == -1) {
+		if (fDCombo.getSelectionIndex() == -1 || getDebugConfig() == null) {
 			setErrorMessage("No debugger avalible");
 			return false;
 		}
@@ -318,10 +318,10 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		else {
 			setDynamicTab(CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID()));
 		}
+		setDebugConfig(debugConfig);
 		if (getDynamicTab() == null) {
 			return;
 		}
-		setDebugConfig(debugConfig);
 		// Ask the dynamic UI to create its Control
 		getDynamicTab().setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 		getDynamicTab().createControl(getDynamicTabHolder());

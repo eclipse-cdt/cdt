@@ -1,4 +1,11 @@
-2003-01-10 Mikhail Khodjaiants
+2003-01-14 Mikhail Khodjaiants
+	Added the 'Add Address Breakpoint' action to the workbench 'Run' menu.
+	* AddAddressBreakpointActionDelegate.java
+	* plugin.properties
+	* plugin.xml
+	* icons/full/obj16/brkp_obj.gif
+
+2003-01-13 Mikhail Khodjaiants
 	Implementation of the 'Run To Line' action for disassembly.
 	* RunToLineActionDelegate.java
 

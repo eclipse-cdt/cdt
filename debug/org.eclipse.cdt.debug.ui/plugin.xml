@@ -146,11 +146,26 @@
          </action>
          <action
                label="%ManageBreakpointAction.label"
-               icon="icons/full/obj16/brkpi_obj.gif"
+               icon="icons/full/obj16/brkp_obj.gif"
                helpContextId="manage_breakpoint_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointActionDelegate"
                menubarPath="org.eclipse.ui.run/cBreakpointGroup"
                id="org.eclipse.cdt.debug.ui.internal.actions.ManageBreakpointActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               label="%AddAddressBreakpointAction.label"
+               icon="icons/full/obj16/addrbrkp_obj.gif"
+               helpContextId="add_address_breakpoint_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.AddAddressBreakpointActionDelegate"
+               menubarPath="org.eclipse.ui.run/cBreakpointGroup"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.AddAddressBreakpointActionDelegate">
             <enablement>
                <pluginState
                      value="activated"
@@ -747,9 +762,9 @@
             targetID="org.eclipse.cdt.ui.editor.asm.AsmEditor"
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor.BreakpointRulerActions">
          <action
+               label="%Dummy.label"
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
                actionID="RulerDoubleClick"
-               label="%Dummy.label"
                id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
             <enablement>
                <pluginState
@@ -763,14 +778,14 @@
             targetID="org.eclipse.cdt.debug.ui.DisassemblyEditor"
             id="org.eclipse.cdt.debug.ui.DisassemblyEditor.BreakpointRulerActions">
          <action
-               actionID="RulerDoubleClick"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
                label="%Dummy.label"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               actionID="RulerDoubleClick"
                id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -826,6 +841,9 @@
          </action>
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.AddAddressBreakpointActionDelegate">
          </action>
       </debugActionGroup>
    </extension>

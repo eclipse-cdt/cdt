@@ -43,7 +43,7 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	private static final String EXTENSION_TYPE	= "CFileType"; //$NON-NLS-1$
 	private static final String EXTENSION_ASSOC = "CFileTypeAssociation"; //$NON-NLS-1$
 	private static final String ATTR_ID	 		= "id"; //$NON-NLS-1$
-	private static final String ATTR_LANGUAGE	= "langauge"; //$NON-NLS-1$
+	private static final String ATTR_LANGUAGE	= "language"; //$NON-NLS-1$
 	private static final String ATTR_NAME 		= "name"; //$NON-NLS-1$
 	private static final String ATTR_TYPE 		= "type"; //$NON-NLS-1$
 	private static final String ATTR_EXT  		= "pattern"; //$NON-NLS-1$

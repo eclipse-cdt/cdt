@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
@@ -1011,4 +1012,34 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		
 		assertAllReferences( 2, createTaskList( new Task( MyClass ), new Task( MyEnum ) ) ); 	
 	}
+	
+	public void testBug44838() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer(); 
+		buffer.append( "class A { int myX; A( int x ); };\n");
+		buffer.append( "A::A( int x ) : myX( x ) { if( x == 5 ) myX++; }\n");
+		Iterator i = parse( buffer.toString() ).getDeclarations(); 
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTField myX = (IASTField)getDeclarations( classA ).next(); 
+		IASTMethod constructor = (IASTMethod)i.next();
+		IASTParameterDeclaration parmX = (IASTParameterDeclaration)constructor.getParameters().next();
+		assertTrue( constructor.isConstructor());
+		assertFalse(i.hasNext());
+	}
+	
+	public void testBug46165() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer(); 
+		buffer.append( "class A { int myX; A( int x ); };\n");
+		buffer.append( "A::A( int x ) : myX( x ) { if( x == 5 ) myX++; }\n");
+		Iterator i = parse( buffer.toString() ).getDeclarations(); 
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTField myX = (IASTField)getDeclarations( classA ).next(); 
+		IASTMethod constructor = (IASTMethod)i.next();
+		IASTParameterDeclaration parmX = (IASTParameterDeclaration)constructor.getParameters().next();
+		assertTrue( constructor.isConstructor());
+		assertAllReferences( 4, createTaskList( new Task( classA ), new Task( myX, 2 ), new Task( parmX )));
+		assertFalse(i.hasNext());
+	}
+
 }

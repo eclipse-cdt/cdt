@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -40,7 +41,13 @@ public class BaseScannerTest extends TestCase {
 
 	protected void initializeScanner( String input, ParserMode mode )
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, new NullSourceElementRequestor( mode ) );
+		initializeScanner( input, mode, new NullSourceElementRequestor( mode ));
+	}
+
+
+	protected void initializeScanner( String input, ParserMode mode, ISourceElementRequestor requestor  )
+	{
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, requestor );
 	}
 
 

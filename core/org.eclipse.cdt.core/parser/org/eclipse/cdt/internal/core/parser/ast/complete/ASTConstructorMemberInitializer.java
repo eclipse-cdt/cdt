@@ -23,17 +23,21 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 public class ASTConstructorMemberInitializer
     implements IASTConstructorMemberInitializer
 {
-    private final String name;
+    private final int nameOffset;
+	private final boolean requireNameResolution;
+	private final String name;
     private final IASTExpression expression;
-    private final ASTReferenceStore store;
+    private final List references;
     /**
      * 
      */
-    public ASTConstructorMemberInitializer( IASTExpression expression, String name, List references )
+    public ASTConstructorMemberInitializer( IASTExpression expression, String name, int nameOffset, List references, boolean requireNameResolution )
     {
     	this.expression = expression;
-    	this.name = name; 
-    	store = new ASTReferenceStore( references );
+    	this.name = name;
+    	this.nameOffset = nameOffset; 
+    	this.references = references;
+    	this.requireNameResolution = requireNameResolution;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer#getExpressionList()
@@ -54,6 +58,7 @@ public class ASTConstructorMemberInitializer
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
+    	ASTReferenceStore store = new ASTReferenceStore( references );
         store.processReferences( requestor );
     }
     /* (non-Javadoc)
@@ -68,4 +73,27 @@ public class ASTConstructorMemberInitializer
     public void exitScope(ISourceElementRequestor requestor)
     {
     }
+	/**
+	 * @return
+	 */
+	public boolean requiresNameResolution()
+	{
+		return requireNameResolution;
+	}
+
+	/**
+	 * @return
+	 */
+	public List getReferences()
+	{
+		return references;
+	}
+	/**
+	 * @return
+	 */
+	public int getNameOffset()
+	{
+		return nameOffset;
+	}
+
 }

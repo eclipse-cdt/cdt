@@ -281,6 +281,14 @@
                      builtIn="false">
                </listOptionValue>
             </option>
+            <option
+                  valueType="stringList"
+                  name="No Command StringList"
+                  id="sub.tool.string.list">
+               <listOptionValue value="x"/>
+               <listOptionValue value="y"/>
+               <listOptionValue value="z"/>
+            </option>
          </tool>
       </target>
       <target

@@ -1232,6 +1232,8 @@ public class ManagedBuildCoreTests extends TestCase {
 	 * in the sub target, the test does a sanity check just to be complete.
 	 */
 	private void checkSubTarget(ITarget target) throws BuildException {
+		final String expectedFlags = "-I/usr/include -I/opt/gnome/include -IC:\\home\\tester/include -I\"../includes\" x y z";
+		
 		// Check the overridden clean command
 		assertEquals("rm -yourworld", target.getCleanCommand());
 		// Make sure the target inherits the make command
@@ -1259,7 +1261,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		assertEquals("Sub Tool", subTool.getName());
 		// Confirm that it has four options
 		IOption[] subOpts = subTool.getOptions();
-		assertEquals(4, subOpts.length);
+		assertEquals(5, subOpts.length);
 		assertEquals("", subTool.getOutputFlag());
 		assertTrue(subTool.buildsFileType("yarf"));
 		assertTrue(subTool.producesFileType("bus"));
@@ -1311,6 +1313,20 @@ public class ManagedBuildCoreTests extends TestCase {
 		assertEquals("obj1.o", objs[0]);
 		assertEquals("obj2.o", objs[1]);
 		assertEquals(IOption.BROWSE_FILE, subOpts[3].getBrowseType());
+		assertNull(subOpts[3].getCommand());
+		
+		// There should be a string list with no command
+		assertEquals("No Command StringList", subOpts[4].getName());
+		assertEquals(IOption.STRING_LIST, subOpts[4].getValueType());
+		String[] listItems = subOpts[4].getStringListValue();
+		assertNull(subOpts[4].getCommand());
+		assertEquals(3, listItems.length);
+		assertEquals("x", listItems[0]);
+		assertEquals("y", listItems[1]);
+		assertEquals("z", listItems[2]);
+		
+		// Make sure the tool flags look right
+		assertEquals(subTool.getToolFlags(), expectedFlags);
 		
 		// Get the configs for this target; it should inherit all the configs defined for the parent
 		IConfiguration[] configs = target.getConfigurations();

@@ -275,7 +275,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 					String[] list = option.getStringListValue();
 					for (int j = 0; j < list.length; j++) {
 						String temp = list[j];
-						buf.append(listCmd + temp + WHITE_SPACE);
+						if (listCmd != null) buf.append(listCmd);
+						buf.append(temp + WHITE_SPACE);
 					}
 					break;
 					

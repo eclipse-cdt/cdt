@@ -34,6 +34,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
 public class EventManager extends SessionObject implements ICDIEventManager, Observer {
 
 	List list = Collections.synchronizedList(new ArrayList(1));
+	boolean isEnable = true;
 
 	/**
 	 * Process the event from MI and do any state work on the CDI.
@@ -64,7 +65,9 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		}
 
 		// Fire the event;
-		fireEvent(cdiEvent);
+		if (isEnable) {
+			fireEvent(cdiEvent);
+		}
 	}
 
 	public EventManager(CSession session) {
@@ -135,4 +138,14 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		CTarget target = getCSession().getCTarget();
 		//target.clearState();
 	}
+
+
+	void disableEvents() {
+		isEnable = false;
+	}
+
+	void enableEvents() {
+		isEnable = true;
+	}
+
 }

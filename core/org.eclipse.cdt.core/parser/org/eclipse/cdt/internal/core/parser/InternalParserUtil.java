@@ -32,7 +32,10 @@ public class InternalParserUtil extends ParserFactory {
 		if (includeFile.exists() && includeFile.isFile()) 
 		{
 			try {
-				return new CodeReader(finalPath);
+			    //use the canonical path so that in case of non-case-sensitive OSs
+			    //the CodeReader always has the same name as the file on disk with
+			    //no differences in case.
+				return new CodeReader(includeFile.getCanonicalPath());
 			} catch (IOException e) {
 			}
 		}

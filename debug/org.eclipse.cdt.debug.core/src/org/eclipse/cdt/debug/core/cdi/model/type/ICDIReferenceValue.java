@@ -4,9 +4,11 @@
  */
 package org.eclipse.cdt.debug.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 /**
  */
 public interface ICDIReferenceValue extends ICDIDerivedValue {
 
+	long referenceValue() throws CDIException;
 }

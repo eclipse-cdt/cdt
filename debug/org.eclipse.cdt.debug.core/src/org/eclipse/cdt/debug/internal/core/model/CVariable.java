@@ -16,7 +16,10 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.core.model.ICValue;
@@ -384,15 +387,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public void setFormat( int format ) throws DebugException
 	{
-		try
-		{
-			getCDIVariable().setFormat( format );
-			fFormat = format;
-		}
-		catch( CDIException e )
-		{
-			targetRequestFailed( e.getMessage(), null );
-		}
+		fFormat = format;
 	}
 
 	/**
@@ -661,5 +656,37 @@ public abstract class CVariable extends CDebugElement
 		{
 		}
 		return type;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isCharacter()
+	 */
+	public boolean isCharacter()
+	{
+		return ( getType() instanceof ICDICharType );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isNaN()
+	 */
+	public boolean isNaN() 
+	{
+		try 
+		{
+			return ( getCDIVariable().getValue() instanceof ICDIFloatingPointValue ) ?
+					((ICDIFloatingPointValue)getCDIVariable().getValue()).isNaN() : false;
+		}
+		catch( CDIException e ) 
+		{
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isFloatingPointType()
+	 */
+	public boolean isFloatingPointType() 
+	{
+		return  ( getType() instanceof ICDIFloatingPointType );
 	}
 }

@@ -31,4 +31,10 @@ public interface ICVariable extends IVariable
 	int[] getArrayDimensions();
 
 	boolean isStructure();
+
+	boolean isCharacter();
+
+	boolean isFloatingPointType();
+
+	boolean isNaN();
 }

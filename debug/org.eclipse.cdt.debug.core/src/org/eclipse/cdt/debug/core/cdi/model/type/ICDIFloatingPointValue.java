@@ -6,8 +6,8 @@
 
 package org.eclipse.cdt.debug.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
-
 
 /**
  * 
@@ -17,5 +17,13 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
  */
 public interface ICDIFloatingPointValue extends ICDIValue {
 
-	// Implement type conversion here
+	float floatValue() throws CDIException;
+
+	double doubleValue() throws CDIException;
+
+	long longValue() throws CDIException;
+
+	boolean isNaN();
+
+	boolean isInfinite();
 }

@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,8 +14,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntegralType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongLongValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortValue;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
@@ -87,15 +98,14 @@ public class CValue extends CDebugElement implements ICValue
 		{
 			try
 			{
-//				fValueString = processCDIValue( getUnderlyingValue().getValueString() );
-				fValueString = getUnderlyingValue().getValueString();
+				fValueString = processUnderlyingValue( getUnderlyingValue() );
 			}
 			catch( CDIException e )
 			{
 				fValueString = e.getMessage();
 			}
 		}
-		return ( fValueString != null ) ? processCDIValue( fValueString ) : null;
+		return fValueString;
 	}
 
 	/* (non-Javadoc)
@@ -266,40 +276,218 @@ public class CValue extends CDebugElement implements ICValue
 		return fParent;
 	}
 
-	public String getUnderlyingValueString()
+	private String processUnderlyingValue( ICDIValue cdiValue ) throws CDIException
 	{
-		if ( fValueString == null && getUnderlyingValue() != null )
+		if ( cdiValue != null )
 		{
-			try
-			{
-				fValueString = getUnderlyingValue().getValueString();
-			}
-			catch( CDIException e )
-			{
-				fValueString = e.getMessage();
-			}
+			if ( cdiValue instanceof ICDICharValue )
+				return getCharValueString( (ICDICharValue)cdiValue );
+			else if ( cdiValue instanceof ICDIShortValue )
+				return getShortValueString( (ICDIShortValue)cdiValue );
+			else if ( cdiValue instanceof ICDIIntValue )
+				return getIntValueString( (ICDIIntValue)cdiValue );
+			else if ( cdiValue instanceof ICDILongValue )
+				return getLongValueString( (ICDILongValue)cdiValue );
+			else if ( cdiValue instanceof ICDILongLongValue )
+				return getLongLongValueString( (ICDILongLongValue)cdiValue );
+			else if ( cdiValue instanceof ICDIFloatValue )
+				return getFloatValueString( (ICDIFloatValue)cdiValue );
+			else if ( cdiValue instanceof ICDIDoubleValue )
+				return getDoubleValueString( (ICDIDoubleValue)cdiValue );
+			else if ( cdiValue instanceof ICDIPointerValue )
+				return getPointerValueString( (ICDIPointerValue)cdiValue );
+			else
+				return cdiValue.getValueString();
 		}
-		return fValueString;
-	}
-	
-	public boolean isCharPointer()
-	{
-		String value = getUnderlyingValueString();
-		if ( value != null )
-		{
-			value = value.trim();
-			return ( value.startsWith( "0x" ) && value.indexOf( ' ' ) != -1 );
-		}
-		return false;
+		return null;
 	}
 
-	public boolean isCharacter()
+	private String getCharValueString( ICDICharValue value ) throws CDIException
 	{
-		String value = getUnderlyingValueString();
-		if ( value != null )
+		byte byteValue = (byte)value.byteValue();
+		short shortValue = value.shortValue();
+		switch( getParentVariable().getFormat() )
 		{
-			return ( value.trim().endsWith( "\'" ) );
+			case ICDIFormat.NATURAL:
+			{
+				return ( ( Character.isISOControl( (char)byteValue ) &&
+						   byteValue != '\b' &&
+						   byteValue != '\t' && 
+						   byteValue != '\n' && 
+						   byteValue != '\f' && 
+						   byteValue != '\r' ) || byteValue < 0 ) ? "" : new String( new byte[] { '\'', byteValue, '\'' } );
+			}
+			case ICDIFormat.DECIMAL:
+			{
+				return ( isUnsigned() ) ? Integer.toString( shortValue ) : Integer.toString( byteValue );
+			}
+			case ICDIFormat.HEXADECIMAL:
+			{
+				StringBuffer sb = new StringBuffer( "0x" ); 
+				String stringValue = Integer.toHexString( ( isUnsigned() ) ? shortValue : byteValue );
+				sb.append( ( stringValue.length() > 2 ) ? stringValue.substring( stringValue.length() - 2 ) : stringValue );
+				return sb.toString();
+			}
 		}
-		return false;
+		return null;
+	}
+
+	private String getShortValueString( ICDIShortValue value ) throws CDIException
+	{
+		short shortValue = value.shortValue();
+		int intValue = value.intValue();
+		switch( getParentVariable().getFormat() )
+		{
+			case ICDIFormat.NATURAL:
+			case ICDIFormat.DECIMAL:
+				return ( isUnsigned() ) ? Integer.toString( intValue ) : Short.toString( shortValue );
+			case ICDIFormat.HEXADECIMAL:
+			{
+				StringBuffer sb = new StringBuffer( "0x" ); 
+				String stringValue = Integer.toHexString( ( isUnsigned() ) ? intValue : shortValue );
+				sb.append( ( stringValue.length() > 4 ) ? stringValue.substring( stringValue.length() - 4 ) : stringValue );
+				return sb.toString();
+			}
+		}
+		return null;
+	}
+
+	private String getIntValueString( ICDIIntValue value ) throws CDIException
+	{
+		int intValue = value.intValue();
+		long longValue = value.longValue();
+		switch( getParentVariable().getFormat() )
+		{
+			case ICDIFormat.NATURAL:
+			case ICDIFormat.DECIMAL:
+				return ( isUnsigned() ) ? Long.toString( longValue ) : Integer.toString( intValue );
+			case ICDIFormat.HEXADECIMAL:
+			{
+				StringBuffer sb = new StringBuffer( "0x" ); 
+				String stringValue = ( isUnsigned() ) ? Long.toHexString( longValue ) : Integer.toHexString( intValue );
+				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
+				return sb.toString();
+			}
+		}
+		return null;
+	}
+
+	private String getLongValueString( ICDILongValue value ) throws CDIException
+	{
+		int intValue = value.intValue();
+		long longValue = value.longValue();
+		switch( getParentVariable().getFormat() )
+		{
+			case ICDIFormat.NATURAL:
+			case ICDIFormat.DECIMAL:
+				return ( isUnsigned() ) ? Long.toString( longValue ) : Integer.toString( intValue );
+			case ICDIFormat.HEXADECIMAL:
+			{
+				StringBuffer sb = new StringBuffer( "0x" ); 
+				String stringValue = Long.toHexString( ( isUnsigned() ) ? longValue : intValue );
+				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
+				return sb.toString();
+			}
+		}
+		return null;
+	}
+
+	private String getLongLongValueString( ICDILongLongValue value ) throws CDIException
+	{
+		BigInteger bigValue = new BigInteger( value.getValueString() );
+		long longValue = value.longValue();
+		switch( getParentVariable().getFormat() )
+		{
+			case ICDIFormat.NATURAL:
+			case ICDIFormat.DECIMAL:
+				return ( isUnsigned() ) ? bigValue.toString() : Long.toString( longValue );
+			case ICDIFormat.HEXADECIMAL:
+			{
+				StringBuffer sb = new StringBuffer( "0x" ); 
+				sb.append( ( isUnsigned() ) ? bigValue.toString( 16 ) : Long.toHexString( longValue ) );
+				return sb.toString();
+			}
+		}
+		return null;
+	}
+
+	private String getFloatValueString( ICDIFloatValue value ) throws CDIException
+	{
+		if ( value.isNaN() )
+			return "";
+		float floatValue = value.floatValue();
+		long longValue = value.longValue();
+		switch( getParentVariable().getFormat() )
+		{
+			case ICDIFormat.NATURAL:
+				return Float.toString( floatValue );
+			case ICDIFormat.DECIMAL:
+				return Long.toString( longValue );
+			case ICDIFormat.HEXADECIMAL:
+			{
+				StringBuffer sb = new StringBuffer( "0x" ); 
+				String stringValue = Long.toHexString( longValue );
+				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
+				return sb.toString();
+			}
+		}
+		return null;
+	}
+
+	private String getDoubleValueString( ICDIDoubleValue value ) throws CDIException
+	{
+		if ( value.isNaN() )
+			return "";
+		double doubleValue = value.doubleValue();
+		long longValue = value.longValue();
+		switch( getParentVariable().getFormat() )
+		{
+			case ICDIFormat.NATURAL:
+				return Double.toString( doubleValue );
+			case ICDIFormat.DECIMAL:
+				return Long.toString( longValue );
+			case ICDIFormat.HEXADECIMAL:
+			{
+				StringBuffer sb = new StringBuffer( "0x" ); 
+				String stringValue = Long.toHexString( longValue );
+				sb.append( ( stringValue.length() > 16 ) ? stringValue.substring( stringValue.length() - 16 ) : stringValue );
+				return sb.toString();
+			}
+		}
+		return null;
+	}
+
+	private String getPointerValueString( ICDIPointerValue value ) throws CDIException
+	{
+		long longValue = value.pointerValue();
+		switch( getParentVariable().getFormat() )
+		{
+			case ICDIFormat.DECIMAL:
+				return Long.toString( longValue );
+			case ICDIFormat.NATURAL:
+			case ICDIFormat.HEXADECIMAL:
+			{
+				StringBuffer sb = new StringBuffer( "0x" ); 
+				String stringValue = Long.toHexString( longValue );
+				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
+				return sb.toString();
+			}
+		}
+		return null;
+	}
+
+	private boolean isUnsigned()
+	{
+		boolean result = false;
+		try
+		{
+			if ( getParentVariable().getCDIVariable() != null )
+				result = ( getParentVariable().getCDIVariable().getType() instanceof ICDIIntegralType ) ? 
+							((ICDIIntegralType)getParentVariable().getCDIVariable().getType()).isUnsigned() : false;
+		}
+		catch( CDIException e )
+		{
+		}
+		return result;
 	}
 }

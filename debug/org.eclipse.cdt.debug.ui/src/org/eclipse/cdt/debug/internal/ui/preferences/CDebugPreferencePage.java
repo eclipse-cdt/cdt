@@ -5,6 +5,8 @@
  */
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
@@ -14,8 +16,11 @@ import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -53,6 +58,11 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 */
 	// Disassembly setting widgets
 	private Button fAutoDisassemblyButton;
+	
+	// Maximum number of disassembly instructions to display
+	private IntegerFieldEditor fMaxNumberOfInstructionsText;
+
+	private static final int NUMBER_OF_DIGITS = 3;
 
 	// Format constants
 //	private static int[] fFormatIds = new int[]{ ICDIFormat.NATURAL, ICDIFormat.HEXADECIMAL, ICDIFormat.DECIMAL };
@@ -144,6 +154,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 		fPathsButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fAutoDisassemblyButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY ) );
+		fMaxNumberOfInstructionsText.setStringValue( new Integer( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) ).toString() );
 /*
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
 		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
@@ -175,6 +186,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, false );
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, true );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_AUTO_DISASSEMBLY, false );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, ICDebugConstants.DEF_NUMBER_OF_INSTRUCTIONS );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, ICDIFormat.NATURAL );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, ICDIFormat.NATURAL );
@@ -212,6 +224,35 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	{
 		Composite comp = createGroupComposite( parent, 1, "Disassembly options" );
 		fAutoDisassemblyButton = createCheckButton( comp, "Automatically switch to &disassembly mode" );
+		createMaxNumberOfInstructionsField( comp );
+	}
+
+	private void createMaxNumberOfInstructionsField( Composite parent )
+	{
+		Composite composite = ControlFactory.createComposite( parent, 2 );
+		fMaxNumberOfInstructionsText = new IntegerFieldEditor( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS,
+															   "Maximum number of instructions: ",
+															   composite,
+															   NUMBER_OF_DIGITS );		
+		GridData data = (GridData)fMaxNumberOfInstructionsText.getTextControl( composite ).getLayoutData();
+		data.horizontalAlignment = GridData.BEGINNING;
+		data.widthHint = convertWidthInCharsToPixels( NUMBER_OF_DIGITS + 1 );
+		fMaxNumberOfInstructionsText.setPreferencePage( this );
+		fMaxNumberOfInstructionsText.setValidateStrategy( StringFieldEditor.VALIDATE_ON_KEY_STROKE );
+		fMaxNumberOfInstructionsText.setValidRange( ICDebugConstants.MIN_NUMBER_OF_INSTRUCTIONS, ICDebugConstants.MAX_NUMBER_OF_INSTRUCTIONS );
+		String minValue = Integer.toString( ICDebugConstants.MIN_NUMBER_OF_INSTRUCTIONS );
+		String maxValue = Integer.toString( ICDebugConstants.MAX_NUMBER_OF_INSTRUCTIONS );
+		fMaxNumberOfInstructionsText.setErrorMessage( MessageFormat.format( "The valid value range is [{0},{1}].", new String[]{ minValue, maxValue } ) );
+		fMaxNumberOfInstructionsText.load();
+		fMaxNumberOfInstructionsText.setPropertyChangeListener( 
+					new IPropertyChangeListener()
+						{
+							public void propertyChange( PropertyChangeEvent event )
+							{
+								if ( event.getProperty().equals( FieldEditor.IS_VALID ) )
+									setValid( fMaxNumberOfInstructionsText.isValid() );
+							}
+						} );
 	}
 
 	/**
@@ -320,6 +361,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		IPreferenceStore store = getPreferenceStore();
 		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, fPathsButton.getSelection() );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_AUTO_DISASSEMBLY, fAutoDisassemblyButton.getSelection() );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, fMaxNumberOfInstructionsText.getIntValue() );
 /*
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, getFormatId( fVariableFormatCombo.getSelectionIndex() ) );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, getFormatId( fExpressionFormatCombo.getSelectionIndex() ) );
@@ -342,6 +384,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		IPreferenceStore store = getPreferenceStore();
 		fPathsButton.setSelection( store.getDefaultBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fAutoDisassemblyButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY ) );
+		fMaxNumberOfInstructionsText.setStringValue( new Integer( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) ).toString() );
 /*
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
 		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );

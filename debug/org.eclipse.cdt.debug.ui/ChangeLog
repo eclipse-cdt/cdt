@@ -1,3 +1,7 @@
+2003-05-14 Mikhail Khodjaiants
+	Created preference for the maximum number of disassembly instructions.
+	* CDebugPreferencePage.java
+
 2003-05-13 Mikhail Khodjaiants
 	Enable/disable the 'Add Globals' action when the 'Expressions' view is initializing.
 	* AddGlobalsActionDelegate.java

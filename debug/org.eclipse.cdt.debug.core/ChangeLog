@@ -1,3 +1,9 @@
+2003-05-14 Mikhail Khodjaiants
+	Created preference for the maximum number of disassembly instructions.
+	* CDebugTarget.java
+	* ICDebugConstants.java
+	* DisassemblyManager.java
+
 2003-05-12 Mikhail Khodjaiants
 	Moved the generation of expressions for global variables to the mi plugin.
 	* CDebugTarget.java

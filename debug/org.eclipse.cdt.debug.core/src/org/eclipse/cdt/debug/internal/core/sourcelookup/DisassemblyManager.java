@@ -9,12 +9,15 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.internal.core.DisassemblyStorage;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.model.IStackFrame;
 
 /**
@@ -22,10 +25,9 @@ import org.eclipse.debug.core.model.IStackFrame;
  * 
  * @since: Oct 8, 2002
  */
-public class DisassemblyManager
+public class DisassemblyManager implements Preferences.IPropertyChangeListener
 {
-	// move to preferences
-	final static private int DISASSEMBLY_MAX_LINE_COUNT = 100;
+	// move to preferences ???
 	final static private int DISASSEMBLY_BLOCK_SIZE = 100;
 	
 	private CDebugTarget fDebugTarget;
@@ -37,6 +39,7 @@ public class DisassemblyManager
 	public DisassemblyManager( CDebugTarget target )
 	{
 		setDebugTarget( target );
+		CDebugCorePlugin.getDefault().getPluginPreferences().addPropertyChangeListener( this );
 	}
 
 	public int getLineNumber( IStackFrame frame )
@@ -133,7 +136,9 @@ public class DisassemblyManager
 				{
 					try
 					{
-						instructions = sm.getInstructions( fileName, lineNumber, DISASSEMBLY_MAX_LINE_COUNT );
+						instructions = sm.getInstructions( fileName, 
+														   lineNumber, 
+														   CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) );
 					}
 					catch( CDIException e )
 					{
@@ -224,5 +229,19 @@ public class DisassemblyManager
 				return true;
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 */
+	public void propertyChange( PropertyChangeEvent event )
+	{
+		if ( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS.equals( event.getProperty() ) )
+			setDisassemblyStorage( null );
+	}
+
+	public void dispose()
+	{
+		CDebugCorePlugin.getDefault().getPluginPreferences().removePropertyChangeListener( this );
 	}
 }

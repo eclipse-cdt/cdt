@@ -52,4 +52,24 @@ public interface ICDebugConstants
 	 * refreshed every time when the execution of program stops.
 	 */
 	public static final String PREF_REGISTERS_AUTO_REFRESH = PLUGIN_ID + "Registers.auto_refresh"; //$NON-NLS-1$
+
+	/**
+	 * The identifier of the maximum number of instructions displayed in disassembly. 
+	 */
+	public static final String PREF_MAX_NUMBER_OF_INSTRUCTIONS = PLUGIN_ID + "cDebug.max_number_of_instructions"; //$NON-NLS-1$
+
+	/**
+	 * The default number of instructions displayed in disassembly. 
+	 */
+	public static final int DEF_NUMBER_OF_INSTRUCTIONS = 100;
+
+	/**
+	 * The minimal valid number of instructions displayed in disassembly. 
+	 */
+	public static final int MIN_NUMBER_OF_INSTRUCTIONS = 1;
+
+	/**
+	 * The maximal valid number of instructions displayed in disassembly. 
+	 */
+	public static final int MAX_NUMBER_OF_INSTRUCTIONS = 999;
 }

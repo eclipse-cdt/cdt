@@ -1183,6 +1183,7 @@ public class CDebugTarget extends CDebugElement
 		disposeSharedLibraryManager();
 		disposeSignalManager();
 		disposeRegisterManager();
+		disposeDisassemblyManager();
 		removeAllExpressions();
 		try
 		{
@@ -2394,6 +2395,11 @@ public class CDebugTarget extends CDebugElement
 	protected void disposeRegisterManager()
 	{
 		fRegisterManager.dispose();
+	}
+
+	protected void disposeDisassemblyManager()
+	{
+		fDisassemblyManager.dispose();
 	}
 
 	/* (non-Javadoc)

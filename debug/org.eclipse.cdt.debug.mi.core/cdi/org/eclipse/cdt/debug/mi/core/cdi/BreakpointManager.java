@@ -28,6 +28,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Exceptionpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Watchpoint;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -579,9 +580,56 @@ public class BreakpointManager extends Manager {
 		return bkpt;
 	}
 
+	Breakpoint[] exceptionBps = new Breakpoint[2];
+	final int EXCEPTION_THROW_IDX = 0;
+	final int EXCEPTION_CATCH_IDX = 1;
+	final static String[] EXCEPTION_FUNCS = new String[] {"__cxa_throw", "__cxa_begin_catch"}; //$NON-NLS-1$ //$NON-NLS-2$
+
+
 	public ICDIExceptionpoint setExceptionpoint(Target target, String clazz, boolean stopOnThrow,
 			boolean stopOnCatch) throws CDIException {
-		return null;
+
+		if (!stopOnThrow && !stopOnCatch) {
+			throw new CDIException("Must suspend on throw or catch"); //$NON-NLS-1$
+		}
+
+		MIBreakpoint miBreakpoint = null;
+
+		if (stopOnThrow) {
+			synchronized(exceptionBps) {
+				int id = EXCEPTION_THROW_IDX;
+				if (exceptionBps[EXCEPTION_THROW_IDX] == null) {
+					Location location = new Location(null, EXCEPTION_FUNCS[id], 0);
+					Breakpoint bp = new Breakpoint(target, ICDIBreakpoint.REGULAR, location, null, null);
+					setLocationBreakpoint(bp);
+					exceptionBps[id] = bp;
+					miBreakpoint = bp.getMIBreakpoint();
+				}
+			}
+		}
+		if (stopOnCatch) {
+			synchronized(exceptionBps) {
+				int id = EXCEPTION_THROW_IDX;
+				if (exceptionBps[id] == null) {
+					Location location = new Location(null, EXCEPTION_FUNCS[id], 0);
+					Breakpoint bp = new Breakpoint(target, ICDIBreakpoint.REGULAR, location, null, null);
+					setLocationBreakpoint(bp);
+					exceptionBps[id] = bp;
+					miBreakpoint = bp.getMIBreakpoint();
+				}
+			}
+		}
+
+		Exceptionpoint excp = new Exceptionpoint(target, clazz, stopOnThrow, stopOnCatch);
+		excp.setMIBreakpoint(miBreakpoint);
+		List blist = getBreakpointsList(target);
+		blist.add(excp);
+
+		// Fire a created Event.
+		MISession miSession = target.getMISession();
+		miSession.fireEvent(new MIBreakpointCreatedEvent(miSession, excp.getMIBreakpoint().getNumber()));
+		
+		return excp;
 	}
 
 	/**

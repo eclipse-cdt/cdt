@@ -48,6 +48,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointDeletedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakpointHitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MICreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIDestroyedEvent;
@@ -272,7 +273,12 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			// Event was consumed by the shared lib processing bailout
 			return false;
 		}
-	
+
+		if (processBreakpointHitEvent(stopped)) {
+			// Event was consumed, i.e. it was not the right exception.
+			return false;
+		}
+
 		int threadId = threadId = stopped.getThreadId();
 		currentTarget.updateState(threadId);
 		try {
@@ -504,6 +510,19 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			}
 		}
 		return false;
+	}
+
+	boolean processBreakpointHitEvent(MIStoppedEvent stopped) {
+		Session session = (Session)getSession();
+		if (stopped instanceof MIBreakpointHitEvent) {
+			MIBreakpointHitEvent bpEvent = (MIBreakpointHitEvent)stopped;
+			BreakpointManager bpMgr = session.getBreakpointManager();
+			int bpNo = bpEvent.getNumber();
+			//if (bpMgr.isExceptionBreakpoint(bpNo)) {
+				
+			//}
+		}
+		return true;
 	}
 
 	/**

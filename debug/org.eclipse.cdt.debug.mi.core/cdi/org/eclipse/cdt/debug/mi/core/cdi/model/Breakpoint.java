@@ -25,7 +25,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
  */
 public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 
-	ICDILocation location;
+	ICDILocation fLocation;
 	ICDICondition condition;
 	MIBreakpoint miBreakpoint;
 	//BreakpointManager mgr;
@@ -37,7 +37,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 		super(target);
 		//mgr = m;
 		type = kind;
-		location = loc;
+		fLocation = loc;
 		condition = cond;
 		tid = threadId;
 		enable = true;
@@ -57,7 +57,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 		miBreakpoint = newMIBreakpoint;
 		// Force the reset to use GDB's values.
 		condition = null;
-		location = null;
+		fLocation = null;
 	}
 
 	public boolean isDeferred() {
@@ -148,18 +148,18 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocationBreakpoint#getLocation()
 	 */
 	public ICDILocation getLocation() throws CDIException {
-		if (location == null) {
+		if (fLocation == null) {
 			if (miBreakpoint != null) {
-				location = new Location (miBreakpoint.getFile(),
+				fLocation = new Location (miBreakpoint.getFile(),
 					miBreakpoint.getFunction(),
 					miBreakpoint.getLine(),
 					miBreakpoint.getAddress());
 			}
 		}
-		return location;
+		return fLocation;
 	}
 
 	public void setLocation(ICDILocation loc) {
-		location = loc;
+		fLocation = loc;
 	}
 }

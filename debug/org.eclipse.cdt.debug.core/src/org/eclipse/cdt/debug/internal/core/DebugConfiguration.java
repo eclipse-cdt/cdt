@@ -10,6 +10,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.ICDebugger;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
@@ -19,17 +20,19 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	 */
 	private IConfigurationElement fElement;
 	private HashSet fModes;
+	private HashSet fCPUs;
+	public static final String NATIVE = "native";
 
 	public DebugConfiguration(IConfigurationElement element) {
 		fElement = element;
 	}
-	
+
 	private IConfigurationElement getConfigurationElement() {
 		return fElement;
-	}	
-	
+	}
+
 	public ICDebugger getDebugger() throws CoreException {
-		return (ICDebugger)getConfigurationElement().createExecutableExtension("class");
+		return (ICDebugger) getConfigurationElement().createExecutableExtension("class");
 	}
 
 	public String getName() {
@@ -41,23 +44,33 @@ public class DebugConfiguration implements ICDebugConfiguration {
 		return getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
 	}
 
-	public String[] getPlatforms() {
+	public String getPlatform() {
 		String platform = getConfigurationElement().getAttribute("platform");
-		if ( platform == null ) {
-			return new String[] {"local"};
+		if (platform == null) {
+			return NATIVE;
 		}
-		StringTokenizer stoken = new StringTokenizer(platform, ",");
-		String[] platforms = new String[stoken.countTokens()];
-		for( int i = 0; i < platforms.length; i++ ) {
-			platforms[i] = stoken.nextToken();
-		}
-		return platforms;
+		return platform;
 	}
-	
+
+	public String[] getCPUList() {
+		return (String[]) getCPUs().toArray(new String[0]);
+	}
+
+	public String[] getModeList() {
+		return (String[]) getModes().toArray(new String[0]);
+	}
+
 	public boolean supportsMode(String mode) {
 		return getModes().contains(mode);
 	}
 
+	public boolean supportsCPU(String cpu) {
+		String nativeCPU = BootLoader.getOSArch();
+		if ( nativeCPU.startsWith(cpu) ) {
+			cpu = NATIVE;
+		}
+		return getCPUs().contains(cpu);
+	}
 	/**
 	 * Returns the set of modes specified in the configuration data.
 	 * 
@@ -65,17 +78,40 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	 */
 	protected Set getModes() {
 		if (fModes == null) {
-			String modes= getConfigurationElement().getAttribute("modes"); //$NON-NLS-1$
+			String modes = getConfigurationElement().getAttribute("modes"); //$NON-NLS-1$
 			if (modes == null) {
 				return new HashSet(0);
 			}
-			StringTokenizer tokenizer= new StringTokenizer(modes, ","); //$NON-NLS-1$
+			StringTokenizer tokenizer = new StringTokenizer(modes, ","); //$NON-NLS-1$
 			fModes = new HashSet(tokenizer.countTokens());
 			while (tokenizer.hasMoreTokens()) {
 				fModes.add(tokenizer.nextToken().trim());
 			}
 		}
 		return fModes;
+	}
+
+	protected Set getCPUs() {
+		if (fCPUs == null) {
+			String cpus = getConfigurationElement().getAttribute("cpu"); //$NON-NLS-1$
+			if (cpus == null) {
+				fCPUs = new HashSet(1);
+				fCPUs.add(NATIVE);
+			}
+			else {
+				String nativeCPU = BootLoader.getOSArch();
+				StringTokenizer tokenizer = new StringTokenizer(cpus, ","); //$NON-NLS-1$
+				fCPUs = new HashSet(tokenizer.countTokens());
+				while (tokenizer.hasMoreTokens()) {
+					String cpu = tokenizer.nextToken().trim();
+					fCPUs.add(cpu);
+					if (nativeCPU.startsWith(cpu)) { // os arch be cpu{le/be}
+						fCPUs.add(NATIVE);
+					}
+				}
+			}
+		}
+		return fCPUs;
 	}
 
 }

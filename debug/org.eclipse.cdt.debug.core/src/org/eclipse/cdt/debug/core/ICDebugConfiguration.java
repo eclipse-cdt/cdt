@@ -7,9 +7,12 @@ package org.eclipse.cdt.debug.core;
 import org.eclipse.core.runtime.CoreException;
 
 public interface ICDebugConfiguration {
-	public ICDebugger getDebugger() throws CoreException;
-	public String getName();
-	public String getID();
-	public String[] getPlatforms();
-	public boolean supportsMode(String mode);
+	ICDebugger getDebugger() throws CoreException;
+	String getName();
+	String getID();
+	String getPlatform();
+	String[] getCPUList();
+	String[] getModeList();
+	boolean supportsCPU(String cpu);
+	boolean supportsMode(String mode);
 }

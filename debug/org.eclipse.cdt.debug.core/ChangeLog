@@ -1,3 +1,9 @@
+2002-11-13
+	* schema/CDebugger.exsd
+	* src/org/eclipse/cdt/debug/core/ICDebugConfiguration.java
+	* src/org/eclipse/cdt/debug/internal/core/DebugConfiguration.java
+	Added supported CPU to Debugger extension.
+	
 2002-11-07 Mikhail Khodjaiants
 	When a referenced project is deleted it's location is null. The source locator should 
 	check this when it returns the path array.

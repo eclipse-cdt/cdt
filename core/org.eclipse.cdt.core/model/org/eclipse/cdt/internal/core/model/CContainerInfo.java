@@ -13,9 +13,12 @@ package org.eclipse.cdt.internal.core.model;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  */
@@ -40,6 +43,7 @@ public class CContainerInfo extends OpenableInfo {
 
 		ArrayList notChildren = new ArrayList();
 		ICElement parent = getElement();
+		ICProject cproject = parent.getCProject();
 		try {
 			IResource[] resources = null;
 			if (res instanceof IContainer) {
@@ -47,16 +51,34 @@ public class CContainerInfo extends OpenableInfo {
 				resources = container.members(false);
 			}
 
+			IPathEntry[] entries = cproject.getResolvedPathEntries();
 			if (resources != null) {
 				CModelManager factory = CModelManager.getDefault();
 				ICElement[] children = getChildren();
 				for (int i = 0; i < resources.length; i++) {
 					boolean found = false;
-					for (int j = 0; j < children.length; j++) {
-						IResource r = children[j].getResource();
-						if (r != null && r.equals(resources[i])){
-							found = true;
-							break;
+					// Check if the folder is not itself a sourceEntry.
+					if (resources[i].getType() == IResource.FOLDER) {
+						IPath fullPath = resources[i].getFullPath();
+						for (int k = 0; k < entries.length; k++) {
+							IPathEntry entry = entries[k];
+							if (entry.getEntryKind() == IPathEntry.CDT_SOURCE) {
+								IPath sourcePath = entry.getPath();
+								if (fullPath.equals(sourcePath)) {
+									found = true;
+									break;
+								}
+							}
+						}
+					}
+					// Check the children for a match
+					if (!found) {
+						for (int j = 0; j < children.length; j++) {
+							IResource r = children[j].getResource();
+							if (r != null && r.equals(resources[i])){
+								found = true;
+								break;
+							}
 						}
 					}
 					if (!found) {

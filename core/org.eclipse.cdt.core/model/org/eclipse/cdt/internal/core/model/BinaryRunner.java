@@ -9,74 +9,45 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
 public class BinaryRunner {
 	IProject project;
+	ICProject cproject;
 	Thread runner;
 	ArchiveContainer vlib;
 	BinaryContainer vbin;
 	
 	public BinaryRunner(IProject prj) {
 		project = prj;
+		cproject = CModelManager.getDefault().create(project);
 	}
 	
 	public void start() {
 		runner = new Thread(new Runnable() {
 			public void run() {
-				ICProject cproject = CModelManager.getDefault().create(project);
 				if (cproject == null || Thread.currentThread().isInterrupted()) {
 					return;
 				}
-				IOutputEntry[] outs = null;
-				try {
-					outs = cproject.getOutputEntries();
-				} catch (CModelException e) {
-					outs = new IOutputEntry[0];
-				}
-				
 				vbin = (BinaryContainer)cproject.getBinaryContainer();
 				vlib = (ArchiveContainer)cproject.getArchiveContainer();
 				vlib.removeChildren();
 				vbin.removeChildren();
-				IPath projectPath = project.getFullPath();
-				for (int i = 0; i < outs.length; i++) {
-					IPath path = outs[i].getPath();
-					if (projectPath.equals(path)) {
-						try {
-							project.accept(new Visitor(BinaryRunner.this));
-						} catch (CoreException e) {
-							//e.printStackTrace();
-						} catch (Exception e) {
-							// What is wrong ?
-							e.printStackTrace();
-						}
-						break; // We are done.
-					} else if (projectPath.isPrefixOf(path)) {
-						path = path.removeFirstSegments(projectPath.segmentCount());
-						IResource res =project.findMember(path);
-						if (res != null) {
-							try {
-								res.accept(new Visitor(BinaryRunner.this));
-							} catch (CoreException e) {
-								//e.printStackTrace();
-							} catch (Exception e) {
-								// What is wrong ?
-								e.printStackTrace();
-							}
-						}
-					}
+				try {
+					project.accept(new Visitor(BinaryRunner.this));
+				} catch (CoreException e) {
+					//e.printStackTrace();
+				} catch (Exception e) {
+					// What is wrong ?
+					e.printStackTrace();
 				}
 				if (!Thread.currentThread().isInterrupted()) {
 					fireEvents(cproject, vbin);
@@ -163,6 +134,9 @@ public class BinaryRunner {
 
 		public boolean visit(IResource res) throws CoreException {
 			if (Thread.currentThread().isInterrupted()) {
+				return false;
+			}
+			if (!cproject.isOnOutputEntry(res)) {
 				return false;
 			}
 			if (res instanceof IFile) {

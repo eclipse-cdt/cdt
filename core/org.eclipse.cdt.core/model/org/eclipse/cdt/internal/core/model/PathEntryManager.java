@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorListener;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -55,7 +57,7 @@ import org.w3c.dom.NodeList;
  * @author alain
  *  
  */
-public class PathEntryManager {
+public class PathEntryManager implements ICDescriptorListener {
 	static String CONTAINER_INITIALIZER_EXTPOINT_ID = "pathEntryContainerInitializer"; //$NON-NLS-1$
 	static String PATH_ENTRY = "pathentry"; //$NON-NLS-1$
 	static String PATH_ENTRY_ID = "org.eclipse.cdt.core.pathentry"; //$NON-NLS-1$
@@ -716,5 +718,30 @@ public class PathEntryManager {
 				element.setAttribute(ATTRIBUTE_EXPORTED, VALUE_TRUE);
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICDescriptorListener#descriptorChanged(org.eclipse.cdt.core.CDescriptorEvent)
+	 */
+	public void descriptorChanged(CDescriptorEvent event) {
+		int flags = event.getFlags();
+		if ((flags & CDescriptorEvent.EXTENSION_CHANGED) != 0) {
+			ICDescriptor cdesc = event.getDescriptor();
+			if (cdesc != null) {
+				CModelManager manager = CModelManager.getDefault();
+				ICProject cproject = manager.create(cdesc.getProject());
+				try {
+					IPathEntry[] oldResolvedEntries = getResolvedPathEntries(cproject);
+					resolvedMap.remove(cproject);
+					IPathEntry[] newResolvedEntries = getResolvedPathEntries(cproject);
+					ICElementDelta[] deltas = generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
+					for (int i = 0; i < deltas.length; i++) {
+						manager.registerCModelDelta(deltas[i]);
+					}
+					manager.fire(ElementChangedEvent.POST_CHANGE);
+				} catch (CModelException e) {
+				}
+			}
+		}		
 	}
 }

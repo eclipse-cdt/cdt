@@ -248,13 +248,14 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		if (cproject == null) {
 			cproject = create(file.getProject());
 		}
+		boolean checkIfBinary = false;
 		ICElement celement = null;
 		try {
 			ISourceRoot[] roots = cproject.getAllSourceRoots();
 			for (int i = 0; i < roots.length; ++i) {
 				ISourceRoot root = roots[i];
-				IPath rootPath = root.getPath();
 				if (root.isOnSourceEntry(file)) {
+					IPath rootPath = root.getPath();
 					IPath resourcePath = file.getFullPath();
 					IPath path = resourcePath.removeFirstSegments(rootPath.segmentCount());
 					String fileName = path.lastSegment();
@@ -282,23 +283,25 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 								}
 							}
 						}
+						checkIfBinary = true;
 					}
+					break;
 				}
 			}
 
-			// try in the outputEntry
-			if (celement == null && cproject.isOnOutputEntry(file)) {
+			// try in the outputEntry and save in the container
+			if (celement == null && !checkIfBinary && cproject.isOnOutputEntry(file)) {
 				IBinaryFile bin = createBinaryFile(file);
 				if (bin != null) {
 					if (bin.getType() == IBinaryFile.ARCHIVE) {
 						ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
-						celement = new Archive(vlib, file, (IBinaryArchive)bin);
-						vlib.addChild(celement);
+						ICElement archive = new Archive(vlib, file, (IBinaryArchive)bin);
+						vlib.addChild(archive);
 					} else {
 						BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
-						celement = new Binary(vbin, file, (IBinaryObject)bin);
+						IBinary binary = new Binary(vbin, file, (IBinaryObject)bin);
 						if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
-							vbin.addChild(celement);
+							vbin.addChild(binary);
 						}
 					}
 				}

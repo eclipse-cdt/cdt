@@ -13,8 +13,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -59,57 +57,19 @@ public class DeltaProcessor {
 		}
 		CModelManager manager = CModelManager.getDefault();
 		ICElement celement = manager.create(resource, null);
-		if (celement == null) {
-			// Probably it was deleted, find it
-			IResource resParent = resource.getParent();
-			ICElement parent = null;
-			// the sourceRoot == Project
-			if (resParent instanceof IProject) {
-				ICProject cpj = manager.create((IProject)resParent);
-				if (cpj != null) {
-					try {
-						ISourceRoot[] roots = cpj.getAllSourceRoots();
-						for (int i = 0; i < roots.length; i++) {
-							if (roots[i].isOnSourceEntry(resource)) {
-								parent = roots[i];
-								break;
-							}
-						}
-					} catch (CModelException e) {
-						//
-					}
-				}
-			}
-			if (parent == null) {
-				parent = manager.create(resParent, null);
-			}
-			if (parent instanceof IParent) {
-				ICElement[] children;
-				if (manager.peekAtInfo(parent) != null ) {
-					children = ((CElement)parent).getElementInfo().getChildren();
-					for (int i = 0; i < children.length; i++) {
-						IResource res = children[i].getResource();
-						if (res != null && res.equals(resource)) {
-							celement = children[i];
-							break;
-						}
-					}
-				}
-			}
-		}
 
 		// BUG 36424:
 		// The Binary may only be visible in the BinaryContainers
 		if (celement == null) {
 			ICElement[] children;
 			ICProject cproj = manager.create(resource.getProject());
-			if (cproj != null && manager.peekAtInfo(cproj) != null) {
+			if (cproj != null && cproj.isOpen()) {
 				IBinaryContainer bin = cproj.getBinaryContainer();
-				if (manager.peekAtInfo(bin) != null) {
+				if (bin.isOpen()) {
 					children = ((CElement)bin).getElementInfo().getChildren();
 					for (int i = 0; i < children.length; i++) {
 						IResource res = children[i].getResource();
-						if (res != null && res.equals(resource)) {
+						if (resource.equals(res)) {
 							celement = children[i];
 							break;
 						}
@@ -122,13 +82,13 @@ public class DeltaProcessor {
 		if (celement == null) {
 			ICElement[] children;
 			ICProject cproj = manager.create(resource.getProject());
-			if (cproj != null && manager.peekAtInfo(cproj) != null) {
+			if (cproj != null && cproj.isOpen()) {
 				IArchiveContainer ar = cproj.getArchiveContainer();
-				if (manager.peekAtInfo(ar) != null) {
+				if (ar.isOpen()) {
 					children = ((CElement)ar).getElementInfo().getChildren();
 					for (int i = 0; i < children.length; i++) {
 						IResource res = children[i].getResource();
-						if (res != null && res.equals(resource)) {
+						if (resource.equals(res)) {
 							celement = children[i];
 							break;
 						}

@@ -189,7 +189,6 @@ public class CContainer extends Openable implements ICContainer {
 
 	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
 		ArrayList vChildren = new ArrayList();
-		ArrayList notChildren = new ArrayList();
 		try {
 			IResource[] resources = null;
 			if (res instanceof IContainer) {
@@ -202,39 +201,9 @@ public class CContainer extends Openable implements ICContainer {
 				ICProject cproject = getCProject();
 				for (int i = 0; i < resources.length; i++) {
 					// Check for Valid C Element only.
-					ICElement celement = null;
-					switch (resources[i].getType()) {
-						case IResource.FILE :
-							{
-								IFile file = (IFile) resources[i];
-								if (factory.isTranslationUnit(file)) {
-									celement = new TranslationUnit(this, file);
-								} else if (cproject.isOnOutputEntry(file)) {
-									IBinaryParser.IBinaryFile bin = factory.createBinaryFile(file);
-									if (bin != null) {
-										if (bin.getType() == IBinaryFile.ARCHIVE) {
-											celement = new Archive(this, file, (IBinaryArchive)bin);
-											ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
-											vlib.addChild(celement);
-										} else {
-											celement = new Binary(this, file, (IBinaryObject)bin);
-											if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
-												BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
-												vbin.addChild(celement);
-											}
-										}
-									}
-								}
-								break;
-							}
-						case IResource.FOLDER :
-							celement = new CContainer(this, (IFolder) resources[i]);
-							break;
-					}
+					ICElement celement = computeChild(resources[i], cproject);
 					if (celement != null) {
 						vChildren.add(celement);
-					} else {
-						notChildren.add(resources[i]);
 					}
 				}
 			}
@@ -247,8 +216,42 @@ public class CContainer extends Openable implements ICContainer {
 		ICElement[] children = new ICElement[vChildren.size()];
 		vChildren.toArray(children);
 		info.setChildren(children);
-		((CContainerInfo) getElementInfo()).setNonCResources(notChildren.toArray());
+		if (info instanceof CContainerInfo) {
+			((CContainerInfo) info).setNonCResources(null);
+		}
 		return true;
 	}
 
+	protected ICElement computeChild(IResource resource, ICProject cproject) {
+		ICElement celement = null;
+		switch (resource.getType()) {
+			case IResource.FILE :
+				{
+					IFile file = (IFile) resource;
+					if (factory.isTranslationUnit(file)) {
+						celement = new TranslationUnit(this, file);
+					} else if (cproject.isOnOutputEntry(file)) {
+						IBinaryParser.IBinaryFile bin = factory.createBinaryFile(file);
+						if (bin != null) {
+							if (bin.getType() == IBinaryFile.ARCHIVE) {
+								celement = new Archive(this, file, (IBinaryArchive)bin);
+								ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
+								vlib.addChild(celement);
+							} else {
+								celement = new Binary(this, file, (IBinaryObject)bin);
+								if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
+									BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
+									vbin.addChild(celement);
+								}
+							}
+						}
+					}
+					break;
+				}
+			case IResource.FOLDER :
+				celement = new CContainer(this, (IFolder) resource);
+				break;
+		}
+		return celement;
+	}
 }

@@ -672,6 +672,7 @@ public class CoreModel implements ICDescriptorListener {
 	 * @see org.eclipse.cdt.core.ICDescriptorListener#descriptorChanged(org.eclipse.cdt.core.CDescriptorEvent)
 	 */
 	public void descriptorChanged(CDescriptorEvent event) {
+		pathEntryManager.descriptorChanged(event);
 		manager.descriptorChanged(event);
 	}
 

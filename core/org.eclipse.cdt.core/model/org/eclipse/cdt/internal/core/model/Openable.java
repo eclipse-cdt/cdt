@@ -301,4 +301,25 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 		}
 	}
 		
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CElement#createElementInfo()
+	 */
+	protected CElementInfo createElementInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o) {
+		if (o instanceof Openable) {
+			IResource otherRes = ((Openable)o).getResource();
+			IResource res = this.getResource();
+			if (otherRes != null && res != null) {
+				return otherRes.equals(res);
+			}
+		}
+		return super.equals(o);
+	}
 }

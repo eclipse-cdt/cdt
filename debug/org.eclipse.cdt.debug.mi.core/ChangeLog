@@ -1,3 +1,11 @@
+2003-12-08 Alain Magloire
+
+	Target.terminate() did not pass the exception up.
+	Added new method MIInferior.terminate().
+
+	* src/org/eclipse/cdt/debug/mi/core/MIInferior.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+
 2003-12-02 Alain Magloire
 
 	Retry the stack-info-depth when it fails the first time

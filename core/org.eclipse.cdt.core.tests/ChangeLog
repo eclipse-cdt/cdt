@@ -1,3 +1,7 @@
+2003-09-09 Hoda Amer
+	Moved three failed tests (bugs #42822, #42823, & #42822B)
+	from FailedCompleteParseASTExpressionTest to CompleteParseASTExpressionTest 
+	
 2003-09-09 John Camelon
 	Updated ScannerTestCase to keep up to date wrt ScannerException updates. 
 

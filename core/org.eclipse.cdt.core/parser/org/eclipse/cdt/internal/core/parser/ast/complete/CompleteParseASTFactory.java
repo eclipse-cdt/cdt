@@ -97,6 +97,25 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     }
 
 	/*
+	 * Adds a reference to a reference list
+	 * Overrides an existing reference if it has the same name and offset
+	 */
+	protected void addReference(List references, IASTReference reference){
+		Iterator i = references.iterator();
+		while (i.hasNext()){
+			IASTReference ref = (IASTReference)i.next();
+			if (ref != null){
+				if( (ref.getName().equals(reference.getName()))
+				&& (ref.getOffset() == reference.getOffset())
+				){
+					i.remove();
+					break; 
+				}
+			}
+		}
+		references.add(reference);
+	}
+	/*
 	 * Test if the provided list is a valid parameter list
 	 * Parameters are list of TypeInfos
 	 */
@@ -133,7 +152,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					result = startingScope.qualifiedLookup(name, type);
 				}
 				if( result != null ) 
-					references.add( createReference( result, name, offset ));
+					addReference(references, createReference( result, name, offset ));
 				else
 					throw new ASTSemanticException();    
 			}
@@ -182,7 +201,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						else
 	                    	result = startingScope.lookup( firstSymbol.getImage());
 	                    if( result != null ) 
-							references.add( createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
+							addReference( references, createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
 						else
 							throw new ASTSemanticException();    
 	                }
@@ -204,7 +223,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 								result = null;
 						else
 							result = pst.getCompilationUnit().lookup( name.getLastToken().getImage() );
-						references.add( createReference( result, name.getLastToken().getImage(), name.getLastToken().getOffset() ));
+						addReference( references, createReference( result, name.getLastToken().getImage(), name.getLastToken().getOffset() ));
 					}
 					catch( ParserSymbolTableException e)
 					{
@@ -233,7 +252,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 									result = ((IContainerSymbol)result).qualifiedLookup( t.getImage() );
 							else
 								result = ((IContainerSymbol)result).lookupNestedNameSpecifier( t.getImage() );
-							references.add( createReference( result, t.getImage(), t.getOffset() ));
+							addReference( references, createReference( result, t.getImage(), t.getOffset() ));
 						}
 						catch( ParserSymbolTableException pste )
 						{
@@ -577,7 +596,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					symbol = symbol.lookupNestedNameSpecifier( t.getImage() );
 				
 				if( symbol != null )
-					references.add( createReference( symbol, t.getImage(), t.getOffset() ));
+					addReference( references, createReference( symbol, t.getImage(), t.getOffset() ));
 				else
 					throw new ASTSemanticException();
 			}
@@ -930,10 +949,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| (expression.getExpressionKind() == IASTExpression.Kind.ASSIGNMENTEXPRESSION_OR)
 		|| (expression.getExpressionKind() == IASTExpression.Kind.ASSIGNMENTEXPRESSION_XOR) 
 		){
-			ASTExpression left = (ASTExpression)expression.getRHSExpression();  
+			ASTExpression left = (ASTExpression)expression.getLHSExpression();  
 			if(left != null){
 				TypeInfo leftType =(TypeInfo)left.getResultType().iterator().next();   
 				result.add(leftType);
+				return result;
 			}
 		}		
 		// a list collects all types of left and right hand sides
@@ -1088,7 +1108,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						typeSymbol = ((IContainerSymbol)typeSymbol).lookup( current.getImage());
 					
 					if( typeSymbol != null )	
-                    	references.add( createReference( typeSymbol, current.getImage(), current.getOffset() ));
+                    	addReference( references, createReference( typeSymbol, current.getImage(), current.getOffset() ));
                     else
                     	throw new ASTSemanticException();
                 }

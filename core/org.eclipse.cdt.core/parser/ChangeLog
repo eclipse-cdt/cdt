@@ -1,3 +1,7 @@
+2003-09-09 Hoda Amer
+	- Solved the double reference problem
+	- solution to bugs #42822, #42823, & #42822B
+	
 2003-09-09 John Camelon
 	Updated ScannerException to be more precise and include more information.  
 	Updated Parser to be more careful of how it handles particular Scanner errors in COMPLETE_PARSE mode.  

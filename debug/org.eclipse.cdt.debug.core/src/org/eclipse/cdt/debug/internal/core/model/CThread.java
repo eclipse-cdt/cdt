@@ -943,6 +943,7 @@ public class CThread extends CDebugElement
 		}
 		else
 		{
+			setCurrent( false );
 			disposeStackFrames();
 			fireChangeEvent( DebugEvent.CONTENT );
 		}
@@ -1207,6 +1208,7 @@ public class CThread extends CDebugElement
 		}
 		else
 		{
+			setCurrent( false );
 			disposeStackFrames();
 			events.add( createChangeEvent( DebugEvent.CONTENT ) );
 		}

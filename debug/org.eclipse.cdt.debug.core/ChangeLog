@@ -1,3 +1,7 @@
+2004-02-17 Mikhail Khodjaiants
+	Reset the current thread flag when resume.
+	* CThread.java
+
 2004-02-16 Mikhail Khodjaiants
 	Fix for bug 52135: Debugger should indicate which thread triggered breakpoint.
 	* CThread.java

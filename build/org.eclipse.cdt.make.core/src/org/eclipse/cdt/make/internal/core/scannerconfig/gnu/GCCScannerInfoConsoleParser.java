@@ -34,6 +34,7 @@ import java.util.Map;
 public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 	private final static String SINGLE_QUOTE_STRING = "\'"; //$NON-NLS-1$
 	private final static String DOUBLE_QUOTE_STRING = "\""; //$NON-NLS-1$
+	private final static char[] matchingChars = {'`', '\'', '\"'};
 	
 	private IProject fProject = null;
 	private IScannerInfoConsoleParserUtility fUtil = null;
@@ -89,7 +90,8 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 		}
 		// Known patterns:
 		// (a) gcc|g++ ... -Dxxx -Iyyy ...
-		ArrayList allTokens = new ArrayList(Arrays.asList(line.split("\\s")));//$NON-NLS-1$
+		List allTokens = tokenize(line);
+//		ArrayList allTokens = new ArrayList(Arrays.asList(line.split("\\s+")));//$NON-NLS-1$
 		if (allTokens.size() <= 1)
 			return false;
 		Iterator I = allTokens.iterator();
@@ -179,6 +181,43 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 			}
 		}
 		return rc;
+	}
+
+	/**
+	 * @param line
+	 * @return
+	 */
+	private List tokenize(String line) {
+		List rv = new ArrayList(2);
+		// find special characters that need to be matched: `, ' and "
+		// First Matching Chararcter
+		int prevFmc = line.length();
+		int emc = -1;
+		char matchingChar = 0;
+		for (int i = 0; i < matchingChars.length; ++i) {
+			char ch = matchingChars[i];
+			int fmc = line.indexOf(ch);
+			if (fmc > -1 && fmc < prevFmc) {
+				emc = line.indexOf(ch, fmc+1);
+				if (emc > fmc) {
+					matchingChar = ch;
+					prevFmc = fmc;
+				}
+			}
+		}
+		if (matchingChar != 0) { // found matched chars
+			String prefix = line.substring(0, prevFmc).trim();
+			rv.addAll(Arrays.asList(prefix.split("\\s+")));//$NON-NLS-1$
+			
+			rv.add(line.substring(prevFmc, emc+1));
+			
+			// recursion
+			rv.addAll(tokenize(line.substring(emc+1).trim()));
+		}
+		else {
+			rv.addAll(Arrays.asList(line.split("\\s+")));//$NON-NLS-1$
+		}
+		return rv;
 	}
 
 	/**

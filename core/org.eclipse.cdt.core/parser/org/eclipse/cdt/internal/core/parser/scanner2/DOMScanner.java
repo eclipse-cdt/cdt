@@ -13,7 +13,9 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -31,7 +33,20 @@ public class DOMScanner extends BaseScanner {
 
     private final ICodeReaderFactory codeReaderFactory;
 //    private int overallOffset = 0;
+    
+    private static class DOMInclusion
+    {
+        public final char[] pt;
+        public final int o;
 
+        /**
+         * 
+         */
+        public DOMInclusion( char [] path, int offset ) {
+            this.pt = path;
+            this.o = offset;
+        }
+    }
 
     /**
      * @param reader
@@ -72,15 +87,18 @@ public class DOMScanner extends BaseScanner {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#createInclusionConstruct(char[], char[], boolean, int, int, int, int, int, int, int, boolean)
      */
-    protected Object createInclusionConstruct(char[] fileNameArray, char[] filename, boolean local, int startOffset, int startingLineNumber, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endLine, boolean isForced) {
-        return null;
+    protected Object createInclusionConstruct(char[] fileName, char[] filenamePath, boolean local, int startOffset, int startingLineNumber, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endLine, boolean isForced) {
+        return new DOMInclusion( filenamePath, startOffset );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processMacro(char[], int, int, int, int, int, int, int)
      */
-    protected void processMacro(char[] name, int startingOffset, int startingLineNumber, int idstart, int idend, int nameLine, int textEnd, int endingLine) {
-        // TODO Auto-generated method stub
+    protected void processMacro(char[] name, int startingOffset, int startingLineNumber, int idstart, int idend, int nameLine, int textEnd, int endingLine, IMacro macro) {
+        if( macro instanceof ObjectStyleMacro )
+            locationMap.defineObjectStyleMacro( (ObjectStyleMacro) macro, startingLineNumber, idstart, idend, textEnd );
+        else if( macro instanceof FunctionStyleMacro )
+            locationMap.defineFunctionStyleMacro( (FunctionStyleMacro) macro, startingLineNumber, idstart, idend, textEnd );
         
     }
 
@@ -125,5 +143,43 @@ public class DOMScanner extends BaseScanner {
 		
 		return i;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#pushProblem(org.eclipse.cdt.core.parser.IProblem)
+     */
+    protected void pushProblem(IProblem p) {
+        locationMap.encounterProblem(p);        
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#quickParsePushPopInclusion(java.lang.Object)
+     */
+    protected void quickParsePushPopInclusion(Object inclusion) {
+        //do nothing
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#pushInclusion(java.lang.Object)
+     */
+    protected void pushInclusion(Object data) {
+        super.pushInclusion(data);
+        if( data instanceof DOMInclusion )
+        {
+            DOMInclusion d = (DOMInclusion)data;
+            locationMap.startInclusion( d.pt, d.o );
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#popInclusion()
+     */
+    protected void popInclusion(Object data) {
+        super.popInclusion(data);
+        if( data instanceof DOMInclusion )
+        {
+            DOMInclusion d = (DOMInclusion)data;
+            locationMap.endInclusion( d.pt, d.o );
+        }
+    }
 
 }

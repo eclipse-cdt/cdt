@@ -83,11 +83,11 @@ public class Scanner2 extends BaseScanner {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#createInclusionConstruct(char[],
      *      char[], boolean, int, int, int, int, int, int, int, boolean)
      */
-    protected Object createInclusionConstruct(char[] fileNameArray,
-            char[] filename, boolean local, int startOffset,
+    protected Object createInclusionConstruct(char[] fileName,
+            char[] filenamePath, boolean local, int startOffset,
             int startingLineNumber, int nameOffset, int nameEndOffset,
             int nameLine, int endOffset, int endLine, boolean isForced) {
-        return getASTFactory().createInclusion(fileNameArray, filename, local,
+        return getASTFactory().createInclusion(fileName, filenamePath, local,
                 startOffset, startingLineNumber, nameOffset, nameEndOffset,
                 nameLine, endOffset, endLine, getCurrentFilename(), isForced);
     }
@@ -100,7 +100,7 @@ public class Scanner2 extends BaseScanner {
      */
     protected void processMacro(char[] name, int startingOffset,
             int startingLineNumber, int idstart, int idend, int nameLine,
-            int textEnd, int endingLine) {
+            int textEnd, int endingLine, org.eclipse.cdt.core.parser.IMacro macro) {
         callbackManager.pushCallback(getASTFactory().createMacro(name,
                 startingOffset, startingLineNumber, idstart, idend, nameLine,
                 textEnd, endingLine, getCurrentFilename(), !isInitialized));
@@ -117,8 +117,8 @@ public class Scanner2 extends BaseScanner {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#popInclusion()
      */
-    protected void popInclusion() {
-        super.popInclusion();
+    protected void popInclusion(java.lang.Object data) {
+        super.popInclusion(data);
         callbackManager.pushCallback( ((InclusionData) bufferData[bufferStackPos]).inclusion );
     }
     

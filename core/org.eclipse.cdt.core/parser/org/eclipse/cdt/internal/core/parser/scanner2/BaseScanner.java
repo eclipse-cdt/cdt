@@ -1272,7 +1272,7 @@ abstract class BaseScanner implements IScanner {
     protected void popContext() {
 		bufferStack[bufferStackPos] = null;
 		if( bufferData[bufferStackPos] instanceof InclusionData )
-			popInclusion();
+			popInclusion(((InclusionData)bufferData[bufferStackPos]).inclusion);
 		
 		bufferData[bufferStackPos] = null;
 		--bufferStackPos;
@@ -1282,9 +1282,10 @@ abstract class BaseScanner implements IScanner {
 	}
 	
 	/**
+	 * @param data TODO
      * 
      */
-    protected void popInclusion() {
+    protected void popInclusion(java.lang.Object data) {
         if( log.isTracing() )
         {
         	StringBuffer buffer = new StringBuffer( "Exiting inclusion "); //$NON-NLS-1$
@@ -2124,8 +2125,7 @@ abstract class BaseScanner implements IScanner {
 	/**
      * @param p
      */
-    protected void pushProblem(IProblem p) {
-    }
+    protected abstract void pushProblem(IProblem p);
 
     /**
 	 * @param i
@@ -2710,11 +2710,11 @@ abstract class BaseScanner implements IScanner {
     /**
      * @param inclusion
      */
-    protected void quickParsePushPopInclusion(Object inclusion) {
-    }
+    protected abstract void quickParsePushPopInclusion(Object inclusion);
+
 
     /**
-     * @param fileNameArray
+     * @param fileName
 	 * @param local
 	 * @param startOffset
 	 * @param startingLineNumber
@@ -2727,7 +2727,7 @@ abstract class BaseScanner implements IScanner {
 	 * @param reader
 	 * @return
      */
-    protected abstract Object createInclusionConstruct(char[] fileNameArray, char [] filename, boolean local, int startOffset, int startingLineNumber, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endLine, boolean isForced );
+    protected abstract Object createInclusionConstruct(char[] fileName, char [] filenamePath, boolean local, int startOffset, int startingLineNumber, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endLine, boolean isForced );
 
     protected void handlePPDefine(int pos2, int startingLineNumber) {
 		char[] buffer = bufferStack[bufferStackPos];
@@ -2847,30 +2847,35 @@ abstract class BaseScanner implements IScanner {
 			text = removeMultilineCommentFromBuffer( text );
 		text = removedEscapedNewline( text, 0, text.length );
 			
+        IMacro result = null;
+        if( arglist == null ) 
+            result = new ObjectStyleMacro(name, text);
+        else
+            result = new FunctionStyleMacro(name, text, arglist);
+        
 		// Throw it in
-		definitions.put(name, 	arglist == null
-				? new ObjectStyleMacro(name, text)
-						: new FunctionStyleMacro(name, text, arglist) );
+		definitions.put(name, result);
 		 
 		if (usesVarArgInDefinition && definitions.get(name) instanceof FunctionStyleMacro && !((FunctionStyleMacro)definitions.get(name)).hasVarArgs())
 			handleProblem(IProblem.PREPROCESSOR_INVALID_VA_ARGS, varArgDefinitionInd, null);
 		
 		int idend = idstart + idlen;
 		int textEnd = textstart + textlen;
-		processMacro(name, startingOffset, startingLineNumber, idstart, idend, nameLine, textEnd, endingLine);
+		processMacro(name, startingOffset, startingLineNumber, idstart, idend, nameLine, textEnd, endingLine, result);
 	}
 	
 	/**
      * @param name
-     * @param startingOffset
-     * @param startingLineNumber
-     * @param idstart
-     * @param idend
-     * @param nameLine
-     * @param textEnd
-     * @param endingLine
+	 * @param startingOffset
+	 * @param startingLineNumber
+	 * @param idstart
+	 * @param idend
+	 * @param nameLine
+	 * @param textEnd
+	 * @param endingLine
+	 * @param macro TODO
      */
-    protected abstract void processMacro(char[] name, int startingOffset, int startingLineNumber, int idstart, int idend, int nameLine, int textEnd, int endingLine);
+    protected abstract void processMacro(char[] name, int startingOffset, int startingLineNumber, int idstart, int idend, int nameLine, int textEnd, int endingLine, org.eclipse.cdt.core.parser.IMacro macro);
 
     protected char[][] extractMacroParameters( int idstart, char[] name, boolean reportProblems ){
 	    char[] buffer = bufferStack[bufferStackPos];

@@ -77,6 +77,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_CEXEC_DEBUG= NAME_PREFIX + "exec_dbg_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CORE= NAME_PREFIX + "core_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CONTAINER= NAME_PREFIX + "container_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_OUTPUT_FOLDER= NAME_PREFIX + "output_folder_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_LIBRARY= NAME_PREFIX + "lib_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ORDER= NAME_PREFIX + "cp_order_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXCLUDSION_FILTER_ATTRIB= NAME_PREFIX + "exclusion_filter_attrib.gif"; //$NON-NLS-1$
@@ -125,6 +126,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_CEXEC_DEBUG= createManaged(T_OBJ, IMG_OBJS_CEXEC_DEBUG);
 	public static final ImageDescriptor DESC_OBJS_CORE= createManaged(T_OBJ, IMG_OBJS_CORE);
 	public static final ImageDescriptor DESC_OBJS_CONTAINER= createManaged(T_OBJ, IMG_OBJS_CONTAINER);
+	public static final ImageDescriptor DESC_OBJS_OUTPUT_FOLDER= createManaged(T_OBJ, IMG_OBJS_OUTPUT_FOLDER);
 	public static final ImageDescriptor DESC_OBJS_LIBRARY= createManaged(T_OBJ, IMG_OBJS_LIBRARY);
 	public static final ImageDescriptor DESC_OBJS_ORDER= createManaged(T_OBJ, IMG_OBJS_ORDER);
 	public static final ImageDescriptor DESC_OBJS_EXCLUSION_FILTER_ATTRIB = createManaged(T_OBJ, IMG_OBJS_EXCLUDSION_FILTER_ATTRIB);

@@ -1,3 +1,17 @@
+2004-04-01 Alain Magloire
+
+	New set of icons to experiment, from Chris.
+	On April first .... ???
+
+	* icons/full/obj16/bin_obj.gif
+	* icons/full/obj16/cfolder_obj.gif
+	* icons/full/obj16/container_obj.gif
+	* icons/full/obj16/output_folder_obj.gif
+	* icons/full/obj16/output_obj.gif
+
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	* src/org/eclipse/cdt/ui/CSearchResultLableProvider.java
+
 2004-03-31 David Inglis
 
 	removed org.apache.xerces dependency

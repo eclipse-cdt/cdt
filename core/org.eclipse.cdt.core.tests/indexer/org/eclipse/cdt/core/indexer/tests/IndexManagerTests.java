@@ -64,8 +64,22 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
 		super(name);
 	}
 
+	public void resetIndexState() {
+		fileIndexed = false;
+	}
+	
+	public void waitForIndex(int maxSec) throws Exception {
+		int delay = 0;
+		while (fileIndexed != true && delay < (maxSec * 1000))
+		{ 
+			Thread.sleep(TIMEOUT);
+			delay += TIMEOUT;
+		}
+	}
+	
 	public static void main(String[] args) {
 	}
+	
 	/*
 	 * @see TestCase#setUp()
 	 */
@@ -152,6 +166,7 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
 	}
 	
 	private IFile importFile(String fileName, String resourceLocation)throws Exception {
+		resetIndexState();
 		//Obtain file handle
 		file = testProject.getProject().getFile(fileName);
 		//Create file input stream
@@ -162,6 +177,7 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
 					false, monitor);
 		}
 		fileDoc = new IFileDocument(file);
+		waitForIndex(20); // only wait 20 seconds max.
 		return file;
 	}
 
@@ -171,9 +187,8 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
 	public void testIndexAll() throws Exception {
 		
 		//Add a file to the project
-		fileIndexed = false;
+		
 		importFile("mail.cpp","resources/indexer/mail.cpp");
-		while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 		
 		IIndex ind = indexManager.getIndex(testProject.getFullPath(),true,true);
 		assertTrue("Index exists for project",ind != null);
@@ -210,22 +225,17 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
 		
 		
 		//Add a file to the project
-		fileIndexed = false;
 		importFile("mail.cpp","resources/indexer/mail.cpp");
-		while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 		
 		//Make sure project got added to index
 		IPath testProjectPath = testProject.getFullPath();
 		IIndex ind = indexManager.getIndex(testProjectPath,true,true);
 		assertTrue("Index exists for project",ind != null);
 		//Add a new file to the project, give it some time to index
-		fileIndexed = false;
+
 		importFile("DocumentManager.h","resources/indexer/DocumentManager.h");
-		while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 		
-		fileIndexed = false;
 		importFile("DocumentManager.cpp","resources/indexer/DocumentManager.cpp");
-		while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 		
 		ind = indexManager.getIndex(testProjectPath,true,true);
 		
@@ -248,10 +258,8 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
 	  
 		
 	  //Add a file to the project
-	  fileIndexed = false;
 	  importFile("mail.cpp","resources/indexer/mail.cpp");
-	  while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
-	  
+
 	  //Make sure project got added to index
 	  IPath testProjectPath = testProject.getFullPath();
 	  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
@@ -282,22 +290,14 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
 	public void testRemoveFileFromIndex() throws Exception{
      
     //Add a file to the project
-	fileIndexed = false;
 	importFile("mail.cpp","resources/indexer/mail.cpp");
-	while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 	
 	//Make sure project got added to index
 	IPath testProjectPath = testProject.getFullPath();
 	IIndex ind = indexManager.getIndex(testProjectPath,true,true);
 	assertTrue("Index exists for project",ind != null);
-	//Add a new file to the project, give it some time to index
-	fileIndexed = false;
 	importFile("DocumentManager.h","resources/indexer/DocumentManager.h");
-	while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
-	
-	fileIndexed = false;
 	importFile("DocumentManager.cpp","resources/indexer/DocumentManager.cpp");
-	while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 	
 	ind = indexManager.getIndex(testProjectPath,true,true);
 		 
@@ -320,8 +320,10 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
 	 // Cleaning up file handles before delete
 	 System.gc();
 	 System.runFinalization();
+	 resetIndexState();
 	 resourceHdl.delete(true,monitor);
-	 Thread.sleep(10000);
+	 waitForIndex(10); // wait up to 10 seconds for the index to be deleted.
+	 
 	 //See if the index is still there
 	 ind = indexManager.getIndex(testProjectPath,true,true);
 	 eresults = ind.queryEntries(prefix);
@@ -339,10 +341,8 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
 	
 	public void testIndexContents() throws Exception{
 		 
-		//Add a new file to the project, give it some time to index
-		fileIndexed = false;
+		//Add a new file to the project
 		importFile("extramail.cpp","resources/indexer/extramail.cpp");
-		while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 		
 		//Make sure project got added to index
 		IPath testProjectPath = testProject.getFullPath();
@@ -454,10 +454,8 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
   }
   
   public void testRefs() throws Exception{
-		  //Add a new file to the project, give it some time to index 
-  		  fileIndexed = false;
+		  //Add a new file to the project
 		  importFile("reftest.cpp","resources/indexer/reftest.cpp");
-		  while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 		  
 		  //Make sure project got added to index
 		  IPath testProjectPath = testProject.getFullPath();
@@ -527,24 +525,15 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
 	
   public void testExactDeclarations() throws Exception
   {
-  	 
-	 fileIndexed = false;
   	 importFile("a.h","resources/dependency/a.h");
-	 while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 	 
   	  //Make sure project got added to index
 	  IPath testProjectPath = testProject.getFullPath();
 	  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
 	  assertTrue("Index exists for project",ind != null);
-	  
-	  fileIndexed = false;
-	  importFile("DepTest3.h","resources/dependency/DepTest3.h");
-	  while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
-	  
-	  fileIndexed = false;
-	  importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");
-	  while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 
+	  importFile("DepTest3.h","resources/dependency/DepTest3.h");
+	  importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");
 	  
 	  IEntryResult[] eResult = ind.queryEntries(IIndexConstants.CLASS_DECL);
 	  IQueryResult[] qResult = ind.queryPrefix(IIndexConstants.CLASS_DECL);
@@ -579,11 +568,8 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
   
   public void testMD5() throws Exception
   {
-  	fileIndexed = false;
   	importFile("extramail.cpp","resources/indexer/extramail.cpp");
   	//importFile("mail.cpp","resources/indexer/mail.cpp");
-  	
-	while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
   	
 	MessageDigest md = MessageDigest.getInstance("MD5");
 	//MessageDigest md = MessageDigest.getInstance("SHA");
@@ -609,10 +595,8 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
   
   public void testMacros() throws Exception
   {
-	  //Add a new file to the project, give it some time to index
-  	  fileIndexed = false;
+	  //Add a new file to the project
 	  importFile("extramail.cpp","resources/indexer/extramail.cpp");
-	  while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 	
 	  //Make sure project got added to index
 	  IPath testProjectPath = testProject.getFullPath();
@@ -634,10 +618,8 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
   }
   
   public void testIndexShutdown() throws Exception{
-	//Add a new file to the project, give it some time to index
-  	 fileIndexed = false;
+	//Add a new file to the project
 	 importFile("reftest.cpp","resources/indexer/reftest.cpp");
-	 while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 	 
 	 //Make sure project got added to index
 	 IPath testProjectPath = testProject.getFullPath();
@@ -671,10 +653,8 @@ public class IndexManagerTests extends TestCase implements IIndexChangeListener 
   }
   
   public void testForwardDeclarations() throws Exception{
-	//Add a new file to the project, give it some time to index
-  	fileIndexed = false;
+	//Add a new file to the project
 	importFile("reftest.cpp","resources/indexer/reftest.cpp");
-	while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
 	
 	 //Make sure project got added to index
 	 IPath testProjectPath = testProject.getFullPath();

@@ -29,17 +29,23 @@ import org.eclipse.core.runtime.IPath;
  * @author vhirsl
  */
 public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
-    private final String INCLUDE = "#include"; //$NON-NLS-1$
-    private final String DEFINE = "#define"; //$NON-NLS-1$
-    private final String COMMAND_ID_BEGIN = "begin generating scanner info for scd_cmd_"; //$NON-NLS-1$
-    private final String COMMAND_ID_END = "end generating scanner info for scd_cmd_"; //$NON-NLS-1$
+    private final static String INCLUDE_PREAMBLE = "#include <...>"; //$NON-NLS-1$
+    private final static String QUOTE_INCLUDE_PREAMBLE = "#include \"...\""; //$NON-NLS-1$
+    private final static String DEFINE_PREAMBLE = "#define"; //$NON-NLS-1$
+    private final static String COMMAND_ID_BEGIN = "begin generating scanner info for scd_cmd_"; //$NON-NLS-1$
+    private final static String COMMAND_ID_END = "end generating scanner info for scd_cmd_"; //$NON-NLS-1$
 
+    private final static int NO_INCLUDES = 0;
+    private final static int QUOTE_INCLUDES = 1;
+    private final static int INCLUDES = 2;
+    
     private IProject fProject = null;
     private IScannerInfoCollector fCollector = null;
     
-    private boolean expectingIncludes = false;
+    private int expectingIncludes = NO_INCLUDES;
     private List symbols;
     private List includes;
+    private List quoteIncludes;
     private int commandId = -1;
 
     /* (non-Javadoc)
@@ -61,19 +67,21 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
             commandId = Integer.parseInt(line.substring(COMMAND_ID_BEGIN.length()));
             symbols = new ArrayList();
             includes = new ArrayList();
+            quoteIncludes = new ArrayList();
         }
         else if (line.startsWith(COMMAND_ID_END)) {
             Map scannerInfo = new HashMap();
             scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
+            scannerInfo.put(ScannerInfoTypes.QUOTE_INCLUDE_PATHS, quoteIncludes);
             scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
             fCollector.contributeToScannerConfig(new Integer(commandId), scannerInfo);
             commandId = -1;
             rc = true;
         }
         // contribution of -dD option
-        else if (line.startsWith(DEFINE)) {
+        else if (line.startsWith(DEFINE_PREAMBLE)) {
             String[] defineParts = line.split("\\s+", 3); //$NON-NLS-1$
-            if (defineParts[0].equals(DEFINE)) {
+            if (defineParts[0].equals(DEFINE_PREAMBLE)) {
                 String symbol = null;
                 switch (defineParts.length) {
                     case 2:
@@ -89,13 +97,20 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
             }
         }
         // now get all the includes
-        else if (line.startsWith(INCLUDE) && line.endsWith("search starts here:")) { //$NON-NLS-1$
-            expectingIncludes = true;
+        else if (line.startsWith(QUOTE_INCLUDE_PREAMBLE) && line.endsWith("search starts here:")) { //$NON-NLS-1$
+            expectingIncludes = QUOTE_INCLUDES;
+        }
+        else if (line.startsWith(INCLUDE_PREAMBLE) && line.endsWith("search starts here:")) { //$NON-NLS-1$
+            expectingIncludes = INCLUDES;
         }
         else if (line.startsWith("End of search list.")) {  //$NON-NLS-1$
-            expectingIncludes = false;
+            expectingIncludes = NO_INCLUDES;
         }
-        else if (expectingIncludes) {
+        else if (expectingIncludes == QUOTE_INCLUDES) {
+            if (!quoteIncludes.contains(line))
+                quoteIncludes.add(line);
+        }
+        else if (expectingIncludes == INCLUDES) {
             if (!includes.contains(line))
                 includes.add(line);
         }

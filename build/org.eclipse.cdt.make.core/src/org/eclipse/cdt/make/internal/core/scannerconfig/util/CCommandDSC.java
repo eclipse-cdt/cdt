@@ -33,6 +33,7 @@ public class CCommandDSC {
     private final static String SI_ITEM_ELEM = "siItem"; //$NON-NLS-1$
     private final static String KEY_ATTR = "key"; //$NON-NLS-1$
     private final static String VALUE_ATTR = "value"; //$NON-NLS-1$
+    private final static String QUOTE_INCLUDE_ATTR = "quote"; //$NON-NLS-1$
     private final static String KIND_ATTR = "kind"; //$NON-NLS-1$
     
 	private int commandId;
@@ -42,6 +43,7 @@ public class CCommandDSC {
 
     private List symbols;
     private List includes;
+    private List quoteIncludes;
     
     /**
 	 * @param cppFileType2 
@@ -53,6 +55,7 @@ public class CCommandDSC {
         
         symbols = new ArrayList();
         includes = new ArrayList();
+        quoteIncludes = new ArrayList();
 	}
 
     public boolean appliesToCPPFileType() {
@@ -176,6 +179,18 @@ public class CCommandDSC {
         this.includes = includes;
     }
     /**
+     * @return Returns the quote include paths (for #include "...")
+     */
+    public List getQuoteIncludes() {
+        return quoteIncludes;
+    }
+    /**
+     * @param includes. Quaote include paths (for #include "...")
+     */
+    public void setQuoteIncludes(List includes) {
+        quoteIncludes = includes;
+    }
+    /**
      * @return Returns the symbols.
      */
     public List getSymbols() {
@@ -217,6 +232,13 @@ public class CCommandDSC {
         cmdElem.appendChild(cmdDescElem);
         // serialize includes and symbols
         Element siElem = doc.createElement(CMD_SI_ELEM);
+        for (Iterator j = quoteIncludes.iterator(); j.hasNext(); ) {
+            Element siItem = doc.createElement(SI_ITEM_ELEM); 
+            siItem.setAttribute(KIND_ATTR, "INCLUDE_PATH");  //$NON-NLS-1$
+            siItem.setAttribute(VALUE_ATTR, (String) j.next());
+            siItem.setAttribute(QUOTE_INCLUDE_ATTR, "true"); //$NON-NLS-1$
+            siElem.appendChild(siItem);
+        }
         for (Iterator j = includes.iterator(); j.hasNext(); ) {
             Element siItem = doc.createElement(SI_ITEM_ELEM); 
             siItem.setAttribute(KIND_ATTR, "INCLUDE_PATH");  //$NON-NLS-1$
@@ -258,8 +280,14 @@ public class CCommandDSC {
                 Element siItemElem = (Element) siItemList.item(i);
                 String kind = siItemElem.getAttribute(KIND_ATTR);
                 String value = siItemElem.getAttribute(VALUE_ATTR);
+                String quote = siItemElem.getAttribute(QUOTE_INCLUDE_ATTR);
                 if (kind.equals("INCLUDE_PATH")) { //$NON-NLS-1$
-                    includes.add(value);
+                    if (quote.equals("true")) { //$NON-NLS-1$
+                        quoteIncludes.add(value);
+                    }
+                    else {
+                        includes.add(value);
+                    }
                 }
                 else if (kind.equals("SYMBOL_DEFINITION")) { //$NON-NLS-1$
                     symbols.add(value);
@@ -268,4 +296,5 @@ public class CCommandDSC {
             setDiscovered(true);
         }
     }
+
 }

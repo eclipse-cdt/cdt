@@ -140,6 +140,9 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                     if (option.length() > 0) {
                         // ex. -I/dir
                     }
+                    else if (SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IDASH)) {
+                        // -I- has no parameter
+                    }
                     else {
                         // ex. -I /dir
                         // take a next token
@@ -149,11 +152,12 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                         }
                         else break;
                     }
-                    if (SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.INCLUDE) ||
+                    if (option.length() > 0 && (
+                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.INCLUDE) ||
                             SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.INCLUDE_FILE) ||
                             SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IMACROS_FILE) ||
                             SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IDIRAFTER) ||
-                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.ISYSTEM)) {
+                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.ISYSTEM))) {
                         option = (getAbsolutePath(option)).toString();
                     }
                     // add the pair

@@ -20,9 +20,9 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredInfoListener;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -46,14 +46,14 @@ public class PerFileDiscoveredPathContainer extends AbstractDiscoveredPathContai
 
                 public void infoRemoved(IDiscoveredPathInfo info) {
                     if (info != null && 
-                            ScannerConfigScope.FILE_SCOPE.equals(info.getScope())) {
+                            info instanceof IPerFileDiscoveredPathInfo) {
                         fgPathEntries.remove(info.getProject());
                     }
                 }
 
                 public void infoChanged(IDiscoveredPathInfo info) {
                     if (info != null && 
-                            ScannerConfigScope.FILE_SCOPE.equals(info.getScope())) {
+                            info instanceof IPerFileDiscoveredPathInfo) {
                         fgPathEntries.remove(info.getProject());
                     }
                 }
@@ -67,34 +67,42 @@ public class PerFileDiscoveredPathContainer extends AbstractDiscoveredPathContai
      * @see org.eclipse.cdt.core.model.IPathEntryContainerExtension#getPathEntries(org.eclipse.core.runtime.IPath, int)
      */
     public IPathEntry[] getPathEntries(IPath path, int mask) {
-        IDiscoveredPathInfo info;
 		ArrayList entries = new ArrayList();
         try {
-            info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
-    		if ((mask & IPathEntry.CDT_INCLUDE) != 0) {
-    			// TODO: Vlad how do we differentiate local includes from system includes
-				IPath[] includes = info.getIncludePaths(path);
-				for (int i = 0; i < includes.length; i++) {
-					entries.add(CoreModel.newIncludeEntry(path, Path.EMPTY, includes[i], true));
-				}
-    		}
-    		if ((mask & IPathEntry.CDT_MACRO) != 0) {
-				Map syms = info.getSymbols(path);
-				for (Iterator iter = syms.entrySet().iterator(); iter.hasNext(); ) {
-					Entry entry = (Entry)iter.next();
-					entries.add(CoreModel.newMacroEntry(path, (String)entry.getKey(), (String)entry.getValue())); //$NON-NLS-1$
-				}
-    		}
-            if ((mask & IPathEntry.CDT_INCLUDE_FILE) != 0) {
-                IPath[] includeFiles = info.getIncludeFiles(path);
-                for (int i = 0; i < includeFiles.length; i++) {
-                    entries.add(CoreModel.newIncludeFileEntry(path, includeFiles[i]));
+            IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
+            if (info instanceof IPerFileDiscoveredPathInfo) {
+                IPerFileDiscoveredPathInfo filePathInfo = (IPerFileDiscoveredPathInfo) info;
+            
+        		if ((mask & IPathEntry.CDT_INCLUDE) != 0) {
+    				IPath[] includes = filePathInfo.getIncludePaths(path);
+    				for (int i = 0; i < includes.length; i++) {
+                        // add as a system include path
+    					entries.add(CoreModel.newIncludeEntry(path, Path.EMPTY, includes[i], true));
+    				}
+                    includes = filePathInfo.getQuoteIncludePaths(path);
+                    for (int i = 0; i < includes.length; i++) {
+                        // add as a local include path
+                        entries.add(CoreModel.newIncludeEntry(path, Path.EMPTY, includes[i], false));
+                    }
+        		}
+        		if ((mask & IPathEntry.CDT_MACRO) != 0) {
+    				Map syms = filePathInfo.getSymbols(path);
+    				for (Iterator iter = syms.entrySet().iterator(); iter.hasNext(); ) {
+    					Entry entry = (Entry)iter.next();
+    					entries.add(CoreModel.newMacroEntry(path, (String)entry.getKey(), (String)entry.getValue())); //$NON-NLS-1$
+    				}
+        		}
+                if ((mask & IPathEntry.CDT_INCLUDE_FILE) != 0) {
+                    IPath[] includeFiles = filePathInfo.getIncludeFiles(path);
+                    for (int i = 0; i < includeFiles.length; i++) {
+                        entries.add(CoreModel.newIncludeFileEntry(path, includeFiles[i]));
+                    }
                 }
-            }
-            if ((mask & IPathEntry.CDT_MACRO_FILE) != 0) {
-                IPath[] imacrosFiles = info.getMacroFiles(path);
-                for (int i = 0; i < imacrosFiles.length; i++) {
-                    entries.add(CoreModel.newMacroFileEntry(path, imacrosFiles[i]));
+                if ((mask & IPathEntry.CDT_MACRO_FILE) != 0) {
+                    IPath[] imacrosFiles = filePathInfo.getMacroFiles(path);
+                    for (int i = 0; i < imacrosFiles.length; i++) {
+                        entries.add(CoreModel.newMacroFileEntry(path, imacrosFiles[i]));
+                    }
                 }
             }
         }

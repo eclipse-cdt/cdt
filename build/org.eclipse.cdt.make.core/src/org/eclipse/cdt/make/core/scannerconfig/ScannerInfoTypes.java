@@ -16,11 +16,12 @@ package org.eclipse.cdt.make.core.scannerconfig;
  * @author vhirsl
  */
 public class ScannerInfoTypes {
-    public static final ScannerInfoTypes INCLUDE_PATHS = new ScannerInfoTypes(1);
-    public static final ScannerInfoTypes SYMBOL_DEFINITIONS = new ScannerInfoTypes(2);
-    public static final ScannerInfoTypes TARGET_SPECIFIC_OPTION = new ScannerInfoTypes(3) ; 
-    public static final ScannerInfoTypes COMPILER_VERSION_INFO = new ScannerInfoTypes(4);
-    public static final ScannerInfoTypes COMPILER_COMMAND = new ScannerInfoTypes(5); // CCommandDSC
+    public static final ScannerInfoTypes COMPILER_COMMAND = new ScannerInfoTypes(1); // CCommandDSC
+    public static final ScannerInfoTypes INCLUDE_PATHS = new ScannerInfoTypes(2);
+    public static final ScannerInfoTypes QUOTE_INCLUDE_PATHS = new ScannerInfoTypes(3);
+    public static final ScannerInfoTypes SYMBOL_DEFINITIONS = new ScannerInfoTypes(4);
+    public static final ScannerInfoTypes TARGET_SPECIFIC_OPTION = new ScannerInfoTypes(5) ; 
+    public static final ScannerInfoTypes COMPILER_VERSION_INFO = new ScannerInfoTypes(6);
 
     private final int _enum;
 

@@ -15,9 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerProjectDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.core.resources.IProject;
@@ -28,7 +27,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 
-public class DiscoveredPathInfo implements IDiscoveredPathInfo, IDiscoveredScannerInfoSerializable {
+public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDiscoveredScannerInfoSerializable {
 	public static final String INCLUDE_PATH = "includePath"; //$NON-NLS-1$
 	public static final String PATH = "path"; //$NON-NLS-1$
 	public static final String DEFINED_SYMBOL = "definedSymbol"; //$NON-NLS-1$
@@ -199,51 +198,10 @@ public class DiscoveredPathInfo implements IDiscoveredPathInfo, IDiscoveredScann
 	}
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludePaths(org.eclipse.core.runtime.IPath)
-     */
-    public IPath[] getIncludePaths(IPath path) {
-        if (project.getFile(path) != null) {
-            return getIncludePaths();
-        }
-        return new IPath[0];
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSymbols(org.eclipse.core.runtime.IPath)
-     */
-    public Map getSymbols(IPath path) {
-        if (project.getFile(path) != null) {
-            return getSymbols();
-        }
-        return new HashMap(0);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludeFiles(org.eclipse.core.runtime.IPath)
-     */
-    public IPath[] getIncludeFiles(IPath path) {
-        return new IPath[0];
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getMacroFiles(org.eclipse.core.runtime.IPath)
-     */
-    public IPath[] getMacroFiles(IPath path) {
-        return new IPath[0];
-    }
-    
-    /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSerializable()
      */
     public IDiscoveredScannerInfoSerializable getSerializable() {
         return this;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getScope()
-     */
-    public ScannerConfigScope getScope() {
-        return ScannerConfigScope.PROJECT_SCOPE;
     }
 
 }

@@ -21,8 +21,8 @@ public final class SCDOptionsEnum {
 	public static final int MIN = 1;
 	public static final SCDOptionsEnum DEFINE = new SCDOptionsEnum(1);				// -D name
 	public static final SCDOptionsEnum UNDEFINE = new SCDOptionsEnum(2);			// -U name
-	public static final SCDOptionsEnum INCLUDE = new SCDOptionsEnum(3);				// -I dir
-	public static final SCDOptionsEnum IDASH = new SCDOptionsEnum(4);				// -I-
+    public static final SCDOptionsEnum IDASH = new SCDOptionsEnum(3);               // -I-
+	public static final SCDOptionsEnum INCLUDE = new SCDOptionsEnum(4);				// -I dir
 	public static final SCDOptionsEnum NOSTDINC = new SCDOptionsEnum(5);			// -nostdinc
 	public static final SCDOptionsEnum NOSTDINCPP = new SCDOptionsEnum(6);			// -nostdinc++
 	public static final SCDOptionsEnum INCLUDE_FILE = new SCDOptionsEnum(7);		// -include file
@@ -38,8 +38,8 @@ public final class SCDOptionsEnum {
 		"cc", //$NON-NLS-1$
         "-D", //$NON-NLS-1$
         "-U", //$NON-NLS-1$
-        "-I", //$NON-NLS-1$
         "-I-", //$NON-NLS-1$
+        "-I", //$NON-NLS-1$
         "-nostdinc", //$NON-NLS-1$
         "-nostdinc++", //$NON-NLS-1$
         "-include", //$NON-NLS-1$
@@ -51,7 +51,7 @@ public final class SCDOptionsEnum {
         "-iwithprefixbefore"   //$NON-NLS-1$
 	};
 	private static final SCDOptionsEnum SCDOPTIONS[] = {
-		COMMAND, DEFINE, UNDEFINE, INCLUDE, IDASH, NOSTDINC, NOSTDINCPP, INCLUDE_FILE, IMACROS_FILE,
+		COMMAND, DEFINE, UNDEFINE, IDASH, INCLUDE, NOSTDINC, NOSTDINCPP, INCLUDE_FILE, IMACROS_FILE,
 		IDIRAFTER, ISYSTEM, IPREFIX, IWITHPREFIX, IWITHPREFIXBEFORE
 	};
 	

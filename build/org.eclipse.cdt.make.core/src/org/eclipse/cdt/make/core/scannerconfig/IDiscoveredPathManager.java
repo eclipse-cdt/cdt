@@ -32,10 +32,26 @@ public interface IDiscoveredPathManager {
          */
 		Map 	getSymbols();
 		
+        IDiscoveredScannerInfoSerializable getSerializable();
+	}
+    
+    interface IPerProjectDiscoveredPathInfo extends IDiscoveredPathInfo {
+        void setIncludeMap(LinkedHashMap map);
+        void setSymbolMap(LinkedHashMap map);
+
+        LinkedHashMap getIncludeMap();
+        LinkedHashMap getSymbolMap();
+    }
+
+    interface IPerFileDiscoveredPathInfo extends IDiscoveredPathInfo {
         /**
          * Get include paths for the specific path (file) 
          */
         IPath[] getIncludePaths(IPath path);
+        /**
+         * Get quote include paths (for #include "...") for the specific path (file)
+         */
+        IPath[] getQuoteIncludePaths(IPath path);
         /**
          * Get defined symbols for the specific path (file) 
          */
@@ -49,17 +65,8 @@ public interface IDiscoveredPathManager {
          * Get macro files (gcc option -imacros) for the specific path (file)
          */
         IPath[] getMacroFiles(IPath path);
-        
-        IDiscoveredScannerInfoSerializable getSerializable();
-        ScannerConfigScope getScope();
-        
-        void setIncludeMap(LinkedHashMap map);
-		void setSymbolMap(LinkedHashMap map);
-
-		LinkedHashMap getIncludeMap();
-		LinkedHashMap getSymbolMap();
-	}
-
+    }
+    
     interface IDiscoveredScannerInfoSerializable {
         /**
          * Serialize discovered scanner info to an XML element

@@ -26,10 +26,10 @@ import java.util.Map.Entry;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
@@ -145,8 +145,6 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
 	private static final String FILE_ELEM = "file"; //$NON-NLS-1$
 	private static final String PATH_ATTR = "path"; //$NON-NLS-1$
 	
-    private static final LinkedHashMap EMPTY_LHM = new LinkedHashMap(0); 
-
     private IProject project;
     
     private ScannerInfoData sid; // scanner info data
@@ -235,10 +233,13 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
     private void addScannerInfo(Integer commandId, Map scannerInfo) {
         CCommandDSC cmd = (CCommandDSC) sid.commandIdCommandMap.get(commandId);
         if (cmd != null) {
-            List symbols = (List) scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
-            List includes = (List) scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);
-            cmd.setSymbols(symbols);
-            cmd.setIncludes(CygpathTranslator.translateIncludePaths(includes));
+            List siItem = (List) scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
+            cmd.setSymbols(siItem);
+            siItem = (List) scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);
+            cmd.setIncludes(CygpathTranslator.translateIncludePaths(siItem));
+            siItem = (List) scannerInfo.get(ScannerInfoTypes.QUOTE_INCLUDE_PATHS);
+            cmd.setQuoteIncludes(siItem);
+            
             cmd.setDiscovered(true);
         }
     }
@@ -438,12 +439,32 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
         
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner#deleteAll(org.eclipse.core.resources.IResource)
+     */
+    public void deleteAll(IResource resource) {
+        if (resource.equals(project)) {
+            siChangedForFileList = new ArrayList();
+            Set changedFiles = sid.fileToCommandIdMap.keySet();
+            for (Iterator i = changedFiles.iterator(); i.hasNext(); ) {
+                IFile file = (IFile) i.next();
+                IPath path = file.getFullPath();
+                siChangedForFileList.add(path);
+            }
+
+            sid = new ScannerInfoData();
+            
+            freeCommandIdPool = new TreeSet();
+            siAvailable = false;
+        }
+    }
+
     /**
      * Per file DPI object
      * 
      * @author vhirsl
      */
-    public class PerFileDiscoveredPathInfo implements IDiscoveredPathInfo {
+    public class PerFileDiscoveredPathInfo implements IPerFileDiscoveredPathInfo {
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getProject()
          */
@@ -516,36 +537,6 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
         }
 
         /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#setIncludeMap(java.util.LinkedHashMap)
-         */
-        public void setIncludeMap(LinkedHashMap map) {
-            // TODO Auto-generated method stub
-
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#setSymbolMap(java.util.LinkedHashMap)
-         */
-        public void setSymbolMap(LinkedHashMap map) {
-            // TODO Auto-generated method stub
-
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludeMap()
-         */
-        public LinkedHashMap getIncludeMap() {
-            return EMPTY_LHM;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSymbolMap()
-         */
-        public LinkedHashMap getSymbolMap() {
-            return EMPTY_LHM;
-        }
-
-        /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludePaths(org.eclipse.core.runtime.IPath)
          */
         public IPath[] getIncludePaths(IPath path) {
@@ -553,6 +544,23 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
             CCommandDSC cmd = getCommand(path);
             if (cmd != null && cmd.isDiscovered()) {
                 List includes = cmd.getIncludes();
+                List includePaths = new ArrayList(includes.size());
+                for (Iterator i = includes.iterator(); i.hasNext(); ) {
+                    includePaths.add(new Path((String) i.next()));
+                }
+                return (IPath[])includePaths.toArray(new IPath[includePaths.size()]);
+            }
+            return new IPath[0];
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getQuoteIncludePaths(org.eclipse.core.runtime.IPath)
+         */
+        public IPath[] getQuoteIncludePaths(IPath path) {
+            // get the command
+            CCommandDSC cmd = getCommand(path);
+            if (cmd != null && cmd.isDiscovered()) {
+                List includes = cmd.getQuoteIncludes();
                 List includePaths = new ArrayList(includes.size());
                 for (Iterator i = includes.iterator(); i.hasNext(); ) {
                     includePaths.add(new Path((String) i.next()));
@@ -595,7 +603,7 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
         }
 
         /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getMacroFiles(org.eclipse.core.runtime.IPath)
+         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getMacroFiles(org.eclipse.core.runtime.IPath)
          */
         public IPath[] getMacroFiles(IPath path) {
             // get the command
@@ -607,17 +615,10 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
         }
 
         /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSerializable()
+         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getSerializable()
          */
         public IDiscoveredScannerInfoSerializable getSerializable() {
             return sid;
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getScope()
-         */
-        public ScannerConfigScope getScope() {
-            return ScannerConfigScope.FILE_SCOPE;
         }
 
         /**

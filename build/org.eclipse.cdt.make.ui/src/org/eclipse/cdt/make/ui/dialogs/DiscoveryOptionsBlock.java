@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  *  A dialog to set scanner config discovery options.
@@ -109,7 +108,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         composite.setFont(font);
         setControl(composite);
 
-        WorkbenchHelp.setHelp(getControl(), IMakeHelpContextIds.SCANNER_CONFIG_DISCOVERY_OPTIONS);
+        MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), IMakeHelpContextIds.SCANNER_CONFIG_DISCOVERY_OPTIONS);
 
         // create a composite for general scanner config discovery options
         Composite scComp = ControlFactory.createComposite(composite, 1);

@@ -33,6 +33,7 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerProjectDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathContainer;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
@@ -159,50 +160,52 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		if (!dirty) {
 			return true;
 		}
-		IDiscoveredPathInfo info;
 		try {
-			info = MakeCorePlugin.getDefault().
+            IDiscoveredPathInfo info = MakeCorePlugin.getDefault().
 					getDiscoveryManager().getDiscoveredInfo(fCProject.getProject());
+            if (info instanceof IPerProjectDiscoveredPathInfo) {
+                IPerProjectDiscoveredPathInfo projetcPathInfo = (IPerProjectDiscoveredPathInfo) info;
 			
-			LinkedHashMap includes = new LinkedHashMap();
-			LinkedHashMap symbols = new LinkedHashMap();
-			
-			DiscoveredElement container = (DiscoveredElement) fDiscoveredContainerList.getElement(0);
-			if (container != null && container.getEntryKind() == DiscoveredElement.CONTAINER) {
-				Object[] cChildren = container.getChildren();
-				if (cChildren != null) {
-					for (int i = 0; i < cChildren.length; ++i) {
-						DiscoveredElement group = (DiscoveredElement) cChildren[i];
-						switch (group.getEntryKind()) {
-							case DiscoveredElement.PATHS_GROUP: {
-								// get the include paths
-								Object[] gChildren = group.getChildren();
-								if (gChildren != null) {
-									for (int j = 0; j < gChildren.length; ++j) {
-										DiscoveredElement include = (DiscoveredElement) gChildren[j];
-										includes.put(include.getEntry(), Boolean.valueOf(include.isRemoved()));
-									}
-								}
-							}
-							break;
-							case DiscoveredElement.SYMBOLS_GROUP: {
-								// get the symbol definitions
-								Object[] gChildren = group.getChildren();
-								if (gChildren != null) {
-									for (int j = 0; j < gChildren.length; ++j) {
-										DiscoveredElement symbol = (DiscoveredElement) gChildren[j];
-										ScannerConfigUtil.scAddSymbolString2SymbolEntryMap(symbols, symbol.getEntry(), !symbol.isRemoved());
-									}
-								}
-							}
-							break;
-						}
-					}
-				}
-			}
-			info.setIncludeMap(includes);
-			info.setSymbolMap(symbols);
-			
+    			LinkedHashMap includes = new LinkedHashMap();
+    			LinkedHashMap symbols = new LinkedHashMap();
+    			
+    			DiscoveredElement container = (DiscoveredElement) fDiscoveredContainerList.getElement(0);
+    			if (container != null && container.getEntryKind() == DiscoveredElement.CONTAINER) {
+    				Object[] cChildren = container.getChildren();
+    				if (cChildren != null) {
+    					for (int i = 0; i < cChildren.length; ++i) {
+    						DiscoveredElement group = (DiscoveredElement) cChildren[i];
+    						switch (group.getEntryKind()) {
+    							case DiscoveredElement.PATHS_GROUP: {
+    								// get the include paths
+    								Object[] gChildren = group.getChildren();
+    								if (gChildren != null) {
+    									for (int j = 0; j < gChildren.length; ++j) {
+    										DiscoveredElement include = (DiscoveredElement) gChildren[j];
+    										includes.put(include.getEntry(), Boolean.valueOf(include.isRemoved()));
+    									}
+    								}
+    							}
+    							break;
+    							case DiscoveredElement.SYMBOLS_GROUP: {
+    								// get the symbol definitions
+    								Object[] gChildren = group.getChildren();
+    								if (gChildren != null) {
+    									for (int j = 0; j < gChildren.length; ++j) {
+    										DiscoveredElement symbol = (DiscoveredElement) gChildren[j];
+    										ScannerConfigUtil.scAddSymbolString2SymbolEntryMap(symbols, symbol.getEntry(), !symbol.isRemoved());
+    									}
+    								}
+    							}
+    							break;
+    						}
+    					}
+    				}
+    			}
+                projetcPathInfo.setIncludeMap(includes);
+                projetcPathInfo.setSymbolMap(symbols);
+            }
+            
 			try {
 				// update scanner configuration
 				MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(info, null);
@@ -249,40 +252,43 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		IDiscoveredPathInfo info;
 		DiscoveredElement container = null;
 		try {
+            container = DiscoveredElement.createNew(null, fCProject.getProject(), null,
+                    DiscoveredElement.CONTAINER, false, false);
 			info = MakeCorePlugin.getDefault().
 					getDiscoveryManager().getDiscoveredInfo(fCProject.getProject());
-			container = DiscoveredElement.createNew(null, fCProject.getProject(), null,
-					DiscoveredElement.CONTAINER, false, false);
 			try {
 				IPathEntryContainer peContainer = CoreModel.getPathEntryContainer(pathEntry.getPath(), fCProject);
 				if (peContainer != null) {
 					container.setEntry(peContainer.getDescription());
 				}
-				// get include paths
-				LinkedHashMap paths = info.getIncludeMap();
-				for (Iterator i = paths.keySet().iterator(); i.hasNext(); ) {
-					String include = (String) i.next();
-					Boolean removed = (Boolean) paths.get(include);
-					removed = (removed == null) ? Boolean.FALSE : removed;
-					DiscoveredElement.createNew(container, fCProject.getProject(), include, 
-							DiscoveredElement.INCLUDE_PATH, removed.booleanValue(), false);
-				}
-				// get defined symbols 
-				LinkedHashMap symbols = info.getSymbolMap();
-				for (Iterator i = symbols.keySet().iterator(); i.hasNext(); ) {
-					String symbol = (String) i.next();
-					SymbolEntry se = (SymbolEntry) symbols.get(symbol);
-					for (Iterator j = se.getActiveRaw().iterator(); j.hasNext();) {
-						String value = (String) j.next();
-						DiscoveredElement.createNew(container, fCProject.getProject(), value, 
-								DiscoveredElement.SYMBOL_DEFINITION, false, false);
-					}
-					for (Iterator j = se.getRemovedRaw().iterator(); j.hasNext();) {
-						String value = (String) j.next();
-						DiscoveredElement.createNew(container, fCProject.getProject(), value, 
-								DiscoveredElement.SYMBOL_DEFINITION, true, false);
-					}
-				}
+                if (info instanceof IPerProjectDiscoveredPathInfo) {
+                    IPerProjectDiscoveredPathInfo projetcPathInfo = (IPerProjectDiscoveredPathInfo) info;
+    				// get include paths
+    				LinkedHashMap paths = projetcPathInfo.getIncludeMap();
+    				for (Iterator i = paths.keySet().iterator(); i.hasNext(); ) {
+    					String include = (String) i.next();
+    					Boolean removed = (Boolean) paths.get(include);
+    					removed = (removed == null) ? Boolean.FALSE : removed;
+    					DiscoveredElement.createNew(container, fCProject.getProject(), include, 
+    							DiscoveredElement.INCLUDE_PATH, removed.booleanValue(), false);
+    				}
+    				// get defined symbols 
+    				LinkedHashMap symbols = projetcPathInfo.getSymbolMap();
+    				for (Iterator i = symbols.keySet().iterator(); i.hasNext(); ) {
+    					String symbol = (String) i.next();
+    					SymbolEntry se = (SymbolEntry) symbols.get(symbol);
+    					for (Iterator j = se.getActiveRaw().iterator(); j.hasNext();) {
+    						String value = (String) j.next();
+    						DiscoveredElement.createNew(container, fCProject.getProject(), value, 
+    								DiscoveredElement.SYMBOL_DEFINITION, false, false);
+    					}
+    					for (Iterator j = se.getRemovedRaw().iterator(); j.hasNext();) {
+    						String value = (String) j.next();
+    						DiscoveredElement.createNew(container, fCProject.getProject(), value, 
+    								DiscoveredElement.SYMBOL_DEFINITION, true, false);
+    					}
+    				}
+                }
 			} catch (CModelException e) {
 				MakeUIPlugin.log(e.getStatus());
 			}
@@ -569,7 +575,20 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
     		List selElements = fDiscoveredContainerList.getSelectedElements();
     		for (int i = 0; i < selElements.size(); ++i) {
     			DiscoveredElement elem = (DiscoveredElement) selElements.get(i);
-    			if (elem.getEntryKind() != DiscoveredElement.CONTAINER) {
+    			if (elem.getEntryKind() == DiscoveredElement.CONTAINER) {
+                    collectorUtil.deleteAll(project);
+                    Object[] children = elem.getChildren();
+                    for (int j = 0; j < children.length; j++) {
+                        if (children[j] instanceof DiscoveredElement) {
+                            DiscoveredElement child = (DiscoveredElement) children[j];
+                            child.delete();
+                        }
+                    }
+                    newSelection.add(elem);
+                    rc = true;
+                    break;
+                }
+                else {
     				DiscoveredElement parent = elem.getParent();
     				if (parent != null) {
     					Object[] children = parent.getChildren();
@@ -687,12 +706,6 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	private boolean canDelete(List selElements) {
 		if (selElements.size() == 0) {
 			return false;
-		}
-		for (int i = 0; i < selElements.size(); i++) {
-			DiscoveredElement elem = (DiscoveredElement) selElements.get(i);
-			if (elem.getEntryKind() == DiscoveredElement.CONTAINER) {
-					return false;
-			}
 		}
 		return true;
 	}

@@ -25,6 +25,7 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerProjectDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore;
@@ -177,23 +178,27 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
 			monitor = new NullProgressMonitor();
 		}
         IDiscoveredPathInfo pathInfo = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project);
-        monitor.beginTask(MakeMessages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
-        if (pathInfo != null) {
-            monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
-            if (scannerConfigNeedsUpdate(pathInfo)) {
-                monitor.worked(50);
-                monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
-                try {
-                    // update scanner configuration
-                    MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(pathInfo, null);
+        if (pathInfo instanceof IPerProjectDiscoveredPathInfo) {
+            IPerProjectDiscoveredPathInfo projectPathInfo = (IPerProjectDiscoveredPathInfo) pathInfo;
+            
+            monitor.beginTask(MakeMessages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
+            if (pathInfo != null) {
+                monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
+                if (scannerConfigNeedsUpdate(projectPathInfo)) {
                     monitor.worked(50);
-                } catch (CoreException e) {
-                    MakeCorePlugin.log(e);
+                    monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
+                    try {
+                        // update scanner configuration
+                        MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(pathInfo, null);
+                        monitor.worked(50);
+                    } catch (CoreException e) {
+                        MakeCorePlugin.log(e);
+                    }
                 }
             }
+            monitor.done();
+            scPersisted = true;
         }
-        monitor.done();
-        scPersisted = true;
 	}
 
 	/**
@@ -202,7 +207,7 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
 	 * @param scanInfo
 	 * @return
 	 */
-	private boolean scannerConfigNeedsUpdate(IDiscoveredPathInfo discPathInfo) {
+	private boolean scannerConfigNeedsUpdate(IPerProjectDiscoveredPathInfo discPathInfo) {
 		boolean addedIncludes = includePathsNeedUpdate(discPathInfo);
 		boolean addedSymbols = definedSymbolsNeedUpdate(discPathInfo);
 		
@@ -216,7 +221,7 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
 	 * @param includes
 	 * @return
 	 */
-	private boolean includePathsNeedUpdate(IDiscoveredPathInfo discPathInfo) {
+	private boolean includePathsNeedUpdate(IPerProjectDiscoveredPathInfo discPathInfo) {
 		boolean addedIncludes = false;
         List discoveredIncludes = (List) discoveredSI.get(ScannerInfoTypes.INCLUDE_PATHS);
 		if (discoveredIncludes != null) {
@@ -274,7 +279,7 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
 	 * @param symbols
 	 * @return
 	 */
-	private boolean definedSymbolsNeedUpdate(IDiscoveredPathInfo discPathInfo) {
+	private boolean definedSymbolsNeedUpdate(IPerProjectDiscoveredPathInfo discPathInfo) {
 		boolean addedSymbols = false;
         List discoveredSymbols = (List) discoveredSI.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
 		if (discoveredSymbols != null) {
@@ -395,6 +400,14 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
             // remove it from the Map of SymbolEntries 
             ScannerConfigUtil.removeSymbolEntryValue(symbol, sumDiscoveredSymbols);
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner#deleteAll(org.eclipse.core.resources.IResource)
+     */
+    public void deleteAll(IResource resource) {
+        deleteAllPaths(resource);
+        deleteAllSymbols(resource);
     }
 
     /* (non-Javadoc)

@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredInfoListener;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerProjectDiscoveredPathInfo;
 import org.eclipse.core.resources.IProject;
 
 public class DiscoveredPathContainer extends AbstractDiscoveredPathContainer {
@@ -33,14 +33,14 @@ public class DiscoveredPathContainer extends AbstractDiscoveredPathContainer {
 
                 public void infoRemoved(IDiscoveredPathInfo info) {
                     if (info != null && 
-                            ScannerConfigScope.PROJECT_SCOPE.equals(info.getScope())) {
+                            info instanceof IPerProjectDiscoveredPathInfo) {
                         fgPathEntries.remove(info.getProject());
                     }
                 }
 
                 public void infoChanged(IDiscoveredPathInfo info) {
                     if (info != null && 
-                            ScannerConfigScope.PROJECT_SCOPE.equals(info.getScope())) {
+                            info instanceof IPerProjectDiscoveredPathInfo) {
                         fgPathEntries.remove(info.getProject());
                     }
                 }

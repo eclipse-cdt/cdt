@@ -19,14 +19,14 @@ import org.eclipse.core.resources.IResource;
  */
 public interface IScannerInfoCollectorCleaner {
     /**
-     * Delete all discovered paths for a resource
+     * Delete all discovered paths for the resource
      * 
      * @param project
      */
     public void deleteAllPaths(IResource resource);
 
     /**
-     * Delete all discovered symbols for a resource
+     * Delete all discovered symbols for the resource
      * 
      * @param project
      */
@@ -48,4 +48,10 @@ public interface IScannerInfoCollectorCleaner {
      */
     public void deleteSymbol(IResource resource, String symbol);
     
+    /**
+     * Delete all discovered scanner info for the resource
+     * 
+     * @param resource
+     */
+    public void deleteAll(IResource resource);
 }

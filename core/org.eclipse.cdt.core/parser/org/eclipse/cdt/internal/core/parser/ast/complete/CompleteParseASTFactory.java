@@ -1071,6 +1071,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         
         // Try to figure out the result that this expression evaluates to
 		ExpressionResult expressionResult = getExpressionResultType(scope, kind, lhs, rhs, thirdExpression, typeId, literal, symbol);
+
+		if( newDescriptor != null ){
+			createConstructorReference( newDescriptor, typeId, references );
+		}
 		
 		if( symbol == null )
 			purgeBadReferences( kind, rhs );
@@ -1086,6 +1090,77 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 		return expression;			
     }
+    
+	private void createConstructorReference( IASTNewExpressionDescriptor descriptor, IASTTypeId typeId, List references ){
+		ISymbol symbol = null;
+		try {
+			symbol = typeId.getTypeSymbol();
+			
+			if( symbol.isType( TypeInfo.t_type ) )
+				symbol = symbol.getTypeSymbol();
+		} catch (ASTNotImplementedException e) {
+			return;
+		}
+		if( symbol == null || !( symbol instanceof IDerivableContainerSymbol ) )
+			return;
+		
+		Iterator i = descriptor.getNewInitializerExpressions();
+		
+		ASTExpression exp = ( i.hasNext() )? (ASTExpression) i.next() : null;
+		
+		ITokenDuple duple = ((ASTTypeId)typeId).getTokenDuple();
+		
+		if( createConstructorReference( symbol, exp, duple, references ) ){
+			//if we have a constructor reference, get rid of the class reference.
+			i = ((ASTTypeId)typeId).getReferences().iterator();
+			while( i.hasNext() )
+			{
+				ASTReference ref = (ASTReference) i.next();
+				if( ref.getName().equals( duple.toString() ) &&
+					ref.getOffset() == duple.getStartOffset() )
+				{
+					i.remove();
+				}
+			}
+		}
+	}
+	
+	private boolean createConstructorReference( ISymbol classSymbol, ASTExpression expressionList, ITokenDuple duple, List references ){
+		if( classSymbol != null && classSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
+			TypeInfo info = classSymbol.getTypeInfo().getFinalType();
+			classSymbol = info.getTypeSymbol();
+		}
+		if( classSymbol == null || ! (classSymbol instanceof IDerivableContainerSymbol ) ){
+			return false;
+		}
+		
+		List parameters = new LinkedList();
+		while( expressionList != null ){
+			parameters.add( expressionList.getResultType().getResult() );
+			expressionList = (ASTExpression) expressionList.getRHSExpression();
+		}
+		
+		IParameterizedSymbol constructor = null;
+		try {
+			constructor = ((IDerivableContainerSymbol)classSymbol).lookupConstructor( parameters );
+		} catch (ParserSymbolTableException e1) {
+			return false;
+		}
+		
+		if( constructor != null ){
+			IASTReference reference = null;
+			try {
+				reference = createReference( constructor, duple.toString(), duple.getStartOffset() );
+			} catch (ASTSemanticException e2) {
+				return false;
+			}
+			if( reference != null ){
+				addReference( references, reference );
+				return true;
+			}
+		}
+		return false;
+	}
     /**
 	 * @param kind
      * @param rhs
@@ -1730,6 +1805,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         if( expression != null )
         {
         	references.addAll( ((ASTExpression)expression).getReferences() );
+        	if( expression.getLHSExpression() != null )
+        		getExpressionReferences( expression.getLHSExpression(), references );
+        	if( expression.getRHSExpression() != null )
+        		getExpressionReferences( expression.getRHSExpression(), references );
         }
     }
     /* (non-Javadoc)
@@ -1774,15 +1853,20 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IContainerSymbol scopeSymbol = scopeToSymbol(scope);
         
 		boolean requireReferenceResolution = false;
+		ISymbol symbol = null;
         if( duple != null )
         {
         	try
         	{
-        		lookupQualifiedName( scopeSymbol, duple, references, true );
+        		symbol = lookupQualifiedName( scopeSymbol, duple, references, true );
         	} catch( ASTSemanticException ase )
         	{
         		requireReferenceResolution = true;
         	}
+        }
+        
+        if( symbol != null ){
+        	createConstructorReference( symbol, (ASTExpression) expressionList, duple, references );
         }
         
         getExpressionReferences( expressionList, references ); 

@@ -1695,4 +1695,71 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		Iterator references = callback.getReferences().iterator();
 		assertEquals( ((IASTReference)references.next()).getReferencedElement(), iii );
 	}
+    
+    public void test57513_new() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "class A{ A(); A( int ); };   \n" );
+    	writer.write( " void f() {                  \n" );
+    	writer.write( "    A * a1 = new A;          \n" );
+    	writer.write( "    A * a2 = new(1)A();      \n" );
+    	writer.write( "    A * a3 = new A( 1 );     \n" );
+    	writer.write( "}                            \n" );
+    	
+    	Iterator i = parse( writer.toString() ).getDeclarations();
+    	
+    	IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next() ).getTypeSpecifier();
+    	IASTFunction f = (IASTFunction) i.next();
+    	assertFalse( i.hasNext() );
+    	
+    	i = getDeclarations( A );
+    	IASTMethod constructor1 = (IASTMethod) i.next();
+    	IASTMethod constructor2 = (IASTMethod) i.next();
+    	assertFalse( i.hasNext() );
+    	
+    	assertReferenceTask( new Task( constructor1, 2, false, false ) );
+    	assertReferenceTask( new Task( constructor2, 1, false, false ) );
+    	assertReferenceTask( new Task( A, 3, false, false ) );
+	}
+
+    public void test57513_NoConstructor() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "class A{  };   \n" );
+    	writer.write( " void f() {                  \n" );
+    	writer.write( "    A * a1 = new A;          \n" );
+    	writer.write( "}                            \n" );
+    	
+    	Iterator i = parse( writer.toString() ).getDeclarations();
+    	
+    	IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next() ).getTypeSpecifier();
+    	IASTFunction f = (IASTFunction) i.next();
+    	assertFalse( i.hasNext() );
+    	
+    	assertReferenceTask( new Task( A, 2, false, false ) );
+	}
+    
+    public void test57513_ctorinit() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "class A{ A(); A( A * ); };   \n" );
+    	writer.write( "class B : public A { B(); }; \n" );
+    	writer.write( "B::B():A( new A ){}          \n" );
+    	
+    	Iterator i = parse( writer.toString() ).getDeclarations();
+    	
+    	IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next() ).getTypeSpecifier();
+    	IASTClassSpecifier B = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next() ).getTypeSpecifier();
+    	IASTMethod constructorB = (IASTMethod) i.next();
+    	assertFalse( i.hasNext() );
+    	
+    	i = getDeclarations( A );
+    	IASTMethod constructor1 = (IASTMethod) i.next();
+    	IASTMethod constructor2 = (IASTMethod) i.next();
+    	assertFalse( i.hasNext() );
+    	
+    	assertReferenceTask( new Task( constructor1, 1, false, false ) );
+    	assertReferenceTask( new Task( constructor2, 1, false, false ) );
+    	assertReferenceTask( new Task( A, 2, false, false ) );
+	}
 }

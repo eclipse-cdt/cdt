@@ -1,3 +1,7 @@
+2003-11-17 Mikhail Khodjaiants
+	src/org/eclipse/cdt/launch/ui/CSourceLookupTab.java: 
+	"Search for duplicate source files" option support.
+	
 2003-10-07 Mikhail Khodjaiants
 	src/org/eclipse/cdt/launch/AbstractCLaunchDelegate.java: 
 	use 'MultiStatus' instead of 'Status' in the 'abort' method.

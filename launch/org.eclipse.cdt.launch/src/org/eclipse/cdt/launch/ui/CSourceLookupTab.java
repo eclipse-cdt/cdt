@@ -109,6 +109,7 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 					if ( !project.equals( fBlock.getProject() ) )
 						fBlock.initialize( clocator );
 					clocator.setSourceLocations( fBlock.getSourceLocations() );
+					clocator.setSearchForDuplicateFiles( fBlock.searchForDuplicateFiles() );
 				}
 				configuration.setAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, locator.getMemento() );
 			}
@@ -129,8 +130,9 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
-	public Image getImage() {
-		return LaunchImages.get(LaunchImages.IMG_VIEW_SOURCE_TAB);
+	public Image getImage() 
+	{
+		return LaunchImages.get( LaunchImages.IMG_VIEW_SOURCE_TAB );
 	}
 
 	private IProject getProject( ILaunchConfiguration configuration )

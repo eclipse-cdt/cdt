@@ -1,5 +1,21 @@
 2002-11-22 Alain Magloire
 
+	The C Builder on error would clear the build.
+	The side effect of that is on every BuildAll
+	or Rebuild on the workspace, it will try to
+	rebuild the projects since it has not states.
+	It seems to work fine for JDT, where the builder
+	has full control and can quickly make a decision
+	The situation is not the same for the CDT, where we
+	spawn an external tool (make) even if nothing changes
+	i.e. the Makefiles rules when properly done will see,
+	it still seems sloppy.  So we remove this behaviour.
+
+	* src/.../internal/core/CBuilder.java (invokeMake):
+	Not to clear the state when errors.
+
+2002-11-22 Alain Magloire
+
 	* src/.../cdt/core/model/IBinary.java (isCore):
 	New method.
 	* src/.../cdt/core/model/IBinaryParser.java (CORE):

@@ -1126,7 +1126,10 @@ public abstract class Parser extends ExpressionParser implements IParser
             {
             	int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
             	logException( "simpleDeclaration:createSimpleTypeSpecifier", e1 ); //$NON-NLS-1$
-                throwBacktrack(firstOffset, endOffset, firstLine);
+            	if( e1 instanceof ASTSemanticException && ((ASTSemanticException)e1).getProblem() != null )
+            	    throwBacktrack(((ASTSemanticException)e1).getProblem());
+            	else
+            	    throwBacktrack(firstOffset, endOffset, firstLine);
             }
         
         try {

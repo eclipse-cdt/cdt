@@ -75,4 +75,20 @@ public class CompleteParseProblemTest extends CompleteParseBaseTest {
 
 	}
 
+	public void testBug68931() throws Exception
+	{
+	    String code = "void foo(){ SomeUnknownType t; } "; //$NON-NLS-1$
+	    parse( code, false );
+	    
+	    int start = code.indexOf( "SomeUnknownType" ); //$NON-NLS-1$
+	    int end = start + 15;
+	    
+	    assertFalse( callback.problems.isEmpty() );
+	    assertEquals( callback.problems.size(), 1 );
+		IProblem p = (IProblem) callback.problems.get( 0 );
+		assertTrue( p.checkCategory( IProblem.SEMANTICS_RELATED ));
+		assertEquals( p.getSourceStart(), start );
+		assertEquals( p.getSourceEnd(), end );
+		assertEquals( p.getID(), IProblem.SEMANTIC_NAME_NOT_FOUND );   
+	}
 }

@@ -2042,7 +2042,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                     	}
 					}
 					else
-                    	handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, image, -1, -1, current.getLineNumber(), true );
+                    	handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, image, current.getOffset(), current.getEndOffset(), current.getLineNumber(), true );
                 }
                 catch (ParserSymbolTableException e)
                 {

@@ -1,3 +1,10 @@
+2004-11-05 Chris Wiebe
+
+	Remove option to use an existing class as enclosing type (defer to future release)
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassWizardMessages.properties
+
 2004-11-04 Alain Magloire
 	Fix for 77825 from (Mikhail Voronin)
 	* src/org/eclipse/cdt/internal/ui/text/CHelpProviderDescriptor.java

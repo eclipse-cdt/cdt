@@ -117,9 +117,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 	private StringButtonDialogField fSourceFolderDialogField;
 	SelectionButtonDialogField fEnclosingTypeSelection;
-	SelectionButtonDialogFieldGroup fEnclosingTypeButtons;
 	StringButtonDialogField fEnclosingTypeDialogField;
-	SelectionButtonDialogFieldGroup fEnclosingClassAccessButtons;
+//	SelectionButtonDialogFieldGroup fEnclosingTypeButtons;
+//	SelectionButtonDialogFieldGroup fEnclosingClassAccessButtons;
 	StringDialogField fClassNameDialogField;
 	BaseClassesListDialogField fBaseClassesDialogField;
 	MethodStubsListDialogField fMethodStubsDialogField;
@@ -160,23 +160,23 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		fEnclosingTypeSelection.setDialogFieldListener(enclosingTypeAdapter);
 		fEnclosingTypeSelection.setLabelText(NewClassWizardMessages.getString("NewClassCreationWizardPage.enclosingType.label")); //$NON-NLS-1$
 
-		String[] buttonNames = new String[] {
-	    	/* NAMESPACE_INDEX */ NewClassWizardMessages.getString("NewClassCreationWizardPage.enclosingType.namespace"), //$NON-NLS-1$
-	    	/* CLASS_INDEX */ NewClassWizardMessages.getString("NewClassCreationWizardPage.enclosingType.class"), //$NON-NLS-1$
-		};
-		fEnclosingTypeButtons = new SelectionButtonDialogFieldGroup(SWT.RADIO, buttonNames, buttonNames.length);
-		fEnclosingTypeButtons.setDialogFieldListener(enclosingTypeAdapter);
-		fEnclosingTypeButtons.setSelection(NAMESPACE_INDEX, true);
+//		String[] buttonNames = new String[] {
+//	    	/* NAMESPACE_INDEX */ NewClassWizardMessages.getString("NewClassCreationWizardPage.enclosingType.namespace"), //$NON-NLS-1$
+//	    	/* CLASS_INDEX */ NewClassWizardMessages.getString("NewClassCreationWizardPage.enclosingType.class"), //$NON-NLS-1$
+//		};
+//		fEnclosingTypeButtons = new SelectionButtonDialogFieldGroup(SWT.RADIO, buttonNames, buttonNames.length);
+//		fEnclosingTypeButtons.setDialogFieldListener(enclosingTypeAdapter);
+//		fEnclosingTypeButtons.setSelection(NAMESPACE_INDEX, true);
 
-		String[] buttonNames2 = new String[] {
-			NewClassWizardMessages.getString("NewClassCreationWizardPage.enclosingClassAccess.public"), //$NON-NLS-1$
-			NewClassWizardMessages.getString("NewClassCreationWizardPage.enclosingClassAccess.protected"), //$NON-NLS-1$
-			NewClassWizardMessages.getString("NewClassCreationWizardPage.enclosingClassAccess.private") //$NON-NLS-1$
-		};
-		fEnclosingClassAccessButtons = new SelectionButtonDialogFieldGroup(SWT.RADIO, buttonNames2, buttonNames2.length);
-		fEnclosingClassAccessButtons.setDialogFieldListener(enclosingTypeAdapter);
-		fEnclosingClassAccessButtons.setLabelText(NewClassWizardMessages.getString("NewClassWizardPage.baseclass.access.label")); //$NON-NLS-1$
-		fEnclosingClassAccessButtons.setSelection(0, true);
+//		String[] buttonNames2 = new String[] {
+//			NewClassWizardMessages.getString("NewClassCreationWizardPage.enclosingClassAccess.public"), //$NON-NLS-1$
+//			NewClassWizardMessages.getString("NewClassCreationWizardPage.enclosingClassAccess.protected"), //$NON-NLS-1$
+//			NewClassWizardMessages.getString("NewClassCreationWizardPage.enclosingClassAccess.private") //$NON-NLS-1$
+//		};
+//		fEnclosingClassAccessButtons = new SelectionButtonDialogFieldGroup(SWT.RADIO, buttonNames2, buttonNames2.length);
+//		fEnclosingClassAccessButtons.setDialogFieldListener(enclosingTypeAdapter);
+//		fEnclosingClassAccessButtons.setLabelText(NewClassWizardMessages.getString("NewClassWizardPage.baseclass.access.label")); //$NON-NLS-1$
+//		fEnclosingClassAccessButtons.setSelection(0, true);
 		
 		fEnclosingTypeDialogField = new StringButtonDialogField(enclosingTypeAdapter);
 		fEnclosingTypeDialogField.setDialogFieldListener(enclosingTypeAdapter);
@@ -288,76 +288,56 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * @param nColumns number of columns to span
 	 */		
 	protected void createEnclosingTypeControls(Composite composite, int nColumns) {
- 		fEnclosingTypeSelection.doFillIntoGrid(composite, 1);
-		
-//		DialogField.createEmptySpace(composite, 1);
+		Composite tabGroup= new Composite(composite, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
+ 		tabGroup.setLayout(layout);
 
-		GridData gd;
-//		LayoutUtil.setHorizontalSpan(fEnclosingTypeButtons.getLabelControl(composite), 1);
-		Control buttonGroup = fEnclosingTypeButtons.getSelectionButtonsGroup(composite);
-//		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.widthHint = convertWidthInCharsToPixels(32);
-		gd.horizontalSpan = nColumns - 2;
-//		textControl.setLayoutData(gd);
-//		textControl.addFocusListener(new StatusFocusListener(NAMESPACE));
-//		buttonGroup.setSize();
-//		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-//		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		fEnclosingTypeSelection.doFillIntoGrid(tabGroup, 1);
+
+		Text text= fEnclosingTypeDialogField.getTextControl(composite);
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint= getMaxFieldWidth();
+		gd.horizontalSpan= 2;
+		text.setLayoutData(gd);
+		
+		Button button= fEnclosingTypeDialogField.getChangeControl(composite);
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.heightHint = SWTUtil.getButtonHeigthHint(button);
+		gd.widthHint = SWTUtil.getButtonWidthHint(button);
+		button.setLayoutData(gd);
+		
+// 		fEnclosingTypeSelection.doFillIntoGrid(composite, 1);
+//		GridData gd;
+//		Control buttonGroup = fEnclosingTypeButtons.getSelectionButtonsGroup(composite);
+//		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+//		gd.widthHint = convertWidthInCharsToPixels(32);
 //		gd.horizontalSpan = nColumns - 2;
-		buttonGroup.setLayoutData(gd);
-//		DialogField.createEmptySpace(composite, 2);
-		DialogField.createEmptySpace(composite, 1);
-		
-		DialogField.createEmptySpace(composite, 1);
-
-//		LayoutUtil.setHorizontalSpan(fNamespaceDialogField.getLabelControl(composite), 1);
-//		Text textControl = fNamespaceDialogField.getTextControl(composite);
-//		gd = new GridData(GridData.FILL_HORIZONTAL);
-//		gd.widthHint = getMaxFieldWidth();
-//		gd.horizontalSpan = 1;
-//		textControl.setLayoutData(gd);
-//		textControl.addFocusListener(new StatusFocusListener(NAMESPACE));
+//		buttonGroup.setLayoutData(gd);
+//		DialogField.createEmptySpace(composite, 1);
 //		
-//		Button button = fNamespaceDialogField.getChangeControl(composite);
+//		DialogField.createEmptySpace(composite, 1);
+//
+//		Text textControl = fEnclosingTypeDialogField.getTextControl(composite);
+//		gd = new GridData(GridData.FILL_HORIZONTAL);
+//		gd.horizontalSpan = 2;
+//		textControl.setLayoutData(gd);
+//		textControl.addFocusListener(new StatusFocusListener(ENCLOSING_TYPE_ID));
+//		
+//		Button button = fEnclosingTypeDialogField.getChangeControl(composite);
 //		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 //		gd.heightHint = SWTUtil.getButtonHeigthHint(button);
-//		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 //		button.setLayoutData(gd);
 //
 //		DialogField.createEmptySpace(composite, 1);
-		
-//		LayoutUtil.setHorizontalSpan(fEnclosingClassDialogField.getLabelControl(composite), 1);
-		Text textControl = fEnclosingTypeDialogField.getTextControl(composite);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-//		gd.widthHint = getMaxFieldWidth() - convertWidthInCharsToPixels(32) - 50;
-		gd.horizontalSpan = 2;
-		textControl.setLayoutData(gd);
-		textControl.addFocusListener(new StatusFocusListener(ENCLOSING_TYPE_ID));
-		
-		Button button = fEnclosingTypeDialogField.getChangeControl(composite);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.heightHint = SWTUtil.getButtonHeigthHint(button);
-//		gd.widthHint = SWTUtil.getButtonWidthHint(button);
-		button.setLayoutData(gd);
-
-		DialogField.createEmptySpace(composite, 1);
-
-//		Label label = fEnclosingClassAccessButtons.getLabelControl(composite);
-//		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+//
+//		buttonGroup = fEnclosingClassAccessButtons.getSelectionButtonsGroup(composite);
+//		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 //		gd.widthHint = convertWidthInCharsToPixels(42);
-//		gd.horizontalSpan = 1;
-//		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-//		gd.horizontalSpan = nColumns - 1;
-//		label.setLayoutData(gd);
-//		LayoutUtil.setHorizontalSpan(label, 1);
-		buttonGroup = fEnclosingClassAccessButtons.getSelectionButtonsGroup(composite);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-//		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.widthHint = convertWidthInCharsToPixels(42);
-		gd.horizontalSpan = nColumns - 2;
-		buttonGroup.setLayoutData(gd);
-		DialogField.createEmptySpace(composite, 1);
+//		gd.horizontalSpan = nColumns - 2;
+//		buttonGroup.setLayoutData(gd);
+//		DialogField.createEmptySpace(composite, 1);
 	}	
 
 	/**
@@ -714,12 +694,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		public void changeControlPressed(DialogField field) {
 		    if (field == fEnclosingTypeDialogField) {
 		        ITypeInfo enclosingType = null;
-	            boolean isNamespace = isNamespaceButtonSelected();
-		        if (isNamespace) {
+//	            boolean isNamespace = isNamespaceButtonSelected();
+	            boolean isNamespace = true;
+//		        if (isNamespace) {
 					enclosingType = chooseNamespace();
-		        } else {
-			        enclosingType = chooseEnclosingClass();
-		        }
+//		        } else {
+//			        enclosingType = chooseEnclosingClass();
+//		        }
 			    if (enclosingType != null) {
 			        int changedFields = ENCLOSING_TYPE_ID;
 			        IPath oldFolderPath = getSourceFolderFullPath();
@@ -752,7 +733,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 		
 		public void dialogFieldChanged(DialogField field) {
-		    if (field == fEnclosingTypeSelection || field == fEnclosingTypeButtons) {
+//		    if (field == fEnclosingTypeSelection || field == fEnclosingTypeButtons) {
+		    if (field == fEnclosingTypeSelection) {
 		        updateEnclosingTypeEnableState();
 		    }
 			handleFieldChanged(ENCLOSING_TYPE_ID);
@@ -975,11 +957,11 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		if (!isEnclosingTypeSelected()) {
 		    return status;
 		}
-		if (isNamespaceButtonSelected()) {
+//		if (isNamespaceButtonSelected()) {
 		    return namespaceChanged();
-		} else {
-		    return enclosingClassChanged();
-		}
+//		} else {
+//		    return enclosingClassChanged();
+//		}
 	}
 	
 	private IStatus namespaceChanged() {
@@ -1607,8 +1589,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	    } else {
 			fEnclosingTypeDialogField.setTextWithoutUpdate(""); //$NON-NLS-1$
 	    }
-		fEnclosingTypeButtons.setSelection(isNamespace ? CLASS_INDEX : NAMESPACE_INDEX, false);
-		fEnclosingTypeButtons.setSelection(isNamespace ? NAMESPACE_INDEX : CLASS_INDEX, true);
+//		fEnclosingTypeButtons.setSelection(isNamespace ? CLASS_INDEX : NAMESPACE_INDEX, false);
+//		fEnclosingTypeButtons.setSelection(isNamespace ? NAMESPACE_INDEX : CLASS_INDEX, true);
 		if (update) {
 		    fEnclosingTypeDialogField.dialogFieldChanged();
 		}
@@ -1628,9 +1610,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * 
 	 * @return the selection state of the enclosing class checkbox
 	 */
-	public boolean isNamespaceButtonSelected() {
-		return fEnclosingTypeButtons.isSelected(NAMESPACE_INDEX);
-	}
+//	public boolean isNamespaceButtonSelected() {
+//		return fEnclosingTypeButtons.isSelected(NAMESPACE_INDEX);
+//	}
 
 	/**
 	 * Returns the class name entered into the class input field.
@@ -1824,8 +1806,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				try {
 					getContainer().run(true, true, runnable);
 				} catch (InvocationTargetException e) {
-					String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.exception.title"); //$NON-NLS-1$
-					String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.exception.message"); //$NON-NLS-1$
+					String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.exception.title"); //$NON-NLS-1$
+					String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.exception.message"); //$NON-NLS-1$
 					ExceptionHandler.handle(e, title, message);
 					return;
 				} catch (InterruptedException e) {
@@ -1856,8 +1838,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			try {
 				getContainer().run(true, true, runnable);
 			} catch (InvocationTargetException e) {
-				String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.exception.title"); //$NON-NLS-1$
-				String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.exception.message"); //$NON-NLS-1$
+				String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.exception.title"); //$NON-NLS-1$
+				String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.exception.message"); //$NON-NLS-1$
 				ExceptionHandler.handle(e, title, message);
 			} catch (InterruptedException e) {
 				// cancelled by user
@@ -1896,9 +1878,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */
 	void updateEnclosingTypeEnableState() {
 		boolean enclosing = isEnclosingTypeSelected();
-        fEnclosingTypeButtons.setEnabled(enclosing);
         fEnclosingTypeDialogField.setEnabled(enclosing);
-        fEnclosingClassAccessButtons.setEnabled(enclosing && !isNamespaceButtonSelected());
+//      fEnclosingTypeButtons.setEnabled(enclosing);
+//      fEnclosingClassAccessButtons.setEnabled(enclosing && !isNamespaceButtonSelected());
 	}
 	
 	/*
@@ -1952,8 +1934,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	    
 		ITypeInfo[] elements = AllTypesCache.getNamespaces(scope, false);
 		if (elements == null || elements.length == 0) {
-			String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.title"); //$NON-NLS-1$
-			String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.message"); //$NON-NLS-1$
+			String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noNamespaces.title"); //$NON-NLS-1$
+			String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noNamespaces.message"); //$NON-NLS-1$
 			MessageDialog.openInformation(getShell(), title, message);
 			return null;
 		}
@@ -1979,8 +1961,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 					try {
 						getContainer().run(true, true, runnable);
 					} catch (InvocationTargetException e) {
-						String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.exception.title"); //$NON-NLS-1$
-						String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.exception.message"); //$NON-NLS-1$
+						String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.exception.title"); //$NON-NLS-1$
+						String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.exception.message"); //$NON-NLS-1$
 						ExceptionHandler.handle(e, title, message);
 						return null;
 					} catch (InterruptedException e) {
@@ -2010,8 +1992,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	    
 	    ITypeInfo[] elements = AllTypesCache.getTypes(scope, ENCLOSING_CLASS_TYPES);
 		if (elements == null || elements.length == 0) {
-			String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.title"); //$NON-NLS-1$
-			String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.message"); //$NON-NLS-1$
+			String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noClasses.title"); //$NON-NLS-1$
+			String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noClasses.message"); //$NON-NLS-1$
 			MessageDialog.openInformation(getShell(), title, message);
 			return null;
 		}
@@ -2039,8 +2021,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 					try {
 						getContainer().run(true, true, runnable);
 					} catch (InvocationTargetException e) {
-						String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.exception.title"); //$NON-NLS-1$
-						String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.exception.message"); //$NON-NLS-1$
+						String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.exception.title"); //$NON-NLS-1$
+						String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.exception.message"); //$NON-NLS-1$
 						ExceptionHandler.handle(e, title, message);
 						return null;
 					} catch (InterruptedException e) {
@@ -2060,8 +2042,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	    
 		ITypeInfo[] elements = getAllReachableTypes();
 		if (elements == null || elements.length == 0) {
-			String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.title"); //$NON-NLS-1$
-			String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.message"); //$NON-NLS-1$
+			String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noClasses.title"); //$NON-NLS-1$
+			String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getTypes.noClasses.message"); //$NON-NLS-1$
 			MessageDialog.openInformation(getShell(), title, message);
 			return;
 		}
@@ -2181,7 +2163,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                     getHeaderFileFullPath(),
                     getSourceFileFullPath(),
                     getClassTypeName(),
-                    isNamespaceButtonSelected() ? getEnclosingTypeName() : null,
+//                  isNamespaceButtonSelected() ? getEnclosingTypeName() : null,
+                    getEnclosingTypeName(),
                     getBaseClasses(),
                     getCheckedMethodStubs());
             fCodeGenerator.createClass(monitor);

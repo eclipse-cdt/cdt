@@ -221,11 +221,9 @@ public class NewClassCodeGenerator {
         List protectedMethods = getStubs(ASTAccessVisibility.PROTECTED, false);
         List privateMethods = getStubs(ASTAccessVisibility.PRIVATE, false);
 
-        if (publicMethods.isEmpty()
-	            && protectedMethods.isEmpty()
-	            && privateMethods.isEmpty()) {
-            text.append(' ');
-        } else {
+        if (!publicMethods.isEmpty()
+	            || !protectedMethods.isEmpty()
+	            || !privateMethods.isEmpty()) {
             addMethodDeclarations(publicMethods, protectedMethods, privateMethods, text);
         }
 

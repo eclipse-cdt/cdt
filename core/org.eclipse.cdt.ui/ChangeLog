@@ -1,3 +1,12 @@
+2005-03-06 Alain Magloire
+	Part of plan item 79518: for PathEntry variable manager.
+	Not enable.
+	* plugin.xml
+	* src/org/eclipse/cdt/internal/ui/preferences/PathEntryVariableDialog.java
+	* src/org/eclipse/cdt/internal/ui/preferences/PathEntryVariablePreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/PathEntryVariableGroup.java
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties
+
 2005-03-02 Alain Magloire
 	Fix for PR 87027: Thanks to Jonathan Emmett, for noticing.
 	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java

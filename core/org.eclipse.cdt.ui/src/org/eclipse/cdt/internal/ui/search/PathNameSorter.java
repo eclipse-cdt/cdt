@@ -48,6 +48,9 @@ public class PathNameSorter extends ViewerSorter {
 				match1 = (IMatch)entry1.getSelectedMarker().getAttribute( CSearchResultCollector.IMATCH );
 			} catch (CoreException e) {
 			}
+			if( match1 == null ){
+				return 0;
+			}
 			name1 = match1.getLocation().toString();
 		}
 		if( e2 instanceof ISearchResultViewEntry ) {
@@ -55,6 +58,9 @@ public class PathNameSorter extends ViewerSorter {
 			try {
 				match2 = (IMatch)entry2.getSelectedMarker().getAttribute( CSearchResultCollector.IMATCH );
 			} catch (CoreException e) {
+			}
+			if( match2 == null ){
+				return 0;
 			}
 			//name2 = _labelProvider.getText( e2 );
 			name2 = match2.getLocation().toString();

@@ -456,7 +456,7 @@
             icon="icons/full/clcl16/search_sortmatch.gif"
             tooltip="%ElementNameSorter.tooltip"
             class="org.eclipse.cdt.internal.ui.search.ElementNameSorter"
-            id="org.eclipse.search.internal.ui.ElementNameSorter">
+            id="org.eclipse.cdt.search.internal.ui.ElementNameSorter">
       </sorter>
       <sorter
             pageId="org.eclipse.cdt.ui.CSearchPage"
@@ -464,7 +464,7 @@
             icon="icons/full/clcl16/search_sortmatch.gif"
             tooltip="%ParentNameSorter.tooltip"
             class="org.eclipse.cdt.internal.ui.search.ParentNameSorter"
-            id="org.eclipse.search.internal.ui.ParentNameSorter">
+            id="org.eclipse.cdt.search.internal.ui.ParentNameSorter">
       </sorter>
       <sorter
             pageId="org.eclipse.cdt.ui.CSearchPage"
@@ -472,7 +472,7 @@
             icon="icons/full/clcl16/search_sortmatch.gif"
             tooltip="%PathNameSorter.tooltip"
             class="org.eclipse.cdt.internal.ui.search.PathNameSorter"
-            id="org.eclipse.search.internal.ui.PathNameSorter">
+            id="org.eclipse.cdt.search.internal.ui.PathNameSorter">
       </sorter>
    </extension>
    <extension

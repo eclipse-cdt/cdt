@@ -1,3 +1,8 @@
+2003-02-20 Andrew Niefer
+	bug 52567
+	change the extension IDs for the C Search sorters to avoid conflict with the JDT
+	check for nulls in PathNameSorter.compare 
+
 2004-02-18 Alain Magloire
 
 	Remove deprecated Eclipse-2.0 api calls

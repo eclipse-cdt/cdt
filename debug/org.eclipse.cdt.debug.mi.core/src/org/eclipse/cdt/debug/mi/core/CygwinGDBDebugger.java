@@ -4,7 +4,6 @@
  */
 
 package org.eclipse.cdt.debug.mi.core;
-
 import java.util.Collections;
 import java.util.List;
 

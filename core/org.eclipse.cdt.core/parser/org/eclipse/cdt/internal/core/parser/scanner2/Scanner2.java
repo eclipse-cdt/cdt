@@ -939,8 +939,10 @@ public class Scanner2 implements IScanner, IScannerData {
 		Object expObject = definitions.get(buffer, start, len);
 			
 		if (expObject != null && !isLimitReached() && shouldExpandMacro( (IMacro) expObject)) {
+		    boolean expanding = true;
 			if (expObject instanceof FunctionStyleMacro) {
-				handleFunctionStyleMacro((FunctionStyleMacro)expObject, true);
+				if( handleFunctionStyleMacro((FunctionStyleMacro)expObject, true) == null )
+				    expanding = false;
 			} else if (expObject instanceof ObjectStyleMacro) {
 				ObjectStyleMacro expMacro = (ObjectStyleMacro)expObject;
 				char[] expText = expMacro.expansion;
@@ -959,7 +961,8 @@ public class Scanner2 implements IScanner, IScannerData {
 				if (expText.length > 0)
 					pushContext(expText);
 			}
-			return new MacroExpansionToken();
+			if( expanding )
+			    return new MacroExpansionToken();
 		}
 		
 		
@@ -2506,10 +2509,10 @@ public class Scanner2 implements IScanner, IScannerData {
 		            idx = indexOfNextNonWhiteSpace( bufferStack[stackpPos], bufferPos[stackpPos], bufferLimit[stackpPos] );
 		            if( idx >= bufferLimit[stackpPos] ) continue;
 		            if( idx > 0 && bufferStack[stackpPos][idx] == '(' ) break;
-                    return emptyCharArray;
+                    return null;
 		        }
 		        if( idx == -1 )
-		            return emptyCharArray;
+		            return null;
 		        
 		        MacroData data = (MacroData) bufferData[stackpPos+1];
 		        for( int i = bufferStackPos; i > stackpPos; i-- )
@@ -2520,11 +2523,11 @@ public class Scanner2 implements IScanner, IScannerData {
 		        limit = bufferLimit[bufferStackPos];
 		        start = data.startOffset;
 		    } else {
-		        return emptyCharArray;
+		        return null;
 		    }
 		}
 		if( buffer[bufferPos[bufferStackPos]] != '(' )
-			return emptyCharArray;
+			return null;
 		
 		char[][] arglist = macro.arglist;
 		int currarg = -1;

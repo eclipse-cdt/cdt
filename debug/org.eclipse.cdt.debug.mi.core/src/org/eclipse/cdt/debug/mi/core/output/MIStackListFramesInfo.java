@@ -39,6 +39,8 @@ public class MIStackListFramesInfo extends MIInfo {
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIList) {
 							parseStack((MIList)val, aList);
+						} else if (val instanceof MITuple) {
+							parseStack((MITuple)val, aList);
 						}
 					}
 				}
@@ -49,6 +51,20 @@ public class MIStackListFramesInfo extends MIInfo {
 
 	void parseStack(MIList miList, List aList) {
 		MIResult[] results = miList.getMIResults();
+		for (int i = 0; i < results.length; i++) {
+			String var = results[i].getVariable();
+			if (var.equals("frame")) {
+				MIValue value = results[i].getMIValue();
+				if (value instanceof MITuple) {
+					aList.add (new MIFrame((MITuple)value));
+				}
+			}
+		}
+	}
+
+	// Old gdb use tuple instead of a list.
+	void parseStack(MITuple tuple, List aList) {
+		MIResult[] results = tuple.getMIResults();
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			if (var.equals("frame")) {

@@ -960,7 +960,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                         sdw.isShort(),
                         sdw.isLong(),
                         sdw.isSigned(),
-                        sdw.isUnsigned(), sdw.isTypeNamed(), sdw.isComplex(), sdw.isImaginary()));
+                        sdw.isUnsigned(), 
+						sdw.isTypeNamed(), 
+						sdw.isComplex(), 
+						sdw.isImaginary(),
+						sdw.isGloballyQualified()));
             }
             catch (Exception e1)
             {
@@ -1193,7 +1197,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                         sdw.isShort(),
                         sdw.isLong(),
                         sdw.isSigned(),
-                        sdw.isUnsigned(), sdw.isTypeNamed(), sdw.isComplex(), sdw.isImaginary()));
+                        sdw.isUnsigned(), 
+						sdw.isTypeNamed(), 
+						sdw.isComplex(), 
+						sdw.isImaginary(),
+						sdw.isGloballyQualified()));
             }
             catch (ASTSemanticException e)
             {
@@ -1564,7 +1572,9 @@ public abstract class Parser extends ExpressionParser implements IParser
 					flags.setEncounteredTypename(true);
                     break;
                 case IToken.tCOLONCOLON :
-                    consume(IToken.tCOLONCOLON);
+                	sdw.setGloballyQualified( true );
+                	consume( IToken.tCOLONCOLON );
+                	break;
                 case IToken.tIDENTIFIER :
                     // TODO - Kludgy way to handle constructors/destructors
                     if (flags.haveEncounteredRawType())

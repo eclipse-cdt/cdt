@@ -152,7 +152,8 @@ public interface IASTFactory
         boolean isShort,
         boolean isLong,
         boolean isSigned,
-        boolean isUnsigned, boolean isTypename, boolean isComplex, boolean isImaginary) throws ASTSemanticException;
+        boolean isUnsigned, 
+		boolean isTypename, boolean isComplex, boolean isImaginary, boolean isGlobal ) throws ASTSemanticException;
 
     public IASTFunction createFunction(
         IASTScope scope,

@@ -1,3 +1,6 @@
+2004-04-05 Andrew Niefer
+	added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testBug47625()
+	
 2004-04-06 John Camelon
 	Moved testBug39704A(), testBug39704B(), testBug39704C() & testBug39704D() from ASTFailedTests to QuickParseASTTests.	
 

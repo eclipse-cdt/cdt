@@ -502,7 +502,8 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		boolean isUnsigned,
 		boolean isTypename,
 		boolean isComplex,
-		boolean isImaginary)
+		boolean isImaginary,
+		boolean isGlobal)
 		throws ASTSemanticException {
 		// TODO Auto-generated method stub
 		return null;

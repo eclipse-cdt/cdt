@@ -1717,7 +1717,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isShort,
         boolean isLong,
         boolean isSigned,
-        boolean isUnsigned, boolean isTypename, boolean isComplex, boolean isImaginary) throws ASTSemanticException
+        boolean isUnsigned, 
+		boolean isTypename, 
+		boolean isComplex, 
+		boolean isImaginary,
+		boolean isGlobal ) throws ASTSemanticException
     {
     	TypeInfo.eType type = null;
     	
@@ -1747,7 +1751,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			IToken first = typeName.getFirstToken();
 			
 			ISymbol typeSymbol = getScopeToSearchUpon( scope, first, i );
-						
+			
+			if( isGlobal )
+				typeSymbol = typeSymbol.getSymbolTable().getCompilationUnit();
+			
 			List [] argLists = typeName.getTemplateIdArgLists();
 			int idx = 0;
 			

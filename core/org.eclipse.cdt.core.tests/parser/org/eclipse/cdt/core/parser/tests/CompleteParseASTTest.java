@@ -1390,4 +1390,25 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertEquals( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), typedef );
 	}
 
+	public void testBug47625() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write("struct s { int num; }; ");
+		writer.write("namespace ns{ ");
+		writer.write("   struct s { double num; };");
+		writer.write("   s inner = { 3.14 };");
+		writer.write("   ::s outer = { 42 };");
+		writer.write("}");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		IASTClassSpecifier outerS = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTNamespaceDefinition ns = (IASTNamespaceDefinition) i.next();
+		
+		i = getDeclarations( ns );
+		IASTClassSpecifier innerS = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTVariable inner = (IASTVariable) i.next();
+		IASTVariable outer = (IASTVariable) i.next();
+		
+		assertAllReferences( 2, createTaskList( new Task( outerS ), new Task( innerS ) ) );
+	}
 }

@@ -69,6 +69,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         friend = false,
         inline = false;
 	private int startingLine;
+	private boolean global = false;
     /**
      * @param b
      */
@@ -744,4 +745,14 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         complex = b;
     }
+	/**
+	 * @param b
+	 */
+	public void setGloballyQualified(boolean b) {
+		global = b;
+	}
+	
+	public boolean isGloballyQualified(){
+		return global;
+	}
 }

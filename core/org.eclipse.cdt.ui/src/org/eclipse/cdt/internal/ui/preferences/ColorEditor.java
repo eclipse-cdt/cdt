@@ -5,7 +5,10 @@ package org.eclipse.cdt.internal.ui.preferences;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -21,8 +24,6 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * A "button" of a certain color determined by the color picker.
@@ -45,6 +46,12 @@ public class ColorEditor {
 		gc.setBackground(fButton.getBackground());
 		gc.fillRectangle(0, 0, fExtent.x, fExtent.y);
 		gc.dispose();
+		
+		fButton.getAccessible().addAccessibleListener(
+				new AccessibleAdapter() {			
+					public void getName(AccessibleEvent e) {
+						e.result = "Color selector"; //$NON-NLS-1$
+				}});
 		
 		fButton.setImage(fImage);
 		fButton.addSelectionListener(new SelectionAdapter() {

@@ -1,4 +1,9 @@
 2004-06-08 Hoda Amer
+	Fix for bug 51482, 61039 
+	* src/org/eclipse/cdt/internal/ui/preferences/TemplatePreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/ColorEditor.java
+	
+2004-06-08 Hoda Amer
 	Fixes for bugs 62780, 62783, 62784
 	* refactor/org/eclipse/cdt/internal/corext/refactoring/rename/RenameElementProcessor.java
 	

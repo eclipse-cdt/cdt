@@ -179,8 +179,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		buttons.setLayout(layout);
 		
 		fAddButton= new Button(buttons, SWT.PUSH);
-		fAddButton.setLayoutData(getButtonGridData(fAddButton));
 		fAddButton.setText(TemplateMessages.getString("TemplatePreferencePage.new")); //$NON-NLS-1$
+		fAddButton.setLayoutData(getButtonGridData(fAddButton));
 		fAddButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				add();
@@ -188,8 +188,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		});
 
 		fEditButton= new Button(buttons, SWT.PUSH);
-		fEditButton.setLayoutData(getButtonGridData(fEditButton));
 		fEditButton.setText(TemplateMessages.getString("TemplatePreferencePage.edit")); //$NON-NLS-1$
+		fEditButton.setLayoutData(getButtonGridData(fEditButton));
 		fEditButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				edit();
@@ -197,8 +197,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		});
 
 		fRemoveButton= new Button(buttons, SWT.PUSH);
-		fRemoveButton.setLayoutData(getButtonGridData(fRemoveButton));
 		fRemoveButton.setText(TemplateMessages.getString("TemplatePreferencePage.remove")); //$NON-NLS-1$
+		fRemoveButton.setLayoutData(getButtonGridData(fRemoveButton));
 		fRemoveButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				remove();
@@ -208,8 +208,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		createSpacer(buttons);
 
 		fImportButton= new Button(buttons, SWT.PUSH);
-		fImportButton.setLayoutData(getButtonGridData(fImportButton));
 		fImportButton.setText(TemplateMessages.getString("TemplatePreferencePage.import")); //$NON-NLS-1$
+		fImportButton.setLayoutData(getButtonGridData(fImportButton));
 		fImportButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				import_();
@@ -217,8 +217,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		});
 
 		fExportButton= new Button(buttons, SWT.PUSH);
-		fExportButton.setLayoutData(getButtonGridData(fExportButton));
 		fExportButton.setText(TemplateMessages.getString("TemplatePreferencePage.export")); //$NON-NLS-1$
+		fExportButton.setLayoutData(getButtonGridData(fExportButton));
 		fExportButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				export();
@@ -226,8 +226,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		});
 
 		fExportAllButton= new Button(buttons, SWT.PUSH);
-		fExportAllButton.setLayoutData(getButtonGridData(fExportAllButton));
 		fExportAllButton.setText(TemplateMessages.getString("TemplatePreferencePage.export.all")); //$NON-NLS-1$
+		fExportAllButton.setLayoutData(getButtonGridData(fExportAllButton));
 		fExportAllButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				exportAll();
@@ -237,8 +237,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		createSpacer(buttons);
 		
 		fEnableAllButton= new Button(buttons, SWT.PUSH);
-		fEnableAllButton.setLayoutData(getButtonGridData(fEnableAllButton));
 		fEnableAllButton.setText(TemplateMessages.getString("TemplatePreferencePage.enable.all")); //$NON-NLS-1$
+		fEnableAllButton.setLayoutData(getButtonGridData(fEnableAllButton));
 		fEnableAllButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				enableAll(true);
@@ -246,8 +246,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		});
 
 		fDisableAllButton= new Button(buttons, SWT.PUSH);
-		fDisableAllButton.setLayoutData(getButtonGridData(fDisableAllButton));
 		fDisableAllButton.setText(TemplateMessages.getString("TemplatePreferencePage.disable.all")); //$NON-NLS-1$
+		fDisableAllButton.setLayoutData(getButtonGridData(fDisableAllButton));
 		fDisableAllButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				enableAll(false);

@@ -1,3 +1,17 @@
+2004-01-29 Alain Magloire
+
+	PR 50789.  Draft work on this.
+	Provide "Show in CView" capability.
+	Patch is based on work done by Thomas Fletcher.
+
+	* plugin.properties
+	* plugin.xml
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+	* src/org/eclipse/cdt/internal/ui/editor/ICEditorActionDefinitonsIds.java
+
+	* src/org/eclipse/cdt/ui/actions/ShowInCViewAction.java
+
 2004-01-29 Hoda Amer
 	Added handling for CompletionOnFunctionReference()
 	

@@ -1,3 +1,7 @@
+2004-08-10 Mikhail Khodjaiants
+	Fix for bug 70902. TVT3.0: Customize Perspective C++ Debug has duplicated strings.
+	* plugin.xml
+
 2004-08-05 Mikhail Khodjaiants
 	Cosmetic fix.
 	* CDebugUIMessages.properties

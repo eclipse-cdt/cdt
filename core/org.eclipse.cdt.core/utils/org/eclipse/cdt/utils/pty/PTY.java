@@ -15,12 +15,27 @@ import java.io.OutputStream;
 public class PTY {
 
 	String slave;
-	public int master;
 	InputStream in;
 	OutputStream out;
+	int master;
 
 	private static boolean hasPTY;
-	
+
+	/**
+	 * The master fd is use on two streams. We need to wrap the fd
+	 * so when stream.close() is call the other stream is disable.
+	 */
+	public class MasterFD {
+
+		public int getFD() {
+			return master;
+		}
+
+		public void setFD(int fd) {
+			master = fd;
+		}
+	}
+
 	public PTY() throws IOException {
 		if (hasPTY) {
 			slave= forkpty();
@@ -29,8 +44,9 @@ public class PTY {
 		if (slave == null) {
 			throw new IOException("Can not create pty");
 		}
-		in = new PTYInputStream(master);
-		out = new PTYOutputStream(master);
+
+		in = new PTYInputStream(new MasterFD());
+		out = new PTYOutputStream(new MasterFD());
 	}
 	
 	public String getSlaveName() {

@@ -8,15 +8,18 @@ package org.eclipse.cdt.utils.pty;
 import java.io.InputStream;
 import java.io.IOException;
 
+import org.eclipse.cdt.utils.pty.PTY.MasterFD;
+
 class PTYInputStream extends InputStream {
-	private int fd;
+
+	MasterFD master;
 
 	/**
 	 * Fome a Unix valid file descriptor set a Reader.
 	 * @param desc file descriptor.
 	 */
-	public PTYInputStream(int fd) {
-		this.fd = fd;
+	public PTYInputStream(MasterFD fd) {
+		master = fd;
 	}
 
 	/**
@@ -46,7 +49,7 @@ class PTYInputStream extends InputStream {
 		}
 		byte[] tmpBuf = new byte[len];
 
-		len = read0(fd, tmpBuf, len);
+		len = read0(master.getFD(), tmpBuf, len);
 		if (len <= 0)
 			return -1;
 
@@ -59,12 +62,12 @@ class PTYInputStream extends InputStream {
 	 * @exception IOException on error.
 	 */
 	public void close() throws IOException {
-		if (fd == -1)
+		if (master.getFD() == -1)
 			return;
-		int status = close0(fd);
+		int status = close0(master.getFD());
 		if (status == -1)
 			throw new IOException("close error");
-		fd = -1;
+		master.setFD(-1);
 	}
 
 	private native int read0(int fd, byte[] buf, int len) throws IOException;

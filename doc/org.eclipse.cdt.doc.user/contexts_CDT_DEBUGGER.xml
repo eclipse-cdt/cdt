@@ -16,6 +16,7 @@
 	<!ENTITY sharedLibsViewPrefs "Shared Libraries view preferences">
 	<!ENTITY signalsView "Signals view">
     <!ENTITY debugPrefs "Debug preferences">
+    <!ENTITY srcPrefs "Source Code Locations">
 ]>
 <contexts>
 
@@ -73,4 +74,9 @@
    	label="&debugPrefs;"/>
 </context>
 
+<context id ="source_preference_page_context">
+   <description>Source code locations. </description>
+   <topic href="reference/cdt_u_dbg_src.htm"
+   	label="&srcPrefs;"/>
+</context>
 </contexts>

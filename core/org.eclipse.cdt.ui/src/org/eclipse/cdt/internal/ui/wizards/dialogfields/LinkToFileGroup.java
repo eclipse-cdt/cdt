@@ -62,6 +62,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	protected Button variablesButton;
 	private Label resolvedPathLabelText;
 	private Label resolvedPathLabelData;
+	private boolean preventDialogFieldChanged = false;
 	
 	public LinkToFileGroup(IStringButtonAdapter adapter, Listener listener) {
 		super(adapter);
@@ -124,7 +125,8 @@ public class LinkToFileGroup extends StringButtonDialogField {
 					resolveVariable();
 					if (listener != null)
 						listener.handleEvent(new Event());
-					dialogFieldChanged();
+					if (!preventDialogFieldChanged)
+						dialogFieldChanged();
 				}
 			};
 			linkButton.addSelectionListener(selectionListener);
@@ -139,9 +141,11 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	public void setText(String text) {
 		fText= text;
 		if (isOkToUse(linkTargetField)) {
+			preventDialogFieldChanged = true;
 			linkTargetField.setText(text);
+			preventDialogFieldChanged = false;
 		}
-		dialogFieldChanged();
+//		dialogFieldChanged();
 	}
 	
 	public Text getTextControl(Composite parent){
@@ -155,7 +159,8 @@ public class LinkToFileGroup extends StringButtonDialogField {
 					resolveVariable();
 					if (listener != null)
 						listener.handleEvent(new Event());
-					dialogFieldChanged();
+					if (!preventDialogFieldChanged)
+						dialogFieldChanged();
 				}
 			});
 			if (initialLinkTarget != null)
@@ -279,7 +284,8 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		}					
 		if (selection != null) {
 			linkTargetField.setText(selection);
-			dialogFieldChanged();
+			if (!preventDialogFieldChanged)
+				dialogFieldChanged();
 		}
 	}
 	/**
@@ -300,7 +306,8 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			if (variableNames != null && variableNames.length == 1)
 			{
 				linkTargetField.setText(variableNames[0]);
-				dialogFieldChanged();
+				if (!preventDialogFieldChanged)
+					dialogFieldChanged();
 			}
 		}
 	}
@@ -338,7 +345,8 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		initialLinkTarget = target;
 		if (linkTargetField != null && linkTargetField.isDisposed() == false) {
 			linkTargetField.setText(target);
-			dialogFieldChanged();
+			if (!preventDialogFieldChanged)
+				dialogFieldChanged();
 		}
 	}
 	/**

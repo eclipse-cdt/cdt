@@ -1,5 +1,7 @@
 2004-06-24 Chris Wiebe
 	Fix for PR 48783 : [New Class Wizard] Err Create C++ Class with "Link to  File" checkbox selected
+	Fix for PR 47571 : [New Class Wizard] resolved location can be blanked
+	Fix for PR 48774 : [New Class Wizard] Error if Create C++ Class with no name
 	
 2004-06-23 Tanya Wolff
 	Fix for bugs 66134,66145

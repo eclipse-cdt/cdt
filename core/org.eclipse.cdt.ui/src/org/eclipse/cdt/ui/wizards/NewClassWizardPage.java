@@ -189,6 +189,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		linkedResourceGroupForBody.setLabelText(NewWizardMessages.getString("NewClassWizardPage.files.body")); //$NON-NLS-1$
 
 		fClassNameStatus=  new StatusInfo();
+		((StatusInfo)fClassNameStatus).setError(NewWizardMessages.getString("NewClassWizardPage.error.EnterClassName")); //$NON-NLS-1$
 		fBaseClassStatus=  new StatusInfo();
 		fLinkedResourceGroupForHeaderStatus=  new StatusInfo();
 		fLinkedResourceGroupForBodyStatus=  new StatusInfo();
@@ -400,9 +401,9 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 
 	IStatus linkedResourceGroupChanged(LinkToFileGroup linkedGroup, boolean isHeader) {
 		StatusInfo status = new StatusInfo();
-		String text = linkedGroup.getText();
 		if (linkedGroup.linkCreated()) {
 			// must not be empty
+			String text = linkedGroup.getText();
 			if (text == null || text.length() == 0) {
 				if (isHeader)
 					status.setError(NewWizardMessages.getString("NewClassWizardPage.error.EnterHeaderFile")); //$NON-NLS-1$
@@ -421,6 +422,21 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 						status.setError(NewWizardMessages.getString("NewClassWizardPage.error.NoHeaderFile")); //$NON-NLS-1$
 					else
 						status.setError(NewWizardMessages.getString("NewClassWizardPage.error.NoBodyFile")); //$NON-NLS-1$
+				}
+			}
+		} else {
+			String text = fClassNameDialogField.getText();
+			if (isHeader) {
+				if (text.length() > 0) {
+					linkedGroup.setText(text + HEADER_EXT);
+				} else {
+					linkedGroup.setText(text);
+				}				
+			} else {
+				if (text.length() > 0) {			
+					linkedGroup.setText(text + BODY_EXT);
+				} else{				
+					linkedGroup.setText(text);
 				}
 			}
 		}

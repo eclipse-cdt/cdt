@@ -304,7 +304,7 @@ public class BreakpointManager extends Manager {
 				setLocationBreakpoint(bpt);
 			}
 		}
-		
+
 		// Fire a changed Event.
 		miBreakpoints = bpt.getMIBreakpoints();
 		if (miBreakpoints != null && miBreakpoints.length > 0) {
@@ -619,6 +619,8 @@ public class BreakpointManager extends Manager {
 		MIBreakInsert[] breakInserts = createMIBreakInsert(bkpt);
 		List pointList = new ArrayList();
 		try {
+			CommandFactory factory = miSession.getCommandFactory();
+			boolean enable = bkpt.isEnabled();
 			for (int i = 0; i < breakInserts.length; i++) {
 				miSession.postCommand(breakInserts[i]);
 				MIBreakInsertInfo info = breakInserts[i].getMIBreakInsertInfo();
@@ -629,6 +631,24 @@ public class BreakpointManager extends Manager {
 				if (points == null || points.length == 0) {
 					throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Parsing_Error")); //$NON-NLS-1$
 				}
+				// Make sure that if the breakpoint was disable we create them disable.
+				if (!enable) {
+					int[] numbers = new int[points.length];
+					for (int j = 0; j < points.length; j++) {
+						numbers[j] = points[j].getNumber();
+					}
+					MIBreakDisable breakDisable = factory.createMIBreakDisable(numbers);
+					try {
+						miSession.postCommand(breakDisable);
+						MIInfo disableInfo = breakDisable.getMIInfo();
+						if (info == null) {
+							throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+						}
+					} catch (MIException e) {
+						throw new MI2CDIException(e);
+					}
+				}
+
 				pointList.addAll(Arrays.asList(points));
 			}
 		} catch (MIException e) {

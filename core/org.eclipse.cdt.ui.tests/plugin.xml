@@ -2,10 +2,13 @@
 <plugin
    id="org.eclipse.cdt.ui.tests"
    name="org.eclipse.cdt.ui.tests"
-   version="1.0.0">
+   version="1.0.0"
+   class="org.eclipse.cdt.testplugin.CTestPlugin">
 
    <runtime>
-      <library name="cdttests.jar"/>
+      <library name="cdttests.jar">
+         <export name="*"/>
+      </library>
    </runtime>
    <requires>
       <import plugin="org.apache.xerces"/>
@@ -17,6 +20,7 @@
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.junit"/>
+      <import plugin="org.eclipse.update.core"/>
    </requires>
 
 

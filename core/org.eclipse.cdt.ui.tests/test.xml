@@ -3,10 +3,11 @@
 <project name="testsuite" default="run" basedir=".">
   <!-- The property ${eclipse-home} should be passed into this script -->
   <!-- Set a meaningful default value for when it is not. -->
-  <property name="eclipse-home" value="${basedir}\..\.."/>
+<!--  <property name="eclipse-home" value="${basedir}\..\.."/> -->
+  <property name="eclipse-home" value="${basedir}"/>
 
   <!-- sets the properties eclipse-home, and library-file -->
-  <property name="plugin-name" value="org.eclipse.jdt.ui.tests"/>
+  <property name="plugin-name" value="org.eclipse.cdt.ui.tests"/>
   <property name="library-file"
             value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
 
@@ -22,14 +23,14 @@
 
   <!-- This target defines the tests that need to be run. -->
   <target name="suite">
-    <property name="jdt-folder" 
-              value="${eclipse-home}/jdt_folder"/>
-    <delete dir="${jdt-folder}" quiet="true"/>
+    <property name="cdt-folder" 
+              value="${eclipse-home}/cdt_folder"/>
+    <delete dir="${cdt-folder}" quiet="true"/>
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="data-dir" value="${jdt-folder}"/>
+      <property name="data-dir" value="${cdt-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 
-                value="org.eclipse.jdt.ui.tests.AutomatedSuite"/>
+                value="org.eclipse.cdt.core.model.tests.AllCoreTests"/>
     </ant>
   </target>
 

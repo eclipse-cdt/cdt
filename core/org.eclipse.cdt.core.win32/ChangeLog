@@ -1,3 +1,13 @@
+2004-07-20 Alex Chapiro
+
+	Fix for PR 70359
+	Binaries regenerated
+
+	* library/Win32ProcessEx.c
+	* library/starter/starter.cpp
+	* os/win32/x86/spawner.dll
+	* os/win32/x86/starter.dll
+
 2004-04-29 Alex Chapiro
 
 	Support for I18N within spawner.

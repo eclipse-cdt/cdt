@@ -22,7 +22,7 @@
 #include "jni.h"
 #include "io.h"
 
-// #define DEBUG_MONITOR
+#define DEBUG_MONITOR
 
 #define PIPE_SIZE 512
 #define MAX_CMD_SIZE 1024
@@ -44,7 +44,6 @@ typedef struct _procInfo {
 static int procCounter = 0;
 
 
-JNIEXPORT void * JNICALL GetJVMProc(char * vmlib, char * procName);
 JNIEXPORT void JNICALL ThrowByName(JNIEnv *env, const char *name, const char *msg);
 pProcInfo_t createProcInfo();
 pProcInfo_t findProcInfo(int pid);
@@ -197,9 +196,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
     if (dir != 0) 
 		{ 
-		const char *  str = NULL;
-		JVM_NativePath nativePath = GetJVMProc(NULL, "_JVM_NativePath@4");
-		cwd = strdup(nativePath(str = (*env) -> GetStringUTFChars(env, dir, 0)));
+		const char * str = NULL;
+		cwd = strdup((*env) -> GetStringUTFChars(env, dir, 0));
 		(*env) -> ReleaseStringUTFChars(env, dir, str);
 		}
 
@@ -397,8 +395,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
     if (dir != 0) 
 		{ 
-		JVM_NativePath nativePath = GetJVMProc(NULL, "_JVM_NativePath@4");
-		cwd = strdup(nativePath((*env) -> GetStringUTFChars(env, dir, 0)));
+		const char * str = NULL;
+		cwd = strdup((*env) -> GetStringUTFChars(env, dir, 0));
+		(*env) -> ReleaseStringUTFChars(env, dir, str);
 		}
 
 
@@ -469,6 +468,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 	pProcInfo_t pCurProcInfo = findProcInfo(uid);
 #ifdef DEBUG_MONITOR
 	char buffer[100];
+	sprintf(buffer, "Spawner received signal %i for process %i\n", signal, pCurProcInfo -> pid);
+	OutputDebugString(buffer);
 #endif
 	
 	if(NULL == pCurProcInfo)
@@ -569,18 +570,6 @@ ThrowByName(JNIEnv *env, const char *name, const char *msg)
 
 
 
-JNIEXPORT void * JNICALL 
-GetJVMProc(char * vmlib, char * procName)
-{
-	if(NULL == vmlib)
-		vmlib = "jvm.dll";
-	if(NULL == hVM) 
-		{
-		if(NULL == (hVM = GetModuleHandle(vmlib)))
-			return NULL;
-		}
-	return GetProcAddress(hVM, procName);
-}
 
 pProcInfo_t createProcInfo()
 {
@@ -691,7 +680,7 @@ unsigned int _stdcall waitProcTermination(void* pv)
 				cleanUpProcBlock(pInfo + i);
 				}
 			break;
-		} // Otherwise failed because was not started
+			} // Otherwise failed because was not started
 		}
 
 	CloseHandle(hProc);

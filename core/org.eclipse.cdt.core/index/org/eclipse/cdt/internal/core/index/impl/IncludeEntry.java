@@ -157,8 +157,12 @@ public class IncludeEntry {
 	 */
 	public void mapRefs(int[] mappings) {
 		int position= 0;
+
 		for (int i= 0; i < fNumRefs; i++) {
-			int map= mappings[fRefs[i]];
+			//Take care that the reference is actually within the bounds of the mapping
+			int map= -1;
+			if(fRefs[i] >= 0 && fRefs[i] < mappings.length) 
+				map= mappings[fRefs[i]];
 			if (map != -1 && map != 0)
 				fRefs[position++]= map;
 		}

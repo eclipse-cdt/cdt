@@ -58,13 +58,12 @@ class AddFolderToIndex extends IndexRequest {
 					public boolean visit(IResourceProxy proxy) throws CoreException {
 						switch(proxy.getType()) {
 							case IResource.FILE :
-//							TODO: BOG Put the file name checking back
-								//if (Util.isJavaFileName(proxy.getName())) {
+								if (Util.isCCFileName(proxy.getName())) {
 									IResource resource = proxy.requestResource();
 									if (pattern == null || !Util.isExcluded(resource, pattern))
 										indexManager.addSource((IFile)resource, container);
-								//}
-								//return false;
+								}
+								return false;
 							case IResource.FOLDER :
 								if (pattern != null && Util.isExcluded(proxy.requestResource(), pattern))
 									return false;

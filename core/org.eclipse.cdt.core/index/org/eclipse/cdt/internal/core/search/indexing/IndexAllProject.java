@@ -124,9 +124,8 @@ public class IndexAllProject extends IndexRequest {
 									public boolean visit(IResourceProxy proxy) {
 										if (isCancelled) return false;
 										switch(proxy.getType()) {
-											case IResource.FILE :
-//											TODO: BOG Put the file name checking back
-												//if (Util.isCCFileName(proxy.getName())) {
+											case IResource.FILE :					
+												if (Util.isCCFileName(proxy.getName())) {
 													IResource resource = proxy.requestResource();
 													IPath path = resource.getLocation();
 													if (path != null && (patterns == null || !Util.isExcluded(resource, patterns))) {
@@ -136,8 +135,8 @@ public class IndexAllProject extends IndexRequest {
 																? (Object) resource
 																: (Object) OK);
 													}
-												//}
-												//return false;
+												}
+												return false;
 											case IResource.FOLDER :
 												if (patterns != null && Util.isExcluded(proxy.requestResource(), patterns))
 													return false;

@@ -97,28 +97,36 @@ public class SourceIndexer extends AbstractIndexer {
 		{
 		}
 		
-		ParserRunner p = new ParserRunner(parser);
-		Thread t = new Thread(p, "CDT Indexer Parser Runner");
-		t.start();
-		
 		try{
-			t.join();
-		}
-		catch (InterruptedException e){
-			org.eclipse.cdt.internal.core.model.Util.log(null, "Parser Runner InterruptedException - file: " + resourceFile.getFullPath(), ICLogConstants.CDT);
-		}
-		
-		boolean retVal = p.getResult();
-		
-		if (!retVal)
-			org.eclipse.cdt.internal.core.model.Util.log(null, "Failed to index " + resourceFile.getFullPath(), ICLogConstants.CDT);
-		
-		if (AbstractIndexer.VERBOSE){
+			boolean retVal = parser.parse();
+			
 			if (!retVal)
-				AbstractIndexer.verbose("PARSE FAILED " + resourceFile.getName().toString());
-			else
-				AbstractIndexer.verbose("PARSE SUCCEEDED " + resourceFile.getName().toString());			
-		}	
+				org.eclipse.cdt.internal.core.model.Util.log(null, "Failed to index " + resourceFile.getFullPath(), ICLogConstants.CDT);
+
+			if (AbstractIndexer.VERBOSE){
+				if (!retVal)
+					AbstractIndexer.verbose("PARSE FAILED " + resourceFile.getName().toString());
+				else
+					AbstractIndexer.verbose("PARSE SUCCEEDED " + resourceFile.getName().toString());			
+			}	
+		}
+		catch ( VirtualMachineError vmErr){
+			if (vmErr instanceof OutOfMemoryError){
+				org.eclipse.cdt.internal.core.model.Util.log(null, "Out Of Memory error: " + vmErr.getMessage() + " on File: " + resourceFile.getName(), ICLogConstants.CDT);
+			}
+		}
+		catch ( Exception ex ){
+			if (ex instanceof IOException)
+				throw (IOException) ex;
+		}
+		finally{
+			//Release all resources
+			parser=null;
+			currentProject = null;
+			requestor = null;
+			provider = null;
+			scanInfo=null;
+		}
 	}
 	/**
 	 * Sets the document types the <code>IIndexer</code> handles.
@@ -132,25 +140,4 @@ public class SourceIndexer extends AbstractIndexer {
 		return resourceFile;
 	}
 	
-	class ParserRunner implements Runnable {
-		IParser parser;
-		boolean retVal;
-		ParserRunner(IParser parser){
-			this.parser = parser;
-		}
-		/* (non-Javadoc)
-		 * @see java.lang.Runnable#run()
-		 */
-		public void run() {
-			try{
-				retVal=parser.parse();
-			}
-			catch (Exception e){
-				org.eclipse.cdt.internal.core.model.Util.log(null, "Parser Runner Exception " + resourceFile.getFullPath() + " Message: " + e.getMessage(), ICLogConstants.CDT);
-			}
-		}
-		
-		boolean getResult(){ return retVal;}
-		
-	}
 }

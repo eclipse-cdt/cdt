@@ -1,3 +1,7 @@
+2004-02-13 Bogdan Gheorghe
+	- Added error handling to MatchLocator.locateMatches to handle possible
+	  parser failures.
+	
 2004-02-06 Bogdan Gheorghe
 
 	- Modified CSearchPattern.scanforParameters. If no parameters are passed in

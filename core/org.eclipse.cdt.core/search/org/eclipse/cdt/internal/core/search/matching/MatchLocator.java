@@ -451,7 +451,22 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			if (VERBOSE)
 			  MatchLocator.verbose("*** New Search for path: " + pathString);
 			  
-			parser.parse();
+			
+			try{ 
+				parser.parse();
+			}
+			catch(Exception ex){
+				if (VERBOSE){
+					ex.printStackTrace();
+				}
+			}
+			catch(VirtualMachineError vmErr){
+				if (VERBOSE){
+					MatchLocator.verbose("MatchLocator VM Error: ");
+					vmErr.printStackTrace();
+				}
+			}
+			
 		}
 	}
 	

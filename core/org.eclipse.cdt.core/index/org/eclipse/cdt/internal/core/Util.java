@@ -148,7 +148,11 @@ public class Util {
 		try {
 			stream = new BufferedInputStream(new FileInputStream(file));
 			return Util.getInputStreamAsCharArray(stream, (int) file.length(), encoding);
-		} finally {
+		}
+		catch (OutOfMemoryError er){
+			return null;
+		}
+		 finally {
 			if (stream != null) {
 				try {
 					stream.close();

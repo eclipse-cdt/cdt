@@ -1,17 +1,28 @@
-2004-02-09 Bogdan Gheorghe
+2004-02-13 Bogdan Gheorghe
 	PR 51232
+
+	- Added mapping range checking to IncludeEntry to avoid out of bounds exceptions
+	- Added error handling to MergeFactory to handle problems during the save operation
+	- Added source file name filtering for the recreate an already existing index scenario in
+	  IndexAllProject. 
+	- Added more robust error handling to SourceIndexer
+	- Added error handling routine to Util.getFileCharContent() to deal with potential out of 
+	  memory crash
 	
-	- Added a layer of separation between the parser and the indexer: we now
-	  create a worker thread to run the parser in. This allows the indexer to 
-	  finish all scheduled jobs regardless of how the parser performs on
-	  individual files (i.e. indexing no longer affected by parser failures)
-	  
+	* index/org/eclipse/cdt/internal/core/index/impl/IncludeEntry.java
+	* index/org/eclipse/cdt/internal/core/index/impl/MergeFactory.java
+	* index/org/eclipse/cdt/internal/core/index/search/Util.java
+	* index/org/eclipse/cdt/internal/core/index/search/indexing/IndexAllProject.java
+	* index/org/eclipse/cdt/internal/core/index/search/indexing/SourceIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/search/indexing/AddFolderToIndex.java
+	
+2004-02-10 Bogdan Gheorghe
+	
 	- Modified some of the stored index block reading routines to use separate
 	  counters, thus avoiding potential EOF exceptions.
 	  
     * index/org/eclipse/cdt/internal/core/index/impl/BlocksIndexInput.java
-	* index/org/eclipse/cdt/internal/core/index/search/indexing/SourceIndexer.java
-	
+    
 2004-02-03 Alain Magloire
 
 	PR 51106                                                                                                                   

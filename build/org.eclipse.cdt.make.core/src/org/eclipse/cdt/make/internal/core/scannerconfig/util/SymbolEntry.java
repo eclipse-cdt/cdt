@@ -41,7 +41,7 @@ public class SymbolEntry {
 	public SymbolEntry(String name, String value, boolean active) {
 		this.name = name;
 		if (values == null) {
-			values = new LinkedHashMap();
+			values = new LinkedHashMap(1);
 		}
 		values.put(value, Boolean.valueOf(active));
 	}
@@ -142,5 +142,20 @@ public class SymbolEntry {
 	
 	public int numberOfValues() {
 		return values.size();
+	}
+	
+	public String toString() {
+		StringBuffer buffer = new StringBuffer(name);
+		buffer.append(':');
+		for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
+			String val = (String) i.next();
+			buffer.append('\t');
+			buffer.append((val == null) ? "null" : val);//$NON-NLS-1$
+			if (((Boolean) values.get(val)).booleanValue() == true) {
+				buffer.append("(active)");//$NON-NLS-1$
+			}
+			buffer.append('\n');
+		}
+		return buffer.toString();
 	}
 }

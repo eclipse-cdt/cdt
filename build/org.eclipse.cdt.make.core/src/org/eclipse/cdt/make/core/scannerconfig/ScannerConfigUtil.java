@@ -51,8 +51,8 @@ public final class ScannerConfigUtil {
 			String value = null;
 			int index = symbol.indexOf("="); //$NON-NLS-1$
 			if (index != -1) {
-				key = symbol.substring(0, index).trim();
-				value = symbol.substring(index + 1).trim();
+				key = getSymbolKey(symbol);
+				value = getSymbolValue(symbol);
 			} else {
 				key = symbol.trim();
 			}
@@ -158,7 +158,7 @@ public final class ScannerConfigUtil {
 					String aValue = (String) j.next();
 					if (!activeValues.contains(aValue)) {
 						// result does not contain addend's value; add it
-						rSE.add(aValue, true);
+						rSE.add(getSymbolValue(aValue), true);
 						rc |= true;
 					}
 				}
@@ -167,7 +167,7 @@ public final class ScannerConfigUtil {
 					String aValue = (String) j.next();
 					if (!removedValues.contains(aValue)) {
 						// result does not contain addend's value; add it
-						rSE.add(aValue, false);
+						rSE.add(getSymbolValue(aValue), false);
 						rc |= true;
 					}
 				}
@@ -192,7 +192,7 @@ public final class ScannerConfigUtil {
 	public static String getSymbolKey(String symbol) {
 		int index = symbol.indexOf('=');
 		if (index != -1) {
-			return symbol.substring(0, index);
+			return symbol.substring(0, index).trim();
 		}
 		return symbol;
 	}
@@ -206,7 +206,7 @@ public final class ScannerConfigUtil {
 	public static String getSymbolValue(String symbol) {
 		int index = symbol.indexOf('=');
 		if (index != -1) {
-			return symbol.substring(index+1);
+			return symbol.substring(index+1).trim();
 		}
 		return null;
 	}

@@ -44,7 +44,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
 	// Primitive display preference widgets
-	private Button fHexButton;
+//	private Button fHexButton;
 
 	// View setting widgets
 	private Button fPathsButton;
@@ -107,8 +107,10 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		composite.setLayoutData( data );
 
 		createSpacer( composite, 1 );
+/*
 		createPrimitiveDisplayPreferences( composite );		
 		createSpacer( composite, 1 );
+*/
 		createViewSettingPreferences( composite );
 		createSpacer( composite, 1 );
 		createDisassemblySettingPreferences( composite );
@@ -149,7 +151,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	{
 		IPreferenceStore store = getPreferenceStore();
 
-		fHexButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) );
+//		fHexButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) );
 		fPathsButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fAutoDisassemblyButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY ) );
 	}
@@ -194,8 +196,10 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 */
 	private void createPrimitiveDisplayPreferences( Composite parent )
 	{
+/*
 		Composite comp = createGroupComposite( parent, 1, "Primitive type display options" );
 		fHexButton = createCheckButton( comp, "Display &hexadecimal values (short, char, int, long)" );
+*/
 	}
 
 	/**
@@ -308,7 +312,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void storeValues()
 	{
 		IPreferenceStore store = getPreferenceStore();
-		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, fHexButton.getSelection() );
+//		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, fHexButton.getSelection() );
 		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, fPathsButton.getSelection() );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_AUTO_DISASSEMBLY, fAutoDisassemblyButton.getSelection() );
 	}
@@ -326,7 +330,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void setDefaultValues()
 	{
 		IPreferenceStore store = getPreferenceStore();
-		fHexButton.setSelection( store.getDefaultBoolean( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) );
+//		fHexButton.setSelection( store.getDefaultBoolean( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) );
+		fPathsButton.setSelection( store.getDefaultBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fAutoDisassemblyButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY ) );
 	}
 }

@@ -1,4 +1,8 @@
 2002-12-17 Mikhail Khodjaiants
+	Removed the "Primitive type display options" section from the C/C++ Debug preference page because of the different formattong strategy.
+	* CDebugPreferencePage.java
+ 
+2002-12-17 Mikhail Khodjaiants
 	The UI part of the prompting source locator.
 	* AttachSourceLocationBlock.java
 	* AttachSourceLocationDialog.java

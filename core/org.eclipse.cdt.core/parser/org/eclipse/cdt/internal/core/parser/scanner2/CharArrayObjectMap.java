@@ -66,10 +66,11 @@ public class CharArrayObjectMap {//extends CharArrayMap {
 	    if( i < 0 || i > currEntry )
 	        return null;
 	  
-	    char [] key = keyAt( i );
-	    if( key == null ) return null;
-	    
-	    return get( key, 0, key.length );
+//	    char [] key = keyAt( i );
+//	    if( key == null ) return null;
+//	    
+//	    return get( key, 0, key.length );
+	    return valueTable[i];
 	}
 	
 	final public char[] keyAt( int i ){

@@ -76,7 +76,8 @@ public class ObjectMap extends HashTable{
 	    if( i < 0 || i > currEntry )
 	        return null;
 	    
-	    return get( keyAt( i ) );
+//	    return get( keyAt( i ) );
+	    return valueTable[i];
 	}
 
 	final public boolean isEmpty(){

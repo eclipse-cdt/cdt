@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -239,7 +238,14 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.core.parser.IScanner#getDefinitions()
 	 */
 	public Map getDefinitions() {
-		return Collections.EMPTY_MAP;
+	    CharArrayObjectMap objMap = getRealDefinitions();
+	    int size = objMap.size();
+	    Map hashMap = new HashMap( size );
+	    for( int i = 0; i < size; i ++ ){
+	        hashMap.put( objMap.keyAt( i ), objMap.getAt( i ) );
+	    }
+	    
+		return hashMap;
 	}
 
 	public CharArrayObjectMap getRealDefinitions() {
@@ -2188,27 +2194,44 @@ public class Scanner2 implements IScanner, IScannerData {
 						outpos += n;
 					}
 
-					++pos;
-					
 					// skip whitespace
 					while (++pos < limit) {
 						switch (expansion[pos]) {
 							case ' ':
 							case '\t':
 								continue;
+							case '/':
+								if (pos + 1 < limit) {
+									c = expansion[pos + 1];
+									if (c == '/')
+										// skip over everything
+										pos = expansion.length;
+									else if (c == '*') {
+										++pos;
+										while (++pos < limit) {
+											if (expansion[pos] == '*'
+													&& pos + 1 < limit
+													&& expansion[pos + 1] == '/') {
+												++pos;
+												break;
+											}
+										}
+										continue;
+									}
+								}
 							//TODO handle comments
 						}
 						break;
 					}
-					--pos;
-					
+				
 					// grab the identifier
 					c = expansion[pos];
 					int idstart = pos;
 					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'X') || c == '_') {
 						while (++pos < limit) {
-							if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'X')
-									|| (c >= '0' && c <= '9') || c == '_')
+						    c = expansion[pos];
+							if( !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'X')
+									|| (c >= '0' && c <= '9') || c == '_') )
 								break;
 						}
 					} // else TODO something
@@ -2216,12 +2239,29 @@ public class Scanner2 implements IScanner, IScannerData {
 					int idlen = pos - idstart + 1;
 					char[] argvalue = (char[])argmap.get(expansion, idstart, idlen);
 					if (argvalue != null) {
+					    //16.3.2-2 ... a \ character is inserted before each " and \ character
+					    //of a character literal or string literal
+					    
+					    //technically, we are also supposed to replace each occurence of whitespace 
+					    //(including comments) in  the argument with a single space. But, at this time
+					    //we don't really care what the contents of the string are, just that we get the string
+					    //so we won't bother doing that
 						if (result != null) {
-							result[outpos] = '"';
-							System.arraycopy(argvalue, 0, result, outpos + 1, argvalue.length);
-							result[outpos + argvalue.length + 1] = '"';
+							result[outpos++] = '"';
+							for( int i = 0; i < argvalue.length; i++ ){
+							    if( argvalue[i] == '"' || argvalue[i] == '\\' )
+							        result[outpos++] = '\\';
+							    result[outpos++] = argvalue[i];
+							}
+							result[outpos++] = '"';
+						} else {
+						    for( int i = 0; i < argvalue.length; i++ ){
+						        if( argvalue[i] == '"' || argvalue[i] == '\\' )
+						            ++outpos;
+						        ++outpos;
+						    }
+						    outpos += 2;
 						}
-						outpos += argvalue.length + 2;
 					}
 					lastcopy = pos;
 				}

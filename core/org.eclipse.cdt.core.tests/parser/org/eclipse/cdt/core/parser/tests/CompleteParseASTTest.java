@@ -2146,6 +2146,23 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	writer.write( "}" );
     	parse( writer.toString() );
 	}
+    
+    public void testBug69454() throws Exception
+    {
+        Writer writer = new StringWriter();
+        writer.write( "#define CATCH_ALL_EXCEPTIONS()                         \\\n" );
+        writer.write( "   catch( Exception &ex ) { handleException( ex ); }   \\\n" );
+        writer.write( "   catch( ... )           { handleException();    }      \n" );
+        writer.write( "class Exception;                                         \n" );
+        writer.write( "void handleException( Exception & ex ) {}                \n" );
+        writer.write( "void handleException() {}                                \n" );
+        writer.write( "void f() {                                               \n" );
+        writer.write( "   try { int i; }                                        \n" );
+        writer.write( "   CATCH_ALL_EXCEPTIONS();                               \n" );
+        writer.write( "}                                                        \n" );
 
+        parse( writer.toString() );
+        assertFalse( callback.getProblems().hasNext() );
+    }
 }
 

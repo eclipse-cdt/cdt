@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumeratorReference;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -125,7 +126,7 @@ public class CompleteParseBaseTest extends TestCase
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind, org.eclipse.cdt.core.parser.ast.IASTNode)
 		 */
-		public ILookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) {
+		public ILookupResult lookup(String prefix, LookupKind[] kind, IASTNode context, IASTExpression functionParameters) {
 			return null;
 		}
 

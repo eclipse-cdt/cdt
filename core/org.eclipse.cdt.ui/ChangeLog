@@ -1,3 +1,16 @@
+2004-05-07 Andrew Niefer
+	- handle content assist for function references so that the function is not inserted if we are just getting signature
+	  info for the popup
+	- created CProposalContextInformation which implements IContextInformation and IContextInformationExtension
+	  so that we can better place the context popup after content assist for functions
+	  
+	  * src/org/eclipse/cdt/internal/ui/text/contentassist/CProposalContextInformation.java
+	  * src/org/eclipse/cdt/internal/ui/text/contentassist/ResultCollector.java
+	  * src/org/eclipse/cdt/internal/ui/text/contentassist/ICompletionRequestor.java
+	  * src/org/eclipse/cdt/internal/ui/text/contentassist/CompletionRequestorAdaptor.java
+	  * src/org/eclipse/cdt/internal/ui/text/contentassist/CompletionEngine.java
+	  * src/org/eclipse/cdt/internal/ui/text/contentassist/CCompletionProcessor.java
+
 2004-05-05 Bogdan Gheorghe
 	Moved the index enablement constants to IndexManager to allow the index manager
 	to load enablement settings if not done so by the property page

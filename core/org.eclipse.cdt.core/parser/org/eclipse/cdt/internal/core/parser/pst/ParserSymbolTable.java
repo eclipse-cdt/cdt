@@ -989,6 +989,7 @@ public class ParserSymbolTable {
 			return null;
 		}
 		
+		//reduce our set of candidate functions to only those who have the right number of parameters
 		reduceToViable( data, functions );
 		
 		if( data.exactFunctionsOnly && data.templateParameters == null ){
@@ -1027,31 +1028,32 @@ public class ParserSymbolTable {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 		}
 		
-		IParameterizedSymbol bestFn = null;				//the best function
-		IParameterizedSymbol currFn = null;				//the function currently under consideration
+		IParameterizedSymbol bestFn = null;		//the best function
+		IParameterizedSymbol currFn = null;		//the function currently under consideration
 		Cost [] bestFnCost = null;				//the cost of the best function
 		Cost [] currFnCost = null;				//the cost for the current function
 				
 		Iterator iterFns = functions.iterator();
-		Iterator sourceParams = null;
-		Iterator targetParams = null;
+		Iterator sourceParams = null;			//the parameters the function is being called with
+		Iterator targetParams = null;			//the current function's parameters
+
+		TypeInfo source = null;					//parameter we are called with
+		TypeInfo target = null;					//function's parameter
 		
 		int comparison;
-		Cost cost = null;
-		Cost temp = null;
-		
-		TypeInfo source = null;
-		TypeInfo target = null;
-		 
-		boolean hasWorse = false;
-		boolean hasBetter = false;
-		boolean ambiguous = false;
-		boolean currHasAmbiguousParam = false;
-		boolean bestHasAmbiguousParam = false;
+		Cost cost = null;						//the cost of converting source to target
+		Cost temp = null;						//the cost of using a user defined conversion to convert source to target
+				 
+		boolean hasWorse = false;				//currFn has a worse parameter fit than bestFn
+		boolean hasBetter = false;				//currFn has a better parameter fit than bestFn
+		boolean ambiguous = false;				//ambiguity, 2 functions are equally good
+		boolean currHasAmbiguousParam = false;	//currFn has an ambiguous parameter conversion (ok if not bestFn)
+		boolean bestHasAmbiguousParam = false;  //bestFn has an ambiguous parameter conversion (not ok, ambiguous)
 
 		List parameters = null;
 		
 		if( numSourceParams == 0 ){
+			//f() is the same as f( void )
 			parameters = new LinkedList();
 			parameters.add( new TypeInfo( TypeInfo.t_void, 0, null ) );
 			numSourceParams = 1;
@@ -1136,6 +1138,12 @@ public class ParserSymbolTable {
 				if( currFnCost[ j ].rank < 0 ){
 					hasWorse = true;
 					hasBetter = false;
+					
+					if( data.mode == LookupMode.PREFIX ){
+						//for prefix lookup, just remove from the function list those functions
+						//that don't fit the parameters
+						iterFns.remove();
+					}
 					break;
 				}
 				
@@ -1151,6 +1159,10 @@ public class ParserSymbolTable {
 					hasBetter = true;
 				}
 			}
+			
+			//during a prefix lookup, we don't need to rank the functions
+			if( data.mode == LookupMode.PREFIX )
+				continue;
 			
 			//If function has a parameter match that is better than the current best,
 			//and another that is worse (or everything was just as good, neither better nor worse).
@@ -1225,11 +1237,30 @@ public class ParserSymbolTable {
 		int numParameters = ( data.parameters == null ) ? 0 : data.parameters.size();
 		int num;	
 			
+		if( data.mode == LookupMode.PREFIX )
+		{
+			if( numParameters >= 1 )
+				numParameters++;
+		}
+		
 		//Trim the list down to the set of viable functions
 		IParameterizedSymbol function;
 		Iterator iter = functions.iterator();
+		Object obj = null;
 		while( iter.hasNext() ){
-			function = (IParameterizedSymbol) iter.next();
+			obj = iter.next();
+			//sanity check
+			if( obj instanceof IParameterizedSymbol ){
+				function = (IParameterizedSymbol) obj;
+				if( !function.isType( TypeInfo.t_function) && !function.isType( TypeInfo.t_constructor ) ){
+					iter.remove();
+					continue;
+				}
+			} else {
+				iter.remove();
+				continue;
+			}
+			
 			num = ( function.getParameterList() == null ) ? 0 : function.getParameterList().size();
 		
 			//if there are m arguments in the list, all candidate functions having m parameters
@@ -1265,6 +1296,10 @@ public class ParserSymbolTable {
 			//a candidate function having more than m parameters is viable only if the (m+1)-st
 			//parameter has a default argument
 			else {
+				if( data.mode == LookupMode.PREFIX ){
+					//during prefix lookup, having more parameters than what is provided is ok
+					continue;
+				}
 				ListIterator listIter = function.getParameterList().listIterator( num );
 				TypeInfo param;
 				for( int i = num; i > ( numParameters - num + 1); i-- ){

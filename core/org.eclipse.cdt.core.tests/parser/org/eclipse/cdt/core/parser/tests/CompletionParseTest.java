@@ -119,7 +119,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 			kinds[0] = IASTNode.LookupKind.ALL; 
-			ILookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
+			ILookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext(), null );
 			assertEquals( result.getPrefix(), prefix );
 			
 			Iterator iter = result.getNodes();
@@ -170,7 +170,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.ALL; 
-		ILookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
+		ILookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext(), null );
 		assertEquals( result.getPrefix(), prefix );
 		
 		Iterator iter = result.getNodes();
@@ -276,7 +276,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 			kinds[0] = IASTNode.LookupKind.METHODS; 
-			ILookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
+			ILookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext(), null );
 			assertEquals( result.getPrefix(), prefix );
 			
 			Iterator iter = result.getNodes();
@@ -320,7 +320,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertNotNull( node.getCompletionContext() );
 		assertTrue( node.getCompletionContext() instanceof IASTVariable );
 		
-		ILookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.METHODS }, node.getCompletionContext() );
+		ILookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.METHODS }, node.getCompletionContext(), null );
 		assertEquals( result.getPrefix(), prefix );
 		
 		Iterator iter = result.getNodes();
@@ -362,7 +362,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertNotNull( node.getCompletionContext() );
 		assertTrue( node.getCompletionContext() instanceof IASTVariable );
 		
-		ILookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.METHODS }, node.getCompletionContext() );
+		ILookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.METHODS }, node.getCompletionContext(), null );
 		assertEquals( result.getPrefix(), prefix );
 		
 		Iterator iter = result.getNodes();
@@ -398,7 +398,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
 		assertNull( node.getCompletionContext() );
 				
-		ILookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.LOCAL_VARIABLES }, node.getCompletionContext() );
+		ILookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.LOCAL_VARIABLES }, node.getCompletionContext(), null );
 		assertEquals( result.getPrefix(), prefix );
 		
 		Iterator iter = result.getNodes();
@@ -442,7 +442,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
 																new IASTNode.LookupKind[] { IASTNode.LookupKind.THIS },
-																node.getCompletionContext() );
+																node.getCompletionContext(), null );
 		
 		assertEquals( result.getResultsSize(), 2 );
 		
@@ -455,7 +455,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
 												   new IASTNode.LookupKind[] { IASTNode.LookupKind.THIS, IASTNode.LookupKind.METHODS },
-												   node.getCompletionContext() );
+												   node.getCompletionContext(), null );
 		
 		assertEquals( result.getResultsSize(), 1 );
 		iter = result.getNodes();
@@ -493,7 +493,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		LookupKind[] kinds = new LookupKind[ 1 ];
 		kinds[0] = LookupKind.FIELDS;
 		
-		ILookupResult result = inquestion.lookup( "a", kinds, null ); //$NON-NLS-1$
+		ILookupResult result = inquestion.lookup( "a", kinds, null, null ); //$NON-NLS-1$
 		assertEquals(result.getResultsSize(), 3 );
 	}
 	
@@ -526,7 +526,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		LookupKind[] kinds = new LookupKind[ 1 ];
 		kinds[0] = LookupKind.FIELDS;
 		
-		ILookupResult result = inquestion.lookup( "a", kinds, null ); //$NON-NLS-1$
+		ILookupResult result = inquestion.lookup( "a", kinds, null, null ); //$NON-NLS-1$
 		assertEquals(result.getResultsSize(), 3 );
 	}
 	
@@ -547,7 +547,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
 				new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, 
-				node.getCompletionContext() );
+				node.getCompletionContext(), null );
 
 		assertEquals( result.getResultsSize(), 1 );
 		IASTField field = (IASTField) result.getNodes().next();
@@ -571,7 +571,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
 				new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, 
-				node.getCompletionContext() );
+				node.getCompletionContext(), null );
 
 		assertEquals( result.getResultsSize(), 1 );
 		IASTField field = (IASTField) result.getNodes().next();
@@ -596,7 +596,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
 		                                                         new IASTNode.LookupKind[]{ IASTNode.LookupKind.THIS },
-																 node.getCompletionContext() );
+																 node.getCompletionContext(), null );
 		
 		assertEquals( result.getResultsSize(), 4 );
 		
@@ -626,7 +626,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		IASTCompletionNode node = parse( code, index );
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
                                                                  new IASTNode.LookupKind[]{ IASTNode.LookupKind.TYPEDEFS },
-				                                                 node.getCompletionContext() );
+				                                                 node.getCompletionContext(), null );
 		
 		assertEquals( result.getResultsSize(), 1 );
 		
@@ -657,7 +657,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			
 			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
 	                new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
-	                node.getCompletionContext() );
+	                node.getCompletionContext(), null );
 	
 			Set results = new HashSet();
 			results.add( "aInteger"); //$NON-NLS-1$
@@ -701,7 +701,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	
 			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
 	                new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
-	                node.getCompletionContext() );
+	                node.getCompletionContext(), null );
 			
 			Set results = new HashSet();
 			results.add( "DEF"); //$NON-NLS-1$
@@ -726,7 +726,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		ILookupResult result = node.getCompletionScope().lookup( "",  //$NON-NLS-1$
 				                                                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL }, 
-																 node.getCompletionContext() );
+																 node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 2 );
 		
 		Iterator i = result.getNodes();
@@ -761,7 +761,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertEquals( node.getCompletionKind(), CompletionKind.MEMBER_REFERENCE );
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL }, 
-				 node.getCompletionContext() );
+				 node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 1 );
 		Iterator i = result.getNodes();
 		IASTMethod doorBell = (IASTMethod) i.next();
@@ -786,7 +786,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
 				                                                 new IASTNode.LookupKind[] {IASTNode.LookupKind.ALL },
-																 node.getCompletionContext() );
+																 node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 3 );
 		Iterator i = result.getNodes();
 		assertTrue( i.next() instanceof IASTField );
@@ -828,7 +828,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		IASTCompletionNode node = parse( code, index );
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
                                                                  new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
-				                                                 node.getCompletionContext() );
+				                                                 node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 1 );
 		
 		Iterator iter = result.getNodes();
@@ -878,35 +878,35 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertNotNull( node );
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
 				                                                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
-		                                                         node.getCompletionContext() );
+		                                                         node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 2 );
 		
 		node = parse( code + "a2-> ", code.length() + 4 ); //$NON-NLS-1$
 		assertNotNull( node );
 		result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
 		                                           new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
-		                                           node.getCompletionContext() );
+		                                           node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 1 );
 		
 		node = parse( code + "a3-> ", code.length() + 4 ); //$NON-NLS-1$
 		assertNotNull( node );
 		result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
 		                                           new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
-		                                           node.getCompletionContext() );
+		                                           node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 2 );
 		
 		node = parse( code + "a4-> ", code.length() + 4 ); //$NON-NLS-1$
 		assertNotNull( node );
 		result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
 		                                           new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
-		                                           node.getCompletionContext() );
+		                                           node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 2 );
 		
 		node = parse( code + "a5-> ", code.length() + 4 ); //$NON-NLS-1$
 		assertNotNull( node );
 		result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
 		                                           new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
-		                                           node.getCompletionContext() );
+		                                           node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 4 );
 	}
 	
@@ -928,7 +928,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		IASTCompletionNode node = parse( code, index );
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
                                                                  new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
-				                                                 node.getCompletionContext() );
+				                                                 node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 1 );
 	}
 	
@@ -950,7 +950,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			assertNotNull( node.getFunctionParameters() );
 			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
                     new IASTNode.LookupKind[]{ IASTNode.LookupKind.LOCAL_VARIABLES },
-                    node.getCompletionContext() );
+                    node.getCompletionContext(), null );
 			assertNotNull(result);
 			assertEquals( result.getResultsSize(), ( i == 0 ) ? 2 : 1 );
 		}
@@ -976,7 +976,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			assertNotNull( node.getFunctionParameters() );
 			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
                     new IASTNode.LookupKind[]{ IASTNode.LookupKind.LOCAL_VARIABLES },
-                    node.getCompletionContext() );
+                    node.getCompletionContext(), null );
 			assertNotNull(result);
 			assertEquals( result.getResultsSize(), ( i == 0 ) ? 2 : 1 );
 		}
@@ -990,10 +990,40 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
                                                                  new IASTNode.LookupKind[]{ IASTNode.LookupKind.CONSTRUCTORS },
-                                                                 node.getCompletionContext() );
+                                                                 node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 1 );
 		IASTMethod constructor = (IASTMethod) result.getNodes().next();
 		assertEquals( constructor.getName(), "Foo" );
 	}
 
+	public void testBug50807() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "void foo();" );
+		writer.write( "void foo( int );" );
+		writer.write( "void foo( int, char );" );
+		writer.write( "void foo( int, int, int );" );
+		writer.write( "void bar(){ " );
+		
+		String code = writer.toString() + "foo( SP";
+		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) );
+		
+		assertEquals( node.getCompletionPrefix(), "" );
+		assertEquals( node.getFunctionName(), "foo" );
+		ILookupResult result = node.getCompletionScope().lookup( node.getFunctionName(), 
+                                                                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.FUNCTIONS },
+                                                                 node.getCompletionContext(), null );
+		assertEquals( result.getResultsSize(), 4 );
+		
+		code = writer.toString() + "foo( 1, SP";
+		node = parse( code, code.indexOf( "SP" ) );
+		
+		assertEquals( node.getCompletionPrefix(), "" );
+		assertEquals( node.getFunctionName(), "foo" );
+		result = node.getCompletionScope().lookup( node.getFunctionName(), 
+                                                   new IASTNode.LookupKind[]{ IASTNode.LookupKind.FUNCTIONS },
+                                                   node.getCompletionContext(), node.getFunctionParameters() );
+		
+		assertEquals( result.getResultsSize(), 2 );
+	}
 }

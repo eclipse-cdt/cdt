@@ -42,7 +42,7 @@ public class CompletionRequestorAdaptor implements ICompletionRequestor {
 	public void acceptFunction(
 		String name,
 		String parameterString,
-		String returnType, int completionStart, int completionLength, int relevance) {
+		String returnType, int completionStart, int completionLength, int relevance, boolean insertFunctionName, int contextInfoOffset) {
 		// TODO Auto-generated method stub
 
 	}
@@ -50,7 +50,7 @@ public class CompletionRequestorAdaptor implements ICompletionRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICompletionRequestor#acceptMacro(java.lang.String)
 	 */
-	public void acceptMacro(String name, int completionStart, int completionLength, int relevance) {
+	public void acceptMacro(String name, int completionStart, int completionLength, int relevance, int contextInfoOffset) {
 		// TODO Auto-generated method stub
 
 	}
@@ -61,7 +61,7 @@ public class CompletionRequestorAdaptor implements ICompletionRequestor {
 	public void acceptMethod(
 		String name,
 		String parameterString,
-		String returnType, ASTAccessVisibility visibility, int completionStart, int completionLength, int relevance) {
+		String returnType, ASTAccessVisibility visibility, int completionStart, int completionLength, int relevance, boolean insertFunctionName, int contextInfoOffset) {
 		// TODO Auto-generated method stub
 
 	}

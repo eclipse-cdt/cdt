@@ -809,23 +809,29 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return null;
 	}
 	
-	public List prefixLookup( TypeFilter filter, String prefix, boolean qualified ) throws ParserSymbolTableException{
+	public List prefixLookup( TypeFilter filter, String prefix, boolean qualified, List paramList ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( prefix, filter );
 		data.qualified = qualified;
 		data.mode = ParserSymbolTable.LookupMode.PREFIX;
+		data.parameters = paramList;
 		
 		ParserSymbolTable.lookup( data, this );
 		
 		List constructors = null;
 		if( filter != null && filter.willAccept( TypeInfo.t_constructor ) && (this instanceof IDerivableContainerSymbol) ){
 			if( getName().startsWith( prefix ) )
-				constructors = ((IDerivableContainerSymbol)this).getConstructors();
+				constructors = new LinkedList( ((IDerivableContainerSymbol)this).getConstructors() );
 		}
 		
 		if( data.foundItems == null || data.foundItems.isEmpty() ){
-			if( constructors != null )
-				return new LinkedList( constructors );
-			else
+			if( constructors != null ){
+				if( paramList != null ){
+					ParserSymbolTable.resolveFunction( data, constructors );
+					return constructors;
+				} else {
+					return constructors;
+				}
+			} else
 				return null;
 		} else {
 			//remove any ambiguous symbols
@@ -840,13 +846,28 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			
 			Iterator iter = data.foundItems.keySet().iterator();
 			Object obj = null;
+			List tempList = null;
 			while( iter.hasNext() ){
 				obj = data.foundItems.get( iter.next() );
 				
 				if( obj instanceof List ){
+					//a list must be all functions?
+					if( paramList != null )
+						ParserSymbolTable.resolveFunction( data, (List) obj );
 					list.addAll( (List) obj );
 				} else{
-					list.add( obj );
+					if( paramList != null && ((ISymbol)obj).isType( TypeInfo.t_function ) )
+					{
+						if( tempList == null )
+							tempList = new LinkedList();
+						else 
+							tempList.clear();
+						tempList.add( obj );
+						ParserSymbolTable.resolveFunction( data, tempList );
+						list.addAll( tempList );
+					} else {
+						list.add( obj );
+					}
 				}
 			}
 

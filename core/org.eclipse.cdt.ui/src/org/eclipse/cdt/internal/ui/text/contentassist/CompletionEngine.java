@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
@@ -79,6 +80,7 @@ public class CompletionEngine implements RelevanceConstants {
 	ICompletionRequestor requestor;
 	int completionStart = 0;
 	int completionLength = 0;
+	int completionOrigin = 0;
 	IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 	private Map macroMap = null;
 	private ContentAssistElementRequestor elementRequestor = null;
@@ -178,8 +180,8 @@ public class CompletionEngine implements RelevanceConstants {
 			IASTCompletionNode result = null;
 			try {
 				// set timeout
-				IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
-				int timeout = store.getInt(ContentAssistPreference.TIMEOUT_DELAY);
+				IPreferenceStore prefStore = CUIPlugin.getDefault().getPreferenceStore();
+				int timeout = prefStore.getInt(ContentAssistPreference.TIMEOUT_DELAY);
 				elementRequestor.setTimeout(timeout);
 
 				// start timer
@@ -205,7 +207,7 @@ public class CompletionEngine implements RelevanceConstants {
 		}	 	
 	}
 	
-	private void addNodeToCompletions(IASTNode node, String prefix, int totalNumberOfResults, boolean addStaticMethodsOnly, boolean addStaticFieldsOnly){
+	private void addNodeToCompletions(IASTNode node, String prefix, int totalNumberOfResults, boolean addStaticMethodsOnly, boolean addStaticFieldsOnly, int parameterIndex){
 		if(node instanceof IASTField){
 			IASTField field = (IASTField)node;
 			if(addStaticFieldsOnly && (!field.isStatic()))
@@ -255,10 +257,20 @@ public class CompletionEngine implements RelevanceConstants {
 			int relevance = computeRelevance(ICElement.C_METHOD, prefix, method.getName());
 			
 			String parameterString = ASTUtil.getParametersString(ASTUtil.getFunctionParameterTypes(method));
+			
+			int contextInfoOffset = completionOrigin;
+			if( parameterIndex > -1 && parameterString.length() > 0){
+				int idx = 0;
+				for( int i = 0; i < parameterIndex; i++ ){
+					idx = parameterString.indexOf( ',', idx );
+				}
+				contextInfoOffset -= idx;
+			}
+			
 			requestor.acceptMethod(method.getName(), 
 				parameterString,
 				ASTUtil.getType(method.getReturnType()), 
-				method.getVisiblity(), completionStart, completionLength, relevance);
+				method.getVisiblity(), completionStart, completionLength, relevance, (parameterIndex == -1 ), contextInfoOffset);
 		}
 		else if(node instanceof IASTFunction){
 			IASTFunction function = (IASTFunction)node;
@@ -268,10 +280,20 @@ public class CompletionEngine implements RelevanceConstants {
 			int relevance = computeRelevance(ICElement.C_FUNCTION, prefix, function.getName());
 			
 			String parameterString = ASTUtil.getParametersString(ASTUtil.getFunctionParameterTypes(function));
+			
+			int contextInfoOffset = completionOrigin;
+			if( parameterIndex > -1 && parameterString.length() > 0){
+				int idx = 0;
+				for( int i = 0; i < parameterIndex; i++ ){
+					idx = parameterString.indexOf( ',', idx );
+				}
+				contextInfoOffset -= idx;
+			}
+
 			requestor.acceptFunction(function.getName(), 
 				parameterString,					
 				ASTUtil.getType(function.getReturnType()), 
-				completionStart, completionLength, relevance);
+				completionStart, completionLength, relevance, (parameterIndex == -1 ), contextInfoOffset);
 		}
 		else if(node instanceof IASTClassSpecifier){
 			IASTClassSpecifier classSpecifier = (IASTClassSpecifier)node;
@@ -372,7 +394,7 @@ public class CompletionEngine implements RelevanceConstants {
 	
 	private void addMacroToCompletions (String prefix, String macroName){
 		int relevance = computeRelevance(ICElement.C_MACRO, prefix, macroName);
-		requestor.acceptMacro(macroName, completionStart, completionLength, relevance);		
+		requestor.acceptMacro(macroName, completionStart, completionLength, relevance, completionOrigin);		
 	}
 
 	private void addMacrosToCompletions(String prefix, Iterator macros){
@@ -386,10 +408,10 @@ public class CompletionEngine implements RelevanceConstants {
 	}
 
 	private void addToCompletions (ILookupResult result){
-		addToCompletions(result, false, false);
+		addToCompletions(result, false, false, -1);
 	}	
 	
-	private void addToCompletions (ILookupResult result, boolean addStaticMethodsOnly, boolean addStaticFieldsOnly){
+	private void addToCompletions (ILookupResult result, boolean addStaticMethodsOnly, boolean addStaticFieldsOnly, int paramIndex){
 		if(result == null){
 			log("Lookup Results       = null ................. !!! No Lookup Results found !!! "); //$NON-NLS-1$
 			return;
@@ -401,15 +423,15 @@ public class CompletionEngine implements RelevanceConstants {
 		
 		while (nodes.hasNext()){
 			IASTNode node = (IASTNode) nodes.next();
-			addNodeToCompletions(node, result.getPrefix(), numberOfElements, addStaticMethodsOnly, addStaticFieldsOnly);	
+			addNodeToCompletions(node, result.getPrefix(), numberOfElements, addStaticMethodsOnly, addStaticFieldsOnly, paramIndex );	
 		}
 		return ;
 	}
 	
-	private ILookupResult lookup(IASTScope searchNode, String prefix, LookupKind[] kinds, IASTNode context){
+	private ILookupResult lookup(IASTScope searchNode, String prefix, LookupKind[] kinds, IASTNode context, IASTExpression expression){
 		try {
 			logLookups (kinds);
-			ILookupResult result = searchNode.lookup (prefix, kinds, context);
+			ILookupResult result = searchNode.lookup (prefix, kinds, context, expression);
 			return result ;
 		} catch (IASTNode.LookupError ilk ){
 			// do we want to do something here?
@@ -462,7 +484,7 @@ public class CompletionEngine implements RelevanceConstants {
 		kinds[0] = IASTNode.LookupKind.FIELDS; 
 		kinds[1] = IASTNode.LookupKind.METHODS; 
 		kinds[2] = IASTNode.LookupKind.ENUMERATORS;
-		result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 		addToCompletions (result);
 	}	
 
@@ -486,16 +508,16 @@ public class CompletionEngine implements RelevanceConstants {
 		kinds[8] = IASTNode.LookupKind.ENUMERATORS; 
 		kinds[9] = IASTNode.LookupKind.CONSTRUCTORS; 
 */		
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 		// lookup static members (field / methods) in types
 		if( (completionNode.getCompletionContext() != null)
 			&& (completionNode.getCompletionContext() instanceof IASTClassSpecifier) 
 			&& (((IASTClassSpecifier) completionNode.getCompletionContext()).getClassKind() != ASTClassKind.ENUM) ){
 				if (completionNode.getCompletionScope() instanceof IASTCodeScope){
-					addToCompletions(result, true, true);
+					addToCompletions(result, true, true, -1);
 				}
 				else {
-					addToCompletions(result, false, true);					
+					addToCompletions(result, false, true, -1);					
 				}
 		} else {
 			addToCompletions(result);
@@ -515,7 +537,7 @@ public class CompletionEngine implements RelevanceConstants {
 			kinds[1] = IASTNode.LookupKind.ENUMERATIONS;
 			kinds[2] = IASTNode.LookupKind.NAMESPACES;
 			kinds[3] = IASTNode.LookupKind.TYPEDEFS;
-			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 			addToCompletions(result);
 		} else // prefix is empty, we can not look for everything 
 		{
@@ -536,7 +558,7 @@ public class CompletionEngine implements RelevanceConstants {
 					ILookupResult result = null;
 					IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 					kinds[0] = IASTNode.LookupKind.STRUCTURES; 
-					result = lookup(searchNode, classSpec.getName(), kinds, completionNode.getCompletionContext());
+					result = lookup(searchNode, classSpec.getName(), kinds, completionNode.getCompletionContext(), null);
 					addToCompletions(result);
 				}
 			}		
@@ -558,7 +580,7 @@ public class CompletionEngine implements RelevanceConstants {
 		if (completionNode.getCompletionPrefix().length() > 0){
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 			kinds[0] = IASTNode.LookupKind.ALL; 
-			result = lookup(searchNode, prefix, kinds, completionNode.getCompletionContext());
+			result = lookup(searchNode, prefix, kinds, completionNode.getCompletionContext(), null);
 			addToCompletions(result);
 		} 
 		else // prefix is empty
@@ -568,24 +590,24 @@ public class CompletionEngine implements RelevanceConstants {
 					// we are inside of a method
 					IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 					kinds[0] = IASTNode.LookupKind.THIS;
-					result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+					result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 					addToCompletions(result);
 					
 					kinds = new IASTNode.LookupKind[1];
 					kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
-					result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+					result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 					addToCompletions(result);
 				} else {
 					// we are inside of a function
 					IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 					kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
-					result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+					result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 					addToCompletions(result);
 				}
 			} else {
 				IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 				kinds[0] = IASTNode.LookupKind.ALL;
-				result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+				result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 				addToCompletions(result);				
 			}
 		}
@@ -601,7 +623,7 @@ public class CompletionEngine implements RelevanceConstants {
 		// only look for classes
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.CLASSES; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 		addToCompletions(result);
 	}
 
@@ -611,7 +633,7 @@ public class CompletionEngine implements RelevanceConstants {
 		// only look for classes
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.STRUCTS; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 		addToCompletions(result);
 	}
 	private void completionOnUnionReference(IASTCompletionNode completionNode){
@@ -620,7 +642,7 @@ public class CompletionEngine implements RelevanceConstants {
 		// only look for classes
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.UNIONS; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 		addToCompletions(result);
 	}
 	private void completionOnEnumReference(IASTCompletionNode completionNode){
@@ -629,7 +651,7 @@ public class CompletionEngine implements RelevanceConstants {
 		// only look for classes
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.ENUMERATIONS; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 		addToCompletions(result);
 	}
 	
@@ -639,7 +661,7 @@ public class CompletionEngine implements RelevanceConstants {
 		// only look for namespaces
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.NAMESPACES; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
 		addToCompletions(result);
 	}
 	private void completionOnExceptionReference(IASTCompletionNode completionNode){
@@ -652,16 +674,16 @@ public class CompletionEngine implements RelevanceConstants {
 	}
 	private void completionOnMacroReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
-		IASTScope searchNode = completionNode.getCompletionScope();
+		//IASTScope searchNode = completionNode.getCompletionScope();
 		// only look for macros
 		List result = lookupMacros(completionNode.getCompletionPrefix());
 		addMacrosToCompletions(completionNode.getCompletionPrefix(), result.iterator());
 	}
 	private void completionOnNewTypeReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
-		IASTScope searchNode = completionNode.getCompletionScope();
+		//IASTScope searchNode = completionNode.getCompletionScope();
 		// look for the specific type being newed and the scope
-		IASTNode context = completionNode.getCompletionContext();
+		//IASTNode context = completionNode.getCompletionContext();
 		// basic completion on all types
 		completionOnTypeReference(completionNode);
 	}
@@ -669,11 +691,24 @@ public class CompletionEngine implements RelevanceConstants {
 	private void completionOnConstructorReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
 		IASTScope searchNode = completionNode.getCompletionScope();
-		// only lookup constructors
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-		kinds[0] = IASTNode.LookupKind.CONSTRUCTORS; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-		addToCompletions(result);
+		if( completionNode.getFunctionName().length() > 0 && 
+			completionNode.getCompletionContext() == null )
+		{
+			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[]{ IASTNode.LookupKind.STRUCTURES };
+			ILookupResult result = lookup( searchNode, completionNode.getFunctionName(), kinds, null, null );
+			if( result.getResultsSize() == 1 ){
+				IASTClassSpecifier cls = (IASTClassSpecifier) result.getNodes().next();
+				kinds[ 0 ] = IASTNode.LookupKind.CONSTRUCTORS;
+				result = lookup( searchNode, completionNode.getCompletionPrefix(), kinds, cls, completionNode.getFunctionParameters() );
+				addToCompletions( result, false, false, result.getIndexOfNextParameter() );
+			}
+		} else {
+			// only lookup constructors
+			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+			kinds[0] = IASTNode.LookupKind.CONSTRUCTORS; 
+			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
+			addToCompletions(result);
+		}
 	}
 	private void completionOnFunctionReference(IASTCompletionNode completionNode){
 		//NOTE:
@@ -682,22 +717,24 @@ public class CompletionEngine implements RelevanceConstants {
 		// looked up for FUNCTION_REFRENCE then please update the documentation in
 		// IASTCompletionNode.java.
 		String prefix = completionNode.getCompletionPrefix();
-		
+		boolean functionsOnly = false;
 		IASTNode.LookupKind[] kinds = null;
 		if( prefix.length() == 0 )
 		{
 			kinds = new IASTNode.LookupKind[] { IASTNode.LookupKind.CONSTRUCTORS, IASTNode.LookupKind.FUNCTIONS, IASTNode.LookupKind.METHODS };
 			prefix = completionNode.getFunctionName();
+			functionsOnly = true;
 		}
 		else
 			kinds = new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL };
 
-		ILookupResult result = lookup(completionNode.getCompletionScope(), prefix, kinds, completionNode.getCompletionContext());
-		addToCompletions(result);
-	
-		List macros = lookupMacros(completionNode.getCompletionPrefix());
-		addMacrosToCompletions(prefix, macros.iterator());
+		ILookupResult result = lookup(completionNode.getCompletionScope(), prefix, kinds, completionNode.getCompletionContext(), completionNode.getFunctionParameters());
+		addToCompletions(result, false, false, functionsOnly ? result.getIndexOfNextParameter() : -1 );
 
+		if( !functionsOnly ){
+			List macros = lookupMacros(completionNode.getCompletionPrefix());
+			addMacrosToCompletions(prefix, macros.iterator());
+		}
 	}
 	
 	public IASTCompletionNode complete(IWorkingCopy sourceUnit, int completionOffset) {
@@ -725,6 +762,7 @@ public class CompletionEngine implements RelevanceConstants {
 		}
 		
 		// set the completionStart and the completionLength
+		completionOrigin = completionOffset;
 		completionStart = completionOffset - completionNode.getCompletionPrefix().length();
 		completionLength = completionNode.getCompletionPrefix().length();
 		CompletionKind kind = completionNode.getCompletionKind();

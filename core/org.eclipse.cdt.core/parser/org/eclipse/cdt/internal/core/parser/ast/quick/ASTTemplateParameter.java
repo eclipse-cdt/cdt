@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
@@ -106,7 +107,7 @@ public class ASTTemplateParameter implements IASTTemplateParameter, IASTOffsetab
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind[], org.eclipse.cdt.core.parser.ast.IASTNode)
 	 */
-	public ILookupResult lookup(String prefix, LookupKind[] lookupKind, IASTNode context) throws LookupError, ASTNotImplementedException {
+	public ILookupResult lookup(String prefix, LookupKind[] lookupKind, IASTNode context, IASTExpression functionParameters) throws LookupError, ASTNotImplementedException {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -622,7 +622,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 							visibility, 
 							completionStart, 
 							completionLength, 
-							relevance);
+							relevance, true, completionStart);
 					break;				
 				case ICElement.C_FUNCTION:
 				case ICElement.C_FUNCTION_DECLARATION:
@@ -632,7 +632,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 							match.getReturnType(), 
 							completionStart, 
 							completionLength, 
-							relevance);
+							relevance, true, completionStart);
 					break;
 				case ICElement.C_CLASS:
 					resultCollector.acceptClass(
@@ -667,7 +667,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 							match.getName(), 
 							completionStart, 
 							completionLength, 
-							relevance);
+							relevance, completionStart);
 					break;
 				case ICElement.C_ENUMERATION:
 					resultCollector.acceptEnumeration(

@@ -6,6 +6,7 @@
  */
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 
 /**
@@ -22,7 +23,7 @@ public class ASTNode implements IASTNode {
 	public ILookupResult lookup(
 		String prefix,
 		LookupKind[] kind,
-		IASTNode context) {
+		IASTNode context, IASTExpression functionParameters) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -588,7 +588,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#prefixLookup(org.eclipse.cdt.internal.core.parser.pst.TypeFilter, java.lang.String, boolean)
 	 */
-	public List prefixLookup(TypeFilter filter, String prefix, boolean qualified) throws ParserSymbolTableException {
+	public List prefixLookup(TypeFilter filter, String prefix, boolean qualified, List paramList) throws ParserSymbolTableException {
 		return null;
 	}
 	/* (non-Javadoc)

@@ -58,15 +58,17 @@ public interface IASTNode {
 	 	public String getPrefix(); 
 	 	public Iterator getNodes(); 
 	 	public int getResultsSize();
+	 	public int getIndexOfNextParameter();
 	 }
 
 	/**
 	 * @param prefix
 	 * @param kind
 	 * @param context
+	 * @param functionParameters
 	 * @return
 	 * @throws LookupError
 	 */
-	public ILookupResult lookup( String prefix, LookupKind[] kind, IASTNode context) throws LookupError, ASTNotImplementedException;
+	public ILookupResult lookup( String prefix, LookupKind[] kind, IASTNode context, IASTExpression functionParameters) throws LookupError, ASTNotImplementedException;
 }
 

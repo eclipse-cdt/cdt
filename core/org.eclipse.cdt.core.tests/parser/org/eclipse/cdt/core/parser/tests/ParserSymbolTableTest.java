@@ -2652,7 +2652,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol anotherVar = table.newSymbol( "anotherVar", TypeInfo.t_int );
 		foo.addSymbol( anotherVar );
 		
-		List results = foo.prefixLookup( null, "a", false );
+		List results = foo.prefixLookup( null, "a", false, null );
 		assertTrue( results != null );
 		assertEquals( results.size(), 2 );
 		
@@ -2686,7 +2686,7 @@ public class ParserSymbolTableTest extends TestCase {
 		D.addSymbol( aField );
 		D.addSymbol( aMethod );
 		
-		List results = D.prefixLookup( null, "a", true );
+		List results = D.prefixLookup( null, "a", true, null );
 		
 		assertTrue( results != null );
 		assertEquals( results.size(), 2 );
@@ -2738,7 +2738,7 @@ public class ParserSymbolTableTest extends TestCase {
 		B.addSymbol( af2 );
 		
 		
-		List results = B.prefixLookup( null, "a", true );
+		List results = B.prefixLookup( null, "a", true, null );
 		
 		assertTrue( results != null );
 		assertEquals( results.size(), 3 );
@@ -2803,7 +2803,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f.addUsingDirective( V );
 		f.addUsingDirective( W );
 		
-		List results = f.prefixLookup( null, "a", false );
+		List results = f.prefixLookup( null, "a", false, null );
 		
 		assertTrue( results != null );
 		assertEquals( results.size(), 1 );
@@ -2946,7 +2946,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol aLocal = table.newSymbol( "aLocal", TypeInfo.t_int );
 		f.addSymbol( aLocal );
 		
-		List results = f.prefixLookup( new TypeFilter( LookupKind.STRUCTURES ), "A", false );
+		List results = f.prefixLookup( new TypeFilter( LookupKind.STRUCTURES ), "A", false, null );
 		
 		assertEquals( results.size(), 3 );
 		
@@ -2954,7 +2954,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertTrue( results.contains( A2 ) );
 		assertTrue( results.contains( a3 ) );
 		
-		results = f.prefixLookup( null, "a", false );
+		results = f.prefixLookup( null, "a", false, null );
 		assertEquals( results.size(), 7 );
 		assertTrue( results.contains( aF ) );
 		assertTrue( results.contains( A2 ) );
@@ -2964,23 +2964,23 @@ public class ParserSymbolTableTest extends TestCase {
 		assertTrue( results.contains( aa ) );
 		assertTrue( results.contains( aLocal ) );
 		
-		results = f.prefixLookup( new TypeFilter( LookupKind.FUNCTIONS ), "a", false );
+		results = f.prefixLookup( new TypeFilter( LookupKind.FUNCTIONS ), "a", false, null );
 		assertEquals( results.size(), 1 );
 		assertTrue( results.contains( aFoo ) );
 		
-		results = f.prefixLookup( new TypeFilter( LookupKind.METHODS ), "a", false );
+		results = f.prefixLookup( new TypeFilter( LookupKind.METHODS ), "a", false, null );
 		assertEquals( results.size(), 1 );
 		assertTrue( results.contains( aF ) );
 		
-		results = f.prefixLookup( new TypeFilter( LookupKind.LOCAL_VARIABLES ), "a", false );
+		results = f.prefixLookup( new TypeFilter( LookupKind.LOCAL_VARIABLES ), "a", false, null );
 		assertEquals( results.size(), 1 );
 		assertTrue( results.contains( aLocal ) );
 		
-		results = f.prefixLookup( new TypeFilter( LookupKind.VARIABLES ), "a", false );
+		results = f.prefixLookup( new TypeFilter( LookupKind.VARIABLES ), "a", false, null );
 		assertEquals( results.size(), 1 );
 		assertTrue( results.contains( aa ) );
 		
-		results = f.prefixLookup( new TypeFilter( LookupKind.FIELDS), "a", false );
+		results = f.prefixLookup( new TypeFilter( LookupKind.FIELDS), "a", false, null );
 		assertEquals( results.size(), 1 );
 		assertTrue( results.contains( a3_int ) );
 	}

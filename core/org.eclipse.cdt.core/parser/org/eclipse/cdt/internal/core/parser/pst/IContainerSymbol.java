@@ -80,13 +80,14 @@ public interface IContainerSymbol extends ISymbol {
 	 * @param filter
 	 * @param prefix
 	 * @param qualified
+	 * @param paramList TODO
 	 * @return
 	 * @throws ParserSymbolTableException
 	 *   Reason: r_BadTypeInfo if during lookup, we come across a class inheriting from a symbol which is not an
 	 *                            IDerivableContainerSymbol
 	 *           r_CircularInheritance if during lookup, we come across a class with a circular inheritance tree
 	 */
-	public List prefixLookup( TypeFilter filter, String prefix, boolean qualified ) throws ParserSymbolTableException;
+	public List prefixLookup( TypeFilter filter, String prefix, boolean qualified, List paramList ) throws ParserSymbolTableException;
 	
 	/**
 	 * Lookups

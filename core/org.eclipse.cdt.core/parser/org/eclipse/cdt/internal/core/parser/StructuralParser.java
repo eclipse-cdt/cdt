@@ -1,5 +1,5 @@
 /*
- * Created on Dec 5, 2003
+ * Created on Dec 8, 2003
  *
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
@@ -8,6 +8,7 @@ package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -25,28 +26,35 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class QuickParser extends Parser {
+public class StructuralParser extends Parser implements IParser {
 
 	/**
 	 * @param scanner
-	 * @param callback
-	 * @param mode
+	 * @param ourCallback
 	 * @param language
-	 * @param log
+	 * @param logService
 	 */
-	public QuickParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log) {
-		super(scanner, callback, language, log);
-		astFactory = ParserFactory.createASTFactory( ParserMode.QUICK_PARSE, language);
+	public StructuralParser(IScanner scanner, ISourceElementRequestor ourCallback, ParserLanguage language, IParserLogService logService) {
+		super(scanner, ourCallback, language, logService);
+		astFactory = ParserFactory.createASTFactory( ParserMode.COMPLETE_PARSE, language);
 		scanner.setASTFactory(astFactory);
 	}
 
-	protected void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws Backtrack, EndOfFile
-	{
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleFunctionBody(org.eclipse.cdt.core.parser.ast.IASTScope, boolean)
+	 */
+	protected void handleFunctionBody(
+		IASTScope scope,
+		boolean isInlineFunction)
+		throws Backtrack, EndOfFile {
 		skipOverCompoundStatement();
 	}
 
-	protected void catchBlockCompoundStatement(IASTScope scope) throws Backtrack, EndOfFile 
-	{
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#catchBlockCompoundStatement(org.eclipse.cdt.core.parser.ast.IASTScope)
+	 */
+	protected void catchBlockCompoundStatement(IASTScope scope)
+		throws Backtrack, EndOfFile {
 		skipOverCompoundStatement();
 	}
 	
@@ -64,5 +72,5 @@ public class QuickParser extends Parser {
 		throw new ParserNotImplementedException();
 	}
 	
-	
+
 }

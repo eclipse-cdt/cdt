@@ -37,7 +37,7 @@ public interface IParser {
 	 * @param offset  offset in the input file where code completion is being requested for 
 	 * @return		an IASTCompletionConstruct that provides a mechanism for determining C/C++ code completion contributions
 	 */
-	public IASTCompletionNode parse( int offset );
+	public IASTCompletionNode parse( int offset )throws ParserNotImplementedException;
 	
 	/**
 	 * 
@@ -45,7 +45,7 @@ public interface IParser {
 	 * @param endingOffset
 	 * @return
 	 */
-	public IASTNode                          parse( int startingOffset, int endingOffset );
+	public IASTNode                          parse( int startingOffset, int endingOffset ) throws ParserNotImplementedException;
 	
 	
 	/**

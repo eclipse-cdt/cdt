@@ -73,13 +73,13 @@ public abstract class Parser implements IParser
 	private static final List EMPTY_LIST = new ArrayList();
     private static int DEFAULT_OFFSET = -1;
     // sentinel initial value for offsets 
-    private int firstErrorOffset = DEFAULT_OFFSET;
+    protected int firstErrorOffset = DEFAULT_OFFSET;
     // offset where the first parse error occurred
    
     // are we doing the high-level parse, or an in depth parse?
-    private boolean parsePassed = true; // did the parse pass?
-    private ParserLanguage language = ParserLanguage.CPP; // C or CPP
-    private ISourceElementRequestor requestor = null;
+    protected boolean parsePassed = true; // did the parse pass?
+    protected ParserLanguage language = ParserLanguage.CPP; // C or CPP
+    protected ISourceElementRequestor requestor = null;
     // new callback mechanism
     protected IASTFactory astFactory = null; // ast factory
     /**
@@ -143,7 +143,8 @@ public abstract class Parser implements IParser
                 + (parsePassed ? "" : " - parse failure") );
         return parsePassed;
     }
-
+        
+    
     /**
      * This is the top-level entry point into the ANSI C++ grammar.  
      * 
@@ -703,6 +704,7 @@ public abstract class Parser implements IParser
         IASTTemplate ownerTemplate)
         throws Backtrack
     {
+    	setCurrentScope(scope);
         switch (LT(1))
         {
             case IToken.t_asm :
@@ -5095,16 +5097,22 @@ public abstract class Parser implements IParser
             }
         }
     }
+
     // the static instance we always use
     private static Backtrack backtrack = new Backtrack();
     // the static instance we always use
     public static EndOfFile endOfFile = new EndOfFile();
     // Token management
-    private IScanner scanner;
-    private IToken currToken, // current token we plan to consume next 
+    
+    protected IScanner scanner;
+    protected IToken currToken, // current token we plan to consume next 
     lastToken; // last token we consumed
     
     private int highWaterOffset = 0; 
+    
+    protected void setCurrentScope( IASTScope scope )
+    {
+    }
     
     /**
      * Fetches a token from the scanner. 
@@ -5239,20 +5247,12 @@ public abstract class Parser implements IParser
     {
         return firstErrorOffset;
     }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParser#parse(int)
-	 */
-	public IASTCompletionNode parse(int offset) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParser#parse(int, int)
-	 */
-	public IASTNode parse(int startingOffset, int endingOffset) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+    
+    protected void setCompletionContext( IASTNode node )
+    {
+    }
+    
+    protected void setCompletionKind( IASTCompletionNode.CompletionKind kind )
+    {
+    }    
 }

@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser;
 import java.io.Reader;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.internal.core.parser.*;
 import org.eclipse.cdt.internal.core.parser.CompleteParser;
 import org.eclipse.cdt.internal.core.parser.LineOffsetReconciler;
 import org.eclipse.cdt.internal.core.parser.Preprocessor;
@@ -46,6 +47,10 @@ public class ParserFactory {
 		ISourceElementRequestor ourCallback = (( callback == null) ? new NullSourceElementRequestor() : callback );
 		if( ourMode == ParserMode.COMPLETE_PARSE)
 			return new CompleteParser( scanner, ourCallback, language, logService );
+		else if( ourMode == ParserMode.STRUCTURAL_PARSE )
+			return new StructuralParser( scanner, ourCallback, language, logService );
+		else if( ourMode == ParserMode.CONTEXTUAL_PARSE )
+			return new ContextualParser( scanner, ourCallback, language, logService );
 		else
 			return new QuickParser( scanner, ourCallback, language, logService );
     }

@@ -2351,7 +2351,7 @@ public class Scanner implements IScanner {
 		Object newDefinition, int beginningOffset )
 		throws ScannerException 
 		{
-			if( mode == ParserMode.COMPLETE_PARSE && previousDefinition != null ) 
+			if( mode != ParserMode.QUICK_PARSE && previousDefinition != null ) 
 			{
 				if( newDefinition instanceof IMacroDescriptor )
 				{

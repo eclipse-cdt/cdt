@@ -49,7 +49,26 @@ public interface IASTCompletionNode {
 	}
 
 
-	public CompletionKind	getCompletionKind(); 
+	/**
+	 * @return		kind of completion expected
+	 */
+	public CompletionKind	getCompletionKind();
+	
+	/**
+	 * @return		the scope the code completion is within
+	 * 				should never be null 
+	 */
+	public IASTScope		getCompletionScope(); 
+	
+	/**
+	 * @return		the context (inter-statement) 
+	 * 		e.g.  LHS of postfix expression a->b, a.b or qualified name a::b is 'a'	
+	 * 		this can be null
+	 */
 	public IASTNode			getCompletionContext(); 
+
+	/**
+	 * @return		the prefix
+	 */
 	public String			getCompletionPrefix(); 
 }

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -38,6 +39,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
@@ -80,6 +82,34 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	private Button symbolUp;
 	private Button symbolDown;
 	private Shell shell;
+	
+	/**
+	 * This class add a "browse" button to the selection to be used for the path
+	 */
+	class SelectPathInputDialog extends InputDialog {
+		public SelectPathInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator) {
+			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
+		}
+		
+		protected void createButtonsForButtonBar(Composite parent) {
+			super.createButtonsForButtonBar(parent);
+			Button browse = createButton(parent, 3, "Browse...", true);
+			browse.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent ev) {
+					DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
+					String currentName = getText().getText();
+					if(currentName != null && currentName.trim().length() != 0) {
+						dialog.setFilterPath(currentName);
+					}
+					String dirname = dialog.open();
+					if(dirname != null) {
+						getText().setText(dirname);
+					}
+				}
+			});
+		}
+
+	}
 
 	public BuildPathInfoBlock() {
 		super(MakeUIPlugin.getResourceString(LABEL));
@@ -349,13 +379,14 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		if (index != -1) {
 			String selItem = pathList.getItem(index);
 			if (selItem != null) {
-				InputDialog dialog =
-					new InputDialog(
-						shell,
-						MakeUIPlugin.getResourceString(EDIT_PATH_TITLE),
-						MakeUIPlugin.getResourceString(PATH_LABEL),
-						selItem,
-						null);
+				InputDialog dialog = 
+				 	new SelectPathInputDialog(
+				 		shell, 
+				 		MakeUIPlugin.getResourceString(EDIT_PATH_TITLE), 
+				 		MakeUIPlugin.getResourceString(PATH_LABEL), 
+				 		selItem, 
+				 		null); 
+
 				String newItem = null;
 				if (dialog.open() == InputDialog.OK) {
 					newItem = dialog.getValue();
@@ -488,7 +519,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 
 	protected void handleAddPath() {
 		// Popup an entry dialog
-		InputDialog dialog = new InputDialog(shell, MakeUIPlugin.getResourceString(PATH_TITLE), MakeUIPlugin.getResourceString(PATH_LABEL), "", null); //$NON-NLS-1$
+		InputDialog dialog = new SelectPathInputDialog(shell, MakeUIPlugin.getResourceString(PATH_TITLE), MakeUIPlugin.getResourceString(PATH_LABEL), "", null); //$NON-NLS-1$
 		String path = null;
 		if (dialog.open() == InputDialog.OK) {
 			path = dialog.getValue();

@@ -6,6 +6,8 @@ package org.eclipse.cdt.internal.ui.util;
  */
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -22,6 +24,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorDescriptor;
@@ -113,6 +117,20 @@ public class EditorUtility {
 	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
 		if (file != null) {
 		try {
+				File tempFile = file.getRawLocation().toFile();
+				
+				if (tempFile != null){
+					String canonicalPath = null;
+					try {
+						canonicalPath = tempFile.getCanonicalPath();
+					} catch (IOException e1) {}
+					
+					if (canonicalPath != null){
+						IPath path = new Path(canonicalPath);
+						file = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
+					}
+				}
+				
 				IEditorInput input = getEditorInput(file);
 				if (input != null) {
 					return openInEditor(input, getEditorID(input, file), activate);

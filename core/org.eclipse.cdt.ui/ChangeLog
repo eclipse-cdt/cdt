@@ -1,3 +1,9 @@
+2004-06-18 Bogdan Gheorghe
+	Partial Fix for Bug 62668: [Search] Search results rely on case of file names in include statement
+	rather then the filesystem
+	
+	* src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
+	
 2004-06-17 Hoda Amer
 	Fix for PR 63933: [Refactoring] compilation errors does not prevent rename refactoring
 	Fix for PR 64213: [Refactoring] No warning given when renaming class A to B when B already exists

@@ -70,4 +70,13 @@ public interface ICDIVariableObject extends ICDIObject {
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	String getQualifiedName() throws CDIException;
+
+	/**
+	 * Returns true if the variable Object are the same,
+	 * For example event if the name is the same because of
+	 * casting this may return false;
+	 * @return true if the same
+	 */
+	boolean equals(ICDIVariableObject varObject);
+
 }

@@ -288,4 +288,35 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 		return qualifiedName;
 	}
 
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#equals(ICDIVariableObject)
+	 */
+	public boolean equals(ICDIVariableObject varObj) {
+		if (varObj instanceof VariableObject) {
+			VariableObject var = (VariableObject) varObj;
+			if (var.getName().equals(getName())
+				&& var.getCastingArrayStart() == getCastingArrayStart()
+				&& var.getCastingArrayEnd() == getCastingArrayEnd()
+				&& ((var.getCastingType() == null && getCastingType() == null)
+					|| (var.getCastingType() != null && getCastingType() != null && var.getCastingType().equals(getCastingType())))) {
+				ICDIStackFrame varFrame = null;
+				ICDIStackFrame ourFrame = null;
+				try {
+					varFrame = var.getStackFrame();
+					ourFrame = getStackFrame();
+				} catch (CDIException e) {
+				}
+				if (ourFrame == null && varFrame == null) {
+					return true;
+				} else if (varFrame != null && ourFrame != null && varFrame.equals(ourFrame)) {
+					if (var.getStackDepth() == getStackDepth()) {
+						if (var.getPosition() == getPosition()) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return super.equals(varObj);
+	}
 }

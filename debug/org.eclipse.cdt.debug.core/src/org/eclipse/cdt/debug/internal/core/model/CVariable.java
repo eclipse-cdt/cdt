@@ -164,6 +164,13 @@ public abstract class CVariable extends CDebugElement
 		{
 			return ( fVariableObject != null ) ? fVariableObject.getQualifiedName() : null;
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#equals(org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject)
+		 */
+		public boolean equals(ICDIVariableObject varObject) {
+			return super.equals(varObject);
+		}
 	}
 
 	class InternalVariable

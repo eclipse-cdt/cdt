@@ -116,23 +116,17 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		}
 
 		public void flush() throws IOException {
-			flush(false);
-		}
-
-		public void flush(boolean force) throws IOException {
-			if (force || fBuffer.length() > 512) {
-				Display.getDefault().syncExec(new Runnable() {
-					public void run() {
-						if (BuildConsolePreferencePage.isConsoleOnTop())
-							bringConsoleOnTop();
-						try {
-							int len = fDocument.getLength();
-							fDocument.replace(len, 0, readBuffer());
-						} catch (BadLocationException x) {
-						}
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					if (BuildConsolePreferencePage.isConsoleOnTop())
+						bringConsoleOnTop();
+					try {
+						int len = fDocument.getLength();
+						fDocument.replace(len, 0, readBuffer());
+					} catch (BadLocationException x) {
 					}
-				});
-			}
+				}
+			});
 		}
 
 		void bringConsoleOnTop() {
@@ -160,7 +154,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		}
 
 		public void close() throws IOException {
-			flush(true);
+			flush();
 		}
 
 	}

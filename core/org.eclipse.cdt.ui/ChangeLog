@@ -1,3 +1,9 @@
+2003-03-12 David Inglis
+	* src/org/eclipse/cdt/internal/ui/BuildConsoleManager.java,v
+	Removed buffering of build console as it was preventing output from being
+	visible during long builds.
+	http://bugs.eclipse.org/bugs/show_bug.cgi?id=32012
+	
 2003-03-02 Alain Magloire
 
 	* src/org/eclipse/cdt/ui/wizards/BinaryParserBlock.java:

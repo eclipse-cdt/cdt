@@ -511,5 +511,16 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTVariable variableY = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 	}
+	
+	public void testNewXReferences() throws Exception
+	{
+		Iterator declarations = parse( "const int max = 5;\n int * x = new int[max];").getDeclarations();
+		IASTVariable max = (IASTVariable) declarations.next();
+		IASTVariable x = (IASTVariable) declarations.next(); 
+		assertFalse( declarations.hasNext() );
+		assertEquals( callback.getReferences().size(), 1 );
+		IASTVariableReference maxRef = (IASTVariableReference) callback.getReferences().get(0);
+		assertEquals( maxRef.getReferencedElement(), max );
+	}
 
 }

@@ -107,8 +107,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	                    result = startingScope.lookup( firstSymbol.getImage());
 	                    if( result != null ) 
 							references.add( createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
-						//else
-						//	throw new ASTSemanticException();    
+						else
+							throw new ASTSemanticException();    
 	                }
 	                catch (ParserSymbolTableException e)
 	                {

@@ -117,4 +117,16 @@ public class GCCQuickParseExtensionsTest extends BaseASTTest {
         code.write("double w = __imag__ x; // imaginary part of expression\n"); //$NON-NLS-1$
         parse(code.toString());
     }
+    
+    public void testBug39681() throws Exception
+    {
+        Writer code = new StringWriter();
+        code.write("double\n"); //$NON-NLS-1$
+        code.write("foo (double a, double b)\n"); //$NON-NLS-1$
+        code.write("{\n"); //$NON-NLS-1$
+        code.write("  double square (double z) { return z * z; }\n"); //$NON-NLS-1$
+        code.write("  return square (a) + square (b);\n"); //$NON-NLS-1$
+        code.write("}\n"); //$NON-NLS-1$
+        parse(code.toString());
+    }
 }

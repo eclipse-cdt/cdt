@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 
@@ -22,7 +23,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDISession;
  * 
  * @since Jul 8, 2002
  */
-public interface ICDITarget extends ICDIObject {
+public interface ICDITarget extends ICDIBreakpointManagement, ICDIObject {
 	/**
 	 * Returns the debug session this target is contained in.
 	 * 
@@ -212,4 +213,20 @@ public interface ICDITarget extends ICDIObject {
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICDIThread getCurrentThread() throws CDIException;
+
+	/**
+	 * Return a ICDICondition
+	 */
+	ICDICondition createCondition(int ignoreCount, String expression);
+
+	/**
+	 * Returns a ICDILocation
+	 */
+	ICDILocation createLocation(String file, String function, int line);
+
+	/**
+	 * Returns a ICDILocation
+	 */
+	ICDILocation createLocation(long address);
+
 }

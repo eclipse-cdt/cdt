@@ -1,3 +1,8 @@
+2004-09-07 Alain Magloire
+	New interfaces to Target.
+	* ICDITarget.java
+	* ICDIBreakpointManagement.java
+
 2004-09-03 Mikhail Khodjaiants
 	Made global variables persistent.
 	* CDIDebugModel.java

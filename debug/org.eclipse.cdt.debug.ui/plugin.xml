@@ -354,5 +354,16 @@
             id="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler">
       </statusHandler>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.debugActionGroups">
+      <debugActionGroup
+            name="%CDebugActionGroup.name"
+            visible="true"
+            id="org.eclipse.cdt.debug.ui.cDebugActionGroup">
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate">
+         </action>
+      </debugActionGroup>
+   </extension>
 
 </plugin>

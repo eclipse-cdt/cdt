@@ -38,7 +38,7 @@ public class CParameter implements IParameter {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return null;
+		return parameterDeclaration.getDeclarator().getName().toString();
 	}
 
 	/* (non-Javadoc)

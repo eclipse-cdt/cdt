@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -24,29 +23,31 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 
 /**
  * Created on Nov 8, 2004
  * @author aniefer
  */
 public class CStructure implements ICompositeType {
-	private IASTDeclSpecifier declSpec;
+	final private IASTDeclSpecifier declSpec;
 	
 	public CStructure( IASTDeclSpecifier declSpec ){
+		declSpec = checkForDefinition( declSpec );
 		this.declSpec = declSpec;
-		checkForDefinition();
 	}
 	
-	private void checkForDefinition(){
+	private IASTDeclSpecifier checkForDefinition( IASTDeclSpecifier declSpec ){
 		if( declSpec instanceof ICASTCompositeTypeSpecifier )
-			return;
+			return declSpec;
 		
-		IASTDeclSpecifier spec = CVisitor.findDefinition( (IASTElaboratedTypeSpecifier) declSpec );
+		IASTDeclSpecifier spec = CVisitor.findDefinition( (ICASTElaboratedTypeSpecifier) declSpec );
 		if( spec != null && spec instanceof ICASTCompositeTypeSpecifier ){
-			this.declSpec = spec;
+			declSpec = spec;
 			ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) spec;
 			((CASTName)compTypeSpec.getName()).setBinding( this );
 		}
+		return declSpec;
 	}
 	
 	/* (non-Javadoc)
@@ -55,8 +56,8 @@ public class CStructure implements ICompositeType {
 	public String getName() {
 		if( declSpec instanceof ICASTCompositeTypeSpecifier )
 			return ((ICASTCompositeTypeSpecifier)declSpec).getName().toString();
-		else if( declSpec instanceof IASTElaboratedTypeSpecifier )
-			return ((IASTElaboratedTypeSpecifier)declSpec).getName().toString();
+		else if( declSpec instanceof ICASTElaboratedTypeSpecifier )
+			return ((ICASTElaboratedTypeSpecifier)declSpec).getName().toString();
 		
 		return ""; //$NON-NLS-1$
 	}

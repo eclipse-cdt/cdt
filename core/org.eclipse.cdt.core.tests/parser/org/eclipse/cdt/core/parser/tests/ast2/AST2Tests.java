@@ -26,6 +26,8 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -35,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
@@ -611,6 +612,34 @@ public class AST2Tests extends TestCase {
     }
     
     public void testSimpleFunction() throws Exception {
+    	StringBuffer buffer = new StringBuffer( "void f( int a, int b ) { }  \n" ); //$NON-NLS-1$
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+    	
+    	IASTFunctionDefinition fDef = (IASTFunctionDefinition) tu.getDeclarations().get(0);
+    	IASTFunctionDeclarator fDtor = fDef.getDeclarator();
+    	IASTName fName = fDtor.getName();
+    	
+    	IASTParameterDeclaration a = (IASTParameterDeclaration) fDtor.getParameters().get( 0 );
+    	IASTName name_a = a.getDeclarator().getName();
+    	
+    	IASTParameterDeclaration b = (IASTParameterDeclaration) fDtor.getParameters().get( 1 );
+    	IASTName name_b = b.getDeclarator().getName();
+    	
+    	IFunction function = (IFunction) fName.resolveBinding();
+    	IParameter param_a = (IParameter) name_a.resolveBinding();
+    	IParameter param_b = (IParameter) name_b.resolveBinding();
+    	
+    	assertEquals( "f", function.getName() ); //$NON-NLS-1$
+    	assertEquals( "a", param_a.getName() ); //$NON-NLS-1$
+    	assertEquals( "b", param_b.getName() ); //$NON-NLS-1$
+    	
+    	List params = function.getParameters();
+    	assertEquals( 2, params.size() );
+    	assertSame( params.get(0), param_a );
+    	assertSame( params.get(1), param_b );
+    }
+    
+    public void testSimpleFunctionCall() throws Exception {
     	StringBuffer buffer = new StringBuffer();
     	buffer.append( "void f();              \n" ); //$NON-NLS-1$
     	buffer.append( "void g() {             \n" ); //$NON-NLS-1$
@@ -627,19 +656,77 @@ public class AST2Tests extends TestCase {
     	
     	//void g() {
     	IASTFunctionDefinition gdef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
-    	IASTFunctionDeclarator gdtor = gdef.getDeclarator();
-    	IASTName name_g = gdtor.getName();
     	
     	//   f();
     	IASTCompoundStatement compound = (IASTCompoundStatement) gdef.getBody();
-    	IASTStatement statement = (IASTStatement) compound.getStatements().get(0);
-    	assertTrue( statement instanceof IASTExpressionStatement );
-    	IASTExpressionStatement expStatement = (IASTExpressionStatement) statement;
-    	IASTExpression exp = expStatement.getExpression();
+    	IASTExpressionStatement expStatement = (IASTExpressionStatement) compound.getStatements().get(0);
+    	IASTFunctionCallExpression fcall = (IASTFunctionCallExpression) expStatement.getExpression();
+    	IASTIdExpression fcall_id = (IASTIdExpression) fcall.getFunctionNameExpression();
+    	IASTName name_fcall = fcall_id.getName();
+    	assertNull( fcall.getParameterExpression() );
     	
     	//void f() {}
-    	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
+    	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations().get(2);
     	fdtor = fdef.getDeclarator();
     	IASTName name_fdef = fdtor.getName();
+    	
+    	//bindings
+    	IFunction function_1 = (IFunction) name_fcall.resolveBinding();
+    	IFunction function_2 = (IFunction) name_f.resolveBinding();
+    	IFunction function_3 =  (IFunction) name_fdef.resolveBinding();
+    	
+    	assertNotNull( function_1 );
+    	assertSame( function_1, function_2 );
+    	assertSame( function_2, function_3 );
+    }
+    
+    public void testForLoop() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append( "void f() {                         \n"); //$NON-NLS-1$
+    	buffer.append( "   for( int i = 0; i < 5; i++ ) {  \n"); //$NON-NLS-1$         
+    	buffer.append( "      i;                           \n"); //$NON-NLS-1$
+    	buffer.append( "   }                               \n"); //$NON-NLS-1$
+    	buffer.append( "}                                  \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+    	
+    	//void f() {
+    	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations().get(0);
+    	IASTCompoundStatement compound = (IASTCompoundStatement) fdef.getBody();
+    	
+    	//   for( 
+    	IASTForStatement for_stmt = (IASTForStatement) compound.getStatements().get(0);
+    	//        int i = 0;
+    	assertNull( for_stmt.getInitExpression() );
+    	IASTSimpleDeclaration initDecl = (IASTSimpleDeclaration) for_stmt.getInitDeclaration();
+    	IASTDeclarator dtor = (IASTDeclarator) initDecl.getDeclarators().get(0);
+    	IASTName name_i = dtor.getName();
+    	//                   i < 5;
+    	IASTBinaryExpression exp = (IASTBinaryExpression) for_stmt.getCondition();
+    	IASTIdExpression id_i = (IASTIdExpression) exp.getOperand1();
+    	IASTName name_i2 = id_i.getName();
+    	IASTLiteralExpression lit_5 = (IASTLiteralExpression) exp.getOperand2();
+    	assertEquals( IASTLiteralExpression.lk_integer_constant, lit_5.getKind() );
+    	//                           i++ ) {
+    	IASTUnaryExpression un = (IASTUnaryExpression) for_stmt.getIterationExpression();
+    	IASTIdExpression id_i2 = (IASTIdExpression) un.getOperand();
+    	IASTName name_i3 = id_i2.getName();
+    	assertEquals( IASTUnaryExpression.op_postFixIncr, un.getOperator() );
+    	
+    	//      i;
+    	compound = (IASTCompoundStatement) for_stmt.getBody();
+    	IASTExpressionStatement exprSt = (IASTExpressionStatement) compound.getStatements().get(0);
+    	IASTIdExpression id_i3 = (IASTIdExpression) exprSt.getExpression();
+    	IASTName name_i4 = id_i3.getName();
+    	
+    	//bindings
+    	IVariable var_1 = (IVariable) name_i4.resolveBinding();
+    	IVariable var_2 = (IVariable) name_i.resolveBinding();
+    	IVariable var_3 = (IVariable) name_i2.resolveBinding();
+    	IVariable var_4 = (IVariable) name_i3.resolveBinding();
+    	
+    	assertSame( var_1, var_2 );
+    	assertSame( var_2, var_3 );
+    	assertSame( var_3, var_4 );
     }
 }

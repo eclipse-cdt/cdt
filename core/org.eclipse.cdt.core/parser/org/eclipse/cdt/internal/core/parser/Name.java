@@ -59,7 +59,7 @@ public class Name {
 	
 	public int length()
 	{
-		return getEndOffset() - getStartOffset() + nameEnd.getImage().length();
+		return getEndOffset() - getStartOffset() + nameEnd.getLength();
 	}
 	/**
 	 * @return

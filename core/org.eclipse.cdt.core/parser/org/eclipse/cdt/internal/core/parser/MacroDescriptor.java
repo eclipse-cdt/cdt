@@ -29,7 +29,7 @@ public class MacroDescriptor implements IMacroDescriptor {
 	 * definition.
 	 * @param tokens		An ordered list of tokens that describe the
 	 * RHS expansion in the macro definition.
-	 * @param sig			The complete signature of the macro, as a string.  
+	 * @param sig			The complete signature of the macro, as a string.
 	 */
 	public void initialize( String name, List identifiers, List tokens, String sig )
 	{
@@ -67,7 +67,7 @@ public class MacroDescriptor implements IMacroDescriptor {
 	{
 		return name;
 	}
-	
+    
 	/**
 	 * @see java.lang.Object#toString()
 	 */

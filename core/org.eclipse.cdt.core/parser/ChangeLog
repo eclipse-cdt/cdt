@@ -1,3 +1,6 @@
+2003-06-20 Victor Mozgin
+	Fixed PR 36463 : Offsets of macros are incorrect.
+	
 2003-06-17 Victor Mozgin
 	Implemented correct handling of nested declarators in CModelBuilder.
 	Added proper support for function pointers as parameters.

@@ -723,10 +723,10 @@ public class ScannerTestCase extends BaseScannerTest
 			assertNotNull(parms);
 			assertTrue(expansion.size() == 3);
 			assertTrue(((Token) expansion.get(0)).type == IToken.tIDENTIFIER);
-			assertTrue(((Token) expansion.get(0)).image.equals("x"));
+			assertTrue(((Token) expansion.get(0)).getImage().equals("x"));
 			assertTrue(((Token) expansion.get(1)).type == IToken.tPLUS);
 			assertTrue(((Token) expansion.get(2)).type == IToken.tINTEGER);
-			assertTrue(((Token) expansion.get(2)).image.equals("1"));
+			assertTrue(((Token) expansion.get(2)).getImage().equals("1"));
 
 			validateIdentifier("y");
 			validateToken(IToken.tASSIGN);

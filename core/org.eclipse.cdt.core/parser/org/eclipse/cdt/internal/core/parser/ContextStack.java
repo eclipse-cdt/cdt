@@ -36,9 +36,23 @@ public class ContextStack {
 		super();
 	}
 
-	public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ScannerException {
+    public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ScannerException {
+        updateContext(reader, filename, type, inclusion, requestor, -1, -1);
+    }
+  
+	public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor, int macroOffset, int macroLength) throws ScannerException 
+    {
+        // If we expand a macro within a macro, then keep offsets of the top-level one,
+        // as only the top level macro identifier is properly positioned    
+        if (type == IScannerContext.MACROEXPANSION) {
+            if (currentContext.getKind() == IScannerContext.MACROEXPANSION) {
+                macroOffset = currentContext.getMacroOffset();
+                macroLength = currentContext.getMacroLength();
+            }
+        }
+        
 		undoStack.clear();
-		push( new ScannerContext().initialize(reader, filename, type, null ), requestor );	
+		push( new ScannerContext().initialize(reader, filename, type, null, macroOffset, macroLength ), requestor );	
 	}
 	
 	protected void push( IScannerContext context, ISourceElementRequestor requestor ) throws ScannerException

@@ -26,12 +26,12 @@ public class Name {
 	
 	public int getStartOffset()
 	{
-		return nameStart.offset;
+		return nameStart.getOffset();
 	}
 	
 	public int getEndOffset()
 	{
-		return nameEnd.offset;
+		return nameEnd.getOffset();
 	}
 
 	public String toString() {
@@ -53,7 +53,7 @@ public class Name {
 	
 	public int length()
 	{
-		return getEndOffset() - getStartOffset() + nameEnd.getImage().length();
+		return getEndOffset() - getStartOffset() + nameEnd.getLength();
 	}
 	/**
 	 * @return

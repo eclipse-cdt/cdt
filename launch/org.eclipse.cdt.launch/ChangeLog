@@ -1,3 +1,9 @@
+2003-03-17 Alain Magloire
+
+	* src/.../internal/ui/CApplicationLaunchShortcut.java:
+	* plugin.xml:
+	Specify in the texts that this is a "C Local Application"
+	
 2002-12-17 David Inglis
 	
 	* src/.../launch/AbstractCLaunchDelegate.java(setDefaultSourceLocator): new method

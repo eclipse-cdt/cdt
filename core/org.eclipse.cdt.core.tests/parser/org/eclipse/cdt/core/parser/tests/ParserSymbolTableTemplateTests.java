@@ -1954,75 +1954,85 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	 * template< class T > void f( T );
 	 * template< class T > void f( T * );
 	 * 
-	 * template <> void f( int * );        //ambiguous
-	 * template <> void f< int >( int * ); //OK
-	 * template <> void f( char );         //OK
+	 * template <> void f<int *>( int * );
+	 * template <> void f< int >( int * );
+	 * template <> void f( char );        
 	 * 
 	 * @throws Exception
 	 */
 	public void test_14_7_3__12_ExplicitSpecializationOverloadedFunction() throws Exception{
-		//TODO
-//		newTable();
-//		
-//		ITemplateSymbol template1 = table.newTemplateSymbol( "f" );
-//		ISymbol T1 = table.newSymbol( "T", TypeInfo.t_templateParameter );
-//		template1.addTemplateParameter( T1 );
-//		
-//		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-//		f1.addParameter( T1, 0, null, false );
-//		
-//		template1.addSymbol( f1 );
-//		
-//		table.getCompilationUnit().addSymbol( template1 );
-//		
-//		ITemplateSymbol template2 = table.newTemplateSymbol( "f" );
-//		ISymbol T2 = table.newSymbol( "T", TypeInfo.t_templateParameter );
-//		template2.addTemplateParameter( T2 );
-//		
-//		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-//		f2.addParameter( T2, 0, new PtrOp( PtrOp.t_pointer ), false );
-//		
-//		template2.addSymbol( f2 );
-//		table.getCompilationUnit().addSymbol( template2 );
-//		
-//		List params = new LinkedList();
-//		
-//		ITemplateFactory factory = table.newTemplateFactory();
-//		ITemplateSymbol template = table.newTemplateSymbol( ParserSymbolTable.EMPTY_NAME );
-//		
-//		factory.pushTemplate( template );
-//				
-//		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-//		f3.addParameter( TypeInfo.t_int, 0, new PtrOp( PtrOp.t_pointer ), false );
-//		
-//		try{
-//			factory.addSymbol( f3 );
-//			assertTrue( false );
-//		} catch( ParserSymbolTableException e ){
-//			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
-//		}
-//		
-//		List args = new LinkedList();
-//		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
-//		
-//		factory = table.getCompilationUnit().lookupTemplateForMemberDefinition( "f", params, args );
-//		IParameterizedSymbol f4 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-//		f4.addParameter( TypeInfo.t_int, 0, new PtrOp( PtrOp.t_pointer ), false );
-//		factory.addSymbol( f4 );
-//
-//		args.clear();
-//		args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
-//		
-//		factory = table.getCompilationUnit().lookupTemplateForMemberDefinition( "f", params, args );
-//		IParameterizedSymbol f5 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-//		f5.addParameter( TypeInfo.t_char, 0, null, false );
-//		factory.addSymbol( f5 );
-//
-//		args.clear();
-//		args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
-//		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", args );
-//		assertTrue( look.isTemplateInstance() );
-//		assertEquals( look.getInstantiatedSymbol(), f5 );
+		newTable();
+		
+		ITemplateSymbol template1 = table.newTemplateSymbol( "f" );
+		ISymbol T1 = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		template1.addTemplateParameter( T1 );
+		
+		ITemplateFactory factory = table.newTemplateFactory();
+		factory.setContainingSymbol( table.getCompilationUnit() );
+		factory.pushTemplate( template1 );
+		
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f1.addParameter( T1, 0, null, false );
+		
+		factory.addSymbol( f1 );
+		
+		ITemplateSymbol template2 = table.newTemplateSymbol( "f" );
+		ISymbol T2 = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		template2.addTemplateParameter( T2 );
+		
+		factory = table.newTemplateFactory();
+		factory.setContainingSymbol( table.getCompilationUnit() );
+		factory.pushTemplate( template2 );
+		
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f2.addParameter( T2, 0, new PtrOp( PtrOp.t_pointer ), false );
+		
+		factory.addSymbol( f2 );
+		
+		List params = new LinkedList();
+		
+		factory = table.newTemplateFactory();
+		ITemplateSymbol template = table.newTemplateSymbol( ParserSymbolTable.EMPTY_NAME );
+		factory.setContainingSymbol( table.getCompilationUnit() );
+		factory.pushTemplate( template );
+				
+		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f3.addParameter( TypeInfo.t_int, 0, new PtrOp( PtrOp.t_pointer ), false );
+		
+		List args = new LinkedList();
+		args.add( new TypeInfo( TypeInfo.t_int, 0, null, new PtrOp( PtrOp.t_pointer ), false ) );
+		factory.addTemplateId( f3, args );
+		
+		args = new LinkedList();
+		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+		
+		template = table.newTemplateSymbol( ParserSymbolTable.EMPTY_NAME );
+		factory = table.newTemplateFactory();
+		factory.setContainingSymbol( table.getCompilationUnit() );
+		factory.pushTemplate( template );
+		
+		IParameterizedSymbol f4 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f4.addParameter( TypeInfo.t_int, 0, new PtrOp( PtrOp.t_pointer ), false );
+		factory.addTemplateId( f4, args );
+
+		args.clear();
+		args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
+
+		template = table.newTemplateSymbol( ParserSymbolTable.EMPTY_NAME );
+		factory = table.newTemplateFactory();
+		factory.setContainingSymbol( table.getCompilationUnit() );
+		factory.pushTemplate( template );
+		
+		IParameterizedSymbol f5 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f5.addParameter( TypeInfo.t_char, 0, null, false );
+		factory.addSymbol( f5 );
+
+		args.clear();
+		args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
+		
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", args );
+		assertTrue( look.isTemplateInstance() );
+		assertEquals( look.getInstantiatedSymbol(), f5 );
 	}
 
 	
@@ -2377,191 +2387,212 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	   *    char c;
 	   * }
 	   * 
-	   * template < class X > void < char, X >::f(){
+	   * template < class X > void A< char, X >::f(){
 	   *    float c;
 	   * }
 	   * 
 	   * A< int, char > a1;  //#1
-	   * A< int, int >  a2;  //#2
-	   * A< char, int > a3;  //#3
-	   * 
 	   * a1.f();  //#1
+	   * 
+	   * A< int, int >  a2;  //#2
 	   * a2.f();  //#2
+	   *
+	   * A< char, int > a3;  //#3
 	   * a3.f();  //#3
 	   * 
 	   * @throws Exception
 	   */
 	  public void testPartialSpecializationDefinitions() throws Exception{
-//	  	newTable();
-//	  	
-//	  	ITemplateSymbol template = table.newTemplateSymbol( "A" );
-//	  	ISymbol T1 = table.newSymbol( "T1", TypeInfo.t_templateParameter );
-//	  	ISymbol T2 = table.newSymbol( "T2", TypeInfo.t_templateParameter );
-//	  	template.addTemplateParameter( T1 );
-//	  	template.addTemplateParameter( T2 );
-//	  	
-//	  	ITemplateFactory factory = table.newTemplateFactory();
-//	  	factory.setContainingSymbol( table.getCompilationUnit() );
-//	  	factory.pushTemplate( template );
-//	  	
-//	  	IDerivableContainerSymbol A1 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
-//	  	factory.addSymbol( A1 );
-//	  	
-//	  	IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-//	  	f1.setIsForwardDeclaration( true );
-//	  	A1.addSymbol( f1 );
-//	  	
-//	  	ITemplateSymbol spec1 = table.newTemplateSymbol("");
-//	  	ISymbol spec1_T = table.newSymbol( "T", TypeInfo.t_templateParameter );
-//	  	spec1.addTemplateParameter( spec1_T );
-//	  	
-//	  	factory = table.newTemplateFactory();
-//	  	factory.setContainingSymbol( table.getCompilationUnit() );
-//	  	factory.pushTemplate( spec1 );
-//	  	
-//	  	ISpecializedSymbol spec1 = table.newSpecializedSymbol( "A" );
-//	  	ISymbol spec1_T = table.newSymbol( "T", TypeInfo.t_templateParameter );
-//	  	
-//	  	spec1.addTemplateParameter( spec1_T );
-//	  	spec1.addArgument( new TypeInfo( TypeInfo.t_type, 0, spec1_T ) );
-//	  	spec1.addArgument( new TypeInfo( TypeInfo.t_type, 0, spec1_T ) );
-//	  	
-//	  	IDerivableContainerSymbol A2 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
-//	  	
-//	  	spec1.addSymbol( A2 );
-//	  	template.addSpecialization( spec1 );
-//	  	
-//	  	IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-//	  	f2.setIsForwardDeclaration( true );
-//	  	A2.addSymbol( f2 );
-//	  	
-//	  	ISpecializedSymbol spec2 = table.newSpecializedSymbol( "A" );
-//	  	ISymbol spec2_T = table.newSymbol( "T", TypeInfo.t_templateParameter );
-//	  	
-//	  	spec2.addTemplateParameter( spec2_T );
-//	  	spec2.addArgument( new TypeInfo( TypeInfo.t_char, 0, null ) );
-//	  	spec2.addArgument( new TypeInfo( TypeInfo.t_type, 0, spec2_T ) );
-//	  	
-//	  	IDerivableContainerSymbol A3 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
-//	  	
-//	  	spec2.addSymbol( A3 );
-//	  	template.addSpecialization( spec2 );
-//	  	
-//	  	IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-//	  	f3.setIsForwardDeclaration( true );
-//	  	A3.addSymbol( f3 );
-//	  	
-//	  	ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter );
-//	  	ISymbol V = table.newSymbol( "V", TypeInfo.t_templateParameter );
-//	  	
-//	  	List params = new LinkedList();
-//	  	params.add( U );
-//	  	params.add( V );
-//	  	
-//	  	List args = new LinkedList();
-//	  	args.add( new TypeInfo( TypeInfo.t_type, 0, U ) );
-//	  	args.add( new TypeInfo( TypeInfo.t_type, 0, V ) );
-//	  	
-//	  	ITemplateFactory factory = table.getCompilationUnit().lookupTemplateForMemberDefinition( "A", params, args );
-//	  	
-//	  	ISymbol look = factory.lookupMemberFunctionForDefinition( "f", new LinkedList() );
-//	  	assertEquals( look, f1 );
-//	  	IParameterizedSymbol f1Def = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-//	  	f1.setTypeSymbol( f1Def );
-//	  	factory.addSymbol( f1Def );
-//	  	
-//	  	ISymbol c1 = table.newSymbol( "c", TypeInfo.t_int );
-//	  	f1Def.addSymbol( c1 );
-//	  	
-//	  	params.clear();
-//	  	args.clear();
-//	  	
-//	  	ISymbol W = table.newSymbol( "W", TypeInfo.t_templateParameter );
-//	  	
-//	  	params.add( W );
-//	  	args.add( new TypeInfo( TypeInfo.t_type, 0, W ) );
-//	  	args.add( new TypeInfo( TypeInfo.t_type, 0, W ) );
-//	  	
-//	  	factory = table.getCompilationUnit().lookupTemplateForMemberDefinition( "A", params, args );
-//	  	
-//	  	look = factory.lookupMemberFunctionForDefinition( "f", new LinkedList() );
-//	  	assertEquals( look, f2 );
-//	  	IParameterizedSymbol f2Def = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-//	  	f2.setTypeSymbol( f2Def );
-//	  	factory.addSymbol( f2Def );
-//	  	
-//	  	ISymbol c2 = table.newSymbol( "c", TypeInfo.t_char );
-//	  	f2Def.addSymbol( c2 );
-//	  	
-//	  	params.clear();
-//	  	args.clear();
-//	  	
-//	  	ISymbol X = table.newSymbol( "X", TypeInfo.t_templateParameter );
-//	  	
-//	  	params.add( X );
-//	  	args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
-//	  	args.add( new TypeInfo( TypeInfo.t_type, 0, X ) );
-//	  	
-//	  	factory = table.getCompilationUnit().lookupTemplateForMemberDefinition( "A", params, args );
-//	  	
-//	  	look = factory.lookupMemberFunctionForDefinition( "f", new LinkedList() );
-//	  	assertEquals( look, f3 );
-//	  	IParameterizedSymbol f3Def = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-//	  	f3.setTypeSymbol( f3Def );
-//	  	factory.addSymbol( f3Def );
-//	  	
-//	  	ISymbol c3 = table.newSymbol( "c", TypeInfo.t_float );
-//	  	f3Def.addSymbol( c3 );
-//	  	
-//	  	args.clear();
-//	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
-//	  	args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
-//	  
-//	  	look = table.getCompilationUnit().lookupTemplateId( "A", args );
-//	  	assertTrue( look.isTemplateInstance() );
-//	  	assertEquals( look.getInstantiatedSymbol(), A1 );
-//	  	
-//	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new LinkedList() );
-//	  	assertTrue( look.isTemplateInstance() );
-//	  	assertEquals( look.getInstantiatedSymbol(), f1Def );
-//	  	
-//	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" );
-//	  	assertTrue( look.isTemplateInstance() );
-//	  	assertEquals( look.getInstantiatedSymbol(), c1 );
-//	  	assertTrue( look.isType( TypeInfo.t_int ) );
-//	
-//	  	args.clear();
-//	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
-//	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
-//	  	
-//	  	look = table.getCompilationUnit().lookupTemplateId( "A", args );
-//	  	assertTrue( look.isTemplateInstance() );
-//	  	assertEquals( look.getInstantiatedSymbol(), A2 );
-//	  	
-//	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new LinkedList() );
-//	  	assertTrue( look.isTemplateInstance() );
-//	  	assertEquals( look.getInstantiatedSymbol(), f2Def );
-//	  	
-//	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" );
-//	  	assertTrue( look.isTemplateInstance() );
-//	  	assertEquals( look.getInstantiatedSymbol(), c2 );
-//	  	assertTrue( look.isType( TypeInfo.t_char ) );
-//	  	
-//	  	args.clear();
-//	  	args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
-//	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
-//	  	
-//	  	look = table.getCompilationUnit().lookupTemplateId( "A", args );
-//	  	assertTrue( look.isTemplateInstance() );
-//	  	assertEquals( look.getInstantiatedSymbol(), A3 );
-//	  	
-//	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new LinkedList() );
-//	  	assertTrue( look.isTemplateInstance() );
-//	  	assertEquals( look.getInstantiatedSymbol(), f3Def );
-//	  	
-//	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" );
-//	  	assertTrue( look.isTemplateInstance() );
-//	  	assertEquals( look.getInstantiatedSymbol(), c3 );
-//	  	assertTrue( look.isType( TypeInfo.t_float ) );
+	  	newTable();
+	  	
+	  	//template < class T1, class T2 > class A  { void f(); };
+	  	ITemplateSymbol template = table.newTemplateSymbol( "A" );
+	  	ISymbol T1 = table.newSymbol( "T1", TypeInfo.t_templateParameter );
+	  	ISymbol T2 = table.newSymbol( "T2", TypeInfo.t_templateParameter );
+	  	template.addTemplateParameter( T1 );
+	  	template.addTemplateParameter( T2 );
+	  	
+	  	ITemplateFactory factory = table.newTemplateFactory();
+	  	factory.setContainingSymbol( table.getCompilationUnit() );
+	  	factory.pushTemplate( template );
+	  	
+	  	IDerivableContainerSymbol A1 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+	  	factory.addSymbol( A1 );
+	  	
+	  	IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	f1.setIsForwardDeclaration( true );
+	  	A1.addSymbol( f1 );
+	  	
+	  	//template < class T > class A < T, T >    { void f(); };
+	  	ITemplateSymbol spec1 = table.newTemplateSymbol("");
+	  	ISymbol spec1_T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+	  	spec1.addTemplateParameter( spec1_T );
+	  	
+	  	factory = table.newTemplateFactory();
+	  	factory.setContainingSymbol( table.getCompilationUnit() );
+	  	factory.pushTemplate( spec1 );
+	  	
+	  	List args = new LinkedList();
+	  	args.add( new TypeInfo( TypeInfo.t_type, 0, spec1_T ) );
+	  	args.add( new TypeInfo( TypeInfo.t_type, 0, spec1_T ) );
+	  	
+	  	IDerivableContainerSymbol A2 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+	  	factory.addTemplateId( A2, args );
+	  	
+	  	IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	f2.setIsForwardDeclaration( true );
+	  	A2.addSymbol( f2 );
+
+	  	//template < class T > class A < char, T > { void f(); };
+	  	ITemplateSymbol spec2 = table.newTemplateSymbol("");
+	  	ISymbol spec2_T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+	  	spec2.addTemplateParameter( spec2_T );
+	  	
+	  	factory = table.newTemplateFactory();
+	  	factory.setContainingSymbol( table.getCompilationUnit() );
+	  	factory.pushTemplate( spec2 );
+	  	
+	  	args.clear();
+	  	args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
+	  	args.add( new TypeInfo( TypeInfo.t_type, 0, spec2_T ) );
+	  	
+	  	IDerivableContainerSymbol A3 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+	  	factory.addTemplateId( A3, args );
+	  	
+	  	IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	f3.setIsForwardDeclaration( true );
+	  	A3.addSymbol( f3 );
+	  	
+	  	//template < class U, class V > void A<U, V>::f(){  int c; }
+	  	ITemplateSymbol templateDef = table.newTemplateSymbol("");
+	  	ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter );
+	  	ISymbol V = table.newSymbol( "V", TypeInfo.t_templateParameter );
+	  	templateDef.addTemplateParameter( U );
+	  	templateDef.addTemplateParameter( V );
+	  	
+	  	factory = table.newTemplateFactory();
+	  	factory.setContainingSymbol( table.getCompilationUnit() );
+	  	factory.pushTemplate( spec2 );
+	  	
+	  	args.clear();
+	  	args.add( new TypeInfo( TypeInfo.t_type, 0, U ) );
+	  	args.add( new TypeInfo( TypeInfo.t_type, 0, V ) );
+	  	
+	  	ISymbol symbol = factory.lookupTemplateId( "A",  args );
+	  	assertEquals( ((IDeferredTemplateInstance)symbol).getTemplate(), template );
+		factory.pushTemplateId( symbol, args );
+	  	
+	  	ISymbol look = factory.lookupMethodForDefinition( "f", new LinkedList() );
+	  	assertEquals( look, f1 );
+	  	IParameterizedSymbol f1Def = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	f1.setTypeSymbol( f1Def );
+	  	factory.addSymbol( f1Def );
+	  	
+	  	ISymbol c1 = table.newSymbol( "c", TypeInfo.t_int );
+	  	f1Def.addSymbol( c1 );
+	  	
+	  	//template < class W > void A < W, W >::f(){  char c; }
+	  	ITemplateSymbol specDef1 = table.newTemplateSymbol("");
+	  	ISymbol W = table.newSymbol( "W", TypeInfo.t_templateParameter );
+	  	specDef1.addTemplateParameter( W );
+	  	
+	  	factory = table.newTemplateFactory();
+	  	factory.setContainingSymbol( table.getCompilationUnit() );
+	  	factory.pushTemplate( specDef1 );
+	  	
+	  	args = new LinkedList();
+	  	args.add( new TypeInfo( TypeInfo.t_type, 0, W ) );
+	  	args.add( new TypeInfo( TypeInfo.t_type, 0, W ) );
+	  	
+	  	symbol = factory.lookupTemplateId( "A",  args );
+		factory.pushTemplateId( symbol, args );
+	  	
+	  	look = factory.lookupMethodForDefinition( "f", new LinkedList() );
+	  	assertEquals( look, f2 );
+	  	IParameterizedSymbol f2Def = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	f2.setTypeSymbol( f2Def );
+	  	factory.addSymbol( f2Def );
+	  	
+	  	ISymbol c2 = table.newSymbol( "c", TypeInfo.t_char );
+	  	f2Def.addSymbol( c2 );
+	  	
+	  	//template < class X > void < char, X >::f(){ float c; }
+	  	ITemplateSymbol specDef2 = table.newTemplateSymbol("");
+	  	ISymbol X = table.newSymbol( "X", TypeInfo.t_templateParameter );
+	  	specDef2.addTemplateParameter( X );
+	  	
+	  	factory = table.newTemplateFactory();
+	  	factory.setContainingSymbol( table.getCompilationUnit() );
+	  	factory.pushTemplate( specDef1 );
+	  	
+	  	args = new LinkedList();
+	  	args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
+	  	args.add( new TypeInfo( TypeInfo.t_type, 0, X ) );
+	  	
+	  	symbol = factory.lookupTemplateId( "A",  args );
+		factory.pushTemplateId( symbol, args );
+		
+		look = factory.lookupMethodForDefinition( "f", new LinkedList() );
+	  	assertEquals( look, f3 );
+	  	IParameterizedSymbol f3Def = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	f3.setTypeSymbol( f3Def );
+	  	factory.addSymbol( f3Def );
+	  	
+	  	ISymbol c3 = table.newSymbol( "c", TypeInfo.t_float );
+	  	f3Def.addSymbol( c3 );
+	  	
+	  	//A< int, char > a1;
+	  	args = new LinkedList();
+	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+	  	args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
+	  
+	  	look = table.getCompilationUnit().lookupTemplateId( "A", args );
+	  	assertTrue( look.isTemplateInstance() );
+	  	assertEquals( look.getInstantiatedSymbol(), A1 );
+	  	
+	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new LinkedList() );
+	  	assertTrue( look.isTemplateInstance() );
+	  	assertEquals( look.getInstantiatedSymbol(), f1Def );
+	  	
+	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" );
+	  	assertTrue( look.isTemplateInstance() );
+	  	assertEquals( look.getInstantiatedSymbol(), c1 );
+	  	assertTrue( look.isType( TypeInfo.t_int ) );
+	
+	  	//A< int, int > a2;
+	  	args.clear();
+	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+	  	
+	  	look = table.getCompilationUnit().lookupTemplateId( "A", args );
+	  	assertTrue( look.isTemplateInstance() );
+	  	assertEquals( look.getInstantiatedSymbol(), A2 );
+	  	
+	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new LinkedList() );
+	  	assertTrue( look.isTemplateInstance() );
+	  	assertEquals( look.getInstantiatedSymbol(), f2Def );
+	  	
+	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" );
+	  	assertTrue( look.isTemplateInstance() );
+	  	assertEquals( look.getInstantiatedSymbol(), c2 );
+	  	assertTrue( look.isType( TypeInfo.t_char ) );
+	  	
+	  	//A< char, int > a3;
+	  	args.clear();
+	  	args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
+	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+	  	
+	  	look = table.getCompilationUnit().lookupTemplateId( "A", args );
+	  	assertTrue( look.isTemplateInstance() );
+	  	assertEquals( look.getInstantiatedSymbol(), A3 );
+	  	
+	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new LinkedList() );
+	  	assertTrue( look.isTemplateInstance() );
+	  	assertEquals( look.getInstantiatedSymbol(), f3Def );
+	  	
+	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" );
+	  	assertTrue( look.isTemplateInstance() );
+	  	assertEquals( look.getInstantiatedSymbol(), c3 );
+	  	assertTrue( look.isType( TypeInfo.t_float ) );
 	  }
 }

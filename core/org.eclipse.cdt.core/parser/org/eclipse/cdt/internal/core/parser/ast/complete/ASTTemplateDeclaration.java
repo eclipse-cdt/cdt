@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2003, 2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDeclaration
 {
 	final private List templateParameters;
-	
+	private ISymbol owned = null;
 	private IASTScope ownerScope;
 	private ITemplateFactory factory;
 	private NamedOffsets offsets = new NamedOffsets();
@@ -85,6 +85,11 @@ public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDec
      */
     public IASTDeclaration getOwnedDeclaration()
     {
+    	if( owned != null && owned.getASTExtension() != null ){
+    		ASTNode node = owned.getASTExtension().getPrimaryDeclaration();
+    		return ( node instanceof IASTDeclaration ) ? (IASTDeclaration)node : null;
+    	}
+    	
     	IContainerSymbol owned = getTemplateSymbol().getTemplatedSymbol();
     	if( owned != null && owned.getASTExtension() != null ){
     		ASTNode node = owned.getASTExtension().getPrimaryDeclaration();
@@ -92,6 +97,10 @@ public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDec
     	}
         return null;
     }
+    
+	public void setOwnedDeclaration(ISymbol symbol) {
+		owned = symbol;
+	}
     
     public void releaseFactory(){
     	factory = null;

@@ -890,7 +890,7 @@ public final class TemplateEngine {
 		
 		Iterator iter = templates.iterator();
 		
-		while( iter.hasNext() ){
+		outer: while( iter.hasNext() ){
 			IParameterizedSymbol fn = (IParameterizedSymbol) iter.next();
 			ITemplateSymbol template = (ITemplateSymbol) fn.getContainingSymbol();
 			
@@ -911,9 +911,9 @@ public final class TemplateEngine {
 					if( arg.equals( mapped ) )
 						instanceArgs.add( arg );
 					else
-						continue;
+						continue outer;
 				else if( arg == null && mapped == null )
-					continue;
+					continue outer;
 				else 
 					instanceArgs.add( (arg != null) ? arg : mapped );
 			}

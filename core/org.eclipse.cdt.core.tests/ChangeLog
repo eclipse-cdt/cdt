@@ -1,3 +1,9 @@
+2004-04-22 Andrew Niefer
+	- added parser/CompleteParseASTTemplateTest.test_14_7_3__12_ExplicitSpecializationOverloadedFunction()
+	- added parser/CompleteParseASTTemplateTest.testPartialSpecializationDefinitions()
+	- uncommented and modified parser/ParserSymbolTableTemplateTests.test_14_7_3__12_ExplicitSpecializationOverloadedFunction()
+	- uncommented and modified parser/ParserSymbolTableTemplateTests.testPartialSpecializationDefinitions()
+
 2004-04-21 Alain Magloire
 	Update the PathEntry test.
 	* model/org/eclipse/cdt/core/model/tests/CPatEntryTest.java

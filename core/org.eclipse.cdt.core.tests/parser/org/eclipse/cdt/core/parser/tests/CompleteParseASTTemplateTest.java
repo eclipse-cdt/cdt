@@ -1,8 +1,15 @@
-/*
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corp. - Rational Software - initial implementation
+ ******************************************************************************/
+ /*
  * Created on Mar 30, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.cdt.core.parser.tests;
 
@@ -28,9 +35,6 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
  * @author aniefer
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	/**
@@ -833,5 +837,56 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		
 		assertReferenceTask( new Task( f1, 1, false, false ) );
 		assertReferenceTask( new Task( f2, 2, false, false ) );
+	}
+
+	public void test_14_7_3__12_ExplicitSpecializationOverloadedFunction() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write("template< class T > void f( T );   ");
+		writer.write("template< class T > void f( T * ); ");
+		writer.write("template <> void f< int*>( int * );");
+		writer.write("template <> void f< int >( int * );");
+		writer.write("template <> void f( char );        ");
+
+		parse( writer.toString() );
+	}
+	
+	public void testPartialSpecializationDefinitions() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write("template < class T1, class T2 > class A  { void f(); };");
+		writer.write("template < class T > class A < T, T >    { void f(); };");
+		writer.write("template < class T > class A < char, T > { void f(); };");
+		
+		writer.write("template < class U, class V > void A<U, V>::f(){}      ");
+		writer.write("template < class W > void A < W, W >::f(){}            ");
+		writer.write("template < class X > void A < char, X >::f(){}         ");
+		
+		writer.write("void main(){                                           ");
+		writer.write("   A< int, char > a1;                                  ");
+		writer.write("   a1.f();                                             ");
+		writer.write("   A< int, int > a2;                                   ");
+		writer.write("   a2.f();                                             ");
+		writer.write("   A< char, int > a3;                                  ");
+		writer.write("   a3.f();                                             ");
+		writer.write("}                                                      ");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration t1 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration t2 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration t3 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration t4 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration t5 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration t6 = (IASTTemplateDeclaration) i.next();
+		
+		IASTFunction main = (IASTFunction) i.next();
+		assertFalse( i.hasNext() );
+		
+		IASTMethod f1 = (IASTMethod) t4.getOwnedDeclaration();
+		IASTMethod f2 = (IASTMethod) t5.getOwnedDeclaration();
+		IASTMethod f3 = (IASTMethod) t6.getOwnedDeclaration();
+		
+		assertReferenceTask( new Task( f1, 1, false, false ) );
+		assertReferenceTask( new Task( f2, 1, false, false ) );
+		assertReferenceTask( new Task( f3, 1, false, false ) );
 	}
 }

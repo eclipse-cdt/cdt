@@ -95,6 +95,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 				 ASTTemplateDeclaration templateDecl = (ASTTemplateDeclaration) getASTExtension().getPrimaryDeclaration();
 				 templateDecl.releaseFactory();
 				 templateDecl.setSymbol( spec );
+				 templateDecl.setOwnedDeclaration( symbol );
 			}
 		}
 		
@@ -205,6 +206,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 				if( getASTExtension() != null ){
 					ASTTemplateDeclaration templateDecl = (ASTTemplateDeclaration) getASTExtension().getPrimaryDeclaration();
 					templateDecl.releaseFactory();
+					templateDecl.setOwnedDeclaration( symbol );
 				}
 			} else {
 				//definition for something declared already
@@ -237,6 +239,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 					if( getASTExtension() != null ){
 						ASTTemplateDeclaration templateDecl = (ASTTemplateDeclaration) getASTExtension().getPrimaryDeclaration();
 						templateDecl.releaseFactory();
+						templateDecl.setOwnedDeclaration( symbol );
 					}
 				} else {
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidOverload );
@@ -260,6 +263,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 				if( getASTExtension() != null ){
 					ASTTemplateDeclaration templateDecl = (ASTTemplateDeclaration) getASTExtension().getPrimaryDeclaration();
 					templateDecl.releaseFactory();
+					templateDecl.setOwnedDeclaration( symbol );
 				}
 			} else {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidOverload );

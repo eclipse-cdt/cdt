@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2003, 2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -10,10 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
-import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
-import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol;
 
 /**
@@ -22,7 +20,6 @@ import org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol;
  */
 public class ASTTemplateSpecialization extends ASTTemplateDeclaration implements IASTTemplateSpecialization
 {
-	private ISymbol owned = null;
     /**
      * 
      */
@@ -30,18 +27,4 @@ public class ASTTemplateSpecialization extends ASTTemplateDeclaration implements
     {
         super(template, scope, null);
     }
-
-    public IASTDeclaration getOwnedDeclaration()
-    {
-    	if( owned != null && owned.getASTExtension() != null ){
-    		ASTNode node = owned.getASTExtension().getPrimaryDeclaration();
-    		return ( node instanceof IASTDeclaration ) ? (IASTDeclaration)node : null;
-    	}
-    	
-    	return null;
-    }
-    
-	public void setOwnedDeclaration(ISymbol symbol) {
-		owned = symbol;
-	}
 }

@@ -19,7 +19,6 @@ import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.editor.MakefileContentOutlinePage;
 import org.eclipse.cdt.make.internal.ui.editor.MakefileEditor;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
@@ -35,7 +34,6 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 	private ITextEditor fEditor;	
 	private IWorkingCopyManager fManager;
 	private IDocumentProvider fDocumentProvider;
-	private IProgressMonitor fProgressMonitor;
 
 	private MakefileContentOutlinePage fOutliner;
 
@@ -54,13 +52,6 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 	}	
 
 
-	/*
-	 * @see IReconcilingStrategyExtension#setProgressMonitor(IProgressMonitor)
-	 */
-	public void setProgressMonitor(IProgressMonitor monitor) {
-		fProgressMonitor= monitor;
-	}
-
 	/**
 	 * @see IReconcilingStrategy#reconcile(region)
 	 */
@@ -74,7 +65,6 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 		}
 		fLastRegionOffset = region.getOffset();
 	}
-
 
 	/**
 	 * @see IReconcilingStrategy#reconcile(dirtyRegion, region)

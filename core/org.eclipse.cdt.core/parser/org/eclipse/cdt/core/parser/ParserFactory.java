@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
+import java.io.BufferedReader;
 import java.io.Reader;
 import java.util.List;
 
@@ -97,13 +98,16 @@ public class ParserFactory {
     public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError
     {
     	if( input == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_READER );
+    	Reader ourReader = input;
+    	if( !(input instanceof BufferedReader ))
+    		ourReader = new BufferedReader( input );
     	if( fileName == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_FILENAME );
     	if( config == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_CONFIG );
     	if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
     	IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
 		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-		IScanner s = new Scanner( input, fileName, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension(), workingCopies );
+		IScanner s = new Scanner( ourReader, fileName, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension(), workingCopies );
 		return s; 
     }
     

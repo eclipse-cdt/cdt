@@ -1,6 +1,21 @@
+/**********************************************************************
+ * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM Rational Software - Initial API and implementation
+ * QNX Software Systems - Move to Make plugin
+***********************************************************************/
 package org.eclipse.cdt.make.ui;
 
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeScannerInfo;
 import org.eclipse.cdt.make.core.MakeScannerProvider;
 import org.eclipse.cdt.ui.AbstractCOptionPage;
@@ -9,10 +24,11 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -23,19 +39,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
-/**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
- * 
- * Contributors: 
- * IBM Rational Software - Initial API and implementation
-***********************************************************************/
-
 public class BuildPathInfoBlock extends AbstractCOptionPage {
 
+	private static final String PREF_SYMBOLS = "ScannerSymbols";
+	private static final String PREF_INCLUDES = "ScannerIncludes";
 	private static final String PREFIX = "BuildPathInfoBlock"; //$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
 	private static final String PATHS = PREFIX + ".paths"; //$NON-NLS-1$
@@ -64,17 +71,11 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	private Button symbolDown;
 	private Shell shell;
 
-	/**
-	 * @param valid
-	 */
 	public BuildPathInfoBlock() {
 		super(CUIPlugin.getResourceString(LABEL));
 		setDescription("Set the include paths and preprocessor symbols for this project");
 	}
 
-	/**
-	 * @param composite
-	 */
 	private void createPathListButtons(Composite parent) {
 		// Create a composite for the buttons
 		pathButtonComp = ControlFactory.createComposite(parent, 1);
@@ -124,9 +125,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 
 	}
 
-	/**
-	 * @param composite
-	 */
 	private void createPathListControl(Composite parent, int numColumns) {
 		// Create the list
 		pathList = new List(parent, SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -135,20 +133,10 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 				enablePathButtons();
 			}
 		});
-		pathList.addMouseListener(new MouseListener() {
-
+		pathList.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
 				editPathListItem();
 			}
-
-			public void mouseDown(MouseEvent e) {
-				// Handled by the selection listener
-			}
-
-			public void mouseUp(MouseEvent e) {
-				// Handled by the selection listener
-			}
-
 		});
 
 		// Make it occupy the first 2 columns
@@ -158,9 +146,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		pathList.setFont(parent.getFont());
 	}
 
-	/**
-	 * @param composite
-	 */
 	private void createSymbolListButtons(Composite parent) {
 		// Create a composite for the buttons
 		symbolButtonComp = ControlFactory.createComposite(parent, 1);
@@ -209,9 +194,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		SWTUtil.setButtonDimensionHint(symbolDown);
 	}
 
-	/**
-	 * @param composite
-	 */
 	private void createSymbolListControl(Composite parent, int numColumns) {
 		// Create the list
 		symbolList = new List(parent, SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -220,18 +202,9 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 				enableSymbolButtons();
 			}
 		});
-		symbolList.addMouseListener(new MouseListener() {
-
+		symbolList.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
 				editSymbolListItem();
-			}
-
-			public void mouseDown(MouseEvent e) {
-				// Handled by the selection event
-			}
-
-			public void mouseUp(MouseEvent e) {
-				// Handled by the selection event
 			}
 		});
 
@@ -260,16 +233,59 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 			monitor.worked(1);
 			info.update();
 			monitor.done();
+		} else {
+			setIncludes(MakeCorePlugin.getDefault().getPluginPreferences());
+			setSymbols(MakeCorePlugin.getDefault().getPluginPreferences());
 		}
 	}
 
 	public void performDefaults() {
+		pathList.removeAll();
+		symbolList.removeAll();
 		if (getContainer().getProject() != null) {
-			pathList.removeAll();
-			symbolList.removeAll();
-			// dinglis-TODO: set list to preference settings
-			getContainer().updateContainer();
+			pathList.setItems(getIncludes(MakeCorePlugin.getDefault().getPluginPreferences()));
+			symbolList.setItems(getSymbols(MakeCorePlugin.getDefault().getPluginPreferences()));
 		}
+		getContainer().updateContainer();
+	}
+
+	private void setSymbols(Preferences prefs) {
+		prefs.setValue(PREF_SYMBOLS, stringArrayToString(getSymbolListContents()));
+	}
+
+	private void setIncludes(Preferences prefs) {
+		prefs.setValue(PREF_INCLUDES, stringArrayToString(getPathListContents()));
+	}
+
+	private String stringArrayToString(String[] strings) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < strings.length; i++) {
+			buf.append(strings[i]).append(';');
+		}
+		return buf.toString();
+	}
+
+	private String[] getSymbols(Preferences prefs) {
+		String syms = prefs.getString(PREF_SYMBOLS);
+		return parseStringToList(syms);
+	}
+
+	private String[] getIncludes(Preferences prefs) {
+		String syms = prefs.getString(PREF_INCLUDES);
+		return parseStringToList(syms);
+	}
+
+	private String[] parseStringToList(String syms) {
+		String[] empty = new String[0];
+		if (syms != null && syms.length() > 0) {
+			StringTokenizer tok = new StringTokenizer(syms, ";");
+			ArrayList list = new ArrayList(tok.countTokens());
+			while (tok.hasMoreElements()) {
+				list.add(tok.nextToken());
+			}
+			return (String[]) list.toArray(empty);
+		}
+		return empty;
 	}
 
 	/*
@@ -404,23 +420,14 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		setControl(composite);
 	}
 
-	/**
-	 * @return
-	 */
 	private String[] getPathListContents() {
 		return pathList.getItems();
 	}
 
-	/**
-	 * @return
-	 */
 	private String[] getSymbolListContents() {
 		return symbolList.getItems();
 	}
 
-	/**
-	 * 
-	 */
 	protected void handleAddPath() {
 		// Popup an entry dialog
 		InputDialog dialog =
@@ -436,9 +443,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	protected void handleAddSymbol() {
 		// Popup an entry dialog
 		InputDialog dialog =
@@ -454,9 +458,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	protected void handlePathDown() {
 		// Get the selection index
 		int index = pathList.getSelectionIndex();
@@ -478,9 +479,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		enablePathButtons();
 	}
 
-	/**
-	 * 
-	 */
 	protected void handlePathUp() {
 		// Get the selection index
 		int index = pathList.getSelectionIndex();
@@ -497,9 +495,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		enablePathButtons();
 	}
 
-	/**
-	 * 
-	 */
 	protected void handleRemovePath() {
 		// Get the selection index
 		int index = pathList.getSelectionIndex();
@@ -516,9 +511,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		enablePathButtons();
 	}
 
-	/**
-	 * 
-	 */
 	protected void handleRemoveSymbol() {
 		// Get the selection index
 		int index = symbolList.getSelectionIndex();
@@ -533,9 +525,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		enableSymbolButtons();
 	}
 
-	/**
-	 * 
-	 */
 	protected void handleSymbolDown() {
 		// Get the selection index
 		int index = symbolList.getSelectionIndex();
@@ -557,9 +546,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		enableSymbolButtons();
 	}
 
-	/**
-	 * 
-	 */
 	protected void handleSymbolUp() {
 		// Get the selection index
 		int index = symbolList.getSelectionIndex();
@@ -593,6 +579,9 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 				symbolList.setItems(info.getPreprocessorSymbols());
 			} catch (CoreException e) {
 			}
+		} else {
+			pathList.setItems(getIncludes(MakeCorePlugin.getDefault().getPluginPreferences()));
+			symbolList.setItems(getSymbols(MakeCorePlugin.getDefault().getPluginPreferences()));
 		}
 	}
 }

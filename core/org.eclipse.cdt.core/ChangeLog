@@ -1,3 +1,12 @@
+2003-12-16 Alain Magloire
+
+	PR 48921.
+	On windows, Object files (*.o) does not have a
+	particular signature we have to compare to the known
+	CPU flags part of COFF
+
+	* utils/org/eclipse/cdt/utils/coff/parser/PEParser.java
+
 2003-12-15 Alain Magloire
 
 	Patch from Thomas F.

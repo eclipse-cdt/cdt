@@ -49,7 +49,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
@@ -139,9 +138,6 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		return fEditor.getSite().getShell();
 	}
 
-	/**
-	 * @see IAction#actionPerformed
-	 */
 	public void run() {
 		ITranslationUnit tu= getTranslationUnit();
 		if (tu != null) {

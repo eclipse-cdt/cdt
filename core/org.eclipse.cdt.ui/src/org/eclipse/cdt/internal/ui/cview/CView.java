@@ -102,7 +102,6 @@ import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.framelist.FrameList;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
@@ -501,9 +500,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		});
 	}
 
-	/**
-	 * @see ContentOutlinePage#createControl
-	 */
 	public void createPartControl(Composite parent) {
 
 		viewer = createViewer(parent);

@@ -15,8 +15,6 @@ import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -100,9 +98,6 @@ public class CElementLabelProvider extends LabelProvider {
 		fFlags = flags;
 	}
 
-	/**
-	 * @see ILabelProvider#getText
-	 */
 	public String getText(Object element) {
 		if (element instanceof ICElement) {
 			try {
@@ -185,16 +180,10 @@ public class CElementLabelProvider extends LabelProvider {
 		return fWorkbenchLabelProvider.getText(element);
 	}
 
-	/**
-	 * @see ILabelProvider#getImage
-	 */
 	public Image getImage(Object element) {
 		return fImageLabelProvider.getImageLabel(element, getImageFlags());
 	}
 	
-	/**
-	 * @see IBaseLabelProvider#dispose()
-	 */
 	public void dispose() {
 		if (fWorkbenchLabelProvider != null) {
 			fWorkbenchLabelProvider.dispose();

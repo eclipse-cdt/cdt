@@ -6,10 +6,14 @@
 
 package org.eclipse.cdt.debug.internal.ui;
 
+import org.eclipse.cdt.debug.core.IState;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 
 /**
@@ -20,7 +24,7 @@ import org.eclipse.ui.IEditorInput;
  * @since Jul 22, 2002
  */
 public class CDTDebugModelPresentation extends LabelProvider
-									 implements IDebugModelPresentation
+									   implements IDebugModelPresentation
 {
 	private static CDTDebugModelPresentation fInstance = null;
 
@@ -66,5 +70,81 @@ public class CDTDebugModelPresentation extends LabelProvider
 	public String getEditorId( IEditorInput input, Object element )
 	{
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILabelProvider#getImage(Object)
+	 */
+	public Image getImage( Object element )
+	{
+		return super.getImage( element );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILabelProvider#getText(Object)
+	 */
+	public String getText( Object element )
+	{
+		if ( element instanceof IDebugTarget )
+			return getTargetText( (IDebugTarget)element );
+		if ( element instanceof IThread )
+			return getThreadText( (IThread)element );
+		return super.getText( element );
+	}
+	
+	protected String getTargetText( IDebugTarget target )
+	{
+		if ( target instanceof IState )
+		{
+			IState state = (IState)target.getAdapter( IState.class );
+			if ( state != null )
+			{
+				switch( state.getCurrentStateId() )
+				{
+					case IState.ATTACHING:
+						break;
+					case IState.CORE_DUMP_FILE:
+						break;
+					case IState.DISCONNECTING:
+						break;
+					case IState.DISCONNECTED:
+						break;
+					case IState.RUNNING:
+						break;
+					case IState.STARTING:
+						break;
+					case IState.STEPPING:
+						break;
+					case IState.SUSPENDED:
+						break;
+					case IState.TERMINATED:
+						break;
+				}
+			}
+		}
+		return super.getText( target );
+	}
+	
+	protected String getThreadText( IThread thread )
+	{
+		if ( thread instanceof IState )
+		{
+			IState state = (IState)thread.getAdapter( IState.class );
+			if ( state != null )
+			{
+				switch( state.getCurrentStateId() )
+				{
+					case IState.CORE_DUMP_FILE:
+						break;
+					case IState.RUNNING:
+						break;
+					case IState.STEPPING:
+						break;
+					case IState.SUSPENDED:
+						break;
+				}
+			}
+		}
+		return super.getText( thread );
 	}
 }

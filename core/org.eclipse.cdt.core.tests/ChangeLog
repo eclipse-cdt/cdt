@@ -1,3 +1,6 @@
+2004-10-13 Tanya Wolff
+	added search tests to regression folder
+
 2004-10-4 Andrew Niefer
 	created regression source folder and a test framework for search and content assist tests
 

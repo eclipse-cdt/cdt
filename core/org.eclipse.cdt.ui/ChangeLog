@@ -1,3 +1,9 @@
+2003-07-21	Bogdan Gheorghe
+	Update to CSearchResultLabelProvider to ensure that search labels
+	show up on subsequent runs.
+	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultCollector.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultLabelProvider.java
 2003-07-18  John Camelon
 	In the core, I updated ParserFactory.createScanner() to force the user to provide a callback and a ParserMode.
 	==> I had to update ComparatorModelBuilder.  

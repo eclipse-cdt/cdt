@@ -24,16 +24,25 @@ public interface IIndexConstants {
 	
 	char[] FUNCTION_REF= "functionRef/".toCharArray(); //$NON-NLS-1$
 	char[] FUNCTION_DECL= "functionDecl/".toCharArray(); //$NON-NLS-1$
+	int FUNCTION_DECL_LENGTH = 13;
 	
 	char[] CONSTRUCTOR_REF= "constructorRef/".toCharArray(); //$NON-NLS-1$
 	char[] CONSTRUCTOR_DECL= "constructorDecl/".toCharArray(); //$NON-NLS-1$
 	
 	char[] NAMESPACE_REF= "namespaceRef/".toCharArray(); //$NON-NLS-1$
 	char[] NAMESPACE_DECL= "namespaceDecl/".toCharArray(); //$NON-NLS-1$
+	int NAMESPACE_DECL_LENGTH = 14;
 		
-	char[] MEMBER_REF= "memberRef/".toCharArray(); //$NON-NLS-1$
-	char[] MEMBER_DECL= "memberDecl/".toCharArray(); //$NON-NLS-1$
-
+	char[] FIELD_REF= "fieldRef/".toCharArray(); //$NON-NLS-1$
+	char[] FIELD_DECL= "fieldDecl/".toCharArray(); //$NON-NLS-1$
+	int FIELD_DECL_LENGTH = 10;
+	
+	char[] METHOD_REF= "methodRef/".toCharArray(); //$NON-NLS-1$
+	char[] METHOD_DECL= "methodDecl/".toCharArray(); //$NON-NLS-1$
+	int METHOD_DECL_LENGTH = 11;
+		
+	char[] TYPEDEF_DECL = "typedefDecl/".toCharArray(); //$NON-NLS-1$
+	int TYPEDEF_DECL_LENGTH = 12;
 	//a Var REF will be treated as  a typeREF
 	//char[] VAR_REF= "varRef/".toCharArray(); //$NON-NLS-1$
 	

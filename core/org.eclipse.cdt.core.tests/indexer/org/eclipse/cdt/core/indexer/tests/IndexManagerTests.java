@@ -21,6 +21,7 @@ import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
+import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -63,9 +64,7 @@ public class IndexManagerTests extends TestCase {
 		//Create temp project
 		testProject = createProject("IndexerTestProject");
 		if (testProject==null)
-			fail("Unable to create project");
-		//Add a file to the project
-		importFile("mail.cpp","resources/indexer/mail.cpp");	
+			fail("Unable to create project");	
 	}
 	/*
 	 * @see TestCase#tearDown()
@@ -78,7 +77,10 @@ public class IndexManagerTests extends TestCase {
 		}
 	}
 
-	public static Test suite() { 
+	public static Test suite() {
+		//TestSuite suite = new TestSuite();
+		//suite.addTest(new IndexManagerTests("testIndexContents"));
+		//return suite;
 		return new TestSuite(IndexManagerTests.class);
 	}
 	/*
@@ -136,6 +138,8 @@ public class IndexManagerTests extends TestCase {
 	 * Start of tests
 	 */ 	
 	public void testIndexAll() throws Exception {
+		//Add a file to the project
+		importFile("mail.cpp","resources/indexer/mail.cpp");
 		//Enable indexing on the created project
 		//By doing this, we force the Index Manager to indexAll()
 		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
@@ -167,6 +171,8 @@ public class IndexManagerTests extends TestCase {
 	}
 	
 	public void testAddNewFileToIndex() throws Exception{
+		//Add a file to the project
+		importFile("mail.cpp","resources/indexer/mail.cpp");
 		//Enable indexing on the created project
 		//By doing this, we force the Index Manager to indexAll()
 		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
@@ -194,6 +200,8 @@ public class IndexManagerTests extends TestCase {
 	}
 
 	public void testRemoveProjectFromIndex() throws Exception{
+	  //Add a file to the project
+	  importFile("mail.cpp","resources/indexer/mail.cpp");
 	  //Enable indexing on the created project
 	  //By doing this, we force the Index Manager to indexAll()
 	  indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
@@ -211,6 +219,8 @@ public class IndexManagerTests extends TestCase {
 	}
 	
 	public void testRemoveFileFromIndex() throws Exception{
+	 //Add a file to the project
+	 importFile("mail.cpp","resources/indexer/mail.cpp");
 	 //Enable indexing on the created project
 	 //By doing this, we force the Index Manager to indexAll()
 	 indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
@@ -252,4 +262,83 @@ public class IndexManagerTests extends TestCase {
 	 }
 	}
 	
+	public void testIndexContents() throws Exception{
+		//Add a new file to the project, give it some time to index
+		importFile("extramail.cpp","resources/indexer/extramail.cpp");
+		//Enable indexing on the created project
+		//By doing this, we force the Index Manager to indexAll()
+		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+		indexManager.setEnabled(testProject,true);
+		Thread.sleep(15000);
+		//Make sure project got added to index
+		IPath testProjectPath = testProject.getFullPath();
+		IIndex ind = indexManager.getIndex(testProjectPath,true,true);
+		assertTrue("Index exists for project",ind != null);
+	
+		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/C/Unknown/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/C/container/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/C/first_class/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/C/postcard/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/E/test/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/V/x/Z, refs={ 1 }"};
+		IEntryResult[] typedeclresults =ind.queryEntries(IIndexConstants.TYPE_DECL);
+
+		if (typedeclresults.length != typeDeclEntryResultModel.length)
+			fail("Entry Result length different from model for typeDecl");
+	
+		for (int i=0;i<typedeclresults.length; i++)
+		{
+			assertEquals(typeDeclEntryResultModel[i],typedeclresults[i].toString());
+		}
+	
+		String [] typeDefEntryResultModel ={"EntryResult: word=typedefDecl/int32, refs={ 1 }"};
+		IEntryResult[] typedefresults =ind.queryEntries(IIndexConstants.TYPEDEF_DECL);
+		
+		if (typedefresults.length != typeDefEntryResultModel.length)
+					fail("Entry Result length different from model for typeDef");
+	
+		for (int i=0;i<typedefresults.length; i++)
+		{
+		 assertEquals(typeDefEntryResultModel[i],typedefresults[i].toString());
+		}
+				
+		String [] namespaceResultModel = {"EntryResult: word=namespaceDecl/X/Z, refs={ 1 }", "EntryResult: word=namespaceDecl/Y/Z/X, refs={ 1 }", "EntryResult: word=namespaceDecl/Z, refs={ 1 }"};
+		IEntryResult[] namespaceresults =ind.queryEntries(IIndexConstants.NAMESPACE_DECL);
+		
+		if (namespaceresults.length != namespaceResultModel.length)
+				fail("Entry Result length different from model for namespace");
+	
+		for (int i=0;i<namespaceresults.length; i++)
+		{
+			assertEquals(namespaceResultModel[i],namespaceresults[i].toString());
+		}
+				
+		String [] fieldResultModel = {"EntryResult: word=fieldDecl/array/Z/X/Y/container, refs={ 1 }", "EntryResult: word=fieldDecl/bye/Z/X/Y/test, refs={ 1 }", "EntryResult: word=fieldDecl/cool/Z/X/Y/test, refs={ 1 }", "EntryResult: word=fieldDecl/hi/Z/X/Y/test, refs={ 1 }", "EntryResult: word=fieldDecl/index/Z/X/Y/container, refs={ 1 }", "EntryResult: word=fieldDecl/postage/Z/X/Y/Mail, refs={ 1 }", "EntryResult: word=fieldDecl/sz/Z/X/Y/container, refs={ 1 }", "EntryResult: word=fieldDecl/type/Z/X/Y/Mail, refs={ 1 }", "EntryResult: word=fieldDecl/why/Z/X/Y/test, refs={ 1 }"};
+		IEntryResult[] fieldresults =ind.queryEntries(IIndexConstants.FIELD_DECL);
+	
+		if (fieldresults.length != fieldResultModel.length)
+				fail("Entry Result length different from model for fieldDecl");
+	
+		for (int i=0;i<fieldresults.length; i++)
+		{
+			assertEquals(fieldResultModel[i],fieldresults[i].toString());
+		}
+	
+		String [] functionResultModel = {"EntryResult: word=functionDecl/doSomething, refs={ 1 }"};	
+		IEntryResult[] functionresults =ind.queryEntries(IIndexConstants.FUNCTION_DECL);
+		
+		if (functionresults.length != functionResultModel.length)
+					fail("Entry Result length different from model for functionDecl");
+	
+		for (int i=0;i<functionresults.length; i++)
+		{
+			assertEquals(functionResultModel[i],functionresults[i].toString());
+		}
+		
+		String [] methodResultModel = {"EntryResult: word=methodDecl/operator<</Z/X/Y/Mail, refs={ 1 }","EntryResult: word=methodDecl/operator=/Z/X/Y/container, refs={ 1 }","EntryResult: word=methodDecl/operator[]/Z/X/Y/container, refs={ 1 }","EntryResult: word=methodDecl/print/Z/X/Y/Mail, refs={ 1 }"};	
+		IEntryResult[] methodresults =ind.queryEntries(IIndexConstants.METHOD_DECL);
+		
+		if (methodresults.length != methodResultModel.length)
+				fail("Entry Result length different from model for functionDecl");
+	
+		for (int i=0;i<methodresults.length; i++)
+		{
+			assertEquals(methodResultModel[i],methodresults[i].toString());
+		}
+  }
 }

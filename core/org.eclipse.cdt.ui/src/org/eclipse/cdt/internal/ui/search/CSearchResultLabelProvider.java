@@ -42,6 +42,7 @@ public class CSearchResultLabelProvider extends LabelProvider {
 	public static final String POTENTIAL_MATCH = CSearchMessages.getString("CSearchResultLabelProvider.potentialMatch"); //$NON-NLS-1$
 
 	public CSearchResultLabelProvider(){
+		_sortOrder = SHOW_ELEMENT_CONTAINER;
 		//_imageProvider = new CElementImageProvider();
 		//_labelProvider = new CElementLabelProvider();	
 	}

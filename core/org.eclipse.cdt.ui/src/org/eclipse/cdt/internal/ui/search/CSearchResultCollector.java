@@ -163,7 +163,7 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 		}
 		
 		Image image = CUIPlugin.getImageDescriptorRegistry().get( imageDescriptor );
-		IMatch match = new Match(name, parentName, image, node.getElementNameOffset(), name.length() );
+		IMatch match = new Match(name, parentName, image, node.getNameOffset(), name.length() );
 		
 		return match;
 	}

@@ -100,6 +100,14 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * Note: the actual operation is performed in background
 	 */
 	public void addSource(IFile resource, IPath indexedContainer){
+	
+		/******
+		*TODO: Remove these methods once the new indexer is
+		*fully integrated
+		*/
+		IProject project= resource.getProject();
+		if (!isEnabled(project)) return;
+
 		if (CCorePlugin.getDefault() == null) return;	
 		AddCompilationUnitToIndex job = new AddCompilationUnitToIndex(resource, indexedContainer, this);
 		if (this.awaitingJobsCount() < MAX_FILES_IN_MEMORY) {
@@ -245,6 +253,12 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 */
 	public void indexSourceFolder(CProject javaProject, IPath sourceFolder, final char[][] exclusionPattern) {
 		IProject project = javaProject.getProject();
+		/******
+		*TODO: Remove these methods once the new indexer is
+		*fully integrated
+		*/
+		if (!isEnabled(project)) return;
+
 		if (this.jobEnd > this.jobStart) {
 			// check if a job to index the project is not already in the queue
 			IndexRequest request = new IndexAllProject(project, this);
@@ -301,6 +315,12 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		IndexRequest request = null;
 		if (target instanceof IProject) {
 			IProject p = (IProject) target;
+			/******
+			*TODO: Remove these methods once the new indexer is
+			*fully integrated
+			*/
+			if (!isEnabled(p)) return;
+
 			//if (JavaProject.hasJavaNature(p))
 				request = new IndexAllProject(p, this);
 		}
@@ -384,6 +404,12 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 */
 	public void removeSourceFolderFromIndex(CProject javaProject, IPath sourceFolder, char[][] exclusionPatterns) {
 		IProject project = javaProject.getProject();
+		/******
+		*TODO: Remove these methods once the new indexer is
+		*fully integrated
+		*/
+		if (!isEnabled(project)) return;
+
 		if (this.jobEnd > this.jobStart) {
 			// check if a job to index the project is not already in the queue
 			IndexRequest request = new IndexAllProject(project, this);

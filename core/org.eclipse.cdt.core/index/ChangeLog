@@ -1,3 +1,17 @@
+2003-07-21 Bogdan Gheorghe
+	Added additional declarations to index: enums, enumerators, namespace,
+	functions, vars, methods, fields, typedefs.
+	
+	Fixed IndexManager to prevent individually added files from
+	being added to the index if indexing is not enabled for the project
+	
+	Modified:
+	
+	* index/org/eclipse/cdt/internal/core/search/indexing/AbstractIndexer.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/IIndexConstants.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexerRequestor.java
+	
 2003-07-10 Bogdan Gheorghe
 	Added bestTypeDeclarationPrefix to AbstractIndexer to allow the
 	search engine to create a query string for the index.

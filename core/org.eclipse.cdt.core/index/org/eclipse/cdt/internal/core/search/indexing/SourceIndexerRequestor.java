@@ -15,10 +15,8 @@ package org.eclipse.cdt.internal.core.search.indexing;
 * @author bgheorgh
 */
 
-import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -93,6 +91,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	public void acceptVariable(IASTVariable variable) {
 		// TODO Auto-generated method stub
 		//System.out.println("acceptVariable");
+		indexer.addVariable(variable);
 	}
 
 	/* (non-Javadoc)
@@ -101,6 +100,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	public void acceptFunctionDeclaration(IASTFunction function) {
 		// TODO Auto-generated method stub
 		//System.out.println("acceptFunctionDeclaration");
+		indexer.addFunctionDeclaration(function);
 	}
 
 	/* (non-Javadoc)
@@ -132,7 +132,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef) {
 		// TODO Auto-generated method stub
-		//System.out.println("acceptTypedef");
+		indexer.addTypedefDeclaration(typedef);
 	}
 
 	/* (non-Javadoc)
@@ -141,6 +141,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration) {
 		// TODO Auto-generated method stub
 		//System.out.println("acceptEnumSpecifier");
+		indexer.addEnumerationSpecifier(enumeration);
 	}
 
 	/* (non-Javadoc)
@@ -184,6 +185,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
 		// TODO Auto-generated method stub
 		//System.out.println("enterNamespaceDefinition");
+		indexer.addNamespaceDefinition(namespaceDefinition);
 	}
 
 	/* (non-Javadoc)
@@ -236,6 +238,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	public void acceptMethodDeclaration(IASTMethod method) {
 		// TODO Auto-generated method stub
 		//System.out.println("acceptMethodDeclaration");
+		indexer.addMethodDeclaration(method);
 	}
 
 	/* (non-Javadoc)
@@ -259,7 +262,8 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void acceptField(IASTField field) {
 		// TODO Auto-generated method stub
-		//System.out.println("acceptField");
+	  // System.out.println("acceptField");
+	   indexer.addFieldDeclaration(field);
 	}
 
 	/* (non-Javadoc)
@@ -336,803 +340,75 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		// TODO Auto-generated method stub
 		//System.out.println("exitCompilationUnit");
 
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#setParser(org.eclipse.cdt.core.parser.IParser)
-	 */
-	public void setParser(IParser parser) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#translationUnitBegin()
-	 */
-	public Object translationUnitBegin() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#translationUnitEnd(java.lang.Object)
-	 */
-	public void translationUnitEnd(Object unit) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#inclusionBegin(java.lang.String, int, int, boolean)
-	 */
-	public Object inclusionBegin(String includeFile, int nameBeginOffset, int inclusionBeginOffset, boolean local) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#inclusionEnd(java.lang.Object)
-	 */
-	public void inclusionEnd(Object inclusion) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#macro(java.lang.String, int, int, int)
-	 */
-	public Object macro(String macroName, int macroNameOffset, int macroBeginOffset, int macroEndOffset) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#simpleDeclarationBegin(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public Object simpleDeclarationBegin(Object Container, IToken firstToken) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#simpleDeclSpecifier(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void simpleDeclSpecifier(Object Container, IToken specifier) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
-	 */
-	public void simpleDeclSpecifierName(Object declaration) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#simpleDeclSpecifierType(java.lang.Object, java.lang.Object)
-	 */
-	public void simpleDeclSpecifierType(Object declaration, Object type) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#simpleDeclarationEnd(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void simpleDeclarationEnd(Object declaration, IToken lastToken) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#parameterDeclarationBegin(java.lang.Object)
-	 */
-	public Object parameterDeclarationBegin(Object Container) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#parameterDeclarationEnd(java.lang.Object)
-	 */
-	public void parameterDeclarationEnd(Object declaration) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#nameBegin(org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void nameBegin(IToken firstToken) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#nameEnd(org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void nameEnd(IToken lastToken) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#declaratorBegin(java.lang.Object)
-	 */
-	public Object declaratorBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#declaratorId(java.lang.Object)
-	 */
-	public void declaratorId(Object declarator) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#declaratorAbort(java.lang.Object)
-	 */
-	public void declaratorAbort(Object declarator) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#declaratorPureVirtual(java.lang.Object)
-	 */
-	public void declaratorPureVirtual(Object declarator) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#declaratorCVModifier(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void declaratorCVModifier(Object declarator, IToken modifier) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#declaratorThrowsException(java.lang.Object)
-	 */
-	public void declaratorThrowsException(Object declarator) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#declaratorThrowExceptionName(java.lang.Object)
-	 */
-	public void declaratorThrowExceptionName(Object declarator) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#declaratorEnd(java.lang.Object)
-	 */
-	public void declaratorEnd(Object declarator) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#arrayDeclaratorBegin(java.lang.Object)
-	 */
-	public Object arrayDeclaratorBegin(Object declarator) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#arrayDeclaratorEnd(java.lang.Object)
-	 */
-	public void arrayDeclaratorEnd(Object arrayQualifier) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#pointerOperatorBegin(java.lang.Object)
-	 */
-	public Object pointerOperatorBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#pointerOperatorType(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void pointerOperatorType(Object ptrOperator, IToken type) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#pointerOperatorName(java.lang.Object)
-	 */
-	public void pointerOperatorName(Object ptrOperator) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#pointerOperatorCVModifier(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void pointerOperatorCVModifier(Object ptrOperator, IToken modifier) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#pointerOperatorAbort(java.lang.Object)
-	 */
-	public void pointerOperatorAbort(Object ptrOperator) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#pointerOperatorEnd(java.lang.Object)
-	 */
-	public void pointerOperatorEnd(Object ptrOperator) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#argumentsBegin(java.lang.Object)
-	 */
-	public Object argumentsBegin(Object declarator) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#argumentsEnd(java.lang.Object)
-	 */
-	public void argumentsEnd(Object parameterDeclarationClause) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#functionBodyBegin(java.lang.Object)
-	 */
-	public Object functionBodyBegin(Object declaration) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#functionBodyEnd(java.lang.Object)
-	 */
-	public void functionBodyEnd(Object functionBody) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#classSpecifierBegin(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public Object classSpecifierBegin(Object container, IToken classKey) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#classSpecifierName(java.lang.Object)
-	 */
-	public void classSpecifierName(Object classSpecifier) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#classSpecifierAbort(java.lang.Object)
-	 */
-	public void classSpecifierAbort(Object classSpecifier) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#classMemberVisibility(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void classMemberVisibility(Object classSpecifier, IToken visibility) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#classSpecifierEnd(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void classSpecifierEnd(Object classSpecifier, IToken closingBrace) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#baseSpecifierBegin(java.lang.Object)
-	 */
-	public Object baseSpecifierBegin(Object containingClassSpec) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#baseSpecifierName(java.lang.Object)
-	 */
-	public void baseSpecifierName(Object baseSpecifier) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#baseSpecifierVisibility(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void baseSpecifierVisibility(Object baseSpecifier, IToken visibility) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#baseSpecifierVirtual(java.lang.Object, boolean)
-	 */
-	public void baseSpecifierVirtual(Object baseSpecifier, boolean virtual) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#baseSpecifierEnd(java.lang.Object)
-	 */
-	public void baseSpecifierEnd(Object baseSpecifier) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#expressionBegin(java.lang.Object)
-	 */
-	public Object expressionBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#expressionOperator(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void expressionOperator(Object expression, IToken operator) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#expressionTerminal(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void expressionTerminal(Object expression, IToken terminal) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#expressionName(java.lang.Object)
-	 */
-	public void expressionName(Object expression) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#expressionAbort(java.lang.Object)
-	 */
-	public void expressionAbort(Object expression) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#expressionEnd(java.lang.Object)
-	 */
-	public void expressionEnd(Object expression) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#elaboratedTypeSpecifierBegin(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public Object elaboratedTypeSpecifierBegin(Object container, IToken classKey) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#elaboratedTypeSpecifierName(java.lang.Object)
-	 */
-	public void elaboratedTypeSpecifierName(Object elab) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#elaboratedTypeSpecifierEnd(java.lang.Object)
-	 */
-	public void elaboratedTypeSpecifierEnd(Object elab) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#namespaceDefinitionBegin(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public Object namespaceDefinitionBegin(Object container, IToken namespace) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#namespaceDefinitionId(java.lang.Object)
-	 */
-	public void namespaceDefinitionId(Object namespace) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#namespaceDefinitionAbort(java.lang.Object)
-	 */
-	public void namespaceDefinitionAbort(Object namespace) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#namespaceDefinitionEnd(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void namespaceDefinitionEnd(Object namespace, IToken closingBrace) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#linkageSpecificationBegin(java.lang.Object, java.lang.String)
-	 */
-	public Object linkageSpecificationBegin(Object container, String literal) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#linkageSpecificationEnd(java.lang.Object)
-	 */
-	public void linkageSpecificationEnd(Object linkageSpec) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#usingDirectiveBegin(java.lang.Object)
-	 */
-	public Object usingDirectiveBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#usingDirectiveNamespaceId(java.lang.Object)
-	 */
-	public void usingDirectiveNamespaceId(Object directive) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#usingDirectiveAbort(java.lang.Object)
-	 */
-	public void usingDirectiveAbort(Object directive) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#usingDirectiveEnd(java.lang.Object)
-	 */
-	public void usingDirectiveEnd(Object directive) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#usingDeclarationBegin(java.lang.Object)
-	 */
-	public Object usingDeclarationBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#usingDeclarationMapping(java.lang.Object, boolean)
-	 */
-	public void usingDeclarationMapping(Object declaration, boolean isTypeName) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#usingDeclarationAbort(java.lang.Object)
-	 */
-	public void usingDeclarationAbort(Object declaration) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#usingDeclarationEnd(java.lang.Object)
-	 */
-	public void usingDeclarationEnd(Object declaration) {
-		// TODO Auto-generated method stub
-		
-	}
+}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#enumSpecifierBegin(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptAbstractTypeSpecDeclaration(org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration)
 	 */
-	public Object enumSpecifierBegin(Object container, IToken enumKey) {
+	public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration) {
 		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#enumSpecifierId(java.lang.Object)
-	 */
-	public void enumSpecifierId(Object enumSpec) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#enumSpecifierAbort(java.lang.Object)
-	 */
-	public void enumSpecifierAbort(Object enumSpec) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void enumSpecifierEnd(Object enumSpec, IToken closingBrace) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#enumeratorBegin(java.lang.Object)
-	 */
-	public Object enumeratorBegin(Object enumSpec) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#enumeratorId(java.lang.Object)
-	 */
-	public void enumeratorId(Object enumDefn) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#enumeratorEnd(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public void enumeratorEnd(Object enumDefn, IToken lastToken) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#asmDefinition(java.lang.Object, java.lang.String)
-	 */
-	public void asmDefinition(Object container, String assemblyCode) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#constructorChainBegin(java.lang.Object)
-	 */
-	public Object constructorChainBegin(Object declarator) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#constructorChainAbort(java.lang.Object)
-	 */
-	public void constructorChainAbort(Object ctor) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#constructorChainEnd(java.lang.Object)
-	 */
-	public void constructorChainEnd(Object ctor) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#constructorChainElementBegin(java.lang.Object)
-	 */
-	public Object constructorChainElementBegin(Object ctor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#constructorChainElementId(java.lang.Object)
-	 */
-	public void constructorChainElementId(Object element) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#constructorChainElementEnd(java.lang.Object)
-	 */
-	public void constructorChainElementEnd(Object element) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#constructorChainElementExpressionListElementBegin(java.lang.Object)
-	 */
-	public Object constructorChainElementExpressionListElementBegin(Object element) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#constructorChainElementExpressionListElementEnd(java.lang.Object)
-	 */
-	public void constructorChainElementExpressionListElementEnd(Object expression) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#explicitInstantiationBegin(java.lang.Object)
-	 */
-	public Object explicitInstantiationBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#explicitInstantiationEnd(java.lang.Object)
-	 */
-	public void explicitInstantiationEnd(Object instantiation) {
-		// TODO Auto-generated method stub
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#explicitSpecializationBegin(java.lang.Object)
-	 */
-	public Object explicitSpecializationBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#explicitSpecializationEnd(java.lang.Object)
-	 */
-	public void explicitSpecializationEnd(Object instantiation) {
-		// TODO Auto-generated method stub
 		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#templateDeclarationBegin(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public Object templateDeclarationBegin(Object container, IToken firstToken) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#templateDeclarationAbort(java.lang.Object)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptPointerToFunction(org.eclipse.cdt.core.parser.ast.IASTPointerToFunction)
 	 */
-	public void templateDeclarationAbort(Object templateDecl) {
+	public void acceptPointerToFunction(IASTPointerToFunction function) {
 		// TODO Auto-generated method stub
 		
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#templateDeclarationEnd(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptPointerToMethod(org.eclipse.cdt.core.parser.ast.IASTPointerToMethod)
 	 */
-	public void templateDeclarationEnd(Object templateDecl, IToken lastToken) {
+	public void acceptPointerToMethod(IASTPointerToMethod method) {
 		// TODO Auto-generated method stub
 		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#templateParameterListBegin(java.lang.Object)
-	 */
-	public Object templateParameterListBegin(Object declaration) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#templateParameterListEnd(java.lang.Object)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTypedefReference(org.eclipse.cdt.core.parser.ast.IASTTypedefReference)
 	 */
-	public void templateParameterListEnd(Object parameterList) {
+	public void acceptTypedefReference(IASTTypedefReference reference) {
 		// TODO Auto-generated method stub
 		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#templateTypeParameterBegin(java.lang.Object, org.eclipse.cdt.core.parser.IToken)
-	 */
-	public Object templateTypeParameterBegin(Object templDecl, IToken kind) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#templateTypeParameterName(java.lang.Object)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptNamespaceReference(org.eclipse.cdt.core.parser.ast.IASTNamespaceReference)
 	 */
-	public void templateTypeParameterName(Object typeParm) {
+	public void acceptNamespaceReference(IASTNamespaceReference reference) {
 		// TODO Auto-generated method stub
 		
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#templateTypeParameterAbort(java.lang.Object)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumerationReference(org.eclipse.cdt.core.parser.ast.IASTEnumerationReference)
 	 */
-	public void templateTypeParameterAbort(Object typeParm) {
+	public void acceptEnumerationReference(IASTEnumerationReference reference) {
 		// TODO Auto-generated method stub
 		
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#templateTypeParameterInitialTypeId(java.lang.Object)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptVariableReference(org.eclipse.cdt.core.parser.ast.IASTVariableReference)
 	 */
-	public void templateTypeParameterInitialTypeId(Object typeParm) {
+	public void acceptVariableReference(IASTVariableReference reference) {
 		// TODO Auto-generated method stub
 		
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#templateTypeParameterEnd(java.lang.Object)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFunctionReference(org.eclipse.cdt.core.parser.ast.IASTFunctionReference)
 	 */
-	public void templateTypeParameterEnd(Object typeParm) {
+	public void acceptFunctionReference(IASTFunctionReference reference) {
 		// TODO Auto-generated method stub
 		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#startBitfield(java.lang.Object)
-	 */
-	public Object startBitfield(Object declarator) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#endBitfield(java.lang.Object)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFieldReference(org.eclipse.cdt.core.parser.ast.IASTFieldReference)
 	 */
-	public void endBitfield(Object bitfield) {
+	public void acceptFieldReference(IASTFieldReference reference) {
 		// TODO Auto-generated method stub
 		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#oldKRParametersBegin(java.lang.Object)
-	 */
-	public Object oldKRParametersBegin(Object parameterDeclarationClause) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParserCallback#oldKRParametersEnd(java.lang.Object)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptMethodReference(org.eclipse.cdt.core.parser.ast.IASTMethodReference)
 	 */
-	public void oldKRParametersEnd(Object oldKRParameterDeclarationClause) {
+	public void acceptMethodReference(IASTMethodReference reference) {
 		// TODO Auto-generated method stub
 		
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptAbstractTypeSpecDeclaration(org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration)
-     */
-    public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptPointerToFunction(org.eclipse.cdt.core.parser.ast.IASTPointerToFunction)
-     */
-    public void acceptPointerToFunction(IASTPointerToFunction function)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptPointerToMethod(org.eclipse.cdt.core.parser.ast.IASTPointerToMethod)
-     */
-    public void acceptPointerToMethod(IASTPointerToMethod method)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTypedefReference(org.eclipse.cdt.core.parser.ast.IASTTypedefReference)
-     */
-    public void acceptTypedefReference(IASTTypedefReference reference)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptNamespaceReference(org.eclipse.cdt.core.parser.ast.IASTNamespaceReference)
-     */
-    public void acceptNamespaceReference(IASTNamespaceReference reference)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumerationReference(org.eclipse.cdt.core.parser.ast.IASTEnumerationReference)
-     */
-    public void acceptEnumerationReference(IASTEnumerationReference reference)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptVariableReference(org.eclipse.cdt.core.parser.ast.IASTVariableReference)
-     */
-    public void acceptVariableReference(IASTVariableReference reference)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFunctionReference(org.eclipse.cdt.core.parser.ast.IASTFunctionReference)
-     */
-    public void acceptFunctionReference(IASTFunctionReference reference)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFieldReference(org.eclipse.cdt.core.parser.ast.IASTFieldReference)
-     */
-    public void acceptFieldReference(IASTFieldReference reference)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptMethodReference(org.eclipse.cdt.core.parser.ast.IASTMethodReference)
-     */
-    public void acceptMethodReference(IASTMethodReference reference)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-//TODO: Get rid of these IParserCallbacks once the parser cleans up
-
 }

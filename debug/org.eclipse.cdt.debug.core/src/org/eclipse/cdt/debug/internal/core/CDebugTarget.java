@@ -623,7 +623,7 @@ public class CDebugTarget extends CDebugElement
 	public void handleDebugEvent( ICDIEvent event )
 	{
 		ICDIObject source = event.getSource();
-		if ( source.getTarget().equals( this ) )
+		if ( source.getTarget().equals( getCDITarget() ) )
 		{
 			if ( event instanceof ICDICreatedEvent )
 			{

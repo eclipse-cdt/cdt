@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>org.eclipse.cdt.core</project>
+		<project>org.eclipse.cdt.core.win32</project>
 		<project>org.eclipse.cdt.debug.core</project>
 		<project>org.eclipse.cdt.ui</project>
 		<project>org.eclipse.core.boot</project>

@@ -34,7 +34,10 @@ import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
+import org.eclipse.cdt.debug.internal.ui.editors.AttachSourceEditor;
+import org.eclipse.cdt.debug.internal.ui.editors.AttachSourceEditorInput;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
+import org.eclipse.cdt.debug.internal.ui.editors.FileNotFoundElement;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -159,6 +162,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			return new DisassemblyEditorInput( (IStorage)element );
 		}
+		if ( element instanceof FileNotFoundElement )
+		{
+			return new AttachSourceEditorInput( (FileNotFoundElement)element );
+		}
 		return null;
 	}
 
@@ -169,6 +176,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 	{
 		if ( input != null )
 		{
+			if ( input instanceof AttachSourceEditorInput )
+			{
+				return AttachSourceEditor.EDITOR_ID;
+			}
 			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 			IEditorDescriptor descriptor = registry.getDefaultEditor( input.getName() );
 			if ( descriptor != null )

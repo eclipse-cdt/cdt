@@ -1,3 +1,14 @@
+2003-02-21 Mikhail Khodjaiants
+	Implementing the 'Attach Source' editor.
+	* plugin.properties
+	* plugin.xml
+	* icons/full/obj16/filenotfound_obj.gif: new
+	* CDTDebugModelPresentation.java
+	* AttachSourceEditor.java: new
+	* AttachSourceEditorInput.java: new
+	* FileNotFoundElement.java: new
+	* CUISourceLocator.java
+
 2003-02-20 Mikhail Khodjaiants
 	Added the 'Association' column and the 'Restore Defaults' button to the SourceLookupBlock.
 	* SourceLookupBlock.java

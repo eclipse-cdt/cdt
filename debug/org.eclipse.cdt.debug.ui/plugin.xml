@@ -1090,6 +1090,12 @@
             class="org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditor"
             id="org.eclipse.cdt.debug.ui.DisassemblyEditor">
       </editor>
+      <editor
+            name="%AttachSourceEditor.name"
+            icon="icons/full/obj16/filenotfound_obj.gif"
+            class="org.eclipse.cdt.debug.internal.ui.editors.AttachSourceEditor"
+            id="org.eclipse.cdt.debug.ui.editor.AttachSourceEditor">
+      </editor>
    </extension>
 
 </plugin>

@@ -12,6 +12,7 @@ import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
+import org.eclipse.cdt.debug.internal.ui.editors.FileNotFoundElement;
 import org.eclipse.cdt.debug.internal.ui.wizards.AddDirectorySourceLocationWizard;
 import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -219,11 +220,14 @@ public class CUISourceLocator implements IAdaptable
 			IStackFrameInfo frameInfo = (IStackFrameInfo)stackFrame.getAdapter( IStackFrameInfo.class );
 			if ( frameInfo != null && frameInfo.getFile() != null && frameInfo.getFile().length() > 0 )
 			{
+/*
 				showDebugSourcePage( stackFrame.getLaunch(), frameInfo.getFile() );
 				if ( fNewLocationAttached )
 				{
 					res = fSourceLocator.getSourceElement( stackFrame );
 				}
+*/
+				res = new FileNotFoundElement( stackFrame );
 			}
 		}
 		return res;

@@ -30,9 +30,9 @@ import org.eclipse.swt.widgets.TabItem;
  */
 public class MakeProjectWizardOptionPage extends CProjectWizardOptionPage {
 
-	public class WizardOptionBlock extends MakeProjectOptionBlock {
+	public class MakeWizardOptionBlock extends MakeProjectOptionBlock {
 
-		public WizardOptionBlock(ICOptionContainer parent) {
+		public MakeWizardOptionBlock(ICOptionContainer parent) {
 			super(parent);
 		}
 
@@ -50,7 +50,7 @@ public class MakeProjectWizardOptionPage extends CProjectWizardOptionPage {
 	}
 
 	protected TabFolderOptionBlock createOptionBlock() {
-		return new WizardOptionBlock(this);
+		return new MakeWizardOptionBlock(this);
 	}
 
 	public IProject getProject() {

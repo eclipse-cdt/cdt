@@ -1,5 +1,9 @@
 2004-07-20 Mikhail Khodjaiants
 	Cleanup.
+	* ICDebugInternalConstants.java
+
+2004-07-20 Mikhail Khodjaiants
+	Cleanup.
 	* CStackFrame.java
 
 2004-07-16 Mikhail Khodjaiants

@@ -8,18 +8,14 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.core;
 
 /**
- *
  * Definitions of the internal constants for C/C++ Debug plug-in.
- * 
- * @since: Sep 25, 2002
  */
-public class ICDebugInternalConstants
-{
-	/*
+public class ICDebugInternalConstants {
+
+	/**
 	 * Status handler codes.
 	 */
 	public static final int STATUS_CODE_QUESTION = 10000;

@@ -124,8 +124,12 @@ public abstract class APathEntry extends PathEntry {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(super.toString());
-		sb.append(" base-path:").append(basePath.toString()); //$NON-NLS-1$
-		sb.append(" base-ref:").append(baseRef.toString()); //$NON-NLS-1$
+		if (basePath != null && !basePath.isEmpty()) {
+			sb.append(" base-path:").append(basePath.toString()); //$NON-NLS-1$
+		}
+		if (baseRef != null && !baseRef.isEmpty()) {
+			sb.append(" base-ref:").append(baseRef.toString()); //$NON-NLS-1$
+		}
 		return sb.toString();
 	}
 }

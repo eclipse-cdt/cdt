@@ -154,6 +154,9 @@
       <super
             type="org.eclipse.core.resources.textmarker">
       </super>
+      <persistent
+            value="true">
+      </persistent>
    </extension>
 <!-- =================================================================================== -->
 <!-- CDT C Nature                                                                        -->
@@ -372,7 +375,7 @@
       </super>
    </extension>
 <!-- =================================================================================== -->
-<!-- Marker for problems in the PathEntrie                                               -->
+<!-- Marker for problems in the PathEntries                                             -->
 <!-- =================================================================================== -->
    <extension
          id="pathentry_problem"
@@ -381,9 +384,6 @@
       <super
             type="org.eclipse.core.resources.problemmarker">
       </super>
-      <persistent
-            value="true">
-      </persistent>
    </extension>
 
 </plugin>

@@ -120,7 +120,7 @@ public class PathEntry implements IPathEntry {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		if (path != null) {
+		if (path != null && !path.isEmpty()) {
 			buffer.append(path.toString()).append(' ');
 		}
 		buffer.append('[');

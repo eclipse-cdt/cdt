@@ -103,8 +103,12 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(super.toString());
-		sb.append(" isSystemInclude:").append(isSystemInclude); //$NON-NLS-1$
-		sb.append(" includePath:").append(includePath); //$NON-NLS-1
+		if (isSystemInclude) {
+			sb.append(" isSystemInclude:").append(isSystemInclude); //$NON-NLS-1$
+		}
+		if (includePath != null && !includePath.isEmpty()) {
+			sb.append(" includePath:").append(includePath); //$NON-NLS-1$
+		}
 		return sb.toString();
 	}
 }

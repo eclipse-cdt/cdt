@@ -1,0 +1,30 @@
+2003-01-29 Peter Graves
+
+    Fixed the warnings when accessing static methods
+    * src/org/eclipse/cdt/testplugin/util/DialogCheck.java:
+    * src/org/eclipse/cdt/testplugin/CTestPlugin.java
+    * src/org/eclipse/cdt/testplugin/TestWorkbench.java
+    * ChangeLog: make all entries have the same formatting
+
+2002-12-17 Peter Graves
+
+    * plugin.xml,test.xml: Some simple cleanups to remove refrences to the jdt and
+	to move closer to automated running
+    
+2002-11-27 Alain Magloire
+
+	* model/org/eclipse/cdt/core/model/tests/CModelTests.java:
+	Use CoreModel.getDefault().
+
+2002-10-30 Alain Magloire
+
+	* model/org/eclipse/cdt/core/model/tests/CModelTests.java (testGetNatureID):
+	The fields and the methods use in this test was removed from the CoreModel class.
+	(testHasNature): The method use in this case was refactor in the classes
+	CProjectNature and CCProjectNature, fix the test.
+
+2002-10-18 Peter Graves
+
+	src/org/eclipse/cdt/testplugin/CProjectHelper.jada
+    Cleanup of the CProjectHelper file to remove unused imports, commeted out code etc.
+    

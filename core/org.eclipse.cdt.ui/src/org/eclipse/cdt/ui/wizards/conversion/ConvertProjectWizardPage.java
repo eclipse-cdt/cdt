@@ -261,8 +261,8 @@ public abstract class ConvertProjectWizardPage
         
         
         selectAllButton= new Button(buttons, SWT.PUSH);
-        selectAllButton.setLayoutData(getButtonGridData(selectAllButton));
         selectAllButton.setText(CUIMessages.getString("ConvertProjectWizardPage.SelectAll")); //$NON-NLS-1$
+        selectAllButton.setLayoutData(getButtonGridData(selectAllButton));
         selectAllButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 ConvertProjectWizardPage.this.tableViewer.setAllChecked(true);
@@ -273,8 +273,8 @@ public abstract class ConvertProjectWizardPage
         });
 
         deselectAllButton= new Button(buttons, SWT.PUSH);
-        deselectAllButton.setLayoutData(getButtonGridData(deselectAllButton));
         deselectAllButton.setText(CUIMessages.getString("ConvertProjectWizardPage.DeselectAll")); //$NON-NLS-1$
+        deselectAllButton.setLayoutData(getButtonGridData(deselectAllButton));
         deselectAllButton.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
                 ConvertProjectWizardPage.this.tableViewer.setAllChecked(false);

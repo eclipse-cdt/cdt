@@ -1,3 +1,8 @@
+2004-12-01 Mikhail Khodjaiants
+	New fix for bug 80034: Expressions view does not display correct no. of elements in array.
+	* CValueFactory.java
+	* CExpression.java
+
 2004-12-03 Mikhail Khodjaiants
 	Fix for bug 62659: Unable to set default for register format via plugin_customization.ini.
 	* CDebugCorePreferenceInitializer.java: new

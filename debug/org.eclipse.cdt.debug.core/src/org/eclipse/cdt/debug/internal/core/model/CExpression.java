@@ -129,7 +129,7 @@ public class CExpression extends CVariable implements IExpression {
 							if ( type != null && type.isArray() ) {
 								int[] dims = type.getArrayDimensions();
 								if ( dims.length > 0 && dims[0] > 0 )
-									fValue = CValueFactory.createIndexedValue( this, (ICDIArrayValue)value, 0, dims[0] - 1 );
+									fValue = CValueFactory.createIndexedValue( this, (ICDIArrayValue)value, 0, dims[0] );
 							}
 						}
 						else {

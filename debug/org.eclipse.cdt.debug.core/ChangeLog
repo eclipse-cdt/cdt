@@ -1,4 +1,7 @@
 2002-11-27 Mikhail Khodjaiants
+	Typo in plugin.properties.
+
+2002-11-27 Mikhail Khodjaiants
 	Fire suspend event for debug target that doesn't have threads.
 	* CDebugTarget.java
 

@@ -12,8 +12,9 @@ package org.eclipse.cdt.internal.core;
 
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.PlatformObject;
 
-public abstract class InternalCExtension {
+public abstract class InternalCExtension extends PlatformObject {
 
 	private IProject project;
 	private ICExtensionReference extensionRef;

@@ -1,4 +1,10 @@
 2003-04-04 John Camelon
+	Fixed defect 36073.
+	Fixed error handling for unterminated strings in Scanner.
+	Significantly updated callback structure to better suite the nature of the Code Model.
+	Updated all callbacks and parser to accommodate altered callbacks.  
+
+2003-04-04 John Camelon
 	Fixed defect 35939.  Proper CElement::pos() is set on Simple Declarations, 
 	Class Specifications, Namespaces, Enumerations and Enumerators, Macros and Inclusions.  
 

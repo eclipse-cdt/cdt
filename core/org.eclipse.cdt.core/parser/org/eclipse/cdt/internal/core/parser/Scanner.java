@@ -510,13 +510,13 @@ public class Scanner implements IScanner {
 
 				for( ; ; )
 				{
-					if( ( c == '"' && previous != '\\' )|| ( c == '\n') )break;  
+					if( ( c == '"' && previous != '\\' )|| ( c == NOCHAR) )break;  
 					buff.append((char) c);
 					previous = c;
 					c = getChar(true);
 				}
 
-				if (c != '\n') 
+				if (c != NOCHAR ) 
 				{
 					int type = wideString ? Token.tLSTRING : Token.tSTRING;
 					return newToken(

@@ -71,13 +71,14 @@ public class NewModelBuilder implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classSpecifierName() 
 	 */
-	public void classSpecifierName(Object classSpecifier) 
+	public Object classSpecifierName(Object classSpecifier) 
 	{
 		if( classSpecifier instanceof SimpleDeclarationWrapper )
 		{
 			SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)classSpecifier;
 			wrapper.setName( currName );
 		}
+		return classSpecifier;
 	}
 
 	/**
@@ -162,7 +163,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		Include elem = new Include(((TranslationUnit)translationUnit.getElement()), includeFile);
 		((TranslationUnit)translationUnit.getElement()).addChild(elem);
 		elem.setIdPos(offset, includeFile.length());
-		elem.setPos(inclusionBeginOffset, offset + includeFile.length() + 1 );
+		elem.setPos(inclusionBeginOffset, inclusionBeginOffset - offset + includeFile.length() + 1 );
 	}
 
 	/**
@@ -200,17 +201,19 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclSpecifier(java.lang.Object, org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void simpleDeclSpecifier(Object declSpec, Token specifier) { 
+	public Object simpleDeclSpecifier(Object declSpec, Token specifier) { 
 		DeclSpecifier declSpecifier = (DeclSpecifier)declSpec;  
-		declSpecifier.setType( specifier ); 				
+		declSpecifier.setType( specifier ); 
+		return declSpecifier;			
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorId(java.lang.Object)
 	 */
-	public void declaratorId(Object declarator) {
+	public Object declaratorId(Object declarator) {
 		Declarator decl = (Declarator)declarator; 
 		decl.setName( currName ); 
+		return decl;
 	}
 
 
@@ -241,21 +244,23 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#baseSpecifierName(java.lang.Object)
 	 */
-	public void baseSpecifierName(Object baseSpecifier) {
+	public Object baseSpecifierName(Object baseSpecifier) {
+		return baseSpecifier;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#baseSpecifierVirtual(java.lang.Object, boolean)
 	 */
-	public void baseSpecifierVirtual(Object baseSpecifier, boolean virtual) {
+	public Object baseSpecifierVirtual(Object baseSpecifier, boolean virtual) {
+		return baseSpecifier;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#baseSpecifierVisibility(java.lang.Object, org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void baseSpecifierVisibility(
-		Object baseSpecifier,
-		Token visibility) {
+	public Object baseSpecifierVisibility(	Object baseSpecifier,	Token visibility) 
+	{
+		return null;
 	}
 
 	/**
@@ -280,12 +285,12 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#parameterDeclarationBegin(java.lang.Object, org.eclipse.cdt.internal.core.newparser.Token)
 	 */
 	public Object parameterDeclarationBegin(
-		Object container ) {
+		Object container ) 
+	{
 		List parameterDeclarationClause = (List)container; 
 		Parameter p = new Parameter();
 		parameterDeclarationClause.add( p );
 		return p; 
-		
 	}
 
 	/**
@@ -338,7 +343,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierSafe(java.lang.Object)
 	 */
-	public void classSpecifierSafe(Object classSpecifier) {
+	public Object classSpecifierSafe(Object classSpecifier) {
 		SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)classSpecifier;
 		int kind;
 		
@@ -370,6 +375,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 			elem.setTypeName( wrapper.getClassKind().getImage() );
 			elem.setIdPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());		
 		}
+		return wrapper;
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierBegin(java.lang.Object)
@@ -399,12 +405,13 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierName(java.lang.Object)
 	 */
-	public void elaboratedTypeSpecifierName(Object elab) {
+	public Object elaboratedTypeSpecifierName(Object elab) {
 		if( elab instanceof SimpleDeclarationWrapper )
 		{
 			SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)elab;
 			wrapper.setName( currName );
 		}
+		return elab;
 	}
 
 
@@ -412,9 +419,10 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
 	 */
-	public void simpleDeclSpecifierName(Object declaration) {
+	public Object simpleDeclSpecifierName(Object declaration) {
 		DeclSpecifier declSpecifier = (DeclSpecifier)declaration;  
 		declSpecifier.setName( currName ); 
+		return declSpecifier;
 	}
 
 	/* (non-Javadoc)
@@ -428,7 +436,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classMemberVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void classMemberVisibility(Object classSpecifier, Token visibility) {
+	public Object classMemberVisibility(Object classSpecifier, Token visibility) {
 		SimpleDeclarationWrapper spec = (SimpleDeclarationWrapper)classSpecifier;
 		switch( visibility.getType() )
 		{
@@ -442,6 +450,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 				spec.setCurrentVisibility( AccessSpecifier.v_private );
 				break;
 		}
+		return spec;
 	}
 
 	/* (non-Javadoc)
@@ -466,14 +475,15 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorName(java.lang.Object)
 	 */
-	public void pointerOperatorName(Object ptrOperator) {
+	public Object pointerOperatorName(Object ptrOperator) {
 		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorType(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorType(Object ptrOperator, Token type) {
+	public Object pointerOperatorType(Object ptrOperator, Token type) {
 		PointerOperator po=(PointerOperator)ptrOperator;
 		switch( type.getType() )
 		{
@@ -484,12 +494,14 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 				po.setKind( PointerOperator.k_reference );
 				break;
 			default: 
-		}	}
+		}
+		return po;	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
+	public Object pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
 		PointerOperator po=(PointerOperator)ptrOperator;
 		switch( modifier.getType() )
 		{
@@ -500,13 +512,14 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 				po.setVolatile( true );
 				break;
 			default: 
-		}	
+		}
+		return po;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void declaratorCVModifier(Object declarator, Token modifier) {
+	public Object declaratorCVModifier(Object declarator, Token modifier) {
 		Declarator d = (Declarator)declarator;
 		switch( modifier.getType() )
 		{
@@ -519,6 +532,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 			default:
 				break;
 		}
+		return d;
 	}
 
 	/* (non-Javadoc)
@@ -539,17 +553,17 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#exceptionSpecificationTypename(java.lang.Object)
 	 */
-	public void declaratorThrowExceptionName(Object declarator) {
+	public Object declaratorThrowExceptionName(Object declarator) {
 		// TODO Auto-generated method stub
-		
+		return declarator;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorThrowsException(java.lang.Object)
 	 */
-	public void declaratorThrowsException(Object declarator) {
+	public Object declaratorThrowsException(Object declarator) {
 		// TODO Auto-generated method stub
-		
+		return declarator;
 	}
 
 	/* (non-Javadoc)
@@ -565,7 +579,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationId(java.lang.Object)
 	 */
-	public void namespaceDefinitionId(Object namespace) {
+	public Object namespaceDefinitionId(Object namespace) {
 		// set wrapper name to current name
 		NamespaceWrapper wrapper = (NamespaceWrapper)namespace;
 		wrapper.setName( currName );
@@ -577,8 +591,9 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		wrapper.setElement(newNameSpace);
 		realParent.addChild( newNameSpace );
 
-		// set the positions
-		newNameSpace.setIdPos(wrapper.getName().getStartOffset(), namespaceName.length());	
+		// set the ID position
+		newNameSpace.setIdPos(wrapper.getName().getStartOffset(), namespaceName.length());
+		return wrapper;
 	}
 
 	/* (non-Javadoc)
@@ -623,9 +638,9 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDirectiveNamespaceId(java.lang.Object)
 	 */
-	public void usingDirectiveNamespaceId(Object container) {
+	public Object usingDirectiveNamespaceId(Object container) {
 		// TODO Auto-generated method stub
-		
+		return container;
 	}
 
 	/* (non-Javadoc)
@@ -647,9 +662,9 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationMapping(java.lang.Object)
 	 */
-	public void usingDeclarationMapping(Object container, boolean isTypename) {
+	public Object usingDeclarationMapping(Object container, boolean isTypename) {
 		// TODO Auto-generated method stub
-		
+		return container;
 	}
 
 	/* (non-Javadoc)
@@ -688,8 +703,9 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierId(java.lang.Object)
 	 */
-	public void enumSpecifierId(Object enumSpec) {
+	public Object enumSpecifierId(Object enumSpec) {
 		((EnumerationWrapper)enumSpec).setName( currName );
+		return enumSpec;
 	}
 
 	/* (non-Javadoc)
@@ -753,9 +769,10 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionId(java.lang.Object)
 	 */
-	public void enumeratorId(Object enumDefn) {
+	public Object enumeratorId(Object enumDefn) {
 		EnumeratorWrapper wrapper = (EnumeratorWrapper)enumDefn; 
 		wrapper.setName( currName ); 
+		return wrapper;
 	}
 
 	/* (non-Javadoc)
@@ -817,9 +834,9 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainId(java.lang.Object)
 	 */
-	public void constructorChainElementId(Object ctor) {
+	public Object constructorChainElementId(Object ctor) {
 		// TODO Auto-generated method stub
-		
+		return ctor;
 	}
 
 	/* (non-Javadoc)
@@ -869,9 +886,9 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorPureVirtual(java.lang.Object)
 	 */
-	public void declaratorPureVirtual(Object declarator) {
+	public Object declaratorPureVirtual(Object declarator) {
 		// TODO Auto-generated method stub
-		
+		return declarator;
 	}
 
 	/* (non-Javadoc)
@@ -909,17 +926,17 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterName(java.lang.Object)
 	 */
-	public void templateTypeParameterName(Object typeParm) {
+	public Object templateTypeParameterName(Object typeParm) {
 		// TODO Auto-generated method stub
-		
+		return typeParm;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeInitialTypeId(java.lang.Object)
 	 */
-	public void templateTypeParameterInitialTypeId(Object typeParm) {
+	public Object templateTypeParameterInitialTypeId(Object typeParm) {
 		// TODO Auto-generated method stub
-		
+		return typeParm;
 	}
 
 	/* (non-Javadoc)
@@ -927,7 +944,6 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 */
 	public void templateTypeParameterEnd(Object typeParm) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)

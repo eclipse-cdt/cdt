@@ -65,8 +65,9 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classSpecifierName()
 	 */
-	public void classSpecifierName(Object classSpecifier) {
+	public Object classSpecifierName(Object classSpecifier) {
 		((ClassSpecifier)classSpecifier).setName(currName);
+		return classSpecifier;
 	}
 
 	/**
@@ -94,14 +95,15 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorId(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void declaratorId(Object declarator) {
+	public Object declaratorId(Object declarator) {
 		((Declarator)declarator).setName(currName);
+		return declarator;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declSpecifier(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void simpleDeclSpecifier(Object Container, Token specifier) {
+	public Object simpleDeclSpecifier(Object Container, Token specifier) {
 		DeclSpecifier.Container decl = (DeclSpecifier.Container)Container;
 		DeclSpecifier declSpec = decl.getDeclSpecifier(); 
 		if( declSpec == null )
@@ -110,7 +112,8 @@ public class DOMBuilder implements IParserCallback
 			decl.setDeclSpecifier( declSpec ); 
 		}
 
-		declSpec.setType( specifier );		
+		declSpec.setType( specifier );
+		return decl;		
 	}
 
 
@@ -219,13 +222,14 @@ public class DOMBuilder implements IParserCallback
 		
 	}
 
-	public void baseSpecifierVirtual( Object baseSpecifier, boolean virtual )
+	public Object baseSpecifierVirtual( Object baseSpecifier, boolean virtual )
 	{
 		BaseSpecifier bs = (BaseSpecifier)baseSpecifier; 
 		bs.setVirtual( virtual );
+		return bs;
 	}
 
-	public void baseSpecifierVisibility( Object baseSpecifier, Token visibility )
+	public Object baseSpecifierVisibility( Object baseSpecifier, Token visibility )
 	{
 		int access = AccessSpecifier.v_public;  
 		switch( visibility.type )
@@ -244,12 +248,14 @@ public class DOMBuilder implements IParserCallback
 		}
 	
 		((BaseSpecifier)baseSpecifier).setAccess(access);  
+		return baseSpecifier;
 	}
 
 	
-	public void baseSpecifierName( Object baseSpecifier )
+	public Object baseSpecifierName( Object baseSpecifier )
 	{
 		((BaseSpecifier)baseSpecifier).setName(currName);		
+		return baseSpecifier;
 	}
 	
 	public Object parameterDeclarationBegin( Object container )
@@ -299,7 +305,8 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierSafe(java.lang.Object)
 	 */
-	public void classSpecifierSafe(Object classSpecifier) {
+	public Object classSpecifierSafe(Object classSpecifier) {
+		return classSpecifier;
 	}
 
 	/**
@@ -335,14 +342,16 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierName(java.lang.Object)
 	 */
-	public void elaboratedTypeSpecifierName(Object elab) {
+	public Object elaboratedTypeSpecifierName(Object elab) {
 		((ElaboratedTypeSpecifier)elab).setName( currName );
+		return elab;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
 	 */
-	public void simpleDeclSpecifierName(Object declaration) {
+	public Object simpleDeclSpecifierName(Object declaration) {
+		return declaration;
 	}
 
 	/* (non-Javadoc)
@@ -354,7 +363,7 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classMemberVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void classMemberVisibility(Object classSpecifier, Token visibility) {
+	public Object classMemberVisibility(Object classSpecifier, Token visibility) {
 		ClassSpecifier spec = (ClassSpecifier)classSpecifier;
 		switch( visibility.getType() )
 		{
@@ -368,6 +377,7 @@ public class DOMBuilder implements IParserCallback
 				spec.setCurrentVisibility( AccessSpecifier.v_private );
 				break;
 		}
+		return spec;
 	}
 
 	/* (non-Javadoc)
@@ -391,14 +401,15 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorName(java.lang.Object)
 	 */
-	public void pointerOperatorName(Object ptrOperator) {
+	public Object pointerOperatorName(Object ptrOperator) {
 		// TODO Auto-generated method stub
+		return ptrOperator;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorType(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorType(Object ptrOperator, Token type) {
+	public Object pointerOperatorType(Object ptrOperator, Token type) {
 		PointerOperator ptrOp = (PointerOperator)ptrOperator;
 		switch( type.getType() )
 		{
@@ -411,12 +422,13 @@ public class DOMBuilder implements IParserCallback
 			default:
 				break;
 		}
+		return ptrOp;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
+	public Object pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
 		PointerOperator ptrOp = (PointerOperator)ptrOperator;
 		switch( modifier.getType() )
 		{
@@ -429,12 +441,13 @@ public class DOMBuilder implements IParserCallback
 			default:
 				break;
 		}
+		return ptrOp;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void declaratorCVModifier(Object declarator, Token modifier) {
+	public Object declaratorCVModifier(Object declarator, Token modifier) {
 		Declarator decl = (Declarator)declarator;
 		switch( modifier.getType() )
 		{
@@ -447,7 +460,7 @@ public class DOMBuilder implements IParserCallback
 			default:
 				break;
 		}
-		
+		return decl;
 	}
 
 	/* (non-Javadoc)
@@ -472,17 +485,20 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#exceptionSpecificationTypename(java.lang.Object)
 	 */
-	public void declaratorThrowExceptionName(Object declarator ) {
+	public Object declaratorThrowExceptionName(Object declarator ) 
+	{
 		Declarator decl = (Declarator)declarator; 
-		decl.getExceptionSpecifier().addTypeName( currName ); 
+		decl.getExceptionSpecifier().addTypeName( currName );
+		return decl; 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorThrowsException(java.lang.Object)
 	 */
-	public void declaratorThrowsException(Object declarator) {
+	public Object declaratorThrowsException(Object declarator) {
 		Declarator decl = (Declarator)declarator; 
-		decl.getExceptionSpecifier().setThrowsException(true); 
+		decl.getExceptionSpecifier().setThrowsException(true);
+		return decl;
 	}
 
 	/* (non-Javadoc)
@@ -498,9 +514,10 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationId(java.lang.Object)
 	 */
-	public void namespaceDefinitionId(Object namespace) {
+	public Object namespaceDefinitionId(Object namespace) {
 		NamespaceDefinition ns = (NamespaceDefinition)namespace;
 		ns.setName( currName );
+		return ns;
 	}
 
 	/* (non-Javadoc)
@@ -546,9 +563,10 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDirectiveNamespaceId(java.lang.Object)
 	 */
-	public void usingDirectiveNamespaceId(Object dir) {
+	public Object usingDirectiveNamespaceId(Object dir) {
 		UsingDirective directive = (UsingDirective)dir;
 		directive.setNamespaceName( currName );
+		return directive;
 	}
 
 	/* (non-Javadoc)
@@ -571,10 +589,11 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationMapping(java.lang.Object)
 	 */
-	public void usingDeclarationMapping(Object decl, boolean isTypename) {
+	public Object usingDeclarationMapping(Object decl, boolean isTypename) {
 		UsingDeclaration declaration = (UsingDeclaration)decl;
 		declaration.setMappedName( currName );
 		declaration.setTypename( isTypename );
+		return declaration;
 	}
 
 	/* (non-Javadoc)
@@ -610,9 +629,10 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierId(java.lang.Object)
 	 */
-	public void enumSpecifierId(Object enumSpec) {
+	public Object enumSpecifierId(Object enumSpec) {
 		EnumerationSpecifier es = (EnumerationSpecifier)enumSpec;
 		es.setName( currName );
+		return es;
 	}
 
 	/* (non-Javadoc)
@@ -642,9 +662,10 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionId(java.lang.Object)
 	 */
-	public void enumeratorId(Object enumDefn) {
+	public Object enumeratorId(Object enumDefn) {
 		EnumeratorDefinition definition = (EnumeratorDefinition)enumDefn;
 		definition.setName( currName );
+		return definition;
 	}
 
 	/* (non-Javadoc)
@@ -704,9 +725,10 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainId(java.lang.Object)
 	 */
-	public void constructorChainElementId(Object element) {
+	public Object constructorChainElementId(Object element) {
 		ConstructorChainElement ele = (ConstructorChainElement)element;
 		ele.setName(currName);
+		return ele;
 	}
 
 	/* (non-Javadoc)
@@ -759,9 +781,10 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorPureVirtual(java.lang.Object)
 	 */
-	public void declaratorPureVirtual(Object declarator) {
+	public Object declaratorPureVirtual(Object declarator) {
 		Declarator d = (Declarator)declarator;
 		d.setPureVirtual(true);
+		return d;
 	}
 
 	/* (non-Javadoc)
@@ -814,15 +837,17 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterName(java.lang.Object)
 	 */
-	public void templateTypeParameterName(Object typeParm) {
+	public Object templateTypeParameterName(Object typeParm) {
 		((TemplateParameter)typeParm).setName( currName );
+		return typeParm;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeInitialTypeId(java.lang.Object)
 	 */
-	public void templateTypeParameterInitialTypeId(Object typeParm) {
+	public Object templateTypeParameterInitialTypeId(Object typeParm) {
 		((TemplateParameter)typeParm).setTypeId( currName );
+		return typeParm;
 	}
 
 	/* (non-Javadoc)

@@ -159,7 +159,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void simpleDeclSpecifier(Object Container, Token specifier) {
+	public Object simpleDeclSpecifier(Object Container, Token specifier) {
+		return null;
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.parser.Token)
@@ -180,7 +181,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorId(java.lang.Object)
 	 */
-	public void declaratorId(Object declarator) {
+	public Object declaratorId(Object declarator) {
+		return null;
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorAbort(java.lang.Object, java.lang.Object)
@@ -223,7 +225,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierName(java.lang.Object)
 	 */
-	public void classSpecifierName(Object classSpecifier) {
+	public Object classSpecifierName(Object classSpecifier) {
+		return null;
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierEnd(java.lang.Object)
@@ -239,19 +242,22 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierName(java.lang.Object)
 	 */
-	public void baseSpecifierName(Object baseSpecifier) {
+	public Object baseSpecifierName(Object baseSpecifier) {
+		return null;
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void baseSpecifierVisibility(
+	public Object baseSpecifierVisibility(
 		Object baseSpecifier,
 		Token visibility) {
+			return null;
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierVirtual(java.lang.Object, boolean)
 	 */
-	public void baseSpecifierVirtual(Object baseSpecifier, boolean virtual) {
+	public Object baseSpecifierVirtual(Object baseSpecifier, boolean virtual) {
+		return null;
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierEnd(java.lang.Object)
@@ -279,7 +285,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierSafe(java.lang.Object)
 	 */
-	public void classSpecifierSafe(Object classSpecifier) {
+	public Object classSpecifierSafe(Object classSpecifier) {
+		return null;
 	}
 
 	/**
@@ -298,13 +305,15 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierName(java.lang.Object)
 	 */
-	public void elaboratedTypeSpecifierName(Object container) {
+	public Object elaboratedTypeSpecifierName(Object container) {
+		return null;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
 	 */
-	public void simpleDeclSpecifierName(Object declaration) {
+	public Object simpleDeclSpecifierName(Object declaration) {
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -318,7 +327,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classMemberVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void classMemberVisibility(Object classSpecifier, Token visibility) {
+	public Object classMemberVisibility(Object classSpecifier, Token visibility) {
+		return null;
 		
 		
 	}
@@ -342,7 +352,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorName(java.lang.Object)
 	 */
-	public void pointerOperatorName(Object ptrOperator) {
+	public Object pointerOperatorName(Object ptrOperator) {
+		return null;
 		
 		
 	}
@@ -350,7 +361,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorType(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorType(Object ptrOperator, Token type) {
+	public Object pointerOperatorType(Object ptrOperator, Token type) {
+		return null;
 		
 		
 	}
@@ -358,7 +370,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
+	public Object pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
+		return null;
 		
 		
 	}
@@ -366,7 +379,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
-	public void declaratorCVModifier(Object declarator, Token modifier) {
+	public Object declaratorCVModifier(Object declarator, Token modifier) {
+		return null;
 		
 		
 	}
@@ -389,7 +403,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#exceptionSpecificationTypename(java.lang.Object)
 	 */
-	public void declaratorThrowExceptionName(Object declarator) {
+	public Object declaratorThrowExceptionName(Object declarator) {
+		return null;
 		
 		
 	}
@@ -397,7 +412,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorThrowsException(java.lang.Object)
 	 */
-	public void declaratorThrowsException(Object declarator) {
+	public Object declaratorThrowsException(Object declarator) {
+		return null;
 		
 		
 	}
@@ -413,7 +429,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationId(java.lang.Object)
 	 */
-	public void namespaceDefinitionId(Object namespace) {
+	public Object namespaceDefinitionId(Object namespace) {
+		return null;
 		
 		
 	}
@@ -457,7 +474,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDirectiveNamespaceId(java.lang.Object)
 	 */
-	public void usingDirectiveNamespaceId(Object container) {
+	public Object usingDirectiveNamespaceId(Object container) {
+		return null;
 
 		
 	}
@@ -481,7 +499,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationMapping(java.lang.Object)
 	 */
-	public void usingDeclarationMapping(Object container, boolean isTypename) {
+	public Object usingDeclarationMapping(Object container, boolean isTypename) {
+		return null;
 		
 		
 	}
@@ -520,7 +539,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierId(java.lang.Object)
 	 */
-	public void enumSpecifierId(Object enumSpec) {
+	public Object enumSpecifierId(Object enumSpec) {
+		return null;
 		
 		
 	}
@@ -552,7 +572,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionId(java.lang.Object)
 	 */
-	public void enumeratorId(Object enumDefn) {
+	public Object enumeratorId(Object enumDefn) {
+		return null;
 		
 		
 	}
@@ -606,7 +627,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainId(java.lang.Object)
 	 */
-	public void constructorChainElementId(Object ctor) {
+	public Object constructorChainElementId(Object ctor) {
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -651,7 +673,8 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorPureVirtual(java.lang.Object)
 	 */
-	public void declaratorPureVirtual(Object declarator) {
+	public Object declaratorPureVirtual(Object declarator) {
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -683,13 +706,15 @@ public class ExpressionEvaluator implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterName(java.lang.Object)
 	 */
-	public void templateTypeParameterName(Object typeParm) {
+	public Object templateTypeParameterName(Object typeParm) {
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeInitialTypeId(java.lang.Object)
 	 */
-	public void templateTypeParameterInitialTypeId(Object typeParm) {
+	public Object templateTypeParameterInitialTypeId(Object typeParm) {
+		return null;
 	}
 
 	/* (non-Javadoc)

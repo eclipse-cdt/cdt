@@ -1015,6 +1015,18 @@ public class DOMTests extends TestCase {
 		assertEquals( spec.getClassKey(), ClassKey.t_struct );
 		assertEquals( spec.getName().toString(), "TTest::STest" );
 	}
+	
+	public void testBug36073() throws Exception
+	{
+		StringWriter writer = new StringWriter(); 
+		writer.write( "class A{\n" ); 
+		writer.write( "int x;\n" ); 
+		writer.write( "public:\n" ); 
+		writer.write( "A(const A&);\n" ); 
+		writer.write( "};\n" ); 
+		writer.write( "A::A(const A&v) : x(v.x) { }\n" );
+		TranslationUnit tu = parse( writer.toString() ); 
+	}
 
 }
 

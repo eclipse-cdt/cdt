@@ -1,9 +1,9 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2003, 2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * Rational Software - Initial API and implementation
@@ -2836,6 +2836,8 @@ public abstract class Parser extends ExpressionParser implements IParser
         ASTAccessVisibility visibility = ASTAccessVisibility.PUBLIC;
         ITokenDuple nameDuple = null;
         
+        ArrayList bases = null;
+        
         baseSpecifierLoop : for (;;)
         {
             switch (LT(1))
@@ -2861,26 +2863,17 @@ public abstract class Parser extends ExpressionParser implements IParser
            			break;
                 case IToken.tCOLONCOLON :
                 case IToken.tIDENTIFIER :
-                    nameDuple = name(astClassSpec.getOwnerScope(), CompletionKind.CLASS_REFERENCE, KeywordSetKey.BASE_SPECIFIER );
+                	//to get templates right we need to use the class as the scope
+                    nameDuple = name(astClassSpec, CompletionKind.CLASS_REFERENCE, KeywordSetKey.BASE_SPECIFIER );
                     break;
                 case IToken.tCOMMA :
-                    try
-                    {
-                        astFactory.addBaseSpecifier(
-                            astClassSpec,
-                            isVirtual,
-                            visibility,
-                            nameDuple );
-                    }
-                    catch (ASTSemanticException e)
-                    {
-						failParse();
-						throw backtrack;
-                    } catch (Exception e)
-                    {
-                    	logException( "baseSpecifier_1::addBaseSpecifier", e ); //$NON-NLS-1$
-                        throw backtrack;
-                    }
+                	//because we are using the class as the scope to get the name, we need to postpone adding the base 
+                	//specifiers until after we have all the nameDuples
+                	if( bases == null ){
+                		bases = new ArrayList(5);
+                	}
+                	bases.add( new Object[] { isVirtual ? Boolean.TRUE : Boolean.FALSE, visibility, nameDuple } );                    	
+
                     isVirtual = false;
                     visibility = ASTAccessVisibility.PUBLIC;
                     nameDuple = null;                        
@@ -2894,7 +2887,18 @@ public abstract class Parser extends ExpressionParser implements IParser
 
         try
         {
-            astFactory.addBaseSpecifier(
+            if( bases != null ){
+            	int size = bases.size();
+            	for( int i = 0; i < size; i++ ){
+            		Object [] data = (Object[]) bases.get( i );
+            		astFactory.addBaseSpecifier( astClassSpec, 
+            				                     ((Boolean)data[0]).booleanValue(),
+            		                             (ASTAccessVisibility) data[1], 
+												 (ITokenDuple)data[2] );
+            	}
+            }
+            
+        	astFactory.addBaseSpecifier(
                 astClassSpec,
                 isVirtual,
                 visibility,

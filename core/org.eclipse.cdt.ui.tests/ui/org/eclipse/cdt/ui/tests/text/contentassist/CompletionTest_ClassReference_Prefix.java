@@ -1,9 +1,9 @@
 /**********************************************************************
  * Copyright (c) 2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
@@ -24,17 +24,17 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
  */
 public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionTestStart20.h";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
-	private final String headerFileName = "CompletionTestStart.h";
-	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTCompilationUnit";
-	private final String expectedContextName = "null"; 
+	private final String fileName = "CompletionTestStart20.h"; //$NON-NLS-1$
+	private final String fileFullPath ="resources/contentassist/" + fileName; //$NON-NLS-1$
+	private final String headerFileName = "CompletionTestStart.h"; //$NON-NLS-1$
+	private final String headerFileFullPath ="resources/contentassist/" + headerFileName; //$NON-NLS-1$
+	private final String expectedScopeName = "ASTClassSpecifier"; //$NON-NLS-1$
+	private final String expectedContextName = "null";  //$NON-NLS-1$
 	private final CompletionKind expectedKind = CompletionKind.CLASS_REFERENCE; 
-	private final String expectedPrefix = "a"; 
+	private final String expectedPrefix = "a";  //$NON-NLS-1$
 	private final String[] expectedResults = {
-			"aClass",
-			"anotherClass"
+			"aClass", //$NON-NLS-1$
+			"anotherClass" //$NON-NLS-1$
 	};
 	
 	public CompletionTest_ClassReference_Prefix(String name) {
@@ -43,7 +43,7 @@ public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBa
 
 	public static Test suite() {
 		TestSuite suite= new TestSuite(CompletionTest_ClassReference_Prefix.class.getName());
-		suite.addTest(new CompletionTest_ClassReference_Prefix("testCompletionProposals"));
+		suite.addTest(new CompletionTest_ClassReference_Prefix("testCompletionProposals")); //$NON-NLS-1$
 		return suite;
 	}		
 	
@@ -51,7 +51,7 @@ public class CompletionTest_ClassReference_Prefix  extends CompletionProposalsBa
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" a ") + 2;
+		return getBuffer().indexOf(" a ") + 2; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

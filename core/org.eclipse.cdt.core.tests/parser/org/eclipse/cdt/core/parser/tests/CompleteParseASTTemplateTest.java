@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v0.5 
+ * are made available under the terms of the Common Public License v1.0 
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
@@ -1011,5 +1011,37 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		
 		assertAllReferences( 4, createTaskList( new Task( simple ), new Task( _Tp ),
 				                                new Task( malloc ), new Task( inst ) ) );
+	}
+	
+	public void testBug655114_2() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template < typename _Alloc > class base_allocator { int _Tp; };             \n"); //$NON-NLS-1$
+		writer.write( "template < class T > class B {};                                            \n"); //$NON-NLS-1$
+		writer.write( "template <> class B < int > {};                                             \n"); //$NON-NLS-1$
+		writer.write( "template < typename _Alloc > class allocator;                               \n"); //$NON-NLS-1$
+		writer.write( "template < typename _Tp > class allocator : base_allocator<_Tp>, B<_Tp> {}; \n"); //$NON-NLS-1$
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration base = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier baseCls = (IASTClassSpecifier) base.getOwnedDeclaration();
+		
+		IASTTemplateDeclaration B1 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration B2 = (IASTTemplateDeclaration) i.next();
+		
+		IASTClassSpecifier B1cls = (IASTClassSpecifier) B1.getOwnedDeclaration();
+		IASTClassSpecifier B2cls = (IASTClassSpecifier) B2.getOwnedDeclaration();
+		
+		IASTTemplateDeclaration forward = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration allocator = (IASTTemplateDeclaration) i.next();
+		
+		IASTClassSpecifier cls = (IASTClassSpecifier) allocator.getOwnedDeclaration();
+		i = cls.getBaseClauses();
+		IASTBaseSpecifier clause = (IASTBaseSpecifier) i.next();
+		assertEquals( clause.getParentClassSpecifier(), baseCls ); 
+		clause = (IASTBaseSpecifier) i.next();
+		assertEquals( clause.getParentClassSpecifier(), B1cls );
+		
 	}
 }

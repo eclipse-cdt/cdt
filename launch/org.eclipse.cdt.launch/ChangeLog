@@ -1,3 +1,12 @@
+2003-01-16 David Inglis
+	* src/.../launch/AbstractCLaunchDelegate.java
+	add check for program existance on disk before launch
+		
+	* src/.../launch/internal/ui/AbstractCDebuggerTab.java
+	* src/.../launch/ui/CDebuggerTab.java
+	* src/.../launch/ui/CorefileDebuggerTab.java
+	Fixed http://bugs.eclipse.org/bugs/show_bug.cgi?id=29532
+
 2003-01-06 Alain Magloire
 
 	* build.properties: Patch from Judy Green.

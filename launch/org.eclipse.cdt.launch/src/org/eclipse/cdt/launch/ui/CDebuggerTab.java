@@ -132,6 +132,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 				}
 			}
 		}
+		// if no selection meaning nothing in config the force initdefault on tab
+		setInitializeDefault(selection.equals("") ? true : false);
+		
 		fDCombo.select(selndx == -1 ? 0 : selndx);
 		//The behaviour is undefined for if the callbacks should be triggered for this,
 		//so to avoid unnecessary confusion, we force an update.

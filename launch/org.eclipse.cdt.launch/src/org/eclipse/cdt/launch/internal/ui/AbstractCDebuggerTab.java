@@ -26,6 +26,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	// Dynamic Debugger UI widgets
 	protected ILaunchConfigurationTab fDynamicTab;
 	protected Composite fDynamicTabHolder;
+	private boolean fInitDefaults;
 
 	protected void setDebugConfig(ICDebugConfiguration config) {
 		fCurrentDebugConfig = config;
@@ -76,8 +77,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		ILaunchConfigurationTab tab = getDynamicTab();
 		if ((super.getErrorMessage() != null) || (tab == null)) {
 			return super.getErrorMessage();
-		}
-		else {
+		} else {
 			return tab.getErrorMessage();
 		}
 	}
@@ -100,23 +100,24 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 			if (wc != null) {
 				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map) null);
 			}
-		}
-		else {
+		} else {
 			if (wc == null) {
 				try {
 					if (getLaunchConfiguration().isWorkingCopy()) {
-						// get a fresh copy to work on
-						wc = ((ILaunchConfigurationWorkingCopy) getLaunchConfiguration()).getOriginal().getWorkingCopy();
+						setLaunchConfigurationWorkingCopy((ILaunchConfigurationWorkingCopy)getLaunchConfiguration());
+					} else {
+						setLaunchConfigurationWorkingCopy(getLaunchConfiguration().getWorkingCopy());
 					}
-					else {
-						wc = getLaunchConfiguration().getWorkingCopy();
-					}
-				}
-				catch (CoreException e) {
+					wc = getLaunchConfigurationWorkingCopy();
+
+				} catch (CoreException e) {
 					return;
 				}
 			}
-			getDynamicTab().setDefaults(wc);
+			if (initDefaults()) {
+				getDynamicTab().setDefaults(wc);
+			}
+			setInitializeDefault(false);
 			getDynamicTab().initializeFrom(wc);
 		}
 		updateLaunchConfigurationDialog();
@@ -137,9 +138,12 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		ICDebugConfiguration debugConfig = getConfigForCurrentDebugger();
 		if (debugConfig == null) {
 			setDynamicTab(null);
-		}
-		else {
+		} else {
 			setDynamicTab(CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID()));
+			ICDebugConfiguration oldConfig = getDebugConfig();
+			if ( oldConfig != null && oldConfig != debugConfig ) {
+				setInitializeDefault(true);
+			}
 		}
 		setDebugConfig(debugConfig);
 		if (getDynamicTab() == null) {
@@ -165,13 +169,12 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		if ( getDebugConfig() != null ) {
+		if (getDebugConfig() != null) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, getDebugConfig().getID());
 			ILaunchConfigurationTab dynamicTab = getDynamicTab();
 			if (dynamicTab == null) {
 				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map) null);
-			}
-			else {
+			} else {
 				dynamicTab.performApply(config);
 			}
 		}
@@ -182,6 +185,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
 			dynamicTab.setDefaults(config);
+			setInitializeDefault(false);
 		}
 	}
 
@@ -198,6 +202,14 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 			return dynamicTab.isValid(config);
 		}
 		return true;
+	}
+
+	protected void setInitializeDefault(boolean init) {
+		fInitDefaults = init;
+	}
+
+	protected boolean initDefaults() {
+		return fInitDefaults;
 	}
 
 }

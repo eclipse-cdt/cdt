@@ -396,7 +396,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		}
 
 		IFile projectPath = ((IProject) cproject.getResource()).getFile(fileName);
-		if (projectPath == null || !projectPath.exists()) {
+		if (projectPath == null || !projectPath.exists() || !projectPath.getLocation().toFile().exists()) {
 			abort("Program file does not exist", null, ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 		return projectPath.getLocation();
@@ -510,7 +510,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 
 		private String parseToken() {
 			StringBuffer buf = new StringBuffer();
-
+			
 			while (ch > 0 && !Character.isWhitespace((char) ch)) {
 				if (ch == '\\') {
 					ch = getNext();

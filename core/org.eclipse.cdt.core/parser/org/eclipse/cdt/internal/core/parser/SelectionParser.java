@@ -27,8 +27,10 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.OffsetDuple;
@@ -158,11 +160,19 @@ public class SelectionParser extends ContextualParser {
 		IASTNode node = lookupNode(finalDuple);
 		if( node == null ) return null;
 		if( !(node instanceof IASTOffsetableNamedElement )) return null;
-		int indexValue = -1;
-		Object index = nodeTable.get( node );
-		if( index instanceof Integer )
-			indexValue = ((Integer)index).intValue();
+		Integer lookupResult = ((Integer)nodeTable.get(node));
+		int indexValue = ( lookupResult != null ) ? lookupResult.intValue() : -1;
 		
+		if( indexValue == -1 && node instanceof IASTParameterDeclaration )
+		{
+			try {
+				IASTFunction f = ((IASTParameterDeclaration)node).getOwnerFunctionDeclaration();
+				lookupResult = ((Integer)nodeTable.get(f)); 
+				indexValue = ( lookupResult != null ) ? lookupResult.intValue() : -1;
+			} catch (ASTNotImplementedException e) {
+			}
+		
+		}
 		return new SelectionParseResult( (IASTOffsetableNamedElement) node, getFilenameForIndex(indexValue) ); 
 	}
 
@@ -253,6 +263,7 @@ public class SelectionParser extends ContextualParser {
 		else
 		{
 			contextNode = declaration;
+			handleOffsetableNamedElement((IASTOffsetableNamedElement) declaration);
 			throw new EndOfFileException();
 		}
 	}
@@ -316,6 +327,7 @@ public class SelectionParser extends ContextualParser {
 		else
 		{
 			contextNode = enumerator;
+			handleOffsetableNamedElement(enumerator);
 			throw new EndOfFileException();
 		}
 	}

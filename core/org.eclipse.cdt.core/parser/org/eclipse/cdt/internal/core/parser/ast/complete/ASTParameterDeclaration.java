@@ -14,8 +14,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
@@ -218,5 +220,11 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
 	 */
 	public int getNameLineNumber() {
 		return offsets.getNameLineNumber();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration#getOwnerFunctionDeclaration()
+	 */
+	public IASTFunction getOwnerFunctionDeclaration() throws ASTNotImplementedException {
+		return (IASTFunction) getSymbol().getContainingSymbol().getASTExtension().getPrimaryDeclaration();
 	}
 }

@@ -16,5 +16,10 @@ package org.eclipse.cdt.core.parser.ast;
  */
 public interface IASTParameterDeclaration extends IASTAbstractDeclaration, IASTOffsetableNamedElement
 {
-	public IASTInitializerClause getDefaultValue(); 
+	public IASTInitializerClause getDefaultValue();
+
+	/**
+	 * @return
+	 */
+	public IASTFunction getOwnerFunctionDeclaration() throws ASTNotImplementedException; 
 }

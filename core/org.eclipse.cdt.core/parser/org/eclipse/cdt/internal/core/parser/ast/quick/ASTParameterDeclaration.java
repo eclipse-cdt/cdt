@@ -12,7 +12,9 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
@@ -137,5 +139,11 @@ public class ASTParameterDeclaration extends ASTAbstractDeclaration implements I
 	 */
 	public int getNameLineNumber() {
 		return offsets.getNameLineNumber();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration#getOwnerFunctionDeclaration()
+	 */
+	public IASTFunction getOwnerFunctionDeclaration() throws ASTNotImplementedException {
+		throw new ASTNotImplementedException();
 	}
 }

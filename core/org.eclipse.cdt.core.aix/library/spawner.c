@@ -71,6 +71,63 @@ static void free_c_array(char **c_array)
 }
 
 
+/*
+ * Class:     org_eclipse_cdt_utils_spawner_Spawner
+ * Method:    exec2
+ * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[ILorg/eclipse/cdt/utils/pty/PTY;)I
+ */
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
+  (JNIEnv *env, jobject jobj, jobjectArray jcmd, jobjectArray jenv, jstring jdir, jintArray jchannels,
+   jstring jslaveName, jint masterFD)
+{
+    jint *channels = (*env)->GetIntArrayElements(env, jchannels, 0);
+    const char *dirpath = (*env)->GetStringUTFChars(env, jdir, NULL);
+    const char *pts_name = (*env)->GetStringUTFChars(env, jslaveName, NULL);
+    char **cmd;
+    char **envp;
+    int fd[3];
+    pid_t pid = -1;
+
+    if (channels == NULL)
+        goto bail_out;
+
+    cmd = alloc_c_array(env, jcmd);
+    if (cmd == NULL)
+        goto bail_out;
+
+    envp = alloc_c_array(env, jenv);
+    if (envp == NULL)
+        goto bail_out;
+
+#if DEBUGIT
+    fprintf(stderr, "command:");
+    print_array(cmd);
+    fprintf(stderr, "Envp:");
+    print_array(envp);
+    fprintf(stderr, "dirpath: %s\n", dirpath);
+    fprintf(stderr, "pts_name: %s\n", pts_name);
+#endif
+
+    pid = exec_pty(cmd[0], cmd, envp, dirpath, fd, pts_name, masterFD);
+    if (pid < 0)
+        goto bail_out;
+
+    channels[0] = fd[0];
+    channels[1] = fd[1];
+    channels[2] = fd[2];
+
+  bail_out:
+    (*env)->ReleaseIntArrayElements(env, jchannels, channels, 0);
+    (*env)->ReleaseStringUTFChars(env, jdir, dirpath);
+    (*env)->ReleaseStringUTFChars(env, jslaveName, pts_name);
+    if (cmd)
+        free_c_array(cmd);
+    if (envp)
+        free_c_array(envp);
+    return pid;
+}
+ 
+
 JNIEXPORT jint JNICALL
 Java_org_eclipse_cdt_utils_spawner_Spawner_exec1(JNIEnv * env, jobject jobj,
                                                jobjectArray jcmd,

@@ -129,6 +129,10 @@ public class MIDataReadMemory extends MICommand {
 		}
 	}
 
+	public MIDataReadMemoryInfo getMIDataReadMemoryInfo() throws MIException {
+		return (MIDataReadMemoryInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -110,6 +109,7 @@ public class IndexManager implements IElementChangedListener {
 		if (filesMap == null)
 			return;
 
+		clearRequestList(resource);
 		switch (resource.getType()) {
 			case IResource.ROOT:
 				// PROBLEM?
@@ -117,10 +117,10 @@ public class IndexManager implements IElementChangedListener {
 
 			case IResource.PROJECT:
 				projectsMap.remove(resource.getLocation());	
-			break;
+				// FALL_THROUGHT
 
 			case IResource.FOLDER:
-				removeFolder((IFolder)resource);
+				removeContainer((IContainer)resource);
 			break;
 
 			case IResource.FILE:
@@ -129,12 +129,12 @@ public class IndexManager implements IElementChangedListener {
 		}
 	}
 
-	public void removeFolder(IFolder folder) {
-		Map filesMap = (Map)projectsMap.get(folder.getProject().getLocation());
+	public void removeContainer(IContainer container) {
+		Map filesMap = (Map)projectsMap.get(container.getProject().getLocation());
 		if (filesMap == null)
 			return;
 
-		IPath folderPath = folder.getLocation();
+		IPath folderPath = container.getLocation();
 		if (filesMap != null) {
 			Iterator keys = filesMap.keySet().iterator();
 			while (keys.hasNext()) {
@@ -151,6 +151,21 @@ public class IndexManager implements IElementChangedListener {
 		Map filesMap = (Map)projectsMap.get(file.getProject().getLocation());
 		if (filesMap != null) {
 			filesMap.remove(file.getLocation());
+		}
+	}
+
+	public void clearRequestList(IResource resource) {
+		if (resource instanceof IFile) {
+			requestList.removeItem(resource);
+		} else if (resource instanceof IContainer) {
+			try {
+				IContainer container = (IContainer)resource;
+				IResource[] resources = container.members(false);
+				for (int i = 0; i < resources.length; i++) {
+					clearRequestList(resources[i]);
+				}
+			} catch (CoreException e) {
+			}
 		}
 	}
 

@@ -1,3 +1,11 @@
+2004-03-03 John Camelon
+	Added some trace statements to CompleteParseASTFactory.  
+	Cleaned up usage of Enum.getValue() wrt encapsulation of enumerator value.  
+	Refactored CompleteParseASTFactory for correctness and abstraction. 
+	Added preliminary IProblem support to CompleteParseASTFactory.  
+	Added (commented out unfortunately) assertions into CompleteParseASTFactory. 
+	Updated IASTUsingDeclaration to return an Iterator for declarations mapped rather than just a single declaration.  
+
 2004-03-01 Andrew Niefer
 	bug 52695 :  ast.complete.IASTClassSpecifier#getDeclarations returns an empty iterator 
 	- take ASTNode.SymbolIterator and move it to org.eclipse.cdt.internal.core.parser.ast

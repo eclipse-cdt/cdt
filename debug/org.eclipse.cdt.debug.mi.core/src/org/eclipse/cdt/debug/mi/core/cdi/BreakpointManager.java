@@ -111,7 +111,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 		for (int i = 0; i < breakpoints.length; i++) {
 			breakList.remove(breakpoints[i]);
@@ -137,7 +137,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 		((Breakpoint) breakpoint).getMIBreakPoint().setEnabled(true);
 	}
@@ -161,7 +161,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 		((Breakpoint) breakpoint).getMIBreakPoint().setEnabled(false);
 	}
@@ -189,7 +189,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 					throw new CDIException("No answer");
 				}
 			} catch (MIException e) {
-				throw new CDIException(e.toString());
+				throw new CDIException(e.getMessage());
 			}
 		} else {
 			int ignoreCount = condition.getIgnoreCount();
@@ -204,7 +204,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 					throw new CDIException("No answer");
 				}
 			} catch (MIException e) {
-				throw new CDIException(e.toString());
+				throw new CDIException(e.getMessage());
 			}
 		}
 	}
@@ -231,7 +231,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			}
 			// FIXME: Generate a DestroyEvent for deleted ones.
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 		return (ICDIBreakpoint[]) listBreakpoints();
 	}
@@ -294,7 +294,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("Error parsing");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 
 		Breakpoint bkpt = new Breakpoint(this, points[0]);
@@ -325,11 +325,25 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("Parsing Error");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 
 		Watchpoint bkpt = new Watchpoint(this, points[0]);
 		breakList.add(bkpt);
 		return bkpt;
 	}
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#createCondition(int, String)
+	 */
+	public ICDICondition createCondition(int ignoreCount, String expression) {
+		return new Condition(ignoreCount, expression);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#createLocation(String, String, int)
+	 */
+	public ICDILocation createLocation( String file, String function, int line) {
+		return new Location(file, function, line);
+	}
+
 }

@@ -1,3 +1,9 @@
+2004-07-26 Alain Magloire
+
+	Fix for PR 70842
+
+	* utils/org/eclipse/cdt/utils/coff/PE.java
+
 2004-07-26 Vladimir Hirsl
 
 	Tracking PR 70820, SOM Binary parser.

@@ -848,8 +848,8 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionDelegate">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -1160,6 +1160,7 @@
       <editor
             name="%CDebugEditor.name"
             icon="icons/full/obj16/filenotfound_obj.gif"
+            contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
             class="org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor"
             id="org.eclipse.cdt.debug.ui.editor.CDebugEditor">
       </editor>

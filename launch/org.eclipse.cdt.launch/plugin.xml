@@ -20,6 +20,7 @@
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.cdt.debug.ui"/>
+      <import plugin="org.eclipse.core.boot"/>
    </requires>
 
 

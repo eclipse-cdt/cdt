@@ -121,6 +121,10 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 				}
 				else if (fileName == null) {
 					String possibleFileName = token.toLowerCase();
+					if ((possibleFileName.startsWith("\"") && possibleFileName.endsWith("\"")) || 
+						(possibleFileName.startsWith("\'") && possibleFileName.endsWith("\'"))) {
+						possibleFileName = possibleFileName.substring(1, possibleFileName.length()-1).trim();
+					}
 					if (possibleFileName.endsWith(".c") || 		//$NON-NLS-1$
 						possibleFileName.endsWith(".cpp") ||	//$NON-NLS-1$
 						possibleFileName.endsWith(".cc") ||		//$NON-NLS-1$
@@ -183,7 +187,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 		int prevIndex = 0;
 		for (int index = line.indexOf(fDashI, prevIndex); index != -1; 
 			 prevIndex = index+2, index = line.indexOf(fDashI, prevIndex)) {
-			String delimiter = "\\s"; //$NON-NLS-1$
+			String delimiter = "\\s+"; //$NON-NLS-1$
 			if (line.charAt(index-1) == '\'' || line.charAt(index-1) == '\"') {
 				// look for only one more ' or "
 				delimiter = String.valueOf(line.charAt(index-1));
@@ -225,9 +229,10 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 	private void parseLineForSymbolDefinitions(String line, List symbols) {
 		final String fDashD = "-D"; //$NON-NLS-1$
 		int prevIndex = 0;
+		String delimiter = null;
+		String splitRegex = "\\s+"; //$NON-NLS-1$
 		for (int index = line.indexOf(fDashD, prevIndex); index != -1; 
 			 prevIndex = index+2, index = line.indexOf(fDashD, prevIndex)) {
-			String delimiter = "\\s"; //$NON-NLS-1$
 			int nDelimiterSymbols = 2;
 			String postfix = line.substring(index+2).trim();
 			if (postfix.charAt(0) == '-') {	// empty -D
@@ -239,7 +244,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 				nDelimiterSymbols = 1;
 			}
 			else {
-				String[] tokens = postfix.split(delimiter, 2);
+				String[] tokens = postfix.split(splitRegex, 2);
 				if (tokens.length > 0 && tokens[0].length() > 0) {
 					int sQuoteIndex = tokens[0].indexOf(SINGLE_QUOTE_STRING);
 					int dQuoteIndex = tokens[0].indexOf(DOUBLE_QUOTE_STRING);
@@ -248,6 +253,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 						if (!symbols.contains(tokens[0])) {
 							symbols.add(tokens[0]);
 						}
+						continue;
 					}
 					else {
 						delimiter = (sQuoteIndex != -1 && (dQuoteIndex == -1 || sQuoteIndex < dQuoteIndex)) ? SINGLE_QUOTE_STRING : DOUBLE_QUOTE_STRING;

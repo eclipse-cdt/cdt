@@ -19,9 +19,7 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerInfoConsoleParser;
 import org.eclipse.core.resources.IResource;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Scanner configuration console parser tests
@@ -53,15 +51,6 @@ public class ScannerConfigConsoleParserTests extends TestCase {
 		
 		clParser.shutdown();
 		clParser = null;
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ScannerConfigConsoleParserTests.class.getName());
-		
-		suite.addTest(new ScannerConfigConsoleParserTests("testParsingIncludePaths"));
-		suite.addTest(new ScannerConfigConsoleParserTests("testParsingSymbolDefinitions"));
-		
-		return suite;
 	}
 
 	/*
@@ -115,6 +104,7 @@ public class ScannerConfigConsoleParserTests extends TestCase {
 		assertTrue(sumIncludes.contains("//server5/include"));
 		assertTrue(sumIncludes.contains("//server6/include"));
 		assertTrue(sumIncludes.contains("/multiline/dir"));
+		assertTrue(sumIncludes.size() == 24);
 	}
 	
 	public void testParsingSymbolDefinitions() {
@@ -152,5 +142,22 @@ public class ScannerConfigConsoleParserTests extends TestCase {
 		assertTrue(sumSymbols.contains("MACRO13=\"value 13\""));
 		assertTrue(sumSymbols.contains("MULTILINE=TRUE"));
 		assertTrue(sumSymbols.contains("SUM(x, y) = (x) + (y)"));
+		assertTrue(sumSymbols.size() == 15);
+		
+	}
+	
+	public void testParsingSymbolDefinitions_bug80271() {
+		final ArrayList sumSymbols = new ArrayList();
+		// initialize it with the utility
+		clParser.startup(null, null, new IScannerInfoCollector() {
+			public void contributeToScannerConfig(IResource resource, List includes, List symbols, Map extraInfo) {
+				sumSymbols.addAll(symbols);
+			}
+		});
+		
+		clParser.processLine("gcc -DMACRO1 -I ..\\inc -c ..\\source\\source.c");	// PR 80271
+
+		assertTrue(sumSymbols.contains("MACRO1"));
+		assertTrue(sumSymbols.size() == 1);
 	}
 }

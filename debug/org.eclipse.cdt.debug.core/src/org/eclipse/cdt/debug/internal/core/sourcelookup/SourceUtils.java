@@ -82,7 +82,7 @@ public class SourceUtils
 	public static ICSourceLocation[] getCommonSourceLocationsFromMemento( String memento )
 	{
 		ICSourceLocation[] result = new ICSourceLocation[0];
-		if ( memento != null )
+		if ( !isEmpty( memento ) )
 		{
 			try
 			{
@@ -172,5 +172,10 @@ public class SourceUtils
 			}
 		}
 		return (ICSourceLocation[])sourceLocations.toArray( new ICSourceLocation[sourceLocations.size()] );
+	}
+
+	private static boolean isEmpty( String string )
+	{
+		return ( string == null || string.trim().length() == 0 );
 	}
 }

@@ -10,13 +10,15 @@
  *******************************************************************************/
 
 /*
- * Created on Nov 23, 2004
+ * Created on Dec 8, 2004
  */
 package org.eclipse.cdt.core.dom.ast;
 
 /**
  * @author aniefer
  */
-public interface IEnumeration extends IBinding, IType {
-
+public interface IPointerType extends IType {
+    public IType getType();
+    public boolean isConst();
+    public boolean isVolatile();
 }

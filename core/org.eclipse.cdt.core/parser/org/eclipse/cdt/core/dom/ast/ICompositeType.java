@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @author Doug Schaefer
  */
-public interface ICompositeType extends IType {
+public interface ICompositeType extends IBinding, IType {
 
 	/**
 	 *  what kind of composite type is this?

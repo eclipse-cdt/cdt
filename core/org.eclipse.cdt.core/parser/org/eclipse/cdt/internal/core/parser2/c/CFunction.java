@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
@@ -120,6 +121,14 @@ public class CFunction implements IFunction {
 		}
 		return null;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
+     */
+    public IFunctionType getType() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 	
 //	public IASTDeclaration getDeclaration(){
 //	    return (IASTDeclaration) declarator.getParent();

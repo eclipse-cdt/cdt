@@ -34,4 +34,6 @@ public interface IFunction extends IBinding {
 	 */
 	public IScope getFunctionScope();
 	
+	public IFunctionType getType();
+	
 }

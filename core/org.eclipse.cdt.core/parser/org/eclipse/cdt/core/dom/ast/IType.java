@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * @author Doug Schaefer
  */
-public interface IType extends IBinding {
+public interface IType {
 
 	
 }

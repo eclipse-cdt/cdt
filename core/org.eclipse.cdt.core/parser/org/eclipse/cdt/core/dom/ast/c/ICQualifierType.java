@@ -10,13 +10,15 @@
  *******************************************************************************/
 
 /*
- * Created on Nov 23, 2004
+ * Created on Dec 9, 2004
  */
-package org.eclipse.cdt.core.dom.ast;
+package org.eclipse.cdt.core.dom.ast.c;
+
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 
 /**
  * @author aniefer
  */
-public interface IEnumeration extends IBinding, IType {
-
+public interface ICQualifierType extends IQualifierType {
+    public boolean isRestrict();
 }

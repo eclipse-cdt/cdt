@@ -10,13 +10,15 @@
  *******************************************************************************/
 
 /*
- * Created on Nov 23, 2004
+ * Created on Dec 8, 2004
  */
-package org.eclipse.cdt.core.dom.ast;
+package org.eclipse.cdt.core.dom.ast.gnu.cpp;
+
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 
 /**
  * @author aniefer
  */
-public interface IEnumeration extends IBinding, IType {
-
+public interface IGPPPointerType extends IPointerType {
+    boolean isRestrict();
 }

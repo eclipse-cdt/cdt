@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * @author Doug Schaefer
  */
-public interface ITypedef extends IType {
+public interface ITypedef extends IBinding, IType {
 
 	/**
 	 * Returns the type that this thing is a typedef of

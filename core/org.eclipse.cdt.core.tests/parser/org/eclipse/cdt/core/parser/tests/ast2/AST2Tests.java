@@ -39,14 +39,19 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
@@ -869,6 +874,139 @@ public class AST2Tests extends AST2BaseTest {
 	        assertEquals( s1, s2);
         }
          
+    }
+    
+    public void _testBasicTypes() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "int a;       \n" ); //$NON-NLS-1$
+        buffer.append( "char * b;    \n" ); //$NON-NLS-1$
+        buffer.append( "const int c; \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IVariable a = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+        IVariable b = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
+        IVariable c = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+        
+        IType t_a_1 = a.getType();
+        assertTrue( t_a_1 instanceof IBasicType );
+        
+        IType t_b_1 = b.getType();
+        assertTrue( t_b_1 instanceof IPointerType );
+        IType t_b_2 = ((IPointerType) t_b_1).getType();
+        assertTrue( t_b_2 instanceof IBasicType );
+
+        IType t_c_1 = c.getType();
+        assertTrue( t_c_1 instanceof IQualifierType );
+        assertTrue( ((IQualifierType)t_c_1).isConst());
+        IType t_c_2 = ((IQualifierType)t_c_1).getType();
+        assertTrue( t_c_2 instanceof IBasicType );
+    }
+    
+    public void _testCompositeTypes() throws Exception{
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "struct A {} a1;              \n"); //$NON-NLS-1$
+        buffer.append( "typedef A * AP;              \n"); //$NON-NLS-1$
+        buffer.append( "struct A * const a2;         \n"); //$NON-NLS-1$
+        buffer.append( "AP a3;                       \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+        ICompositeType A = (ICompositeType) compSpec.getName().resolveBinding();
+        IVariable a1 = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+        ITypedef AP = (ITypedef) decl.getDeclarators()[0].getName().resolveBinding();
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
+        IVariable a2 = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[3];
+        IVariable a3 = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+
+        IType t_a1 = a1.getType();
+        assertSame( t_a1, A );
+        
+        IType t_a2 = a2.getType();
+        assertTrue( t_a2 instanceof IPointerType );
+        assertTrue( ((IPointerType) t_a2).isConst() );
+        assertSame( ((IPointerType) t_a2).getType(), A );
+        
+        IType t_a3 = a3.getType();
+        assertSame( t_a3, AP );
+        IType t_AP = AP.getType();
+        assertTrue( t_AP instanceof IPointerType );
+        assertSame( ((IPointerType) t_AP).getType(), A );
+    }
+    
+    public void _testFunctionTypes() throws Exception{
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "struct A;                           \n"); //$NON-NLS-1$
+        buffer.append( "int * f( int i, char c );           \n"); //$NON-NLS-1$
+        buffer.append( "void ( *g ) ( struct A * );         \n"); //$NON-NLS-1$
+        buffer.append( "void (* (*h)(struct A**) ) ( int ); \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IASTElaboratedTypeSpecifier elabSpec = (IASTElaboratedTypeSpecifier) decl.getDeclSpecifier();
+        ICompositeType A = (ICompositeType) elabSpec.getName().resolveBinding();
+        
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+        IFunction f = (IFunction) decl.getDeclarators()[0].getName().resolveBinding();
+        
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
+        IVariable g = (IVariable) decl.getDeclarators()[0].getNestedDeclarator().getName().resolveBinding();
+        
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[3];
+        IVariable h = (IVariable) decl.getDeclarators()[0].getNestedDeclarator().getNestedDeclarator().getName().resolveBinding();
+        
+        IFunctionType t_f = f.getType();
+        IType t_f_return = t_f.getReturnType();
+        assertTrue( t_f_return instanceof IPointerType );
+        assertTrue( ((IPointerType) t_f_return).getType() instanceof IBasicType );
+        IType [] t_f_params = t_f.getParameterTypes();
+        assertEquals( t_f_params.length, 2 );
+        assertTrue( t_f_params[0] instanceof IBasicType );
+        assertTrue( t_f_params[1] instanceof IBasicType );
+        
+        //g is a pointer to a function that returns void and has 1 parameter struct A *
+        IType t_g = g.getType();
+        assertTrue( t_g instanceof IPointerType );
+        assertTrue( ((IPointerType) t_g).getType() instanceof IFunctionType );
+        IFunctionType t_g_func = (IFunctionType) ((IPointerType) t_g).getType();
+        IType t_g_func_return = t_g_func.getReturnType();
+        assertTrue( t_g_func_return instanceof IBasicType );
+        IType [] t_g_func_params = t_g_func.getParameterTypes();
+        assertEquals( t_g_func_params.length, 1 );
+        IType t_g_func_p1 = t_g_func_params[0];
+        assertTrue( t_g_func_p1 instanceof IPointerType );
+        assertSame( ((IPointerType)t_g_func_p1).getType(), A );
+        
+        //h is a pointer to a function that returns a pointer to a function
+        //the returned pointer to function returns void and takes 1 parameter int
+        // the *h function takes 1 parameter struct A**
+        IType t_h = h.getType();
+        assertTrue( t_h instanceof IPointerType );
+        assertTrue( ((IPointerType) t_h).getType() instanceof IFunctionType );
+        IFunctionType t_h_func = (IFunctionType) ((IPointerType) t_h).getType();
+        IType t_h_func_return = t_g_func.getReturnType();
+        IType [] t_h_func_params = t_h_func.getParameterTypes();
+        assertEquals( t_h_func_params.length, 1 );
+        IType t_h_func_p1 = t_h_func_params[0];
+        assertTrue( t_h_func_p1 instanceof IPointerType );
+        assertTrue( ((IPointerType)t_h_func_p1).getType() instanceof IPointerType );
+        assertSame( ((IPointerType) ((IPointerType)t_h_func_p1).getType() ).getType(), A );
+        
+        assertTrue( t_h_func_return instanceof IPointerType );
+        IFunctionType h_return = (IFunctionType) ((IPointerType) t_h_func_return).getType();
+        IType h_r = h_return.getReturnType();
+        IType [] h_ps = h_return.getParameterTypes();
+        assertTrue( h_r instanceof IBasicType );
+        assertEquals( h_ps.length, 1 );
+        assertTrue( h_ps[0] instanceof IBasicType );
     }
 }
 

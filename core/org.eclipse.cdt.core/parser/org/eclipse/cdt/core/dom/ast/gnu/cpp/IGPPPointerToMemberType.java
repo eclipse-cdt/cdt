@@ -10,13 +10,16 @@
  *******************************************************************************/
 
 /*
- * Created on Nov 23, 2004
+ * Created on Dec 9, 2004
  */
-package org.eclipse.cdt.core.dom.ast;
+package org.eclipse.cdt.core.dom.ast.gnu.cpp;
+
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 
 /**
  * @author aniefer
  */
-public interface IEnumeration extends IBinding, IType {
+public interface IGPPPointerToMemberType extends ICPPPointerToMemberType,
+        IGPPPointerType {
 
 }

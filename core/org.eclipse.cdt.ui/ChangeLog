@@ -1,3 +1,10 @@
+2004-04-12 Hoda Amer
+	From Chris Wiebe
+	This patch updates the class wizard to use the type cache & type
+	selection dialog when choosing a base class.
+	It also fixes the base class inclusion problem and 
+	ensures the working copies are destroyed once committed [57968].
+		
 2004-04-11 John Camelon
 	Updated CompletionEngine to use shared working copies when parsing include files.
 	Updated clients for ISourceElementRequestor.createReader() updates.

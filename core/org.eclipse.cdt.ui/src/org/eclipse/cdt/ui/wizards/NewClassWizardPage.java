@@ -15,28 +15,30 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CConventions;
+import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.TypeInfo;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOpenable;
-import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.search.BasicSearchMatch;
-import org.eclipse.cdt.core.search.BasicSearchResultCollector;
-import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.wizards.*;
 import org.eclipse.cdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
@@ -49,7 +51,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFie
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
-import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.CodeGeneration;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -68,6 +69,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -81,7 +83,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -111,7 +112,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	// the created class element
 	private /*IStructure*/ ICElement createdClass = null;
 	
-	private List elementsOfTypeClassInProject = null;
+		 private ITypeInfo[] elementsOfTypeClassInProject = null;
 	
 	// Controls
 	private StringDialogField fClassNameDialogField;
@@ -129,8 +130,6 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 
 	private boolean hasCppNature = false;
 	
-	BasicSearchResultCollector  resultCollector;
-	SearchEngine searchEngine;
 
 	// -------------------- Initialization ------------------
 	public NewClassWizardPage(IStructuredSelection selection) {
@@ -181,9 +180,6 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 
 		fClassNameStatus=  new StatusInfo();
 		fBaseClassStatus=  new StatusInfo();
-
-		resultCollector = new BasicSearchResultCollector ();
-		searchEngine = new SearchEngine();		
 	}
 	
 	public void init() {
@@ -330,9 +326,9 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	
 	private void classPageChangeControlPressed(DialogField field) {
 		if (field == fBaseClassDialogField) {
-			BasicSearchMatch element= (BasicSearchMatch)chooseBaseClass();
-			if (element != null) {
-				fBaseClassDialogField.setText(element.getName());
+		 		 		 ITypeInfo info= chooseBaseClass();
+		 		 		 if (info != null) {
+		 		 		 		 fBaseClassDialogField.setText(info.getQualifiedName());
 			}
 		}
 	}
@@ -398,8 +394,8 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}
 	
 	private ICElement getSelectionCElement(IStructuredSelection sel) {
-		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			List list= ((IStructuredSelection)sel).toList();
+		 		 if (!sel.isEmpty()) {
+		 		 		 List list= sel.toList();
 			if (list.size() == 1) {
 				Object element= list.get(0);
 				if (element instanceof ICElement) {
@@ -411,8 +407,8 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}
 
 	private IResource getSelectionResourceElement(IStructuredSelection sel) {
-		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			List list= ((IStructuredSelection)sel).toList();
+		 		 if (!sel.isEmpty()) {
+		 		 		 List list= sel.toList();
 			if (list.size() == 1) {
 				Object element= list.get(0);
 				if (element instanceof IResource) {
@@ -428,90 +424,74 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		return null;
 	}
 	
-	private void getChildrenOfTypeClass(IParent parent, List elementsFound, IProgressMonitor monitor, int worked){
-		ICElement[] elements = parent.getChildren();
-		monitor.worked( worked );
-		
-		for (int i = 0; i< elements.length; i++){
-			ICElement element = (ICElement)elements[i];
-			if(element.getElementType() == ICElement.C_CLASS){
-				elementsFound.add(element);
-			}
-			if(element instanceof IParent){
-				getChildrenOfTypeClass((IParent)element, elementsFound, monitor, worked+1);
-			}
-		}
-	}
-	
-	private void searchForClasses(ICProject cProject, List elementsFound, IProgressMonitor monitor, int worked){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "*", ICSearchConstants.CLASS, ICSearchConstants.DECLARATIONS, false ); //$NON-NLS-1$
-		ICElement[] elements = new ICElement[1];
-		elements[0] = cProject;
-		ICSearchScope scope = SearchEngine.createCSearchScope(elements, true);
-
-		try {
-			searchEngine.search(CUIPlugin.getWorkspace(), pattern, scope, resultCollector, false);
-		} catch (InterruptedException e) {
-		}
-		elementsFound.addAll(resultCollector.getSearchResults());
-	}
-	
-	private List getClassElementsInProject(){
-		return elementsOfTypeClassInProject;
-	}
-	
-	private List findClassElementsInProject(){		
+		 private ITypeInfo[] findClassElementsInProject(){		 		 
 		if(eSelection == null){
-			return new LinkedList();			
+		 		 		 return null;
 		}
 
 		if(	elementsOfTypeClassInProject != null ){
 			return elementsOfTypeClassInProject;
 		}
+		 		 
+		 		 ICProject cProject= eSelection.getCProject();
+		 		 ICElement[] elements= new ICElement[] { cProject };
+		 		 final ICSearchScope scope= SearchEngine.createCSearchScope(elements, true);
+		 		 final int[] kinds= { ICElement.C_CLASS, ICElement.C_STRUCT };
+		 		 final Collection typeList= new ArrayList();
 
-		elementsOfTypeClassInProject = new LinkedList();		
-		IRunnableWithProgress runnable= new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				if (monitor == null) {
-					monitor= new NullProgressMonitor();
-				}				
-				monitor.beginTask(NewWizardMessages.getString("NewClassWizardPage.operations.getProjectClasses"), 5); //$NON-NLS-1$
-				try{
-					ICProject cProject = eSelection.getCProject();
-					searchForClasses(cProject, elementsOfTypeClassInProject, monitor, 1);
-					//getChildrenOfTypeClass((IParent)cProject, elementsOfTypeClassInProject, monitor, 1);
-					monitor.worked(5);
-				} finally{
-					monitor.done();
+		 		 if (AllTypesCache.isCacheUpToDate()) {
+		 		 		 // run without progress monitor
+		 		 		 AllTypesCache.getTypes(scope, kinds, null, typeList);
+		 		 } else {
+		 		 		 IRunnableWithProgress runnable= new IRunnableWithProgress() {
+		 		 		 		 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		 		 		 		 		 AllTypesCache.getTypes(scope, kinds, monitor, typeList);
+		 		 		 		 		 if (monitor.isCanceled()) {
+		 		 		 		 		 		 throw new InterruptedException();
+		 		 		 		 		 }
 				}
+		 		 		 };
+
+		 		 		 try {
+		 		 		 		 getContainer().run(true, true, runnable);
+		 		 		 } catch (InvocationTargetException e) {
+		 		 		 		 String title= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.exception.title"); //$NON-NLS-1$
+		 		 		 		 String message= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.exception.message"); //$NON-NLS-1$
+		 		 		 		 ExceptionHandler.handle(e, title, message);
+		 		 		 		 return null;
+		 		 		 } catch (InterruptedException e) {
+		 		 		 		 // cancelled by user
+		 		 		 		 return null;
 			}
-		};
+		 		 }
 		
-		try {
-			getWizard().getContainer().run(false, true, runnable);
-		} catch (InvocationTargetException e) {				
-		} catch (InterruptedException e) {
-		} 
-		finally {
+		 		 if (typeList.isEmpty()) {
+		 		 		 elementsOfTypeClassInProject= new ITypeInfo[0];
+		 		 } else {
+		 		 		 elementsOfTypeClassInProject= (ITypeInfo[]) typeList.toArray(new ITypeInfo[typeList.size()]);
+		 		 		 Arrays.sort(elementsOfTypeClassInProject, TYPE_NAME_COMPARATOR);
 		}
+
 		return elementsOfTypeClassInProject;				
 	}
 	
-	protected Object chooseBaseClass(){
-		// find the available classes in this project
-		List elementsFound = findClassElementsInProject();
-		
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new CSearchResultLabelProvider());
-		dialog.setTitle(NewWizardMessages.getString("BaseClassSelectionDialog.title")); //$NON-NLS-1$
-		dialog.setMessage(NewWizardMessages.getString("BaseClassSelectionDialog.message")); //$NON-NLS-1$
-		dialog.setElements(elementsFound.toArray());
-		dialog.setFilter("*"); //$NON-NLS-1$
-		
-		if (dialog.open() == ElementListSelectionDialog.OK) {
-			Object element= dialog.getFirstResult();
-			return element;
-		}		
-		return null;
+		 protected ITypeInfo chooseBaseClass(){
+		 		 ITypeInfo[] elementsFound= findClassElementsInProject();
+		 		 if (elementsFound == null || elementsFound.length == 0) {
+		 		 		 String title= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.noclasses.title"); //$NON-NLS-1$
+		 		 		 String message= NewWizardMessages.getString("NewClassWizardPage.getProjectClasses.noclasses.message"); //$NON-NLS-1$
+		 		 		 MessageDialog.openInformation(getShell(), title, message);
+		 		 		 return null;
+		 		 }
+
+		 		 BaseClassSelectionDialog dialog= new BaseClassSelectionDialog(getShell());
+		 		 dialog.setElements(elementsFound);
+
+		 		 int result= dialog.open();
+		 		 if (result != IDialogConstants.OK_ID)
+		 		 		 return null;
+		 		 
+		 		 return (ITypeInfo)dialog.getFirstResult();
 	}
 	
 	// ------------- getter methods for dialog controls ------------- 			
@@ -578,7 +558,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			monitor.worked(1);
 	
 			if(parentHeaderTU != null){
-				String header = constructHeaderFileContent(lineDelimiter);
+		 		 		 		 String header = constructHeaderFileContent(parentHeaderTU, lineDelimiter);
 				IWorkingCopy headerWC = parentHeaderTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getDocumentProvider().getBufferFactory());
 				headerWC.getBuffer().append(header);
 				synchronized(headerWC)	{
@@ -587,6 +567,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 				}
 				//createdClass= (IStructure)headerWC.getElement(getNewClassName());				
 				createdClass= headerWC.getElement(getNewClassName());				
+		 		 		 		 headerWC.destroy();
 			}
 			if(parentBodyTU != null){
 				String body = constructBodyFileContent(lineDelimiter);
@@ -596,6 +577,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 					bodyWC.reconcile();
 					bodyWC.commit(true, monitor);
 				}
+		 		 		 		 bodyWC.destroy();
 			}
 		
 			return true;	
@@ -798,24 +780,41 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}
 
 	// ------------ Constructing File Contents -----------------
-	protected String constructHeaderFileContent(String lineDelimiter){
+		 protected String constructHeaderFileContent(ITranslationUnit header, String lineDelimiter){
 		StringBuffer text = new StringBuffer();
 		boolean extendingBase = false;
 		String baseClassName = getBaseClassName();
 		String baseClassFileName = ""; //$NON-NLS-1$
+		 		 boolean systemIncludePath= false;
+
 		if((baseClassName != null) && (baseClassName.length() > 0))
 		{
 			extendingBase = true;
-			List classElements = findClassElementsInProject();
-			BasicSearchMatch baseClass = (BasicSearchMatch)findInList(baseClassName, null, classElements);
+		 		 		 
+		 		 		 ITypeInfo[] classElements = findClassElementsInProject();
+		 		 		 ITypeInfo baseClass = findInList(baseClassName, null, classElements);
 
-//			if(baseClass != null){
-//				IPath baseClassFileLocation = baseClass.getLocation();
-//				IPath newFilePath = getContainerFullPath(linkedResourceGroupForHeader);
-//				baseClassFileName = baseClassName + HEADER_EXT;
-//			} else {
+		 		 		 if (baseClass != null) {
+		 		 		 		 IPath projectPath= null;
+		 		 		 		 IPath baseClassPath= null;
+		 		 		 		 ICProject cProject= eSelection.getCProject();
+		 		 		 		 if (cProject != null) {
+		 		 		 		 		 projectPath= cProject.getPath();
+		 		 		 		 		 baseClassPath= baseClass.resolveIncludePath(cProject);
+		 		 		 		 		 if (baseClassPath != null && projectPath != null && !projectPath.isPrefixOf(baseClassPath)) {
+		 		 		 		 		 		 systemIncludePath= true;
+		 		 		 		 		 }
+		 		 		 		 }
+		 		 		 		 if (baseClassPath == null)
+		 		 		 		 		 baseClassPath= resolveRelativePath(baseClass.getPath(), header.getPath(), projectPath);
+
+		 		 		 		 if (baseClassPath != null)
+		 		 		 		 		 baseClassFileName= baseClassPath.toString();
+		 		 		 		 else
+		 		 		 		 		 baseClassFileName= baseClass.getFileName();
+		 		 		 } else {
 				baseClassFileName = baseClassName + HEADER_EXT;
-//			}
+		 		 		 }
 		}
 		
 		if(isIncludeGuard()){
@@ -831,9 +830,16 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		}
 		
 		if(extendingBase){
-			text.append("#include \""); //$NON-NLS-1$
+		 		 		 text.append("#include "); //$NON-NLS-1$
+		 		 		 if (systemIncludePath)
+		 		 		 		 text.append('<'); //$NON-NLS-1$
+		 		 		 else
+		 		 		 		 text.append('\"'); //$NON-NLS-1$
 			text.append(baseClassFileName);
-			text.append('\"');
+		 		 		 if (systemIncludePath)
+		 		 		 		 text.append('>'); //$NON-NLS-1$
+		 		 		 else
+		 		 		 		 text.append('\"'); //$NON-NLS-1$
 			text.append(lineDelimiter);			
 			text.append(lineDelimiter);			
 		}
@@ -893,6 +899,25 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		return text.toString();	 		
 	}
 		
+		 private IPath resolveRelativePath(IPath baseClassPath, IPath headerPath, IPath projectPath) {
+		 		 if (baseClassPath == null || headerPath == null || projectPath == null)
+		 		 		 return baseClassPath;
+		 		 
+		 		 if (projectPath.isPrefixOf(baseClassPath) && projectPath.isPrefixOf(headerPath)) {
+		 		 		 int segments= headerPath.matchingFirstSegments(baseClassPath);
+		 		 		 if (segments > 0) {
+		 		 		 		 IPath headerPrefix= headerPath.removeFirstSegments(segments).removeLastSegments(1);
+		 		 		 		 IPath baseClassSuffix= baseClassPath.removeFirstSegments(segments);
+		 		 		 		 IPath relativeBaseClassPath= new Path(""); //$NON-NLS-1$
+		 		 		 		 for (int i= 0; i < headerPrefix.segmentCount(); ++i) {
+		 		 		 		 		 relativeBaseClassPath= relativeBaseClassPath.append(".." + IPath.SEPARATOR); //$NON-NLS-1$
+		 		 		 		 }
+		 		 		 		 return relativeBaseClassPath.append(baseClassSuffix);
+		 		 		 }
+		 		 }
+		 		 return baseClassPath;
+		 }
+
 	protected String constructBodyFileContent(String lineDelimiter){
 		StringBuffer text = new StringBuffer();
 		text.append("#include \""); //$NON-NLS-1$
@@ -923,7 +948,6 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		text.append(lineDelimiter);				
 		return text.toString();
 	}
-	
 
 	// ------ validation --------
 	protected void doStatusUpdate() {
@@ -983,7 +1007,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		}		
 
 		// must not exist
-		List elementsFound = findClassElementsInProject();
+		 		 ITypeInfo[] elementsFound= findClassElementsInProject();
 		if(foundInList(getNewClassName(), getContainerPath(linkedResourceGroupForHeader), elementsFound)){
 			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.error.ClassNameExists")); //$NON-NLS-1$
 		}
@@ -1014,35 +1038,29 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		} 
 
 		// if class does not exist, give warning 
-		List elementsFound = findClassElementsInProject();
+		 		 ITypeInfo[] elementsFound = findClassElementsInProject();
 		if(!foundInList(baseClassName, null, elementsFound)){
 			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.warning.BaseClassNotExists")); //$NON-NLS-1$
 		}
 		return status;		
 	}
 		
-	private Object findInList(String name, IPath path, List elements){
-		Iterator i = elements.iterator();
-		while (i.hasNext()){
-			BasicSearchMatch element = (BasicSearchMatch)i.next();
-			if(path != null){
-				// check both the name and the path
-				if ((name.equals(element.getName())) && (path.makeAbsolute().equals(element.getLocation())))
-					return element;
-			} else {
-				// we don't care about the path
-				if (name.equals(element.getName()))
-					return element;				
-			}
-		}
-		return null;
+		 /**
+		  * A comparator for simple type names
+		  */
+		 final static private Comparator TYPE_NAME_COMPARATOR= new Comparator() {
+		 		 public int compare(Object o1, Object o2) {
+		 		 		 return ((ITypeInfo)o1).getName().compareTo(((ITypeInfo)o2).getName());
+		 		 }
+		 };
+		 private ITypeInfo findInList(String name, IPath path, ITypeInfo[] elements) {
+		 		 if (elements == null || elements.length == 0)
+		 		 		 return null;
+		 		 return TypeInfo.findType(name, path, elements);
 	}
 	
-	private boolean foundInList(String name, IPath path, List elements){
-		if(findInList(name, path, elements) != null)
-			return true;
-		else
-			return false;
+		 private boolean foundInList(String name, IPath path, ITypeInfo[] elements){
+		 		 return (findInList(name, path, elements) != null);
 	}
 
 }

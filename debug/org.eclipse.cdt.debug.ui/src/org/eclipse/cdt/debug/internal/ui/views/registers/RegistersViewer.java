@@ -96,7 +96,7 @@ public class RegistersViewer extends TreeViewer
 			}
 			setNewItem( null );
 		}
-		expandToLevel( 2 );
+		//expandToLevel( 2 );
 	}
 
 	/**

@@ -13,24 +13,20 @@ package org.eclipse.cdt.debug.mi.core.output;
 public class MIVarCreateInfo extends MIInfo {
 
 	String name = "";
-	int children;
+	int numChild;
 	String type = "";
+	MIChild child;
 
 	public MIVarCreateInfo(MIOutput record) {
 		super(record);
 		parse();
 	}
 
-	public String getName () {
-		return name;
-	}
-
-	public int getChildNumber() {
-		return children;
-	}
-
-	public String getType() {
-		return type;
+	public MIChild getMIChild() {
+		if (child == null) {
+			child = new MIChild(name, numChild, type);
+		}
+		return child;
 	}
 
 	void parse() {
@@ -51,7 +47,7 @@ public class MIVarCreateInfo extends MIInfo {
 						name = str;
 					} else if (var.equals("numchild")) {
 						try {
-							children = Integer.parseInt(str.trim());
+							numChild = Integer.parseInt(str.trim());
 						} catch (NumberFormatException e) {
 						}
 					} else if (var.equals("type")) {

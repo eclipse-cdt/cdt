@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
@@ -41,10 +43,15 @@ public class CTarget  implements ICDITarget {
 
 	List threadList;
 	CSession session;
+	CThread dummyThread; // Dummy for non multi-thread programs.
+	CThread currentThread;
 	
 	public CTarget(CSession s) {
 		session = s;
 		threadList = new ArrayList(1);
+		dummyThread = new CThread(this, 0);
+		currentThread = dummyThread;
+		threadList.add(dummyThread);
 	}
 	
 	CSession getCSession() {
@@ -57,6 +64,16 @@ public class CTarget  implements ICDITarget {
 
 	void removeCThread(CThread cthread) {
 		threadList.remove(cthread);
+	}
+
+	void setCurrentThread(int id) {
+		for (int i = 0; i < threadList.size(); i++) {
+			CThread cthread = (CThread)threadList.get(i);
+			if (cthread.getId() == id) {
+				currentThread = cthread;
+				return ;
+			}
+		}
 	}
 
 	boolean containsCThread(int id) {
@@ -149,7 +166,7 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getCurrentThread()
 	 */
 	public ICDIThread getCurrentThread() throws CDIException {
-		return null;
+		return currentThread;
 	}
 
 	/**
@@ -164,15 +181,12 @@ public class CTarget  implements ICDITarget {
 			MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
 			int[] ids = info.getThreadIds();
 			if (ids != null && ids.length > 0) {
+				// Ok that means it is a multiThreaded, remove the dummy Thread
+				removeCThread(dummyThread);
 				for (int i = 0; i < ids.length; i++) {
 					if (! containsCThread(ids[i])) {
 						addCThread(new CThread(this, ids[i]));
 					}
-				}
-			} else {
-				// HACK create a dummy thread
-				if (threadList.size() == 0) {
-					addCThread(new CThread(this, 1));
 				}
 			}
 		} catch (MIException e) {
@@ -379,7 +393,11 @@ public class CTarget  implements ICDITarget {
 	 */
 	public ICDIValue evaluateExpressionToValue(String expressionText)
 		throws CDIException {
-		return null;
+		ICDIExpressionManager mgr = session.getExpressionManager();
+		ICDIExpression cexp = mgr.createExpression(expressionText);
+		ICDIValue value = cexp.getValue();
+		mgr.removeExpression(cexp);
+		return value;
 	}
 
 	/**

@@ -214,6 +214,10 @@ public class CommandFactory {
 		return new MIThreadSelect(threadNum);
 	}
 
+	public MIVarCreate createMIVarCreate(String expression) {
+		return new MIVarCreate(expression);
+	}
+
 	public MIVarCreate createMIVarCreate(String name, String frameAddr, String expression) {
 		return new MIVarCreate(name, frameAddr, expression);
 	}

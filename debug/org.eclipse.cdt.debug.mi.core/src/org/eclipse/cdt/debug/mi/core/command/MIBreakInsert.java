@@ -60,7 +60,7 @@ public class MIBreakInsert extends MICommand
 	}
 
 	public MIBreakInsert(boolean isTemporary, boolean isHardware,
-						 String condition, int ignoreCount, String line) {
+			 String condition, int ignoreCount, String line) {
 		super("-break-insert");
 
 		int i = 0;

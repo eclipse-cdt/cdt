@@ -42,6 +42,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 		props = new Properties();
 		breakpointManager = new BreakpointManager(this);
 		eventManager = new EventManager(this);
+		s.addObserver(eventManager);
 		expressionManager = new ExpressionManager(this);
 		memoryManager = new MemoryManager(this);
 		signalManager = new SignalManager(this);
@@ -58,7 +59,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 	}
 	
 	CTarget getCTarget() {
-			return ctarget;
+		return ctarget;
 	}
 
 	/**

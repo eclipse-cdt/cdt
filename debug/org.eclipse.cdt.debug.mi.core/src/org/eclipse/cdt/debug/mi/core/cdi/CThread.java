@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
  */
 public class CThread extends CObject implements ICDIThread {
 
-	int id = 0;
+	int id;
 	
 	public CThread(CTarget target, int threadId) {
 		super(target);

@@ -5,11 +5,20 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
-import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
+import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
+import org.eclipse.cdt.debug.mi.core.output.MIChild;
+import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 
 /**
  * @author alain
@@ -19,17 +28,27 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class ExpressionManager extends SessionObject implements ICDIExpressionManager {
+public class ExpressionManager
+	extends SessionObject
+	implements ICDIExpressionManager {
 
+	List expList;
 	public ExpressionManager(CSession session) {
 		super(session);
+		expList = new ArrayList();
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpression(String)
 	 */
 	public ICDIExpression getExpression(String expressionId)
 		throws CDIException {
+		ICDIExpression[] expressions = getExpressions();
+		for (int i = 0; i < expressions.length; i++) {
+			if (expressionId.equals(expressions[i].getName())) {
+				return expressions[i];
+			}
+		}
 		return null;
 	}
 
@@ -37,13 +56,27 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpressions()
 	 */
 	public ICDIExpression[] getExpressions() throws CDIException {
-		return null;
+		return (ICDIExpression[]) expList.toArray(new ICDIExpression[0]);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpression(ICDIExpression)
 	 */
-	public void removeExpression(ICDIExpression expression) throws CDIException {
+	public void removeExpression(ICDIExpression expression)
+		throws CDIException {
+		if (expression instanceof Expression) {
+			expList.remove(expression);
+			MISession mi = getCSession().getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			MIVarDelete var =
+				factory.createMIVarDelete(
+					((Expression) expression).getVarName());
+			try {
+				mi.postCommand(var);
+			} catch (MIException e) {
+				throw new CDIException(e.toString());
+			}
+		}
 	}
 
 	/**
@@ -51,6 +84,9 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 	 */
 	public void removeExpressions(ICDIExpression[] expressions)
 		throws CDIException {
+		for (int i = 0; i < expressions.length; i++) {
+			removeExpression(expressions[i]);
+		}
 	}
 
 	/**
@@ -58,7 +94,22 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 	 */
 	public ICDIExpression createExpression(String expressionId)
 		throws CDIException {
-		return null;
+
+		Expression cexp = null;
+
+		MISession mi = getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIVarCreate var = factory.createMIVarCreate(expressionId);
+		try {
+			mi.postCommand(var);
+			MIVarCreateInfo info = var.getMIVarCreateInfo();
+			MIChild child  = info.getMIChild();
+			cexp = new Expression(getCSession().getCTarget(), expressionId, child);
+			expList.add(cexp);
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
+		return cexp;
 	}
 
 	/**

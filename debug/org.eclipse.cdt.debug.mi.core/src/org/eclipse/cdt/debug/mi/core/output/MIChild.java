@@ -17,6 +17,12 @@ public class MIChild {
 	int numchild;
 
 
+	public MIChild(String n, int num, String t) {
+		name = n;
+		numchild = num;
+		type = t;
+	}
+
 	public MIChild(MITuple tuple) {
 		parse(tuple);
 	}
@@ -29,7 +35,7 @@ public class MIChild {
 		return type;
 	}
 
-	public int getnumChild() {
+	public int getNumChild() {
 		return numchild;
 	}
 

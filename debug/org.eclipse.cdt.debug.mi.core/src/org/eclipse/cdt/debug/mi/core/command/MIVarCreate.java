@@ -6,6 +6,11 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
+
 /**
  * 
  *    -var-create {NAME | "-"}
@@ -40,11 +45,28 @@ public class MIVarCreate extends MICommand
 	public MIVarCreate(String expression) {
 		this("-", "*", expression);
 	}
+
 	public MIVarCreate(String name, String expression) {
 		this(name, "*", expression);
 	}
+
 	public MIVarCreate(String name, String frameAddr, String expression) {
 		super("-var-name", new String[]{name, frameAddr, expression});
 	}
-	
+
+	public MIVarCreateInfo getMIVarCreateInfo() throws MIException {
+		return (MIVarCreateInfo)getMIInfo();
+	}
+
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new MIVarCreateInfo(out);
+			if (info.isError()) {
+				throw new MIException(info.getErrorMsg());
+			}
+		}
+		return info;
+	}
 }

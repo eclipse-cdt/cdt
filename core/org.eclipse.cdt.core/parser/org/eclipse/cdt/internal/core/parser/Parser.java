@@ -2893,7 +2893,7 @@ public class Parser implements IParser
 		// if the condition not taken, try assignment operators
 		if (conditionalExpression != null
 			&& conditionalExpression.getExpressionKind()
-				== IASTExpression.Kind.CONDITIONALEXPRESSION_HARD)
+				== IASTExpression.Kind.CONDITIONALEXPRESSION)
 			return conditionalExpression;
 		switch (LT(1)) {
 			case IToken.tASSIGN :
@@ -3031,7 +3031,7 @@ public class Parser implements IParser
             {
                 return astFactory.createExpression(
                     scope,
-                    IASTExpression.Kind.CONDITIONALEXPRESSION_HARD,
+                    IASTExpression.Kind.CONDITIONALEXPRESSION,
                     firstExpression,
                     secondExpression,
                     thirdExpression,

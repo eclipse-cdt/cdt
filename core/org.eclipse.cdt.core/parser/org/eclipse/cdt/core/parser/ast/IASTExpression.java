@@ -95,8 +95,7 @@ public interface IASTExpression extends ISourceElementCallbackDelegate
 		public static final Kind INCLUSIVEOREXPRESSION        = new Kind( 68 );
 		public static final Kind LOGICALANDEXPRESSION         = new Kind( 69 );
 		public static final Kind LOGICALOREXPRESSION          = new Kind( 70 );
-		public static final Kind CONDITIONALEXPRESSION_SIMPLE = new Kind( 71 );
-		public static final Kind CONDITIONALEXPRESSION_HARD   = new Kind( 72 );
+		public static final Kind CONDITIONALEXPRESSION        = new Kind( 71 );
 		public static final Kind THROWEXPRESSION              = new Kind( 72 );
 		public static final Kind ASSIGNMENTEXPRESSION_NORMAL  = new Kind( 73 );
 		public static final Kind ASSIGNMENTEXPRESSION_PLUS    = new Kind( 74 );

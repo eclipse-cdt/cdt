@@ -767,6 +767,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         if( typeId != null ){
 			 symbol = lookupQualifiedName( startingScope, typeId, references, false );
         }
+		// "a.m" or "a->m : lookup m in the scope of the declaration of a        
+		if ((kind == IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION) 
+		|| (kind == IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION)){
+			TypeInfo lhsInfo = (TypeInfo) ((ASTExpression)lhs).getResultType().iterator().next();
+			ISymbol containingScope = (ISymbol) lhsInfo.getTypeSymbol().getTypeSymbol();
+			if(containingScope != null){
+				symbol = lookupQualifiedName((IContainerSymbol)containingScope, ((ASTExpression)rhs).getTypeId() , references, false);
+			}
+		}
 		
 		if (kind == IASTExpression.Kind.POSTFIX_FUNCTIONCALL){        							
 			ITokenDuple functionId = ((ASTExpression)lhs).getTypeId();
@@ -781,7 +790,72 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         							
         return expression;
     }
-
+	/*
+	 * Apply the usual arithmetic conversions to find out the result of an expression 
+	 * that has a lhs and a rhs as indicated in the specs (section 5.Expressions, page 64)
+	 */
+	protected TypeInfo usualArithmeticConversions(TypeInfo lhs, TypeInfo rhs){
+		TypeInfo info = new TypeInfo();
+		if( 
+		   ( lhs.checkBit(TypeInfo.isLong)  && lhs.getType() == TypeInfo.t_double)
+		|| ( rhs.checkBit(TypeInfo.isLong)  && rhs.getType() == TypeInfo.t_double)
+		){
+			info.setType(TypeInfo.t_double);
+			info.setBit(true, TypeInfo.isLong);		
+			return info; 
+		}
+		else if(
+		   ( lhs.getType() == TypeInfo.t_double )
+		|| ( rhs.getType() == TypeInfo.t_double )
+		){
+			info.setType(TypeInfo.t_double);
+			return info; 			
+		}
+		else if (
+		   ( lhs.getType() == TypeInfo.t_float )
+		|| ( rhs.getType() == TypeInfo.t_float )
+		){
+			info.setType(TypeInfo.t_float);
+			return info; 						
+		} else {
+			// perform intergral promotions (Specs section 4.5)
+			info.setType(TypeInfo.t_int);
+		}
+		
+		if(
+		   ( lhs.checkBit(TypeInfo.isUnsigned) && lhs.checkBit(TypeInfo.isLong)) 
+		|| ( rhs.checkBit(TypeInfo.isUnsigned) && rhs.checkBit(TypeInfo.isLong))
+		){
+			info.setBit(true, TypeInfo.isUnsigned);
+			info.setBit(true, TypeInfo.isLong);
+			return info;
+		} 
+		else if(
+			( lhs.checkBit(TypeInfo.isUnsigned) && rhs.checkBit(TypeInfo.isLong) ) 
+		 || ( rhs.checkBit(TypeInfo.isUnsigned) && lhs.checkBit(TypeInfo.isLong) )
+		){
+			info.setBit(true, TypeInfo.isUnsigned);
+			info.setBit(true, TypeInfo.isLong);
+			return info;
+		}
+		else if (		
+			( lhs.checkBit(TypeInfo.isLong)) 
+		 || ( rhs.checkBit(TypeInfo.isLong))
+		){
+			info.setBit(true, TypeInfo.isLong);
+			return info;			
+		}
+		else if (
+			( lhs.checkBit(TypeInfo.isUnsigned) ) 
+		 || ( rhs.checkBit(TypeInfo.isUnsigned) )		
+		){
+			info.setBit(true, TypeInfo.isUnsigned);
+			return info;			
+		} else {
+			// it should be both = int
+			return info;
+		}		
+	}
 	protected List getExpressionResultType(IASTExpression expression, ISymbol symbol){
 		List result = new ArrayList();
 		TypeInfo info = new TypeInfo();
@@ -794,22 +868,19 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			return result;
 		}
 		// types that resolve to int
-		// the relational kinds are 0 and !0
 		if ((expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_INTEGER_LITERAL)
 		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_SIMPLETYPE_INT)
-		|| (expression.getExpressionKind() == IASTExpression.Kind.RELATIONAL_GREATERTHAN)
-		|| (expression.getExpressionKind() == IASTExpression.Kind.RELATIONAL_GREATERTHANEQUALTO)
-		|| (expression.getExpressionKind() == IASTExpression.Kind.RELATIONAL_LESSTHAN)
-		|| (expression.getExpressionKind() == IASTExpression.Kind.RELATIONAL_LESSTHANEQUALTO) 
-		|| (expression.getExpressionKind() == IASTExpression.Kind.EQUALITY_EQUALS) 
-		|| (expression.getExpressionKind() == IASTExpression.Kind.EQUALITY_NOTEQUALS) 
-		|| (expression.getExpressionKind() == IASTExpression.Kind.ANDEXPRESSION) 
-		|| (expression.getExpressionKind() == IASTExpression.Kind.EXCLUSIVEOREXPRESSION)
-		|| (expression.getExpressionKind() == IASTExpression.Kind.INCLUSIVEOREXPRESSION)
-		|| (expression.getExpressionKind() == IASTExpression.Kind.LOGICALANDEXPRESSION) 
-		|| (expression.getExpressionKind() == IASTExpression.Kind.LOGICALOREXPRESSION) 		
 		){
 			info.setType(TypeInfo.t_int);
+			result.add(info);
+			return result;
+		}
+		// size of is always unsigned int
+		if ((expression.getExpressionKind() == IASTExpression.Kind.UNARY_SIZEOF_TYPEID) 		
+		|| (expression.getExpressionKind() == IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION) 		
+		){
+			info.setType(TypeInfo.t_int);
+			info.setBit(true, TypeInfo.isUnsigned);
 			result.add(info);
 			return result;
 		}
@@ -849,6 +920,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		// types that resolve to bool
 		if( (expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL)
 		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_SIMPLETYPE_BOOL)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.RELATIONAL_GREATERTHAN)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.RELATIONAL_GREATERTHANEQUALTO)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.RELATIONAL_LESSTHAN)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.RELATIONAL_LESSTHANEQUALTO) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.EQUALITY_EQUALS) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.EQUALITY_NOTEQUALS) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.LOGICALANDEXPRESSION) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.LOGICALOREXPRESSION) 				
 		)
 		{
 			info.setType(TypeInfo.t_bool);
@@ -885,7 +964,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		
 		// types that resolve to t_type, symbol already looked up in type id
-		if (expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION){
+		if( (expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_TYPEID_TYPEID)
+		){
 			info.setType(TypeInfo.t_type);
 			if(symbol != null)
 				info.setTypeSymbol(symbol);			
@@ -914,16 +995,64 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			result.add(info);
 			return result;
 		}
-		// types that resolve to LHS types 
-		if ((expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_INCREMENT) 
-		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_DECREMENT) 
-		|| (expression.getExpressionKind() == IASTExpression.Kind.UNARY_INCREMENT) 
-		|| (expression.getExpressionKind() == IASTExpression.Kind.UNARY_DECREMENT) 
-		|| (expression.getExpressionKind() == IASTExpression.Kind.MULTIPLICATIVE_MULTIPLY) 
+		// the dot and the arrow resolves to the type of the member
+		if ((expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION)
+		){
+			if(symbol != null){
+				info = new TypeInfo(symbol.getTypeInfo());			
+				result.add(info);
+				return result;
+			}
+		}
+		// new 
+/*		if((expression.getExpressionKind() == IASTExpression.Kind.NEW_NEWTYPEID)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.NEW_TYPEID)
+		){
+			if(symbol != null){
+				info.setType(symbol.getType());		
+				info.setTypeSymbol(symbol);	
+				result.add(info);
+				return result;
+			}
+		}
+*/		// types that use the usual arithmetic conversions
+		if((expression.getExpressionKind() == IASTExpression.Kind.MULTIPLICATIVE_MULTIPLY) 
 		|| (expression.getExpressionKind() == IASTExpression.Kind.MULTIPLICATIVE_DIVIDE) 
 		|| (expression.getExpressionKind() == IASTExpression.Kind.MULTIPLICATIVE_MODULUS) 
 		|| (expression.getExpressionKind() == IASTExpression.Kind.ADDITIVE_PLUS) 
 		|| (expression.getExpressionKind() == IASTExpression.Kind.ADDITIVE_MINUS) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.ANDEXPRESSION) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.EXCLUSIVEOREXPRESSION)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.INCLUSIVEOREXPRESSION)
+		){
+			ASTExpression left = (ASTExpression)expression.getLHSExpression();
+			ASTExpression right = (ASTExpression)expression.getRHSExpression();  
+			if((left != null ) && (right != null)){
+				TypeInfo leftType =(TypeInfo)left.getResultType().iterator().next();
+				while( (leftType.getType() == TypeInfo.t_type) && (leftType.getTypeSymbol() != null)){
+					leftType = leftType.getTypeSymbol().getTypeInfo();  
+				}
+				TypeInfo rightType =(TypeInfo)right.getResultType().iterator().next();
+				while( (rightType.getType() == TypeInfo.t_type) && (rightType.getTypeSymbol() != null)){
+					rightType = rightType.getTypeSymbol().getTypeInfo();  
+				}
+				info = usualArithmeticConversions(leftType, rightType);   
+				result.add(info);
+				return result;
+			}
+		}
+		// types that resolve to LHS types 
+		if ((expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_BRACKETED_EXPRESSION)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_INCREMENT) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_DECREMENT)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_TYPEID_EXPRESSION)		 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.UNARY_INCREMENT) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.UNARY_DECREMENT) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION) 
 		|| (expression.getExpressionKind() == IASTExpression.Kind.SHIFT_LEFT) 
 		|| (expression.getExpressionKind() == IASTExpression.Kind.SHIFT_RIGHT) 
 		|| (expression.getExpressionKind() == IASTExpression.Kind.ASSIGNMENTEXPRESSION_NORMAL) 
@@ -945,6 +1074,20 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				return result;
 			}
 		}		
+		// the cast changes the types to the type looked up in typeId = symbol
+		if((expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_DYNAMIC_CAST)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_REINTERPRET_CAST)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_STATIC_CAST)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_CONST_CAST)
+		){
+			if(symbol != null){
+				info = new TypeInfo(symbol.getTypeInfo());		
+				info.setTypeSymbol(symbol);	
+				result.add(info);
+				return result;			
+			}
+		}
+		
 		// a list collects all types of left and right hand sides
 		if(expression.getExpressionKind() == IASTExpression.Kind.EXPRESSIONLIST){
 			if(expression.getLHSExpression() != null){

@@ -1872,70 +1872,111 @@ public class Scanner implements IScanner {
 	}
 
 	protected void poundInclude( int beginningOffset ) throws ScannerException {
-		skipOverWhitespace();
-		int c = getChar();
-		int offset;
-		
-		if( c == '/' ){
-			c = getChar();
-			if( c == '*' ){
-				skipOverMultilineComment();
-				skipOverWhitespace();
-				c = getChar();
-			} else {
-				if( throwExceptionOnBadPreprocessorSyntax )
-					throw new ScannerException( "Encountered ill-formed #include" );
-				else return;
-			}
-		}
 
+		skipOverWhitespace();				
+		int baseOffset = lastContext.getOffset() - lastContext.undoStackSize();
+		String includeLine = getRestOfPreprocessorLine();
 		StringBuffer fileName = new StringBuffer();
 		boolean useIncludePath = true;
-		int endChar = -1;
-		if( c == '<' ){
-			endChar = '>'; 		 
-		} else if ( c == '"' ){
-			endChar = '"';
-			useIncludePath = false;
-		} else {
-			if( throwExceptionOnBadPreprocessorSyntax )
-				throw new ScannerException( "Encountered ill-formed #include");
-			else return; 
-		}
-		
-		c = getChar();
-
-		while ((c != '\n') && (c != endChar) && (c != NOCHAR)){
-			if( c == '\r' ){
-				c = getChar();
-				continue;
-			}
-			fileName.append((char) c);
-			c = getChar();
-		}
+		int startOffset = baseOffset;
+		int endOffset = baseOffset; 
 			
-		if( c != endChar ){ 
-			if( throwExceptionOnBadPreprocessorSyntax )
-				throw new ScannerException( "Ill-formed #include: reached end of line before " + (char)endChar );
-			else return;
+		if (! includeLine.equals("")) {
+			Scanner helperScanner = new Scanner(
+										new StringReader(includeLine), 
+										null, 
+										new ScannerInfo(definitions, originalConfig.getIncludePaths()), 
+										problemReporter, 
+										translationResult,
+										new NullSourceElementRequestor(),
+										mode);
+			IToken t = null;
+			
+			try {
+				t = helperScanner.nextToken(false);
+			} catch (EndOfFile eof) {
+				if (throwExceptionOnBadPreprocessorSyntax) {
+						 throw new ScannerException( "Encountered ill-formed #include" );
+				}
+				
+				return;
+			}
+
+			try {
+				if (t.getType() == IToken.tSTRING) {
+					fileName.append(t.getImage());
+					startOffset = baseOffset + t.getOffset();
+					endOffset = baseOffset + t.getEndOffset();
+					useIncludePath = false;
+					
+					// This should throw EOF
+					t = helperScanner.nextToken(false);
+
+					if (throwExceptionOnBadPreprocessorSyntax) {
+						throw new ScannerException( "Encountered ill-formed #include" );
+					}
+					
+					return;
+				} else if (t.getType() == IToken.tLT) {
+					
+					try {
+						startOffset = baseOffset + t.getOffset();					
+						t = helperScanner.nextToken(false);
+						
+						while (t.getType() != IToken.tGT) {
+							fileName.append(t.getImage());
+							helperScanner.skipOverWhitespace();
+							int c = helperScanner.getChar();
+							if (c == '\\') fileName.append('\\'); else helperScanner.ungetChar(c);
+							t = helperScanner.nextToken(false);
+						}
+						
+						endOffset = baseOffset + t.getEndOffset();
+						
+					} catch (EndOfFile eof) {
+						if (throwExceptionOnBadPreprocessorSyntax) {
+								 throw new ScannerException( "Ill-formed #include: reached end of line before >" );
+						}
+				
+						return;
+					}
+					
+					// This should throw EOF
+					 t = helperScanner.nextToken(false);
+
+					 if (throwExceptionOnBadPreprocessorSyntax) {
+						 throw new ScannerException( "Encountered ill-formed #include" );
+					 }
+	
+					 return;
+					
+				} else if (throwExceptionOnBadPreprocessorSyntax) {
+					throw new ScannerException( "Encountered ill-formed #include" );
+				}
+			}
+			catch( EndOfFile eof )
+			{
+				// good
+			}
+			
+		} else if (throwExceptionOnBadPreprocessorSyntax) {
+			throw new ScannerException( "Encountered ill-formed #include" );
 		}
-		
+
 		String f = fileName.toString();
-		offset = contextStack.getCurrentContext().getOffset() - f.length() - 1; // -1 for the end quote
 		
 		if( mode == ParserMode.QUICK_PARSE )
 		{ 
 			if( requestor != null )
 			{
 				IASTInclusion i = astFactory.createInclusion( f, "", !useIncludePath, beginningOffset, 
-					contextStack.getCurrentContext().getOffset(), offset );
+					endOffset, startOffset );
 				i.enterScope( requestor );
 				i.exitScope( requestor );					 
 			}
 		}
 		else
-			handleInclusion(f.trim(), useIncludePath, offset, beginningOffset, contextStack.getCurrentContext().getOffset() ); 
-
+			handleInclusion(f.trim(), useIncludePath, startOffset, beginningOffset, endOffset); 
 	}
 
 	protected void poundDefine(int beginning) throws ScannerException, EndOfFile {
@@ -2097,7 +2138,7 @@ public class Scanner implements IScanner {
     
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        IScanner tokenizer  = ParserFactory.createScanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), mode, new NullSourceElementRequestor(), problemReporter, translationResult );
+        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), problemReporter, translationResult, new NullSourceElementRequestor(), mode);
         Vector parameterValues = new Vector();
         Token t = null;
         String str = new String();
@@ -2106,6 +2147,12 @@ public class Scanner implements IScanner {
         
         try {
             while (true) {
+				int c = tokenizer.getChar();
+				if ((c != ' ') && (c != '\t') && (c != '\r') && (c != '\n')) {
+					space = false;
+				}
+				if (c != NOCHAR) tokenizer.ungetChar(c);
+				
                 t = (Token)(forStringizing ? tokenizer.nextTokenForStringizing() : tokenizer.nextToken(false));
                 if (t.type == IToken.tLPAREN) {
                     nParen++;
@@ -2261,7 +2308,7 @@ public class Scanner implements IScanner {
 					
 					if( t.getType() != tPOUNDPOUND && ! pastingNext )
 						if (i < (numberOfTokens-1)) // Do not append to the last one 
-                            buffer.append( " " ); 
+                        	buffer.append( " " ); 
 				}
 				String finalString = buffer.toString();
 				contextStack.updateContext(

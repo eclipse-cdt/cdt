@@ -1,3 +1,6 @@
+2003-07-25 Victor Mozgin
+	Fixed PR 39553 : Macros are not expanded in #include statements.
+
 2003-07-24 John Camelon
 	Added COMPLETE_PARSE support for Method and Field declarations and cross-references. 
 	Fixed some small ParserSymbolTable bugs.

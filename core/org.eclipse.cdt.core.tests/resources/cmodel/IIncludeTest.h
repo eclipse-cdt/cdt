@@ -38,5 +38,5 @@ EMPTY #include "invalid.h"
 #define INCFILE(x) vers ## x
 #define xstr(x) str(x)
 #define str(x) #x
-#include xstr(INCFILE(2)).h
+#include xstr(INCFILE(2).h)
 

@@ -1241,7 +1241,7 @@ public class ScannerTestCase extends BaseScannerTest
 		initializeScanner( writer.toString() ); 
 		validateIdentifier("fputs"); 
 		validateToken(IToken.tLPAREN); 
-		validateString("strncmp ( \\\"abc\\\\0d\\\" , \\\"abc\\\" , '\\\\4' ) == 0"); 
+		validateString("strncmp(\\\"abc\\\\0d\\\", \\\"abc\\\", '\\\\4') == 0"); 
 		validateToken(IToken.tCOMMA); 
 		validateIdentifier("s"); 
 		validateToken(IToken.tRPAREN); 
@@ -1270,7 +1270,7 @@ public class ScannerTestCase extends BaseScannerTest
 		try{
 			validateEOF();
 		} catch ( ScannerException e ){
-			assertTrue( e.getMessage().equals( "Ill-formed #include: reached end of line before \"" ));
+			assertTrue( e.getMessage().equals( "Unbounded string" ));
 		}
 	
 		initializeScanner( "#include <foo.h" );

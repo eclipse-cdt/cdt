@@ -145,11 +145,6 @@ public class ASTFailedTests extends BaseASTTest
         assertEquals( variable.getName(), "id");
     }
     
-    public void testBug39553() throws Exception
-    {
-        parse("#define COMP_INC \"foobar.h\"  \n" + "#include COMP_INC");
-        assertFalse( quickParseCallback.getInclusions().hasNext() );
-    }
     public void testBug39554() throws Exception
     {
         assertCodeFailsParse("_Pragma(\"foobar\")");

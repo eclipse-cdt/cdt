@@ -1157,8 +1157,8 @@ public class QuickParseASTTests extends BaseASTTest
 		
 		assertEquals( i.getName(), "stdio.h");
 		assertEquals( i.getStartingOffset(), 0 ); 
-		assertEquals( i.getNameOffset(), 10 ); 
-		assertEquals( i.getEndingOffset(), 18 );
+		assertEquals( i.getNameOffset(), 9 ); 
+		assertEquals( i.getEndingOffset(), 19 );
 		
 		
 		IASTMacro m = (IASTMacro)macros.next();
@@ -1702,5 +1702,11 @@ public class QuickParseASTTests extends BaseASTTest
 		code.write("??>\n");
 		
 		parse(code.toString());
+	}
+	
+	public void testBug39553() throws Exception	
+	{
+		parse("#define COMP_INC \"foobar.h\"  \n" + "#include COMP_INC");
+		assertTrue( quickParseCallback.getInclusions().hasNext() );
 	}
 }

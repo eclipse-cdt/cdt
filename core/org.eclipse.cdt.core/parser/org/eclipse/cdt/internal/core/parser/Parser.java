@@ -4315,7 +4315,7 @@ public class Parser implements IParserData, IParser
 	 * This class represents the state and strategy for parsing
 	 * declarationSpecifierSequences
 	 */
-    public class Flags
+    public static class Flags
     {
         private boolean encounteredTypename = false;
         // have we encountered a typeName yet?

@@ -34,7 +34,7 @@ public class TypeId implements IDeclarator
     /**
 	 * @param scope2
 	 */
-	void reset(IASTScope s) {
+	public void reset(IASTScope s) {
 		this.scope = s;
 	    arrayModifiers = Collections.EMPTY_LIST;
 	    pointerOperators = Collections.EMPTY_LIST;
@@ -43,7 +43,7 @@ public class TypeId implements IDeclarator
 	/**
      * 
      */
-    TypeId()
+    public TypeId()
     {
     	reset( null );
     }

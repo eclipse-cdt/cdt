@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-final class TemplateParameterManager
+public final class TemplateParameterManager
 {	
 	protected void reset()
 	{

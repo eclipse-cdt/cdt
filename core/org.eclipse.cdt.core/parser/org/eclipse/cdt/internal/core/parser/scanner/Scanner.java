@@ -2113,11 +2113,6 @@ public final class Scanner implements IScanner, IScannerData {
 					continue;			
 			}
 		}
-		if (( getDepth() != 0) && !atEOF )
-		{
-			atEOF = true;
-			handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, getCurrentOffset(), false, true );
-		}
 
 		// we're done
 		throwEOF(null);

@@ -74,6 +74,8 @@ public interface ICDTLaunchConfigurationConstants {
 	 */
 	public static final String ATTR_USE_TERMINAL = CDT_LAUNCH_ID + ".use_terminal";
 
+	public static final boolean USE_TERMINAL_DEFAULT = true;
+
 	/**
 	 * Launch configuration attribute key. The value is the debugger id used
 	 * when launching a C/C++ application for debug.

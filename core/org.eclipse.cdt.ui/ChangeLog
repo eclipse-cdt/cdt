@@ -1,3 +1,46 @@
+<<<<<<< ChangeLog
+2003-06-06
+	I have added toolchain definitions for Cygnus and Linux to the plugin.xml file
+	for the new build model. There are two new wizards for adding a C and C++ project
+	for use with managed build systems. The files to implement that are:
+	
+	* build/org/eclipse/cdt/build/ui/wizards/ConfigurationBlock.java
+	* build/org/eclipse/cdt/build/ui/wizards/ConfigurationContentProvider.java
+	* build/org/eclipse/cdt/build/ui/wizards/ConfigurationLabelProvider.java
+	* build/org/eclipse/cdt/build/ui/wizards/CProjectPlatformPage.java
+	* build/org/eclipse/cdt/build/ui/wizards/ManagedCCWizard.java
+	* build/org/eclipse/cdt/build/ui/wizards/ManagedCWizard.java
+	* build/org/eclipse/cdt/build/ui/wizards/ManagedProjectWizard.java
+	
+	There is a new property page specifically for projects with this managed nature.
+	The code to implement it has been added to:
+	
+	* build/org/eclipse/cdt/build/ui/properties/BrowseEntryDialog.java
+	* build/org/eclipse/cdt/build/ui/properties/BuildOptionComboFieldEditor.java
+	* build/org/eclipse/cdt/build/ui/properties/BuildOptionListFieldEditor.java
+	* build/org/eclipse/cdt/build/ui/properties/BuildPropertyPage.java
+	* build/org/eclipse/cdt/build/ui/properties/BuildToolSettingsPage.java
+	* build/org/eclipse/cdt/build/ui/properties/BuildToolsSettingsStore.java
+	* build/org/eclipse/cdt/build/ui/properties/ManageConfigDialog.java
+	* build/org/eclipse/cdt/build/ui/properties/NewConfigurationDialog.java
+	* build/org/eclipse/cdt/build/ui/properties/SummaryFieldEditor.java
+	* build/org/eclipse/cdt/build/ui/properties/ToolListContentProvider.java
+	* build/org/eclipse/cdt/build/ui/properties/ToolListLabelProvider.java
+	
+	New string resources have been added to the plugin.properties file and to the 
+	src/org/eclipse/cdt/internal/ui/CPluginResources.properties file.
+	
+	New icons have been added:
+	* icons/full/build16/config-command.gif
+	* icons/full/build16/config-librarian.gif
+	* icons/full/build16/config-tool.gif
+	* icons/full/ctool16/newmngc_app.gif
+	* icons/full/ctool16/newmngcc_app.gif
+	
+	and the path src/org/eclipse/cdt/internal/ui/CPluginImages.java class
+	has been modified to manage them.
+	
+=======
 2003-06-05 Alain Magloire
 
 	Patch from Christophe Juniet, this patch adds #ifdef guards
@@ -11,6 +54,7 @@
 	* src/org/eclipse/cdt/ui/wizards/NewClassWizardPage.java
 	* src/org/eclipse/cdt/internal/ui/wizards/NewWizardMessages.properties.
 
+>>>>>>> 1.101
 2003-05-23 Alain Magloire
 
 	Patch from Victor Mozgin to deal with PR 38405

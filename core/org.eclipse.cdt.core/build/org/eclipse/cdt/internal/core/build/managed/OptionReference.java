@@ -30,10 +30,14 @@ import org.w3c.dom.NodeList;
  */
 public class OptionReference implements IOption {
 
-	private IOption option;
-	private ToolReference owner;
-	private Object value;
+	// Used for all option references that override the command
 	private String command;
+	// The option this reference overrides
+	private IOption option;
+	// The owner of the reference
+	private ToolReference owner;
+	// The actual value of the reference
+	private Object value;
 
 	/**
 	 * Created internally.
@@ -69,7 +73,7 @@ public class OptionReference implements IOption {
 				value = element.getAttribute("defaultValue");
 				break;
 			case IOption.ENUMERATED:
-				value = option.getEnumCommand(option.getSelectedEnum());				
+				value = option.getSelectedEnum();
 				break;
 			case IOption.STRING_LIST:
 				List valueList = new ArrayList();
@@ -97,11 +101,11 @@ public class OptionReference implements IOption {
 		// value
 		switch (option.getValueType()) {
 			case IOption.BOOLEAN:
-				value = new Boolean(element.getAttribute("value"));
+				value = new Boolean(element.getAttribute("defaultValue"));
 				break;
 			case IOption.STRING:
 			case IOption.ENUMERATED:
-				value = (String) element.getAttribute("value");
+				value = (String) element.getAttribute("defaultValue");
 				break;
 			case IOption.STRING_LIST:
 				List valueList = new ArrayList();
@@ -130,11 +134,11 @@ public class OptionReference implements IOption {
 		// value
 		switch (option.getValueType()) {
 			case IOption.BOOLEAN:
-				element.setAttribute("value", ((Boolean)value).toString());
+				element.setAttribute("defaultValue", ((Boolean)value).toString());
 				break;
 			case IOption.STRING:
 			case IOption.ENUMERATED:
-				element.setAttribute("value", (String)value);
+				element.setAttribute("defaultValue", (String)value);
 				break;
 			case IOption.STRING_LIST:
 				ArrayList stringList = (ArrayList)value;
@@ -213,7 +217,7 @@ public class OptionReference implements IOption {
 			// Return the default defined for the enumeration in the manifest.
 			return option.getSelectedEnum();
 		} else {
-			// Value will contain the selection of the user
+			// Value will contain the human-readable name of the enum 
 			return (String) value;
 		}
 	}

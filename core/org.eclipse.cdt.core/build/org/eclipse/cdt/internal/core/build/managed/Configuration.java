@@ -258,7 +258,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		String oldValue;
 		// Check whether this is an enumerated option
 		if (option.getValueType() == IOption.ENUMERATED) {
-			oldValue = option.getEnumCommand(option.getSelectedEnum());
+			oldValue = option.getSelectedEnum();
 		}
 		else {
 			oldValue = option.getStringValue(); 

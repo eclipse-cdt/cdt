@@ -35,6 +35,7 @@ public class CPluginImages {
 	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
 	private static final String T= "full/";
 
+	public static final String T_BUILD= T + "build16/";
 	public static final String T_OBJ= T + "obj16/";
 	public static final String T_WIZBAN= T + "wizban/";
 	public static final String T_LCL=  "lcl16/";
@@ -147,6 +148,22 @@ public class CPluginImages {
 	public static final String IMG_OBJS_BUILD= NAME_PREFIX + "build_menu.gif";
 	public static final ImageDescriptor DESC_BUILD_MENU = createManaged(T_OBJ, IMG_OBJS_BUILD);
 	
+	// For the managed build images
+	public static final String IMG_BUILD_CONFIG = NAME_PREFIX + "build_configs.gif";
+	public static final ImageDescriptor DESC_BUILD_CONFIG = createManaged(T_BUILD, IMG_BUILD_CONFIG);
+	public static final String IMG_BUILD_COMPILER = NAME_PREFIX + "config-compiler.gif";
+	public static final ImageDescriptor DESC_BUILD_COMPILER = createManaged(T_BUILD, IMG_BUILD_COMPILER);
+	public static final String IMG_BUILD_LINKER = NAME_PREFIX + "config-linker.gif";
+	public static final ImageDescriptor DESC_BUILD_LINKER = createManaged(T_BUILD, IMG_BUILD_LINKER);
+	public static final String IMG_BUILD_LIBRARIAN = NAME_PREFIX + "config-librarian.gif";
+	public static final ImageDescriptor DESC_BUILD_LIBRARIAN = createManaged(T_BUILD, IMG_BUILD_LIBRARIAN);
+	public static final String IMG_BUILD_COMMAND = NAME_PREFIX + "config-command.gif";
+	public static final ImageDescriptor DESC_BUILD_COMMAND = createManaged(T_BUILD, IMG_BUILD_COMMAND);
+	public static final String IMG_BUILD_PREPROCESSOR = NAME_PREFIX + "config-preprocessor.gif";
+	public static final ImageDescriptor DESC_BUILD_PREPROCESSOR = createManaged(T_BUILD, IMG_BUILD_PREPROCESSOR);
+	public static final String IMG_BUILD_TOOL = NAME_PREFIX + "config-tool.gif";
+	public static final ImageDescriptor DESC_BUILD_TOOL = createManaged(T_BUILD, IMG_BUILD_TOOL);
+
 	public static void initialize() {
 		//createManaged(registry, T_OBJ, IMG_OBJS_TUNIT);
 		//createManaged(registry, T_OBJ, IMG_OBJS_FIELD);

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.build.managed.IConfiguration;
+import org.eclipse.cdt.core.build.managed.IResourceBuildInfo;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
@@ -37,8 +38,12 @@ public class Target extends BuildObject implements ITarget {
 	private List configurations;
 	private Map configMap;
 	private boolean isAbstract = false;
+	private boolean isTest = false;
+	private String artifactName;
+	private String defaultExtension;
 
 	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
+	private static final String EMPTY_STRING = new String();
 	
 	public Target(IResource owner) {
 		this.owner = owner;
@@ -58,9 +63,12 @@ public class Target extends BuildObject implements ITarget {
 		this.parent = parent;
 		setId(parent.getId() + ".1");		
 		setName(parent.getName());
+		this.artifactName = parent.getArtifactName();
+		this.defaultExtension = parent.getDefaultExtension();
+		this.isTest = parent.isTestTarget();
 
 		// Hook me up
-		ResourceBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner, true);
+		IResourceBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner, true);
 		buildInfo.addTarget(this);
 	}
 
@@ -76,8 +84,15 @@ public class Target extends BuildObject implements ITarget {
 		// hook me up
 		ManagedBuildManager.addExtensionTarget(this);
 		
-		// name
+		// Get the target name
 		setName(element.getAttribute("name"));
+
+		// Get the name of the build artifact associated with target (usually 
+		// in the plugin specification).
+		artifactName = element.getAttribute("artifactName");
+		
+		// Get the default extension
+		defaultExtension = element.getAttribute("defaultExtension");
 
 		// parent
 		String parentId = element.getAttribute("parent");
@@ -92,6 +107,9 @@ public class Target extends BuildObject implements ITarget {
 		// isAbstract
 		if ("true".equals(element.getAttribute("isAbstract")))
 			isAbstract = true;
+
+		// Is this a test target
+		isTest = ("true".equals(element.getAttribute("isTest")));
 
 		IConfigurationElement[] targetElements = element.getChildren();
 		for (int k = 0; k < targetElements.length; ++k) {
@@ -123,6 +141,13 @@ public class Target extends BuildObject implements ITarget {
 		// name
 		setName(element.getAttribute("name"));
 
+		// Get the name of the build artifact associated with target (should
+		// contain what the user entered in the UI).
+		artifactName = element.getAttribute("artifactName");
+
+		// Get the default extension
+		defaultExtension = element.getAttribute("defaultExtension");
+
 		// parent
 		String parentId = element.getAttribute("parent");
 		if (parentId != null)
@@ -131,6 +156,9 @@ public class Target extends BuildObject implements ITarget {
 		// isAbstract
 		if ("true".equals(element.getAttribute("isAbstract")))
 			isAbstract = true;
+			
+		// Is this a test target
+		isTest = ("true".equals(element.getAttribute("isTest")));
 	
 		Node child = element.getFirstChild();
 		while (child != null) {
@@ -139,8 +167,6 @@ public class Target extends BuildObject implements ITarget {
 			}
 			child = child.getNextSibling();
 		}
-
-
 	}
 	
 	/**
@@ -155,7 +181,10 @@ public class Target extends BuildObject implements ITarget {
 		if (parent != null)
 			element.setAttribute("parent", parent.getId());
 		element.setAttribute("isAbstract", isAbstract ? "true" : "false");
-		
+		element.setAttribute("artifactName", getArtifactName());
+		element.setAttribute("defaultExtension", getDefaultExtension());
+		element.setAttribute("isTest", isTest ? "true" : "false");
+				
 		if (configurations != null)
 			for (int i = 0; i < configurations.size(); ++i) {
 				Configuration config = (Configuration)configurations.get(i);
@@ -231,6 +260,24 @@ public class Target extends BuildObject implements ITarget {
 			return emptyConfigs;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITarget#getDefaultExtension()
+	 */
+	public String getDefaultExtension() {
+		return defaultExtension == null ? EMPTY_STRING : defaultExtension;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITarget#getArtifactName()
+	 */
+	public String getArtifactName() {
+		// Return name or an empty string
+		return artifactName == null ? EMPTY_STRING : artifactName;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITarget#getConfiguration()
+	 */
 	public IConfiguration getConfiguration(String id) {
 		return (IConfiguration)configMap.get(id);
 	}
@@ -252,6 +299,13 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITarget#isTestTarget()
+	 */
+	public boolean isTestTarget() {
+		return isTest;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#createConfiguration()
 	 */
 	public IConfiguration createConfiguration(String id) {
@@ -265,4 +319,10 @@ public class Target extends BuildObject implements ITarget {
 		return new Configuration(this, parent, id);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITarget#setBuildArtifact(java.lang.String)
+	 */
+	public void setBuildArtifact(String name) {
+		artifactName = name;		
+	}
 }

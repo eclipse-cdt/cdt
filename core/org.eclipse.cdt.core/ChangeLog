@@ -1,3 +1,44 @@
+2003-06-06 Sean Evoy
+
+	Added new interface, IResourceBuildInfo, so clients could
+	be shielded from future implementation changes.
+	
+	ManagedBuildManager class has been updated to return an 
+	interface, IResourceBuildInfo, instead of the implementing 
+	class.
+	
+	For ITool, I added a method to determine if the tool produces 
+	an output based on a file extension, and one to determine if
+	it builds an input based on a file extension. I added a method 
+	to determine what the output file extension of a build will 
+	be based on an input extension. Finally, I added a method to 
+	extract a tool command and one to extract its flags.
+	
+	For ITarget, I added more information about the build artifact. 
+	I have added artifact name and default extension attributes to 
+	the target schema. The artifact name is intended to hold the 
+	name the user has selected as the final build object 
+	(i.e. test.exe, foo.so, etc). The default extension will be 
+	used by the toolchain provider to specify a default extension 
+	for the final build object (i.e. .dll.a for Cygwin shared libs 
+	vs .so for Linux shared libs).	There are getter and setter 
+	methods for the name of the final build artifact. There is also a 
+	method to extract the default extension that is built for targets 
+	of this type.
+	
+	The build model schema was updated to reflect these new bit of 
+	information.
+	
+	The GeneratedMakefileBuilder was updated to extract this information
+	and to create a new rule for each input to the build artifact.
+
+ 	The resource build information store now remembers the top 
+	configuration for a target as selected by the user in the UI. 
+	This is needed by the makefile generator and in persisted in the 
+	project build file. 
+	
+	The test has been updated to reflect these changes.
+
 2003-06-05 Alain Magloire
 
 	PR #38380, partially fix; would need more detail form

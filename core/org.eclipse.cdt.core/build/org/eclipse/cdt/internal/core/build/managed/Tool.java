@@ -13,8 +13,11 @@ package org.eclipse.cdt.internal.core.build.managed;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
@@ -29,19 +32,30 @@ import org.eclipse.core.runtime.IConfigurationElement;
  */
 public class Tool extends BuildObject implements ITool, IOptionCategory {
 
+	private static final String DEFAULT_SEPARATOR = ",";
+	private static final IOptionCategory[] EMPTY_CATEGORIES = new IOptionCategory[0];
+	private static final IOption[] EMPTY_OPTIONS = new IOption[0];
+
 	private ITarget target;
 	private List options;
 	private Map optionMap;
 	private List childOptionCategories;
 	private Map categoryMap;
-	
-	private static IOption[] emptyOptions = new IOption[0];
-	private static IOptionCategory[] emptyCategories = new IOptionCategory[0];
+	private String command;
+	private List inputExtensions;
+	private String outputExtension;
 	
 	public Tool(Target target) {
 		this.target = target;
 	}
 	
+	/**
+	 * Constructor to create a new tool in the build model based on the information
+	 * defined in the plugin.xml manifest. 
+	 * 
+	 * @param target The target the receiver will belong to.
+	 * @param element The element containing the information.
+	 */
 	public Tool(Target target, IConfigurationElement element) {
 		this(target);
 
@@ -53,6 +67,25 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 
 		// name
 		setName(element.getAttribute("name"));
+		
+		// Get the supported input file extension
+		String inputs = element.getAttribute("sources") == null ? 
+			new String() : 
+			element.getAttribute("sources");
+		StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
+		while (tokenizer.hasMoreElements()) {
+			getInputExtensions().add(tokenizer.nextElement());
+		}
+				
+		// Get the output extension
+		outputExtension = element.getAttribute("outputs") == null ? 
+			new String() : 
+			element.getAttribute("outputs");
+			
+		// Get the tool invocation
+		command = element.getAttribute("command") == null ? 
+			new String() : 
+			element.getAttribute("command");
 
 		// set up the category map
 		categoryMap = new HashMap();
@@ -70,10 +103,6 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		}
 	}
 	
-	public ITarget getTarget() {
-		return target;	
-	}
-	
 	public IOptionCategory getOptionCategory(String id) {
 		return (IOptionCategory)categoryMap.get(id);
 	}
@@ -82,6 +111,13 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		categoryMap.put(category.getId(), category);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#handlesFileType(java.lang.String)
+	 */
+	public boolean buildsFileType(String extension) {
+		return getInputExtensions().contains(extension);
+	}
+
 	void addChildCategory(IOptionCategory category) {
 		if (childOptionCategories == null)
 			childOptionCategories = new ArrayList();
@@ -92,7 +128,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if (options != null)
 			return (IOption[])options.toArray(new IOption[options.size()]);
 		else
-			return emptyOptions;
+			return EMPTY_OPTIONS;
 	}
 
 	public void addOption(Option option) {
@@ -115,7 +151,17 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if (childOptionCategories != null)
 			return (IOptionCategory[])childOptionCategories.toArray(new IOptionCategory[childOptionCategories.size()]);
 		else
-			return emptyCategories;
+			return EMPTY_CATEGORIES;
+	}
+
+	/* (non-Javadoc)
+	 * @return
+	 */
+	private List getInputExtensions() {
+		if (inputExtensions == null) {
+			inputExtensions = new ArrayList();
+		}
+		return inputExtensions;
 	}
 
 	/* (non-Javadoc)
@@ -138,11 +184,70 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		return null;
 	}
 
+	public ITarget getTarget() {
+		return target;	
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getTool()
 	 */
 	public ITool getTool() {
 		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolCommand()
+	 */
+	public String getToolCommand() {
+		return command;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolFlags()
+	 */
+	public String getToolFlags() throws BuildException {
+		// Get all of the options
+		StringBuffer buf = new StringBuffer();
+		IOption[] opts = getOptions();
+		for (int index = 0; index < opts.length; index++) {
+			IOption option = opts[index];
+			switch (option.getValueType()) {
+				case IOption.BOOLEAN :
+					if (option.getBooleanValue()) {
+						buf.append(option.getCommand() + WHITE_SPACE);
+					}
+					break;
+				
+				case IOption.ENUMERATED :
+					String enum = option.getEnumCommand(option.getSelectedEnum());
+					if (enum.length() > 0) {
+						buf.append(enum + WHITE_SPACE);
+					}
+					break;
+				
+				case IOption.STRING :
+					String val = option.getStringValue();
+					if (val.length() > 0) { 
+						buf.append(val + WHITE_SPACE);
+					}
+					break;
+					
+				case IOption.STRING_LIST :
+					String cmd = option.getCommand();
+					String[] list = option.getStringListValue();
+					for (int j = 0; j < list.length; j++) {
+						String temp = list[j];
+						buf.append(cmd + temp + WHITE_SPACE);
+					}
+					break;
+					
+				default :
+					break;
+			}
+
+		}
+
+		return buf.toString();
 	}
 
 	/* (non-Javadoc)
@@ -181,6 +286,27 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 */
 	public IOption getOption(String id) {
 		return (IOption)optionMap.get(id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutput(java.lang.String)
+	 */
+	public String getOutputExtension(String inputExtension) {
+		// Examine the list of input extensions
+		ListIterator iter = getInputExtensions().listIterator();
+		while (iter.hasNext()) {
+			if (((String)iter.next()).equals(inputExtension)) {
+				return outputExtension;
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
+	 */
+	public boolean producesFileType(String outputExtension) {
+		return outputExtension.equals(this.outputExtension);
 	}
 
 }

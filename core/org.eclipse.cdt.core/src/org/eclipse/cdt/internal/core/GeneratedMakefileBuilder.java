@@ -14,10 +14,10 @@ package org.eclipse.cdt.internal.core;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.build.managed.IResourceBuildInfo;
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.MakeUtil;
-import org.eclipse.cdt.internal.core.build.managed.ResourceBuildInfo;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -41,6 +41,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final String INCREMENTAL = MESSAGE + ".incremental";	//$NON-NLS-1$
 	private static final String FILENAME = "makefile";	//$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator", "\n");	//$NON-NLS-1$
+	private static final String COLON = ":";
 	private static final String TAB = "\t";	//$NON-NLS-1$
 	
 	public class MyResourceDeltaVisitor implements IResourceDeltaVisitor {
@@ -67,34 +68,88 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	}
 
 	/**
+	 * Add whatever macros we can figure out to the makefile.
+	 * 
 	 * @param buffer
 	 */
-	private void addMacros(StringBuffer buffer, ResourceBuildInfo info) {
+	private void addMacros(StringBuffer buffer, IResourceBuildInfo info) {
 		// TODO this should come from the build model
-		buffer.append("CC = " + NEWLINE);
-		buffer.append("CFLAGS = " + NEWLINE);
-		buffer.append("LD = " + NEWLINE);
-		buffer.append("LDFLAGS = " + NEWLINE);
 		buffer.append("RM = rm -f" + NEWLINE);
 		buffer.append("MAKE = make" + NEWLINE);
+		buffer.append(NEWLINE);
+	}
+
+	private void addRule(StringBuffer buffer, IPath sourcePath, String outputName, IResourceBuildInfo info) {
+		// Add the rule to the makefile
+		buffer.append(outputName + COLON + " " + sourcePath.toString());
+		// Add all of the dependencies on the source file
 		
 		buffer.append(NEWLINE);
+		String ext = sourcePath.getFileExtension();
+		String cmd = info.getToolForSource(ext);
+		String flags = info.getFlagsForSource(ext);
+		buffer.append(TAB + cmd + " " + flags + " " + "$?" + NEWLINE + NEWLINE);
+	}
+	
+	/**
+	 * Creates a list of dependencies on project resources.
+	 *  
+	 * @param buffer
+	 */
+	private void addSources(StringBuffer buffer, IResourceBuildInfo info) throws CoreException {
+		// Add the list of project files to be built
+		buffer.append("OBJS = \\" + NEWLINE);
+		
+		//Get a list of files from the project
+		IResource[] members = getProject().members();
+		for (int i = 0; i < members.length; i++) {
+			IResource resource = members[i];
+			IPath sourcePath = resource.getProjectRelativePath().removeFileExtension(); 
+			String srcExt = resource.getFileExtension();
+			String outExt = info.getOutputExtension(srcExt);
+			if (outExt != null) {
+				// Add the extension back to path
+				IPath outputPath = sourcePath.addFileExtension(outExt);
+				// Add the file to the list of dependencies for the base target
+				buffer.append(outputPath.toString() + " \\" + NEWLINE);
+			} 			
+		}
+		buffer.append(NEWLINE);
+
+		// Add a rule for building each resource to the makefile
+		for (int j = 0; j < members.length; j++) {
+			IResource resource = members[j];
+			IPath sourcePath = resource.getProjectRelativePath().removeFileExtension(); 
+			String srcExt = resource.getFileExtension();
+			String outExt = info.getOutputExtension(srcExt);
+			if (outExt != null) {
+				// Add the extension back to path
+				IPath outputPath = sourcePath.addFileExtension(outExt);
+				addRule(buffer, resource.getProjectRelativePath(), outputPath.toString(), info);
+			}
+		}
 	}
 
 	/**
 	 * @param buffer
 	 */
-	private void addTargets(StringBuffer buffer) {
-		// TODO Targets should come from build model
+	private void addTargets(StringBuffer buffer, IResourceBuildInfo info) {
+		// Generate a rule per source
 
-		// TODO Generate 'all' for now
-		buffer.append("all:" + NEWLINE);
+		// This is the top build rule
+		String flags = info.getFlagsForTarget("exe") + " ";
+		String cmd = info.getToolForTarget("exe") + " ";
+		buffer.append(info.getBuildArtifactName() + COLON + " ${OBJS}" + NEWLINE);
+		buffer.append(TAB + cmd + flags + "$@ ${OBJS}" + NEWLINE);
 		buffer.append(NEWLINE);
-		
+
+		// TODO Generate 'all' for now but determine the real rules from UI
+		buffer.append("all: " + info.getBuildArtifactName() + NEWLINE);
+		buffer.append(NEWLINE);
 		
 		// Always add a clean target
 		buffer.append("clean:" + NEWLINE);
-		buffer.append(TAB + "$(RM) *.o" + NEWLINE);
+		buffer.append(TAB + "$(RM) *.o " + info.getBuildArtifactName() + NEWLINE);
 		buffer.append(NEWLINE);
 	}
 
@@ -234,13 +289,16 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private void populateMakefile(IFile fileHandle, IProgressMonitor monitor) throws CoreException {
 		// Write out the contents of the build model
 		StringBuffer buffer = new StringBuffer();
-		ResourceBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+		IResourceBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		
 		// Add the macro definitions
 		addMacros(buffer, info);
 
+		// Add a list of source files
+		addSources(buffer, info);
+		
 		// Add targets
-		addTargets(buffer);
+		addTargets(buffer, info);
 
 		// Save the file
 		Util.save(buffer, fileHandle);

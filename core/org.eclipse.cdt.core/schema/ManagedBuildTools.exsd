@@ -50,39 +50,46 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A unique identifier for the tool that will be used by the build model.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Human-readable name for the tool to be used in the UI.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="sources" type="string">
             <annotation>
                <documentation>
-                  
+                  A comma-separated list of file extensions that the tool will produce output for.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="outputs" type="string">
             <annotation>
                <documentation>
-                  
+                  The extension that the tool will produce from a given input.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="dependencyCalculator" type="string">
             <annotation>
                <documentation>
-                  
+                  A reference to the class that will calculate the dependencies for a given file. For example, a compiler might require a dependency calculator for source files that discovers the dependenncies on header files.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  The command that invokes the tool. For example, gcc for the Gnu C compiler, or g++ for the Gnu C++ compiler.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -234,6 +241,11 @@
    </element>
 
    <element name="optionRef">
+      <annotation>
+         <documentation>
+            Option references hold onto information the user has changed through the UI. Not all fields will be populated, depending on the option type the reference overrides. For example, the &apos;name&apos; field is used by enumerated options only.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -273,14 +285,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Used by the build model to uniquely identify the target.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A human-readable target name, such as &apos;Linux Executable&apos;. This will be the name the user sees displayed in the UI.
                </documentation>
             </annotation>
          </attribute>
@@ -295,6 +307,27 @@
             <annotation>
                <documentation>
                   The id of a target that this tool inherits from.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="artifactName" type="string">
+            <annotation>
+               <documentation>
+                  This is the name of the final build artifact associated with the target. The user will specify this is the UI, so there is no need to supply a default value.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="defaultExtension" type="string">
+            <annotation>
+               <documentation>
+                  This is the extensionthat will be applied to any build artifact created by the target.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isTest" type="boolean">
+            <annotation>
+               <documentation>
+                  A an optional field that flags a target as a test-only target. If true, the target will not appear in the UI.
                </documentation>
             </annotation>
          </attribute>

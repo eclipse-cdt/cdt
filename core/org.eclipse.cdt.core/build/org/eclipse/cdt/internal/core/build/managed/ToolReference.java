@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
@@ -122,6 +123,61 @@ public class ToolReference implements ITool {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolCommand()
+	 */
+	public String getToolCommand() {
+		return parent.getToolCommand();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolFlags()
+	 */
+	public String getToolFlags() throws BuildException {
+		// Get all of the options
+		StringBuffer buf = new StringBuffer();
+		IOption[] opts = getOptions();
+		for (int index = 0; index < opts.length; index++) {
+			IOption option = opts[index];
+			switch (option.getValueType()) {
+				case IOption.BOOLEAN :
+					if (option.getBooleanValue()) {
+						buf.append(option.getCommand() + WHITE_SPACE);
+					}
+					break;
+				
+				case IOption.ENUMERATED :
+					String enum = option.getEnumCommand(option.getSelectedEnum());
+					if (enum.length() > 0) {
+						buf.append(enum + WHITE_SPACE);
+					}
+					break;
+				
+				case IOption.STRING :
+					String val = option.getStringValue();
+					if (val.length() > 0) { 
+						buf.append(val + WHITE_SPACE);
+					}
+					break;
+					
+				case IOption.STRING_LIST :
+					String cmd = option.getCommand();
+					String[] list = option.getStringListValue();
+					for (int j = 0; j < list.length; j++) {
+						String temp = list[j];
+						buf.append(cmd + temp + WHITE_SPACE);
+					}
+					break;
+					
+				default :
+					break;
+			}
+
+		}
+
+		return buf.toString().trim();
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#createOption()
 	 */
 	public IOption createOption() {
@@ -157,6 +213,13 @@ public class ToolReference implements ITool {
 	 */
 	public IOptionCategory getTopOptionCategory() {
 		return parent.getTopOptionCategory();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
+	 */
+	public boolean producesFileType(String outputExtension) {
+		return parent.producesFileType(outputExtension);
 	}
 
 	/* (non-Javadoc)
@@ -220,11 +283,26 @@ public class ToolReference implements ITool {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#handlesFileType(java.lang.String)
+	 */
+	public boolean buildsFileType(String extension) {
+		return parent.buildsFileType(extension);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
 	 */
 	public IOption getOption(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutput(java.lang.String)
+	 */
+	public String getOutputExtension(String inputExtension) {
+		return parent.getOutputExtension(inputExtension);
+	}
+
 
 }

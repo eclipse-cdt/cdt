@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.build.managed.tests;
 
 import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -20,6 +21,7 @@ import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
+import org.eclipse.cdt.core.build.managed.IResourceBuildInfo;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
@@ -35,11 +37,13 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class AllBuildTests extends TestCase {
 	private static final boolean boolVal = true;
-	private static final String newConfigName = "test.config.override";
+	private static final String testConfigName = "test.config.override";
 	private static final String enumVal = "Another Enum";
 	private static final String[] listVal = {"_DEBUG", "/usr/include", "libglade.a"};
 	private static final String projectName = "BuildTest";
-	private static final String stringVal = "-c -wall";
+	private static final String rootExt = "toor";
+	private static final String stringVal = "-c -Wall";
+	private static final String subExt = "bus";
 
 	public AllBuildTests(String name) {
 		super(name);
@@ -51,14 +55,12 @@ public class AllBuildTests extends TestCase {
 		suite.addTest(new AllBuildTests("testExtensions"));
 		suite.addTest(new AllBuildTests("testProject"));
 		suite.addTest(new AllBuildTests("testConfigurations"));
+		suite.addTest(new AllBuildTests("testTargetArtifacts"));
+		suite.addTest(new AllBuildTests("cleanup"));
 		
 		return suite;
 	}
 
-	public void testThatAlwaysFails() {
-		assertTrue(false);
-	}
-	
 	/**
 	 * Navigates through the build info as defined in the extensions
 	 * defined in this plugin
@@ -75,30 +77,11 @@ public class AllBuildTests extends TestCase {
 			
 			if (target.getName().equals("Test Root")) {
 				testRoot = target;
-				
 				checkRootTarget(testRoot, "x");
 				
 			} else if (target.getName().equals("Test Sub")) {
 				testSub = target;
-				
-				// Tools
-				ITool[] tools = testSub.getTools();
-				// Root Tool
-				ITool rootTool = tools[0];
-				assertEquals("Root Tool", rootTool.getName());
-				// Sub Tool
-				ITool subTool = tools[1];
-				assertEquals("Sub Tool", subTool.getName());
-
-				// Configs
-				IConfiguration[] configs = testSub.getConfigurations();
-				// Root Config
-				IConfiguration rootConfig = configs[0];
-				assertEquals("Root Config", rootConfig.getName());
-				assertEquals("Root Override Config", configs[1].getName());
-				// Sub Config
-				IConfiguration subConfig = configs[2];
-				assertEquals("Sub Config", subConfig.getName());
+				checkSubTarget(testSub);
 			}
 		}
 		
@@ -106,6 +89,16 @@ public class AllBuildTests extends TestCase {
 		assertNotNull(testSub);
 	}
 
+	/**
+	 * Create a new configuration based on one defined in the plugin file.
+	 * Overrides all of the configuration settings. Saves, closes, and reopens 
+	 * the project. Then calls a method to check the overridden options.
+	 * 
+	 * Tests creating a new configuration.
+	 * Tests setting options.
+	 * Tests persisting overridden options between project sessions.
+	 * 
+	 */
 	public void testConfigurations() throws CoreException, BuildException {
 		// Open the test project
 		IProject project = createProject(projectName);
@@ -119,7 +112,7 @@ public class AllBuildTests extends TestCase {
 		IConfiguration baseConfig = definedConfigs[0];
 		
 		// Create a new configuration
-		IConfiguration newConfig = rootTarget.createConfiguration(baseConfig, newConfigName);
+		IConfiguration newConfig = rootTarget.createConfiguration(baseConfig, testConfigName);
 		assertEquals(3, rootTarget.getConfigurations().length);
 
 		// There is only one tool
@@ -155,29 +148,38 @@ public class AllBuildTests extends TestCase {
 	public void testProject() throws CoreException, BuildException {
 		// Create new project
 		IProject project = createProject(projectName);
-		
+		// There should not be any targets defined for this project yet
 		assertEquals(0, ManagedBuildManager.getTargets(project).length);
 		
 		// Find the base target definition
 		ITarget targetDef = ManagedBuildManager.getTarget(project, "test.root");
 		assertNotNull(targetDef);
 		
-		// Create the target for our project
+		// Create the target for our project that builds a dummy executable
 		ITarget newTarget = ManagedBuildManager.createTarget(project, targetDef);
 		assertEquals(newTarget.getName(), targetDef.getName());
 		assertFalse(newTarget.equals(targetDef));
+		String buildArtifactName = projectName + "." + newTarget.getDefaultExtension();
+		newTarget.setBuildArtifact(buildArtifactName);
 		
 		ITarget[] targets = ManagedBuildManager.getTargets(project);
 		assertEquals(1, targets.length);
 		ITarget target = targets[0];
 		assertEquals(target, newTarget);
 		assertFalse(target.equals(targetDef));
-		
+
 		// Copy over the configs
+		IConfiguration defaultConfig = null;
 		IConfiguration[] configs = targetDef.getConfigurations();
-		for (int i = 0; i < configs.length; ++i)
-			target.createConfiguration(configs[i], target.getId() + "." + i);
-		
+		for (int i = 0; i < configs.length; ++i) {
+			// Make the first configuration the default 
+			if (i == 0) {
+				defaultConfig = target.createConfiguration(configs[i], target.getId() + "." + i);
+			} else {
+				target.createConfiguration(configs[i], target.getId() + "." + i);
+			}
+		}
+		ManagedBuildManager.setDefaultConfiguration(project, defaultConfig);		
 		checkRootTarget(target, "x");
 		
 		// Override the "String Option in Category" option value
@@ -198,29 +200,86 @@ public class AllBuildTests extends TestCase {
 		ManagedBuildManager.removeBuildInfo(project);
 		project.open(null);
 		
+		// Test that the default config was remembered
+		IResourceBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		assertEquals(defaultConfig.getId(), info.getDefaultConfiguration(target).getId());
+
+		// Get the targets
 		targets = ManagedBuildManager.getTargets(project);
 		assertEquals(1, targets.length);
+		// See if the artifact name is remembered
+		assertEquals(targets[0].getArtifactName(), buildArtifactName);
+		// Check the rest of the default information
 		checkRootTarget(targets[0], "z");
-	}
-	
-	IProject createProject(String name) throws CoreException {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(name);
-		if (!project.exists()) {
-			project.create(null);
-		} else {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		}
-        
-		if (!project.isOpen()) {
-			project.open(null);
-		}
 		
-		//CCorePlugin.getDefault().convertProjectToC(project, null, CCorePlugin.PLUGIN_ID + ".make", true);
-
-		return project;	
+		// Now test the information the makefile builder needs
+		checkBuildSettings(project);
 	}
 	
+	/**
+	 * Tests the tool settings through the interface the makefile generator
+	 * uses.
+	 * 
+	 * @param project
+	 */
+	private void checkBuildSettings(IProject project) {
+		String ext1 = "foo";
+		String ext2 = "bar";
+		String badExt = "cpp";
+		String expectedOutput = "toor";
+		String expectedCmd = "doIt";
+		
+		// Get that interface, Rover. Go get it. That's a good doggie! Good boy.
+		IResourceBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		assertNotNull(info);
+		assertEquals(info.getBuildArtifactName(), "BuildTest.toor");
+		
+		// There should be a default configuration defined for the project
+		ITarget buildTarget = info.getDefaultTarget();
+		assertNotNull(buildTarget);
+		assertEquals(buildTarget.getId(), "test.root.1");
+		IConfiguration buildConfig = info.getDefaultConfiguration(buildTarget);
+		assertNotNull(buildConfig);
+		assertEquals(buildConfig.getId(), "test.root.1.0");
+				
+		// The default target should be the same as the one-and-only target in the project
+		List targets = info.getTargets();
+		assertEquals(targets.size(), 1);
+		ITarget target = (ITarget) targets.get(0);
+		assertEquals(target, buildTarget);
+		
+		// Check that tool handles resources with extensions foo and bar by building a baz
+		assertEquals(info.getOutputExtension(ext1), expectedOutput);
+		assertEquals(info.getOutputExtension(ext2), expectedOutput);
+		
+		// Check that it ignores others based on filename extensions
+		assertNull(info.getOutputExtension(badExt));
+		
+		// Now see what the tool command line invocation is for foo and bar
+		assertEquals(info.getToolForSource(ext1), expectedCmd);
+		assertEquals(info.getToolForSource(ext2), expectedCmd);
+		// Make sure that there is no tool to build files of type foo and bar
+		assertNull(info.getToolForTarget(ext1));
+		assertNull(info.getToolForTarget(ext2));
+		
+		// There is no target that builds toor
+		assertNull(info.getToolForSource(expectedOutput));
+		// but there is one that produces it
+		assertEquals(info.getToolForTarget(expectedOutput), expectedCmd);
+		
+		// Now check the build flags
+		assertEquals(info.getFlagsForSource(ext1), "-La -Lb z -e1");
+		assertEquals(info.getFlagsForSource(ext1), info.getFlagsForSource(ext2));
+		
+	}
+	
+	/**
+	 * Tests that overridden options are properly read into build model.
+	 * Test that option values that are not overridden remain the same.
+	 * 
+	 * @param project The project to get build model information for.
+	 * @throws BuildException
+	 */
 	private void checkOptionReferences(IProject project) throws BuildException {
 		// Get the targets out of the project
 		ITarget[] definedTargets = ManagedBuildManager.getTargets(project);
@@ -230,7 +289,7 @@ public class AllBuildTests extends TestCase {
 		// Now get the configs
 		IConfiguration[] definedConfigs = rootTarget.getConfigurations(); 		
 		assertEquals(3, definedConfigs.length);
-		IConfiguration newConfig = rootTarget.getConfiguration(newConfigName);
+		IConfiguration newConfig = rootTarget.getConfiguration(testConfigName);
 		assertNotNull(newConfig);
 
 		// Now get the tool options and make sure the values are correct		
@@ -273,6 +332,10 @@ public class AllBuildTests extends TestCase {
 	
 	
 	private void checkRootTarget(ITarget target, String oicValue) throws BuildException {
+		// Target stuff
+		assertTrue(target.isTestTarget());
+		assertEquals(target.getDefaultExtension(), rootExt);
+		
 		// Tools
 		ITool[] tools = target.getTools();
 		// Root Tool
@@ -376,4 +439,115 @@ public class AllBuildTests extends TestCase {
 		assertEquals("-e2", options[1].getEnumCommand(valueList[1]));
 	}
 
+	private void checkSubTarget(ITarget target) {
+		// Make sure this is a test target
+		assertTrue(target.isTestTarget());
+		// Make sure the build artifact extension is there
+		assertEquals(target.getDefaultExtension(), subExt);
+				
+		// Tools
+		ITool[] tools = target.getTools();
+		// Root Tool
+		ITool rootTool = tools[0];
+		assertEquals("Root Tool", rootTool.getName());
+		// Sub Tool
+		ITool subTool = tools[1];
+		assertEquals("Sub Tool", subTool.getName());
+
+		// Configs
+		IConfiguration[] configs = target.getConfigurations();
+		// Root Config
+		IConfiguration rootConfig = configs[0];
+		assertEquals("Root Config", rootConfig.getName());
+		assertEquals("Root Override Config", configs[1].getName());
+		// Sub Config
+		IConfiguration subConfig = configs[2];
+		assertEquals("Sub Config", subConfig.getName());
+	}
+
+	/**
+	 * Remove all the project information associated with the project used during test.
+	 */
+	public void cleanup() {
+		removeProject(projectName);
+	}
+	
+	/**
+	 * Create a new project named <code>name</code> or return the project in 
+	 * the workspace of the same name if it exists.
+	 * 
+	 * @param name The name of the project to create or retrieve.
+	 * @return 
+	 * @throws CoreException
+	 */
+	private IProject createProject(String name) throws CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(name);
+		if (!project.exists()) {
+			project.create(null);
+		} else {
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		}
+        
+		if (!project.isOpen()) {
+			project.open(null);
+		}
+		
+		//CCorePlugin.getDefault().convertProjectToC(project, null, CCorePlugin.PLUGIN_ID + ".make", true);
+
+		return project;	
+	}
+	
+	/**
+	 * Remove the <code>IProject</code> with the name specified in the argument from the 
+	 * receiver's workspace.
+	 *  
+	 * @param name
+	 */
+	private void removeProject(String name) {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(name);
+		if (project.exists()) {
+			try {
+				project.delete(true, false, null);
+			} catch (CoreException e) {
+				assertTrue(false);
+			}
+		}
+	}
+	
+	/**
+	 * Test that the build artifact of a <code>ITarget</code> can be modified
+	 * programmatically.
+	 */
+	public void testTargetArtifacts () throws CoreException {
+		// Open the test project
+		IProject project = createProject(projectName);
+		
+		// Make sure there is one and only one target
+		ITarget[] definedTargets = ManagedBuildManager.getTargets(project);
+		assertEquals(1, definedTargets.length);
+		ITarget rootTarget = definedTargets[0];
+		
+		// Set the build artifact of the target
+		String ext = rootTarget.getDefaultExtension();
+		String name = project.getName() + "." + ext;
+		rootTarget.setBuildArtifact(name);
+		
+		// Save, close, reopen and test again
+		ManagedBuildManager.saveBuildInfo(project);
+		project.close(null);
+		ManagedBuildManager.removeBuildInfo(project);
+		project.open(null);
+
+		// Make sure there is one and only one target
+		definedTargets = ManagedBuildManager.getTargets(project);
+		assertEquals(1, definedTargets.length);
+		rootTarget = definedTargets[0];
+		assertEquals(name, rootTarget.getArtifactName());
+	}
+
+	public void testThatAlwaysFails() {
+		assertTrue(false);
+	}
 }

@@ -108,7 +108,7 @@ public class ManagedBuildManager {
 	 * @return
 	 */
 	public static ITarget[] getTargets(IResource resource) {
-		ResourceBuildInfo buildInfo = getBuildInfo(resource);
+		IResourceBuildInfo buildInfo = getBuildInfo(resource);
 		
 		if (buildInfo != null) {
 			List targets = buildInfo.getTargets();
@@ -121,7 +121,7 @@ public class ManagedBuildManager {
 
 	public static ITarget getTarget(IResource resource, String id) {
 		if (resource != null) {
-			ResourceBuildInfo buildInfo = getBuildInfo(resource);
+			IResourceBuildInfo buildInfo = getBuildInfo(resource);
 			if (buildInfo != null)
 				return buildInfo.getTarget(id);
 		}
@@ -138,7 +138,7 @@ public class ManagedBuildManager {
 	 * 
 	 * @param resource
 	 * @param parentTarget
-	 * @return
+	 * @return new <code>ITarget</code> with settings based on the parent passed in the arguments
 	 * @throws BuildException
 	 */
 	public static ITarget createTarget(IResource resource, ITarget parentTarget)
@@ -164,6 +164,24 @@ public class ManagedBuildManager {
 		
 		// Passed validation
 		return new Target(resource, parentTarget);
+	}
+	
+	/**
+	 * Sets the default configuration for the project. Note that this will also
+	 * update the default target if needed.
+	 *  
+	 * @param project
+	 * @param newDefault
+	 */
+	public static void setDefaultConfiguration(IProject project, IConfiguration newDefault) {
+		if (project == null || newDefault == null) {
+			return;
+		}
+		// Set the default in build information for the project 
+		IResourceBuildInfo info = getBuildInfo(project);
+		if (info != null) {
+			info.setDefaultConfiguration(newDefault);
+		}
 	}
 	
 	/**
@@ -223,9 +241,8 @@ public class ManagedBuildManager {
 		Element rootElement = doc.createElement("buildInfo");
 		doc.appendChild(rootElement);
 
-		// Populate from buildInfo
-		// To do - find other resources also
-		ResourceBuildInfo buildInfo = getBuildInfo(project);
+		// Save the build info
+		ResourceBuildInfo buildInfo = (ResourceBuildInfo) getBuildInfo(project);
 		if (buildInfo != null)
 			buildInfo.serialize(doc, rootElement);
 		
@@ -276,8 +293,7 @@ public class ManagedBuildManager {
 			return;
 		extensionTargetsLoaded = true;
 
-		IExtensionPoint extensionPoint
-			= CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ManagedBuildInfo");
+		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ManagedBuildInfo");
 		IExtension[] extensions = extensionPoint.getExtensions();
 		for (int i = 0; i < extensions.length; ++i) {
 			IExtension extension = extensions[i];
@@ -313,7 +329,7 @@ public class ManagedBuildManager {
 		return buildInfo;
 	}
 
-	public static ResourceBuildInfo getBuildInfo(IResource resource, boolean create) {
+	public static IResourceBuildInfo getBuildInfo(IResource resource, boolean create) {
 		// Make sure the extension information is loaded first
 		loadExtensions();
 		ResourceBuildInfo buildInfo = null;
@@ -338,7 +354,7 @@ public class ManagedBuildManager {
 		return buildInfo;
 	}
 	
-	public static ResourceBuildInfo getBuildInfo(IResource resource) {
+	public static IResourceBuildInfo getBuildInfo(IResource resource) {
 		return getBuildInfo(resource, false);
 	}
 

@@ -29,75 +29,16 @@
          name="Tools for Build Test"
          point="org.eclipse.cdt.core.ManagedBuildInfo">
       <target
-            name="Linux"
-            isAbstract="true"
-            id="linux">
-         <tool
-               name="Compiler"
-               id="linux.compiler">
-            <optionCategory
-                  owner="linux.compiler"
-                  name="Optimization Options"
-                  id="linux.compiler.optimization">
-            </optionCategory>
-            <option
-                  name="Compiler Flags"
-                  valueType="string"
-                  id="linux.compiler.flags">
-            </option>
-            <option
-                  name="Optimization Flags"
-                  category="linux.compiler.optimization"
-                  value="-O"
-                  valueType="string"
-                  id="linux.compiler.optimizationFlags">
-            </option>
-         </tool>
-      </target>
-      <target
-            name="Linux Executable"
-            parent="linux"
-            isAbstract="false"
-            id="linux.exec">
-         <tool
-               name="Linker"
-               id="org.eclipse.cdt.ui.tests.tool.linux.link">
-         </tool>
-         <configuration
-               name="Release"
-               id="linux.exec.release">
-         </configuration>
-         <configuration
-               name="Debug"
-               id="linux.exec.debug">
-         </configuration>
-      </target>
-      <target
-            name="Linux Shared Library"
-            parent="linux"
-            isAbstract="false"
-            id="linux.so">
-         <tool
-               name="Linker"
-               id="org.eclipse.cdt.ui.tests.tool.linux.solink">
-         </tool>
-      </target>
-      <target
-            name="Linux Static Library"
-            parent="linux"
-            isAbstract="false"
-            id="linux.lib">
-         <tool
-               name="Archiver"
-               id="org.eclipse.cdt.ui.tests.tool.linux.ar">
-         </tool>
-      </target>
-      <target
+            isTest="true"
             name="Test Root"
+            defaultExtension="toor"
             isAbstract="false"
             id="test.root">
          <tool
+               sources="foo,bar"
                name="Root Tool"
+               outputs="toor"
+               command="doIt"
                id="root.tool">
             <optionCategory
                   owner="root.tool"
@@ -137,14 +78,12 @@
                   id="enumerated.option">
                <optionEnum
                      name="Default Enum"
-                     value="s"
                      isDefault="true"
                      command="-e1"
                      id="default.enum.option">
                </optionEnum>
                <optionEnum
                      name="Another Enum"
-                     value="t"
                      command="-e2"
                      id="another.enum.option">
                </optionEnum>
@@ -161,7 +100,6 @@
                   id="root.tool">
                <optionRef
                      defaultValue="y"
-                     value="y"
                      id="string.option">
                </optionRef>
                <optionRef
@@ -172,8 +110,10 @@
          </configuration>
       </target>
       <target
+            isTest="true"
             name="Test Sub"
             parent="test.root"
+            defaultExtension="bus"
             isAbstract="false"
             id="test.sub">
          <configuration

@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-    <classpathentry kind="src" path="builder"/>
-    <classpathentry kind="src" path="index"/>
-    <classpathentry kind="src" path="model"/>
-    <classpathentry kind="src" path="src"/>
-    <classpathentry kind="src" path="utils"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
@@ -15,5 +10,10 @@
     <classpathentry kind="src" path="/org.eclipse.debug.core"/>
     <classpathentry kind="src" path="/org.eclipse.core.boot"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
+    <classpathentry kind="src" path="builder"/>
+    <classpathentry kind="src" path="index"/>
+    <classpathentry kind="src" path="model"/>
+    <classpathentry kind="src" path="src"/>
+    <classpathentry kind="src" path="utils"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

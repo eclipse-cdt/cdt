@@ -7,7 +7,9 @@
    class="org.eclipse.cdt.internal.CCorePlugin">
 
    <runtime>
-      <library name="cdtcore.jar"/>
+      <library name="cdtcore.jar">
+         <export name="*"/>
+      </library>
    </runtime>
 <!-- ======================================================================= -->
 <!-- The C Plugin                                                            -->

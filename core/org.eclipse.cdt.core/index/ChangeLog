@@ -1,4 +1,8 @@
 2004-05-28 Bogdan Gheorghe
+    Fix for Bug 63831 - Ability to determine when the index is incomplete
+    Provided a way for external clients to query the index state of a project
+    
+2004-05-28 Bogdan Gheorghe
 	Fix for Bug 60946 - [Indexer] indexer should provide notification whenever index changes
 	Provide a notification to the listener of index events
 

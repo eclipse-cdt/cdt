@@ -320,7 +320,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * @param project
 	 * @return
 	 */
-	private boolean isIndexEnabled(IProject project) {
+	public boolean isIndexEnabled(IProject project) {
 		Boolean indexValue = null;
 		
 		try {

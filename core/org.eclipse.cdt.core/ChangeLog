@@ -1,3 +1,8 @@
+2003-02-05 Doug Schaefer
+
+    * src/org/eclipse/cdt/internal/parser.generated:
+    Fix for hang on destructors in namespaces
+
 2003-02-01 Alain Magloire
 
 	Cleanups and suggestions for Hoda.

@@ -13,7 +13,8 @@ package org.eclipse.cdt.core.dom.ast;
  * @author jcamelon
  */
 public interface IASTTypeId extends IASTNode {
-
+	public static final IASTTypeId [] EMPTY_TYPEID_ARRAY = new IASTTypeId[0];
+	
     public static final ASTNodeProperty DECL_SPECIFIER = new ASTNodeProperty( "Decl Specifier"); //$NON-NLS-1$
     public static final ASTNodeProperty ABSTRACT_DECLARATOR = new ASTNodeProperty( "Abstract Declarator"); //$NON-NLS-1$
     

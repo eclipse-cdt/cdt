@@ -21,6 +21,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -31,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -52,6 +52,7 @@ import org.eclipse.cdt.internal.core.parser2.c.CVisitor;
 import org.eclipse.cdt.internal.core.parser2.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.parser2.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.cpp.ANSICPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser2.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration;
 
@@ -190,7 +191,7 @@ public class AST2BaseTest extends TestCase {
         return s.getExpression();
     }
 
-    static protected class NameCollector extends CVisitor.BaseVisitorAction {
+    static protected class CNameCollector extends CVisitor.CBaseVisitorAction {
         {
             processNames = true;
         }
@@ -207,7 +208,33 @@ public class AST2BaseTest extends TestCase {
         public int size() { return nameList.size(); } 
     }
 
-    protected void assertInstances( NameCollector collector, IBinding binding, int num ) throws Exception {
+    protected void assertInstances( CNameCollector collector, IBinding binding, int num ) throws Exception {
+        int count = 0;
+        for( int i = 0; i < collector.size(); i++ )
+            if( collector.getName( i ).resolveBinding() == binding )
+                count++;
+        
+        assertEquals( count, num );
+    }
+
+    static protected class CPPNameCollector extends CPPVisitor.CPPBaseVisitorAction {
+        {
+            processNames = true;
+        }
+        public List nameList = new ArrayList();
+        public boolean processName( IASTName name ){
+            nameList.add( name );
+            return true;
+        }
+        public IASTName getName( int idx ){
+            if( idx < 0 || idx >= nameList.size() )
+                return null;
+            return (IASTName) nameList.get( idx );
+        }
+        public int size() { return nameList.size(); } 
+    }
+
+    protected void assertInstances( CPPNameCollector collector, IBinding binding, int num ) throws Exception {
         int count = 0;
         for( int i = 0; i < collector.size(); i++ )
             if( collector.getName( i ).resolveBinding() == binding )

@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -25,7 +24,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 /**
  * @author aniefer
  */
-public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope, IBinding{
+public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 	private CharArrayObjectMap bindings = CharArrayObjectMap.EMPTY_MAP;
 	
 	public CPPNamespaceScope( IASTNode physicalNode ) {
@@ -60,26 +59,5 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope, I
 	public ICPPASTUsingDirective[] getUsingDirectives() {
 		// TODO Auto-generated method stub
 		return ICPPASTUsingDirective.EMPTY_USINGDIRECTIVE_ARRAY;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
-	public char[] getNameCharArray() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
-	public IScope getScope() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

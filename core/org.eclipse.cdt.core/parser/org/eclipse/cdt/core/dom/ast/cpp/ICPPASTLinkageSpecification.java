@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
@@ -24,6 +22,6 @@ public interface ICPPASTLinkageSpecification extends IASTDeclaration {
     public void setLiteral( String value );
     
     public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty( "Owned Declaration"); //$NON-NLS-1$
-    public List getDeclarations();
+    public IASTDeclaration [] getDeclarations();
     public void addDeclaration( IASTDeclaration declaration );
 }

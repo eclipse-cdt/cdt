@@ -699,7 +699,7 @@ public class AST2Tests extends AST2BaseTest {
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         
-        NameCollector collector = new NameCollector();
+        CNameCollector collector = new CNameCollector();
         CVisitor.visitTranslationUnit( tu, collector );
         
         assertEquals( collector.size(), 3 );

@@ -27,14 +27,17 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.parser2.cpp.CPPVisitor;
 
 /**
  * @author aniefer
@@ -298,29 +301,44 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame( f2, f3 );
 	}
 	
-//	public void testNamespaces() throws Exception {
-//		StringBuffer buffer = new StringBuffer();
-//		buffer.append( "namespace A{            \n"); //$NON-NLS-1$
-//		buffer.append( "   int a;               \n"); //$NON-NLS-1$
-//		buffer.append( "}                       \n"); //$NON-NLS-1$
-//		buffer.append( "namespace B{            \n"); //$NON-NLS-1$
-//		buffer.append( "   using namespace A;   \n"); //$NON-NLS-1$
-//		buffer.append( "}                       \n"); //$NON-NLS-1$
-//		buffer.append( "namespace C{            \n"); //$NON-NLS-1$
-//		buffer.append( "   using namespace A;   \n"); //$NON-NLS-1$
-//		buffer.append( "}                       \n"); //$NON-NLS-1$
-//		buffer.append( "                        \n"); //$NON-NLS-1$
-//		buffer.append( "namespace BC{           \n"); //$NON-NLS-1$
-//		buffer.append( "   using namespace B;   \n"); //$NON-NLS-1$
-//		buffer.append( "   using namespace C;   \n"); //$NON-NLS-1$
-//		buffer.append( "}                       \n"); //$NON-NLS-1$
-//		buffer.append( "                        \n"); //$NON-NLS-1$
-//		buffer.append( "void f(){               \n"); //$NON-NLS-1$
-//		buffer.append( "   BC::a++; //ok        \n"); //$NON-NLS-1$
-//		buffer.append( "}                       \n"); //$NON-NLS-1$
-//		
-//		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
-//		
-//		//CPPVisitor.visitTranslationUnit( tu )
-//	}
+	public void testNamespaces() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "namespace A{            \n"); //$NON-NLS-1$
+		buffer.append( "   int a;               \n"); //$NON-NLS-1$
+		buffer.append( "}                       \n"); //$NON-NLS-1$
+		buffer.append( "namespace B{            \n"); //$NON-NLS-1$
+		buffer.append( "   using namespace A;   \n"); //$NON-NLS-1$
+		buffer.append( "}                       \n"); //$NON-NLS-1$
+		buffer.append( "namespace C{            \n"); //$NON-NLS-1$
+		buffer.append( "   using namespace A;   \n"); //$NON-NLS-1$
+		buffer.append( "}                       \n"); //$NON-NLS-1$
+		buffer.append( "                        \n"); //$NON-NLS-1$
+		buffer.append( "namespace BC{           \n"); //$NON-NLS-1$
+		buffer.append( "   using namespace B;   \n"); //$NON-NLS-1$
+		buffer.append( "   using namespace C;   \n"); //$NON-NLS-1$
+		buffer.append( "}                       \n"); //$NON-NLS-1$
+		buffer.append( "                        \n"); //$NON-NLS-1$
+		buffer.append( "void f(){               \n"); //$NON-NLS-1$
+		buffer.append( "   BC::a++; //ok        \n"); //$NON-NLS-1$
+		buffer.append( "}                       \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		
+		assertEquals( collector.size(), 13 );
+        ICPPNamespace A = (ICPPNamespace) collector.getName( 0 ).resolveBinding();
+        IVariable a = (IVariable) collector.getName( 1 ).resolveBinding();
+        ICPPNamespace B = (ICPPNamespace) collector.getName( 2 ).resolveBinding();
+        ICPPNamespace C = (ICPPNamespace) collector.getName( 4 ).resolveBinding();
+        ICPPNamespace BC = (ICPPNamespace) collector.getName( 6 ).resolveBinding();
+        IFunction f = (IFunction) collector.getName( 9 ).resolveBinding();
+        assertInstances( collector, A, 3 );
+        assertInstances( collector, a, 3 );
+        assertInstances( collector, B, 2 );
+        assertInstances( collector, C, 2 );
+        assertInstances( collector, BC, 2 );
+        assertInstances( collector, f ,1 );
+	}
 }

@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @author jcamelon
  */
 public interface ICPPASTConstructorChainInitializer extends IASTNode {
+    public static final ICPPASTConstructorChainInitializer [] EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY = new ICPPASTConstructorChainInitializer[0];
     
     public static final ASTNodeProperty MEMBER_ID = new ASTNodeProperty( "Member Initializer Id"); //$NON-NLS-1$
     public IASTName getMemberInitializerId();

@@ -10,10 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 
@@ -41,10 +37,10 @@ public class CPPASTLinkageSpecification extends CPPASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification#getDeclarations()
      */
-    public List getDeclarations() {
-        if( declarations == null ) return Collections.EMPTY_LIST;
+    public IASTDeclaration [] getDeclarations() {
+        if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
         removeNullDeclarations();
-        return Arrays.asList( declarations );
+        return declarations;
     }
 
     /* (non-Javadoc)

@@ -10,10 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
@@ -103,10 +99,10 @@ public class CPPASTNewExpression extends CPPASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#getNewTypeIdArrayExpressions()
      */
-    public List getNewTypeIdArrayExpressions() {
-        if( arrayExpressions == null ) return Collections.EMPTY_LIST;
+    public IASTExpression [] getNewTypeIdArrayExpressions() {
+        if( arrayExpressions == null ) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
         removeNullExpressions();
-        return Arrays.asList( arrayExpressions );
+        return arrayExpressions;
     }
 
     /* (non-Javadoc)

@@ -19,6 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
  */
 public interface ICPPASTCatchHandler extends IASTStatement {
 
+	public static final ICPPASTCatchHandler [] EMPTY_CATCHHANDLER_ARRAY = new ICPPASTCatchHandler[0];
+	
     public static final ASTNodeProperty DECLARATION = new ASTNodeProperty( "Declaration"); //$NON-NLS-1$
     public static final ASTNodeProperty CATCH_BODY = new ASTNodeProperty( "Catch Body"); //$NON-NLS-1$
 

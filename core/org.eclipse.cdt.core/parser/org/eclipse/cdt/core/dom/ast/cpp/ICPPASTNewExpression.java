@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -40,7 +38,7 @@ public interface ICPPASTNewExpression extends IASTExpression {
     public void setIsNewTypeId( boolean value );
     
     public static final ASTNodeProperty NEW_TYPEID_ARRAY_EXPRESSION = new ASTNodeProperty( "Array Size Expression"); //$NON-NLS-1$
-    public List getNewTypeIdArrayExpressions();
+    public IASTExpression [] getNewTypeIdArrayExpressions();
     public void addNewTypeIdArrayExpression( IASTExpression expression );
 
 }

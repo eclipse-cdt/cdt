@@ -10,10 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -145,10 +141,10 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#getExceptionSpecification()
      */
-    public List getExceptionSpecification() {
-        if( typeIds == null ) return Collections.EMPTY_LIST;
+    public IASTTypeId[] getExceptionSpecification() {
+        if( typeIds == null ) return IASTTypeId.EMPTY_TYPEID_ARRAY;
         removeNullTypeIds();
-        return Arrays.asList( typeIds );
+        return typeIds;
     }
 
 
@@ -210,10 +206,10 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#getConstructorChain()
      */
-    public List getConstructorChain() {
-        if( constructorChain == null ) return Collections.EMPTY_LIST;
+    public ICPPASTConstructorChainInitializer[] getConstructorChain() {
+        if( constructorChain == null ) return ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
         removeNullConstructors();
-        return Arrays.asList( constructorChain );
+        return constructorChain;
     }
 
 

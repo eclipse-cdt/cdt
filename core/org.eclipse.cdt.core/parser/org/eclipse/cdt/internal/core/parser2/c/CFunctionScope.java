@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.parser2.c.CVisitor.BaseVisitorAction;
+import org.eclipse.cdt.internal.core.parser2.c.CVisitor.CBaseVisitorAction;
 
 /**
  * Created on Nov 8, 2004
@@ -98,7 +98,7 @@ public class CFunctionScope implements ICFunctionScope {
 	    return list;
 	}
 	
-	static private class FindLabelsAction extends BaseVisitorAction {
+	static private class FindLabelsAction extends CBaseVisitorAction {
         public List labels = new ArrayList();
         public boolean ambiguous = false;
         

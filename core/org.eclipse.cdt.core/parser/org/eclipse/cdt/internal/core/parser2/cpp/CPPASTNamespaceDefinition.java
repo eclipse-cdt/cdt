@@ -10,13 +10,11 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 
 /**
  * @author jcamelon
@@ -43,10 +41,10 @@ public class CPPASTNamespaceDefinition extends CPPASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition#getDeclarations()
      */
-    public List getDeclarations() {
-        if( declarations == null ) return Collections.EMPTY_LIST;
+    public IASTDeclaration [] getDeclarations() {
+        if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
         removeNullDeclarations();
-        return Arrays.asList( declarations );
+        return declarations;
     }
 
     /* (non-Javadoc)
@@ -85,5 +83,16 @@ public class CPPASTNamespaceDefinition extends CPPASTNode implements
     private int currentIndex = 0;    
     private IASTDeclaration [] declarations = null;
     private static final int DEFAULT_DECLARATIONS_LIST_SIZE = 4;
+	private ICPPNamespaceScope scope = null;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition#getScope()
+	 */
+	public IScope getScope() {
+		if(scope == null )
+			scope = new CPPNamespaceScope( this );
+		
+		return scope;
+	}
 
 }

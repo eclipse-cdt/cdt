@@ -10,11 +10,10 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
  * @author jcamelon
@@ -33,8 +32,8 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration {
 	 * 
 	 * @return List of IASTDeclaration
 	 */
-	public List getDeclarations();
+	public IASTDeclaration [] getDeclarations();
 	
 	public void addDeclaration( IASTDeclaration declaration );
-
+	public IScope getScope();
 }

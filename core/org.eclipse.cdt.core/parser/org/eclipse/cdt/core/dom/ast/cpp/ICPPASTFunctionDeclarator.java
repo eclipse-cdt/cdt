@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -31,7 +29,7 @@ public interface ICPPASTFunctionDeclarator extends IASTFunctionDeclarator {
 	public void setVolatile( boolean value );
 	
 	public static final ASTNodeProperty EXCEPTION_TYPEID = new ASTNodeProperty( "Exception TypeId"); //$NON-NLS-1$
-	public List getExceptionSpecification();
+	public IASTTypeId [] getExceptionSpecification();
 	public void addExceptionSpecificationTypeId( IASTTypeId typeId );
     /**
      * @param isPureVirtual
@@ -40,7 +38,7 @@ public interface ICPPASTFunctionDeclarator extends IASTFunctionDeclarator {
     public void setPureVirtual(boolean isPureVirtual);
 	
     public static final ASTNodeProperty CONSTRUCTOR_CHAIN_MEMBER = new ASTNodeProperty( "Constructor Chain Member"); //$NON-NLS-1$
-    public List getConstructorChain();
+    public ICPPASTConstructorChainInitializer[] getConstructorChain();
     public void addConstructorToChain( ICPPASTConstructorChainInitializer initializer );
 
 }

@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
@@ -28,6 +26,6 @@ public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
     public void setDeclaration( IASTDeclaration declaration );
     
     public static final ASTNodeProperty PARAMETER = new ASTNodeProperty( "Template Parameter"); //$NON-NLS-1$
-    public List getTemplateParameters();
+    public ICPPASTTemplateParameter [] getTemplateParameters();
     public void addTemplateParamter( ICPPASTTemplateParameter parm );
 }

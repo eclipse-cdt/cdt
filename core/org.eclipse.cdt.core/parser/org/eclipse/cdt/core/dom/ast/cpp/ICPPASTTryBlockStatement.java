@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
@@ -36,6 +34,6 @@ public interface ICPPASTTryBlockStatement extends IASTStatement {
      * @param handler
      */
     public void addCatchHandler(ICPPASTCatchHandler handler);
-    public List getCatchHandlers();
+    public ICPPASTCatchHandler [] getCatchHandlers();
 
 }

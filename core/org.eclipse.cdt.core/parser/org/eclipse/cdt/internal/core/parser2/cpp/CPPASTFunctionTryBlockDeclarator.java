@@ -10,11 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 
 /**
@@ -26,16 +22,16 @@ public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator#addCatchHandler(org.eclipse.cdt.core.dom.ast.IASTStatement)
      */
-    public void addCatchHandler(IASTStatement statement) {
+    public void addCatchHandler(ICPPASTCatchHandler statement) {
         if( catchHandlers == null )
         {
-            catchHandlers = new IASTStatement[ DEFAULT_CATCH_HANDLER_LIST_SIZE ];
+            catchHandlers = new ICPPASTCatchHandler[ DEFAULT_CATCH_HANDLER_LIST_SIZE ];
             currentIndex = 0;
         }
         if( catchHandlers.length == currentIndex )
         {
-            IASTStatement [] old = catchHandlers;
-            catchHandlers = new IASTStatement[ old.length * 2 ];
+        	ICPPASTCatchHandler [] old = catchHandlers;
+            catchHandlers = new ICPPASTCatchHandler[ old.length * 2 ];
             for( int i = 0; i < old.length; ++i )
                 catchHandlers[i] = old[i];
         }
@@ -44,10 +40,10 @@ public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator#getCatchHandlers()
      */
-    public List getCatchHandlers() {
-        if( catchHandlers == null ) return Collections.EMPTY_LIST;
+    public ICPPASTCatchHandler [] getCatchHandlers() {
+        if( catchHandlers == null ) return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
         removeNullCatchHandlers();
-        return Arrays.asList( catchHandlers );
+        return catchHandlers;
     }
 
     private void removeNullCatchHandlers() {
@@ -56,16 +52,16 @@ public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
             if( catchHandlers[i] == null )
                 ++nullCount;
         if( nullCount == 0 ) return;
-        IASTStatement [] old = catchHandlers;
+        ICPPASTCatchHandler [] old = catchHandlers;
         int newSize = old.length - nullCount;
-        catchHandlers = new IASTStatement[ newSize ];
+        catchHandlers = new ICPPASTCatchHandler[ newSize ];
         for( int i = 0; i < newSize; ++i )
             catchHandlers[i] = old[i];
         currentIndex = newSize;
     }
 
     private int currentIndex = 0;    
-    private IASTStatement [] catchHandlers = null;
+    private ICPPASTCatchHandler [] catchHandlers = null;
     private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE = 4;
 
 }

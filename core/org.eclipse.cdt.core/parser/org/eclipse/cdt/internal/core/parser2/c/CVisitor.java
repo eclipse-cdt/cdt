@@ -79,7 +79,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * @author aniefer
  */
 public class CVisitor {
-	public static abstract class BaseVisitorAction {
+	public static abstract class CBaseVisitorAction {
 		public boolean processNames          = false;
 		public boolean processDeclarations   = false;
 		public boolean processInitializers   = false;
@@ -106,7 +106,7 @@ public class CVisitor {
 		public boolean processEnumerator( IASTEnumerator enumerator )   { return true; }
 	}
 	
-	public static class ClearBindingAction extends BaseVisitorAction {
+	public static class ClearBindingAction extends CBaseVisitorAction {
 		{
 			processNames = true;
 		}
@@ -661,20 +661,20 @@ public class CVisitor {
 		visitTranslationUnit( tu, new ClearBindingAction() ); 
 	}
 	
-	public static void visitTranslationUnit( IASTTranslationUnit tu, BaseVisitorAction action ){
+	public static void visitTranslationUnit( IASTTranslationUnit tu, CBaseVisitorAction action ){
 		IASTDeclaration[] decls = tu.getDeclarations();
 		for( int i = 0; i < decls.length; i++ ){
 			if( !visitDeclaration( decls[i], action ) ) return;
 		}
 	}
 	
-	public static boolean visitName( IASTName name, BaseVisitorAction action ){
+	public static boolean visitName( IASTName name, CBaseVisitorAction action ){
 		if( action.processNames )
 			return action.processName( name );
 		return true;
 	}
 	
-	public static boolean visitDeclaration( IASTDeclaration declaration, BaseVisitorAction action ){
+	public static boolean visitDeclaration( IASTDeclaration declaration, CBaseVisitorAction action ){
 		if( action.processDeclarations )
 			if( !action.processDeclaration( declaration ) ) return false;
 		
@@ -693,7 +693,7 @@ public class CVisitor {
 		}
 		return true;
 	}
-	public static boolean visitDeclarator( IASTDeclarator declarator, BaseVisitorAction action ){
+	public static boolean visitDeclarator( IASTDeclarator declarator, CBaseVisitorAction action ){
 		if( action.processDeclarators )
 			if( !action.processDeclarator( declarator ) ) return false;
 		
@@ -716,7 +716,7 @@ public class CVisitor {
 		return true;
 	}
 	
-	public static boolean visitInitializer( IASTInitializer initializer, BaseVisitorAction action ){
+	public static boolean visitInitializer( IASTInitializer initializer, CBaseVisitorAction action ){
 	    if( initializer == null )
 	        return true;
 	    if( action.processInitializers )
@@ -731,7 +731,7 @@ public class CVisitor {
 	    }
 	    return true;
 	}
-	public static boolean visitParameterDeclaration( IASTParameterDeclaration parameterDeclaration, BaseVisitorAction action ){
+	public static boolean visitParameterDeclaration( IASTParameterDeclaration parameterDeclaration, CBaseVisitorAction action ){
 	    if( action.processParameterDeclarations )
 	        if( !action.processParameterDeclaration( parameterDeclaration ) ) return false;
 	    
@@ -740,7 +740,7 @@ public class CVisitor {
 	    return true;
 	}
 	
-	public static boolean visitDeclSpecifier( IASTDeclSpecifier declSpec, BaseVisitorAction action ){
+	public static boolean visitDeclSpecifier( IASTDeclSpecifier declSpec, CBaseVisitorAction action ){
 		if( action.processDeclSpecifiers )
 			if( !action.processDeclSpecifier( declSpec ) ) return false;
 		
@@ -766,7 +766,7 @@ public class CVisitor {
 		}
 		return true;
 	}
-	public static boolean visitEnumerator( IASTEnumerator enumerator, BaseVisitorAction action ){
+	public static boolean visitEnumerator( IASTEnumerator enumerator, CBaseVisitorAction action ){
 	    if( action.processEnumerators )
 	        if( !action.processEnumerator( enumerator ) ) return false;
 	        
@@ -775,7 +775,7 @@ public class CVisitor {
 	        if( !visitExpression( enumerator.getValue(), action ) ) return false;
 	    return true;
 	}
-	public static boolean visitStatement( IASTStatement statement, BaseVisitorAction action ){
+	public static boolean visitStatement( IASTStatement statement, CBaseVisitorAction action ){
 		if( action.processStatements )
 			if( !action.processStatement( statement ) ) return false;
 		
@@ -822,7 +822,7 @@ public class CVisitor {
 		}
 		return true;
 	}
-	public static boolean visitTypeId( IASTTypeId typeId, BaseVisitorAction action ){
+	public static boolean visitTypeId( IASTTypeId typeId, CBaseVisitorAction action ){
 		if( action.processTypeIds )
 			if( !action.processTypeId( typeId ) ) return false;
 		
@@ -830,7 +830,7 @@ public class CVisitor {
 		if( !visitDeclSpecifier( typeId.getDeclSpecifier(), action ) ) return false;
 		return true;
 	}
-	public static boolean visitExpression( IASTExpression expression, BaseVisitorAction action ){
+	public static boolean visitExpression( IASTExpression expression, CBaseVisitorAction action ){
 		if( action.processExpressions )
 		    if( !action.processExpression( expression ) ) return false;
 		

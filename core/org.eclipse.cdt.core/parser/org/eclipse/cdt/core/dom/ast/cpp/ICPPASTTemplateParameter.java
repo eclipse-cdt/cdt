@@ -16,5 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @author jcamelon
  */
 public interface ICPPASTTemplateParameter extends IASTNode {
+	public static final ICPPASTTemplateParameter [] EMPTY_TEMPLATEPARAMETER_ARRAY = new ICPPASTTemplateParameter[0];
 
 }

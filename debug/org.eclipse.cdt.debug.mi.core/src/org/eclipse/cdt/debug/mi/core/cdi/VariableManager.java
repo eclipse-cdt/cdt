@@ -138,7 +138,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				throw new MI2CDIException(e);
 			}
 		} else {
-			throw new CDIException("Unkown type");
+			throw new CDIException("Unknown type");
 		}
 	}
 

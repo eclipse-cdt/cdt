@@ -705,7 +705,7 @@ public class CompletionEngine implements RelevanceConstants {
 		{
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[]{ IASTNode.LookupKind.STRUCTURES };
 			ILookupResult result = lookup( searchNode, completionNode.getFunctionName(), kinds, null, null );
-			if( result.getResultsSize() == 1 ){
+			if( result != null && result.getResultsSize() == 1 ){
 				IASTClassSpecifier cls = (IASTClassSpecifier) result.getNodes().next();
 				kinds[ 0 ] = IASTNode.LookupKind.CONSTRUCTORS;
 				result = lookup( searchNode, completionNode.getCompletionPrefix(), kinds, cls, completionNode.getFunctionParameters() );
@@ -738,7 +738,8 @@ public class CompletionEngine implements RelevanceConstants {
 			kinds = new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL };
 
 		ILookupResult result = lookup(completionNode.getCompletionScope(), prefix, kinds, completionNode.getCompletionContext(), completionNode.getFunctionParameters());
-		addToCompletions(result, false, false, functionsOnly ? result.getIndexOfNextParameter() : -1 );
+		if( result != null)
+			addToCompletions(result, false, false, functionsOnly ? result.getIndexOfNextParameter() : -1 );
 
 		if( !functionsOnly ){
 			List macros = lookupMacros(completionNode.getCompletionPrefix());

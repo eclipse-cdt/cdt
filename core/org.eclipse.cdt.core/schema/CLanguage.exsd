@@ -81,7 +81,7 @@ By themselves, languages don&apos;t serve much purpose.  However, they are used 
       &lt;language
             name=&quot;My Language&quot;
             id=&quot;com.example.product.language.my_language&quot;&gt;
-      &lt;/fileType&gt;
+      &lt;/language&gt;
    &lt;/extension&gt;
    
 This indicates to CDT that there is a new language, identified using the language id &quot;com.example.product.language.my_language&quot;.

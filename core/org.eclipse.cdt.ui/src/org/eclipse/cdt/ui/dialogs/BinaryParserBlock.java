@@ -44,7 +44,6 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$ //$NON-NLS-1$
 	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$ //$NON-NLS-1$
 
-	private static String[][] radios;
 	protected Combo comboBox;
 	private HashMap idMap = new HashMap();
 	private String initial;
@@ -142,7 +141,6 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		IExtensionPoint point = CCorePlugin.getDefault().getDescriptor().getExtensionPoint(CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
-			radios = new String[exts.length][2];
 			for (int i = 0; i < exts.length; i++) {
 				idMap.put(exts[i].getLabel(), exts[i].getUniqueIdentifier());
 			}

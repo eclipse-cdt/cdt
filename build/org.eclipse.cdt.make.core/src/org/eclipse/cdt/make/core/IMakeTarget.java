@@ -31,7 +31,7 @@ public interface IMakeTarget {
 	void setBuildCommand(IPath command);
 	
 	String getBuildArguments();
-	void setBuildArguments();
+	void setBuildArguments(String arguments);
 	
 	IContainer getContainer();
 	

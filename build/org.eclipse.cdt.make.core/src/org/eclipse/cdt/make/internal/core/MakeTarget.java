@@ -16,7 +16,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class MakeTarget implements IMakeTarget {
 
-	MakeTarget(String targetBuilderID, String targetName) {
+	private boolean bDirty;
+
+	MakeTarget(IContainer container, String targetBuilderID, String targetName) {
 		// dinglis-TODO Auto-generated constructor stub
 	}
 
@@ -78,7 +80,7 @@ public class MakeTarget implements IMakeTarget {
 		return null;
 	}
 
-	public void setBuildArguments() {
+	public void setBuildArguments(String arguments) {
 		// dinglis-TODO Auto-generated method stub
 
 	}
@@ -91,5 +93,9 @@ public class MakeTarget implements IMakeTarget {
 	public void build(IProgressMonitor monitor) throws CoreException {
 		// dinglis-TODO Auto-generated method stub
 		
+	}
+	
+	public boolean isDirty() {
+		return bDirty;
 	}
 }

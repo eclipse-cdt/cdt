@@ -68,10 +68,10 @@
    </extension>
    <extension
          point="org.eclipse.cdt.make.core.MakeTargetBuilder">
-         <builder
-         	builderID="org.eclipse.cdt.core.make.makeBuilder"
-         	id="org.eclipse.cdt.make.MakeTargetBuilder">
-         </builder>
+      <builder
+            builderID="org.eclipse.cdt.core.make.makeBuilder"
+            id="org.eclipse.cdt.make.MakeTargetBuilder">
+      </builder>
    </extension>
 
 </plugin>

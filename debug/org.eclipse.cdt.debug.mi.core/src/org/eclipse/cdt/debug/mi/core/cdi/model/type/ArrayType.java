@@ -18,8 +18,19 @@ public class ArrayType extends DerivedType implements ICDIArrayType {
 	/**
 	 * @param typename
 	 */
-	public ArrayType(ICDITarget target, String typename) {
+	public ArrayType(ICDITarget target, String typename,int dim) {
 		super(target, typename);
+		dimension = dim;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType#getDimension()
+	 */
+	public int getDimension() {
+		if (derivedType == null) {
+			getComponentType();
+		}
+		return dimension;
 	}
 
 	/* (non-Javadoc)
@@ -39,20 +50,9 @@ public class ArrayType extends DerivedType implements ICDIArrayType {
 				}
 				name = orig.substring(0, lbracket).trim();
 			}
-			setDerivedType(name);
+			setComponentType(name);
 		}
 		return derivedType;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType#getDimension()
-	 */
-	public int getDimension() {
-		// Need to initialize.
-		if (derivedType == null) {
-			getComponentType();
-		}
-		return dimension;
 	}
 
 }

@@ -17,7 +17,6 @@ public class PointerType extends DerivedType implements ICDIPointerType {
 		super(target, typename);
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType#getComponentType()
 	 */
@@ -30,7 +29,7 @@ public class PointerType extends DerivedType implements ICDIPointerType {
 			if (star != -1) { 
 				name = orig.substring(0, star).trim();
 			}
-			setDerivedType(name);
+			setComponentType(name);
 		}
 		return derivedType;
 	}

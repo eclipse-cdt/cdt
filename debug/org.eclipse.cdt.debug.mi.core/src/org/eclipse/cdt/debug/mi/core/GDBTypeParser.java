@@ -231,7 +231,7 @@ public class GDBTypeParser {
 			c = getch();
 		}
 
-		char character = (char) c;
+		//char character = (char) c;
 
 		if (c == '(') {
 			if ((c = getch()) == ')') {
@@ -296,7 +296,6 @@ public class GDBTypeParser {
 		}
 		while (namp-- > 0) {
 			prependChild(GDBType.REFERENCE);
-			GDBDerivedType referenceType = new GDBDerivedType(genericType, GDBDerivedType.REFERENCE);
 		}
 	}
 
@@ -338,7 +337,13 @@ public class GDBTypeParser {
 	}
 
 	public static void main(String[] args) {
+
 		GDBTypeParser parser = new GDBTypeParser();
+
+		System.out.println("struct link { int i; int j; struct link * next} *");
+		parser.parse("struct link { int i; int j; struct link * next} *");
+		System.out.println(parser.getGDBType());
+
 		System.out.println("char **argv");
 		parser.parse("unsigned long long int **argv");
 		System.out.println(parser.getGDBType());

@@ -12,13 +12,17 @@ import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.mi.core.GDBTypeParser;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.GDBTypeParser.GDBDerivedType;
+import org.eclipse.cdt.debug.mi.core.GDBTypeParser.GDBType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Instruction;
 import org.eclipse.cdt.debug.mi.core.cdi.model.MixedInstruction;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ArrayType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.BoolType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.CharType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.DerivedType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.DoubleType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.EnumType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.FloatType;
@@ -50,10 +54,12 @@ import org.eclipse.cdt.debug.mi.core.output.MISrcAsm;
 public class SourceManager extends SessionObject implements ICDISourceManager {
 
 	boolean autoupdate;
+	GDBTypeParser gdbTypeParser;
 
 	public SourceManager(Session session) {
 		super(session);
 		autoupdate = false;
+		gdbTypeParser = new GDBTypeParser();
 	}
 
 	/**
@@ -224,24 +230,49 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		}
 		String typename = name.trim();
 
-		// Check the derived types and agregate types
-		if (typename.endsWith("]")) {
-			return new ArrayType(target, typename);
-		} else if (typename.endsWith("*")) {
-			return new PointerType(target, typename);
-		} else if (typename.endsWith("&")) {
-			return new ReferenceType(target, typename);
-		} else if (typename.endsWith(")")) {
-			return new FunctionType(target, typename);
-		} else if (typename.startsWith("enum ")) {
-			return new EnumType(target, typename);
-		} else if (typename.startsWith("union ")) {
-			return new StructType(target, typename);
-		} else if (typename.startsWith("struct ")) {
-			return new StructType(target, typename);
-		} else if (typename.startsWith("class ")) {
-			return new StructType(target, typename);
+		// Parse the string.
+		GDBType gdbType = gdbTypeParser.parse(typename);
+		Type type = null;
+
+		for (Type aType = null; gdbType != null; type = aType) {
+			if (gdbType instanceof GDBDerivedType) {
+				switch(gdbType.getType()) {
+					case GDBType.ARRAY:
+						int d = ((GDBDerivedType)gdbType).getDimension();
+						aType = new ArrayType(target, typename, d);
+					break;
+					case GDBType.FUNCTION:
+						aType = new FunctionType(target, typename);
+					break;
+					case GDBType.POINTER:
+						aType = new PointerType(target, typename);
+					break;
+					case GDBType.REFERENCE:
+						aType = new ReferenceType(target, typename);
+					break;
+				}
+				gdbType = ((GDBDerivedType)gdbType).getChild();
+			} else {
+				aType = toCDIType(target, gdbType.toString());
+				gdbType = null;
+			}
+			if (type instanceof DerivedType) {
+				((DerivedType)type).setComponentType(aType);
+			}
 		}
+
+		if (type != null) {
+			return type;
+		}
+		throw new CDIException("Unknown type");
+	}
+	
+	Type toCDIType(ICDITarget target, String name) throws CDIException {
+		// Check the derived types and agregate types
+		if (name == null) {
+			name = new String();
+		}
+		String typename = name.trim();
 
 		// Check the primitives.
 		if (typename.equals("char")) {
@@ -268,6 +299,14 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			return new DoubleType(target, typename);
 		} else if (typename.equals("void")) {
 			return new VoidType(target, typename);
+		} else if (typename.equals("enum")) {
+			return new EnumType(target, typename);
+		} else if (typename.equals("union")) {
+			return new StructType(target, typename);
+		} else if (typename.equals("struct")) {
+			return new StructType(target, typename);
+		} else if (typename.equals("class")) {
+			return new StructType(target, typename);
 		}
 
 		StringTokenizer st = new StringTokenizer(typename);
@@ -286,11 +325,17 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			boolean isLong =      (first.equals("long") || second.equals("long"));
 			boolean isShort =     (first.equals("short") || second.equals("short"));
 			boolean isLongLong =  (first.equals("long") && second.equals("long"));
+			
 			boolean isDouble =    (first.equals("double") || second.equals("double"));
 			boolean isFloat =     (first.equals("float") || second.equals("float"));
 			boolean isComplex =   (first.equals("complex") || second.equals("complex") ||
 			                       first.equals("_Complex") || second.equals("_Complex"));
 			boolean isImaginery = (first.equals("_Imaginary") || second.equals("_Imaginary"));
+
+			boolean isStruct =     first.equals("struct");
+			boolean isClass =      first.equals("class");
+			boolean isUnion =      first.equals("union");
+			boolean isEnum =       first.equals("enum");
 
 			if (isChar && (isSigned || isUnsigned)) {
 				return new CharType(target, typename, isUnsigned);
@@ -306,6 +351,14 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 				return new DoubleType(target, typename, isComplex, isImaginery, isLong);
 			} else if (isFloat && (isComplex || isImaginery)) {
 				return new FloatType(target, typename, isComplex, isImaginery);
+			} else if (isStruct) {
+				return new StructType(target, typename);
+			} else if (isClass) {
+				return new StructType(target, typename);
+			} else if (isUnion) {
+				return new StructType(target, typename);
+			} else if (isEnum) {
+				return new EnumType(target, typename);
 			}
 		} else if (count == 3) {
 			// ISOC allows permutation. replace short by: long or short
@@ -364,7 +417,6 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		}
 		throw new CDIException("Unknown type");
 	}
-
 
 	public String getDetailTypeName(String typename) throws CDIException {
 		try {

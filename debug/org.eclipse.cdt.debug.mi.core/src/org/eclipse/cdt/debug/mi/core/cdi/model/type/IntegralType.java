@@ -14,9 +14,9 @@ public abstract class IntegralType extends Type implements ICDIIntegralType {
 
 	boolean unSigned;
 
-	public IntegralType(ICDITarget target, String typename, boolean usigned) {
+	public IntegralType(ICDITarget target, String typename, boolean isUnsigned) {
 		super(target, typename);
-		unSigned = usigned;
+		unSigned = isUnsigned;
 	}
 	
 	/* (non-Javadoc)

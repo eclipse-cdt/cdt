@@ -19,8 +19,8 @@ public class IntType extends IntegralType implements ICDIIntType {
 		this(target, typename, false);
 	}
 
-	public IntType(ICDITarget target, String typename, boolean usigned) {
-		super(target, typename, usigned);
+	public IntType(ICDITarget target, String typename, boolean isUnsigned) {
+		super(target, typename, isUnsigned);
 	}
 
 }

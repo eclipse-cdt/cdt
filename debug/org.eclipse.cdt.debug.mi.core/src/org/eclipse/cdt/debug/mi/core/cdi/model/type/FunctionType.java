@@ -32,15 +32,9 @@ public class FunctionType extends DerivedType implements ICDIFunctionType {
 				params = name.substring(lparen + 1, rparen).trim();
 				name = orig.substring(0, lparen).trim();
 			}
-			setDerivedType(name);
+			setComponentType(name);
 		}
 		return derivedType; 
 	}
 
-	public String getArguments() {
-		if (derivedType != null) {
-			getComponentType();
-		}
-		return params;
-	}
 }

@@ -32,7 +32,7 @@ public class ReferenceType extends DerivedType implements ICDIReferenceType {
 			if (amp != -1) { 
 				name = orig.substring(0, amp).trim();
 			}
-			setDerivedType(name);
+			setComponentType(name);
 		}
 		return derivedType;
 	}

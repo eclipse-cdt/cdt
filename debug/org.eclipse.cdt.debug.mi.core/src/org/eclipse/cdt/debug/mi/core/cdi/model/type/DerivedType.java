@@ -22,8 +22,11 @@ public abstract class DerivedType extends Type implements ICDIDerivedType {
 		super(target, typename);
 	}
 
+	public void setComponentType(ICDIType dtype) {
+		derivedType = dtype;
+	}
 
-	void setDerivedType(String name) {
+	public void setComponentType(String name) {
 		ICDITarget target = getTarget();
 		Session session = (Session)(target.getSession());
 		SourceManager sourceMgr = (SourceManager)session.getSourceManager();
@@ -41,5 +44,4 @@ public abstract class DerivedType extends Type implements ICDIDerivedType {
 			derivedType = new IncompleteType(getTarget(), name);
 		}
 	}
-
 }

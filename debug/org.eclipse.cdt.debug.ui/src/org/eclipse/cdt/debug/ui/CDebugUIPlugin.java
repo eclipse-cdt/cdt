@@ -242,7 +242,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 		Shell shell = getActiveWorkbenchShell();
 		if ( shell != null )
 		{
-			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, "Error logged from CDT Debug UI: ", t ); //$NON-NLS-1$	
+			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, t.getMessage(), null ); //$NON-NLS-1$	
 			ErrorDialog.openError( shell, "Error", message, status );
 		}
 	}
@@ -372,7 +372,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 						}
 						catch( DebugException e )
 						{
-							errorDialog( e.getMessage(), e );
+							errorDialog( "Switch to stack frame failed.", e );
 						}
 					}
 				}

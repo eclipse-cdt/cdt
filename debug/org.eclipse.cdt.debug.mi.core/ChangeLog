@@ -1,3 +1,8 @@
+2003-04-07 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+	When program == null do not pass it in the array of args to exec.
+
 2003-03-06 Alain Magloire
 
     GDB on certain platform is very susceptible to register probing

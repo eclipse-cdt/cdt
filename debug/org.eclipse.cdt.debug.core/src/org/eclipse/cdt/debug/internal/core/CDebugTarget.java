@@ -338,6 +338,15 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void terminate() throws DebugException
 	{
+		try
+		{
+			setTerminating( true );
+			getCDITarget().terminate();
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( MessageFormat.format( "{0} occurred while terminating.", new String[]{ e.toString() } ), e );
+		}
 	}
 
 	/**

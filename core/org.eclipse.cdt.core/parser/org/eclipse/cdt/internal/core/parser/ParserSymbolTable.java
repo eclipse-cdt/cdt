@@ -1037,7 +1037,7 @@ public class ParserSymbolTable {
 	}
 
 	static private Declaration ResolveFunction( LookupData data, LinkedList functions ) throws ParserSymbolTableException{
-		
+		 
 		ReduceToViable( data, functions );
 		
 		int numSourceParams = ( data.parameters == null ) ? 0 : data.parameters.size();
@@ -1073,10 +1073,12 @@ public class ParserSymbolTable {
 		TypeInfo source = null;
 		TypeInfo target = null;
 		 
-		boolean hasWorse;
-		boolean hasBetter;
+		boolean hasWorse = false;
+		boolean hasBetter = false;
 		boolean ambiguous = false;
-		
+		boolean currHasAmbiguousParam = false;
+		boolean bestHasAmbiguousParam = false;
+
 		for( int i = numFns; i > 0; i-- ){
 			currFn = (Declaration) iterFns.next();
 			
@@ -1128,6 +1130,8 @@ public class ParserSymbolTable {
 					break;
 				}
 				
+				currHasAmbiguousParam = ( currFnCost[ j ].userDefined == 1 );
+				
 				if( bestFnCost != null ){
 					comparison = currFnCost[ j ].compare( bestFnCost[ j ] );
 					hasWorse |= ( comparison < 0 );
@@ -1143,13 +1147,14 @@ public class ParserSymbolTable {
 				if( hasBetter ){
 					ambiguous = false;
 					bestFnCost = currFnCost;
+					bestHasAmbiguousParam = currHasAmbiguousParam;
 					currFnCost = null;
 					bestFn = currFn;
 				}				
 			}
 		}
 
-		if( ambiguous ){
+		if( ambiguous || bestHasAmbiguousParam ){
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 		}
 						
@@ -1387,6 +1392,23 @@ public class ParserSymbolTable {
 			source = getFlatTypeInfo( source );
 		}
 	
+		String sourcePtr = source.getPtrOperator();
+		String targetPtr = target.getPtrOperator();
+		
+		if( sourcePtr != null && sourcePtr.length() > 0 ){
+			char sourcePtrArray [] = sourcePtr.toCharArray();
+			if( sourcePtrArray[ 0 ] == '&' ){
+				source.setPtrOperator( new String(sourcePtrArray, 1, sourcePtr.length() - 1 ) );
+			}
+		}
+		
+		if( targetPtr != null && targetPtr.length() > 0 ){
+			char targetPtrArray [] = targetPtr.toCharArray();
+			if( targetPtrArray[ 0 ] == '&' ){
+				target.setPtrOperator ( new String( targetPtrArray, 1, targetPtr.length() - 1 ) );
+			}
+		}
+		
 		Cost cost = new Cost( source, target );
 	
 		return cost;
@@ -1528,7 +1550,7 @@ public class ParserSymbolTable {
 		Cost cost = lvalue_to_rvalue( source, target );
 		
 		if( cost.source.equals( cost.target ) ){
-			cost.rank = 1;
+			cost.rank = 0;
 			return cost;
 		}
 	
@@ -1551,9 +1573,15 @@ public class ParserSymbolTable {
 	
 	static private Cost checkUserDefinedConversionSequence( TypeInfo source, TypeInfo target ) throws ParserSymbolTableException {
 		Cost cost = null;
+		Cost constructorCost = null;
+		Cost conversionCost = null;
+
 		Declaration targetDecl = null;
+		Declaration sourceDecl = null;
 		Declaration constructor = null;
+		Declaration conversion = null;
 		
+		//constructors
 		if( target.getType() == TypeInfo.t_type ){
 			targetDecl = target.getTypeDeclaration();
 			if( targetDecl.isType( TypeInfo.t_class, TypeInfo.t_union ) ){
@@ -1563,12 +1591,54 @@ public class ParserSymbolTable {
 				data.parameters = params;
 				LookupInContained( data, targetDecl );
 				constructor = ResolveAmbiguities( data );
-				if( constructor != null ){
-					cost = checkStandardConversionSequence( new TypeInfo( TypeInfo.t_type, constructor._containingScope ), target );
+			}
+		}
+		
+		//conversion operators
+		if( source.getType() == TypeInfo.t_type ){
+			source = getFlatTypeInfo( source );
+			sourceDecl = source.getTypeDeclaration();
+			
+			if( sourceDecl != null ){
+				String name = target.toString();
+				
+				if( !name.equals("") ){
+					LookupData data = new LookupData( "operator " + name, TypeInfo.t_function );
+					LinkedList params = new LinkedList();
+					data.parameters = params;
+					
+					LookupInContained( data, sourceDecl );
+					conversion = ResolveAmbiguities( data );	
 				}
 			}
-			
 		}
+		
+		if( constructor != null ){
+			constructorCost = checkStandardConversionSequence( new TypeInfo( TypeInfo.t_type, constructor._containingScope ), target );
+		}
+		if( conversion != null ){
+			conversionCost = checkStandardConversionSequence( new TypeInfo( target.getType(), target.getTypeDeclaration() ), target );
+		}
+		
+		//if both are valid, then the conversion is ambiguous
+		if( constructorCost != null && constructorCost.rank != -1 && 
+			conversionCost != null && conversionCost.rank != -1 )
+		{
+			cost = constructorCost;
+			cost.userDefined = 1;
+			cost.rank = 3;
+		} else {
+			if( constructorCost != null && constructorCost.rank != -1 ){
+				cost = constructorCost;
+				cost.userDefined = constructor.hashCode();
+				cost.rank = 3;
+			} else if( conversionCost != null && conversionCost.rank != -1 ){
+				cost = conversionCost;
+				cost.userDefined = conversion.hashCode();
+				cost.rank = 3;
+			} 			
+		}
+		
 		return cost;
 	}
 
@@ -1667,12 +1737,30 @@ public class ParserSymbolTable {
 		public int promotion;
 		public int conversion;
 		public int qualification;
-		
+		public int userDefined;
 		public int rank = -1;
 		public int detail;
 		
 		public int compare( Cost cost ){
 			int result = 0;
+			
+			if( rank != cost.rank ){
+				return cost.rank - rank;
+			}
+			
+			if( userDefined != 0 || cost.userDefined != 0 ){
+				if( userDefined == 0 || cost.userDefined == 0 ){
+					return cost.userDefined - userDefined;
+				} else {
+					if( (userDefined == 1 || cost.userDefined == 1) ||
+						(userDefined != cost.userDefined ) )
+					{
+						return 0;
+					} 
+					// else they are the same constructor/conversion operator and are ranked
+					//on the standard conversion sequence
+				}
+			}
 			
 			if( promotion > 0 || cost.promotion > 0 ){
 				result = cost.promotion - promotion;
@@ -1691,8 +1779,6 @@ public class ParserSymbolTable {
 			 
 			return result;
 		}
-		
-		
 	}
-	
+
 }

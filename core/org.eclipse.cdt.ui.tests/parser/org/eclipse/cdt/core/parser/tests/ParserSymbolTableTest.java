@@ -1902,5 +1902,108 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, f1 );
 		
 	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 *
+	 * class B;
+	 * class A { A( B& ); };
+	 * class B { operator A(); };
+	 *  
+	 * void f(A){}
+	 * 
+	 * B b;
+	 * f( b );	//ambiguous because b->A via constructor or conversion
+	 *
+	 * class C { C( B& ); };
+	 *  
+	 * void f(C){}
+	 * 
+	 * f( b );	//ambiguous because b->C via constructor and b->a via constructor/conversion
+	 * 
+	 * void f(B){}
+	 * 
+	 * f( b );  //calls f(B) 
+	 */
+	   
+	public void testUserDefinedConversionByOperator() throws Exception{
+		newTable();
+		
+		Declaration B = new Declaration( "B" );
+		B.setType( TypeInfo.t_class );
+		
+		table.addDeclaration( B );
+		
+		Declaration A = new Declaration( "A" );
+		A.setType( TypeInfo.t_class );
+		table.addDeclaration( A );
+		
+		table.push( A );
+		Declaration constructA = new Declaration( "" );
+		constructA.setType( TypeInfo.t_function );
+		constructA.addParameter( B, 0, "&", false );
+		table.addDeclaration( constructA );
+		table.pop();
+		
+		table.push( B );
+		Declaration operator = new Declaration( "operator A" );
+		operator.setType( TypeInfo.t_function );
+		table.addDeclaration( operator );
+		table.pop();
+		
+		Declaration f1 = new Declaration( "f" );
+		f1.setType( TypeInfo.t_function );
+		f1.addParameter( A, 0, null, false );
+		table.addDeclaration( f1 );
+		
+		Declaration b = new Declaration( "b" );
+		b.setType( TypeInfo.t_type );
+		b.setTypeDeclaration( B );
+		
+		LinkedList params = new LinkedList();
+		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, b, 0, null, false );
+		params.add( p1 );
+		
+		Declaration look = null;
+		
+		try{
+			look = table.UnqualifiedFunctionLookup( "f", params );
+			assertTrue( false );
+		} catch( ParserSymbolTableException e ){
+			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous ); 
+		}
+		
+		Declaration C = new Declaration("C");
+		C.setType( TypeInfo.t_class );
+		table.addDeclaration( C );
+		
+		table.push( C );
+		Declaration constructC = new Declaration("");
+		constructC.setType( TypeInfo.t_function );
+		constructC.addParameter( B, 0, "&", false );
+		table.addDeclaration( constructC );
+		table.pop();
+		
+		Declaration f2 = new Declaration( "f" );
+		f2.setType( TypeInfo.t_function );
+		f2.addParameter(  C, 0, null, false );
+		table.addDeclaration( f2 );
+		
+		try{
+			look = table.UnqualifiedFunctionLookup( "f", params );
+			assertTrue( false );
+		} catch( ParserSymbolTableException e ){
+			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous ); 
+		}
+		
+		Declaration f3 = new Declaration( "f" );
+		f3.setType( TypeInfo.t_function );
+		f3.addParameter(  B, 0, null, false );
+		table.addDeclaration( f3 );
+		
+		look = table.UnqualifiedFunctionLookup( "f", params );
+		assertEquals( look, f3 );
+	}
 }
 

@@ -90,6 +90,23 @@ public class TypeInfo{
 	public static final int t_void        = 14;
 	public static final int t_enumerator  = 15;
 		
+	private static final String _image[] = {	"", 
+												"", 
+												"namespace", 
+												"class", 
+												"struct", 
+												"union", 
+												"enum",
+												"",
+												"bool",
+												"char",
+												"wchar_t",
+												"int",
+												"float",
+												"double",
+												"void",
+												""
+											 };
 	//Partial ordering :
 	// none		< const
 	// none     < volatile
@@ -334,6 +351,14 @@ public class TypeInfo{
 		return result;
 	}
 	
+	public String toString(){
+		if( isType( t_type ) ){
+			return _typeDeclaration.getName();
+		} else {
+			return _image[ getType() ];
+		}
+	}
+
 	private int 		 _typeInfo = 0;
 	private Declaration _typeDeclaration;	
 	private int		 _cvQualifier = 0;

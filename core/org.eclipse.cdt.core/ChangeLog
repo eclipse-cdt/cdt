@@ -1,3 +1,8 @@
+2004-09-03 Alain Magloire
+
+	Fix for PR 72901
+	* plugin.xml
+
 2004-08-27 Alain Magloire
 
 	Fix for PR 72782

@@ -62,7 +62,7 @@ public class MIInferiorExitEvent extends MIEvent {
 
 				if (var.equals("exit-code")) {
 					try {
-						code = Integer.parseInt(str.trim());
+						code = Integer.decode(str.trim()).intValue();
 					} catch (NumberFormatException e) {
 					}
 				}

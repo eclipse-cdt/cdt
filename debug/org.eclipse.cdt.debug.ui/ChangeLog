@@ -1,4 +1,12 @@
 2004-08-24 Mikhail Khodjaiants
+	Moved the property pages and related classes into the newly created package - "org.eclipse.cdt.debug.internal.ui.propertypages".
+	* PropertyPageMessages.properties: new
+	* CBreakpointPreferenceStore.java
+	* CBreakpointPropertyPage.java
+	* PropertyPageMessages.java: new
+	* ActionMessages.properties
+
+2004-08-24 Mikhail Khodjaiants
 	Replaced the "Breakpoint Properties" dialog by standard property pages.
 	* CBreakpointPreferenceStore.java
 	* CBreakpointPropertiesAction.java

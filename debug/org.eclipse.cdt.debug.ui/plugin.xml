@@ -1074,7 +1074,7 @@
       <page
             adaptable="true"
             objectClass="org.eclipse.cdt.debug.core.model.ICBreakpoint"
-            class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertyPage"
+            class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointPropertyPage"
             name="%CommonBreakpointPage.label"
             id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"/>
    </extension>

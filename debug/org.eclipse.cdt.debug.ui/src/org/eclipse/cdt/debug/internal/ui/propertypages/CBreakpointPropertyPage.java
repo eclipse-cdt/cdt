@@ -8,7 +8,7 @@
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
  ***********************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions;
+package org.eclipse.cdt.debug.internal.ui.propertypages;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,7 +51,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 		public BreakpointIntegerFieldEditor( String name, String labelText, Composite parent ) {
 			super( name, labelText, parent );
-			setErrorMessage( ActionMessages.getString( "CBreakpointPropertyPage.0" ) ); //$NON-NLS-1$
+			setErrorMessage( PropertyPageMessages.getString( "CBreakpointPropertyPage.0" ) ); //$NON-NLS-1$
 		}
 
 		/**
@@ -276,8 +276,8 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	private void createTypeSpecificLabelFieldEditors( ICBreakpoint breakpoint ) {
 		if ( breakpoint instanceof ICFunctionBreakpoint ) {
 			ICFunctionBreakpoint fbrkpt = (ICFunctionBreakpoint)breakpoint;
-			addField( createLabelEditor( getFieldEditorParent(), ActionMessages.getString( "CBreakpointPropertyPage.18" ), ActionMessages.getString( "CBreakpointPropertyPage.3" ) ) );  //$NON-NLS-1$//$NON-NLS-2$
-			String function = ActionMessages.getString( "CBreakpointPropertyPage.1" ); //$NON-NLS-1$
+			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ), PropertyPageMessages.getString( "CBreakpointPropertyPage.3" ) ) );  //$NON-NLS-1$//$NON-NLS-2$
+			String function = PropertyPageMessages.getString( "CBreakpointPropertyPage.1" ); //$NON-NLS-1$
 			try {
 				function = fbrkpt.getFunction();
 			}
@@ -286,13 +286,13 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			catch( NumberFormatException e ) {
 			}
 			if ( function != null ) {
-				addField( createLabelEditor( getFieldEditorParent(), ActionMessages.getString( "CBreakpointPropertyPage.2" ), function ) ); //$NON-NLS-1$
+				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.2" ), function ) ); //$NON-NLS-1$
 			}
 		}
 		else if ( breakpoint instanceof ICAddressBreakpoint ) {
 			ICAddressBreakpoint abrkpt = (ICAddressBreakpoint)breakpoint;
-			addField( createLabelEditor( getFieldEditorParent(), ActionMessages.getString( "CBreakpointPropertyPage.18" ), ActionMessages.getString( "CBreakpointPropertyPage.6" ) ) );  //$NON-NLS-1$//$NON-NLS-2$
-			String address = ActionMessages.getString( "CBreakpointPropertyPage.4" ); //$NON-NLS-1$
+			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ), PropertyPageMessages.getString( "CBreakpointPropertyPage.6" ) ) );  //$NON-NLS-1$//$NON-NLS-2$
+			String address = PropertyPageMessages.getString( "CBreakpointPropertyPage.4" ); //$NON-NLS-1$
 			try {
 				address = CDebugUtils.toHexAddressString( Long.parseLong( abrkpt.getAddress() ) );
 			}
@@ -301,14 +301,14 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			catch( NumberFormatException e ) {
 			}
 			if ( address != null ) {
-				addField( createLabelEditor( getFieldEditorParent(), ActionMessages.getString( "CBreakpointPropertyPage.5" ), address ) ); //$NON-NLS-1$
+				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.5" ), address ) ); //$NON-NLS-1$
 			}
 		}
 		else if ( breakpoint instanceof ILineBreakpoint ) {
-			addField( createLabelEditor( getFieldEditorParent(), ActionMessages.getString( "CBreakpointPropertyPage.18" ), ActionMessages.getString( "CBreakpointPropertyPage.8" ) ) );  //$NON-NLS-1$//$NON-NLS-2$
+			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ), PropertyPageMessages.getString( "CBreakpointPropertyPage.8" ) ) );  //$NON-NLS-1$//$NON-NLS-2$
 			String fileName = breakpoint.getMarker().getResource().getLocation().toOSString();
 			if ( fileName != null ) {
-				addField( createLabelEditor( getFieldEditorParent(), ActionMessages.getString( "CBreakpointPropertyPage.7" ), fileName ) ); //$NON-NLS-1$
+				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.7" ), fileName ) ); //$NON-NLS-1$
 			}
 			ILineBreakpoint lBreakpoint = (ILineBreakpoint)breakpoint;
 			StringBuffer lineNumber = new StringBuffer( 4 );
@@ -322,7 +322,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 				CDebugUIPlugin.log( ce );
 			}
 			if ( lineNumber.length() > 0 ) {
-				addField( createLabelEditor( getFieldEditorParent(), ActionMessages.getString( "CBreakpointPropertyPage.9" ), lineNumber.toString() ) ); //$NON-NLS-1$
+				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.9" ), lineNumber.toString() ) ); //$NON-NLS-1$
 			}
 		}
 		else if ( breakpoint instanceof ICWatchpoint ) {
@@ -331,39 +331,39 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			String expression = ""; //$NON-NLS-1$
 			try {
 				if ( watchpoint.isReadType() && !watchpoint.isWriteType() )
-					type = ActionMessages.getString( "CBreakpointPropertyPage.11" ); //$NON-NLS-1$
+					type = PropertyPageMessages.getString( "CBreakpointPropertyPage.11" ); //$NON-NLS-1$
 				else if ( !watchpoint.isReadType() && watchpoint.isWriteType() )
-					type = ActionMessages.getString( "CBreakpointPropertyPage.12" ); //$NON-NLS-1$
+					type = PropertyPageMessages.getString( "CBreakpointPropertyPage.12" ); //$NON-NLS-1$
 				else
-					type = ActionMessages.getString( "CBreakpointPropertyPage.13" ); //$NON-NLS-1$
+					type = PropertyPageMessages.getString( "CBreakpointPropertyPage.13" ); //$NON-NLS-1$
 				expression = watchpoint.getExpression();
 			}
 			catch( CoreException ce ) {
 				CDebugUIPlugin.log( ce );
 			}
-			addField( createLabelEditor( getFieldEditorParent(), ActionMessages.getString( "CBreakpointPropertyPage.18" ), type ) ); //$NON-NLS-1$
+			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ), type ) ); //$NON-NLS-1$
 			String projectName = breakpoint.getMarker().getResource().getLocation().toOSString();
 			if ( projectName != null ) {
-				addField( createLabelEditor( getFieldEditorParent(), ActionMessages.getString( "CBreakpointPropertyPage.10" ), projectName ) ); //$NON-NLS-1$
+				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.10" ), projectName ) ); //$NON-NLS-1$
 			}
-			addField( createLabelEditor( getFieldEditorParent(), ActionMessages.getString( "CBreakpointPropertyPage.14" ), expression ) ); //$NON-NLS-1$
+			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.14" ), expression ) ); //$NON-NLS-1$
 		}
 	}
 
 	protected void createEnabledField( Composite parent ) {
-		fEnabled = new BooleanFieldEditor( CBreakpointPreferenceStore.ENABLED, ActionMessages.getString( "CBreakpointPropertyPage.19" ), parent ); //$NON-NLS-1$
+		fEnabled = new BooleanFieldEditor( CBreakpointPreferenceStore.ENABLED, PropertyPageMessages.getString( "CBreakpointPropertyPage.19" ), parent ); //$NON-NLS-1$
 		addField( fEnabled );
 	}
 
 	protected void createConditionEditor( Composite parent ) {
-		fCondition = new BreakpointStringFieldEditor( CBreakpointPreferenceStore.CONDITION, ActionMessages.getString( "CBreakpointPropertyPage.15" ), parent ); //$NON-NLS-1$
+		fCondition = new BreakpointStringFieldEditor( CBreakpointPreferenceStore.CONDITION, PropertyPageMessages.getString( "CBreakpointPropertyPage.15" ), parent ); //$NON-NLS-1$
 		fCondition.setEmptyStringAllowed( true );
-		fCondition.setErrorMessage( ActionMessages.getString( "CBreakpointPropertyPage.16" ) ); //$NON-NLS-1$
+		fCondition.setErrorMessage( PropertyPageMessages.getString( "CBreakpointPropertyPage.16" ) ); //$NON-NLS-1$
 		addField( fCondition );
 	}
 
 	protected void createIgnoreCountEditor( Composite parent ) {
-		fIgnoreCount = new BreakpointIntegerFieldEditor( CBreakpointPreferenceStore.IGNORE_COUNT, ActionMessages.getString( "CBreakpointPropertyPage.17" ), parent ); //$NON-NLS-1$
+		fIgnoreCount = new BreakpointIntegerFieldEditor( CBreakpointPreferenceStore.IGNORE_COUNT, PropertyPageMessages.getString( "CBreakpointPropertyPage.17" ), parent ); //$NON-NLS-1$
 		fIgnoreCount.setValidRange( 0, Integer.MAX_VALUE );
 		fIgnoreCountTextControl = fIgnoreCount.getTextControl( parent );
 		try {

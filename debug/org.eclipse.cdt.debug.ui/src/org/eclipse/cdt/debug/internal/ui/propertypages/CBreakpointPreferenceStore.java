@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.actions;
+package org.eclipse.cdt.debug.internal.ui.propertypages;
 
 import java.util.HashMap;
 import org.eclipse.jface.preference.IPreferenceStore;

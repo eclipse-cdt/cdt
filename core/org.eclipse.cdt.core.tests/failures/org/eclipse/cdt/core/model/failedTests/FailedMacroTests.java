@@ -14,9 +14,10 @@ import java.util.Stack;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.tests.IntegratedCModelTest;
-import org.eclipse.cdt.internal.core.model.CElement;
 
 /**
  * @author jcamelon
@@ -94,10 +95,10 @@ public class FailedMacroTests extends IntegratedCModelTest
 				 int offset = -1;
 				 int length = -1;
                 
-				 if (myElement instanceof CElement) {
-					 CElement elem = (CElement)myElement;
-					 offset = elem.getIdStartPos();
-					 length = elem.getIdLength();
+				 if (myElement instanceof ISourceReference) {
+					 ISourceRange range = ((ISourceReference)myElement).getSourceRange();
+					 offset = range.getIdStartPos();
+					 length = range.getIdLength();
 				 }
                                     
 				 assertTrue("Expected offset for '" + expectedStringList[x] + "':" + expectedOffsets[x] + " Got:" + offset,

@@ -33,13 +33,14 @@ import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.core.model.FunctionTemplate;
 import org.eclipse.cdt.internal.core.model.MethodTemplate;
 import org.eclipse.cdt.internal.core.model.StructureTemplate;
@@ -109,8 +110,8 @@ public class CModelElementsTests extends TestCase {
 		List tuPackages = tu.getChildrenOfType(ICElement.C_NAMESPACE);
 		INamespace namespace = (INamespace) tuPackages.get(0);
 		assertEquals(namespace.getElementName(), new String("MyPackage"));
-		checkElementOffset((CElement)namespace);
-		checkLineNumbers((CElement)namespace, 8, 130);
+		checkElementOffset(namespace);
+		checkLineNumbers(namespace, 8, 130);
 		checkClass(namespace);
 				
 		checkEnums(namespace);	
@@ -132,16 +133,16 @@ public class CModelElementsTests extends TestCase {
 		List tuIncludes = tu.getChildrenOfType(ICElement.C_INCLUDE);
 		IInclude inc1 = (IInclude) tuIncludes.get(0);
 		assertEquals(inc1.getElementName(), new String("included.h"));
-		checkElementOffset((CElement)inc1);
-		checkLineNumbers((CElement)inc1, 2, 2);
+		checkElementOffset(inc1);
+		checkLineNumbers(inc1, 2, 2);
 	}
 	
 	private void checkMacro(IParent tu) throws CModelException{
 		List tuMacros = tu.getChildrenOfType(ICElement.C_MACRO);
 		IMacro mac1 = (IMacro) tuMacros.get(0);
 		assertEquals(mac1.getElementName(), new String("PRINT"));
-		checkElementOffset((CElement)mac1);
-		checkLineNumbers((CElement)mac1, 5, 5);
+		checkElementOffset(mac1);
+		checkLineNumbers(mac1, 5, 5);
 	}
 	
 	private void checkClass(IParent namespace) throws CModelException{
@@ -149,16 +150,16 @@ public class CModelElementsTests extends TestCase {
 		List nsClasses = namespace.getChildrenOfType(ICElement.C_CLASS);		
 		IStructure classHello = (IStructure) nsClasses.get(0);
 		assertEquals(classHello.getElementName(), new String("Hello"));
-		checkElementOffset((CElement)classHello);
-		checkLineNumbers((CElement)classHello, 12, 53);
+		checkElementOffset(classHello);
+		checkLineNumbers(classHello, 12, 53);
 		
 		// Hello --> field: int x
 		List helloFields = classHello.getChildrenOfType(ICElement.C_FIELD);
 		IField intX = (IField) helloFields.get(0);
 		assertEquals(intX.getElementName(), new String("x"));
-		checkElementOffset((CElement)intX);
+		checkElementOffset(intX);
 		assertEquals(intX.getTypeName(), new String("int"));
-		checkLineNumbers((CElement)intX, 17, 17);
+		checkLineNumbers(intX, 17, 17);
 		
 		ASTAccessVisibility xVisibility = intX.getVisibility(); 
 		if (xVisibility != ASTAccessVisibility.PROTECTED)
@@ -168,9 +169,9 @@ public class CModelElementsTests extends TestCase {
 		List helloMethods = classHello.getChildrenOfType(ICElement.C_METHOD);
 		IMethod setX = (IMethod) helloMethods.get(0);
 		assertEquals(setX.getElementName(), new String("setX"));
-		checkElementOffset((CElement)setX);
+		checkElementOffset(setX);
 		assertEquals(setX.getReturnType(), new String("void"));
-		checkLineNumbers((CElement)setX, 19, 22);
+		checkLineNumbers(setX, 19, 22);
 		int setXNumOfParam = setX.getNumberOfParameters();
 		if(setXNumOfParam != 1)
 			fail("setX should have one parameter!");
@@ -186,8 +187,8 @@ public class CModelElementsTests extends TestCase {
 		List helloNamespaces = classHello.getChildrenOfType(ICElement.C_NAMESPACE);
 		INamespace myNestedPackage = (INamespace) helloNamespaces.get(0);
 		assertEquals(myNestedPackage.getElementName(), new String("MyNestedPackage"));
-		checkElementOffset((CElement)myNestedPackage);
-		checkLineNumbers((CElement)myNestedPackage, 25, 52);
+		checkElementOffset(myNestedPackage);
+		checkLineNumbers(myNestedPackage, 25, 52);
 
 		checkParentNestedClass(myNestedPackage);	
 		checkDerivedNestedClass(myNestedPackage);
@@ -197,23 +198,23 @@ public class CModelElementsTests extends TestCase {
 		List nestedClasses = myNestedPackage.getChildrenOfType(ICElement.C_CLASS);		
 		IStructure classY = (IStructure) nestedClasses.get(0);
 		assertEquals(classY.getElementName(), new String("Y"));
-		checkElementOffset((CElement)classY);
-		checkLineNumbers((CElement)classY, 28, 35);
+		checkElementOffset(classY);
+		checkLineNumbers(classY, 28, 35);
 		
 		// Y ---> constructor: Y
 		List yMethods = classY.getChildrenOfType(ICElement.C_METHOD_DECLARATION);
 		IMethodDeclaration constructor  = (IMethodDeclaration) yMethods.get(0);
 		assertEquals(constructor.getElementName(), new String("Y"));
-		checkElementOffset((CElement)constructor);
+		checkElementOffset(constructor);
 		assertTrue (constructor.isConstructor());
-		checkLineNumbers((CElement)constructor, 32, 32);
+		checkLineNumbers(constructor, 32, 32);
 		
 		// Y ---> destructor: ~Y
 		IMethodDeclaration destructor  = (IMethodDeclaration) yMethods.get(1);
 		assertEquals(destructor.getElementName(), new String("~Y"));
-		checkElementOffset((CElement)destructor);
+		checkElementOffset(destructor);
 		assertTrue (destructor.isDestructor());
-		checkLineNumbers((CElement)destructor, 34, 34);
+		checkLineNumbers(destructor, 34, 34);
 		// TODO: check for virtual on destructors
 		
 	}
@@ -223,17 +224,17 @@ public class CModelElementsTests extends TestCase {
 		List nestedClasses = myNestedPackage.getChildrenOfType(ICElement.C_CLASS);		
 		IStructure classX = (IStructure) nestedClasses.get(1);
 		assertEquals(classX.getElementName(), new String("X"));
-		checkElementOffset((CElement)classX);
-		checkLineNumbers((CElement)classX, 38, 51);
+		checkElementOffset(classX);
+		checkLineNumbers(classX, 38, 51);
 		// TODO : Check for base classes here
 		
 		// X --> field: B b
 		List xFieldChildren = classX.getChildrenOfType(ICElement.C_FIELD);
 		IField bB = (IField) xFieldChildren.get(0);
 		assertEquals(bB.getElementName(), new String("b"));
-		checkElementOffset((CElement)bB);
+		checkElementOffset(bB);
 		assertEquals(bB.getTypeName(), new String("B"));
-		checkLineNumbers((CElement)bB, 42, 42);
+		checkLineNumbers(bB, 42, 42);
 		ASTAccessVisibility bVisibility = bB.getVisibility(); 
 		if (bVisibility != ASTAccessVisibility.PRIVATE)
 			fail("visibility should be private!");
@@ -242,62 +243,62 @@ public class CModelElementsTests extends TestCase {
 		List xMethodChildren = classX.getChildrenOfType(ICElement.C_METHOD);
 		IMethod xconstructor  = (IMethod) xMethodChildren.get(0);
 		assertEquals(xconstructor.getElementName(), new String("X"));
-		checkElementOffset((CElement)xconstructor);
+		checkElementOffset(xconstructor);
 		assertTrue (xconstructor.isConstructor());
-		checkLineNumbers((CElement)xconstructor, 46, 48);
+		checkLineNumbers(xconstructor, 46, 48);
 
 		// X ---> method declaration: doNothing
 		List xMethodDeclarations = classX.getChildrenOfType(ICElement.C_METHOD_DECLARATION);
 		IMethodDeclaration xDoNothing = (IMethodDeclaration) xMethodDeclarations.get(0);
 		assertEquals(xDoNothing.getElementName(), new String("doNothing"));
-		checkElementOffset((CElement)xDoNothing);
+		checkElementOffset(xDoNothing);
 		assertEquals(xDoNothing.getReturnType(), new String("int"));						
-		checkLineNumbers((CElement)xDoNothing, 50, 50);
+		checkLineNumbers(xDoNothing, 50, 50);
 	}
 	
 	private void checkEnums(IParent namespace) throws CModelException{
 		// MyPackage ---> enum: Noname
 		List nsEnums = namespace.getChildrenOfType(ICElement.C_ENUMERATION);		
-		IEnumeration enum = (IEnumeration) nsEnums.get(0);
-		assertEquals(enum.getElementName(), new String(""));
-		checkElementOffset((CElement)enum);
-		checkLineNumbers((CElement)enum, 57, 61);
+		IEnumeration enumaration = (IEnumeration) nsEnums.get(0);
+		assertEquals(enumaration.getElementName(), new String(""));
+		checkElementOffset(enumaration);
+		checkLineNumbers(enumaration, 57, 61);
 	
 		// 	enum ---> enumerator: first = 1
-		List enumEnumerators = enum.getChildrenOfType(ICElement.C_ENUMERATOR);
+		List enumEnumerators = enumaration.getChildrenOfType(ICElement.C_ENUMERATOR);
 		IEnumerator first = (IEnumerator) enumEnumerators.get(0);
 		assertEquals(first.getElementName(), new String("first"));
 		assertEquals("1", first.getConstantExpression());
-		checkElementOffset((CElement)first);
+		checkElementOffset(first);
 		// 	enum ---> enumerator: second
 		IEnumerator second = (IEnumerator) enumEnumerators.get(1);
 		assertEquals(second.getElementName(), new String("second"));
-		checkElementOffset((CElement)second);
+		checkElementOffset(second);
 		// 	enum ---> enumerator: third
 		IEnumerator third = (IEnumerator) enumEnumerators.get(2);
-		checkElementOffset((CElement)third);
+		checkElementOffset(third);
 		assertEquals(third.getElementName(), new String("third"));		
-		checkElementOffset((CElement)third);
+		checkElementOffset(third);
 		
 		// MyPackage ---> enum: MyEnum
 		IEnumeration myEnum = (IEnumeration) nsEnums.get(1);
 		assertEquals(myEnum.getElementName(), new String("MyEnum"));
-		checkElementOffset((CElement)myEnum);
-		checkLineNumbers((CElement)myEnum, 64, 67);
+		checkElementOffset(myEnum);
+		checkLineNumbers(myEnum, 64, 67);
 	
 		// 	enum ---> enumerator: first
 		List myEnumEnumerators = myEnum.getChildrenOfType(ICElement.C_ENUMERATOR);
 		IEnumerator f = (IEnumerator) myEnumEnumerators.get(0);
 		assertEquals(f.getElementName(), new String("f"));
-		checkElementOffset((CElement)f);
+		checkElementOffset(f);
 		// 	enum ---> enumerator: second
 		IEnumerator s = (IEnumerator) myEnumEnumerators.get(1);
 		assertEquals(s.getElementName(), new String("s"));
-		checkElementOffset((CElement)s);
+		checkElementOffset(s);
 		// 	enum ---> enumerator: third
 		IEnumerator t = (IEnumerator) myEnumEnumerators.get(2);
 		assertEquals(t.getElementName(), new String("t"));
-		checkElementOffset((CElement)t);
+		checkElementOffset(t);
 	}
 
 	private void checkVariables(IParent namespace) throws CModelException{
@@ -305,30 +306,30 @@ public class CModelElementsTests extends TestCase {
 		List nsVars = namespace.getChildrenOfType(ICElement.C_VARIABLE);
 		IVariable var1 = (IVariable) nsVars.get(0);
 		assertEquals(var1.getElementName(), new String("v"));
-		checkElementOffset((CElement)var1);
+		checkElementOffset(var1);
 		assertEquals(var1.getTypeName(), new String("int"));
-		checkLineNumbers((CElement)var1, 71, 71);
+		checkLineNumbers(var1, 71, 71);
 		
 		// MyPackage ---> unsigned long vuLong
 		IVariable var2 = (IVariable) nsVars.get(1);
 		assertEquals(var2.getElementName(), new String("vuLong"));
-		checkElementOffset((CElement)var2);
+		checkElementOffset(var2);
 		assertEquals(var2.getTypeName(), new String("unsigned long"));
-		checkLineNumbers((CElement)var2, 73, 73);
+		checkLineNumbers(var2, 73, 73);
 
 		// MyPackage ---> unsigned short vuShort
 		IVariable var3 = (IVariable) nsVars.get(2);
 		assertEquals(var3.getElementName(), new String("vuShort"));
-		checkElementOffset((CElement)var3);
+		checkElementOffset(var3);
 		assertEquals(var3.getTypeName(), new String("unsigned short"));
-		checkLineNumbers((CElement)var3, 75, 75);
+		checkLineNumbers(var3, 75, 75);
 		
 		// MyPackage ---> function pointer: orig_malloc_hook
 		IVariable vDecl2 = (IVariable) nsVars.get(3);
 		assertEquals(vDecl2.getElementName(), new String("orig_malloc_hook"));
-		checkElementOffset((CElement)vDecl2);
+		checkElementOffset(vDecl2);
 		assertEquals(vDecl2.getTypeName(), new String ("void*(*)(const char*, int, size_t)"));
-		checkLineNumbers((CElement)vDecl2, 81, 81);
+		checkLineNumbers(vDecl2, 81, 81);
 	}
 
 	private void checkVariableDeclarations(IParent namespace) throws CModelException{
@@ -336,9 +337,9 @@ public class CModelElementsTests extends TestCase {
 		List nsVarDecls = namespace.getChildrenOfType(ICElement.C_VARIABLE_DECLARATION);
 		IVariableDeclaration vDecl1 = (IVariableDeclaration) nsVarDecls.get(0);
 		assertEquals(vDecl1.getElementName(), new String("evar"));
-		checkElementOffset((CElement)vDecl1);
+		checkElementOffset(vDecl1);
 		assertEquals(vDecl1.getTypeName(), new String("int"));
-		checkLineNumbers((CElement)vDecl1, 79, 79);
+		checkLineNumbers(vDecl1, 79, 79);
 	}
 	
 	private void checkFunctions(IParent namespace) throws CModelException{
@@ -347,16 +348,16 @@ public class CModelElementsTests extends TestCase {
 		//	MyPackage ---> function: void foo()
 		IFunctionDeclaration f1 = (IFunctionDeclaration) nsFunctionDeclarations.get(0);
 		assertEquals(f1.getElementName(), new String("foo"));
-		checkElementOffset((CElement)f1);
+		checkElementOffset(f1);
 		assertEquals(f1.getReturnType(), new String("void"));
-		checkLineNumbers((CElement)f1, 85, 85);
+		checkLineNumbers(f1, 85, 85);
 		
 		//	MyPackage ---> function: char* foo(int&, char**)
 		IFunctionDeclaration f2 = (IFunctionDeclaration) nsFunctionDeclarations.get(1);
 		assertEquals(f2.getElementName(), new String("foo"));
-		checkElementOffset((CElement)f2);
+		checkElementOffset(f2);
 		assertEquals(f2.getReturnType(), new String("char*"));
-		checkLineNumbers((CElement)f2, 87, 88);
+		checkLineNumbers(f2, 87, 88);
 		int fooNumOfParam = f2.getNumberOfParameters();
 		if(fooNumOfParam != 2)
 			fail("foo should have two parameter!");
@@ -368,9 +369,9 @@ public class CModelElementsTests extends TestCase {
 		List nsFunctions = namespace.getChildrenOfType(ICElement.C_FUNCTION);
 		IFunction f3 = (IFunction) nsFunctions.get(0);		
 		assertEquals(f3.getElementName(), new String("boo"));
-		checkElementOffset((CElement)f3);
+		checkElementOffset(f3);
 		assertEquals(f3.getReturnType(), new String("void"));
-		checkLineNumbers((CElement)f3, 90, 92);
+		checkLineNumbers(f3, 90, 92);
 	}
 
 	private void checkStructs(IParent namespace) throws CModelException{
@@ -378,14 +379,14 @@ public class CModelElementsTests extends TestCase {
 		List nsStructs = namespace.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure struct1 = (IStructure) nsStructs.get(0);
 		assertEquals(struct1.getElementName(), new String ("MyStruct"));
-		checkElementOffset((CElement)struct1);
-		checkLineNumbers((CElement)struct1, 95, 97);
+		checkElementOffset(struct1);
+		checkLineNumbers(struct1, 95, 97);
 		List struct1Fields = struct1.getChildrenOfType(ICElement.C_FIELD);
 		IField field1 = (IField) struct1Fields.get(0);
 		assertEquals(field1.getElementName(), new String("sint"));
-		checkElementOffset((CElement)field1);
+		checkElementOffset(field1);
 		assertEquals(field1.getTypeName(), new String("int"));
-		checkLineNumbers((CElement)field1, 96, 96);
+		checkLineNumbers(field1, 96, 96);
 		
 		if(field1.getVisibility() != ASTAccessVisibility.PUBLIC)
 			fail("field visibility should be public!");
@@ -393,14 +394,14 @@ public class CModelElementsTests extends TestCase {
 		// struct no name
 		IStructure struct2 = (IStructure) nsStructs.get(1);
 		assertEquals(struct2.getElementName(), new String (""));
-		checkElementOffset((CElement)struct2);
-		checkLineNumbers((CElement)struct2, 101, 103);
+		checkElementOffset(struct2);
+		checkLineNumbers(struct2, 101, 103);
 		List struct2Fields = struct2.getChildrenOfType(ICElement.C_FIELD);
 		IField field2 = (IField) struct2Fields.get(0);
 		assertEquals(field2.getElementName(), new String("ss"));
-		checkElementOffset((CElement)field2);
+		checkElementOffset(field2);
 		assertEquals(field2.getTypeName(), new String("int"));
-		checkLineNumbers((CElement)field2, 102, 102);
+		checkLineNumbers(field2, 102, 102);
 		if(field2.getVisibility() != ASTAccessVisibility.PUBLIC)
 			fail("field visibility should be public!");
 		
@@ -408,27 +409,27 @@ public class CModelElementsTests extends TestCase {
 		List nsTypeDefs = namespace.getChildrenOfType(ICElement.C_TYPEDEF);
 		ITypeDef td1 = (ITypeDef) nsTypeDefs.get(0);
 		assertEquals(td1.getElementName(), new String ("myStruct"));
-		checkElementOffset((CElement)td1);
+		checkElementOffset(td1);
 		assertEquals(td1.getTypeName(), new String ("struct MyStruct"));
-		checkLineNumbers((CElement)td1, 99, 99);
+		checkLineNumbers(td1, 99, 99);
 		ITypeDef td2 = (ITypeDef) nsTypeDefs.get(1);
 		assertEquals(td2.getElementName(), new String ("myTypedef"));
-		checkElementOffset((CElement)td2);
+		checkElementOffset(td2);
 		assertEquals(td2.getTypeName(), new String (""));
-		checkLineNumbers((CElement)td2, 101, 103);
+		checkLineNumbers(td2, 101, 103);
 
 		// union
 		List nsUnions = namespace.getChildrenOfType(ICElement.C_UNION);
 		IStructure u0 = (IStructure) nsUnions.get(0);
 		assertEquals(u0.getElementName(), new String("U"));		
-		checkElementOffset((CElement)u0);
-		checkLineNumbers((CElement)u0, 105, 107);
+		checkElementOffset(u0);
+		checkLineNumbers(u0, 105, 107);
 		List u0Fields = u0.getChildrenOfType(ICElement.C_FIELD);
 		IField field3 = (IField) u0Fields.get(0);
 		assertEquals(field3.getElementName(), new String("U1"));
-		checkElementOffset((CElement)field3);
+		checkElementOffset(field3);
 		assertEquals(field3.getTypeName(), new String("int"));
-		checkLineNumbers((CElement)field3, 106, 106);
+		checkLineNumbers(field3, 106, 106);
 		if(field3.getVisibility() != ASTAccessVisibility.PUBLIC)
 			fail("field visibility should be public!");
 	}
@@ -446,7 +447,7 @@ public class CModelElementsTests extends TestCase {
 		// template method
 		List nsClasses = namespace.getChildrenOfType(ICElement.C_CLASS);
 		IStructure enclosingClass = (IStructure) nsClasses.get(1);
-		checkLineNumbers((CElement)enclosingClass, 115, 120);
+		checkLineNumbers(enclosingClass, 115, 120);
 		List methodTemplates = enclosingClass.getChildrenOfType(ICElement.C_TEMPLATE_METHOD);
 		MethodTemplate mt = (MethodTemplate)methodTemplates.get(0);
 		assertEquals(mt.getElementName(), new String("aTemplatedMethod"));
@@ -477,9 +478,9 @@ public class CModelElementsTests extends TestCase {
 //		ArrayList variableTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE);
 //		VariableTemplate vt = (VariableTemplate)variableTemplates.get(0);
 //		assertEquals(vt.getElementName(), new String("default_alloc_template<__threads,__inst>::_S_start_free"));
-//		checkElementOffset((CElement)mac1);
+//		checkElementOffset(mac1);
 //		assertEquals(vt.getTemplateSignature(), new String("default_alloc_template<__threads,__inst>::_S_start_free<bool, int> : char*"));
-//		checkLineNumbers((CElement)vt, 128, 129);
+//		checkLineNumbers(vt, 128, 129);
 	}
 	
 	private void checkArrays(IParent tu) throws CModelException{
@@ -487,17 +488,17 @@ public class CModelElementsTests extends TestCase {
 		List variables = tu.getChildrenOfType(ICElement.C_VARIABLE);
 		IVariable arrayVar = (IVariable) variables.get(0);
 		assertEquals(arrayVar.getElementName(), new String("myArray"));
-		checkElementOffset((CElement)arrayVar);
+		checkElementOffset(arrayVar);
 		assertEquals(arrayVar.getTypeName(), new String("int[][]"));
-		checkLineNumbers((CElement)arrayVar, 133, 133);
+		checkLineNumbers(arrayVar, 133, 133);
 		
 		// array parameter in function main
 		List functions = tu.getChildrenOfType(ICElement.C_FUNCTION);
 		IFunction mainFunction  = (IFunction) functions.get(0);
 		assertEquals(mainFunction.getElementName(), new String("main"));
-		checkElementOffset((CElement)mainFunction);
+		checkElementOffset(mainFunction);
 		assertEquals(mainFunction.getReturnType(), new String("int"));
-		checkLineNumbers((CElement)mainFunction, 134, 136);
+		checkLineNumbers(mainFunction, 134, 136);
 		int NumOfParam = mainFunction.getNumberOfParameters();
 		if(NumOfParam != 2)
 			fail("main should have two parameter!");
@@ -506,23 +507,26 @@ public class CModelElementsTests extends TestCase {
 		assertEquals(paramTypes[1], new String("char*[]"));
 		
 	}
-	private void checkLineNumbers(CElement element, int startLine, int endLine){
-		assertEquals(startLine, element.getStartLine());
-		assertEquals(endLine, element.getEndLine());		 		
+	private void checkLineNumbers(ICElement element, int startLine, int endLine) throws CModelException {
+		ISourceRange range = ((ISourceReference)element).getSourceRange();
+		assertEquals(startLine, range.getStartLine());
+		assertEquals(endLine, range.getEndLine());		 		
 	}
-	private void checkElementOffset(CElement element) throws CModelException{
-		if(element.getElementName().length() > 0 ){
-			assertTrue (element.getStartPos() <= element.getIdStartPos());
-			assertEquals (element.getIdLength(), element.getElementName().length());
+	private void checkElementOffset(ICElement element) throws CModelException {
+		String name = element.getElementName();
+		ISourceRange range = ((ISourceReference)element).getSourceRange();
+		if(name.length() > 0 ){
+			assertTrue (range.getStartPos() <= range.getIdStartPos());
+			assertEquals (range.getIdLength(), name.length());
 		}
 		else{
-			assertEquals (element.getStartPos(), element.getIdStartPos());
+			assertEquals (range.getStartPos(), range.getIdStartPos());
 			if(element instanceof ITypeDef)
-				assertEquals ( element.getIdLength(), ((ITypeDef)element).getTypeName().length());
+				assertEquals (range.getIdLength(), ((ITypeDef)element).getTypeName().length());
 			else if(element instanceof IEnumeration)
-				assertEquals ( element.getIdLength(), ((IEnumeration)element).getTypeName().length());
+				assertEquals (range.getIdLength(), ((IEnumeration)element).getTypeName().length());
 			else if(element instanceof IStructure)
-				assertEquals ( element.getIdLength(), ((IStructure)element).getTypeName().length());
+				assertEquals (range.getIdLength(), ((IStructure)element).getTypeName().length());
 		}
 			
 	}

@@ -2245,12 +2245,6 @@ public class Scanner2 implements IScanner, IScannerData {
 		CharArrayObjectMap argmap = new CharArrayObjectMap(arglist.length);
 		
 		while (bufferPos[bufferStackPos] < limit) {
-			if (++currarg >= arglist.length || arglist[currarg] == null){
-				// too many args
-			    handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, bufferPos[bufferStackPos], macro.name );
-				break;
-			}
-
 			skipOverWhiteSpace();
 			
 			int pos = ++bufferPos[bufferStackPos];
@@ -2264,6 +2258,12 @@ public class Scanner2 implements IScanner, IScannerData {
 				continue;
 			}
 			
+			if (++currarg >= arglist.length || arglist[currarg] == null){
+				// too many args
+			    handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, bufferPos[bufferStackPos], macro.name );
+				break;
+			}
+
 			// peel off the arg
 			--bufferPos[bufferStackPos];
 			int argend = bufferPos[bufferStackPos];

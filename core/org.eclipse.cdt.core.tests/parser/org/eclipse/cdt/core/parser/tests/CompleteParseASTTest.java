@@ -2121,4 +2121,12 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTTypeId typeId = (IASTTypeId) typeIds.next();
 		assertEquals(typeId.getTypeOrClassName(), "Thrown");
 	}
+    
+    public void testBug76685() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "#define foo() int\n" );
+    	writer.write( "foo() i;" );
+    	parse( writer.toString() );
+	}
 }

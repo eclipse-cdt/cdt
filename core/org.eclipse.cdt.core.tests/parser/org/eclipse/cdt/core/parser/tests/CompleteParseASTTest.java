@@ -1476,4 +1476,26 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		
 		assertFalse( i.hasNext() ); 
 	}
+	
+	public void testBug55163() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "void foo() { \n");
+		writer.write( "   int i, n; \n");
+		writer.write( "   double di; \n");
+		writer.write( "   for( i = n - 1, di = (double)( i + i ); i > 0; i-- ){ } \n");
+		writer.write( "}\n");
+		
+		Iterator iter = parse( writer.toString() ).getDeclarations();
+		
+		IASTFunction foo = (IASTFunction) iter.next();
+		assertFalse( iter.hasNext() );
+		iter = getDeclarations( foo );
+		IASTVariable i = (IASTVariable)iter.next();
+		IASTVariable n = (IASTVariable)iter.next();
+		IASTVariable di = (IASTVariable)iter.next();
+		
+		assertAllReferences( 7, createTaskList( new Task( n ), new Task( i, 5 ), new Task( di ) ) );
+		
+	}
 }

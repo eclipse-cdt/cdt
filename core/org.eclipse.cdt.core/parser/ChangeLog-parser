@@ -1,3 +1,8 @@
+2004-03-17 Andrew Niefer
+	fix bug 55163 
+	- in for-init-statement, try expression-statement before simple-declaration since if it actually is a statement instead of a 
+	declaration, the simple-declaration fails hard and can actually enter an infinite loop.
+
 2004-03-16 Dave Daoust
 	refactor scanner for performance improvements
 	-changes to accountForUndo, now named readFromStream

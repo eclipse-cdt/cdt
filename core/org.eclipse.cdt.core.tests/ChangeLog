@@ -1,3 +1,6 @@
+2003-03-16 Andrew Niefer
+	added CompleteParseASTTest.testBug55163
+
 2004-03-12 Sean Evoy
 	Corrected a target definition in the plugin manifest that was flagged 
 	as release when it should have been flagged as test. Also updated the 

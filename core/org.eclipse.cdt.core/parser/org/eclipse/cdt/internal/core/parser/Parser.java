@@ -503,7 +503,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     			throw e;
             }
             templateDecl.setEndingOffsetAndLineNumber( lastToken.getEndOffset(), lastToken.getLineNumber() );
-			templateDecl.exitScope( requestor );
+			templateDecl.exitScope( requestor );      
         }
         catch (BacktrackException bt)
         {
@@ -2822,16 +2822,20 @@ public abstract class Parser extends ExpressionParser implements IParser
      */
     protected void forInitStatement( IASTScope scope ) throws BacktrackException, EndOfFileException
     {
+    	IToken mark = mark();
     	try
     	{
-        	simpleDeclarationStrategyUnion(scope,null, null);
+    		IASTExpression e = expression( scope );
+			e.acceptElement(requestor);
+			
+			consume( IToken.tSEMI );
     	}
     	catch( BacktrackException bt )
     	{
+    		backup( mark );
     		try
     		{
-    			IASTExpression e = expression( scope );
-    			e.acceptElement(requestor);
+    			simpleDeclarationStrategyUnion(scope,null, null);
     		}
     		catch( BacktrackException b )
     		{

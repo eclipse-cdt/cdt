@@ -206,6 +206,12 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final int ERR_DEBUGGER_NOT_INSTALLED = 106;
 
 	/**
+	 * Status code indicating a launch configuration does not specify a vaild
+	 * program.
+	 */
+	public static final int ERR_PROGRAM_NOT_BINARY = 107;
+
+	/**
 	 * Status code indicating a the user did not specify a process id
 	 */
 	public static final int ERR_NO_PROCESSID = 107;

@@ -55,7 +55,10 @@ public class ProblemPainter implements IPainter, PaintListener, IAnnotationModel
 	}
 	
 	private boolean hasProblems() {
-		return !fProblemPositions.isEmpty();
+		if (fProblemPositions != null) {
+			return !fProblemPositions.isEmpty();
+		}
+		return false;
 	}	
 	
 	protected void enablePainting() {

@@ -124,8 +124,7 @@ public class CPPSemantics {
 			this.name = n;
 		}
 		public boolean includeBlockItem( IASTNode item ){
-		    if( astName == null ) return false;
-		    if( astName.getParent() instanceof IASTIdExpression || 
+		    if( ( astName != null && astName.getParent() instanceof IASTIdExpression ) || 
 		        item instanceof IASTNamespaceDefinition  ||
 	           (item instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration)item).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ) )
 		    {
@@ -1758,5 +1757,55 @@ public class CPPSemantics {
 				return n + 1;
 		}
 		return -1;
+	}
+	
+	/**
+	 * Find the binding for the type for the given name, if the given name is not a type, or can not 
+	 * be resolved, null is returned.
+	 * @param mostRelevantScope
+	 * @param name
+	 * @return
+	 */
+	public static IBinding findTypeBinding( IASTNode mostRelevantScope, IASTName name ){
+		IScope scope = null;
+		if( mostRelevantScope instanceof IASTCompoundStatement )
+			scope = ((IASTCompoundStatement) mostRelevantScope).getScope();
+		else if ( mostRelevantScope instanceof IASTTranslationUnit )
+			scope = ((IASTTranslationUnit) mostRelevantScope).getScope();
+		else if ( mostRelevantScope instanceof ICPPASTNamespaceDefinition )
+			scope = ((ICPPASTNamespaceDefinition) mostRelevantScope).getScope();
+		else if( mostRelevantScope instanceof ICPPASTCompositeTypeSpecifier )
+			scope = ((ICPPASTCompositeTypeSpecifier) mostRelevantScope).getScope();
+		
+		if( scope == null )
+			return null;
+		
+		LookupData data = new LookupData( name ){
+			public boolean typesOnly(){ return true; }
+			public boolean forUsingDeclaration(){ return false; }
+			public boolean forDefinition(){ return false; }
+			public boolean considerConstructors(){ return false; }
+			public boolean functionCall(){ return false; }
+			public boolean qualified(){ 
+				IASTNode p1 = astName.getParent();
+				if( p1 instanceof ICPPASTQualifiedName ){
+					return ((ICPPASTQualifiedName)p1).getNames()[0] != astName;
+				}
+				return false;
+			}
+		};
+		
+		try {
+			lookup( data, scope );
+		} catch (DOMException e) {
+			return null;
+		}
+		IBinding binding = null;
+        try {
+            binding = resolveAmbiguities( data, name );
+        } catch ( DOMException e2 ) {
+        }
+        
+		return binding;
 	}
 }

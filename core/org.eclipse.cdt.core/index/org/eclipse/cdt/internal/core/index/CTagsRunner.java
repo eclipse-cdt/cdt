@@ -45,23 +45,21 @@ public class CTagsRunner implements Runnable {
 						Map projectsMap = manager.getProjectsMap();
 						Map filesMap = (Map)projectsMap.get(project.getLocation());
 						if (filesMap == null) {
-							Map m = Collections.synchronizedMap(new HashMap());
-							projectsMap.put(project.getLocation(), m);
-							// Kick Start;
-							manager.addContainer(project);
-						} else {
-							try {
-								CTagsCmd cmd = new CTagsCmd();
-								IFile file = (IFile)resource;
-								IPath path = file.getLocation();
-								if (path != null) {
-									ITagEntry[] entries = cmd.getTagEntries(file, path.toOSString());
-									filesMap.put(resource.getLocation(), entries);
-								}
-							} catch (IOException e) {
-							}
-							//System.out.println("indexing " + resource.getName());
+							filesMap = Collections.synchronizedMap(new HashMap());
+							projectsMap.put(project.getLocation(), filesMap);
 						}
+						
+						try {
+							CTagsCmd cmd = new CTagsCmd();
+							IFile file = (IFile)resource;
+							IPath path = file.getLocation();
+							if (path != null) {
+								ITagEntry[] entries = cmd.getTagEntries(file, path.toOSString());
+								filesMap.put(resource.getLocation(), entries);
+							}
+						} catch (IOException e) {
+						}
+						//System.out.println("indexing " + resource.getName());
 					break;
 
 					case IResource.FOLDER:

@@ -23,7 +23,7 @@ public abstract class InternalCExtension extends PlatformObject {
 		fProject = project;
 	}
 
-	void setExtenionReference(ICExtensionReference extReference) {
+	void setExtensionReference(ICExtensionReference extReference) {
 		extensionRef = extReference;
 	}
 		

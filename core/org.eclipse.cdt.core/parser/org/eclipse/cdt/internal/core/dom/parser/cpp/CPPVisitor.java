@@ -923,7 +923,8 @@ public class CPPVisitor implements ICPPASTVisitor {
 						prop == ICPPASTPointerToMember.NAME ||
 						prop == ICPPASTTypenameExpression.TYPENAME ||
 						prop == ICPPASTUsingDeclaration.NAME ||
-						prop == ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME)
+						prop == ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME ||
+						p2 == ICPPASTQualifiedName.SEGMENT_NAME )
 					{
 						break;
 					} 

@@ -2068,8 +2068,8 @@ public class AST2CPPTests extends AST2BaseTest {
     	IASTReturnStatement r = (IASTReturnStatement) ((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody()).getStatements()[0];
     	assertTrue( r.getReturnValue() instanceof IASTCastExpression );
     }
-    
-    public void testBug84476() throws Exception
+ 
+     public void testBug84476() throws Exception
     {
     	StringBuffer buffer = new StringBuffer();
 //    	buffer.append( "struct B {	int f();};\n"); //$NON-NLS-1$
@@ -2082,6 +2082,47 @@ public class AST2CPPTests extends AST2BaseTest {
     	buffer.append( "}\n" ); //$NON-NLS-1$
     	String code = buffer.toString();
     	parse( code, ParserLanguage.CPP );
+    }
+       
+    public void testBug86336() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct T1 {                   \n"); //$NON-NLS-1$
+        buffer.append("   T1 operator() ( int x ) {  \n"); //$NON-NLS-1$
+        buffer.append("      return T1(x);           \n"); //$NON-NLS-1$
+        buffer.append("   }                          \n"); //$NON-NLS-1$
+        buffer.append("   T1( int ) {}               \n"); //$NON-NLS-1$
+        buffer.append("};                            \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        ICPPConstructor T1_ctor = (ICPPConstructor) col.getName(6).resolveBinding();
+        ICPPClassType T1 = (ICPPClassType) col.getName(0).resolveBinding();
+        
+        assertInstances( col, T1_ctor, 2 );
+        assertInstances( col, T1, 2 );
+    }
+    
+    public void testBug86306() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct S { int i; };    \n"); //$NON-NLS-1$
+        buffer.append("void foo() {            \n"); //$NON-NLS-1$
+        buffer.append("   int S::* pm = &S::i; \n"); //$NON-NLS-1$
+        buffer.append("}                       \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        ICPPClassType S = (ICPPClassType) col.getName(0).resolveBinding();
+        
+        assertInstances( col, S, 3 );
+        
+        IASTName [] refs = tu.getReferences( S );
+        assertEquals( refs.length, 2 );
+        assertSame( refs[0], col.getName(4) );
+        assertSame( refs[1], col.getName(7) );
     }
 }
 

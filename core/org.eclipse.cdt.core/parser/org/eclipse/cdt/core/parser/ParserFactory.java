@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.parser;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +29,6 @@ import org.eclipse.cdt.internal.core.parser.StructuralParser;
 import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
-import org.eclipse.cdt.internal.core.parser.scanner.LineOffsetReconciler;
 import org.eclipse.cdt.internal.core.parser.scanner.Scanner;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 
@@ -110,11 +108,6 @@ public class ParserFactory {
     public static IScanner createScanner( String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError, IOException
 	{
     	return createScanner(new CodeReader(fileName), config, mode, language, requestor, log, workingCopies);
-	}
-    
-	public static ILineOffsetReconciler createLineOffsetReconciler( Reader input )
-	{
-		return new LineOffsetReconciler( input ); 
 	}
 	
 	public static IQuickParseCallback createQuickParseCallback()

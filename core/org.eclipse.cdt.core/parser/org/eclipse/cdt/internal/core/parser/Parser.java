@@ -3291,6 +3291,9 @@ public abstract class Parser extends ExpressionParser implements IParser
 	public int getLastErrorOffset() {
 		return firstErrorOffset;
 	}
+	public int getLastErrorLine() {
+	    return firstErrorLine;
+	}
 
 	protected void setCompletionToken(IToken token) {
 		// do nothing!

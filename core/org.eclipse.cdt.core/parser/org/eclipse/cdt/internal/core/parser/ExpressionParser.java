@@ -51,9 +51,10 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 public class ExpressionParser implements IExpressionParser, IParserData {
 
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private static int FIRST_ERROR_OFFSET_UNSET = -1;
+	private static int FIRST_ERROR_UNSET = -1;
 	protected boolean parsePassed = true;
-	protected int firstErrorOffset = FIRST_ERROR_OFFSET_UNSET;
+	protected int firstErrorOffset = FIRST_ERROR_UNSET;
+	protected int firstErrorLine = FIRST_ERROR_UNSET;
 	private BacktrackException backtrack = new BacktrackException();
 	private int backtrackCount = 0;
 
@@ -223,8 +224,10 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 */
 	protected void failParse() {
 		try {
-			if (firstErrorOffset == FIRST_ERROR_OFFSET_UNSET)
+			if (firstErrorOffset == FIRST_ERROR_UNSET){
 				firstErrorOffset = LA(1).getOffset();
+				firstErrorLine = LA(1).getLineNumber();
+			}
 		} catch (EndOfFileException eof) {
 			// do nothing
 		} finally {

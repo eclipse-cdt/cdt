@@ -58,5 +58,6 @@ public interface IParser  {
 	 */
 	public int getLastErrorOffset();
 	
+	public int getLastErrorLine();
 	
 }

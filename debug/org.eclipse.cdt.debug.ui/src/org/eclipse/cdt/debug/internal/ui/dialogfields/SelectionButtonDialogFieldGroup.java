@@ -177,7 +177,7 @@ public class SelectionButtonDialogFieldGroup extends DialogField {
 		return null;
 	}
 	
-	private void doWidgetSelected(SelectionEvent e) {
+	protected void doWidgetSelected(SelectionEvent e) {
 		Button button= (Button)e.widget;
 		for (int i= 0; i < fButtons.length; i++) {
 			if (fButtons[i] == button) {

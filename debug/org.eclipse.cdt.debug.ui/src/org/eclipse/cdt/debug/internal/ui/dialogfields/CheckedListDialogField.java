@@ -165,7 +165,7 @@ public class CheckedListDialogField extends ListDialogField {
 	}
 	
 			
-	private void doCheckStateChanged(CheckStateChangedEvent e) {
+	protected void doCheckStateChanged(CheckStateChangedEvent e) {
 		if (e.getChecked()) {
 			fCheckElements.add(e.getElement());
 		} else {

@@ -1,3 +1,9 @@
+2002-10-22 Alain Magloire
+
+	* src/.../core/GDBStreamsProxy.java (write):
+	Replace the OutputStream with a Write class.
+	And clear the buffer on flush().
+
 2002-10-21 Alain Magloire
 
 	* src/.../core/GDBProcess.java (getExitValue): Catch

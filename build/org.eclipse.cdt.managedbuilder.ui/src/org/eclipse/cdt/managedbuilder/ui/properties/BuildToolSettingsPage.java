@@ -431,7 +431,9 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 					break;
 				case IOption.ENUMERATED :
 					String enumVal = getPreferenceStore().getString(option.getId());
-					ManagedBuildManager.setOption(configuration, option, enumVal);
+					String enumId = option.getEnumeratedId(enumVal);
+					ManagedBuildManager.setOption(configuration, option, 
+							(enumId.length() > 0) ? enumId : enumVal);
 					break;
 				case IOption.STRING :
 					String strVal = getPreferenceStore().getString(option.getId());

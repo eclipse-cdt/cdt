@@ -532,15 +532,49 @@
          point="org.eclipse.compare.structureCreators">
       <structureCreator
             extensions="c,cc,cpp,cxx,h,hpp"
-            class="org.eclipse.cdt.internal.ui.compare.CStructureCreator">
+            class="org.eclipse.cdt.internal.ui.compare.CStructureCreator"
+            id="org.eclipse.cdt.ui.compare.CStructureCreator">
       </structureCreator>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.cdt.core.cSource"
+            structureCreatorId="org.eclipse.cdt.ui.compare.CStructureCreator">
+	  </contentTypeBinding>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.cdt.core.cHeader"
+            structureCreatorId="org.eclipse.cdt.ui.compare.CStructureCreator">
+	  </contentTypeBinding>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.cdt.core.cxxSource"
+            structureCreatorId="org.eclipse.cdt.ui.compare.CStructureCreator">
+	  </contentTypeBinding>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.cdt.core.cxxHeader"
+            structureCreatorId="org.eclipse.cdt.ui.compare.CStructureCreator">
+	  </contentTypeBinding>
    </extension>
    <extension
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
             extensions="c,cc,cpp,cxx,h,c2,hpp"
-            class="org.eclipse.cdt.internal.ui.compare.CContentViewerCreator">
+            class="org.eclipse.cdt.internal.ui.compare.CContentViewerCreator"
+            id="org.eclipse.cdt.ui.compare.CContentViewerCreator">
       </viewer>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.cdt.core.cSource"
+            contentMergeViewerId="org.eclipse.cdt.ui.compare.CContentViewerCreator">
+	  </contentTypeBinding>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.cdt.core.cHeader"
+            contentMergeViewerId="org.eclipse.cdt.ui.compare.CContentViewerCreator">
+	  </contentTypeBinding>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.cdt.core.cxxSource"
+            contentMergeViewerId="org.eclipse.cdt.ui.compare.CContentViewerCreator">
+	  </contentTypeBinding>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.cdt.core.cxxHeader"
+            contentMergeViewerId="org.eclipse.cdt.ui.compare.CContentViewerCreator">
+	  </contentTypeBinding>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

@@ -1,3 +1,9 @@
+2004-09-14 Alain Magloire
+
+	Define contentTypes for some of the
+	extension points.
+	* plugin.xml
+
 2004-09-11 Alain Magloire
 
 	Allow grouping of namespace in the outliner.

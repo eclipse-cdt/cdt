@@ -16,7 +16,7 @@ import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 
 /**
  * MakefileDocumentSetupParticipant
@@ -45,7 +45,7 @@ public class MakefileDocumentSetupParticipant  implements IDocumentSetupParticip
 	}
 	
 	private IDocumentPartitioner createDocumentPartitioner() {
-		return new DefaultPartitioner(
+		return new FastPartitioner(
 				new MakefilePartitionScanner(), MakefilePartitionScanner.MAKE_PARTITIONS);
 	}
 }

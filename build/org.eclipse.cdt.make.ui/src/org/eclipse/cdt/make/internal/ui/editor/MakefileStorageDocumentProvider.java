@@ -15,7 +15,7 @@ import org.eclipse.cdt.make.internal.ui.text.makefile.MakefilePartitionScanner;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.ui.editors.text.StorageDocumentProvider;
 
 /**
@@ -41,7 +41,7 @@ public class MakefileStorageDocumentProvider extends StorageDocumentProvider {
 	}
 	
 	private IDocumentPartitioner createDocumentPartitioner() {
-		return new DefaultPartitioner(
+		return new FastPartitioner(
 				new MakefilePartitionScanner(), MakefilePartitionScanner.MAKE_PARTITIONS);
 	}
 

@@ -10,22 +10,22 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.parser.ast2.ASTFactory;
-import org.eclipse.cdt.core.parser.ast2.IASTCompoundStatement;
-import org.eclipse.cdt.core.parser.ast2.IASTDeclarationStatement;
-import org.eclipse.cdt.core.parser.ast2.IASTExpression;
-import org.eclipse.cdt.core.parser.ast2.IASTFunction;
-import org.eclipse.cdt.core.parser.ast2.IASTFunctionDeclaration;
-import org.eclipse.cdt.core.parser.ast2.IASTParameter;
-import org.eclipse.cdt.core.parser.ast2.IASTParameterDeclaration;
-import org.eclipse.cdt.core.parser.ast2.IASTTranslationUnit;
-import org.eclipse.cdt.core.parser.ast2.IASTType;
-import org.eclipse.cdt.core.parser.ast2.IASTTypeDeclaration;
-import org.eclipse.cdt.core.parser.ast2.IASTVariable;
-import org.eclipse.cdt.core.parser.ast2.IASTVariableDeclaration;
-import org.eclipse.cdt.core.parser.ast2.IASTVariableReference;
+import org.eclipse.cdt.core.parser.ast2.c.CASTFactory;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTBinaryOperation;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTCompoundStatement;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTDeclarationStatement;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTDeclarator;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTFunctionDeclarator;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTFunctionDefinition;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTIdExpression;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTParameterDeclaration;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTSimpleDeclaration;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTSimpleTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTTranslationUnit;
 
 /**
  * Test the new AST.
@@ -34,10 +34,6 @@ import org.eclipse.cdt.core.parser.ast2.IASTVariableReference;
  */
 public class AST2Tests extends TestCase {
 
-	private IASTTranslationUnit parse(StringBuffer code) {
-		return ASTFactory.parseString(code.toString(), ScannerConfigFactory.getScannerInfo());
-	}
-	
 	public void testBasicFunction() {
 		StringBuffer buff = new StringBuffer();
 		buff.append("int x;");
@@ -45,50 +41,45 @@ public class AST2Tests extends TestCase {
 		buff.append("   int z = x + y;");
 		buff.append("}");
 		
-		IASTTranslationUnit tu = parse(buff);
-		// Built-in for int
-		IASTTypeDeclaration typeDecl_int = (IASTTypeDeclaration)tu.getMemberDeclaration(0);
-		assertTrue(typeDecl_int.getName().equals("int"));
-		IASTType type_int = typeDecl_int.getType();
-		assertEquals(typeDecl_int, type_int.getDeclaration(0));
-		// Built-in for void
-		IASTTypeDeclaration typeDecl_void = (IASTTypeDeclaration)tu.getMemberDeclaration(1);
-		assertTrue(typeDecl_void.getName().equals("void"));
-		IASTType type_void = typeDecl_void.getType();
-		assertEquals(typeDecl_void, type_void.getDeclaration(0));
+		ICASTTranslationUnit tu = CASTFactory.parseString(buff);
+		List declarations = tu.getDeclarations();
 		// int x;
-		IASTVariableDeclaration varDecl_x = (IASTVariableDeclaration)tu.getMemberDeclaration(2);
-		assertTrue(varDecl_x.getName().equals("x"));
-		assertEquals(type_int, varDecl_x.getType());
-		IASTVariable var_x = varDecl_x.getVariable();
-		assertEquals(varDecl_x, var_x.getDeclaration(0));
-		// function void f();
-		IASTFunctionDeclaration funcDecl_f = (IASTFunctionDeclaration)tu.getMemberDeclaration(3);
-		assertTrue(varDecl_x.getName().equals("f"));
-		assertEquals(type_void, funcDecl_f.getReturnType());
-		IASTFunction func_f = funcDecl_f.getFunction();
-		assertEquals(funcDecl_f, func_f.getDeclaration(0));
-		// parameter int y;
-		IASTParameterDeclaration paramDecl_y = (IASTParameterDeclaration)funcDecl_f.getParameters()[0];
-		assertTrue(paramDecl_y.getName().equals("y"));
-		assertEquals(type_int, paramDecl_y.getType());
-		IASTParameter param_y = (IASTParameter)paramDecl_y.getVariable();
-		assertEquals(paramDecl_y, param_y.getDeclaration(0));
-		// function body
-		IASTCompoundStatement body = (IASTCompoundStatement)func_f.getBody();
-		IASTDeclarationStatement decl_stmt = (IASTDeclarationStatement)body.getStatement(0);
-		IASTVariableDeclaration varDecl_z = (IASTVariableDeclaration)decl_stmt.getDeclaration();
-		assertTrue(varDecl_z.getName().equals("z"));
-		assertEquals(type_int, varDecl_z.getType());
-		IASTVariable var_z = varDecl_z.getVariable();
-		assertEquals(varDecl_z, var_z.getDeclaration(0));
-		IASTExpression init_expr = var_z.getInitialization();
-		assertTrue(init_expr.getOperator().equals("+"));
-		IASTVariableReference varRef_x = (IASTVariableReference)init_expr.getOperands(0);
-		assertEquals(var_x, varRef_x.getVariable());
-		assertEquals(varRef_x, var_x.getReference(0));
-		IASTVariableReference varRef_y = (IASTVariableReference)init_expr.getOperands(1);
-		assertEquals(param_y, varRef_y.getVariable());
-		assertEquals(varRef_y, param_y.getReference(0));
+		ICASTSimpleDeclaration decl_x = (ICASTSimpleDeclaration)declarations.get(0);
+		ICASTSimpleTypeSpecifier type_x
+			= (ICASTSimpleTypeSpecifier)decl_x.getDeclSpecifiers().getTypeSpecifiers();
+		assertEquals(ICASTSimpleTypeSpecifier.t_int, type_x.getType());
+		ICASTDeclarator dclr_x = (ICASTDeclarator)decl_x.getDeclarators().get(0);
+		assertEquals("x", dclr_x.getName().toString());
+		// void f(...)
+		ICASTFunctionDefinition def_f = (ICASTFunctionDefinition)declarations.get(1);
+		ICASTSimpleTypeSpecifier ret_f
+			= (ICASTSimpleTypeSpecifier)def_f.getReturnDeclSpecifiers().getTypeSpecifiers();
+		assertEquals(ICASTSimpleTypeSpecifier.t_void, ret_f.getType());
+		ICASTFunctionDeclarator dclr_f = (ICASTFunctionDeclarator)def_f.getDeclarator();
+		assertEquals("f", dclr_f.getName().toString());
+		// parameter - int y
+		ICASTParameterDeclaration decl_y = (ICASTParameterDeclaration)dclr_f.getParameters().get(0);
+		ICASTSimpleTypeSpecifier type_y
+			= (ICASTSimpleTypeSpecifier)decl_y.getDeclSpecifiers().getTypeSpecifiers().get(0);
+		assertEquals(ICASTSimpleTypeSpecifier.t_int, type_y.getType());
+		ICASTDeclarator dclr_y = decl_y.getDeclarator();
+		assertEquals("y", dclr_y.getName().toString());
+		// int z
+		ICASTCompoundStatement body_f = (ICASTCompoundStatement)def_f.getBody();
+		ICASTDeclarationStatement dstmt_z = (ICASTDeclarationStatement)body_f.getStatements().get(0);
+		ICASTSimpleDeclaration decl_z = (ICASTSimpleDeclaration)dstmt_z.getDeclaration();
+		ICASTSimpleTypeSpecifier type_z
+			= (ICASTSimpleTypeSpecifier)decl_z.getDeclSpecifiers().getTypeSpecifiers().get(0);
+		assertEquals(ICASTSimpleTypeSpecifier.t_int, type_z.getType());
+		ICASTDeclarator dclr_z = (ICASTDeclarator)decl_z.getDeclarators().get(0);
+		assertEquals("z", dclr_z.getName().toString());
+		// = x + y
+		ICASTBinaryOperation z_plus = (ICASTBinaryOperation)dclr_z.getInitializer();
+		ICASTIdExpression z_ref_x = (ICASTIdExpression)z_plus.getOperand1();
+		assertEquals("x", z_ref_x.getName().toString());
+		assertEquals(dclr_x, z_ref_x.getDeclarator());
+		ICASTIdExpression z_ref_y = (ICASTIdExpression)z_plus.getOperand2();
+		assertEquals("y", z_ref_y.getName().toString());
+		assertEquals(dclr_y, z_ref_y.getDeclarator());
 	}
 }

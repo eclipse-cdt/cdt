@@ -25,6 +25,10 @@ public class Register extends Variable implements ICDIRegister {
 		super(obj, var);
 	}
 
+	public RegisterObject getRegisterObject() {
+		return (RegisterObject)super.getVariableObject();
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getValue()
 	 */

@@ -1,5 +1,10 @@
 2003-06-03 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java:
+	Bug fix gdb returns fix like "char [200]" no variables.
+
+2003-06-03 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdi/SourceManager.java
 	(getType): save the head of the type for the return value.
 

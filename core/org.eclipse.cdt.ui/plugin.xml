@@ -886,8 +886,20 @@
       </command>
       <keyBinding
             string="F4"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.cdt.ui.cEditorScope"
             command="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.openTypeInHierarchy.name"
+            description="%ActionDefinition.openTypeInHierarchy.description"
+            category="org.eclipse.ui.category.navigate"
+            id="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy">
+      </command>
+      <keyBinding
+            string="Ctrl+Shift+H"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command

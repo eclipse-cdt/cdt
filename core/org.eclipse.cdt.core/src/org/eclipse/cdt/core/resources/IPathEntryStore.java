@@ -11,14 +11,14 @@
 
 package org.eclipse.cdt.core.resources;
 
+import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * IPathEntryStore
  */
-public interface IPathEntryStore {
+public interface IPathEntryStore extends ICExtension {
 
 	/**
 	 * Returns the path entries save on the project. 
@@ -26,7 +26,7 @@ public interface IPathEntryStore {
 	 * @return
 	 * @throws CoreException
 	 */
-	IPathEntry[] getRawPathEntries(IProject project) throws CoreException;
+	IPathEntry[] getRawPathEntries() throws CoreException;
 
 	/**
 	 * Save the entries on the project.
@@ -37,7 +37,7 @@ public interface IPathEntryStore {
 	 * @param entries
 	 * @throws CoreException
 	 */
-	void setRawPathEntries(IProject project, IPathEntry[] entries) throws CoreException;
+	void setRawPathEntries(IPathEntry[] entries) throws CoreException;
 
 	/**
 	 * Add a listener to the store.
@@ -53,18 +53,6 @@ public interface IPathEntryStore {
 	 */
 	void removePathEntryStoreListener(IPathEntryStoreListener listener);
 
-	/**
-	 * Fire a CONTENT_CHANGED event to the listeners.
-	 * 
-	 * @param project
-	 */
-	void fireContentChangedEvent(IProject project);
-
-	/**
-	 * Fire a CLOSE_STORE event to the listeners.
-	 * 
-	 * @param project
-	 */
-	void fireClosedEvent(IProject project);
+	void close();
 
 }

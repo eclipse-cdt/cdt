@@ -31,6 +31,7 @@ import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.model.DefaultPathEntryStore;
 import org.eclipse.cdt.internal.core.model.DeltaProcessor;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.Util;
@@ -650,28 +651,13 @@ public class CCorePlugin extends Plugin {
 			}
 		}
 		if (store == null) {
-			store = getDefaultPathEntryStore();
+			store = getDefaultPathEntryStore(project);
 		}
 		return store;
 	}
 
-	public IPathEntryStore getDefaultPathEntryStore() throws CoreException {
-		IPathEntryStore store = null;
-		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(PATHENTRY_STORE_ID);
-		IExtension extension = extensionPoint.getExtension(DEFAULT_PATHENTRY_STORE_ID);
-		if (extension != null) {
-			IConfigurationElement element[] = extension.getConfigurationElements();
-			for (int i = 0; i < element.length; i++) {
-				if (element[i].getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
-					store = (IPathEntryStore) element[i].createExecutableExtension("run"); //$NON-NLS-1$
-					break;
-				}
-			}
-		} else {
-			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CCorePlugin.exception.noBinaryFormat"), null); //$NON-NLS-1$
-			throw new CoreException(s);
-		}
-		return store;
+	public IPathEntryStore getDefaultPathEntryStore(IProject project) throws CoreException {
+		return new DefaultPathEntryStore(project);
 	}
 
 	/**

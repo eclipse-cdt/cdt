@@ -97,19 +97,6 @@
          </run>
       </cextension>
    </extension>
-<!-- =================================================================================== -->
-<!-- Define the default PathEntry store provided by the CDT                                 -->
-<!-- =================================================================================== -->
-   <extension
-         id="cdtPathEntryStore"
-         name="Path Entry Store"
-         point="org.eclipse.cdt.core.PathEntryStore">
-      <cextension>
-         <run
-               class="org.eclipse.cdt.internal.core.model.PathEntryStore">
-         </run>
-      </cextension>
-   </extension>
 
 <!-- =================================================================================== -->
 <!-- Define the list of Error Parser provided by the CDT                                 -->

@@ -16,11 +16,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICDescriptorListener;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelStatus;
@@ -44,7 +44,7 @@ import org.w3c.dom.NodeList;
 /**
  * PathEntryStore
  */
-public class PathEntryStore extends AbstractCExtension implements IPathEntryStore, ICDescriptorListener {
+public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListener {
 
 	static String PATH_ENTRY = "pathentry"; //$NON-NLS-1$
 	static String PATH_ENTRY_ID = "org.eclipse.cdt.core.pathentry"; //$NON-NLS-1$
@@ -67,28 +67,29 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 	static final IPathEntry[] NO_PATHENTRIES = new IPathEntry[0];
 
 	List listeners;
+	IProject fProject;
 	
 	/**
 	 * 
 	 */
-	public PathEntryStore() {
-		super();
+	public DefaultPathEntryStore(IProject project) {
+		fProject = project;
 		listeners = Collections.synchronizedList(new ArrayList());
 		// Register the Core Model on the Descriptor
 		// Manager, it needs to know about changes.
 		CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(this);
 	}
 
-	public IPathEntry[] getRawPathEntries(IProject project) throws CoreException {
+	public IPathEntry[] getRawPathEntries() throws CoreException {
 		ArrayList pathEntries = new ArrayList();
-		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project);
+		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(fProject);
 		Element element = cdesc.getProjectData(PATH_ENTRY_ID);
 		NodeList list = element.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			Node childNode = list.item(i);
 			if (childNode.getNodeType() == Node.ELEMENT_NODE) {
 				if (childNode.getNodeName().equals(PATH_ENTRY)) {
-					pathEntries.add(decodePathEntry(project, (Element) childNode));
+					pathEntries.add(decodePathEntry(fProject, (Element) childNode));
 				}
 			}
 		}
@@ -96,11 +97,11 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 		return (IPathEntry[]) pathEntries.toArray(NO_PATHENTRIES);
 	}
 
-	public void setRawPathEntries(IProject project, IPathEntry[] newRawEntries) throws CoreException {
-		if (Arrays.equals(newRawEntries, getRawPathEntries(project))) {
+	public void setRawPathEntries(IPathEntry[] newRawEntries) throws CoreException {
+		if (Arrays.equals(newRawEntries, getRawPathEntries())) {
 			return;
 		}	
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(fProject);
 		Element rootElement = descriptor.getProjectData(PATH_ENTRY_ID);
 		// Clear out all current children
 		Node child = rootElement.getFirstChild();
@@ -112,7 +113,7 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 		if (newRawEntries != null && newRawEntries.length > 0) {
 			// Serialize the include paths
 			Document doc = rootElement.getOwnerDocument();
-			encodePathEntries(project.getFullPath(), doc, rootElement, newRawEntries);
+			encodePathEntries(fProject.getFullPath(), doc, rootElement, newRawEntries);
 		}
 		descriptor.saveProjectData();
 	}
@@ -239,7 +240,7 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 			// translate the project prefix.
 			IPath xmlPath = entries[i].getPath();
 			if (xmlPath == null) {
-				xmlPath = new Path("");
+				xmlPath = new Path(""); //$NON-NLS-1$
 			}
 			if (kind != IPathEntry.CDT_CONTAINER) {
 				// translate to project relative from absolute (unless a device path)
@@ -346,10 +347,9 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 	public void descriptorChanged(CDescriptorEvent event) {
 		if (event.getType() == CDescriptorEvent.CDTPROJECT_CHANGED) {
 			ICDescriptor cdesc = event.getDescriptor();
-			if (cdesc != null) {
-				IProject project = cdesc.getProject();
+			if (cdesc != null && cdesc.getProject() == fProject){
 				// Call the listeners.
-				fireContentChangedEvent(project);
+				fireContentChangedEvent(fProject);
 			}
 		}
 	}
@@ -368,10 +368,7 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 		listeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#fireContentChangedEvent(IProject)
-	 */
-	public void fireContentChangedEvent(IProject project) {
+	private void fireContentChangedEvent(IProject project) {
 		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, project, PathEntryStoreChangedEvent.CONTENT_CHANGED);
 		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[listeners.size()];
 		listeners.toArray(observers);
@@ -383,13 +380,21 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#fireClosedChangedEvent(IProject)
 	 */
-	public void fireClosedEvent(IProject project) {
-		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, project, PathEntryStoreChangedEvent.STORE_CLOSED);
+	public void close() {
+		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, fProject, PathEntryStoreChangedEvent.STORE_CLOSED);
 		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[listeners.size()];
 		listeners.toArray(observers);
 		for (int i = 0; i < observers.length; i++) {
 			observers[i].pathEntryStoreChanged(evt);
-		}		
+		}
+		CCorePlugin.getDefault().getCDescriptorManager().removeDescriptorListener(this);
 	}
 
+	public IProject getProject() {
+		return fProject;
+	}
+
+	public ICExtensionReference getExtensionReference() {
+		return null;
+	}
 }

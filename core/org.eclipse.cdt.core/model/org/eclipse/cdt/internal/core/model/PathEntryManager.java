@@ -288,8 +288,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 		IPathEntry[] pathEntries;
 		try {
-			IPathEntryStore store = getPathEntryStore(project);
-			pathEntries = store.getRawPathEntries(project);
+			IPathEntryStore store = getPathEntryStore(project, true);
+			pathEntries = store.getRawPathEntries();
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}
@@ -528,8 +528,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	public void saveRawPathEntries(ICProject cproject, IPathEntry[] newRawEntries) throws CModelException {
 		try {
 			IProject project = cproject.getProject();
-			IPathEntryStore store = getPathEntryStore(project);
-			store.setRawPathEntries(project, newRawEntries);
+			IPathEntryStore store = getPathEntryStore(project, true);
+			store.setRawPathEntries(newRawEntries);
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}
@@ -681,9 +681,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return containerIDs;
 	}
 
-	private synchronized IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
+	private synchronized IPathEntryStore getPathEntryStore(IProject project, boolean create) throws CoreException {
 		IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
-		if (store == null) {
+		if (store == null && create == true) {
 			store = CCorePlugin.getDefault().getPathEntryStore(project);
 			storeMap.put(project, store);
 			store.addPathEntryStoreListener(this);
@@ -691,8 +691,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return store;
 	}
 
-	private synchronized Object removePathEntryStore(IProject project) {
-		return storeMap.remove(project);
+	private synchronized void removePathEntryStore(IProject project) {
+		IPathEntryStore store = (IPathEntryStore)storeMap.remove(project);
+		if (store!= null) {
+			store.removePathEntryStoreListener(this);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -708,17 +711,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 		CModelManager manager = CModelManager.getDefault();
 		ICProject cproject = manager.create(project);
-		try {
-			IPathEntryStore store = getPathEntryStore(project);
-			if (store != null) {
-				if (event.hasClosed()) {
-					removePathEntryStore(project);
-					store.removePathEntryStoreListener(this);
-					containerRemove(cproject);
-				}
-			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
+		if (event.hasClosed()) {
+			removePathEntryStore(project);
+			containerRemove(cproject);
 		}
 		if (project.isAccessible()) {
 			try {
@@ -766,9 +761,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				IProject project = cproject.getProject();
 				IPathEntryStore store = null;
 				try {
-					store = getPathEntryStore(project);
+					store = getPathEntryStore(project, false);
 					if (store != null) {
-						store.fireClosedEvent(project);
+						store.close();
 					}
 				} catch (CoreException e) {
 					throw new CModelException(e);

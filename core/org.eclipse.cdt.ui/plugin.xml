@@ -673,6 +673,19 @@
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
       </viewerContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IMarker"
+            id="org.eclipse.cdt.ui.action.DeleteIProblemMarkers">
+         <action
+               label="%DeleteIProblemMarkerAction.label"
+               icon="icons/full/ovr16/error_co.gif"
+               class="org.eclipse.cdt.internal.ui.util.DeleteIProblemMarkerAction"
+               menubarPath="additions"
+               id="org.eclipse.cdt.ui.action.DeleteIProblemMarkers"/>
+         <filter
+               value="org.eclipse.cdt.core.indexermarker"
+               name="type"/>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.compare.structureCreators">

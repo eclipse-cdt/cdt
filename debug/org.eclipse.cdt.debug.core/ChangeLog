@@ -1,3 +1,8 @@
+2003-08-06 Mikhail Khodjaiants
+	Uncommented the 'sizeof' method of 'ICDIVariableObject'.
+	* ICDIVariableObject.java
+	* CVariable.java
+
 2003-08-06 Alain Magloire
 
 	Move some of the methods in ICDIVariableObject.

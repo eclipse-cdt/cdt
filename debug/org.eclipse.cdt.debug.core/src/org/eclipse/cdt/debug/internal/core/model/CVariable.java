@@ -151,6 +151,14 @@ public abstract class CVariable extends CDebugElement
 		{
 			return fException;
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#sizeof()
+		 */
+		public int sizeof() throws CDIException
+		{
+			return 0;
+		}
 	}
 
 	class InternalVariable

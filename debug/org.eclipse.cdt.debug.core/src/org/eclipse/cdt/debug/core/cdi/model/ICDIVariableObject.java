@@ -50,5 +50,5 @@ public interface ICDIVariableObject extends ICDIObject {
 	/**
 	 * @return
 	 */
-	//int sizeof() throws CDIException;
+	int sizeof() throws CDIException;
 }

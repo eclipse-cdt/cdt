@@ -17,6 +17,8 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.core.model.Util;
+
 public class Parser implements IParser {
 
 	private static int DEFAULT_OFFSET = -1; 
@@ -79,7 +81,10 @@ c, quick);
 	public boolean parse() throws Backtrack {
 		long startTime = System.currentTimeMillis();
 		translationUnit();
-		System.out.println("Parse " + (++parseCount) + ": "
+		// For the debuglog to take place, you have to call
+		// Util.setDebugging(true);
+		// Or set debug to true in the core plugin preference 
+		Util.debugLog( "Parse " + (++parseCount) + ": "
 			+ ( System.currentTimeMillis() - startTime ) + "ms"
 			+ ( parsePassed ? "" : " - parse failure" ));
 			

@@ -95,7 +95,11 @@ public class CModelBuilder {
 			System.out.println( "NullPointer exception generating CModel");
 			npe.printStackTrace();
 		}
-		System.out.println("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms" );
+		 
+		// For the debuglog to take place, you have to call
+		// Util.setDebugging(true);
+		// Or set debug to true in the core plugin preference 
+		Util.debugLog("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms");
 		return this.newElements;
 	}
 	

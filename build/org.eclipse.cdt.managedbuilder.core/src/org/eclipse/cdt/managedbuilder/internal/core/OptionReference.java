@@ -87,8 +87,13 @@ public class OptionReference implements IOption {
 	 * @param element
 	 */
 	public OptionReference(ToolReference owner, Element element) {
-		this.owner = owner;	
-		option = owner.getTool().getOption(element.getAttribute(ID));
+		this.owner = owner;
+		try {
+			option = owner.getTool().getOptionById(element.getAttribute(ID));
+		} catch (NullPointerException e) {
+			// Something bad happened
+			option = null;
+		}
 		
 		// Bail now if there's no option for the reference
 		if (option == null) {
@@ -105,7 +110,9 @@ public class OptionReference implements IOption {
 				break;
 			case STRING:
 			case ENUMERATED:
-				value = (String) element.getAttribute(DEFAULT_VALUE);
+				// Pre-2.0 the value was the string for the UI
+				// Post-2.0 it is the ID of the enumerated option
+				value = (String) element.getAttribute(DEFAULT_VALUE);				
 				break;
 			case STRING_LIST:
 			case INCLUDE_PATH:
@@ -137,7 +144,12 @@ public class OptionReference implements IOption {
 			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			
 			// resolve parent (recursively) before calling methods on it.
-			option = owner.getTool().getOption(element.getAttribute(ID));
+			option = owner.getTool().getOptionById(element.getAttribute(ID));
+			if (option == null) {
+				// error condition probably the result of a misidentified option ID
+				resolved = false;
+				return;
+			}
 			if (option instanceof Option) {
 				((Option)option).resolveReferences();
 			} else if (option instanceof OptionReference) {
@@ -276,9 +288,31 @@ public class OptionReference implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumCommand(java.lang.String)
 	 */
 	public String getEnumCommand(String name) {
-		return option.getEnumCommand(name);
+		if (!resolved) {
+			resolveReferences();
+		}
+		if (option != null) {
+			return option.getEnumCommand(name);
+		} else {
+			return new String();
+		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getEnumeratedId(java.lang.String)
+	 */
+	public String getEnumeratedId(String name) {
+		if (!resolved) {
+			resolveReferences();
+		}
+		if (option != null) {
+			return option.getEnumeratedId(name);
+		} else {
+			return new String();
+		}
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getId()
 	 */
@@ -373,19 +407,27 @@ public class OptionReference implements IOption {
 		return (String[]) answer.toArray(new String[answer.size()]);
 	}
 
+	/**
+	 * @return the <code>IOption the reference is for</code>
+	 */
 	public IOption getOption() {
+		// This is an operation that requires the reference to be resolved
+		if (!resolved) {
+			resolveReferences();
+		}
 		return option;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefaultEnumValue()
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getSelectedEnum()
 	 */
 	public String getSelectedEnum() throws BuildException {
+		// A reference to an enumerated option stores the ID of the selected enum in its value
 		if (value == null) {
 			// Return the default defined for the enumeration in the manifest.
 			return option.getSelectedEnum();
 		} else if (getValueType() == ENUMERATED) {
-			// Value will contain the human-readable name of the enum 
+			// This is a valid ID
 			return (String) value;
 		} else {
 			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -495,10 +537,12 @@ public class OptionReference implements IOption {
 	 * @throws BuildException
 	 */
 	public void setValue(String value) throws BuildException {
-		if (getValueType() == STRING || getValueType() == ENUMERATED)
+		// Note that we can still set the human-readable value here 
+		if (getValueType() == STRING || getValueType() == ENUMERATED) {
 			this.value = value;
-		else
+		} else {
 			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
 	}
 	
 	/**
@@ -535,4 +579,5 @@ public class OptionReference implements IOption {
 			return super.toString();			
 		}
 	}
+
 }

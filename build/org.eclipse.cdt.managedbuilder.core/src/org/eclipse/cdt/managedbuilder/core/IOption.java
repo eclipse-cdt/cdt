@@ -119,14 +119,21 @@ public interface IOption extends IBuildObject {
 	public String[] getDefinedSymbols() throws BuildException;
 
 	/**
-	 * Answers the command associated with the enumeration name. For
-	 * example, if the enumeration name was 'Default' for the debug 
-	 * level option of the Gnu compiler, and the plugin manifest defined
-	 * that as -g, then the return value would be a String containing "-g"  
+	 * Answers the command associated with the enumeration id. For
+	 * example, if the enumeration id was <code>gnu.debug.level.default</code> 
+	 * for the debug level option of the Gnu compiler, and the plugin 
+	 * manifest defined that as -g, then the return value would be the 
+	 * String "-g"  
 	 *  
 	 * @return 
 	 */
-	public String getEnumCommand (String name);
+	public String getEnumCommand (String id);
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	public String getEnumeratedId(String name);
 
 	/**
 	 * Answers an array of <code>String</code> containing the includes paths
@@ -148,14 +155,14 @@ public interface IOption extends IBuildObject {
 	public String[] getLibraries() throws BuildException ;
 
 	/**
-	 * Answers a <code>String</code> containing the selected enumeration in an
-	 * enumerated option. For an option that has not been changed by the user, 
-	 * the receiver will answer with the default defined in the plugin manifest.
-	 * If the user has modified the selection, the receiver will answer with the
-	 * overridden selection.
+	 * Answers a <code>String</code> containing the unique ID of the selected 
+	 * enumeration in an enumerated option. For an option that has not been 
+	 * changed by the user, the receiver will answer with the default defined 
+	 * in the plugin manifest. If the user has modified the selection, the 
+	 * receiver will answer with the overridden selection.
 	 * 
 	 * @return String
-	 * @throws BuildException
+	 * @throws BuildException if the option type is not an enumeration
 	 */
 	public String getSelectedEnum () throws BuildException;	
 

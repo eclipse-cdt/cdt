@@ -169,14 +169,25 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	}
 
 	protected Control createContents(Composite parent)  {
+		// Create the container we return to the property page editor
+		Composite composite = new Composite(parent, SWT.NULL);
+		composite.setFont(parent.getFont());
+		composite.setLayout(new GridLayout(1, true));
+		GridData gd;
+
 		// Initialize the key data
-		targets = ManagedBuildManager.getTargets(getProject());
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject(), true);
+		if (info.getVersion() == null) {
+			// Display a message page instead of the properties control
+			final Label invalidInfo = new Label(composite, SWT.LEFT);
+			invalidInfo.setFont(composite.getFont());
+			invalidInfo.setText(ManagedBuilderUIPlugin.getResourceString("BuildPropertyPage.error.version_low"));	//$NON-NLS-1$
+			invalidInfo.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, GridData.VERTICAL_ALIGN_CENTER, true, true));
+			return composite;
+		}
+		targets = ManagedBuildManager.getTargets(getProject());
 		ITarget defaultTarget = info.getDefaultTarget();
 
-		// Create the container we return to the property page editor
-		Composite composite = ControlFactory.createComposite(parent, 1);
-		GridData gd;
 
 		// Add a config selection area
 		Group configGroup = ControlFactory.createGroup(composite, ManagedBuilderUIPlugin.getResourceString(ACTIVE_LABEL), 1);
@@ -456,6 +467,10 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	 * @return 
 	 */
 	private List getPagesForConfig() {
+		// Make sure that something was selected
+		if (selectedConfiguration == null) {
+			return null;
+		}
 		List pages = (List) configToPageListMap.get(selectedConfiguration.getId());
 		if (pages == null) {
 			pages = new ArrayList();
@@ -858,6 +873,11 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	public boolean performOk() {
 		// Force each settings page to update
 		List pages = getPagesForConfig();
+		// Make sure we have something to work on
+		if (pages == null) {
+			// Nothing to do
+			return true;
+		}
 		ListIterator iter = pages.listIterator();
 		while (iter.hasNext()) {
 			BuildSettingsPage page = (BuildSettingsPage) iter.next();

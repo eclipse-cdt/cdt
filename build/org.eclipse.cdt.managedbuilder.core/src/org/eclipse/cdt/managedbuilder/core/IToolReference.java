@@ -56,7 +56,11 @@ public interface IToolReference extends ITool {
 	 */
 	public boolean references(ITool tool);
 	
-	
+	/**
+	 * @param isDirty The value to set the dirty flag to in the receiver
+	 */
+	public void setDirty(boolean isDirty);
+
 	/**
 	 * Set the tool command in the receiver to be the argument.
 	 * 

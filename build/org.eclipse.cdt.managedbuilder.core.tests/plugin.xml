@@ -60,7 +60,7 @@
             defaultExtension="toor"
             isAbstract="false"
             makeCommand="make"
-            makeFlags="-k"
+            makeArguments="-k"
             binaryParser="org.eclipse.cdt.core.PE"
             osList="win32">
          <tool
@@ -182,7 +182,7 @@
                      id="boolean.false.option">
                </optionReference>
                <optionReference
-                     defaultValue="-e2"
+                     defaultValue="another.enum.option"
                      id="enumerated.option">
                </optionReference>
                <optionReference
@@ -208,7 +208,7 @@
             defaultExtension="bus"
             isAbstract="false"
             binaryParser="org.eclipse.cdt.core.PE"
-            makeFlags="-d"
+            makeArguments="-d"
             parent="test.root"
             osList="win32,linux,solaris">
          <configuration
@@ -294,6 +294,7 @@
          </toolReference>
       </target>
       <dynamicElementProvider
+            name="Test Target Provider"
             class="org.eclipse.cdt.managedbuild.core.tests.TestManagedConfigProvider">
       </dynamicElementProvider>
       <target
@@ -364,6 +365,8 @@
                id="error.parsers.tool">
          </tool>
       </target>
+      <!-- The old tool definitions exercised the model differently, so keep an example around for testing -->
+
    </extension>
 
 </plugin>

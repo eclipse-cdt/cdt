@@ -38,6 +38,8 @@ public interface IConfiguration extends IBuildObject {
 	 */
 	public IConfiguration getParent();
 	
+	public ITool getToolById(String id);
+	
 	/**
 	 * Returns the tools that are used in this configuration.
 	 * 

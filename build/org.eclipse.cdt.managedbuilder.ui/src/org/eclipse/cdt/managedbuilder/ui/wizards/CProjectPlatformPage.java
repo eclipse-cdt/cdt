@@ -21,16 +21,21 @@ import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -38,7 +43,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 
 public class CProjectPlatformPage extends WizardPage {
 	/*
@@ -55,12 +59,14 @@ public class CProjectPlatformPage extends WizardPage {
 	 */
 	protected Combo platformSelection;
 	protected CheckboxTableViewer tableViewer;
+	protected Button showAll;
 	private static final String PREFIX = "PlatformBlock"; //$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
 	private static final String TIP = PREFIX + ".tip"; //$NON-NLS-1$
-	private static final String PLATFORM_TIP = TIP + ".platform"; //$NON-NLS-1$
-	private static final String PLATFORM_LABEL = LABEL + ".platform"; //$NON-NLS-1$
+	private static final String TARGET_TIP = TIP + ".platform"; //$NON-NLS-1$
+	private static final String TARGET_LABEL = LABEL + ".platform"; //$NON-NLS-1$
 	private static final String CONFIG_LABEL = LABEL + ".configs"; //$NON-NLS-1$
+	private static final String SHOWALL_LABEL = LABEL + ".showall"; //$NON-NLS-1$
 
 	/**
 	 * Constructor.
@@ -70,7 +76,6 @@ public class CProjectPlatformPage extends WizardPage {
 	public CProjectPlatformPage(String pageName, NewManagedProjectWizard parentWizard) {
 		super(pageName);
 		setPageComplete(false);
-		populateTargets();
 		selectedTarget = null;
 		selectedConfigurations = new ArrayList(0);
 		this.parentWizard = parentWizard;
@@ -83,36 +88,21 @@ public class CProjectPlatformPage extends WizardPage {
 		return validatePage();
 	}
 
-	/**
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createControl(Composite parent) {
-		// Create the composite control for the tab
-		Composite composite = ControlFactory.createComposite(parent, 6);
-
-		// Create the platform selection label and combo widgets
-		Label platformLabel = ControlFactory.createLabel(composite, ManagedBuilderUIPlugin.getResourceString(PLATFORM_LABEL));
-		platformLabel.setLayoutData(new GridData());
-
-		platformSelection =	ControlFactory.createSelectCombo(composite, targetNames, null);
-//		platformSelection.setToolTipText(ManagedBuilderUIPlugin.getResourceString(PLATFORM_TIP));
-		platformSelection.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				handleTargetSelection();
-			}
-		});
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 5;
-		platformSelection.setLayoutData(gd);
+	private void createConfigSelectionGroup (Composite parent) {
+		// Create the group composite
+		Composite composite = new Composite(parent, SWT.NULL);
+		composite.setFont(parent.getFont());
+		composite.setLayout(new GridLayout());
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Create a check box table of valid configurations
-		Label configLabel = ControlFactory.createLabel(composite, ManagedBuilderUIPlugin.getResourceString(CONFIG_LABEL));
-		configLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		final Label configLabel = new Label(composite, SWT.LEFT);
+		configLabel.setFont(composite.getFont());
+		configLabel.setText(ManagedBuilderUIPlugin.getResourceString(CONFIG_LABEL));
+
 		Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.MULTI
 								| SWT.SINGLE | SWT.H_SCROLL	| SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 6;
-		table.setLayoutData(gd);
+		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(false);
 
@@ -131,12 +121,31 @@ public class CProjectPlatformPage extends WizardPage {
 				handleConfigurationSelectionChange();
 			}
 		});
-		
-		// Select the first target in the list
-		handleTargetSelection();
-		
+
+	}
+	
+	/**
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		// Create the composite control for the tab
+		Composite composite = new Composite(parent, SWT.NULL);
+		composite.setFont(parent.getFont());
+		composite.setLayout(new GridLayout());
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		// Setup the help information
 		WorkbenchHelp.setHelp(composite, ManagedBuilderHelpContextIds.MAN_PROJ_PLATFORM_HELP);
+
+		// Create the widgets
+		createTargetSelectGroup(composite);
+		createConfigSelectionGroup(composite);
+		createShowAllGroup(composite);
+
+		// Select the first target in the list
+		populateTargets();
+		platformSelection.select(0);
+		handleTargetSelection();
 		
 		// Do the nasty
 		setErrorMessage(null);
@@ -144,6 +153,65 @@ public class CProjectPlatformPage extends WizardPage {
 		setControl(composite);
 	}
 
+	private void createShowAllGroup(Composite parent) {
+		// Create the group composite
+		Composite composite = new Composite(parent, SWT.NULL);
+		composite.setFont(parent.getFont());
+		composite.setLayout(new GridLayout());
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		showAll = new Button(composite, SWT.CHECK | SWT.LEFT);
+		showAll.setFont(composite.getFont());
+		showAll.setText(ManagedBuilderUIPlugin.getResourceString(SHOWALL_LABEL));
+		showAll.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				populateTargets();
+				platformSelection.select(0);
+				handleTargetSelection();
+			}
+		});
+		showAll.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				showAll = null;
+			}
+		});
+	}
+	
+	private void createTargetSelectGroup(Composite parent) {
+		// Create the group composite
+		Composite composite = new Composite(parent, SWT.NULL);
+		composite.setFont(parent.getFont());
+		composite.setLayout(new GridLayout(2, false));
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		// Create the platform selection label and combo widgets
+		final Label platformLabel = new Label(composite, SWT.LEFT);
+		platformLabel.setFont(composite.getFont());
+		platformLabel.setText(ManagedBuilderUIPlugin.getResourceString(TARGET_LABEL));
+
+		platformSelection = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);	
+		platformSelection.setFont(composite.getFont());
+		platformSelection.setToolTipText(ManagedBuilderUIPlugin.getResourceString(TARGET_TIP));
+		platformSelection.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				handleTargetSelection();
+			}
+		});
+		platformSelection.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				platformSelection = null;
+			}
+		});
+		
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		// Make this the same as NewCProjectWizardPage.SIZING_TEXT_FIELD_WIDTH
+		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH + 50;
+		platformSelection.setLayoutData(gd);
+	}
+	
+	/**
+	 * @return
+	 */
 	public IConfiguration[] getSelectedConfigurations() {
 		return (IConfiguration[]) selectedConfigurations.toArray(new IConfiguration[selectedConfigurations.size()]);
 	}
@@ -198,6 +266,10 @@ public class CProjectPlatformPage extends WizardPage {
 		handleConfigurationSelectionChange();
 	}
 
+	/* (non-Javadoc)
+	 * Extracts the names from the targets that are valid for the wizard
+	 * session and populates the combo widget with them.
+	 */
 	private void populateTargetNames() {
 		targetNames = new String[targets.size()];
 		ListIterator iter = targets.listIterator();
@@ -205,8 +277,15 @@ public class CProjectPlatformPage extends WizardPage {
 		while (iter.hasNext()) {
 			targetNames[index++] = ((ITarget) iter.next()).getName();
 		}
+		
+		// Now setup the combo
+		platformSelection.removeAll();
+		platformSelection.setItems(targetNames);
 	}
 
+	/* (non-Javadoc)
+	 * Collects all the valid targets for the platform Eclipse is running on
+	 */
 	private void populateTargets() {
 		// Get a list of platforms defined by plugins
 		ITarget[] allTargets = ManagedBuildManager.getDefinedTargets(null);
@@ -216,9 +295,14 @@ public class CProjectPlatformPage extends WizardPage {
 		for (int index = 0; index < allTargets.length; ++index) {
 			ITarget target = allTargets[index];
 			if (!target.isAbstract() && !target.isTestTarget()) {
-				List targetOSList = Arrays.asList(target.getTargetOSList());
-				if (targetOSList.contains(os)) {
+				// If the check box is selected show all the targets
+				if (showAll != null && showAll.getSelection() == true) {
 					targets.add(target);
+				} else {
+					List targetOSList = Arrays.asList(target.getTargetOSList());
+					if (targetOSList.contains("all") || targetOSList.contains(os)) {	//$NON-NLS-1$
+						targets.add(target);
+					}
 				}
 			}
 		}
@@ -230,7 +314,7 @@ public class CProjectPlatformPage extends WizardPage {
 	 * @return
 	 */
 	private boolean validatePage() {
-		// TODO Auto-generated method stub
+		// TODO some validation ... maybe
 		return true;
 	}
 

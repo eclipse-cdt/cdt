@@ -75,6 +75,7 @@ public class FileListControl {
 			super.createButtonsForButtonBar(parent);
 			if (type != IOption.BROWSE_NONE) {
 				final Button browse = createButton(parent, 3, ManagedBuilderUIPlugin.getResourceString(BROWSE), true);
+				getOkButton().setFocus();
 				browse.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent ev) {
 						String currentName;
@@ -89,6 +90,8 @@ public class FileListControl {
 								result = dialog.open();
 								if(result != null) {
 									getText().setText(result);
+									// Give the OK button focus
+									getOkButton().setFocus();
 								}
 								break;
 							case IOption.BROWSE_FILE:
@@ -100,6 +103,8 @@ public class FileListControl {
 								result = browseDialog.open();
 								if (result != null) {
 									getText().setText(result);
+									// Give the OK button focus
+									getOkButton().setFocus();
 								}
 								break;
 						}

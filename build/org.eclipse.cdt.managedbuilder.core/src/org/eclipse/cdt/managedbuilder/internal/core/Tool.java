@@ -91,7 +91,10 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		return getInputExtensions().contains(extension);
 	}
 
-	void addChildCategory(IOptionCategory category) {
+	/**
+	 * @param category
+	 */
+	public void addChildCategory(IOptionCategory category) {
 		if (childOptionCategories == null)
 			childOptionCategories = new ArrayList();
 		childOptionCategories.add(category);
@@ -145,19 +148,6 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			interfaceExtensions = new ArrayList();
 		}
 		return interfaceExtensions;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#createChildCategory()
-	 */
-	public IOptionCategory createChildCategory() {
-		IOptionCategory category = new OptionCategory(this);
-		
-		if (childOptionCategories == null)
-			childOptionCategories = new ArrayList();
-		childOptionCategories.add(category);
-		
-		return category;
 	}
 
 	/* (non-Javadoc)
@@ -310,9 +300,16 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOption(java.lang.String)
 	 */
 	public IOption getOption(String id) {
+		return getOptionById(id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
+	 */
+	public IOption getOptionById(String id) {
 		return (IOption)optionMap.get(id);
 	}
 

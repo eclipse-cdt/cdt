@@ -844,11 +844,15 @@ public class ManagedBuildCoreTests extends TestCase {
 		// Next option is an enumerated
 		assertEquals("Enumerated Option in Category", options[4].getName());
 		assertEquals(IOption.ENUMERATED, options[4].getValueType());
-		assertEquals("Default Enum", options[4].getSelectedEnum());
+		// Post-2.0 enums store the ID, not the string value 
+		assertEquals("default.enum.option", options[4].getSelectedEnum());
+		assertEquals("-e1", options[4].getEnumCommand("default.enum.option"));
+		// Need this methof to populate the UI selection widget
 		valueList = options[4].getApplicableValues();
 		assertEquals(2, valueList.length);
 		assertEquals("Default Enum", valueList[0]);
 		assertEquals("Another Enum", valueList[1]);
+		// Test compatability with 1.2 scheme of getting the command from the name
 		assertEquals("-e1", options[4].getEnumCommand(valueList[0]));
 		assertEquals("-e2", options[4].getEnumCommand(valueList[1]));
 		// Final option is another boolean
@@ -986,13 +990,13 @@ public class ManagedBuildCoreTests extends TestCase {
 		assertTrue(options[2] instanceof OptionReference);
 		assertEquals("Enumerated Option in Category", options[2].getName());
 		assertEquals(IOption.ENUMERATED, options[2].getValueType());
-		assertEquals("-e2", options[2].getSelectedEnum());
+		assertEquals("another.enum.option", options[2].getSelectedEnum());
 		assertTrue(options[3] instanceof OptionReference);
 		assertEquals("Boolean Option in Category", options[3].getName());
 		assertEquals(IOption.BOOLEAN, options[3].getValueType());
 		assertEquals(true, options[3].getBooleanValue());
 		tool = tools[0];
-		assertEquals("-Ld -Le -Lf -b overridden -stralsooverridden", tool.getToolFlags());
+		assertEquals("-Ld -Le -Lf -b overridden -stralsooverridden -e2", tool.getToolFlags());
 	}
 
 	/*
@@ -1186,7 +1190,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		assertNotNull(parentTool);
 
 		// check option categories
-		IOption option = parentTool.getOption("test.forward.option");
+		IOption option = parentTool.getOptionById("test.forward.option");
 		assertNotNull(option);
 		IOptionCategory[] firstLevel = parentTool.getTopOptionCategory()
 			.getChildCategories();
@@ -1206,7 +1210,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		
 		// get and check the option reference
 		OptionReference optRef = (OptionReference)
-			childToolRef.getOption("test.forward.option");
+			childToolRef.getOptionById("test.forward.option");
 		assertEquals(option, optRef.getOption());
 		
 		// get the tool reference from the grandchild

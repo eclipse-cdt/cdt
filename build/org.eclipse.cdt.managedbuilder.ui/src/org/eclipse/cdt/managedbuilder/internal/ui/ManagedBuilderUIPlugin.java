@@ -11,22 +11,25 @@ package org.eclipse.cdt.managedbuilder.internal.ui;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
-import java.text.MessageFormat;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
-public class ManagedBuilderUIPlugin extends Plugin {
+public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static ManagedBuilderUIPlugin plugin;
 	//Resource bundle.
@@ -43,6 +46,21 @@ public class ManagedBuilderUIPlugin extends Plugin {
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
+	}
+
+	public static Shell getActiveWorkbenchShell() {
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getShell();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the active workbench window or <code>null</code> if none
+	 */
+	public static IWorkbenchWindow getActiveWorkbenchWindow() {
+		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	/**
@@ -62,6 +80,20 @@ public class ManagedBuilderUIPlugin extends Plugin {
 		}
 	}
 
+	/**
+	 * Answers the <code>Shell</code> associated with the active workbench, or 
+	 * one of the windows associated with the workbench.
+	 * @return
+	 */
+	public Shell getShell() {
+		if (getActiveWorkbenchShell() != null) {
+			return getActiveWorkbenchShell();
+		} else {
+			IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
+			return windows[0].getShell();
+		}
+	}
+	
 	public static String getFormattedString(String key, String arg) {
 		return MessageFormat.format(getResourceString(key), new String[] { arg });
 	}
@@ -115,6 +147,54 @@ public class ManagedBuilderUIPlugin extends Plugin {
 			status = new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), -1, "Internal Error: ", t); //$NON-NLS-1$	
 		}
 		ErrorDialog.openError(shell, title, message, status);
+	}
+
+	/**
+	 * Convenience method to log an exception without displaying a 
+	 * message dialog
+	 * @param e
+	 */
+	public static void logException(Throwable e) {
+		logException(e, null, null);
+	}
+
+	/**
+	 * @param exception
+	 * @param string
+	 * @param string2
+	 */
+	public static void logException(Throwable exception, final String title, String message) {
+		if (exception instanceof InvocationTargetException) {
+			exception = ((InvocationTargetException) exception).getTargetException();
+		}
+		IStatus status = null;
+		if (exception instanceof CoreException)
+			status = ((CoreException) exception).getStatus();
+		else {
+			if (message == null)
+				message = exception.getMessage();
+			if (message == null)
+				message = exception.toString();
+			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, message, exception);
+		}
+		ResourcesPlugin.getPlugin().getLog().log(status);
+		Display display;
+		display = Display.getCurrent();
+		if (display == null)
+			display = Display.getDefault();
+		final IStatus fstatus = status;
+		display.asyncExec(new Runnable() {
+			public void run() {
+				ErrorDialog.openError(null, title, null, fstatus);
+			}
+		});
+	}
+
+	/**
+	 * @return
+	 */
+	public static IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
 	}
 
 }

@@ -61,12 +61,28 @@ public interface ITool extends IBuildObject {
 	public int getNatureFilter();
 
 	/**
-	 * Get a particular option.
-	 * 
+	 * This is a deprecated method for retrieving an <code>IOption</code> from 
+	 * the receiver based on an ID. It is preferred that you use the newer method
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
+	 *  
 	 * @param id unique identifier of the option to search for
-	 * @return IOption
+	 * @return <code>IOption</code>
 	 */
 	public IOption getOption(String id);
+
+	/**
+	 * Get the <code>IOption</code> in the receiver with the specified 
+	 * ID. This is an efficient search in the receiver.
+	 * 
+	 * <p>If the receiver does not have an option with that ID, the method 
+	 * returns <code>null</code>. It is the responsibility of the caller to 
+	 * verify the return value.  
+	 * 
+	 * @param id unique identifier of the option to search for
+	 * @return <code>IOption</code>
+	 * @since 2.0
+	 */
+	public IOption getOptionById(String id);
 	
 	/**
 	 * Answers the options that may be customized for this tool.

@@ -201,6 +201,13 @@ public interface IManagedBuildInfo {
 	 */
 	public String[] getUserObjectsForTarget(String extension);
 
+	
+	/**
+	 * Answers the version of the build information in the format 
+	 * @return
+	 */
+	public String getVersion();
+
 	/**
 	 * Answers true if the build model has been changed by the user.
 	 * 
@@ -217,6 +224,8 @@ public interface IManagedBuildInfo {
 	 */
 	public boolean isHeaderFile(String ext);
 
+	public void removeTarget(String id);
+	
 	/**
 	 * Set the dirty flag for the build model to the value of the argument.
 	 * 

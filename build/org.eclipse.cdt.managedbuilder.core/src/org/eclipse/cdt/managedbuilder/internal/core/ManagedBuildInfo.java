@@ -20,6 +20,11 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IIncludeEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -54,7 +59,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private IResource owner;
 	private Map targetMap;
 	private List targetList;
-	private String version;	//$NON-NLS-1$
+	private String version;	
 	
 	/**
 	 * Create a new managed build information for the IResource specified in the argument
@@ -171,6 +176,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 		return name;
 	}
+
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getCleanCommand()
@@ -338,7 +345,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 		return symbols; 
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getFlagsForSource(java.lang.String)
 	 */
@@ -463,7 +470,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				if (option.getValueType() == IOption.INCLUDE_PATH) {
 					try {
 						// Get all the built-in paths from the option
-						paths.addAll(Arrays.asList(option.getBuiltIns()));
+						paths.addAll(getCompilerPaths(option));
 						// Get all the user-defined paths from the option as absolute paths
 						String[] userPaths = option.getIncludePaths();
 						for (int index = 0; index < userPaths.length; ++index) {
@@ -484,6 +491,39 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 		paths.trimToSize();
 		return (String[])paths.toArray(new String[paths.size()]); 
+	}
+
+	/**
+	 * @param owner2
+	 * @return
+	 */
+	private List getCompilerPaths(IOption option) {
+		// Extract the resolved paths from the project (if any)
+		ArrayList paths = new ArrayList();
+		ICProject project = CoreModel.getDefault().create(owner.getProject()); 
+		if (project != null) {
+			try {
+				IPathEntry[] entries = project.getResolvedPathEntries();
+				for (int index = entries.length - 1; index >=0; --index) {
+					int kind = entries[index].getEntryKind();
+					if (kind == IPathEntry.CDT_INCLUDE) {
+						IIncludeEntry include = (IIncludeEntry) entries[index];
+						if (include.isSystemInclude()) {
+							IPath entryPath = include.getPath();
+							paths.add(entryPath.toString());
+						}						
+					}
+				}
+			} catch (CModelException e) {
+				// See if there are any built-ins from the tool definition
+				return Arrays.asList(option.getBuiltIns());
+			}
+		}
+//		if (paths.size() == 0) {
+			return Arrays.asList(option.getBuiltIns());
+//		} else {
+//			return paths;
+//		}
 	}
 
 	/* (non-Javadoc)
@@ -830,8 +870,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return (String[])objs.toArray(new String[objs.size()]);
 	}
 
-	/**
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getVersion()
 	 */
 	public String getVersion() {
 		return version;
@@ -935,6 +975,16 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#removeTarget(java.lang.String)
+	 */
+	public void removeTarget(String id) {
+		getTargets().remove(getTarget(id));
+		getTargetMap().remove(id);
+		setDirty(true);
+		
+	}
+	
 	/**
 	 * Write the contents of the build model to the persistent store 
 	 * specified in the argument.

@@ -146,6 +146,9 @@ public class Target extends BuildObject implements ITarget {
 		// Get the make command
 		makeCommand = element.getAttribute(MAKE_COMMAND);
 
+		// Get the make arguments
+		makeArguments = element.getAttribute(MAKE_ARGS);
+		
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
@@ -213,7 +216,9 @@ public class Target extends BuildObject implements ITarget {
 		isTest = ("true".equals(element.getAttribute(IS_TEST))); //$NON-NLS-1$
 		
 		// Get the clean command
-		cleanCommand = element.getAttribute(CLEAN_COMMAND);
+		if (element.hasAttribute(CLEAN_COMMAND)) {
+			cleanCommand = element.getAttribute(CLEAN_COMMAND);
+		}
 		
 		// Get the semicolon separated list of IDs of the error parsers
 		if (element.hasAttribute(ERROR_PARSERS)) {
@@ -321,7 +326,7 @@ public class Target extends BuildObject implements ITarget {
 			element.setAttribute(EXTENSION, extension);
 		}
 		element.setAttribute(IS_TEST, isTest ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute(CLEAN_COMMAND, getCleanCommand());
+
 		if (makeCommand != null) {
 			element.setAttribute(MAKE_COMMAND, makeCommand);
 		}
@@ -426,7 +431,16 @@ public class Target extends BuildObject implements ITarget {
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
 	 */
 	public String getName() {
-		return (name == null && parent != null) ? parent.getName() : name;
+		// If I am unnamed, see if I can inherit one from my parent
+		if (name == null) {
+			if (parent != null) {
+				return parent.getName();
+			} else {
+				return new String(""); //$NON-NLS-1$
+			}
+		} else {
+			return name;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -445,8 +459,8 @@ public class Target extends BuildObject implements ITarget {
 			if (parent != null) {
 				return parent.getTargetOSList();
 			} else {
-				// I have no parent and no defined list but never return null
-				return new String[0];
+				// I have no parent and no defined filter list
+				return new String[] {"all"};
 			}
 		}
 		return (String[]) targetOSList.toArray(new String[targetOSList.size()]);
@@ -736,7 +750,7 @@ public class Target extends BuildObject implements ITarget {
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
-				String[] strArr = {""};
+				String[] strArr = {""};	//$NON-NLS-1$
 				errorParsers = (String[]) list.toArray(strArr);
 			}
 		} else {
@@ -894,4 +908,6 @@ public class Target extends BuildObject implements ITarget {
 			owner = resource;
 		}
 	}
+
+
 }

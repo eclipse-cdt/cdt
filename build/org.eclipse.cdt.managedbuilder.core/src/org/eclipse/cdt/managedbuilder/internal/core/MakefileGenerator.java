@@ -669,7 +669,11 @@ public class MakefileGenerator {
 
 		// Always add a clean target
 		buffer.append("clean:" + NEWLINE); //$NON-NLS-1$
-		buffer.append(TAB + "-$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + outputPrefix + target + NEWLINE + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append(TAB + "-$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + outputPrefix + target); //$NON-NLS-1$ //$NON-NLS-2$
+		if (extension.length() > 0) {
+			buffer.append(DOT + extension);
+		}
+		buffer.append(NEWLINE + NEWLINE); 
 		
 		buffer.append(".PHONY: all clean deps" + NEWLINE + NEWLINE); //$NON-NLS-1$
 		
@@ -765,6 +769,16 @@ public class MakefileGenerator {
 		}
 	}
 
+	
+	/* (non-Javadoc)
+	 * @param message
+	 */
+	protected void cancel(String message) {
+		if (monitor != null && !monitor.isCanceled()) {
+			throw new OperationCanceledException(message);
+		}
+	}
+
 	/**
 	 * Check whether the build has been cancelled. Cancellation requests 
 	 * propagated to the caller by throwing <code>OperationCanceledException</code>.
@@ -776,7 +790,6 @@ public class MakefileGenerator {
 			throw new OperationCanceledException();
 		}
 	}
-
 
 	/**
 	 * Clients call this method when an incremental rebuild is required. The argument
@@ -1076,7 +1089,11 @@ public class MakefileGenerator {
 		// Now populate the module makefiles
 		ListIterator iter = getSubdirList().listIterator();
 		while (iter.hasNext()) {
-			populateFragmentMakefile((IContainer)iter.next());
+			try {
+				populateFragmentMakefile((IContainer)iter.next());
+			} catch (CoreException e) {
+				
+			}
 			checkCancel();
 		}
 	}

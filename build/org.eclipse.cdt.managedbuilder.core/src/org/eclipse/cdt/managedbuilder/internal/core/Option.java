@@ -12,8 +12,11 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -35,8 +38,9 @@ public class Option extends BuildObject implements IOption {
 	private IOptionCategory category;
 	private String command;
 	private String commandFalse;
-	private String defaultEnumName;
+	private String defaultEnumId;
 	private Map enumCommands;
+	private Map enumNames;
 	private ITool tool;
 	private Object value;
 	private int valueType;
@@ -89,7 +93,6 @@ public class Option extends BuildObject implements IOption {
 			valueType = PREPROCESSOR_SYMBOLS;
 		
 		// Now get the actual value
-		enumCommands = new HashMap();
 		switch (valueType) {
 			case BOOLEAN:
 				// Convert the string to a boolean
@@ -103,13 +106,13 @@ public class Option extends BuildObject implements IOption {
 				List enumList = new ArrayList();
 				IManagedConfigElement[] enumElements = element.getChildren(ENUM_VALUE);
 				for (int i = 0; i < enumElements.length; ++i) {
-					String optName = enumElements[i].getAttribute(NAME);
-					String optCommand = enumElements[i].getAttribute(COMMAND); 
-					enumList.add(optName);
-					enumCommands.put(optName, optCommand);
+					String optId = enumElements[i].getAttribute(ID);
+					enumList.add(optId);
+					getEnumCommandMap().put(optId, enumElements[i].getAttribute(COMMAND));
+					getEnumNameMap().put(optId, enumElements[i].getAttribute(NAME));
 					Boolean isDefault = new Boolean(enumElements[i].getAttribute(IS_DEFAULT));
 					if (isDefault.booleanValue()) {
-						defaultEnumName = optName; 
+						defaultEnumId = optId; 
 					}
 				}
 				value = enumList;
@@ -165,10 +168,18 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getApplicableValues()
 	 */
 	public String[] getApplicableValues() {
-		List enumValues = (List)value;
-		return enumValues != null
-			? (String[])enumValues.toArray(new String[enumValues.size()])
-			: EMPTY_STRING_ARRAY;
+		// Get all of the enumerated names from the option
+		List ids = (List) value;
+		if (ids == null || ids.size() == 0) {
+			return EMPTY_STRING_ARRAY;
+		} else {
+			// Return the elements in the order they are specified in the manifest
+			String[] enumNames = new String[ids.size()];
+			for (int index = 0; index < ids.size(); ++ index) {
+				enumNames[index] = (String) getEnumNameMap().get(ids.get(index));
+			}
+			return enumNames;
+		}
 	}
 
 	public boolean getBooleanValue() {
@@ -233,11 +244,72 @@ public class Option extends BuildObject implements IOption {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumCommand(java.lang.String)
 	 */
-	public String getEnumCommand(String name) {
-		String cmd = (String) enumCommands.get(name); 
+	public String getEnumCommand(String id) {
+		// Sanity
+		if (id == null) return EMPTY_STRING;
+		
+		// First check for the command in ID->command map
+		String cmd = (String) getEnumCommandMap().get(id);
+		if (cmd == null) {
+			// This may be a 1.2 project or plugin manifest. If so, the argument is the human readable
+			// name of the enumeration. Search for the ID that maps to the name and use that to find the
+			// command.
+			List ids = (List) value;
+			ListIterator iter = ids.listIterator();
+			while (iter.hasNext()) {
+				String realID = (String) iter.next();
+				String name = (String) getEnumNameMap().get(realID);
+				if (id.equals(name)) {
+					cmd = (String) getEnumCommandMap().get(realID);
+					break;
+				}
+			}
+		}
 		return cmd == null ? EMPTY_STRING : cmd;
 	}
 
+	/* (non-Javadoc)
+	 * A memory-safe accessor to the map of enumerated option value IDs to the commands
+	 * that a tool understands.
+	 * 
+	 * @return a Map of enumerated option value IDs to actual commands that are passed 
+	 * to a tool on the command line.
+	 */
+	private Map getEnumCommandMap() {
+		if (enumCommands == null) {
+			enumCommands = new HashMap();
+		}
+		return enumCommands;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getEnumeratedId(java.lang.String)
+	 */
+	public String getEnumeratedId(String name) {
+		if (name == null) return null;
+		Set idSet = getEnumNameMap().keySet();
+		Iterator iter = idSet.iterator();
+		while (iter.hasNext()) {
+			String id = (String) iter.next();
+			String enumName = (String) getEnumNameMap().get(id);
+			if (name.equals(enumName)) {
+				return id;
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * 
+	 * @return a Map of enumerated option value IDs to the selection displayed to the user.
+	 */
+	private Map getEnumNameMap() {
+		if (enumNames == null) {
+			enumNames = new HashMap();
+		}
+		return enumNames;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getIncludePaths()
 	 */
@@ -277,7 +349,7 @@ public class Option extends BuildObject implements IOption {
 		if (valueType != ENUMERATED) {
 			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		return defaultEnumName == null ? EMPTY_STRING : defaultEnumName;
+		return defaultEnumId == null ? EMPTY_STRING : defaultEnumId;
 	}
 
 	/* (non-Javadoc)

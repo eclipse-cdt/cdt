@@ -129,6 +129,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 					ManagedBuildManager.setDefaultConfiguration(newProject, newConfigs[0]);
 				}
 				ManagedBuildManager.setSelectedTarget(newProject, newTarget);
+				ManagedBuildManager.setNewProjectVersion(newProject);
 			}
 		} catch (BuildException e) {
 			// TODO Flag the error to the user
@@ -141,7 +142,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
 			
 			desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-			// org.eclipse.cdt.core.ELF or "org.eclipse.cdt.core.PE"
+			// org.eclipse.cdt.core.ELF or org.eclipse.cdt.core.PE
 			desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, newTarget.getBinaryParserId());
 		} catch (CoreException e) {
 			// TODO Flag the error to the user

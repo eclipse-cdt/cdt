@@ -99,7 +99,7 @@
          <attribute name="outputPrefix" type="string">
             <annotation>
                <documentation>
-                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be lib&lt;target&gt;.a so &apos;lib&apos; would be the prefix.
+                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be lib&lt;target&gt;.a, so &apos;lib&apos; would be the prefix.
                </documentation>
             </annotation>
          </attribute>
@@ -327,7 +327,28 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="command" type="string">
             <annotation>
                <documentation>
-                  
+                  The overridden command for the tool the reference is for.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="outputs" type="string">
+            <annotation>
+               <documentation>
+                  A comma-separated list of extensions that this tool reference will create. This completely overrides the the output extension in the tool the reference is for.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="outputPrefix" type="string">
+            <annotation>
+               <documentation>
+                  The prefix that will be applied to the output of the tool. This completely overrides the output defined in the referenced tool.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="outputFlag" type="string">
+            <annotation>
+               <documentation>
+                  Overrides the output flag of the referenced tool.
                </documentation>
             </annotation>
          </attribute>
@@ -388,7 +409,7 @@ Additional special types exist to flag options of special relevance to the build
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string" use="required">
+         <attribute name="name" type="string">
             <annotation>
                <documentation>
                   A human-readable target name, such as &apos;Linux Executable&apos;. This will be the name the user sees displayed in the UI.
@@ -444,14 +465,14 @@ Additional special types exist to flag options of special relevance to the build
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="makeFlags" type="string">
+         <attribute name="makeArguments" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="binaryParser" type="string" use="required">
+         <attribute name="binaryParser" type="string">
             <annotation>
                <documentation>
                   Set this to the ID of the binary parser for the output format of your target. Currently there are only 2 choices: org.eclipse.cdt.core.ELF for *nix targets, and &quot;org.eclipse.cdt.core.PE&quot; for targets that build for Windows, like Cygwin.
@@ -461,7 +482,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="osList" type="string">
             <annotation>
                <documentation>
-                  This field is used by the managed build system to decide when to show the user the target. The value should be a comma-separated list. Current values are &quot;win32&quot;, &quot;linux&quot;, and &quot;solaris&quot;.
+                  This field is used by the managed build system to decide when to show the user the target. The value should be a comma-separated list. Current values are &quot;win32&quot;, &quot;linux&quot;, &quot;solaris&quot;, &quot;hpux&quot;, &quot;aix&quot; or &quot;any&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -545,6 +566,13 @@ Additional special types exist to flag options of special relevance to the build
                <appInfo>
                   <meta.attribute kind="java"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A meaningful name for the type of element being provided.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

@@ -216,19 +216,31 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @return
 	 */
 	private OptionReference createOptionReference(IOption option) {
+		// The option may already be a reference created to hold user settings
 		if (option instanceof OptionReference) {
+			// The option reference belongs to an existing tool reference
 			OptionReference optionRef = (OptionReference)option;
 			ToolReference toolRef = optionRef.getToolReference();
+			// That tool reference may belong to a target or to the configuration
 			if (toolRef.ownedByConfiguration(this))
 				return optionRef;
 			else {
+				// Make a copy so the settings can be saved
 				toolRef = new ToolReference(this, toolRef);
 				return toolRef.createOptionReference(option);
 			}
 		} else {
-			IToolReference toolRef = getToolReference(option.getTool());
-			if (toolRef == null)
+			// Find out if a tool reference already exists
+			ToolReference toolRef = (ToolReference) getToolReference(option.getTool());
+			if (toolRef == null) {
 				toolRef = new ToolReference(this, option.getTool());
+			} else {
+				// The reference may belong to the target
+				if (!toolRef.ownedByConfiguration(this)) {
+					toolRef = new ToolReference(this, toolRef);
+				}
+			}
+		
 			return toolRef.createOptionReference(option);
 		}
 	}
@@ -363,6 +375,31 @@ public class Configuration extends BuildObject implements IConfiguration {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolById(java.lang.String)
+	 */
+	public ITool getToolById(String id) {
+		ITool[] tools = parent != null
+		? parent.getTools()
+		: target.getTools();
+
+		// Replace tools with local overrides
+		for (int i = 0; i < tools.length; ++i) {
+			IToolReference ref = getToolReference(tools[i]);
+			if (ref != null)
+				tools[i] = ref;
+		}
+
+		// Search the result for the ID
+		for (int index = tools.length - 1; index >= 0; --index) {
+			if (tools[index].getId().equals(id)) {
+				return tools[index];
+			}
+		}
+
+		return null;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getTarget()
 	 */
 	public ITarget getTarget() {
@@ -384,18 +421,29 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @return ToolReference
 	 */
 	private IToolReference getToolReference(ITool tool) {
+		// Sanity
+		if (tool == null) return null;
+
 		// See if the receiver has a reference to the tool
-		ToolReference ref = null;
-		if (tool == null) return ref;
 		Iterator iter = getLocalToolReferences().listIterator();
 		while (iter.hasNext()) {
 			ToolReference temp = (ToolReference)iter.next(); 
 			if (temp.references(tool)) {
-				ref = temp;
-				break;
+				return temp;
 			}
 		}
-		return ref;
+		
+		// See if the target that the receiver belongs to has a reference to the tool
+		ITool[] targetTools = target.getTools();
+		for (int index = targetTools.length - 1; index >= 0; --index) {
+			ITool targetTool = targetTools[index];
+			if (targetTool instanceof ToolReference) {
+				if (((ToolReference)targetTool).references(tool)) {
+					return (ToolReference)targetTool;
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -447,7 +495,13 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setDirty(boolean)
 	 */
 	public void setDirty(boolean isDirty) {
+		// Override the dirty flag
 		this.isDirty = isDirty;
+		// And do the same for the tool references
+		Iterator iter = getLocalToolReferences().listIterator();
+		while (iter.hasNext()) {
+			((ToolReference)iter.next()).setDirty(isDirty);
+		}
 	}
 
 	/* (non-Javadoc)

@@ -216,14 +216,14 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.debug.core.model.IStackFrame#getRegisterGroups()
 	 */
 	public IRegisterGroup[] getRegisterGroups() throws DebugException {
-		return ((CDebugTarget)getDebugTarget()).getRegisterGroups();
+		return ((CDebugTarget)getDebugTarget()).getRegisterGroups( this );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasRegisterGroups()
 	 */
 	public boolean hasRegisterGroups() throws DebugException {
-		return ((CDebugTarget)getDebugTarget()).getRegisterGroups().length > 0;
+		return ((CDebugTarget)getDebugTarget()).getRegisterGroups( this ).length > 0;
 	}
 
 	/* (non-Javadoc)

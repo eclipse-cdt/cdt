@@ -11,10 +11,8 @@
 package org.eclipse.cdt.debug.core.model;
 
 /**
- * Enter type comment.
- * 
- * @since: Nov 13, 2002
+ * Represents a dummy stack frame used to indicate that the stack depth is greater 
+ * than the number of displayed frames.
  */
-public interface IDummyStackFrame
-{
+public interface IDummyStackFrame {
 }

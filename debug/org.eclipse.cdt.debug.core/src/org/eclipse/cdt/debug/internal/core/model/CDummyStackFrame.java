@@ -18,12 +18,10 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- * Enter type comment.
- * 
- * @since: Nov 13, 2002
+ * Implementation of the dummy stack frame.
  */
-public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDummyStackFrame
-{
+public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDummyStackFrame {
+
 	/**
 	 * Containing thread.
 	 */
@@ -31,198 +29,222 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 
 	/**
 	 * Constructor for CDummyStackFrame.
+	 * 
 	 * @param target
 	 */
-	public CDummyStackFrame( CThread thread )
-	{
+	public CDummyStackFrame( CThread thread ) {
 		super( (CDebugTarget)thread.getDebugTarget() );
 		setThread( thread );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getThread()
 	 */
-	public IThread getThread()
-	{
+	public IThread getThread() {
 		return fThread;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
-	public IVariable[] getVariables() throws DebugException
-	{
+	public IVariable[] getVariables() throws DebugException {
 		return new IVariable[0];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasVariables()
 	 */
-	public boolean hasVariables() throws DebugException
-	{
+	public boolean hasVariables() throws DebugException {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getLineNumber()
 	 */
-	public int getLineNumber() throws DebugException
-	{
+	public int getLineNumber() throws DebugException {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharStart()
 	 */
-	public int getCharStart() throws DebugException
-	{
+	public int getCharStart() throws DebugException {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharEnd()
 	 */
-	public int getCharEnd() throws DebugException
-	{
+	public int getCharEnd() throws DebugException {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getName()
 	 */
-	public String getName() throws DebugException
-	{
+	public String getName() throws DebugException {
 		return "..."; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getRegisterGroups()
 	 */
-	public IRegisterGroup[] getRegisterGroups() throws DebugException
-	{
-		return ((CDebugTarget)getDebugTarget()).getRegisterGroups();
+	public IRegisterGroup[] getRegisterGroups() throws DebugException {
+		return new IRegisterGroup[0];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasRegisterGroups()
 	 */
-	public boolean hasRegisterGroups() throws DebugException
-	{
-		return ((CDebugTarget)getDebugTarget()).getRegisterGroups().length > 0;
+	public boolean hasRegisterGroups() throws DebugException {
+		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
 	 */
-	public boolean canStepInto()
-	{
+	public boolean canStepInto() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#canStepOver()
 	 */
-	public boolean canStepOver()
-	{
+	public boolean canStepOver() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#canStepReturn()
 	 */
-	public boolean canStepReturn()
-	{
+	public boolean canStepReturn() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#isStepping()
 	 */
-	public boolean isStepping()
-	{
+	public boolean isStepping() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
-	public void stepInto() throws DebugException
-	{
+	public void stepInto() throws DebugException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
-	public void stepOver() throws DebugException
-	{
+	public void stepOver() throws DebugException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
-	public void stepReturn() throws DebugException
-	{
+	public void stepReturn() throws DebugException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
-	public boolean canResume()
-	{
+	public boolean canResume() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
-	public boolean canSuspend()
-	{
+	public boolean canSuspend() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
-	public boolean isSuspended()
-	{
+	public boolean isSuspended() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
-	public void resume() throws DebugException
-	{
+	public void resume() throws DebugException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
-	public void suspend() throws DebugException
-	{
+	public void suspend() throws DebugException {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
-	public boolean canTerminate()
-	{
+	public boolean canTerminate() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
-	public boolean isTerminated()
-	{
+	public boolean isTerminated() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
-	public void terminate() throws DebugException
-	{
+	public void terminate() throws DebugException {
 	}
 
 	/**
@@ -230,20 +252,20 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @param thread the containing thread
 	 */
-	protected void setThread( CThread thread )
-	{
+	protected void setThread( CThread thread ) {
 		fThread = thread;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
-	public Object getAdapter( Class adapter )
-	{
+	public Object getAdapter( Class adapter ) {
 		if ( adapter.equals( IDummyStackFrame.class ) )
 			return this;
 		if ( adapter.equals( IStackFrame.class ) )
 			return this;
-		return super.getAdapter(adapter);
+		return super.getAdapter( adapter );
 	}
 }

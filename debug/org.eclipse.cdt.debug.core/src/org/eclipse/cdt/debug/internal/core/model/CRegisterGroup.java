@@ -89,14 +89,6 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup {
 		return register;
 	}
 
-	public void resetChangeFlags() {
-		for ( int i = 0; i < fRegisters.length; ++i ) {
-			if ( fRegisters[i] != null ) {
-				((CRegister)fRegisters[i]).setChanged( false );
-			}
-		}
-	}
-
 	public void targetSuspended() {
 		for ( int i = 0; i < fRegisters.length; ++i ) {
 			if ( fRegisters[i] != null && ((CRegister)fRegisters[i]).hasErrors() ) {

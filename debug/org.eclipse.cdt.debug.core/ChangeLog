@@ -1,4 +1,14 @@
 2004-10-07 Mikhail Khodjaiants
+	Pass the current stack frame to the registers manager to provide the evaluation context.
+	* ICRegisterManager.java
+	* IDummyStackFrame.java
+	* CRegisterManager.java
+	* CDebugTarget.java
+	* CDummyStackFrame.java
+	* CRegisterGroup.java
+	* CStackFrame.java
+
+2004-10-07 Mikhail Khodjaiants
 	Provide a context for expression evaluation.
 	* ICValue.java
 	* AbstractCValue.java

@@ -1387,10 +1387,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		return getLaunch().getSourceLocator();
 	}
 
-	protected void resetRegisters() {
-		getRegisterManager().reset();
-	}
-
 	protected CMemoryManager getMemoryManager() {
 		return fMemoryManager;
 	}
@@ -1627,8 +1623,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		fRegisterManager = registerManager;
 	}
 
-	public IRegisterGroup[] getRegisterGroups() throws DebugException {
-		return getRegisterManager().getRegisterGroups();
+	public IRegisterGroup[] getRegisterGroups( CStackFrame frame ) throws DebugException {
+		return getRegisterManager().getRegisterGroups( frame );
 	}
 
 	protected void disposeSourceManager() {

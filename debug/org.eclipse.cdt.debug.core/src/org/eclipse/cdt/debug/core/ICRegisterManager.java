@@ -8,31 +8,19 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.core;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
 
 /**
- * Enter type comment.
- * 
- * @since Mar 31, 2003
+ * Provides the access to the register groups' management functions.
  */
-public interface ICRegisterManager extends ICUpdateManager, IAdaptable
-{
-	void initialize();
-	
-	IRegisterGroup[] getRegisterGroups() throws DebugException;
-	
+public interface ICRegisterManager extends ICUpdateManager, IAdaptable {
+
 	void addRegisterGroup( IRegisterGroup group );
-	
+
 	void removeRegisterGroup( IRegisterGroup group );
 
 	void removeAllRegisterGroups();
-
-	void reset();
-	
-	void dispose();
 }

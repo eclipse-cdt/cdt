@@ -13,8 +13,10 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
@@ -36,14 +38,34 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 	public void addBinding(IBinding binding) {
 		if( bindings == CharArrayObjectMap.EMPTY_MAP )
 			bindings = new CharArrayObjectMap(1);
-		bindings.put( binding.getNameCharArray(), binding );
+		char [] c = binding.getNameCharArray();
+		Object o = bindings.get( c );
+		if( o != null ){
+		    if( o instanceof List ){
+		        ((List)o).add( binding );
+		    } else {
+		        List list = new ArrayList(2);
+		        list.add( o );
+		        list.add( binding );
+		        bindings.put( c, list );
+		    }
+		} else {
+		    bindings.put( c, binding );
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
 	 */
-	public IBinding getBinding(int namespaceType, char[] name) {
-		return (IBinding) bindings.get( name );
+	public IBinding getBinding( IASTName name ) {
+	    char [] c = name.toCharArray();
+	    Object obj = bindings.get( c );
+	    if( obj != null ){
+	        if( obj instanceof List ){
+	            obj = CPPSemantics.resolveAmbiguities( name, (List) obj );
+	        }
+	    }
+		return (IBinding) obj;
 	}
 
 	/* (non-Javadoc)

@@ -49,6 +49,9 @@ public class CPPASTName extends CPPASTNode implements IASTName {
     protected void setBinding( IBinding binding ){
     	this.binding = binding;
     }
+    protected IBinding getBinding(){
+    	return binding;
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

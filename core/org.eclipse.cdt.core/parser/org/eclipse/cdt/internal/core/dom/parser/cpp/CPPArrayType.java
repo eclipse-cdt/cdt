@@ -8,21 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Nov 29, 2004
- */
-package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
+/*
+ * Created on Dec 13, 2004
+ */
+package org.eclipse.cdt.internal.core.dom.parser.cpp;
+
+import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * @author aniefer
  */
-public interface ICPPScope extends IScope {
-	public IASTNode getPhysicalNode();
-    public void addBinding( IBinding binding );
-    public IBinding getBinding( IASTName name );
+public class CPPArrayType implements IArrayType, ICPPTypeContainer {
+    private IType type = null;
+    
+    public CPPArrayType( IType type ){
+        this.type = type;
+    }
+    
+    public IType getType(){
+        return type;
+    }
 }

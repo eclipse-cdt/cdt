@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -45,7 +46,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
 	 */
-	public IBinding getBinding(int namespaceType, char[] name) {
+	public IBinding getBinding( IASTName name ) {
 		// TODO Auto-generated method stub
 		return null;
 	}

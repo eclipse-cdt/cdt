@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 /**
  * @author aniefer
  */
-public class CPPTypedef implements ITypedef {
+public class CPPTypedef implements ITypedef, ICPPTypeContainer {
 	private IASTDeclarator declarator = null;
 	/**
 	 * @param declarator

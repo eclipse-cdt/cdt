@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 /**
  * @author aniefer
  */
-public class CPPPointerType implements IPointerType {
+public class CPPPointerType implements IPointerType, ICPPTypeContainer {
 	private IASTPointer operator = null;
 	private IType type = null;
 	/**

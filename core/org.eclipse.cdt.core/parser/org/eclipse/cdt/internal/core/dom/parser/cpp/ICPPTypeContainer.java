@@ -8,21 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Nov 29, 2004
- */
-package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
+/*
+ * Created on Dec 13, 2004
+ */
+package org.eclipse.cdt.internal.core.dom.parser.cpp;
+
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * @author aniefer
  */
-public interface ICPPScope extends IScope {
-	public IASTNode getPhysicalNode();
-    public void addBinding( IBinding binding );
-    public IBinding getBinding( IASTName name );
+public interface ICPPTypeContainer extends IType{
+    IType getType();
 }

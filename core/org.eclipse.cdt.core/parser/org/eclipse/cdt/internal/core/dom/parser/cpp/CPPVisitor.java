@@ -14,6 +14,12 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -62,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -143,7 +150,7 @@ public class CPPVisitor {
 	    }
 	    
 		ICPPScope scope = (ICPPScope) getContainingScope( elabType );
-		CPPClassType binding = (CPPClassType) scope.getBinding( 0, elabType.getName().toCharArray() );
+		CPPClassType binding = (CPPClassType) scope.getBinding( elabType.getName() );
 		if( binding == null ){
 			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum )
 				binding = new CPPClassType( elabType );
@@ -155,12 +162,12 @@ public class CPPVisitor {
 	}
 	private static IBinding createBinding( ICPPASTCompositeTypeSpecifier compType ){
 		ICPPScope scope = (ICPPScope) getContainingScope( compType );
-		CPPClassType binding = (CPPClassType) scope.getBinding( 0, compType.getName().toCharArray() );
-		if( binding == null ){
+		IBinding binding = scope.getBinding( compType.getName() );
+		if( binding == null || !(binding instanceof ICPPClassType) ){
 			binding = new CPPClassType( compType );
 			scope.addBinding( binding );
 		} else {
-			binding.addDefinition( compType );
+			((CPPClassType)binding).addDefinition( compType );
 		}
 		return binding;
 	}
@@ -168,7 +175,7 @@ public class CPPVisitor {
 		if( declaration instanceof ICPPASTNamespaceDefinition ){
 			ICPPASTNamespaceDefinition namespaceDef = (ICPPASTNamespaceDefinition) declaration;
 			ICPPScope scope = (ICPPScope) getContainingScope( namespaceDef );
-			CPPNamespace binding = (CPPNamespace) scope.getBinding( 0, namespaceDef.getName().toCharArray() );
+			CPPNamespace binding = (CPPNamespace) scope.getBinding( namespaceDef.getName() );
 			if( binding == null )
 				binding = new CPPNamespace( namespaceDef );
 			else
@@ -182,10 +189,25 @@ public class CPPVisitor {
 		return null;
 	}
 	private static IBinding createBinding( IASTDeclarator declarator ){
-		IBinding binding = null;
+		
 		IASTNode parent = declarator.getParent();
+		ICPPScope scope = (ICPPScope) getContainingScope( parent );
+		IBinding binding = ( scope != null ) ? scope.getBinding( declarator.getName() ) : null;
+
 		if( declarator instanceof ICPPASTFunctionDeclarator ){
-			IScope scope = getContainingScope( parent );
+			if( binding != null && binding instanceof IFunction ){
+			    IFunction function = (IFunction) binding;
+			    IFunctionType ftype = function.getType();
+			    IType type = createType( (ICPPASTFunctionDeclarator) declarator );
+			    if( ftype.equals( type ) ){
+			        if( parent instanceof IASTSimpleDeclaration )
+			            ((CPPFunction)function).addDeclaration( (ICPPASTFunctionDeclarator) declarator );
+			        else 
+			            ((CPPFunction)function).addDefinition( (ICPPASTFunctionDeclarator) declarator );
+			        
+			        return function;
+			    }
+			} 
 			if( scope instanceof ICPPClassScope )
 				binding = new CPPMethod( (ICPPASTFunctionDeclarator) declarator );
 			else
@@ -201,11 +223,16 @@ public class CPPVisitor {
 					binding = new CPPVariable( declarator );
 				}
 			} else if( parent instanceof IASTParameterDeclaration ){
-				binding = new CPPParameter( declarator );
+				IASTParameterDeclaration param = (IASTParameterDeclaration) parent;
+				IASTFunctionDeclarator fDtor = (IASTFunctionDeclarator) param.getParent();
+				IFunction function = (IFunction) fDtor.getName().resolveBinding();
+				binding = ((CPPFunction) function).resolveParameter( param );
 			} else if( parent instanceof IASTFunctionDefinition ){
 				
 			}
 		}
+		if( scope != null )
+		    scope.addBinding( binding );
 		return binding;
 	}
 
@@ -745,11 +772,65 @@ public class CPPVisitor {
 		return true;
 	}
 
+	public static IFunctionType createType( ICPPASTFunctionDeclarator fnDtor ){
+	    List pTypes = Collections.EMPTY_LIST;
+	    IASTParameterDeclaration [] params = fnDtor.getParameters();
+	    IType pt = null;
+	    
+	    for( int i = 0; i < params.length; i++ ){
+	        IASTDeclSpecifier pDeclSpec = params[i].getDeclSpecifier();
+	        IASTDeclarator pDtor = params[i].getDeclarator();
+	        //8.3.5-3 
+	        //Any cv-qualifier modifying a parameter type is deleted.
+	        //so only create the base type from the declspec and not the qualifiers
+	        pt = getBaseType( pDeclSpec );
+	        
+	        pt = getPointerTypes( pt, pDtor );
+	        
+	        //any parameter of type array of T is adjusted to be pointer to T
+	        if( pDtor instanceof IASTArrayDeclarator ){
+	            IASTArrayModifier [] mods = ((IASTArrayDeclarator)pDtor).getArrayModifiers();
+	    	    for( int j = 0; j < mods.length - 1; j++ ){
+	    	        pt = new CPPArrayType( pt );
+	    	    }
+	    	    if( mods.length > 0 ){
+	    	        pt = new CPPPointerType( pt );
+	    	    }
+	        }
+	        
+	        //any parameter to type function returning T is adjusted to be pointer to function
+	        if( pt instanceof IFunctionType ){
+	            pt = new CPPPointerType( pt );
+	        }
+	        
+	        if( pTypes == Collections.EMPTY_LIST ){
+	            pTypes = new ArrayList();
+	        }
+	        pTypes.add( pt );
+	    }
+	    
+	    IASTNode node = fnDtor.getParent();
+	    IASTDeclSpecifier declSpec = null;
+	    if( node instanceof IASTSimpleDeclaration )
+	        declSpec = ((IASTSimpleDeclaration)node).getDeclSpecifier();
+	    else if ( node instanceof IASTFunctionDefinition )
+	    	declSpec = ((IASTFunctionDefinition)node).getDeclSpecifier();
+	    
+	    IType returnType = createType( declSpec );
+	    returnType = getPointerTypes( returnType, fnDtor );
+	    
+	    IType [] array = new IType [ pTypes.size() ];
+	    return new CPPFunctionType( returnType, (IType[]) pTypes.toArray( array ) );
+	}
+	
 	/**
 	 * @param declarator
 	 * @return
 	 */
 	public static IType createType(IASTDeclarator declarator) {
+	    if( declarator instanceof ICPPASTFunctionDeclarator )
+	        return createType( (ICPPASTFunctionDeclarator)declarator );
+	    
 		IASTNode parent = declarator.getParent();
 		IASTDeclSpecifier declSpec = null;
 		if( parent instanceof IASTParameterDeclaration )
@@ -759,26 +840,50 @@ public class CPPVisitor {
 		
 		IType type = createType( declSpec );
 		
-		IASTPointerOperator [] ptrOps = declarator.getPointerOperators();
+		type = getPointerTypes( type, declarator );
+		if( declarator instanceof IASTArrayDeclarator )
+		    type = getArrayTypes( type, (IASTArrayDeclarator) declarator );
+		return type;
+	}
+
+	private static IType getPointerTypes( IType type, IASTDeclarator declarator ){
+	    IASTPointerOperator [] ptrOps = declarator.getPointerOperators();
 		for( int i = ptrOps.length - 1; i >= 0; i-- ){
 			type = new CPPPointerType( type, (IASTPointer) ptrOps[i] );
 		}
 		return type;
 	}
-
+	private static IType getArrayTypes( IType type, IASTArrayDeclarator declarator ){
+	    IASTArrayModifier [] mods = declarator.getArrayModifiers();
+	    for( int i = 0; i < mods.length; i++ ){
+	        type = new CPPArrayType( type );
+	    }
+	    return type;
+	}
+	
 	/**
 	 * @param declSpec
 	 * @return
 	 */
-	protected static IType createType(IASTDeclSpecifier declSpec) {
-		if( declSpec instanceof ICPPASTCompositeTypeSpecifier ){
+	protected static IType createType(IASTDeclSpecifier declSpec ) {
+	    IType type = getBaseType( declSpec );
+		
+		if( type != null && ( declSpec.isConst() || declSpec.isVolatile() ) ){
+		    type = new CPPQualifierType( type, declSpec.isConst(), declSpec.isVolatile() );
+		}
+		return type;
+	}
+
+	private static IType getBaseType( IASTDeclSpecifier declSpec ){
+	    IType type = null;
+	    if( declSpec instanceof ICPPASTCompositeTypeSpecifier ){
 			IBinding binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
 			if( binding instanceof IType) 
-				return (IType) binding;
+				type = (IType) binding;
 		} else if( declSpec instanceof ICPPASTElaboratedTypeSpecifier ){
 			IBinding binding = ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding();
 			if( binding instanceof IType )
-				return (IType) binding;
+				type = (IType) binding;
 		} else if( declSpec instanceof ICPPASTSimpleDeclSpecifier ){
 			ICPPASTSimpleDeclSpecifier spec = (ICPPASTSimpleDeclSpecifier) declSpec;
 			int bits = ( spec.isLong()     ? CPPBasicType.IS_LONG  : 0 ) &
@@ -788,14 +893,13 @@ public class CPPVisitor {
 			if( spec instanceof IGPPASTSimpleDeclSpecifier ){
 				IGPPASTSimpleDeclSpecifier gspec = (IGPPASTSimpleDeclSpecifier) spec;
 				bits &= ( gspec.isLongLong() ? GPPBasicType.IS_LONGLONG : 0 );
-				return new GPPBasicType( spec.getType(), bits, getExpressionType(gspec.getTypeofExpression()) );
+				type = new GPPBasicType( spec.getType(), bits, getExpressionType(gspec.getTypeofExpression()) );
+			} else {
+			    type = new CPPBasicType( spec.getType(), bits );
 			}
-			return new CPPBasicType( spec.getType(), bits );
-					
 		}
-		return null;
+		return type;
 	}
-
 	/**
 	 * @param expression
 	 * @return

@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -668,12 +669,69 @@ public class CPPSemantics {
 			IASTNode node =  name.getParent();
 			if( node instanceof ICPPASTQualifiedName )
 				node = node.getParent();
-			if( node instanceof IASTFunctionDeclarator ){
-				((CPPFunction)binding).addDefinition( (IASTFunctionDeclarator) node );
+			if( node instanceof ICPPASTFunctionDeclarator ){
+				((CPPFunction)binding).addDefinition( (ICPPASTFunctionDeclarator) node );
 			}
 		}
 	}
 
+	static protected IBinding resolveAmbiguities( IASTName name, List bindings ){
+	    if( bindings == null || bindings.size() == 0 )
+	        return null;
+	    else if( bindings.size() == 1 )
+	        return (IBinding) bindings.get( 0 );
+	    
+	    LookupData data = createLookupData( name );
+	    
+	    IBinding type = null;
+	    IBinding obj  = null;
+	    List fns = null;
+	    for( int i = 0; i < data.foundItems.size(); i++ ){
+	        IBinding b = (IBinding) bindings.get( i );
+	        
+	        if( b instanceof IFunction ){
+	        	if( fns == null )
+	        		fns = new ArrayList(2);
+	        	IASTName n = ((IASTFunctionDeclarator) ((IFunction)b).getPhysicalNode() ).getName();
+	        	fns.add( n );
+	        } else if( b instanceof IVariable ){
+	            if( obj == null ){
+	                obj = b;
+	            } else {
+	                //TODO
+	            }
+	        } else {
+	            if( type == null ){
+	                type = b;
+	            } else {
+	                //TODO
+	            }
+	        }
+	    }
+	    
+	    if( type != null ) {
+	    	if( obj == null && fns == null )
+	    		return type;
+	    	IScope typeScope = type.getScope();
+	    	if( obj != null && obj.getScope() != typeScope ){
+	    		return null;//ambiguous
+	    	} else if( fns != null ){
+	    		for( int i = 0; i < fns.size(); i++ ){
+	    			if( ((IBinding)fns.get(i)).getScope() != typeScope )
+	    				return null; //ambiguous
+	    		}
+	    	}
+	    }
+	    if( fns != null){
+	    	if( obj != null )
+	    		return null; //ambiguous
+	    	IASTName n = resolveFunction( data, fns ); 
+	    	return ( n != null ) ? n.resolveBinding() : null;
+	    }
+	    
+	    return obj;
+	}
+	
 	static private IASTName resolveAmbiguities( CPPSemantics.LookupData data, IASTName name ) {
 	    if( data.foundItems == null || data.foundItems.size() == 0 )
 	        return null;

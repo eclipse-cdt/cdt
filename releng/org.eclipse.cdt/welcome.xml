@@ -10,16 +10,16 @@ provided by Independent Software Vendors.
 This page will help familiarize you with the Eclipse C/C++ development tooling.
 To get started, read the sections below and click on the related links. </intro>
 
-	<item><b>The C/C++ Perspectives </b>
-To open the C/C++ Perspective: Window > Open Perspective > C/C++ Development. </item>
+	<item><b>The C/C++ perspectives </b>
+To open the C/C++ perspective: Click <b>Window > Open Perspective > C/C++ Development. </b></item>
 
-	<item><b>What's New </b> 
-This quick tutorial guides you through the basic steps to get started. 
-  <topic id="/org.eclipse.cdt.doc.user/toc.xml">What's new </topic> 
+	<item><b>What's new </b> 
+Learn about the new features in this version of the CDT. 
+  <topic href="/org.eclipse.cdt.doc.user/cdt_o_whatnew.htm">What's new </topic> 
 	</item>
 
 	<item><b>CDT Tutorial </b> 
 This quick tutorial guides you through the basic steps to get started. 
-  <topic id="/org.eclipse.cdt.doc.user/toc.xml">Tutorial </topic> 
+  <topic href="/org.eclipse.cdt.doc.user/cdt_o_tutorial.htm">Tutorial </topic> 
 	</item>
 </welcomePage>

@@ -6,12 +6,14 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -383,4 +385,20 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		return this.equals(otherElement);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICElement#accept(org.eclipse.cdt.core.model.ICElementVisitor)
+	 */
+	public void accept(ICElementVisitor visitor) throws CoreException {
+		// Visit me, return right away if the visitor doesn't want to visit my children
+		if (!visitor.visit(this))
+			return;
+
+		// If I am a Parent, visit my children
+		if (this instanceof IParent) {
+			ICElement [] children = ((IParent)this).getChildren();
+			for (int i = 0; i < children.length; ++i)
+				children[i].accept(visitor);
+		}
+	}
+
 }

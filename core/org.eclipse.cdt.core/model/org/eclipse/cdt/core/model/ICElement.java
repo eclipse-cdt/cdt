@@ -6,6 +6,7 @@ package org.eclipse.cdt.core.model;
  */
  
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 
@@ -313,4 +314,12 @@ public interface ICElement extends IAdaptable {
 	 *		exception occurs while accessing its corresponding resource
 	 */
 	boolean isStructureKnown() throws CModelException;
+	
+	/**
+	 * Accept a visitor and walk the ICElement tree with it.
+	 * 
+	 * @param visitor
+	 * @throws CModelException
+	 */
+	void accept(ICElementVisitor visitor) throws CoreException;
 }

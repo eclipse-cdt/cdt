@@ -82,7 +82,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private ISourceElementRequestor requestor;
 	
 	private ParserLanguage language;
-	protected IParserLogService log;
+	private IParserLogService log;
 	private IScannerExtension scannerExtension;
 	
 	private CharArrayObjectMap definitions = new CharArrayObjectMap(512);
@@ -207,13 +207,30 @@ public class Scanner2 implements IScanner, IScannerData {
 		pushContext(buffer);
 		bufferData[bufferStackPos] = data;
 		if( data instanceof InclusionData )
-			requestor.enterInclusion( ((InclusionData)data).inclusion ); 
+		{
+			requestor.enterInclusion( ((InclusionData)data).inclusion );
+			if( log.isTracing() )
+			{
+				StringBuffer b = new StringBuffer( "Entering inclusion "); //$NON-NLS-1$
+				b.append( ((InclusionData)data).reader.filename ); 
+				log.traceLog( b.toString() );
+			}
+
+		}
 	}
 	
 	private void popContext() {
 		bufferStack[bufferStackPos] = null;
 		if( bufferData[bufferStackPos] instanceof InclusionData )
+		{
+			if( log.isTracing() )
+			{
+				StringBuffer buffer = new StringBuffer( "Exiting inclusion "); //$NON-NLS-1$
+				buffer.append( ((InclusionData)bufferData[bufferStackPos]).reader.filename ); 
+				log.traceLog( buffer.toString() );
+			}
 			requestor.exitInclusion( ((InclusionData)bufferData[bufferStackPos]).inclusion );
+		}
 		bufferData[bufferStackPos] = null;
 		bufferLineNums[bufferStackPos] = 1;
 		--bufferStackPos;

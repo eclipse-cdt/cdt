@@ -100,4 +100,11 @@ public class CExpression extends CVariable implements IExpression {
 	public boolean canEnableDisable() {
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.CVariable#isBookkeepingEnabled()
+	 */
+	protected boolean isBookkeepingEnabled() {
+		return false;
+	}
 }

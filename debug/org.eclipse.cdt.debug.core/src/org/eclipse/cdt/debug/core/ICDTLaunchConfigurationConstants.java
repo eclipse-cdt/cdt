@@ -103,6 +103,11 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING = CDT_LAUNCH_ID + ".ENABLE_VARIABLE_BOOKKEEPING"; //$NON-NLS-1$
 		
 	/**
+	 * Launch configuration attribute key. The value is a boolean specifying whether to enable register bookkeeping.
+	 */
+	public static final String ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING = CDT_LAUNCH_ID + ".ENABLE_REGISTER_BOOKKEEPING"; //$NON-NLS-1$
+		
+	/**
 	 * Launch configuration attribute key. The value is a global variables' memento.
 	 */
 	public static final String ATTR_DEBUGGER_GLOBAL_VARIABLES = CDT_LAUNCH_ID + ".GLOBAL_VARIABLES"; //$NON-NLS-1$

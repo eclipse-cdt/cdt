@@ -1,3 +1,8 @@
+2004-10-08 Mikhail Khodjaiants
+	Added the launch configuration preference for the register bookkeeping.
+	* LaunchUIPluginResources.properties
+	* CDebuggerTab.java
+
 2004-08-23 Mikhail Khodjaiants
 	Changes in the "Debugger" tab of the launch configuration dialog.
 	Replaced the "Run in debugger/Attach to running process" radio button by 

@@ -1,4 +1,12 @@
 2004-10-08 Mikhail Khodjaiants
+	Added the launch configuration preference for the register bookkeeping.
+	* ICDTLaunchConfigurationConstants.java
+	* CExpression.java
+	* CRegister.java
+	* CRegisterGroup.java
+	* CVariable.java
+
+2004-10-08 Mikhail Khodjaiants
 	Added the bookkeeping of registers and register groups.
 	* ICVariable.java
 	* IEnableDisableTarget.java: new

@@ -61,7 +61,9 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup, IEn
 				catch( DebugException e ) {
 					fRegisters[i] = new CRegister( this, fRegisterObjects[i], e.getMessage() );
 				}
-				((CRegister)fRegisters[i]).setEnabled( isEnabled() );
+				if ( ((CRegister)fRegisters[i]).isEnabled() ) {
+					((CRegister)fRegisters[i]).setEnabled( isEnabled() );
+				}
 			}
 		}
 		return fRegisters;

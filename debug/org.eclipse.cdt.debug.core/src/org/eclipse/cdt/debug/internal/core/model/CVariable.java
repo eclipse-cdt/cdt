@@ -707,7 +707,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		fShadow = shadow;
 	}
 
-	private boolean isBookkeepingEnabled() {
+	protected boolean isBookkeepingEnabled() {
 		boolean result = false;
 		try {
 			result = getLaunch().getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, false );

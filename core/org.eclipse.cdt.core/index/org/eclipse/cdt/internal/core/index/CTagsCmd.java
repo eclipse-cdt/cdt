@@ -25,10 +25,11 @@ public class CTagsCmd {
 		BufferedReader stdout;
 
 		String[] args = {"ctags", "--excmd=pattern", "--format=2",
-							"--if0=yes", "--sort=no", "--extra=q",
-							"--fields=aiKlmnsz", "--line-directives=yes",
-							"--sort=no", "--kind-long", "--c-types=cdefgmnpstuvx",
-							"-f", "-", filename};
+				"--if0=yes", "--sort=no", "--extra=q",
+				"--fields=aiKlmnsz", "--line-directives=yes",
+				"--sort=no", "--kind-long",
+				"--c-types=cdefgmnpstuvx",
+				"-f", "-", filename};
 
 		//Process ctags = Runtime.getRuntime().exec(args);
 		Process ctags = ProcessFactory.getFactory().exec(args);

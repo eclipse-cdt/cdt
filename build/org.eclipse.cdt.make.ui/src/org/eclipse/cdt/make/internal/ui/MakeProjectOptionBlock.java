@@ -10,8 +10,8 @@ package org.eclipse.cdt.make.internal.ui;
 
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.ui.BuildPathInfoBlock;
-import org.eclipse.cdt.make.ui.SettingsBlock;
+import org.eclipse.cdt.make.ui.dialogs.BuildPathInfoBlock;
+import org.eclipse.cdt.make.ui.dialogs.SettingsBlock;
 import org.eclipse.cdt.ui.dialogs.BinaryParserBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;

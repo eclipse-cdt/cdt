@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -41,14 +42,15 @@ public class BuildTargetAction extends ActionDelegate implements IObjectActionDe
 					dialog.setTarget(new IMakeTarget[] { target });
 			} catch (CoreException e) {
 			}
-			dialog.open();
-			IMakeTarget target = dialog.getTarget();
-			if (target != null) {
-				try {
-					fContainer.setSessionProperty(
-						new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"),
-						target.getName());
-				} catch (CoreException e1) {
+			if (dialog.open() == Window.OK) {
+				IMakeTarget target = dialog.getTarget();
+				if (target != null) {
+					try {
+						fContainer.setSessionProperty(
+							new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"),
+							target.getName());
+					} catch (CoreException e1) {
+					}
 				}
 			}
 		}

@@ -7,6 +7,7 @@ package org.eclipse.cdt.make.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetListener;
@@ -27,12 +28,19 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 
 public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener, IResourceChangeListener {
+	private boolean bFlatten;
+
 	protected StructuredViewer viewer;
 
 	/**
 	 * Constructor for MakeContentProvider
 	 */
 	public MakeContentProvider() {
+		this(false);
+	}
+	
+	public MakeContentProvider(boolean flat) {
+		bFlatten = flat;
 	}
 
 	public Object[] getChildren(Object obj) {
@@ -72,6 +80,15 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	}
 
 	public Object[] getElements(Object obj) {
+		if ( bFlatten ) {
+			List list = new ArrayList();
+			Object[] children = getChildren(obj);
+			for( int i = 0; i < children.length; i++ ) {
+				list.add(children[i]);
+				list.addAll(Arrays.asList(getElements(children[i])));
+			}
+			return list.toArray();
+		}
 		return getChildren(obj);
 	}
 

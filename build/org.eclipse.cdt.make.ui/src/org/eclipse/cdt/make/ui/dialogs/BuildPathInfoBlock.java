@@ -9,7 +9,7 @@
  * IBM Rational Software - Initial API and implementation
  * QNX Software Systems - Move to Make plugin
 ***********************************************************************/
-package org.eclipse.cdt.make.ui;
+package org.eclipse.cdt.make.ui.dialogs;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;

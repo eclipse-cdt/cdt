@@ -8,12 +8,23 @@ package org.eclipse.cdt.make.ui;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class MakeLabelProvider extends LabelProvider {
+	private IPath pathPrefix;
+
 	WorkbenchLabelProvider fLableProvider = new WorkbenchLabelProvider();
+
+	public MakeLabelProvider() {
+		this(null);
+	}
+	
+	public MakeLabelProvider(IPath removePrefix) {
+		pathPrefix = removePrefix;
+	}
 	/**
 	 * @see ILabelProvider#getImage(Object)
 	 */
@@ -31,12 +42,32 @@ public class MakeLabelProvider extends LabelProvider {
 	 * @see ILabelProvider#getText(Object)
 	 */
 	public String getText(Object obj) {
+		StringBuffer str = new StringBuffer();
 		if (obj instanceof IMakeTarget) {
-			return ((IMakeTarget)obj).getName();
+			if ( pathPrefix != null) {
+				IPath targetPath = ((IMakeTarget)obj).getContainer().getProjectRelativePath();
+				if ( pathPrefix.isPrefixOf(targetPath) ) {
+					targetPath = targetPath.removeFirstSegments(pathPrefix.segmentCount());
+				}
+				str.append(targetPath.toString());
+				if (targetPath.segmentCount() > 0) {
+					str.append("/");
+				}
+			}
+			str.append(((IMakeTarget)obj).getName());
 		} else if (obj instanceof IContainer) {
-			return fLableProvider.getText(obj);			
+			if ( pathPrefix != null ) {
+				IPath targetPath = ((IContainer)obj).getProjectRelativePath();
+				if ( pathPrefix.isPrefixOf(targetPath) ) {
+					targetPath = targetPath.removeFirstSegments(pathPrefix.segmentCount());
+				}
+				str.append(targetPath.toString());
+				str.append("/");
+			} else {
+				return fLableProvider.getText(obj);
+			}			
 		}
-		return ""; //$NON-NLS-1$
+		return str.toString();
 	}
 	
 	public void dispose() {

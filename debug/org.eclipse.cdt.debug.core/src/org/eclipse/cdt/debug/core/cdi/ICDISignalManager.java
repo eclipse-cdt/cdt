@@ -11,11 +11,11 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
  * 
  * The signal manager manages the collection of signals defined 
  * for the debug session.
- * 
+ * Auto update is off by default.
  * @since Jul 9, 2002
  */
-public interface ICDISignalManager extends ICDISessionObject
-{
+public interface ICDISignalManager extends ICDIManager {
+
 	/**
 	 * Returns the array of signals defined for this session.
 	 * 
@@ -23,4 +23,5 @@ public interface ICDISignalManager extends ICDISessionObject
 	 * @throws CDIException on failure. Reasons include:
 	 */
 	ICDISignal[] getSignals() throws CDIException;
+
 }

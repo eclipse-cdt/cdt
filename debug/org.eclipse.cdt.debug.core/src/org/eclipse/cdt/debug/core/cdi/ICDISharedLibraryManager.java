@@ -10,11 +10,12 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 /**
  * 
  * Manages the collection of shared libraries in the debug session.
+ * Auto update is on by default.
  * 
  * @since: Jan 15, 2003
  */
-public interface ICDISharedLibraryManager extends ICDISessionObject
-{
+public interface ICDISharedLibraryManager extends ICDIManager {
+
 	/**
 	 * Returns the array of loaded shared libraries.
 	 * 

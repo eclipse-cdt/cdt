@@ -11,20 +11,10 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
  * 
  * The memory manager manages the collection of memory blocks 
  * specified for the debug session.
- * 
+ * Auto update is on by default.
  * @since Jul 9, 2002
  */
-public interface ICDIMemoryManager extends ICDISessionObject
-{
-	/**
-	 * Returns a memory block specified by given identifier.
-	 * 
-	 * @param address 
-	 * @param length - how much for address
-	 * @return a memory block with the specified identifier
-	 * @throws CDIException on failure. Reasons include:
-	 */
-	ICDIMemoryBlock createMemoryBlock(String address, int length) throws CDIException;
+public interface ICDIMemoryManager extends ICDIManager {
 
 	/**
 	 * Returns a memory block specified by given identifier.
@@ -34,7 +24,19 @@ public interface ICDIMemoryManager extends ICDISessionObject
 	 * @return a memory block with the specified identifier
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	ICDIMemoryBlock createMemoryBlock(long address, int length) throws CDIException;
+	ICDIMemoryBlock createMemoryBlock(String address, int length)
+		throws CDIException;
+
+	/**
+	 * Returns a memory block specified by given identifier.
+	 * 
+	 * @param address 
+	 * @param length - how much for address
+	 * @return a memory block with the specified identifier
+	 * @throws CDIException on failure. Reasons include:
+	 */
+	ICDIMemoryBlock createMemoryBlock(long address, int length)
+		throws CDIException;
 
 	/**
 	 * Removes the given memory block from the debug session.
@@ -43,15 +45,16 @@ public interface ICDIMemoryManager extends ICDISessionObject
 	 * @exception CDIException on failure. Reasons include:
 	 */
 	void removeBlock(ICDIMemoryBlock memoryBlock) throws CDIException;
-	
+
 	/**
 	 * Removes the given array of memory blocks from the debug session.
 	 * 
 	 * @param memoryBlock - the array of memory blocks to be removed
 	 * @exception CDIException on failure. Reasons include:
 	 */
-	void removeBlocks(ICDIMemoryBlock[] memoryBlocks) throws CDIException;;
-	
+	void removeBlocks(ICDIMemoryBlock[] memoryBlocks) throws CDIException;
+	;
+
 	/**
 	 * Removes all memory blocks from the debug session.
 	 * 
@@ -59,7 +62,6 @@ public interface ICDIMemoryManager extends ICDISessionObject
 	 */
 	void removeAllBlocks() throws CDIException;
 
-	
 	/**
 	 * Returns an array of all memory blocks set for this debug session.
 	 *
@@ -67,4 +69,5 @@ public interface ICDIMemoryManager extends ICDISessionObject
 	 * @throws CDIException on failure. Reasons include:
 	 */
 	ICDIMemoryBlock[] getMemoryBlocks() throws CDIException;
+
 }

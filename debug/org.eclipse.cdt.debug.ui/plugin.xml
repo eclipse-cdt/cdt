@@ -72,21 +72,33 @@
                relationship="stack"
                id="org.eclipse.cdt.debug.ui.RegistersView">
          </view>
+         <viewShortcut
+               id="org.eclipse.cdt.debug.ui.RegistersView">
+         </viewShortcut>
          <view
                relative="org.eclipse.debug.ui.VariableView"
                relationship="stack"
                id="org.eclipse.cdt.debug.ui.MemoryView">
          </view>
+         <viewShortcut
+               id="org.eclipse.cdt.debug.ui.MemoryView">
+         </viewShortcut>
          <view
                relative="org.eclipse.debug.ui.VariableView"
                relationship="stack"
                id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
          </view>
+         <viewShortcut
+               id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
+         </viewShortcut>
          <view
                relative="org.eclipse.debug.ui.VariableView"
                relationship="stack"
                id="org.eclipse.cdt.debug.ui.SignalsView">
          </view>
+         <viewShortcut
+               id="org.eclipse.cdt.debug.ui.SignalsView">
+         </viewShortcut>
          <actionSet
                id="org.eclipse.cdt.debug.ui.debugActionSet">
          </actionSet>

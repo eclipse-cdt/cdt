@@ -10,10 +10,11 @@ import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IDeclaration;
+import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
-import org.eclipse.cdt.core.model.IField;
+import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -206,6 +207,7 @@ public class CElementImageProvider {
 				return CPluginImages.DESC_OBJS_STRUCT;
 				
 			case ICElement.C_CLASS:
+			case ICElement.C_TEMPLATE_CLASS:
 				return CPluginImages.DESC_OBJS_CLASS;
 				
 			case ICElement.C_UNION:
@@ -236,6 +238,7 @@ public class CElementImageProvider {
 
 			case ICElement.C_METHOD:  
 			case ICElement.C_METHOD_DECLARATION:
+			case ICElement.C_TEMPLATE_METHOD:
 				IMethodDeclaration  md= (IMethodDeclaration)celement;
 				switch(md.getVisibility()){
 					case IMember.V_PUBLIC:
@@ -245,6 +248,7 @@ public class CElementImageProvider {
 					case IMember.V_PRIVATE:
 						return CPluginImages.DESC_OBJS_PRIVATE_METHOD;
 				}
+				
 			case ICElement.C_FUNCTION:
 				return CPluginImages.DESC_OBJS_FUNCTION;
 		
@@ -252,6 +256,7 @@ public class CElementImageProvider {
 				return CPluginImages.DESC_OBJS_VAR_DECLARARION;
 			
 			case ICElement.C_FUNCTION_DECLARATION:
+			case ICElement.C_TEMPLATE_FUNCTION:
 				return CPluginImages.DESC_OBJS_DECLARARION;
 
 			case ICElement.C_INCLUDE:
@@ -262,7 +267,7 @@ public class CElementImageProvider {
 				
 			case ICElement.C_NAMESPACE:
 				return CPluginImages.DESC_OBJS_CONTAINER;
-			
+										
 		}
 		return null;
 	}	
@@ -284,6 +289,9 @@ public class CElementImageProvider {
 			}
 			if(decl.isVolatile()){
 				flags |= CElementImageDescriptor.VOLATILE;
+			}
+			if(element instanceof ITemplate){
+				flags |= CElementImageDescriptor.TEMPLATE;
 			}
 		}
 		return flags;

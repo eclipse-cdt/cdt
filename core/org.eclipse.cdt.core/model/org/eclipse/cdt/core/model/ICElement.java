@@ -112,7 +112,7 @@ public interface ICElement extends IAdaptable {
 	/**
 	 * C++ template class.
 	 */
-	static final int C_TEMPLATE = 73;
+	static final int C_TEMPLATE_CLASS = 73;
 
 	/**
 	 * Global variable.
@@ -143,6 +143,16 @@ public interface ICElement extends IAdaptable {
 	 * Enumerator.
 	 */
 	static final int C_ENUMERATOR = 79;
+
+	/**
+	 * C++ template function.
+	 */
+	static final int C_TEMPLATE_FUNCTION = 80;
+
+	/**
+	 * C++ template method.
+	 */
+	static final int C_TEMPLATE_METHOD = 81;
 
 	/**
 	 * Modifier indicating a class constructor

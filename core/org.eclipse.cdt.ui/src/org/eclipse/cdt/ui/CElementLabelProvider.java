@@ -9,6 +9,7 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
+import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
@@ -108,6 +109,13 @@ public class CElementLabelProvider extends LabelProvider {
 						INamespace nDecl = (INamespace) celem;
 						name.append(nDecl.getTypeName());				
 					}
+				break;
+				case ICElement.C_TEMPLATE_CLASS:
+				case ICElement.C_TEMPLATE_FUNCTION:
+				case ICElement.C_TEMPLATE_METHOD:
+					ITemplate template = (ITemplate) celem;
+					String signature = template.getTemplateSignature();
+					name.append(signature);
 				break;
 				default:
 					name.append(celem.getElementName());

@@ -31,7 +31,7 @@ import org.eclipse.jface.util.Assert;
 public class CElementImageDescriptor extends CompositeImageDescriptor {
 	
 	/** Flag to render the abstract adornment */
-	public final static int ABSTRACT= 		0x001;
+	public final static int TEMPLATE= 		0x001;
 	
 	/** Flag to render the const adornment */
 	public final static int CONSTANT=		0x002;
@@ -177,6 +177,11 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 			x-= data.width;
 			drawImage(data, x, 0);
 		} 
+		if ((fFlags & TEMPLATE) != 0) {
+			data= CPluginImages.DESC_OVR_TEMPLATE.getImageData();
+			x-= data.width;
+			drawImage(data, x, 0);
+		}
 	}		
 	
 	private void drawBottomRight() {

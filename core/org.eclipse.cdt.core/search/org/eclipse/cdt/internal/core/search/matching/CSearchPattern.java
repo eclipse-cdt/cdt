@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
@@ -511,81 +512,21 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			
 			IASTFunction function = (IASTFunction) decl;
 			
-			Iterator parameters = function.getParameters();
-			char [] param = null;
-			while( parameters.hasNext() ){
-				param = getParamString( (IASTParameterDeclaration)parameters.next() );
-				list.add( param );
-			}
-			
-			if (param == null){
+			String [] paramTypes = ASTUtil.getFunctionParameterTypes(function);
+			if( paramTypes.length == 0 )
+			{
 				//This means that no params have been added (i.e. empty brackets - void case)
-				param = "void ".toCharArray(); //$NON-NLS-1$
-				list.add (param); 
+				list.add ("void".toCharArray() ); //$NON-NLS-1$ 
+			} else {
+				for( int i = 0; i < paramTypes.length; i++ ){
+					list.add( paramTypes[i].toCharArray() );
+				}
 			}
 		}
 		
 		return list;
 	}
 		
-	static public char [] getParamString( IASTParameterDeclaration param ){
-		if( param == null ) return null;
-		 
-		String signature = ""; //$NON-NLS-1$
-		
-		IASTTypeSpecifier typeSpec = param.getTypeSpecifier();
-		if( typeSpec instanceof IASTSimpleTypeSpecifier ){
-			IASTSimpleTypeSpecifier simple = (IASTSimpleTypeSpecifier)typeSpec;
-			signature += simple.getTypename();
-		} else if( typeSpec instanceof IASTElaboratedTypeSpecifier ){
-			IASTElaboratedTypeSpecifier elaborated = (IASTElaboratedTypeSpecifier)typeSpec;
-			if( elaborated.getClassKind() == ASTClassKind.CLASS ){
-				signature += "class "; //$NON-NLS-1$
-			} else if( elaborated.getClassKind() == ASTClassKind.ENUM ) {
-				signature += "enum "; //$NON-NLS-1$
-			} else if( elaborated.getClassKind() == ASTClassKind.STRUCT ) {
-				signature += "struct "; //$NON-NLS-1$
-			} else if( elaborated.getClassKind() == ASTClassKind.UNION ) {
-				signature += "union"; //$NON-NLS-1$
-			}
-
-			signature += elaborated.getName();
-		} else if( typeSpec instanceof IASTClassSpecifier ){
-			IASTClassSpecifier classSpec = (IASTClassSpecifier)typeSpec;
-			signature += classSpec.getName();
-		} else if( typeSpec instanceof IASTEnumerationSpecifier ){
-			IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier)typeSpec;
-			signature += enumSpec.getName();
-		}
-		
-		signature += " "; //$NON-NLS-1$
-		
-		if( param.isConst() ) signature += "const "; //$NON-NLS-1$
-		if( param.isVolatile() ) signature += "volatile "; //$NON-NLS-1$
-
-		Iterator ptrs = param.getPointerOperators();
-		while( ptrs.hasNext() ){
-			ASTPointerOperator ptrOp = (ASTPointerOperator) ptrs.next();
-			if( ptrOp == ASTPointerOperator.POINTER ){
-				signature += " * "; //$NON-NLS-1$
-			} else if( ptrOp == ASTPointerOperator.REFERENCE ){
-				signature += " & "; //$NON-NLS-1$
-			} else if( ptrOp == ASTPointerOperator.CONST_POINTER ){
-				signature += " const * "; //$NON-NLS-1$
-			} else if( ptrOp == ASTPointerOperator.VOLATILE_POINTER ){
-				signature += " volatile * "; //$NON-NLS-1$
-			}
-		}
-
-		Iterator arrayModifiers = param.getArrayModifiers();
-		while( arrayModifiers.hasNext() ){
-			arrayModifiers.next();
-			signature += " [] "; //$NON-NLS-1$
-		}
-
-		return signature.toCharArray();
-	}
-	
 	static private LinkedList scanForNames( IScanner scanner, IToken unusedToken ){
 		LinkedList list = new LinkedList();
 		

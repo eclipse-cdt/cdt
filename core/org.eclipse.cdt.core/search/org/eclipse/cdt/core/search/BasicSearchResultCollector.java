@@ -14,14 +14,13 @@
 package org.eclipse.cdt.core.search;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
@@ -33,14 +32,10 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
-import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
-import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.internal.core.parser.util.ASTUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -144,57 +139,15 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 			return ""; //$NON-NLS-1$
 		
 		String paramString = "("; //$NON-NLS-1$
-			
-		Iterator iter = function.getParameters();
 		
-		boolean first = true;
-		while( iter.hasNext() ){
-			IASTParameterDeclaration param = (IASTParameterDeclaration) iter.next();
-			
-			if( !first ) paramString += ", "; //$NON-NLS-1$
-			
-			IASTTypeSpecifier typeSpec = param.getTypeSpecifier();
-			if( param.isConst() )
-				paramString += "const "; //$NON-NLS-1$
-
-			if( typeSpec instanceof IASTSimpleTypeSpecifier ){
-				paramString += ((IASTSimpleTypeSpecifier)typeSpec).getTypename();
-			} else if( typeSpec instanceof IASTOffsetableNamedElement ){
-				paramString += ((IASTOffsetableNamedElement)typeSpec).getName();
-			} else if( typeSpec instanceof IASTElaboratedTypeSpecifier ){
-				ASTClassKind kind = ((IASTElaboratedTypeSpecifier)typeSpec).getClassKind();
-				if( kind == ASTClassKind.CLASS ){
-					paramString += "class "; //$NON-NLS-1$
-				} else if( kind == ASTClassKind.STRUCT ){
-					paramString += "struct "; //$NON-NLS-1$
-				} else if( kind == ASTClassKind.ENUM ){
-					paramString += "enum "; //$NON-NLS-1$
-				} else if( kind == ASTClassKind.UNION ){
-					paramString += "union "; //$NON-NLS-1$
-				}
-				paramString += ((IASTElaboratedTypeSpecifier)typeSpec).getName();
-			}
-				
-			Iterator ptrs = param.getPointerOperators();
-			if( ptrs.hasNext() ) paramString += " "; //$NON-NLS-1$
-			
-			while( ptrs.hasNext() ){
-				ASTPointerOperator ptr = (ASTPointerOperator)ptrs.next();
-				if( ptr == ASTPointerOperator.POINTER )
-					paramString += "*"; //$NON-NLS-1$
-				else if( ptr == ASTPointerOperator.REFERENCE )
-					paramString += "&"; //$NON-NLS-1$
-				else if( ptr == ASTPointerOperator.CONST_POINTER )
-					paramString += " const * "; //$NON-NLS-1$
-				else if( ptr == ASTPointerOperator.VOLATILE_POINTER )
-					paramString += " volatile * "; //$NON-NLS-1$
-					
-				ptr = ASTPointerOperator.POINTER;
-			}
-			
-			first = false;
+		String [] paramTypes = ASTUtil.getFunctionParameterTypes( function );
+		
+		for( int i = 0; i < paramTypes.length; i++ ){
+			if( i != 0 )
+				paramString += ", ";
+			paramString += paramTypes[i];
 		}
-		
+
 		paramString += ")"; //$NON-NLS-1$
 		return paramString;
 	}

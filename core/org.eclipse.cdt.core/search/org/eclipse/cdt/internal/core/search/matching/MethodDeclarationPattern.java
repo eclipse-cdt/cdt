@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
@@ -99,32 +100,29 @@ public class MethodDeclarationPattern extends CSearchPattern {
 		
 		//parameters
 		if( parameterNames != null && parameterNames.length > 0  &&	parameterNames[0].length > 0 ){
-
-			Iterator params = function.getParameters();
-				
-			if (!params.hasNext() && CharOperation.equals(parameterNames[0], "void ".toCharArray())){ //$NON-NLS-1$
-			//All empty lists have transformed to void, this function has no parms
+			String [] paramTypes = ASTUtil.getFunctionParameterTypes(function);
+			
+			if ( paramTypes.length == 0 && CharOperation.equals(parameterNames[0], "void".toCharArray())){ //$NON-NLS-1$
+				//All empty lists have transformed to void, this function has no parms
 				return ACCURATE_MATCH;
 			}
+			
+			if( parameterNames.length != paramTypes.length )
+				return IMPOSSIBLE_MATCH;
 			
 			for( int i = 0; i < parameterNames.length; i++ ){
 			
 				//if this function doesn't have this many parameters, it is not a match.
 				//or if this function has a parameter, but parameterNames only has null.
-				if( !params.hasNext() || parameterNames[ i ] == null )
+				if( parameterNames[ i ] == null )
 					return IMPOSSIBLE_MATCH;
 					
-				IASTParameterDeclaration parameter = (IASTParameterDeclaration) params.next();
-				char[] param = CSearchPattern.getParamString( parameter );
+				char[] param = paramTypes[ i ].toCharArray();
 				
 				//no wildcards in parameters strings
 				if( !CharOperation.equals( parameterNames[i], param, _caseSensitive ) )
 					return IMPOSSIBLE_MATCH;
 			}
-			
-			//if this function still has more parameters, it is not a match
-			if( params.hasNext() )
-				return IMPOSSIBLE_MATCH;
 		}
 		
 		return ACCURATE_MATCH;

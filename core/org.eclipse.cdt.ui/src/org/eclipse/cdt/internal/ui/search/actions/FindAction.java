@@ -34,8 +34,11 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
@@ -140,6 +143,34 @@ public abstract class FindAction extends Action {
 		
 	}
 
+	 protected CSearchQuery createSearchQuery( IASTOffsetableNamedElement node ){
+	 	String pattern = null;
+	 	
+	 	if( node instanceof IASTQualifiedNameElement ){
+	 		String [] qualNames = ((IASTQualifiedNameElement)node).getFullyQualifiedName();
+	 		pattern = "::" + qualNames[0]; //$NON-NLS-1$
+	 		for( int i = 1; i < qualNames.length; i++ ){
+				 pattern += "::"; //$NON-NLS-1$
+				 pattern += qualNames[i];
+	 		}
+	 	} else {
+	 		pattern = node.getName();
+	 	}
+	 	
+	 	if( node instanceof IASTFunction ){
+	 		pattern += '(';
+	 		String[] parameterTypes = ASTUtil.getFunctionParameterTypes((IASTFunction) node);
+	 		for( int i = 0; i < parameterTypes.length; i++ ){
+	 			if( i != 0 )
+	 				pattern += ", "; //$NON-NLS-1$
+	 			pattern += parameterTypes[i];
+	 		}
+	 		pattern += ')';
+	 	}
+	 	
+	 	return createSearchQuery( pattern, CSearchUtil.getSearchForFromNode(node) );
+	 }
+	 
 	protected ISelection getSelection(){
 		ISelection sel = null;
 		if (fSite != null){
@@ -205,7 +236,7 @@ public abstract class FindAction extends Action {
 			return;
 		}
 	
-		CSearchQuery job = createSearchQuery(selectedText.getText(), CSearchUtil.getSearchForFromNode(node));
+		CSearchQuery job = createSearchQuery(node);
 		NewSearchUI.activateSearchResultView();
 		
 		NewSearchUI.runQuery(job);

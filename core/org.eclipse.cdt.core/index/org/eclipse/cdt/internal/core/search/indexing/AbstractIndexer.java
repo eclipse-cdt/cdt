@@ -88,6 +88,11 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 					String[] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedName();
 					this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
 				}
+				else if (decl instanceof IASTElaboratedTypeSpecifier){
+					IASTElaboratedTypeSpecifier friendClassSpec = (IASTElaboratedTypeSpecifier) decl;
+					String[] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedName();
+					this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
+				}
 				else if (decl instanceof IASTFunction){
 					
 				}
@@ -113,6 +118,28 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 						this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,DERIVED,ICSearchConstants.DECLARATIONS));
 					}
 				} catch (ASTNotImplementedException e) {}
+			}
+			
+//			Get friends
+			Iterator friends = classSpecification.getFriends();
+			while (friends.hasNext()){
+				Object decl = friends.next();
+				if (decl instanceof IASTClassSpecifier){
+					IASTClassSpecifier friendClassSpec = (IASTClassSpecifier) decl;
+					String[] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedName();
+					this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
+				}
+				else if (decl instanceof IASTElaboratedTypeSpecifier){
+					IASTElaboratedTypeSpecifier friendClassSpec = (IASTElaboratedTypeSpecifier) decl;
+					String[] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedName();
+					this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
+				}
+				else if (decl instanceof IASTFunction){
+					
+				}
+				else if (decl instanceof IASTMethod){
+					//
+				}
 			}
 			
 			this.output.addRef(encodeTypeEntry(classSpecification.getFullyQualifiedName(),STRUCT, ICSearchConstants.DECLARATIONS));

@@ -12,6 +12,7 @@ import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 
@@ -67,20 +68,31 @@ public class FriendPattern extends ClassDeclarationPattern {
 		Iterator i = tempNode.getFriends();
 		
 		boolean matchFlag=false;
-		
+		String[] fullName=null;
 		while (i.hasNext()){
 			Object friend =  i.next();
+			String[] baseFullyQualifiedName = null;
 			if (friend instanceof IASTClassSpecifier)
 			{
 				IASTClassSpecifier classSpec = (IASTClassSpecifier) friend;
-				String[] baseFullyQualifiedName = classSpec.getFullyQualifiedName();
-				
+				baseFullyQualifiedName = classSpec.getFullyQualifiedName();
+	
 				//check name, if simpleName == null, its treated the same as "*"	
 				if( simpleName != null && !matchesName( simpleName, classSpec.getName().toCharArray() ) ){
 					continue;
 				}
-				
-
+			}	
+			else if (friend instanceof IASTElaboratedTypeSpecifier ){
+			    IASTElaboratedTypeSpecifier elabType = (IASTElaboratedTypeSpecifier) friend;
+			    baseFullyQualifiedName = elabType.getFullyQualifiedName();
+			    
+				//check name, if simpleName == null, its treated the same as "*"	
+				if( simpleName != null && !matchesName( simpleName, elabType.getName().toCharArray() ) ){
+					continue;
+				}
+			}
+			
+			if (baseFullyQualifiedName != null){
 				char [][] qualName = new char [ baseFullyQualifiedName.length - 1 ][];
 				for( int j = 0; j < baseFullyQualifiedName.length - 1; j++ ){
 					qualName[j] = baseFullyQualifiedName[j].toCharArray();
@@ -102,4 +114,6 @@ public class FriendPattern extends ClassDeclarationPattern {
 		
 		return IMPOSSIBLE_MATCH;
 	}
+	
+	
 }

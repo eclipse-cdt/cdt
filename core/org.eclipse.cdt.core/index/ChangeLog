@@ -1,3 +1,6 @@
+2004-05-07 Bogdan Gheorghe
+	Modified indexer friend encoding to encode IASTElaboratedTypeSpecifier
+	
 2004-05-06 Bogdan Gheorghe
 	Modified AbstractIndexer to encode friends, add friends constant to IIndexConstants,
 	modified SourceIndexerRequestor to add class specifier on exit instead of enter in order

@@ -10,9 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -34,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
@@ -67,7 +71,7 @@ public class TreeObject implements IAdaptable {
 	private static final String IAST_PREFIX = "IAST"; //$NON-NLS-1$
 	private static final String START_OF_LIST = ": "; //$NON-NLS-1$
 	private static final String LIST_SEPARATOR = ", "; //$NON-NLS-1$
-	private static final String FILENAME_SEPARATOR = "."; //$NON-NLS-1$
+	private static final String PERIOD = "."; //$NON-NLS-1$
 	private IASTNode node = null;
 	private TreeParent parent;
 	
@@ -109,10 +113,10 @@ public class TreeObject implements IAdaptable {
 		
 		Class[] classes = node.getClass().getInterfaces();
 		for(int i=0; i<classes.length; i++) {
-			String interfaceName = classes[i].getName().substring(classes[i].getName().lastIndexOf(FILENAME_SEPARATOR) + 1);
+			String interfaceName = classes[i].getName().substring(classes[i].getName().lastIndexOf(PERIOD) + 1);
 			if (hasProperPrefix(interfaceName)) {
 				buffer.append(interfaceName);
-				if (i+1 < classes.length && hasProperPrefix(classes[i+1].getName().substring(classes[i+1].getName().lastIndexOf(FILENAME_SEPARATOR) + 1)))
+				if (i+1 < classes.length && hasProperPrefix(classes[i+1].getName().substring(classes[i+1].getName().lastIndexOf(PERIOD) + 1)))
 					buffer.append(LIST_SEPARATOR);
 			}
 		}
@@ -306,6 +310,15 @@ public class TreeObject implements IAdaptable {
 	
 	private class ASTPropertySource implements IPropertySource {
 		
+		private static final String L_BRACKET_STRING = "["; //$NON-NLS-1$
+		private static final String R_BRACKET_STRING = "]"; //$NON-NLS-1$
+		private static final String CLONE_METHOD_NAME = "clone"; //$NON-NLS-1$
+		private static final String NO_ELEMENT_STRING = "[0]"; //$NON-NLS-1$
+		private static final String SEMI = ";"; //$NON-NLS-1$
+		private static final String GETTYPE_METHOD_NAME = "getType"; //$NON-NLS-1$
+		private static final String EXCEPTION_ON = " on "; //$NON-NLS-1$
+		private static final String NULL_STRING = "null"; //$NON-NLS-1$
+		private static final String OBJECT_SEPARATOR = ", "; //$NON-NLS-1$
 		private static final String COLON_SEPARATOR = ": "; //$NON-NLS-1$
 		private static final String IBINDING_TAG = "IBinding: "; //$NON-NLS-1$
 		private static final String EMPTY_PARAMETER = "()"; //$NON-NLS-1$
@@ -352,7 +365,7 @@ public class TreeObject implements IAdaptable {
 			for(int i=0; i<interfaces.length; i++) {
 				Method[] methods = interfaces[i].getMethods();
 				for(int j=0; j<methods.length; j++) {
-					if (methods[j].getParameterTypes().length > 0) continue; // only do getters
+					if (methods[j].getParameterTypes().length > 0 || (!shouldInvokeMethod(methods[j].getName()))) continue; // only do getters, that aren't in the bad list (like clone())
 					
 					TextPropertyDescriptor text = null;
 					if (obj instanceof IBinding)
@@ -362,9 +375,9 @@ public class TreeObject implements IAdaptable {
 					
 					if (text != null) {
 						if (obj instanceof IBinding)
-							text.setCategory(IBINDING_TAG + ((IASTName)node).resolveBinding().getClass().getName().substring(((IASTName)node).resolveBinding().getClass().getName().lastIndexOf(FILENAME_SEPARATOR) + 1) + COLON_SEPARATOR + ((IASTName)node).resolveBinding().toString());
+							text.setCategory(IBINDING_TAG + ((IASTName)node).resolveBinding().getClass().getName().substring(((IASTName)node).resolveBinding().getClass().getName().lastIndexOf(PERIOD) + 1) + COLON_SEPARATOR + getValueString(((IASTName)node).resolveBinding()));
 						else
-							text.setCategory(objClass.getName().substring(objClass.getName().lastIndexOf(FILENAME_SEPARATOR) + 1) + COLON_SEPARATOR + node.toString());
+							text.setCategory(objClass.getName().substring(objClass.getName().lastIndexOf(PERIOD) + 1) + COLON_SEPARATOR + getValueString(node));
 						desc = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, desc, text);
 					}
 				}
@@ -395,15 +408,127 @@ public class TreeObject implements IAdaptable {
 					result = method.invoke(node, null);
 				}
 				
-				if (result != null)
-					value = result.toString();
+				if (result == null) {
+					value = NULL_STRING;
+				} else if (result.getClass().isArray()) { // if it's an array
+					if (result.getClass().getComponentType().equals(char.class)) // array of char
+						value = String.valueOf((char[])result);
+					else if (result.getClass().isPrimitive()) {
+						value = trimObjectToString(result.toString());
+					} else
+						value = getValueString((Object[])result);
+				} else {
+					value = getValueString(result);
+				}
 			} catch (Exception e) {
 				e.printStackTrace(); // display all exceptions to developers
+				
+				if (e instanceof InvocationTargetException)
+					return trimObjectToString(((InvocationTargetException)e).getTargetException().toString()) + EXCEPTION_ON + ((InvocationTargetException)e).getTargetException().getStackTrace()[0].toString();
+				
 				return e.toString();
 			}
 			
 			return value;
 		}
+		
+		private String trimObjectToString(String str) {
+			return str.substring(str.lastIndexOf(PERIOD) + 1);
+		}
+		
+		private String getValueString(Object obj) {
+			StringBuffer buffer = new StringBuffer();
+			
+			if (obj.getClass().isPrimitive()) {
+				buffer.append(trimObjectToString(obj.toString()));
+			} else if (obj instanceof ASTNodeProperty) {
+				buffer.append(((ASTNodeProperty)obj).getName());
+			} else if (obj instanceof IASTName) {
+				buffer.append( trimObjectToString(((IASTName)obj).toString()) );
+				buffer.append(COLON_SEPARATOR);
+				buffer.append( getType(((IASTName)obj).resolveBinding()) );
+			} else if (obj instanceof IType) {
+				buffer.append(getType(obj));
+			} else if (obj instanceof IBinding) {
+				buffer.append(((IBinding)obj).getName());
+				buffer.append(COLON_SEPARATOR);
+				buffer.append(getType(obj));
+			} else if (obj instanceof IASTExpression) {
+				buffer.append(ASTSignatureUtil.getExpressionString((IASTExpression)obj));
+			} else if (obj instanceof IASTNode) {
+				String utilString = ASTSignatureUtil.getNodeSignature((IASTNode)obj);
+				if (utilString != null && !utilString.equals(BLANK_STRING)) {
+					buffer.append(trimObjectToString(obj.toString()));
+					buffer.append(COLON_SEPARATOR);
+					buffer.append(utilString);
+				}
+				else
+					buffer.append(trimObjectToString(obj.toString()));
+			} else
+				buffer.append(trimObjectToString(obj.toString()));
+			
+			return buffer.toString();
+		}
+		
+		private String getType(Object obj) {
+			if (obj == null) return NULL_STRING;
+			
+			if (obj instanceof IType)
+				return ASTTypeUtil.getType((IType)obj);
+			
+			Method[] methods = obj.getClass().getMethods();
+			boolean hasGetType = false;
+			
+			int i=0;
+			for(; i<methods.length; i++) {
+				if (methods[i].getName().equals(GETTYPE_METHOD_NAME)) {
+					hasGetType = true;
+					break;
+				}
+			}
+			
+			if (hasGetType) {
+				try {
+					Object result = methods[i].invoke(obj, null);
+					
+					if (result instanceof IType) {
+						return ASTTypeUtil.getType((IType)result);
+					}
+				} catch (Exception e) {
+					e.printStackTrace(); // display all exceptions to developers
+					
+					if (e instanceof InvocationTargetException)
+						return trimObjectToString(((InvocationTargetException)e).getTargetException().toString()) + EXCEPTION_ON + ((InvocationTargetException)e).getTargetException().getStackTrace()[0].toString();
+					
+					return e.toString();
+				}
+			}
+			
+			return BLANK_STRING; // if there is no type
+		}
+		
+		private String getValueString(Object[] objs) {
+			if (objs.length==0) return trimObjectToString(objs.getClass().getName()).replaceAll(SEMI, BLANK_STRING) + NO_ELEMENT_STRING;
+			
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(L_BRACKET_STRING);
+			for(int i=0; i<objs.length; i++) {
+				buffer.append(getValueString(objs[i]));
+				if (i<objs.length-1) buffer.append(OBJECT_SEPARATOR); 
+			}
+			buffer.append(R_BRACKET_STRING);
+			
+			return buffer.toString();
+		}
+		
+		// used to determine if a getter method should be invoked or not, there may be a list of them in the future...
+		private boolean shouldInvokeMethod(String method) {
+			if (method.equals(CLONE_METHOD_NAME)) 
+				return false;
+			
+			return true;
+		}
+		
 		public boolean isPropertySet(Object id) {
 			return false;
 		}

@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -38,36 +39,38 @@ public class CEnumerator implements IEnumerator {
         }
     }
 
-    private final IASTEnumerator enumerator;
+    private final IASTName enumeratorName;
     public CEnumerator( IASTEnumerator enumtor ){
-		this.enumerator= enumtor;
+		this.enumeratorName = enumtor.getName();
+		((CASTName)enumeratorName).setBinding( this );
 	}
     
     public IASTNode getPhysicalNode(){
-        return enumerator;
+        return enumeratorName;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
     public String getName() {
-        return enumerator.getName().toString();
+        return enumeratorName.toString();
     }
     public char[] getNameCharArray(){
-        return ((CASTName) enumerator.getName()).toCharArray();
+        return enumeratorName.toCharArray();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
     public IScope getScope() {
-        return CVisitor.getContainingScope( enumerator );
+        return CVisitor.getContainingScope( enumeratorName.getParent() );
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IEnumerator#getType()
 	 */
 	public IType getType() {
-		IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) enumerator.getParent();
+	    IASTEnumerator etor = (IASTEnumerator) enumeratorName.getParent();
+		IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) etor.getParent();
 		IEnumeration enumeration = (IEnumeration) enumSpec.getName().resolveBinding();
 		return enumeration;
 	}

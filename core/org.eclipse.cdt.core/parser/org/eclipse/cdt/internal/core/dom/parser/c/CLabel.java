@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -36,10 +37,11 @@ public class CLabel implements ILabel {
         }
     }
     
-    private final IASTLabelStatement labelStatement;
+    private final IASTName labelStatement;
     
-    public CLabel( IASTLabelStatement statement ){
+    public CLabel( IASTName statement ){
         labelStatement = statement;
+        ((CASTName)statement).setBinding( this );
     }
     public IASTNode getPhysicalNode(){
         return labelStatement;
@@ -48,24 +50,24 @@ public class CLabel implements ILabel {
      * @see org.eclipse.cdt.core.dom.ast.ILabel#getLabelStatement()
      */
     public IASTLabelStatement getLabelStatement() {
-        return labelStatement;
+        return (IASTLabelStatement) labelStatement.getParent();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
     public String getName() {
-        return labelStatement.getName().toString();
+        return labelStatement.toString();
     }
     public char[] getNameCharArray(){
-        return ((CASTName) labelStatement.getName()).toCharArray();
+        return labelStatement.toCharArray();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
     public IScope getScope() {
-        return CVisitor.getContainingScope( labelStatement );
+        return CVisitor.getContainingScope( labelStatement.getParent() );
     }
 
 }

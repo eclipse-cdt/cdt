@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -37,7 +38,18 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * @author aniefer
  */
 public class CScope implements ICScope {
+	/**
+	 * ISO C:99 6.2.3 there are seperate namespaces for various categories of
+	 * identifiers: - label names ( labels have ICFunctionScope ) - tags of
+	 * structures or unions : NAMESPACE_TYPE_TAG - members of structures or
+	 * unions ( members have ICCompositeTypeScope ) - all other identifiers :
+	 * NAMESPACE_TYPE_OTHER
+	 */
+	public static final int NAMESPACE_TYPE_TAG = 0;
+	public static final int NAMESPACE_TYPE_OTHER = 1;
+	
     private IASTNode physicalNode = null;
+    private boolean isFullyCached = false;
     
     private CharArrayObjectMap [] bindings = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
     
@@ -103,17 +115,18 @@ public class CScope implements ICScope {
         return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
     }
 
-    public void addBinding( IBinding binding ) {
-        int type = ( binding instanceof ICompositeType || binding instanceof IEnumeration ) ? 
-                						NAMESPACE_TYPE_TAG : NAMESPACE_TYPE_OTHER;
-
-        if( bindings[type] == CharArrayObjectMap.EMPTY_MAP )
-            bindings[type] = new CharArrayObjectMap(1);
-        bindings[type].put( binding.getNameCharArray(), binding );
-    }
+//    public void addBinding( IBinding binding ) {
+//        int type = ( binding instanceof ICompositeType || binding instanceof IEnumeration ) ? 
+//                						NAMESPACE_TYPE_TAG : NAMESPACE_TYPE_OTHER;
+//
+//        if( bindings[type] == CharArrayObjectMap.EMPTY_MAP )
+//            bindings[type] = new CharArrayObjectMap(1);
+//        bindings[type].put( binding.getNameCharArray(), binding );
+//    }
     
     public IBinding getBinding( int namespaceType, char [] name ){
-        return (IBinding) bindings[namespaceType].get( name );
+        IASTName n = (IASTName) bindings[namespaceType].get( name );
+        return ( n != null ) ? n.resolveBinding() : null;
     }
 
 	/* (non-Javadoc)
@@ -126,6 +139,7 @@ public class CScope implements ICScope {
 		if( bindings[type] != CharArrayObjectMap.EMPTY_MAP ) {
 			bindings[type].remove( binding.getNameCharArray(), 0, binding.getNameCharArray().length);
 		}
+		isFullyCached = false;
 	}
 
     /* (non-Javadoc)
@@ -133,5 +147,64 @@ public class CScope implements ICScope {
      */
     public IASTNode getPhysicalNode() {
         return physicalNode;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#addName(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public void addName( IASTName name ) {
+        int type = getNamespaceType( name );
+        if( bindings[type] == CharArrayObjectMap.EMPTY_MAP )
+            bindings[type] = new CharArrayObjectMap(1);
+        
+        char [] n = name.toCharArray();
+        IASTName current = (IASTName) bindings[type].get( n );
+        if( current == null || ((CASTName)current).getOffset() > ((CASTName) name).getOffset() ){
+            bindings[type].put( n, name );
+        }
+    }
+
+    private int getNamespaceType( IASTName name ){
+        ASTNodeProperty prop = name.getPropertyInParent();
+        if( prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
+            prop == IASTElaboratedTypeSpecifier.TYPE_NAME ||
+            prop == IASTEnumerationSpecifier.ENUMERATION_NAME )
+        {
+            return NAMESPACE_TYPE_TAG;
+        }
+        
+        return NAMESPACE_TYPE_OTHER;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
+     */
+    public IBinding getBinding( IASTName name, boolean resolve ) {
+        int type = getNamespaceType( name );
+        Object o = bindings[type].get( name.toCharArray() );
+        
+        if( o == null ) 
+            return null;
+        
+        if( o instanceof IBinding )
+            return (IBinding) o;
+
+        if( (resolve || ((CASTName)o).hasBinding()) && ( o != name ) )
+            return ((IASTName)o).resolveBinding();
+
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#setFullyCached(boolean)
+     */
+    public void setFullyCached( boolean b ){
+        isFullyCached = b;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#isFullyCached()
+     */
+    public boolean isFullyCached(){
+        return isFullyCached;
     }
 }

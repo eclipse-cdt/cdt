@@ -110,6 +110,7 @@ import org.eclipse.ui.views.properties.PropertySheet;
  */
 
 public class DOMAST extends ViewPart {
+   private static final String PROPERTIES_VIEW = "org.eclipse.ui.views.PropertySheet"; //$NON-NLS-1$
    private static final String ASTUTIL_MENU_LABEL = "ASTUtil#"; //$NON-NLS-1$
    private static final String DISPLAY_TYPE = "getNodeType(IASTNode)"; //$NON-NLS-1$
    private static final String DISPLAY_SIGNATURE = "getNodeSignature(IASTNode)"; //$NON-NLS-1$
@@ -651,6 +652,20 @@ public class DOMAST extends ViewPart {
 
       customFiltersActionGroup = new CustomFiltersActionGroup(DOMAST_FILTER_GROUP_ID, viewer);
       contributeToActionBars();
+	  
+	  viewer.addSelectionChangedListener(new UpdatePropertiesListener());
+   }
+   
+   private class UpdatePropertiesListener implements ISelectionChangedListener {
+
+	public void selectionChanged(SelectionChangedEvent event) {
+		ISelection selection = viewer.getSelection();
+		IViewPart propertyPart = getSite().getPage().findView(PROPERTIES_VIEW);
+		if (propertyPart instanceof PropertySheet) {
+			((PropertySheet)propertyPart).selectionChanged(getSite().getPart(), selection);
+		}
+	}
+	   
    }
 
    public void setContentProvider(ViewContentProvider vcp) {
@@ -931,7 +946,6 @@ public class DOMAST extends ViewPart {
    }
       
    private class ASTHighlighterAction extends Action {
-	private static final String PROPERTIES_VIEW = "org.eclipse.ui.views.PropertySheet"; //$NON-NLS-1$
 	IEditorPart aPart = null;
 
       public ASTHighlighterAction(IEditorPart part) {
@@ -990,11 +1004,6 @@ public class DOMAST extends ViewPart {
                   ((TreeObject) obj).getLength());
 
             aPart.getSite().getPage().activate(aPart.getSite().getPage().findView(OpenDOMViewAction.VIEW_ID));
-			
-			IViewPart part = getSite().getPage().findView(PROPERTIES_VIEW);
-			if (part instanceof PropertySheet) {
-				((PropertySheet)part).selectionChanged(getSite().getPart(), selection);
-			}
          }
       }
    }
@@ -1093,6 +1102,12 @@ public class DOMAST extends ViewPart {
     */
    public void setFocus() {
       viewer.getControl().setFocus();
+	  
+	  ISelection selection = viewer.getSelection();
+      IViewPart propertyPart = getSite().getPage().findView(PROPERTIES_VIEW);
+	  if (propertyPart instanceof PropertySheet) {
+		  ((PropertySheet)propertyPart).selectionChanged(getSite().getPart(), selection);
+	  }
    }
 
    public void setPart(IEditorPart part) {

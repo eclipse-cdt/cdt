@@ -71,7 +71,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
-import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -200,24 +199,24 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_y);
 
-        // test clearBindings
-        assertNotNull(((ICScope) tu.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
-        assertNotNull(((ICScope) tu.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
-        assertNotNull(((ICScope) body_f.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray())); //$NON-NLS-1$
-        assertNotNull(((ICScope) body_f.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray())); //$NON-NLS-1$
-        CVisitor.clearBindings(tu);
-        assertNull(((ICScope) tu.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
-        assertNull(((ICScope) tu.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
-        assertNull(((ICScope) body_f.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray())); //$NON-NLS-1$
-        assertNull(((ICScope) body_f.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray())); //$NON-NLS-1$
+//        // test clearBindings
+//        assertNotNull(((ICScope) tu.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
+//        assertNotNull(((ICScope) tu.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
+//        assertNotNull(((ICScope) body_f.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray())); //$NON-NLS-1$
+//        assertNotNull(((ICScope) body_f.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray())); //$NON-NLS-1$
+//        CVisitor.clearBindings(tu);
+//        assertNull(((ICScope) tu.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
+//        assertNull(((ICScope) tu.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
+//        assertNull(((ICScope) body_f.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray())); //$NON-NLS-1$
+//        assertNull(((ICScope) body_f.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray())); //$NON-NLS-1$
     }
 
     public void testSimpleStruct() throws Exception {
@@ -769,23 +768,23 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(decls.length, 1);
         assertEquals(decls[0], declaration2.getDeclarators()[0].getName());
 
-        assertNotNull(((ICScope) tu.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray())); //$NON-NLS-1$
-        assertNotNull(((ICScope) tu.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
-        assertNotNull(((ICScope) compound.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
-        assertNotNull(((ICScope) compound.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray())); //$NON-NLS-1$
-        CVisitor.clearBindings(tu);
-        assertNull(((ICScope) tu.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray())); //$NON-NLS-1$
-        assertNull(((ICScope) tu.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
-        assertNull(((ICScope) compound.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
-        assertNull(((ICScope) compound.getScope()).getBinding(
-                ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray())); //$NON-NLS-1$
+//        assertNotNull(((ICScope) tu.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray())); //$NON-NLS-1$
+//        assertNotNull(((ICScope) tu.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
+//        assertNotNull(((ICScope) compound.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
+//        assertNotNull(((ICScope) compound.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray())); //$NON-NLS-1$
+//        CVisitor.clearBindings(tu);
+//        assertNull(((ICScope) tu.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray())); //$NON-NLS-1$
+//        assertNull(((ICScope) tu.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
+//        assertNull(((ICScope) compound.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
+//        assertNull(((ICScope) compound.getScope()).getBinding(
+//                ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray())); //$NON-NLS-1$
     }
 
     public void testFunctionParameters() throws Exception {

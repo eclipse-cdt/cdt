@@ -41,12 +41,14 @@ public class CEnumeration implements IEnumeration {
         	declarations = new IASTName[] { enumeration };
         else
             definition = enumeration;
+        ((CASTName)enumeration).setBinding( this );
 	}
 	
     public void addDeclaration( IASTName decl ){
         if( decl.getPropertyInParent() != IASTElaboratedTypeSpecifier.TYPE_NAME )
             return;
             
+        ((CASTName) decl).setBinding( this );
         if( declarations == null ){
             declarations = new IASTName[] { decl };
         	return;

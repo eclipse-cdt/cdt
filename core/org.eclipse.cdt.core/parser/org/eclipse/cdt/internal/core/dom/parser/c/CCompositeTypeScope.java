@@ -16,56 +16,24 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
-import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.dom.parser.c.CScope.CollectNamesAction;
 
 /**
  * @author aniefer
  */
-public class CCompositeTypeScope implements ICCompositeTypeScope {
-    private ICASTCompositeTypeSpecifier compositeTypeSpec = null;
-    
-    private CharArrayObjectMap bindings = CharArrayObjectMap.EMPTY_MAP;
-    
+public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope {
     public CCompositeTypeScope( ICASTCompositeTypeSpecifier compTypeSpec ){
-        compositeTypeSpec = compTypeSpec;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#addBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-     */
-    public void addBinding( IBinding binding ) {
-        if( bindings == CharArrayObjectMap.EMPTY_MAP )
-            bindings = new CharArrayObjectMap( 1 );
-        bindings.put( binding.getNameCharArray(), binding );
+        super( compTypeSpec );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(int, char[])
-     */
-    public IBinding getBinding( int namespaceType, char[] name ) {
-        if( namespaceType == ICScope.NAMESPACE_TYPE_OTHER )
-            return getBinding( name );
-        return null;
-    }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope#getBinding(char[])
      */
     public IBinding getBinding( char[] name ) {
-        return (IBinding) bindings.get( name );
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
-     */
-    public IScope getParent() {
-        return CVisitor.getContainingScope( compositeTypeSpec );
+        return super.getBinding( NAMESPACE_TYPE_OTHER, name );
     }
 
     /* (non-Javadoc)
@@ -73,7 +41,7 @@ public class CCompositeTypeScope implements ICCompositeTypeScope {
      */
     public IBinding[] find( String name ) {
         CollectNamesAction action = new CollectNamesAction( name.toCharArray() );
-        compositeTypeSpec.accept( action );
+        getPhysicalNode().accept( action );
         
         IASTName [] names = action.getNames();
         IBinding [] result = null;
@@ -88,20 +56,5 @@ public class CCompositeTypeScope implements ICCompositeTypeScope {
         }
             
         return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
-    }
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-	 */
-	public void removeBinding(IBinding binding) {
-		if( bindings != CharArrayObjectMap.EMPTY_MAP ) {
-			bindings.remove( binding.getNameCharArray(), 0, binding.getNameCharArray().length);
-		}
-	}
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getPhysicalNode()
-     */
-    public IASTNode getPhysicalNode() {
-        return compositeTypeSpec;
     }
 }

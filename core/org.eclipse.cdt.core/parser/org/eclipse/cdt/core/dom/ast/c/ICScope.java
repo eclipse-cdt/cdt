@@ -15,6 +15,7 @@
 package org.eclipse.cdt.core.dom.ast.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
@@ -22,25 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @author aniefer
  */
 public interface ICScope extends IScope {
-	/**
-	 * ISO C:99 6.2.3 there are seperate namespaces for various categories of
-	 * identifiers: - label names ( labels have ICFunctionScope ) - tags of
-	 * structures or unions : NAMESPACE_TYPE_TAG - members of structures or
-	 * unions ( members have ICCompositeTypeScope ) - all other identifiers :
-	 * NAMESPACE_TYPE_OTHER
-	 */
-	public static final int NAMESPACE_TYPE_TAG = 0;
-
-	public static final int NAMESPACE_TYPE_OTHER = 1;
-
-	/**
-	 * add a binding to this scope
-	 * 
-	 * @param binding
-	 * @throws DOMException
-	 */
-	void addBinding(IBinding binding) throws DOMException;
-
 	/**
 	 * remove the given binding from this scope
 	 * 
@@ -50,15 +32,39 @@ public interface ICScope extends IScope {
 	void removeBinding(IBinding binding) throws DOMException;
 
 	/**
-	 * Get the binding that has previously been added to this scope that matches
-	 * the given name and is in the appropriate namespace
+	 * Add an IASTName to be cached in this scope
 	 * 
-	 * @param namespaceType :
-	 *            either NAMESPACE_TYPE_TAG or NAMESPACE_TYPE_OTHER
 	 * @param name
-	 * @return
 	 * @throws DOMException
 	 */
-	public IBinding getBinding(int namespaceType, char[] name)
+	public void addName(IASTName name) throws DOMException;
+
+	/**
+	 * Get the binding that the given name would resolve to in this scope. Could
+	 * return null if there is no matching binding in this scope, or if resolve ==
+	 * false and the appropriate binding has not yet been resolved.
+	 * 
+	 * @param name
+	 * @param resolve :
+	 *            whether or not to resolve the matching binding if it has not
+	 *            been so already.
+	 * @return : the binding in this scope that matches the name, or null
+	 * @throws DOMException
+	 */
+	public IBinding getBinding(IASTName name, boolean resolve)
 			throws DOMException;
+
+	/**
+	 * Set whether or not all the names in this scope have been cached
+	 * 
+	 * @param b
+	 */
+	public void setFullyCached(boolean b) throws DOMException;
+
+	/**
+	 * whether or not this scope's cache contains all the names
+	 * 
+	 * @return
+	 */
+	public boolean isFullyCached() throws DOMException;
 }

@@ -21,72 +21,38 @@ import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
-import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
  * Created on Nov 8, 2004
  * @author aniefer
  */
-public class CFunctionScope implements ICFunctionScope {
-	private final IASTFunctionDefinition function;
-	private CharArrayObjectMap bindings = CharArrayObjectMap.EMPTY_MAP;
-	
+public class CFunctionScope extends CScope implements ICFunctionScope {
 	public CFunctionScope( IASTFunctionDefinition function ){
-		this.function = function;
+	    super( function );
 	}
 	
-	public void addBinding( IBinding binding ) {
-	    //only labels have function scope 
-	    if( !(binding instanceof ILabel) )
-	        return;
-	    if( bindings == CharArrayObjectMap.EMPTY_MAP )
-	        bindings = new CharArrayObjectMap(1);
-	    bindings.put( binding.getNameCharArray(), binding );
-    }
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(int, char[])
-     */
-    public IBinding getBinding( int namespaceType, char[] name ) {
-        if( namespaceType == ICScope.NAMESPACE_TYPE_OTHER )
-            return getBinding( name );
-        return null;
-    }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICFunctionScope#getBinding(char[])
      */
     public IBinding getBinding( char[] name ) {
-        return (IBinding) bindings.get( name );
+        return super.getBinding( NAMESPACE_TYPE_OTHER, name );
     }
 
     
 	public IScope getBodyScope(){
-	    IASTStatement statement = function.getBody();
+	    IASTNode node = getPhysicalNode();
+	    IASTStatement statement = ((IASTFunctionDefinition)node).getBody();
 	    if( statement instanceof IASTCompoundStatement ){
 	        return ((IASTCompoundStatement)statement).getScope();
 	    }
 	    return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
-	 */
-	public IScope getParent() {
-		return function.getScope();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-	 */
-	public IBinding[] find(String name) {
-		return null;
-	}
 
 	public ILabel[] getLabels(){
 	    FindLabelsAction action = new FindLabelsAction();
 	    
-        function.accept( action );
+        getPhysicalNode().accept( action );
 	    
 	    ILabel [] result = null;
 	    if( action.labels != null ){
@@ -114,20 +80,4 @@ public class CFunctionScope implements ICFunctionScope {
             return PROCESS_CONTINUE;
         }
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-	 */
-	public void removeBinding(IBinding binding) {
-		if( bindings != CharArrayObjectMap.EMPTY_MAP ) {
-			bindings.remove( binding.getNameCharArray(), 0, binding.getNameCharArray().length);
-		}
-	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getPhysicalNode()
-     */
-    public IASTNode getPhysicalNode() {
-        return function;
-    }
 }

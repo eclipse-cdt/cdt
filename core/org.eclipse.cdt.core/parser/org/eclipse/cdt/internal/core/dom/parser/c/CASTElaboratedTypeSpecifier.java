@@ -87,7 +87,7 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 		IBinding binding = name.resolveBinding();
 		if( binding instanceof ICInternalBinding ){
 			IASTNode node = ((ICInternalBinding)binding).getPhysicalNode();
-			if( node == this ) 
+			if( node == name ) 
 				return r_declaration;
 		}
 		return r_reference;

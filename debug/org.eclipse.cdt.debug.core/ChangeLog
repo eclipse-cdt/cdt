@@ -1,3 +1,8 @@
+2003-03-14 Mikhail Khodjaiants
+	Cross-referencing projects cause the debugger to go into a stack overflow exception. 
+	Make sure that there is only one source location for each referenced project.
+	* CSourceLocator.java
+
 2003-01-07 Mikhail Khodjaiants
 	Fix for bug 29098: The step commands don't switch to the corresponding instruction commands in the disassembly mode.
 	* CDebugTarget.java

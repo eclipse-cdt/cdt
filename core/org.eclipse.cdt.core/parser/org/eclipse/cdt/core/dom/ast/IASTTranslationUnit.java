@@ -60,4 +60,8 @@ public interface IASTTranslationUnit extends IASTNode {
 	
 	public IASTNode getNodeForLocation( IASTNodeLocation location );
 	
+	public IASTMacroDefinition [] getMacroDefinitions();
+	public IASTPreprocessorIncludeStatement [] getIncludeDirectives();
+	public IASTPreprocessorStatement [] getAllPreprocessorStatements();
+	
 }

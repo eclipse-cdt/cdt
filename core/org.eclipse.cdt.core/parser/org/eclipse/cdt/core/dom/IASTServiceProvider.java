@@ -8,19 +8,22 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.dom.ast;
+package org.eclipse.cdt.core.dom;
+
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 /**
- * This represents the definition of a macro.
- * 
- * @author Doug Schaefer
+ * @author jcamelon
  */
-public interface IASTMacroDefinition extends IASTPreprocessorStatement {
+public interface IASTServiceProvider {
 
-    public static final ASTNodeProperty MACRO_NAME = new ASTNodeProperty( "Macro Name"); //$NON-NLS-1$
-    public IASTName getName();
-    public void setName( IASTName name );
+    public String getName();
+
+    public IASTTranslationUnit getTranslationUnit();
     
-    public String getExpansion();
-    public void setExpansion( String exp );
+    public IASTTranslationUnit getTranslationUnit( ICodeReaderFactory fileCreator  );
+
+    public IASTTranslationUnit getTranslationUnit( ICodeReaderFactory fileCreator, IParserConfiguration configuration );
+    
+    public String [] getSupportedDialects();
 }

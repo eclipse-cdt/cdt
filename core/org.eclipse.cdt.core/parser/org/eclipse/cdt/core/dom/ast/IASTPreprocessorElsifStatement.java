@@ -11,16 +11,8 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This represents the definition of a macro.
- * 
- * @author Doug Schaefer
+ * @author jcamelon
  */
-public interface IASTMacroDefinition extends IASTPreprocessorStatement {
+public interface IASTPreprocessorElsifStatement extends IASTPreprocessorStatement {
 
-    public static final ASTNodeProperty MACRO_NAME = new ASTNodeProperty( "Macro Name"); //$NON-NLS-1$
-    public IASTName getName();
-    public void setName( IASTName name );
-    
-    public String getExpansion();
-    public void setExpansion( String exp );
 }

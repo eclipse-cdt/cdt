@@ -8,19 +8,18 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.dom.ast;
+package org.eclipse.cdt.internal.core.parser.scanner2;
+
+import org.eclipse.cdt.core.dom.ast.IASTMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 
 /**
- * This represents the definition of a macro.
- * 
- * @author Doug Schaefer
+ * @author jcamelon
  */
-public interface IASTMacroDefinition extends IASTPreprocessorStatement {
-
-    public static final ASTNodeProperty MACRO_NAME = new ASTNodeProperty( "Macro Name"); //$NON-NLS-1$
-    public IASTName getName();
-    public void setName( IASTName name );
+public interface ILocationResolver {
     
-    public String getExpansion();
-    public void setExpansion( String exp );
+    public IASTMacroDefinition[] getAllMacroDefinitions();
+    public IASTPreprocessorStatement [] getPreprocessorStatements();
+    public IASTNodeLocation [] getLocations( int offset, int length );
 }

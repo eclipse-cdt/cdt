@@ -309,26 +309,50 @@
             name="%newCWizardsCategory.name"
             id="org.eclipse.cdt.ui.newCWizards">
       </category>
+      <wizard
+            name="%NewWizards.sourceFile"
+            icon="icons/full/ctool16/newcfile_wiz.gif"
+            category="org.eclipse.cdt.ui.newCWizards"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
+            <parameter name="cfile" value="true"/>
+         </class>
+         <description>
+            %NewWizards.sourceFile.description
+         </description>
+      </wizard>
+      <wizard
+            name="%NewWizards.headerFile"
+            icon="icons/full/ctool16/newhfile_wiz.gif"
+            category="org.eclipse.cdt.ui.newCWizards"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
+            <parameter name="cfile" value="true"/>
+         </class>
+         <description>
+            %NewWizards.headerFile.description
+         </description>
+      </wizard>
+      <wizard
+            name="%NewWizards.file"
+            icon="icons/full/ctool16/newfile_wiz.gif"
+            category="org.eclipse.cdt.ui.newCWizards"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
+            <parameter name="cfile" value="true"/>
+         </class>
+         <description>
+            %NewWizards.file.description
+         </description>
+      </wizard>
 <!-- For C++ Wizards -->
       <category
             name="%newCCWizardsCategory.name"
             id="org.eclipse.cdt.ui.newCCWizards">
       </category>
-<!-- old class wizard
-      <wizard
-            name="%NewWizards.class"
-            icon="icons/full/ctool16/newclass_wiz.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.NewClassWizard">
-         <class class="org.eclipse.cdt.ui.wizards.NewClassWizard">
-            <parameter name="ctype" value="true"/>
-         </class>
-         <description>
-            %NewWizards.class.description
-         </description>
-      </wizard>
--->
       <wizard
             name="%NewWizards.class"
             icon="icons/full/ctool16/newclass_wiz.gif"
@@ -337,9 +361,49 @@
             id="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
          <class class="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
             <parameter name="ctype" value="true"/>
+            <parameter targetId="org.eclipse.cdt.ui.actions.NewTypeDropDown"/>
          </class>
          <description>
             %NewWizards.class.description
+         </description>
+      </wizard>
+      <wizard
+            name="%NewWizards.sourceFile"
+            icon="icons/full/ctool16/newcfile_wiz.gif"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
+            <parameter name="cfile" value="true"/>
+         </class>
+         <description>
+            %NewWizards.sourceFile.description
+         </description>
+      </wizard>
+      <wizard
+            name="%NewWizards.headerFile"
+            icon="icons/full/ctool16/newhfile_wiz.gif"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
+            <parameter name="cfile" value="true"/>
+         </class>
+         <description>
+            %NewWizards.headerFile.description
+         </description>
+      </wizard>
+      <wizard
+            name="%NewWizards.file"
+            icon="icons/full/ctool16/newfile_wiz.gif"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
+            <parameter name="cfile" value="true"/>
+         </class>
+         <description>
+            %NewWizards.file.description
          </description>
       </wizard>
    </extension>
@@ -589,17 +653,19 @@
                class="org.eclipse.cdt.internal.ui.wizards.NewTypeDropDownAction"
                disabledIcon="icons/full/dtool16/newclass_wiz.gif"
                icon="icons/full/etool16/newclass_wiz.gif"
-               label="%OpenClassWizardAction.label"
+               label="%NewTypeDropDownAction.label"
                pulldown="true"
-               tooltip="%OpenClassWizardAction.tooltip">
+               tooltip="%NewTypeDropDownAction.tooltip">
          </action>
          <action
-               label="%OpenNewFileWizardAction.label"
-               icon="icons/full/ctool16/newfile_wiz.gif"
-               class="org.eclipse.cdt.internal.ui.wizards.OpenNewFileWizardAction"
-               tooltip="%OpenNewFileWizardAction.tooltip"
+               id="org.eclipse.cdt.ui.actions.NewFileDropDown"
                toolbarPath="Normal/CCWizards"
-               id="org.eclipse.cdt.ui.actions.OpenNewFileWizardAction">
+               class="org.eclipse.cdt.internal.ui.wizards.NewFileDropDownAction"
+               disabledIcon="icons/full/dtool16/newcfile_wiz.gif"
+               icon="icons/full/etool16/newcfile_wiz.gif"
+               label="%NewFileDropDownAction.label"
+               pulldown="true"
+               tooltip="%NewFileDropDownAction.tooltip">
          </action>
          <action
                label="%OpenNewFolderWizardAction.label"
@@ -615,9 +681,9 @@
                class="org.eclipse.cdt.internal.ui.wizards.NewProjectDropDownAction"
                disabledIcon="icons/full/dtool16/newcprj_wiz.gif"
                icon="icons/full/etool16/newcprj_wiz.gif"
-               label="%OpenProjectWizardAction.label"
+               label="%NewProjectDropDownAction.label"
                pulldown="true"
-               tooltip="%OpenProjectWizardAction.tooltip">
+               tooltip="%NewProjectDropDownAction.tooltip">
          </action>
       </actionSet>
    </extension>

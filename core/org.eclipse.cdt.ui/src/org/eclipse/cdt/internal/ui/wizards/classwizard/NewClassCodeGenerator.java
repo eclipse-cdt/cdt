@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
+import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -135,7 +136,7 @@ public class NewClassCodeGenerator {
             }
 
             if (fSourcePath != null) {
-	            IFile sourceFile = NewSourceFileGenerator.createHeaderFile(fSourcePath, true, new SubProgressMonitor(monitor, 50));
+	            IFile sourceFile = NewSourceFileGenerator.createSourceFile(fSourcePath, true, new SubProgressMonitor(monitor, 50));
 	            if (sourceFile != null) {
 	                sourceTU = (ITranslationUnit) CoreModel.getDefault().create(sourceFile);
 	            }

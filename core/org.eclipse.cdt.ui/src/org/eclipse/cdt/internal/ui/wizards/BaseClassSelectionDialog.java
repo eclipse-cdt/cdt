@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * A dialog to select a type from a list of types. The selected type will be
  * opened in the editor.
+ * 
+ * @deprecated use NewBaseClassSelectionDialog instead
  */
 public class BaseClassSelectionDialog extends TypeSelectionDialog {
 

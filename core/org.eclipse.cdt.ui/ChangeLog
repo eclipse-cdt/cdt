@@ -1,3 +1,42 @@
+2004-09-22 Chris Wiebe
+
+	new file wizards
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassWizardMessages.properties
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/SourceFileSelectionDialog.java
+	* src/org/eclipse/cdt/internal/ui/wizards/AbstractOpenWizardAction.java	
+	* src/org/eclipse/cdt/internal/ui/wizards/AbstractWizardDropDownAction.java	
+	* src/org/eclipse/cdt/internal/ui/wizards/BaseClassSelectionDialog.java	
+	* src/org/eclipse/cdt/internal/ui/wizards/CWizardRegistry.java	
+	* src/org/eclipse/cdt/internal/ui/wizards/NewFileDropDownAction.java	
+	* src/org/eclipse/cdt/internal/ui/wizards/NewProjectDropDownAction.java	
+	* src/org/eclipse/cdt/internal/ui/wizards/NewTypeDropDownAction.java
+	* src/org/eclipse/cdt/internal/ui/wizards/OpenNewFileWizardAction.java
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	* icons/full/ctool16/newcfile_wiz.gif
+	* icons/full/ctool16/newhfile_wiz.gif
+	* icons/full/dtool16/newcfile_wiz.gif
+	* icons/full/dtool16/newhfile_wiz.gif
+	* icons/full/etool16/newcfile_wiz.gif
+	* icons/full/etool16/newhfile_wiz.gif
+	* icons/full/wizban/newcfile_wiz.gif
+	* icons/full/wizban/newhfile_wiz.gif
+	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/AbstractFileCreationWizard.java
+	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/AbstractFileCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewFileWizardMessages.java
+	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewFileWizardMessages.properties
+	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewHeaderFileCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewSourceFileCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewSourceFileGenerator.java
+	* src/org/eclipse/cdt/ui/wizards/NewClassWizard.java
+	* src/org/eclipse/cdt/ui/wizards/NewClassWizardPage.java
+	* src/org/eclipse/cdt/ui/wizards/NewFileCreationWizard.java
+	* src/org/eclipse/cdt/ui/wizards/NewHeaderFileCreationWizard.java
+	* src/org/eclipse/cdt/ui/wizards/NewSourceFileCreationWizard.java
+	* plugin.properties
+	* plugin.xml
+	
 2004-09-21 Alain Magloire
 	Duplication in the CView ILibraryReferece.
 	* src/org/eclipse/cdt/internal/ui/cview/CViewContentProvider.java

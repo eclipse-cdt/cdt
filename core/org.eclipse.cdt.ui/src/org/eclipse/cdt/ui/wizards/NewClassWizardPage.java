@@ -26,8 +26,8 @@ import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
-import org.eclipse.cdt.core.browser.UnknownTypeInfo;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.browser.UnknownTypeInfo;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -48,9 +48,9 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LinkToFileGroup;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFieldGroup;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.CodeGeneration;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -84,7 +84,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Wizard page to  create a new class. 
@@ -93,8 +92,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * a new class wizard page, extend <code>NewTypeWizardPage</code>.
  * </p>
  * 
+ * @deprecated use NewClassCreationWizardPage instead
  */
-
 public class NewClassWizardPage extends WizardPage implements Listener {
 	// the page name
 	private final static String PAGE_NAME= "NewClassWizardPage"; //$NON-NLS-1$
@@ -646,7 +645,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			monitor= new NullProgressMonitor();
 		}
 
-		monitor.beginTask(NewWizardMessages.getString("NewTypeWizardPage.operationdesc"), 10); //$NON-NLS-1$
+		monitor.beginTask(NewWizardMessages.getString("NewClassWizardPage.operationdesc"), 10); //$NON-NLS-1$
 
 		// resolve location of base class
 		String baseClassName = getBaseClassName();

@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.wizards.classwizard;
+package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -94,7 +94,7 @@ public class NewSourceFileGenerator {
         return null;
     }
 
-    public static IFile createSourceFile(IPath filePath, boolean useIncludeGuard, boolean force, IProgressMonitor monitor) throws CoreException {
+    public static IFile createSourceFile(IPath filePath, boolean force, IProgressMonitor monitor) throws CoreException {
         //TODO should use code templates
         ByteArrayInputStream stream = new ByteArrayInputStream(new byte[0]);
 		return createNewFile(filePath, stream, force, monitor);
@@ -104,7 +104,7 @@ public class NewSourceFileGenerator {
         int totalWork = 100;
         int createFileWork = totalWork;
 
-        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createFile.task"), totalWork); //$NON-NLS-1$
+        monitor.beginTask(NewFileWizardMessages.getString("NewSourceFileGenerator.createFile.task"), totalWork); //$NON-NLS-1$
 
         IWorkspaceRoot root = CUIPlugin.getWorkspace().getRoot();
         IFile newFile = root.getFileForLocation(newFilePath);

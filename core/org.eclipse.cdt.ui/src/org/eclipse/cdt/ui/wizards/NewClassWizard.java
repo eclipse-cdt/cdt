@@ -36,6 +36,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 /**
  * description for "NewClassWizard".
  * @see Wizard
+ * @deprecated use NewClassCreationWizard instead
  */
 public class NewClassWizard extends BasicNewResourceWizard implements INewWizard {
 	private NewClassWizardPage fPage;

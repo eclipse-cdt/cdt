@@ -44,6 +44,7 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
 import org.eclipse.cdt.internal.ui.wizards.NewElementWizardPage;
+import org.eclipse.cdt.internal.ui.wizards.SourceFolderSelectionDialog;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog.ITypeSelectionListener;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassCodeGenerator.CodeGeneratorException;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
@@ -57,6 +58,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFie
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -1363,7 +1365,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 
 		if (!fileExists) {
-			IStatus val = validateHeaderFileName(getCurrentProject(), path.lastSegment());
+			IStatus val = CConventions.validateHeaderFileName(getCurrentProject(), path.lastSegment());
 			if (val.getSeverity() == IStatus.ERROR) {
 				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidHeaderFileName", val.getMessage())); //$NON-NLS-1$
 				return status;
@@ -1447,7 +1449,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 
 		if (!fileExists) {
-			IStatus val = validateSourceFileName(getCurrentProject(), path.lastSegment());
+			IStatus val = CConventions.validateSourceFileName(getCurrentProject(), path.lastSegment());
 			if (val.getSeverity() == IStatus.ERROR) {
 				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidSourceFileName", val.getMessage())); //$NON-NLS-1$
 				return status;
@@ -1455,63 +1457,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.SourceFileNameDiscouraged", val.getMessage())); //$NON-NLS-1$
 			}
 		}
-		return status;
-	}
-
-	//TODO should this method be part of CConventions.java?
-	private static IStatus validateHeaderFileName(IProject project, String name) {
-	    IStatus val = validateFileName(name);
-	    if (val.getSeverity() == IStatus.ERROR) {
-	        return val;
-	    }
-
-	    StatusInfo status = new StatusInfo(val.getSeverity(), val.getMessage());
-
-	    if (!CoreModel.isValidHeaderUnitName(project, name)) {
-	        status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.convention.headerFilename.filetype")); //$NON-NLS-1$
-	    }
-
-		//TODO could use a prefs option for header file naming conventions
-        return status;
-	}
-
-	//TODO should this method be part of CConventions.java?
-	private static IStatus validateSourceFileName(IProject project, String name) {
-	    IStatus val = validateFileName(name);
-	    if (val.getSeverity() == IStatus.ERROR) {
-	        return val;
-	    }
-
-	    StatusInfo status = new StatusInfo(val.getSeverity(), val.getMessage());
-
-	    if (!CoreModel.isValidSourceUnitName(project, name)) {
-	        status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.convention.sourceFilename.filetype")); //$NON-NLS-1$
-	    }
-
-		//TODO could use a prefs option for source file naming conventions
-        return status;
-	}
-	
-	//TODO should this method be part of CConventions.java?
-	private static IStatus validateFileName(String name) {
-	    StatusInfo status = new StatusInfo();
-	    
-	    if (name == null || name.length() == 0) {
-	        status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.convention.filename.nullName")); //$NON-NLS-1$
-	        return status;
-	    }
-
-		IPath path = new Path(name);
-		if (!path.isValidSegment(name)) {
-	        status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.convention.filename.invalid")); //$NON-NLS-1$
-	        return status;
-		}
-		
-		if (name.indexOf(" ") != -1) { //$NON-NLS-1$
-	        status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.convention.filename.nameWithBlanks")); //$NON-NLS-1$
-		}
-		
-		//TODO could use a prefs option for file naming conventions
 		return status;
 	}
 

@@ -18,6 +18,10 @@ import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
+/**
+ * @deprecated use NewFileCreationWizard instead
+ */
+
 public class OpenNewFileWizardAction extends Action implements IWorkbenchWindowActionDelegate {
 
 

@@ -12,10 +12,10 @@ package org.eclipse.cdt.internal.ui.wizards;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -24,10 +24,15 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.IWorkbenchWizard;
@@ -118,10 +123,20 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 			ISelection selection= window.getSelectionService().getSelection();
 			if (selection instanceof IStructuredSelection) {
 				return (IStructuredSelection) selection;
+			} else {
+				// Build the selection from the IFile of the editor
+				IWorkbenchPart part = window.getPartService().getActivePart();
+				if (part instanceof IEditorPart) {
+					IEditorInput input = ((IEditorPart) part).getEditorInput();
+					if (input instanceof IFileEditorInput) {
+					    IFile file = ((IFileEditorInput) input).getFile();
+					    if (file != null)
+					        return new StructuredSelection(file);
+					}
+				}
 			}
-			
 		}
-		return null;
+		return StructuredSelection.EMPTY;
 	}
 
 	/**

@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards;
 
-import java.util.ArrayList;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -25,25 +22,47 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 
 public abstract class AbstractWizardDropDownAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
 
-	private final static String TAG_WIZARD = "wizard"; //$NON-NLS-1$
-	private final static String ATT_CATEGORY = "category";//$NON-NLS-1$
+	protected final static IAction[] NO_ACTIONS = new IAction[0];
 	private Menu fMenu;
+	private IAction[] fActions;
+	private IRegistryChangeListener fListener;
 	
 	public AbstractWizardDropDownAction() {
 		fMenu= null;
+		fActions= null;
 		setMenuCreator(this);
+		
+		// listen for changes to wizard extensions
+		fListener = new IRegistryChangeListener() {
+		    public void registryChanged(IRegistryChangeEvent event) {
+		        refreshActions();
+		    }
+		};
+		Platform.getExtensionRegistry().addRegistryChangeListener(fListener);
+	}
+	
+	public void refreshActions() {
+        // force menu and actions to be created again
+        fActions = null;
+		if (fMenu != null) {
+			fMenu.dispose();
+			fMenu = null;
+		}
 	}
 
 	public void dispose() {
+		if (fListener != null) {
+			Platform.getExtensionRegistry().removeRegistryChangeListener(fListener);
+			fListener= null;
+		}
 		if (fMenu != null) {
 			fMenu.dispose();
 			fMenu= null;
 		}
+		fActions= null;
 	}
 
 	public Menu getMenu(Menu parent) {
@@ -53,67 +72,52 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 	public Menu getMenu(Control parent) {
 		if (fMenu == null) {
 			fMenu= new Menu(parent);
-			
-			Action[] actions= getActionFromDescriptors();
+			IAction[] actions= getActions();
 			for (int i= 0; i < actions.length; i++) {
 				ActionContributionItem item= new ActionContributionItem(actions[i]);
 				item.fill(fMenu, -1);				
-			}			
-		
+			}
 		}
 		return fMenu;
 	}
 	
 	public void run() {
-	    // for now, just run the first available action
-		Action[] actions = getActionFromDescriptors();
-		if (actions != null) {
-		    for (int i = 0; i < actions.length; ++i) {
-		        AbstractOpenWizardAction action = (AbstractOpenWizardAction) actions[0];
-			    if (action.isEnabled()) {
-			        action.run();
-			        return;
-			    }
-		    }
-		}
+	    // for now, run the default action
+	    // we might want the last run action at some point
+	    IAction action = getDefaultAction();
+	    if (action != null) {
+	        action.run();
+	    }
 	}
 	
-	public Action[] getActionFromDescriptors() {
-		ArrayList CActions = new ArrayList();
-		ArrayList CCActions = new ArrayList();
-		
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_NEW);
-		if (extensionPoint != null) {
-			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
-			for (int i = 0; i < elements.length; i++) {
-				IConfigurationElement element= elements[i];
-				if (element.getName().equals(TAG_WIZARD)) {
-				    String category = element.getAttribute(ATT_CATEGORY);
-				    if (category != null) {
-				        if (category.equals(CUIPlugin.CCWIZARD_CATEGORY_ID)) {
-					        AbstractOpenWizardAction action = createWizardAction(element);
-					        if (action != null) {
-							    CCActions.add(action);
-							}
-				        } else if (category.equals(CUIPlugin.CWIZARD_CATEGORY_ID)) {
-					        AbstractOpenWizardAction action = createWizardAction(element);
-					        if (action != null) {
-							    CActions.add(action);
-							}
-				        }
-				    }
-				}
-			}
+	public IAction getDefaultAction() {
+	    IAction[] actions = getActions();
+		if (actions.length > 0) {
+		    actions[0].getId();
+		    return actions[0];
+//		    for (int i = 0; i < actions.length; ++i) {
+//		        IAction action = actions[i];
+//			    if (action.isEnabled()) {
+//			        return action;
+//			    }
+//		    }
 		}
+		return null;
+	}
+	
+	private IAction[] getActions() {
+	    if (fActions == null) {
+	        fActions = getWizardActions();
+		    if (fActions == null)
+		        fActions = NO_ACTIONS;
 
-		//TODO: check for duplicate actions
-		// show C actions, then C++ Actions
-		CActions.addAll(CCActions);
-		return (Action[]) CActions.toArray(new Action[CActions.size()]);
+		    //TODO provide a way to sort the actions
+	    }
+	    return fActions;
 	}
 	
-	public abstract AbstractOpenWizardAction createWizardAction(IConfigurationElement element);
-		
+	protected abstract IAction[] getWizardActions();
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */

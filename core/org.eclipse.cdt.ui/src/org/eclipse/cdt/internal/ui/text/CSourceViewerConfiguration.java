@@ -18,8 +18,11 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -27,6 +30,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.ContentFormatter;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.IFormattingStrategy;
+import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
@@ -37,6 +41,8 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
@@ -347,6 +353,29 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	
 	protected IPreferenceStore getPreferenceStore() {
 		return CUIPlugin.getDefault().getPreferenceStore();
+	}
+	
+	/*
+	 * @see SourceViewerConfiguration#getHoverControlCreator(ISourceViewer)
+	 * @since 2.0
+	 */
+	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
+		return getInformationControlCreator(sourceViewer, true);
+	}
+	
+
+	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer, final boolean cutDown) {
+			return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				int style= cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
+				return new DefaultInformationControl(parent, style, new HTMLTextPresenter(cutDown));
+				// return new HoverBrowserControl(parent);
+			}
+		};
+	}
+
+	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
+		return super.getInformationPresenter(sourceViewer);
 	}
 
 }

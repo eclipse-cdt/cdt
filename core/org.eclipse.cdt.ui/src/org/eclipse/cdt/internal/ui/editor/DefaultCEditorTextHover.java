@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.index.TagFlags;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
 import org.eclipse.cdt.ui.IFunctionSummary;
 
 public class DefaultCEditorTextHover implements ITextHover 
@@ -42,7 +43,6 @@ public class DefaultCEditorTextHover implements ITextHover
 	 */
 	public String getHoverInfo( ITextViewer viewer, IRegion region ) 
 	{
-		String result = null;
 		String expression = null;
 		
 		if(fEditor == null) 
@@ -54,26 +54,23 @@ public class DefaultCEditorTextHover implements ITextHover
 			if ( expression.length() == 0 )
 				return null; 
 
+			StringBuffer buffer = new StringBuffer();
+
 			// We are just doing some C, call the Help to get info
 
 			IFunctionSummary fs = CCompletionContributorManager.getFunctionInfo(expression);
 			if(fs != null) {
-				StringBuffer s = new StringBuffer();
-				s.append(expression + "() - " + fs.getSummary() + "\n\n" + fs.getSynopsis());
+				buffer.append("<b>" + HTMLPrinter.convertToHTMLContent(expression) + 
+							  "()</b> - " + HTMLPrinter.convertToHTMLContent(fs.getSummary()) +
+							  "<br><br>" + HTMLPrinter.convertToHTMLContent(fs.getSynopsis()));
 				int i;
-				for(i = 0; i < s.length(); i++) {
-					if(s.charAt(i) == '\\') {
-						if((i + 1 < s.length()) && s.charAt(i+1) == 'n') {
-							s.replace(i, i + 2, "\n");
+				for(i = 0; i < buffer.length(); i++) {
+					if(buffer.charAt(i) == '\\') {
+						if((i + 1 < buffer.length()) && buffer.charAt(i+1) == 'n') {
+							buffer.replace(i, i + 2, "<br>");
 						}
 					}
 				}
-				i = s.length();
-				// Eat the last cariage return for nicer looking text
-				if(i != 0 && s.charAt(i - 1) == '\n') {
-					s.replace(i - 1, i, "");
-				}
-				return s.toString();
 			} else {
 				// Query the C model
 				IndexModel model = IndexModel.getDefault();
@@ -102,13 +99,17 @@ public class DefaultCEditorTextHover implements ITextHover
 					if(tags != null && tags.length > 0) {
 						ITagEntry selectedTag = selectTag(tags);
 						// Show only the first element
-						StringBuffer s = new StringBuffer();
-						s.append(expression + "() - " + selectedTag.getIFile().getFullPath().toString() + "[" + selectedTag.getLineNumber()+"]" );
+						buffer.append("<b>" + HTMLPrinter.convertToHTMLContent(expression) +
+									  "()</b> - " + selectedTag.getIFile().getFullPath().toString() + "[" + selectedTag.getLineNumber()+"]" );
 						// Now add the pattern
-						s.append("\n\n" + selectedTag.getPattern());
-						return s.toString();
+						buffer.append("<br><br>" + HTMLPrinter.convertToHTMLContent(selectedTag.getPattern()));
 					}	
 				}
+			}
+			if (buffer.length() > 0) {
+				HTMLPrinter.insertPageProlog(buffer, 0);
+				HTMLPrinter.addPageEpilog(buffer);
+				return buffer.toString();
 			}
 		}
 		catch( BadLocationException x )
@@ -119,8 +120,6 @@ public class DefaultCEditorTextHover implements ITextHover
 		{
 			// ignore
 		}
-		if ( expression != null && result != null )
-			return expression + " = " + result;
 		return null;
 	}
 

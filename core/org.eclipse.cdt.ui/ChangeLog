@@ -1,3 +1,17 @@
+2002-12-06 David Inglis
+
+	* src/org/eclipse/cdt/internal/ui/editor/DefaultCEditorTextHover.java:
+	* srcsrc/org/eclipse/cdt/internal/ui/text/CAnnotationHover.java:
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java:
+	* src/org/eclipse/cdt/internal/ui/text/HTML2TextReader.java: New 
+	* src/org/eclipse/cdt/internal/ui/text/HTMLPrinter.java: New
+	* src/org/eclipse/cdt/internal/ui/text/HTMLTextPresenter.java: New
+	* src/org/eclipse/cdt/internal/ui/text/LineBreakingReader.java
+	* src/org/eclipse/cdt/internal/ui/text/SubstitutionTextReader.java: New
+
+	Added support to display balloon messages for lines with multiple markers.
+	Added support for basic markup within the hover balloons within the CEditor.
+	
 2002-12-04 Alex Chapiro
 
 	I propose to create isValidLocation method in addition to already existing

@@ -65,6 +65,11 @@ public class LineBreakingReader {
 		fLine= null;
 		fLineBreakIterator= BreakIterator.getLineInstance();
 	}
+	
+	public boolean isFormattedLine() {
+		return fLine != null;
+	}
+	
 	/**
 	 * Reads the next line. The lengths of the line will not exceed the gived maximum
 	 * width.

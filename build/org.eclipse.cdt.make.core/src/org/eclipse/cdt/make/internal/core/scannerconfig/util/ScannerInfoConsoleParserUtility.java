@@ -323,51 +323,46 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 			String include = (String) i.next();
 			IPath includePath = new Path(include);
 			if (!includePath.isAbsolute()) {
-				// check if it is a relative path
-				if (include.startsWith("..") || include.startsWith(".")) {	//$NON-NLS-1$ //$NON-NLS-2$
-					// First try the current working directory
-					IPath cwd = getWorkingDirectory();
-					if (!cwd.isAbsolute()) {
-						cwd = fProject.getLocation().append(cwd);
-					}
-					// check if the cwd is the right one
-					// appending fileName to cwd should yield file path
-					IPath filePath = cwd.append(fileName);
-					if (!filePath.toString().equalsIgnoreCase(file.getLocation().toString())) {
-						// must be the cwd is wrong
-						// check if file name starts with ".."
-						if (fileName.startsWith("..")) {	//$NON-NLS-1$
-							// probably multiple choices for cwd, hopeless
-							TraceUtil.outputError("Unable to determine working directory for ", fileName); //$NON-NLS-1$
-							generateMarker(file, -1, "Unable to determine working directory for",	//$NON-NLS-1$
-									IMarkerGenerator.SEVERITY_WARNING, fileName);				
-							break;
-						}
-						else {
-							// remove common segments at the end 
-							IPath tPath = new Path(fileName);
-							if (fileName.startsWith(".")) {	//$NON-NLS-1$
-								tPath = tPath.removeFirstSegments(1);
-							}
-							// get the file path from the file
-							filePath = file.getLocation();
-							IPath lastFileSegment = filePath.removeFirstSegments(filePath.segmentCount() - tPath.segmentCount());
-							if (lastFileSegment.matchingFirstSegments(tPath) == tPath.segmentCount()) {
-								cwd = filePath.removeLastSegments(tPath.segmentCount());
-							}
-						}
-					}
-					
-					IPath candidatePath = cwd.append(includePath);
-					File dir = candidatePath.toFile();
-					if (dir.exists()) {
-						translatedIncludes.add(candidatePath.toString());
-						continue;
+				// First try the current working directory
+				IPath cwd = getWorkingDirectory();
+				if (!cwd.isAbsolute()) {
+					cwd = fProject.getLocation().append(cwd);
+				}
+				// check if the cwd is the right one
+				// appending fileName to cwd should yield file path
+				IPath filePath = cwd.append(fileName);
+				if (!filePath.toString().equalsIgnoreCase(file.getLocation().toString())) {
+					// must be the cwd is wrong
+					// check if file name starts with ".."
+					if (fileName.startsWith("..")) {	//$NON-NLS-1$
+						// probably multiple choices for cwd, hopeless
+						TraceUtil.outputError("Unable to determine working directory for ", fileName); //$NON-NLS-1$
+						generateMarker(file, -1, "Unable to determine working directory for",	//$NON-NLS-1$
+								IMarkerGenerator.SEVERITY_WARNING, fileName);				
+						break;
 					}
 					else {
-						generateMarker(file, -1, "Nonexistent include path: "+include,
-								IMarkerGenerator.SEVERITY_WARNING, fileName);				
+						// remove common segments at the end 
+						IPath tPath = new Path(fileName);
+						if (fileName.startsWith(".")) {	//$NON-NLS-1$
+							tPath = tPath.removeFirstSegments(1);
+						}
+						// get the file path from the file
+						filePath = file.getLocation();
+						IPath lastFileSegment = filePath.removeFirstSegments(filePath.segmentCount() - tPath.segmentCount());
+						if (lastFileSegment.matchingFirstSegments(tPath) == tPath.segmentCount()) {
+							cwd = filePath.removeLastSegments(tPath.segmentCount());
+						}
 					}
+				}
+				
+				IPath candidatePath = cwd.append(includePath);
+				File dir = candidatePath.toFile();
+				include = candidatePath.toString();
+				if (!dir.exists()) {
+					TraceUtil.outputError("Nonexistent include path:  ", include); //$NON-NLS-1$
+					generateMarker(file, -1, "Nonexistent include path: "+include, //$NON-NLS-1$
+							IMarkerGenerator.SEVERITY_WARNING, fileName);				
 				}
 			}
 			// TODO VMIR for now add unresolved paths as well

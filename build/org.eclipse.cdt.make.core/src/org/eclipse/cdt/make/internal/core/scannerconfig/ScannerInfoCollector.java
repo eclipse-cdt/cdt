@@ -80,9 +80,9 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(org.eclipse.core.resources.IResource, java.util.List, java.util.List, java.util.List)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(org.eclipse.core.resources.IResource, java.util.List, java.util.List, java.util.Map)
 	 */
-	public synchronized void contributeToScannerConfig(IResource resource, List includes, List symbols, List targetSpecificOptions) {
+	public void contributeToScannerConfig(IResource resource, List includes, List symbols, Map extraInfo) {
 		IProject project;
 		if (resource == null || (project = resource.getProject()) == null) {
 			TraceUtil.outputError("IScannerInfoCollector.contributeToScannerConfig : ", "resource or project is null"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -96,7 +96,10 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 				String projectName = project.getName();
 				contribute(projectName, discoveredIncludes, includes, true);
 				contribute(projectName, discoveredSymbols, symbols, false);
-				contribute(projectName, discoveredTSO, targetSpecificOptions, false);
+				contribute(projectName, 
+						   discoveredTSO, 
+						   (extraInfo == null) ? null : (List) extraInfo.get(IScannerInfoCollector.TARGET_SPECIFIC_OPTION),
+						   false);
 			}
 		} 
 		catch (CoreException e) {

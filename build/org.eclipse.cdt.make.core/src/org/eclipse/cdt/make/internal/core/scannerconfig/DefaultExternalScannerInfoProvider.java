@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -32,6 +31,7 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerConfigUtil;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -54,7 +54,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 	
 	private IPath fWorkingDirectory;
 	private IPath fCompileCommand;
-	private String fCompileArguments;
+	private String[] fCompileArguments;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider#invokeProvider(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.resources.IProject, org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo, java.util.List, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector)
@@ -144,32 +144,31 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 	private boolean initialize(IProject currentProject, IScannerConfigBuilderInfo buildInfo, List targetSpecificOptions) {
 		boolean rc = false;
 		
-		if (buildInfo.isDefaultESIProviderCmd()) {
-			fWorkingDirectory = MakeCorePlugin.getWorkingDirectory();
-			String targetFile = "dummy";	//$NON-NLS-1$
-			try {
-				if (currentProject.hasNature(CCProjectNature.CC_NATURE_ID)) {
-					targetFile = GCCScannerConfigUtil.CPP_SPECS_FILE;
-				}
-				else if (currentProject.hasNature(CProjectNature.C_NATURE_ID)) {
-					targetFile = GCCScannerConfigUtil.C_SPECS_FILE;
-				}
-			} catch (CoreException e) {
-				//TODO VMIR better error handling
-				MakeCorePlugin.log(e.getStatus());
+		fWorkingDirectory = currentProject.getLocation();
+		String targetFile = "dummy";	//$NON-NLS-1$
+		try {
+			if (currentProject.hasNature(CCProjectNature.CC_NATURE_ID)) {
+				targetFile = GCCScannerConfigUtil.CPP_SPECS_FILE;
 			}
-			IPath path2File = fWorkingDirectory.append(targetFile);
-			if (!path2File.toFile().exists()) {
-				GCCScannerConfigUtil.createSpecs();
+			else if (currentProject.hasNature(CProjectNature.C_NATURE_ID)) {
+				targetFile = GCCScannerConfigUtil.C_SPECS_FILE;
 			}
-			targetSpecificOptions.add(targetFile);
+		} catch (CoreException e) {
+			//TODO VMIR better error handling
+			MakeCorePlugin.log(e.getStatus());
 		}
-		else {
-			fWorkingDirectory = currentProject.getLocation();
+		IPath path2File = fWorkingDirectory.append(targetFile);
+		if (!path2File.toFile().exists()) {
+			GCCScannerConfigUtil.createSpecs();
 		}
 		fCompileCommand = buildInfo.getESIProviderCommand();
 		if (fCompileCommand != null) {
-			fCompileArguments = buildInfo.getESIProviderArguments();
+			fCompileArguments = ScannerConfigUtil.tokenizeStringWithQuotes(buildInfo.getESIProviderArguments());
+			for (int i = 0; i < fCompileArguments.length; ++i) {
+				fCompileArguments[i] = fCompileArguments[i].replaceAll("\\$\\{plugin_state_location\\}",	//$NON-NLS-1$ 
+						MakeCorePlugin.getWorkingDirectory().toString());
+				fCompileArguments[i] = fCompileArguments[i].replaceAll("\\$\\{specs_file\\}", targetFile);	//$NON-NLS-1$
+			}
 			rc = true;
 		}
 		return rc;
@@ -183,17 +182,12 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 		String[] rv = null;
 		// commandArguments may have multiple arguments; tokenizing
 		int nTokens = 0;
-		if (fCompileArguments != null && fCompileArguments.length() > 0) {
-			StringTokenizer tokenizer = new StringTokenizer(fCompileArguments, " ");//$NON-NLS-1$
-			nTokens = tokenizer.countTokens();
-			if (nTokens > 0) {
-				rv = new String[nTokens + tso.size()];
-				for (int i = 0; tokenizer.hasMoreTokens(); ++i) {
-					rv[i] = tokenizer.nextToken();
-				}
-			}
+		if (fCompileArguments != null && fCompileArguments.length > 0) {
+			nTokens = fCompileArguments.length;
+			rv = new String[nTokens + tso.size()];
+			System.arraycopy(fCompileArguments, 0, rv, 0, nTokens);
 		}
-		if (rv == null) {
+		else {
 			rv = new String[tso.size()];
 		}
 		for (int i = 0; i < tso.size(); ++i) {

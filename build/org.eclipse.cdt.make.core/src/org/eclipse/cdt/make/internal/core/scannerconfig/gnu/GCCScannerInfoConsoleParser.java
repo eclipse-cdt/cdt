@@ -16,12 +16,15 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Parses gcc and g++ output for -I and -D parameters.
@@ -67,17 +70,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 		}
 		// Known patterns:
 		// (a) gcc|g++ ... -Dxxx -Iyyy ...
-		ArrayList allTokens = new ArrayList();
-		String[] tokens = line.split("\"");
-		for (int i = 0; i < tokens.length; ++i) {
-			if (i % 2 == 0) { // even tokens need further tokenization
-				String[] sTokens = tokens[i].split("\\s");
-				allTokens.addAll(Arrays.asList(sTokens));
-			}
-			else {
-				allTokens.add(tokens[i]);
-			}
-		}
+		ArrayList allTokens = new ArrayList(Arrays.asList(ScannerConfigUtil.tokenizeStringWithQuotes(line)));
 		if (allTokens.size() <= 1)
 			return false;
 		Iterator I = allTokens.iterator();
@@ -181,7 +174,9 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 			}
 			// Contribute discovered includes and symbols to the ScannerInfoCollector
 			if (translatedIncludes.size() > 0 || symbols.size() > 0) {
-				fCollector.contributeToScannerConfig(project, translatedIncludes, symbols, targetSpecificOptions);
+				Map extraInfo = new HashMap();
+				extraInfo.put(IScannerInfoCollector.TARGET_SPECIFIC_OPTION, targetSpecificOptions);
+				fCollector.contributeToScannerConfig(project, translatedIncludes, symbols, extraInfo);
 				
 				TraceUtil.outputTrace("Discovered scanner info for file \'" + fileName + '\'',	//$NON-NLS-1$
 						"Include paths", includes, translatedIncludes, "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$

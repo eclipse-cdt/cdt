@@ -106,7 +106,7 @@ public class CLIProcessor {
 		boolean isDelete = false;
 		/* deleting breaks: clear, delete */
 		if ((operation.startsWith("cl")  && "clear".indexOf(operation)   != -1) ||
-		    (operation.startsWith("del") && "delete".indexOf(operation)  != -1)) {
+		    (operation.equals("d") || (operation.startsWith("del") && "delete".indexOf(operation)  != -1))) {
 			isDelete = true;
 		}
 		return isDelete;

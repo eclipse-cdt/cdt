@@ -14,10 +14,10 @@ import junit.framework.Test;
 import junit.framework.TestListener;
 import junit.framework.TestResult;
 
-import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.testing.ITestHarness;
@@ -30,7 +30,7 @@ import org.w3c.dom.ProcessingInstruction;
 /**
  * @see IPlatformRunnable
  */
-public class RunTests implements IPlatformRunnable, ITestHarness, TestListener {
+public class RunTests implements ITestHarness, TestListener {
 
 	private TestableObject testableObject;
 	private PrintStream stream;

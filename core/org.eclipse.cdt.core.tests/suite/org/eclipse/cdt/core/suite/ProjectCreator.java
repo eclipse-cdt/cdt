@@ -32,9 +32,9 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * This is a utility class that properly creates a project for testing
- * core features. Projects are created from a template stored in the
- * resources/zips directory. These templates are created using the CDT
- * and have the proper natures and build settings set up.
+ * core features. Projects are created from a template stored in a zip file
+ * These templates are created using the CDT and have the proper natures
+ * and build settings set up.
  * 
  * @author Doug Schaefer
  */

@@ -1,3 +1,7 @@
+2004-04-19 Andrew Niefer
+	added parser/CompleteParseASTTemplateTest.test_14_7_3__5_ExplicitSpecialization()
+	uncommented & modified parser/ParserSymbolTableTemplateTests.test_14_7_3__5_ExplicitSpecialization()
+
 2004-04-15 Andrew Niefer
 	added parser/org/eclipse/cdt/core/parser/tests/CompletionParseTest.testBug58492()
 

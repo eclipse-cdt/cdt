@@ -755,4 +755,36 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
 		IASTTemplateDeclaration temp2 = (IASTTemplateDeclaration) i.next();
 	}
+	
+	public void test_14_7_3__5_ExplicitSpecialization() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write("template< class T > struct A {  ");
+		writer.write("   void f( T ) {}               ");
+		writer.write("};                              ");
+		writer.write("template <> struct A< int >{    ");
+		writer.write("   void f( int );               ");
+		writer.write("};                               ");
+		writer.write("void A< int >::f( int ){ }      ");
+		
+		writer.write("void main(){                    ");
+		writer.write("   A<int> a;                    ");
+		writer.write("   a.f( 1 );                    ");
+		writer.write("}                               ");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTTemplateParameter T = (IASTTemplateParameter) template.getTemplateParameters().next();
+		IASTTemplateSpecialization spec = (IASTTemplateSpecialization) i.next();
+		IASTMethod f = (IASTMethod) i.next();
+		IASTFunction main = (IASTFunction) i.next();
+		
+		IASTClassSpecifier ASpec = (IASTClassSpecifier) spec.getOwnedDeclaration();
+		
+		i = getDeclarations( main );
+		IASTVariable a = (IASTVariable) i.next();
+		
+		assertAllReferences( 5, createTaskList( new Task( T ), new Task( ASpec, 2 ), new Task( a ), new Task( f ) ) );
+	}
 }

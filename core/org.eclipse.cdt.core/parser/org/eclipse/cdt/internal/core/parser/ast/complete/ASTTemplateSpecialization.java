@@ -10,8 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol;
 
 /**
@@ -20,6 +22,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol;
  */
 public class ASTTemplateSpecialization extends ASTTemplateDeclaration implements IASTTemplateSpecialization
 {
+	private ISymbol owned = null;
     /**
      * 
      */
@@ -28,4 +31,15 @@ public class ASTTemplateSpecialization extends ASTTemplateDeclaration implements
         super(template, scope, null);
     }
 
+    public IASTDeclaration getOwnedDeclaration()
+    {
+    	if( owned != null && owned.getASTExtension() != null )
+    		return owned.getASTExtension().getPrimaryDeclaration();
+    	
+    	return null;
+    }
+    
+	public void setOwnedDeclaration(ISymbol symbol) {
+		owned = symbol;
+	}
 }

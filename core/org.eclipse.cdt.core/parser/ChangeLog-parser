@@ -1,3 +1,6 @@
+2004-04-19 Andrew Niefer
+	fix problems with explicit specialization
+
 2004-04-16 Andrew Niefer
 	refactor ASTNode.lookup, partially addressing bug 50807
 

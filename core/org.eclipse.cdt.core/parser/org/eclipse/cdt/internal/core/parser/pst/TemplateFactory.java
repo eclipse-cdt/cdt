@@ -18,9 +18,9 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateInstantiation;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateSpecialization;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType;
 
@@ -72,6 +72,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		} else if( params.size() == 0 ){
 			//explicit specialization
 			 addExplicitSpecialization( origTemplate, symbol, args );
+			 
 		} else {
 			//partial speciailization
 			ISpecializedSymbol spec = template.getSymbolTable().newSpecializedSymbol( symbol.getName() );
@@ -286,24 +287,12 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		}
 	}
 	private void addExplicitSpecialization( ITemplateSymbol template, ISymbol symbol, List arguments ) throws ParserSymbolTableException {
-		Iterator templatesIter = templates.iterator();
-		Iterator argsIter = arguments.iterator();
+		template.addExplicitSpecialization( symbol, arguments );
 		
-//		while( templatesIter.hasNext() ){
-//			ITemplateSymbol template = (ITemplateSymbol)templatesIter.next();
-			
-			template.addExplicitSpecialization( symbol, arguments );
-		//}
-		
-//		if( getTemplateFunctions() != null && argsIter.hasNext() ){
-//			List args = (List) argsIter.next();
-//			ITemplateSymbol template = TemplateEngine.resolveTemplateFunctions( getTemplateFunctions(), args, symbol );
-//			if( template != null ){
-//				template.addExplicitSpecialization( symbol, args );
-//			} else {
-//				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
-//			}
-//		}
+		if( getASTExtension() != null ){
+		 	ASTTemplateSpecialization spec = (ASTTemplateSpecialization) getASTExtension().getPrimaryDeclaration();
+		 	spec.setOwnedDeclaration( symbol );
+		 }
 	}
 	
 	private IContainerSymbol getLastSymbol() {

@@ -25,10 +25,16 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -593,6 +599,143 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		assertInstances( collector, A, 2 );
 		assertInstances( collector, x, 2 );
+    }
+	
+    public void testEnumerations() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "enum hue { red, blue, green };     \n" ); //$NON-NLS-1$
+        buffer.append( "enum hue col, *cp;                 \n" ); //$NON-NLS-1$
+        buffer.append( "void f() {                         \n" ); //$NON-NLS-1$
+        buffer.append( "   col = blue;                     \n" ); //$NON-NLS-1$
+        buffer.append( "   cp = &col;                      \n" ); //$NON-NLS-1$
+        buffer.append( "   if( *cp != red )                \n" ); //$NON-NLS-1$
+        buffer.append( "      return;                      \n" ); //$NON-NLS-1$
+        buffer.append( "}                                  \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+        
+		IEnumeration hue = (IEnumeration) collector.getName(0).resolveBinding();
+		IEnumerator red = (IEnumerator) collector.getName(1).resolveBinding();
+		IEnumerator blue = (IEnumerator) collector.getName(2).resolveBinding();
+		IEnumerator green = (IEnumerator) collector.getName(3).resolveBinding();
+		IVariable col = (IVariable) collector.getName(5).resolveBinding();
+		IVariable cp = (IVariable) collector.getName(6).resolveBinding();
+		
+		assertInstances( collector, hue, 2 );
+		assertInstances( collector, red, 2 );
+		assertInstances( collector, blue, 2 );
+		assertInstances( collector, green, 1 );
+		assertInstances( collector, col, 3 );
+		assertInstances( collector, cp, 3 );
+		
+		assertTrue( cp.getType() instanceof IPointerType );
+		IPointerType pt = (IPointerType) cp.getType();
+		assertSame( pt.getType(), hue );
+    }
+    
+    public void testPointerToFunction() throws Exception{
+    	IASTTranslationUnit tu = parse( "int (*pfi)();", ParserLanguage.CPP ); //$NON-NLS-1$
+    	CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		IVariable pf = (IVariable) collector.getName(0).resolveBinding();
+		IPointerType pt = (IPointerType) pf.getType();
+		assertTrue( pt.getType() instanceof IFunctionType );
+		
+		tu = parse( "struct A; int (*pfi)( int, struct A * );", ParserLanguage.CPP ); //$NON-NLS-1$
+    	collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		ICPPClassType A = (ICPPClassType) collector.getName(0).resolveBinding();
+		pf = (IVariable) collector.getName(1).resolveBinding();
+		pt = (IPointerType) pf.getType();
+		assertTrue( pt.getType() instanceof IFunctionType );
+		IFunctionType ft = (IFunctionType) pt.getType();
+		IType [] params = ft.getParameterTypes();
+		assertTrue( params[0] instanceof IBasicType );
+		assertTrue( params[1] instanceof IPointerType );
+		pt = (IPointerType) params[1];
+		assertSame( pt.getType(), A );
+    }
+    
+    public void testFunctionTypes() throws Exception{
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "struct A;                           \n"); //$NON-NLS-1$
+        buffer.append( "int * f( int i, char c );           \n"); //$NON-NLS-1$
+        buffer.append( "void ( *g ) ( A * );         \n"); //$NON-NLS-1$
+        buffer.append( "void (* (*h)(A**) ) ( int ); \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IASTElaboratedTypeSpecifier elabSpec = (IASTElaboratedTypeSpecifier) decl.getDeclSpecifier();
+        ICompositeType A = (ICompositeType) elabSpec.getName().resolveBinding();
+        
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+        IFunction f = (IFunction) decl.getDeclarators()[0].getName().resolveBinding();
+        
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
+        IVariable g = (IVariable) decl.getDeclarators()[0].getNestedDeclarator().getName().resolveBinding();
+        
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[3];
+        IVariable h = (IVariable) decl.getDeclarators()[0].getNestedDeclarator().getNestedDeclarator().getName().resolveBinding();
+        
+        IFunctionType t_f = f.getType();
+        IType t_f_return = t_f.getReturnType();
+        assertTrue( t_f_return instanceof IPointerType );
+        assertTrue( ((IPointerType) t_f_return).getType() instanceof IBasicType );
+        IType [] t_f_params = t_f.getParameterTypes();
+        assertEquals( t_f_params.length, 2 );
+        assertTrue( t_f_params[0] instanceof IBasicType );
+        assertTrue( t_f_params[1] instanceof IBasicType );
+        
+        //g is a pointer to a function that returns void and has 1 parameter struct A *
+        IType t_g = g.getType();
+        assertTrue( t_g instanceof IPointerType );
+        assertTrue( ((IPointerType) t_g).getType() instanceof IFunctionType );
+        IFunctionType t_g_func = (IFunctionType) ((IPointerType) t_g).getType();
+        IType t_g_func_return = t_g_func.getReturnType();
+        assertTrue( t_g_func_return instanceof IBasicType );
+        IType [] t_g_func_params = t_g_func.getParameterTypes();
+        assertEquals( t_g_func_params.length, 1 );
+        IType t_g_func_p1 = t_g_func_params[0];
+        assertTrue( t_g_func_p1 instanceof IPointerType );
+        assertSame( ((IPointerType)t_g_func_p1).getType(), A );
+        
+        //h is a pointer to a function that returns a pointer to a function
+        //the returned pointer to function returns void and takes 1 parameter int
+        // the *h function takes 1 parameter struct A**
+        IType t_h = h.getType();
+        assertTrue( t_h instanceof IPointerType );
+        assertTrue( ((IPointerType) t_h).getType() instanceof IFunctionType );
+        IFunctionType t_h_func = (IFunctionType) ((IPointerType) t_h).getType();
+        IType t_h_func_return = t_h_func.getReturnType();
+        IType [] t_h_func_params = t_h_func.getParameterTypes();
+        assertEquals( t_h_func_params.length, 1 );
+        IType t_h_func_p1 = t_h_func_params[0];
+        assertTrue( t_h_func_p1 instanceof IPointerType );
+        assertTrue( ((IPointerType)t_h_func_p1).getType() instanceof IPointerType );
+        assertSame( ((IPointerType) ((IPointerType)t_h_func_p1).getType() ).getType(), A );
+        
+        assertTrue( t_h_func_return instanceof IPointerType );
+        IFunctionType h_return = (IFunctionType) ((IPointerType) t_h_func_return).getType();
+        IType h_r = h_return.getReturnType();
+        IType [] h_ps = h_return.getParameterTypes();
+        assertTrue( h_r instanceof IBasicType );
+        assertEquals( h_ps.length, 1 );
+        assertTrue( h_ps[0] instanceof IBasicType );
+    }
+    
+    public void testFnReturningPtrToFn() throws Exception {
+    	IASTTranslationUnit tu = parse( "void ( * f( int ) )(){}", ParserLanguage.CPP ); //$NON-NLS-1$
+    	
+        IASTFunctionDefinition def = (IASTFunctionDefinition) tu.getDeclarations()[0];
+        IFunction f = (IFunction) def.getDeclarator().getNestedDeclarator().getName().resolveBinding();
+        
+        IFunctionType ft = f.getType();
+        assertTrue( ft.getReturnType() instanceof IPointerType );
+        assertTrue( ((IPointerType) ft.getReturnType()).getType() instanceof IFunctionType );
+        assertEquals( ft.getParameterTypes().length, 1 );
     }
 }
 

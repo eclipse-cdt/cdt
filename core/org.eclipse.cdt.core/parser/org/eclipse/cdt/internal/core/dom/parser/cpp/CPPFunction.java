@@ -124,8 +124,8 @@ public class CPPFunction implements IFunction {
      * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
      */
     public IFunctionType getType() {
-        if( type == null ) 
-            type = CPPVisitor.createType( ( definition != null ) ? definition : declarations[0] );
+        if( type == null )
+            type = (IFunctionType) CPPVisitor.createType( ( definition != null ) ? definition : declarations[0] );
         return type;
     }
 

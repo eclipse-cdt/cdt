@@ -13,13 +13,8 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -29,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
  */
 public class CPPVariable implements IVariable {
 	private IASTDeclarator declarator = null;
+	private IType type = null;
 	
 	public CPPVariable( IASTDeclarator dtor ){
 		declarator = dtor;
@@ -38,17 +34,9 @@ public class CPPVariable implements IVariable {
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
 	public IType getType() {
-		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) declarator.getParent();
-		IASTDeclSpecifier declSpec = decl.getDeclSpecifier();
-		
-		if( declSpec instanceof IASTNamedTypeSpecifier )
-			return (IType) ((IASTNamedTypeSpecifier)declSpec).getName().resolveBinding();
-		else if( declSpec instanceof IASTCompositeTypeSpecifier )
-			return (IType) ((IASTCompositeTypeSpecifier)declSpec).getName().resolveBinding();
-		else if( declSpec instanceof IASTElaboratedTypeSpecifier )
-			return (IType) ((IASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding();
-		
-		return null;
+		if( type == null )
+			type = CPPVisitor.createType( declarator ); 
+		return type;
 	}
 
 	/* (non-Javadoc)

@@ -46,8 +46,11 @@ public class CMemoryManager implements ICMemoryManager
 	{
 		for ( int i = 0; i < fBlocks.length; ++i )
 		{
-			fBlocks[i].dispose();
-			fBlocks[i] = null;
+			if ( fBlocks[i] != null )
+			{
+				fBlocks[i].dispose();
+				fBlocks[i] = null;
+			}
 		}
 	}
 
@@ -99,6 +102,14 @@ public class CMemoryManager implements ICMemoryManager
 	
 	public void dispose()
 	{
+		for ( int i = 0; i < fBlocks.length; ++i )
+		{
+			if ( fBlocks[i] != null )
+			{
+				fBlocks[i].dispose();
+				fBlocks[i] = null;
+			}
+		}
 	}
 
 	/* (non-Javadoc)

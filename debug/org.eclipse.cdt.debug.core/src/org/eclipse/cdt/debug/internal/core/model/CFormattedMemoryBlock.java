@@ -380,6 +380,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 			fAddressExpression = null;
 		}
 		getCDISession().getEventManager().removeEventListener( this );
+		fireTerminateEvent();
 	}
 
 	/* (non-Javadoc)

@@ -1,3 +1,8 @@
+2003-09-10 Mikhail Khodjaiants
+	Fix for PR 42790: Memory view is not cleared when target is terminated.
+	* CFormattedMemoryBlock.java: fire 'terminate' event when block is disposing.
+	* CMemoryManager.java: implementation of 'dispose'.
+
 2003-09-09 Mikhail Khodjaiants
 	Fix for PR 39680: Gash in error message for memory view.
 	* CDebugModel.java

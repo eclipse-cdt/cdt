@@ -1,7 +1,7 @@
 2003-04-29 Alain Magloire
 
 	* src/org/eclipse/cdt/internal/ui/compare/ComparatorModelBuilder.java:
-	Fix NPE, PR 367976.
+	Fix NPE, PR 36976.
 
 2003-04-29 Alain Magloire
 

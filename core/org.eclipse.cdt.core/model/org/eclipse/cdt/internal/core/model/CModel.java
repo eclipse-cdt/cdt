@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -207,7 +208,7 @@ public class CModel extends Openable implements ICModel {
 		IProject[] projects = root.getProjects();
 		for (int i = 0, max = projects.length; i < max; i++) {
 			IProject project = projects[i];
-			if (factory.hasCNature(project) || factory.hasCCNature(project)) {
+			if (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project)) {
 				ICProject cproject = new CProject(this, project);
 				info.addChild(cproject);
 			}

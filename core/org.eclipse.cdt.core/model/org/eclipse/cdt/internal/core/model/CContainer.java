@@ -11,6 +11,7 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -226,7 +227,7 @@ public class CContainer extends Openable implements ICContainer {
 			case IResource.FILE :
 				{
 					IFile file = (IFile) resource;
-					if (factory.isTranslationUnit(file)) {
+					if (CoreModel.isTranslationUnit(file)) {
 						celement = new TranslationUnit(this, file);
 					} else if (cproject.isOnOutputEntry(file)) {
 						IBinaryParser.IBinaryFile bin = factory.createBinaryFile(file);

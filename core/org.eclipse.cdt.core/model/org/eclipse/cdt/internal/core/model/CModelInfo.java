@@ -1,5 +1,6 @@
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -33,7 +34,7 @@ public class CModelInfo extends OpenableInfo {
 		int index = 0;
 		for (int i = 0; i < length; i++) {
 			IProject project = projects[i];
-			if (!(mgr.hasCNature(project) || mgr.hasCCNature(project))) {
+			if (!(CoreModel.hasCNature(project) || CoreModel.hasCCNature(project))) {
 				if (nonCProjects == null) {
 					nonCProjects = new Object[length];
 				}

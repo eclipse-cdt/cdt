@@ -3,7 +3,14 @@ package org.eclipse.cdt.core.model;
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002. All Rights Reserved.
  */
+import java.util.ArrayList;
+
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.filetype.ICFileTypeAssociation;
+import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
@@ -53,7 +60,6 @@ public class CoreModel {
 	 */
 	public ICElement create(IFile file) {
 		return manager.create(file, null);
-
 	}
 
 	/**
@@ -104,91 +110,171 @@ public class CoreModel {
 	 * Return true if IFile is a shared library, i.e. libxx.so
 	 */
 	public boolean isSharedLib(IFile file) {
-		return manager.isSharedLib(file);
+		ICElement celement = create(file);
+		if (celement instanceof IBinary) {
+			return ((IBinary)celement).isSharedLib();
+		}
+		return false;
 	}
 
 	/**
 	 * Return true if IFile is a an object(ELF), i.e. *.o
 	 */
 	public boolean isObject(IFile file) {
-		return manager.isObject(file);
+		ICElement celement = create(file);
+		if (celement instanceof IBinary) {
+			return ((IBinary)celement).isObject();
+		}
+		return false;
 	}
 
 	/**
 	 * Return true if IFile is an ELF executable
 	 */
 	public boolean isExecutable(IFile file) {
-		return manager.isExecutable(file);
+		ICElement celement = create(file);
+		if (celement instanceof IBinary) {
+			return ((IBinary)celement).isExecutable();
+		}
+		return false;
 	}
 
 	/**
 	 * Return true if IFile is an ELF.
 	 */
 	public boolean isBinary(IFile file) {
-		return manager.isBinary(file);
+		ICElement celement = create(file);
+		return (celement instanceof IBinary);
 	}
 
 	/**
 	 * Return true if IFile is an Achive, *.a
 	 */
 	public boolean isArchive(IFile file) {
-		return manager.isArchive(file);
+		ICElement celement = create(file);
+		return(celement instanceof IArchive);
 	}
 
 	/**
 	 * Return true if IFile is a TranslationUnit.
 	 */
-	public boolean isTranslationUnit(IFile file) {
-		return manager.isTranslationUnit(file);
+	public static boolean isTranslationUnit(IFile file) {
+		if (file != null) {
+			ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
+			return type.isTranslationUnit();
+		}
+		return false;
 	}
 
 	/**
 	 * Return true if name is a valid name for a translation unit.
 	 */
-	public boolean isValidTranslationUnitName(String name) {
-		return manager.isValidTranslationUnitName(name);
+	public static boolean isValidTranslationUnitName(String name) {
+		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
+		ICFileType type = resolver.getFileType(name);
+		return type.isTranslationUnit();
+	}
+
+	/**
+	 * Return true if name is a valid name for a translation unit.
+	 */
+	public static boolean isValidHeaderUnitName(String name) {
+		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
+		ICFileType type = resolver.getFileType(name);
+		return type.isHeader();
+	}
+
+	/**
+	 * Return true if name is a valid name for a translation unit.
+	 */
+	public static boolean isValidSourceUnitName(String name) {
+		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
+		ICFileType type = resolver.getFileType(name);
+		return type.isSource();
 	}
 
 	/**
 	 * Return the list of headers extensions.
 	 */
 	public String[] getHeaderExtensions() {
-		return manager.getHeaderExtensions();
+		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
+		ICFileTypeAssociation[] associations = resolver.getFileTypeAssociations();
+		ArrayList list = new ArrayList(associations.length);
+		for (int i = 0; i < associations.length; i++) {
+			ICFileType type = associations[i].getType();
+			if (type.isHeader()) {
+				list.add(associations[i].getPattern());
+			}
+		}
+		String[] exts = new String[list.size()];
+		list.toArray(exts);
+		return exts;
 	}
 
 	/**
 	 * Returns the list of source extensions.
 	 */
 	public String[] getSourceExtensions() {
-		return manager.getSourceExtensions();
-	}
-
-	/**
-	 * Returns the list of assembly file extensions.
-	 */
-	public String[] getAssemblyExtensions() {
-		return manager.getAssemblyExtensions();
+		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
+		ICFileTypeAssociation[] associations = resolver.getFileTypeAssociations();
+		ArrayList list = new ArrayList(associations.length);
+		for (int i = 0; i < associations.length; i++) {
+			ICFileType type = associations[i].getType();
+			if (type.isSource()) {
+				list.add(associations[i].getPattern());
+			}
+		}
+		String[] exts = new String[list.size()];
+		list.toArray(exts);
+		return exts;
 	}
 
 	/**
 	 * Returns the list of headers and sources extensions
 	 */
 	public String[] getTranslationUnitExtensions() {
-		return manager.getTranslationUnitExtensions();
+		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
+		ICFileTypeAssociation[] associations = resolver.getFileTypeAssociations();
+		ArrayList list = new ArrayList(associations.length);
+		for (int i = 0; i < associations.length; i++) {
+			ICFileType type = associations[i].getType();
+			if (type.isTranslationUnit()) {
+				list.add(associations[i].getPattern());
+			}
+		}
+		String[] exts = new String[list.size()];
+		list.toArray(exts);
+		return exts;
 	}
 
 	/**
 	 * Return true if project has C nature.
 	 */
-	public boolean hasCNature(IProject project) {
-		return manager.hasCNature(project);
+	public static boolean hasCNature(IProject project) {
+		boolean ok = false;
+		try {
+			ok = (project.isOpen() && project.hasNature(CProjectNature.C_NATURE_ID));
+		} catch (CoreException e) {
+			//throws exception if the project is not open.
+			//System.out.println (e);
+			//e.printStackTrace();
+		}
+		return ok;
 	}
 
 	/**
 	 * Return true if project has C++ nature.
 	 */
-	public boolean hasCCNature(IProject project) {
-		return manager.hasCCNature(project);
+	public static boolean hasCCNature(IProject project) {
+		boolean ok = false;
+		try {
+			ok = (project.isOpen() && project.hasNature(CCProjectNature.CC_NATURE_ID));
+		} catch (CoreException e) {
+			//throws exception if the project is not open.
+			//System.out.println (e);
+			//e.printStackTrace();
+		}
+		return ok;
 	}
 
 	/**

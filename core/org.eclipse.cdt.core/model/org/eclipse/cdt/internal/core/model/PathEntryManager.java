@@ -229,7 +229,7 @@ public class PathEntryManager implements ICDescriptorListener {
 
 	public IPathEntry[] getRawPathEntries(ICProject cproject) throws CModelException {
 		CModelManager factory = CModelManager.getDefault();
-		if (!(factory.hasCNature(cproject.getProject()) || factory.hasCCNature(cproject.getProject()))) {
+		if (!(CoreModel.hasCNature(cproject.getProject()) || CoreModel.hasCCNature(cproject.getProject()))) {
 			return NO_PATHENTRIES;
 		}
 		ArrayList pathEntries = new ArrayList();
@@ -884,7 +884,7 @@ public class PathEntryManager implements ICDescriptorListener {
 			if (cdesc != null) {
 				CModelManager manager = CModelManager.getDefault();
 				IProject project = cdesc.getProject();
-				if (manager.hasCNature(project) || manager.hasCCNature(project)) {
+				if (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project)) {
 					ICProject cproject = manager.create(project);
 					try {
 						IPathEntry[] oldResolvedEntries = getResolvedPathEntries(cproject);

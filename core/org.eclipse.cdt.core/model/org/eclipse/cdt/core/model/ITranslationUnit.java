@@ -203,6 +203,39 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 *		exception occurs while accessing its corresponding resource
 	 */
 	IUsing[] getUsings() throws CModelException;
+
+	/**
+	 * True if its a header.
+	 * @return boolean
+	 */
+	boolean isHeaderUnit();
+
+	/**
+	 * True it is a source file.
+	 * @return boolean
+	 */
+	boolean isSourceUnit();
+
+	/**
+	 * True if the code is C
+	 * @return
+	 */
+	boolean isCLanguage();
+
+	/**
+	 * True if the code is C++
+	 * 
+	 * @return
+	 */
+	boolean isCXXLanguage();
+
+	/**
+	 * True if assembly
+	 * 
+	 * @return
+	 */
+	boolean isASMLanguage();
+
 	/**
 	 * Returns a new working copy for the Translation Unit.
 	 * @return IWorkingCopy
@@ -219,7 +252,8 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * Checks if this is a working copy.
 	 * @return boolean
 	 */
-	boolean isWorkingCopy();	
+	boolean isWorkingCopy();
+
 	/**
 	 * parse()
 	 * returns a map of all new elements and their element info

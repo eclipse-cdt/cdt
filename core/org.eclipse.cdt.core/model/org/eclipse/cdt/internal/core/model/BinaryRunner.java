@@ -7,6 +7,7 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
@@ -105,7 +106,7 @@ public class BinaryRunner {
 		CModelManager factory = CModelManager.getDefault();
 		// Attempt to speed things up by rejecting up front
 		// Things we know should not be Binary files.
-		if (!factory.isTranslationUnit(file)) {
+		if (!CoreModel.isTranslationUnit(file)) {
 			IBinaryFile bin = factory.createBinaryFile(file);
 			if (bin != null) {
 				// Create the file will add it to the {Archive,Binary}Containery.

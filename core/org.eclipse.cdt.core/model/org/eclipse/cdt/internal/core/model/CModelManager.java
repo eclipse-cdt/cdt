@@ -26,9 +26,8 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -156,7 +155,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 */
 	public ICModel getCModel(IWorkspaceRoot root) {
 		return getCModel();
-		//return create(root);
 	}
 
 	public CModel getCModel() {
@@ -269,7 +267,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						cfolder = cfolder.getCContainer(segments[j]);
 					}
 					
-					if (isValidTranslationUnitName(fileName)) {
+					if (CoreModel.isValidTranslationUnitName(fileName)) {
 						celement = cfolder.getTranslationUnit(fileName);
 					} else if (cproject.isOnOutputEntry(file)) {
 						IBinaryFile bin = createBinaryFile(file);
@@ -558,123 +556,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 	
-	public boolean isSharedLib(IFile file) {
-		ICElement celement = create(file, null);
-		if (celement instanceof IBinary) {
-			return ((IBinary)celement).isSharedLib();
-		}
-		return false;
-	}
-
-	public boolean isObject(IFile file) {
-		ICElement celement = create(file, null);
-		if (celement instanceof IBinary) {
-			return ((IBinary)celement).isObject();
-		}
-		return false;
-	}
-
-	public boolean isExecutable(IFile file) {
-		ICElement celement = create(file, null);
-		if (celement instanceof IBinary) {
-			return ((IBinary)celement).isExecutable();
-		}
-		return false;
-	}
-
-	public boolean isBinary(IFile file) {
-		ICElement celement = create(file, null);
-		return (celement instanceof IBinary);
-	}
-
-	public boolean isArchive(IFile file) {
-		ICElement celement = create(file, null);
-		return(celement instanceof IArchive);
-	}
-
-	public boolean isTranslationUnit(IFile file) {
-		return file != null && isValidTranslationUnitName(file.getName());
-	}
-
-	public boolean isSourceUnit(IFile file) {
-		return file != null && isValidSourceUnitName(file.getName());
-	}
-
-	public boolean isHeaderUnit(IFile file) {
-		return file != null && isValidHeaderUnitName(file.getName());
-	}
-
-	public boolean isAssemblyUnit(IFile file) {
-		return file != null && isValidAssemblyUnitName(file.getName());
-	}
-
-	public boolean isValidTranslationUnitName(String name){
-		if (name == null) {
-			return false;
-		}
-		int index = name.lastIndexOf('.');
-		if (index == -1) {
-			return false;
-		}
-		String ext = name.substring(index + 1);
-		String[] cexts = getTranslationUnitExtensions();
-		for (int i = 0; i < cexts.length; i++) {
-			if (ext.equals(cexts[i]))
-				return true;
-		}
-		return false;
-	}
-	
-	public boolean isValidSourceUnitName(String name){
-		if (name == null) {
-			return false;
-		}
-		int index = name.lastIndexOf('.');
-		if (index == -1) {
-			return false;
-		}
-		String ext = name.substring(index + 1);
-		String[] cexts = getSourceExtensions();
-		for (int i = 0; i < cexts.length; i++) {
-			if (ext.equals(cexts[i]))
-				return true;
-		}
-		return false;
-	}
-
-	public boolean isValidHeaderUnitName(String name){
-		if (name == null) {
-			return false;
-		}
-		int index = name.lastIndexOf('.');
-		if (index == -1) {
-			return false;
-		}
-		String ext = name.substring(index + 1);
-		String[] cexts = getHeaderExtensions();
-		for (int i = 0; i < cexts.length; i++) {
-			if (ext.equals(cexts[i]))
-				return true;
-		}
-		return false;
-	}
-
-	public boolean isValidAssemblyUnitName(String name){
-		if (name == null) {
-			return false;
-		}
-		int index = name.lastIndexOf('.');
-		if (index == -1) {
-			return false;
-		}
-		String ext = name.substring(index + 1);
-		String[] cexts = getAssemblyExtensions();
-		for (int i = 0; i < cexts.length; i++) {
-			if (ext.equals(cexts[i]))
-				return true;
-		}
-		return false;
-	}
+/*
 
 	public String[] getHeaderExtensions() {
 		return headerExtensions;
@@ -698,33 +580,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		System.arraycopy(asm, 0, cexts, sources.length + headers.length, asm.length);
 		return cexts;
 	}
-
-	/* Only project with C nature and Open.  */
-	public boolean hasCNature (IProject p) {
-		boolean ok = false;
-		try {
-			ok = (p.isOpen() && p.hasNature(CProjectNature.C_NATURE_ID));
-		} catch (CoreException e) {
-			//throws exception if the project is not open.
-			//System.out.println (e);
-			//e.printStackTrace();
-		}
-		return ok;
-	}
-
-	/* Only project with C++ nature and Open.  */
-	public boolean hasCCNature (IProject p) {
-		boolean ok = false;
-		try {
-			ok = (p.isOpen() && p.hasNature(CCProjectNature.CC_NATURE_ID));
-		} catch (CoreException e) {
-			//throws exception if the project is not open.
-			//System.out.println (e);
-			//e.printStackTrace();
-		}
-		return ok;
-	}
-
+*/
+	
 	public BinaryRunner getBinaryRunner(ICProject project) {
 		BinaryRunner runner = null;
 		synchronized(binaryRunners) {

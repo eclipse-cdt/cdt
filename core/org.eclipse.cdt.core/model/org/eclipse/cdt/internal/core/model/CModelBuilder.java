@@ -89,7 +89,7 @@ public class CModelBuilder {
 		// check the project's nature
 		if( currentProject != null )
 		{
-			hasCppNature = CoreModel.getDefault().hasCCNature(currentProject);
+			hasCppNature = CoreModel.hasCCNature(currentProject);
 		}
 		// get the code to parse
 		try{

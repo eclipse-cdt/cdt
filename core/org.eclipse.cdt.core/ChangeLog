@@ -1,3 +1,19 @@
+2004-04-23 Alain Magloire
+
+	Moving the work from Sam Robb part of PR 52864, this
+	is is only the Core part, UI is still pending.
+
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+	* model/org/eclipse/cdt/core/model/ITranslationUnit.java
+	* model/org/eclipse/cdt/internal/core/model/BinaryRunner.java
+	* model/org/eclipse/cdt/internal/core/model/CContainer.java
+	* model/org/eclipse/cdt/internal/core/model/CModel.java
+	* model/org/eclipse/cdt/internal/core/model/CModelBuilder.java
+	* model/org/eclipse/cdt/internal/core/model/CModelInfo.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+
 2004-04-21 Alain Magloire
 
 	Added support for Base Reference Attribute in the PathEntry

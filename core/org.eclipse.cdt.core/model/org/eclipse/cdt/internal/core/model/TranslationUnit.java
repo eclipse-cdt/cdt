@@ -11,7 +11,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
@@ -23,6 +26,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -508,6 +512,50 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			}
 			parent.removeChildren();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isHeaderUnit()
+	 */
+	public boolean isHeaderUnit() {
+		return CoreModel.isValidHeaderUnitName(getPath().lastSegment());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isSourceUnit()
+	 */
+	public boolean isSourceUnit() {
+		return CoreModel.isValidSourceUnitName(getPath().lastSegment());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isCLanguage()
+	 */
+	public boolean isCLanguage() {
+		IProject project = getCProject().getProject();
+		ICFileType type = CCorePlugin.getDefault().getFileType(project, getPath().lastSegment());
+		String lid = type.getLanguageId();
+		return lid != null && lid.equals(ICFileTypeConstants.LANG_C);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isCXXLanguage()
+	 */
+	public boolean isCXXLanguage() {
+		IProject project = getCProject().getProject();
+		ICFileType type = CCorePlugin.getDefault().getFileType(project, getPath().lastSegment());
+		String lid = type.getLanguageId();
+		return lid != null && lid.equals(ICFileTypeConstants.LANG_CXX);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isASMLanguage()
+	 */
+	public boolean isASMLanguage() {
+		IProject project = getCProject().getProject();
+		ICFileType type = CCorePlugin.getDefault().getFileType(project, getPath().lastSegment());
+		String lid = type.getLanguageId();
+		return lid != null && lid.equals(ICFileTypeConstants.LANG_ASM);
 	}
 
 	

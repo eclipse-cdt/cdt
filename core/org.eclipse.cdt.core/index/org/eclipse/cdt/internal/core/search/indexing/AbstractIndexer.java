@@ -80,7 +80,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 					IASTTypeSpecifier typeSpec =  baseSpec.getParentClassSpecifier();
 					if (typeSpec instanceof IASTClassSpecifier){
 						IASTClassSpecifier baseClassSpec = (IASTClassSpecifier) typeSpec;
-						String[] baseFullyQualifiedName = baseClassSpec.getFullyQualifiedName();
+						char[][] baseFullyQualifiedName = baseClassSpec.getFullyQualifiedNameCharArrays();
 						this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,DERIVED,ICSearchConstants.DECLARATIONS));
 					}
 				} catch (ASTNotImplementedException e) {}
@@ -92,12 +92,12 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 				Object decl = friends.next();
 				if (decl instanceof IASTClassSpecifier){
 					IASTClassSpecifier friendClassSpec = (IASTClassSpecifier) decl;
-					String[] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedName();
+					char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
 					this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
 				}
 				else if (decl instanceof IASTElaboratedTypeSpecifier){
 					IASTElaboratedTypeSpecifier friendClassSpec = (IASTElaboratedTypeSpecifier) decl;
-					String[] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedName();
+					char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
 					this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
 				}
 				else if (decl instanceof IASTFunction){
@@ -109,7 +109,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 				
 			}
 			
-			this.output.addRef(encodeTypeEntry(classSpecification.getFullyQualifiedName(),CLASS, ICSearchConstants.DECLARATIONS));
+			this.output.addRef(encodeTypeEntry(classSpecification.getFullyQualifiedNameCharArrays(),CLASS, ICSearchConstants.DECLARATIONS));
 		}		
 		else if (classSpecification.getClassKind().equals(ASTClassKind.STRUCT))
 		{
@@ -121,7 +121,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 					IASTTypeSpecifier typeSpec =  baseSpec.getParentClassSpecifier();
 					if (typeSpec instanceof IASTClassSpecifier){
 						IASTClassSpecifier baseClassSpec = (IASTClassSpecifier) typeSpec;
-						String[] baseFullyQualifiedName = baseClassSpec.getFullyQualifiedName();
+						char[][] baseFullyQualifiedName = baseClassSpec.getFullyQualifiedNameCharArrays();
 						this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,DERIVED,ICSearchConstants.DECLARATIONS));
 					}
 				} catch (ASTNotImplementedException e) {}
@@ -133,12 +133,12 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 				Object decl = friends.next();
 				if (decl instanceof IASTClassSpecifier){
 					IASTClassSpecifier friendClassSpec = (IASTClassSpecifier) decl;
-					String[] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedName();
+					char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
 					this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
 				}
 				else if (decl instanceof IASTElaboratedTypeSpecifier){
 					IASTElaboratedTypeSpecifier friendClassSpec = (IASTElaboratedTypeSpecifier) decl;
-					String[] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedName();
+					char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
 					this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
 				}
 				else if (decl instanceof IASTFunction){
@@ -149,22 +149,22 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 				}
 			}
 			
-			this.output.addRef(encodeTypeEntry(classSpecification.getFullyQualifiedName(),STRUCT, ICSearchConstants.DECLARATIONS));
+			this.output.addRef(encodeTypeEntry(classSpecification.getFullyQualifiedNameCharArrays(),STRUCT, ICSearchConstants.DECLARATIONS));
 		}
 		else if (classSpecification.getClassKind().equals(ASTClassKind.UNION))
 		{
-			this.output.addRef(encodeTypeEntry(classSpecification.getFullyQualifiedName(),UNION, ICSearchConstants.DECLARATIONS));			
+			this.output.addRef(encodeTypeEntry(classSpecification.getFullyQualifiedNameCharArrays(),UNION, ICSearchConstants.DECLARATIONS));			
 		}
 	}
 	
 	public void addEnumerationSpecifier(IASTEnumerationSpecifier enumeration) {
-		this.output.addRef(encodeTypeEntry(enumeration.getFullyQualifiedName(), ENUM, ICSearchConstants.DECLARATIONS));
+		this.output.addRef(encodeTypeEntry(enumeration.getFullyQualifiedNameCharArrays(), ENUM, ICSearchConstants.DECLARATIONS));
 		
 		Iterator i = enumeration.getEnumerators();
 		while (i.hasNext())
 		{
 			IASTEnumerator en = (IASTEnumerator) i.next(); 	
-			String[] enumeratorFullName =
+			char[][] enumeratorFullName =
 				createEnumeratorFullyQualifiedName(en);
 			
 			this.output.addRef(encodeEntry( enumeratorFullName, ENUMTOR_DECL, ENUMTOR_DECL_LENGTH ));
@@ -172,13 +172,13 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		}
 	}
 
-	protected String[] createEnumeratorFullyQualifiedName(IASTEnumerator en) {
-		String name = en.getName();
+	protected char[][] createEnumeratorFullyQualifiedName(IASTEnumerator en) {
+		char[] name = en.getNameCharArray();
 		IASTEnumerationSpecifier parent = en.getOwnerEnumerationSpecifier();
-		String[] parentName = parent.getFullyQualifiedName();
+		char[][] parentName = parent.getFullyQualifiedNameCharArrays();
 		
 		//See spec 7.2-10, the the scope of the enumerator is the same level as the enumeration
-		String[] enumeratorFullName = new String[ parentName.length ];
+		char[][] enumeratorFullName = new char[parentName.length][];
 		
 		System.arraycopy( parentName, 0, enumeratorFullName, 0, parentName.length);
 		enumeratorFullName[ parentName.length - 1 ] = name;
@@ -190,67 +190,66 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	}
 		
 	public void addMacro(IASTMacro macro) {
-		String[] macroName = new String[1];
-		macroName[0] = macro.getName();
+		char[][] macroName = new char[][] { macro.getNameCharArray() };
 		this.output.addRef(encodeEntry(macroName,MACRO_DECL,MACRO_DECL_LENGTH));
 	}
 		
 	public void addEnumerationReference(IASTEnumerationSpecifier enumeration) {
-		this.output.addRef(encodeTypeEntry(enumeration.getFullyQualifiedName(), ENUM, ICSearchConstants.REFERENCES));
+		this.output.addRef(encodeTypeEntry(enumeration.getFullyQualifiedNameCharArrays(), ENUM, ICSearchConstants.REFERENCES));
 	}
 	public void addVariable(IASTVariable variable) {
-		this.output.addRef(encodeTypeEntry(variable.getFullyQualifiedName(), VAR, ICSearchConstants.DECLARATIONS));
+		this.output.addRef(encodeTypeEntry(variable.getFullyQualifiedNameCharArrays(), VAR, ICSearchConstants.DECLARATIONS));
 	}
 	
 	public void addVariableReference(IASTVariable variable) {
-		this.output.addRef(encodeTypeEntry(variable.getFullyQualifiedName(), VAR, ICSearchConstants.REFERENCES));
+		this.output.addRef(encodeTypeEntry(variable.getFullyQualifiedNameCharArrays(), VAR, ICSearchConstants.REFERENCES));
 	}	
 	
 	public void addParameterReference( IASTParameterDeclaration parameter ){
-		this.output.addRef( encodeTypeEntry( new String [] { parameter.getName() }, VAR, ICSearchConstants.REFERENCES));
+		this.output.addRef( encodeTypeEntry( new char[][] { parameter.getNameCharArray() }, VAR, ICSearchConstants.REFERENCES));
 	}
 	
 	public void addTypedefDeclaration(IASTTypedefDeclaration typedef) {
-		this.output.addRef(encodeEntry(typedef.getFullyQualifiedName(), TYPEDEF_DECL, TYPEDEF_DECL_LENGTH));
+		this.output.addRef(encodeEntry(typedef.getFullyQualifiedNameCharArrays(), TYPEDEF_DECL, TYPEDEF_DECL_LENGTH));
 	}
 	
 	public void addFieldDeclaration(IASTField field) {
-		this.output.addRef(encodeEntry(field.getFullyQualifiedName(),FIELD_DECL,FIELD_DECL_LENGTH));
+		this.output.addRef(encodeEntry(field.getFullyQualifiedNameCharArrays(),FIELD_DECL,FIELD_DECL_LENGTH));
 	}
 	
 	public void addFieldReference(IASTField field) {
-		this.output.addRef(encodeEntry(field.getFullyQualifiedName(),FIELD_REF,FIELD_REF_LENGTH));
+		this.output.addRef(encodeEntry(field.getFullyQualifiedNameCharArrays(),FIELD_REF,FIELD_REF_LENGTH));
 	}
 	
 	public void addMethodDeclaration(IASTMethod method) {
-		this.output.addRef(encodeEntry(method.getFullyQualifiedName(),METHOD_DECL,METHOD_DECL_LENGTH));
+		this.output.addRef(encodeEntry(method.getFullyQualifiedNameCharArrays(),METHOD_DECL,METHOD_DECL_LENGTH));
 	
 		Iterator i=method.getParameters();
 		while (i.hasNext()){
 			Object parm = i.next();
 			if (parm instanceof IASTParameterDeclaration){
 				IASTParameterDeclaration parmDecl = (IASTParameterDeclaration) parm;
-				this.output.addRef(encodeTypeEntry(new String[]{parmDecl.getName()}, VAR, ICSearchConstants.DECLARATIONS));
+				this.output.addRef(encodeTypeEntry(new char[][]{parmDecl.getNameCharArray()}, VAR, ICSearchConstants.DECLARATIONS));
 			}
 		}
 	}
 	
 	public void addMethodReference(IASTMethod method) {
-		this.output.addRef(encodeEntry(method.getFullyQualifiedName(),METHOD_REF,METHOD_REF_LENGTH));
+		this.output.addRef(encodeEntry(method.getFullyQualifiedNameCharArrays(),METHOD_REF,METHOD_REF_LENGTH));
 	}
 
 	public void addElaboratedForwardDeclaration(IASTElaboratedTypeSpecifier elaboratedType) {
 		if (elaboratedType.getClassKind().equals(ASTClassKind.CLASS))
 		{
-			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedName(),CLASS, ICSearchConstants.DECLARATIONS));
+			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),CLASS, ICSearchConstants.DECLARATIONS));
 		}		
 		else if (elaboratedType.getClassKind().equals(ASTClassKind.STRUCT))
 		{
-			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedName(),STRUCT, ICSearchConstants.DECLARATIONS));
+			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),STRUCT, ICSearchConstants.DECLARATIONS));
 		}
 		else if (elaboratedType.getClassKind().equals(ASTClassKind.UNION))
 		{
-			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedName(),UNION, ICSearchConstants.DECLARATIONS));			
+			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),UNION, ICSearchConstants.DECLARATIONS));			
 		}
 	}
 	
@@ -269,20 +268,20 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	}
 
 	public void addFunctionDeclaration(IASTFunction function){
-		this.output.addRef(encodeEntry(function.getFullyQualifiedName(),FUNCTION_DECL,FUNCTION_DECL_LENGTH));
+		this.output.addRef(encodeEntry(function.getFullyQualifiedNameCharArrays(),FUNCTION_DECL,FUNCTION_DECL_LENGTH));
 		
 		Iterator i=function.getParameters();
 		while (i.hasNext()){
 			Object parm = i.next();
 			if (parm instanceof IASTParameterDeclaration){
 				IASTParameterDeclaration parmDecl = (IASTParameterDeclaration) parm;
-				this.output.addRef(encodeTypeEntry(new String[]{parmDecl.getName()}, VAR, ICSearchConstants.DECLARATIONS));
+				this.output.addRef(encodeTypeEntry(new char[][]{parmDecl.getNameCharArray()}, VAR, ICSearchConstants.DECLARATIONS));
 			}
 		}
 	}
 	
 	public void addFunctionReference(IASTFunction function){
-		this.output.addRef(encodeEntry(function.getFullyQualifiedName(),FUNCTION_REF,FUNCTION_REF_LENGTH));
+		this.output.addRef(encodeEntry(function.getFullyQualifiedNameCharArrays(),FUNCTION_REF,FUNCTION_REF_LENGTH));
 	}
 	
 	public void addNameReference(){
@@ -290,15 +289,15 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	}
 	
 	public void addNamespaceDefinition(IASTNamespaceDefinition namespace){
-		this.output.addRef(encodeEntry(namespace.getFullyQualifiedName(),NAMESPACE_DECL,NAMESPACE_DECL_LENGTH));
+		this.output.addRef(encodeEntry(namespace.getFullyQualifiedNameCharArrays(),NAMESPACE_DECL,NAMESPACE_DECL_LENGTH));
 	}
 	
 	public void addNamespaceReference(IASTNamespaceDefinition namespace) {
-		this.output.addRef(encodeEntry(namespace.getFullyQualifiedName(),NAMESPACE_REF,NAMESPACE_REF_LENGTH));
+		this.output.addRef(encodeEntry(namespace.getFullyQualifiedNameCharArrays(),NAMESPACE_REF,NAMESPACE_REF_LENGTH));
 	}
 	
 	public void addTypedefReference( IASTTypedefDeclaration typedef ){
-		this.output.addRef( encodeTypeEntry( typedef.getFullyQualifiedName(), TYPEDEF, ICSearchConstants.REFERENCES) );
+		this.output.addRef( encodeTypeEntry( typedef.getFullyQualifiedNameCharArrays(), TYPEDEF, ICSearchConstants.REFERENCES) );
 	}
 
 	private void addSuperTypeReference(int modifiers, char[] packageName, char[] typeName, char[][] enclosingTypeNames, char classOrInterface, char[] superTypeName, char superClassOrInterface){
@@ -310,17 +309,17 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	}
 	
 	public void addClassReference(IASTTypeSpecifier reference){
-		String[] fullyQualifiedName = null;
+		char[][] fullyQualifiedName = null;
 		ASTClassKind classKind = null;
 		
 		if (reference instanceof IASTClassSpecifier){
 		  IASTClassSpecifier classRef = (IASTClassSpecifier) reference;
-		  fullyQualifiedName = classRef.getFullyQualifiedName();
+		  fullyQualifiedName = classRef.getFullyQualifiedNameCharArrays();
 		  classKind = classRef.getClassKind();
 		}
 		else if (reference instanceof IASTElaboratedTypeSpecifier){
 		  IASTElaboratedTypeSpecifier typeRef = (IASTElaboratedTypeSpecifier) reference;
-		  fullyQualifiedName = typeRef.getFullyQualifiedName();
+		  fullyQualifiedName = typeRef.getFullyQualifiedNameCharArrays();
 		  classKind = typeRef.getClassKind();
 		}
 	
@@ -340,12 +339,12 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	/**
 	 * Type entries are encoded as follow: 'typeDecl/' ('C' | 'S' | 'U' | 'E' ) '/'  TypeName ['/' Qualifier]* 
 	 */
-	 protected static final char[] encodeTypeEntry( String [] fullTypeName, int typeType, LimitTo encodeType){ 
+	 protected static final char[] encodeTypeEntry( char[][] fullTypeName, int typeType, LimitTo encodeType){ 
 
 		int pos = 0, nameLength = 0;
 		for (int i=0; i<fullTypeName.length; i++){
-			String namePart = fullTypeName[i];
-			nameLength+= namePart.length();
+			char[] namePart = fullTypeName[i];
+			nameLength+= namePart.length;
 		}
 		
 		char [] result = null;
@@ -398,14 +397,14 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		//	[typeDecl info]/[typeName]/[qualifiers]
 		if (fullTypeName.length > 0){
 		//Extract the name first
-			char [] tempName = fullTypeName[fullTypeName.length-1].toCharArray();
+			char [] tempName = fullTypeName[fullTypeName.length-1];
 			System.arraycopy(tempName, 0, result, pos, tempName.length);
 			pos += tempName.length;
 		}
 		//Extract the qualifiers
 		for (int i=fullTypeName.length - 2; i >= 0; i--){
 			result[pos++] = SEPARATOR;
-			char [] tempName = fullTypeName[i].toCharArray();
+			char [] tempName = fullTypeName[i];
 			System.arraycopy(tempName, 0, result, pos, tempName.length);
 			pos+=tempName.length;				
 		}
@@ -418,11 +417,11 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	/**
 	 * Namespace entries are encoded as follow: '[prefix]/' TypeName ['/' Qualifier]*
 	 */
-	protected static final char[] encodeEntry(String[] elementName, char[] prefix, int prefixSize){ 
+	protected static final char[] encodeEntry(char[][] elementName, char[] prefix, int prefixSize){ 
 		int pos, nameLength = 0;
 		for (int i=0; i<elementName.length; i++){
-			String namePart = elementName[i];
-			nameLength+= namePart.length();
+			char[] namePart = elementName[i];
+			nameLength+= namePart.length;
 		}
 		//char[] has to be of size - [type length + length of the name (including qualifiers) + 
 		//separators (need one less than fully qualified name length)
@@ -430,14 +429,14 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		System.arraycopy(prefix, 0, result, 0, pos = prefix.length);
 		if (elementName.length > 0){
 		//Extract the name first
-			char [] tempName = elementName[elementName.length-1].toCharArray();
+			char [] tempName = elementName[elementName.length-1];
 			System.arraycopy(tempName, 0, result, pos, tempName.length);
 			pos += tempName.length;
 		}
 		//Extract the qualifiers
 		for (int i=elementName.length - 2; i>=0; i--){
 			result[pos++] = SEPARATOR;
-			char [] tempName = elementName[i].toCharArray();
+			char [] tempName = elementName[i];
 			System.arraycopy(tempName, 0, result, pos, tempName.length);
 			pos+=tempName.length;				
 		}
@@ -786,8 +785,8 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		this.output.addIncludeRef(inclusion.getFullFileName());
 		this.output.addRelatives(inclusion.getFullFileName(),(parent != null ) ? parent.getFullFileName() : null);
 		//Add Dep Table entry
-		String[] incName = new String[1];
-		incName[0] = inclusion.getFullFileName();
+		char[][] incName = new char[1][];
+		incName[0] = inclusion.getFullFileName().toCharArray();
 		this.output.addRef(encodeEntry(incName, INCLUDE_REF, INCLUDE_REF_LENGTH));
 	}
 }

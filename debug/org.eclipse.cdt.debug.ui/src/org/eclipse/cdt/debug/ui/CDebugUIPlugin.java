@@ -6,8 +6,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.debug.core.IDisassemblyStorage;
-import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
-import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.ISwitchToThread;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
@@ -165,28 +163,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	public static CDTDebugModelPresentation getDebugModelPresentation()
 	{
 		return CDTDebugModelPresentation.getDefault();
-	}
-
-	public void addBlock( IFormattedMemoryRetrieval mbr, IFormattedMemoryBlock memoryBlock )
-	{
-	}
-	
-	public void removeBlock( IFormattedMemoryRetrieval mbr, IFormattedMemoryBlock memoryBlock )
-	{
-	}
-
-	public void removeAllBlocks( IFormattedMemoryRetrieval mbr )
-	{
-	}
-
-	public IFormattedMemoryBlock getBlock( IFormattedMemoryRetrieval mbr, int index )
-	{
-		return null;
-	}
-
-	public IFormattedMemoryBlock[] getBlocks( IFormattedMemoryRetrieval mbr )
-	{
-		return new IFormattedMemoryBlock[0];
 	}
 	
 	/**

@@ -1,4 +1,8 @@
 2002-10-15 Mikhail Khodjaiants
+	* CDebugUIPlugin.java: Moved the memory management functionality to the core.
+	* MemoryControlArea.java: Moved the memory management functionality to the core.
+
+2002-10-15 Mikhail Khodjaiants
 	* CDebugPreferencePage.java: Implementation of the 'Automatically switch to disassembly mode' preference.
 
 2002-10-14 Mikhail Khodjaiants

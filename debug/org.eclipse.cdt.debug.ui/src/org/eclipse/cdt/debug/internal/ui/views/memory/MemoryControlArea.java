@@ -9,8 +9,6 @@ package org.eclipse.cdt.debug.internal.ui.views.memory;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-//import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -145,7 +143,7 @@ public class MemoryControlArea extends Composite
 	public void setInput( IFormattedMemoryRetrieval input )
 	{
 		fInput = input;
-		fMemoryBlock = CDebugUIPlugin.getDefault().getBlock( fInput, fIndex );
+//		fMemoryBlock = CDebugUIPlugin.getDefault().getBlock( fInput, fIndex );
 		fPresentation.setMemoryBlock( fMemoryBlock );
 		refresh();		
 	}

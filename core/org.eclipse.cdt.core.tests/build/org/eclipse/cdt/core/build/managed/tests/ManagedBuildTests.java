@@ -19,11 +19,13 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ManagedCProjectNature;
 import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
+import org.eclipse.cdt.core.build.managed.IManagedBuildInfo;
 import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
-import org.eclipse.cdt.core.build.managed.IManagedBuildInfo;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
@@ -32,16 +34,18 @@ import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.internal.core.build.managed.ToolReference;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
-public class AllBuildTests extends TestCase {
+public class ManagedBuildTests extends TestCase {
 	private static final boolean boolVal = true;
+	private static final String PROJECT_ID = CCorePlugin.PLUGIN_ID + ".make";
 	private static final String testConfigName = "test.config.override";
 	private static final String enumVal = "Another Enum";
 	private static final String[] listVal = {"_DEBUG", "/usr/include", "libglade.a"};
@@ -50,19 +54,19 @@ public class AllBuildTests extends TestCase {
 	private static final String stringVal = "-c -Wall";
 	private static final String subExt = "bus";
 
-	public AllBuildTests(String name) {
+	public ManagedBuildTests(String name) {
 		super(name);
 	}
 	
 	public static Test suite() {
-		TestSuite suite = new TestSuite(AllBuildTests.class.getName());
+		TestSuite suite = new TestSuite(ManagedBuildTests.class.getName());
 		
-		suite.addTest(new AllBuildTests("testExtensions"));
-		suite.addTest(new AllBuildTests("testProject"));
-		suite.addTest(new AllBuildTests("testConfigurations"));
-		suite.addTest(new AllBuildTests("testTargetArtifacts"));
-		suite.addTest(new AllBuildTests("testScannerInfoInterface"));
-		suite.addTest(new AllBuildTests("cleanup"));
+		suite.addTest(new ManagedBuildTests("testExtensions"));
+		suite.addTest(new ManagedBuildTests("testProjectCreation"));
+		suite.addTest(new ManagedBuildTests("testConfigurations"));
+		suite.addTest(new ManagedBuildTests("testTargetArtifacts"));
+		suite.addTest(new ManagedBuildTests("testScannerInfoInterface"));
+		suite.addTest(new ManagedBuildTests("cleanup"));
 		
 		return suite;
 	}
@@ -109,6 +113,9 @@ public class AllBuildTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testScannerInfoInterface(){
+		// These are the expected path settings
+		final String[] expectedPaths = {"/usr/include", "/opt/gnome/include", "/home/tester/include"};
+
 		// Open the test project
 		IProject project = null;
 		try {
@@ -144,29 +151,19 @@ public class AllBuildTests extends TestCase {
 		if (extensionPoint == null) {
 			fail("Failed to retrieve the extension point ScannerInfoProvider.");
 		}
-		IExtension[] extensions = extensionPoint.getExtensions();
-		IScannerInfoProvider provider = null;
+
 		// Find the first IScannerInfoProvider that supplies build info for the project
-		for (int i = 0; i < extensions.length && provider == null; i++) {
-			IExtension extension = extensions[i];
-			IConfigurationElement[] elements = extension.getConfigurationElements();
-			for (int j = 0; j < elements.length; ++j) {
-				IConfigurationElement element = elements[j];
-				if (element.getName().equals("provider")) { 
-					// Check if it handles the info for the project
-					try {
-						IScannerInfoProvider temp = (IScannerInfoProvider)element.createExecutableExtension("class");
-						if (temp.managesResource(project)) {
-							provider = temp;
-							break;
-						}
-					} catch (CoreException e) {
-						fail("Failed retrieving scanner info provider from plugin: " + e.getLocalizedMessage());
-					}
-				}
-			}
-		}
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 		assertNotNull(provider);
+		
+		// Check the build information right away
+		IScannerInfo currentSettings = provider.getScannerInformation(project);
+		Map currentSymbols = currentSettings.getDefinedSymbols();
+		assertTrue(currentSymbols.isEmpty());
+		String[] currentPaths = currentSettings.getIncludePaths();
+		assertTrue(Arrays.equals(expectedPaths, currentPaths));
+		
+		// Now subscribe (note that the method will be called after a change
 		provider.subscribe(project, new IScannerInfoChangeListener () {
 			public void changeNotification(IResource project, IScannerInfo info) {
 				// Test the symbols 
@@ -177,7 +174,6 @@ public class AllBuildTests extends TestCase {
 				assertEquals((String)definedSymbols.get("DEBUG"), "");
 				assertEquals((String)definedSymbols.get("GNOME"), "ME");
 				// Test the includes path
-				String[] expectedPaths = {"/usr/include", "/opt/gnome/include", "/home/tester/include"};
 				String[] actualPaths = info.getIncludePaths();
 				assertTrue(Arrays.equals(expectedPaths, actualPaths));
 			}
@@ -269,11 +265,13 @@ public class AllBuildTests extends TestCase {
 	 * @throws CoreException
 	 * @throws BuildException
 	 */
-	public void testProject() throws BuildException {
+	public void testProjectCreation() throws BuildException {
 		// Create new project
 		IProject project = null;
 		try {
 			project = createProject(projectName);
+			// Now associate the builder with the project
+			addManagedBuildNature(project);
 		} catch (CoreException e) {
 			fail("Test failed on project creation: " + e.getLocalizedMessage());
 		}
@@ -354,6 +352,24 @@ public class AllBuildTests extends TestCase {
 		ManagedBuildManager.removeBuildInfo(project);
 	}
 	
+	private void addManagedBuildNature (IProject project) {
+		// Add the managed build nature
+		try {
+			ManagedCProjectNature.addManagedNature(project, new NullProgressMonitor());
+		} catch (CoreException e) {
+			fail("Test failed on adding managed build nature: " + e.getLocalizedMessage());
+		}
+
+		// Associate the project with the managed builder so the clients can get proper information
+		try {
+			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project);
+			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
+			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
+		} catch (CoreException e) {
+			fail("Test failed on adding managed builder as scanner info provider: " + e.getLocalizedMessage());
+		}
+	}
+
 	/**
 	 * Tests the tool settings through the interface the makefile generator
 	 * uses.
@@ -672,19 +688,23 @@ public class AllBuildTests extends TestCase {
 	 */
 	private IProject createProject(String name) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(name);
-		if (!project.exists()) {
-			project.create(null);
+		IProject newProjectHandle = root.getProject(name);
+		IProject project = null;
+		
+		if (!newProjectHandle.exists()) {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
+			//description.setLocation(root.getLocation());
+			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), PROJECT_ID);
 		} else {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, null);
+			project = newProjectHandle;
 		}
         
 		if (!project.isOpen()) {
 			project.open(null);
 		}
 		
-		//CCorePlugin.getDefault().convertProjectToC(project, null, CCorePlugin.PLUGIN_ID + ".make", true);
-
 		return project;	
 	}
 	

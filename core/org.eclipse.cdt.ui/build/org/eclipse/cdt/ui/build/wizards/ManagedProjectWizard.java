@@ -12,6 +12,7 @@ package org.eclipse.cdt.ui.build.wizards;
 ***********************************************************************/
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ManagedCProjectNature;
 import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
@@ -108,6 +109,16 @@ public abstract class ManagedProjectWizard extends CProjectWizard {
 		} catch (BuildException e) {
 			e.printStackTrace();
 		}
+		
+		// Associate the project with the managed builder so the clients can get proper information
+		try {
+			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project);
+			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
+			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
+		} catch (CoreException e) {
+			// TODO Flag the error to the user
+		}
+		
 		// Save the build options
 		monitor.subTask("Saving new build options.");
 		ManagedBuildManager.saveBuildInfo(project);

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.build.standard.StandardBuildManager;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.swt.IValidation;
@@ -58,6 +60,7 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 	private static final String WZ_DESC= "CProjectWizard.description"; //$NON-NLS-1$
 
 	private static final String WINDOW_TITLE = "CProjectWizard.windowTitle"; //$NON-NLS-1$
+	
 
 	private String wz_title;
 	private String wz_desc;
@@ -279,6 +282,16 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		createNewProject(monitor);
+
+		// Associate the project with the standard builder so the clients can get proper information
+		try {
+			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(newProject);
+			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
+			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, StandardBuildManager.INTERFACE_IDENTITY);
+		} catch (CoreException e) {
+			// TODO Flag the error to the user
+		}
+
 	}	
 
 	/**

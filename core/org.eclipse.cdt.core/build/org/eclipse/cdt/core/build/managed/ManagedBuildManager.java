@@ -28,6 +28,7 @@ import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.*;
 import org.eclipse.cdt.internal.core.build.managed.ManagedBuildInfo;
@@ -48,13 +49,13 @@ import org.w3c.dom.Node;
  * This is the main entry point for getting at the build information
  * for the managed build system. 
  */
-public class ManagedBuildManager implements IScannerInfoProvider {
+public class ManagedBuildManager extends AbstractCExtension implements IScannerInfoProvider {
 
-	private static final QualifiedName buildInfoProperty
-		= new QualifiedName(CCorePlugin.PLUGIN_ID, "managedBuildInfo");
+	private static final QualifiedName buildInfoProperty = new QualifiedName(CCorePlugin.PLUGIN_ID, "managedBuildInfo");
 	private static final String ROOT_ELEM_NAME = "ManagedProjectBuildInfo";
 	private static final String FILE_NAME = ".cdtbuild";
 	private static final ITarget[] emptyTargets = new ITarget[0];
+	public static final String INTERFACE_IDENTITY = CCorePlugin.PLUGIN_ID + "." + "ManagedBuildManager";
 
 	// Targets defined by extensions (i.e., not associated with a resource)
 	private static boolean extensionTargetsLoaded = false;
@@ -450,15 +451,21 @@ public class ManagedBuildManager implements IScannerInfoProvider {
 	 * Answers with an interface to the parse information that has been 
 	 * associated with the resource specified in the argument. 
 	 * 
-	 * NOTE: This method is not part of the registration interface. It has
-	 * been made public as a short-term workaround for the clients of the
-	 * scanner information until the redesign of the build information management
-	 * occurs.
+	 * @deprecated This method is not part of the registration interface. 
+	 * Clients of build information should now use getScannerInformation(IResource) 
+	 * for one-time information requests.
 	 * 
 	 * @param resource
 	 * @return
 	 */
 	public static IScannerInfo getScannerInfo(IResource resource) {
+		return (IScannerInfo) getBuildInfo(resource, false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
+	 */
+	public IScannerInfo getScannerInformation(IResource resource) {
 		return (IScannerInfo) getBuildInfo(resource, false);
 	}
 
@@ -488,41 +495,6 @@ public class ManagedBuildManager implements IScannerInfoProvider {
 		}
 	}
 
-	// TODO Remove all of the IScannerInfoProvider interface methods when
-	// the discovery mechanism is solidified
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#managesResource(org.eclipse.core.resources.IResource)
-	 */
-	public boolean managesResource(IResource resource) {
-		// The managed build manager manages build information for the 
-		// resource IFF it it is a project and has a build file with the proper
-		// root element
-		IProject project = null;
-		if (resource instanceof IProject){
-			project = (IProject)resource;
-		} else if (resource instanceof IFile) {
-			project = ((IFile)resource).getProject();
-		} else {
-			return false;
-		}
-		IFile file = project.getFile(FILE_NAME);
-		if (file.exists()) {
-			try {
-				InputStream stream = file.getContents();
-				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-				Document document = parser.parse(stream);
-				Node rootElement = document.getFirstChild();
-				if (rootElement.getNodeName().equals(ROOT_ELEM_NAME)) {
-					return true;
-				} 
-			} catch (Exception e) {
-				return false;
-			}
-		}
-		return false;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
 	 */
@@ -544,6 +516,4 @@ public class ManagedBuildManager implements IScannerInfoProvider {
 			map.put(project, list);
 		}
 	}
-
-
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.BuildInfoFactory;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -21,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
@@ -34,11 +34,13 @@ import org.w3c.dom.NodeList;
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 
-public class StandardBuildManager implements IScannerInfoProvider {
+public class StandardBuildManager extends AbstractCExtension  implements IScannerInfoProvider {
 	// Name we will use to store build property with the project
 	private static final QualifiedName buildInfoProperty
 		= new QualifiedName(CCorePlugin.PLUGIN_ID, "standardBuildInfo");
 	private static final String ID = CCorePlugin.PLUGIN_ID + ".standardBuildInfo";
+	// This is the id of the IScannerInfoProvider extension point entry
+	public static final String INTERFACE_IDENTITY = CCorePlugin.PLUGIN_ID + "." + "StandardBuildManager";
 
 	// Listeners interested in build model changes
 	private static Map buildModelListeners; 
@@ -91,30 +93,6 @@ public class StandardBuildManager implements IScannerInfoProvider {
 		return buildModelListeners;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#managesResource(org.eclipse.core.resources.IResource)
-	 */
-	public boolean managesResource(IResource resource) throws CoreException {
-		/* 
-		 * Answers true if this project has a build info associated with it
-		 */
-		
-		IProject project = null;
-		if (resource instanceof IProject) {
-			project = (IProject)resource;
-		} else if (resource instanceof IFile) {
-			project = ((IFile)resource).getProject();
-		} else {
-			return false;
-		}
-
-		// Look for (but do not create) the build information
-		IStandardBuildInfo info = getBuildInfo(project);
-		
-		// If there's info, I manage the resource
-		return info == null ? false : true;
-	}
-
 	public static void setPreprocessorSymbols(IProject project, String[] symbols)
 		throws CoreException 
 	{
@@ -160,6 +138,19 @@ public class StandardBuildManager implements IScannerInfoProvider {
 			((IScannerInfoChangeListener)iter.next()).changeNotification(project, (IScannerInfo) info);
 		}
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
+	 */
+	public IScannerInfo getScannerInformation(IResource resource) {
+		IStandardBuildInfo info;
+		try {
+			info = getBuildInfo((IProject)resource);
+		} catch (CoreException e) {
+			return null;
+		}
+		return (IScannerInfo)info;
 	}
 
 	/*
@@ -266,4 +257,5 @@ public class StandardBuildManager implements IScannerInfoProvider {
 			map.put(project, list);
 		}
 	}
+
 }

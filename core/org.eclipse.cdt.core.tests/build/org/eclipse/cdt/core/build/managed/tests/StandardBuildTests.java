@@ -10,6 +10,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.build.standard.StandardBuildManager;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
@@ -20,9 +21,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**********************************************************************
@@ -175,38 +173,6 @@ public class StandardBuildTests extends TestCase {
 		return project;	
 	}
 
-	private IScannerInfoProvider findInfoProvider(IProject project) { 
-		// Use the plugin mechanism to discover the supplier of the path information
-		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ScannerInfoProvider");
-		if (extensionPoint == null) {
-			fail("StandardBuildTest testScannerListernerInterface failed to retrieve the extension point ScannerInfoProvider.");
-		}
-		IExtension[] extensions = extensionPoint.getExtensions();
-		IScannerInfoProvider provider = null;
-
-		// Find the first IScannerInfoProvider that supplies build info for the project
-		for (int i = 0; i < extensions.length && provider == null; i++) {
-			IExtension extension = extensions[i];
-			IConfigurationElement[] elements = extension.getConfigurationElements();
-			for (int j = 0; j < elements.length; ++j) {
-				IConfigurationElement element = elements[j];
-				if (element.getName().equals("provider")) { 
-					// Check if it handles the info for the project
-					try {
-						IScannerInfoProvider temp = (IScannerInfoProvider)element.createExecutableExtension("class");
-						if (temp.managesResource(project)) {
-							provider = temp;
-							break;
-						}
-					} catch (CoreException e) {
-						fail("Failed retrieving scanner info provider from plugin: " + e.getLocalizedMessage());
-					}
-				}
-			}
-		}
-		return provider;
-	}
-	
 	/**
 	 * Remove the <code>IProject</code> with the name specified in the argument from the 
 	 * receiver's workspace.
@@ -298,6 +264,15 @@ public class StandardBuildTests extends TestCase {
 		} catch (CoreException e) {
 			fail("StandardBuildTest testProjectCreation failed getting nature: " + e.getLocalizedMessage());
 		}
+
+		// Associate the project with the standard builder so the clients can get proper information
+		try {
+			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project);
+			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
+			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, StandardBuildManager.INTERFACE_IDENTITY);
+		} catch (CoreException e) {
+			fail("StandardBuildTest testProjectCreation failed setting the StandardBuildManager: " + e.getLocalizedMessage());
+		}
 		
 		// Check the default settings
 		checkDefaultProjectSettings(project);
@@ -353,8 +328,20 @@ public class StandardBuildTests extends TestCase {
 		assertNotNull(project);
 
 		// Find the scanner info provider for this project
-		IScannerInfoProvider provider = findInfoProvider(project);
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 		assertNotNull(provider);
+		
+		// Check out the information we can get through the interface
+		IScannerInfo currentSettings = provider.getScannerInformation(project);
+		Map currentSymbols = currentSettings.getDefinedSymbols();
+		assertTrue(currentSymbols.containsKey("_RELEASE"));
+		assertEquals("", currentSymbols.get("_RELEASE"));
+		assertTrue(currentSymbols.containsKey("YES"));
+		assertEquals("1", currentSymbols.get("YES"));
+		assertTrue(currentSymbols.containsKey("NO"));
+		assertEquals("", currentSymbols.get("NO"));
+		String[] currentPaths = currentSettings.getIncludePaths();
+		assertTrue(Arrays.equals(OVR_INC_PATHS, currentPaths));
 		
 		// Remove what's there
 		StandardBuildManager.setIncludePaths(project, new String[0]);

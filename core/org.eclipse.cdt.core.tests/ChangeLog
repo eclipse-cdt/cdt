@@ -1,3 +1,16 @@
+2003-08-13 Sean Evoy
+	Renamed the 'AllBuildTest' class to 'ManagedBuildTest' and updated the 
+	integration suite class.
+	* suite/org/eclipse/cdt/core/suite/AutomatedIntegrationSuite.java
+
+	This class is renamed. It also has a renamed method 'testProjectCreation'
+	that creates a project the same way the new project wizard does. It uses
+	the new discovery mechanism to find the scanner info provider.
+	* build/org/eclipse/cdt/core/build/managed/tests/ManagedBuildTests.java
+	
+	Uses the new discovery mechanism to find the scanner info provider.
+	* build/org/eclipse/cdt/core/build/managed/tests/StandardBuildTests.java
+
 2003-08-12 Bogdan Gheorghe
 	Changed the order of tests in AutomatedIntegrationSuite to have
 	the indexing tests run last (the last indexing test shuts down
@@ -819,4 +832,3 @@
 	src/org/eclipse/cdt/testplugin/CProjectHelper.jada
     Cleanup of the CProjectHelper file to remove unused imports, commeted out code etc.
     
->>>>>>> 1.36

@@ -1,7 +1,6 @@
 package org.eclipse.cdt.core.parser;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
@@ -15,7 +14,16 @@ import org.eclipse.core.runtime.CoreException;
 ***********************************************************************/
 
 public interface IScannerInfoProvider {
-	
+
+	/**
+	 * The receiver will answer the current state of the build information for the 
+	 * resource specified in the argument.
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	public IScannerInfo getScannerInformation(IResource resource); 	
+
 	/**
 	 * The receiver will register the listener specified in the argument
 	 * to receive change notifications when the information for the 
@@ -24,15 +32,6 @@ public interface IScannerInfoProvider {
 	 * @param listener
 	 */
 	public void subscribe(IResource resource, IScannerInfoChangeListener listener);
-	
-	/**
-	 * Answers <code>true</code> if the receiver has information for
-	 * the resource specified in the argument, else <code>false</code>. 
-	 * 
-	 * @param resource
-	 * @return
-	 */
-	public boolean managesResource(IResource resource) throws CoreException;
 	
 	/**
 	 * The receiver will no longer notify the listener specified in 

@@ -1,3 +1,31 @@
+2003-08-13 Sean Evoy
+	The major change in the increment of work is the new discovery mechanism 
+	that clients will use to find the IScannerInfoProvider for a project. 
+	Rather than a simple extension point which requires the client to iterate 
+	over all registered providers, the CExtension feature will be used to 
+	register the provider at project creation time, and to find the provider 
+	at runtime. 
+	
+	Changed the plugin entries for the two builders currently described. The 
+	schema for the ScannerInfoProvider was removed, and the plugin description 
+	was converted to work with the CExtension feature.
+	* plugin.xml
+	* schema/ScannerInfoProvider.exsd (removed)
+
+	Added a method to find and create the provider described in the extension point. 
+	Used by clients at runtime to discover the provider.
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	
+	Changed the IScannerInfoProvider interface by removing the 'managesResource' 
+	method (no more iteration required) and adding a method so clients can get 
+	build information as soon as they get the provider and before they subscribe.
+	* parser/org/eclipse/cdt/core/parser/IScannerInfoProvider.java	
+	
+	Updated the two classes that implemet the interface and made them inherit from 
+	AbstractCExtension in order to be managed by the CExtension feature. 
+	* build/org/eclipse/cdt/core/build/managed/ManagedBuildManager.java
+	* build/org/eclipse/cdt/core/build/standard/StandardBuildManager.java
+
 2003-08-12 Hoda Amer
 	Moved CharOperations and Utils from internal.core.search to internal.core
 	Added CConventions class to validate class names

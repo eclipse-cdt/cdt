@@ -17,7 +17,7 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import org.eclipse.cdt.core.build.managed.tests.AllBuildTests;
+import org.eclipse.cdt.core.build.managed.tests.ManagedBuildTests;
 import org.eclipse.cdt.core.build.managed.tests.StandardBuildTests;
 import org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest;
 import org.eclipse.cdt.core.indexer.tests.IndexManagerTests;
@@ -80,7 +80,7 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTest(suite.new GenerateReport("startSuccessTests"));
 
 		// Add all success tests
-		suite.addTest(AllBuildTests.suite());
+		suite.addTest(ManagedBuildTests.suite());
 		suite.addTest(StandardBuildTests.suite());
 		suite.addTest(ParserTestSuite.suite());
 		suite.addTest(AllCoreTests.suite());

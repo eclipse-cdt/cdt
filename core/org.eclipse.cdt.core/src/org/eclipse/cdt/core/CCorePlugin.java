@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.CPathEntry;
@@ -57,7 +58,12 @@ public class CCorePlugin extends Plugin {
 	public final static String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF";
 	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID;
 	public final static String PREF_USE_NEW_PARSER = "useNewParser";
-    
+	
+	// Build Model Interface Discovery
+	public final static String BUILD_SCANNER_INFO_SIMPLE_ID = "ScannerInfoProvider";
+	public final static String BUILD_SCANNER_INFO_UNIQ_ID = PLUGIN_ID + "." + BUILD_SCANNER_INFO_SIMPLE_ID;
+	
+	    
     /**
      * Possible configurable option ID.
      * @see #getDefaultOptions
@@ -695,6 +701,21 @@ public class CCorePlugin extends Plugin {
 			}
 		}
 		return null;
+	}
+	
+	
+	public IScannerInfoProvider getScannerInfoProvider(IProject project) {
+		IScannerInfoProvider provider = null;
+		if (project != null) {
+			try {
+				ICDescriptor desc = (ICDescriptor) getCProjectDescription(project);
+				ICExtensionReference[] extensions = desc.get(BUILD_SCANNER_INFO_UNIQ_ID);
+				if (extensions.length > 0)
+					provider = (IScannerInfoProvider) extensions[0].createExtension();
+			} catch (CoreException e) {
+			}
+		}
+		return provider;
 	}
 
 	// Preference to turn on/off the new parser

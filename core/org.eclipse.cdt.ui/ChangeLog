@@ -1,3 +1,19 @@
+2003-08-13 Sean Evoy
+	A simple change to add transparency information to the build property page 
+	GIFs. They were not being drawn properly on Solaris/Motif and would probably
+	have shown the same behaviour on Linux. Now, they all get blitted correctly
+	even with a different widget background colour.
+	* icons/full/build16/build_configs.gif
+	* icons/full/build16/config-category.gif
+	* icons/full/build16/config-tool.gif
+	
+	Updated the new project wizard to register the correct build manager at 
+	project creation time. We have switched to using the CDescriptor mechanism 
+	for provider discovery. In order for the to work, the project has to be updated
+	properly and the only time it can be easily done is at creation time.
+	* build/org/eclipse/cdt/ui/build/wizards/ManagedProjectWizard.java
+	* src/org/eclipse/cdt/ui/wizards/CProjectWizard.java
+
 2003-08-13 John Camelon
 	Fixed Bug 41480 - ceditor extension point is not default editor for C++ file extensions
 

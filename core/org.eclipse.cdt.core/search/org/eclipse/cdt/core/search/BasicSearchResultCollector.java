@@ -53,6 +53,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class BasicSearchResultCollector implements ICSearchResultCollector {
+		 IProgressMonitor fProgressMonitor = null;
+
+		 public BasicSearchResultCollector() {
+		 }
+		 
+		 public BasicSearchResultCollector(IProgressMonitor monitor) {
+		 		 fProgressMonitor = monitor;
+		 }
 
 	public void aboutToStart() {
 		results = new HashSet();
@@ -62,7 +70,7 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 	}
 	
 	public IProgressMonitor getProgressMonitor() {
-		return null;
+		 		 return fProgressMonitor;
 	}
 
 	public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node ) throws CoreException 

@@ -21,4 +21,5 @@ public interface IGDBServerMILaunchConfigurationConstants extends IMILaunchConfi
 	public static final String ATTR_HOST = MIPlugin.getUniqueIdentifier() + ".HOST"; //$NON-NLS-1$
 	public static final String ATTR_PORT = MIPlugin.getUniqueIdentifier() + ".PORT"; //$NON-NLS-1$
 	public static final String ATTR_DEV = MIPlugin.getUniqueIdentifier() + ".DEV"; //$NON-NLS-1$
+	public static final String ATTR_DEV_SPEED = MIPlugin.getUniqueIdentifier() + ".DEV_SPEED"; //$NON-NLS-1$
 }

@@ -1,13 +1,11 @@
-/**********************************************************************
- * Copyright (c) 2002,2003,2004 QNX Software Systems and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+/*******************************************************************************
+ * Copyright (c) 2002,2003,2004 QNX Software Systems and others. All rights
+ * reserved. This program and the accompanying materials are made available
+ * under the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
 import java.io.IOException;
@@ -103,7 +101,7 @@ public class BuildConsolePartitioner
 		nLines = fDocument.getNumberOfLines();
 		checkOverflow();
 	}
-	
+
 	public void connect(IDocument document) {
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
@@ -145,20 +143,19 @@ public class BuildConsolePartitioner
 	 */
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		if (offset == 0 && length == fDocument.getLength()) {
-			return (ITypedRegion[]) fPartitions.toArray(new ITypedRegion[fPartitions.size()]);
-		} else {
-			int end = offset + length;
-			List list = new ArrayList();
-			for (int i = 0; i < fPartitions.size(); i++) {
-				ITypedRegion partition = (ITypedRegion) fPartitions.get(i);
-				int partitionStart = partition.getOffset();
-				int partitionEnd = partitionStart + partition.getLength();
-				if ((offset >= partitionStart && offset <= partitionEnd) || (offset < partitionStart && end >= partitionStart)) {
-					list.add(partition);
-				}
-			}
-			return (ITypedRegion[]) list.toArray(new ITypedRegion[list.size()]);
+			return (ITypedRegion[])fPartitions.toArray(new ITypedRegion[fPartitions.size()]);
 		}
+		int end = offset + length;
+		List list = new ArrayList();
+		for (int i = 0; i < fPartitions.size(); i++) {
+			ITypedRegion partition = (ITypedRegion)fPartitions.get(i);
+			int partitionStart = partition.getOffset();
+			int partitionEnd = partitionStart + partition.getLength();
+			if ( (offset >= partitionStart && offset <= partitionEnd) || (offset < partitionStart && end >= partitionStart)) {
+				list.add(partition);
+			}
+		}
+		return (ITypedRegion[])list.toArray(new ITypedRegion[list.size()]);
 	}
 
 	/**
@@ -166,7 +163,7 @@ public class BuildConsolePartitioner
 	 */
 	public ITypedRegion getPartition(int offset) {
 		for (int i = 0; i < fPartitions.size(); i++) {
-			ITypedRegion partition = (ITypedRegion) fPartitions.get(i);
+			ITypedRegion partition = (ITypedRegion)fPartitions.get(i);
 			int start = partition.getOffset();
 			int end = start + partition.getLength();
 			if (offset >= start && offset < end) {
@@ -199,7 +196,7 @@ public class BuildConsolePartitioner
 
 		return new Region(affectedRegions[0].getOffset(), affectedLength);
 	}
-	
+
 	/**
 	 * Checks to see if the console buffer has overflowed, and empties the
 	 * overflow if needed, updating partitions and hyperlink positions.
@@ -210,14 +207,14 @@ public class BuildConsolePartitioner
 			if (nLines > fMaxLines + 1) {
 				int overflow = 0;
 				try {
-					overflow = fDocument.getLineOffset(nLines - fMaxLines); 
+					overflow = fDocument.getLineOffset(nLines - fMaxLines);
 				} catch (BadLocationException e1) {
 				}
 				// update partitions
 				List newParitions = new ArrayList(fPartitions.size());
 				Iterator partitions = fPartitions.iterator();
 				while (partitions.hasNext()) {
-					ITypedRegion region = (ITypedRegion) partitions.next();
+					ITypedRegion region = (ITypedRegion)partitions.next();
 					if (region instanceof BuildConsolePartition) {
 						BuildConsolePartition messageConsolePartition = (BuildConsolePartition)region;
 
@@ -234,7 +231,8 @@ public class BuildConsolePartitioner
 							}
 						} else {
 							// modify parition offset
-							newPartition = messageConsolePartition.createNewPartition(messageConsolePartition.getOffset()-overflow, messageConsolePartition.getLength());
+							newPartition = messageConsolePartition.createNewPartition(messageConsolePartition.getOffset()
+									- overflow, messageConsolePartition.getLength());
 						}
 						if (newPartition != null) {
 							newParitions.add(newPartition);
@@ -242,28 +240,25 @@ public class BuildConsolePartitioner
 					}
 				}
 				fPartitions = newParitions;
-		
-				//called from GUI Thread (see startUpdaterThread()), no asyncExec needed.
+
 				try {
-					fDocument.replace(0, overflow, "");  //$NON-NLS-1$
+					fDocument.replace(0, overflow, ""); //$NON-NLS-1$
 				} catch (BadLocationException e) {
-				}		
+				}
 			}
 		}
 	}
-		
-	
 
 	/**
-	 * Adds a new colored input partition, combining with the previous
-	 * partition if possible.
+	 * Adds a new colored input partition, combining with the previous partition
+	 * if possible.
 	 */
 	private BuildConsolePartition addPartition(BuildConsolePartition partition) {
 		if (fPartitions.isEmpty()) {
 			fPartitions.add(partition);
 		} else {
 			int index = fPartitions.size() - 1;
-			BuildConsolePartition last = (BuildConsolePartition) fPartitions.get(index);
+			BuildConsolePartition last = (BuildConsolePartition)fPartitions.get(index);
 			if (last.canBeCombinedWith(partition)) {
 				// replace with a single partition
 				partition = last.combineWith(partition);
@@ -305,12 +300,11 @@ public class BuildConsolePartitioner
 			appendToDocument(readBuffer(), fStream);
 			fManager.showConsole();
 		}
-		
+
 		public void close() throws IOException {
 			flush();
 		}
-		
-		
+
 		public synchronized void write(byte[] b, int off, int len) throws IOException {
 			super.write(b, off, len);
 			flush();

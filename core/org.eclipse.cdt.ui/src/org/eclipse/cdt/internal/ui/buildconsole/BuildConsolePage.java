@@ -234,7 +234,7 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
 				ISharedImages.IMG_TOOL_COPY_DISABLED));
 		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
-				ISharedImages.IMG_TOOL_COPY_HOVER));
+				ISharedImages.IMG_TOOL_COPY));
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		action = new TextViewerAction(getViewer(), ITextOperationTarget.SELECT_ALL);
 		action.configureAction(ConsoleMessages.getString("BuildConsolePage.Select_&All@Ctrl+A_12"), //$NON-NLS-1$

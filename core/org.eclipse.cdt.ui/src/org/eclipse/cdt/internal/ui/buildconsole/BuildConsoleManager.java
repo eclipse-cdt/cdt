@@ -163,6 +163,9 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	public void startup() {
 		fConsole = new BuildConsole(this);
 		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
+		infoStream = new BuildConsoleStream(fConsole);
+		outputStream = new BuildConsoleStream(fConsole);
+		errorStream = new BuildConsoleStream(fConsole);
 
 		runUI(new Runnable() {
 
@@ -174,13 +177,10 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			public void run() {
 				// install colors
 				infoColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
-				infoStream = new BuildConsoleStream(fConsole);
 				infoStream.setColor(infoColor);
 				outputColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR);
-				outputStream = new BuildConsoleStream(fConsole);
 				outputStream.setColor(outputColor);
 				errorColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
-				errorStream = new BuildConsoleStream(fConsole);
 				errorStream.setColor(errorColor);
 			}
 		});

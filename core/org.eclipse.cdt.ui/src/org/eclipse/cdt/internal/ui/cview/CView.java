@@ -109,8 +109,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	FrameList frameList;
 	CViewFrameSource frameSource;
 
-	CLibFilter clibFilter = new CLibFilter();
-	CPatternFilter patternFilter = new CPatternFilter();
 	ResourceWorkingSetFilter workingSetFilter = new ResourceWorkingSetFilter();
 
 	private boolean dragDetected;
@@ -123,11 +121,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	static final String TAG_PATH = "path"; //$NON-NLS-1$
 	static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
 	static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
-	static final String TAG_FILTERS = "filters"; //$NON-NLS-1$
-	static final String TAG_FILTER = "filter"; //$NON-NLS-1$
-	static final String TAG_SHOWLIBRARIES = "showLibraries"; //$NON-NLS-1$
 	static final String TAG_WORKINGSET = "workingSet"; //$NON-NLS-1$
-	static final String TAG_SORTER = "sorter"; //$NON-NLS-1$
 
 	//Menu tags
 	final String WORKING_GROUP_MARKER = "workingSetGroup"; //$NON-NLS-1$
@@ -358,9 +352,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 *            the viewer
 	 */
 	void initFilters(TreeViewer viewer) {
-		viewer.addFilter(patternFilter);
 		viewer.addFilter(workingSetFilter);
-		//viewer.addFilter(clibFilter);
 	}
 
 	/**
@@ -395,16 +387,12 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * Initializes the default preferences
 	 */
 	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(TAG_SHOWLIBRARIES, true);
 	}
 
 	/**
 	 * get the default preferences.
 	 */
 	void initFilterFromPreferences() {
-		CUIPlugin plugin = CUIPlugin.getDefault();
-		boolean show = plugin.getPreferenceStore().getBoolean(TAG_SHOWLIBRARIES);
-		getLibraryFilter().setShowLibraries(show);
 	}
 
 	/**
@@ -515,12 +503,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		CUIPlugin.getDefault().getProblemMarkerManager().addListener(viewer);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 
-		if (memento != null) {
-			restoreFilters();
-		} else {
-			initFilterFromPreferences();
-		}
-
 		initFilters(viewer);
 		initWorkingSetFilter();
 		initListeners(viewer);
@@ -547,6 +529,12 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		makeActions();
 		getActionGroup().fillActionBars(getViewSite().getActionBars());
 		updateActionBars((IStructuredSelection) viewer.getSelection());
+
+		if (memento != null) {
+			getActionGroup().restoreFilterAndSorterState(memento);
+		} else {
+			initFilterFromPreferences();
+		}
 
 
 		if (memento != null) {
@@ -615,19 +603,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 				}
 			}
 		}
-	}
-
-	CLibFilter getLibraryFilter() {
-		return clibFilter;
-	}
-
-	/**
-	 * Returns the pattern filter for this view.
-	 * 
-	 * @return the pattern filter
-	 */
-	CPatternFilter getPatternFilter() {
-		return patternFilter;
 	}
 
 	/**
@@ -904,32 +879,12 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		viewer.getControl().setRedraw(true);
 	}
 
-	void restoreFilters() {
-		// restore pattern filters
-		IMemento filtersMem = memento.getChild(TAG_FILTERS);
-		if (filtersMem != null) {
-			IMemento children[] = filtersMem.getChildren(TAG_FILTER);
-			String filters[] = new String[children.length];
-			for (int i = 0; i < children.length; i++) {
-				filters[i] = children[i].getString(TAG_ELEMENT);
-			}
-			getPatternFilter().setPatterns(filters);
-		} else {
-			getPatternFilter().setPatterns(new String[0]);
-		}
-
-		//restore library
-		String show = memento.getString(TAG_SHOWLIBRARIES);
-		if (show != null) {
-			getLibraryFilter().setShowLibraries(show.equals("true")); //$NON-NLS-1$
-		} else {
-			initFilterFromPreferences();
-		}
-	}
-
 	void restoreState(IMemento memento) {
-		//ICelement container = CElementFactory.getDefault().getRoot();
+		
 		CoreModel factory = CoreModel.getDefault();
+		
+		getActionGroup().restoreFilterAndSorterState(memento);
+
 		IMemento childMem = memento.getChild(TAG_EXPANDED);
 		if (childMem != null) {
 			ArrayList elements = new ArrayList();
@@ -1042,22 +997,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		position = bar != null ? bar.getSelection() : 0;
 		memento.putString(TAG_HORIZONTAL_POSITION, String.valueOf(position));
 
-		//save filters
-		String filters[] = getPatternFilter().getPatterns();
-		if (filters.length > 0) {
-			IMemento filtersMem = memento.createChild(TAG_FILTERS);
-			for (int i = 0; i < filters.length; i++) {
-				IMemento child = filtersMem.createChild(TAG_FILTER);
-				child.putString(TAG_ELEMENT, filters[i]);
-			}
-		}
-
-		//save library filter
-		boolean showLibraries = getLibraryFilter().getShowLibraries();
-		String show = "true"; //$NON-NLS-1$
-		if (!showLibraries) show = "false"; //$NON-NLS-1$
-		memento.putString(TAG_SHOWLIBRARIES, show);
-
+		getActionGroup().saveFilterAndSorterState(memento);
 		//Save the working set away
 		if (workingSetFilter.getWorkingSet() != null) {
 			String wsname = workingSetFilter.getWorkingSet().getName();

@@ -14,11 +14,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionGroup;
 
 /**
@@ -112,6 +114,12 @@ public abstract class CViewActionGroup extends ActionGroup {
 	 * @param selection the current selection
 	 */
 	public void runDefaultAction(IStructuredSelection selection) {
+	}
+
+	public void restoreFilterAndSorterState(IMemento memento) {
+	}
+	
+	public void saveFilterAndSorterState(IMemento memento) {
 	}
 
 }

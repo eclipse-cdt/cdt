@@ -49,25 +49,61 @@
             pattern=".*">
       </filter>
       <filter
-            selected="false"
-            pattern="*.o">
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%HideExecutableFiles.label"
+            enabled="false"
+            description="%HideExecutableFiles.description"
+            class="org.eclipse.cdt.internal.ui.filters.ExecutableFilter"
+            id="org.eclipse.cdt.internal.ui.CView.ExecutableFilter">
       </filter>
       <filter
-            selected="false"
-            pattern="*.so">
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%HideSharedFiles.label"
+            enabled="false"
+            description="%HideSharedFiles.description"
+            class="org.eclipse.cdt.internal.ui.filters.SharedFilter"
+            id="org.eclipse.cdt.internal.ui.CView.SharedFilter">
       </filter>
       <filter
-            selected="false"
-            pattern="*.a">
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%HideObjectFiles.label"
+            enabled="false"
+            description="%HideObjectFiles.description"
+            class="org.eclipse.cdt.internal.ui.filters.ObjectFilter"
+            id="org.eclipse.cdt.internal.ui.CView.ArchiveFilter">
       </filter>
       <filter
-            selected="false"
-            pattern="Makefile">
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%HideArchiveFiles.label"
+            enabled="false"
+            description="%HideArchiveFiles.description"
+            class="org.eclipse.cdt.internal.ui.filters.ArchiveFilter"
+            id="org.eclipse.cdt.internal.ui.CView.ArchiveFilter">
       </filter>
       <filter
-            selected="false"
-            pattern="*.h">
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%HideClosedProjects.label"
+            enabled="false"
+            description="%HideClosedProjects.description"
+            class="org.eclipse.cdt.internal.ui.filters.ClosedProjectFilter"
+            id="org.eclipse.cdt.internal.ui.CView.ClosedProjectFilter">
       </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%HideNonCElements.label"
+            enabled="false"
+            description="%HideNonCElements.description"
+            class="org.eclipse.cdt.internal.ui.filters.NonCElementFilter"
+            id="org.eclipse.cdt.internal.ui.CView.NonCElementFilter">
+      </filter>
+      <!--filter
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%HideHeaderFilter.label"
+            enabled="false"
+            description="%HideHeaderFilter.description"
+            class="org.eclipse.cdt.internal.ui.filters.HeaderFilter"
+            id="org.eclipse.cdt.internal.ui.CView.HeaderFilter">
+      </filter-->
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

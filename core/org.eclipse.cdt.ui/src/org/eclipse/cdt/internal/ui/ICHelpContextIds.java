@@ -64,6 +64,10 @@ public interface ICHelpContextIds {
 
 	public static final String COPY_ACTION = PREFIX + "copy_action_context"; //$NON-NLS-1$
 
+	// Custom Filters
+	public static final String CUSTOM_FILTERS_DIALOG= PREFIX + "open_custom_filters_dialog_context"; //$NON-NLS-1$
+
+
 	public static final String PASTE_ACTION = PREFIX + "paste_action_context"; //$NON_NLS-1$ //$NON-NLS-1$
 
 	public static final String MOVE_ACTION = PREFIX + "move_action_context"; //$NON-NLS-1$

@@ -244,7 +244,16 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	}
 	
 	protected Object[] getCProjects(ICModel cModel) {
-		return cModel.getCProjects();
+		Object[] objects = cModel.getCProjects();
+		try {
+			Object[] nonC = cModel.getNonCResources();
+			if (nonC.length > 0) {
+				objects = concatenate(objects, nonC);
+			}
+		} catch (CModelException e) {
+			//
+		}
+		return objects;
 	}
 
 	protected Object[] getSourceRoots(ICProject cproject) {
@@ -263,9 +272,9 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 					for (int k= 0; k < children.length; k++) { 
 						list.add(children[k]);
 					}
-				} else if (hasChildren(root)) {
+				} else {
 					list.add(root);
-				} 
+				}
 			}
 		} catch (CModelException e1) {
 		}

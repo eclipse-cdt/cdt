@@ -19,6 +19,7 @@ import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
 import org.eclipse.cdt.internal.ui.editor.SearchDialogAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -35,6 +36,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.ActionContext;
@@ -64,7 +66,7 @@ public class MainActionGroup extends CViewActionGroup {
 
 	// CElement action
 	OpenIncludeAction openIncludeAction;
-	ShowLibrariesAction clibFilterAction;
+
 	// Collapsing
 	CollapseAllAction collapseAllAction;
 	ToggleLinkingAction toggleLinkingAction;
@@ -73,7 +75,6 @@ public class MainActionGroup extends CViewActionGroup {
 	FileSearchAction fFileSearchAction;
 	FileSearchActionInWorkingSet fFileSearchActionInWorkingSet;
 	SearchDialogAction fSearchDialogAction;
-	FilterSelectionAction patternFilterAction;
 
 	BuildGroup buildGroup;
 	OpenFileGroup openFileGroup;
@@ -81,6 +82,7 @@ public class MainActionGroup extends CViewActionGroup {
 	RefactorActionGroup refactorGroup;
 	OpenProjectGroup openProjectGroup;
 	WorkingSetFilterActionGroup workingSetGroup;
+	CustomFiltersActionGroup fCustomFiltersActionGroup;	
 
 	SelectionSearchGroup selectionSearchGroup;
 	RefactoringActionGroup refactoringActionGroup;
@@ -125,8 +127,6 @@ public class MainActionGroup extends CViewActionGroup {
 
 		//sortByNameAction = new SortViewAction(this, false);
 		//sortByTypeAction = new SortViewAction(this, true);
-		patternFilterAction = new FilterSelectionAction(shell, getCView(), CViewMessages.getString("FilterSelectionAction.label")); //$NON-NLS-1$
-		clibFilterAction = new ShowLibrariesAction(shell, getCView(), CViewMessages.getString("ShowLibrariesAction.label")); //$NON-NLS-1$
 
 		IPropertyChangeListener workingSetUpdater = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -145,6 +145,7 @@ public class MainActionGroup extends CViewActionGroup {
 		};
 		workingSetGroup = new WorkingSetFilterActionGroup(shell, workingSetUpdater);
 		workingSetGroup.setWorkingSet(getCView().getWorkingSet());
+		fCustomFiltersActionGroup= new CustomFiltersActionGroup(getCView(), getCView().getViewer());
 
 		addBookmarkAction = new AddBookmarkAction(shell);
 		addTaskAction = new AddTaskAction(shell);
@@ -314,6 +315,7 @@ public class MainActionGroup extends CViewActionGroup {
 		buildGroup.updateActionBars();
 		refactorGroup.updateActionBars();
 		workingSetGroup.updateActionBars();
+		fCustomFiltersActionGroup.updateActionBars();
 	}
 
 	public void fillActionBars(IActionBars actionBars) {
@@ -322,6 +324,7 @@ public class MainActionGroup extends CViewActionGroup {
         actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), propertyDialogAction);
 
 		workingSetGroup.fillActionBars(actionBars);
+		fCustomFiltersActionGroup.fillActionBars(actionBars);
 		gotoGroup.fillActionBars(actionBars);
 		refactorGroup.fillActionBars(actionBars);
 		openFileGroup.fillActionBars(actionBars);
@@ -335,8 +338,24 @@ public class MainActionGroup extends CViewActionGroup {
 
 		IMenuManager menu = actionBars.getMenuManager();
 		//menu.add (clibFilterAction);
-		menu.add(patternFilterAction);
+		//menu.add(fCustomFiltersActionGroup);
 		menu.add(toggleLinkingAction);
+	}
+
+	//---- Persistent state -----------------------------------------------------------------------
+
+	public void restoreFilterAndSorterState(IMemento memento) {
+		//fWorkingSetFilterActionGroup.restoreState(memento);
+		fCustomFiltersActionGroup.restoreState(memento);
+	}
+	
+	public void saveFilterAndSorterState(IMemento memento) {
+		//fWorkingSetFilterActionGroup.saveState(memento);
+		fCustomFiltersActionGroup.saveState(memento);
+	}
+
+	public CustomFiltersActionGroup getCustomFilterActionGroup() {
+	    return fCustomFiltersActionGroup;
 	}
 
 	public void dispose() {

@@ -548,15 +548,22 @@ public class CompletionEngine implements RelevanceConstants {
 		} 
 		else // prefix is empty
 		{
-			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-			kinds[0] = IASTNode.LookupKind.THIS;
-			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-			addToCompletions(result);
-			
-			kinds = new IASTNode.LookupKind[1];
-			kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
-			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-			addToCompletions(result);
+			if(searchNode instanceof IASTCodeScope){
+				IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+				kinds[0] = IASTNode.LookupKind.THIS;
+				result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+				addToCompletions(result);
+				
+				kinds = new IASTNode.LookupKind[1];
+				kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
+				result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+				addToCompletions(result);
+			} else {
+				IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+				kinds[0] = IASTNode.LookupKind.ALL;
+				result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+				addToCompletions(result);				
+			}
 		}		
 	}
 

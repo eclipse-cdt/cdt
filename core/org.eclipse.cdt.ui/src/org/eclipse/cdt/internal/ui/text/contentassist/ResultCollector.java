@@ -190,8 +190,15 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 				arguments, image, completionStart, completionLength, relevance);
 			
 			boolean userMustCompleteParameters= (parameterString != null && parameterString.length() > 0);
+
 			char[] triggers= userMustCompleteParameters ? METHOD_WITH_ARGUMENTS_TRIGGERS : METHOD_TRIGGERS;
 			proposal.setTriggerCharacters(triggers);
+
+			if (userMustCompleteParameters) {
+				// set the cursor before the closing bracket
+				proposal.setCursorPosition(replaceString.length() - 1);
+			}			
+
 			completions.add(proposal);		
 	}
 
@@ -324,9 +331,17 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			// create proposal and add it to completions list
 			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				arguments, image, completionStart, completionLength, relevance);
+			
 			boolean userMustCompleteParameters= (parameterString != null && parameterString.length() > 0);
+			
 			char[] triggers= userMustCompleteParameters ? METHOD_WITH_ARGUMENTS_TRIGGERS : METHOD_TRIGGERS;
 			proposal.setTriggerCharacters(triggers);
+
+			if (userMustCompleteParameters) {
+				// set the cursor before the closing bracket
+				proposal.setCursorPosition(replaceString.length() - 1);
+			}
+		
 			completions.add(proposal);		
 	}
 

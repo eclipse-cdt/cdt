@@ -147,6 +147,27 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		return ((CElement)fCElement).getIdStartPos(); 
 	}
 	
+	public String getElementQualifiedName(ICElement element){
+		if(element instanceof ITranslationUnit){
+			return "";
+		} else {
+			StringBuffer name = new StringBuffer();
+			if(element instanceof IFunctionDeclaration){
+				// add the whole signature
+				IFunctionDeclaration function = (IFunctionDeclaration)element;
+				name.append(getElementQualifiedName(element.getParent()));
+				if(name.length() > 0)
+					name.append("::");
+				name.append(function.getSignature());
+			} else {
+				name.append(getElementQualifiedName(element.getParent()));
+				if(name.length() > 0)
+					name.append("::");
+				name.append(element.getElementName());				
+			}
+			return name.toString();
+		}
+	}
 	public RefactoringStatus checkNewElementName(String newName){
 		if ((fCElement == null) || (!(fCElement instanceof ISourceReference)) || (fCElement instanceof ITranslationUnit)) { 
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("RenameTypeRefactoring.wrong_element")); //$NON-NLS-1$
@@ -172,6 +193,15 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 				String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.member_type_exists", //$NON-NLS-1$
 						new String[]{fNewElementName, fCElement.getParent().getElementName()});
 				result.addFatalError(msg);		
+			}
+		}
+		
+		if( fCElement instanceof IMethodDeclaration){
+			IMethodDeclaration method = (IMethodDeclaration)fCElement;
+			if (method.isVirtual()){
+				String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.virtual_method", //$NON-NLS-1$
+						new String[]{fNewElementName, fCElement.getParent().getElementName()});
+				result.addWarning(msg);	
 			}
 		}
 		
@@ -257,11 +287,11 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			
 			if (result.hasFatalError())
 				return result;
-			
+						
 			fReferences= null;
 			if (fUpdateReferences){
 				pm.setTaskName(RefactoringCoreMessages.getString("RenameTypeRefactoring.searching"));	 //$NON-NLS-1$
-				fReferences= getReferences(fCElement.getElementName(), new SubProgressMonitor(pm, 35));
+				fReferences= getReferences(getElementQualifiedName(fCElement), new SubProgressMonitor(pm, 35));
 			}
 			pm.worked(6);
 			
@@ -363,7 +393,10 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	}
 	
 	private ICSearchScope createRefactoringScope() throws CoreException {
-		return SearchEngine.createWorkspaceScope();
+		ICElement[] projectScopeElement = new ICElement[1];
+		projectScopeElement[0] = fCElement.getCProject();
+		ICSearchScope scope = SearchEngine.createCSearchScope(projectScopeElement, true);
+		return scope;	
 	}
 	
 	private OrPattern createSearchPattern(String searchPrefix) throws CoreException {

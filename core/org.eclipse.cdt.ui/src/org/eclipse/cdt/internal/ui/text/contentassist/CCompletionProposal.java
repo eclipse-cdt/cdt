@@ -1,39 +1,74 @@
+/**********************************************************************
+ * Copyright (c) 2004 Rational Software Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM Rational Software - Initial API and implementation
+***********************************************************************/
+
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
-/*
- * (c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
- */
 
-import org.eclipse.cdt.internal.ui.text.link.LinkedPositionManager;
-import org.eclipse.cdt.internal.ui.text.link.LinkedPositionUI;
-import org.eclipse.cdt.internal.ui.text.link.LinkedPositionUI.ExitFlags;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DefaultPositionUpdater;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IPositionUpdater;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension2;
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.text.link.ILinkedListener;
+import org.eclipse.jface.text.link.LinkedEnvironment;
+import org.eclipse.jface.text.link.LinkedPositionGroup;
+import org.eclipse.jface.text.link.LinkedUIControl;
+import org.eclipse.jface.text.link.LinkedUIControl.ExitFlags;
+import org.eclipse.jface.text.link.LinkedUIControl.IExitPolicy;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.texteditor.link.EditorHistoryUpdater;
 
-public class CCompletionProposal implements ICCompletionProposal, ICompletionProposalExtension {
+
+public class CCompletionProposal implements ICCompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2, ICompletionProposalExtension3 {
+
 	private String fDisplayString;
 	private String fReplacementString;
-	private String fAdditionalInfoString;
 	private int fReplacementOffset;
 	private int fReplacementLength;
 	private int fCursorPosition;
 	private Image fImage;
 	private IContextInformation fContextInformation;
 	private int fContextInformationPosition;
-	//private IImportDeclaration fImportDeclaration;
+	private String fProposalInfo;
 	private char[] fTriggerCharacters;
+	protected boolean fToggleEating;
 	protected ITextViewer fTextViewer;	
 	
 	private int fRelevance;
+	private StyleRange fRememberedStyleRange;
 
 	/**
 	 * Creates a new completion proposal. All fields are initialized based on the provided information.
@@ -45,11 +80,26 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	 * @param displayString the string to be displayed for the proposal
 	 * If set to <code>null</code>, the replacement string will be taken as display string.
 	 */
+	public CCompletionProposal(String replacementString, int replacementOffset, int replacementLength, Image image, String displayString, int relevance) {
+		this(replacementString, replacementOffset, replacementLength, image, displayString, relevance, null);
+	}
+
+	/**
+	 * Creates a new completion proposal. All fields are initialized based on the provided information.
+	 *
+	 * @param replacementString the actual string to be inserted into the document
+	 * @param replacementOffset the offset of the text to be replaced
+	 * @param replacementLength the length of the text to be replaced
+	 * @param image the image to display for this proposal
+	 * @param displayString the string to be displayed for the proposal
+	 * @param viewer the text viewer for which this proposal is computed, may be <code>null</code>
+	 * If set to <code>null</code>, the replacement string will be taken as display string.
+	 */
 	public CCompletionProposal(String replacementString, int replacementOffset, int replacementLength, Image image, String displayString, int relevance, ITextViewer viewer) {
 		Assert.isNotNull(replacementString);
 		Assert.isTrue(replacementOffset >= 0);
 		Assert.isTrue(replacementLength >= 0);
-		
+				
 		fReplacementString= replacementString;
 		fReplacementOffset= replacementOffset;
 		fReplacementLength= replacementLength;
@@ -57,21 +107,13 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		fDisplayString= displayString != null ? displayString : replacementString;
 		fRelevance= relevance;
 		fTextViewer= viewer;
-		
-		//@@@ Is this the best way to do this, likely it isn't
-		if(replacementString.indexOf("()") == -1) {		//Not replacing with a function //$NON-NLS-1$
-			fCursorPosition = replacementString.length();
-		} else if(displayString.indexOf("()") == -1) { 	//Assume that there are arguments between () //$NON-NLS-1$
-			fCursorPosition = replacementString.length() - 1;
-		} else {
-			fCursorPosition = replacementString.length();
-		}
+
+		fCursorPosition= replacementString.length();
 	
-		fAdditionalInfoString = null;
 		fContextInformation= null;
 		fContextInformationPosition= -1;
-		//fIncludeDeclaration= null;
 		fTriggerCharacters= null;
+		fProposalInfo= null;
 	}
 	
 	/**
@@ -84,20 +126,19 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	}
 	
 	/**
-	 * Sets the import declaration to import when applied.
-	 * @param importDeclaration Optional import declaration to be added. Can be <code>null</code>. The underlying compilation unit
-	 * is assumed to be compatible with the document passed in <code>apply</code>.
-	 *
-	public void setIncludeDeclaration(IImportDeclaration importDeclaration) {
-		fIncludeDeclaration= importDeclaration;
-	} */
-	
-	/**
 	 * Sets the trigger characters.
 	 * @param triggerCharacters The set of characters which can trigger the application of this completion proposal
 	 */
 	public void setTriggerCharacters(char[] triggerCharacters) {
 		fTriggerCharacters= triggerCharacters;
+	}
+	
+	/**
+	 * Sets the proposal info.
+	 * @param additionalProposalInfo The additional information associated with this proposal or <code>null</code>
+	 */
+	public void setAdditionalProposalInfo(String proposalInfo) {
+		fProposalInfo= proposalInfo;
 	}
 	
 	/**
@@ -111,88 +152,21 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		fContextInformationPosition= (fContextInformation != null ? fCursorPosition : -1);
 	}	
 	
-/*	protected void addInclude(IRequiredInclude[] inc, CFileElementWorkingCopy tu) {
-		AddIncludeOperation op= new AddIncludeOperation(fEditor, tu, inc, false);
-		try {
-			ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
-			dialog.run(false, true, op);
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-			MessageDialog.openError(getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message1"), e.getTargetException().getMessage()); //$NON-NLS-1$
-		} catch (InterruptedException e) {
-			// Do nothing. Operation has been canceled.
-		}
-	} */
-	
-	protected void applyIncludes(IDocument document) {
-		//AddIncludeOperation(ITextEditor ed, CFileElementWorkingCopy tu, IRequiredInclude[] includes, boolean save) {
-			
-		//if (fIncludeDeclaration == null) {
-			return;
-		//}
-		
-		/* ICompilationUnit cu= (ICompilationUnit) JavaModelUtil.findElementOfKind(fImportDeclaration, IJavaElement.COMPILATION_UNIT);
-		if (cu != null) {
-			try {
-				IType[] types= cu.getTypes();
-				if (types.length == 0 || types[0].getSourceRange().getOffset() > fReplacementOffset) {
-					// do not add import for code assist on import statements
-					return;
-				}
-
-				String[] prefOrder= ImportOrganizePreferencePage.getImportOrderPreference();
-				int threshold= ImportOrganizePreferencePage.getImportNumberThreshold();					
-				ImportsStructure impStructure= new ImportsStructure(cu, prefOrder, threshold, true);
-
-				impStructure.addImport(fImportDeclaration.getElementName());
-				// will modify the document as the CU works on the document
-				impStructure.create(false, null);
-
-			} catch (CoreException e) {
-				JavaPlugin.log(e);
-			}
-		} */
-	}
-
 	/*
-	 * @see ICompletionProposal#apply
-	 */
-	public void apply(IDocument document) {
-		apply(document, (char) 0, fReplacementOffset + fReplacementLength);
-	}
-	
-	/*
-	 * In this case we need to apply the completion proposal intelligently.
-	 * This means that if we are applying it to a function, we don't wipe
-	 * out the internal arguments, and if the proposal is a function, and it
-	 * already is bracketed, then don't put those brackets in.
-	 * 
 	 * @see ICompletionProposalExtension#apply(IDocument, char, int)
 	 */
 	public void apply(IDocument document, char trigger, int offset) {
-		int     functionBracketIndex;
-		boolean isBeforeBracket;
-		String  replacementStringCopy = fReplacementString;
-		fReplacementLength = offset - fReplacementOffset;		
 		try {
-			functionBracketIndex = fReplacementString.indexOf("()"); //$NON-NLS-1$
-			isBeforeBracket = document.getChar(fReplacementOffset + fReplacementLength) == '(';
+			// patch replacement length
+			int delta= offset - (fReplacementOffset + fReplacementLength);
+			if (delta > 0)
+				fReplacementLength += delta;
 			
-			//Strip the brackets off the function if inserting right before brackets
-			if(functionBracketIndex != -1 && isBeforeBracket) {
-				replacementStringCopy = fReplacementString.substring(0, functionBracketIndex);
-			}
-		} catch(Exception ex) {
-			/* Ignore */
-		}
-						
-		try {		
 			String string;
 			if (trigger == (char) 0) {
 				string= fReplacementString;
-				replace(document, fReplacementOffset, fReplacementLength, replacementStringCopy);
 			} else {
-				StringBuffer buffer= new StringBuffer(replacementStringCopy);
+				StringBuffer buffer= new StringBuffer(fReplacementString);
 
 				// fix for PR #5533. Assumes that no eating takes place.
 				if ((fCursorPosition > 0 && fCursorPosition <= buffer.length() && buffer.charAt(fCursorPosition - 1) != trigger)) {
@@ -201,46 +175,140 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 				}
 				
 				string= buffer.toString();
-				replace(document, fReplacementOffset, fReplacementLength, string);
 			}
-			
+
+			// reference position just at the end of the document change.
+			int referenceOffset= fReplacementOffset + fReplacementLength;
+			final ReferenceTracker referenceTracker= new ReferenceTracker();
+			referenceTracker.preReplace(document, referenceOffset);
+
+			replace(document, fReplacementOffset, fReplacementLength, string);
+
+			referenceOffset= referenceTracker.postReplace(document);			
+			fReplacementOffset= referenceOffset - (string == null ? 0 : string.length());
+
 			if (fTextViewer != null && string != null) {
 				int index= string.indexOf("()"); //$NON-NLS-1$
 				if (index != -1 && index + 1 == fCursorPosition) {
-					//IPreferenceStore preferenceStore= JavaPlugin.getDefault().getPreferenceStore();
+					IPreferenceStore preferenceStore= CUIPlugin.getDefault().getPreferenceStore();
 					//if (preferenceStore.getBoolean(PreferenceConstants.EDITOR_CLOSE_BRACKETS)) {
+					if(true){
 						int newOffset= fReplacementOffset + fCursorPosition;
 						
-						LinkedPositionManager manager= new LinkedPositionManager(document);
-						manager.addPosition(newOffset, 0);
+						LinkedPositionGroup group= new LinkedPositionGroup();
+						group.createPosition(document, newOffset, 0);
 						
-						LinkedPositionUI editor= new LinkedPositionUI(fTextViewer, manager);
-						editor.setExitPolicy(new ExitPolicy(')'));
-						editor.setFinalCaretOffset(newOffset + 1);
-						editor.enter();							
-					//}
+						LinkedEnvironment env= new LinkedEnvironment();
+						env.addGroup(group);
+						env.forceInstall();
+						
+						LinkedUIControl ui= new LinkedUIControl(env, fTextViewer);
+						ui.setPositionListener(new EditorHistoryUpdater());
+						ui.setExitPolicy(new ExitPolicy(')'));
+						ui.setExitPosition(fTextViewer, newOffset + 1, 0, Integer.MAX_VALUE);
+						ui.setCyclingMode(LinkedUIControl.CYCLE_NEVER);
+						ui.enter();
+					}
 				}
 			}
 
-			/*
-			 * The replacement length is used to calculate the new cursor position,
-			 * so after we update the includes adjust the replacement offset.
-			 * NOTE: This won't work if the include is added after the offset,
-			 * such as might be the case with #include completions.
-			 */
-			int oldLen= document.getLength();
-			applyIncludes(document);
-			fReplacementOffset += document.getLength() - oldLen;
-			
 		} catch (BadLocationException x) {
 			// ignore
-		}	
+		}		
 	}
+
+	/**
+	 * A class to simplify tracking a reference position in a document. 
+	 */
+	private static final class ReferenceTracker {
+
+		/** The reference position category name. */
+		private static final String CATEGORY= "reference_position"; //$NON-NLS-1$
+		/** The position updater of the reference position. */
+		private final IPositionUpdater fPositionUpdater= new DefaultPositionUpdater(CATEGORY);
+		/** The reference position. */
+		private final Position fPosition= new Position(0);
+		
+		/**
+		 * Called before document changes occur. It must be followed by a call to postReplace().
+		 * 
+		 * @param document the document on which to track the reference position.
+		 *	
+		 */
+		public void preReplace(IDocument document, int offset) throws BadLocationException {
+			fPosition.setOffset(offset);
+			try {
+				document.addPositionCategory(CATEGORY);
+				document.addPositionUpdater(fPositionUpdater);
+				document.addPosition(CATEGORY, fPosition);
+
+			} catch (BadPositionCategoryException e) {
+				// should not happen
+				CUIPlugin.getDefault().log(e);
+			}
+		}
+	
+		/**
+		 * Called after the document changed occured. It must be preceded by a call to preReplace().
+		 * 
+		 * @param document the document on which to track the reference position.
+		 */
+		public int postReplace(IDocument document) {
+			try {
+				document.removePosition(CATEGORY, fPosition);
+				document.removePositionUpdater(fPositionUpdater);
+				document.removePositionCategory(CATEGORY);
+				 
+			} catch (BadPositionCategoryException e) {
+				// should not happen
+				CUIPlugin.getDefault().log(e);
+			}
+			return fPosition.getOffset();
+		}
+	}	
+	
+	protected static class ExitPolicy implements IExitPolicy {
+		
+		final char fExitCharacter;
+		
+		public ExitPolicy(char exitCharacter) {
+			fExitCharacter= exitCharacter;
+		}
+
+		/*
+		 * @see org.eclipse.jdt.internal.ui.text.link.LinkedPositionUI.ExitPolicy#doExit(org.eclipse.jdt.internal.ui.text.link.LinkedPositionManager, org.eclipse.swt.events.VerifyEvent, int, int)
+		 */
+		public ExitFlags doExit(LinkedEnvironment environment, VerifyEvent event, int offset, int length) {
+			
+			if (event.character == fExitCharacter) {
+				if (environment.anyPositionContains(offset))
+					return new ExitFlags(ILinkedListener.UPDATE_CARET, false);
+				else
+					return new ExitFlags(ILinkedListener.UPDATE_CARET, true);
+			}	
+			
+			switch (event.character) {			
+			case ';':
+				return new ExitFlags(ILinkedListener.NONE, true);
+								
+			default:
+				return null;
+			}						
+		}
+
+	}	
 	
 	// #6410 - File unchanged but dirtied by code assist
 	private void replace(IDocument document, int offset, int length, String string) throws BadLocationException {
 		if (!document.get(offset, length).equals(string))
 			document.replace(offset, length, string);
+	}
+
+	/*
+	 * @see ICompletionProposal#apply
+	 */
+	public void apply(IDocument document) {
+		apply(document, (char) 0, fReplacementOffset + fReplacementLength);
 	}
 	
 	/*
@@ -271,20 +339,14 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		return fDisplayString;
 	}
 
-	/**
-	 * Set the additional information which will be shown when this
-	 * proposal is selected in the popup list.
-	 * @param infoString
-	 */
-	public void setAdditionalProposalInfo(String infoString) {
-		fAdditionalInfoString = infoString;
-	}
-
 	/*
 	 * @see ICompletionProposal#getAdditionalProposalInfo()
 	 */
 	public String getAdditionalProposalInfo() {
-		return fAdditionalInfoString;
+//		if (fProposalInfo != null) {
+//			return fProposalInfo.getInfo();
+//		}
+		return fProposalInfo;
 	}
 	
 	/*
@@ -300,27 +362,6 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	public int getContextInformationPosition() {
 		return fReplacementOffset + fContextInformationPosition;
 	}
-
-	/*
-	 * @see ICompletionProposalExtension#isValidFor(IDocument, int)
-	 */
-	public boolean isValidFor(IDocument document, int offset) {
-		if (offset < fReplacementOffset)
-			return false;
-		
-		int replacementLength= fReplacementString == null ? 0 : fReplacementString.length();
-		if (offset >  fReplacementOffset + replacementLength)
-			return false;
-		
-		try {
-			int length= offset - fReplacementOffset;
-			String start= document.get(fReplacementOffset, length);
-			return fReplacementString.substring(0, length).equalsIgnoreCase(start);
-		} catch (BadLocationException x) {
-		}		
-		
-		return false;
-	}
 	
 	/**
 	 * Gets the replacement offset.
@@ -328,6 +369,13 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	 */
 	public int getReplacementOffset() {
 		return fReplacementOffset;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getCompletionOffset()
+	 */
+	public int getCompletionOffset() {
+		return getReplacementOffset();
 	}
 
 	/**
@@ -363,6 +411,18 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	public String getReplacementString() {
 		return fReplacementString;
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getReplacementText()
+	 */
+	public CharSequence getCompletionText() {
+		String string= getReplacementString();
+		int pos= string.indexOf('(');
+		if (pos > 0)
+			return string.subSequence(0, pos);
+		else
+			return string;
+	}
 
 	/**
 	 * Sets the replacement string.
@@ -378,6 +438,36 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	 */
 	public void setImage(Image image) {
 		fImage= image;
+	}
+
+	/*
+	 * @see ICompletionProposalExtension#isValidFor(IDocument, int)
+	 */
+	public boolean isValidFor(IDocument document, int offset) {
+		return validate(document, offset, null);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
+	 */
+	public boolean validate(IDocument document, int offset, DocumentEvent event) {
+
+		if (offset < fReplacementOffset)
+			return false;
+				
+		/* 
+		 * See http://dev.eclipse.org/bugs/show_bug.cgi?id=17667
+		String word= fReplacementString;
+		 */ 
+		boolean validated= startsWith(document, offset, fDisplayString);	
+
+		if (validated && event != null) {
+			// adapt replacement range to document change
+			int delta= (event.fText == null ? 0 : event.fText.length()) - event.fLength;
+			fReplacementLength += delta;	
+		}
+
+		return validated;
 	}
 	
 	/**
@@ -396,68 +486,168 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		fRelevance= relevance;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-		return fDisplayString.hashCode() 
-		+ fReplacementString.hashCode() 
-		+ ((fAdditionalInfoString == null) ? 0 : fAdditionalInfoString.hashCode());
-	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object other) {
-		if(!(other instanceof CCompletionProposal))
-			return false;
-		if(!(fDisplayString.equals(((CCompletionProposal)other).fDisplayString)))
-			return false;
-		if(!(fReplacementString.equals(((CCompletionProposal)other).fReplacementString)))
-			return false;
-		if((fAdditionalInfoString != null) && (((CCompletionProposal)other).fAdditionalInfoString != null) && (!(fAdditionalInfoString.equals(((CCompletionProposal)other).fAdditionalInfoString))))
+	/**
+	 * Returns <code>true</code> if a words starts with the code completion prefix in the document,
+	 * <code>false</code> otherwise.
+	 */	
+	protected boolean startsWith(IDocument document, int offset, String word) {
+		int wordLength= word == null ? 0 : word.length();
+		if (offset >  fReplacementOffset + wordLength)
 			return false;
 		
-		return true;
-	}
-
-	private static class ExitPolicy implements LinkedPositionUI.ExitPolicy {
-		
-		final char fExitCharacter;
-		
-		public ExitPolicy(char exitCharacter) {
-			fExitCharacter= exitCharacter;
+		try {
+			int length= offset - fReplacementOffset;
+			String start= document.get(fReplacementOffset, length);
+			return word.substring(0, length).equalsIgnoreCase(start);
+		} catch (BadLocationException x) {
 		}
-
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link.LinkedPositionUI.ExitPolicy#doExit(org.eclipse.jdt.internal.ui.text.link.LinkedPositionManager, org.eclipse.swt.events.VerifyEvent, int, int)
-		 */
-		public ExitFlags doExit(LinkedPositionManager manager, VerifyEvent event, int offset, int length) {
-			
-			if (event.character == fExitCharacter) {
-				if (manager.anyPositionIncludes(offset, length))
-					return new ExitFlags(LinkedPositionUI.COMMIT| LinkedPositionUI.UPDATE_CARET, false);
-				else
-					return new ExitFlags(LinkedPositionUI.COMMIT, true);
-			}	
-			
-			switch (event.character) {			
-				case '\b':
-					if (manager.getFirstPosition().length == 0)
-						return new ExitFlags(0, true);
-					else
-						return null;
-					
-				case '\n':
-				case '\r':
-				case ';':
-					return new ExitFlags(LinkedPositionUI.COMMIT, true);
-					
-				default:
-					return null;
-			}						
-		}
-
+		
+		return false;	
 	}	
-	
-}
 
+	private static boolean insertCompletion() {
+		IPreferenceStore preference= CUIPlugin.getDefault().getPreferenceStore();
+		return preference.getBoolean(ContentAssistPreference.AUTOINSERT);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension1#apply(org.eclipse.jface.text.ITextViewer, char, int, int)
+	 */
+	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
+
+		IDocument document= viewer.getDocument();
+
+		// don't eat if not in preferences, XOR with modifier key 1 (Ctrl)
+		// but: if there is a selection, replace it!
+		Point selection= viewer.getSelectedRange();
+		fToggleEating= (stateMask & SWT.MOD1) != 0;
+		if (insertCompletion() ^ fToggleEating)
+			fReplacementLength= selection.x + selection.y - fReplacementOffset;
+		
+		apply(document, trigger, offset);
+		fToggleEating= false;
+	}
+
+	private static Color getForegroundColor(StyledText text) {
+
+		IPreferenceStore preference= CUIPlugin.getDefault().getPreferenceStore();
+		RGB rgb= PreferenceConverter.getColor(preference, ContentAssistPreference.PROPOSALS_FOREGROUND);
+		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
+		return textTools.getColorManager().getColor(rgb);
+	}
+
+	private static Color getBackgroundColor(StyledText text) {
+
+		IPreferenceStore preference= CUIPlugin.getDefault().getPreferenceStore();
+		RGB rgb= PreferenceConverter.getColor(preference, ContentAssistPreference.PROPOSALS_BACKGROUND);
+		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
+		return textTools.getColorManager().getColor(rgb);
+	}
+	
+	private void repairPresentation(ITextViewer viewer) {
+		if (fRememberedStyleRange != null) {
+			 if (viewer instanceof ITextViewerExtension2) {
+			 	// attempts to reduce the redraw area
+			 	ITextViewerExtension2 viewer2= (ITextViewerExtension2) viewer;
+			 	
+			 	if (viewer instanceof ITextViewerExtension5) {
+			 		
+			 		ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+			 		IRegion widgetRange= extension.modelRange2WidgetRange(new Region(fRememberedStyleRange.start, fRememberedStyleRange.length));
+			 		if (widgetRange != null)
+			 			viewer2.invalidateTextPresentation(widgetRange.getOffset(), widgetRange.getLength());
+			 			
+			 	} else {
+					viewer2.invalidateTextPresentation(fRememberedStyleRange.start + viewer.getVisibleRegion().getOffset(), fRememberedStyleRange.length);
+			 	}
+			 	
+			} else
+				viewer.invalidateTextPresentation();
+		}
+	}
+
+	private void updateStyle(ITextViewer viewer) {
+
+		StyledText text= viewer.getTextWidget();
+		if (text == null || text.isDisposed())
+			return;
+
+		int widgetCaret= text.getCaretOffset();
+		
+		int modelCaret= 0;
+		if (viewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+			modelCaret= extension.widgetOffset2ModelOffset(widgetCaret);
+		} else {
+			IRegion visibleRegion= viewer.getVisibleRegion();
+			modelCaret= widgetCaret + visibleRegion.getOffset();			
+		}
+		
+		if (modelCaret >= fReplacementOffset + fReplacementLength) {
+			repairPresentation(viewer);
+			return;
+		}
+					
+		int offset= widgetCaret;
+		int length= fReplacementOffset + fReplacementLength - modelCaret;
+	
+		Color foreground= getForegroundColor(text);
+		Color background= getBackgroundColor(text);
+
+		StyleRange range= text.getStyleRangeAtOffset(offset);
+		int fontStyle= range != null ? range.fontStyle : SWT.NORMAL;
+
+		repairPresentation(viewer);
+		fRememberedStyleRange= new StyleRange(offset, length, foreground, background, fontStyle);
+		
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=34754
+		try {
+			text.setStyleRange(fRememberedStyleRange);
+		} catch (IllegalArgumentException x) {
+			// catching exception as offset + length might be outside of the text widget
+			fRememberedStyleRange= null;
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#selected(ITextViewer, boolean)
+	 */
+	public void selected(ITextViewer viewer, boolean smartToggle) {
+		if (!insertCompletion() ^ smartToggle)
+			updateStyle(viewer);
+		else {
+			repairPresentation(viewer);
+			fRememberedStyleRange= null;
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#unselected(ITextViewer)
+	 */
+	public void unselected(ITextViewer viewer) {
+		repairPresentation(viewer);
+		fRememberedStyleRange= null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getInformationControlCreator()
+	 */
+	public IInformationControlCreator getInformationControlCreator() {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void updateReplacementOffset(int newOffset) {
+		setReplacementOffset(newOffset);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void updateReplacementLength(int length) {
+		setReplacementLength(length);
+	}
+
+}

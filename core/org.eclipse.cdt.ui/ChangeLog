@@ -1,3 +1,9 @@
+2004-04-05 Hoda Amer
+	Fix for bug#44378 : Content Assist: easy keyboard exit of argument-providing mode
+	Fix for bug#56614 : [Content Assist] Global variables do not appear in a global completion list.
+	Fix for bug#56634 : Renaming a fcn in class A renames same named function of other classes
+	Fix for bug#56646 : Did not get warning when renaming a virtual function 
+	
 2004-04-03 Alain Magloire
 
 	Draft support for LibraryReference and IncludeReference

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -16,6 +17,7 @@ import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -28,6 +30,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.ILaunchFilter;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -43,7 +46,7 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 /**
  */
-public class CApplicationLaunchShortcut implements ILaunchShortcut {
+public class CApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilter {
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(IEditorPart, String)
@@ -288,8 +291,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
 					StringBuffer name = new StringBuffer();
-					name.append(bin.getCPU() + (bin.isLittleEndian() ? "le" : "be"));
-					name.append(" - ");
+					name.append(bin.getCPU() + (bin.isLittleEndian() ? "le" : "be")); //$NON-NLS-1$ //$NON-NLS-2$
+					name.append(" - "); //$NON-NLS-1$
 					name.append(bin.getPath().toString());
 					return name.toString();
 				}
@@ -383,6 +386,29 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		} else {
 			MessageDialog.openError(getShell(), "Application Launcher", "Launch failed no project selected");
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchFilter#testAttribute(org.eclipse.core.resources.IResource, java.lang.String, java.lang.String)
+	 */
+	public boolean testAttribute(IResource target, String name, String value) {
+		if ("ContextualLaunchActionFilter".equals(name)) { //$NON-NLS-1$
+			return isExecutable(target);
+		}
+		return false;
+	}
+
+	/**
+	 * Look for executable.
+	 * @return true if the target resource has a <code>main</code> method,
+	 * <code>false</code> otherwise.
+	 */
+	private boolean isExecutable(IResource target) {
+		ICElement celement = null;
+		if (target instanceof IFile) {
+			celement = CoreModel.getDefault().create(target);
+		}
+		return (celement != null && celement instanceof IBinary);
 	}
 
 }

@@ -73,11 +73,21 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            label="C Local Application"
+            label="%CApplicationShortcut.label"
             icon="icons/c_app.gif"
             modes="run, debug"
+            filterClass="org.eclipse.cdt.launch.internal.CApplicationLaunchShortcut"
             class="org.eclipse.cdt.launch.internal.CApplicationLaunchShortcut"
             id="org.eclipse.cdt.debug.ui.localCShortcut">
+         <filter
+             name="ContextualLaunchActionFilter"
+             value="supportsContextualLaunch"/>
+         <contextLabel
+             mode="run"
+             label="%ContextualRunJavaApplication.label"/>
+         <contextLabel
+             mode="debug"
+             label="%ContextualDebugJavaApplication.label"/>
          <perspective
                id="org.eclipse.cdt.ui.CPerspective">
          </perspective>

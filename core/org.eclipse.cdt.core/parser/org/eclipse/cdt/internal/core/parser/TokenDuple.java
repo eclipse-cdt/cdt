@@ -113,5 +113,31 @@ public class TokenDuple implements ITokenDuple {
         }
         return count;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ITokenDuple#getSubDuple(int, int)
+     */
+    public ITokenDuple getSubrange(int startIndex, int endIndex)
+    {
+		return new TokenDuple( getToken( startIndex ), getToken( endIndex) );
+    }
+
+    /**
+     * @param endIndex
+     */
+    public IToken getToken(int index)
+    {
+        if( index < 0 || index >= length() ) return null;
+        Iterator i = iterator();
+        int count = 0;  
+        while( i.hasNext() )
+        {
+        	IToken r = (IToken)i.next();
+        	if( count == index )
+        		return r;
+        	++count; 
+        }
+        return null;
+    }
 	
 }

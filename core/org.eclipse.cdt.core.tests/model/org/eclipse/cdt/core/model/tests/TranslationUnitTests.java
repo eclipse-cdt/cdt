@@ -6,29 +6,18 @@ package org.eclipse.cdt.core.model.tests;
  */
 
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Stack;
 
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.util.ExpectedStrings;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 
 
 
@@ -39,14 +28,7 @@ import org.eclipse.core.runtime.Path;
  * class. There is nothing exotic here, mostly just sanity type tests
  *
  */
-public class TranslationUnitTests extends TestCase {
-    IWorkspace workspace;
-    IWorkspaceRoot root;
-    ICProject testProject;
-    IFile cfile, exefile, libfile, archfile, objfile;
-    Path cpath, exepath, libpath, archpath, objpath;
-    NullProgressMonitor monitor;
-    
+public class TranslationUnitTests extends TranslationUnitBaseTest {
     /* This is a list of elements in the test .c file. It will be used 
      * in a number of places in the tests
      */
@@ -73,91 +55,6 @@ public class TranslationUnitTests extends TestCase {
         super(name);
     }
     
-    /**
-     * Sets up the test fixture.
-     *
-     * Called before every test case method.
-     * 
-     * Example code test the packages in the project 
-     *  "com.qnx.tools.ide.cdt.core"
-     */
-    protected void setUp() throws CoreException,FileNotFoundException {
-        /***
-         * The rest of the tests assume that they have a working workspace
-         * and workspace root object to use to create projects/files in, 
-         * so we need to get them setup first.
-         */
-        IWorkspaceDescription desc;
-        String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
-        workspace= ResourcesPlugin.getWorkspace();
-        root= workspace.getRoot();
-        monitor = new NullProgressMonitor();
-        if (workspace==null) 
-            fail("Workspace was not setup");
-        if (root==null)
-            fail("Workspace root was not setup");
-            
-        desc=workspace.getDescription();
-	    desc.setAutoBuilding(false);
-	    workspace.setDescription(desc);
-
-        /***
-         * Setup the various files, paths and projects that are needed by the
-         * tests
-         */
-            
-        testProject=CProjectHelper.createCProject("filetest", "none");
-        if (testProject==null)
-            fail("Unable to create project");
-
-        cfile = testProject.getProject().getFile("exetest.c");
-        if (!cfile.exists()) {
-            cfile.create(new FileInputStream(pluginRoot+"resources/cfiles/TranslationUnits.c"),false, monitor);
-        
-        }
-        cpath=new Path(workspace.getRoot().getLocation()+"/filetest/main.c");
-
-        objfile = testProject.getProject().getFile("exetest.o");
-        if (!objfile.exists()) {
-            objfile.create(new FileInputStream(pluginRoot+"resources/exe/x86/o.g/main.o"),false, monitor);
-        
-        }
-        objpath=new Path(workspace.getRoot().getLocation()+"/filetest/main.o");
-        
-        exefile = testProject.getProject().getFile("test_g");
-        if (!exefile.exists()) {
-            exefile.create(new FileInputStream(pluginRoot+"resources/exe/x86/o.g/exe_g"),false, monitor);
-        
-        }
-        exepath=new Path(workspace.getRoot().getLocation()+"/filetest/exe_g");
-        
-        archfile = testProject.getProject().getFile("libtestlib_g.a");
-        if (!archfile.exists()) {
-            archfile.create(new FileInputStream(pluginRoot+"resources/testlib/x86/a.g/libtestlib_g.a"),false, monitor);
-        
-        }
-        libpath=new Path(workspace.getRoot().getLocation()+"/filetest/libtestlib_g.so");
-        
-        libfile = testProject.getProject().getFile("libtestlib_g.so");
-        if (!libfile.exists()) {
-            libfile.create(new FileInputStream(pluginRoot+"resources/testlib/x86/so.g/libtestlib_g.so"),false, monitor);
-        
-        }
-        archpath=new Path(workspace.getRoot().getLocation()+"/filetest/libtestlib_g.a");
-
-
-    }
-    
-     /**
-     * Tears down the test fixture.
-     *
-     * Called after every test case method.
-     */
-    protected void tearDown() throws CoreException {
-       // release resources here and clean-up
-       testProject.getProject().delete(true,true,monitor);
-    }
-    
     public static TestSuite suite() {
 		TestSuite suite= new TestSuite(TranslationUnitTests.class.getName());
 		suite.addTest(new TranslationUnitTests("testIsTranslationUnit"));
@@ -165,7 +62,6 @@ public class TranslationUnitTests extends TestCase {
 		suite.addTest(new TranslationUnitTests("testGetElement"));
 		suite.addTest(new TranslationUnitTests("testBug23478A"));
 		suite.addTest(new TranslationUnitTests("testBug23478B"));
-		suite.addTest(new TranslationUnitTests("testKRFunctionDeclarations"));
 		// TODO: suite.addTest(new TranslationUnitTests("testGetElementAtLine"));
 		return suite;
     }
@@ -320,57 +216,5 @@ public class TranslationUnitTests extends TestCase {
             assertTrue(output, false);
         }
 
-    }
-    /***
-     * Simple sanity tests for the getInclude call
-     */
-/* Reintroduce this test when Bug# 23478 is fixed
-    public void testGetInclude() {
-        IInclude myInclude;
-        int x;
-        String includes[]={"stdio.h", "unistd.h"};
-        ITranslationUnit myTranslationUnit=CProjectHelper.findTranslationUnit(testProject,"exetest.c");
-                
-        for (x=0;x<includes.length;x++) {
-            myInclude=myTranslationUnit.getInclude(includes[x]);
-            if (myInclude==null)
-                fail("Unable to get include: " + includes[x]);
-            else
-                assertTrue("PR:23478 Expected:"+includes[x] +" Got:"+ myInclude.getIncludeName(), includes[x].equals(myInclude.getIncludeName()));
-        }
-        
-
-    }
-*/
-    /***
-     * Simple sanity tests for the getIncludes call
-     */
-/* Reintroduce this test when Bug# 23478 is fixed
-    public void testGetIncludes() throws CModelException {
-        IInclude myIncludes[];
-        String includes[]={"stdio.h", "unistd.h"};
-        ExpectedStrings myExp= new ExpectedStrings(includes);
-        int x;
-        ITranslationUnit myTranslationUnit=CProjectHelper.findTranslationUnit(testProject,"exetest.c");
-        fail("PR:23478 Unable to test because we can't get the name of an include file"); 
-                
-        myIncludes=myTranslationUnit.getIncludes();
-        for (x=0;x<myIncludes.length;x++) {
-            myExp.foundString(myIncludes[x].getIncludeName());
-        }
-        assertTrue(myExp.getMissingString(), myExp.gotAll());
-        assertTrue(myExp.getExtraString(), !myExp.gotExtra());
-    }
-*/      
-	/***
-	 * Simple sanity test for old K&R-style C function declaration
-	 */
-	public void testKRFunctionDeclarations() throws CModelException {
-		ITranslationUnit myTranslationUnit = CProjectHelper.findTranslationUnit(testProject,"exetest.c");
-        
-		assertTrue(myTranslationUnit.getElement("KRFunction") instanceof IFunction);            
-		IFunction myKRFunction = (IFunction)myTranslationUnit.getElement("KRFunction"); 
-		assertEquals(myKRFunction.getSignature(), "KRFunction(const char*, int(*)(float), parm3)");
-		assertEquals(myKRFunction.getReturnType(), "bool");
-	}      
+    }      
 }

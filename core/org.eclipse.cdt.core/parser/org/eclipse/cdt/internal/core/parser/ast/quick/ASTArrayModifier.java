@@ -10,8 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
-import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 
 /**
  * @author jcamelon

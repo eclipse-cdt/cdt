@@ -43,7 +43,6 @@ import org.eclipse.cdt.internal.core.model.FunctionTemplate;
 import org.eclipse.cdt.internal.core.model.MethodTemplate;
 import org.eclipse.cdt.internal.core.model.StructureTemplate;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
-import org.eclipse.cdt.internal.core.model.VariableTemplate;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

@@ -12,87 +12,80 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.ast.Offsets;
+import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTASMDefinition implements IASTASMDefinition
+public class ASTASMDefinition extends ASTAnonymousDeclaration implements IASTASMDefinition
 {
+	private Offsets offsets = new Offsets();
+	private final String assembly;
     /**
      * 
      */
-    public ASTASMDefinition()
+    public ASTASMDefinition( IContainerSymbol scope, String assembly, int first, int last )
     {
-        super();
-        // TODO Auto-generated constructor stub
+        super( scope );
+        this.assembly = assembly;
+        setStartingOffset(first);
+        setEndingOffset(last);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTASMDefinition#getBody()
      */
     public String getBody()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return assembly;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
     public void setStartingOffset(int o)
     {
-        // TODO Auto-generated method stub
+        offsets.setStartingOffset(o);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
     public void setEndingOffset(int o)
     {
-        // TODO Auto-generated method stub
+        offsets.setEndingOffset(o);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
      */
     public int getStartingOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return offsets.getStartingOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
      */
     public int getEndingOffset()
-    {
-        // TODO Auto-generated method stub
-        return 0;
+    {        
+        return offsets.getEndingOffset();
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTScopedElement#getOwnerScope()
-     */
-    public IASTScope getOwnerScope()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
+        requestor.acceptASMDefinition(this);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
     }
 }

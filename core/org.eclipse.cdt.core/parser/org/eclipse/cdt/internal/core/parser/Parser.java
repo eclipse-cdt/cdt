@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
@@ -54,7 +55,6 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.internal.core.model.Util;
-import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
  * ANSI C and C++.
@@ -275,9 +275,9 @@ public class Parser implements IParser
                     astUD = astFactory.createUsingDirective(scope, duple, firstToken.getOffset(), last.getEndOffset());
                 }
                 catch (ASTSemanticException e)
-                {
-                	//TODO add in IProblem stuff here
-                	failParse(); 
+                {                	
+                	failParse();
+                	throw backtrack;
                 }
                 astUD.acceptElement(requestor);
                 return;
@@ -321,7 +321,8 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e)
                 {
-                 
+                	failParse();
+                	throw backtrack;
                 }
                 declaration.acceptElement( requestor );
             }
@@ -592,13 +593,13 @@ public class Parser implements IParser
                         null,
                         astFactory.createParameterDeclaration(
                             wrapper.isConst(),
+                            wrapper.isVolatile(),
                             wrapper.getTypeSpecifier(),
                             declarator.getPtrOps(),
                             declarator.getArrayModifiers(),
-                            null,
-                            null, declarator.getName() == null
-                                    ? ""
-                                    : declarator.getName(), declarator.getInitializerClause()),
+                            null, null, declarator.getName() == null
+                                            ? ""
+                                            : declarator.getName(), declarator.getInitializerClause()),
                         null));
             }
         }
@@ -725,8 +726,8 @@ public class Parser implements IParser
             }
             catch (ASTSemanticException e)
             {
-                // TODO Auto-generated catch block
-
+				failParse();
+				throw backtrack;
             }
             namespaceDefinition.enterScope( requestor );
             namepsaceDeclarationLoop : while (LT(1) != IToken.tRBRACE)
@@ -807,6 +808,8 @@ public class Parser implements IParser
 	                    sdw.isUnsigned(), sdw.isTypeNamed()));
         } catch( ASTSemanticException se )
         {
+			failParse();
+			throw backtrack;
         }
         
         Declarator declarator = null;
@@ -864,7 +867,8 @@ public class Parser implements IParser
         }
         catch (ASTSemanticException e)
         {
-        	throw backtrack;
+			failParse();
+			throw backtrack;
         }
         Iterator i = l.iterator();
         if (hasFunctionBody && l.size() != 1)
@@ -1014,7 +1018,10 @@ public class Parser implements IParser
 	                    sdw.isSigned(),
 	                    sdw.isUnsigned(), sdw.isTypeNamed()));
         }
-        catch( ASTSemanticException se ) { }
+        catch( ASTSemanticException se ) { 
+			failParse();
+			throw backtrack;
+		}
         
         if (LT(1) != IToken.tSEMI)
             try
@@ -1485,12 +1492,24 @@ public class Parser implements IParser
         }
  
         ITokenDuple d = name();
-        IASTElaboratedTypeSpecifier elaboratedTypeSpec =
-            astFactory.createElaboratedTypeSpecifier(
-                eck,
-                d.toString(),
-                t.getOffset(),
-                d.getLastToken().getEndOffset());
+        IASTElaboratedTypeSpecifier elaboratedTypeSpec = null;
+        
+        try
+        {
+            elaboratedTypeSpec =
+                astFactory.createElaboratedTypeSpecifier(
+                    sdw.getScope(),
+                    eck,
+                    d,
+                    t.getOffset(),
+                    d.getLastToken().getEndOffset(), 
+                    ( LT(1) == IToken.tSEMI ) );
+        }
+        catch (ASTSemanticException e)
+        {
+			failParse();
+			throw backtrack;
+        }
         sdw.setTypeSpecifier(elaboratedTypeSpec);
     }
     /**
@@ -2195,7 +2214,8 @@ public class Parser implements IParser
             }
             catch (ASTSemanticException e)
             {
-                
+				failParse();
+				throw backtrack;               
             }
             consume(IToken.tLBRACE);
             while (LT(1) != IToken.tRBRACE)
@@ -2229,7 +2249,8 @@ public class Parser implements IParser
                     }
                     catch (ASTSemanticException e1)
                     {
-                    
+						failParse();
+						throw backtrack;                   
                     }
                     break;
                 }
@@ -2248,7 +2269,8 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e1)
                 {
-                
+					failParse();
+					throw backtrack; 
                 }
                 consume(IToken.tCOMMA);
             }
@@ -2320,7 +2342,7 @@ public class Parser implements IParser
                 astFactory
                     .createClassSpecifier(
                         sdw.getScope(),
-                        duple == null ? "" : duple.toString(),
+                        duple, 
                         classKind,
                         nameType,
                         access,
@@ -2329,7 +2351,8 @@ public class Parser implements IParser
         }
         catch (ASTSemanticException e)
         {
-            // TODO Auto-generated catch block`
+			failParse();
+			throw backtrack;
         }
         sdw.setTypeSpecifier(astClassSpecifier);
         // base clause
@@ -2441,7 +2464,8 @@ public class Parser implements IParser
                     }
                     catch (ASTSemanticException e)
                     {
-                        // TODO Auto-generated catch block
+						failParse();
+						throw backtrack;
                     }
                     isVirtual = false;
                     visibility = ASTAccessVisibility.PUBLIC;
@@ -2463,7 +2487,8 @@ public class Parser implements IParser
         }
         catch (ASTSemanticException e)
         {
-            // TODO Auto-generated catch block
+			failParse();
+			throw backtrack;
         }
     }
     /**

@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -819,6 +821,41 @@ public class CompleteParseASTTest extends TestCase
 		Iterator i = parse(code.toString()).getDeclarations();
 		IASTVariable instanceA = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
+	}
+	
+	public void testNestedClassname() throws Exception
+	{
+		Iterator declarations = parse( "namespace A { } \n class A::B { };").getDeclarations();
+		IASTNamespaceDefinition namespaceA = (IASTNamespaceDefinition)declarations.next();
+		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		assertEquals( classB.getOwnerScope(), namespaceA );
+		assertEquals( callback.getReferences().size(), 1 );
+	}
+	
+	public void testForwardDeclaration() throws Exception
+	{
+		Iterator i = parse( "class forward;").getDeclarations();
+		assertTrue( i.hasNext() );
+		IASTAbstractTypeSpecifierDeclaration d = (IASTAbstractTypeSpecifierDeclaration)i.next(); 
+		IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier)d.getTypeSpecifier();
+		assertEquals( elab.getName(), "forward");
+		assertEquals( elab.getClassKind(), ASTClassKind.CLASS );
+	}
+	
+	public void testElaboratedType() throws Exception
+	{
+		Iterator i = parse( "class A; class A * a;").getDeclarations();
+		IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		assertEquals( elab.getName(), "A" );
+		IASTVariable variableA = (IASTVariable)i.next();
+		assertEquals( variableA.getName(), "a");
+		assertEquals( variableA.getAbstractDeclaration().getTypeSpecifier(), elab ); 
+	}
+	
+	public void testASM() throws Exception
+	{
+		IASTASMDefinition asm = (IASTASMDefinition)parse( "asm ( \"blah blah blah\" );" ).getDeclarations().next();
+		assertEquals( asm.getBody(), "blah blah blah");  
 	}
 
 	public void testOverride() throws Exception

@@ -23,7 +23,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
  */
 public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
 {
-	private final List parms;
+	private final boolean isVolatile;
+    private final List parms;
     private final boolean isConst; 
 	private final IASTTypeSpecifier typeSpecifier; 
 	private final List pointerOperators; 
@@ -35,7 +36,7 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
      * @param pointerOperators
      * @param arrayModifiers
      */
-    public ASTAbstractDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp )
+    public ASTAbstractDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp )
     {
        this.isConst = isConst;
        this.typeSpecifier = typeSpecifier;
@@ -43,6 +44,7 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
        this.arrayModifiers = arrayModifiers;
        this.parms = parameters;
        this.pointerOperator = pointerOp;
+       this.isVolatile = isVolatile;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#isConst()
@@ -85,5 +87,12 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
     public ASTPointerOperator getPointerToFunctionOperator()
     {
         return pointerOperator;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#isVolatile()
+     */
+    public boolean isVolatile()
+    {
+        return isVolatile;
     }
 }

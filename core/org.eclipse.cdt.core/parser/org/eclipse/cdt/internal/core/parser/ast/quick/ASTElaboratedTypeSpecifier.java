@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 
@@ -79,5 +80,12 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
     public int getEndingOffset()
     {
         return offsets.getEndingOffset();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#isResolved()
+     */
+    public boolean isResolved() throws ASTNotImplementedException
+    {
+    	throw new ASTNotImplementedException();
     }
 }

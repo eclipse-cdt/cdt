@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -85,11 +86,12 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 	private final ASTClassKind  classKind;
 	private ASTAccessVisibility currentVisibility;
 	private final ASTQualifiedNamedElement qualifiedName;
+	private final ASTReferenceStore references;
 
     /**
      * @param symbol
      */
-    public ASTClassSpecifier(ISymbol symbol, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, int startingOffset, int nameOffset )
+    public ASTClassSpecifier(ISymbol symbol, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, int startingOffset, int nameOffset, List references )
     {
         super(symbol);
         classKind = kind;
@@ -98,6 +100,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
         setStartingOffset(startingOffset);
         setNameOffset(nameOffset);
 		qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
+		this.references = new ASTReferenceStore( references );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getClassNameType()
@@ -161,13 +164,13 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
+    	references.processReferences( requestor );
         requestor.enterClassSpecifier(this); 
         Iterator i = getBaseClauses();
         while( i.hasNext() )

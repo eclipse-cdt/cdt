@@ -372,8 +372,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
         	
 			List convertedParms = createParameterList( declarator.getParameters() );        	
         	IASTAbstractDeclaration abs = astFactory.createAbstractDeclaration(
-        		constt, getTypeSpecifier(), declarator.getPtrOps(), declarator.getArrayModifiers(), convertedParms, 
-        			(ASTPointerOperator)i.next() );
+        		constt, volatil, getTypeSpecifier(), declarator.getPtrOps(), declarator.getArrayModifiers(), 
+        			convertedParms, (ASTPointerOperator)i.next() );
         	String name = ( d.getPointerOperatorNameDuple() != null ) ? d.getPointerOperatorNameDuple().toString() + d.getName() : d.getName(); 
         	if( typedef )
 				return astFactory.createTypedef(
@@ -402,9 +402,9 @@ public class DeclarationWrapper implements IDeclaratorOwner
             nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
             astFactory.createAbstractDeclaration(
                 constt,
+                volatil,
                 getTypeSpecifier(),
-                declarator.getPtrOps(),
-                declarator.getArrayModifiers(), null, null), startingOffset, declarator.getNameStartOffset());
+                declarator.getPtrOps(), declarator.getArrayModifiers(), null, null), startingOffset, declarator.getNameStartOffset());
     }
     /**
      * @param declarator
@@ -419,9 +419,9 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 createParameterList(declarator.getParameters()),
                 astFactory.createAbstractDeclaration(
                     constt,
+					volatil,
                     getTypeSpecifier(),
-                    declarator.getPtrOps(),
-                    declarator.getArrayModifiers(), null, null),
+                    declarator.getPtrOps(), declarator.getArrayModifiers(), null, null),
                 declarator.getExceptionSpecification(),
                 inline,
                 friend,
@@ -451,9 +451,9 @@ public class DeclarationWrapper implements IDeclaratorOwner
             createParameterList(declarator.getParameters()),
             astFactory.createAbstractDeclaration(
                 constt,
+				volatil,
                 getTypeSpecifier(),
-                declarator.getPtrOps(),
-                declarator.getArrayModifiers(), null, null),
+                declarator.getPtrOps(), declarator.getArrayModifiers(), null, null),
             declarator.getExceptionSpecification(),
             inline,
             friend,
@@ -476,9 +476,9 @@ public class DeclarationWrapper implements IDeclaratorOwner
             declarator.getBitFieldExpression(),
             astFactory.createAbstractDeclaration(
                 constt,
+				volatil,
                 getTypeSpecifier(),
-                declarator.getPtrOps(),
-                declarator.getArrayModifiers(), null, null),
+                declarator.getPtrOps(), declarator.getArrayModifiers(), null, null),
             mutable,
             extern,
             register,
@@ -501,13 +501,13 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 result.add(
                     astFactory.createParameterDeclaration(
                         wrapper.isConst(),
+                        wrapper.isVolatile(),
                         wrapper.getTypeSpecifier(),
                         declarator.getPtrOps(),
                         declarator.getArrayModifiers(),
-                        null,
-                        null, declarator.getName() == null
-                                ? ""
-                                : declarator.getName(), declarator.getInitializerClause()));
+                        null, null, declarator.getName() == null
+                                        ? ""
+                                        : declarator.getName(), declarator.getInitializerClause()));
             }
         }
         return result;
@@ -526,9 +526,9 @@ public class DeclarationWrapper implements IDeclaratorOwner
             declarator.getBitFieldExpression(),
             astFactory.createAbstractDeclaration(
                 constt,
+                volatil,
                 getTypeSpecifier(),
-                declarator.getPtrOps(),
-                declarator.getArrayModifiers(), null, null),
+                declarator.getPtrOps(), declarator.getArrayModifiers(), null, null),
             mutable,
             extern,
             register,

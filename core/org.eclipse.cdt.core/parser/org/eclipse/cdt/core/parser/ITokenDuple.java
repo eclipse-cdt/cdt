@@ -29,4 +29,7 @@ public interface ITokenDuple {
 	public abstract String toString();
 	public abstract boolean isIdentifier();
 	public abstract int length(); 
+	
+	public abstract ITokenDuple getSubrange( int startIndex, int endIndex );
+	public IToken getToken(int index);
 }

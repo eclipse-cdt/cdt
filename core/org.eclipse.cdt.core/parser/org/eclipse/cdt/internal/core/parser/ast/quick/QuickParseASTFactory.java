@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -53,9 +54,9 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescripto
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
-import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 
 /**
+
  * @author jcamelon
  *
  */
@@ -112,8 +113,8 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ast.ClassKind, org.eclipse.cdt.core.parser.ast.ClassNameType, org.eclipse.cdt.core.parser.ast.AccessVisibility, org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
 	 */
-	public IASTClassSpecifier createClassSpecifier(IASTScope scope, String name, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, int startingOffset, int nameOffset)  throws ASTSemanticException {
-		IASTClassSpecifier spec = new ASTClassSpecifier( scope, name, kind, type, access );
+	public IASTClassSpecifier createClassSpecifier(IASTScope scope, ITokenDuple name, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, int startingOffset, int nameOffset)  throws ASTSemanticException {
+		IASTClassSpecifier spec = new ASTClassSpecifier( scope, name == null ? "" : name.toString() , kind, type, access );
 		spec.setStartingOffset( startingOffset );
 		spec.setNameOffset( nameOffset );
 		return spec;
@@ -126,14 +127,6 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 		IASTBaseSpecifier baseSpecifier = new ASTBaseSpecifier( parentClassName.toString(), isVirtual, visibility, parentClassName.getFirstToken().getOffset() );
 		((IASTQClassSpecifier)astClassSpec).addBaseClass(baseSpecifier);
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createElaboratedTypeSpecifier(org.eclipse.cdt.core.parser.ast.ClassKind, java.lang.String, int, int)
-     */
-    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset)
-    {
-        return new ASTElaboratedTypeSpecifier( elaboratedClassKind, typeName, startingOffset, endOffset );
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createEnumerationSpecifier(java.lang.String, int)
@@ -285,5 +278,8 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
         return new ASTAbstractTypeSpecifierDeclaration( scope, typeSpecifier, template, startingOffset, endingOffset );
     }
 
-
+    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, ITokenDuple typeName, int startingOffset, int endOffset, boolean isForewardDecl)
+    {
+        return new ASTElaboratedTypeSpecifier( elaboratedClassKind, typeName.toString(), startingOffset, endOffset );
+    }
 }

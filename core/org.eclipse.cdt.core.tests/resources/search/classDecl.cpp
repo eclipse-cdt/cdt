@@ -15,13 +15,13 @@ namespace NS {
 		struct a{};
 	}
 	class B: public A {
-		struct A {};
+		struct AA {};
 		enum e {};
 		
 		using namespace NS2;
 		
 		a aStruct;
-		A anotherStruct;
+		AA anotherStruct;
 	};
 	union u{ } ;
 }

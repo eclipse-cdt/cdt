@@ -1,3 +1,9 @@
+2003-08-11 John Camelon
+	Added Complete Parse support for ASM Definitions.  
+	Added isVolatile() to abstract declarations.
+	Added Complte Parse support for elaborated types / forward declaration of classes.  
+	Fixed some robustness issues.
+
 2003-08-05 Andrew Niefer
 	- Refactor symbol table functions to start with lower case letters
 	- Added better constructor support :

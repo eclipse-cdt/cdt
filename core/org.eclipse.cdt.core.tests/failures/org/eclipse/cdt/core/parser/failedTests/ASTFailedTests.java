@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.tests.BaseASTTest;
@@ -96,11 +97,14 @@ public class ASTFailedTests extends BaseASTTest
     }
     public void testBug39536A() throws Exception
     {
-        assertCodeFailsParse("template<class E> class X { X<E>(); };");
+        IASTTemplateDeclaration template = (IASTTemplateDeclaration)parse("template<class E> class X { X<E>(); };").getDeclarations().next();
+        IASTClassSpecifier classX = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)template.getOwnedDeclaration()).getTypeSpecifier();
+        IASTDeclaration d = (IASTDeclaration)classX.getDeclarations().next();
+        assertTrue( d instanceof IASTVariable ); // this is not right!   
     }
     public void testBug39536B() throws Exception
     {
-        assertCodeFailsParse("template<class E> class X { inline X<E>(int); };");
+		assertCodeFailsParse("template<class E> class X { inline X<E>(int); };");
     }
     public void testBug39538() throws Exception
     {
@@ -314,8 +318,8 @@ public class ASTFailedTests extends BaseASTTest
     {
     	try
     	{
-			IASTDeclaration d = assertSoleDeclaration("extern int (* import) (void) __attribute__((dllimport));");
-			fail( "We should not reach this point");	
+			IASTVariable d = (IASTVariable)assertSoleDeclaration("extern int (* import) (void) __attribute__((dllimport));");
+			assertEquals( d.getName(), "__attribute__"); // false assertion 
     	}
     	catch( ClassCastException cce )
     	{

@@ -34,9 +34,9 @@ public class ASTParameterDeclaration extends ASTAbstractDeclaration implements I
      * @param parameterName
      * @param initializerClause
      */
-    public ASTParameterDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause)
+    public ASTParameterDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause)
     {
-    	super( isConst, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp );
+    	super( isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp );
 		this.parameterName = parameterName;
 		this.initializerClause = initializerClause;
     }

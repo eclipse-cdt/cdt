@@ -10,67 +10,100 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.internal.core.parser.ast.Offsets;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
+public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElaboratedTypeSpecifier
 {
+	private final ASTClassKind kind;
+    private Offsets offsets = new Offsets();
+	
     /**
-     * 
+     * @param checkSymbol
+     * @param kind
+     * @param startingOffset
+     * @param endOffset
      */
-    public ASTElaboratedTypeSpecifier()
+    public ASTElaboratedTypeSpecifier(ISymbol checkSymbol, ASTClassKind kind, int startingOffset, int endOffset)
     {
-        super();
-        // TODO Auto-generated constructor stub
+        super( checkSymbol );
+        this.kind = kind;
+        setStartingOffset( startingOffset );
+        setEndingOffset( endOffset );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#getName()
      */
     public String getName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return getSymbol().getName();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#getClassKind()
      */
     public ASTClassKind getClassKind()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return kind;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#isResolved()
+     */
+    public boolean isResolved() throws ASTNotImplementedException
+    {
+        return ! getSymbol().isForwardDeclaration();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
     public void setStartingOffset(int o)
     {
-        // TODO Auto-generated method stub
+        offsets.setStartingOffset(o);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
     public void setEndingOffset(int o)
     {
-        // TODO Auto-generated method stub
+        offsets.setEndingOffset( o );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
      */
     public int getStartingOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return offsets.getStartingOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
      */
     public int getEndingOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return offsets.getEndingOffset();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void acceptElement(ISourceElementRequestor requestor)
+    {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void enterScope(ISourceElementRequestor requestor)
+    {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void exitScope(ISourceElementRequestor requestor)
+    {
     }
 }

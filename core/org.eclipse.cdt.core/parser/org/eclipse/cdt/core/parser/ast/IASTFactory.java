@@ -14,7 +14,6 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
-import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 /**
  * @author jcamelon
  *
@@ -57,7 +56,7 @@ public interface IASTFactory
         String spec, int startingOffset);
     public IASTClassSpecifier createClassSpecifier(
         IASTScope scope,
-        String name,
+        ITokenDuple name,
         ASTClassKind kind,
         ClassNameType type,
         ASTAccessVisibility access,
@@ -75,10 +74,10 @@ public interface IASTFactory
         ASTAccessVisibility visibility,
         ITokenDuple parentClassName) throws ASTSemanticException;
     public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(
+        IASTScope scope,
         ASTClassKind elaboratedClassKind,
-        String typeName,
-        int startingOffset,
-        int endOffset);
+        ITokenDuple typeName,
+        int startingOffset, int endOffset, boolean isForewardDecl) throws ASTSemanticException;
     public IASTEnumerationSpecifier createEnumerationSpecifier(
         IASTScope scope,
         String name,
@@ -137,9 +136,9 @@ public interface IASTFactory
         IASTTemplate ownerTemplate) throws ASTSemanticException;
     public IASTAbstractDeclaration createAbstractDeclaration(
         boolean isConst,
+        boolean isVolatile,
         IASTTypeSpecifier typeSpecifier,
-        List pointerOperators,
-        List arrayModifiers, List parameters, ASTPointerOperator pointerOperator);
+        List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOperator);
     public IASTMethod createMethod(
         IASTScope scope,
         String name,
@@ -166,7 +165,7 @@ public interface IASTFactory
 		   
 	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, ASTAccessVisibility visibility) throws ASTSemanticException;
 	
-	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause );
+	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, boolean isVolatile, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause );
 	
 	public IASTTemplateDeclaration createTemplateDeclaration( IASTScope scope, List templateParameters, boolean exported, int startingOffset ); 
 

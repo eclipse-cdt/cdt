@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
@@ -57,7 +58,6 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
-import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.internal.core.parser.pst.ForewardDeclaredSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
@@ -86,6 +86,73 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         super();
     }
 
+
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, List references ) throws ASTSemanticException
+	{
+		ISymbol result = null;
+		IToken firstSymbol = null;		
+		switch( name.length() )
+		{
+			case 0: 
+				throw new ASTSemanticException();
+			case 1:
+				firstSymbol = name.getFirstToken();
+				try
+                {
+                    result = startingScope.lookup( firstSymbol.getImage());
+                    if( result != null ) 
+						references.add( createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
+					else
+						throw new ASTSemanticException();    
+                }
+                catch (ParserSymbolTableException e)
+                {
+                 	throw new ASTSemanticException();    
+                }
+                break;
+			case 2: 
+				firstSymbol = name.getFirstToken();
+				if( firstSymbol.getType() != IToken.tCOLONCOLON )
+					throw new ASTSemanticException();
+				try
+				{
+					result = pst.getCompilationUnit().lookup( name.getLastToken().getImage() );
+					references.add( createReference( result, name.getLastToken().getImage(), name.getLastToken().getOffset() ));
+				}
+				catch( ParserSymbolTableException e)
+				{
+					throw new ASTSemanticException();
+				}
+				break;
+			default:
+				Iterator iter = name.iterator();
+				firstSymbol = name.getFirstToken();
+				result = startingScope;
+				if( firstSymbol.getType() == IToken.tCOLONCOLON )
+					result = pst.getCompilationUnit();
+				while( iter.hasNext() )
+				{
+					IToken t = (IToken)iter.next();
+					if( t.getType() == IToken.tCOLONCOLON ) continue;
+					try
+					{
+						if( t == name.getLastToken() ) 
+							result = ((IContainerSymbol)result).qualifiedLookup( t.getImage() );
+						else
+							result = ((IContainerSymbol)result).lookupNestedNameSpecifier( t.getImage() );
+						references.add( createReference( result, t.getImage(), t.getOffset() ));
+					}
+					catch( ParserSymbolTableException pste )
+					{
+						throw new ASTSemanticException();						
+					}
+				}
+				 
+		}
+		return result;
+	}
+
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createUsingDirective(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ITokenDuple, int, int)
      */
@@ -95,34 +162,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int startingOffset,
         int endingOffset)
         throws ASTSemanticException
-    {
-		Iterator iter = duple.iterator();
-		if( ! iter.hasNext() )
-			throw new ASTSemanticException(); 
-			
-		IContainerSymbol symbol = null; 
-		List references = new ArrayList(); 
-		
-        symbol = getScopeToSearchUpon(scope, (IToken)duple.getFirstToken(), iter );
-		
-		while( iter.hasNext() )
-		{
-			IToken t = (IToken)iter.next(); 
-			if( t.getType() == IToken.tCOLONCOLON ) continue; 
-			try
-			{
-				symbol = symbol.lookupNestedNameSpecifier( t.getImage() );
-				references.add( createReference( symbol, t.getImage(), t.getOffset() ));
-			}
-			catch( ParserSymbolTableException pste )
-			{
-				throw new ASTSemanticException();
-			}
-		}
-		
+    {		
+		List references = new ArrayList();	
+		ISymbol symbol = lookupQualifiedName( 
+			scopeToSymbol( scope), duple, references ); 
+
 		try {
-			((ASTScope)scope).getContainerSymbol().addUsingDirective( symbol );
-		} catch (ParserSymbolTableException pste) {	
+			((ASTScope)scope).getContainerSymbol().addUsingDirective( (IContainerSymbol)symbol );
+		} catch (ParserSymbolTableException pste) {
+			throw new ASTSemanticException();	
 		}
 		
 		IASTUsingDirective astUD = new ASTUsingDirective( scopeToSymbol(scope), ((IASTNamespaceDefinition)symbol.getASTExtension().getPrimaryDeclaration()), startingOffset, endingOffset, references );
@@ -164,30 +212,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int endingOffset) throws ASTSemanticException
     {
         List references = new ArrayList(); 
-        Iterator iter = name.iterator();
-        
-        if( ! iter.hasNext() )
-        	throw new ASTSemanticException();
-        	
-        ISymbol symbol = getScopeToSearchUpon( scope, name.getFirstToken(), iter );
-        
-        while( iter.hasNext() )
-        {
-        	IToken t = (IToken)iter.next(); 
-        	if( t.getType() == IToken.tCOLONCOLON ) continue;
-        	try
-            {
-            	if( t != name.getLastToken() )
-                	symbol = ((IContainerSymbol)symbol).lookupNestedNameSpecifier( t.getImage() );
-                else
-                	symbol = ((IContainerSymbol)symbol).lookup( t.getImage() );
-            }
-            catch (ParserSymbolTableException e)
-            {
-                throw new ASTSemanticException();
-            }
-        	references.add( createReference( symbol, t.getImage(), t.getOffset() ) );
-        }
+		ISymbol symbol = lookupQualifiedName( scopeToSymbol(scope), name, references );
         
         try
         {
@@ -209,8 +234,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int first,
         int last)
     {
-        // TODO Fix This
-        return new ASTASMDefinition();
+        
+        return new ASTASMDefinition( scopeToSymbol(scope), assembly, first, last );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNamespaceDefinition(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, int, int)
@@ -221,20 +246,22 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int startingOffset,
         int nameOffset) throws ASTSemanticException
     {
-    	// first we look up the symbol in the PST see if it already exists 
-    	// if not we create it 
-    	// TODO : handle the anonymous case
     	
     	IContainerSymbol pstScope = scopeToSymbol(scope);
     	ISymbol namespaceSymbol  = null; 
-    	try
-        {
-            namespaceSymbol = pstScope.lookup( identifier );
-        }
-        catch (ParserSymbolTableException e)
-        {
-            throw new ASTSemanticException();
-        }
+
+    	
+    	if( ! identifier.equals( "" ) )
+    	{
+	    	try
+	        {
+	            namespaceSymbol = pstScope.qualifiedLookup( identifier );
+	        }
+	        catch (ParserSymbolTableException e)
+	        {
+	            throw new ASTSemanticException();
+	        }
+    	}
         
         if( namespaceSymbol != null )
         {
@@ -244,14 +271,20 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         else
         {
         	namespaceSymbol = pst.newContainerSymbol( identifier, TypeInfo.t_namespace );
-        	try
-            {
-                pstScope.addSymbol( namespaceSymbol );
-            }
-            catch (ParserSymbolTableException e1)
-            {
-            	// not overloading, should never happen
-            }
+        	if( identifier.equals( "" ) )
+        		namespaceSymbol.setContainingSymbol( pstScope );	
+        	else
+        	{
+	        	
+	        	try
+	            {
+	                pstScope.addSymbol( namespaceSymbol );
+	            }
+	            catch (ParserSymbolTableException e1)
+	            {
+	            	// not overloading, should never happen
+	            }
+        	}
         }
         
         ASTNamespaceDefinition namespaceDef = new ASTNamespaceDefinition( namespaceSymbol, startingOffset, nameOffset );
@@ -327,45 +360,84 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      */
     public IASTClassSpecifier createClassSpecifier(
         IASTScope scope,
-        String name,
+        ITokenDuple name,
         ASTClassKind kind,
         ClassNameType type,
         ASTAccessVisibility access,
         int startingOffset,
         int nameOffset) throws ASTSemanticException
     {
-        IContainerSymbol containerSymbol = scopeToSymbol(scope);
-		TypeInfo.eType pstType = null;
+        IContainerSymbol currentScopeSymbol = scopeToSymbol(scope);
+        TypeInfo.eType pstType = classKindToTypeInfo(kind);		
+		List references = new ArrayList();
+		IToken lastToken = name.getLastToken();
+		if( name.length() != 1 ) // qualified name 
+		{
+			 ITokenDuple containerSymbolName = 
+			 	name.getSubrange( 0, name.length() - 3 ); // -1 for index, -2 for last hop of qualified name
+			 currentScopeSymbol = (IContainerSymbol)lookupQualifiedName( currentScopeSymbol, 
+			 	containerSymbolName, references);
+			 if( currentScopeSymbol == null )
+			 	throw new ASTSemanticException();
+		}
 		
-		if( kind == ASTClassKind.CLASS )
-			pstType = TypeInfo.t_class;
-		else if( kind == ASTClassKind.STRUCT )
-			pstType = TypeInfo.t_struct;
-		else if( kind == ASTClassKind.UNION )
-			pstType = TypeInfo.t_union;
-		else
-			throw new ASTSemanticException();
-			
-        IDerivableContainerSymbol classSymbol = pst.newDerivableContainerSymbol( name, pstType );
+		ISymbol classSymbol = null;
         try
         {
-            containerSymbol.addSymbol( classSymbol );
+            classSymbol = currentScopeSymbol.qualifiedLookup(lastToken.getImage());
         }
         catch (ParserSymbolTableException e)
         {
-			throw new ASTSemanticException();
+            throw new ASTSemanticException();
         }
         
-        ASTClassSpecifier classSpecifier = new ASTClassSpecifier( classSymbol, kind, type, access, startingOffset, nameOffset );
+        if( classSymbol != null && ! classSymbol.isForwardDeclaration() )
+			throw new ASTSemanticException();
+		
+		if( classSymbol != null && classSymbol.getType() != pstType )
+			throw new ASTSemanticException();
+
+
+		IDerivableContainerSymbol newSymbol = pst.newDerivableContainerSymbol( lastToken.getImage(), pstType );
+		
+		try
+        {
+            currentScopeSymbol.addSymbol( newSymbol );
+        }
+        catch (ParserSymbolTableException e2)
+        {
+        	throw new ASTSemanticException();
+        }
+		
+		if( classSymbol != null )
+			classSymbol.setTypeSymbol( newSymbol );
+			
+        ASTClassSpecifier classSpecifier = new ASTClassSpecifier( newSymbol, kind, type, access, startingOffset, nameOffset, references );
         try
         {
-            attachSymbolExtension(classSymbol, classSpecifier );
+            attachSymbolExtension(newSymbol, classSpecifier );
         }
         catch (ExtensionException e1)
         {
             throw new ASTSemanticException();
         }
         return classSpecifier;
+    }
+    
+    protected TypeInfo.eType classKindToTypeInfo(ASTClassKind kind)
+        throws ASTSemanticException
+    {
+        TypeInfo.eType pstType = null;
+        
+        if( kind == ASTClassKind.CLASS )
+        	pstType = TypeInfo.t_class;
+        else if( kind == ASTClassKind.STRUCT )
+        	pstType = TypeInfo.t_struct;
+        else if( kind == ASTClassKind.UNION )
+        	pstType = TypeInfo.t_union;
+        else
+        	throw new ASTSemanticException();
+        return pstType;
     }
     
     
@@ -467,18 +539,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         throw new ASTSemanticException(); 
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createElaboratedTypeSpecifier(org.eclipse.cdt.core.parser.ast.ASTClassKind, java.lang.String, int, int)
-     */
-    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(
-        ASTClassKind elaboratedClassKind,
-        String typeName,
-        int startingOffset,
-        int endOffset)
-    {
-    	//TODO FIX THIS
-        return new ASTElaboratedTypeSpecifier();
-    }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createEnumerationSpecifier(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, int, int)
      */
@@ -1016,8 +1076,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     protected ISymbol cloneSimpleTypeSymbol(
         String name,
         IASTAbstractDeclaration abstractDeclaration,
-        List references)
+        List references) throws ASTSemanticException
     {
+    	if( abstractDeclaration.getTypeSpecifier() == null )
+    		throw new ASTSemanticException();
         ISymbol newSymbol = null;
 		ISymbol symbolToBeCloned = null;		
         if( abstractDeclaration.getTypeSpecifier() instanceof ASTSimpleTypeSpecifier ) 
@@ -1029,6 +1091,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         {
         	symbolToBeCloned = ((ASTClassSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol();
         }
+		else if( abstractDeclaration.getTypeSpecifier() instanceof ASTElaboratedTypeSpecifier )
+		{
+			symbolToBeCloned = ((ASTElaboratedTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol();
+		}
 		newSymbol = (ISymbol) symbolToBeCloned.clone(); 
 		newSymbol.setName( name );
 
@@ -1070,8 +1136,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		catch (ParserSymbolTableException e)
 		{
-			// TODO Auto-generated catch block
+			throw new ASTSemanticException();
 		}
+		
 		ASTField field = new ASTField( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, references, visibility );
 		try
 		{
@@ -1145,6 +1212,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	ISymbol newSymbol = pst.newSymbol( name, TypeInfo.t_type);
     	newSymbol.getTypeInfo().setBit( true,TypeInfo.isTypedef );
     	
+    	
     	List references = new ArrayList();
 		if( mapping.getTypeSpecifier() instanceof ASTSimpleTypeSpecifier ) 
 	    {
@@ -1184,5 +1252,66 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     }
 
     
+    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind kind, ITokenDuple name, int startingOffset, int endOffset, boolean isForewardDecl) throws ASTSemanticException
+    {
+		IContainerSymbol currentScopeSymbol = scopeToSymbol(scope);
+		TypeInfo.eType pstType = classKindToTypeInfo(kind);		
+		List references = new ArrayList();
+		IToken lastToken = name.getLastToken();
+		if( name.length() != 1 ) // qualified name 
+		{
+			 ITokenDuple containerSymbolName = 
+				name.getSubrange( 0, name.length() - 3 ); // -1 for index, -2 for last hop of qualified name
+			 currentScopeSymbol = (IContainerSymbol)lookupQualifiedName( currentScopeSymbol, 
+				containerSymbolName, references);
+			 if( currentScopeSymbol == null )
+				throw new ASTSemanticException();
+		}
+		
+		ISymbol checkSymbol = null;
+		try
+		{
+			checkSymbol = currentScopeSymbol.qualifiedLookup(lastToken.getImage());
+		}
+		catch (ParserSymbolTableException e)
+		{
+			throw new ASTSemanticException();
+		}
+        
+
+ 		if( isForewardDecl )
+ 		{
+			if( checkSymbol == null ) 
+			{ 
+				
+				checkSymbol  = pst.newDerivableContainerSymbol( lastToken.getImage(), pstType );
+				checkSymbol.setIsForwardDeclaration( true );
+				try
+	            {
+	                currentScopeSymbol.addSymbol( checkSymbol  );
+	            }
+	            catch (ParserSymbolTableException e1)
+	            {
+	                throw new ASTSemanticException();
+	            }
+	            
+	            ASTElaboratedTypeSpecifier elab = 
+	            	new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, endOffset );
+	            	
+	            try
+                {
+                    attachSymbolExtension( checkSymbol, elab );
+                }
+                catch (ExtensionException e2)
+                {
+                	throw new ASTSemanticException();
+                }
+			}
+ 		}
+
+
+		return (IASTElaboratedTypeSpecifier)checkSymbol.getASTExtension().getPrimaryDeclaration();
+    }
+
     protected ParserSymbolTable pst = new ParserSymbolTable();
 }

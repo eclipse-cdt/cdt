@@ -1,4 +1,9 @@
 2002-11-28 Mikhail Khodjaiants
+	'exec-until' instead of temporary breakpoints for 'run to line'.
+	* CDebugTarget.java
+	* CThread.java
+
+2002-11-28 Mikhail Khodjaiants
 	Live editing of the memory view: removed support of the 'Save Changes' action.
 	* IFormattedMemoryBlock.java
 	* CFormattedMemoryBlock.java

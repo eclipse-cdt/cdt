@@ -13,11 +13,13 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.IInstructionStep;
 import org.eclipse.cdt.debug.core.IRestart;
+import org.eclipse.cdt.debug.core.IRunToLine;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
@@ -33,6 +35,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -50,6 +53,7 @@ public class CThread extends CDebugElement
 					 implements IThread,
 					 			IState,
 					 			IRestart,
+					 			IRunToLine,
 					 			IInstructionStep,
 					 			ISwitchToFrame,
 					 			ICDIEventListener
@@ -1086,5 +1090,41 @@ public class CThread extends CDebugElement
 	private int getLastStackDepth()
 	{
 		return fLastStackDepth;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IRunToLine#canRunToLine(IResource, int)
+	 */
+	public boolean canRunToLine( IResource resource, int lineNumber )
+	{
+		return canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IRunToLine#runToLine(IResource, int)
+	 */
+	public void runToLine( IResource resource, int lineNumber ) throws DebugException
+	{
+		if ( !canRunToLine( resource, lineNumber ) )
+			return;
+		ICDILocation location = getCDISession().getBreakpointManager().createLocation( resource.getLocation().lastSegment(), null, lineNumber );
+		try
+		{
+			getCDIThread().runUntil( location );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.toString(), e );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
+	 */
+	public Object getAdapter(Class adapter)
+	{
+		if ( adapter.equals( IRunToLine.class ) )
+			return this;
+		return super.getAdapter(adapter);
 	}
 }

@@ -388,7 +388,7 @@
             category="org.eclipse.cdt.ui.newCCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
-         <class class="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
+         <class class="org.eclipse.cdt.internal.ui.wizards.NewClassCreationWizard">
             <parameter name="ctype" value="true"/>
             <parameter targetId="org.eclipse.cdt.ui.actions.NewTypeDropDown"/>
          </class>

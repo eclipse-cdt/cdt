@@ -10,21 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -105,36 +100,47 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
 	private void addType(Object elem) {
 		if (elem instanceof ITypeInfo) {
 		    ITypeInfo type = (ITypeInfo)elem;
-		    if (!fTypeList.contains(type)) {
+		    if (fTypeList.contains(type)) {
+                String qualifiedName = type.getQualifiedTypeName().getFullyQualifiedName();
+                String message = NewClassWizardMessages.getFormattedString("NewBaseClassSelectionDialog.classalreadyadded.info", qualifiedName); //$NON-NLS-1$
+                updateStatus(new StatusInfo(IStatus.INFO, message));
+            } else {
 				String qualifiedName = type.getQualifiedTypeName().getFullyQualifiedName();
 				String message = NewClassWizardMessages.getFormattedString("NewBaseClassSelectionDialog.addingclass.info", qualifiedName); //$NON-NLS-1$
 				updateStatus(new StatusInfo(IStatus.INFO, message));
 
-				// resolve location of base class
-				if (type.getResolvedReference() == null) {
-					final ITypeInfo[] typesToResolve = new ITypeInfo[] { type };
-					IRunnableWithProgress runnable = new IRunnableWithProgress() {
-						public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
-							AllTypesCache.resolveTypeLocation(typesToResolve[0], progressMonitor);
-							if (progressMonitor.isCanceled()) {
-								throw new InterruptedException();
-							}
-						}
-					};
-					
-					IProgressService service = PlatformUI.getWorkbench().getProgressService();
-					try {
-						service.busyCursorWhile(runnable);
-					} catch (InvocationTargetException e) {
-						String title= NewClassWizardMessages.getString("NewBaseClassSelectionDialog.getClasses.exception.title"); //$NON-NLS-1$
-						String errorMessage= NewClassWizardMessages.getString("NewBaseClassSelectionDialog.getClasses.exception.message"); //$NON-NLS-1$
-						ExceptionHandler.handle(e, title, errorMessage);
-					} catch (InterruptedException e) {
-						// cancelled by user
-					}
-				}
+                boolean canAdd = true;
+                if (verifyBaseClasses()) {
+                    IProgressService service = PlatformUI.getWorkbench().getProgressService();
+                    NewClassWizardUtil.resolveClassLocation(type, service);
+                    canAdd = (type.getResolvedReference() != null);
+                }
+                
+//				// resolve location of base class
+//				if (type.getResolvedReference() == null) {
+//					final ITypeInfo[] typesToResolve = new ITypeInfo[] { type };
+//					IRunnableWithProgress runnable = new IRunnableWithProgress() {
+//						public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
+//							AllTypesCache.resolveTypeLocation(typesToResolve[0], progressMonitor);
+//							if (progressMonitor.isCanceled()) {
+//								throw new InterruptedException();
+//							}
+//						}
+//					};
+//					
+//					IProgressService service = PlatformUI.getWorkbench().getProgressService();
+//					try {
+//						service.busyCursorWhile(runnable);
+//					} catch (InvocationTargetException e) {
+//						String title= NewClassWizardMessages.getString("NewBaseClassSelectionDialog.getClasses.exception.title"); //$NON-NLS-1$
+//						String errorMessage= NewClassWizardMessages.getString("NewBaseClassSelectionDialog.getClasses.exception.message"); //$NON-NLS-1$
+//						ExceptionHandler.handle(e, title, errorMessage);
+//					} catch (InterruptedException e) {
+//						// cancelled by user
+//					}
+//				}
 				
-				if (type.getResolvedReference() != null) {
+                if (canAdd) {
 					fTypeList.add(type);
 					
 					message = NewClassWizardMessages.getFormattedString("NewBaseClassSelectionDialog.classadded.info", qualifiedName); //$NON-NLS-1$
@@ -145,13 +151,18 @@ public class NewBaseClassSelectionDialog extends TypeSelectionDialog {
 					message = NewClassWizardMessages.getFormattedString("NewBaseClassSelectionDialog.error.classnotadded", qualifiedName); //$NON-NLS-1$
 					updateStatus(new StatusInfo(IStatus.ERROR, message));
 				}
-		    } else {
-				String qualifiedName = type.getQualifiedTypeName().getFullyQualifiedName();
-				String message = NewClassWizardMessages.getFormattedString("NewBaseClassSelectionDialog.classalreadyadded.info", qualifiedName); //$NON-NLS-1$
-				updateStatus(new StatusInfo(IStatus.INFO, message));
 		    }
 		}
 	}
+    
+    /**
+     * Checks if the base classes need to be verified (ie they must exist in the project)
+     * 
+     * @return <code>true</code> if the base classes should be verified
+     */
+    public boolean verifyBaseClasses() {
+        return NewClassWizardPrefs.verifyBaseClasses();
+    }
 	
 	/*
 	 * @see AbstractElementListSelectionDialog#handleDefaultSelected()

@@ -1,3 +1,25 @@
+2005-03-29 Chris Wiebe
+
+	fix PR#87328 by making class wizard page publicly accessible
+	refactored wizard code and added comments
+	* src/org/eclipse/cdt/internal/ui/wizards/AbstractMethodStub.java
+	* src/org/eclipse/cdt/internal/ui/wizards/ConstructorMethodStub.java
+	* src/org/eclipse/cdt/internal/ui/wizards/DestructorMethodStub.java
+	* src/org/eclipse/cdt/internal/ui/wizards/IMethodStub.java
+	* src/org/eclipse/cdt/internal/ui/wizards/NewBaseClassSelectionDialog.java
+	* src/org/eclipse/cdt/internal/ui/wizards/NewClassCodeGenerator.java
+	* src/org/eclipse/cdt/internal/ui/wizards/NewClassWizardMessages.properties
+	* src/org/eclipse/cdt/internal/ui/wizards/DestructorMethodStub.java
+	* src/org/eclipse/cdt/internal/ui/wizards/DestructorMethodStub.java
+	* src/org/eclipse/cdt/ui/wizards/NewClassCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/NewClassCreationWizard.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassWizardPrefs.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassWizardUtil.java
+	* plugin.xml
+	removed:
+	* src/org/eclipse/cdt/ui/wizards/NewClassCreationWizard.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java
+
 2005-03-29 Vladimir Hirsl
 	Removing indexer problem markers when problem reporting is deselected.
 

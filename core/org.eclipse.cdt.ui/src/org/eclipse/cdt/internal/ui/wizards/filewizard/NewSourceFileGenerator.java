@@ -61,8 +61,9 @@ public class NewSourceFileGenerator {
             buf.append(includeGuardSymbol);
             buf.append(fLineDelimiter);
             buf.append(fLineDelimiter);
-            buf.append("#endif //"); //$NON-NLS-1$
+            buf.append("#endif /*"); //$NON-NLS-1$
             buf.append(includeGuardSymbol);
+            buf.append("*/"); //$NON-NLS-1$
             buf.append(fLineDelimiter);
             stream = new ByteArrayInputStream(buf.toString().getBytes());
         } else {

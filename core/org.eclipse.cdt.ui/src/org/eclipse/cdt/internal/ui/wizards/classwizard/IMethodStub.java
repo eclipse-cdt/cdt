@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
-import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 
@@ -33,6 +32,6 @@ public interface IMethodStub {
     public boolean isConstructor();
     public boolean isDestructor();
     
-    public String createMethodDeclaration(IQualifiedTypeName className, IBaseClassInfo[] baseClasses, String lineDelimiter);
-    public String createMethodImplementation(IQualifiedTypeName className, IBaseClassInfo[] baseClasses, String lineDelimiter);
+    public String createMethodDeclaration(String className, IBaseClassInfo[] baseClasses, String lineDelimiter);
+    public String createMethodImplementation(String className, IBaseClassInfo[] baseClasses, String lineDelimiter);
 }

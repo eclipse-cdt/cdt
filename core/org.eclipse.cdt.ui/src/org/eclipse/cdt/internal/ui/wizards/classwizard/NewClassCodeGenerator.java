@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.PathUtil;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -32,20 +33,23 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class NewClassCodeGenerator {
 
     private IPath fHeaderPath = null;
     private IPath fSourcePath = null;
-    private IQualifiedTypeName fClassName = null;
+    private String fClassName = null;
     private IQualifiedTypeName fNamespace = null;
     private String fLineDelimiter;
     private IBaseClassInfo[] fBaseClasses = null;
@@ -54,25 +58,30 @@ public class NewClassCodeGenerator {
     private ITranslationUnit fCreatedSourceTU = null;
     private ICElement fCreatedClass = null;
     
-	//TODO this should be a prefs option
-	private boolean fCreateIncludePaths = true;
-	
-	public static class CodeGeneratorException extends Exception {
+	public static class CodeGeneratorException extends CoreException {
         /**
 		 * Comment for <code>serialVersionUID</code>
 		 */
 		private static final long serialVersionUID = 1L;
-		public CodeGeneratorException(String message) {
+		
+        public CodeGeneratorException(String message) {
+            super(new Status(Status.ERROR, CUIPlugin.getPluginId(), IStatus.OK, message, null));
         }
+        
         public CodeGeneratorException(Throwable e) {
+            super(new Status(Status.ERROR, CUIPlugin.getPluginId(), IStatus.OK, e.getMessage(), e));
         }
 	}
 
-    public NewClassCodeGenerator(IPath headerPath, IPath sourcePath, IQualifiedTypeName className, IQualifiedTypeName namespace, IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs) {
+    public NewClassCodeGenerator(IPath headerPath, IPath sourcePath, String className, String namespace, IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs) {
         fHeaderPath = headerPath;
         fSourcePath = sourcePath;
-        fClassName = className;
-        fNamespace = namespace;
+        if (className != null && className.length() > 0) {
+            fClassName = className;
+        }
+        if (namespace != null && namespace.length() > 0) {
+            fNamespace = new QualifiedTypeName(namespace);
+        }
         fBaseClasses = baseClasses;
         fMethodStubs = methodStubs;
         fLineDelimiter = NewSourceFileGenerator.getLineDelimiter();
@@ -85,9 +94,23 @@ public class NewClassCodeGenerator {
     public ITranslationUnit getCreatedHeaderTU() {
         return fCreatedHeaderTU;
     }
+    
+    public IFile getCreatedHeaderFile() {
+        if (fCreatedHeaderTU != null) {
+            return (IFile)fCreatedHeaderTU.getResource();
+        }
+        return null;
+    }
 
     public ITranslationUnit getCreatedSourceTU() {
         return fCreatedSourceTU;
+    }
+
+    public IFile getCreatedSourceFile() {
+        if (fCreatedSourceTU != null) {
+            return (IFile)fCreatedSourceTU.getResource();
+        }
+        return null;
     }
 
     /**
@@ -393,10 +416,10 @@ public class NewClassCodeGenerator {
         IPath headerLocation = headerTU.getResource().getLocation();
         
         List includePaths = getIncludePaths(headerTU);
-        List baseClassPaths = getBaseClassPaths();
+        List baseClassPaths = getBaseClassPaths(verifyBaseClasses());
         
 	    // add the missing include paths to the project
-        if (fCreateIncludePaths) {
+        if (createIncludePaths()) {
 	        List newIncludePaths = getMissingIncludePaths(projectLocation, includePaths, baseClassPaths);
 	        if (!newIncludePaths.isEmpty()) {
 			    addIncludePaths(cProject, newIncludePaths, monitor);
@@ -448,6 +471,24 @@ public class NewClassCodeGenerator {
         }
         
         monitor.done();
+    }
+    
+    /**
+     * Checks if the base classes need to be verified (ie they must exist in the project)
+     * 
+     * @return <code>true</code> if the base classes should be verified
+     */
+    private boolean verifyBaseClasses() {
+        return NewClassWizardPrefs.verifyBaseClasses();
+    }
+
+    /**
+     * Checks if include paths can be added to the project as needed.
+     *
+     * @return <code>true</code> if the include paths should be added
+     */
+    private boolean createIncludePaths() {
+        return NewClassWizardPrefs.createIncludePaths();
     }
 
     private void addIncludePaths(ICProject cProject, List newIncludePaths, IProgressMonitor monitor) throws CodeGeneratorException {
@@ -562,18 +603,23 @@ public class NewClassCodeGenerator {
         return null;
     }
     
-    private List getBaseClassPaths() throws CodeGeneratorException {
+    private List getBaseClassPaths(boolean verifyLocation) throws CodeGeneratorException {
         List list = new ArrayList();
 	    for (int i = 0; i < fBaseClasses.length; ++i) {
 	        IBaseClassInfo baseClass = fBaseClasses[i];
 	        ITypeReference ref = baseClass.getType().getResolvedReference();
 	        IPath baseClassLocation = null;
-	        if (ref != null)
+	        if (ref != null) {
 	            baseClassLocation = ref.getLocation();
+            }
+            
 	        if (baseClassLocation == null) {
-	            throw new CodeGeneratorException("Could not find base class " + baseClass.toString()); //$NON-NLS-1$
-	        }
-	        list.add(baseClassLocation);
+                if (verifyLocation) {
+                    throw new CodeGeneratorException("Could not find base class " + baseClass.toString()); //$NON-NLS-1$
+                }
+	        } else {
+                list.add(baseClassLocation);
+            }
 	    }
 	    return list;
     }

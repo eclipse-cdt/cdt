@@ -1,3 +1,7 @@
+2002-12-09 Mikhail Khodjaiants
+	Split the detail message of ICDIErrorInfo into tokens and trancate aech token if it is too long.
+	* CDebugTarget.java
+
 2002-12-08 Mikhail Khodjaiants
 	Display the error message with details when program is suspended because of ICDIErrorInfo.
 	* CDebugTarget.java

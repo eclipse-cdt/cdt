@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -1345,11 +1346,20 @@ public class CDebugTarget extends CDebugElement
 												  ICDebugInternalConstants.STATUS_CODE_ERROR,
 												  "The execution of program is suspended because of error.",
 												  null );
-			status.add( new Status( IStatus.ERROR, 
-									status.getPlugin(), 
-									ICDebugInternalConstants.STATUS_CODE_ERROR,
-									info.getDetailMessage(),
-									null ) ); 
+			StringTokenizer st = new StringTokenizer( info.getDetailMessage(), "\n\r" );
+			while( st.hasMoreTokens() )
+			{
+				String token = st.nextToken();
+				if ( token.length() > 200 )
+				{
+					token = token.substring( 0, 200 );
+				}
+				status.add( new Status( IStatus.ERROR, 
+										status.getPlugin(), 
+										ICDebugInternalConstants.STATUS_CODE_ERROR,
+										token,
+										null ) );
+			} 
 			CDebugUtils.error( status, this );
 		}
 	}

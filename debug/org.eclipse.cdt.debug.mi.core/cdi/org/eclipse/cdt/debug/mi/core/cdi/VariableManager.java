@@ -548,7 +548,13 @@ public class VariableManager extends Manager {
 		// Fire  a destroyEvent ?
 		Target target = (Target)variable.getTarget();
 		MISession mi = target.getMISession();
-		removeMIVar(mi, variable.getMIVar());
+		// no need to call -var-delete for variable that are not in
+		// the list most probaby they are children of other variables and in this case
+		// we should not delete them
+		List varList = getVariablesList(target);
+		if (varList.contains(variable)) {
+			removeMIVar(mi, variable.getMIVar());
+		}
 		MIVarDeletedEvent del = new MIVarDeletedEvent(mi, variable.getMIVar().getVarName());
 		mi.fireEvent(del);
 	}

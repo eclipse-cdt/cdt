@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFunctionType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 
 /**
  */
@@ -21,8 +21,8 @@ public class FunctionType extends DerivedType implements ICDIFunctionType {
 
 	String params = ""; //$NON-NLS-1$
 
-	public FunctionType(StackFrame frame, String typename) {
-		super(frame, typename);
+	public FunctionType(Target target, String typename) {
+		super(target, typename);
 	}
 
 	/* (non-Javadoc)

@@ -16,7 +16,6 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
-import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 
 /**
@@ -25,8 +24,8 @@ public abstract class DerivedType extends Type implements ICDIDerivedType {
 
 	ICDIType derivedType;
 
-	public DerivedType(StackFrame frame, String typename) {
-		super(frame, typename);
+	public DerivedType(Target target, String typename) {
+		super(target, typename);
 	}
 
 	public void setComponentType(ICDIType dtype) {
@@ -38,17 +37,17 @@ public abstract class DerivedType extends Type implements ICDIDerivedType {
 		Session session = (Session)target.getSession();
 		SourceManager sourceMgr = session.getSourceManager();
 		try {
-			derivedType = sourceMgr.getType((StackFrame)getStackFrame(), name);
+			derivedType = sourceMgr.getType((Target)getTarget(), name);
 		} catch (CDIException e) {
 			// Try after ptype.
 			try {
-				String ptype = sourceMgr.getDetailTypeName((StackFrame)getStackFrame(), name);
-				derivedType = sourceMgr.getType((StackFrame)getStackFrame(), ptype);
+				String ptype = sourceMgr.getDetailTypeName((Target)getTarget(), name);
+				derivedType = sourceMgr.getType((Target)getTarget(), ptype);
 			} catch (CDIException ex) {
 			}
 		}
 		if (derivedType == null) {
-			derivedType = new IncompleteType((StackFrame)getStackFrame(), name);
+			derivedType = new IncompleteType((Target)getTarget(), name);
 		}
 	}
 }

@@ -42,14 +42,12 @@ public class FunctionFinished extends EndSteppingRange implements ICDIFunctionFi
 	public ICDIType getReturnType() throws CDIException {
 		Session session = (Session)getSession();
 		Target target = session.getTarget(fMIEvent.getMISession());
-		Thread thread = (Thread)target.getCurrentThread();
-		StackFrame frame = thread.getCurrentStackFrame();
 		String rType = fMIEvent.getReturnType();
 		if (rType == null || rType.length() == 0) {
 			throw new CDIException(CdiResources.getString("cdi.VariableManager.Unknown_type")); //$NON-NLS-1$
 		}
 		SourceManager srcMgr = session.getSourceManager();
-		return srcMgr.getType(frame, rType);
+		return srcMgr.getType(target, rType);
 	}
 
 	/* (non-Javadoc)

@@ -6,8 +6,8 @@ package org.eclipse.cdt.internal.core.model;
  */
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ICModelStatus;
+import org.eclipse.cdt.core.model.IStructure;
 /**
  * <p>This operation creates a field declaration in a type.
  *

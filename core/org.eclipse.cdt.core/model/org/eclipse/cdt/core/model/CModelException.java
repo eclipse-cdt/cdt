@@ -5,9 +5,8 @@ package org.eclipse.cdt.core.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.internal.core.model.CModelStatus;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * A checked exception representing a failure in the C model.

@@ -5,8 +5,8 @@ package org.eclipse.cdt.internal.core.index;
  * All Rights Reserved.
  */
  
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 
 
 /* This structure contains information about the tag file. */

@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTASMDefinition extends IASTOffsetableElement {
+public interface IASTASMDefinition extends IASTOffsetableElement, IASTDeclaration {
 	
 	public String getBody(); 
 	

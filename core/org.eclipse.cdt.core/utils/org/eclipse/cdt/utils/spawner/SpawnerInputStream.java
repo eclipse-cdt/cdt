@@ -5,8 +5,8 @@ package org.eclipse.cdt.utils.spawner;
  * All Rights Reserved.
  */
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 class SpawnerInputStream extends InputStream {
 	private int fd;

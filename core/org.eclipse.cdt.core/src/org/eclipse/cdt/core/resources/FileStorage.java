@@ -5,18 +5,17 @@ package org.eclipse.cdt.core.resources;
  * All Rights Reserved.
  */
 
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.IStatus;
+import java.io.InputStream;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 
 /**
  *

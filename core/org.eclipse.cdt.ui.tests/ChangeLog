@@ -1,4 +1,7 @@
 2003-06-12 John Camelon
+	Get rest of JUnit tests working, will merge back to HEAD branch.  
+
+2003-06-12 John Camelon
 	Introduction of ASTFactory strategy, some restructuring of packages and interfaces.
 	
 2003-06-10 John Camelon

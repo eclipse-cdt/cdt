@@ -14,8 +14,10 @@ package org.eclipse.cdt.internal.core.model;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.model.*;
+import org.eclipse.cdt.core.model.BufferChangedEvent;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.IBufferChangedListener;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;

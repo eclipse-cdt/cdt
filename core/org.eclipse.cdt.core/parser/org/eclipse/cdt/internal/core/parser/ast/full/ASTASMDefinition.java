@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.full;
 
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
 
@@ -67,5 +68,11 @@ public class ASTASMDefinition implements IASTFASMDefinition {
 	private final ISymbol symbol; 
 	public ISymbol getSymbol() {
 		return symbol;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTDeclaration#getOwnerScope()
+	 */
+	public IASTScope getOwnerScope() {
+		return (IPSTContainerExtension)symbol.getContainingSymbol().getASTNode();
 	}
 }

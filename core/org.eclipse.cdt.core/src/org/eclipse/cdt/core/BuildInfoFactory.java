@@ -6,6 +6,7 @@ package org.eclipse.cdt.core;
  */
 
 
+import org.eclipse.cdt.core.resources.IBuildInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -15,8 +16,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
-
-import org.eclipse.cdt.core.resources.IBuildInfo;
 
 public class BuildInfoFactory {
 	public static final String LOCATION = "buildLocation";

@@ -84,6 +84,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 		
 		classSpecifier.setClassKeyToken( classKey );
 		decl.setTypeSpecifier(classSpecifier);
+		domScopes.push( classSpecifier );
 		return classSpecifier;
 	}
 
@@ -100,6 +101,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	public void classSpecifierEnd(Object classSpecifier, Token closingBrace) {
 		ClassSpecifier c = (ClassSpecifier)classSpecifier;
 		c.setTotalLength( closingBrace.getOffset() + closingBrace.getLength() - c.getStartingOffset() );
+		domScopes.pop();
 	}
 
 	/**
@@ -216,7 +218,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 */
 	public Object simpleDeclarationBegin(Object container, Token firstToken) {
 		SimpleDeclaration decl = new SimpleDeclaration( getCurrentDOMScope() );
-		if( container instanceof IAccessable )
+		if( getCurrentDOMScope() instanceof IAccessable )
 			decl.setAccessSpecifier(new AccessSpecifier( ((IAccessable)getCurrentDOMScope()).getVisibility() ));
 		((IOffsetable)decl).setStartingOffset( firstToken.getOffset() );
 		return decl;
@@ -345,6 +347,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	public void classSpecifierAbort(Object classSpecifier) {
 		ClassSpecifier cs = (ClassSpecifier)classSpecifier;
 		cs.getOwner().setTypeSpecifier(null);
+		domScopes.pop();
 	}
 
 	/**
@@ -620,26 +623,27 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationBegin(java.lang.Object)
 	 */
 	public Object usingDeclarationBegin(Object container) {
-		IScope scope = (IScope)container;
-		UsingDeclaration declaration = new UsingDeclaration( scope );
-		return declaration;
+//		IScope scope = (IScope)container;
+//		UsingDeclaration declaration = new UsingDeclaration( scope );
+//		return declaration;
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationMapping(java.lang.Object)
 	 */
 	public void usingDeclarationMapping(Object decl, boolean isTypename) {
-		UsingDeclaration declaration = (UsingDeclaration)decl;
-		declaration.setMappedName( currName );
-		declaration.setTypename( isTypename );
+//		UsingDeclaration declaration = (UsingDeclaration)decl;
+//		declaration.setMappedName( currName );
+//		declaration.setTypename( isTypename );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationEnd(java.lang.Object)
 	 */
 	public void usingDeclarationEnd(Object decl) {
-		UsingDeclaration declaration = (UsingDeclaration)decl;
-		declaration.getOwnerScope().addDeclaration( declaration );		
+//		UsingDeclaration declaration = (UsingDeclaration)decl;
+//		declaration.getOwnerScope().addDeclaration( declaration );		
 	}
 
 	/* (non-Javadoc)
@@ -834,8 +838,8 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationBegin(java.lang.Object, boolean)
 	 */
 	public Object templateDeclarationBegin(Object container, Token exported) {
-		TemplateDeclaration d = new TemplateDeclaration( (IScope)container, exported );
-		if( container instanceof IAccessable )
+		TemplateDeclaration d = new TemplateDeclaration( (IScope)getCurrentDOMScope(), exported );
+		if( getCurrentDOMScope() instanceof IAccessable )
 			d.setVisibility( ((IAccessable)container).getVisibility() );
 		d.setStartingOffset( exported.getOffset() );
 		domScopes.push( d ); 
@@ -1022,8 +1026,10 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptUsageDeclaration(org.eclipse.cdt.core.parser.ast.IASTUsageDeclaration)
 	 */
 	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) {
-		// TODO Auto-generated method stub
-		
+		UsingDeclaration declaration = new UsingDeclaration( getCurrentDOMScope() );
+		declaration.setTypename( usageDeclaration.isTypename());
+		declaration.setMappedName(usageDeclaration.usingTypeName());
+		declaration.getOwnerScope().addDeclaration( declaration );	
 	}
 
 	/* (non-Javadoc)

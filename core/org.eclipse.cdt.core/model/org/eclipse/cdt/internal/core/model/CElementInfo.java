@@ -7,10 +7,9 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.io.File;
 
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.core.resources.IResource;
 
 /**
  * Holds cached structure and properties for a C element.

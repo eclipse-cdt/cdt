@@ -14,8 +14,6 @@ package org.eclipse.cdt.internal.core.util;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import org.eclipse.cdt.internal.core.util.LRUCache;
-
 /**
  *	The <code>OverflowingLRUCache</code> is an LRUCache which attempts
  *	to maintain a size equal or less than its <code>fSpaceLimit</code>

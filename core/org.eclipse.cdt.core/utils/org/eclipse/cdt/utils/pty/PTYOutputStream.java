@@ -5,8 +5,8 @@ package org.eclipse.cdt.utils.pty;
  * All Rights Reserved.
  */
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 public class PTYOutputStream extends OutputStream {
 	private int fd;

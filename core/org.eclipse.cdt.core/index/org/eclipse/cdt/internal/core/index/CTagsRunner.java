@@ -10,12 +10,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.index.ITagEntry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.cdt.core.index.ITagEntry;
 
 public class CTagsRunner implements Runnable {
 

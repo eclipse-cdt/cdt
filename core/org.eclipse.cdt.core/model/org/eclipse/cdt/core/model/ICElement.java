@@ -6,8 +6,8 @@ package org.eclipse.cdt.core.model;
  */
  
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Common protocol for all elements provided by the C model.

@@ -222,16 +222,16 @@ public class DOMTests extends BaseDOMTest {
 		assertEquals( second.getNamespaceName().toString(), "C" ); 
 		
 		third = (UsingDeclaration) declarations.get(2);
-		assertEquals( third.getMappedName().toString(), "B::f" );
+		assertEquals( third.getMappedName(), "B::f" );
 		assertFalse( third.isTypename() ); 
 		
 		fourth = (UsingDeclaration) declarations.get(3);
-		assertEquals( fourth.getMappedName().toString(), "::f" );
+		assertEquals( fourth.getMappedName(), "::f" );
 		assertFalse( fourth.isTypename() ); 
 		
 		fifth = (UsingDeclaration) declarations.get(4);
 		assertTrue( fifth.isTypename() );
-		assertEquals( fifth.getMappedName().toString(), "crap::de::crap" );
+		assertEquals( fifth.getMappedName(), "crap::de::crap" );
 	}
 	
 	public void testDeclSpecifier() throws Exception

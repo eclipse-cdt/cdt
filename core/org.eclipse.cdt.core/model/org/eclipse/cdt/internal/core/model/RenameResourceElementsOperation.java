@@ -5,8 +5,8 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * This operation renames resources (Package fragments and compilation units).

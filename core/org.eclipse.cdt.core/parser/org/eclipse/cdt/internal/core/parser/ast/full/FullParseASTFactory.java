@@ -18,8 +18,8 @@ import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
-import org.eclipse.cdt.internal.core.parser.ASTUsingDirective;
 import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.Parser.Backtrack;
@@ -135,6 +135,14 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 	 */
 	private void handlePSTException(ParserSymbolTableException pste) throws Backtrack {
 		throw new Backtrack(); 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createUsingDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, boolean, org.eclipse.cdt.internal.core.parser.TokenDuple)
+	 */
+	public IASTUsingDeclaration createUsingDeclaration(IASTScope scope, boolean isTypeName, TokenDuple name) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

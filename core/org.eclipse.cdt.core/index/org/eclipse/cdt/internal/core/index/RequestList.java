@@ -5,9 +5,11 @@ package org.eclipse.cdt.internal.core.index;
  * All Rights Reserved.
  */
  
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
 
 public class RequestList {
 

@@ -8,8 +8,8 @@ package org.eclipse.cdt.utils.elf;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.Comparator;
+
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
 

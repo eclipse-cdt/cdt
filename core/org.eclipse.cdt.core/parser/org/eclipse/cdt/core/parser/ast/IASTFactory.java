@@ -27,6 +27,12 @@ public interface IASTFactory {
 		TokenDuple duple)
 		throws Backtrack;
 		
+	public IASTUsingDeclaration createUsingDeclaration( 
+		IASTScope scope, 
+		boolean isTypeName, 
+		TokenDuple name );
+		
+		
 	public IASTASMDefinition createASMDefinition(
 		IASTScope scope,
 		String assembly,

@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.cdt.core.index.ITagEntry;
 import org.eclipse.cdt.core.index.TagFlags;
+import org.eclipse.core.resources.IFile;
 
 public class CTagsEntry implements ITagEntry {
 

@@ -11,9 +11,9 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.cdt.core.index.ITagEntry;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
+import org.eclipse.core.resources.IFile;
 
 public class CTagsCmd {
 		

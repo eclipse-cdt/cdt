@@ -8,11 +8,11 @@ package org.eclipse.cdt.internal.core.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.cdt.core.model.CModelException;
 
 /**
  * This class is used to perform operations on multiple <code>ICElement</code>.

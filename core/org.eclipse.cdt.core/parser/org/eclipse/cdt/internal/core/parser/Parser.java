@@ -24,9 +24,9 @@ import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.internal.core.model.Util;
-import org.eclipse.cdt.internal.core.parser.ast.full.IASTFScope;
 
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
@@ -312,10 +312,11 @@ c, quickParse);
 				consume( Token.t_typename );
 			}
 			
+			TokenDuple name = null; 
 			if( LT(1) == Token.tIDENTIFIER || LT(1) == Token.tCOLONCOLON )
 			{
 				//	optional :: and nested classes handled in name
-				name();
+				name = name();
 				try{ callback.usingDeclarationMapping( usingDeclaration, typeName ); } catch( Exception e ) {}
 			}
 			else
@@ -327,7 +328,11 @@ c, quickParse);
 			if( LT(1) == Token.tSEMI )
 			{
 				consume( Token.tSEMI );
+				
 				try{ callback.usingDeclarationEnd( usingDeclaration );} catch( Exception e ) {}
+				
+				IASTUsingDeclaration declaration = astFactory.createUsingDeclaration( scope, typeName, name );
+				requestor.acceptUsingDeclaration(declaration);
 			}
 			else
 			{

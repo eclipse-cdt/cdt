@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.full;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
@@ -100,5 +101,12 @@ public class ASTNamespaceDefinition implements IASTFNamespaceDefinition {
 	 */
 	public IContainerSymbol getContainerSymbol() {
 		return symbol;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTDeclaration#getOwnerScope()
+	 */
+	public IASTScope getOwnerScope() {
+		return (IPSTContainerExtension)symbol.getContainingSymbol().getASTNode();
 	} 
 }

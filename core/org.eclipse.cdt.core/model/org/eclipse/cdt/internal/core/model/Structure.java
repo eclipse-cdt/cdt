@@ -7,9 +7,9 @@ package org.eclipse.cdt.internal.core.model;
  
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IStructure;
-import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IField;
+import org.eclipse.cdt.core.model.IMethod;
+import org.eclipse.cdt.core.model.IStructure;
 
 public class Structure extends SourceManipulation implements IStructure {
 	

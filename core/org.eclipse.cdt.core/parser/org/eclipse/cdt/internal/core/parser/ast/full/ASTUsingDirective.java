@@ -8,8 +8,9 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.internal.core.parser.ast.full;
 
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 
 /**
@@ -18,7 +19,7 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
  */
 public class ASTUsingDirective implements IASTUsingDirective {
 
-	private final String namespaceName;
+	private final String namespaceName; 
 	
 	public ASTUsingDirective( String namespace )
 	{
@@ -28,8 +29,14 @@ public class ASTUsingDirective implements IASTUsingDirective {
 	 * @see org.eclipse.cdt.core.parser.ast.IASTUsingDirective#getNamespaceName()
 	 */
 	public String getNamespaceName() {
-		// TODO Auto-generated method stub
 		return namespaceName;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTDeclaration#getOwnerScope()
+	 */
+	public IASTScope getOwnerScope() {
+		return null; //TODO
+	}
+
 
 }

@@ -10,13 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.full;
 
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 
 /**
  * @author jcamelon
  *
  */
-public interface IPSTContainerExtension extends IPSTSymbolExtension {
+public interface IPSTContainerExtension extends IPSTSymbolExtension, IASTScope {
 
 	public IContainerSymbol getContainerSymbol(); 
 }

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.internal.core.parser.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.Parser.Backtrack;
@@ -66,6 +67,13 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 */
 	public IASTLinkageSpecification createLinkageSpecification(IASTScope scope, String spec) {
 		return new ASTLinkageSpecification( scope, spec );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createUsingDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, boolean, org.eclipse.cdt.internal.core.parser.TokenDuple)
+	 */
+	public IASTUsingDeclaration createUsingDeclaration(IASTScope scope, boolean isTypeName, TokenDuple name) {
+		return new ASTUsingDeclaration( scope, isTypeName, name.toString() );
 	}
 
 }

@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.ui.cview;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 
 /*
  * CViewLabelProvider 
@@ -42,7 +44,12 @@ public class CViewLabelProvider extends StandardCElementLabelProvider {
 			IIncludeReference ref = (IIncludeReference)element;
 			Object parent = ref.getParent();
 			if (!(parent instanceof IIncludeReference)) {
-				return ref.getPath().toString();
+				IPath p = ref.getPath();
+				IPath rootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+				if (rootLocation.isPrefixOf(p)) {
+					p = p.removeFirstSegments(rootLocation.segmentCount());
+				}
+				return p.toString();
 			}
 		}
 		return super.getText(element);

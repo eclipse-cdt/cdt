@@ -81,7 +81,7 @@ public class ObjectMapTest extends TestCase {
         ObjectMap map = new ObjectMap( 1 );
         
         assertEquals( map.size(), 0 );
-        assertEquals( map.capacity(), 1 );
+        assertEquals( map.capacity(), 2 );
         
         Object [][] res = new Object [][] { { "0", "o0" },  //$NON-NLS-1$//$NON-NLS-2$
 							                { "1", "o1" },  //$NON-NLS-1$//$NON-NLS-2$
@@ -98,7 +98,7 @@ public class ObjectMapTest extends TestCase {
         ObjectMap map = new ObjectMap( 1 );
         
         assertEquals( map.size(), 0 );
-        assertEquals( map.capacity(), 1 );
+        assertEquals( map.capacity(), 2 );
         
         Object [][] res = new Object [][] { { new HashObject(0), "o0" },  //$NON-NLS-1$
 							                { new HashObject(1), "o1" },  //$NON-NLS-1$
@@ -115,7 +115,7 @@ public class ObjectMapTest extends TestCase {
         ObjectMap map = new ObjectMap( 1 );
         
         assertEquals( map.size(), 0 );
-        assertEquals( map.capacity(), 1 );
+        assertEquals( map.capacity(), 2 );
         
         Object [][] res = new Object [][] { { "0", "o0" },  //$NON-NLS-1$ //$NON-NLS-2$
 							                { "1", "o1" } };  //$NON-NLS-1$ //$NON-NLS-2$

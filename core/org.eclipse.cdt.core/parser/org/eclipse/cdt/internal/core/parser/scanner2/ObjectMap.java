@@ -15,14 +15,17 @@
  */
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * @author aniefer
  */
-public class ObjectMap extends HashTable{
+public class ObjectMap extends ObjectTable {
     public static final ObjectMap EMPTY_MAP = new ObjectMap( 0 ){
         public Object clone()                         { return this; }
+        public List toList()                		  { return Collections.EMPTY_LIST; }
         public Object put( Object key, Object value ) { throw new UnsupportedOperationException(); }
     };
     
@@ -30,15 +33,12 @@ public class ObjectMap extends HashTable{
 
 	public ObjectMap(int initialSize) {
 	    super( initialSize );
-		
 		valueTable = new Object[ capacity() ];
 	}
 
 	public Object clone(){
 	    ObjectMap newMap = (ObjectMap) super.clone();
-	    
 	    newMap.valueTable = new Object[ capacity() ];
-	    
 	    System.arraycopy(valueTable, 0, newMap.valueTable, 0, valueTable.length);
 	    return newMap;
 	}
@@ -54,7 +54,6 @@ public class ObjectMap extends HashTable{
 		Object[] oldValueTable = valueTable;
 		valueTable = new Object[size];
 		System.arraycopy(oldValueTable, 0, valueTable, 0, oldValueTable.length);
-			
 		super.resize( size );
 	}
 	
@@ -76,12 +75,7 @@ public class ObjectMap extends HashTable{
 	    if( i < 0 || i > currEntry )
 	        return null;
 	    
-//	    return get( keyAt( i ) );
 	    return valueTable[i];
-	}
-
-	final public boolean isEmpty(){
-	    return currEntry == -1;
 	}
 	
 	final public Object remove( Object key ) {
@@ -107,22 +101,7 @@ public class ObjectMap extends HashTable{
 		super.removeEntry(i);
 	}
 	
-    final public void sort( Comparator c ) {
-        if( size() > 1 ){
-	        quickSort( c, 0, size() - 1 );
-	        
-	        rehash( size(), false );
-        }
-    }	
-    
-    private void quickSort( Comparator c, int p, int r ){
-        if( p < r ){
-            int q = partition( c, p, r );
-            if( p < q )   quickSort( c, p, q );
-            if( ++q < r ) quickSort( c, q, r );
-        }
-    }
-    private int partition( Comparator c, int p, int r ){
+    protected int partition( Comparator c, int p, int r ){
         Object x = keyTable[ p ];
         Object temp = null;
         int i = p;

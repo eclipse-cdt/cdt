@@ -244,6 +244,8 @@ public class ParserSymbolTable {
 
 			//namespaces are searched at most once
 			if( !data.visited.containsKey( temp ) ){
+			    if( data.visited == ObjectSet.EMPTY_SET )
+			        data.visited = new ObjectSet( 2 );
 				data.visited.put( temp );
 				
 				CharArrayObjectMap map = lookupInContained( data, temp );
@@ -658,6 +660,8 @@ public class ParserSymbolTable {
 
 			if( !wrapper.isVirtual() || !data.visited.containsKey( parent ) ){
 				if( wrapper.isVirtual() ){
+				    if( data.visited == ObjectSet.EMPTY_SET )
+				        data.visited = new ObjectSet(2);
 					data.visited.put( parent );
 				}
 
@@ -2219,7 +2223,7 @@ public class ParserSymbolTable {
 		
 		public char[] name;
 		public ObjectMap usingDirectives; 
-		public ObjectSet visited = new ObjectSet(0);	//used to ensure we don't visit things more than once
+		public ObjectSet visited = ObjectSet.EMPTY_SET;	//used to ensure we don't visit things more than once
 		public ObjectSet inheritanceChain;	//used to detect circular inheritance
 		public ISymbol templateMember;  	//to assit with template member defs
 		

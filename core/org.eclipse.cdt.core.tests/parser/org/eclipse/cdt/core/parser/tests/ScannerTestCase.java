@@ -1584,4 +1584,36 @@ public class ScannerTestCase extends BaseScannerTest
     	initializeScanner( "18446744073709551615LL"); //$NON-NLS-1$
     	validateInteger( "18446744073709551615"); //$NON-NLS-1$
 	}
+    
+    public void testBug62390() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "#define f(x) x\n"); //$NON-NLS-1$
+    	writer.write( "#if f(\n"); //$NON-NLS-1$
+    	writer.write( "5) == 5\n"); //$NON-NLS-1$
+    	writer.write( "true1\n"); //$NON-NLS-1$
+    	writer.write( "#endif\n"); //$NON-NLS-1$
+    	writer.write( "#if A\n"); //$NON-NLS-1$
+    	writer.write( "#elif f(\n"); //$NON-NLS-1$
+    	writer.write( "5) == 5\n"); //$NON-NLS-1$
+    	writer.write( "true2\n"); //$NON-NLS-1$
+    	writer.write( "#endif\n"); //$NON-NLS-1$
+		writer.write( "#undef f\n"); //$NON-NLS-1$
+		writer.write( "#define f(x) \"A0I70_001.h\"\n"); //$NON-NLS-1$
+		writer.write( "#include f(\n"); //$NON-NLS-1$
+		writer.write( "5\n"); //$NON-NLS-1$
+    	writer.write( ")\n"); //$NON-NLS-1$
+    	writer.write( "#undef f\n"); //$NON-NLS-1$
+    	writer.write( "#define f(x) 1467\n"); //$NON-NLS-1$
+    	writer.write( "#line f(\n"); //$NON-NLS-1$
+    	writer.write( "5\n"); //$NON-NLS-1$
+    	writer.write( ")\n"); //$NON-NLS-1$
+    	writer.write( "#pragma f(\n"); //$NON-NLS-1$
+    	writer.write( "5\n"); //$NON-NLS-1$
+    	writer.write( ")\n"); //$NON-NLS-1$
+    	writer.write( "}\n"); //$NON-NLS-1$
+    	Callback callback = new Callback( ParserMode.QUICK_PARSE );
+    	initializeScanner( writer.toString(), ParserMode.QUICK_PARSE, callback );
+    	fullyTokenize();
+	}
 }

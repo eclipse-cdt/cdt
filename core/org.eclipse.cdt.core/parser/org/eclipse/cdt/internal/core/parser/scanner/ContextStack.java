@@ -204,7 +204,9 @@ public class ContextStack {
 
 	public ScannerContextInclusion getMostRelevantFileContext()
 	{
-		return (ScannerContextInclusion)cs[lastFileContext];
+		if( cs[lastFileContext] != null && cs[lastFileContext] instanceof ScannerContextInclusion )
+			return (ScannerContextInclusion)cs[lastFileContext];
+		return null;
 	}
 	
 	public int getMostRelevantFileContextIndex()
@@ -213,7 +215,11 @@ public class ContextStack {
 	}
 	public int getCurrentLineNumber()
 	{
-		return getMostRelevantFileContext().getLine();
+		
+		ScannerContextInclusion mostRelevantFileContext = getMostRelevantFileContext();
+		if( mostRelevantFileContext != null )
+			return mostRelevantFileContext.getLine();
+		return -1;
 	}
 
 }

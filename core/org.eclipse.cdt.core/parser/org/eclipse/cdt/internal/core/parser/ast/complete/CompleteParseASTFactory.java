@@ -1368,7 +1368,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 * Apply the usual arithmetic conversions to find out the result of an expression 
 	 * that has a lhs and a rhs as indicated in the specs (section 5.Expressions, page 64)
 	 */
-	protected ITypeInfo usualArithmeticConversions( IASTScope scope, ASTExpression lhsExp, ASTExpression rhsExp) throws ASTSemanticException{
+	protected ITypeInfo usualArithmeticConversions( IASTScope scope, ASTExpression lhsExp, ASTExpression rhsExp, Kind kind) throws ASTSemanticException{
 		setFilename(lhsExp.getFilename());
 		
 		ITypeInfo lhs = lhsExp.getResultType().getResult();
@@ -1376,18 +1376,62 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 		if( lhs == null ) return null;
 		if( rhs == null ) return null;
+		boolean isLhsPointer = false;
+		boolean isRhsPointer = false;
 		// if you have a variable of type basic type, then we need to go to the basic type first
 		while( (lhs.getType() == ITypeInfo.t_type) && (lhs.getTypeSymbol() != null)){
+			if (!isLhsPointer) isLhsPointer = lhs.hasPtrOperators();
 			lhs = lhs.getTypeSymbol().getTypeInfo();  
 		}
 		while( (rhs.getType() == ITypeInfo.t_type) && (rhs.getTypeSymbol() != null)){
+			if (!isRhsPointer) isRhsPointer = rhs.hasPtrOperators();
 			rhs = rhs.getTypeSymbol().getTypeInfo();  
 		}
 
-		if( !lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) )
-			handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, lhsExp.getStartingOffset(), lhsExp.getEndingOffset(), lhsExp.getStartingLine(), true );
-		if( !rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) )
-			handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, rhsExp.getStartingOffset(), rhsExp.getEndingOffset(), rhsExp.getStartingLine(), true );
+		// invalid arithmetic detection TODO add support for 4.5 Integral Promotions/4.7 Integral Conversions if necessary 
+		// 5.6 Multiplicative Operators: The operands of * and / shall have arithmetic or enumeration type; the operands of % shall have integral or enumeration type.
+		if (kind == IASTExpression.Kind.MULTIPLICATIVE_MULTIPLY || kind == IASTExpression.Kind.MULTIPLICATIVE_DIVIDE) {
+			if( !lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) )
+				handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, lhsExp.getStartingOffset(), lhsExp.getEndingOffset(), lhsExp.getStartingLine(), true ); // TODO Devin used to be true
+			if( !rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) )
+				handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, rhsExp.getStartingOffset(), rhsExp.getEndingOffset(), rhsExp.getStartingLine(), true ); // TODO Devin used to be true
+		} else if (kind == IASTExpression.Kind.MULTIPLICATIVE_MODULUS) {
+			if( !(isIntegralType(lhs, isLhsPointer) || lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) ))
+				handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, lhsExp.getStartingOffset(), lhsExp.getEndingOffset(), lhsExp.getStartingLine(), true ); // TODO Devin used to be true
+			if( !(isIntegralType(rhs, isRhsPointer) || rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) ))
+				handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, rhsExp.getStartingOffset(), rhsExp.getEndingOffset(), rhsExp.getStartingLine(), true ); // TODO Devin used to be true
+
+		// 5.7 Additive Operators: 
+		// For addition, either both operands shall have arithmetic or enumeration type, or one operand shall be a
+		// pointer to a completely defined object type and the other shall have integral or enumeration type.
+		// For subtraction, one of the following shall hold:
+		// — both operands have arithmetic or enumeration type; or
+		// — both operands are pointers to cvqualified	or cvunqualified versions of the same completely defined object type; or
+		// — the left operand is a pointer to a completely defined object type and the right operand has integral or
+		// enumeration type.
+		} else if (kind == IASTExpression.Kind.ADDITIVE_PLUS) {
+			if (!((isLhsPointer && (isIntegralType(rhs, isRhsPointer) || rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ))) ||
+			(isRhsPointer && (isIntegralType(lhs, isRhsPointer) || lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ))))) {			
+				if( !(isIntegralType(lhs, isLhsPointer) || lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator )) )
+					handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, lhsExp.getStartingOffset(), lhsExp.getEndingOffset(), lhsExp.getStartingLine(), true ); // TODO Devin used to be true
+				if( !(isIntegralType(rhs, isRhsPointer) || rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator )) )
+					handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, rhsExp.getStartingOffset(), rhsExp.getEndingOffset(), rhsExp.getStartingLine(), true ); // TODO Devin used to be true
+				}
+		} else if (kind == IASTExpression.Kind.ADDITIVE_MINUS) {
+			if (!(isLhsPointer && (isIntegralType(rhs, isRhsPointer) || rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator )))) {			
+				if( !(isIntegralType(lhs, isLhsPointer) || lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator )) )
+					handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, lhsExp.getStartingOffset(), lhsExp.getEndingOffset(), lhsExp.getStartingLine(), true ); // TODO Devin used to be true
+				if( !(isIntegralType(rhs, isRhsPointer) || rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator )) )
+					handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, rhsExp.getStartingOffset(), rhsExp.getEndingOffset(), rhsExp.getStartingLine(), true ); // TODO Devin used to be true
+			}
+
+		// 5.11, 5.12, 5.13: The operator applies only to integral or enumeration operands.
+		} else if (kind == IASTExpression.Kind.ANDEXPRESSION || kind == IASTExpression.Kind.EXCLUSIVEOREXPRESSION	|| kind == IASTExpression.Kind.INCLUSIVEOREXPRESSION) {
+			if( !(isIntegralType(lhs, isLhsPointer) || lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator )) )
+				handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, lhsExp.getStartingOffset(), lhsExp.getEndingOffset(), lhsExp.getStartingLine(), true ); // TODO Devin used to be true
+			if( !(isIntegralType(rhs, isRhsPointer) || rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator )) )
+				handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, rhsExp.getStartingOffset(), rhsExp.getEndingOffset(), rhsExp.getStartingLine(), true ); // TODO Devin used to be true			
+		}
 
 		ITypeInfo info = TypeInfoProvider.newTypeInfo( );
 		if( 
@@ -1739,7 +1783,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			ASTExpression left = (ASTExpression)lhs;
 			ASTExpression right = (ASTExpression)rhs;  
 			if((left != null ) && (right != null)){
-				info = usualArithmeticConversions( scope, left, right);
+				info = usualArithmeticConversions( scope, left, right, kind );
 			}
 			else 
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null ); 
@@ -3811,5 +3855,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			this.problemLineNumber = -1;
 			this.filename = EMPTY_STRING;
 		}
+	}
+	
+	// used to check if an ITypeInfo is an "integral type" based on 3.9.1-7
+	private boolean isIntegralType(ITypeInfo info, boolean isPointer) {
+		if (isPointer) return true;
+		if (info.getType() == ITypeInfo.t_bool || info.getType() == ITypeInfo.t_char || info.getType() == ITypeInfo.t_wchar_t || info.getType() == ITypeInfo.t_int) return true;
+		
+		return false;	
 	}
 }

@@ -2332,5 +2332,14 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	writer.write("#endif\n"); //$NON-NLS-1$
     	parse(writer.toString());
     }
+    
+    public void testBug77821() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("typedef struct { /* ... */ }TYPE;\n"); //$NON-NLS-1$
+    	writer.write("void ptrArith(const TYPE* pType) {\n"); //$NON-NLS-1$
+    	writer.write("TYPE *temp = 0;\n"); //$NON-NLS-1$
+    	writer.write("temp = (TYPE*)(pType + 1); /* Parser error is here */\n}\n"); //$NON-NLS-1$
+    	parse(writer.toString());
+    }
 }
 

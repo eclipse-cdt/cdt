@@ -45,7 +45,7 @@ public class CDebugHelper {
             exename+="sol/" + exe;
         else
            return(null);
-        session=mi.createCSession(null, new File(exename), new File("."), null);
+        session=mi.createCSession(null, new File(exename), new File("."), null, null);
 		return(session);
 	}
 	/**
@@ -63,7 +63,7 @@ public class CDebugHelper {
 			return(null);        
 		}
 		
-		session=mi.createCSession(null, new File(workspacePath +bins[0].getPath().toOSString()), new File("."), null);
+		session=mi.createCSession(null, new File(workspacePath +bins[0].getPath().toOSString()), new File("."), null, null);
 		return(session);
 	}
 	

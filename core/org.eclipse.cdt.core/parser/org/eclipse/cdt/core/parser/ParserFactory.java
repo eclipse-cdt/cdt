@@ -44,7 +44,7 @@ public class ParserFactory {
 	public static IASTFactory createASTFactory( IFilenameProvider provider, ParserMode mode, ParserLanguage language )
 	{
 		if( mode == ParserMode.QUICK_PARSE )
-			return new QuickParseASTFactory();
+			return new QuickParseASTFactory(extensionFactory.createASTExtension( mode ));
 		else if( mode == ParserMode.EXPRESSION_PARSE )
 			return new ExpressionParseASTFactory( extensionFactory.createASTExtension( mode ));
 		else

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser;
 
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -21,10 +22,12 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCDesignator;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
@@ -262,7 +265,7 @@ public class GCCParserExtension implements IParserExtension {
 						sdw.setSimpleType( IASTGCCSimpleTypeSpecifier.Type.TYPEOF );
 						flags.setEncounteredRawType(true);
 						Hashtable params = new Hashtable();
-						params.put( ASTGCCSimpleTypeSpecifier.TYPEOF_EXRESSION, typeOfExpression );
+						params.put( IASTGCCSimpleTypeSpecifier.TYPEOF_EXRESSION, typeOfExpression );
 						sdw.setExtensionParameter( ASTGCCSimpleTypeSpecifier.TYPEOF_EXRESSION, typeOfExpression );
 						return new GCCDeclSpecifierExtensionResult( startingPoint, data.getLastToken(), flags, params );
 					}
@@ -391,6 +394,63 @@ public class GCCParserExtension implements IParserExtension {
 			return null;			
 		}
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#canHandleCDesignatorInitializer(int)
+	 */
+	public boolean canHandleCDesignatorInitializer(int tokenType) {
+		switch( tokenType )
+		{
+			case IToken.tIDENTIFIER:
+			case IToken.tLBRACKET:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#parseDesignator(org.eclipse.cdt.internal.core.parser.IParserData)
+	 */
+	public IASTDesignator parseDesignator(IParserData parserData, IASTScope scope) {
+		IToken startingPoint = null;
+		try {
+			startingPoint = parserData.mark();
+		} catch (EndOfFileException e) {
+			return null;
+		}
+		
+		try
+		{
+			if( parserData.LT(1) == IToken.tIDENTIFIER )
+			{
+				IToken identifier = parserData.identifier();
+				parserData.consume( IToken.tCOLON );
+				return parserData.getAstFactory().createDesignator( IASTDesignator.DesignatorKind.FIELD, null, identifier, null );
+			}
+			if( parserData.LT(1) == IToken.tLBRACKET )
+			{
+				parserData.consume( IToken.tLBRACKET );
+				IASTExpression constantExpression1 = parserData.expression( scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION );
+				parserData.consume( IToken.tELLIPSIS );
+				IASTExpression constantExpression2 = parserData.expression( scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION );
+				parserData.consume(IToken.tRBRACKET );
+				Map extensionParms = new Hashtable();
+				extensionParms.put( IASTGCCDesignator.SECOND_EXRESSION, constantExpression2 );
+				return parserData.getAstFactory().createDesignator( IASTGCCDesignator.DesignatorKind.SUBSCRIPT_RANGE, constantExpression1, null, extensionParms );
+
+			}
+		}
+		catch( EndOfFileException eof )
+		{
+		}
+		catch( BacktrackException bt )
+		{
+		}
+		parserData.backup( startingPoint );
+		return null;
+
 	}
 
 }

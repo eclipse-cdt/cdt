@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.expression;
 
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IToken;
@@ -75,13 +76,11 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 
 	
 
-	private final IASTFactoryExtension extension;
-
 	/**
 	 * @param factory
 	 */
 	public ExpressionParseASTFactory( IASTFactoryExtension extension ) {
-		this.extension = extension;
+		super( extension );
 	}
 
 	/*
@@ -672,7 +671,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	public IASTDesignator createDesignator(
 		DesignatorKind kind,
 		IASTExpression constantExpression,
-		IToken fieldIdentifier) {
+		IToken fieldIdentifier, Map extensionParms) {
 		// TODO Auto-generated method stub
 		return null;
 	}

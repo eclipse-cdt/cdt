@@ -13,16 +13,21 @@ package org.eclipse.cdt.internal.core.parser.ast;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
+import org.eclipse.cdt.core.parser.ast.IASTDesignator.DesignatorKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
+import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCDesignator;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
@@ -30,6 +35,7 @@ import org.eclipse.cdt.internal.core.parser.ast.complete.ASTExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTypeId;
 import org.eclipse.cdt.internal.core.parser.ast.complete.gcc.ASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.ast.expression.gcc.ASTGCCExpression;
+import org.eclipse.cdt.internal.core.parser.ast.gcc.ASTGCCDesignator;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
@@ -86,13 +92,17 @@ public class GCCASTExtension implements IASTFactoryExtension {
 	public TypeInfo getExpressionResultType(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTTypeId typeId) {
 		TypeInfo info = null;
 		if( kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID ||
-			kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION || 
-			kind == IASTGCCExpression.Kind.RELATIONAL_MAX || 
-			kind == IASTGCCExpression.Kind.RELATIONAL_MIN )
+			kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION )
 		{
 			info = new TypeInfo();
 			info.setType(TypeInfo.t_int);
 			info.setBit(true, TypeInfo.isUnsigned);
+		}
+		else if( kind == IASTGCCExpression.Kind.RELATIONAL_MAX || 
+			kind == IASTGCCExpression.Kind.RELATIONAL_MIN )
+		{
+			if( lhs instanceof ASTExpression )
+				info = new TypeInfo( ((ASTExpression)lhs).getResultType().getResult() );
 		}
 		else if( kind == IASTGCCExpression.Kind.UNARY_TYPEOF_TYPEID )
 		{
@@ -130,5 +140,20 @@ public class GCCASTExtension implements IASTFactoryExtension {
 			return new ASTGCCSimpleTypeSpecifier( s, isTypename, ( typeName == null ? EMPTY_STRING : typeName.toString()), EMPTY_LIST, typeOfExpression );
 		}
 		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#overrideCreateDesignatorMethod(org.eclipse.cdt.core.parser.ast.IASTDesignator.DesignatorKind)
+	 */
+	public boolean overrideCreateDesignatorMethod(DesignatorKind kind) {
+		if( kind == IASTGCCDesignator.DesignatorKind.SUBSCRIPT_RANGE )
+			return true;
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#createDesignator(org.eclipse.cdt.core.parser.ast.IASTDesignator.DesignatorKind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.IToken, java.util.Map)
+	 */
+	public IASTDesignator createDesignator(DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier, Map extensionParms) {
+		IASTExpression secondExpression = (IASTExpression) extensionParms.get( IASTGCCDesignator.SECOND_EXRESSION );
+		return new ASTGCCDesignator( kind, constantExpression, EMPTY_STRING, -1, secondExpression );
 	}
 }

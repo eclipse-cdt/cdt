@@ -22,6 +22,7 @@ public interface IASTDesignator
 	{
 		public static final DesignatorKind FIELD = new DesignatorKind( 0 );
 		public static final DesignatorKind SUBSCRIPT = new DesignatorKind( 1 );
+		protected static final int LAST_KIND = 1;
         /**
          * @param enumValue
          */

@@ -113,7 +113,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	private final static List SUBSCRIPT;
     private final static IProblemFactory problemFactory = new ASTProblemFactory();
 	private final IFilenameProvider fileProvider;
-	private final IASTFactoryExtension extension;
 	
     static 
     {
@@ -136,10 +135,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     
     public CompleteParseASTFactory( IFilenameProvider filenameProvider, ParserLanguage language, ParserMode mode, IASTFactoryExtension extension )
     {
-        super();
+        super(extension);
 		pst = new ParserSymbolTable( language, mode );
 		fileProvider = filenameProvider;
-		this.extension = extension;
     }
 
 	/*
@@ -1091,7 +1089,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			ASTExpression astExpression = (ASTExpression) rhs;
 			Iterator refs = astExpression.getReferences().iterator();
 			String idExpression = astExpression.getIdExpression();
-			if( !idExpression.equals( ""))
+			if( !idExpression.equals( "")) //$NON-NLS-1$
 			{
 				while( refs.hasNext() )
 				{

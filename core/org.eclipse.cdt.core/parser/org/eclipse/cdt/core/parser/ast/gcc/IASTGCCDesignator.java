@@ -10,28 +10,27 @@
 
 package org.eclipse.cdt.core.parser.ast.gcc;
 
+import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
-import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTGCCSimpleTypeSpecifier extends IASTSimpleTypeSpecifier {
+public interface IASTGCCDesignator extends IASTDesignator {
 	
-	public static class Type extends IASTSimpleTypeSpecifier.Type
+	public static class DesignatorKind extends IASTDesignator.DesignatorKind
 	{
-		public static final Type TYPEOF = new Type( LAST_TYPE + 1 );
+		public static final DesignatorKind SUBSCRIPT_RANGE = new DesignatorKind(LAST_KIND + 1 );
 		
 		/**
 		 * @param enumValue
 		 */
-		protected Type(int enumValue) {
+		protected DesignatorKind(int enumValue) {
 			super(enumValue);
 		}
-		
 	}
 	
-	public static final String TYPEOF_EXRESSION = "TYPEOF EXPRESSION"; //$NON-NLS-1$
-	public IASTExpression getTypeOfExpression();
+	public static final String SECOND_EXRESSION = "SUBSCRIPT2 EXPRESSION"; //$NON-NLS-1$
+	public IASTExpression arraySubscriptExpression2();
 }

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser.ast;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -206,7 +207,7 @@ public interface IASTFactory
 		   
 	public IASTField createField( IASTScope scope, ITokenDuple name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, IASTExpression constructorExpression, ASTAccessVisibility visibility) throws ASTSemanticException;
 
-	public IASTDesignator createDesignator( IASTDesignator.DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier );
+	public IASTDesignator createDesignator( IASTDesignator.DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier, Map extensionParms );
 	
 	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, boolean isVolatile, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine ) ;
 	

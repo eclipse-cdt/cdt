@@ -1756,16 +1756,6 @@ public abstract class Parser extends ExpressionParser implements IParser
         	((IASTElaboratedTypeSpecifier)elaboratedTypeSpec).acceptElement( requestor );
     }
     /**
-     * Parse an identifier.  
-     * 
-     * @throws BacktrackException	request a backtrack
-     */
-    protected IToken identifier() throws EndOfFileException, BacktrackException
-    {
-        IToken first = consume(IToken.tIDENTIFIER); // throws backtrack if its not that
-        return first;
-    }
-    /**
      * Parses the initDeclarator construct of the ANSI C++ spec.
      * 
      * initDeclarator
@@ -1845,15 +1835,17 @@ public abstract class Parser extends ExpressionParser implements IParser
     {    	
         if (LT(1) == IToken.tLBRACE)
         {
-            consume(IToken.tLBRACE);
+            IToken mark = consume(IToken.tLBRACE);
             List initializerList = new ArrayList();
             for (;;)
             {
+            	IToken checkToken = LA(1);
                 // required at least one initializer list
                 // get designator list
                 List newDesignators = designatorList(scope);
                 if( newDesignators.size() != 0 )
-                	consume( IToken.tASSIGN );
+                	if( LT(1) == IToken.tASSIGN )
+                		consume( IToken.tASSIGN );
                 IASTInitializerClause initializer =
                     cInitializerClause(scope, newDesignators );
                 initializerList.add(initializer);
@@ -1865,6 +1857,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                     consume(IToken.tCOMMA);
                 if (LT(1) == IToken.tRBRACE)
                     break;
+                if( checkToken == LA(1))
+                {
+                	backup( mark );
+                	throw backtrack;
+                }
                 // otherwise, its another initializer in the list
             }
             // consume the closing brace
@@ -2010,16 +2007,36 @@ public abstract class Parser extends ExpressionParser implements IParser
     			}
     			else if( LT(1) == IToken.tLBRACKET )
     			{
-    				consume( IToken.tLBRACKET );
+    				IToken mark = consume( IToken.tLBRACKET );
     				constantExpression = expression( scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION );
+    				if( LT(1) != IToken.tRBRACKET )
+    				{
+    					backup( mark );
+    			   		if( extension.canHandleCDesignatorInitializer( LT(1)))
+    		    		{
+    		    			IASTDesignator d = extension.parseDesignator( this, scope );
+    		    			if( d != null )
+    		    				designatorList.add( d );
+    		    			break;
+    		    		}
+    				}
     				consume( IToken.tRBRACKET );
 					kind = IASTDesignator.DesignatorKind.SUBSCRIPT; 	
     			}
     			
     			IASTDesignator d = 
-    				astFactory.createDesignator( kind, constantExpression, id );
+    				astFactory.createDesignator( kind, constantExpression, id, null );
     			designatorList.add( d );
     				
+    		}
+    	}
+    	else
+    	{
+    		if( extension.canHandleCDesignatorInitializer( LT(1)))
+    		{
+    			IASTDesignator d = extension.parseDesignator( this, scope );
+    			if( d != null )
+    				designatorList.add( d );
     		}
     	}
 		return designatorList;

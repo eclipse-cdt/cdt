@@ -24,7 +24,6 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
  */
 public class ASTGCCSimpleTypeSpecifier extends ASTSimpleTypeSpecifier implements IASTGCCSimpleTypeSpecifier {
 	
-	public static final String TYPEOF_EXRESSION = "TYPEOF EXPRESSION"; //$NON-NLS-1$
 	private final IASTExpression expression;
 
 	/**

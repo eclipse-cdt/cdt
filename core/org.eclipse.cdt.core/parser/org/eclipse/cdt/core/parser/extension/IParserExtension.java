@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser.extension;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
@@ -55,4 +56,15 @@ public interface IParserExtension {
 	 * @return TODO
 	 */
 	public IDeclSpecifierExtensionResult parseDeclSpecifierSequence(IParserData parser, Parser.Flags flags, DeclarationWrapper sdw, CompletionKind kind, Key key );
+	/**
+	 * @param i
+	 * @return
+	 */
+	public boolean canHandleCDesignatorInitializer(int tokenType);
+	/**
+	 * @param parserData
+	 * @param scope TODO
+	 * @return
+	 */
+	public IASTDesignator parseDesignator(IParserData parserData, IASTScope scope);
 }

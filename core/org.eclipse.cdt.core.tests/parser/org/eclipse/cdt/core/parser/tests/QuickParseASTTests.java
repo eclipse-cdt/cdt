@@ -2219,5 +2219,15 @@ public class QuickParseASTTests extends BaseASTTest
     	Iterator i = parse( "class __decl  main{  int main; };", true, false ).getDeclarations();
     	assertFalse( i.hasNext() );
     }
-	
+
+    public void testBug57652() throws Exception
+	{
+    	parse("struct file_operations driver_fops = {  open: device_open, release: device_release	};", true, true, ParserLanguage.C ).getDeclarations();
+	}
+    
+    public void testBug39676_tough() throws Exception
+	{
+    	parse( "int widths[] = { [0 ... 9] = 1, [10 ... 99] = 2, [100] = 3 };", true, true, ParserLanguage.C );
+	}
+    
 }

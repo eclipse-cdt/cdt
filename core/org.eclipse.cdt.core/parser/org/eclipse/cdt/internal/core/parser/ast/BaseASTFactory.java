@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDesignator.DesignatorKind;
+import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
 
 
 /**
@@ -32,6 +34,11 @@ import org.eclipse.cdt.core.parser.ast.IASTDesignator.DesignatorKind;
  */
 public class BaseASTFactory  {
 
+	public BaseASTFactory( IASTFactoryExtension extension )
+	{
+		this.extension = extension;
+	}
+	
 	protected IParserLogService logService;
 
 	/* (non-Javadoc)
@@ -60,8 +67,10 @@ public class BaseASTFactory  {
         return new ASTArrayModifier( exp );
     }
 
-    public IASTDesignator createDesignator(DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier)
+    public IASTDesignator createDesignator(DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier, Map extensionParms)
     {
+    	if( extension.overrideCreateDesignatorMethod( kind ))
+    		return extension.createDesignator( kind, constantExpression, fieldIdentifier, extensionParms );
         return new ASTDesignator( kind, constantExpression, 
         		fieldIdentifier == null ? "" : fieldIdentifier.getImage(),  //$NON-NLS-1$
         		fieldIdentifier == null ? -1 : fieldIdentifier.getOffset() );
@@ -70,6 +79,8 @@ public class BaseASTFactory  {
 	public void setLogger(IParserLogService log) {
 		logService = log;
 	}
+
+	protected final IASTFactoryExtension extension;
 
 
 }

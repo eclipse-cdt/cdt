@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
  * @author jcamelon
  *
  */
-public interface IParserData {
+public interface IParserData extends IExpressionParser {
 	/**
 	 * @return Returns the astFactory.
 	 */
@@ -113,4 +113,6 @@ public interface IParserData {
 	 * @return
 	 */
 	public IASTExpression shiftExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException;
+	
+	public IToken identifier() throws EndOfFileException, BacktrackException;
 }

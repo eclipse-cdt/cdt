@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
+import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.expression.ASTExpression;
 
@@ -71,9 +72,9 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	private static final boolean CREATE_EXCESS_CONSTRUCTS = true;
 
 
-	public QuickParseASTFactory( )
+	public QuickParseASTFactory( IASTFactoryExtension extension )
 	{
-		super();
+		super(extension);
 	}
 	
 	/* (non-Javadoc)

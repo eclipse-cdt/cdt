@@ -2904,4 +2904,13 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	public final ParserLanguage getParserLanguage() {
 		return language;
 	}
+	/**
+	 * Parse an identifier.  
+	 * 
+	 * @throws BacktrackException	request a backtrack
+	 */
+	public IToken identifier() throws EndOfFileException, BacktrackException {
+	    IToken first = consume(IToken.tIDENTIFIER); // throws backtrack if its not that
+	    return first;
+	}
 }

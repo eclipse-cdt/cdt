@@ -11,8 +11,11 @@
 package org.eclipse.cdt.core.parser.extension;
 
 import java.util.Hashtable;
+import java.util.Map;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
@@ -60,5 +63,8 @@ public interface IASTFactoryExtension {
         boolean isLong,
         boolean isSigned, 
 		boolean isUnsigned, boolean isTypename, boolean isComplex, boolean isImaginary, boolean isGlobal, Hashtable extensionParms );
+    
+    public boolean overrideCreateDesignatorMethod( IASTDesignator.DesignatorKind kind );
+    public IASTDesignator createDesignator( IASTDesignator.DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier, Map extensionParms );
 
 }

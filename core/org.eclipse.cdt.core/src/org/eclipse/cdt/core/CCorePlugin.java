@@ -209,6 +209,7 @@ public class CCorePlugin extends Plugin {
 			if (cdtLog != null) {
 				cdtLog.shutdown();
 			}
+			savePluginPreferences();
 		} finally {
 			super.stop(context);
 		}

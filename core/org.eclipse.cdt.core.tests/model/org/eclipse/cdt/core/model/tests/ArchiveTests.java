@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.util.ExpectedStrings;
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -127,8 +128,12 @@ public class ArchiveTests extends TestCase {
      *
      * Called after every test case method.
      */
-    protected void tearDown() throws CoreException {
-        CProjectHelper.delete(testProject);
+    protected void tearDown()  {
+    	try{
+		  CProjectHelper.delete(testProject);
+    	} 
+    	catch (ResourceException e) {} 
+    	catch (CoreException e) {} 
     }
     
     public static TestSuite suite() {

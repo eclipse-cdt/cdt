@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.util.ExpectedStrings;
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -62,9 +63,11 @@ public class BinaryTests extends TestCase {
         /**
          * Make sure we leave the workspace clean for the next set of tests
          */
-        CProjectHelper.delete(testProject);
-
-        
+		try{
+		   CProjectHelper.delete(testProject);
+		 } 
+		 catch (ResourceException e) {} 
+		 catch (CoreException e) {}
     }
 
     
@@ -169,9 +172,12 @@ public class BinaryTests extends TestCase {
     protected void tearDown() throws CoreException, InterruptedException {
     	/* Let everything settle down before we try to delete the project. 
     	 */
-    	 
 		Thread.sleep(500);
-        CProjectHelper.delete(testProject);
+		try{
+		  CProjectHelper.delete(testProject);
+		} 
+		catch (ResourceException e) {} 
+		catch (CoreException e) {}
         
     }
     

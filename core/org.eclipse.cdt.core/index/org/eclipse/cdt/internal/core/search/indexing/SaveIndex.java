@@ -39,7 +39,7 @@ public class SaveIndex extends IndexRequest {
 			monitor.enterWrite(); // ask permission to write
 			this.manager.saveIndex(index);
 		} catch (IOException e) {
-			if (JobManager.VERBOSE) {
+			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to save index " + this.indexPath + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();
 			}

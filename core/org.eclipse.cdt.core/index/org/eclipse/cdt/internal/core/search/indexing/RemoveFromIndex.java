@@ -40,7 +40,7 @@ class RemoveFromIndex extends IndexRequest {
 			monitor.enterWrite(); // ask permission to write
 			index.remove(resourceName);
 		} catch (IOException e) {
-			if (JobManager.VERBOSE) {
+			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to remove " + this.resourceName + " from index because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();
 			}

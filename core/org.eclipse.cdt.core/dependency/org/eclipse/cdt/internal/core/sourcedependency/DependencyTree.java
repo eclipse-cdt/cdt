@@ -27,14 +27,19 @@ import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.cdt.internal.core.sourcedependency.impl.InMemoryTree;
 import org.eclipse.cdt.internal.core.sourcedependency.impl.IncludeEntry;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
 
 public class DependencyTree implements IDependencyTree {
-	
+	/**
+	 * Maximum size of the index in memory.
+	 */
+	public static final int MAX_FOOTPRINT= 1000000;
 	protected InMemoryTree addsTree;
 	
 	public DependencyTree(String treeName, String string, boolean b) throws IOException{
+		super();
 		initialize();
 	}
 
@@ -106,17 +111,20 @@ public class DependencyTree implements IDependencyTree {
 	 * @see org.eclipse.cdt.internal.core.sourcedependency.IDependencyTree#remove(java.lang.String)
 	 */
 	public void remove(String documentName) throws IOException {
-		// TODO Auto-generated method stub
+		//IndexedFile file= addsTree.getIndexedFile(documentName);
+		//if (file != null) {
+		//}
+	
 	}
 	/**
 	 * Add the file that will be preprocessed to the tree, create a new
 	 * preprocessor output and preprocess!
 	 */
-	public void add(IDocument document, String docPath, IScannerInfo newInfo, ParserLanguage language) throws IOException  {
+	public void add(IDocument document, String docPath, IScannerInfo newInfo, IFile file, ParserLanguage language) throws IOException  {
 		IndexedFile indexedFile= addsTree.getIndexedFile(document.getName());
 		//if (indexedFile != null)
 			//remove(indexedFile, 0);
-		PreprocessorOutput output= new PreprocessorOutput(addsTree);
+		PreprocessorOutput output= new PreprocessorOutput(addsTree, file);
 		DependencyRequestor depReq = new DependencyRequestor(output,document);
 		
 		output.addDocument(document);
@@ -171,5 +179,13 @@ public class DependencyTree implements IDependencyTree {
 			System.out.println(tempFiles[i].toString());
 		}
 		
+	}
+	
+	/**
+	 * Returns true if the in memory index reaches a critical size, 
+	 * to merge it with the index on the disk.
+	 */
+	protected boolean timeToMerge() {
+		return (addsTree.getFootprint() >= MAX_FOOTPRINT);
 	}
 }

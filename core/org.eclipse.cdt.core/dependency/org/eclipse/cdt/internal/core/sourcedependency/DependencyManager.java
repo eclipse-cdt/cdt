@@ -15,6 +15,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.CRC32;
@@ -40,6 +41,7 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 	public static int MAX_FILES_IN_MEMORY = 0;
 
 	public SimpleLookupTable projectNames = new SimpleLookupTable();
+	public SimpleLookupTable dependencyTable;
 	private Map dependencyTrees = new HashMap(5);
 
 	/* read write monitors */
@@ -58,7 +60,9 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 	public static Integer UPDATING_STATE = new Integer(1);
 	public static Integer UNKNOWN_STATE = new Integer(2);
 	public static Integer REBUILDING_STATE = new Integer(3);
-
+    
+	public static boolean VERBOSE = false;
+	
 	public String processName(){
 		//TODO: BOG Add name to .properties file
 		return "Dependency Tree"; //org.eclipse.cdt.internal.core.search.Util.bind("process.name"); //$NON-NLS-1$
@@ -77,6 +81,7 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 		}
 		
 		this.projectNames = new SimpleLookupTable();
+		this.dependencyTable = new SimpleLookupTable();
 		this.ccorePluginLocation = null;
 	}
 	/* (non-Javadoc)
@@ -125,7 +130,7 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 					} catch (IOException e) {
 						//	failed to read the existing file or its no longer compatible
 						 if (currentDTreeState != REBUILDING_STATE) { // rebuild tree if existing file is corrupt, unless the tree is already being rebuilt
-							 if (VERBOSE)
+							 if (DependencyManager.VERBOSE)
 								JobManager.verbose("-> cannot reuse existing tree: "+ treeName +" path: "+path.toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 							 rebuildDTree(treeName, path);
 							 return null;
@@ -167,7 +172,7 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 				checksumCalculator.reset();
 				checksumCalculator.update(pathString.getBytes());
 				String fileName = Long.toString(checksumCalculator.getValue()) + ".depTree"; //$NON-NLS-1$
-				if (VERBOSE)
+				if (DependencyManager.VERBOSE)
 					JobManager.verbose("-> dependency tree name for " + pathString + " is " + fileName); //$NON-NLS-1$ //$NON-NLS-2$
 				name = getCCorePluginWorkingLocation().append(fileName).toOSString();
 				projectNames.put(path, name);
@@ -209,7 +214,7 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 		try {
 			return org.eclipse.cdt.internal.core.Util.getFileCharContent(savedDTreesFile, null);
 		} catch (IOException ignored) {
-			if (VERBOSE)
+			if (DependencyManager.VERBOSE)
 				JobManager.verbose("Failed to read saved dTree file names"); //$NON-NLS-1$
 			return new char[0];
 		}
@@ -219,7 +224,7 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 		Object target = org.eclipse.cdt.internal.core.Util.getTarget(ResourcesPlugin.getWorkspace().getRoot(), path, true);
 		if (target == null) return;
 	
-		if (VERBOSE)
+		if (DependencyManager.VERBOSE)
 			JobManager.verbose("-> request to rebuild dTree: "+treeName+" path: "+path.toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 	
 		updateTreeState(treeName, REBUILDING_STATE);
@@ -274,7 +279,7 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 				}
 			}
 		} catch (IOException ignored) {
-			if (VERBOSE)
+			if (DependencyManager.VERBOSE)
 				JobManager.verbose("Failed to write saved dTree file names"); //$NON-NLS-1$
 		} finally {
 			if (writer != null) {
@@ -283,7 +288,7 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 				} catch (IOException e) {}
 			}
 		}
-		if (VERBOSE) {
+		if (DependencyManager.VERBOSE) {
 			String state = "?"; //$NON-NLS-1$
 			if (treeState == SAVED_STATE) state = "SAVED"; //$NON-NLS-1$
 			else if (treeState == UPDATING_STATE) state = "UPDATING"; //$NON-NLS-1$
@@ -307,13 +312,15 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 	 */
 	public void remove(String resourceName, IPath indexedContainer){
 		//request(new RemoveFromIndex(resourceName, indexedContainer, this));
+		if (DependencyManager.VERBOSE)
+		  JobManager.verbose("remove file from tree " + resourceName);
 	}
 	/**
 	 * Removes the tree for a given path. 
 	 * This is a no-op if the tree did not exist.
 	 */
 	public synchronized void removeTree(IPath path) {
-		if (VERBOSE)
+		if (DependencyManager.VERBOSE)
 			JobManager.verbose("removing dependency tree " + path); //$NON-NLS-1$
 		String treeName = computeTreeName(path);
 		File indexFile = new File(treeName);
@@ -325,6 +332,50 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 		this.dependencyTrees.remove(path);
 		updateTreeState(treeName, null);
 	}
+	
+	public synchronized void addToTable(String fileName, IFile resource){
+		ArrayList projectContainer = (ArrayList) dependencyTable.get(fileName);
+		if (projectContainer == null) {
+			ArrayList newProjectContainer = new ArrayList();
+			newProjectContainer.add(resource.getLocation());
+			
+			dependencyTable.put(fileName, newProjectContainer);
+		}
+		else {
+		  if (!projectContainer.contains(resource.getLocation())){
+		  	projectContainer.add(resource.getLocation());
+		  }
+		}
+	}
+	
+	public synchronized void removeFromTable(String fileName, IPath refToRemove){
+		ArrayList projectContainer = (ArrayList) dependencyTable.get(fileName);
+		if (projectContainer != null) {
+			int index = projectContainer.indexOf(refToRemove);
+			projectContainer.remove(refToRemove);
+		}
+	}
+	
+	public synchronized ArrayList getProjectDependsForFile(String fileName){
+		ArrayList projectContainer = (ArrayList) dependencyTable.get(fileName);
+		return projectContainer;
+	}	
+	
+	/**
+	 * @param file
+	 * @param path
+	 * @param info
+	 */
+	public void addSource(IFile file, IPath path, IScannerInfo info) {
+		if (CCorePlugin.getDefault() == null) return;	
+			AddFileToDependencyTree job = new AddFileToDependencyTree(file, path, this, info);
+			if (this.awaitingJobsCount() < MAX_FILES_IN_MEMORY) {
+				// reduces the chance that the file is open later on, preventing it from being deleted
+				if (!job.initializeContents()) return;
+			}
+			request(job);
+	}
+	
 	/*************
 	 *TODO: Remove these methods once the depTree is
 	 *fully integrated
@@ -363,21 +414,7 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 		} catch (CoreException e) {
 		}
 	}
-	/**
-	 * @param file
-	 * @param path
-	 * @param info
-	 */
-	public void addSource(IFile file, IPath path, IScannerInfo info) {
-		if (CCorePlugin.getDefault() == null) return;	
-			AddFileToDependencyTree job = new AddFileToDependencyTree(file, path, this, info);
-			if (this.awaitingJobsCount() < MAX_FILES_IN_MEMORY) {
-				// reduces the chance that the file is open later on, preventing it from being deleted
-				if (!job.initializeContents()) return;
-			}
-			request(job);
-	}
-	
+
 	/************
 	 * END OF TEMP D-TREE ENABLE SECTION
 	 */

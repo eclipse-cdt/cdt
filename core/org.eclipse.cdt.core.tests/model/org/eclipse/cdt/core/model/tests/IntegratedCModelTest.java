@@ -12,6 +12,7 @@ import java.util.Map;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -81,8 +82,13 @@ public abstract class IntegratedCModelTest extends TestCase {
 		CCorePlugin.getDefault().setUseNewParser(true);
 	}
 
-	protected void tearDown() throws Exception {
-		CProjectHelper.delete(fCProject);
+	protected void tearDown() {
+		try{
+		  CProjectHelper.delete(fCProject);
+		} 
+		catch (ResourceException e) {} 
+		catch (CoreException e) {} 
+		
 	}	
 
 	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {

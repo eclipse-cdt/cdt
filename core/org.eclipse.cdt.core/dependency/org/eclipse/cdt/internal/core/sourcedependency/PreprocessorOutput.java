@@ -10,24 +10,32 @@
 ***********************************************************************/
 
 package org.eclipse.cdt.internal.core.sourcedependency;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.cdt.internal.core.sourcedependency.impl.InMemoryTree;
+import org.eclipse.core.resources.IFile;
 
 
 public class PreprocessorOutput implements IPreprocessorOutput {
 	protected InMemoryTree tree;
 	protected IndexedFile indexedFile;
 	protected IDocument document;
+	protected IFile file;
 	
-	public PreprocessorOutput(InMemoryTree tree) {
+	public PreprocessorOutput(InMemoryTree tree, IFile file) {
 		this.tree = tree;
+		this.file = file;
 	}
 
 	public void addInclude(IASTInclusion inclusion, IASTInclusion parent){
 		addRef(inclusion.getFullFileName());
 		addRelatives(inclusion.getFullFileName(),(parent != null ) ? parent.getFullFileName() : null);
+	
+		DependencyManager depMan = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
+		depMan.addToTable(inclusion.getFullFileName(),this.file);	
+		
 	}
 	
 	public void addRelatives(String inclusion, String parent) {

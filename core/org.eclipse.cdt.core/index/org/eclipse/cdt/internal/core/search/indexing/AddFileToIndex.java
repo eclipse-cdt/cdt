@@ -37,7 +37,7 @@ public abstract class AddFileToIndex extends IndexRequest {
 			monitor.enterWrite(); // ask permission to write
 			if (!indexDocument(index)) return false;
 		} catch (IOException e) {
-			if (JobManager.VERBOSE) {
+			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to index " + this.resource + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();
 			}

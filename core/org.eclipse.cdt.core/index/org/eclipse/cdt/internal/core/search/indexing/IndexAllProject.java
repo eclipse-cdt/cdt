@@ -182,14 +182,14 @@ public class IndexAllProject extends IndexRequest {
 				this.manager.request(new SaveIndex(this.indexPath, this.manager));
 
 		} catch (CoreException e) {
-			if (JobManager.VERBOSE) {
+			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to index " + this.project + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();
 			}
 			this.manager.removeIndex(this.indexPath);
 			return false;
 		} catch (IOException e) {
-			if (JobManager.VERBOSE) {
+			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to index " + this.project + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();
 			}

@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -142,9 +143,13 @@ public class TranslationUnitBaseTest extends TestCase
          *
          * Called after every test case method.
          */
-    protected void tearDown() throws CoreException
+    protected void tearDown() 
     {
        // release resources here and clean-up
-       testProject.getProject().delete(true,true,monitor);
+       try {
+		testProject.getProject().delete(true,true,monitor);
+	   } catch (ResourceException e) {
+	   } catch (CoreException e) {
+	   } 
     }
 }

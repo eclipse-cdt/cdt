@@ -31,6 +31,7 @@ import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
+import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -845,6 +846,7 @@ public class CCorePlugin extends Plugin {
 	 * Configure the plugin with respect to option settings defined in ".options" file
 	 */
 	public void configurePluginDebugOptions(){
+		
 		if(CCorePlugin.getDefault().isDebugging()){
 			String option = Platform.getDebugOption(PARSER);
 			if(option != null) Util.VERBOSE_PARSER = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
@@ -852,11 +854,19 @@ public class CCorePlugin extends Plugin {
 			option = Platform.getDebugOption(MODEL);
 			if(option != null) Util.VERBOSE_MODEL = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
+			boolean depFlag = false;
 			option = Platform.getDebugOption(DEPENDENCY);
-			if(option != null) DependencyManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
-		
+			if(option != null){
+				depFlag = option.equalsIgnoreCase("true"); 
+				DependencyManager.VERBOSE = depFlag;
+			}//$NON-NLS-1$
+			
+			boolean indexFlag = false;
 			option = Platform.getDebugOption(INDEX_MANAGER);
-			if(option != null) IndexManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			if(option != null) {
+				indexFlag = option.equalsIgnoreCase("true");
+				IndexManager.VERBOSE = indexFlag;
+			} //$NON-NLS-1$
 			
 			option = Platform.getDebugOption(INDEXER);
 			if(option != null) SourceIndexer.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
@@ -867,6 +877,10 @@ public class CCorePlugin extends Plugin {
 			option = Platform.getDebugOption(MATCH_LOCATOR);
 			if(option != null) MatchLocator.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 			
+			if (indexFlag == true ||
+			    depFlag == true){
+			   JobManager.VERBOSE = true; 	
+			}
 		}
 	}
 }

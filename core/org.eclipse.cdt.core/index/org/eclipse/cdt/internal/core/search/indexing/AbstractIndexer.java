@@ -283,7 +283,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			pos+=tempName.length;				
 		}
 		
-		if (VERBOSE)
+		if (AbstractIndexer.VERBOSE)
 			AbstractIndexer.verbose(new String(result));
 			
 		return result;
@@ -315,7 +315,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			pos+=tempName.length;				
 		}
 		
-		if (VERBOSE)
+		if (AbstractIndexer.VERBOSE)
 			AbstractIndexer.verbose(new String(result));
 			
 		return result;

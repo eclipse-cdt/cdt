@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class AddFileToDependencyTree extends DependencyRequest {
-	public static final String[] FILE_TYPES= new String[] {"cpp"}; //$NON-NLS-1$
+	public static final String[] FILE_TYPES= new String[] {"cpp","c", "cc", "cxx"}; //$NON-NLS-1$
 
 	IFile resource;
 	char[] contents;
 	IScannerInfo buildInfo;
-
+	
 	/**
 	 * @param path
 	 * @param manager
@@ -57,7 +57,7 @@ public class AddFileToDependencyTree extends DependencyRequest {
 			monitor.enterWrite(); // ask permission to write
 			if (!addDocumentToTree(tree)) return false;
 		} catch (IOException e) {
-			if (JobManager.VERBOSE) {
+			if (DependencyManager.VERBOSE) {
 				JobManager.verbose("-> failed to calculate dependency for " + this.resource + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();
 			}
@@ -78,8 +78,8 @@ public class AddFileToDependencyTree extends DependencyRequest {
 		IScannerInfo newInfo = new ScannerInfo((this.buildInfo != null) ? this.buildInfo.getDefinedSymbols() : null,(this.buildInfo != null) ? this.buildInfo.getIncludePaths() : null);
 		
 		ParserLanguage language = CoreModel.getDefault().hasCCNature( resource.getProject() ) ? ParserLanguage.CPP : ParserLanguage.C;
-		
-		dTree.add(document,docPath,newInfo, language);
+		dTree.add(document,docPath,newInfo, resource, language);
+
 		return true;
 	}
 	

@@ -33,6 +33,7 @@ import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -56,6 +57,7 @@ public class IndexManagerTests extends TestCase {
 	IProject testProject;
 	NullProgressMonitor monitor;
     IndexManager indexManager;
+    
     public static final int TIMEOUT = 10000;
 	/**
 	 * Constructor for IndexManagerTest.
@@ -76,15 +78,24 @@ public class IndexManagerTests extends TestCase {
 		testProject = createProject("IndexerTestProject");
 		if (testProject==null)
 			fail("Unable to create project");	
+			
+	
 	}
 	/*
 	 * @see TestCase#tearDown()
 	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	protected void tearDown() {
+		try {
+			super.tearDown();
+		} catch (Exception e1) {
+		}
 		//Delete project
 		if (testProject.exists()){
-			testProject.delete(true,monitor);
+			try {
+				testProject.delete(true,monitor);
+			} catch (ResourceException e) {
+			} catch (CoreException e) {
+			}
 		}
 	}
 
@@ -109,31 +120,39 @@ public class IndexManagerTests extends TestCase {
 	{
 	   IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 	   IProject project= root.getProject(projectName);
-	   if (!project.exists()) {
-		 project.create(null);
-	   } else {
-	     project.refreshLocal(IResource.DEPTH_INFINITE, null);
+	   IProject cproject = null;
+	   try{
+		   if (!project.exists()) {
+			 project.create(null);
+		   } else {
+		     project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		   }
+		   if (!project.isOpen()) {
+			 project.open(null);
+		   }  
+		  
+	       //Fill out a project description
+		   IPath defaultPath = Platform.getLocation();
+		   IPath newPath = project.getFullPath();
+		   if (defaultPath.equals(newPath))
+			 newPath = null;
+		   IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		   IProjectDescription description = workspace.newProjectDescription(project.getName());
+		   description.setLocation(newPath);
+		   //Create the project
+		   cproject = CCorePlugin.getDefault().createCProject(description,project,monitor,CCorePlugin.PLUGIN_ID + ".make"); //.getCoreModel().create(project);
+		    
+		   if( !cproject.hasNature(CCProjectNature.CC_NATURE_ID) ){
+			   addNatureToProject(cproject, CCProjectNature.CC_NATURE_ID, null);
+		   }
 	   }
-	   if (!project.isOpen()) {
-		 project.open(null);
-	   }  
-	  
-       //Fill out a project description
-	   IPath defaultPath = Platform.getLocation();
-	   IPath newPath = project.getFullPath();
-	   if (defaultPath.equals(newPath))
-		 newPath = null;
-	   IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	   IProjectDescription description = workspace.newProjectDescription(project.getName());
-	   description.setLocation(newPath);
-	   //Create the project
-	   IProject cproject = CCorePlugin.getDefault().createCProject(description,project,monitor,CCorePlugin.PLUGIN_ID + ".make"); //.getCoreModel().create(project);
-	    
-	   if( !cproject.hasNature(CCProjectNature.CC_NATURE_ID) ){
-		   addNatureToProject(cproject, CCProjectNature.CC_NATURE_ID, null);
+	   catch (CoreException e){
+		  cproject = project;
+		  cproject.open(null);
 	   }
-	   
-	   return cproject; 
+	   finally{
+		  return cproject;
+	   }
 	}
 	
 	private IFile importFile(String fileName, String resourceLocation)throws Exception{
@@ -236,12 +255,26 @@ public class IndexManagerTests extends TestCase {
 	  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
 	  assertTrue("Index exists for project",ind != null);
 	  //Delete the project
-	  testProject.delete(true,monitor);
+	  safeDelete(testProject);
+	  
 	  //See if the index is still there
 	  ind = indexManager.getIndex(testProjectPath,true,true);
 	  assertTrue("Index deleted",ind == null);
 	}
 	
+	/**
+	 * @param testProject
+	 */
+	private void safeDelete(IProject testProject) throws InterruptedException, CoreException {
+		try {
+			testProject.delete(true,monitor);
+		} catch (CoreException e) {
+			Thread.sleep(1000);
+			testProject.delete(true,monitor);
+		}
+		
+	}
+
 	public void testRemoveFileFromIndex() throws Exception{
 	 //Add a file to the project
 	 importFile("mail.cpp","resources/indexer/mail.cpp");

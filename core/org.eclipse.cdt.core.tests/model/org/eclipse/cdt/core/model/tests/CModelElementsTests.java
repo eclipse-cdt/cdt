@@ -44,6 +44,7 @@ import org.eclipse.cdt.internal.core.model.MethodTemplate;
 import org.eclipse.cdt.internal.core.model.StructureTemplate;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -98,8 +99,12 @@ public class CModelElementsTests extends TestCase {
 		proj.setDescription(description, monitor);
 	}
 	
-	protected void tearDown() throws Exception {
-		CProjectHelper.delete(fCProject);
+	protected void tearDown() {
+		try{
+		  CProjectHelper.delete(fCProject);
+		} 
+		catch (ResourceException e) {} 
+		catch (CoreException e) {} 
 	}	
 			
 	public void testCModelElements(){

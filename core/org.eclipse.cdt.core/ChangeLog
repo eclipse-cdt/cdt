@@ -1,3 +1,11 @@
+2003-09-05 Bogdan Gheorghe
+
+	Hooked in the dependency checking on file changes in Delta
+	Processor.java. When a header files' contents change we look
+	up the referencing files in the dep tree table and reindex them.
+	
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	
 2003-09-05 Alain Magloire
 
 	The PTY classes are using one instance of the master fd for Input/Output/Error
@@ -37,7 +45,6 @@
 	
 	* src/org/eclipse/cdt/core/ErrorParserManager.java
 	
-
 2003-09-01 Alain Magloire
 
 	Typo in the class signature.

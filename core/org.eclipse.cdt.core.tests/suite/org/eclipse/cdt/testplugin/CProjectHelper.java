@@ -63,7 +63,22 @@ public class CProjectHelper {
      * Removes a ICProject.
      */        
     public static void delete(ICProject cproject) throws CoreException {
-        cproject.getProject().delete(true, true, null);
+       
+		try {
+			cproject.getProject().delete(true, true, null);
+		} catch (CoreException e) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+	
+			}
+			finally{
+				cproject.getProject().delete(true, true, null);
+			}
+			
+		}
+       
+        
     }
 
 

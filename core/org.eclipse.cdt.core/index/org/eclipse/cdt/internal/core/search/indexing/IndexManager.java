@@ -65,6 +65,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	public static Integer UNKNOWN_STATE = new Integer(2);
 	public static Integer REBUILDING_STATE = new Integer(3);
 
+	public static boolean VERBOSE = false;
+	
 	public synchronized void aboutToUpdateIndex(IPath path, Integer newIndexState) {
 		// newIndexState is either UPDATING_STATE or REBUILDING_STATE
 		// must tag the index as inconsistent, in case we exit before the update job is started
@@ -127,7 +129,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			checksumCalculator.reset();
 			checksumCalculator.update(pathString.getBytes());
 			String fileName = Long.toString(checksumCalculator.getValue()) + ".index"; //$NON-NLS-1$
-			if (VERBOSE)
+			if (IndexManager.VERBOSE)
 				JobManager.verbose("-> index name for " + pathString + " is " + fileName); //$NON-NLS-1$ //$NON-NLS-2$
 			name = getCCorePluginWorkingLocation().append(fileName).toOSString();
 			indexNames.put(path, name);
@@ -168,7 +170,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 					} catch (IOException e) {
 						// failed to read the existing file or its no longer compatible
 						if (currentIndexState != REBUILDING_STATE) { // rebuild index if existing file is corrupt, unless the index is already being rebuilt
-							if (VERBOSE)
+							if (IndexManager.VERBOSE)
 								JobManager.verbose("-> cannot reuse existing index: "+indexName+" path: "+path.toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 							rebuildIndex(indexName, path);
 							return null;
@@ -311,7 +313,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		Object target = org.eclipse.cdt.internal.core.Util.getTarget(ResourcesPlugin.getWorkspace().getRoot(), path, true);
 		if (target == null) return;
 
-		if (VERBOSE)
+		if (IndexManager.VERBOSE)
 			JobManager.verbose("-> request to rebuild index: "+indexName+" path: "+path.toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 
 		updateIndexState(indexName, REBUILDING_STATE);
@@ -344,7 +346,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 
 			// Path is already canonical
 			String indexPath = computeIndexName(path);
-			if (VERBOSE)
+			if (IndexManager.VERBOSE)
 				JobManager.verbose("-> recreating index: "+indexPath+" for path: "+path.toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 			index = new Index(indexPath, "Index for " + path.toOSString(), false /*reuse index file*/); //$NON-NLS-1$
 			indexes.put(path, index);
@@ -352,7 +354,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			return index;
 		} catch (IOException e) {
 			// The file could not be created. Possible reason: the project has been deleted.
-			if (VERBOSE) {
+			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to recreate index for path: "+path.toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();
 			}
@@ -371,7 +373,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * This is a no-op if the index did not exist.
 	 */
 	public synchronized void removeIndex(IPath path) {
-		if (VERBOSE)
+		if (IndexManager.VERBOSE)
 			JobManager.verbose("removing index " + path); //$NON-NLS-1$
 		String indexName = computeIndexName(path);
 		File indexFile = new File(indexName);
@@ -439,7 +441,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	public void saveIndex(IIndex index) throws IOException {
 		// must have permission to write from the write monitor
 		if (index.hasChanged()) {
-			if (VERBOSE)
+			if (IndexManager.VERBOSE)
 				JobManager.verbose("-> saving index " + index.getIndexFile()); //$NON-NLS-1$
 			index.save();
 		}
@@ -479,7 +481,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 				try {
 					saveIndex(index);
 				} catch(IOException e){
-					if (VERBOSE) {
+					if (IndexManager.VERBOSE) {
 						JobManager.verbose("-> got the following exception while saving:"); //$NON-NLS-1$
 						e.printStackTrace();
 					}
@@ -493,7 +495,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	}
 	
 	public void shutdown() {
-		if (VERBOSE)
+		if (IndexManager.VERBOSE)
 			JobManager.verbose("Shutdown"); //$NON-NLS-1$
 		//Get index entries for all projects in the workspace, store their absolute paths
 		IndexSelector indexSelector = new IndexSelector(new CWorkspaceScope(), null, false, this);
@@ -523,7 +525,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 				for (int i = 0, indexesFilesLength = indexesFiles.length; i < indexesFilesLength; i++) {
 					String fileName = indexesFiles[i].getAbsolutePath();
 					if (!knownPaths.containsKey(fileName) && fileName.toLowerCase().endsWith(".index")) { //$NON-NLS-1$
-						if (VERBOSE)
+						if (IndexManager.VERBOSE)
 							JobManager.verbose("Deleting index file " + indexesFiles[i]); //$NON-NLS-1$
 						indexesFiles[i].delete();
 					}
@@ -549,7 +551,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		try {
 			return org.eclipse.cdt.internal.core.Util.getFileCharContent(savedIndexNamesFile, null);
 		} catch (IOException ignored) {
-			if (VERBOSE)
+			if (IndexManager.VERBOSE)
 				JobManager.verbose("Failed to read saved index file names"); //$NON-NLS-1$
 			return new char[0];
 		}
@@ -577,7 +579,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 				}
 			}
 		} catch (IOException ignored) {
-			if (VERBOSE)
+			if (IndexManager.VERBOSE)
 				JobManager.verbose("Failed to write saved index file names"); //$NON-NLS-1$
 		} finally {
 			if (writer != null) {
@@ -586,7 +588,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 				} catch (IOException e) {}
 			}
 		}
-		if (VERBOSE) {
+		if (IndexManager.VERBOSE) {
 			String state = "?"; //$NON-NLS-1$
 			if (indexState == SAVED_STATE) state = "SAVED"; //$NON-NLS-1$
 			else if (indexState == UPDATING_STATE) state = "UPDATING"; //$NON-NLS-1$

@@ -13,7 +13,9 @@ package org.eclipse.cdt.internal.core.sourcedependency;
 
 import java.util.HashSet;
 
-import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
@@ -160,13 +162,19 @@ public class EntireProjectDependencyTree extends DependencyRequest {
 						shouldSave = true;
 					if (value == DELETED)
 							this.manager.remove(name, this.dependencyTreePath);
-					else
-						this.manager.addSource((IFile) value, this.dependencyTreePath, ManagedBuildManager.getScannerInfo(project));
+					else{
+						IScannerInfo scanInfo = null;
+						IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+						if (provider != null){
+							scanInfo = provider.getScannerInformation(project);
+						}
+						this.manager.addSource((IFile) value, this.dependencyTreePath, scanInfo);
+					}
 				}
 			  }
 			}
 		} catch (/*IO*/Exception e) {
-			if (JobManager.VERBOSE) {
+			if (DependencyManager.VERBOSE) {
 				JobManager.verbose("-> failed to generate tree " + this.project + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();
 			}

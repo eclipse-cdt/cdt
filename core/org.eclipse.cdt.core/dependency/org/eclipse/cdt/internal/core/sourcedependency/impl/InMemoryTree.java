@@ -140,4 +140,11 @@ public class InMemoryTree {
 	public IndexedFile[] getIndexedFiles(){
 		return this.files.asArray();
 	}
+	
+	/**
+	 * Returns the footprint of the index.
+	 */
+	public long getFootprint() {
+		return this.footprint;
+	}
 }

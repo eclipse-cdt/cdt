@@ -18,13 +18,15 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
 public interface IDependencyTree {
 	/**
 	 * Adds the given document to the index.
 	 */
-	void add(IDocument document, String docPath, IScannerInfo newInfo, ParserLanguage language) throws IOException;
+	void add(IDocument document, String docPath, IScannerInfo newInfo, IFile file, ParserLanguage language) throws IOException;
+
 	/**
 	 * Empties the index.
 	 */

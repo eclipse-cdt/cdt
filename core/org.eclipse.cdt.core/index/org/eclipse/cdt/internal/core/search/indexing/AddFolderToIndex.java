@@ -75,7 +75,7 @@ class AddFolderToIndex extends IndexRequest {
 				IResource.NONE
 			);
 		} catch (CoreException e) {
-			if (JobManager.VERBOSE) {
+			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to add " + this.folderPath + " to index because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();
 			}

@@ -48,6 +48,8 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 		catch( ScannerException se )
 		{
 			// callback IProblem here
+			org.eclipse.cdt.internal.core.model.Util.log(se, "Preprocessor Exception"); //$NON-NLS-1$h
+			
 		}
 		catch( EndOfFile eof )
 		{

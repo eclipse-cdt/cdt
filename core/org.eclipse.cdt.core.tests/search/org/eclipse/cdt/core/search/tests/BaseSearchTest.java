@@ -24,9 +24,10 @@ import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
+import org.eclipse.cdt.testplugin.FileManager;
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -51,13 +52,13 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 
 	ICSearchScope 			scope;
 	IFile 					file;
-	IFileDocument 			fileDoc;
 	IProject 				testProject;
 	NullProgressMonitor		monitor;
 	IWorkspace 				workspace;
 	CSearchResultCollector	resultCollector;
 	SearchEngine			searchEngine;
-
+    FileManager 			fileManager;
+    
 	public BaseSearchTest(String name) {
 		super(name);
 	}
@@ -75,6 +76,9 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		if (testProject == null)
 			fail("Unable to create project");
 
+		//Create file manager
+		fileManager = new FileManager();
+		
 		//Add a file to the project
 		importFile("mail.cpp", "resources/indexer/mail.cpp");
 		importFile("classDecl.cpp", "resources/search/classDecl.cpp");
@@ -91,18 +95,28 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		searchEngine = new SearchEngine();
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	protected void tearDown() {
+		try {
+			super.tearDown();
+		} catch (Exception e1) {
+		}
 		//Delete project
 		if (testProject.exists()){
-			testProject.delete( true, monitor );
+			try {
+				fileManager.closeAllFiles();
+				testProject.delete(true,monitor);
+			} catch (ResourceException e) {
+			} catch (CoreException e) {
+			}
 		}
 	}
 	
-	private IProject createProject(String projectName) throws CoreException {
+	private IProject createProject(String projectName) {
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProject(projectName);
-		
+		IProject cproject = null;
+	 try{
+	 
 		if( !project.exists() ) {
 			project.create( null );
 		} else {
@@ -125,7 +139,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		description.setLocation(newPath);
 		
 		//Create the project
-		IProject cproject = CCorePlugin.getDefault().createCProject( description,
+		cproject = CCorePlugin.getDefault().createCProject( description,
 																	 project,
 																	 monitor,
 																	 CCorePlugin.PLUGIN_ID + ".make");
@@ -133,8 +147,15 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		if( !project.hasNature(CCProjectNature.CC_NATURE_ID) ){
 			addNatureToProject(project, CCProjectNature.CC_NATURE_ID, null);
 		}
-
+	 }
+	 catch (CoreException e){
+	 	cproject = project;
+	 	cproject.open(null);
+	 }
+	 finally{
 		return cproject;
+	 }
+		
 	}
 
 	private void importFile(String fileName, String resourceLocation)throws Exception{
@@ -145,8 +166,9 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		
 		if (!file.exists()){
 			file.create(new FileInputStream(pluginRoot + resourceLocation),false,monitor);
+			fileManager.addFile(file);
 		}
-		fileDoc = new IFileDocument(file);
+	
 	}
 	
 	private void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
@@ -165,4 +187,5 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		resultCollector.setProgressMonitor( monitor );
 		searchEngine.search( workspace, pattern, scope, collector );
 	}
+	
 }

@@ -88,7 +88,10 @@ public class SourceIndexer extends AbstractIndexer {
 		try{
 			boolean retVal = parser.parse();
 			
-			if (VERBOSE){
+			if (!retVal)
+				org.eclipse.cdt.internal.core.model.Util.log(null, "Failed to index " + resourceFile.getFullPath());
+			
+			if (AbstractIndexer.VERBOSE){
 				if (!retVal)
 					AbstractIndexer.verbose("PARSE FAILED " + resourceFile.getName().toString());
 				else

@@ -2230,4 +2230,15 @@ public class QuickParseASTTests extends BaseASTTest
     	parse( "int widths[] = { [0 ... 9] = 1, [10 ... 99] = 2, [100] = 3 };", true, true, ParserLanguage.C );
 	}
     
+    public void testBug60142() throws Exception
+	{
+    	IASTVariable var = (IASTVariable) assertSoleDeclaration( "unsigned long var;");
+    	assertEquals( var.getName(), "var");
+    	IASTSimpleTypeSpecifier specifier = ((IASTSimpleTypeSpecifier)var.getAbstractDeclaration().getTypeSpecifier());
+		assertEquals( specifier.getTypename(), "unsigned long" );
+		assertTrue( specifier.isLong() );
+		assertTrue( specifier.isUnsigned() );
+		assertEquals( specifier.getType(), IASTSimpleTypeSpecifier.Type.INT );
+	}
+    
 }

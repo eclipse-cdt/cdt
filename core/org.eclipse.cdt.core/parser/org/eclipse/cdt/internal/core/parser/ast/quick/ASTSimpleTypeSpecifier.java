@@ -59,67 +59,7 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
 		this.complex = isComplex;
 		this.imaginary = isImaginary;	
 		
-		StringBuffer type = new StringBuffer();
-		if( this.kind == IASTSimpleTypeSpecifier.Type.CHAR || this.kind == IASTSimpleTypeSpecifier.Type.WCHAR_T )
-		{
-			if (isUnsigned())
-				type.append("unsigned "); //$NON-NLS-1$
-			else if( isSigned() )
-				type.append("signed "); //$NON-NLS-1$
-			type.append( (String)nameMap.get( this.kind ));
-		}
-		else if( this.kind == Type.BOOL || this.kind == Type.VOID || this.kind == Type._BOOL )
-		{
-			type.append( (String) nameMap.get( this.kind ));
-		}
-		else if( this.kind == Type.INT )
-		{
-			if (isUnsigned())
-				type.append("unsigned "); //$NON-NLS-1$
-			if (isShort())
-				type.append("short "); //$NON-NLS-1$
-			if (isLong())
-				type.append("long "); //$NON-NLS-1$
-			type.append( (String)nameMap.get( this.kind ));
-		}
-		else if( this.kind == Type.FLOAT )
-		{
-			type.append( (String)nameMap.get( this.kind ));
-			if( isComplex() )
-				type.append( "_Complex" ); //$NON-NLS-1$
-			else if( isImaginary() )
-				type.append( "_Imaginary" ); //$NON-NLS-1$
-		}
-		else if( this.kind == Type.DOUBLE )
-		{
-			if (isLong())
-				type.append("long "); //$NON-NLS-1$
-			type.append( (String)nameMap.get( this.kind ));
-			if( isComplex() )
-				type.append( "_Complex" ); //$NON-NLS-1$
-			else if( isImaginary() )
-				type.append( "_Imaginary" ); //$NON-NLS-1$
-		}
-		else if( this.kind == Type.CLASS_OR_TYPENAME || this.kind == Type.TEMPLATE )
-		{
-			if (isTypename() )
-				type.append("typename "); //$NON-NLS-1$
-			type.append(typeName.toString());
-		}
-		else if( this.kind == Type.UNSPECIFIED )
-		{
-			if (isUnsigned())
-				type.append("unsigned "); //$NON-NLS-1$
-			if (isShort())
-				type.append("short "); //$NON-NLS-1$
-			if (isLong())
-				type.append("long "); //$NON-NLS-1$
-			if (isSigned())
-				type.append("signed "); //$NON-NLS-1$
-		}
-		else
-			type.append( typeName.toString() );
-		this.typeName = type.toString().trim();
+		this.typeName = typeName.toString();
     }
 
     /* (non-Javadoc)

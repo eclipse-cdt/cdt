@@ -312,14 +312,14 @@ public class CModelElementsTests extends TestCase {
 		IVariable var2 = (IVariable) nsVars.get(1);
 		assertEquals(var2.getElementName(), new String("vuLong"));
 		checkElementOffset((CElement)var2);
-		assertEquals(var2.getTypeName(), new String("unsigned long int"));
+		assertEquals(var2.getTypeName(), new String("unsigned long"));
 		checkLineNumbers((CElement)var2, 73, 73);
 
 		// MyPackage ---> unsigned short vuShort
 		IVariable var3 = (IVariable) nsVars.get(2);
 		assertEquals(var3.getElementName(), new String("vuShort"));
 		checkElementOffset((CElement)var3);
-		assertEquals(var3.getTypeName(), new String("unsigned short int"));
+		assertEquals(var3.getTypeName(), new String("unsigned short"));
 		checkLineNumbers((CElement)var3, 75, 75);
 		
 		// MyPackage ---> function pointer: orig_malloc_hook

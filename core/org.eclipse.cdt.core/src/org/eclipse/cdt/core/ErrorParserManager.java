@@ -28,6 +28,8 @@ public class ErrorParserManager extends OutputStream {
 
 	private int nOpens;
 
+	private static String PREF_ERROR_PARSER = "errorOutputParser";
+
 	private IProject fProject;
 	private IMarkerGenerator fMarkerGenerator;
 	private Map fFilesInProject;
@@ -56,8 +58,7 @@ public class ErrorParserManager extends OutputStream {
 	public ErrorParserManager(IProject project, IMarkerGenerator markerGenerator, String[] parsersIDs) {
 		fProject = project;
 		if (parsersIDs == null) {
-			fErrorParsers = new HashMap();
-			readPreferences();
+			enableAllParsers();
 		} else {
 			fErrorParsers = new HashMap(parsersIDs.length);
 			for (int i = 0; i < parsersIDs.length; i++) {
@@ -128,18 +129,19 @@ public class ErrorParserManager extends OutputStream {
 		return fDirectoryStack.size();
 	}
 
-	private void readPreferences() {
-		fErrorParsers.clear();
-		String[] parserIDs = CCorePlugin.getDefault().getPreferenceErrorParserIDs();
+	private void enableAllParsers() {
+		fErrorParsers = new HashMap();
+		String[] parserIDs = CCorePlugin.getDefault().getAllErrorParsersIDs();
 		for (int i = 0; i < parserIDs.length; i++) {
 			IErrorParser[] parsers = CCorePlugin.getDefault().getErrorParser(parserIDs[i]);
 			fErrorParsers.put(parserIDs[i], parsers);
 		}
 		if (fErrorParsers.size() == 0) {
 			initErrorParsersMap();
-			savePreferences();
+			CCorePlugin.getDefault().getPluginPreferences().setValue(PREF_ERROR_PARSER, ""); // remove old prefs
 		}
 	}
+
 
 	private void initErrorParsersMap() {
 		String[] parserIDs = CCorePlugin.getDefault().getAllErrorParsersIDs();
@@ -147,15 +149,6 @@ public class ErrorParserManager extends OutputStream {
 			IErrorParser[] parsers = CCorePlugin.getDefault().getErrorParser(parserIDs[i]);
 			fErrorParsers.put(parserIDs[i], parsers);
 		}
-	}
-
-	private void savePreferences() {
-		String[] parserIDs = new String[fErrorParsers.size()];
-		Iterator items = fErrorParsers.keySet().iterator();
-		for (int i = 0; items.hasNext(); i++) {
-			parserIDs[i] = (String) items.next();
-		}
-		CCorePlugin.getDefault().setPreferenceErrorParser(parserIDs);
 	}
 
 	protected void collectFiles(IContainer parent, List result) {

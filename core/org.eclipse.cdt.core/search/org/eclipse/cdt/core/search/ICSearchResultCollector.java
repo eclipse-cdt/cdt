@@ -65,7 +65,8 @@ public interface ICSearchResultCollector {
 	public IMatch createMatch( Object fileResource, int start, int end, 
 						ISourceElementCallbackDelegate node, IASTScope parent) throws CoreException;
 	
-	public void acceptMatch( IMatch match ) throws CoreException;
+	//return whether or not the match was accepted
+	public boolean acceptMatch( IMatch match ) throws CoreException;
 	
 	/**
 	 * Returns the progress monitor used to report progress.

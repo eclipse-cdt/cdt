@@ -1,3 +1,7 @@
+#include "include.h"
+
+class Heal{};
+
 class A {
 	class B {
 		void f( A );

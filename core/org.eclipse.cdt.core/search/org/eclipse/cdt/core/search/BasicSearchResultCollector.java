@@ -13,12 +13,26 @@
  */
 package org.eclipse.cdt.core.search;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
-import org.eclipse.cdt.core.parser.ast.*;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
+import org.eclipse.cdt.core.parser.ast.IASTReference;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -33,7 +47,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class BasicSearchResultCollector implements ICSearchResultCollector {
 
 	public void aboutToStart() {
-		results = new LinkedList();
+		results = new HashSet();
 	}
 
 	public void done() {
@@ -43,9 +57,13 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 		return null;
 	}
 
-	public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node, IASTScope parent) throws CoreException {
+	public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node, IASTScope parent) throws CoreException 
+	{
 		BasicSearchMatch result = new BasicSearchMatch();
-		
+		return createMatch( result, fileResource, start, end, node, parent );
+	}
+	
+	public IMatch createMatch( BasicSearchMatch result, Object fileResource, int start, int end, ISourceElementCallbackDelegate node, IASTScope parent) throws CoreException {
 		if( fileResource instanceof IResource )
 			result.resource = (IResource) fileResource;
 		else if( fileResource instanceof IPath )
@@ -81,11 +99,15 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 	}
 
 
-	public void acceptMatch(IMatch match) throws CoreException {
-		results.add( match );
+	public boolean acceptMatch(IMatch match) throws CoreException {
+		if( !results.contains( match ) ){
+			results.add( match );
+			return true;
+		}
+		return false;
 	}
 	
-	public List getSearchResults(){
+	public Set getSearchResults(){
 		return results;
 	}
 	
@@ -140,6 +162,5 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 		}
 	}
 	
-	private List results;
-
+	private Set results;
 }

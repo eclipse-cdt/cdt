@@ -76,14 +76,14 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 		}
 	}
 
-	public void acceptMatch( IMatch match ) throws CoreException
+	public boolean acceptMatch( IMatch match ) throws CoreException
 	{
-		super.acceptMatch( match );
-		
 		BasicSearchMatch searchMatch = (BasicSearchMatch) match;
 		if( searchMatch.resource == null  )
-			return;
-		
+			return false;
+					
+		if( !super.acceptMatch( match ) )
+			return false;
 		 
 		IMarker marker =  searchMatch.resource.createMarker( SearchUI.SEARCH_MARKER );
 		
@@ -102,6 +102,8 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 			_view.addMatch( searchMatch.name, groupKey, searchMatch.resource, marker );
 		
 		_matchCount++;
+		
+		return true;
 	}
 
 	/* (non-Javadoc)

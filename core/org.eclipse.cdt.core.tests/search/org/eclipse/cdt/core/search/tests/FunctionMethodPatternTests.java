@@ -13,7 +13,7 @@
  */
 package org.eclipse.cdt.core.search.tests;
 
-import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
@@ -73,7 +73,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		List matches = resultCollector.getSearchResults();
+		Set matches = resultCollector.getSearchResults();
 		
 		assertEquals( matches.size(), 1 );
 	}
@@ -83,7 +83,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		
 		search( workspace, pattern, scope, resultCollector );
 		
-		List matches = resultCollector.getSearchResults();
+		Set matches = resultCollector.getSearchResults();
 		
 		assertEquals( matches.size(), 1 );	}
 }

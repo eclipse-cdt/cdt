@@ -1,3 +1,7 @@
+2003-08-01 Andrew Niefer
+	- Modified BasicSearchResultCollector to only accept matches it has not already seen
+	- fixed bug in finding a resource when entering includes
+
 2003-07-29 Andrew Niefer
 	Refactoring Search result collection:
 	- Modified ICSearchResultCollector

@@ -1,3 +1,8 @@
+2003-08-01 Andrew Niefer
+	Added resources/search/header.h
+	Added ClassDeclarationPatternTests.testHeadersVisitedTwice()
+	Modified other search tests to reflect ICSearchResultCollector changes
+
 2003-07-31 Andrew Niefer
 	Added ParserSymbolTableTest.testForwardClassDeclaration
 	Added ParserSymbolTableTest.testForwardDeclarationUsedAsFunctionParam

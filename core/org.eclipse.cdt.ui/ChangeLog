@@ -1,3 +1,8 @@
+2003-08-01 Andrew Niefer
+	- Modified CSearchResultCollector to reflect changes in BasicSearchResultCollector, 
+	  acceptMatch will return false if the match was not accepted because it has already
+	  been seen.
+
 2003-07-30 Hoda Amer
 	The New Class Wizard uses search to look for base classes in the workspace.
 

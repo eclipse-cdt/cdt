@@ -36,6 +36,47 @@ public class BasicSearchMatch implements IMatch {
 		endOffset 	= basicMatch.endOffset;
 	}
 	
+	public int hashCode(){
+		String hashString = "";
+		
+		hashString += name;
+		hashString += ":" + parentName;
+		hashString += ":" + getLocation().toString();
+		hashString += ":" + startOffset + ":" + endOffset;
+		hashString += ":" + type + ":" + visibility;
+		
+		return hashString.hashCode();
+	}
+	
+	public boolean equals(Object obj){
+		if( !(obj instanceof BasicSearchMatch ) ){
+			return false;	
+		}
+		BasicSearchMatch match = (BasicSearchMatch)obj;
+		
+		IPath path = getLocation();
+		
+		if( startOffset != match.getStartOffset() || endOffset != match.getEndOffset()  )
+			return false;
+		
+		if( type != match.getElementType() || visibility != match.getVisibility() )
+			return false;
+			
+		if( !name.equals( match.getName() ) || !parentName.equals( match.getParentName() ) )
+			return false; 
+		
+		IPath thisPath = getLocation();
+		IPath matchPath = match.getLocation();
+		if( thisPath != null && matchPath != null ){
+			if( !thisPath.equals( matchPath ) )
+				return false;
+		} else if( thisPath != matchPath ){
+			return false;
+		}
+
+		return true;
+	}
+	
 	public String name 		  = null;
 	public String parentName  = null;
 	

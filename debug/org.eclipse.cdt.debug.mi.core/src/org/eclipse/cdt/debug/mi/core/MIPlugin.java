@@ -199,21 +199,22 @@ public class MIPlugin extends Plugin {
 		}
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb, null, MISession.ATTACH);
-		MIInfo info = null;
 		CommandFactory factory = session.getCommandFactory();
 		if (targetParams != null && targetParams.length > 0) {
 			MITargetSelect target = factory.createMITargetSelect(targetParams);
 			session.postCommand(target);
-			info = target.getMIInfo();
+			MIInfo info = target.getMIInfo();
 			if (info == null) {
 				throw new MIException("No answer");
 			}
 		}
-		MITargetAttach attach = factory.createMITargetAttach(pid);
-		session.postCommand(attach);
-		info = attach.getMIInfo();
-		if (info == null) {
-			throw new MIException("No answer");
+		if (pid > 0) {
+			MITargetAttach attach = factory.createMITargetAttach(pid);
+			session.postCommand(attach);
+			MIInfo info = attach.getMIInfo();
+			if (info == null) {
+				throw new MIException("No answer");
+			}
 		}
 		//@@@ We have to manually set the suspended state when we attach
 		session.getMIInferior().setSuspended();

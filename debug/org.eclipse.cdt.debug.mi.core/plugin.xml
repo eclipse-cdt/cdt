@@ -37,6 +37,14 @@
             class="org.eclipse.cdt.debug.mi.core.CygwinGDBDebugger"
             id="org.eclipse.cdt.debug.mi.core.CygwinCDebugger">
       </debugger>
+      <debugger
+            platform="native"
+            name="%GDBServer.name"
+            modes="run"
+            cpu="native"
+            class="org.eclipse.cdt.debug.mi.core.GDBServerDebugger"
+            id="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger">
+      </debugger>
    </extension>
 
 </plugin>

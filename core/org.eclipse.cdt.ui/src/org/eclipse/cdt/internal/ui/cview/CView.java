@@ -20,11 +20,14 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.ui.drag.DelegatingDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.FileTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.LocalSelectionTransferDragAdapter;
@@ -41,6 +44,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
@@ -99,6 +103,7 @@ import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.framelist.FrameList;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
@@ -122,6 +127,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	private boolean dragDetected;
 	private Listener dragDetectListener;
 
+	private ICElement workingCopyTranslation = null;
+	
 	// Persistance tags.
 	static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
 	static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
@@ -197,11 +204,104 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 */
 	public void selectReveal(ISelection selection) {
 		IStructuredSelection ssel = SelectionConverter.convertSelectionToCElements(selection);
+		
+		Object tempElement = ssel.getFirstElement();
+		ICElement celement = null;
+		if (tempElement instanceof ICElement){
+			celement = (ICElement) tempElement;
+		}
+		
+		//Check to see if the translation unit for this CElement
+		//currently has a working copy - if it does we need to find
+		//the corresponding element in the working copy in order for 
+		//selectReveal to work properly
+		
+		if (celement != null){
+			if (celement instanceof ITranslationUnit){
+				IWorkingCopy wcopy = checkForWorkingCopy((ITranslationUnit) celement);
+				if (wcopy != null)
+					ssel = new StructuredSelection(new Object[]{wcopy});
+			} else {
+				IStructuredSelection tempSSel=getCElementFromTranslationUnit(celement);
+				if (tempSSel != null)
+					ssel = tempSSel;
+			}
+		}
+		
 		if (!ssel.isEmpty()) {
 			getViewer().setSelection(ssel, true);
 		}
 	}
 
+	/**
+	 * @param unit
+	 */
+	private IWorkingCopy checkForWorkingCopy(ITranslationUnit unit) {
+		IBufferFactory bufferFactory = CUIPlugin.getDefault().getBufferFactory();
+		
+		if (bufferFactory != null)
+			return unit.findSharedWorkingCopy(bufferFactory);
+		
+		return null;
+	}
+
+	private void setElementForStructuredSelection(ICElement element){
+		this.workingCopyTranslation = element;
+	}
+	
+	private IStructuredSelection getCElementFromTranslationUnit(ICElement celement){
+	
+		//Check to see if we have a working copy in the model 
+		//for this translation unit1
+		ArrayList parents = new ArrayList();
+		//Get translation unit for this element - find the TranslationUnit parent
+		
+		ICElement parent =celement.getParent();
+		parents.add(parent);
+		while (!(parent instanceof ITranslationUnit)){
+			parent = parent.getParent();
+			parents.add(parent);
+			if (parent == null)
+				break;
+		}
+		
+		if (parent != null){
+			final ArrayList finalParents = new ArrayList(parents);
+			final ICElement finalCElement = celement;
+			
+			IWorkingCopy wcopy = checkForWorkingCopy((ITranslationUnit) parent);
+			
+			if (wcopy != null){
+				ICElement[] celements = null;
+				final ICElementVisitor visitor = new ICElementVisitor() {
+					public boolean visit(ICElement element) throws CoreException {
+						if (element instanceof IWorkingCopy)
+							return true;
+						
+						ICElement parentStruct = ((ICElement) finalParents.get(0));
+						if (element.getElementName().equals(parentStruct.getElementName()) &&
+							element.getElementType() == parentStruct.getElementType()){
+							return true;
+						}
+						
+						if (finalCElement.getElementName().equals(element.getElementName()) &&
+							finalCElement.getElementType() == element.getElementType()){
+							setElementForStructuredSelection(element);
+						}
+						
+						return false;
+					}
+				};
+				try {
+					wcopy.accept(visitor);
+				} catch (CoreException e) {}
+				 return new StructuredSelection(new Object[]{workingCopyTranslation});
+			}
+		}
+	
+		return null;
+	}
+	
 	private ITreeViewerListener expansionListener = new ITreeViewerListener() {
 
 		public void treeCollapsed(TreeExpansionEvent event) {

@@ -1,3 +1,8 @@
+2004-08-19 Bogdan Gheorghe
+	Fix for 69925: ShowIn C/C++ Projects explorer does not work in certain cases
+	
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	
 2004-08-16 Tanya Wolff
 	Fix for 70906: Duplicate entries in C/C++ preferences
 	src/org.eclipse.cdt.internal.ui.preferences/CeditorHoverConfigurationBlock.java

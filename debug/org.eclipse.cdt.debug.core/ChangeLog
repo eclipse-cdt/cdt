@@ -1,3 +1,8 @@
+2003-03-23 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/model/type/ICDIVariable.java:
+	(getType): New method.
+
 2003-05-26 Mikhail Khodjaiants
 	First draft of the tracepoints in the CDI.
 	* ICDITraceManager.java

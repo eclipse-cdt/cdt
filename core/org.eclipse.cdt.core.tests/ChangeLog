@@ -1,3 +1,6 @@
+2003-08-28 Andrew Niefer
+	Modified BaseSearchTest.setup to properly include the "include.h" file
+
 2003-08-28 Hoda Amer
 	- Added to completeParseASTTest testQualifiedNameReferences(), 
 	testIsConstructor() and testIsDestructor().

@@ -78,7 +78,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		//Add a file to the project
 		importFile("mail.cpp", "resources/indexer/mail.cpp");
 		importFile("classDecl.cpp", "resources/search/classDecl.cpp");
-		importFile("head.h", "resources/search/include.h");
+		importFile("include.h", "resources/search/include.h");
 		
 		scope = SearchEngine.createWorkspaceScope();
 		

@@ -15,6 +15,8 @@ import java.io.Writer;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -25,10 +27,12 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GCCParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
@@ -1383,12 +1387,21 @@ public class QuickParser2Tests extends TestCase {
             parser2 = new GNUCSourceParser(scanner, ParserMode.QUICK_PARSE,
                     NULL_LOG, config);
         }
-        parser2.parse();
+        IASTTranslationUnit tu = parser2.parse();
         if (parser2.encounteredError() && expectedToPass)
             throw new ParserException("FAILURE"); //$NON-NLS-1$
         if (expectedToPass)
         {
-            //TODO need visitor to ensure that there aren't any problems
+            if( lang == ParserLanguage.C )
+            {
+            	IASTProblem [] problems = CVisitor.getProblems(tu);
+            	assertEquals( problems.length, 0 );
+            }
+            else if ( lang == ParserLanguage.CPP )
+            {
+            	IASTProblem [] problems = CPPVisitor.getProblems(tu);
+            	assertEquals( problems.length, 0 );
+            }
         }
     }
 

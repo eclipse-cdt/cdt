@@ -48,6 +48,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -121,6 +123,92 @@ public class CVisitor {
 		}
 		public boolean processName(IASTName name) {
 			((CASTName) name ).setBinding( null );
+			return true;
+		}
+	}
+	
+	public static class CollectProblemsAction extends CBaseVisitorAction {
+		{
+			processDeclarations = true;
+			processExpressions = true;
+			processStatements = true;
+			processTypeIds = true;
+		}
+		
+		private static final int DEFAULT_CHILDREN_LIST_SIZE = 8;
+		private IASTProblem[] problems = null;
+		int numFound = 0;
+
+		public CollectProblemsAction() {
+			problems = new IASTProblem[DEFAULT_CHILDREN_LIST_SIZE];
+		}
+		
+		private void addProblem(IASTProblem problem) {
+			if( problems.length == numFound ) // if the found array is full, then double the array
+	        {
+	            IASTProblem [] old = problems;
+	            problems = new IASTProblem[ old.length * 2 ];
+	            for( int j = 0; j < old.length; ++j )
+	                problems[j] = old[j];
+	        }
+			problems[numFound++] = problem;
+		}
+		
+	    private IASTProblem[] removeNullFromProblems() {
+	    	if (problems[problems.length-1] != null) { // if the last element in the list is not null then return the list
+				return problems;			
+			} else if (problems[0] == null) { // if the first element in the list is null, then return empty list
+				return new IASTProblem[0];
+			}
+			
+			IASTProblem[] results = new IASTProblem[numFound];
+			for (int i=0; i<results.length; i++)
+				results[i] = problems[i];
+				
+			return results;
+	    }
+		
+		public IASTProblem[] getProblems() {
+			return removeNullFromProblems();
+		}
+	    
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
+		 */
+		public boolean processDeclaration(IASTDeclaration declaration) {
+			if ( declaration instanceof IASTProblemHolder )
+				addProblem(((IASTProblemHolder)declaration).getProblem());
+
+			return true;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
+		 */
+		public boolean processExpression(IASTExpression expression) {
+			if ( expression instanceof IASTProblemHolder )
+				addProblem(((IASTProblemHolder)expression).getProblem());
+
+			return true;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
+		 */
+		public boolean processStatement(IASTStatement statement) {
+			if ( statement instanceof IASTProblemHolder )
+				addProblem(((IASTProblemHolder)statement).getProblem());
+
+			return true;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
+		 */
+		public boolean processTypeId(IASTTypeId typeId) {
+			if ( typeId instanceof IASTProblemHolder )
+				addProblem(((IASTProblemHolder)typeId).getProblem());
+
 			return true;
 		}
 	}
@@ -1228,5 +1316,12 @@ public class CVisitor {
 		}
 		
 		return null;
+	}
+	
+	public static IASTProblem[] getProblems(IASTTranslationUnit tu) {
+		CollectProblemsAction action = new CollectProblemsAction();
+		visitTranslationUnit(tu, action);
+		
+		return action.getProblems();
 	}
 }

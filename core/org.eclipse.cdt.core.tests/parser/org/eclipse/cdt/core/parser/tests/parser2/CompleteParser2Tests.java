@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -59,6 +60,7 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GCCParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration;
@@ -165,7 +167,16 @@ public class CompleteParser2Tests extends TestCase {
             throw new ParserException("FAILURE"); //$NON-NLS-1$
         if (expectedToPass)
         {
-            //TODO visit translation unit and ensure that there aren't any problems
+            if( lang == ParserLanguage.C )
+            {
+            	IASTProblem [] problems = CVisitor.getProblems(tu);
+            	assertEquals( problems.length, 0 );
+            }
+            else if ( lang == ParserLanguage.CPP )
+            {
+            	IASTProblem [] problems = CPPVisitor.getProblems(tu);
+            	assertEquals( problems.length, 0 );
+            }
         }
         return tu;
     }

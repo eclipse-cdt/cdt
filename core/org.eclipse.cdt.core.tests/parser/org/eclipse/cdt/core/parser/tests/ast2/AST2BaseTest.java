@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -102,9 +103,17 @@ public class AST2BaseTest extends TestCase {
 
         if( parser2.encounteredError() )
             throw new ParserException( "FAILURE"); //$NON-NLS-1$
-        
-        //TODO add in assertion here to visit all problems 
-    
+         
+        if( lang == ParserLanguage.C )
+        {
+        	IASTProblem [] problems = CVisitor.getProblems(tu);
+        	assertEquals( problems.length, 0 );
+        }
+        else if ( lang == ParserLanguage.CPP )
+        {
+        	IASTProblem [] problems = CPPVisitor.getProblems(tu);
+        	assertEquals( problems.length, 0 );
+        }
         
         return tu;
     }

@@ -12,6 +12,7 @@ package org.eclipse.cdt.ui.wizards;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
@@ -132,6 +133,8 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	private IStatus fCurrStatus;
 	protected IStatus fClassNameStatus;
 	protected IStatus fBaseClassStatus;
+	protected IStatus fLinkedResourceGroupForHeaderStatus;
+	protected IStatus fLinkedResourceGroupForBodyStatus;
 
 	private boolean hasCppNature = false;
 	
@@ -179,12 +182,16 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		fConstDestButtons.setDialogFieldListener(adapter);
 				
 		linkedResourceGroupForHeader = new LinkToFileGroup(adapter, this);
+		linkedResourceGroupForHeader.setDialogFieldListener(adapter);
 		linkedResourceGroupForHeader.setLabelText(NewWizardMessages.getString("NewClassWizardPage.files.header")); //$NON-NLS-1$
 		linkedResourceGroupForBody = new LinkToFileGroup(adapter, this);
+		linkedResourceGroupForBody.setDialogFieldListener(adapter);
 		linkedResourceGroupForBody.setLabelText(NewWizardMessages.getString("NewClassWizardPage.files.body")); //$NON-NLS-1$
 
 		fClassNameStatus=  new StatusInfo();
 		fBaseClassStatus=  new StatusInfo();
+		fLinkedResourceGroupForHeaderStatus=  new StatusInfo();
+		fLinkedResourceGroupForBodyStatus=  new StatusInfo();
 	}
 	
 	public void init() {
@@ -376,17 +383,49 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		}
 		
 		if(field == fBaseClassDialogField){
-			if(fBaseClassDialogField.getText().length() >= 0)
-			{
-				fAccessButtons.setEnabled(true);
-				fBaseClassStatus = baseClassNameChanged();
-			}
-			else{
-				fAccessButtons.setEnabled(false);
-			}							
-		}		
+			String text = fBaseClassDialogField.getText();
+			fAccessButtons.setEnabled(text.length() > 0);
+			fBaseClassStatus = baseClassNameChanged();
+		}
+		
+		if (field == linkedResourceGroupForHeader) {
+			fLinkedResourceGroupForHeaderStatus = linkedResourceGroupChanged(linkedResourceGroupForHeader, true);
+		}
+		if (field == linkedResourceGroupForBody) {
+			fLinkedResourceGroupForBodyStatus = linkedResourceGroupChanged(linkedResourceGroupForBody, false);
+		}
+		
 		doStatusUpdate();		
 	}		
+
+	IStatus linkedResourceGroupChanged(LinkToFileGroup linkedGroup, boolean isHeader) {
+		StatusInfo status = new StatusInfo();
+		String text = linkedGroup.getText();
+		if (linkedGroup.linkCreated()) {
+			// must not be empty
+			if (text == null || text.length() == 0) {
+				if (isHeader)
+					status.setError(NewWizardMessages.getString("NewClassWizardPage.error.EnterHeaderFile")); //$NON-NLS-1$
+				else
+					status.setError(NewWizardMessages.getString("NewClassWizardPage.error.EnterBodyFile")); //$NON-NLS-1$
+			} else {
+				// check if file exists
+				IPath filePath = getContainerFullPath(linkedGroup);
+				boolean validFile = false;
+				if (filePath != null) {
+					File f = filePath.toFile();
+					validFile = (f != null && f.exists() && f.isFile());
+				}
+				if (!validFile) {
+					if (isHeader)
+						status.setError(NewWizardMessages.getString("NewClassWizardPage.error.NoHeaderFile")); //$NON-NLS-1$
+					else
+						status.setError(NewWizardMessages.getString("NewClassWizardPage.error.NoBodyFile")); //$NON-NLS-1$
+				}
+			}
+		}
+		return status;
+	}
 	
 	// --------------- Helper methods for creating controls -----
 	public boolean selectionIsCpp(){
@@ -986,7 +1025,9 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		IStatus[] status= new IStatus[] {
 			fClassNameStatus,
 			fBaseClassStatus,
-		};
+			fLinkedResourceGroupForHeaderStatus,
+			fLinkedResourceGroupForBodyStatus
+			};
 		
 		// the mode severe status will be displayed and the ok button enabled/disabled.
 		updateStatus(status);

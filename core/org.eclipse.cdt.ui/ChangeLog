@@ -1,3 +1,6 @@
+2004-06-24 Chris Wiebe
+	Fix for PR 48783 : [New Class Wizard] Err Create C++ Class with "Link to  File" checkbox selected
+	
 2004-06-23 Tanya Wolff
 	Fix for bugs 66134,66145
 	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathEntryMessages.properties

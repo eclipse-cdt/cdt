@@ -121,8 +121,10 @@ public class LinkToFileGroup extends StringButtonDialogField {
 					browseButton.setEnabled(createLink);
 					variablesButton.setEnabled(createLink);
 					linkTargetField.setEnabled(createLink);
+					resolveVariable();
 					if (listener != null)
 						listener.handleEvent(new Event());
+					dialogFieldChanged();
 				}
 			};
 			linkButton.addSelectionListener(selectionListener);
@@ -138,9 +140,8 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		fText= text;
 		if (isOkToUse(linkTargetField)) {
 			linkTargetField.setText(text);
-		} else {
-			dialogFieldChanged();
-		}	
+		}
+		dialogFieldChanged();
 	}
 	
 	public Text getTextControl(Composite parent){
@@ -154,6 +155,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 					resolveVariable();
 					if (listener != null)
 						listener.handleEvent(new Event());
+					dialogFieldChanged();
 				}
 			});
 			if (initialLinkTarget != null)
@@ -275,8 +277,10 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			dialog.setMessage(WorkbenchMessages.getString("CreateLinkedResourceGroup.targetSelectionLabel")); //$NON-NLS-1$
 			selection = dialog.open();
 		}					
-		if (selection != null)
+		if (selection != null) {
 			linkTargetField.setText(selection);
+			dialogFieldChanged();
+		}
 	}
 	/**
 	 * Opens a path variable selection dialog
@@ -294,7 +298,10 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			String[] variableNames = (String[]) dialog.getResult();			
 			if (variableNames != null && variableNames.length == 1)
+			{
 				linkTargetField.setText(variableNames[0]);
+				dialogFieldChanged();
+			}
 		}
 	}
 	/**
@@ -303,8 +310,10 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	 * Displays the resolved value if the entered value is a variable.
 	 */
 	protected void resolveVariable() {
-		if(!linkTargetField.isEnabled())
+		if(!linkTargetField.isEnabled()) {
+			resolvedPathLabelData.setText("");
 			return;
+		}
 			
 		IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 		IPath path = new Path(linkTargetField.getText());
@@ -327,8 +336,10 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	 */
 	public void setLinkTarget(String target) {
 		initialLinkTarget = target;
-		if (linkTargetField != null && linkTargetField.isDisposed() == false)
+		if (linkTargetField != null && linkTargetField.isDisposed() == false) {
 			linkTargetField.setText(target);
+			dialogFieldChanged();
+		}
 	}
 	/**
 	 * Validates the type of the given file against the link type specified

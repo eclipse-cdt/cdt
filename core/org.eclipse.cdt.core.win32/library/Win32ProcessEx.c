@@ -22,6 +22,7 @@
 #include "jni.h"
 #include "io.h"
 
+// #define DEBUG_MONITOR
 
 #define PIPE_SIZE 512
 #define MAX_CMD_SIZE 1024
@@ -491,7 +492,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 		case SIG_KILL:
 		case SIG_TERM:
 #ifdef DEBUG_MONITOR
-			sprintf(buffer, "Spawner received KILL or TERM signal for process %i\n", pid);
+			sprintf(buffer, "Spawner received KILL or TERM signal for process %i\n", pCurProcInfo -> pid);
 			OutputDebugString(buffer);
 #endif
 		    SetEvent(pCurProcInfo -> eventTerminate);
@@ -677,18 +678,20 @@ unsigned int _stdcall waitProcTermination(void* pv)
 #endif
 		}
 	
-
 	for(i = 0; i < MAX_PROCS; ++i)
 		{
 		if(pInfo[i].pid == pid)
 			{
+			if(WaitForSingleObject(pInfo[i].eventWait, 1) == WAIT_OBJECT_0)  // Correct finish
+				{
 #ifdef DEBUG_MONITOR
-			sprintf(buffer, "waitProcTermination: set PID %i to 0\n", pid, GetLastError());
-			OutputDebugString(buffer);
+				sprintf(buffer, "waitProcTermination: set PID %i to 0\n", pid, GetLastError());
+				OutputDebugString(buffer);
 #endif
-			cleanUpProcBlock(pInfo + i);
+				cleanUpProcBlock(pInfo + i);
+				}
 			break;
-			}
+		} // Otherwise failed because was not started
 		}
 
 	CloseHandle(hProc);

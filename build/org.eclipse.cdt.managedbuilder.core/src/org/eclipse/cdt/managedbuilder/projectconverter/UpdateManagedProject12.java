@@ -48,7 +48,6 @@ import org.w3c.dom.NodeList;
 
 class UpdateManagedProject12 {
 	
-	
 	private static final String ID_CYGWIN = "cygwin";	//$NON-NLS-1$
 	private static final String ID_DEBUG = "debug";	//$NON-NLS-1$
 	private static final String ID_DIRS = "dirs";	//$NON-NLS-1$
@@ -160,20 +159,28 @@ class UpdateManagedProject12 {
 		
 		Element oldTarget = (Element)oldConfig.getParentNode();
 		if(oldTarget.hasAttribute(ITarget.ARTIFACT_NAME)){
-			String artName = oldTarget.getAttribute(ITarget.ARTIFACT_NAME);
-			String ext = newConfig.getArtifactExtension();
-			int extIndex = artName.lastIndexOf("."); //$NON-NLS-1$
-			try{
-				if(extIndex != -1){
-					String name_ext = artName.substring(extIndex+1);
-					if(!"".equals(name_ext) && name_ext.equalsIgnoreCase(ext)) //$NON-NLS-1$
-						artName = artName.substring(0,extIndex);
+			String buildGoal = oldTarget.getAttribute(ITarget.ARTIFACT_NAME);
+			// The name may be in the form <name>[.ext1[.ext2[...]]]
+			String[] nameElements = buildGoal.split("\\.");	//$NON-NLS-1$
+			// There had better be at least a name
+			String name = null;
+			try {
+				name = nameElements[0];
+			} catch (ArrayIndexOutOfBoundsException e) {
+				name = "default";	//$NON-NLS-1$
+			}
+			// Reconstruct the extension
+			String extension = new String();
+			for (int index = 1; index < nameElements.length; ++index) {
+				extension += nameElements[index];
+				if (index < nameElements.length - 1) {
+					extension += ".";	//$NON-NLS-1$
 				}
 			}
-			catch(IndexOutOfBoundsException e){
-				
+			newConfig.setArtifactName(name);
+			if (extension.length() != 0) {
+				newConfig.setArtifactExtension(extension);
 			}
-			newConfig.setArtifactName(artName);
 		}
 		
 		// Convert the tool references
@@ -383,8 +390,8 @@ class UpdateManagedProject12 {
 				type = TYPE_EXE;
 			} else if (token.equalsIgnoreCase(ID_SHARED)){
 				type = TYPE_SHARED;
-			} else if (token.equalsIgnoreCase(ID_SHARED)){
-				type = TYPE_SHARED;
+			} else if (token.equalsIgnoreCase(ID_STATIC)){
+				type = TYPE_STATIC;
 			}
 		}
 		// Create a target based on the new target type

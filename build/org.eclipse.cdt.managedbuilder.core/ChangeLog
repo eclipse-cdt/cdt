@@ -1,3 +1,6 @@
+2004-03-16 Tanya Wolff
+	Marked remaining strings untranslatable as they belong to the extensibility schema.
+
 2004-03-12 Sean Evoy
 	Commit for Jeremiah Lott. 
 	Allows the managed build system to resolve "forward references" within its 

@@ -62,7 +62,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static final String ROOT_ELEM_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
 	private static final String FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
-	public static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + "ManagedBuildManager";	//$NON-NLS-1$
+	public static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + "ManagedBuildManager";	//$NON-NLS-1$ //$NON-NLS-2$
 	public static final String EXTENSION_POINT_ID = "ManagedBuildInfo";		//$NON-NLS-1$
 	
 	// This is the version of the manifest and project files that

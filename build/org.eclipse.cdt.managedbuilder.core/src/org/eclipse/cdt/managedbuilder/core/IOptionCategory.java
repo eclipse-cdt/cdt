@@ -16,7 +16,7 @@ package org.eclipse.cdt.managedbuilder.core;
 public interface IOptionCategory extends IBuildObject {
 
 	// Schema element names
-	public static final String OWNER = "owner";
+	public static final String OWNER = "owner"; //$NON-NLS-1$
 
 	/**
 	 * Returns the list of children of this node in the option category tree

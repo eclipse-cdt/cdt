@@ -12,8 +12,8 @@ package org.eclipse.cdt.managedbuilder.core;
 
 public interface IBuildObject {
 	// Schema element names
-	public static final String ID = "id";
-	public static final String NAME = "name";
+	public static final String ID = "id"; //$NON-NLS-1$
+	public static final String NAME = "name"; //$NON-NLS-1$
 
 	public String getId();
 	public String getName();

@@ -406,13 +406,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				if (errMsg != null && errMsg.length() > 0) {
 					String errorDesc = ManagedBuilderCorePlugin.getResourceString(BUILD_ERROR);
 					buf.append(errorDesc);
-					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-2$
+					buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
 					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					// Report a successful build
 					String successMsg = ManagedBuilderCorePlugin.getFormattedString(BUILD_FINISHED, currentProject.getName());
 					buf.append(successMsg);
-					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-2$
+					buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
 				}
 
 				// Write message on the console

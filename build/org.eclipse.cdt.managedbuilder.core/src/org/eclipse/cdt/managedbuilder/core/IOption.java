@@ -25,24 +25,24 @@ public interface IOption extends IBuildObject {
 	public static final int OBJECTS = 7;
 	
 	// Schema attribute names for option elements
-	public static final String CATEGORY = "category";
-	public static final String COMMAND = "command";
-	public static final String DEFAULT_VALUE = "defaultValue";
-	public static final String ENUM_VALUE = "enumeratedOptionValue";
-	public static final String IS_DEFAULT = "isDefault";
-	public static final String LIST_VALUE = "listOptionValue";
-	public static final String TYPE_BOOL = "boolean";
-	public static final String TYPE_ENUM = "enumerated";
-	public static final String TYPE_INC_PATH = "includePath";
-	public static final String TYPE_LIB = "libs";
-	public static final String TYPE_STRING = "string";
-	public static final String TYPE_STR_LIST = "stringList";
-	public static final String TYPE_USER_OBJS = "userObjs";
-	public static final String VALUE_TYPE = "valueType";
+	public static final String CATEGORY = "category"; //$NON-NLS-1$
+	public static final String COMMAND = "command"; //$NON-NLS-1$
+	public static final String DEFAULT_VALUE = "defaultValue"; //$NON-NLS-1$
+	public static final String ENUM_VALUE = "enumeratedOptionValue"; //$NON-NLS-1$
+	public static final String IS_DEFAULT = "isDefault"; //$NON-NLS-1$
+	public static final String LIST_VALUE = "listOptionValue"; //$NON-NLS-1$
+	public static final String TYPE_BOOL = "boolean"; //$NON-NLS-1$
+	public static final String TYPE_ENUM = "enumerated"; //$NON-NLS-1$
+	public static final String TYPE_INC_PATH = "includePath"; //$NON-NLS-1$
+	public static final String TYPE_LIB = "libs"; //$NON-NLS-1$
+	public static final String TYPE_STRING = "string"; //$NON-NLS-1$
+	public static final String TYPE_STR_LIST = "stringList"; //$NON-NLS-1$
+	public static final String TYPE_USER_OBJS = "userObjs"; //$NON-NLS-1$
+	public static final String VALUE_TYPE = "valueType"; //$NON-NLS-1$
 
 	// Schema attribute names for listOptionValue elements
-	public static final String LIST_ITEM_VALUE = "value";
-	public static final String LIST_ITEM_BUILTIN = "builtIn";
+	public static final String LIST_ITEM_VALUE = "value"; //$NON-NLS-1$
+	public static final String LIST_ITEM_BUILTIN = "builtIn"; //$NON-NLS-1$
 
 	
 	/**

@@ -26,9 +26,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Plugin;
 
 public class ManagedCProjectNature implements IProjectNature {
-	public static final String BUILDER_NAME = "genmakebuilder";
+	public static final String BUILDER_NAME = "genmakebuilder"; //$NON-NLS-1$
 	public static final String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + BUILDER_NAME; //$NON-NLS-1$
-	private static final String MNG_NATURE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".managedBuildNature"; 
+	private static final String MNG_NATURE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".managedBuildNature";  //$NON-NLS-1$
 	private IProject project;
 
 	/**

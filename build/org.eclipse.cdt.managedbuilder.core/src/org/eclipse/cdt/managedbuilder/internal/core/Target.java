@@ -330,7 +330,10 @@ public class Target extends BuildObject implements ITarget {
 
 		if (makeCommand != null) {
 			element.setAttribute(MAKE_COMMAND, makeCommand);
+		} else {
+			// Make sure we use the default
 		}
+		
 		if (makeArguments != null) {
 			element.setAttribute(MAKE_ARGS, makeArguments);
 		}
@@ -420,7 +423,7 @@ public class Target extends BuildObject implements ITarget {
 			if (parent != null) {
 				return parent.getMakeCommand();
 			} else {
-				// The user has forgotten to specify a command in the plugin manifets.
+				// The user has forgotten to specify a command in the plugin manifest
 				return new String("make"); //$NON-NLS-1$
 			}
 		} else {
@@ -721,7 +724,7 @@ public class Target extends BuildObject implements ITarget {
 			return defaultExtension;
 		}
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getBinaryParserId()
 	 */

@@ -180,12 +180,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 
 	/* (non-Javadoc)
-	 * Safe accessor method to retrieve the list of valid source extensions 
-	 * the receiver know how to build.
-	 * 
-	 * @return List
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInputExtensions()
 	 */
-	private List getInputExtensions() {
+	public List getInputExtensions() {
 		if (inputExtensions == null) {
 			inputExtensions = new ArrayList();
 		}

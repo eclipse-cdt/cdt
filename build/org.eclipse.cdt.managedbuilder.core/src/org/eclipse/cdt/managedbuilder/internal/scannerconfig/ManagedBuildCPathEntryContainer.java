@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.model.CoreModel;
@@ -32,7 +31,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IProject;
@@ -73,8 +72,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	
 	protected void addDefinedSymbols(Map definedSymbols) {
 		// Add a new macro entry for each defined symbol
-		Set macros = definedSymbols.keySet();
-		Iterator keyIter = macros.iterator();
+		Iterator keyIter = definedSymbols.keySet().iterator();
 		while (keyIter.hasNext()) {
 			boolean add = true;
 			String macro = (String) keyIter.next();
@@ -191,7 +189,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPathEntries()
 	 */
-	public synchronized IPathEntry[] getPathEntries() {
+	public IPathEntry[] getPathEntries() {
 		// TODO figure out when I can skip this step
 		if (entries.isEmpty()) {
 			// Load the toolchain-spec'd collector
@@ -207,7 +205,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			}
 			// See if we can load a dynamic resolver
 			String baseTargetId = parent.getId();
-			IManagedScannerInfoCollector collector = ManagedBuilderCorePlugin.getDefault().getScannerInfoCollector(baseTargetId); 
+			IManagedScannerInfoCollector collector = ManagedBuildManager.getScannerInfoCollector(baseTargetId); 
 			if (collector != null) {
 				collector.setProject(info.getOwner().getProject());
 				calculateEntriesDynamically((IProject)info.getOwner(), collector);
@@ -239,4 +237,5 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	public IPath getPath() {
 		return new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER");	//$NON-NLS-1$
 	}
+	
 }

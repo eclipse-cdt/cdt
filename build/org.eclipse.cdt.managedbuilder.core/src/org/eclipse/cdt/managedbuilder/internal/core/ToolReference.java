@@ -273,8 +273,15 @@ public class ToolReference implements IToolReference {
 	public String getId() {
 		return parent.getId();
 	}
-
-	/* (non-Javadoc)
+	
+ 	/* (non-Javadoc)
+ 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInputExtensions()
+ 	 */
+ 	public List getInputExtensions() {
+ 		return getTool().getInputExtensions();
+ 	}
+	
+	 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
 	 */
 	public String getName() {

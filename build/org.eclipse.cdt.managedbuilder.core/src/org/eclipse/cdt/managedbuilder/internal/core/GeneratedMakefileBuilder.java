@@ -28,8 +28,11 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -39,11 +42,15 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class GeneratedMakefileBuilder extends ACBuilder {
@@ -65,7 +72,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	// Local variables
 	protected List resourcesToBuild;
 	protected List ruleList;
-
+	protected IManagedBuilderMakefileGenerator generator;
 	
 	public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		private boolean buildNeeded = false;
@@ -96,7 +103,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		String statusMsg = ManagedBuilderCorePlugin.getFormattedString(START, getProject().getName());
+		String statusMsg = ManagedMakeMessages.getFormattedString(START, getProject().getName());
 		IProject[] deps = getProject().getReferencedProjects();
 		if (statusMsg != null) {
 			monitor.subTask(statusMsg);
@@ -171,7 +178,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			IProject depProject = deps[i];
 			if (ManagedBuildManager.manages(depProject)) {
 				IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(depProject);
-				MakefileGenerator generator = new MakefileGenerator(depProject, depInfo, monitor);
+				String targetID = depInfo.getDefaultTarget().getParent().getId();
+				IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getMakefileGenerator(targetID);
+				generator.initialize(depProject, depInfo, monitor);
 				try {
 					generator.regenerateMakefiles();		
 				} catch (CoreException e) {
@@ -182,11 +191,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 
 		// Need to report status to the user
-		String statusMsg = ManagedBuilderCorePlugin.getFormattedString(REBUILD, getProject().getName());
+		String statusMsg = ManagedMakeMessages.getFormattedString(REBUILD, getProject().getName());
 		monitor.subTask(statusMsg);
 
 		// Regenerate the makefiles for this project
-		MakefileGenerator generator = new MakefileGenerator(getProject(), info, monitor);		
+		String targetID = info.getDefaultTarget().getParent().getId();
+		generator = ManagedBuildManager.getMakefileGenerator(targetID);
+		generator.initialize(getProject(), info, monitor);
 		try {
 			generator.regenerateMakefiles();
 		} catch (CoreException e) {
@@ -195,14 +206,53 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 		
 		// Now call make
-		IPath topBuildDir = generator.getTopBuildDir();
+		IPath topBuildDir = generator.getBuildWorkingDir();
 		if (topBuildDir != null) {
-			invokeMake(true, topBuildDir.removeFirstSegments(1), info, monitor);
+			invokeMake(true, topBuildDir, info, monitor);
 		} else {
 			monitor.done();
 		}
+		
+		// Now regenerate the dependencies
+		try {
+			generator.regenerateDependencies(false);
+		} catch (CoreException e) {
+			// Throw the exception back to the builder
+			throw e;
+		}
+		
 	}
 
+	/**
+	 * @param toolId
+	 * @return
+	 */
+	public IManagedBuilderDependencyCalculator getDependencyCalculator(String toolId) {
+		try {
+			IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(ManagedBuilderCorePlugin.getUniqueIdentifier(), ManagedBuilderCorePlugin.DEP_CALC_ID);
+			if (extension != null) {
+				// There could be many of these
+				IExtension[] extensions = extension.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
+					for (int j = 0; j < configElements.length; j++) {
+						IConfigurationElement element = configElements[j];
+						if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) { 
+							if (element.getAttribute(ITool.ID).equals(toolId)) {
+								if (element.getAttribute(ManagedBuilderCorePlugin.DEP_CALC_ID) != null) {
+									return (IManagedBuilderDependencyCalculator) element.createExecutableExtension(ManagedBuilderCorePlugin.DEP_CALC_ID);
+								}
+							}
+						}
+					}
+				}
+			}
+		} 
+		catch (CoreException e) {
+			// Probably not defined
+		}
+		return null;
+	}
 	/* (non-javadoc)
 	 * Answers an array of strings with the proper make targets
 	 * 
@@ -262,7 +312,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		statusMsg = ManagedBuilderCorePlugin.getFormattedString(INCREMENTAL, getProject().getName());
+		statusMsg = ManagedMakeMessages.getFormattedString(INCREMENTAL, getProject().getName());
 		monitor.subTask(statusMsg);
 		
 		// Regenerate the makefiles for any managed projects this project depends on
@@ -271,7 +321,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			IProject depProject = deps[i];
 			if (ManagedBuildManager.manages(depProject)) {
 				IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(depProject);
-				MakefileGenerator generator = new MakefileGenerator(depProject, depInfo, monitor);
+				String targetID = depInfo.getDefaultTarget().getParent().getId();
+				IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getMakefileGenerator(targetID);
+				generator.initialize(depProject, depInfo, monitor);	
 				try {
 					generator.regenerateMakefiles();		
 				} catch (CoreException e) {
@@ -282,7 +334,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 
 		// Ask the makefile generator to generate any makefiles needed to build delta
-		MakefileGenerator generator = new MakefileGenerator(getProject(), info, monitor);
+		String targetID = info.getDefaultTarget().getParent().getId();
+		generator = ManagedBuildManager.getMakefileGenerator(targetID);
+		generator.initialize(getProject(), info, monitor);
 		try {
 			generator.generateMakefiles(delta);
 		} catch (CoreException e) {
@@ -319,7 +373,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			if (root == null) {
 				return;
 			}
-			IPath makefile = workingDirectory.addTrailingSeparator().append(MakefileGenerator.MAKEFILE_NAME);
+			IPath makefile = workingDirectory.addTrailingSeparator().append(generator.getMakefileName());
 			if (root.getFileForLocation(makefile) == null) {
 				return; 
 			}
@@ -330,7 +384,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				String[] msgs = new String[2];
 				msgs[0] = makeCommand.toString();
 				msgs[1] = currentProject.getName();
-				monitor.beginTask(ManagedBuilderCorePlugin.getFormattedString(MAKE, msgs), IProgressMonitor.UNKNOWN);
+				monitor.beginTask(ManagedMakeMessages.getFormattedString(MAKE, msgs), IProgressMonitor.UNKNOWN);
 
 				// Get a build console for the project
 				StringBuffer buf = new StringBuffer();
@@ -339,14 +393,14 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				ConsoleOutputStream consoleOutStream = console.getOutputStream();
 				String[] consoleHeader = new String[3];
 				consoleHeader[0] = fullBuild ? 
-						ManagedBuilderCorePlugin.getResourceString(TYPE_FULL) : 
-						ManagedBuilderCorePlugin.getResourceString(TYPE_INC);
+						ManagedMakeMessages.getResourceString(TYPE_FULL) : 
+						ManagedMakeMessages.getResourceString(TYPE_INC);
 				consoleHeader[1] = info.getConfigurationName();
 				consoleHeader[2] = currentProject.getName();
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$
-				buf.append(ManagedBuilderCorePlugin.getFormattedString(CONSOLE_HEADER, consoleHeader));
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$
-				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$
+				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+				buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
+				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 				consoleOutStream.write(buf.toString().getBytes());
 				consoleOutStream.flush();
 				
@@ -392,7 +446,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			
 				// Hook up an error parser manager
 				String[] errorParsers = info.getDefaultTarget().getErrorParserList(); 
-				ErrorParserManager epm = new ErrorParserManager(getProject(), this, errorParsers);
+				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectory, this, errorParsers);
 				epm.setOutputStream(consoleOutStream);
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();
@@ -413,7 +467,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					// Force a resync of the projects without allowing the user to cancel.
 					// This is probably unkind, but short of this there is no way to insure
 					// the UI is up-to-date with the build results
-					monitor.subTask(ManagedBuilderCorePlugin.getResourceString(REFRESH));
+					monitor.subTask(ManagedMakeMessages.getResourceString(REFRESH));
 					try {
 						currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 						for (int j = 0; j < deps.length; ++j) {
@@ -421,7 +475,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 							project.refreshLocal(IResource.DEPTH_INFINITE, null);
 						}
 					} catch (CoreException e) {
-						monitor.subTask(ManagedBuilderCorePlugin.getResourceString(REFRESH_ERROR));
+						monitor.subTask(ManagedMakeMessages.getResourceString(REFRESH_ERROR));
 					}
 				} else {
 					errMsg = launcher.getErrorMessage();
@@ -430,13 +484,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				// Report either the success or failure of our mission
 				buf = new StringBuffer();
 				if (errMsg != null && errMsg.length() > 0) {
-					String errorDesc = ManagedBuilderCorePlugin.getResourceString(BUILD_ERROR);
+					String errorDesc = ManagedMakeMessages.getResourceString(BUILD_ERROR);
 					buf.append(errorDesc);
 					buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
 					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					// Report a successful build
-					String successMsg = ManagedBuilderCorePlugin.getFormattedString(BUILD_FINISHED, currentProject.getName());
+					String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, currentProject.getName());
 					buf.append(successMsg);
 					buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
 				}
@@ -447,7 +501,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				stdout.close();
 				stderr.close();				
 
-				monitor.subTask(ManagedBuilderCorePlugin.getResourceString(MARKERS));
+				monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
 				epm.reportProblems();
 			}
 		} catch (Exception e) {

@@ -6,12 +6,11 @@
    version="1.0.0">
 
    <requires>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.cdt.managedbuilder.core"/>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.cdt.make.core"/>
-      <import plugin="org.eclipse.cdt.core.tests"/>
       <import plugin="org.eclipse.core.resources"/>
    </requires>
 

@@ -848,13 +848,14 @@
          </tool>
       </target>
       <target
-            isTest="false"
+            isAbstract="false"
             osList="solaris,linux,hpux,aix,macosx,qnx"
             scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
+            isTest="false"
+            makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
             name="%TargetName.gnu.exe"
-            parent="cdt.managedbuild.target.gnu"
-            isAbstract="false"
-            id="cdt.managedbuild.target.gnu.exe">
+            id="cdt.managedbuild.target.gnu.exe"
+            parent="cdt.managedbuild.target.gnu">
          <configuration
                name="%ConfigName.Dbg"
                id="cdt.managedbuild.config.gnu.exe.debug">
@@ -918,6 +919,7 @@
             isTest="false"
             osList="solaris,linux,hpux,aix,macosx,qnx"
             scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
+            makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
             name="%TargetName.gnu.so"
             parent="cdt.managedbuild.target.gnu"
             defaultExtension="so"
@@ -990,6 +992,7 @@
             isTest="false"
             osList="solaris,linux,hpux,aix,macosx,qnx"
             scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
+            makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
             name="%TargetName.gnu.lib"
             parent="cdt.managedbuild.target.gnu"
             defaultExtension="a"
@@ -1059,6 +1062,7 @@
             isTest="false"
             defaultExtension="exe"
             scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultCygwinScannerInfoCollector"
+            makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
             isAbstract="false"
             binaryParser="org.eclipse.cdt.core.PE"
             parent="cdt.managedbuild.target.gnu"
@@ -1130,6 +1134,7 @@
             isTest="false"
             defaultExtension="a.dll"
             scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultCygwinScannerInfoCollector"
+            makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
             isAbstract="false"
             binaryParser="org.eclipse.cdt.core.PE"
             parent="cdt.managedbuild.target.gnu"
@@ -1199,6 +1204,7 @@
             name="%TargetName.cygw.lib"
             id="cdt.managedbuild.target.gnu.cygwin.lib"
             isTest="false"
+            makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
             defaultExtension="a"
             scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultCygwinScannerInfoCollector"
             isAbstract="false"
@@ -1269,6 +1275,7 @@
             osList="win32"
             makeCommand="mingw32-make"
             scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultMinGWScannerInfoCollector"
+            makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
             isTest="false"
             binaryParser="org.eclipse.cdt.core.PE"
             name="%TargetName.mingw.exe"
@@ -1344,6 +1351,7 @@
             scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultMinGWScannerInfoCollector"
             isTest="false"
             binaryParser="org.eclipse.cdt.core.PE"
+            makefileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
             name="%TargetName.mingw.so"
             parent="cdt.managedbuild.target.gnu"
             id="cdt.managedbuild.target.gnu.mingw.so"
@@ -1414,6 +1422,7 @@
             defaultExtension="lib"
             osList="win32"
             makeCommand="mingw32-make"
+            makefileGenerator="org.eclipse.cdt.managedbuilder.ui.properties.BrowseEntryDialog"
             scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultMinGWScannerInfoCollector"
             isTest="false"
             binaryParser="org.eclipse.cdt.core.PE"

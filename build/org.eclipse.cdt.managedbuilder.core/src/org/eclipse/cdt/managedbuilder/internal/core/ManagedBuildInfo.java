@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
@@ -41,9 +42,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -92,10 +96,26 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		cModelElement = CoreModel.getDefault().create(owner.getProject());
 		
 		try {
-			CoreModel.getDefault().setRawPathEntries(cModelElement, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
-		} catch (CModelException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			IPathEntry[] entries = cModelElement.getRawPathEntries();
+			if (entries.length > 0 && entries[0].equals(containerEntry)) {
+				
+			} else {
+				Job initJob = new Job("Initializing path container") {
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							// Set the raw path entries
+							cModelElement.setRawPathEntries(new IPathEntry[]{containerEntry}, new NullProgressMonitor());
+						} catch (CModelException e) {
+							ManagedBuilderCorePlugin.log(e);
+						}
+						return null;
+					}
+
+				};
+				initJob.schedule();
+			}
+		} catch (CModelException e) {
+			ManagedBuilderCorePlugin.log(e);
 		}
 
 		isDirty = false;
@@ -161,27 +181,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
 		// Check to see if there is a rule to build a file with this extension
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(project);
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			try {
-				// Make sure the tool is right for the project
-				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							return tool.buildsFileType(srcExt);
-						}
-						break;
-					case ITool.FILTER_CC:
-						if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							return tool.buildsFileType(srcExt);
-						}
-						break;
-					case ITool.FILTER_BOTH:
-						return tool.buildsFileType(srcExt);
-				}
-			} catch (CoreException e) {
-				continue;
+			if (tool != null && tool.buildsFileType(srcExt)) {
+				return true;
 			}
 		}
 		return false;
@@ -365,31 +369,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(project);
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			if (tool.buildsFileType(extension)) {
+			if (tool != null && tool.buildsFileType(extension)) {
 				try {
-					// Make sure the tool is right for the project
-					switch (tool.getNatureFilter()) {
-						case ITool.FILTER_C:
-							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								return tool.getToolFlags();
-							}
-							break;
-						case ITool.FILTER_CC:
-							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								return tool.getToolFlags();
-							}
-							break;
-						case ITool.FILTER_BOTH:
-							return tool.getToolFlags();
-					}
-				} catch (CoreException e) {
-					continue;
+					return tool.getToolFlags();
 				} catch (BuildException e) {
-					// Give it your best shot with the next tool
-					continue;
+					return null;
 				}
 			}
 		}
@@ -406,31 +393,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(project);
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
 			if (tool.producesFileType(ext)) {
 				try {
-					// Make sure the tool is right for the project
-					switch (tool.getNatureFilter()) {
-						case ITool.FILTER_C:
-							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								return tool.getToolFlags();
-							}
-							break;
-						case ITool.FILTER_CC:
-							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								return tool.getToolFlags();
-							}
-							break;
-						case ITool.FILTER_BOTH:
-							return tool.getToolFlags();
-					}
-				} catch (CoreException e) {
-					continue;
+					return tool.getToolFlags();
 				} catch (BuildException e) {
-					// Give it your best shot with the next tool
-					continue;
+					return null;
 				}
 			}
 		}
@@ -534,32 +504,12 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public String[] getLibsForTarget(String extension) {
 		IProject project = (IProject)owner;
 		
-		ArrayList libs = new ArrayList();
+		Vector libs = new Vector();
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(project);
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			try {
-				// Make sure the tool is right for the project
-				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_CC:
-						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_BOTH:
-						break;
-				}
-			} catch (CoreException e) {
-				continue;
-			}
-			// The tool is OK for this project nature
 			if (tool.producesFileType(extension)) {
 				IOption[] opts = tool.getOptions();
 				// Look for the lib option type
@@ -580,7 +530,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				}
 			}
 		}
-		libs.trimToSize();
 		return (String[])libs.toArray(new String[libs.size()]);
 	}
 
@@ -603,29 +552,16 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public String getOutputExtension(String resourceExtension) {
 		IProject project = (IProject)owner;
+		String outputExtension = null;
+		
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(project);
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			try {
-				// Make sure the tool is right for the project
-				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							return tool.getOutputExtension(resourceExtension);
-						}
-						break;
-					case ITool.FILTER_CC:
-						if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							return tool.getOutputExtension(resourceExtension);
-						}
-						break;
-					case ITool.FILTER_BOTH:
-						return tool.getOutputExtension(resourceExtension);
-				}
-			} catch (CoreException e) {
-				continue;
+			outputExtension = tool.getOutputExtension(resourceExtension);
+			if (outputExtension != null) {
+				return outputExtension;
 			}
 		}
 		return null;
@@ -642,28 +578,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// Get all the tools for the current config
 		String flags = new String();
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(project);
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			try {
-				// Make sure the tool is right for the project
-				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_CC:
-						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_BOTH:
-						break;
-				}
-			} catch (CoreException e) {
-				continue;
-			}
 			// It's OK
 			if (tool.producesFileType(ext)) {
 				flags = tool.getOutputFlag();
@@ -683,28 +600,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// Get all the tools for the current config
 		String flags = new String();
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(project);
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			try {
-				// Make sure the tool is right for the project
-				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_CC:
-						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_BOTH:
-						break;
-				}
-			} catch (CoreException e) {
-				continue;
-			}
 			if (tool.producesFileType(ext)) {
 				flags = tool.getOutputPrefix();
 			}
@@ -756,29 +654,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(project);
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
 			if (tool.buildsFileType(extension)) {
-				try {
-					// Make sure the tool is right for the project
-					switch (tool.getNatureFilter()) {
-						case ITool.FILTER_C:
-							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								return tool.getToolCommand();
-							}
-							break;
-						case ITool.FILTER_CC:
-							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								return tool.getToolCommand();
-							}
-							break;
-						case ITool.FILTER_BOTH:
-							return tool.getToolCommand();
-					}
-				} catch (CoreException e) {
-					continue;
-				}
+				return tool.getToolCommand();
 			}
 		}
 		return null;
@@ -794,29 +674,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		String ext = extension == null ? new String() : extension;
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(project);
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
 			if (tool.producesFileType(ext)) {
-				try {
-					// Make sure the tool is right for the project
-					switch (tool.getNatureFilter()) {
-						case ITool.FILTER_C:
-							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								return tool.getToolCommand();
-							}
-							break;
-						case ITool.FILTER_CC:
-							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								return tool.getToolCommand();
-							}
-							break;
-						case ITool.FILTER_BOTH:
-							return tool.getToolCommand();
-					}
-				} catch (CoreException e) {
-					continue;
-				}
+				return tool.getToolCommand();
 			}
 		}
 		return null;
@@ -827,31 +689,12 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public String[] getUserObjectsForTarget(String extension) {
 		IProject project = (IProject)owner;
-		ArrayList objs = new ArrayList();
+		Vector objs = new Vector();
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(project);
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			try {
-				// Make sure the tool is right for the project
-				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_CC:
-						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_BOTH:
-						break;
-				}
-			} catch (CoreException e) {
-				continue;
-			}
 			// The tool is OK for this project nature
 			if (tool.producesFileType(extension)) {
 				IOption[] opts = tool.getOptions();
@@ -868,7 +711,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				}
 			}
 		}
-		objs.trimToSize();
 		return (String[])objs.toArray(new String[objs.size()]);
 	}
 
@@ -985,8 +827,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			IPathEntryContainer container = new ManagedBuildCPathEntryContainer(this);
 			CoreModel.getDefault().setPathEntryContainer(new ICProject[]{cModelElement}, container, new NullProgressMonitor());
 		} catch (CModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ManagedBuilderCorePlugin.log(e);
 		}
 	}
 	
@@ -1122,7 +963,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				// And finally update the cModelElement
 				cModelElement = CoreModel.getDefault().create(owner.getProject());
 				try {
-					CoreModel.getDefault().setRawPathEntries(cModelElement, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
+					CoreModel.setRawPathEntries(cModelElement, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
 				} catch (CModelException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

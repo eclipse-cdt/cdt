@@ -21,8 +21,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
 public class ManagedCProjectNature implements IProjectNature {
@@ -110,9 +110,8 @@ public class ManagedCProjectNature implements IProjectNature {
 	 */
 	public static String getBuilderID() {
 		Plugin plugin = (Plugin)ManagedBuilderCorePlugin.getDefault();
-		IPluginDescriptor descriptor = plugin.getDescriptor();
-		if (descriptor.getExtension(BUILDER_NAME) != null) {
-			return descriptor.getUniqueIdentifier() + "." + BUILDER_NAME; //$NON-NLS-1$
+		if (Platform.getExtensionRegistry().getExtension(BUILDER_NAME) != null) {
+			return ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + BUILDER_NAME; //$NON-NLS-1$
 		}
 		return BUILDER_ID;
 	}

@@ -41,8 +41,11 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.DefaultManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -50,7 +53,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Document;
@@ -69,8 +73,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
 	public static final String SETTINGS_FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
-	public static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + "ManagedBuildManager";	//$NON-NLS-1$ //$NON-NLS-2$
-	public static final String EXTENSION_POINT_ID = "ManagedBuildInfo";	//$NON-NLS-1$
+	public static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".ManagedBuildManager";	//$NON-NLS-1$
+	public static final String EXTENSION_POINT_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".ManagedBuildInfo";	//$NON-NLS-1$
 	private static final String REVISION_ELEMENT_NAME = "managedBuildRevision";	//$NON-NLS-1$
 	private static final String VERSION_ELEMENT_NAME = "fileVersion";	//$NON-NLS-1$
 	private static final String MANIFEST_VERSION_ERROR ="ManagedBuildManager.error.manifest.version.error";	//$NON-NLS-1$
@@ -236,7 +240,73 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			info.setSelectedTarget(target);
 		}
 	}
-	
+
+	public static IManagedBuilderMakefileGenerator getMakefileGenerator(String targetId) {
+		try {
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint extension = registry.getExtensionPoint(EXTENSION_POINT_ID);
+			if (extension != null) {
+				// There could be many of these
+				IExtension[] extensions = extension.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
+					for (int j = 0; j < configElements.length; j++) {
+						IConfigurationElement element = configElements[j];
+						if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) { 
+							if (element.getAttribute(ITarget.ID).equals(targetId)) {
+								if (element.getAttribute(ManagedBuilderCorePlugin.MAKEGEN_ID) != null) {
+									return (IManagedBuilderMakefileGenerator) element.createExecutableExtension(ManagedBuilderCorePlugin.MAKEGEN_ID);
+								}
+							}
+						}
+					}
+				}
+			}
+		} 
+		catch (CoreException e) {
+			// Probably not defined
+			ManagedBuilderCorePlugin.log(e);
+		}
+		return null;
+	}
+
+	/** 
+	 * Targets may have a scanner collector defined that knows how to discover 
+	 * built-in compiler defines and includes search paths. Find the scanner 
+	 * collector implentation for the target specified.
+	 * 
+	 * @param string the unique id of the target to search for
+	 * @return an implementation of <code>IManagedScannerInfoCollector</code>
+	 */
+	public static IManagedScannerInfoCollector getScannerInfoCollector(String targetId) {
+		try {
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint extension = registry.getExtensionPoint(EXTENSION_POINT_ID);
+			if (extension != null) {
+				// There could be many of these
+				IExtension[] extensions = extension.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
+					for (int j = 0; j < configElements.length; j++) {
+						IConfigurationElement element = configElements[j];
+						if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) { 
+							if (element.getAttribute(ITarget.ID).equals(targetId)) {
+								if (element.getAttribute(ManagedBuilderCorePlugin.SCANNER_INFO_ID) != null) {
+									return (IManagedScannerInfoCollector) element.createExecutableExtension(ManagedBuilderCorePlugin.SCANNER_INFO_ID);
+								}
+							}
+						}
+					}
+				}
+			}
+		} 
+		catch (CoreException e) {
+			// Probably not defined
+			ManagedBuilderCorePlugin.log(e);
+		}
+		return null;
+	}
+
 	/**
 	 * Gets the currently selected target.  This is used while the project
 	 * property pages are displayed
@@ -351,6 +421,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			config.setToolCommand(tool, command);
 		}
 	}
+	
 	
 	/**
 	 * Saves the build information associated with a project and all resources
@@ -501,13 +572,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		if (resource instanceof IProject) {
 			// Must be an extension target (why?)
 			if (owner != null)
-				throw new BuildException(ManagedBuilderCorePlugin.getResourceString("ManagedBuildManager.error.owner_not_null")); //$NON-NLS-1$
+				throw new BuildException(ManagedMakeMessages.getResourceString("ManagedBuildManager.error.owner_not_null")); //$NON-NLS-1$
 		} else {
 			// Owner must be owned by the project containing this resource
 			if (owner == null)
-				throw new BuildException(ManagedBuilderCorePlugin.getResourceString("ManagedBuildManager.error.null_owner")); //$NON-NLS-1$
+				throw new BuildException(ManagedMakeMessages.getResourceString("ManagedBuildManager.error.null_owner")); //$NON-NLS-1$
 			if (!owner.equals(resource.getProject()))
-				throw new BuildException(ManagedBuilderCorePlugin.getResourceString("ManagedBuildManager.error.owner_not_project")); //$NON-NLS-1$
+				throw new BuildException(ManagedMakeMessages.getResourceString("ManagedBuildManager.error.owner_not_project")); //$NON-NLS-1$
 		}
 		
 		// Passed validation so create the target.
@@ -566,7 +637,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				fileVersion = rootElement.getNodeValue();
 				PluginVersionIdentifier version = new PluginVersionIdentifier(fileVersion);
 				if (!buildInfoVersion.isCompatibleWith(version)) {
-					throw new BuildException(ManagedBuilderCorePlugin.getResourceString(PROJECT_VERSION_ERROR)); 
+					throw new BuildException(ManagedMakeMessages.getResourceString(PROJECT_VERSION_ERROR)); 
 				}
 				if (buildInfoVersion.isGreaterThan(version)) {
 					// TODO Upgrade the project
@@ -599,8 +670,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			return;
 		
 		// Get those extensions
-		IPluginDescriptor descriptor = ManagedBuilderCorePlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint = descriptor.getExtensionPoint(EXTENSION_POINT_ID);
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
 		IExtension[] extensions = extensionPoint.getExtensions();
 				
 		// First call the constructors
@@ -609,7 +679,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			// Can we read this manifest
 			if (!isVersionCompatible(extension)) {
 				//The version of the Plug-in is greater than what the manager thinks it understands
-				throw new BuildException(ManagedBuilderCorePlugin.getResourceString(MANIFEST_VERSION_ERROR));
+				throw new BuildException(ManagedMakeMessages.getResourceString(MANIFEST_VERSION_ERROR));
 			}			
 			IConfigurationElement[] elements = extension.getConfigurationElements();
 			loadConfigElements(DefaultManagedConfigElement.convertArray(elements));

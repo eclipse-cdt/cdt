@@ -109,7 +109,7 @@
                   This is an optional field that specifies the class that provides the dependency calculation for a given tool. This field is unused in CDT 1.2.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.internal.core.sourcedependency.ISourceDependency"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -238,6 +238,16 @@ Additional special types exist to flag options of special relevance to the build
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+         <attribute name="helpSupplier" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
          </attribute>
       </complexType>
    </element>
@@ -393,7 +403,7 @@ Additional special types exist to flag options of special relevance to the build
    <element name="target">
       <annotation>
          <documentation>
-            Represents a type of resource that is the target of the build process, for example, a Linux Library.  A target contains a sequence of tool definitions and configurations.  Targets are arranged in an inheritance hierarchy where a target inherits the list of tools from it&apos;s parent and can add to or override tools in this list.
+            Represents a type of resource that is the target of the build process, for example, a Linux static library. A target contains a sequence of tool definitions and configurations. Targets are arranged in an inheritance hierarchy where a target inherits the list of tools from it&apos;s parent and can add to or override tools in this list.
          </documentation>
       </annotation>
       <complexType>
@@ -507,6 +517,16 @@ Additional special types exist to flag options of special relevance to the build
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="makefileGenerator" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator"/>
                </appInfo>
             </annotation>
          </attribute>

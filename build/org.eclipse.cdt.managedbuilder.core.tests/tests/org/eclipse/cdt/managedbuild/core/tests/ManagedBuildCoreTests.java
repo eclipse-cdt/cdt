@@ -46,7 +46,6 @@ import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionReference;
-import org.eclipse.cdt.testplugin.FileManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -1435,8 +1434,6 @@ public class ManagedBuildCoreTests extends TestCase {
 	public void testBug43450 () throws Exception{
 		IProject project = createProject( projectName );
 		
-		FileManager fileManager = new FileManager();
-
 		IFolder folder = project.getProject().getFolder( "includes" );
 		if( !folder.exists() ){
 			folder.create( false, true, null );

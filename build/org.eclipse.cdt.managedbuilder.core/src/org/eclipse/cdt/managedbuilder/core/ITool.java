@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import java.util.List;
+
 /**
  * 
  */
@@ -41,6 +43,14 @@ public interface ITool extends IBuildObject {
 	 */
 	public boolean buildsFileType(String extension);
 	
+	/**
+	 * Answers the list of valid source extensions the receiver know how to build.
+	 * The list may be empty but will never be <code>null</code>.
+	 * 
+	 * @return List
+	 */
+	public List getInputExtensions();
+
 	/**
 	 * Answers a constant corresponding to the project nature the tool should be used 
 	 * for. Possible answers are:

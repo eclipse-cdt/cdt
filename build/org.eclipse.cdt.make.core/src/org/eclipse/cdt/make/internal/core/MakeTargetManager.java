@@ -48,6 +48,8 @@ import org.eclipse.core.runtime.Status;
 public class MakeTargetManager implements IMakeTargetManager, IResourceChangeListener {
 	private static String TARGET_BUILD_EXT = "MakeTargetBuilder"; //$NON-NLS-1$
 
+	private static String TARGETS_EXT = "targets"; //$NON-NLS-1$
+
 	private ListenerList listeners = new ListenerList();
 	private HashMap projectMap = new HashMap();
 	private HashMap builderMap;
@@ -56,19 +58,23 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	public MakeTargetManager() {
 	}
 
-	public IMakeTarget addTarget(IContainer container, String targetBuilderID, String targetName) throws CoreException {
+	public IMakeTarget createTarget(String name, String targetBuilderID) {
+		return new MakeTarget(this, targetBuilderID, name);
+	}
+	
+	public void addTarget(IContainer container, IMakeTarget target) throws CoreException {
 		if (container instanceof IWorkspaceRoot) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
 		}
-		ProjectTargets projectTargets = (ProjectTargets) projectMap.get(container.getProject());
+		IProject project = container.getProject();
+		ProjectTargets projectTargets = (ProjectTargets) projectMap.get(project);
 		if (projectTargets == null) {
-			projectTargets = readTargets(container.getProject());
+			projectTargets = readTargets(project);
 		}
-		MakeTarget target = new MakeTarget(container, targetBuilderID, targetName);
-		projectTargets.add(target);
+		((MakeTarget)target).setContainer(container);
+		projectTargets.add((MakeTarget)target);
 		writeTargets(projectTargets);
 		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_ADD, target));
-		return target;
 	}
 
 	public void removeTarget(IMakeTarget target) throws CoreException {
@@ -231,7 +237,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	protected void writeTargets(ProjectTargets projectTargets) throws CoreException {
-		IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(projectTargets.getProject().getName());
+		IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(projectTargets.getProject().getName()).addFileExtension(TARGETS_EXT);
 		File targetFile = targetFilePath.toFile();
 		try {
 			FileOutputStream file = new FileOutputStream(targetFile);
@@ -244,15 +250,21 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	protected ProjectTargets readTargets(IProject project) {
-		IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName());
+		IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(TARGETS_EXT);
 		File targetFile = targetFilePath.toFile();
+		ProjectTargets projectTargets = null;
 		if (targetFile.exists()) {
 			try {
-				return new ProjectTargets(project, new FileInputStream(targetFile));
+				projectTargets = new ProjectTargets(this, project, new FileInputStream(targetFile));
 			} catch (FileNotFoundException e) {
 			}
 		}
-		return new ProjectTargets(project);
+		if ( projectTargets == null) {
+		 	projectTargets = new ProjectTargets(this, project);
+		}
+		projectMap.put(project, projectTargets);
+		return projectTargets;
+
 	}
 
 	protected void initializeBuilders() {

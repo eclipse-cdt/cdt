@@ -9,9 +9,10 @@ import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
-import org.eclipse.cdt.make.ui.dialogs.BuildTargetDialog;
-import org.eclipse.core.resources.IContainer;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.dialogs.MakeTargetDialog;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -31,10 +32,13 @@ public class EditTargetAction extends SelectionListenerAction {
 
 	public void run() {
 		if (canRename()) {
-			BuildTargetDialog dialog = new BuildTargetDialog(shell, (IContainer) getStructuredSelection().getFirstElement());
-			dialog.setOpenMode(BuildTargetDialog.OPEN_MODE_CREATE_NEW);
-			dialog.setSelectedTarget((IMakeTarget) getStructuredSelection().getFirstElement());
-			dialog.open();
+			MakeTargetDialog dialog;
+			try {
+				dialog = new MakeTargetDialog(shell, (IMakeTarget) getStructuredSelection().getFirstElement());
+				dialog.open();
+			} catch (CoreException e) {
+				MakeUIPlugin.errorDialog(shell, "Internal Error", "", e);
+			}
 		}
 	}
 

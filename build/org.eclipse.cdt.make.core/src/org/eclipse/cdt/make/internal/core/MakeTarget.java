@@ -19,9 +19,11 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 public class MakeTarget implements IMakeTarget {
 
+	private String target;
 	private String buildArguments;
 	private IPath buildCommand;
 	private boolean isDefaultBuildCmd;
@@ -29,11 +31,16 @@ public class MakeTarget implements IMakeTarget {
 	private String name;
 	private String targetBuilderID;
 	private IContainer container;
-
-	MakeTarget(IContainer container, String targetBuilderID, String name) {
-		this.container = container;
+	private MakeTargetManager manager;
+	
+	MakeTarget(MakeTargetManager manager, String targetBuilderID, String name) {
+		this.manager = manager;
 		this.targetBuilderID = targetBuilderID;
 		this.name = name;
+	}
+
+	void setContainer(IContainer container) {
+		this.container = container;
 	}
 
 	void setName(String name) {
@@ -65,7 +72,7 @@ public class MakeTarget implements IMakeTarget {
 	}
 
 	public IPath getBuildCommand() {
-		return buildCommand;
+		return buildCommand != null ? buildCommand: new Path("");
 	}
 
 	public void setBuildCommand(IPath command) {
@@ -73,7 +80,7 @@ public class MakeTarget implements IMakeTarget {
 	}
 
 	public String getBuildArguments() {
-		return buildArguments;
+		return buildArguments != null ? buildArguments : "";
 	}
 
 	public void setBuildArguments(String arguments) {
@@ -100,16 +107,29 @@ public class MakeTarget implements IMakeTarget {
 
 	public void build(IProgressMonitor monitor) throws CoreException {
 		IProject project = container.getProject();
-		String builderID = MakeCorePlugin.getDefault().getTargetManager().getBuilderID(targetBuilderID);
+		String builderID = manager.getBuilderID(targetBuilderID);
 		HashMap infoMap = new HashMap();
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(infoMap, builderID);
-		info.setBuildArguments(buildArguments);
-		info.setBuildCommand(buildCommand);
+		if ( buildArguments != null) {
+			info.setBuildArguments(buildArguments);
+		}
+		if ( buildCommand != null ) {
+			info.setBuildCommand(buildCommand);
+		}
 		info.setUseDefaultBuildCmd(isDefaultBuildCmd);
 		info.setStopOnError(isStopOnError);
 		info.setFullBuildEnable(true);
-		info.setFullBuildTarget(buildArguments);
+		info.setFullBuildTarget(target);
 		info.setBuildLocation(container.getLocation());
 		project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, monitor);
+	}
+
+	public void setBuildTarget(String target) {
+		this.target = target;
+		
+	}
+
+	public String getBuildTarget() {
+		return target;
 	}
 }

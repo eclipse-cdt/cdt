@@ -12,7 +12,6 @@ import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.ui.actions.TargetBuild;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -32,9 +31,8 @@ public class BuildTargetAction extends SelectionListenerAction {
 
 	public void run() {
 		if (canBuild()) {
-			ProgressMonitorDialog pd = new ProgressMonitorDialog(shell);
 			IMakeTarget[] targets = (IMakeTarget[]) getSelectedElements().toArray(new IMakeTarget[0]);
-			TargetBuild.run(true, pd, targets);
+			TargetBuild.runWithProgressDialog(shell, targets);
 		}
 	}
 

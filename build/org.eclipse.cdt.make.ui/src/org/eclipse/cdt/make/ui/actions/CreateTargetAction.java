@@ -9,13 +9,9 @@
 package org.eclipse.cdt.make.ui.actions;
 
 import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.make.core.IMakeTarget;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
-import org.eclipse.cdt.make.ui.dialogs.BuildTargetDialog;
+import org.eclipse.cdt.make.ui.dialogs.MakeTargetDialog;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,29 +21,18 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.actions.ActionDelegate;
 
-public class CreateBuildAction extends ActionDelegate implements IObjectActionDelegate, IWorkbenchWindowActionDelegate {
+public class CreateTargetAction extends ActionDelegate implements IObjectActionDelegate, IWorkbenchWindowActionDelegate {
 
 	IWorkbenchPart fPart;
 	IContainer fContainer;
 	
 	public void run(IAction action) {
 		if ( fContainer != null ) {
-			BuildTargetDialog dialog = new BuildTargetDialog(fPart.getSite().getShell(), fContainer);
-			dialog.setOpenMode(BuildTargetDialog.OPEN_MODE_BUILD);
-			String name;
+			MakeTargetDialog dialog;
 			try {
-				name = (String) fContainer.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"));
-				IMakeTarget target = MakeCorePlugin.getDefault().getTargetManager().findTarget(fContainer, name);
-				dialog.setSelectedTarget(target);	
+				dialog = new MakeTargetDialog(fPart.getSite().getShell(), fContainer);
+				dialog.open();
 			} catch (CoreException e) {
-			}
-			dialog.open();
-			IMakeTarget target = dialog.getSelectedTarget();
-			if ( target != null ) {
-				try {
-					fContainer.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"), target.getName());
-				} catch (CoreException e1) {
-				}
 			}
 		}
 	}

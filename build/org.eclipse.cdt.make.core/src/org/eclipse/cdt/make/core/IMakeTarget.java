@@ -25,9 +25,11 @@ public interface IMakeTarget {
 	boolean isDefaultBuildCmd();
 	void setUseDefaultBuildCmd(boolean useDefault);
 
+	void setBuildTarget(String target);
+	String getBuildTarget();
+	
 	IPath getBuildCommand();
 	void setBuildCommand(IPath command);
-	
 	String getBuildArguments();
 	void setBuildArguments(String arguments);
 	

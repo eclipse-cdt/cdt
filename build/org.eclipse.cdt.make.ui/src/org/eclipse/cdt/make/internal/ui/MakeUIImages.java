@@ -39,8 +39,12 @@ public class MakeUIImages {
 	public static final String OBJ = "obj16/"; //$NON-NLS-1$
 
 	// For the build image
-	public static final String IMG_OBJS_BUILD_TARGET = NAME_PREFIX + "target.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_BUILD_TARGET = NAME_PREFIX + "target_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_TARGET = createManaged(OBJ, IMG_OBJS_BUILD_TARGET);
+
+	public static final String IMG_OBJS_ERROR = NAME_PREFIX + "error_obj.gif";
+	public static final ImageDescriptor DESC_OBJ_ERROR = createManaged(OBJ, IMG_OBJS_ERROR);
+
 
 	public static final String IMG_TOOLS_MAKE_TARGET_BUILD = NAME_PREFIX + "target_build.gif"; //$NON-NLS-1$
 	public static final String IMG_TOOLS_MAKE_TARGET_ADD = NAME_PREFIX + "target_add.gif"; //$NON-NLS-1$

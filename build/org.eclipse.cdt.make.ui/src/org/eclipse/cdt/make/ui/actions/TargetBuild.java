@@ -17,8 +17,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -67,7 +69,16 @@ public class TargetBuild {
 		}
 	}
 	
-	static public void run(boolean fork, IRunnableContext context, final IMakeTarget[] targets) {
+	static public void runWithProgressDialog(Shell shell, IMakeTarget[] targets) {
+		ProgressMonitorDialog pd = new ProgressMonitorDialog(shell);
+		try {
+			TargetBuild.run(true, pd, targets);
+		} catch (InvocationTargetException e) {
+			MakeUIPlugin.errorDialog(shell, "Target Build Error", "Error Building Target", e);
+		}
+	}
+		
+	static public void run(boolean fork, IRunnableContext context, final IMakeTarget[] targets) throws InvocationTargetException {
 		try {
 			context.run(fork, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -91,8 +102,6 @@ public class TargetBuild {
 			});
 		} catch (InterruptedException e) {
 			return;
-		} catch (InvocationTargetException e) {
-			MakeUIPlugin.logException(e, "Build Error", "Error Building Projects");
 		}
 	}
 }

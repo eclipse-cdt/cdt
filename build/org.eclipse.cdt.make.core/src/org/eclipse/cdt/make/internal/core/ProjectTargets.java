@@ -7,6 +7,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,19 +33,31 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class ProjectTargets {
-	private static String BUILD_TARGET_ELEMENT = "buildTargets"; //$NON-NLS-1$
-	private static String TARGET_ELEMENT = "target"; //$NON-NLS-1$
 
+	private static final String BUILD_TARGET_ELEMENT = "buildTargets"; //$NON-NLS-1$
+	private static final String TARGET_ELEMENT = "target"; //$NON-NLS-1$
+	private static final String TARGET_ATTR_ID = "targetID"; //$NON-NLS-1$
+	private static final String TARGET_ATTR_PATH = "path";
+	private static final String TARGET_ATTR_NAME = "name";
+	private static final String TARGET_STOP_ON_ERROR = "stopOnError";
+	private static final String TARGET_USE_DEFAULT_CMD = "useDefaultCommand";
+	private static final String TARGET_ARGUMENTS = "buildArguments";
+	private static final String TARGET_COMMAND ="buildCommand";
+	private static final String TARGET = "buidlTarget";
+	
 	private HashMap targetMap = new HashMap();
-	private IProject project;
 
-	public ProjectTargets(IProject project) {
+	private IProject project;
+	private MakeTargetManager manager;
+
+	public ProjectTargets(MakeTargetManager manager, IProject project) {
 		this.project = project;
+		this.manager = manager;
 	}
 
-	public ProjectTargets(IProject project, InputStream input) {
-		this(project);
-		
+	public ProjectTargets(MakeTargetManager manager, IProject project, InputStream input) {
+		this(manager, project);
+
 		Document document = null;
 		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -59,28 +73,33 @@ public class ProjectTargets {
 				if (node.getNodeName().equals(TARGET_ELEMENT)) {
 					IContainer container = null;
 					NamedNodeMap attr = node.getAttributes();
-					String path = attr.getNamedItem("targetID").getNodeValue();
-					if (path != null) {
+					String path = attr.getNamedItem(TARGET_ATTR_PATH).getNodeValue();
+					if (path != null && !path.equals("")) {
 						container = project.getFolder(path);
 					} else {
 						container = project;
 					}
-					MakeTarget target = new MakeTarget(container, attr.getNamedItem("targetID").getNodeValue(), attr.getNamedItem("name").getNodeValue()); //$NON-NLS-1$ //$NON-NLS-2$
-					String option = getString(node, "stopOnError");
+					MakeTarget target = new MakeTarget(manager, attr.getNamedItem(TARGET_ATTR_ID).getNodeValue(), attr.getNamedItem(TARGET_ATTR_NAME).getNodeValue()); 
+					target.setContainer(container);
+					String option = getString(node, TARGET_STOP_ON_ERROR);
 					if (option != null) {
 						target.setStopOnError(Boolean.valueOf(option).booleanValue());
 					}
-					option = getString(node, "useDefaultCommand");
+					option = getString(node, TARGET_USE_DEFAULT_CMD);
 					if (option != null) {
 						target.setUseDefaultBuildCmd(Boolean.valueOf(option).booleanValue());
 					}
-					option = getString(node, "buildCommand");
+					option = getString(node, TARGET_COMMAND);
 					if (option != null) {
 						target.setBuildCommand(new Path(option));
 					}
-					option = getString(node, "buildArguments");
+					option = getString(node, TARGET_ARGUMENTS);
 					if (option != null) {
 						target.setBuildArguments(option);
+					}
+					option = getString(node, TARGET);
+					if (option != null) {
+						target.setBuildTarget(option);
 					}
 					try {
 						add(target);
@@ -113,17 +132,17 @@ public class ProjectTargets {
 		}
 		return new IMakeTarget[0];
 	}
-	
+
 	public IMakeTarget findTarget(IContainer container, String name) {
 		ArrayList list = (ArrayList) targetMap.get(container);
 		if (list != null) {
 			Iterator targets = list.iterator();
-			while( targets.hasNext()) {
-				IMakeTarget target = (IMakeTarget)targets.next();
-				if ( target.getName().equals(name) ) {
+			while (targets.hasNext()) {
+				IMakeTarget target = (IMakeTarget) targets.next();
+				if (target.getName().equals(name)) {
 					return target;
 				}
-			}		
+			}
 		}
 		return null;
 	}
@@ -165,9 +184,44 @@ public class ProjectTargets {
 
 	protected Document getAsXML() throws IOException {
 		Document doc = new DocumentImpl();
-		Element configRootElement = doc.createElement(BUILD_TARGET_ELEMENT);
-		doc.appendChild(configRootElement);
+		Element targetsRootElement = doc.createElement(BUILD_TARGET_ELEMENT);
+		doc.appendChild(targetsRootElement);
+		Iterator container = targetMap.entrySet().iterator();
+		while (container.hasNext()) {
+			List targets = (List) ((Map.Entry)container.next()).getValue();
+			for (int i = 0; i < targets.size(); i++) {
+				MakeTarget target = (MakeTarget) targets.get(i);
+				targetsRootElement.appendChild(createTargetElement(doc, target));
+			}
+		}
 		return doc;
+	}
+
+	private Node createTargetElement(Document doc, MakeTarget target) {
+		Element targetElem = doc.createElement(TARGET_ELEMENT);
+		targetElem.setAttribute(TARGET_ATTR_NAME, target.getName());
+		targetElem.setAttribute(TARGET_ATTR_ID, target.getTargetBuilderID());
+		targetElem.setAttribute(TARGET_ATTR_PATH, target.getContainer().getProjectRelativePath().toString());
+		Element elem = doc.createElement(TARGET_COMMAND);
+		targetElem.appendChild(elem);
+		elem.appendChild(doc.createTextNode(target.getBuildCommand().toString()));
+		
+		elem = doc.createElement(TARGET_ARGUMENTS);
+		elem.appendChild(doc.createTextNode(target.getBuildArguments()));
+		targetElem.appendChild(elem);
+
+		elem = doc.createElement(TARGET);
+		elem.appendChild(doc.createTextNode(target.getBuildTarget()));
+		targetElem.appendChild(elem);
+
+		elem = doc.createElement(TARGET_STOP_ON_ERROR);
+		elem.appendChild(doc.createTextNode(new Boolean(target.isStopOnError()).toString()));
+		targetElem.appendChild(elem);
+		
+		elem = doc.createElement(TARGET_USE_DEFAULT_CMD);
+		elem.appendChild(doc.createTextNode(new Boolean(target.isDefaultBuildCmd()).toString()));
+		targetElem.appendChild(elem);
+		return targetElem;		
 	}
 
 	public void saveTargets(OutputStream output) throws IOException {

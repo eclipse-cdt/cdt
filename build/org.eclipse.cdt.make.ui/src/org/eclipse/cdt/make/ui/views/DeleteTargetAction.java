@@ -10,8 +10,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
+import org.eclipse.cdt.make.core.IMakeTargetManager;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -46,7 +50,10 @@ public class DeleteTargetAction extends SelectionListenerAction {
 			msg = MessageFormat.format("Are you sure you want to delete  ''{0}''?", new Object[] { target.getName()});
 		} else {
 			title = "Confirm Multiple Target Deletion";
-			msg = MessageFormat.format("Are you sure you want to delete these {0} targets?", new Object[] { new Integer(targets.size())});
+			msg =
+				MessageFormat.format(
+					"Are you sure you want to delete these {0} targets?",
+					new Object[] { new Integer(targets.size())});
 		}
 		return MessageDialog.openQuestion(shell, title, msg);
 	}
@@ -54,12 +61,22 @@ public class DeleteTargetAction extends SelectionListenerAction {
 	public void run() {
 		if (canDelete() && confirmDelete() == false)
 			return;
+		List targets = getTargetsToDelete();
+		IMakeTargetManager manager = MakeCorePlugin.getDefault().getTargetManager();
+		Iterator iter = targets.iterator();
+		try {
+			while (iter.hasNext()) {
+				manager.removeTarget((IMakeTarget) iter.next());
+			}
+		} catch (CoreException e) {
+			MakeUIPlugin.errorDialog(shell, "Target Remove Error", "Error deleting build target", e);
+		}
 	}
 
 	protected boolean updateSelection(IStructuredSelection selection) {
-			return super.updateSelection(selection) && canDelete();
+		return super.updateSelection(selection) && canDelete();
 	}
-	
+
 	/**
 	 * @return
 	 */

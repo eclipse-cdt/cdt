@@ -77,11 +77,18 @@
             adaptable="false"
             id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
          <action
-               label="%ActionMakeBuildCreate.label"
-               class="org.eclipse.cdt.make.ui.actions.CreateBuildAction"
+               label="%ActionMakeCreateTarget.label"
+               class="org.eclipse.cdt.make.ui.actions.CreateTargetAction"
                menubarPath="buildGroup"
                enablesFor="1"
-               id="org.eclipse.cdt.make.ui.CViewCreateBuildAction">
+               id="org.eclipse.cdt.make.ui.CViewCreateTargetAction">
+         </action>
+         <action
+               label="%ActionMakeBuildTarget.label"
+               class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
+               menubarPath="buildGroup"
+               enablesFor="1"
+               id="org.eclipse.cdt.make.ui.CViewBuildTargetAction">
          </action>
          <filter
                name="projectNature"
@@ -93,11 +100,11 @@
             adaptable="false"
             id="org.eclipse.cdt.make.ui.popupMenu.NavigatorContribution">
          <action
-               label="%ActionMakeBuildCreate.label"
-               class="org.eclipse.cdt.make.ui.actions.CreateBuildAction"
+               label="%ActionMakeBuildTarget.label"
+               class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
                menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.cdt.make.ui.NavigatorCreateBuildAction">
+               id="org.eclipse.cdt.make.ui.NavigatorBuildTargetAction">
          </action>
          <filter
                name="projectNature"
@@ -144,6 +151,7 @@
                label="%ActionMakeUpdate.label"
                class="org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction"
                enablesFor="+"
+               icon="icons/ctool16/update_old.gif"
                id="org.eclipse.cdt.make.ui.UpdateProjectMakeAction">
          </action>
       </objectContribution>
@@ -187,7 +195,7 @@
       </category>
       <view
             name="%ViewMake.name"
-            icon="icons/cview16/make.gif"
+            icon="icons/cview16/make_target.gif"
             category="org.eclipse.cdt.make.ui"
             class="org.eclipse.cdt.make.ui.views.MakeView"
             id="org.eclipse.cdt.make.ui.views.MakeView">
@@ -196,12 +204,48 @@
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            label="%ActionUpdateActionSet.label"
+            label="%ActionSetUpdateMake.label"
             id="org.eclipse.cdt.make.ui.updateActionSet">
          <action
-               label="org.eclipse.cdt.make.ui.action1"
+               label="%ActionMakeUpdate.label"
                class="org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction"
-               id="org.eclipse.cdt.make.ui.action1">
+               id="org.eclipse.cdt.make.ui.UpdateMakeAction"
+               icon="icons/ctool16/update_old.gif"
+               toolbarPath="Normal"
+               tooltip="%ActionMakeUpdate.tooltip">
+            <enablement>
+            <and>
+               <not>
+                  <objectState
+                        name="nature"
+                        value="org.eclipse.cdt.make.core.makeNature">
+                  </objectState>
+               </not>
+               <objectState
+                     name="nature"
+                     value="org.eclipse.cdt.core.cnature">
+               </objectState>
+               <or>
+                  <objectState
+                        name="projectPersistentProperty"
+                        value="org.eclipse.cdt.core.buildLocation">
+                  </objectState>
+                  <objectState
+                        name="projectPersistentProperty"
+                        value="org.eclipse.cdt.core.buildFullArguments">
+                  </objectState>
+                  <objectState
+                        name="projectPersistentProperty"
+                        value="org.eclipse.cdt.core.buildIncrementalArguments">
+                  </objectState>
+                  <objectState
+                        name="projectPersistentProperty"
+                        value="org.eclipse.cdt.make.goals">
+                  </objectState>
+               </or>
+            </and>
+            </enablement>
+               
          </action>
       </actionSet>
    </extension>

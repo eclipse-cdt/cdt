@@ -23,7 +23,6 @@
 
    <requires>
       <import plugin="org.eclipse.platform" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.jdt.doc.user"/>
    </requires>
 
    <plugin

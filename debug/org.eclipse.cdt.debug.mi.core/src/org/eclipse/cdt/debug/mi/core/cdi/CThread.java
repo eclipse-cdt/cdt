@@ -42,7 +42,7 @@ public class CThread extends CObject implements ICDIThread {
 
 	StackFrame getCurrentStackFrame() throws CDIException {
 		if (currentFrame == null) {
-			ICDIStackFrame[] frames = getStackFrames();
+			ICDIStackFrame[] frames = getStackFrames(0, 0);
 			if (frames.length > 0) {
 				currentFrame = (StackFrame)frames[0];
 			}

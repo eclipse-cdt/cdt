@@ -15,6 +15,7 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,9 +23,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-public class MakeTarget implements IMakeTarget {
+public class MakeTarget extends PlatformObject implements IMakeTarget {
 
 	private final MakeTargetManager manager;
 	private String name;
@@ -109,7 +111,7 @@ public class MakeTarget implements IMakeTarget {
 			return true;
 		if (obj instanceof MakeTarget) {
 			MakeTarget other = (MakeTarget)obj;
-			return container.equals(other.getContainer()) && name.equals(other.getName());
+			return (container != null ? container.equals(other.getContainer()) : other.getContainer() == null) && name.equals(other.getName());
 		}
 		return false;
 	}
@@ -196,5 +198,19 @@ public class MakeTarget implements IMakeTarget {
 	 */
 	public boolean runAllBuilders() {
 		return runAllBuidlers;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(IProject.class)) {
+			return container.getProject();
+		} else if (adapter.equals(IResource.class)) {
+			return container;
+		}
+		return super.getAdapter(adapter);
 	}
 }

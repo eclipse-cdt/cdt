@@ -12,10 +12,11 @@ package org.eclipse.cdt.make.core;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public interface IMakeTarget {
+public interface IMakeTarget extends IAdaptable {
 	String getName();
 	String getTargetBuilderID();
 	

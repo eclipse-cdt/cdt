@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.ICBreakpoint;
+import org.eclipse.cdt.debug.core.ICWatchpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -254,34 +255,9 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 	protected void createFieldEditors()
 	{
 		ICBreakpoint breakpoint = getBreakpoint();
-		String fileName = breakpoint.getMarker().getResource().getLocation().toOSString();
-		if ( fileName != null )
-		{
-			addField( createLabelEditor( getFieldEditorParent(), "File: ", fileName ) );
-		}
 
-		if ( breakpoint instanceof ILineBreakpoint )
-		{
-			setTitle( "C/C++ Line Breakpoint Properties" );
-			ILineBreakpoint lBreakpoint = (ILineBreakpoint)breakpoint;
-			StringBuffer lineNumber = new StringBuffer( 4 );
-			try
-			{
-				int lNumber = lBreakpoint.getLineNumber();
-				if ( lNumber > 0 )
-				{
-					lineNumber.append( lNumber );
-				}
-			}
-			catch( CoreException ce )
-			{
-				CDebugUIPlugin.log( ce );
-			}
-			if ( lineNumber.length() > 0 )
-			{
-				addField( createLabelEditor( getFieldEditorParent(), "Line Number: ", lineNumber.toString() ) );
-			}
-		}
+		createTypeSpecificLabelFieldEditors( breakpoint );
+
 		IPreferenceStore store = getPreferenceStore();
 
 		try
@@ -304,6 +280,68 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 		catch( CoreException ce )
 		{
 			CDebugUIPlugin.log( ce );
+		}
+	}
+
+	/**
+	 * Method createTypeSpecificLabelFieldEditors.
+	 * @param breakpoint
+	 */
+	private void createTypeSpecificLabelFieldEditors( ICBreakpoint breakpoint )
+	{
+		if ( breakpoint instanceof ILineBreakpoint )
+		{
+			String fileName = breakpoint.getMarker().getResource().getLocation().toOSString();
+			if ( fileName != null )
+			{
+				addField( createLabelEditor( getFieldEditorParent(), "File: ", fileName ) );
+			}
+			setTitle( "C/C++ Line Breakpoint Properties" );
+			ILineBreakpoint lBreakpoint = (ILineBreakpoint)breakpoint;
+			StringBuffer lineNumber = new StringBuffer( 4 );
+			try
+			{
+				int lNumber = lBreakpoint.getLineNumber();
+				if ( lNumber > 0 )
+				{
+					lineNumber.append( lNumber );
+				}
+			}
+			catch( CoreException ce )
+			{
+				CDebugUIPlugin.log( ce );
+			}
+			if ( lineNumber.length() > 0 )
+			{
+				addField( createLabelEditor( getFieldEditorParent(), "Line Number: ", lineNumber.toString() ) );
+			}
+		}
+		else if ( breakpoint instanceof ICWatchpoint )
+		{
+			String projectName = breakpoint.getMarker().getResource().getLocation().toOSString();
+			if ( projectName != null )
+			{
+				addField( createLabelEditor( getFieldEditorParent(), "Project: ", projectName ) );
+			}
+			ICWatchpoint watchpoint = (ICWatchpoint)breakpoint;
+			String title = "";
+			String expression = "";
+			try
+			{
+				if ( watchpoint.isReadType() && !watchpoint.isWriteType() )
+					title = "C/C++ Read Watchpoint Properties";
+				else if ( !watchpoint.isReadType() && watchpoint.isWriteType() )
+					title = "C/C++ Watchpoint Properties";
+				else
+					title = "C/C++ Access Watchpoint Properties";
+				expression = watchpoint.getExpression();
+			}
+			catch( CoreException ce )
+			{
+				CDebugUIPlugin.log( ce );
+			}
+			setTitle( title );
+			addField( createLabelEditor( getFieldEditorParent(), "Expression To Watch: ", expression ) );
 		}
 	}
 

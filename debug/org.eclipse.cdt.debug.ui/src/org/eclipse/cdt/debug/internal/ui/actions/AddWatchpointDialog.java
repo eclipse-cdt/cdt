@@ -45,9 +45,13 @@ public class AddWatchpointDialog extends Dialog
 	 * Constructor for AddWatchpointDialog.
 	 * @param parentShell
 	 */
-	public AddWatchpointDialog( Shell parentShell )
+	public AddWatchpointDialog( Shell parentShell, boolean write, boolean read, String expression )
 	{
 		super( parentShell );
+		fWrite = write;
+		fRead = read;
+		if ( expression != null )
+			fExpression = expression; 
 	}
 
 	protected void configureShell( Shell shell ) 
@@ -89,9 +93,9 @@ public class AddWatchpointDialog extends Dialog
 
 	private void initializeDataWidgets()
 	{
-		fTextExpression.setText( "" );
-		fChkBtnRead.setSelection( false );
-		fChkBtnWrite.setSelection( true );
+		fTextExpression.setText( fExpression );
+		fChkBtnRead.setSelection( fRead );
+		fChkBtnWrite.setSelection( fWrite );
 		setOkButtonState();
 	}
 
@@ -173,5 +177,14 @@ public class AddWatchpointDialog extends Dialog
 	public boolean getReadAccess()
 	{
 		return fRead;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
+	protected void okPressed()
+	{
+		storeData();
+		super.okPressed();
 	}
 }

@@ -22,7 +22,7 @@ import org.eclipse.swt.graphics.Image;
  */
 public class CDebugImages
 {
-	private static final String NAME_PREFIX = "org.eclipse.jdt.debug.ui."; //$NON-NLS-1$
+	private static final String NAME_PREFIX = "org.eclipse.cdt.debug.ui."; //$NON-NLS-1$
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
 
 	private static URL fgIconBaseURL = null;
@@ -50,6 +50,10 @@ public class CDebugImages
 	public static final String IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED = NAME_PREFIX + "installed_ovr_disabled.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_WATCHPOINT_ENABLED = NAME_PREFIX + "readwrite_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_WATCHPOINT_DISABLED = NAME_PREFIX + "readwrite_obj_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_READ_WATCHPOINT_ENABLED = NAME_PREFIX + "read_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_READ_WATCHPOINT_DISABLED = NAME_PREFIX + "read_obj_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_WRITE_WATCHPOINT_ENABLED = NAME_PREFIX + "write_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_WRITE_WATCHPOINT_DISABLED = NAME_PREFIX + "write_obj_disabled.gif";	//$NON-NLS-1$
 
 	/*
 	 * Set of predefined Image Descriptors.
@@ -67,6 +71,10 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED_DISABLED = createManaged( T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_DISABLED );
+	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_READ_WATCHPOINT_ENABLED );
+	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_READ_WATCHPOINT_DISABLED );
+	public static final ImageDescriptor DESC_OBJS_WRITE_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WRITE_WATCHPOINT_ENABLED );
+	public static final ImageDescriptor DESC_OBJS_WRITE_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_WRITE_WATCHPOINT_DISABLED );
 
 	/**
 	 * Returns the image managed under the given key in this registry.

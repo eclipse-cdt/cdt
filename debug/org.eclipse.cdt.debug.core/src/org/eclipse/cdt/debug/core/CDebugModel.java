@@ -231,6 +231,31 @@ public class CDebugModel
 		return new CLineBreakpoint( resource, attributes, add );
 	}
 
+	public static ICWatchpoint watchpointExists( IResource resource, boolean write, boolean read, String expression ) throws CoreException
+	{
+			String modelId = getPluginIdentifier();
+		String markerType = CWatchpoint.getMarkerType();
+		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] breakpoints = manager.getBreakpoints( modelId );
+		for ( int i = 0; i < breakpoints.length; i++ )
+		{
+			if ( !( breakpoints[i] instanceof ICWatchpoint ) )
+			{
+				continue;
+			}
+			ICWatchpoint breakpoint = (ICWatchpoint)breakpoints[i];
+			if ( breakpoint.getMarker().getType().equals( markerType )&& 
+				 breakpoint.getMarker().getResource().equals( resource ) && 
+				 breakpoint.isWriteType() == write &&
+				 breakpoint.isReadType() == read &&
+				 breakpoint.getExpression().equals( expression ) )
+				{
+					return breakpoint;
+				}
+		}
+		return null;
+}
+
 	public static ICWatchpoint createWatchpoint( IResource resource, 
 												 boolean writeAccess,
 												 boolean readAccess,
@@ -245,6 +270,9 @@ public class CDebugModel
 		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
+		attributes.put( ICWatchpoint.EXPRESSION, expression );
+		attributes.put( ICWatchpoint.READ, new Boolean( readAccess ) );
+		attributes.put( ICWatchpoint.WRITE, new Boolean( writeAccess ) );
 		return new CWatchpoint( resource, attributes, add );
 	}
 }

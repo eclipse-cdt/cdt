@@ -80,6 +80,14 @@
       <actionSet
             label="%DebugActionSet.label"
             id="org.eclipse.cdt.debug.ui.debugActionSet">
+         <menu
+               label="%RunMenu.label"
+               path="additions"
+               id="org.eclipse.ui.run">
+            <separator
+                  name="cBreakpointGroup">
+            </separator>
+         </menu>
          <action
                id="org.eclipse.cdt.debug.ui.internal.actions.RestartActionDelegate"
                hoverIcon="icons/full/clcl16/restart.gif"
@@ -102,7 +110,7 @@
                icon="icons/full/obj16/brkpi_obj.gif"
                helpContextId="manage_breakpoint_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointActionDelegate"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               menubarPath="org.eclipse.ui.run/cBreakpointGroup"
                id="org.eclipse.cdt.debug.ui.internal.actions.ManageBreakpointActionDelegate">
             <enablement>
                <pluginState
@@ -115,8 +123,8 @@
                label="%ManageWatchpointAction.label"
                icon="icons/full/obj16/readwrite_obj.gif"
                helpContextId="manage_watchpoint_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ManageWatchpointActionDelegate"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointActionDelegate"
+               menubarPath="org.eclipse.ui.run/cBreakpointGroup"
                disabledIcon="icons/full/obj16/readwrite_obj_disabled.gif"
                id="org.eclipse.cdt.debug.internal.ui.actions.ManageWatchpointActionDelegate">
             <enablement>

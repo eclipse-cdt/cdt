@@ -5,9 +5,6 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -21,6 +18,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -263,8 +261,11 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	protected void setTextEditor( ITextEditor editor )
 	{
 		fTextEditor = editor;
-		IEditorInput input = fTextEditor.getEditorInput();
-		fFile = (IFile)input.getAdapter( IFile.class );
+		if ( fTextEditor != null )
+		{
+			IEditorInput input = fTextEditor.getEditorInput();
+			setFile( ( input != null && input instanceof IFileEditorInput ) ? ((IFileEditorInput)input).getFile() : null );
+		}
 		setEnabledState( editor );
 	}
 

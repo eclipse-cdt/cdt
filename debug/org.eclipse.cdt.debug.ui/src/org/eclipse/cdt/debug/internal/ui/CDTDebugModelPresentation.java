@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.core.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.ICBreakpoint;
 import org.eclipse.cdt.debug.core.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.ICWatchpoint;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
@@ -384,6 +385,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			return getLineBreakpointImage( (ICLineBreakpoint)breakpoint );
 		}
+		if ( breakpoint instanceof ICWatchpoint )
+		{
+			return getWatchpointImage( (ICWatchpoint)breakpoint );
+		}
 		return null;
 	}
 
@@ -398,6 +403,31 @@ public class CDTDebugModelPresentation extends LabelProvider
 		else
 		{
 			descriptor = new CImageDescriptor( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED ),  flags );
+		}
+		return fDebugImageRegistry.get( descriptor );
+	}
+
+	protected Image getWatchpointImage( ICWatchpoint watchpoint ) throws CoreException
+	{
+		int flags = computeBreakpointAdornmentFlags( watchpoint );
+		CImageDescriptor descriptor = null;
+		if ( watchpoint.isEnabled() )
+		{
+			if ( watchpoint.isReadType() && !watchpoint.isWriteType() )
+				descriptor = new CImageDescriptor( CDebugImages.DESC_OBJS_READ_WATCHPOINT_ENABLED,  flags );
+			else if ( !watchpoint.isReadType() && watchpoint.isWriteType() )
+				descriptor = new CImageDescriptor( CDebugImages.DESC_OBJS_WRITE_WATCHPOINT_ENABLED,  flags );
+			else
+				descriptor = new CImageDescriptor( CDebugImages.DESC_OBJS_WATCHPOINT_ENABLED,  flags );
+		}
+		else
+		{
+			if ( watchpoint.isReadType() && !watchpoint.isWriteType() )
+				descriptor = new CImageDescriptor( CDebugImages.DESC_OBJS_READ_WATCHPOINT_DISABLED,  flags );
+			else if ( !watchpoint.isReadType() && watchpoint.isWriteType() )
+				descriptor = new CImageDescriptor( CDebugImages.DESC_OBJS_WRITE_WATCHPOINT_DISABLED,  flags );
+			else
+				descriptor = new CImageDescriptor( CDebugImages.DESC_OBJS_WATCHPOINT_DISABLED,  flags );
 		}
 		return fDebugImageRegistry.get( descriptor );
 	}
@@ -422,6 +452,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			return getFunctionBreakpointText( (ICFunctionBreakpoint)breakpoint, qualified );
 		}
+		if ( breakpoint instanceof ICWatchpoint )
+		{
+			return getWatchpointText( (ICWatchpoint)breakpoint, qualified );
+		}
 		return ""; //$NON-NLS-1$
 	}
 
@@ -435,6 +469,16 @@ public class CDTDebugModelPresentation extends LabelProvider
 		return label.toString();
 	}
 
+	protected String getWatchpointText( ICWatchpoint watchpoint, boolean qualified ) throws CoreException
+	{
+		StringBuffer label = new StringBuffer();
+		appendResourceName( watchpoint, label, qualified );
+		appendWatchExpression( watchpoint, label );
+		appendIgnoreCount( watchpoint, label );
+		appendCondition( watchpoint, label );
+		return label.toString();
+	}
+
 	protected String getAddressBreakpointText( ICAddressBreakpoint breakpoint, boolean qualified ) throws CoreException
 	{
 		return null;
@@ -445,7 +489,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		return null;
 	}
 
-	protected StringBuffer appendResourceName( ICLineBreakpoint breakpoint, StringBuffer label, boolean qualified ) throws CoreException
+	protected StringBuffer appendResourceName( ICBreakpoint breakpoint, StringBuffer label, boolean qualified ) throws CoreException
 	{
 		IPath path = breakpoint.getMarker().getResource().getLocation();
 		if ( !path.isEmpty() )
@@ -481,13 +525,24 @@ public class CDTDebugModelPresentation extends LabelProvider
 		return label;
 	}
 
-	protected void appendCondition( ICLineBreakpoint breakpoint, StringBuffer buffer ) throws CoreException
+	protected void appendCondition( ICBreakpoint breakpoint, StringBuffer buffer ) throws CoreException
 	{
 		String condition = breakpoint.getCondition();
 		if ( condition != null && condition.length() > 0 )
 		{
 			buffer.append( " if " ); 
 			buffer.append( condition );
+		}
+	}
+
+	private void appendWatchExpression( ICWatchpoint watchpoint, StringBuffer label ) throws CoreException
+	{
+		String expression = watchpoint.getExpression();
+		if ( expression != null && expression.length() > 0 )
+		{
+			label.append( " at \'" ); 
+			label.append( expression );
+			label.append( '\'' );
 		}
 	}
 

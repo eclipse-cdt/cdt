@@ -471,6 +471,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                   ((ASTNode) p).getLength());
             p.setParent(ps);
             p.setPropertyInParent(IASTProblemHolder.PROBLEM);
+            if (statements == Collections.EMPTY_LIST)
+               statements = new ArrayList(DEFAULT_COMPOUNDSTATEMENT_LIST_SIZE);
             statements.add(ps);
             if (LA(1).hashCode() == checkToken)
                failParseWithErrorHandling();

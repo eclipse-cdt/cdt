@@ -1,3 +1,6 @@
+2005-03-13 Bogdan Gheorghe
+	Updated references to IndexManager to reflect new indexing framework.
+	
 2005-02-03 Tanya Wolff
 	Fixed some content assist regression tests.
 	Added Regression tests (content assist, refactoring) to automated suite for nightly builds

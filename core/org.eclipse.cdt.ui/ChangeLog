@@ -1,3 +1,14 @@
+2005-03-13 Bogdan Gheorghe
+	New UI items to support index framework
+	
+	* src/org/eclipse/cdt/internal/ui/CPluginResources
+	* src/org/eclipse/cdt/ui/CUIPreferenceInitializer.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/IndexerBlock.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/IndexerOptionPropertyPage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/SourceIndexerBlock.java
+	* src/org/eclipse/cdt/ui/index/AbstractIndexerPage
+	* plugin.xml
+	
 2005-03-12 Alain Magloire
 	Plan item 79518: for PathEntry variable manager. Enable.
 	* src/org/eclipse/cdt/internal/ui/preferences/PathEntryVariablesGroup.java

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -53,6 +54,8 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 	static protected BasicSearchResultCollector	resultCollector;
 	static protected SearchEngine				searchEngine;
 	static protected FileManager 				fileManager;
+	static final 	 String 					sourceIndexerID = "org.eclipse.cdt.core.originalsourceindexer"; //$NON-NLS-1$
+	
 	{
 		
 		(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
@@ -63,7 +66,12 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		try {
 			//Create temp project
 			testProject = createProject("SearchTestProject");
-			testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+			
+			testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
+			
+			//Set the id of the source indexer extension point as a session property to allow
+			//index manager to instantiate it
+			testProject.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);
 		} catch (CoreException e) {}
 		
 		

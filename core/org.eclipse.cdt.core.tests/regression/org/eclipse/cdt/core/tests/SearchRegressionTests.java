@@ -33,6 +33,8 @@ import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -42,11 +44,10 @@ import org.eclipse.core.runtime.Path;
  * @author aniefer
  */
 public class SearchRegressionTests extends BaseTestFramework implements ICSearchConstants, IIndexChangeListener{
-    static protected ICSearchScope 			scope;
-    static protected SearchEngine			searchEngine;
-    static protected BasicSearchResultCollector	resultCollector;
-    static private boolean indexChanged = false;
-    
+    static protected 	ICSearchScope 				scope;
+    static protected 	SearchEngine				searchEngine;
+    static protected 	BasicSearchResultCollector	resultCollector;
+    static private 		boolean 					indexChanged = false;
     {
         scope = SearchEngine.createWorkspaceScope();
 		resultCollector = new BasicSearchResultCollector();
@@ -67,11 +68,18 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
     protected void setUp() throws Exception {
         super.setUp();
 		try{
-		    project.setSessionProperty( IndexManager.activationKey, new Boolean( true ) );
+			project.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);
+		    project.setSessionProperty( SourceIndexer.activationKey, new Boolean( true ) );
 		} catch ( CoreException e ) { //boo
 		}
+		TypeCacheManager typeCacheManager = TypeCacheManager.getInstance();
+		typeCacheManager.setProcessTypeCacheEvents(false);
+		
         IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-        indexManager.addIndexChangeListener( this );
+        indexManager.reset();
+        
+		sourceIndexer = (SourceIndexer) CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(project); 
+        sourceIndexer.addIndexChangeListener( this );
     }
     
     protected void tearDown() throws Exception {
@@ -79,9 +87,9 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
             return;
     
         IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-        indexManager.removeIndexChangeListener( this );
+        sourceIndexer.removeIndexChangeListener( this );
 		try{
-		    project.setSessionProperty( IndexManager.activationKey, new Boolean( false ) );
+		    project.setSessionProperty( SourceIndexer.activationKey, new Boolean( false ) );
 		} catch ( CoreException e ) { //boo
 		}
         super.tearDown();

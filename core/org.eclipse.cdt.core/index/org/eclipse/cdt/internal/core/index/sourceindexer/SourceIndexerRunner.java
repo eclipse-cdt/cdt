@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.search.indexing;
+package org.eclipse.cdt.internal.core.index.sourceindexer;
 
 /**
  * @author bgheorgh
@@ -27,12 +27,10 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ParserTimeOut;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.index.IDocument;
@@ -40,6 +38,8 @@ import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * A SourceIndexer indexes source files using the parser. The following items are indexed:
@@ -52,36 +52,27 @@ import org.eclipse.core.runtime.CoreException;
  * - Structs
  * - Unions
  */
-public class SourceIndexer extends AbstractIndexer {
+public class SourceIndexerRunner extends AbstractIndexer {
 	 
-	//TODO: Indexer, add additional file types
-	//Header files: "h" , "hh", "hpp"
-	//Use the CModelManager defined file types
-	//public static final String[] FILE_TYPES= new String[] {"cpp","c", "cc", "cxx"}; //$NON-NLS-1$
-	
-	//protected DefaultProblemFactory problemFactory= new DefaultProblemFactory(Locale.getDefault());
-	public static final String CDT_INDEXER_TIMEOUT= "CDT_INDEXER_TIMEOUT"; //$NON-NLS-1$
-	
 	IFile resourceFile;
-	ParserTimeOut timeOut = null;
+	private SourceIndexer indexer;
 	
 	/**
 	 * @param resource
 	 * @param out
 	 */
-	public SourceIndexer(IFile resource, ParserTimeOut timeOut) {
+	public SourceIndexerRunner(IFile resource, SourceIndexer indexer) {
+		this.indexer = indexer;
 		this.resourceFile = resource;
-		this.timeOut = timeOut;
 	}
 	
 	protected void indexFile(IDocument document) throws IOException {
 		// Add the name of the file to the index
 		output.addDocument(document);
-		// Create a new Parser
-		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, resourceFile, timeOut);
+		// Create a new Parser 
+		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, resourceFile);
 		
-		IndexManager manager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		int problems = manager.indexProblemsEnabled( resourceFile.getProject() );
+		int problems = indexer.indexProblemsEnabled( resourceFile.getProject() );
 		requestor.setProblemMarkersEnabled( problems );
 		requestor.requestRemoveMarkers( resourceFile, null );
 		
@@ -108,7 +99,6 @@ public class SourceIndexer extends AbstractIndexer {
 			parser = ParserFactory.createParser( 
 							ParserFactory.createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getScannerLogService(), null ), 
 							requestor, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
-			requestor.setParser(parser);
 		} catch( ParserFactoryError pfe ){
 		} catch (CoreException e) {
 		} finally {
@@ -118,14 +108,6 @@ public class SourceIndexer extends AbstractIndexer {
 		}
 		
 		try{
-
-			// start timer
-			String timeOut = CCorePlugin.getDefault().getPluginPreferences().getString(CDT_INDEXER_TIMEOUT);
-			Integer timeOutValue = new Integer(timeOut);
-			if (timeOutValue.intValue() > 0) {
-				requestor.setTimeout(timeOutValue.intValue());
-				requestor.startTimer();
-			}
 			boolean retVal = parser.parse();
 	
 			if (AbstractIndexer.VERBOSE){
@@ -140,23 +122,19 @@ public class SourceIndexer extends AbstractIndexer {
 				org.eclipse.cdt.internal.core.model.Util.log(null, "Out Of Memory error: " + vmErr.getMessage() + " on File: " + resourceFile.getName(), ICLogConstants.CDT); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		catch (ParseError e){
-			org.eclipse.cdt.internal.core.model.Util.log(null, "Parser Timeout on File: " + resourceFile.getName(), ICLogConstants.CDT); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 		catch ( Exception ex ){
 			if (ex instanceof IOException)
 				throw (IOException) ex;
 		}
 		finally{
-			requestor.stopTimer();
 			//if the user disable problem reporting since we last checked, don't report the collected problems
-			if( manager.indexProblemsEnabled( resourceFile.getProject() ) != 0 )
+			if( indexer.indexProblemsEnabled( resourceFile.getProject() ) != 0 )
 				requestor.reportProblems();
 			
 			//Report events
 			ArrayList filesTrav = requestor.getFilesTraversed();
 			IndexDelta indexDelta = new IndexDelta(resourceFile.getProject(),filesTrav, IIndexDelta.INDEX_FINISHED_DELTA);
-			CCorePlugin.getDefault().getCoreModel().getIndexManager().notifyListeners(indexDelta);
+			indexer.notifyListeners(indexDelta);
 			//Release all resources
 			parser=null;
 			currentProject = null;
@@ -165,16 +143,19 @@ public class SourceIndexer extends AbstractIndexer {
 			scanInfo=null;
 		}
 	}
-	/**
-	 * Sets the document types the <code>IIndexer</code> handles.
-	 */
-	
-	public void setFileTypes(String[] fileTypes){}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer#getResourceFile()
 	 */
 	public IFile getResourceFile() {
 		return resourceFile;
 	}
-	
+
+	/**
+	 * @param fullPath
+	 * @param path
+	 */
+	public boolean haveEncounteredHeader(IPath fullPath, Path path) {
+		return indexer.haveEncounteredHeader(fullPath, path);
+	}
 }

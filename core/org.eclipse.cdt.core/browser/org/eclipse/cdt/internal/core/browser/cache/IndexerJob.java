@@ -13,10 +13,12 @@ package org.eclipse.cdt.internal.core.browser.cache;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
-import org.eclipse.cdt.internal.core.search.processing.IJob;
+import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -25,16 +27,23 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
-public abstract class IndexerJob implements IJob {
+public abstract class IndexerJob implements IIndexJob {
 
 	private IndexManager fIndexManager;
 	private IProject fProject;
 	private IIndex fProjectIndex = null;
+	private SourceIndexer fSourceIndexer = null;
+	
 	public static final String FAMILY= "BasicTypeIndexerJob"; //$NON-NLS-1$
 
 	public IndexerJob(IndexManager indexManager, IProject project) {
 		fIndexManager = indexManager;
 		fProject = project;
+		//Get the indexer assigned to this project; check to see if it's 
+		//a Source Indexder
+		ICDTIndexer indexer = indexManager.getIndexerForProject(project);
+		if (indexer instanceof SourceIndexer)
+			fSourceIndexer = (SourceIndexer) indexer;
 	}
 
 	public boolean belongsTo(String family) {
@@ -94,7 +103,11 @@ public abstract class IndexerJob implements IJob {
 		if (index == null)
 			return COMPLETE;
 		
-		ReadWriteMonitor monitor = fIndexManager.getMonitorFor(index);
+		if (fSourceIndexer == null)
+			return FAILED;
+
+		ReadWriteMonitor monitor = fSourceIndexer.getMonitorFor(index);
+		
 		if (monitor == null)
 			return COMPLETE; // index got deleted since acquired
 		
@@ -105,7 +118,7 @@ public abstract class IndexerJob implements IJob {
 				try {
 					monitor.exitRead(); // free read lock
 					monitor.enterWrite(); // ask permission to write
-					fIndexManager.saveIndex(index);
+					fSourceIndexer.saveIndex(index);
 				} catch (IOException e) {
 					return FAILED;
 				} finally {
@@ -135,7 +148,10 @@ public abstract class IndexerJob implements IJob {
 		}
 		
 		// may trigger some index recreation work
-		return fIndexManager.getIndex(path, true /*reuse index file*/, false /*do not create if none*/);
+		if (fSourceIndexer != null)
+			return fSourceIndexer.getIndex(path, true /*reuse index file*/, false /*do not create if none*/);
+		
+		return null;
 	}
 }
 

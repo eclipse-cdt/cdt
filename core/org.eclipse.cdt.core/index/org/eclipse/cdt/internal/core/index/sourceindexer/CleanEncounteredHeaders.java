@@ -4,9 +4,9 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package org.eclipse.cdt.internal.core.search.indexing;
+package org.eclipse.cdt.internal.core.index.sourceindexer;
 
-import org.eclipse.cdt.internal.core.search.processing.IJob;
+import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -15,20 +15,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class CleanEncounteredHeaders implements IJob {
+public class CleanEncounteredHeaders implements IIndexJob {
 	
-	IndexManager manager = null;
+	SourceIndexer indexer = null;
 	
-	public CleanEncounteredHeaders(IndexManager manager){
-		this.manager = manager;
+	public CleanEncounteredHeaders(SourceIndexer indexer){
+		this.indexer = indexer;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.search.processing.IJob#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean execute(IProgressMonitor progress) {
-		
-		//Clean out the headers
-		this.manager.resetEncounteredHeaders();
+		indexer.resetEncounteredHeaders();	
 		return true;
 	}
 	/* (non-Javadoc)

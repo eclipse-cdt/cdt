@@ -5,7 +5,6 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
@@ -17,7 +16,6 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -38,7 +36,7 @@ public class DeltaProcessor {
 	protected CElementDelta fCurrentDelta;
 	
 	protected IndexManager indexManager = new IndexManager();
-	
+
 	/* The C element that was last created (see createElement(IResource). 
 	 * This is used as a stack of C elements (using getParent() to pop it, and 
 	 * using the various get*(...) to push it. */
@@ -606,22 +604,8 @@ public class DeltaProcessor {
 	
 		if (indexManager == null)
 			return;
-		
-	    switch (element.getElementType()) {
-			case ICElement.C_PROJECT :
-				this.indexManager.indexAll(element.getCProject().getProject());
-				break;
-            
-			case ICElement.C_CCONTAINER:
-				indexManager.indexSourceFolder(element.getCProject().getProject(),element.getPath(),null);
-			break;
-			
-			case ICElement.C_UNIT:
-				IFile file = (IFile) delta.getResource();
-				IProject filesProject = file.getProject();
-				indexManager.addSource(file, filesProject.getFullPath());
-				break;						
-	    }
+	
+		indexManager.addResourceEvent(element.getCProject().getProject(),element,delta);
 		
 	}
 
@@ -630,40 +614,22 @@ public class DeltaProcessor {
 		if (indexManager == null)
 						return;
 
-		switch (element.getElementType()) {
-			case ICElement.C_PROJECT :
-				IPath fullPath = element.getCProject().getProject().getFullPath();
-				if( delta.getKind() == IResourceDelta.CHANGED )
-					indexManager.discardJobs(fullPath.segment(0));
-				indexManager.removeIndexFamily(fullPath);
-				// NB: Discarding index jobs belonging to this project was done during PRE_DELETE
-				break;
-				// NB: Update of index if project is opened, closed, or its c nature is added or removed
-				//     is done in updateCurrentDeltaAndIndex
-			
-			case ICElement.C_CCONTAINER:
-				indexManager.removeSourceFolderFromIndex(element.getCProject().getProject(),element.getPath(),null);
-				break;
-			
-			case ICElement.C_UNIT:
-				IFile file = (IFile) delta.getResource();
-				indexManager.remove(file.getFullPath().toString(), file.getProject().getFullPath());
-				break;				
-		}
+		indexManager.removeResourceEvent(element.getCProject().getProject(),element,delta);
 	
 
 	}
-	
+
 	private void updateDependencies(ICElement element){
 		
 		IResource resource = element.getResource();
 		if (resource == null)
 			return;
 		
+		IProject project = resource.getProject();
 		String filename = resource.getName();
 		
-		if (CoreModel.isValidHeaderUnitName(resource.getProject(), filename)) {
-			indexManager.updateDependencies(resource);
+		if (CoreModel.isValidHeaderUnitName(project, filename)) {
+			indexManager.updateDependencies(project, resource);
 		}
 	}	
 

@@ -18,12 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexDelta;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
@@ -66,32 +68,21 @@ public class Index implements IIndex {
 	protected static final int CAN_MERGE= 0;
 	protected static final int MERGED= 1;
 	private File indexFile;
+	
+	private ICDTIndexer indexer = null;
+	
 
 	/**
 	 * String representation of this index.
 	 */
 	public String toString;
 	
-	public Index(File indexDirectory, boolean reuseExistingFile) throws IOException {
-		this(indexDirectory,".index", reuseExistingFile); //$NON-NLS-1$
-	}
-	
-	public Index(File indexDirectory, String indexName, boolean reuseExistingFile) throws IOException {
-		super();
-		state= MERGED;
-		indexFile= new File(indexDirectory, indexName);
-		initialize(reuseExistingFile);
-	}
-	
-	public Index(String indexName, boolean reuseExistingFile) throws IOException {
-		this(indexName, null, reuseExistingFile);
-	}
-
-	public Index(String indexName, String toString, boolean reuseExistingFile) throws IOException {
+	public Index(String indexName, String toString, boolean reuseExistingFile, ICDTIndexer indexer) throws IOException {
 		super();
 		state= MERGED;
 		indexFile= new File(indexName);
 		this.toString = toString;
+		this.indexer = indexer;
 		initialize(reuseExistingFile);
 	}
 	/**
@@ -278,8 +269,10 @@ public class Index implements IIndex {
 			CCorePlugin.getDefault().cdtLog.flushLog();
 			
 			//Send out notification to listeners;
-			IndexDelta indexDelta = new IndexDelta(null,null,IIndexDelta.MERGE_DELTA);
-			CCorePlugin.getDefault().getCoreModel().getIndexManager().notifyListeners(indexDelta);
+			if (indexer instanceof SourceIndexer){
+				IndexDelta indexDelta = new IndexDelta(null,null,IIndexDelta.MERGE_DELTA);
+				((SourceIndexer) indexer).notifyListeners(indexDelta);
+			}
 		}
 	}
 	/**
@@ -443,6 +436,11 @@ public class Index implements IIndex {
 	str += "(length: "+ getIndexFile().length() +")"; //$NON-NLS-1$ //$NON-NLS-2$
 	return str;
 }
+	
+	public org.eclipse.cdt.core.index.ICDTIndexer  getIndexer(){
+		return (org.eclipse.cdt.core.index.ICDTIndexer) indexer;
+	}
+
 
 	
 }

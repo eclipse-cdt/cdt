@@ -44,6 +44,7 @@
 <!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
+   <extension-point id="IndexerPage" name="Indexer Page" schema="schema/IndexerPage.exsd"/>
    <extension-point id="completionContributors" name="%completionContributors" schema="schema/completionContributors.exsd"/>
 
    <extension
@@ -616,11 +617,6 @@
             class="org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CFileTypesPreferences">
       </page>
-      <page
-            class="org.eclipse.cdt.internal.ui.preferences.CSearchPreferencePage"
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            name="%CDTSearch.name"
-            id="org.eclipse.cdt.ui.preferences.CSearchPreferencePage"/>
       <page
             name="%appearancePrefName"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
@@ -1324,13 +1320,20 @@
       		file="templates/default-templates.xml">
       </include>
    </extension>
-
    <extension
+         point="org.eclipse.cdt.ui.IndexerPage">
+      <indexerUI
+            class="org.eclipse.cdt.ui.dialogs.SourceIndexerBlock"
+            indexerID="org.eclipse.cdt.core.originalsourceindexer"
+            name="Original C/C++ Indexer"
+            id="org.eclipse.cdt.ui.originalSourceIndexerUI"/>
+   </extension>
+	<extension
          point="org.eclipse.cdt.ui.completionContributors">
       <contributor
             class="org.eclipse.cdt.internal.ui.text.contentassist.DOMCompletionContributor"
             id="DOM"
             priority="1"/>
-   </extension>
-   
+   	</extension>
+
 </plugin>

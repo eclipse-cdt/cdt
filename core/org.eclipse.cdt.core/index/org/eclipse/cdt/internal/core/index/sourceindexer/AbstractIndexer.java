@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.search.indexing;
+package org.eclipse.cdt.internal.core.index.sourceindexer;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -38,9 +38,10 @@ import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.core.resources.IFile;
 
-public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSearchConstants {
+public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSearchConstants {
 	
 	IIndexerOutput output;
 	final static int CLASS = 1;

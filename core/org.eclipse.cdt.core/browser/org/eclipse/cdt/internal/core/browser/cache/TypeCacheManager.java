@@ -50,7 +50,8 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
     //TODO make this a WeakHashMap or LRUCache
     private Map fTypeToElementMap = new HashMap(INITIAL_TYPE_MAP_SIZE);
     private Map fElementToTypeMap = new HashMap(INITIAL_TYPE_MAP_SIZE);
-
+    private boolean processTypeCacheEvents = true;
+    
 	private TypeCacheManager() {
 		fCacheMap = new HashMap();
 	}
@@ -227,6 +228,9 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 	}
 	
 	public synchronized void reconcile(boolean enableIndexing, int priority, int delay) {
+		if (!(processTypeCacheEvents))
+			return;
+		
 		TypeSearchScope workspaceScope = new TypeSearchScope(true);
 		IProject[] projects = workspaceScope.getEnclosingProjects();
 		for (int i = 0; i < projects.length; ++i) {
@@ -236,6 +240,9 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 	}
 
 	public synchronized void reconcileAndWait(boolean enableIndexing, int priority, IProgressMonitor monitor) {
+		if (!(processTypeCacheEvents))
+			return;
+		
 		TypeSearchScope workspaceScope = new TypeSearchScope(true);
 		IProject[] projects = workspaceScope.getEnclosingProjects();
 		for (int i = 0; i < projects.length; ++i) {
@@ -444,4 +451,10 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 		}
 		return null;
     }
+	public boolean getProcessTypeCacheEvents() {
+		return processTypeCacheEvents;
+	}
+	public void setProcessTypeCacheEvents(boolean processTypeCacheEvents) {
+		this.processTypeCacheEvents = processTypeCacheEvents;
+	}
 }

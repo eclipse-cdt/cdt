@@ -17,6 +17,7 @@ import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -29,14 +30,16 @@ import org.w3c.dom.Node;
 
 public class IndexerOptionPropertyPage extends PropertyPage {
 	
-	private IndexerOptionDialogPage optionPage;
-	private boolean oldIndexerValue;
-	private int oldIndexerProblemsValue;
+
+
+	private IndexerBlock optionPage;
+	private String oldIndexerID;
+
 	private boolean requestedIndexAll;
-	
+	 
 	public IndexerOptionPropertyPage(){
 		super();
-		optionPage = new IndexerOptionDialogPage();
+		optionPage = new IndexerBlock();
 		requestedIndexAll = false;
 	}
 	/* (non-Javadoc)
@@ -63,43 +66,43 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 		IProject project = getProject();
 		
 		try {
-			oldIndexerValue = getIndexerEnabled(project);
-			oldIndexerProblemsValue = getIndexerProblemsEnabled( project );
+			oldIndexerID = getIndexerID(project);
+			
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 		
-		optionPage.setIndexerValue(oldIndexerValue);
-		optionPage.setIndexerProblemValues( oldIndexerProblemsValue );
+		optionPage.setIndexerID(oldIndexerID, project);
 	}
 	
 	/*
 	 * @see IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-	
-		boolean newIndexerValue = optionPage.getIndexerValue();
-		int newIndexerProblemsValue = optionPage.getIndexerProblemsValues();
+
+	/*	String newIndexerID = optionPage.getSelectedIndexerID();
+
+		boolean indexerIDChanged = false;
 		
-		boolean indexChanged = (oldIndexerValue != newIndexerValue);
-		boolean problemsChanged = (oldIndexerProblemsValue != newIndexerProblemsValue );
-		
-		if ( indexChanged || problemsChanged){
-			//persist new values
-			IProject tempProject = getProject();
-			optionPage.persistIndexerValues(tempProject);
-		
-			if( problemsChanged && newIndexerProblemsValue == 0)
-				CCorePlugin.getDefault().getCoreModel().getIndexManager().removeIndexerProblems(tempProject);
-						
-			//if indexer is now on send a index all request 
-			if( indexChanged && newIndexerValue && !requestedIndexAll ) {
-				CCorePlugin.getDefault().getCoreModel().getIndexManager().indexAll(tempProject);
-				requestedIndexAll = true;
-			} else if( indexChanged && !newIndexerValue ) {
-				CCorePlugin.getDefault().getCoreModel().getIndexManager().discardJobs( tempProject.getName() );
-			}
+		if (newIndexerID != null){
+			 indexerIDChanged = !(oldIndexerID.equals(newIndexerID));
 		}
+		else if (oldIndexerID != null){
+			//newIndexerID is null, oldIndexerID wasn't null
+			indexerIDChanged = true;
+		}
+	
+		if ( indexerIDChanged ){
+		//persist new values
+		IProject tempProject = getProject();
+		optionPage.persistIndexerValues(tempProject);
+		}*/
+		
+		IProject tempProject = getProject();
+		try {
+			optionPage.persistIndexerSettings(tempProject, new NullProgressMonitor());
+		} catch (CoreException e) {}
+		
 		return true;
 	}
 	
@@ -112,104 +115,51 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 		return project;
 	}
 	
-	public boolean getIndexerEnabled(IProject project) throws CoreException {
-		// See if there's already one associated with the resource for this
-		// session
-		 Boolean indexValue = (Boolean) project.getSessionProperty(IndexManager.activationKey);
+	public String getIndexerID(IProject project) throws CoreException {
+		//See if there's already one associated with the resource for this session
+		 String indexerID = (String) project.getSessionProperty(IndexerBlock.indexerUIIDKey);
 
+		 if (indexerID != null)
+		 	return indexerID;
+		 
 		// Try to load one for the project
-		if (indexValue == null) {
-			indexValue = loadIndexerEnabledFromCDescriptor(project);
-		}
-	
+		 indexerID = loadIndexerIDFromCDescriptor(project);
+		
 		// There is nothing persisted for the session, or saved in a file so
 		// create a build info object
-		if (indexValue != null) {
-			project.setSessionProperty(IndexManager.activationKey, indexValue);
+		if (indexerID != null) {
+			project.setSessionProperty(IndexerBlock.indexerUIIDKey, indexerID);
 		}
 		else{
-			//Hmm, no persisted indexer value. Could be an old project - set to true and persist
-			indexValue = new Boolean(true);
-			optionPage.setIndexerValue(true);
-			optionPage.persistIndexerValues(project);
+			//Hmm, no persisted indexer value. Could be an old project - need to run project
+			//update code here	
 		}
 		
-		return indexValue.booleanValue();
+		return indexerID;
 	}
-	
-	public int getIndexerProblemsEnabled( IProject project ) throws CoreException 
-	{		
-		// See if there's already one associated with the resource for this session
-		 Integer value = (Integer) project.getSessionProperty( IndexManager.problemsActivationKey );
 
-		// Try to load one for the project
-		if (value == null) {
-			value = loadIndexerProblemsEnabledFromCDescriptor(project);
-		}
-	
-		// There is nothing persisted for the session, or saved in a file so
-		// create a build info object
-		if (value != null) {
-			project.setSessionProperty(IndexManager.problemsActivationKey, value);
-		} else {
-			//Hmm, no persisted indexer value. Could be an old project - set all to false and persist
-			value = new Integer( 0 );
-			optionPage.setIndexerProblemValues( 0 );
-			optionPage.persistIndexerValues(project);
-		}
-		
-		return value.intValue();
-	}
 	/**
-	 * Loads dis from .cdtproject file
+	 * Loads indexerID from .cdtproject file
 	 * @param project
 	 * @param includes
 	 * @param symbols
 	 * @throws CoreException
 	 */
-	private Boolean loadIndexerEnabledFromCDescriptor(IProject project) throws CoreException {
+	private String loadIndexerIDFromCDescriptor(IProject project) throws CoreException {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
 		
 		Node child = descriptor.getProjectData(IndexManager.CDT_INDEXER).getFirstChild();
-		Boolean strBool = null;
+		
+		String indexerID = ""; //$NON-NLS-1$
 		
 		while (child != null) {
-			if (child.getNodeName().equals(IndexManager.INDEXER_ENABLED)) 
-				 strBool = Boolean.valueOf(((Element)child).getAttribute(IndexManager.INDEXER_VALUE));
-			
+			if (child.getNodeName().equals(IndexerBlock.INDEXER_UI)) 
+				  indexerID = ((Element)child).getAttribute(IndexerBlock.INDEXER_UI_VALUE);
 			
 			child = child.getNextSibling();
 		}
 		
-		return strBool;
-	}
-	
-	private Integer loadIndexerProblemsEnabledFromCDescriptor( IProject project ) throws CoreException
-	{
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
-		
-		Node child = descriptor.getProjectData(IndexManager.CDT_INDEXER).getFirstChild();
-		Integer strInt = null;
-		
-		while (child != null) {
-			if (child.getNodeName().equals(IndexManager.INDEXER_PROBLEMS_ENABLED)) {
-				String val = ((Element)child).getAttribute(IndexManager.INDEXER_PROBLEMS_VALUE);
-				try{
-					strInt = Integer.valueOf( val );
-				} catch( NumberFormatException e ){
-					//some old projects might have a boolean stored, translate that into just preprocessors
-					Boolean bool = Boolean.valueOf( val );
-					if( bool.booleanValue() )
-						strInt = new Integer( IndexManager.PREPROCESSOR_PROBLEMS_BIT );
-					else 
-						strInt = new Integer( 0 );
-				}
-				break;
-			}
-			
-			child = child.getNextSibling();
-		}
-		return strInt;
+		return indexerID;
 	}
 	
 }

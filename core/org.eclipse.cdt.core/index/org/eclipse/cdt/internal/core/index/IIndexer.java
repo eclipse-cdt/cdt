@@ -26,11 +26,7 @@ public interface IIndexer {
 	 */
 
 	void index(IDocument document, IIndexerOutput output) throws java.io.IOException;
-	/**
-	 * Sets the document types the <code>IIndexer</code> handles.
-	 */
 
-	public void setFileTypes(String[] fileTypes);
 	/**
 	 * Returns whether the <code>IIndexer</code> can index the given IFile or not.
 	 */

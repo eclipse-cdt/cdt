@@ -1,3 +1,6 @@
+2005-03-12 Bogdan Gheorghe
+	Updated search to work with new index framework
+	
 2004-11-02 Bogdan Gheorghe
 	Partial Fix for 74427: Indexer needs to store more info
 	

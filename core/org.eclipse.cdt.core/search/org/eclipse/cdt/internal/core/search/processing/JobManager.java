@@ -13,11 +13,9 @@
  */
 package org.eclipse.cdt.internal.core.search.processing;
 
-import java.util.HashSet;
-
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.search.indexing.IndexRequest;
+import org.eclipse.cdt.internal.core.index.sourceindexer.IndexRequest;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -27,7 +25,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 public abstract class JobManager implements Runnable {
 
 	/* queue of jobs to execute */
-	protected IJob[] awaitingJobs = new IJob[10];
+	protected IIndexJob[] awaitingJobs = new IIndexJob[10];
 	protected int jobStart = 0;
 	protected int jobEnd = -1;
 	protected boolean executing = false;
@@ -46,8 +44,6 @@ public abstract class JobManager implements Runnable {
 	public boolean activated = false;
 	
 	private int awaitingClients = 0;
-	
-	protected HashSet jobSet;
 	
 	protected IndexingJob indexJob = null;
 	
@@ -87,7 +83,7 @@ public abstract class JobManager implements Runnable {
 	 * Answers the first job in the queue, or null if there is no job available
 	 * Until the job has completed, the job manager will keep answering the same job.
 	 */
-	public synchronized IJob currentJob() {
+	public synchronized IIndexJob currentJob() {
 
 		if ( enabled != ENABLED )
 			return null;
@@ -114,7 +110,7 @@ public abstract class JobManager implements Runnable {
 
 		int oldEnabledState = 0;
 		try {
-			IJob currentJob;
+			IIndexJob currentJob;
 			// cancel current job if it belongs to the given family
 			synchronized(this){
 				currentJob = this.currentJob();
@@ -208,7 +204,7 @@ public abstract class JobManager implements Runnable {
 		}
 		if( indexJob != null ){
 			String progressString = null;
-			IJob job = currentJob();
+			IIndexJob job = currentJob();
 			if( job instanceof IndexRequest ){
 				progressString = " ("; //$NON-NLS-1$
 				progressString += job.toString();
@@ -241,23 +237,23 @@ public abstract class JobManager implements Runnable {
 	 *
 	 */
 	public boolean performConcurrentJob(
-		IJob searchJob,
+		IIndexJob searchJob,
 		int waitingPolicy,
 		IProgressMonitor progress, 
-		IJob jobToIgnore) {
+		IIndexJob jobToIgnore) {
 			
 		if (VERBOSE)
 			JobManager.verbose("STARTING  concurrent job - " + searchJob); //$NON-NLS-1$
 		if (!searchJob.isReadyToRun()) {
 			if (VERBOSE)
 				JobManager.verbose("ABORTED   concurrent job - " + searchJob); //$NON-NLS-1$
-			return IJob.FAILED;
+			return IIndexJob.FAILED;
 		}
 
 		int concurrentJobWork = 100;
 		if (progress != null)
 			progress.beginTask("", concurrentJobWork); //$NON-NLS-1$
-		boolean status = IJob.FAILED;
+		boolean status = IIndexJob.FAILED;
 		if (awaitingJobsCount() > 0) {
 			if( enabledState() == WAITING ){
 				//the indexer is paused, resume now that we have been asked for something
@@ -268,7 +264,7 @@ public abstract class JobManager implements Runnable {
 				attemptPolicy = false;
 				switch (waitingPolicy) {
 	
-					case IJob.ForceImmediate :
+					case IIndexJob.ForceImmediate :
 						if (VERBOSE)
 							JobManager.verbose("-> NOT READY - forcing immediate - " + searchJob);//$NON-NLS-1$
 						boolean wasEnabled = ( enabledState() == ENABLED );
@@ -284,7 +280,7 @@ public abstract class JobManager implements Runnable {
 							JobManager.verbose("FINISHED  concurrent job - " + searchJob); //$NON-NLS-1$
 						return status;
 						
-					case IJob.CancelIfNotReady :
+					case IIndexJob.CancelIfNotReady :
 						if (VERBOSE)
 							JobManager.verbose("-> NOT READY - cancelling - " + searchJob); //$NON-NLS-1$
 						if (progress != null) progress.setCanceled(true);
@@ -292,10 +288,10 @@ public abstract class JobManager implements Runnable {
 							JobManager.verbose("CANCELED concurrent job - " + searchJob); //$NON-NLS-1$
 						throw new OperationCanceledException();
 	
-					case IJob.WaitUntilReady :
+					case IIndexJob.WaitUntilReady :
 						int awaitingWork;
-						IJob previousJob = null;
-						IJob currentJob;
+						IIndexJob previousJob = null;
+						IIndexJob currentJob;
 						IProgressMonitor subProgress = null;
 						int totalWork = this.awaitingJobsCount();
 						if (progress != null && totalWork > 0) {
@@ -333,7 +329,7 @@ public abstract class JobManager implements Runnable {
 								
 								if( enabledState() == WAITING ){
 									//user canceled the index we are waiting on, force immediate
-									waitingPolicy = IJob.ForceImmediate;
+									waitingPolicy = IIndexJob.ForceImmediate;
 									attemptPolicy = true;
 									continue policy;
 								}
@@ -372,7 +368,7 @@ public abstract class JobManager implements Runnable {
 	 * @param jobToIgnore
 	 * @return
 	 */
-	private boolean jobShouldBeIgnored(IJob jobToIgnore) {
+	private boolean jobShouldBeIgnored(IIndexJob jobToIgnore) {
 		if (jobToIgnore == null)
 			return false;
 		
@@ -384,7 +380,7 @@ public abstract class JobManager implements Runnable {
 
 	public abstract String processName();
 	
-	public synchronized void request(IJob job) {
+	public synchronized void request(IIndexJob job) {
 		if (!job.isReadyToRun()) {
 			if (VERBOSE)
 				JobManager.verbose("ABORTED request of background job - " + job); //$NON-NLS-1$
@@ -398,7 +394,7 @@ public abstract class JobManager implements Runnable {
 			System.arraycopy(
 				awaitingJobs,
 				jobStart,
-				(awaitingJobs = new IJob[size * 2]),
+				(awaitingJobs = new IIndexJob[size * 2]),
 				0,
 				jobEnd);
 			jobStart = 0;
@@ -435,11 +431,10 @@ public abstract class JobManager implements Runnable {
 			thread = new Thread(this, this.processName());
 			thread.setDaemon(true);
 			// less prioritary by default, priority is raised if clients are actively waiting on it
-			thread.setPriority(Thread.NORM_PRIORITY-1); 
+			thread.setPriority(Thread.MIN_PRIORITY); 
 			thread.start();
 		}
 		
-		jobSet = new HashSet();
 	}
 
 	/**
@@ -452,7 +447,7 @@ public abstract class JobManager implements Runnable {
 		try {
 			while (this.thread != null) {
 				try {
-					IJob job;
+					IIndexJob job;
 					if ((job = currentJob()) == null) {
 						if (idlingStart < 0)
 							idlingStart = System.currentTimeMillis();
@@ -548,6 +543,6 @@ public abstract class JobManager implements Runnable {
 		return buffer.toString();
 	}	
 	
-	protected abstract void jobFinishedNotification(IJob job);
+	protected abstract void jobFinishedNotification(IIndexJob job);
 
 }

@@ -12,11 +12,13 @@ package org.eclipse.cdt.internal.core.search;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -89,7 +91,17 @@ public class IndexSelector {
 		int count = 0;
 		for (int i = 0; i < length; i++){
 			// may trigger some index recreation work
-			IIndex index = indexManager.getIndex(indexKeys[i], true /*reuse index file*/, false /*do not create if none*/);
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			ICDTIndexer indexer = indexManager.getIndexerForProject( root.getProject(indexKeys[i].toOSString()));
+			
+			IIndex index = null;
+			
+			if (indexer != null){
+				if (indexer instanceof SourceIndexer){
+					SourceIndexer sourceIndexer = (SourceIndexer) indexer;
+					index =sourceIndexer.getIndex(indexKeys[i], true /*reuse index file*/, false /*do not create if none*/);
+				}
+			}
 			if (index != null) indexes[count++] = index; // only consider indexes which are ready yet
 		}
 		if (count != length) {

@@ -187,17 +187,17 @@ public interface ICSearchConstants {
 	 * has not finished indexing the workspace. Results will more likely
 	 * not contain all the matches.
 	 */
-	int FORCE_IMMEDIATE_SEARCH = IJob.ForceImmediate;
+	int FORCE_IMMEDIATE_SEARCH = IIndexJob.ForceImmediate;
 	/**
 	 * The search operation throws an <code>org.eclipse.core.runtime.OperationCanceledException</code>
 	 * if the underlying indexer has not finished indexing the workspace.
 	 */
-	int CANCEL_IF_NOT_READY_TO_SEARCH = IJob.CancelIfNotReady;
+	int CANCEL_IF_NOT_READY_TO_SEARCH = IIndexJob.CancelIfNotReady;
 	/**
 	 * The search operation waits for the underlying indexer to finish indexing 
 	 * the workspace before starting the search.
 	 */
-	int WAIT_UNTIL_READY_TO_SEARCH = IJob.WaitUntilReady;
+	int WAIT_UNTIL_READY_TO_SEARCH = IIndexJob.WaitUntilReady;
 	
 	public static final String EXTERNAL_SEARCH_LINK_PREFIX = "cdtlnk"; //$NON-NLS-1$
 	

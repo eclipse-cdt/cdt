@@ -13,7 +13,7 @@ import org.eclipse.cdt.core.build.managed.tests.StandardBuildTests;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.filetype.tests.ResolverTests;
 import org.eclipse.cdt.core.indexer.tests.DependencyTests;
-import org.eclipse.cdt.core.indexer.tests.IndexManagerTests;
+import org.eclipse.cdt.core.indexer.tests.SourceIndexerTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.BinaryTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
@@ -65,7 +65,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(RegressionTestSuite.suite());
 		//Indexer Tests need to be run after any indexer client tests
 		//as the last test shuts down the indexing thread
-		suite.addTest(IndexManagerTests.suite());
+		suite.addTest(SourceIndexerTests.suite());
 		// Last test to trigger report generation
 		
 		// Add all failed tests

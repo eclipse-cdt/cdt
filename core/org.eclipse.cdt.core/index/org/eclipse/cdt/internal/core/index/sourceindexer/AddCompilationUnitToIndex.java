@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.search.indexing;
+package org.eclipse.cdt.internal.core.index.sourceindexer;
 
 import java.io.IOException;
 
@@ -21,12 +21,13 @@ import org.eclipse.core.runtime.IPath;
 public class AddCompilationUnitToIndex extends AddFileToIndex {
 	char[] contents;
 
-	public AddCompilationUnitToIndex(IFile resource, IPath indexedContainer, IndexManager manager, boolean checkEncounteredHeaders) {
-		super(resource, indexedContainer, manager, checkEncounteredHeaders);
+	public AddCompilationUnitToIndex(IFile resource, IPath indexedContainer, SourceIndexer indexer, boolean checkEncounteredHeaders) {
+		super(resource, indexedContainer, indexer, checkEncounteredHeaders);
 	}
 	protected boolean indexDocument(IIndex index) throws IOException {
 		if (!initializeContents()) return false;
-		index.add(new IFileDocument(resource, this.contents), new SourceIndexer(resource, manager.getTimeout()));
+		index.add(new IFileDocument(resource, this.contents), new SourceIndexerRunner(resource, indexer));
+		
 		return true;
 	}
 	public boolean initializeContents() {

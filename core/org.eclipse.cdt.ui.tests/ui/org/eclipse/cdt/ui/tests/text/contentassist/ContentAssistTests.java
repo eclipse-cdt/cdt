@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
@@ -65,7 +65,7 @@ public class ContentAssistTests extends TestCase {
             cPrj = CProjectHelper.createCCProject("ContentAssistTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
         
             project = cPrj.getProject();
-            project.setSessionProperty(IndexManager.activationKey,new Boolean(false));
+            project.setSessionProperty(SourceIndexer.activationKey,new Boolean(false));
         } catch ( CoreException e ) {
             /*boo*/
         }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.search.indexing;
+package org.eclipse.cdt.internal.core.index.sourceindexer;
 
 import java.util.ArrayList;
 
@@ -18,6 +18,8 @@ import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -28,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-class AddFolderToIndex extends IndexRequest {
+public class AddFolderToIndex extends IndexRequest {
 	IPath folderPath;
 	IProject project;
 	char[][] exclusionPattern;
@@ -36,8 +38,8 @@ class AddFolderToIndex extends IndexRequest {
 	ArrayList headerFilesToIndex;
 	boolean cleanEncouteredHeaders;
 	
-	public AddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, IndexManager manager) {
-		super(project.getFullPath(), manager);
+	public AddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, SourceIndexer indexer) {
+		super(project.getFullPath(), indexer);
 		this.folderPath = folderPath;
 		this.project = project;
 		this.exclusionPattern = exclusionPattern;
@@ -46,8 +48,8 @@ class AddFolderToIndex extends IndexRequest {
 		this.cleanEncouteredHeaders = false;
 	}
 	
-	public AddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, IndexManager manager, boolean cleanEncounteredHeaders) {
-		super(project.getFullPath(), manager);
+	public AddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, SourceIndexer indexer, boolean cleanEncounteredHeaders) {
+		super(project.getFullPath(), indexer);
 		this.folderPath = folderPath;
 		this.project = project;
 		this.exclusionPattern = exclusionPattern;
@@ -58,21 +60,22 @@ class AddFolderToIndex extends IndexRequest {
 	
 	public boolean execute(IProgressMonitor progressMonitor) {
 		if (progressMonitor != null && progressMonitor.isCanceled()) return true;
+		
 		if (!project.isAccessible()) return true; // nothing to do
 		IResource folder = this.project.getParent().findMember(this.folderPath);
 		if (folder == null || folder.getType() == IResource.FILE) return true; // nothing to do, source folder was removed
 
-		/* ensure no concurrent write access to index */
-		IIndex index = manager.getIndex(this.indexPath, true, /*reuse index file*/ true /*create if none*/);
+		/* ensure no concurrent write access to index */	
+		IIndex index = indexer.getIndex(this.indexPath, true, /*reuse index file*/ true /*create if none*/);
 		if (index == null) return true;
-		ReadWriteMonitor monitor = manager.getMonitorFor(index);
+		ReadWriteMonitor monitor = indexer.getMonitorFor(index);
 		if (monitor == null) return true; // index got deleted since acquired
 
 		try {
 			monitor.enterRead(); // ask permission to read
 
 			final IPath container = this.indexPath;
-			final IndexManager indexManager = this.manager;
+			//final IndexManager indexManager = this.manager;
 			final char[][] pattern = exclusionPattern;
 			folder.accept(
 				new IResourceProxyVisitor() {
@@ -114,14 +117,14 @@ class AddFolderToIndex extends IndexRequest {
 	private void scheduleJobs() {
 		//Schedule the source jobs first, then the headers
 		for (int i=0; i<sourceFilesToIndex.size(); i++)
-			this.manager.addSource((IFile)sourceFilesToIndex.get(i), this.indexPath, false);
+			this.indexer.addSource((IFile)sourceFilesToIndex.get(i), this.indexPath, false);
 		
 		for (int i=0;i<headerFilesToIndex.size(); i++)
-			this.manager.addSource((IFile)headerFilesToIndex.get(i), this.indexPath, true);
+			this.indexer.addSource((IFile)headerFilesToIndex.get(i), this.indexPath, true);
 		
 		if (cleanEncouteredHeaders){
-			CleanEncounteredHeaders cleanHeaders = new CleanEncounteredHeaders(this.manager);
-			this.manager.request(cleanHeaders);
+			CleanEncounteredHeaders cleanHeaders = new CleanEncounteredHeaders(this.indexer);
+			this.indexer.request(cleanHeaders);
 		}
 	}
 

@@ -13,12 +13,9 @@
  */
 package org.eclipse.cdt.internal.core.search.processing;
 
-/**
- * @author bgheorgh
- */
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public interface IJob {
+public interface IIndexJob {
 	
 	/* Waiting policies */
 	int ForceImmediate = 1;
@@ -30,20 +27,20 @@ public interface IJob {
 	boolean COMPLETE = true;
 
 	/**
-	 * True if job belongs to the passed in jobFamily
+	 * True if index job belongs to the passed in jobFamily
 	 */
 	public boolean belongsTo(String jobFamily);
 	/**
-	 * Asks this job to cancel its execution. The cancellation
+	 * Asks this index job to cancel its execution. The cancellation
 	 * can take an undertermined amount of time.
 	 */
 	public void cancel();
 	/**
-	 * Execute the current job, answer whether it was successful.
+	 * Execute the current index job, answer whether it was successful.
 	 */
 	public boolean execute(IProgressMonitor progress);
 	/**
-	 * Answer whether the job is ready to run.
+	 * Answer whether the index job is ready to run.
 	 */
 	public boolean isReadyToRun();
 	

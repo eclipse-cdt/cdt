@@ -1113,6 +1113,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	public IndexManager getIndexManager() {
 		return this.fDeltaProcessor.indexManager;
 	}
+	
 
 	public void deleting(IProject project) {
 		//	discard all indexing jobs for this project

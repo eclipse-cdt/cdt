@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
-import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
+import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 
 /**
  * @author bgheorgh

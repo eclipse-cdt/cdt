@@ -1,3 +1,33 @@
+2005-03-12 Bogdan Gheorghe
+	Restructured indexer framework to allow for multiple indexers in a workspace.
+
+	* index/org/eclipse/cdt/core/index/ICDTIndexer.java
+	* index/org/eclipse/cdt/core/index/IIndexStorage.java
+	* index/org/eclipse/cdt/core/index/Indexer.java
+	* index/org/eclipse/cdt/core/index/IndexManager.java
+	* index/org/eclipse/cdt/internal/core/index/IIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/impl/Index.java
+	* index/org/eclipse/cdt/internal/core/index/impl/MergeFactory.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexerModelListener.java
+	
+	Moved following classes to new source indexer folder:
+	
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AbstractIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AddCompilationUnit.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AddFileToIndex.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AddFolderToIndex.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/CIndexStorage.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/CleanEncounteredHeaders.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/IndexAllProject.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/IndexRequest.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/RemoveFolderFromIndex.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/RemoveFromIndex.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SaveIndex.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRequestor.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRunner.java
+	
+	
 2004-11-17 Bogdan Gheorghe 
 	Fix for Bug 78678: Indexer stops reindexing file after repeated saves
 	

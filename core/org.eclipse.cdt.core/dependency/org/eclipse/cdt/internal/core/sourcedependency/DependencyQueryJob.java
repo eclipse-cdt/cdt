@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -15,10 +17,12 @@ import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.index.impl.IncludeEntry;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
 import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
+import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.IndexSelector;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
-import org.eclipse.cdt.internal.core.search.processing.IJob;
+import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -28,20 +32,22 @@ import org.eclipse.core.runtime.OperationCanceledException;
 /**
  * @author bgheorgh
  */
-public class DependencyQueryJob implements IJob {
+public class DependencyQueryJob implements IIndexJob {
 
 	IProject project;
 	IFile file;
 	ArrayList includeFiles;
+	SourceIndexer indexer;
 	IndexManager indexManager;
 	protected IndexSelector indexSelector;
 	protected long executionTime = 0;
 	
-	public DependencyQueryJob(IProject project, IFile file, IndexManager inMan, List includeFiles) {
+	public DependencyQueryJob(IProject project, IFile file, SourceIndexer indexer, List includeFiles) {
 		this.project = project;
 		this.file = file;
-		this.indexManager = inMan;
+		this.indexer = indexer;
 		this.includeFiles = (ArrayList) includeFiles;
+		this.indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	}
 
 	/* (non-Javadoc)
@@ -69,11 +75,12 @@ public class DependencyQueryJob implements IJob {
 				executionTime = 0;
 				if (this.indexSelector == null) {
 					this.indexSelector =
-						new IndexSelector(SearchEngine.createWorkspaceScope(), null, false, this.indexManager);
+						new IndexSelector(SearchEngine.createWorkspaceScope(), null, false, indexManager);
 				}
 				IIndex[] searchIndexes = this.indexSelector.getIndexes();
 				try {
 					int max = searchIndexes.length;
+					int min=0;
 					if (progressMonitor != null) {
 						progressMonitor.beginTask("", max); //$NON-NLS-1$
 					}
@@ -115,7 +122,15 @@ public class DependencyQueryJob implements IJob {
 	
 		if (index == null)
 			return COMPLETE;
-		ReadWriteMonitor monitor = indexManager.getMonitorFor(index);
+		
+		
+		if (!(indexer instanceof SourceIndexer))
+			return FAILED;
+		
+		
+		SourceIndexer sourceIndexer = (SourceIndexer)indexer;
+			
+		ReadWriteMonitor monitor = sourceIndexer.getMonitorFor(index);
 		if (monitor == null)
 			return COMPLETE; // index got deleted since acquired
 		try {
@@ -126,7 +141,7 @@ public class DependencyQueryJob implements IJob {
 				try {
 					monitor.exitRead(); // free read lock
 					monitor.enterWrite(); // ask permission to write
-					this.indexManager.saveIndex(index);
+					sourceIndexer.saveIndex(index);
 				} catch (IOException e) {
 					return FAILED;
 				} finally {
@@ -219,7 +234,7 @@ public class DependencyQueryJob implements IJob {
 	 */
 	public boolean isReadyToRun() {
 		if (this.indexSelector == null) { // only check once. As long as this job is used, it will keep the same index picture
-			this.indexSelector = new IndexSelector(SearchEngine.createWorkspaceScope(), null, false, this.indexManager);
+			this.indexSelector = new IndexSelector(SearchEngine.createWorkspaceScope(), null, false, indexManager);
 			this.indexSelector.getIndexes(); // will only cache answer if all indexes were available originally
 		}
 		return true;

@@ -9,24 +9,25 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.search.indexing;
+package org.eclipse.cdt.internal.core.index.sourceindexer;
 
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.search.processing.IJob;
+import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
+import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
-public abstract class IndexRequest implements IJob {
+public abstract class IndexRequest implements IIndexJob {
 	protected boolean isCancelled = false;
-	protected IPath indexPath;
-	protected IndexManager manager;
-
-	public IndexRequest(IPath indexPath, IndexManager manager) {
+	protected IPath indexPath = null;
+	protected SourceIndexer indexer = null;
+	
+	public IndexRequest(IPath indexPath, SourceIndexer indexer) {
 		this.indexPath = indexPath;
-		this.manager = manager;
+		this.indexer = indexer;
 	}
 	
 	public boolean belongsTo(String projectName) {
@@ -34,18 +35,18 @@ public abstract class IndexRequest implements IJob {
 	}
 	
 	public void cancel() {
-		this.manager.jobFinishedNotification( this );
-		this.manager.jobWasCancelled(this.indexPath);
+		this.indexer.jobFinishedNotification( this );
+		this.indexer.jobWasCancelled(this.indexPath);
 		this.isCancelled = true;
 	}
 	
 	public boolean isReadyToRun() {
 		IProject project = CCorePlugin.getWorkspace().getRoot().getProject(indexPath.segment(0));
-		if ( !project.isAccessible() || !this.manager.isIndexEnabled( project ) )
+		if ( !project.isAccessible() || !this.indexer.isIndexEnabled( project ) )
 			return false;
 		
 		// tag the index as inconsistent
-		this.manager.aboutToUpdateIndex(indexPath, updatedIndexState());
+		indexer.aboutToUpdateIndex(indexPath, updatedIndexState());
 		return true;
 	}
 	/*
@@ -57,7 +58,7 @@ public abstract class IndexRequest implements IJob {
 			try {
 				monitor.exitRead(); // free read lock
 				monitor.enterWrite(); // ask permission to write
-				this.manager.saveIndex(index);
+				indexer.saveIndex(index);
 			} finally {
 				monitor.exitWriteEnterRead(); // finished writing and reacquire read permission
 			}
@@ -65,6 +66,10 @@ public abstract class IndexRequest implements IJob {
 	}
 	
 	protected Integer updatedIndexState() {
-		return IndexManager.UPDATING_STATE;
+		return CIndexStorage.UPDATING_STATE;
+	}
+	
+	public IPath getIndexPath(){
+		return indexPath;
 	}
 }

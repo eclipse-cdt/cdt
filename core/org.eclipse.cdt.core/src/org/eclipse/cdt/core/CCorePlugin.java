@@ -31,13 +31,13 @@ import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.PathEntryVariableManager;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexerRunner;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.DeltaProcessor;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.cdt.internal.core.search.indexing.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
@@ -889,7 +889,7 @@ public class CCorePlugin extends Plugin {
 			} //$NON-NLS-1$
 			
 			option = Platform.getDebugOption(INDEXER);
-			if(option != null) SourceIndexer.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			if(option != null) SourceIndexerRunner.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 		
 			option = Platform.getDebugOption(SEARCH);
 			if(option != null) SearchEngine.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$

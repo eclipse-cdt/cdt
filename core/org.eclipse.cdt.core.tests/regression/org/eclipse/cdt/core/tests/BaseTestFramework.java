@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -41,7 +41,8 @@ abstract public class BaseTestFramework extends TestCase {
     static protected IProject 				project;
     static protected ICProject				cproject;
     static protected FileManager 			fileManager;
-    
+    static final 	 String 				sourceIndexerID = "org.eclipse.cdt.core.originalsourceindexer"; //$NON-NLS-1$
+    static protected SourceIndexer			sourceIndexer;
     {
         if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
 			(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
@@ -53,7 +54,14 @@ abstract public class BaseTestFramework extends TestCase {
 	            cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 	        
 	            project = cproject.getProject();
-	            project.setSessionProperty(IndexManager.activationKey, Boolean.FALSE );
+	            
+	            /*project.setSessionProperty(SourceIndexer.activationKey, Boolean.FALSE );
+	        	//Set the id of the source indexer extension point as a session property to allow
+	    		//index manager to instantiate it
+	    		project.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);*/
+	    		
+	 
+	    		
 	        } catch ( CoreException e ) {
 	            /*boo*/
 	        }
@@ -69,7 +77,7 @@ abstract public class BaseTestFramework extends TestCase {
         if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
             if( project != null )
                 try {
-                    project.setSessionProperty( IndexManager.activationKey, Boolean.TRUE );
+                    project.setSessionProperty( SourceIndexer.activationKey, Boolean.TRUE );
                 } catch ( CoreException e ) { //boo
                 }
         }
@@ -79,7 +87,7 @@ abstract public class BaseTestFramework extends TestCase {
         if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
             if( project != null )
                 try {
-                    project.setSessionProperty( IndexManager.activationKey, Boolean.FALSE );
+                    project.setSessionProperty( SourceIndexer.activationKey, Boolean.FALSE );
                 } catch ( CoreException e ) { //boo
                 }
         }

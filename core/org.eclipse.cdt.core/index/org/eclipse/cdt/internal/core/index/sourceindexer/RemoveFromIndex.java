@@ -9,20 +9,22 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.search.indexing;
+package org.eclipse.cdt.internal.core.index.sourceindexer;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
+import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.search.processing.JobManager;
 
-class RemoveFromIndex extends IndexRequest {
+public class RemoveFromIndex extends IndexRequest {
 	String resourceName;
 
-	public RemoveFromIndex(String resourceName, IPath indexPath, IndexManager manager) {
-		super(indexPath, manager);
+	public RemoveFromIndex(String resourceName, IPath indexPath, SourceIndexer indexer) {
+		super(indexPath, indexer);
 		this.resourceName = resourceName;
 	}
 	
@@ -31,9 +33,9 @@ class RemoveFromIndex extends IndexRequest {
 		if (progressMonitor != null && progressMonitor.isCanceled()) return true;
 
 		/* ensure no concurrent write access to index */
-		IIndex index = manager.getIndex(this.indexPath, true, /*reuse index file*/ false /*create if none*/);
+		IIndex index = indexer.getIndex(this.indexPath, true, /*reuse index file*/ false /*create if none*/);
 		if (index == null) return true;
-		ReadWriteMonitor monitor = manager.getMonitorFor(index);
+		ReadWriteMonitor monitor = indexer.getMonitorFor(index);
 		if (monitor == null) return true; // index got deleted since acquired
 
 		try {

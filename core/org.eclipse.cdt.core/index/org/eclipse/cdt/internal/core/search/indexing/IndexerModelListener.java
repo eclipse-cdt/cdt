@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.search.indexing;
 
+import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.model.SourceRoot;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -54,6 +56,13 @@ public class IndexerModelListener implements IElementChangedListener {
 		int kind= delta.getKind();
 		int flags= delta.getFlags();
 		ICElement element= delta.getElement();
+		IProject project = element.getCProject().getProject();
+		ICDTIndexer indexer = indexManager.getIndexerForProject(project);
+		
+		if (!(indexer instanceof SourceIndexer))
+			return;
+		
+		SourceIndexer sourceIndexer = (SourceIndexer) indexer;
 		
 		switch(kind){		
 			case ICElementDelta.CHANGED:
@@ -69,27 +78,27 @@ public class IndexerModelListener implements IElementChangedListener {
 					switch(tempResource.getType())
 					{
 						case IResource.FILE:
-						indexManager.addSource((IFile) tempResource,tempResource.getProject().getFullPath());
+						sourceIndexer.addSource((IFile) tempResource,tempResource.getProject().getFullPath());
 						break;
 						
 						case IResource.FOLDER:
 						tempRootElement = (SourceRoot) getElementSource(element);
 						if (tempRootElement != null){	
 						 IProject theProj = tempResource.getProject();
-						 indexManager.indexSourceFolder(theProj,tempResource.getFullPath(),tempRootElement.getSourceEntry().fullExclusionPatternChars());
+						 sourceIndexer.indexSourceFolder(theProj,tempResource.getFullPath(),tempRootElement.getSourceEntry().fullExclusionPatternChars());
 						}
 						break;
 						
 						case IResource.PROJECT:
-						indexManager.indexAll(tempResource.getProject());
+						sourceIndexer.indexAll(tempResource.getProject());
 						break;
 					}
 					
 				} else if( (flags & ICElementDelta.F_REMOVED_PATHENTRY_SOURCE) != 0 ){
 					IResource tempResource = element.getResource();
-					IProject project = tempResource.getProject();
-					if( indexManager.indexProblemsEnabled(project) != 0 ){
-						indexManager.removeIndexerProblems( tempResource );
+					IProject tempProject = tempResource.getProject();
+					if( sourceIndexer.indexProblemsEnabled(tempProject) != 0 ){
+						sourceIndexer.removeIndexerProblems( tempResource );
 					}
 				}
 			break;			

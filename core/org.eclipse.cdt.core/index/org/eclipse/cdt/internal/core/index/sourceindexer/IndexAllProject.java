@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.search.indexing;
+package org.eclipse.cdt.internal.core.index.sourceindexer;
 
 import java.io.IOException;
 
@@ -22,6 +22,8 @@ import org.eclipse.cdt.internal.core.model.CModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.SourceRoot;
 import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -31,8 +33,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class IndexAllProject extends IndexRequest {
 	IProject project;
 
-	public IndexAllProject(IProject project, IndexManager manager) {
-		super(project.getFullPath(), manager);
+	public IndexAllProject(IProject project, SourceIndexer indexer) {
+		super(project.getFullPath(), indexer);
 		this.project = project;
 	}
 	
@@ -50,10 +52,12 @@ public class IndexAllProject extends IndexRequest {
 
 		if (progressMonitor != null && progressMonitor.isCanceled()) return true;
 		if (!project.isAccessible()) return true; // nothing to do
-
-		IIndex index = this.manager.getIndex(this.indexPath, true, /*reuse index file*/ true /*create if none*/);
+		
+		String test = this.indexPath.toOSString();
+		
+		IIndex index = indexer.getIndex(this.indexPath, true, /*reuse index file*/ true /*create if none*/);
 		if (index == null) return true;
-		ReadWriteMonitor monitor = this.manager.getMonitorFor(index);
+		ReadWriteMonitor monitor = indexer.getMonitorFor(index);
 		if (monitor == null) return true; // index got deleted since acquired
 
 		try {
@@ -84,27 +88,27 @@ public class IndexAllProject extends IndexRequest {
 					ISourceEntry tempEntry = ((SourceRoot) sourceRoot[i]).getSourceEntry();
 					
 					if ((i+1) != sourceRoot.length)
-						this.manager.request(new AddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), this.manager));
+						indexer.request(new AddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), indexer));
 					else
-						this.manager.request(new AddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), this.manager,true));
+						indexer.request(new AddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(),indexer,true));
 				}
 			}
 			
 			// request to save index when all cus have been indexed
-			this.manager.request(new SaveIndex(this.indexPath, this.manager));
+			indexer.request(new SaveIndex(this.indexPath, indexer));
 		} catch (CoreException e) {
 			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to index " + this.project + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();
 			}
-			this.manager.removeIndex(this.indexPath);
+			indexer.removeIndex(this.indexPath);
 			return false;
 		} catch (IOException e) {
 			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to index " + this.project + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
 				e.printStackTrace();
 			}
-			this.manager.removeIndex(this.indexPath);
+			indexer.removeIndex(this.indexPath);
 			return false;
 		} finally {
 			monitor.exitRead(); // free read lock
@@ -117,7 +121,7 @@ public class IndexAllProject extends IndexRequest {
 	}
 	
 	protected Integer updatedIndexState() {
-		return IndexManager.REBUILDING_STATE;
+		return CIndexStorage.REBUILDING_STATE;
 	}
 	
 	public String toString() {

@@ -1,3 +1,12 @@
+2005-03-13 Bogdan Gheorghe
+	Added support for new indexer framework
+	
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* plugin.xml
+	
 2005-03-12 Alain Magloire
 	Plan item 79518: for PathEntry variable manager.
 	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java

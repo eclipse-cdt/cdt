@@ -20,11 +20,12 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.PathCollector;
 import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
-import org.eclipse.cdt.internal.core.search.processing.IJob;
+import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -38,15 +39,17 @@ import org.eclipse.core.runtime.Path;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class UpdateDependency implements IJob {
+public class UpdateDependency implements IIndexJob {
 	PathCollector pathCollector;
 	IResource resource;
+	SourceIndexer indexer;
 	
 	/**
 	 * @param resource
 	 */
-	public UpdateDependency(IResource resource) {
+	public UpdateDependency(IResource resource, SourceIndexer indexer) {
 		this.resource = resource;
+		this.indexer = indexer;
 	}
 
 	/* (non-Javadoc)
@@ -99,7 +102,7 @@ public class UpdateDependency implements IJob {
 			if (fileToReindex!=null && fileToReindex.exists() ) {
 //			if (VERBOSE)
 //			 System.out.println("Going to reindex " + fileToReindex.getName());
-			 indexManager.addSource(fileToReindex,fileToReindex.getProject().getProject().getFullPath());
+			 indexer.addSource(fileToReindex,fileToReindex.getProject().getProject().getFullPath());
 			}
 		}
 		return false;

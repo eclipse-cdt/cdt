@@ -1,3 +1,9 @@
+2005-03-12 Bogdan Gheorghe
+	- Updated references from IndexManager to SourceIndexer due to new indexer framework
+	
+	* src/org/eclipse/cdt/internal/core/sourcedependency/DependencyQueryJob.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/UpdateDependency.java
+		
 2004-02-25 Bogdan Gheorghe
 	- Check to see if the resource has a location before using it in
 	  UpdateDependency

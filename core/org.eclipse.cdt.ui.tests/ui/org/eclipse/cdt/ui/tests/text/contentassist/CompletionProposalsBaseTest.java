@@ -100,8 +100,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 		}
 
 		// use the new indexer
-		IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		indexManager.reset();		
+		//IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	}
 
 	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {

@@ -20,6 +20,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexChangeListener;
+import org.eclipse.cdt.core.index.IIndexDelta;
+import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
@@ -30,12 +33,14 @@ import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.PathCollector;
 import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
-import org.eclipse.cdt.internal.core.search.processing.IJob;
+import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
 import org.eclipse.cdt.internal.core.sourcedependency.UpdateDependency;
 import org.eclipse.core.resources.IFile;
@@ -53,7 +58,7 @@ import org.eclipse.core.runtime.Platform;
 	/**
  	* @author bgheorgh
  	*/
-	public class DependencyTests extends TestCase {
+	public class DependencyTests extends TestCase implements IIndexChangeListener {
 	IFile 					file;
 	IFileDocument 			fileDoc;
 	IProject 				testProject;
@@ -63,12 +68,15 @@ import org.eclipse.core.runtime.Platform;
 	BasicSearchResultCollector	resultCollector;
 	SearchEngine			searchEngine;
 	ICSearchScope 			scope;
-
+	SourceIndexer			sourceIndexer;
+	boolean					fileIndexed;
+	public static final int TIMEOUT = 50;
+	
 	public static Test suite() {
 		TestSuite suite = new TestSuite(DependencyTests.class.getName());
 
 		suite.addTest(new DependencyTests("testDependencyTree"));
-		suite.addTest(new DependencyTests("testDepTable"));
+		//suite.addTest(new DependencyTests("testDepTable"));
 		suite.addTest(new DependencyTests("testDepSourceChangeTree"));
 		suite.addTest(new DependencyTests("testDepHeaderChangeTree"));
 		suite.addTest(new DependencyTests("testDepHeaderChangeReindex"));
@@ -97,13 +105,17 @@ import org.eclipse.core.runtime.Platform;
 		if (indexFile.exists())
 			indexFile.delete();
 		
-		testProject.setSessionProperty(IndexManager.activationKey,new Boolean(false));
+		testProject.setSessionProperty(IndexManager.indexerIDKey, SourceIndexerTests.sourceIndexerID);
+		testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
 		
 		if (testProject==null)
 			fail("Unable to create project");	
 		
 		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 		indexManager.reset();
+		
+		TypeCacheManager typeCacheManager = TypeCacheManager.getInstance();
+		typeCacheManager.setProcessTypeCacheEvents(false);
 		
 		workspace = ResourcesPlugin.getWorkspace();
 		
@@ -112,6 +124,9 @@ import org.eclipse.core.runtime.Platform;
 		resultCollector = new BasicSearchResultCollector();
 	
 		searchEngine = new SearchEngine();
+		
+		sourceIndexer = (SourceIndexer) indexManager.getIndexerForProject(testProject);
+		sourceIndexer.addIndexChangeListener(this);
 	}
 	/*
 	 * @see TestCase#tearDown()
@@ -121,6 +136,9 @@ import org.eclipse.core.runtime.Platform;
 			super.tearDown();
 		} catch (Exception e1) {
 		}
+		
+		sourceIndexer.shutdown();
+		
 		//Delete project
 		if (testProject.exists()){
 			try {
@@ -156,19 +174,13 @@ import org.eclipse.core.runtime.Platform;
    importFile("DepTest2.h","resources/dependency/DepTest2.h");
    IFile depTest = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");
    IFile depTest2 = importFile("DepTest2.cpp","resources/dependency/DepTest2.cpp");
-   //Enable indexing on the created project
-   //By doing this, we force the Dependency Manager to do a g()
-
-   IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-   //indexManager.setEnabled(testProject,true);
-   testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
-	
+   
 
    String[] depTestModel = {File.separator + "DepTestProject" + File.separator + "d.h", File.separator + "DepTestProject" + File.separator + "Inc1.h", File.separator + "DepTestProject" + File.separator + "c.h", File.separator + "DepTestProject" + File.separator + "a.h", File.separator + "DepTestProject" + File.separator + "DepTest.h"};
    String[] depTest2Model = {File.separator + "DepTestProject" + File.separator + "d.h", File.separator + "DepTestProject" + File.separator + "DepTest2.h"};
 	
    ArrayList includes = new ArrayList();
-   indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest,indexManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null,null);
+   indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest,sourceIndexer,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null,null);
 
    String[] depTestModelLocal = convertToLocalPath(depTestModel);
    String[] depTestIncludes = new String[includes.size()];
@@ -191,7 +203,7 @@ import org.eclipse.core.runtime.Platform;
    }
 	
    ArrayList includes2 = new ArrayList();
-   indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest2,indexManager,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null,null);
+   indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest2,sourceIndexer,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null,null);
    
    String[] depTest2ModelLocal = convertToLocalPath(depTest2Model);
    String[] depTest2Includes = new String[includes2.size()];
@@ -226,7 +238,7 @@ import org.eclipse.core.runtime.Platform;
    IFile depTestH = importFile("DepTest.h","resources/dependency/DepTest.h");
    IFile depTest2H = importFile("DepTest2.h","resources/dependency/DepTest2.h");
    
-   testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+   testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
 	
    PathCollector pathCollector = new PathCollector();
    getTableRefs(dH, pathCollector);
@@ -273,7 +285,7 @@ import org.eclipse.core.runtime.Platform;
    IFile depTestH = importFile("DepTest.h","resources/dependency/DepTest.h");
    IFile depTestC = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");
 
-   testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+   testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
 	
    String[] beforeModel = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp"};
 	
@@ -370,14 +382,14 @@ import org.eclipse.core.runtime.Platform;
 	 IFile depTestC = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");
 	 IFile depTest2C = importFile("DepTest2.cpp","resources/dependency/DepTest2.cpp");
 
-	 testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+	 testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
 		
 	 IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	  
 	 String[] preDepTestModel = {File.separator + "DepTestProject" + File.separator + "DepTest.h", File.separator + "DepTestProject" + File.separator + "Inc1.h", File.separator + "DepTestProject" + File.separator + "a.h", File.separator + "DepTestProject" + File.separator + "c.h", File.separator + "DepTestProject" + File.separator + "d.h"};
 	
 	 ArrayList includes = new ArrayList();
-	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTestC,indexManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
+	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTestC,sourceIndexer,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
 
 	 String[] preDepTestModelLocal = convertToLocalPath(preDepTestModel);
 	 String[] preDepTestIncludes = new String[includes.size()];
@@ -406,7 +418,7 @@ import org.eclipse.core.runtime.Platform;
 
 	 testProject.refreshLocal(IResource.DEPTH_INFINITE,null);
 	
-	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTestC,indexManager,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
+	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTestC,sourceIndexer,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
 	
 	
 	 String[] postDepTestModelLocal = convertToLocalPath(postDepTestModel);
@@ -439,14 +451,14 @@ import org.eclipse.core.runtime.Platform;
 	 IFile depTest3H = importFile("DepTest3.h","resources/dependency/DepTest3.h");
 	 IFile depTest3C = importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");
 
-	 testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+	 testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
 		
 	 IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	  
 	 String[] preDepTestModel = {File.separator + "DepTestProject" + File.separator + "DepTest3.h", File.separator + "DepTestProject" + File.separator + "a.h", File.separator + "DepTestProject" + File.separator + "c.h"};
 	
 	 ArrayList includes = new ArrayList();
-	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest3C,indexManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
+	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest3C,sourceIndexer,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
 
 	 String[] preDepTestModelLocal = convertToLocalPath(preDepTestModel);
 	 String[] preDepTestIncludes = new String[includes.size()];
@@ -475,7 +487,7 @@ import org.eclipse.core.runtime.Platform;
 
 	 testProject.refreshLocal(IResource.DEPTH_INFINITE,null);
 	
-	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest3C,indexManager,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
+	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest3C,sourceIndexer,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
 	
 	
 	 String[] postDepTestModelLocal = convertToLocalPath(postDepTestModel);
@@ -508,7 +520,7 @@ import org.eclipse.core.runtime.Platform;
 	IFile depTest3H = importFile("DepTest3.h","resources/dependency/DepTest3.h");
 	IFile depTest3C = importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");
 	
-	testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+	testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
 		
 	 
 	String[] beforeModel = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest3.cpp"}; 
@@ -568,7 +580,7 @@ import org.eclipse.core.runtime.Platform;
  	assertFalse(nonExistantResource.exists());
  	assertNull(nonExistantResource.getLocation());
  	
- 	IJob job = new UpdateDependency(nonExistantResource);
+ 	IIndexJob job = new UpdateDependency(nonExistantResource, sourceIndexer);
  	assertFalse(job.execute(new NullProgressMonitor()));
  }
   
@@ -580,7 +592,7 @@ import org.eclipse.core.runtime.Platform;
    IFile depTest3H = importFile("DepTest3.h","resources/dependency/DepTest3.h");
    IFile depTest3C = importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");
  	
-   testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+   testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
 	
    ICSearchPattern pattern = SearchEngine.createSearchPattern( "Z", ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, true );
 		
@@ -712,8 +724,8 @@ import org.eclipse.core.runtime.Platform;
 	   
    }
 	
-   private IFile importFile(String fileName, String resourceLocation)throws Exception{
-   		String testCaseName = this.getName();
+	private IFile importFile(String fileName, String resourceLocation)throws Exception {
+		resetIndexState();
 		//Obtain file handle
 		file = testProject.getProject().getFile(fileName);
 		//Create file input stream
@@ -724,6 +736,26 @@ import org.eclipse.core.runtime.Platform;
 					false, monitor);
 		}
 		fileDoc = new IFileDocument(file);
+		waitForIndex(10); // only wait 20 seconds max.
 		return file;
-   }
+	}
+   
+	public void resetIndexState() {
+		fileIndexed = false;
+	}
+	
+	public void waitForIndex(int maxSec) throws Exception {
+		int delay = 0;
+		while (fileIndexed != true && delay < (maxSec * 1000))
+		{ 
+			Thread.sleep(TIMEOUT);
+			delay += TIMEOUT;
+		}
+	}
+	public void indexChanged(IndexChangeEvent event) {
+		IIndexDelta delta = event.getDelta();
+		if (delta.getDeltaType() == IIndexDelta.MERGE_DELTA){
+			fileIndexed = true;
+		}
+	}
 }

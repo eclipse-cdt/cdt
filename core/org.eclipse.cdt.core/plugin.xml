@@ -61,7 +61,7 @@
 <!-- =================================================================================== -->
    <extension-point id="PathEntryContainerInitializer" name="%PathEntryContainerInitializer" schema="schema/PathEntryContainerInitializer.exsd"/>
    <extension-point id="CodeFormatter" name="%CodeFormatter.name" schema="schema/CodeFormatter.exsd"/>
-
+   <extension-point id="CIndexer" name="C/C++ Indexer" schema="schema/CIndexer.exsd"/>
 <!-- =================================================================================== -->
 <!-- Define the list of the Binary Parser provided by the CDT                            -->
 <!-- =================================================================================== -->
@@ -526,6 +526,21 @@
 <!-- =================================================================================== -->
    <extension point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.internal.core.CCorePreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CIndexer">
+      <indexer
+            indexStorageID="org.eclipse.cdt.core.cindexstorage"
+            class="org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer"
+            name="Original C/C++ Indexer"
+            id="org.eclipse.cdt.core.originalsourceindexer">
+      </indexer>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run class="org.eclipse.cdt.core.index2.IndexRunner"/>
+      </application>
    </extension>
  
 </plugin>

@@ -1,3 +1,6 @@
+2005-03-13 Bogdan Gheorghe
+	Updated tests to work with new index framework
+	
 2005-02-02 Tanya Wolff
 	added regression tests to AutomatedIntegrationSuite
 	* build.properties

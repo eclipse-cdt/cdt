@@ -1,127 +1,113 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IRegisterGroup;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Sep 16, 2002
+ * Represents a group of registers of a debug target.
  */
-public class CRegisterGroup extends CDebugElement implements IRegisterGroup
-{
+public class CRegisterGroup extends CDebugElement implements IRegisterGroup {
+
 	private String fName;
+
 	private ICDIRegisterObject[] fRegisterObjects;
-	private List fRegisters;
+
+	private IRegister[] fRegisters;
 
 	/**
 	 * Constructor for CRegisterGroup.
-	 * @param target
 	 */
-	public CRegisterGroup( CDebugTarget target, String name, ICDIRegisterObject[] regObjects )
-	{
+	public CRegisterGroup( CDebugTarget target, String name, ICDIRegisterObject[] regObjects ) {
 		super( target );
 		fName = name;
 		fRegisterObjects = regObjects;
-		fRegisters = new ArrayList();
+		fRegisters = new IRegister[regObjects.length];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#getName()
 	 */
-	public String getName() throws DebugException
-	{
+	public String getName() throws DebugException {
 		return fName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#getRegisters()
 	 */
-	public IRegister[] getRegisters() throws DebugException
-	{
-		List list = getRegisters0();
-		return (IRegister[])list.toArray( new IRegister[list.size()] );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IRegisterGroup#hasRegisters()
-	 */
-	public boolean hasRegisters() throws DebugException
-	{
-		return fRegisterObjects.length > 0;
-	}
-
-	private List getRegisters0() throws DebugException
-	{
-		if ( fRegisters == null || fRegisters.size() == 0 )
-		{
-			ICDIRegister[] regs = getCDIRegisters();
-			fRegisters = new ArrayList( regs.length );
-			for ( int i = 0; i < regs.length; ++i )
-			{
-				fRegisters.add( new CRegister( this, regs[i] ) );
+	public IRegister[] getRegisters() throws DebugException {
+		for ( int i = 0; i < fRegisters.length; ++i ) {
+			if ( fRegisters[i] == null ) {
+				fRegisters[i] = new CRegister( this, getCDIRegister( fRegisterObjects[i] ) );
 			}
 		}
 		return fRegisters;
 	}
-	
-	public void dispose()
-	{
-		Iterator it = fRegisters.iterator();
-		while( it.hasNext() )
-		{
-			((CRegister)it.next()).dispose();
-		}
-		fRegisters.clear();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.model.IRegisterGroup#hasRegisters()
+	 */
+	public boolean hasRegisters() throws DebugException {
+		return fRegisterObjects.length > 0;
 	}
 
-	private ICDIRegister[] getCDIRegisters() throws DebugException
-	{
-		ICDIRegister[] results = new ICDIRegister[fRegisterObjects.length];
-		for ( int i = 0; i < fRegisterObjects.length; ++i )
-		{
-			try
-			{
-				results[i] = ((CDebugTarget)getDebugTarget()).getCDISession().getRegisterManager().createRegister( fRegisterObjects[i] );
-			}
-			catch( CDIException e )
-			{
-				results[i] = new CRegister.ErrorRegister( fRegisterObjects[i], e );
+	public void dispose() {
+		for ( int i = 0; i < fRegisters.length; ++i ) {
+			if ( fRegisters[i] != null ) {
+				((CRegister)fRegisters[i]).dispose();
+				fRegisters[i] = null;
 			}
 		}
-		return results;
 	}
-	
-	public void resetChangeFlags()
-	{
-		if ( fRegisters == null )
-			return;
-		try
-		{
-			Iterator it = fRegisters.iterator();
-			while( it.hasNext() )
-			{
-				((CVariable)it.next()).setChanged( false );
+
+	private ICDIRegister getCDIRegister( ICDIRegisterObject ro ) throws DebugException {
+		try {
+			return ((CDebugTarget)getDebugTarget()).getCDISession().getRegisterManager().createRegister( ro );
+		}
+		catch( CDIException e ) {
+			return new CRegister.ErrorRegister( ro, e );
+		}
+	}
+
+	public void resetChangeFlags() {
+		for ( int i = 0; i < fRegisters.length; ++i ) {
+			if ( fRegisters[i] != null ) {
+				try {
+					((CRegister)fRegisters[i]).setChanged( false );
+				}
+				catch( DebugException e ) {
+					DebugPlugin.log( e );
+				}
 			}
 		}
-		catch( DebugException e )
-		{
-			CDebugCorePlugin.log( e );
+	}
+
+	public void targetSuspended() {
+		for ( int i = 0; i < fRegisters.length; ++i ) {
+			if ( fRegisters[i] != null && ((CRegister)fRegisters[i]).hasErrors() ) {
+				((CRegister)fRegisters[i]).dispose();
+				fRegisters[i] = null;
+			}
 		}
 	}
 }

@@ -1320,6 +1320,8 @@ public class CDebugTarget extends CDebugElement
 		ICDISessionObject reason = event.getReason();
 		setCurrentStateInfo( reason );
 		setRunningInfo( null );
+		// Reset the registers that have errors.
+		getRegisterManager().targetSuspended();
 		setSuspensionThread();
 		List newThreads = refreshThreads();
 		if ( event.getSource() instanceof ICDITarget )
@@ -1365,7 +1367,6 @@ public class CDebugTarget extends CDebugElement
 		{
 			handleSuspendedBySolibEvent( (ICDISharedLibraryEvent)reason );
 		}
-		
 	}
 /*
 	private boolean handleInternalSuspendedEvent( ICDISuspendedEvent event )

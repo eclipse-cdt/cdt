@@ -1,3 +1,11 @@
+2004-06-02 Mikhail Khodjaiants
+	Fix for bug 65112: Debug Registers view is empty.
+	* CRegisterManager.java
+	* CDebugTarget.java
+	* CRegister.java
+	* CRegisterGroup.java
+	* CVariable.java
+
 2004-05-28 Mikhail Khodjaiants
 	Support for the "Skip All Breakpoints" action.
 	* CBreakpointManager.java

@@ -54,10 +54,15 @@ public class CRegister extends CGlobalVariable implements IRegister
 	 */
 	public boolean hasValueChanged() throws DebugException
 	{
-		IValue value = getValue();
-		if ( value != null )
-		{
-			return ( value.hasVariables() ) ? false : fChanged;
+		try {
+			IValue value = getValue();
+			if ( value != null )
+			{
+				return ( value.hasVariables() ) ? false : fChanged;
+			}
+		}
+		catch( DebugException e ) {
+			// ignore to prevent logging. 
 		}
 		return false;
 	}

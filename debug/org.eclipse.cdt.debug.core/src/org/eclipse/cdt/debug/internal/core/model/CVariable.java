@@ -307,6 +307,10 @@ public abstract class CVariable extends CDebugElement
 			}
 			return fQualifiedName;
 		}
+
+		public boolean hasErrors() {
+			return ( fCDIVariable instanceof ErrorVariable );
+		}
 	}
 
 	/**
@@ -1042,5 +1046,9 @@ public abstract class CVariable extends CDebugElement
 	protected int sizeof()
 	{
 		return getInternalVariable().sizeof();
+	}
+
+	public boolean hasErrors() {
+		return ( getShadow() != null ) ? getShadow().hasErrors() : fOriginal.hasErrors();
 	}
 }

@@ -148,4 +148,11 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 		}
 		return null;
 	}
+
+	public void targetSuspended() {
+		Iterator it = fRegisterGroups.iterator();
+		while( it.hasNext() ) {
+			((CRegisterGroup)it.next()).targetSuspended();
+		}
+	}
 }

@@ -100,7 +100,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					debugger =  dsession.getSessionProcess();
 					if ( debugger != null ) {
 						debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console"); //$NON-NLS-1$
-						launch.removeProcess(debuggerProcess);
+//						launch.removeProcess(debuggerProcess);
 					}
 					boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 					CDebugModel.newDebugTarget(

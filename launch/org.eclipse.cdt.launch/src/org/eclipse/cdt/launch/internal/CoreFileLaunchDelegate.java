@@ -61,7 +61,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		}
 		if ( debugger != null ) {
 			debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console"); //$NON-NLS-1$
-			launch.removeProcess(debuggerProcess);
+//			launch.removeProcess(debuggerProcess);
 		}
 		// set the source locator
 		setSourceLocator(launch, config);

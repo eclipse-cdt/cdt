@@ -634,12 +634,12 @@ public class CDebugTarget extends CDebugElement
 			}
 			else if ( event instanceof ICDISuspendedEvent )
 			{
-				if ( source instanceof ICDITarget )
+				if ( source instanceof ICDITarget || source instanceof ICDIThread )
 				{
 					handleSuspendedEvent( (ICDISuspendedEvent)event );
 				}
 			}
-			else if ( event instanceof ICDIResumedEvent )
+			else if ( event instanceof ICDIResumedEvent || source instanceof ICDIThread )
 			{
 				if ( source instanceof ICDITarget )
 				{

@@ -327,7 +327,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * @return
 	 */
 	public boolean isIndexEnabled(IProject project) {
-		if( project == null || !project.exists() )
+		if( project == null || !project.exists() || !project.isOpen() )
 			return false;
 		
 		Boolean indexValue = null;
@@ -335,8 +335,6 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		try {
 			indexValue = (Boolean) project.getSessionProperty(activationKey);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		if (indexValue != null)
@@ -354,12 +352,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			indexValue = new Boolean(true);
 			project.setSessionProperty(IndexManager.activationKey, indexValue);
 			return indexValue.booleanValue();
-			
-			
-			
 		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
 		
 		return false;

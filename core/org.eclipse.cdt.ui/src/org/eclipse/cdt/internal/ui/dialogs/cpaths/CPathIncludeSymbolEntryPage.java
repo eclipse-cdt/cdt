@@ -496,6 +496,9 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		if (elem instanceof CPElement) {
 			CPElement element = (CPElement)selected.get(0);
 			if (element.getParentContainer() == null && element.getInherited() == null) {
+				IPath base_ref = (IPath)element.getAttribute(CPElement.BASE_REF);
+				if (base_ref != null && !base_ref.equals(Path.EMPTY))
+					return false;
 				return element.getEntryKind() == IPathEntry.CDT_INCLUDE || element.getEntryKind() == IPathEntry.CDT_MACRO;
 			}
 		}

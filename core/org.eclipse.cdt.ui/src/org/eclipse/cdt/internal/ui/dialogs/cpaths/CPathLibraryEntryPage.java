@@ -271,6 +271,10 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 				if (curr.getParentContainer() != null) {
 					return false;
 				}
+				IPath base_ref = (IPath)curr.getAttribute(CPElement.BASE_REF);
+				if (base_ref != null && !base_ref.equals(Path.EMPTY))
+					return false;
+
 			}
 		}
 		return true;

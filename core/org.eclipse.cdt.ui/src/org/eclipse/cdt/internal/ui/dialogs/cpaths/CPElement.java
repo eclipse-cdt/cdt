@@ -167,14 +167,14 @@ public class CPElement {
 					return CoreModel.newIncludeRefEntry(fPath, baseRef, include);
 				}
 				return CoreModel.newIncludeEntry(fPath, base, include, ((Boolean)getAttribute(SYSTEM_INCLUDE)).booleanValue(),
-						exclusionPattern);
+						exclusionPattern, isExported());
 			case IPathEntry.CDT_MACRO :
 				String macroName = (String)getAttribute(MACRO_NAME);
 				String macroValue = (String)getAttribute(MACRO_VALUE);
 				if (!baseRef.isEmpty()) {
 					return CoreModel.newMacroRefEntry(fPath, baseRef, macroName);
 				}
-				return CoreModel.newMacroEntry(fPath, macroName, macroValue, exclusionPattern);
+				return CoreModel.newMacroEntry(fPath, macroName, macroValue, exclusionPattern, isExported());
 			default :
 				return null;
 		}

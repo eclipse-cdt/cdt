@@ -232,16 +232,20 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	private void addBaseString(IPath endPath, CPElement cpentry, StringBuffer str) {
 		IPath baseRef = (IPath)cpentry.getAttribute(CPElement.BASE_REF);
 		if (!baseRef.isEmpty()) {
-			if (endPath != null) {
-				str.append(endPath.toOSString());
-			}
-			str.append(" - ("); //$NON-NLS-1$
 			if (baseRef.isAbsolute()) {
 				//				str.append("From project ");
-				str.append(baseRef);
+				IPath path = baseRef;
+				if (endPath != null) {
+					path = path.append(endPath);
+				}
+				str.append(path.makeRelative().toOSString());
 			} else {
 				//				str.append("From contribution ");
 				IPathEntryContainer container;
+				if (endPath != null) {
+					str.append(endPath.toOSString());
+				}
+				str.append(" - ("); //$NON-NLS-1$
 				try {
 					container = CoreModel.getPathEntryContainer(baseRef, cpentry.getCProject());
 					if (container != null) {
@@ -249,8 +253,8 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 					}
 				} catch (CModelException e1) {
 				}
+				str.append(')');
 			}
-			str.append(')');
 		} else {
 			IPath path = (IPath)cpentry.getAttribute(CPElement.BASE);
 			if (!path.isEmpty()) {

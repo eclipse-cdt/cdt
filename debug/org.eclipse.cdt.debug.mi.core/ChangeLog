@@ -1,8 +1,15 @@
+2003-08-26 Alain Magloire
+
+	Using the wrong method for toString() and we were returning
+	a overly verbose string.
+
+	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+
 2003-08-25 Alain Magloire
 
-	Small fix, get the datatype form the GDBTypeParser.
+	Small fix, get the datatype for the GDBTypeParser.
 
-	* src/org/eclipse/cdt/debu/mi/core/cdi/SourceManager.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SourceManager.java
 
 2003-08-22 Alain Magloire
 

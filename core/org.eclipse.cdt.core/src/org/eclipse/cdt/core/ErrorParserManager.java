@@ -269,11 +269,10 @@ public class ErrorParserManager extends OutputStream {
 			else {
 				path = fp;
 			}
-		}
-		else {
+		} else {
 			path = (IPath) getWorkingDirectory().append(filePath);
 		}
-		IFile file = fProject.getFile(path);
+		IFile file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
 		return (file.exists()) ? file : null;
 	}
 

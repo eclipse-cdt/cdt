@@ -1,5 +1,10 @@
 2002-11-15 Alain Magloire
 
+	* src/.../internal/ui/cview/CView.java (addBookMarkMenu):
+	Only add bookmark of IFile.
+
+2002-11-15 Alain Magloire
+
 	* plugin.xml:  Typo when doing the Ruler contibution
 	for Task and bookmarks, it should #CEditorRulerContext.
 

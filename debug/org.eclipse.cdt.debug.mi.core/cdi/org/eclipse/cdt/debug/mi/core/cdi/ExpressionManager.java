@@ -173,6 +173,8 @@ public class ExpressionManager extends Manager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
+		List varList = getVariableList(target);
+		varList.remove(variable);
 	}
 
 }

@@ -889,4 +889,38 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		assertReferenceTask( new Task( f2, 1, false, false ) );
 		assertReferenceTask( new Task( f3, 1, false, false ) );
 	}
+	
+	public void test_14_5_2__2_MemberFunctionTemplates() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write("template < class T > struct A {                                        ");
+		writer.write("   void f( int );                                                      ");
+		writer.write("   template < class T2 > void f( T2 );                                 ");
+		writer.write("};                                                                     ");
+		
+		writer.write("template <> void A<int>::f(int) {}  //non-template member            \n");
+		writer.write("template <> template<> void A<int>::f<>( int ) {} //template member  \n");
+		
+		writer.write("int main(){                                                            ");
+		writer.write("   A< int > ac;                                                        ");
+		writer.write("   ac.f( 1 );   //non-template                                       \n");
+		writer.write("   ac.f( 'c' ); //template                                           \n");
+		writer.write("   ac.f<>(1);   //template                                           \n");
+		writer.write("}                                                                      ");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration spec1 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration spec2 = (IASTTemplateDeclaration) i.next();
+		
+		IASTMethod f1 = (IASTMethod) spec1.getOwnedDeclaration();
+		IASTMethod f2 = (IASTMethod) spec2.getOwnedDeclaration();;
+		
+		IASTFunction main = (IASTFunction) i.next();
+		assertFalse( i.hasNext() );
+		
+		assertReferenceTask( new Task( f1, 1, false, false ) );
+		//we aren't going to be completely correct about references to explicit specializations
+		//due to limitations in the implementation, see bug 59811
+	}
 }

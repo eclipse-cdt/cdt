@@ -42,6 +42,7 @@ public interface ITemplateSymbol extends IParameterizedSymbol {
 	public List findArgumentsFor( IContainerSymbol instance );
 	
 	public void addInstantiation( IContainerSymbol instance, List args );
+	public void removeInstantiation( IContainerSymbol symbol );
 	
 	public void addExplicitSpecialization( ISymbol symbol, List args ) throws ParserSymbolTableException;
 	
@@ -77,8 +78,4 @@ public interface ITemplateSymbol extends IParameterizedSymbol {
 		public static final DeferredKind PARENT      = new DeferredKind( 2 );
 		public static final DeferredKind TYPE_SYMBOL = new DeferredKind( 3 );
 	}
-
-	
-	
-	
 }

@@ -1297,8 +1297,8 @@ public final class TemplateEngine {
 			return false;
 		}
 		
-		ITemplateSymbol t1 = (ITemplateSymbol) getContainingTemplate( p1 );//.getContainingSymbol();
-		ITemplateSymbol t2 = (ITemplateSymbol) getContainingTemplate( p2 );//.getContainingSymbol();
+		ITemplateSymbol t1 = getContainingTemplate( p1 );
+		ITemplateSymbol t2 = getContainingTemplate( p2 );
 		
 		if( p1.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName )
 		{

@@ -99,14 +99,21 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 					
 					if( !template.getExplicitSpecializations().isEmpty() ){
 						List argList = new LinkedList();
+						boolean hasAllParams = true;
 						Iterator templateParams = template.getParameterList().iterator();
 						while( templateParams.hasNext() ){
-							argList.add( argMap.get( templateParams.next() ) );
+							Object obj = argMap.get( templateParams.next() );
+							if( obj == null ){
+								hasAllParams = false;
+								break;
+							}
+							argList.add( obj );
 						}
-						
-						ISymbol temp = TemplateEngine.checkForTemplateExplicitSpecialization( template, symbol, argList );
-						if( temp != null )
-							containedSymbol = temp;
+						if( hasAllParams){
+							ISymbol temp = TemplateEngine.checkForTemplateExplicitSpecialization( template, symbol, argList );
+							if( temp != null )
+								containedSymbol = temp;
+						}
 					}
 					
 					Map instanceMap = argMap;
@@ -797,49 +804,6 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return null;
 	}
 	
-//	public ITemplateFactory lookupTemplateForMemberDefinition( String name, List parameters, List arguments ) throws ParserSymbolTableException{
-//		LookupData data = new LookupData( name, TypeInfo.t_any );
-//		
-//		ParserSymbolTable.lookup( data, this );
-//		
-//		Object look = null;
-//		try{
-//			look = ParserSymbolTable.resolveAmbiguities( data );
-//		} catch ( ParserSymbolTableException e ){
-//			if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction ){
-//				throw e;
-//			}
-//			if( !data.foundItems.isEmpty() ){
-//				look = data.foundItems.get( name );
-//				if(!( look instanceof List ) ){
-//					throw new ParserSymbolTableError();
-//				}
-//			}
-//		}
-//		
-//		ITemplateSymbol template = (ITemplateSymbol) (( look instanceof ITemplateSymbol ) ? look : null);
-//		if( template == null ){
-//			if( look instanceof ISymbol ){
-//				ISymbol symbol = (ISymbol) look;
-//				if( symbol.isTemplateMember() && symbol.getContainingSymbol().isType( TypeInfo.t_template ) ){
-//					template = (ITemplateSymbol) symbol.getContainingSymbol();
-//				}	
-//			}
-//			
-//		}
-//		if( template != null ){
-//			template = TemplateEngine.selectTemplateOrSpecialization( template, parameters, arguments );
-//			if( template != null ){
-//				return new TemplateFactory( template, parameters, arguments );
-//			}
-//		} else if ( look instanceof List ){
-//			return new TemplateFactory( new HashSet( (List)look ), parameters, arguments );
-//		}
-//		
-//		return null;
-//	}
-	
-
 	public List prefixLookup( TypeFilter filter, String prefix, boolean qualified ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( prefix, filter );
 		data.qualified = qualified;

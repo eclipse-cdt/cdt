@@ -437,4 +437,59 @@ public class TokenDuple implements ITokenDuple {
 			return true;
 		return false;
 	}
+	
+	 public String extractNameFromTemplateId(){
+	 	ITokenDuple nameDuple = getLastSegment(); 
+	 	
+    	Iterator i = nameDuple.iterator();
+    	
+    	if( !i.hasNext() )
+    		return "";//$NON-NLS-1$
+    	
+    	StringBuffer nameBuffer = new StringBuffer();
+    	IToken token = (IToken) i.next();
+    	nameBuffer.append( token.getImage() );
+    	
+    	if( !i.hasNext() )
+    		return nameBuffer.toString();
+		
+    	//appending of spaces needs to be the same as in toString()
+    	    	
+    	//destructors
+    	if( token.getType() == IToken.tCOMPL ){
+    		token = (IToken) i.next();
+    		nameBuffer.append( token.getImage() );
+    	} 
+    	//operators
+    	else if( token.getType() == IToken.t_operator ){
+    		token = (IToken) i.next();
+    		nameBuffer.append( ' ' );
+    		nameBuffer.append( token.getImage() );
+    		
+    		if( !i.hasNext() )
+        		return nameBuffer.toString();
+    		
+    		//operator new [] and operator delete []
+    		if( (token.getType() == IToken.t_new || token.getType() == IToken.t_delete) &&
+    			(token.getNext().getType() == IToken.tLBRACKET ) )
+    		{
+    			nameBuffer.append( ' ' );
+    			nameBuffer.append( ((IToken)i.next()).getImage() );
+    			nameBuffer.append( ((IToken)i.next()).getImage() );
+    		}
+    		//operator []
+    		else if( token.getType() == IToken.tLBRACKET )
+			{
+    			nameBuffer.append( ((IToken)i.next()).getImage() );
+			}
+    		//operator ( )
+    		else if( token.getType() == IToken.tLBRACE )
+    		{
+    			nameBuffer.append( ' ' );
+    			nameBuffer.append( ((IToken)i.next()).getImage() );
+    		}
+    	}
+    	
+    	return nameBuffer.toString();
+    }
 }

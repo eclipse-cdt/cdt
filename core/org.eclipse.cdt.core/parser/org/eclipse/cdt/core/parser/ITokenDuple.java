@@ -56,4 +56,6 @@ public interface ITokenDuple {
 	 * @return
 	 */
 	public abstract boolean syntaxOfName();
+	
+	public String extractNameFromTemplateId();
 }

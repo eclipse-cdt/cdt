@@ -565,7 +565,7 @@ public class ParserSymbolTable {
 		}
 		
 		if( numTemplateFunctions > 0 ){
-			if( data.parameters != null && !data.exactFunctionsOnly ){
+			if( data.parameters != null && ( !data.exactFunctionsOnly || data.templateParameters != null ) ){
 				List fns  = TemplateEngine.selectTemplateFunctions( templateFunctionSet, data.parameters, data.templateParameters );
 				functionSet.addAll( fns );
 				numFunctions = functionSet.size();
@@ -984,7 +984,7 @@ public class ParserSymbolTable {
 		
 		reduceToViable( data, functions );
 		
-		if( data.exactFunctionsOnly ){
+		if( data.exactFunctionsOnly && data.templateParameters == null ){
 			if( functions.size() == 1 ){
 				return (IParameterizedSymbol) functions.get( 0 );
 			} else if( functions.size() == 0 ){
@@ -1153,7 +1153,10 @@ public class ParserSymbolTable {
 			if( !hasWorse ){
 				if( !hasBetter ){
 					//if they are both template functions, we can order them that way
-					if( bestFn.isTemplateInstance() && currFn.isTemplateInstance() ){
+					boolean bestIsTemplate = bestFn.getContainingSymbol() instanceof ITemplateSymbol;
+					boolean currIsTemplate = currFn.getContainingSymbol() instanceof ITemplateSymbol; 
+					if( bestIsTemplate && currIsTemplate )
+					{
 						ITemplateSymbol t1 = (ITemplateSymbol) bestFn.getInstantiatedSymbol().getContainingSymbol();
 						ITemplateSymbol t2 = (ITemplateSymbol) currFn.getInstantiatedSymbol().getContainingSymbol();
 						int order = TemplateEngine.orderTemplateFunctions( t1, t2 );
@@ -1163,13 +1166,13 @@ public class ParserSymbolTable {
 							ambiguous = false;
 						}
 					}
-					//we prefer normal functions over template functions, unless the specified template arguments
-					else if( bestFn.isTemplateInstance() && !currFn.isTemplateInstance() ){
+					//we prefer normal functions over template functions, unless we specified template arguments
+					else if( bestIsTemplate && !currIsTemplate ){
 						if( data.templateParameters == null )
 							hasBetter = true;
 						else
 							ambiguous = false;
-					} else if( !bestFn.isTemplateInstance() && currFn.isTemplateInstance() ){
+					} else if( !bestIsTemplate && currIsTemplate ){
 						if( data.templateParameters == null )
 							ambiguous = false;
 						else

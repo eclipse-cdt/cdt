@@ -80,21 +80,24 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 			}
 		}
 		
-		Iterator iter = getParameterList().iterator();
-		
-		newParameterized.getParameterList().clear();
-		newParameterized.getParameterMap().clear();
-		
-		ISymbol param = null, newParam = null;
-		
-		while( iter.hasNext() ){
-			param = (ISymbol) iter.next();
-			newParam = param.instantiate( template, argMap );
+		//handle template parameter lists in TemplateSymbol, only do function parameter lists here.
+		if( !isType( TypeInfo.t_template ) ){
+			Iterator iter = getParameterList().iterator();
 			
-			newParameterized.getParameterList().add( newParam );
-			if( !newParam.getName().equals( ParserSymbolTable.EMPTY_NAME ) ){
-				newParameterized.getParameterMap().put( newParam.getName(), newParam );
-			}
+			newParameterized.getParameterList().clear();
+			newParameterized.getParameterMap().clear();
+			
+			ISymbol param = null, newParam = null;
+			
+			while( iter.hasNext() ){
+				param = (ISymbol) iter.next();
+				newParam = param.instantiate( template, argMap );
+				
+				newParameterized.getParameterList().add( newParam );
+				if( !newParam.getName().equals( ParserSymbolTable.EMPTY_NAME ) ){
+					newParameterized.getParameterMap().put( newParam.getName(), newParam );
+				}
+			}	
 		}
 		
 		return newParameterized;	

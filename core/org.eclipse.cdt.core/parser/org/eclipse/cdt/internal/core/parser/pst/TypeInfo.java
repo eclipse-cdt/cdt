@@ -229,6 +229,7 @@ public class TypeInfo {
 												"enum",		//$NON-NLS-1$	t_enumeration
 												"",			//$NON-NLS-1$	t_constructor
 												"",			//$NON-NLS-1$	t_function
+												"_Bool",    //$NON-NLS-1$   t__Bool
 												"bool",		//$NON-NLS-1$	t_bool
 												"char",		//$NON-NLS-1$	t_char
 												"wchar_t",	//$NON-NLS-1$	t_wchar_t
@@ -240,7 +241,9 @@ public class TypeInfo {
 												"",			//$NON-NLS-1$	t_block	
 												"template",	//$NON-NLS-1$	t_template
 												"",			//$NON-NLS-1$	t_asm			
-												""			//$NON-NLS-1$	t_linkage
+												"",			//$NON-NLS-1$	t_linkage
+												"",         //$NON-NLS-1$   t_templateParameter
+												"typename"  //$NON-NLS-1$   t_typeName
 											 };
 	//Partial ordering :
 	// none		< const

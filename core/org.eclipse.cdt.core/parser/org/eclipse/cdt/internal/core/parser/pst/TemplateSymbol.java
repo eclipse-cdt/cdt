@@ -162,6 +162,26 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		}
 	}
 	
+	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+		if( !isTemplateMember() ){
+			return null;
+		}
+		
+		TemplateSymbol newTemplate = (TemplateSymbol) super.instantiate( template, argMap );
+		
+		//we don't want to instantiate the template parameters, just the defaults if there are any
+		Iterator iter = newTemplate.getParameterList().iterator();
+		ISymbol param = null;
+		while( iter.hasNext() ){
+			param = (ISymbol) iter.next();
+			Object obj = param.getTypeInfo().getDefault();
+			if( obj instanceof TypeInfo ){
+				param.getTypeInfo().setDefault( TemplateEngine.instantiateTypeInfo( (TypeInfo) obj, template, argMap ) );
+			}
+		}	
+		
+		return newTemplate;
+	}
 	
 	public void addParameter( ISymbol param ) {
 		throw new ParserSymbolTableError( ParserSymbolTableError.r_OperationNotSupported );
@@ -278,10 +298,23 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		if( found == null && getTemplatedSymbol().getName().equals( symbol.getName() ) ){
 			found = getTemplatedSymbol();
 			
-			IContainerSymbol instance = findInstantiation( args );
+			IContainerSymbol instance = findInstantiation( actualArgs );
 			if( instance != null ){
 				_instantiations.remove( findArgumentsFor( instance ) );
 			}
+		}
+
+		if( found != null && found.getTypeInfo().isForwardDeclaration() && found.getTypeSymbol() == symbol ){
+			//in defining the explicit specialization for a member function, the factory would have set 
+			//the specialization as the definition of the original declaration, which it is not
+			found.setTypeSymbol( null );
+		}
+		
+		//TODO, once we can instantiate members as we need them instead of at the same time as the class
+		//then found should stay as the instance, for now though, we need the original (not 100% correct
+		//but the best we can do for now)
+		while( found.isTemplateInstance() ){
+			found = found.getInstantiatedSymbol();
 		}
 		
 		if( found != null ){
@@ -355,6 +388,13 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		}
 		
 		return null;
+	}
+	
+	public void removeInstantiation( IContainerSymbol symbol ){
+		List args = findArgumentsFor( symbol );
+		if( args != null ){
+			_instantiations.remove( args );
+		}
 	}
 	
 	public Map getDefinitionParameterMap(){

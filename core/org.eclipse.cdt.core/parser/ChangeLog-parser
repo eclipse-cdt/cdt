@@ -1,3 +1,10 @@
+2004-04-23 Andrew Niefer
+	- fixed up CompleteParseASTFactory.lookupQualifiedName in the case where the 
+	  tokenDuple has 1 segement
+	- fixed CompleteParseASTFactory.createMethod to handle template ids
+	- fixed instantiation of member templates
+	- fixed up handling of explicit specializations
+
 2004-04-22 John Camelon
 	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=47926
 

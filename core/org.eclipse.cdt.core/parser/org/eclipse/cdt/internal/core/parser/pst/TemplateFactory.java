@@ -57,7 +57,8 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 */
 	public void addTemplateId(ISymbol symbol, List args) throws ParserSymbolTableException {
 		ISymbol previous = findPreviousSymbol( symbol, args );
-		ITemplateSymbol origTemplate = (previous != null ) ? (ITemplateSymbol) previous.getContainingSymbol() : null;
+		ITemplateSymbol origTemplate = (previous != null && previous.getContainingSymbol() instanceof ITemplateSymbol ) 
+		                                   ? (ITemplateSymbol) previous.getContainingSymbol() : null;
 		
 		if( origTemplate == null ){
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
@@ -131,7 +132,6 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		int numSymbols = symbols.size();
 		
 		if( templateParamState ){
-			ITemplateSymbol template = (ITemplateSymbol) container.getContainingSymbol();
 			List args = (List) argMap.get( container );
 			addExplicitSpecialization( (ITemplateSymbol) container.getContainingSymbol(), symbol, args );
 			return;
@@ -310,6 +310,19 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	}
 	private void addExplicitSpecialization( ITemplateSymbol template, ISymbol symbol, List arguments ) throws ParserSymbolTableException {
 		template.addExplicitSpecialization( symbol, arguments );
+		
+		Iterator i = symbols.iterator();
+		while( i.hasNext() ){
+			IContainerSymbol sym = (IContainerSymbol) i.next();
+			ISymbol instantiated = sym.getInstantiatedSymbol();
+			if( instantiated != null ){
+				IContainerSymbol container = instantiated.getContainingSymbol();
+				if( container.isType( TypeInfo.t_template ) ){
+					((ITemplateSymbol) container ).removeInstantiation( sym );
+				}
+			}
+				
+		}
 		
 		if( getASTExtension() != null ){
 		 	ASTTemplateSpecialization spec = (ASTTemplateSpecialization) getASTExtension().getPrimaryDeclaration();
@@ -527,7 +540,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		
 		if( look instanceof ITemplateSymbol ){
 			ITemplateSymbol t = TemplateEngine.selectTemplateOrSpecialization( (ITemplateSymbol) look, getNextAvailableTemplate().getParameterList(), arguments );
-			look = ((ITemplateSymbol) look).getTemplatedSymbol();
+			look =  t.getTemplatedSymbol();
 		}
 		return (IContainerSymbol) (( look instanceof IContainerSymbol) ? look : null);
 	}

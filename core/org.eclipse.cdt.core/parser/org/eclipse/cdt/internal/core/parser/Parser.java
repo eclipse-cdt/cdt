@@ -14,25 +14,17 @@ package org.eclipse.cdt.internal.core.parser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.internal.core.model.Util;
-import org.eclipse.cdt.internal.core.parser.ast.ASTASMDefinition;
-import org.eclipse.cdt.internal.core.parser.ast.ASTCompilationUnit;
-import org.eclipse.cdt.internal.core.parser.ast.ASTLinkageSpecification;
-import org.eclipse.cdt.internal.core.parser.ast.ASTNamespaceDefinition;
-import org.eclipse.cdt.internal.core.parser.ast.IASTASMDefinition;
-import org.eclipse.cdt.internal.core.parser.ast.IASTCompilationUnit;
-import org.eclipse.cdt.internal.core.parser.ast.IASTLinkageSpecification;
-import org.eclipse.cdt.internal.core.parser.ast.IASTNamespaceDefinition;
-import org.eclipse.cdt.internal.core.parser.ast.IASTScope;
-import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
-import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
+import org.eclipse.cdt.internal.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.internal.core.parser.ast.full.IASTASMDefinition;
+import org.eclipse.cdt.internal.core.parser.ast.full.IASTCompilationUnit;
+import org.eclipse.cdt.internal.core.parser.ast.full.IASTLinkageSpecification;
+import org.eclipse.cdt.internal.core.parser.ast.full.IASTNamespaceDefinition;
+import org.eclipse.cdt.internal.core.parser.ast.full.IASTScope;
 
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
@@ -50,8 +42,8 @@ public class Parser implements IParser {
 	private boolean quickParse = false;				// are we doing the high-level parse, or an in depth parse? 
 	private boolean parsePassed = true;				// did the parse pass?
 	private boolean cppNature = true;				// true for C++, false for C
-	private ISourceElementRequestor requestor = null; // new callback mechanism
-	private ParserSymbolTable pst = new ParserSymbolTable(); // symbol table 
+	private ISourceElementRequestor requestor = null; // new callback mechanism 
+	private IASTFactory astFactory = ParserFactory.createASTFactory( false ); 
 	
 	/**
 	 * This is the single entry point for setting parsePassed to 
@@ -81,6 +73,7 @@ public class Parser implements IParser {
 		if( c instanceof ISourceElementRequestor )
 			setRequestor( (ISourceElementRequestor)c );
 		quickParse = quick;
+		astFactory = ParserFactory.createASTFactory( quick );
 		scanner.setQuickScan(quick);
 		scanner.setCallback(c);
 	}
@@ -182,7 +175,7 @@ c, quickParse);
 		Object translationUnit = null;
 		try{ translationUnit = callback.translationUnitBegin();} catch( Exception e ) {}		
 		
-		IASTCompilationUnit compilationUnit = new ASTCompilationUnit( pst.getCompilationUnit() );  
+		IASTCompilationUnit compilationUnit = astFactory.createCompilationUnit();
 		requestor.enterCompilationUnit( compilationUnit );
 		
 		Token lastBacktrack = null;
@@ -222,6 +215,9 @@ c, quickParse);
 		try{ callback.translationUnitEnd(translationUnit);} catch( Exception e ) {}
 		requestor.exitCompilationUnit( compilationUnit );
 	}
+
+
+
 
 	/**
 	 * This function is called whenever we encounter and error that we cannot backtrack out of and we 
@@ -291,45 +287,7 @@ c, quickParse);
 				consume( Token.tSEMI );
 				try{ callback.usingDirectiveEnd( directive );} catch( Exception e ) {}
 				
-				Iterator iter = duple.iterator();
-				Token t1 = (Token)iter.next();
-				IContainerSymbol symbol = null; 
-
-				if( t1.getType() == Token.tCOLONCOLON )
-					symbol = pst.getCompilationUnit();
-				else
-				{
-					try
-					{
-						symbol = (IContainerSymbol)scope.getContainerSymbol().Lookup( t1.getImage() );
-					}
-					catch( ParserSymbolTableException pste )
-					{
-						handlePSTException( pste );
-					}
-				}
-			
-				while( iter.hasNext() )
-				{
-					Token t = (Token)iter.next(); 
-					if( t.getType() == Token.tCOLONCOLON ) continue; 
-					try
-					{
-						symbol = symbol.LookupNestedNameSpecifier( t.getImage() );
-					}
-					catch( ParserSymbolTableException pste )
-					{
-						handlePSTException( pste );
-					}
-				}
-				
-				try {
-					scope.getContainerSymbol().addUsingDirective( symbol );
-				} catch (ParserSymbolTableException pste) {
-					handlePSTException( pste );
-				}
-				
-				IASTUsingDirective astUD = new ASTUsingDirective( duple.toString() );
+				IASTUsingDirective astUD = astFactory.createUsingDirective(scope, duple);
 				requestor.acceptUsingDirective( astUD );
 				return;
 			}
@@ -375,13 +333,6 @@ c, quickParse);
 			}			
 		}
 	}
-	
-	/**
-	 * @param pste
-	 */
-	private void handlePSTException(ParserSymbolTableException pste) throws Backtrack {
-		throw backtrack; 
-	}
 
 
 	/**
@@ -409,8 +360,7 @@ c, quickParse);
 		{	
 			consume(Token.tLBRACE);
 		
-			IContainerSymbol symbol = pst.newContainerSymbol("", ParserSymbolTable.TypeInfo.t_linkage );
-			IASTLinkageSpecification linkage = new ASTLinkageSpecification( symbol, spec.getImage() );
+			IASTLinkageSpecification linkage = astFactory.createLinkageSpecification(spec.getImage());
 		
 			requestor.enterLinkageSpecification( linkage );
 			 
@@ -444,8 +394,7 @@ c, quickParse);
 		else // single declaration
 		{
 			
-			IContainerSymbol symbol = pst.newContainerSymbol("", ParserSymbolTable.TypeInfo.t_linkage );
-			IASTLinkageSpecification linkage = new ASTLinkageSpecification( symbol, spec.getImage() );
+			IASTLinkageSpecification linkage = astFactory.createLinkageSpecification( spec.getImage() );
 		
 			requestor.enterLinkageSpecification( linkage );
 
@@ -454,6 +403,7 @@ c, quickParse);
 			requestor.exitLinkageSpecification( linkage );
 		}
 	}
+
 	
 	/**
 	 * 
@@ -653,20 +603,8 @@ c, quickParse);
 				consume( Token.tRPAREN ); 
 				Token last = consume( Token.tSEMI );
 				
-				IContainerSymbol containerSymbol = (IContainerSymbol)scope.getSymbol();
-				
-				ISymbol asmSymbol = pst.newSymbol( "", ParserSymbolTable.TypeInfo.t_asm );
-				IASTASMDefinition asmDefinition = new ASTASMDefinition( asmSymbol, assembly );
-				asmSymbol.setASTNode( asmDefinition );
-				
-				try {
-					containerSymbol.addSymbol(asmSymbol);
-				} catch (ParserSymbolTableException e1) {
-					//?
-				}
-				
-				asmDefinition.setStartingOffset( first.getOffset() );
-				asmDefinition.setEndingOffset( last.getOffset() + 1 );
+				IASTASMDefinition asmDefinition =
+					astFactory.createASMDefinition(scope, assembly, first.getOffset(), last.getEndOffset());
 				
 				// if we made it this far, then we have all we need 
 				// do the callback
@@ -734,14 +672,9 @@ c, quickParse);
 		{
 			consume(); 
 			
-			IContainerSymbol namespaceSymbol = null; 
-			
-			String name = identifier == null ? "" : identifier.getImage();
-			pst.newContainerSymbol( name, ParserSymbolTable.TypeInfo.t_namespace );
-			IASTNamespaceDefinition namespaceDefinition = new ASTNamespaceDefinition( namespaceSymbol, name );
-			namespaceDefinition.setStartingOffset( first.getOffset() ); 
-			if( identifier != null )
-				namespaceDefinition.setNameOffset( identifier.getOffset() );
+			IASTNamespaceDefinition namespaceDefinition =
+				astFactory.createNamespaceDefinition(first.getOffset(), identifier.getImage(), 
+				( identifier == null ? 0 : identifier.getOffset()) );
 			
 			requestor.enterNamespaceDefinition( namespaceDefinition );
 			
@@ -781,9 +714,9 @@ c, quickParse);
 			throw backtrack;
 		}
 	}
-	
-	
 
+
+		
 	/**
 	 * Serves as the catch-all for all complicated declarations, including function-definitions.  
 	 * 

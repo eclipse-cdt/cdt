@@ -8,41 +8,39 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser.ast.full;
 
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.ast.ASTBaseSpecifier;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 
 /**
  * @author jcamelon
  *
  */
-public class ScopeIterator implements Iterator {
+public class BaseIterator implements Iterator {
 
-	private final Map sourceMap; 
-	private final Iterator keyIter;
-	
-	public ScopeIterator( Map in )
+	private final Iterator rawIter; 
+	public BaseIterator( List bases )
 	{
-		sourceMap = in;
-		keyIter = in.keySet().iterator();
+		rawIter = bases.iterator();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#hasNext()
 	 */
 	public boolean hasNext() {
-		return keyIter.hasNext();
+		return rawIter.hasNext(); 
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
 	public Object next() {
-		ISymbol symbol = (ISymbol)sourceMap.get( keyIter.next() );
-		return symbol.getASTNode();
+		ParserSymbolTable.Declaration.ParentWrapper wrapper = (ParserSymbolTable.Declaration.ParentWrapper)rawIter.next(); 
+		return new ASTBaseSpecifier( (IASTClassSpecifier)wrapper.getParent().getASTNode(), wrapper.getAccess(), wrapper.isVirtual());
 	}
 
 	/* (non-Javadoc)

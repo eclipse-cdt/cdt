@@ -8,13 +8,15 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser.ast.full;
+
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTNamespaceDefinition
-	extends IASTScope, org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition {
+public interface IASTClassSpecifier
+	extends IASTScope, org.eclipse.cdt.core.parser.ast.IASTClassSpecifier {
 
 }

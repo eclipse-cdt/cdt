@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.eclipse.cdt.internal.core.parser.ast.IPSTSymbolExtension;
+import org.eclipse.cdt.internal.core.parser.ast.full.IPSTSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfo;
 /**

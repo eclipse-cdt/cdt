@@ -43,6 +43,8 @@ public class Token {
 	public int offset;
 	public int getOffset() { return offset; }
 	public int getLength() { return image.length(); }
+	public int getEndOffset() { return getOffset() + getLength(); }
+	
 	
 	public int getDelta( Token other )
 	{

@@ -8,38 +8,41 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser.ast.full;
 
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
 /**
  * @author jcamelon
  *
  */
-public class BaseIterator implements Iterator {
+public class ScopeIterator implements Iterator {
 
-	private final Iterator rawIter; 
-	public BaseIterator( List bases )
+	private final Map sourceMap; 
+	private final Iterator keyIter;
+	
+	public ScopeIterator( Map in )
 	{
-		rawIter = bases.iterator();
+		sourceMap = in;
+		keyIter = in.keySet().iterator();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#hasNext()
 	 */
 	public boolean hasNext() {
-		return rawIter.hasNext(); 
+		return keyIter.hasNext();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
 	public Object next() {
-		ParserSymbolTable.Declaration.ParentWrapper wrapper = (ParserSymbolTable.Declaration.ParentWrapper)rawIter.next(); 
-		return new ASTBaseSpecifier( (IASTClassSpecifier)wrapper.getParent().getASTNode(), wrapper.getAccess(), wrapper.isVirtual());
+		ISymbol symbol = (ISymbol)sourceMap.get( keyIter.next() );
+		return symbol.getASTNode();
 	}
 
 	/* (non-Javadoc)

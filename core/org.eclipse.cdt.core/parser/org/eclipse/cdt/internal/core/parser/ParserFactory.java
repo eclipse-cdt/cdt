@@ -8,15 +8,23 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser;
+
+import org.eclipse.cdt.internal.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.internal.core.parser.ast.full.FullParseASTFactory;
+import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTCompilationUnit
-	extends
-		org.eclipse.cdt.core.parser.ast.IASTCompilationUnit,
-		IASTScope {
+public class ParserFactory {
 
+	public static IASTFactory createASTFactory( boolean quickParse )
+	{
+		if( quickParse )
+			return new QuickParseASTFactory(); 
+		else
+			return new FullParseASTFactory(); 
+	}
 }

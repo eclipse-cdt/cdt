@@ -10,11 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast;
 
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTASMDefinition
-	extends org.eclipse.cdt.core.parser.ast.IASTASMDefinition, IPSTSymbolExtension {
+public class BaseASTFactory  {
+
 
 }

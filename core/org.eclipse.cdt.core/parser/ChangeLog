@@ -1,3 +1,6 @@
+2003-06-12 John Camelon
+	Introduction of ASTFactory strategy, some restructuring of packages and interfaces.
+
 2003-06-10 John Camelon
 	Futher pursuit of the golden hammer, symbol table integration. 
 

@@ -18,8 +18,8 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.ast.AccessVisibility;
-import org.eclipse.cdt.internal.core.parser.ast.ASTCompilationUnit;
-import org.eclipse.cdt.internal.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.internal.core.parser.ast.full.ASTCompilationUnit;
+import org.eclipse.cdt.internal.core.parser.ast.full.IASTCompilationUnit;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;

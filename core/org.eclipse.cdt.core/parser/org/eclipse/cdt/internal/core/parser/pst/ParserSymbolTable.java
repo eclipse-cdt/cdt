@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.parser.ast.AccessVisibility;
-import org.eclipse.cdt.internal.core.parser.ast.IPSTSymbolExtension;
+import org.eclipse.cdt.internal.core.parser.ast.full.IPSTSymbolExtension;
 
 /**
  * @author aniefer

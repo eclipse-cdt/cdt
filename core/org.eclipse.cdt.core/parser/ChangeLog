@@ -1,4 +1,7 @@
 2003-06-23 John Camelon
+	Updating SimpleDeclarations to move towards new Callback structure.  
+
+2003-06-23 John Camelon
 	Updated Factory infrastructure, constructors, etc. 
 	Introduced Preprocessor class for transitive closure calc. client.  
 

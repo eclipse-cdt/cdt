@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
-import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
  * @author jcamelon

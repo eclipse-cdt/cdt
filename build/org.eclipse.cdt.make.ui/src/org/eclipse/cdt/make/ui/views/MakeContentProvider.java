@@ -5,35 +5,35 @@ package org.eclipse.cdt.make.ui.views;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.make.core.IMakeTarget;
+import org.eclipse.cdt.make.core.IMakeTargetListener;
+import org.eclipse.cdt.make.core.IMakeTargetProvider;
+import org.eclipse.cdt.make.core.MakeTargetEvent;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Control;
 
-public class MakeContentProvider implements ITreeContentProvider, IResourceChangeListener {
-
+public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener {
 	protected Viewer viewer;
 
 	/**
 	 * Constructor for MakeContentProvider
 	 */
 	public MakeContentProvider() {
-		super();
 	}
 
 	/**
 	 * @see ITreeContentProvider#getChildren(Object)
 	 */
 	public Object[] getChildren(Object obj) {
-		if (obj instanceof MakeTarget) {
-			MakeTarget md = (MakeTarget)obj;
-			return (Object[])md.getChildren();
+		if (obj instanceof IContainer) {
+			if (viewer != null) {
+				Object input = viewer.getInput();
+				if (input instanceof IMakeTargetProvider) {
+					IMakeTargetProvider provider = (IMakeTargetProvider)obj;
+					return provider.getTargets((IContainer)obj);
+				}
+			}
 		}
 		return new Object[0];
 	}
@@ -42,9 +42,10 @@ public class MakeContentProvider implements ITreeContentProvider, IResourceChang
 	 * @see ITreeContentProvider#getParent(Object)
 	 */
 	public Object getParent(Object obj) {
-		if (obj instanceof MakeTarget) {
-			MakeTarget directives = (MakeTarget)obj;
-			return directives.getParent();
+		if (obj instanceof IMakeTarget) {
+			return ((IMakeTarget)obj).getContainer();
+		} else if (obj instanceof IContainer) {
+			return ((IContainer)obj).getParent();
 		}
 		return null;
 	}
@@ -69,10 +70,10 @@ public class MakeContentProvider implements ITreeContentProvider, IResourceChang
 	public void dispose() {
 		if (viewer != null) {
 			Object obj = viewer.getInput();
-			if (obj instanceof MakeTarget) {
-				MakeTarget target = (MakeTarget)obj;
-				IWorkspace workspace = target.getResource().getWorkspace();
-				workspace.removeResourceChangeListener(this);
+			if (obj instanceof IMakeTargetProvider) {
+				IMakeTargetProvider provider = (IMakeTargetProvider)obj;
+				provider.removeListener(this);
+				provider = null;
 			}
 		}
 	}
@@ -83,86 +84,21 @@ public class MakeContentProvider implements ITreeContentProvider, IResourceChang
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = viewer;
 		if (oldInput != null) {
-			if (oldInput instanceof MakeTarget) {
-				IResource res = ((MakeTarget)oldInput).getResource();
-				if (res instanceof IWorkspaceRoot) {
-					IWorkspace workspace = res.getWorkspace();
-					workspace.removeResourceChangeListener(this);
-				}
+			if (oldInput instanceof IMakeTargetProvider) {
+				((IMakeTargetProvider)oldInput).removeListener(this);
 			}
 		}
 		if (newInput != null) {
-			if (newInput instanceof MakeTarget) {
-				IResource res = ((MakeTarget)newInput).getResource();
-				if (res instanceof IWorkspaceRoot) {
-					IWorkspace workspace = res.getWorkspace();
-					workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
-				}
+			if (newInput instanceof IMakeTargetProvider) {
+				((IMakeTargetProvider)newInput).addListener(this);
 			}
 		}
 	}
 
-	public void resourceChanged (final IResourceChangeEvent event) {
-		final IResourceDelta deltas = event.getDelta();
-		Control ctrl = viewer.getControl();
-		if (ctrl != null && !ctrl.isDisposed()) {
-	        // Get the affected resource
-			ctrl.getDisplay().syncExec(new Runnable() {
-				public void run() {
-					processDelta (deltas);
-				}
-			});
-		}
-	}
-
-	void processDelta (IResourceDelta delta) {
-		// Bail out if the widget was disposed.
-		Control ctrl = viewer.getControl();
-		if (ctrl == null || ctrl.isDisposed()) {
-			return;
-		}
-
-		if (delta == null) {
-			return;
-		}
-
-		int changeFlags = delta.getFlags();
-
-        IResourceDelta[] affectedChildren =
-            delta.getAffectedChildren(IResourceDelta.CHANGED);
-
-		// Not interested in Content changes.
-        for (int i = 0; i < affectedChildren.length; i++) {
-            if ((affectedChildren[i].getFlags() & IResourceDelta.TYPE) != 0) {
-                return;
-			}
-		}
-
-		// handle open and closing.
-        if ((changeFlags & (IResourceDelta.OPEN | IResourceDelta.SYNC)) != 0) {
-				ctrl.setRedraw(false);
-                viewer.refresh();
-				ctrl.setRedraw(true);
-				return;
-        }
-
-		// Handle changed children recursively.
-		for (int i = 0; i < affectedChildren.length; i++) {
-			processDelta(affectedChildren[i]);
-		}
-
-		// We are only interested in creation and deletion of folders.
-		affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED | IResourceDelta.ADDED);
-		if (affectedChildren.length > 0) {
-			for (int i = 0; i < affectedChildren.length; i++) {
-				IResource r = affectedChildren[i].getResource();
-				if (r instanceof IContainer) {
-					ctrl.setRedraw(false);
-					viewer.refresh();
-					ctrl.setRedraw(true);
-					break;
-				}
-			}
-		}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.IMakeTargetListener#targetChanged(org.eclipse.cdt.make.core.MakeTargetEvent)
+	 */
+	public void targetChanged(MakeTargetEvent event) {
+		
 	}
 }

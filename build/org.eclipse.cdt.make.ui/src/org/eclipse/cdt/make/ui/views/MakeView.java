@@ -5,27 +5,31 @@ package org.eclipse.cdt.make.ui.views;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.action.Action;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 
 public class MakeView extends ViewPart {
-
+	
 	TreeViewer viewer;
+	DrillDownAdapter drillDownAdapter;
 
 	public MakeView() {
 		super();
@@ -39,9 +43,92 @@ public class MakeView extends ViewPart {
 	}
 
 	/**
-	* Handles double clicks in viewer.
-	* Opens editor if file double-clicked.
+	* @see ContentOutlinePage#createControl
 	*/
+	public void createPartControl(Composite parent) {
+		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer.setUseHashlookup(true);
+		viewer.setContentProvider(new MakeContentProvider());
+		viewer.setLabelProvider(new MakeLabelProvider());
+
+		drillDownAdapter = new DrillDownAdapter(viewer);
+
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleDoubleClick(event);
+			}
+		});
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				handleSelectionChanged(event);
+			}
+		});
+		viewer.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.character == SWT.DEL && event.stateMask == 0) {
+					handleDeleteKeyPressed();
+				}
+			}
+		});
+
+		viewer.setContentProvider(new MakeContentProvider());
+		viewer.setLabelProvider(new MakeLabelProvider());
+		viewer.setInput(MakeCorePlugin.getDefault().getTargetProvider());
+		getSite().setSelectionProvider(viewer);
+
+		makeActions();
+		hookContextMenu();
+		contributeToActionBars();
+	}
+
+	private void makeActions() {
+		// dinglis-TODO Auto-generated method stub
+		
+	}
+	private void contributeToActionBars() {
+		IActionBars bars = getViewSite().getActionBars();
+		fillLocalPullDown(bars.getMenuManager());
+		fillLocalToolBar(bars.getToolBarManager());
+	}
+
+	private void fillLocalToolBar(IToolBarManager toolBar) {
+		drillDownAdapter.addNavigationActions(toolBar);
+	}
+
+	private void fillLocalPullDown(IMenuManager manager) {
+	}
+	
+
+	private void hookContextMenu() {
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				MakeView.this.fillContextMenu(manager);
+				updateActions((IStructuredSelection) viewer.getSelection());
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, viewer);
+	}
+
+
+	protected void fillContextMenu(IMenuManager manager) {
+//		manager.add(deleteAction);
+//		manager.add(renameAction);
+		manager.add(new Separator());
+		drillDownAdapter.addNavigationActions(manager);
+		// Other plug-ins can contribute there actions here
+		manager.add(new Separator("Additions"));
+	}
+
+	protected void handleDeleteKeyPressed() {
+		// dinglis-TODO Auto-generated method stub
+		
+	}
+
+
 	protected void handleDoubleClick(DoubleClickEvent event) {
 		IStructuredSelection s = (IStructuredSelection) event.getSelection();
 		Object element = s.getFirstElement();
@@ -56,126 +143,17 @@ public class MakeView extends ViewPart {
 		//}
 	}
 
-	/**
-	* called to create the context menu of the outline
-	*/
-	protected void contextMenuAboutToShow(IMenuManager menu) {
-		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-		Object element = selection.getFirstElement();
-		if (element instanceof MakeTarget) {
-			final MakeTarget ta = (MakeTarget) element;
-			Action add = new Action("Add...") {
-				public void run() {
-					InputDialog dialog =
-						new InputDialog(getViewSite().getShell(), "Target Dialog: ", "Enter Target(s): ", null, null);
-					dialog.open();
-					String value = dialog.getValue();
-					if (value != null && value.length() > 0) {
-//						IResource res = ta.getResource();
-//						MakeUtil.addPersistentTarget(res, value);
-						viewer.getControl().setRedraw(false);
-						viewer.refresh();
-						viewer.getControl().setRedraw(true);
-						viewer.expandToLevel(ta, 2);
-					}
-				}
-			};
-			Action edit = new Action("Edit...") {
-				public void run() {
-					String oldtarget = ta.toString();
-					InputDialog dialog =
-						new InputDialog(getViewSite().getShell(), "Target Dialog: ", "Enter Target(s): ", oldtarget, null);
-					dialog.open();
-					String value = dialog.getValue();
-					if (value != null && value.length() > 0 && !value.equals(oldtarget)) {
-//						IResource res = ta.getResource();
-//						MakeUtil.replacePersistentTarget(res, oldtarget, value);
-						viewer.getControl().setRedraw(false);
-						viewer.refresh();
-						viewer.getControl().setRedraw(true);
-						viewer.expandToLevel(ta, 2);
-					}
-				}
-			};
-
-			Action del = new Action("Delete") {
-				public void run() {
-					String target = ta.toString();
-					if (target != null) {
-//						IResource res = ta.getResource();
-//						MakeUtil.removePersistentTarget(res, target);
-						viewer.getControl().setRedraw(false);
-						viewer.refresh();
-						viewer.getControl().setRedraw(true);
-					}
-				}
-			};
-
-//			Action build = new MakeBuildAction(new MakeTarget[] { ta }, getViewSite().getShell(), "Build");
-
-			menu.add(add);
-			menu.add(edit);
-			menu.add(del);
-			//menu.add (new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-//			menu.add(build);
-			if (ta.isLeaf()) {
-				add.setEnabled(false);
-			} else {
-				edit.setEnabled(false);
-				del.setEnabled(false);
-			}
-		}
-		//menu.add (new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));
+	void handleSelectionChanged(SelectionChangedEvent event) {
+		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+//		updateStatusLine(sel);
+		updateActions(sel);
+	}
+	
+	void updateActions(IStructuredSelection sel) {
+//		deleteAction.selectionChanged(sel);
+//		renameAction.selectionChanged(sel);
 	}
 
-	private void contributeToActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
-//		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager());
-	}
 
-	private void fillLocalToolBar(IToolBarManager toolBar) {
-		Action refreshAllAction = new Action("Refresh") {
-			public void run() {
-				viewer.refresh();
-			}
 
-		};
-		toolBar.add(refreshAllAction);
-	}
-
-	/**
-	* @see ContentOutlinePage#createControl
-	*/
-	public void createPartControl(Composite parent) {
-
-		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setUseHashlookup(true);
-		viewer.setContentProvider(new MakeContentProvider());
-		viewer.setLabelProvider(new MakeLabelProvider());
-
-		MenuManager manager = new MenuManager("#PopUp");
-		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				contextMenuAboutToShow(manager);
-			}
-		});
-
-		Control control = viewer.getControl();
-		Menu menu = manager.createContextMenu(control);
-		control.setMenu(menu);
-
-		viewer.setInput(new MakeTarget(ResourcesPlugin.getWorkspace().getRoot()));
-
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClick(event);
-			}
-		});
-
-		contributeToActionBars();
-
-		getSite().setSelectionProvider(viewer);
-	}
 }

@@ -44,7 +44,6 @@
             %MakeConversionWizard.description
          </description>
       </wizard>
-      
 <!-- For C++ Wizards -->
       <wizard
             name="%WizardNewCCMakeProject.name"
@@ -59,7 +58,7 @@
          </description>
       </wizard>
       <wizard
-            name="%WizardConvertMakeWizard.name"
+            name="%WizardConvertMakeProject.name"
             icon="icons/ctool16/convert-normal.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             class="org.eclipse.cdt.make.ui.wizards.ConvertToMakeProjectWizard"
@@ -70,7 +69,6 @@
             %MakeConversionWizard.description
          </description>
       </wizard>
-      
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -217,10 +215,11 @@
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            label="%ActionSetMake.label"
-            id="org.eclipse.cdt.make.ui.actionSet1">
+            label="%ActionUpdateActionSet.label"
+            id="org.eclipse.cdt.make.ui.updateActionSet">
          <action
                label="org.eclipse.cdt.make.ui.action1"
+               class="org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction"
                id="org.eclipse.cdt.make.ui.action1">
          </action>
       </actionSet>

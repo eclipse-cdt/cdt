@@ -5,38 +5,23 @@ package org.eclipse.cdt.make.ui.views;
  * All Rights Reserved.
  */
 
-import java.util.Hashtable;
-import java.util.Map;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.cdt.make.core.IMakeTarget;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
-public class MakeLabelProvider implements ILabelProvider {
-
-	/**
-	 * The cache of images that have been dispensed by this provider.
-	 * Maps ImageDescriptor->Image.
-	 */
-	private Map imageTable = null;
+public class MakeLabelProvider extends LabelProvider {
 
 	/**
 	 * @see ILabelProvider#getImage(Object)
 	 */
 	public Image getImage(Object obj) {
 		Image image = null;
-		//obtain the cached image corresponding to the descriptor
-		if (imageTable == null) {
-			imageTable = new Hashtable(4);
-		}
-		if (obj instanceof MakeTarget) {
-			ImageDescriptor descriptor = ((MakeTarget)obj).getImageDescriptor();
-			image = (Image) imageTable.get(descriptor);
-			if (image == null) {
-				image = descriptor.createImage();
-				imageTable.put(descriptor, image);
-			}
+		if (obj instanceof IMakeTarget) {
+		} else if (obj instanceof IContainer) {
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
 		return image;
 	}
@@ -46,33 +31,10 @@ public class MakeLabelProvider implements ILabelProvider {
 	 */
 	public String getText(Object obj) {
 		if (obj instanceof MakeTarget) {
-			return ((MakeTarget)obj).toString();
+			return ((IMakeTarget)obj).getName();
+		} else if (obj instanceof IContainer) {
+			return ((IContainer)obj).getName();
 		}
 		return "";
-	}
-
-	/**
-	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
-	 */
-	public void addListener(ILabelProviderListener arg0) {
-	}
-
-	/**
-	 * @see IBaseLabelProvider#dispose()
-	 */
-	public void dispose() {
-	}
-
-	/**
-	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
-	 */
-	public boolean isLabelProperty(Object arg0, String arg1) {
-		return false;
-	}
-
-	/**
-	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
-	 */
-	public void removeListener(ILabelProviderListener arg0) {
 	}
 }

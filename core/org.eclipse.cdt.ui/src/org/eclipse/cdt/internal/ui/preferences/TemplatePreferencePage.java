@@ -44,6 +44,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -368,7 +369,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		template.setContext(contextTypeName); //$NON-NLS-1$
 		
 		EditTemplateDialog dialog= new EditTemplateDialog(getShell(), template, false);
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == Window.OK) {
 			fTemplates.add(template);
 			fTableViewer.refresh();
 			fTableViewer.setChecked(template, template.isEnabled());
@@ -390,7 +391,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	private void edit(Template template) {
 		Template newTemplate= new Template(template);
 		EditTemplateDialog dialog= new EditTemplateDialog(getShell(), newTemplate, true);
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == Window.OK) {
 
 			if (!newTemplate.getName().equals(template.getName()) &&
 				MessageDialog.openQuestion(getShell(),
@@ -464,7 +465,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 			try {
 				templateSet.saveToFile(file);			
 			} catch (CoreException e) {			
-				CUIPlugin.log(e);
+				CUIPlugin.getDefault().log(e);
 				openWriteErrorDialog(e);
 			}		
 		}
@@ -520,7 +521,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		try {
 			fTemplates.restoreDefaults();
 		} catch (CoreException e) {
-			CUIPlugin.log(e);
+			CUIPlugin.getDefault().log(e);
 			openReadErrorDialog(e);
 		}
 		
@@ -540,7 +541,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		try {
 			fTemplates.save();
 		} catch (CoreException e) {
-			CUIPlugin.log(e);
+			CUIPlugin.getDefault().log(e);
 			openWriteErrorDialog(e);
 		}
 		
@@ -554,7 +555,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		try {
 			fTemplates.reset();			
 		} catch (CoreException e) {
-			CUIPlugin.log(e);
+			CUIPlugin.getDefault().log(e);
 			openReadErrorDialog(e);
 		}
 

@@ -75,7 +75,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			try {
 				fInput.update();
 			} catch (CoreException e) {
-				CUIPlugin.log(e.getStatus());
+				CUIPlugin.getDefault().log(e.getStatus());
 				fInput= null;
 				return;
 			}
@@ -165,7 +165,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 
 			treeViewer.setInput(fInput);
 		} catch (CoreException e) {
-			CUIPlugin.log(e.getStatus());
+			CUIPlugin.getDefault().log(e.getStatus());
 			fInput= null;
 		}
 	}

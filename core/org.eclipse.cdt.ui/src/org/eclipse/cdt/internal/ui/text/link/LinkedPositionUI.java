@@ -184,7 +184,7 @@ public class LinkedPositionUI implements LinkedPositionListener,
 			openErrorDialog(fViewer.getTextWidget().getShell(), e);
 
 		} catch (BadPositionCategoryException e) {
-			CUIPlugin.log(e);
+			CUIPlugin.getDefault().log(e);
 			Assert.isTrue(false);
 		}
 
@@ -272,7 +272,7 @@ public class LinkedPositionUI implements LinkedPositionListener,
 					((flags & DOCUMENT_CHANGED) != 0));
 
 		} catch (BadPositionCategoryException e) {
-			CUIPlugin.log(e);
+			CUIPlugin.getDefault().log(e);
 			Assert.isTrue(false);
 		}
 

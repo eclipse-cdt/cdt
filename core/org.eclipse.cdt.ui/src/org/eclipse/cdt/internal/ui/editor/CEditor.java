@@ -657,7 +657,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 
 		MenuManager search= new MenuManager("Search", IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, search);
-		if(fSearchForReferencesAction.canActionBeAdded(getSelectionProvider().getSelection())) {
+		if(SearchForReferencesAction.canActionBeAdded(getSelectionProvider().getSelection())) {
 			search.add(fSearchForReferencesAction);
 		}
 		

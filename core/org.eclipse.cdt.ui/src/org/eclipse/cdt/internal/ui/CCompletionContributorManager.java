@@ -41,7 +41,7 @@ public class CCompletionContributorManager {
 		return fInstance;
 	}
 	
-	public static IFunctionSummary getFunctionInfo(String name) {
+	public IFunctionSummary getFunctionInfo(String name) {
 		if(!fContributorsLoaded)
 			loadExtensions();
 		
@@ -55,7 +55,7 @@ public class CCompletionContributorManager {
 		return null;
 	}
 	
-	public static IFunctionSummary[] getMatchingFunctions(String frag) {
+	public IFunctionSummary[] getMatchingFunctions(String frag) {
 		if(!fContributorsLoaded)
 			loadExtensions();
 		IFunctionSummary[] fs = null;
@@ -83,7 +83,7 @@ public class CCompletionContributorManager {
 		return fs;
 	}
 	
-	static private void loadExtensions() {
+	private void loadExtensions() {
 		fContributorsLoaded = true;
  		fCompletionContributors= new ArrayList(2);
  		

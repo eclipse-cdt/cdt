@@ -112,9 +112,9 @@ public class OpenIncludeAction extends Action {
 				}
 			}
 		} catch (CModelException e) {
-			CUIPlugin.log(e.getStatus());
+			CUIPlugin.getDefault().log(e.getStatus());
 		} catch (CoreException e) {
-			CUIPlugin.log(e.getStatus());
+			CUIPlugin.getDefault().log(e.getStatus());
 		}
 	}
 	
@@ -143,7 +143,7 @@ public class OpenIncludeAction extends Action {
 			}
 		};
 		
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(CUIPlugin.getActiveWorkbenchShell(), renderer, false, false);
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(CUIPlugin.getDefault().getActiveWorkbenchShell(), renderer, false, false);
 		dialog.setTitle(CUIPlugin.getResourceString(DIALOG_TITLE));
 		dialog.setMessage(CUIPlugin.getResourceString(DIALOG_MESSAGE));
 		dialog.setElements(filesFound);

@@ -106,7 +106,7 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 	}
 	
 	public String getProjectID() {
-		return CCorePlugin.getDefault().PLUGIN_ID + ".make";
+		return CCorePlugin.PLUGIN_ID + ".make";
 	}
 
 }

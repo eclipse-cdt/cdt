@@ -136,7 +136,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		}
 
 		void bringConsoleOnTop() {
-			IWorkbenchWindow window = CUIPlugin.getActiveWorkbenchWindow();
+			IWorkbenchWindow window = CUIPlugin.getDefault().getActiveWorkbenchWindow();
 			if (window == null)
 				return;
 			IWorkbenchPage page = window.getActivePage();

@@ -28,7 +28,7 @@ public class CPluginImages {
 		try {
 			fgIconBaseURL= new URL(CUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/" );
 		} catch (MalformedURLException e) {
-			CUIPlugin.log(e);
+			CUIPlugin.getDefault().log(e);
 		}
 	}	
 	private static final String NAME_PREFIX= CUIPlugin.PLUGIN_ID + '.';
@@ -155,7 +155,7 @@ public class CPluginImages {
 		try {
 			return new URL(fgIconBaseURL, buffer.toString());
 		} catch (MalformedURLException e) {
-			CUIPlugin.log(e);
+			CUIPlugin.getDefault().log(e);
 			return null;
 		}
 	}

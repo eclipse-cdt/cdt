@@ -55,9 +55,9 @@ public class TabFolderPage extends WizardPage implements IValidation {
 		tabFolder.setLayout(new TabFolderLayout());
 
 		MGridData gd= new MGridData();
-		gd.horizontalAlignment= gd.FILL;
+		gd.horizontalAlignment= MGridData.FILL;
 		gd.grabExcessHorizontalSpace= true;
-		gd.verticalAlignment= gd.FILL;
+		gd.verticalAlignment= MGridData.FILL;
 		gd.grabExcessVerticalSpace= true;
 		tabFolder.setLayoutData(gd);
 

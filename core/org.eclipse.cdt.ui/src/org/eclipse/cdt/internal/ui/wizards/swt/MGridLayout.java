@@ -656,7 +656,7 @@ public final class MGridLayout extends Layout {
 					} else if (vAlign == MGridData.END) {
 						widgetY= widgetY + spannedHeight - childExtent.y;
 					} else {
-						widgetY= widgetY;
+						//widgetY= widgetY;
 					}
 					if (vAlign == MGridData.FILL) {
 						widgetH= spannedHeight;

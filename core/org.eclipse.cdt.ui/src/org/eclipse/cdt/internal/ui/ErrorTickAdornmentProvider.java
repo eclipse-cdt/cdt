@@ -63,7 +63,7 @@ public class ErrorTickAdornmentProvider implements IAdornmentProvider {
 				return getErrorTicksFromMarkers((IResource) obj, IResource.DEPTH_INFINITE, null);
 			}
 		} catch (CoreException e) {
-			CUIPlugin.log(e);
+			CUIPlugin.getDefault().log(e);
 		}
 		return 0;
 	}

@@ -139,7 +139,7 @@ public abstract class ConversionWizard
      * The default if a make project
      */
     public String getProjectID() {
-        return CCorePlugin.getDefault().PLUGIN_ID + ".make";//$NON-NLS-1$
+        return CCorePlugin.PLUGIN_ID + ".make";//$NON-NLS-1$
     }
 
     /**

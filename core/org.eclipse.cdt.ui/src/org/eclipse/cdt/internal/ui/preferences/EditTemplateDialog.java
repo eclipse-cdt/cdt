@@ -349,7 +349,7 @@ public class EditTemplateDialog extends StatusDialog {
 			    try {
 					fTranslator.translate(event.getDocumentEvent().getDocument().get());
 			    } catch (CoreException e) {
-			     	CUIPlugin.log(e);
+			     	CUIPlugin.getDefault().log(e);
 			     	// XXX dialog   
 			    }
 				

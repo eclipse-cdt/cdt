@@ -103,11 +103,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fgResourceBundle;
 	}
 
-	public static IWorkbenchWindow getActiveWorkbenchWindow() {
+	public IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 
-	public static Shell getActiveWorkbenchShell() {
+	public Shell getActiveWorkbenchShell() {
 		return getActiveWorkbenchWindow().getShell();
 	}
 
@@ -115,11 +115,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fgCPlugin;
 	}
 
-	public static void log(Throwable e) {
+	public void log(Throwable e) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, "Error", e));
 	}
 
-	public static void log(IStatus status) {
+	public void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
 

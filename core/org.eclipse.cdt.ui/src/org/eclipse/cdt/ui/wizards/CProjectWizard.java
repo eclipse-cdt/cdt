@@ -259,12 +259,12 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 				IStatus status= ((CoreException)th).getStatus();
 				if (status != null) {
 					ErrorDialog.openError(shell, title, message, status);
-					CUIPlugin.log(status);
+					CUIPlugin.getDefault().log(status);
 					return false;
 				}
 			}
 			MessageDialog.openError(shell, title, message);
-			CUIPlugin.log(th);
+			CUIPlugin.getDefault().log(th);
 			try {
 				getProjectHandle().delete(false, false, null);
 			} catch (CoreException ignore) {

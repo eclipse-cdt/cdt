@@ -504,14 +504,14 @@ public abstract class ConvertProjectWizardPage
     	}                           	
     }
 	protected void addCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException{
-     	CCorePlugin.getDefault().convertProjectToC(project, monitor, CCorePlugin.getDefault().PLUGIN_ID + ".make", addMakeBuilder);  //$NON-NLS-1$
+     	CCorePlugin.getDefault().convertProjectToC(project, monitor, CCorePlugin.PLUGIN_ID + ".make", addMakeBuilder);  //$NON-NLS-1$
      }
      
      protected void addCCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException{
      	if (project.hasNature(CProjectNature.C_NATURE_ID)) {     		
 	     	CCorePlugin.getDefault().convertProjectFromCtoCC(project, monitor);  //$NON-NLS-1$
      	} else {
-	     	CCorePlugin.getDefault().convertProjectToCC(project, monitor, CCorePlugin.getDefault().PLUGIN_ID + ".make", addMakeBuilder);  //$NON-NLS-1$
+	     	CCorePlugin.getDefault().convertProjectToCC(project, monitor, CCorePlugin.PLUGIN_ID + ".make", addMakeBuilder);  //$NON-NLS-1$
      	}
      }
     

@@ -169,7 +169,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 				results= evalProposals(document, offset, length);
 			}
 		} catch (Exception e) {
-			CUIPlugin.log(e);
+			CUIPlugin.getDefault().log(e);
 		}
 		
 		if(results == null) 
@@ -181,7 +181,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 				fTemplateEngine.complete(viewer, documentOffset, null);
 			} catch (Exception x) {
 				System.out.println("Template Exception");
-				CUIPlugin.log(x);
+				CUIPlugin.getDefault().log(x);
 			}				
 			
 			ICCompletionProposal[] templateResults= fTemplateEngine.getResults();

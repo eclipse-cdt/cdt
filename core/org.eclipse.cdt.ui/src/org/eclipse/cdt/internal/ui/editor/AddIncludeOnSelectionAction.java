@@ -78,7 +78,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 					throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "no Editor Input", null));
 
 			} catch (CoreException e) {
-				CUIPlugin.log(e.getStatus());
+				CUIPlugin.getDefault().log(e.getStatus());
 			}
 		}
 		return unit;

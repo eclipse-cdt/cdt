@@ -180,11 +180,11 @@ public class OpenOnSelectionAction extends Action {
 					}
 				}
 			} catch	 (CModelException x) {
-				CUIPlugin.log(x.getStatus());
+				CUIPlugin.getDefault().log(x.getStatus());
 			} catch (PartInitException x) {
-				CUIPlugin.log(x);
+				CUIPlugin.getDefault().log(x);
 			} catch (CoreException x) {
-				CUIPlugin.log(x);
+				CUIPlugin.getDefault().log(x);
 			}
 		}
 		

@@ -49,7 +49,7 @@ public class Templates extends TemplateSet {
 			}
 
 		} catch (CoreException e) {
-			CUIPlugin.log(e);
+			CUIPlugin.getDefault().log(e);
 			ErrorDialog.openError(null,
 				TemplateMessages.getString("Templates.error.title"), //$NON-NLS-1$
 				e.getMessage(), e.getStatus());

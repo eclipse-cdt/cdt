@@ -40,7 +40,7 @@ public class EditorUtility {
 	}
 
 	public static IEditorPart openInEditor (IFile file) throws PartInitException {
-		IWorkbenchWindow window= CUIPlugin.getActiveWorkbenchWindow();
+		IWorkbenchWindow window= CUIPlugin.getDefault().getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage p= window.getActivePage();
 			if (p != null) {
@@ -88,7 +88,7 @@ public class EditorUtility {
 
 	public static IEditorPart openInEditor (IStorage store, String name) throws PartInitException {
 		IEditorInput ei = new ExternalEditorInput(store);
-		IWorkbenchWindow window= CUIPlugin.getActiveWorkbenchWindow();
+		IWorkbenchWindow window= CUIPlugin.getDefault().getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage p = window.getActivePage();
 			if (p != null) {

@@ -76,7 +76,7 @@ public class StringDialogField extends DialogField {
 	}
 	protected static MGridData gridDataForText(int span) {
 		MGridData gd= new MGridData();
-		gd.horizontalAlignment= gd.FILL;
+		gd.horizontalAlignment= MGridData.FILL;
 		gd.grabExcessHorizontalSpace= true;
 		gd.grabColumn= 0;
 		gd.horizontalSpan= span;

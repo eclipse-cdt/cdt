@@ -161,7 +161,7 @@ public class CAutoIndentStrategy extends DefaultAutoIndentStrategy {
 				}
 			}
 		} catch (BadLocationException excp) {
-			CUIPlugin.log(excp);
+			CUIPlugin.getDefault().log(excp);
 		}
 	}
 
@@ -194,7 +194,7 @@ public class CAutoIndentStrategy extends DefaultAutoIndentStrategy {
 
 
 		} catch (BadLocationException excp) {
-			CUIPlugin.log(excp);
+			CUIPlugin.getDefault().log(excp);
 		}
 	}
 	

@@ -36,7 +36,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		
 		public SelectionAction(String prefix, int operation) {
-			super(CUIPlugin.getDefault().getResourceBundle(), prefix, null);
+			super(CUIPlugin.getResourceBundle(), prefix, null);
 			fOperationCode= operation;
 			setEnabled(false);
 		}

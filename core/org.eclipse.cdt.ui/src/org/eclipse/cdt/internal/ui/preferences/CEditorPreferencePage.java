@@ -970,7 +970,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 				buffer.append(separator);
 			}
 		} catch (IOException io) {
-			CUIPlugin.log(io);
+			CUIPlugin.getDefault().log(io);
 		} finally {
 			if (reader != null) {
 				try { reader.close(); } catch (IOException e) {}

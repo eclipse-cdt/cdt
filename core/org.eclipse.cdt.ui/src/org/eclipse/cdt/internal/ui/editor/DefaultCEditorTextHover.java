@@ -58,7 +58,7 @@ public class DefaultCEditorTextHover implements ITextHover
 
 			// We are just doing some C, call the Help to get info
 
-			IFunctionSummary fs = CCompletionContributorManager.getFunctionInfo(expression);
+			IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(expression);
 			if(fs != null) {
 				buffer.append("<b>" + HTMLPrinter.convertToHTMLContent(expression) + 
 							  "()</b> - " + HTMLPrinter.convertToHTMLContent(fs.getSummary()) +

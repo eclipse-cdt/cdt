@@ -24,7 +24,7 @@ public class OpenNewFolderWizardAction extends Action implements IWorkbenchWindo
 		wizard.init(CUIPlugin.getDefault().getWorkbench(), getCurrentSelection());
 		wizard.setNeedsProgressMonitor(true);
 		WizardDialog dialog=
-			new WizardDialog(CUIPlugin.getActiveWorkbenchShell(), wizard);
+			new WizardDialog(CUIPlugin.getDefault().getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		dialog.getShell().setText(
 			CUIPlugin.getResourceString("OpenNewFolderWizardAction.title")); //$NON-NLS-1$
@@ -32,7 +32,7 @@ public class OpenNewFolderWizardAction extends Action implements IWorkbenchWindo
 	}
 
 	protected IStructuredSelection getCurrentSelection() {
-		IWorkbenchWindow window= CUIPlugin.getActiveWorkbenchWindow();
+		IWorkbenchWindow window= CUIPlugin.getDefault().getActiveWorkbenchWindow();
 		if (window != null) {
 			ISelection selection= window.getSelectionService().getSelection();
 			if (selection instanceof IStructuredSelection) {

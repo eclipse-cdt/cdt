@@ -88,7 +88,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 			IFile file= getInputFile();
 			isCProject= (file.getProject().hasNature(CProjectNature.C_NATURE_ID));
 		} catch (CoreException e) {
-			CUIPlugin.log(e);
+			CUIPlugin.getDefault().log(e);
 		}
 		
 		if (isCProject) {
@@ -122,7 +122,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 					fWorkingDirField.setText(file.getParent().getLocation().toOSString());
 				}
 			} catch (CoreException e) {
-				CUIPlugin.log(e.getStatus());
+				CUIPlugin.getDefault().log(e.getStatus());
 			}
 		}	
 	}
@@ -138,7 +138,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 				file.setPersistentProperty(fWorkingDirPropertyName, fWorkingDirField.getText());
 			} catch (CoreException e) {
 				ErrorDialog.openError(fShell, "Error", null, e.getStatus());
-				CUIPlugin.log(e.getStatus());
+				CUIPlugin.getDefault().log(e.getStatus());
 				return false;
 			}
 		}

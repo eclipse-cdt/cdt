@@ -100,11 +100,11 @@ public class TemplateProposal implements ICCompletionProposal {
 			fSelectedRegion= editor.getSelectedRegion();
 			
 		} catch (BadLocationException e) {
-			CUIPlugin.log(e);	
+			CUIPlugin.getDefault().log(e);	
 			openErrorDialog(e);		    	    
 
 	    } catch (CoreException e) {
-	       	CUIPlugin.log(e);	
+	       	CUIPlugin.getDefault().log(e);	
 			openErrorDialog(e);		    
 	    }	    
 	}
@@ -139,7 +139,7 @@ public class TemplateProposal implements ICCompletionProposal {
 			return textToHTML(fTemplateBuffer.getString());
 
 	    } catch (CoreException e) {
-	       	CUIPlugin.log(e);	
+	       	CUIPlugin.getDefault().log(e);	
 			openErrorDialog(e);		    
 
 			return null;

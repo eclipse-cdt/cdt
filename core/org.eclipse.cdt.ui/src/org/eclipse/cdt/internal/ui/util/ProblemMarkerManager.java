@@ -54,7 +54,7 @@ public class ProblemMarkerManager implements IResourceChangeListener {
 						return false;
 					}
 				} catch (CoreException e) {
-					CUIPlugin.log(e.getStatus());
+					CUIPlugin.getDefault().log(e.getStatus());
 					return false;
 				}
 			}
@@ -110,7 +110,7 @@ public class ProblemMarkerManager implements IResourceChangeListener {
 			if (delta != null)
 				delta.accept(new ProjectErrorVisitor(changedElements));
 		} catch (CoreException e) {
-			CUIPlugin.log(e.getStatus());
+			CUIPlugin.getDefault().log(e.getStatus());
 		}
 
 		if (changedElements.size() > 0) {

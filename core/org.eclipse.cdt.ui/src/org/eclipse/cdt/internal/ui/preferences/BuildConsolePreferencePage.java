@@ -82,7 +82,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		prefs.setDefault(PREF_CLEAR_CONSOLE, true);
 		prefs.setDefault(PREF_AUTO_OPEN_CONSOLE, false);
 		prefs.setDefault(PREF_CONSOLE_ON_TOP, true);
-		prefs.setDefault(PREF_BUILDCONSOLE_LINES, 100);
+		prefs.setDefault(PREF_BUILDCONSOLE_LINES, 500);
 		Font font = JFaceResources.getTextFont();
 		if (font != null) {
 			FontData[] data = font.getFontData();

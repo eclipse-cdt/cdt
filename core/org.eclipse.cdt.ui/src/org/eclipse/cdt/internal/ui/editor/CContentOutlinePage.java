@@ -58,7 +58,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private String fContextMenuId;
 	
 	private OpenIncludeAction fOpenIncludeAction;
-	private SearchForReferencesAction fSearchForReferencesAction;
+	private FileSearchAction fFileSearchAction;
+	private FileSearchActionInWorkingSet fFileSearchActionInWorkingSet;
 	private SearchDialogAction fSearchDialogAction;
 	
 	private MemberFilterActionGroup fMemberFilterActionGroup;
@@ -77,7 +78,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		fTogglePresentation.setEditor(editor);
 		
 		fOpenIncludeAction= new OpenIncludeAction(this);
-		fSearchForReferencesAction= new SearchForReferencesAction(this);
+		fFileSearchAction= new FileSearchAction(this);
+		fFileSearchActionInWorkingSet = new FileSearchActionInWorkingSet(this);
 		fSearchDialogAction = new SearchDialogAction(this, editor);
 	}
 	
@@ -143,8 +145,11 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			menu.add(fSearchDialogAction);
 		}
 		
-		if (SearchForReferencesAction.canActionBeAdded(getSelection())) {
-			menu.add(fSearchForReferencesAction);
+		if (FileSearchAction.canActionBeAdded(getSelection())) {
+			MenuManager fileSearch = new MenuManager("File Search");
+			fileSearch.add(fFileSearchAction);
+			fileSearch.add(fFileSearchActionInWorkingSet);
+			menu.add(fileSearch);
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$

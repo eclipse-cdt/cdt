@@ -21,8 +21,14 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.resources.MakeUtil;
+import org.eclipse.cdt.internal.core.model.CProject;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
+import org.eclipse.cdt.internal.ui.editor.FileSearchAction;
+import org.eclipse.cdt.internal.ui.editor.FileSearchActionInWorkingSet;
 import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
+import org.eclipse.cdt.internal.ui.editor.SearchDialogAction;
 import org.eclipse.cdt.internal.ui.makeview.MakeAction;
 import org.eclipse.cdt.internal.ui.makeview.MakeTarget;
 import org.eclipse.cdt.internal.ui.makeview.MakeTargetAction;
@@ -174,6 +180,11 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	// Collapsing
 	CollapseAllAction collapseAllAction;
 
+	//Search
+	FileSearchAction fFileSearchAction;
+	FileSearchActionInWorkingSet fFileSearchActionInWorkingSet;
+	SearchDialogAction fSearchDialogAction;
+	
 	// Persistance tags.
 	static final String TAG_SELECTION= "selection"; //$NON-NLS-1$
 	static final String TAG_EXPANDED= "expanded"; //$NON-NLS-1$
@@ -636,6 +647,10 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.CLOSE_PROJECT, closeProjectAction);
 
 		collapseAllAction = new CollapseAllAction(this);
+		
+		fFileSearchAction = new FileSearchAction(viewer);
+		fFileSearchActionInWorkingSet = new	FileSearchActionInWorkingSet(viewer);
+		fSearchDialogAction = new SearchDialogAction(viewer, this.getViewSite().getWorkbenchWindow());
 	}
 
 	/**
@@ -743,6 +758,8 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		addIOMenu(menu, selection);
 		menu.add(new Separator());
 		addBookMarkMenu (menu, selection);
+		menu.add(new Separator());
+		addSearchMenu(menu, selection);
 		//menu.add(new Separator());
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
@@ -1303,4 +1320,28 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 			}
 		}
 	}
+	
+	void addSearchMenu(IMenuManager menu, IStructuredSelection selection) {	
+		IAdaptable element = (IAdaptable)selection.getFirstElement();
+
+		if (element instanceof TranslationUnit ||
+			element instanceof CProject)
+		 return;
+		 
+		MenuManager search = new MenuManager("Search", IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
+		
+		if (SearchDialogAction.canActionBeAdded(selection)){
+			search.add(fSearchDialogAction);
+		}
+		
+		if (FileSearchAction.canActionBeAdded(selection)) {
+			MenuManager fileSearch = new MenuManager("File Search");
+			fileSearch.add(fFileSearchAction);
+			fileSearch.add(fFileSearchActionInWorkingSet);
+			search.add(fileSearch);
+		}
+		
+		menu.add(search);
+	}
+	
 }

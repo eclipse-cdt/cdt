@@ -1,3 +1,7 @@
+2003-09-11 Bogdan Gheorghe
+	- Added null guard to DependencyManager.getDependencyTree(), 
+	  DependencyTree.getFileDependencies()
+	
 2003-09-08 Andrew Niefer
 	- Modified calls to ParserFactory to specify which language to use
 	- Modified IDependencyTree.add to take ParserLanguage as a parameter so that it can
@@ -24,5 +28,5 @@
 	* src/org/eclipse/cdt/internal/core/sourcedependency/impl/InMemoryTree.java
 	* src/org/eclipse/cdt/internal/core/sourcedependency/impl/Node.java
 	
-
+-
 	

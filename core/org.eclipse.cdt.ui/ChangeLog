@@ -1,3 +1,11 @@
+2003-09-11 Bogdan Gheorghe
+	- Added Search Menu to CView.java
+	- Added queryWorkingSets to CSearchScopeFactory to bring up the working
+	  set dialog
+	- Modified Search Menu in CEditor.java, CContentOutlinePage.java
+	- Added new action FileSearchActionInWorkingSet
+	- Modified actions FileSearchAction, SearchDialogAction
+	
 2003-09-10 Sean Evoy
 	Work completed to resolve [Bug 41412] Restore Default in Managed Build 
 	project's settings Not Working. Added an event handler to reset the selected 

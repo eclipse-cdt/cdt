@@ -32,14 +32,14 @@ import org.eclipse.ui.PlatformUI;
 
 
 
-public class SearchForReferencesAction extends Action {
+public class FileSearchAction extends Action {
 
 
-	private static final String PREFIX= "SearchForReferencesAction.";
+	private static final String PREFIX= "FileSearchAction.";
 	
 	private ISelectionProvider fSelectionProvider;
 
-	public SearchForReferencesAction(ISelectionProvider provider) {
+	public FileSearchAction(ISelectionProvider provider) {
 		super(CUIPlugin.getResourceString(PREFIX + "label"));
 		setDescription(CUIPlugin.getResourceString(PREFIX + "description"));
 		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip"));

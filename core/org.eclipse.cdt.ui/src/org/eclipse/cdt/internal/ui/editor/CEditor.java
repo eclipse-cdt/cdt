@@ -96,8 +96,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 	/** The outline page */
 	protected CContentOutlinePage fOutlinePage;
 
-	private SearchForReferencesAction fSearchForReferencesAction;
+	private FileSearchAction fFileSearchAction;
 
+	private FileSearchActionInWorkingSet fFileSearchActionInWorkingSet;
+	
 	private SearchDialogAction fSearchDialogAction;
 	
 	protected ISelectionChangedListener fStatusLineClearer;
@@ -427,7 +429,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		setAction("AddIncludeOnSelection", new AddIncludeOnSelectionAction(this)); //$NON-NLS-1$
 		setAction("OpenDeclarations", new OpenDeclarationsAction(this));
 
-		fSearchForReferencesAction = new SearchForReferencesAction(getSelectionProvider());
+		fFileSearchAction = new FileSearchAction(getSelectionProvider());
+		
+		fFileSearchActionInWorkingSet = new FileSearchActionInWorkingSet(getSelectionProvider());
 		
 		fSearchDialogAction = new SearchDialogAction(getSelectionProvider(), this);
 	}
@@ -452,8 +456,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 			search.add(fSearchDialogAction);
 		}
 		
-		if (SearchForReferencesAction.canActionBeAdded(getSelectionProvider().getSelection())) {
-			search.add(fSearchForReferencesAction);
+		if (FileSearchAction.canActionBeAdded(getSelectionProvider().getSelection())) {
+			MenuManager fileSearch = new MenuManager("File Search");
+			fileSearch.add(fFileSearchAction);
+			fileSearch.add(fFileSearchActionInWorkingSet);
+			search.add(fileSearch);
 		}
 
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ContentAssistProposal"); //$NON-NLS-1$

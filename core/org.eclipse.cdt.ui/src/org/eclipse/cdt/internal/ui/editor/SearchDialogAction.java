@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -29,12 +30,12 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class SearchDialogAction extends Action {
-
 	private static final String PREFIX= "SearchDialogAction.";
 	private static final String C_SEARCH_PAGE_ID= "org.eclipse.cdt.ui.CSearchPage"; 
 
 	private ISelectionProvider fSelectionProvider;
 	private ITextEditor fEditor;
+	private IWorkbenchWindow fWorkbenchWindow;
 	
 	public SearchDialogAction(ISelectionProvider provider, CEditor editor) {
 		super(CUIPlugin.getResourceString(PREFIX + "label"));
@@ -47,6 +48,20 @@ public class SearchDialogAction extends Action {
 		
 		fSelectionProvider= provider;
 		fEditor = editor;
+	}
+	
+	public SearchDialogAction(ISelectionProvider provider, IWorkbenchWindow window) {
+		
+		super(CUIPlugin.getResourceString(PREFIX + "label"));
+		setDescription(CUIPlugin.getResourceString(PREFIX + "description"));
+		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip"));
+		
+		if(provider instanceof CContentOutlinePage) {
+			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_OPEN_INCLUDE);
+		}
+		
+		fSelectionProvider= provider;
+		fWorkbenchWindow = window;
 	}
 			
 	public void run() {
@@ -64,8 +79,12 @@ public class SearchDialogAction extends Action {
 			search_name = element.getElementName();
 		}
 		
-		SearchUI.openSearchDialog(fEditor.getEditorSite().getWorkbenchWindow(),C_SEARCH_PAGE_ID);
-		
+		if (fEditor != null){
+			SearchUI.openSearchDialog(fEditor.getEditorSite().getWorkbenchWindow(),C_SEARCH_PAGE_ID);
+		} 
+		else if (fWorkbenchWindow != null){
+			SearchUI.openSearchDialog(fWorkbenchWindow,C_SEARCH_PAGE_ID);
+		}
 //		// @@@ we rely on the internal functions of the Search plugin, since
 //		// none of these are actually exported. This is probably going to change
 //		// with 2.0.

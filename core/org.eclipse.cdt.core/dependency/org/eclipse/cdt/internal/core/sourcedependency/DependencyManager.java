@@ -98,10 +98,12 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 		IPath path =project.getFullPath();
 		IDependencyTree dTree= this.getDependencyTree(path,true,false);
 		try{
+			if (dTree != null) { 
 			//dTree.printIncludeEntries();
 			//dTree.printIndexedFiles();
 			String[] files = dTree.getFileDependencies(file.getFullPath());
 			 return files;
+			}
 		}
 		catch(Exception e){}
 		return null;

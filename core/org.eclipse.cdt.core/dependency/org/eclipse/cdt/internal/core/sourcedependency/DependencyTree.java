@@ -145,6 +145,10 @@ public class DependencyTree implements IDependencyTree {
 	public String[] getFileDependencies(IPath filePath) throws IOException {
 		List tempFileReturn = new ArrayList();
 		IndexedFile indexFile = addsTree.getIndexedFile(filePath.toString());
+		
+		if (indexFile == null)
+		 return new String[0];
+		 
 		int fileNum = indexFile.getFileNumber();
 		IncludeEntry[] tempEntries = addsTree.getIncludeEntries();
 		for (int i=0; i<tempEntries.length; i++)

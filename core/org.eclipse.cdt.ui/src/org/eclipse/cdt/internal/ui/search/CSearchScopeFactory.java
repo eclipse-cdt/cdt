@@ -20,9 +20,14 @@ import java.util.Set;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 /**
  * @author aniefer
@@ -114,6 +119,20 @@ public class CSearchScopeFactory {
 		}
 		
 		return createCSearchScope( cElements );
+	}
+	
+
+	public IWorkingSet[] queryWorkingSets() {
+		Shell shell= CUIPlugin.getDefault().getActiveWorkbenchShell();
+		if (shell == null)
+			return null;
+		IWorkingSetSelectionDialog dialog= PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(shell, true);
+		if (dialog.open() == Window.OK) {
+			IWorkingSet[] workingSets= dialog.getSelection();
+			if (workingSets.length > 0)
+				return workingSets;
+		}
+		return null;
 	}
 	
 }

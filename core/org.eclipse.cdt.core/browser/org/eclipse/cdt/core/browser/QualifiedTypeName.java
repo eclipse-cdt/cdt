@@ -260,6 +260,9 @@ public class QualifiedTypeName implements IQualifiedTypeName {
         for (int i = 0; result == 0 && i < len; ++i) {
             result = fSegments[i].compareTo(segments[i]);
         }
+        if (result == 0 && fSegments.length != segments.length) {
+            result = (fSegments.length < segments.length) ? -1 : 1;
+        }
         return result;
 	}
 
@@ -273,6 +276,9 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		int result = 0;
         for (int i = 0; result == 0 && i < len; ++i) {
             result = fSegments[i].compareToIgnoreCase(segments[i]);
+        }
+        if (result == 0 && fSegments.length != segments.length) {
+            result = (fSegments.length < segments.length) ? -1 : 1;
         }
         return result;
 	}

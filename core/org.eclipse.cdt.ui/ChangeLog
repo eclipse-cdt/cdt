@@ -1,3 +1,8 @@
+2004-08-24 Chris Wiebe
+
+	fix sorting bug
+	* browser/org/eclipse/cdt/core/browser/QualifiedTypeName.java
+
 2004-08-21 Alain Magloire
 
 	Hardcode The CEditor id and the ASM id for the

@@ -31,8 +31,6 @@ import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.GapTextStore;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentExtension;
-import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
@@ -44,15 +42,6 @@ import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 
 public class CDocumentProvider extends FileDocumentProvider {
 
-	static private class RegisteredReplace {
-		IDocumentListener fOwner;
-		IDocumentExtension.IReplace fReplace;
-			
-		RegisteredReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
-			fOwner= owner;
-			fReplace= replace;
-		}
-	};
 	/**
 	 * Bundle of all required informations to allow working copy management. 
 	 */

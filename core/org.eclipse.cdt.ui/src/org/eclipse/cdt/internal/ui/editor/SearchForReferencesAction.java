@@ -37,11 +37,7 @@ public class SearchForReferencesAction extends Action {
 
 	private static final String PREFIX= "SearchForReferencesAction.";
 	
-	private static final String DIALOG_TITLE= PREFIX + "dialog.title";
-	private static final String DIALOG_MESSAGE= PREFIX + "dialog.message";
-	
 	private ISelectionProvider fSelectionProvider;
-
 
 	public SearchForReferencesAction(ISelectionProvider provider) {
 		super(CUIPlugin.getResourceString(PREFIX + "label"));

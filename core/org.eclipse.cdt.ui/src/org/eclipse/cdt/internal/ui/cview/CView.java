@@ -418,9 +418,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		boolean showCUChildren= CPluginPreferencePage.showCompilationUnitChildren();
 		viewer.setUseHashlookup (true);
 		viewer.setContentProvider(new CElementContentProvider (showCUChildren, true));
-		viewer.setLabelProvider (new DecoratingLabelProvider(
-				new StandardCElementLabelProvider (),
-				PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
+		setLabelDecorator(PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
 		CUIPlugin.getDefault().getProblemMarkerManager().addListener(viewer);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 

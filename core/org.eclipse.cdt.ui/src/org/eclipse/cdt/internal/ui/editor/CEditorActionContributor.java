@@ -23,8 +23,6 @@ import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 import org.eclipse.ui.texteditor.TextEditorAction;
-import org.eclipse.ui.texteditor.TextOperationAction;
-
 
 public class CEditorActionContributor extends TextEditorActionContributor {
 
@@ -85,7 +83,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	protected RetargetTextEditorAction fOpenOnSelection;
 	protected SelectionAction fShiftLeft;
 	protected SelectionAction fShiftRight;
-	private TextOperationAction caAction;
 	private TogglePresentationAction fTogglePresentation;
 	//private ToggleTextHoverAction fToggleTextHover;
 	private GotoErrorAction fPreviousError;

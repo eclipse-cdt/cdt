@@ -61,7 +61,7 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
 		// call the CompletionProcessor
 		CCompletionProcessor completionProcessor = new CCompletionProcessor(null);
 		ICompletionProposal[] results = completionProcessor.evalProposals( new Document(buffer), offset, wc, null);
-		return results;
+		return ( results != null ? results : new ICompletionProposal [0] );
     }
     
     public static Test suite(){

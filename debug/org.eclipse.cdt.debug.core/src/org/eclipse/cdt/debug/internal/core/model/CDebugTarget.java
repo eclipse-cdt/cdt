@@ -1976,7 +1976,9 @@ public class CDebugTarget extends CDebugElement
 	private synchronized ICDIBreakpoint setFunctionBreakpoint0( ICFunctionBreakpoint breakpoint ) throws CDIException, CoreException
 	{
 		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
-		ICDILocation location = bm.createLocation( null, breakpoint.getFunction(), -1 );
+		String function = breakpoint.getFunction();
+		String fileName = ( function != null && function.indexOf( "::" ) == -1  ) ? breakpoint.getFileName() : null;
+		ICDILocation location = bm.createLocation( fileName, function, -1 );
 		ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
 		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
 		getBreakpoints().put( breakpoint, cdiBreakpoint );

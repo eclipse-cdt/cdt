@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -91,5 +92,18 @@ public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakp
 	public static String getMarkerType()
 	{
 		return C_FUNCTION_BREAKPOINT;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint#getFileName()
+	 */
+	public String getFileName() throws CoreException
+	{
+		IResource resource = ensureMarker().getResource();
+		if ( resource instanceof IFile )
+		{
+			return ((IFile)resource).getLocation().lastSegment();
+		}
+		return null;
 	}
 }

@@ -1,3 +1,11 @@
+2003-04-11 Mikhail Khodjaiants
+	Core support of function and method breakpoints.
+	* CDebugModel.java
+	* ICFunctionBreakpoint.java
+	* CDebugUtils.java
+	* CFunctionBreakpoint.java
+	* CDebugTarget.java
+
 2003-04-09 Mikhail Khodjaiants
 	Core support of function breakpoints.
 	* CDebugModel.java

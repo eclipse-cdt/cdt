@@ -39,4 +39,6 @@ public interface ICFunctionBreakpoint extends ICLineBreakpoint
 	 * 	on this breakpoint's underlying marker
 	 */
 	public void setFunction( String function ) throws CoreException;
+	
+	public String getFileName() throws CoreException;
 }

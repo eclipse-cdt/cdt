@@ -14,7 +14,11 @@ import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
+import org.eclipse.cdt.core.model.IFunction;
+import org.eclipse.cdt.core.model.IMethod;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
@@ -288,5 +292,48 @@ public class CDebugUtils
 		Serializer serializer = SerializerFactory.getSerializerFactory( Method.XML ).makeSerializer( new OutputStreamWriter( s, "UTF8" ), format );
 		serializer.asDOMSerializer().serialize( doc );
 		return s.toString( "UTF8" ); //$NON-NLS-1$		
+	}
+
+
+	public static IResource getFunctionResource( IFunction function )
+	{
+		ITranslationUnit tu = function.getTranslationUnit();
+		return ( tu != null ) ? tu.getResource() : function.getCProject().getProject();
+	}
+
+	public static IResource getMethodResource( IMethod method )
+	{
+		ITranslationUnit tu = method.getTranslationUnit();
+		return ( tu != null ) ? tu.getResource() : method.getCProject().getProject();
+	}
+
+	public static String getFunctionName( IFunction function )
+	{
+		StringBuffer name = new StringBuffer( function.getElementName() );
+		if ( name.indexOf( "::" ) != -1 )
+		{
+			String[] params = function.getParameterTypes();
+			name.append( '(' );
+			if ( params.length == 0 )
+			{
+				name.append( "void" ); 
+			}
+			else
+			{
+				for ( int i = 0; i < params.length; ++i )
+				{
+					name.append( params[i] );
+					if ( i != params.length - 1 )
+						name.append( ',' ); 
+				}
+			}
+			name.append( ')' );
+		}
+		return name.toString();
+	}
+
+	public static String getMethodQualifiedName( IMethod method )
+	{
+		return null;
 	}
 }

@@ -1,4 +1,13 @@
 2004-03-31 Mikhail Khodjaiants
+	Added default preferences to the C/C++ Debug preference page.
+	Removed the preference page of the Shared Libraries views.
+	* SharedLibrariesPreferencePage.java - removed
+	* CDebugPreferencePage.java
+	* CDebugUIPluginResources.properties
+	* CDebugUIPlugin.java
+	* plugin.xml
+
+2004-03-31 Mikhail Khodjaiants
 	The Registers view has been contibuted and moved to the Eclipse platform.
 	* org.eclipse.cdt.debug.ui/src/org/eclipse/cdt/debug/internal/ui/views/registers/* - removed
 	* org.eclipse.cdt.debug.ui/icons/full/cview16/registers_view.gif - removed

@@ -240,7 +240,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 				Session session = (Session) (target.getSession());
 				MISession mi = session.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
-				MIWhatis whatis = factory.createMIWhatis(getName());
+				MIWhatis whatis = factory.createMIWhatis(getQualifiedName());
 				mi.postCommand(whatis);
 				MIWhatisInfo info = whatis.getMIWhatisInfo();
 				if (info == null) {

@@ -1,3 +1,8 @@
+2004-07-23 Mikhail Khodjaiants
+	More informative error messages.
+	* CDebugUIMessages.properties
+	* CDTDebugModelPresentation.java
+
 2004-07-20 Mikhail Khodjaiants
 	Cleanup.
 	* ErrorStatusHandler.java

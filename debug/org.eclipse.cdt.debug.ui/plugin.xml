@@ -62,7 +62,7 @@
             targetID="org.eclipse.debug.ui.DebugPerspective">
          <view
                relative="org.eclipse.debug.ui.VariableView"
-               relationship="org.eclipse.cdt.debug.ui.view2"
+               relationship="stack"
                id="org.eclipse.cdt.debug.ui.MemoryView">
          </view>
       </perspectiveExtension>

@@ -1,4 +1,8 @@
 2002-10-24 Mikhail Khodjaiants
+	Set the 'relationship' attribute value to 'stack' for the 'MemoryView' perspective extension.
+	* plugin.xml
+ 
+2002-10-24 Mikhail Khodjaiants
 	Implementation of the 'Memory Unit Size' action.
 	* MemorySizeAction.java
 	* MemoryView.java

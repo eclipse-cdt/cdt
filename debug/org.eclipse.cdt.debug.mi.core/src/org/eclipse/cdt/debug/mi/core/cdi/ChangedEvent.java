@@ -8,7 +8,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.mi.core.event.MIBreakPointChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 
@@ -47,7 +47,7 @@ public class ChangedEvent implements ICDIChangedEvent {
 		}
 	}
 
-	public ChangedEvent(CSession s, MIBreakPointChangedEvent bpoint) {
+	public ChangedEvent(CSession s, MIBreakpointChangedEvent bpoint) {
 		session = s;
 		BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
 		int number = bpoint.getNumber();

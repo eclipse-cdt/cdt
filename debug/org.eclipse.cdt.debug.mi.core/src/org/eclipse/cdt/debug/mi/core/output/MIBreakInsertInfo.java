@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class MIBreakInsertInfo extends MIInfo {
 
-	MIBreakPoint[] breakpoints;
+	MIBreakpoint[] breakpoints;
 
 	void parse() {
 		List aList = new ArrayList(1);
@@ -33,27 +33,27 @@ public class MIBreakInsertInfo extends MIInfo {
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					MIValue val = results[i].getMIValue();
-					MIBreakPoint bpt = null;
+					MIBreakpoint bpt = null;
 					if (var.equals("wpt")) {
 						if (val instanceof MITuple) {
-							bpt = new MIBreakPoint((MITuple)val);
+							bpt = new MIBreakpoint((MITuple)val);
 							bpt.setEnabled(true);
 							bpt.setWriteWatchpoint(true);
 						}
 					} else if (var.equals("bkpt")) {
 						if (val instanceof MITuple) {
-							bpt = new MIBreakPoint((MITuple)val);
+							bpt = new MIBreakpoint((MITuple)val);
 							bpt.setEnabled(true);
 						}
 					} else if (var.equals("hw-awpt")) {
 						if (val instanceof MITuple) {
-							bpt = new MIBreakPoint((MITuple)val);
+							bpt = new MIBreakpoint((MITuple)val);
 							bpt.setAccessWatchpoint(true);
 							bpt.setEnabled(true);
 						}
 					} else if (var.equals("hw-rwpt")) {
 						if (val instanceof MITuple) {
-							bpt = new MIBreakPoint((MITuple)val);
+							bpt = new MIBreakpoint((MITuple)val);
 							bpt.setReadWatchpoint(true);
 							bpt.setEnabled(true);
 						}
@@ -64,14 +64,14 @@ public class MIBreakInsertInfo extends MIInfo {
 				}
 			}
 		}
-		breakpoints = (MIBreakPoint[])aList.toArray(new MIBreakPoint[aList.size()]);
+		breakpoints = (MIBreakpoint[])aList.toArray(new MIBreakpoint[aList.size()]);
 	}
 
 	public MIBreakInsertInfo(MIOutput record) {
 		super(record);
 	}
 
-	public MIBreakPoint[] getBreakPoints() {
+	public MIBreakpoint[] getMIBreakpoints() {
 		if (breakpoints == null) {
 			parse();
 		}

@@ -7,7 +7,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.mi.core.event.MIBreakPointDeletedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakpointDeletedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 
@@ -35,7 +35,7 @@ public class DestroyedEvent implements ICDIDestroyedEvent {
 		}
 	}
 
-	public DestroyedEvent(CSession s, MIBreakPointDeletedEvent bpoint) {
+	public DestroyedEvent(CSession s, MIBreakpointDeletedEvent bpoint) {
 		session = s;
 		BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
 		int number = bpoint.getNumber();

@@ -10,16 +10,16 @@ package org.eclipse.cdt.debug.mi.core.event;
 /**
  *
  */
-public class MIBreakPointDeletedEvent extends MIDestroyedEvent {
+public class MIBreakpointDeletedEvent extends MIDestroyedEvent {
 
 	int no;
 
-	public MIBreakPointDeletedEvent(int number) {
+	public MIBreakpointDeletedEvent(int number) {
 		super(0);
 		no = number;
 	}
 
-	public MIBreakPointDeletedEvent(int id, int number) {
+	public MIBreakpointDeletedEvent(int id, int number) {
 		super(id);
 		no = number;
 	}

@@ -6,7 +6,7 @@
 package org.eclipse.cdt.debug.mi.core;
  
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
-import org.eclipse.cdt.debug.mi.core.event.MIBreakPointChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 
@@ -44,10 +44,12 @@ public class CLIProcessor {
 			session.getMIInferior().setRunning();
 			MIEvent event = new MIRunningEvent(cmd.getToken(), type);
 			session.fireEvent(event);
-		} else if (isSettingBreakpoint(operation)) {
-			session.fireEvent(new MIBreakPointChangedEvent(0));
-		} else if (isSettingWatchpoint(operation)) {
-		} else if (isDeletingBreakpoint(operation)) {
+		} else if (isSettingBreakpoint(operation) ||
+				   isSettingWatchpoint(operation) ||
+				   isDeletingBreakpoint(operation)) {
+			// We know something change, we just do not know what.
+			// So the easiest way is to let the top layer handle it. 
+			session.fireEvent(new MIBreakpointChangedEvent(0));
 		}
 	}
 

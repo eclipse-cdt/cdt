@@ -18,13 +18,13 @@ import java.util.List;
  */
 public class MIBreakListInfo extends MIInfo {
 
-	MIBreakPoint[] breakpoints;
+	MIBreakpoint[] breakpoints;
 
 	public MIBreakListInfo(MIOutput rr) {
 		super(rr);
 	}
 
-	public MIBreakPoint[] getBreakPoints() {
+	public MIBreakpoint[] getMIBreakpoints() {
 		if (breakpoints == null) {
 			parse();
 		}
@@ -46,7 +46,7 @@ public class MIBreakListInfo extends MIInfo {
 				}
 			}
 		}
-		breakpoints = (MIBreakPoint[])aList.toArray(new MIBreakPoint[aList.size()]);
+		breakpoints = (MIBreakpoint[])aList.toArray(new MIBreakpoint[aList.size()]);
 	}
 
 	void parseTable(MIValue val, List aList) {
@@ -69,7 +69,7 @@ public class MIBreakListInfo extends MIInfo {
 				if (b.equals("bkpt")) {
 					MIValue value = bkpts[i].getMIValue();
 					if (value instanceof MITuple) {
-						aList.add(new MIBreakPoint((MITuple)value));
+						aList.add(new MIBreakpoint((MITuple)value));
 					}
 				}
 			}

@@ -18,7 +18,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecNextInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
-import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakpointHitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIErrorEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
@@ -324,9 +324,9 @@ public class RxThread extends Thread {
 		MIEvent event = null;
 		if ("breakpoint-hit".equals(reason)) {
 			if (exec != null) {
-				event = new MIBreakpointEvent(exec);
+				event = new MIBreakpointHitEvent(exec);
 			} else if (rr != null) {
-				event = new MIBreakpointEvent(rr);
+				event = new MIBreakpointHitEvent(rr);
 			}
 			session.getMIInferior().setSuspended();
 		} else if ("watchpoint-trigger".equals(reason) ||

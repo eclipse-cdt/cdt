@@ -10,16 +10,16 @@ package org.eclipse.cdt.debug.mi.core.event;
 /**
  *
  */
-public class MIBreakPointCreatedEvent extends MICreatedEvent {
+public class MIBreakpointCreatedEvent extends MICreatedEvent {
 
 	int no;
 
-	public MIBreakPointCreatedEvent(int number) {
+	public MIBreakpointCreatedEvent(int number) {
 		super(0);
 		no = number;
 	}
 
-	public MIBreakPointCreatedEvent(int id, int number) {
+	public MIBreakpointCreatedEvent(int id, int number) {
 		super(id);
 		no = number;
 	}

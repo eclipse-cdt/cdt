@@ -7,13 +7,13 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICatchEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDICatchpoint;
-import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
+import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
 /**
  */
 public class Catchpoint extends Breakpoint implements ICDICatchpoint {
 
-	public Catchpoint(BreakpointManager m, MIBreakPoint miBreak) {
+	public Catchpoint(BreakpointManager m, MIBreakpoint miBreak) {
 		super(m, miBreak);
 	}
 

@@ -7,15 +7,15 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
-import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakpointHitEvent;
 
 /**
  */
 public class BreakpointHit extends SessionObject implements ICDIBreakpointHit {
 
-	MIBreakpointEvent breakEvent;
+	MIBreakpointHitEvent breakEvent;
 
-	public BreakpointHit(CSession session, MIBreakpointEvent e) {
+	public BreakpointHit(CSession session, MIBreakpointHitEvent e) {
 		super(session);
 		breakEvent = e;
 	}

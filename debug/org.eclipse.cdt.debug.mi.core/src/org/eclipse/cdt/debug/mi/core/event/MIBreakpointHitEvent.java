@@ -17,17 +17,17 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  * ^stopped,reason="breakpoint-hit",bkptno="1",thread-id="0",frame={addr="0x08048468",func="main",args=[{name="argc",value="1"},{name="argv",value="0xbffff18c"}],file="hello.c",line="4"}
  *
  */
-public class MIBreakpointEvent extends MIStoppedEvent {
+public class MIBreakpointHitEvent extends MIStoppedEvent {
 
 	int bkptno;
 	MIFrame frame;
 
-	public MIBreakpointEvent(MIExecAsyncOutput record) {
+	public MIBreakpointHitEvent(MIExecAsyncOutput record) {
 		super(record);
 		parse();
 	}
 
-	public MIBreakpointEvent(MIResultRecord record) {
+	public MIBreakpointHitEvent(MIResultRecord record) {
 		super(record);
 		parse();
 	}

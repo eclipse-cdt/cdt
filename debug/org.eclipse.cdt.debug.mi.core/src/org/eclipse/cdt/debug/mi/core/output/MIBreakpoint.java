@@ -42,7 +42,7 @@ package org.eclipse.cdt.debug.mi.core.output;
  * </li>
  *</ul>
  */
-public class MIBreakPoint {
+public class MIBreakpoint {
 
 	int number;
 	String type = "";
@@ -63,7 +63,7 @@ public class MIBreakPoint {
 	boolean isRWpt;
 	boolean isWWpt;
 
-	public MIBreakPoint(MITuple tuple) {
+	public MIBreakpoint(MITuple tuple) {
 		parse(tuple);
 	}
 

@@ -10,16 +10,16 @@ package org.eclipse.cdt.debug.mi.core.event;
 /**
  *
  */
-public class MIBreakPointChangedEvent extends MIChangedEvent {
+public class MIBreakpointChangedEvent extends MIChangedEvent {
 
 	int no;
 
-	public MIBreakPointChangedEvent(int number) {
+	public MIBreakpointChangedEvent(int number) {
 		super(0);
 		no = number;
 	}
 
-	public MIBreakPointChangedEvent(int id, int number) {
+	public MIBreakpointChangedEvent(int id, int number) {
 		super(id);
 		no = number;
 	}

@@ -8,7 +8,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
-import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
+import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
 /**
  */
@@ -16,17 +16,17 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 
 	ICDILocation location;
 	ICDICondition condition;
-	MIBreakPoint miBreakPoint;
+	MIBreakpoint miBreakpoint;
 	BreakpointManager mgr;
 
-	public Breakpoint(BreakpointManager m, MIBreakPoint miBreak) {
+	public Breakpoint(BreakpointManager m, MIBreakpoint miBreak) {
 		super(m.getCSession().getCTarget());
-		miBreakPoint = miBreak;
+		miBreakpoint = miBreak;
 		mgr = m;
 	}
 
-	MIBreakPoint getMIBreakPoint() {
-		return miBreakPoint;
+	MIBreakpoint getMIBreakpoint() {
+		return miBreakpoint;
 	}
 	
 	/**
@@ -34,8 +34,8 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 */
 	public ICDICondition getCondition() throws CDIException {
 		if (condition == null) {
-			condition =  new Condition(miBreakPoint.getIgnoreCount(),
-				miBreakPoint.getWhat());
+			condition =  new Condition(miBreakpoint.getIgnoreCount(),
+				miBreakpoint.getWhat());
 		}
 		return condition;
 	}
@@ -44,28 +44,28 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#getThreadId()
 	 */
 	public String getThreadId() throws CDIException {
-		return miBreakPoint.getThreadId();
+		return miBreakpoint.getThreadId();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isEnabled()
 	 */
 	public boolean isEnabled() throws CDIException {
-		return miBreakPoint.isEnabled();
+		return miBreakpoint.isEnabled();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isHardware()
 	 */
 	public boolean isHardware() {
-		return miBreakPoint.isHardware();
+		return miBreakpoint.isHardware();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isTemporary()
 	 */
 	public boolean isTemporary() {
-		return miBreakPoint.isTemporary();
+		return miBreakpoint.isTemporary();
 	}
 
 	/**
@@ -94,10 +94,10 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 */
 	public ICDILocation getLocation() throws CDIException {
 		if (location == null) {
-			location = new Location (miBreakPoint.getFile(),
-					miBreakPoint.getFunction(),
-					miBreakPoint.getLine(),
-					miBreakPoint.getAddress());
+			location = new Location (miBreakpoint.getFile(),
+					miBreakpoint.getFunction(),
+					miBreakpoint.getLine(),
+					miBreakpoint.getAddress());
 		}
 		return location;
 	}

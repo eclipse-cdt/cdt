@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -67,6 +68,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
+import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
+import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -104,7 +110,7 @@ public class DOMAST extends ViewPart {
 	private Action refreshAction;
 	private IFile file = null;
 	private IEditorPart part = null;
-	private ParserLanguage lang = null;
+	ParserLanguage lang = null;
 	
 	/*
 	 * The content provider class is responsible for
@@ -205,14 +211,21 @@ public class DOMAST extends ViewPart {
 			
 			String [] includePaths = new String[0];
 			IScannerInfo scannerInfo = new ScannerInfo( definitions, includePaths );
-			IScanner scanner = ParserFactory.createScanner(
-					reader,
-					scannerInfo, 		
-					mode, 
-					lang,
-					new NullSourceElementRequestor(), 			 
-					null, 
-					null  );
+			IScannerExtensionConfiguration configuration = null;
+			if( lang == ParserLanguage.CPP )
+			   configuration = new GPPScannerExtensionConfiguration();
+			else
+			   configuration = new GCCScannerExtensionConfiguration();
+			
+			IScanner scanner = new DOMScanner( reader, scannerInfo, mode, lang, ParserFactory.createDefaultLogService(), configuration, CDOM.getInstance().getCodeReaderFactory( CDOM.PARSE_SAVED_RESOURCES) );
+			
+//					reader,
+//					scannerInfo, 		
+//					mode, 
+//					lang,
+//					new NullSourceElementRequestor(), 			 
+//					null, 
+//					null  );
 			AbstractGNUSourceCodeParser parser = null;
 			if ( lang == ParserLanguage.C ) {
 				parser = new GNUCSourceParser(

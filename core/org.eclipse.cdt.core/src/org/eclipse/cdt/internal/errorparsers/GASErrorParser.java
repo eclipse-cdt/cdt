@@ -5,10 +5,10 @@ package org.eclipse.cdt.internal.errorparsers;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.errorparsers.ErrorParserManager;
-import org.eclipse.cdt.errorparsers.IErrorParser;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IErrorParser;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 
 public class GASErrorParser implements IErrorParser {
 
@@ -22,7 +22,7 @@ public class GASErrorParser implements IErrorParser {
 			String fileName = "";
 			IFile file = null;
 			int num = 0;
-			int severity = IMarker.SEVERITY_ERROR;
+			int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 			String desc = line;
 			if (previous != null && previous.startsWith("Assembler")) {
 				if (! line.startsWith("FATAL")) {

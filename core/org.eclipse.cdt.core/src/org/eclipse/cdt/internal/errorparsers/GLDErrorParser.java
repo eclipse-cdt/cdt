@@ -5,10 +5,10 @@ package org.eclipse.cdt.internal.errorparsers;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.errorparsers.ErrorParserManager;
-import org.eclipse.cdt.errorparsers.IErrorParser;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IErrorParser;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 
 public class GLDErrorParser implements IErrorParser {
 
@@ -44,14 +44,14 @@ public class GLDErrorParser implements IErrorParser {
 				if (file == null) {
 					desc = fileName + " " + desc;
 				} 
-				eoParser.generateMarker(file, 0, desc, IMarker.SEVERITY_ERROR, null);
+				eoParser.generateMarker(file, 0, desc, IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
 			} else if (buf.endsWith("ld")){
 				String fileName = line.substring(0, firstColon);
 				IFile file = eoParser.findFilePath(fileName);
 				if (file == null) {
 					desc = fileName + " " + desc;
 				} 
-				eoParser.generateMarker(file, 0, desc, IMarker.SEVERITY_ERROR, null);
+				eoParser.generateMarker(file, 0, desc, IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
 			}
 		}
 		return false;

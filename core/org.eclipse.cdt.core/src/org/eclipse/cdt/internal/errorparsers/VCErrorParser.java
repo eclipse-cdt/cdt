@@ -8,10 +8,10 @@ package org.eclipse.cdt.internal.errorparsers;
 import java.io.File;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.errorparsers.ErrorParserManager;
-import org.eclipse.cdt.errorparsers.IErrorParser;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IErrorParser;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 
 public class VCErrorParser implements IErrorParser {
 
@@ -37,9 +37,9 @@ public class VCErrorParser implements IErrorParser {
 			    if (file == null) {
 				desc= "*" + desc;
 			    }
-			    int severity= IMarker.SEVERITY_ERROR;
+			    int severity= IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 			    if (desc.startsWith("warning")) {
-				severity= IMarker.SEVERITY_WARNING;
+				severity= IMarkerGenerator.SEVERITY_WARNING;
 			    }
 			    eoParser.generateMarker(file, num, desc, severity, null);
 			    return true;

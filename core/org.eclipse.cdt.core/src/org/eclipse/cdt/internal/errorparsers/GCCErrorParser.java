@@ -5,10 +5,10 @@ package org.eclipse.cdt.internal.errorparsers;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.errorparsers.ErrorParserManager;
-import org.eclipse.cdt.errorparsers.IErrorParser;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IErrorParser;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 
 public class GCCErrorParser implements IErrorParser {
 
@@ -40,7 +40,7 @@ public class GCCErrorParser implements IErrorParser {
 					String lineNumber = line.substring(firstColon + 1, secondColon);
 					String varName = null;
 					String desc = line.substring(secondColon + 1).trim();
-					int severity = IMarker.SEVERITY_ERROR;
+					int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 					int	num  = 0;
 
 					try {
@@ -126,14 +126,14 @@ public class GCCErrorParser implements IErrorParser {
 						}
 					}
 					if (desc.startsWith("warning") || desc.startsWith("Warning")) {
-						severity = IMarker.SEVERITY_WARNING;
+						severity = IMarkerGenerator.SEVERITY_WARNING;
 					}
 					eoParser.generateMarker(file, num, desc, severity, varName);
 				}
 			} catch (StringIndexOutOfBoundsException e) {
 			} catch (NumberFormatException e) {
 			}
-    	}
+		}
 		return false;
 	}
 }

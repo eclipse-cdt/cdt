@@ -5,6 +5,7 @@
 package org.eclipse.cdt.debug.mi.core.output;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,6 +51,7 @@ public class MIInfoThreadsInfo extends MIInfo {
 		for (int i = 0; i < aList.size(); i++) {
 			threadIds[i] = ((Integer) aList.get(i)).intValue();
 		}
+		Arrays.sort(threadIds);
 	}
 
 	protected void parseThreadInfo(String str, List aList) {

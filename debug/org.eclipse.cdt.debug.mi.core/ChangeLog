@@ -1,3 +1,10 @@
+2004-01-29 Alain Magloire
+
+	The CDT debug ui prefers things to be in ascending
+	number
+
+	* src/org/eclipse/cdt/debug/mi/core/output/MIInfoThreadsInfo.java
+
 2004-01-28 Alain Magloire
 
 	Some clients using MI need to have access to thoes

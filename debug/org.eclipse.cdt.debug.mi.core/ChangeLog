@@ -1,3 +1,10 @@
+2004-02-11 Alain Magloire
+
+	Use String.endsWith("(gdb)") to detect the prompt.
+	Sometimes gdb does not flush the endline.
+
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+
 2004-01-30 Alain Magloire
 
 	Allow the clients to override the interrupt.

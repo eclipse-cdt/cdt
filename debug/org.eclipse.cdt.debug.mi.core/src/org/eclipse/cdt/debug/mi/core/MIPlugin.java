@@ -350,7 +350,7 @@ public class MIPlugin extends Plugin {
 					while ((line = reader.readLine()) != null) {
 						line = line.trim();
 						//System.out.println("GDB " + line);
-						if (line.startsWith("(gdb)")) {
+						if (line.endsWith("(gdb)")) {
 							break;
 						}
 					}

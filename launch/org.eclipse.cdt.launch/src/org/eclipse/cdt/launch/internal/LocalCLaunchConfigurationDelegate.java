@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.ICDebugger;
@@ -36,8 +35,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -46,32 +43,16 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 /**
  * Insert the type's description here.
  * @see ILaunchConfigurationDelegate
  */
 public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
-
-	/*
-	  	protected String renderDebugTarget(ICDISession session) {
-			String format= "{0} at localhost {1}";
-			return MessageFormat.format(format, new String[] { classToRun, String.valueOf(host) });
-		}
-	*/
-	public String renderProcessLabel(String[] commandLine) {
-		String format = "{0} ({1})";
-		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
-		return MessageFormat.format(format, new String[] { commandLine[0], timestamp });
-	}
 
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
@@ -89,33 +70,10 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		ArrayList command = new ArrayList(1 + arguments.length);
 		command.add(projectPath.toOSString());
 		command.addAll(Arrays.asList(arguments));
+		String[] commandArray = (String[]) command.toArray(new String[command.size()]);
 
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			ICDebugConfiguration dbgCfg = null;
-			ICDebugger cdebugger = null;
-			try {
-				dbgCfg =
-					CDebugCorePlugin.getDefault().getDebugConfiguration(
-						config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""));
-				cdebugger = dbgCfg.getDebugger();
-			}
-			catch (CoreException e) {
-				IStatus status =
-					new Status(
-						IStatus.ERROR,
-						LaunchUIPlugin.getUniqueIdentifier(),
-						ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED,
-						"CDT Debubger not installed",
-						e);
-				IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
-
-				if (handler != null) {
-					Object result = handler.handleStatus(status, this);
-					if (result instanceof String) {
-					}
-				}
-				throw e;
-			}
+			ICDebugConfiguration debugConfig = getDebugConfig(config);
 			IFile exe = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(projectPath);
 			ICDISession dsession = null;
 			try {
@@ -124,21 +82,14 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 						ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 				if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-					dsession = cdebugger.createLaunchSession(config, exe);
+					dsession = debugConfig.getDebugger().createLaunchSession(config, exe);
 				}
 				else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
 					int pid = getProcessID();
 					if ( pid == -1 ) {
 						abort("No Process ID selected", null, ICDTLaunchConfigurationConstants.ERR_NO_PROCESSID);
 					}
-					dsession = cdebugger.createAttachSession(config, exe, pid);
-				}
-				else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
-					IPath corefile = getCoreFilePath((IProject)cproject.getResource());
-					if ( corefile == null ) {
-						abort("No Corefile selected", null, ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
-					}
-					dsession = cdebugger.createCoreSession(config, exe, corefile);
+					dsession = debugConfig.getDebugger().createAttachSession(config, exe, pid);
 				}
 			}
 			catch (CDIException e) {
@@ -154,12 +105,12 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 			ICDITarget dtarget = dsession.getTargets()[0];
 			Process process = dtarget.getProcess();
 			IProcess iprocess =
-				DebugPlugin.newProcess(launch, process, renderProcessLabel((String[]) command.toArray(new String[command.size()])));
+				DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
 			boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 			CDebugModel.newDebugTarget(
 				launch,
 				dsession.getTargets()[0],
-				dbgCfg.getName(),
+				renderTargetLabel(debugConfig),
 				iprocess,
 				exe.getProject(),
 				true,
@@ -167,43 +118,11 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 				stopInMain);
 		}
 		else {
-			String[] commandArray = (String[]) command.toArray(new String[command.size()]);
 			Process process = exec(commandArray, getEnvironmentArray(config), getWorkingDir(config));
-			DebugPlugin.getDefault().newProcess(launch, process, renderProcessLabel(commandArray));
+			DebugPlugin.getDefault().newProcess(launch, process, renderProcessLabel(commandArray[0]));
 		}
 		monitor.done();
 	}
-
-	private IPath getCoreFilePath(final IProject project) {
-		final Shell shell = LaunchUIPlugin.getShell();
-		final String res[] = {null};
-		if ( shell == null ) 
-			return null;
-		Display display = shell.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				FileDialog dialog = new FileDialog( shell );
-				dialog.setText( "Select Corefile" );
-		
-				String initPath = null;
-				try {
-					initPath = project.getPersistentProperty(new QualifiedName(LaunchUIPlugin.getUniqueIdentifier(), "SavePath"));
-				}
-				catch (CoreException e) {
-				}
-				if ( initPath == null || initPath.equals("") ) {
-					initPath = project.getLocation().toString();
-				}
-				dialog.setFilterPath( initPath );
-				res[0] = dialog.open();
-			}
-		});
-		if ( res[0] != null ) {
-			return new Path( res[0] );
-		}
-		return null;		
-	}
-
 
 	private int getProcessID() {
 		final Shell shell = LaunchUIPlugin.getShell();

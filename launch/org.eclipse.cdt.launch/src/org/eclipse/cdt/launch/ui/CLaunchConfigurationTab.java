@@ -1,15 +1,16 @@
-package org.eclipse.cdt.launch.internal.ui;
+package org.eclipse.cdt.launch.ui;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -32,40 +33,62 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	 * 
 	 * @return C element context.
 	 */
-	protected ICElement getContext(ILaunchConfigurationWorkingCopy config) throws CoreException {
+	protected ICElement getContext(ILaunchConfiguration config, String platform) {
+		String projectName = null;
 		IWorkbenchPage page = LaunchUIPlugin.getActivePage();
-		if (page != null) {
-			ISelection selection = page.getSelection();
-			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection ss = (IStructuredSelection) selection;
-				if (!ss.isEmpty()) {
-					Object obj = ss.getFirstElement();
-					if (obj instanceof ICElement) {
-						ICDescriptor descriptor =
-							CCorePlugin.getDefault().getCProjectDescription(((ICElement) obj).getCProject().getProject());
-						if (descriptor.getPlatform().equals(getPlatform(config)))
-							return (ICElement) obj;
-					}
-					if (obj instanceof IResource) {
-						ICElement ce = CoreModel.getDefault().create((IResource) obj);
-						if (ce == null) {
-							IProject pro = ((IResource) obj).getProject();
-							ce = CoreModel.getDefault().create(pro);
-						}
-						if (ce != null) {
-							ICDescriptor descriptor =
-								CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
-							if (descriptor.getPlatform().equals(getPlatform(config)))
-								return ce;
-						}
+		Object obj = null;
+		try {
+			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+		}
+		catch (CoreException e) {
+		}
+		if (projectName != null && !projectName.equals("")) {
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+			ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
+			if (cProject != null && cProject.exists()) {
+				obj = cProject;
+			}
+		}
+		else {
+			if (page != null) {
+				ISelection selection = page.getSelection();
+				if (selection instanceof IStructuredSelection) {
+					IStructuredSelection ss = (IStructuredSelection) selection;
+					if (!ss.isEmpty()) {
+						obj = ss.getFirstElement();
 					}
 				}
 			}
-			IEditorPart part = page.getActiveEditor();
-			if (part != null) {
-				IEditorInput input = part.getEditorInput();
-				return (ICElement) input.getAdapter(ICElement.class);
+		}
+		if (obj instanceof IResource) {
+			ICElement ce = CoreModel.getDefault().create((IResource) obj);
+			if (ce == null) {
+				IProject pro = ((IResource) obj).getProject();
+				ce = CoreModel.getDefault().create(pro);
 			}
+			obj = ce;
+		}
+		if (obj instanceof ICElement) {
+			if (platform != null && !platform.equals("*")) {
+				ICDescriptor descriptor;
+				try {
+					descriptor = CCorePlugin.getDefault().getCProjectDescription(((ICElement) obj).getCProject().getProject());
+				}
+				catch (CoreException e) {
+					return null;
+				}
+				if (descriptor.getPlatform().equals(platform)) {
+					return (ICElement) obj;
+				}
+			}
+			else {
+				return (ICElement) obj;
+			}
+		}
+		IEditorPart part = page.getActiveEditor();
+		if (part != null) {
+			IEditorInput input = part.getEditorInput();
+			return (ICElement) input.getAdapter(ICElement.class);
 		}
 		return null;
 	}

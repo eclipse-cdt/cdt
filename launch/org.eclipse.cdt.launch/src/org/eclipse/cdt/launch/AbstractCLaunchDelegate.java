@@ -5,7 +5,10 @@
 package org.eclipse.cdt.launch;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -13,16 +16,34 @@ import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.debug.core.ICDebugger;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 
 abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDelegate {
 
@@ -137,6 +158,46 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		String[] res = parser.parseArguments();
 
 		return res;
+	}
+
+	protected ICDebugConfiguration getDebugConfig(ILaunchConfiguration config) throws CoreException {
+		ICDebugConfiguration dbgCfg = null;
+		try {
+			dbgCfg =
+				CDebugCorePlugin.getDefault().getDebugConfiguration(
+					config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""));
+		}
+		catch (CoreException e) {
+			IStatus status =
+				new Status(
+					IStatus.ERROR,
+					LaunchUIPlugin.getUniqueIdentifier(),
+					ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED,
+					"CDT Debubger not installed",
+					e);
+			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
+
+			if (handler != null) {
+				Object result = handler.handleStatus(status, this);
+				if (result instanceof String) {
+					// this could return the new debugger id to use?
+				}
+			}
+			throw e;
+		}
+		return dbgCfg;
+	}
+
+	protected String renderTargetLabel(ICDebugConfiguration debugConfig) {
+		String format = "{0} ({1})";
+		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
+		return MessageFormat.format(format, new String[] { debugConfig.getName(), timestamp });
+	}
+
+	protected String renderProcessLabel(String commandLine) {
+		String format = "{0} ({1})";
+		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
+		return MessageFormat.format(format, new String[] { commandLine, timestamp });
 	}
 
 	private static class ArgumentParser {

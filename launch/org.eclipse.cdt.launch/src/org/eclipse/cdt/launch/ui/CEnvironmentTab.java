@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.launch.internal.ui.CLaunchConfigurationTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;

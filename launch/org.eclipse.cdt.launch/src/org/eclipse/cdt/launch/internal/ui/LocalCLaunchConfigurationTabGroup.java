@@ -2,12 +2,10 @@ package org.eclipse.cdt.launch.internal.ui;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.ui.CArgumentsTab;
 import org.eclipse.cdt.launch.ui.CDebuggerTab;
 import org.eclipse.cdt.launch.ui.CEnvironmentTab;
 import org.eclipse.cdt.launch.ui.CMainTab;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;

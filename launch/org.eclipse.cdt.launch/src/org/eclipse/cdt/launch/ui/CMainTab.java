@@ -15,11 +15,12 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.CContentProvider;
 import org.eclipse.cdt.internal.ui.CElementLabelProvider;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.launch.internal.ui.CLaunchConfigurationTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 /**
  * A launch configuration tab that displays and edits project and
@@ -106,6 +108,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
+				updateLaunchConfigurationDialog();
 			}
 		});
 
@@ -136,6 +139,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSearchButtonSelected();
+				updateLaunchConfigurationDialog();
 			}
 		});
 	}
@@ -194,19 +198,11 @@ public class CMainTab extends CLaunchConfigurationTab {
 		}
 
 		IBinary[] executables = getBinaryFiles(getCProject());
-
 		ILabelProvider labelProvider = new CElementLabelProvider();
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
-		dialog.setTitle("Program Selection");
-		dialog.setMessage("Choose a &program to run");
+			ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(executables);
-
-		/*
-		if (cProject != null) {
-			dialog.setInitialSelections(new Object[] { cProject });
-		}
-		*/
-
+		dialog.setMessage("Choose a &program to run");
+		dialog.setTitle("Program Selection");
 		if (dialog.open() == dialog.OK) {
 			IBinary binary = (IBinary) dialog.getFirstResult();
 			try {
@@ -271,11 +267,14 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected ICProject[] getCProjects() {
 		ICProject cproject[] = CoreModel.getDefault().getCRoot().getCProjects();
 		ArrayList list = new ArrayList(cproject.length);
+		boolean isLocal = filterPlatform.equals(BootLoader.getOS());
+
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;
 			try {
 				cdesciptor = CCorePlugin.getDefault().getCProjectDescription((IProject) cproject[i].getResource());
-				if (cdesciptor.getPlatform().equals("*") || filterPlatform.equalsIgnoreCase(cdesciptor.getPlatform()) == true) {
+				if (filterPlatform.equals("*") || (isLocal && cdesciptor.getPlatform().equalsIgnoreCase("local"))
+					|| filterPlatform.equalsIgnoreCase(cdesciptor.getPlatform()) == true) {
 					list.add(cproject[i]);
 				}
 			}
@@ -320,7 +319,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			setErrorMessage("Program not specified");
 			return false;
 		}
-		if ( name.equals(".") || name.equals("..")) {
+		if (name.equals(".") || name.equals("..")) {
 			setErrorMessage("Program does not exist");
 			return false;
 		}
@@ -335,22 +334,17 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		// We set empty attributes for project & program so that when one config is
+		// compared to another, the existence of empty attributes doesn't cause an
+		// incorrect result (the performApply() method can result in empty values
+		// for these attributes being set on a config if there is nothing in the
+		// corresponding text boxes)
+		// plus getContext will use this to base context from if set.
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
 		ICElement cElement = null;
-		try {
-			cElement = getContext(config);
-		}
-		catch (CoreException e) {
-		}
+		cElement = getContext(config, getPlatform(config));
 		if (cElement != null) {
 			initializeCProject(cElement, config);
-		}
-		else {
-			// We set empty attributes for project & program so that when one config is
-			// compared to another, the existence of empty attributes doesn't cause an
-			// incorrect result (the performApply() method can result in empty values
-			// for these attributes being set on a config if there is nothing in the
-			// corresponding text boxes)
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
 		}
 		initializeProgramName(cElement, config);
 	}

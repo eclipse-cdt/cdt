@@ -6,7 +6,6 @@ package org.eclipse.cdt.launch.ui;
  */
 
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.launch.internal.ui.CLaunchConfigurationTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.launch.internal.ui.WorkingDirectoryBlock;

@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -140,7 +141,16 @@ public class CThread extends CDebugElement
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException
 	{
-		List list = computeStackFrames();
+		List list = Collections.EMPTY_LIST;
+		try
+		{
+			list = computeStackFrames();
+		}
+		catch( DebugException e )
+		{
+			setStatus( ICDebugElementErrorStatus.ERROR, e.getStatus().getMessage() );
+			throw e;
+		}
 		return (IStackFrame[])list.toArray( new IStackFrame[list.size()] );
 	}
 
@@ -149,16 +159,8 @@ public class CThread extends CDebugElement
 	 */
 	public boolean hasStackFrames() throws DebugException
 	{
-		try
-		{
-			return computeStackFrames().size() > 0;
-		}
-		catch( DebugException e )
-		{
-			// do not throw an exception if the thread resumed while determining
-			// whether stack frames are present
-		}
-		return false;
+		// Always return true to postpone the stack frames request
+		return true;
 	}
 
 	/**

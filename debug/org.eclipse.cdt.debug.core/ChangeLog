@@ -1,3 +1,8 @@
+2003-10-23 Mikhail Khodjaiants
+	Changed the 'hasStackFrames' method of the 'CThread' class to return true regardless if 
+	the thread contains stack frames or not. This method is only used by UI to update the thread label.
+	* CThread.java
+ 
 2003-10-17 Mikhail Khodjaiants
 	Temporary fix for PR 39061: Attach source does not work for applications compiled in CygWin.
 	* CDirectorySourceLocation.java

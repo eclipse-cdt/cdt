@@ -331,9 +331,33 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			String depFile =  relativePath + resourceName + DOT + DEP_EXT;
 			getDependencyMakefiles().add(depFile);
 		}
+	
+		/*
+		 * fix for PR 70491
+		 * We need to check if the current resource is LINKED, because
+		 * the default CDT doesn't handle this properly.  If it IS linked,
+		 * then we must get the actual location of the resource, rather
+		 * than the relative path.
+		 */
+		IPath resourceLocation = resource.getLocation();
+		String projectLocation = project.getLocation().toString();
+		String resourcePath = null;
+		String buildRule = null;
+		// figure out path to use to resource
+		if(!resourceLocation.toString().startsWith(projectLocation)) {
+			// it IS linked, so use the actual location
+			resourcePath = resourceLocation.toString();
+			// Need a hardcoded rule, not a pattern rule, as a linked file
+			// can reside in any path
+			buildRule = relativePath + resourceName + DOT + outputExtension + COLON + WHITESPACE + resourcePath;
+		} else {
+			// use the relative path (not really needed to store per se but in the future someone may want this)
+			resourcePath = relativePath; 
+			// The rule and command to add to the makefile
+			buildRule = relativePath + WILDCARD + DOT + outputExtension + COLON + WHITESPACE + ROOT + SEPARATOR + resourcePath + WILDCARD + DOT + inputExtension;
+		} // end fix for PR 70491
 		
-		// Add the rule and command to the makefile
-		String buildRule = relativePath + WILDCARD + DOT + outputExtension + COLON + WHITESPACE + ROOT + SEPARATOR + relativePath + WILDCARD + DOT + inputExtension;
+		// No duplicates in a makefile
 		if (getRuleList().contains(buildRule)) {
 			return;
 		}
@@ -347,7 +371,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		outputPrefix = info.getOutputPrefix(outputExtension);
 		
 		// The command to build
-		String buildCmd = cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO;
+		String buildCmd = cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO;
 		buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
 		buffer.append(TAB + AT + buildCmd);
 		
@@ -583,7 +607,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 		buffer.append(NEWLINE);
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_BUILD + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
-		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + OUT_MACRO + WHITESPACE + "$(OBJS) $(USER_OBJS) $(LIBS)" + NEWLINE); //$NON-NLS-1$
+		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + OUT_MACRO + WHITESPACE + "$(OBJS) $(USER_OBJS) $(LIBS)" + NEWLINE); //$NON-NLS-1$
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE + NEWLINE);
 
 		// Always add a clean target

@@ -386,8 +386,8 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="defaultValue" type="string">
             <annotation>
                <documentation>
-                  This field is used to record the value of the option that the user has set in the build settings file. For example, if the user has set the verbose flag to true, the project&apos;s build settings file will contain an option reference for the verbose option, with the defaultvalue set to true.
-&lt;p&gt;The attribute is also used to override the default option setting for a configuration in a toolchain. For example, a &apos;Debug&apos; configuration may setthe value of a debug flag differently than the default value defined in the tool.
+                  This field is used to record the value of the option that the user has set in the build settings file. For example, if the user has set the verbose flag to true, the project&apos;s build settings file will contain an option reference for the verbose option, with the defaultValue set to true.
+&lt;p&gt;The attribute is also used to override the default option setting for a configuration in a toolchain. For example, a &apos;Debug&apos; configuration may set the value of a debug flag differently than the default value defined in the tool.
                </documentation>
             </annotation>
          </attribute>

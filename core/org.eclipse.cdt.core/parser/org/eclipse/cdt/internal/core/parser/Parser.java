@@ -933,26 +933,40 @@ c, quickParse);
 	 */
 	private boolean lookAheadForConstructor( Flags flags ) throws EndOfFile
 	{
-		return 		(
-						!flags.isForParameterDeclaration() 
-					) && 
-					( 
-						(
-							( 
-								LT(2) == Token.tCOLONCOLON && 
-									(
-										LA(3).getImage().equals( LA(1).getImage() ) ||  
-										LT(3) == Token.tCOMPL
-									)  
-							) || 
-							(
-								LT(2) == Token.tLPAREN && 
-								flags.isForConstructor()
-							)   
-						)
-					)
-				;
-	}
+		if (flags.isForParameterDeclaration()) return false;
+		if (LT(2) == Token.tLPAREN && flags.isForConstructor()) return true;
+		
+		int posTokenAfterTemplateParameters = 2;
+		
+		if (LT(posTokenAfterTemplateParameters) == Token.tLT) {
+			// a case for template constructor, like CFoobar<A,B>::CFoobar
+			
+			posTokenAfterTemplateParameters++;
+		
+			// until we get all the names sorted out
+			int depth = 1;
+		
+			while (depth > 0) {
+				switch (LT(posTokenAfterTemplateParameters++)) {
+					case Token.tGT :
+						--depth;
+						break;
+					case Token.tLT :
+						++depth;
+						break;
+				}
+			}
+		}
+
+		return 
+		  (LT(posTokenAfterTemplateParameters) == Token.tCOLONCOLON)
+         && 
+		  (
+			LA(posTokenAfterTemplateParameters+1).getImage().equals( LA(1).getImage() ) ||  
+			LT(posTokenAfterTemplateParameters+1) == Token.tCOMPL
+		  )
+		;
+ 	}
 	
 	/**
 	 * @param flags			input flags that are used to make our decision 
@@ -1145,7 +1159,38 @@ c, quickParse);
 			callback.elaboratedTypeSpecifierEnd( elab );
 		} catch( Exception e ) {}
 	}
+	
+	/**
+	 * Consumes template parameters.  
+	 *
+	 * @param previousLast	Previous "last" token (returned if nothing was consumed)
+	 * @return				Last consumed token, or <code>previousLast</code> if nothing was consumed
+	 * @throws Backtrack	request a backtrack
+	 */
+	private Token consumeTemplateParameters(Token previousLast) throws Backtrack {
+		Token last = previousLast;
 
+		if (LT(1) == Token.tLT) {
+			last = consume(Token.tLT);
+
+			// until we get all the names sorted out
+			int depth = 1;
+
+			while (depth > 0) {
+				last = consume();
+				switch (last.getType()) {
+					case Token.tGT :
+						--depth;
+						break;
+					case Token.tLT :
+						++depth;
+						break;
+				}
+			}
+		}
+		
+		return last;
+	}
 
 	/**
 	 * Parse an identifier.  
@@ -1198,23 +1243,7 @@ c, quickParse);
 	 */
 	protected Token templateId() throws Backtrack {
 		Token first = consume( Token.tIDENTIFIER );
-		consume( Token.tLT );
-		
-		// until we get all the names sorted out
-		int depth = 1;
-		Token last = null; 
-		
-		while (depth > 0) {
-			last = consume();
-			switch ( last.getType()) {
-				case Token.tGT:
-					--depth;
-					break;
-				case Token.tLT:
-					++depth;
-				break;
-			}
-		}
+		Token last = consumeTemplateParameters(first);
 		
 		callback.nameBegin( first );
 		callback.nameEnd( last );
@@ -1249,25 +1278,7 @@ c, quickParse);
 		switch (LT(1)) {
 			case Token.tIDENTIFIER:
 				last = consume();
-				if( LT(1) == Token.tLT )
-				{
-					consume( Token.tLT );
-				
-					// until we get all the names sorted out
-					int depth = 1; 
-
-					while (depth > 0) {
-						last = consume();
-						switch ( last.getType()) {
-							case Token.tGT:
-								--depth;
-								break;
-							case Token.tLT:
-								++depth;
-							break;
-						}
-					}
-				}
+				last = consumeTemplateParameters(last);
 				break;
 			default:
 				backup( mark );
@@ -1289,26 +1300,7 @@ c, quickParse);
 					throw backtrack;
 				case Token.tIDENTIFIER:
 					last = consume();
-					if( LT(1) == Token.tLT )
-					{
-						consume( Token.tLT );
-				
-						// until we get all the names sorted out
-						int depth = 1; 
-
-						while (depth > 0) {
-							last = consume();
-							switch ( last.getType()) {
-								case Token.tGT:
-									--depth;
-									break;
-								case Token.tLT:
-									++depth;
-								break;
-							}
-						}
-					}
-				
+					last = consumeTemplateParameters(last);				
 			}
 		}
 
@@ -1515,13 +1507,16 @@ c, quickParse);
 					{
 						Token start = consume();
 						Token end = null;  
+						if (start.type == Token.tIDENTIFIER) end = consumeTemplateParameters(end);
 						while( LT(1) == Token.tCOLONCOLON || LT(1) == Token.tIDENTIFIER )
 						{
 							end = consume(); 
+							if (end.type == Token.tIDENTIFIER) end = consumeTemplateParameters(end); 
 						}
 
 						if( LT(1) == Token.t_operator )
 						{
+							consume();
 							if( LA(1).isOperator() || LT(1) == Token.tLPAREN || LT(1) == Token.tLBRACKET )
 							{
 								if( (LT(1) == Token.t_new || LT(1) == Token.t_delete ) && 

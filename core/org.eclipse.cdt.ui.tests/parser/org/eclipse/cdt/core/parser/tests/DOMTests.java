@@ -1783,5 +1783,40 @@ public class DOMTests extends BaseDOMTest {
 		parse("static const A a( 1, 0 );");
 	}	
 
+	public void testBug36766and36769A() throws Exception {
+		Writer code = new StringWriter();
+		code.write("template <class _CharT, class _Alloc>\n");
+		code.write("rope<_CharT, _Alloc>::rope(size_t __n, _CharT __c,\n");
+		code.write("const allocator_type& __a): _Base(__a)\n");
+		code.write("{}\n");
+		parse(code.toString());
+	}
+
+	public void testBug36766and36769B() throws Exception {
+		Writer code = new StringWriter();
+		code.write("template<class _CharT>\n");
+		code.write("bool _Rope_insert_char_consumer<_CharT>::operator()\n");
+		code.write("(const _CharT* __leaf, size_t __n)\n");
+		code.write("{}\n");
+		parse(code.toString());
+	}
+
+	public void testBug36766and36769C() throws Exception {
+		Writer code = new StringWriter();
+		code.write("template <class _CharT, class _Alloc>\n");
+		code.write("_Rope_char_ref_proxy<_CharT, _Alloc>&\n");
+		code.write(
+			"_Rope_char_ref_proxy<_CharT, _Alloc>::operator= (_CharT __c)\n");
+		code.write("{}\n");
+		parse(code.toString());
+	}
+	
+	public void testBug36766and36769D() throws Exception {
+		Writer code = new StringWriter();
+		code.write("template <class _CharT, class _Alloc>\n");
+		code.write("rope<_CharT, _Alloc>::~rope()\n");
+		code.write("{}\n");
+		parse(code.toString());
+	}
 }
 

@@ -49,6 +49,8 @@ public class ErrorParserManager extends OutputStream {
 	private OutputStream outputStream;
 	private StringBuffer currentLine = new StringBuffer();
 
+	private StringBuffer scratchBuffer = new StringBuffer();
+
 	public ErrorParserManager(ACBuilder builder) {
 		this(builder.getProject(), builder);
 	}
@@ -401,5 +403,26 @@ public class ErrorParserManager extends OutputStream {
 			fErrors.clear();
 		}
 		return reset;
+	}
+
+	/**
+	 * 
+	 */
+	public String getScratchBuffer() {
+		return scratchBuffer.toString();
+	}
+
+	/**
+	 * @param line
+	 */
+	public void appendToScratchBuffer(String line) {
+		scratchBuffer.append(line);		
+	}
+
+	/**
+	 * 
+	 */
+	public void clearScratchBuffer() {
+		scratchBuffer.setLength(0);
 	}
 }

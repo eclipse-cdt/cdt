@@ -1,3 +1,10 @@
+2003-09-3 Alain Magloire
+
+	Wrong fix to a warning the call is needed but not the variable.
+	Thanks to Hoda for noticing.
+
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/LinkToFileGroup.java
+
 2003-09-01 Alain Magloire
 
 	The Drag&Drop code is revisited with a facelift.

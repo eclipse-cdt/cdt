@@ -913,7 +913,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             try {
                 int offset = consume(IToken.tLPAREN).getOffset();
                 IASTTypeId t = typeId(false, false);
-                int lastOffset = consume(IToken.tRPAREN).getEndOffset();
+                consume(IToken.tRPAREN).getEndOffset();
                 IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
                 firstExpression = buildTypeIdInitializerExpression(t, i,
                         offset, calculateEndOffset(i));

@@ -1,3 +1,8 @@
+2003-11-26 Mikhail Khodjaiants
+	Cleanup.
+	* GDBServerDebuggerPage.java
+	* ComboDialogField.java
+
 2003-11-20 Mikhail Khodjaiants
 	Removed dependencies on internal packages from other cdt plugins.
 	* src/org/eclipse/cdt/debug/mi/internal/ui/PixelConverter.java: added

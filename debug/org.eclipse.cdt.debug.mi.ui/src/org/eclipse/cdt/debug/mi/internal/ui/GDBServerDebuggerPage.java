@@ -204,11 +204,11 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		
 		attr = null;
 		try {
-			attr = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEBUG_NAME, (String) null);
+			attr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, (String) null);
 		} catch (CoreException e) {
 		}
 		if (attr == null) {
-			configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
+			configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
 		}
 
 		/* The booleans should already be correct. */
@@ -289,7 +289,7 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		String asyncDevSpeed = "115200";
 		boolean autosolib = false;
 		try {
-			debuggerCommand = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
+			debuggerCommand = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
 			autosolib = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, false);
 		} catch (CoreException e) {
 		}
@@ -325,7 +325,7 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		hostText.trim();
 		hostPort.trim();
 		asyncDev.trim();
-		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEBUG_NAME, debuggerCommand);
+		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, debuggerCommand);
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, fAutoSoLibButton.getSelection());
 		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, fTCPButton.getSelection());
 		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, hostText);

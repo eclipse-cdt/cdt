@@ -22,11 +22,10 @@ import org.eclipse.cdt.internal.core.parser.Token;
  * @author jcamelon
  *
  */
-public class NamespaceDefinition extends Declaration implements IScope, IOffsetable {
+public class NamespaceDefinition extends Declaration implements IScope {
 
 	private List declarations = new LinkedList();
 	private Name name = null;
-	private int startingOffset = 0, totalLength = 0;
 	private Token startToken = null;
 
 	public NamespaceDefinition( IScope owner )
@@ -66,34 +65,6 @@ public class NamespaceDefinition extends Declaration implements IScope, IOffseta
 	}
 
 	/**
-	 * @return
-	 */
-	public int getStartingOffset() {
-		return startingOffset;
-	}
-
-	/**
-	 * @return
-	 */
-	public int getTotalLength() {
-		return totalLength;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setStartingOffset(int i) {
-		startingOffset = i;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setTotalLength(int i) {
-		totalLength = i;
-	}
-
-	/**
 	 * Returns the startToken.
 	 * @return Token
 	 */
@@ -109,32 +80,5 @@ public class NamespaceDefinition extends Declaration implements IScope, IOffseta
 		this.startToken = startToken;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setTopLine(int)
-	 */
-	public void setTopLine(int lineNumber) {
-		topLine = lineNumber;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setBottomLine(int)
-	 */
-	public void setBottomLine(int lineNumber) {
-		bottomLine = lineNumber;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getTopLine()
-	 */
-	public int getTopLine() { 
-		return topLine;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getBottomLine()
-	 */
-	public int getBottomLine() {
-		return bottomLine;
-	}
-	private int topLine = 0, bottomLine = 0; 
 }

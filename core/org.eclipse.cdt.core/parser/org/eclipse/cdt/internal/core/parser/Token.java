@@ -76,6 +76,11 @@ public class Token {
 		return false;
 	}
 	
+	public boolean isPointer()
+	{
+		return (getType() == tAMPER || getType() == tSTAR);
+	}
+	
 	public boolean isOperator()
 	{
 		switch( getType() )

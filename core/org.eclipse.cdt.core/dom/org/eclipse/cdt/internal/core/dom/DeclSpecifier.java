@@ -34,6 +34,7 @@ public class DeclSpecifier {
 	public static final int isLong = 0x80000;
 
 	private int declSpecifierSeq = 0;
+	private boolean isTypename = false;
 	public int getDeclSpecifierSeq() {
 		return declSpecifierSeq;
 	}
@@ -168,6 +169,9 @@ public class DeclSpecifier {
 
 	public void setType(Token token) {
 		switch (token.getType()) {
+			case Token.t_typename:
+				setTypename(true);
+				break;
 			case Token.t_auto :
 				setAuto(true);
 				break;
@@ -319,6 +323,8 @@ public class DeclSpecifier {
 				type.append("void");
 				break;
 			case t_type :
+				if (isTypename() )
+					type.append("typename ");
 				if (getName() != null)
 					type.append(getName().toString());
 				else {
@@ -334,6 +340,20 @@ public class DeclSpecifier {
 				return "";
 		}
 		return type.toString();
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isTypename() {
+		return isTypename;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setTypename(boolean b) {
+		isTypename = b;
 	}
 
 }

@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
 public class TypeFilter {
 	
 	public TypeFilter(){
-        acceptedTypes.add( TypeInfo.t_any );
 	}
 	
 	public TypeFilter( Set types ){
@@ -35,15 +34,15 @@ public class TypeFilter {
 	
 	public TypeFilter( LookupKind kind ){
 		acceptedKinds.add( kind );
-		populatedFilteredTypes( kind );
+		populatedAcceptedTypes( kind );
 	}
 	
-    public void addFilteredType( TypeInfo.eType type ){
+    public void addAcceptedType( TypeInfo.eType type ){
     	acceptedTypes.add( type );
     }
     
-    public void addFilteredType( LookupKind kind ) {
-    	populatedFilteredTypes( kind );
+    public void addAcceptedType( LookupKind kind ) {
+    	populatedAcceptedTypes( kind );
         acceptedKinds.add( kind );
     }
     
@@ -95,7 +94,7 @@ public class TypeFilter {
 	/**
 	 * @param lookupKind
 	 */
-	private void populatedFilteredTypes(LookupKind kind) {
+	private void populatedAcceptedTypes(LookupKind kind) {
              if ( kind == LookupKind.ALL )         { acceptedTypes.add( TypeInfo.t_any );         }
         else if ( kind == LookupKind.STRUCTURES )  { acceptedTypes.add( TypeInfo.t_class );
                                                      acceptedTypes.add( TypeInfo.t_struct );

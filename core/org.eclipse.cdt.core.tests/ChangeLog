@@ -1,3 +1,6 @@
+2004-01-06 Andrew Niefer
+	Added ContextualParseTest::testCompletionLookup_LookupKindTHIS
+
 2004-01-06 John Camelon
 	Added CompleteParseASTTest::testBug43110() and QuickParseASTTests::testBug43110().  
 

@@ -371,4 +371,54 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertEquals( aLocal.getName(), "aLocal" );
 		assertEquals( aParameter.getName(), "aParameter" );
 	}
+	
+	public void testCompletionLookup_LookupKindTHIS() throws Exception{
+		StringWriter writer = new StringWriter();
+		writer.write( "int aGlobalVar;" );
+		writer.write( "namespace NS { " );
+		writer.write( "   int aNamespaceFunction(){}" );
+		writer.write( "   class Base { " );
+		writer.write( "      protected: int aBaseField;" );
+		writer.write( "   };" );
+		writer.write( "   class Derived : public Base {" );
+		writer.write( "      int aMethod();" );
+		writer.write( "   };" );
+		writer.write( "}" );
+		writer.write( "int NS::Derived::aMethod(){");
+		writer.write( "   int aLocal;" );
+		writer.write( "   a  ");
+
+		String code = writer.toString();
+		int index = code.indexOf( " a " );
+		
+		IASTCompletionNode node = parse( code, index + 2 );
+		
+		assertNotNull( node );
+		
+		assertEquals( node.getCompletionPrefix(), "a" );
+		assertTrue( node.getCompletionScope() instanceof IASTMethod );
+		
+		LookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
+																new IASTNode.LookupKind[] { IASTNode.LookupKind.THIS },
+																node.getCompletionContext() );
+		
+		assertEquals( result.getResultsSize(), 2 );
+		
+		Iterator iter = result.getNodes();
+		IASTMethod method = (IASTMethod) iter.next();
+		IASTField field = (IASTField) iter.next();
+		assertFalse( iter.hasNext() );
+		assertEquals( method.getName(), "aMethod" );
+		assertEquals( field.getName(), "aBaseField" );
+		
+		result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
+												   new IASTNode.LookupKind[] { IASTNode.LookupKind.THIS, IASTNode.LookupKind.METHODS },
+												   node.getCompletionContext() );
+		
+		assertEquals( result.getResultsSize(), 1 );
+		iter = result.getNodes();
+		method = (IASTMethod) iter.next();
+		assertFalse( iter.hasNext() );
+		assertEquals( method.getName(), "aMethod" );
+	}
 }

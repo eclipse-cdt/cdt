@@ -19,6 +19,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.TypeFilter;
 
@@ -52,19 +53,34 @@ public class ASTNode implements IASTNode {
 			throw new LookupException();
 		}
 	
-		TypeFilter filter = null;
-		if( kind != null && kind.length > 0 ){
-			filter = new TypeFilter( kind[0] );
-			for( int i = 1; i < kind.length; i++ ){
-				filter.addFilteredType( kind[i] );
+		boolean lookInThis = false;
+		
+		TypeFilter filter = new TypeFilter();
+		if( kind != null ){
+			for( int i = 0; i < kind.length; i++ ){
+				filter.addAcceptedType( kind[i] );
+				if( kind[i] == LookupKind.THIS ){
+					lookInThis = true;
+					if( kind.length == 1 ){
+						filter.addAcceptedType( LookupKind.ALL );
+					}
+				} else {
+					filter.addAcceptedType( kind[i] );
+				}
 			}	
 		} else {
-			filter = new TypeFilter();
+			filter.addAcceptedType( LookupKind.ALL );
 		}
 		
 		List lookupResults = null;
 		try {
-			if( qualification != null ){
+			if( lookInThis ){
+				ISymbol thisPointer = thisContainer.lookup( ParserSymbolTable.THIS );
+				ISymbol thisClass = ( thisPointer != null ) ? thisPointer.getTypeSymbol() : null; 
+				if( thisClass != null && thisClass instanceof IContainerSymbol ){
+					lookupResults = ((IContainerSymbol) thisClass).prefixLookup( filter, prefix, true );
+				}
+			} else if( qualification != null ){
 				lookupResults = qualification.prefixLookup( filter, prefix, true );
 			} else {
 				lookupResults = thisContainer.prefixLookup( filter, prefix, false );

@@ -1,3 +1,7 @@
+2004-01-06 Andrew Niefer
+	For Content Assist, support lookup using LookupKind.THIS (lookup in the class of the this pointer )
+	Fix bug where forward declared method/functions appeared twice in the content assist lookup results.
+
 2004-01-06 John Camelon
 	Renamed IToken::tELIPSE to IToken::tELLIPSIS
 	Partially fixed Bug 43110 : Parser support needed for functions with ellipses 

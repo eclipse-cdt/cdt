@@ -388,7 +388,7 @@ public class ParserSymbolTable {
 		Iterator iter = ( object instanceof List ) ? ((List)object).iterator() : null;
 		ISymbol symbol = ( iter != null ) ? (ISymbol) iter.next() : (ISymbol) object;
 	
-		List functionList = new LinkedList();
+		Set functionSet = new HashSet();
 		ISymbol obj	= null;
 		IContainerSymbol cls = null;
 		
@@ -400,7 +400,11 @@ public class ParserSymbolTable {
 					foundSymbol = symbol;
 				
 				if( foundSymbol.isType( TypeInfo.t_function ) ){
-					functionList.add( foundSymbol );
+					if( foundSymbol.isForwardDeclaration() && foundSymbol.getTypeSymbol() != null ){
+						foundSymbol = foundSymbol.getTypeSymbol();
+					}
+					
+					functionSet.add( foundSymbol );
 				} else {
 					//if this is a class-name, other stuff hides it
 					if( foundSymbol.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) ){
@@ -448,7 +452,7 @@ public class ParserSymbolTable {
 			}
 		}
 	
-		int numFunctions = functionList.size();
+		int numFunctions = functionSet.size();
 		
 		boolean ambiguous = false;
 		
@@ -457,8 +461,8 @@ public class ParserSymbolTable {
 			if( obj != null && cls.getContainingSymbol() != obj.getContainingSymbol()){
 				ambiguous = true;	
 			}
-			if( functionList != null ){
-				Iterator fnIter = functionList.iterator();
+			if( !functionSet.isEmpty() ){
+				Iterator fnIter = functionSet.iterator();
 				IParameterizedSymbol fn = null;
 				for( int i = numFunctions; i > 0; i-- ){
 					fn = (IParameterizedSymbol) fnIter.next();
@@ -477,7 +481,7 @@ public class ParserSymbolTable {
 				return obj;
 			}
 		} else if( numFunctions > 0 ) {
-			return functionList;
+			return new LinkedList( functionSet );
 		}
 		
 		if( ambiguous ){

@@ -381,9 +381,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		ISymbol foundSymbol = null;
 	
 		LookupData data = new LookupData( name, TypeInfo.t_namespace, getTemplateInstance() );
-		data.filter.addFilteredType( TypeInfo.t_class );
-		data.filter.addFilteredType( TypeInfo.t_struct );
-		data.filter.addFilteredType( TypeInfo.t_union );
+		data.filter.addAcceptedType( TypeInfo.t_class );
+		data.filter.addAcceptedType( TypeInfo.t_struct );
+		data.filter.addAcceptedType( TypeInfo.t_union );
 		
 		data.foundItems = ParserSymbolTable.lookupInContained( data, inSymbol );
 	

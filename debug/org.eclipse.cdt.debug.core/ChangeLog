@@ -1,3 +1,7 @@
+2003-03-09 Mikhail Khodjaiants
+	New ICDIVariableManager methods for the 'DisplayAsArray' and 'CastToType' actions.
+	* CVariable.java
+
 2003-03-11 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/core/cdi/ICDIvariableManager.java:

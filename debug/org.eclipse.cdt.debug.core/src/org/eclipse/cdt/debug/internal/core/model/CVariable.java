@@ -5,18 +5,16 @@
  */
 package org.eclipse.cdt.debug.internal.core.model;
 
-import java.text.MessageFormat;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICastToArray;
@@ -430,8 +428,7 @@ public abstract class CVariable extends CDebugElement
 	{
 		try
 		{
-			String newName = MessageFormat.format( "({0})({1})", new String[] { type, getOriginalCDIVariable().getName() } );
-			ICDIVariable newVar = createShadow( getOriginalCDIVariable().getStackFrame(), newName );
+			ICDIVariable newVar = createShadow( getOriginalCDIVariable().getStackFrame(), type );
 			ICDIVariable oldVar = getShadow();
 			setShadow( newVar );
 			if ( oldVar != null )
@@ -510,13 +507,28 @@ public abstract class CVariable extends CDebugElement
 		fShadow = shadow;
 	}
 	
-	private ICDIVariable createShadow( ICDIStackFrame cdiFrame, String expression ) throws DebugException
+	private ICDIVariable createShadow( ICDIStackFrame cdiFrame, String type ) throws DebugException
 	{
 		try
 		{
-//			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObject( getCDIVariable().getStackFrame(), newName );
-//			return getCDISession().getVariableManager().createVariable( varObject );
-			return getCDISession().getExpressionManager().createExpression( expression );
+			ICDIVariableObject originalVarObject = getCDISession().getVariableManager().getVariableObject( cdiFrame, getOriginalCDIVariable().getName() );
+			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObjectAsType( originalVarObject, type );
+			return getCDISession().getVariableManager().createVariable( varObject );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
+		return null;
+	}
+	
+	private ICDIVariable createShadow( ICDIStackFrame cdiFrame, String type, int start, int end ) throws DebugException
+	{
+		try
+		{
+			ICDIVariableObject originalVarObject = getCDISession().getVariableManager().getVariableObject( cdiFrame, getOriginalCDIVariable().getName() );
+			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObjectAsArray( originalVarObject, type, start, end );
+			return getCDISession().getVariableManager().createVariable( varObject );
 		}
 		catch( CDIException e )
 		{
@@ -529,8 +541,7 @@ public abstract class CVariable extends CDebugElement
 	{
 		try
 		{
-//			getCDISession().getVariableManager().destroyVariable( shadow );
-			getCDISession().getExpressionManager().destroyExpression( (ICDIExpression)shadow );
+			getCDISession().getVariableManager().destroyVariable( shadow );
 		}
 		catch( CDIException e )
 		{
@@ -551,6 +562,28 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public void castToArray( String type, int startIndex, int endIndex ) throws DebugException
 	{
+		try
+		{
+			ICDIVariable newVar = createShadow( getOriginalCDIVariable().getStackFrame(), type, startIndex, endIndex );
+			ICDIVariable oldVar = getShadow();
+			setShadow( newVar );
+			if ( oldVar != null )
+				destroyShadow( oldVar );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
+		finally
+		{
+			if ( fValue != null )
+			{
+				((CValue)fValue).dispose();
+				fValue = null;
+			}
+			fTypeName = null;
+			fireChangeEvent( DebugEvent.STATE );
+		}
 	}
 
 	/* (non-Javadoc)

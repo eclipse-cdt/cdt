@@ -11,8 +11,10 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
@@ -23,7 +25,8 @@ import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
  */
 public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedefDeclaration
 {
-    private final String name;
+    protected static final ASTNotImplementedException NOT_IMPLEMENTED = new ASTNotImplementedException();
+	private final String name;
     private final IASTAbstractDeclaration mapping;
     private NamedOffsets offsets = new NamedOffsets();
     private final ASTQualifiedNamedElement qualifiedName; 
@@ -166,5 +169,11 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
 	 */
 	public int getNameLineNumber() {
 		return offsets.getNameLineNumber();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration#getFinalTypeSpecifier()
+	 */
+	public IASTTypeSpecifier getFinalTypeSpecifier() throws ASTNotImplementedException {
+		throw NOT_IMPLEMENTED;
 	}
 }

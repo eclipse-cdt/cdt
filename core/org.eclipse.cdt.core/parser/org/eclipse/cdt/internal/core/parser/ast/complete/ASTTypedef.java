@@ -13,7 +13,10 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
@@ -184,5 +187,29 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
 	 */
 	public int getNameLineNumber() {
 		return offsets.getNameLineNumber();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration#getFinalTypeSpecifier()
+	 */
+	public IASTTypeSpecifier getFinalTypeSpecifier() throws ASTNotImplementedException {
+		IASTTypeSpecifier currentTypeSpec = mapping.getTypeSpecifier();
+		while( currentTypeSpec instanceof IASTSimpleTypeSpecifier || 
+			   currentTypeSpec instanceof IASTTypedefDeclaration )
+		{
+			if( currentTypeSpec instanceof IASTSimpleTypeSpecifier )
+			{
+				IASTSimpleTypeSpecifier simpleTypeSpec = (IASTSimpleTypeSpecifier) currentTypeSpec;
+				if( simpleTypeSpec.getType() == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
+					currentTypeSpec = simpleTypeSpec.getTypeSpecifier();
+				else
+					break;
+			}
+			else if( currentTypeSpec instanceof IASTTypedefDeclaration )
+			{
+				currentTypeSpec = ((IASTTypedefDeclaration)currentTypeSpec).getAbstractDeclarator().getTypeSpecifier();
+			}
+		}
+		return currentTypeSpec;
 	}
 }

@@ -20,4 +20,5 @@ public interface IASTTypedefDeclaration extends IASTDeclaration, IASTOffsetableN
 	public String getName(); 
 	public IASTAbstractDeclaration getAbstractDeclarator(); 
 
+	public IASTTypeSpecifier  getFinalTypeSpecifier() throws ASTNotImplementedException;
 }

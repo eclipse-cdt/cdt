@@ -29,7 +29,6 @@ public interface IASTSimpleTypeSpecifier extends IASTTypeSpecifier
 		public static final Type DOUBLE       = new Type( 6 );
 		public static final Type VOID         = new Type( 7 );
 		public static final Type CLASS_OR_TYPENAME     = new Type( 8 );
-		public static final Type TEMPLATE     = new Type( 9 );
 		public static final Type _BOOL        = new Type( 10 );	
 		
 		protected static final int LAST_TYPE = 10;

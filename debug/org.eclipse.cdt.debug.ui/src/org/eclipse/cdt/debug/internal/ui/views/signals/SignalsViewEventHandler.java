@@ -43,6 +43,9 @@ public class SignalsViewEventHandler extends AbstractDebugEventHandler
 						 event.getSource() instanceof ICSignal )
 						refresh();
 					break;
+				case DebugEvent.SUSPEND :
+					refresh();
+					break;
 				case DebugEvent.CHANGE :
 					if ( event.getSource() instanceof ICSignal )
 						refresh( event.getSource() );

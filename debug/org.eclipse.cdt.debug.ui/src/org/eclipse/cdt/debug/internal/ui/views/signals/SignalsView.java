@@ -19,7 +19,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -96,7 +95,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 		
 		// add tree viewer
 		final SignalsViewer vv = new SignalsViewer( parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL );
-		vv.setContentProvider( new SignalsViewContentProvider() );
+		vv.setContentProvider( createContentProvider() );
 		vv.setLabelProvider( new SignalsViewLabelProvider() );
 		vv.setUseHashlookup( true );
 		vv.setExceptionHandler( this );
@@ -163,7 +162,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 	 */
 	public void handleException( DebugException e )
 	{
-		ErrorDialog.openError( getSite().getShell(), "Error", e.getMessage(), null );
+		showMessage( e.getMessage() );
 	}
 
 	protected void setViewerInput( IStructuredSelection ssel )

@@ -1,3 +1,10 @@
+2003-04-23 Mikhail Khodjaiants
+	If error occurs when acquiring the signal information from gdb 
+	the error message should be displayed in the 'Signals' view.
+	* SignalsView.java
+	* SignalsViewer.java
+	* SignalsViewEventHandler.java
+
 2003-04-21 Mikhail Khodjaiants
 	Fix for bug 36682.
 	* CDTDebugModelPresentation.java

@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -130,8 +131,7 @@ public class SignalsViewer extends TableViewer
 								}
 								catch( DebugException e )
 								{
-									if ( getExceptionHandler() != null )
-										getExceptionHandler().handleException( e );
+									Display.getCurrent().beep();
 								}
 							}
 						}

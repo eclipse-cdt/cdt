@@ -1,5 +1,11 @@
 2003-02-12 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java:
+	Removed getRegisterObjects(), getRegisters(), getSharedLibraries().
+	Those actions are done via the managers.
+
+2003-02-12 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java (isAutoLoadSymbols):
 	New method.
 	* src/org/eclipse/cdt/deb/mi/core/command/MIGDBShow.java (getMIGDBShowInfo):

@@ -1,3 +1,8 @@
+2003-02-12 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/mode/ICDITarget.java (getSharedLibraries):
+	Remove action done via the manager.
+
 2003-02-12 Mikhail Khodjaiants
 	Use ICDIRegisterManager instead of ICDITarget.
 	* ICDITarget.java

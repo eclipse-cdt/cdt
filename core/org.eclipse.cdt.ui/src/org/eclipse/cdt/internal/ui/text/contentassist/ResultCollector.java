@@ -11,9 +11,9 @@
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
@@ -35,7 +35,8 @@ import org.eclipse.swt.graphics.Image;
 public class ResultCollector extends CompletionRequestorAdaptor {
 	private Set completions = new HashSet();
 	private ImageDescriptorRegistry registry = CUIPlugin.getImageDescriptorRegistry();
-
+	private IProblem fLastProblem;	
+	
 	public ResultCollector(){
 		completions.clear();
 	}
@@ -46,8 +47,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 	public Set getCompletions() {
 		return completions;
 	}
-	public void clearCompletions() {
+	public void reset() {
 		completions.clear();
+		fLastProblem = null;
 	}
 	/*
 	 * Create a proposal
@@ -459,4 +461,17 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		completions.add(proposal);		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICompletionRequestor#acceptError(org.eclipse.cdt.core.parser.IProblem)
+	 */
+	public void acceptError(IProblem error) {
+		fLastProblem = error;
+	}
+
+	public String getErrorMessage() {
+		if (fLastProblem != null)
+			return fLastProblem.getMessage();
+		return ""; //$NON-NLS-1$
+	}
+	
 }

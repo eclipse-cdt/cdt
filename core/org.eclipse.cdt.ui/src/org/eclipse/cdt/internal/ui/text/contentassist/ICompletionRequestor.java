@@ -8,8 +8,9 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core;
+package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 /**
@@ -32,4 +33,5 @@ public interface ICompletionRequestor {
 	void acceptEnumeration(String name, int completionStart, int completionLength, int relevance);
 	void acceptEnumerator(String name, int completionStart, int completionLength, int relevance);
 	void acceptKeyword(String name, int completionStart, int completionLength, int relevance);
+	void acceptError(IProblem error);
 }

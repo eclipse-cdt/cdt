@@ -1,3 +1,9 @@
+2003-12-29 Hoda Amer
+	- Added context checking for completions comming from contributions
+	- Added preference : Show proposals in Alphabetical Order
+	- Fix for bug #44043: code assist letter by letter doesn't update properly 
+	- Fix for bug #44251: Code Assist: bad error message on preference page 
+	
 2003-12-22 Hoda Amer
 	Content Assist work : Added context information to templates.
 	Added scope information into relevance calculations

@@ -286,7 +286,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 			return false;
 		
 		int replacementLength= fReplacementString == null ? 0 : fReplacementString.length();
-		if (offset >=  fReplacementOffset + replacementLength)
+		if (offset >  fReplacementOffset + replacementLength)
 			return false;
 		
 		try {

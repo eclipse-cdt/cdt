@@ -1,3 +1,6 @@
+2003-12-29 Hoda Amer
+	Content Assist Work : Moved ICompletionRequestor from core to ui
+	
 2003-12-19 Alain Magloire
 
 	Added a getCommandLine() method on the CommandLauncher

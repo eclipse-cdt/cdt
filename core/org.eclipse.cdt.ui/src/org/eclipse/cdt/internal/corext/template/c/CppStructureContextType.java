@@ -34,7 +34,6 @@ public class CppStructureContextType extends CompilationUnitContextType {
 		 addVariable(new Type());
 		 addVariable(new Package()); */
 		addVariable(new Project());
-		// @@@ Need to add some specific C ones
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.corext.template.ContextType#createContext()

@@ -34,7 +34,6 @@ public class CppGlobalContextType extends CompilationUnitContextType {
 		addVariable(new Type());
 		addVariable(new Package()); */
 		addVariable(new Project());
-		// @@@ Need to add some specific C ones
 	}
 	
 	/*

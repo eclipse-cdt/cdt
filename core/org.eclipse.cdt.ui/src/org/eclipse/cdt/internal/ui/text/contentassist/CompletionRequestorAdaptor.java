@@ -10,7 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
-import org.eclipse.cdt.core.ICompletionRequestor;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 /**
@@ -133,6 +133,14 @@ public class CompletionRequestorAdaptor implements ICompletionRequestor {
 		int completionStart,
 		int completionLength,
 		int relevance) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICompletionRequestor#acceptError(org.eclipse.cdt.core.parser.IProblem)
+	 */
+	public void acceptError(IProblem error) {
 		// TODO Auto-generated method stub
 
 	}

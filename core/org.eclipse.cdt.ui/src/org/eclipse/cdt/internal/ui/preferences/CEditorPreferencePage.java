@@ -858,11 +858,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.insertSingleProposalAutomatically");
 		addCheckBox(contentAssistComposite, label, ContentAssistPreference.AUTOINSERT, 0);
 		
-		//label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.showOnlyProposalsWithCorrectVisibility"); 
-		//addCheckBox(contentAssistComposite, label, ContentAssistPreference.SHOW_VISIBLE_PROPOSALS, 0);
-
-		//label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.showProposalsInAlphabeticalOrder");
-		//addCheckBox(contentAssistComposite, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
+		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.showProposalsInAlphabeticalOrder");
+		addCheckBox(contentAssistComposite, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following items are grouped for Auto Activation
@@ -1203,14 +1200,14 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	private IStatus validatePositiveNumber(String number) {
 		StatusInfo status = new StatusInfo();
 		if (number.length() == 0) {
-			//status.setError("CEditorPreferencePage.empty_input"); //$NON-NLS-1$
+			status.setError(PreferencesMessages.getString("CEditorPreferencePage.empty_input")); //$NON-NLS-1$
 		} else {
 			try {
 				int value = Integer.parseInt(number);
 				if (value < 0)
-					status.setError("CEditorPreferencePage.invalid_input"); //$NON-NLS-1$
+					status.setError(PreferencesMessages.getString("CEditorPreferencePage.invalid_input")); //$NON-NLS-1$
 			} catch (NumberFormatException e) {
-				status.setError("CEditorPreferencePage.invalid_input"); //$NON-NLS-1$
+				status.setError(PreferencesMessages.getString("CEditorPreferencePage.invalid_input")); //$NON-NLS-1$
 			}
 		}
 		return status;

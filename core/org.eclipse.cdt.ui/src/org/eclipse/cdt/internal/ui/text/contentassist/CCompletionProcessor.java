@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.cdt.internal.corext.template.ITemplateEditor;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
 import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
@@ -44,7 +45,9 @@ import org.eclipse.jface.text.contentassist.ContextInformation;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.contentassist.IContextInformationExtension;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -52,6 +55,49 @@ import org.eclipse.ui.IEditorPart;
  */
 public class CCompletionProcessor implements IContentAssistProcessor {
 
+	private static class ContextInformationWrapper implements IContextInformation, IContextInformationExtension {
+		
+		private final IContextInformation fContextInformation;
+		private int fPosition;
+		
+		public ContextInformationWrapper(IContextInformation contextInformation) {
+			fContextInformation= contextInformation;
+		}
+		
+		/*
+		 * @see IContextInformation#getContextDisplayString()
+		 */
+		public String getContextDisplayString() {
+			return fContextInformation.getContextDisplayString();
+		}
+
+		/*
+		 * @see IContextInformation#getImage()
+		 */
+		public Image getImage() {
+			return fContextInformation.getImage();
+		}
+
+		/*
+		 * @see IContextInformation#getInformationDisplayString()
+		 */
+		public String getInformationDisplayString() {
+			return fContextInformation.getInformationDisplayString();
+		}
+
+		/*
+		 * @see IContextInformationExtension#getContextInformationPosition()
+		 */
+		public int getContextInformationPosition() {
+			return fPosition;
+		}
+		
+		public void setContextInformationPosition(int position) {
+			fPosition= position;	
+		}
+	}
+	
+	
 	private CEditor fEditor;
 	private char[] fProposalAutoActivationSet;
 	private CCompletionProposalComparator fComparator;
@@ -64,15 +110,16 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	private boolean fRestrictToMatchingCase;
 	private boolean fAllowAddIncludes;
 
-	BasicSearchResultCollector  searchResultCollector = null;
-	ResultCollector resultCollector = null;
-	CompletionEngine completionEngine = null;
+	private BasicSearchResultCollector  searchResultCollector = null;
+	private ResultCollector resultCollector = null;
+	private CompletionEngine completionEngine = null;
 	
-	SearchEngine searchEngine = null;
-	CSearchResultLabelProvider labelProvider = null;
+	private SearchEngine searchEngine = null;
+	private CSearchResultLabelProvider labelProvider = null;
 	
-	int currentOffset = 0;
-	IWorkingCopy currentSourceUnit = null;
+	private int currentOffset = 0;
+	private IWorkingCopy currentSourceUnit = null;
+	private int fNumberOfComputedResults= 0;
 	
 	public CCompletionProcessor(IEditorPart editor) {
 		fEditor = (CEditor) editor;
@@ -177,7 +224,14 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	 * @see IContentAssistProcessor#getErrorMessage()
 	 */
 	public String getErrorMessage() {
-		return null;
+		if (fNumberOfComputedResults == 0) {
+			String errorMsg= resultCollector.getErrorMessage();
+			if (errorMsg == null || errorMsg.trim().length() == 0)
+				errorMsg= CUIMessages.getString("CEditor.contentassist.noCompletions"); //$NON-NLS-1$
+			return errorMsg;
+		}
+				
+		return resultCollector.getErrorMessage();
 	}
 
 	/**
@@ -201,9 +255,25 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {		
-		return null;
+		List result= addContextInformations(viewer, offset);
+		return (IContextInformation[]) result.toArray(new IContextInformation[result.size()]);
 	}
+	
+	private List addContextInformations(ITextViewer viewer, int offset) {
+		ICompletionProposal[] proposals= internalComputeCompletionProposals(viewer, offset);
 
+		List result= new ArrayList();
+		for (int i= 0; i < proposals.length; i++) {
+			IContextInformation contextInformation= proposals[i].getContextInformation();
+			if (contextInformation != null) {
+				ContextInformationWrapper wrapper= new ContextInformationWrapper(contextInformation);
+				wrapper.setContextInformationPosition(offset);
+				result.add(wrapper);				
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
@@ -244,13 +314,16 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-				
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
+		return internalComputeCompletionProposals(viewer, offset);
+	}
+	
+	private ICompletionProposal[] internalComputeCompletionProposals(ITextViewer viewer, int offset) {
 		IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
 		IWorkingCopy unit = fManager.getWorkingCopy(fEditor.getEditorInput());
-							
+		
 		IDocument document = viewer.getDocument();
-				
+		
 		ICCompletionProposal[] results = null;
 
 		try {
@@ -265,12 +338,14 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 //					length = selection.y;
 //				}
 
-				results = evalProposals(document, documentOffset, unit, viewer);
+			results = evalProposals(document, offset, unit, viewer);
 //			}
 		} catch (Exception e) {
 			CUIPlugin.getDefault().log(e);
 		}
 
+		fNumberOfComputedResults= (results == null ? 0 : results.length);
+		
 		if (results == null)
 			results = new ICCompletionProposal[0];
 
@@ -281,7 +356,6 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		order(results);
 		return results;
 	}
-
 	/**
 	 * Order the given proposals.
 	 */
@@ -304,7 +378,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			return null;
 		
 		// clear the completion list at the result collector
-		resultCollector.clearCompletions();
+		resultCollector.reset();
 		
 		IASTCompletionNode completionNode = addProposalsFromModel(completions);
 		addProposalsFromSearch(completionNode, completions);
@@ -353,6 +427,10 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		String prefix = completionNode.getCompletionPrefix();
 		int offset = currentOffset - prefix.length();
 		int length = prefix.length();
+		
+		// calling functions should happen only within the context of a code body
+		if(completionNode.getCompletionContext() != IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
+			return;
 		
 		IFunctionSummary[] summary;
 
@@ -425,7 +503,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		ICSearchScope scope = null;
 	
 		if (((projectScope) || (projectScopeAndDependency))
-				&& ( (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE) 
+				&& (   (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
 				    || (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)
 					|| (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.FIELD_TYPE) )
 				&& (prefix.length() > 0)){
@@ -434,15 +512,9 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			ICElement[] projectScopeElement = new ICElement[1];
 			projectScopeElement[0] = (ICElement)currentSourceUnit.getCProject();
 			scope = SearchEngine.createCSearchScope(projectScopeElement, projectScopeAndDependency);
-
-			OrPattern orPattern = new OrPattern();
+			
 			// search for global variables, functions, classes, structs, unions, enums, macros, and namespaces
-			orPattern.addPattern(SearchEngine.createSearchPattern( 
-					searchPrefix, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( 
-					searchPrefix, ICSearchConstants.FUNCTION, ICSearchConstants.DEFINITIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( 
-					searchPrefix, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false ));
+			OrPattern orPattern = new OrPattern();
 			orPattern.addPattern(SearchEngine.createSearchPattern( 
 					searchPrefix, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, false ));
 			orPattern.addPattern(SearchEngine.createSearchPattern( 
@@ -451,6 +523,15 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 					searchPrefix, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, false ));
 			orPattern.addPattern(SearchEngine.createSearchPattern( 
 					searchPrefix, ICSearchConstants.NAMESPACE, ICSearchConstants.DEFINITIONS, false ));
+			
+			if( (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)){
+				orPattern.addPattern(SearchEngine.createSearchPattern( 
+						searchPrefix, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false ));
+				orPattern.addPattern(SearchEngine.createSearchPattern( 
+						searchPrefix, ICSearchConstants.FUNCTION, ICSearchConstants.DEFINITIONS, false ));
+				orPattern.addPattern(SearchEngine.createSearchPattern( 
+						searchPrefix, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false ));
+			}
 			searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, searchResultCollector, true);
 			elementsFound.addAll(searchResultCollector.getSearchResults());
 			

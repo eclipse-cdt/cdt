@@ -20,7 +20,9 @@ import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -63,7 +65,7 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 		throws CoreException, InvocationTargetException, InterruptedException 
 	{
 		_collector.setProgressMonitor( monitor );	
-	
+		IWorkingCopy copy = null;
 		SearchEngine engine = new SearchEngine( );
 		if( _elementPattern != null ){
 			engine.search( _workspace, _elementPattern, _limitTo, _scope, _collector );

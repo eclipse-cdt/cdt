@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
@@ -49,6 +51,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypedef;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
@@ -71,7 +74,7 @@ import org.eclipse.core.runtime.Path;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class MatchLocator implements ISourceElementRequestor {
+public class MatchLocator implements ISourceElementRequestor, ICSearchConstants {
 
 	
 	/**
@@ -94,28 +97,79 @@ public class MatchLocator implements ISourceElementRequestor {
 	public void acceptASMDefinition(IASTASMDefinition asmDefinition) 			{	}
 	public void acceptTypedef(IASTTypedef typedef) 								{	}
 	public void acceptEnumerator(IASTEnumerator enumerator) 					{	}
-	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration){	}
+	
+	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration){
+		if( searchPattern.getLimitTo() == DECLARATIONS || searchPattern.getLimitTo() == ALL_OCCURRENCES ){
+			if( searchPattern instanceof ClassDeclarationPattern ){
+				ClassDeclarationPattern classPattern = (ClassDeclarationPattern)searchPattern;
+				if( classPattern.getKind() == null || classPattern.getKind() == ASTClassKind.ENUM ){
+					int level = searchPattern.matchLevel( enumeration ); 
+					if(  level != ICSearchPattern.IMPOSSIBLE_MATCH ){
+						report( enumeration, level );				
+					}
+				}
+			}
+		}
+	}	
+	
 	public void acceptClassReference(IASTClassReference reference) {	}
 	public void acceptElaboratedTypeSpecifier(IASTElaboratedTypeSpecifier elaboratedTypeSpec){  }
 	public void acceptMethodDeclaration(IASTMethod method) 						{	}
 	public void acceptField(IASTField field) 									{	}
-	public void enterFunctionBody(IASTFunction function) 						{	}
-	public void enterCompilationUnit(IASTCompilationUnit compilationUnit) 		{	}
-	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) 		{	}
+	
+	public void enterFunctionBody(IASTFunction function){
+		pushScope( function );
+	}
+	
+	public void enterCompilationUnit(IASTCompilationUnit compilationUnit) {
+		pushScope( compilationUnit );
+	}
+	
+	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
+		if( searchPattern.getLimitTo() == DECLARATIONS || searchPattern.getLimitTo() == ALL_OCCURRENCES ){
+			if( searchPattern instanceof NamespaceDeclarationPattern ){
+				int level = searchPattern.matchLevel( namespaceDefinition ); 
+				if(  level != ICSearchPattern.IMPOSSIBLE_MATCH ){
+					report( namespaceDefinition, level );				
+				}
+			}
+		}			
+				
+		pushScope( namespaceDefinition );
+	}
+	
 	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {	}
 	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) 	{	}
 	public void enterTemplateSpecialization(IASTTemplateSpecialization specialization) 		{	}
 	public void enterTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) {	}
-	public void enterMethodBody(IASTMethod method) 								{	}
-	public void exitFunctionBody(IASTFunction function) 						{	}
-	public void exitMethodBody(IASTMethod method) 								{	}
-	public void exitTemplateDeclaration(IASTTemplateDeclaration declaration) 	{	}
+	
+	public void enterMethodBody(IASTMethod method) {
+		pushScope( method );
+	}
+	
+	public void exitFunctionBody(IASTFunction function) {
+		popScope();	
+	}
+	public void exitMethodBody(IASTMethod method) {
+		popScope();	
+	}
+	
+	public void exitTemplateDeclaration(IASTTemplateDeclaration declaration) 	{}
 	public void exitTemplateSpecialization(IASTTemplateSpecialization specialization) 		{	}
 	public void exitTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) 	{	}
 	public void exitLinkageSpecification(IASTLinkageSpecification linkageSpec) 	{	}
-	public void exitClassSpecifier(IASTClassSpecifier classSpecification) 		{	}
-	public void exitNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) 		{	}
-	public void exitCompilationUnit(IASTCompilationUnit compilationUnit)		{	}
+	
+	public void exitClassSpecifier(IASTClassSpecifier classSpecification) {
+		popScope();
+	}
+	
+	public void exitNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
+		popScope();
+	}
+	
+	public void exitCompilationUnit(IASTCompilationUnit compilationUnit){
+		popScope();
+	}
 
 	public void enterInclusion(IASTInclusion inclusion) {
 		String includePath = inclusion.getFullFileName();
@@ -154,12 +208,15 @@ public class MatchLocator implements ISourceElementRequestor {
 	}
 		
 	public void enterClassSpecifier(IASTClassSpecifier classSpecification) {
-		if( searchPattern instanceof ClassDeclarationPattern ){
-			int level = searchPattern.matchLevel( classSpecification ); 
-			if(  level != ICSearchPattern.IMPOSSIBLE_MATCH ){
-				report( classSpecification, level );				
+		if( searchPattern.getLimitTo() == DECLARATIONS || searchPattern.getLimitTo() == ALL_OCCURRENCES ){
+			if( searchPattern instanceof ClassDeclarationPattern ){
+				int level = searchPattern.matchLevel( classSpecification ); 
+				if(  level != ICSearchPattern.IMPOSSIBLE_MATCH ){
+					report( classSpecification, level );				
+				}
 			}
-		}
+		}			
+		pushScope( classSpecification );
 	}
 
 	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies ){
@@ -244,17 +301,30 @@ public class MatchLocator implements ISourceElementRequestor {
 	
 	protected void report( IASTOffsetableNamedElement node, int accuracyLevel ){
 		try {
+			if( progressMonitor != null ) {
+				if( progressMonitor.isCanceled() ) {
+					throw new OperationCanceledException();
+				} else {
+					progressMonitor.worked( 1 );
+				}
+			}
+			
+			int offset = node.getElementNameOffset();
+			if( offset == 0 )
+				offset = node.getElementStartingOffset();
+				
 			if( currentResource != null ){
+				
 				resultCollector.accept( currentResource, 
-								  node.getElementNameOffset(), 
-								  node.getElementNameOffset() + node.getName().length(), 
-								  null, 
+								  offset, 
+								  offset + node.getName().length(), 
+								  resultCollector.createMatch( node, currentScope ), 
 								  accuracyLevel );
 			} else if( currentPath != null ){
 				resultCollector.accept( currentPath, 
-										node.getElementStartingOffset(), 
-										node.getElementEndingOffset(), 
-										null, 
+										offset, 
+										offset + node.getName().length(), 
+										resultCollector.createMatch( node, currentScope ), 
 										accuracyLevel );				
 			}
 		} catch (CoreException e) {
@@ -263,12 +333,27 @@ public class MatchLocator implements ISourceElementRequestor {
 		}
 	}
 	
+	private void pushScope( IASTScope scope ){
+		scopeStack.addFirst( currentScope );
+		currentScope = scope;
+	}
+	
+	private IASTScope popScope(){
+		IASTScope oldScope = currentScope;
+		currentScope = (scopeStack.size() > 0 ) ? (IASTScope) scopeStack.removeFirst() : null;
+		return oldScope;
+	}
+	
 	private ICSearchPattern 		searchPattern;
 	private ICSearchResultCollector resultCollector;
 	private IProgressMonitor 		progressMonitor;
-	private IResource 				currentResource = null;
 	private IPath					currentPath 	= null;
-	private ICSearchScope 			searchScope;		
-	private LinkedList 				resourceStack = new LinkedList();
+	private ICSearchScope 			searchScope;
 	private IWorkspaceRoot 			workspaceRoot;
+	
+	private IResource 				currentResource = null;
+	private LinkedList 				resourceStack = new LinkedList();
+	
+	private IASTScope				currentScope = null;
+	private LinkedList				scopeStack = new LinkedList();
 }

@@ -17,11 +17,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.core.search.ICSearchPattern;
+import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.core.search.matching.ClassDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
+import org.eclipse.cdt.internal.ui.search.Match;
 import org.eclipse.core.runtime.Path;
 
 import junit.framework.TestCase;
@@ -42,7 +45,7 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 		super(name);
 	}
 	
-	private void initialize( CSearchPattern pattern ){
+	private void initialize( ICSearchPattern pattern ){
 		cppPath = org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
 		cppPath += "resources/search/classDecl.cpp";
 		
@@ -51,7 +54,7 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 	}
 	
 	public void testMatchSimpleDeclaration(){
-		CSearchPattern pattern = CSearchPattern.createPattern( "A", TYPE, DECLARATIONS, EXACT_MATCH, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", TYPE, DECLARATIONS, true );
 
 		assertTrue( pattern instanceof ClassDeclarationPattern );
 		
@@ -64,7 +67,7 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 	}
 	
 	public void testMatchNamespaceNestedDeclaration(){
-		CSearchPattern pattern = CSearchPattern.createPattern( "NS::B", TYPE, DECLARATIONS, EXACT_MATCH, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "NS::B", TYPE, DECLARATIONS, true );
 		
 		assertTrue( pattern instanceof ClassDeclarationPattern );
 		
@@ -83,7 +86,7 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 	}
 	
 	public void testBug39652() {
-		CSearchPattern pattern = CSearchPattern.createPattern( "A::B", TYPE, DECLARATIONS, EXACT_MATCH, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B", TYPE, DECLARATIONS, true );
 		
 		initialize( pattern );
 		matchLocator.locateMatches( new String[] { cppPath }, null, null );
@@ -92,21 +95,21 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 		assertTrue( matches != null );
 		assertTrue( matches.size() == 1 );
 				
-		pattern = CSearchPattern.createPattern( "NS::NS2::a", TYPE, DECLARATIONS, EXACT_MATCH, true );
+		pattern = SearchEngine.createSearchPattern( "NS::NS2::a", TYPE, DECLARATIONS, true );
 		initialize( pattern );
 		matchLocator.locateMatches( new String[] { cppPath }, null, null );
 		matches = resultCollector.getMatches();
 		assertTrue( matches != null );
 		
-		pattern = CSearchPattern.createPattern( "NS::B::A", TYPE, DECLARATIONS, EXACT_MATCH, true );
+		pattern = SearchEngine.createSearchPattern( "NS::B::A", TYPE, DECLARATIONS, true );
 		initialize( pattern );
 		matchLocator.locateMatches( new String[] { cppPath }, null, null );
 		matches = resultCollector.getMatches();
 		assertTrue( matches != null );
 	}
 	
-	public void failingtestMatchStruct(){
-		CSearchPattern pattern = CSearchPattern.createPattern( "A", STRUCT, DECLARATIONS, EXACT_MATCH, true );
+	public void testMatchStruct(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", STRUCT, DECLARATIONS, true );
 		
 		assertTrue( pattern instanceof ClassDeclarationPattern );
 		
@@ -119,7 +122,7 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 		Set matches = resultCollector.getMatches();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = CSearchPattern.createPattern( "NS::B::A", TYPE, DECLARATIONS, EXACT_MATCH, true );
+		pattern = SearchEngine.createSearchPattern( "NS::B::A", TYPE, DECLARATIONS, true );
 		
 		initialize( pattern );
 		matchLocator.locateMatches( new String[] { cppPath }, null, null );
@@ -131,12 +134,48 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 		Iterator iter = matches.iterator();
 		Iterator iter2 = matches2.iterator();
 		
-		CSearchResultCollector.Match match = (CSearchResultCollector.Match)iter.next();
-		CSearchResultCollector.Match match2 = (CSearchResultCollector.Match)iter2.next();
+		Match match = (Match)iter.next();
+		Match match2 = (Match)iter2.next();
 		
-		assertTrue( match.path.equals( match2.path ) );
+		//assertTrue( match.path.equals( match2.path ) );
 		assertEquals( match.start, match2.start );
 		assertEquals( match.end, match2.end );
+	}
+	
+	public void testWildcardQualification() {
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::*::A", TYPE, DECLARATIONS, true );
+		initialize( pattern );
+		matchLocator.locateMatches( new String [] { cppPath }, null, null );
+		
+		Set matches = resultCollector.getMatches();
+		assertEquals( matches, null );
+		
+		pattern = SearchEngine.createSearchPattern( "NS::*::A", TYPE, DECLARATIONS, false );
+		initialize( pattern );
+		matchLocator.locateMatches( new String [] { cppPath }, null, null );
+		
+		matches = resultCollector.getMatches();
+		assertEquals( matches.size(), 2 );
+	}
+	
+	public void testElaboratedType(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "struct A", TYPE, DECLARATIONS, true );
+		initialize( pattern );
+		matchLocator.locateMatches( new String [] { cppPath }, null, null );
+		Set matches = resultCollector.getMatches();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "union u", TYPE, DECLARATIONS, true );
+		initialize( pattern );
+		matchLocator.locateMatches( new String [] { cppPath }, null, null );
+		matches = resultCollector.getMatches();
+		assertEquals( matches.size(), 2 );
+
+		pattern = SearchEngine.createSearchPattern( "union ::*::u", TYPE, DECLARATIONS, true );
+		initialize( pattern );
+		matchLocator.locateMatches( new String [] { cppPath }, null, null );
+		matches = resultCollector.getMatches();
+		assertEquals( matches.size(), 1 );
 	}
 	
 }

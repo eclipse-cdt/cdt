@@ -9,13 +9,9 @@
  *     IBM Corp. - Rational Software - initial implementation
  ******************************************************************************/
 /*
- * Created on Jun 18, 2003
+ * Created on Jul 10, 2003
  */
-package org.eclipse.cdt.internal.ui.search;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.search.ui.IGroupByKeyComputer;
+package org.eclipse.cdt.core.search;
 
 /**
  * @author aniefer
@@ -23,24 +19,6 @@ import org.eclipse.search.ui.IGroupByKeyComputer;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class GroupByKeyComputer implements IGroupByKeyComputer {
+public interface IMatch {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.IGroupByKeyComputer#computeGroupByKey(org.eclipse.core.resources.IMarker)
-	 */
-	 
-	public Object computeGroupByKey(IMarker marker) {
-		if( marker == null ){
-			return null;
-		}
-		
-		Match match = null;
-		
-		try {
-			match = (Match) marker.getAttribute(CSearchResultCollector.IMATCH);
-		} catch (CoreException e) {
-		}
-		
-		return match.parent;
-	}
 }

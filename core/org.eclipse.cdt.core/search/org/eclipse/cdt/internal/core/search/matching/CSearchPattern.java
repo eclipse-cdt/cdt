@@ -52,9 +52,14 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @param matchMode
 	 * @param caseSensitive
 	 */
-	public CSearchPattern(int matchMode, boolean caseSensitive) {
+	public CSearchPattern(int matchMode, boolean caseSensitive, LimitTo limitTo ) {
 		_matchMode = matchMode;
 		_caseSensitive = caseSensitive;
+		_limitTo = limitTo;
+	}
+	
+	public LimitTo getLimitTo(){
+		return _limitTo;
 	}
 
 	public CSearchPattern() {
@@ -69,14 +74,18 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		CSearchPattern pattern = null;
 		if( searchFor == TYPE || searchFor == CLASS || searchFor == STRUCT || searchFor == ENUM || searchFor == UNION ){
 			pattern = createClassPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
-		} else if ( searchFor == MEMBER ){
-			//	pattern = createMethodPattern( patternString, limitTo, matchMode, caseSensitive );
-		} else if ( searchFor == CONSTRUCTOR ){
-			pattern = createConstructorPattern( patternString, limitTo, matchMode, caseSensitive );
+		} else if ( searchFor == METHOD ){
+			pattern = createMethodPattern( patternString, limitTo, matchMode, caseSensitive );
+		} else if ( searchFor == FIELD){
+			pattern = createFieldPattern( patternString, limitTo, matchMode, caseSensitive );
+		} else if ( searchFor == VAR ){
+			pattern = createVariablePattern( patternString, limitTo, matchMode, caseSensitive );
+		} else if ( searchFor == FUNCTION ){
+			pattern = createFunctionPattern( patternString, limitTo, matchMode, caseSensitive );
+		} else if ( searchFor == NAMESPACE ){
+			pattern = createNamespacePattern( patternString, limitTo, matchMode, caseSensitive );
 		}
-			//case ICSearchConstants.FIELD:
-			//	pattern = createFieldPattern( patternString, limitTo, matchMode, caseSensitive );
-			//	break;
+	
 		return pattern;
 	}
 
@@ -87,9 +96,55 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @param caseSensitive
 	 * @return
 	 */
-	private static CSearchPattern createFieldPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+	private static CSearchPattern createNamespacePattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE );
+		LinkedList list = scanForNames( scanner, null );
+		
+		char [] name = (char []) list.removeLast();
+		char [][] qualifications = new char [0][];
+		
+		return new NamespaceDeclarationPattern( name, (char[][]) list.toArray( qualifications ), matchMode, limitTo, caseSensitive );
+	}
+
+	/**
+	 * @param patternString
+	 * @param limitTo
+	 * @param matchMode
+	 * @param caseSensitive
+	 * @return
+	 */
+	private static CSearchPattern createFunctionPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * @param patternString
+	 * @param limitTo
+	 * @param matchMode
+	 * @param caseSensitive
+	 * @return
+	 */
+	private static CSearchPattern createVariablePattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @param patternString
+	 * @param limitTo
+	 * @param matchMode
+	 * @param caseSensitive
+	 * @return
+	 */
+	private static CSearchPattern createFieldPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE );
+		LinkedList list = scanForNames( scanner, null );
+		
+		char [] name = (char []) list.removeLast();
+		char [][] qualifications = new char[0][];
+		
+		return new FieldDeclarationPattern( name, (char[][]) list.toArray( qualifications ), matchMode, limitTo, caseSensitive );
 	}
 
 	/**
@@ -100,21 +155,9 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createMethodPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @param patternString
-	 * @param limitTo
-	 * @param matchMode
-	 * @param caseSensitive
-	 * @return
-	 */
-	private static CSearchPattern createConstructorPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/**
 	 * @param patternString
@@ -126,41 +169,81 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	private static CSearchPattern createClassPattern(String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive) {
 		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE );
 		
-		LinkedList list  = new LinkedList();
-		IToken 	   token = null;
-		String 	   name  = new String("");
+		IToken token = null;
+		ASTClassKind kind = null;
 		
 		try {
+			token = scanner.nextToken();
+		} catch (EndOfFile e) {
+		} catch (ScannerException e) {
+		}
+		
+		if( token != null ){
+			if( token.getType() == IToken.t_class ){
+				kind = ASTClassKind.CLASS;
+			} else if ( token.getType() == IToken.t_struct ){
+				kind = ASTClassKind.STRUCT;
+			} else if ( token.getType() == IToken.t_union ){
+				kind = ASTClassKind.UNION;
+			} else if ( token.getType() == IToken.t_enum ){
+				kind = ASTClassKind.ENUM;
+			}
+			if( kind != null ){
+				token = null;
+			} else {
+				if( searchFor == CLASS ){
+					kind = ASTClassKind.CLASS;
+				} else if( searchFor == STRUCT ) {
+					kind = ASTClassKind.STRUCT;
+				} else if ( searchFor == ENUM ) {
+					kind = ASTClassKind.ENUM;
+				} else if ( searchFor == UNION ) {
+					kind = ASTClassKind.UNION;
+				}		
+			}
+		}
+			
+		LinkedList list = scanForNames( scanner, token );
+		
+		char[] name = (char [])list.removeLast();
+		char [][] qualifications = new char[0][];
+		
+		return new ClassDeclarationPattern( name, (char[][])list.toArray( qualifications ), kind, matchMode, limitTo, caseSensitive );
+	}
+	
+	static private LinkedList scanForNames( IScanner scanner, IToken unusedToken ){
+		LinkedList list = new LinkedList();
+		
+		String name  = new String("");
+		
+		try {
+			IToken token = ( unusedToken != null ) ? unusedToken : scanner.nextToken();
+			
 			while( true ){
-				token = scanner.nextToken();
-				
 				switch( token.getType() ){
 					case IToken.tCOLONCOLON :
 						list.addLast( name.toCharArray() );
 						name = new String("");
 						break;
 					default:
+						if( token.getType() != IToken.tSTAR &&
+							token.getType() != IToken.tQUESTION &&
+							name.length() > 0 )
+						{
+							name += " ";
+						}
 						name += token.getImage();
 						break;
 				}
+				
+				token = scanner.nextToken();
 			}
 		} catch (EndOfFile e) {	
+			list.addLast( name.toCharArray() );
 		} catch (ScannerException e) {
 		}
 		
-		ASTClassKind kind = null;
-		if( searchFor == CLASS ){
-			kind = ASTClassKind.CLASS;
-		} else if( searchFor == STRUCT ) {
-			kind = ASTClassKind.STRUCT;
-		} else if ( searchFor == ENUM ) {
-			kind = ASTClassKind.ENUM;
-		} else if ( searchFor == UNION ) {
-			kind = ASTClassKind.UNION;
-		}
-
-		char [][] qualifications = new char[0][];
-		return new ClassDeclarationPattern( name.toCharArray(), (char[][])list.toArray( qualifications ), kind, matchMode, caseSensitive );
+		return list;	
 	}
 	
 	protected boolean matchesName( char[] pattern, char[] name ){
@@ -185,6 +268,32 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		return false;
 	}
 	
+	protected boolean matchQualifications( char[][] qualifications, String [] fullyQualifiedName ){
+		
+		int qualLen = qualifications != null ? qualifications.length : 0;
+		int fullLen = fullyQualifiedName != null ? fullyQualifiedName.length : 0;
+		
+		if( qualLen == 0 ){
+			return true;
+		}
+		
+		int root = ( qualifications[0].length == 0 ) ? 1 : 0;
+		
+		if( (root == 1 && fullLen - 1 != qualLen - 1 ) ||
+			(root == 0 && fullLen - 1 < qualLen ) )
+		{
+			return false;
+		}
+		
+		for( int i = 1; i <= qualLen - root; i++ ){
+			if( !matchesName( qualifications[ qualLen - i - root ], fullyQualifiedName[ fullLen - i - 1 ].toCharArray() ) ){
+				return false;		
+			}
+		}
+		
+		return true;
+	}
+
     /**
 	* Query a given index for matching entries. 
 	*/
@@ -208,7 +317,10 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	   if (progressMonitor != null && progressMonitor.isCanceled()) throw new OperationCanceledException();
 	
 	   /* narrow down a set of entries using prefix criteria */
-	   IEntryResult[] entries = input.queryEntriesPrefixedBy(indexEntryPrefix());
+		char [] prefix = indexEntryPrefix();
+		if( prefix == null ) return;
+		
+	   IEntryResult[] entries = input.queryEntriesPrefixedBy( prefix );
 	   if (entries == null) return;
 	
 	   /* only select entries which actually match the entire search pattern */
@@ -247,4 +359,5 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
    
 	protected int 		_matchMode;
 	protected boolean 	_caseSensitive;
+	protected LimitTo   _limitTo;
 }

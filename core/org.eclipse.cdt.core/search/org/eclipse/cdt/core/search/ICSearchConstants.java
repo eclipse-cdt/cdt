@@ -54,14 +54,14 @@ public interface ICSearchConstants {
 	public static final SearchFor NAMESPACE = new SearchFor( 2 );
 	
 	/**
-	 * The searched element is a constructor.
+	 * The searched element is a method (member function).
 	 */
-	public static final SearchFor CONSTRUCTOR = new SearchFor( 3 );
+	public static final SearchFor METHOD = new SearchFor( 3 );
 
 	/**
-	 * The searched element is a member.
+	 * The searched element is a field (member variable).
      */
-	public static final SearchFor MEMBER = new SearchFor( 4 );
+	public static final SearchFor FIELD = new SearchFor( 4 );
 	
 	/**
 	 * The searched element is a variable.

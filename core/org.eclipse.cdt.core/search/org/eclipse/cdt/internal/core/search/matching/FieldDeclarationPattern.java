@@ -9,13 +9,10 @@
  *     IBM Corp. - Rational Software - initial implementation
  ******************************************************************************/
 /*
- * Created on Jun 18, 2003
+ * Created on Jul 11, 2003
  */
-package org.eclipse.cdt.internal.ui.search;
+package org.eclipse.cdt.internal.core.search.matching;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.search.ui.IGroupByKeyComputer;
 
 /**
  * @author aniefer
@@ -23,24 +20,18 @@ import org.eclipse.search.ui.IGroupByKeyComputer;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class GroupByKeyComputer implements IGroupByKeyComputer {
+public class FieldDeclarationPattern extends VariableDeclarationPattern {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.IGroupByKeyComputer#computeGroupByKey(org.eclipse.core.resources.IMarker)
+	/**
+	 * @param name
+	 * @param cs
+	 * @param matchMode
+	 * @param limitTo
+	 * @param caseSensitive
 	 */
-	 
-	public Object computeGroupByKey(IMarker marker) {
-		if( marker == null ){
-			return null;
-		}
-		
-		Match match = null;
-		
-		try {
-			match = (Match) marker.getAttribute(CSearchResultCollector.IMATCH);
-		} catch (CoreException e) {
-		}
-		
-		return match.parent;
+	public FieldDeclarationPattern(char[] name, char[][] cs, int matchMode, LimitTo limitTo, boolean caseSensitive) {
+		super( name, matchMode, limitTo, caseSensitive );
+		// TODO Auto-generated constructor stub
 	}
+
 }

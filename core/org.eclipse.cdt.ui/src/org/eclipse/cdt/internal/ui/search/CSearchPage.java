@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
-//import org.eclipse.cdt.core.search.SearchFor;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
@@ -271,20 +270,12 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private void setLimitTo( SearchFor searchFor ) {
 		HashSet set = new HashSet();
 		
-		if( searchFor == TYPE ){
-			set.add( DECLARATIONS );
-			set.add( REFERENCES );
-		} else if ( searchFor == FUNCTION || searchFor == CONSTRUCTOR ) {
-			set.add( DECLARATIONS );
+		if ( searchFor == FUNCTION || searchFor == METHOD ) {
 			set.add( DEFINITIONS );
-			//set.add( REFERENCES );
-		} else if( searchFor == NAMESPACE ) {
-			set.add( DECLARATIONS );
-			set.add( REFERENCES );
-		} else if( searchFor == MEMBER ) {
-			set.add( DECLARATIONS );
-			set.add( REFERENCES );
 		}
+		
+		set.add( DECLARATIONS );
+		set.add( REFERENCES );
 		set.add( ALL_OCCURRENCES );
 		
 		for( int i = 0; i < fLimitTo.length; i++ )
@@ -306,10 +297,10 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		}
 
 		// Fill with dummy radio buttons
-		Button filler= new Button(result, SWT.RADIO);
-		filler.setVisible(false);
-		filler= new Button(result, SWT.RADIO);
-		filler.setVisible(false);
+		//Button filler= new Button(result, SWT.RADIO);
+		//filler.setVisible(false);
+		//filler= new Button(result, SWT.RADIO);
+		//filler.setVisible(false);
 
 		return result;		
 	}
@@ -567,13 +558,14 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private static List fgPreviousSearchPatterns = new ArrayList(20);
 
 	private Button[] fSearchFor;
-	private SearchFor[] fSearchForValues = { TYPE, FUNCTION, NAMESPACE, CONSTRUCTOR, MEMBER };
+	private SearchFor[] fSearchForValues = { TYPE, NAMESPACE, METHOD, FUNCTION, FIELD, VAR };
 	private String[] fSearchForText= {
 		CSearchMessages.getString("CSearchPage.searchFor.type"), //$NON-NLS-1$
-		CSearchMessages.getString("CSearchPage.searchFor.method"), //$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.namespace"), //$NON-NLS-1$
-		CSearchMessages.getString("CSearchPage.searchFor.constructor"), //$NON-NLS-1$
-		CSearchMessages.getString("CSearchPage.searchFor.field")}; //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.searchFor.method"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.searchFor.function"),
+		CSearchMessages.getString("CSearchPage.searchFor.field"),
+		CSearchMessages.getString("CSearchPage.searchFor.variable") }; //$NON-NLS-1$
 		
 	private Button[] fLimitTo;
 	private LimitTo[] fLimitToValues = { DECLARATIONS, DEFINITIONS, REFERENCES, ALL_OCCURRENCES };

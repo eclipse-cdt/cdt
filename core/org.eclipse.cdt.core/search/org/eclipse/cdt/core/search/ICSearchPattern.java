@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public interface ICSearchPattern {
+public interface ICSearchPattern extends ICSearchConstants{
 
 	public static final int IMPOSSIBLE_MATCH = 0;
 	public static final int POSSIBLE_MATCH   = 1;
@@ -34,4 +34,5 @@ public interface ICSearchPattern {
 	 */
 	int matchLevel( IASTOffsetableElement node );
 	
+	LimitTo   getLimitTo();
 }

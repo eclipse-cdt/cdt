@@ -13,11 +13,13 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.CElementImageProvider;
+import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.search.ui.SearchUI;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -39,55 +41,70 @@ public class CSearchResultLabelProvider extends LabelProvider {
 	
 	public static final String POTENTIAL_MATCH = CSearchMessages.getString("CSearchResultLabelProvider.potentialMatch"); //$NON-NLS-1$
 
+	public CSearchResultLabelProvider(){
+		//_imageProvider = new CElementImageProvider();
+		//_labelProvider = new CElementLabelProvider();	
+	}
+	
 	public Image getImage( Object element ) {
-		return null;	
+		if( !( element instanceof ISearchResultViewEntry ) ){
+			return null;
+		}
+		
+		ISearchResultViewEntry viewEntry = (ISearchResultViewEntry)element;
+		IMarker marker = viewEntry.getSelectedMarker();
+		Match match = null;
+		try {
+			match = (Match) marker.getAttribute( CSearchResultCollector.IMATCH );
+		} catch (CoreException e) {
+			return null;
+		}
+	
+		return match.image;
 	}
 	
 	public String getText( Object element ) {
-		_lastMarker = null;
-		
-		ICElement cElement = getCElement( element );
-		
-		boolean isPotentialMatch = _lastMarker != null && _lastMarker.getAttribute( SearchUI.POTENTIAL_MATCH, false );
-		
-		if( cElement == null ){
-			if( _lastMarker != null ){
-				if( isPotentialMatch )
-					return super.getText( _lastMarker.getResource() ) + POTENTIAL_MATCH;
-				else 
-					return super.getText( _lastMarker.getResource() );
-			} else {
-				return "";
-			}
+		if( ! (element instanceof ISearchResultViewEntry ) ){
+			return null;
 		}
 		
-		String text = "";
-		if( isPotentialMatch ){
-			text = CElementLabels.getTextLabel( element, _textFlags ) + POTENTIAL_MATCH;
-		} else {
-			text = CElementLabels.getTextLabel( element, _textFlags );
+		ISearchResultViewEntry viewEntry = (ISearchResultViewEntry) element;
+		
+		IMarker marker = viewEntry.getSelectedMarker();
+		
+		Match match = null;
+		
+		try {
+			match = (Match) marker.getAttribute(CSearchResultCollector.IMATCH);
+		} catch (CoreException e) {
+			return null;
 		}
-		//if( cElement instanceof )
 		
-		return element == null ? "" : element.toString();//$NON-NLS-1$	
-	}
-	
-	public void setOrder(int orderFlag) {
-		int flags = DEFAULT_TEXTFLAGS | CElementLabels.P_COMPRESSED;
+		IResource resource = marker.getResource();
 		
-		switch( orderFlag ){
+		String result = null;
+		String path = (resource != null ) ? resource.getFullPath().toString() : "";
+		
+		switch( getOrder() ){
 			case SHOW_ELEMENT_CONTAINER:
-				flags |= CElementLabels.ALL_POST_QUALIFIED | CElementLabels.M_PARAMETER_TYPES;
+				result = match.name + " - " + match.parent + " ( " + path + " )";
 				break;
 			case SHOW_PATH:
-				flags |= CElementLabels.PREPEND_ROOT_PATH;
-				/*fall through to SHOW_CONTAINER_ELEMENT*/
+				result = path + " - " + match.parent + "::" + match.name;
+				break;				
 			case SHOW_CONTAINER_ELEMENT:
-				flags |= CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.M_PARAMETER_TYPES;
+				result = match.parent + "::" + match.name + " ( " + path + " )";
 				break;
 		}
-			
-		_textFlags = flags;
+		
+		return result;
+	}
+	
+	public int getOrder(){
+		return _sortOrder;
+	}
+	public void setOrder(int orderFlag) {
+		_sortOrder = orderFlag;
 	}
 	
 	protected IMarker getMarker( Object o ){
@@ -98,35 +115,11 @@ public class CSearchResultLabelProvider extends LabelProvider {
 		return ( (ISearchResultViewEntry)o ).getSelectedMarker();
 	}
 	
-	private ICElement getCElement( Object o ){
-		if( o instanceof ICElement )
-			return (ICElement) o;
-
-		IMarker marker = getMarker( o );
-		if( marker == null )
-			return null;
-			
-		return getCElement( marker, (ISearchResultViewEntry) o );
-	}
 	
-	private ICElement getCElement( IMarker marker, ISearchResultViewEntry entry ) {
-		if( _lastMarker != marker ){
-			boolean canUseGroupByKey = false;
-			
-			if( canUseGroupByKey && entry.getGroupByKey() instanceof ICElement ){
-				_lastCElement = (ICElement) entry.getGroupByKey();
-			} else {
-				_lastCElement = CSearchUtil.getCElement( marker );
-			}
-			
-			_lastMarker = marker;
-		}
-		return _lastCElement;
-	}
+	private CElementImageProvider _imageProvider;
+	private CElementLabelProvider _labelProvider;
 	
-	private IMarker _lastMarker;
-	private ICElement _lastCElement;
-	
+	private int _sortOrder;
 	private int _textFlags;
 	private int _imageFlags;
 	

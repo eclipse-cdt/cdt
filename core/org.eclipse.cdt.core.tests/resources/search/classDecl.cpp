@@ -9,5 +9,10 @@ namespace NS {
 	}
 	class B {
 		struct A {};
+		enum e {};
 	};
+	union u{ } ;
 }
+
+union u{
+};

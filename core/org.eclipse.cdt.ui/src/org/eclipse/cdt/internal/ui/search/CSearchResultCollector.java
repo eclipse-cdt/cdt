@@ -18,17 +18,28 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
+import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.search.ui.IActionGroupFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
+//import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
-import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.swt.graphics.Image;
+//import org.eclipse.ui.actions.ActionGroup;
 
 /**
  * @author aniefer
@@ -37,6 +48,9 @@ import org.eclipse.ui.actions.ActionGroup;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class CSearchResultCollector implements ICSearchResultCollector {
+	
+	public static final String IMATCH = "IMatchObject";
+	
 	/**
 	 * 
 	 */
@@ -53,7 +67,7 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 		_matchCount = 0;
 		if( _view != null ){
 			_view.searchStarted(
-				new ActionGroupFactory(),
+				null,//new ActionGroupFactory(),
 				_operation.getSingularLabel(),
 				_operation.getPluralLabelPattern(),
 				_operation.getImageDescriptor(),
@@ -76,23 +90,26 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 		IResource resource,
 		int start,
 		int end,
-		ICElement enclosingElement,
+		IMatch enclosingObject,
 		int accuracy)
 		throws CoreException 
 	{
 		IMarker marker = resource.createMarker( SearchUI.SEARCH_MARKER );
 		
-		Object groupKey = enclosingElement;
+		Match match = (Match) enclosingObject;
+		
+		Object groupKey = match;
 		
 		HashMap markerAttributes = new HashMap( 2 );
 		
 		//we can hang any other info we want off the marker
 		markerAttributes.put( IMarker.CHAR_START, new Integer( Math.max( start, 0 ) ) );		
 		markerAttributes.put( IMarker.CHAR_END,   new Integer( Math.max( end, 0 ) ) );
+		markerAttributes.put( IMATCH, enclosingObject );
 		
 		marker.setAttributes( markerAttributes );
 		
-		_view.addMatch( enclosingElement.getElementName(), groupKey, resource, marker );
+		_view.addMatch( match.name, groupKey, resource, marker );
 		_matchCount++;
 	}
 
@@ -100,7 +117,7 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 		IPath path,
 		int start,
 		int end,
-		ICElement enclosingElement,
+		IMatch match,
 		int accuracy)
 		throws CoreException 
 	{
@@ -108,9 +125,49 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 			_matches = new HashSet();
 		}
 		
-		_matches.add( new Match( path.toString(), start, end ) );
+		_matches.add( match );
 	}
-	
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.search.ICSearchResultCollector#createMatch(org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement)
+	 */
+	public IMatch createMatch(IASTOffsetableNamedElement node, IASTScope parent ) {
+		String name = node.getName();
+		
+		String parentName = "";
+		if( parent instanceof IASTQualifiedNameElement ){
+			String [] names = ((IASTQualifiedNameElement)parent).getFullyQualifiedName();
+			for( int i = 0; i < names.length; i++ ){
+				if( i > 0 )
+					parentName += "::";
+					
+				parentName += names[ i ];
+			}
+		}
+		
+		ImageDescriptor imageDescriptor = null;
+		if( node instanceof IASTClassSpecifier ){
+			ASTClassKind kind = ((IASTClassSpecifier)node).getClassKind();
+			if( kind == ASTClassKind.CLASS ){
+				imageDescriptor = CPluginImages.DESC_OBJS_CLASS;
+			} else if ( kind == ASTClassKind.STRUCT ){
+				imageDescriptor = CPluginImages.DESC_OBJS_STRUCT;
+			} else if ( kind == ASTClassKind.UNION ){
+				imageDescriptor = CPluginImages.DESC_OBJS_UNION;
+			}
+		} else if ( node instanceof IASTNamespaceDefinition ){
+			imageDescriptor = CPluginImages.DESC_OBJS_CONTAINER;
+		} else if ( node instanceof IASTEnumerationSpecifier ){
+			imageDescriptor = CPluginImages.DESC_OBJS_ENUMERATION;
+		}
+		
+		Image image = CUIPlugin.getImageDescriptorRegistry().get( imageDescriptor );
+		IMatch match = new Match(name, parentName, image, node.getElementNameOffset(), name.length() );
+		
+		return match;
+	}
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.search.ICSearchResultCollector#done()
 	 */
@@ -153,13 +210,13 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 		return _matches;
 	}
 	
-	private class ActionGroupFactory implements IActionGroupFactory {
-		public ActionGroup createActionGroup( ISearchResultView part ){
-			return new CSearchViewActionGroup( part );
-		}
-	}
+	//private class ActionGroupFactory implements IActionGroupFactory {
+	//	public ActionGroup createActionGroup( ISearchResultView part ){
+	//		return new CSearchViewActionGroup( part );
+	//	}
+	//}
 	
-	public static class Match {
+	/*public static class Match impl{
 		public Match( String path, int start, int end ){
 			this.path = path;
 			this.start = start;
@@ -170,7 +227,7 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 		public int start;
 		public int end;
 	}
-		
+	*/	
 	private static final String SEARCHING = CSearchMessages.getString("CSearchResultCollector.searching"); //$NON-NLS-1$
 	private static final String MATCH     = CSearchMessages.getString("CSearchResultCollector.match"); //$NON-NLS-1$
 	private static final String MATCHES   = CSearchMessages.getString("CSearchResultCollector.matches"); //$NON-NLS-1$

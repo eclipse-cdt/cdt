@@ -17,7 +17,9 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
@@ -26,6 +28,7 @@ import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 
+
 /**
  * @author aniefer
  */
@@ -33,11 +36,12 @@ import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 public class ClassDeclarationPattern extends CSearchPattern {
 
 	public ClassDeclarationPattern( int matchMode, boolean caseSensitive ){
-		super( matchMode, caseSensitive );
+		super( matchMode, caseSensitive, DECLARATIONS );
 	}
 	
-	public ClassDeclarationPattern( char[] name, char[][] containers, ASTClassKind kind, int mode, boolean caseSensitive ){
-		super( mode, caseSensitive );
+	public ClassDeclarationPattern( char[] name, char[][] containers, ASTClassKind kind, int mode, LimitTo limit, boolean caseSensitive ){
+		super( mode, caseSensitive, limit );
+		
 		simpleName = caseSensitive ? name : CharOperation.toLowerCase( name );
 		if( caseSensitive || containers == null ){
 			containingTypes = containers;
@@ -48,41 +52,45 @@ public class ClassDeclarationPattern extends CSearchPattern {
 				this.containingTypes[i] = CharOperation.toLowerCase( containers[i] );
 			}
 		} 
+		
 		classKind = kind;
+		limitTo = limit;
 	}
 	
 	public int matchLevel( IASTOffsetableElement node ){
-		if( !( node instanceof IASTClassSpecifier ) )
+		
+		if( !( node instanceof IASTClassSpecifier ) && !( node instanceof IASTEnumerationSpecifier ) )
 			return IMPOSSIBLE_MATCH;
-			
-		IASTClassSpecifier clsSpec = (IASTClassSpecifier) node;
-		String nodeName = clsSpec.getName();
+		
+		String nodeName = ((IASTOffsetableNamedElement)node).getName();
 		
 		//check name, if simpleName == null, its treated the same as "*"	
-		if( simpleName != null && !matchesName( simpleName, clsSpec.getName().toCharArray() ) ){
+		if( simpleName != null && !matchesName( simpleName, nodeName.toCharArray() ) ){
 			return IMPOSSIBLE_MATCH;
+		}
+
+		String [] fullyQualifiedName = null;
+		
+		if( node instanceof IASTClassSpecifier ){
+			IASTClassSpecifier clsSpec = (IASTClassSpecifier) node;
+			fullyQualifiedName = clsSpec.getFullyQualifiedName();		
+		} else {
+			//TODO fully qualified names for enums
 		}
 		
 		//check containing scopes
-		String [] qualifications = clsSpec.getFullyQualifiedName();
-		if( qualifications != null ){
-			
-			int size = containingTypes.length;
-			if( qualifications.length < size )
-				return IMPOSSIBLE_MATCH;
-				
-			for( int i = 0; i < containingTypes.length; i++ ){
-				if( !matchesName( containingTypes[i], qualifications[i].toCharArray() ) ){
-					return IMPOSSIBLE_MATCH;
-				}
-			}
-		} else if( containingTypes.length > 0 ) {
+		if( !matchQualifications( containingTypes, fullyQualifiedName ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 		
 		//check type
-		if( classKind != null && classKind != clsSpec.getClassKind() ){
-			return IMPOSSIBLE_MATCH;
+		if( classKind != null ){
+			if( node instanceof IASTClassSpecifier ){
+				IASTClassSpecifier clsSpec = (IASTClassSpecifier) node;
+				return ( classKind == clsSpec.getClassKind() ) ? ACCURATE_MATCH : IMPOSSIBLE_MATCH;
+			} else {
+				return ( classKind == ASTClassKind.ENUM ) ? ACCURATE_MATCH : IMPOSSIBLE_MATCH;
+			}
 		}
 		
 		return ACCURATE_MATCH;
@@ -94,10 +102,14 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	public char[] [] getContainingTypes () {
 		return containingTypes;
 	}
-	
+	public ASTClassKind getKind(){
+		return classKind;
+	}
+
 	private char[] 	  simpleName;
 	private char[][]  containingTypes;
 	private ASTClassKind classKind;
+	private LimitTo	  limitTo;
 	
 	protected char[] decodedSimpleName;
 	private char[][] decodedContainingTypes;

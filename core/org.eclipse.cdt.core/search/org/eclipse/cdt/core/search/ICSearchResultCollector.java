@@ -14,6 +14,8 @@
 package org.eclipse.cdt.core.search;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -50,9 +52,9 @@ public interface ICSearchResultCollector {
 	 * @param end the end position of the match, -1 if it is unknown;
 	 *  the ending offset is exclusive, meaning that the actual range of characters 
 	 *  covered is <code>[start, end]</code>
-	 * @param enclosingElement the Java element that contains the character range
+	 * @param enclosingObject an object that contains the character range
 	 *	<code>[start, end]</code>; the value can be <code>null</code> indicating that
-	 *	no enclosing Java element has been found
+	 *	no enclosing object has been found
 	 * @param accuracy the level of accuracy the search result has; either
 	 *  <code>EXACT_MATCH</code> or <code>POTENTIAL_MATCH</code>
 	 * @exception CoreException if this collector had a problem accepting the search result
@@ -61,7 +63,7 @@ public interface ICSearchResultCollector {
 		IResource resource,
 		int start,
 		int end,
-		ICElement enclosingElement,
+		IMatch enclosingObject,
 		int accuracy)
 		throws CoreException;
 		
@@ -85,7 +87,16 @@ public interface ICSearchResultCollector {
 	public void accept(IPath currentPath, 
 					   int start, 
 					   int end, 
-					   ICElement enclosingElement, 
+					   IMatch enclosingObject, 
 					   int accuracyLevel) throws CoreException;
 
+	/**
+	 * returns an IMatch object that contains any information the client cared
+	 * to extract from the IAST node.  
+	 * Note that clients should not reference information in the node itself so 
+	 * that it can be garbage collected 
+	 * @param node
+	 * @return
+	 */
+	public IMatch createMatch(IASTOffsetableNamedElement node, IASTScope parent );
 }

@@ -973,8 +973,8 @@
             class="org.eclipse.cdt.internal.ui.search.ParentNameSorter"
             id="org.eclipse.search.internal.ui.ParentNameSorter">
       </sorter>
-      <sorter
-            pageId="org.eclipse.cdt.ui.JavaSearchPage"
+	<sorter
+            pageId="org.eclipse.cdt.ui.CSearchPage"
             label="%PathNameSorter.label"
             icon="icons/full/clcl16/search_sortmatch.gif"
             tooltip="%PathNameSorter.tooltip"

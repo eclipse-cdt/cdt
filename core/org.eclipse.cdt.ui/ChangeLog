@@ -1,3 +1,9 @@
+2003-07-14 Andrew Niefer
+	-modified plugin.xml entry for search's PathNameSorter
+	-added src/org/eclipse/cdt/internal/ui/search/Match.java which implements IMatch to store 
+	 information used by CSearchResultLabelProvider
+	-Modified CSearchResultCollector and CSearchResultLabelProvider to use Match
+
 2003-07-11 Bogdan Gheorghe
 	Added new C/C++ Search menu item.
 	

@@ -1,3 +1,19 @@
+2003-07-14 Andrew Niefer
+	-Modified SearchFor instances in ICSearchConstants to more closely match what we are searching for
+	-added IMatch interface, it represents matches found by the search engine, implementors can store
+	 whatever information they like, see ICSearchResultCollector::createMatch
+	-added createMatch to the ICSearchResultCollector interface, the result collector is responsible for
+	 implementing IMatch to store whatever data they want out of the AST nodes.
+	-added skeleton patterns:
+		search/org/eclipse/cdt/internal/core/search/matching/FieldDeclarationPattern.java
+		search/org/eclipse/cdt/internal/core/search/matching/FunctionDeclarationPattern.java
+		search/org/eclipse/cdt/internal/core/search/matching/MethodDeclarationPattern.java
+		search/org/eclipse/cdt/internal/core/search/matching/NamespaceDeclarationPattern.java
+		search/org/eclipse/cdt/internal/core/search/matching/VariableDeclarationPattern.java
+	-added beginnings of CSearchPattern::create*Pattern functions
+	-modifications to MatchLocator to keep track of current scope
+	-added CSearchPattern::matchQualifications
+	
 2003-07-10 Bogdan Gheorghe
 	Provided implementation for ICSearchScope.java, CSearchScope.java
 	

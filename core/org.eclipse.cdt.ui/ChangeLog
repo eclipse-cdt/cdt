@@ -1,3 +1,23 @@
+2003-05-23 Alain Magloire
+
+	Patch from Victor Mozgin to deal with PR 38405
+	The CEditor did not do hilight for macros like
+	# define foo
+	
+	I've patched UI code to add a new rule for handling preprocessor directives,
+	PreprocessorRule class (extends WordRule). And here I noticed that
+	CppCodeScanner uses private class CWordRule, while CCodeScanner uses standard
+	WordRule. They seem to do exactly the same thing, but CWordRule additionally
+	checks for # sign to be the first character on the line.  As now preprocessor
+	directives are handled by PreprocessorRule class, CWordRule can be removed and
+	replaced with WordRule; also, there is no need for CWordDetector to pick up #
+	sign as a valid word start.
+
+	* src/org/eclipse/cdt/internal/ui/text/CCodeScanner.java
+	* src/org/eclipse/cdt/internal/ui/text/CppCodeScanner.java: removed
+	* src/org/eclipse/cdt/internal/ui/text/PreprocessorRule.java: New file
+	* src/org/eclipse/cdt/internal/ui/text/util/CWordDetector.java
+
 2003-05-23 Mikhail Khodjaiants
 	PR 38047: Unable to save changes in C/C++ debug editor.
 	* src/org/eclipse/cdt/ui/IEditorInputDelegate.java: new

@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.contentassist;
+package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import org.eclipse.cdt.core.ICompletionRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -117,6 +117,18 @@ public class CompletionRequestorAdaptor implements ICompletionRequestor {
 	 * @see org.eclipse.cdt.core.ICompletionRequestor#acceptEnumerator(java.lang.String, int, int, int)
 	 */
 	public void acceptEnumerator(
+		String name,
+		int completionStart,
+		int completionLength,
+		int relevance) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICompletionRequestor#acceptKeyword(java.lang.String, int, int, int)
+	 */
+	public void acceptKeyword(
 		String name,
 		int completionStart,
 		int completionLength,

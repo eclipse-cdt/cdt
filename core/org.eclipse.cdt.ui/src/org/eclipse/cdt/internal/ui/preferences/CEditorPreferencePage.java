@@ -20,8 +20,8 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
@@ -58,9 +58,9 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 
@@ -78,13 +78,13 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
             PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR }
 	};
 
-	protected final String[][] fAppearanceColorListModel = new String[][] { { "Line number color", TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR }, //$NON-NLS-1$
+	protected final String[][] fAppearanceColorListModel = new String[][] { { "Line number color", ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR }, //$NON-NLS-1$
 		{
 			"Matching bracket color", CEditor.MATCHING_BRACKETS_COLOR }, //$NON-NLS-1$
 		{
-			"Current line highlight color", TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR }, //$NON-NLS-1$
+			"Current line highlight color", ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR }, //$NON-NLS-1$
 		{
-			"Print margin color", TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR }, //$NON-NLS-1$
+			"Print margin color", ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR }, //$NON-NLS-1$
 		{
 			"Linked position color", CEditor.LINKED_POSITION_COLOR }, //$NON-NLS-1$
 	};
@@ -158,114 +158,54 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 				new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getOverviewRulerPreferenceKey()));
 		}
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.PREFERENCE_COLOR_FOREGROUND));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.BOOLEAN,
-				CEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,CEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.PREFERENCE_COLOR_BACKGROUND));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.BOOLEAN,
-				CEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_MULTI_LINE_COMMENT));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_MULTI_LINE_COMMENT + "_bold"));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_SINGLE_LINE_COMMENT));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.BOOLEAN,
-				ICColorConstants.C_SINGLE_LINE_COMMENT + "_bold"));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,CEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_MULTI_LINE_COMMENT));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_MULTI_LINE_COMMENT + "_bold"));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_SINGLE_LINE_COMMENT));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_SINGLE_LINE_COMMENT + "_bold"));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_KEYWORD));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_KEYWORD + "_bold"));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_KEYWORD + "_bold"));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_TYPE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_TYPE + "_bold"));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_STRING));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_STRING + "_bold"));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_DEFAULT));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_DEFAULT + "_bold"));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_DEFAULT + "_bold"));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.MATCHING_BRACKETS_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.MATCHING_BRACKETS));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.STRING,
-				TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.BOOLEAN,
-				TextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.SPACES_FOR_TABS));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.STRING,
-				TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.INT,
-				TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.BOOLEAN,
-				TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.LINKED_POSITION_COLOR));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.STRING,
-				TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.BOOLEAN,
-				TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.BOOLEAN,
-				TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOACTIVATION));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.AUTOACTIVATION_DELAY));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOACTIVATION));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOINSERT));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_BACKGROUND));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FOREGROUND));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_FOREGROUND));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.STRING,
-				ContentAssistPreference.AUTOACTIVATION_TRIGGERS_C));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(
-				OverlayPreferenceStore.BOOLEAN,
-				ContentAssistPreference.SHOW_DOCUMENTED_PROPOSALS));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ORDER_PROPOSALS));
-		overlayKeys.add(
-			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CASE_SENSITIVITY));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_BACKGROUND));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FOREGROUND));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_FOREGROUND));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_C));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.SHOW_DOCUMENTED_PROPOSALS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ORDER_PROPOSALS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CASE_SENSITIVITY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ADD_INCLUDE));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_SCOPE_SEARCH));
-		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FOREGROUND),
-		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND),
-		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_FOREGROUND),
-		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVADOC),
-        
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_SCOPE_SEARCH));        
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_TAG_COLOR));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_TAG_BOLD));
-        
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_INDICATION_COLOR));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_INDICATION));
-        
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER));
-
-		OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
+		
+        OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
 	}
@@ -287,12 +227,12 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		color = display.getSystemColor(SWT.COLOR_GRAY);
 		PreferenceConverter.setDefault(store, CEditor.MATCHING_BRACKETS_COLOR, color.getRGB());
 
-		store.setDefault(TextEditorPreferenceConstants.EDITOR_CURRENT_LINE, true);
-		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, new RGB(225, 235, 224));
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, true);
+		PreferenceConverter.setDefault(store, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, new RGB(225, 235, 224));
 
-		store.setDefault(TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, true);
-		store.setDefault(TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
-		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, new RGB(176, 180, 185));
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, true);
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
+		PreferenceConverter.setDefault(store, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, new RGB(176, 180, 185));
 
 		WorkbenchChainedTextFontFieldEditor.startPropagate(store, JFaceResources.TEXT_FONT);
 
@@ -328,10 +268,10 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		PreferenceConverter.setDefault(store, CEditor.LINKED_POSITION_COLOR, new RGB(0, 200, 100));
 
-		store.setDefault(TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
-		PreferenceConverter.setDefault(store, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, new RGB(0, 0, 0));
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
+		PreferenceConverter.setDefault(store, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, new RGB(0, 0, 0));
 
-		store.setDefault(TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
 
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION, false);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_DELAY, 500);
@@ -792,7 +732,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		addTextField(behaviorComposite, label, CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH, 2, 0, true);
 
 		label = "Print margin col&umn:";
-		addTextField(behaviorComposite, label, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 4, 0, true);
+		addTextField(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 4, 0, true);
 
 		label = "Insert &space for tabs";
 		addCheckBox(behaviorComposite, label, CEditor.SPACES_FOR_TABS, 0);
@@ -801,16 +741,16 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		fBracketHighlightButton = addCheckBox(behaviorComposite, label, CEditor.MATCHING_BRACKETS, 0);
 
 		label = "Show line numbers"; //$NON-NLS-1$
-		addCheckBox(behaviorComposite, label, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
+		addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
 
 		label = "Highlight &current line";
-		fLineHighlightButton = addCheckBox(behaviorComposite, label, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
+		fLineHighlightButton = addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
 
 		label = "Show overview ruler"; //$NON-NLS-1$
-		addCheckBox(behaviorComposite, label, TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
+		addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
 
 		label = "Show print &margin";
-		addCheckBox(behaviorComposite, label, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
+		addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
 
 		Label l = new Label(behaviorComposite, SWT.LEFT);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -899,8 +839,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		//label= "Show only proposals visible in the invocation conte&xt";
 		//addCheckBox(contentAssistComposite, label, ContentAssistPreference.SHOW_VISIBLE_PROPOSALS, 0);
 
-		//label= "Show only proposals with &matching cases";
-		//addCheckBox(contentAssistComposite, label, ContentAssistPreference.CASE_SENSITIVITY, 0);
+		label= "Show only proposals with &matching cases";
+		addCheckBox(contentAssistComposite, label, ContentAssistPreference.CASE_SENSITIVITY, 0);
 
 		//label= "Present proposals in a&lphabetical order";
 		//addCheckBox(contentAssistComposite, label, ContentAssistPreference.ORDER_PROPOSALS, 0);

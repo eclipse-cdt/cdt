@@ -1,3 +1,8 @@
+2003-12-03 Hoda Amer
+	Content Assist work :Added a new internal package for content assist
+	Added more functionality to the CompletionEngine.
+	Added the Case Sensitive user preference.
+	 
 2003-11-27 Hoda Amer
 	Content Assist work : Added a ResultCollector class
 	and moved the ICCompletionProposal from an internal package 

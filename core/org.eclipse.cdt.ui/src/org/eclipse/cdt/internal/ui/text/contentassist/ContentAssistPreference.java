@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui.text;
+package org.eclipse.cdt.internal.ui.text.contentassist;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -8,6 +8,8 @@ package org.eclipse.cdt.internal.ui.text;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;

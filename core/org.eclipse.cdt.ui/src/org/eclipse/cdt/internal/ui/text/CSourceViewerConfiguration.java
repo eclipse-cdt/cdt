@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorTextHoverDispatcher;
+import org.eclipse.cdt.internal.ui.text.contentassist.*;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICDTConstants;
 import org.eclipse.core.runtime.CoreException;

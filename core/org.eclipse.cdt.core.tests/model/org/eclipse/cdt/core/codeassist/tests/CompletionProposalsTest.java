@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.cdt.internal.ui.text.CCompletionProcessor;
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;

@@ -15,7 +15,7 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.ui.CUIPlugin;

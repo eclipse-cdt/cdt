@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui.text;
+package org.eclipse.cdt.internal.ui.text.contentassist;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.contentassist.CompletionEngine;
 import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.OrPattern;
@@ -36,6 +35,8 @@ import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
 import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -56,7 +57,6 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 
@@ -472,7 +472,10 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		//  TODO: change that to resource scope later
 		if (currentScope == null)
 		   return;
-		   
+		
+		// clear the completion list at the result collector
+		resultCollector.clearCompletions();
+		
 		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		boolean projectScope = store.getBoolean(ContentAssistPreference.PROJECT_SCOPE_SEARCH);
 		ICSearchScope scope = null;
@@ -557,8 +560,41 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			
 			BasicSearchMatch match = (BasicSearchMatch)i.next();
 			int type = match.getElementType();
-			switch (type){
-				case ICElement.C_FIELD:
+			int relevance = completionEngine.computeRelevance(type, frag, match.getName());
+			if(relevance > 0){				
+				switch (type){
+					case ICElement.C_FIELD:
+						switch (match.getVisibility()){
+							case ICElement.CPP_PUBLIC:
+								visibility = ASTAccessVisibility.PUBLIC;
+							break;
+							case ICElement.CPP_PROTECTED:
+								visibility = ASTAccessVisibility.PROTECTED;
+							break;
+							default:
+								visibility = ASTAccessVisibility.PRIVATE;
+							break;
+						};
+						resultCollector.acceptField(
+							match.getName(), 
+							null, 
+							visibility, 
+							completionStart, 
+							completionLength, 
+							relevance);
+					break;
+					
+					case ICElement.C_VARIABLE:
+					case ICElement.C_VARIABLE_DECLARATION:
+						resultCollector.acceptVariable(
+						match.getName(), 
+						null, 
+						completionStart, 
+						completionLength, 
+						relevance);
+					break;
+					case ICElement.C_METHOD:
+					case ICElement.C_METHOD_DECLARATION:
 					switch (match.getVisibility()){
 						case ICElement.CPP_PUBLIC:
 							visibility = ASTAccessVisibility.PUBLIC;
@@ -570,109 +606,79 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 							visibility = ASTAccessVisibility.PRIVATE;
 						break;
 					};
-					resultCollector.acceptField(
+					resultCollector.acceptMethod(
 						match.getName(), 
-						null, 
+						null,
+						match.getReturnType(), 
 						visibility, 
 						completionStart, 
 						completionLength, 
-						completionEngine.computeTypeRelevance(type));
-				break;
-				
-				case ICElement.C_VARIABLE:
-				case ICElement.C_VARIABLE_DECLARATION:
-					resultCollector.acceptVariable(
+						completionEngine.computeRelevance(type, prefix, match.getName()));
+					break;				
+					case ICElement.C_FUNCTION:
+					case ICElement.C_FUNCTION_DECLARATION:
+					resultCollector.acceptFunction(
 						match.getName(), 
-						null, 
+						null,
+						match.getReturnType(), 
 						completionStart, 
 						completionLength, 
-						completionEngine.computeTypeRelevance(type));
-				break;
-				case ICElement.C_METHOD:
-				case ICElement.C_METHOD_DECLARATION:
-				switch (match.getVisibility()){
-					case ICElement.CPP_PUBLIC:
-						visibility = ASTAccessVisibility.PUBLIC;
+						completionEngine.computeRelevance(type, prefix, match.getName()));
 					break;
-					case ICElement.CPP_PROTECTED:
-						visibility = ASTAccessVisibility.PROTECTED;
+					case ICElement.C_CLASS:
+					resultCollector.acceptClass(
+						match.getName(), 
+						completionStart, 
+						completionLength, 
+						completionEngine.computeRelevance(type, prefix, match.getName()));
 					break;
-					default:
-						visibility = ASTAccessVisibility.PRIVATE;
+					case ICElement.C_STRUCT:
+					resultCollector.acceptStruct(
+						match.getName(), 
+						completionStart, 
+						completionLength, 
+						completionEngine.computeRelevance(type, prefix, match.getName()));
 					break;
-				};
-				resultCollector.acceptMethod(
-					match.getName(), 
-					null,
-					match.getReturnType(), 
-					visibility, 
-					completionStart, 
-					completionLength, 
-					completionEngine.computeTypeRelevance(type));
-				break;				
-				case ICElement.C_FUNCTION:
-				case ICElement.C_FUNCTION_DECLARATION:
-				resultCollector.acceptFunction(
-					match.getName(), 
-					null,
-					match.getReturnType(), 
-					completionStart, 
-					completionLength, 
-					completionEngine.computeTypeRelevance(type));
-				break;
-				case ICElement.C_CLASS:
-				resultCollector.acceptClass(
-					match.getName(), 
-					completionStart, 
-					completionLength, 
-					completionEngine.computeTypeRelevance(type));
-				break;
-				case ICElement.C_STRUCT:
-				resultCollector.acceptStruct(
-					match.getName(), 
-					completionStart, 
-					completionLength, 
-					completionEngine.computeTypeRelevance(type));
-				break;
-				case ICElement.C_UNION:
-				resultCollector.acceptUnion(
-					match.getName(), 
-					completionStart, 
-					completionLength, 
-					completionEngine.computeTypeRelevance(type));
-				break;
-				case ICElement.C_NAMESPACE:
-				resultCollector.acceptNamespace(
-					match.getName(), 
-					completionStart, 
-					completionLength, 
-					completionEngine.computeTypeRelevance(type));				
-				break;
-				case ICElement.C_MACRO:
-				resultCollector.acceptMacro(
-					match.getName(), 
-					completionStart, 
-					completionLength, 
-					completionEngine.computeTypeRelevance(type));
-				break;
-				case ICElement.C_ENUMERATION:
-				resultCollector.acceptEnumeration(
-					match.getName(), 
-					completionStart, 
-					completionLength, 
-					completionEngine.computeTypeRelevance(type));				
-				break;
-				case ICElement.C_ENUMERATOR:
-				resultCollector.acceptEnumerator(
-					match.getName(), 
-					completionStart, 
-					completionLength, 
-					completionEngine.computeTypeRelevance(type));
-				break;
-				default :
-				break;				
-			}
-		}
+					case ICElement.C_UNION:
+					resultCollector.acceptUnion(
+						match.getName(), 
+						completionStart, 
+						completionLength, 
+						completionEngine.computeRelevance(type, prefix, match.getName()));
+					break;
+					case ICElement.C_NAMESPACE:
+					resultCollector.acceptNamespace(
+						match.getName(), 
+						completionStart, 
+						completionLength, 
+						completionEngine.computeRelevance(type, prefix, match.getName()));				
+					break;
+					case ICElement.C_MACRO:
+					resultCollector.acceptMacro(
+						match.getName(), 
+						completionStart, 
+						completionLength, 
+						completionEngine.computeRelevance(type, prefix, match.getName()));
+					break;
+					case ICElement.C_ENUMERATION:
+					resultCollector.acceptEnumeration(
+						match.getName(), 
+						completionStart, 
+						completionLength, 
+						completionEngine.computeRelevance(type, prefix, match.getName()));				
+					break;
+					case ICElement.C_ENUMERATOR:
+					resultCollector.acceptEnumerator(
+						match.getName(), 
+						completionStart, 
+						completionLength, 
+						completionEngine.computeRelevance(type, prefix, match.getName()));
+					break;
+					default :
+					break;				
+				} // end switch
+			} // end if relevance
+		} // end while 
 		completions.addAll(resultCollector.getCompletions());
 	}
 

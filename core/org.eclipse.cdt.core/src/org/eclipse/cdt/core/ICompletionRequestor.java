@@ -31,4 +31,5 @@ public interface ICompletionRequestor {
 	void acceptMacro(String name, int completionStart, int completionLength, int relevance);
 	void acceptEnumeration(String name, int completionStart, int completionLength, int relevance);
 	void acceptEnumerator(String name, int completionStart, int completionLength, int relevance);
+	void acceptKeyword(String name, int completionStart, int completionLength, int relevance);
 }

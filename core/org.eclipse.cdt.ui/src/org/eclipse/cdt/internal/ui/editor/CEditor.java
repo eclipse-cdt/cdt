@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.resources.IFile;

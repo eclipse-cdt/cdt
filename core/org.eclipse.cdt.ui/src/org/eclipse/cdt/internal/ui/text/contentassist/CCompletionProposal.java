@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui.text;
+package org.eclipse.cdt.internal.ui.text.contentassist;
 
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002.

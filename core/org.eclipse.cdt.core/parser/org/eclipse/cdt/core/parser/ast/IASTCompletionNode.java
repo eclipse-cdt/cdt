@@ -49,7 +49,7 @@ public interface IASTCompletionNode {
 	}
 
 
-	public CompletionKind		getCompletionKind(); 
-	public IASTNode               getCompletionContext(); 
-	public String                   	getCompletionPrefix(); 
+	public CompletionKind	getCompletionKind(); 
+	public IASTNode			getCompletionContext(); 
+	public String			getCompletionPrefix(); 
 }

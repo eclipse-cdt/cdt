@@ -495,10 +495,13 @@ public class CDTDebugModelPresentation extends LabelProvider
 		String label = new String();
 		IPath path = new Path( library.getFileName() );
 		if ( !path.isEmpty() )
-			label += ( qualified ? path.toOSString() : path.lastSegment() );	
+			label += ( qualified ? path.toOSString() : path.lastSegment() );
+		String startAddress = ( library.getStartAddress() > 0 ) ? 
+								CDebugUtils.toHexAddressString( library.getStartAddress() ) : "Not available";
+		String endAddress = ( library.getEndAddress() > 0 ) ? 
+								CDebugUtils.toHexAddressString( library.getEndAddress() ) : "Not available";
 		return label + MessageFormat.format( " (Start address: ''{0}''  End address: ''{1}'')", 
-									 		 new String[] { CDebugUtils.toHexAddressString( library.getStartAddress() ),
-									 		 				CDebugUtils.toHexAddressString( library.getEndAddress() ) } );
+									 		 new String[] { startAddress, endAddress } );
 	}
 
 	/**

@@ -75,4 +75,5 @@ public interface IASTTranslationUnit extends IASTNode {
    
    public IASTVisitor getVisitor();
 
+   public String getFilePath();
 }

@@ -67,7 +67,6 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 
     private ILocationResolver resolver;
 
-    private static final IASTNode[] EMPTY_NODE_ARRAY = new IASTNode[0];
 
     private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
 
@@ -451,4 +450,15 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
             visitor = new CPPVisitor( this );
         return visitor;
     }
+    
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getFilePath()
+	 */
+	public String getFilePath() {
+		if (resolver == null)
+			return EMPTY_STRING;
+		return new String(resolver.getTranslationUnitPath());
+	}
 }

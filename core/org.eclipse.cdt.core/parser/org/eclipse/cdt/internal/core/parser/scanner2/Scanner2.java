@@ -199,7 +199,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private void popContext() {
 		bufferStack[bufferStackPos] = null;
 		if( bufferData[bufferStackPos] instanceof InclusionData )
-			requestor.enterInclusion( ((InclusionData)bufferData[bufferStackPos]).inclusion );
+			requestor.exitInclusion( ((InclusionData)bufferData[bufferStackPos]).inclusion );
 		bufferData[bufferStackPos] = null;
 		bufferLineNums[bufferStackPos] = 1;
 		--bufferStackPos;
@@ -242,7 +242,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	    int size = objMap.size();
 	    Map hashMap = new HashMap( size );
 	    for( int i = 0; i < size; i ++ ){
-	        hashMap.put( objMap.keyAt( i ), objMap.getAt( i ) );
+	        hashMap.put( String.valueOf( objMap.keyAt( i ) ), objMap.getAt( i ) );
 	    }
 	    
 		return hashMap;

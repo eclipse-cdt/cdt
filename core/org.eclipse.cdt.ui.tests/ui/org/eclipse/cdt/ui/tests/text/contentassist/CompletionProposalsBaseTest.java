@@ -175,9 +175,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 						break;
 					}
 				}
-				if(found == false){
-					assertTrue(found);
-				}
+				assertTrue( "Lookup failed for " + expected[i],  found ); //$NON-NLS-1$
 			}	
 			
 		} catch(CModelException e){

@@ -80,8 +80,8 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 
 			String ca = coligate(compileArguments);
 
-			monitor.subTask(MakeCorePlugin.getResourceString("ExternalScannerInfoProvider.Invoking_Command")
-					+ fCompileCommand.toString() + ca); //$NON-NLS-1$
+			monitor.subTask(MakeCorePlugin.getResourceString("ExternalScannerInfoProvider.Invoking_Command")  //$NON-NLS-1$
+					+ fCompileCommand.toString() + ca);
 			cos = new StreamMonitor(new SubProgressMonitor(monitor, 70), cos, 100);
 			
 			OutputStream sniffer = ScannerInfoConsoleParserFactory.getESIProviderOutputSniffer(

@@ -139,7 +139,7 @@ public class ScannerInfoCollector {
 	 */
 	private void updateScannerConfig(IProject project, IProgressMonitor monitor) {
 		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
-		monitor.beginTask(MakeCorePlugin.getResourceString("ScannerInfoCollector.Processing"), 100);
+		monitor.beginTask(MakeCorePlugin.getResourceString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
 		if (provider != null) {
 			IScannerInfo scanInfo = provider.getScannerInformation(project);
 			if (scanInfo != null) {
@@ -147,10 +147,10 @@ public class ScannerInfoCollector {
 					MakeScannerInfo makeScanInfo = (MakeScannerInfo)scanInfo;
 					String projectName = project.getName();
 					
-					monitor.subTask(MakeCorePlugin.getResourceString("ScannerInfoCollector.Processing"));
+					monitor.subTask(MakeCorePlugin.getResourceString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
 					if (scannerConfigNeedsUpdate(makeScanInfo, projectName)) {
 						monitor.worked(50);
-						monitor.subTask(MakeCorePlugin.getResourceString("ScannerInfoCollector.Updating") + projectName);
+						monitor.subTask(MakeCorePlugin.getResourceString("ScannerInfoCollector.Updating") + projectName); //$NON-NLS-1$
 						
 						try {
 							// update scanner configuration

@@ -38,7 +38,7 @@ public final class ScannerConfigUtil {
 				symbol = key;
 			}
 			else {
-				symbol = key + "=" + value;	//$NON-NLS-1
+				symbol = key + "=" + value;	//$NON-NLS-1$
 			}
 			retSymbols.add(symbol);
 		}

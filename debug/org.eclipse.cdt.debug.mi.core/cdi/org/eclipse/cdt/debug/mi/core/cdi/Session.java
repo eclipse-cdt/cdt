@@ -16,7 +16,6 @@ import java.util.Properties;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
@@ -163,10 +162,7 @@ public class Session implements ICDISession, ICDISessionObject {
 		return sharedLibraryManager;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getMemoryManager()
-	 */
-	public ICDIMemoryManager getMemoryManager() {
+	public MemoryManager getMemoryManager() {
 		return memoryManager;
 	}
 

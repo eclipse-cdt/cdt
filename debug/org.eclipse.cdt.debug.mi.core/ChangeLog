@@ -1,4 +1,13 @@
 2004-10-26 Alain Magloire
+	Remove ICDIMemoryManager in CDI
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Session.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/MemoryManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/MemoryBlock.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/event/CreatedEvent.java
+
+2004-10-26 Alain Magloire
 	Remove of ICDISourceManager in CDI
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Session.java
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/SourceManager.java

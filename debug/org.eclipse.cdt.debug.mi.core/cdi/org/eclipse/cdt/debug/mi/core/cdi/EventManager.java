@@ -118,7 +118,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			} else if (miEvent instanceof MIMemoryChangedEvent) {
 				// We need to fire an event for all the register blocks
 				// that may contain the modified addresses.
-				MemoryManager mgr = (MemoryManager)session.getMemoryManager();
+				MemoryManager mgr = session.getMemoryManager();
 				MemoryBlock[] blocks = mgr.getMemoryBlocks(miEvent.getMISession());
 				MIMemoryChangedEvent miMem = (MIMemoryChangedEvent)miEvent;
 				BigInteger[] addresses = miMem.getAddresses();
@@ -301,7 +301,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		VariableManager varMgr = (VariableManager)session.getVariableManager();
 		ExpressionManager expMgr  = session.getExpressionManager();		
 		RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
-		MemoryManager memMgr = (MemoryManager)session.getMemoryManager();
+		MemoryManager memMgr = session.getMemoryManager();
 		BreakpointManager bpMgr = session.getBreakpointManager();
 		SignalManager sigMgr = (SignalManager)session.getSignalManager();
 		SourceManager srcMgr = (SourceManager)session.getSourceManager();

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
@@ -36,7 +35,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
 
 /**
  */
-public class MemoryManager extends Manager implements ICDIMemoryManager {
+public class MemoryManager extends Manager {
 
 	ICDIMemoryBlock[] EMPTY_MEMORY_BLOCKS = {};
 	Map blockMap;
@@ -157,21 +156,11 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(long, int)
-	 */
-	public ICDIMemoryBlock createMemoryBlock(BigInteger address, int length)
+	public ICDIMemoryBlock createMemoryBlock(Target target, BigInteger address, int length)
 		throws CDIException {
-		return createMemoryBlock(address.toString(16), length);
+		return createMemoryBlock(target, address.toString(16), length);
 	}
 		
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(string, int)
-	 */
-	public ICDIMemoryBlock createMemoryBlock(String address, int length) throws CDIException {
-		Session session = (Session)getSession();
-		return createMemoryBlock(session.getCurrentTarget(), address, length);
-	}
 	public ICDIMemoryBlock createMemoryBlock(Target target, String address, int length) throws CDIException {
 		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(target.getMISession(), address, length);
 		ICDIMemoryBlock block = new MemoryBlock(target, address, info);
@@ -182,13 +171,6 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 		return block;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#getBlocks()
-	 */
-	public ICDIMemoryBlock[] getMemoryBlocks() throws CDIException {
-		Target target = ((Session)getSession()).getCurrentTarget();
-		return getMemoryBlocks(target);
-	}
 	public MemoryBlock[] getMemoryBlocks(MISession miSession) {
 		Session session = (Session)getSession();
 		Target target = session.getTarget(miSession);
@@ -200,32 +182,9 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 		return (ICDIMemoryBlock[]) blockList.toArray(new ICDIMemoryBlock[blockList.size()]);
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#removeAllBlocks()
-	 */
-	public void removeAllBlocks() throws CDIException {
-		Target target = ((Session)getSession()).getCurrentTarget();
-		removeAllBlocks(target);
-	}
-
 	public void removeAllBlocks(Target target) throws CDIException {
 		ICDIMemoryBlock[] blocks = getMemoryBlocks(target);
 		removeBlocks(target, blocks);
-	}
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#removeBlock(ICDIMemoryBlock)
-	 */
-	public void removeBlock(ICDIMemoryBlock memoryBlock) throws CDIException {
-		removeBlocks((Target)memoryBlock.getTarget(), new ICDIMemoryBlock[] { memoryBlock });
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#removeBlocks(ICDIMemoryBlock[])
-	 */
-	public void removeBlocks(ICDIMemoryBlock[] memoryBlocks) throws CDIException {
-		for (int i = 0; i < memoryBlocks.length; i++) {
-			removeBlock(memoryBlocks[i]);
-		}
 	}
 
 	public void removeBlocks(Target target, ICDIMemoryBlock[] memoryBlocks) throws CDIException {

@@ -91,7 +91,7 @@ public class CreatedEvent implements ICDICreatedEvent {
 
 	public CreatedEvent(Session s, MIMemoryCreatedEvent mblock) {
 		session = s;
-		MemoryManager mgr = (MemoryManager)session.getMemoryManager();
+		MemoryManager mgr = session.getMemoryManager();
 		MISession miSession = mblock.getMISession();
 		ICDIMemoryBlock[] blocks = mgr.getMemoryBlocks(miSession);
 		for (int i = 0; i < blocks.length; i++) {

@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.MemoryManager;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataWriteMemory;
 import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
@@ -141,7 +142,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	 */
 	public void refresh() throws CDIException {
 		Target target = (Target)getTarget();
-		MemoryManager mgr = (MemoryManager)target.getSession().getMemoryManager();
+		MemoryManager mgr = ((Session)target.getSession()).getMemoryManager();
 		setDirty(true);
 		BigInteger[] addresses = mgr.update(this, null);
 		// Check if this affects other blocks.

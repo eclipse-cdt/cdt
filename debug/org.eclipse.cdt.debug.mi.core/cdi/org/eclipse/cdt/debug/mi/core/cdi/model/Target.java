@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
+import org.eclipse.cdt.debug.mi.core.cdi.MemoryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalManager;
@@ -879,6 +881,46 @@ public class Target  implements ICDITarget {
 	public ICDIMixedInstruction[] getMixedInstructions(String filename, int linenum, int lines) throws CDIException {
 		SourceManager srcMgr = ((Session)getSession()).getSourceManager();
 		return srcMgr.getMixedInstructions(this, filename, linenum, lines);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlockManagement#createMemoryBlock(java.lang.String, int)
+	 */
+	public ICDIMemoryBlock createMemoryBlock(String address, int length) throws CDIException {
+		MemoryManager memMgr = ((Session)getSession()).getMemoryManager();
+		return memMgr.createMemoryBlock(this, address, length);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlockManagement#createMemoryBlock(java.math.BigInteger, int)
+	 */
+	public ICDIMemoryBlock createMemoryBlock(BigInteger address, int length) throws CDIException {
+		MemoryManager memMgr = ((Session)getSession()).getMemoryManager();
+		return memMgr.createMemoryBlock(this, address, length);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlockManagement#removeBlocks(org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock[])
+	 */
+	public void removeBlocks(ICDIMemoryBlock[] memoryBlocks) throws CDIException {
+		MemoryManager memMgr = ((Session)getSession()).getMemoryManager();
+		memMgr.removeBlocks(this, memoryBlocks);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlockManagement#removeAllBlocks()
+	 */
+	public void removeAllBlocks() throws CDIException {
+		MemoryManager memMgr = ((Session)getSession()).getMemoryManager();
+		memMgr.removeAllBlocks(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlockManagement#getMemoryBlocks()
+	 */
+	public ICDIMemoryBlock[] getMemoryBlocks() throws CDIException {
+		MemoryManager memMgr = ((Session)getSession()).getMemoryManager();
+		return memMgr.getMemoryBlocks(this);
 	}
 
 }

@@ -321,7 +321,7 @@ public class BuildConsolePartitioner
 	}
 
 	public ConsoleOutputStream getErrorStream() throws CoreException {
-		return new BuildOutputStream(fManager.getStream(BuildConsoleManager.BUILD_STREAM_TYPE_INFO));
+		return new BuildOutputStream(fManager.getStream(BuildConsoleManager.BUILD_STREAM_TYPE_ERROR));
 	}
 
 }

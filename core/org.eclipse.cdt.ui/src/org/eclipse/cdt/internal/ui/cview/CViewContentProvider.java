@@ -91,7 +91,7 @@ public class CViewContentProvider extends CElementContentProvider {
 			extras = new Object[] {archive};
 		}
 		IBinaryContainer bin = cproject.getBinaryContainer(); 
-		if (getBinaries(bin).length > 0) {
+		if (getExecutables(bin).length > 0) {
 			Object[] o = new Object[] {bin};
 			if (extras != null && extras.length > 0) {
 				extras = concatenate(extras, o);

@@ -112,6 +112,8 @@ public abstract class FindAction extends SelectionParseAction {
 	 	if( obj == null || !(obj instanceof ICElement ) ){
 	 		operationNotAvailable();
 	 		return;
+	 	} else {
+	 		clearStatusLine();
 	 	}
 		ICElement element = (ICElement) obj;
 		
@@ -152,6 +154,8 @@ public abstract class FindAction extends SelectionParseAction {
 		if (node == null || !( node instanceof IASTNode )){
 			operationNotAvailable();
 			return;
+		} else {
+			clearStatusLine();
 		}
 	
 		CSearchQuery job = createSearchQuery(node);

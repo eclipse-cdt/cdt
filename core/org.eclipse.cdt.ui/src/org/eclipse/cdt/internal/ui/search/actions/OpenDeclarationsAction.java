@@ -187,6 +187,8 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 	 		if( namedElement == null ){
 	 			operationNotAvailable();
 	 			return;
+	 		} else {
+	 			clearStatusLine();
 	 		}
 	 		
 			if( storage.getResource() != null )

@@ -130,6 +130,17 @@ public class SelectionParseAction extends Action {
 		 if( statusManager != null )
 		 	statusManager.setErrorMessage(CSearchMessages.getString("CSearchOperation.operationUnavailable.message"));//$NON-NLS-1$
 	}
+	protected void clearStatusLine() {
+		IStatusLineManager statusManager = null;
+		 if (fSite instanceof IViewSite){
+		 	statusManager = ((IViewSite) fSite).getActionBars().getStatusLineManager();
+		 }
+		 else if (fSite instanceof IEditorSite){
+		 	statusManager = ((IEditorSite) fSite).getActionBars().getStatusLineManager();
+		 }	
+		 if( statusManager != null )
+		 	statusManager.setErrorMessage( "" ); //$NON-NLS-1$
+	}
 
 	//TODO: Change this to work with qualified identifiers
 	public SelSearchNode getSelection( int fPos ) {

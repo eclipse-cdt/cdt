@@ -11,7 +11,7 @@ package org.eclipse.cdt.debug.mi.core.event;
  * This can not be detected yet by gdb/mi.
  *
  */
-public class MIVarChangedEvent extends MIEvent {
+public class MIVarChangedEvent extends MIChangedEvent {
 
 		String varName;
 		boolean inScope;

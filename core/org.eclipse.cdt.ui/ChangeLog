@@ -1,3 +1,9 @@
+2004-04-05 Alain Magloire
+	From Chris Wiebe
+	This patch cleans up the layout of the checkboxes on the Open Type dialog.
+ 
+	* browser/org/eclipse/cdt/ui/browser/typeinfo/TypeSelectionDialog.java
+
 2004-04-06 Alain Magloire
 
 	This patch provides some improvements to the Open Type action, such as

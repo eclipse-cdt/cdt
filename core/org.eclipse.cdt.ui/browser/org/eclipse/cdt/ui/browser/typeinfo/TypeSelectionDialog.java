@@ -29,10 +29,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FilteredList;
@@ -293,7 +294,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	/**
 	 * Creates a type filter checkbox.
 	 */
-	private Button createTypeCheckbox(Composite parent, Integer typeObject) {
+	private void createTypeCheckbox(Composite parent, Integer typeObject) {
 		String name;
 		int type = typeObject.intValue();
 		switch (type) {
@@ -316,14 +317,18 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 				name = TypeInfoMessages.getString("TypeSelectionDialog.filterUnions"); //$NON-NLS-1$
 			break;
 			default:
-				return null;
+				return;
 		};
 		Image icon = TypeInfoLabelProvider.getTypeIcon(type);
 
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout(2, false);
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
+		
 		final Integer fTypeObject = typeObject;
-		Button checkbox = new Button(parent, SWT.CHECK);
-		checkbox.setFont(parent.getFont());
-		checkbox.setText(name);
+		Button checkbox = new Button(composite, SWT.CHECK);
+		checkbox.setFont(composite.getFont());
 		checkbox.setImage(icon);
 		checkbox.setSelection(fFilterMatcher.getVisibleTypes().contains(fTypeObject));
 		checkbox.addSelectionListener(new SelectionAdapter() {
@@ -338,7 +343,10 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 				}
 			}
 		});
-		return checkbox;
+		
+		Label label = new Label(composite, SWT.LEFT);
+		label.setFont(composite.getFont());
+		label.setText(name);
 	}
 
 	/**
@@ -350,11 +358,11 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		createLabel(parent, TypeInfoMessages.getString("TypeSelectionDialog.filterLabel")); //$NON-NLS-1$
 		
 		Composite upperRow = new Composite(parent, SWT.NONE);
-		RowLayout layout = new RowLayout();
-		layout.spacing = 10;
-		layout.marginTop = 0;
-		layout.marginLeft = 0;
-		upperRow.setLayout(layout);
+		GridLayout upperLayout = new GridLayout(3, true);
+		upperLayout.verticalSpacing = 2;
+		upperLayout.marginHeight = 0;
+		upperLayout.marginWidth = 0;
+		upperRow.setLayout(upperLayout);
 
 		// the for loop is here to guarantee we always
 		// create the checkboxes in the same order
@@ -363,13 +371,23 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			if (fKnownTypes.contains(typeObject))
 				createTypeCheckbox(upperRow, typeObject);
 		}
-		
+
 		Composite lowerRow = new Composite(parent, SWT.NONE);
-		lowerRow.setLayout(layout);
+		GridLayout lowerLayout = new GridLayout(1, true);
+		lowerLayout.verticalSpacing = 2;
+		lowerLayout.marginHeight = 0;
+		upperLayout.marginWidth = 0;
+		lowerRow.setLayout(lowerLayout);
+
+		Composite composite = new Composite(lowerRow, SWT.NONE);
+		GridLayout layout= new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		composite.setLayout(layout);
 
 		String name = TypeInfoMessages.getString("TypeSelectionDialog.filterLowLevelTypes"); //$NON-NLS-1$
-		Button checkbox = new Button(lowerRow, SWT.CHECK);
-		checkbox.setFont(lowerRow.getFont());
+		Button checkbox = new Button(composite, SWT.CHECK);
+		checkbox.setFont(composite.getFont());
 		checkbox.setText(name);
 		checkbox.setSelection(fFilterMatcher.getShowLowLevelTypes());
 		checkbox.addSelectionListener(new SelectionAdapter() {

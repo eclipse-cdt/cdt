@@ -55,7 +55,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return (IRule[]) array.toArray(new IRule[0]);
 	}
 
-	public IRule[] getRule(String target) {
+	public IRule[] getRules(String target) {
 		IRule[] rules = getRules();
 		List array = new ArrayList(rules.length);
 		for (int i = 0; i < rules.length; i++) {
@@ -77,7 +77,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
 	}
 
-	public IInferenceRule[] getInferenceRule(String target) {
+	public IInferenceRule[] getInferenceRules(String target) {
 		IInferenceRule[] irules = getInferenceRules();
 		List array = new ArrayList(irules.length);
 		for (int i = 0; i < irules.length; i++) {
@@ -99,7 +99,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return (ITargetRule[]) array.toArray(new ITargetRule[0]);
 	}
 
-	public ITargetRule[] getTargetRule(String target) {
+	public ITargetRule[] getTargetRules(String target) {
 		ITargetRule[] trules = getTargetRules();
 		List array = new ArrayList(trules.length);
 		for (int i = 0; i < trules.length; i++) {
@@ -121,7 +121,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return (IMacroDefinition[]) array.toArray(new IMacroDefinition[0]);
 	}
 
-	public IMacroDefinition[] getMacroDefinition(String name) {
+	public IMacroDefinition[] getMacroDefinitions(String name) {
 		IMacroDefinition[] variables = getMacroDefinitions();
 		List array = new ArrayList(variables.length);
 		for (int i = 0; i < variables.length; i++) {
@@ -143,7 +143,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return (IMacroDefinition[]) array.toArray(new IMacroDefinition[0]);
 	}
 
-	public IMacroDefinition[] getBuiltinMacroDefinition(String name) {
+	public IMacroDefinition[] getBuiltinMacroDefinitions(String name) {
 		IMacroDefinition[] variables = getBuiltinMacroDefinitions();
 		List array = new ArrayList(variables.length);
 		for (int i = 0; i < variables.length; i++) {
@@ -165,7 +165,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
 	}
 
-	public IInferenceRule[] getBuiltinInferenceRule(String target) {
+	public IInferenceRule[] getBuiltinInferenceRules(String target) {
 		IInferenceRule[] irules = getBuiltinInferenceRules();
 		List array = new ArrayList(irules.length);
 		for (int i = 0; i < irules.length; i++) {
@@ -211,9 +211,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 					if (inMacro) {
 						String name = macroName.toString();
 						if (name.length() > 0) {
-							IMacroDefinition[] defs = getMacroDefinition(name);
+							IMacroDefinition[] defs = getMacroDefinitions(name);
 							if (defs.length == 0) {
-								defs = getBuiltinMacroDefinition(name);
+								defs = getBuiltinMacroDefinitions(name);
 							}
 							if (defs.length > 0) {
 								String result = defs[0].getValue().toString();
@@ -236,9 +236,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 						macroName.append(c);
 					} else if (foundDollar) {
 						String name = String.valueOf(c);
-						IMacroDefinition[] defs = getMacroDefinition(name);
+						IMacroDefinition[] defs = getMacroDefinitions(name);
 						if (defs.length == 0) {
-							defs = getBuiltinMacroDefinition(name);
+							defs = getBuiltinMacroDefinitions(name);
 						}
 						if (defs.length > 0) {
 							String result = defs[0].getValue().toString();

@@ -144,7 +144,7 @@ public class MakefileDocumentProvider extends FileDocumentProvider implements IM
 			String content = document.get();
 			StringReader reader = new StringReader(content);
 			try {
-				info.fCopy.parse(reader);
+				info.fCopy.parse(info.fCopy.getFileName(), reader);
 			} catch (IOException e) {
 			}
 		}

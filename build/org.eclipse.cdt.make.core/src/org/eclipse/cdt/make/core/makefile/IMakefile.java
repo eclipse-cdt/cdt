@@ -41,10 +41,25 @@ public interface IMakefile extends IParent {
 	IRule[] getRules();
 
 	/**
+	 * Returns the IRule for target.
+	 * 
+	 * @param target
+	 * @return
+	 */
+	IRule[] getRules(String target);
+
+	/**
 	 * Returns IInferenceRule
 	 * @return
 	 */
 	IInferenceRule[] getInferenceRules();
+
+	/**
+	 * Returns the IInferenceRules for target.
+	 * @param target
+	 * @return
+	 */
+	IInferenceRule[] getInferenceRules(String target);
 
 	/**
 	 * Returns ITargetRule
@@ -53,10 +68,26 @@ public interface IMakefile extends IParent {
 	ITargetRule[] getTargetRules();
 
 	/**
-	 * Return IMacroDefintion
+	 * Returns the ITargetRules for name.
+	 * 
+	 * @param target
+	 * @return
+	 */
+	ITargetRule[] getTargetRules(String target);
+
+	/**
+	 * Return IMacroDefinition
 	 * @return
 	 */
 	IMacroDefinition[] getMacroDefinitions();
+
+	/**
+	 * Returns the IMacroDefinitions for name.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	IMacroDefinition[] getMacroDefinitions(String name);
 
 	/**
 	 * Return all the builtin directives.
@@ -69,6 +100,14 @@ public interface IMakefile extends IParent {
 	 * @return
 	 */
 	IMacroDefinition[] getBuiltinMacroDefinitions();
+
+	/**
+	 * Returns the Builtin macro definition for name.
+	 *  
+	 * @param name
+	 * @return
+	 */
+	IMacroDefinition[] getBuiltinMacroDefinitions(String name);
 
 	/**
 	 * Returning after expanding any macros.
@@ -86,8 +125,11 @@ public interface IMakefile extends IParent {
 
 	/**
 	 * Clear the all statements and (re)parse the Makefile
+	 * 
+	 * @param name
 	 * @param makefile
 	 * @throws IOException
 	 */
-	void parse(Reader makefile) throws IOException;
+	void parse(String name, Reader makefile) throws IOException;
+
 }

@@ -80,7 +80,7 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 		String content = fDocumentProvider.getDocument(fEditor.getEditorInput()).get();
 		StringReader reader = new StringReader(content);
 		try {
-				makefile.parse(reader);
+				makefile.parse(makefile.getFileName(), reader);
 		} catch (IOException e) {
 		}
 

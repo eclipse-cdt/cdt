@@ -33,18 +33,18 @@ import org.eclipse.cdt.make.core.makefile.IDirective;
 
 public class NullMakefile extends AbstractMakefile {
 
-	public static IDirective[] empty = new IDirective[0];
+	public final static IDirective[] EMPTY_DIRECTIVES = new IDirective[0];
 
 	public NullMakefile() {
 		super(null);
 	}
 
 	public IDirective[] getDirectives() {
-		return empty;
+		return EMPTY_DIRECTIVES;
 	}
 
 	public IDirective[] getBuiltins() {
-		return empty;
+		return EMPTY_DIRECTIVES;
 	}
 
 	public void addDirective(IDirective directive) {
@@ -57,7 +57,7 @@ public class NullMakefile extends AbstractMakefile {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.io.Reader)
 	 */
-	public void parse(Reader makefile) throws IOException {
+	public void parse(String name, Reader makefile) throws IOException {
 	}
 
 }

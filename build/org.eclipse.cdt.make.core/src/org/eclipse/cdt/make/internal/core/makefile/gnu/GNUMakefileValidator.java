@@ -91,7 +91,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 		try {
 			stream = file.getContents();
 			Reader source = new InputStreamReader(stream);
-			gnu.parse(source);
+			gnu.parse(file.getFullPath().toString(), source);
 			validateDirectives(file, gnu.getDirectives());
 		} catch (CoreException e) {
 		} catch (IOException e) {

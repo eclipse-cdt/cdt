@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
+import java.util.ResourceBundle;
+
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -27,6 +29,7 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 public class MakefileEditorActionContributor extends BasicTextEditorActionContributor {
 
 	private MakefileEditorTogglePresentationAction fTogglePresentation;
+	private OpenDeclarationAction fOpenDeclarationAction;
 	protected RetargetTextEditorAction fContentAssistProposal;
 	protected RetargetTextEditorAction fContentAssistTip;
 
@@ -35,11 +38,14 @@ public class MakefileEditorActionContributor extends BasicTextEditorActionContri
 	 */
 	public MakefileEditorActionContributor() {
 		super();
-		fContentAssistProposal = new RetargetTextEditorAction(MakeUIPlugin.getDefault().getResourceBundle(), "ContentAssistProposal."); //$NON-NLS-1$
+		ResourceBundle bundle = MakeUIPlugin.getDefault().getResourceBundle();
+		fContentAssistProposal = new RetargetTextEditorAction(bundle, "ContentAssistProposal."); //$NON-NLS-1$
 		fContentAssistProposal.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		fContentAssistTip = new RetargetTextEditorAction(MakeUIPlugin.getDefault().getResourceBundle(), "ContentAssistTip."); //$NON-NLS-1$
+		fContentAssistTip = new RetargetTextEditorAction(bundle, "ContentAssistTip."); //$NON-NLS-1$
 		fContentAssistTip.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		fTogglePresentation = new MakefileEditorTogglePresentationAction();
+		fOpenDeclarationAction = new OpenDeclarationAction();
+		
 	}
 
 	/**
@@ -63,6 +69,9 @@ public class MakefileEditorActionContributor extends BasicTextEditorActionContri
 
 		fTogglePresentation.setEditor(editor);
 		fTogglePresentation.update();
+		
+		fOpenDeclarationAction.setEditor(editor);
+		fOpenDeclarationAction.update();
 	}
 
 	/*
@@ -84,6 +93,7 @@ public class MakefileEditorActionContributor extends BasicTextEditorActionContri
 			editMenu.add(new Separator());
 			editMenu.add(fContentAssistProposal);
 			editMenu.add(fContentAssistTip);
+			editMenu.add(fOpenDeclarationAction);
 		}
 
 		IToolBarManager toolBarManager = bars.getToolBarManager();

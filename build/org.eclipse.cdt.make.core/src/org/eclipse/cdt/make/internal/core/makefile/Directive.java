@@ -16,6 +16,7 @@ public abstract class Directive implements IDirective {
 
 	int endLine;
 	int startLine;
+	String filename;
 	Directive parent;
 
 	public Directive(Directive owner) {
@@ -49,6 +50,18 @@ public abstract class Directive implements IDirective {
 		return parent;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getFileName()
+	 */
+	public String getFileName() {
+		if (filename == null) {
+			if (parent != null) {
+				filename = parent.getFileName();
+			}
+		}
+		return filename;
+	}
+
 	public void setParent(Directive owner) {
 		parent = owner;
 	}
@@ -64,6 +77,10 @@ public abstract class Directive implements IDirective {
 	public void setLines(int start, int end) {
 		setStartLine(start);
 		setEndLine(end);
+	}
+
+	public void setFilename(String name) {
+		filename = name;
 	}
 
 }

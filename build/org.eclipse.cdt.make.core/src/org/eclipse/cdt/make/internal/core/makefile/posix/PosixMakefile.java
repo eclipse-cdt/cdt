@@ -70,7 +70,7 @@ public class PosixMakefile extends AbstractMakefile {
 
 	public void parse(String name) throws IOException {
 		FileReader stream = new FileReader(name);
-		parse(stream);
+		parse(name, stream);
 		if (stream != null) {
 			try {
 				stream.close();
@@ -79,15 +79,21 @@ public class PosixMakefile extends AbstractMakefile {
 		}
 	}
 
-	public void parse(Reader reader) throws IOException {
-		parse(new MakefileReader(reader));
+	public void parse(String name, Reader reader) throws IOException {
+		parse(name, new MakefileReader(reader));
 	}
 
-	protected void parse(MakefileReader reader) throws IOException {
+	protected void parse(String name, MakefileReader reader) throws IOException {
 		String line;
 		Rule[] rules = null;
 		int startLine = 0;
 		int endLine = 0;
+
+		// Clear any old directives.
+		clearDirectives();
+
+		setFilename(name);
+
 		while ((line = reader.readLine()) != null) {
 			startLine = endLine + 1;
 			endLine = reader.getLineNumber();
@@ -204,7 +210,7 @@ public class PosixMakefile extends AbstractMakefile {
 			try {
 				InputStream stream = MakeCorePlugin.getDefault().openStream(new Path(location));
 				PosixMakefile gnu = new PosixMakefile();
-				gnu.parse(new InputStreamReader(stream));
+				gnu.parse(location, new InputStreamReader(stream));
 				builtins = gnu.getDirectives();
 				for (int i = 0; i < builtins.length; i++) {
 					if (builtins[i] instanceof MacroDefinition) {

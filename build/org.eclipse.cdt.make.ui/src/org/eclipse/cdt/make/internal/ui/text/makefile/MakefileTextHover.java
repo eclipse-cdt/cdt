@@ -54,28 +54,29 @@ public class MakefileTextHover implements ITextHover {
 				if (fEditor != null && len > -1) {
 					IWorkingCopyManager fManager = MakeUIPlugin.getDefault().getWorkingCopyManager();
 					IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
-					IMacroDefinition[] statements;
+					WordPartDetector wordPart = new WordPartDetector(textViewer, offset);
+					String name = wordPart.toString();
+					IMacroDefinition[] statements = null;
 					if (WordPartDetector.inMacro(textViewer, offset)) {
-						IMacroDefinition[] m1 = makefile.getMacroDefinitions();
-						IMacroDefinition[] m2 = makefile.getBuiltinMacroDefinitions();
-						statements = new IMacroDefinition[m1.length + m2.length];
-						System.arraycopy(m1, 0, statements, 0, m1.length);
-						System.arraycopy(m2, 0, statements, m1.length, m2.length);
-					} else {
+						statements = makefile.getMacroDefinitions(name);
+						if (statements == null || statements.length == 0) {
+							statements = makefile.getBuiltinMacroDefinitions(name);
+						}
+					}
+					
+					if (statements == null) {
 						statements = new IMacroDefinition[0];
 					}
 					// iterate over all the different categories
-					WordPartDetector wordPart = new WordPartDetector(textViewer, offset);
 					StringBuffer buffer = new StringBuffer();
 					for (int i = 0; i < statements.length; i++) {
-						String name = statements[i].getName();
-						String infoString = statements[i].getValue().toString();
-						if (name != null && name.equals(wordPart.toString())) {
-							buffer.append(name);
-							buffer.append(" - "); //$NON-NLS-1$
-							buffer.append(infoString);
-							break;						
+						if (i > 0) {
+							buffer.append("\n"); //$NON-NLS-1$
 						}
+						String infoString = statements[i].getValue().toString();
+						buffer.append(name);
+						buffer.append(" - "); //$NON-NLS-1$
+						buffer.append(infoString);			
 					}
 					return buffer.toString();
 				}

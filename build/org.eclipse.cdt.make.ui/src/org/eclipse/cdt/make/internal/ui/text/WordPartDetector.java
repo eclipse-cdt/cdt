@@ -24,17 +24,23 @@ public class WordPartDetector {
 	int offset;
 
 	/**
-	 * Method WordPartDetector.
+	 * WordPartDetector.
 	 * @param viewer is a text viewer 
 	 * @param documentOffset into the SQL document
 	 */
 	public WordPartDetector(ITextViewer viewer, int documentOffset) {
+		this(viewer.getDocument(), documentOffset);
+	}
+
+	/**
+	 * 
+	 * @param doc
+	 * @param documentOffset
+	 */
+	public WordPartDetector(IDocument doc, int documentOffset) {
 		offset = documentOffset - 1;
 		int endOffset = documentOffset;		
 		try {
-			IDocument doc = viewer.getDocument();
-			//int bottom = viewer.getBottomIndexEndOffset();
-			//int top = viewer.getTopIndexStartOffset();
 			IRegion region = doc.getLineInformationOfOffset(documentOffset);
 			int top = region.getOffset();
 			int bottom = region.getLength() + top;
@@ -46,15 +52,18 @@ public class WordPartDetector {
 			} 
 			//we've been one step too far : increase the offset
 			offset++;
-			wordPart = viewer.getDocument().get(offset, endOffset - offset);
+			wordPart = doc.get(offset, endOffset - offset);
 		} catch (BadLocationException e) {
 			// do nothing
 		}
 	}
 
 	public static boolean inMacro(ITextViewer viewer, int offset) {
+		return inMacro(viewer.getDocument(), offset);
+	}
+	
+	public static boolean inMacro(IDocument document, int offset) {
 		boolean isMacro = false;
-		IDocument document = viewer.getDocument();
 		// Try to figure out if we are in a Macro.
 		try {
 			for (int index = offset - 1; index >= 0; index--) {

@@ -36,5 +36,12 @@ public interface IDirective {
 	 */
 	int getEndLine();
 
+	/**
+	 * Returns the filename where the directive was found.
+	 * 
+	 * @return String - filename
+	 */
+	String getFileName();
+
 	String toString();
 }

@@ -31,10 +31,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -123,7 +126,12 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		a = new TextOperationAction(bundle, "Uncomment.", this, ITextOperationTarget.STRIP_PREFIX); //$NON-NLS-1$
 		a.setActionDefinitionId(IMakefileEditorActionDefinitionIds.UNCOMMENT);
 		setAction("Uncomment", a); //$NON-NLS-1$
-		markAsStateDependentAction("Uncomment", true); //$NON-NLS-1$ 
+		markAsStateDependentAction("Uncomment", true); //$NON-NLS-1$
+
+		a = new OpenDeclarationAction(this);
+		a.setActionDefinitionId(IMakefileEditorActionDefinitionIds.OPEN_DECLARATION);
+		setAction("OpenDeclarationAction", a); //$NON-NLS-1$
+		markAsStateDependentAction("OpenDeclarationAction", true); //$NON-NLS-1$
 
 	}
 
@@ -169,7 +177,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		return fFindReplaceDocumentAdapter;
 	}
 
-	private void setSelection(IDirective directive, boolean moveCursor) {
+	public void setSelection(IDirective directive, boolean moveCursor) {
 		int startLine = directive.getStartLine() - 1;
 		int endLine = directive.getEndLine() - 1;
 		try {
@@ -217,7 +225,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		super.editorContextMenuAboutToShow(menu);
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Comment"); //$NON-NLS-1$
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Uncomment"); //$NON-NLS-1$
-
+		//addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "OpenDeclarationAction"); //$NON-NLS-1$
 	}
 
 }

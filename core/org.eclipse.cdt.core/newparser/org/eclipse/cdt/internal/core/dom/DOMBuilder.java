@@ -255,11 +255,26 @@ public class DOMBuilder implements IParserCallback {
 		currName.setEnd(lastToken);
 	}
 
-	public Object baseSpecifierBegin( Object classSpecifier, Token visibility )
+	public Object baseSpecifierBegin( Object classSpecifier )
 	{
 		ClassSpecifier cs =(ClassSpecifier)classSpecifier;
 		BaseSpecifier baseSpec = new BaseSpecifier( cs );
+		return baseSpec; 
+	}
 
+	public void baseSpecifierEnd( Object baseSpecifier  )
+	{
+		
+	}
+
+	public void baseSpecifierVirtual( Object baseSpecifier, boolean virtual )
+	{
+		BaseSpecifier bs = (BaseSpecifier)baseSpecifier; 
+		bs.setVirtual( virtual );
+	}
+
+	public void baseSpecifierVisibility( Object baseSpecifier, Token visibility )
+	{
 		int access = BaseSpecifier.t_public;  
 		switch( visibility.type )
 		{
@@ -268,20 +283,17 @@ public class DOMBuilder implements IParserCallback {
 			break; 
 		case Token.t_protected:
 			access = BaseSpecifier.t_protected;		 
+			break;
 		case Token.t_private:
-			access = BaseSpecifier.t_private; 		
+			access = BaseSpecifier.t_private;
+			break; 		
 		default: 
 			break;
 		}
 	
-		baseSpec.setAccess(access);  
-		return baseSpec; 
+		((BaseSpecifier)baseSpecifier).setAccess(access);  
 	}
 
-	public void baseSpecifierEnd( Object baseSpecifier  )
-	{
-		
-	}
 	
 	public void baseSpecifierName( Object baseSpecifier )
 	{

@@ -137,7 +137,7 @@ public class NullParserCallback implements IParserCallback {
 	public void classSpecifierName(Object classSpecifier) {
 	}
 	
-	public Object baseSpecifierBegin( Object classSpecifier, Token visibility )
+	public Object baseSpecifierBegin( Object classSpecifier )
 	{
 		return null; 
 	}
@@ -149,4 +149,13 @@ public class NullParserCallback implements IParserCallback {
 	public void baseSpecifierName( Object baseSpecifier )
 	{
 	}
+	
+	public void baseSpecifierVisibility( Object baseSpecifier, Token visibility )
+	{
+	}
+
+	public void baseSpecifierVirtual( Object baseSpecifier, boolean virtual )
+	{
+	}
+
 }

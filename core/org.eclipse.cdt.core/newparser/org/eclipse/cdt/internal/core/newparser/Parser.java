@@ -511,34 +511,38 @@ c, quick);
 		callback.classSpecifierEnd(classSpec);
 	}
 
-	public void baseSpecifier( Object classSpecOwner ) {
+	public void baseSpecifier( Object classSpecOwner ) throws Exception {
+
+		Object baseSpecifier = callback.baseSpecifierBegin( classSpecOwner ); 		
+		
 		baseSpecifierLoop:
 		for (;;) {
 			switch (LT(1)) {
 				case Token.t_virtual:
+					callback.baseSpecifierVirtual( baseSpecifier, true ); 
 					consume();
 					break;
 				case Token.t_public:
-					consume();
-					break;
 				case Token.t_protected:
-					consume();
-					break;
 				case Token.t_private:
-					consume();
+					callback.baseSpecifierVisibility( baseSpecifier, currToken );
+					consume();					
 					break;
 				case Token.tCOLONCOLON:
 				case Token.tIDENTIFIER:
-					// TO DO: handle nested names and template ids
-					consume();
+					name();
+					callback.baseSpecifierName( baseSpecifier ); 
 					break;
 				case Token.tCOMMA:
-					
+					callback.baseSpecifierEnd( baseSpecifier ); 
+					baseSpecifier = callback.baseSpecifierBegin( classSpecOwner );
+					consume(); 
 					continue baseSpecifierLoop;
 				default:
 					break baseSpecifierLoop;
 			}
 		}
+		callback.baseSpecifierEnd( baseSpecifier ); 
 	}
 	
 	public void functionBody() throws Exception {

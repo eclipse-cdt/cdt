@@ -40,8 +40,10 @@ public interface IParserCallback {
 	public void classSpecifierName(Object classSpecifier);
 	public void classSpecifierEnd(Object classSpecifier);
 	
-	public Object	baseSpecifierBegin( Object containingClassSpec, Token visibility );
+	public Object	baseSpecifierBegin( Object containingClassSpec );
 	public void	baseSpecifierName( Object baseSpecifier );
+	public void 	baseSpecifierVisibility( Object baseSpecifier, Token visibility );
+	public void 	baseSpecifierVirtual( Object baseSpecifier, boolean virtual );
 	public void  	baseSpecifierEnd( Object baseSpecifier );
 	
 	public void expressionOperator(Token operator) throws Exception;

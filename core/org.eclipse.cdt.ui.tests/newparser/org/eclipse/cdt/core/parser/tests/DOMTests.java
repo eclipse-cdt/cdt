@@ -131,7 +131,7 @@ public class DOMTests extends TestCase {
 	public void testSimpleClassMembers() throws Exception {
 		// Parse and get the translaton unit
 		Writer code = new StringWriter();
-		code.write("class A : public B { public: int x, y; float a,b,c; };");
+		code.write("class A : public B, private C, virtual protected D { public: int x, y; float a,b,c; };");
 		TranslationUnit translationUnit = parse(code.toString());
 		
 		// Get the declaration
@@ -150,10 +150,23 @@ public class DOMTests extends TestCase {
 		Name className = classSpecifier.getName();
 		assertEquals("A", className.getName());
 		
-//		List baseClasses = classSpecifier.getBaseSpecifiers();
-//		assertEquals( 1, baseClasses.size() );
-//		BaseSpecifier bs = (BaseSpecifier)baseClasses.get( 0 ); 
-//		assertEquals( bs.getName(), "B" ); 
+		List baseClasses = classSpecifier.getBaseSpecifiers();
+		assertEquals( 3, baseClasses.size() );
+		BaseSpecifier bs = (BaseSpecifier)baseClasses.get( 0 ); 
+		assertEquals( bs.getAccess(), BaseSpecifier.t_public );
+		assertEquals( bs.isVirtual(), false ); 
+		assertEquals( bs.getName(), "B" ); 
+		
+		bs = (BaseSpecifier)baseClasses.get( 1 );
+		assertEquals( bs.getAccess(), BaseSpecifier.t_private );
+		assertEquals( bs.isVirtual(), false ); 
+		assertEquals( bs.getName(), "C" );
+		 
+		bs = (BaseSpecifier)baseClasses.get( 2 );
+		assertEquals( bs.getAccess(), BaseSpecifier.t_protected );
+		assertEquals( bs.isVirtual(), true ); 
+		assertEquals( bs.getName(), "D" ); 
+		
 		
 		// Get the member declaration
 		declarations = classSpecifier.getDeclarations();

@@ -1,4 +1,9 @@
 2003-06-20 Mikhail Khodjaiants
+	In the 'getVariableText' and 'getVariableImage' methods of CDTDebugModelPresentation
+	ignore exceptions thrown by getType.
+	* CDTDebugModelPresentation.java
+
+2003-06-20 Mikhail Khodjaiants
 	Variable bookkeeping (phase 0.1).
 	The 'Enable' and 'Disable' actions added to the Variables view.
 	* plugin.properties

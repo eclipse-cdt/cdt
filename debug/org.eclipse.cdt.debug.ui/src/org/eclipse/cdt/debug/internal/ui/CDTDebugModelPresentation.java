@@ -544,7 +544,15 @@ public class CDTDebugModelPresentation extends LabelProvider
 		StringBuffer label = new StringBuffer();
 		if ( var instanceof ICVariable )
 		{
-			ICType type = ((ICVariable)var).getType();
+			ICType type = null;
+			try
+			{
+				type = ((ICVariable)var).getType();
+			}
+			catch( DebugException e )
+			{
+				// don't display type
+			}
 			if ( type != null && isShowVariableTypeNames() )
 			{
 				String typeName = getVariableTypeName( type );
@@ -872,7 +880,15 @@ public class CDTDebugModelPresentation extends LabelProvider
 	{
 		if ( element instanceof ICVariable )
 		{
-			ICType type = ((ICVariable)element).getType();
+			ICType type = null;
+			try
+			{
+				type = ((ICVariable)element).getType();
+			}
+			catch( DebugException e )
+			{
+				// use default image
+			}
 			if ( type != null && ( type.isArray() || type.isStructure() ) )
 				return fDebugImageRegistry.get( ( ((ICVariable)element).isEnabled() ) ? 
 							CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE : CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE_DISABLED );

@@ -624,14 +624,14 @@
             id="org.eclipse.cdt.ui.edit.opencview">
       </command>
       <command
-            description="Find Declaration"
+            description="%ActionDefinition.finddecl.description"
             category="org.eclipse.cdt.ui.category.source"
-            name="Find Declaration"
+            name="%ActionDefinition.finddecl.name"
             id="org.eclipse.cdt.ui.search.finddecl"/>
       <command
             category="org.eclipse.cdt.ui.category.source"
-            description="Find Refs"
-            name="Find Refs"
+            description="%ActionDefinition.findrefs.description"
+            name="%ActionDefinition.findrefs.name"
             id="org.eclipse.cdt.ui.search.findrefs"/>
       <keyBinding
             command="org.eclipse.cdt.ui.search.findrefs"

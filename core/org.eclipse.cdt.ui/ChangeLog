@@ -1,3 +1,9 @@
+2004-08-03 Tanya Wolff
+
+	Fix for 71033: English "Find Refs" in Workbench Key preferences.
+	*plugin.properties
+	*plugin.xml
+	
 2004-07-30 Alain Magloire
 
 	Implementation of "Add Include" add the using directive.

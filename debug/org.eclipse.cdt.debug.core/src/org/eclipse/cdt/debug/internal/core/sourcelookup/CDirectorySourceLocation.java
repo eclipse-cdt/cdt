@@ -26,9 +26,14 @@ import org.eclipse.core.runtime.Path;
 public class CDirectorySourceLocation implements ICSourceLocation
 {
 	/**
-	 * The directory associated with this source location
+	 * The root directory of this source location
 	 */
 	private IPath fDirectory;
+
+	/**
+	 * The associted path of this source location. 
+	 */
+	private IPath fAssociation = null;
 
 	/**
 	 * Constructor for CDirectorySourceLocation.
@@ -36,6 +41,15 @@ public class CDirectorySourceLocation implements ICSourceLocation
 	public CDirectorySourceLocation( IPath directory )
 	{
 		setDirectory( directory );
+	}
+
+	/**
+	 * Constructor for CDirectorySourceLocation.
+	 */
+	public CDirectorySourceLocation( IPath directory, IPath association )
+	{
+		setDirectory( directory );
+		setAssociation( association );
 	}
 
 	/* (non-Javadoc)
@@ -67,19 +81,17 @@ public class CDirectorySourceLocation implements ICSourceLocation
 	}
 
 	/**
-	 * Sets the directory in which source elements will
-	 * be searched for.
+	 * Sets the directory in which source elements will be searched for.
 	 * 
 	 * @param directory a directory
 	 */
-	private void setDirectory( IPath directory )
+	protected void setDirectory( IPath directory )
 	{
 		fDirectory = directory;
 	}
 
 	/**
-	 * Returns the directory associated with this source
-	 * location.
+	 * Returns the root directory of this source location.
 	 * 
 	 * @return directory
 	 */
@@ -88,29 +100,45 @@ public class CDirectorySourceLocation implements ICSourceLocation
 		return fDirectory;
 	}
 
+	protected void setAssociation( IPath association )
+	{
+		fAssociation = association;
+	}
+
+	public IPath getAssociation()
+	{
+		return fAssociation;
+	}
+
 	private Object findFileByAbsolutePath( String fileName )
 	{
 		IPath filePath = new Path( fileName );
-		String name = filePath.lastSegment();
-		filePath = filePath.removeLastSegments( 1 );
 		IPath path = getDirectory();
-		if ( path.equals( filePath ) )
+		IPath association = getAssociation();
+		if ( path.isPrefixOf( filePath ) )
 		{
-			path = path.append( name );
-
-			// Try for a file in another workspace project
-			IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
-			if ( f != null ) 
-			{
-				return f;
-			} 
-
-			File file = path.toFile();
-			if ( file.exists() )
-			{
-				return createExternalFileStorage( path );
-			}
+			filePath = path.append( filePath.removeFirstSegments( path.segmentCount() ) );
+		}
+		else if ( association != null && association.isPrefixOf( filePath ) )
+		{
+			filePath = path.append( filePath.removeFirstSegments( association.segmentCount() ) );
+		}
+		else
+		{
+			return null;
+		}
+		// Try for a file in another workspace project
+		IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( filePath );
+		if ( f != null ) 
+		{
+			return f;
 		} 
+
+		File file = filePath.toFile();
+		if ( file.exists() )
+		{
+			return createExternalFileStorage( filePath );
+		}
 		return null;
 	}
 

@@ -1,4 +1,13 @@
 2002-12-17 Mikhail Khodjaiants
+	The core support of the prompting source locator.
+	* ICSourceLocator.java
+	* CDebugTarget.java
+	* CDirectorySourceLocation.java
+	* CSourceLocator.java
+	* CSourceManager.java
+	* DisassemblyManager.java
+
+2002-12-17 Mikhail Khodjaiants
 	The 'getLineNumber' method of CStackFrame should return the line number associated with the stack frame if the current source locator 
 	does not implement 'ICSourceLocator'.
 	* CStackFrame.java

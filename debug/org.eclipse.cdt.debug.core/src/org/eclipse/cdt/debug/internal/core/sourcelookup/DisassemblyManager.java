@@ -39,12 +39,16 @@ public class DisassemblyManager
 		setDebugTarget( target );
 	}
 
-	public int getLineNumber( IStackFrameInfo frameInfo )
+	public int getLineNumber( IStackFrame frame )
 	{
-		DisassemblyStorage storage = getSourceElement( frameInfo );
-		if ( storage != null )
+		IStackFrameInfo info = (IStackFrameInfo)frame.getAdapter( IStackFrameInfo.class );
+		if ( info != null )
 		{
-			return storage.getLineNumber( frameInfo.getAddress() );
+			DisassemblyStorage storage = getSourceElement( info );
+			if ( storage != null )
+			{
+				return storage.getLineNumber( info.getAddress() );
+			}
 		}
 		return 0;
 	}

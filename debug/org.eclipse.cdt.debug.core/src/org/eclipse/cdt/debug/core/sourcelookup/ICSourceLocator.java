@@ -5,9 +5,9 @@
  */
 package org.eclipse.cdt.debug.core.sourcelookup;
 
-import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.model.IStackFrame;
 
 /**
  * 
@@ -27,17 +27,8 @@ public interface ICSourceLocator extends ISourceLocator
 	 * @return line number of instruction pointer in this stack frame, 
 	 * 		   or -1 if line number information is unavailable
 	 */
-	int getLineNumber( IStackFrameInfo frameInfo );
+	int getLineNumber( IStackFrame stackFrame );
 
-	/**
-	 * Returns a source element that corresponds to the given file name, or
-	 * <code>null</code> if a source element could not be located.
-	 * 
-	 * @param fileName the file name for which to locate source
-	 * @return an object representing a source element. 
-	 */
-//	Object getSourceElement( String fileName );
-	
 	/**
 	 * Returns the source locations of this locator.
 	 * 

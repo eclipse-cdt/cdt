@@ -15,10 +15,9 @@ import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 
 /**
@@ -27,7 +26,7 @@ import org.eclipse.debug.core.model.IStackFrame;
  * 
  * @since Aug 19, 2002
  */
-public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocator
+public class CSourceLocator implements ICSourceLocator
 {
 	/**
 	 * The array of source locations associated with this locator.
@@ -73,9 +72,10 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getLineNumber(IStackFrameInfo)
 	 */
-	public int getLineNumber( IStackFrameInfo frameInfo )
+	public int getLineNumber( IStackFrame frame )
 	{
-		return ( frameInfo != null ) ? frameInfo.getFrameLineNumber() : 0;
+		IStackFrameInfo info = (IStackFrameInfo)frame.getAdapter( IStackFrameInfo.class );
+		return ( info != null ) ? info.getFrameLineNumber() : 0;
 	}
 
 	protected Object getInput( IStackFrameInfo info )
@@ -86,27 +86,23 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			String fileName = info.getFile();
 			if ( fileName != null && fileName.length() > 0 )
 			{
-				ICSourceLocation[] locations = getSourceLocations();
-				for ( int i = 0; i < locations.length; ++i )
+				result = findFileByAbsolutePath( fileName );
+				if ( result == null )
 				{
-					try
+					ICSourceLocation[] locations = getSourceLocations();
+					for ( int i = 0; i < locations.length; ++i )
 					{
-						result = locations[i].findSourceElement( fileName );
+						try
+						{
+							result = locations[i].findSourceElement( fileName );
+						}
+						catch( CoreException e )
+						{
+							// do nothing
+						}
+						if ( result != null )
+							break;
 					}
-					catch( CoreException e )
-					{
-						// do nothing
-					}
-					if ( result != null )
-						break;
-				}
-			}
-			if ( result == null )
-			{
-				Path path = new Path( fileName );
-				if ( path.isAbsolute() && path.toFile().exists() )
-				{
-					return new FileStorage( path );
 				}
 			}
 		}		
@@ -191,26 +187,20 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		}
 		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
 	}
-
-	/**
-	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
-	 */
-	public String getMemento() throws CoreException
+	
+	private Object findFileByAbsolutePath( String fileName )
 	{
+		Path path = new Path( fileName );
+		if ( path.isAbsolute() && path.toFile().exists() )
+		{
+			// Try for a file in another workspace project
+			IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
+			if ( f != null ) 
+			{
+				return f;
+			} 
+			return new FileStorage( path );
+		}
 		return null;
-	}
-
-	/**
-	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(ILaunchConfiguration)
-	 */
-	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException
-	{
-	}
-
-	/**
-	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(String)
-	 */
-	public void initializeFromMemento( String memento ) throws CoreException
-	{
 	}
 }

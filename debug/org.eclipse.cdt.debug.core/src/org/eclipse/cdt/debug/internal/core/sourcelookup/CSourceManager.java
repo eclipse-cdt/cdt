@@ -6,6 +6,9 @@
 
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
@@ -14,6 +17,7 @@ import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 
@@ -24,52 +28,43 @@ import org.eclipse.debug.core.model.IStackFrame;
  */
 public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 {
-	private ISourceLocator fSourceLocator;
-	private DisassemblyManager fDisassemblyManager;
+	private ISourceLocator fSourceLocator = null;
 	private int fMode = ISourceMode.MODE_SOURCE;
 	private int fRealMode = fMode;
+	private ILaunch fLaunch = null; 
 	
 	/**
 	 * Constructor for CSourceManager.
 	 */
-	public CSourceManager( ISourceLocator sourceLocator, DisassemblyManager disassemblyManager )
+	public CSourceManager( ISourceLocator sourceLocator )
 	{
 		setSourceLocator( sourceLocator );
-		setDisassemblyManager( disassemblyManager );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getLineNumber(IStackFrameInfo)
 	 */
-	public int getLineNumber( IStackFrameInfo frameInfo )
+	public int getLineNumber( IStackFrame frame )
 	{
 		if ( getRealMode() == ISourceMode.MODE_SOURCE )
 		{
 			if ( getCSourceLocator() != null )
 			{
-				return getCSourceLocator().getLineNumber( frameInfo );
+				return getCSourceLocator().getLineNumber( frame );
 			}
-			if ( frameInfo != null )
+			IStackFrameInfo info = (IStackFrameInfo)frame.getAdapter( IStackFrameInfo.class );
+			if ( info != null )
 			{
-				return frameInfo.getFrameLineNumber();
+				return info.getFrameLineNumber();
 			}
 		}
-		if ( getRealMode() == ISourceMode.MODE_DISASSEMBLY && getDisassemblyManager() != null )
+		if ( getRealMode() == ISourceMode.MODE_DISASSEMBLY && getDisassemblyManager( frame ) != null )
 		{
-			return getDisassemblyManager().getLineNumber( frameInfo );
+			return getDisassemblyManager( frame ).getLineNumber( frame );
 		}
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getSourceElement(String)
-	 */
-/*
-	public Object getSourceElement( String fileName )
-	{
-		return ( getCSourceLocator() != null ) ? getCSourceLocator().getSourceElement( fileName ) : null;
-	}
-*/
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getSourceLocations()
 	 */
@@ -146,10 +141,10 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 		}
 		if ( result == null && 
 			 ( autoDisassembly || getMode() == ISourceMode.MODE_DISASSEMBLY ) && 
-			 getDisassemblyManager() != null )
+			 getDisassemblyManager( stackFrame ) != null )
 		{
 			setRealMode( ISourceMode.MODE_DISASSEMBLY );
-			result = getDisassemblyManager().getSourceElement( stackFrame );
+			result = getDisassemblyManager( stackFrame ).getSourceElement( stackFrame );
 		}
 		else
 		{
@@ -167,7 +162,11 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 	
 	protected ISourceLocator getSourceLocator()
 	{
-		return fSourceLocator;
+		if ( fSourceLocator != null )
+			return fSourceLocator;
+		else if ( fLaunch != null )
+			return fLaunch.getSourceLocator();
+		return null;
 	}
 
 	protected void setSourceLocator( ISourceLocator sl )
@@ -175,13 +174,20 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 		fSourceLocator = sl;
 	}
 	
-	protected void setDisassemblyManager( DisassemblyManager dm )
+	protected DisassemblyManager getDisassemblyManager( IStackFrame stackFrame )
 	{
-		fDisassemblyManager = dm;
+		if ( stackFrame != null )
+		{
+			return (DisassemblyManager)stackFrame.getDebugTarget().getAdapter( DisassemblyManager.class );
+		}
+		return null;
 	}
-
-	protected DisassemblyManager getDisassemblyManager()
+	
+	public void addSourceLocation( ICSourceLocation location )
 	{
-		return fDisassemblyManager;
+		ICSourceLocation[] locations = getSourceLocations();
+		ArrayList list = new ArrayList( Arrays.asList( locations ) );
+		list.add( location );
+		setSourceLocations( (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] ) );
 	}
 }

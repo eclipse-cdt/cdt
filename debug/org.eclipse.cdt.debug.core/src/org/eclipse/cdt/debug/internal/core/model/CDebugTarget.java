@@ -68,14 +68,13 @@ import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.CMemoryManager;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -212,7 +211,12 @@ public class CDebugTarget extends CDebugElement
 	private CMemoryManager fMemoryManager;
 
 	/**
-	 * A memory manager for this target.
+	 * A disassembly manager for this target.
+	 */
+	private DisassemblyManager fDisassemblyManager;
+
+	/**
+	 * Whether the debugger process is default.
 	 */
 	private boolean fIsDebuggerProcessDefault = false;
 
@@ -244,14 +248,11 @@ public class CDebugTarget extends CDebugElement
 		setCDITarget( cdiTarget );
 		setBreakpoints( new HashMap( 5 ) );
 		setExecFile( file );
-		if ( getExecFile() != null )
-		{
-			getLaunch().setSourceLocator( createSourceLocator( getExecFile().getProject() ) );
-		}
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
 		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
 		fSupportsDisconnect = allowsDisconnect & getConfiguration().supportsDisconnect();
 		setThreadList( new ArrayList( 5 ) );
+		setDisassemblyManager( new DisassemblyManager( this ) );
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
 		DebugPlugin.getDefault().getExpressionManager().addExpressionListener( this );
@@ -827,9 +828,9 @@ public class CDebugTarget extends CDebugElement
 			return this;
 		if ( adapter.equals( ISourceMode.class ) )
 		{
-			if ( getSourceLocator() instanceof ISourceMode )
+			if ( getSourceLocator() instanceof IAdaptable )
 			{
-				return getSourceLocator();
+				return ((IAdaptable)getSourceLocator()).getAdapter( ISourceMode.class );
 			}
 		}
 		if ( adapter.equals( ICMemoryManager.class ) )
@@ -840,6 +841,8 @@ public class CDebugTarget extends CDebugElement
 			return this;
 		if ( adapter.equals( IRunToLine.class ) )
 			return this;
+		if ( adapter.equals( DisassemblyManager.class ) )
+			return fDisassemblyManager;
 		return super.getAdapter( adapter );
 	}
 	
@@ -1832,12 +1835,6 @@ public class CDebugTarget extends CDebugElement
 		return getLaunch().getSourceLocator();
 	}
 	
-	protected ISourceLocator createSourceLocator( IProject project )
-	{
-		return new CSourceManager( ( getLaunch().getSourceLocator() != null ) ? getLaunch().getSourceLocator() : new CSourceLocator( project ), 
-									new DisassemblyManager( this ) ) ;
-	}
-	
 	protected void setSourceSearchPath()
 	{
 		ICDISourceManager mgr = getCDISession().getSourceManager();
@@ -2019,5 +2016,15 @@ public class CDebugTarget extends CDebugElement
 						  return path;
 				  	  }
 				  };
+	}
+	
+	protected void setDisassemblyManager( DisassemblyManager dm )
+	{
+		fDisassemblyManager = dm;
+	}
+	
+	protected DisassemblyManager getDisassemblyManager()
+	{
+		return fDisassemblyManager;
 	}
 }

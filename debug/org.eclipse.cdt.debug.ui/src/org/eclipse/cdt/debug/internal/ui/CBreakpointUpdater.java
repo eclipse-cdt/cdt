@@ -107,7 +107,8 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 						breakpoint.delete();
 				}
 				catch( CoreException e ) {
-					CDebugUIPlugin.log( e.getStatus() );
+					// ensureMarker throws this exception 
+					// if breakpoint has already been deleted 
 				}
 			}
 		} );

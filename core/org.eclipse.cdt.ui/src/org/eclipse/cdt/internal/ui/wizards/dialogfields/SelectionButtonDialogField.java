@@ -131,7 +131,7 @@ public class SelectionButtonDialogField extends DialogField {
 		return fButton;
 	}
 	
-	private void doWidgetSelected(SelectionEvent e) {
+	protected void doWidgetSelected(SelectionEvent e) {
 		if (isOkToUse(fButton)) {
 			changeValue(fButton.getSelection());
 		}

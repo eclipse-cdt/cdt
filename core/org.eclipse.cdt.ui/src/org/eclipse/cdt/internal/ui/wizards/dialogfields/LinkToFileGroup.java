@@ -46,20 +46,20 @@ import org.eclipse.ui.internal.dialogs.PathVariableSelectionDialog;
  */
 public class LinkToFileGroup extends StringButtonDialogField {
 	private String fText;
-	private Listener listener;
+	protected Listener listener;
 	private String initialLinkTarget;
 	private int type;
-	private boolean createLink = false;
+	protected boolean createLink = false;
 
 	// used to compute layout sizes
 	//private FontMetrics fontMetrics;
 
 	// widgets
 	//private Composite groupComposite;
-	private Text linkTargetField;
-	private Button linkButton;
-	private Button browseButton;
-	private Button variablesButton;
+	protected Text linkTargetField;
+	protected Button linkButton;
+	protected Button browseButton;
+	protected Button variablesButton;
 	private Label resolvedPathLabelText;
 	private Label resolvedPathLabelData;
 	
@@ -76,7 +76,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		Label label= getLabelControl(parent);
 		label.setLayoutData(gridDataForLabel(1));
 			
-		Button checkButton = getLinkCheckButtonControl(parent);		
+		//Button checkButton = getLinkCheckButtonControl(parent);		
 
 		Text text= getTextControl(parent);
 		text.setLayoutData(gridDataForText(1));
@@ -242,7 +242,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	/**
 	 * Opens a file or directory browser depending on the link type.
 	 */
-	private void handleLinkTargetBrowseButtonPressed() {
+	protected void handleLinkTargetBrowseButtonPressed() {
 		String linkTargetName = linkTargetField.getText();
 		File file = null;
 		String selection = null;
@@ -279,7 +279,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	/**
 	 * Opens a path variable selection dialog
 	 */
-	private void handleVariablesButtonPressed() {
+	protected void handleVariablesButtonPressed() {
 		int variableTypes = IResource.FOLDER;
 	
 		// allow selecting file and folder variables when creating a 
@@ -300,7 +300,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	 * a variable, if the value is a relative path.
 	 * Displays the resolved value if the entered value is a variable.
 	 */
-	private void resolveVariable() {
+	protected void resolveVariable() {
 		if(!linkTargetField.isEnabled())
 			return;
 			

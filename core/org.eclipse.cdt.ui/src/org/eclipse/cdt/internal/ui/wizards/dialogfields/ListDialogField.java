@@ -59,9 +59,9 @@ import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
 public class ListDialogField extends DialogField {
 	
 	public static class ColumnsDescription {
-		private ColumnLayoutData[] columns;
-		private String[] headers;
-		private boolean drawLines;
+		protected ColumnLayoutData[] columns;
+		protected String[] headers;
+		protected boolean drawLines;
 		
 		public ColumnsDescription(ColumnLayoutData[] columns, String[] headers, boolean drawLines) {
 			this.columns= columns;
@@ -103,7 +103,7 @@ public class ListDialogField extends DialogField {
 	
 	private Label fLastSeparator;
 	
-	private Control fTableControl;
+	protected Control fTableControl;
 	private Composite fButtonsControl;
 	private ISelection fSelectionWhenEnabled;
 	
@@ -111,7 +111,7 @@ public class ListDialogField extends DialogField {
 	
 	private Object fParentElement;
 	
-	private ColumnsDescription fTableColumns;
+	protected ColumnsDescription fTableColumns;
 	
 
 	/**
@@ -438,7 +438,7 @@ public class ListDialogField extends DialogField {
 		return fButtonsControl;
 	}
 	
-	private void doButtonSelected(SelectionEvent e) {
+	protected void doButtonSelected(SelectionEvent e) {
 		if (fButtonControls != null) {
 			for (int i= 0; i < fButtonControls.length; i++) {
 				if (e.widget == fButtonControls[i]) {

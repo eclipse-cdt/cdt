@@ -122,7 +122,7 @@ public class ComboDialogField extends DialogField {
 		return fComboControl;
 	}	
 	
-	private void doModifyText(ModifyEvent e) {
+	protected void doModifyText(ModifyEvent e) {
 		if (isOkToUse(fComboControl)) {
 			fText= fComboControl.getText();
 			fSelectionIndex= fComboControl.getSelectionIndex();
@@ -130,7 +130,7 @@ public class ComboDialogField extends DialogField {
 		dialogFieldChanged();
 	}
 	
-	private void doSelectionChanged(SelectionEvent e) {
+	protected void doSelectionChanged(SelectionEvent e) {
 		if (isOkToUse(fComboControl)) {
 			fItems= fComboControl.getItems();
 			fText= fComboControl.getText();

@@ -1,9 +1,44 @@
+2004-12-14 Bogdan Gheorghe
+
+	Partial Fix for Bug 74427: Indexer needs to store more info
+	Fix for Bug 78678: Indexer stops reindexing file after repeated saves
+	Fix for Bug 78414: IProblem count increased through indexing header files stand-alone
+	
+	* index/org/eclipse/cdt/core/index/IIndexDelta.java	
+	* index/org/eclipse/cdt/internal/core/index/IEntryResult.java	
+	* index/org/eclipse/cdt/internal/core/index/IIndexerOutput.java
+	* index/org/eclipse/cdt/internal/core/index/impl/BlocksIndexInput.java
+	* index/org/eclipse/cdt/internal/core/index/impl/EntryResult.java	
+	* index/org/eclipse/cdt/internal/core/index/impl/GammaCompressedIndexBlock.java	
+	* index/org/eclipse/cdt/internal/core/index/impl/IIndexConstants.java
+	* index/org/eclipse/cdt/internal/core/index/impl/IncludeEntry.java	
+	* index/org/eclipse/cdt/internal/core/index/impl/Index.java	
+	* index/org/eclipse/cdt/internal/core/index/impl/IndexDelta.java	
+	* index/org/eclipse/cdt/internal/core/index/impl/IndexedFileHashedArray.java	
+	* index/org/eclipse/cdt/internal/core/index/impl/IndexerOutput.java	
+	* index/org/eclipse/cdt/internal/core/index/impl/InMemoryIndex.java	
+	* index/org/eclipse/cdt/internal/core/index/impl/MergeFactory.java	
+	* index/org/eclipse/cdt/internal/core/index/impl/Util.java	
+	* index/org/eclipse/cdt/internal/core/index/impl/WordEntry.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/AbstractIndexer.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/AddCompilationUnitToIndex.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/AddFileToIndex.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/AddFolderToIndex.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/CleanEncounteredHeaders.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexerModelListener.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexer.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexerRequestor.java	
+	* dependency/org/eclipse/cdt/internal/core/sourcedependency/UpdateDependency.java	
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java	
+	
 2004-08-25 Alain Magloire
 
 	Workaround for PR 72435, Patch From Bogdan
 	
 	* index/org/eclipse/cdt/internal/core/Util.java
 
+	
 2004-08-19 Bogdan Gheorghe
 	Fix for Bug 71500: [Indexer] all headers get indexed on project open
 	

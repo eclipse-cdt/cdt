@@ -70,6 +70,8 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
+import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -124,9 +126,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		this.filesTraversed = new ArrayList(15);
 		this.filesTraversed.add(resourceFile.getLocation().toOSString());
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
-	 */
+	
 	public boolean acceptProblem(IProblem problem) {
 		if( areProblemMarkersEnabled() && shouldRecordProblem( problem ) ){
 			IASTInclusion include = peekInclude();
@@ -155,101 +155,62 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		return IndexProblemHandler.ruleOnProblem( problem, ParserMode.COMPLETE_PARSE );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptMacro(org.eclipse.cdt.core.parser.ast.IASTMacro)
-	 */
 	public void acceptMacro(IASTMacro macro) {
-		// TODO Auto-generated method stub
-		indexer.addMacro(macro);
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		indexer.addMacro(macro, indexFlag);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptVariable(org.eclipse.cdt.core.parser.ast.IASTVariable)
-	 */
 	public void acceptVariable(IASTVariable variable) {
-		// TODO Auto-generated method stub
-		//System.out.println("acceptVariable");
-		indexer.addVariable(variable);
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		indexer.addVariable(variable, indexFlag);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFunctionDeclaration(org.eclipse.cdt.core.parser.ast.IASTFunction)
-	 */
 	public void acceptFunctionDeclaration(IASTFunction function) {
-		// TODO Auto-generated method stub
-		//System.out.println("acceptFunctionDeclaration");
-		indexer.addFunctionDeclaration(function);
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+
+		indexer.addFunctionDeclaration(function, indexFlag);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptUsingDirective(org.eclipse.cdt.core.parser.ast.IASTUsingDirective)
-	 */
-	public void acceptUsingDirective(IASTUsingDirective usageDirective) {
-		// TODO Auto-generated method stub
-		//System.out.println("acceptUsingDirective");
-	}
+	public void acceptUsingDirective(IASTUsingDirective usageDirective) {}
+	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) {}
+	public void acceptASMDefinition(IASTASMDefinition asmDefinition) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptUsingDeclaration(org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration)
-	 */
-	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) {
-		// TODO Auto-generated method stub
-		//System.out.println("acceptUsingDeclaration");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptASMDefinition(org.eclipse.cdt.core.parser.ast.IASTASMDefinition)
-	 */
-	public void acceptASMDefinition(IASTASMDefinition asmDefinition) {
-		// TODO Auto-generated method stub
-		//System.out.println("acceptASMDefinition");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTypedef(org.eclipse.cdt.core.parser.ast.IASTTypedef)
-	 */
 	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef) {
-		// TODO Auto-generated method stub
-		indexer.addTypedefDeclaration(typedef);
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		indexer.addTypedefDeclaration(typedef,indexFlag);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumerationSpecifier(org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier)
-	 */
 	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration) {
-		// TODO Auto-generated method stub
-		//System.out.println("acceptEnumSpecifier");
-		indexer.addEnumerationSpecifier(enumeration);
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		indexer.addEnumerationSpecifier(enumeration,indexFlag);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterFunctionBody(org.eclipse.cdt.core.parser.ast.IASTFunction)
-	 */
 	public void enterFunctionBody(IASTFunction function) {
-		// TODO Auto-generated method stub
-		indexer.addFunctionDeclaration(function);
-		//indexer.addFunctionDefinition();
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		indexer.addFunctionDeclaration(function,indexFlag);
+		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitFunctionBody(org.eclipse.cdt.core.parser.ast.IASTFunction)
-	 */
-	public void exitFunctionBody(IASTFunction function) {
-		// TODO Auto-generated method stub
-		//System.out.println("exitFunctionBody");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterCompilationUnit(org.eclipse.cdt.core.parser.ast.IASTCompilationUnit)
-	 */
-	public void enterCompilationUnit(IASTCompilationUnit compilationUnit) {
-		// TODO Auto-generated method stub
-		//System.out.println("enterCompilationUnit");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterInclusion(org.eclipse.cdt.core.parser.ast.IASTInclusion)
-	 */
+	public void exitFunctionBody(IASTFunction function) {}
+	public void enterCompilationUnit(IASTCompilationUnit compilationUnit) {}
+	
 	public void enterInclusion(IASTInclusion inclusion) {
 		if( areProblemMarkersEnabled() ){
 			IPath newPath = new Path(inclusion.getFullFileName());
@@ -262,305 +223,249 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		}
 		
 		IASTInclusion parent = peekInclude();
-		indexer.addInclude(inclusion, parent);
+		indexer.addInclude(inclusion, parent,indexer.output.getIndexedFile(resourceFile.getFullPath().toString()).getFileNumber());
 		//Push on stack
 		pushInclude(inclusion);
 		//Add to traversed files
 		this.filesTraversed.add(inclusion.getFullFileName());
 		
 		IProject resourceProject = resourceFile.getProject();
-		/* Check to see if this is a header file */
+		/* Check to see if this is a header file */ 
 		ICFileType type = CCorePlugin.getDefault().getFileType(resourceProject,
 				inclusion.getFullFileName());
 
-		/* See if this file has been encountered before */
-		if (type.isHeader())
-			CCorePlugin.getDefault().getCoreModel().getIndexManager().haveEncounteredHeader(resourceProject.getFullPath(),new Path(inclusion.getFullFileName()));
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterNamespaceDefinition(org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition)
-	 */
-	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
-		// TODO Auto-generated method stub
-		//System.out.println("enterNamespaceDefinition");
-		indexer.addNamespaceDefinition(namespaceDefinition);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier)
-	 */
-	public void enterClassSpecifier(IASTClassSpecifier classSpecification) {
-		// TODO Auto-generated method stub
+	    /* See if this file has been encountered before */
+         if (type.isHeader())
+                 CCorePlugin.getDefault().getCoreModel().getIndexManager().haveEncounteredHeader(resourceProject.getFullPath(),new Path(inclusion.getFullFileName()));
 		
-		//System.out.println("New class spec: " + classSpecification.getName());
-		//System.out.println("enterClassSpecifier");
-
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterLinkageSpecification(org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification)
-	 */
-	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {
-		// TODO Auto-generated method stub
-		//System.out.println("enterLinkageSpecification");
+	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		indexer.addNamespaceDefinition(namespaceDefinition, indexFlag);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterTemplateDeclaration(org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
-	 */
-	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) {
-		// TODO Auto-generated method stub
-		//System.out.println("enterTemplateDeclaration");
-	}
+	public void enterClassSpecifier(IASTClassSpecifier classSpecification) {}
+	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {}
+	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) {}
+	public void enterTemplateSpecialization(IASTTemplateSpecialization specialization) {}
+	public void enterTemplateInstantiation(IASTTemplateInstantiation instantiation) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterTemplateSpecialization(org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization)
-	 */
-	public void enterTemplateSpecialization(IASTTemplateSpecialization specialization) {
-		// TODO Auto-generated method stub
-		//System.out.println("enterTemplateSpecialization");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterTemplateExplicitInstantiation(org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation)
-	 */
-	public void enterTemplateInstantiation(IASTTemplateInstantiation instantiation) {
-		// TODO Auto-generated method stub
-		//System.out.println("enterTemplateExplicitInstantiation");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptMethodDeclaration(org.eclipse.cdt.core.parser.ast.IASTMethod)
-	 */
 	public void acceptMethodDeclaration(IASTMethod method) {
-		// TODO Auto-generated method stub
-		//System.out.println("acceptMethodDeclaration");
-		indexer.addMethodDeclaration(method);
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		indexer.addMethodDeclaration(method, indexFlag);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterMethodBody(org.eclipse.cdt.core.parser.ast.IASTMethod)
-	 */
 	public void enterMethodBody(IASTMethod method) {
-		// TODO Auto-generated method stub
-		//System.out.println("enterMethodBody " + method.getName());
-		indexer.addMethodDeclaration(method);
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		indexer.addMethodDeclaration(method, indexFlag);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitMethodBody(org.eclipse.cdt.core.parser.ast.IASTMethod)
-	 */
-	public void exitMethodBody(IASTMethod method) {
-		// TODO Auto-generated method stub
-		//System.out.println("exitMethodBody");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptField(org.eclipse.cdt.core.parser.ast.IASTField)
-	 */
+	public void exitMethodBody(IASTMethod method) {}
+	
 	public void acceptField(IASTField field) {
-		// TODO Auto-generated method stub
-	  // System.out.println("acceptField");
-	   indexer.addFieldDeclaration(field);
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+	    indexer.addFieldDeclaration(field, indexFlag);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptClassReference(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier, int)
-	 */
 	public void acceptClassReference(IASTClassReference reference) {
-		// TODO Auto-generated method stub
-		//System.out.println("acceptClassReference");
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
 		if (reference.getReferencedElement() instanceof IASTClassSpecifier)
-			indexer.addClassReference((IASTClassSpecifier)reference.getReferencedElement());
+			indexer.addClassReference((IASTClassSpecifier)reference.getReferencedElement(), indexFlag);
 		else if (reference.getReferencedElement() instanceof IASTElaboratedTypeSpecifier)
 		{
-		    indexer.addForwardClassReference((IASTTypeSpecifier) reference.getReferencedElement());
+		    indexer.addForwardClassReference((IASTTypeSpecifier) reference.getReferencedElement(), indexFlag);
 		} 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitTemplateDeclaration(org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
+	/**
+	 * @return
 	 */
-	public void exitTemplateDeclaration(IASTTemplateDeclaration declaration) {
-		// TODO Auto-generated method stub
-		//System.out.println("exitTemplateDeclaration");
+	private int calculateIndexFlags() {
+		int fileNum= 0;
+		
+		//Initialize the file number to be the file number for the file that triggerd
+		//the indexing. Note that we should always be able to get a number for this as
+		//the first step in the Source Indexer is to add the file being indexed to the index
+		//which actually creates an entry for the file in the index.
+		
+		IndexedFile mainIndexFile = indexer.output.getIndexedFile(resourceFile.getFullPath().toString());
+		if (mainIndexFile != null)
+			fileNum = mainIndexFile.getFileNumber();
+		
+		IASTInclusion include = peekInclude();
+		if (include != null){
+			//We are not in the file that has triggered the index. Thus, we need to find the
+			//file number for the current file (if it has one). If the current file does not
+			//have a file number, we need to add it to the index.
+			IFile tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(include.getFullFileName()));   
+			String filePath = "";
+			if (tempFile != null){
+				//File is local to workspace
+				filePath = tempFile.getFullPath().toString();
+			}
+			else{
+				//File is external to workspace
+				filePath = include.getFullFileName();
+			}
+			
+			IndexedFile indFile = indexer.output.getIndexedFile(filePath);
+			if (indFile != null){
+				fileNum = indFile.getFileNumber();
+			}
+			else {
+				//Need to add file to index
+				if (tempFile != null){
+				indFile = indexer.output.addSecondaryIndexedFile(new IFileDocument(tempFile));
+				if (indFile != null)
+					fileNum = indFile.getFileNumber();
+				}
+				else {
+					indFile = indexer.output.addSecondaryExternalIndexedFile(include.getFullFileName());
+					if (indFile != null)
+						fileNum = indFile.getFileNumber();
+				}
+			}
+			
+		}
+		
+		return fileNum;
 	}
+	
+	public void exitTemplateDeclaration(IASTTemplateDeclaration declaration) {}	
+	public void exitTemplateSpecialization(IASTTemplateSpecialization specialization) {}
+	public void exitTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) {}
+	public void exitLinkageSpecification(IASTLinkageSpecification linkageSpec) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitTemplateSpecialization(org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization)
-	 */
-	public void exitTemplateSpecialization(IASTTemplateSpecialization specialization) {
-		// TODO Auto-generated method stub
-		//System.out.println("exitTemplateSpecialization");
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitTemplateExplicitInstantiation(org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation)
-	 */
-	public void exitTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) {
-		// TODO Auto-generated method stub
-		//System.out.println("exitTemplateExplicitInstantiation");
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitLinkageSpecification(org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification)
-	 */
-	public void exitLinkageSpecification(IASTLinkageSpecification linkageSpec) {
-		// TODO Auto-generated method stub
-		//System.out.println("exitLinkageSpecification");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier)
-	 */
 	public void exitClassSpecifier(IASTClassSpecifier classSpecification) {
-		// TODO Auto-generated method stub
-		indexer.addClassSpecifier(classSpecification);
-		//System.out.println("exitClassSpecifier");
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+	
+		indexer.addClassSpecifier(classSpecification, indexFlag);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitNamespaceDefinition(org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition)
-	 */
-	public void exitNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
-		// TODO Auto-generated method stub
-		//System.out.println("exitNamespaceDefinition");
-	}
+	public void exitNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitInclusion(org.eclipse.cdt.core.parser.ast.IASTInclusion)
-	 */
 	public void exitInclusion(IASTInclusion inclusion) {
 		// TODO Auto-generated method stub
 		popInclude();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitCompilationUnit(org.eclipse.cdt.core.parser.ast.IASTCompilationUnit)
-	 */
-	public void exitCompilationUnit(IASTCompilationUnit compilationUnit) {
-		// TODO Auto-generated method stub
-		//System.out.println("exitCompilationUnit");
-
-}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptAbstractTypeSpecDeclaration(org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration)
-	 */
-	public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTypedefReference(org.eclipse.cdt.core.parser.ast.IASTTypedefReference)
-	 */
-	public void acceptTypedefReference(IASTTypedefReference reference) {
-		// TODO Auto-generated method stub
-		if( reference.getReferencedElement() instanceof IASTTypedefDeclaration )
-			indexer.addTypedefReference( (IASTTypedefDeclaration) reference.getReferencedElement() );
-		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptNamespaceReference(org.eclipse.cdt.core.parser.ast.IASTNamespaceReference)
-	 */
-	public void acceptNamespaceReference(IASTNamespaceReference reference) {
-		// TODO Auto-generated method stub
-		if (reference.getReferencedElement() instanceof IASTNamespaceDefinition)
-		indexer.addNamespaceReference((IASTNamespaceDefinition)reference.getReferencedElement());	
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumerationReference(org.eclipse.cdt.core.parser.ast.IASTEnumerationReference)
-	 */
-	public void acceptEnumerationReference(IASTEnumerationReference reference) {
-		// TODO Auto-generated method stub
-		if (reference.getReferencedElement() instanceof IASTEnumerationSpecifier)
-		  indexer.addEnumerationReference((IASTEnumerationSpecifier) reference.getReferencedElement());
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptVariableReference(org.eclipse.cdt.core.parser.ast.IASTVariableReference)
-	 */
-	public void acceptVariableReference(IASTVariableReference reference) {
-		// TODO Auto-generated method stub
-		if (reference.getReferencedElement() instanceof IASTVariable)
-			indexer.addVariableReference((IASTVariable)reference.getReferencedElement());
+	public void exitCompilationUnit(IASTCompilationUnit compilationUnit) {}
 	
+	public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration) {}
+
+	public void acceptTypedefReference(IASTTypedefReference reference) {
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		if( reference.getReferencedElement() instanceof IASTTypedefDeclaration )
+			indexer.addTypedefReference( (IASTTypedefDeclaration) reference.getReferencedElement(),indexFlag);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFunctionReference(org.eclipse.cdt.core.parser.ast.IASTFunctionReference)
-	 */
+	
+	public void acceptNamespaceReference(IASTNamespaceReference reference) {
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		if (reference.getReferencedElement() instanceof IASTNamespaceDefinition)
+		indexer.addNamespaceReference((IASTNamespaceDefinition)reference.getReferencedElement(),indexFlag);	
+	}
+
+	public void acceptEnumerationReference(IASTEnumerationReference reference) {
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		if (reference.getReferencedElement() instanceof IASTEnumerationSpecifier)
+		  indexer.addEnumerationReference((IASTEnumerationSpecifier) reference.getReferencedElement(),indexFlag);
+	}
+	
+	public void acceptVariableReference(IASTVariableReference reference) {
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+		if (reference.getReferencedElement() instanceof IASTVariable)
+			indexer.addVariableReference((IASTVariable)reference.getReferencedElement(),indexFlag);
+	}
+	
 	public void acceptFunctionReference(IASTFunctionReference reference) {
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
 		if (reference.getReferencedElement() instanceof IASTFunction)
-			indexer.addFunctionReference((IASTFunction) reference.getReferencedElement());
+			indexer.addFunctionReference((IASTFunction) reference.getReferencedElement(), indexFlag);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFieldReference(org.eclipse.cdt.core.parser.ast.IASTFieldReference)
-	 */
+	
 	public void acceptFieldReference(IASTFieldReference reference) {
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
 		if (reference.getReferencedElement() instanceof IASTField)
-		  indexer.addFieldReference((IASTField) reference.getReferencedElement());
+		  indexer.addFieldReference((IASTField) reference.getReferencedElement(),indexFlag);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptMethodReference(org.eclipse.cdt.core.parser.ast.IASTMethodReference)
-	 */
+	
 	public void acceptMethodReference(IASTMethodReference reference) {
+		//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
 		if (reference.getReferencedElement() instanceof IASTMethod)
-		 indexer.addMethodReference((IASTMethod) reference.getReferencedElement());
+		 indexer.addMethodReference((IASTMethod) reference.getReferencedElement(),indexFlag);
 	}
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptElaboratedForewardDeclaration(org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier)
-     */
+    
     public void acceptElaboratedForewardDeclaration(IASTElaboratedTypeSpecifier elaboratedType){
-        indexer.addElaboratedForwardDeclaration(elaboratedType);       
+    	//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
+		
+    	indexer.addElaboratedForwardDeclaration(elaboratedType, indexFlag);       
     }
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
-	 */
-	public void enterCodeBlock(IASTCodeScope scope) {
-		// TODO Auto-generated method stub
+	
+    public void enterCodeBlock(IASTCodeScope scope) {}
+	public void exitCodeBlock(IASTCodeScope scope) {}
+    public void acceptEnumeratorReference(IASTEnumeratorReference reference){
+    	//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
 		
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
-	 */
-	public void exitCodeBlock(IASTCodeScope scope) {
-		// TODO Auto-generated method stub
-		
-	}
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumeratorReference(org.eclipse.cdt.core.parser.ast.IASTEnumerationReference)
-     */
-    public void acceptEnumeratorReference(IASTEnumeratorReference reference)
-    {
      	if( reference.getReferencedElement() instanceof IASTEnumerator )
-     		indexer.addEnumeratorReference( (IASTEnumerator)reference.getReferencedElement() );
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptParameterReference(org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference)
-     */
-    public void acceptParameterReference(IASTParameterReference reference)
-    {
-        if( reference.getReferencedElement() instanceof IASTParameterDeclaration )
-        	indexer.addParameterReference( (IASTParameterDeclaration) reference.getReferencedElement() );
+     		indexer.addEnumeratorReference( (IASTEnumerator)reference.getReferencedElement(), indexFlag);
         
     }
     
-    public void acceptTemplateParameterReference( IASTTemplateParameterReference reference ){
-    	if( reference.getReferencedElement() instanceof IASTTemplateParameterReference ){
-    		//TODO
-    	}
-    }
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFriendDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
-	 */
-	public void acceptFriendDeclaration(IASTDeclaration declaration) {
-		// TODO Auto-generated method stub
+    public void acceptParameterReference(IASTParameterReference reference){
+    	//Check to see if this reference actually occurs in the file being indexed
+		//or if it occurs in another file
+		int indexFlag = calculateIndexFlags();
 		
-	}
+        if( reference.getReferencedElement() instanceof IASTParameterDeclaration )
+        	indexer.addParameterReference( (IASTParameterDeclaration) reference.getReferencedElement(), indexFlag);
+        
+    }
+    
+    public void acceptTemplateParameterReference( IASTTemplateParameterReference reference ){}
+    public void acceptFriendDeclaration(IASTDeclaration declaration) {}
 	
 	private void pushInclude( IASTInclusion inclusion ){
 		includeStack.addFirst( currentInclude );
@@ -781,7 +686,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		boolean semantics = ( problemMarkersEnabled & IndexManager.SEMANTIC_PROBLEMS_BIT ) != 0;
 		boolean syntax = ( problemMarkersEnabled & IndexManager.SYNTACTIC_PROBLEMS_BIT ) != 0;
 		
-		if( problem.checkCategory( IProblem.PREPROCESSOR_RELATED ) )
+		if( problem.checkCategory( IProblem.PREPROCESSOR_RELATED ) || problem.checkCategory( IProblem.SCANNER_RELATED ))
 			return preprocessor && problem.getID() != IProblem.PREPROCESSOR_CIRCULAR_INCLUSION;
 		else if( problem.checkCategory( IProblem.SEMANTICS_RELATED ) )
 			return semantics;

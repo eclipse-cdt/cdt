@@ -167,7 +167,7 @@ public class IncludeEntry {
 				fRefs[position++]= map;
 		}
 		fNumRefs= position;
-
+	
 		//to be changed!
 		System.arraycopy(fRefs, 0, (fRefs= new int[fNumRefs]), 0, fNumRefs);
 		Util.sort(fRefs);
@@ -223,5 +223,18 @@ public class IncludeEntry {
 		}
 		tempBuffer.append("} >"); //$NON-NLS-1$
 		return tempBuffer.toString();
+	}
+
+	/**
+	 * @return
+	 */
+	public long footprint() {
+		//Size of Object + (number of fields * size of Fields) + 
+		//(Size of ArrayListObject + (Number of Nodes * sizeof Node)) + (Size of ArrayObject + (Number of fFile * sizeof char)) + 
+		//(Size of ArrayListObject + (Number of Nodes * sizeof Node)) + 
+		//(Size of ArrayObject + (Number of refs * sizeof int)) 
+		return 8 + (8 * 4) + 
+			  (8 + fChild.size() * (8 + 2 * 4)) + (8 + fFile.length * 2) +
+			  (8 + fParent.size() * (8 + 2 * 4)) + (8 + fRefs.length * 4);
 	}
 }

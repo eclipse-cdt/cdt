@@ -703,8 +703,9 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		   IEntryResult entry = entries[i];
 		   resetIndexInfo();
 		   decodeIndexEntry(entry);
+		  
 		   if (matchIndexEntry()){
-			   feedIndexRequestor(requestor, detailLevel, entry.getFileReferences(), input, scope);
+			   feedIndexRequestor(requestor, detailLevel, entry.getFileReferences(), entry.getIndexFlags(), input, scope);
 		   }
 	   }
    }
@@ -712,7 +713,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
    /**
    * Feed the requestor according to the current search pattern
    */
-   public abstract void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references, IndexInput input, ICSearchScope scope)  throws IOException ;
+   public abstract void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references, int[] indexFlags, IndexInput input, ICSearchScope scope)  throws IOException ;
    
    /**
     * Called to reset any variables used in the decoding of index entries, 

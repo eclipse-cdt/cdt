@@ -91,7 +91,14 @@ public class Util {
 			quickSort(list, left, original_right);
 		}
 	}
-	private static void quickSort(int[] list, int left, int right) {
+	private static void quickSort(int[] list, int left, int right, int[] dependentList) {
+		
+		//If we are sorting 2 arrays, make sure that they are the same length
+		if (dependentList != null){
+			if (list.length != dependentList.length)
+				return;
+		}
+		
 		int original_left= left;
 		int original_right= right;
 		int mid= list[(left + right) / 2];
@@ -106,15 +113,22 @@ public class Util {
 				int tmp= list[left];
 				list[left]= list[right];
 				list[right]= tmp;
+				
+				if (dependentList != null){
+					int depTmp = dependentList[left];
+					dependentList[left]=dependentList[right];
+					dependentList[right]=depTmp;
+				}
+				
 				left++;
 				right--;
 			}
 		} while (left <= right);
 		if (original_left < right) {
-			quickSort(list, original_left, right);
+			quickSort(list, original_left, right, dependentList);
 		}
 		if (left < original_right) {
-			quickSort(list, left, original_right);
+			quickSort(list, left, original_right, dependentList);
 		}
 	}
 	private static void quickSort(String[] list, int left, int right) {
@@ -303,7 +317,11 @@ public class Util {
 	}
 	public static void sort(int[] list) {
 		if (list.length > 1)
-			quickSort(list, 0, list.length - 1);
+			quickSort(list, 0, list.length - 1, null);
+	}
+	public static void sort(int[] list, int[] dependentList) {
+		if (list.length > 1)
+			quickSort(list, 0, list.length - 1, dependentList);
 	}
 	public static void sort(String[] list) {
 		if (list.length > 1)

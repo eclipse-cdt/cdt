@@ -43,17 +43,17 @@ public class IndexerOutput implements IIndexerOutput {
 	/**
 	 * Adds a reference to the given word to the inMemoryIndex.
 	 */
-	public void addRef(char[] word) {
+	public void addRef(char[] word, int indexFlags) {
 		if (indexedFile == null) {
 			throw new IllegalStateException();
 		}
-		index.addRef(indexedFile, word);
+		index.addRef(indexedFile, word, indexFlags);
 	}
 	/**
 	 * Adds a reference to the given word to the inMemoryIndex.
 	 */
-	public void addRef(String word) {
-		addRef(word.toCharArray());
+	public void addRef(String word, int indexFlags) {
+		addRef(word.toCharArray(), indexFlags);
 	}
 		
 	public void addRelatives(String inclusion, String parent) {
@@ -72,6 +72,28 @@ public class IndexerOutput implements IIndexerOutput {
 
 	public void addIncludeRef(String word) {
 		addIncludeRef(word.toCharArray());
+	}
+	
+	public IndexedFile getIndexedFile(String path) {
+		return index.getIndexedFile(path);
+	}
+	
+	/**
+	 * Adds a file to the InMemoryIndex but does not supplant the current
+	 * file being indexed. This method is to be used if the current file being indexed
+	 * needs to make reference to a file that has not been added to the index as of yet.
+	 */
+	public IndexedFile addSecondaryIndexedFile(IDocument document) {
+		return index.addDocument(document);
+	}
+	
+	/**
+	 * Adds a file to the InMemoryIndex but does not supplant the current
+	 * file being indexed. This method is to be used if the current file being indexed
+	 * needs to make reference to an external file that has not been added to the index as of yet.
+	 */
+	public IndexedFile addSecondaryExternalIndexedFile(String path) {
+		return index.addExternalFilePath(path);
 	}
 	
 }

@@ -154,7 +154,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	protected boolean isForward;
 
 	
-	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references, IndexInput input, ICSearchScope scope) throws IOException {
+	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references, int[] indexFlags, IndexInput input, ICSearchScope scope) throws IOException {
 		boolean isClass = decodedType == CLASS_SUFFIX;
 		for (int i = 0, max = references.length; i < max; i++) {
 			IndexedFile file = input.getIndexedFile(references[i]);
@@ -253,4 +253,5 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		
 		return true;
 	}
+
 }

@@ -69,7 +69,7 @@ public class IndexerModelListener implements IElementChangedListener {
 					switch(tempResource.getType())
 					{
 						case IResource.FILE:
-						indexManager.addSource((IFile) tempResource,tempResource.getProject().getFullPath(), false);
+						indexManager.addSource((IFile) tempResource,tempResource.getProject().getFullPath());
 						break;
 						
 						case IResource.FOLDER:

@@ -57,6 +57,13 @@ public class InMemoryIndex {
 		return indexedFile;
 	}
 	
+	public IndexedFile addExternalFilePath(String path){
+		IndexedFile indexedFile = this.files.add(path);
+		this.footprint += indexedFile.footprint() + 4;
+		this.sortedFiles = null;
+		return indexedFile;
+	}
+	
 	public void addIncludeRef(IndexedFile indexedFile, char[] include) {
 		addIncludeRef(include, indexedFile.getFileNumber());
 	}
@@ -88,9 +95,7 @@ public class InMemoryIndex {
 				entry.addRef(fileNum);
 				this.includes.add(entry);
 				this.sortedIncludeEntries= null;
-				//TODO: BOG FIGURE OUT FOOTPRINT
-				//this.footprint += entry.getClass(); //footprint();
-				//
+				this.footprint += entry.footprint();
 			} else {
 				this.footprint += entry.addRef(fileNum);
 			}
@@ -99,38 +104,41 @@ public class InMemoryIndex {
 	/**
 	 * Adds the references of the word to the index (reference = number of the file the word belongs to).
 	 */
-	protected void addRef(char[] word, int[] references) {
+	protected void addRef(char[] word, int[] references, int[] indexFlags) {
 		int size= references.length;
 		int i= 0;
 		while (i < size) {
 			if (references[i] != 0)
-				addRef(word, references[i]);
+				addRef(word, references[i], indexFlags[i]);
 			i++;
 		}
 	}
 	/**
 	 * Looks if the word already exists in the index and add the fileNum to this word.
 	 * If the word does not exist, it adds it in the index.
+	 * @param indexFlags
 	 */
-	protected void addRef(char[] word, int fileNum) {
+	protected void addRef(char[] word, int fileNum, int indexFlags) {
 		WordEntry entry= this.words.get(word);
 		if (entry == null) {
 			entry= new WordEntry(word);
-			entry.addRef(fileNum);
+			//entry.addRef(fileNum, indexFlags);
+			entry.addRef(indexFlags, indexFlags);
 			this.words.add(entry);
 			this.sortedWordEntries= null;
 			this.footprint += entry.footprint();
 		} else {
-			this.footprint += entry.addRef(fileNum);
+			//this.footprint += entry.addRef(fileNum, indexFlags);
+			this.footprint += entry.addRef(indexFlags, indexFlags);
 		}
 	}
 
-	public void addRef(IndexedFile indexedFile, char[] word) {
-		addRef(word, indexedFile.getFileNumber());
+	public void addRef(IndexedFile indexedFile, char[] word, int indexFlags) {
+		addRef(word, indexedFile.getFileNumber(), indexFlags);
 	}
 
-	public void addRef(IndexedFile indexedFile, String word) {
-		addRef(word.toCharArray(), indexedFile.getFileNumber());
+	public void addRef(IndexedFile indexedFile, String word, int indexFlags) {
+		addRef(word.toCharArray(), indexedFile.getFileNumber(), indexFlags);
 	}
 	
 	public void addRelatives(IndexedFile indexedFile, String inclusion, String parent) {

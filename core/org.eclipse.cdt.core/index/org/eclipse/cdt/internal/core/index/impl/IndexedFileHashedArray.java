@@ -35,6 +35,10 @@ public IndexedFile add(IDocument document) {
 	return add(new IndexedFile(document, ++lastId));
 }
 
+public IndexedFile add(String path){
+	return add(new IndexedFile(path, ++lastId));
+}
+
 private IndexedFile add(IndexedFile file) {
 	int length = elements.length;
 	String path = file.getPath();

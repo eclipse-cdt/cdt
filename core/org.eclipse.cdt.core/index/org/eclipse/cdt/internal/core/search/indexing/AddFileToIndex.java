@@ -32,18 +32,21 @@ public abstract class AddFileToIndex extends IndexRequest {
 		this.checkEncounteredHeaders = checkEncounteredHeaders;
 	}
 	
+	public AddFileToIndex(IFile resource, IPath indexPath, IndexManager manager) {
+		this(resource,indexPath,manager,false);
+	}
+	
 	public boolean execute(IProgressMonitor progressMonitor) {
 		if (progressMonitor != null && progressMonitor.isCanceled()) return true;
 	
 		if (checkEncounteredHeaders) {
 			IProject resourceProject = resource.getProject();
-			/* Check to see if this is a header file */ 
-			ICFileType type = CCorePlugin.getDefault().getFileType(resourceProject,resource.getName());
-			
-			/* See if this file has been encountered before */
-			if (type.isHeader() &&
-				manager.haveEncounteredHeader(resourceProject.getFullPath(),resource.getLocation()))
-				return true;
+			/* Check to see if this is a header */
+			ICFileType type = CCorePlugin.getDefault().getFileType(resourceProject, resource.getName());
+		    /* See if this file has been encountered before */
+             if (type.isHeader() &&
+                 manager.haveEncounteredHeader(resourceProject.getFullPath(),resource.getLocation()))
+                 return true;
 		}
 		/* ensure no concurrent write access to index */
 		IIndex index = manager.getIndex(this.indexPath, true, /*reuse index file*/ true /*create if none*/);

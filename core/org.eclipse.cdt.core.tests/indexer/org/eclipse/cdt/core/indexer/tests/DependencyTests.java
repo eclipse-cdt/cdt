@@ -14,9 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
@@ -89,8 +91,13 @@ import org.eclipse.core.runtime.Platform;
 		super.setUp();
 		//Create temp project
 		testProject = createProject("DepTestProject");
+		IPath pathLoc = CCorePlugin.getDefault().getStateLocation();
 		
-		testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+		File indexFile = new File(pathLoc.append("281274758.index").toOSString());
+		if (indexFile.exists())
+			indexFile.delete();
+		
+		testProject.setSessionProperty(IndexManager.activationKey,new Boolean(false));
 		
 		if (testProject==null)
 			fail("Unable to create project");	
@@ -154,7 +161,8 @@ import org.eclipse.core.runtime.Platform;
 
    IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
    //indexManager.setEnabled(testProject,true);
-   
+   testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+	
 
    String[] depTestModel = {File.separator + "DepTestProject" + File.separator + "d.h", File.separator + "DepTestProject" + File.separator + "Inc1.h", File.separator + "DepTestProject" + File.separator + "c.h", File.separator + "DepTestProject" + File.separator + "a.h", File.separator + "DepTestProject" + File.separator + "DepTest.h"};
    String[] depTest2Model = {File.separator + "DepTestProject" + File.separator + "d.h", File.separator + "DepTestProject" + File.separator + "DepTest2.h"};
@@ -208,20 +216,22 @@ import org.eclipse.core.runtime.Platform;
 
  public void testDepTable() throws Exception{
    //Add a file to the project
-   
+ 	
+ 	IFile depTest2C = importFile("DepTest2.cpp","resources/dependency/DepTest2.cpp");
+    IFile depTestC = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");
    IFile cH = importFile("c.h","resources/dependency/c.h");
    IFile aH = importFile("a.h","resources/dependency/a.h");
    IFile Inc1H = importFile("Inc1.h","resources/dependency/Inc1.h");
    IFile dH = importFile("d.h","resources/dependency/d.h");
    IFile depTestH = importFile("DepTest.h","resources/dependency/DepTest.h");
    IFile depTest2H = importFile("DepTest2.h","resources/dependency/DepTest2.h");
-   IFile depTest2C = importFile("DepTest2.cpp","resources/dependency/DepTest2.cpp");
-   IFile depTestC = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");
    
+   testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+	
    PathCollector pathCollector = new PathCollector();
    getTableRefs(dH, pathCollector);
-				
-   String[] dHModel = {IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest2.cpp", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest2.h"};
+
+   String[] dHModel = {IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest2.cpp", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp"};
    String[] iPath = pathCollector.getPaths();
 	
    if (dHModel.length != iPath.length)
@@ -238,7 +248,7 @@ import org.eclipse.core.runtime.Platform;
    pathCollector = new PathCollector();
    getTableRefs(Inc1H, pathCollector);
 				
-   String[] Inc1HModel = {IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp",IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.h"};
+   String[] Inc1HModel = {IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp"};
    iPath = pathCollector.getPaths();
 	
    if (Inc1HModel.length != iPath.length)
@@ -263,6 +273,8 @@ import org.eclipse.core.runtime.Platform;
    IFile depTestH = importFile("DepTest.h","resources/dependency/DepTest.h");
    IFile depTestC = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");
 
+   testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+	
    String[] beforeModel = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp"};
 	
    PathCollector pathCollector = new PathCollector();
@@ -283,7 +295,7 @@ import org.eclipse.core.runtime.Platform;
    getTableRefs(Inc1H, pathCollector);
 				
    iPath = pathCollector.getPaths();
-   String[] inc1Model = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp",Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.h"};
+   String[] inc1Model = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp"};
    compareArrays(iPath,inc1Model);
 	
    pathCollector = new PathCollector();
@@ -298,7 +310,7 @@ import org.eclipse.core.runtime.Platform;
 			
    iPath = pathCollector.getPaths();
 
-   String[] cHModel = {Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "Inc1.h", Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "DepTest.cpp", Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "a.h", Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR +  "DepTest.h"};
+   String[] cHModel = {Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "DepTest.cpp"};
    compareArrays(iPath,cHModel);
 	
    editCode(depTestC,"#include \"DepTest.h\"","//#include \"DepTest.h\"");
@@ -325,7 +337,7 @@ import org.eclipse.core.runtime.Platform;
 				
    iPath = pathCollector.getPaths();
 		
-   if (iPath.length != 1)
+   if (iPath.length != 0)
 	   fail("Number of included files differs from model");
 	
    pathCollector = new PathCollector();
@@ -333,7 +345,7 @@ import org.eclipse.core.runtime.Platform;
 			
    iPath = pathCollector.getPaths();
 	
-   if (iPath.length != 1)
+   if (iPath.length != 0)
 	   fail("Number of included files differs from model");
 	
 	
@@ -342,7 +354,7 @@ import org.eclipse.core.runtime.Platform;
 			
    iPath = pathCollector.getPaths();
 	
-   if (iPath.length != 3)
+   if (iPath.length != 0)
 	   fail("Number of included files differs from model");
 
  }
@@ -358,6 +370,8 @@ import org.eclipse.core.runtime.Platform;
 	 IFile depTestC = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");
 	 IFile depTest2C = importFile("DepTest2.cpp","resources/dependency/DepTest2.cpp");
 
+	 testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+		
 	 IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	  
 	 String[] preDepTestModel = {File.separator + "DepTestProject" + File.separator + "DepTest.h", File.separator + "DepTestProject" + File.separator + "Inc1.h", File.separator + "DepTestProject" + File.separator + "a.h", File.separator + "DepTestProject" + File.separator + "c.h", File.separator + "DepTestProject" + File.separator + "d.h"};
@@ -425,6 +439,8 @@ import org.eclipse.core.runtime.Platform;
 	 IFile depTest3H = importFile("DepTest3.h","resources/dependency/DepTest3.h");
 	 IFile depTest3C = importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");
 
+	 testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+		
 	 IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	  
 	 String[] preDepTestModel = {File.separator + "DepTestProject" + File.separator + "DepTest3.h", File.separator + "DepTestProject" + File.separator + "a.h", File.separator + "DepTestProject" + File.separator + "c.h"};
@@ -491,10 +507,13 @@ import org.eclipse.core.runtime.Platform;
 	IFile aH = importFile("a.h","resources/dependency/a.h");
 	IFile depTest3H = importFile("DepTest3.h","resources/dependency/DepTest3.h");
 	IFile depTest3C = importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");
+	
+	testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+		
 	 
 	String[] beforeModel = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest3.cpp"}; 
-	String[] cHModel = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest3.cpp", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "a.h", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest3.h"};
-	String[] aHModel = {Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "DepTest3.cpp", Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "DepTest3.h"};
+	String[] cHModel = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest3.cpp"};
+	String[] aHModel = {Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "DepTest3.cpp"};
 	PathCollector pathCollector = new PathCollector();
 	getTableRefs(depTest3H, pathCollector);
 				
@@ -561,6 +580,8 @@ import org.eclipse.core.runtime.Platform;
    IFile depTest3H = importFile("DepTest3.h","resources/dependency/DepTest3.h");
    IFile depTest3C = importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");
  	
+   testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+	
    ICSearchPattern pattern = SearchEngine.createSearchPattern( "Z", ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, true );
 		
    search(workspace,pattern,scope,resultCollector);

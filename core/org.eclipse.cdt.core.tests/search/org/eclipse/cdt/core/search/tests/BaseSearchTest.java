@@ -14,7 +14,9 @@
 package org.eclipse.cdt.core.search.tests;
 
 import java.io.FileInputStream;
+
 import junit.framework.TestCase;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
@@ -27,7 +29,6 @@ import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.cdt.testplugin.FileManager;
-import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -44,30 +45,28 @@ import org.eclipse.core.runtime.Path;
  */
 public class BaseSearchTest extends TestCase implements ICSearchConstants {
 
-	ICSearchScope 			scope;	
-	IFile 					file;
-	IProject 				testProject;
-	NullProgressMonitor		monitor;
-	IWorkspace 				workspace;
-	BasicSearchResultCollector	resultCollector;
-	SearchEngine			searchEngine;
-	FileManager 			fileManager;
-    
-	public BaseSearchTest(String name) {
-		super(name);
-	}
-
-	protected void setUp() throws Exception {
-		super.setUp();
+	static protected ICSearchScope 				scope;	
+	static protected IFile 						file;
+	static protected IProject 					testProject;
+	static protected NullProgressMonitor		monitor;
+	static protected IWorkspace 				workspace;
+	static protected BasicSearchResultCollector	resultCollector;
+	static protected SearchEngine				searchEngine;
+	static protected FileManager 				fileManager;
+	{
+		
 		(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 		monitor = new NullProgressMonitor();
 		
 		workspace = ResourcesPlugin.getWorkspace();
 		
-		//Create temp project
-		testProject = createProject("SearchTestProject");
+		try {
+			//Create temp project
+			testProject = createProject("SearchTestProject");
+			testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+		} catch (CoreException e) {}
 		
-		testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+		
 		
 		if (testProject == null)
 			fail("Unable to create project");
@@ -75,10 +74,16 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		//Create file manager
 		fileManager = new FileManager();
 		
-		//Add a file to the project
-		//importFile("mail.cpp", "resources/indexer/mail.cpp");
-		importFile("classDecl.cpp", "resources/search/classDecl.cpp");
-		importFile("include.h", "resources/search/include.h");
+		try {
+			//Add a file to the project
+			//importFile("mail.cpp", "resources/indexer/mail.cpp");
+			importFile("classDecl.cpp", "resources/search/classDecl.cpp");
+			importFile("include.h", "resources/search/include.h");
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		
 		scope = SearchEngine.createWorkspaceScope();
 	
@@ -87,20 +92,17 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		searchEngine = new SearchEngine();
 	}
 
+	
+	
+	public BaseSearchTest(String name) {
+		super(name);
+	}
+
+	protected void setUp() throws Exception {
+	
+	}
+
 	protected void tearDown() {
-		try {
-			super.tearDown();
-		} catch (Exception e1) {
-		}
-		//Delete project
-		if (testProject.exists()){
-			try {
-				fileManager.closeAllFiles();
-				testProject.delete(true,monitor);
-			} catch (ResourceException e) {
-			} catch (CoreException e) {
-			}
-		}
 	}
 	
 	private IProject createProject(String projectName) throws CoreException {

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.index;
 
 public interface IEntryResult {
+	public int[] getIndexFlags();
 	public int[] getFileReferences();
 	public char[] getWord();
 }

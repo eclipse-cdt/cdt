@@ -1,20 +1,9 @@
-/*
- * Created on Aug 19, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package org.eclipse.cdt.internal.core.search.indexing;
 
 import org.eclipse.cdt.internal.core.search.processing.IJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-/**
- * @author bgheorgh
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+
 public class CleanEncounteredHeaders implements IJob {
 	
 	IndexManager manager = null;

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
+import org.eclipse.cdt.core.index.IIndexDelta;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
@@ -154,7 +155,7 @@ public class SourceIndexer extends AbstractIndexer {
 			
 			//Report events
 			ArrayList filesTrav = requestor.getFilesTraversed();
-			IndexDelta indexDelta = new IndexDelta(resourceFile.getProject(),filesTrav);
+			IndexDelta indexDelta = new IndexDelta(resourceFile.getProject(),filesTrav, IIndexDelta.INDEX_FINISHED_DELTA);
 			CCorePlugin.getDefault().getCoreModel().getIndexManager().notifyListeners(indexDelta);
 			//Release all resources
 			parser=null;

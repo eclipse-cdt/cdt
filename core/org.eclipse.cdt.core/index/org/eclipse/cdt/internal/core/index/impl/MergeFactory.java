@@ -189,17 +189,21 @@ public class MergeFactory {
 			else
 				compare= Util.compare(word1.getWord(), word2.getWord());
 			if (compare < 0) {
+				word1.catRefs(word1);
 				word1.mapRefs(mappingOld);
 				mergeOutput.addWord(word1);
 				oldInput.moveToNextWordEntry();
 			} else if (compare > 0) {
+				word2.catRefs(word2);
 				word2.mapRefs(mappingAdds);
 				mergeOutput.addWord(word2);
 				addsInput.moveToNextWordEntry();
 			} else {
+				word1.catRefs(word1);
+				word2.catRefs(word2);
 				word1.mapRefs(mappingOld);
 				word2.mapRefs(mappingAdds);
-				word1.addRefs(word2.getRefs());
+				word1.addRefs(word2.getRefs(),word2.getRefsIndexFlags());
 				mergeOutput.addWord(word1);
 				addsInput.moveToNextWordEntry();
 				oldInput.moveToNextWordEntry();
@@ -213,7 +217,7 @@ public class MergeFactory {
 	 */
 	protected void mergeIncludes() throws IOException {
 		int compare;
-		
+
 		while (oldInput.hasMoreIncludes() || addsInput.hasMoreIncludes()) {
 			IncludeEntry inc1= oldInput.getCurrentIncludeEntry();
 			IncludeEntry inc2= addsInput.getCurrentIncludeEntry();

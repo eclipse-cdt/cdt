@@ -5,8 +5,8 @@
 	in a threaded program, GNU/Linux uses a thread manager
 	when trying to access the stackframe, gdb usually coredumps
 	with an assert, it goes something like this:
-	54 0-data-disassemble -f manager.c -l 136 -n 100 0
-
+	
+-data-disassemble -f manager.c -l 136 -n 100 0
 &"Cannot access memory at address 0x4002d794\n"
 ^error,msg="Cannot access memory at address 0x4002d794"
 (gdb) 

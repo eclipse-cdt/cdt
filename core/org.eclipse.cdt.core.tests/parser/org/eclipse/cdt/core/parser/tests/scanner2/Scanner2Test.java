@@ -318,7 +318,29 @@ public class Scanner2Test extends BaseScanner2Test
 				"SIMPLE_STRING", //$NON-NLS-1$
 				"This 	is a simple 	string.		Continue please."); //$NON-NLS-1$
 	}
-
+	public void testBug67834() throws Exception {
+		initializeScanner(
+				"#if ! BAR\n" + //$NON-NLS-1$
+				"foo\n" + //$NON-NLS-1$
+				"#else\n" + //$NON-NLS-1$
+				"bar\n" + //$NON-NLS-1$
+				"#endif\n"  //$NON-NLS-1$
+				); //$NON-NLS-1$
+		validateIdentifier("foo"); //$NON-NLS-1$
+		validateEOF();
+		validateBalance();
+		
+		initializeScanner(
+				"#if ! (BAR)\n" + //$NON-NLS-1$
+				"foo\n" + //$NON-NLS-1$
+				"#else\n" + //$NON-NLS-1$
+				"bar\n" + //$NON-NLS-1$
+				"#endif\n"  //$NON-NLS-1$
+				); //$NON-NLS-1$
+		validateIdentifier("foo"); //$NON-NLS-1$
+		validateEOF();
+		validateBalance();
+	}
 
 	public void testConcatenation()
 	{
@@ -1189,7 +1211,8 @@ public class Scanner2Test extends BaseScanner2Test
 		validateInteger( "2" ); //$NON-NLS-1$
 		validateEOF();
 	}
-		
+	
+	
 	public void testBug36816() throws Exception
 	{
 		initializeScanner( "#include \"foo.h" ); //$NON-NLS-1$
@@ -1488,6 +1511,43 @@ public class Scanner2Test extends BaseScanner2Test
     	validateEOF();
     }
     
+    public void test68229() throws Exception{
+    	Writer writer = new StringWriter();
+    	writer.write( "#define COUNT 0     \n" ); //$NON-NLS-1$
+    	writer.write( "1                   \n" ); //$NON-NLS-1$
+    	writer.write( "#if COUNT           \n" ); //$NON-NLS-1$
+    	writer.write( "   2                \n" ); //$NON-NLS-1$
+    	writer.write( "#endif              \n" ); //$NON-NLS-1$
+    	writer.write( "3                   \n" ); //$NON-NLS-1$
+
+    	initializeScanner( writer.toString() );
+    	
+    	IToken t1 = scanner.nextToken();
+    	IToken t3 = scanner.nextToken();
+
+    	assertEquals( t1.getImage(), "1" ); //$NON-NLS-1$
+    	assertEquals( t3.getImage(), "3" ); //$NON-NLS-1$
+    	assertEquals( t1.getNext(), t3 );
+    	validateEOF();
+    	
+    	writer = new StringWriter();
+    	writer.write( "#define FOO( x ) x   \n" ); //$NON-NLS-1$
+    	writer.write( "1  FOO( 2 )  3       \n" ); //$NON-NLS-1$
+    	
+    	initializeScanner( writer.toString() );
+    	t1 = scanner.nextToken();
+    	IToken t2 = scanner.nextToken();
+    	t3 = scanner.nextToken();
+    	validateEOF();
+    	
+    	assertEquals( t1.getImage(), "1" ); //$NON-NLS-1$
+    	assertEquals( t2.getImage(), "2" ); //$NON-NLS-1$
+    	assertEquals( t3.getImage(), "3" ); //$NON-NLS-1$
+    	
+    	assertEquals( t1.getNext(), t2 );
+    }
+    
+    
     public void testBug56517() throws Exception
 	{
     	Writer writer = new StringWriter();
@@ -1707,4 +1767,6 @@ public class Scanner2Test extends BaseScanner2Test
     	assertFalse( i.hasNext() );
     	assertEquals( inc.getName(), "foo.h"); //$NON-NLS-1$
 	}
+    
+    
 }

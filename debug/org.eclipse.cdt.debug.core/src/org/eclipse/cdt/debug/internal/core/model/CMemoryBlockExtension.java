@@ -26,31 +26,14 @@ import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
-import org.eclipse.debug.internal.core.memory.MemoryByte;
+import org.eclipse.debug.core.model.MemoryByte;
 
 /**
  * Represents a memory block in the CDI model.
  */
-public class CExtendedMemoryBlock extends CDebugElement implements IExtendedMemoryBlock, ICDIEventListener {
-
-	private class CMemoryByte extends MemoryByte {
-
-		/** 
-		 * Constructor for CMemoryByte. 
-		 */
-		public CMemoryByte( byte v, byte f ) {
-			this.value = v;
-			this.flags = f;
-		}
-
-		/** 
-		 * Constructor for CMemoryByte. 
-		 */
-		public CMemoryByte() {
-		}
-	}
+public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlockExtension, ICDIEventListener {
 
 	/**
 	 * The address expression this memory block is based on.
@@ -75,9 +58,9 @@ public class CExtendedMemoryBlock extends CDebugElement implements IExtendedMemo
 	private HashSet fChanges = new HashSet();
 
 	/** 
-	 * Constructor for CExtendedMemoryBlock. 
+	 * Constructor for CMemoryBlockExtension. 
 	 */
-	public CExtendedMemoryBlock( CDebugTarget target, String expression, BigInteger baseAddress ) {
+	public CMemoryBlockExtension( CDebugTarget target, String expression, BigInteger baseAddress ) {
 		super( target );
 		fExpression = expression;
 		fBaseAddress = baseAddress;
@@ -164,7 +147,7 @@ public class CExtendedMemoryBlock extends CDebugElement implements IExtendedMemo
 					byte flags = MemoryByte.VALID;
 					if ( hasChanged( getRealBlockAddress().add( BigInteger.valueOf( i ) ) ) )
 						flags |= MemoryByte.CHANGED;
-					fBytes[i] = new CMemoryByte( bytes[i], flags );
+					fBytes[i] = new MemoryByte( bytes[i], flags );
 				}
 			}
 		}
@@ -374,8 +357,8 @@ public class CExtendedMemoryBlock extends CDebugElement implements IExtendedMemo
 					if ( addresses[i].compareTo( start ) >= 0 && addresses[i].compareTo( start.add( BigInteger.valueOf( length ) ) ) < 0 ) {
 						int index = addresses[i].subtract( start ).intValue();
 						if ( index >= 0 && index < memBytes.length && index < newBytes.length ) {
-							memBytes[index].flags |= MemoryByte.CHANGED;
-							memBytes[index].value = newBytes[index];
+							memBytes[index].setChanged( true );
+							memBytes[index].setValue( newBytes[index] );
 						}
 					}
 				}
@@ -404,12 +387,60 @@ public class CExtendedMemoryBlock extends CDebugElement implements IExtendedMemo
 				if ( real.compareTo( changes[i] ) <= 0 && real.add( BigInteger.valueOf( getBlockSize() ) ).compareTo( changes[i] ) > 0 ) {
 					int index = changes[i].subtract( real ).intValue();
 					if ( index >= 0 && index < fBytes.length ) {
-						fBytes[index].flags &= ~MemoryByte.CHANGED; 
+						fBytes[index].setChanged( false ); 
 					}
 				}
 			}
 		}
 		fChanges.clear();
 		fireChangeEvent( DebugEvent.CONTENT );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportsChangeManagement()
+	 */
+	public boolean supportsChangeManagement() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#connect(java.lang.Object)
+	 */
+	public void connect( Object object ) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#disconnect(java.lang.Object)
+	 */
+	public void disconnect( Object object ) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getConnected()
+	 */
+	public Object[] getConnected() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#dispose()
+	 */
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressibleSize()
+	 */
+	public int getAddressibleSize() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

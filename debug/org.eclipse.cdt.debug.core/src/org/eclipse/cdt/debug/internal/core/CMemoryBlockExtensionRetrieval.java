@@ -14,7 +14,7 @@ import java.math.BigInteger;
 import java.text.MessageFormat;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
-import org.eclipse.cdt.debug.internal.core.model.CExtendedMemoryBlock;
+import org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension;
 import org.eclipse.cdt.debug.internal.core.model.CStackFrame;
 import org.eclipse.cdt.debug.internal.core.model.CThread;
 import org.eclipse.core.runtime.IStatus;
@@ -23,25 +23,25 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlockRetrieval;
 
 /**
  * Implements the memory retrieval features based on the CDI model.
  */
-public class CExtendedMemoryBlockRetrieval implements IExtendedMemoryBlockRetrieval {
+public class CMemoryBlockExtensionRetrieval implements IMemoryBlockExtensionRetrieval {
 
 	/** 
-	 * Constructor for CExtendedMemoryBlockRetrieval. 
+	 * Constructor for CMemoryBlockExtensionRetrieval. 
 	 */
-	public CExtendedMemoryBlockRetrieval() {
+	public CMemoryBlockExtensionRetrieval() {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlockRetrieval#getExtendedMemoryBlock(java.lang.String, org.eclipse.debug.core.model.IDebugElement)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval#getExtendedMemoryBlock(java.lang.String, org.eclipse.debug.core.model.IDebugElement)
 	 */
-	public IExtendedMemoryBlock getExtendedMemoryBlock( String expression, IDebugElement selected ) throws DebugException {
+	public IMemoryBlockExtension getExtendedMemoryBlock( String expression, IDebugElement selected ) throws DebugException {
 		String address = null;
 		if ( selected instanceof CStackFrame ) {
 			address = ((CStackFrame)selected).evaluateExpressionToString( expression );
@@ -57,10 +57,10 @@ public class CExtendedMemoryBlockRetrieval implements IExtendedMemoryBlockRetrie
 			if ( address != null ) {
 				try {
 					BigInteger a = ( address.startsWith( "0x" ) ) ? new BigInteger( address.substring( 2 ), 16 ) : new BigInteger( address ); //$NON-NLS-1$
-					return new CExtendedMemoryBlock( (CDebugTarget)target, expression, a );
+					return new CMemoryBlockExtension( (CDebugTarget)target, expression, a );
 				}
 				catch( NumberFormatException e ) {
-					throw new DebugException( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, MessageFormat.format( InternalDebugCoreMessages.getString( "CExtendedMemoryBlockRetrieval.0" ), new String[] { expression, address } ), null ) ); //$NON-NLS-1$
+					throw new DebugException( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockExtensionRetrieval.0" ), new String[] { expression, address } ), null ) ); //$NON-NLS-1$
 				}
 			}
 		}

@@ -213,6 +213,13 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 	}
 
 	/**
+	 * Return the "gdb/mi" Process.
+	 */
+	public Process getMIProcess() {
+		return miProcess;
+	}
+
+	/**
 	 * Check if the gdb session is terminated.
 	 */
 	public boolean isTerminated() {

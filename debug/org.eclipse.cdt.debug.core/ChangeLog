@@ -1,3 +1,7 @@
+2004-06-12 Mikhail Khodjaiants
+	Changed the comments and copyright text.
+	* ICUpdateManager.java
+
 2004-06-11 Mikhail Khodjaiants
 	"CDebugTarget" should provide an adapter for "ICDebugTarget".
 	* CDebugTarget.java

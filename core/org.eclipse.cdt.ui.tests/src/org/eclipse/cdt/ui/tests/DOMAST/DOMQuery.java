@@ -82,10 +82,13 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 	     		   
 	     		  path = new Path(fileName);
 	              file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-	              start = names[i].getNodeLocations()[0].getNodeOffset();
-	              end = names[i].getNodeLocations()[0].getNodeOffset() + names[i].getNodeLocations()[0].getNodeLength();
-	     			
-	     		   collector.acceptMatch( createMatch(file, start, end, names[i], path ) );
+	              
+	              if (names[i].getNodeLocations().length > 0) { // fix for 84223
+		              start = names[i].getNodeLocations()[0].getNodeOffset();
+		              end = names[i].getNodeLocations()[0].getNodeOffset() + names[i].getNodeLocations()[0].getNodeLength();
+		     			
+		     		  collector.acceptMatch( createMatch(file, start, end, names[i], path ) );
+	              }
      			}
      		} catch (CoreException ce) {}
      	}

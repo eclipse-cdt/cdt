@@ -59,6 +59,8 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 	}
 	
 	private void addRoot(IASTNode node) {
+		if (node == null) return;
+		
 		IASTNodeLocation[] nodeLocations = node.getNodeLocations();
         if (!(nodeLocations.length > 0 && 
 				nodeLocations[0].getNodeOffset() >= 0 &&

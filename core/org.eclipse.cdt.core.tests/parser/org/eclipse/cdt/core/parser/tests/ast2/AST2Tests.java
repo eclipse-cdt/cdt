@@ -2099,10 +2099,10 @@ public class AST2Tests extends AST2BaseTest {
       assertEquals(decls.length, 1);
       assertEquals(decls[0], def2.getDeclarator().getName());
 
-      decls = tu.getDeclarations(def3.getDeclarator().getName()
+      decls = tu.getDeclarations(def3.getDeclarator().getNestedDeclarator().getName()
             .resolveBinding());
       assertEquals(decls.length, 1);
-      assertEquals(decls[0], def3.getDeclarator().getName());
+      assertEquals(decls[0], def3.getDeclarator().getNestedDeclarator().getName());
    }
 
    // any parameter to type function returning T is adjusted to be pointer to

@@ -63,6 +63,8 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 	}
 	
 	private void addRoot(IASTNode node) {
+		if (node == null) return;
+		
 		TreeParent parent = root.findParentOfNode(node);
 		
 		if ( parent != null ) {

@@ -301,14 +301,14 @@ public class CVisitor {
 		public int processDeclarator(IASTDeclarator declarator) {
 			//GCC allows declarations in expressions, so we have to continue from the 
 			//declarator in case there is something in the initializer expression
-			if ( declarator == null ) return PROCESS_CONTINUE;
+			if ( declarator == null || declarator.getName() == null || declarator.getName().toCharArray().length == 0 ) return PROCESS_CONTINUE;
 			
 			//if the binding is something not declared in a declarator, continue
 			if( binding instanceof ICompositeType ) return PROCESS_CONTINUE;
 			if( binding instanceof IEnumeration ) return PROCESS_CONTINUE;
 			
 			IASTNode parent = declarator.getParent();
-			while (parent != null && !(parent instanceof IASTDeclaration))
+			while (parent != null && !(parent instanceof IASTDeclaration || parent instanceof IASTParameterDeclaration))
 				parent = parent.getParent();
 
 			if ( parent instanceof IASTDeclaration ) {
@@ -318,14 +318,14 @@ public class CVisitor {
 					}
 				} else if ( parent instanceof IASTSimpleDeclaration ) {
 					// prototype parameter with no identifier isn't a declaration of the K&R C parameter 
-					if ( binding instanceof CKnRParameter && declarator.getName().toCharArray().length == 0 )
-						return PROCESS_CONTINUE;
+//					if ( binding instanceof CKnRParameter && declarator.getName().toCharArray().length == 0 )
+//						return PROCESS_CONTINUE;
 					
 					if ( (declarator.getName() != null && declarator.getName().resolveBinding() == binding) ) {
 						addName(declarator.getName());
 					}
 				} 
-			} else if ( parent instanceof IASTParameterDeclaration && binding instanceof IParameter ) {
+			} else if ( parent instanceof IASTParameterDeclaration ) {
 				if ( declarator.getName() != null && declarator.getName().resolveBinding() == binding ) {
 					addName(declarator.getName());
 				}
@@ -1612,6 +1612,8 @@ public class CVisitor {
 		return true;
 	}
 	public static boolean visitExpression( IASTExpression expression, CBaseVisitorAction action ){
+		if (expression == null) return true;
+		
 		if( action.processExpressions ){
 		    switch( action.processExpression( expression ) ){
 		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;

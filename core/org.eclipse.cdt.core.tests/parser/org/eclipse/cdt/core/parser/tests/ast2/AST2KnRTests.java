@@ -246,9 +246,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	
 		// test tu.getDeclarations(IBinding)
 		IASTName[] decls = tu.getDeclarations(x3.resolveBinding()); 
-		assertEquals( decls.length, 2 );
-		assertEquals( decls[0], x0 );
-		assertEquals( decls[1], x2 );
+		assertEquals( decls.length, 1 );
+		assertEquals( decls[0], x2 );
 		
 		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("c").toCharArray()) ); //$NON-NLS-1$
 		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("isroot").toCharArray()) ); //$NON-NLS-1$
@@ -538,9 +537,8 @@ public class AST2KnRTests extends AST2BaseTest {
 
 		// test tu.getDeclarations(IBinding)
 		IASTName[] decls = tu.getDeclarations(x2.resolveBinding()); 
-		assertEquals( decls.length, 2 );
-		assertEquals( decls[0], x0 );
-		assertEquals( decls[1], x2 );
+		assertEquals( decls.length, 1 );
+		assertEquals( decls[0], x2 );
 		
 		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_TAG, new String("A_struct").toCharArray()) ); //$NON-NLS-1$
 		assertNotNull( ((ICScope)tu.getScope()).getBinding(ICScope.NAMESPACE_TYPE_OTHER, new String("A").toCharArray()) ); //$NON-NLS-1$

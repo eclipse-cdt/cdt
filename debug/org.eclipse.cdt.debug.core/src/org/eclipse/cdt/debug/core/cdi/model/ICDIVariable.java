@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 
 /**
  * 
@@ -42,6 +43,14 @@ public interface ICDIVariable extends ICDIVariableObject {
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	String getTypeName() throws CDIException;
+
+	/**
+	 * Returns the type of data this variable is declared.
+	 * 
+	 * @return the type of data this variable is declared
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	ICDIType getType() throws CDIException;
 
 	/**
 	 * Returns the value of this variable.

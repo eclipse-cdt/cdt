@@ -37,9 +37,9 @@ public interface IManagedBuildInfo {
 
 	
 	/**
-	 * Answers the file extension for the receivers build goal.
+	 * Answers the file extension for the receivers build goal without a separator.
 	 * 
-	 * @return
+	 * @return the extension or an empty string if none is defined
 	 */
 	public String getBuildArtifactExtension();
 	
@@ -163,7 +163,7 @@ public interface IManagedBuildInfo {
 	 * the extension '.a', so the final goal would be 'libfoo.a' 
 	 * 
 	 * @param extension
-	 * @return
+	 * @return the prefix or an empty string
 	 */
 	public String getOutputPrefix(String outputExtension);
 	

@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.makegen;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -93,6 +94,13 @@ public interface IManagedBuilderMakefileGenerator {
 	 */
 	public void initialize(IProject project, IManagedBuildInfo info, IProgressMonitor monitor);	
 
+	/**
+	 * Answers <code>true</code> if the argument is a resource created by the generator
+	 * @param resource
+	 * @return
+	 */
+	public boolean isGeneratedResource(IResource resource);
+	
 	/**
 	 * @param force
 	 * @throws CoreException

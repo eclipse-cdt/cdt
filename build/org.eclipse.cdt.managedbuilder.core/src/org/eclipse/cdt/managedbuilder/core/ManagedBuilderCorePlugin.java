@@ -11,17 +11,11 @@ package org.eclipse.cdt.managedbuilder.core;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildPathEntryContainerInitializer;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 
@@ -63,21 +57,6 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		return plugin;
 	}
 
-	public static void log(Throwable e) {
-		if (e instanceof InvocationTargetException)
-			e = ((InvocationTargetException) e).getTargetException();
-		IStatus status = null;
-		if (e instanceof CoreException)
-			status = ((CoreException) e).getStatus();
-		else
-			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, e.getMessage(), e);
-		log(status);
-	}
-
-	public static void log(IStatus status) {
-		ResourcesPlugin.getPlugin().getLog().log(status);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
@@ -90,7 +69,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	private static final String PATH_ENTRY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntry"; //$NON-NLS-1$
 	private static final String PATH_ENTRY_INIT = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntryInit"; //$NON-NLS-1$
 	private static final String BUILDER = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/builder"; //$NON-NLS-1$
-	
+
 	/**
 	 * 
 	 */

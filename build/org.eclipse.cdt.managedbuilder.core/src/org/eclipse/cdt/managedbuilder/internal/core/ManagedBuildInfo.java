@@ -349,7 +349,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				}
 			}
 		} catch (NullPointerException e) {
-			ManagedBuilderCorePlugin.log(e);
 			return null;
 		}
 		
@@ -719,7 +718,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			IPathEntryContainer container = new ManagedBuildCPathEntryContainer(getOwner().getProject());
 			CoreModel.getDefault().setPathEntryContainer(new ICProject[]{cProject}, container, new NullProgressMonitor());
 		} catch (CModelException e) {
-			ManagedBuilderCorePlugin.log(e);
 		}
 	}
 	
@@ -889,9 +887,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// See if there is anything to be done
 		IConfiguration oldDefault = getDefaultConfiguration(target);
 		if (defaultTarget == null || !configuration.equals(oldDefault)) {
-			// Make sure it is the default
+			// Make sure the containing target is also the default target
 			setDefaultTarget(target);
-			// Make the argument the 
+			// Make the argument the default configuration 
 			getDefaultConfigMap().put(target.getId(), configuration);
 			// Save it
 			persistDefaultConfigurations();

@@ -24,7 +24,6 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -196,7 +195,7 @@ public class ToolReference implements IToolReference {
 							break;
 					}
 				} catch (BuildException e) {
-					ManagedBuilderCorePlugin.log(e);
+					// Likely a mismatch between the value and option type
 					continue;
 				}
 			}

@@ -438,7 +438,7 @@
                name="%Option.Posix.UndefSym"
                id="gnu.windres.option.preprocessor.undefined.symbols"/>
       </tool-->
-      <!--tool
+      <tool
             command="as"
             sources="s,S"
             outputs="o"
@@ -452,13 +452,33 @@
                id="gnu.asm.category.general">
          </optionCategory>
          <option
-               name="%Option.Posix.Assembler.Flags"
+               name="%Option.Gnu.Assembler.Flags"
                category="gnu.asm.category.general"
                valueType="string"
                id="gnu.both.asm.option.flags">
          </option>
-            
-      <tool/-->
+         <option
+               command="-I"
+               valueType="includePath"
+               category="gnu.asm.category.general"
+               browseType="directory"
+               name="%Option.Posix.InclPaths"
+               id="gnu.both.asm.option.include.paths"/>
+         <option
+               command="-W"
+               defaultValue="false"
+               valueType="boolean"
+               category="gnu.asm.category.general"
+               name="%Option.Gnu.Assembler.warn.suppress"
+               id="gnu.both.asm.option.warnings.nowarn"/>
+         <option
+               command="-v"
+               defaultValue="false"
+               valueType="boolean"
+               category="gnu.asm.category.general"
+               name="%Option.Gnu.Assembler.version"
+               id="gnu.both.asm.option.version"/>
+      </tool>
       <target
             name="%TargetName.gnu"
             id="cdt.managedbuild.target.gnu"
@@ -933,6 +953,7 @@
                   valueType="boolean">
             </option>
          </tool>
+         <toolReference id="cdt.managedbuild.tool.gnu.assembler"/>
       </target>
       <target
             isAbstract="false"

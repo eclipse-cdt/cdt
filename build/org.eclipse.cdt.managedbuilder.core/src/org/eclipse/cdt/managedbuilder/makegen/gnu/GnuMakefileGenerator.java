@@ -472,6 +472,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		Iterator iter = getSubdirList().listIterator();
 		while (iter.hasNext()) {
 			IContainer container = (IContainer) iter.next();
+			updateMonitor(ManagedMakeMessages.getFormattedString("MakefileGenerator.message.adding.source.folder", container.getFullPath().toString()));	//$NON-NLS-1$
 			// Check the special case where the module is the project root
 			if (container.getFullPath() == project.getFullPath()) {
 				buffer.append(DOT + WHITESPACE + LINEBREAK);
@@ -565,7 +566,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 		/*
 		 * Write out the target rule as:
-		 * targ_<prefix><target>.<extension>: $(OBJS) <refd_project_1 ... refd_project_n>
+		 * <targ_prefix><target>.<extension>: $(OBJS) <refd_project_1 ... refd_project_n>
 		 * 		@echo 'Building target: $@'
 		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG)$@ $(OBJS) $(USER_OBJS) $(LIB_DEPS)
 		 * 		@echo 'Finished building: $@'
@@ -682,7 +683,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * Check whether the build has been cancelled. Cancellation requests 
 	 * propagated to the caller by throwing <code>OperationCanceledException</code>.
 	 * 
@@ -861,6 +862,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					IFile depFile = root.getFile(file.getFullPath());
 					if (depFile == null) continue;
 					try {
+						updateMonitor(ManagedMakeMessages.getFormattedString("GnuMakefileGenerator.message.postproc.dep.file", depFile.getName()));	//$NON-NLS-1$
 						populateDummyTargets(depFile, false);
 					} catch (CoreException e) {
 						throw e;
@@ -888,18 +890,43 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			return regenerateMakefiles();
 		}
 		
-		// Make sure the build directory is available
-		topBuildDir = createDirectory(info.getConfigurationName());
-		checkCancel();
-		
+		// Return value
+		MultiStatus status;		
+
 		// Visit the resources in the delta and compile a list of subdirectories to regenerate
+		updateMonitor(ManagedMakeMessages.getFormattedString("MakefileGenerator.message.calc.delta", project.getName()));	//$NON-NLS-1$
 		ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(this, info);
 		delta.accept(visitor);
 		checkCancel();
 		
 		// Get all the subdirectories participating in the build
+		updateMonitor(ManagedMakeMessages.getFormattedString("MakefileGenerator.message.finding.sources", project.getName()));	//$NON-NLS-1$
 		ResourceProxyVisitor resourceVisitor = new ResourceProxyVisitor(this, info);
 		project.accept(resourceVisitor, IResource.NONE);
+		checkCancel();
+		
+		// Make sure there is something to build
+		if (getSubdirList().isEmpty()) {
+			String info = ManagedMakeMessages.getFormattedString("MakefileGenerator.warning.no.source", project.getName());	//$NON-NLS-1$ 
+			updateMonitor(info);
+			status = new MultiStatus(
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					IStatus.INFO,
+					info,
+					null);
+			status.add(new Status (
+					IStatus.INFO,
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					NO_SOURCE_FOLDERS,
+					new String(),
+					null));
+			return status;
+		} 
+
+		// Make sure the build directory is available
+		topBuildDir = createDirectory(info.getConfigurationName());
+		checkCancel();
+
 		IPath srcsFilePath = topBuildDir.addTrailingSeparator().append(SRCSFILE_NAME);
 		IFile srcsFileHandle = createFile(srcsFilePath);
 		populateSourcesMakefile(srcsFileHandle);
@@ -943,7 +970,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 
 		// How did we do
-		MultiStatus status;
 		if (!getInvalidDirList().isEmpty()) {
 			status = new MultiStatus (
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
@@ -977,7 +1003,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	public IPath getBuildWorkingDir() {
 		if (topBuildDir != null) {
 			return topBuildDir.removeFirstSegments(1);
-		}
+		} 
 		return null;
 	}
 
@@ -1144,11 +1170,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 	
 	/* (non-Javadoc)
-	 * Answers <code>true</code> if the argument is found in a generated container 
-	 * @param resource
-	 * @return boolean
+	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#isGeneratedResource(org.eclipse.core.resources.IResource)
 	 */
-	protected boolean isGeneratedResource(IResource resource) {
+	public boolean isGeneratedResource(IResource resource) {
 		// Is this a generated directory ...
 		IPath path = resource.getProjectRelativePath();
 		String[] configNames = info.getConfigurationNames();
@@ -1340,7 +1364,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 		
 		IPath moduleOutputPath = buildRoot.append(moduleRelativePath);
-		
+		updateMonitor(ManagedMakeMessages.getFormattedString("MakefileGenerator.message.gen.source.makefile", moduleOutputPath.toString()));	//$NON-NLS-1$
+
 		// Now create the directory
 		IPath moduleOutputDir = createDirectory(moduleOutputPath.toString());
 		
@@ -1513,8 +1538,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			// The path to search for the dependency makefile
 			IPath relDepFilePath = topBuildDir.append(new Path((String)iter.next()));
 			IFile depFile = root.getFile(relDepFilePath);
-			if (depFile == null || !depFile.exists()) continue;
+			if (depFile == null || !depFile.isAccessible()) continue;
 			try {
+				updateMonitor(ManagedMakeMessages.getFormattedString("GnuMakefileGenerator.message.postproc.dep.file", depFile.getName()));	//$NON-NLS-1$
 				populateDummyTargets(depFile, true);
 			} catch (CoreException e) {
 				throw e;
@@ -1529,6 +1555,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#regenerateMakefiles()
 	 */
 	public MultiStatus regenerateMakefiles() throws CoreException {
+		MultiStatus status;
 		// Visit the resources in the project
 		ResourceProxyVisitor visitor = new ResourceProxyVisitor(this, info);
 		project.accept(visitor, IResource.NONE);
@@ -1538,7 +1565,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 		// Populate the makefile if any source files have been found in the project
 		if (getSubdirList().isEmpty()) {
-			monitor.subTask(ManagedMakeMessages.getFormattedString("MakefileGenerator.warning.no.source", project.getName()));	//$NON-NLS-1$
+			String info = ManagedMakeMessages.getFormattedString("MakefileGenerator.warning.no.source", project.getName()); //$NON-NLS-1$ 
+			updateMonitor(info);	
+			status = new MultiStatus(
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					IStatus.INFO,
+					info,
+					null);
+			status.add(new Status (
+					IStatus.INFO,
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					NO_SOURCE_FOLDERS,
+					new String(),
+					null));
+			return status;
 		} 
 
 		// Create the top-level directory for the build output
@@ -1578,7 +1618,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		checkCancel();
 
 		// How did we do
-		MultiStatus status;
 		if (!getInvalidDirList().isEmpty()) {
 			status = new MultiStatus (
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
@@ -1603,6 +1642,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					null);
 		}
 		return status;
+	}
+
+	/* (non-Javadoc)
+	 * @param msg
+	 */
+	protected void updateMonitor(String msg) {
+		if (monitor!= null && !monitor.isCanceled()) {
+			monitor.subTask(msg);
+			monitor.worked(1);
+		}
 	}
 
 }

@@ -36,7 +36,9 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -70,6 +72,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @since 1.2
 	 */
 	public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
+		private String buildGoalName;
 		private IManagedBuildInfo buildInfo;
 		private boolean buildNeeded = true;
 		private List reservedNames;
@@ -79,6 +82,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		 */
 		public ResourceDeltaVisitor(IManagedBuildInfo info) {
 			buildInfo = info;
+			String ext = buildInfo.getBuildArtifactExtension();
+			if (ext.length() > 0) {
+				buildGoalName = buildInfo.getOutputPrefix(ext) + buildInfo.getBuildArtifactName() + "." + ext;	//$NON-NLS-1$
+			} else {
+				buildGoalName = buildInfo.getBuildArtifactName();
+			}
 			reservedNames = Arrays.asList(new String[]{".cdtbuild", ".cdtproject", ".project"});	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
@@ -118,20 +127,28 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				IResourceDelta[] kids = delta.getAffectedChildren();
 				for (int index = kids.length - 1; index >= 0; --index) {
 					IResource changedResource = kids[index].getResource();
-					String ext = changedResource.getFileExtension();
-					// There are some things we don't care about
-					if (resource.isDerived()) {
-						buildNeeded = false;
-					} else if (isGeneratedResource(changedResource)) {
-						buildNeeded = false;
-					} else if (buildInfo.buildsFileType(ext) || buildInfo.isHeaderFile(ext)) {
-						// We do care and there is no point checking anythings else
-						buildNeeded = true;
-						break;
-					} else if (isProjectFile(changedResource)) {
-						buildNeeded = false;
+					if (changedResource instanceof IFolder) {
+						return true;
 					} else {
-						buildNeeded = true;
+						String name = changedResource.getName();
+						String ext = changedResource.getFileExtension();
+						// There are some things we don't care about and some we do
+						if (name.equals(buildGoalName)) {
+							buildNeeded = true;
+							break;
+						} else if (resource.isDerived()) {
+							buildNeeded |= false;
+						} else if (isGeneratedResource(changedResource)) {
+							buildNeeded |= false;
+						} else if (buildInfo.buildsFileType(ext) || buildInfo.isHeaderFile(ext)) {
+							// We do care and there is no point checking anythings else
+							buildNeeded = true;
+							break;
+						} else if (isProjectFile(changedResource)) {
+							buildNeeded |= false;
+						} else {
+							buildNeeded = true;
+						}
 					}
 				}
 				return false;
@@ -142,16 +159,15 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	}
 
 	// String constants
-	private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
-	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
-	private static final String BUILD_FINISHED = MESSAGE + ".finished";	//$NON-NLS-1$
-	private static final String CONSOLE_HEADER = MESSAGE + ".console.header";	//$NON-NLS-1$
+	private static final String BUILD_ERROR = "ManagedMakeBuilder.message.error";	//$NON-NLS-1$
+	private static final String BUILD_FINISHED = "ManagedMakeBuilder.message.finished";	//$NON-NLS-1$
+	private static final String CONSOLE_HEADER = "ManagedMakeBuilder.message.console.header";	//$NON-NLS-1$
 	private static final String ERROR_HEADER = "GeneratedmakefileBuilder error [";	//$NON-NLS-1$
-	private static final String MAKE = MESSAGE + ".make";	//$NON-NLS-1$
-	private static final String MARKERS = MESSAGE + ".creating.markers";	//$NON-NLS-1$
+	private static final String MAKE = "ManagedMakeBuilder.message.make";	//$NON-NLS-1$
+	private static final String MARKERS = "ManagedMakeBuilder.message.creating.markers";	//$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
-	private static final String NOTHING_BUILT = MESSAGE + ".no.build";	//$NON-NLS-1$
-	private static final String REFRESH = MESSAGE + ".updating";	//$NON-NLS-1$
+	private static final String NOTHING_BUILT = "ManagedMakeBuilder.message.no.build";	//$NON-NLS-1$
+	private static final String REFRESH = "ManagedMakeBuilder.message.updating";	//$NON-NLS-1$
 	private static final String REFRESH_ERROR = BUILD_ERROR + ".refresh";	//$NON-NLS-1$
 	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
 	private static final String TRACE_HEADER = "GeneratedmakefileBuilder trace [";	//$NON-NLS-1$
@@ -161,13 +177,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	public static boolean VERBOSE = false;
 	
 	// Local variables
+	private IConsole console;
 	protected Vector generationProblems;
-	protected IManagedBuilderMakefileGenerator generator;
 	protected IProject[] referencedProjects;
 	protected List resourcesToBuild;
 	protected List ruleList;
-	private IConsole console;
-
+	
 	public static void outputTrace(String resourceName, String message) {
 		if (VERBOSE) {
 			System.out.println(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
@@ -208,8 +223,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		// We should always tell the build system what projects we reference
 		referencedProjects = getProject().getReferencedProjects();
-		checkCancel(monitor);
-		
+
 		// Get the build information
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		if (info == null) {
@@ -217,14 +231,19 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			return referencedProjects;
 		}
 
+		// Create a makefile generator for the build
+		String targetID = info.getDefaultTarget().getParent().getId();
+		IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getMakefileGenerator(targetID);
+		generator.initialize(getProject(), info, monitor);
+
 		// So let's figure out why we got called
 		if (kind == FULL_BUILD || info.needsRebuild()) {
 			outputTrace(getProject().getName(), "Full build needed/requested");	//$NON-NLS-1$
-			fullBuild(monitor, info);
+			fullBuild(info, generator, monitor);
 		}
 		else if (kind == AUTO_BUILD && info.needsRebuild()) {
 			outputTrace(getProject().getName(), "Autobuild requested, full build needed");	//$NON-NLS-1$
-			fullBuild(monitor, info);
+			fullBuild(info, generator, monitor);
 		}
 		else {
 			// Create a delta visitor to make sure we should be rebuilding
@@ -232,24 +251,21 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			IResourceDelta delta = getDelta(getProject());
 			if (delta == null) {
 				outputTrace(getProject().getName(), "Incremental build requested, full build needed");	//$NON-NLS-1$
-				fullBuild(monitor, info);
+				fullBuild(info, generator, monitor);
 			}
 			else {
 				delta.accept(visitor);
 				if (visitor.shouldBuild()) {
 					outputTrace(getProject().getName(), "Incremental build requested");	//$NON-NLS-1$
-					incrementalBuild(delta, info, monitor);
+					incrementalBuild(delta, info, generator, monitor);
 				}
 			}
 		}
-		
 		// Scrub the build info the project
 		info.setRebuildState(false);
-		
 		// Ask build mechanism to compute deltas for project dependencies next time
 		return referencedProjects;
 	}
-
 
 	/**
 	 * Check whether the build has been canceled. Cancellation requests 
@@ -259,6 +275,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 */
 	public void checkCancel(IProgressMonitor monitor) {
 		if (monitor != null && monitor.isCanceled()) {
+			outputTrace(getProject().getName(), "Build cancelled");	//$NON-NLS-1$
+			forgetLastBuiltState();
 			throw new OperationCanceledException();
 		}
 	}
@@ -274,79 +292,108 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			outputError(getProject().getName(), "Build information was not found");	//$NON-NLS-1$
 			return;
 		}
-		cleanBuild(monitor, info);
+		IPath buildDirPath = getProject().getLocation().append(info.getConfigurationName());
+		IWorkspace workspace = CCorePlugin.getWorkspace();
+		IContainer buildDir = workspace.getRoot().getContainerForLocation(buildDirPath);
+		if (buildDir == null || !buildDir.isAccessible()){
+			outputError(buildDir.getName(), "Could not delete the build directory");	//$NON-NLS-1$
+			return;
+		}
+		String status;		
+		try {
+			// try the brute force approach first
+			status = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.clean.deleting.output", buildDir.getName());	//$NON-NLS-1$
+			monitor.subTask(status);
+			workspace.delete(new IResource[]{buildDir}, true, monitor);
+		} catch (CoreException e) {
+			// Create a makefile generator for the build
+			status = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.clean.build.clean", buildDir.getName());	//$NON-NLS-1$
+			monitor.subTask(status);
+			String targetID = info.getDefaultTarget().getParent().getId();
+			IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getMakefileGenerator(targetID);
+			generator.initialize(getProject(), info, monitor);
+			cleanBuild(info, generator, monitor);
+		}
 	}
 	
 	/* (non-Javadoc)
 	 * @param monitor
 	 * @param info
 	 */
-	protected void cleanBuild(IProgressMonitor monitor, IManagedBuildInfo info) {
+	protected void cleanBuild(IManagedBuildInfo info, IManagedBuilderMakefileGenerator generator, IProgressMonitor monitor) {
 		// Make sure that there is a top level directory and a set of makefiles
-		String targetID = info.getDefaultTarget().getParent().getId();
-		generator = ManagedBuildManager.getMakefileGenerator(targetID);
-		IPath buildDir = getProject().getLocation().append(info.getConfigurationName());
-		IPath makefilePath = buildDir.append(generator.getMakefileName());		
+		IPath buildDir = generator.getBuildWorkingDir();
+		if (buildDir == null) {
+			buildDir = new Path(info.getConfigurationName());
+		}
+		IPath makefilePath = getProject().getLocation().append(buildDir.append(generator.getMakefileName()));		
 		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
 		IFile makefile = root.getFileForLocation(makefilePath);
 		
-		if (buildDir != null && makefile != null && makefile.exists()) {		
+		if (buildDir != null && makefile != null && makefile.isAccessible()) {		
 			// invoke make with the clean argument
 			String statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.starting", getProject().getName());	//$NON-NLS-1$
 			monitor.subTask(statusMsg);
 			checkCancel(monitor);
-			invokeMake(CLEAN_BUILD, buildDir, info, monitor);
+			invokeMake(CLEAN_BUILD, buildDir, info, generator, monitor);
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @param monitor
 	 */
-	protected void fullBuild(IProgressMonitor monitor, IManagedBuildInfo info) throws CoreException {
+	protected void fullBuild(IManagedBuildInfo info, IManagedBuilderMakefileGenerator generator, IProgressMonitor monitor) throws CoreException {
 		// Always need one of these bad boys
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 		
 		// Regenerate the makefiles for this project
+		checkCancel(monitor);
 		String statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.rebuild.makefiles", getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
-		checkCancel(monitor);
 		String targetID = info.getDefaultTarget().getParent().getId();
 		generator = ManagedBuildManager.getMakefileGenerator(targetID);
 		generator.initialize(getProject(), info, monitor);
 		MultiStatus result = generator.regenerateMakefiles();
-		if (result.getCode() != IStatus.OK) {
-			getGenerationProblems().addAll(Arrays.asList(result.getChildren()));		
+		if (result.getCode() == IStatus.WARNING || result.getCode() == IStatus.INFO) {
+			IStatus[] kids = result.getChildren();
+			for (int index = 0; index < kids.length; ++index) {
+				// One possibility is that there is nothing to build
+				IStatus status = kids[index]; 
+				if (status.getCode() == IManagedBuilderMakefileGenerator.NO_SOURCE_FOLDERS) {
+					// Dude, we're done
+					return;
+				} else {
+					// Stick this in the list of stuff to warn the user about
+					getGenerationProblems().add(status);		
+				}				
+			}
 		}
 		
-		monitor.worked(1);
-
 		// Now call make
+		checkCancel(monitor);
 		statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.starting", getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
-		checkCancel(monitor);
 		IPath topBuildDir = generator.getBuildWorkingDir();
 		if (topBuildDir != null) {
-			invokeMake(FULL_BUILD, topBuildDir, info, monitor);
+			invokeMake(FULL_BUILD, topBuildDir, info, generator, monitor);
 		} else {
 			statusMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName());	//$NON-NLS-1$
 			monitor.subTask(statusMsg);
 			return;
 		}
-		monitor.worked(1);
 		
 		// Now regenerate the dependencies
+		checkCancel(monitor);
 		statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.regen.deps", getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
-		checkCancel(monitor);
 		try {
 			generator.regenerateDependencies(false);
 		} catch (CoreException e) {
 			// Throw the exception back to the builder
 			throw e;
 		}
-		monitor.worked(1);
 
 		// Say bye bye
 		statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	//$NON-NLS-1$
@@ -452,51 +499,55 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	protected void incrementalBuild(IResourceDelta delta, IManagedBuildInfo info, IProgressMonitor monitor) throws CoreException {
+	protected void incrementalBuild(IResourceDelta delta, IManagedBuildInfo info, IManagedBuilderMakefileGenerator generator, IProgressMonitor monitor) throws CoreException {
 		// Need to report status to the user
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 		
 		// Ask the makefile generator to generate any makefiles needed to build delta
+		checkCancel(monitor);
 		String statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.update.makefiles", getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
-		checkCancel(monitor);
-		String targetID = info.getDefaultTarget().getParent().getId();
-		generator = ManagedBuildManager.getMakefileGenerator(targetID);
-		generator.initialize(getProject(), info, monitor);
 		MultiStatus result = generator.generateMakefiles(delta);
-		if (result.getCode() != IStatus.OK) {
-			getGenerationProblems().addAll(Arrays.asList(result.getChildren()));		
+		if (result.getCode() == IStatus.WARNING || result.getCode() == IStatus.INFO) {
+			IStatus[] kids = result.getChildren();
+			for (int index = 0; index < kids.length; ++index) {
+				// One possibility is that there is nothing to build
+				IStatus status = kids[index]; 
+				if (status.getCode() == IManagedBuilderMakefileGenerator.NO_SOURCE_FOLDERS) {
+					// Dude, we're done
+					return;
+				} else {
+					// Stick this in the list of stuff to warn the user about
+					getGenerationProblems().add(status);		
+				}				
+			}
 		}
-		monitor.worked(1);
 
 		// Run the build
+		checkCancel(monitor);
 		statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.starting", getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
-		checkCancel(monitor);
 		IPath buildDir = new Path(info.getConfigurationName());
 		if (buildDir != null) {
-			invokeMake(INCREMENTAL_BUILD, buildDir, info, monitor);
+			invokeMake(INCREMENTAL_BUILD, buildDir, info, generator, monitor);
 		} else {
 			statusMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName());	//$NON-NLS-1$
 			monitor.subTask(statusMsg);
 			return;
 		}
-		monitor.worked(1);
 		
 		// Generate the dependencies for all changes
+		checkCancel(monitor);
 		statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.updating.deps", getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
-		checkCancel(monitor);
 		try {
 			generator.generateDependencies();
 		} catch (CoreException e) {
-			ManagedBuilderCorePlugin.log(e);
 			throw e;
 		}
-		monitor.worked(1);
-
+		
 		// Say bye bye
 		statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
@@ -508,7 +559,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @param info
 	 * @param monitor
 	 */
-	protected void invokeMake(int buildType, IPath buildDir, IManagedBuildInfo info, IProgressMonitor monitor) {
+	protected void invokeMake(int buildType, IPath buildDir, IManagedBuildInfo info, IManagedBuilderMakefileGenerator generator, IProgressMonitor monitor) {
 		// Get the project and make sure there's a monitor to cancel the build
 		IProject currentProject = getProject();
 		if (monitor == null) {
@@ -537,7 +588,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				String[] msgs = new String[2];
 				msgs[0] = makeCommand.toString();
 				msgs[1] = currentProject.getName();
-				monitor.beginTask(ManagedMakeMessages.getFormattedString(MAKE, msgs), IProgressMonitor.UNKNOWN);
+				monitor.subTask(ManagedMakeMessages.getFormattedString(MAKE, msgs));
 
 				// Get a build console for the project
 				StringBuffer buf = new StringBuffer();
@@ -660,16 +711,15 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				stdout.close();
 				stderr.close();				
 
+				// Generate any error markers that the build has discovered
 				monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
 				addBuilderMarkers(epm);
 				epm.reportProblems();
 			}
 		} catch (Exception e) {
-			ManagedBuilderCorePlugin.log(e);
 			forgetLastBuiltState();
 		} finally {
 			getGenerationProblems().clear();
-			monitor.done();
 		}
 	}
 
@@ -684,8 +734,14 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		return console;
 	}
 
+	/* (non-Javadoc)
+	 * Removes the IMarkers for the project specified in the argument if the
+	 * project exists, and is open. 
+	 * 
+	 * @param project
+	 */
 	private void removeAllMarkers(IProject project) {
-		if (project == null || !project.exists()) return;
+		if (project == null || !project.isAccessible()) return;
 
 		// Clear out the problem markers
 		IWorkspace workspace = project.getWorkspace();
@@ -693,14 +749,15 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		try {
 			markers = project.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
-			ManagedBuilderCorePlugin.log(e);
+			// Handled just about every case in the sanity check
 			return;
 		}
 		if (markers != null) {
 			try {
 				workspace.deleteMarkers(markers);
 			} catch (CoreException e) {
-				ManagedBuilderCorePlugin.log(e);
+				// The only situation that might cause this is some sort of resource change event
+				return;
 			}
 		}
 	}

@@ -1,3 +1,6 @@
+2004-04-22 Hoda Amer
+	Backing out previous changes regarding new JFace interfaces.
+	
 2004-04-22 Alain Magloire
 
 	Fix for PR 59534

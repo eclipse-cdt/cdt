@@ -99,20 +99,20 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IDebugTarget,
-	 *      org.eclipse.debug.core.model.IBreakpoint)
+	 *      org.eclipse.debug.core.model.IBreakpoint[])
 	 */
-	public void breakpointRemoved( IDebugTarget target, final IBreakpoint breakpoint ) {
+	public void breakpointsRemoved( IDebugTarget target, final IBreakpoint[] breakpoints ) {
 		asyncExec( new Runnable() {
 
 			public void run() {
-				try {
-					int installCount = ((ICBreakpoint)breakpoint).decrementInstallCount();
-					if ( installCount == 0 )
-						breakpoint.delete();
-				}
-				catch( CoreException e ) {
-					// ensureMarker throws this exception 
-					// if breakpoint has already been deleted 
+				for ( int i = 0; i < breakpoints.length; ++i ) {
+					try {
+						((ICBreakpoint)breakpoints[i]).decrementInstallCount();
+					}
+					catch( CoreException e ) {
+						// ensureMarker throws this exception 
+						// if breakpoint has already been deleted 
+					}
 				}
 			}
 		} );

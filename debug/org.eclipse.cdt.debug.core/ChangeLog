@@ -1,3 +1,7 @@
+2004-05-28 Mikhail Khodjaiants
+	Support for the "Skip All Breakpoints" action.
+	* CBreakpointManager.java
+
 2004-05-27 Mikhail Khodjaiants
 	Display global variables in the Variables view.
 	* CDIDebugModel.java

@@ -48,6 +48,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -56,7 +58,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
  * The breakpoint manager manages all breakpoints set to the associated 
  * debug target.
  */
-public class CBreakpointManager implements ICDIEventListener, IAdaptable {
+public class CBreakpointManager implements IBreakpointManagerListener, ICDIEventListener, IAdaptable {
 
 	private class BreakpointMap {
 
@@ -128,6 +130,7 @@ public class CBreakpointManager implements ICDIEventListener, IAdaptable {
 		super();
 		setDebugTarget( target );
 		fMap = new BreakpointMap();
+		DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener( this );
 		getDebugTarget().getCDISession().getEventManager().addEventListener( this );
 	}
 
@@ -167,6 +170,7 @@ public class CBreakpointManager implements ICDIEventListener, IAdaptable {
 
 	public void dispose() {
 		getDebugTarget().getCDISession().getEventManager().removeEventListener( this );
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener( this );
 		removeAllBreakpoints();
 		getBreakpointMap().dispose();
 	}
@@ -392,9 +396,16 @@ public class CBreakpointManager implements ICDIEventListener, IAdaptable {
 		if ( breakpoint != null ) {
 			Map map = new HashMap( 3 );
 			try {
-				map.put( IBreakpoint.ENABLED, new Boolean( cdiBreakpoint.isEnabled() ) );
+				if ( DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
+						map.put( IBreakpoint.ENABLED, new Boolean( cdiBreakpoint.isEnabled() ) );
+				}
+				else {
+					map.put( IBreakpoint.ENABLED, new Boolean( breakpoint.isEnabled() ) );
+				}
 			}
 			catch( CDIException e ) {
+			}
+			catch( CoreException e ) {
 			}
 			try {
 				map.put( ICBreakpoint.IGNORE_COUNT, new Integer( cdiBreakpoint.getCondition().getIgnoreCount() ) );
@@ -614,5 +625,26 @@ public class CBreakpointManager implements ICDIEventListener, IAdaptable {
 
 	private boolean isEmpty( String str ) {
 		return !( str != null && str.trim().length() > 0 );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
+	 */
+	public void breakpointManagerEnablementChanged( boolean enabled ) {
+		ICBreakpoint[] cBreakpoints = getBreakpointMap().getAllCBreakpoints();
+		for ( int i = 0; i < cBreakpoints.length; ++i ) {
+			try {
+				if ( cBreakpoints[i].isEnabled() ) {
+					ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( cBreakpoints[i] );
+					if ( cdiBreakpoint != null ) {
+						cdiBreakpoint.setEnabled( enabled );
+					}
+				}
+			}
+			catch( CoreException e ) {
+			}
+			catch( CDIException e ) {
+			}
+		}
 	}
 }

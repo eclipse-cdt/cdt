@@ -296,19 +296,14 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
 			if ( cdiBreakpoint == null ) {
 				if ( breakpoint instanceof ICFunctionBreakpoint )
-					cdiBreakpoint = setFunctionBreakpoint( (ICFunctionBreakpoint)breakpoint );
+					setFunctionBreakpoint( (ICFunctionBreakpoint)breakpoint );
 				else if ( breakpoint instanceof ICAddressBreakpoint )
-					cdiBreakpoint = setAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
+					setAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
 				else if ( breakpoint instanceof ICLineBreakpoint )
-					cdiBreakpoint = setLineBreakpoint( (ICLineBreakpoint)breakpoint );
+					setLineBreakpoint( (ICLineBreakpoint)breakpoint );
 				else if ( breakpoint instanceof ICWatchpoint )
-					cdiBreakpoint = setWatchpoint( (ICWatchpoint)breakpoint );
+					setWatchpoint( (ICWatchpoint)breakpoint );
 			}
-			if ( cdiBreakpoint == null )
-				return;
-			boolean enabled = breakpoint.isEnabled();
-			if ( !enabled )
-				cdiBreakpoint.setEnabled( false );
 		}
 		catch( CoreException e ) {
 			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.0" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
@@ -326,15 +321,18 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	protected void doRemoveBreakpoint( ICBreakpoint breakpoint ) throws DebugException {
-		ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
+		final ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
 		if ( cdiBreakpoint != null ) {
-			ICDITarget cdiTarget = getCDITarget();
-			try {
-				cdiTarget.deleteBreakpoints( new ICDIBreakpoint[]{ cdiBreakpoint } );
-			}
-			catch( CDIException e ) {
-				targetRequestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.3" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
-			}
+			final ICDITarget cdiTarget = getCDITarget();
+			DebugPlugin.getDefault().asyncExec( new Runnable() {				
+				public void run() {
+					try {
+						cdiTarget.deleteBreakpoints( new ICDIBreakpoint[]{ cdiBreakpoint } );
+					}
+					catch( CDIException e ) {
+					} 
+				}
+			} );			
 		}
 	}
 
@@ -343,12 +341,12 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	protected void doChangeBreakpointProperties( ICBreakpoint breakpoint, IMarkerDelta delta ) throws DebugException {
-		ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
+		final ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
 		if ( cdiBreakpoint == null )
 			return;
 		ICDITarget cdiTarget = getCDITarget();
 		try {
-			boolean enabled = breakpoint.isEnabled();
+			final boolean enabled = breakpoint.isEnabled();
 			boolean oldEnabled = ( delta != null ) ? delta.getAttribute( IBreakpoint.ENABLED, true ) : enabled;
 			int ignoreCount = breakpoint.getIgnoreCount();
 			int oldIgnoreCount = ( delta != null ) ? delta.getAttribute( ICBreakpoint.IGNORE_COUNT, 0 ) : ignoreCount;
@@ -356,18 +354,31 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			String oldCondition = ( delta != null ) ? delta.getAttribute( ICBreakpoint.CONDITION, "" ) : condition; //$NON-NLS-1$
 			String[] newThreadIs = getThreadNames( breakpoint );
 			if ( enabled != oldEnabled ) {
-				cdiBreakpoint.setEnabled( enabled );
+				DebugPlugin.getDefault().asyncExec( new Runnable() {				
+					public void run() {
+						try {
+							cdiBreakpoint.setEnabled( enabled );
+						}
+						catch( CDIException e ) {
+						} 
+					}
+				} );
 			}
 			if ( ignoreCount != oldIgnoreCount || condition.compareTo( oldCondition ) != 0 || areThreadFiltersChanged( newThreadIs, cdiBreakpoint ) ) {
-				ICDICondition cdiCondition = cdiTarget.createCondition( ignoreCount, condition, newThreadIs  );
-				cdiBreakpoint.setCondition( cdiCondition );
+				final ICDICondition cdiCondition = cdiTarget.createCondition( ignoreCount, condition, newThreadIs  );
+				DebugPlugin.getDefault().asyncExec( new Runnable() {				
+					public void run() {
+						try {
+							cdiBreakpoint.setCondition( cdiCondition );
+						}
+						catch( CDIException e ) {
+						} 
+					}
+				} );
 			}
 		}
 		catch( CoreException e ) {
 			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.4" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
-		}
-		catch( CDIException e ) {
-			targetRequestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.5" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
 		}
 	}
 
@@ -498,68 +509,93 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		}
 	}
 
-	private ICDIBreakpoint setFunctionBreakpoint( ICFunctionBreakpoint breakpoint ) throws CDIException, CoreException {
-		ICDITarget cdiTarget = getCDITarget();
+	private void setLocationBreakpointOnTarget( final ICBreakpoint breakpoint, final ICDITarget target, final ICDILocation location, final ICDICondition condition, final boolean enabled ) {
+		DebugPlugin.getDefault().asyncExec( new Runnable() {				
+			public void run() {
+				try {
+					synchronized ( getBreakpointMap() ) {
+						ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
+						if ( cdiBreakpoint == null ) {
+							cdiBreakpoint = target.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
+							if ( !enabled ) {
+								cdiBreakpoint.setEnabled( false );
+							}
+							getBreakpointMap().put( breakpoint, cdiBreakpoint );
+						}
+					}
+				}
+				catch( CDIException e ) {
+				} 
+			}
+		} );
+	}
+
+	private void setFunctionBreakpoint( ICFunctionBreakpoint breakpoint ) throws CDIException, CoreException {
+		final boolean enabled = breakpoint.isEnabled();
+		final ICDITarget cdiTarget = getCDITarget();
 		String function = breakpoint.getFunction();
 		String fileName = (function != null && function.indexOf( "::" ) == -1) ? breakpoint.getFileName() : null; //$NON-NLS-1$
-		ICDILocation location = cdiTarget.createLocation( fileName, function, -1 );
-		ICDICondition condition = createCondition( breakpoint );
-		ICDIBreakpoint cdiBreakpoint = null;
-		synchronized ( getBreakpointMap() ) {
-			cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
-			getBreakpointMap().put( breakpoint, cdiBreakpoint );
-		}
-		return cdiBreakpoint;
+		final ICDILocation location = cdiTarget.createLocation( fileName, function, -1 );
+		final ICDICondition condition = createCondition( breakpoint );
+		setLocationBreakpointOnTarget( breakpoint, cdiTarget, location, condition, enabled );
 	}
 
-	private ICDIBreakpoint setAddressBreakpoint( ICAddressBreakpoint breakpoint ) throws CDIException, CoreException, NumberFormatException {
-		ICDIBreakpoint cdiBreakpoint = null;
-		ICDITarget cdiTarget = getCDITarget();
+	private void setAddressBreakpoint( ICAddressBreakpoint breakpoint ) throws CDIException, CoreException, NumberFormatException {
+		final boolean enabled = breakpoint.isEnabled();
+		final ICDITarget cdiTarget = getCDITarget();
 		String address = breakpoint.getAddress();
 		if ( address.startsWith( "0x" ) ) { //$NON-NLS-1$
-			ICDILocation location = cdiTarget.createLocation( new BigInteger ( breakpoint.getAddress().substring( 2 ), 16 ) );
-			ICDICondition condition = createCondition( breakpoint );
-			synchronized ( getBreakpointMap() ) {
-				cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
-				getBreakpointMap().put( breakpoint, cdiBreakpoint );
-			}
+			final ICDILocation location = cdiTarget.createLocation( new BigInteger ( breakpoint.getAddress().substring( 2 ), 16 ) );
+			final ICDICondition condition = createCondition( breakpoint );
+			setLocationBreakpointOnTarget( breakpoint, cdiTarget, location, condition, enabled );
 		}
-		return cdiBreakpoint;
 	}
 
-	private ICDIBreakpoint setLineBreakpoint( ICLineBreakpoint breakpoint ) throws CDIException, CoreException {
-		ICDITarget cdiTarget = getCDITarget();
+	private void setLineBreakpoint( ICLineBreakpoint breakpoint ) throws CDIException, CoreException {
+		final boolean enabled = breakpoint.isEnabled();
+		final ICDITarget cdiTarget = getCDITarget();
 		String handle = breakpoint.getSourceHandle();
 		IPath path = new Path( handle );
 		if ( path.isValidPath( handle ) ) {
-			ICDILocation location = cdiTarget.createLocation( path.lastSegment(), null, breakpoint.getLineNumber() );
-			ICDICondition condition = createCondition( breakpoint );
-			ICDIBreakpoint cdiBreakpoint = null;
-			synchronized ( getBreakpointMap() ) {
-				cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
-				getBreakpointMap().put( breakpoint, cdiBreakpoint );
-			}
-			return cdiBreakpoint;
+			final ICDILocation location = cdiTarget.createLocation( path.lastSegment(), null, breakpoint.getLineNumber() );
+			final ICDICondition condition = createCondition( breakpoint );
+			setLocationBreakpointOnTarget( breakpoint, cdiTarget, location, condition, enabled );
 		}
-		return null;
 	}
 
-	private ICDIBreakpoint setWatchpoint( ICWatchpoint watchpoint ) throws CDIException, CoreException {
-		ICDITarget cdiTarget = getCDITarget();
+	private void setWatchpointOnTarget( final ICWatchpoint watchpoint, final ICDITarget target, final int accessType, final String expression, final ICDICondition condition, final boolean enabled ) {
+		DebugPlugin.getDefault().asyncExec( new Runnable() {				
+			public void run() {
+				try {
+					synchronized ( getBreakpointMap() ) {
+						if ( getBreakpointMap().getCDIBreakpoint( watchpoint ) == null ) {
+							ICDIWatchpoint cdiWatchpoint = target.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
+							if ( !enabled ) {
+								cdiWatchpoint.setEnabled( false );
+							}
+							getBreakpointMap().put( watchpoint, cdiWatchpoint );
+						}
+					}
+				}
+				catch( CDIException e ) {
+				} 
+			}
+		} );
+	}
+
+	private void setWatchpoint( ICWatchpoint watchpoint ) throws CDIException, CoreException {
+		final boolean enabled = watchpoint.isEnabled();
+		final ICDITarget cdiTarget = getCDITarget();
 		int accessType = 0;
 		accessType |= (watchpoint.isWriteType()) ? ICDIWatchpoint.WRITE : 0;
 		accessType |= (watchpoint.isReadType()) ? ICDIWatchpoint.READ : 0;
-		String expression = watchpoint.getExpression();
-		ICDICondition condition = createCondition( watchpoint );
-		ICDIWatchpoint cdiWatchpoint = null;
-		synchronized ( getBreakpointMap() ) {
-			cdiWatchpoint = cdiTarget.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
-			getBreakpointMap().put( watchpoint, cdiWatchpoint );
-		}
-		return cdiWatchpoint;
+		final int accessType1 = accessType;
+		final String expression = watchpoint.getExpression();
+		final ICDICondition condition = createCondition( watchpoint );
+		setWatchpointOnTarget( watchpoint, cdiTarget, accessType1, expression, condition, enabled );
 	}
 
-	private BreakpointMap getBreakpointMap() {
+	protected BreakpointMap getBreakpointMap() {
 		return fMap;
 	}
 

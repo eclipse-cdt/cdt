@@ -118,6 +118,11 @@ public class AllBuildTests extends TestCase {
 		assertEquals(target, newTarget);
 		assertFalse(target.equals(targetDef));
 		
+		// Copy over the configs
+		IConfiguration[] configs = targetDef.getConfigurations();
+		for (int i = 0; i < configs.length; ++i)
+			target.createConfiguration(configs[i], target.getId() + "." + i);
+		
 		checkRootTarget(target);
 		
 		// Save, close, reopen and test again

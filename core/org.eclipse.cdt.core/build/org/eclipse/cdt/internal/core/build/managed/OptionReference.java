@@ -48,7 +48,7 @@ public class OptionReference implements IOption {
 	 */
 	public OptionReference(ToolReference owner, IConfigurationElement element) {
 		this.owner = owner;
-		option = owner.getOption(element.getAttribute("id"));
+		option = owner.getTool().getOption(element.getAttribute("id"));
 		
 		owner.addOptionReference(this);
 	}
@@ -61,7 +61,7 @@ public class OptionReference implements IOption {
 	 */
 	public OptionReference(ToolReference owner, Element element) {
 		this.owner = owner;	
-		option = owner.getOption(element.getAttribute("id"));
+		option = owner.getTool().getOption(element.getAttribute("id"));
 		
 		owner.addOptionReference(this);
 	}

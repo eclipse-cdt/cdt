@@ -46,6 +46,14 @@ public interface ITarget extends IBuildObject {
 	public IConfiguration[] getConfigurations();
 
 	/**
+	 * Returns the configuration with the given id, or null if not found.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public IConfiguration getConfiguration(String id);
+	
+	/**
 	 * Creates a new configuration for the target.  It is populated with
 	 * the tools defined for that target and options set at their defaults.
 	 * 

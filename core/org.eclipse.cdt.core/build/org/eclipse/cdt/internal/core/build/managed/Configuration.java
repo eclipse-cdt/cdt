@@ -73,9 +73,29 @@ public class Configuration extends BuildObject implements IConfiguration {
 		}
 	}
 	
+	public Configuration(Target target, Element element) {
+		this.target = target;
+		
+		// id
+		setId(element.getAttribute("id"));
+		
+		// hook me up
+		target.addConfiguration(this);
+		
+		// name
+		if (element.hasAttribute("name"))
+			setName(element.getAttribute("name"));
+		
+		if (element.hasAttribute("parent"))
+			parent = target.getParent().getConfiguration(element.getAttribute("parent"));
+	}
+	
 	public void serealize(Document doc, Element element) {
 		element.setAttribute("id", id);
-		element.setAttribute("name", name);
+		
+		if (name != null)
+			element.setAttribute("name", name);
+			
 		if (parent != null)
 			element.setAttribute("parent", parent.getId());
 		

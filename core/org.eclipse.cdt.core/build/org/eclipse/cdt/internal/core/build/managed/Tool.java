@@ -96,9 +96,12 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 
 	public void addOption(Option option) {
-		if (options == null)
+		if (options == null) {
 			options = new ArrayList();
+			optionMap = new HashMap();
+		}
 		options.add(option);
+		optionMap.put(option.getId(), option);
 	}
 	
 	public IOptionCategory getTopOptionCategory() {
@@ -177,8 +180,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
 	 */
 	public IOption getOption(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		return (IOption)optionMap.get(id);
 	}
 
 }

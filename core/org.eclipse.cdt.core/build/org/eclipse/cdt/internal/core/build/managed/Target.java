@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * 
@@ -34,6 +35,7 @@ public class Target extends BuildObject implements ITarget {
 	private List tools;
 	private Map toolMap;
 	private List configurations;
+	private Map configMap;
 	private boolean isAbstract = false;
 
 	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
@@ -78,8 +80,13 @@ public class Target extends BuildObject implements ITarget {
 
 		// parent
 		String parentId = element.getAttribute("parent");
-		if (parentId != null)
+		if (parentId != null) {
 			parent = ManagedBuildManager.getTarget(null, parentId);
+			// copy over the parents configs
+			IConfiguration[] parentConfigs = parent.getConfigurations();
+			for (int i = 0; i < parentConfigs.length; ++i)
+				addConfiguration(parentConfigs[i]);
+		}
 
 		// isAbstract
 		if ("true".equals(element.getAttribute("isAbstract")))
@@ -123,6 +130,16 @@ public class Target extends BuildObject implements ITarget {
 		// isAbstract
 		if ("true".equals(element.getAttribute("isAbstract")))
 			isAbstract = true;
+	
+		Node child = element.getFirstChild();
+		while (child != null) {
+			if (child.getNodeName().equals("configuration")) {
+				new Configuration(this, (Element)child);
+			}
+			
+			child = child.getNextSibling();
+		}
+
 
 	}
 	
@@ -137,6 +154,7 @@ public class Target extends BuildObject implements ITarget {
 			for (int i = 0; i < configurations.size(); ++i) {
 				Configuration config = (Configuration)configurations.get(i);
 				Element configElement = doc.createElement("configuration");
+				element.appendChild(configElement);
 				config.serealize(doc, configElement);
 			}
 	}
@@ -200,16 +218,17 @@ public class Target extends BuildObject implements ITarget {
 			return emptyConfigs;
 	}
 
-	public void addConfiguration(IConfiguration configuration) {
-		if (configurations == null)
-			configurations = new ArrayList();
-		configurations.add(configuration);
+	public IConfiguration getConfiguration(String id) {
+		return (IConfiguration)configMap.get(id);
 	}
-	
-	private void addLocalConfiguration(IConfiguration configuration) {
-		if (configurations == null)
+
+	public void addConfiguration(IConfiguration configuration) {
+		if (configurations == null) {
 			configurations = new ArrayList();
+			configMap = new HashMap();
+		}
 		configurations.add(configuration);
+		configMap.put(configuration.getId(), configuration);
 	}
 	
 	/* (non-Javadoc)

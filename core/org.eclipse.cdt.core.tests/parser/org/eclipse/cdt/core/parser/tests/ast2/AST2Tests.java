@@ -789,4 +789,30 @@ public class AST2Tests extends TestCase {
     	assertSame( var_2, var_3 );
     	assertSame( var_3, var_4 );
     }
+    
+    public void testExpressionFieldReference() throws Exception{
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append( "struct A { int x; };    \n"); //$NON-NLS-1$
+    	buffer.append( "void f(){               \n"); //$NON-NLS-1$
+    	buffer.append( "   ((struct A *) 1)->x; \n"); //$NON-NLS-1$
+    	buffer.append( "}                       \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+    	
+    	IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
+    	IASTCompositeTypeSpecifier compType = (IASTCompositeTypeSpecifier) simpleDecl.getDeclSpecifier();
+    	IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) compType.getMembers().get(0);
+    	IASTName name_x1 = ((IASTDeclarator) decl_x.getDeclarators().get(0)).getName();
+    	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
+    	IASTCompoundStatement body = (IASTCompoundStatement) fdef.getBody();
+    	IASTExpressionStatement expStatement = (IASTExpressionStatement) body.getStatements().get(0);
+    	IASTFieldReference fieldRef = (IASTFieldReference) expStatement.getExpression();
+    	IASTName name_x2 = fieldRef.getFieldName();
+    	
+    	IField x1 = (IField) name_x1.resolveBinding();
+    	IField x2 = (IField) name_x2.resolveBinding();
+    	
+    	assertNotNull( x1 );
+    	assertSame( x1, x2 );
+    }
 }

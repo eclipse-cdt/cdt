@@ -102,6 +102,9 @@ public class CVisitor {
 				return binding;
 			} 
 			return resolveBinding( elabTypeSpec );
+		} else if( parent instanceof IASTTypeId ){
+			IASTNode blockItem = getContainingBlockItem( parent );
+			return findBinding( blockItem, (CASTName) elabTypeSpec.getName(), COMPLETE );
 		}
 		return null;
 	}
@@ -117,6 +120,12 @@ public class CVisitor {
 			}
 			if( binding instanceof ICompositeType )
 				compositeType = (ICompositeType) binding;
+		} else if( fieldOwner instanceof IASTUnaryTypeIdExpression ){
+			IASTTypeId id = ((IASTUnaryTypeIdExpression)fieldOwner).getTypeId();
+			IBinding binding = resolveBinding( id );
+			if( binding != null && binding instanceof ICompositeType ){
+				compositeType = (ICompositeType) binding;
+			}
 		}
 
 		IBinding binding = null;
@@ -147,11 +156,9 @@ public class CVisitor {
 	}
 
 	private static IBinding createBinding( ICASTCompositeTypeSpecifier compositeTypeSpec ){
-		IBinding binding = resolveBinding( compositeTypeSpec, CURRENT_SCOPE );
-		if( binding == null )
-			binding = new CStructure( compositeTypeSpec );
-		return binding;
+		return new CStructure( compositeTypeSpec );
 	}
+	
 
 	/**
 	 * @param parent
@@ -212,6 +219,18 @@ public class CVisitor {
 					IASTParameterDeclaration pdef = (IASTParameterDeclaration) fdef.getParameters().get( index );
 					return pdef.getDeclarator().getName().resolveBinding();
 				}
+			}
+		} else if( node instanceof IASTTypeId ){
+			IASTTypeId typeId = (IASTTypeId) node;
+			IASTDeclSpecifier declSpec = typeId.getDeclSpecifier();
+			IASTName name = null;
+			if( declSpec instanceof ICASTElaboratedTypeSpecifier ){
+				name = ((ICASTElaboratedTypeSpecifier)declSpec).getName();
+			} else if( declSpec instanceof ICASTCompositeTypeSpecifier ){
+				name = ((ICASTCompositeTypeSpecifier)declSpec).getName();
+			}
+			if( name != null ){
+				return name.resolveBinding();
 			}
 		}
 		return null;
@@ -338,22 +357,26 @@ public class CVisitor {
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 			List declarators = simpleDeclaration.getDeclarators();
 			int size = declarators.size();
-			if( size > 0 ){
-				for( int i = 0; i < declarators.size(); i++ ){
-					IASTDeclarator declarator = (IASTDeclarator) declarators.get(i);
-					CASTName declaratorName = (CASTName) declarator.getName();
-					if( CharArrayUtils.equals( declaratorName.toCharArray(), name.toCharArray() ) ){
-						return declaratorName.resolveBinding();
-					}
+
+			for( int i = 0; i < size; i++ ){
+				IASTDeclarator declarator = (IASTDeclarator) declarators.get(i);
+				CASTName declaratorName = (CASTName) declarator.getName();
+				if( CharArrayUtils.equals( declaratorName.toCharArray(), name.toCharArray() ) ){
+					return declaratorName.resolveBinding();
 				}
-			} else {
-				//forward declaration
-				IASTDeclSpecifier declSpec = simpleDeclaration.getDeclSpecifier();
-				if( declSpec instanceof ICASTElaboratedTypeSpecifier ){
-					CASTName elabName = (CASTName) ((ICASTElaboratedTypeSpecifier)declSpec).getName();
-					if( CharArrayUtils.equals( elabName.toCharArray(), name.toCharArray() ) ){
-						return elabName.resolveBinding();
-					}
+			}
+
+			//decl spec 
+			IASTDeclSpecifier declSpec = simpleDeclaration.getDeclSpecifier();
+			if( declSpec instanceof ICASTElaboratedTypeSpecifier ){
+				CASTName elabName = (CASTName) ((ICASTElaboratedTypeSpecifier)declSpec).getName();
+				if( CharArrayUtils.equals( elabName.toCharArray(), name.toCharArray() ) ){
+					return elabName.resolveBinding();
+				}
+			} else if( declSpec instanceof ICASTCompositeTypeSpecifier ){
+				CASTName compName = (CASTName) ((ICASTCompositeTypeSpecifier)declSpec).getName();
+				if( CharArrayUtils.equals( compName.toCharArray(), name.toCharArray() ) ){
+					return compName.resolveBinding();
 				}
 			}
 		} else if( declaration instanceof IASTFunctionDefinition ){
@@ -379,13 +402,14 @@ public class CVisitor {
 	}
 	
 	private static IBinding checkForBinding( IASTStatement statement, CASTName name ){
-		if( statement instanceof IASTForStatement ){
+		if( statement instanceof IASTDeclarationStatement ){
+			return checkForBinding( ((IASTDeclarationStatement)statement).getDeclaration(), name );
+		} else if( statement instanceof IASTForStatement ){
 			IASTForStatement forStatement = (IASTForStatement) statement;
 			if( forStatement.getInitDeclaration() != null ){
 				return checkForBinding( forStatement.getInitDeclaration(), name );
 			}
 		}
-		
 		return null;
 	}
 	

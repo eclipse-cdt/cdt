@@ -9,7 +9,6 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.cdt.core.dom;
-import org.eclipse.cdt.core.dom.ast.IASTLocationFactory;
 import org.eclipse.cdt.internal.core.dom.InternalASTServiceProvider;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 
@@ -88,9 +87,6 @@ public class CDOM {
         return null;
     }
     
-    public IASTLocationFactory getLocationFactory()
-    {
-        return new EclipseLocationFactory();
-    }
+
 
 }

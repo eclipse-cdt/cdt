@@ -125,8 +125,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getNodeForLocation(org.eclipse.cdt.core.dom.ast.IASTNodeLocation)
      */
-    public IASTNode getNodeForLocation(IASTNodeLocation location) {
-        // TODO Auto-generated method stub
+    public IASTNode[] selectNodesForLocation(String path, int offset, int length) {
         return null;
     }
 
@@ -161,4 +160,12 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     public void setLocationResolver(ILocationResolver resolver) {
         this.resolver = resolver;
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#selectNodesForLocation(int, int)
+     */
+    public IASTNode[] selectNodesForLocation(int offset, int length) {
+        return selectNodesForLocation( resolver.getTranslationUnitPath(), offset, length ); //$NON-NLS-1$
+    }
+
 }

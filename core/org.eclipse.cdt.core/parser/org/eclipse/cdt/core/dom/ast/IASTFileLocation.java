@@ -25,10 +25,4 @@ public interface IASTFileLocation extends IASTNodeLocation {
 	public String getFileName();
 	public void setFileName( String fileName );
 
-    /**
-     * @param b
-     */
-    public void setResolved(boolean b);
-    public boolean getResolved();
-
 }

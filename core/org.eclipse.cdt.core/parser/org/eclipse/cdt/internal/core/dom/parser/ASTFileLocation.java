@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 public class ASTFileLocation implements IASTFileLocation {
 
     private String fn;
-    private boolean resolved;
     private int o;
     private int l;
 
@@ -34,20 +33,6 @@ public class ASTFileLocation implements IASTFileLocation {
      */
     public void setFileName(String fileName) {
         fn = fileName;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFileLocation#setResolved(boolean)
-     */
-    public void setResolved(boolean b) {
-        resolved = b;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFileLocation#getResolved()
-     */
-    public boolean getResolved() {
-        return resolved;
     }
 
     /* (non-Javadoc)

@@ -36,6 +36,10 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     //Binding
     private CScope compilationUnit = null;
     private ILocationResolver resolver;
+    private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
+    private static final IASTNodeLocation[] EMPTY_PREPROCESSOR_LOCATION_ARRAY = new IASTNodeLocation[0];
+    private static final IASTMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTMacroDefinition[0];
+    private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = new IASTPreprocessorIncludeStatement[0];
     
     public void addDeclaration( IASTDeclaration d )
     {
@@ -111,6 +115,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLocationInfo(int)
      */
     public IASTNodeLocation getLocationInfo(int offset) {
+        if( resolver == null ) return null;
         return resolver.getLocation(offset);
     }
 
@@ -119,6 +124,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLocationInfo(int, int)
      */
     public IASTNodeLocation[] getLocationInfo(int offset, int length) {
+        if( resolver == null ) return EMPTY_PREPROCESSOR_LOCATION_ARRAY;
         return resolver.getLocations(offset,length);
     }
 
@@ -126,7 +132,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getNodeForLocation(org.eclipse.cdt.core.dom.ast.IASTNodeLocation)
      */
-    public IASTNode getNodeForLocation(IASTNodeLocation location) {
+    public IASTNode[] selectNodesForLocation(String path, int offset, int length) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -136,6 +142,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getMacroDefinitions()
      */
     public IASTMacroDefinition[] getMacroDefinitions() {
+        if( resolver == null ) return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
         return resolver.getMacroDefinitions(this);
     }
 
@@ -144,6 +151,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getIncludeDirectives()
      */
     public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
+        if( resolver == null ) return EMPTY_PREPROCESSOR_INCLUSION_ARRAY;
         return resolver.getIncludeDirectives(this);
     }
 
@@ -152,6 +160,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getAllPreprocessorStatements()
      */
     public IASTPreprocessorStatement[] getAllPreprocessorStatements() {
+        if( resolver == null ) return EMPTY_PREPROCESSOR_STATEMENT_ARRAY;
         return resolver.getAllPreprocessorStatements(this);
     }
 
@@ -161,5 +170,21 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
      */
     public void setLocationResolver(ILocationResolver resolver) {
         this.resolver = resolver;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#selectNodesForLocation(int, int)
+     */
+    public IASTNode[] selectNodesForLocation(int offset, int length) {
+        return selectNodesForLocation( "", offset, length ); //$NON-NLS-1$
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#finalize()
+     */
+    protected void finalize() throws Throwable {
+        if( resolver != null ) resolver.cleanup();
+        super.finalize();
     }
 }

@@ -3466,9 +3466,10 @@ public class Scanner2 implements IScanner, IScannerData {
      * @see org.eclipse.cdt.core.parser.IScanner#getLocationResolver()
      */
     public ILocationResolver getLocationResolver() {
-        // TODO Auto-generated method stub
+        if( locationMap instanceof ILocationResolver )
+            return (ILocationResolver) locationMap;
         return null;
     }
-	
-
+    
+    final IScannerPreprocessorLog locationMap = new LocationMap();
 }

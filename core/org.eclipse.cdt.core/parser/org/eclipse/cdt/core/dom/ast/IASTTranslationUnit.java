@@ -58,7 +58,8 @@ public interface IASTTranslationUnit extends IASTNode {
 	public IASTNodeLocation getLocationInfo( int offset );
 	public IASTNodeLocation [] getLocationInfo( int offset, int length );
 	
-	public IASTNode getNodeForLocation( IASTNodeLocation location );
+	public IASTNode[] selectNodesForLocation( String path, int offset, int length );
+	public IASTNode[] selectNodesForLocation( int offset, int length );
 	
 	public IASTMacroDefinition [] getMacroDefinitions();
 	public IASTPreprocessorIncludeStatement [] getIncludeDirectives();

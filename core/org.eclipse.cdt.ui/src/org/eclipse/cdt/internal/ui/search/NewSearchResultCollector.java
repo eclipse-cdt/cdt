@@ -87,7 +87,7 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
           	IFile refFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(refLocation);
           	IProject refProject = refFile.getProject();
           	IPath externalMatchLocation = searchMatch.getLocation();
-          	IFile linksFile = refProject.getFile("_cdtsrchlnk_" + externalMatchLocation.lastSegment()); //$NON-NLS-1$
+          	IFile linksFile = getUniqueFile(externalMatchLocation, refProject);
             //Delete links file to keep up to date with latest prefs
           	if (linksFile.exists() &&
           		linksFile.isLinked())
@@ -106,6 +106,7 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
           		
           	}
           	searchMatch.resource = linksFile;
+          	searchMatch.path = externalMatchLocation;
         	fMatchCount++;
     		int start = match.getStartOffset();
     		int end = match.getEndOffset();
@@ -116,6 +117,38 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
 
       return false;
 	
+	}
+
+
+	/**
+	 * @param externalMatchLocation
+	 * @param refProject
+	 * @return
+	 */
+	private IFile getUniqueFile(IPath externalMatchLocation, IProject refProject) {
+		IFile file = null;
+		String fileName = ""; //$NON-NLS-1$
+		//Total number of segments in file name
+		int segments = externalMatchLocation.segmentCount() - 1;
+		for (int linkNumber=0; linkNumber<Integer.MAX_VALUE; linkNumber++){
+			if (fileName !="") //$NON-NLS-1$
+				fileName = "lnk" + linkNumber + "_" + externalMatchLocation.segment(segments); //$NON-NLS-1$ //$NON-NLS-2$
+			else
+				fileName = externalMatchLocation.segment(segments);
+			
+			file=refProject.getFile(fileName);
+		    IPath path = file.getLocation();
+			
+		    //If the location passed in is equal to a location of a file
+		    //that is already linked then return the file
+		    if (externalMatchLocation.equals(path))
+		    	break;
+		    
+		    //If the file doesn't already exist in the workspace return
+		    if (!file.exists())
+				break;
+		}
+		return file;
 	}
 	
 	

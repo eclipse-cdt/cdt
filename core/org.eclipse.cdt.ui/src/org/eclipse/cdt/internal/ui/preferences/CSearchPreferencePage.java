@@ -216,8 +216,8 @@ public class CSearchPreferencePage extends PreferencePage
 	 * @param store
 	 */
 	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(CSearchPage.EXTERNALMATCH_ENABLED, true);
-		store.setDefault(CSearchPage.EXTERNALMATCH_VISIBLE, 1);
+		store.setDefault(CSearchPage.EXTERNALMATCH_ENABLED, false);
+		store.setDefault(CSearchPage.EXTERNALMATCH_VISIBLE, 0);
 		store.setDefault(SourceIndexer.CDT_INDEXER_TIMEOUT,TIMEOUT_VALUE);
 	}
 	

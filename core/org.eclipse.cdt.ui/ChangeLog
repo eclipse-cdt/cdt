@@ -1,4 +1,8 @@
 2004-06-15 Bogdan Gheorghe
+	Fix for Bug 63957: Error with external search markers - changed label
+	provider to provide proper paths for external links
+	
+2004-06-15 Bogdan Gheorghe
 	Disable background type cache on startup for now
 	
 	* src/org/eclipse/cdt/internal/ui/preferences/WorkInProgressPreferencePage.java

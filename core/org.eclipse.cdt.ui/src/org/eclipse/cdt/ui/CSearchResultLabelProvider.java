@@ -158,7 +158,15 @@ public class CSearchResultLabelProvider extends LabelProvider {
 		IResource resource = match.getResource();
 		
 		String result = ""; //$NON-NLS-1$
-		String path = (resource != null ) ? resource.getFullPath().toString() : ""; //$NON-NLS-1$
+		String path = "";  //$NON-NLS-1$
+		if (resource != null){
+			if (resource.isLinked()){
+				path = match.getLocation().toOSString();
+			}
+			else{
+				path = resource.getFullPath().toOSString();
+			}
+		}
 		
 		switch( getOrder() ){
 			case SHOW_NAME_ONLY:

@@ -9,6 +9,7 @@
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -85,6 +86,10 @@ public class CPElementGroup {
 		}
 	}
 
+	public void setChildren(CPElement[] elements) {
+		children = new ArrayList(Arrays.asList(elements));
+	}
+	
 	public void addChildren(CPElement[] elements) {
 		for (int i = 0; i < elements.length; i++) {
 			addChild(elements[i]);

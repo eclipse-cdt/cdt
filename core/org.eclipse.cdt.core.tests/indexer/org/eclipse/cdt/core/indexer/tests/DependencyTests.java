@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -667,7 +668,7 @@ import org.eclipse.core.runtime.Platform;
 		  IProjectDescription description = workspace.newProjectDescription(project.getName());
 		  description.setLocation(newPath);
 		  //Create the project
-		  cproject = CCorePlugin.getDefault().createCProject(description,project,monitor,CCorePlugin.PLUGIN_ID + ".make"); //.getCoreModel().create(project);
+		  cproject = CCorePlugin.getDefault().createCProject(description,project,monitor,MakeCorePlugin.MAKE_PROJECT_ID); //.getCoreModel().create(project);
 		    
 		  if( !cproject.hasNature(CCProjectNature.CC_NATURE_ID) ){
 			  addNatureToProject(cproject, CCProjectNature.CC_NATURE_ID, null);

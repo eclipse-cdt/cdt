@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -140,7 +141,7 @@ public class IndexManagerTests extends TestCase {
 		   IProjectDescription description = workspace.newProjectDescription(project.getName());
 		   description.setLocation(newPath);
 		   //Create the project
-		   cproject = CCorePlugin.getDefault().createCProject(description,project,monitor,CCorePlugin.PLUGIN_ID + ".make"); //.getCoreModel().create(project);
+		   cproject = CCorePlugin.getDefault().createCProject(description,project,monitor,MakeCorePlugin.MAKE_PROJECT_ID); //.getCoreModel().create(project);
 		    
 		   if( !cproject.hasNature(CCProjectNature.CC_NATURE_ID) ){
 			   addNatureToProject(cproject, CCProjectNature.CC_NATURE_ID, null);

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.testplugin.FileManager;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
@@ -137,7 +138,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		cproject = CCorePlugin.getDefault().createCProject( description,
 																	 project,
 																	 monitor,
-																	 CCorePlugin.PLUGIN_ID + ".make");
+																	 MakeCorePlugin.MAKE_PROJECT_ID);
 
 		if( !project.hasNature(CCProjectNature.CC_NATURE_ID) ){
 			addNatureToProject(project, CCProjectNature.CC_NATURE_ID, null);

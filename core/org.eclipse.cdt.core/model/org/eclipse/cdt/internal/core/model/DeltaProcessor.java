@@ -500,7 +500,7 @@ public class DeltaProcessor {
 					updateIndexAddResource(element, delta);
 					elementAdded(element, delta);
 				}
-				return true;
+				return false;
 
 			case IResourceDelta.REMOVED :
 				if (element != null) {
@@ -534,7 +534,7 @@ public class DeltaProcessor {
 								}
 								elementOpened(element, delta);
 								updateIndexAddResource(element, delta);
-								return true;
+								return false;
 							}
 							elementClosed(element, delta);
 							updateIndexRemoveResource(element, delta);

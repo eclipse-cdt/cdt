@@ -1,3 +1,7 @@
+2004-08-09 Bogdan Gheorghe
+	Fix for Bug 71115: Double Indexing
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	
 2004-08-06 Vladimir Hirsl
 
 	A small parser Problem fix after String to char[] optimization.

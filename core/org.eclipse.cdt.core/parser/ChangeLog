@@ -1,3 +1,6 @@
+2003-09-15 Andrew Niefer
+	bug43106 - added getConditionalOperand to ParserSymbolTable
+
 2003-09-15 John Camelon
 	Partially fixed Bug 42979 : Cannot search for operator overloaders 
 

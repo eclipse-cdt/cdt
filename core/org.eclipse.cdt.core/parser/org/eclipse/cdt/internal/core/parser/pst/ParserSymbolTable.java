@@ -1303,7 +1303,7 @@ public class ParserSymbolTable {
 				// to an rvalue of type "pointer to cv B", where B is a base class of D.
 				if( (srcDecl instanceof IDerivableContainerSymbol) && trgDecl.isType( srcDecl.getType() ) ){
 					temp = hasBaseClass( (IDerivableContainerSymbol) srcDecl, (IDerivableContainerSymbol) trgDecl );
-					cost.rank = Cost.CONVERSION_RANK;
+					cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
 					cost.conversion = ( temp > -1 ) ? temp : 0;
 					cost.detail = 1;
 					return;
@@ -1319,7 +1319,7 @@ public class ParserSymbolTable {
 				TypeInfo.PtrOp srcPtr =  trg.hasPtrOperators() ? (TypeInfo.PtrOp)trg.getPtrOperators().getFirst() : null;
 				if( trgDecl.isType( srcDecl.getType() ) && srcPtr != null && srcPtr.getType() == TypeInfo.PtrOp.t_memberPointer ){
 					temp = hasBaseClass( (IDerivableContainerSymbol)ptr.getMemberOf(), (IDerivableContainerSymbol)srcPtr.getMemberOf() );
-					cost.rank = Cost.CONVERSION_RANK;
+					cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
 					cost.detail = 1;
 					cost.conversion = ( temp > -1 ) ? temp : 0;
 					return; 
@@ -1456,6 +1456,61 @@ public class ParserSymbolTable {
 		return cost;
 	}
 
+	/**
+	 *	Determine the type of a conditional operator based on the second and third operands 
+	 * @param secondOp
+	 * @param thirdOp
+	 * @return
+	 * Spec 5.16
+	 * Determine if the second operand can be converted to match the third operand, and vice versa.
+	 * - If both can be converted, or one can be converted but the conversion is ambiguous, the program
+	 * is illformed  (throw ParserSymbolTableException)
+	 * - If neither can be converted, further checking must be done (return null)
+	 * - If exactly one conversion is possible, that conversion is applied ( return the other TypeInfo )
+	 */
+	static public TypeInfo getConditionalOperand( TypeInfo secondOp, TypeInfo thirdOp ) throws ParserSymbolTableException{
+		
+		//can secondOp convert to thirdOp ?
+		Cost secondCost = checkStandardConversionSequence( secondOp, getFlatTypeInfo( thirdOp ) );
+
+		if( secondCost.rank == Cost.NO_MATCH_RANK ){
+			secondCost = checkUserDefinedConversionSequence( secondOp, getFlatTypeInfo( thirdOp ) );
+		}
+		
+		Cost thirdCost = checkStandardConversionSequence( thirdOp, getFlatTypeInfo( secondOp ) );
+		if( thirdCost.rank == Cost.NO_MATCH_RANK ){
+			thirdCost = checkUserDefinedConversionSequence( thirdOp, getFlatTypeInfo( secondOp ) );
+		}
+		
+		
+		boolean canConvertSecond = ( secondCost != null && secondCost.rank != Cost.NO_MATCH_RANK );
+		boolean canConvertThird  = ( thirdCost  != null && thirdCost.rank  != Cost.NO_MATCH_RANK );
+
+		if( !canConvertSecond && !canConvertThird ){
+			//neither can be converted
+			return null;
+		} else if ( canConvertSecond && canConvertThird ){
+			//both can be converted -> illformed
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+		} else {
+			if( canConvertSecond ){
+				if( secondCost.userDefined == Cost.AMBIGUOUS_USERDEFINED_CONVERSION ){
+					//conversion is ambiguous -> ill-formed
+					throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+				} else {
+					return thirdOp;
+				}
+			} else {
+				if( thirdCost.userDefined == Cost.AMBIGUOUS_USERDEFINED_CONVERSION ){
+					//conversion is ambiguous -> ill-formed
+					throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+				} else {
+					return secondOp;
+				}
+			}
+		}
+	}
+	
 	/**
 	 * 
 	 * @param decl

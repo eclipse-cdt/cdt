@@ -2624,5 +2624,77 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		assertEquals( look, null );
 	}
+	
+	/**
+	 * class A {
+	 *    A ( C ) {};
+	 * } a;
+	 * class B : public A {} b;
+	 * class C {
+	 *    C ( A ) {};
+	 * } c;
+	 * 
+	 * isTrue ? &a : &b;	//expect type = 2nd operand ( A )
+	 * isTrue ? &a : &c;	//expect null, neither converts
+	 * isTrue ? a : c;		//expect exception, both convert 
+	 * 
+	 * @throws Exception
+	 */
+	public void testGetConditionalOperand_bug43106() throws Exception{
+		newTable();
+		
+		IDerivableContainerSymbol clsA = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol clsB = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+		
+		clsB.addParent( clsA );
+		
+		table.getCompilationUnit().addSymbol( clsA );
+		table.getCompilationUnit().addSymbol( clsB );
+		
+		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
+		a.setTypeSymbol( clsA );
+		
+		ISymbol b = table.newSymbol( "b", TypeInfo.t_type );
+		b.setTypeSymbol( clsB );
+		
+		table.getCompilationUnit().addSymbol( a );
+		table.getCompilationUnit().addSymbol( b );
+		
+		TypeInfo secondOp = new TypeInfo( TypeInfo.t_type, 0, a, new PtrOp( PtrOp.t_reference ), false );
+		TypeInfo thirdOp = new TypeInfo( TypeInfo.t_type, 0, b, new PtrOp( PtrOp.t_reference ), false );
+		
+		TypeInfo returned = ParserSymbolTable.getConditionalOperand( secondOp, thirdOp );
+		assertEquals( returned, secondOp );
+		
+		IDerivableContainerSymbol clsC = table.newDerivableContainerSymbol( "C", TypeInfo.t_class );
+		table.getCompilationUnit().addSymbol( clsC );
+		ISymbol c = table.newSymbol( "c", TypeInfo.t_type );
+		c.setTypeSymbol( clsC );
+		table.getCompilationUnit().addSymbol( c );
+		
+		TypeInfo anotherOp = new TypeInfo( TypeInfo.t_type, 0, c, new PtrOp( PtrOp.t_reference ), false );
+		
+		returned = ParserSymbolTable.getConditionalOperand( secondOp, anotherOp );
+		assertEquals( returned, null );
+		
+		IParameterizedSymbol constructorA = table.newParameterizedSymbol( "A", TypeInfo.t_constructor );
+		constructorA.addParameter( clsC, null, false );
+		clsA.addConstructor( constructorA );
+		
+		IParameterizedSymbol constructorC = table.newParameterizedSymbol( "C", TypeInfo.t_constructor );
+		constructorC.addParameter( clsA, null, false );
+		clsC.addConstructor( constructorC );
+		
+		secondOp.getPtrOperators().clear();
+		anotherOp.getPtrOperators().clear();
+		try{
+			
+			returned = ParserSymbolTable.getConditionalOperand( secondOp, anotherOp );
+			assertTrue( false );
+		} catch ( ParserSymbolTableException e ){
+			//good
+		}
+	}
+	
 }
 

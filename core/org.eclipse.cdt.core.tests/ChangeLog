@@ -1,3 +1,6 @@
+2003-09-15 Andrew Niefer
+	added testGetConditionalOperand_bug43106 to ParserSymbolTableTests
+
 2003-09-15 John Camelon
 	Added CompleteParseASTTest::testBug42979().
 	Updated CompleteParseASTTest::testAndrewsExample(). 

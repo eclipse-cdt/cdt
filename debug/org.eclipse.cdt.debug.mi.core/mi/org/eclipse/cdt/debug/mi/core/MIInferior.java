@@ -165,7 +165,8 @@ public class MIInferior extends Process {
 		//   to kill a disconnected program).
 		// - For Program session:
 		//   if the inferior was not terminated.
-		// - For PostMortem(Core): noop
+		// - For PostMortem(Core): send event
+		// else noop
 		if ((session.isAttachSession() && isConnected()) || (session.isProgramSession() && !isTerminated())) {
 
 			CommandFactory factory = session.getCommandFactory();
@@ -175,6 +176,8 @@ public class MIInferior extends Process {
 			session.postCommand(abort);
 			abort.getMIInfo();
 			setTerminated(abort.getToken(), true);
+		} else if (session.isCoreSession()){
+			setTerminated(0, true);
 		}
 	}
 

@@ -232,6 +232,8 @@ public class MIPlugin extends Plugin {
 		MISession session;
 		try {
 			session = createMISession(pgdb, null, MISession.CORE);
+			//@@@ We have to manually set the suspended state when doing post-mortem
+			session.getMIInferior().setSuspended();
 		} catch (MIException e) {
 			pgdb.destroy();
 			throw e;

@@ -25,6 +25,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
+import org.eclipse.cdt.debug.mi.core.CoreProcess;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
@@ -684,6 +685,9 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getProcess()
 	 */
 	public Process getProcess() {
+		if (miSession.isCoreSession()) {
+			return new CoreProcess();
+		}
 		return miSession.getMIInferior();
 	}
 

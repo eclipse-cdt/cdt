@@ -151,23 +151,23 @@ public class CPPVisitor {
 	
     private static IBinding createBinding( IASTEnumerator enumerator ) {
         ICPPScope scope = (ICPPScope) getContainingScope( enumerator );
-        IBinding enum = scope.getBinding( enumerator.getName() );
-        if( enum == null ){
-            enum = new CPPEnumerator( enumerator );
-            scope.addBinding( enum );
+        IBinding enumeration = scope.getBinding( enumerator.getName() );
+        if( enumeration == null ){
+            enumeration = new CPPEnumerator( enumerator );
+            scope.addBinding( enumeration );
         }
-        return enum;
+        return enumeration;
     }
 
 
     private static IBinding createBinding( IASTEnumerationSpecifier specifier ) {
         ICPPScope scope = (ICPPScope) getContainingScope( specifier );
-        IBinding enum = scope.getBinding( specifier.getName() );
-        if( enum == null ){
-            enum = new CPPEnumeration( specifier );
-            scope.addBinding( enum );
+        IBinding enumeration = scope.getBinding( specifier.getName() );
+        if( enumeration == null ){
+            enumeration = new CPPEnumeration( specifier );
+            scope.addBinding( enumeration );
         }
-        return enum;
+        return enumeration;
     }
 
     private static IBinding createBinding( ICPPASTElaboratedTypeSpecifier elabType ){
@@ -592,9 +592,9 @@ public class CPPVisitor {
 		} else if( declSpecifier instanceof ICPPASTElaboratedTypeSpecifier ){
 			if( !visitName( ((ICPPASTElaboratedTypeSpecifier) declSpecifier).getName(), action ) ) return false;
 		} else if( declSpecifier instanceof IASTEnumerationSpecifier ){
-			IASTEnumerationSpecifier enum = (IASTEnumerationSpecifier) declSpecifier;
-			if( !visitName( enum.getName(), action ) ) return false;
-			IASTEnumerator [] etors = enum.getEnumerators();
+			IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpecifier;
+			if( !visitName( enumeration.getName(), action ) ) return false;
+			IASTEnumerator [] etors = enumeration.getEnumerators();
 			for( int i = 0; i < etors.length; i++ ){
 				if( !visitEnumerator( etors[i], action ) ) return false;
 			}

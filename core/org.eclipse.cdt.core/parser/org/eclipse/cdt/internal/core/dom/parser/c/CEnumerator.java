@@ -57,8 +57,8 @@ public class CEnumerator implements IEnumerator {
 	 */
 	public IType getType() {
 		IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) enumerator.getParent();
-		IEnumeration enum = (IEnumeration) enumSpec.getName().resolveBinding();
-		return enum;
+		IEnumeration enumeration = (IEnumeration) enumSpec.getName().resolveBinding();
+		return enumeration;
 	}
 
 }

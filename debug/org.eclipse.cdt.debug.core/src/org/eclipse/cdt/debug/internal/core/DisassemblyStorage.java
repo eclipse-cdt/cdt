@@ -150,6 +150,7 @@ public class DisassemblyStorage implements IDisassemblyStorage
 	{
 		StringBuffer lines = new StringBuffer();
 		int maxFunctionName = 0;
+		int maxOpcodeLength = 0;
 		long maxOffset = 0;
 		for ( int i = 0; i < fInstructions.length; ++i )
 		{
@@ -157,15 +158,21 @@ public class DisassemblyStorage implements IDisassemblyStorage
 			{
 				maxFunctionName = fInstructions[i].getFuntionName().length();
 			}
+
+			String opcode = fInstructions[i].getOpcode();
+			if ( opcode.length() > maxOpcodeLength )
+				maxOpcodeLength = opcode.length();
+
 			if ( fInstructions[i].getOffset() > maxOffset )
 			{
 				maxOffset = fInstructions[i].getOffset();
 			}
 		}
 		int instrPos = calculateInstructionPosition( maxFunctionName, maxOffset );		
+		int argPosition = instrPos + maxOpcodeLength + 1;
 		for ( int i = 0; i < fInstructions.length; ++i )
 		{
-			lines.append( getInstructionString( fInstructions[i], instrPos ) );
+			lines.append( getInstructionString( fInstructions[i], instrPos, argPosition ) );
 		}
 		fInputStream = new ByteArrayInputStream( lines.toString().getBytes() );
 	}
@@ -179,9 +186,10 @@ public class DisassemblyStorage implements IDisassemblyStorage
 		}
 	}
 	
-	private String getInstructionString( ICDIInstruction instruction, int instrPosition )
+	private String getInstructionString( ICDIInstruction instruction, int instrPosition, int argPosition )
 	{
-		char[] spaces= new char[instrPosition];
+		int worstCaseSpace = Math.max( instrPosition, argPosition );
+		char[] spaces= new char[worstCaseSpace];
 		Arrays.fill( spaces, ' ' );
 		StringBuffer sb = new StringBuffer();
 		if ( instruction != null )
@@ -200,7 +208,9 @@ public class DisassemblyStorage implements IDisassemblyStorage
 				sb.append( ">:" );
 				sb.append( spaces, 0, instrPosition - sb.length() );
 			}
-			sb.append( instruction.getInstruction() );
+			sb.append( instruction.getOpcode() );
+			sb.append( spaces, 0, argPosition - sb.length() );
+			sb.append( instruction.getArgs() );
 			sb.append( '\n' );
 		}
 		return sb.toString();

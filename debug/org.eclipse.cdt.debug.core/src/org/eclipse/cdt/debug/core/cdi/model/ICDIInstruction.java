@@ -14,7 +14,7 @@ package org.eclipse.cdt.debug.core.cdi.model;
  */
 public interface ICDIInstruction extends ICDIObject {
 	/**
-	 *  Returns the Address.
+	 * Returns the Address.
 	 * @return the address.
 	 */
 	long getAdress();
@@ -28,8 +28,19 @@ public interface ICDIInstruction extends ICDIObject {
 	 * @return the instruction.
 	 */
 	String getInstruction();
-	
+  
 	/**
+	* @return the opcode
+	*/
+	String getOpcode();
+
+	/**
+	* @return any arguments to the opcode
+	*/
+	String getArgs();
+
+	/**
+	 * @return the offset of this machine instruction
 	 * Returns the instruction's offset.
 	 * 
 	 * @return the offset of this machine instruction

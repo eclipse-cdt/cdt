@@ -11,8 +11,9 @@ package org.eclipse.cdt.debug.mi.core.output;
 public class MIAsm {
 	long address;
 	String function = "";
+	String opcode = "";
+	String args = "";
 	long offset;
-	String instruction = "";
 
 	public MIAsm (MITuple tuple) {
 		parse(tuple);
@@ -31,7 +32,7 @@ public class MIAsm {
 	}
 
 	public String getInstruction() {
-		return instruction;
+		return opcode + " " + args;
 	}
 
 	public String toString() {
@@ -40,7 +41,7 @@ public class MIAsm {
 		buffer.append("address=\"" + Long.toHexString(address) +"\"");
 		buffer.append(",func-name=\"" + function + "\"");
 		buffer.append(",offset=\"").append(offset).append('"');
-		buffer.append(",inst=\"" + instruction + "\"");
+		buffer.append(",inst=\"" + getInstruction() + "\"");
 		buffer.append('}');
 		return buffer.toString();
 	}
@@ -69,8 +70,44 @@ public class MIAsm {
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("inst")) {
-				instruction = str;
-			}
+				/* for the instruction, we do not want the C string but the
+				translated string since the only thing we are doing is
+				displaying it. */
+				str = ((MIConst)value).getString();
+
+				char chars[] = str.toCharArray();
+				int index = 0;
+ 
+				// count the non-whitespace characters.
+				while( (index < chars.length) && (chars[index] > '\u0020'))
+					index++;
+
+				// guard all whitespace
+				if( index < chars.length )
+					opcode = str.substring( 0, index );
+
+				// skip any whitespace characters
+				while( index < chars.length && chars[index] >= '\u0000' && chars[index] <= '\u0020')
+					index++;
+
+				// guard no argument
+				if( index < chars.length )
+					args = str.substring( index );
+ 			}
 		}
+	}
+
+	/**
+	 * @return String
+	 */
+	public String getArgs() {
+		return args;
+	}
+
+	/**
+	 * @return String
+	 */
+	public String getOpcode() {
+		return opcode;
 	}
 }

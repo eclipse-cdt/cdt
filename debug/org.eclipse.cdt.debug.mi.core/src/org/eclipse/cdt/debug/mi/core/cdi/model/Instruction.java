@@ -47,4 +47,17 @@ public class Instruction extends CObject implements ICDIInstruction  {
 		return asm.getOffset();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction#getArgs()
+	 */
+	public String getArgs() {
+		return asm.getArgs();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction#getOpcode()
+	 */
+	public String getOpcode() {
+		return asm.getOpcode();
+	}
 }

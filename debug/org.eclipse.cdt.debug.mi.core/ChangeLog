@@ -1,3 +1,8 @@
+2003-03-27 Mikhail Khodjaiants
+	Applied patch from Chris Songer: Assembly View Fixups
+	* Instruction.java
+	* MIAsm.java
+
 2003-03-19 Alain Magloire
 
 	Some applications, like recursive code, have a very deep stackframes

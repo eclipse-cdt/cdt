@@ -128,7 +128,7 @@ public class CSourceLocator implements ICSourceLocator
 	private Object getSourceInput( IStackFrameInfo info )
 	{
 		Object result = null;
-		if ( info != null )
+		if ( info != null && fProject != null )
 		{
 			setInternalMode( ICSourceLocator.MODE_SOURCE );
 			String fileName = info.getFile();

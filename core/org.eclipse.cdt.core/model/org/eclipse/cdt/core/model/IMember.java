@@ -12,9 +12,9 @@ package org.eclipse.cdt.core.model;
  */
 public interface IMember extends IDeclaration {
 
-	static final int V_PUBLIC = 0;
+	static final int V_PRIVATE = 0;
 	static final int V_PROTECTED = 1;
-	static final int V_PRIVATE = 2;
+	static final int V_PUBLIC = 2;
 
 	/**
 	 * Returns the member's visibility

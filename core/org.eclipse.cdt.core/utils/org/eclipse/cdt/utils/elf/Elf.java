@@ -669,6 +669,9 @@ public class Elf {
 			case Elf.ELFhdr.EM_SPARC:
 				attrib.cpu = "sparc";
 				break;
+			case Elf.ELFhdr.EM_68K:
+				attrib.cpu = "m68k";
+				break;
 			case Elf.ELFhdr.EM_NONE:
 			default:
 				attrib.cpu = "none";

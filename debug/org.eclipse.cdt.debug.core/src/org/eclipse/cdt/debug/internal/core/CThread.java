@@ -375,6 +375,8 @@ public class CThread extends CDebugElement
 	public void handleDebugEvent( ICDIEvent event )
 	{
 		ICDIObject source = event.getSource();
+		if ( source == null )
+			return;
 		if ( source.getTarget().equals( getCDITarget() ) )
 		{
 			if ( event instanceof ICDISuspendedEvent )

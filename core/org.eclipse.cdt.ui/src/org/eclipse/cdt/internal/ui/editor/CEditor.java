@@ -14,8 +14,10 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
@@ -578,6 +580,37 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		}
 	}
 	
+	public void setSelection(ICElement element) {
+
+		if (element == null || element instanceof ITranslationUnit) {
+			/*
+			 * If the element is an ITranslationUnit this unit is either the input
+			 * of this editor or not being displayed. In both cases, nothing should
+			 * happened.
+			 */
+			return;
+		} if (element instanceof ISourceReference) {
+			ISourceReference reference= (ISourceReference) element;
+			// set hightlight range
+			setSelection(reference, true);
+			// set outliner selection
+			//if (fOutlinePage != null) {
+			//	fOutlinePage.removeSelectionChangedListener(fSelectionChangedListener);
+			//	fOutlinePage.select(reference);
+			//	fOutlinePage.addSelectionChangedListener(fSelectionChangedListener);
+			//}
+		}
+	}
+
+	public void setSelection(ISourceReference element, boolean moveCursor) {
+		if (element != null) {
+			try {
+				setSelection(element.getSourceRange(), moveCursor);
+			} catch (CModelException e) {
+			}
+		}
+	}
+
 	/**
 	 * Sets the current editor selection to the source range. Optionally
 	 * sets the current editor position.
@@ -586,50 +619,52 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 	 * @param moveCursor if true the editor is scrolled to show the range.
 	 */
 	public void setSelection(ISourceRange element, boolean moveCursor) {
-		if (element != null) {
-			try {
-				IRegion alternateRegion = null;
-				int start= element.getStartPos();
-				int length= element.getLength();
 
-				// Sanity check sometimes the parser may throw wrong numbers.
-				if (start < 0 || length < 0) {
-					start = 0;                              
-					length = 0;
-				}
-
-				// 0 length and start and non-zero start line says we know
-				// the line for some reason, but not the offset.
-				if (length == 0 && start == 0 && element.getStartLine() != 0) {
-					alternateRegion = 
-						getDocumentProvider().getDocument(getEditorInput()).getLineInformation(element.getStartLine());
-					if (alternateRegion != null) {
-						start = alternateRegion.getOffset();
-						length = alternateRegion.getLength();
-					}
-				}
-				setHighlightRange(start, length, moveCursor);
-				
-				if (moveCursor) {
-					start= element.getIdStartPos();
-					length= element.getIdLength();
-					if (start == 0 && length == 0 && alternateRegion != null) {
-						start = alternateRegion.getOffset();
-						length = alternateRegion.getLength();
-					}
-					if (start > -1 && getSourceViewer() != null) {
-						getSourceViewer().revealRange(start, length);
-						getSourceViewer().setSelectedRange(start, length);
-					}
-					updateStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);
-				}
-				return;
-				
-			} catch (IllegalArgumentException x) {
-			} catch (BadLocationException e ) {
-			}
+		if (element == null) {
+			return;
 		}
-		
+
+		try {
+			IRegion alternateRegion = null;
+			int start= element.getStartPos();
+			int length= element.getLength();
+
+			// Sanity check sometimes the parser may throw wrong numbers.
+			if (start < 0 || length < 0) {
+				start = 0;                              
+				length = 0;
+			}
+
+			// 0 length and start and non-zero start line says we know
+			// the line for some reason, but not the offset.
+			if (length == 0 && start == 0 && element.getStartLine() != 0) {
+				alternateRegion = 
+					getDocumentProvider().getDocument(getEditorInput()).getLineInformation(element.getStartLine());
+				if (alternateRegion != null) {
+					start = alternateRegion.getOffset();
+					length = alternateRegion.getLength();
+				}
+			}
+			setHighlightRange(start, length, moveCursor);
+				
+			if (moveCursor) {
+				start= element.getIdStartPos();
+				length= element.getIdLength();
+				if (start == 0 && length == 0 && alternateRegion != null) {
+					start = alternateRegion.getOffset();
+					length = alternateRegion.getLength();
+				}
+				if (start > -1 && getSourceViewer() != null) {
+					getSourceViewer().revealRange(start, length);
+					getSourceViewer().setSelectedRange(start, length);
+				}
+				updateStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);
+			}
+			return;
+		} catch (IllegalArgumentException x) {
+		} catch (BadLocationException e ) {
+		}
+
 		if (moveCursor)
 			resetHighlightRange();
 	}	

@@ -139,6 +139,8 @@ public class Elf {
 		public final static int SHT_SHLIB = 10;
 		public final static int SHT_DYNSYM = 11;
 		
+		public final static int SHT_LOPROC = 0x70000000;
+		
 		/* sh_flags */
 		public final static int SHF_WRITE = 1;
 		public final static int SHF_ALLOC = 2;
@@ -173,7 +175,7 @@ public class Elf {
 					efile.read(section_strtab);
 				}
 				int str_size = 0;
-				if ( sh_name > sh_size || ( sh_name + str_size + 1) > section_strtab.length) {
+				if ( sh_name > section_strtab.length) {
 					return EMPTY_STRING;
 				}
 				while( section_strtab[(int)sh_name + str_size] != 0)
@@ -483,6 +485,8 @@ public class Elf {
 	}
 		
 	public class Dynamic {
+		public final static int DYN_ENT_SIZE = 8;
+
 		public final static int DT_NULL 		= 0;
 		public final static int DT_NEEDED 		= 1;
 		public final static int DT_PLTRELSZ 	= 2;
@@ -501,7 +505,6 @@ public class Elf {
 		public final static int DT_RPATH		= 15;
 		public long d_tag;
 		public long d_val;
-
 		private Section section;
 		private String name;
 						
@@ -538,16 +541,15 @@ public class Elf {
 		}
 		ArrayList dynList = new ArrayList();
 		efile.seek(section.sh_offset);
-		if (section.sh_entsize == 0) {
+		int off = 0;
+		// We must assume the section is a table ignoring the sh_entsize as it is not
+		// set for MIPS.
+		while( off < section.sh_size ) {
 			Dynamic dynEnt = new Dynamic(section, efile.readIntE(), efile.readIntE());
+			if ( dynEnt.d_tag == Dynamic.DT_NULL ) 
+				break;
 			dynList.add(dynEnt);
-		} else {
-			for (int i = 0; i < section.sh_size / section.sh_entsize; i++ ) {
-				Dynamic dynEnt = new Dynamic(section, efile.readIntE(), efile.readIntE());
-				if ( dynEnt.d_tag == Dynamic.DT_NULL ) 
-					break;
-				dynList.add(dynEnt);
-			}
+			off+= Dynamic.DYN_ENT_SIZE;
 		}
 		return (Dynamic[])dynList.toArray(new Dynamic[0]);
 	}
@@ -725,6 +727,17 @@ public class Elf {
 		} finally {
 			super.finalize();
 		}
+	}
+
+	public Section getSectionByName(String name) throws IOException {
+		if ( sections == null )
+			getSections();
+		for( int i = 0; i < sections.length; i++) {
+			if ( sections[i].toString().equals(name)) {
+				return sections[i];
+			}
+		}
+		return null;
 	}
 	
 	public Section[] getSections(int type) throws IOException {		

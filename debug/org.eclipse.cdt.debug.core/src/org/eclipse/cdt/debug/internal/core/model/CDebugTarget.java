@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
@@ -1151,9 +1152,9 @@ public class CDebugTarget extends CDebugElement
 		{
 			handleEndSteppingRange( (ICDIEndSteppingRange)reason );
 		}
-		else if ( reason instanceof ICDIBreakpoint )
+		else if ( reason instanceof ICDIBreakpointHit )
 		{
-			handleBreakpointHit( (ICDIBreakpoint)reason );
+			handleBreakpointHit( (ICDIBreakpointHit)reason );
 		}
 		else if ( reason instanceof ICDISignal )
 		{
@@ -1193,7 +1194,7 @@ public class CDebugTarget extends CDebugElement
 		fireSuspendEvent( DebugEvent.UNSPECIFIED );
 	}
 
-	private void handleBreakpointHit( ICDIBreakpoint breakpoint )
+	private void handleBreakpointHit( ICDIBreakpointHit breakpointHit )
 	{
 		fireSuspendEvent( DebugEvent.BREAKPOINT );
 	}

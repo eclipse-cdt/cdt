@@ -15,6 +15,7 @@ import org.eclipse.cdt.debug.core.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.IState;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -292,6 +293,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 									   						 new String[] { ((ICDISignal)info).getName(), ((ICDISignal)info).getMeaning() } );
 						return label;
 					}
+/*
+					if ( info != null && info instanceof ICDIBreakpointHit )
+					{
+						return target.getName() + " (Breakpoint hit)";
+					}
+*/
 				}
 			}
 		}

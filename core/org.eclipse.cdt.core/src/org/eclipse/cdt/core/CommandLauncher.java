@@ -134,40 +134,8 @@ public class CommandLauncher {
 		PipedOutputStream outputPipe = new PipedOutputStream();
 		PipedInputStream errInPipe, inputPipe;
 		try {
-			errInPipe = new PipedInputStream(errOutPipe) {
-				/**
-				 * FIXME: To remove when j9 is fix.
-				 * The overloading here corrects a bug in J9
-				 * When the ring buffer when full it returns 0 .
-				 */
-				public synchronized int available() throws IOException {
-					if(in < 0 || buffer == null)
-						return 0;
-					else if(in == out)
-						return buffer.length;
-					else if (in > out)
-						return in - out;
-					else
-						return in + buffer.length - out;
-				}
-			};
-			inputPipe = new PipedInputStream(outputPipe) {
-				/**
-				 * FIXME: To remove when j9 is fix.
-				 * The overloading here corrects a bug in J9
-				 * When the ring buffer when full returns 0.
-				 */
-				public synchronized int available() throws IOException {
-					if(in < 0 || buffer == null)
-						return 0;
-					else if(in == out)
-						return buffer.length;
-					else if (in > out)
-						return in - out;
-					else
-						return in + buffer.length - out;
-				}
-			};
+			errInPipe = new PipedInputStream(errOutPipe);
+			inputPipe = new PipedInputStream(outputPipe);
 		} catch( IOException e ) {
 			setErrorMessage("Command canceled");
 			return COMMAND_CANCELED;
@@ -178,6 +146,7 @@ public class CommandLauncher {
 		byte buffer[] = new byte[1024];
 		int nbytes;
 		while (!monitor.isCanceled() && closure.isAlive()) {
+			nbytes = 0;
 			try {
 				if ( errInPipe.available() > 0 ) {
 					nbytes = errInPipe.read(buffer);
@@ -192,9 +161,11 @@ public class CommandLauncher {
 			} catch( IOException e) {
 			}
 			monitor.worked(0);
-			try {
-					Thread.sleep(DELAY);
-			} catch (InterruptedException ie) {
+			if (nbytes == 0) {
+				try {
+						Thread.sleep(DELAY);
+				} catch (InterruptedException ie) {
+				}
 			}
 		}
 

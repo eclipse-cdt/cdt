@@ -132,7 +132,8 @@ public class CompletionParser extends ContextualParser implements IParser {
 	throws EndOfFileException, BacktrackException {
 		if( LT(1) != IToken.t_catch )
 		{
-			throwBacktrack(LA(1).getOffset()); // error, need at least one of these
+			IToken la = LA(1);
+			throwBacktrack(la.getOffset(), la.getEndOffset(), la.getLineNumber()); // error, need at least one of these
 		}
 		while (LT(1) == IToken.t_catch)
 		{

@@ -74,7 +74,7 @@ public class IndexerOptionDialogPage extends DialogPage {
 		preprocessorProblemsEnabled = createCheckButton( problemsGroup, ENABLE_PREPROCESSOR_PROBLEMS );
 		semanticProblemsEnabled = createCheckButton( problemsGroup, ENABLE_SEMANTIC_PROBLEMS );
 		//uncomment when we want to report syntax problems
-		//syntacticProblemsEnabled = createCheckButton( problemsGroup, ENABLE_SYNTACTIC_PROBLEMS );
+		syntacticProblemsEnabled = createCheckButton( problemsGroup, ENABLE_SYNTACTIC_PROBLEMS );
 		setControl(result);
 	}
 	

@@ -10,13 +10,16 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IQuickParseCallback;
+import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
@@ -32,6 +35,7 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 
 /**
  * @author jcamelon
@@ -39,22 +43,39 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class BaseASTTest extends TestCase
 {
+	/**
+	 * @author jcamelon
+	 *
+	 */
+	public class ProblemCallback extends QuickParseCallback implements
+			ISourceElementRequestor {
+		
+		List problems = new ArrayList();
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
+		 */
+		public boolean acceptProblem(IProblem problem) {
+			problems.add( problem );
+			return super.acceptProblem( problem );
+		}
+	}
 	public BaseASTTest( String a )
 	{
 		super( a );
 	}
 	
-	protected IQuickParseCallback quickParseCallback; 
+	protected ProblemCallback quickParseCallback; 
 	protected IParser parser; 
 	
 	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError, ParserLanguage lang ) throws ParserException, ParserFactoryError
 	{
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
-		quickParseCallback = ParserFactory.createQuickParseCallback(); 
+		quickParseCallback = new ProblemCallback();
 		parser = ParserFactory.createParser( ParserFactory.createScanner( new CodeReader(code.toCharArray()), new ScannerInfo(), mode, lang, quickParseCallback, new NullLogService(), null), quickParseCallback, mode, lang, null ); //$NON-NLS-1$
 		if( ! parser.parse() && throwExceptionOnError )
 			throw new ParserException("Parse failure"); //$NON-NLS-1$
-		return quickParseCallback.getCompilationUnit(); 		
+		return ((QuickParseCallback)quickParseCallback).getCompilationUnit(); 		
 	}
 	
 	

@@ -20,6 +20,7 @@ public class BacktrackException extends Exception
 	private IProblem problem;
 	private int startOffset;
 	private int endOffset;
+	private int lineNumber;
 
 	/**
 	 * @param p
@@ -48,10 +49,11 @@ public class BacktrackException extends Exception
 	 * @param startingOffset
 	 * @param endingOffset
 	 */
-	public void initialize(int startingOffset, int endingOffset) {
+	public void initialize(int startingOffset, int endingOffset, int line) {
 		reset();
 		startOffset = startingOffset;
 		endOffset = endingOffset;
+		lineNumber = line;
 	}
 	/**
 	 * @return Returns the offset.
@@ -64,5 +66,12 @@ public class BacktrackException extends Exception
 	 */
 	public final int getEndOffset() {
 		return endOffset;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getLineNumber() {
+		return lineNumber;
 	}
 }

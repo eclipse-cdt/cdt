@@ -63,12 +63,9 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		throw backtrack;
 	}
 
-	protected final void throwBacktrack( int startingOffset ) throws BacktrackException {
-		++backtrackCount;
-		if( lastToken != null )
-			backtrack.initialize( startingOffset, lastToken.getEndOffset() );
-		else
-			backtrack.initialize( startingOffset, startingOffset );
+	protected final void throwBacktrack( int startingOffset, int endingOffset, int lineNumber ) throws BacktrackException {
+		++backtrackCount;		
+		backtrack.initialize( startingOffset, ( endingOffset == 0 ) ? startingOffset + 1 : endingOffset, lineNumber );
 		throw backtrack;
 	}
 
@@ -163,7 +160,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			BacktrackException {
 		if (LT(1) == type)
 			return consume();
-		throwBacktrack(LA(1).getOffset());
+		IToken la = LA(1);
+		throwBacktrack(la.getOffset(), la.getEndOffset(), la.getLineNumber());
 		return null;
 	}
 
@@ -269,7 +267,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						} while (!scopes.empty()
 								&& (top == IToken.tGT || top == IToken.tLT));
 						if (top != IToken.tLBRACKET)
-							throwBacktrack(startingOffset );
+							throwBacktrack(startingOffset, last.getEndOffset(), last.getLineNumber());
 
 						break;
 					case IToken.tRPAREN :
@@ -278,7 +276,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						} while (!scopes.empty()
 								&& (top == IToken.tGT || top == IToken.tLT));
 						if (top != IToken.tLPAREN)
-							throwBacktrack(startingOffset);
+							throwBacktrack(startingOffset, last.getEndOffset(), last.getLineNumber());
 
 						break;
 					case IToken.tLT :
@@ -295,7 +293,10 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	protected List templateArgumentList(IASTScope scope,
 			IASTCompletionNode.CompletionKind kind) throws EndOfFileException,
 			BacktrackException {
-		int startingOffset = LA(1).getOffset();
+		IToken start = LA(1);
+		int startingOffset = start.getOffset();
+		int startingLineNumber = start.getOffset();
+		start = null;
 		IASTExpression expression = null;
 		List list = new LinkedList();
 
@@ -328,11 +329,15 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 
 			if (!completedArg) {
 				try {
+					IToken la = LA(1);
+					int so = la.getOffset();
+					int ln= la.getLineNumber();
 					expression = assignmentExpression(scope,
 							CompletionKind.VARIABLE_TYPE,
 							KeywordSetKey.EXPRESSION);
+					 
 					if (expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_EMPTY) {
-						throwBacktrack(startingOffset);
+						throwBacktrack(so, ( lastToken != null ) ? lastToken.getEndOffset() : 0, ln);
 					}
 					list.add(expression);
 					completedArg = true;
@@ -378,7 +383,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		if (failed) {
 			if (expression != null)
 				expression.freeReferences(astFactory.getReferenceManager());
-			throwBacktrack(startingOffset);
+			throwBacktrack(startingOffset, 0, startingLineNumber );
 		}
 
 		return list;
@@ -459,8 +464,9 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					break;
 
 				default :
+					IToken l = LA(1);
 					backup(mark);
-					throwBacktrack(first.getOffset());
+					throwBacktrack(first.getOffset(), l.getEndOffset(), first.getLineNumber());
 			}
 
 			while (LT(1) == IToken.tCOLONCOLON) {
@@ -477,8 +483,9 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 
 				switch (LT(1)) {
 					case IToken.t_operator :
+						IToken l = LA(1);
 						backup(mark);
-						throwBacktrack(first.getOffset());
+						throwBacktrack(first.getOffset(), l.getEndOffset(), first.getLineNumber());
 					case IToken.tIDENTIFIER :
 						prev = last;
 						last = consume();
@@ -620,7 +627,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 							language, IToken.t_restrict));
 					break;
 				}
-				throwBacktrack(startingOffset);
+				IToken la = LA(1);
+				throwBacktrack(startingOffset, la.getEndOffset(), la.getLineNumber());
 
 			default :
 				if (extension.isValidCVModifier(language, LT(1))) {
@@ -651,7 +659,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				arrayMod = astFactory.createArrayModifier(exp);
 			} catch (Exception e) {
 				logException("consumeArrayModifiers::createArrayModifier()", e); //$NON-NLS-1$
-				throwBacktrack(startingOffset);
+				throwBacktrack(startingOffset, last.getEndOffset(), last.getLineNumber());
 			}
 			d.addArrayModifier(arrayMod);
 		}
@@ -683,7 +691,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			} else if (LA(1).isOperator())
 				toSend = consume();
 			else
-				throwBacktrack(operatorToken.getOffset());
+				throwBacktrack(operatorToken.getOffset(), toSend != null ? toSend.getEndOffset() : 0, operatorToken.getLineNumber() );
 		} else {
 			// must be a conversion function
 			typeId(d.getDeclarationWrapper().getScope(), true,
@@ -795,7 +803,9 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 
 	public IASTExpression expression(IASTScope scope, CompletionKind kind,
 			KeywordSetKey key) throws BacktrackException, EndOfFileException {
-		int startingOffset = LA(1).getOffset();
+		IToken la = LA(1);
+		int startingOffset = la.getOffset();
+		int ln = la.getLineNumber();
 		IASTExpression assignmentExpression = assignmentExpression(scope, kind,
 				key);
 		while (LT(1) == IToken.tCOMMA) {
@@ -804,6 +814,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			IASTExpression secondExpression = assignmentExpression(scope, kind,
 					key);
 			setParameterListExpression(null);
+			int endOffset = lastToken != null ? lastToken.getEndOffset() : 0 ;
 			try {
 				assignmentExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.EXPRESSIONLIST,
@@ -813,7 +824,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
 				logException("expression::createExpression()", e); //$NON-NLS-1$
-				throwBacktrack(startingOffset);
+				throwBacktrack(startingOffset, endOffset, ln);
 			}
 		}
 		return assignmentExpression;
@@ -906,6 +917,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					CompletionKind.SINGLE_NAME_REFERENCE, key);
 		} catch (BacktrackException b) {
 		}
+		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
 			return astFactory.createExpression(scope,
 					IASTExpression.Kind.THROWEXPRESSION, throwExpression, null,
@@ -914,7 +926,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
 			logException("throwExpression::createExpression()", e); //$NON-NLS-1$
-			throwBacktrack(throwToken.getOffset());
+			throwBacktrack(throwToken.getOffset(), endOffset, throwToken.getLineNumber() );
 
 		}
 		return null;
@@ -928,14 +940,18 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	protected IASTExpression conditionalExpression(IASTScope scope,
 			CompletionKind kind, KeywordSetKey key) throws BacktrackException,
 			EndOfFileException {
-		int startingOffset = LA(1).getOffset();
+		IToken la = LA(1);
+		int startingOffset = la.getOffset();
+		int ln = la.getLineNumber();
+		la = null;
 		IASTExpression firstExpression = logicalOrExpression(scope, kind, key);
 		if (LT(1) == IToken.tQUESTION) {
-			consume();
+			consume(IToken.tQUESTION);
 			IASTExpression secondExpression = expression(scope, kind, key);
 			consume(IToken.tCOLON);
 			IASTExpression thirdExpression = assignmentExpression(scope, kind,
 					key);
+			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
 				return astFactory.createExpression(scope,
 						IASTExpression.Kind.CONDITIONALEXPRESSION,
@@ -945,7 +961,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
 				logException("conditionalExpression::createExpression()", e); //$NON-NLS-1$
-				throwBacktrack(startingOffset);
+				throwBacktrack(startingOffset, endOffset, ln);
 			}
 		}
 		return firstExpression;
@@ -959,12 +975,13 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			CompletionKind kind, KeywordSetKey key) throws BacktrackException,
 			EndOfFileException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = logicalAndExpression(scope, kind, key);
 		while (LT(1) == IToken.tOR) {
-			consume();
+			consume(IToken.tOR);
 			IASTExpression secondExpression = logicalAndExpression(scope, kind,
 					key);
-
+			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
 				firstExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.LOGICALOREXPRESSION,
@@ -974,7 +991,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
 				logException("logicalOrExpression::createExpression()", e); //$NON-NLS-1$
-				throwBacktrack(startingOffset);
+				throwBacktrack(startingOffset, endOffset, line);
 			}
 		}
 		return firstExpression;
@@ -988,11 +1005,13 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			CompletionKind kind, KeywordSetKey key) throws BacktrackException,
 			EndOfFileException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = inclusiveOrExpression(scope, kind, key);
 		while (LT(1) == IToken.tAND) {
-			consume();
+			consume(IToken.tAND);
 			IASTExpression secondExpression = inclusiveOrExpression(scope,
 					kind, key);
+			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
 				firstExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.LOGICALANDEXPRESSION,
@@ -1002,7 +1021,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
 				logException("logicalAndExpression::createExpression()", e); //$NON-NLS-1$
-				throwBacktrack(startingOffset);
+				throwBacktrack(startingOffset, endOffset, line);
 			}
 		}
 		return firstExpression;
@@ -1016,12 +1035,13 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			CompletionKind kind, KeywordSetKey key) throws BacktrackException,
 			EndOfFileException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = exclusiveOrExpression(scope, kind, key);
 		while (LT(1) == IToken.tBITOR) {
 			consume();
 			IASTExpression secondExpression = exclusiveOrExpression(scope,
 					kind, key);
-
+			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
 				firstExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.INCLUSIVEOREXPRESSION,
@@ -1031,7 +1051,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
 				logException("inclusiveOrExpression::createExpression()", e); //$NON-NLS-1$
-				throwBacktrack(startingOffset);
+				throwBacktrack(startingOffset, endOffset, line);
 			}
 		}
 		return firstExpression;
@@ -1045,12 +1065,13 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			CompletionKind kind, KeywordSetKey key) throws BacktrackException,
 			EndOfFileException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = andExpression(scope, kind, key);
 		while (LT(1) == IToken.tXOR) {
 			consume();
 
 			IASTExpression secondExpression = andExpression(scope, kind, key);
-
+			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
 				firstExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.EXCLUSIVEOREXPRESSION,
@@ -1060,7 +1081,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
 				logException("exclusiveORExpression::createExpression()", e); //$NON-NLS-1$
-				throwBacktrack(startingOffset);
+				throwBacktrack(startingOffset, endOffset, line);
 			}
 		}
 		return firstExpression;
@@ -1074,12 +1095,13 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			CompletionKind kind, KeywordSetKey key) throws EndOfFileException,
 			BacktrackException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = equalityExpression(scope, kind, key);
 		while (LT(1) == IToken.tAMPER) {
 			consume();
 			IASTExpression secondExpression = equalityExpression(scope, kind,
 					key);
-
+			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
 				firstExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.ANDEXPRESSION, firstExpression,
@@ -1088,7 +1110,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
 				logException("andExpression::createExpression()", e); //$NON-NLS-1$
-				throwBacktrack(startingOffset);
+				throwBacktrack(startingOffset, endOffset, line);
 			}
 		}
 		return firstExpression;
@@ -1122,6 +1144,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			CompletionKind kind, KeywordSetKey key) throws EndOfFileException,
 			BacktrackException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = relationalExpression(scope, kind, key);
 		for (;;) {
 			switch (LT(1)) {
@@ -1130,7 +1153,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					IToken t = consume();
 					IASTExpression secondExpression = relationalExpression(
 							scope, kind, key);
-
+					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
 						firstExpression = astFactory.createExpression(scope, (t
 								.getType() == IToken.tEQUAL)
@@ -1143,7 +1166,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					} catch (Exception e) {
 						logException(
 								"equalityExpression::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				default :
@@ -1160,6 +1183,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			CompletionKind kind, KeywordSetKey key) throws BacktrackException,
 			EndOfFileException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = shiftExpression(scope, kind, key);
 		for (;;) {
 			switch (LT(1)) {
@@ -1196,6 +1220,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 							expressionKind = IASTExpression.Kind.RELATIONAL_GREATERTHANEQUALTO;
 							break;
 					}
+					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
 						firstExpression = astFactory.createExpression(scope,
 								expressionKind, firstExpression,
@@ -1206,7 +1231,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					} catch (Exception e) {
 						logException(
 								"relationalExpression::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				default :
@@ -1230,6 +1255,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	public IASTExpression shiftExpression(IASTScope scope, CompletionKind kind,
 			KeywordSetKey key) throws BacktrackException, EndOfFileException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = additiveExpression(scope, kind, key);
 		for (;;) {
 			switch (LT(1)) {
@@ -1238,6 +1264,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					IToken t = consume();
 					IASTExpression secondExpression = additiveExpression(scope,
 							kind, key);
+					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
 						firstExpression = astFactory.createExpression(scope,
 								((t.getType() == IToken.tSHIFTL)
@@ -1249,7 +1276,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						throwBacktrack(e.getProblem());
 					} catch (Exception e) {
 						logException("shiftExpression::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				default :
@@ -1266,6 +1293,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			CompletionKind kind, KeywordSetKey key) throws BacktrackException,
 			EndOfFileException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = multiplicativeExpression(scope, kind,
 				key);
 		for (;;) {
@@ -1275,6 +1303,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					IToken t = consume();
 					IASTExpression secondExpression = multiplicativeExpression(
 							scope, kind, key);
+					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
 						firstExpression = astFactory.createExpression(scope,
 								((t.getType() == IToken.tPLUS)
@@ -1287,7 +1316,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					} catch (Exception e) {
 						logException(
 								"additiveExpression::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				default :
@@ -1304,6 +1333,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			CompletionKind kind, KeywordSetKey key) throws BacktrackException,
 			EndOfFileException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = pmExpression(scope, kind, key);
 		for (;;) {
 			switch (LT(1)) {
@@ -1325,6 +1355,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 							expressionKind = IASTExpression.Kind.MULTIPLICATIVE_MODULUS;
 							break;
 					}
+					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
 						firstExpression = astFactory.createExpression(scope,
 								expressionKind, firstExpression,
@@ -1337,7 +1368,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					} catch (Exception e) {
 						logException(
 								"multiplicativeExpression::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				default :
@@ -1353,6 +1384,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	protected IASTExpression pmExpression(IASTScope scope, CompletionKind kind,
 			KeywordSetKey key) throws EndOfFileException, BacktrackException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = castExpression(scope, kind, key);
 		for (;;) {
 			switch (LT(1)) {
@@ -1361,6 +1393,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					IToken t = consume();
 					IASTExpression secondExpression = castExpression(scope,
 							kind, key);
+					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
 						firstExpression = astFactory.createExpression(scope,
 								((t.getType() == IToken.tDOTSTAR)
@@ -1372,7 +1405,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						throwBacktrack(e.getProblem());
 					} catch (Exception e) {
 						logException("pmExpression::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				default :
@@ -1392,6 +1425,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		// TO DO: we need proper symbol checkint to ensure type name
 		if (LT(1) == IToken.tLPAREN) {
 			int startingOffset = LA(1).getOffset();
+			int line = LA(1).getLineNumber();
 			IToken mark = mark();
 			consume();
 			if (templateIdScopes != null) {
@@ -1423,6 +1457,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						typeId.freeReferences(astFactory.getReferenceManager());
 					return unaryExpression(scope, kind, key);
 				}
+				int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 				mark = null; // clean up mark so that we can garbage collect
 				try {
 					return astFactory.createExpression(scope,
@@ -1432,7 +1467,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(e.getProblem());
 				} catch (Exception e) {
 					logException("castExpression::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(startingOffset);
+					throwBacktrack(startingOffset, endOffset, line);
 				}
 			} catch (BacktrackException b) {
 				if (templateIdScopes != null && !popped) {
@@ -1606,14 +1641,15 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
 				} catch (BacktrackException b) {
 					backup(mark);
-					throwBacktrack(mark.getOffset());
+					throwBacktrack(b);
 				}
 			}
 
 		} while (false);
 
+		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		if (kind == null)
-			throwBacktrack(mark.getOffset());
+			throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber());
 
 		TypeId id = getTypeIdInstance(scope);
 		IToken last = lastToken;
@@ -1633,6 +1669,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				last = temp;
 		}
 
+		endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
 			String signature = "";//$NON-NLS-1$
 			if (last != null)
@@ -1651,7 +1688,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
 			logException("typeId::createTypeId()", e); //$NON-NLS-1$
-			throwBacktrack(mark.getOffset());
+			throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber());
 		}
 		return null;
 	}
@@ -1672,6 +1709,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			CompletionKind kind, KeywordSetKey key) throws EndOfFileException,
 			BacktrackException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		if (LT(1) == IToken.tCOLONCOLON) {
 			// global scope
 			consume(IToken.tCOLONCOLON);
@@ -1687,6 +1725,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			vectored = true;
 		}
 		IASTExpression castExpression = castExpression(scope, kind, key);
+		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
 			return astFactory.createExpression(scope, (vectored
 					? IASTExpression.Kind.DELETE_VECTORCASTEXPRESSION
@@ -1696,7 +1735,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
 			logException("deleteExpression::createExpression()", e); //$NON-NLS-1$
-			throwBacktrack(startingOffset);
+			throwBacktrack(startingOffset, endOffset, line);
 		}
 		return null;
 	}
@@ -1722,6 +1761,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		setCompletionValues(scope, CompletionKind.NEW_TYPE_REFERENCE,
 				KeywordSetKey.EMPTY);
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		if (LT(1) == IToken.tCOLONCOLON) {
 			// global scope
 			consume(IToken.tCOLONCOLON);
@@ -1821,6 +1861,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 							// Worst-case scenario - this cannot be resolved w/o more semantic information.
 							// Luckily, we don't need to know what was that - we only know that 
 							// new-expression ends here.
+							int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 							try {
 								setCompletionValues(scope,
 										CompletionKind.NO_SUCH_KIND,
@@ -1837,7 +1878,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 							} catch (Exception e) {
 								logException(
 										"newExpression_1::createExpression()", e); //$NON-NLS-1$
-								throwBacktrack(startingOffset);
+								throwBacktrack(startingOffset, endOffset, line);
 							}
 						}
 					} catch (BacktrackException e) {
@@ -1895,6 +1936,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		}
 		setCompletionValues(scope, CompletionKind.NO_SUCH_KIND,
 				KeywordSetKey.EMPTY);
+		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
 			return astFactory.createExpression(scope,
 					IASTExpression.Kind.NEW_TYPEID, null, null, null, typeId,
@@ -1906,7 +1948,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			return null;
 		} catch (Exception e) {
 			logException("newExpression_2::createExpression()", e); //$NON-NLS-1$
-			throwBacktrack(startingOffset);
+			throwBacktrack(startingOffset, endOffset, line);
 		}
 		return null;
 	}
@@ -1924,6 +1966,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	public IASTExpression unaryExpression(IASTScope scope, CompletionKind kind,
 			KeywordSetKey key) throws EndOfFileException, BacktrackException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		switch (LT(1)) {
 			case IToken.tSTAR :
 				consume();
@@ -1980,6 +2023,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				} else {
 					unaryExpression = unaryExpression(scope, kind, key);
 				}
+				int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 				if (unaryExpression == null)
 					try {
 						return astFactory.createExpression(scope,
@@ -1989,7 +2033,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						throwBacktrack(e.getProblem());
 					} catch (Exception e) {
 						logException("unaryExpression_1::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 				try {
 					return astFactory.createExpression(scope,
@@ -2000,7 +2044,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(e1.getProblem());
 				} catch (Exception e) {
 					logException("unaryExpression_1::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(startingOffset);
+					throwBacktrack(startingOffset, endOffset, line);
 				}
 			case IToken.t_new :
 				return newExpression(scope, key);
@@ -2036,6 +2080,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			CompletionKind kind, KeywordSetKey key) throws EndOfFileException,
 			BacktrackException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression firstExpression = null;
 		boolean isTemplate = false;
 
@@ -2058,10 +2103,11 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				}
 				IASTExpression expressionList = expression(scope,
 						CompletionKind.TYPE_REFERENCE, key);
-				consume(IToken.tRPAREN);
+				int endOffset = consume(IToken.tRPAREN).getEndOffset();
 				if (templateIdScopes != null) {
 					templateIdScopes.pop();
 				}
+				
 				try {
 					firstExpression = astFactory
 							.createExpression(
@@ -2075,7 +2121,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(ase.getProblem());
 				} catch (Exception e) {
 					logException("postfixExpression_1::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(startingOffset);
+					throwBacktrack(startingOffset, endOffset, line);
 				}
 				break;
 			// simple-type-specifier ( assignment-expression , .. )
@@ -2150,7 +2196,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					isTypeId = false;
 					lhs = expression(scope, CompletionKind.TYPE_REFERENCE, key);
 				}
-				consume(IToken.tRPAREN);
+				endOffset = consume(IToken.tRPAREN).getEndOffset();
 				if (templateIdScopes != null) {
 					templateIdScopes.pop();
 				}
@@ -2167,7 +2213,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(e6.getProblem());
 				} catch (Exception e) {
 					logException("postfixExpression_2::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(startingOffset);
+					throwBacktrack(startingOffset, endOffset, line);
 				}
 				break;
 			default :
@@ -2184,7 +2230,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					}
 					secondExpression = expression(scope,
 							CompletionKind.SINGLE_NAME_REFERENCE, key);
-					consume(IToken.tRBRACKET);
+					int endOffset = consume(IToken.tRBRACKET).getEndOffset();
 					if (templateIdScopes != null) {
 						templateIdScopes.pop();
 					}
@@ -2198,7 +2244,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_3::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				case IToken.tLPAREN :
@@ -2228,7 +2274,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					secondExpression = expression(scope,
 							CompletionKind.FUNCTION_REFERENCE, key);
 					setCurrentFunctionName(EMPTY_STRING);
-					consume(IToken.tRPAREN);
+					endOffset = consume(IToken.tRPAREN).getEndOffset();
 					if (templateIdScopes != null) {
 						templateIdScopes.pop();
 					}
@@ -2242,11 +2288,11 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_4::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				case IToken.tINCR :
-					consume(IToken.tINCR);
+					endOffset = consume(IToken.tINCR).getEndOffset();
 					try {
 						firstExpression = astFactory.createExpression(scope,
 								IASTExpression.Kind.POSTFIX_INCREMENT,
@@ -2257,11 +2303,11 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_5::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				case IToken.tDECR :
-					consume();
+					endOffset = consume().getEndOffset();
 					try {
 						firstExpression = astFactory.createExpression(scope,
 								IASTExpression.Kind.POSTFIX_DECREMENT,
@@ -2272,7 +2318,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_6::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				case IToken.tDOT :
@@ -2294,6 +2340,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 							memberCompletionKind);
 					secondExpression = primaryExpression(scope,
 							CompletionKind.MEMBER_REFERENCE, key);
+					endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					if (secondExpression != null
 							&& secondExpression.getExpressionKind() == Kind.ID_EXPRESSION
 							&& secondExpression.getIdExpression().indexOf('~') != -1)
@@ -2309,7 +2356,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_7::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				case IToken.tARROW :
@@ -2331,7 +2378,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 							arrowCompletionKind);
 					secondExpression = primaryExpression(scope,
 							CompletionKind.MEMBER_REFERENCE, key);
-
+					endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					if (secondExpression != null
 							&& secondExpression.getExpressionKind() == Kind.ID_EXPRESSION
 							&& secondExpression.getIdExpression().indexOf('~') != -1)
@@ -2346,7 +2393,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_8::createExpression()", e); //$NON-NLS-1$
-						throwBacktrack(startingOffset);
+						throwBacktrack(startingOffset, endOffset, line);
 					}
 					break;
 				default :
@@ -2383,13 +2430,14 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			Kind type, KeywordSetKey key) throws EndOfFileException,
 			BacktrackException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		String typeName = consume().getImage();
 		consume(IToken.tLPAREN);
 		setCurrentFunctionName(typeName);
 		IASTExpression inside = expression(scope,
 				CompletionKind.CONSTRUCTOR_REFERENCE, key);
 		setCurrentFunctionName(EMPTY_STRING);
-		consume(IToken.tRPAREN);
+		int endOffset = consume(IToken.tRPAREN).getEndOffset();
 		try {
 			return astFactory.createExpression(scope, type, inside, null, null,
 					null, null, EMPTY_STRING, null);
@@ -2398,7 +2446,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		} catch (Exception e) {
 			logException(
 					"simpleTypeConstructorExpression::createExpression()", e); //$NON-NLS-1$
-			throwBacktrack(startingOffset);
+			throwBacktrack(startingOffset, endOffset, line);
 		}
 		return null;
 	}
@@ -2423,7 +2471,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(e1.getProblem());
 				} catch (Exception e) {
 					logException("primaryExpression_1::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(t.getOffset());
+					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber());
 				}
 			case IToken.tFLOATINGPT :
 				t = consume();
@@ -2435,7 +2483,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(e2.getProblem());
 				} catch (Exception e) {
 					logException("primaryExpression_2::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(t.getOffset());
+					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber());
 				}
 			case IToken.tSTRING :
 			case IToken.tLSTRING :
@@ -2448,7 +2496,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(e5.getProblem());
 				} catch (Exception e) {
 					logException("primaryExpression_3::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(t.getOffset());
+					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber());
 				}
 
 			case IToken.t_false :
@@ -2462,7 +2510,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(e3.getProblem());
 				} catch (Exception e) {
 					logException("primaryExpression_4::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(t.getOffset());
+					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber());
 				}
 
 			case IToken.tCHAR :
@@ -2477,7 +2525,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(e4.getProblem());
 				} catch (Exception e) {
 					logException("primaryExpression_5::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(t.getOffset());
+					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber());
 				}
 
 			case IToken.t_this :
@@ -2490,7 +2538,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(e7.getProblem());
 				} catch (Exception e) {
 					logException("primaryExpression_6::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(t.getOffset());
+					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber());
 				}
 			case IToken.tLPAREN :
 				t = consume();
@@ -2498,7 +2546,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					templateIdScopes.push(new Integer(IToken.tLPAREN));
 				}
 				IASTExpression lhs = expression(scope, kind, key);
-				consume(IToken.tRPAREN);
+				int endOffset = consume(IToken.tRPAREN).getEndOffset();
 				if (templateIdScopes != null) {
 					templateIdScopes.pop();
 				}
@@ -2510,7 +2558,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(e6.getProblem());
 				} catch (Exception e) {
 					logException("primaryExpression_7::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(t.getOffset());
+					throwBacktrack(t.getOffset(), endOffset, t.getLineNumber() );
 				}
 			case IToken.tIDENTIFIER :
 			case IToken.tCOLONCOLON :
@@ -2518,6 +2566,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			case IToken.tCOMPL :
 				ITokenDuple duple = null;
 				int startingOffset = LA(1).getOffset();
+				int line = LA(1).getLineNumber();
 				try {
 					duple = name(scope, kind, key);
 				} catch (BacktrackException bt) {
@@ -2541,7 +2590,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 							operatorId(d, start, null, kind);
 						else {
 							backup(mark);
-							throwBacktrack(startingOffset);
+							throwBacktrack(startingOffset, end.getEndOffset(), end.getLineNumber());
 						}
 					} else if (LT(1) == IToken.t_operator)
 						operatorId(d, null, null, kind);
@@ -2549,6 +2598,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					duple = d.getNameDuple();
 				}
 
+				endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.ID_EXPRESSION, null, null,
@@ -2557,10 +2607,11 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(e8.getProblem());
 				} catch (Exception e) {
 					logException("primaryExpression_8::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(startingOffset);
+					throwBacktrack(startingOffset, endOffset, line);
 				}
 			default :
 				startingOffset = LA(1).getOffset();
+				line = LA(1).getLineNumber();
 				if (!queryLookaheadCapability(2)) {
 					if (LA(1).canBeAPrefix()) {
 						consume();
@@ -2577,7 +2628,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					return null;
 				} catch (Exception e) {
 					logException("primaryExpression_9::createExpression()", e); //$NON-NLS-1$
-					throwBacktrack(startingOffset);
+					throwBacktrack(startingOffset, 0, line);
 				}
 				return empty;
 		}
@@ -2630,7 +2681,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		IToken t = consume();
 		IASTExpression assignmentExpression = assignmentExpression(scope,
 				completionKind, key);
-
+		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
 			return astFactory.createExpression(scope, kind, lhs,
 					assignmentExpression, null, null, null, EMPTY_STRING, null);
@@ -2638,7 +2689,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
 			logException("assignmentOperatorExpression::createExpression()", e); //$NON-NLS-1$
-			throwBacktrack(t.getOffset());
+			throwBacktrack(t.getOffset(), endOffset, t.getLineNumber());
 		}
 		return null;
 	}
@@ -2667,8 +2718,10 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			IASTExpression.Kind kind, CompletionKind completionKind,
 			KeywordSetKey key) throws EndOfFileException, BacktrackException {
 		int startingOffset = LA(1).getOffset();
+		int line = LA(1).getLineNumber();
 		IASTExpression castExpression = castExpression(scope, completionKind,
 				key);
+		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
 			return astFactory.createExpression(scope, kind, castExpression,
 					null, null, null, null, EMPTY_STRING, null);
@@ -2676,7 +2729,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
 			logException("unaryOperatorCastExpression::createExpression()", e); //$NON-NLS-1$
-			throwBacktrack(startingOffset);
+			throwBacktrack(startingOffset, endOffset, line);
 		}
 		return null;
 	}
@@ -2684,6 +2737,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	protected IASTExpression specialCastExpression(IASTScope scope,
 			IASTExpression.Kind kind, KeywordSetKey key)
 			throws EndOfFileException, BacktrackException {
+		int line = LA(1).getLineNumber();
 		int startingOffset = consume().getOffset();
 		consume(IToken.tLT);
 		IASTTypeId duple = typeId(scope, false, CompletionKind.TYPE_REFERENCE);
@@ -2691,7 +2745,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		consume(IToken.tLPAREN);
 		IASTExpression lhs = expression(scope,
 				CompletionKind.SINGLE_NAME_REFERENCE, key);
-		consume(IToken.tRPAREN);
+		int endOffset = consume(IToken.tRPAREN).getEndOffset();
 		try {
 			return astFactory.createExpression(scope, kind, lhs, null, null,
 					duple, null, EMPTY_STRING, null);
@@ -2699,7 +2753,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
 			logException("specialCastExpression::createExpression()", e); //$NON-NLS-1$
-			throwBacktrack(startingOffset);
+			throwBacktrack(startingOffset, endOffset, line );
 		}
 		return null;
 	}

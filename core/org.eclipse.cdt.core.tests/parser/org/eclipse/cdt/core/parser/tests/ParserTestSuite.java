@@ -35,10 +35,12 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite(CModelElementsTests.class);
 		suite.addTestSuite(StructuralCModelElementsTests.class);
 		suite.addTestSuite(CompletionParseTest.class);
+		suite.addTestSuite(QuickParseProblemTests.class);
 //		suite.addTestSuite(MacroTests.class);
 		suite.addTestSuite( PreprocessorConditionalTest.class );
 		suite.addTestSuite( QuickParseASTQualifiedNameTest.class);
 		suite.addTestSuite( CompleteParseASTTest.class );
+		suite.addTestSuite( CompleteParseProblemTest.class );
 		suite.addTestSuite( SelectionParseTest.class );
 		suite.addTestSuite( CompleteParseASTExpressionTest.class );
 		suite.addTestSuite( CompleteParseASTSymbolIteratorTest.class );

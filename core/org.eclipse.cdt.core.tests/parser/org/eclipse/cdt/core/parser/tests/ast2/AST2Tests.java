@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.parser.tests;
+package org.eclipse.cdt.core.parser.tests.ast2;
 
 import junit.framework.TestCase;
 

@@ -50,7 +50,19 @@ public class MakefileUtil {
 		return isTargetRule(line.toCharArray());
 	}
 	public static boolean isTargetRule(char[] line) {
-		return indexOf(line, ':') != -1;
+		int colon = indexOf(line, ':');
+		if (colon != -1) {
+			colon++;
+			// Things like := are not targets but :: is
+			if (colon < line.length) {
+				char c = line[colon];
+				if (c == '=') {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	public static boolean isCommand(String line) {

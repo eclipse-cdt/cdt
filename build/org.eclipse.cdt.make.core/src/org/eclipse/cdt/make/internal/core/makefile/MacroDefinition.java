@@ -22,7 +22,15 @@ public class MacroDefinition extends Statement implements IMacroDefinition {
 		value = new StringBuffer();
 		int index = line.indexOf('=');
 		if (index != -1) {
-			name = line.substring(0, index).trim();
+			int separator = index;
+			// Check for "+=",  ":="
+			if (index > 0) {
+				char c = line.charAt(index - 1);
+				if (c == ':' || c =='+') {
+					separator = index -1;
+				}
+			}
+			name = line.substring(0, separator).trim();
 			value.append(line.substring(index + 1));
 		} else {
 			name = line;

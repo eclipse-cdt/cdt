@@ -1,3 +1,10 @@
+2003-11-06 Alain Magloire
+
+	Patch from Ashish Karkare(TimeSys)
+	*src/org/eclipse/cdt/debug/mi/uui/internal/ui/GDBServerDebuggerPage.java
+	Add a new Combo that  helps select a reasonable line speed, and storing
+	the selected value as a configuration attribute.
+
 2003-09-29 Mikhail Khodjaiants
 	Improved the layout of the 'Shared Libraries' component.
 	* SolibSearchPathBlock.java

@@ -2124,6 +2124,18 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	parse( writer.toString() );
 	}
     
+    public void testBug71733() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "void foo( int );\n");
+    	writer.write( "#define BLAH() \\\n");
+    	writer.write( "  foo ( /*  slash / is misinterpreted as end of comment */ \\\n");
+    	writer.write( "    4 );\n");
+    	writer.write( "int f() { BLAH() }\n");
+    	parse( writer.toString() );
+    	assertEquals( callback.getReferences().size(), 1 );
+	}
+    
     public void testBug69526() throws Exception
 	{
     	Writer writer = new StringWriter();

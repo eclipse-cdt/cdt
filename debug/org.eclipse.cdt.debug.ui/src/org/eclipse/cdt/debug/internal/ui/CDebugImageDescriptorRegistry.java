@@ -85,12 +85,14 @@ public class CDebugImageDescriptorRegistry
 
 	private void hookDisplay()
 	{
-		fDisplay.disposeExec( new Runnable()
-									{
-										public void run()
-										{
-											dispose();
-										}
-									} );
+		fDisplay.asyncExec(new Runnable() {
+			public void run() {
+				fDisplay.disposeExec( new Runnable() {
+					public void run()	{
+						dispose();
+					}
+				} );
+			}
+		} );
 	}
 }

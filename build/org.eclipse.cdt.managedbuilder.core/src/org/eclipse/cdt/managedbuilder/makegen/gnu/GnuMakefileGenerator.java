@@ -574,7 +574,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 		/*
 		 * Write out the target rule as:
-		 * targ_<prefix><target>.<extension>: $(OBJS)
+		 * targ_<prefix><target>.<extension>: $(OBJS) <refd_project_1 ... refd_project_n>
 		 * 		@echo 'Building target: $@'
 		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $(OBJS) $(USER_OBJS) $(LIB_DEPS)
 		 * 		@echo 'Finished building: $@'
@@ -585,6 +585,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			buffer.append(DOT + extension);
 		}
 		buffer.append(COLON + WHITESPACE + "$(OBJS)"); //$NON-NLS-1$
+		Iterator refIter = managedProjectOutputs.listIterator();
+		while (refIter.hasNext()) {
+			buffer.append(WHITESPACE + (String)refIter.next());
+		}
 		buffer.append(NEWLINE);
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_BUILD + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
 		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + OUT_MACRO + WHITESPACE + "$(OBJS) $(USER_OBJS) $(LIBS)" + NEWLINE); //$NON-NLS-1$
@@ -598,7 +602,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 		buffer.append(NEWLINE + NEWLINE); 
 		
-		buffer.append(".PHONY: all clean dependents" + NEWLINE + NEWLINE); //$NON-NLS-1$
+		// Add all the eneded dummy and phony targets
+		buffer.append(".PHONY: all clean dependents" + NEWLINE); //$NON-NLS-1$
+		refIter = managedProjectOutputs.listIterator();
+		while(refIter.hasNext()) {
+			buffer.append((String)refIter.next() + COLON + NEWLINE);
+		}
+		buffer.append(NEWLINE);
 		
 		// Include makefile.targets supplemental makefile
 		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_TARGETS + NEWLINE); //$NON-NLS-1$

@@ -198,16 +198,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			}
 		}
 		
-		// Scrub the build info of all the projects participating in the build
+		// Scrub the build info the project
 		info.setRebuildState(false);
-		for (int i = 0; i < referencedProjects.length; i++) {
-			IProject project = referencedProjects[i];
-			IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(project);
-			// May not be a managed project 
-			if (depInfo != null) {
-				depInfo.setRebuildState(false);
-			}
-		} 
 		
 		// Ask build mechanism to compute deltas for project dependencies next time
 		return referencedProjects;

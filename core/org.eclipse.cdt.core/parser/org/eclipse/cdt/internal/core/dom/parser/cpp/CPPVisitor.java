@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
@@ -739,12 +740,15 @@ public class CPPVisitor {
 				node = null;
 		}
 		if( name != null ){
-			IBinding binding = CPPSemantics.resolveBinding( name );
 			if( name instanceof ICPPASTQualifiedName ){
 				IASTName ns [] = ((ICPPASTQualifiedName)name).getNames();
 				name = ns[ ns.length - 1 ];
 			}
-			name.setBinding( binding );
+			IBinding binding = name.getBinding();
+			if( binding == null ){
+				binding = CPPSemantics.resolveBinding( name );
+				name.setBinding( binding );
+			}
 			return binding;
 		}
 		return null;
@@ -1382,21 +1386,20 @@ public class CPPVisitor {
 			return null;
 	    if( expression instanceof IASTIdExpression ){
 	        IBinding binding = resolveBinding( expression );
-			if( binding instanceof IVariable ){
-				try {
+	        try {
+				if( binding instanceof IVariable ){
                     return ((IVariable)binding).getType();
-                } catch ( DOMException e ) {
-                    return e.getProblem();
-                }
-			} else if( binding instanceof IProblemBinding ){
-				return (IType) binding;
-			} else if( binding instanceof IFunction ){
-				try {
+				} else if( binding instanceof IEnumerator ){
+					return ((IEnumerator)binding).getType();
+				} else if( binding instanceof IProblemBinding ){
+					return (IType) binding;
+				} else if( binding instanceof IFunction ){
 					return ((IFunction)binding).getType();
-				} catch ( DOMException e ){
-					return e.getProblem();
 				}
+			} catch ( DOMException e ){
+				return e.getProblem();
 			}
+			
 	    } else if( expression instanceof IASTCastExpression ){
 	        IASTTypeId id = ((IASTCastExpression)expression).getTypeId();
 	        IType type = createType( id.getDeclSpecifier() );
@@ -1515,6 +1518,8 @@ public class CPPVisitor {
                     return ((IVariable)binding).getType();
                 else if( binding instanceof IFunction )
 				    return ((IFunction)binding).getType();
+                else if( binding instanceof IEnumerator )
+                	return ((IEnumerator)binding).getType();
 		    } catch ( DOMException e ) {
 		        return e.getProblem();
             }

@@ -3155,5 +3155,28 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( bs[0], f1 );
         assertSame( bs[1], f2 );
     }
+    
+    public void testBug90039() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("class A {                  \n"); //$NON-NLS-1$
+    	buffer.append("   enum type { t1, t2 };   \n"); //$NON-NLS-1$
+    	buffer.append("   void f( type t );       \n"); //$NON-NLS-1$
+    	buffer.append("};                         \n"); //$NON-NLS-1$
+    	buffer.append("class B : public A {       \n"); //$NON-NLS-1$
+    	buffer.append("   void g() {              \n"); //$NON-NLS-1$
+    	buffer.append("      f( A::t1 );          \n"); //$NON-NLS-1$
+    	buffer.append("   }                       \n"); //$NON-NLS-1$
+    	buffer.append("};                         \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept( col );
+
+        IFunction f = (IFunction) col.getName( 10 ).resolveBinding();
+        IEnumerator t1 = (IEnumerator) col.getName( 13 ).resolveBinding();
+
+        assertInstances( col, f, 2 );
+        assertInstances( col, t1, 3 );
+    }
 }
 

@@ -1,0 +1,5 @@
+Release CDT-3.0
+
+	* Memory View (bug 73168)
+		- removed the old memory view
+		- added support for the Memory view provided by Eclipse 3.1

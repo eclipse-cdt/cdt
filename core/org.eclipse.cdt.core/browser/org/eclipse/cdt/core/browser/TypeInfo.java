@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
 import org.eclipse.core.resources.IProject;
@@ -63,10 +62,6 @@ public class TypeInfo implements ITypeInfo
 				for (int i = 0; i < elems.length; ++i) {
 					ICElement elem = elems[i];
 					if (elem.getElementType() == fElementType && elem.getElementName().equals(getName())) {
-						//TODO should check fully qualified name
-						return elem;
-					}
-					if (elem instanceof ITypeDef && ((ITypeDef)elem).getTypeName().equals(getName())) {
 						//TODO should check fully qualified name
 						return elem;
 					}

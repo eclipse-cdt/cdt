@@ -45,7 +45,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 	private String[] fUsings;
 	private boolean fDoSave;
 
-	private String newLine = System.getProperty("line.separator", "\n"); //$NON-NLS-2$
+	private String newLine = System.getProperty("line.separator", "\n");  //$NON-NLS-1$//$NON-NLS-2$
 
 	/**
 	 * Generate include statements for the passed java elements

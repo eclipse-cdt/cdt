@@ -23,7 +23,7 @@
          point="org.eclipse.debug.ui.debugModelPresentations">
       <debugModelPresentation
             class="org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation"
-            id="org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation">
+            id="org.eclipse.cdt.debug.core">
       </debugModelPresentation>
    </extension>
    <extension

@@ -67,49 +67,41 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#getExpression()
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getExpression()
 	 */
 	public String getExpression() throws DebugException {
 		return fExpression;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#getBigBaseAddress()
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBigBaseAddress()
 	 */
 	public BigInteger getBigBaseAddress() {
 		return fBaseAddress;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#getAddressSize()
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressSize()
 	 */
 	public int getAddressSize() {
-		// TODO need a similar method for IAddress
-		return 4;
+		return ((CDebugTarget)getDebugTarget()).getAddressFactory().createAddress( getBigBaseAddress() ).getSize();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#supportBaseAddressModification()
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportBaseAddressModification()
 	 */
 	public boolean supportBaseAddressModification() {
 		return true;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#isMemoryChangesManaged()
-	 */
-	public boolean isMemoryChangesManaged() {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#setBaseAddress(java.math.BigInteger)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#setBaseAddress(java.math.BigInteger)
 	 */
 	public void setBaseAddress( BigInteger address ) throws DebugException {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#getBytesFromOffset(long, long)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromOffset(long, long)
 	 */
 	public MemoryByte[] getBytesFromOffset( long offset, long length ) throws DebugException {
 		// TODO Auto-generated method stub
@@ -117,7 +109,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#getBytesFromAddress(java.math.BigInteger, long)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromAddress(java.math.BigInteger, long)
 	 */
 	public MemoryByte[] getBytesFromAddress( BigInteger address, long length ) throws DebugException {
 		ICDIMemoryBlock cdiBlock = getCDIBlock();
@@ -166,7 +158,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#isBigEndian()
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#isBigEndian()
 	 */
 	public boolean isBigEndian() {
 		IExecFileInfo info = (IExecFileInfo)getDebugTarget().getAdapter( IExecFileInfo.class );
@@ -177,58 +169,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#enable()
-	 */
-	public void enable() {
-		ICDIMemoryBlock block = getCDIBlock();
-		if ( block != null ) {
-			block.setFrozen( false );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#disable()
-	 */
-	public void disable() {
-		ICDIMemoryBlock block = getCDIBlock();
-		if ( block != null ) {
-			block.setFrozen( true );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#isEnabled()
-	 */
-	public boolean isEnabled() {
-		ICDIMemoryBlock block = getCDIBlock();
-		if ( block != null ) {
-			return !block.isFrozen();
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#delete()
-	 */
-	public void delete() {
-		fChanges.clear();
-		ICDIMemoryBlock cdiBlock = getCDIBlock();
-		if ( cdiBlock != null ) {
-			try {
-				((CDebugTarget)getDebugTarget()).getCDITarget().removeBlocks( new ICDIMemoryBlock[] {cdiBlock} );
-			}
-			catch( CDIException e ) {
-				CDebugCorePlugin.log( e );
-			}
-			fCDIBlock = null;
-		}
-		getCDISession().getEventManager().removeEventListener( this );
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock#getMemoryBlockRetrieval()
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockRetrieval()
 	 */
 	public IMemoryBlockRetrieval getMemoryBlockRetrieval() {
 		return (IMemoryBlockRetrieval)getDebugTarget().getAdapter( IMemoryBlockRetrieval.class );
@@ -256,9 +197,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getStartAddress()
 	 */
 	public long getStartAddress() {
@@ -306,6 +245,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 
 	private ICDIMemoryBlock createCDIBlock( BigInteger address, long length ) throws CDIException {
 		ICDIMemoryBlock block = ((CDebugTarget)getDebugTarget()).getCDITarget().createMemoryBlock( address.toString(), (int)length );
+		block.setFrozen( false );
 		getCDISession().getEventManager().addEventListener( this );
 		return block;
 	}
@@ -400,8 +340,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportsChangeManagement()
 	 */
 	public boolean supportsChangeManagement() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -409,7 +348,6 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 */
 	public void connect( Object object ) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -417,7 +355,6 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 */
 	public void disconnect( Object object ) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -432,8 +369,18 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#dispose()
 	 */
 	public void dispose() {
-		// TODO Auto-generated method stub
-		
+		fChanges.clear();
+		ICDIMemoryBlock cdiBlock = getCDIBlock();
+		if ( cdiBlock != null ) {
+			try {
+				((CDebugTarget)getDebugTarget()).getCDITarget().removeBlocks( new ICDIMemoryBlock[] {cdiBlock} );
+			}
+			catch( CDIException e ) {
+				CDebugCorePlugin.log( e );
+			}
+			fCDIBlock = null;
+		}
+		getCDISession().getEventManager().removeEventListener( this );
 	}
 
 	/* (non-Javadoc)

@@ -1,4 +1,8 @@
-2004-12-21 Mikhail Khodjaiants
+2004-12-23 Mikhail Khodjaiants
+	Cleanup.
+	* CMemoryBlockExtension.java
+
+2004-12-22 Mikhail Khodjaiants
 	Fix for bug 75948: Provide "breakpoint type name" for C breakpoints.
 	Applied patch from Jared Burns.
 	* plugin.properties

@@ -38,11 +38,12 @@ import org.eclipse.ui.texteditor.IUpdate;
 public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		
 	private ITextEditor fEditor;
-		
+	private IRequiredInclude [] fCachedRequiredIncludes;	
 	
 	public AddIncludeOnSelectionAction() {
 		this(null);
 	}
+	
 	public AddIncludeOnSelectionAction(ITextEditor editor) {	
 		super(CEditorMessages.getString("AddIncludeOnSelection.label"));		 //$NON-NLS-1$
 		setToolTipText(CEditorMessages.getString("AddIncludeOnSelection.tooltip")); //$NON-NLS-1$
@@ -51,6 +52,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		fEditor= editor;
 		//WorkbenchHelp.setHelp(this,	new Object[] { IJavaHelpContextIds.ADD_IMPORT_ON_SELECTION_ACTION });	
 	}
+	
 	private void addInclude(IRequiredInclude[] inc, CFileElementWorkingCopy tu) {
 		AddIncludeOperation op= new AddIncludeOperation(fEditor, tu, inc, false);
 		try {
@@ -114,41 +116,67 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			doc.replace(nameStart, packLen + 1, ""); //$NON-NLS-1$
 		}
 	} */
+	
 	/**
 	 * @see IAction#actionPerformed
 	 */
 	public void run() {
-		
-		CFileElementWorkingCopy tu= getTranslationUnit();
-		if (tu != null) {
-			ISelection s= fEditor.getSelectionProvider().getSelection();
-			IDocument doc= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
-			if (!s.isEmpty() && doc != null) {
-				ITextSelection selection= (ITextSelection) s;
-				try {
-					int selStart= selection.getOffset();
-					int nameStart= getNameStart(doc, selStart);
-					int len= selStart - nameStart + selection.getLength();
-					
-					String name= doc.get(nameStart, len).trim();
-					
-					//IType[] types= StubUtility.findAllTypes(typeName, cu.getJavaProject(), null);
-					//IType chosen= selectResult(types, packName, getShell());
-					IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(name);
-					if(fs != null) {
-						IRequiredInclude[] ri = fs.getIncludes();
-						if(ri != null && ri.length > 0) {
-							addInclude(ri, tu);
-							return;
-						}
-					}
-				} catch (BadLocationException e) {
-					MessageDialog.openError(getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message3"), CEditorMessages.getString("AddIncludeOnSelection.error.message4") + e.getMessage()); //$NON-NLS-2$ //$NON-NLS-1$
-				}
-			}
+		IRequiredInclude [] requiredIncludes;
+		if(fCachedRequiredIncludes != null) {
+			requiredIncludes = fCachedRequiredIncludes;
+		} else {
+			requiredIncludes = extractIncludes(fEditor);		
 		}
-		getShell().getDisplay().beep();
+
+		if(requiredIncludes != null && requiredIncludes.length > 0) {
+			CFileElementWorkingCopy tu= getTranslationUnit();
+			if(tu != null) {
+				addInclude(requiredIncludes, tu);
+			}
+		} 
 	}
+
+	/**
+	 * Extract the includes for the given selection.  This can be both used to perform
+	 * the work as well as being invoked when there is a change.  The actual results 
+	 * can and should be cached as the lookup process could be potentially costly.
+	 * 
+	 * @return IRequiredInclude [] An array of the required includes, or null if this action is invalid.
+	 */
+	private IRequiredInclude [] extractIncludes(ITextEditor editor) {
+		if(editor == null) {
+			return null;
+		}
+		
+		ISelection s= editor.getSelectionProvider().getSelection();
+		IDocument doc= editor.getDocumentProvider().getDocument(editor.getEditorInput());
+
+		if (s.isEmpty() || !(s instanceof ITextSelection) || doc == null) {
+			return null;
+		}
+	
+		ITextSelection selection= (ITextSelection) s;
+		IRequiredInclude [] requiredIncludes = null;
+		try {
+			int selStart= selection.getOffset();
+			int nameStart= getNameStart(doc, selStart);
+			int len= selStart - nameStart + selection.getLength();
+					
+			String name= doc.get(nameStart, len).trim();
+					
+			//IType[] types= StubUtility.findAllTypes(typeName, cu.getJavaProject(), null);
+			//IType chosen= selectResult(types, packName, getShell());
+			IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(name);
+			if(fs != null) {
+				requiredIncludes = fs.getIncludes();
+			}
+		} catch (BadLocationException e) {
+			MessageDialog.openError(getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message3"), CEditorMessages.getString("AddIncludeOnSelection.error.message4") + e.getMessage()); //$NON-NLS-2$ //$NON-NLS-1$
+		}
+		
+		return requiredIncludes;
+	}
+
 /*	private IType selectResult(IType[] results, String packName, Shell shell) {
 		int nResults= results.length;
 		
@@ -178,12 +206,14 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		}
 		return null;
 	} */
+	
 	public void setContentEditor(ITextEditor editor) {
 		fEditor= editor;
 	}
+	
 	public void update() {
-		ISelection selection= fEditor.getSelectionProvider().getSelection();
-		setEnabled(!selection.isEmpty());
+		fCachedRequiredIncludes = extractIncludes(fEditor);
+		setEnabled(fCachedRequiredIncludes != null);
 	}
 }
 

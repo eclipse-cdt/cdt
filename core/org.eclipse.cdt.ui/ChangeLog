@@ -1,3 +1,13 @@
+2004-02-03 Alain Magloire
+
+	PR 51115
+	Patch from Thomas Fletcher to cache the include queries.
+
+	- Only enable the Add Include action when there are actually includes
+ 	  to add in to the the file.
+
+	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java
+
 2004-02-02 Alain Magloire
 
 	Dealing with PR 50792, give more flexibility in the behaviour

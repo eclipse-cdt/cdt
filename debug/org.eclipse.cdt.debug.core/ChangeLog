@@ -1,3 +1,19 @@
+2003-11-05 Mikhail Khodjaiants
+	Changed the handling of the breakpoint created event to reflect the CDI changes for deferred 
+	breakpoints support.
+	* CBreakpointManager.java
+	* CSharedLibraryManager.java
+	* CDebugTarget.java
+ 
+2003-11-05 Mikhail Khodjaiants
+	Moved all breakpoint-related functionality to the new class - 'CBreakpointManager'.
+	* CBreakpointManager.java
+
+2003-11-05 Mikhail Khodjaiants
+	The argument type of the 'getBreakpointAddress' method of 'ICBreakpointManager' is changed from 
+	'ICBreakpoint' to 'ICBreakpointManager'.
+	* ICBreakpointMaanger.java
+
 2003-10-30 Mikhail Khodjaiants
 	* CSourceManager.java: implements adapters for 'ISourceMode' and 'IPersistableSourceLocator'.
 

@@ -41,6 +41,7 @@ public class Thread extends CObject implements ICDIThread {
 
 	static ICDIStackFrame[] noStack = new ICDIStackFrame[0];
 	int id;
+	String name;
 	ICDIStackFrame currentFrame;
 	List currentFrames;
 	int stackdepth = 0;
@@ -48,8 +49,13 @@ public class Thread extends CObject implements ICDIThread {
 	final static int STACKFRAME_DEFAULT_DEPTH = 200;
 
 	public Thread(ICDITarget target, int threadId) {
+		this(target, threadId, null);
+	}
+
+	public Thread(ICDITarget target, int threadId, String threadName) {
 		super(target);
 		id = threadId;
+		name = threadName;
 	}
 
 	public int getId() {
@@ -63,7 +69,11 @@ public class Thread extends CObject implements ICDIThread {
 	}
 
 	public String toString() {
-		return Integer.toString(id);
+		String str = Integer.toString(id);
+		if (name != null) {
+			str += " " + name; //$NON-NLS-1$
+		}
+		return str;
 	}
 
 	public void updateState() {

@@ -256,16 +256,25 @@ public class Target  implements ICDITarget {
 			mi.postCommand(tids);
 			MIInfoThreadsInfo info = tids.getMIInfoThreadsInfo();
 			int [] ids;
+			String[] names;
 			if (info == null) {
 				ids = new int[0];
+				names = new String[0];
 			} else {
 				ids = info.getThreadIds();
+				names = info.getThreadNames();
 			}
 			if (ids != null && ids.length > 0) {
 				cthreads = new Thread[ids.length];
 				// Ok that means it is a multiThreaded.
-				for (int i = 0; i < ids.length; i++) {
-					cthreads[i] = new Thread(this, ids[i]);
+				if (names != null && names.length == ids.length) {
+					for (int i = 0; i < ids.length; i++) {
+						cthreads[i] = new Thread(this, ids[i], names[i]);
+					}
+				} else {
+					for (int i = 0; i < ids.length; i++) {
+						cthreads[i] = new Thread(this, ids[i]);
+					}
 				}
 			} else {
 				// Provide a dummy.

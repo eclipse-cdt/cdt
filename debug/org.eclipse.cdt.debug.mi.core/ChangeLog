@@ -1,3 +1,14 @@
+2004-07-12 Alain Magloire
+
+	Patch from Stefan Bylund, to permit backend
+	to show names of thread.
+	PR 69711
+
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Thread.java
+
+	* mi/org/eclipse/cdt/debug/mi/core/mi/core/output/MIInfoThreadsInfo.java
+	
 2004-06-29 Alain Magloire
 
 	When selecting threads gdb can reset the current

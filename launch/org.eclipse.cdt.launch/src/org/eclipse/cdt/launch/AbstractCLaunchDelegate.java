@@ -399,20 +399,24 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		return cproject;
 	}
 
-	protected IPath verifyProgramFile(ILaunchConfiguration config) throws CoreException {
+	protected IFile getProgramFile(ILaunchConfiguration config) throws CoreException {
 		ICProject cproject = verifyCProject(config);
 		String fileName = getProgramName(config);
 		if (fileName == null) {
 			abort("Program file not specified", null, ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
 
-		IFile projectPath = ((IProject) cproject.getResource()).getFile(fileName);
-		if (projectPath == null || !projectPath.exists() || !projectPath.getLocation().toFile().exists()) {
+		IFile programPath = ((IProject) cproject.getResource()).getFile(fileName);
+		if (programPath == null || !programPath.exists() || !programPath.getLocation().toFile().exists()) {
 			abort("Program file does not exist", null, ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
-		return projectPath.getLocation();
+		return programPath;
 	}
 
+	protected IPath verifyProgramFile(ILaunchConfiguration config) throws CoreException {
+		return getProgramFile(config).getLocation();
+	}
+	
 	/**
 	 * Verifies the working directory specified by the given 
 	 * launch configuration exists, and returns the working

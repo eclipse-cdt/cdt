@@ -285,7 +285,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 					list.add(cproject[i]);
 				}
 			} catch (CoreException e) {
-				e.printStackTrace();
+				list.add(cproject[i]); 
 			}
 		}
 		return (ICProject[]) list.toArray(new ICProject[list.size()]);

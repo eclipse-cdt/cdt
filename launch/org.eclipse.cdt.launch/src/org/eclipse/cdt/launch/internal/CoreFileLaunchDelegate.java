@@ -10,7 +10,6 @@ import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,12 +41,10 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		if (monitor.isCanceled()) {
 			return;
 		}
-		IPath projectPath = verifyProgramFile(config);
+		IFile exeFile = getProgramFile(config);
 
 		ICDebugConfiguration debugConfig = getDebugConfig(config);
-		IFile exe = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(projectPath);
 		ICDISession dsession = null;
-
 		ICProject cproject = getCProject(config);
 
 		IPath corefile = getCoreFilePath((IProject) cproject.getResource());
@@ -57,7 +54,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		Process debugger = null;
 		IProcess debuggerProcess = null;
 		try {
-			dsession = debugConfig.getDebugger().createCoreSession(config, exe, corefile);
+			dsession = debugConfig.getDebugger().createCoreSession(config, exeFile, corefile);
 			debugger = dsession.getSessionProcess();
 		} catch (CDIException e) {
 			abort("Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
@@ -74,7 +71,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			dsession.getCurrentTarget(),
 			renderTargetLabel(debugConfig),
 			debuggerProcess,
-			exe);
+			exeFile);
 		
 		monitor.done();
 	}

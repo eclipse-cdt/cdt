@@ -26,9 +26,7 @@ import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -61,10 +59,10 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		if (monitor.isCanceled()) {
 			return;
 		}
-		IPath projectPath = verifyProgramFile(config);
+		IFile exeFile = getProgramFile(config);
 		String arguments[] = getProgramArgumentsArray(config);
 		ArrayList command = new ArrayList(1 + arguments.length);
-		command.add(projectPath.toOSString());
+		command.add(exeFile.getLocation().toOSString());
 		command.addAll(Arrays.asList(arguments));
 		String[] commandArray = (String[]) command.toArray(new String[command.size()]);
 
@@ -75,7 +73,6 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 			IProcess debuggerProcess = null;
 			Process debugger;
 			ICDebugConfiguration debugConfig = getDebugConfig(config);
-			IFile exe = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(projectPath);
 			ICDISession dsession = null;
 			try {
 				String debugMode =
@@ -83,7 +80,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 						ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 				if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-					dsession = debugConfig.getDebugger().createLaunchSession(config, exe);
+					dsession = debugConfig.getDebugger().createLaunchSession(config, exeFile);
 					ICDIRuntimeOptions opt = dsession.getRuntimeOptions();
 					opt.setArguments(getProgramArgumentsArray(config));
 					File wd = getWorkingDirectory(config);
@@ -106,7 +103,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						renderTargetLabel(debugConfig),
 						iprocess,
 						debuggerProcess,
-						exe,
+						exeFile,
 						true,
 						false,
 						stopInMain);
@@ -116,7 +113,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					if (pid == -1) {
 						cancel("No Process ID selected", ICDTLaunchConfigurationConstants.ERR_NO_PROCESSID);
 					}
-					dsession = debugConfig.getDebugger().createAttachSession(config, exe, pid);
+					dsession = debugConfig.getDebugger().createAttachSession(config, exeFile, pid);
 					debugger = dsession.getSessionProcess();
 					if ( debugger != null ) {
 						debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console");
@@ -127,7 +124,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						dsession.getCurrentTarget(),
 						renderTargetLabel(debugConfig),
 						debuggerProcess,
-						exe);
+						exeFile);
 				}
 			} catch (CDIException e) {
 				abort("Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);

@@ -1,3 +1,10 @@
+2003-07-03 David Inglis
+	* src/org/eclipse/cdt/launch/AbstractCLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/CoreFileLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/LocalCLaunchConfigurationDelegate.java
+	* src/org/eclipse/cdt/launch/ui/CMainTab.java
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39583
+
 2003-06-26 David Inglis
 	
 	* src/org/eclipse/cdt/launch/ui/CDebuggerTab.java

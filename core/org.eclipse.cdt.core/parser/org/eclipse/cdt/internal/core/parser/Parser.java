@@ -3150,15 +3150,21 @@ public abstract class Parser extends ExpressionParser implements IParser
 		while (LT(1) == IToken.t_catch) {
 			consume(IToken.t_catch);
 			consume(IToken.tLPAREN);
-			if (LT(1) == IToken.tELLIPSIS)
-				consume(IToken.tELLIPSIS);
-			else
-				simpleDeclaration(SimpleDeclarationStrategy.TRY_VARIABLE,
-						scope, null, CompletionKind.EXCEPTION_REFERENCE, true,
-						KeywordSetKey.DECL_SPECIFIER_SEQUENCE);
-			consume(IToken.tRPAREN);
 
-			catchBlockCompoundStatement(scope);
+			try {
+				if (LT(1) == IToken.tELLIPSIS)
+					consume(IToken.tELLIPSIS);
+				else
+					simpleDeclaration(SimpleDeclarationStrategy.TRY_VARIABLE,
+							scope, null, CompletionKind.EXCEPTION_REFERENCE, true,
+							KeywordSetKey.DECL_SPECIFIER_SEQUENCE);
+				consume(IToken.tRPAREN);
+	
+				catchBlockCompoundStatement(scope);
+			} catch (BacktrackException b) {
+				failParse(b);
+				failParseWithErrorHandling();
+			}
 		}
 	}
 

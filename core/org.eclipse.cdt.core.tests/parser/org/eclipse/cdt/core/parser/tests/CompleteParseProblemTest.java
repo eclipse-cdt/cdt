@@ -10,8 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
+import java.util.Iterator;
+
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
@@ -90,5 +94,25 @@ public class CompleteParseProblemTest extends CompleteParseBaseTest {
 		assertEquals( p.getSourceStart(), start );
 		assertEquals( p.getSourceEnd(), end );
 		assertEquals( p.getID(), IProblem.SEMANTIC_NAME_NOT_FOUND );   
+	}
+	
+	public void testBug69744() throws Exception
+	{
+	    String code = "int f() {  try { } catch( foo bar ) {} catch ( ... ) {} }  int i;"; //$NON-NLS-1$
+	    
+	    Iterator i = parse( code, false ).getDeclarations();
+	    
+	    int start = code.indexOf( "foo" ); //$NON-NLS-1$
+	    int end = start + 3;
+	    
+	    assertEquals( callback.problems.size(), 1 );
+	    IProblem p = (IProblem) callback.problems.get( 0 );
+	    
+	    assertEquals( p.getSourceStart(), start );
+	    assertEquals( p.getSourceEnd(), end );
+	    assertEquals( p.getID(), IProblem.SEMANTIC_NAME_NOT_FOUND );
+	    
+	    IASTFunction f = (IASTFunction) i.next();
+	    IASTVariable varI = (IASTVariable) i.next();
 	}
 }

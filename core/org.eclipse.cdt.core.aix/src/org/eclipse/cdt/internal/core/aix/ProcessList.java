@@ -24,7 +24,7 @@ public class ProcessList implements IProcessList {
 	 * @see IProcessList#getProcessList
 	 */
 	public IProcessInfo [] getProcessList()  {
-		File proc = new File("/proc");
+		File proc = new File("/proc"); //$NON-NLS-1$
 		File[] pidFiles = null;
 		
 		// We are only interrested in the pid so filter the rest out.
@@ -48,7 +48,7 @@ public class ProcessList implements IProcessList {
 		if (pidFiles != null) {
 			processInfo = new ProcessInfo[pidFiles.length];
 			for (int i = 0; i < pidFiles.length; i++) {
-				File cmdLine = new File(pidFiles[i], "cmdline");
+				File cmdLine = new File(pidFiles[i], "cmdline"); //$NON-NLS-1$
 				StringBuffer line = new StringBuffer();
 				try {
 					FileReader reader = new FileReader(cmdLine);
@@ -60,7 +60,7 @@ public class ProcessList implements IProcessList {
 				}
 				String name = line.toString();
 				if (name.length() == 0) {
-					name = "Unknown";
+					name = "Unknown"; //$NON-NLS-1$
 				}
 				processInfo[i] = new ProcessInfo(pidFiles[i].getName(), name);
 			}

@@ -263,7 +263,7 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 				pwd = dir.removeFirstSegments(fBaseDirectory.segmentCount());
 			} else {
 				// check if it is a cygpath
-				if (dir.toString().startsWith("/cygdrive/")) {	// $NON-NLS-1$
+				if (dir.toString().startsWith("/cygdrive/")) {	//$NON-NLS-1$
 					char driveLetter = dir.toString().charAt(10);
 					StringBuffer buf = new StringBuffer();
 					buf.append(driveLetter);

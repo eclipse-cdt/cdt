@@ -262,7 +262,7 @@ public class ProjectTargets {
 	 */
 	protected void translateDocumentToCDTProject(Document doc) throws CoreException, IOException {
 		ICDescriptor descriptor;
-		descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject());
+		descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject(), true);
 
 		Element rootElement = descriptor.getProjectData(MAKE_TARGET_KEY);
 
@@ -297,7 +297,7 @@ public class ProjectTargets {
 		try {
 			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			ICDescriptor descriptor;
-			descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject());
+			descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject(), true);
 
 			rootElement = descriptor.getProjectData(MAKE_TARGET_KEY);
 		} catch (ParserConfigurationException e) {

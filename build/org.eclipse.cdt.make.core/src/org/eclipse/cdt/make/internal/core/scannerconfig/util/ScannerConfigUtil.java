@@ -299,7 +299,7 @@ public final class ScannerConfigUtil {
 	public static IPath getDiscoveredScannerConfigStore(IProject project, boolean delete) {
 		if (project != null) {
 			try {
-				String fileName = (String) project.getPersistentProperty(discoveredScannerConfigFileNameProperty);
+				String fileName = project.getPersistentProperty(discoveredScannerConfigFileNameProperty);
 				if (fileName == null) {
 					fileName = String.valueOf(sRandom.nextLong()) + ".sc"; //$NON-NLS-1$
 					project.setPersistentProperty(discoveredScannerConfigFileNameProperty, fileName);

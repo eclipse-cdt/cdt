@@ -87,7 +87,9 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		line = line.trim();
 		if (line.startsWith(GNUMakefileConstants.VARIABLE_OVERRIDE)) {
 			int i = 8;
-			for (; i < line.length() && Character.isWhitespace(line.charAt(i)); i++);
+			while(i < line.length() && Character.isWhitespace(line.charAt(i))) {
+				i++;
+			}
 			if (line.startsWith(GNUMakefileConstants.VARIABLE_DEFINE, i)) {
 				return true;
 			}

@@ -19,7 +19,7 @@ import java.util.List;
  * @author vhirsl
  */
 public class TraceUtil {
-	public static final String EOL = System.getProperty("line.separator");
+	public static final String EOL = System.getProperty("line.separator"); //$NON-NLS-1$
 	public static boolean SCANNER_CONFIG = false;
 	
 	public static boolean isTracing() {

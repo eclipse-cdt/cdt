@@ -17,7 +17,8 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
 import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBExit;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
-import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIParser;
@@ -229,7 +230,8 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 
 		// Tell the observers that the session
 		// is finish, but we can not use the Event Thread.
-		notifyObservers(new MIExitEvent());
+		// The Event Thread is being kill below.
+		notifyObservers(new MIGDBExitEvent());
 		
 		// send the exit(-gdb-exit).
 		try {
@@ -332,4 +334,19 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 	MIOutput parse(String buffer) {
 		return parser.parse(buffer);
 	}
+
+	public void fireEvents(MIEvent[] events) {
+		if (events != null && events.length > 0) {
+			for (int i = 0; i < events.length; i++) {
+				fireEvent(events[i]);
+			}
+		}
+	}
+
+	public void fireEvent(MIEvent event) {
+		if (event != null) {
+			getEventQueue().addItem(event);
+		}
+	}
+
 }

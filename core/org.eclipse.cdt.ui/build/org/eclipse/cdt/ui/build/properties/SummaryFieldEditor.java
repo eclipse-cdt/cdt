@@ -11,22 +11,24 @@ package org.eclipse.cdt.ui.build.properties;
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 
-import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class SummaryFieldEditor extends FieldEditor {
-
-	// The tool this category belongs to
-	ITool tool;
-	// The text widget to hold summary of all commands for the tool
-	Text summary;
 	// Whitespace character
 	private static final String WHITESPACE = " ";
+
+	// The top level composite
+	protected Composite parent;
+	// The tool this category belongs to
+	protected ITool tool;
+	// The text widget to hold summary of all commands for the tool
+	protected Text summary;
 	
 	/**
 	 * @param name 
@@ -53,18 +55,22 @@ public class SummaryFieldEditor extends FieldEditor {
 	 * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite, int)
 	 */
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
+		this.parent = parent;
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = numColumns;
+		this.parent.setLayoutData(gd);
+		
 		// Add the label
-		getLabelControl(parent);
+		Label label = getLabelControl(parent);
+		GridData labelData = new GridData();
+		labelData.horizontalSpan = numColumns;
+		label.setLayoutData(labelData);		
 
 		// Create the multi-line, read-only field
 		summary = new Text(parent, SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
-		GridData data = new GridData();
-		data.horizontalSpan = numColumns - 1;
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
-		data.verticalAlignment = GridData.CENTER;
-		data.grabExcessVerticalSpace = true;
-		summary.setLayoutData(data);
+		GridData summaryData = new GridData(GridData.FILL_BOTH);
+		summaryData.horizontalSpan = numColumns;
+		summary.setLayoutData(summaryData);
 	}
 
 	/* (non-Javadoc)
@@ -72,21 +78,21 @@ public class SummaryFieldEditor extends FieldEditor {
 	 */
 	protected void doLoad() {
 		// Look at the data store for every option defined for the tool
-		IOption[] options = tool.getOptions();
-		for (int index = 0; index < options.length; ++index) {
-			IOption option = options[index];
-			String command = option.getCommand();
-			if (command == null) {
-				command = "";
-			}
-			String id = option.getId();
-			String values = getPreferenceStore().getString(id);
-			String[] valuesList = BuildToolsSettingsStore.parseString(values);
-			for (int j = 0; j < valuesList.length; ++j) {
-				String entry = valuesList[j];
-				summary.append(command + entry + WHITESPACE);
-			}
-		}
+//		IOption[] options = tool.getOptions();
+//		for (int index = 0; index < options.length; ++index) {
+//			IOption option = options[index];
+//			String command = option.getCommand();
+//			if (command == null) {
+//				command = "";
+//			}
+//			String id = option.getId();
+//			String values = getPreferenceStore().getString(id);
+//			String[] valuesList = BuildToolsSettingsStore.parseString(values);
+//			for (int j = 0; j < valuesList.length; ++j) {
+//				String entry = valuesList[j];
+//				summary.append(command + entry + WHITESPACE);
+//			}
+//		}
 	}
 
 	/* (non-Javadoc)

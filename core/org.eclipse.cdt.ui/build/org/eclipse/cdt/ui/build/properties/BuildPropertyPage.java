@@ -340,7 +340,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			int vdiff = contentSize.y - containerSize.y;
 
 			if (hdiff > 0 || vdiff > 0) {
-				if (shellSize.equals(lastShellSize)) {
+				if (shellSize.equals(getLastShellSize())) {
 					hdiff = Math.max(0, hdiff);
 					vdiff = Math.max(0, vdiff);
 					setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
@@ -377,6 +377,18 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		return names;
 	}
 	
+	/**
+	 * @return
+	 */
+	protected Point getLastShellSize() {
+		if (lastShellSize == null) {
+			Shell shell = getShell();
+			if (shell != null)
+				lastShellSize = shell.getSize();
+		}
+		return lastShellSize;
+	}
+
 	private List getPagesForConfig() {
 		List pages = (List) configToPageListMap.get(selectedConfiguration.getId());
 		if (pages == null) {
@@ -550,7 +562,4 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	 */
 	public void updateTitle() {
 	}
-	
-
-
 }

@@ -1,3 +1,8 @@
+2003-08-10 Sean Evoy
+	Fix for Bug 41274. Was not saving the library option properly because the value type 
+	of the option was not recognized.
+	* build/org/eclipse/cdt/internal/core/build/managed/Configuration.java
+
 2003-07-30 Hoda Amer
 	The C Model recognizes pointers to functions.
 

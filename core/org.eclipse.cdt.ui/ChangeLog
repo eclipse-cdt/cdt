@@ -1,3 +1,47 @@
+2003-08-10 Sean Evoy
+	Added a new target for building DLLs on Cygwin.
+	* plugin.xml
+	
+	Added a new icon for configurations in the tree view of the build 
+	property page for managed builds.
+	* icons/full/build16/config-category.gif
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	
+	Changed the icons used to display tools and categories in the tree view 
+	of the managed build property page. Now the tool uses the tool icon and 
+	the category uses the new category icon.
+	* build/org/eclipse/cdt/ui/build/properties/ToolListLabelProvider.java
+	
+	Changed the list field editor so that it will better fit a page with 
+	space-grabbing widgets in different columns. For example, the default list
+	field editor puts the list in the left column and allows it to garab all 
+	excess space. Entry fields put the label in the left and the space-grabbing 
+	entry field/combo box in the right. The layout manager then gives both left 
+	and right columns equal space. By wrapping the list field editor in a group 
+	control that spans both columns, the layout manager allocates enough space for 
+	controls in the right-hand column. It also lays out the contents of the list 
+	field editor inside the group control independently of the outer container, so 
+	it looks right too. Also added a double-click event handler so users can edit
+	list elements. Mondo happy with this!
+	* build/org/eclipse/cdt/ui/build/properties/BuildOptionComboFieldEditor.java
+
+	Re-activated the summary field editor class. It still does not behave quite right, 
+	but it is there.
+	* build/org/eclipse/cdt/ui/build/properties/SummaryFieldEditor.java
+	* build/org/eclipse/cdt/ui/build/properties/BuildToolSettingsPage.java
+	
+	Changed the combo-box field editor to lay itself out in the grid more like the other
+	field editors. This has not made the widget behave differently in any way, but should
+	insure that it lay itself out correctly on any page with any combination of
+	field editors.
+	* build/org/eclipse/cdt/ui/build/properties/BuildOptionComboFieldEditor.java
+
+	Fixed the resize behaviour of the build property page; at least in terms of resizing up 
+	to its constrained size. There is the issue of size-creep (each time you reselect the 
+	category, the property page control resizes up a bit until it hits some limit). But,
+	this is a better situation than what was there before.
+	* build/org/eclipse/cdt/ui/build/properties/BuildPropertyPage.java
+
 2003-08-08 Bogdan Gheorghe
 	- Filled out CSearchScopeFactory to translate working sets
 	  into CElements

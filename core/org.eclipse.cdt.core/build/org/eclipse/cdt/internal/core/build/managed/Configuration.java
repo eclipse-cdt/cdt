@@ -283,6 +283,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 			case IOption.PREPROCESSOR_SYMBOLS :
 				oldValue = option.getDefinedSymbols();
 				break;
+			case IOption.LIBRARIES :
+				oldValue = option.getLibraries();
+				break;
 			default :
 				oldValue = new String[0];
 				break;

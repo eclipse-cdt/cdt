@@ -16,6 +16,7 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 public class BuildOptionComboFieldEditor extends FieldEditor {
 
@@ -23,7 +24,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	private Combo optionSelector;
 	private String [] options = new String[0];
 	private String selected; 
-
+	
 	/**
 	 * @param name
 	 * @param label
@@ -52,13 +53,23 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	 * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite, int)
 	 */
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = numColumns;
+		parent.setLayoutData(gd);
+		
 		// Add the label
-		getLabelControl(parent);
+		Label label = getLabelControl(parent);
+		GridData labelData = new GridData();
+		labelData.horizontalSpan = 1;
+		labelData.grabExcessHorizontalSpace = false;
+		label.setLayoutData(labelData);
 		
 		// Now add the combo selector
 		optionSelector = ControlFactory.createSelectCombo(parent, options, selected);
-		GridData gd = (GridData) optionSelector.getLayoutData();
-		gd.horizontalSpan = numColumns - 1;
+		GridData selectorData = (GridData) optionSelector.getLayoutData();
+		selectorData.horizontalSpan = numColumns - 1;
+		selectorData.grabExcessHorizontalSpace = true;
+		optionSelector.setLayoutData(selectorData);
 	}
 
 	/* (non-Javadoc)

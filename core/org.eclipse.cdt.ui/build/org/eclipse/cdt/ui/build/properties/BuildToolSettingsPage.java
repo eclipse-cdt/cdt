@@ -84,12 +84,12 @@ public class BuildToolSettingsPage extends FieldEditorPreferencePage {
 					BuildOptionListFieldEditor listField = new BuildOptionListFieldEditor(opt.getId(), opt.getName(), getFieldEditorParent());
 					addField(listField); 
 					break;
-//				case IOption.SUMMARY :
-//				SummaryFieldEditor summaryField = new SummaryFieldEditor(opt.getId(), opt.getName(), category.getTool(), getFieldEditorParent());
-//				addField(summaryField);
-//				break;
 				default :
+					SummaryFieldEditor summaryField = new SummaryFieldEditor(opt.getId(), opt.getName(), category.getTool(), getFieldEditorParent());
+					addField(summaryField);
 					break;
+//				default :
+//					break;
 			}
 		}
 	}

@@ -26,9 +26,9 @@
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
 <!-- =========================================================================== -->
-<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
    <extension-point id="CToolTabGroup" name="C/C++ Tool Configuration Tabs" schema="schema/CToolTabGroup.exsd"/>
@@ -137,8 +137,8 @@
             id="org.eclipse.cdt.ui.MakeView">
       </view>
    </extension>
-<!-- The wizards -->
 <!-- For C Wizards -->
+<!-- The wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -808,10 +808,10 @@
          </tool>
       </target>
       <target
-            isTest="true"
+            isTest="false"
             name="Cygwin Shared Library"
             parent="cygwin"
-            defaultExtension="dll.a"
+            defaultExtension="dll"
             isAbstract="false"
             id="cygwin.so">
          <configuration
@@ -825,7 +825,8 @@
          <tool
                name="%ToolName.linker"
                outputFlag="-o"
-               outputs="dll.a"
+               command="g++ -shared"
+               outputs="dll"
                id="org.eclipse.cdt.build.tool.cygwin.solink">
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.solink"
@@ -833,7 +834,7 @@
                   id="cygwin.solink.category.general">
             </optionCategory>
             <option
-                  defaultValue="-shared"
+                  defaultValue=""
                   name="Linker Flags"
                   category="cygwin.solink.category.general"
                   valueType="string"
@@ -852,6 +853,56 @@
                   command="-l"
                   valueType="libs"
                   id="cygwin.solink.libs">
+            </option>
+         </tool>
+      </target>
+      <target
+            isTest="true"
+            name="Cygwin Export Library (DLL)"
+            parent="cygwin"
+            defaultExtension="dll.a"
+            isAbstract="false"
+            id="cygwin.exp">
+         <configuration
+               name="Release"
+               id="cygwin.exp.release">
+         </configuration>
+         <configuration
+               name="Debug"
+               id="cygwin.exp.debug">
+         </configuration>
+         <tool
+               name="%ToolName.linker"
+               outputFlag="-o"
+               outputPrefix="cyg"
+               command="g++ -shared"
+               outputs="dll"
+               id="org.eclipse.cdt.build.tool.cygwin.explink">
+            <optionCategory
+                  owner="org.eclipse.cdt.build.tool.cygwin.explink"
+                  name="General"
+                  id="cygwin.explink.category.general">
+            </optionCategory>
+            <option
+                  defaultValue="-Wl,--export-all-symbols -Wl,--enable-auto-import"
+                  name="Linker Flags"
+                  category="cygwin.explink.category.general"
+                  valueType="string"
+                  id="cygwin.explink.ld.flags">
+            </option>
+            <option
+                  name="Library Paths"
+                  category="cygwin.explink.category.general"
+                  command="-L"
+                  valueType="stringList"
+                  id="cygwin.explink.ld.paths">
+            </option>
+            <option
+                  name="Libraries"
+                  category="cygwin.explink.category.general"
+                  command="-l"
+                  valueType="libs"
+                  id="cygwin.explink.libs">
             </option>
          </tool>
       </target>

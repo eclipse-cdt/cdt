@@ -163,6 +163,8 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_BUILD_PREPROCESSOR = createManaged(T_BUILD, IMG_BUILD_PREPROCESSOR);
 	public static final String IMG_BUILD_TOOL = NAME_PREFIX + "config-tool.gif";
 	public static final ImageDescriptor DESC_BUILD_TOOL = createManaged(T_BUILD, IMG_BUILD_TOOL);
+	public static final String IMG_BUILD_CAT = NAME_PREFIX + "config-category.gif";
+	public static final ImageDescriptor DESC_BUILD_CAT = createManaged(T_BUILD, IMG_BUILD_CAT);
 
 	//for search
 	public static final String IMG_OBJS_SEARCH_REF  = NAME_PREFIX + "search_ref_obj.gif";

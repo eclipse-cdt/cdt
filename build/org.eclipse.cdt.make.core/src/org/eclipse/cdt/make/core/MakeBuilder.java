@@ -87,6 +87,9 @@ public class MakeBuilder extends ACBuilder {
 			if (isClean) {
 				forgetLastBuiltState();
 			}
+		} else { // This should really be based of last build state, for now its safer to just
+			    //  forget last, until we get some kind of build state manager in the CDT Core. 
+			forgetLastBuiltState();
 		}
 		checkCancel(monitor);
 		return getProject().getReferencedProjects();

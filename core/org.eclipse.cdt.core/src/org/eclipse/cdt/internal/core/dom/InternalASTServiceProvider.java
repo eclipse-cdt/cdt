@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IParserConfiguration;
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
@@ -165,8 +166,62 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getSupportedDialects()
-     */
+	 * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getCompletionNode(org.eclipse.core.resources.IFile, int, org.eclipse.cdt.core.dom.ICodeReaderFactory)
+	 */
+	public ASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
+			ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
+		// Get the scanner info
+		IProject currentProject = fileToParse.getProject();
+		IScannerInfo scanInfo = null;
+
+		IScannerInfoProvider provider = CCorePlugin.getDefault()
+				.getScannerInfoProvider(currentProject);
+		if (provider != null) {
+			IScannerInfo buildScanInfo = provider
+					.getScannerInformation(fileToParse);
+			if (buildScanInfo != null)
+				scanInfo = buildScanInfo;
+			else
+				scanInfo = new ScannerInfo();
+		}
+
+		CodeReader reader = fileCreator
+				.createCodeReaderForTranslationUnit(fileToParse.getLocation()
+						.toOSString());
+
+		ParserLanguage l = getLanguage(fileToParse);
+		IScannerExtensionConfiguration scannerExtensionConfiguration = null;
+		if (l == ParserLanguage.CPP)
+			scannerExtensionConfiguration = CPP_GNU_SCANNER_EXTENSION;
+		else
+			scannerExtensionConfiguration = C_GNU_SCANNER_EXTENSION;
+
+		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
+				l, ParserFactory.createDefaultLogService(),
+				scannerExtensionConfiguration, fileCreator);
+		scanner.setContentAssistMode(offset);
+		
+		// assume GCC
+		ISourceCodeParser parser = null;
+		if (l == ParserLanguage.C)
+			parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE,
+					ParserUtil.getParserLogService(),
+					new GCCParserExtensionConfiguration());
+		else
+			parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE,
+					ParserUtil.getParserLogService(),
+					new GPPParserExtensionConfiguration());
+		
+		// Run the parse and return the completion node
+		parser.parse();
+		return parser.getCompletionNode();
+	}
+	
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getSupportedDialects()
+	 */
     public String[] getSupportedDialects() {
         return dialects;
     }

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom;
 
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.core.resources.IFile;
 
@@ -28,4 +29,6 @@ public interface IASTServiceProvider {
 
     public IASTTranslationUnit getTranslationUnit( IFile fileToParse, ICodeReaderFactory fileCreator, IParserConfiguration configuration )throws UnsupportedDialectException;
 
+    public ASTCompletionNode getCompletionNode( IFile fileToParse, int offset, ICodeReaderFactory fileCreator) throws UnsupportedDialectException;
+    
 }

@@ -11,6 +11,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -62,6 +64,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 
 /**
  * @author jcamelon
@@ -107,6 +110,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected IToken currToken;
 
+    protected ASTCompletionNode completionNode;
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser#getCompletionNode()
+	 */
+	public ASTCompletionNode getCompletionNode() {
+		return completionNode;
+	}
+	
     /**
      * Look Ahead in the token list to see what is coming.
      * 
@@ -462,7 +474,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         ((ASTNode) result).setOffset(startingOffset);
         result.setParent(mostRelevantScopeNode);
         result.setPropertyInParent(IASTFunctionDefinition.FUNCTION_BODY);
-        while (LT(1) != IToken.tRBRACE) {
+        while (LT(1) != IToken.tRBRACE && LT(1) != IToken.tCOMPLETION) {
             int checkToken = LA(1).hashCode();
             try {
                 IASTStatement s = statement();
@@ -484,8 +496,36 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                     failParseWithErrorHandling();
             }
         }
-        int lastOffset = consume(IToken.tRBRACE).getEndOffset();
+        
+        IToken token = consume();
+        int lastOffset = token.getEndOffset();
         ((ASTNode) result).setLength(lastOffset - startingOffset);
+        
+        if (token.getType() == IToken.tCOMPLETION) {
+         	if (token.getLength() > 0) {
+         		// At the beginning of a statement, this could be either an expression
+         		// statement or a declaration statement. We'll create both and add them
+         		// to the completion node.
+         		
+         		// First the expression statement
+         		IASTExpressionStatement exprStmt = createExpressionStatement();
+         		exprStmt.setParent(result);
+                exprStmt.setPropertyInParent(IASTCompoundStatement.NESTED_STATEMENT);
+         		IASTIdExpression expr = new CPPASTIdExpression(); // Obviously need a factory
+         		exprStmt.setExpression(expr);
+         		expr.setParent(exprStmt);
+         		expr.setPropertyInParent(IASTExpressionStatement.EXPFRESSION);
+         		IASTName exprName = createName(token);
+         		expr.setName(exprName);
+         		exprName.setParent(expr);
+         		exprName.setPropertyInParent(IASTIdExpression.ID_NAME);
+         		
+         		if (completionNode == null)
+         			completionNode = new ASTCompletionNode(token);
+         		completionNode.addName(exprName);
+         	}
+        }
+        
         return result;
     }
 

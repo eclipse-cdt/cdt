@@ -1513,6 +1513,15 @@ abstract class BaseScanner implements IScanner {
         beforeSecondFetchToken();
 
         if (finished) {
+        	if (contentAssistMode) {
+        		lastToken = nextToken;
+        		nextToken = null;
+        		if (lastToken == null)
+        			throwEOF();
+        		else
+        			return lastToken;
+        	}
+        	
             if (isCancelled == true)
                 throw new ParseError(
                         ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
@@ -1541,6 +1550,8 @@ abstract class BaseScanner implements IScanner {
         if (nextToken == null) {
             if (!exception)
                 finished = true;
+        } else if (nextToken.getType() == IToken.tCOMPLETION) {
+        	finished = true;
         } else if (nextToken.getType() == IToken.tPOUNDPOUND) {
             // time for a pasting
             IToken token2 = fetchToken();
@@ -2019,6 +2030,11 @@ abstract class BaseScanner implements IScanner {
         }
 
         --bufferPos[bufferStackPos];
+
+        if (contentAssistMode && bufferStackPos == 0 && bufferPos[bufferStackPos] + 1 == limit) {
+        	// return the text as a content assist token
+        	return newToken(IToken.tCOMPLETION, CharArrayUtils.extract(buffer, start, bufferPos[bufferStackPos] - start + 1));
+        }
 
         // Check for macro expansion
         Object expObject = definitions.get(buffer, start, len);
@@ -4478,6 +4494,8 @@ abstract class BaseScanner implements IScanner {
     };
 
     protected int offsetBoundary = -1;
+    
+    protected boolean contentAssistMode = false;
 
     protected void setupBuiltInMacros(IScannerExtensionConfiguration config) {
 
@@ -4509,6 +4527,14 @@ abstract class BaseScanner implements IScanner {
         bufferLimit[0] = offset;
     }
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IScanner#setContentAssistMode(int)
+	 */
+	public void setContentAssistMode(int offset) {
+		bufferLimit[0] = offset;
+		contentAssistMode = true;
+	}
+	
     protected ParserLanguage getLanguage() {
         return language;
     }

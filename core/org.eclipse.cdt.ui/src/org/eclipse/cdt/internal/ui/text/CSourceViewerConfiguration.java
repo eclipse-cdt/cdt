@@ -6,11 +6,12 @@ package org.eclipse.cdt.internal.ui.text;
 
 import java.util.Vector;
 
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -187,7 +188,10 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 
 		ContentAssistant assistant = new ContentAssistant();
 		
-		IContentAssistProcessor processor = new CCompletionProcessor(getEditor());
+		IContentAssistProcessor processor
+			= getPreferenceStore().getBoolean(ContentAssistPreference.USE_DOM)
+			? (IContentAssistProcessor)new CCompletionProcessor2(getEditor())
+			: (IContentAssistProcessor)new CCompletionProcessor(getEditor());
 		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 
 		//Will this work as a replacement for the configuration lines below?

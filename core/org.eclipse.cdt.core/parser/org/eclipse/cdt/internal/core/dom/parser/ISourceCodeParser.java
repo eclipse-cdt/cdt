@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 /**
@@ -21,4 +22,7 @@ public interface ISourceCodeParser {
     public IASTTranslationUnit parse();
     
     public boolean encounteredError();
+    
+    public ASTCompletionNode getCompletionNode();
+    
 }

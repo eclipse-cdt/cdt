@@ -26,6 +26,7 @@ public interface IScanner  {
 	public static final int tPOUND      = -7;
 	
 	public void setOffsetBoundary( int offset );
+	public void setContentAssistMode( int offset );
 	public void setASTFactory( IASTFactory f );
 	
 	public void addDefinition(char[] key, char[] value); 

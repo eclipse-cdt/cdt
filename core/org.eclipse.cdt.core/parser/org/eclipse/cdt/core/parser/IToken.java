@@ -315,6 +315,8 @@ public interface IToken {
 	static public final int tMACROEXP = 138;
 	
 	static public final int tPOUNDPOUND = 139;
+	
+	static public final int tCOMPLETION = 140;
 
-	static public final int tLAST = 139;
+	static public final int tLAST = 140;
 }

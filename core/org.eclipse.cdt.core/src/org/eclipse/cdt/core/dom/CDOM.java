@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom;
 import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.InternalASTServiceProvider;
 import org.eclipse.cdt.internal.core.dom.PartialWorkingCopyCodeReaderFactory;
@@ -90,6 +91,14 @@ public class CDOM implements IASTServiceProvider {
     public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator, IParserConfiguration configuration) throws UnsupportedDialectException {
         return defaultService.getTranslationUnit(fileToParse, fileCreator, configuration );
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getCompletionNode(org.eclipse.core.resources.IFile, int, org.eclipse.cdt.core.dom.ICodeReaderFactory)
+	 */
+	public ASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
+			ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
+		return defaultService.getCompletionNode(fileToParse, offset, fileCreator);
+	}
 
     /**
      * @param workingCopyProvider

@@ -1,5 +1,13 @@
 2003-06-24 Alain Magloire
 
+	Patch form ando@park.ruru.ne.jp, to deal
+	with different file cases i.e. TEST.C vs test.c
+	On windows.
+	
+	* src/org/eclipse/cdt/core/ErrorParserManager.java
+
+2003-06-24 Alain Magloire
+
 	* src/org/eclipse/cdt/internal/errorparser/GCCErrorParser.java:
 	New scheme to detect, preprocessor errors.
 	* src/org/eclipse/cdt/core/ErrorParserManager.java:

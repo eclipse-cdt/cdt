@@ -221,9 +221,8 @@ public class OpenIncludeAction extends Action {
 			IEditorDescriptor descriptor = registry.getDefaultEditor(name);
 			if (descriptor != null) {
 				return descriptor.getId();
-			} else {
-				return IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID;
 			}
+			return IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID;
 		}
 		return null;
 	}

@@ -22,7 +22,7 @@
 #include "jni.h"
 #include "io.h"
 
-// #define DEBUG_MONITOR
+//#define DEBUG_MONITOR
 
 #define PIPE_SIZE 512
 #define MAX_CMD_SIZE 1024
@@ -96,7 +96,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	char eventWaitName[20];
 	char eventTerminateName[20];
 #ifdef DEBUG_MONITOR
-	char buffer[100];
+	char buffer[1000];
 #endif
 
 
@@ -179,16 +179,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 			{
 			jobject item = (*env) -> GetObjectArrayElement(env, envp, i);
 			jsize    len = (*env) -> GetStringUTFLength(env, item);
-			int nCpyLen;
 			const char *  str = (*env) -> GetStringUTFChars(env, item, 0);	
 			if(NULL != str)
 				{
-				if(0 > (nCpyLen = copyTo(szEnvBlock + nPos, str, len, MAX_ENV_SIZE - nPos - 1)))
-					{
-					ThrowByName(env, "java/Exception", "Too many environment variables");
-					return 0;
-					}
-				nPos += nCpyLen;
+				strncpy(szEnvBlock + nPos, str, len);
+				nPos += len;
 				szEnvBlock[nPos] = '\0';
 				++nPos;
 				(*env) -> ReleaseStringUTFChars(env, item, str);
@@ -387,16 +382,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 			{
 			jobject item = (*env) -> GetObjectArrayElement(env, envp, i);
 			jsize    len = (*env) -> GetStringUTFLength(env, item);
-			int nCpyLen;
 			const char *  str = (*env) -> GetStringUTFChars(env, item, 0);	
 			if(NULL != str)
 				{
-				if(0 > (nCpyLen = copyTo(szEnvBlock + nPos, str, len, MAX_ENV_SIZE - nPos - 1)))
-					{
-					ThrowByName(env, "java/Exception", "Too many environment variables");
-					return 0;
-					}
-				nPos += nCpyLen;
+				strncpy(szEnvBlock + nPos, str, len);
+				nPos += len;
 				szEnvBlock[nPos] = '\0';
 				++nPos;
 				(*env) -> ReleaseStringUTFChars(env, item, str);
@@ -664,7 +654,7 @@ unsigned int _stdcall waitProcTermination(void* pv)
 	int pid = *(int *)pv;
 	DWORD rc = 0;
 #ifdef DEBUG_MONITOR
-	char buffer[100];
+	char buffer[1000];
 #endif
 
 	HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, 0, pid);
@@ -710,36 +700,46 @@ unsigned int _stdcall waitProcTermination(void* pv)
 // Return number of bytes in target or -1 in case of error
 int copyTo(char * target, const char * source, int cpyLength, int availSpace)
 {
+#ifdef DEBUG_MONITOR
+	char buffer[1000];
+#endif
 	BOOL bSlash = FALSE;
-	int i, j;
+	int i = 0, j = 0;
 	int totCpyLength = cpyLength;
+	BOOL bQoutedTerm = FALSE;
 
 	if(availSpace < cpyLength)
 		return -1;
-	strncpy(target, source, cpyLength);
-	return cpyLength;
+	//strncpy(target, source, cpyLength);
+	//return cpyLength;
 
-	// Don't open this feature for a while
+	if(('\"' == *source) && ('\"' == *(source + cpyLength)))
+		bQoutedTerm = TRUE; // Already quoted
+	else
+	if(strchr(source, ' ') == NULL)
+		bQoutedTerm = TRUE; // No reason to quotate term becase it doesn't have embedded spaces
+	else
+		{
+		*target = '\"';
+		++j;
+		}
 
-	for(i = 0, j = 0; i < cpyLength; ++i, ++j) 
+
+	for(; i < cpyLength; ++i, ++j) 
 		{
 		if(source[i] == '\\')
 			bSlash = TRUE;
 		else
-		if(source[i] == '"') 
+		if((source[i] == '\"') && (!bQoutedTerm || (i != 0) || i != (cpyLength)) ) 
 			{
-			if(bSlash)
+			if(!bSlash)
 				{
 				if(j == availSpace)
 					return -1;
 				target[j] = '\\';
 				++j;
-				bSlash = FALSE;
 				}
-			if(j == availSpace)
-				return -1;
-			target[j] = '\\';
-			++j;
+			bSlash = FALSE;
 			}
 		else
 			bSlash = FALSE;
@@ -749,6 +749,18 @@ int copyTo(char * target, const char * source, int cpyLength, int availSpace)
 		target[j] = source[i];
 		}
 
+	if(!bQoutedTerm)
+		{
+		if(j == availSpace)
+			return -1;
+		target[j] = '\"';
+		++j;
+		}
+
+#ifdef DEBUG_MONITOR
+	sprintf(buffer, "copyTo: %s %d %d\n", source, j, cpyLength);
+	OutputDebugString(buffer);
+#endif
 	return j;
 }
 

@@ -1,3 +1,14 @@
+2004-07-19 Chris Wiebe
+	This patch cleans up code using the ToggleLinkingAction
+	(subclass off AbstractToggleLinkingAction).
+
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingPart.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/ToggleLinkingAction.java
+
+	* src/org/eclipse/cdt/internal/ui/cview/MainActionGroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/ToggleLinkingAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+
 2004-07-16 Tanya Wolff
 
 	Fix for 70221: unexternalized strings

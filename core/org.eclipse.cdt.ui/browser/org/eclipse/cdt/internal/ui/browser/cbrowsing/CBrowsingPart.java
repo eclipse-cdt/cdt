@@ -124,7 +124,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 //	private OpenEditorActionGroup fOpenEditorGroup;
 //	private CCPActionGroup fCCPActionGroup;
 //	private BuildActionGroup fBuildActionGroup;
-//	private ToggleLinkingAction fToggleLinkingAction;
+	private ToggleLinkingAction fToggleLinkingAction;
 //	protected CompositeActionGroup fActionGroups;
 
 
@@ -435,8 +435,8 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 //		if (fHasCustomFilter)
 //			fCustomFiltersActionGroup.fillActionBars(actionBars);
 //			
-//		IMenuManager menu= actionBars.getMenuManager();
-//		menu.add(fToggleLinkingAction);
+		IMenuManager menu= actionBars.getMenuManager();
+		menu.add(fToggleLinkingAction);
 	}
 	
 	//---- IWorkbenchPart ------------------------------------------------------
@@ -548,7 +548,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 //		if (fHasCustomFilter)
 //			fCustomFiltersActionGroup= new CustomFiltersActionGroup(this, fViewer);
 //	
-//		fToggleLinkingAction= new ToggleLinkingAction(this);
+		fToggleLinkingAction= new ToggleLinkingAction(this);
 	}
 	
 	private void doWorkingSetChanged(PropertyChangeEvent event) {
@@ -933,10 +933,10 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		if (!needsToProcessSelectionChanged(part, selection))
 			return;
 		
-//		if (fToggleLinkingAction.isChecked() && (part instanceof ITextEditor)) {
-//			setSelectionFromEditor(part, selection);
-//			return;
-//		}
+		if (fToggleLinkingAction.isChecked() && (part instanceof ITextEditor)) {
+			setSelectionFromEditor(part, selection);
+			return;
+		}
 
 		if (!(selection instanceof IStructuredSelection))
 			return;

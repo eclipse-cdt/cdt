@@ -11,13 +11,13 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
-import org.eclipse.cdt.internal.ui.cview.CViewMessages;
+import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
@@ -58,12 +58,47 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private String fContextMenuId;
 	
 	private OpenIncludeAction fOpenIncludeAction;
+	private ToggleLinkingAction fToggleLinkingAction;
 	
 	private MemberFilterActionGroup fMemberFilterActionGroup;
 
 	private ActionGroup fSelectionSearchGroup;
 	private ActionGroup fRefactoringActionGroup;
 	private ActionGroup fOpenViewActionGroup;
+	
+	/**
+	 * This action toggles whether this C Outline page links
+	 * its selection to the active editor.
+	 * 
+	 * @since 3.0
+	 */
+	public class ToggleLinkingAction extends AbstractToggleLinkingAction {
+	
+	    CContentOutlinePage fOutlinePage;
+	
+		/**
+		 * Constructs a new action.
+		 * 
+		 * @param outlinePage the Java outline page
+		 */
+		public ToggleLinkingAction(CContentOutlinePage outlinePage) {
+			//boolean isLinkingEnabled= PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE);
+			boolean isLinkingEnabled= true;
+			setChecked(isLinkingEnabled);
+			fOutlinePage= outlinePage;
+		}
+
+		/**
+		 * Runs the action.
+		 */
+		public void run() {
+			//TODO synchronize selection with editor
+			//PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE, isChecked());
+			//if (isChecked() && fEditor != null)
+			//	fEditor.synchronizeOutlinePage(fEditor.computeHighlightRangeSourceReference(), false);
+		}
+
+	}
 	
 	public CContentOutlinePage(CEditor editor) {
 		this("#TranslationUnitOutlinerContext", editor); //$NON-NLS-1$
@@ -250,7 +285,13 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 
 		fMemberFilterActionGroup= new MemberFilterActionGroup(treeViewer, "COutlineViewer"); //$NON-NLS-1$
 		fMemberFilterActionGroup.fillActionBars(actionBars);
-	}
+		
+/*		IMenuManager menu= actionBars.getMenuManager();
+		menu.add(new Separator("EndFilterGroup")); //$NON-NLS-1$
+		
+		fToggleLinkingAction= new ToggleLinkingAction(this);
+		menu.add(fToggleLinkingAction);
+*/	}
 
 	/* (non-Javadoc)
 	 * Method declared on ISelectionProvider.

@@ -149,7 +149,7 @@ public class MainActionGroup extends CViewActionGroup {
 
 		collapseAllAction = new CollapseAllAction(getCView());
 
-		toggleLinkingAction = new ToggleLinkingAction(getCView(), CViewMessages.getString("ToggleLinkingAction.label")); //$NON-NLS-1$
+		toggleLinkingAction = new ToggleLinkingAction(getCView()); //$NON-NLS-1$
 		toggleLinkingAction.setToolTipText(CViewMessages.getString("ToggleLinkingAction.toolTip")); //$NON-NLS-1$
 		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
 		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$

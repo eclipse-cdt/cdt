@@ -78,7 +78,8 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	public boolean exists() {
-		return getResource() != null;
+		return getElementInfo() != null;
+	//	return getResource() != null;
 	}
 	
 	public boolean isReadOnly () {

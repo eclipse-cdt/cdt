@@ -1344,29 +1344,30 @@ abstract class BaseScanner implements IScanner {
 
     protected void pushContext(char[] buffer, Object data) {
         if (data instanceof InclusionData) {
-            boolean isCircular = false;
-            for (int i = 0; i < bufferStackPos; ++i) {
-                if (bufferData[i] instanceof CodeReader
-                        && CharArrayUtils.equals(
-                                ((CodeReader) bufferData[i]).filename,
-                                ((InclusionData) data).reader.filename)) {
-                    isCircular = true;
-                    break;
-                } else if (bufferData[i] instanceof InclusionData
-                        && CharArrayUtils
-                                .equals(
-                                        ((InclusionData) bufferData[i]).reader.filename,
-                                        ((InclusionData) data).reader.filename)) {
-                    isCircular = true;
-                    break;
-                }
-            }
-            if (isCircular)
+            if (isCircularInclusion( (InclusionData)data ))
                 return;
         }
         pushContext(buffer);
         bufferData[bufferStackPos] = data;
 
+    }
+
+    protected boolean isCircularInclusion(InclusionData data) {
+        for (int i = 0; i < bufferStackPos; ++i) {
+            if (bufferData[i] instanceof CodeReader
+                    && CharArrayUtils.equals(
+                            ((CodeReader) bufferData[i]).filename,
+                            data.reader.filename)) {
+                return true;
+            } else if (bufferData[i] instanceof InclusionData
+                    && CharArrayUtils
+                            .equals(
+                                    ((InclusionData) bufferData[i]).reader.filename,
+                                    data.reader.filename)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected Object popContext() {

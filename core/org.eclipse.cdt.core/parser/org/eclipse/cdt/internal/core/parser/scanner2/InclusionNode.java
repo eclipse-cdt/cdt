@@ -36,5 +36,9 @@ public class InclusionNode implements IASTInclusionNode, IDependencyNodeHost {
     public void addInclusionNode(IASTInclusionNode node) {
         incs = (IASTInclusionNode[]) ArrayUtil.append( IASTInclusionNode.class, incs, node );
     }
+    
+    public String toString() {
+        return stmt.toString();
+    }
 
 }

@@ -21,11 +21,15 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorEndifStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -305,40 +309,8 @@ public class DOMLocationInclusionTests extends FileBasePluginTest {
          assertSoleFileLocation(
                macroDefinitions[5],
                "blarg.c", c_file_code.indexOf("#define POST_SECOND"), "#define POST_SECOND".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$    //$NON-NLS-4$
+        
       }
-   }
-   
-   public void testBug87894() throws Exception {
-       StringBuffer fakeBuffer = new StringBuffer( "// windows_fake.h:\n" ); //$NON-NLS-1$
-       fakeBuffer.append( "#ifdef RC_INVOKED\n" ); //$NON-NLS-1$
-       fakeBuffer.append( "#define WIN32_LEAN_AND_MEAN\n" ); //$NON-NLS-1$
-       fakeBuffer.append( "#endif\n" ); //$NON-NLS-1$
-       fakeBuffer.append( "\n" ); //$NON-NLS-1$
-       fakeBuffer.append( "#ifndef WIN32_LEAN_AND_MEAN\n" ); //$NON-NLS-1$
-       fakeBuffer.append( "#include \"rpc_fake.h\"\n" ); //$NON-NLS-1$
-       fakeBuffer.append( "#endif)\n" ); //$NON-NLS-1$
-       String windows_fake_h_code = fakeBuffer.toString();
-       importFile( "windows_fake.h", windows_fake_h_code ); //$NON-NLS-1$
-       StringBuffer rpcBuffer = new StringBuffer();
-       rpcBuffer.append( "//     rpc_fake.h:\n" ); //$NON-NLS-1$
-       rpcBuffer.append( "#define RC_INVOKED\n" ); //$NON-NLS-1$
-       rpcBuffer.append( "\n" ); //$NON-NLS-1$
-       rpcBuffer.append( "#ifndef RPC_NO_WINDOWS_H\n" ); //$NON-NLS-1$
-       rpcBuffer.append( "#include \"windows_fake.h\"\n" ); //$NON-NLS-1$
-       rpcBuffer.append( "#endif\n" ); //$NON-NLS-1$
-       String rpc_fake_h_code = rpcBuffer.toString();
-       importFile( "rpc_fake.h", rpc_fake_h_code ); //$NON-NLS-1$
-       String test_c_code = "// test.c:\n#include \"windows_fake.h\"\n // endOffset is 64 but should be more like 266"; //$NON-NLS-1$
-       IFile f = importFile( "test.c", test_c_code ); //$NON-NLS-1$
-       for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
-               : null) {
-            IASTTranslationUnit tu = parse(f, p); //$NON-NLS-1$
-            
-       }
-            
-       
-    
-
    }
 
    public static Test suite() {

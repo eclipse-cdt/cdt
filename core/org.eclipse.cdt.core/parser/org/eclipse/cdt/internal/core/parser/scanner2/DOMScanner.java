@@ -187,11 +187,13 @@ public class DOMScanner extends BaseScanner {
                 b.append(((InclusionData) data).reader.filename);
                 log.traceLog(b.toString());
             }
-
-            DOMInclusion inc = ((DOMInclusion) ((InclusionData) data).inclusion);
-            locationMap.startInclusion(((InclusionData) data).reader, inc.o,
-                    resolveOffset(getCurrentOffset()));
-            bufferDelta[bufferStackPos + 1] = 0;
+            if( ! isCircularInclusion( (InclusionData) data ))
+            {
+                DOMInclusion inc = ((DOMInclusion) ((InclusionData) data).inclusion);
+                locationMap.startInclusion(((InclusionData) data).reader, inc.o,
+                        resolveOffset(getCurrentOffset()));
+                bufferDelta[bufferStackPos + 1] = 0;
+            }
         }
 
         else if (data instanceof MacroData) {

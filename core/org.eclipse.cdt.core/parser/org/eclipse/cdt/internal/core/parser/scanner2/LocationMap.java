@@ -457,6 +457,11 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public String getPath() {
             return new String(path);
         }
+        
+        public String toString() {
+            return getPath();
+        }
+        
 
     }
 

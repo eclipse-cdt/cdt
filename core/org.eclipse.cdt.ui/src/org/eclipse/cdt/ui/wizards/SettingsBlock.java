@@ -50,9 +50,9 @@ public class SettingsBlock implements IWizardTab {
 	private static final String KEEP_ARG = "keep"; //$NON-NLS-1$
 	private static final String STOP_ARG = "stop"; //$NON-NLS-1$
 
-	private RadioButtonsArea radioButtons;
-	private Button defButton;
-	private Text cmdText;
+	protected RadioButtonsArea radioButtons;
+	protected Button defButton;
+	protected Text cmdText;
 
 	private boolean stopOnError;
 	private boolean useDefaultBuildCmd;

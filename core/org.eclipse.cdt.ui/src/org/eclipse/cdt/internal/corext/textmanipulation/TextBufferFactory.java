@@ -32,7 +32,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /* package */ class TextBufferFactory {
 
-	private IDocumentProvider fDocumentProvider;
+	protected IDocumentProvider fDocumentProvider;
 	private Map fFileValueMap;
 	private Map fBufferValueMap;
 	

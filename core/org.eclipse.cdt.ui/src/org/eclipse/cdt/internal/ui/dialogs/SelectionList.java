@@ -37,7 +37,7 @@ public class SelectionList extends Composite {
 
 	// State
 	private Object[] fElements;
-	private ILabelProvider fRenderer;
+	protected ILabelProvider fRenderer;
 	private boolean fIgnoreCase;
 	
 	// Implementation details

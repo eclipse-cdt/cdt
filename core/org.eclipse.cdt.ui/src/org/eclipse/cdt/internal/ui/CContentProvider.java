@@ -165,7 +165,7 @@ public class CContentProvider extends BaseCElementContentProvider implements ITr
 		});
 	}
 
-	private boolean updateContainer(ICProject cproject) {
+	protected boolean updateContainer(ICProject cproject) {
 		IParent binContainer = cproject.getBinaryContainer();
 		IParent libContainer = cproject.getArchiveContainer();
 		if (binContainer != null) {

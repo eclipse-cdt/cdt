@@ -40,7 +40,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
 public class BuildConsoleView extends ViewPart {
 
 
-	private TextViewer fTextViewer;
+	protected TextViewer fTextViewer;
 	private ClearConsoleAction fClearOutputAction;
 	private TextEditorAction fCopyAction;
 	private TextEditorAction fSelectAllAction;
@@ -99,7 +99,7 @@ public class BuildConsoleView extends ViewPart {
 		WorkbenchHelp.setHelp(fTextViewer.getControl(), ICHelpContextIds.CLEAR_CONSOLE_VIEW);
 	}
 	
-	private void initializeWidgetFont(StyledText styledText) {
+	protected void initializeWidgetFont(StyledText styledText) {
 		IPreferenceStore store= CPlugin.getDefault().getPreferenceStore();
 		String prefKey= CPluginPreferencePage.PREF_CONSOLE_FONT;
 		FontData data= null;

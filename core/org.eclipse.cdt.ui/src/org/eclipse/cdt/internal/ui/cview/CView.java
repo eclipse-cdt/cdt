@@ -228,7 +228,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	* Handles double clicks in viewer.
 	* Opens editor if file double-clicked.
 	*/
-	private void handleDoubleClick(DoubleClickEvent event) {
+	protected void handleDoubleClick(DoubleClickEvent event) {
 		IStructuredSelection s = (IStructuredSelection)event.getSelection();
 		//Object element = s.getFirstElement();
 		IAdaptable element = (IAdaptable)s.getFirstElement();

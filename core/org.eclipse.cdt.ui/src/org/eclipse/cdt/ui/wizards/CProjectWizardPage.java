@@ -49,7 +49,7 @@ import org.eclipse.ui.internal.IHelpContextIds;
  */
 public class CProjectWizardPage extends WizardPage {
 
-	private boolean useDefaults = true;
+	protected boolean useDefaults = true;
 
 	// initial value stores
 	private String initialProjectFieldValue;
@@ -57,9 +57,9 @@ public class CProjectWizardPage extends WizardPage {
 	
 	// widgets
 	private Text projectNameField;
-	private Text locationPathField;
-	private Label locationLabel;
-	private Button browseButton;
+	protected Text locationPathField;
+	protected Label locationLabel;
+	protected Button browseButton;
 
 	private Listener nameModifyListener = new Listener() {
 		public void handleEvent(Event e) {
@@ -250,7 +250,7 @@ public class CProjectWizardPage extends WizardPage {
 	/**
 	 *	Open an appropriate directory browser
 	 */
-	private void handleLocationBrowseButtonPressed() {
+	protected void handleLocationBrowseButtonPressed() {
 		DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
 		dialog.setMessage(CPlugin.getResourceString("CProjectWizardPage.directoryLabel")); //$NON-NLS-1$
 	
@@ -280,7 +280,7 @@ public class CProjectWizardPage extends WizardPage {
 	/**
 	 * Set the location to the default location if we are set to useDefaults.
 	 */
-	private void setLocationForSelection() {
+	protected void setLocationForSelection() {
 		if (useDefaults) {
 			IPath defaultPath = Platform.getLocation().append(projectNameField.getText());
 			locationPathField.setText(defaultPath.toOSString());
@@ -294,7 +294,7 @@ public class CProjectWizardPage extends WizardPage {
 	 * @return <code>true</code> if all controls are valid, and
 	 *   <code>false</code> if at least one is invalid
 	 */
-	private boolean validatePage() {
+	protected boolean validatePage() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 		String projectFieldContents = projectNameField.getText();

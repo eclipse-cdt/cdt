@@ -311,7 +311,7 @@ import org.eclipse.jface.util.Assert;
 		return new RootNode(length);
 	}
 	
-	private TextEditNode(TextEdit edit) {
+	protected TextEditNode(TextEdit edit) {
 		fEdit= edit;
 	}
 	

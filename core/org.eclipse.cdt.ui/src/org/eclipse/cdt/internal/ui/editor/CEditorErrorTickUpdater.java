@@ -24,7 +24,7 @@ import org.eclipse.ui.IEditorInput;
  */
 public class CEditorErrorTickUpdater implements IAnnotationModelListener {
 
-	private CEditor fCEditor;
+	protected CEditor fCEditor;
 	private IAnnotationModel fAnnotationModel;
 	private CElementLabelProvider fLabelProvider;
 

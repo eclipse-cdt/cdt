@@ -45,7 +45,7 @@ public class MakeView extends ViewPart {
 	* Handles double clicks in viewer.
 	* Opens editor if file double-clicked.
 	*/
-	private void handleDoubleClick(DoubleClickEvent event) {
+	protected void handleDoubleClick(DoubleClickEvent event) {
 		IStructuredSelection s = (IStructuredSelection)event.getSelection();
 		Object element = s.getFirstElement();
 		//System.out.println ("Double click on " + element);
@@ -62,7 +62,7 @@ public class MakeView extends ViewPart {
 	/**
 	* called to create the context menu of the outline
 	*/
-	private void contextMenuAboutToShow(IMenuManager menu) {
+	protected void contextMenuAboutToShow(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 		Object element = selection.getFirstElement ();
 		if (element instanceof MakeTarget) {

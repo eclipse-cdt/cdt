@@ -25,7 +25,7 @@ public class MessageLine extends CLabel {
 
 	private Color fDefaultColor;
 	private RGB fErrorRGB;
-	private Color fErrorColor;
+	protected Color fErrorColor;
 
 	private static RGB fgErrorRGB= new RGB(200, 0, 0);
 

@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.TreeViewer;
  */
 public class ProblemTreeViewer extends TreeViewer implements IProblemChangedListener {
 
-	private ProblemItemMapper fProblemItemMapper;
+	protected ProblemItemMapper fProblemItemMapper;
 
 	/*
 	 * @see TreeViewer#TreeViewer(Composite)

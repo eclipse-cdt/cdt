@@ -94,8 +94,8 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	
 	private List fPainters= new ArrayList(2);
 	private PositionManager fManager;
-	private ISourceViewer fSourceViewer;
-	private boolean fTextChanged= false;
+	protected ISourceViewer fSourceViewer;
+	protected boolean fTextChanged= false;
 	private boolean fAutoRepeat= false;
 	
 	
@@ -163,7 +163,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		}
 	}
 	
-	private void paint(int reason) {
+	protected void paint(int reason) {
 		for (Iterator e = fPainters.iterator(); e.hasNext();)
 			((IPainter) e.next()).paint(reason);
 	}

@@ -44,7 +44,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	/*
 	 * @private
 	 */
-	private void access$superOpen() {
+	protected void access$superOpen() {
 		super.open();
 	}
 	/*

@@ -5,25 +5,9 @@ package org.eclipse.cdt.internal.ui.preferences;
  * All Rights Reserved.
  */
  
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
-
-import org.eclipse.jface.dialogs.ErrorDialog;
-
-import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.help.DialogPageContextComputer;
-import org.eclipse.ui.help.WorkbenchHelp;
-
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusTool;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
@@ -32,10 +16,20 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.cdt.internal.ui.wizards.swt.MGridLayout;
-
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.internal.ui.CPlugin;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 public class CLaunchingPropertyPage extends PropertyPage {
 	
 	private static final String PAGE_NAME= "CLaunchingPropertyPage";
@@ -47,7 +41,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 	private static final String ERROR_WORKINGDIR_NOTEXISTS= PAGE_NAME + ".error.WorkingDirNotExists";
 	
 	private StringDialogField fArgumentField;
-	private StringButtonDialogField fWorkingDirField;
+	protected StringButtonDialogField fWorkingDirField;
 	
 	private StatusInfo fWorkingDirStatus;
 	
@@ -174,7 +168,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 		}
 	}
 
-	private void doFieldChanged(DialogField field) {
+	protected void doFieldChanged(DialogField field) {
 		if (field == fWorkingDirField) {
 			updateWorkingDirStatus();
 		}
@@ -198,7 +192,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 		return (IFile)getElement();
 	}
 			
-	private String chooseFolder(String initPath) {
+	protected String chooseFolder(String initPath) {
 		DirectoryDialog dialog= new DirectoryDialog(fShell, 0);
 		dialog.setFilterPath(initPath);
 		String res= dialog.open();

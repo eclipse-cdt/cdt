@@ -5,6 +5,11 @@ package org.eclipse.cdt.internal.ui.preferences;
  * All Rights Reserved.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.cdt.internal.corext.template.Template;
@@ -18,27 +23,7 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.template.TemplateContentProvider;
 import org.eclipse.cdt.internal.ui.text.template.TemplateLabelProvider;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -59,10 +44,21 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 
@@ -331,7 +327,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		return data;
 	}
 	
-	private void selectionChanged1() {		
+	protected void selectionChanged1() {		
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
 
 		if (selection.size() == 1) {
@@ -355,7 +351,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		fDisableAllButton.setEnabled(itemCount > 0);
 	}
 	
-	private void add() {		
+	protected void add() {		
 		
 		Template template= new Template();
 
@@ -380,7 +376,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		}
 	}
 
-	private void edit() {
+	protected void edit() {
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
 
 		Object[] objects= selection.toArray();		
@@ -416,7 +412,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		}
 	}
 		
-	private void import_() {
+	protected void import_() {
 		FileDialog dialog= new FileDialog(getShell());
 		dialog.setText(TemplateMessages.getString("TemplatePreferencePage.import.title")); //$NON-NLS-1$
 		dialog.setFilterExtensions(new String[] {TemplateMessages.getString("TemplatePreferencePage.import.extension")}); //$NON-NLS-1$
@@ -437,11 +433,11 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		}
 	}
 	
-	private void exportAll() {
+	protected void exportAll() {
 		export(fTemplates);	
 	}
 
-	private void export() {
+	protected void export() {
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
 		Object[] templates= selection.toArray();
 		
@@ -480,7 +476,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 			TemplateMessages.getFormattedString("TemplatePreferencePage.export.exists.message", file.getAbsolutePath()));
 	}
 	
-	private void remove() {
+	protected void remove() {
 		IStructuredSelection selection= (IStructuredSelection) fTableViewer.getSelection();
 
 		Iterator elements= selection.iterator();
@@ -492,7 +488,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		fTableViewer.refresh();
 	}
 	
-	private void enableAll(boolean enable) {
+	protected void enableAll(boolean enable) {
 		Template[] templates= fTemplates.getTemplates();
 		for (int i= 0; i != templates.length; i++)
 			templates[i].setEnabled(enable);		

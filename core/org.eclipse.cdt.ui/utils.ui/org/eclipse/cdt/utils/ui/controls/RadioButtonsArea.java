@@ -48,7 +48,7 @@ public class RadioButtonsArea extends Composite {
 	 * The radio buttons, or <code>null</code> if none
 	 * (before creation and after disposal).
 	 */
-	private Button[] radioButtons;
+	protected Button[] radioButtons;
 
 
 	public RadioButtonsArea(Composite parent, String labelText, int numColumns, String[][] labelAndValues) {
@@ -82,7 +82,7 @@ public class RadioButtonsArea extends Composite {
 		return true;
 	}
 
-	private void fireSelectionEvent(SelectionEvent event) {
+	protected void fireSelectionEvent(SelectionEvent event) {
 		for(Iterator i = externalListeners.iterator(); i.hasNext(); ) {
 			SelectionListener s = (SelectionListener)i.next();
 			s.widgetSelected(event);

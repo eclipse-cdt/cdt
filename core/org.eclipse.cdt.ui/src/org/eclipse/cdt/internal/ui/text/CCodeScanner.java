@@ -6,22 +6,16 @@ package org.eclipse.cdt.internal.ui.text;
  */
 
 
-import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import java.util.Map;
+import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.PatternRule;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 

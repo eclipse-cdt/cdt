@@ -191,19 +191,19 @@ public class EditTemplateDialog extends StatusDialog {
 
 	private final Template fTemplate;
 	
-	private Text fNameText;
+	protected Text fNameText;
 	private Text fDescriptionText;
-	private Combo fContextCombo;
-	private SourceViewer fPatternEditor;	
+	protected Combo fContextCombo;
+	protected SourceViewer fPatternEditor;	
 	private Button fInsertVariableButton;
 
-	private TemplateTranslator fTranslator= new TemplateTranslator();	
-	private boolean fSuppressError= true; // #4354	
+	protected TemplateTranslator fTranslator= new TemplateTranslator();	
+	protected boolean fSuppressError= true; // #4354	
 	private Map fGlobalActions= new HashMap(10);
 	private List fSelectionActions = new ArrayList(3);	
 	private Vector fContextTypes= new Vector();
 	
-	private final TemplateVariableProcessor fProcessor= new TemplateVariableProcessor();
+	protected final TemplateVariableProcessor fProcessor= new TemplateVariableProcessor();
 		
 	public EditTemplateDialog(Shell parent, Template template, boolean edit) {
 		super(parent);
@@ -382,7 +382,7 @@ public class EditTemplateDialog extends StatusDialog {
 		return viewer;
 	}
 
-	private void handleKeyPressed(KeyEvent event) {
+	protected void handleKeyPressed(KeyEvent event) {
 		if (event.stateMask != SWT.CTRL)
 			return;
 			
@@ -398,7 +398,7 @@ public class EditTemplateDialog extends StatusDialog {
 		}
 	}
 
-	private void handleVerifyKeyPressed(VerifyEvent event) {
+	protected void handleVerifyKeyPressed(VerifyEvent event) {
 		if (!event.doit)
 			return;
 
@@ -462,7 +462,7 @@ public class EditTemplateDialog extends StatusDialog {
 		text.setMenu(menu);
 	}
 
-	private void fillContextMenu(IMenuManager menu) {
+	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(new GroupMarker(ITextEditorActionConstants.GROUP_UNDO));
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, (IAction) fGlobalActions.get(ITextEditorActionConstants.UNDO));
 		
@@ -513,7 +513,7 @@ public class EditTemplateDialog extends StatusDialog {
 		super.okPressed();
 	}
 	
-	private void updateButtons() {		
+	protected void updateButtons() {		
 		boolean valid= fNameText.getText().trim().length() != 0;
 
 		StatusInfo status= new StatusInfo();

@@ -137,7 +137,7 @@ public class CPlugin extends AbstractUIPlugin {
 	private ProblemMarkerManager fProblemMarkerManager;
 
 	static class ConsoleDocument extends ConsoleOutputStream implements IConsole {
-		private IDocument fDocument;
+		protected IDocument fDocument;
     	
 		public ConsoleDocument() {
 			fDocument = new Document();

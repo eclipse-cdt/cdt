@@ -27,7 +27,7 @@ public class CColorManager implements IColorManager, IColorManagerExtension {
 	public CColorManager() {
 	}
 	
-	private void dispose(Display display) {		
+	protected void dispose(Display display) {		
 		Map colorTable= (Map) fDisplayTable.get(display);
 		if (colorTable != null) {
 			Iterator e= colorTable.values().iterator();

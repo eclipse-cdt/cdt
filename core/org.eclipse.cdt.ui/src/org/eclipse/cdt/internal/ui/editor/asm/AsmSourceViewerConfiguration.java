@@ -5,7 +5,6 @@ package org.eclipse.cdt.internal.ui.editor.asm;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;

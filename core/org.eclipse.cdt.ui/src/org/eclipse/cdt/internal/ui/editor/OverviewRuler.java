@@ -152,9 +152,9 @@ public class OverviewRuler {
 
 	
 	/** The model of the overview ruler */
-	private IAnnotationModel fModel;
+	protected IAnnotationModel fModel;
 	/** The view to which this ruler is connected */
-	private ITextViewer fTextViewer;
+	protected ITextViewer fTextViewer;
 	/** The ruler's canvas */
 	private Canvas fCanvas;
 	/** The drawable for double buffering */
@@ -186,7 +186,7 @@ public class OverviewRuler {
 		return fWidth;
 	}
 	
-	private int getType(Annotation annotation) {
+	protected int getType(Annotation annotation) {
 		if (annotation instanceof IProblemAnnotation) {
 			IProblemAnnotation pa= (IProblemAnnotation) annotation;
 			//if (!pa.isRelevant())
@@ -259,7 +259,7 @@ public class OverviewRuler {
 	/**
 	 * Disposes the ruler's resources.
 	 */
-	private void handleDispose() {
+	protected void handleDispose() {
 		
 		if (fTextViewer != null) {
 			fTextViewer.removeTextListener(fInternalListener);
@@ -283,7 +283,7 @@ public class OverviewRuler {
 	/**
 	 * Double buffer drawing.
 	 */
-	private void doubleBufferPaint(GC dest) {
+	protected void doubleBufferPaint(GC dest) {
 		
 		Point size= fCanvas.getSize();
 		
@@ -408,7 +408,7 @@ public class OverviewRuler {
 	/**
 	 * Redraws the overview ruler.
 	 */
-	private void redraw() {
+	protected void redraw() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			GC gc= new GC(fCanvas);
 			doubleBufferPaint(gc);
@@ -472,7 +472,7 @@ public class OverviewRuler {
 		return found;
 	}
 	
-	private void handleMouseDown(MouseEvent event) {
+	protected void handleMouseDown(MouseEvent event) {
 		if (fTextViewer != null) {
 			int[] lines= toLineNumbers(event.y);
 			Position p= getProblemPositionAt(lines);
@@ -484,7 +484,7 @@ public class OverviewRuler {
 		}
 	}
 	
-	private void handleMouseMove(MouseEvent event) {
+	protected void handleMouseMove(MouseEvent event) {
 		if (fTextViewer != null) {
 			int[] lines= toLineNumbers(event.y);
 			Position p= getProblemPositionAt(lines);

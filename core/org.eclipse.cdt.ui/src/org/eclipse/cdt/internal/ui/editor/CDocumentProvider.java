@@ -5,11 +5,9 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
-
-
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.GapTextStore;
@@ -18,13 +16,9 @@ import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.IAnnotationModel;
-
-
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
-
-import org.eclipse.cdt.internal.ui.CPlugin;
 
 public class CDocumentProvider extends FileDocumentProvider {
 

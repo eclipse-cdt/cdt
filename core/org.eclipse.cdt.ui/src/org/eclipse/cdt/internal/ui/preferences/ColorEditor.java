@@ -30,10 +30,10 @@ import org.eclipse.jface.resource.JFaceResources;
 public class ColorEditor {
 	
 	private Point fExtent;
-	private Image fImage;
-	private RGB fColorValue;
-	private Color fColor;
-	private Button fButton;
+	protected Image fImage;
+	protected RGB fColorValue;
+	protected Color fColor;
+	protected Button fButton;
 	
 	public ColorEditor(Composite parent) {
 		

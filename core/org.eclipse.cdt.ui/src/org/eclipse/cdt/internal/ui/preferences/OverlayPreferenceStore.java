@@ -17,7 +17,7 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 	
 	
 	public static final class TypeDescriptor {
-		private TypeDescriptor() {
+		protected TypeDescriptor() {
 		}
 	};
 	
@@ -52,8 +52,8 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 	};
 	
 	
-	private IPreferenceStore fParent;
-	private IPreferenceStore fStore;
+	protected IPreferenceStore fParent;
+	protected IPreferenceStore fStore;
 	private OverlayKey[] fOverlayKeys;
 	
 	private PropertyListener fPropertyListener;
@@ -65,7 +65,7 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 		fStore= new PreferenceStore();
 	}
 	
-	private OverlayKey findOverlayKey(String key) {
+	protected OverlayKey findOverlayKey(String key) {
 		for (int i= 0; i < fOverlayKeys.length; i++) {
 			if (fOverlayKeys[i].fKey.equals(key))
 				return fOverlayKeys[i];
@@ -77,7 +77,7 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 		return (findOverlayKey(key) != null);
 	}
 	
-	private void propagateProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target) {
+	protected void propagateProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target) {
 		
 		if (orgin.isDefault(key.fKey)) {
 			if (!target.isDefault(key.fKey))

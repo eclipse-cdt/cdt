@@ -73,7 +73,7 @@ public abstract class ConvertProjectWizardPage
     protected Button deselectAllButton;
     
     // We only need to calculate this once per instantiation of this wizard
-    private Object[] listItems = null;
+    protected Object[] listItems = null;
 
     /**
      * Constructor for ConvertProjectWizardPage.
@@ -258,7 +258,7 @@ public abstract class ConvertProjectWizardPage
       * dependent on what is selected
       */
       
-     private void updateSelectionButtons() { 
+     protected void updateSelectionButtons() { 
         
         // update select and deselect buttons as required 
         Object[] checkedObjects = tableViewer.getCheckedElements(); 

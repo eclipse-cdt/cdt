@@ -132,7 +132,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		
 	};
 	
-	private final String[][] fListModel= new String[][] {
+	protected final String[][] fListModel= new String[][] {
 		{ "Multi-line comment", ICColorConstants.C_MULTI_LINE_COMMENT },
 		{ "Single-line comment", ICColorConstants.C_SINGLE_LINE_COMMENT },
 		{ "Keywords", ICColorConstants.C_KEYWORD },
@@ -141,7 +141,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		{ "Others", ICColorConstants.C_DEFAULT }
 	};
 	
-	private final String[][] fAppearanceColorListModel= new String[][] {
+	protected final String[][] fAppearanceColorListModel= new String[][] {
 		{"Line number color", CEditor.LINE_NUMBER_COLOR}, //$NON-NLS-1$
 		{"Matching bracket color", CEditor.MATCHING_BRACKETS_COLOR}, //$NON-NLS-1$
 		{"Current line highlight color", CEditor.CURRENT_LINE_COLOR}, //$NON-NLS-1$
@@ -150,10 +150,10 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		{"Linked position color", CEditor.LINKED_POSITION_COLOR}, //$NON-NLS-1$
 	};
 	
-	private OverlayPreferenceStore fOverlayStore;
+	protected OverlayPreferenceStore fOverlayStore;
 	private CTextTools fCTextTools;
 	
-	private Map fColorButtons= new HashMap();
+	protected Map fColorButtons= new HashMap();
 	private SelectionListener fColorButtonListener= new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
@@ -163,7 +163,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 	};
 	
-	private Map fCheckBoxes= new HashMap();
+	protected Map fCheckBoxes= new HashMap();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
@@ -173,7 +173,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 	};
 	
-	private Map fTextFields= new HashMap();
+	protected Map fTextFields= new HashMap();
 	private ModifyListener fTextFieldListener= new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			Text text= (Text) e.widget;
@@ -182,18 +182,18 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	};
 	
 	private WorkbenchChainedTextFontFieldEditor fFontEditor;
-	private List fList;
-	private ColorEditor fForegroundColorEditor;
-	private ColorEditor fBackgroundColorEditor;
+	protected List fList;
+	protected ColorEditor fForegroundColorEditor;
+	protected ColorEditor fBackgroundColorEditor;
 	private Button fBackgroundDefaultRadioButton;
-	private Button fBackgroundCustomRadioButton;
-	private Button fBackgroundColorButton;
-	private Button fBoldCheckBox;
-	private SourceViewer fPreviewViewer;
+	protected Button fBackgroundCustomRadioButton;
+	protected Button fBackgroundColorButton;
+	protected Button fBoldCheckBox;
+	protected SourceViewer fPreviewViewer;
 	
-	private List fAppearanceColorList;
+	protected List fAppearanceColorList;
 	private ColorEditor fSyntaxForegroundColorEditor;
-	private ColorEditor fAppearanceForegroundColorEditor;
+	protected ColorEditor fAppearanceForegroundColorEditor;
 	
 	public CEditorPreferencePage() {
 		setDescription(CPlugin.getResourceString("CEditorPreferencePage.description"));
@@ -296,7 +296,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		//WorkbenchHelp.setHelp(getControl(), ICHelpContextIds.JAVA_EDITOR_PREFERENCE_PAGE);
 	}
 
-	private void handleListSelection() {	
+	protected void handleListSelection() {	
 		int i= fList.getSelectionIndex();
 		String key= fListModel[i][1];
 		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
@@ -495,7 +495,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	 * 
 	 * @param viewer the viewer to be initialized
 	 */
-	private void initializeViewerColors(ISourceViewer viewer) {
+	protected void initializeViewerColors(ISourceViewer viewer) {
 		
 		IPreferenceStore store= fOverlayStore;
 		if (store != null) {
@@ -538,7 +538,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	}	
 	
 	// sets enabled flag for a control and all its sub-tree
-	private static void setEnabled(Control control, boolean enable) {
+	protected static void setEnabled(Control control, boolean enable) {
 		control.setEnabled(enable);
 		if (control instanceof Composite) {
 			Composite composite= (Composite) control;
@@ -560,15 +560,15 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	private Control fBracketHighlightColor;
 	private Button fLineHighlightButton;
 	private Control fLineHighlightColor;
-	private Button fPrintMarginButton;
-	private Control fPrintMarginColor;
-	private Control fPrintMarginColumn;
+	protected Button fPrintMarginButton;
+	protected Control fPrintMarginColor;
+	protected Control fPrintMarginColumn;
 	private Button fProblemIndicationButton;
 	private Control fProblemIndicationColor;
 	private Control fFindScopeColor;
 	private Control fLinkedPositionColor;
 	
-	private void handleAppearanceColorListSelection() {	
+	protected void handleAppearanceColorListSelection() {	
 		int i= fAppearanceColorList.getSelectionIndex();
 		String key= fAppearanceColorListModel[i][1];
 		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
@@ -995,7 +995,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		return buffer.toString();
 	}
 	
-	private void numberFieldChanged(Text textControl) {
+	protected void numberFieldChanged(Text textControl) {
 		String number= textControl.getText();
 		IStatus status= validatePositiveNumber(number);
 		if (!status.matches(IStatus.ERROR))

@@ -5,11 +5,11 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
   
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -21,16 +21,10 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.texteditor.BasicTextEditorActionContributor;
-import org.eclipse.ui.texteditor.IStatusField;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
-import org.eclipse.ui.texteditor.StatusLineContributionItem;
 import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
-
-import org.eclipse.cdt.internal.ui.CPlugin;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 
 
 public class CEditorActionContributor extends BasicTextEditorActionContributor {

@@ -34,7 +34,8 @@ public class StringDialogField extends DialogField {
 		
 		return new Control[] { label, text };
 	}
-	private void doModifyText(ModifyEvent e) {
+
+	protected void doModifyText(ModifyEvent e) {
 		if (isOkToUse(fTextControl)) {
 			fText= fTextControl.getText();
 		}

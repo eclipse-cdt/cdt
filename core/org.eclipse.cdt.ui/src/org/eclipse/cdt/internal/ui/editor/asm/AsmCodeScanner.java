@@ -6,20 +6,18 @@ package org.eclipse.cdt.internal.ui.editor.asm;
  */
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;

@@ -96,7 +96,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		}
 	}
 	
-	private ISelection updateSelection(ISelection sel) {
+	protected ISelection updateSelection(ISelection sel) {
 		ArrayList newSelection= new ArrayList();
 		if (sel instanceof IStructuredSelection) {
 			Iterator iter= ((IStructuredSelection)sel).iterator();
@@ -114,7 +114,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	/**
 	 * called to create the context menu of the outline
 	 */
-	private void contextMenuAboutToShow(IMenuManager menu) {		
+	protected void contextMenuAboutToShow(IMenuManager menu) {		
 		if (OpenIncludeAction.canActionBeAdded(getSelection())) {
 			menu.add(fOpenIncludeAction);
 		}

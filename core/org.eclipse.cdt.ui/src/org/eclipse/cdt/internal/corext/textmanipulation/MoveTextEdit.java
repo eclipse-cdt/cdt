@@ -114,7 +114,7 @@ public final class MoveTextEdit extends TextEdit {
 	
 	//---- Helper method ---------------------------------------------------------------------------------
 	
-	private void internalPerform(TextBuffer buffer) throws CoreException {
+	protected void internalPerform(TextBuffer buffer) throws CoreException {
 		Assert.isTrue(fPerformCounter < 2);
 		if (++fPerformCounter == 2) {
 			TextRange source= getSourceRange();

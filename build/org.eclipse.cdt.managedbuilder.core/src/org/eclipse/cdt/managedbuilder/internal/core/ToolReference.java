@@ -461,7 +461,8 @@ public class ToolReference implements IToolReference {
 					String[] list = option.getStringListValue();
 					for (int j = 0; j < list.length; j++) {
 						String temp = list[j];
-						buf.append(cmd + temp + WHITE_SPACE);
+						if (cmd != null) buf.append(cmd);
+						buf.append(temp + WHITE_SPACE);
 					}
 					break;
 					

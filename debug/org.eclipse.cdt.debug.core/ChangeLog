@@ -1,3 +1,8 @@
+2003-09-09 Mikhail Khodjaiants
+	Added the 'getSharedLibraryPaths' and 'setSharedLibraryPaths' methods 
+	to the 'ICDISharedLibraryManager' interface.
+	* ICDISharedLibraryManager.java
+
 2003-08-29 Mikhail Khodjaiants
 	Implementation of deferred breakpoints.
 	* CDebugTarget.java

@@ -82,7 +82,7 @@ public class IncludeRefContainer implements IAdaptable, IWorkbenchAdapter{
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
 	public String getLabel(Object o) {
-		return "Includes"; //$NON-NLS-1$
+		return CViewMessages.getString("IncludeRefContainer.Includes");  //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

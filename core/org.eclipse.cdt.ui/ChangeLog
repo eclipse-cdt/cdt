@@ -1,3 +1,9 @@
+2004-06-07 Tanya Wolff
+	Fix for Bug 66053 - externalized string in cview
+
+	* src/org/eclipse/cdt/internal/ui/cview/IncludeRefContainer.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewMessages.properties
+
 2004-06-08 Hoda Amer
 	Fix for bug 51482, 61039 
 	* src/org/eclipse/cdt/internal/ui/preferences/TemplatePreferencePage.java

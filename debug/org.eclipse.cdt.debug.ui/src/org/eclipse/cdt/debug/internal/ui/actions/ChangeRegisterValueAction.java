@@ -206,7 +206,9 @@ public class ChangeRegisterValueAction extends SelectionProviderAction
 		}
 		catch( DebugException de )
 		{
+			cleanup();
 			CDebugUIPlugin.errorDialog( "Setting the register value failed.", de );
+			return;
 		}
 		cleanup();
 	}

@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.ui.editor;
  */
 
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -44,7 +45,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 						int start = 0, end, pos;
 						pos = 0;
 						while(start != -1) {
-							start = text.indexOf(var, pos);
+							start = getStart(text, var, pos);
 							if(start >= 0) {
 								if(Character.isJavaIdentifierStart(text.charAt(start + var.length())) == false) {
 									break;
@@ -71,6 +72,69 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 			} catch (BadLocationException e) {
 			}
 		}
+	}
+	/**
+	 * Ensures that we return a value that is not encased in a String
+	 */
+	private int getStart(String text, String var, int pos){
+		
+		// determine if there are more than one instance of var in this text
+		int count = 0;
+		int currentPosition = pos;
+		while(currentPosition != -1){			
+			currentPosition = text.indexOf(var, currentPosition);
+			if (currentPosition != -1){
+				// found one!
+				count++;
+				currentPosition += var.length();
+			}
+		}
+		// only one occurrence return its index
+		if (count == 1){
+			return text.indexOf(var, pos);
+		}
+		
+		// otherwise we need to find the first one not inside of quotes
+		int indexOfStringStart = pos;
+		
+		final String QUOTE = "\"";
+		indexOfStringStart =  text.indexOf(QUOTE, indexOfStringStart);
+		int newPosition = -1;
+		currentPosition = pos; // reinitialize currentPosition
+		
+		if (indexOfStringStart == -1) {
+			// No Strings ... return the first occurrence of var
+			newPosition = text.indexOf(var, currentPosition);	
+		} else {
+			// we have Strings
+			StringTokenizer tokens = new StringTokenizer(text.substring(currentPosition), QUOTE, true);
+			String nextToken = null;
+			int quoteCount = 0;
+			int potentialStart = -1;
+			boolean found = false;
+			
+			while (tokens.hasMoreTokens() && !found){
+				nextToken = tokens.nextToken();	
+				if(QUOTE.equals(nextToken)){
+					quoteCount++;					
+				} else {
+					if ((quoteCount % 2) == 0){
+						// no open quotes .. we can check this token
+						potentialStart = nextToken.indexOf(var, 0);
+						if (potentialStart != -1){
+							found = true;
+							currentPosition += potentialStart;
+							newPosition = currentPosition;
+							break;
+						}
+					}// else ... we have an open quote and must
+					 // throw away this non-quote token		
+				}		
+				currentPosition += nextToken.length();
+			}
+		}
+		
+		return newPosition;		
 	}
 
 	/**

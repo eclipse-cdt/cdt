@@ -1,3 +1,9 @@
+2002-12-12 Judy N Green
+	src/org/eclipse/cdt/internal/ui/editor/CMarkerAnnotation.java
+	Added a method that will attempt to highlight the correct instance of 
+	a variable. It will skip instances of the string if they are encased in
+	String quotes and return the first instance that is not encased in quotes
+
 2002-12-11 Judy N Green
 	* src/org/eclipse/cdt/internal/ui/text/BufferedDocumentScanner.java
 	Fix for the backwards display of typed text when the CDT ran within

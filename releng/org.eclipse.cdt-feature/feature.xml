@@ -43,4 +43,32 @@
          version="1.0.0">
    </plugin>
 
+   <plugin
+         id="org.eclipse.cdt.debug.core"
+         download-size="0"
+         install-size="0"
+         version="1.0.0">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.debug.mi.core"
+         download-size="0"
+         install-size="0"
+         version="1.0.0">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.debug.ui"
+         download-size="0"
+         install-size="0"
+         version="1.0.0">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.launch"
+         download-size="0"
+         install-size="0"
+         version="1.0.0">
+   </plugin>
+
 </feature>

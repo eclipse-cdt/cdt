@@ -6,6 +6,8 @@
 
 package org.eclipse.cdt.debug.core;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 /**
  * 
  * Represents the current state of debug element.
@@ -27,5 +29,17 @@ public interface IState
 	public static final int TERMINATED = 10;
 	public static final int CORE_DUMP_FILE = 11;
 	
-	int getCurrentState();
+	/**
+	 * Returns the identifier of the current state.
+	 * 
+	 * @return the identifier of the current state
+	 */
+	int getCurrentStateId();
+	
+	/**
+	 * Returns the info object associated with the current state.
+	 * 
+	 * @return the info object associated with the current state
+	 */
+	Object getCurrentStateInfo();
 }

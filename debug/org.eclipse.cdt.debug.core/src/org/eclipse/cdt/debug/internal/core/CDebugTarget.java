@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.core;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
@@ -46,6 +47,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStep;
 import org.eclipse.debug.core.model.IThread;
 
 /**
@@ -58,7 +60,6 @@ public class CDebugTarget extends CDebugElement
 						  implements IDebugTarget,
 						  			 ICEventListener,
 						  			 IRestart,
-						  			 IInstructionStep,
 						  			 IFormattedMemoryRetrieval,
 						  			 IState,
 						  			 ILaunchListener
@@ -76,7 +77,7 @@ public class CDebugTarget extends CDebugElement
 	private IProcess fProcess;
 
 	/**
-	 * Underlying CDI target.
+	 * The underlying CDI target.
 	 */
 	private ICTarget fCDITarget;
 
@@ -116,6 +117,11 @@ public class CDebugTarget extends CDebugElement
 	private ILaunch fLaunch;	
 
 	/**
+	 * The debug configuration of this session
+	 */
+	private CDebugConfiguration fConfig;	
+
+	/**
 	 * Whether terminate is supported.
 	 */
 	private boolean fSupportsTerminate;
@@ -124,6 +130,16 @@ public class CDebugTarget extends CDebugElement
 	 * Whether disconnect is supported.
 	 */
 	private boolean fSupportsDisconnect;
+
+	/**
+	 * The current state identifier.
+	 */
+	private int fCurrentStateId = IState.UNKNOWN;
+	
+	/**
+	 * The current state info.
+	 */
+	private Object fCurrentStateInfo = null;
 
 	/**
 	 * Constructor for CDebugTarget.
@@ -143,6 +159,9 @@ public class CDebugTarget extends CDebugElement
 		setName( name );
 		setProcess( process );
 		setCDITarget( cdiTarget );
+		fConfig = new CDebugConfiguration( cdiTarget.getSession() );
+		fSupportsTerminate = allowsTerminate & fConfig.supportsTerminate();
+		fSupportsDisconnect = allowsDisconnect & fConfig.supportsDisconnect();
 		setThreadList( new ArrayList( 5 ) );
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
@@ -299,7 +318,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean canTerminate()
 	{
-		return false;
+		return supportsTerminate() && isAvailable();
 	}
 
 	/* (non-Javadoc)
@@ -370,6 +389,23 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void resume() throws DebugException
 	{
+		if ( !isSuspended() ) 
+		{
+			return;
+		}
+		try 
+		{
+			setSuspended( false );
+			getCDITarget().resume();
+			resumeThreads();
+			fireResumeEvent( DebugEvent.CLIENT_REQUEST );
+		} 
+		catch( CDIException e ) 
+		{
+			setSuspended( true );
+			fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
+			targetRequestFailed( MessageFormat.format( "{0} occurred resuming target.", new String[] { e.toString() } ), e );
+		}	
 	}
 
 	/* (non-Javadoc)
@@ -404,6 +440,13 @@ public class CDebugTarget extends CDebugElement
 	{
 	}
 
+	/**
+	 * Notifies threads that they have been resumed
+	 */
+	protected void resumeThreads()
+	{
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(IBreakpoint)
 	 */
@@ -425,12 +468,32 @@ public class CDebugTarget extends CDebugElement
 	{
 	}
 
+	/**
+	 * Returns whether this debug target supports disconnecting.
+	 * 
+	 * @return whether this debug target supports disconnecting
+	 */
+	protected boolean supportsDisconnect()
+	{
+		return fConfig.supportsDisconnect();
+	}
+	
+	/**
+	 * Returns whether this debug target supports termination.
+	 * 
+	 * @return whether this debug target supports termination
+	 */
+	protected boolean supportsTerminate()
+	{
+		return fConfig.supportsTerminate();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDisconnect#canDisconnect()
 	 */
 	public boolean canDisconnect()
 	{
-		return false;
+		return supportsDisconnect() && !isDisconnected();
 	}
 
 	/* (non-Javadoc)
@@ -438,6 +501,26 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void disconnect() throws DebugException
 	{
+		if ( isDisconnected() )
+		{
+			// already done
+			return;
+		}
+
+		if ( !canDisconnect() )
+		{
+			notSupported( "Session does not support \'disconnect\'" );
+		}
+
+		try
+		{
+			getCDITarget().disconnect();
+			disconnected();
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( MessageFormat.format( "{0} ocurred disconnecting from target.", new String[] { e.toString()} ), e );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -530,6 +613,8 @@ public class CDebugTarget extends CDebugElement
 			return this;
 		if ( adapter.equals( ICTarget.class ) )
 			return fCDITarget;
+		if ( adapter.equals( IState.class ) )
+			return this;
 		return super.getAdapter( adapter );
 	}
 	
@@ -623,7 +708,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean canRestart()
 	{
-		return false;
+		return fConfig.supportsRestart() && isSuspended() && isAvailable();
 	}
 
 	/* (non-Javadoc)
@@ -631,35 +716,27 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void restart() throws DebugException
 	{
+		if ( !canRestart() )
+		{
+			return;
+		}
+
+		try
+		{
+			getCDITarget().restart();
+			restarted();
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( MessageFormat.format( "{0} ocurred restarting the target.", new String[] { e.toString()} ), e );
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IInstructionStep#canStepIntoInstruction()
+	/**
+	 * Updates the state of this target for restarting.
+	 * 
 	 */
-	public boolean canStepIntoInstruction()
-	{
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IInstructionStep#canStepOverInstruction()
-	 */
-	public boolean canStepOverInstruction()
-	{
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IInstructionStep#stepIntoInstruction()
-	 */
-	public void stepIntoInstruction() throws DebugException
-	{
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IInstructionStep#stepOverInstruction()
-	 */
-	public void stepOverInstruction() throws DebugException
+	protected void restarted()
 	{
 	}
 
@@ -704,7 +781,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean isAvailable()
 	{
-		return false;
+		return !( isTerminated() || isTerminating() || isDisconnected() );
 	}
 
 	/**
@@ -754,8 +831,8 @@ public class CDebugTarget extends CDebugElement
 	}
 	
 	/**
-	 * Updates the state of this target for disconnection
-	 * from the VM.
+	 * Updates the state of this target for disconnection.
+	 * 
 	 */
 	protected void disconnected()
 	{
@@ -788,6 +865,13 @@ public class CDebugTarget extends CDebugElement
 	 */
 	protected void removeAllThreads()
 	{
+		Iterator itr = getThreadList().iterator();
+		setThreadList( new ArrayList( 0 ) );
+		while( itr.hasNext() )
+		{
+			CThread thread = (CThread)itr.next();
+			thread.terminated();
+		}
 	}
 
 	/**
@@ -863,7 +947,9 @@ public class CDebugTarget extends CDebugElement
 	private void handleSuspendedEvent( ICSuspendedEvent event )
 	{
 		setSuspended( true );
+		setCurrentStateId( IState.SUSPENDED );
 		ICSessionObject reason = event.getReason();
+		setCurrentStateInfo( reason );
 		if ( reason instanceof ICEndSteppingRange )
 		{
 			handleEndSteppingRange( (ICEndSteppingRange)reason );
@@ -881,6 +967,8 @@ public class CDebugTarget extends CDebugElement
 	private void handleResumedEvent( ICResumedEvent event )
 	{
 		setSuspended( false );
+		setCurrentStateId( IState.RUNNING );
+		setCurrentStateInfo( null );
 		fireResumeEvent( DebugEvent.UNSPECIFIED );
 	}
 	
@@ -901,16 +989,22 @@ public class CDebugTarget extends CDebugElement
 
 	private void handleExitedEvent( ICExitedEvent event )
 	{
+		setCurrentStateId( IState.EXITED );
+		setCurrentStateInfo( event.getExitInfo() );
 		fireChangeEvent( DebugEvent.STATE );
 	}
 
 	private void handleTerminatedEvent( ICTerminatedEvent event )
 	{
+		setCurrentStateId( IState.TERMINATED );
+		setCurrentStateInfo( null );
 		terminated();
 	}
 
 	private void handleDisconnectedEvent( ICDisconnectedEvent event )
 	{
+		setCurrentStateId( IState.DISCONNECTED );
+		setCurrentStateInfo( null );
 		disconnected();
 	}
 
@@ -928,6 +1022,8 @@ public class CDebugTarget extends CDebugElement
 
 	private void handleSteppingEvent( ICSteppingEvent event )
 	{
+		setCurrentStateId( IState.STEPPING );
+		setCurrentStateInfo( null );
 	}
 
 	private void handleThreadCreatedEvent( ICCreatedEvent event )
@@ -976,10 +1072,38 @@ public class CDebugTarget extends CDebugElement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IState#getCurrentState()
+	 * @see org.eclipse.cdt.debug.core.IState#getCurrentStateId()
 	 */
-	public int getCurrentState()
+	public int getCurrentStateId()
 	{
-		return IState.UNKNOWN;
+		return fCurrentStateId;
+	}
+
+	/**
+	 * Sets the current state identifier.
+	 * 
+	 * @param id the identifier
+	 */
+	private void setCurrentStateId( int id )
+	{
+		fCurrentStateId = id;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IState#getCurrentStateInfo()
+	 */
+	public Object getCurrentStateInfo()
+	{
+		return fCurrentStateInfo;
+	}
+
+	/**
+	 * Sets the info object of the current state.
+	 * 
+	 * @param id the info object
+	 */
+	private void setCurrentStateInfo( Object info )
+	{
+		fCurrentStateInfo = info;
 	}
 }

@@ -197,7 +197,7 @@
       </perspective>
       <perspective
             name="%CHierarchy.perspective.name"
-            icon="icons/full/eview16/chierch_persp.gif"
+            icon="icons/full/eview16/chierch_pers.gif"
             class="org.eclipse.cdt.internal.ui.browser.typehierarchy.CHierarchyPerspectiveFactory"
             id="org.eclipse.cdt.ui.CHierarchyPerspective">
       </perspective>

@@ -1,3 +1,8 @@
+2003-09-17 Hoda Amer
+	Added more success test cases to CompleteParseASTExpressionTest
+	and more failure test cases to FailedCompleteParseASTExpressionTest
+	in testing PM_DOTSTAR, PM_ARROWSTAR, CONDITIONALEXPRESSION
+
 2003-09-16 Andrew Niefer
 	- modified resources/search/classDecl.cpp & include.h to include some operators
 	- added testOperators_bug43063_bug42979() to MethodDeclarationPatternTests

@@ -1,6 +1,10 @@
 2003-09-16 Andrew Niefer
 	- added setThrowExceptionOnBadCharacterRead to IScanner to help with wildcard bug43063
 
+2003-09-17 Hoda Amer
+	In completeParseASTFactory.getExpressionResultType(): Added the support 
+	for expression types: PM_DOTSTAR, PM_ARROWSTAR, CONDITIONALEXPRESSION
+		
 2003-09-16 John Camelon
 	Implement CompleteParse IASTFunction::previouslyDeclared(). 
 

@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.model.tests.BinaryTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
 import org.eclipse.cdt.core.model.tests.WorkingCopyTests;
 import org.eclipse.cdt.core.parser.failedTests.ASTFailedTests;
+import org.eclipse.cdt.core.parser.failedTests.FailedCompleteParseASTExpressionTest;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
 import org.eclipse.cdt.core.search.tests.SearchTestSuite;
@@ -94,7 +95,7 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTestSuite(ASTFailedTests.class);
 		suite.addTestSuite(STLFailedTests.class);
 		suite.addTestSuite(CModelElementsFailedTests.class);
-//		suite.addTestSuite(FailedCompleteParseASTExpressionTest.class);
+		suite.addTestSuite(FailedCompleteParseASTExpressionTest.class);
 
 		// Last test to trigger report generation
 		suite.addTest(suite.new GenerateReport("generateReport"));

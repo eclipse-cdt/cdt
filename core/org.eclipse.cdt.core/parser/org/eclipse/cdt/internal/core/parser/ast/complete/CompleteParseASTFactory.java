@@ -789,8 +789,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			 symbol = lookupQualifiedName( startingScope, typeId, references, false );
         }
 		// "a.m" or "a->m : lookup m in the scope of the declaration of a        
-		if ((kind == IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION) 
-		|| (kind == IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION)){
+		if((kind == IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION) 
+		|| (kind == IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION)
+		|| (kind == IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS)
+		|| (kind == IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP)		
+		|| (kind == IASTExpression.Kind.PM_DOTSTAR)
+		|| (kind == IASTExpression.Kind.PM_ARROWSTAR)
+		){
 			TypeInfo lhsInfo = (TypeInfo) ((ASTExpression)lhs).getResultType().iterator().next();
 			ISymbol containingScope = (ISymbol) lhsInfo.getTypeSymbol().getTypeSymbol();
 			if(containingScope != null){
@@ -822,11 +827,49 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         							
         return expression;
     }
+    /*
+     * Conditional Expression conversion
+     */
+     protected TypeInfo conditionalExpressionConversions(TypeInfo second, TypeInfo third){
+     	TypeInfo info = new TypeInfo();
+     	if(second.equals(third)){
+     		info = second;
+     		return info;
+     	}
+     	if((second.getType() == TypeInfo.t_void) && (third.getType() != TypeInfo.t_void)){
+     		info = third;
+     		return info;	
+     	}
+		if((second.getType() != TypeInfo.t_void) && (third.getType() == TypeInfo.t_void)){
+			info = second;
+			return info;	
+		}
+		if((second.getType() == TypeInfo.t_void) && (third.getType() == TypeInfo.t_void)){
+			info = second;
+			return info;	
+		}
+		try{
+	     	info = ParserSymbolTable.getConditionalOperand(second, third);
+	     	return info;
+		} catch(ParserSymbolTableException e){
+			// empty info
+			return info;
+		}
+     }
 	/*
 	 * Apply the usual arithmetic conversions to find out the result of an expression 
 	 * that has a lhs and a rhs as indicated in the specs (section 5.Expressions, page 64)
 	 */
 	protected TypeInfo usualArithmeticConversions(TypeInfo lhs, TypeInfo rhs){
+		
+		// if you have a variable of type basic type, then we need to go to the basic type first
+		while( (lhs.getType() == TypeInfo.t_type) && (lhs.getTypeSymbol() != null)){
+			lhs = lhs.getTypeSymbol().getTypeInfo();  
+		}
+		while( (rhs.getType() == TypeInfo.t_type) && (rhs.getTypeSymbol() != null)){
+			rhs = rhs.getTypeSymbol().getTypeInfo();  
+		}
+
 		TypeInfo info = new TypeInfo();
 		if( 
 		   ( lhs.checkBit(TypeInfo.isLong)  && lhs.getType() == TypeInfo.t_double)
@@ -894,7 +937,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		// types that resolve to void
 		if ((expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_EMPTY)
-		|| (expression.getExpressionKind() == IASTExpression.Kind.THROWEXPRESSION)) {
+		|| (expression.getExpressionKind() == IASTExpression.Kind.THROWEXPRESSION) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_DOT_DESTRUCTOR) 
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_ARROW_DESTRUCTOR)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.DELETE_CASTEXPRESSION)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.DELETE_VECTORCASTEXPRESSION)
+		){
 			info.setType(TypeInfo.t_void);
 			result.add(info);
 			return result;
@@ -1000,8 +1048,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_TYPEID_TYPEID)
 		){
 			info.setType(TypeInfo.t_type);
-			if(symbol != null)
-				info.setTypeSymbol(symbol);			
+			info.setTypeSymbol(symbol);			
 			result.add(info);
 			return result;
 		}
@@ -1027,15 +1074,44 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			result.add(info);
 			return result;
 		}
+		// subscript
+//		if (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_SUBSCRIPT){
+//			List lhsResult = ((ASTExpression)expression.getLHSExpression()).getResultType();
+//			if( lhsResult.iterator().hasNext())
+//				info = (TypeInfo)lhsResult.iterator().next();
+//			if ((info != null) && (info.getTypeSymbol() != null)){
+//				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_pointer));				
+//			}
+//			result.add(info);
+//			return result;
+//		}
 		// the dot and the arrow resolves to the type of the member
 		if ((expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION)
 		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP)
 		){
 			if(symbol != null){
 				info = new TypeInfo(symbol.getTypeInfo());			
 				result.add(info);
 				return result;
 			}
+		}
+		// the dot* and the arrow* are the same as dot/arrow + unary star
+		if ((expression.getExpressionKind() == IASTExpression.Kind.PM_DOTSTAR)
+		|| (expression.getExpressionKind() == IASTExpression.Kind.PM_ARROWSTAR)
+		){
+			List rhsResult = ((ASTExpression)expression.getRHSExpression()).getResultType();
+			if( rhsResult.iterator().hasNext())
+				info = (TypeInfo)rhsResult.iterator().next();
+			if (info != null){
+				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_pointer));				
+			}
+			if(symbol != null){
+				info.setTypeSymbol(symbol);
+			}						
+			result.add(info);
+			return result;
 		}
 		// this
 		if (expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_THIS){
@@ -1044,6 +1120,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				info.setType(TypeInfo.t_type);
 				info.setTypeSymbol(symbol);	
 				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_reference));		
+				result.add(info);
+				return result;
+			}
+		}
+		// conditional
+		if (expression.getExpressionKind() == IASTExpression.Kind.CONDITIONALEXPRESSION){
+			ASTExpression right = (ASTExpression)expression.getRHSExpression();  
+			ASTExpression third = (ASTExpression)expression.getThirdExpression();
+			if((right != null ) && (third != null)){
+				TypeInfo rightType =(TypeInfo)right.getResultType().iterator().next();
+				TypeInfo thirdType =(TypeInfo)third.getResultType().iterator().next();
+				info = conditionalExpressionConversions(rightType, thirdType);   
 				result.add(info);
 				return result;
 			}
@@ -1073,13 +1161,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			ASTExpression right = (ASTExpression)expression.getRHSExpression();  
 			if((left != null ) && (right != null)){
 				TypeInfo leftType =(TypeInfo)left.getResultType().iterator().next();
-				while( (leftType.getType() == TypeInfo.t_type) && (leftType.getTypeSymbol() != null)){
-					leftType = leftType.getTypeSymbol().getTypeInfo();  
-				}
 				TypeInfo rightType =(TypeInfo)right.getResultType().iterator().next();
-				while( (rightType.getType() == TypeInfo.t_type) && (rightType.getTypeSymbol() != null)){
-					rightType = rightType.getTypeSymbol().getTypeInfo();  
-				}
 				info = usualArithmeticConversions(leftType, rightType);   
 				result.add(info);
 				return result;
@@ -1676,6 +1758,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				isDestructor = true;
 			}
 		}
+
 		symbol.setIsForwardDeclaration(!isFunctionDefinition);
 		boolean previouslyDeclared = false; 
 		

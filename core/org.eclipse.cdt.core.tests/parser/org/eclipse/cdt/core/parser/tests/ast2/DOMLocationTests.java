@@ -352,7 +352,7 @@ public class DOMLocationTests extends AST2BaseTest {
    		String code = "namespace A {\n extern \"C\" int g();\n }"; //$NON-NLS-1$
    	  	IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
    	  	ICPPASTLinkageSpecification spec = (ICPPASTLinkageSpecification)((ICPPASTNamespaceDefinition)tu.getDeclarations()[0]).getDeclarations()[0];
-   	  	assertSoleLocation( spec, code.indexOf( "extern \"C\""), "extern \"C\"".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+   	  	assertSoleLocation( spec, code.indexOf( "extern \"C\""), "extern \"C\" int g();".length() ); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 }

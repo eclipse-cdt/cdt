@@ -10,10 +10,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.newparser;
 
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Token {
 
 	public Token(int t, String i, ScannerContext context ) {

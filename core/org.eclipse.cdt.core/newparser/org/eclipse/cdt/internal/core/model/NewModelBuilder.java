@@ -10,10 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.internal.core.newparser.NullParserCallback;
 import org.eclipse.cdt.internal.core.newparser.Parser;
 import org.eclipse.cdt.internal.core.newparser.Token;
@@ -37,7 +34,7 @@ public class NewModelBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginClass(String, String)
 	 */
-	public void beginClass(String classKey, Token className) {
+	public void classBegin(String classKey, Token className) {
 		int kind;
 		if (classKey.equals("class"))
 			kind = ICElement.C_CLASS;
@@ -65,14 +62,14 @@ public class NewModelBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#endClass()
 	 */
-	public void endClass() {
+	public void classEnd() {
 		currentElement = (CElement)currentElement.getParent();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginDeclarator()
 	 */
-	public void beginDeclarator() {
+	public void declaratorBegin() {
 		if (!inArguments) {
 			declaratorId = null;
 			isFunction = false;
@@ -113,7 +110,7 @@ public class NewModelBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginArguments()
 	 */
-	public void beginArguments() {
+	public void argumentsBegin() {
 		isFunction = true;
 		inArguments = true;
 	}
@@ -121,7 +118,7 @@ public class NewModelBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endArguments()
 	 */
-	public void endArguments() {
+	public void argumentsEnd() {
 		inArguments = false;
 	}
 
@@ -130,7 +127,7 @@ public class NewModelBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#endDeclarator()
 	 */
-	public void endDeclarator() {
+	public void declaratorEnd() {
 		elem = null;
 		
 		if (isFunction) {
@@ -154,7 +151,7 @@ public class NewModelBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginFunctionBody()
 	 */
-	public void beginFunctionBody() {
+	public void functionBodyBegin() {
 		// Oops, the last function declaration was really supposed to be
 		// a function definition.
 		//((CElement)elem.getParent()).add
@@ -175,7 +172,7 @@ public class NewModelBuilder extends NullParserCallback {
 	 * @see 
 org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(Token)
 	 */
-	public void beginSimpleDeclaration(Token firstToken) {
+	public void simpleDeclarationBegin(Token firstToken) {
 		if (inclusionDepth == 0)
 			startPos = firstToken.getOffset();
 	}
@@ -183,7 +180,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginInclusion(String)
 	 */
-	public void beginInclusion(String includeFile) {
+	public void inclusionBegin(String includeFile) {
 		++inclusionDepth;
 		Include elem = new Include(translationUnit, includeFile);
 		translationUnit.addChild(elem);
@@ -192,7 +189,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endInclusion()
 	 */
-	public void endInclusion() {
+	public void inclusionEnd() {
 		--inclusionDepth;
 	}
 

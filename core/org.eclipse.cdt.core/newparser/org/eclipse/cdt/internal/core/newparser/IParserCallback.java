@@ -10,34 +10,32 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.newparser;
 
-import java.util.List;
-
 public interface IParserCallback {
 
-	public void beginTranslationUnit();
-	public void endTranslationUnit();
+	public void translationUnitBegin();
+	public void translationUnitEnd();
 	
-	public void beginInclusion(String includeFile);
-	public void endInclusion();
+	public void inclusionBegin(String includeFile);
+	public void inclusionEnd();
 	
 	public void macro(String macroName);
 	
-	public void beginSimpleDeclaration(Token firstToken);
-	public void endSimpleDeclaration(Token lastToken);
+	public void simpleDeclarationBegin(Token firstToken);
+	public void simpleDeclarationEnd(Token lastToken);
 	
 	public void declSpecifier(Token specifier);
 	
-	public void beginDeclarator();
+	public void declaratorBegin();
 	public void declaratorId(Token id);
-	public void beginArguments();
-	public void endArguments();
-	public void endDeclarator();
+	public void argumentsBegin();
+	public void argumentsEnd();
+	public void declaratorEnd();
 	
-	public void beginFunctionBody();
-	public void endFunctionBody();
+	public void functionBodyBegin();
+	public void functionBodyEnd();
 	
-	public void beginClass(String classKey, Token name);
-	public void endClass();
+	public void classBegin(String classKey, Token name);
+	public void classEnd();
 	
 	public void expressionOperator(Token operator) throws Exception;
 	public void expressionTerminal(Token terminal) throws Exception;

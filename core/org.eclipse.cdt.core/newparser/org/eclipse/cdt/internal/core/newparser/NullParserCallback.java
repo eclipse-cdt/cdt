@@ -1,48 +1,46 @@
 package org.eclipse.cdt.internal.core.newparser;
 
-import java.util.List;
-
 public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginArguments()
 	 */
-	public void beginArguments() {
+	public void argumentsBegin() {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginClass(String, Token)
 	 */
-	public void beginClass(String classKey, Token name) {
+	public void classBegin(String classKey, Token name) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginDeclarator()
 	 */
-	public void beginDeclarator() {
+	public void declaratorBegin() {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginFunctionBody()
 	 */
-	public void beginFunctionBody() {
+	public void functionBodyBegin() {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginInclusion(String)
 	 */
-	public void beginInclusion(String includeFile) {
+	public void inclusionBegin(String includeFile) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(Token)
 	 */
-	public void beginSimpleDeclaration(Token firstToken) {
+	public void simpleDeclarationBegin(Token firstToken) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginTranslationUnit()
 	 */
-	public void beginTranslationUnit() {
+	public void translationUnitBegin() {
 	}
 
 	/**
@@ -60,43 +58,43 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endArguments()
 	 */
-	public void endArguments() {
+	public void argumentsEnd() {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endClass()
 	 */
-	public void endClass() {
+	public void classEnd() {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endDeclarator()
 	 */
-	public void endDeclarator() {
+	public void declaratorEnd() {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endFunctionBody()
 	 */
-	public void endFunctionBody() {
+	public void functionBodyEnd() {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endInclusion()
 	 */
-	public void endInclusion() {
+	public void inclusionEnd() {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endSimpleDeclaration(Token)
 	 */
-	public void endSimpleDeclaration(Token lastToken) {
+	public void simpleDeclarationEnd(Token lastToken) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endTranslationUnit()
 	 */
-	public void endTranslationUnit() {
+	public void translationUnitEnd() {
 	}
 
 	/**

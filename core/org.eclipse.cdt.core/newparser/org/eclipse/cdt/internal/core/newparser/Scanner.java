@@ -57,7 +57,7 @@ public class Scanner {
 	protected void updateContext(Reader reader, String filename)
 	{
 		if (callback != null)
-			callback.beginInclusion(filename);
+			callback.inclusionBegin(filename);
 			
 		contextStack.push(currentContext);
 		currentContext= new ScannerContext(reader, filename, NOCHAR);
@@ -66,7 +66,7 @@ public class Scanner {
 	protected boolean rollbackContext()
 	{
 		if (callback != null)
-			callback.endInclusion();
+			callback.inclusionEnd();
 			
 		try
 		{

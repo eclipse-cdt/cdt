@@ -28,7 +28,7 @@ public class DOMBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginTranslationUnit()
 	 */
-	public void beginTranslationUnit() {
+	public void translationUnitBegin() {
 		translationUnit = new TranslationUnit();
 		nodes.push(translationUnit);
 	}
@@ -36,7 +36,7 @@ public class DOMBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#endTranslationUnit()
 	 */
-	public void endTranslationUnit() {
+	public void translationUnitEnd() {
 		if (!nodes.empty())
 			nodes.pop();
 	}
@@ -85,7 +85,7 @@ public class DOMBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginDeclarator()
 	 */
-	public void beginDeclarator() {
+	public void declaratorBegin() {
 		if (!nodes.empty() && nodes.peek() instanceof SimpleDeclaration) {
 			Declarator declarator = new Declarator();
 			declarator.setParent((SimpleDeclaration)nodes.peek());
@@ -104,7 +104,7 @@ public class DOMBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#endDeclarator()
 	 */
-	public void endDeclarator() {
+	public void declaratorEnd() {
 		if (!nodes.empty() && nodes.peek() instanceof Declarator)
 			nodes.pop();
 	}
@@ -118,13 +118,13 @@ public class DOMBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginClass(String, List)
 	 */
-	public void beginClass(String classKey, List className) {
+	public void classBegin(String classKey, List className) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#endClass()
 	 */
-	public void endClass() {
+	public void classEnd() {
 	}
 
 	/**

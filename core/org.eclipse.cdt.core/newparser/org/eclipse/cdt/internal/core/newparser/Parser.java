@@ -28,8 +28,6 @@ package org.eclipse.cdt.internal.core.newparser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Parser {
 
@@ -86,7 +84,7 @@ public class Parser {
 	// translationUnit
 	// : ( definition )*
 	public void rTranslationUnit() throws Exception {
-		callback.beginTranslationUnit();
+		callback.translationUnitBegin();
 		while (LT(1) != Token.tEOF) {
 			try {
 				rDefinition();
@@ -95,7 +93,7 @@ public class Parser {
 				throw new ParserException(LA(1));
 			}
 		}
-		callback.endTranslationUnit();
+		callback.translationUnitEnd();
 		return;
 	}
 	
@@ -308,7 +306,7 @@ public class Parser {
 	// constDeclaration
 	// : cvQualify ("*")? identifier "=" expression ("," declarators) ";"
 	public void rDeclaration() throws Exception {
-		callback.beginSimpleDeclaration(LA(1));
+		callback.simpleDeclarationBegin(LA(1));
 		boolean memberSpec = optMemberSpec();
 		optStorageSpec();
 		if (!memberSpec)
@@ -323,7 +321,7 @@ public class Parser {
 			else
 				rOtherDeclaration();
 		}
-		callback.endSimpleDeclaration(LA(0));
+		callback.simpleDeclarationEnd(LA(0));
 	}
 	
 	public void rIntegralDeclaration() throws Exception {
@@ -352,7 +350,7 @@ public class Parser {
 	public void rConstDeclaration() throws Exception { throw backtrack; }
 	
 	public void rOtherDeclaration() throws Exception {
-		callback.beginDeclarator();
+		callback.declaratorBegin();
 		Token id = LA(1);
 		rName();
 		callback.declaratorId(id);
@@ -374,7 +372,7 @@ public class Parser {
 			rFunctionBody();
 		}
 		
-		callback.endDeclarator();
+		callback.declaratorEnd();
 	}
 	
 	public boolean isConstructorDecl() throws Exception {
@@ -532,14 +530,14 @@ public class Parser {
 	}
 	
 	public void rConstructorDecl() throws Exception {
-		callback.beginArguments();
+		callback.argumentsBegin();
 		consume(Token.tLPAREN);
 		
 		if (LT(1) != Token.tRPAREN)
 			rArgDeclList();
 		
 		consume(Token.tRPAREN);
-		callback.endArguments();
+		callback.argumentsEnd();
 		
 		optCvQualify();
 		optThrowDecl();
@@ -575,7 +573,7 @@ public class Parser {
 	public void rDeclaratorWithInit(boolean shouldBeDeclarator,
 									 boolean isStatement) throws Exception
 	{
-		callback.beginDeclarator();
+		callback.declaratorBegin();
 		if (LT(1) == Token.tCOLON) {
 			consume();
 			rExpression();
@@ -590,7 +588,7 @@ public class Parser {
 				rExpression();
 			}
 		}
-		callback.endDeclarator();
+		callback.declaratorEnd();
 	}
 	
 	public void rDeclarator(int kind,
@@ -618,14 +616,14 @@ public class Parser {
 		
 		for (;;) {
 			if (LT(1) == Token.tLPAREN) { // function
-				callback.beginArguments();
+				callback.argumentsBegin();
 				consume();
 				boolean args = false;
 				if (LT(1) != Token.tRPAREN)
 					args = rArgDeclListOrInit(isStatement);
 
 				consume(Token.tRPAREN);
-				callback.endArguments();
+				callback.argumentsEnd();
 				
 				optCvQualify();
 				optThrowDecl();
@@ -989,23 +987,23 @@ public class Parser {
 		if (LT(1) != Token.tLBRACE) {
 			Token nameToken = LA(1);
 			rName();
-			callback.beginClass(classKey, nameToken);
+			callback.classBegin(classKey, nameToken);
 			callback.declSpecifier(nameToken);
 			
 			if (LT(1) == Token.tCOLON)
 				rBaseSpecifiers();
 			else if (LT(1) != Token.tLBRACE) {
-				callback.endClass();
+				callback.classEnd();
 				return;
 			}
 		} else {
 			// anonymous class
-			callback.beginClass(classKey, null);
+			callback.classBegin(classKey, null);
 			callback.declSpecifier(null);
 		}
 		
 		rClassBody();
-		callback.endClass();
+		callback.classEnd();
 	}
 	
 	public void rBaseSpecifiers() throws Exception {
@@ -1629,9 +1627,9 @@ public class Parser {
 	}
 	
 	public void rFunctionBody() throws Exception {
-		callback.beginFunctionBody();
+		callback.functionBodyBegin();
 		rCompoundStatement();
-		callback.endFunctionBody();
+		callback.functionBodyEnd();
 	}
 	
 	public void rCompoundStatement() throws Exception {

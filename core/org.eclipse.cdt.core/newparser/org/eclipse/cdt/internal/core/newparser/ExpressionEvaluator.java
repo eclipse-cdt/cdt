@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.newparser;
 
-import java.util.List;
 import java.util.Stack;
 
 public class ExpressionEvaluator extends NullParserCallback {

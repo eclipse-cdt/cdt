@@ -30,13 +30,10 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -64,8 +61,8 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		super();
 	}
 
-	/**
-	 * @see AbstractTextEditor#init(IEditorSite, IEditorInput)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
 	 */
 	protected void initializeEditor() {
 
@@ -97,9 +94,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		}
 	}
 
-	/**
-	 * Method to install the editor actions.
-	 *
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
 	 */
 	protected void createActions() {

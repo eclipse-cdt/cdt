@@ -261,4 +261,9 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		}
 		return p;
 	}
+	
+	protected String getPluginID() {
+		return LaunchUIPlugin.getUniqueIdentifier();
+	}
+
 }

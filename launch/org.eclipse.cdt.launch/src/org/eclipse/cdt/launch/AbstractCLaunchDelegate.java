@@ -79,8 +79,11 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	 * @param code error code
 	 */
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), code, message, exception));
+		throw new CoreException(new Status(IStatus.ERROR, getPluginID(), code, message, exception));
 	}
+
+	abstract protected String getPluginID();
+
 
 	public ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
 		String projectName = getProjectName(configuration);

@@ -4,7 +4,7 @@
  * 
  */
 
-package org.eclipse.cdt.debug.internal.core;
+package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -16,8 +16,7 @@ import org.eclipse.cdt.debug.core.IInstructionStep;
 import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration;
+import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
@@ -29,6 +28,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 //import org.eclipse.cdt.debug.core.cdi.event.ICDISteppingEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -87,7 +87,7 @@ public class CThread extends CDebugElement
 	/**
 	 * The debug configuration of this session.
 	 */
-	private ICDIDebugConfiguration fConfig;	
+	private ICDIConfiguration fConfig;	
 
 	/**
 	 * Constructor for CThread.

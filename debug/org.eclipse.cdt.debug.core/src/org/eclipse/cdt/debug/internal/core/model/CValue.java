@@ -4,7 +4,7 @@
  * 
  */
 
-package org.eclipse.cdt.debug.internal.core;
+package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;

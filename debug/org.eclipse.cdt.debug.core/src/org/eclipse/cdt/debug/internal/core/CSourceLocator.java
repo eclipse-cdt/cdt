@@ -9,6 +9,7 @@ package org.eclipse.cdt.debug.internal.core;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICSourceLocator;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
+import org.eclipse.cdt.debug.internal.core.model.*;
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;

@@ -4,7 +4,7 @@
  * 
  */
 
-package org.eclipse.cdt.debug.internal.core;
+package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;

@@ -127,7 +127,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		try {
 			varMgr.update();
 		} catch (CDIException e) {
-			System.out.println(e);
+			//System.out.println(e);
 		}
 	}
 

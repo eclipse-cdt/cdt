@@ -40,8 +40,7 @@ public class ParserFactory {
 	{
 		if( mode == ParserMode.QUICK_PARSE )
 			return new QuickParseASTFactory(extensionFactory.createASTExtension( mode ));
-		else
-			return new CompleteParseASTFactory( language, mode, extensionFactory.createASTExtension( mode )); 
+		return new CompleteParseASTFactory( language, mode, extensionFactory.createASTExtension( mode )); 
 	}
 	
 	

@@ -86,8 +86,8 @@ public class ASTNewExpression extends ASTExpression {
 	}
 	
 	public ASTExpression findOwnerExpressionForIDExpression(ITokenDuple duple) {
-	    ASTTypeId typeId = (ASTTypeId) getTypeId();
-	    ITokenDuple typeDuple = typeId.getTokenDuple();
+	    ASTTypeId t = (ASTTypeId) getTypeId();
+	    ITokenDuple typeDuple = t.getTokenDuple();
 	    
 	    if( typeDuple.equals( duple ) )
 			return this;
@@ -97,8 +97,8 @@ public class ASTNewExpression extends ASTExpression {
 		
 		//else, check the parameters
 		ASTExpression ownerExpression = null;
-		ASTNewDescriptor newDescriptor = (ASTNewDescriptor)getNewExpressionDescriptor();
-		List newInitializerExpressions = newDescriptor.getNewInitializerExpressionsList();
+		ASTNewDescriptor nd = (ASTNewDescriptor)getNewExpressionDescriptor();
+		List newInitializerExpressions = nd.getNewInitializerExpressionsList();
 		int size = newInitializerExpressions.size();
 		for( int i = 0; i < size; i++ )
 		{

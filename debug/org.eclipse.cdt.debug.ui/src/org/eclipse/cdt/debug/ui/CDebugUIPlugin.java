@@ -221,7 +221,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 		log( status );
 		Shell shell = getActiveWorkbenchShell();
 		if ( shell != null ) {
-			ErrorDialog.openError( shell, CDebugUIPlugin.getResourceString( "ui.CDebugUIPlugin.Error" ), message, status ); //$NON-NLS-1$
+			ErrorDialog.openError( shell, UIMessages.getString( "CDebugUIPlugin.0" ), message, status ); //$NON-NLS-1$
 		}
 	}
 
@@ -230,7 +230,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 		Shell shell = getActiveWorkbenchShell();
 		if ( shell != null ) {
 			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, t.getMessage(), null ); //$NON-NLS-1$	
-			ErrorDialog.openError( shell, CDebugUIPlugin.getResourceString( "ui.CDebugUIPlugin.Error" ), message, status ); //$NON-NLS-1$
+			ErrorDialog.openError( shell, UIMessages.getString( "CDebugUIPlugin.0" ), message, status ); //$NON-NLS-1$
 		}
 	}
 

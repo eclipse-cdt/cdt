@@ -1,13 +1,17 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
 import java.util.HashMap;
 import java.util.Iterator;
-
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
@@ -15,33 +19,28 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * 
  * A registry that maps <code>ImageDescriptors</code> to <code>Image</code>.
- * 
- * @since Aug 30, 2002
  */
-public class CDebugImageDescriptorRegistry
-{
-	private HashMap fRegistry = new HashMap(10);
+public class CDebugImageDescriptorRegistry {
+
+	private HashMap fRegistry = new HashMap( 10 );
+
 	private Display fDisplay;
 
 	/**
-	 * Creates a new image descriptor registry for the current or default display,
-	 * respectively.
+	 * Creates a new image descriptor registry for the current or default display, respectively.
 	 */
-	public CDebugImageDescriptorRegistry()
-	{
+	public CDebugImageDescriptorRegistry() {
 		this( CDebugUIPlugin.getStandardDisplay() );
 	}
 
 	/**
-	 * Creates a new image descriptor registry for the given display. All images
-	 * managed by this registry will be disposed when the display gets disposed.
+	 * Creates a new image descriptor registry for the given display. All images managed by this registry will be disposed when the display gets disposed.
 	 * 
-	 * @param diaplay the display the images managed by this registry are allocated for 
+	 * @param diaplay
+	 *            the display the images managed by this registry are allocated for
 	 */
-	public CDebugImageDescriptorRegistry( Display display )
-	{
+	public CDebugImageDescriptorRegistry( Display display ) {
 		fDisplay = display;
 		Assert.isNotNull( fDisplay );
 		hookDisplay();
@@ -50,20 +49,17 @@ public class CDebugImageDescriptorRegistry
 	/**
 	 * Returns the image associated with the given image descriptor.
 	 * 
-	 * @param descriptor the image descriptor for which the registry manages an image
-	 * @return the image associated with the image descriptor or <code>null</code>
-	 *  if the image descriptor can't create the requested image.
+	 * @param descriptor
+	 *            the image descriptor for which the registry manages an image
+	 * @return the image associated with the image descriptor or <code>null</code> if the image descriptor can't create the requested image.
 	 */
-	public Image get( ImageDescriptor descriptor )
-	{
+	public Image get( ImageDescriptor descriptor ) {
 		if ( descriptor == null )
 			descriptor = ImageDescriptor.getMissingImageDescriptor();
-
 		Image result = (Image)fRegistry.get( descriptor );
 		if ( result != null )
 			return result;
-
-		Assert.isTrue( fDisplay == CDebugUIPlugin.getStandardDisplay(), CDebugUIPlugin.getResourceString("internal.ui.CDebugImageDescriptorRegistry.Allocating_image_for_wrong_display") ); //$NON-NLS-1$
+		Assert.isTrue( fDisplay == CDebugUIPlugin.getStandardDisplay(), CDebugUIMessages.getString( "CDebugImageDescriptorRegistry.0" ) ); //$NON-NLS-1$
 		result = descriptor.createImage();
 		if ( result != null )
 			fRegistry.put( descriptor, result );
@@ -73,22 +69,21 @@ public class CDebugImageDescriptorRegistry
 	/**
 	 * Disposes all images managed by this registry.
 	 */
-	public void dispose()
-	{
-		for ( Iterator iter = fRegistry.values().iterator(); iter.hasNext(); )
-		{
+	public void dispose() {
+		for( Iterator iter = fRegistry.values().iterator(); iter.hasNext(); ) {
 			Image image = (Image)iter.next();
 			image.dispose();
 		}
 		fRegistry.clear();
 	}
 
-	private void hookDisplay()
-	{
-		fDisplay.asyncExec(new Runnable() {
+	private void hookDisplay() {
+		fDisplay.asyncExec( new Runnable() {
+
 			public void run() {
 				getDisplay().disposeExec( new Runnable() {
-					public void run()	{
+
+					public void run() {
 						dispose();
 					}
 				} );

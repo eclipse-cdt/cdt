@@ -8,19 +8,19 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  ***********************************************************************/
-package org.eclipse.cdt.debug.internal.ui.wizards;
+package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import java.util.MissingResourceException;
 //import java.util.ResourceBundle;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
-public class WizardMessages {
+public class MemoryViewMessages {
 
-//	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.ui.wizards.WizardMessages";//$NON-NLS-1$
+//	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewMessages";//$NON-NLS-1$
 
 //	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle( BUNDLE_NAME );
 
-	private WizardMessages() {
+	private MemoryViewMessages() {
 	}
 
 	public static String getString( String key ) {

@@ -49,8 +49,6 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Displays shared libraries.
- * 
- * @since: Jan 21, 2003
  */
 public class SharedLibrariesView extends AbstractDebugEventHandlerView
 								 implements ISelectionListener, 

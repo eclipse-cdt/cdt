@@ -24,7 +24,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * The wizard to add a file system directory based source location to the source locator.
@@ -89,7 +88,7 @@ public class AddDirectorySourceLocationWizard extends Wizard implements INewSour
 			setErrorMessage( null );
 			String dirText = fAttachBlock.getLocationPath();
 			if ( dirText.length() == 0 ) {
-				setErrorMessage( CDebugUIPlugin.getResourceString( "internal.ui.wizards.AddDirectorySourceLocationWizard.ErrorDirectoryEmpty" ) ); //$NON-NLS-1$
+				setErrorMessage( WizardMessages.getString( "AddDirectorySourceLocationWizard.6" ) ); //$NON-NLS-1$
 				complete = false;
 			}
 			else {

@@ -1,3 +1,6 @@
+2004-06-21 Mikhail Khodjaiants
+	String externalization.
+
 2004-06-16 Mikhail Khodjaiants
 	Deleted the "C/C++ Debugger Appearance" theme.
 	Moved the diassembly color preferences to the "C/C++ Debug" preference page.

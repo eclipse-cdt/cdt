@@ -13,5 +13,5 @@ package org.eclipse.cdt.debug.core.cdi.model;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIRegister extends ICDIVariable {
+public interface ICDIRegister extends ICDIVariable, ICDIRegisterObject {
 }

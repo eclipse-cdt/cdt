@@ -85,8 +85,8 @@ public class BaseScannerTest extends TestCase {
 	{
 		try {
 			IToken t= scanner.nextToken();
-			assertTrue(t.getType() == IToken.tIDENTIFIER);
-			assertTrue(t.getImage().equals(expectedImage));
+			assertEquals( t.getType(), IToken.tIDENTIFIER );
+			assertEquals(t.getImage(), expectedImage );
 		} catch (EndOfFileException e) {
 			assertTrue(false);
 		} 

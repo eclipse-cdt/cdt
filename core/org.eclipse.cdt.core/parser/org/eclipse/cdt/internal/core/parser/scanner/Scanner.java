@@ -994,8 +994,12 @@ public class Scanner implements IScanner {
 				
 		
 			} else if (
-				((c >= 'a') && (c <= 'z'))
-					|| ((c >= 'A') && (c <= 'Z')) || (c == '_')) {
+					// JOHNC - Accept non-ASCII Input
+//				((c >= 'a') && (c <= 'z'))
+//					|| ((c >= 'A') && (c <= 'Z')) || (c == '_')) {
+					Character.isLetter((char)c) || ( c == '_') 
+			)
+			{
                         
                 int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
 						
@@ -1005,10 +1009,13 @@ public class Scanner implements IScanner {
 
 				c = getChar();				
 				
-				while (((c >= 'a') && (c <= 'z'))
-					|| ((c >= 'A') && (c <= 'Z'))
-					|| ((c >= '0') && (c <= '9'))
-					|| (c == '_')) {
+				while (
+						Character.isUnicodeIdentifierPart( (char)c)
+//					((c >= 'a') && (c <= 'z'))
+//					|| ((c >= 'A') && (c <= 'Z'))
+//					|| ((c >= '0') && (c <= '9'))
+//					|| (c == '_')
+					) {
 					buff.append((char) c);
 					c = getChar();
 				}
@@ -2003,7 +2010,6 @@ public class Scanner implements IScanner {
                 if (tokenImage.length() > 0) throw endOfMacroToken;                
                 c = getChar();
                 continue;
-                
             } else if (c == '"') {
        
                 if (tokenImage.length() > 0) throw endOfMacroToken;

@@ -1,3 +1,6 @@
+2004-02-25 John Camelon
+	Updated Scanner to allow for invalid identifier names despite C++'s best efforts at maintaining its honour.  
+
 2004-02-24 John Camelon
 	Refactoring Scanner.handleInclusion to be more modular.
 

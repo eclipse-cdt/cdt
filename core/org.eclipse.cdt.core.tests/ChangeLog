@@ -1,3 +1,6 @@
+2004-02-25 John Camelon
+	Added ScannerTestCase::testGerman().  
+
 2004-02-25 Alain Magloire
 	Added the PathEntry in the AllCoreTests suite
 

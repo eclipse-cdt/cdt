@@ -1555,4 +1555,13 @@ public class ScannerTestCase extends BaseScannerTest
     	scanner.nextToken(); 
     	assertEquals( callback.problems.size(), 1 );
     }
+    
+    public void testGerman() throws ScannerException
+	{
+    	initializeScanner("\"Liﬂ‰\" 'ﬂ' /* Liﬂ‰ */ Liﬂ‰ ");
+    	validateString("Liﬂ‰");
+    	validateChar( 'ﬂ' );
+    	validateIdentifier( "Liﬂ‰");
+    	validateEOF();
+    }
 }

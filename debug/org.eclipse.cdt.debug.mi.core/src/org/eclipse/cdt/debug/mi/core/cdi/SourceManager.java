@@ -232,6 +232,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 
 		// Parse the string.
 		GDBType gdbType = gdbTypeParser.parse(typename);
+		Type headType = null;
 		Type type = null;
 
 		for (Type aType = null; gdbType != null; type = aType) {
@@ -259,10 +260,14 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			if (type instanceof DerivedType) {
 				((DerivedType)type).setComponentType(aType);
 			}
+			// Save the head to returning it.
+			if (headType == null) {
+				headType = aType;
+			}
 		}
 
-		if (type != null) {
-			return type;
+		if (headType != null) {
+			return headType;
 		}
 		throw new CDIException("Unknown type");
 	}

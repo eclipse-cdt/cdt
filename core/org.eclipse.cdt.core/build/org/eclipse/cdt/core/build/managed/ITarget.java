@@ -10,7 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.build.managed;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 
 /**
  * This class represents targets for the managed build process.  A target
@@ -33,6 +33,13 @@ public interface ITarget {
 	public ITarget getParent();
 	
 	/**
+	 * Gets the resource that this target is applied to.
+	 * 
+	 * @return
+	 */
+	public IResource getOwner();
+	
+	/**
 	 * Returns the list of platform specific tools associated with this
 	 * platform.
 	 * 
@@ -44,6 +51,24 @@ public interface ITarget {
 	 * Returns all of the configurations defined by this target.
 	 * @return
 	 */
-	public IConfiguration[] getAvailableConfigurations(IProject project);
+	public IConfiguration[] getConfigurations();
+
+	/**
+	 * Creates a new configuration for the given resource.
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	public IConfiguration addConfiguration(IResource resource)
+		throws BuildException;
+	
+	/**
+	 * Creates a new configuration for the given resource based on the parent config
+	 * @param resource
+	 * @param parentConfig
+	 * @return
+	 */
+	public IConfiguration addConfiguration(IResource resource, IConfiguration parentConfig)
+		throws BuildException;
 
 }

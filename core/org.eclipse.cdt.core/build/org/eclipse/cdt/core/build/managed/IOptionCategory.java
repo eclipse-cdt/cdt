@@ -16,6 +16,13 @@ package org.eclipse.cdt.core.build.managed;
 public interface IOptionCategory {
 
 	/**
+	 * Returns the name of the option category.
+	 * 
+	 * @return
+	 */
+	public String getName();
+
+	/**
 	 * Returns the options that have been assigned to this category.
 	 * 
 	 * @return
@@ -29,4 +36,7 @@ public interface IOptionCategory {
 	 */
 	public IOptionCategory[] getChildCategories();
 	
+	public IOptionCategory getOwner();
+	
+	public ITool getTool();
 }

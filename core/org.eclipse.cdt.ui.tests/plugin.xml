@@ -91,6 +91,10 @@
                id="org.eclipse.cdt.ui.tests.tool.linux.ar">
          </tool>
       </target>
+      <target
+            name="Test Root"
+            id="test.root">
+      </target>
    </extension>
 
 </plugin>

@@ -15,7 +15,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.build.managed.ITarget;
-import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
 
 /**
@@ -44,13 +43,19 @@ public class AllBuildTests extends TestCase {
 	 * defined in this plugin
 	 */
 	public void testExtensions() {
+		boolean testRootFound = false;
+		
 		// Note secret null parameter which means just extensions
-		ITarget[] targets = ManagedBuildManager.getTargets(null);
+		ITarget[] targets = ManagedBuildManager.getDefinedTargets(null);
 
-		ITarget target = targets[0];
-		assertEquals(target.getName(), "Linux");
-		ITool[] tools = target.getTools();
-		ITool tool = tools[0];
-		assertEquals(tool.getName(), "Compiler");
+		for (int i = 0; i < targets.length; ++i) {
+			ITarget target = targets[i];
+			
+			if (target.getName().equals("Test Root")) {
+				testRootFound = true;
+			}
+		}
+		
+		assertTrue(testRootFound);
 	}
 }

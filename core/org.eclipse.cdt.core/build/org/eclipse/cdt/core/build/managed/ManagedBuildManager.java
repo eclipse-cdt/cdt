@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.build.managed.Configuration;
 import org.eclipse.cdt.internal.core.build.managed.Target;
 import org.eclipse.cdt.internal.core.build.managed.Tool;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -32,84 +31,113 @@ import org.eclipse.core.runtime.QualifiedName;
  */
 public class ManagedBuildManager {
 
-	private static final QualifiedName configProperty
-		= new QualifiedName(CCorePlugin.PLUGIN_ID, "config");
-		
+	private static final QualifiedName ownedTargetsProperty
+		= new QualifiedName(CCorePlugin.PLUGIN_ID, "ownedTargets");
+	private static final QualifiedName definedTargetsProperty
+		= new QualifiedName(CCorePlugin.PLUGIN_ID, "definedTargets"); 
+
+	private static final ITarget[] emptyTargets = new ITarget[0];
+	
 	/**
-	 * Returns the list of targets that are available to be used in
-	 * conjunction with the given project.  Generally this will include
-	 * targets defined by extensions as well as targets defined by
-	 * the project and all projects this project reference.
+	 * Returns the list of targets that are defined by this project,
+	 * projects referenced by this project, and by the extensions. 
 	 * 
 	 * @param project
 	 * @return
 	 */
-	public static ITarget[] getTargets(IProject project) {
+	public static ITarget[] getDefinedTargets(IProject project) {
 		// Make sure the extensions are loaded
 		loadExtensions();
 
 		// Get the targets for this project and all referenced projects
-		
+		List definedTargets = null;
+
+		if (project != null) {
+			try {
+				definedTargets = (List)project.getSessionProperty(definedTargetsProperty);
+			} catch (CoreException e) {
+			}
+		}
+
 		// Create the array and copy the elements over
-		ITarget[] targets = new ITarget[extensionTargets.size()];
+		int size = extensionTargets.size()
+			+ (definedTargets != null ? definedTargets.size() : 0);
+
+		ITarget[] targets = new ITarget[size];
 		
+		int n = 0;
 		for (int i = 0; i < extensionTargets.size(); ++i)
-			targets[i] = (ITarget)extensionTargets.get(i);
-			
+			targets[n++] = (ITarget)extensionTargets.get(i);
+		
+		if (definedTargets != null)
+			for (int i = 0; i < definedTargets.size(); ++i)
+				targets[n++] = (ITarget)definedTargets.get(i);
+				
 		return targets;
 	}
 
 	/**
-	 * Returns the list of configurations associated with the given project.
+	 * Returns the targets owned by this project.  If none are owned,
+	 * an empty array is returned.
 	 * 
 	 * @param project
 	 * @return
 	 */
-	public static IConfiguration[] getConfigurations(IProject project) {
-		return getResourceConfigs(project);
-	}
-
-	/**
-	 * Returns the list of configurations associated with a given file.
-	 * 
-	 * @param file
-	 * @return
-	 */
-	public static IConfiguration[] getConfigurations(IFile file) {
-		// TODO not ready for prime time...
-		return getResourceConfigs(file);
-	}
-
-	/**
-	 * Adds a configuration containing the tools defined by the target to
-	 * the given project.
-	 * 
-	 * @param target
-	 * @param project
-	 * @return
-	 */
-	public static IConfiguration addConfiguration(IProject project, ITarget target) {
-		Configuration config = new Configuration(project, target);
-		return null;
-	}
-
-	/**
-	 * Adds a configuration inheriting from the given configuration.
-	 * 
-	 * @param origConfig
-	 * @param resource
-	 * @return
-	 */
-	public static IConfiguration addConfiguration(IProject project, IConfiguration parentConfig) {
-		if (parentConfig.getProject() != null)
-			// Can only inherit from target configs
-			return null;
+	public static ITarget[] getTargets(IResource resource) {
+		List targets = getOwnedTargetsProperty(resource);
 		
-		Configuration config = new Configuration(project, parentConfig);
-		addResourceConfig(project, config);
-		return config;
+		if (targets != null) {
+			return (ITarget[])targets.toArray(new ITarget[targets.size()]);
+		} else {
+			return emptyTargets;
+		}
 	}
 
+	/**
+	 * Adds a new target to the resource based on the parentTarget.
+	 * 
+	 * @param resource
+	 * @param parentTarget
+	 * @return
+	 * @throws BuildException
+	 */
+	public static ITarget addTarget(IResource resource, ITarget parentTarget)
+		throws BuildException
+	{
+		IResource owner = parentTarget.getOwner();
+		
+		if (owner != null && owner.equals(resource))
+			// Already added
+			return parentTarget; 
+			
+		if (resource instanceof IProject) {
+			// Owner must be null
+			if (owner != null)
+				throw new BuildException("addTarget: owner not null");
+		} else {
+			// Owner must be owned by the project containing this resource
+			if (owner == null)
+				throw new BuildException("addTarget: null owner");
+			if (!owner.equals(resource.getProject()))
+				throw new BuildException("addTarget: owner not project");
+		}
+		
+		// Passed validation
+		List targets = getOwnedTargetsProperty(resource);
+		if (targets == null) {
+			targets = new ArrayList();
+			try {
+				resource.setSessionProperty(ownedTargetsProperty, targets);
+			} catch (CoreException e) {
+				throw new BuildException("addTarget: could not add property");
+			}
+		}
+		
+		Target newTarget = new Target(resource, parentTarget);
+		targets.add(newTarget);
+		return newTarget;
+	}
+	
 	// Private stuff
 	
 	private static List extensionTargets;
@@ -129,59 +157,29 @@ public class ManagedBuildManager {
 			for (int j = 0; j < elements.length; ++j) {
 				IConfigurationElement element = elements[j];
 				if (element.getName().equals("target")) {
-					Target target = new Target(element.getAttribute("name"));
+					Target target = new Target(null);
+					target.setName(element.getAttribute("name"));
 					extensionTargets.add(target);
 					
-					List configs = null;
 					IConfigurationElement[] targetElements = element.getChildren();
 					for (int k = 0; k < targetElements.length; ++k) {
 						IConfigurationElement targetElement = targetElements[k];
 						if (targetElement.getName().equals("tool")) {
 							Tool tool = new Tool(targetElement.getAttribute("name"), target);
 						} else if (targetElement.getName().equals("configuration")) {
-							if (configs == null)
-								configs = new ArrayList();
-							configs.add(new Configuration(target));
+							target.addConfiguration(new Configuration(target));
 						}
-					}
-					
-					if (configs != null) {
-						IConfiguration[] configArray = new IConfiguration[configs.size()];
-						configArray = (IConfiguration[])configs.toArray(configArray);
-						target.setConfigurations(configArray);
 					}
 				}
 			}
 		}
 	}
 	
-	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
-	
-	private static IConfiguration[] getResourceConfigs(IResource resource) {
-		IConfiguration[] configs = null;
-		
+	private static List getOwnedTargetsProperty(IResource resource) {
 		try {
-			configs = (IConfiguration[])resource.getSessionProperty(configProperty);
+			return (List)resource.getSessionProperty(ownedTargetsProperty);
 		} catch (CoreException e) {
+			return null;
 		}
-		
-		return (configs != null) ? configs : emptyConfigs;
 	}
-
-	private static void addResourceConfig(IResource resource, IConfiguration config) {
-		IConfiguration[] configs = getResourceConfigs(resource);
-		
-		IConfiguration[] newConfigs = new IConfiguration[configs.length + 1];
-		for (int i = 0; i < configs.length; ++i)
-			newConfigs[i] = configs[i];
-		newConfigs[configs.length] = config;
-		
-		try {
-			resource.setSessionProperty(configProperty, newConfigs);
-		} catch (CoreException e) {
-		}
-
-		// TODO save the config info to the project build file
-	}
-
 }

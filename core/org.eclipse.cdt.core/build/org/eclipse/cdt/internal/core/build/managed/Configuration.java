@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 
 /**
  * 
@@ -24,7 +24,6 @@ public class Configuration implements IConfiguration {
 
 	private String name;
 	private ITarget target;
-	private IProject project;
 	private IConfiguration parent;
 	private List toolReference;
 	
@@ -32,13 +31,7 @@ public class Configuration implements IConfiguration {
 		this.target = target;
 	}
 
-	public Configuration(IProject project, ITarget target) {
-		this.project = project;
-		this.target = target;
-	}
-	
-	public Configuration(IProject project, IConfiguration parent) {
-		this.project = project;
+	public Configuration(IConfiguration parent) {
 		this.parent = parent;
 	}
 
@@ -79,10 +72,10 @@ public class Configuration implements IConfiguration {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getProject()
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getOwner()
 	 */
-	public IProject getProject() {
-		return (project == null && parent != null) ? parent.getProject() : project;
+	public IResource getOwner() {
+		return getTarget().getOwner();
 	}
 
 }

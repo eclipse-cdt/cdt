@@ -65,8 +65,8 @@ public class CDebugImages
 	public static final String IMG_OBJS_DISASSEMBLY = NAME_PREFIX + "disassembly_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_PROJECT = NAME_PREFIX + "project_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_FOLDER = NAME_PREFIX + "folder_obj.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_LOADED_SHARED_LIBRARY = NAME_PREFIX + "sharedlibraryl_obj.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_SHARED_LIBRARY = NAME_PREFIX + "sharedlibraryu_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_LOADED_SHARED_LIBRARY = NAME_PREFIX + "library_syms_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_SHARED_LIBRARY = NAME_PREFIX + "library_obj.gif";	//$NON-NLS-1$
 
 	public static final String IMG_LCL_TYPE_NAMES = NAME_PREFIX + "tnames_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_CHANGE_REGISTER_VALUE = NAME_PREFIX + "change_reg_value_co.gif";	//$NON-NLS-1$

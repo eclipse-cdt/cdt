@@ -6,17 +6,13 @@
 package org.eclipse.cdt.debug.internal.ui.views.sharedlibs;
 
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
-import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
-import org.eclipse.cdt.debug.internal.core.CDebugUtils;
-import org.eclipse.cdt.debug.internal.ui.CDebugImages;
-import org.eclipse.cdt.debug.internal.ui.CImageDescriptor;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
-import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
-import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -25,16 +21,10 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -44,58 +34,50 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @since: Jan 16, 2003
  */
-public class SharedLibrariesView extends AbstractDebugEventHandlerView
+public class SharedLibrariesView extends AbstractDebugView
 								 implements ISelectionListener, 
 								 			IPropertyChangeListener, 
 								 			IDebugExceptionHandler
 {
 	/**
-	 * Enter type comment.
-	 * 
-	 * @since: Jan 16, 2003
+	 * Event handler for this view
 	 */
-	public class SharedLibrariesViewLabelProvider extends LabelProvider
-												  implements ITableLabelProvider
-	{
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(Object, int)
-		 */
-		public Image getColumnImage( Object element, int columnIndex )
-		{
-			if ( columnIndex == 0 && element instanceof ICSharedLibrary )
-			{
-				if ( ((ICSharedLibrary)element).areSymbolsLoaded() )
-				{
-					return CDebugUIPlugin.getImageDescriptorRegistry().get( new CImageDescriptor( CDebugImages.DESC_OBJS_LOADED_SHARED_LIBRARY,  0 ) );
-				}
-				else
-				{
-					return CDebugUIPlugin.getImageDescriptorRegistry().get( new CImageDescriptor( CDebugImages.DESC_OBJS_SHARED_LIBRARY,  0 ) );
-				}
-			}
-			return null;
-		}
+	private SharedLibrariesViewEventHandler fEventHandler;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(Object, int)
-		 */
-		public String getColumnText( Object element, int columnIndex )
+	/**
+	 * The model presentation used as the label provider for the tree viewer.
+	 */
+	private IDebugModelPresentation fModelPresentation;
+
+	/**
+	 * Sets the event handler for this view
+	 * 
+	 * @param eventHandler event handler
+	 */
+	protected void setEventHandler( SharedLibrariesViewEventHandler eventHandler )
+	{
+		fEventHandler = eventHandler;
+	}
+
+	/**
+	 * Returns the event handler for this view
+	 * 
+	 * @return The event handler for this view
+	 */
+	protected SharedLibrariesViewEventHandler getEventHandler()
+	{
+		return fEventHandler;
+	}
+
+	/**
+	 * @see IWorkbenchPart#dispose()
+	 */
+	public void dispose()
+	{
+		super.dispose();
+		if ( getEventHandler() != null )
 		{
-			if ( element instanceof ICSharedLibrary )
-			{
-				switch( columnIndex )
-				{
-					case 0:
-						return ((ICSharedLibrary)element).getFileName();
-					case 1:
-						return CDebugUtils.toHexAddressString( ((ICSharedLibrary)element).getStartAddress() );
-					case 2:
-						return CDebugUtils.toHexAddressString( ((ICSharedLibrary)element).getEndAddress() );
-					case 3:
-						return ( ((ICSharedLibrary)element).areSymbolsLoaded() ) ? "Yes" : "No";
-				}
-			}
-			return null;
+			getEventHandler().dispose();
 		}
 	}
 
@@ -105,25 +87,8 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	protected Viewer createViewer( Composite parent )
 	{
 		TableViewer viewer = new TableViewer( parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL );
-
-		Table table = viewer.getTable();
-		table.setHeaderVisible( true );
-		table.setLinesVisible( true );
-		table.setLayoutData( new GridData( GridData.FILL_BOTH ) );
-
-		// Create the table columns
-		new TableColumn( table, SWT.NULL );
-		new TableColumn( table, SWT.NULL );
-		new TableColumn( table, SWT.NULL );
-		new TableColumn( table, SWT.NULL );
-		TableColumn[] columns = table.getColumns();
-		columns[0].setText( "Name" );
-		columns[1].setText( "Start Address" );
-		columns[2].setText( "End Address" );
-		columns[3].setText( "Symbols" );
-
 		viewer.setContentProvider( new SharedLibrariesViewContentProvider() );
-		viewer.setLabelProvider( new SharedLibrariesViewLabelProvider() );
+		viewer.setLabelProvider( getModelPresentation() );
 
 		// listen to selection in debug view
 		getSite().getPage().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
@@ -235,8 +200,17 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	 * @param viewer the viewer associated with this view
 	 * @return an event handler
 	 */
-	protected AbstractDebugEventHandler createEventHandler( Viewer viewer ) 
+	protected SharedLibrariesViewEventHandler createEventHandler( Viewer viewer ) 
 	{
 		return new SharedLibrariesViewEventHandler( this );
 	}	
+
+	protected IDebugModelPresentation getModelPresentation() 
+	{
+		if ( fModelPresentation == null ) 
+		{
+			fModelPresentation = DebugUITools.newDebugModelPresentation();
+		}
+		return fModelPresentation;
+	}
 }

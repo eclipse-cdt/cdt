@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
@@ -228,6 +229,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 			{
 				return getVariableImage( (IVariable)element );
 			}
+			if ( element instanceof ICSharedLibrary )
+			{
+				return getSharedLibraryImage( (ICSharedLibrary)element );
+			}
 		}
 		catch( CoreException e )
 		{
@@ -244,6 +249,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 		StringBuffer label = new StringBuffer();
 		try
 		{
+			if ( element instanceof ICSharedLibrary )
+			{
+				label.append( getSharedLibraryText( (ICSharedLibrary)element, showQualified ) );
+				return label.toString();
+			}
+			
 			if ( element instanceof IRegisterGroup )
 			{
 				label.append( ((IRegisterGroup)element).getName() );
@@ -476,6 +487,17 @@ public class CDTDebugModelPresentation extends LabelProvider
 			}
 		}
 		return label;
+	}
+
+	protected String getSharedLibraryText( ICSharedLibrary library, boolean qualified ) throws DebugException
+	{
+		String label = new String();
+		IPath path = new Path( library.getFileName() );
+		if ( !path.isEmpty() )
+			label += ( qualified ? path.toOSString() : path.lastSegment() );	
+		return label + MessageFormat.format( " (Start address: ''{0}''  End address: ''{1}'')", 
+									 		 new String[] { CDebugUtils.toHexAddressString( library.getStartAddress() ),
+									 		 				CDebugUtils.toHexAddressString( library.getEndAddress() ) } );
 	}
 
 	/**
@@ -769,6 +791,18 @@ public class CDTDebugModelPresentation extends LabelProvider
 	protected Image getExpressionImage( IExpression element ) throws DebugException
 	{
 		return fDebugImageRegistry.get( new CImageDescriptor( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_EXPRESSION ),  0 ) );
+	}
+
+	protected Image getSharedLibraryImage( ICSharedLibrary element ) throws DebugException
+	{
+		if ( element.areSymbolsLoaded() )
+		{
+			return CDebugUIPlugin.getImageDescriptorRegistry().get( new CImageDescriptor( CDebugImages.DESC_OBJS_LOADED_SHARED_LIBRARY,  0 ) );
+		}
+		else
+		{
+			return CDebugUIPlugin.getImageDescriptorRegistry().get( new CImageDescriptor( CDebugImages.DESC_OBJS_SHARED_LIBRARY,  0 ) );
+		}
 	}
 
 	protected DisassemblyEditorInput getDisassemblyEditorInput( ICAddressBreakpoint breakpoint )

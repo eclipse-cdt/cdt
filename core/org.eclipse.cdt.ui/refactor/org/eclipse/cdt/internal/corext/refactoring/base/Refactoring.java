@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import org.eclipse.cdt.internal.corext.refactoring.UndoManager;
+
 /**
  * Superclass for all refactorings.
  * <p>
@@ -26,6 +28,12 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public abstract class Refactoring implements IRefactoring, IAdaptable {
 
+	private static IUndoManager fgUndoManager= new UndoManager();
+	
+	public static IUndoManager getUndoManager() {
+		return fgUndoManager;
+	}
+	
 	
 	/* non java-doc
 	 * for debugging only

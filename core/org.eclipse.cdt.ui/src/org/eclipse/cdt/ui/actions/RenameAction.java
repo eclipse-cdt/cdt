@@ -12,7 +12,7 @@ package org.eclipse.cdt.ui.actions;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
-import org.eclipse.cdt.internal.ui.refactoring.RenameRefactoringAction;
+import org.eclipse.cdt.internal.ui.refactoring.actions.RenameRefactoringAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;

@@ -12,7 +12,7 @@
 package org.eclipse.cdt.ui.refactoring;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.refactoring.actions.RenameRefactoringAction;
+import org.eclipse.cdt.internal.ui.refactoring.actions.RedoRefactoringAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -23,62 +23,64 @@ import org.eclipse.ui.IViewPart;
 /**
  * TODO: Provide description for "RefactoringRenameAction".
  */
-public class RenameAction extends Action implements IViewActionDelegate {
-	private IViewPart fView;
-	private IAction fAction;
+public class RedoAction extends Action implements IViewActionDelegate {
+//	private IViewPart fView;
+//	private IAction fAction;
+	RedoRefactoringAction refactoringAction = new RedoRefactoringAction();
 		
-	protected IViewPart getView() {
-		return fView;
-	}
+//	protected IViewPart getView() {
+//		return fView;
+//	}
 
-	protected void setView(IViewPart view) {
-		fView = view;
-	}
-	protected IAction getAction() {
-		return fAction;
-	}
+//	protected void setView(IViewPart view) {
+//		fView = view;
+//	}
+//	protected IAction getAction() {
+//		return fAction;
+//	}
 
-	protected void setAction(IAction action) {
-		fAction = action;
-	}
+//	protected void setAction(IAction action) {
+//		fAction = action;
+//	}
 	/**
 	 * TODO: Implement the "RefactoringRenameAction" constructor.
 	 */
-	public RenameAction() {
+	public RedoAction() {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	public void init(IViewPart view) {
-		setView(view);
-		
+//		setView(view);
+		refactoringAction.init(view.getSite().getWorkbenchWindow());		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		RenameRefactoringAction refactoringAction = new RenameRefactoringAction(getView().getSite());
-		refactoringAction.run(getSelection());
+		refactoringAction.run(action);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		setAction(action);
-		if (!(selection instanceof IStructuredSelection)) {
-			return;
-		}
-		IStructuredSelection sel= (IStructuredSelection)selection;
-		Object o= sel.getFirstElement();
-		if (!(o instanceof ICElement)) {
-			return;
-		}
+		refactoringAction.selectionChanged(action, selection);
+//		setAction(action);
+//		if (!(selection instanceof IStructuredSelection)) {
+//			return;
+//		}
+//		IStructuredSelection sel= (IStructuredSelection)selection;
+//		Object o= sel.getFirstElement();
+//		if (!(o instanceof ICElement)) {
+//			return;
+//		}
 	}
 
-	private IStructuredSelection getSelection() {
-		return (IStructuredSelection)getView().getViewSite().getSelectionProvider().getSelection();
-	}
+//	private IStructuredSelection getSelection() {
+//		return (IStructuredSelection)getView().getViewSite().getSelectionProvider().getSelection();
+//	}
 	
 }
+

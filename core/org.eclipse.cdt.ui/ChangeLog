@@ -1,3 +1,6 @@
+2004-03-11 Hoda Amer
+	Added the undo manager for the renaming refactor.
+	
 2004-03-11 John Camelon
 	Updated content assist to not clear() the Scanner's definition map. 
 

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
+import org.eclipse.cdt.internal.corext.refactoring.base.Refactoring;
 import org.eclipse.cdt.internal.ui.BuildConsoleManager;
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -34,7 +35,6 @@ import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
-import org.eclipse.cdt.ui.browser.typeinfo.AllTypesCache;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
 import org.eclipse.cdt.internal.ui.util.Util;
+import org.eclipse.cdt.ui.browser.typeinfo.AllTypesCache;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -304,6 +305,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fDocumentProvider.shutdown();
 			fDocumentProvider= null;
 		}
+		Refactoring.getUndoManager().shutdown();		
 	}
 
 	private void runUI(Runnable run) {

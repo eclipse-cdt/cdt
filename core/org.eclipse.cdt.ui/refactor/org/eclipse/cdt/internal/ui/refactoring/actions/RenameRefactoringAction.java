@@ -8,33 +8,28 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.ui.refactoring;
+package org.eclipse.cdt.internal.ui.refactoring.actions;
 
 
+import org.eclipse.cdt.internal.corext.refactoring.RenameRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
+import org.eclipse.cdt.internal.ui.refactoring.UserInterfaceStarter;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchSite;
-
-import org.eclipse.cdt.internal.corext.refactoring.RenameRefactoring;
-
-import org.eclipse.cdt.internal.ui.refactoring.UserInterfaceStarter;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-
-import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
 
 
 public class RenameRefactoringAction extends SelectionDispatchAction {
 
 	public RenameRefactoringAction(IWorkbenchSite site) {
 		super(site);
-		setText("Rename ...");
+		setText(RefactoringMessages.getString("RenameRefactoringAction.text"));//$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -54,7 +49,8 @@ public class RenameRefactoringAction extends SelectionDispatchAction {
 			RenameRefactoring refactoring= new RenameRefactoring(element);
 			run(refactoring, getShell());
 		} catch (CoreException e) {
-			ExceptionHandler.handle(e, getShell(), "Rename Refactoring", "Unexpected Exception occured");
+			ExceptionHandler.handle(e, getShell(), RefactoringMessages.getString("RenameRefactoringAction.label"), //$NON-NLS-1$
+					RefactoringMessages.getString("RenameRefactoringAction.unexpected_exception"));//$NON-NLS-1$
 		}
 	}
 	
@@ -73,9 +69,9 @@ public class RenameRefactoringAction extends SelectionDispatchAction {
 		if (refactoring.isAvailable()) {
 			UserInterfaceStarter.run(refactoring, parent);
 		} else {
-			MessageDialog.openInformation(parent, 
-				"Rename Refactoring", 
-				"No refactoring available to process the selected element.");
+			MessageDialog.openInformation(parent, RefactoringMessages.getString("RenameRefactoringAction.label"), //$NON-NLS-1$
+					RefactoringMessages.getString("RenameRefactoringAction.no_refactoring_available")//$NON-NLS-1$
+					);
 		}		
 	}
 }

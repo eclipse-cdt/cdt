@@ -312,7 +312,19 @@
                label="%Refactoring.renameAction.label"
                class="org.eclipse.cdt.ui.refactoring.RenameAction"
                menubarPath="org.eclipse.cdt.ui.refactoring.menu/reorgGroup"
-               id="org.eclipse.cdt.ui.actions.Rename">
+               id="org.eclipse.cdt.ui.actions.refactor.Rename">
+         </action>
+         <action
+               label="%Refactoring.undoAction.label"
+               class="org.eclipse.cdt.ui.refactoring.UndoAction"
+               menubarPath="org.eclipse.cdt.ui.refactoring.menu/reorgGroup"
+               id="org.eclipse.cdt.ui.actions.refactor.Undo">
+         </action>
+         <action
+               label="%Refactoring.redoAction.label"
+               class="org.eclipse.cdt.ui.refactoring.RedoAction"
+               menubarPath="org.eclipse.cdt.ui.refactoring.menu/reorgGroup"
+               id="org.eclipse.cdt.ui.actions.refactor.Redo">
          </action>
       </viewerContribution>
    </extension>
@@ -508,13 +520,13 @@
          </action>
          <action
                id="org.eclipse.cdt.ui.actions.OpenType"
-               label="%OpenTypeAction.label"
-               icon="icons/full/opentype16/opentype.gif"
+               toolbarPath="org.eclipse.search.searchActionSet/Search"
                class="org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeAction"
                definitionId="org.eclipse.cdt.ui.navigate.opentype"
-               menubarPath="navigate/open.ext2"
-               toolbarPath="org.eclipse.search.searchActionSet/Search"
+               icon="icons/full/opentype16/opentype.gif"
                helpContextId="org.eclipse.cdt.ui.open_type_action"
+               label="%OpenTypeAction.label"
+               menubarPath="navigate/open.ext2"
                tooltip="%OpenTypeAction.tooltip">
          </action>
          <menu

@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.corext.refactoring.base.ChangeAbortException;
 import org.eclipse.cdt.internal.corext.refactoring.base.ChangeContext;
 import org.eclipse.cdt.internal.corext.refactoring.base.IChange;
+import org.eclipse.cdt.internal.corext.refactoring.base.IUndoManager;
 import org.eclipse.cdt.internal.corext.refactoring.base.Refactoring;
 
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
@@ -43,16 +44,16 @@ public class PerformRefactoringUtil {
 	public static boolean performRefactoring(PerformChangeOperation op, Refactoring refactoring, IRunnableContext execContext, Shell parent) {
 		ChangeContext context= new ChangeContext(new ChangeExceptionHandler(parent));
 		boolean success= false;
-//		IUndoManager undoManager= Refactoring.getUndoManager();
+		IUndoManager undoManager= Refactoring.getUndoManager();
 		try{
 			op.setChangeContext(context);
-//			undoManager.aboutToPerformRefactoring();
+			undoManager.aboutToPerformRefactoring();
 			execContext.run(false, false, op);
 			if (op.changeExecuted()) {
 				if (! op.getChange().isUndoable()){
 					success= false;
 				} else { 
-//					undoManager.addUndo(refactoring.getName(), op.getChange().getUndoChange());
+					undoManager.addUndo(refactoring.getName(), op.getChange().getUndoChange());
 					success= true;
 				}	
 			}
@@ -71,7 +72,7 @@ public class PerformRefactoringUtil {
 			return false;
 		} finally {
 			context.clearPerformedChanges();
-//			undoManager.refactoringPerformed(success);
+			undoManager.refactoringPerformed(success);
 		}
 		
 		return true;

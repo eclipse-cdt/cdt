@@ -129,8 +129,8 @@ public abstract class TextInputWizardPage extends UserInputWizardPage{
 		}
 		if ((! isInitialInputValid()) && text.equals(fInitialValue)){
 			setPageComplete(false);
-			//setErrorMessage(null);
-			setErrorMessage(RefactoringMessages.getString("RenameInputWizardPage.no_undo")); //$NON-NLS-1$
+			setErrorMessage(null);
+			//setErrorMessage(RefactoringMessages.getString("RenameInputWizardPage.no_undo")); //$NON-NLS-1$
 			restoreMessage();
 			return;
 		}

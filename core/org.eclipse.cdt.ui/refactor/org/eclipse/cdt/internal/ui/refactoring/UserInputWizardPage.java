@@ -54,8 +54,8 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 			setErrorMessage(status.getFirstMessage(severity));	
 		} else {
 			setPageComplete(true);
-			//setErrorMessage(null);
-			setErrorMessage(RefactoringMessages.getString("RenameInputWizardPage.no_undo")); //$NON-NLS-1$
+			setErrorMessage(null);
+			//setErrorMessage(RefactoringMessages.getString("RenameInputWizardPage.no_undo")); //$NON-NLS-1$
 			if (severity == RefactoringStatus.OK)
 				setMessage(null, NONE);
 			else	

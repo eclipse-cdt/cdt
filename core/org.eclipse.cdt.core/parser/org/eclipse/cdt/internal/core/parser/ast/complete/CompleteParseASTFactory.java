@@ -3576,7 +3576,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				ASTExpression expression = (ASTExpression) reference;
 				final char[] dupleAsCharArray = duple.toCharArray();
 				if( expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION &&
-					CharArrayUtils.equals( expression.getLHSExpression().getIdExpressionCharArray(), dupleAsCharArray ))
+					CharArrayUtils.equals( expression.getIdExpressionCharArray(), dupleAsCharArray ))
 				{
 					try {
 						s = lookupQualifiedName( scopeToSymbol( scope ), duple, null, false );

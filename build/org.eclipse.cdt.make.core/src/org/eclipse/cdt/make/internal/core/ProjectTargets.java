@@ -3,8 +3,10 @@ package org.eclipse.cdt.make.internal.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,6 +15,12 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -45,7 +53,8 @@ public class ProjectTargets {
 	private static final String TARGET_USE_DEFAULT_CMD = "useDefaultCommand"; //$NON-NLS-1$
 	private static final String TARGET_ARGUMENTS = "buildArguments"; //$NON-NLS-1$
 	private static final String TARGET_COMMAND = "buildCommand"; //$NON-NLS-1$
-	private static final String TARGET = "buidlTarget"; //$NON-NLS-1$
+	private static final String BAD_TARGET = "buidlTarget"; //$NON-NLS-1$
+	private static final String TARGET = "buildTarget"; //$NON-NLS-1$
 
 	private HashMap targetMap = new HashMap();
 
@@ -78,8 +87,9 @@ public class ProjectTargets {
 			extractMakeTargetsFromDocument(document, manager);
 			if (writeTargets) {
 				try {
-					saveTargets();
-				} catch (IOException e) {
+					Document doc = getAsXML();
+					translateDocumentToCDTProject(doc);
+				} catch (Exception e) {
 					targetFile = null;
 				}
 				if (targetFile != null) {
@@ -192,13 +202,17 @@ public class ProjectTargets {
 		targetElem.appendChild(elem);
 		elem.appendChild(doc.createTextNode(target.getBuildCommand().toString()));
 
-		elem = doc.createElement(TARGET_ARGUMENTS);
-		elem.appendChild(doc.createTextNode(target.getBuildArguments()));
-		targetElem.appendChild(elem);
+		if (target.getBuildArguments().length() > 0) {
+			elem = doc.createElement(TARGET_ARGUMENTS);
+			elem.appendChild(doc.createTextNode(target.getBuildArguments()));
+			targetElem.appendChild(elem);
+		}
 
-		elem = doc.createElement(TARGET);
-		elem.appendChild(doc.createTextNode(target.getBuildTarget()));
-		targetElem.appendChild(elem);
+		if (target.getBuildTarget().length() > 0) {
+			elem = doc.createElement(TARGET);
+			elem.appendChild(doc.createTextNode(target.getBuildTarget()));
+			targetElem.appendChild(elem);
+		}
 
 		elem = doc.createElement(TARGET_STOP_ON_ERROR);
 		elem.appendChild(doc.createTextNode(new Boolean(target.isStopOnError()).toString()));
@@ -211,19 +225,37 @@ public class ProjectTargets {
 	}
 
 	public void saveTargets() throws IOException {
+		Document doc = getAsXML();
+		//Historical method would save the output to the stream specified
+		//translateDocumentToOutputStream(doc, output);
 		try {
-			Document doc = getAsXML();
-			//Historical method would save the output to the stream specified
-			//translateDocumentToOutputStream(doc, output);
 			translateDocumentToCDTProject(doc);
-		} catch (CoreException ex) {
-			throw new IOException(ex.getMessage());
+		} catch (Exception e) {
+			IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(
+					TARGETS_EXT);
+			File targetFile = targetFilePath.toFile();
+			try {
+				saveTargets(doc, new FileOutputStream(targetFile));
+			} catch (FileNotFoundException e1) {
+			} catch (IOException e1) {
+			} catch (TransformerException e1) {
+			}
 		}
 	}
 
+	protected void saveTargets(Document doc, OutputStream output) throws IOException, TransformerException {
+		TransformerFactory factory = TransformerFactory.newInstance();
+		Transformer transformer;
+		transformer = factory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+
+		DOMSource source = new DOMSource(doc);
+		StreamResult outputTarget = new StreamResult(output);
+		transformer.transform(source, outputTarget);
+	}
 	/**
-	 * This output method saves the information into the .cdtproject metadata
-	 * file.
+	 * This output method saves the information into the .cdtproject metadata file.
 	 * 
 	 * @param doc
 	 * @throws IOException
@@ -254,8 +286,7 @@ public class ProjectTargets {
 	}
 
 	/**
-	 * This method parses the .cdtproject file for the XML document describing
-	 * the build targets.
+	 * This method parses the .cdtproject file for the XML document describing the build targets.
 	 * 
 	 * @param input
 	 * @return
@@ -269,26 +300,24 @@ public class ProjectTargets {
 			descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject());
 
 			rootElement = descriptor.getProjectData(MAKE_TARGET_KEY);
-		} catch ( ParserConfigurationException e) {
+		} catch (ParserConfigurationException e) {
 			return document;
-		} catch ( CoreException e) {
+		} catch (CoreException e) {
 			return document;
 		}
-		Element element = rootElement.getOwnerDocument().getDocumentElement();
 		NodeList list = rootElement.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
-			if ( list.item(i).getNodeType() == Node.ELEMENT_NODE) {
+			if (list.item(i).getNodeType() == Node.ELEMENT_NODE) {
 				Node appendNode = document.importNode(list.item(i), true);
 				document.appendChild(appendNode);
-				break; // show never have multiple <buildtargets>
+				break; // should never have multiple <buildtargets>
 			}
 		}
 		return document;
 	}
 
 	/**
-	 * This method parses the input stream for the XML document describing the
-	 * build targets.
+	 * This method parses the input stream for the XML document describing the build targets.
 	 * 
 	 * @param input
 	 * @return
@@ -304,8 +333,7 @@ public class ProjectTargets {
 	}
 
 	/**
-	 * Extract the make target information which is contained in the XML
-	 * Document
+	 * Extract the make target information which is contained in the XML Document
 	 * 
 	 * @param document
 	 */
@@ -343,6 +371,10 @@ public class ProjectTargets {
 						option = getString(node, TARGET_ARGUMENTS);
 						if (option != null) {
 							target.setBuildArguments(option);
+						}
+						option = getString(node, BAD_TARGET);
+						if (option != null) {
+							target.setBuildTarget(option);
 						}
 						option = getString(node, TARGET);
 						if (option != null) {

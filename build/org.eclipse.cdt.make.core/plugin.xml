@@ -15,7 +15,6 @@
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
@@ -69,8 +68,8 @@
          name="%makeproject.name"
          point="org.eclipse.cdt.core.CProject">
       <cproject
-      		natureID="org.eclipse.cdt.make.core.makeNature"
-            class="org.eclipse.cdt.make.internal.core.MakeProject">
+            class="org.eclipse.cdt.make.internal.core.MakeProject"
+            natureID="org.eclipse.cdt.make.core.makeNature">
       </cproject>
    </extension>
    <extension

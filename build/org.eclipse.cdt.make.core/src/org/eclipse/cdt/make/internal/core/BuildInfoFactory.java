@@ -46,7 +46,9 @@ public class BuildInfoFactory {
 	static final String BUILD_TARGET_AUTO = PREFIX + ".autoBuildTarget"; //$NON-NLS-1$
 	static final String BUILD_TARGET_INCREMENTAL = PREFIX + ".incrementalBuildTarget"; //$NON-NLS-1$
 	static final String BUILD_TARGET_FULL = PREFIX + ".fullBuildTarget"; //$NON-NLS-1$
+	static final String BUILD_TARGET_CLEAN = PREFIX + ".cleanBuildTarget"; //$NON-NLS-1$
 	static final String BUILD_FULL_ENABLED = PREFIX + ".enableFullBuild"; //$NON-NLS-1$
+	static final String BUILD_CLEAN_ENABLED = PREFIX + ".enableCleanBuild"; //$NON-NLS-1$
 	static final String BUILD_INCREMENTAL_ENABLED = PREFIX + ".enabledIncrementalBuild"; //$NON-NLS-1$
 	static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild"; //$NON-NLS-1$
 	static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments"; //$NON-NLS-1$
@@ -145,6 +147,14 @@ public class BuildInfoFactory {
 			return getString(BUILD_TARGET_FULL);
 		}
 
+		public void setCleanBuildTarget(String target) throws CoreException {
+			putString(BUILD_TARGET_CLEAN, target);
+		}
+
+		public String getCleanBuildTarget() {
+			return getString(BUILD_TARGET_CLEAN);
+		}
+
 		public boolean getBoolean(String property) {
 			return Boolean.valueOf(getString(property)).booleanValue();
 		}
@@ -174,6 +184,14 @@ public class BuildInfoFactory {
 
 		public boolean isFullBuildEnabled() {
 			return getBoolean(BUILD_FULL_ENABLED);
+		}
+
+		public void setCleanBuildEnable(boolean enabled) throws CoreException {
+			putString(BUILD_CLEAN_ENABLED, new Boolean(enabled).toString());
+		}
+
+		public boolean isCleanBuildEnabled() {
+			return getBoolean(BUILD_CLEAN_ENABLED);
 		}
 
 		public String getBuildArguments() {

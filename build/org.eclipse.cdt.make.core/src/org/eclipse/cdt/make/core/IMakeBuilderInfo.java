@@ -49,6 +49,12 @@ public interface IMakeBuilderInfo {
 	String getFullBuildTarget();
 	void setFullBuildTarget(String target) throws CoreException;
 
+	String getCleanBuildTarget();
+	void setCleanBuildTarget(String target) throws CoreException;
+
+	boolean isCleanBuildEnabled();
+	void setCleanBuildEnable(boolean enabled) throws CoreException;
+	
 	String[] getErrorParsers();
 	void setErrorParsers(String[] parsers) throws CoreException;
 

@@ -116,6 +116,8 @@ public class MakeProjectNature implements IProjectNature {
 
 		projectInfo.setFullBuildEnable(info.isFullBuildEnabled());
 		projectInfo.setFullBuildTarget(info.getFullBuildTarget());
+		projectInfo.setCleanBuildEnable(info.isCleanBuildEnabled());
+		projectInfo.setCleanBuildTarget(info.getCleanBuildTarget());
 		projectInfo.setErrorParsers(info.getErrorParsers());
 	}
 

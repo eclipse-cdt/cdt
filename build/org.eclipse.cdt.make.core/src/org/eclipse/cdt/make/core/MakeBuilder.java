@@ -36,10 +36,13 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 
 public class MakeBuilder extends ACBuilder {
 
@@ -97,7 +100,29 @@ public class MakeBuilder extends ACBuilder {
 		return getProject().getReferencedProjects();
 	}
 
-	private boolean invokeMake(int kind, IMakeBuilderInfo info, IProgressMonitor monitor) {
+	
+	protected void clean(IProgressMonitor monitor) throws CoreException {
+		final IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(getProject(), BUILDER_ID);
+		if (shouldBuild(CLEAN_BUILD, info)) {
+			Job backgroundJob = new Job("Standard Make Builder"){  //$NON-NLS-1$
+				/* (non-Javadoc)
+				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				protected IStatus run(IProgressMonitor monitor) {
+					invokeMake(CLEAN_BUILD, info, monitor);
+					IStatus returnStatus = Status.OK_STATUS;
+					return returnStatus;
+				}
+				
+				
+			};
+			
+			backgroundJob.setRule(getProject());
+			backgroundJob.schedule();
+		}
+	}
+	
+	protected boolean invokeMake(int kind, IMakeBuilderInfo info, IProgressMonitor monitor) {
 		boolean isClean = false;
 		IProject currProject = getProject();
 
@@ -128,7 +153,7 @@ public class MakeBuilder extends ACBuilder {
 					workingDirectory = currProject.getLocation();
 				}
 				String[] targets = getTargets(kind, info);
-				if (targets.length != 0 && targets[targets.length - 1].equals("clean")) //$NON-NLS-1$
+				if (targets.length != 0 && targets[targets.length - 1].equals(info.getCleanBuildTarget())) //$NON-NLS-1$
 					isClean = true;
 
 				String errMsg = null;
@@ -257,6 +282,8 @@ public class MakeBuilder extends ACBuilder {
 				return info.isIncrementalBuildEnabled();
 			case IncrementalProjectBuilder.FULL_BUILD :
 				return info.isFullBuildEnabled();
+			case IncrementalProjectBuilder.CLEAN_BUILD :
+				return info.isCleanBuildEnabled();
 		}
 		return true;
 	}
@@ -272,6 +299,9 @@ public class MakeBuilder extends ACBuilder {
 				break;
 			case IncrementalProjectBuilder.FULL_BUILD :
 				targets = info.getFullBuildTarget();
+				break;
+			case IncrementalProjectBuilder.CLEAN_BUILD :
+				targets = info.getCleanBuildTarget();
 				break;
 		}
 		return makeArray(targets);

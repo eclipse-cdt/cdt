@@ -145,6 +145,8 @@ public class MakeCorePlugin extends Plugin {
 			info.setIncrementalBuildTarget("all"); //$NON-NLS-1$
 			info.setFullBuildEnable(true);
 			info.setFullBuildTarget("clean all"); //$NON-NLS-1$
+			info.setCleanBuildEnable(true);
+			info.setCleanBuildTarget("clean"); //$NON-NLS-1$
 			info.setErrorParsers(CCorePlugin.getDefault().getAllErrorParsersIDs());
 		} catch (CoreException e) {
 		}

@@ -307,6 +307,10 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 				label.append( getVariableText( (IVariable)element ) );
 				return label.toString();
 			}
+			if ( element instanceof IValue ) {
+				label.append( getValueText( (IValue)element ) );
+				return label.toString();
+			}
 			if ( element instanceof IStackFrame ) {
 				label.append( getStackFrameText( (IStackFrame)element, showQualified ) );
 				return label.toString();
@@ -473,20 +477,22 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 		}
 		else {
 			IValue value = expression.getValue();
-			if ( value != null ) {
+			if ( value instanceof ICValue ) {
+				ICType type = null;
+				try {
+					type = ((ICValue)value).getType();
+				}
+				catch( DebugException e1 ) {
+				}
+				if ( type != null && isShowVariableTypeNames() ) {
+					String typeName = getVariableTypeName( type );
+					if ( !isEmpty( typeName ) ) {
+						result.insert( 0, typeName + ' ' );
+					}
+				}
 				String valueString = DebugUIPlugin.getModelPresentation().getText( value );
 				if ( valueString.length() > 0 ) {
 					result.append( " = " ).append( valueString ); //$NON-NLS-1$
-				}
-				if ( isShowVariableTypeNames() ) {
-					String type = null;
-					try {
-						type = value.getReferenceTypeName();
-					}
-					catch( DebugException e ) {
-					}
-					if ( !isEmpty( type ) )
-						result.insert( 0, type + ' ' );
 				}
 			}
 		}
@@ -519,22 +525,42 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 							label.append( ']' );
 						}
 					}
-					label.append( ' ' );
 				}
 			}
 			String name = var.getName();
 			if ( name != null )
 				label.append( name.trim() );
 			IValue value = var.getValue();
-			if ( value instanceof ICDebugElementStatus && !((ICDebugElementStatus)value).isOK() ) {
-				label.append(  getFormattedString( CDebugUIMessages.getString( "CDTDebugModelPresentation.4" ), ((ICDebugElementStatus)value).getMessage() ) ); //$NON-NLS-1$
+			String valueString = DebugUIPlugin.getModelPresentation().getText( value );
+			if ( !isEmpty( valueString ) ) {
+				label.append( " = " ); //$NON-NLS-1$
+				label.append( valueString );
 			}
-			else if ( value instanceof ICValue && value.getValueString() != null ) {
-				String valueString = value.getValueString().trim();
+		}
+		if ( !((ICVariable)var).isEnabled() ) {
+			label.append( ' ' );
+			label.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.25" ) ); //$NON-NLS-1$
+		}
+		return label.toString();
+	}
+
+	protected String getValueText( IValue value ) throws DebugException {
+		StringBuffer label = new StringBuffer();
+		if ( value instanceof ICDebugElementStatus && !((ICDebugElementStatus)value).isOK() ) {
+			label.append(  getFormattedString( CDebugUIMessages.getString( "CDTDebugModelPresentation.4" ), ((ICDebugElementStatus)value).getMessage() ) ); //$NON-NLS-1$
+		}
+		else if ( value instanceof ICValue ) {
+			ICType type = null;
+			try {
+				type = ((ICValue)value).getType();
+			}
+			catch( DebugException e ) {
+			}
+			String valueString = value.getValueString().trim();
+			if ( valueString != null ) {
 				if ( type != null && type.isCharacter() ) {
 					if ( valueString.length() == 0 )
 						valueString = "."; //$NON-NLS-1$
-					label.append( "= " ); //$NON-NLS-1$
 					label.append( valueString );
 				}
 				else if ( type != null && type.isFloatingPointType() ) {
@@ -545,21 +571,15 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 						valueString = CDebugUIMessages.getString( "CDTDebugModelPresentation.23" ); //$NON-NLS-1$
 					if ( CDebugUtils.isNegativeInfinity( floatingPointValue ) )
 						valueString = CDebugUIMessages.getString( "CDTDebugModelPresentation.24" ); //$NON-NLS-1$
-					label.append( "= " ); //$NON-NLS-1$
 					label.append( valueString );
 				}
 				else if ( type == null || (!type.isArray() && !type.isStructure()) ) {
 					if ( valueString.length() > 0 ) {
-						label.append( "= " ); //$NON-NLS-1$
 						label.append( valueString );
 					}
 				}
 			}
-		}
-		if ( !((ICVariable)var).isEnabled() ) {
-			label.append( ' ' );
-			label.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.25" ) ); //$NON-NLS-1$
-		}
+		}	
 		return label.toString();
 	}
 
@@ -811,13 +831,25 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 	}
 
 	private String getVariableTypeName( ICType type ) {
+		StringBuffer result = new StringBuffer();
 		String typeName = type.getName();
 		if ( type.isArray() && typeName != null ) {
 			int index = typeName.indexOf( '[' );
 			if ( index != -1 )
-				return typeName.substring( 0, index ).trim();
+				typeName = typeName.substring( 0, index ).trim();
 		}
-		return typeName;
+		if ( typeName != null && typeName.length() > 0 ) {
+			result.append( typeName );
+			if ( type.isArray() ) {
+				int[] dims = type.getArrayDimensions();
+				for( int i = 0; i < dims.length; ++i ) {
+					result.append( '[' );
+					result.append( dims[i] );
+					result.append( ']' );
+				}
+			}
+		}
+		return result.toString();
 	}
 
 	/*

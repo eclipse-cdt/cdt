@@ -30,7 +30,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -153,8 +152,17 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 
 	private Object findFileByAbsolutePath( String name )
 	{
-		IPath path = new Path( name );
-		return findFile( getProject(), path.toOSString() );
+		File file = new File( name );
+		Object result = null;
+		try
+		{
+			if ( file.isAbsolute() ) 
+				result = findFile( getProject(), file.getCanonicalPath() );
+		}
+		catch( IOException e )
+		{
+		}
+		return result;
 	}
 
 	private Object findFileByRelativePath( IContainer container, String fileName )

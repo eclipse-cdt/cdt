@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
@@ -249,16 +250,23 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 
 	private Object findFileByAbsolutePath( String fileName )
 	{
-		Path path = new Path( fileName );
-		if ( path.isAbsolute() && path.toFile().exists() )
+		File file = new File( fileName );
+		if ( file.isAbsolute() && file.exists() )
 		{
-			// Try for a file in another workspace project
-			IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
-			if ( f != null && f.exists() ) 
+			try
 			{
-				return f;
-			} 
-			return new FileStorage( path );
+				Path path = new Path( file.getCanonicalPath() );
+				// Try for a file in another workspace project
+				IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
+				if ( f != null && f.exists() ) 
+				{
+					return f;
+				} 
+				return new FileStorage( path );
+			}
+			catch( IOException e )
+			{
+			}
 		}
 		return null;
 	}

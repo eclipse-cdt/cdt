@@ -145,8 +145,20 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		return fAssociation;
 	}
 
-	private Object findFileByAbsolutePath( String fileName )
+	private Object findFileByAbsolutePath( String name )
 	{
+		File file = new File( name );
+		if ( !file.isAbsolute() )
+			return null;
+		String fileName;
+		try
+		{
+			fileName = file.getCanonicalPath();
+		}
+		catch( IOException e )
+		{
+			return null;
+		}
 		IPath filePath = new Path( fileName );
 		IPath path = getDirectory();
 		IPath association = getAssociation();
@@ -169,7 +181,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 			return f;
 		} 
 
-		File file = filePath.toFile();
+		file = filePath.toFile();
 		if ( file.exists() )
 		{
 			return createExternalFileStorage( filePath );
@@ -186,12 +198,19 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 			File file = path.toFile();
 			if ( file.exists() )
 			{
-				IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
-				if ( f != null ) 
+				try
 				{
-					return f;
-				} 
-				return createExternalFileStorage( path );
+					path = new Path( file.getCanonicalPath() );
+					IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
+					if ( f != null ) 
+					{
+						return f;
+					} 
+					return createExternalFileStorage( path );
+				}
+				catch( IOException e )
+				{
+				}
 			}
 		}
 		return null;

@@ -1,3 +1,10 @@
+2003-16-10 Mikhail Khodjaiants
+	Fix for PR 38468: Error in files location.
+	Use the 'getCanonicalPath' method of the 'File' class to obtain the file name.
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+	* CSourceLocator.java
+
 2003-15-10 Mikhail Khodjaiants
 	Fix for PR 43101: Breakpoint exception when source doesn't exist.
 	The 'fireBreakpointChanged' method of 'BreakpointManager' is used to notify 

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -758,7 +759,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 					for (int j = 0; j < enclosedTypes.length; ++j) {
 						ITypeInfo enclosedType = enclosedTypes[j];
 						if (enclosedType.getResolvedReference() != null) {
-							ICElement typeElem = enclosedType.getCElement();
+							ICElement typeElem = TypeUtil.getElementForType(enclosedType);
 							if (typeElem != null && (typeElem.equals(cElem) || (typeElem instanceof IParent && hasChild(typeElem, cElem)))) {
 								return namespaces[i];
 							}
@@ -819,7 +820,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 					for (int j = 0; j < enclosedTypes.length; ++j) {
 						ITypeInfo enclosedType = enclosedTypes[j];
 						if (enclosedType.getResolvedReference() != null) {
-							ICElement typeElem = enclosedType.getCElement();
+							ICElement typeElem = TypeUtil.getElementForType(enclosedType);
 							if (typeElem != null && (typeElem.equals(cElem) || (typeElem instanceof IParent && hasChild(typeElem, cElem)))) {
 								return enclosedType;
 							}

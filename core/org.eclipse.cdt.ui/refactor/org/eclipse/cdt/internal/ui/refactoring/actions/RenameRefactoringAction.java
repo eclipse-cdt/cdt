@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.corext.refactoring.RenameRefactoring;
-import org.eclipse.cdt.internal.ui.cview.SelectionConverter;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.cdt.internal.ui.refactoring.UserInterfaceStarter;

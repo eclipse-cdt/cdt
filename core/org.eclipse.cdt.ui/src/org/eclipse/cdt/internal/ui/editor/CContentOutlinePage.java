@@ -19,6 +19,7 @@ import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -41,6 +42,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IPageSite;
@@ -61,6 +63,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 
 	private ActionGroup fSelectionSearchGroup;
 	private ActionGroup fRefactoringActionGroup;
+	private ActionGroup fOpenViewActionGroup;
 	
 	public CContentOutlinePage(CEditor editor) {
 		this("#TranslationUnitOutlinerContext", editor); //$NON-NLS-1$
@@ -123,6 +126,13 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	protected void contextMenuAboutToShow(IMenuManager menu) {
 		CUIPlugin.createStandardGroups(menu);
 		
+		if (OpenViewActionGroup.canActionBeAdded(getSelection())){
+			fOpenViewActionGroup.setContext(new ActionContext(getSite().getSelectionProvider().getSelection()));
+			fOpenViewActionGroup.fillContextMenu(menu);
+			fOpenViewActionGroup.setContext(null);
+			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		}
+
 		if (OpenIncludeAction.canActionBeAdded(getSelection())) {
 			menu.add(fOpenIncludeAction);
 		}
@@ -182,6 +192,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
+		fOpenViewActionGroup = new OpenViewActionGroup(this);
 		
 		treeViewer.setInput(fInput);
 		WorkbenchHelp.setHelp(control, ICHelpContextIds.COUTLINE_VIEW);	
@@ -207,6 +218,10 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		if (fRefactoringActionGroup != null) {
 			fRefactoringActionGroup.dispose();
 			fRefactoringActionGroup= null;
+		}
+		if (fOpenViewActionGroup != null) {
+		    fOpenViewActionGroup.dispose();
+		    fOpenViewActionGroup= null;
 		}
 		
 		if (fSelectionSearchGroup != null) {

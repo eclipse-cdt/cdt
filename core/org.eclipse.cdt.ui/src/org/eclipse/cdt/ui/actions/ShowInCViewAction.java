@@ -13,7 +13,7 @@ package org.eclipse.cdt.ui.actions;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.cview.SelectionConverter;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.ITextSelection;

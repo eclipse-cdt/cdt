@@ -171,6 +171,12 @@
             class="org.eclipse.cdt.internal.ui.browser.cbrowsing.CBrowsingPerspectiveFactory"
             id="org.eclipse.cdt.ui.CBrowsingPerspective">
       </perspective>
+      <perspective
+            name="%CHierarchy.perspective.name"
+            icon="icons/full/eview16/chierch_persp.gif"
+            class="org.eclipse.cdt.internal.ui.CHierarchyPerspectiveFactory"
+            id="org.eclipse.cdt.ui.CHierarchyPerspective">
+      </perspective>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -258,6 +264,17 @@
             category="org.eclipse.cdt.ui.c.browsing"
             class="org.eclipse.cdt.internal.ui.browser.cbrowsing.MembersView"
             id="org.eclipse.cdt.ui.MembersView">
+      </view>
+     <category
+            name="%CHierarchy.viewCategoryName"
+            id="org.eclipse.cdt.ui.c.hierarchy">
+      </category>
+      <view
+            name="%CHierarchy.hierarchyViewName"
+            icon="icons/full/eview16/class_hi.gif"
+            category="org.eclipse.cdt.ui.c.hierarchy"
+            class="org.eclipse.cdt.internal.ui.browser.typehierarchy.TypeHierarchyViewPart"
+            id="org.eclipse.cdt.ui.TypeHierarchyView">
       </view>
    </extension>
 <!-- The wizards -->
@@ -618,6 +635,18 @@
             string="Ctrl+G"
             scope="org.eclipse.cdt.ui.cEditorScope"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <command
+            name="%ActionDefinition.openTypeHierarchy.name"
+            description="%ActionDefinition.openTypeHierarchy.description"
+            category="org.eclipse.ui.category.navigate"
+            id="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy">
+      </command>
+      <keyBinding
+            string="F4"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    <extension
          id="org.eclipse.cdt.ui.CSearchPage"
@@ -684,6 +713,22 @@
                label="%OpenTypeAction.label"
                menubarPath="navigate/open.ext2"
                tooltip="%OpenTypeAction.tooltip">
+         </action>
+        <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"
+               label="%OpenTypeHierarchyAction.label"
+               retarget="true"
+               menubarPath="navigate/open.ext"
+               id="org.eclipse.cdt.ui.actions.OpenTypeHierarchy">
+         </action>
+         <action
+               id="org.eclipse.cdt.ui.actions.openTypeInHierarchy"
+               class="org.eclipse.cdt.internal.ui.browser.typehierarchy.OpenTypeInHierarchyAction"
+               definitionId="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
+               label="%OpenTypeInHierarchyAction.label"
+               helpContextId="org.eclipse.cdt.ui.open_type_in_hierarchy_action"
+               menubarPath="navigate/open.ext2"
+               tooltip="%OpenTypeInHierarchyAction.tooltip">
          </action>
          <menu
                label="%searchMenu.label"

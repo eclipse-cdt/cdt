@@ -74,8 +74,8 @@ public class CElementImageProvider {
 	 */	
 	public final static int OVERLAY_IMPLEMENTS= 0x40;
 	
-	private static final Point SMALL_SIZE= new Point(16, 16);
-	private static final Point BIG_SIZE= new Point(22, 16);
+	public static final Point SMALL_SIZE= new Point(16, 16);
+	public static final Point BIG_SIZE= new Point(22, 16);
 
 	private static ImageDescriptor DESC_OBJ_PROJECT_CLOSED;	
 	private static ImageDescriptor DESC_OBJ_PROJECT;	

@@ -228,19 +228,45 @@ public class CElementSorter extends ViewerSorter {
 		}
 		
 		String name1;
+		boolean e1destructor = false;
 		String name2;
+		boolean e2destructor = false;
 
 		if (e1 instanceof ICElement) {
 			name1 = ((ICElement)e1).getElementName();
+		    if (e1 instanceof IMethodDeclaration) {
+		        IMethodDeclaration method = (IMethodDeclaration)e1;
+		        try {
+			        if (method.isDestructor()) {
+						name1 = ((ICElement)e1).getElementName().substring(1);
+						e1destructor = true;
+			        }
+		        } catch (CModelException e) {
+		        }
+		    }
 		} else {
 			name1 = e1.toString();
 		}
 		if (e2 instanceof ICElement) {
 			name2 = ((ICElement)e2).getElementName();
+		    if (e2 instanceof IMethodDeclaration) {
+		        IMethodDeclaration method = (IMethodDeclaration)e2;
+		        try {
+			        if (method.isDestructor()) {
+						name2 = ((ICElement)e2).getElementName().substring(1);
+						e2destructor = true;
+			        }
+		        } catch (CModelException e) {
+		        }
+		    }
 		} else {
 			name2 = e2.toString();
 		}
-		return getCollator().compare(name1, name2);		
+		int result = getCollator().compare(name1, name2);
+		if (result == 0 && (e1destructor != e2destructor)) {
+		    result = e1destructor ? 1 : -1;
+		}
+		return result;
 	}
 
 	private ISourceRoot getSourceRoot(Object element) {

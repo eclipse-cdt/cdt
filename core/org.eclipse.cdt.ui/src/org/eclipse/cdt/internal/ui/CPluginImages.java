@@ -153,6 +153,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_EXCLUSION_FILTER_ATTRIB = createManaged(T_OBJ, IMG_OBJS_EXCLUDSION_FILTER_ATTRIB);
 	public static final ImageDescriptor DESC_OBJS_SOURCE_ATTACH_ATTRIB= createManaged(T_OBJ, IMG_OBJS_SOURCE_ATTACH_ATTRIB);
 	public static final ImageDescriptor DESC_OVR_PATH_INHERIT= create(T_OVR, "path_inherit_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_FOCUS= create(T_OVR, "focus_ovr.gif"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_OBJS_FIXABLE_PROBLEM= createManaged(T_OBJ, IMG_OBJS_FIXABLE_PROBLEM);
 	public static final ImageDescriptor DESC_OBJS_FIXABLE_ERROR= createManaged(T_OBJ, IMG_OBJS_FIXABLE_ERROR);
@@ -271,7 +272,8 @@ public class CPluginImages {
 	 * Sets all available image descriptors for the given action.
 	 */	
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
-		relPath= relPath.substring(NAME_PREFIX_LENGTH);
+	    if (relPath.startsWith(NAME_PREFIX))
+	        relPath= relPath.substring(NAME_PREFIX_LENGTH);
 		action.setDisabledImageDescriptor(create(T + "d" + type, relPath)); //$NON-NLS-1$
 		action.setHoverImageDescriptor(create(T + "c" + type, relPath)); //$NON-NLS-1$
 		action.setImageDescriptor(create(T + "e" + type, relPath)); //$NON-NLS-1$

@@ -20,9 +20,12 @@ package org.eclipse.cdt.ui.actions;
  * state of the buttons changes.
  * <p>
  */
+import java.util.ArrayList;
+
 import org.eclipse.cdt.internal.ui.viewsupport.MemberFilter;
 import org.eclipse.cdt.internal.ui.viewsupport.MemberFilterAction;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -40,6 +43,9 @@ public class MemberFilterActionGroup extends ActionGroup {
 	public static final int FILTER_NONPUBLIC= MemberFilter.FILTER_NONPUBLIC;
 	public static final int FILTER_STATIC= MemberFilter.FILTER_STATIC;
 	public static final int FILTER_FIELDS= MemberFilter.FILTER_FIELDS;
+	
+	public static final int FILTER_LOCALTYPES= MemberFilter.FILTER_LOCALTYPES;
+	public static final int ALL_FILTERS= FILTER_NONPUBLIC | FILTER_FIELDS | FILTER_STATIC | FILTER_LOCALTYPES;
 	
 	private static final String TAG_HIDEFIELDS= "hidefields"; //$NON-NLS-1$
 	private static final String TAG_HIDESTATIC= "hidestatic"; //$NON-NLS-1$
@@ -124,6 +130,104 @@ public class MemberFilterActionGroup extends ActionGroup {
 		fViewer.addFilter(fFilter);
 	}
 	
+	/**
+	 * Creates a new <code>MemberFilterActionGroup</code>.
+	 * 
+	 * @param viewer the viewer to be filtered
+	 * @param viewerId a unique id of the viewer. Used as a key to to store 
+	 * the last used filter settings in the preference store
+	 * @param inViewMenu if <code>true</code> the actions are added to the view
+	 * menu. If <code>false</code> they are added to the toobar.
+	 * @param availableFilters Specifies which filter action should be contained. <code>FILTER_NONPUBLIC</code>,
+	 * <code>FILTER_STATIC</code>, <code>FILTER_FIELDS</code> and <code>FILTER_LOCALTYPES</code>
+	 * or a combination of these constants are possible values. Use <code>ALL_FILTERS</code> to select all available filters.
+	 */
+	public MemberFilterActionGroup(StructuredViewer viewer, String viewerId, boolean inViewMenu, int availableFilters) {	
+				
+		fViewer= viewer;
+		fViewerId= viewerId;
+		fInViewMenu= inViewMenu;
+		
+		IPreferenceStore store= PreferenceConstants.getPreferenceStore();
+		fFilter= new MemberFilter();
+		
+		String title, helpContext;
+		ArrayList actions= new ArrayList(4);
+		
+		// fields
+		int filterProperty= FILTER_FIELDS;
+		if (isSet(filterProperty, availableFilters)) {
+			boolean filterEnabled= store.getBoolean(getPreferenceKey(filterProperty));
+			if (filterEnabled) {
+				fFilter.addFilter(filterProperty);
+			}
+			title= ActionMessages.getString("MemberFilterActionGroup.hide_fields.label"); //$NON-NLS-1$
+			helpContext= ICHelpContextIds.FILTER_FIELDS_ACTION;
+			MemberFilterAction hideFields= new MemberFilterAction(this, title, filterProperty, helpContext, filterEnabled);
+			hideFields.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_fields.description")); //$NON-NLS-1$
+			hideFields.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_fields.tooltip")); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(hideFields, CPluginImages.T_LCL, "fields_co.gif"); //$NON-NLS-1$
+			actions.add(hideFields);
+		}
+			
+		// static
+		filterProperty= FILTER_STATIC;
+		if (isSet(filterProperty, availableFilters)) {
+			boolean filterEnabled= store.getBoolean(getPreferenceKey(filterProperty));
+			if (filterEnabled) {
+				fFilter.addFilter(filterProperty);
+			}
+			title= ActionMessages.getString("MemberFilterActionGroup.hide_static.label"); //$NON-NLS-1$
+			helpContext= ICHelpContextIds.FILTER_STATIC_ACTION;
+			MemberFilterAction hideStatic= new MemberFilterAction(this, title, FILTER_STATIC, helpContext, filterEnabled);
+			hideStatic.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_static.description")); //$NON-NLS-1$
+			hideStatic.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_static.tooltip")); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(hideStatic, CPluginImages.T_LCL, "static_co.gif"); //$NON-NLS-1$
+			actions.add(hideStatic);
+		}
+		
+		// non-public
+		filterProperty= FILTER_NONPUBLIC;
+		if (isSet(filterProperty, availableFilters)) {
+			boolean filterEnabled= store.getBoolean(getPreferenceKey(filterProperty));
+			if (filterEnabled) {
+				fFilter.addFilter(filterProperty);
+			}
+			title= ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.label"); //$NON-NLS-1$
+			helpContext= ICHelpContextIds.FILTER_PUBLIC_ACTION;
+			MemberFilterAction hideNonPublic= new MemberFilterAction(this, title, filterProperty, helpContext, filterEnabled);
+			hideNonPublic.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.description")); //$NON-NLS-1$
+			hideNonPublic.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.tooltip")); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(hideNonPublic, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$
+			actions.add(hideNonPublic);
+		}
+		
+		// local types
+		filterProperty= FILTER_LOCALTYPES;
+		if (isSet(filterProperty, availableFilters)) {
+			boolean filterEnabled= store.getBoolean(getPreferenceKey(filterProperty));
+			if (filterEnabled) {
+				fFilter.addFilter(filterProperty);
+			}
+			title= ActionMessages.getString("MemberFilterActionGroup.hide_localtypes.label"); //$NON-NLS-1$
+			helpContext= ICHelpContextIds.FILTER_LOCALTYPES_ACTION;
+			MemberFilterAction hideLocalTypes= new MemberFilterAction(this, title, filterProperty, helpContext, filterEnabled);
+			hideLocalTypes.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_localtypes.description")); //$NON-NLS-1$
+			hideLocalTypes.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_localtypes.tooltip")); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(hideLocalTypes, CPluginImages.T_LCL, "localtypes_co.gif"); //$NON-NLS-1$
+			actions.add(hideLocalTypes);
+		}
+		
+		// order corresponds to order in toolbar
+		fFilterActions= (MemberFilterAction[]) actions.toArray(new MemberFilterAction[actions.size()]);
+		
+		fViewer.addFilter(fFilter);
+	}
+
+	private boolean isSet(int flag, int set) {
+		return (flag & set) != 0;
+	}
+
 	private String getPreferenceKey(int filterProperty) {
 		return "MemberFilterActionGroup." + fViewerId + '.' + String.valueOf(filterProperty); //$NON-NLS-1$
 	}

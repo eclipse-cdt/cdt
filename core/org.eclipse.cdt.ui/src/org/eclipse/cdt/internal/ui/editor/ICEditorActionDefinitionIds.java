@@ -79,6 +79,7 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.redo.action"</code>).
 	 */
 	public static final String REDO_ACTION= "org.eclipse.cdt.ui.edit.text.redo.action"; //$NON-NLS-1$	
+
 	/**
 	 * Action definition ID of the find references in workspace action
 	 * (value <code>"org.eclipse.cdt.ui.search.findrefs"</code>).
@@ -89,4 +90,16 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.search.finddecl"</code>).
 	 */
 	public static final String FIND_DECL= "org.eclipse.cdt.ui.search.finddecl"; //$NON-NLS-1$	
+
+	/**
+	 * Action definition ID of the navigate -> open type hierarchy action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"</code>).
+	 */
+	public static final String OPEN_TYPE_HIERARCHY= "org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the navigate -> open action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.open.editor"</code>).
+	 */
+	public static final String OPEN_EDITOR= "org.eclipse.cdt.ui.edit.text.c.open.editor"; //$NON-NLS-1$
 }

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;

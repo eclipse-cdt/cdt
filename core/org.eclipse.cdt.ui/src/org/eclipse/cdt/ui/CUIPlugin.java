@@ -161,6 +161,21 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public static String ID_MEMBERS_VIEW = PLUGIN_ID + ".MembersView"; //$NON-NLS-1$
 
+	/** 
+	 * The view part id of the type hierarchy part
+	 * (value <code>"org.eclipse.cdt.ui.TypeHierarchy"</code>).
+	 * <p>
+	 * When this id is used to access
+	 * a view part with <code>IWorkbenchPage.findView</code> or 
+	 * <code>showView</code>, the returned <code>IViewPart</code>
+	 * can be safely cast to an <code>ITypeHierarchyViewPart</code>.
+	 * </p>
+	 *
+	 * @see ITypeHierarchyViewPart
+	 * @see org.eclipse.ui.IWorkbenchPage#findView(java.lang.String)
+	 * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String)
+	 */ 
+	public static final String ID_TYPE_HIERARCHY = "org.eclipse.cdt.ui.TypeHierarchyView"; //$NON-NLS-1$
 	
 	
 	// -------- static methods --------

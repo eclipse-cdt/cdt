@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
@@ -184,7 +185,7 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 	
 		ICElement elem = null;
 		if (location != null)
-			elem = info.getCElement();
+			elem = TypeUtil.getElementForType(info);
 
 		if (location == null) {
 			// could not resolve location

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.drag.DelegatingDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.FileTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.LocalSelectionTransferDragAdapter;

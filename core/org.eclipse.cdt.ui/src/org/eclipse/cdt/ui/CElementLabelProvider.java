@@ -17,6 +17,7 @@ import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.ErrorTickAdornmentProvider;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -82,7 +83,7 @@ public class CElementLabelProvider extends LabelProvider {
 	public final static int SHOW_DEFAULT= new Integer(SHOW_PARAMETERS | SHOW_OVERLAY_ICONS).intValue();
 	
 	private WorkbenchLabelProvider fWorkbenchLabelProvider;
-	private CElementImageProvider fImageLabelProvider;
+	protected CElementImageProvider fImageLabelProvider;
 	private IAdornmentProvider[] fAdornmentProviders;
 
 	private int fFlags;
@@ -186,6 +187,7 @@ public class CElementLabelProvider extends LabelProvider {
 					IBinary bin = (IBinary)celem;
 					name.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
+				
 				return name.toString();
 			} catch (CModelException e) {
 				CUIPlugin.getDefault().log(e);
@@ -198,13 +200,27 @@ public class CElementLabelProvider extends LabelProvider {
 	 * @see ILabelProvider#getImage
 	 */
 	public Image getImage(Object element) {
+		return fImageLabelProvider.getImageLabel(element, evaluateImageFlags(element));
+	}
+	
+	protected int evaluateImageFlags(Object element) {
 		int imageFlags= getImageFlags();
 		if (fAdornmentProviders != null) {
 			for (int i= 0; i < fAdornmentProviders.length; i++) {
 				imageFlags |= fAdornmentProviders[i].computeAdornmentFlags(element);
 			}
-		}		
-		return fImageLabelProvider.getImageLabel(element, imageFlags);
+		}
+		return imageFlags;
+	}
+	
+	protected Image decorateImage(Image image, Object element) {
+//		if (fLabelDecorators != null && image != null) {
+//			for (int i= 0; i < fLabelDecorators.size(); i++) {
+//				ILabelDecorator decorator= (ILabelDecorator) fLabelDecorators.get(i);
+//				image= decorator.decorateImage(image, element);
+//			}
+//		}
+		return image;
 	}
 
 	/**
@@ -277,6 +293,9 @@ public class CElementLabelProvider extends LabelProvider {
 		}
 		if (getFlag(SHOW_EXCEPTION)) {
 			fTextFlags |= CElementLabels.M_EXCEPTIONS;
+		}
+		if (getFlag(SHOW_POST_QUALIFIED)) {
+			fTextFlags |= CElementLabels.M_POST_QUALIFIED;
 		}
 		return fTextFlags;
 	}

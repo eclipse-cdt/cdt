@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
@@ -15,6 +16,29 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  */
 public interface IContextMenuConstants {
 
+	/**
+	 * Type hierarchy view part: pop-up menu target ID for supertype hierarchy viewer
+	 * (value <code>"org.eclipse.cdt.ui.TypeHierarchy.supertypes"</code>).
+	 * 
+	 * @since 2.0
+	 */
+	public static final String TARGET_ID_SUPERTYPES_VIEW= CUIPlugin.ID_TYPE_HIERARCHY + ".supertypes"; //$NON-NLS-1$	
+
+	/**
+	 * Type hierarchy view part: Pop-up menu target ID for the subtype hierarchy viewer
+	 * (value <code>"org.eclipse.cdt.ui.TypeHierarchy.subtypes"</code>).
+	 * 
+	 * @since 2.0
+	 */
+	public static final String TARGET_ID_SUBTYPES_VIEW= CUIPlugin.ID_TYPE_HIERARCHY + ".subtypes"; //$NON-NLS-1$	
+
+	/**
+	 * Type hierarchy view part: pop-up menu target ID for the meber viewer
+	 * (value <code>"org.eclipse.cdt.ui.TypeHierarchy.members"</code>).
+	 * 
+	 * @since 2.0
+	 */
+	public static final String TARGET_ID_MEMBERS_VIEW= CUIPlugin.ID_TYPE_HIERARCHY + ".members"; //$NON-NLS-1$	
 
 	/**
 	 * Pop-up menu: name of group for goto actions (value <code>"group.open"</code>).

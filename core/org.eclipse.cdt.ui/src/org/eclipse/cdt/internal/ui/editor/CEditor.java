@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.browser.typehierarchy.OpenTypeHierarchyAction;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
@@ -549,6 +550,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
 		setAction("OpenDeclarations", action); //$NON-NLS-1$
 
+		action = new OpenTypeHierarchyAction(this);
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
+		setAction("OpenTypeHierarchy", action); //$NON-NLS-1$
+
 		fShowInCViewAction = new ShowInCViewAction(this);
 		action = fShowInCViewAction;
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CVIEW);
@@ -578,6 +583,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		//addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Format"); //$NON-NLS-1$
 
 		addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenDeclarations"); //$NON-NLS-1$
+
+		addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenTypeHierarchy"); //$NON-NLS-1$
 
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ContentAssistProposal"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "AddIncludeOnSelection"); //$NON-NLS-1$

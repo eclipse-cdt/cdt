@@ -1,3 +1,9 @@
+2004-07-15 Chris Wiebe
+
+	Initial draft for the type hierarchy view.
+	* browser/*
+	* icons/*
+
 2004-07-15 Hoda Amer
 	Fix for PR 68500: [Outline View] After doing a rename of a class, the outline viewer does not display the new name (just the old name)
 	

@@ -1859,4 +1859,15 @@ public class Scanner2Test extends BaseScanner2Test
     	validateToken( IToken.tSEMI );
     	validateEOF();
 	}
+    
+    public void testBug72537() throws Exception
+    {
+        initializeScanner( "FOO BAR(boo)" ); //$NON-NLS-1$
+        scanner.addDefinition( "FOO".toCharArray(), "foo".toCharArray() );  //$NON-NLS-1$//$NON-NLS-2$
+        scanner.addDefinition( "BAR(x)".toCharArray(), "x".toCharArray() ); //$NON-NLS-1$//$NON-NLS-2$
+        
+        validateIdentifier( "foo" ); //$NON-NLS-1$
+        validateIdentifier( "boo" );  //$NON-NLS-1$
+        validateEOF();
+    }
 }

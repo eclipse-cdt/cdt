@@ -300,7 +300,24 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.core.parser.IScanner#addDefinition(java.lang.String, java.lang.String)
 	 */
 	public void addDefinition(char[] key, char[] value) {
-		definitions.put(key, new ObjectStyleMacro(key, value ));
+	    int idx = CharArrayUtils.indexOf( '(', key );
+	    if( idx == -1 )
+	        definitions.put(key, new ObjectStyleMacro(key, value ));
+	    else {
+	        pushContext( key );
+	        bufferPos[ bufferStackPos ] = idx;
+	        char[][] args = null;
+	        try{
+	            args = extractMacroParameters( 0, EMPTY_STRING_CHAR_ARRAY, false );
+	        } finally{
+	            popContext();
+	        }
+	        
+	        if( args != null ){
+	            key = CharArrayUtils.extract( key, 0, idx );
+	            definitions.put( key, new FunctionStyleMacro( key, value, args ) );
+	        }
+	    }
 	}
 
 	/* (non-Javadoc)
@@ -1687,44 +1704,9 @@ public class Scanner2 implements IScanner, IScannerData {
 		int pos = bufferPos[bufferStackPos];
 		if (pos + 1 < limit && buffer[pos + 1] == '(') {
 			++bufferPos[bufferStackPos];
-			arglist = new char[4][];
-			int currarg = -1;
-			while (bufferPos[bufferStackPos] < limit) {
-				pos = bufferPos[bufferStackPos];
-				skipOverWhiteSpace();
-				if (++bufferPos[bufferStackPos] >= limit)
-					return;
-				c = buffer[bufferPos[bufferStackPos]];
-				if (c == ')') {
-					break;
-				} else if (c == ',') {
-					continue;
-				} else if (c == '.'
-						&& pos + 1 < limit && buffer[pos + 1] == '.'
-						&& pos + 2 < limit && buffer[pos + 2] == '.') {
-					// varargs
-					// TODO - something better
-					bufferPos[bufferStackPos] += 2;
-					arglist[++currarg] = "...".toCharArray(); //$NON-NLS-1$
-					continue;
-				} else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Character.isUnicodeIdentifierPart(c))) {
-				    handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, idstart, name );
-					// yuck
-					skipToNewLine();
-					return;
-				}
-				int argstart = bufferPos[bufferStackPos];
-				skipOverIdentifier();
-				if (++currarg == arglist.length) {
-					char[][] oldarglist = arglist;
-					arglist = new char[oldarglist.length * 2][];
-					System.arraycopy(oldarglist, 0, arglist, 0, oldarglist.length);
-				}
-				int arglen = bufferPos[bufferStackPos] - argstart + 1;
-				char[] arg = new char[arglen];
-				System.arraycopy(buffer, argstart, arg, 0, arglen);
-				arglist[currarg] = arg;
-			}
+			arglist = extractMacroParameters( idstart, name, true );
+			if( arglist == null )
+			    return;
 		}
 
 		// Capture the replacement text
@@ -1790,7 +1772,56 @@ public class Scanner2 implements IScanner, IScannerData {
 		pushCallback( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, getCurrentFilename() ) );
 	}
 	
-	
+	private char[][] extractMacroParameters( int idstart, char[] name, boolean reportProblems ){
+	    char[] buffer = bufferStack[bufferStackPos];
+		int limit = bufferLimit[bufferStackPos];
+		
+	    if( bufferPos[bufferStackPos] >= limit || buffer[bufferPos[bufferStackPos]] != '(' )
+	        return null;
+	        
+	    char c;
+	    char[][] arglist = new char[4][];
+		int currarg = -1;
+		while (bufferPos[bufferStackPos] < limit) {
+			int pos = bufferPos[bufferStackPos];
+			skipOverWhiteSpace();
+			if (++bufferPos[bufferStackPos] >= limit)
+				return null;
+			c = buffer[bufferPos[bufferStackPos]];
+			if (c == ')') {
+				break;
+			} else if (c == ',') {
+				continue;
+			} else if (c == '.'
+					&& pos + 1 < limit && buffer[pos + 1] == '.'
+					&& pos + 2 < limit && buffer[pos + 2] == '.') {
+				// varargs
+				// TODO - something better
+				bufferPos[bufferStackPos] += 2;
+				arglist[++currarg] = "...".toCharArray(); //$NON-NLS-1$
+				continue;
+			} else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Character.isUnicodeIdentifierPart(c))) {
+			    if( reportProblems )
+			        handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, idstart, name );
+				// yuck
+				skipToNewLine();
+				return null;
+			}
+			int argstart = bufferPos[bufferStackPos];
+			skipOverIdentifier();
+			if (++currarg == arglist.length) {
+				char[][] oldarglist = arglist;
+				arglist = new char[oldarglist.length * 2][];
+				System.arraycopy(oldarglist, 0, arglist, 0, oldarglist.length);
+			}
+			int arglen = bufferPos[bufferStackPos] - argstart + 1;
+			char[] arg = new char[arglen];
+			System.arraycopy(buffer, argstart, arg, 0, arglen);
+			arglist[currarg] = arg;
+		}
+		
+		return arglist;
+	}
 	/**
 	 * @param text
 	 * @return

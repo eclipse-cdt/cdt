@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!-- NOTE TO TRANSLATOR:
+* Only these ENTITY strings listed in the DOCTYPE definition
+* are to be translated. The rest of this file should remain
+* English as it produces compilable code. 
+-->
+
 <!DOCTYPE document [
 	<!ENTITY withtempvar "with temporary variable">
 	<!ENTITY statement "statement">
@@ -13,6 +20,8 @@
 	<!ENTITY printtostdout "print to standard output">
 	<!ENTITY printtostderr "print to standard error">
 	<!ENTITY authorname "author name">
+	<!ENTITY commentText "To change this generated comment edit the template variable &quot;comment&quot;:
+ * Window&gt;Preferences&gt;C&gt;Templates.">
 	
 ]>
 
@@ -56,8 +65,7 @@ private:
 }</template><template name="new" description="&createnewobject;" context="C++ Function" enabled="true">${type} ${name} = new ${type}(${arguments});</template><template name="comment" description="&defaultmultilinecomment;" context="C Global" enabled="true">/*
  * author ${user}
  *
- * To change this generated comment edit the template variable &quot;comment&quot;:
- * Window&gt;Preferences&gt;C&gt;Templates.
+ * &commentText;
  */</template>
  <template name="stdout" description="&printtostdout;" context="C Function" enabled="true">printf(${cursor});</template>
  <template name="stderr" description="&printtostderr;" context="C Function" enabled="true">fprintf(stderr, ${cursor});</template>

@@ -79,15 +79,15 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
             PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR } //$NON-NLS-1$
 	};
 
-	protected final String[][] fAppearanceColorListModel = new String[][] { { "Line number color", ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR }, //$NON-NLS-1$
+	protected final String[][] fAppearanceColorListModel = new String[][] { { PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.lineNumberColor"), ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR }, //$NON-NLS-1$
 		{
-			"Matching bracket color", CEditor.MATCHING_BRACKETS_COLOR }, //$NON-NLS-1$
+		PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.matchingBracketColor"), CEditor.MATCHING_BRACKETS_COLOR }, //$NON-NLS-1$
 		{
-			"Current line highlight color", ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR }, //$NON-NLS-1$
+			PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.currentLineHighlightColor"), ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR }, //$NON-NLS-1$
 		{
-			"Print margin color", ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR }, //$NON-NLS-1$
+				PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.printMarginColor"), ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR }, //$NON-NLS-1$
 		{
-			"Linked position color", CEditor.LINKED_POSITION_COLOR }, //$NON-NLS-1$
+					PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.linkedPositionColor"), CEditor.LINKED_POSITION_COLOR }, //$NON-NLS-1$
 	};
 
 	protected OverlayPreferenceStore fOverlayStore;
@@ -746,13 +746,13 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.matchingBrackets"); //$NON-NLS-1$
 		fBracketHighlightButton = addCheckBox(behaviorComposite, label, CEditor.MATCHING_BRACKETS, 0);
 
-		label = "Show line numbers"; //$NON-NLS-1$
+		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.showLineNumbers"); //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
 
 		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.highlightLine"); //$NON-NLS-1$
 		fLineHighlightButton = addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
 
-		label = "Show overview ruler"; //$NON-NLS-1$
+		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.showOverviewRuler"); //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
 
 		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.printMargin"); //$NON-NLS-1$
@@ -765,7 +765,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		l.setLayoutData(gd);
 
 		l = new Label(behaviorComposite, SWT.LEFT);
-		l.setText("Appearance color options"); //$NON-NLS-1$
+		l.setText(PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.appearanceColorOptions")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		l.setLayoutData(gd);
@@ -794,7 +794,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		l = new Label(stylesComposite, SWT.LEFT);
-		l.setText("Color:"); //$NON-NLS-1$
+		l.setText(PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.Color")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		l.setLayoutData(gd);

@@ -529,7 +529,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		// @@@ disabled for now until we get it to do something...
 		//addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Format"); //$NON-NLS-1$
 
-		MenuManager search = new MenuManager("Search", IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
+		MenuManager search = new MenuManager(CEditorMessages.getString("CEditor.menu.search"), IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, search);
 		
 		if (SearchDialogAction.canActionBeAdded(getSelectionProvider().getSelection())){

@@ -1,3 +1,12 @@
+2004-03-21 Tanya Wolff
+
+	Externalized stray strings.
+	* src/org/eclipse/cdt/internal/corext/template/default-templates.xml
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/editor/PreferencesMessages.properties
+	
 2004-03-21 Alain Magloire
 
 	Show the binaries in the CView even if the parent

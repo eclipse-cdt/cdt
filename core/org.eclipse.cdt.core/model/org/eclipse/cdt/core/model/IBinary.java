@@ -20,6 +20,8 @@ public interface IBinary extends ICFile {
 	public boolean isObject();
 
 	public boolean isSharedLib();
+	
+	public boolean isCore();
 
 	public String [] getNeededSharedLibs();
 

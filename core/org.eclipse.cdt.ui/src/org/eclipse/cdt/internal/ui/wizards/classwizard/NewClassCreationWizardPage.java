@@ -93,8 +93,8 @@ import org.eclipse.ui.views.contentoutline.ContentOutline;
 
 public class NewClassCreationWizardPage extends NewElementWizardPage {
 
-    private static final int NAMESPACE_INDEX = 0;
-    private static final int CLASS_INDEX = 1;
+//    private static final int NAMESPACE_INDEX = 0;
+//    private static final int CLASS_INDEX = 1;
     private final static String PAGE_NAME = "NewClassWizardPage"; //$NON-NLS-1$
 	private static final int MAX_FIELD_CHARS = 50;
 	
@@ -294,11 +294,12 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 		fEnclosingTypeSelection.doFillIntoGrid(tabGroup, 1);
 
-		Text text= fEnclosingTypeDialogField.getTextControl(composite);
+		Text textControl= fEnclosingTypeDialogField.getTextControl(composite);
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= getMaxFieldWidth();
 		gd.horizontalSpan= 2;
-		text.setLayoutData(gd);
+		textControl.setLayoutData(gd);
+		textControl.addFocusListener(new StatusFocusListener(ENCLOSING_TYPE_ID));
 		
 		Button button= fEnclosingTypeDialogField.getChangeControl(composite);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -700,7 +701,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 //			        enclosingType = chooseEnclosingClass();
 //		        }
 			    if (enclosingType != null) {
-			        int changedFields = ENCLOSING_TYPE_ID;
+			        int changedFields = ENCLOSING_TYPE_ID|CLASS_NAME_ID;
 			        IPath oldFolderPath = getSourceFolderFullPath();
 			        if (oldFolderPath == null) {
 						IPath headerPath = getHeaderFileFullPath();
@@ -735,7 +736,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		    if (field == fEnclosingTypeSelection) {
 		        updateEnclosingTypeEnableState();
 		    }
-			handleFieldChanged(ENCLOSING_TYPE_ID);
+			handleFieldChanged(ENCLOSING_TYPE_ID|CLASS_NAME_ID);
 		}
 	}
     
@@ -976,6 +977,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		if (val.getSeverity() == IStatus.ERROR) {
 			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidNamespace", val.getMessage())); //$NON-NLS-1$
 			return status;
+		} else if (val.getSeverity() == IStatus.WARNING) {
+			status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.NamespaceDiscouraged", val.getMessage())); //$NON-NLS-1$
 		}
 
 		IProject project = getCurrentProject();
@@ -1029,11 +1032,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 						}
 			        }
 		            if (exactMatch) {
-		                status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExists")); //$NON-NLS-1$
+		                status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExists")); //$NON-NLS-1$
 		            } else {
-		                status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExistsDifferentCase")); //$NON-NLS-1$
+		                status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExistsDifferentCase")); //$NON-NLS-1$
 		            }
-		            return status;
 			    }
 		    } else {
 		        status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NamespaceNotExists")); //$NON-NLS-1$
@@ -1044,8 +1046,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		if (val.getSeverity() == IStatus.ERROR) {
 			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidNamespace", val.getMessage())); //$NON-NLS-1$
 			return status;
-		} else if (val.getSeverity() == IStatus.WARNING) {
-			status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.NamespaceDiscouraged", val.getMessage())); //$NON-NLS-1$
 		}
 
 	    return status;
@@ -2131,8 +2131,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                     getHeaderFileFullPath(),
                     getSourceFileFullPath(),
                     getClassTypeName(),
-//                  isNamespaceButtonSelected() ? getEnclosingTypeName() : null,
-                    getEnclosingTypeName(),
+                    isEnclosingTypeSelected() ? getEnclosingTypeName() : null,
                     getBaseClasses(),
                     getCheckedMethodStubs());
             fCodeGenerator.createClass(monitor);

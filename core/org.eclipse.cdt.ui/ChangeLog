@@ -1,3 +1,11 @@
+2004-08-012 Chris Wiebe
+
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogsfields/ListDialogField.java
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogsfields/CheckedListDialogField.java
+
+	change constructor to accept IBaseLabelProvider so TableViewer can use ITableLabelProvider
+	fix bug in CheckedListDialogField.SetChecked() (never worked!)
+
 2004-08-12 Alain Magloire
 
 	Fix for PR 71667.

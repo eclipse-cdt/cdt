@@ -46,7 +46,7 @@
 <!-- =================================================================================== -->
    <extension
          id="ELF"
-         name="Elf Parser"
+         name="%ElfParser.name"
          point="org.eclipse.cdt.core.BinaryParser">
       <cextension>
          <run
@@ -56,7 +56,7 @@
    </extension>
    <extension
          id="GNU_ELF"
-         name="GNU Elf Parser"
+         name="%GNUElfParser.name"
          point="org.eclipse.cdt.core.BinaryParser">
       <cextension>
          <run
@@ -66,7 +66,7 @@
    </extension>
    <extension
          id="PE"
-         name="PE Windows Parser"
+         name="%PEWindowsParser.name"
          point="org.eclipse.cdt.core.BinaryParser">
       <cextension>
          <run
@@ -76,7 +76,7 @@
    </extension>
    <extension
          id="Cygwin_PE"
-         name="Cygwin PE Parser"
+         name="%CygwinPEParser.name"
          point="org.eclipse.cdt.core.BinaryParser">
       <cextension>
          <run
@@ -89,7 +89,7 @@
 <!-- =================================================================================== -->
    <extension
          id="GCCErrorParser"
-         name="CDT GNU C/C++ Error Parser"
+         name="%CDTGNUCErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
             class="org.eclipse.cdt.internal.errorparsers.GCCErrorParser">
@@ -97,7 +97,7 @@
    </extension>
    <extension
          id="GASErrorParser"
-         name="CDT GNU Assembler Error Parser"
+         name="%CDTGNUAssemblerErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
             class="org.eclipse.cdt.internal.errorparsers.GASErrorParser">
@@ -105,7 +105,7 @@
    </extension>
    <extension
          id="GLDErrorParser"
-         name="CDT GNU Linker Error Parser"
+         name="%CDTGNULinkerErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
             class="org.eclipse.cdt.internal.errorparsers.GLDErrorParser">
@@ -113,7 +113,7 @@
    </extension>
    <extension
          id="MakeErrorParser"
-         name="CDT GNU Make Error Parser"
+         name="%CDTGNUMakeErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
             class="org.eclipse.cdt.internal.errorparsers.MakeErrorParser">
@@ -121,7 +121,7 @@
    </extension>
    <extension
          id="VCErrorParser"
-         name="CDT Visual C Error Parser"
+         name="%CDTVisualCErrorParser.name"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
             class="org.eclipse.cdt.internal.errorparsers.VCErrorParser">

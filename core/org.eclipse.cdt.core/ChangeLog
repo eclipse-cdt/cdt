@@ -1,3 +1,9 @@
+2004-03-22 Tanya Wolff
+	Externalized names of Binary Parsers and Error Parsers
+ 
+	* plugin.xml
+	* plugin.properties
+
 2004-03-22 Alain Magloire
 
 	Boost the warning of the compiler and remove

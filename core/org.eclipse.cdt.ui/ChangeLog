@@ -1,5 +1,10 @@
 2003-04-29 Alain Magloire
 
+	* src/org/eclipse/cdt/internal/ui/compare/ComparatorModelBuilder.java:
+	Fix NPE, PR 367976.
+
+2003-04-29 Alain Magloire
+
 	* src/org/eclipse/cdt/internal/ui/cview/CView.java:
 	Fix PR 36743: allowing extending the CView.java
 	Fix PR 36876: ClastCastException was thrown.

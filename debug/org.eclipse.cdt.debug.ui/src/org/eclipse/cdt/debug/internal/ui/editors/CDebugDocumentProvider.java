@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.internal.ui.editors;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IStorage;
@@ -90,4 +91,18 @@ public class CDebugDocumentProvider extends CDocumentProvider
 			return super.createAnnotationModel( ((EditorInputDelegate)element).getDelegate() );
 		return super.createAnnotationModel( element );
 	}
+
+	/* (non-Javadoc)
+	 * This hack is important for the the outliner to work correctly.
+	 * The outliner looks at the working copy and it is maintain by
+	 * CUIPlugin.getDefault().getWorkingCopyManager()
+	 * CUIPlugin.getDefault().getDocumentProvider();
+	 * They are singletons.
+	 * 
+	 * @see org.eclipse.cdt.internal.ui.editor.CDocumentProvider#getBufferFactory()
+	 */
+	public IBufferFactory getBufferFactory() {
+		return CUIPlugin.getDefault().getDocumentProvider().getBufferFactory();
+	}
+
 }

@@ -73,22 +73,22 @@ MIPlugin.getDefault().debugLog(line);
 			}
 		} catch (IOException e) {
 			//e.printStackTrace();
-			// This code should be executed when gdb been abruptly
-			// or unxepectedly killed.  This is detected by checking
-			// if the channelInputStream is not null.  In normal case
-			// session.terminate() will set the channelInputStream to null.
-			if (session.getChannelInputStream() != null) {
-				Runnable cleanup = new Runnable() {
-					public void run() {
-						// Change the state of the inferior.
-						session.getMIInferior().setTerminated();
-						session.terminate();
-					}
-				};
-				Thread clean = new Thread(cleanup, "GDB Died");
-				clean.setDaemon(true);
-				clean.start();
-			}
+		}
+		// This code should be executed when gdb been abruptly
+		// or unxepectedly killed.  This is detected by checking
+		// if the channelInputStream is not null.  In normal case
+		// session.terminate() will set the channelInputStream to null.
+		if (session.getChannelInputStream() != null) {
+			Runnable cleanup = new Runnable() {
+				public void run() {
+					// Change the state of the inferior.
+					session.getMIInferior().setTerminated();
+					session.terminate();
+				}
+			};
+			Thread clean = new Thread(cleanup, "GDB Died");
+			clean.setDaemon(true);
+			clean.start();
 		}
 	}
 

@@ -16,4 +16,6 @@ import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
  */
 public interface IASTCodeScope extends IASTScope, ISourceElementCallbackDelegate{
 
+	public IASTCodeScope getOwnerCodeScope(); 
+
 }

@@ -1,3 +1,9 @@
+2003-09-08 John Camelon
+	Made scoping support more robust in CompleteParse mode. 
+	Refactored ISourceElementRequestor (enter|exit)CodeBlock() to take IASTCodeScope rather than IASTScope. 
+	Removed the now obsolete DOM.  
+`	Added enumerator references to ISourceElementRequestor.
+
 2003-09-08 Andrew Niefer
 	- Created ParserLanguage.java
 	- Updated Factories to take language as parameter when create scanner & parser

@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
@@ -585,6 +586,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		else if( symbol.getType() == TypeInfo.t_enumeration )
 			return new ASTEnumerationReference( offset, string,  (IASTEnumerationSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
+		else if( symbol.getType() == TypeInfo.t_enumerator )
+			return new ASTEnumeratorReference( offset, string, (IASTEnumerator)symbol.getASTExtension().getPrimaryDeclaration() );
 		else if( symbol.getType() == TypeInfo.t_function )
 		{
 			if( symbol.getContainingSymbol().getTypeInfo().isType( TypeInfo.t_class, TypeInfo.t_union ) )

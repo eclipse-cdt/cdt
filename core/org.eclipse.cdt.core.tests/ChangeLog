@@ -1,3 +1,7 @@
+2003-09-08 John Camelon
+	Added CompleteParseASTTest::testThrowStatement(), testScoping(), testEnumeratorReferences().
+	Removed LineNumberTest source as it is obsolete.  
+
 2003-09-08 Andrew Niefer
 	Modified calls to ParserFactory to specify which language to use
 	Add CC nature to projects in BaseSearchTest & IndexManagerTests

@@ -29,11 +29,13 @@ import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumeratorReference;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -108,6 +110,58 @@ public class CompleteParseBaseTest extends TestCase
             return scope;
         }
     }
+    
+    public static class CodeScope extends Scope implements IASTCodeScope
+    {
+		private List nestedScopes = new ArrayList(); 
+        /**
+         * @param scope
+         */
+        public CodeScope(IASTCodeScope scope)
+        {
+            super(scope);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ast.IASTCodeScope#getOwnerCodeScope()
+         */
+        public IASTCodeScope getOwnerCodeScope()
+        {
+            return ((IASTCodeScope)getScope()).getOwnerCodeScope();
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+         */
+        public void acceptElement(ISourceElementRequestor requestor)
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+         */
+        public void enterScope(ISourceElementRequestor requestor)
+        {
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+         */
+        public void exitScope(ISourceElementRequestor requestor)
+        {           
+        }
+    	
+    	public void addNewScope( IASTCodeScope s )
+    	{
+    		nestedScopes.add( s );
+    	}
+    	
+		public Iterator getCodeBlocks()
+		{
+			return nestedScopes.iterator();
+		}
+    }
+    
     public static class FullParseCallback implements ISourceElementRequestor 
     {
     	private List references = new ArrayList(); 
@@ -183,7 +237,6 @@ public class CompleteParseBaseTest extends TestCase
         public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration)
         {
             getCurrentScope().addDeclaration( abstractDeclaration );
-            
         }
     
         /* (non-Javadoc)
@@ -191,7 +244,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void enterFunctionBody(IASTFunction function)
         {
-            pushScope( function );
+            pushCodeScope( function );
         }
     
         /* (non-Javadoc)
@@ -290,7 +343,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void enterMethodBody(IASTMethod method)
         {
-            pushScope(method);
+            pushCodeScope(method);
         }
     
         /* (non-Javadoc)
@@ -398,6 +451,11 @@ public class CompleteParseBaseTest extends TestCase
         	return (Scope)scopes.peek();
         }
         
+        protected CodeScope getCurrentCodeScope()
+        {
+        	return (CodeScope)scopes.peek();
+        }
+        
         protected Scope popScope()
         {
         	Scope s = (Scope)scopes.pop();
@@ -416,6 +474,12 @@ public class CompleteParseBaseTest extends TestCase
         {
         	return (Scope)h.get(s);
         }
+        
+		public CodeScope lookup( IASTCodeScope s )
+		{
+			return (CodeScope)h.get(s);
+		}
+        
     
         /* (non-Javadoc)
          * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
@@ -466,7 +530,6 @@ public class CompleteParseBaseTest extends TestCase
         public void acceptEnumerationReference(IASTEnumerationReference reference)
         {
     		references.add( reference );
-            
         }
     
         /* (non-Javadoc)
@@ -528,19 +591,43 @@ public class CompleteParseBaseTest extends TestCase
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
 		 */
-		public void enterCodeBlock(IASTScope scope) {
-			// TODO Auto-generated method stub
-			
+		public void enterCodeBlock(IASTCodeScope scope) {
+			pushCodeScope( scope );
 		}
 
-		/* (non-Javadoc)
+		/**
+         * @param scope
+         */
+        protected void pushCodeScope(IASTCodeScope scope)
+        {
+			scopes.push( new CodeScope( scope ) );
+        }
+
+        /* (non-Javadoc)
 		 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
 		 */
-		public void exitCodeBlock(IASTScope scope) {
-			// TODO Auto-generated method stub
-			
+		public void exitCodeBlock(IASTCodeScope scope) {
+			popScope();
+			getCurrentCodeScope().addNewScope(scope);
 		}
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumeratorReference(org.eclipse.cdt.core.parser.ast.IASTEnumerationReference)
+         */
+        public void acceptEnumeratorReference(IASTEnumeratorReference reference)
+        {
+        	references.add( reference );
+        }
     
+    }
+    
+    protected Iterator getNestedScopes( IASTCodeScope scope )
+    {
+    	CodeScope s = callback.lookup( scope );
+		if( s != null )
+			return s.getCodeBlocks();
+		return null;
+ 
     }
     protected Iterator getDeclarations(IASTScope scope)
     {

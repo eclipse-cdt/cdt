@@ -2632,14 +2632,14 @@ public class Parser implements IParser
                 condition( scope );
                 consume(IToken.tRPAREN);
                 if( LT(1) != IToken.tLBRACE )
-					statement( astFactory.createNewCodeBlock( scope ) );
+                    singleStatementScope(scope);
                 else
-                	statement(scope);
+                	statement( scope );
                 if (LT(1) == IToken.t_else)
                 {
                     consume( IToken.t_else );
                     if( LT(1) != IToken.tLBRACE )
-                    	statement( astFactory.createNewCodeBlock( scope ) );
+						singleStatementScope(scope);
                     else
                     	statement( scope );
                 }
@@ -2657,14 +2657,14 @@ public class Parser implements IParser
                 condition(scope);
                 consume(IToken.tRPAREN);
                 if( LT(1) != IToken.tLBRACE )
-                	statement(astFactory.createNewCodeBlock(scope));
+					singleStatementScope(scope);
                 else
                 	statement(scope);
                 return;
             case IToken.t_do :
                 consume(IToken.t_do);
 				if( LT(1) != IToken.tLBRACE )
-					statement(astFactory.createNewCodeBlock(scope));
+					singleStatementScope(scope);
 				else
 					statement(scope);
                 consume(IToken.t_while);
@@ -2751,6 +2751,19 @@ public class Parser implements IParser
                 }
                 // declarationStatement
                 declaration(scope, null);
+        }
+    }
+    protected void singleStatementScope(IASTScope scope) throws Backtrack
+    {
+        IASTCodeScope newScope = astFactory.createNewCodeBlock( scope );
+        newScope.enterScope( requestor );
+        try
+        {
+			statement( newScope );
+        }
+        finally
+        {
+			newScope.exitScope( requestor );
         }
     }
 

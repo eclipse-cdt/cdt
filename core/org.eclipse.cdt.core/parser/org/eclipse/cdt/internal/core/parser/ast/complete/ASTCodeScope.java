@@ -18,11 +18,16 @@ import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
  */
 public class ASTCodeScope extends ASTScope implements IASTCodeScope {
 
-	/**
+	private final IASTCodeScope ownerCodeScope;
+
+    /**
 	 * @param newScope
 	 */
 	public ASTCodeScope(IContainerSymbol newScope) {
 		super( newScope );
+		ownerCodeScope = ( newScope.getContainingSymbol().getASTExtension().getPrimaryDeclaration() instanceof IASTCodeScope ) ? 
+			(IASTCodeScope) newScope.getContainingSymbol().getASTExtension().getPrimaryDeclaration() : null; 
+	
 	}
 
 	/* (non-Javadoc)
@@ -44,5 +49,13 @@ public class ASTCodeScope extends ASTScope implements IASTCodeScope {
 	public void exitScope(ISourceElementRequestor requestor) {
 		requestor.exitCodeBlock( this );
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTCodeScope#getOwnerCodeScope()
+     */
+    public IASTCodeScope getOwnerCodeScope()
+    {
+        return ownerCodeScope;
+    }
 
 }

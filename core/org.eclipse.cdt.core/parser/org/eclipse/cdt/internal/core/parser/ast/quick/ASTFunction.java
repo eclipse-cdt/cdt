@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
@@ -210,4 +211,11 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 	public boolean hasFunctionBody() {
 		return hasFunctionBody;
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTCodeScope#getOwnerCodeScope()
+     */
+    public IASTCodeScope getOwnerCodeScope()
+    {
+    	return null;
+    }
 }

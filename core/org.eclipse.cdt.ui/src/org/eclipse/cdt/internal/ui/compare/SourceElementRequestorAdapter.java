@@ -17,10 +17,12 @@ import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumeratorReference;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -296,7 +298,7 @@ public class SourceElementRequestorAdapter implements ISourceElementRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
 	 */
-	public void enterCodeBlock(IASTScope scope) {
+	public void enterCodeBlock(IASTCodeScope scope) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -304,9 +306,18 @@ public class SourceElementRequestorAdapter implements ISourceElementRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
 	 */
-	public void exitCodeBlock(IASTScope scope) {
+	public void exitCodeBlock(IASTCodeScope scope) {
 		// TODO Auto-generated method stub
 		
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumeratorReference(org.eclipse.cdt.core.parser.ast.IASTEnumerationReference)
+     */
+    public void acceptEnumeratorReference(IASTEnumeratorReference reference)
+    {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

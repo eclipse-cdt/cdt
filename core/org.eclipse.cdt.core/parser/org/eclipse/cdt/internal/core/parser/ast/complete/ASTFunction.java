@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
@@ -238,5 +239,15 @@ public class ASTFunction extends ASTScope implements IASTFunction
     public void exitScope(ISourceElementRequestor requestor)
     {
         requestor.exitFunctionBody( this );
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTCodeScope#getOwnerCodeScope()
+     */
+    public IASTCodeScope getOwnerCodeScope()
+    {
+        return ( getSymbol().getContainingSymbol().getASTExtension().getPrimaryDeclaration() ) instanceof IASTCodeScope ? 
+			(IASTCodeScope) getSymbol().getContainingSymbol().getASTExtension().getPrimaryDeclaration()  : null;
     }
 }

@@ -14,10 +14,12 @@ import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumeratorReference;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -29,7 +31,6 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
@@ -61,8 +62,9 @@ public interface ISourceElementRequestor {
 
 	public void enterFunctionBody( IASTFunction function );
 	public void exitFunctionBody( IASTFunction function );
-	public void enterCodeBlock( IASTScope scope );
-	public void exitCodeBlock( IASTScope scope );
+	
+	public void enterCodeBlock( IASTCodeScope scope );
+	public void exitCodeBlock( IASTCodeScope scope );
 
 	public void enterCompilationUnit( IASTCompilationUnit compilationUnit ); 
 	public void enterInclusion( IASTInclusion inclusion ); 
@@ -87,6 +89,7 @@ public interface ISourceElementRequestor {
 	public void acceptFunctionReference( IASTFunctionReference reference );
 	public void acceptFieldReference( IASTFieldReference reference );
 	public void acceptMethodReference( IASTMethodReference reference );
+	public void acceptEnumeratorReference( IASTEnumeratorReference reference );
 	
 	public void exitTemplateDeclaration( IASTTemplateDeclaration declaration );
 	public void exitTemplateSpecialization( IASTTemplateSpecialization specialization );

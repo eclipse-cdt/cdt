@@ -21,7 +21,9 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -742,5 +744,54 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTFunction foo = (IASTFunction)i.next(); 
 		assertFalse( i.hasNext() );
 		assertEquals( callback.getReferences().size(), 3 );
+	}
+	
+	public void testThrowStatement() throws Exception
+	{
+		Iterator i = parse( "class A { }; void foo() throw ( A ) { throw A; throw; } ").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTFunction functionF = (IASTFunction)i.next(); 
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 2 );
+		for( int j = 0; j < 2; ++j )
+			assertEquals( ((IASTReference)callback.getReferences().get(j) ).getReferencedElement(), classA );
+	}
+	
+	public void testScoping() throws Exception
+	{
+		Iterator i = parse( "void foo() { int x = 3; if( x == 1 ) { int x = 4; } else int x = 2; }").getDeclarations(); 
+		IASTFunction f = (IASTFunction)i.next(); 
+		Iterator subDeclarations = getDeclarations(f);
+		IASTVariable topX = (IASTVariable)subDeclarations.next();
+		assertEquals( topX.getInitializerClause().getAssigmentExpression().getLiteralString(), "3");
+		assertEquals( topX.getName(), "x");
+		assertFalse( subDeclarations.hasNext() );
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 1 );
+		assertEquals( ((IASTReference)callback.getReferences().get(0)).getReferencedElement(), topX ); 
+		
+		Iterator level1 = getNestedScopes( f );
+		IASTCodeScope codeScope = (IASTCodeScope)level1.next();
+		Iterator subSubDeclarations = getDeclarations(codeScope);
+		IASTVariable secondX = (IASTVariable)subSubDeclarations.next();
+		assertEquals( secondX.getInitializerClause().getAssigmentExpression().getLiteralString(), "4");
+		codeScope = (IASTCodeScope)level1.next();
+		assertFalse( level1.hasNext() );
+		subSubDeclarations = getDeclarations(codeScope);
+		IASTVariable thirdX = (IASTVariable)subSubDeclarations.next();
+		assertEquals( thirdX.getInitializerClause().getAssigmentExpression().getLiteralString(), "2");
+		
+	}
+	
+	public void testEnumeratorReferences() throws Exception
+	{
+		Iterator i = parse( "enum E { e1, e2, e3 }; E anE = e1;").getDeclarations();
+		IASTEnumerationSpecifier enumE = (IASTEnumerationSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTVariable anE = (IASTVariable)i.next();
+		IASTEnumerator e1 = (IASTEnumerator)enumE.getEnumerators().next();
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 2 );
+		assertEquals( ((IASTReference)callback.getReferences().get(0)).getReferencedElement(), enumE );
+		assertEquals( ((IASTReference)callback.getReferences().get(1)).getReferencedElement(),  e1 );
 	}
 }

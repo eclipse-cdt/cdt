@@ -1,3 +1,15 @@
+2003-02-11 Mikhail Khodjaiants
+	The 'Automatically Load Symbols' action is added to the 'Shared Libraries' view.
+	* SetAutoSolibActionDelegate.java: new
+	* plugin.properties
+	* plugin.xml
+	* icons/full/clcl16/auto_solib_co.gif: new
+	* icons/full/dlcl16/auto_solib_co.gif: new
+	* icons/full/elcl16/auto_solib_co.gif: new
+
+2003-02-11 Mikhail Khodjaiants
+	New package 'org.eclipse.cdt.debug.mi.internal.ui.actions' is added.
+
 2003-02-06 Alain Magloire
 
 	* src/.../internal/ui/CygwinDebuggerPage.java (updateLaunchConfigurationDialog):

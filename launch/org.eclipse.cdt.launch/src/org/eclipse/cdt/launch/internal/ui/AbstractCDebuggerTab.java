@@ -65,6 +65,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 
 	protected void setLaunchConfiguration(ILaunchConfiguration launchConfiguration) {
 		fLaunchConfiguration = launchConfiguration;
+		setLaunchConfigurationWorkingCopy( null );
 	}
 
 	protected ILaunchConfiguration getLaunchConfiguration() {

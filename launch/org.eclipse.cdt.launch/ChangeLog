@@ -1,3 +1,7 @@
+2004-08-10 Mikhail Khodjaiants
+	Fix for bug 70442: Debugger launch configuration not updating properly.
+	* AbstractCDebuggerTab.java
+
 2004-07-21 Mikhail Khodjaiants
 	Replaced the decprecated target factory methods.
 	* CoreFileLaunchDelegate.java

@@ -2584,5 +2584,45 @@ public class ParserSymbolTableTest extends TestCase {
 		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f );
 	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 * 
+	 * The general rule is that when you set a TypeInfo's type to be t_type, you 
+	 * should set the type symbol to be something.  This is to test that the function
+	 * resolution can handle a bad typeInfo that has a null symbol without throwing a NPE
+	 */
+	public void testBadParameterInfo() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
+		
+		IDerivableContainerSymbol a = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		table.getCompilationUnit().addSymbol( a );
+		
+		f.addParameter( a, null, false );
+		
+		table.getCompilationUnit().addSymbol( f );
+		
+		LinkedList paramList = new LinkedList ();
+		
+		TypeInfo param = new TypeInfo( TypeInfo.t_type, 0, null );
+		
+		paramList.add( param );
+		
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", paramList );
+		
+		assertEquals( look, null );
+		
+		ISymbol intermediate = table.newSymbol( "", TypeInfo.t_type );
+		
+		param.setTypeSymbol( intermediate );
+		
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", paramList );
+		
+		assertEquals( look, null );
+	}
 }
 

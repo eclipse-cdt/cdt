@@ -738,13 +738,13 @@ public class ParserSymbolTable {
 				target = ((ISymbol)targetParams.next()).getTypeInfo();
 				if( source.equals( target ) ){
 					cost = new Cost( source, target );
-					cost.rank = 0;	//exact match, no cost
+					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
 				} else {
 					cost = checkStandardConversionSequence( source, target );
 					
 					//12.3-4 At most one user-defined conversion is implicitly applied to
 					//a single value.  (also prevents infinite loop)				
-					if( cost.rank == -1 && !data.forUserDefinedConversion ){
+					if( cost.rank == Cost.NO_MATCH_RANK && !data.forUserDefinedConversion ){
 						temp = checkUserDefinedConversionSequence( source, target );
 						if( temp != null ){
 							cost = temp;
@@ -758,7 +758,9 @@ public class ParserSymbolTable {
 			
 			hasWorse = false;
 			hasBetter = false;
-			
+			//In order for this function to be better than the previous best, it must
+			//have at least one parameter match that is better that the corresponding
+			//match for the other function, and none that are worse.
 			for( int j = 0; j < numParams; j++ ){ 
 				if( currFnCost[ j ].rank < 0 ){
 					hasWorse = true;
@@ -766,6 +768,8 @@ public class ParserSymbolTable {
 					break;
 				}
 				
+				//an ambiguity in the user defined conversion sequence is only a problem
+				//if this function turns out to be the best.
 				currHasAmbiguousParam = ( currFnCost[ j ].userDefined == 1 );
 				
 				if( bestFnCost != null ){
@@ -776,11 +780,15 @@ public class ParserSymbolTable {
 					hasBetter = true;
 				}
 			}
-				
+			
+			//If function has a parameter match that is better than the current best,
+			//and another that is worse (or everything was just as good, neither better nor worse).
+			//then this is an ambiguity (unless we find something better than both later)	
 			ambiguous |= ( hasWorse && hasBetter ) || ( !hasWorse && !hasBetter );
 			
 			if( !hasWorse ){
 				if( hasBetter ){
+					//the new best function.
 					ambiguous = false;
 					bestFnCost = currFnCost;
 					bestHasAmbiguousParam = currHasAmbiguousParam;
@@ -1091,6 +1099,13 @@ public class ParserSymbolTable {
 		}
 		
 		Cost cost = new Cost( source, target );
+		
+		//if either source or target is null here, then there was a problem 
+		//with the parameters and we can't match them.
+		if( cost.source == null || cost.target == null ){
+			return cost;
+		}
+		
 		TypeInfo.PtrOp op = null;
 		
 		if( cost.source.hasPtrOperators() ){
@@ -1132,6 +1147,12 @@ public class ParserSymbolTable {
 		return cost;
 	}
 	
+	/**
+	 * qualificationConversion
+	 * @param cost
+	 * 
+	 * see spec section 4.4 regarding qualification conversions
+	 */
 	static private void qualificationConversion( Cost cost ){
 		int size = cost.source.hasPtrOperators() ? cost.source.getPtrOperators().size() : 0;
 		int size2 = cost.target.hasPtrOperators() ? cost.target.getPtrOperators().size() : 0;
@@ -1149,6 +1170,7 @@ public class ParserSymbolTable {
 			op1 = (TypeInfo.PtrOp) iter1.next();
 			op2 = (TypeInfo.PtrOp) iter2.next();
 			
+			//can only convert if op2 is more qualified
 			if( ( op1.isConst()    && !op2.isConst() ) ||
 				( op1.isVolatile() && !op2.isVolatile() ) )
 			{
@@ -1166,7 +1188,7 @@ public class ParserSymbolTable {
 				op1 = (TypeInfo.PtrOp) iter1.next();
 				op2 = (TypeInfo.PtrOp) iter2.next();
 				
-				//pointer types are similar
+				//pointer types must be similar
 				if( op1.getType() != op2.getType() ){
 					canConvert = false;
 					break;
@@ -1191,7 +1213,7 @@ public class ParserSymbolTable {
 		
 		if( canConvert == true ){
 			cost.qualification = 1;
-			cost.rank = 0;
+			cost.rank = Cost.LVALUE_OR_QUALIFICATION_RANK;
 		} else {
 			cost.qualification = 0;
 		}
@@ -1235,7 +1257,7 @@ public class ParserSymbolTable {
 			cost.promotion = 0;
 		}
 		
-		cost.rank = (cost.promotion > 0 ) ? 1 : -1;
+		cost.rank = (cost.promotion > 0 ) ? Cost.PROMOTION_RANK : Cost.NO_MATCH_RANK;
 	}
 	
 	/**
@@ -1269,7 +1291,7 @@ public class ParserSymbolTable {
 				//4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 				//converted to an rvalue of type "pointer to cv void"
 				if( trg.isType( TypeInfo.t_void ) ){
-					cost.rank = 2;
+					cost.rank = Cost.CONVERSION_RANK;
 					cost.conversion = 1;
 					cost.detail = 2;
 					return;	
@@ -1281,7 +1303,7 @@ public class ParserSymbolTable {
 				// to an rvalue of type "pointer to cv B", where B is a base class of D.
 				if( (srcDecl instanceof IDerivableContainerSymbol) && trgDecl.isType( srcDecl.getType() ) ){
 					temp = hasBaseClass( (IDerivableContainerSymbol) srcDecl, (IDerivableContainerSymbol) trgDecl );
-					cost.rank = 2;
+					cost.rank = Cost.CONVERSION_RANK;
 					cost.conversion = ( temp > -1 ) ? temp : 0;
 					cost.detail = 1;
 					return;
@@ -1297,7 +1319,7 @@ public class ParserSymbolTable {
 				TypeInfo.PtrOp srcPtr =  trg.hasPtrOperators() ? (TypeInfo.PtrOp)trg.getPtrOperators().getFirst() : null;
 				if( trgDecl.isType( srcDecl.getType() ) && srcPtr != null && srcPtr.getType() == TypeInfo.PtrOp.t_memberPointer ){
 					temp = hasBaseClass( (IDerivableContainerSymbol)ptr.getMemberOf(), (IDerivableContainerSymbol)srcPtr.getMemberOf() );
-					cost.rank = 2;
+					cost.rank = Cost.CONVERSION_RANK;
 					cost.detail = 1;
 					cost.conversion = ( temp > -1 ) ? temp : 0;
 					return; 
@@ -1313,7 +1335,7 @@ public class ParserSymbolTable {
 				if( trg.isType( TypeInfo.t_bool, TypeInfo.t_int ) ||
 					trg.isType( TypeInfo.t_float, TypeInfo.t_double ) )
 				{
-					cost.rank = 2;
+					cost.rank = Cost.CONVERSION_RANK;
 					cost.conversion = 1;	
 				}
 			}
@@ -1323,8 +1345,12 @@ public class ParserSymbolTable {
 	static private Cost checkStandardConversionSequence( TypeInfo source, TypeInfo target ){
 		Cost cost = lvalue_to_rvalue( source, target );
 		
+		if( cost.source == null || cost.target == null ){
+			return cost;
+		}
+			
 		if( cost.source.equals( cost.target ) ){
-			cost.rank = 0;
+			cost.rank = Cost.IDENTITY_RANK;
 			return cost;
 		}
 	
@@ -1384,7 +1410,7 @@ public class ParserSymbolTable {
 		//conversion operators
 		if( source.getType() == TypeInfo.t_type ){
 			source = getFlatTypeInfo( source );
-			sourceDecl = source.getTypeSymbol();
+			sourceDecl = ( source != null ) ? source.getTypeSymbol() : null;
 			
 			if( sourceDecl != null && (sourceDecl instanceof IContainerSymbol) ){
 				String name = target.toString();
@@ -1409,21 +1435,21 @@ public class ParserSymbolTable {
 		}
 		
 		//if both are valid, then the conversion is ambiguous
-		if( constructorCost != null && constructorCost.rank != -1 && 
-			conversionCost != null && conversionCost.rank != -1 )
+		if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK && 
+			conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK )
 		{
 			cost = constructorCost;
-			cost.userDefined = 1;
-			cost.rank = 3;
+			cost.userDefined = Cost.AMBIGUOUS_USERDEFINED_CONVERSION;	
+			cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
 		} else {
-			if( constructorCost != null && constructorCost.rank != -1 ){
+			if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK ){
 				cost = constructorCost;
 				cost.userDefined = constructor.hashCode();
-				cost.rank = 3;
-			} else if( conversionCost != null && conversionCost.rank != -1 ){
+				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
+			} else if( conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK ){
 				cost = conversionCost;
 				cost.userDefined = conversion.hashCode();
-				cost.rank = 3;
+				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
 			} 			
 		}
 		
@@ -1442,20 +1468,19 @@ public class ParserSymbolTable {
 		TypeInfo returnInfo = topInfo;
 		TypeInfo info = null;
 		
-		if( topInfo.getType() == TypeInfo.t_type ){
+		if( topInfo.getType() == TypeInfo.t_type && topInfo.getTypeSymbol() != null ){
 			returnInfo = (TypeInfo)new TypeInfo();
 			
 			ISymbol typeSymbol = topInfo.getTypeSymbol();
 			
-			info = topInfo.getTypeSymbol().getTypeInfo();
+			info = typeSymbol.getTypeInfo();
 			
-			while( info.getType() == TypeInfo.t_type || ( info.isForwardDeclaration() && info.getTypeSymbol() != null ) ){
+			while( info.getTypeSymbol() != null && ( info.getType() == TypeInfo.t_type || info.isForwardDeclaration() ) ){
 				typeSymbol = info.getTypeSymbol();
 				
-				//returnInfo.addCVQualifier( info.getCVQualifier() );
 				returnInfo.addPtrOperator( info.getPtrOperators() );	
 				
-				info = info.getTypeSymbol().getTypeInfo();
+				info = typeSymbol.getTypeInfo();
 			}
 			
 			if( info.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) ){
@@ -2038,6 +2063,16 @@ public class ParserSymbolTable {
 		public int rank = -1;
 		public int detail;
 		
+		//Some constants to help clarify things
+		public static final int AMBIGUOUS_USERDEFINED_CONVERSION = 1;
+		
+		public static final int NO_MATCH_RANK = -1;
+		public static final int IDENTITY_RANK = 0;
+		public static final int LVALUE_OR_QUALIFICATION_RANK = 0;
+		public static final int PROMOTION_RANK = 1;
+		public static final int CONVERSION_RANK = 2;
+		public static final int USERDEFINED_CONVERSION_RANK = 3;
+		
 		public int compare( Cost cost ){
 			int result = 0;
 			
@@ -2049,7 +2084,7 @@ public class ParserSymbolTable {
 				if( userDefined == 0 || cost.userDefined == 0 ){
 					return cost.userDefined - userDefined;
 				} else {
-					if( (userDefined == 1 || cost.userDefined == 1) ||
+					if( (userDefined == AMBIGUOUS_USERDEFINED_CONVERSION || cost.userDefined == AMBIGUOUS_USERDEFINED_CONVERSION) ||
 						(userDefined != cost.userDefined ) )
 					{
 						return 0;
@@ -3135,7 +3170,7 @@ public class ParserSymbolTable {
 				if( paramType == null ){
 					continue;
 				}
-				
+					
 				ParserSymbolTable.getAssociatedScopes( paramType, associated );
 			
 				//if T is a pointer to a data member of class X, its associated namespaces and classes

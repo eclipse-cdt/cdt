@@ -1,3 +1,7 @@
+2003-09-12 Andrew Niefer
+	Fixed some NPEs in ParserSymbolTable.getFlatTypeInfo
+	Added some comments and created some constants to help clarify ranking of conversion sequences
+
 2003-09-11 John Camelon
 	Fixed Bug 42840 : Search: Cannot find things after double declarations 
 	Fixed Bug 42798 : Selected #include <Angled> off by 1 char 

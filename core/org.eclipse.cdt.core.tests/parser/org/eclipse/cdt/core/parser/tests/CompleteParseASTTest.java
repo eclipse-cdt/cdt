@@ -48,8 +48,6 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
@@ -380,20 +378,6 @@ public class CompleteParseASTTest extends TestCase
             this.compilationUnit = popScope();
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptPointerToFunction(org.eclipse.cdt.core.parser.ast.IASTPointerToFunction)
-         */
-        public void acceptPointerToFunction(IASTPointerToFunction function)
-        {
-			getCurrentScope().addDeclaration(function);
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptPointerToMethod(org.eclipse.cdt.core.parser.ast.IASTPointerToMethod)
-         */
-        public void acceptPointerToMethod(IASTPointerToMethod method)
-        {
-			getCurrentScope().addDeclaration(method);        }
         
         
         private Stack scopes = new Stack();
@@ -796,11 +780,26 @@ public class CompleteParseASTTest extends TestCase
 		assertEquals( callback.getReferences().size(), 2 );
 	}
 	
-//	public void testSimpleTypedef() throws Exception
-//	{
-//		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)parse( "typedef int myInt;").getDeclarations().next();
-//		assertEquals( typedef.getName(), "myInt");
-//	}
+	public void testSimpleTypedef() throws Exception
+	{
+		Iterator iter = parse( "typedef int myInt;\n myInt var;").getDeclarations();
+		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)iter.next();
+		assertEquals( typedef.getName(), "myInt");
+		assertEquals( ((IASTSimpleTypeSpecifier)typedef.getAbstractDeclarator().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.INT );
+		IASTVariable v = (IASTVariable)iter.next();
+		assertEquals( v.getName(), "var");
+		assertEquals( callback.getReferences().size(), 1 ); 
+	}
+	
+	public void testComplexTypedef() throws Exception
+	{
+		Iterator declarations = parse( "class A{ }; typedef A ** A_DOUBLEPTR;").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)declarations.next();
+		assertEquals( ((IASTSimpleTypeSpecifier)typedef.getAbstractDeclarator().getTypeSpecifier()).getTypeSpecifier(), classA ); 
+		assertEquals( callback.getReferences().size(), 1 );
+	}
+	
 	
 	protected void assertQualifiedName(String [] fromAST, String [] theTruth)
 	 {

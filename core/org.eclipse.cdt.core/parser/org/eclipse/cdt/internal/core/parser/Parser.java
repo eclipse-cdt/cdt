@@ -595,10 +595,10 @@ public class Parser implements IParser
                             wrapper.getTypeSpecifier(),
                             declarator.getPtrOps(),
                             declarator.getArrayModifiers(),
-                            declarator.getName() == null
-                                ? ""
-                                : declarator.getName(),
-                            declarator.getInitializerClause()),
+                            null,
+                            null, declarator.getName() == null
+                                    ? ""
+                                    : declarator.getName(), declarator.getInitializerClause()),
                         null));
             }
         }

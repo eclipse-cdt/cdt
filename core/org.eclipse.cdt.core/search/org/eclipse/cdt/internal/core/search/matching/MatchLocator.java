@@ -75,8 +75,6 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef) 		{	}
 	
 	public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration) {}
-	public void acceptPointerToFunction(IASTPointerToFunction function) {}
-	public void acceptPointerToMethod(IASTPointerToMethod method)   { }
 	public void acceptTypedefReference( IASTTypedefReference reference )        {	}
 	
 	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {	}

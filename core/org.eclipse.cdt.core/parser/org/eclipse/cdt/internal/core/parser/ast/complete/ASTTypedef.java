@@ -10,121 +10,137 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
+import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTTypedef implements IASTTypedefDeclaration
+public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
 {
+
+    private final IASTAbstractDeclaration mapping;
+    private NamedOffsets offsets = new NamedOffsets();
+    private final ASTQualifiedNamedElement qualifiedName;
+    private final ASTReferenceStore referenceStore; 
+
     /**
-     * 
+     * @param newSymbol
+     * @param mapping
+     * @param startingOffset
+     * @param nameOffset
+     * @param references
      */
-    public ASTTypedef()
+    public ASTTypedef(ISymbol newSymbol, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset, List references)
     {
-        super();
-        // TODO Auto-generated constructor stub
+        super( newSymbol );
+        this.mapping = mapping;
+        this.referenceStore = new ASTReferenceStore( references );
+        this.qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), newSymbol.getName());
+        setStartingOffset(startingOffset);
+        setNameOffset(nameOffset);
     }
+
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
+     * @see org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration#getName()
      */
     public String getName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return getSymbol().getName();
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration#getAbstractDeclarator()
      */
     public IASTAbstractDeclaration getAbstractDeclarator()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return mapping;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameOffset()
-     */
-    public int getNameOffset()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
-     */
-    public void setNameOffset(int o)
-    {
-        // TODO Auto-generated method stub
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
-     */
-    public String[] getFullyQualifiedName()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTScopedElement#getOwnerScope()
-     */
-    public IASTScope getOwnerScope()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
+        requestor.acceptTypedefDeclaration(this);
+        referenceStore.processReferences(requestor);        
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void enterScope(ISourceElementRequestor requestor)
-    {
-        // TODO Auto-generated method stub
+    {     
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameOffset()
+     */
+    public int getNameOffset()
+    {
+        return offsets.getNameOffset();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
+     */
+    public void setNameOffset(int o)
+    {
+        offsets.setNameOffset(o);
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
     public void setStartingOffset(int o)
     {
-        // TODO Auto-generated method stub
+        offsets.setStartingOffset(o);
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
     public void setEndingOffset(int o)
     {
-        // TODO Auto-generated method stub
+        offsets.setEndingOffset(o);
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
      */
     public int getStartingOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return offsets.getStartingOffset();
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
      */
     public int getEndingOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return offsets.getEndingOffset();
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName()
+    {
+        return qualifiedName.getFullyQualifiedName();
+    }
+	
 }

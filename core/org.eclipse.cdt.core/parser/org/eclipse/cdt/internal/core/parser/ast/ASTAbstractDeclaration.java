@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.ast;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 
@@ -22,22 +23,26 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
  */
 public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
 {
-	private final boolean isConst; 
+	private final List parms;
+    private final boolean isConst; 
 	private final IASTTypeSpecifier typeSpecifier; 
 	private final List pointerOperators; 
 	private final List arrayModifiers;
+	private final ASTPointerOperator pointerOperator; 
     /**
      * @param isConst
      * @param typeSpecifier
      * @param pointerOperators
      * @param arrayModifiers
      */
-    public ASTAbstractDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers)
+    public ASTAbstractDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp )
     {
        this.isConst = isConst;
        this.typeSpecifier = typeSpecifier;
        this.pointerOperators = pointerOperators; 
-       this.arrayModifiers = arrayModifiers;     
+       this.arrayModifiers = arrayModifiers;
+       this.parms = parameters;
+       this.pointerOperator = pointerOp;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#isConst()
@@ -66,5 +71,19 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
     public Iterator getArrayModifiers()
     {
         return arrayModifiers.iterator();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#getParameters()
+     */
+    public Iterator getParameters()
+    {
+        return parms.iterator();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#getPointerToFunctionOperator()
+     */
+    public ASTPointerOperator getPointerToFunctionOperator()
+    {
+        return pointerOperator;
     }
 }

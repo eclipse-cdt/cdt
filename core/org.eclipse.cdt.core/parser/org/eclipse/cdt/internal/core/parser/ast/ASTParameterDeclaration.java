@@ -10,9 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast;
 
-import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
@@ -21,12 +21,9 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
  * @author jcamelon
  *
  */
-public class ASTParameterDeclaration implements IASTParameterDeclaration
+public class ASTParameterDeclaration extends ASTAbstractDeclaration implements IASTParameterDeclaration
 {
-	private final boolean isConst; 
-	private final IASTTypeSpecifier typeSpecifier; 
-	private final List pointerOperators;
-	private final List arrayModifiers;
+
 	private final String parameterName; 
 	private final IASTInitializerClause initializerClause;
     /**
@@ -37,12 +34,9 @@ public class ASTParameterDeclaration implements IASTParameterDeclaration
      * @param parameterName
      * @param initializerClause
      */
-    public ASTParameterDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, String parameterName, IASTInitializerClause initializerClause)
+    public ASTParameterDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause)
     {
-		this.isConst = isConst; 
-		this.typeSpecifier = typeSpecifier;
-		this.pointerOperators = pointerOperators;
-		this.arrayModifiers = arrayModifiers;
+    	super( isConst, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp );
 		this.parameterName = parameterName;
 		this.initializerClause = initializerClause;
     }
@@ -59,33 +53,5 @@ public class ASTParameterDeclaration implements IASTParameterDeclaration
     public IASTInitializerClause getDefaultValue()
     {
         return initializerClause;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#isConst()
-     */
-    public boolean isConst()
-    {
-        return isConst;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#getTypeSpecifier()
-     */
-    public IASTTypeSpecifier getTypeSpecifier()
-    {
-        return typeSpecifier;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#getPointerOperators()
-     */
-    public Iterator getPointerOperators()
-    {
-        return pointerOperators.iterator();
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#getArrayModifiers()
-     */
-    public Iterator getArrayModifiers()
-    {
-        return arrayModifiers.iterator();
     }
 }

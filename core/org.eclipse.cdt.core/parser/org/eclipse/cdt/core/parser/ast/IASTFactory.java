@@ -139,7 +139,7 @@ public interface IASTFactory
         boolean isConst,
         IASTTypeSpecifier typeSpecifier,
         List pointerOperators,
-        List arrayModifiers);
+        List arrayModifiers, List parameters, ASTPointerOperator pointerOperator);
     public IASTMethod createMethod(
         IASTScope scope,
         String name,
@@ -166,7 +166,7 @@ public interface IASTFactory
 		   
 	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, ASTAccessVisibility visibility) throws ASTSemanticException;
 	
-	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, String parameterName, IASTInitializerClause initializerClause );
+	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause );
 	
 	public IASTTemplateDeclaration createTemplateDeclaration( IASTScope scope, List templateParameters, boolean exported, int startingOffset ); 
 
@@ -176,42 +176,8 @@ public interface IASTFactory
 	
 	public IASTTemplateSpecialization createTemplateSpecialization(IASTScope scope, int startingOffset); 
 	
-	public IASTTypedefDeclaration createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset );
+	public IASTTypedefDeclaration createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset ) throws ASTSemanticException;
 
 	public IASTAbstractTypeSpecifierDeclaration createTypeSpecDeclaration( IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate template, int startingOffset, int endingOffset);
 
-	public IASTPointerToFunction createPointerToFunction(
-		IASTScope scope,
-		String name,
-		List parameters,
-		IASTAbstractDeclaration returnType,
-		IASTExceptionSpecification exception,
-		boolean isInline,
-		boolean isFriend,
-		boolean isStatic,
-		int startOffset,
-		int nameOffset,
-		IASTTemplate ownerTemplate, ASTPointerOperator pointerOperator);
-
-	public IASTPointerToMethod createPointerToMethod(
-		IASTScope scope,
-		String name,
-		List parameters,
-		IASTAbstractDeclaration returnType,
-		IASTExceptionSpecification exception,
-		boolean isInline,
-		boolean isFriend,
-		boolean isStatic,
-		int startOffset,
-		int nameOffset,
-		IASTTemplate ownerTemplate,
-		boolean isConst,
-		boolean isVolatile,
-		boolean isConstructor,
-		boolean isDestructor,
-		boolean isVirtual,
-		boolean isExplicit,
-		boolean isPureVirtual,
-		ASTAccessVisibility visibility, ASTPointerOperator pointerOperator);
-		
 }

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
@@ -119,6 +120,12 @@ public class BaseASTTest extends TestCase
     {
     	assertEquals( ((IASTSimpleTypeSpecifier)function.getReturnType().getTypeSpecifier()).getType(), type ); 
     }
+
+	protected void assertSimpleType(IASTTypedefDeclaration variable, IASTSimpleTypeSpecifier.Type type)
+	{
+		assertEquals( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclarator().getTypeSpecifier()).getType(), type ); 
+	}
+
     
 	protected void assertSimpleType(IASTVariable variable, IASTSimpleTypeSpecifier.Type type)
 	{

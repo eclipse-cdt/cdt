@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
@@ -37,8 +36,6 @@ import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
@@ -288,19 +285,5 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
         return new ASTAbstractTypeSpecifierDeclaration( scope, typeSpecifier, template, startingOffset, endingOffset );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createPointerToFunction(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplate)
-     */
-    public IASTPointerToFunction createPointerToFunction(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int nameOffset, IASTTemplate ownerTemplate, ASTPointerOperator pointerOperator)
-    {
-        return new ASTPointerToFunction( scope, name, parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, nameOffset, ownerTemplate, pointerOperator); 
-    }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createPointerToMethod(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplate, boolean, boolean, boolean, boolean, boolean, boolean, boolean, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility)
-     */
-    public IASTPointerToMethod createPointerToMethod(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int nameOffset, IASTTemplate ownerTemplate, boolean isConst, boolean isVolatile, boolean isConstructor, boolean isDestructor, boolean isVirtual, boolean isExplicit, boolean isPureVirtual, ASTAccessVisibility visibility, ASTPointerOperator pointerOperator)
-    {
-        return new ASTPointerToMethod(scope, name, parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, nameOffset, ownerTemplate, isConst, isVolatile, isConstructor, isDestructor, isVirtual, isExplicit, isPureVirtual, visibility, pointerOperator);
-    }
 }

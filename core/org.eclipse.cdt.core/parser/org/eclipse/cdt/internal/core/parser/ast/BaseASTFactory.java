@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
@@ -48,14 +49,14 @@ public class BaseASTFactory  {
 		return inclusion;
 	}
 
-    public IASTAbstractDeclaration createAbstractDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers)
+    public IASTAbstractDeclaration createAbstractDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOperator)
     {
-        return new ASTAbstractDeclaration( isConst, typeSpecifier, pointerOperators, arrayModifiers );
+        return new ASTAbstractDeclaration( isConst, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOperator );
     }
 
-    public IASTParameterDeclaration createParameterDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, String parameterName, IASTInitializerClause initializerClause)
+    public IASTParameterDeclaration createParameterDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause)
     {
-        return new ASTParameterDeclaration( isConst, typeSpecifier, pointerOperators, arrayModifiers, parameterName, initializerClause );
+        return new ASTParameterDeclaration( isConst, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp, parameterName, initializerClause );
     }
 
 

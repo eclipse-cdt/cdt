@@ -1,3 +1,7 @@
+2003-07-29 John Camelon
+	Updated AST to better represent pointers to functions/methods.
+	Implemented typedef declaration/x-ref infrastructure.  
+
 2003-07-29 Victor Mozgin
 	Fixed PR 39546 : Parser fails on 'signed' casts.
 

@@ -38,8 +38,6 @@ import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
@@ -431,6 +429,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				 symbol.getType() == TypeInfo.t_union ) 
 		{  
 			return new ASTClassReference( offset, string, (IASTClassSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
+		}
+		else if( symbol.getTypeInfo().checkBit( TypeInfo.isTypedef ))
+		{
+			return new ASTTypedefReference( offset, string, (IASTTypedefDeclaration)symbol.getASTExtension().getPrimaryDeclaration());
 		}
 		else if( symbol.getType() == TypeInfo.t_enumeration )
 			return new ASTEnumerationReference( offset, string,  (IASTEnumerationSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
@@ -1137,10 +1139,36 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         String name,
         IASTAbstractDeclaration mapping,
         int startingOffset,
-        int nameOffset)
+        int nameOffset) throws ASTSemanticException
     {
-        // TODO Auto-generated method stub
-        return new ASTTypedef();
+    	IContainerSymbol containerSymbol = scopeToSymbol(scope);
+    	ISymbol newSymbol = pst.newSymbol( name, TypeInfo.t_type);
+    	newSymbol.getTypeInfo().setBit( true,TypeInfo.isTypedef );
+    	
+    	List references = new ArrayList();
+		if( mapping.getTypeSpecifier() instanceof ASTSimpleTypeSpecifier ) 
+	    {
+			references.addAll( ((ASTSimpleTypeSpecifier)mapping.getTypeSpecifier()).getReferences() );
+		}
+    	
+    	try
+        {
+            containerSymbol.addSymbol( newSymbol );
+        }
+        catch (ParserSymbolTableException e)
+        {
+            throw new ASTSemanticException(); 
+        }
+        ASTTypedef d = new ASTTypedef( newSymbol, mapping, startingOffset, nameOffset, references );
+        try
+        {
+            attachSymbolExtension(newSymbol, d );
+        }
+        catch (ExtensionException e1)
+        {
+            throw new ASTSemanticException();
+        }
+        return d; 
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTypeSpecDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier, org.eclipse.cdt.core.parser.ast.IASTTemplate, int, int)
@@ -1154,54 +1182,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {
         return new ASTAbstractTypeSpecifierDeclaration( scopeToSymbol(scope), typeSpecifier, template, startingOffset, endingOffset);
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createPointerToFunction(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplate, org.eclipse.cdt.core.parser.ast.ASTPointerOperator)
-     */
-    public IASTPointerToFunction createPointerToFunction(
-        IASTScope scope,
-        String name,
-        List parameters,
-        IASTAbstractDeclaration returnType,
-        IASTExceptionSpecification exception,
-        boolean isInline,
-        boolean isFriend,
-        boolean isStatic,
-        int startOffset,
-        int nameOffset,
-        IASTTemplate ownerTemplate,
-        ASTPointerOperator pointerOperator)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createPointerToMethod(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplate, boolean, boolean, boolean, boolean, boolean, boolean, boolean, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility, org.eclipse.cdt.core.parser.ast.ASTPointerOperator)
-     */
-    public IASTPointerToMethod createPointerToMethod(
-        IASTScope scope,
-        String name,
-        List parameters,
-        IASTAbstractDeclaration returnType,
-        IASTExceptionSpecification exception,
-        boolean isInline,
-        boolean isFriend,
-        boolean isStatic,
-        int startOffset,
-        int nameOffset,
-        IASTTemplate ownerTemplate,
-        boolean isConst,
-        boolean isVolatile,
-        boolean isConstructor,
-        boolean isDestructor,
-        boolean isVirtual,
-        boolean isExplicit,
-        boolean isPureVirtual,
-        ASTAccessVisibility visibility,
-        ASTPointerOperator pointerOperator)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
     
     protected ParserSymbolTable pst = new ParserSymbolTable();
 }

@@ -20,8 +20,6 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
@@ -333,23 +331,8 @@ public class NullSourceElementRequestor implements ISourceElementRequestor
         
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptPointerToFunction(org.eclipse.cdt.core.parser.ast.IASTPointerToFunction)
-     */
-    public void acceptPointerToFunction(IASTPointerToFunction function)
-    {
-        // TODO Auto-generated method stub
-        
-    }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptPointerToMethod(org.eclipse.cdt.core.parser.ast.IASTPointerToMethod)
-     */
-    public void acceptPointerToMethod(IASTPointerToMethod method)
-    {
-        // TODO Auto-generated method stub
-        
-    }
+
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTypedefReference(org.eclipse.cdt.core.parser.ast.IASTTypedefReference)

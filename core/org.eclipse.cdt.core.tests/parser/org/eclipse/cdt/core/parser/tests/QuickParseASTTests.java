@@ -35,8 +35,6 @@ import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
@@ -433,6 +431,7 @@ public class QuickParseASTTests extends BaseASTTest
 		parse("typedef void (boo) ( void ); ");
 		parse("typedef void boo (void); ");
 	}
+	
 	public void testBug36769B() throws Exception {
 		parse("class X { operator int(); } \n");
 		parse("class X { operator int*(); } \n");
@@ -1495,24 +1494,22 @@ public class QuickParseASTTests extends BaseASTTest
 		code.write( "static void * (* const orig_malloc_hook)(const char *file, int line, size_t size);\n");
 
 		Iterator declarations = parse( code.toString() ).getDeclarations();
-		IASTPointerToFunction p2f = (IASTPointerToFunction)declarations.next();
-		assertSimpleReturnType( p2f, IASTSimpleTypeSpecifier.Type.VOID );
-		assertEquals( p2f.getName(), "name");
-		assertEquals( p2f.getPointerOperator(), ASTPointerOperator.POINTER);
-		Iterator parameters = p2f.getParameters();
+		IASTVariable p2f = (IASTVariable)declarations.next();
+		assertSimpleType( p2f, IASTSimpleTypeSpecifier.Type.VOID );
+		assertEquals( p2f.getName(), "name" );
+		Iterator parameters = p2f.getAbstractDeclaration().getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 
 		assertFalse( parameters.hasNext() );
 		assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.VOID );
 		assertEquals( parm.getName(), "" );
 		
-		p2f = (IASTPointerToFunction)declarations.next(); 
-		assertSimpleReturnType( p2f, IASTSimpleTypeSpecifier.Type.VOID );
+		p2f = (IASTVariable)declarations.next(); 
+		assertSimpleType( p2f, IASTSimpleTypeSpecifier.Type.VOID );
 		assertTrue( p2f.isStatic() );
-		Iterator rtPo = p2f.getReturnType().getPointerOperators();
+		Iterator rtPo = p2f.getAbstractDeclaration().getPointerOperators();
 		assertEquals( rtPo.next(), ASTPointerOperator.POINTER );
 		assertFalse( rtPo.hasNext() );
-		assertEquals( p2f.getPointerOperator(), ASTPointerOperator.CONST_POINTER);
-		parameters = p2f.getParameters();
+		parameters = p2f.getAbstractDeclaration().getParameters();
 		parm = (IASTParameterDeclaration)parameters.next(); 
 	    assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.CHAR );
 	    assertEquals( parm.getName(), "file" );
@@ -1529,13 +1526,12 @@ public class QuickParseASTTests extends BaseASTTest
 	
 	public void testBug36600() throws Exception
 	{
-		IASTPointerToFunction p2f = (IASTPointerToFunction)parse( "enum mad_flow (*input_func)(void *, struct mad_stream *);").getDeclarations().next();
-		IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier)p2f.getReturnType().getTypeSpecifier();
+		IASTVariable p2f = (IASTVariable)parse( "enum mad_flow (*input_func)(void *, struct mad_stream *);").getDeclarations().next();
+		IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier)p2f.getAbstractDeclaration().getTypeSpecifier();
 		assertEquals( elab.getName(), "mad_flow");
 		assertEquals( elab.getClassKind(), ASTClassKind.ENUM );
-		assertEquals( p2f.getPointerOperator(), ASTPointerOperator.POINTER );
 		assertEquals( p2f.getName(), "input_func");
-		Iterator parms = p2f.getParameters();
+		Iterator parms = p2f.getAbstractDeclaration().getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parms.next();
 		assertEquals( parm.getName(), "" );
 		assertEquals( parm.getPointerOperators().next(), ASTPointerOperator.POINTER);
@@ -1635,11 +1631,11 @@ public class QuickParseASTTests extends BaseASTTest
     
 	public void testPointersToMemberFunctions() throws Exception
 	{
-		IASTPointerToMethod p2m  = (IASTPointerToMethod)parse("void (A::*name)(void);").getDeclarations().next();
-		assertSimpleReturnType( p2m, IASTSimpleTypeSpecifier.Type.VOID );
+		IASTVariable p2m  = (IASTVariable)parse("void (A::*name)(void);").getDeclarations().next();
+		assertSimpleType( p2m, IASTSimpleTypeSpecifier.Type.VOID );
 		assertEquals( p2m.getName(), "A::name");
-		assertEquals( p2m.getPointerOperator(), ASTPointerOperator.POINTER);
-		Iterator parameters = p2m.getParameters();
+		assertEquals( p2m.getAbstractDeclaration().getPointerToFunctionOperator(), ASTPointerOperator.POINTER);
+		Iterator parameters = p2m.getAbstractDeclaration().getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 
 		assertFalse( parameters.hasNext() );
 		assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.VOID );
@@ -1720,5 +1716,39 @@ public class QuickParseASTTests extends BaseASTTest
 	{
 		parse("signed char c = (signed char) 0xffffffff;");
 		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
+	}
+	
+	public void testIndirectDeclarators() throws Exception
+	{
+		IASTVariable v = (IASTVariable)parse( "void (*x)( int );").getDeclarations().next();
+		assertEquals( v.getName(), "x");
+		assertSimpleType( v, IASTSimpleTypeSpecifier.Type.VOID );
+		assertParameterSimpleType( (IASTParameterDeclaration)v.getAbstractDeclaration().getParameters().next(), IASTSimpleTypeSpecifier.Type.INT  );
+		assertEquals( v.getAbstractDeclaration().getPointerToFunctionOperator(), ASTPointerOperator.POINTER );
+		
+		v = (IASTVariable)parse( "const int * (* const something)( const int * const * const  );").getDeclarations().next();
+		assertEquals( v.getName(), "something");
+		assertEquals( v.getAbstractDeclaration().getPointerToFunctionOperator(), ASTPointerOperator.CONST_POINTER);
+		assertTrue( v.getAbstractDeclaration().isConst() );
+		assertSimpleType( v, IASTSimpleTypeSpecifier.Type.INT );
+		assertEquals( v.getAbstractDeclaration().getPointerOperators().next(), ASTPointerOperator.POINTER );
+		IASTParameterDeclaration parm = (IASTParameterDeclaration)v.getAbstractDeclaration().getParameters().next();
+		assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.INT );
+		Iterator pointerOps = parm.getPointerOperators();
+		assertEquals( pointerOps.next(), ASTPointerOperator.CONST_POINTER );
+		assertEquals( pointerOps.next(), ASTPointerOperator.CONST_POINTER );
+		assertFalse( pointerOps.hasNext() );
+		
+		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)parse( "typedef void (*life)(int);").getDeclarations().next();
+		assertEquals( typedef.getName(), "life");
+		assertSimpleType( typedef, IASTSimpleTypeSpecifier.Type.VOID );
+		assertParameterSimpleType( (IASTParameterDeclaration)typedef.getAbstractDeclarator().getParameters().next(), IASTSimpleTypeSpecifier.Type.INT  );
+		
+		IASTFunction f = (IASTFunction)parse( "void (f)(void);").getDeclarations().next();
+		assertEquals( f.getName(), "f");
+		
+		typedef = (IASTTypedefDeclaration)parse( "typedef void (life)(int);").getDeclarations().next();
+		assertEquals( typedef.getName(), "life");
+		
 	}
 }

@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.tests.BaseASTTest;
@@ -323,7 +322,7 @@ public class ASTFailedTests extends BaseASTTest
     {
     	try
     	{
-			IASTPointerToFunction p2f = (IASTPointerToFunction)assertSoleDeclaration("extern int (* import) (void) __attribute__((dllimport));");
+			IASTDeclaration d = assertSoleDeclaration("extern int (* import) (void) __attribute__((dllimport));");
 			fail( "We should not reach this point");	
     	}
     	catch( ClassCastException cce )

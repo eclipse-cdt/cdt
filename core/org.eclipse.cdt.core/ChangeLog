@@ -1,3 +1,24 @@
+2003-10-18 Alain Magloire
+
+	Implement a Cygwin PE parser where addr2line, c++filt
+	cygpath can be set.  Remove the old implementation
+	in the core model.
+
+	* plugin.xml: Advertise the new Cygwin PE parser.
+
+	* utils/org/eclipse/cdt/utils/coff/parser/BinaryFile.java
+	* utils/org/eclipse/cdt/utils/coff/parser/BinaryObject.java
+	* utils/org/eclipse/cdt/utils/coff/parser/BinaryExcutable.java
+	* utils/org/eclipse/cdt/utils/coff/parser/BinaryShared.java
+	* utils/org/eclipse/cdt/utils/coff/parser/BinaryArchive.java
+	* utils/org/eclipse/cdt/utils/ICygwinToolsProvider.java
+
+	* model/org/eclipse/cdt/internal/model/parser/PEBinaryFile.java
+	* model/org/eclipse/cdt/internal/model/parser/ElfBinaryFile.java
+	* model/org/eclipse/cdt/internal/model/parser/PEBinaryArchive.java
+	* model/org/eclipse/cdt/internal/model/parser/ElfBinaryArchive.java
+	Removed
+
 2003-10-17 Alain Magloire
 
 	A proposed fix from c_ravikanth@xxxx, for a more meaningfull

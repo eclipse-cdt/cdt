@@ -1,3 +1,10 @@
+2003-10-18 Alain Magloire
+
+	New Binary Parser tab page for Cygwin PE Parser.
+
+	* src/org/eclipse/cdt/ui/dialogs/CygwinPEBinaryParser.java
+	* plugin.xml: Advertise this new parser.
+
 2003-10-17 David Inglis
 
 	Fix build error with Eclipse 3.0.

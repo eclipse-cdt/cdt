@@ -11,20 +11,34 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
+import org.eclipse.cdt.internal.core.parser.scanner2.InvalidPreprocessorNodeException;
 
 /**
  * @author jcamelon
@@ -126,13 +140,172 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
         return resolver.getLocations(offset,length);
     }
 
+    private class CFindNodeForOffsetAction extends CVisitor.CBaseVisitorAction {
+    	{
+    		processNames          = true;
+    		processDeclarations   = true;
+    		processInitializers   = true;
+    		processParameterDeclarations = true;
+    		processDeclarators    = true;
+    		processDeclSpecifiers = true;
+    		processDesignators 	  = true;
+    		processExpressions    = true;
+    		processStatements     = true;
+    		processTypeIds        = true;
+    		processEnumerators    = true;
+    	}
+    	
+    	IASTNode foundNode = null;
+    	int offset = 0;
+    	int length = 0;
+    	
+    	/**
+		 * 
+		 */
+		public CFindNodeForOffsetAction(int offset, int length) {
+			this.offset = offset;
+			this.length = length;
+		}
+    	
+    	public int processNode(IASTNode node) {
+    		if (foundNode != null)
+    			return PROCESS_ABORT;
+    		
+    		if (node instanceof ASTNode &&
+    				((ASTNode)node).getOffset() == offset &&
+    				((ASTNode)node).getLength() == length) {
+    			foundNode = node;
+    			return PROCESS_ABORT;
+    		}
+    		
+    		// skip the rest of this node if the selection is outside of its bounds
+    		if (node instanceof ASTNode &&
+    				offset > ((ASTNode)node).getOffset() + ((ASTNode)node).getLength())
+    			return PROCESS_SKIP;
+    		
+    		return PROCESS_CONTINUE;
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
+    	 */
+    	public int processDeclaration(IASTDeclaration declaration) {
+    		// use declarations to determine if the search has gone past the offset (i.e. don't know the order the visitor visits the nodes)
+    		if (declaration instanceof ASTNode && ((ASTNode)declaration).getOffset() > offset)
+    			return PROCESS_ABORT;
+    		
+    		return processNode(declaration);
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
+    	 */
+    	public int processDeclarator(IASTDeclarator declarator) {
+    		int ret = processNode(declarator);
+    		
+    		IASTPointerOperator[] ops = declarator.getPointerOperators();
+    		for(int i=0; i<ops.length; i++)
+    			processNode(ops[i]);
+    		
+    		if (declarator instanceof IASTArrayDeclarator) {
+    			IASTArrayModifier[] mods = ((IASTArrayDeclarator)declarator).getArrayModifiers();
+    			for(int i=0; i<mods.length; i++)
+    				processNode(mods[i]);
+    		}
+    		
+    		return ret;
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDesignator(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
+    	 */
+    	public int processDesignator(ICASTDesignator designator) {
+    		return processNode(designator);
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
+    	 */
+    	public int processDeclSpecifier(IASTDeclSpecifier declSpec) {
+    		return processNode(declSpec);
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
+    	 */
+    	public int processEnumerator(IASTEnumerator enumerator) {
+    		return processNode((IASTNode)enumerator);
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
+    	 */
+    	public int processExpression(IASTExpression expression) {
+    		return processNode(expression);
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
+    	 */
+    	public int processInitializer(IASTInitializer initializer) {
+    		return processNode(initializer);
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processName(org.eclipse.cdt.core.dom.ast.IASTName)
+    	 */
+    	public int processName(IASTName name) {
+    		if ( name.toString() != null )
+    			return processNode(name);
+    		return PROCESS_CONTINUE;
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
+    	 */
+    	public int processParameterDeclaration(
+    			IASTParameterDeclaration parameterDeclaration) {
+    		return processNode(parameterDeclaration);
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
+    	 */
+    	public int processStatement(IASTStatement statement) {
+    		return processNode(statement);
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
+    	 */
+    	public int processTypeId(IASTTypeId typeId) {
+    		return processNode(typeId);
+    	}
 
+    	public IASTNode getNode() {
+    		return foundNode;
+    	}
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getNodeForLocation(org.eclipse.cdt.core.dom.ast.IASTNodeLocation)
      */
-    public IASTNode[] selectNodesForLocation(String path, int offset, int length) {
-        // TODO Auto-generated method stub
-        return null;
+    public IASTNode selectNodeForLocation(String path, int realOffset, int realLength) {
+    	IASTNode node = null;
+    	
+    	try {
+    		node = resolver.getPreprocessorNode(path, realOffset, realLength);
+    	} catch (InvalidPreprocessorNodeException ipne) {
+    		// extract global offset from the exception, use it to get the node from the AST if it's valid
+    		int globalOffset = ipne.getGlobalOffset();
+    		if (globalOffset >= 0) {
+	    		CFindNodeForOffsetAction nodeFinder = new CFindNodeForOffsetAction(globalOffset, realLength);
+	    		getVisitor().visitTranslationUnit(nodeFinder);
+	    		node = nodeFinder.getNode();
+    		}
+    	}
+    	
+        return node;
     }
 
 
@@ -189,13 +362,6 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
         this.resolver = resolver;
     }
 
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#selectNodesForLocation(int, int)
-     */
-    public IASTNode[] selectNodesForLocation(int offset, int length) {
-        return selectNodesForLocation( "", offset, length ); //$NON-NLS-1$
-    }
     
     /* (non-Javadoc)
      * @see java.lang.Object#finalize()

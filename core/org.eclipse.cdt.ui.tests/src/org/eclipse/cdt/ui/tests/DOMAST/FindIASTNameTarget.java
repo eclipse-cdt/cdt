@@ -11,6 +11,7 @@
 package org.eclipse.cdt.ui.tests.DOMAST;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -401,11 +402,11 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		// get the TreeObject from the AST View's model corresponding to that name
 		TreeObject treeNode = null;
 		TreeItem treeItem = null;
-		treeNode =  tuTreeParent.findTreeObjectForIASTName(foundName);
+		treeNode =  tuTreeParent.findTreeObject(foundName, true, true);
 
 		if (treeNode != null && treeNode.getParent() != null) {
 			// found a matching TreeObject, so expand the tree to that object
-			treeItem = expandTreeToTreeObject(treeNode); // TODO Devin test this
+			treeItem = expandTreeToTreeObject(treeNode);
 		}
 		
 		// loop until the next name within the matchingNames list is found in the tree
@@ -413,11 +414,11 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 				((searchForward && index < matchingNames.length) ||
 				(!searchForward && index >= 0))) {
 			foundName = findNextMatchingName( findString, searchForward, caseSensitive, wholeWord, regExSearch );
-			treeNode =  tuTreeParent.findTreeObjectForIASTName(foundName);
+			treeNode =  tuTreeParent.findTreeObject(foundName, true, true);
 			
 			if (treeNode != null && treeNode.getParent() != null) {
 				// found a matching TreeObject, so expand the tree to that object
-				treeItem = expandTreeToTreeObject(treeNode); // TODO Devin test this
+				treeItem = expandTreeToTreeObject(treeNode);
 			}
 		}
 		
@@ -440,5 +441,5 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 }

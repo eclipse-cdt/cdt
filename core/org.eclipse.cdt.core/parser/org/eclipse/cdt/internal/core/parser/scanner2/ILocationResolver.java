@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -26,7 +27,6 @@ public interface ILocationResolver {
 	public IASTPreprocessorStatement [] getAllPreprocessorStatements();
 
 	public IASTNodeLocation [] getLocations( int offset, int length );
-    public IASTNodeLocation    getLocation( int offset );
     
     public char [] getUnpreprocessedSignature( IASTNodeLocation [] locations );
     
@@ -35,5 +35,7 @@ public interface ILocationResolver {
     public String getTranslationUnitPath();
     
     public void cleanup();
+
+    public IASTNode getPreprocessorNode( String path, int offset, int length ) throws InvalidPreprocessorNodeException;
     
 }

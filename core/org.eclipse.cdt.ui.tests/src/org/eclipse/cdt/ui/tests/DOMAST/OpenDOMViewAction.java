@@ -116,5 +116,5 @@ public class OpenDOMViewAction implements IViewActionDelegate, IEditorActionDele
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
-
+	
 }

@@ -46,7 +46,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  */
 public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
-    /**
+    private static final String NOT_VALID_MACRO = "Not a valid macro selection"; //$NON-NLS-1$
+	private static final String TU_INCLUDE_NOT_FOUND = "File searching does not match TU or #includes."; //$NON-NLS-1$
+	/**
      * @author jcamelon
      */
     static class ASTEndif extends ScannerASTNode implements
@@ -1024,31 +1026,38 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         collectContexts(V_PREPROCESSOR, tu, contexts, 0);
         IASTPreprocessorStatement[] result = new IASTPreprocessorStatement[size];
         for (int i = 0; i < size; ++i) {
-            if (contexts[i] instanceof _Inclusion)
-                result[i] = createASTInclusion(((_Inclusion) contexts[i]));
-            else if (contexts[i] instanceof _MacroDefinition)
-                result[i] = createASTMacroDefinition((_MacroDefinition) contexts[i]);
-            else if (contexts[i] instanceof _Undef)
-                result[i] = createASTUndef((_Undef) contexts[i]);
-            else if (contexts[i] instanceof _Pragma)
-                result[i] = createASTPragma((_Pragma) contexts[i]);
-            else if (contexts[i] instanceof _Error)
-                result[i] = createASTError((_Error) contexts[i]);
-            else if (contexts[i] instanceof _If)
-                result[i] = createASTIf((_If) contexts[i]);
-            else if (contexts[i] instanceof _Ifdef)
-                result[i] = createASTIfdef((_Ifdef) contexts[i]);
-            else if (contexts[i] instanceof _Ifndef)
-                result[i] = createASTIfndef((_Ifndef) contexts[i]);
-            else if (contexts[i] instanceof _Else)
-                result[i] = createASTElse((_Else) contexts[i]);
-            else if (contexts[i] instanceof _Elif)
-                result[i] = createASTElif((_Elif) contexts[i]);
-            else if (contexts[i] instanceof _Endif)
-                result[i] = createASTEndif((_Endif) contexts[i]);
+        	result[i] = createPreprocessorStatement(contexts[i]);
         }
 
         return result;
+    }
+    
+    private IASTPreprocessorStatement createPreprocessorStatement(_Context context) {
+        IASTPreprocessorStatement result = null; 
+    	if (context instanceof _Inclusion)
+            result = createASTInclusion(((_Inclusion) context));
+        else if (context instanceof _MacroDefinition)
+            result = createASTMacroDefinition((_MacroDefinition) context);
+        else if (context instanceof _Undef)
+            result = createASTUndef((_Undef) context);
+        else if (context instanceof _Pragma)
+            result = createASTPragma((_Pragma) context);
+        else if (context instanceof _Error)
+            result = createASTError((_Error) context);
+        else if (context instanceof _If)
+            result = createASTIf((_If) context);
+        else if (context instanceof _Ifdef)
+            result = createASTIfdef((_Ifdef) context);
+        else if (context instanceof _Ifndef)
+            result = createASTIfndef((_Ifndef) context);
+        else if (context instanceof _Else)
+            result = createASTElse((_Else) context);
+        else if (context instanceof _Elif)
+            result = createASTElif((_Elif) context);
+        else if (context instanceof _Endif)
+            result = createASTEndif((_Endif) context);
+    	
+    	return result;
     }
 
     /**
@@ -1278,16 +1287,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         if (bestContext instanceof _CompositeContext)
             return findContextForOffset((_CompositeContext) bestContext, offset);
         return bestContext;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getLocation(int)
-     */
-    public IASTNodeLocation getLocation(int offset) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     /*
@@ -1693,5 +1692,94 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         currentContext.addSubContext(new _Ifndef(currentContext, startOffset,
                 endOffset, taken));
     }
+    
+    private _Context findInclusion(_CompositeContext context, String path) {
+    	_Context foundContext = null;
+    	List contexts = context.getSubContexts();
+    	
+		for (int i=0; foundContext == null && i<contexts.size(); i++) {
+			if (contexts.get(i) instanceof _Inclusion) {
+				context = (_Inclusion)contexts.get(i);
+				
+				// check if the file matches the #include
+				if (CharArrayUtils.equals(((_Inclusion)context).reader.filename, path.toCharArray())) {
+					foundContext = context;
+				} else {
+					foundContext = findInclusion(context, path);
+				}
+			}
+		}
+
+		return foundContext;
+    }
+
+    private IASTNode getPreprocessorNode(int globalOffset, int length, _Context startContext) throws InvalidPreprocessorNodeException {
+    	IASTNode result = null;
+    	if (!(startContext instanceof _CompositeContext)) throw new InvalidPreprocessorNodeException(NOT_VALID_MACRO, globalOffset);
+    	List contexts = ((_CompositeContext)startContext).getSubContexts();
+    	
+		// check if a macro in the location map is the selection
+		for (int i=0; result == null && i<contexts.size(); i++) {
+			if (contexts.get(i) instanceof _Context) {
+				_Context context = (_Context)contexts.get(i);
+				
+				// if offset is past the _Context then increment globalOffset
+				if (globalOffset > context.context_directive_end) {
+					globalOffset += context.context_ends - context.context_directive_end;
+				}
+				
+				// check if the _Context is the selection
+				if (globalOffset == context.context_directive_start &&
+						length == context.context_directive_end - context.context_directive_start) {
+					result = createPreprocessorStatement(context);
+				}
+				
+				// check if a sub node of the macro is the selection // TODO determine how this can be kept in sync with logic in getAllPreprocessorStatements (i.e. 1:1 mapping)
+				if (context instanceof _MacroDefinition) {
+					if (globalOffset == ((_MacroDefinition)context).nameOffset
+						&& length == ((_MacroDefinition)context).name.length)
+					result = createASTMacroDefinition((_MacroDefinition)context).getName();
+				}
+
+				// stop searching the _Contexts if they've gone past the selection
+				if (globalOffset < context.context_directive_end)
+					break;
+			}
+		}
+		
+		if (result == null)
+			throw new InvalidPreprocessorNodeException(NOT_VALID_MACRO, globalOffset);
+
+		return result;
+    }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getPreprocessorNode(int, int)
+	 */
+	public IASTNode getPreprocessorNode(String path, int offset, int length) throws InvalidPreprocessorNodeException {
+		IASTNode result = null;
+		int globalOffset = 0;
+		_Context foundContext = tu;
+		
+		// is the selection in TU or an #include else it's an exception
+		if (CharArrayUtils.equals(tu.reader.filename, path.toCharArray())) {
+			globalOffset = offset; // in TU so start at the real offset
+		} else {
+			foundContext = findInclusion(tu, path);
+			
+			if (foundContext == null) {
+				throw new InvalidPreprocessorNodeException(TU_INCLUDE_NOT_FOUND, globalOffset);
+			} else if (foundContext instanceof _Inclusion){
+				globalOffset = foundContext.context_directive_end + offset; // start at #include's directive_end + real offset
+			}
+		}
+		
+		result = getPreprocessorNode(globalOffset, length, foundContext);
+		
+		if (result == null)
+			throw new InvalidPreprocessorNodeException(NOT_VALID_MACRO, globalOffset);
+		
+		return result;
+	}
 
 }

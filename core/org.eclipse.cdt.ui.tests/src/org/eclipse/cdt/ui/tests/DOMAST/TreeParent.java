@@ -15,6 +15,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
@@ -127,14 +128,14 @@ public class TreeParent extends TreeObject {
 	 * @param node
 	 * @return
 	 */
-	private TreeParent findTreeObject(TreeObject[] trees, IASTNode node) {
+	private TreeParent findTreeObject(TreeObject[] trees, IASTNode node, boolean useOffset, boolean useName) {
 		for (int i=0; i<trees.length; i++) {
 			
 			if (trees[i] != null && trees[i] instanceof TreeParent) {
-				if ( ((TreeParent)trees[i]).getNode() == node ) {
+				if ( equalNodes( ((TreeParent)trees[i]).getNode(), node, useOffset, useName ) ) {
 					return (TreeParent)trees[i];
 				} else if ( ((TreeParent)trees[i]).hasChildren() ){
-					TreeParent tree = findTreeObject( ((TreeParent)trees[i]).getChildren(), node );
+					TreeParent tree = findTreeObject( ((TreeParent)trees[i]).getChildren(), node, useOffset, useName );
 					if (tree != null) return tree;
 				}
 			}
@@ -150,65 +151,32 @@ public class TreeParent extends TreeObject {
 	 * @param node
 	 * @return
 	 */
-	public TreeParent findTreeObject(IASTNode node) {
+	public TreeParent findTreeObject(IASTNode node, boolean useOffset) {
+		return findTreeObject(node, useOffset, false);
+	}
+	
+	/**
+	 * Returns the TreeParent that corresponds to the IASTNode.  This is the TreeParent
+	 * that represents the IASTNode in the DOM AST View.
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public TreeParent findTreeObject(IASTNode node, boolean useOffset, boolean useName) {
 		if (node == null) return null;
 		
 		Iterator itr = children.iterator();
 		while (itr.hasNext()) {
 			Object o = itr.next();
 			if (o != null && o instanceof TreeParent) {
-				if ( ((TreeParent)o).getNode() == node ) {
-					return (TreeParent)o;
-				} else if ( ((TreeParent)o).hasChildren() ){
-					TreeParent tree = findTreeObject( ((TreeParent)o).getChildren(), node );
-					if (tree != null) return tree;
-				}
-			}
-		}
-		
-		return null; // nothing found
-	}
-	
-	/**
-	 * Returns the TreeParent that corresponds to the IASTName.  This is based on string and offset equality.
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public TreeParent findTreeObjectForIASTName(IASTName name) {
-		if (name == null) return null;
-		
-		Iterator itr = children.iterator();
-		while (itr.hasNext()) {
-			Object o = itr.next();
-			if (o != null && o instanceof TreeParent) {
-				if (treeParentHasName((TreeParent)o, name)) return (TreeParent)o;
-			
-				if ( ((TreeParent)o).hasChildren() ){
-					TreeParent tree = findTreeObjectForIASTName( ((TreeParent)o).getChildren(), name );
-					if (tree != null) return tree;
-				}
-			}
-		}
-		
-		return null; // nothing found
-	}
-	
-	/**
-	 * Returns the TreeParent that corresponds to the IASTName.  This is based on string and offset equality.
-	 * 
-	 * @param trees
-	 * @param node
-	 * @return
-	 */
-	private TreeParent findTreeObjectForIASTName(TreeObject[] trees, IASTName name) {
-		for (int i=0; i<trees.length; i++) {
-			
-			if (trees[i] != null && trees[i] instanceof TreeParent) {
-				if (treeParentHasName((TreeParent)trees[i], name)) return (TreeParent)trees[i];
+				IASTNode treeNode = ((TreeParent)o).getNode(); 
 				
-				if ( ((TreeParent)trees[i]).hasChildren() ){
-					TreeParent tree = findTreeObjectForIASTName( ((TreeParent)trees[i]).getChildren(), name );
+				if (equalNodes(node, ((TreeParent)o).getNode(), useOffset, useName))
+					return (TreeParent)o;
+				
+				// search the children
+				if ( ((TreeParent)o).hasChildren() ){
+					TreeParent tree = findTreeObject( ((TreeParent)o).getChildren(), node, useOffset, useName );
 					if (tree != null) return tree;
 				}
 			}
@@ -216,16 +184,31 @@ public class TreeParent extends TreeObject {
 		
 		return null; // nothing found
 	}
-
-	private boolean treeParentHasName(TreeParent tp, IASTName name) {
-		if ( tp.getNode() instanceof IASTName && 
-				tp.getNode() instanceof ASTNode &&
-				name instanceof ASTNode) {
-			IASTName treeName = (IASTName)tp.getNode();
-			ASTNode treeNode = (ASTNode)tp.getNode();
-			if (treeName.toString().equals(name.toString()) && treeNode.getOffset() == ((ASTNode)name).getOffset() ) {
+		
+	private boolean equalNodes(IASTNode node1, IASTNode node2, boolean useOffset, boolean useName) {
+		if (useName && 
+				(!(node1 instanceof IASTName) || !(node2 instanceof IASTName) ||
+			!(((IASTName)node1).toString().equals(((IASTName)node2).toString())))) return false;
+			
+		if (useOffset) {
+			if (node1 instanceof ASTNode && node2 instanceof ASTNode) {
+				if (((ASTNode)node1).getOffset() == ((ASTNode)node2).getOffset() &&
+						((ASTNode)node1).getLength() == ((ASTNode)node2).getLength())
+					return true;
+			} else {
+				IASTNodeLocation[] locs1 = node1.getNodeLocations();
+				IASTNodeLocation[] locs2 = node2.getNodeLocations();
+				for(int i=0; i<locs1.length && i<locs2.length; i++) {
+					if (locs1[i].getNodeOffset() != locs2[i].getNodeOffset() ||
+							locs1[i].getNodeLength() != locs2[i].getNodeLength())
+						return false;
+				}
+				
 				return true;
 			}
+		} else {
+			if ( node1 == node2 ) 
+				return true;
 		}
 		
 		return false;

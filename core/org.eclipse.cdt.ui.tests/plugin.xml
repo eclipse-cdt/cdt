@@ -92,6 +92,15 @@
          	</or>
          </visibility>
       </viewerContribution>
+      <viewerContribution
+            targetID="#CEditorContext"
+            id="org.eclipse.cdt.ui.tests.cEditorContribution">
+         <action
+               label="Show IASTNode in DOM View"
+               class="org.eclipse.cdt.ui.tests.DOMAST.ShowInDOMViewAction"
+               menubarPath="additions"
+               id="org.eclipse.cdt.ui.tests.DOMAST.ShowInDOMViewAction1"/>
+      </viewerContribution>
    </extension>
    <extension
          point="org.eclipse.cdt.ui.CElementFilters">

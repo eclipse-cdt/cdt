@@ -67,6 +67,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -83,6 +84,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
@@ -90,41 +92,32 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
- * This sample class demonstrates how to plug-in a new workbench view. The view
- * shows data obtained from the model. The sample creates a dummy model on the
- * fly, but a real implementation would connect to the model available either in
- * this or another plug-in (e.g. the workspace). The view is connected to the
- * model using a content provider.
- * <p>
- * The view uses a label provider to define how model objects should be
- * presented in the view. Each view can present the same model objects using
- * different labels and icons, if needed. Alternatively, a single label provider
- * can be shared between views in order to ensure that objects of the same type
- * are presented in the same way everywhere.
- * <p>
+ * This is a simple DOM AST View used for development testing.
  */
 
 public class DOMAST extends ViewPart {
-   private static final String DOM_AST_HAS_NO_CONTENT = "DOM AST has no content"; //$NON-NLS-1$
-   private static final String SEARCH_FOR_IASTNAME = "Search for IASTName"; //$NON-NLS-1$
-   private static final String CLEAR = "Clear"; //$NON-NLS-1$
-   private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"; //$NON-NLS-1$
+   private static final String NOT_VALID_COMPILATION_UNIT = "The active editor does not contain a valid compilation unit."; //$NON-NLS-1$
    private static final String EXTENSION_CXX = "CXX"; //$NON-NLS-1$
    private static final String EXTENSION_CPP = "CPP"; //$NON-NLS-1$
    private static final String EXTENSION_CC = "CC"; //$NON-NLS-1$
    private static final String EXTENSION_C = "C"; //$NON-NLS-1$
-   private static final String NOT_VALID_COMPILATION_UNIT = "The active editor does not contain a valid compilation unit."; //$NON-NLS-1$
+   private static final String DOM_AST_HAS_NO_CONTENT = "DOM AST has no content"; //$NON-NLS-1$
+   private static final String SEARCH_FOR_IASTNAME = "Search for IASTName"; //$NON-NLS-1$
+   private static final String CLEAR = "Clear"; //$NON-NLS-1$
+   private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"; //$NON-NLS-1$
    private static final String LOAD_ACTIVE_EDITOR = "Load Active Editor"; //$NON-NLS-1$
    private static final String COLLAPSE_ALL = "Collapse ALL"; //$NON-NLS-1$
    private static final String EXPAND_ALL = "Expand All"; //$NON-NLS-1$
    private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1$
-   private static final String VIEW_NAME         = "DOM View";         //$NON-NLS-1$
+   public static final String VIEW_NAME         = "DOM View";         //$NON-NLS-1$
    private static final String POPUPMENU         = "#PopupMenu";       //$NON-NLS-1$
    private static final String OPEN_DECLARATIONS = "Open Declarations"; //$NON-NLS-1$
    private static final String OPEN_REFERENCES   = "Open References";  //$NON-NLS-1$
@@ -144,6 +137,8 @@ public class DOMAST extends ViewPart {
    private ParserLanguage              lang              = null;
    
    private CustomFiltersActionGroup customFiltersActionGroup;
+   
+   private static ViewContentProvider.StartInitializingASTView initializeASTViewJob = null;
 
    /*
     * The content provider class is responsible for providing objects to the
@@ -167,8 +162,8 @@ public class DOMAST extends ViewPart {
       }
       
       public ViewContentProvider(IFile file, Object[] expanded) {
-       	StartInitializingASTView job = new StartInitializingASTView(new InitializeView(POPULATING_AST_VIEW, this, viewer, file), expanded);
-   		job.schedule();
+       	initializeASTViewJob = new StartInitializingASTView(new InitializeView(POPULATING_AST_VIEW, this, viewer, file), expanded);
+   		initializeASTViewJob.schedule();
 
      }
       
@@ -177,6 +172,7 @@ public class DOMAST extends ViewPart {
       		for(int i=0; i<invisibleRoot.getChildren().length; i++) {
       			if (invisibleRoot.getChildren()[i] instanceof TreeParent && invisibleRoot.getChildren()[i].getNode() instanceof IASTTranslationUnit){
       	      		tuTreeParent = (TreeParent)invisibleRoot.getChildren()[i];
+      	      		return tuTreeParent;
       			}
       		}
       	}
@@ -452,6 +448,72 @@ public class DOMAST extends ViewPart {
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
+		
+		private TreeItem expandTreeToTreeObject(TreeItem[] treeItems, TreeObject treeObj) {
+			for (int i=0; i<treeItems.length; i++) {
+				if (treeItems[i].getData() == treeObj) {
+	 				return treeItems[i];
+	 			}
+	 			
+	 			TreeParent parent = treeObj.getParent();
+	 			
+	 			if (parent == null) return null; 
+
+	 			while (parent != treeItems[i].getData()) {
+	 				parent = parent.getParent();
+	 				if (parent == null) break;
+	 			}
+	 			
+	 			if (parent == treeItems[i].getData()) {
+	 				treeItems[i].setExpanded(true);
+	 				viewer.refresh();
+
+	 				return expandTreeToTreeObject(treeItems[i].getItems(), treeObj);
+	 			}
+	 		}
+	 		
+	 		return null; // nothing found
+		}
+		
+	 	private TreeItem expandTreeToTreeObject(TreeObject treeObj) {
+	 		return expandTreeToTreeObject(viewer.getTree().getItems(), treeObj);
+	 	}
+		
+		/**
+		 * Find an ASTNode in the tree and expand the tree to that node.
+		 * Returns true if successful, false otherwise.
+		 * 
+		 * @param offset
+		 * @param findString
+		 * @param searchForward
+		 * @param caseSensitive
+		 * @param wholeWord
+		 * @param regExSearch
+		 * @return
+		 */
+		public boolean findAndSelect(IASTNode node, boolean useOffset) {
+			// get the TreeObject from the AST View's model corresponding to the IASTNode
+			TreeObject treeNode = null;
+			TreeItem treeItem = null;
+			
+			treeNode =  getTUTreeParent().findTreeObject(node, useOffset);
+
+			if (treeNode != null && treeNode.getParent() != null) {
+				// found a matching TreeObject, so expand the tree to that object
+				treeItem = expandTreeToTreeObject(treeNode);
+			}
+			
+			// select the node that was found (and is now displayed)
+			if (treeItem != null) {
+				TreeItem[] items = new TreeItem[1];
+				items[0] = treeItem;
+				treeItem.getParent().setSelection(items);
+					
+				return true;
+			}
+
+			return false;
+		}
    }
 
    class ViewLabelProvider extends LabelProvider {
@@ -559,7 +621,10 @@ public class DOMAST extends ViewPart {
 
    public void setContentProvider(ViewContentProvider vcp) {
       viewer.setContentProvider(vcp);
-      
+   }
+   
+   public IContentProvider getContentProvider() {
+   		return viewer.getContentProvider();
    }
 
    private void hookContextMenu() {
@@ -628,35 +693,7 @@ public class DOMAST extends ViewPart {
    private void makeActions() {
  	  loadActiveEditorAction = new Action() {
         public void run() {
-        	// get the active editor
-        	IEditorPart editor = getActiveEditor();
-        	if (editor instanceof CEditor) {
-	    		IViewPart tempView = null;
-	
-	    		try {
-	    			tempView = getSite().getPage().showView(OpenDOMViewAction.VIEW_ID);
-	    		} catch (PartInitException pie) {}
-	    		
-	    		if (tempView != null) {
-	    			if (tempView instanceof DOMAST) {
-	    				IFile aFile = ((CEditor)editor).getInputFile();
-	    				
-	    				// check if the file is a valid "compilation unit" (based on file extension)
-	    				String ext = aFile.getFileExtension().toUpperCase();
-	    				if (!(ext.equals(EXTENSION_C) || ext.equals(EXTENSION_CC) || ext.equals(EXTENSION_CPP) || ext.equals(EXTENSION_CXX))) {
-	    					showMessage(NOT_VALID_COMPILATION_UNIT);
-	    					return;
-	    				}
-	    				
-	    				((DOMAST)tempView).setFile(aFile);
-	    				((DOMAST)tempView).setPart(editor);
-	    				((DOMAST)tempView).setLang(getLanguageFromFile(aFile));
-	    				((DOMAST)tempView).setContentProvider(((DOMAST)tempView).new ViewContentProvider(((CEditor)editor).getInputFile()));
-	    			}
-	    		}
-	
-	    		getSite().getPage().activate(tempView);
-        	}
+        	openDOMASTView(getActiveEditor());
         }
      };
      loadActiveEditorAction.setText(LOAD_ACTIVE_EDITOR);
@@ -747,18 +784,7 @@ public class DOMAST extends ViewPart {
 
    	return editor;
    }
-   
-   private ParserLanguage getLanguageFromFile(IFile file) {
-   	IProject project = file.getProject();
-	ICFileType type = CCorePlugin.getDefault().getFileType(project, file.getFullPath().lastSegment());
-	String lid = type.getLanguage().getId();
-	if ( lid != null && lid.equals(ICFileTypeConstants.LANG_CXX) ) {
-		return ParserLanguage.CPP;
-	}
-	
-	return ParserLanguage.C;
-   }
-   
+      
    private class ASTHighlighterAction extends Action {
 	IEditorPart aPart = null;
 
@@ -913,4 +939,105 @@ public class DOMAST extends ViewPart {
     this.file = file;
    }
 
+   private class RunAfterViewOpenJob extends Job {
+   	
+   	Runnable runner = null;
+   	
+   	/**
+	 * 
+	 */
+	public RunAfterViewOpenJob(String name, Runnable runner) {
+		super(name);
+		this.runner = runner;
+	}
+   	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IStatus run(IProgressMonitor monitor) {
+		try {
+			initializeASTViewJob.join();
+			CTestPlugin.getStandardDisplay().asyncExec(runner);
+		} catch (InterruptedException ie) {}
+		
+		return Status.OK_STATUS;
+
+	}
+   }
+   
+   /**
+    * Open the DOM AST View and return a reference to it.  This helper method can also be used to run an
+    * Action after the DOM AST View has been fully loaded (like find/select nodes in the view).
+    * 
+    * Note:  The action is not guaranteed to run.  An example would be if loading the view is canceled.
+    * 
+    * @param editor
+    * @param action
+    * @return
+    */
+    public static IViewPart openDOMASTViewRunAction(IEditorPart editor, Runnable runnable, String nameOfJob) {
+    	IViewPart view = openDOMASTView(editor);
+    	
+    	if (view == null) return null;
+    	
+   		RunAfterViewOpenJob job = ((DOMAST)view).new RunAfterViewOpenJob(nameOfJob, runnable);
+   		job.schedule();
+    	
+    	return view;
+    }
+   
+    /**
+     * Open the DOM AST View and return a reference to it.
+     * 
+     * @param editor
+     * @return
+     */
+	public static IViewPart openDOMASTView(IEditorPart editor) {
+		IWorkbenchPartSite site = editor.getSite();
+		Shell shell = site.getShell();
+		IViewPart tempView = null;
+		
+		// get the active editor
+    	if (editor instanceof CEditor) {
+
+    		try {
+    			tempView = site.getPage().showView(OpenDOMViewAction.VIEW_ID);
+    		} catch (PartInitException pie) {}
+    		
+    		if (tempView != null) {
+    			if (tempView instanceof DOMAST) {
+    				IFile aFile = ((CEditor)editor).getInputFile();
+    				
+    				// check if the file is a valid "compilation unit" (based on file extension)
+    				String ext = aFile.getFileExtension().toUpperCase();
+    				if (!(ext.equals(EXTENSION_C) || ext.equals(EXTENSION_CC) || ext.equals(EXTENSION_CPP) || ext.equals(EXTENSION_CXX))) {
+    					MessageDialog.openInformation(shell, DOMAST.VIEW_NAME, NOT_VALID_COMPILATION_UNIT);
+    					return null;
+    				}
+    				
+    				((DOMAST)tempView).setFile(aFile);
+    				((DOMAST)tempView).setPart(editor);
+    				((DOMAST)tempView).setLang(getLanguageFromFile(aFile));
+    				((DOMAST)tempView).setContentProvider(((DOMAST)tempView).new ViewContentProvider(((CEditor)editor).getInputFile()));
+    			}
+    		}
+
+    		site.getPage().activate(tempView);
+    		
+    	}
+    	
+    	return tempView;
+	}
+    	
+    public static ParserLanguage getLanguageFromFile(IFile file) {
+       	IProject project = file.getProject();
+    	ICFileType type = CCorePlugin.getDefault().getFileType(project, file.getFullPath().lastSegment());
+    	String lid = type.getLanguage().getId();
+    	if ( lid != null && lid.equals(ICFileTypeConstants.LANG_CXX) ) {
+    		return ParserLanguage.CPP;
+    	}
+    	
+    	return ParserLanguage.C;
+    }
+   
 }

@@ -236,7 +236,7 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 		TreeParent[] treeIncludes = new TreeParent[includes.length];
 		for (int i=0; i<treeIncludes.length; i++) {
 			if (monitor != null && monitor.isCanceled()) return;
-			treeIncludes[i] = root.findTreeObject(includes[i]);
+			treeIncludes[i] = root.findTreeObject(includes[i], false);
 		}
 		
 		// loop through the includes and make sure that all of the nodes 

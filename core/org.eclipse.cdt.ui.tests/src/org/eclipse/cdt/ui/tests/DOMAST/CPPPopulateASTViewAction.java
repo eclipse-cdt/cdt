@@ -263,7 +263,7 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 		TreeParent[] treeIncludes = new TreeParent[includes.length];
 		for (int i=0; i<treeIncludes.length; i++) {
 			if (monitor != null && monitor.isCanceled()) return;
-			treeIncludes[i] = root.findTreeObject(includes[i]);
+			treeIncludes[i] = root.findTreeObject(includes[i], false);
 		}
 		
 		// loop through the includes and make sure that all of the nodes 

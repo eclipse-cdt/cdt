@@ -1,3 +1,11 @@
+2002-11-21 Judy N. Green
+
+	* src/org/eclipse/cdt/launch/AbstractCLaunchDelegate.java (verifyCProject):
+	If we cannot get the ICProject with the config, we get the project 
+	and see if it exists and/or it is closed. The appropriate error is now
+	displayed, rather than reporting that the project does not exist when it
+	does exist, but is closed.
+
 2002-11-14 Thomas Fletcher
 	* src/.../launch/ui/CMainTab.java
 	Updated error condition to catch closed projects.

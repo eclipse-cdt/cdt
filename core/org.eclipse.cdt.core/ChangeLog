@@ -1,3 +1,11 @@
+2003-06-13 Andrew Niefer
+	Added search\org.eclipse.cdt.core.search
+		  search\org.eclipse.cdt.internal.core.search
+		  search\org.eclipse.cdt.internal.core.search.matching
+		  search\org.eclipse.cdt.internal.core.search.processing
+	with skeleton classes based on the JDT search as a beginning for 
+	implementing C/CPP search.
+
 2003-06-06 Sean Evoy
 
 	Added new interface, IResourceBuildInfo, so clients could

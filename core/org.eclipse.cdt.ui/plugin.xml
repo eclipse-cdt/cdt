@@ -888,5 +888,18 @@
          </tool>
       </target>
    </extension>
+   <extension
+         id="org.eclipse.cdt.ui.CSearchPage"
+         name="CSearchPage"
+         point="org.eclipse.search.searchPages">
+      <page
+            showScopeSection="true"
+            label="C/CPP Search"
+            icon="icons/full/obj16/csearch_obj.gif"
+            class="org.eclipse.cdt.internal.ui.search.CSearchPage"
+            sizeHint="460, 160"
+            id="org.eclipse.cdt.ui.CSearchPage">
+      </page>
+   </extension>
 
 </plugin>

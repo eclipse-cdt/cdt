@@ -2941,4 +2941,15 @@ public class AST2Tests extends AST2BaseTest {
                 ICPPASTCastExpression.op_dynamic_cast);
 
     }
+    
+    public void testBug86766() throws Exception {
+        IASTTranslationUnit tu = parse("char foo; void foo(){}", ParserLanguage.C); //$NON-NLS-1$
+        CNameCollector col = new CNameCollector();
+        tu.getVisitor().visitTranslationUnit( col);
+        
+        IVariable foo = (IVariable) col.getName(0).resolveBinding();
+        IProblemBinding prob = (IProblemBinding) col.getName(1).resolveBinding();
+        assertEquals( prob.getID(), IProblemBinding.SEMANTIC_INVALID_OVERLOAD );
+        assertNotNull( foo );
+    }
 }

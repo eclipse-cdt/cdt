@@ -640,7 +640,10 @@ public class CVisitor implements ICASTVisitor {
 		if( declarator instanceof IASTStandardFunctionDeclarator ){
 			binding = resolveBinding( parent, CURRENT_SCOPE );
 			if( binding != null ) {
-			    ((CFunction)binding).addDeclarator( (IASTStandardFunctionDeclarator) declarator );
+			    if( binding instanceof IFunction )
+			        ((CFunction)binding).addDeclarator( (IASTStandardFunctionDeclarator) declarator );
+			    else 
+			        binding = new ProblemBinding( IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
 			} else {
 				binding = createBinding(declarator);
 			}
@@ -648,7 +651,10 @@ public class CVisitor implements ICASTVisitor {
 			if ( CharArrayUtils.equals(declarator.getName().toCharArray(), name.toCharArray()) ){
 				binding = resolveBinding( parent, CURRENT_SCOPE );
 				if( binding != null ) {
-				    ((CFunction)binding).addDeclarator( (ICASTKnRFunctionDeclarator) declarator );
+				    if( binding instanceof IFunction )
+				        ((CFunction)binding).addDeclarator( (ICASTKnRFunctionDeclarator) declarator );
+				    else 
+				        binding = new ProblemBinding( IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
 				} else { 
 					binding = createBinding(declarator);
 				}

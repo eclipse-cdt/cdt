@@ -11,6 +11,7 @@ import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
@@ -537,6 +538,7 @@ public class DeltaProcessor {
 				if (element != null) {
 					updateIndexAddResource(element, delta);
 					elementAdded(element, delta);
+					return element instanceof ICContainer;
 				}
 				return false;
 
@@ -545,7 +547,7 @@ public class DeltaProcessor {
 					updateIndexRemoveResource(element, delta);
 					elementRemoved(element, delta);
 				}
-				return false;
+				return element instanceof ICContainer;
 
 			case IResourceDelta.CHANGED :
 				int flags = delta.getFlags();

@@ -1,4 +1,8 @@
 2005-03-23 Alain Magloire
+	Fix PR 87443.
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+
+2005-03-23 Alain Magloire
 	NPE fix.
 	* src/org/eclipse/cdt/internal/core/PathEntryVariableresolver.java
 

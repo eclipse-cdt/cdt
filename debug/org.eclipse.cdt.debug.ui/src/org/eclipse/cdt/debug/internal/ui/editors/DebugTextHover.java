@@ -78,7 +78,7 @@ public class DebugTextHover implements ITextHover
 					ICExpressionEvaluator ee = (ICExpressionEvaluator)targets[i].getAdapter( ICExpressionEvaluator.class );
 					if ( ee != null )
 					{
-						targetList.add( i, targets[i] );
+						targetList.add(targets[i] );
 					}
 				}
 				StringBuffer buffer = new StringBuffer();

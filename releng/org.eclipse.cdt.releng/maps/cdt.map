@@ -34,5 +34,13 @@ plugin@org.eclipse.cdt.managedbuilder.core=HEAD,:pserver:anonymous@dev.eclipse.o
 plugin@org.eclipse.cdt.managedbuilder.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,
 feature@org.eclipse.cdt.managedbuilder=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt.managedbuilder-feature
 
+! Testing feature
+
+plugin@org.eclipse.cdt.core.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,
+plugin@org.eclipse.cdt.ui.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,
+plugin@org.eclipse.cdt.debug.ui.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,
+plugin@org.eclipse.cdt.testing=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,
+feature@org.eclipse.cdt.testing=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt.testing-feature
+
 ! Source Feature
 

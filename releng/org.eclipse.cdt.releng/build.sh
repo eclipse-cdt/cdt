@@ -6,8 +6,4 @@ export PATH=$JAVA_HOME/bin:$PATH
 
 cd `dirname $0`
 
-rm -fr results
-
-java -cp eclipse/startup.jar org.eclipse.core.launcher.Main -application org.eclipse.ant.core.antRunner $* \
-	-DbaseLocation=$PWD/eclipse \
-	-DbuildDirectory=$PWD/results
+java -cp ../../startup.jar org.eclipse.core.launcher.Main -application org.eclipse.ant.core.antRunner $*

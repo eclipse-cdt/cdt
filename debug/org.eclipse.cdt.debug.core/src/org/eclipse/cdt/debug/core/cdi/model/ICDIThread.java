@@ -29,6 +29,12 @@ public interface ICDIThread extends ICDIObject {
 	ICDIStackFrame[] getStackFrames() throws CDIException;
 
 	/**
+	 * Set the curretn Stack for the thread.
+	 * @param - ICDIStackFrame
+	 */
+	void setCurrentStackFrame(ICDIStackFrame current) throws CDIException;
+
+	/**
 	 * Returns whether this thread is currently suspended.
 	 *
 	 * @return whether this thread is currently suspended

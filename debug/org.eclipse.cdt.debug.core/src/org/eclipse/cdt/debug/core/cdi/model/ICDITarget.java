@@ -54,6 +54,12 @@ public interface ICDITarget extends ICDIObject {
 	ICDIThread[] getThreads() throws CDIException;
 
 	/**
+	 * Set the current thread on the target.
+	 * @param - ICDThread
+	 */
+	void setCurrentThread(ICDIThread current) throws CDIException;
+
+	/**
 	 * Returns a memory block that starts at the specified memory 
 	 * address, with the specified length.
 	 * 

@@ -390,8 +390,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 + (++parseCount) + ": " //$NON-NLS-1$
                 + (System.currentTimeMillis() - startTime) + "ms" //$NON-NLS-1$
                 + (parsePassed ? "" : " - parse failure")); //$NON-NLS-1$ //$NON-NLS-2$
-        return getTranslationUnit();
+        IASTTranslationUnit result = getTranslationUnit();
+        nullifyTranslationUnit();
+        return result;
     }
+
+    /**
+     * 
+     */
+    protected abstract void nullifyTranslationUnit();
 
     protected void skipOverCompoundStatement() throws BacktrackException,
             EndOfFileException {

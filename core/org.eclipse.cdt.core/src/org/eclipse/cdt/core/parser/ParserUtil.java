@@ -21,6 +21,7 @@ import org.eclipse.cdt.internal.core.parser.ParserLogService;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -98,11 +99,14 @@ public class ParserUtil
 			return null;
 		IPath path = new Path( finalPath );
 		
-		if( workspace.getRoot().getLocation().isPrefixOf( path ) )
-			path = path.removeFirstSegments(workspace.getRoot().getLocation().segmentCount() );
+		IWorkspaceRoot root = workspace.getRoot();
+        if( root.getLocation().isPrefixOf( path ) )
+			path = path.removeFirstSegments(root.getLocation().segmentCount() );
 
-		IResource resultingResource = workspace.getRoot().findMember(path);
-		return resultingResource;
+		IResource resultingResource = root.getFile(path);
+		if( resultingResource.exists() ) 
+		    return resultingResource;
+		return null;
 	}
 
 	/**

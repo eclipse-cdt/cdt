@@ -2101,4 +2101,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#nullifyTranslationUnit()
+     */
+    protected void nullifyTranslationUnit() {
+        translationUnit = null;
+    }
+
 }

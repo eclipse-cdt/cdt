@@ -474,25 +474,15 @@ public class ManageConfigDialog extends Dialog {
 				break;
 			}
 		}
-		// Get all the predefined configs
-		IConfiguration [] allDefinedConfigs = null;
-		if (parentTarget != null) {
-			allDefinedConfigs = parentTarget.getConfigurations();
-		}
-		
-		// There should be predefined configurations ....
-		if (allDefinedConfigs != null && allDefinedConfigs.length != 0) {
-			NewConfigurationDialog dialog = new NewConfigurationDialog(getShell(), 
-																	   allDefinedConfigs, 
-																	   managedTarget, 
-																	   ManagedBuilderUIPlugin.getResourceString(CONF_DLG));
-			if (dialog.open() == NewConfigurationDialog.OK) {
-				// Get the new name and configuration to base the new config on
-				String newConfigName = dialog.getNewName(); 
-				getNewConfigs().put(newConfigName, dialog.getParentConfiguration());
-				currentConfigList.add(newConfigName);
-				currentConfigList.setSelection(currentConfigList.getItemCount() - 1);			
-			}
+		NewConfigurationDialog dialog = new NewConfigurationDialog(getShell(), 
+																   managedTarget, 
+																   ManagedBuilderUIPlugin.getResourceString(CONF_DLG));
+		if (dialog.open() == NewConfigurationDialog.OK) {
+			// Get the new name and configuration to base the new config on
+			String newConfigName = dialog.getNewName(); 
+			getNewConfigs().put(newConfigName, dialog.getParentConfiguration());
+			currentConfigList.add(newConfigName);
+			currentConfigList.setSelection(currentConfigList.getItemCount() - 1);			
 		}
 
 		// Update the buttons based on the choices		

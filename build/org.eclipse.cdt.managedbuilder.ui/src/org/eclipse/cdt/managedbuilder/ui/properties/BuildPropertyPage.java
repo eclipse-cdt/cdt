@@ -89,6 +89,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	private static final String ADD_TIP = TIP + ".addconf";	//$NON-NLS-1$
 	private static final String MANAGE_TITLE = PREFIX + ".manage.title";	//$NON-NLS-1$
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 20, 30 };
+	private static final String ID_SEPARATOR = ".";	//$NON-NLS-1$
 	
 	/*
 	 * Dialog widgets
@@ -598,7 +599,18 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 					if (id < 0) {
 						id *= -1;
 					}
-					String newId = parent.getId() + "." + id; //$NON-NLS-1$
+					
+					// Create ID for the new component based on the parent ID and random component
+					String newId = parent.getId();
+					int index = newId.lastIndexOf(ID_SEPARATOR);
+					if (index > 0) {
+						String lastComponent = newId.substring(index + 1, newId.length());
+						if (Character.isDigit(lastComponent.charAt(0))) {
+							// Strip the last component
+							newId = newId.substring(0, index);
+						}
+					}
+					newId += ID_SEPARATOR + id;
 					IConfiguration newConfig = selectedTarget.createConfiguration(parent, newId);
 					newConfig.setName(name);
 					// Update the config lists

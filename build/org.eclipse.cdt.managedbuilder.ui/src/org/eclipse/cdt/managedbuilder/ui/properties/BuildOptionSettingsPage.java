@@ -94,14 +94,7 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 					fieldsList.add(listField);
 					break;
 				default :
-					SummaryFieldEditor summaryField = new SummaryFieldEditor(
-							opt.getId(), opt.getName(), category.getTool(),
-							getFieldEditorParent());
-					addField(summaryField);
-					fieldsList.add(summaryField);
 					break;
-			//				default :
-			//					break;
 			}
 		}
 	}

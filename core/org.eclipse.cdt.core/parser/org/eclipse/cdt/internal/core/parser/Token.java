@@ -24,8 +24,6 @@ public class Token {
 		image = i;
 	}
 	
-	public static Token EOF = new Token(Token.tEOF, "<EOF>");
-	
 	public String toString()
 	{
 		return "Token type=" + type + "  image =" + image + " offset=" + offset; 	
@@ -47,7 +45,6 @@ public class Token {
 	public void setNext(Token t) { next = t; }
 
 	// Token types
-	static public final int tEOF = 0;
 	static public final int tIDENTIFIER = 1;
 	static public final int tINTEGER = 2;
 	static public final int tCOLONCOLON = 3;

@@ -26,7 +26,7 @@ public interface IScanner {
 	public void addIncludePath(String includePath); 
 	public void overwriteIncludePath( List newIncludePaths );
 	
-	public Token nextToken() throws ScannerException;
+	public Token nextToken() throws ScannerException, Parser.EndOfFile;
 	 
 	public void setQuickScan(boolean qs);
 	public void setCallback(IParserCallback c);

@@ -366,6 +366,9 @@ public class Scanner implements IScanner {
 
 	private int getChar() {
 		int c = NOCHAR;
+		if (currentContext == null)
+			// past the end of file
+			return c;
 
 		boolean done;
 		do {
@@ -436,12 +439,12 @@ public class Scanner implements IScanner {
 
 	
 
-	public Token nextToken() throws ScannerException {
+	public Token nextToken() throws ScannerException, Parser.EndOfFile {
 		return nextToken( true ); 
 	}
 
 
-	protected Token nextToken( boolean pasting ) throws ScannerException
+	protected Token nextToken( boolean pasting ) throws ScannerException, Parser.EndOfFile
 	{
 	
 		count++;
@@ -1102,10 +1105,9 @@ public class Scanner implements IScanner {
 						break;
 				}
 
-				return newToken(
-					Token.tEOF,
-					"Bad Char: " + (char) c,
-					currentContext);
+				// Bad character
+				// TODO - does this need it's own exception
+				throw Parser.endOfFile;
 			}
 		}
 
@@ -1113,9 +1115,7 @@ public class Scanner implements IScanner {
 			throw new ScannerException("End of file encountered without terminating #endif");
 
 		// we're done
-		if (currentToken != null)
-			currentToken.setNext(Token.EOF);
-		return Token.EOF;
+		throw Parser.endOfFile;
 	}
 
 	static {
@@ -1254,7 +1254,8 @@ public class Scanner implements IScanner {
 				ExpressionEvaluator evaluator = new ExpressionEvaluator();
 				Scanner trial =
 					new Scanner(
-						new StringReader(expression),
+						// Semicolon makes this valid C (hopefully)
+						new StringReader(expression + ";"),
 						EXPRESSION,
 						definitions);
 				Parser parser = new Parser(trial, evaluator);
@@ -1373,7 +1374,7 @@ public class Scanner implements IScanner {
 			handleInclusion(f.trim(), useIncludePath );
 	}
 
-	protected void poundDefine() throws ScannerException {
+	protected void poundDefine() throws ScannerException, Parser.EndOfFile {
 		skipOverWhitespace();
 		// definition 
 		String key = getNextIdentifier();
@@ -1424,9 +1425,13 @@ public class Scanner implements IScanner {
 				null);
 			Token t = helperScanner.nextToken(false);
 
-			while (t.type != Token.tEOF) {
-				macroReplacementTokens.add(t);
-				t = helperScanner.nextToken(false);
+			try {
+				while (true) {
+					macroReplacementTokens.add(t);
+					t = helperScanner.nextToken(false);
+				}
+			} catch (Parser.EndOfFile e) {
+				// Good
 			}
 
 			IMacroDescriptor descriptor = new MacroDescriptor();

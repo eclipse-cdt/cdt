@@ -25,17 +25,17 @@ public class ExprEvalTest extends TestCase {
 	}
 	
 	public void testInteger() throws Exception {
-		runTest("5", 5);
+		runTest("5;", 5);
 	}
 	
 	public void testRelational() throws Exception {
-		runTest("1 < 2", 1);
-		runTest("2 < 1", 0);
-		runTest("2 == 1 + 1", 1);
-		runTest("2 != 1 + 1", 0);
+		runTest("1 < 2;", 1);
+		runTest("2 < 1;", 0);
+		runTest("2 == 1 + 1;", 1);
+		runTest("2 != 1 + 1;", 0);
 	}
 	
 	public void testBracketed() throws Exception {
-		runTest("2 * (3 + 4)", 14);
+		runTest("2 * (3 + 4);", 14);
 	}
 }

@@ -1,3 +1,7 @@
+2003-03-17 Doug Schaefer
+	Changed EOF to be a Backtrack exception instead of a token so simplify
+	error handling.
+	
 2003-03-13 John Camelon
 	Moved ## token to IScanner from Scanner.
 	Updated IParserCallback and implementations to deal with Elaborated Type Specifiers. 

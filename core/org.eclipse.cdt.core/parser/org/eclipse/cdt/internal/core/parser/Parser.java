@@ -32,7 +32,6 @@ public class Parser {
 		quickParse = quick;
 		scanner.setQuickScan(quick);
 		scanner.setCallback(c);
-		//fetchToken();
 	}
 
 	public Parser(IScanner s, IParserCallback c) throws Exception {
@@ -78,13 +77,16 @@ c, quick);
 	public void translationUnit() throws Exception {
 		Object translationUnit = callback.translationUnitBegin();
 		Token lastBacktrack = null;
-		Token lastToken = null;
-		while (LT(1) != Token.tEOF) {
+		Token lastToken;
+		while (true) {
 			try {
-				lastToken = currToken;
+				lastToken = LA(1);
 				declaration( translationUnit );
-				if( currToken == lastToken )
+				if( LA(1) == lastToken )
 					consumeToNextSemicolon();
+			} catch (EndOfFile e) {
+				// Good
+				break;
 			} catch (Backtrack b) {
 				// Mark as failure and try to reach a recovery point
 				parsePassed = false;
@@ -102,12 +104,11 @@ c, quick);
 		callback.translationUnitEnd(translationUnit);
 	}
 
-	protected void consumeToNextSemicolon() {
-		for (int t = LT(1); t != Token.tEOF; t = LT(1)) {
+	protected void consumeToNextSemicolon() throws EndOfFile {
+		consume();
+		// TODO - we should really check for matching braces too
+		while (LT(1) != Token.tSEMI) {
 			consume();
-			// TO DO: we should really check for matching braces too
-			if (t == Token.tSEMI)
-				break;
 		}
 	}
 	
@@ -205,9 +206,7 @@ c, quick);
 				// and look for the left brace;
 				consume();
 				while (LT(1) != Token.tLBRACE) {
-					if (consume().getType() == Token.tEOF)
-						// Oops, couldn't find it
-						throw backtrack;
+					consume();
 				}
 				// Falling through on purpose
 			case Token.tLBRACE:
@@ -225,9 +224,6 @@ c, quick);
 							case Token.tLBRACE:
 								++depth;
 								break;
-							case Token.tEOF:
-								// Oops, no match
-								throw backtrack;
 						}
 					}
 				} else {
@@ -461,9 +457,6 @@ c, quick);
 						case Token.tLBRACE:
 							++depth;
 							break;
-						case Token.tEOF:
-							// Oops, no match
-							throw backtrack;
 					}
 				}
 			}
@@ -529,6 +522,7 @@ c, quick);
 							// parameterDeclarationClause
 							Object clause = callback.argumentsBegin(declarator);
 							consume();
+							boolean seenParameter = false;
 							parameterDeclarationLoop:
 							for (;;) {
 								switch (LT(1)) {
@@ -540,9 +534,13 @@ c, quick);
 										break;
 									case Token.tCOMMA:
 										consume();
+										seenParameter = false;
 										break;
 									default:
-										parameterDeclaration( clause );  
+										if (seenParameter)
+											throw backtrack;
+										parameterDeclaration( clause );
+										seenParameter = true;
 								}
 							}
 							callback.argumentsEnd(clause);
@@ -633,9 +631,6 @@ c, quick);
 					case Token.tLBRACE:
 						++depth;
 						break;
-					case Token.tEOF:
-						// Oops, no match
-						throw backtrack;
 				}
 			}
 		}
@@ -1362,24 +1357,32 @@ c, quick);
 	}
 	
 	// Backtracking
-	private static class Backtrack extends Exception {
+	public static class Backtrack extends Exception {
 	}
 	
 	private static Backtrack backtrack = new Backtrack();
+	
+	// End of file generally causes backtracking
+	public static class EndOfFile extends Backtrack {
+	}
+	
+	public static EndOfFile endOfFile = new EndOfFile();
 	
 	// Token management
 	private IScanner scanner;
 	private Token currToken;
 	
-	private Token fetchToken() {
+	private Token fetchToken() throws EndOfFile {
 		try {
 			return scanner.nextToken();
+		} catch (EndOfFile e) {
+			throw e;
 		} catch (Exception e) {
 			return null;
 		}
 	}
 
-	protected Token LA(int i) {
+	protected Token LA(int i) throws EndOfFile {
 		if (i < 1)
 			// can't go backwards
 			return null;
@@ -1390,34 +1393,37 @@ c, quick);
 		Token retToken = currToken;
 		 
 		for (; i > 1; --i) {
-			if (retToken.getNext() == null)
-				fetchToken();
 			retToken = retToken.getNext();
+			if (retToken == null)
+				retToken = fetchToken();
 		}
 		
 		return retToken;
 	}
 
-	protected int LT(int i) {
+	protected int LT(int i) throws EndOfFile {
 		return LA(i).type;
 	}
 	
-	protected Token consume() {
-		if (currToken.getNext() == null)
-			fetchToken();
+	protected Token consume() throws EndOfFile {
+		if (currToken == null)
+			currToken = fetchToken();
+
 		Token retToken = currToken;
 		currToken = currToken.getNext();
 		return retToken;
 	}
 	
-	protected Token consume(int type) throws Exception {
+	protected Token consume(int type) throws Backtrack {
 		if (LT(1) == type)
 			return consume();
 		else
 			throw backtrack;
 	}
 	
-	protected Token mark() {
+	protected Token mark() throws EndOfFile {
+		if (currToken == null)
+			currToken = fetchToken();
 		return currToken;
 	}
 	

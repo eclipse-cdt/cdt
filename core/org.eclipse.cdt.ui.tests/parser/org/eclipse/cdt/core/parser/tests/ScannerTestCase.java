@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.internal.core.parser.IMacroDescriptor;
+import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.Scanner;
 import org.eclipse.cdt.internal.core.parser.ScannerException;
 import org.eclipse.cdt.internal.core.parser.Token;
@@ -176,15 +177,18 @@ public class ScannerTestCase extends TestCase
 		try
 		{
 			Token t= scanner.nextToken();
-			while ((t != null) && (t.type != Token.tEOF))
+			while (t != null)
 			{
 				if (verbose)
 					System.out.println("Token t = " + t);
 
-				if ((t.type < Token.tEOF) || (t.type > Token.tLAST))
+				if ((t.type < 1) || (t.type > Token.tLAST))
 					System.out.println("Unknown type for token " + t);
 				t= scanner.nextToken();
 			}
+		}
+		catch (Parser.EndOfFile e)
+		{
 		}
 		catch (ScannerException se)
 		{
@@ -245,7 +249,7 @@ public class ScannerTestCase extends TestCase
 			validateToken(Token.tASSIGN);
 			validateInteger("5");
 			validateToken(Token.tSEMI);
-			validateToken(Token.tEOF);
+			validateEOF();
 
 			// the case we were failing against in ctype.h
 			// this is a definition, not a macro!
@@ -445,7 +449,7 @@ public class ScannerTestCase extends TestCase
 			validateEOF();
 
 			initializeScanner("#define SYMBOL 5\n#ifndef SYMBOL\nint counter(SYMBOL);\n#endif");
-			validateToken(Token.tEOF);
+			validateEOF();
 
 			initializeScanner("#ifndef DEFINED\n#define DEFINED 100\n#endif\nint count = DEFINED;");
 			validateToken(Token.t_int);
@@ -522,7 +526,7 @@ public class ScannerTestCase extends TestCase
 			validateBalance();
 
 			initializeScanner("#ifndef FOO\n#define FOO 4\n#else\n#undef FOO\n#define FOO 6\n#endif");
-			validateToken(Token.tEOF);
+			validateEOF();
 			validateBalance();
 			validateDefinition("FOO", "4");
 
@@ -833,7 +837,7 @@ public class ScannerTestCase extends TestCase
 		}
 	}
 
-	public void testQuickScan()
+	public void testQuickScan() throws Parser.EndOfFile
 	{
 		try
 		{
@@ -970,29 +974,45 @@ public class ScannerTestCase extends TestCase
 
 	public void validateIdentifier(String expectedImage) throws ScannerException
 	{
-		Token t= scanner.nextToken();
-		assertTrue(t.type == Token.tIDENTIFIER);
-		assertTrue(t.image.equals(expectedImage));
+		try {
+			Token t= scanner.nextToken();
+			assertTrue(t.type == Token.tIDENTIFIER);
+			assertTrue(t.image.equals(expectedImage));
+		} catch (Parser.EndOfFile e) {
+			assertTrue(false);
+		}
 	}
 
 	public void validateInteger(String expectedImage) throws ScannerException
 	{
-		Token t= scanner.nextToken();
-		assertTrue(t.type == Token.tINTEGER);
-		assertTrue(t.image.equals(expectedImage));
+		try {
+			Token t= scanner.nextToken();
+			assertTrue(t.type == Token.tINTEGER);
+			assertTrue(t.image.equals(expectedImage));
+		} catch (Parser.EndOfFile e) {
+			assertTrue(false);
+		}
 	}
 
 	public void validateString(String expectedImage) throws ScannerException
 	{
-		Token t= scanner.nextToken();
-		assertTrue(t.type == Token.tSTRING);
-		assertTrue(t.image.equals(expectedImage));
+		try {
+			Token t= scanner.nextToken();
+			assertTrue(t.type == Token.tSTRING);
+			assertTrue(t.image.equals(expectedImage));
+		} catch (Parser.EndOfFile e) {
+			assertTrue(false);
+		}
 	}
 
 	public void validateToken(int tokenType) throws ScannerException
 	{
-		Token t= scanner.nextToken();
-		assertTrue(t.type == tokenType);
+		try {
+			Token t= scanner.nextToken();
+			assertTrue(t.type == tokenType);
+		} catch (Parser.EndOfFile e) {
+			assertTrue(false);
+		}
 	}
 
 	public void validateBalance(int expected)
@@ -1007,7 +1027,10 @@ public class ScannerTestCase extends TestCase
 
 	public void validateEOF() throws ScannerException
 	{
-		validateToken(Token.tEOF);
+		try {
+			assertNull(scanner.nextToken());
+		} catch (Parser.EndOfFile e) {
+		}
 	}
 
 	public void validateDefinition(String name, String value)
@@ -1022,7 +1045,7 @@ public class ScannerTestCase extends TestCase
 	{
 		String definition= null;
 		definition= (String) scanner.getDefinition(name);
-		this.assertNotNull(definition);
+		assertNotNull(definition);
 		int intValue= (Integer.valueOf((String) definition)).intValue();
 		assertEquals(value, intValue);
 	}
@@ -1105,7 +1128,7 @@ public class ScannerTestCase extends TestCase
 				validateInteger( "0"); 
 				validateToken( Token.tSEMI ); 
 				validateToken( Token.tRBRACE ); 
-				validateToken( Token.tEOF );
+				validateEOF();
 			}
 		} catch( ScannerException se )
 		{

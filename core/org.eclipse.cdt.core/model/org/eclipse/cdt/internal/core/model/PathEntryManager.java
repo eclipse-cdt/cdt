@@ -338,6 +338,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				// filter out this project - does not reference the container
 				// path
 				modifiedProjects[i] = null;
+				containerPut(affectedProject, containerPath, newContainer);
 				continue;
 			}
 			IPathEntryContainer oldContainer = containerGet(affectedProject, containerPath);

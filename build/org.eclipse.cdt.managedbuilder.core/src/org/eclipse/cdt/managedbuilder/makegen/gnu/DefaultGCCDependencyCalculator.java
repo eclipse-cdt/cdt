@@ -80,9 +80,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 				IManagedBuilderMakefileGenerator.WHITESPACE +
 				depRule + 
 				IManagedBuilderMakefileGenerator.WHITESPACE + 
-				IManagedBuilderMakefileGenerator.SINGLE_QUOTE + 
-				relativePath + 
-				IManagedBuilderMakefileGenerator.SINGLE_QUOTE + 
+				"$(dir $@)" + //$NON-NLS-1$
 				IManagedBuilderMakefileGenerator.WHITESPACE + 
 				">" + //$NON-NLS-1$ 
 				IManagedBuilderMakefileGenerator.WHITESPACE + 
@@ -100,7 +98,6 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 				IManagedBuilderMakefileGenerator.WHITESPACE +
 				buildFlags + 
 				IManagedBuilderMakefileGenerator.WHITESPACE +  
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
 				IManagedBuilderMakefileGenerator.IN_MACRO + 
 				IManagedBuilderMakefileGenerator.WHITESPACE + 
 				">>" +  //$NON-NLS-1$

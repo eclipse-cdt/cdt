@@ -1,3 +1,12 @@
+2003-08-31 Alain Magloire
+
+	Add method to retrieve the Error Parsers in the CCorePlugin.
+	Add extension point  for the ErrorParser.
+
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* plugin.xml
+	* plugin.properties
+
 2003-08-28 Alain Magloire
 
 	Change the TranslationUnit to not always assume that it has a valid

@@ -1,3 +1,9 @@
+2003-08-31 Alain Magloire
+
+	Added new block ErrorParserBlock, not enable yet.
+
+	* src/org/eclipse/cdt/ui/ErrorParserBlock.java
+
 2003-08-30 Alain Magloire
 
 	Deal with the annoying warnings from eclipse about syntetic methods.

@@ -430,9 +430,14 @@ public class DeltaProcessor {
 			IResource resource = delta.getResource();
 			ICElement current = createElement(resource);
 			updateChildren = updateCurrentDeltaAndIndex(delta);
-			if (current == null || current instanceof ISourceRoot ||
-					(current instanceof ICProject && !((ICProject)current).getProject().isOpen())) {
+			if (current == null || current instanceof ISourceRoot) {
 				nonCResourcesChanged(parent, delta);
+			} else if (current instanceof ICProject) {
+				ICProject cprj = (ICProject)current;
+				CModel cModel = CModelManager.getDefault().getCModel();
+				if (!cprj.getProject().isOpen() || cModel.findCProject(cprj.getProject()) == null) {
+					nonCResourcesChanged(parent, delta);
+				}
 			} else {
 				parent = current;
 			}

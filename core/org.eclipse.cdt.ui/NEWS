@@ -1,5 +1,8 @@
 Release CDT-3.0
 
+	* All the CEditor text preference settings are now common with the text editors.
+	  To access use Window --> Preferences --> General --> Editors --> Text Editors
+
 	* Implement Eclipse 3.0 Next/Prev Annonation retargetable actions for CEditor with Problems
 	   view highlighting.
 

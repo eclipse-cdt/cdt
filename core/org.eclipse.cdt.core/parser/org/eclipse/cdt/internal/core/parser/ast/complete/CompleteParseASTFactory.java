@@ -169,7 +169,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		while (i.hasNext()){
 			IASTReference ref = (IASTReference)i.next();
 			if (ref != null){
-				if( (ref.getName().equals(reference.getName()))
+				if( (CharArrayUtils.equals( ref.getNameCharArray(), reference.getNameCharArray()))
 				&& (ref.getOffset() == reference.getOffset())
 				){
 					cache.returnReference( ref );
@@ -1120,7 +1120,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         ITokenDuple idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException
     {
     	setFilename( idExpression );
-    	if( idExpression != null )
+    	if( idExpression != null && logService.isTracing() )
     	{
     		TraceUtil.outputTrace(
     				logService,
@@ -1131,7 +1131,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					idExpression.toString()
     				);
     	}
-    	else if( literal != null && literal.length > 0 ) 
+    	else if( literal != null && literal.length > 0 && logService.isTracing() ) 
     	{
        		TraceUtil.outputTrace(
        				logService,

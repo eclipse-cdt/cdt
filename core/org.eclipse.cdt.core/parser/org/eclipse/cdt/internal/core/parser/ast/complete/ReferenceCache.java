@@ -638,6 +638,7 @@ public class ReferenceCache implements IReferenceManager {
 	public abstract static class ASTReference implements IASTReference {
 		protected int offset;
 		private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+		private static final char[] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 
 		public abstract void reset();
 		
@@ -681,7 +682,12 @@ public class ReferenceCache implements IReferenceManager {
 						.getName();
 			return EMPTY_STRING;
 		}
-
+		public char[] getNameCharArray() {
+			if (getReferencedElement() instanceof IASTOffsetableNamedElement)
+				return ((IASTOffsetableNamedElement) getReferencedElement())
+						.getNameCharArray();
+			return EMPTY_CHAR_ARRAY;
+		}
 		public boolean equals(Object obj) {
 			if (obj == null)
 				return false;

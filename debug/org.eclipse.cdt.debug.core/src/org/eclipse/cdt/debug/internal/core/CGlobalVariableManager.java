@@ -20,7 +20,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -102,7 +101,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 		ArrayList globals = new ArrayList( descriptors.length );
 		for ( int i = 0; i < descriptors.length; ++i ) {
 			try {
-				globals.add( CDIDebugModel.createGlobalVariable( getDebugTarget(), descriptors[i] ) );
+				globals.add( getDebugTarget().createGlobalVariable( descriptors[i] ) );
 			}
 			catch( DebugException e ) {
 				ms.add( e.getStatus() );

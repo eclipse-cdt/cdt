@@ -84,12 +84,14 @@ public class CValue extends AbstractCValue {
 	 */
 	public String getValueString() throws DebugException {
 		if ( fValueString == null && getUnderlyingValue() != null ) {
-			try {
-				fValueString = processUnderlyingValue( getUnderlyingValue() );
-				resetStatus();
-			}
-			catch( CDIException e ) {
-				setStatus( ICDebugElementStatus.ERROR, e.getMessage() );
+			resetStatus();
+			if ( getParentVariable().getStackFrame().isSuspended() ) {
+				try {
+					fValueString = processUnderlyingValue( getUnderlyingValue() );
+				}
+				catch( CDIException e ) {
+					setStatus( ICDebugElementStatus.ERROR, e.getMessage() );
+				}
 			}
 		}
 		return fValueString;
@@ -430,6 +432,7 @@ public class CValue extends AbstractCValue {
 	 * Invalidates the string cache.
 	 */
 	protected void reset() {
+		resetStatus();
 		fValueString = null;
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() ) {
@@ -440,5 +443,17 @@ public class CValue extends AbstractCValue {
 	public ICType getType() throws DebugException {
 		AbstractCVariable var = getParentVariable();
 		return ( var instanceof CVariable ) ? ((CVariable)var).getType() : null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#preserve()
+	 */
+	protected void preserve() {
+		setChanged( false );
+		resetStatus();
+		Iterator it = fVariables.iterator();
+		while( it.hasNext() ) {
+			((AbstractCVariable)it.next()).preserve();
+		}
 	}
 }

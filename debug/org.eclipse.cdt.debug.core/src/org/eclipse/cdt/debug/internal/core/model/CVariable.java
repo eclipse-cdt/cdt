@@ -276,6 +276,13 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			fChanged = changed;
 		}
 
+		synchronized void preserve() {
+			setChanged( false );
+			if ( fValue instanceof AbstractCValue ) {
+				((AbstractCValue)fValue).preserve();
+			}
+		}
+
 		CVariable getVariable() {
 			return fVariable;
 		}
@@ -737,6 +744,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	protected void resetValue() {
 		InternalVariable iv = getCurrentInternalVariable();
 		if ( iv != null ) {
+			resetStatus();
 			iv.resetValue();
 			fireChangeEvent( DebugEvent.STATE );
 		}
@@ -791,5 +799,15 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	public String getExpressionString() throws DebugException {
 		InternalVariable iv = getCurrentInternalVariable(); 
 		return ( iv != null ) ? iv.getQualifiedName() : null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#preserve()
+	 */
+	protected void preserve() {
+		resetStatus();
+		InternalVariable iv = getCurrentInternalVariable(); 
+		if ( iv != null )
+			iv.preserve();
 	}
 }

@@ -60,4 +60,6 @@ public abstract class AbstractCValue extends CDebugElement implements ICValue {
 	abstract public void dispose();
 
 	abstract protected void reset();
+
+	abstract protected void preserve();
 }

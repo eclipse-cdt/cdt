@@ -507,7 +507,7 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 					}
 				}
 				if ( expression.isEnabled() ) {
-					String valueString = DebugUIPlugin.getModelPresentation().getText( value );
+					String valueString = getValueText( value );
 					if ( valueString.length() > 0 ) {
 						result.append( " = " ).append( valueString ); //$NON-NLS-1$
 					}
@@ -542,7 +542,7 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 				label.append( name.trim() );
 			IValue value = var.getValue();
 			if ( value != null ) {
-				String valueString = DebugUIPlugin.getModelPresentation().getText( value );
+				String valueString = getValueText( value );
 				if ( !isEmpty( valueString ) ) {
 					label.append( " = " ); //$NON-NLS-1$
 					label.append( valueString );
@@ -552,7 +552,7 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 		return label.toString();
 	}
 
-	protected String getValueText( IValue value ) throws DebugException {
+	protected String getValueText( IValue value )/* throws DebugException*/ {
 		StringBuffer label = new StringBuffer();
 		if ( value instanceof ICDebugElementStatus && !((ICDebugElementStatus)value).isOK() ) {
 			label.append(  getFormattedString( CDebugUIMessages.getString( "CDTDebugModelPresentation.4" ), ((ICDebugElementStatus)value).getMessage() ) ); //$NON-NLS-1$
@@ -564,29 +564,33 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 			}
 			catch( DebugException e ) {
 			}
-			String valueString = value.getValueString();
-			if ( valueString != null ) {
-				valueString = valueString.trim();
-				if ( type != null && type.isCharacter() ) {
-					if ( valueString.length() == 0 )
-						valueString = "."; //$NON-NLS-1$
-					label.append( valueString );
-				}
-				else if ( type != null && type.isFloatingPointType() ) {
-					Number floatingPointValue = CDebugUtils.getFloatingPointValue( (ICValue)value );
-					if ( CDebugUtils.isNaN( floatingPointValue ) )
-						valueString = "NAN"; //$NON-NLS-1$
-					if ( CDebugUtils.isPositiveInfinity( floatingPointValue ) )
-						valueString = CDebugUIMessages.getString( "CDTDebugModelPresentation.23" ); //$NON-NLS-1$
-					if ( CDebugUtils.isNegativeInfinity( floatingPointValue ) )
-						valueString = CDebugUIMessages.getString( "CDTDebugModelPresentation.24" ); //$NON-NLS-1$
-					label.append( valueString );
-				}
-				else if ( type == null || (!type.isArray() && !type.isStructure()) ) {
-					if ( valueString.length() > 0 ) {
+			try {
+				String valueString = value.getValueString();
+				if ( valueString != null ) {
+					valueString = valueString.trim();
+					if ( type != null && type.isCharacter() ) {
+						if ( valueString.length() == 0 )
+							valueString = "."; //$NON-NLS-1$
 						label.append( valueString );
 					}
+					else if ( type != null && type.isFloatingPointType() ) {
+						Number floatingPointValue = CDebugUtils.getFloatingPointValue( (ICValue)value );
+						if ( CDebugUtils.isNaN( floatingPointValue ) )
+							valueString = "NAN"; //$NON-NLS-1$
+						if ( CDebugUtils.isPositiveInfinity( floatingPointValue ) )
+							valueString = CDebugUIMessages.getString( "CDTDebugModelPresentation.23" ); //$NON-NLS-1$
+						if ( CDebugUtils.isNegativeInfinity( floatingPointValue ) )
+							valueString = CDebugUIMessages.getString( "CDTDebugModelPresentation.24" ); //$NON-NLS-1$
+						label.append( valueString );
+					}
+					else if ( type == null || (!type.isArray() && !type.isStructure()) ) {
+						if ( valueString.length() > 0 ) {
+							label.append( valueString );
+						}
+					}
 				}
+			}
+			catch( DebugException e1 ) {
 			}
 		}	
 		return label.toString();

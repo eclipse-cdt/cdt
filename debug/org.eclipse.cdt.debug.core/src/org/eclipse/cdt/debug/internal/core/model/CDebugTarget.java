@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -58,6 +59,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.IBreakpointTarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
@@ -65,6 +67,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICSignal;
@@ -78,7 +81,6 @@ import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
-import org.eclipse.cdt.debug.internal.core.CExpressionTarget;
 import org.eclipse.cdt.debug.internal.core.CExtendedMemoryBlockRetrieval;
 import org.eclipse.cdt.debug.internal.core.CGlobalVariableManager;
 import org.eclipse.cdt.debug.internal.core.CMemoryManager;
@@ -183,11 +185,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * A breakpoint manager for this target.
 	 */
 	private CBreakpointManager fBreakpointManager;
-
-	/**
-	 * The expression evaluation target.
-	 */
-	private CExpressionTarget fExpressionTarget;
 
 	/**
 	 * The global variable manager for this target.
@@ -860,8 +857,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return getSignalManager();
 		if ( adapter.equals( ICRegisterManager.class ) )
 			return getRegisterManager();
-		if ( adapter.equals( CExpressionTarget.class ) )
-			return getExpressionTarget();
 		if ( adapter.equals( ICGlobalVariableManager.class ) )
 			return getGlobalVariableManager();
 		if ( adapter.equals( ICDISession.class ) )
@@ -1046,7 +1041,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		disposeDisassembly();
 		disposeSourceManager();
 		disposeBreakpointManager();
-		disposeExpresionTarget();
 		removeAllExpressions();
 		disposePreferences();
 	}
@@ -1648,13 +1642,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 	}
 
-	private void disposeExpresionTarget() {
-		if ( fExpressionTarget != null ) {
-			fExpressionTarget.dispose();
-			fExpressionTarget = null;
-		}
-	}
-
 	public IFile getCurrentBreakpointFile() {
 		Object info = getCurrentStateInfo();
 		if ( info instanceof ICDIBreakpointHit ) {
@@ -1822,13 +1809,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			fPreferences.removePropertyChangeListener( listener );
 	}
 
-	protected CExpressionTarget getExpressionTarget() {
-		if ( fExpressionTarget == null ) {
-			fExpressionTarget = new CExpressionTarget( this );
-		}
-		return fExpressionTarget;
-	}
-
 	protected CGlobalVariableManager getGlobalVariableManager() {
 		return fGlobalVariableManager;
 	}
@@ -1889,5 +1869,16 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	private void handleSymbolsLoaded( ICDISharedLibrary library ) {
 		getSharedLibraryManager().symbolsLoaded( library );
+	}
+
+	public ICGlobalVariable createGlobalVariable( IGlobalVariableDescriptor info ) throws DebugException {
+		ICDIVariableObject vo = null;
+		try {
+			vo = getCDISession().getVariableManager().getGlobalVariableObject( info.getPath().lastSegment(), null, info.getName() );
+		}
+		catch( CDIException e ) {
+			throw new DebugException( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, (vo != null) ? vo.getName() + ": " + e.getMessage() : e.getMessage(), null ) ); //$NON-NLS-1$
+		}
+		return CVariableFactory.createGlobalVariable( this, info, vo );
 	}
 }

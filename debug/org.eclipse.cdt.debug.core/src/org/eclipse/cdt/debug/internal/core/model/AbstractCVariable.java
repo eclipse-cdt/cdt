@@ -75,4 +75,6 @@ public abstract class AbstractCVariable extends CDebugElement implements ICVaria
 	protected abstract void resetValue();
 
 	protected abstract void setChanged( boolean changed );
+
+	protected abstract void preserve();
 }

@@ -17,13 +17,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
@@ -33,7 +33,6 @@ import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
-import org.eclipse.cdt.debug.internal.core.CExpressionTarget;
 import org.eclipse.cdt.debug.internal.core.CGlobalVariableManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
@@ -74,6 +73,11 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * Whether the variables need refreshing
 	 */
 	private boolean fRefreshVariables = true;
+
+	/**
+	 * List of watch expressions evaluating in the context of this frame.
+	 */
+	private List fExpressions;
 
 	/**
 	 * Constructor for CStackFrame.
@@ -475,6 +479,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	protected void dispose() {
 		getCDISession().getEventManager().removeEventListener( this );
 		disposeAllVariables();
+		disposeExpressions();
 	}
 
 	/**
@@ -526,7 +531,19 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		while( it.hasNext() ) {
 			((CVariable)it.next()).dispose();
 		}
+		fVariables.clear();
 		fVariables = null;
+	}
+
+	protected void disposeExpressions() {
+		if ( fExpressions != null ) {
+			Iterator it = fExpressions.iterator();
+			while( it.hasNext() ) {
+				((CExpression)it.next()).dispose();
+			}
+			fExpressions.clear();
+		}
+		fExpressions = null;
 	}
 
 	/* (non-Javadoc)
@@ -567,6 +584,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 
 	protected synchronized void preserve() {
 		preserveVariables();
+		preserveExpressions();
 	}
 
 	private void preserveVariables() {
@@ -574,7 +592,18 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 			return;
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() ) {
-			((AbstractCVariable)it.next()).setChanged( false );
+			AbstractCVariable av = (AbstractCVariable)it.next();
+			av.preserve();
+		}
+	}
+
+	private void preserveExpressions() {
+		if ( fExpressions == null )
+			return;
+		Iterator it = fExpressions.iterator();
+		while( it.hasNext() ) {
+			CExpression exp = (CExpression)it.next();
+			exp.preserve();
 		}
 	}
 
@@ -631,9 +660,12 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#evaluateExpression(java.lang.String)
 	 */
-	public IValue evaluateExpression( String expression ) throws DebugException {
-		CExpressionTarget target = (CExpressionTarget)getDebugTarget().getAdapter( CExpressionTarget.class );
-		return (target != null) ? target.evaluateExpression( getCDIStackFrame(), expression ) : null;
+	public IValue evaluateExpression( String expressionText ) throws DebugException {
+		CExpression expression = getExpression( expressionText );
+		if ( expression != null ) {
+			return expression.getValue( this );
+		}
+		return null;
 	}
 
 	private ICGlobalVariable[] getGlobals() {
@@ -684,5 +716,28 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), null );
 		}
+	}
+
+	private CExpression getExpression( String expressionText ) throws DebugException {
+		if ( fExpressions == null ) {
+			fExpressions = new ArrayList( 5 );
+		}
+		CExpression expression = null;
+		Iterator it = fExpressions.iterator();
+		while( it.hasNext() ) {
+			expression = (CExpression)it.next();
+			if ( expression.getExpressionText().compareTo( expressionText ) == 0 ) {
+				return expression;
+			}
+		}
+		try {
+			ICDIExpression cdiExpression = ((CDebugTarget)getDebugTarget()).getCDITarget().createExpression( expressionText );
+			expression = new CExpression( this, cdiExpression, null );
+			fExpressions.add( expression );
+		}
+		catch( CDIException e ) {
+			targetRequestFailed( e.getMessage(), null );
+		}
+		return expression;
 	}
 }

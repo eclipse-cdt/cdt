@@ -1,3 +1,8 @@
+2004-10-29 Mikhail Khodjaiants
+	Use the new expression API of CDI.
+	* CDebugUIMessages.properties
+	* CDTDebugModelPresentation.java
+
 2004-10-18 Mikhail Khodjaiants
 	Corrupted plugin.xml.
 	* plugin.xml

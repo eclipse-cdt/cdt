@@ -77,22 +77,6 @@ public class CDebugModel {
 		return CDIDebugModel.newCoreFileDebugTarget( launch, cdiTarget, name, debuggerProcess, file );
 	}
 
-	/**
-	 * @deprecated
-	 * Use {@link CDIDebugModel#createExpression(IDebugTarget, String)}. 
-	 */
-	public static IExpression createExpression( IDebugTarget target, String text ) throws DebugException {
-		return CDIDebugModel.createExpression( target, text );
-	}
-
-	/**
-	 * @deprecated
-	 * Use {@link CDIDebugModel#createExpressionForGlobalVariable(IDebugTarget, IPath, String)}. 
-	 */
-	public static IExpression createExpressionForGlobalVariable( IDebugTarget target, IPath fileName, String name ) throws DebugException {
-		return CDIDebugModel.createExpressionForGlobalVariable( target, fileName, name );
-	}
-
 	public static IFormattedMemoryBlock createFormattedMemoryBlock( IDebugTarget target, String addressExpression, int format, int wordSize, int numberOfRows, int numberOfColumns, char paddingChar ) throws DebugException {
 		if ( target != null && target instanceof CDebugTarget ) {
 			try {

@@ -1,3 +1,19 @@
+2004-10-29 Mikhail Khodjaiants
+	Use the new expression API of CDI.
+	* CDebugModel.java
+	* CDIDebugModel.java
+	* CGlobalVariableManager.java
+	* AbstractCValue.java
+	* AbstractCVariable.java
+	* CArrayPartition.java
+	* CArrayPartitionValue.java
+	* CDebugTarget.java
+	* CExpression.java
+	* CStackFrame.java
+	* CValue.java
+	* CVariable.java
+	* CExpressionTarget.java: removed
+
 2004-10-29 Alain Magloire
 	Remove of ICDISharedLibraryManager
 	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java

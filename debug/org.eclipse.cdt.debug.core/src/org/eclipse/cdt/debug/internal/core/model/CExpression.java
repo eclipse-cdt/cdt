@@ -17,13 +17,11 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
-import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
@@ -33,15 +31,20 @@ import org.eclipse.debug.core.model.IValue;
  */
 public class CExpression extends CVariable implements IExpression {
 
-	ICDIExpression fCDIExpression;
+	private ICDIExpression fCDIExpression;
+	
+	private CStackFrame fStackFrame;
+
+	private IValue fValue;
 
 	/**
 	 * Constructor for CExpression.
 	 */
-	public CExpression( CDebugTarget target, ICDIExpression cdiExpression, ICDIVariableObject varObject ) {
-		super( target, varObject );
+	public CExpression( CStackFrame frame, ICDIExpression cdiExpression, ICDIVariableObject varObject ) {
+		super( frame, varObject );
 		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ))) ;
 		fCDIExpression = cdiExpression;
+		fStackFrame = frame;
 	}
 
 	/* (non-Javadoc)
@@ -63,6 +66,7 @@ public class CExpression extends CVariable implements IExpression {
 					ICDITarget cdiTarget = source.getTarget();
 					if (  getCDITarget().equals( cdiTarget ) ) {
 						setChanged( false );
+						resetValue();
 					}
 				}
 			}
@@ -96,17 +100,62 @@ public class CExpression extends CVariable implements IExpression {
 	 */
 	public IValue getValue() {
 		CStackFrame frame = (CStackFrame)getStackFrame();
-		return getValue(frame.getCDIStackFrame());
-	}
-
-	public IValue getValue(ICDIStackFrame context) {
 		try {
-			ICDIValue value = fCDIExpression.getValue(context);
-			return CValueFactory.createValue(this, value);
-		} catch (CDIException e) {
-			// TODO Auto-generated catch block
+			return getValue( frame );
+		}
+		catch( DebugException e ) {
 		}
 		return null;
 	}
 
+	protected synchronized IValue getValue( CStackFrame context ) throws DebugException {
+		if ( fValue == null ) {
+			if ( context.isSuspended() ) {
+				try {
+					ICDIValue value = fCDIExpression.getValue( context.getCDIStackFrame() );
+					fValue = CValueFactory.createValue( this, value );
+				}
+				catch( CDIException e ) {
+					targetRequestFailed( e.getMessage(), null );
+				}
+			}
+		}
+		return fValue;
+	}
+
+	protected ICStackFrame getStackFrame() {
+		return fStackFrame;
+	}
+
+	protected void resetValue() {
+		if ( fValue instanceof AbstractCValue ) {
+			((AbstractCValue)fValue).reset();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#getExpressionString()
+	 */
+	public String getExpressionString() throws DebugException {
+		return getExpressionText();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#dispose()
+	 */
+	public void dispose() {
+		if ( fCDIExpression != null ) {
+			try {
+				getCDITarget().destroyExpressions( new ICDIExpression[] { fCDIExpression } );
+				fCDIExpression = null;
+			}
+			catch( CDIException e ) {
+			}
+		}
+		if ( fValue instanceof AbstractCValue ) {
+			((AbstractCValue)fValue).dispose();
+			fValue = null;
+		}
+		super.dispose();
+	}
 }

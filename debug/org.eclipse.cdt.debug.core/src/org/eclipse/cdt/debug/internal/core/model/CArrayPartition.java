@@ -339,4 +339,15 @@ public class CArrayPartition extends AbstractCVariable {
 			fArrayPartitionValue.setChanged( changed );
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#preserve()
+	 */
+	protected void preserve() {
+		setChanged( false );
+		resetStatus();
+		if ( fArrayPartitionValue != null ) {
+			fArrayPartitionValue.preserve();
+		}
+	}
 }

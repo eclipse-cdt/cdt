@@ -155,4 +155,15 @@ public class CArrayPartitionValue extends AbstractCValue {
 	public ICType getType() throws DebugException {
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#preserve()
+	 */
+	protected void preserve() {
+		resetStatus();
+		Iterator it = fVariables.iterator();
+		while( it.hasNext() ) {
+			((AbstractCVariable)it.next()).preserve();
+		}
+	}
 }

@@ -150,7 +150,11 @@ public class StabsAddr2line {
 				byte[] strtab = stabstr.loadSectionData();
 				StabsAddr2line addr2line = new StabsAddr2line(array, strtab, true);
 				long address = Integer.decode(args[1]).longValue();
-				addr2line.getStartLine(address);
+				int line = addr2line.getStartLine(address);
+				String function = addr2line.getFunction(address);
+				String filename = addr2line.getFileName(address);
+				System.out.println(Long.toHexString(address));
+				System.out.println(filename + ":" + function + ":" + line);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -113,6 +113,17 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 		return label;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		if (fStore != null) {
+			fStore.removePathEntryStoreListener(this);
+		}
+	}
+	
 	public void setVisible(boolean visible) {
 		if (fIncludesSymbolsBlock != null) {
 			if (!visible) {
@@ -199,9 +210,6 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 				return false;
 			}
 		}
-		if (fStore != null) {
-			fStore.removePathEntryStoreListener(this);
-		}
 		return true;
 	}
 
@@ -224,9 +232,6 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 		if (fIncludesSymbolsBlock != null) {
 			getSettings().put(INDEX, fIncludesSymbolsBlock.getPageIndex());
 		}
-		if (fStore != null) {
-			fStore.removePathEntryStoreListener(this);
-		}
 		return super.performCancel();
 	}
 
@@ -242,8 +247,10 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 				control.getDisplay().asyncExec(new Runnable() {
 
 					public void run() {
-						fIncludesSymbolsBlock.init(getCElement(), null);
-
+						Control control = getControl();
+						if (control != null && !control.isDisposed()) {
+							fIncludesSymbolsBlock.init(getCElement(), null);
+						}
 					}
 				});
 			}

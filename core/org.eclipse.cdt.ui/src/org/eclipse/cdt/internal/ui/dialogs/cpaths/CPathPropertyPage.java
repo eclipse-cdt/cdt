@@ -198,12 +198,19 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 				return false;
 			}
 		}
-		if (fStore != null) {
-			fStore.removePathEntryStoreListener(this);
-		}
 		return true;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		if (fStore != null) {
+			fStore.removePathEntryStoreListener(this);
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -241,7 +248,10 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 				control.getDisplay().asyncExec(new Runnable() {
 
 					public void run() {
-						fCPathsBlock.init(CoreModel.getDefault().create(getProject()), null);
+						Control control = getControl();
+						if (control != null && !control.isDisposed()) {
+							fCPathsBlock.init(CoreModel.getDefault().create(getProject()), null);
+						}
 					}
 				});
 			}

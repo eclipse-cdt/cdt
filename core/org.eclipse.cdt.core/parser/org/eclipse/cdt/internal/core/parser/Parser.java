@@ -178,7 +178,7 @@ c, quick);
 	 */
 	public void simpleDeclaration( Object container ) throws Exception {
 		Object simpleDecl = callback.simpleDeclarationBegin( container);
-		declSpecifierSeq(simpleDecl);
+		declSpecifierSeq(simpleDecl, false);
 
 		if (LT(1) != Token.tSEMI)
 			try {
@@ -210,7 +210,7 @@ c, quick);
 				}
 				// Falling through on purpose
 			case Token.tLBRACE:
-				callback.functionBodyBegin();
+				callback.functionBodyBegin(simpleDecl );
 				if (quickParse) {
 					// speed up the parser by skiping the body
 					// simply look for matching brace and return
@@ -242,7 +242,7 @@ c, quick);
 	public void parameterDeclaration( Object containerObject ) throws Exception
 	{
 		Object parameterDecl = callback.parameterDeclarationBegin( containerObject );
-		declSpecifierSeq( parameterDecl );
+		declSpecifierSeq( parameterDecl, true );
 		
 		if (LT(1) != Token.tSEMI)
 			try {
@@ -273,7 +273,7 @@ c, quick);
 	 * - folded elaboratedTypeSpecifier into classSpecifier and enumSpecifier
 	 * - find template names in name
 	 */
-	public void declSpecifierSeq( Object decl ) throws Exception {
+	public void declSpecifierSeq( Object decl, boolean parm ) throws Exception {
 		boolean encounteredTypename = false;
 		boolean encounteredRawType = false;
 		declSpecifiers:		
@@ -291,16 +291,16 @@ c, quick);
 				case Token.t_friend:
 				case Token.t_const:
 				case Token.t_volatile:
+				case Token.t_signed:
+				case Token.t_unsigned:
+				case Token.t_short:
 					callback.simpleDeclSpecifier(decl, consume());
 					break;
 				case Token.t_char:
 				case Token.t_wchar_t:
 				case Token.t_bool:
-				case Token.t_short:
 				case Token.t_int:
 				case Token.t_long:
-				case Token.t_signed:
-				case Token.t_unsigned:
 				case Token.t_float:
 				case Token.t_double:
 				case Token.t_void:
@@ -316,21 +316,19 @@ c, quick);
 					// handle nested later:
 				case Token.tIDENTIFIER:
 					// TODO - Kludgy way to handle constructors/destructors
-					if (!encounteredRawType && LT(2) != Token.tCOLONCOLON && LT(2) != Token.tLPAREN)
+					// handle nested later:
+					if ((parm && !encounteredRawType) || (!encounteredRawType && LT(2) != Token.tCOLONCOLON && LT(2) != Token.tLPAREN))
 					{
-						// handle nested later:
 						if( ! encounteredTypename )
 						{
-							callback.simpleDeclSpecifier(decl,consume());
+							callback.simpleDeclSpecifier(decl,LA(1));
+							name(); 
+							callback.simpleDeclSpecifierName( decl );
 							encounteredTypename = true; 
 							break;
 						}
-						else
-							return;
 					}
-					else
-						return;
-					
+					return;
 				case Token.t_class:
 				case Token.t_struct:
 				case Token.t_union:

@@ -206,7 +206,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#functionBodyBegin()
 	 */
-	public void functionBodyBegin() {
+	public void functionBodyBegin(Object declaration) {
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#functionBodyEnd()
@@ -298,6 +298,12 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierName(java.lang.Object)
 	 */
 	public void elaboratedTypeSpecifierName(Object container) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
+	 */
+	public void simpleDeclSpecifierName(Object declaration) {
 	}
 
 }

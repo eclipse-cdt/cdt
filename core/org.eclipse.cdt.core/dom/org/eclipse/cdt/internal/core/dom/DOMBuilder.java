@@ -126,7 +126,7 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#functionBodyBegin()
 	 */
-	public void functionBodyBegin() {
+	public void functionBodyBegin(Object declaration) {
 	}
 
 	/**
@@ -321,6 +321,12 @@ public class DOMBuilder implements IParserCallback
 	 */
 	public void elaboratedTypeSpecifierName(Object elab) {
 		((ElaboratedTypeSpecifier)elab).setName( currName );
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
+	 */
+	public void simpleDeclSpecifierName(Object declaration) {
 	}
 
 }

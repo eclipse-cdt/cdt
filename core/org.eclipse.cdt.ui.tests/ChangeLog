@@ -1,3 +1,7 @@
+2003-03-18 John Camelon
+	Updated DOMTests to validate simple case of a function declaration with multiple parameters.  
+	* parser/org/eclipse/cdt/core/parser/tests/DOMTests.java
+
 2003-03-11 John Camelon
 	Updated DOMTests for core.internal.parser change of merging DeclarationSpecifier and DeclSpecifier
 	Organized imports

@@ -102,7 +102,9 @@ public class NewModelBuilder implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginFunctionBody()
 	 */
-	public void functionBodyBegin() {
+	public void functionBodyBegin(Object declaration) {
+		SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)declaration; 
+		wrapper.setFunctionDefinition(true);
 	}
 
 	/**
@@ -344,6 +346,16 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierName(java.lang.Object)
 	 */
 	public void elaboratedTypeSpecifierName(Object elab) {
+	}
+
+
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
+	 */
+	public void simpleDeclSpecifierName(Object declaration) {
+		DeclSpecifier declSpecifier = (DeclSpecifier)declaration;  
+		declSpecifier.setName( currName ); 
 	}
 
 }

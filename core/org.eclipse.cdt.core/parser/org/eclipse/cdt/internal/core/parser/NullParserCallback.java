@@ -25,7 +25,7 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginFunctionBody()
 	 */
-	public void functionBodyBegin() {
+	public void functionBodyBegin(Object declaration) {
 	}
 
 	/**
@@ -214,6 +214,12 @@ public class NullParserCallback implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierName(java.lang.Object)
 	 */
 	public void elaboratedTypeSpecifierName(Object elab) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
+	 */
+	public void simpleDeclSpecifierName(Object declaration) {
 	}
 
 }

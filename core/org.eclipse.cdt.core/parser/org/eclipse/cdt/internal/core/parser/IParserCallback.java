@@ -20,12 +20,12 @@ public interface IParserCallback {
 	public void macro(String macroName, int offset);
 	
 	public Object simpleDeclarationBegin(Object Container);
+	public void simpleDeclSpecifier(Object Container, Token specifier);
+	public void simpleDeclSpecifierName( Object declaration );
 	public void simpleDeclarationEnd(Object declaration);
-	
+
 	public Object parameterDeclarationBegin( Object Container ); 
 	public void  parameterDeclarationEnd( Object declaration ); 
-	
-	public void simpleDeclSpecifier(Object Container, Token specifier);
 	
 	public void nameBegin(Token firstToken);
 	public void nameEnd(Token lastToken);
@@ -38,7 +38,7 @@ public interface IParserCallback {
 	public Object argumentsBegin( Object declarator );
 	public void argumentsEnd(Object parameterDeclarationClause);
 	
-	public void functionBodyBegin();
+	public void functionBodyBegin(Object declaration);
 	public void functionBodyEnd();
 	
 	public Object classSpecifierBegin(Object container, Token classKey);

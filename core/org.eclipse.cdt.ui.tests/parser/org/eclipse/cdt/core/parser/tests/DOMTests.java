@@ -243,6 +243,47 @@ public class DOMTests extends TestCase {
 	}
 	
 	/**
+	 * Test code: bool myFunction( int parm1, double parm2 );
+	 * @throws Exception
+	 */
+	public void testFunctionDeclarationWithParameters() throws Exception
+	{
+		// Parse and get the translaton unit
+		Writer code = new StringWriter();
+		code.write("bool myFunction( int parm1, double parm2 );");
+		TranslationUnit translationUnit = parse(code.toString());
+
+		// Get the declaration
+		List declarations = translationUnit.getDeclarations();
+		assertEquals(1, declarations.size());
+		SimpleDeclaration simpleDeclaration = (SimpleDeclaration)declarations.get(0);
+		assertEquals( simpleDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_bool );
+		List declarators  = simpleDeclaration.getDeclarators(); 
+		assertEquals( 1, declarators.size() ); 
+		Declarator functionDeclarator = (Declarator)declarators.get( 0 ); 
+		assertEquals( functionDeclarator.getName().toString(), "myFunction" );
+		ParameterDeclarationClause pdc = functionDeclarator.getParms(); 
+		assertNotNull( pdc ); 
+		List parameterDecls = pdc.getDeclarations(); 
+		assertEquals( 2, parameterDecls.size() );
+		ParameterDeclaration parm1 = (ParameterDeclaration)parameterDecls.get( 0 );
+		assertEquals( DeclSpecifier.t_int, parm1.getDeclSpecifier().getType() );
+		List parm1Decls = parm1.getDeclarators(); 
+		assertEquals( 1, parm1Decls.size() ); 
+		Declarator parm1Declarator = (Declarator) parm1Decls.get(0); 
+		assertEquals( "parm1", parm1Declarator.getName().toString() );  
+
+		ParameterDeclaration parm2 = (ParameterDeclaration)parameterDecls.get( 1 );
+		assertEquals( DeclSpecifier.t_double, parm2.getDeclSpecifier().getType() );
+		List parm2Decls = parm2.getDeclarators(); 
+		assertEquals( 1, parm2Decls.size() ); 
+		Declarator parm2Declarator = (Declarator) parm2Decls.get(0); 
+		assertEquals( "parm2", parm2Declarator.getName().toString() );  
+		
+	}
+	
+	
+	/**
 	 * Test code:  "class A { int floor( double input ), someInt; };"
 	 */
 	public void testMultipleDeclarators() throws Exception

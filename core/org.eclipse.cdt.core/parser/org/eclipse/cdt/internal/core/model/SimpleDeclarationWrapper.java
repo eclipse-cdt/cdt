@@ -22,6 +22,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	private CElement parent = null; 
 	int kind; 
 	private Name name = null;
+	private boolean functionDefinition = false; 
 
 	public SimpleDeclarationWrapper( CElement item )
 	{
@@ -195,6 +196,22 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 */
 	public void setKind(int kind) {
 		this.kind = kind;
+	}
+
+	/**
+	 * Returns the functionDefinition.
+	 * @return boolean
+	 */
+	public boolean isFunctionDefinition() {
+		return functionDefinition;
+	}
+
+	/**
+	 * Sets the functionDefinition.
+	 * @param functionDefinition The functionDefinition to set
+	 */
+	public void setFunctionDefinition(boolean functionDefinition) {
+		this.functionDefinition = functionDefinition;
 	}
 
 }

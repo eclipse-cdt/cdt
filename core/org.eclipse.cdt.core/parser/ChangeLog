@@ -1,3 +1,7 @@
+2003-03-18 John Camelon
+	Updated IParserCallback (and implementations) to add a typeName to DeclSpecifier. 
+	Updated IParserCallback and NewModelBuilder to distinguish between Function declarations and definitions. 
+
 2003-03-17 Doug Schaefer
 	Changed EOF to be a Backtrack exception instead of a token so simplify
 	error handling.

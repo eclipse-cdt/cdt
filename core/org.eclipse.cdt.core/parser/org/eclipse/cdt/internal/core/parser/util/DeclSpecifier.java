@@ -45,7 +45,8 @@ public class DeclSpecifier {
 	}
 	
 	private boolean checkBit(int mask) {
-		return (declSpecifierSeq & mask) == 1;
+		int masked =(declSpecifierSeq & mask); 
+		return  (masked == 1);
 	}
 	
 	public void setAuto(boolean b) { setBit(b, isAuto); }
@@ -201,5 +202,23 @@ public class DeclSpecifier {
 		public List getDeclarators();
 
 	};
+	
+	Name name = null; 
+	
+	/**
+	 * Returns the name.
+	 * @return Name
+	 */
+	public Name getName() {
+		return name;
+	}
+
+	/**
+	 * Sets the name.
+	 * @param name The name to set
+	 */
+	public void setName(Name name) {
+		this.name = name;
+	}
 
 }

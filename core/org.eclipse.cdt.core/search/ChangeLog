@@ -1,6 +1,7 @@
 2003-07-25 Bogdan Gheorghe
 	- Added refs to PathCollector
 	- Filled in feedIndexRequestor for the new search patterns
+	- Fixed the FunctionDeclarationPattern to work with no parms
 	
 2003-07-24 Andrew Niefer
 	- Implemented decodeIndexEntry & matchIndexEntry for all patterns

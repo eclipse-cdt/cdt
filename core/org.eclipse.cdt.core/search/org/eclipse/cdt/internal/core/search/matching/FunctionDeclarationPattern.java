@@ -67,9 +67,11 @@ public class FunctionDeclarationPattern extends CSearchPattern {
 			return IMPOSSIBLE_MATCH;
 		}
 		
-		if( parameterNames != null && parameterNames.length > 0  ){
+		if( parameterNames != null && 
+		    parameterNames.length > 0  && 
+		    parameterNames[0].length > 0
+		    ){
 			Iterator params = function.getParameters();
-			
 			
 			for( int i = 0; i < parameterNames.length; i++ ){
 			

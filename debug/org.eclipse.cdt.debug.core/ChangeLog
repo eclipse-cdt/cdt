@@ -1,3 +1,7 @@
+2004-11-12 Mikhail Khodjaiants
+	Compare breakpoint source handles as pathes.
+	* CDIDebugModel.java
+  
 2004-11-11 Alain Magloire
 	Fix for PR 75000, from PalmSource
 	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIVariable.java

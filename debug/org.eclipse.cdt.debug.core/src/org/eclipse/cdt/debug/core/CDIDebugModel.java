@@ -40,8 +40,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -300,7 +302,7 @@ public class CDIDebugModel {
 				continue;
 			}
 			ICLineBreakpoint breakpoint = (ICLineBreakpoint)breakpoints[i];
-			if ( sourceHandle != null && sourceHandle.equals( breakpoint.getSourceHandle() ) ) {
+			if ( sameSourceHandle( sourceHandle, breakpoint.getSourceHandle() ) ) {
 				if ( breakpoint.getMarker().getResource().equals( resource ) ) {
 					if ( breakpoint.getLineNumber() == lineNumber ) {
 						return breakpoint;
@@ -335,7 +337,7 @@ public class CDIDebugModel {
 			}
 			ICWatchpoint breakpoint = (ICWatchpoint)breakpoints[i];
 			if ( breakpoint.getMarker().getType().equals( markerType ) ) {
-				if ( sourceHandle != null && sourceHandle.equals( breakpoint.getSourceHandle() ) ) {
+				if ( sameSourceHandle( sourceHandle, breakpoint.getSourceHandle() ) ) {
 					if ( breakpoint.getMarker().getResource().equals( resource ) ) {
 						if ( breakpoint.getExpression().equals( expression ) ) {
 							return breakpoint;
@@ -371,7 +373,7 @@ public class CDIDebugModel {
 			}
 			ICFunctionBreakpoint breakpoint = (ICFunctionBreakpoint)breakpoints[i];
 			if ( breakpoint.getMarker().getType().equals( markerType ) ) {
-				if ( sourceHandle != null && sourceHandle.equals( breakpoint.getSourceHandle() ) ) {
+				if ( sameSourceHandle( sourceHandle, breakpoint.getSourceHandle() ) ) {
 					if ( breakpoint.getMarker().getResource().equals( resource ) ) {
 						if ( breakpoint.getFunction() != null && breakpoint.getFunction().equals( function ) ) {
 							return breakpoint;
@@ -437,5 +439,17 @@ public class CDIDebugModel {
 			}
 		}
 		throw new CoreException( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), -1, DebugCoreMessages.getString( "CDIDebugModel.0" ), null ) ); //$NON-NLS-1$
+	}
+
+	private static boolean sameSourceHandle( String handle1, String handle2 ) {
+		if ( handle1 == null || handle2 == null )
+			return false;
+		IPath path1 = new Path( handle1 );
+		IPath path2 = new Path( handle2 );
+		if ( path1.isValidPath( handle1 ) && path2.isValidPath( handle2 ) ) {
+			return path1.equals( path2 );
+		}
+		// If handles are not file names ????
+		return handle1.equals( handle2 );
 	}
 }

@@ -1,4 +1,8 @@
 2004-05-25 Alain Magloire
+	Update the necessary classes to use the new
+	ResolverModel.
+
+2004-05-25 Alain Magloire
 
 	Major Patch from Sam Robb
 	bring to a close PR 52864.

@@ -135,7 +135,13 @@ public class CModelBuilder {
 		}
 
 		// pick the language
-		ParserLanguage language = hasCppNature ? ParserLanguage.CPP : ParserLanguage.C;
+		ParserLanguage language;
+		if (hasCppNature) {
+			language = ParserLanguage.CPP;
+		} else {
+			// for C project try to guess.
+			language = translationUnit.isCXXLanguage() ? ParserLanguage.CPP : ParserLanguage.C;
+		}
 		
 		// create the parser
 		IParser parser = null;

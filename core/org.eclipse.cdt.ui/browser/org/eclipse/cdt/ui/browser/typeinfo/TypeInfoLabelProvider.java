@@ -109,7 +109,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 				ITypeReference ref = typeRef.getResolvedReference();
 				if (ref != null) {
 					path = ref.getPath();
-					if (CoreModel.isValidHeaderUnitName(path.lastSegment())) {
+					if (CoreModel.isValidHeaderUnitName(typeRef.getEnclosingProject(), path.lastSegment())) {
 						return HEADER_ICON;
 					}
 				}

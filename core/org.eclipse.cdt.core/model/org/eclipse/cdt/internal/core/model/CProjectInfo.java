@@ -106,7 +106,7 @@ class CProjectInfo extends OpenableInfo {
 						case IResource.FILE: {
 							String filename = member.getName();
 							if (srcIsProject) {
-								if (CoreModel.isValidTranslationUnitName(filename) 
+								if (CoreModel.isValidTranslationUnitName(cproject.getProject(), filename) 
 									&& !CoreModelUtil.isExcluded(member, exclusionPatterns)) {
 									continue;
 								} else if (!CoreModelUtil.isExcluded(member, exclusionPatterns)) {

@@ -112,24 +112,12 @@ public class CElementSorter extends ViewerSorter {
 		} else if (element instanceof ICContainer) {
 			return CCONTAINERS;
 		} else if (element instanceof ITranslationUnit) {
-			IResource res = null;
-			res = ((ITranslationUnit)element).getUnderlyingResource();
-			if (res != null) {
-				String ext = res.getFileExtension();
-				if (ext != null) {
-					String[] headers = CoreModel.getDefault().getHeaderExtensions();
-					for (int i = 0; i < headers.length; i++) {
-						if (ext.equals(headers[i])) {
-							return TRANSLATIONUNIT_HEADERS;
-						}
-					}
-					String[] sources = CoreModel.getDefault().getSourceExtensions();
-					for (int i = 0; i < sources.length; i++) {
-						if (ext.equals(sources[i])) {
-							return TRANSLATIONUNIT_SOURCE;
-						}
-					}					
-				}
+			ITranslationUnit tu = (ITranslationUnit)element;
+			if (CoreModel.isValidHeaderUnitName(tu.getCProject().getProject(), tu.getElementName())) {
+				return TRANSLATIONUNIT_HEADERS;
+			}
+			if (CoreModel.isValidSourceUnitName(tu.getCProject().getProject(), tu.getElementName())) {
+				return TRANSLATIONUNIT_SOURCE;
 			}
 			return TRANSLATIONUNITS;
 		} else if (element instanceof IInclude) {

@@ -3,14 +3,11 @@ package org.eclipse.cdt.core.model;
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002. All Rights Reserved.
  */
-import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.filetype.ICFileType;
-import org.eclipse.cdt.core.filetype.ICFileTypeAssociation;
-import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModel;
@@ -170,82 +167,25 @@ public class CoreModel {
 	/**
 	 * Return true if name is a valid name for a translation unit.
 	 */
-	public static boolean isValidTranslationUnitName(String name) {
-		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
-		ICFileType type = resolver.getFileType(name);
+	public static boolean isValidTranslationUnitName(IProject project, String name) {
+		ICFileType type = CCorePlugin.getDefault().getFileType(project, name);
 		return type.isTranslationUnit();
 	}
 
 	/**
 	 * Return true if name is a valid name for a translation unit.
 	 */
-	public static boolean isValidHeaderUnitName(String name) {
-		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
-		ICFileType type = resolver.getFileType(name);
+	public static boolean isValidHeaderUnitName(IProject project, String name) {
+		ICFileType type = CCorePlugin.getDefault().getFileType(project, name);
 		return type.isHeader();
 	}
 
 	/**
 	 * Return true if name is a valid name for a translation unit.
 	 */
-	public static boolean isValidSourceUnitName(String name) {
-		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
-		ICFileType type = resolver.getFileType(name);
+	public static boolean isValidSourceUnitName(IProject project, String name) {
+		ICFileType type = CCorePlugin.getDefault().getFileType(project, name);
 		return type.isSource();
-	}
-
-	/**
-	 * Return the list of headers extensions.
-	 */
-	public static String[] getHeaderExtensions() {
-		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
-		ICFileTypeAssociation[] associations = resolver.getFileTypeAssociations();
-		ArrayList list = new ArrayList(associations.length);
-		for (int i = 0; i < associations.length; i++) {
-			ICFileType type = associations[i].getType();
-			if (type.isHeader()) {
-				list.add(associations[i].getPattern());
-			}
-		}
-		String[] exts = new String[list.size()];
-		list.toArray(exts);
-		return exts;
-	}
-
-	/**
-	 * Returns the list of source extensions.
-	 */
-	public static String[] getSourceExtensions() {
-		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
-		ICFileTypeAssociation[] associations = resolver.getFileTypeAssociations();
-		ArrayList list = new ArrayList(associations.length);
-		for (int i = 0; i < associations.length; i++) {
-			ICFileType type = associations[i].getType();
-			if (type.isSource()) {
-				list.add(associations[i].getPattern());
-			}
-		}
-		String[] exts = new String[list.size()];
-		list.toArray(exts);
-		return exts;
-	}
-
-	/**
-	 * Returns the list of headers and sources extensions
-	 */
-	public static String[] getTranslationUnitExtensions() {
-		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
-		ICFileTypeAssociation[] associations = resolver.getFileTypeAssociations();
-		ArrayList list = new ArrayList(associations.length);
-		for (int i = 0; i < associations.length; i++) {
-			ICFileType type = associations[i].getType();
-			if (type.isTranslationUnit()) {
-				list.add(associations[i].getPattern());
-			}
-		}
-		String[] exts = new String[list.size()];
-		list.toArray(exts);
-		return exts;
 	}
 
 	/**

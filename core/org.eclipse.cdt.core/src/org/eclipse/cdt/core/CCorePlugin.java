@@ -664,22 +664,6 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Returns the file type object corresponding to the provided
-	 * file name, using the workspace resolver.
-	 * 
-	 * If no file type object exists, a default file type object is
-	 * returned.
-	 * 
-	 * @param fileName Name of the file to resolve type info for.
-	 * 
-	 * @return File type object for the provided file name, in the
-	 * context of the workspace
-	 */
-	public ICFileType getFileType(String fileName) {	
-		return getFileTypeResolver().getFileType(fileName);
-	}
-	
-	/**
-	 * Returns the file type object corresponding to the provided
 	 * file name.
 	 * 
 	 * If no file type object exists, a default file type object is
@@ -695,17 +679,6 @@ public class CCorePlugin extends Plugin {
 		return getFileTypeResolver(project).getFileType(fileName);
 	}
 
-	/**
-	 * Return the file type resolver for the workspace.
-	 * 
-	 * @param project Project to get file type resolver for.
-	 * 
-	 * @return File type resolver for the project.
-	 */
-	public ICFileTypeResolver getFileTypeResolver() {	
-		return getResolverModel().getResolver();
-	}
-	
 	/**
 	 * Return the file type resolver for the specified project.
 	 * Specifying a null project returns the file type resolver

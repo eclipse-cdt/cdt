@@ -103,7 +103,7 @@ public class UndoManager implements IUndoManager {
 					IResource resource= delta.getResource();
 					if (resource.getType() == IResource.FILE && delta.getKind() == IResourceDelta.CHANGED &&
 							(delta.getFlags() & IResourceDelta.CONTENT) != 0) {
-						if(CoreModel.getDefault().isValidTranslationUnitName(resource.getName())) {
+						if(CoreModel.isValidTranslationUnitName(resource.getProject(), resource.getName())) {
 							ITranslationUnit unit= (ITranslationUnit)CoreModel.getDefault().create((IFile)resource);
 							if (unit != null && unit.exists()) {
 								flush();

@@ -532,14 +532,16 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isHeaderUnit()
 	 */
 	public boolean isHeaderUnit() {
-		return CoreModel.isValidHeaderUnitName(getPath().lastSegment());
+		IProject project = getCProject().getProject();
+		return CoreModel.isValidHeaderUnitName(project, getPath().lastSegment());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isSourceUnit()
 	 */
 	public boolean isSourceUnit() {
-		return CoreModel.isValidSourceUnitName(getPath().lastSegment());
+		IProject project = getCProject().getProject();
+		return CoreModel.isValidSourceUnitName(project, getPath().lastSegment());
 	}
 
 	/* (non-Javadoc)

@@ -109,7 +109,8 @@ public class IncludeReference extends Openable implements IIncludeReference {
 					ICElement celement = null;
 					if (child.isDirectory()) {
 						celement = new IncludeReference(this, fIncludeEntry, new Path(child.getAbsolutePath()));
-					} else if (CoreModel.isValidTranslationUnitName(names[i]) && child.isFile()) {
+					} else if (CoreModel.isValidTranslationUnitName(getCProject().getProject(), names[i]) &&
+							child.isFile()) {
 						celement = new ExternalTranslationUnit(this, path.append(names[i]));
 					}
 					if (celement != null) {

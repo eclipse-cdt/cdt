@@ -102,8 +102,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
-		boolean markers = cproject.getProject().getWorkspace().isTreeLocked();
-		return getResolvedPathEntries(cproject, !markers);
+		//boolean markers = cproject.getProject().getWorkspace().isTreeLocked();
+		//return getResolvedPathEntries(cproject, !markers);
+		return getResolvedPathEntries(cproject, false);
 	}
 	
 	public IPathEntry[] getResolvedPathEntries(ICProject cproject, boolean generateMarkers) throws CModelException {

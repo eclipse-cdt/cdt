@@ -266,6 +266,14 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		if (cproject == null) {
 			cproject = create(file.getProject());
 		}
+		/////////////////////////////////////////////////
+		// FIXME-alain: Quick hack 'til we fix the CDescriptor
+		// This should/must be remove
+		// ".cdtproject" is a special file for CProjects.
+		/////////////////////////////////////////////////
+		if (file.getName().equals(".cdtproject")) { // $NON-NLS-1$
+			return null;
+		}
 		boolean checkIfBinary = false;
 		ICElement celement = null;
 		try {
@@ -284,7 +292,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						cfolder = cfolder.getCContainer(segments[j]);
 					}
 					
-					if (CoreModel.isValidTranslationUnitName(fileName)) {
+					if (CoreModel.isValidTranslationUnitName(cproject.getProject(), fileName)) {
 						celement = cfolder.getTranslationUnit(fileName);
 					} else if (cproject.isOnOutputEntry(file)) {
 						IBinaryFile bin = createBinaryFile(file);

@@ -607,7 +607,7 @@ public class DeltaProcessor {
 		
 		String filename = resource.getName();
 		
-		if (CoreModel.isValidHeaderUnitName(filename)) {
+		if (CoreModel.isValidHeaderUnitName(resource.getProject(), filename)) {
 			indexManager.updateDependencies(resource);
 		}
 	}	

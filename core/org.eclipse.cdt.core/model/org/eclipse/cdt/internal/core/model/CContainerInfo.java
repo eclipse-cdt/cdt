@@ -80,7 +80,8 @@ public class CContainerInfo extends OpenableInfo {
 						}
 						case IResource.FILE: {
 							String filename = member.getName();
-							if (CoreModel.isValidTranslationUnitName(filename) && root.isOnSourceEntry(member)) {
+							if (CoreModel.isValidTranslationUnitName(cproject.getProject(), filename) &&
+									root.isOnSourceEntry(member)) {
 								continue;
 							} else {
 								if (root.isOnSourceEntry(member)) {

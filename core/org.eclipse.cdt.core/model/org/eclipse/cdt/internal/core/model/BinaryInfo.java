@@ -38,25 +38,7 @@ class BinaryInfo extends CFileInfo {
 
 	public ICElement[] getChildren() {
 		if (hasChanged()) {
-			if (hash == null) {
-				hash = new HashMap();
-			}
-			hash.clear();
-			removeChildren();
-			setIsStructureKnown(true);
-			IBinaryObject bin = getBinaryObject();
-			ISymbol[] symbols = bin.getSymbols();
-			for (int i = 0; i < symbols.length; i++) {
-				switch (symbols[i].getType()) {
-					case ISymbol.FUNCTION :
-						addFunction(symbols[i]);
-						break;
-
-					case ISymbol.VARIABLE :
-						addVariable(symbols[i]);
-						break;
-				}
-			}
+			loadChildren();
 		}
 		return super.getChildren();
 	}
@@ -155,6 +137,28 @@ class BinaryInfo extends CFileInfo {
 			return bin.isLittleEndian();
 		}
 		return false;
+	}
+	
+	void loadChildren() {
+		if (hash == null) {
+			hash = new HashMap();
+		}
+		hash.clear();
+		removeChildren();
+		setIsStructureKnown(true);
+		IBinaryObject bin = getBinaryObject();
+		ISymbol[] symbols = bin.getSymbols();
+		for (int i = 0; i < symbols.length; i++) {
+			switch (symbols[i].getType()) {
+				case ISymbol.FUNCTION :
+					addFunction(symbols[i]);
+				break;
+
+				case ISymbol.VARIABLE :
+					addVariable(symbols[i]);
+				break;
+			}
+		}
 	}
 
 	IBinaryObject getBinaryObject() {

@@ -13,8 +13,6 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.core.model.parser.BinaryFileAdapter;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -41,27 +39,25 @@ class ArchiveInfo extends CFileInfo {
 				res = getElement().getResource();
 			} catch (CModelException e) {
 			}
-			if (res != null && res instanceof IContainer) {
-				IContainer container = (IContainer)res;
-				IBinaryArchive ar = getBinaryArchive();
-				IBinaryObject[] objects = ar.getObjects();
-				for (int i = 0; i < objects.length; i++) {
-					final IBinaryObject obj = objects[i];
-					IFile file = new BinaryFileAdapter(container, obj);
-					Binary binary = new Binary(getElement(), file) {
-						public CElementInfo createElementInfo() {
-							return new BinaryInfo(this) {
-								/**
-								 * @see org.eclipse.cdt.internal.core.model.BinaryInfo#getBinaryObject()
-								 */
-								IBinaryObject getBinaryObject() {
-									return obj;
-								}
-							};
-						}
-					};
-					addChild(binary);
-				}
+			IBinaryArchive ar = getBinaryArchive();
+			IBinaryObject[] objects = ar.getObjects();
+			for (int i = 0; i < objects.length; i++) {
+				final IBinaryObject obj = objects[i];
+				Binary binary = new Binary(getElement(), res.getLocation().append(obj.getName())) {
+					public CElementInfo createElementInfo() {
+						return new BinaryInfo(this) {
+							/**
+							 * @see org.eclipse.cdt.internal.core.model.BinaryInfo#getBinaryObject()
+							 */
+							IBinaryObject getBinaryObject() {
+								return obj;
+							}
+						};
+					}
+				};
+				BinaryInfo info = (BinaryInfo)binary.getElementInfo();
+				info.loadChildren();
+				addChild(binary);
 			}
 		}
 		return super.getChildren();

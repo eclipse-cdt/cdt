@@ -1,3 +1,7 @@
+2004-11-19 Alain Magloire
+	Fix for PR 39204
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+
 2004-11-19 Bogdan Gheorghe
 	Fix for 43664 : Search should report matches outside of workspace
 	

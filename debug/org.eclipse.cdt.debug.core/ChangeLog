@@ -1,3 +1,7 @@
+2003-04-16 Mikhail Khodjaiants
+	Quick fix for variable values.
+	* CValue.java
+
 2003-04-14 Alain Magloire
 
 	StringBuffer.indexOf() is 1.4.x only

@@ -209,6 +209,26 @@ public class CValue extends CDebugElement implements ICValue
 		if ( cdiValue != null )
 		{
 			result = cdiValue.trim();
+			if ( result.startsWith( "@" ) ) // Reference
+			{
+				int end = result.indexOf( ':' );
+				if ( end == -1 )
+					end = result.length();
+				result = result.substring( 1, end );
+			}
+			else if ( result.startsWith( "0x" ) )
+			{
+				int end = result.indexOf( ' ' );
+				if ( end == -1 )
+					end = result.length();
+				result = result.substring( 0, end );
+			}
+			else if ( result.charAt( result.length() - 1 ) == '\'' )
+			{
+				int start = result.indexOf( '\'' );
+				if ( start != -1 )
+					result = result.substring( start );
+			}
 		}
 		return result;
 	}
@@ -238,5 +258,32 @@ public class CValue extends CDebugElement implements ICValue
 	protected CVariable getParentVariable()
 	{
 		return fParent;
+	}
+
+	public String getUnderlyingValueString()
+	{
+		ICDIValue cdiValue = getUnderlyingValue();
+		String value = null;
+		if ( cdiValue != null )
+		{
+			try
+			{
+				value = cdiValue.getValueString();
+			}
+			catch( CDIException e )
+			{
+			}
+		}
+		return value;
+	}
+	
+	public boolean isCharPointer()
+	{
+		String value = getUnderlyingValueString();
+		if ( value != null )
+		{
+			return ( value.startsWith( "0x" ) && value.indexOf( ' ' ) != -1 );
+		}
+		return false;
 	}
 }

@@ -33,6 +33,7 @@ import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
+import org.eclipse.cdt.debug.internal.core.model.CValue;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
@@ -490,7 +491,11 @@ public class CDTDebugModelPresentation extends LabelProvider
 			IValue value = var.getValue();
 			if ( value != null && value.getValueString() != null && value.getValueString().trim().length() > 0 )
 			{
-				label += "= " + value.getValueString();
+				if ( value instanceof CValue && ((CValue)value).isCharPointer() )
+					label += "= " + ((CValue)value).getUnderlyingValueString();
+				else
+					label += getVariableValue( value.getValueString().trim() );					
+//				label += "= " + value.getValueString();
 			}
 		}
 		return label;
@@ -864,5 +869,14 @@ public class CDTDebugModelPresentation extends LabelProvider
 			}
 		}
 		return null;
+	}
+
+	private String getVariableValue( String value )
+	{
+		if ( value.startsWith( "[" ) )
+			return value;
+		if ( value.startsWith( "{" ) )
+			return "";
+		return "=" + value; 
 	}
 }

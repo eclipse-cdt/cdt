@@ -1,3 +1,9 @@
+2004-03-31 David Inglis
+
+	removed org.apache.xerces dependency
+	
+	* src/org/eclipse/cdt/internal/corext/template/TemplateSet.java
+	
 2004-03-31 David Daoust
 	Changed the default value for the preference "LinkToEditor" to be 
 	off -- the same as in the JDT.

@@ -40,7 +40,16 @@ public class CPathSymbolEntryPage extends ExtendedCPathBasePage {
 				List cplist = fPathList.getElements();
 
 				CPListElement newPath = newCPElement(((ICElement) getSelection().get(0)).getResource());
-				newPath.setAttribute(CPListElement.MACRO_NAME, symbol);
+				String name, value = ""; //$NON-NLS-1$
+				int index = symbol.indexOf("="); //$NON-NLS-1$
+				if (index != -1) {
+					name = symbol.substring(0, index).trim();
+					value = symbol.substring(index + 1).trim();
+				} else {
+					name = symbol.trim();
+				}
+				newPath.setAttribute(CPListElement.MACRO_NAME, name);
+				newPath.setAttribute(CPListElement.MACRO_VALUE, value);
 				if (!cplist.contains(newPath)) {
 					fPathList.addElement(newPath);
 					fCPathList.add(newPath);

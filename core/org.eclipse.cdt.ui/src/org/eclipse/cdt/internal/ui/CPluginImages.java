@@ -135,6 +135,8 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_ORDER= createManaged(T_OBJ, IMG_OBJS_ORDER);
 	public static final ImageDescriptor DESC_OBJS_EXCLUSION_FILTER_ATTRIB = createManaged(T_OBJ, IMG_OBJS_EXCLUDSION_FILTER_ATTRIB);
 
+	public static final ImageDescriptor DESC_OVR_PATH_INHERIT= create(T_OVR, "path_inherit_co.gif"); //$NON-NLS-1$
+
 	// Breakpoint image descriptors
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT = createManaged( T_OBJ, IMG_OBJS_BREAKPOINT );
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_BREAKPOINT_DISABLED );

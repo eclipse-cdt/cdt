@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.cdt.internal.ui.wizards.TypedElementSelectionValidator;
@@ -36,6 +37,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -46,6 +48,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -103,22 +107,107 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 
 		private final Color inDirect = new Color(Display.getDefault(), new RGB(170, 170, 170));
 
+		private class CPListImageDescriptor extends CompositeImageDescriptor {
+
+			private Image fBaseImage;
+			private boolean showInherited;
+			private Point fSize;
+
+			public CPListImageDescriptor(Image baseImage, boolean inherited) {
+				fBaseImage = baseImage;
+				showInherited = inherited;
+			}
+
+			/**
+			 * @see CompositeImageDescriptor#getSize()
+			 */
+			protected Point getSize() {
+				if (fSize == null) {
+					ImageData data = fBaseImage.getImageData();
+					setSize(new Point(data.width, data.height));
+				}
+				return fSize;
+			}
+
+			/**
+			 * @see Object#equals(java.lang.Object)
+			 */
+			public boolean equals(Object object) {
+				if (!(object instanceof CPListImageDescriptor)) {
+					return false;
+				}
+
+				CPListImageDescriptor other = (CPListImageDescriptor) object;
+				return (fBaseImage.equals(other.fBaseImage) && showInherited == other.showInherited);
+			}
+
+			/**
+			 * @see Object#hashCode()
+			 */
+			public int hashCode() {
+				return fBaseImage.hashCode() | (showInherited ? 0x1 : 0);
+			}
+
+			/**
+			 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
+			 */
+			protected void drawCompositeImage(int width, int height) {
+				ImageData bg = fBaseImage.getImageData();
+				if (bg == null) {
+					bg = DEFAULT_IMAGE_DATA;
+				}
+				drawImage(bg, 0, 0);
+				drawOverlays();
+			}
+
+			/**
+			 * Add any overlays to the image as specified in the flags.
+			 */
+			protected void drawOverlays() {
+				ImageData data = null;
+				if (showInherited) {
+					data = CPluginImages.DESC_OVR_PATH_INHERIT.getImageData();
+					drawImage(data, 0, 0);
+				}
+			}
+
+			protected void setSize(Point size) {
+				fSize = size;
+			}
+
+		}
+
+		public Image getImage(Object element) {
+			Image image = super.getImage(element);
+			if (isPathInherited((CPListElement) element)) {
+				image = new CPListImageDescriptor(image, true).createImage();
+			}
+			return image;
+		}
+
 		public Color getBackground(Object element) {
 			return null;
 		}
 
 		public Color getForeground(Object element) {
-			IPath resPath = ((CPListElement) element).getPath();
+			if (isPathInherited((CPListElement) element)) {
+				return inDirect;
+			}
+			return null;
+		}
+
+		boolean isPathInherited(CPListElement element) {
+			IPath resPath = element.getPath();
 			List sel = getSelection();
 			if (!sel.isEmpty()) {
 				if (sel.get(0) instanceof ICElement) {
 					ICElement celem = (ICElement) sel.get(0);
 					if (!celem.getPath().equals(resPath)) {
-						return inDirect;
+						return true;
 					}
 				}
 			}
-			return null;
+			return false;
 		}
 	}
 
@@ -180,7 +269,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 	protected void removePath(CPListElement element) {
 		ICElement celem = (ICElement) getSelection().get(0);
 		if (!celem.getPath().equals(element.getPath())) {
-			IPath exclude = element.getPath().removeFirstSegments(element.getPath().segmentCount()).addTrailingSeparator();
+			IPath exclude = celem.getPath().removeFirstSegments(element.getPath().segmentCount()).addTrailingSeparator();
 			IPath[] exclusions = (IPath[]) element.getAttribute(CPListElement.EXCLUSION);
 			IPath[] newExlusions = new IPath[exclusions.length + 1];
 			System.arraycopy(exclusions, 0, newExlusions, 0, exclusions.length);
@@ -255,8 +344,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		while (iter.hasNext()) {
 			CPListElement element = (CPListElement) iter.next();
 			if (element.getPath().isPrefixOf(resPath)
-					&& (element.getPath().equals(resPath)
-					|| !CoreModelUtil.isExcludedPath(resPath.removeFirstSegments(1),
+					&& (element.getPath().equals(resPath) || !CoreModelUtil.isExcludedPath(resPath.removeFirstSegments(1),
 							(IPath[]) element.getAttribute(CPListElement.EXCLUSION)))) {
 				newList.add(element);
 			}

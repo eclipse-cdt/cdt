@@ -134,7 +134,7 @@ public class CPListElement {
 						((Boolean) getAttribute(SYSTEM_INCLUDE)).booleanValue(), exclusionPattern);
 			case IPathEntry.CDT_MACRO:
 				exclusionPattern = (IPath[]) getAttribute(EXCLUSION);
-				return CoreModel.newMacroEntry(fPath, (String) getAttribute(MACRO_NAME), (String) getAttribute(MACRO_NAME), exclusionPattern);
+				return CoreModel.newMacroEntry(fPath, (String) getAttribute(MACRO_NAME), (String) getAttribute(MACRO_VALUE), exclusionPattern);
 			default:
 				return null;
 		}

@@ -150,13 +150,13 @@ public interface IManagedBuildInfo {
 	public String[] getLibsForTarget(String extension);
 
 	/**
-	 * Answers a string array containing the arguments to be passed to
-	 * make. For example, if the user has selected a build that stops
-	 * at the first error, the array would contain {"k"}.
+	 * Answers a <code>String</code> containing the arguments to be passed to make. 
+	 * For example, if the user has selected a build that keeps going on error, the 
+	 * answer would contain {"-k"}.
 	 * 
-	 * @return
+	 * @return String
 	 */
-	public String[] getMakeArguments();
+	public String getMakeArguments();
 
 	/**
 	 * Answers a <code>String</code> containing the make command invocation 

@@ -352,6 +352,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 			case IOption.LIBRARIES :
 				oldValue = option.getLibraries();
 				break;
+			case IOption.OBJECTS :
+				oldValue = option.getUserObjects();
+				break;
 			default :
 				oldValue = new String[0];
 				break;

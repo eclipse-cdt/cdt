@@ -51,9 +51,9 @@ import org.eclipse.core.runtime.Status;
 
 public class MakefileGenerator {
 	// String constants for messages
-	private static final String MESSAGE = "MakeBuilder.message";	//$NON-NLS-1$
+	private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
 	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
-	private static final String COMMENT = "MakeBuilder.comment";	//$NON-NLS-1$
+	private static final String COMMENT = "ManagedMakeBuilder.comment";	//$NON-NLS-1$
 	private static final String MOD_LIST = COMMENT + ".module.list";	//$NON-NLS-1$	
 	private static final String SRC_LISTS = COMMENT + ".source.list";	//$NON-NLS-1$	
 	private static final String MOD_RULES = COMMENT + ".build.rule";	//$NON-NLS-1$	
@@ -462,7 +462,12 @@ public class MakefileGenerator {
 		}
 
 		// Write out the all target first in case someone just runs make
-		buffer.append("all: deps" + WHITESPACE + outputPrefix + target + NEWLINE);
+		// 	all: targ_<target_name> [deps] 
+		String defaultTarget = "all:";
+		if (deps.length > 0) {
+			defaultTarget += WHITESPACE + "deps";
+		}
+		buffer.append(defaultTarget + WHITESPACE + outputPrefix + target + NEWLINE);
 		buffer.append(NEWLINE);
 
 		/*
@@ -472,30 +477,32 @@ public class MakefileGenerator {
 		 * 		<cd <Proj_Dep_1/build_dir>; $(MAKE) [clean all | all]> 
 		 */
 		List managedProjectOutputs = new ArrayList();
-		buffer.append("deps:" + NEWLINE);
-		if (deps != null) {
-			for (int i = 0; i < deps.length; i++) {
-				IProject dep = deps[i];
-				String buildDir = dep.getLocation().toString();
-				if (ManagedBuildManager.manages(dep)) {
-					// Add the current configuration to the makefile path
-					IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(dep);
-					buildDir += SEPARATOR + depInfo.getConfigurationName();
+		if (deps.length > 0) { 
+			buffer.append("deps:" + NEWLINE);
+			if (deps != null) {
+				for (int i = 0; i < deps.length; i++) {
+					IProject dep = deps[i];
+					String buildDir = dep.getLocation().toString();
+					if (ManagedBuildManager.manages(dep)) {
+						// Add the current configuration to the makefile path
+						IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(dep);
+						buildDir += SEPARATOR + depInfo.getConfigurationName();
 					
-					// Extract the build artifact to add to the dependency list
-					String depTarget = depInfo.getBuildArtifactName();
-					String depExt = (new Path(depTarget)).getFileExtension();
-					String depPrefix = depInfo.getOutputPrefix(depExt);
-					managedProjectOutputs.add(buildDir + SEPARATOR + depPrefix + depTarget);
+						// Extract the build artifact to add to the dependency list
+						String depTarget = depInfo.getBuildArtifactName();
+						String depExt = (new Path(depTarget)).getFileExtension();
+						String depPrefix = depInfo.getOutputPrefix(depExt);
+						managedProjectOutputs.add(buildDir + SEPARATOR + depPrefix + depTarget);
+					}
+					buffer.append(TAB + "cd" + WHITESPACE + buildDir + SEMI_COLON + WHITESPACE + "$(MAKE) " + targets + NEWLINE);
 				}
-				buffer.append(TAB + "cd" + WHITESPACE + buildDir + SEMI_COLON + WHITESPACE + "$(MAKE) " + targets + NEWLINE);
 			}
+			buffer.append(NEWLINE);
 		}
-		buffer.append(NEWLINE);
 
 		/*
 		 * Write out the target rule as:
-		 * <prefix><target>.<extension>: $(OBJS) [<dep_proj_1_output> ... <dep_proj_n_output>]
+		 * targ_<prefix><target>.<extension>: $(OBJS) [<dep_proj_1_output> ... <dep_proj_n_output>]
 		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $(OBJS) $(USER_OBJS) $(LIB_DEPS)
 		 */
 		//

@@ -180,10 +180,13 @@ public class Option extends BuildObject implements IOption {
 		if (valueType != PREPROCESSOR_SYMBOLS) {
 			throw new BuildException("bad value type");
 		}
-		List v = (List)value;
-		return v != null
-			? (String[])v.toArray(new String[v.size()])
-			: EMPTY_STRING_ARRAY;
+		ArrayList v = (ArrayList)value;
+		if (v == null) {
+			return EMPTY_STRING_ARRAY;
+		} else {
+			v.trimToSize();
+			return (String[]) v.toArray(new String[v.size()]);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -201,10 +204,13 @@ public class Option extends BuildObject implements IOption {
 		if (valueType != INCLUDE_PATH) {
 			throw new BuildException("bad value type");
 		}
-		List v = (List)value;
-		return v != null
-			? (String[])v.toArray(new String[v.size()])
-			: EMPTY_STRING_ARRAY;
+		ArrayList v = (ArrayList)value;
+		if (v == null) {
+			return EMPTY_STRING_ARRAY;
+		} else {
+			v.trimToSize();
+			return (String[]) v.toArray(new String[v.size()]);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -214,10 +220,13 @@ public class Option extends BuildObject implements IOption {
 		if (valueType != LIBRARIES) {
 			throw new BuildException("bad value type");
 		}
-		List v = (List)value;
-		return v != null
-			? (String[])v.toArray(new String[v.size()])
-			: EMPTY_STRING_ARRAY;
+		ArrayList v = (ArrayList)value;
+		if (v == null) {
+			return EMPTY_STRING_ARRAY;
+		} else {
+			v.trimToSize();
+			return (String[]) v.toArray(new String[v.size()]);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -237,10 +246,13 @@ public class Option extends BuildObject implements IOption {
 		if (valueType != STRING_LIST) {
 			throw new BuildException("bad value type");
 		}
-		List v = (List)value;
-		return v != null
-			? (String[])v.toArray(new String[v.size()])
-			: EMPTY_STRING_ARRAY;
+		ArrayList v = (ArrayList)value;
+		if (v == null) {
+			return EMPTY_STRING_ARRAY;
+		} else {
+			v.trimToSize();
+			return (String[]) v.toArray(new String[v.size()]);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -268,10 +280,13 @@ public class Option extends BuildObject implements IOption {
 			throw new BuildException("bad value type");
 		}
 		// This is the right puppy, so return its list value
-		List v = (List)value;
-		return v != null
-			? (String[])v.toArray(new String[v.size()])
-			: EMPTY_STRING_ARRAY;
+		ArrayList v = (ArrayList)value;
+		if (v == null) {
+			return EMPTY_STRING_ARRAY;
+		} else {
+			v.trimToSize();
+			return (String[]) v.toArray(new String[v.size()]);
+		}
 	}
 
 	/* (non-Javadoc)

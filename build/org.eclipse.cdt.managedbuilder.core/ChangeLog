@@ -1,4 +1,36 @@
 2003-09-25 Sean Evoy
+	A patch to resolve the problem with refreshing the project after a build, or
+	bug 42522 if you care about those sorts of things. The managed make builder was
+	calling refresh at inside a bad if statement. I corrected that and projects 
+	refresh correctly. Of course, if you have the wrong binary parser selected you are
+	hosed. You will also notice that the string constants have been changed to 
+	resolve to a different name. The standard builder uses this name and I wanted 
+	to minimize the possibility of problems later.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/GeneratedMakefileBuilder.java
+	
+	Prepended "Managed" to the externalized string identifiers to avoid future overlap 
+	with the standard build system. Had to update the makefile generator to use the 
+	new identifiers.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/PluginResources.properties
+	*  src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+	
+	Changed the signature of the 'getMakeArguments' to return a string instead of an 
+	array so the builder can invoke make with the user-specified args. I also changed 
+	the logic of the getMakeCommand method in the implementor so that it only returns 
+	a string containing the command itself.
+	* src/org/eclipse/cdt/managedbuilder/core/IManagedBuildInfo.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ManagedBuildInfo.java
+
+	Explicitly trim all arrays to size before converting them to String[] for Options 
+	and Tools.
+	*src/org/eclipse/cdt/managedbuilder/internal/core/Option.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java
+	
+	Fixed a missing bit of logic in the Configuration when a user-object option is 
+	deleted. Now the build model really does get rid of the the value.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Configuration.java
+	
+2003-09-25 Sean Evoy
 	This patch contains a lot of changes needed to implement fixes for 42648 and 
 	43122. 
 

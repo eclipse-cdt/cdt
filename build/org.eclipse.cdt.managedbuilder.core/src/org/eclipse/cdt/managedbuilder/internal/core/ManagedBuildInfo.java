@@ -148,6 +148,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			IConfiguration configuration = configs[i];
 			configNames.add(configuration.getName());
 		}
+		configNames.trimToSize();
 		return (String[])configNames.toArray(new String[configNames.size()]);
 	}
 
@@ -350,11 +351,29 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getMakeArguments()
 	 */
-	public String[] getMakeArguments() {
-		// TODO Stop hard-coding this
-		String[] args = {""}; 
-
-		return args;
+	public String getMakeArguments() {
+		String arguments = new String();		
+		
+		// The make command may or may not have any flags
+		ITarget target = getDefaultTarget();
+		String command = target.getMakeCommand();
+		
+		// If it does, the flags will be everything between the '-' and the next space
+		int indexOfArgs = command.indexOf('-');
+		if (indexOfArgs != - 1) {
+			try {
+				String argsAndTargs = command.substring(indexOfArgs);
+				int indexOfTargs = argsAndTargs.indexOf(' ');
+				arguments = (indexOfTargs != -1) ? 
+							argsAndTargs.substring(0, indexOfTargs) : 
+							argsAndTargs;
+				// Make sure the arg list does not contain f or C
+				
+			} catch (IndexOutOfBoundsException e) {
+			}
+		}
+		
+		return arguments.trim();
 	}
 
 	/* (non-Javadoc)
@@ -364,7 +383,15 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		String command = new String();
 		ITarget target = getDefaultTarget();
 		command = target.getMakeCommand();
-		return command;
+		
+		// There may actually be arguments, so just get everything up to the first '-'
+		int indexOfArgs = command.indexOf('-');
+		if (indexOfArgs != -1) {
+			// Return ecverything up to the first argument as the command
+			return command.substring(0, indexOfArgs).trim();
+		} else {
+			return command.trim();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -427,6 +454,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public IResource getOwner() {
 		return owner;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getTarget(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */

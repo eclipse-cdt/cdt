@@ -196,14 +196,14 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputFlag()
 	 */
 	public String getOutputFlag() {
-		return outputFlag == null ? new String() : outputFlag;
+		return outputFlag == null ? new String() : outputFlag.trim();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputPrefix()
 	 */
 	public String getOutputPrefix() {
-		return outputPrefix == null ? new String() : outputPrefix;
+		return outputPrefix == null ? new String() : outputPrefix.trim();
 	}
 
 	/* (non-Javadoc)
@@ -228,7 +228,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolCommand()
 	 */
 	public String getToolCommand() {
-		return command;
+		return command.trim();
 	}
 
 	/* (non-Javadoc)
@@ -294,7 +294,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 
 		}
 
-		return buf.toString();
+		return buf.toString().trim();
 	}
 
 	/* (non-Javadoc)
@@ -317,7 +317,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		}
 
 		IOption[] allOptions = tool.getOptions();
-		List myOptions = new ArrayList();
+		ArrayList myOptions = new ArrayList();
 			
 		for (int i = 0; i < allOptions.length; ++i) {
 			IOption option = allOptions[i];
@@ -325,6 +325,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				myOptions.add(option);
 		}
 
+		myOptions.trimToSize();
 		return (IOption[])myOptions.toArray(new IOption[myOptions.size()]);
 	}
 

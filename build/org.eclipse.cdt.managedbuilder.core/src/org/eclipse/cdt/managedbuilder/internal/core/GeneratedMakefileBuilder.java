@@ -14,6 +14,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -46,14 +47,17 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class GeneratedMakefileBuilder extends ACBuilder {
 	// String constants
-	private static final String MESSAGE = "MakeBuilder.message";	//$NON-NLS-1$
+	private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
 	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
+	private static final String REFRESH_ERROR = BUILD_ERROR + ".refresh";	//$NON-NLS-1$
 	private static final String BUILD_FINISHED = MESSAGE + ".finished";	//$NON-NLS-1$
 	private static final String INCREMENTAL = MESSAGE + ".incremental";	//$NON-NLS-1$
 	private static final String MAKE = MESSAGE + ".make";	//$NON-NLS-1$
 	private static final String REBUILD = MESSAGE + ".rebuild";	//$NON-NLS-1$
 	private static final String START = MESSAGE + ".starting";	//$NON-NLS-1$
-
+	private static final String REFRESH = MESSAGE + ".updating";	//$NON-NLS-1$
+	private static final String MARKERS = MESSAGE + ".creating.markers";	//$NON-NLS-1$
+	
 	// Status codes
 	public static final int EMPTY_PROJECT_BUILD_ERROR = 1;
 
@@ -85,7 +89,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * 
 	 */
 	public GeneratedMakefileBuilder() {
-		super();
+
 	}
 
 	/* (non-Javadoc)
@@ -100,6 +104,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 
 		if (kind == IncrementalProjectBuilder.FULL_BUILD || info.isDirty()) {
+			fullBuild(monitor, info);
+		}
+		else if (kind == IncrementalProjectBuilder.AUTO_BUILD && info.isDirty()) {
 			fullBuild(monitor, info);
 		}
 		else {
@@ -118,9 +125,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 		info.setDirty(false);
 		
-		// Checking to see if the user cancelled the build
-		checkCancel(monitor);
-
 		// Ask build mechanism to compute deltas for project dependencies next time
 		return getProject().getReferencedProjects();
 	}
@@ -191,7 +195,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		
 		// Now call make
 		invokeMake(true, topBuildDir.removeFirstSegments(1), info, monitor);
-		
 		monitor.worked(1);		
 	}
 
@@ -282,132 +285,128 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	}
 
 	protected void invokeMake(boolean fullBuild, IPath buildDir, IManagedBuildInfo info, IProgressMonitor monitor) {
-		boolean isCanceled = false;
+		// Get the project and make sure there's a monitor to cancel the build
 		IProject currentProject = getProject();
-		SubProgressMonitor subMonitor = null;
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 
-		// Flag to the user that make is about to be called
-		IPath makeCommand = new Path(info.getMakeCommand()); 
-		String[] msgs = new String[2];
-		msgs[0] = info.getMakeCommand();
-		msgs[1] = currentProject.getName();
-		String statusMsg = ManagedBuilderCorePlugin.getFormattedString(MAKE, msgs);
-		if (statusMsg != null) {
-			monitor.subTask(statusMsg);
-		}
-
-		// Get a build console for the project
-		IConsole console = null;
-		ConsoleOutputStream consoleOutStream = null;
-		IWorkspace workspace = null;
-		IMarker[] markers = null;
 		try {
-			console = CCorePlugin.getDefault().getConsole();
-			console.start(currentProject);
-			consoleOutStream = console.getOutputStream();
+			// Flag to the user that make is about to be called
+			IPath makeCommand = new Path(info.getMakeCommand()); 
+			if (makeCommand != null) {
+				String[] msgs = new String[2];
+				msgs[0] = makeCommand.toString();
+				msgs[1] = currentProject.getName();
+				monitor.beginTask(ManagedBuilderCorePlugin.getFormattedString(MAKE, msgs), IProgressMonitor.UNKNOWN);
 
-			// Remove all markers for this project
-			workspace = currentProject.getWorkspace();
-			markers = currentProject.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-			if (markers != null) {
-				workspace.deleteMarkers(markers);
-			}
-		} catch (CoreException e) {
-		}
+				// Get a build console for the project
+				IConsole console = CCorePlugin.getDefault().getConsole();
+				console.start(currentProject);
+				ConsoleOutputStream consoleOutStream = console.getOutputStream();
+	
+				// Remove all markers for this project
+				removeAllMarkers(currentProject);
 
-		IPath workingDirectory = getWorkingDirectory().append(buildDir);
-
-		// Get the arguments to be passed to make from build model
-		String[] makeTargets = getMakeTargets(fullBuild);
-		
-		// Get a launcher for the make command
-		String errMsg = null;
-		CommandLauncher launcher = new CommandLauncher();
-		launcher.showCommand(true);
-
-		// Set the environmennt, some scripts may need the CWD var to be set.
-		Properties props = launcher.getEnvironment();
-		props.put("CWD", workingDirectory.toOSString());
-		props.put("PWD", workingDirectory.toOSString());
-		String[] env = null;
-		ArrayList envList = new ArrayList();
-		Enumeration names = props.propertyNames();
-		if (names != null) {
-			while (names.hasMoreElements()) {
-				String key = (String) names.nextElement();
-				envList.add(key + "=" + props.getProperty(key));
-			}
-			env = (String[]) envList.toArray(new String[envList.size()]);
-		}
-		
-		// Hook up an error parser
-		ErrorParserManager epm = new ErrorParserManager(this);
-		epm.setOutputStream(consoleOutStream);
-		OutputStream stdout = epm.getOutputStream();
-		OutputStream stderr = epm.getOutputStream();
-		
-		// Launch make
-		Process proc = launcher.execute(makeCommand, makeTargets, env, workingDirectory);
-		if (proc != null) {
-			try {
-				// Close the input of the Process explicitely.
-				// We will never write to it.
-				proc.getOutputStream().close();
-			} catch (IOException e) {
-			}
-			subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-			if (launcher.waitAndRead(stdout, stderr, subMonitor) != CommandLauncher.OK) {
-				errMsg = launcher.getErrorMessage();
+				IPath workingDirectory = getWorkingDirectory().append(buildDir);
+	
+				// Get the arguments to be passed to make from build model
+				ArrayList makeArgs = new ArrayList();
+				makeArgs.add(info.getMakeArguments());
+				makeArgs.addAll(Arrays.asList(getMakeTargets(fullBuild)));
+				String[] makeTargets = (String[]) makeArgs.toArray(new String[makeArgs.size()]);
 			
-				isCanceled = monitor.isCanceled();
-				monitor.setCanceled(false);
-				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-				subMonitor.subTask("Refresh From Local");
-
-				try {
-					currentProject.refreshLocal(IResource.DEPTH_INFINITE, subMonitor);
-				} catch (CoreException e) {
+				// Get a launcher for the make command
+				String errMsg = null;
+				CommandLauncher launcher = new CommandLauncher();
+				launcher.showCommand(true);
+	
+				// Set the environmennt, some scripts may need the CWD var to be set.
+				Properties props = launcher.getEnvironment();
+				props.put("CWD", workingDirectory.toOSString());	//$NON-NLS-1$
+				props.put("PWD", workingDirectory.toOSString());	//$NON-NLS-1$
+				String[] env = null;
+				ArrayList envList = new ArrayList();
+				Enumeration names = props.propertyNames();
+				if (names != null) {
+					while (names.hasMoreElements()) {
+						String key = (String) names.nextElement();
+						envList.add(key + "=" + props.getProperty(key)); //$NON-NLS-1$
+					}
+					env = (String[]) envList.toArray(new String[envList.size()]);
+				}
+			
+				// Hook up an error parser
+				ErrorParserManager epm = new ErrorParserManager(this);
+				epm.setOutputStream(consoleOutStream);
+				OutputStream stdout = epm.getOutputStream();
+				OutputStream stderr = epm.getOutputStream();
+			
+				// Launch make
+				Process proc = launcher.execute(makeCommand, makeTargets, env, workingDirectory);
+				if (proc != null) {
+					try {
+						// Close the input of the process since we will never write to it
+						proc.getOutputStream().close();
+					} catch (IOException e) {
+					}
+				
+					if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) { 
+						errMsg = launcher.getErrorMessage();
+					}
+				
+					// Force a resync of the project without allowing the user to cancel.
+					// This is probably unkind, but short of this there is no way to insure
+					// the UI is up-to-date with the build results
+					monitor.subTask(ManagedBuilderCorePlugin.getResourceString(REFRESH));
+					try {
+						currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+					} catch (CoreException e) {
+						monitor.subTask(ManagedBuilderCorePlugin.getResourceString(REFRESH_ERROR));
+					}
+				} else {
+					errMsg = launcher.getErrorMessage();
+				}
+				
+				// Report either the success or failure of our mission
+				StringBuffer buf = new StringBuffer();
+				if (errMsg != null && errMsg.length() > 0) {
+					String errorDesc = ManagedBuilderCorePlugin.getResourceString(BUILD_ERROR);
+					buf.append(errorDesc);
+					buf.append(System.getProperty("line.separator", "\n"));
+					buf.append("(").append(errMsg).append(")");
+				} else {
+					// Report a successful build
+					String successMsg = ManagedBuilderCorePlugin.getFormattedString(BUILD_FINISHED, currentProject.getName());
+					buf.append(successMsg);
+					buf.append(System.getProperty("line.separator", "\n"));
 				}
 
-				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-				subMonitor.subTask("Parsing");
-			} else {
-					errMsg = launcher.getErrorMessage();
-			}
-			
-			
-			// Report either the success or failure of our mission
-			StringBuffer buf = new StringBuffer();
-			if (errMsg != null && errMsg.length() > 0) {
-				String errorDesc = ManagedBuilderCorePlugin.getResourceString(BUILD_ERROR);
-				buf.append(errorDesc);
-				buf.append(System.getProperty("line.separator", "\n"));
-				buf.append("(").append(errMsg).append(")");
-			}
-			else {
-				// Report a successful build
-				String successMsg = ManagedBuilderCorePlugin.getFormattedString(BUILD_FINISHED, currentProject.getName());
-				buf.append(successMsg);
-				buf.append(System.getProperty("line.separator", "\n"));
-			}
-			// Write your message on the pavement
-			try {
+				// Write message on the console
 				consoleOutStream.write(buf.toString().getBytes());
 				consoleOutStream.flush();
 				stdout.close();
 				stderr.close();				
-			} catch (IOException e) {
+
+				monitor.subTask(ManagedBuilderCorePlugin.getResourceString(MARKERS)); //$NON-NLS-1$
+				epm.reportProblems();
 			}
-
-			epm.reportProblems();
-
-			subMonitor.done();
-			monitor.setCanceled(isCanceled);
+		} catch (Exception e) {
+			CCorePlugin.log(e);
+			forgetLastBuiltState();
+		} finally {
+			monitor.done();
 		}
-		monitor.done();
+	}
+
+	private void removeAllMarkers(IProject project) throws CoreException {
+		IWorkspace workspace = project.getWorkspace();
+
+		// remove all markers
+		IMarker[] markers = project.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+		if (markers != null) {
+			workspace.deleteMarkers(markers);
+		}
 	}
 
 }

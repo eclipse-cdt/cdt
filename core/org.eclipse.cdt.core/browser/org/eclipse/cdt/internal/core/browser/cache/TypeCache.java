@@ -218,8 +218,7 @@ public class TypeCache implements ITypeCache {
 			if (!(obj instanceof IQualifiedTypeName)) {
 				return false;
 			}
-			IQualifiedTypeName typeName = (IQualifiedTypeName) obj;
-			return (typeName instanceof GlobalNamespace);
+			return equals((IQualifiedTypeName)obj);
 		}
 		
 		public int compareTo(Object obj) {
@@ -229,9 +228,36 @@ public class TypeCache implements ITypeCache {
 			if (!(obj instanceof IQualifiedTypeName)) {
 				throw new ClassCastException();
 			}
-			IQualifiedTypeName typeName = (IQualifiedTypeName) obj;
-			return getFullyQualifiedName().compareTo(typeName.getFullyQualifiedName());
+			return compareTo((IQualifiedTypeName)obj);
 		}
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.browser.IQualifiedTypeName#equals(org.eclipse.cdt.core.browser.IQualifiedTypeName)
+         */
+        public boolean equals(IQualifiedTypeName typeName) {
+			return (typeName instanceof GlobalNamespace);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.browser.IQualifiedTypeName#equalsIgnoreCase(org.eclipse.cdt.core.browser.IQualifiedTypeName)
+         */
+        public boolean equalsIgnoreCase(IQualifiedTypeName typeName) {
+			return (typeName instanceof GlobalNamespace);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.browser.IQualifiedTypeName#compareTo(org.eclipse.cdt.core.browser.IQualifiedTypeName)
+         */
+        public int compareTo(IQualifiedTypeName typeName) {
+			return getFullyQualifiedName().compareTo(typeName.getFullyQualifiedName());
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.browser.IQualifiedTypeName#compareToIgnoreCase(org.eclipse.cdt.core.browser.IQualifiedTypeName)
+         */
+        public int compareToIgnoreCase(IQualifiedTypeName typeName) {
+			return getFullyQualifiedName().compareToIgnoreCase(typeName.getFullyQualifiedName());
+        }
 	}
 	
 	private static class HashKey {
@@ -454,17 +480,28 @@ public class TypeCache implements ITypeCache {
 		return (ITypeInfo[]) results.toArray(new ITypeInfo[results.size()]);
 	}
 	
-	public synchronized ITypeInfo[] getTypes(IQualifiedTypeName qualifiedName) {
+	public synchronized ITypeInfo[] getTypes(IQualifiedTypeName qualifiedName, boolean ignoreCase) {
 		Collection results = new ArrayList();
-		for (int i = 0; i < ITypeInfo.KNOWN_TYPES.length; ++i) {
-			ITypeInfo info = (ITypeInfo) fTypeKeyMap.get(new HashKey(qualifiedName, ITypeInfo.KNOWN_TYPES[i]));
+		if (!ignoreCase) {
+			for (int i = 0; i < ITypeInfo.KNOWN_TYPES.length; ++i) {
+				ITypeInfo info = (ITypeInfo) fTypeKeyMap.get(new HashKey(qualifiedName, ITypeInfo.KNOWN_TYPES[i]));
+				if (info != null) {
+					results.add(info);
+				}
+			}
+			ITypeInfo info = (ITypeInfo) fTypeKeyMap.get(new HashKey(qualifiedName, 0));
 			if (info != null) {
 				results.add(info);
 			}
-		}
-		ITypeInfo info = (ITypeInfo) fTypeKeyMap.get(new HashKey(qualifiedName, 0));
-		if (info != null) {
-			results.add(info);
+		} else {
+		    // TODO this should probably use a more efficient search algorithm
+		    for (Iterator mapIter = fTypeKeyMap.entrySet().iterator(); mapIter.hasNext(); ) {
+				Map.Entry entry = (Map.Entry) mapIter.next();
+				ITypeInfo info = (ITypeInfo) entry.getValue();
+				if (info.getQualifiedTypeName().compareToIgnoreCase(qualifiedName) == 0) {
+				    results.add(info);
+				}
+			}
 		}
 		return (ITypeInfo[]) results.toArray(new ITypeInfo[results.size()]);
 	}
@@ -492,6 +529,26 @@ public class TypeCache implements ITypeCache {
 		return null;
 	}
 		
+	public synchronized ITypeInfo getEnclosingNamespace(ITypeInfo info) {
+		IQualifiedTypeName enclosingName = info.getQualifiedTypeName().getEnclosingTypeName();
+		if (enclosingName != null) {
+		    // look for namespace
+			ITypeInfo enclosingType = (ITypeInfo) fTypeKeyMap.get(new HashKey(enclosingName, ICElement.C_NAMESPACE));
+			if (enclosingType != null) {
+			    return enclosingType;
+			}
+			// try class, struct, then undefined
+			final int[] kinds = {ICElement.C_CLASS, ICElement.C_STRUCT, 0};
+			for (int i = 0; enclosingType == null && i < kinds.length; ++i) {
+				enclosingType = (ITypeInfo) fTypeKeyMap.get(new HashKey(enclosingName, kinds[i]));
+			}
+			if (enclosingType != null) {
+			    return getEnclosingNamespace(enclosingType);
+			}
+		}
+		return null;
+	}
+
 	public synchronized ITypeInfo getRootNamespace(ITypeInfo info, boolean includeGlobalNamespace) {
 		IQualifiedTypeName qualifiedName = info.getQualifiedTypeName();
 		if (qualifiedName.isGlobal()) {

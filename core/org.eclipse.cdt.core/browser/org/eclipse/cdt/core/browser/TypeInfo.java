@@ -149,6 +149,13 @@ public class TypeInfo implements ITypeInfo
 		return getEnclosingType(KNOWN_TYPES);
 	}
 	
+	public ITypeInfo getEnclosingNamespace() {
+		if (fTypeCache != null) {
+			return fTypeCache.getEnclosingNamespace(this);
+		}
+		return null;
+	}
+
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
 		if (fTypeCache != null) {
 			return fTypeCache.getRootNamespace(this, true);

@@ -105,7 +105,7 @@ public interface ITypeCache extends ISchedulingRule {
 	 * @param qualifiedName the qualified type name to match
 	 * @return Array of types
 	 */
-	public ITypeInfo[] getTypes(IQualifiedTypeName qualifiedName);
+	public ITypeInfo[] getTypes(IQualifiedTypeName qualifiedName, boolean ignoreCase);
 
 	/** Returns first type in the cache which matches the given
 	 *  type and name.  If no type is found, <code>null</code>
@@ -126,6 +126,13 @@ public interface ITypeCache extends ISchedulingRule {
 	 */
 	public ITypeInfo getEnclosingType(ITypeInfo info, int[] kinds);
 	
+	/** Returns the enclosing namespace for the given type, or
+	 *  <code>null</code> if none exists.
+	 *
+	 * @param type the ICElement type
+	 * @return the namespace
+	 */
+	public ITypeInfo getEnclosingNamespace(ITypeInfo info);
 
 	/** Gets the root namespace of which encloses the given type.
 	 *

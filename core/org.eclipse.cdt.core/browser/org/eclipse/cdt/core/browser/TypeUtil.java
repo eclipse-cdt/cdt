@@ -85,6 +85,7 @@ public class TypeUtil {
         return (ICElement[])typeList.toArray(new ICElement[typeList.size()]);
 	}
 	
+//  TODO move method to CModelUtil
     public static IQualifiedTypeName getFullyQualifiedName(ICElement type) {
 		String name = type.getElementName();
 		IQualifiedTypeName qualifiedName = new QualifiedTypeName(name);

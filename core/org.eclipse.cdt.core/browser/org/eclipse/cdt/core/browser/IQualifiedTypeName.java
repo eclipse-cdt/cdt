@@ -40,4 +40,9 @@ public interface IQualifiedTypeName extends Comparable {
 
 	public boolean isLowLevel();
 	public boolean validate();
+	
+	public boolean equals(IQualifiedTypeName typeName);
+	public boolean equalsIgnoreCase(IQualifiedTypeName typeName);
+	public int compareTo(IQualifiedTypeName typeName);
+	public int compareToIgnoreCase(IQualifiedTypeName typeName);
 }

@@ -246,8 +246,35 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		if (!(obj instanceof IQualifiedTypeName)) {
 			throw new ClassCastException();
 		}
-		IQualifiedTypeName typeName = (IQualifiedTypeName) obj;
-		return getFullyQualifiedName().compareTo(typeName.getFullyQualifiedName());
+		return compareTo((IQualifiedTypeName)obj);
+	}
+	
+	public int compareTo(IQualifiedTypeName typeName) {
+		if (typeName == this)
+			return 0;
+		if (typeName == null)
+		    return 1;
+        String[] segments = typeName.segments();
+        int len = Math.min(fSegments.length, segments.length);
+		int result = 0;
+        for (int i = 0; result == 0 && i < len; ++i) {
+            result = fSegments[i].compareTo(segments[i]);
+        }
+        return result;
+	}
+
+	public int compareToIgnoreCase(IQualifiedTypeName typeName) {
+		if (typeName == this)
+			return 0;
+		if (typeName == null)
+		    return 1;
+        String[] segments = typeName.segments();
+        int len = Math.min(fSegments.length, segments.length);
+		int result = 0;
+        for (int i = 0; result == 0 && i < len; ++i) {
+            result = fSegments[i].compareToIgnoreCase(segments[i]);
+        }
+        return result;
 	}
 
 	public boolean equals(Object obj) {
@@ -255,23 +282,40 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 			return true;
 		}
 		if (!(obj instanceof IQualifiedTypeName)) {
-			return false;
+			throw new ClassCastException();
 		}
-		IQualifiedTypeName typeName = (IQualifiedTypeName) obj;
-		return matchSegments(fSegments, typeName.segments());
+		return equals((IQualifiedTypeName)obj);
+	}
+	
+	public boolean equals(IQualifiedTypeName typeName) {
+		if (typeName == this)
+			return true;
+		if (typeName == null)
+		    return false;
+        String[] segments = typeName.segments();
+        int len = segments.length;
+		if (fSegments.length != len)
+        	return false;
+        for (int i = 0; i < len; ++i) {
+            if (!fSegments[i].equals(segments[i]))
+                return false;
+        }
+        return true;
 	}
 
-	private static boolean matchSegments(String[] a, String[] b) {
-		if (a == null && b == null)
+	public boolean equalsIgnoreCase(IQualifiedTypeName typeName) {
+		if (typeName == this)
 			return true;
-		if (a == null || b == null)
-			return false;
-		if (a.length != b.length)
-			return false;
-		for (int i = 0; i < a.length; ++i) {
-			if (!a[i].equals(b[i]))
-				return false;
-		}
-		return true;
+		if (typeName == null)
+		    return false;
+        String[] segments = typeName.segments();
+        int len = segments.length;
+		if (fSegments.length != len)
+        	return false;
+        for (int i = 0; i < len; ++i) {
+            if (!fSegments[i].equalsIgnoreCase(segments[i]))
+                return false;
+        }
+        return true;
 	}
 }

@@ -313,6 +313,33 @@ public class AllTypesCache {
 	public static ITypeInfo getTypeForElement(ICElement elem) {
 	    return TypeUtil.getTypeForElement(elem);
 	}
+	
+	/** Returns first type in the cache which matches the given
+	 *  type and name.  If no type is found, <code>null</code>
+	 *  is returned.
+	 *
+	 * @param project the enclosing project
+	 * @param type the ICElement type
+	 * @param qualifiedName the qualified type name to match
+	 * @return the matching type
+	 */
+	public static ITypeInfo getType(IProject project, int type, IQualifiedTypeName qualifiedName) {
+		ITypeCache cache = TypeCacheManager.getInstance().getCache(project);
+		return cache.getType(type, qualifiedName);
+	}
+
+	/**
+	 * Returns all types matching name in the given project.
+	 * 
+	 * @param project the enclosing project
+	 * @param qualifiedName The qualified type name
+	 * @param ignoreCase <code>true</code> if case-insensitive
+	 * @return Array of types
+	 */
+	public static ITypeInfo[] getTypes(IProject project, IQualifiedTypeName qualifiedName, boolean ignoreCase) {
+		ITypeCache cache = TypeCacheManager.getInstance().getCache(project);
+		return cache.getTypes(qualifiedName, ignoreCase);
+	}
 
 	/**
 	 * Creates and returns a type hierarchy for this type containing

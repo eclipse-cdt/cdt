@@ -72,6 +72,11 @@ public interface ITypeInfo extends Comparable {
 	 */
 	public ITypeInfo getEnclosingType();
 
+	/** Gets the enclosing namespace for this type.
+	 * @return the enclosing namespace, or <code>null</code> if none exists.
+	 */
+	public ITypeInfo getEnclosingNamespace();
+
 	/** Gets the first enclosing type which matches one of the given kinds.
 	 * @param kinds Array containing CElement types: C_NAMESPACE, C_CLASS, C_STRUCT
 	 * @return the enclosing type, or <code>null</code> if not found.

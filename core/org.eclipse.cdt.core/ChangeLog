@@ -1,5 +1,16 @@
 2004-08-13 Chris Wiebe
 
+	Extra functionality in type cache to support new class wizard
+	* browser/org/eclipse/cdt/core/browser/AllTypesCache.java
+	* browser/org/eclipse/cdt/core/browser/IQualifiedTypeName.java
+	* browser/org/eclipse/cdt/core/browser/QualifiedTypeName.java
+	* browser/org/eclipse/cdt/core/browser/ITypeInfo.java
+	* browser/org/eclipse/cdt/core/browser/TypeInfo.java
+	* browser/org/eclipse/cdt/internal/core/browser/cache/ITypeCache.java
+	* browser/org/eclipse/cdt/internal/core/browser/cache/TypeCache.java
+
+2004-08-13 Chris Wiebe
+
 	Add findSourceRoot() method needed for class wizard
 	* model/org/eclipse/cdt/core/model/ICProject.java
 	* model/org/eclipse/cdt/internal/core/model/CProject.java

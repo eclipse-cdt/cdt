@@ -45,8 +45,7 @@ public class CharArrayIntMap extends CharArrayMap {
 		int i = lookup(key, start, length);
 		if (i >= 0)
 			return valueTable[i];
-		else
-			return -1;
+		return -1;
 	}
 
 }

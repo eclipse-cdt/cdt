@@ -44,8 +44,7 @@ public class CharArrayObjectMap extends CharArrayMap {
 		int i = lookup(key, start, length);
 		if (i >= 0)
 			return valueTable[i];
-		else
-			return null;
+		return null;
 	}
 	
 	public Object get(char[] key) {

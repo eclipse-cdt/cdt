@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,11 +47,11 @@ import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 public class Scanner2 implements IScanner, IScannerData {
 
 	private ISourceElementRequestor requestor;
-	private ParserMode parserMode;
+	
 	private ParserLanguage language;
 	protected IParserLogService log;
 	private IScannerExtension scannerExtension;
-	private List workingCopies;
+	
 	private CharArrayObjectMap definitions = new CharArrayObjectMap(64);
 	private String[] includePaths;
 	int count;
@@ -93,10 +91,10 @@ public class Scanner2 implements IScanner, IScannerData {
 
 		this.scannerExtension = extension;
 		this.requestor = requestor;
-		this.parserMode = parserMode;
+//		this.parserMode = parserMode;
 		this.language = language;
 		this.log = log;
-		this.workingCopies = workingCopies;
+//		this.workingCopies = workingCopies;
 
 		if (reader.filename != null)
 			fileCache.put(reader.filename, reader);
@@ -109,7 +107,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			Map symbols = info.getDefinedSymbols();
 			String[] keys = (String[])symbols.keySet().toArray(emptyStringArray);
 			for (int i = 0; i < keys.length; ++i) {
-				String symbolName = (String)keys[i];
+				String symbolName = keys[i];
 				Object value = symbols.get(symbolName);
 
 				if( value instanceof String ) {	
@@ -305,13 +303,12 @@ public class Scanner2 implements IScanner, IScannerData {
 				case 'L':
 					if (pos + 1 < limit && buffer[pos + 1] == '"')
 						return scanString();
-					else {
-						IToken t = scanIdentifier();
-						if (t instanceof MacroExpansionToken)
-							continue;
-						else
-							return t;
-					}
+					
+					IToken t = scanIdentifier();
+					if (t instanceof MacroExpansionToken)
+						continue;
+					return t;
+					
 				
 				case '"':
 					return scanString();
@@ -371,11 +368,10 @@ public class Scanner2 implements IScanner, IScannerData {
 				case 'Y':
 				case 'Z':
 				case '_':
-					IToken t = scanIdentifier();
+					t = scanIdentifier();
 					if (t instanceof MacroExpansionToken)
 						continue;
-					else
-						return t;
+					return t;
 				
 				case '0':
 				case '1':
@@ -636,9 +632,8 @@ public class Scanner2 implements IScanner, IScannerData {
 					|| c == '_' || (c >= '0' && c <= '9')) {
 				++len;
 				continue;
-			} else {
-				break;
 			}
+			break;
 		}
 
 		--bufferPos[bufferStackPos];
@@ -677,8 +672,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		int tokenType = keywords.get(buffer, start, len);
 		if (tokenType == keywords.undefined)
 			return new ImagedToken(IToken.tIDENTIFIER, new String(buffer, start, len));
-		else
-			return new SimpleToken(tokenType);
+		return new SimpleToken(tokenType);
 	}
 	
 	private IToken scanString() {
@@ -956,8 +950,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				c = buffer[bufferPos[bufferStackPos]];
 				if ((c >= 'a' && c <= 'z') || c == '_')
 					continue;
-				else
-					break;
+				break;
 			}
 			--bufferPos[bufferStackPos];
 			int len = bufferPos[bufferStackPos] - start + 1;
@@ -987,10 +980,10 @@ public class Scanner2 implements IScanner, IScannerData {
 						skipToNewLine();
 						len = bufferPos[bufferStackPos] - start;
 						if (expressionEvaluator.evaluate(buffer, start, len, definitions) == 0) {
-							if (dlog != null) dlog.println("#if <FALSE> " + new String(buffer,start+1,len-1));
+							if (dlog != null) dlog.println("#if <FALSE> " + new String(buffer,start+1,len-1)); //$NON-NLS-1$
 							skipOverConditionalCode(true);
 						} else
-							if (dlog != null) dlog.println("#if <TRUE> " + new String(buffer,start+1,len-1));
+							if (dlog != null) dlog.println("#if <TRUE> " + new String(buffer,start+1,len-1)); //$NON-NLS-1$
 						return;
 					case ppElse:
 					case ppElif:
@@ -1082,7 +1075,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (reader != null) {
 						if (reader.filename != null)
 							fileCache.put(reader.filename, reader);
-						if (dlog != null) dlog.println("#include <" + finalPath + ">");
+						if (dlog != null) dlog.println("#include <" + finalPath + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 						pushContext(reader.buffer, reader);
 						return;
 					}
@@ -1119,14 +1112,13 @@ public class Scanner2 implements IScanner, IScannerData {
 					|| c == '_' || (c >= '0' && c <= '9')) {
 				++idlen;
 				continue;
-			} else {
-				break;
-			}
+			}  
+			break;
 		}
 		--bufferPos[bufferStackPos];
 		char[] name = new char[idlen];
 		System.arraycopy(buffer, idstart, name, 0, idlen);
-		if (dlog != null) dlog.println("#define " + new String(buffer, idstart, idlen));
+		if (dlog != null) dlog.println("#define " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
 		
 		// Now check for function style macro to store the arguments
 		char[][] arglist = null;
@@ -1151,7 +1143,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					// varargs
 					// TODO - something better
 					bufferPos[bufferStackPos] += 2;
-					arglist[++currarg] = "...".toCharArray();
+					arglist[++currarg] = "...".toCharArray(); //$NON-NLS-1$
 					continue;
 				} else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_')) {
 					// yuck
@@ -1222,16 +1214,16 @@ public class Scanner2 implements IScanner, IScannerData {
 					|| c == '_' || (c >= '0' && c <= '9')) {
 				++idlen;
 				continue;
-			} else {
-				break;
-			}
+			} 
+			break;
+			
 		}
 		--bufferPos[bufferStackPos];
 
 		skipToNewLine();
 		
 		definitions.remove(buffer, idstart, idlen);
-		if (dlog != null) dlog.println("#undef " + new String(buffer, idstart, idlen));
+		if (dlog != null) dlog.println("#undef " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
 	}
 	
 	private void handlePPIfdef(boolean positive) {
@@ -1258,23 +1250,23 @@ public class Scanner2 implements IScanner, IScannerData {
 					|| c == '_' || (c >= '0' && c <= '9')) {
 				++idlen;
 				continue;
-			} else {
-				break;
-			}
+			} 
+			break;
+			
 		}
 		--bufferPos[bufferStackPos];
 
 		skipToNewLine();
 
 		if ((definitions.get(buffer, idstart, idlen) != null) == positive) {
-			if (dlog != null) dlog.println((positive ? "#ifdef" : "#ifndef")
-					+ " <TRUE> " + new String(buffer, idstart, idlen));
+			if (dlog != null) dlog.println((positive ? "#ifdef" : "#ifndef") //$NON-NLS-1$ //$NON-NLS-2$
+					+ " <TRUE> " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
 			// continue on
 			return;
 		}
 		
-		if (dlog != null) dlog.println((positive ? "#ifdef" : "#ifndef")
-				+ " <FALSE> " + new String(buffer, idstart, idlen));
+		if (dlog != null) dlog.println((positive ? "#ifdef" : "#ifndef") //$NON-NLS-1$ //$NON-NLS-2$
+				+ " <FALSE> " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
 		// skip over this group
 		skipOverConditionalCode(true);
 	}
@@ -1309,8 +1301,7 @@ public class Scanner2 implements IScanner, IScannerData {
 						c = buffer[bufferPos[bufferStackPos]];
 						if ((c >= 'a' && c <= 'z'))
 							continue;
-						else
-							break;
+						break;
 					}
 					--bufferPos[bufferStackPos];
 					int len = bufferPos[bufferStackPos] - start + 1;
@@ -1527,9 +1518,8 @@ public class Scanner2 implements IScanner, IScannerData {
 			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 					|| c == '_' || (c >= '0' && c <= '9')) {
 				continue;
-			} else {
-				break;
-			}
+			} 
+			break;
 
 		}
 		--bufferPos[bufferStackPos];
@@ -1544,7 +1534,6 @@ public class Scanner2 implements IScanner, IScannerData {
 			return;
 		
 		boolean escaped = false;
-		boolean inComment = false;
 		while (++bufferPos[bufferStackPos] < limit) {
 			switch (buffer[bufferPos[bufferStackPos]]) {
 				case '/':
@@ -1569,9 +1558,9 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (escaped) {
 						escaped = false;
 						break;
-					} else {
-						return;
-					}
+					} 
+					return;
+					
 			}
 			escaped = false;
 		}
@@ -1924,28 +1913,28 @@ public class Scanner2 implements IScanner, IScannerData {
 
 	// standard built-ins
 	private static final ObjectStyleMacro __cplusplus
-		= new ObjectStyleMacro("__cplusplus".toCharArray(), "1".toCharArray());
+		= new ObjectStyleMacro("__cplusplus".toCharArray(), "1".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __STDC__
-		= new ObjectStyleMacro("__STDC__".toCharArray(), "1".toCharArray());
+		= new ObjectStyleMacro("__STDC__".toCharArray(), "1".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	// gcc built-ins
 	private static final ObjectStyleMacro __inline__
-		= new ObjectStyleMacro("__inline__".toCharArray(), "inline".toCharArray());
+		= new ObjectStyleMacro("__inline__".toCharArray(), "inline".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __extension__
-		= new ObjectStyleMacro("__extension__".toCharArray(), emptyCharArray);
+		= new ObjectStyleMacro("__extension__".toCharArray(), emptyCharArray); //$NON-NLS-1$
 	private static final ObjectStyleMacro __asm__
-		= new ObjectStyleMacro("__asm__".toCharArray(), "asm".toCharArray());
+		= new ObjectStyleMacro("__asm__".toCharArray(), "asm".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __restrict__
-		= new ObjectStyleMacro("__restrict__".toCharArray(), "restrict".toCharArray());
+		= new ObjectStyleMacro("__restrict__".toCharArray(), "restrict".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __restrict
-		= new ObjectStyleMacro("__restrict".toCharArray(), "restrict".toCharArray());
+		= new ObjectStyleMacro("__restrict".toCharArray(), "restrict".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __volatile__
-		= new ObjectStyleMacro("__volatile__".toCharArray(), "volatile".toCharArray());
+		= new ObjectStyleMacro("__volatile__".toCharArray(), "volatile".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final FunctionStyleMacro __attribute__
 		= new FunctionStyleMacro(
-				"__attribute__".toCharArray(),
+				"__attribute__".toCharArray(), //$NON-NLS-1$
 				emptyCharArray,
-				new char[][] { "arg".toCharArray() });
+				new char[][] { "arg".toCharArray() }); //$NON-NLS-1$
 	
 	protected void setupBuiltInMacros() {
 
@@ -2328,103 +2317,103 @@ public class Scanner2 implements IScanner, IScannerData {
 		keywords = new CharArrayIntMap(IToken.tLAST, -1);
 		
 		// Common keywords
-		keywords.put("auto".toCharArray(), IToken.t_auto);
-		keywords.put("break".toCharArray(), IToken.t_break);
-		keywords.put("case".toCharArray(), IToken.t_case);
-		keywords.put("char".toCharArray(), IToken.t_char);
-		keywords.put("const".toCharArray(), IToken.t_const);
-		keywords.put("continue".toCharArray(), IToken.t_continue);
-		keywords.put("default".toCharArray(), IToken.t_default);
-		keywords.put("do".toCharArray(), IToken.t_do);
-		keywords.put("double".toCharArray(), IToken.t_double);
-		keywords.put("else".toCharArray(), IToken.t_else);
-		keywords.put("enum".toCharArray(), IToken.t_enum);
-		keywords.put("extern".toCharArray(), IToken.t_extern);
-		keywords.put("float".toCharArray(), IToken.t_float);
-		keywords.put("for".toCharArray(), IToken.t_for);
-		keywords.put("goto".toCharArray(), IToken.t_goto);
-		keywords.put("if".toCharArray(), IToken.t_if);
-		keywords.put("inline".toCharArray(), IToken.t_inline);
-		keywords.put("int".toCharArray(), IToken.t_int);
-		keywords.put("long".toCharArray(), IToken.t_long);
-		keywords.put("register".toCharArray(), IToken.t_register);
-		keywords.put("return".toCharArray(), IToken.t_return);
-		keywords.put("short".toCharArray(), IToken.t_short);
-		keywords.put("signed".toCharArray(), IToken.t_signed);
-		keywords.put("sizeof".toCharArray(), IToken.t_sizeof);
-		keywords.put("static".toCharArray(), IToken.t_static);
-		keywords.put("struct".toCharArray(), IToken.t_struct);
-		keywords.put("switch".toCharArray(), IToken.t_switch);
-		keywords.put("typedef".toCharArray(), IToken.t_typedef);
-		keywords.put("union".toCharArray(), IToken.t_union);
-		keywords.put("unsigned".toCharArray(), IToken.t_unsigned);
-		keywords.put("void".toCharArray(), IToken.t_void);
-		keywords.put("volatile".toCharArray(), IToken.t_volatile);
-		keywords.put("while".toCharArray(), IToken.t_while);
+		keywords.put("auto".toCharArray(), IToken.t_auto); //$NON-NLS-1$
+		keywords.put("break".toCharArray(), IToken.t_break); //$NON-NLS-1$
+		keywords.put("case".toCharArray(), IToken.t_case); //$NON-NLS-1$
+		keywords.put("char".toCharArray(), IToken.t_char); //$NON-NLS-1$
+		keywords.put("const".toCharArray(), IToken.t_const); //$NON-NLS-1$
+		keywords.put("continue".toCharArray(), IToken.t_continue); //$NON-NLS-1$
+		keywords.put("default".toCharArray(), IToken.t_default); //$NON-NLS-1$
+		keywords.put("do".toCharArray(), IToken.t_do); //$NON-NLS-1$
+		keywords.put("double".toCharArray(), IToken.t_double); //$NON-NLS-1$
+		keywords.put("else".toCharArray(), IToken.t_else); //$NON-NLS-1$
+		keywords.put("enum".toCharArray(), IToken.t_enum); //$NON-NLS-1$
+		keywords.put("extern".toCharArray(), IToken.t_extern); //$NON-NLS-1$
+		keywords.put("float".toCharArray(), IToken.t_float); //$NON-NLS-1$
+		keywords.put("for".toCharArray(), IToken.t_for); //$NON-NLS-1$
+		keywords.put("goto".toCharArray(), IToken.t_goto); //$NON-NLS-1$
+		keywords.put("if".toCharArray(), IToken.t_if); //$NON-NLS-1$
+		keywords.put("inline".toCharArray(), IToken.t_inline); //$NON-NLS-1$
+		keywords.put("int".toCharArray(), IToken.t_int); //$NON-NLS-1$
+		keywords.put("long".toCharArray(), IToken.t_long); //$NON-NLS-1$
+		keywords.put("register".toCharArray(), IToken.t_register); //$NON-NLS-1$
+		keywords.put("return".toCharArray(), IToken.t_return); //$NON-NLS-1$
+		keywords.put("short".toCharArray(), IToken.t_short); //$NON-NLS-1$
+		keywords.put("signed".toCharArray(), IToken.t_signed); //$NON-NLS-1$
+		keywords.put("sizeof".toCharArray(), IToken.t_sizeof); //$NON-NLS-1$
+		keywords.put("static".toCharArray(), IToken.t_static); //$NON-NLS-1$
+		keywords.put("struct".toCharArray(), IToken.t_struct); //$NON-NLS-1$
+		keywords.put("switch".toCharArray(), IToken.t_switch); //$NON-NLS-1$
+		keywords.put("typedef".toCharArray(), IToken.t_typedef); //$NON-NLS-1$
+		keywords.put("union".toCharArray(), IToken.t_union); //$NON-NLS-1$
+		keywords.put("unsigned".toCharArray(), IToken.t_unsigned); //$NON-NLS-1$
+		keywords.put("void".toCharArray(), IToken.t_void); //$NON-NLS-1$
+		keywords.put("volatile".toCharArray(), IToken.t_volatile); //$NON-NLS-1$
+		keywords.put("while".toCharArray(), IToken.t_while); //$NON-NLS-1$
 
 		// ANSI C keywords
-		keywords.put("restrict".toCharArray(), IToken.t_restrict);
-		keywords.put("_Bool".toCharArray(), IToken.t__Bool);
-		keywords.put("_Complex".toCharArray(), IToken.t__Complex);
-		keywords.put("_Imaginary".toCharArray(), IToken.t__Imaginary);
+		keywords.put("restrict".toCharArray(), IToken.t_restrict); //$NON-NLS-1$
+		keywords.put("_Bool".toCharArray(), IToken.t__Bool); //$NON-NLS-1$
+		keywords.put("_Complex".toCharArray(), IToken.t__Complex); //$NON-NLS-1$
+		keywords.put("_Imaginary".toCharArray(), IToken.t__Imaginary); //$NON-NLS-1$
 
 		// C++ Keywords
-		keywords.put("asm".toCharArray(), IToken.t_asm);
-		keywords.put("bool".toCharArray(), IToken.t_bool);
-		keywords.put("catch".toCharArray(), IToken.t_catch);
-		keywords.put("class".toCharArray(), IToken.t_class);
-		keywords.put("const_cast".toCharArray(), IToken.t_const_cast);
-		keywords.put("delete".toCharArray(), IToken.t_delete);
-		keywords.put("dynamic_cast".toCharArray(), IToken.t_dynamic_cast);
-		keywords.put("explicit".toCharArray(), IToken.t_explicit);
-		keywords.put("export".toCharArray(), IToken.t_export);
-		keywords.put("false".toCharArray(), IToken.t_false);
-		keywords.put("friend".toCharArray(), IToken.t_friend);
-		keywords.put("mutable".toCharArray(), IToken.t_mutable);
-		keywords.put("namespace".toCharArray(), IToken.t_namespace);
-		keywords.put("new".toCharArray(), IToken.t_new);
-		keywords.put("operator".toCharArray(), IToken.t_operator);
-		keywords.put("private".toCharArray(), IToken.t_private);
-		keywords.put("protected".toCharArray(), IToken.t_protected);
-		keywords.put("public".toCharArray(), IToken.t_public);
-		keywords.put("reinterpret_cast".toCharArray(), IToken.t_reinterpret_cast);
-		keywords.put("static_cast".toCharArray(), IToken.t_static_cast);
-		keywords.put("template".toCharArray(), IToken.t_template);
-		keywords.put("this".toCharArray(), IToken.t_this);
-		keywords.put("throw".toCharArray(), IToken.t_throw);
-		keywords.put("true".toCharArray(), IToken.t_true);
-		keywords.put("try".toCharArray(), IToken.t_try);
-		keywords.put("typeid".toCharArray(), IToken.t_typeid);
-		keywords.put("typename".toCharArray(), IToken.t_typename);
-		keywords.put("using".toCharArray(), IToken.t_using);
-		keywords.put("virtual".toCharArray(), IToken.t_virtual);
-		keywords.put("wchar_t".toCharArray(), IToken.t_wchar_t);
+		keywords.put("asm".toCharArray(), IToken.t_asm); //$NON-NLS-1$
+		keywords.put("bool".toCharArray(), IToken.t_bool); //$NON-NLS-1$
+		keywords.put("catch".toCharArray(), IToken.t_catch); //$NON-NLS-1$
+		keywords.put("class".toCharArray(), IToken.t_class); //$NON-NLS-1$
+		keywords.put("const_cast".toCharArray(), IToken.t_const_cast); //$NON-NLS-1$
+		keywords.put("delete".toCharArray(), IToken.t_delete); //$NON-NLS-1$
+		keywords.put("dynamic_cast".toCharArray(), IToken.t_dynamic_cast); //$NON-NLS-1$
+		keywords.put("explicit".toCharArray(), IToken.t_explicit); //$NON-NLS-1$
+		keywords.put("export".toCharArray(), IToken.t_export); //$NON-NLS-1$
+		keywords.put("false".toCharArray(), IToken.t_false); //$NON-NLS-1$
+		keywords.put("friend".toCharArray(), IToken.t_friend); //$NON-NLS-1$
+		keywords.put("mutable".toCharArray(), IToken.t_mutable); //$NON-NLS-1$
+		keywords.put("namespace".toCharArray(), IToken.t_namespace); //$NON-NLS-1$
+		keywords.put("new".toCharArray(), IToken.t_new); //$NON-NLS-1$
+		keywords.put("operator".toCharArray(), IToken.t_operator); //$NON-NLS-1$
+		keywords.put("private".toCharArray(), IToken.t_private); //$NON-NLS-1$
+		keywords.put("protected".toCharArray(), IToken.t_protected); //$NON-NLS-1$
+		keywords.put("public".toCharArray(), IToken.t_public); //$NON-NLS-1$
+		keywords.put("reinterpret_cast".toCharArray(), IToken.t_reinterpret_cast); //$NON-NLS-1$
+		keywords.put("static_cast".toCharArray(), IToken.t_static_cast); //$NON-NLS-1$
+		keywords.put("template".toCharArray(), IToken.t_template); //$NON-NLS-1$
+		keywords.put("this".toCharArray(), IToken.t_this); //$NON-NLS-1$
+		keywords.put("throw".toCharArray(), IToken.t_throw); //$NON-NLS-1$
+		keywords.put("true".toCharArray(), IToken.t_true); //$NON-NLS-1$
+		keywords.put("try".toCharArray(), IToken.t_try); //$NON-NLS-1$
+		keywords.put("typeid".toCharArray(), IToken.t_typeid); //$NON-NLS-1$
+		keywords.put("typename".toCharArray(), IToken.t_typename); //$NON-NLS-1$
+		keywords.put("using".toCharArray(), IToken.t_using); //$NON-NLS-1$
+		keywords.put("virtual".toCharArray(), IToken.t_virtual); //$NON-NLS-1$
+		keywords.put("wchar_t".toCharArray(), IToken.t_wchar_t); //$NON-NLS-1$
 
 		// C++ operator alternative
-		keywords.put("and".toCharArray(), IToken.t_and);
-		keywords.put("and_eq".toCharArray(), IToken.t_and_eq);
-		keywords.put("bitand".toCharArray(), IToken.t_bitand);
-		keywords.put("bitor".toCharArray(), IToken.t_bitor);
-		keywords.put("compl".toCharArray(), IToken.t_compl);
-		keywords.put("not".toCharArray(), IToken.t_not);
-		keywords.put("not_eq".toCharArray(), IToken.t_not_eq);
-		keywords.put("or".toCharArray(), IToken.t_or);
-		keywords.put("or_eq".toCharArray(), IToken.t_or_eq);
-		keywords.put("xor".toCharArray(), IToken.t_xor);
-		keywords.put("xor_eq".toCharArray(), IToken.t_xor_eq);
+		keywords.put("and".toCharArray(), IToken.t_and); //$NON-NLS-1$
+		keywords.put("and_eq".toCharArray(), IToken.t_and_eq); //$NON-NLS-1$
+		keywords.put("bitand".toCharArray(), IToken.t_bitand); //$NON-NLS-1$
+		keywords.put("bitor".toCharArray(), IToken.t_bitor); //$NON-NLS-1$
+		keywords.put("compl".toCharArray(), IToken.t_compl); //$NON-NLS-1$
+		keywords.put("not".toCharArray(), IToken.t_not); //$NON-NLS-1$
+		keywords.put("not_eq".toCharArray(), IToken.t_not_eq); //$NON-NLS-1$
+		keywords.put("or".toCharArray(), IToken.t_or); //$NON-NLS-1$
+		keywords.put("or_eq".toCharArray(), IToken.t_or_eq); //$NON-NLS-1$
+		keywords.put("xor".toCharArray(), IToken.t_xor); //$NON-NLS-1$
+		keywords.put("xor_eq".toCharArray(), IToken.t_xor_eq); //$NON-NLS-1$
 		
 		// Preprocessor keywords
 		ppKeywords = new CharArrayIntMap(16, -1);
-		ppKeywords.put("if".toCharArray(), ppIf);
-		ppKeywords.put("ifdef".toCharArray(), ppIfdef);
-		ppKeywords.put("ifndef".toCharArray(), ppIfndef);
-		ppKeywords.put("elif".toCharArray(), ppElif);
-		ppKeywords.put("else".toCharArray(), ppElse);
-		ppKeywords.put("endif".toCharArray(), ppEndif);
-		ppKeywords.put("include".toCharArray(), ppInclude);
-		ppKeywords.put("define".toCharArray(), ppDefine);
-		ppKeywords.put("undef".toCharArray(), ppUndef);
-		ppKeywords.put("error".toCharArray(), ppError);
-		ppKeywords.put("include_next".toCharArray(), ppInclude_next);
+		ppKeywords.put("if".toCharArray(), ppIf); //$NON-NLS-1$
+		ppKeywords.put("ifdef".toCharArray(), ppIfdef); //$NON-NLS-1$
+		ppKeywords.put("ifndef".toCharArray(), ppIfndef); //$NON-NLS-1$
+		ppKeywords.put("elif".toCharArray(), ppElif); //$NON-NLS-1$
+		ppKeywords.put("else".toCharArray(), ppElse); //$NON-NLS-1$
+		ppKeywords.put("endif".toCharArray(), ppEndif); //$NON-NLS-1$
+		ppKeywords.put("include".toCharArray(), ppInclude); //$NON-NLS-1$
+		ppKeywords.put("define".toCharArray(), ppDefine); //$NON-NLS-1$
+		ppKeywords.put("undef".toCharArray(), ppUndef); //$NON-NLS-1$
+		ppKeywords.put("error".toCharArray(), ppError); //$NON-NLS-1$
+		ppKeywords.put("include_next".toCharArray(), ppInclude_next); //$NON-NLS-1$
 	}
 }

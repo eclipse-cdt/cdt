@@ -312,8 +312,8 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#suspend()
 	 */
 	public void suspend() throws CDIException {
-		getTarget().setCurrentThread(this);
 		getTarget().suspend();
+		getTarget().setCurrentThread(this);
 	}
 
 	/**

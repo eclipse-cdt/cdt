@@ -22,6 +22,7 @@ public interface ManagedBuilderHelpContextIds {
 	public static final String MAN_PROJ_WIZ_PROJECTS_TAB = PREFIX + "new_proj_wiz_m_proj"; //$NON-NLS-1$
 	public static final String MAN_PROJ_WIZ_ERRORPARSERS_TAB = PREFIX + "new_proj_wiz_m_errorp"; //$NON-NLS-1$
 	public static final String MAN_PROJ_WIZ_INDEXER_TAB = PREFIX + "new_proj_wiz_m_cindexer"; //$NON-NLS-1$
+	public static final String MAN_PROJ_WIZ_BINARYPARSER_TAB = PREFIX + "new_proj_wiz_s_binary"; //$NON-NLS-1$
 	
 	public static final String MAN_PROJ_BUILD_PROP = PREFIX + "man_prop_build"; //$NON-NLS-1$
 	public static final String MAN_PROJ_ERROR_PARSER = PREFIX + "man_prop_error"; //$NON-NLS-1$

@@ -11,6 +11,7 @@ package org.eclipse.cdt.managedbuilder.internal.ui;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
+import org.eclipse.cdt.ui.dialogs.BinaryParserBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.swt.widgets.Composite;
@@ -19,7 +20,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 
-	ErrorParserBlock errParserBlock;
+	private ErrorParserBlock errParserBlock;
+	private BinaryParserBlock binaryParserBlock;
 	
 	/**
 	 * @param parent
@@ -34,8 +36,13 @@ public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 	protected void addTabs() {
 		errParserBlock = new ErrorParserBlock();
 		addTab(errParserBlock);
+		addTab(binaryParserBlock = new BinaryParserBlock());
 	}
 
+	public BinaryParserBlock getBinaryParserBlock() {
+		return binaryParserBlock;
+	}
+	
 	public ErrorParserBlock getErrorParserBlock() {
 		return errParserBlock;
 	}

@@ -1,3 +1,11 @@
+2003-12-15 Alain Magloire
+
+	Patch from Thomas F.
+	Update to classify ld warnings as warning markers instead
+	of "problem" marker
+                                                                                
+	* src/org/eclipse/cdt/internal/errorparsers/GLDErrorParser.java
+
 2003-12-11 David Inglis
 	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=48596
 	

@@ -19,7 +19,6 @@ import java.util.Observer;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
-import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
@@ -350,14 +349,9 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		MISession miSession = stopped.getMISession();
 
 		Target currentTarget = session.getTarget(miSession);
-		ICDISharedLibraryManager libMgr = session.getSharedLibraryManager();
-		SharedLibraryManager mgr = null;
+		SharedLibraryManager mgr = session.getSharedLibraryManager();
 
-		if (libMgr instanceof SharedLibraryManager) {
-			mgr = (SharedLibraryManager)libMgr;
-		}
-
-		if (mgr !=null &&  mgr.isDeferredBreakpoint()) {
+		if (mgr.isDeferredBreakpoint()) {
 			if (stopped instanceof MISharedLibEvent) {
 				// Check if we have a new library loaded
 				List eventList = null;

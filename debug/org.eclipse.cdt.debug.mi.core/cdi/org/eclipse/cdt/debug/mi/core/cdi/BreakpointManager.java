@@ -21,7 +21,6 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
-import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
@@ -532,19 +531,16 @@ public class BreakpointManager extends Manager {
 				throw e;
 			}
 			Session session = (Session)target.getSession();
-			ICDISharedLibraryManager sharedMgr  = session.getSharedLibraryManager();
-			if (sharedMgr instanceof SharedLibraryManager) {
-				SharedLibraryManager mgr = (SharedLibraryManager)sharedMgr;
-				if (mgr.isDeferredBreakpoint()) {
-					List dList = (List)deferredMap.get(target);
-					if (dList == null) {
-						dList = Collections.synchronizedList(new ArrayList());
-						deferredMap.put(target, dList);
-					}
-					dList.add(bkpt);
-				} else {
-					throw e;
+			SharedLibraryManager sharedMgr  = session.getSharedLibraryManager();
+			if (sharedMgr.isDeferredBreakpoint()) {
+				List dList = (List)deferredMap.get(target);
+				if (dList == null) {
+					dList = Collections.synchronizedList(new ArrayList());
+					deferredMap.put(target, dList);
 				}
+				dList.add(bkpt);
+			} else {
+				throw e;
 			}
 		}
 		return bkpt;

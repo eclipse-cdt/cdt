@@ -23,10 +23,10 @@ import org.eclipse.cdt.debug.core.ICDIDebugger;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -183,14 +183,16 @@ public class GDBCDIDebugger implements ICDIDebugger {
 
 	protected void initializeLibraries(ILaunchConfiguration config, Session session) throws CoreException {
 		try {
-			ICDISharedLibraryManager manager = session.getSharedLibraryManager();
-			if (manager instanceof SharedLibraryManager) {
-				SharedLibraryManager mgr = (SharedLibraryManager)manager;
-				boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
-				boolean stopOnSolibEvents = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IMILaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT);
+			SharedLibraryManager sharedMgr = session.getSharedLibraryManager();
+			boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
+			boolean stopOnSolibEvents = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IMILaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT);
+			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
+			ICDITarget[] dtargets = session.getTargets();
+			for (int i = 0; i < dtargets.length; ++i) {
+				Target target = (Target)dtargets[i];
 				try {
-					mgr.setAutoLoadSymbols(autolib);
-					mgr.setStopOnSolibEvents(stopOnSolibEvents);
+					sharedMgr.setAutoLoadSymbols(target, autolib);
+					sharedMgr.setStopOnSolibEvents(target, stopOnSolibEvents);
 					// The idea is that if the user set autolib, by default
 					// we provide with the capability of deferred breakpoints
 					// And we set setStopOnSolib events for them(but they should not see those things.
@@ -198,21 +200,20 @@ public class GDBCDIDebugger implements ICDIDebugger {
 					// If the user explicitly set stopOnSolibEvents well it probably
 					// means that they wanted to see those events so do no do deferred breakpoints.
 					if (autolib && !stopOnSolibEvents) {
-						mgr.setDeferredBreakpoint(true);
-						mgr.setStopOnSolibEvents(true);
+						sharedMgr.setDeferredBreakpoint(true);
+						sharedMgr.setStopOnSolibEvents(target, true);
 					}
 				} catch (CDIException e) {
 					// Ignore this error
 					// it seems to be a real problem on many gdb platform
 				}
-			}
-			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
-			if (p.size() > 0) {
-				String[] oldPaths = manager.getSharedLibraryPaths();
-				String[] paths = new String[oldPaths.length + p.size()];
-				System.arraycopy(p.toArray(new String[p.size()]), 0, paths, 0, p.size());
-				System.arraycopy(oldPaths, 0, paths, p.size(), oldPaths.length);
-				manager.setSharedLibraryPaths(paths);
+				if (p.size() > 0) {
+					String[] oldPaths = sharedMgr.getSharedLibraryPaths(target);
+					String[] paths = new String[oldPaths.length + p.size()];
+					System.arraycopy(p.toArray(new String[p.size()]), 0, paths, 0, p.size());
+					System.arraycopy(oldPaths, 0, paths, p.size(), oldPaths.length);
+					sharedMgr.setSharedLibraryPaths(target, paths);
+				}
 			}
 		} catch (CDIException e) {
 			throw newCoreException(MIPlugin.getResourceString("src.GDBDebugger.Error_initializing_shared_lib_options") + e.getMessage(), e); //$NON-NLS-1$

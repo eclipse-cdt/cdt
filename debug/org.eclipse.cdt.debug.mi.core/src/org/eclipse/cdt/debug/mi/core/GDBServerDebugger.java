@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
@@ -38,20 +37,22 @@ public class GDBServerDebugger implements ICDebugger {
 
 	void initializeLibraries(ILaunchConfiguration config, Session session) throws CDIException {
 		try {
-			ICDISharedLibraryManager mgr = session.getSharedLibraryManager();
-			if (mgr instanceof SharedLibraryManager) {
-				boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
+			SharedLibraryManager mgr = session.getSharedLibraryManager();
+			boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
+			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, new ArrayList(1));
+			ICDITarget[] dtargets = session.getTargets();
+			for (int i = 0; i < dtargets.length; ++i) {
+				Target target = (Target)dtargets[i];
 				try {
-					((SharedLibraryManager)mgr).setAutoLoadSymbols(autolib);
+					mgr.setAutoLoadSymbols(target, autolib);
 				} catch (CDIException e) {
 					// ignore this one, cause problems for many gdb.
 				}
+				if (p.size() > 0) {
+					String[] paths = (String[])p.toArray(new String[0]);
+					mgr.setSharedLibraryPaths(target, paths);
+				}
 			}			
-			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, new ArrayList(1));
-			if (p.size() > 0) {
-				String[] paths = (String[])p.toArray(new String[0]);
-				mgr.setSharedLibraryPaths(paths);
-			}
 		} catch (CoreException e) {
 			throw new CDIException(MIPlugin.getResourceString("src.GDBServerDebugger.Error_initializing") + e.getMessage()); //$NON-NLS-1$
 		}

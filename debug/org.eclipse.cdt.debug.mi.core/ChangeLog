@@ -1,3 +1,13 @@
+2004-10-29 Alain Magloire
+	Remove of ICDISharedLibraryManager
+	* cdi/org/eclipse/cdt/debug/core/cdi/Session.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/SharedLibraryManager.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/Target.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/SharedLibraryManagement.java
+
+	* src/org/eclipse/cdt/debug/mi/core/GDBCDIDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBServerCDIDebugger.java
+
 2004-10-28 Alain Magloire
 	Add ICDIValue.getType() and ICDIExpression.geType() new methods.
 

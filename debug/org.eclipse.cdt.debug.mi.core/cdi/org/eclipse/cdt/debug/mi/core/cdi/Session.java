@@ -19,7 +19,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
-import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -155,10 +154,7 @@ public class Session implements ICDISession, ICDISessionObject {
 		return registerManager;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSharedLibraryManager()
-	 */
-	public ICDISharedLibraryManager getSharedLibraryManager() {
+	public SharedLibraryManager getSharedLibraryManager() {
 		return sharedLibraryManager;
 	}
 

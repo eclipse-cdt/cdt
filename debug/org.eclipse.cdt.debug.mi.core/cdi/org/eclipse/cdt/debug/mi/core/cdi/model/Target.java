@@ -25,6 +25,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRuntimeOptions;
+import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.MemoryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalManager;
 import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
@@ -921,6 +923,14 @@ public class Target  implements ICDITarget {
 	public ICDIMemoryBlock[] getMemoryBlocks() throws CDIException {
 		MemoryManager memMgr = ((Session)getSession()).getMemoryManager();
 		return memMgr.getMemoryBlocks(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibraryManagement#getSharedLibraries()
+	 */
+	public ICDISharedLibrary[] getSharedLibraries() throws CDIException {
+		SharedLibraryManager sharedMgr = ((Session)getSession()).getSharedLibraryManager();
+		return sharedMgr.getSharedLibraries(this);
 	}
 
 }

@@ -18,27 +18,29 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class GDBDebugger implements ICDebugger {
 
 	protected void initializeLibraries(ILaunchConfiguration config, Session session) throws CDIException {
 		try {
-			ICDISharedLibraryManager manager = session.getSharedLibraryManager();
-			if (manager instanceof SharedLibraryManager) {
-				SharedLibraryManager mgr = (SharedLibraryManager)manager;
-				boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
-				boolean stopOnSolibEvents = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IMILaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT);
+			SharedLibraryManager mgr = session.getSharedLibraryManager();
+			boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
+			boolean stopOnSolibEvents = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IMILaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT);
+			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
+			ICDITarget[] dtargets = session.getTargets();
+			for (int i = 0; i < dtargets.length; ++i) {
+				Target target = (Target)dtargets[i];
 				try {
-					mgr.setAutoLoadSymbols(autolib);
-					mgr.setStopOnSolibEvents(stopOnSolibEvents);
+					mgr.setAutoLoadSymbols(target, autolib);
+					mgr.setStopOnSolibEvents(target, stopOnSolibEvents);
 					// The idea is that if the user set autolib, by default
 					// we provide with the capability of deferred breakpoints
 					// And we set setStopOnSolib events for them(but they should not see those things.
@@ -47,20 +49,19 @@ public class GDBDebugger implements ICDebugger {
 					// means that they wanted to see those events so do no do deferred breakpoints.
 					if (autolib && !stopOnSolibEvents) {
 						mgr.setDeferredBreakpoint(true);
-						mgr.setStopOnSolibEvents(true);
+						mgr.setStopOnSolibEvents(target, true);
 					}
 				} catch (CDIException e) {
 					// Ignore this error
 					// it seems to be a real problem on many gdb platform
 				}
-			}
-			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
-			if (p.size() > 0) {
-				String[] oldPaths = manager.getSharedLibraryPaths();
-				String[] paths = new String[oldPaths.length + p.size()];
-				System.arraycopy(p.toArray(new String[p.size()]), 0, paths, 0, p.size());
-				System.arraycopy(oldPaths, 0, paths, p.size(), oldPaths.length);
-				manager.setSharedLibraryPaths(paths);
+				if (p.size() > 0) {
+					String[] oldPaths = mgr.getSharedLibraryPaths(target);
+					String[] paths = new String[oldPaths.length + p.size()];
+					System.arraycopy(p.toArray(new String[p.size()]), 0, paths, 0, p.size());
+					System.arraycopy(oldPaths, 0, paths, p.size(), oldPaths.length);
+					mgr.setSharedLibraryPaths(target, paths);
+				}
 			}
 		} catch (CoreException e) {
 			throw new CDIException(MIPlugin.getResourceString("src.GDBDebugger.Error_initializing_shared_lib_options") + e.getMessage()); //$NON-NLS-1$

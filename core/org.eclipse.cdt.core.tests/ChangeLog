@@ -1,3 +1,7 @@
+2003-09-17 Bogdan Gheorghe
+	Added asserts to all index lookups in IndexManagerTests
+	Fixed testAddNewFileToIndex
+	
 2003-09-16 Hoda Amer
     Added CompleteParseASTExpressionTest.testPrimaryThis()
     

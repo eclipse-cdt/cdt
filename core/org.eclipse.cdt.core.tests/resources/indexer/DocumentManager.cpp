@@ -1,5 +1,5 @@
 //#include "StdAfx.h"
-#include "documentmanager.h"
+#include "DocumentManager.h"
 
 CDocumentManager::CDocumentManager(void)
 {

@@ -191,9 +191,15 @@ public class IndexManagerTests extends TestCase {
 		indexManager.setEnabled(testProject,true);
 		Thread.sleep(1500);
 		IIndex ind = indexManager.getIndex(testProject.getFullPath(),true,true);
+		assertTrue("Index exists for project",ind != null);
+		
 		char[] prefix = "typeDecl/".toCharArray();
 		IQueryResult[] qresults = ind.queryPrefix(prefix);
 		IEntryResult[] eresults = ind.queryEntries(prefix);
+		
+		assertTrue("Query Results exist", qresults != null);
+		assertTrue("Entry Results exist", eresults != null);
+		
 		String [] queryResultModel = {"IndexedFile(1: /IndexerTestProject/mail.cpp)"};
 		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 1 }", "EntryResult: word=typeDecl/C/container, refs={ 1 }", "EntryResult: word=typeDecl/C/first_class, refs={ 1 }", "EntryResult: word=typeDecl/C/postcard, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }"};
 		
@@ -231,9 +237,12 @@ public class IndexManagerTests extends TestCase {
 		importFile("DocumentManager.cpp","resources/indexer/DocumentManager.cpp");
 		Thread.sleep(10000);
 		ind = indexManager.getIndex(testProjectPath,true,true);
+		
 		char[] prefix = "typeDecl/C/CDocumentManager".toCharArray();
 		String [] entryResultModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }"};
 		IEntryResult[] eresults =ind.queryEntries(prefix);
+		
+		assertTrue("Entry Result exists", eresults != null);
 		
 		if (eresults.length != entryResultModel.length)
 			fail("Entry Result length different from model");
@@ -296,6 +305,8 @@ public class IndexManagerTests extends TestCase {
 	 ind = indexManager.getIndex(testProjectPath,true,true);
 	 char[] prefix = "typeDecl/".toCharArray();
 	 IEntryResult[] eresults = ind.queryEntries(prefix);
+	 assertTrue("Entry result found for typdeDecl/", eresults != null);
+	 
 	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }", "EntryResult: word=typeDecl/C/Mail, refs={ 2 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 2 }", "EntryResult: word=typeDecl/C/container, refs={ 2 }", "EntryResult: word=typeDecl/C/first_class, refs={ 2 }", "EntryResult: word=typeDecl/C/postcard, refs={ 2 }"};
 	 if (eresults.length != entryResultBeforeModel.length)
 			fail("Entry Result length different from model");	
@@ -311,6 +322,8 @@ public class IndexManagerTests extends TestCase {
 	 //See if the index is still there
 	 ind = indexManager.getIndex(testProjectPath,true,true);
 	 eresults = ind.queryEntries(prefix);
+	 assertTrue("Entry exists", eresults != null);
+		
 	 String [] entryResultAfterModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }"};
 	 if (eresults.length != entryResultAfterModel.length)
 		fail("Entry Result length different from model");
@@ -335,10 +348,12 @@ public class IndexManagerTests extends TestCase {
 		assertTrue("Index exists for project",ind != null);
 	
 		IEntryResult[] typerefreesults = ind.queryEntries(IIndexConstants.TYPE_REF);
+		assertTrue("Type Ref Results exist", typerefreesults != null);
 		
 		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/Unknown/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/container/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/first_class/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/postcard/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/E/test/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/T/int32, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }", "EntryResult: word=typeDecl/V/x/Z, refs={ 1 }"};
 		IEntryResult[] typedeclresults =ind.queryEntries(IIndexConstants.TYPE_DECL);
-
+		assertTrue("Type Decl Results exist", typedeclresults != null);
+		
 		if (typedeclresults.length != typeDeclEntryResultModel.length)
 			fail("Entry Result length different from model for typeDecl");
 	
@@ -349,6 +364,7 @@ public class IndexManagerTests extends TestCase {
 	
 		String [] typeDefEntryResultModel ={"EntryResult: word=typeDecl/T/int32, refs={ 1 }"};
 		IEntryResult[] typedefresults =ind.queryEntries(IIndexConstants.TYPEDEF_DECL);
+		assertTrue("Type Def Results exist", typedefresults != null);
 		
 		if (typedefresults.length != typeDefEntryResultModel.length)
 					fail("Entry Result length different from model for typeDef");
@@ -360,6 +376,7 @@ public class IndexManagerTests extends TestCase {
 				
 		String [] namespaceResultModel = {"EntryResult: word=namespaceDecl/X/Z, refs={ 1 }", "EntryResult: word=namespaceDecl/Y/X/Z, refs={ 1 }", "EntryResult: word=namespaceDecl/Z, refs={ 1 }"};
 		IEntryResult[] namespaceresults =ind.queryEntries(IIndexConstants.NAMESPACE_DECL);
+		assertTrue("Namespace Results exist", namespaceresults != null);
 		
 		if (namespaceresults.length != namespaceResultModel.length)
 				fail("Entry Result length different from model for namespace");
@@ -371,7 +388,8 @@ public class IndexManagerTests extends TestCase {
 				
 		String [] fieldResultModel = {"EntryResult: word=fieldDecl/array/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/bye/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/cool/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/hi/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/index/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/postage/Mail/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/sz/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/type/Mail/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/why/Y/X/Z, refs={ 1 }"};
 		IEntryResult[] fieldresults =ind.queryEntries(IIndexConstants.FIELD_DECL);
-	
+		assertTrue("Field Results exist", fieldresults != null);
+		
 		if (fieldresults.length != fieldResultModel.length)
 				fail("Entry Result length different from model for fieldDecl");
 	
@@ -411,6 +429,7 @@ public class IndexManagerTests extends TestCase {
 									   
 	
 		IEntryResult[] methodresults =ind.queryEntries(IIndexConstants.METHOD_DECL);
+		assertTrue("Entry exists", methodresults != null);
 		
 		if (methodresults.length != methodResultModel.length)
 				fail("Entry Result length different from model for functionDecl");
@@ -436,7 +455,8 @@ public class IndexManagerTests extends TestCase {
 		  
 		  String [] typeRefEntryResultModel ={"EntryResult: word=typeRef/C/C/B/A, refs={ 1 }", "EntryResult: word=typeRef/C/ForwardA/A, refs={ 1 }", "EntryResult: word=typeRef/E/e1/B/A, refs={ 1 }", "EntryResult: word=typeRef/V/x/B/A, refs={ 1 }"};
 		  IEntryResult[] typerefresults = ind.queryEntries(IIndexConstants.TYPE_REF);
-
+		  assertTrue("Entry exists",typerefresults != null);
+		  
 		  if (typerefresults.length != typeRefEntryResultModel.length)
 			  fail("Entry Result length different from model for typeRef");
 	
@@ -447,7 +467,8 @@ public class IndexManagerTests extends TestCase {
 	
 		  String [] funRefEntryResultModel ={"EntryResult: word=functionRef/something/A, refs={ 1 }"};
 		  IEntryResult[] funRefresults = ind.queryEntries(IIndexConstants.FUNCTION_REF);
-		
+		  assertTrue("Entry exists",funRefresults != null);
+		  
 		  if (funRefresults.length != funRefEntryResultModel.length)
 					  fail("Entry Result length different from model for funcRef");
 	
@@ -458,7 +479,8 @@ public class IndexManagerTests extends TestCase {
 				
 		  String [] namespaceRefResultModel = {"EntryResult: word=namespaceRef/A, refs={ 1 }", "EntryResult: word=namespaceRef/B/A, refs={ 1 }"};
 		  IEntryResult[] namespacerefresults = ind.queryEntries(IIndexConstants.NAMESPACE_REF);
-		
+		  assertTrue("Entry exists",namespacerefresults!=null);
+		  
 		  if (namespacerefresults.length != namespaceRefResultModel.length)
 				  fail("Entry Result length different from model for namespaceRef");
 	
@@ -469,7 +491,8 @@ public class IndexManagerTests extends TestCase {
 				
 		  String [] fieldRefResultModel = {"EntryResult: word=fieldRef/y/C/B/A, refs={ 1 }"};
 		  IEntryResult[] fieldrefresults = ind.queryEntries(IIndexConstants.FIELD_REF);
-	
+		  assertTrue("Entry exists",fieldrefresults!=null);
+		  
 		  if (fieldrefresults.length != fieldRefResultModel.length)
 				  fail("Entry Result length different from model for fieldRef");
 	
@@ -480,7 +503,8 @@ public class IndexManagerTests extends TestCase {
 	
 		  String [] methodRefResultModel = {"EntryResult: word=methodRef/bar/C/B/A, refs={ 1 }"};	
 		  IEntryResult[] methodrefresults = ind.queryEntries(IIndexConstants.METHOD_REF);
-		
+		  assertTrue("Entry exists", methodrefresults != null); 
+		   
 		  if (methodrefresults.length != methodRefResultModel.length)
 				  fail("Entry Result length different from model for methodRef");
 	
@@ -505,6 +529,7 @@ public class IndexManagerTests extends TestCase {
 	  assertTrue("Index exists for project",ind != null);
 	
 	  IEntryResult[] macroresults = ind.queryEntries(IIndexConstants.MACRO_DECL);
+	  assertTrue("Entry exists", macroresults != null);
 	  
 	  String [] macroResultModel = {"EntryResult: word=macroDecl/CASE, refs={ 1 }", "EntryResult: word=macroDecl/MAX, refs={ 1 }", "EntryResult: word=macroDecl/PRINT, refs={ 1 }"};
 	   
@@ -570,7 +595,8 @@ public class IndexManagerTests extends TestCase {
 	 assertTrue("Index exists for project",ind != null);
 
 	 IEntryResult[] fwdDclResults = ind.queryEntries("typeDecl/C/ForwardA/A".toCharArray());
-  
+	 assertTrue("Entry exists",fwdDclResults != null);
+	 
 	 String [] fwdDclModel = {"EntryResult: word=typeDecl/C/ForwardA/A, refs={ 1 }"};
 	
 	 if (fwdDclResults.length != fwdDclModel.length)
@@ -582,7 +608,8 @@ public class IndexManagerTests extends TestCase {
 	 }
 
 	IEntryResult[] fwdDclRefResults = ind.queryEntries("typeRef/C/ForwardA/A".toCharArray());
-  
+	assertTrue("Entry exists", fwdDclRefResults!= null);
+	
 	String [] fwdDclRefModel = {"EntryResult: word=typeRef/C/ForwardA/A, refs={ 1 }"};
 
 	if (fwdDclRefResults.length != fwdDclRefModel.length)

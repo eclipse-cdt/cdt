@@ -1931,10 +1931,13 @@ public class Parser implements IParser
     {    	
         if (LT(1) == IToken.tLBRACE)
         {
-            consume(IToken.tLBRACE);
+			IToken mark = consume(IToken.tLBRACE);
             List initializerList = new ArrayList();
+            
             for (;;)
             {
+				IToken checkToken = LA(1);
+
                 // required at least one initializer list
                 // get designator list
                 List newDesignators = designatorList(scope);
@@ -1951,6 +1954,11 @@ public class Parser implements IParser
                     consume(IToken.tCOMMA);
                 if (LT(1) == IToken.tRBRACE)
                     break;
+				if( checkToken == LA(1))
+				{
+					backup( mark );
+					throw backtrack;
+				}                   
                 // otherwise, its another initializer in the list
             }
             // consume the closing brace

@@ -1,3 +1,6 @@
+2004-05-06 David Inglis
+	Fixed critical bug 61197 causeing endless loop w/memleak when parsing initializer clause (fix pulled from HEAD)
+	
 2004-01-29 John Camelon
 	Fixed Bug 50821 - Freezes when opening / saving .c file 
 

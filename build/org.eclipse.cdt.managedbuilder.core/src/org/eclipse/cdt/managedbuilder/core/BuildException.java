@@ -12,6 +12,8 @@ package org.eclipse.cdt.managedbuilder.core;
 
 public class BuildException extends Exception {
 
+	public static final int BUILD_FAILED = -1;
+
 	public BuildException(String msg) {
 		super(msg);
 	}

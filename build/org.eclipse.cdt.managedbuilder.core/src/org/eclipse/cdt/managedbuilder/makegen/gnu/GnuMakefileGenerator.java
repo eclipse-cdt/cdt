@@ -48,8 +48,11 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
@@ -210,6 +213,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	private Vector dependencyMakefiles;
 	private String extension;
 	private IManagedBuildInfo info;
+	private Vector invalidDirList;
 	private Vector modifiedList;
 	private IProgressMonitor monitor;
 	private Set outputExtensionsSet;
@@ -374,6 +378,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		IPath moduleRelativePath = module.getProjectRelativePath();
 		String relativePath = moduleRelativePath.toString();
 		relativePath += relativePath.length() == 0 ? "" : SEPARATOR;  //$NON-NLS-1$
+ 		relativePath = escapeWhitespaces(relativePath);
  		
  		// For each tool for the target, lookup the kinds of sources it can handle and
  		// create a map which will map its extension to a string which holds its list of sources.
@@ -400,7 +405,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
   					// there is no entry in the map, so create a buffer for this extension
  					StringBuffer tempBuffer = new StringBuffer();
  					tempBuffer.append(macroName + WHITESPACE + "+=" + WHITESPACE + LINEBREAK);	//$NON-NLS-1$
- 					tempBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK);	//$NON-NLS-1$ //$NON-NLS-2$
+ 					tempBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + WHITESPACE + LINEBREAK);	//$NON-NLS-1$ //$NON-NLS-2$
  					
  					// have to store the buffer in String form as StringBuffer is not a sublcass of Object
  					extensionToRuleStringMap.put(extensionName, tempBuffer.toString());
@@ -549,9 +554,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						if (depExt.length() > 0) {
 							dependency += DOT + depExt;
 						}
+						dependency = escapeWhitespaces(dependency);
 						managedProjectOutputs.add(dependency);
 					}
-					buffer.append(TAB + "-cd" + WHITESPACE + buildDir + WHITESPACE + LOGICAL_AND + WHITESPACE + "$(MAKE) " + depTargets + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
+					buffer.append(TAB + "-cd" + WHITESPACE + escapeWhitespaces(buildDir) + WHITESPACE + LOGICAL_AND + WHITESPACE + "$(MAKE) " + depTargets + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			buffer.append(NEWLINE);
@@ -619,8 +625,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 */
 	protected void appendBuildSubdirectory(IResource resource) {
 		IContainer container = resource.getParent();
-		if (!getSubdirList().contains(container)) {
-			getSubdirList().add(container);		
+		// If the path contains a space relative to the project, reject it from the build
+		if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) {	//$NON-NLS-1$
+			// Only add the container once
+			if (!getInvalidDirList().contains(container)) {
+				getInvalidDirList().add(container);
+			}
+		} else {
+			// Only add the container once
+			if (!getSubdirList().contains(container)) {
+				getSubdirList().add(container);		
+			}
 		}
 	}
 
@@ -645,8 +660,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 */
 	protected void appendModifiedSubdirectory(IResource resource) {
 		IContainer container = resource.getParent();
-		if (!getModifiedList().contains(container)) {
-			getModifiedList().add(container);		
+		// If the path contains a space relative to the project, reject it from the build
+		if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) {	//$NON-NLS-1$
+			// Only add the container once
+			if (!getInvalidDirList().contains(container)) {
+				getInvalidDirList().add(container);
+			}
+		} else {
+			if (!getModifiedList().contains(container)) {
+				getModifiedList().add(container);
+			}
 		}
 	}
 	
@@ -854,7 +877,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#generateMakefiles(org.eclipse.core.resources.IResourceDelta)
 	 */
-	public void generateMakefiles(IResourceDelta delta) throws CoreException {
+	public MultiStatus generateMakefiles(IResourceDelta delta) throws CoreException {
 		/*
 		 * Let's do a sanity check right now. 
 		 * 
@@ -863,8 +886,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		 */
 		IFolder folder = project.getFolder(info.getConfigurationName());
 		if (!folder.exists()) {
-			regenerateMakefiles();
-			return;
+			return regenerateMakefiles();
 		}
 		
 		// Make sure the build directory is available
@@ -875,7 +897,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(this, info);
 		delta.accept(visitor);
 		checkCancel();
-	
+		
 		// Get all the subdirectories participating in the build
 		ResourceProxyVisitor resourceVisitor = new ResourceProxyVisitor(this, info);
 		project.accept(resourceVisitor, IResource.NONE);
@@ -920,6 +942,34 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			populateFragmentMakefile(subDir);
 			checkCancel();
 		}
+
+		// How did we do
+		MultiStatus status;
+		if (!getInvalidDirList().isEmpty()) {
+			status = new MultiStatus (
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					IStatus.WARNING,
+					new String(),
+					null);
+			// Add a new status for each of the bad folders
+			iter = getInvalidDirList().iterator();
+			while (iter.hasNext()) {
+				status.add(new Status (
+						IStatus.WARNING,
+						ManagedBuilderCorePlugin.getUniqueIdentifier(),
+						SPACES_IN_PATH,
+						((IContainer)iter.next()).getFullPath().toString(),
+						null));
+			}
+		} else {
+			status = new MultiStatus(
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					IStatus.OK,
+					new String(),
+					null);
+		}
+
+		return status;
 	}
 
 	/* (non-Javadoc)
@@ -968,6 +1018,21 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			answer = lastSegment.substring(0, extensionSeparator);
 		}
 		return answer;
+	}
+	
+	/* (non-Javadoc)
+	 * Answers a Vector containing a list of directories that are invalid for the 
+	 * build for some reason. At the moment, the only reason a directory would 
+	 * not be considered for the build is if it contains a space in the relative 
+	 * path from the project root.
+	 * 
+	 * @return a a list of directories that are invalid for the build
+	 */
+	private Vector getInvalidDirList() {
+		if (invalidDirList == null) {
+			invalidDirList = new Vector();
+		}
+		return invalidDirList;
 	}
 	
 	protected StringBuffer getMacroName(String extensionName) {
@@ -1125,117 +1190,136 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 		contentStream.close();  
 		
+		// The rest of this operation is equally expensive, so 
+		// if we are doing an incremental build, only update the 
+		// files that do not have a comment
+		if (inBuffer == null) return;
+		String inBufferString = inBuffer.toString();
+		if (!force && inBufferString.startsWith(COMMENT_SYMBOL)) {
+				return;
+		}
+
+		// Reconstruct the buffer tokens into useful chunks of dependency information 
+		Vector bufferTokens = new Vector(Arrays.asList(inBufferString.split("\\s")));	//$NON-NLS-1$
+		Vector deps = new Vector(bufferTokens.size());
+		Iterator tokenIter = bufferTokens.iterator();
+		while (tokenIter.hasNext()) {
+			String token = (String)tokenIter.next();
+			if (token.lastIndexOf("\\") == token.length() - 1  && token.length() > 1) {	//$NON-NLS-1$
+				// This is escaped so keep adding to the token until we find the end
+				while (tokenIter.hasNext()) {
+					String nextToken = (String)tokenIter.next();
+					token += WHITESPACE + nextToken;
+					if (!nextToken.endsWith("\\")) {	//$NON-NLS-1$
+						break;
+					}
+				}
+			}
+			deps.add(token);
+		}
+		deps.trimToSize();
+		
 		// Now find the header file dependencies and make dummy targets for them
 		boolean save = false;
 		StringBuffer outBuffer = null;
-		if (inBuffer != null) {
-			// Here are the tokens in the file
-			String[] dependencies = inBuffer.toString().split("\\s");	//$NON-NLS-1$
-			if (dependencies.length == 0) return;
-			
-			// If we are doing an incremental build, only update the files that do not have a comment
-			String firstLine = dependencies[0];
-			if (!force) {
-				if (firstLine.startsWith(COMMENT_SYMBOL)) {
-					return;
-				}
-			}
+		
+		// If we are doing an incremental build, only update the files that do not have a comment
+		String firstLine;
+		try {
+			firstLine = (String) deps.get(0);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// This makes no sense so bail
+			ManagedBuilderCorePlugin.log(e);
+			return;
+		}
 
-			// Put the generated comments in
-			if (!firstLine.startsWith(COMMENT_SYMBOL)) {
-				outBuffer = addDefaultHeader();
+		// Put the generated comments in the output buffer
+		if (!firstLine.startsWith(COMMENT_SYMBOL)) {
+			outBuffer = addDefaultHeader();
+		} else {
+			outBuffer = new StringBuffer();
+		}
+		
+		// Some echo implementations misbehave and put the -n and newline in the output
+		if (firstLine.startsWith("-n")) { //$NON-NLS-1$
+			
+			// Now let's parse:
+			// Win32 outputs -n '<path>/<file>.d <path>/'
+			// POSIX outputs -n <path>/<file>.d <path>/
+			// Get the dep file name
+			String secondLine;
+			try {
+				secondLine = (String) deps.get(1);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				secondLine = new String();
+			}
+			if (secondLine.startsWith("'")) { //$NON-NLS-1$
+				// This is the Win32 implementation of echo (MinGW without MSYS)
+				outBuffer.append(secondLine.substring(1) + WHITESPACE);
 			} else {
-				outBuffer = new StringBuffer();
+				outBuffer.append(secondLine + WHITESPACE);
 			}
 			
-			// Some echo implementations misbehave and put the -n and newline in the output
-			if (firstLine.startsWith("-n")) { //$NON-NLS-1$
-				// Create a vector with all the strings
-				Vector tokens = new Vector(dependencies.length);
-				for (int index = 1; index < dependencies.length; ++index) {
-					String token = dependencies[index];
-					if (token.length() > 0) {
-						tokens.add(token);
-					}
-				}
-				tokens.trimToSize();
-				
-				// Now let's parse:
-				// Win32 outputs -n '<path>/<file>.d <path>/'
-				// POSIX outputs -n <path>/<file>.d <path>/
-				// Get the dep file name
-				String secondLine;
-				try {
-					secondLine = (String) tokens.get(0);
-				} catch (ArrayIndexOutOfBoundsException e) {
-					secondLine = new String();
-				}
-				if (secondLine.startsWith("'")) { //$NON-NLS-1$
-					// This is the Win32 implementation of echo (MinGW without MSYS)
-					outBuffer.append(secondLine.substring(1) + WHITESPACE);
+			// The relative path to the build goal comes next
+			String thirdLine;
+			try {
+				thirdLine = (String) deps.get(2);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				thirdLine = new String();
+			}
+			int lastIndex = thirdLine.lastIndexOf("'"); //$NON-NLS-1$
+			if (lastIndex != -1) {
+				if (lastIndex == 0) {
+					outBuffer.append(WHITESPACE);
 				} else {
-					outBuffer.append(secondLine + WHITESPACE);
+					outBuffer.append(thirdLine.substring(0, lastIndex - 1));
 				}
-				
-				// The relative path to the build goal comes next
-				String thirdLine;
-				try {
-					thirdLine = (String) tokens.get(1);
-				} catch (ArrayIndexOutOfBoundsException e) {
-					thirdLine = new String();
-				}
-				int lastIndex = thirdLine.lastIndexOf("'"); //$NON-NLS-1$
-				if (lastIndex != -1) {
-					if (lastIndex == 0) {
-						outBuffer.append(WHITESPACE);
+			} else {
+				outBuffer.append(thirdLine);
+			}
+			
+			// followed by the actual dependencies
+			String fourthLine;
+			try {
+				fourthLine = (String) deps.get(3);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				fourthLine = new String();
+			}
+			outBuffer.append(fourthLine + WHITESPACE);
+			
+			// Now do the rest
+			try {
+				Iterator iter = deps.listIterator(4);
+				while (iter.hasNext()) {
+					String nextElement = (String)iter.next();
+					if (nextElement.endsWith("\\")) { //$NON-NLS-1$
+						outBuffer.append(nextElement + NEWLINE + WHITESPACE);
 					} else {
-						outBuffer.append(thirdLine.substring(0, lastIndex - 1));
+						outBuffer.append(nextElement + WHITESPACE);
 					}
-				} else {
-					outBuffer.append(thirdLine);
 				}
-				
-				// followed by the actual dependencies
-				String fourthLine;
-				try {
-					fourthLine = (String) tokens.get(2);
-				} catch (ArrayIndexOutOfBoundsException e) {
-					fourthLine = new String();
-				}
-				outBuffer.append(fourthLine + WHITESPACE);
-				
-				// Now do the rest
-				try {
-					Iterator iter = tokens.listIterator(3);
-					while (iter.hasNext()) {
-						String nextElement = (String)iter.next();
-						if (nextElement.endsWith("\\")) { //$NON-NLS-1$
-							outBuffer.append(nextElement + NEWLINE + WHITESPACE);
-						} else {
-							outBuffer.append(nextElement + WHITESPACE);
-						}
-					}
-				} catch (IndexOutOfBoundsException e) {					
-				}
-
-			} else {
-				outBuffer.append(inBuffer);
+			} catch (IndexOutOfBoundsException e) {					
 			}
-			
-			outBuffer.append(NEWLINE);
-			save = true;
-			
-			// Dummy targets to add to the makefile
-			for (int i = 0; i < dependencies.length; ++i) {
-				IPath dep = new Path(dependencies[i]);
-				String extension = dep.getFileExtension();
-				if (info.isHeaderFile(extension)) {
-					/*
-					 * The formatting here is 
-					 * <dummy_target>:
-					 */
-					outBuffer.append(dependencies[i] + COLON + NEWLINE + NEWLINE);
-				}
+
+		} else {
+			outBuffer.append(inBuffer);
+		}
+		
+		outBuffer.append(NEWLINE);
+		save = true;
+		
+		// Dummy targets to add to the makefile
+		Iterator dummyIter = deps.iterator();
+		while (dummyIter.hasNext()) {
+			String dummy = (String)dummyIter.next();
+			IPath dep = new Path(dummy);
+			String extension = dep.getFileExtension();
+			if (info.isHeaderFile(extension)) {
+				/*
+				 * The formatting here is 
+				 * <dummy_target>:
+				 */
+				outBuffer.append(dummy + COLON + NEWLINE + NEWLINE);
 			}
 		}
 		
@@ -1256,6 +1340,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		if (buildRoot == null) {
 			return;
 		}
+		
 		IPath moduleOutputPath = buildRoot.append(moduleRelativePath);
 		
 		// Now create the directory
@@ -1446,7 +1531,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#regenerateMakefiles()
 	 */
-	public void regenerateMakefiles() throws CoreException {
+	public MultiStatus regenerateMakefiles() throws CoreException {
 		// Visit the resources in the project
 		ResourceProxyVisitor visitor = new ResourceProxyVisitor(this, info);
 		project.accept(visitor, IResource.NONE);
@@ -1456,8 +1541,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 		// Populate the makefile if any source files have been found in the project
 		if (getSubdirList().isEmpty()) {
-			return;
-		}
+			throw new CoreException(new Status(
+					IStatus.WARNING,
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					NO_SOURCE_FOLDERS,
+					new String(),
+					null));
+		} 
 
 		// Create the top-level directory for the build output
 		topBuildDir = createDirectory(info.getConfigurationName());
@@ -1494,6 +1584,33 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		IFile objsFileHandle = createFile(objFilePath);
 		populateObjectsMakefile(objsFileHandle);
 		checkCancel();
+
+		// How did we do
+		MultiStatus status;
+		if (!getInvalidDirList().isEmpty()) {
+			status = new MultiStatus (
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					IStatus.WARNING,
+					new String(),
+					null);
+			// Add a new status for each of the bad folders
+			iter = getInvalidDirList().iterator();
+			while (iter.hasNext()) {
+				status.add(new Status (
+						IStatus.WARNING,
+						ManagedBuilderCorePlugin.getUniqueIdentifier(),
+						SPACES_IN_PATH,
+						((IContainer)iter.next()).getFullPath().toString(),
+						null));
+			}
+		} else {
+			status = new MultiStatus(
+					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+					IStatus.OK,
+					new String(),
+					null);
+		}
+		return status;
 	}
 
 }

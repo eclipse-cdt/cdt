@@ -16,14 +16,17 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -31,8 +34,8 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -47,6 +50,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
@@ -156,10 +161,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	public static boolean VERBOSE = false;
 	
 	// Local variables
+	protected Vector generationProblems;
 	protected IManagedBuilderMakefileGenerator generator;
 	protected IProject[] referencedProjects;
 	protected List resourcesToBuild;
 	protected List ruleList;
+	private IConsole console;
 
 	public static void outputTrace(String resourceName, String message) {
 		if (VERBOSE) {
@@ -180,6 +187,21 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	public GeneratedMakefileBuilder() {
 	}
 
+	/**
+	 * @param epm
+	 */
+	private void addBuilderMarkers(ErrorParserManager epm) {
+		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
+		Iterator iter = getGenerationProblems().iterator();
+		while (iter.hasNext()) {
+			IStatus stat = (IStatus)iter.next();
+			IResource location = root.findMember(stat.getMessage());
+			if (stat.getCode() == IManagedBuilderMakefileGenerator.SPACES_IN_PATH) {
+				epm.generateMarker(location, -1, ManagedMakeMessages.getResourceString("MakefileGenerator.error.spaces"), IMarkerGenerator.SEVERITY_WARNING, null);	//$NON-NLS-1$
+			}
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -196,11 +218,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 
 		// So let's figure out why we got called
-		if (kind == CLEAN_BUILD) {
-			outputTrace(getProject().getName(), "Clean build requested");	//$NON-NLS-1$
-			cleanBuild(monitor, info);
-		}
-		else if (kind == FULL_BUILD || info.needsRebuild()) {
+		if (kind == FULL_BUILD || info.needsRebuild()) {
 			outputTrace(getProject().getName(), "Full build needed/requested");	//$NON-NLS-1$
 			fullBuild(monitor, info);
 		}
@@ -245,7 +263,21 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void clean(IProgressMonitor monitor) throws CoreException {
+		referencedProjects = getProject().getReferencedProjects();
+		outputTrace(getProject().getName(), "Clean build requested");	//$NON-NLS-1$
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+		if (info == null) {
+			outputError(getProject().getName(), "Build information was not found");	//$NON-NLS-1$
+			return;
+		}
+		cleanBuild(monitor, info);
+	}
+	
+	/* (non-Javadoc)
 	 * @param monitor
 	 * @param info
 	 */
@@ -253,7 +285,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		// Make sure that there is a top level directory and a set of makefiles
 		String targetID = info.getDefaultTarget().getParent().getId();
 		generator = ManagedBuildManager.getMakefileGenerator(targetID);
-		IPath buildDir = new Path(info.getConfigurationName());
+		IPath buildDir = getProject().getLocation().append(info.getConfigurationName());
 		IPath makefilePath = buildDir.append(generator.getMakefileName());		
 		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
 		IFile makefile = root.getFileForLocation(makefilePath);
@@ -267,7 +299,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @param monitor
 	 */
 	protected void fullBuild(IProgressMonitor monitor, IManagedBuildInfo info) throws CoreException {
@@ -283,12 +315,11 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		String targetID = info.getDefaultTarget().getParent().getId();
 		generator = ManagedBuildManager.getMakefileGenerator(targetID);
 		generator.initialize(getProject(), info, monitor);
-		try {
-			generator.regenerateMakefiles();
-		} catch (CoreException e) {
-			// Throw the exception back to the builder
-			throw e;
+		MultiStatus result = generator.regenerateMakefiles();
+		if (result.getCode() != IStatus.OK) {
+			getGenerationProblems().addAll(Arrays.asList(result.getChildren()));		
 		}
+		
 		monitor.worked(1);
 
 		// Now call make
@@ -352,6 +383,18 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * 
+	 * @return
+	 */
+	private Vector getGenerationProblems() {
+		if (generationProblems == null) {
+			generationProblems = new Vector();
+		}
+		return generationProblems;
+	}
+	
 	/* (non-javadoc)
 	 * Answers an array of strings with the proper make targets
 	 * 
@@ -422,12 +465,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		String targetID = info.getDefaultTarget().getParent().getId();
 		generator = ManagedBuildManager.getMakefileGenerator(targetID);
 		generator.initialize(getProject(), info, monitor);
-		try {
-			generator.generateMakefiles(delta);
-		} catch (CoreException e) {
-			// Throw the exception back to the builder
-			ManagedBuilderCorePlugin.log(e);
-			throw e;
+		MultiStatus result = generator.generateMakefiles(delta);
+		if (result.getCode() != IStatus.OK) {
+			getGenerationProblems().addAll(Arrays.asList(result.getChildren()));		
 		}
 		monitor.worked(1);
 
@@ -501,9 +541,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 				// Get a build console for the project
 				StringBuffer buf = new StringBuffer();
-				IConsole console = CCorePlugin.getDefault().getConsole();
-				console.start(currentProject);
-				ConsoleOutputStream consoleOutStream = console.getOutputStream();
+				ConsoleOutputStream consoleOutStream = getConsole().getOutputStream();
 				String[] consoleHeader = new String[3];
 				switch (buildType) {
 					case FULL_BUILD:
@@ -623,14 +661,27 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				stderr.close();				
 
 				monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
+				addBuilderMarkers(epm);
 				epm.reportProblems();
 			}
 		} catch (Exception e) {
 			ManagedBuilderCorePlugin.log(e);
 			forgetLastBuiltState();
 		} finally {
+			getGenerationProblems().clear();
 			monitor.done();
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	private IConsole getConsole() {
+		if (console == null) {
+			console = CCorePlugin.getDefault().getConsole();
+			console.start(getProject());
+		}
+		return console;
 	}
 
 	private void removeAllMarkers(IProject project) {

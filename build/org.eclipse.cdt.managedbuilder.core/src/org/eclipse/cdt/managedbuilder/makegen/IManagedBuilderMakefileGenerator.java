@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.MultiStatus;
 
 /**
  * @since 2.0
@@ -50,6 +51,11 @@ public interface IManagedBuilderMakefileGenerator {
 	public final String WHITESPACE = " ";	//$NON-NLS-1$
 	public final String WILDCARD = "%";	//$NON-NLS-1$
 	
+	// Generation error codes
+	public static final int SPACES_IN_PATH = 0;
+	public static final int NO_SOURCE_FOLDERS = 1;
+
+	
 	/**
 	 * @throws CoreException
 	 */
@@ -63,7 +69,7 @@ public interface IManagedBuilderMakefileGenerator {
 	 * @param delta
 	 * @throws CoreException
 	 */
-	public void generateMakefiles(IResourceDelta delta)  throws CoreException ;
+	public MultiStatus generateMakefiles(IResourceDelta delta)  throws CoreException ;
 	
 	/**
 	 * Answers the path of the top directory generated for the build
@@ -96,6 +102,6 @@ public interface IManagedBuilderMakefileGenerator {
 	/**
 	 * @throws CoreException
 	 */
-	public void regenerateMakefiles() throws CoreException;
+	public MultiStatus regenerateMakefiles() throws CoreException;
 
 }

@@ -14,23 +14,38 @@ import java.io.OutputStreamWriter;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 
 public class Addr2line {
+	private String[] args;
 	private Process addr2line;
 	private BufferedReader stdout;
 	private BufferedWriter stdin;
 	private String lastaddr, lastsymbol, lastline;
 
-	public Addr2line(String command, String file) throws IOException {
-		String[] args = {command, "-C", "-f", "-e", file}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		addr2line = ProcessFactory.getFactory().exec(args);
-		stdin = new BufferedWriter(new OutputStreamWriter(addr2line.getOutputStream()));
-		stdout = new BufferedReader(new InputStreamReader(addr2line.getInputStream()));			
+	public Addr2line(String command, String[] params, String file) throws IOException {
+		init(command, params, file);
 	}
 
+	public Addr2line(String command, String file) throws IOException {
+		this(command, new String[0], file);
+	}
+	
 	public Addr2line(String file) throws IOException {
 		this("addr2line", file); //$NON-NLS-1$
 	}
 
-	private void getOutput(String address) throws IOException {
+	protected void init(String command, String[] params, String file) throws IOException {
+		if (params == null || params.length == 0) {
+			args = new String[] {command, "-C", "-f", "-e", file}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		} else {
+			args = new String[params.length + 1];
+			args[0] = command;
+			System.arraycopy(params, 0, args, 1, params.length);
+		}
+		addr2line = ProcessFactory.getFactory().exec(args);
+		stdin = new BufferedWriter(new OutputStreamWriter(addr2line.getOutputStream()));
+		stdout = new BufferedReader(new InputStreamReader(addr2line.getInputStream()));			
+	}
+	
+	protected void getOutput(String address) throws IOException {
 		if ( address.equals(lastaddr) == false ) {
 				stdin.write(address + "\n"); //$NON-NLS-1$
 				stdin.flush();

@@ -14,20 +14,34 @@ import java.io.OutputStreamWriter;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 
 public class CPPFilt {
+	private String[] args;
 	private Process cppfilt;
 	private BufferedReader stdout;
 	private BufferedWriter stdin;
 
-	public CPPFilt(String command) throws IOException {		
-		String[] args = {command};
-		cppfilt = ProcessFactory.getFactory().exec(args);
-		//cppfilt = new Spawner(args);
-		stdin = new BufferedWriter(new OutputStreamWriter(cppfilt.getOutputStream()));
-		stdout = new BufferedReader(new InputStreamReader(cppfilt.getInputStream()));
+	public CPPFilt(String command, String[] params) throws IOException {
+		init(command, params);
 	}
-
+	
+	public CPPFilt(String command) throws IOException {
+		this(command, new String[0]);
+	}
+	
 	public CPPFilt() throws IOException {
 		this("c++filt"); //$NON-NLS-1$
+	}
+
+	protected void init(String command, String[] params) throws IOException {
+		if (params == null || params.length == 0) {
+			args = new String[] {command};
+		} else {
+			args = new String[params.length + 1];
+			args[0] = command;
+			System.arraycopy(params, 0, args, 1, params.length);
+		}
+		cppfilt = ProcessFactory.getFactory().exec(args);
+		stdin = new BufferedWriter(new OutputStreamWriter(cppfilt.getOutputStream()));
+		stdout = new BufferedReader(new InputStreamReader(cppfilt.getInputStream()));			
 	}
 
 	public String getFunction(String symbol) throws IOException {

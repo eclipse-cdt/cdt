@@ -18,9 +18,10 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
-import org.eclipse.cdt.debug.core.model.IAsmInstruction;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
+import org.eclipse.cdt.debug.core.model.IDisassemblyBlock;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.debug.core.DebugException;
 
@@ -31,7 +32,7 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 
 	final static private int DISASSEMBLY_BLOCK_SIZE = 100;
 
-	private IAsmInstruction[] fInstructions = new IAsmInstruction[0];
+	private DisassemblyBlock[] fBlocks = new DisassemblyBlock[1];
 
 	/**
 	 * Constructor for Disassembly.
@@ -43,85 +44,63 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IDisassembly#getInstructions(org.eclipse.cdt.debug.core.model.ICStackFrame)
+	 * @see org.eclipse.cdt.debug.core.model.IDisassembly#getDisassemblyBlock(org.eclipse.cdt.debug.core.model.ICStackFrame)
 	 */
-	public IAsmInstruction[] getInstructions( ICStackFrame frame ) throws DebugException {
-		long address = frame.getAddress();
-		if ( !containsAddress( address ) ) {
-			loadInstructions( frame );
+	public IDisassemblyBlock getDisassemblyBlock( ICStackFrame frame ) throws DebugException {
+		if ( fBlocks[0] == null || !fBlocks[0].contains( frame ) ) {
+			fBlocks[0] = createBlock( frame );
 		}
-		return fInstructions;
+		return fBlocks[0];		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IDisassembly#getInstructions(long, int)
-	 */
-	public IAsmInstruction[] getInstructions( long address, int length ) throws DebugException {
-		if ( !containsAddress( address ) ) {
-			loadInstructions( address, length );
-		}
-		return fInstructions;
-	}
-
-	private boolean containsAddress( long address ) {
-		for ( int i = 0; i < fInstructions.length; ++i ) {
-			if ( fInstructions[i].getAdress() == address )
-				return true;
-		}
-		return false;
-	}
-
-	private boolean containsAddress( ICDIInstruction[] instructions, long address ) {
-		for( int i = 0; i < instructions.length; ++i ) {
-			if ( instructions[i].getAdress() == address )
-				return true;
-		}
-		return false;
-	}
-
-	private void loadInstructions( ICStackFrame frame ) throws DebugException {
-		fInstructions = new IAsmInstruction[0];
+	private DisassemblyBlock createBlock( ICStackFrame frame ) throws DebugException {
 		ICDISession session = (ICDISession)getDebugTarget().getAdapter( ICDISession.class );
 		if ( session != null ) {
 			ICDISourceManager sm = session.getSourceManager();
 			if ( sm != null ) {
 				String fileName = frame.getFile();
 				int lineNumber = frame.getLineNumber();
-				ICDIInstruction[] instructions = new ICDIInstruction[0];
+				ICDIMixedInstruction[] mixedInstrs = new ICDIMixedInstruction[0];
 				long address = frame.getAddress();				
 				if ( fileName != null && fileName.length() > 0 ) {
 					try {
-						instructions = sm.getInstructions( fileName, 
-														   lineNumber, 
-														   CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) );
+						mixedInstrs = sm.getMixedInstructions( fileName, 
+															   lineNumber, 
+															   CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) );
 					}
 					catch( CDIException e ) {
 						targetRequestFailed( CoreModelMessages.getString( "Disassembly.Unable_to_get_disassembly_instructions_1" ), e ); //$NON-NLS-1$
 					}
 				}
-				if ( instructions.length == 0 ||
+				if ( mixedInstrs.length == 0 ||
 				// Double check if debugger returns correct address range.
-						!containsAddress( instructions, address ) ) {
+						!containsAddress( mixedInstrs, address ) ) {
 					if ( address >= 0 ) {
 						try {
-							instructions = getFunctionInstructions( sm.getInstructions( address, address + DISASSEMBLY_BLOCK_SIZE ) );
+							ICDIInstruction[] instructions = getFunctionInstructions( sm.getInstructions( address, address + DISASSEMBLY_BLOCK_SIZE ) );
+							return DisassemblyBlock.create( this, instructions );
 						}
 						catch( CDIException e ) {
 							targetRequestFailed( CoreModelMessages.getString( "Disassembly.Unable_to_get_disassembly_instructions_2" ), e ); //$NON-NLS-1$
 						}
 					}
 				}
-				fInstructions = new IAsmInstruction[instructions.length];
-				for ( int i = 0; i < fInstructions.length; ++i ) {
-					fInstructions[i] = new AsmInstruction( instructions[i] );
+				else {
+					return DisassemblyBlock.create( this, mixedInstrs );
 				}
 			}
 		}
+		return null;
 	}
 
-	private void loadInstructions( long address, int length ) throws DebugException {
-		fInstructions = new IAsmInstruction[0];
-		
+	private boolean containsAddress( ICDIMixedInstruction[] mi, long address ) {
+		for( int i = 0; i < mi.length; ++i ) {
+			ICDIInstruction[] instructions = mi[i].getInstructions();
+			for ( int j = 0; j < instructions.length; ++j )
+				if ( instructions[j].getAdress() == address )
+					return true;
+		}
+		return false;
 	}
 
 	private ICDIInstruction[] getFunctionInstructions( ICDIInstruction[] rawInstructions ) {
@@ -139,7 +118,11 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 	}
 
 	public void dispose() {
-		fInstructions = null;
+		for ( int i = 0; i < fBlocks.length; ++i )
+			if ( fBlocks[i] != null ) {
+				fBlocks[i].dispose();
+				fBlocks[i] = null;
+			}
 	}
 
 	/* (non-Javadoc)

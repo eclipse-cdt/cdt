@@ -10,14 +10,11 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 
-import org.eclipse.cdt.debug.core.model.IAsmInstruction;
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
-import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerAction;
@@ -529,13 +526,8 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 					input = (IEditorInput)current;
 				}
 				else {
-					IAsmInstruction[] instructions = new IAsmInstruction[0];
 					try {
-						IDisassembly disassembly = ((ICDebugTarget)frame.getDebugTarget()).getDisassembly();
-						if ( disassembly != null ) {
-							instructions = disassembly.getInstructions( frame );
-							input = new DisassemblyEditorInput( disassembly, instructions );
-						}
+						input = DisassemblyEditorInput.create( frame );
 					}
 					catch( DebugException e ) {
 						status = new Status( IStatus.ERROR, 
@@ -553,8 +545,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	}
 
 	protected void selectAndReveal( ICStackFrame frame, IEditorInput input ) {
-		long address = frame.getAddress();
-		IRegion region = getLineInformation( address, input );
+		IRegion region = getLineInformation( frame, input );
 		if ( region != null ) {
 			int start = region.getOffset();
 			int length = region.getLength();			
@@ -572,9 +563,9 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	/**
 	 * Returns the line information for the given line in the given editor
 	 */
-	private IRegion getLineInformation( long address, IEditorInput input ) {
+	private IRegion getLineInformation( ICStackFrame frame, IEditorInput input ) {
 		if ( input instanceof DisassemblyEditorInput ) {
-			int line = ((DisassemblyEditorInput)input).getInstructionNumber( address );
+			int line = ((DisassemblyEditorInput)input).getInstructionLine( frame.getAddress() );
 			if ( line > 0 ) {
 				try {
 					return getSourceViewer().getDocument().getLineInformation( --line );
@@ -703,8 +694,8 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		Assert.isNotNull( model );
 		DisassemblyInstructionPointerAnnotation instrPointer = getCurrentInstructionPointer();
 		if ( instrPointer != null ) {
-				model.removeAnnotation( instrPointer );
-				setCurrentInstructionPointer( null );
+			model.removeAnnotation( instrPointer );
+			setCurrentInstructionPointer( null );
 		}
 	}
 

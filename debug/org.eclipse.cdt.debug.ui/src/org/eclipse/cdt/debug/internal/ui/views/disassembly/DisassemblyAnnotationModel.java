@@ -137,10 +137,9 @@ public class DisassemblyAnnotationModel extends AnnotationModel {
 		Position position = null;
 		DisassemblyEditorInput input = getInput();
 		if ( input != null ) {
-			long address = input.getBreakpointAddress( breakpoint );
 			int start = -1;
-			if ( address > 0 && document != null ) {
-				int instrNumber = input.getInstructionNumber( address );
+			if ( document != null ) {
+				int instrNumber = input.getInstructionLine( breakpoint );
 				if ( instrNumber > 0 ) {
 					try {
 						start = fDocument.getLineOffset( instrNumber - 1 );

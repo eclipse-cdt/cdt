@@ -18,7 +18,6 @@ import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInpu
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -109,20 +108,25 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					IResource resource = ResourcesPlugin.getWorkspace().getRoot();
 					String sourceHandle = getSourceHandle( input );
 					long address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-					ICAddressBreakpoint breakpoint = CDIDebugModel.addressBreakpointExists( sourceHandle, resource, address );
-					if ( breakpoint != null ) {
-						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
+					if ( address != 0 ) {
+						ICAddressBreakpoint breakpoint = CDIDebugModel.addressBreakpointExists( sourceHandle, resource, address );
+						if ( breakpoint != null ) {
+							DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
+						}
+						else {
+							CDIDebugModel.createAddressBreakpoint( sourceHandle, 
+																   resource, 
+																   address, 
+																   true, 
+																   0, 
+																   "", //$NON-NLS-1$
+																   true );
+						}
+						return;
 					}
 					else {
-						CDIDebugModel.createAddressBreakpoint( sourceHandle, 
-															   resource, 
-															   address, 
-															   true, 
-															   0, 
-															   "", //$NON-NLS-1$
-															   true );
+						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$						
 					}
-					return;
 				}
 			}
 		}
@@ -141,7 +145,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			if ( !(input instanceof DisassemblyEditorInput) || 
 				 ((DisassemblyEditorInput)input).equals( DisassemblyEditorInput.EMPTY_EDITOR_INPUT ) ) {
 				return false;
-			}
+			}			
 		}
 		return ( selection instanceof ITextSelection );
 	}
@@ -258,8 +262,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			return ((IStorageEditorInput)input).getStorage().getName();
 		}
 		if ( input instanceof DisassemblyEditorInput ) {
-			IFile file = ((DisassemblyEditorInput)input).getModuleFile();
-			return ( file != null ) ? file.getLocation().toOSString() : ""; //$NON-NLS-1$
+			return ((DisassemblyEditorInput)input).getModuleFile();
 		}
 		return ""; //$NON-NLS-1$
 	}

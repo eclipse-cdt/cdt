@@ -10,19 +10,15 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
-import org.eclipse.debug.core.DebugException;
-
 /**
- * Represents the disassembly of a debug target.
+ * A source line in disassembly.
  */
-public interface IDisassembly extends ICDebugElement {
+public interface IAsmSourceLine {
 
 	/**
-	 * Returns the disassembly block for given stack frame.
-	 * 
-	 * @param frame the stack frame for which the disassembly is required
-	 * @return the disassembly block for given stack frame
-	 * @throws DebugException if this method fails.
+	 * Returns the array of the disassembly instructions associated with this source line.
+	 *  
+	 * @return the array of the disassembly instructions associated with this source line
 	 */
-	IDisassemblyBlock getDisassemblyBlock( ICStackFrame frame ) throws DebugException;
+	IAsmInstruction[] getInstructions(); 
 }

@@ -13,13 +13,14 @@ package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
+import org.eclipse.cdt.debug.core.model.IAsmSourceLine;
 import org.eclipse.cdt.debug.core.model.IBreakpointTarget;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
-import org.eclipse.cdt.debug.core.model.IExecFileInfo;
+import org.eclipse.cdt.debug.core.model.IDisassemblyBlock;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -29,148 +30,6 @@ import org.eclipse.ui.IPersistableElement;
  * Editor input associated with a debug element.
  */
 public class DisassemblyEditorInput implements IEditorInput {
-
-	/**
-	 * A storage object used by Disassembly view.
-	 */
-	private static class DisassemblyStorage {
-
-		private IDisassembly fDisassembly;
-		private IAsmInstruction[] fInstructions;
-		protected String fContents;
-		protected long fStartAddress = 0;
-		protected long fEndAddress = 0;
-
-		/**
-		 * Constructor for DisassemblyStorage.
-		 */
-		public DisassemblyStorage( IDisassembly disassembly, IAsmInstruction[] instructions ) {
-			fDisassembly = disassembly;
-			fInstructions = ( instructions != null ) ? instructions : new IAsmInstruction[0];
-			initializeAddresses();
-			createContent();
-		}
-
-		public String getContents() {
-			return fContents;
-		}
-
-		public IDisassembly getDisassembly() {
-			return this.fDisassembly;
-		}
-
-		public boolean containsFrame( ICStackFrame frame ) {
-			if ( !getDisassembly().getDebugTarget().equals( frame.getDebugTarget() ) )
-				return false;
-			long address = frame.getAddress();
-			return (address >= fStartAddress && address <= fEndAddress);
-		}
-
-		public IFile getModuleFile() {
-			IDisassembly d = getDisassembly();
-			IFile result = null;
-			if ( d != null ) {
-				IExecFileInfo info = (IExecFileInfo)d.getAdapter( IExecFileInfo.class );
-				if ( info != null ) {
-					result = info.getExecFile();
-				}
-			}
-			return result;
-		}
-
-		public long getBreakpointAddress( ICLineBreakpoint breakpoint ) {
-			IDisassembly dis = getDisassembly();
-			if ( dis != null ) {
-				IBreakpointTarget bt = (IBreakpointTarget)dis.getDebugTarget().getAdapter( IBreakpointTarget.class );
-				if ( bt != null ) {
-					try {
-						return bt.getBreakpointAddress( breakpoint );
-					}
-					catch( DebugException e ) {
-					}
-				}
-			}
-			return 0;
-		}
-
-		private void createContent() {
-			StringBuffer lines = new StringBuffer();
-			int maxFunctionName = 0;
-			int maxOpcodeLength = 0;
-			long maxOffset = 0;
-			for( int i = 0; i < fInstructions.length; ++i ) {
-				String functionName = fInstructions[i].getFunctionName();
-				if ( functionName.length() > maxFunctionName ) {
-					maxFunctionName = functionName.length();
-				}
-				String opcode = fInstructions[i].getOpcode();
-				if ( opcode.length() > maxOpcodeLength )
-					maxOpcodeLength = opcode.length();
-				if ( fInstructions[i].getOffset() > maxOffset ) {
-					maxOffset = fInstructions[i].getOffset();
-				}
-			}
-			int instrPos = calculateInstructionPosition( maxFunctionName, maxOffset );
-			int argPosition = instrPos + maxOpcodeLength + 1;
-			for( int i = 0; i < fInstructions.length; ++i ) {
-				lines.append( getInstructionString( fInstructions[i], instrPos, argPosition ) );
-			}
-			fContents = lines.toString();
-		}
-
-		private String getInstructionString( IAsmInstruction instruction, int instrPosition, int argPosition ) {
-			int worstCaseSpace = Math.max( instrPosition, argPosition );
-			char[] spaces = new char[worstCaseSpace];
-			Arrays.fill( spaces, ' ' );
-			StringBuffer sb = new StringBuffer();
-			if ( instruction != null ) {
-				sb.append( CDebugUIUtils.toHexAddressString( instruction.getAdress() ) );
-				sb.append( ' ' );
-				String functionName = instruction.getFunctionName();
-				if ( functionName != null && functionName.length() > 0 ) {
-					sb.append( '<' );
-					sb.append( functionName );
-					if ( instruction.getOffset() != 0 ) {
-						sb.append( '+' );
-						sb.append( instruction.getOffset() );
-					}
-					sb.append( ">:" ); //$NON-NLS-1$
-					sb.append( spaces, 0, instrPosition - sb.length() );
-				}
-				sb.append( instruction.getOpcode() );
-				sb.append( spaces, 0, argPosition - sb.length() );
-				sb.append( instruction.getArguments() );
-				sb.append( '\n' );
-			}
-			return sb.toString();
-		}
-
-		private int calculateInstructionPosition( int maxFunctionName, long maxOffset ) {
-			return (16 + maxFunctionName + Long.toString( maxOffset ).length());
-		}
-
-		private void initializeAddresses() {
-			if ( fInstructions.length > 0 ) {
-				fStartAddress = fInstructions[0].getAdress();
-				fEndAddress = fInstructions[fInstructions.length - 1].getAdress();
-			}
-		}
-
-		public int getLineNumber( long address ) {
-			for( int i = 0; i < fInstructions.length; ++i ) {
-				if ( fInstructions[i].getAdress() == address ) {
-					return i + 1;
-				}
-			}
-			return 0;
-		}
-
-		public long getAddress( int lineNumber ) throws IllegalArgumentException {
-			if ( lineNumber > 0 && lineNumber <= fInstructions.length )
-				return fInstructions[--lineNumber].getAdress();
-			throw new IllegalArgumentException();
-		}
-	}
 
 	public static final IEditorInput EMPTY_EDITOR_INPUT = new DisassemblyEditorInput();
 
@@ -182,9 +41,11 @@ public class DisassemblyEditorInput implements IEditorInput {
 			};
 	
 	/**
-	 * Storage associated with this editor input
+	 * Disassembly block associated with this editor input
 	 */
-	private DisassemblyStorage fStorage;
+	private IDisassemblyBlock fBlock;
+
+	private String fContents = ""; //$NON-NLS-1$
 
 	/**
 	 * Constructor for DisassemblyEditorInput.
@@ -198,8 +59,9 @@ public class DisassemblyEditorInput implements IEditorInput {
 	 * @param disassembly
 	 * @param instructions
 	 */
-	public DisassemblyEditorInput( IDisassembly disassembly, IAsmInstruction[] instructions ) {
-		fStorage = new DisassemblyStorage( disassembly, instructions );
+	private DisassemblyEditorInput( IDisassemblyBlock block ) {
+		fBlock = block;
+		createContents();
 	}
 
 	/* (non-Javadoc)
@@ -245,29 +107,158 @@ public class DisassemblyEditorInput implements IEditorInput {
 	}
 
 	public boolean contains( ICStackFrame frame ) {
-		if ( fStorage != null ) {
-			return fStorage.containsFrame( frame );
+		if ( fBlock != null ) {
+			return fBlock.contains( frame );
 		}
 		return false;
 	}
 
 	public String getContents() {
-		return ( fStorage != null ) ? fStorage.getContents() : ""; //$NON-NLS-1$
+		return fContents;
 	}
 
-	public int getInstructionNumber( long address ) {
-		return ( fStorage != null ) ? fStorage.getLineNumber( address ) : 0;
+	public int getInstructionLine( long address ) {
+		if ( fBlock != null ) {
+			IAsmSourceLine[] lines = fBlock.getSourceLines();
+			int result = 0;
+			for ( int i = 0; i < lines.length; ++i ) {
+				IAsmInstruction[] instructions = lines[i].getInstructions();
+				++result;
+				for ( int j = 0; j < instructions.length; ++j ) {
+					++result;
+					if ( instructions[j].getAdress() == address ) {
+						return result;
+					}
+				}
+			}
+		}
+		return 0;
 	}
 
-	public long getAddress( int lineNumber ) throws IllegalArgumentException {
-		return ( fStorage != null ) ? fStorage.getAddress( lineNumber ) : 0;
+	public int getInstructionLine( ICLineBreakpoint breakpoint ) {
+		if ( fBlock != null ) {
+			IDisassembly dis = fBlock.getDisassembly();
+			if ( dis != null ) {
+				IBreakpointTarget bt = (IBreakpointTarget)dis.getDebugTarget().getAdapter( IBreakpointTarget.class );
+				if ( bt != null ) {
+					try {
+						long address = bt.getBreakpointAddress( breakpoint );
+						if ( address != 0 )
+							return getInstructionLine( address );
+					}
+					catch( DebugException e ) {
+					}
+				}
+			}
+		}
+		return 0;
 	}
 
-	public IFile getModuleFile() {
-		return ( fStorage != null ) ? fStorage.getModuleFile() : null;
+	public long getAddress( int lineNumber ) {
+		if ( fBlock != null ) {
+			IAsmSourceLine[] lines = fBlock.getSourceLines();
+			int current = 0;
+			for ( int i = 0; i < lines.length; ++i ) {
+				IAsmInstruction[] instructions = lines[i].getInstructions();
+				++current;
+				if ( lineNumber == current )
+					return instructions[0].getAdress();
+				if ( lineNumber > current && lineNumber <= current + instructions.length )
+					return instructions[lineNumber - current - 1].getAdress();
+				current += instructions.length;
+			}
+		}
+		return 0;
 	}
 
-	public long getBreakpointAddress( ICLineBreakpoint breakpoint ) {
-		return ( fStorage != null ) ? fStorage.getBreakpointAddress( breakpoint ) : 0;
+	public String getModuleFile() {
+		return ( fBlock != null ) ? fBlock.getModuleFile() : null;
+	}
+
+	public static DisassemblyEditorInput create( ICStackFrame frame ) throws DebugException {
+		DisassemblyEditorInput input = null;
+		IDisassembly disassembly = ((ICDebugTarget)frame.getDebugTarget()).getDisassembly();
+		if ( disassembly != null ) {
+			IDisassemblyBlock block = disassembly.getDisassemblyBlock( frame );
+			input = new DisassemblyEditorInput( block );
+		}
+		return input;
+	}
+
+	private void createContents() {
+		StringBuffer lines = new StringBuffer();
+		int maxFunctionName = 0;
+		int maxOpcodeLength = 0;
+		long maxOffset = 0;
+		if ( fBlock != null ) {
+			IAsmSourceLine[] mi = fBlock.getSourceLines();
+			for ( int j = 0; j < mi.length; ++j ) {
+				IAsmInstruction[] instructions = mi[j].getInstructions();
+				for( int i = 0; i < instructions.length; ++i ) {
+					String functionName = instructions[i].getFunctionName();
+					if ( functionName.length() > maxFunctionName ) {
+						maxFunctionName = functionName.length();
+					}
+					String opcode = instructions[i].getOpcode();
+					if ( opcode.length() > maxOpcodeLength )
+						maxOpcodeLength = opcode.length();
+					if ( instructions[i].getOffset() > maxOffset ) {
+						maxOffset = instructions[i].getOffset();
+					}
+				}
+			}
+			int instrPos = calculateInstructionPosition( maxFunctionName, maxOffset );
+			int argPosition = instrPos + maxOpcodeLength + 1;
+			for ( int j = 0; j < mi.length; ++j ) {
+				if ( fBlock.isMixedMode() )
+					lines.append( getSourceLineString( mi[j] ) );
+				IAsmInstruction[] instructions = mi[j].getInstructions();
+				for( int i = 0; i < instructions.length; ++i ) {
+//					if ( fBlock.isMixedMode() )
+//						lines.append( "\t" ); //$NON-NLS-1$
+					lines.append( getInstructionString( instructions[i], instrPos, argPosition ) );
+				}
+			}
+		}
+		fContents = lines.toString();
+	}
+
+	private String getInstructionString( IAsmInstruction instruction, int instrPosition, int argPosition ) {
+		int worstCaseSpace = Math.max( instrPosition, argPosition );
+		char[] spaces = new char[worstCaseSpace];
+		Arrays.fill( spaces, ' ' );
+		StringBuffer sb = new StringBuffer();
+		if ( instruction != null ) {
+			sb.append( CDebugUIUtils.toHexAddressString( instruction.getAdress() ) );
+			sb.append( ' ' );
+			String functionName = instruction.getFunctionName();
+			if ( functionName != null && functionName.length() > 0 ) {
+				sb.append( '<' );
+				sb.append( functionName );
+				if ( instruction.getOffset() != 0 ) {
+					sb.append( '+' );
+					sb.append( instruction.getOffset() );
+				}
+				sb.append( ">:" ); //$NON-NLS-1$
+				sb.append( spaces, 0, instrPosition - sb.length() );
+			}
+			sb.append( instruction.getOpcode() );
+			sb.append( spaces, 0, argPosition - sb.length() );
+			sb.append( instruction.getArguments() );
+			sb.append( '\n' );
+		}
+		return sb.toString();
+	}
+
+	private int calculateInstructionPosition( int maxFunctionName, long maxOffset ) {
+		return (16 + maxFunctionName + Long.toString( maxOffset ).length());
+	}
+
+	private String getSourceLineString( IAsmSourceLine line ) {
+		String text = line.toString();
+		if ( text == null ) {
+			text = DisassemblyMessages.getString( "DisassemblyEditorInput.source_line_is_not_available_1" ) + '\n'; //$NON-NLS-1$
+		}
+		return text;
 	}
 }

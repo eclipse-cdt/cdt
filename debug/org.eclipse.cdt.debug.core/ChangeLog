@@ -1,3 +1,12 @@
+2004-05-06 Mikhail Khodjaiants
+	Implementation of mixed disassembly mode.
+	* IAsmSourceLine.java: new
+	* IDisassembly.java
+	* IDisassemblyBlock.java: new
+	* AsmSourceLine.java: new
+	* Disassembly.java
+	* DisassemblyBlock.java: new
+
 2004-04-30 Mikhail Khodjaiants
 	New copyright.
 	* IJumpToAddress.java

@@ -1,3 +1,11 @@
+2004-05-06 Mikhail Khodjaiants
+	Implementation of mixed disassembly mode.
+	* ToggleBreakpointAdapter.java
+	* DisassemblyMessages.properties
+	* DisassemblyAnnotationModel.java
+	* DisassemblyEditorInput.java
+	* DisassemblyView.java
+
 2004-05-02 Mikhail Khodjaiants
 	Check if the new stack frame is of the same debug target as the old one.
 	* DisassemblyEditorInput.java

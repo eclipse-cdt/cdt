@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IResource;
 
 /**
@@ -117,6 +118,17 @@ public interface ITarget extends IBuildObject {
 	 */
 	public String getDefaultExtension();	
 
+	/**
+	 * Answers a class instance that implements an interface to generate 
+	 * source-level dependencies for the tool specified in the argument. 
+	 * This method may return <code>null</code> in which case, the receiver 
+	 * should assume that the tool does not require dependency information 
+	 * when the project is built.
+	 *  
+	 * @param toolId
+	 * @return
+	 */
+	public IManagedDependencyGenerator getDependencyGenerator(String toolId);
 	
 	/**
 	 * Answers the command line arguments to pass to the make utility used 
@@ -162,12 +174,12 @@ public interface ITarget extends IBuildObject {
 	 */
 	public String[] getTargetOSList();
 		 
-		 /**
-		  * Answers an array of architectures the target can be created on.
-		  * 
-		  * @return String[]
-		  */
-		 public String[] getTargetArchList();
+	 /**
+	  * Answers an array of architectures the target can be created on.
+	  * 
+	  * @return String[]
+	  */
+	 public String[] getTargetArchList();
 
 	/**
 	 * Returns the list of platform specific tools associated with this
@@ -229,7 +241,7 @@ public interface ITarget extends IBuildObject {
 	/**
 	 * Removes the configuration with the ID specified in the argument.
 	 * 
-	 * @param id
+	 * @param id 
 	 */
 	public void removeConfiguration(String id);
 	

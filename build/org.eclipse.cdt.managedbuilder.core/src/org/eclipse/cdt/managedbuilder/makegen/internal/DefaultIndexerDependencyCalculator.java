@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.managedbuilder.makegen.gnu;
+package org.eclipse.cdt.managedbuilder.makegen.internal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,8 @@ import org.eclipse.cdt.internal.core.search.PathCollector;
 import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -29,7 +30,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 /**
  * @since 2.0
  */
-public class DefaultIndexerDependencyCalculator implements IManagedBuilderDependencyCalculator {
+public class DefaultIndexerDependencyCalculator implements IManagedDependencyGenerator {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#findDependencies(org.eclipse.core.resources.IResource)
@@ -79,7 +80,7 @@ public class DefaultIndexerDependencyCalculator implements IManagedBuilderDepend
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#getDependencyCommand()
 	 */
-	public String getDependencyCommand() {
+	public String getDependencyCommand(IResource resource, IManagedBuildInfo info) {
 		// There is no command
 		return null;
 	}

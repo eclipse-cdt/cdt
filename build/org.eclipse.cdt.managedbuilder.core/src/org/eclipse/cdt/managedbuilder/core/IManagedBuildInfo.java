@@ -13,9 +13,11 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.util.List;
 
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+
 public interface IManagedBuildInfo {
-	public static final String DEFAULT_TARGET = "defaultTarget";	//$NON-NLS-1$
 	public static final String DEFAULT_CONFIGURATION = "defaultConfig";	//$NON-NLS-1$
+	public static final String DEFAULT_TARGET = "defaultTarget";	//$NON-NLS-1$
 
 	/**
 	 * Add a new target to the build information for the receiver
@@ -87,49 +89,10 @@ public interface IManagedBuildInfo {
 	public ITarget getDefaultTarget();
 	
 	/**
-	 * Answers the extension that will be built by the current configuration
-	 * for the extension passed in the argument or <code>null</code>.
-	 * 
-	 * @param resourceName
+	 * @param sourceExtension
 	 * @return
 	 */
-	public String getOutputExtension(String resourceExtension);
-	
-	/**
-	 * Answers the flag to be passed to the build tool to produce a specific output 
-	 * or an empty <code>String</code> if there is no special flag. For example, the
-	 * GCC tools use the '-o' flag to produce a named output, for example
-	 * 		gcc -c foo.c -o foo.o
-	 * 
-	 * @param outputExt
-	 * @return
-	 */
-	public String getOutputFlag(String outputExt);
-
-	/**
-	 * Get the target specified in the argument.
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public ITarget getTarget(String id);
-	
-	/**
-	 * Answers the prefix that should be prepended to the name of the build 
-	 * artifact. For example, a library foo, should have the prefix 'lib' and 
-	 * the extension '.a', so the final goal would be 'libfoo.a' 
-	 * 
-	 * @param extension
-	 * @return
-	 */
-	public String getOutputPrefix(String outputExtension);
-
-	/**
-	 * Get all of the targets associated with the receiver.
-	 * 
-	 * @return
-	 */
-	public List getTargets();
+	public IManagedDependencyGenerator getDependencyGenerator(String sourceExtension);
 	
 	/**
 	 * Returns a <code>String</code> containing the flags, including 
@@ -173,22 +136,75 @@ public interface IManagedBuildInfo {
 	 * for the default target/configuration.
 	 */
 	public String getMakeCommand();
+	
+	/**
+	 * Answers the extension that will be built by the current configuration
+	 * for the extension passed in the argument or <code>null</code>.
+	 * 
+	 * @param resourceName
+	 * @return
+	 */
+	public String getOutputExtension(String resourceExtension);
+	
+	/**
+	 * Answers the flag to be passed to the build tool to produce a specific output 
+	 * or an empty <code>String</code> if there is no special flag. For example, the
+	 * GCC tools use the '-o' flag to produce a named output, for example
+	 * 		gcc -c foo.c -o foo.o
+	 * 
+	 * @param outputExt
+	 * @return
+	 */
+	public String getOutputFlag(String outputExt);
+	
+	/**
+	 * Answers the prefix that should be prepended to the name of the build 
+	 * artifact. For example, a library foo, should have the prefix 'lib' and 
+	 * the extension '.a', so the final goal would be 'libfoo.a' 
+	 * 
+	 * @param extension
+	 * @return
+	 */
+	public String getOutputPrefix(String outputExtension);
+	
+	/**
+	 * Get the currently selected target.  This is used while the project
+	 * property pages are displayed
+	 * 
+	 * @return target
+	 */
+	public ITarget getSelectedTarget();
+
+	/**
+	 * Get the target specified in the argument.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public ITarget getTarget(String id);
+
+	/**
+	 * Get all of the targets associated with the receiver.
+	 * 
+	 * @return
+	 */
+	public List getTargets();
 
 	/**
 	 * Returns a <code>String</code> containing the command-line invocation 
 	 * for the tool associated with the source extension.
 	 * 
-	 * @param extension the file extension of the file to be built
-	 * @return String
+	 * @param sourceExtension the file extension of the file to be built
+	 * @return a String containing the command line invocation for the tool
 	 */
-	public String getToolForSource(String extension);
+	public String getToolForSource(String sourceExtension);
 
 	/**
 	 * Returns a <code>String</code> containing the command-line invocation 
 	 * for the tool associated with the target extension.
 	 * 
-	 * @param extension
-	 * @return
+	 * @param extension the file extension of the build goal
+	 * @return a String containing the command line invocation for the tool
 	 */
 	public String getToolForTarget(String extension);
 	
@@ -204,26 +220,10 @@ public interface IManagedBuildInfo {
 	
 	/**
 	 * Answers the version of the build information in the format 
-	 * @return
+	 * @return a <code>String</code> containing the build information 
+	 * version
 	 */
 	public String getVersion();
-
-	
-	/**
-	 * Answers whether the receiver has been changed and requires the 
-	 * project to be rebuilt. When a project is first created, it is 
-	 * assumed that the user will need it to be fully rebuilt. However 
-	 * only option and tool command changes will trigger the build 
-	 * information for an existing project to require a rebuild.
-	 * <p>
-	 * Clients can reset the state to force or clear the rebuild status 
-	 * using <code>setRebuildState()</code>
-	 * @see ManagedBuildInfo#setRebuildState(boolean)
-	 * 
-	 * @return <code>true</code> if the resource managed by the 
-	 * receiver needs to be rebuilt
-	 */
-	public boolean needsRebuild();
 	
 	/**
 	 * Answers true if the build model has been changed by the user.
@@ -241,14 +241,24 @@ public interface IManagedBuildInfo {
 	 */
 	public boolean isHeaderFile(String ext);
 
-	public void removeTarget(String id);
 	
 	/**
-	 * Set the dirty flag for the build model to the value of the argument.
+	 * Answers whether the receiver has been changed and requires the 
+	 * project to be rebuilt. When a project is first created, it is 
+	 * assumed that the user will need it to be fully rebuilt. However 
+	 * only option and tool command changes will trigger the build 
+	 * information for an existing project to require a rebuild.
+	 * <p>
+	 * Clients can reset the state to force or clear the rebuild status 
+	 * using <code>setRebuildState()</code>
+	 * @see ManagedBuildInfo#setRebuildState(boolean)
 	 * 
-	 * @param isDirty
+	 * @return <code>true</code> if the resource managed by the 
+	 * receiver needs to be rebuilt
 	 */
-	public void setDirty(boolean isDirty);
+	public boolean needsRebuild();
+
+	public void removeTarget(String id);
 	
 	/**
 	 * Set the primary configuration for the receiver.
@@ -259,6 +269,7 @@ public interface IManagedBuildInfo {
 	public void setDefaultConfiguration(IConfiguration configuration);
 	
 	/**
+	 * 
 	 * @param configuration
 	 * @return
 	 */
@@ -272,6 +283,13 @@ public interface IManagedBuildInfo {
 	public void setDefaultTarget(ITarget target);
 	
 	/**
+	 * Set the dirty flag for the build model to the value of the argument.
+	 * 
+	 * @param isDirty
+	 */
+	public void setDirty(boolean isDirty);
+	
+	/**
 	 * Sets the rebuild state in the receiver to the value of the argument. 
 	 * This is a potentially expensive option, so setting it to true should 
 	 * only be done if a project resource or setting has been modified in a 
@@ -282,18 +300,10 @@ public interface IManagedBuildInfo {
 	public void setRebuildState(boolean rebuild);
 	
 	/**
-	 * Set the currently selected target.  This is used while the project
+	 * Set the currently selected target. This is used while the project 
 	 * property pages are displayed
 	 * 
-	 * @param target
+	 * @param target the user selection
 	 */
 	public void setSelectedTarget(ITarget target);
-	
-	/**
-	 * Get the currently selected target.  This is used while the project
-	 * property pages are displayed
-	 * 
-	 * @return target
-	 */
-	public ITarget getSelectedTarget();
 }

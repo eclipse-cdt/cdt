@@ -109,7 +109,7 @@
                   This is an optional field that specifies the class that provides the dependency calculation for a given tool. This field is unused in CDT 1.2.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -28,12 +28,12 @@ import java.util.Vector;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -205,7 +205,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	
 	// Local variables needed by generator
 	private String buildTargetName;
-	private ITarget defaultTarget;
+	private Vector buildTools;
 	private Vector deletedFileList;
 	private Vector dependencyMakefiles;
 	private String extension;
@@ -319,9 +319,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		String outputExtension = info.getOutputExtension(inputExtension);
 		String outflag = null;
 		String outputPrefix = null;
+		IManagedDependencyGenerator depGen = info.getDependencyGenerator(inputExtension);
+		boolean doDepGen = (depGen != null && depGen.getCalculatorType() == IManagedDependencyGenerator.TYPE_COMMAND); 
 
 		// If the tool creates a dependency file, add it to the list
-		if (true) {
+		if (doDepGen) {
 			String depFile =  relativePath + resourceName + DOT + DEP_EXT;
 			getDependencyMakefiles().add(depFile);
 		}
@@ -345,14 +347,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
 		buffer.append(TAB + AT + buildCmd);
 		
-		// TODO determine if there are any deps to calculate
-		if (true) {
+		// determine if there are any deps to calculate
+		if (doDepGen && depGen.getCalculatorType() == IManagedDependencyGenerator.TYPE_COMMAND) {
 			buffer.append(WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK);
-			// TODO get the dep rule out of the tool
-			String depRule =  "$(@:%." + outputExtension + "=%." + DEP_EXT + ")";
-			buffer.append(TAB + ECHO + WHITESPACE + "-n" + WHITESPACE + depRule + WHITESPACE + SINGLE_QUOTE + relativePath + SINGLE_QUOTE + WHITESPACE + ">" + WHITESPACE + depRule + WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append(TAB + cmd + WHITESPACE + "-MM -MG -P -w" + WHITESPACE + buildFlags + WHITESPACE + IN_MACRO + WHITESPACE + ">>" + WHITESPACE + depRule); //$NON-NLS-1$ //$NON-NLS-2$
-			
+			// get the dep rule out of the generator
+			String depCmd = depGen.getDependencyCommand(resource, info);
+			buffer.append(depCmd);
 		}
 		
 		// Say goodbye to the nice user
@@ -375,9 +375,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		String relativePath = moduleRelativePath.toString();
 		relativePath += relativePath.length() == 0 ? "" : SEPARATOR;  //$NON-NLS-1$
  		
- 		// get the list of tools associated with our target
- 		ITool toolArray[] = defaultTarget.getTools();
- 		
  		// For each tool for the target, lookup the kinds of sources it can handle and
  		// create a map which will map its extension to a string which holds its list of sources.
   		HashMap extensionToRuleStringMap = new HashMap();
@@ -386,8 +383,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
  		Set outputExtensionsSet = getOutputExtentions();
  		
  		// put in rules if the file type is not a generated file
- 		for(int k = 0; k < toolArray.length; k++) {
- 			List extensionsList = toolArray[k].getInputExtensions();
+ 		Iterator iter = buildTools.iterator();
+ 		while(iter.hasNext()) {
+ 			List extensionsList = ((ITool)iter.next()).getInputExtensions();
   			// iterate over all extensions that the tool knows how to handle
  			Iterator exListIterator = extensionsList.iterator();
   			while(exListIterator.hasNext())	{
@@ -935,7 +933,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 
 
-	/**
+	/* (non-Javadoc)
 	 * @return
 	 */
 	private Vector getDeletedFileList() {
@@ -945,7 +943,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		return deletedFileList;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @return
 	 */
 	private Vector getDependencyMakefiles() {
@@ -955,7 +953,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		return dependencyMakefiles;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * Strips off the file extension from the argument and returns 
 	 * the name component in a <code>String</code>
 	 * 
@@ -1017,9 +1015,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 */
 	protected Set getOutputExtentions() {
 		if (outputExtensionsSet == null) {
-			// Get the list of tools associated with our target
-			ITool toolArray[] = defaultTarget.getTools();
-			
 			// The set of output extensions which will be produced by this tool.
 			// It is presumed that this set is not very large (likely < 10) so
 			// a HashSet should provide good performance.
@@ -1027,8 +1022,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			
 			// For each tool for the target, lookup the kinds of sources it outputs
 			// and add that to our list of output extensions.
-			for(int k = 0; k < toolArray.length; k++) {
-				String[] outputs = toolArray[k].getOutputExtensions();
+			Iterator iter = buildTools.iterator();
+			while(iter.hasNext()) {
+				String[] outputs = ((ITool)iter.next()) .getOutputExtensions();
 				outputExtensionsSet.addAll(Arrays.asList(outputs));
 			}
 		}
@@ -1079,10 +1075,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		if (extension == null) {
 			extension = new String();
 		}
-		defaultTarget = info.getDefaultTarget();
+		// Cache the build tools
+		buildTools = new Vector(Arrays.asList(info.getDefaultTarget().getTools()));
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * Answers <code>true</code> if the argument is found in a generated container 
 	 * @param resource
 	 * @return boolean
@@ -1274,7 +1271,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		Util.save(makeBuf, modMakefile);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * The makefile generator "knows" about source files participating in the 
 	 * the build. It does not keep track of the targets that the build produces. 
 	 * Instead, it keeps a set of transformation macros that it supplies to the 
@@ -1316,17 +1313,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		// which says that B depends on A.
  		// TODO Handle dependencies for complex chains of the form A->B->C
 	
- 		// get the list of tools associated with our target
- 		ITool toolArray[] = defaultTarget.getTools();
- 		
  		// set of input extensions for which rules have been created so far
  		HashSet handledInputExtensions = new HashSet();
  		
  		// Look at each input extension and generate an appropriate macro for that extension
  		// based on whether the file is generated or not.  We do not want to create rules for
  		// generated files due to the current way the makefile is structured.
- 		for(int k = 0; k < toolArray.length; k++) {
- 			List extensionsList = toolArray[k].getInputExtensions();
+ 		Iterator iter = buildTools.iterator();
+ 		while(iter.hasNext()) {
+ 			ITool tool = (ITool)iter.next();
+ 			List extensionsList = tool.getInputExtensions();
  			
  			// iterate over all extensions that the tool knows how to handle
  			Iterator exListIterator = extensionsList.iterator();
@@ -1348,7 +1344,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
  					// OBJS = $(macroName1: $(ROOT)/%.input1=%.output1) ... $(macroNameN: $(ROOT)/%.inputN=%.outputN)
  					objectsBuffer.append(WHITESPACE + "$(" + macroName + COLON + "$(ROOT)" + SEPARATOR + WILDCARD	//$NON-NLS-1$ //$NON-NLS-2$
  							+ DOT + extensionName + "=" + WILDCARD + DOT +	//$NON-NLS-1$
- 							toolArray[k].getOutputExtension(extensionName) + ")" );	//$NON-NLS-1$
+ 							tool.getOutputExtension(extensionName) + ")" );	//$NON-NLS-1$
  					
  					// And another for the deps makefiles
  					// DEPS = $(macroName1: $(ROOT)/%.input1=%.DEP_EXT) ... $(macroNameN: $(ROOT)/%.inputN=%.DEP_EXT)
@@ -1367,7 +1363,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		Util.save(macroBuffer, fileHandle);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @param fileHandle
 	 * @throws CoreException
 	 */
@@ -1376,10 +1372,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		StringBuffer buffer = addDefaultHeader();
 		
 		// Add the known macros
- 		ITool toolArray[] = defaultTarget.getTools();
  		HashSet handledInputExtensions = new HashSet();
- 		for(int k = 0; k < toolArray.length; k++) {
- 			List extensionsList = toolArray[k].getInputExtensions();
+ 		Iterator iter = buildTools.iterator();
+ 		while(iter.hasNext()) {
+ 			List extensionsList = ((ITool)iter.next()).getInputExtensions();
  			Iterator exListIterator = extensionsList.iterator();
  			while(exListIterator.hasNext()) {
  				// create a macro of the form "EXTENSION_SRCS :="
@@ -1399,7 +1395,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		Util.save(buffer, fileHandle);
 	}
 
-	/* (non-javadoc)
+	/*  (non-Javadoc)
 	 * Create the entire contents of the makefile.
 	 * 
 	 * @param fileHandle The file to place the contents in.

@@ -31,7 +31,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -326,7 +326,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @param toolId
 	 * @return
 	 */
-	public IManagedBuilderDependencyCalculator getDependencyCalculator(String toolId) {
+	public IManagedDependencyGenerator getDependencyCalculator(String toolId) {
 		try {
 			IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(ManagedBuilderCorePlugin.getUniqueIdentifier(), ManagedBuilderCorePlugin.DEP_CALC_ID);
 			if (extension != null) {
@@ -339,7 +339,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) { 
 							if (element.getAttribute(ITool.ID).equals(toolId)) {
 								if (element.getAttribute(ManagedBuilderCorePlugin.DEP_CALC_ID) != null) {
-									return (IManagedBuilderDependencyCalculator) element.createExecutableExtension(ManagedBuilderCorePlugin.DEP_CALC_ID);
+									return (IManagedDependencyGenerator) element.createExecutableExtension(ManagedBuilderCorePlugin.DEP_CALC_ID);
 								}
 							}
 						}

@@ -47,6 +47,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IFile;
@@ -88,6 +89,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	
 	// This is the version of the manifest and project files that
 	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(2, 0, 0);
+	private static Map depCalculatorsMap;
 	private static boolean extensionTargetsLoaded = false;
 	private static Map extensionTargetMap;
 	private static List extensionTargets;
@@ -136,6 +138,69 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return targets;
 	}
 
+	/**
+	 * Answers an instance of a class that implements the 
+	 * <code>IManagedDependencyGenerator</code> interface to generate 
+	 * the source-level dependencies that make utilities rely on to 
+	 * properly rebuild projects  
+	 *  
+	 * @param toolId the unique <code>ID</code> of the tool to look for
+	 * @return the dependency generator for the tool specified in the argument or <code>null</code>
+	 */
+	public static IManagedDependencyGenerator getDependencyGenerator(String toolId) {
+		return (IManagedDependencyGenerator) getExtensionDepCalcMap().get(toolId);
+	}
+	
+	/**
+	 * @param toolId
+	 * @return
+	 */
+	public static IManagedDependencyGenerator createDependencyGenerator(String toolId) {
+		try {
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint extension = registry.getExtensionPoint(EXTENSION_POINT_ID);
+			if (extension != null) {
+				// There could be many of these
+				IExtension[] extensions = extension.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
+					for (int j = 0; j < configElements.length; j++) {
+						IConfigurationElement element = configElements[j];
+						if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) { 
+							if (element.getAttribute(ITool.ID).equals(toolId)) {
+								if (element.getAttribute(ManagedBuilderCorePlugin.DEP_CALC_ID) != null) {
+									return (IManagedDependencyGenerator) element.createExecutableExtension(ManagedBuilderCorePlugin.DEP_CALC_ID);
+								}
+							}
+						} else if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) {
+							IConfigurationElement[] children = element.getChildren(ITool.TOOL_ELEMENT_NAME);
+							for (int k = 0; k < children.length; ++k) {
+								IConfigurationElement child = children[k];
+								if (child.getAttribute(ITool.ID).equals(toolId)) {
+									if (child.getAttribute(ManagedBuilderCorePlugin.DEP_CALC_ID) != null) {
+										return (IManagedDependencyGenerator) child.createExecutableExtension(ManagedBuilderCorePlugin.DEP_CALC_ID);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} 
+		catch (CoreException e) {
+			// Probably not defined
+			ManagedBuilderCorePlugin.log(e);
+		}
+		return null;
+	}
+	
+	protected static Map getExtensionDepCalcMap() {
+		if (depCalculatorsMap == null) {
+			depCalculatorsMap = new HashMap();
+		}
+		return depCalculatorsMap;
+	}
+	
 	/* (non-Javadoc)
 	 * Safe accessor for the map of IDs to Targets
 	 * 
@@ -247,6 +312,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}
 
+	/**
+	 * @param targetId
+	 * @return
+	 */
 	public static IManagedBuilderMakefileGenerator getMakefileGenerator(String targetId) {
 		try {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -555,10 +624,17 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 		
 	/**
+	 * Adds a tool that is is specified in the manifest to the 
+	 * build system. This tool is available to any target that 
+	 * has a reference to it as part of its description. This 
+	 * permits a tool that is common to many targets to be defined 
+	 * only once.   
+	 *  
 	 * @param tool
 	 */
 	public static void addExtensionTool(Tool tool) {
 		getExtensionToolMap().put(tool.getId(), tool);
+		getExtensionDepCalcMap().put(tool.getId(), createDependencyGenerator(tool.getId()));
 	}
 	
 	/**
@@ -609,7 +685,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			ManagedBuilderCorePlugin.log(e);
 			return new Status(IStatus.ERROR, 
 				ManagedBuilderCorePlugin.getUniqueIdentifier(), 
-				-1, 
+				IStatus.ERROR, 
 				e.getLocalizedMessage(), 
 				e);
 		}
@@ -628,6 +704,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @throws CoreException
 	 */
 	private static void initBuildInfoContainer(ManagedBuildInfo info) throws CoreException {
+		if (info == null) {
+			throw new CoreException(new Status(IStatus.ERROR, 
+					ManagedBuilderCorePlugin.getUniqueIdentifier(), 
+					IStatus.ERROR, 
+					new String(), 
+					null));
+		}
 		// Now associate the path entry container with the project
 		ICProject cProject = info.getCProject();
 		// This does not block the workspace or trigger delta events
@@ -901,6 +984,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		// Nothing in session store, so see if we can load it from cdtbuild
 		if (buildInfo == null && resource instanceof IProject) {
 			buildInfo = loadBuildInfo((IProject)resource);
+			// Make sure there was no error
+			
 			try {
 				// Check if the project needs its container initialized
 				initBuildInfoContainer(buildInfo);

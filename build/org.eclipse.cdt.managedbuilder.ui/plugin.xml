@@ -99,6 +99,7 @@
             name="%ToolName.linker.gnu.c"
             outputFlag="-o"
             command="gcc"
+            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.gnu.c.linker">
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.linker"
@@ -232,6 +233,7 @@
             name="%ToolName.linker.gnu.cpp"
             outputFlag="-o"
             command="g++"
+            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.gnu.cpp.linker">
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.linker"
@@ -358,6 +360,7 @@
             outputs="a"
             command="ar"
             outputPrefix="lib"
+            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.gnu.archiver">
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.archiver"
@@ -372,8 +375,7 @@
                id="gnu.both.lib.option.flags">
          </option>
       </tool>
- <!-- Experimental
-      <tool
+      <!--tool
             command="windres"
             sources="rc"
             outputs="res"
@@ -435,8 +437,7 @@
                browseType="none"
                name="%Option.Posix.UndefSym"
                id="gnu.windres.option.preprocessor.undefined.symbols"/>
-      </tool>
-       -->
+      </tool-->
       <target
             name="%TargetName.gnu"
             id="cdt.managedbuild.target.gnu"
@@ -1192,6 +1193,7 @@
                outputs="exe"
                id="cdt.managedbuild.tool.gnu.cpp.linker">
          </toolReference>
+         <toolReference id="cdt.managedbuild.tool.gnu.windres"/>
       </target>
       <target
             name="%TargetName.cygw.so"

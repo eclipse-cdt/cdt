@@ -13,8 +13,8 @@ import java.util.ResourceBundle;
 import org.eclipse.cdt.core.builder.ICBuilder;
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IBinaryParser;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.core.BinaryParserConfiguration;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -159,7 +159,7 @@ public class CCorePlugin extends Plugin {
 		return getConsole(null);
 	}
 
-	public String[] getBinaryParserFormats() {
+	public IBinaryParserConfiguration[] getBinaryParserConfigurations() {
 		ArrayList list = new ArrayList();
 		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint("BinaryParser");
 		if (extensionPoint != null) {
@@ -167,14 +167,13 @@ public class CCorePlugin extends Plugin {
 			for(int i = 0; i < extensions.length; i++){
 				IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
 				for( int j = 0; j < configElements.length; j++ ) {
-					String attr = configElements[j].getAttribute("format");
-					if (attr != null) {
-						list.add(attr);
-					}
+					String format = configElements[j].getAttribute("format");
+					String name = configElements[j].getAttribute("name");
+					list.add(new BinaryParserConfiguration(format, name));
 				}
 			}
 		}	
-		return (String[])list.toArray(new String[0]);
+		return (IBinaryParserConfiguration[])list.toArray(new IBinaryParserConfiguration[0]);
 	}
 	
 	public IBinaryParser getBinaryParser(String format) {
@@ -195,7 +194,7 @@ public class CCorePlugin extends Plugin {
 		} catch (CoreException e) {
 		} 
 		return null;
-	}	
+	}
 
 	public CoreModel getCoreModel() {
 		return CoreModel.getDefault();

@@ -354,28 +354,33 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * Set the program name attributes on the working copy based on the ICElement
 	 */
 	protected void initializeProgramName(ICElement cElement, ILaunchConfigurationWorkingCopy config) {
-		String name = null;
+		IBinary binary = null;
 		if (cElement instanceof ICProject) {
 			IBinaryContainer bc = ((ICProject) cElement).getBinaryContainer();
 			IBinary[] bins = bc.getBinaries();
 			if (bins.length == 1) {
-				name = bins[0].getElementName();
+				binary = bins[0];
 			}
 		}
-		if (name == null) {
-			name = EMPTY_STRING;
-		}
-		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, name);
-		if (name.length() > 0) {
-			int index = name.lastIndexOf('.');
-			if (index > 0) {
-				name = name.substring(index + 1);
+
+		if (binary != null) {
+			String path;
+			try {
+				path = binary.getResource().getProjectRelativePath().toOSString();
+				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, path);
+				String name = binary.getElementName();
+				int index = name.lastIndexOf('.');
+				if (index > 0) {
+					name = name.substring(index + 1);
+				}
+				name = getLaunchConfigurationDialog().generateName(name);
+				config.rename(name);
 			}
-			name = getLaunchConfigurationDialog().generateName(name);
-			config.rename(name);
+			catch (CModelException e) {
+			}
+
 		}
 	}
-
 	/**
 	 * @see ILaunchConfigurationTab#getName()
 	 */

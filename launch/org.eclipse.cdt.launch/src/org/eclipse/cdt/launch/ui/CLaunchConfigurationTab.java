@@ -77,7 +77,8 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				catch (CoreException e) {
 					return null;
 				}
-				if (descriptor.getPlatform().equals(platform)) {
+				String projectPlatform = descriptor.getPlatform();
+				if (projectPlatform.equals(platform) || projectPlatform.equals("*")) {
 					return (ICElement) obj;
 				}
 			}

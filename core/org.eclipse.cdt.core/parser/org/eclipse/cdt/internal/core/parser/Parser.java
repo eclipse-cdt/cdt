@@ -50,13 +50,16 @@ import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -6674,9 +6677,29 @@ public class Parser implements IParserData, IParser
 		if( contextNode == null ) return null;
 		if( contextNode instanceof IASTDeclaration )
 		{
-			if( contextNode instanceof IASTOffsetableNamedElement )
+			if( contextNode instanceof IASTOffsetableNamedElement && !(contextNode instanceof IASTUsingDirective) && !(contextNode instanceof IASTUsingDeclaration))
 			{
-				if( ((IASTOffsetableNamedElement)contextNode).getName().equals( finalDuple.toString() ) )
+				if( contextNode instanceof IASTFunction ) {
+					Iterator i = ((IASTFunction)contextNode).getParameters();
+					while (i.hasNext()) {
+						IASTParameterDeclaration parm = (IASTParameterDeclaration)i.next();
+						if (parm.getName().equals(finalDuple.toString()) && parm.getNameOffset() == finalDuple.getStartOffset() && parm.getStartingLine() == finalDuple.getLineNumber() && parm instanceof IASTNode) {
+							return (IASTNode) parm;
+						}
+					}
+				}
+
+				if (contextNode instanceof IASTMethod) {
+					Iterator parms = ((IASTMethod)contextNode).getParameters();
+					while (parms.hasNext()) {
+						Object parm = parms.next();
+						if (parm instanceof IASTParameterDeclaration && ((IASTParameterDeclaration)parm).getName().equals(finalDuple.toString()) && ((IASTParameterDeclaration)parm).getNameOffset() == finalDuple.getStartOffset()) {
+							return (IASTNode)parm;
+						}
+					}
+				}
+				
+				if( ((IASTOffsetableNamedElement)contextNode).getName().equals( finalDuple.toString() ) && ((IASTOffsetableNamedElement)contextNode).getNameOffset() == finalDuple.getStartOffset())  // 75731 needs to include offset for equality as well...
 					return contextNode;
 			}
 			if( contextNode instanceof IASTQualifiedNameElement )

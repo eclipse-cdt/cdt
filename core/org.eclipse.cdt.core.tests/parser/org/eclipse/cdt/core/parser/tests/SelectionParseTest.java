@@ -22,6 +22,8 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTNamespaceDefinition;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterDeclaration;
 
 /**
  * @author jcamelon
@@ -516,5 +518,192 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		IASTField rank = (IASTField) node;
 		assertEquals( rank.getName(), "rank"); //$NON-NLS-1$
 	}
+	
+	
+	public void testBug75731() throws Exception 
+	{
+		Writer writer = new StringWriter();
+		writer.write("int rank() {\n"); //$NON-NLS-1$
+		writer.write("return 5;\n}\n"); //$NON-NLS-1$
+		writer.write("class Card{\n"); //$NON-NLS-1$
+		writer.write("private:\n"); //$NON-NLS-1$
+		writer.write("Card( int rank );\n"); //$NON-NLS-1$
+		writer.write("int rank;\n"); //$NON-NLS-1$
+		writer.write("public:\n");  //$NON-NLS-1$
+		writer.write("int getRank();\n};\n"); //$NON-NLS-1$
+		writer.write("Card::Card( int rank )\n{\n");  //$NON-NLS-1$
+		writer.write("this->rank = ::rank();\n"); //$NON-NLS-1$
+		writer.write("this->rank = this->rank;\n"); //$NON-NLS-1$
+		writer.write("this->rank = rank;\n"); //$NON-NLS-1$
+		writer.write("this->rank = Card::rank;\n"); //$NON-NLS-1$
+		writer.write("this->rank = getRank();\n}\n"); //$NON-NLS-1$
+		
+		String code = writer.toString();
+		int index = code.indexOf( "int rank() {") + 4; //$NON-NLS-1$
+		IASTNode node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTFunction );
+		IASTFunction rank1 = (IASTFunction) node;
+		assertEquals( rank1.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank1.getNameOffset(), index );
+		
+		index = code.indexOf( "class Card{") + 6; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTClassSpecifier );
+		IASTClassSpecifier card1 = (IASTClassSpecifier) node;
+		assertEquals( card1.getName(), "Card"); //$NON-NLS-1$
+		assertEquals( card1.getNameOffset(), index );
+		
+		index = code.indexOf( "Card( int rank );"); //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTMethod );
+		IASTMethod card2 = (IASTMethod) node;
+		assertEquals( card2.getName(), "Card"); //$NON-NLS-1$
+		assertEquals( card2.getNameOffset(), index );
+		
+		index = code.indexOf( "Card( int rank );") + 10; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTParameterDeclaration );
+		IASTParameterDeclaration rank2 = (IASTParameterDeclaration) node;
+		assertEquals( rank2.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank2.getNameOffset(), index );
+
+		index = code.indexOf( "int rank;") + 4; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTField );
+		IASTField rank3 = (IASTField) node;
+		assertEquals( rank3.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank3.getNameOffset(), index );
+		
+		index = code.indexOf( "int getRank();") + 4; //$NON-NLS-1$
+		node = parse( code, index, index + 7 );
+		assertTrue( node instanceof IASTMethod );
+		IASTMethod getRank1 = (IASTMethod) node;
+		assertEquals( getRank1.getName(), "getRank"); //$NON-NLS-1$
+		assertEquals( getRank1.getNameOffset(), index );
+		
+		index = code.indexOf( "Card::Card( int rank )"); //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTClassSpecifier );
+		IASTClassSpecifier card3 = (IASTClassSpecifier) node;
+		assertEquals( card3.getName(), "Card"); //$NON-NLS-1$
+		assertEquals( card3.getNameOffset(), card1.getNameOffset() );
+		
+		index = code.indexOf( "Card::Card( int rank )") + 6; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTMethod );
+		IASTMethod card4 = (IASTMethod) node;
+		assertEquals( card4.getName(), "Card"); //$NON-NLS-1$
+		assertEquals( card4.getNameOffset(), card2.getNameOffset() );
+		
+		index = code.indexOf( "Card::Card( int rank )") + 16; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTParameterDeclaration );
+		IASTParameterDeclaration rank4 = (IASTParameterDeclaration) node;
+		assertEquals( rank4.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank4.getNameOffset(), index );
+		
+		index = code.indexOf( "this->rank = ::rank();") + 6; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTField );
+		IASTField rank5 = (IASTField) node;
+		assertEquals( rank5.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank5.getNameOffset(), rank3.getNameOffset() );
+		
+		index = code.indexOf( "this->rank = ::rank();") + 15; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTFunction );
+		IASTFunction rank6 = (IASTFunction) node;
+		assertEquals( rank6.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank6.getNameOffset(), rank1.getNameOffset() );
+		
+		index = code.indexOf( "this->rank = this->rank;") + 6; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTField );
+		IASTField rank7 = (IASTField) node;
+		assertEquals( rank7.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank7.getNameOffset(), rank3.getNameOffset() );
+		
+		index = code.indexOf( "this->rank = this->rank;") + 19; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTField );
+		IASTField rank8 = (IASTField) node;
+		assertEquals( rank8.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank8.getNameOffset(), rank3.getNameOffset() );
+		
+		index = code.indexOf( "this->rank = rank;") + 6; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTField );
+		IASTField rank9 = (IASTField) node;
+		assertEquals( rank9.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank9.getNameOffset(), rank3.getNameOffset() );
+		
+		index = code.indexOf( "this->rank = rank;") + 13; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTParameterDeclaration );
+		IASTParameterDeclaration rank10 = (IASTParameterDeclaration) node;
+		assertEquals( rank10.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank10.getNameOffset(), rank4.getNameOffset() );
+		
+		index = code.indexOf( "this->rank = Card::rank;") + 6; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTField );
+		IASTField rank11 = (IASTField) node;
+		assertEquals( rank11.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank11.getNameOffset(), rank3.getNameOffset() );
+		
+		index = code.indexOf( "this->rank = Card::rank;") + 19; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTField );
+		IASTField rank12 = (IASTField) node;
+		assertEquals( rank12.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank12.getNameOffset(), rank3.getNameOffset() );
+		
+		index = code.indexOf( "this->rank = getRank();") + 6; //$NON-NLS-1$
+		node = parse( code, index, index + 4 );
+		assertTrue( node instanceof IASTField );
+		IASTField rank13 = (IASTField) node;
+		assertEquals( rank13.getName(), "rank"); //$NON-NLS-1$
+		assertEquals( rank13.getNameOffset(), rank3.getNameOffset() );
+		
+		index = code.indexOf( "this->rank = getRank();") + 13; //$NON-NLS-1$
+		node = parse( code, index, index + 7 );
+		assertTrue( node instanceof IASTMethod );
+		IASTMethod getRank2 = (IASTMethod) node;
+		assertEquals( getRank2.getName(), "getRank"); //$NON-NLS-1$
+		assertEquals( getRank2.getNameOffset(), getRank1.getNameOffset() );
+	}
+
+	public void testBug77989() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write("namespace N {        /* A */\n"); //$NON-NLS-1$
+		writer.write("class C{};\n}\n"); //$NON-NLS-1$
+		writer.write("using namespace N;   /* B */\n"); //$NON-NLS-1$
+		writer.write("N::C c;              /* C */\n"); //$NON-NLS-1$
+		
+		String code = writer.toString();
+		int index = code.indexOf( "using namespace N;") + 16; //$NON-NLS-1$
+		IASTNode node = parse( code, index, index + 1 );
+		assertTrue( node instanceof ASTNamespaceDefinition );
+		ASTNamespaceDefinition n = (ASTNamespaceDefinition) node;
+		assertEquals( n.getName(), "N"); //$NON-NLS-1$
+		assertEquals( n.getNameOffset(), 10 );
+		assertEquals( n.getStartingLine(), 1 );
+	}
+
+	public void testBug78435() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write("int itself;          //A\n"); //$NON-NLS-1$ 
+		writer.write("void f(int itself){} //B\n"); //$NON-NLS-1$
+		
+		String code = writer.toString();
+		int index = code.indexOf( "void f(int itself){}") + 11; //$NON-NLS-1$
+		IASTNode node = parse( code, index, index + 6 );
+		assertTrue( node instanceof ASTParameterDeclaration );
+		ASTParameterDeclaration n = (ASTParameterDeclaration) node;
+		assertEquals( n.getName(), "itself"); //$NON-NLS-1$
+		assertEquals( n.getNameOffset(), 36 );
+		assertEquals( n.getStartingLine(), 2 );
+	}
+
 }
 

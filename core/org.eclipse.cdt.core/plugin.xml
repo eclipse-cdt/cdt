@@ -111,4 +111,20 @@
       </run>
    </extension>
 
+   <!-- Some well known C file extensions -->
+   <extension point="org.eclipse.team.core.fileTypes">
+     <fileTypes extension="c" type="text"/>
+     <fileTypes extension="cc" type="text"/>
+     <fileTypes extension="cpp" type="text"/>
+     <fileTypes extension="cxx" type="text"/>
+     <fileTypes extension="h" type="text"/>
+     <fileTypes extension="hh" type="text"/>
+     <fileTypes extension="o" type="binary"/>
+     <fileTypes extension="a" type="binary"/>
+     <fileTypes extension="so" type="binary"/>
+     <fileTypes extension="dll" type="binary"/>
+     <fileTypes extension="exe" type="binary"/>
+     <fileTypes extension="com" type="binary"/>
+   </extension>
+
 </plugin>

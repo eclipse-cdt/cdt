@@ -1,3 +1,7 @@
+2003-09-09 Mikhail Khodjaiants
+	New class - SolibSearchPathBlock. Implements the UI control block to set the shared library search path.
+	* SolibSearchPathBlock.java
+
 2003-08-29 Mikhail Khodjaiants
 	Label for target suspended by shared library event.
 	* CDTDebugModelPresentation.java

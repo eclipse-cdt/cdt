@@ -15,15 +15,15 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.cdi.model.*;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Argument;
-import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
+import org.eclipse.cdt.debug.mi.core.cdi.model.ArgumentObject;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListArguments;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListLocals;
@@ -164,15 +164,15 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			}
 			if (argument == null) {
 				String name = argObj.getName();
-				StackFrame stack = argObj.getStackFrame();
+				ICDIStackFrame stack = argObj.getStackFrame();
 				Session session = (Session)getSession();
-				Thread currentThread = null;
-				StackFrame currentFrame = null;
+				ICDIThread currentThread = null;
+				ICDIStackFrame currentFrame = null;
 				if (stack != null) {
 					ICDITarget currentTarget = session.getCurrentTarget();
-					currentThread = (Thread)currentTarget.getCurrentThread();
-					currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
-					((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
+					currentThread = currentTarget.getCurrentThread();
+					currentFrame = currentThread.getCurrentStackFrame();
+					stack.getThread().setCurrentStackFrame(stack, false);
 				}
 				try {
 					MISession mi = session.getMISession();
@@ -216,15 +216,12 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getArgumentObjects(ICDIStackFrame)
 	 */
 	public ICDIArgumentObject[] getArgumentObjects(ICDIStackFrame frame) throws CDIException {
-		if (!(frame instanceof StackFrame)) {
-			return new ICDIArgumentObject[0];
-		}
 		List argObjects = new ArrayList();
 		Session session = (Session)getSession();
 		ICDITarget currentTarget = session.getCurrentTarget();
-		Thread currentThread = (Thread)currentTarget.getCurrentThread();
-		StackFrame currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
-		((Thread)(frame.getThread())).setCurrentStackFrame((StackFrame)frame, false);
+		ICDIThread currentThread = currentTarget.getCurrentThread();
+		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
@@ -243,10 +240,10 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				args = miFrames[0].getArgs();
 			}
 			if (args != null) {
-				ICDITarget target = frame.getThread().getTarget();
+				ICDITarget tgt = frame.getThread().getTarget();
 				for (int i = 0; i < args.length; i++) {
-					ArgumentObject arg = new ArgumentObject(target, args[i].getName(),
-					 (StackFrame)frame, args.length - i, depth);
+					ArgumentObject arg = new ArgumentObject(tgt, args[i].getName(),
+					 frame, args.length - i, depth);
 					argObjects.add(arg);
 				}
 			}
@@ -300,15 +297,12 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjects(ICDIStackFrame)
 	 */
 	public ICDIVariableObject[] getVariableObjects(ICDIStackFrame frame) throws CDIException {
-		if (!(frame instanceof StackFrame)) {
-			return new ICDIVariableObject[0];
-		}
 		List varObjects = new ArrayList();
 		Session session = (Session)getSession();
 		ICDITarget currentTarget = session.getCurrentTarget();
-		Thread currentThread = (Thread)currentTarget.getCurrentThread();
-		StackFrame currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
-		((Thread)(frame.getThread())).setCurrentStackFrame((StackFrame)frame, false);
+		ICDIThread currentThread = currentTarget.getCurrentThread();
+		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
@@ -322,17 +316,17 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			}
 			args = info.getLocals();
 			if (args != null) {
-				ICDITarget target = frame.getThread().getTarget();
+				ICDITarget tgt = frame.getThread().getTarget();
 				for (int i = 0; i < args.length; i++) {
-					VariableObject varObj = new VariableObject(target, args[i].getName(),
-						 (StackFrame)frame, args.length - i, depth);
+					VariableObject varObj = new VariableObject(tgt, args[i].getName(),
+						 frame, args.length - i, depth);
 					varObjects.add(varObj);
 				}
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			currentThread.setCurrentStackFrame((StackFrame)currentFrame, false);
+			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
 		return (ICDIVariableObject[])varObjects.toArray(new ICDIVariableObject[0]);
 	}
@@ -347,14 +341,14 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			if (variable == null) {
 				String name = varObj.getName();
 				Session session = (Session)getSession();
-				StackFrame stack = varObj.getStackFrame();
-				Thread currentThread = null;
-				StackFrame currentFrame = null;
+				ICDIStackFrame stack = varObj.getStackFrame();
+				ICDIThread currentThread = null;
+				ICDIStackFrame currentFrame = null;
 				if (stack != null) {
 					ICDITarget currentTarget = session.getCurrentTarget();
-					currentThread = (Thread)currentTarget.getCurrentThread();
-					currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
-					((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
+					currentThread = currentTarget.getCurrentThread();
+					currentFrame = currentThread.getCurrentStackFrame();
+					stack.getThread().setCurrentStackFrame(stack, false);
 				}
 				try {
 					MISession mi = session.getMISession();

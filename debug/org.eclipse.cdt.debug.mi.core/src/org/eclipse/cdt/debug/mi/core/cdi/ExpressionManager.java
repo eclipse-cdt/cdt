@@ -17,9 +17,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.cdi.model.*;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
-import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
@@ -52,8 +51,6 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 		try {
 			Session session = (Session)getSession();
 			ICDITarget currentTarget = session.getCurrentTarget();
-			//ICDIThread currentThread = currentTarget.getCurrentThread();
-			//StackFrame currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIVarCreate var = factory.createMIVarCreate(name);
@@ -76,14 +73,11 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 	 */
 	public ICDIExpression createExpression(ICDIStackFrame frame, String name) throws CDIException {
 		Expression expression = null;
-		if (!(frame instanceof StackFrame)) {
-			return expression;
-		}
 		Session session = (Session)getSession();
 		ICDITarget currentTarget = session.getCurrentTarget();
 		ICDIThread currentThread = currentTarget.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
-		frame.getThread().setCurrentStackFrame(frame);
+		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
@@ -93,14 +87,14 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 			if (info == null) {
 				throw new CDIException("No answer");
 			}
-			ICDITarget target = frame.getThread().getTarget();
-			VariableObject varObj = new VariableObject(target, name, (StackFrame)frame, 0, 0);
+			ICDITarget tgt = frame.getThread().getTarget();
+			VariableObject varObj = new VariableObject(tgt, name, frame, 0, 0);
 			expression = new Expression(varObj, info.getMIVar());
 			addExpression(expression);
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			currentThread.setCurrentStackFrame(currentFrame);
+			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
 		return expression;
 	}

@@ -112,7 +112,7 @@ public class Value extends CObject implements ICDIValue {
 			variables = new Variable[vars.length];
 			for (int i = 0; i < vars.length; i++) {
 				VariableObject varObj = new VariableObject(getTarget(),
-				 vars[i].getExp(), (StackFrame)variable.getStackFrame(),
+				 vars[i].getExp(), variable.getStackFrame(),
 				 variable.getVariableObject().getPosition(),
 				 variable.getVariableObject().getStackDepth());
 				variables[i] = mgr.createVariable(varObj, vars[i]);

@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.core.resources.IMarker;
@@ -111,6 +112,15 @@ public class CDebugModel
 			CDebugCorePlugin.log( e );
 		}
 		// Temporary
+		try
+		{
+			cdiTarget.getSession().addSearchPaths( new String[] { project.getLocation().toOSString() } );
+		}
+		catch( CDIException e )
+		{
+			((CDebugElement)target[0]).targetRequestFailed( "Operation failed. Reason: ", e );
+		}
+		
 		if ( stopInMain )
 		{
 			ICDILocation location = cdiTarget.getSession().getBreakpointManager().createLocation( "", "main", 0 );
@@ -219,4 +229,20 @@ public class CDebugModel
 		return new CLineBreakpoint( resource, attributes, add );
 	}
 
+	public static ICWatchpoint createWatchpoint( IResource resource, 
+												 boolean writeAccess,
+												 boolean readAccess,
+												 String expression, 
+												 boolean enabled,
+												 int ignoreCount, 
+												 String condition, 
+												 boolean add ) throws DebugException
+	{
+		HashMap attributes = new HashMap( 10 );
+		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
+		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
+		attributes.put( ICBreakpoint.CONDITION, condition );
+		return new CWatchpoint( resource, attributes, add );
+	}
 }

@@ -16,8 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * 
  * @since Jul 8, 2002
  */
-public interface ICDIThread extends ICDIObject
-{
+public interface ICDIThread extends ICDIObject {
 	/**
 	 * Returns the stack frames contained in this thread. An
 	 * empty collection is returned if this thread contains
@@ -27,7 +26,7 @@ public interface ICDIThread extends ICDIObject
 	 * @return  a collection of stack frames
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	ICDIStackFrame[] getStackFrames() throws CDIException;	
+	ICDIStackFrame[] getStackFrames() throws CDIException;
 
 	/**
 	 * Returns whether this thread is currently suspended.
@@ -35,7 +34,7 @@ public interface ICDIThread extends ICDIObject
 	 * @return whether this thread is currently suspended
 	 */
 	boolean isSuspended();
-	
+
 	/**
 	 * Causes this thread to resume its execution. 
 	 * Has no effect on a thread that is not suspended.
@@ -43,7 +42,7 @@ public interface ICDIThread extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void resume() throws CDIException;
-	
+
 	/**
 	 * Causes this thread to suspend its execution. 
 	 * Has no effect on an already suspended thread.
@@ -59,7 +58,7 @@ public interface ICDIThread extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepOver() throws CDIException;
-	
+
 	/**
 	 * Steps into the current source line. Can only be called
 	 * when the associated thread is suspended. 
@@ -67,7 +66,7 @@ public interface ICDIThread extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepInto() throws CDIException;
-	
+
 	/**
 	 * Steps over the current machine instruction. Can only be called
 	 * when the associated thread is suspended. 
@@ -75,7 +74,7 @@ public interface ICDIThread extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepOverInstruction() throws CDIException;
-	
+
 	/**
 	 * Steps into the current machine instruction. Can only be called
 	 * when the associated thread is suspended. 
@@ -83,7 +82,7 @@ public interface ICDIThread extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepIntoInstruction() throws CDIException;
-	
+
 	/**
 	 * Continues running until just after function in the current 
 	 * stack frame returns. Can only be called when the associated 
@@ -92,4 +91,9 @@ public interface ICDIThread extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void finish() throws CDIException;
+
+	/**
+	 * Returns true if the threads are the same.
+	 */
+	boolean equals(ICDIThread thead);
 }

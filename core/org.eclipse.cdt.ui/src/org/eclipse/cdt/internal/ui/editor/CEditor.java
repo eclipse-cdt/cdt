@@ -77,6 +77,8 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
@@ -94,7 +96,7 @@ import org.eclipse.ui.views.tasklist.TaskList;
 /**
  * C specific text editor.
  */
-public class CEditor extends TextEditor implements ISelectionChangedListener {
+public class CEditor extends TextEditor implements ISelectionChangedListener, IShowInSource {
 
 	/** The outline page */
 	protected CContentOutlinePage fOutlinePage;
@@ -620,6 +622,17 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
+	 *
+	 * This is required by the IShowInSource interface for the "ShowIn"
+ 	* navigation menu generalized in Eclipse.
+	 */
+	public ShowInContext getShowInContext() {
+		return new ShowInContext( getEditorInput(), null );
+	}
+
 	/*
 	 * Get the dektop's StatusLineManager
 	 */

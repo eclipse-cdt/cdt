@@ -14,12 +14,11 @@
  */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 
 /**
  * @author aniefer
  */
 public interface ICPPPointerToMemberType extends IPointerType {
-    public IBinding getMemberOfClass();
+    public ICPPClassType getMemberOfClass();
 }

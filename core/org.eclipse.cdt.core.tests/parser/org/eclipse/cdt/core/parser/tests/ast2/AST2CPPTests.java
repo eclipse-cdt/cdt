@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -1438,6 +1439,77 @@ public class AST2CPPTests extends AST2BaseTest {
 	    CPPVisitor.visitTranslationUnit(tu, col);
 	    
 	    assertEquals( 9, col.size() );
+	}
+   
+   public void testPointerToMemberType() throws Exception {
+   		IASTTranslationUnit tu = parse( "struct S; int S::* pm;", ParserLanguage.CPP );
+   		CPPNameCollector col = new CPPNameCollector();
+	    CPPVisitor.visitTranslationUnit(tu, col);
+	    
+	    assertEquals( 4, col.size() );
+	    
+	    IVariable pm = (IVariable) col.getName(3).resolveBinding();
+	    ICPPClassType S = (ICPPClassType) col.getName(0).resolveBinding();
+	    
+	    IType t = pm.getType();
+	    assertNotNull( t );
+	    assertTrue( t instanceof ICPPPointerToMemberType );
+	    ICPPClassType cls = ((ICPPPointerToMemberType)t).getMemberOfClass();
+	    assertSame( S, cls );
+	    assertTrue( ((ICPPPointerToMemberType)t).getType() instanceof IBasicType );
+   }
+   
+   public void testBug_PM_() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("struct S { int i ; } *s; \n"); //$NON-NLS-1$
+		buffer.append("int S::* pm = &S::i;     \n"); //$NON-NLS-1$
+		buffer.append("void f() {               \n"); //$NON-NLS-1$
+		buffer.append("   s->*pm = 1;           \n"); //$NON-NLS-1$
+		buffer.append("}                        \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
+	    CPPNameCollector col = new CPPNameCollector();
+	    CPPVisitor.visitTranslationUnit(tu, col);
+	    
+	    IBinding ref = col.getName(11).resolveBinding();
+	    IVariable pm = (IVariable) col.getName(5).resolveBinding();
+	    
+	    assertSame( pm, ref );
+	}
+	
+	public void testBug_PM_2() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("struct S {               \n"); //$NON-NLS-1$
+		buffer.append("   int i;                \n"); //$NON-NLS-1$
+		buffer.append("   S* f();               \n"); //$NON-NLS-1$
+		buffer.append("} *s;                    \n"); //$NON-NLS-1$
+		buffer.append("S* (S::* pm) () = &S::f; \n"); //$NON-NLS-1$
+		buffer.append("void foo() {             \n"); //$NON-NLS-1$
+		buffer.append("   (s->*pm)()->i;        \n"); //$NON-NLS-1$
+		buffer.append("}                        \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
+	    CPPNameCollector col = new CPPNameCollector();
+	    CPPVisitor.visitTranslationUnit(tu, col);
+	    
+	    ICPPClassType S = (ICPPClassType) col.getName(0).resolveBinding();
+	    IVariable pm = (IVariable) col.getName(8).resolveBinding();
+	    IField i = (IField) col.getName(1).resolveBinding();
+	    ICPPMethod f = (ICPPMethod) col.getName(3).resolveBinding();
+	    
+	    IType t = pm.getType();
+	    assertTrue( t instanceof ICPPPointerToMemberType );
+	    IFunctionType ft = (IFunctionType) ((ICPPPointerToMemberType)t).getType();
+	    ICPPClassType ST = (ICPPClassType) ((ICPPPointerToMemberType)t).getMemberOfClass();
+	    
+	    assertTrue( ft.getReturnType() instanceof IPointerType );
+	    assertSame( ST, ((IPointerType)ft.getReturnType()).getType() );
+	    assertSame( S, ST );
+	    
+	    assertInstances(col, S, 5);
+	    assertInstances(col, pm, 2);
+	    assertInstances(col, i, 2);
+	    assertInstances(col, f, 3);
 	}
 }
 

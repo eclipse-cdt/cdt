@@ -470,41 +470,50 @@ public class CPPVisitor {
 	public static IScope getContainingScope( IASTNode node ){
 		if( node == null )
 			return null;
-		if( node instanceof IASTName )
-			return getContainingScope( (IASTName) node );
-		else if( node instanceof IASTDeclaration )
-	        return getContainingScope( (IASTDeclaration) node );
-	    else if( node instanceof IASTStatement )
-	        return getContainingScope( (IASTStatement) node );
-	    else if( node instanceof IASTDeclSpecifier )
-	        return getContainingScope( (IASTDeclSpecifier) node );
-	    else if( node instanceof IASTParameterDeclaration )
-	        return getContainingScope( (IASTParameterDeclaration) node );
-	    else if( node instanceof IASTExpression )
-	        return getContainingScope( (IASTExpression) node );
-	    else if( node instanceof IASTEnumerator ){
-	        //put the enumerators in the same scope as the enumeration
-	        return getContainingScope( (IASTEnumerationSpecifier) node.getParent() );
-	    }
-	    
-	    return getContainingScope( node.getParent() );
+		while( node != null ){
+			if( node instanceof IASTName ){
+				return getContainingScope( (IASTName) node );
+			} else if( node instanceof IASTDeclaration ){
+				IASTNode parent = node.getParent();
+				if( parent instanceof IASTTranslationUnit ){
+					return ((IASTTranslationUnit)parent).getScope();
+				} else if( parent instanceof IASTDeclarationStatement ){
+					return getContainingScope( (IASTStatement) parent );
+				} else if( parent instanceof IASTForStatement ){
+				    return ((IASTForStatement)parent).getScope();
+				} else if( parent instanceof IASTCompositeTypeSpecifier ){
+				    return ((IASTCompositeTypeSpecifier)parent).getScope();
+				} else if( parent instanceof ICPPASTNamespaceDefinition ) {
+					return ((ICPPASTNamespaceDefinition)parent).getScope();
+				}
+			} else if( node instanceof IASTStatement ){
+		        return getContainingScope( (IASTStatement) node ); 
+			} else if( node instanceof IASTTypeId ){
+				node = node.getParent();
+			} else if( node instanceof IASTParameterDeclaration ){
+				ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node.getParent();
+				ASTNodeProperty prop = dtor.getPropertyInParent();
+				if( prop == IASTSimpleDeclaration.DECLARATOR || prop == IASTFunctionDefinition.DECLARATOR )
+				    return dtor.getFunctionScope();
+			} else if( node instanceof IASTExpression ){
+		    	IASTNode parent = node.getParent();
+			    if( parent instanceof IASTForStatement ){
+			        return ((IASTForStatement)parent).getScope();
+			    } else if( parent instanceof IASTCompoundStatement ){
+			        return ((IASTCompoundStatement)parent).getScope();
+			    } else if( parent instanceof ICPPASTConstructorChainInitializer ){
+			    	IASTNode temp = getContainingBlockItem( parent.getParent() );
+			    	if( temp instanceof IASTFunctionDefinition ){
+			    		IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition)temp).getBody();
+			    		return body.getScope();
+			    	}
+			    }
+		    } 
+		    node = node.getParent();
+		}
+	    return null;
 	}
 	
-	public static IScope getContainingScope( IASTExpression expression ){
-	    IASTNode parent = expression.getParent();
-	    if( parent instanceof IASTForStatement ){
-	        return ((IASTForStatement)parent).getScope();
-	    } else if( parent instanceof IASTCompoundStatement ){
-	        return ((IASTCompoundStatement)parent).getScope();
-	    } else if( parent instanceof ICPPASTConstructorChainInitializer ){
-	    	IASTNode node = getContainingBlockItem( parent.getParent() );
-	    	if( node instanceof IASTFunctionDefinition ){
-	    		IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition)node).getBody();
-	    		return body.getScope();
-	    	}
-	    }
-	    return getContainingScope( parent );
-	}
 	public static IScope getContainingScope( IASTName name ){
 		IASTNode parent = name.getParent();
 		try {
@@ -538,27 +547,7 @@ public class CPPVisitor {
 		}
 		return getContainingScope( parent );
 	}
-	/**
-	 * @param declaration
-	 * @return
-	 */
-	public static IScope getContainingScope(IASTDeclaration declaration) {
-		IASTNode parent = declaration.getParent();
-		if( parent instanceof IASTTranslationUnit ){
-			return ((IASTTranslationUnit)parent).getScope();
-		} else if( parent instanceof IASTDeclarationStatement ){
-			return getContainingScope( (IASTStatement) parent );
-		} else if( parent instanceof IASTForStatement ){
-		    return ((IASTForStatement)parent).getScope();
-		} else if( parent instanceof IASTCompositeTypeSpecifier ){
-		    return ((IASTCompositeTypeSpecifier)parent).getScope();
-		} else if( parent instanceof ICPPASTNamespaceDefinition ) {
-			return ((ICPPASTNamespaceDefinition)parent).getScope();
-		}
-		
-		return null;
-	}
-	
+
 	public static IScope getContainingScope( IASTStatement statement ){
 		IASTNode parent = statement.getParent();
 		IScope scope = null;
@@ -588,59 +577,46 @@ public class CPPVisitor {
 		return scope;
 	}
 	
-	public static IScope getContainingScope( IASTDeclSpecifier typeSpec ){
-	    IASTNode parent = typeSpec.getParent();
-	    if( parent instanceof IASTSimpleDeclaration )
-	        return getContainingScope( (IASTSimpleDeclaration) parent );
-	    else if( parent instanceof IASTTypeId )
-	        return getContainingScope( parent.getParent() );
-	    return getContainingScope( parent );
-	}
-
-	/**
-	 * @param parameterDeclaration
-	 * @return
-	 */
-	public static IScope getContainingScope(IASTParameterDeclaration parameterDeclaration) {
-		ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parameterDeclaration.getParent();
-		ASTNodeProperty prop = dtor.getPropertyInParent();
-		if( prop == IASTSimpleDeclaration.DECLARATOR || prop == IASTFunctionDefinition.DECLARATOR )
-		    return dtor.getFunctionScope();
-		
-		return getContainingScope( dtor );
-	}
-	
 	public static IASTNode getContainingBlockItem( IASTNode node ){
 		IASTNode parent = node.getParent();
 		if( parent == null )
 			return null;
-		
-		if( parent instanceof IASTDeclaration ){
-			IASTNode p = parent.getParent();
-			if( p instanceof IASTDeclarationStatement )
-				return p;
-			return parent;
-		} else if( parent instanceof IASTExpression ){
-			IASTNode p = parent.getParent();
-			if( p instanceof IASTStatement )
-				return p;
-		} else if ( parent instanceof IASTStatement || parent instanceof IASTTranslationUnit ) {
-			return parent;
-		} else if( parent instanceof IASTFunctionDeclarator ){
-		    return node;
+		while( parent != null ) {
+			if( parent instanceof IASTDeclaration ){
+				IASTNode p = parent.getParent();
+				if( p instanceof IASTDeclarationStatement )
+					return p;
+				return parent;
+			} else if( parent instanceof IASTExpression ){
+				IASTNode p = parent.getParent();
+				if( p instanceof IASTStatement )
+					return p;
+			} else if ( parent instanceof IASTStatement || parent instanceof IASTTranslationUnit ) {
+				return parent;
+			} else if( parent instanceof IASTFunctionDeclarator ){
+			    return node;
+			}
+			node = parent;
+			parent = node.getParent();
 		}
-		
-		return getContainingBlockItem( parent );
+		return null;
 	}
 	
 	static private IBinding resolveBinding( IASTNode node ){
-		if( node instanceof IASTIdExpression ){
-			return CPPSemantics.resolveBinding( ((IASTIdExpression)node).getName() );
-		} else if( node instanceof ICPPASTFieldReference ){
-			return CPPSemantics.resolveBinding( ((ICPPASTFieldReference)node).getFieldName() );
-		} else if( node instanceof IASTFunctionCallExpression ){
-		    return resolveBinding( ((IASTFunctionCallExpression)node).getFunctionNameExpression() );
+		while( node != null ) {
+			if( node instanceof IASTIdExpression ){
+				return CPPSemantics.resolveBinding( ((IASTIdExpression)node).getName() );
+			} else if( node instanceof ICPPASTFieldReference ){
+				return CPPSemantics.resolveBinding( ((ICPPASTFieldReference)node).getFieldName() );
+			} else if( node instanceof IASTFunctionCallExpression ){
+				node = ((IASTFunctionCallExpression)node).getFunctionNameExpression();
+			} else if( node instanceof IASTUnaryExpression ){
+				node = ((IASTUnaryExpression)node).getOperand();
+			} else if( node instanceof IASTBinaryExpression ){
+				node = ((IASTBinaryExpression)node).getOperand2();
+			}
 		}
+		
 		return null;
 	}
 	
@@ -1487,7 +1463,9 @@ public class CPPVisitor {
 	private static IType getPointerTypes( IType type, IASTDeclarator declarator ){
 	    IASTPointerOperator [] ptrOps = declarator.getPointerOperators();
 		for( int i = ptrOps.length - 1; i >= 0; i-- ){
-		    if( ptrOps[i] instanceof IASTPointer )
+			if( ptrOps[i] instanceof ICPPASTPointerToMember )
+				type = new CPPPointerToMemberType( type, (ICPPASTPointerToMember) ptrOps[i] );
+		    else if( ptrOps[i] instanceof IASTPointer )
 		        type = new CPPPointerType( type, (IASTPointer) ptrOps[i] );
 		    else if( ptrOps[i] instanceof ICPPASTReferenceOperator )
 		        type = new CPPReferenceType( type );
@@ -1652,7 +1630,17 @@ public class CPPVisitor {
                 } catch ( DOMException e ) {
                     return e.getProblem();
                 }
-                
+	        } else if( binding instanceof IVariable ){
+	        	try {
+		        	IType t = ((IVariable)binding).getType();
+		        	if( t instanceof IPointerType && ((IPointerType)t).getType() instanceof IFunctionType ){
+		        		IFunctionType ftype = (IFunctionType) ((IPointerType)t).getType();
+		        		if( ftype != null )
+		        			return ftype.getReturnType();
+		        	}
+	        	} catch( DOMException e ){
+	        		return e.getProblem();
+	        	} 
 	        }
 	    }
 	    else if( expression instanceof IASTUnaryExpression )

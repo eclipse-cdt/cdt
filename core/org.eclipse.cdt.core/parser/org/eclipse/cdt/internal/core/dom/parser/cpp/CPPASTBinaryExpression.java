@@ -10,14 +10,14 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 
 /**
  * @author jcamelon
  */
 public class CPPASTBinaryExpression extends CPPASTNode implements
-        IASTBinaryExpression {
+        ICPPASTBinaryExpression {
 
     private int op;
     private IASTExpression operand1;

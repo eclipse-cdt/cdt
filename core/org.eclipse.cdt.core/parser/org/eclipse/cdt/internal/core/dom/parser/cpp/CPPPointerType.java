@@ -23,8 +23,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  * @author aniefer
  */
 public class CPPPointerType implements IPointerType, ITypeContainer {
-	private IASTPointer operator = null;
-	private IType type = null;
+	protected IASTPointer operator = null;
+	protected IType type = null;
 	/**
 	 * @param type
 	 * @param operator

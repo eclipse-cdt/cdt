@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -40,11 +41,55 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author aniefer
  */
 public class CPPClassType implements ICPPClassType, ICPPBinding {
+	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType{
+        public CPPClassTypeProblem( int id, char[] arg ) {
+            super( id, arg );
+        }
+
+		public ICPPBase[] getBases() throws DOMException {
+			throw new DOMException( this );
+		}
+		public IField[] getFields() throws DOMException {
+			throw new DOMException( this );
+		}
+		public List getDeclaredFields() throws DOMException {
+			throw new DOMException( this );
+		}
+		public List getMethods() throws DOMException {
+			throw new DOMException( this );
+		}
+		public List getAllDeclaredMethods() throws DOMException {
+			throw new DOMException( this );
+		}
+		public List getDeclaredMethods() throws DOMException {
+			throw new DOMException( this );
+		}
+		public ICPPConstructor[] getConstructors() throws DOMException {
+			throw new DOMException( this );
+		}
+		public int getKey() throws DOMException {
+			throw new DOMException( this );
+		}
+		public IField findField(String name) throws DOMException {
+			throw new DOMException( this );
+		}
+		public IScope getCompositeScope() throws DOMException {
+			throw new DOMException( this );
+		}
+		public IScope getParent() throws DOMException {
+			throw new DOMException( this );
+		}
+		public List find(String name) throws DOMException {
+			throw new DOMException( this );
+		}
+    }
+	
 	private ICPPASTCompositeTypeSpecifier definition;
 	private ICPPASTElaboratedTypeSpecifier [] declarations;
 	

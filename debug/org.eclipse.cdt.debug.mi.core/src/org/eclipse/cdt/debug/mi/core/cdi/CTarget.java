@@ -132,6 +132,9 @@ public class CTarget  implements ICDITarget {
 		// get the new Threads.
 		CThread[] newThreads = getCThreads();
 
+		currentThreads = newThreads;
+		currentThreadId = newThreadId;
+
 		// Fire destroyedEvent for old threads.
 		if (oldThreads != null && oldThreads.length > 0) {
 			List dList = new ArrayList(oldThreads.length);
@@ -157,8 +160,6 @@ public class CTarget  implements ICDITarget {
 				miSession.fireEvents(events);
 			}
 		}
-		currentThreads = newThreads;
-		currentThreadId = newThreadId;
 	}
 
 	/**

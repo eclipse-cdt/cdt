@@ -65,7 +65,9 @@ public class ManagedBuildTests extends TestCase {
 	private static final String testConfigName = "Tester";
 	private static final String enumVal = "Another Enum";
 	private static final String[] listVal = {"_DEBUG", "/usr/include", "libglade.a"};
+	private static final String newExt = "wen";
 	private static final String projectName = "ManagedBuildTest";
+	private static final String projectRename = "ManagedBuildRedux";
 	private static final String rootExt = "toor";
 	private static final String stringVal = "-c -Wall";
 	private static final String subExt = "bus";
@@ -85,6 +87,7 @@ public class ManagedBuildTests extends TestCase {
 		suite.addTest(new ManagedBuildTests("testMakeCommandManipulation"));
 		suite.addTest(new ManagedBuildTests("testScannerInfoInterface"));
 		suite.addTest(new ManagedBuildTests("testBug43450"));
+		suite.addTest(new ManagedBuildTests("testProjectRename"));
 		suite.addTest(new ManagedBuildTests("cleanup"));
 		
 		return suite;
@@ -107,7 +110,7 @@ public class ManagedBuildTests extends TestCase {
 			
 			if (target.getName().equals("Test Root")) {
 				testRoot = target;
-				checkRootTarget(testRoot, "x");
+				checkRootTarget(testRoot);
 			} else if (target.getName().equals("Test Sub")) {
 				testSub = target;
 				checkSubTarget(testSub);
@@ -373,7 +376,7 @@ public class ManagedBuildTests extends TestCase {
 		
 		// See if it still contains the overridden values (see testProjectCreation())
 		try {
-			checkRootTarget(defaultTarget, "z");
+			checkRootTarget(defaultTarget);
 		} catch (BuildException e1) {
 			fail("Overridden root target check failed: " + e1.getLocalizedMessage());
 		}
@@ -381,7 +384,7 @@ public class ManagedBuildTests extends TestCase {
 		// Reset the config and retest
 		ManagedBuildManager.resetConfiguration(project, defaultConfig);
 		try {
-			checkRootTarget(defaultTarget, "x");
+			checkRootTarget(defaultTarget);
 		} catch (BuildException e2) {
 			fail("Reset root target check failed: " + e2.getLocalizedMessage());
 		}
@@ -412,9 +415,9 @@ public class ManagedBuildTests extends TestCase {
 		ITarget newTarget = ManagedBuildManager.createTarget(project, targetDef);
 		assertEquals(newTarget.getName(), targetDef.getName());
 		assertFalse(newTarget.equals(targetDef));
-		String buildArtifactName = projectName + "." + newTarget.getDefaultExtension();
-		newTarget.setBuildArtifact(buildArtifactName);
-		
+		String buildArtifactName = projectName;
+		newTarget.setArtifactName(buildArtifactName);
+		newTarget.setArtifactExtension(newExt);
 		ITarget[] targets = ManagedBuildManager.getTargets(project);
 		assertEquals(1, targets.length);
 		ITarget target = targets[0];
@@ -433,7 +436,7 @@ public class ManagedBuildTests extends TestCase {
 			}
 		}
 		ManagedBuildManager.setDefaultConfiguration(project, defaultConfig);		
-		checkRootTarget(target, "x");
+		checkRootTarget(target);
 		
 		// Override the "String Option in Category" option value
 		configs = target.getConfigurations();
@@ -471,11 +474,124 @@ public class ManagedBuildTests extends TestCase {
 		// See if the artifact name is remembered
 		assertEquals(targets[0].getArtifactName(), buildArtifactName);
 		// Check the rest of the default information
-		checkRootTarget(targets[0], "z");
+		checkRootTarget(targets[0]);
 		
 		// Now test the information the makefile builder needs
 		checkBuildTestSettings(info);
 		ManagedBuildManager.removeBuildInfo(project);
+	}
+
+	/**
+	 * Tests that bugzilla 44159 has been addressed. After a project was renamed, the 
+	 * build information mistakenly referred to the old project as its owner. This
+	 * caused a number of searches on the information to fail. In this bug, it was the 
+	 * list of tools that could not be determined. In other cases, the information 
+	 * retrieval caused NPEs because the old owner no longer existed.
+	 */
+	public void testProjectRename() {
+		// Open the test project
+		IProject project = null;
+		try {
+			project = createProject(projectName);
+		} catch (CoreException e) {
+			fail("Failed to open project: " + e.getLocalizedMessage());
+		}
+		
+		// Rename the project
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();	
+		IResource newResource = workspaceRoot.findMember(projectRename);
+		if (newResource != null) {
+			try {
+				newResource.delete(IResource.KEEP_HISTORY, new NullProgressMonitor());
+			} catch (CoreException e) {
+				fail("Failed to delete old project " + projectRename + ": " + e.getLocalizedMessage());
+			}		
+		}
+		IProjectDescription description = null;
+		try {
+			description = project.getDescription();
+		} catch (CoreException e) {
+			fail("Failed to find project descriptor for " + projectName + ": " + e.getLocalizedMessage());
+		}
+		description.setName(projectRename);
+		try {
+			project.move(description, IResource.FORCE | IResource.SHALLOW, new NullProgressMonitor());
+		} catch (CoreException e) {
+			fail("Failed to rename project: " + e.getLocalizedMessage());
+		}
+		try {
+			project = createProject(projectRename);
+		} catch (CoreException e) {
+			fail("Failed to open renamed project: " + e.getLocalizedMessage());
+		}
+
+		// By now there should be 2 targets with 3 configs
+		ITarget[] definedTargets = ManagedBuildManager.getTargets(project);
+		assertEquals(2, definedTargets.length);
+		ITarget rootTarget = definedTargets[0];
+		IConfiguration[] definedConfigs = rootTarget.getConfigurations(); 		
+		assertEquals(3, definedConfigs.length);
+		IConfiguration baseConfig = definedConfigs[0];
+		
+		// There is only one tool
+		ITool[] definedTools = baseConfig.getTools();
+		assertEquals(1, definedTools.length);
+		ITool rootTool = definedTools[0];
+		
+		// Get the options 2 in top category and 2 in its child
+		IOptionCategory topCategory = rootTool.getTopOptionCategory();
+		assertEquals("Root Tool", topCategory.getName());
+		IOption[] options = topCategory.getOptions(null);
+		assertEquals(2, options.length);
+		IOptionCategory[] categories = topCategory.getChildCategories();
+		assertEquals(1, categories.length);
+		options = categories[0].getOptions(null);
+		assertEquals(2, options.length);
+		
+		// Set the name back
+		newResource = workspaceRoot.findMember(projectName);
+		if (newResource != null) {
+			try {
+				newResource.delete(IResource.KEEP_HISTORY, new NullProgressMonitor());
+			} catch (CoreException e) {
+				fail("Failed to delete old project " + projectName + ": " + e.getLocalizedMessage());
+			}		
+		}
+		try {
+			description = project.getDescription();
+		} catch (CoreException e) {
+			fail("Failed to find project descriptor for " + projectRename + ": " + e.getLocalizedMessage());
+		}
+		description.setName(projectName);
+		try {
+			project.move(description, IResource.FORCE | IResource.SHALLOW, new NullProgressMonitor());
+		} catch (CoreException e) {
+			fail("Failed to re-rename project: " + e.getLocalizedMessage());
+		}
+		try {
+			project = createProject(projectName);
+		} catch (CoreException e) {
+			fail("Failed to open re-renamed project: " + e.getLocalizedMessage());
+		}
+
+		// Do it all again
+		definedTargets = ManagedBuildManager.getTargets(project);
+		assertEquals(2, definedTargets.length);
+		rootTarget = definedTargets[0];
+		definedConfigs = rootTarget.getConfigurations(); 		
+		assertEquals(3, definedConfigs.length);
+		baseConfig = definedConfigs[0];
+		definedTools = baseConfig.getTools();
+		assertEquals(1, definedTools.length);
+		rootTool = definedTools[0];
+		topCategory = rootTool.getTopOptionCategory();
+		assertEquals("Root Tool", topCategory.getName());
+		options = topCategory.getOptions(null);
+		assertEquals(2, options.length);
+		categories = topCategory.getChildCategories();
+		assertEquals(1, categories.length);
+		options = categories[0].getOptions(null);
+		assertEquals(2, options.length);
 	}
 	
 	private void addManagedBuildNature (IProject project) {
@@ -510,7 +626,7 @@ public class ManagedBuildTests extends TestCase {
 		String expectedCmd = "doIt";
 		
 		assertNotNull(info);
-		assertEquals(info.getBuildArtifactName(), projectName + "." + rootExt);
+		assertEquals(info.getBuildArtifactName(), projectName);
 		
 		// There should be a default configuration defined for the project
 		ITarget buildTarget = info.getDefaultTarget();
@@ -609,13 +725,17 @@ public class ManagedBuildTests extends TestCase {
 	/*
 	 * Do a full sanity check on the root target.
 	 */
-	private void checkRootTarget(ITarget target, String oicValue) throws BuildException {
+	private void checkRootTarget(ITarget target) throws BuildException {
 		// Target stuff
 		String expectedCleanCmd = "del /myworld";
 		String expectedParserId = "org.eclipse.cdt.core.PE";
 		String[] expectedOSList = {"win32"};
 		assertTrue(target.isTestTarget());
-		assertEquals(target.getDefaultExtension(), rootExt);
+		if (target.getArtifactName().equals("ManagedBuildTest")) {
+			assertEquals(target.getArtifactExtension(), newExt);
+		} else {
+			assertEquals(target.getArtifactExtension(), rootExt);
+		}
 		assertEquals(expectedCleanCmd, target.getCleanCommand());
 		assertEquals("make", target.getMakeCommand());
 		assertEquals(expectedParserId, target.getBinaryParserId());
@@ -806,7 +926,7 @@ public class ManagedBuildTests extends TestCase {
 		// Make sure this is a test target
 		assertTrue(target.isTestTarget());
 		// Make sure the build artifact extension is there
-		assertEquals(target.getDefaultExtension(), subExt);
+		assertEquals(target.getArtifactExtension(), subExt);
 				
 		// Get the tools for this target
 		ITool[] tools = target.getTools();
@@ -942,9 +1062,9 @@ public class ManagedBuildTests extends TestCase {
 		ITarget rootTarget = definedTargets[0];
 		
 		// Set the build artifact of the target
-		String ext = rootTarget.getDefaultExtension();
+		String ext = rootTarget.getArtifactExtension();
 		String name = project.getName() + "." + ext;
-		rootTarget.setBuildArtifact(name);
+		rootTarget.setArtifactName(name);
 		
 		// Save, close, reopen and test again
 		ManagedBuildManager.saveBuildInfo(project);

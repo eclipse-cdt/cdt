@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -219,6 +220,9 @@ public class CModelBuilder {
 			generateModelElements(parent, (IASTTypedefDeclaration) declaration);
 		}
 		
+		if(declaration instanceof IASTLinkageSpecification) {
+			generateModelElements(parent, (IASTLinkageSpecification)declaration);
+		}
 		createSimpleElement(parent, declaration, false);
 	}
 	
@@ -229,6 +233,15 @@ public class CModelBuilder {
 		while (nsDecls.hasNext()){
 			IASTDeclaration subNsDeclaration = (IASTDeclaration) nsDecls.next();
 			generateModelElements((Parent)namespace, subNsDeclaration);			
+		}
+	}
+
+	private void generateModelElements (Parent parent, IASTLinkageSpecification declaration) throws CModelException, ASTNotImplementedException{
+		// IASTLinkageSpecification
+		Iterator nsDecls = declaration.getDeclarations();
+		while (nsDecls.hasNext()){
+			IASTDeclaration subNsDeclaration = (IASTDeclaration) nsDecls.next();
+			generateModelElements(parent, subNsDeclaration);			
 		}
 	}
 	

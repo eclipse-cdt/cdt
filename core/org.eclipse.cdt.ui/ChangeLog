@@ -1,3 +1,9 @@
+2003-10-16 Alain Magloire
+
+	Fix null out the dynamic parser page, it not selected.
+
+	* src/org/eclipse/cdt/ui/dialogs/AbstractBinaryParserPage.java
+
 2003-10-14 Alain Magloire
 
 	Added a new method to ICOptionContainer.java

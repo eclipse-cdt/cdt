@@ -966,6 +966,8 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( adapter.equals( IDebugTarget.class ) )
 			return this;
+		if ( adapter.equals( ICDebugTarget.class ) )
+			return this;
 		if ( adapter.equals( CDebugTarget.class ) )
 			return this;
 		if ( adapter.equals( ICDITarget.class ) )

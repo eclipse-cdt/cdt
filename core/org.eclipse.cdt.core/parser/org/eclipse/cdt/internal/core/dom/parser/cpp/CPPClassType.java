@@ -305,8 +305,12 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
 	 */
 	public ICPPBase [] getBases() {
-		if( definition == null )
-		    return null; //TODO 
+		if( definition == null ){
+            checkForDefinition();
+            if( definition == null ){
+                return new ICPPBase [] { new CPPBaseClause.CPPBaseProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+            }
+        }
 		ICPPASTBaseSpecifier [] bases = definition.getBaseSpecifiers();
 		if( bases.length == 0 )
 		    return ICPPBase.EMPTY_BASE_ARRAY;

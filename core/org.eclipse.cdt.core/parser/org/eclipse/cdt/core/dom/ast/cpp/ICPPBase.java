@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 
 /**
@@ -25,14 +26,14 @@ public interface ICPPBase {
 	 * 
 	 * @return
 	 */
-	public ICPPClassType getBaseClass();
+	public ICPPClassType getBaseClass() throws DOMException;
 	
 	/**
 	 * The visibility qualifier applied to the base class.
 	 * 
 	 * @return
 	 */
-	public int getVisibility();
+	public int getVisibility() throws DOMException;
 	
 	public static final int v_private = ICPPASTBaseSpecifier.v_private;
 	public static final int v_protected = ICPPASTBaseSpecifier.v_protected;
@@ -43,6 +44,6 @@ public interface ICPPBase {
 	 * 
 	 * @return
 	 */
-	public boolean isVirtual();
+	public boolean isVirtual() throws DOMException;
 
 }

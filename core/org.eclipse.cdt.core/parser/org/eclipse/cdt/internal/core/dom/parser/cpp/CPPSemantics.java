@@ -517,6 +517,8 @@ public class CPPSemantics {
 			    ICPPClassType cls = (ICPPClassType) t;
 			    ICPPBase[] bases = cls.getBases();
 			    for( int i = 0; i < bases.length; i++ ){
+			        if( bases[i] instanceof IProblemBinding )
+			            continue;
 			        getAssociatedScopes( bases[i].getBaseClass(), namespaces, classes );
 			    }
 		    }
@@ -1744,8 +1746,12 @@ public class CPPSemantics {
 			ICPPConstructor [] constructors = ((ICPPClassType)t).getConstructors();
 			
 			if( constructors.length > 0 ){
-			    //the list out of Arrays.asList does not support remove, which we need
-				constructor = (ICPPConstructor) resolveFunction( data, constructors );
+			    if( constructors.length == 1 && constructors[0] instanceof IProblemBinding )
+			        constructor = null;
+			    else {
+				    //the list out of Arrays.asList does not support remove, which we need
+					constructor = (ICPPConstructor) resolveFunction( data, constructors );
+			    }
 			}
 			if( constructor != null && constructor.isExplicit() ){
 				constructor = null;

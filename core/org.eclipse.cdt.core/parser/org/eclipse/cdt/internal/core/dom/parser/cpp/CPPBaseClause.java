@@ -14,14 +14,32 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author aniefer
  */
 public class CPPBaseClause implements ICPPBase {
+    static public class CPPBaseProblem extends ProblemBinding implements ICPPBase {
+        public CPPBaseProblem( int id, char[] arg ) {
+            super( id, arg );
+        }
+        public ICPPClassType getBaseClass() throws DOMException {
+            throw new DOMException( this );
+        }
+
+        public int getVisibility() throws DOMException {
+            throw new DOMException( this );
+        }
+
+        public boolean isVirtual() throws DOMException {
+            throw new DOMException( this );
+        }
+    }
     ICPPASTBaseSpecifier base = null;
     
     public CPPBaseClause( ICPPASTBaseSpecifier base ){

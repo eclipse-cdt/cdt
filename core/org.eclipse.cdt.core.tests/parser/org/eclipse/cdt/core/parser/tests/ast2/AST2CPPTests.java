@@ -2041,6 +2041,26 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( printf, r2 );
     }
     
+    public void testBug86346() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct S;            \n"); //$NON-NLS-1$
+        buffer.append("extern S a;          \n"); //$NON-NLS-1$
+        buffer.append("void g( S );         \n"); //$NON-NLS-1$
+        buffer.append("void h() {           \n"); //$NON-NLS-1$
+        buffer.append("   g( a );           \n"); //$NON-NLS-1$
+        buffer.append("}                    \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        ICPPClassType S = (ICPPClassType) col.getName(0).resolveBinding();
+        IFunction g = (IFunction) col.getName(3).resolveBinding();
+        
+        assertInstances( col, S, 3 );
+        assertInstances( col, g, 2 );
+    }
+    
     public void testBug86288() throws Exception
     {
     	String code = "int *foo( int *b ) { return (int *)(b); }"; //$NON-NLS-1$

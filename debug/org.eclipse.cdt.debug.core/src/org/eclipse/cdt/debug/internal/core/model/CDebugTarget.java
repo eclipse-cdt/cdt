@@ -873,6 +873,8 @@ public class CDebugTarget extends CDebugElement
 
 		try
 		{
+			ICDILocation location = getCDISession().getBreakpointManager().createLocation( "", "main", 0 );
+			setInternalTemporaryBreakpoint( location );
 			getCDITarget().restart();
 			restarted();
 		}

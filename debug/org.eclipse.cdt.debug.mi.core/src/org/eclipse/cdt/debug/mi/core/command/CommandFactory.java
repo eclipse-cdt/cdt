@@ -171,6 +171,10 @@ public class CommandFactory {
 		return new MIGDBShowExitCode();
 	}
 
+	public MIGDBShowDirectories createMIGDBShowDirectories() {
+		return new MIGDBShowDirectories();
+	}
+
 	public MIStackInfoDepth createMIStackInfoDepth(int depth) {
 		return new MIStackInfoDepth(depth);
 	}

@@ -6,8 +6,6 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
@@ -15,6 +13,8 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBShowDirectories;
+import org.eclipse.cdt.debug.mi.core.output.MIGDBShowDirectoriesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 
 
@@ -22,11 +22,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
  */
 public class SourceManager extends SessionObject implements ICDISourceManager {
 
-	List sourcePaths;
-
 	public SourceManager(CSession session) {
 		super(session);
-		sourcePaths = new ArrayList();
 	}
 	
 	/**
@@ -61,16 +58,22 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
-		for (int i = 0; i < dirs.length; i++) {
-			sourcePaths.add(dirs[i]);
-		}
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getSourcePaths()
 	 */
-	public String[] getSourcePaths() {
-		return (String[])sourcePaths.toArray(new String[0]);
+	public String[] getSourcePaths() throws CDIException {
+		MISession mi = getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIGDBShowDirectories dir = factory.createMIGDBShowDirectories();
+		try {
+			mi.postCommand(dir);
+			MIGDBShowDirectoriesInfo info = dir.getMIGDBShowDirectoriesInfo();
+			return info.getDirectories();
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
 	}
 
 	/**

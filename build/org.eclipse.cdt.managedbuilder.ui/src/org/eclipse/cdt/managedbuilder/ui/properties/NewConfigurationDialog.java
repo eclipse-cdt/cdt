@@ -321,11 +321,11 @@ public class NewConfigurationDialog extends StatusDialog {
 	private boolean validateName(String name) {
 		// Iterate over the name checking for bad characters
 		char[] chars = name.toCharArray();
+		// No whitespaces at the start of a config name
+		if (Character.isWhitespace(chars[0])) {
+			return false;
+		}
 		for (int index = 0; index < chars.length; ++index) {
-			// For now no whitespaces
-			if (Character.isWhitespace(chars[index])) {
-				return false;
-			}
 			// Config name must be a valid dir name too, so we ban "\ / : * ? " < >" in the names
 			if (!Character.isLetterOrDigit(chars[index])) {
 				switch (chars[index]) {

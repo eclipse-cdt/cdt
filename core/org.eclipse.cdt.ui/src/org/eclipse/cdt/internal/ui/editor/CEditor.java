@@ -23,6 +23,7 @@ import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.ContentAssistPreference;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.resources.IFile;
@@ -43,6 +44,8 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -257,6 +260,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 						stopTabConversion();
 					return;
 				}
+				
+				IContentAssistant c= asv.getContentAssistant();
+				if (c instanceof ContentAssistant)
+					ContentAssistPreference.changeConfiguration((ContentAssistant) c, getPreferenceStore(), event);
+				
 			}
 		} finally {
 			super.handlePreferenceStoreChanged(event);
@@ -708,6 +716,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 			String language) {
 			super(parent, ruler, fOverviewRuler, isOverviewRulerShowing, styles);
 			fDisplayLanguage = language;
+		}
+		public IContentAssistant getContentAssistant() {
+			return fContentAssistant;
 		}
 
 		/*

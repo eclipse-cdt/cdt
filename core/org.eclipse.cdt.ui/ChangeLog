@@ -3,6 +3,13 @@
 		- modify UI to allow selecting Definitions for more items
 		* src/org/eclipse/cdt/internal/ui/search/CSearchPage.java
 
+2003-09-26 Hoda Amer
+	Solution to :
+	bug#43149: Code Assist Preferences: Background Color not working.... 
+	bug#43153:  Code Assist Preferences: Disabling "Insert single proposa... 
+	bug#43154: Code Assist Preferences: Enable Auto activation not working 
+	bug#42224: Code Assist preferences Do not work properly 
+	
 2003-09-25 Hoda Amer
 	Solution to bug#43646: Code Assist won't work if missing end bracket
 

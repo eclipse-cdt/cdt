@@ -588,7 +588,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			
 			// The info string could be populated with documentation info.
 			// For now, it has the name and the parent's name if available.
-			proposal.setAdditionalProposalInfo(infoString.toString());
+			if(!displayString.equals(infoString.toString()))
+				proposal.setAdditionalProposalInfo(infoString.toString());
 		}
 	}
 

@@ -177,13 +177,9 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 
 		//Will this work as a replacement for the configuration lines below?
-		//ContentAssistPreference.configure(assistant, getPreferenceStore());
+		ContentAssistPreference.configure(assistant, getPreferenceStore());
 		
-		assistant.enableAutoInsert(CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.AUTOINSERT));
-		assistant.enableAutoActivation(true);
-		assistant.setAutoActivationDelay(500);
-		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
-		
+		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);		
 		assistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_ABOVE);
 		assistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 

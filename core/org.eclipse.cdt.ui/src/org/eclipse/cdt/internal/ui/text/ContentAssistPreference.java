@@ -90,11 +90,10 @@ public class ContentAssistPreference {
 	/**
 	 * Configure the given content assistant from the given store.
 	 */
-	public static void configure(ContentAssistant assistant, IPreferenceStore store) {
-		
+	public static void configure(ContentAssistant assistant, IPreferenceStore store) {	
+			
 		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
 		IColorManager manager= textTools.getColorManager();		
-		
 		
 		boolean enabled= store.getBoolean(AUTOACTIVATION);
 		assistant.enableAutoActivation(enabled);
@@ -102,22 +101,22 @@ public class ContentAssistPreference {
 		int delay= store.getInt(AUTOACTIVATION_DELAY);
 		assistant.setAutoActivationDelay(delay);
 		
-		//Color c= getColor(store, PROPOSALS_FOREGROUND, manager);
-		//assistant.setProposalSelectorForeground(c);
+		Color c1= getColor(store, PROPOSALS_FOREGROUND, manager);
+		assistant.setProposalSelectorForeground(c1);
 		
-		Color c= getColor(store, PROPOSALS_BACKGROUND, manager);
-		assistant.setContextInformationPopupBackground(c);
+		Color c2= getColor(store, PROPOSALS_BACKGROUND, manager);
+		assistant.setProposalSelectorBackground(c2);
 		
-		c= getColor(store, PARAMETERS_FOREGROUND, manager);
-		//assistant.setContextInformationPopupForeground(c);
-		//assistant.setContextSelectorForeground(c);
+		Color c3= getColor(store, PARAMETERS_FOREGROUND, manager);
+		assistant.setContextInformationPopupForeground(c3);
+		assistant.setContextSelectorForeground(c3);
 		
-		c= getColor(store, PARAMETERS_BACKGROUND, manager);
-		assistant.setContextInformationPopupBackground(c);
-		//assistant.setContextSelectorBackground(c);
+		Color c4= getColor(store, PARAMETERS_BACKGROUND, manager);
+		assistant.setContextInformationPopupBackground(c4);
+		assistant.setContextSelectorBackground(c4);
 		
 		enabled= store.getBoolean(AUTOINSERT);
-		//assistant.enableAutoInsert(enabled);
+		assistant.enableAutoInsert(enabled);
 
 		configureCProcessor(assistant, store);
 	}
@@ -162,22 +161,22 @@ public class ContentAssistPreference {
 			int delay= store.getInt(AUTOACTIVATION_DELAY);
 			assistant.setAutoActivationDelay(delay);
 		} else if (PROPOSALS_FOREGROUND.equals(p)) {
-			//Color c= getColor(store, PROPOSALS_FOREGROUND);
-			//assistant.setProposalSelectorForeground(c);
+			Color c= getColor(store, PROPOSALS_FOREGROUND);
+			assistant.setProposalSelectorForeground(c);
 		} else if (PROPOSALS_BACKGROUND.equals(p)) {
-			//Color c= getColor(store, PROPOSALS_BACKGROUND);
-			//assistant.setProposalSelectorBackground(c);
+			Color c= getColor(store, PROPOSALS_BACKGROUND);
+			assistant.setProposalSelectorBackground(c);
 		} else if (PARAMETERS_FOREGROUND.equals(p)) {
-			//Color c= getColor(store, PARAMETERS_FOREGROUND);
-			//assistant.setContextInformationPopupForeground(c);
-			//assistant.setContextSelectorForeground(c);
+			Color c= getColor(store, PARAMETERS_FOREGROUND);
+			assistant.setContextInformationPopupForeground(c);
+			assistant.setContextSelectorForeground(c);
 		} else if (PARAMETERS_BACKGROUND.equals(p)) {
 			Color c= getColor(store, PARAMETERS_BACKGROUND);
 			assistant.setContextInformationPopupBackground(c);
-			//assistant.setContextSelectorBackground(c);
+			assistant.setContextSelectorBackground(c);
 		} else if (AUTOINSERT.equals(p)) {
-			//boolean enabled= store.getBoolean(AUTOINSERT);
-			//assistant.enableAutoInsert(enabled);
+			boolean enabled= store.getBoolean(AUTOINSERT);
+			assistant.enableAutoInsert(enabled);
 		}
 		
 		changeCProcessor(assistant, store, p);

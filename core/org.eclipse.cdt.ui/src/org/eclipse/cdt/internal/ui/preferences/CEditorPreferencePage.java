@@ -233,6 +233,12 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		overlayKeys.add(
 			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_BACKGROUND));
 		overlayKeys.add(
+			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FOREGROUND));
+		overlayKeys.add(
+			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND));
+		overlayKeys.add(
+			new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_FOREGROUND));
+		overlayKeys.add(
 			new OverlayPreferenceStore.OverlayKey(
 				OverlayPreferenceStore.STRING,
 				ContentAssistPreference.AUTOACTIVATION_TRIGGERS_C));
@@ -331,9 +337,9 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		store.setDefault(ContentAssistPreference.AUTOINSERT, true);
 		PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
-		//PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
-		//PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_BACKGROUND, new RGB(254, 241, 233));
-		//PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_FOREGROUND, new RGB(0, 0, 0));
+		PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
+		PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_BACKGROUND, new RGB(254, 241, 233));
+		PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_FOREGROUND, new RGB(0, 0, 0));
 		//store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_C, ".,");
 		//store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVADOC, "@");
 		//store.setDefault(ContentAssistPreference.SHOW_VISIBLE_PROPOSALS, true);
@@ -912,14 +918,14 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		label = "&Background for completion proposals:";
 		addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_BACKGROUND, 0);
 
-		//label= "&Foreground for completion proposals:";
-		//addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_FOREGROUND, 0);
+		label= "&Foreground for completion proposals:";
+		addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_FOREGROUND, 0);
 
-		//label= "Bac&kground for method parameters:";
-		//addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_BACKGROUND, 0);
-
-		//label= "Fo&reground for method parameters:";
-		//addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_FOREGROUND, 0);
+//		label= "Bac&kground for method parameters:";
+//		addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_BACKGROUND, 0);
+//
+//		label= "Fo&reground for method parameters:";
+//		addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_FOREGROUND, 0);
 
 		return contentAssistComposite;
 	}

@@ -118,13 +118,13 @@ public class EditTemplateDialog extends StatusDialog {
 			
 			Color background= createColor(store, ContentAssistPreference.PROPOSALS_BACKGROUND, display);			
 			assistant.setContextInformationPopupBackground(background);
-			//assistant.setContextSelectorBackground(background);
-			//assistant.setProposalSelectorBackground(background);
+			assistant.setContextSelectorBackground(background);
+			assistant.setProposalSelectorBackground(background);
 
-			//Color foreground= createColor(store, ContentAssistPreference.PROPOSALS_FOREGROUND, display);
-			//assistant.setContextInformationPopupForeground(foreground);
-			//assistant.setContextSelectorForeground(foreground);
-			//assistant.setProposalSelectorForeground(foreground);
+			Color foreground= createColor(store, ContentAssistPreference.PROPOSALS_FOREGROUND, display);
+			assistant.setContextInformationPopupForeground(foreground);
+			assistant.setContextSelectorForeground(foreground);
+			assistant.setProposalSelectorForeground(foreground);
 			
 			return assistant;
 		}	

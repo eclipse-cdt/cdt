@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projects>
     <plugin name="org.eclipse.cdt" type="plugin"/>
+    <plugin name="org.eclipse.cdt.aix" type="plugin"/>
     <plugin name="org.eclipse.cdt.core" type="plugin"/>
+    <plugin name="org.eclipse.cdt.core.aix" type="fragment"/>
     <plugin name="org.eclipse.cdt.core.linux" type="fragment"/>
     <plugin name="org.eclipse.cdt.core.qnx" type="fragment"/>
     <plugin name="org.eclipse.cdt.core.solaris" type="fragment"/>
@@ -28,6 +30,7 @@
     <plugin name="org.eclipse.cdt.ui.tests" type="plugin"/>
     <plugin name="org.eclipse.cdt.win32" type="plugin"/>
     <feature name="org.eclipse.cdt" suffix="-feature" type="feature" visible="false"/>
+    <feature name="org.eclipse.cdt.aix" suffix="-feature" type="feature"/>
     <feature name="org.eclipse.cdt.linux.gtk" suffix="-feature" type="feature"/>
     <feature name="org.eclipse.cdt.linux.motif" suffix="-feature" type="feature"/>
     <feature name="org.eclipse.cdt.make" suffix="-feature" type="feature"/>

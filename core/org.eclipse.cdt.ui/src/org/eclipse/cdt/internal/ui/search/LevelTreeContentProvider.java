@@ -25,6 +25,7 @@ import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.widgets.Control;
 
 public class LevelTreeContentProvider extends CSearchContentProvider implements ITreeContentProvider {
@@ -63,8 +64,9 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 
 	public Object getParent(Object child) {
 		Object possibleParent= null;
-		if (child instanceof BasicSearchMatch){ 
-			BasicSearchMatch tempMatch = (BasicSearchMatch)child;
+		
+		if (child instanceof CSearchMatch){ 
+			BasicSearchMatch tempMatch = ((CSearchMatch) child).getSearchMatch();
 			ICElement cTransUnit = CCorePlugin.getDefault().getCoreModel().create(tempMatch.getResource());
 			
 			if (cTransUnit instanceof ITranslationUnit){
@@ -123,7 +125,7 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 	}
 
 	protected void insert(Object child, boolean refreshViewer) {
-		Object parent= getParent(child);
+		Object parent= getMatchParent(child);
 		while (parent != null) {
 			if (insertChild(parent, child)) {
 				if (refreshViewer)
@@ -141,6 +143,22 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 			if (refreshViewer)
 				fTreeViewer.add(_result, child);
 		}
+	}
+
+	/**
+	 * @param child
+	 * @return
+	 */
+	private Object getMatchParent(Object child) {
+		Match[]m=null;
+		if (child instanceof String){
+			m=this._result.getMatches(child);
+		}
+		
+		if (m.length > 0)
+			return getParent(m[0]); 
+			
+		return null;
 	}
 
 	/**

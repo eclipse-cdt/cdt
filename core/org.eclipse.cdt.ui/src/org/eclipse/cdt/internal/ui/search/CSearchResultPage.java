@@ -39,7 +39,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.widgets.Composite;
@@ -120,8 +119,8 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 			} 
 		} else if (element instanceof IFile) {
 			editor= IDE.openEditor(CUIPlugin.getActivePage(), getCanonicalFile((IFile) element), false);
-		} else if (element instanceof BasicSearchMatch){
-			BasicSearchMatch searchMatch = (BasicSearchMatch) element;
+		} else if (match instanceof CSearchMatch){
+			BasicSearchMatch searchMatch = ((CSearchMatch) match).getSearchMatch();
 			if (searchMatch.resource != null){
 				editor = IDE.openEditor(CUIPlugin.getActivePage(), getCanonicalFile((IFile) searchMatch.resource), false);
 				showWithMarker(editor, getCanonicalFile((IFile) searchMatch.resource), currentOffset, currentLength);
@@ -158,7 +157,7 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		viewer.setSorter(new ViewerSorter());
 		CSearchResultLabelProvider labelProvider = new CSearchResultLabelProvider();
 		labelProvider.setOrder(CSearchResultLabelProvider.SHOW_NAME_ONLY);
-		viewer.setLabelProvider(labelProvider);
+		viewer.setLabelProvider(new CountLabelProvider(this, labelProvider));
 		_contentProvider= new LevelTreeContentProvider(viewer, _currentGrouping);
 		viewer.setContentProvider(_contentProvider);
 		

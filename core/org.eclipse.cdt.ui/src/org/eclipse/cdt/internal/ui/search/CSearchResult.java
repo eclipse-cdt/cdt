@@ -117,6 +117,16 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 				else
 					return false;
 			}
+		} else if (match instanceof CSearchMatch) {
+			BasicSearchMatch searchMatch = ((CSearchMatch) match).getSearchMatch();
+			if (editorInput instanceof IFileEditorInput){
+				IFile inputFile= ((IFileEditorInput)editorInput).getFile();
+				IResource matchFile = searchMatch.getResource();
+				if (matchFile != null)
+					return inputFile.equals(matchFile);
+				else
+					return false;
+			}
 		} else if (match.getElement() instanceof IFile) {
 			if (editorInput instanceof IFileEditorInput) {
 				return ((IFileEditorInput)editorInput).getFile().equals(match.getElement());
@@ -231,15 +241,10 @@ public class CSearchResult extends AbstractTextSearchResult implements IEditorMa
 	private void collectMatches(Set matches, Object[] test, IFile file) {
 		
 		for (int i=0; i<test.length; i++){
-			BasicSearchMatch tempMatch = (BasicSearchMatch) test[i];
-			if (tempMatch.getResource().equals(file)){
-				Match[] m= getMatches(tempMatch);
-				
-				if (m.length != 0) {
-					for (int j= 0; j < m.length; j++) {
-						matches.add(m[j]);
-					}
-				}
+			Match[]testMatches=this.getMatches(test[i]);
+			for (int k=0;k<testMatches.length;k++){
+			  if (((CSearchMatch) testMatches[k]).getSearchMatch().getResource().equals(file))
+			     matches.add(testMatches[k]);
 			}
 		}
 	}

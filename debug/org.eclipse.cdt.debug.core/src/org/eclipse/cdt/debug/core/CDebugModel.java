@@ -36,6 +36,7 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
+import org.eclipse.cdt.debug.internal.core.model.CCoreFileDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.cdt.debug.internal.core.model.CFormattedMemoryBlock;
@@ -222,15 +223,11 @@ public class CDebugModel
 		{
 			public void run( IProgressMonitor m )
 			{
-				target[0] = new CDebugTarget( launch, 
-											  ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP, 
-											  cdiTarget, 
-											  name,
-											  null,
-											  debuggerProcess,
-											  file,
-											  true,
-											  false );
+				target[0] = new CCoreFileDebugTarget( launch, 
+													  cdiTarget, 
+													  name,
+													  debuggerProcess,
+													  file );
 			}
 		};
 		try

@@ -1,3 +1,9 @@
+2003-08-20 Mikhail Khodjaiants
+	Unable to terminate post mortem debugging session.
+	Extended the 'CDebugTarget' class to overload the 'terminate' and 'canTerminate' methods.
+	* CDebugModel.java
+	* CCoreFileDebugTarget.java: new
+
 2003-08-19 Mikhail Khodjaiants
 	Create ICDIVariableObject for each array partition to compute a detail panel's value. 
 	* CArrayPartition.java

@@ -51,4 +51,5 @@ public interface ICHelpContextIds {
 
 	public static final String COLLAPSE_ALL_ACTION= 	PREFIX + "collapse_all_action"; //$NON-NLS-1$
 
+	public static final String C_SEARCH_PAGE=			PREFIX + "c_search_page"; //$NON-NLS-1$
 }

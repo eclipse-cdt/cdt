@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
@@ -62,6 +63,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -179,7 +181,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		setControl( result );
 
 		Dialog.applyDialogFont( result );
-		//WorkbenchHelp.setHelp(result, IJavaHelpContextIds.JAVA_SEARCH_PAGE);	
+		WorkbenchHelp.setHelp(result, ICHelpContextIds.C_SEARCH_PAGE);	
 	}
 	
 	private Control createExpression( Composite parent ) {

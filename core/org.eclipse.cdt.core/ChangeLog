@@ -1,5 +1,10 @@
 2003-03-27 Alain Magloire
 
+	The ICElement.getResource() should not throw a CModelException, it returns null or the the resource.
+	This makes us consistent with JDT/IJavaElement.getResource();
+
+2003-03-27 Alain Magloire
+
 	Some changes in the Core Model to make it closer to JDT, the hierarchy is now:
 	ICModel
 		ICProject

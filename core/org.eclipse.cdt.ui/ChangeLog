@@ -1,3 +1,13 @@
+2004-02-26 Alain Magloire
+
+	New icons from Chris Wiebe.
+
+	* icons/full/obj16/c_resource_obj.gif
+	* icons/full/obj16/cfolder_obj.gif
+	* icons/full/obj16/s_file.obj.gif
+	* icons/full/ovr16/c_ovr.gif.gif
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+
 2004-02-25 Bogdan Gheorghe
 	First go at Selection Search facility. Added Selection Search menus to
 	the CView, the CEditor and the COutlineView.

@@ -1,3 +1,9 @@
+2003-02-12 Mikhail Khodjaiants
+	Changes in the 'Automatically Load Symbols' action because of the removal of the 
+	'setAutoSolib' method from ICDISharedLibraryManager.
+	* SetAutoSolibActionDelegate.java
+	* plugin.xml
+ 
 2003-02-11 Mikhail Khodjaiants
 	The 'Automatically Load Symbols' action is added to the 'Shared Libraries' view.
 	* SetAutoSolibActionDelegate.java: new

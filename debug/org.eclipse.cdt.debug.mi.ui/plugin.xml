@@ -61,11 +61,11 @@
                icon="icons/full/elcl16/auto_solib_co.gif"
                helpContextId="set_auto_solib_action_context"
                label="%SetAutoSolibAction.label"
-               menubarPath="sharedLibrariesGroup"
+               menubarPath="additions"
                tooltip="%SetAutoSolibAction.tooltip">
             <enablement>
                <pluginState
-                     value="activated"
+                     value="installed"
                      id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>

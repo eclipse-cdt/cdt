@@ -5,15 +5,21 @@
  */
 package org.eclipse.cdt.debug.mi.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.mi.core.MIPlugin;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPartListener;
@@ -29,12 +35,11 @@ import org.eclipse.ui.IWorkbenchWindow;
  * @since: Feb 11, 2003
  */
 public class SetAutoSolibActionDelegate implements IViewActionDelegate, 
-												   ISelectionListener, 
+												   ISelectionListener,
 												   IPartListener
 {
 	private IViewPart fView = null;
 	private IAction fAction;
-	private IStructuredSelection fSelection;
 	private IStatus fStatus = null;
 
 	/**
@@ -42,6 +47,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 	 */
 	public SetAutoSolibActionDelegate()
 	{
+		super();
 	}
 
 	/* (non-Javadoc)
@@ -61,14 +67,6 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 	{
 		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
 		{
-			if ( selection instanceof IStructuredSelection )
-			{
-				setSelection( (IStructuredSelection)selection );
-			}
-			else
-			{
-				setSelection( null );
-			}
 			update( getAction() );
 		}
 	}
@@ -78,9 +76,6 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 	 */
 	public void run( IAction action )
 	{
-		final IStructuredSelection selection = getSelection();
-		if ( selection != null && selection.size() != 1 )
-			return;
 		BusyIndicator.showWhile( Display.getCurrent(), 
 								 new Runnable() 
 									 {
@@ -88,7 +83,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 										 {
 											 try 
 											 {
-												 doAction( selection.getFirstElement() );
+												 doAction( DebugUITools.getDebugContext() );
 												 setStatus( null );
 											 } 
 											 catch( DebugException e ) 
@@ -108,7 +103,8 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 			{
 				CDebugUIPlugin.log( getStatus() );
 			}
-		}		
+		}
+		update( action );		
 	}
 
 	/* (non-Javadoc)
@@ -127,8 +123,9 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 	{
 		if ( action != null )
 		{
-			action.setEnabled( getEnableStateForSelection( getSelection() ) );
-			action.setChecked( getCheckStateForSelection( getSelection() ) );
+			IAdaptable element = DebugUITools.getDebugContext();
+			action.setEnabled( getEnableStateForSelection( element ) );
+			action.setChecked( getCheckStateForSelection( element ) );
 		}
 	}
 
@@ -191,53 +188,36 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 		return fAction;
 	}
 
-	private void setSelection( IStructuredSelection selection )
-	{
-		fSelection = selection;
-	}
-
-	private IStructuredSelection getSelection()
-	{
-		return fSelection;
-	}
-
 	protected void dispose()
 	{
 		if ( getView() != null ) 
 		{
 			getView().getViewSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 			getView().getViewSite().getPage().removePartListener( this );
-		}	
+		}
 	}
 
-	protected boolean getCheckStateForSelection( IStructuredSelection selection )
-	{
-		if ( selection == null || selection.size() != 1 )
+	protected boolean getCheckStateForSelection( IAdaptable element )
+	{		
+		SharedLibraryManager slm = getSharedLibraryManager( element );
+		if ( slm != null )
 		{
-			return false;
-		}
-		Object element = selection.getFirstElement();
-		if ( element instanceof IDebugElement )
-		{
-			ICSharedLibraryManager slm = (ICSharedLibraryManager)((IDebugElement)element).getDebugTarget().getAdapter( ICSharedLibraryManager.class );
-			if ( slm != null )
+			try
 			{
-				return slm.getAutoLoadSymbols();
+				return slm.isAutoLoadSymbols();
+			}
+			catch( CDIException e )
+			{
 			}
 		}
 		return false;
 	}
 
-	protected boolean getEnableStateForSelection( IStructuredSelection selection )
+	protected boolean getEnableStateForSelection( IAdaptable element )
 	{
-		if ( selection == null || selection.size() != 1 )
-		{
-			return false;
-		}
-		Object element = selection.getFirstElement();
 		return ( element instanceof IDebugElement && 
 				 ((IDebugElement)element).getDebugTarget().isSuspended() &&
-				 ((IDebugElement)element).getDebugTarget().getAdapter( ICSharedLibraryManager.class ) != null );
+				 getSharedLibraryManager( element ) != null );
 	}
 
 	protected String getStatusMessage()
@@ -263,25 +243,37 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 		return fStatus;
 	}
 
-	protected void doAction( Object element ) throws DebugException
+	protected void doAction( IAdaptable element ) throws DebugException
 	{
 		if ( getView() == null )
 			return;
-		if ( element instanceof IDebugElement )
+		SharedLibraryManager slm = getSharedLibraryManager( element );
+		if ( slm != null && getAction() != null )
 		{
-			ICSharedLibraryManager slm = (ICSharedLibraryManager)((IDebugElement)element).getDebugTarget().getAdapter( ICSharedLibraryManager.class );
-			if ( slm != null && getAction() != null )
+			try
 			{
-				try
-				{
-					slm.setAutoLoadSymbols( getAction().isChecked() );
-				}
-				catch( DebugException e )
-				{
-					getAction().setChecked( slm.getAutoLoadSymbols() );
-					throw e;
-				}
+				slm.setAutoLoadSymbols( getAction().isChecked() );
+			}
+			catch( CDIException e )
+			{
+				getAction().setChecked( !getAction().isChecked() );
+				throw new DebugException( new Status( IStatus.ERROR, 
+													  MIPlugin.getUniqueIdentifier(),
+													  DebugException.TARGET_REQUEST_FAILED, 
+													  e.toString(), 
+													  null ) );
 			}
 		}
+	}
+	
+	private SharedLibraryManager getSharedLibraryManager( IAdaptable element )
+	{
+		if ( element != null )
+		{
+			ICDISession session = (ICDISession)element.getAdapter( ICDISession.class );
+			if ( session instanceof Session && ((Session)session).getSharedLibraryManager() instanceof SharedLibraryManager )
+				return (SharedLibraryManager)((Session)session).getSharedLibraryManager();
+		}
+		return null;		
 	}
 }

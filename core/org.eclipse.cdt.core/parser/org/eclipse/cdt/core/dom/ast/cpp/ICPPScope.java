@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
@@ -23,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @author aniefer
  */
 public interface ICPPScope extends IScope {
-	public IASTNode getPhysicalNode() throws DOMException;
+
     public void addBinding( IBinding binding ) throws DOMException;
     public IBinding getBinding( IASTName name ) throws DOMException;
 }

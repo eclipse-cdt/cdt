@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ILabel;
@@ -121,4 +122,11 @@ public class CFunctionScope implements ICFunctionScope {
 			bindings.remove( binding.getNameCharArray(), 0, binding.getNameCharArray().length);
 		}
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#getPhysicalNode()
+     */
+    public IASTNode getPhysicalNode() {
+        return function;
+    }
 }

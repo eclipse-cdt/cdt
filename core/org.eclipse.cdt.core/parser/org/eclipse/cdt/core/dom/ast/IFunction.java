@@ -42,4 +42,5 @@ public interface IFunction extends IBinding {
 	 */
 	public IFunctionType getType() throws DOMException;
 	
+	public boolean isStatic() throws DOMException;
 }

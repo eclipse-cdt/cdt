@@ -14,13 +14,16 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -29,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -37,11 +41,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 public class CPPFunction implements IFunction, ICPPBinding {
     
     public static class CPPFunctionProblem extends ProblemBinding implements IFunction {
-
-        /**
-         * @param id
-         * @param arg
-         */
         public CPPFunctionProblem( int id, char[] arg ) {
             super( id, arg );
         }
@@ -57,11 +56,20 @@ public class CPPFunction implements IFunction, ICPPBinding {
         public IFunctionType getType() throws DOMException {
             throw new DOMException( this );
         }
+
+        public boolean isStatic() throws DOMException {
+            throw new DOMException( this );
+        }
     }
     
 	protected ICPPASTFunctionDeclarator [] declarations;
 	protected ICPPASTFunctionDeclarator definition;
 	protected IFunctionType type = null;
+	
+	private static final int FULLY_RESOLVED         = 1;
+	private static final int RESOLUTION_IN_PROGRESS = 1 << 1;
+	private static final int IS_STATIC              = 3 << 2;
+	private int bits = 0;
 	
 	public CPPFunction( ICPPASTFunctionDeclarator declarator ){
 	    if( declarator != null ) {
@@ -70,6 +78,34 @@ public class CPPFunction implements IFunction, ICPPBinding {
 				definition = declarator;
 			else
 				declarations = new ICPPASTFunctionDeclarator [] { declarator };
+	    }
+	}
+	
+	private void resolveAllDeclarations(){
+	    if( (bits & (FULLY_RESOLVED | RESOLUTION_IN_PROGRESS)) == 0 ){
+	        bits |= RESOLUTION_IN_PROGRESS;
+		    IASTTranslationUnit tu = null;
+	        if( definition != null )
+	            tu = definition.getTranslationUnit();
+	        else if( declarations != null )
+	            tu = declarations[0].getTranslationUnit();
+	        else {
+	            //implicit binding
+	            IScope scope = getScope();
+                try {
+                    IASTNode node = scope.getPhysicalNode();
+                    while( !( node instanceof IASTTranslationUnit) )
+    	                node = node.getParent();
+    	            tu = (IASTTranslationUnit) node;
+                } catch ( DOMException e ) {
+                }
+	        }
+	        if( tu != null ){
+	            CPPVisitor.getDeclarations( tu, this );
+	        }
+	        declarations = (ICPPASTFunctionDeclarator[]) ArrayUtil.trim( ICPPASTFunctionDeclarator.class, declarations );
+	        bits |= FULLY_RESOLVED;
+	        bits &= ~RESOLUTION_IN_PROGRESS;
 	    }
 	}
 	
@@ -98,7 +134,10 @@ public class CPPFunction implements IFunction, ICPPBinding {
 			return;
 		}
 		for( int i = 0; i < declarations.length; i++ ){
-			if( declarations[i] == null ){
+		    if( declarations[i] == dtor ){
+		        //already in
+		        return;
+		    } else if( declarations[i] == null ){
 				declarations[i] = dtor;
 				updateParameterBindings( dtor );
 				return;
@@ -183,17 +222,6 @@ public class CPPFunction implements IFunction, ICPPBinding {
 		return scope;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
-	 */
-	public IASTNode getPhysicalNode() {
-	    if( definition != null )
-	        return definition;
-	    else if( declarations != null && declarations.length > 0 )
-	        return declarations[0];
-		return null;
-	}
-
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
      */
@@ -234,7 +262,7 @@ public class CPPFunction implements IFunction, ICPPBinding {
     }
     
     protected void updateParameterBindings( ICPPASTFunctionDeclarator fdtor ){
-    	ICPPASTFunctionDeclarator orig = (ICPPASTFunctionDeclarator) getPhysicalNode();
+    	ICPPASTFunctionDeclarator orig = definition != null ? definition : declarations[0];
     	IASTParameterDeclaration [] ops = orig.getParameters();
     	IASTParameterDeclaration [] nps = fdtor.getParameters();
     	CPPParameter temp = null;
@@ -246,5 +274,39 @@ public class CPPFunction implements IFunction, ICPPBinding {
     			temp.addDeclaration( name );
     		}
     	}
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
+     */
+    public boolean isStatic() {
+        if( (bits & FULLY_RESOLVED) == 0 ){
+            resolveAllDeclarations();
+        }
+
+        //2 state bits, most significant = whether or not we've figure this out yet
+        //least significant = whether or not we are static
+        int state = ( bits & IS_STATIC ) >> 2;
+        if( state > 1 ) return (state % 2 != 0);
+        
+        
+        IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) getDefinition();
+        IASTDeclSpecifier declSpec = ((IASTFunctionDefinition)dtor.getParent()).getDeclSpecifier();
+        if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
+            bits |= 3 << 2;
+            return true;
+        }
+        
+        IASTFunctionDeclarator[] dtors = (IASTFunctionDeclarator[]) getDeclarations();
+        for( int i = 0; i < dtors.length; i++ ){
+            IASTNode parent = dtors[i].getParent();
+            declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+            if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
+                bits |= 3 << 2;
+                return true;
+            }
+        }
+        bits |= 2 << 2;
+        return false;
     }
 }

@@ -80,4 +80,11 @@ public class CExternalFunction implements IFunction, ICExternalBinding {
     public IScope getScope() {
         return tu.getScope();
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
+     */
+    public boolean isStatic() {
+        return false;
+    }
 }

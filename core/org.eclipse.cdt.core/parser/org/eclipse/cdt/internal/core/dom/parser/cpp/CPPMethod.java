@@ -15,16 +15,13 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
@@ -68,7 +65,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 			}
 		}
 		
-		char [] myName = ((IASTDeclarator)getPhysicalNode()).getName().toCharArray();
+		char [] myName = getNameCharArray();
 		
 		ICPPClassScope scope = (ICPPClassScope) getScope();
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) scope.getPhysicalNode();
@@ -148,24 +145,24 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return declarations[0].getName().toCharArray();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#isStatic()
-     */
-    public boolean isStatic() throws DOMException {
-        IASTDeclarator dtor = (IASTDeclarator) getPrimaryDeclaration();
-        if( dtor == null ) return false;
-        
-        while( dtor.getPropertyInParent() == IASTDeclarator.NESTED_DECLARATOR )
-            dtor = (IASTDeclarator) dtor.getParent();
-        
-        IASTNode node = dtor.getParent();
-        if( node instanceof IASTSimpleDeclaration ){
-            ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)node).getDeclSpecifier();
-            return (declSpec.getStorageClass() == IASTDeclSpecifier.sc_static );
-        } else if( node instanceof IASTFunctionDefinition ){
-            ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)node).getDeclSpecifier();
-            return (declSpec.getStorageClass() == IASTDeclSpecifier.sc_static );
-        }
-        return false;
-    }
+//    /* (non-Javadoc)
+//     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#isStatic()
+//     */
+//    public boolean isStatic() throws DOMException {
+//        IASTDeclarator dtor = (IASTDeclarator) getPrimaryDeclaration();
+//        if( dtor == null ) return false;
+//        
+//        while( dtor.getPropertyInParent() == IASTDeclarator.NESTED_DECLARATOR )
+//            dtor = (IASTDeclarator) dtor.getParent();
+//        
+//        IASTNode node = dtor.getParent();
+//        if( node instanceof IASTSimpleDeclaration ){
+//            ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)node).getDeclSpecifier();
+//            return (declSpec.getStorageClass() == IASTDeclSpecifier.sc_static );
+//        } else if( node instanceof IASTFunctionDefinition ){
+//            ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)node).getDeclSpecifier();
+//            return (declSpec.getStorageClass() == IASTDeclSpecifier.sc_static );
+//        }
+//        return false;
+//    }
 }

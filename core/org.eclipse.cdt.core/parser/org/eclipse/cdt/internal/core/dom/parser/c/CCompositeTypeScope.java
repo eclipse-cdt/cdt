@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -79,4 +80,10 @@ public class CCompositeTypeScope implements ICCompositeTypeScope {
 			bindings.remove( binding.getNameCharArray(), 0, binding.getNameCharArray().length);
 		}
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#getPhysicalNode()
+     */
+    public IASTNode getPhysicalNode() {
+        return compositeTypeSpec;
+    }
 }

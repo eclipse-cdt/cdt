@@ -73,4 +73,11 @@ public class CScope implements ICScope {
 			bindings[type].remove( binding.getNameCharArray(), 0, binding.getNameCharArray().length);
 		}
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#getPhysicalNode()
+     */
+    public IASTNode getPhysicalNode() {
+        return physicalNode;
+    }
 }

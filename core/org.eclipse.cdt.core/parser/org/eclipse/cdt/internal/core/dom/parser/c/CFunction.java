@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -25,8 +27,11 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 
 /**
  * Created on Nov 5, 2004
@@ -35,6 +40,12 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 public class CFunction implements IFunction, ICBinding {
 	private IASTStandardFunctionDeclarator [] declarators = null;
 	private IASTFunctionDeclarator definition;
+	
+	private static final int FULLY_RESOLVED         = 1;
+	private static final int RESOLUTION_IN_PROGRESS = 1 << 1;
+	private static final int IS_STATIC              = 3 << 2;
+	private int bits = 0;
+	
 	IFunctionType type = null;
 	
 	public CFunction( IASTFunctionDeclarator declarator ){
@@ -70,6 +81,24 @@ public class CFunction implements IFunction, ICBinding {
         }
     }
 	
+    private void resolveAllDeclarations(){
+	    if( (bits & (FULLY_RESOLVED | RESOLUTION_IN_PROGRESS)) == 0 ){
+	        bits |= RESOLUTION_IN_PROGRESS;
+		    IASTTranslationUnit tu = null;
+	        if( definition != null )
+	            tu = definition.getTranslationUnit();
+	        else if( declarators != null )
+	            tu = declarators[0].getTranslationUnit();
+	        
+	        if( tu != null ){
+	            CPPVisitor.getDeclarations( tu, this );
+	        }
+	        declarators = (ICPPASTFunctionDeclarator[]) ArrayUtil.trim( ICPPASTFunctionDeclarator.class, declarators );
+	        bits |= FULLY_RESOLVED;
+	        bits &= ~RESOLUTION_IN_PROGRESS;
+	    }
+	}
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */
@@ -266,5 +295,38 @@ public class CFunction implements IFunction, ICBinding {
         	    }
         	}
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
+     */
+    public boolean isStatic() {
+        if( (bits & FULLY_RESOLVED) == 0 ){
+            resolveAllDeclarations();
+        }
+
+        //2 state bits, most significant = whether or not we've figure this out yet
+        //least significant = whether or not we are static
+        int state = ( bits & IS_STATIC ) >> 2;
+        if( state > 1 ) return (state % 2 != 0);
+        
+        
+        IASTFunctionDeclarator dtor = definition;
+        IASTDeclSpecifier declSpec = ((IASTFunctionDefinition)dtor.getParent()).getDeclSpecifier();
+        if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
+            bits |= 3 << 2;
+            return true;
+        }
+        
+        for( int i = 0; i < declarators.length; i++ ){
+            IASTNode parent = declarators[i].getParent();
+            declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+            if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
+                bits |= 3 << 2;
+                return true;
+            }
+        }
+        bits |= 2 << 2;
+        return false;
     }
 }

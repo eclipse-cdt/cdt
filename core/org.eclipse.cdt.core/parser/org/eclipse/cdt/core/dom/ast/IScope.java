@@ -33,4 +33,9 @@ public interface IScope {
 	 * @return List of IBinding
 	 */
 	public IBinding[] find(String name) throws DOMException;
+
+    /**
+     * @return
+     */
+    public IASTNode getPhysicalNode() throws DOMException;
 }

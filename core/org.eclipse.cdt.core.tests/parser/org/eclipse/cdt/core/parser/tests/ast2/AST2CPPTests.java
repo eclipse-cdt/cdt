@@ -1923,6 +1923,20 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( 4, bs.length );
     }
     
+    public void testIsStatic() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("static void f();    \n" ); //$NON-NLS-1$
+        buffer.append("void f() {}         \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        IFunction f = (IFunction) col.getName(1).resolveBinding();
+        assertTrue( f.isStatic() );
+        assertInstances( col, f, 2 );
+    }
+    
 //    public void testBug85310() throws Exception
 //    {
 //    	  StringBuffer buffer = new StringBuffer( "void f() {" ); //$NON-NLS-1$

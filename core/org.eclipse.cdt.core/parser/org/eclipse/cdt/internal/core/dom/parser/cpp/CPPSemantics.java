@@ -79,7 +79,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -758,7 +757,8 @@ public class CPPSemantics {
 	            return true;
 	        if( binding instanceof IEnumerator )
 	            continue;
-	        else if( binding instanceof ICPPMember && ((ICPPMember)binding).isStatic() )
+	        else if( (binding instanceof IFunction && ((IFunction)binding).isStatic()) ||
+	                 (binding instanceof IVariable && ((IVariable)binding).isStatic()) )
 	            continue;
 	        
 	        return true;
@@ -1114,9 +1114,9 @@ public class CPPSemantics {
 	        ICPPBinding cpp = (ICPPBinding) binding;
 	        IASTNode[] n = cpp.getDeclarations();
 	        if( n != null && n.length > 0 )
-	            return (((ASTNode) n[0]).getOffset() < ((ASTNode)node).getOffset() );
+	            return (((ASTNode) n[0]).getOffset() <= ((ASTNode)node).getOffset() );
 	        else if( cpp.getDefinition() != null )
-	            return (((ASTNode) cpp.getDefinition()).getOffset() < ((ASTNode)node).getOffset() );
+	            return (((ASTNode) cpp.getDefinition()).getOffset() <= ((ASTNode)node).getOffset() );
 	        else 
 	            return true;
 	    }

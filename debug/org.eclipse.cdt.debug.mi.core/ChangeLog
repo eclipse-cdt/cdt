@@ -1,3 +1,10 @@
+
+2003-09-11 Alain Magloire
+
+	Fix to inf shared parsing.
+
+	* src/org/eclipse/cdt/debug/mi/core/outpu/MIInfoSharedLibary.java
+
 2003-09-09 Mikhail Khodjaiants
 	Regrouping the launch configuration constants.
 	* IMILaunchConfigurationConstants.java

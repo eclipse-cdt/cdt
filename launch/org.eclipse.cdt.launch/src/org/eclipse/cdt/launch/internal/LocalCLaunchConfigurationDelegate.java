@@ -80,7 +80,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 				else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
 					int pid = getProcessID();
 					if ( pid == -1 ) {
-						abort("No Process ID selected", null, ICDTLaunchConfigurationConstants.ERR_NO_PROCESSID);
+						cancel("No Process ID selected", ICDTLaunchConfigurationConstants.ERR_NO_PROCESSID);
 					}
 					dsession = debugConfig.getDebugger().createAttachSession(config, exe, pid);
 				}
@@ -117,11 +117,12 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		monitor.done();
 	}
 
-	private int getProcessID() {
+	private int getProcessID() throws CoreException {
 		final Shell shell = LaunchUIPlugin.getShell();
 		final int pid[] = {-1};
-		if ( shell == null ) 
-			return -1;
+		if ( shell == null ) {
+			abort( "No Shell availible in Launch", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+		}
 		Display display = shell.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {

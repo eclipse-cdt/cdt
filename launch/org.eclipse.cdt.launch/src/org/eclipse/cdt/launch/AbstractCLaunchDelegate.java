@@ -95,6 +95,10 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		throw new CoreException(new Status(IStatus.ERROR, getPluginID(), code, newMessage, exception));
 	}
 
+	protected void cancel(String message, int code) throws CoreException {
+		throw new CoreException(new Status(IStatus.OK, getPluginID(), code, message, null));
+	}
+
 	abstract protected String getPluginID();
 
 

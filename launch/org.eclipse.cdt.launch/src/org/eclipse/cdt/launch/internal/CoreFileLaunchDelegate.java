@@ -55,7 +55,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 	
 		IPath corefile = getCoreFilePath((IProject)cproject.getResource());
 		if ( corefile == null ) {
-			abort("No Corefile selected", null, ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
+			cancel("No Corefile selected", ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
 		}
 		try {
 			dsession = debugConfig.getDebugger().createCoreSession(config, exe, corefile);
@@ -80,11 +80,12 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			false);
 	}
 
-	private IPath getCoreFilePath(final IProject project) {
+	private IPath getCoreFilePath(final IProject project) throws CoreException {
 		final Shell shell = LaunchUIPlugin.getShell();
 		final String res[] = { null };
-		if (shell == null)
-			return null;
+		if (shell == null) {
+			abort( "No Shell availible in Launch", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+		}
 		Display display = shell.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {

@@ -493,11 +493,13 @@ public class PE {
 			}
 		} catch (IOException e) {
 		}
-		byte[] bytes = new byte[data.length - idx];
-		System.arraycopy(data, idx, bytes, 0, data.length - idx);
-		Coff.FileHeader filehdr = new Coff.FileHeader(bytes, true);
-		if (isValidMachine(filehdr.f_magic)) {	
-			return getAttributes(filehdr);
+		if (idx < data.length) {
+			byte[] bytes = new byte[data.length - idx];
+			System.arraycopy(data, idx, bytes, 0, data.length - idx);
+			Coff.FileHeader filehdr = new Coff.FileHeader(bytes, true);
+			if (isValidMachine(filehdr.f_magic)) {	
+				return getAttributes(filehdr);
+			}
 		}
 		throw new IOException(CCorePlugin.getResourceString("Util.exception.notPE")); //$NON-NLS-1$
 	}

@@ -102,6 +102,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	static final IPathEntryContainer[] NO_PATHENTRYCONTAINERS = new IPathEntryContainer[0];
 
+	static final IMarker[] NO_MARKERS = new IMarker[0];
+
 	// Synchronized the access of the cache entries.
 	protected Map resolvedMap = new Hashtable();
 
@@ -388,8 +390,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
-		boolean markers = cproject.getProject().getWorkspace().isTreeLocked();
-		ArrayList resolvedListEntries = getResolvedPathEntries(cproject, !markers);
+		boolean treeLock = cproject.getProject().getWorkspace().isTreeLocked();
+		ArrayList resolvedListEntries = getResolvedPathEntries(cproject, !treeLock);
 		return getCachedResolvedPathEntries(resolvedListEntries, cproject);
 	}
 
@@ -440,7 +442,24 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 			if (generateMarkers) {
 				IPathEntry[] finalEntries = (IPathEntry[])resolvedEntries.toArray(NO_PATHENTRIES);
-				generateMarkers(cproject, finalEntries);
+				ArrayList problemList = new ArrayList();
+				ICModelStatus status = validatePathEntry(cproject, finalEntries);
+				if (!status.isOK()) {
+					problemList.add(status);
+				}
+				for (int j = 0; j < finalEntries.length; j++) {
+					status = validatePathEntry(cproject, finalEntries[j], true, false);
+					if (!status.isOK()) {
+						problemList.add(status);
+					}
+				}
+				ICModelStatus[] problems = new ICModelStatus[problemList.size()];
+				problemList.toArray(problems);
+				IProject project = cproject.getProject();
+				if (hasPathEntryProblemMarkersChange(project, problems)) {
+					generateMarkers(project, problems);
+				}
+
 			}
 
 			// Check for duplication in the sources
@@ -1147,7 +1166,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 	}
 	
-	public void generateMarkers(final ICProject cProject, final IPathEntry[] entries) {
+	public void generateMarkers(final IProject project, final ICModelStatus[] problems) {
 		Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
 			
 			/*
@@ -1163,17 +1182,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
 						 */
 						public void run(IProgressMonitor monitor) throws CoreException {
-							IProject project = cProject.getProject();
 							flushPathEntryProblemMarkers(project);
-							ICModelStatus status = validatePathEntry(cProject, entries);
-							if (!status.isOK()) {
-								createPathEntryProblemMarker(project, status);
-							}
-							for (int j = 0; j < entries.length; j++) {
-								status = validatePathEntry(cProject, entries[j], true, false);
-								if (!status.isOK()) {
-									createPathEntryProblemMarker(project, status);
-								}
+							for (int i = 0; i < problems.length; ++i) {
+								createPathEntryProblemMarker(project, problems[i]);
 							}
 						}
 					}, null);
@@ -1208,15 +1219,23 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 								IPathEntry[] entries = getCachedResolvedPathEntries(cProjects[i]);
 								if (entries != null) {
 									IProject project = cProjects[i].getProject();
-									flushPathEntryProblemMarkers(project);
+									ArrayList problemList = new ArrayList();
 									ICModelStatus status = validatePathEntry(cProjects[i], entries);
 									if (!status.isOK()) {
-										createPathEntryProblemMarker(project, status);
+										problemList.add(status);
 									}
 									for (int j = 0; j < entries.length; j++) {
 										status = validatePathEntry(cProjects[i], entries[j], true, false);
 										if (!status.isOK()) {
-											createPathEntryProblemMarker(project, status);
+											problemList.add(status);
+										}
+									}
+									ICModelStatus[] problems = new ICModelStatus[problemList.size()];
+									problemList.toArray(problems);
+									if (hasPathEntryProblemMarkersChange(project, problems)) {
+										flushPathEntryProblemMarkers(project);
+										for (int j = 0; j < problems.length; ++j) {
+											createPathEntryProblemMarker(project, problems[j]);
 										}
 									}
 								}
@@ -1491,8 +1510,30 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	public void elementChanged(ElementChangedEvent event) {
 		try {
 			if (processDelta(event.getDelta()) == true) {
-				ICProject[] projects = (ICProject [])resolvedMap.keySet().toArray(new ICProject[0]);
-				updateMarkers(projects);
+				ICProject[] cProjects = (ICProject [])resolvedMap.keySet().toArray(new ICProject[0]);
+				for(int i = 0; i < cProjects.length; i++) {
+					IPathEntry[] entries = getCachedResolvedPathEntries(cProjects[i]);
+					if (entries != null) {
+						IProject project = cProjects[i].getProject();
+						ArrayList problemList = new ArrayList();
+						ICModelStatus status = validatePathEntry(cProjects[i], entries);
+						if (!status.isOK()) {
+							problemList.add(status);
+						}
+						for (int j = 0; j < entries.length; j++) {
+							status = validatePathEntry(cProjects[i], entries[j], true, false);
+							if (!status.isOK()) {
+								problemList.add(status);
+							}
+						}
+						ICModelStatus[] problems = new ICModelStatus[problemList.size()];
+						problemList.toArray(problems);
+						if (hasPathEntryProblemMarkersChange(project, problems)) {
+							generateMarkers(project, problems);
+						}
+					}
+				}
+				//updateMarkers(projects);
 			}
 		} catch (CModelException e) {
 		}
@@ -1825,21 +1866,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	void createPathEntryProblemMarker(IProject project, ICModelStatus status) {
 
 		IMarker marker = null;
-		int severity;
-		switch (status.getCode()) {
-			case ICModelStatusConstants.INVALID_PATHENTRY :
-				severity = IMarker.SEVERITY_WARNING;
-				break;
-
-			case ICModelStatusConstants.INVALID_PATH :
-				severity = IMarker.SEVERITY_WARNING;
-				break;
-
-			default :
-				severity = IMarker.SEVERITY_ERROR;
-				break;
-		}
-
+		int severity = code2Severity(status);
 		try {
 			marker = project.createMarker(ICModelMarker.PATHENTRY_PROBLEM_MARKER);
 			marker.setAttributes(new String[]{IMarker.MESSAGE, IMarker.SEVERITY, IMarker.LOCATION,
@@ -1859,16 +1886,70 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		IWorkspace workspace = project.getWorkspace();
 
 		try {
-			if (project.isAccessible()) {
-				IMarker[] markers = project.findMarkers(ICModelMarker.PATHENTRY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
-				if (markers != null) {
-					workspace.deleteMarkers(markers);
-				}
-			}
+			IMarker[] markers = getPathEntryProblemMarkers(project);
+			workspace.deleteMarkers(markers);
 		} catch (CoreException e) {
 			// could not flush markers: not much we can do
 			//e.printStackTrace();
 		}
 	}
 
+	/**
+	 * get all markers denoting pathentry problems
+	 */
+	protected IMarker[] getPathEntryProblemMarkers(IProject project) {
+
+		try {
+			IWorkspace workspace = project.getWorkspace();
+			IMarker[] markers = project.findMarkers(ICModelMarker.PATHENTRY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+			if (markers != null) {
+				return markers;
+			}
+		} catch (CoreException e) {
+			//e.printStackTrace();
+		}
+		return NO_MARKERS;
+	}
+
+	protected boolean hasPathEntryProblemMarkersChange(IProject project, ICModelStatus[] status) {
+		IMarker[] markers = getPathEntryProblemMarkers(project);
+		if (markers.length != status.length) {
+			return true;
+		}
+		for (int i = 0; i < markers.length; ++i) {
+			boolean found = false;
+			String message = markers[i].getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
+			int severity = markers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+			for (int j = 0; j < status.length; ++j) {
+				String msg = status[j].getMessage();
+				int cseverity = code2Severity(status[j]);
+				if (msg.equals(message) && severity == cseverity) {
+					found = true;
+				}
+			}
+			if (!found) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	int code2Severity(ICModelStatus status) {
+		int severity;
+		switch (status.getCode()) {
+			case ICModelStatusConstants.INVALID_PATHENTRY :
+				severity = IMarker.SEVERITY_WARNING;
+				break;
+
+			case ICModelStatusConstants.INVALID_PATH :
+				severity = IMarker.SEVERITY_WARNING;
+				break;
+
+			default :
+				severity = IMarker.SEVERITY_ERROR;
+				break;
+		}
+
+		return severity;
+	}
 }

@@ -10,22 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.internal.ui;
 
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TabFolder;
 
-public class CygwinDebuggerPage extends GDBDebuggerPage 
-{
-	public String getName() 
-	{
+public class CygwinDebuggerPage extends GDBDebuggerPage {
+
+	public String getName() {
 		return MIUIMessages.getString( "CygwinDebuggerPage.0" ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#createSolibBlock(org.eclipse.swt.widgets.Composite)
+	 * @see org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#createTabs(org.eclipse.swt.widgets.TabFolder)
 	 */
-	public GDBSolibBlock createSolibBlock(Composite parent)
-	{
-		GDBSolibBlock block = new GDBSolibBlock();
-		block.createBlock( parent, true, false, true );
-		return block;
+	public void createTabs( TabFolder tabFolder ) {
+		createMainTab( tabFolder );
 	}
 }

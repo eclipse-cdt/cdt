@@ -1,3 +1,10 @@
+2004-07-02 Mikhail Khodjaiants
+	Fix for bug 68934: Debug into dll doesn't work.
+	The "solib-search-path" and "stop-on-solib-events" options are not supported by gdb on CygWin.
+	Removed the "Shared Libraries" tab from the "Debugger" page of the laaunch configuration dialog
+	for the "CygWin Debugger" type.
+	* CygwinDebuggerPage.java
+
 2004-06-22 Mikhail Khodjaiants
 	Replaced global resource bundles by messages.
 

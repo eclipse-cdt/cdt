@@ -10,18 +10,11 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.NullLogService;
-import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -32,14 +25,8 @@ import org.eclipse.cdt.core.parser.ast.IASTVariable;
 /**
  * @author jcamelon
  */
-public class SelectionParseTest extends CompleteParseBaseTest {
+public class SelectionParseTest extends SelectionParseBaseTest {
 
-	protected IASTNode parse(String code, int offset1, int offset2 )
-	throws Exception {
-		return parse( code, offset1, offset2, true );
-	}
-	
-	
 	public void testBaseCase_VariableReference() throws Exception
 	{
 		String code = "void f() { int x; x=3; }"; //$NON-NLS-1$
@@ -68,44 +55,6 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 		assertNull( parse( code, offset1, offset2, false ));
 	}
 	
-	/**
-	 * @param code
-	 * @param offset1
-	 * @param offset2
-	 * @param b
-	 * @return
-	 */
-	protected IASTNode parse(String code, int offset1, int offset2, boolean expectedToPass ) throws Exception {
-		callback = new FullParseCallback();
-		IParser parser = null;
-
-		parser =
-			ParserFactory.createParser(
-					ParserFactory.createScanner(
-							new StringReader(code),
-							"completion-test", //$NON-NLS-1$
-							new ScannerInfo(),
-							ParserMode.SELECTION_PARSE,
-							ParserLanguage.CPP,
-							callback,
-							new NullLogService(), null),
-							callback,
-							ParserMode.SELECTION_PARSE,
-							ParserLanguage.CPP,
-							ParserUtil.getParserLogService());
-		
-		IParser.ISelectionParseResult result =parser.parse( offset1, offset2 );
-		if( expectedToPass )
-		{
-			assertNotNull( result );
-			String filename = result.getFilename();
-			assertTrue( !filename.equals( "")); //$NON-NLS-1$
-			return (IASTNode) result.getOffsetableNamedElement();
-		}
-		return null;
-	}
-
-
 	public void testBaseCase_FunctionDeclaration() throws Exception
 	{
 		String code = "int x(); x( );"; //$NON-NLS-1$

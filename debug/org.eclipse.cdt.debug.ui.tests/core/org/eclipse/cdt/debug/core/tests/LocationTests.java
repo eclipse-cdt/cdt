@@ -120,7 +120,10 @@ public class LocationTests extends TestCase {
         ICDILocationBreakpoint curbreak;
         session=CDebugHelper.createSession("main",testProject);
         assertNotNull(session);
-        cdiTarget=session.getCurrentTarget();
+		ICDITarget[] targets = session.getTargets();
+		assertNotNull(targets);
+		assertTrue(targets.length > 0);
+		cdiTarget = targets[0];
         assertNotNull(cdiTarget);
         
         /**********************************************************************

@@ -62,9 +62,9 @@ public class BreakpointTests extends TestCase {
 		root = workspace.getRoot();
 		monitor = new NullProgressMonitor();
 		if (workspace == null)
-			fail("Workspace was not setup");
+			fail("Workspace was not setup"); //$NON-NLS-1$
 		if (root == null)
-			fail("Workspace root was not setup");
+			fail("Workspace root was not setup"); //$NON-NLS-1$
 
 	}
 
@@ -81,10 +81,10 @@ public class BreakpointTests extends TestCase {
 		/***********************************************************************
 		 * Create a new project and import the test source.
 		 */
-		Path imputFile = new Path("resources/debugTest.zip");
-		testProject = CProjectHelper.createCProjectWithImport("filetest", imputFile);
+		Path imputFile = new Path("resources/debugTest.zip"); //$NON-NLS-1$
+		testProject = CProjectHelper.createCProjectWithImport("filetest", imputFile); //$NON-NLS-1$
 		if (testProject == null)
-			fail("Unable to create project");
+			fail("Unable to create project"); //$NON-NLS-1$
 		/* Build the test project.. */
 
 		testProject.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
@@ -167,16 +167,19 @@ public class BreakpointTests extends TestCase {
 		ICDITarget cdiTarget;
 		ICDILocation location;
 		boolean caught = false;
-		session = CDebugHelper.createSession("main", testProject);
+		session = CDebugHelper.createSession("main", testProject); //$NON-NLS-1$
 		assertNotNull(session);
-		cdiTarget = session.getCurrentTarget();
+		ICDITarget[] targets = session.getTargets();
+		assertNotNull(targets);
+		assertTrue(targets.length > 0);
+		cdiTarget = targets[0];
 		assertNotNull(cdiTarget);
 
 		/***********************************************************************
 		 * Create a break point on a generic function
 		 **********************************************************************/
 
-		location = cdiTarget.createLocation(null, "func1", 0);
+		location = cdiTarget.createLocation(null, "func1", 0); //$NON-NLS-1$
 		assertNotNull(location);
 		cdiTarget.setLocationBreakpoint(0, location, null, false);
 
@@ -184,7 +187,7 @@ public class BreakpointTests extends TestCase {
 		 * Create a break point on main
 		 **********************************************************************/
 
-		location = cdiTarget.createLocation(null, "main", 0);
+		location = cdiTarget.createLocation(null, "main", 0); //$NON-NLS-1$
 		assertNotNull(location);
 		cdiTarget.setLocationBreakpoint(0, location, null, false);
 
@@ -194,7 +197,7 @@ public class BreakpointTests extends TestCase {
 		 * CDIException
 		 **********************************************************************/
 
-		location = cdiTarget.createLocation(null, "badname", 0);
+		location = cdiTarget.createLocation(null, "badname", 0); //$NON-NLS-1$
 		assertNotNull(location);
 		try {
 			cdiTarget.setLocationBreakpoint(0, location, null, false);
@@ -210,7 +213,7 @@ public class BreakpointTests extends TestCase {
 		 * and stop program execution.
 		 **********************************************************************/
 
-		location = cdiTarget.createLocation(null, "func1", 0);
+		location = cdiTarget.createLocation(null, "func1", 0); //$NON-NLS-1$
 		assertNotNull(location);
 		cdiTarget.setLocationBreakpoint(0, location, null, false);
 		targets = session.getTargets();
@@ -237,8 +240,8 @@ public class BreakpointTests extends TestCase {
 		assertTrue(targets[0].isSuspended());
 		location = targets[0].getCurrentThread().getStackFrames()[0].getLocation();
 		assertTrue(location.getLineNumber() == 6);
-		assertTrue(location.getFunction().equals("func1"));
-		assertTrue(location.getFile().equals("main.c"));
+		assertTrue(location.getFunction().equals("func1")); //$NON-NLS-1$
+		assertTrue(location.getFile().equals("main.c")); //$NON-NLS-1$
 
 		/* clean up the session */
 		targets[0].terminate();
@@ -264,7 +267,10 @@ public class BreakpointTests extends TestCase {
 		boolean caught = false;
 		session = CDebugHelper.createSession("main", testProject);
 		assertNotNull(session);
-		cdiTarget = session.getCurrentTarget();
+		ICDITarget[] targets = session.getTargets();
+		assertNotNull(targets);
+		assertTrue(targets.length > 0);
+		cdiTarget = targets[0];
 		assertNotNull(cdiTarget);
 
 		/***********************************************************************
@@ -380,7 +386,10 @@ public class BreakpointTests extends TestCase {
 		ICDILocationBreakpoint curbreak;
 		session = CDebugHelper.createSession("main", testProject);
 		assertNotNull(session);
-		cdiTarget = session.getCurrentTarget();
+		ICDITarget[] targets = session.getTargets();
+		assertNotNull(targets);
+		assertTrue(targets.length > 0);
+		cdiTarget = targets[0];
 		assertNotNull(cdiTarget);
 
 		/***********************************************************************
@@ -451,7 +460,10 @@ public class BreakpointTests extends TestCase {
 
 		session = CDebugHelper.createSession("main", testProject);
 		assertNotNull(session);
-		cdiTarget = session.getCurrentTarget();
+		ICDITarget[] targets = session.getTargets();
+		assertNotNull(targets);
+		assertTrue(targets.length > 0);
+		cdiTarget = targets[0];
 		assertNotNull(cdiTarget);
 
 		/* Make sure initially we don't have any breakpoints */
@@ -604,7 +616,10 @@ public class BreakpointTests extends TestCase {
 		boolean caught = false;
 		session = CDebugHelper.createSession("main", testProject);
 		assertNotNull(session);
-		ICDITarget cdiTarget = session.getCurrentTarget();
+		ICDITarget[] targets = session.getTargets();
+		assertNotNull(targets);
+		assertTrue(targets.length > 0);
+		ICDITarget cdiTarget = targets[0];
 		assertNotNull(cdiTarget);
 
 		/***********************************************************************

@@ -1,3 +1,9 @@
+2004-10-17 Alain Magloire
+	Remove deprecated method in CDI adjust the implementation.
+	* core/org/eclipse/cdt/debug/core/tests/BreakpointTests.java
+	* core/org/eclipse/cdt/debug/core/tests/DebugTests.java
+	* core/org/eclipse/cdt/debug/core/tests/LocationTests.java
+
 2004-10-15 Alain Magloire
 	Adjust to the change in the CDI
 	* core/org/eclipse/cdt/debug/core/tests/BreakpointTests.java

@@ -124,12 +124,15 @@ public class DebugTests extends TestCase {
         assertNotNull(session);
         source=session.getSourceManager();
         assertNotNull(source);
-		cdiTarget=session.getCurrentTarget();
+		ICDITarget[] targets = session.getTargets();
+		assertNotNull(targets);
+		assertTrue(targets.length > 0);
+		cdiTarget = targets[0];
 		assertNotNull(cdiTarget);
 		location=cdiTarget.createLocation(null, "func1", 0);
 		assertNotNull(location);
 		cdiTarget.setLocationBreakpoint(0, location, null, false);
-		session.getCurrentTarget().resume();
+		cdiTarget.resume();
 		session.terminate();
 		session=null;
 

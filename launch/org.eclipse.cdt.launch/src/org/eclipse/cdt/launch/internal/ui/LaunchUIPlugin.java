@@ -61,7 +61,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin {
 		return shell;
 	}
 
-	public static void setDebugDialogShell(Shell shell) {
+	public static void setDialogShell(Shell shell) {
 		debugDialogShell = shell;
 	}
 	

@@ -54,8 +54,6 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		getDynamicTabHolder().setLayoutData(gd);
-
-		LaunchUIPlugin.setDebugDialogShell(parent.getShell());
 	}
 
 	protected void loadDebuggerComboBox(ILaunchConfiguration config, String selection) {

@@ -140,6 +140,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
+		LaunchUIPlugin.setDialogShell(parent.getShell());
 	}
 
 	/**

@@ -42,7 +42,7 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 			ParserFactory.createParser(
 					ParserFactory.createScanner(
 							new StringReader(code),
-							"completion-test",
+							"completion-test", //$NON-NLS-1$
 							new ScannerInfo(),
 							ParserMode.SELECTION_PARSE,
 							ParserLanguage.CPP,
@@ -62,80 +62,80 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 	
 	public void testBaseCase_VariableReference() throws Exception
 	{
-		String code = "void f() { int x; x=3; }";
-		int offset1 = code.indexOf( "x=" );
+		String code = "void f() { int x; x=3; }"; //$NON-NLS-1$
+		int offset1 = code.indexOf( "x=" ); //$NON-NLS-1$
 		int offset2 = code.indexOf( '=');
 		IASTNode node = parse( code, offset1, offset2 );
 		assertTrue( node instanceof IASTVariable );
-		assertEquals( ((IASTVariable)node).getName(), "x" );
+		assertEquals( ((IASTVariable)node).getName(), "x" ); //$NON-NLS-1$
 	}
 
 	public void testBaseCase_FunctionReference() throws Exception
 	{
-		String code = "int x(){x( );}";
-		int offset1 = code.indexOf( "x( " );
-		int offset2 = code.indexOf( "( )");
+		String code = "int x(){x( );}"; //$NON-NLS-1$
+		int offset1 = code.indexOf( "x( " ); //$NON-NLS-1$
+		int offset2 = code.indexOf( "( )"); //$NON-NLS-1$
 		IASTNode node = parse( code, offset1, offset2 );
 		assertTrue( node instanceof IASTFunction );
-		assertEquals( ((IASTFunction)node).getName(), "x" );
+		assertEquals( ((IASTFunction)node).getName(), "x" ); //$NON-NLS-1$
 	}
 	
 	public void testBaseCase_Error() throws Exception
 	{
-		String code = "int x() { y( ) }";
-		int offset1 = code.indexOf( "y( " );
-		int offset2 = code.indexOf( "( )");
+		String code = "int x() { y( ) }"; //$NON-NLS-1$
+		int offset1 = code.indexOf( "y( " ); //$NON-NLS-1$
+		int offset2 = code.indexOf( "( )"); //$NON-NLS-1$
 		assertNull( parse( code, offset1, offset2 ));
 	}
 	
 	public void testBaseCase_FunctionDeclaration() throws Exception
 	{
-		String code = "int x(); x( );";
-		int offset1 = code.indexOf( "x()" );
-		int offset2 = code.indexOf( "()");
+		String code = "int x(); x( );"; //$NON-NLS-1$
+		int offset1 = code.indexOf( "x()" ); //$NON-NLS-1$
+		int offset2 = code.indexOf( "()"); //$NON-NLS-1$
 		IASTNode node = parse( code, offset1, offset2 );
 		assertTrue( node instanceof IASTFunction );
-		assertEquals( ((IASTFunction)node).getName(), "x" );
+		assertEquals( ((IASTFunction)node).getName(), "x" ); //$NON-NLS-1$
 	}
 	
 	public void testBaseCase_FunctionDeclaration2() throws Exception
 	{
-		String code = "int printf( const char *, ... ); ";
-		int offset1 = code.indexOf( "printf" );
-		int offset2 = code.indexOf( "( const");
+		String code = "int printf( const char *, ... ); "; //$NON-NLS-1$
+		int offset1 = code.indexOf( "printf" ); //$NON-NLS-1$
+		int offset2 = code.indexOf( "( const"); //$NON-NLS-1$
 		IASTNode node = parse( code, offset1, offset2 );
 		assertTrue( node instanceof IASTFunction );
-		assertEquals( ((IASTFunction)node).getName(), "printf" );		
+		assertEquals( ((IASTFunction)node).getName(), "printf" );		 //$NON-NLS-1$
 	}
 
 	public void testBaseCase_VariableDeclaration() throws Exception
 	{
-		String code = "int x = 3;";
-		int offset1 = code.indexOf( "x" );
-		int offset2 = code.indexOf( " =");
+		String code = "int x = 3;"; //$NON-NLS-1$
+		int offset1 = code.indexOf( "x" ); //$NON-NLS-1$
+		int offset2 = code.indexOf( " ="); //$NON-NLS-1$
 		IASTNode node = parse( code, offset1, offset2 );
 		assertNotNull( node );
 		assertTrue( node instanceof IASTVariable );
-		assertEquals( ((IASTVariable)node).getName(), "x" );
+		assertEquals( ((IASTVariable)node).getName(), "x" ); //$NON-NLS-1$
 	}
 	
 	public void testBaseCase_Parameter() throws Exception
 	{
-		String code = "int main( int argc ) { int x = argc; }";
-		int offset1 = code.indexOf( "argc;" );
-		int offset2 = code.indexOf( ";" );
+		String code = "int main( int argc ) { int x = argc; }"; //$NON-NLS-1$
+		int offset1 = code.indexOf( "argc;" ); //$NON-NLS-1$
+		int offset2 = code.indexOf( ";" ); //$NON-NLS-1$
 		IASTNode node = parse( code, offset1, offset2 );
 		assertNotNull( node );
 		assertTrue( node instanceof IASTParameterDeclaration );
-		assertEquals( ((IASTParameterDeclaration)node).getName(), "argc" );		
+		assertEquals( ((IASTParameterDeclaration)node).getName(), "argc" );		 //$NON-NLS-1$
 	}
 	
 	public void testBug57898() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "class Gonzo {  public: void playHorn(); };\n" );
-		writer.write( "void Gonzo::playHorn() { return; }\n" );
-		writer.write( "int	main(int argc, char **argv) { Gonzo gonzo; gonzo.playHorn(); }\n" );
+		writer.write( "class Gonzo {  public: void playHorn(); };\n" ); //$NON-NLS-1$
+		writer.write( "void Gonzo::playHorn() { return; }\n" ); //$NON-NLS-1$
+		writer.write( "int	main(int argc, char **argv) { Gonzo gonzo; gonzo.playHorn(); }\n" ); //$NON-NLS-1$
 		String code = writer.toString();
 		for( int i = 0; i < 3; ++i )
 		{
@@ -143,13 +143,13 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 			switch( i )
 			{
 				case 0:
-					start = code.indexOf( "void playHorn") + 5;
+					start = code.indexOf( "void playHorn") + 5; //$NON-NLS-1$
 					break;
 				case 1:
-					start = code.indexOf( "::playHorn") + 2;
+					start = code.indexOf( "::playHorn") + 2; //$NON-NLS-1$
 					break;
 				case 2:
-					start = code.indexOf( ".playHorn") + 1;
+					start = code.indexOf( ".playHorn") + 1; //$NON-NLS-1$
 					break;
 			}
 			stop = start + 8;
@@ -157,33 +157,30 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 			assertNotNull( node );
 			assertTrue( node instanceof IASTMethod );
 			IASTMethod method = (IASTMethod) node;
-			assertEquals( method.getName(), "playHorn");
+			assertEquals( method.getName(), "playHorn"); //$NON-NLS-1$
 			IASTClassSpecifier gonzo = method.getOwnerClassSpecifier();
-			assertEquals( gonzo.getName(), "Gonzo");
+			assertEquals( gonzo.getName(), "Gonzo"); //$NON-NLS-1$
 		}
 	}
 	
 	public void testConstructorDestructorDeclaration() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "class Gonzo { Gonzo(); ~Gonzo(); };");
+		writer.write( "class Gonzo { Gonzo(); ~Gonzo(); };"); //$NON-NLS-1$
 		String code = writer.toString();
-		int offset = code.indexOf( " Gonzo()") + 1;
+		int offset = code.indexOf( " Gonzo()") + 1; //$NON-NLS-1$
 		IASTNode node = parse( code, offset, offset + 5 );
 		assertNotNull( node );
 		assertTrue( node instanceof IASTMethod );
 		IASTMethod constructor = ((IASTMethod)node);
-		assertEquals( constructor.getName(), "Gonzo" );
+		assertEquals( constructor.getName(), "Gonzo" ); //$NON-NLS-1$
 		assertTrue( constructor.isConstructor() );
-		offset = code.indexOf( "~Gonzo");
+		offset = code.indexOf( "~Gonzo"); //$NON-NLS-1$
 		node = parse( code, offset, offset + 6 );
 		assertNotNull( node );
 		assertTrue( node instanceof IASTMethod );
 		IASTMethod destructor = ((IASTMethod)node);
-		assertEquals( destructor.getName(), "~Gonzo" );
+		assertEquals( destructor.getName(), "~Gonzo" ); //$NON-NLS-1$
 		assertTrue( destructor.isDestructor() );
-		
-		
-	}
-	
+	}	
 }

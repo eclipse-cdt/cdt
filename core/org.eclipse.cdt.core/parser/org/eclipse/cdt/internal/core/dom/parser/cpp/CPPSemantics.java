@@ -746,6 +746,8 @@ public class CPPSemantics {
 					
 					if( inherited == null || inherited.length == 0 ){
 						inherited = lookupInParents( data, parent );
+					} else {
+					    visitVirtualBaseClasses( data, cls );
 					}
 				} else {
 				    data.problem = new ProblemBinding( IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, bases[i].getName().toCharArray() );
@@ -775,6 +777,26 @@ public class CPPSemantics {
 		return result;	
 	}
 
+	public static void visitVirtualBaseClasses( LookupData data, ICPPClassType cls ){
+	    ICPPBase [] bases = null;
+	    try {
+            bases = cls.getBases();
+        } catch ( DOMException e ) {
+            return;
+        }
+        for( int i = 0; i < bases.length; i++ ){
+            try {
+                if( bases[i].isVirtual() ){
+                    if( data.visited == ObjectSet.EMPTY_SET )
+				        data.visited = new ObjectSet(2);
+					data.visited.put( bases[i].getBaseClass().getCompositeScope() );
+                } else {
+                    visitVirtualBaseClasses( data, bases[i].getBaseClass() );
+                }
+            } catch ( DOMException e1 ) {
+            }
+        }
+	}
 	private static boolean checkAmbiguity( IASTName n, IASTName []names ) throws DOMException{
 	    names = (IASTName[]) ArrayUtil.trim( IASTName.class, names );
 	    if( names.length == 0 )

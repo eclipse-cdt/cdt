@@ -2615,5 +2615,41 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, g1, 1 );
         assertInstances( col, g2, 2 );
     }
+    
+    public void testBug86649() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class V { int f(); int x; };                 \n"); //$NON-NLS-1$
+        buffer.append("class W { int g(); int y; };                 \n"); //$NON-NLS-1$
+        buffer.append("class B : public virtual V, public W {       \n"); //$NON-NLS-1$
+        buffer.append("   int f();  int x;                          \n"); //$NON-NLS-1$
+        buffer.append("   int g();  int y;                          \n"); //$NON-NLS-1$
+        buffer.append("};                                           \n"); //$NON-NLS-1$
+        buffer.append("class C : public virtual V, public W {};     \n"); //$NON-NLS-1$
+        buffer.append("class D : public B, public C {               \n"); //$NON-NLS-1$
+        buffer.append("   void foo();                               \n"); //$NON-NLS-1$
+        buffer.append("};                                           \n"); //$NON-NLS-1$
+        buffer.append("void D::foo(){                               \n"); //$NON-NLS-1$
+        buffer.append("   x++;                                      \n"); //$NON-NLS-1$
+        buffer.append("   f();                                      \n"); //$NON-NLS-1$
+        buffer.append("   y++;                                      \n"); //$NON-NLS-1$
+        buffer.append("   g();                                      \n"); //$NON-NLS-1$
+        buffer.append("}                                            \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        ICPPField x = (ICPPField) col.getName(23).resolveBinding();
+        ICPPMethod f = (ICPPMethod) col.getName(24).resolveBinding();
+        
+        IProblemBinding y = (IProblemBinding) col.getName(25).resolveBinding();
+        IProblemBinding g = (IProblemBinding) col.getName(26).resolveBinding();
+        
+        assertEquals( y.getID(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP );
+        assertEquals( g.getID(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP );
+        
+        assertInstances( col, x, 2 );
+        assertInstances( col, f, 2 );
+    }
 }
 

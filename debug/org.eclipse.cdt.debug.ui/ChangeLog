@@ -1,4 +1,19 @@
 2005-02-03 Mikhail Khodjaiants
+	Added new images for the modules view.
+	* icons\full\clcl16\det_pane_hide.gif
+	* icons\full\clcl16\det_pane_right.gif
+	* icons\full\clcl16\det_pane_under.gif
+	* icons\full\dlcl16\det_pane_hide.gif
+	* icons\full\dlcl16\det_pane_right.gif
+	* icons\full\dlcl16\det_pane_under.gif
+	* icons\full\elcl16\det_pane_hide.gif
+	* icons\full\elcl16\det_pane_right.gif
+	* icons\full\elcl16\det_pane_under.gif
+	* icons\full\cview16\modules_view.gif
+	* icons\full\obj16\exec_dbg_obj.gif
+	* icons\full\obj16\exec_obj.gif
+
+2005-02-03 Mikhail Khodjaiants
 	Fix for bug 84402: computeDetail executes in the UI thread.
 	* CValueDetailProvider.java
 

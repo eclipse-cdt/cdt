@@ -24,6 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
@@ -49,16 +50,23 @@ public class Target extends BuildObject implements ITarget {
 	private List targetOSList;
 	private Map toolMap;
 	private List toolList;
+	private List toolReferences;
 
 	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
 	private static final String EMPTY_STRING = new String();
 	
-	public Target(IResource owner) {
+	/* (non-Javadoc)
+	 * Set the resource that owns the target.
+	 * 
+	 * @param owner
+	 */
+	protected Target(IResource owner) {
 		this.owner = owner;
 	}
 	
 	/**
-	 * Create a target owned by a resource based on a parent target
+	 * Create a copy of the target specified in the argument, 
+	 * that is owned by the owned by the specified resource.
 	 * 
 	 * @param owner 
 	 * @param parent
@@ -132,17 +140,9 @@ public class Target extends BuildObject implements ITarget {
 		
 		// Get the clean command
 		cleanCommand = element.getAttribute(CLEAN_COMMAND);
-		if (cleanCommand == null) {
-			// See if it defined in the parent
-			cleanCommand = parent.getCleanCommand();
-		}
 
 		// Get the make command
 		makeCommand = element.getAttribute(MAKE_COMMAND);
-		if (makeCommand == null) {
-			// See if it defined in the parent
-			makeCommand = parent.getMakeCommand();
-		}
 
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
@@ -154,23 +154,21 @@ public class Target extends BuildObject implements ITarget {
 			}
 		}
 		
-		IConfigurationElement[] targetElements = element.getChildren();
-		int k;
-		// Load the tools first
-		for (k = 0; k < targetElements.length; ++k) {
-			IConfigurationElement targetElement = targetElements[k];
-			if (targetElement.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
-				new Tool(this, targetElement);
-			}
+		// Load any tool references we might have
+		IConfigurationElement[] toolRefs = element.getChildren(IConfiguration.TOOLREF_ELEMENT_NAME);
+		for (int i=0; i < toolRefs.length; ++i) {
+			new ToolReference(this, toolRefs[i]);
+		}
+		// Then load any tools defined for the target
+		IConfigurationElement[] tools = element.getChildren(ITool.TOOL_ELEMENT_NAME);
+		for (int j = 0; j < tools.length; ++j) {
+			new Tool(this, tools[j]);
 		}
 		// Then load the configurations which may have tool references
-		for (k = 0; k < targetElements.length; ++k) {
-			IConfigurationElement targetElement = targetElements[k];
-			if (targetElement.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
-				new Configuration(this, targetElement);
-			}
+		IConfigurationElement[] configs = element.getChildren(IConfiguration.CONFIGURATION_ELEMENT_NAME);
+		for (int k = 0; k < configs.length; ++k) {
+			new Configuration(this, configs[k]);
 		}
-
 	}
 
 	/**
@@ -290,6 +288,20 @@ public class Target extends BuildObject implements ITarget {
 			}
 	}
 
+	/* (non-javadoc)
+	 * A safe accesor method. It answers the tool reference list in the 
+	 * receiver.
+	 * 
+	 * @return List
+	 */
+	protected List getLocalToolReferences() {
+		if (toolReferences == null) {
+			toolReferences = new ArrayList();
+			toolReferences.clear();
+		}
+		return toolReferences;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getMakeArguments()
 	 */
@@ -311,7 +323,17 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	public String getMakeCommand() {
 		// Return the name of the make utility
-		return (makeCommand == null) ? parent.getMakeCommand() : makeCommand;
+		if (makeCommand == null) {
+			// If I have a parent, ask it
+			if (parent != null) {
+				return parent.getMakeCommand();
+			} else {
+				// The user has forgotten to specify a command in the plugin manifets.
+				return new String("make");
+			}
+		} else {
+			return makeCommand;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -351,14 +373,26 @@ public class Target extends BuildObject implements ITarget {
 		return owner;
 	}
 
-	private int getNumTools() {
+	private int getToolCount() {
+		// Count the tools that belong to the target
 		int n = getToolList().size();
+		// Count the references the target has
+		n += getLocalToolReferences().size();
+		// Count the tools in the parent
 		if (parent != null)
-			n += ((Target)parent).getNumTools();
+			n += ((Target)parent).getToolCount();
 		return n;
 	}
 	
 
+	/* (non-Javadoc)
+	 * Tail-recursion method that creates a lits of tools and tool reference 
+	 * walking the receiver's parent hierarchy. 
+	 *  
+	 * @param toolArray
+	 * @param start
+	 * @return
+	 */
 	private int addToolsToArray(ITool[] toolArray, int start) {
 		int n = start;
 		if (parent != null)
@@ -367,10 +401,20 @@ public class Target extends BuildObject implements ITarget {
 		for (int i = 0; i < getToolList().size(); ++i) {
 			toolArray[n++] = (ITool)getToolList().get(i); 
 		}
+
+		// Add local tool references
+		for (int j = 0; j < getLocalToolReferences().size(); ++j) {
+			toolArray[n++] = (ITool)getLocalToolReferences().get(j);
+		}
 		
 		return n;
 	}
 	
+	/* (non-Javadoc)
+	 * A safe accessor method for the list of tools maintained by the 
+	 * target
+	 * 
+	 */
 	private List getToolList() {
 		if (toolList == null) {
 			toolList = new ArrayList();
@@ -379,6 +423,10 @@ public class Target extends BuildObject implements ITarget {
 		return toolList;
 	}
 
+	/* (non-Javadoc)
+	 * A safe accessor for the tool map
+	 * 
+	 */
 	private Map getToolMap() {
 		if (toolMap == null) {
 			toolMap = new HashMap();
@@ -388,10 +436,32 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/* (non-Javadoc)
+	 * Returns the reference for a given tool or <code>null</code> if one is not
+	 * found.
+	 * 
+	 * @param tool
+	 * @return ToolReference
+	 */
+	private ToolReference getToolReference(ITool tool) {
+		// See if the receiver has a reference to the tool
+		ToolReference ref = null;
+		if (tool == null) return ref;
+		Iterator iter = getLocalToolReferences().listIterator();
+		while (iter.hasNext()) {
+			ToolReference temp = (ToolReference)iter.next(); 
+			if (temp.references(tool)) {
+				ref = temp;
+				break;
+			}
+		}
+		return ref;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTools()
 	 */
 	public ITool[] getTools() {
-		ITool[] toolArray = new ITool[getNumTools()];
+		ITool[] toolArray = new ITool[getToolCount()];
 		addToolsToArray(toolArray, 0);
 		return toolArray;
 	}
@@ -413,11 +483,16 @@ public class Target extends BuildObject implements ITarget {
 		ITool result = null;
 
 		// See if receiver has it in list
-			result = (ITool) getToolMap().get(id);
+		result = (ITool) getToolMap().get(id);
 
 		// If not, check if parent has it
 		if (result == null && parent != null) {
 			result = ((Target)parent).getTool(id);
+		}
+		
+		// If not defined in parents, check if defined at all
+		if (result == null) {
+			result = ManagedBuildManager.getTool(id);
 		}
 
 		return result;
@@ -454,7 +529,21 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	public String getCleanCommand() {
 		// Return the command used to remove files
-		return cleanCommand == null ? EMPTY_STRING : cleanCommand;
+		if (cleanCommand == null) {
+			if (parent != null) {
+				return parent.getCleanCommand();
+			} else {
+				// User forgot to specify it. Guess based on OS.
+				if (BootLoader.getOS().equals("OS_WIN32")) {
+					return new String("del");
+				} else {
+					return new String("rm");
+				}
+			}
+		} else {
+			// This was spec'd in the manifest
+			return cleanCommand;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -559,6 +648,15 @@ public class Target extends BuildObject implements ITarget {
 		return new Configuration(this, parent, id);
 	}
 
+	/**
+	 * Adds a tool reference to the receiver.
+	 * 
+	 * @param toolRef
+	 */
+	public void addToolReference(ToolReference toolRef) {
+		getLocalToolReferences().add(toolRef);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setArtifactExtension(java.lang.String)
 	 */
@@ -595,6 +693,13 @@ public class Target extends BuildObject implements ITarget {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return new String("Target: ") + getName();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#updateOwner(org.eclipse.core.resources.IResource)
 	 */

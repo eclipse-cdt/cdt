@@ -21,8 +21,8 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
-import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
@@ -47,96 +47,27 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private String outputExtension;
 	private String outputFlag;
 	private String outputPrefix;
-	private ITarget target;
 	
-	public Tool(Target target) {
-		this.target = target;
+
+	public Tool(IConfigurationElement element) {
+		loadFromManifest(element);
+
+		// hook me up
+		ManagedBuildManager.addExtensionTool(this);
 	}
 	
 	/**
-	 * Constructor to create a new tool in the build model based on the information
+	 * Constructor to create a new tool for a target based on the information
 	 * defined in the plugin.xml manifest. 
 	 * 
 	 * @param target The target the receiver will belong to.
 	 * @param element The element containing the information.
 	 */
 	public Tool(Target target, IConfigurationElement element) {
-		this(target);
-
-		// id		
-		setId(element.getAttribute(ITool.ID));
+		loadFromManifest(element);
 		
 		// hook me up
 		target.addTool(this);
-
-		// name
-		setName(element.getAttribute(ITool.NAME));
-		
-		// Get the nature filter
-		String nature = element.getAttribute(NATURE);
-		if (nature == null || "both".equals(nature)) {
-			natureFilter = FILTER_BOTH;
-		} else if ("cnature".equals(nature)) {
-			natureFilter = FILTER_C;
-		} else if ("ccnature".equals(nature)) {
-			natureFilter = FILTER_CC;
-		} else {
-			natureFilter = FILTER_BOTH;
-		}
-		
-		// Get the supported input file extension
-		String inputs = element.getAttribute(ITool.SOURCES) == null ? 
-			new String() : 
-			element.getAttribute(ITool.SOURCES);
-		StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
-		while (tokenizer.hasMoreElements()) {
-			getInputExtensions().add(tokenizer.nextElement());
-		}
-		
-		// Get the interface (header file) extensions
-		String headers = element.getAttribute(INTERFACE_EXTS);
-		if (headers == null) {
-			headers = new String();
-		}
-		tokenizer = new StringTokenizer(headers, DEFAULT_SEPARATOR);
-		while (tokenizer.hasMoreElements()) {
-			getInterfaceExtensions().add(tokenizer.nextElement());
-		}
-		
-		// Get the output extension
-		outputExtension = element.getAttribute(ITool.OUTPUTS) == null ? 
-			new String() : 
-			element.getAttribute(ITool.OUTPUTS);
-			
-		// Get the tool invocation
-		command = element.getAttribute(ITool.COMMAND) == null ? 
-			new String() : 
-			element.getAttribute(ITool.COMMAND);
-			
-		// Get the flag to control output
-		outputFlag = element.getAttribute(ITool.OUTPUT_FLAG) == null ?
-			new String() :
-			element.getAttribute(ITool.OUTPUT_FLAG);
-			
-		// Get the output prefix
-		outputPrefix = element.getAttribute(ITool.OUTPUT_PREFIX) == null ?
-			new String() :
-			element.getAttribute(ITool.OUTPUT_PREFIX);
-
-		// set up the category map
-		categoryMap = new HashMap();
-		addOptionCategory(this);
-
-		// Check for options
-		IConfigurationElement[] toolElements = element.getChildren();
-		for (int l = 0; l < toolElements.length; ++l) {
-			IConfigurationElement toolElement = toolElements[l];
-			if (toolElement.getName().equals(ITool.OPTION)) {
-				new Option(this, toolElement);
-			} else if (toolElement.getName().equals(ITool.OPTION_CAT)) {
-				new OptionCategory(this, toolElement);
-			}
-		}
 	}
 	
 	public IOptionCategory getOptionCategory(String id) {
@@ -247,10 +178,10 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		return null;
 	}
 
-	public ITarget getTarget() {
+/*	public ITarget getTarget() {
 		return target;	
 	}
-	
+*/	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getTool()
 	 */
@@ -401,6 +332,80 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		return getInterfaceExtensions().contains(ext);
 	}
 
+	protected void loadFromManifest(IConfigurationElement element) {
+		// id		
+		setId(element.getAttribute(ITool.ID));
+		
+		// name
+		setName(element.getAttribute(ITool.NAME));
+		
+		// Get the nature filter
+		String nature = element.getAttribute(NATURE);
+		if (nature == null || "both".equals(nature)) {
+			natureFilter = FILTER_BOTH;
+		} else if ("cnature".equals(nature)) {
+			natureFilter = FILTER_C;
+		} else if ("ccnature".equals(nature)) {
+			natureFilter = FILTER_CC;
+		} else {
+			natureFilter = FILTER_BOTH;
+		}
+		
+		// Get the supported input file extension
+		String inputs = element.getAttribute(ITool.SOURCES) == null ? 
+			new String() : 
+			element.getAttribute(ITool.SOURCES);
+		StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
+		while (tokenizer.hasMoreElements()) {
+			getInputExtensions().add(tokenizer.nextElement());
+		}
+		
+		// Get the interface (header file) extensions
+		String headers = element.getAttribute(INTERFACE_EXTS);
+		if (headers == null) {
+			headers = new String();
+		}
+		tokenizer = new StringTokenizer(headers, DEFAULT_SEPARATOR);
+		while (tokenizer.hasMoreElements()) {
+			getInterfaceExtensions().add(tokenizer.nextElement());
+		}
+		
+		// Get the output extension
+		outputExtension = element.getAttribute(ITool.OUTPUTS) == null ? 
+			new String() : 
+			element.getAttribute(ITool.OUTPUTS);
+			
+		// Get the tool invocation
+		command = element.getAttribute(ITool.COMMAND) == null ? 
+			new String() : 
+			element.getAttribute(ITool.COMMAND);
+			
+		// Get the flag to control output
+		outputFlag = element.getAttribute(ITool.OUTPUT_FLAG) == null ?
+			new String() :
+			element.getAttribute(ITool.OUTPUT_FLAG);
+			
+		// Get the output prefix
+		outputPrefix = element.getAttribute(ITool.OUTPUT_PREFIX) == null ?
+			new String() :
+			element.getAttribute(ITool.OUTPUT_PREFIX);
+
+		// set up the category map
+		categoryMap = new HashMap();
+		addOptionCategory(this);
+
+		// Check for options
+		IConfigurationElement[] toolElements = element.getChildren();
+		for (int l = 0; l < toolElements.length; ++l) {
+			IConfigurationElement toolElement = toolElements[l];
+			if (toolElement.getName().equals(ITool.OPTION)) {
+				new Option(this, toolElement);
+			} else if (toolElement.getName().equals(ITool.OPTION_CAT)) {
+				new OptionCategory(this, toolElement);
+			}
+		}
+		
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
 	 */

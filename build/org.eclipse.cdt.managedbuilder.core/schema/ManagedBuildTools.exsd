@@ -298,6 +298,13 @@ Additional special types exist to flag options of special relevance to the build
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -342,6 +349,7 @@ Additional special types exist to flag options of special relevance to the build
          <sequence>
             <element ref="tool"/>
             <element ref="configuration"/>
+            <element ref="toolReference"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -437,7 +445,7 @@ Additional special types exist to flag options of special relevance to the build
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   Used by the build model to uniquely identify the option category.

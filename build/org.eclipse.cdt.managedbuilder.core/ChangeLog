@@ -1,3 +1,41 @@
+2004-02-26
+	Work for C14, add the ability to inherit a tool description via a tool 
+	reference.
+	
+	Changed the schema to allow a tool reference to belong to a target.
+	* schema/ManagedBuildTools.exsd
+	
+	Changed the manifest logic in the managed build manager to load and 
+	retrieve tool definitions as well as target definitions. The schema 
+	allowed for this, but the logic was missing.
+	* src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java
+
+	Made some bookeeping additions to the target so that it can store references 
+	to tools. First, the target loads any tool references it has. Then it loads 
+	tools and configurations. The target also has to consider the presence of tool 
+	references when it determines how many tools it has, so the logic that counted 
+	and returned the number of tools in the target was updated. Some key changes in 
+	this regard relate to how the target looks up the tool references it has. It 
+	now has to ask the managed build info if it has a tool definition for the reference 
+	if there are no tools defined for the target level for a given reference.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Target.java
+	
+	Tool references now have the potential to be owned by either a target or a 
+	configuration. Changed the owner to the superclass of both and figure out 
+	which the parent is at runtime to perform the proper registration and information 
+	look-up. Also removed the reference to a target from a tool and the interface to 
+	extract the target from ITool.
+	* src/org/eclipse/cdt/managedbuilder/core/ITool.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ToolReference.java
+	
+	An unrelated bug had to do with a problem my testing uncovered with nested 
+	categories. The manifest reader was looking at the wrong field to determine 
+	the parent, but for the manifests we have created, this has not proven to be 
+	a problem so far.
+	* src/org/eclipse/cdt/managedbuilder/core/IOptionCategory.java
+	* src/org/eclipse/cdt/managedbuilder/core/IOptionCategory.java	
+	
 2004-02-24 Sean Evoy
 	Changed the makefile generator to escape any whitespace it finds in a dependency
 	path. Now it is possible to build a project in a location with spaces but 

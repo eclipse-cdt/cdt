@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IResource;
 public interface IConfiguration extends IBuildObject {
 	// Schema element names
 	public static final String CONFIGURATION_ELEMENT_NAME = "configuration";	//$NON-NLS-1$
-	public static final String TOOL_REF = "toolReference";	//$NON-NLS-1$
+	public static final String TOOLREF_ELEMENT_NAME = "toolReference";	//$NON-NLS-1$
 	public static final String PARENT = "parent";	//$NON-NLS-1$
 
 	/**

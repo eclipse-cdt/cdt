@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
+import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -42,6 +43,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,10 +62,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + "ManagedBuildManager";	//$NON-NLS-1$
 	public static final String EXTENSION_POINT_ID = "ManagedBuildInfo";		//$NON-NLS-1$
 	
-	// Targets defined by extensions (i.e., not associated with a resource)
+	// This is the version of the manifest and project files that
+	private static final String buildInfoVersion = "2.0.0";
 	private static boolean extensionTargetsLoaded = false;
-	private static List extensionTargets;
 	private static Map extensionTargetMap;
+	private static List extensionTargets;
+	private static Map extensionToolMap;
 
 	// Listeners interested in build model changes
 	private static Map buildModelListeners;
@@ -102,6 +106,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 
 	/* (non-Javadoc)
+	 * Safe accessor for the map of IDs to Targets
+	 * 
 	 * @return
 	 */
 	protected static Map getExtensionTargetMap() {
@@ -109,6 +115,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			extensionTargetMap = new HashMap();
 		}
 		return extensionTargetMap;
+	}
+
+	/* (non-Javadoc)
+	 * Safe accessor for the map of IDs to Tools
+	 * 
+	 * @return
+	 */
+	protected static Map getExtensionToolMap() {
+		if (extensionToolMap == null) {
+			extensionToolMap = new HashMap();
+		}
+		return extensionToolMap;
 	}
 
 	/**
@@ -129,6 +147,15 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}
 
+	/**
+	 * Answers the tool with the ID specified in the argument or <code>null</code>.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public static ITool getTool(String id) {
+		return (ITool) getExtensionToolMap().get(id);
+	}
 	
 	/**
 	 * Answers the result of a best-effort search to find a target with the 
@@ -153,39 +180,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return target;
 	}
 
-	/**
-	 * Creates a new target for the resource based on the parentTarget.
-	 * 
-	 * @param resource
-	 * @param parentTarget
-	 * @return new <code>ITarget</code> with settings based on the parent passed in the arguments
-	 * @throws BuildException
-	 */
-	public static ITarget createTarget(IResource resource, ITarget parentTarget)
-		throws BuildException
-	{
-		IResource owner = parentTarget.getOwner();
-		
-		if (owner != null && owner.equals(resource))
-			// Already added
-			return parentTarget; 
-			
-		if (resource instanceof IProject) {
-			// Must be an extension target (why?)
-			if (owner != null)
-				throw new BuildException("addTarget: owner not null");
-		} else {
-			// Owner must be owned by the project containing this resource
-			if (owner == null)
-				throw new BuildException("addTarget: null owner");
-			if (!owner.equals(resource.getProject()))
-				throw new BuildException("addTarget: owner not project");
-		}
-		
-		// Passed validation
-		return new Target(resource, parentTarget);
-	}
-	
 	/**
 	 * Sets the default configuration for the project. Note that this will also
 	 * update the default target if needed.
@@ -384,7 +378,50 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		getExtensionTargetMap().put(target.getId(), target);
 	}
 		
-	// Private stuff
+	/**
+	 * @param tool
+	 */
+	public static void addExtensionTool(Tool tool) {
+		getExtensionToolMap().put(tool.getId(), tool);
+	}
+
+	/**
+	 * Creates a new target for the resource based on the parentTarget.
+	 * 
+	 * @param resource
+	 * @param parentTarget
+	 * @return new <code>ITarget</code> with settings based on the parent passed in the arguments
+	 * @throws BuildException
+	 */
+	public static ITarget createTarget(IResource resource, ITarget parentTarget)
+		throws BuildException
+	{
+		IResource owner = parentTarget.getOwner();
+		
+		if (owner != null && owner.equals(resource))
+			// Already added
+			return parentTarget; 
+			
+		if (resource instanceof IProject) {
+			// Must be an extension target (why?)
+			if (owner != null)
+				throw new BuildException("addTarget: owner not null");
+		} else {
+			// Owner must be owned by the project containing this resource
+			if (owner == null)
+				throw new BuildException("addTarget: null owner");
+			if (!owner.equals(resource.getProject()))
+				throw new BuildException("addTarget: owner not project");
+		}
+		
+		// Passed validation
+		return new Target(resource, parentTarget);
+	}
+	
+	/* (non-Javadoc)
+	 * Load the build information for the specified resource from its project
+	 * file. Pay attention to the version number too.
+	 */
 	private static ManagedBuildInfo loadBuildInfo(IProject project) {
 		ManagedBuildInfo buildInfo = null;
 		IFile file = project.getFile(FILE_NAME);
@@ -408,26 +445,44 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 
 	/* (non-Javadoc)
-	 * Since the class does not have a constructor, but all public methods
+	 * Since the class does not have a constructor but all public methods
 	 * call this method first, it is effectively a startup method
 	 */
 	private static void loadExtensions() {
 		if (extensionTargetsLoaded)
 			return;
-		extensionTargetsLoaded = true;
-
-		IExtensionPoint extensionPoint = ManagedBuilderCorePlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_ID);
+		
+		// Get those extensions
+		IPluginDescriptor descriptor = ManagedBuilderCorePlugin.getDefault().getDescriptor();
+		// Get the version of the manifest
+/*		PluginVersionIdentifier version = descriptor.getVersionIdentifier();
+		if (version.isGreaterThan(new PluginVersionIdentifier(buildInfoVersion))) {
+			//TODO: The version of the Plug-in is greater than what the manager thinks it understands
+		}
+*/		// We can read the manifest
+		IExtensionPoint extensionPoint = descriptor.getExtensionPoint(EXTENSION_POINT_ID);
 		IExtension[] extensions = extensionPoint.getExtensions();
 		for (int i = 0; i < extensions.length; ++i) {
 			IExtension extension = extensions[i];
 			IConfigurationElement[] elements = extension.getConfigurationElements();
-			for (int j = 0; j < elements.length; ++j) {
-				IConfigurationElement element = elements[j];
+			// Load the tools first
+			for (int toolIndex = 0; toolIndex < elements.length; ++toolIndex) {
+				IConfigurationElement element = elements[toolIndex];
+				// Load the targets
+				if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
+					new Tool(element);
+				}				
+			}
+			for (int targetIndex = 0; targetIndex < elements.length; ++targetIndex) {
+				IConfigurationElement element = elements[targetIndex];
+				// Load the targets
 				if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) {
 					new Target(element);
 				}
 			}
 		}
+		// Let's never do that again
+		extensionTargetsLoaded = true;
 	}
 
 	/**
@@ -518,6 +573,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return (IManagedBuildInfo) findBuildInfo(resource, false);
 	}
 
+	public static String getBuildInfoVersion() {
+		return buildInfoVersion;
+	}
+
 	/*
 	 * @return
 	 */
@@ -582,4 +641,5 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			map.put(project, list);
 		}
 	}
+
 }

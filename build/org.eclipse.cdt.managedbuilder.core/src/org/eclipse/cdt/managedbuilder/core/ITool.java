@@ -104,7 +104,7 @@ public interface ITool extends IBuildObject {
 	 * Return the target that defines this tool, if applicable
 	 * @return ITarget
 	 */ 
-	public ITarget getTarget();
+//	public ITarget getTarget();
 	
 	/**
 	 * Answers the command-line invocation defined for the receiver.

@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
-import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
@@ -31,25 +31,29 @@ import org.w3c.dom.NodeList;
  * 
  */
 public class ToolReference implements ITool {
-
-	private ITool parent;
-	private IConfiguration owner;
+	private String command;
 	private List optionReferences;
 	private Map optionRefMap;
+	private IBuildObject owner;
+	private ITool parent;
 	
 	/**
 	 * Created a tool reference on the fly based on an existing tool.
 	 * 
-	 * @param owner The <code>Configuration</code> the receiver will be added to.
+	 * @param owner The <code>BuildObject</code> the receiver will be added to.
 	 * @param parent The <code>ITool</code>tool the reference will be based on.
 	 */
-	public ToolReference(Configuration owner, ITool parent) {
+	public ToolReference(BuildObject owner, ITool parent) {
 		this.owner = owner;
 		this.parent = parent;
 		
-		owner.addToolReference(this);
+		if (owner instanceof Configuration) {
+			((Configuration)owner).addToolReference(this);
+		} else if (owner instanceof Target) {
+			((Target)owner).addToolReference(this);
+		}
 	}
-	
+
 	/**
 	 * Adds the option reference specified in the argument to the receiver.
 	 * 
@@ -62,15 +66,19 @@ public class ToolReference implements ITool {
 	/**
 	 * Created tool reference from an extension defined in a plugin manifest.
 	 * 
-	 * @param owner The <code>Configuration</code> the receiver will be added to.
+	 * @param owner The <code>BuildObject</code> the receiver will be added to.
 	 * @param element The element containing build information for the reference.
 	 */
-	public ToolReference(Configuration owner, IConfigurationElement element) {
+	public ToolReference(BuildObject owner, IConfigurationElement element) {
 		this.owner = owner;
-		
-		parent = ((Target)owner.getTarget()).getTool(element.getAttribute(ID));
-
-		owner.addToolReference(this);
+		if (owner instanceof Configuration) {
+			Target target = (Target) ((Configuration)owner).getTarget();
+			parent = target.getTool(element.getAttribute(ID));
+			((Configuration)owner).addToolReference(this);
+		} else if (owner instanceof Target) {
+			parent = ((Target)owner).getTool(element.getAttribute(ID));
+			((Target)owner).addToolReference(this);
+		}
 		
 		IConfigurationElement[] toolElements = element.getChildren();
 		for (int m = 0; m < toolElements.length; ++m) {
@@ -88,13 +96,17 @@ public class ToolReference implements ITool {
 	 * @param element The element defined in the project file containing build information
 	 * for the receiver.
 	 */
-	public ToolReference(Configuration owner, Element element) {
+	public ToolReference(BuildObject owner, Element element) {
 		this.owner = owner;
 		
-		Target parentTarget = (Target)owner.getTarget();
-		parent = ((Target)parentTarget.getParent()).getTool(element.getAttribute("id"));
-
-		owner.addToolReference(this);
+		if (owner instanceof Configuration) {
+			Target parentTarget = (Target) ((Configuration)owner).getTarget();
+			parent = ((Target)parentTarget.getParent()).getTool(element.getAttribute(ID));
+			((Configuration)owner).addToolReference(this);
+		} else if (owner instanceof Target) {
+			parent = ((Target)((Target)owner).getParent()).getTool(element.getAttribute(ID));
+			((Target)owner).addToolReference(this);
+		}
 	
 		NodeList configElements = element.getChildNodes();
 		for (int i = 0; i < configElements.getLength(); ++i) {
@@ -105,28 +117,14 @@ public class ToolReference implements ITool {
 		}
 	}
 
-	/**
-	 * Persist receiver to project file.
-	 * 
-	 * @param doc The persistent store for the reference information.
-	 * @param element The root element in the store the receiver must use 
-	 * to persist settings.
-	 */
-	public void serialize(Document doc, Element element) {
-		element.setAttribute(ITool.ID, parent.getId());
-		Iterator iter = getLocalOptionRefs().listIterator();
-		while (iter.hasNext()) {
-			OptionReference optionRef = (OptionReference) iter.next();
-			Element optionRefElement = doc.createElement(ITool.OPTION_REF);
-			element.appendChild(optionRefElement);
-			optionRef.serialize(doc, optionRefElement);
+	public boolean ownedByConfiguration(IConfiguration config) {
+		if (owner instanceof Configuration) {
+			return ((IConfiguration)owner).equals(config);
+		} else {
+			return false;
 		}
 	}
 
-	public IConfiguration getConfiguration() {
-		return owner;
-	}
-	
 	public ITool getTool() {
 		return parent;
 	}
@@ -247,10 +245,14 @@ public class ToolReference implements ITool {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getTarget()
 	 */
-	public ITarget getTarget() {
-		return owner.getTarget();
+/*	public ITarget getTarget() {
+		if (owner instanceof IConfiguration) {
+			return ((IConfiguration)owner).getTarget();
+		} else {
+			return (ITarget)owner;
+		}
 	}
-
+*/
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getTopOptionCategory()
 	 */
@@ -395,4 +397,38 @@ public class ToolReference implements ITool {
 		return parent.getOutputExtension(inputExtension);
 	}
 
+	/**
+	 * Persist receiver to project file.
+	 * 
+	 * @param doc The persistent store for the reference information.
+	 * @param element The root element in the store the receiver must use 
+	 * to persist settings.
+	 */
+	public void serialize(Document doc, Element element) {
+		element.setAttribute(ITool.ID, parent.getId());
+		Iterator iter = getLocalOptionRefs().listIterator();
+		while (iter.hasNext()) {
+			OptionReference optionRef = (OptionReference) iter.next();
+			Element optionRefElement = doc.createElement(ITool.OPTION_REF);
+			element.appendChild(optionRefElement);
+			optionRef.serialize(doc, optionRefElement);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		String answer = new String();
+		
+		if (parent != null) {
+			answer += "Reference to tool: " + parent.getName();	//$NON-NLS-1$ 
+		}
+		
+		if (answer.length() > 0) {
+			return answer;
+		} else {
+			return super.toString();			
+		}
+	}
 }

@@ -41,16 +41,44 @@ public class Configuration extends BuildObject implements IConfiguration {
 	private List toolReferences;
 
 	/**
-	 * A fresh new configuration for a target.
+	 * Build a configuration from the project manifest file.
 	 * 
-	 * @param target
-	 * @param id
-	 */	
-	public Configuration(Target target, String id) {
-		this.id = id;
+	 * @param target The <code>Target</code> the configuration belongs to. 
+	 * @param element The element from the manifest that contains the overridden configuration information.
+	 */
+	public Configuration(Target target, Element element) {
 		this.target = target;
 		
+		// id
+		setId(element.getAttribute(IConfiguration.ID));
+		
+		// hook me up
 		target.addConfiguration(this);
+		
+		// name
+		if (element.hasAttribute(IConfiguration.NAME))
+			setName(element.getAttribute(IConfiguration.NAME));
+		
+		if (element.hasAttribute(IConfiguration.PARENT)) {
+			// See if the target has a parent
+			ITarget targetParent = target.getParent();
+			// If so, then get my parent from it
+			if (targetParent != null) {
+				parent = targetParent.getConfiguration(element.getAttribute(IConfiguration.PARENT));
+			}
+			else {
+				parent = null;
+			}
+		}
+		
+		NodeList configElements = element.getChildNodes();
+		for (int i = 0; i < configElements.getLength(); ++i) {
+			Node configElement = configElements.item(i);
+			if (configElement.getNodeName().equals(IConfiguration.TOOLREF_ELEMENT_NAME)) {
+				new ToolReference(this, (Element)configElement);
+			}
+		}
+	
 	}
 
 	/**
@@ -139,78 +167,56 @@ public class Configuration extends BuildObject implements IConfiguration {
 		IConfigurationElement[] configElements = element.getChildren();
 		for (int l = 0; l < configElements.length; ++l) {
 			IConfigurationElement configElement = configElements[l];
-			if (configElement.getName().equals(IConfiguration.TOOL_REF)) {
+			if (configElement.getName().equals(IConfiguration.TOOLREF_ELEMENT_NAME)) {
 				new ToolReference(this, configElement);
 			}
 		}
 	}
 	
 	/**
-	 * Build a configuration from the project manifest file.
+	 * A fresh new configuration for a target.
 	 * 
-	 * @param target The <code>Target</code> the configuration belongs to. 
-	 * @param element The element from the manifest that contains the overridden configuration information.
-	 */
-	public Configuration(Target target, Element element) {
+	 * @param target
+	 * @param id
+	 */	
+	public Configuration(Target target, String id) {
+		this.id = id;
 		this.target = target;
 		
-		// id
-		setId(element.getAttribute(IConfiguration.ID));
-		
-		// hook me up
 		target.addConfiguration(this);
-		
-		// name
-		if (element.hasAttribute(IConfiguration.NAME))
-			setName(element.getAttribute(IConfiguration.NAME));
-		
-		if (element.hasAttribute(IConfiguration.PARENT)) {
-			// See if the target has a parent
-			ITarget targetParent = target.getParent();
-			// If so, then get my parent from it
-			if (targetParent != null) {
-				parent = targetParent.getConfiguration(element.getAttribute(IConfiguration.PARENT));
-			}
-			else {
-				parent = null;
-			}
-		}
-		
-		NodeList configElements = element.getChildNodes();
-		for (int i = 0; i < configElements.getLength(); ++i) {
-			Node configElement = configElements.item(i);
-			if (configElement.getNodeName().equals(IConfiguration.TOOL_REF)) {
-				new ToolReference(this, (Element)configElement);
-			}
-		}
-	
+	}
+
+	/**
+	 * Adds a tool reference to the receiver.
+	 * 
+	 * @param toolRef
+	 */
+	public void addToolReference(ToolReference toolRef) {
+		getLocalToolReferences().add(toolRef);
 	}
 	
 	/**
-	 * Persist receiver to project file.
-	 * 
-	 * @param doc
-	 * @param element
+	 * @param option
+	 * @return
 	 */
-	public void serialize(Document doc, Element element) {
-		element.setAttribute(IConfiguration.ID, id);
-		
-		if (name != null)
-			element.setAttribute(IConfiguration.NAME, name);
-			
-		if (parent != null)
-			element.setAttribute(IConfiguration.PARENT, parent.getId());
-		
-		// Serialize only the tool references defined in the configuration
-		Iterator iter = getLocalToolReferences().listIterator();
-		while (iter.hasNext()) {
-			ToolReference toolRef = (ToolReference) iter.next();
-			Element toolRefElement = doc.createElement(IConfiguration.TOOL_REF);
-			element.appendChild(toolRefElement);
-			toolRef.serialize(doc, toolRefElement);
+	public OptionReference createOptionReference(IOption option) {
+		if (option instanceof OptionReference) {
+			OptionReference optionRef = (OptionReference)option;
+			ToolReference toolRef = optionRef.getToolReference();
+			if (toolRef.ownedByConfiguration(this))
+				return optionRef;
+			else {
+				toolRef = new ToolReference(this, toolRef);
+				return toolRef.createOptionReference(option);
+			}
+		} else {
+			ToolReference toolRef = getToolReference(option.getTool());
+			if (toolRef == null)
+				toolRef = new ToolReference(this, option.getTool());
+			return toolRef.createOptionReference(option);
 		}
 	}
-	
+
 	/* (non-javadoc)
 	 * A safety method to avoid NPEs. It answers the tool reference list in the 
 	 * receiver. It does not look at the tool references defined in the parent.
@@ -278,32 +284,12 @@ public class Configuration extends BuildObject implements IConfiguration {
 		
 		// Replace tools with local overrides
 		for (int i = 0; i < tools.length; ++i) {
-			ITool tool = tools[i];
-			if (tool == null) {
-				// May have been filtered out
-				continue;
-			}
 			ToolReference ref = getToolReference(tools[i]);
 			if (ref != null)
 				tools[i] = ref;
 		}
 		
 		return tools;
-	}
-
-	/**
-	 * @param targetElement
-	 */
-	public void reset(IConfigurationElement element) {
-		// I just need to reset the tool references
-		getLocalToolReferences().clear();
-		IConfigurationElement[] configElements = element.getChildren();
-		for (int l = 0; l < configElements.length; ++l) {
-			IConfigurationElement configElement = configElements[l];
-			if (configElement.getName().equals(IConfiguration.TOOL_REF)) {
-				new ToolReference(this, configElement);
-			}
-		}
 	}
 
 	/* (non-Javadoc)
@@ -356,7 +342,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		return getTarget().getOwner();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * Returns the reference for a given tool or <code>null</code> if one is not
 	 * found.
 	 * 
@@ -366,6 +352,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	private ToolReference getToolReference(ITool tool) {
 		// See if the receiver has a reference to the tool
 		ToolReference ref = null;
+		if (tool == null) return ref;
 		Iterator iter = getLocalToolReferences().listIterator();
 		while (iter.hasNext()) {
 			ToolReference temp = (ToolReference)iter.next(); 
@@ -374,32 +361,49 @@ public class Configuration extends BuildObject implements IConfiguration {
 				break;
 			}
 		}
-		
 		return ref;
 	}
 	
-	public void addToolReference(ToolReference toolRef) {
-		getLocalToolReferences().add(toolRef);
-	}
-	
-	public OptionReference createOptionReference(IOption option) {
-		if (option instanceof OptionReference) {
-			OptionReference optionRef = (OptionReference)option;
-			ToolReference toolRef = optionRef.getToolReference();
-			if (toolRef.getConfiguration().equals(this))
-				return optionRef;
-			else {
-				toolRef = new ToolReference(this, toolRef);
-				return toolRef.createOptionReference(option);
+	/**
+	 * @param targetElement
+	 */
+	public void reset(IConfigurationElement element) {
+		// I just need to reset the tool references
+		getLocalToolReferences().clear();
+		IConfigurationElement[] configElements = element.getChildren();
+		for (int l = 0; l < configElements.length; ++l) {
+			IConfigurationElement configElement = configElements[l];
+			if (configElement.getName().equals(IConfiguration.TOOLREF_ELEMENT_NAME)) {
+				new ToolReference(this, configElement);
 			}
-		} else {
-			ToolReference toolRef = getToolReference(option.getTool());
-			if (toolRef == null)
-				toolRef = new ToolReference(this, option.getTool());
-			return toolRef.createOptionReference(option);
 		}
 	}
 
+	/**
+	 * Persist receiver to project file.
+	 * 
+	 * @param doc
+	 * @param element
+	 */
+	public void serialize(Document doc, Element element) {
+		element.setAttribute(IConfiguration.ID, id);
+		
+		if (name != null)
+			element.setAttribute(IConfiguration.NAME, name);
+			
+		if (parent != null)
+			element.setAttribute(IConfiguration.PARENT, parent.getId());
+		
+		// Serialize only the tool references defined in the configuration
+		Iterator iter = getLocalToolReferences().listIterator();
+		while (iter.hasNext()) {
+			ToolReference toolRef = (ToolReference) iter.next();
+			Element toolRefElement = doc.createElement(IConfiguration.TOOLREF_ELEMENT_NAME);
+			element.appendChild(toolRefElement);
+			toolRef.serialize(doc, toolRefElement);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, boolean)
 	 */
@@ -454,6 +458,11 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if(!Arrays.equals(value, oldValue))
 			createOptionReference(option).setValue(value);
 	}
-
-
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return new String("Configuration: ") + getName();
+	}
 }

@@ -1,4 +1,8 @@
 2002-10-29 Mikhail Khodjaiants
+	Fix for bug 25283.
+	* CDebugTarget.java: in 'setCurrentThread' method set the 'isCurrent' flag to false for the currently current thread.
+
+2002-10-29 Mikhail Khodjaiants
 	Implementing editing features of the memory view.
 	* IFormattedMemoryBlockRow.java
 	* IFormattedMemoryBlock.java

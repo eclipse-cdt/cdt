@@ -1830,8 +1830,13 @@ public class CDebugTarget extends CDebugElement
 		}
 		try
 		{
-			getCDITarget().setCurrentThread( ((CThread)thread).getCDIThread() );
-			((CThread)thread).setCurrent( true );
+			CThread oldThread = (CThread)getCurrentThread();
+			if ( !oldThread.equals( thread ) )
+			{
+				oldThread.setCurrent( false );
+				getCDITarget().setCurrentThread( ((CThread)thread).getCDIThread() );
+				((CThread)thread).setCurrent( true );
+			}
 		}
 		catch( CDIException e )
 		{

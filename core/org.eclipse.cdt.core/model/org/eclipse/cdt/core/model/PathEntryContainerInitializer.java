@@ -64,7 +64,7 @@ public abstract class PathEntryContainerInitializer {
 	 * @see CoreModel#setPathEntryContainer(IPath, ICProject[], IPathEntryContainer[], org.eclipse.core.runtime.IProgressMonitor)
 	 * @see PathContainerInitializer#canUpdatePathContainer(IPath, ICProject)
 	 */
-    public void requestClasspathContainerUpdate(IPath containerPath, ICProject project, IPathEntryContainer containerSuggestion) throws CoreException {
+    public void requestPathEntryContainerUpdate(IPath containerPath, ICProject project, IPathEntryContainer containerSuggestion) throws CoreException {
 
 		// By default, path container initializers do not accept updating containers
     }

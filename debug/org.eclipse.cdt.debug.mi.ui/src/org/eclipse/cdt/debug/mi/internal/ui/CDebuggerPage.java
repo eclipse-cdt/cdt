@@ -90,7 +90,7 @@ public class CDebuggerPage extends AbstractLaunchConfigurationTab {
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, false);
+		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, true);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class CDebuggerPage extends AbstractLaunchConfigurationTab {
 		boolean autosolib = false;
 		try {
 			debuggerCommand = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-			autosolib = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, false);
+			autosolib = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, true);
 		} catch (CoreException e) {
 		}
 		fDebuggerCommandText.setText(debuggerCommand);

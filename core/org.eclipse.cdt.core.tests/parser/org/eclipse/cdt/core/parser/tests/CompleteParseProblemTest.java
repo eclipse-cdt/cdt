@@ -58,8 +58,21 @@ public class CompleteParseProblemTest extends CompleteParseBaseTest {
 		assertEquals( p.getID(), IProblem.SYNTAX_ERROR );
 		assertEquals( p.getSourceStart(), code.indexOf( name )); //$NON-NLS-1$
 		assertEquals( p.getSourceEnd(), code.indexOf( name ) + name.length() ); //$NON-NLS-1$
-
 	}
 
+	public void testBug68306() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "class Foo { int bar( int ); };\n" ); //$NON-NLS-1$
+		buffer.append( "int Foo::bar( int ){}\n" ); //$NON-NLS-1$
+		buffer.append( "int Foo::bar( int ){}  //error\n" ); //$NON-NLS-1$
+		String code = buffer.toString();
+		parse( code, false );
+		assertFalse( callback.problems.isEmpty() );
+		assertEquals( callback.problems.size(), 1 );
+		IProblem p = (IProblem) callback.problems.get( 0 );
+		assertTrue( p.checkCategory( IProblem.SEMANTICS_RELATED ));
+
+	}
 
 }

@@ -881,6 +881,8 @@ public abstract class Parser extends ExpressionParser implements IParser
         throws EndOfFileException, BacktrackException
     {
         simpleDeclarationMark = mark();
+        IProblem firstFailure = null;
+        IProblem secondFailure = null;
 		try
         {
             return simpleDeclaration(
@@ -893,6 +895,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         {
         	if( simpleDeclarationMark == null )
         		throwBacktrack( bt );
+        	firstFailure = bt.getProblem();
             // did not work
             backup(simpleDeclarationMark);
             
@@ -906,8 +909,14 @@ public abstract class Parser extends ExpressionParser implements IParser
             catch( BacktrackException bt2 )
             {
             	if( simpleDeclarationMark == null )
-            		throwBacktrack(bt2);
-
+            	{
+            		if( firstFailure != null  && (bt2.getProblem() == null ))
+            			throwBacktrack(firstFailure);
+            		else
+            			throwBacktrack(bt2);
+            	}
+            	
+            	secondFailure = bt2.getProblem();
             	backup( simpleDeclarationMark ); 
 
 				try
@@ -920,7 +929,13 @@ public abstract class Parser extends ExpressionParser implements IParser
 				catch( BacktrackException b3 )
 				{
 					backup( simpleDeclarationMark ); //TODO - necessary?
-					throwBacktrack( b3 );
+					
+					if( firstFailure != null )
+						throwBacktrack( firstFailure );
+					else if( secondFailure != null )
+						throwBacktrack( secondFailure );
+					else
+						throwBacktrack( b3 );
 					return null;
 				}
             }

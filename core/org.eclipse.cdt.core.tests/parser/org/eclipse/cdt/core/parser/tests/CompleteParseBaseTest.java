@@ -801,8 +801,10 @@ public class CompleteParseBaseTest extends TestCase
     		ParserFactory.createScanner( new CodeReader( code.toCharArray() ), new ScannerInfo(), //$NON-NLS-1$
     			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
-    	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$
-    	assertTrue( ((CompleteParser)parser).validateCaches());
+    	boolean parseResult = parser.parse();
+		if( ! parseResult && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$
+		if( parseResult  )
+			assertTrue( ((CompleteParser)parser).validateCaches());
         return callback.getCompilationUnit();
     }
         

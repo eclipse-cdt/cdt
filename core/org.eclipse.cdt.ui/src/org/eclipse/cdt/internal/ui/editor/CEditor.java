@@ -86,10 +86,10 @@ import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -809,7 +809,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
 		
 
-		WorkbenchHelp.setHelp(parent, ICHelpContextIds.CEDITOR_VIEW);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.CEDITOR_VIEW);
 
 		fEditorSelectionChangedListener= new EditorSelectionChangedListener();
 		fEditorSelectionChangedListener.install(getSelectionProvider());

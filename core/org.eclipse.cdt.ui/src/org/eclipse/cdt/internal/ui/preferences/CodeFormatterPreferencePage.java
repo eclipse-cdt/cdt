@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * 
@@ -60,7 +60,7 @@ public class CodeFormatterPreferencePage extends PreferencePage implements IWork
 
 		
 		applyDialogFont(parent);
-		WorkbenchHelp.setHelp(getControl(), ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
 		return fCodeFormatterBlock.createControl(topPane);
 	}
 

@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -147,6 +148,15 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		return textControl;
 	}
 
+	protected void addFiller(Composite composite) {
+		PixelConverter pixelConverter= new PixelConverter(composite);
+		Label filler= new Label(composite, SWT.LEFT );
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
+		filler.setLayoutData(gd);
+	}
+
 	protected void numberFieldChanged(Text textControl) {
 		String number = textControl.getText();
 		IStatus status = validatePositiveNumber(number);
@@ -182,6 +192,12 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		//status= StatusUtil.getMoreSevere(fCEditorHoverConfigurationBlock.getStatus(), status);
 		setValid(!status.matches(IStatus.ERROR));
 		StatusUtil.applyToStatusLine(this, status);
+	}
+
+	protected void indent(Control control) {
+		GridData gridData= new GridData();
+		gridData.horizontalIndent= 20;
+		control.setLayoutData(gridData);		
 	}
 
 	protected Control addColorButton(Composite parent, String label, String key, int indentation) {

@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -59,7 +57,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * CEditorHoverConfigurationBlock
@@ -157,19 +155,6 @@ public class CEditorHoverConfigurationBlock {
 
 	private StatusInfo fStatus;
 	
-	Map fCheckBoxes= new HashMap();
-	private SelectionListener fCheckBoxListener= new SelectionListener() {
-		public void widgetDefaultSelected(SelectionEvent e) {
-			Button button= (Button) e.widget;
-			fStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
-		}
-		public void widgetSelected(SelectionEvent e) {
-			Button button= (Button) e.widget;
-			fStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
-		}
-	};
-	
-
 	public CEditorHoverConfigurationBlock(CEditorPreferencePage mainPreferencePage, OverlayPreferenceStore store) {
 		Assert.isNotNull(mainPreferencePage);
 		Assert.isNotNull(store);
@@ -361,7 +346,8 @@ public class CEditorHoverConfigurationBlock {
 
 		Dialog.applyDialogFont(hoverComposite);
 		
-		WorkbenchHelp.setHelp(hoverComposite, ICHelpContextIds.C_EDITOR_HOVERS_PAGE);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(hoverComposite, ICHelpContextIds.C_EDITOR_HOVERS_PAGE);
+
 		return hoverComposite;
 	}
 	
@@ -408,13 +394,6 @@ public class CEditorHoverConfigurationBlock {
 		fShowEditorAnnotationCheckbox.setSelection(fStore.getBoolean(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS));
 		fModifierEditor.setEnabled(false);
 		
-		Iterator e= fCheckBoxes.keySet().iterator();
-		while (e.hasNext()) {
-			Button b= (Button) e.next();
-			String key= (String) fCheckBoxes.get(b);
-			b.setSelection(fStore.getBoolean(key));
-		}
-
 		CEditorTextHoverDescriptor[] hoverDescs= getContributedHovers();
 		for (int i= 0; i < hoverDescs.length; i++)
 			fHoverTable.getItem(i).setChecked(hoverDescs[i].isEnabled());
@@ -574,20 +553,6 @@ public class CEditorHoverConfigurationBlock {
 		}
 	}
 	
-	private Button addCheckBox(Composite parent, String label, String key, int indentation) {		
-		Button checkBox= new Button(parent, SWT.CHECK);
-		checkBox.setText(label);
-		
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
-		gd.horizontalSpan= 2;
-		checkBox.setLayoutData(gd);
-		checkBox.addSelectionListener(fCheckBoxListener);
-		
-		fCheckBoxes.put(checkBox, key);
-		
-		return checkBox;
-	}
 	
 	private void addFiller(Composite composite) {
 		PixelConverter pixelConverter= new PixelConverter(composite);

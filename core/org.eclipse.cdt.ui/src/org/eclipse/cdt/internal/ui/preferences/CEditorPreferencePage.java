@@ -36,12 +36,16 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /*
  * The page for setting the editor options.
@@ -174,7 +178,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(parent, ICHelpContextIds.C_EDITOR_PREF_PAGE);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.C_EDITOR_PREF_PAGE);
 	}
 
 	protected void handleListSelection() {
@@ -277,7 +281,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 			}
 		});
 
-		WorkbenchHelp.setHelp(colorComposite, ICHelpContextIds.C_EDITOR_COLORS_PREF_PAGE);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(colorComposite, ICHelpContextIds.C_EDITOR_COLORS_PREF_PAGE);
+
 		return colorComposite;
 	}
 
@@ -334,10 +339,22 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		return behaviorComposite;
 	}
 
-	private static void indent(Control control) {
-		GridData gridData= new GridData();
-		gridData.horizontalIndent= 20;
-		control.setLayoutData(gridData);		
+	private Control createHeader(Composite parent) {
+		String text = PreferencesMessages.getString("CEditorPreferencePage.link"); //$NON-NLS-1$
+		Link link = new Link(parent, SWT.NONE);
+		link.setText(text);
+		link.addListener (SWT.Selection, new Listener () {
+			public void handleEvent(Event event) {
+				String u = event.text;
+				System.out.println("Selection: " + u);
+				PreferencesUtil.createPreferenceDialogOn(getShell(), u, null, null);
+			}
+		});
+
+		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+		gridData.widthHint= 150; // only expand further if anyone else requires it
+		link.setLayoutData(gridData);
+		return link;
 	}
 
 	private void createDependency(final Button master, String masterKey, final Control slave) {
@@ -362,6 +379,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		fCEditorHoverConfigurationBlock= new CEditorHoverConfigurationBlock(this, fOverlayStore);
 		fFoldingConfigurationBlock= new FoldingConfigurationBlock(fOverlayStore);
+
+		createHeader(parent);
 
 		TabFolder folder = new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());
@@ -405,7 +424,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		String label = PreferencesMessages.getString("CEditorPreferencePage.Enable_Hyperlink_Navigation"); //$NON-NLS-1$
 		addCheckBox(navComposite, label, CEditor.HYPERLINK_ENABLED, 0);
 
-		WorkbenchHelp.setHelp(navComposite, ICHelpContextIds.C_EDITOR_NAVIGATION_PAGE);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(navComposite, ICHelpContextIds.C_EDITOR_NAVIGATION_PAGE);
 		return navComposite;
 	}
 

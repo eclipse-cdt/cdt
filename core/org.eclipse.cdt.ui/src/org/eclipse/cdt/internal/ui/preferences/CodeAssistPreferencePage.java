@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * CodeAssistPreferencePage
@@ -138,7 +138,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 //		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.parameterForegroundColor");
 //		addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_FOREGROUND, 0);
 
-		WorkbenchHelp.setHelp(contentAssistComposite, ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(contentAssistComposite, ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);
 
 		return contentAssistComposite;
 	}

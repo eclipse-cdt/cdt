@@ -1,4 +1,16 @@
-2005-02-15 Alain Magloire
+2005-02-24 Alain Magloire
+	Fix PR 86655: adds a link to the Text Editor preference
+	Remove some warning, WorkbenchHelp was deprecated.
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/preferences/AbstractPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/AppearancePreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorHoverConfigurationBlock.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CodeAssistPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessage.properties
+
+2005-02-24 Alain Magloire
 	Fix for 85633, Moving out all the CEditorPreference Text setting
 	to eclipse EditorsUI preference page.
 	* src/org/eclipse/cdt/internal/ui/editore/CEditor.java

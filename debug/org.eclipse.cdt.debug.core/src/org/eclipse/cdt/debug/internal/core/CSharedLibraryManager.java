@@ -9,11 +9,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
+import org.eclipse.cdt.debug.core.ICUpdateManager;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CSharedLibrary;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
@@ -98,6 +102,10 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 	 */
 	public Object getAdapter( Class adapter )
 	{
+		if ( adapter.equals( ICUpdateManager.class ) )
+		{
+			return this;
+		}
 		if ( adapter.equals( ICSharedLibraryManager.class ) )
 		{
 			return this;
@@ -134,4 +142,66 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 		}
 		return null;
 	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICUpdateManager#getAutoModeEnabled()
+	 */
+	public boolean getAutoModeEnabled()
+	{
+		if ( getCDIManager() != null )
+		{
+			return getCDIManager().isAutoUpdate();
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICUpdateManager#setAutoModeEnabled(boolean)
+	 */
+	public void setAutoModeEnabled( boolean enable )
+	{
+		if ( getCDIManager() != null )
+		{
+			getCDIManager().setAutoUpdate( enable );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICUpdateManager#update()
+	 */
+	public void update() throws DebugException
+	{
+		if ( getCDIManager() != null )
+		{
+			try
+			{
+				getCDIManager().update();
+			}
+			catch( CDIException e )
+			{
+				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.toString(), null );
+			}
+		}
+	}
+	
+	private ICDISharedLibraryManager getCDIManager()
+	{
+		if ( getDebugTarget() != null )
+		{
+			return ((CDebugTarget)getDebugTarget()).getCDISession().getSharedLibraryManager();
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICUpdateManager#canUpdate()
+	 */
+	public boolean canUpdate()
+	{
+		if ( getDebugTarget() != null )
+		{
+			return getDebugTarget().isSuspended();
+		}
+		return false;
+	}
 }

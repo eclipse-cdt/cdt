@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * 
  * @since: Jan 15, 2003
  */
-public interface ICSharedLibraryManager extends IAdaptable
+public interface ICSharedLibraryManager extends ICUpdateManager, IAdaptable
 {
 	ICSharedLibrary[] getSharedLibraries();
 

@@ -1,4 +1,10 @@
 2003-02-10 Mikhail Khodjaiants
+	Support of update ('Refresh', 'Auto-Refresh) actions.
+	* ICUpdateManager.java: new
+	* ICSharedLibraryManager.java
+	* CSharedLibraryManager.java
+
+2003-02-10 Mikhail Khodjaiants
 	Disable the address breakpoints to prevent the debugger to insert them prematurely.
 	* CDebugTarget.java
 

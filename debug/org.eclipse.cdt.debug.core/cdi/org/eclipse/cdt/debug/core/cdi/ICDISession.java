@@ -57,7 +57,7 @@ public interface ICDISession {
 	 * 
 	 * @return the configuration description
 	 */
-	ICDIConfiguration getConfiguration();
+	ICDISessionConfiguration getConfiguration();
 
 	/**
 	 * Causes this element to terminate, generating a <code>KIND_TERMINATE</code> event.  

@@ -33,11 +33,11 @@ import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
 import org.eclipse.cdt.debug.core.ICSignalManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
-import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryEvent;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
@@ -58,6 +58,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
@@ -154,7 +155,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/**
 	 * The debug configuration of this session
 	 */
-	private ICDIConfiguration fConfig;
+	private ICDITargetConfiguration fConfig;
 
 	/**
 	 * The memory manager for this target.
@@ -232,7 +233,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		setCDITarget( cdiTarget );
 		setState( CDebugElementState.SUSPENDED );
 		initializePreferences();
-		setConfiguration( cdiTarget.getSession().getConfiguration() );
+		setConfiguration( cdiTarget.getConfiguration() );
 		setThreadList( new ArrayList( 5 ) );
 		createDisassembly();
 		setSharedLibraryManager( new CSharedLibraryManager( this ) );
@@ -1216,7 +1217,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		setState( CDebugElementState.EXITED );
 		setCurrentStateInfo( event.getReason() );
 		fireChangeEvent( DebugEvent.CONTENT );
-		if ( getConfiguration().terminateSessionOnExit() )
+		ICDISessionConfiguration sessionConfig = getCDISession().getConfiguration();
+		if ( sessionConfig != null && sessionConfig.terminateSessionOnExit() )
 			terminated();
 	}
 
@@ -1283,7 +1285,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * 
 	 * @return the debug configuration of this target
 	 */
-	protected ICDIConfiguration getConfiguration() {
+	protected ICDITargetConfiguration getConfiguration() {
 		return fConfig;
 	}
 
@@ -1292,7 +1294,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * 
 	 * @param config the debug configuration to set
 	 */
-	private void setConfiguration( ICDIConfiguration config ) {
+	private void setConfiguration( ICDITargetConfiguration config ) {
 		fConfig = config;
 	}
 

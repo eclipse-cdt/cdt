@@ -19,9 +19,9 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
-import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
@@ -90,7 +90,7 @@ public class CDIDebugModel {
 			public void run( IProgressMonitor m ) throws CoreException {
 				boolean stop = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false );
 				target[0] = new CDebugTarget( launch, project, cdiTarget, name, debuggeeProcess, file, allowTerminate, allowDisconnect );
-				ICDIConfiguration config = cdiTarget.getSession().getConfiguration();
+				ICDITargetConfiguration config = cdiTarget.getConfiguration();
 				if ( config.supportsBreakpoints() && stop ) {
 					stopInMain( (CDebugTarget)target[0] );
 				}

@@ -19,7 +19,6 @@ import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
-import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
@@ -34,6 +33,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
@@ -80,7 +80,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/**
 	 * The debug configuration of this session.
 	 */
-	private ICDIConfiguration fConfig;
+	private ICDITargetConfiguration fConfig;
 
 	/**
 	 * Whether this thread is current.
@@ -104,7 +104,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		super( target );
 		setState( cdiThread.isSuspended() ? CDebugElementState.SUSPENDED : CDebugElementState.RESUMED );
 		setCDIThread( cdiThread );
-		fConfig = getCDISession().getConfiguration();
+		fConfig = getCDITarget().getConfiguration();
 		initialize();
 		getCDISession().getEventManager().addEventListener( this );
 	}

@@ -1,3 +1,14 @@
+2004-11-02 Alain Magloire
+	Refactor ICDIConfiguratio --> ICDISessionConfiguration and ICDITargetConfiguration
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISessionConfiguration.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDITargetConfiguration.java
+
+	* src/org/eclipse/cdt/debug/core/CDIDebugModel.java
+	* src/org/eclipse/cdt/debug/interternal/core/model/CDIDebugTarget.java
+	* src/org/eclipse/cdt/debug/interternal/core/model/CThread.java
+
 2004-11-1 David Inglis
 	
 	Fixed bogus exception with older CDI debuggers.

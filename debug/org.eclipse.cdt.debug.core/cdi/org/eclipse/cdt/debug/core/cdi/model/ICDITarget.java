@@ -37,6 +37,13 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	Process getProcess();
 
 	/**
+	 * Returns the configuration description of this debug session.
+	 * 
+	 * @return the configuration description
+	 */
+	ICDITargetConfiguration getConfiguration();
+
+	/**
 	 * Evaluates the expression specified by the given string.
 	 * Returns the evaluation result as a String.
 	 * 

@@ -275,8 +275,8 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -288,8 +288,8 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -301,8 +301,8 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -352,8 +352,8 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesAction">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -387,6 +387,59 @@
                menubarPath="expressionGroup"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#ASMEditorRulerContext"
+            id="org.eclipse.cdt.debug.ui.AsmEditorRulerActions">
+<!--
+         <action
+               label="%RunToLineAction.label"
+               icon="icons/full/clcl16/runtoline_co.gif"
+               helpContextId="run_to_line_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate">
+         </action>
+-->
+         <action
+               label="%BreakpointProperties.label"
+               helpContextId="breakpoint_properties_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               label="%EnableBreakpoint.label"
+               helpContextId="enable_disable_breakpoint_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               label="%AddBreakpoint.label"
+               helpContextId="manage_breakpoint_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate">
             <enablement>
                <pluginState
                      value="activated"
@@ -431,8 +484,8 @@
                tooltip="%ShowFullPathsAction.tooltip">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -467,8 +520,8 @@
                tooltip="%ShowDebuggerConsoleAction.tooltip">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -488,8 +541,8 @@
                tooltip="%ShowFullPathsAction.tooltip">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -529,8 +582,8 @@
                id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>

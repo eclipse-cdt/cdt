@@ -1,7 +1,8 @@
 2004-03-23 Hoda Amer
-	Fix for bug#51303  Content Assist: Completion list remains open after a space is added to a prefix
+	Fix for bug#51303 Content Assist: Completion list remains open after a space is added to a prefix
 	Fix for bug#53066 Content Assist: Information displayed after completion on Macro function is not legible.
-	
+	Fix for bug#52858 Content Assist: Relevance sorting mixes ordering of structs and classes
+	 
 2004-03-21 Tanya Wolff
 
 	Externalized stray strings.

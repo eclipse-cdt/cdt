@@ -1,9 +1,9 @@
 2004-05-26 Alain Magloire
 
 	PR 61965
-	From Thomas Fletcher:
-	2.0 mainline scalability patch to 
-	call dispose methods and remove listeners
+	From Thomas Fletcher: 2.0 mainline scalability patch
+	- Properly detach listeners and dispose of components to address
+	resource and memory leaks from CEditor stress test (PR 61965)
 
 2004-05-21 Andrew Niefer
 	Indexer Problem reporting (bug 43014, 62979)

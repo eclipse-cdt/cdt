@@ -11,24 +11,21 @@
 package org.eclipse.cdt.utils.pty;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import org.eclipse.cdt.core.CCorePlugin;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ * PTY
+ * pseudo terminal code.
  */
 public class PTY {
 
 	String slave;
-	InputStream in;
-	OutputStream out;
+	PTYInputStream in;
+	PTYOutputStream out;
+	/**
+	 * NOTE: Field access by the native layer do not refactor.
+	 */
 	int master;
 
 	private static boolean hasPTY;
@@ -43,14 +40,14 @@ public class PTY {
 			return master;
 		}
 
-		public void setFD(int fd) {
+		void setFD(int fd) {
 			master = fd;
 		}
 	}
 
 	public PTY() throws IOException {
 		if (hasPTY) {
-			slave= forkpty();
+			slave= openMaster();
 		}
 
 		if (slave == null) {
@@ -64,23 +61,33 @@ public class PTY {
 	public String getSlaveName() {
 		return slave;
 	}
-	
-	public OutputStream getOutputStream() {
+
+	public MasterFD getMasterFD() {
+		return new MasterFD();
+	}
+
+	public PTYOutputStream getOutputStream() {
 		return out;
 	}
 	
-	public InputStream getInputStream() {
+	public PTYInputStream getInputStream() {
 		return in;
 	}
-	
-	native String forkpty();
+
+	public static boolean isSupported() {
+		return hasPTY;
+	}
+
+	native String openMaster();
 
 	static {
 		try {
 			System.loadLibrary("pty"); //$NON-NLS-1$
 			hasPTY = true;
 		} catch (SecurityException e) {
+			CCorePlugin.log(e);
 		} catch (UnsatisfiedLinkError e) {
+			CCorePlugin.log(e);
 		}			
 	}
 	

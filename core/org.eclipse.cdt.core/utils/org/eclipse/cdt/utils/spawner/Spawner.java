@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.utils.pty.PTY;
 
 public class Spawner extends Process {
 
@@ -29,7 +30,7 @@ public class Spawner extends Process {
 
 	int pid = 0;
 	int status;
-	int[] channels = new int[3];
+	int[] fChannels = new int[3];
 	boolean isDone;
 	OutputStream out;
 	InputStream in;
@@ -56,6 +57,12 @@ public class Spawner extends Process {
 		exec(cmdarray, envp, dirpath);
 	}
 
+	protected Spawner(String[] cmdarray, String[] envp, File dir, PTY pty) throws IOException {
+		String dirpath = "."; //$NON-NLS-1$
+		if (dir != null)
+			dirpath = dir.getAbsolutePath();
+		exec_pty(cmdarray, envp, dirpath, pty);
+	}
 	/**
 	 * Executes the specified string command in a separate process.
 	 **/
@@ -222,9 +229,50 @@ public class Spawner extends Process {
 		if (pid == -1) {
 			throw new IOException("Exec error:" + reaper.getErrorMessage()); //$NON-NLS-1$
 		}
-		in = new SpawnerInputStream(channels[1]);
-		err = new SpawnerInputStream(channels[2]);
-		out = new SpawnerOutputStream(channels[0]);
+		in = new SpawnerInputStream(fChannels[1]);
+		err = new SpawnerInputStream(fChannels[2]);
+		out = new SpawnerOutputStream(fChannels[0]);
+	}
+
+	private void exec_pty(String[] cmdarray, String[] envp, String dirpath, PTY pty) throws IOException {
+		String command = cmdarray[0];
+		SecurityManager s = System.getSecurityManager();
+		if (s != null)
+			s.checkExec(command);
+		if (envp == null)
+			envp = new String[0];
+
+		final String slaveName = pty.getSlaveName();
+		final int masterFD = pty.getMasterFD().getFD();
+		//int fdm = pty.get
+		Reaper reaper = new Reaper(cmdarray, envp, dirpath) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.spawner.Spawner.Reaper#execute(java.lang.String[], java.lang.String[], java.lang.String, int[])
+			 */
+			int execute(String[] cmd, String[] env, String dir, int[] channels) throws IOException {
+				return exec2(cmd, env, dir, channels, slaveName, masterFD);
+			}
+		};
+		reaper.setDaemon(true);
+		reaper.start();
+
+		// Wait until the subprocess is started or error.
+		synchronized (this) {
+			while (pid == 0) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+
+		// Check for errors.
+		if (pid == -1) {
+			throw new IOException("Exec_tty error:" + reaper.getErrorMessage()); //$NON-NLS-1$
+		}
+		in = new SpawnerInputStream(fChannels[1]);
+		err = new SpawnerInputStream(fChannels[2]);
+		out = new SpawnerOutputStream(fChannels[0]);
 	}
 
 	public void exec_detached(String[] cmdarray, String[] envp, String dirpath) throws IOException {
@@ -241,13 +289,39 @@ public class Spawner extends Process {
 		}
 	}
 
+	/**
+	 * Native method use in normal exec() calls. 
+	 */
 	native int exec0( String[] cmdarray, String[] envp, String dir, int[] chan) throws IOException;
+
+	/**
+	 * Native method use in no redirect meaning to streams will created. 
+	 */
 	native int exec1( String[] cmdarray, String[] envp, String dir) throws IOException;
-	public native int raise(int pid, int sig);
-	native int waitFor(int pid);
+
+	/**
+	 * Native method when executing with a terminal emulation. 
+	 */
+	native int exec2( String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD) throws IOException;
+
+	/**
+	 * Native method to drop a signal on the process with pid.
+	 */
+	public native int raise(int processID, int sig);
+
+	/*
+	 * Native method to wait(3) for process to terminate.
+	 */
+	native int waitFor(int processID);
 
 	static {
-		System.loadLibrary("spawner"); //$NON-NLS-1$
+		try {
+			System.loadLibrary("spawner"); //$NON-NLS-1$
+		} catch (SecurityException e) {
+			CCorePlugin.log(e);
+		} catch (UnsatisfiedLinkError e) {
+			CCorePlugin.log(e);
+		}
 	}
 
 	// Spawn a thread to handle the forking and waiting
@@ -255,25 +329,29 @@ public class Spawner extends Process {
 	// send to the one thread.  So do the forking and
 	// the wait in the same thread.
 	class Reaper extends Thread {
-		String[] cmdarray;
-		String[] envp;
-		String dirpath;
-		String errMesg;
+		String[] fCmdarray;
+		String[] fEnvp;
+		String fDirpath;
+		String fErrMesg;
 
 		public Reaper(String[] array, String[] env, String dir) {
 			super("Spawner Reaper"); //$NON-NLS-1$
-			cmdarray = array;
-			envp = env;
-			dirpath = dir;
-			errMesg = new String(CCorePlugin.getResourceString("Util.error.cannotRun") + cmdarray[0]); //$NON-NLS-1$
+			fCmdarray = array;
+			fEnvp = env;
+			fDirpath = dir;
+			fErrMesg = new String(CCorePlugin.getResourceString("Util.error.cannotRun") + fCmdarray[0]); //$NON-NLS-1$
+		}
+
+		int execute(String[] cmdarray, String[] envp, String dir, int[] channels) throws IOException {
+			return exec0(cmdarray, envp, dir, channels);
 		}
 
 		public void run() {
 			try {
-				pid = exec0(cmdarray, envp, dirpath, channels);
+				pid = execute(fCmdarray, fEnvp, fDirpath, fChannels);
 			} catch (Exception e) {
 				pid = -1;
-				errMesg = e.getMessage();
+				fErrMesg = e.getMessage();
 			}
 
 			// Tell spawner that the process started.
@@ -292,7 +370,7 @@ public class Spawner extends Process {
 		}
 
 		public String getErrorMessage() {
-			return errMesg;
+			return fErrMesg;
 		}
 	}
 }

@@ -14,6 +14,9 @@ package org.eclipse.cdt.utils.spawner;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.utils.pty.PTY;
+
 public class ProcessFactory {
 
 	static private ProcessFactory instance;
@@ -33,9 +36,9 @@ public class ProcessFactory {
 				hasSpawner = true;
 			}
 		} catch (SecurityException e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		} catch (UnsatisfiedLinkError e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 
@@ -81,5 +84,12 @@ public class ProcessFactory {
 		if (hasSpawner)
 			return new Spawner(cmdarray, envp, dir);
 		return runtime.exec(cmdarray, envp, dir);
+	}
+
+	public Process exec(String cmdarray[], String[] envp, File dir, PTY pty)
+		throws IOException {
+		if (hasSpawner)
+			return new Spawner(cmdarray, envp, dir, pty);
+		throw new UnsupportedOperationException(CCorePlugin.getResourceString("Util.exception.cannotCreatePty")); //$NON-NLS-1$
 	}
 }

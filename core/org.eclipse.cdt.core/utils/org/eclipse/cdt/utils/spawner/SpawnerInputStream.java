@@ -78,8 +78,8 @@ class SpawnerInputStream extends InputStream {
 		fd = -1;
 	}
 
-	private native int read0(int fd, byte[] buf, int len) throws IOException;
-	private native int close0(int fd) throws IOException;
+	private native int read0(int fileDesc, byte[] buf, int len) throws IOException;
+	private native int close0(int fileDesc) throws IOException;
 
 	static {
 		System.loadLibrary("spawner"); //$NON-NLS-1$

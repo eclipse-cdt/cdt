@@ -91,15 +91,17 @@ import org.eclipse.core.runtime.CoreException;
  */
 
 public class DOMAST extends ViewPart {
+	private static final String REFRESH_DOM_AST = "Refresh DOM AST"; //$NON-NLS-1$
 	private static final String VIEW_NAME = "DOM View"; //$NON-NLS-1$
 	private static final String POPUPMENU = "#PopupMenu"; //$NON-NLS-1$
-	private static final String OPEN_DEFINITIONS = "Open Definitions"; //$NON-NLS-1$
+	private static final String OPEN_DECLARATIONS = "Open Declarations"; //$NON-NLS-1$
 	private static final String OPEN_REFERENCES = "Open References"; //$NON-NLS-1$
 	private TreeViewer viewer;
 	private DrillDownAdapter drillDownAdapter;
 	private Action action1;
 	private Action action2;
 	private Action singleClickAction;
+	private Action refreshAction;
 	private IFile file = null;
 	private IEditorPart part = null;
 	private ParserLanguage lang = null;
@@ -185,7 +187,7 @@ public class DOMAST extends ViewPart {
 //				if( workingCopy == null )
 					reader = new CodeReader(aFile.getLocation().toOSString(), aFile.getCharset() );
 //				else 
-//					reader = new CodeReader(file.getLocation().toOSString(), workingCopy.getContents());
+//					reader = new CodeReader(aFile.getLocation().toOSString(), workingCopy.getContents());
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch ( CoreException e ) {
@@ -366,10 +368,9 @@ public class DOMAST extends ViewPart {
 				DOMAST.this.fillContextMenu(manager);
 				IContributionItem[] items = manager.getItems();
 				for (int i=0; i<items.length; i++) {
-					// TODO Devin put in the check here if IASTName or not... if it isn't, and item is open declaration (make constant) then hide it
 					if (items[i] instanceof ActionContributionItem &&
 							(((ActionContributionItem)items[i]).getAction().getText().equals(OPEN_REFERENCES) ||
-									((ActionContributionItem)items[i]).getAction().getText().equals(OPEN_DEFINITIONS) )) {
+									((ActionContributionItem)items[i]).getAction().getText().equals(OPEN_DECLARATIONS) )) {
 						if (viewer.getSelection() instanceof StructuredSelection &&
 								((StructuredSelection)viewer.getSelection()).getFirstElement() instanceof TreeObject &&
 								((TreeObject)((StructuredSelection)viewer.getSelection()).getFirstElement()).getNode() instanceof IASTName) {
@@ -408,28 +409,36 @@ public class DOMAST extends ViewPart {
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
-//		manager.add(action1); // TODO determine the groups/filters to use
-//		manager.add(action2);
-//		manager.add(new Separator());
-//		drillDownAdapter.addNavigationActions(manager);
+		manager.add(refreshAction);
+		manager.add(new Separator());
+		drillDownAdapter.addNavigationActions(manager);
 	}
 
 	private void makeActions() {
-		action1 = new Action() {
+		refreshAction = new Action() {
 			public void run() {
-				showMessage("Action 1 executed"); // TODO Devin open declarations action ... john probably wants all of them highlighted... wouldn't I have to use annotations then???
+				setContentProvider(new ViewContentProvider(file));
 			}
 		};
-		action1.setText(OPEN_REFERENCES);
+		refreshAction.setText(REFRESH_DOM_AST);
+		refreshAction.setToolTipText(REFRESH_DOM_AST);
+		refreshAction.setImageDescriptor(DOMASTPluginImages.DESC_IASTInitializer);
+		
+		action1 = new Action() {
+			public void run() {
+				showMessage("Action 1 executed"); // TODO open declarations action ... use annotations
+			}
+		};
+		action1.setText(OPEN_DECLARATIONS);
 		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		
 		action2 = new Action() {
 			public void run() {
-				showMessage("Action 2 executed"); // TODO Devin open definitions action ... use annotations to highlight definitions?
+				showMessage("Action 2 executed"); // TODO open references action ... use annotations
 			}
 		};
-		action2.setText(OPEN_DEFINITIONS);
+		action2.setText(OPEN_REFERENCES);
 		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		

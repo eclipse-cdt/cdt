@@ -4,6 +4,8 @@
  */
 package org.eclipse.cdt.ui;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
 /**
  * Preference constants used in the JDT-UI preference store. Clients should only read the
  * JDT-UI preference store using these values. Clients are not allowed to modify the 
@@ -16,6 +18,15 @@ public class PreferenceConstants {
 	
 	private PreferenceConstants() {
 	}
+	/**
+	 * A named preference that controls if comment stubs will be added
+	 * automatically to newly created types and methods.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * @since 2.1
+	 */
+	public static final String CODEGEN_ADD_COMMENTS= "org.eclipse.cdt.ui.javadoc"; //$NON-NLS-1$
 	
 	/**
 	 * A named preference that controls whether the cview's selection is linked to the active editor.
@@ -41,4 +52,12 @@ public class PreferenceConstants {
 	 */
 	public static final String EDITOR_SHOW_SEGMENTS= "org.eclipse.cdt.ui.editor.showSegments"; //$NON-NLS-1$
 
+	/**
+	 * Returns the JDT-UI preference store.
+	 * 
+	 * @return the JDT-UI preference store
+	 */
+	public static IPreferenceStore getPreferenceStore() {
+		return CUIPlugin.getDefault().getPreferenceStore();
+	}
 }

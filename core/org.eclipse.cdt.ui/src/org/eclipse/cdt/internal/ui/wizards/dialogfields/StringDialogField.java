@@ -5,15 +5,15 @@ package org.eclipse.cdt.internal.ui.wizards.dialogfields;
  * All Rights Reserved.
  */
  
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.internal.ui.wizards.swt.MGridData;
 
 
 public class StringDialogField extends DialogField {
@@ -22,8 +22,16 @@ public class StringDialogField extends DialogField {
 	private Text fTextControl;
 	private ModifyListener fModifyListener;
 	
+	public StringDialogField() {
+		super();
+		fText= ""; //$NON-NLS-1$
+	}
+			
 	// ------- layout helpers
 		
+	/*
+	 * @see DialogField#doFillIntoGrid
+	 */
 	public Control[] doFillIntoGrid(Composite parent, int nColumns) {
 		assertEnoughColumns(nColumns);
 		
@@ -33,19 +41,43 @@ public class StringDialogField extends DialogField {
 		text.setLayoutData(gridDataForText(nColumns - 1));
 		
 		return new Control[] { label, text };
-	}
+	} 
 
-	protected void doModifyText(ModifyEvent e) {
-		if (isOkToUse(fTextControl)) {
-			fText= fTextControl.getText();
-		}
-		dialogFieldChanged();
-	}
+	/*
+	 * @see DialogField#getNumberOfControls
+	 */
 	public int getNumberOfControls() {
 		return 2;	
 	}
-	// ------- ui creation			
+	
+	protected static GridData gridDataForText(int span) {
+		GridData gd= new GridData();
+		gd.horizontalAlignment= GridData.FILL;
+		gd.grabExcessHorizontalSpace= false;
+		gd.horizontalSpan= span;
+		return gd;
+	}	
+	
+	// ------- focus methods
+	
+	/*
+	 * @see DialogField#setFocus
+	 */
+	public boolean setFocus() {
+		if (isOkToUse(fTextControl)) {
+			fTextControl.setFocus();
+			fTextControl.setSelection(0, fTextControl.getText().length());
+		}
+		return true;
+	}
 		
+	// ------- ui creation			
+
+	/**
+	 * Creates or returns the created text control.
+	 * @param parent The parent composite or <code>null</code> when the widget has
+	 * already been created.
+	 */		
 	public Text getTextControl(Composite parent) {
 		if (fTextControl == null) {
 			assertCompositeNotNull(parent);
@@ -61,38 +93,41 @@ public class StringDialogField extends DialogField {
 			fTextControl.setFont(parent.getFont());
 			fTextControl.addModifyListener(fModifyListener);
 			
-			
 			fTextControl.setEnabled(isEnabled());
 		}
 		return fTextControl;
 	}
+	
+	private void doModifyText(ModifyEvent e) {
+		if (isOkToUse(fTextControl)) {
+			fText= fTextControl.getText();
+		}
+		dialogFieldChanged();
+	}		
+	
+	// ------ enable / disable management
+	
+	/*
+	 * @see DialogField#updateEnableState
+	 */		
+	protected void updateEnableState() {
+		super.updateEnableState();		
+		if (isOkToUse(fTextControl)) {
+			fTextControl.setEnabled(isEnabled());
+		}	
+	}		
+		
 	// ------ text access 
 	
 	/**
-	 * Get the text
+	 * Gets the text. Can not be <code>null</code>
 	 */	
 	public String getText() {
 		return fText;
 	}
-	protected static MGridData gridDataForText(int span) {
-		MGridData gd= new MGridData();
-		gd.horizontalAlignment= MGridData.FILL;
-		gd.grabExcessHorizontalSpace= true;
-		gd.grabColumn= 0;
-		gd.horizontalSpan= span;
-		return gd;
-	}
-	// ------- focus methods
 	
-	public boolean setFocus() {
-		if (isOkToUse(fTextControl)) {
-			fTextControl.setFocus();
-			fTextControl.setSelection(0, fTextControl.getText().length());
-		}
-		return true;
-	}
 	/**
-	 * Set the text. Triggers an dialog-changed event
+	 * Sets the text. Triggers a dialog-changed event.
 	 */
 	public void setText(String text) {
 		fText= text;
@@ -102,8 +137,9 @@ public class StringDialogField extends DialogField {
 			dialogFieldChanged();
 		}	
 	}
+
 	/**
-	 * Set the text without triggering a dialog-changed event
+	 * Sets the text without triggering a dialog-changed event.
 	 */
 	public void setTextWithoutUpdate(String text) {
 		fText= text;
@@ -113,16 +149,5 @@ public class StringDialogField extends DialogField {
 			fTextControl.addModifyListener(fModifyListener);
 		}
 	}
-	// ------ enable / disable management
 	
-	protected void updateEnableState() {
-		super.updateEnableState();		
-		if (isOkToUse(fTextControl)) {
-			fTextControl.setEnabled(isEnabled());
-		}	
-	}
-	public StringDialogField() {
-		super();
-		fText= ""; //$NON-NLS-1$
-	}
 }

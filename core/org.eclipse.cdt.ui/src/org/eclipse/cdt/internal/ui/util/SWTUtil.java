@@ -17,7 +17,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 
 /**
@@ -66,19 +67,21 @@ public class SWTUtil {
 	 * Returns a width hint for a button control.
 	 */
 	public static int getButtonWidthHint(Button button) {
-		//PixelConverter converter= new PixelConverter(button);
-		//int widthHint= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		//return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		return 8*button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+		if (button.getFont().equals(JFaceResources.getDefaultFont()))
+			button.setFont(JFaceResources.getDialogFont());
+		PixelConverter converter= new PixelConverter(button);
+		int widthHint= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
 
 	/**
 	 * Returns a height hint for a button control.
 	 */		
 	public static int getButtonHeigthHint(Button button) {
-		//PixelConverter converter= new PixelConverter(button);
-		//return converter.convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		return button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
+		if (button.getFont().equals(JFaceResources.getDefaultFont()))
+			button.setFont(JFaceResources.getDialogFont());
+		PixelConverter converter= new PixelConverter(button);
+		return converter.convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 	}	
 
 	

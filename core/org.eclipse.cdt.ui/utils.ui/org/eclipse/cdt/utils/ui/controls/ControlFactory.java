@@ -102,6 +102,31 @@ public class ControlFactory {
 		separator.setLayoutData(data);
 		return separator;
 	}
+	/**
+	 * Creates a spacer control.
+	 * @param parent The parent composite
+	 */		
+	public static Control createEmptySpace(Composite parent) {
+		return createEmptySpace(parent, 1);
+	}
+	/**
+	 * Creates a spacer control with the given span.
+	 * The composite is assumed to have <code>MGridLayout</code> as
+	 * layout.
+	 * @param parent The parent composite
+	 */			
+	public static Control createEmptySpace(Composite parent, int span) {
+		Label label= new Label(parent, SWT.LEFT);
+		GridData gd= new GridData();
+		gd.horizontalAlignment= GridData.BEGINNING;
+		gd.grabExcessHorizontalSpace= false;
+		gd.horizontalSpan= span;
+		gd.horizontalIndent= 0;
+		gd.widthHint= 0;
+		gd.heightHint= 0;
+		label.setLayoutData(gd);
+		return label;
+	}
 
 	/**
 	 * Creates an new label (basic method)

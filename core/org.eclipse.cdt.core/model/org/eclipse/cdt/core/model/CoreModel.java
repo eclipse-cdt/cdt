@@ -6,12 +6,18 @@ package org.eclipse.cdt.core.model;
  */
  
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CoreModel {
 
@@ -199,4 +205,14 @@ public class CoreModel {
 	private CoreModel() {
 	}
 
+
+	public static void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		if (workspace.isTreeLocked()) {
+			new BatchOperation(action).run(monitor);
+		} else {
+			// use IWorkspace.run(...) to ensure that a build will be done in autobuild mode
+			workspace.run(new BatchOperation(action), monitor);
+		}
+	}
 }

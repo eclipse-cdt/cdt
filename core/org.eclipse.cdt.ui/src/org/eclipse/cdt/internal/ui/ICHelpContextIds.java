@@ -21,6 +21,8 @@ public interface ICHelpContextIds {
 	// Wizard pages
 	public static final String NEW_CPROJECT_WIZARD_PAGE= PREFIX + "new_cproject_wizard_page_context";
 	public static final String NEW_LAUNCH_WIZARD_PAGE= PREFIX + "new_launch_wizard_page_context";
+	public static final String NEW_CLASS_WIZARD_PAGE= PREFIX + "new_class_wizard_page_context";	
+	public static final String OPEN_CLASS_WIZARD_ACTION= PREFIX + "open_class_wizard_action";
 
 	// Actions
 	public static final String FILTER_PUBLIC_ACTION= PREFIX + "filter_public_action";

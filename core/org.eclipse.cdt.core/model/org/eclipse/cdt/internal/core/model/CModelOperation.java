@@ -89,6 +89,8 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	protected boolean hasModifiedResource = false;
 
+	protected CModelOperation() {
+	}
 	/**
 	 * A common constructor for all C Model operations.
 	 */

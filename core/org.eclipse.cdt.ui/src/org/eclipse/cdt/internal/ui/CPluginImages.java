@@ -136,9 +136,12 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OVR_ERROR= create(T_OVR, "error_co.gif");
 
 	public static final ImageDescriptor DESC_WIZABAN_NEW_PROJ= create(T_WIZBAN, "newcprj_wiz.gif");
+	public static final ImageDescriptor DESC_WIZBAN_NEWCLASS= create(T_WIZBAN, "newclass_wiz.gif");	
 	public static final ImageDescriptor DESC_WIZABAN_C_APP= create(T_WIZBAN, "c_app_wiz.gif");
 	public static final String IMG_OBJS_PROJECT = NAME_PREFIX + "prj_obj.gif";
 	public static final ImageDescriptor DESC_PROJECT= createManaged(T_WIZBAN, IMG_OBJS_PROJECT);
+
+	public static final ImageDescriptor DESC_TOOL_NEWCLASS= create(T_TOOL, "newclass_wiz.gif"); 				//$NON-NLS-1$
 
 	// For the build image
 	public static final String IMG_OBJS_BUILD= NAME_PREFIX + "build_menu.gif";

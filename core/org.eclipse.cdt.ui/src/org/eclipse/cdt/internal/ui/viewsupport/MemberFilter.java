@@ -77,19 +77,4 @@ public class MemberFilter extends ViewerFilter{
 		}
 		return true;
 	}
-/*	
-	private boolean isMemberInInterface(IMember member) throws JavaModelException {
-		IType parent= member.getDeclaringType();
-		return parent != null && parent.isInterface();
-	}
-	
-	private boolean isFieldInInterface(IMember member) throws JavaModelException {
-		return (member.getElementType() == IJavaElement.FIELD) && member.getDeclaringType().isInterface();
-	}	
-	
-	private boolean isTopLevelType(IMember member) throws JavaModelException {
-		IType parent= member.getDeclaringType();
-		return parent == null;
-	}		
-*/
 }

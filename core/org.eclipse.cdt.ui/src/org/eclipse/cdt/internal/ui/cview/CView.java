@@ -751,12 +751,15 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	}
 
 	void addNewMenu (IMenuManager menu, IStructuredSelection selection) {
-
+		
+		
 		MenuManager newMenu = new MenuManager("New");
 		IAdaptable element = (IAdaptable)selection.getFirstElement();
 		IResource resource = (IResource)element.getAdapter(IResource.class);
-
-		new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
+		
+		newMenu.add(goIntoAction);		
+		
+		NewWizardMenu newWizMenu = new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
 
 		menu.add(newMenu);
 

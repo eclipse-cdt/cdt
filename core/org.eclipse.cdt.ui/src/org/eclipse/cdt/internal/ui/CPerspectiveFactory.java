@@ -57,6 +57,7 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
 
 		// new actions - C project creation wizard
+		layout.addNewWizardShortcut(CUIPlugin.CLASS_WIZARD_ID);
 		layout.addNewWizardShortcut(CUIPlugin.FILE_WIZARD_ID);
 		layout.addNewWizardShortcut(CUIPlugin.FOLDER_WIZARD_ID);
 	}

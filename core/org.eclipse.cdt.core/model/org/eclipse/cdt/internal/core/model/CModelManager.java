@@ -269,7 +269,7 @@ public class CModelManager implements IResourceChangeListener {
 	}
 
 	public ICProject create(ICElement parent, IProject project) {
-		if (hasCNature(project)) {
+		if (hasCNature(project)){
 			return new CProject(parent, project);
 		}
 		return null;

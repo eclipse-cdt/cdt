@@ -227,6 +227,17 @@
                class="org.eclipse.core.resources.IResource">
          </selection>
       </wizard>
+      <wizard
+            name="%NewWizards.class"
+            icon="icons/full/ctool16/newclass_wiz.gif"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            class="org.eclipse.cdt.ui.wizards.NewClassWizard"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewClassWizard">
+         <description>
+            %NewWizards.class.description
+         </description>
+      </wizard>
    </extension>
    <extension
          id="org.eclipse.cdt.ui.ceditor"
@@ -404,6 +415,14 @@
                class="org.eclipse.cdt.internal.ui.wizards.OpenNewFolderWizardAction"
                toolbarPath="Normal/FolderWizards"
                id="org.eclipse.cdt.ui.actions.OpenNewFolderWizardAction">
+         </action>
+         <action
+               label="%OpenClassWizardAction.label"
+               icon="icons/full/ctool16/newclass_wiz.gif"
+               tooltip="%OpenClassWizardAction.tooltip"
+               class="org.eclipse.cdt.ui.actions.OpenClassWizardAction"
+               toolbarPath="Normal/FolderWizards"
+               id="org.eclipse.cdt.ui.actions.OpenClassWizardAction">
          </action>
       </actionSet>
    </extension>

@@ -198,31 +198,14 @@
             name="%CEditor.name"
             default="true"
             icon="icons/full/obj16/c_file_obj.gif"
-            extensions="c, cc, cpp, cxx"
+            extensions="c, cc, cpp, cxx, h, hh, hpp"
             contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
             class="org.eclipse.cdt.internal.ui.editor.CEditor"
             id="org.eclipse.cdt.ui.editor.CEditor">
-      </editor>
-      <editor
-            name="%CEditor.name"
-            default="true"
-            icon="icons/full/obj16/h_file_obj.gif"
-            extensions="h, hh, hpp"
-            contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
-            class="org.eclipse.cdt.internal.ui.editor.CEditor"
-            id="org.eclipse.cdt.ui.editor.CEditor">
-      </editor>
-      <editor
-            name="%Editors.DefaultTextEditor"
-            icon="icons/full/obj16/file_obj.gif"
-            extensions="mk"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            class="org.eclipse.ui.editors.text.TextEditor"
-            id="org.eclipse.ui.DefaultTextEditor">
       </editor>
       <editor
             name="%AsmEditor.name"
-            icon="icons/full/obj16/c_file_obj.gif"
+            icon="icons/full/obj16/s_file_obj.gif"
             extensions="s"
             class="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor">
@@ -635,6 +618,17 @@
       </page>
       <page
             objectClass="org.eclipse.cdt.core.model.ICContainer"
+            adaptable="true"
+            name="C/C++ Include Paths &amp; Symbols"
+            class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"
+            id="org.eclipse.cdt.internal.ui.dialogs.cpath.IncludeSymbolsPropertyPage">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.core.cnature">
+         </filter>
+      </page>
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
             name="C/C++ Include Paths &amp; Symbols"
             class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"

@@ -1,3 +1,11 @@
+2004-04-14 Alain Magloire
+
+	Remove the contribution for header doing this will force
+	all C files to have the header icon. Added icon for assembly files.
+
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	* plugin.xml
+
 2004-04-14 Andrew Niefer
 	updated src/org/eclipse/cdt/internal/ui/compare/SourceElementRequestorAdapter with acceptFriendDeclaration
 

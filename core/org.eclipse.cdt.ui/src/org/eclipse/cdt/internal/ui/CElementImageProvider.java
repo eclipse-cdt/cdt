@@ -288,6 +288,12 @@ public class CElementImageProvider {
 							return CPluginImages.DESC_OBJS_TUNIT_HEADER;
 						}
 					}
+					exts = CoreModel.getDefault().getAssemblyExtensions();
+					for (int i = 0; i < exts.length; i++) {
+						if (exts[i].equalsIgnoreCase(ext)) {
+							return CPluginImages.DESC_OBJS_TUNIT_ASM;
+						}
+					}
 				}
 				return CPluginImages.DESC_OBJS_TUNIT;
 				

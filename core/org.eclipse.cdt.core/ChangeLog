@@ -1,4 +1,3 @@
-
 2002-11-13 Judy Green
 
 	*src/org/eclipse/cdt/core/CCProjectNature.java
@@ -12,10 +11,15 @@
 	
 	Cleaned up the convert methods to ensure that extra calls to add a
 	CBuilder are not called.
-	
-	
-	
-		
+
+2002-11-13 Alain Magloire
+
+	* src/.../internal/errorparsers/GCCErrorParser.java (processLine):
+	The full semantics seems to be:
+		filename:lineno:column:error_description
+	we did not take to account that the preprocessor
+	was putting the column also.
+
 2002-11-13 Alain Magloire
 
 	* src/.../internal/core/CBuilder.java (invokeMake):

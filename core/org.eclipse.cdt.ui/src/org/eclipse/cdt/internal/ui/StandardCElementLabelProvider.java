@@ -16,18 +16,15 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class StandardCElementLabelProvider extends CElementLabelProvider implements IPropertyChangeListener {
 
-	public final static int DEFAULT_TEXTFLAGS= 0; //CElementLabels.ROOT_VARIABLE | JavaElementLabels.M_PARAMETER_TYPES |  JavaElementLabels.M_APP_RETURNTYPE;
-	public final static int DEFAULT_IMAGEFLAGS= CElementImageProvider.OVERLAY_ICONS;
+	//public final static int DEFAULT_FLAGS = SHOW_OVERLAY_ICONS | SHOW_PARAMETERS;
+	public final static int DEFAULT_FLAGS = SHOW_OVERLAY_ICONS ;
 	
-	private int fTextFlagMask;
-	private int fImageFlagMask;
-
 	/**
 	 * Constructor for StandardCElementLabelProvider.
 	 * @see CElementLabelProvider#CElementLabelProvider
 	 */
-	public StandardCElementLabelProvider(int textFlags, int imageFlags, IAdornmentProvider[] adormentProviders) {
-		super(textFlags, imageFlags, adormentProviders);
+	public StandardCElementLabelProvider(int flags, IAdornmentProvider[] adormentProviders) {
+		super(flags, adormentProviders);
 		initMasks();
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
@@ -37,19 +34,11 @@ public class StandardCElementLabelProvider extends CElementLabelProvider impleme
 	 * and the ErrorTickAdornmentProvider.
 	 */	
 	public StandardCElementLabelProvider() {
-		this(DEFAULT_TEXTFLAGS, DEFAULT_IMAGEFLAGS, new IAdornmentProvider[] { new ErrorTickAdornmentProvider() });
+		this(DEFAULT_FLAGS, new IAdornmentProvider[] { new ErrorTickAdornmentProvider() });
 	}
 	
 	private void initMasks() {
-		fTextFlagMask= -1;
-		/* if (!AppearancePreferencePage.showMethodReturnType()) {
-			fTextFlagMask ^= JavaElementLabels.M_APP_RETURNTYPE;
-		}
-		if (!AppearancePreferencePage.isCompressingPkgNameInPackagesView()) {
-			fTextFlagMask ^= JavaElementLabels.P_COMPRESSED;
-		} */
-		
-		fImageFlagMask= -1;
+		// turn on or off the flags depending on property/preference changes.
 	}
 
 	/*
@@ -72,20 +61,6 @@ public class StandardCElementLabelProvider extends CElementLabelProvider impleme
 	public void dispose() {
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		super.dispose();
-	}
-
-	/*
-	 * @see JavaUILabelProvider#getImageFlags()
-	 */
-	public int getImageFlags() {
-		return super.getImageFlags() & fImageFlagMask;
-	}
-
-	/*
-	 * @see JavaUILabelProvider#getTextFlags()
-	 */
-	public int getTextFlags() {
-		return super.getTextFlags() & fTextFlagMask;
 	}
 
 }

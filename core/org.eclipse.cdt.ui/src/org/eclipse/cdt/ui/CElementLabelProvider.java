@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.ErrorTickAdornmentProvider;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
+import org.eclipse.cdt.internal.ui.search.CElementLabels;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -25,33 +26,69 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class CElementLabelProvider extends LabelProvider {
 
+	/**
+	 * Flag (bit mask) indicating that methods labels include the method return type. (appended)
+	 */
+	public final static int SHOW_RETURN_TYPE = 0x001;
+
+	/**
+	 * Flag (bit mask) indicating that method label include method parameter types.
+	 */
+	public final static int SHOW_PARAMETERS = 0x002;
+
+	/**
+	 * Flag (bit mask) indicating that method label include thrown exception.
+	 */
+	public final static int SHOW_EXCEPTION = 0x004;
+
+	/**
+	 * Flag (bit mask) indicating that the label should show the icons with no space
+	 * reserved for overlays.
+	 */
+	public final static int SHOW_SMALL_ICONS = 0x100;
+
+	/**
+	 * Flag (bit mask) indicating that the label should include overlay icons
+	 * for element type and modifiers.
+	 */
+	public final static int SHOW_OVERLAY_ICONS = 0x010;
+
+	/**
+	 * Constant indicating the default label rendering.
+	 * Currently the default is equivalent to
+	 * <code>SHOW_PARAMETERS | SHOW_OVERLAY_ICONS</code>.
+	 */
+	public final static int SHOW_DEFAULT= new Integer(SHOW_PARAMETERS | SHOW_OVERLAY_ICONS).intValue();
+	
 	private ImageRegistry fImageRegistry;
 	private WorkbenchLabelProvider fWorkbenchLabelProvider;
-
 	private CElementImageProvider fImageLabelProvider;
-	
 	private IAdornmentProvider[] fAdornmentProviders;
 
+	private int fFlags;
 	private int fImageFlags;
 	private int fTextFlags;
 	
 	public CElementLabelProvider() {
-		this(0 /* CElementLabels.M_PARAMETER_TYPES */, CElementImageProvider.OVERLAY_ICONS, null);
+		this(SHOW_DEFAULT);
 	}
-	
+
+	public CElementLabelProvider(int flags) {
+		this(flags, null);
+	}
+
 	/**
-	 * @param textFlags Flags defined in <code>JavaElementLabels</code>.
-	 * @param imageFlags Flags defined in <code>JavaElementImageProvider</code>.
+	 * @param textFlags Flags defined in <code>CElementLabels</code>.
+	 * @param imageFlags Flags defined in <code>CElementImageProvider</code>.
 	 */
-	public CElementLabelProvider(int textFlags, int imageFlags, IAdornmentProvider[] adormentProviders) {
+	public CElementLabelProvider(int flags, IAdornmentProvider[] adormentProviders) {
 		fImageRegistry= CUIPlugin.getDefault().getImageRegistry();
 		fWorkbenchLabelProvider= new WorkbenchLabelProvider();
 		
 		fImageLabelProvider= new CElementImageProvider();
 		fAdornmentProviders= adormentProviders; 
-		
-		fImageFlags= imageFlags;
-		fTextFlags= textFlags;
+
+		fFlags = flags;
 	}
 
 	/**
@@ -172,21 +209,27 @@ public class CElementLabelProvider extends LabelProvider {
 			fImageLabelProvider.dispose();
 		}
 	}
-	
-	/**
-	 * Sets the textFlags.
-	 * @param textFlags The textFlags to set
-	 */
-	public void setTextFlags(int textFlags) {
-		fTextFlags= textFlags;
+
+	private boolean getFlag(int flag) {
+		return (fFlags & flag) != 0;
 	}
 
 	/**
-	 * Sets the imageFlags 
-	 * @param imageFlags The imageFlags to set
+	 * Turns on the rendering options specified in the given flags.
+	 *
+	 * @param flags the options; a bitwise OR of <code>SHOW_* </code> constants
 	 */
-	public void setImageFlags(int imageFlags) {
-		fImageFlags= imageFlags;
+	public void turnOn(int flags) {
+		fFlags |= flags;
+	}
+
+	/**
+	 * Turns off the rendering options specified in the given flags.
+	 *
+	 * @param flags the initial options; a bitwise OR of <code>SHOW_* </code> constants
+	 */
+	public void turnOff(int flags) {
+		fFlags &= (~flags);
 	}
 	
 	/**
@@ -195,6 +238,13 @@ public class CElementLabelProvider extends LabelProvider {
 	 * @return Returns a int
 	 */
 	public int getImageFlags() {
+		fImageFlags = 0;
+		if (getFlag(SHOW_OVERLAY_ICONS)) {
+			fImageFlags |= CElementImageProvider.OVERLAY_ICONS;
+		}
+		if (getFlag(SHOW_SMALL_ICONS)) {
+			fImageFlags |= CElementImageProvider.SMALL_ICONS;
+		}
 		return fImageFlags;
 	}
 
@@ -203,6 +253,16 @@ public class CElementLabelProvider extends LabelProvider {
 	 * @return Returns a int
 	 */
 	public int getTextFlags() {
+		fTextFlags = 0;
+		if (getFlag(SHOW_RETURN_TYPE)) {
+			fTextFlags |= CElementLabels.M_APP_RETURNTYPE;
+		}
+		if (getFlag(SHOW_PARAMETERS)) {
+			fTextFlags |= CElementLabels.M_PARAMETER_TYPES;
+		}
+		if (getFlag(SHOW_EXCEPTION)) {
+			fTextFlags |= CElementLabels.M_EXCEPTIONS;
+		}
 		return fTextFlags;
 	}
 	

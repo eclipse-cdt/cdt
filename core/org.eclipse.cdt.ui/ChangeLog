@@ -1,3 +1,12 @@
+2004-02-02 Alain Magloire
+
+	Dealing with PR 50792, give more flexibility in the behaviour
+	of CElementLabelProvider
+
+	* src/org/eclipse/cdt/internal/ui/StandardCElementLabelProvider.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorErrorTickUpdater.java
+	* src/org/eclipse/cdt/ui/CElementLabelProvider.java
+
 2004-01-29 Hoda Amer
 	Tuning for the Completion Engine.
 	

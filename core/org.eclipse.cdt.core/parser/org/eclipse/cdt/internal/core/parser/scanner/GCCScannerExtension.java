@@ -112,7 +112,7 @@ public class GCCScannerExtension implements IScannerExtension {
 			TraceUtil.outputTrace(scannerData.getLogService(), "GCCScannerExtension handling #include_next directive", null, null, null, null); //$NON-NLS-1$
 			// figure out the name of the current file and its path
 			IScannerContext context = scannerData.getContextStack().getCurrentContext();
-			if( context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
+			if( context == null || context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
 				return;
 			
 			String fullInclusionPath = context.getFilename();

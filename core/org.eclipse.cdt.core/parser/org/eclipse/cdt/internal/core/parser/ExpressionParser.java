@@ -211,6 +211,9 @@ public class ExpressionParser implements IExpressionParser {
 	        	}catch( BacktrackException e ){
 	        		failed = true;
 	        		break;
+	        	}catch( Exception e ){
+	        		failed = true;
+	        		break;
 	        	}
         	}
         	

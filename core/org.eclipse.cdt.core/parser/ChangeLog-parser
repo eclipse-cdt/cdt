@@ -1,3 +1,9 @@
+2004-04-07 Andrew Niefer
+	small changes to get through iostream under standard make with discovered symbols
+	- check null pointer in GCCScannerExtension.handlePreprocessorDirective, the null is probably a symptom of whatever 
+	  is giving us an unbalanced preprocessor directive
+	- catch exceptions during our 3rd attempt at a template argument in ExpressionParser.templateArgumentList
+
 2004-04-07 John Camelon
 	Provided a partial fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=50152
 	Updated IExpressionParser::expression() interface necessitated by this fix, and updated its clients appropriately.  

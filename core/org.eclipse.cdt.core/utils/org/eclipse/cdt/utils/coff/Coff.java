@@ -267,7 +267,7 @@ public class Coff {
 			buffer.append("s_nreloc = ").append(s_nreloc).append(NL);
 			buffer.append("s_nlnno = ").append(s_nlnno).append(NL);
 			buffer.append("s_flags = ").append(s_flags).append(NL);
-/*
+///*
 			try {
 				Reloc[] rcs = getRelocs();
 				for (int i = 0; i < rcs.length; i++) {
@@ -282,7 +282,7 @@ public class Coff {
 				}
 			} catch (IOException e) {
 			}
-*/
+//*/
 			return buffer.toString();
 		}
 	}

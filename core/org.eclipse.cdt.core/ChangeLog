@@ -1,3 +1,8 @@
+2003-11-20 Alain Magloire
+
+	Remove of methods that are JVM 1.4.x
+	* model/org/eclipse/cdt/internal/core/model/Binary.java
+	
 2003-11-19 Alain Magloire
 
 	Improve performance on the binary parser, and fix a JUnit test.

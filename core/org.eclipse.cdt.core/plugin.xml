@@ -20,6 +20,7 @@
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.text"/>
+      <import plugin="org.eclipse.core.variables"/>
    </requires>
 
 <!-- =================================================================================== -->
@@ -535,5 +536,17 @@
             id="org.eclipse.cdt.core.originalsourceindexer">
       </indexer>
    </extension>
- 
+
+<!-- =================================================================================== -->
+<!-- Dynamic Variables                                                          -->	
+<!-- =================================================================================== -->
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            name="cdt_pathentry_var"
+            resolver="org.eclipse.cdt.internal.core.PathEntryVariableResolver"
+            description="%cdt_pathentry_var.description">
+      </variable>
+   </extension>
+
 </plugin>

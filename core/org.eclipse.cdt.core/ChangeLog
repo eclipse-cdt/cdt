@@ -1,3 +1,11 @@
+2005-03-18 Alain Magloire
+	Export the PathEntry Variable to the outside world.
+	* src/org/eclipse/cdt/internal/core/CCorePluginResources.properties
+	* src/org/eclipse/cdt/internal/core/PathEntryVariableManager.java
+	* src/org/eclipse/cdt/internal/core/PathEntryVariableResolver.java
+	* plugin.properties
+	* plugin.xml
+
 2005-03-14 Alain Magloire
 	Fix NPEs: PathEntryManager should be created first, since it will
 	be use by other components.

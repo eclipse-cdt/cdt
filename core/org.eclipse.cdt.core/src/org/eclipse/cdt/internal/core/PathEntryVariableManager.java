@@ -238,9 +238,12 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 				if (inMacro) {
 					inMacro = false;
 					String p = param.toString();
-					String v = getValue(p).toPortableString();
-					if (v != null) {
-						sb.append(v);
+					IPath path = getValue(p);
+					if (path != null) {
+						String v = path.toPortableString();
+						if (v != null) {
+							sb.append(v);
+						}
 					}
 					param.setLength(0);
 					/* Skip the trailing } */

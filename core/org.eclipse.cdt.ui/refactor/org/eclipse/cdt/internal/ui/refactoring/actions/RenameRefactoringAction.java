@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.actions;
 
 
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.model.CElement;
@@ -21,6 +20,8 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.cdt.internal.ui.refactoring.UserInterfaceStarter;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
@@ -55,12 +56,8 @@ public class RenameRefactoringAction extends SelectionDispatchAction {
 
 	public void selectionChanged(ITextSelection selection) {
 		boolean enable = true;
-		ICElement element = null;
-		try {
-			element = SelectionConverter.getElementAtOffset(fEditor);
-		}catch (CModelException e) {
-			setEnabled(false);
-		}
+		IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
+		ICElement element = manager.getWorkingCopy(fEditor.getEditorInput());
 		if((element == null) || (element instanceof ITranslationUnit)){
 			setEnabled(false);
 			return;

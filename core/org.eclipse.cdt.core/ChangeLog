@@ -1,3 +1,8 @@
+2004-04-19 David Inglis
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=58232
+	
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java
+	
 2004-04-18 Alain Magloire
 
 	Added a new method in CoreModel to get ITranslationUnit

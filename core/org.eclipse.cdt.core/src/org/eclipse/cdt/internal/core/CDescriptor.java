@@ -11,9 +11,9 @@ package org.eclipse.cdt.internal.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -156,12 +156,10 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	private String readCDTProjectFile(IPath descriptionPath) throws CoreException {
-		FileInputStream file = null;
 		String ownerID = ""; //$NON-NLS-1$
 		try {
-			file = new FileInputStream(descriptionPath.toFile());
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document document = parser.parse(file);
+			Document document = parser.parse(descriptionPath.toFile());
 			NodeList nodeList = document.getElementsByTagName(PROJECT_DESCRIPTION);
 			if (nodeList != null && nodeList.getLength() > 0) {
 				Node node = nodeList.item(0);
@@ -177,13 +175,6 @@ public class CDescriptor implements ICDescriptor {
 		} catch (Exception e) {
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.toString(), e);
 			throw new CoreException(status);
-		} finally {
-			if (file != null) {
-				try {
-					file.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 	}
 
@@ -322,16 +313,21 @@ public class CDescriptor implements ICDescriptor {
 				}
 
 				IFile rscFile = getFile();
-				InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
-				// update the resource content
-				if (rscFile.exists()) {
-					if (rscFile.isReadOnly()) {
-						// provide opportunity to checkout read-only .cdtproject file
-						fManager.getWorkspace().validateEdit(new IFile[]{rscFile}, null);
+				InputStream inputStream;
+				try {
+					inputStream = new ByteArrayInputStream(xml.getBytes("UTF8")); //$NON-NLS-1$
+					if (rscFile.exists()) {
+						if (rscFile.isReadOnly()) {
+							// provide opportunity to checkout read-only .cdtproject file
+							fManager.getWorkspace().validateEdit(new IFile[]{rscFile}, null);
+						}
+						rscFile.setContents(inputStream, IResource.FORCE, null);
+					} else {
+						rscFile.create(inputStream, IResource.FORCE, null);
 					}
-					rscFile.setContents(inputStream, IResource.FORCE, null);
-				} else {
-					rscFile.create(inputStream, IResource.FORCE, null);
+				} catch (UnsupportedEncodingException e) {
+					IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e);
+					throw new CoreException(s);
 				}
 				fUpdating = false;
 			}
@@ -588,6 +584,7 @@ public class CDescriptor implements ICDescriptor {
 		TransformerFactory factory = TransformerFactory.newInstance();
 		Transformer transformer = factory.newTransformer();
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
 
 		DOMSource source = new DOMSource(doc);

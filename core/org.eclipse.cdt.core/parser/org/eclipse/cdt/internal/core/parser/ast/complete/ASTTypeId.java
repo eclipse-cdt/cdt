@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -97,7 +98,7 @@ public class ASTTypeId implements IASTTypeId
     
     public List getReferences()
     {
-    	return references;
+    	return (references == null ) ? Collections.EMPTY_LIST : references;
     }
         
     public ITokenDuple getTokenDuple()

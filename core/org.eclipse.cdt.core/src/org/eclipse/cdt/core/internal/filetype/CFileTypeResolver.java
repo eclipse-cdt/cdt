@@ -61,11 +61,12 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	private CFileTypeResolver() {
 		loadTypes();
 		loadAssociations();
-		
-		String[] test = { "foo.c", "bar.h", "baz.s", "numeric" }; 
-		for (int i = 0; i < test.length; i++) {
-			ICFileType ft = getFileType(test[i]);
-			System.out.println("Self test: " + test[i] + " mapped to " + ft.getId());
+		if (CCorePlugin.getDefault().isDebugging()) {
+			String[] test = { "foo.c", "bar.h", "baz.s", "numeric" }; 
+			for (int i = 0; i < test.length; i++) {
+				ICFileType ft = getFileType(test[i]);
+				System.out.println("Self test: " + test[i] + " mapped to " + ft.getId());
+			}
 		}
 	}
 
@@ -147,8 +148,8 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	public boolean addFileType(ICFileType type) {
 		if (CCorePlugin.getDefault().isDebugging()) {
 			System.out.println("File Type Resolver: adding type " + type.getId() + " as " + type.getName());
+			System.out.println();
 		}
-		System.out.println();
 		boolean added = false;
 		if (!fTypeMap.containsValue(type)) {
 			added = (null != fTypeMap.put(type.getId(), type));
@@ -227,7 +228,7 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 		IExtensionPoint			point		= getExtensionPoint(EXTENSION_ASSOC);
 		IExtension[]			extensions	= point.getExtensions();
 		IConfigurationElement[]	elements	= null;
-		ICFileTypeAssociation[]	assocs		= null;
+		//ICFileTypeAssociation[]	assocs		= null;
 		
 		for (int i = 0; i < extensions.length; i++) {
 			elements = extensions[i].getConfigurationElements();

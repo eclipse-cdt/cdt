@@ -24,6 +24,11 @@ public class MakeProject implements ICOwner {
 		cproject.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
 		cproject.remove(CCorePlugin.BUILDER_MODEL_ID);
 		cproject.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, MakeScannerProvider.INTERFACE_IDENTITY);
+		Preferences makePrefs = MakeCorePlugin.getDefault().getPluginPreferences();
+		String id = makePrefs.getString(CCorePlugin.PREF_BINARY_PARSER);
+		if (id != null && id.length() != 0) {
+			cproject.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, id);
+		}
 	}
 
 	public void update(ICDescriptor cproject, String extensionID) throws CoreException {

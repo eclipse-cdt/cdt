@@ -69,6 +69,7 @@
          name="%makeproject.name"
          point="org.eclipse.cdt.core.CProject">
       <cproject
+      		natureID="org.eclipse.cdt.make.core.makeNature"
             class="org.eclipse.cdt.make.internal.core.MakeProject">
       </cproject>
    </extension>

@@ -24,9 +24,9 @@ public class COwner implements ICOwnerInfo {
 	public COwner(String id) throws CoreException {
 		ownerID = id;
 		IExtensionPoint extpoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("CProject");
-		if (extpoint != null) {
-			extension =  extpoint.getExtension(ownerID);
-		} else {
+		extension =  extpoint.getExtension(ownerID);
+		
+		if (extension == null) {
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Invalid CDTProject owner ID", (Throwable)null);
 			throw new CoreException(status);
 		}

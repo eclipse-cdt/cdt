@@ -50,10 +50,10 @@ public class CDescriptor implements ICDescriptor {
 	private HashMap extMap = new HashMap(4);
 	private HashMap extInfoMap = new HashMap(4);
 		
-	private final String DESCRIPTION_FILE_NAME = ".cdtproject";
-	private final String PROJECT_DESCRIPTION = "cdtproject";
-	private final String PROJECT_EXTENSION = "extension";
-	private final String PROJECT_EXTENSION_ATTRIBUTE = "attribute";
+	final static String DESCRIPTION_FILE_NAME = ".cdtproject";
+	private final static String PROJECT_DESCRIPTION = "cdtproject";
+	private final static String PROJECT_EXTENSION = "extension";
+	private final static String PROJECT_EXTENSION_ATTRIBUTE = "attribute";
 
 	private boolean fDirty;
 

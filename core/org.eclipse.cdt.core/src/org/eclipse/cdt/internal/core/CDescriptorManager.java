@@ -11,10 +11,12 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -22,7 +24,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
@@ -52,11 +56,39 @@ public class CDescriptorManager implements IResourceChangeListener {
 			return;
 		}
 		IResource resource = event.getResource();
-		if ( event.getType() == IResourceChangeEvent.PRE_DELETE ) {
-			if(resource.getType() == IResource.PROJECT ) {
-				fDescriptorMap.remove(resource);
-			}
-		}
+		
+		Object source = event.getSource();
+				
+		int eventType = event.getType();
+		
+		switch(eventType) {
+			case IResourceChangeEvent.PRE_DELETE:
+				if (resource.getType() == IResource.PROJECT){
+					fDescriptorMap.remove(resource);
+				}			
+			break;
+			case IResourceChangeEvent.POST_CHANGE:
+				IResourceDelta delta= event.getDelta();				
+				if (delta == null) {
+					break;
+				}
+				IResource dResource = delta.getResource();
+				//if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
+					if (dResource instanceof IFile) {
+						IFile file = (IFile)dResource;
+
+						// the .cdtproject file has been deleted
+						if ((file != null) && (file.getName().endsWith(CDescriptor.DESCRIPTION_FILE_NAME)) && !file.exists()){
+							// must remove the corresponding reference to it in the fDescriptorMap
+							if (fDescriptorMap != null){
+								fDescriptorMap.remove(resource);
+							}
+						}
+						
+					}
+				//}
+			break;		
+		}				
 	}
 	
 
@@ -123,4 +155,27 @@ public class CDescriptorManager implements IResourceChangeListener {
 		}		
 		return (ICExtension[]) extensionList.toArray(new ICExtension[extensionList.size()]);
 	}	
+
+    /**
+     * Must remove an existing .cdtproject file before we generate a new one when converting
+     */
+    public static void removeExistingCdtProjectFile(IProject project){
+    	IFile file = project.getFile(CDescriptor.DESCRIPTION_FILE_NAME);
+    	IProgressMonitor monitor = new  NullProgressMonitor();
+    		
+		// update the resource content
+		if ((file != null) && file.exists()) {
+			try{
+				file.delete(true, monitor);
+				// remove reference from the fDescriptorMap
+				if (fDescriptorMap != null){
+					fDescriptorMap.remove(project);
+				}	
+
+				project.refreshLocal(1, monitor);		
+			}catch(CoreException ce){
+				CCorePlugin.log(ce);
+			}
+		}    	
+    }
 }

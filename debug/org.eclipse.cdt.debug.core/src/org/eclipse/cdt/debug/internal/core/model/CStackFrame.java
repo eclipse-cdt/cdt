@@ -130,11 +130,6 @@ public class CStackFrame extends CDebugElement
 			ICDIVariable var = findVariable( locals, local.getCDIVariable() );
 			if ( var != null )
 			{
-				// update variable with new underling CDI LocalVariable
-				if ( !var.equals( local.getCDIVariable() ) )
-				{
-					local.setCDIVariable( var );
-				}
 				locals.remove( var );
 				index++;
 			}
@@ -718,21 +713,14 @@ public class CStackFrame extends CDebugElement
 		}
 	}
 	
-	// temporary solution
 	protected ICDIVariable findVariable( List list, ICDIVariable var )
 	{
 		Iterator it = list.iterator();
 		while( it.hasNext() )
 		{
 			ICDIVariable newVar = (ICDIVariable)it.next();
-			try
-			{
-				if ( newVar.getName().equals( var.getName() ) )
-					return newVar;
-			}
-			catch( CDIException e )
-			{
-			}
+			if ( newVar.equals( var ) )
+				return newVar;
 		}
 		return null;
 	}

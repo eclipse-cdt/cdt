@@ -11,6 +11,8 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
+ * This interface represent a preprocessor #error statement.
+ * 
  * @author jcamelon
  */
 public interface IASTPreprocessorErrorStatement extends

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
+ * This interface represents a parse problem where we tried to match against a statement.
  * @author jcamelon
  */
 public interface IASTProblemStatement extends IASTStatement, IASTProblemHolder {

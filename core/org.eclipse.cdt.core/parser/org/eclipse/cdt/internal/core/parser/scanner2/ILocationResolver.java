@@ -10,12 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorSelectionResult;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 
 /**
  * @author jcamelon
@@ -36,6 +36,6 @@ public interface ILocationResolver {
     
     public void cleanup();
 
-    public IASTPreprocessorSelectionResult getPreprocessorNode( String path, int offset, int length ) throws InvalidPreprocessorNodeException;
+    public ASTPreprocessorSelectionResult getPreprocessorNode( String path, int offset, int length ) throws InvalidPreprocessorNodeException;
     
 }

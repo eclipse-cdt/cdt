@@ -11,16 +11,32 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
+ * This interface represent a preprocessor function-style macro definition. e.g.
+ * #define ABC( def ) GHI
+ * 
  * @author jcamelon
  */
 public interface IASTPreprocessorFunctionStyleMacroDefinition extends
-      IASTPreprocessorMacroDefinition {
+		IASTPreprocessorMacroDefinition {
 
-   public static final ASTNodeProperty PARAMETER = new ASTNodeProperty(
-                                                       "Function Macro Parameter"); //$NON-NLS-1$
+	/**
+	 * This property represents the relationship between a function style macro definition and one of its parameters.
+	 */
+	public static final ASTNodeProperty PARAMETER = new ASTNodeProperty(
+			"Function Macro Parameter"); //$NON-NLS-1$
 
-   public IASTFunctionStyleMacroParameter[] getParameters();
+	/**
+	 * Get the macro parameters. 
+	 * 
+	 * @return <code>IASTFunctionStyleMacroParameter[]</code> parameters 
+	 */
+	public IASTFunctionStyleMacroParameter[] getParameters();
 
-   public void addParameter(IASTFunctionStyleMacroParameter parm);
+	/**
+	 * Add a function-style macro parameter. 
+	 * 
+	 * @param parm <code>IASTFunctionStyleMacroParameter</code>
+	 */
+	public void addParameter(IASTFunctionStyleMacroParameter parm);
 
 }

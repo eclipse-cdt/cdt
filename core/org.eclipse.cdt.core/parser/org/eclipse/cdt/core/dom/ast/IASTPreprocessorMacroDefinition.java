@@ -17,10 +17,33 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTPreprocessorMacroDefinition extends IASTPreprocessorStatement {
 
+    /**
+     * <code>MACRO_NAME</code> describes the relationship between a macro definition and it's name. 
+     */
     public static final ASTNodeProperty MACRO_NAME = new ASTNodeProperty( "Macro Name"); //$NON-NLS-1$
+    /**
+     * Get the macro name. 
+     * 
+     * @return <code>IASTName</code>
+     */
     public IASTName getName();
+    /**
+     * Set the macro name.
+     * 
+     * @param name
+     */
     public void setName( IASTName name );
     
+    /**
+     * Get the macro expansion.
+     * 
+     * @return String
+     */
     public String getExpansion();
+    /**
+     * Set the macro expansion. 
+     * 
+     * @param exp String
+     */
     public void setExpansion( String exp );
 }

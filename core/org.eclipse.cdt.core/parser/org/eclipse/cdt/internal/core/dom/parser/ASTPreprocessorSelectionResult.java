@@ -11,14 +11,13 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorSelectionResult;
 
 /**
  * This class is used to wrap possible results from the ILocationResolver (when retrieving
  * nodes from the preprocessor tree.
  * @author dsteffle
  */
-public class ASTPreprocessorSelectionResult implements IASTPreprocessorSelectionResult {
+public class ASTPreprocessorSelectionResult  {
 	IASTNode selectedNode = null;
 	int globalOffset = 0;
 	

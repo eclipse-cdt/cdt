@@ -21,8 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorEndifStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorErrorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorSelectionResult;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -1723,7 +1722,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 		return foundContext;
     }
 
-    private IASTPreprocessorSelectionResult getPreprocessorNode(int globalOffset, int length, _Context startContext) throws InvalidPreprocessorNodeException {
+    private ASTPreprocessorSelectionResult getPreprocessorNode(int globalOffset, int length, _Context startContext) throws InvalidPreprocessorNodeException {
     	IASTNode result = null;
     	if (!(startContext instanceof _CompositeContext)) throw new InvalidPreprocessorNodeException(NOT_VALID_MACRO, globalOffset);
     	List contexts = ((_CompositeContext)startContext).getSubContexts();
@@ -1763,8 +1762,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getPreprocessorNode(int, int)
 	 */
-	public IASTPreprocessorSelectionResult getPreprocessorNode(String path, int offset, int length) throws InvalidPreprocessorNodeException {
-		IASTPreprocessorSelectionResult result = null;
+	public ASTPreprocessorSelectionResult getPreprocessorNode(String path, int offset, int length) throws InvalidPreprocessorNodeException {
+		ASTPreprocessorSelectionResult result = null;
 		
 		int globalOffset = 0;
 		_Context foundContext = tu;

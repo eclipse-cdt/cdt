@@ -11,10 +11,17 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
+ * Represents a #elif preprocessor statement.
+ * 
  * @author jcamelon
  */
 public interface IASTPreprocessorElifStatement extends IASTPreprocessorStatement {
 
+    /**
+     * Was this #elif branch taken?
+     * 
+     * @return boolean
+     */
     public boolean taken();
     
 }

@@ -11,6 +11,8 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
+ * Represents a #pragma directive.
+ * 
  * @author jcamelon
  */
 public interface IASTPreprocessorPragmaStatement extends

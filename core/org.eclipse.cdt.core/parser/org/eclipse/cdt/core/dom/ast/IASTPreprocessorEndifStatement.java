@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
+ * This interface represent a preprocessor #endif statement.
  * @author jcamelon
  */
 public interface IASTPreprocessorEndifStatement extends IASTPreprocessorStatement{

@@ -18,10 +18,30 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTPointer extends IASTPointerOperator {
 
 	// Qualifiers applied to the pointer type
+	/**
+	 * Is this a const pointer?
+	 * 
+	 * @return boolean
+	 */
 	public boolean isConst();
+	/**
+	 * Is this a volatile pointer? 
+	 * 
+	 * @return boolean
+	 */
 	public boolean isVolatile();
 	
+	/**
+	 * Set this to be a const pointer (true/false).
+	 * 
+	 * @param value - the value
+	 */
 	public void setConst( boolean value );
+	/**
+	 * Set this to be a volatile pointer (true/false).
+	 * 
+	 * @param value - the value
+	 */
 	public void setVolatile( boolean value );
 
 }

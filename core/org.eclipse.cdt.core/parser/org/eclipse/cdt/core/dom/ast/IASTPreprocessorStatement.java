@@ -11,6 +11,8 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
+ * This is the base interface for all preprocessor directives.
+ * 
  * @author jcamelon
  */
 public interface IASTPreprocessorStatement extends IASTNode {

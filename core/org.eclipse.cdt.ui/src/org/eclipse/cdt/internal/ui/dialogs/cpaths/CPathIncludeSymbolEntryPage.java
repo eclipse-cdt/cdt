@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.cdt.internal.ui.wizards.TypedViewerFilter;
@@ -30,17 +31,19 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -63,8 +66,8 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 	private TreeListDialogField fIncludeSymPathsList;
 	private SelectionButtonDialogField fShowInheritedPaths;
 	private ICProject fCurrCProject;
-	private ListDialogField fCPathList;
 	private CPElementFilter fFilter;
+	private IStatusChangeListener fContext;
 
 	private final int IDX_ADD_FOLDER_FILE = 0;
 	private final int IDX_ADD_SYMBOL = 2;
@@ -77,7 +80,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 	private final int IDX_UP = 14;
 	private final int IDX_DOWN = 15;
 
-	private static final String[] buttonLabel = new String[] {
+	private static final String[] buttonLabel = new String[]{
 
 	/* 0 */CPathEntryMessages.getString("IncludeSymbolEntryPage.addFolderFile"), //$NON-NLS-1$
 			null,
@@ -95,6 +98,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 			null,
 			/* 14 */CPathEntryMessages.getString("IncludeSymbolEntryPage.down"), //$NON-NLS-1$
 			/* 15 */CPathEntryMessages.getString("IncludeSymbolEntryPage.up")}; //$NON-NLS-1$
+	private CPElementGroup fProjectGroup;
 
 	private class IncludeSymbolAdapter implements IDialogFieldListener, ITreeListAdapter {
 
@@ -119,18 +123,18 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 
 		public Object[] getChildren(TreeListDialogField field, Object element) {
 			if (element instanceof CPElement) {
-				return ((CPElement) element).getChildren();
+				return ((CPElement)element).getChildren();
 			} else if (element instanceof CPElementGroup) {
-				return ((CPElementGroup) element).getChildren();
+				return ((CPElementGroup)element).getChildren();
 			}
 			return EMPTY_ARR;
 		}
 
 		public Object getParent(TreeListDialogField field, Object element) {
 			if (element instanceof CPElementGroup) {
-				return ((CPElementGroup) element).getParent();
+				return ((CPElementGroup)element).getParent();
 			} else if (element instanceof CPElement) {
-				return ((CPElement) element).getParent();
+				return ((CPElement)element).getParent();
 			}
 			return null;
 		}
@@ -140,7 +144,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 				return true;
 			}
 			if (element instanceof CPElement) {
-				return ((CPElement) element).getChildren().length > 0;
+				return ((CPElement)element).getChildren().length > 0;
 			}
 			return false;
 		}
@@ -154,9 +158,9 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 
 	}
 
-	public CPathIncludeSymbolEntryPage(ListDialogField cPathList) {
+	public CPathIncludeSymbolEntryPage(IStatusChangeListener context) {
 		super(CPathEntryMessages.getString("IncludeSymbolEntryPage.title")); //$NON-NLS-1$
-		fCPathList = cPathList;
+		fContext = context;
 		IncludeSymbolAdapter adapter = new IncludeSymbolAdapter();
 		fIncludeSymPathsList = new TreeListDialogField(adapter, buttonLabel, new CPElementLabelProvider(true, false)) {
 
@@ -180,8 +184,8 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		fShowInheritedPaths.setLabelText(CPathEntryMessages.getString("IncludeSymbolsEntryPage.show_inherited.check")); //$NON-NLS-1$
 		fShowInheritedPaths.setDialogFieldListener(adapter);
 
-		fFilter = new CPElementFilter(new int[] { -1, IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO, IPathEntry.CDT_CONTAINER},
-				false, true);
+		fFilter = new CPElementFilter(new int[]{-1, IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO, IPathEntry.CDT_CONTAINER}, false,
+				true);
 	}
 
 	public void createControl(Composite parent) {
@@ -189,7 +193,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fIncludeSymPathsList, fShowInheritedPaths}, true);
+		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fIncludeSymPathsList, fShowInheritedPaths}, true);
 		LayoutUtil.setHorizontalGrabbing(fIncludeSymPathsList.getTreeControl(null));
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
@@ -203,33 +207,60 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_CONTAINER);
 	}
 
-	public void init(ICProject cproject) {
+	public void init(ICProject cproject, List cPaths) {
 		fCurrCProject = cproject;
-		List elements = createGroups();
+		List elements = createGroups(cPaths);
 		fIncludeSymPathsList.setElements(elements);
 	}
 
-	private List createGroups() {
-		List cpelements = fCPathList.getElements();
+	private void updateStatus() {
+		CPElement entryMissing = null;
+		int nEntriesMissing = 0;
+		IStatus status = Status.OK_STATUS;
+		List elements = getCPaths();
+		for (int i = elements.size() - 1; i >= 0; i--) {
+			CPElement currElement = (CPElement)elements.get(i);
+			if (currElement.isMissing()) {
+				nEntriesMissing++;
+				if (entryMissing == null) {
+					entryMissing = currElement;
+				}
+			}
+		}
 
+		if (nEntriesMissing > 0) {
+			if (nEntriesMissing == 1) {
+				status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getFormattedString(
+						"CPathsBlock.warning.EntryMissing", //$NON-NLS-1$
+						entryMissing.getPath().toString()), null);
+			} else {
+				status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getFormattedString(
+						"CPathsBlock.warning.EntriesMissing", //$NON-NLS-1$
+						String.valueOf(nEntriesMissing)), null);
+			}
+		}
+		fContext.statusChanged(status);
+	}
+
+	private List createGroups(List cPaths) {
 		// create resource groups
 		List resourceGroups = new ArrayList(5);
-		CPElementGroup projectGroup = new CPElementGroup(fCurrCProject.getResource());
-		resourceGroups.add(projectGroup);
-		for (int i = 0; i < cpelements.size(); i++) {
-			CPElement element = (CPElement) cpelements.get(i);
+		fProjectGroup = new CPElementGroup(fCurrCProject.getResource());
+		resourceGroups.add(fProjectGroup);
+		for (int i = 0; i < cPaths.size(); i++) {
+			CPElement element = (CPElement)cPaths.get(i);
 			switch (element.getEntryKind()) {
-				case IPathEntry.CDT_CONTAINER:
-					projectGroup.addChild(element);
+				case IPathEntry.CDT_CONTAINER :
+					fProjectGroup.addChild(element);
 					break;
-				case IPathEntry.CDT_INCLUDE:
-				case IPathEntry.CDT_MACRO:
+				case IPathEntry.CDT_INCLUDE :
+				case IPathEntry.CDT_MACRO :
 					CPElementGroup resGroup = new CPElementGroup(element.getResource());
 					int ndx = resourceGroups.indexOf(resGroup);
 					if (ndx == -1) {
 						resourceGroups.add(resGroup);
 					} else {
-						resGroup = (CPElementGroup) resourceGroups.get(ndx);
+						resGroup = (CPElementGroup)resourceGroups.get(ndx);
 					}
 					resGroup.addChild(element);
 			}
@@ -237,11 +268,11 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 
 		// place each path in its appropriate inherited group (or not if
 		// excluded)
-		for (int i = 0; i < cpelements.size(); i++) {
-			CPElement element = (CPElement) cpelements.get(i);
+		for (int i = 0; i < cPaths.size(); i++) {
+			CPElement element = (CPElement)cPaths.get(i);
 			switch (element.getEntryKind()) {
-				case IPathEntry.CDT_INCLUDE:
-				case IPathEntry.CDT_MACRO:
+				case IPathEntry.CDT_INCLUDE :
+				case IPathEntry.CDT_MACRO :
 					addPathToResourceGroups(element, null, resourceGroups);
 			}
 		}
@@ -250,8 +281,8 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 
 	private void addPathToResourceGroup(CPElement element, CPElementGroup parent, CPElementGroup group) {
 		IPath resPath = element.getPath();
-		IPath[] exclusions = (IPath[]) element.getAttribute(CPElement.EXCLUSION);
-		if ((group != parent || !group.getResource().equals(element.getResource()))
+		IPath[] exclusions = (IPath[])element.getAttribute(CPElement.EXCLUSION);
+		if ( (group != parent || !group.getResource().equals(element.getResource()))
 				&& resPath.isPrefixOf(group.getPath())
 				&& (resPath.equals(group.getPath()) || !CoreModelUtil.isExcludedPath(
 						group.getResource().getFullPath().removeFirstSegments(resPath.segmentCount()), exclusions))) {
@@ -264,23 +295,34 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 			parent.addChild(element);
 		}
 		for (int i = 0; i < groups.size(); i++) {
-			CPElementGroup group = (CPElementGroup) groups.get(i);
+			CPElementGroup group = (CPElementGroup)groups.get(i);
 			addPathToResourceGroup(element, parent, group);
 		}
 	}
 
 	private void updatePathOnResourceGroups(CPElement element, List groups) {
 		CPElementGroup parent = element.getParent();
+		IPath resPath = element.getPath();
+		IPath[] exclusions = (IPath[])element.getAttribute(CPElement.EXCLUSION);
 		for (int i = 0; i < groups.size(); i++) {
-			CPElementGroup group = (CPElementGroup) groups.get(i);
+			CPElementGroup group = (CPElementGroup)groups.get(i);
 			if (group != parent) {
+				boolean found = false;
 				CPElement[] elements = group.getChildren();
 				for (int j = 0; j < elements.length; j++) {
 					if (elements[j].getInherited() == element) {
-						group.removeChild(elements[j]);
+						found = true;
+						if (!CoreModelUtil.isExcludedPath(group.getResource().getFullPath().removeFirstSegments(resPath.segmentCount()), exclusions)) {
+							group.replaceChild(elements[j], new CPElement(element, group.getPath(), group.getResource()));
+						} else {
+							group.removeChild(elements[j]);
+						}
+						break;
 					}
 				}
-				addPathToResourceGroup(element, parent, group);
+				if (!found) {
+					addPathToResourceGroup(element, parent, group);
+				}
 			}
 		}
 	}
@@ -291,25 +333,25 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		resGroup.removeChild(element);
 		if (Inherited != null) { // applied exclusion to orig.
 			IPath exclude = element.getPath().removeFirstSegments(Inherited.getPath().segmentCount());
-			IPath[] exclusions = (IPath[]) Inherited.getAttribute(CPElement.EXCLUSION);
+			IPath[] exclusions = (IPath[])Inherited.getAttribute(CPElement.EXCLUSION);
 			IPath[] newExlusions = new IPath[exclusions.length + 1];
 			System.arraycopy(exclusions, 0, newExlusions, 0, exclusions.length);
 			newExlusions[exclusions.length] = exclude;
 			Inherited.setAttribute(CPElement.EXCLUSION, newExlusions);
-		} else { // remove all inherited
-			for (int i = 0; i < groups.size(); i++) {
-				CPElementGroup group = (CPElementGroup) groups.get(i);
-				CPElement elements[] = group.getChildren();
-				for (int j = 0; j < elements.length; j++) {
-					if (elements[j].getInherited() == element) {
-						group.removeChild(elements[j]);
-						break;
-					}
+			return null;
+		}
+		// remove all inherited
+		for (int i = 0; i < groups.size(); i++) {
+			CPElementGroup group = (CPElementGroup)groups.get(i);
+			CPElement elements[] = group.getChildren();
+			for (int j = 0; j < elements.length; j++) {
+				if (elements[j].getInherited() == element) {
+					group.removeChild(elements[j]);
+					break;
 				}
 			}
-			return element;
 		}
-		return null;
+		return element;
 	}
 
 	private boolean canAddPath(List selected) {
@@ -326,14 +368,14 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		}
 		Object elem = selected.get(0);
 		if (elem instanceof CPElement) {
-			CPElement element = (CPElement) elem;
+			CPElement element = (CPElement)elem;
 			if (element.getParentContainer() == null) {
 				return element.getEntryKind() == IPathEntry.CDT_INCLUDE || element.getEntryKind() == IPathEntry.CDT_MACRO;
 			}
 		} else if (elem instanceof CPElementAttribute) {
-			CPElementAttribute attrib = (CPElementAttribute) elem;
+			CPElementAttribute attrib = (CPElementAttribute)elem;
 			if (attrib.getKey().equals(CPElement.EXCLUSION)) {
-				if (((IPath[]) attrib.getValue()).length > 0) {
+				if ( ((IPath[])attrib.getValue()).length > 0) {
 					return true;
 				}
 			}
@@ -345,21 +387,19 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		List selected = getSelection();
 		Object elem = selected.get(0);
 		if (elem instanceof CPElement) {
-			CPElement removed = removePathFromResourceGroups((CPElement) elem, fIncludeSymPathsList.getElements());
-			if (removed != null) {
-				fCPathList.removeElement(removed);
+			if (removePathFromResourceGroups((CPElement)elem, fIncludeSymPathsList.getElements()) == null) {
+				updatePathOnResourceGroups(((CPElement)elem).getInherited(), fIncludeSymPathsList.getElements());
 			}
-			fCPathList.dialogFieldChanged(); // validate
 			fIncludeSymPathsList.refresh();
 		} else if (elem instanceof CPElementAttribute) {
-			CPElementAttribute attrib = (CPElementAttribute) elem;
+			CPElementAttribute attrib = (CPElementAttribute)elem;
 			String key = attrib.getKey();
 			Object value = key.equals(CPElement.EXCLUSION) ? new Path[0] : null;
 			attrib.getParent().setAttribute(key, value);
 			updatePathOnResourceGroups(attrib.getParent(), fIncludeSymPathsList.getElements());
 			fIncludeSymPathsList.refresh();
 		}
-
+		updateStatus();
 	}
 
 	private boolean canEdit(List selected) {
@@ -368,9 +408,14 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		}
 		Object elem = selected.get(0);
 		if (elem instanceof CPElement) {
-			CPElement element = (CPElement) selected.get(0);
+			CPElement element = (CPElement)selected.get(0);
 			if (element.getParentContainer() == null && element.getInherited() == null) {
-				return element.getEntryKind() == IPathEntry.CDT_INCLUDE || element.getEntryKind() == IPathEntry.CDT_MACRO;
+				IPath path = (IPath)element.getAttribute(CPElement.BASE_REF);
+				if (path != null && !path.equals(Path.EMPTY)) {
+					return false;
+				}
+				return element.getEntryKind() == IPathEntry.CDT_INCLUDE || element.getEntryKind() == IPathEntry.CDT_MACRO
+						|| element.getEntryKind() == IPathEntry.CDT_CONTAINER;
 			}
 		}
 		if (elem instanceof CPElementAttribute) {
@@ -387,9 +432,39 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		Object element = selElements.get(0);
 
 		if (element instanceof CPElement) {
-
+			editElementEntry((CPElement)element);
 		} else if (element instanceof CPElementAttribute) {
-			editAttributeEntry((CPElementAttribute) element);
+			editAttributeEntry((CPElementAttribute)element);
+		}
+	}
+
+	private void editElementEntry(CPElement element) {
+		IPath path = (IPath)element.getAttribute(CPElement.BASE_REF);
+		if (path != null && !path.equals(Path.EMPTY)) {
+			return;
+		} else if (element.getEntryKind() == IPathEntry.CDT_MACRO) {
+			addSymbol(element);
+		} else if (element.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+			path = (IPath)element.getAttribute(CPElement.BASE);
+			if (path != null && !path.equals(Path.EMPTY)) {
+				CPElement[] includes = openWorkspacePathEntryDialog(null);
+				if (includes != null && includes.length > 0) {
+					includes[0].setExported(element.isExported());
+
+				}
+			} else {
+				addInclude(element);
+			}
+		} else if (element.getEntryKind() == IPathEntry.CDT_CONTAINER) {
+			CPElement[] res = null;
+
+			res = openContainerSelectionDialog(element);
+			if (res != null && res.length > 0) {
+				CPElement curr = res[0];
+				curr.setExported(element.isExported());
+				fProjectGroup.replaceChild(element, curr);
+				fIncludeSymPathsList.refresh();
+			}
 		}
 	}
 
@@ -400,19 +475,30 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 			ExclusionPatternDialog dialog = new ExclusionPatternDialog(getShell(), selElement);
 			if (dialog.open() == Window.OK) {
 				selElement.setAttribute(CPElement.EXCLUSION, dialog.getExclusionPattern());
-				fCPathList.dialogFieldChanged(); // validate
 				updatePathOnResourceGroups(selElement, fIncludeSymPathsList.getElements());
 				fIncludeSymPathsList.refresh();
+				updateStatus();
 			}
 		}
 	}
 
 	private void exportEntry() {
-
+		CPElement element = (CPElement)getSelection().get(0);
+		element.setExported(!element.isExported()); // toggle
+		fIncludeSymPathsList.refresh(element);
 	}
 
-	private boolean canExport(List selectedElements) {
-		// dinglis-TODO Auto-generated method stub
+	private boolean canExport(List selected) {
+		if (selected.size() != 1) {
+			return false;
+		}
+		Object elem = selected.get(0);
+		if (elem instanceof CPElement) {
+			CPElement element = (CPElement)selected.get(0);
+			if (element.getParentContainer() == null && element.getInherited() == null) {
+				return element.getEntryKind() == IPathEntry.CDT_INCLUDE || element.getEntryKind() == IPathEntry.CDT_MACRO;
+			}
+		}
 		return false;
 	}
 
@@ -428,7 +514,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		boolean rc = false;
 		List selElements = fIncludeSymPathsList.getSelectedElements();
 		for (Iterator i = selElements.iterator(); i.hasNext();) {
-			CPElement elem = (CPElement) i.next();
+			CPElement elem = (CPElement)i.next();
 			CPElementGroup parent = elem.getParent();
 			CPElement[] children = parent.getChildren();
 			for (int j = 0; j < children.length; ++j) {
@@ -461,7 +547,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		List revSelElements = new ArrayList(selElements);
 		Collections.reverse(revSelElements);
 		for (Iterator i = revSelElements.iterator(); i.hasNext();) {
-			CPElement elem = (CPElement) i.next();
+			CPElement elem = (CPElement)i.next();
 			CPElementGroup parent = elem.getParent();
 			CPElement[] children = parent.getChildren();
 			for (int j = children.length - 1; j >= 0; --j) {
@@ -491,7 +577,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 			if (fFilter != null) {
 				fIncludeSymPathsList.getTreeViewer().removeFilter(fFilter);
 			}
-			fFilter = new CPElementFilter(new int[] { -1, IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO, IPathEntry.CDT_CONTAINER},
+			fFilter = new CPElementFilter(new int[]{-1, IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO, IPathEntry.CDT_CONTAINER},
 					false, showInherited);
 			fIncludeSymPathsList.getTreeViewer().addFilter(fFilter);
 			fIncludeSymPathsList.refresh();
@@ -506,18 +592,20 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		field.enableButton(IDX_ADD_EXT_INCLUDE, canAddPath(selected));
 		field.enableButton(IDX_ADD_WS_INCLUDE, canAddPath(selected));
 		field.enableButton(IDX_ADD_SYMBOL, canAddPath(selected));
+		field.enableButton(IDX_EXPORT, canExport(selected));
+		field.enableButton(IDX_DOWN, canMoveDown(selected));
+		field.enableButton(IDX_UP, canMoveUp(selected));
 	}
-
 
 	private CPElementGroup getSelectedGroup() {
 		List selected = fIncludeSymPathsList.getSelectedElements();
 		if (!selected.isEmpty()) {
 			Object item = selected.get(0);
 			if (item instanceof CPElement) {
-				item = ((CPElement) item).getParent();
+				item = ((CPElement)item).getParent();
 			}
 			if (item instanceof CPElementGroup) {
-				return (CPElementGroup) item;
+				return (CPElementGroup)item;
 			}
 		}
 		return null;
@@ -525,91 +613,46 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 
 	protected void ListCustomButtonPressed(TreeListDialogField field, int index) {
 		switch (index) {
-			case IDX_ADD_FOLDER_FILE:
+			case IDX_ADD_FOLDER_FILE :
 				addNewPathResource();
 				break;
-			case IDX_ADD_SYMBOL:
+			case IDX_ADD_SYMBOL :
 				addSymbol(null);
 				break;
-			case IDX_ADD_EXT_INCLUDE:
+			case IDX_ADD_EXT_INCLUDE :
 				addInclude(null);
 				break;
-			case IDX_ADD_WS_INCLUDE:
+			case IDX_ADD_WS_INCLUDE :
 				addFromWorkspace();
 				break;
-			case IDX_ADD_CONTRIBUTED:
+			case IDX_ADD_CONTRIBUTED :
 				addContributed();
 				break;
-			case IDX_EDIT:
+			case IDX_EDIT :
 				if (canEdit(field.getSelectedElements())) {
 					editEntry();
 				}
 				break;
-			case IDX_REMOVE:
+			case IDX_REMOVE :
 				if (canRemove(field.getSelectedElements())) {
 					removeEntry();
 				}
 				break;
-			case IDX_DOWN:
+			case IDX_DOWN :
 				if (canMoveDown(field.getSelectedElements())) {
 					moveDown();
 				}
 				break;
-			case IDX_UP:
+			case IDX_UP :
 				if (canMoveUp(field.getSelectedElements())) {
 					moveUp();
 				}
 				break;
-			case IDX_EXPORT:
+			case IDX_EXPORT :
 				if (canExport(field.getSelectedElements())) {
 					exportEntry();
 				}
 
-		}
-	}
-
-	private void addNewPathResource() {
-		Class[] acceptedClasses = new Class[] { ICProject.class, ICContainer.class, ITranslationUnit.class};
-		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, false);
-		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);
-
-		String title = CPathEntryMessages.getString("IncludeSymbolEntryPage.newResource.title"); //$NON-NLS-1$
-		String message = CPathEntryMessages.getString("IncludeSymbolEntryPage.newResource.description"); //$NON-NLS-1$
-
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(),
-				new CElementContentProvider());
-		dialog.setValidator(validator);
-		dialog.setTitle(title);
-		dialog.setMessage(message);
-		dialog.addFilter(filter);
-		dialog.setInput(fCurrCProject);
-		dialog.setInitialSelection(fCurrCProject);
-
-		if (dialog.open() == Window.OK) {
-			Object[] elements = dialog.getResult();
-			IResource resource;
-			if (elements[0] instanceof IResource) {
-				resource = (IResource) elements[0];
-			} else {
-				resource = ((ICElement) elements[0]).getResource();
-			}
-			CPElementGroup newGroup = new CPElementGroup(resource);
-			if (!fIncludeSymPathsList.getElements().contains(newGroup)) {
-				List cpelements = fCPathList.getElements();
-				for (int i = 0; i < cpelements.size(); i++) {
-					CPElement element = (CPElement) cpelements.get(i);
-					if (element.getPath().isPrefixOf(newGroup.getPath())) {
-						switch (element.getEntryKind()) {
-							case IPathEntry.CDT_INCLUDE:
-							case IPathEntry.CDT_MACRO:
-								addPathToResourceGroup(element, null, newGroup);
-						}
-					}
-				}
-				fIncludeSymPathsList.addElement(newGroup);
-			}
-			fIncludeSymPathsList.selectElements(new StructuredSelection(newGroup));
-			fIncludeSymPathsList.expandElement(newGroup, 1);
 		}
 	}
 
@@ -631,24 +674,86 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 	}
 
 	protected IPathEntry[] getRawPathEntries() {
-		IPathEntry[] currEntries = new IPathEntry[fCPathList.getElements().size()];
+		List paths = getCPaths();
+		IPathEntry[] currEntries = new IPathEntry[paths.size()];
 		for (int i = 0; i < currEntries.length; i++) {
-			CPElement curr = (CPElement) fCPathList.getElement(i);
+			CPElement curr = (CPElement)paths.get(i);
 			currEntries[i] = curr.getPathEntry();
 		}
 		return currEntries;
 	}
 
+	private void addNewPathResource() {
+		Class[] acceptedClasses = new Class[]{ICProject.class, ICContainer.class, ITranslationUnit.class};
+		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, false);
+		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);
+
+		String title = CPathEntryMessages.getString("IncludeSymbolEntryPage.newResource.title"); //$NON-NLS-1$
+		String message = CPathEntryMessages.getString("IncludeSymbolEntryPage.newResource.description"); //$NON-NLS-1$
+
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(),
+				new CElementContentProvider());
+		dialog.setValidator(validator);
+		dialog.setTitle(title);
+		dialog.setMessage(message);
+		dialog.addFilter(filter);
+		dialog.setInput(fCurrCProject);
+		dialog.setInitialSelection(fCurrCProject);
+
+		if (dialog.open() == Window.OK) {
+			Object[] elements = dialog.getResult();
+			IResource resource;
+			if (elements[0] instanceof IResource) {
+				resource = (IResource)elements[0];
+			} else {
+				resource = ((ICElement)elements[0]).getResource();
+			}
+			CPElementGroup newGroup = new CPElementGroup(resource);
+			if (!fIncludeSymPathsList.getElements().contains(newGroup)) {
+				List groups = fIncludeSymPathsList.getElements();
+				for (int i = 0; i < groups.size(); i++) {
+					CPElementGroup group = (CPElementGroup)groups.get(i);
+					if (group.getPath().isPrefixOf(newGroup.getPath())) {
+						CPElement[] cpelements = group.getChildren();
+						for (int j = 0; j < cpelements.length; j++) {
+							if (cpelements[j].getInherited() == null) {
+								switch (cpelements[j].getEntryKind()) {
+									case IPathEntry.CDT_INCLUDE :
+									case IPathEntry.CDT_MACRO :
+										addPathToResourceGroup(cpelements[j], null, newGroup);
+								}
+							}
+						}
+					}
+				}
+				fIncludeSymPathsList.addElement(newGroup);
+			}
+			fIncludeSymPathsList.selectElements(new StructuredSelection(newGroup));
+			fIncludeSymPathsList.expandElement(newGroup, 1);
+		}
+	}
+
 	protected void addSymbol(CPElement existing) {
 		// Popup an entry dialog
-		InputDialog dialog = new InputDialog(getShell(), CPathEntryMessages.getString("IncludeSymbolEntryPage.addSymbol.title"), //$NON-NLS-1$
-				CPathEntryMessages.getString("IncludeSymbolEntryPage.addSymbol.message"), "", //$NON-NLS-1$ //$NON-NLS-2$
-				null);
+		InputDialog dialog;
+		if (existing == null) {
+			dialog = new InputDialog(getShell(), CPathEntryMessages.getString("IncludeSymbolEntryPage.addSymbol.title"), //$NON-NLS-1$
+					CPathEntryMessages.getString("IncludeSymbolEntryPage.addSymbol.message"), "", //$NON-NLS-1$ //$NON-NLS-2$
+					null);
+		} else {
+			StringBuffer initialValue = new StringBuffer();
+			initialValue.append((String)existing.getAttribute(CPElement.MACRO_NAME));
+			initialValue.append('=');
+			initialValue.append((String)existing.getAttribute(CPElement.MACRO_VALUE));
+			dialog = new InputDialog(getShell(), CPathEntryMessages.getString("IncludeSymbolEntryPage.editSymbol.title"), //$NON-NLS-1$
+					CPathEntryMessages.getString("IncludeSymbolEntryPage.editSymbol.message"), initialValue.toString(), //$NON-NLS-1$ //$NON-NLS-2$
+					null);
+		}
+
 		String symbol = null;
 		if (dialog.open() == Window.OK) {
 			symbol = dialog.getValue();
 			if (symbol != null && symbol.length() > 0) {
-				List cplist = fCPathList.getElements();
 				CPElementGroup group = getSelectedGroup();
 				CPElement newPath = new CPElement(fCurrCProject, IPathEntry.CDT_MACRO, group.getResource().getFullPath(),
 						group.getResource());
@@ -660,14 +765,20 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 				} else {
 					name = symbol.trim();
 				}
-				newPath.setAttribute(CPElement.MACRO_NAME, name);
-				newPath.setAttribute(CPElement.MACRO_VALUE, value);
-
-				if (!cplist.contains(newPath)) {
-					fCPathList.addElement(newPath);
-					addPathToResourceGroups(newPath, getSelectedGroup(), fIncludeSymPathsList.getElements());
+				if (existing != null) {
+					existing.setAttribute(CPElement.MACRO_NAME, name);
+					existing.setAttribute(CPElement.MACRO_VALUE, value);
+					updatePathOnResourceGroups(existing, fIncludeSymPathsList.getElements());
 					fIncludeSymPathsList.refresh();
-					fIncludeSymPathsList.expandElement(getSelectedGroup(), 1);
+				} else {
+					newPath.setAttribute(CPElement.MACRO_NAME, name);
+					newPath.setAttribute(CPElement.MACRO_VALUE, value);
+
+					if (!group.contains(newPath)) {
+						addPathToResourceGroups(newPath, group, fIncludeSymPathsList.getElements());
+						fIncludeSymPathsList.refresh();
+					}
+					updateStatus();
 				}
 			}
 		}
@@ -683,59 +794,75 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 			dialog = new SelectPathInputDialog(
 					getShell(),
 					CPathEntryMessages.getString("IncludeSymbolEntryPage.editExternal.title"), //$NON-NLS-1$
-					CPathEntryMessages.getString("IncludeSymbolEntryPage.editExternal.message"), ((IPath) existing.getAttribute(CPElement.INCLUDE)).toOSString(), null); //$NON-NLS-1$
+					CPathEntryMessages.getString("IncludeSymbolEntryPage.editExternal.message"), ((IPath)existing.getAttribute(CPElement.INCLUDE)).toOSString(), null); //$NON-NLS-1$
 		}
 		String newItem = null;
 		if (dialog.open() == Window.OK) {
 			newItem = dialog.getValue();
 			if (newItem != null && !newItem.equals("")) { //$NON-NLS-1$
 				if (existing == null) {
-					List cplist = fCPathList.getElements();
 					CPElementGroup group = getSelectedGroup();
 					CPElement newPath = new CPElement(fCurrCProject, IPathEntry.CDT_INCLUDE, group.getResource().getFullPath(),
 							group.getResource());
 					newPath.setAttribute(CPElement.INCLUDE, new Path(newItem));
-					if (!cplist.contains(newPath)) {
-						fCPathList.addElement(newPath);
-						addPathToResourceGroups(newPath, getSelectedGroup(), fIncludeSymPathsList.getElements());
-						fIncludeSymPathsList.refresh();
-						fIncludeSymPathsList.expandElement(getSelectedGroup(), 1);
+					if (!group.contains(newPath)) {
+						addPathToResourceGroups(newPath, group, fIncludeSymPathsList.getElements());
 					}
 				} else {
 					existing.setAttribute(CPElement.INCLUDE, new Path(newItem));
-					fIncludeSymPathsList.refresh();
+					updatePathOnResourceGroups(existing, fIncludeSymPathsList.getElements());
 				}
+				fIncludeSymPathsList.refresh();
+				updateStatus();
 			}
 		}
 	}
 
 	protected void addFromWorkspace() {
 		CPElement[] includes = openWorkspacePathEntryDialog(null);
-		if (includes != null) {
+		if (includes != null && includes.length > 0) {
 			int nElementsChosen = includes.length;
-			// remove duplicates
-			List cplist = fCPathList.getElements();
+			CPElementGroup group = getSelectedGroup();
 			for (int i = 0; i < nElementsChosen; i++) {
 				CPElement curr = includes[i];
-				if (!cplist.contains(curr)) {
-					fCPathList.addElement(curr);
-					addPathToResourceGroups(curr, getSelectedGroup(), fIncludeSymPathsList.getElements());
+				if (!group.contains(curr)) {
+					addPathToResourceGroups(curr, group, fIncludeSymPathsList.getElements());
 					fIncludeSymPathsList.refresh();
 					fIncludeSymPathsList.expandElement(getSelectedGroup(), 1);
+					updateStatus();
 				}
 			}
 		}
 
 	}
 
+	protected void addContributed() {
+		CPElement[] includes = openContainerSelectionDialog(null);
+		if (includes != null && includes.length > 0) {
+			int nElementsChosen = includes.length;
+			// remove duplicates
+			CPElementGroup group = getSelectedGroup();
+			for (int i = 0; i < nElementsChosen; i++) {
+				CPElement curr = includes[i];
+				if (!group.contains(curr)) {
+					addPathToResourceGroups(curr, getSelectedGroup(), fIncludeSymPathsList.getElements());
+					fIncludeSymPathsList.refresh();
+					fIncludeSymPathsList.expandElement(getSelectedGroup(), 1);
+					updateStatus();
+				}
+			}
+		}
+	}
+
 	protected CPElement[] openWorkspacePathEntryDialog(CPElement existing) {
-		Class[] acceptedClasses = new Class[] { ICProject.class, IProject.class, IContainer.class, ICContainer.class};
+		Class[] acceptedClasses = new Class[]{ICProject.class, IProject.class, IContainer.class, ICContainer.class};
 		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, existing == null);
 		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);
 
 		String title = (existing == null) ? CPathEntryMessages.getString("IncludeSymbolEntryPage.fromWorkspaceDialog.new.title") //$NON-NLS-1$
 				: CPathEntryMessages.getString("IncludeSymbolEntryPage.fromWorkspaceDialog.edit.title"); //$NON-NLS-1$
-		String message = (existing == null) ? CPathEntryMessages.getString("IncludeSymbolEntryPage.fromWorkspaceDialog.new.description") //$NON-NLS-1$
+		String message = (existing == null)
+				? CPathEntryMessages.getString("IncludeSymbolEntryPage.fromWorkspaceDialog.new.description") //$NON-NLS-1$
 				: CPathEntryMessages.getString("IncludeSymbolEntryPage.fromWorkspaceDialog.edit.description"); //$NON-NLS-1$
 
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(),
@@ -758,11 +885,11 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 				IProject project;
 				IPath includePath;
 				if (elements[i] instanceof IResource) {
-					project = ((IResource) elements[i]).getProject();
-					includePath = ((IResource) elements[i]).getProjectRelativePath();
+					project = ((IResource)elements[i]).getProject();
+					includePath = ((IResource)elements[i]).getProjectRelativePath();
 				} else {
-					project = ((ICElement) elements[i]).getCProject().getProject();
-					includePath = ((ICElement) elements[i]).getResource().getProjectRelativePath();
+					project = ((ICElement)elements[i]).getCProject().getProject();
+					includePath = ((ICElement)elements[i]).getResource().getProjectRelativePath();
 				}
 				CPElementGroup group = getSelectedGroup();
 				res[i] = new CPElement(fCurrCProject, IPathEntry.CDT_INCLUDE, group.getResource().getFullPath(),
@@ -784,7 +911,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 			title = CPathEntryMessages.getString("IncludeSymbolEntryPage.ContainerDialog.edit.title"); //$NON-NLS-1$
 			elem = existing.getPathEntry();
 		}
-		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, fCurrCProject, getRawPathEntries(), new int[] {
+		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, fCurrCProject, getRawPathEntries(), new int[]{
 				IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO});
 		wizard.setWindowTitle(title);
 		if (CPathContainerWizard.openWizard(getShell(), wizard) == Window.OK) {
@@ -798,40 +925,20 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 					if (elements[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
 						res[i] = new CPElement(fCurrCProject, IPathEntry.CDT_INCLUDE, group.getResource().getFullPath(),
 								group.getResource());
-						res[i].setAttribute(CPElement.INCLUDE, ((IIncludeEntry) elements[i]).getIncludePath());
+						res[i].setAttribute(CPElement.INCLUDE, ((IIncludeEntry)elements[i]).getIncludePath());
 						res[i].setAttribute(CPElement.BASE_REF, parent.getPath());
 					} else if (elements[i].getEntryKind() == IPathEntry.CDT_MACRO) {
 						res[i] = new CPElement(fCurrCProject, IPathEntry.CDT_MACRO, group.getResource().getFullPath(),
 								group.getResource());
-						res[i].setAttribute(CPElement.MACRO_NAME, ((IMacroEntry) elements[i]).getMacroName());
+						res[i].setAttribute(CPElement.MACRO_NAME, ((IMacroEntry)elements[i]).getMacroName());
 						res[i].setAttribute(CPElement.BASE_REF, parent.getPath());
-
 					}
-
 				}
 				return res;
 			}
+			return new CPElement[] {CPElement.createFromExisting(parent, fCurrCProject)};
 		}
 		return null;
-	}
-
-	protected void addContributed() {
-		CPElement[] includes = openContainerSelectionDialog(null);
-		if (includes != null) {
-			int nElementsChosen = includes.length;
-			// remove duplicates
-			List cplist = fCPathList.getElements();
-
-			for (int i = 0; i < nElementsChosen; i++) {
-				CPElement curr = includes[i];
-				if (!cplist.contains(curr)) {
-					fCPathList.addElement(curr);
-					addPathToResourceGroups(curr, getSelectedGroup(), fIncludeSymPathsList.getElements());
-					fIncludeSymPathsList.refresh();
-					fIncludeSymPathsList.expandElement(getSelectedGroup(), 1);
-				}
-			}
-		}
 	}
 
 	private class SelectPathInputDialog extends InputDialog {
@@ -890,5 +997,23 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 	}
 
 	public void performDefaults() {
+	}
+
+	/**
+	 * @return
+	 */
+	public List getCPaths() {
+		List cPaths = new ArrayList();
+		List groups = fIncludeSymPathsList.getElements();
+		for (int i = 0; i < groups.size(); i++) {
+			CPElementGroup group = (CPElementGroup)groups.get(i);
+			CPElement[] elements = group.getChildren();
+			for (int j = 0; j < elements.length; j++) {
+				if (elements[j].getInherited() == null) {
+					cPaths.add(elements[j]);
+				}
+			}
+		}
+		return cPaths;
 	}
 }

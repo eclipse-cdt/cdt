@@ -10,13 +10,18 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.resources.IPathEntryStore;
+import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
+import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,13 +39,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-
-public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatusChangeListener {
+public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatusChangeListener, IPathEntryStoreListener {
 
 	private static final String PAGE_SETTINGS = "IncludeSysmbolsPropertyPage"; //$NON-NLS-1$
 	private static final String INDEX = "pageIndex"; //$NON-NLS-1$
 
 	NewIncludesSymbolsTabBlock fIncludesSymbolsBlock;
+	IPathEntryStore fStore;
 
 	/**
 	 * @see PropertyPage#createContents
@@ -53,6 +58,11 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 		} else if (!project.isOpen()) {
 			result = createForClosedProject(parent);
 		} else {
+			try {
+				fStore = CCorePlugin.getDefault().getPathEntryStore(getProject());
+				fStore.addPathEntryStoreListener(this);
+			} catch (CoreException e) {
+			}
 			result = createWithCProject(parent, project);
 		}
 		Dialog.applyDialogFont(result);
@@ -107,21 +117,19 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 		if (fIncludesSymbolsBlock != null) {
 			if (!visible) {
 				if (fIncludesSymbolsBlock.hasChangesInDialog()) {
-					String title= CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.title"); //$NON-NLS-1$
-					String message= CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.message"); //$NON-NLS-1$
-					String[] buttonLabels= new String[] {
+					String title = CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.title"); //$NON-NLS-1$
+					String message = CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.message"); //$NON-NLS-1$
+					String[] buttonLabels = new String[]{
 							CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.button.save"), //$NON-NLS-1$
 							CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.button.discard"), //$NON-NLS-1$
-							CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.button.ignore") //$NON-NLS-1$
 					};
-					MessageDialog dialog= new MessageDialog(getShell(), title, null, message, MessageDialog.QUESTION, buttonLabels, 0);
-					int res= dialog.open();
+					MessageDialog dialog = new MessageDialog(getShell(), title, null, message, MessageDialog.QUESTION,
+							buttonLabels, 0);
+					int res = dialog.open();
 					if (res == 0) {
 						performOk();
 					} else if (res == 1) {
 						fIncludesSymbolsBlock.init(getCElement(), null);
-					} else {
-						fIncludesSymbolsBlock.initializeTimeStamps();
 					}
 				}
 			} else {
@@ -136,8 +144,8 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	private IProject getProject() {
 		IAdaptable adaptable = getElement();
 		if (adaptable != null) {
-			ICElement elem = (ICElement) adaptable.getAdapter(ICElement.class);
-			return elem.getCProject().getProject();
+			IResource resource = (IResource)adaptable.getAdapter(IResource.class);
+			return resource.getProject();
 		}
 		return null;
 	}
@@ -145,7 +153,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	private ICElement getCElement() {
 		IAdaptable adaptable = getElement();
 		if (adaptable != null) {
-			ICElement elem = (ICElement) adaptable.getAdapter(ICElement.class);
+			ICElement elem = (ICElement)adaptable.getAdapter(ICElement.class);
 			return elem;
 		}
 		return null;
@@ -191,6 +199,9 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 				return false;
 			}
 		}
+		if (fStore != null) {
+			fStore.removePathEntryStoreListener(this);
+		}
 		return true;
 	}
 
@@ -213,6 +224,31 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 		if (fIncludesSymbolsBlock != null) {
 			getSettings().put(INDEX, fIncludesSymbolsBlock.getPageIndex());
 		}
+		if (fStore != null) {
+			fStore.removePathEntryStoreListener(this);
+		}
 		return super.performCancel();
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.resources.IPathEntryStoreListener#pathEntryStoreChanged(org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent)
+	 */
+	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
+		if (event.hasContentChanged()) {
+			Control control = getControl();
+			if (control != null && !control.isDisposed()) {
+				control.getDisplay().asyncExec(new Runnable() {
+
+					public void run() {
+						fIncludesSymbolsBlock.init(getCElement(), null);
+
+					}
+				});
+			}
+		}
+
+	}
+
 }

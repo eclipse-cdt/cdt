@@ -10,10 +10,14 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.resources.IPathEntryStore;
+import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
+import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
@@ -39,12 +43,13 @@ import org.eclipse.ui.dialogs.PropertyPage;
 /**
  * @see PropertyPage
  */
-public class CPathPropertyPage extends PropertyPage implements IStatusChangeListener {
+public class CPathPropertyPage extends PropertyPage implements IStatusChangeListener, IPathEntryStoreListener {
 
 	private static final String PAGE_SETTINGS = "CPathsPropertyPage"; //$NON-NLS-1$
 	private static final String INDEX = "pageIndex"; //$NON-NLS-1$
 
 	CPathTabBlock fCPathsBlock;
+	IPathEntryStore fStore;
 
 	/**
 	 * @see PropertyPage#createContents
@@ -54,12 +59,18 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		Control result;
 
 		// ensure the page has no special buttons
-		noDefaultAndApplyButton();		
+		noDefaultAndApplyButton();
 		if (project == null || !isCProject(project)) {
 			result = createWithoutCProject(parent);
 		} else if (!project.isOpen()) {
 			result = createForClosedProject(parent);
 		} else {
+			try {
+				fStore = CCorePlugin.getDefault().getPathEntryStore(getProject());
+				fStore.addPathEntryStoreListener(this);
+			} catch (CoreException e) {
+			}
+
 			result = createWithCProject(parent, project);
 		}
 		Dialog.applyDialogFont(result);
@@ -113,21 +124,19 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		if (fCPathsBlock != null) {
 			if (!visible) {
 				if (fCPathsBlock.hasChangesInDialog()) {
-					String title= CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.title"); //$NON-NLS-1$
-					String message= CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.message"); //$NON-NLS-1$
-					String[] buttonLabels= new String[] {
+					String title = CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.title"); //$NON-NLS-1$
+					String message = CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.message"); //$NON-NLS-1$
+					String[] buttonLabels = new String[]{
 							CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.button.save"), //$NON-NLS-1$
 							CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.button.discard"), //$NON-NLS-1$
-							CPathEntryMessages.getString("CPathsPropertyPage.unsavedchanges.button.ignore") //$NON-NLS-1$
 					};
-					MessageDialog dialog= new MessageDialog(getShell(), title, null, message, MessageDialog.QUESTION, buttonLabels, 0);
-					int res= dialog.open();
+					MessageDialog dialog = new MessageDialog(getShell(), title, null, message, MessageDialog.QUESTION,
+							buttonLabels, 0);
+					int res = dialog.open();
 					if (res == 0) {
 						performOk();
 					} else if (res == 1) {
 						fCPathsBlock.init(CoreModel.getDefault().create(getProject()), null);
-					} else {
-						fCPathsBlock.initializeTimeStamps();
 					}
 				}
 			} else {
@@ -142,9 +151,9 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	private IProject getProject() {
 		IAdaptable adaptable = getElement();
 		if (adaptable != null) {
-			ICElement elem = (ICElement) adaptable.getAdapter(ICElement.class);
+			ICElement elem = (ICElement)adaptable.getAdapter(ICElement.class);
 			if (elem instanceof ICProject) {
-				return ((ICProject) elem).getProject();
+				return ((ICProject)elem).getProject();
 			}
 		}
 		return null;
@@ -190,6 +199,9 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 				return false;
 			}
 		}
+		if (fStore != null) {
+			fStore.removePathEntryStoreListener(this);
+		}
 		return true;
 	}
 
@@ -212,6 +224,29 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		if (fCPathsBlock != null) {
 			getSettings().put(INDEX, fCPathsBlock.getPageIndex());
 		}
+		if (fStore != null) {
+			fStore.removePathEntryStoreListener(this);
+		}
 		return super.performCancel();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.resources.IPathEntryStoreListener#pathEntryStoreChanged(org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent)
+	 */
+	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
+		if (event.hasContentChanged()) {
+			Control control = getControl();
+			if (control != null && !control.isDisposed()) {
+				control.getDisplay().asyncExec(new Runnable() {
+
+					public void run() {
+						fCPathsBlock.init(CoreModel.getDefault().create(getProject()), null);
+					}
+				});
+			}
+
+		}
 	}
 }

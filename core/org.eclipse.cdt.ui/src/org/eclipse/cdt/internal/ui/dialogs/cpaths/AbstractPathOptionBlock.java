@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
@@ -123,6 +123,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 	protected ArrayList getFilteredElements(IPathEntry[] cPathEntries, int[] types) {
 		ArrayList newCPath = new ArrayList();
+		fFilteredOut.clear();
 		for (int i = 0; i < cPathEntries.length; i++) {
 			IPathEntry curr = cPathEntries[i];
 			if (contains(types, curr.getEntryKind())) {
@@ -234,8 +235,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 			entries[i] = currElement.getPathEntry();
 		}
 
-		ICModelStatus status = CModelStatus.VERIFIED_OK; // CoreModelUtil.validateCPathEntries(fCurrCProject,
-		// entries);
+		ICModelStatus status = CoreModel.validatePathEntries(fCurrCProject, entries);
 		if (!status.isOK()) {
 			fBuildPathStatus.setError(status.getMessage());
 			return;

@@ -108,4 +108,20 @@ public class CPElementGroup {
 		return (CPElement[])children.toArray(new CPElement[children.size()]);
 	}
 
+	/**
+	 * @param newPath
+	 * @return
+	 */
+	public boolean contains(CPElement newPath) {
+		return children.contains(newPath);
+	}
+
+	public void replaceChild(CPElement element, CPElement replaceWith) {
+		int idx = children.indexOf(element);
+		if (idx != -1) {
+			children.remove(idx);
+			children.add(idx, replaceWith);
+		}
+	}
+
 }

@@ -118,15 +118,15 @@ public class CPathContainerWizard extends Wizard {
 			// add as dummy, will not be shown
 			fContainerPage = new CPathContainerDefaultPage();
 			addPage(fContainerPage);
+			if (fFilterType != null) {
+				fFilterPage = new CPathFilterPage(fCurrElement, fFilterType);
+				addPage(fFilterPage);
+			}
 		} else { // fPageDesc == null && fEntryToEdit != null
 			IContainerDescriptor[] containers = CPathContainerDescriptor.getDescriptors();
 			IContainerDescriptor descriptor = findDescriptorPage(containers, fEntryToEdit);
 			fContainerPage = getContainerPage(descriptor);
 			addPage(fContainerPage);
-		}
-		if (fFilterType != null) {
-			fFilterPage = new CPathFilterPage(fCurrElement, fFilterType);
-			addPage(fFilterPage);
 		}
 		super.addPages();
 	}

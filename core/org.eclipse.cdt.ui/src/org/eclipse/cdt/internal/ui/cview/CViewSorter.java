@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.ui.cview;
  */
  
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinaryContainer;
@@ -56,12 +57,18 @@ public class CViewSorter extends ViewerSorter {
 			if (res != null) {
 				String ext = res.getFileExtension();
 				if (ext != null) {
-					if (ext.equals("h") || ext.equals("hh")) {
-						return 42;
+					String[] headers = CoreModel.getDefault().getHeaderExtensions();
+					for (int i = 0; i < headers.length; i++) {
+						if (ext.equals(headers[i])) {
+							return 42;
+						}
 					}
-					if (ext.equals("c") || ext.equals("C") || ext.equals("cc") || ext.equals("cpp")) {
-						return 44;
-					}
+					String[] sources = CoreModel.getDefault().getSourceExtensions();
+					for (int i = 0; i < sources.length; i++) {
+						if (ext.equals(sources[i])) {
+							return 44;
+						}
+					}					
 					return 48;
 				}
 				return 49;

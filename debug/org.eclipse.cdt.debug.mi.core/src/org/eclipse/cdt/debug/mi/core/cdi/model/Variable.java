@@ -169,9 +169,11 @@ public class Variable extends CObject implements ICDIVariable {
 				//value = new FunctionValue(this);
 				value = new Value(this);
 			} else if (t instanceof ICDIPointerType) {
+				((ICDIPointerType)t).getComponentType();
 				//value = new PointerValue(this);
 				value = new Value(this);
 			} else if (t instanceof ICDIArrayType) {
+				((ICDIArrayType)t).getComponentType();
 				//value = new ArrayValue(this);
 				value = new Value(this);
 			} else if (t instanceof ICDIStructType) {
@@ -287,9 +289,9 @@ public class Variable extends CObject implements ICDIVariable {
 			SourceManager sourceMgr = (SourceManager)session.getSourceManager();
 			String typename = getTypeName();
 			try {
-				type = sourceMgr.getType(typename);
+				type = sourceMgr.getType(getTarget(), typename);
 			} catch (CDIException e) {
-				type = new IncompleteType(typename);
+				type = new IncompleteType(getTarget(), typename);
 //				// Try after ptype.
 //				String ptype = sourceMgr.getDetailTypeName(typename);
 //				try {

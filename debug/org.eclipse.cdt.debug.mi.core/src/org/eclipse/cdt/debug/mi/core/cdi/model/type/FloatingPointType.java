@@ -5,6 +5,7 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointType;
 
 /**
@@ -15,8 +16,8 @@ public abstract class FloatingPointType extends Type implements ICDIFloatingPoin
 	boolean imaginary;
 	boolean islong;
 
-	public FloatingPointType(String typename, boolean comp, boolean img, boolean l) {
-		super(typename);
+	public FloatingPointType(ICDITarget target, String typename, boolean comp, boolean img, boolean l) {
+		super(target, typename);
 		complex = comp;
 		imaginary = img;
 		islong = l;

@@ -5,6 +5,7 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 
@@ -12,15 +13,10 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
  */
 public abstract class DerivedType extends Type implements ICDIDerivedType {
 
-	public DerivedType(String typename) {
-		super(typename);
-	}
+	ICDIType derivedType;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType#getComponentType()
-	 */
-	public ICDIType getComponentType() {
-		return null;
+	public DerivedType(ICDITarget target, String typename) {
+		super(target, typename);
 	}
 
 }

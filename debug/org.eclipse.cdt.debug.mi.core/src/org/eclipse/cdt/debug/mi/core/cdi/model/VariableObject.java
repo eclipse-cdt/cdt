@@ -13,6 +13,11 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
  */
 public class VariableObject extends CObject implements ICDIVariableObject {
 
+	// Casting info.
+	public String type;
+	public int index;
+	public int length;
+
 	String name;
 	int position;
 	ICDIStackFrame frame;
@@ -30,6 +35,9 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 		frame = stack;
 		position = pos;
 		stackdepth = depth;
+		type = new String();
+		index = 0;
+		length = 0;
 	}
 
 	public ICDITarget getTarget() {

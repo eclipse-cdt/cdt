@@ -5,6 +5,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+
 
 /**
  */
@@ -13,8 +15,8 @@ public class IncompleteType extends Type {
 	/**
 	 * @param name
 	 */
-	public IncompleteType(String name) {
-		super(name);
+	public IncompleteType(ICDITarget target, String name) {
+		super(target, name);
 	}
 
 }

@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Instruction;
@@ -217,53 +218,53 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	}
 
 
-	public Type getType(String name) throws CDIException {
+	public Type getType(ICDITarget target, String name) throws CDIException {
 		String typename = name.trim();
 
 		// Check the derived types and agregate types
 		if (typename.endsWith("]")) {
-			return new ArrayType(typename);
-		} else if (typename.indexOf("*") != -1) {
-			return new PointerType(typename);
-		} else if (typename.indexOf("&") != -1) {
-			return new ReferenceType(typename);
+			return new ArrayType(target, typename);
+		} else if (typename.endsWith("*")) {
+			return new PointerType(target, typename);
+		} else if (typename.endsWith("&")) {
+			return new ReferenceType(target, typename);
 		} else if (typename.endsWith(")")) {
-			return new FunctionType(typename);
+			return new FunctionType(target, typename);
 		} else if (typename.startsWith("enum ")) {
-			return new EnumType(typename);
+			return new EnumType(target, typename);
 		} else if (typename.startsWith("union ")) {
-			return new StructType(typename);
+			return new StructType(target, typename);
 		} else if (typename.startsWith("struct ")) {
-			return new StructType(typename);
+			return new StructType(target, typename);
 		} else if (typename.startsWith("class ")) {
-			return new StructType(typename);
+			return new StructType(target, typename);
 		}
 
 		// Check the primitives.
 		if (typename.equals("char")) {
-			return new CharType(typename);
+			return new CharType(target, typename);
 		} else if (typename.equals("wchar_t")) {
-			return new WCharType(typename);
+			return new WCharType(target, typename);
 		} else if (typename.equals("short")) {
-			return new ShortType(typename);
+			return new ShortType(target, typename);
 		} else if (typename.equals("int")) {
-			return new IntType(typename);
+			return new IntType(target, typename);
 		} else if (typename.equals("long")) {
-			return new LongType(typename);
+			return new LongType(target, typename);
 		} else if (typename.equals("unsigned")) {
-			return new IntType(typename, true);
+			return new IntType(target, typename, true);
 		} else if (typename.equals("signed")) {
-			return new IntType(typename);
+			return new IntType(target, typename);
 		} else if (typename.equals("bool")) {
-			return new BoolType(typename);
+			return new BoolType(target, typename);
 		} else if (typename.equals("_Bool")) {
-			return new BoolType(typename);
+			return new BoolType(target, typename);
 		} else if (typename.equals("float")) {
-			return new FloatType(typename);
+			return new FloatType(target, typename);
 		} else if (typename.equals("double")) {
-			return new DoubleType(typename);
+			return new DoubleType(target, typename);
 		} else if (typename.equals("void")) {
-			return new VoidType(typename);
+			return new VoidType(target, typename);
 		}
 
 		StringTokenizer st = new StringTokenizer(typename);
@@ -289,19 +290,19 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			boolean isImaginery = (first.equals("_Imaginary") || second.equals("_Imaginary"));
 
 			if (isChar && (isSigned || isUnsigned)) {
-				return new CharType(typename, isUnsigned);
+				return new CharType(target, typename, isUnsigned);
 			} else if (isShort && (isSigned || isUnsigned)) {
-				return new ShortType(typename, isUnsigned);
+				return new ShortType(target, typename, isUnsigned);
 			} else if (isInt && (isSigned || isUnsigned)) {
-				return new IntType(typename, isUnsigned);
+				return new IntType(target, typename, isUnsigned);
 			} else if (isLong && (isInt || isSigned || isUnsigned)) {
-				return new LongType(typename, isUnsigned);
+				return new LongType(target, typename, isUnsigned);
 			} else if (isLongLong) {
-				return new LongLongType(typename);
+				return new LongLongType(target, typename);
 			} else if (isDouble && (isLong || isComplex || isImaginery)) {
-				return new DoubleType(typename, isComplex, isImaginery, isLong);
+				return new DoubleType(target, typename, isComplex, isImaginery, isLong);
 			} else if (isFloat && (isComplex || isImaginery)) {
-				return new FloatType(typename, isComplex, isImaginery);
+				return new FloatType(target, typename, isComplex, isImaginery);
 			}
 		} else if (count == 3) {
 			// ISOC allows permutation. replace short by: long or short
@@ -329,13 +330,13 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 
 
 			if (isShort && isInt && (isSigned || unSigned)) {
-				return new ShortType(typename, unSigned);
+				return new ShortType(target, typename, unSigned);
 			} else if (isLong && isInt && (isSigned || unSigned)) {
-				return new LongType(typename, unSigned);
+				return new LongType(target, typename, unSigned);
 			} else if (isLongLong && (isSigned || unSigned)) {
-				return new LongLongType(typename, unSigned);
+				return new LongLongType(target, typename, unSigned);
 			} else if (isDouble && isLong && (isComplex || isImaginery)) {
-				return new DoubleType(typename, isComplex, isImaginery, isLong);
+				return new DoubleType(target, typename, isComplex, isImaginery, isLong);
 			}
 		} else if (count == 4) {
 			// ISOC allows permutation:
@@ -355,7 +356,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 				|| (third.equals("long") && fourth.equals("long"));
 
 			if (isLongLong && isInt && (isSigned || unSigned)) {
-				return new LongLongType(typename, unSigned);
+				return new LongLongType(target, typename, unSigned);
 			}
 		}
 		throw new CDIException("Unknown type");

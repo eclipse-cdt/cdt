@@ -6,6 +6,8 @@
 
 package org.eclipse.cdt.debug.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+
 
 /**
  * 
@@ -13,7 +15,7 @@ package org.eclipse.cdt.debug.core.cdi.model.type;
  * 
  * @since Apr 15, 2003
  */
-public interface ICDIType {
+public interface ICDIType extends ICDIObject {
 
 	/**
 	 * Returns the name.

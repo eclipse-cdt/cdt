@@ -115,6 +115,48 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	}
 
 	/**
+	 * Check the type
+	 */
+	public void checkType(String type) throws CDIException {
+		try {
+				MISession mi = ((Session)getSession()).getMISession();
+				CommandFactory factory = mi.getCommandFactory();
+				MIPType ptype = factory.createMIPType(type);
+				mi.postCommand(ptype);
+				MIPTypeInfo info = ptype.getMIPtypeInfo();
+				if (info == null) {
+						throw new CDIException("No answer");
+				}
+		} catch (MIException e) {
+				throw new MI2CDIException(e);
+		}
+	}
+
+	public String createStringEncoding(VariableObject varObj) {
+		StringBuffer buffer = new StringBuffer();
+		if (varObj.length > 0) {
+			buffer.append("*(");
+			buffer.append('(');
+			if (varObj.type != null && varObj.type.length() > 0) {
+				buffer.append('(').append(varObj.type).append(')');
+			}
+			buffer.append(varObj.getName());
+			buffer.append(')');
+			if (varObj.index != 0) {
+					buffer.append('+').append(varObj.index);
+			}
+			buffer.append(')');
+			buffer.append('@').append(varObj.length - varObj.index);
+		} else if (varObj.type != null && varObj.type.length() > 0) {
+			buffer.append('(').append(varObj.type).append(')');
+			buffer.append('(').append(varObj.getName()).append(')');
+		} else {
+			buffer.append(varObj.getName());
+		}
+		return buffer.toString();
+	}
+
+	/**
 	 * Tell gdb to remove the underlying var-object also.
 	 */
 	void removeMIVar(MIVar miVar) throws CDIException {

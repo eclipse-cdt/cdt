@@ -5,6 +5,7 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntegralType;
 
 /**
@@ -13,8 +14,8 @@ public abstract class IntegralType extends Type implements ICDIIntegralType {
 
 	boolean unSigned;
 
-	public IntegralType(String typename, boolean usigned) {
-		super(typename);
+	public IntegralType(ICDITarget target, String typename, boolean usigned) {
+		super(target, typename);
 		unSigned = usigned;
 	}
 	

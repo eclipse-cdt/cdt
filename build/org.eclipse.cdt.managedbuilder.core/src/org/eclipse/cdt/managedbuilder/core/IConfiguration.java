@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 public interface IConfiguration extends IBuildObject {
@@ -19,11 +20,15 @@ public interface IConfiguration extends IBuildObject {
 	public static final String PARENT = "parent";	//$NON-NLS-1$
 
 	/**
-	 * Returns the target for this configuration.
+	 * Projects have C or CC natures. Tools can specify a filter so they are not 
+	 * misapplied to a project. This method allows the caller to retrieve a list 
+	 * of tools from a project that are correct for a project's nature.  
 	 * 
-	 * @return
+	 * @param project the project to filter for
+	 * @return an array of <code>ITools</code> that have compatible filters 
+	 * for the specified project
 	 */
-	public ITarget getTarget();
+	ITool[] getFilteredTools(IProject project);
 	
 	/**
 	 * Returns the resource that owns the target that owns the configuration.
@@ -38,6 +43,20 @@ public interface IConfiguration extends IBuildObject {
 	 */
 	public IConfiguration getParent();
 	
+	/**
+	 * Returns the target for this configuration.
+	 * 
+	 * @return
+	 */
+	public ITarget getTarget();
+	
+	/**
+	 * Answers the <code>ITool</code> in the receiver with the same 
+	 * id as the argument, or <code>null</code>. 
+	 * 
+	 * @param id unique identifier to search for
+	 * @return
+	 */
 	public ITool getToolById(String id);
 	
 	/**

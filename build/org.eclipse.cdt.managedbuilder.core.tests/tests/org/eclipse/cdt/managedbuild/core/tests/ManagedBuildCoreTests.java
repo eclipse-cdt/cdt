@@ -239,8 +239,8 @@ public class ManagedBuildCoreTests extends TestCase {
 		buildInfo.setDefaultConfiguration(newTarget.getConfiguration(configs[0].getId()));
 
 		// Save the build info
-		ManagedBuildManager.saveBuildInfo(project, false);		
-
+		ManagedBuildManager.saveBuildInfo(project, false);
+		
 		// Use the plugin mechanism to discover the supplier of the path information
 		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ScannerInfoProvider");
 		if (extensionPoint == null) {

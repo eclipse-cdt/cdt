@@ -35,12 +35,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.AbstractCExtension;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -49,7 +43,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.DefaultManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
-import org.eclipse.cdt.managedbuilder.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -58,8 +51,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Document;
@@ -79,7 +70,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static final String SETTINGS_FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
 	public static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + "ManagedBuildManager";	//$NON-NLS-1$ //$NON-NLS-2$
-	private static final String EXTENSION_POINT_ID = "ManagedBuildInfo";	//$NON-NLS-1$
+	public static final String EXTENSION_POINT_ID = "ManagedBuildInfo";	//$NON-NLS-1$
 	private static final String REVISION_ELEMENT_NAME = "managedBuildRevision";	//$NON-NLS-1$
 	private static final String VERSION_ELEMENT_NAME = "fileVersion";	//$NON-NLS-1$
 	private static final String MANIFEST_VERSION_ERROR ="ManagedBuildManager.error.manifest.version.error";	//$NON-NLS-1$
@@ -92,6 +83,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static List extensionTargets;
 	private static Map extensionToolMap;
 	private static Map configElementMap;
+
 
 	// Listeners interested in build model changes
 	private static Map buildModelListeners;
@@ -714,7 +706,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return false;
 	}
 
-	private static ManagedBuildInfo findBuildInfo(IResource resource, boolean create) {
+	private static synchronized ManagedBuildInfo findBuildInfo(IResource resource, boolean create) {
 		// Make sure the extension information is loaded first
 		try {
 			loadExtensions();
@@ -723,8 +715,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			return null;
 		}
 		
-		// Flag to deteremine if a PathEntryContainer is needed for project
-		boolean needsContainer = false;
 		ManagedBuildInfo buildInfo = null;
 
 		// Check if there is any build info associated with this project for this session
@@ -741,36 +731,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		if (buildInfo == null && resource instanceof IProject) {
 			// Nothing in session store, so see if we can load it from cdtbuild
 			buildInfo = loadBuildInfo((IProject)resource);
-			needsContainer = (buildInfo != null);
 		}
 		
 		if (buildInfo == null && create) {
 			try {
 				// Create a new build info object for the project
-				buildInfo = new ManagedBuildInfo(resource);
+				buildInfo = new ManagedBuildInfo(resource, true);
 				// Associate the build info with the project for the duration of the session
 				resource.setSessionProperty(buildInfoProperty, buildInfo);
-				needsContainer = true;
 			} catch (CoreException e) {
 				return null;
 			}
 		}
 
-		// Assocaite a container with the project
-		if (buildInfo != null && needsContainer) {
-			IPathEntryContainer container = new ManagedBuildCPathEntryContainer(buildInfo);
-			try {
-				ICProject project = CoreModel.getDefault().create((IProject)resource);
-				IContainerEntry containerEntry = CoreModel.newContainerEntry(new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER"));	//$NON-NLS-1$
-				CoreModel.getDefault().setRawPathEntries(project, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
-				CoreModel.getDefault().setPathEntryContainer(new ICProject[]{project}, container, new NullProgressMonitor());
-			} catch (CModelException e) {
-				e.printStackTrace();
-				// The build info is valid even if there's no container
-				return buildInfo;
-			}
-		}
-		
 		return buildInfo;
 	}
 	

@@ -11,9 +11,10 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
+import org.eclipse.cdt.managedbuilder.internal.ui.ErrorParserBlock;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedProjectOptionBlock;
-import org.eclipse.cdt.managedbuilder.internal.ui.ErrorParserBlock;
+import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 import org.eclipse.cdt.ui.dialogs.ReferenceBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
@@ -22,11 +23,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Preferences;
 
 public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
+	
 
 	public class ManagedWizardOptionBlock extends ManagedProjectOptionBlock {
 		
 		NewManagedProjectOptionPage parent;
 		ErrorParserBlock errorParsers;
+		IndexerBlock indexBlock;
+		
 
 		public ManagedWizardOptionBlock(NewManagedProjectOptionPage parentPage) {
 			super(parentPage);
@@ -47,6 +51,7 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 			addTab(new ReferenceBlock());
 			errorParsers = new ErrorParserBlock();
 			addTab(errorParsers);
+			addTab(indexBlock = new IndexerBlock()); 
 		}
 	}
 	
@@ -87,4 +92,6 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 		//  Update the error parser list
 		optionBlock.updateTargetProperties();
 	}
+	
+	
 }

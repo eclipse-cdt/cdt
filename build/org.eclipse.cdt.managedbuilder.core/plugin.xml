@@ -16,6 +16,7 @@
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.cdt.make.core"/>
    </requires>
 
 

@@ -15,6 +15,11 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 
@@ -75,6 +80,39 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			return "org.eclipse.cdt.managedbuilder.core"; //$NON-NLS-1$
 		}
 		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
+
+	/**
+	 * Targets may have a scanner collector defined that knows how to discover 
+	 * built-in compiler defines and includes search paths. Find the scanner 
+	 * collector implentation for the target specified.
+	 * 
+	 * @param string the unique id of the target to search for
+	 * @return an implementation of <code>IManagedScannerInfoCollector</code>
+	 */
+	public IManagedScannerInfoCollector getScannerInfoCollector(String targetId) {
+		try {
+			IExtensionPoint extension = getDescriptor().getExtensionPoint(ManagedBuildManager.EXTENSION_POINT_ID);
+			if (extension != null) {
+				// There could be many of these
+				IExtension[] extensions = extension.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
+					for (int j = 0; j < configElements.length; j++) {
+						IConfigurationElement element = configElements[j];
+						if (element.getName().equals("target")) { //$NON-NLS-1$
+							if (element.getAttribute(ITarget.ID).equals(targetId)) {
+								return (IManagedScannerInfoCollector) element.createExecutableExtension("scannerInfoCollector"); //$NON-NLS-1$
+							}
+						}
+					}
+				}
+			}
+		} 
+		catch (CoreException e) {
+			// Probably not defined
+		}
+		return null;
 	}
 
 }

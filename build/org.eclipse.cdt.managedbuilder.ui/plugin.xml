@@ -31,8 +31,8 @@
             icon="icons/full/wizban/newmngcc_app.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             class="org.eclipse.cdt.managedbuilder.ui.wizards.NewManagedCCProjectWizard"
-            project="true"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            project="true"
             id="org.eclipse.cdt.managedbuilder.ui.wizards.StdCCWizard">
          <description>
             %MngCCWizard.description
@@ -43,8 +43,8 @@
             icon="icons/full/wizban/newmngc_app.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.managedbuilder.ui.wizards.NewManagedCProjectWizard"
-            project="true"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            project="true"
             id="org.eclipse.cdt.managedbuilder.ui.wizards.StdCWizard">
          <description>
             %MngCWizard.description
@@ -54,8 +54,8 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
             name="%MngBuildProp.name"
             class="org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage"
             id="org.eclipse.cdt.managedbuilder.ui.properties.BuildProperties">
@@ -68,8 +68,8 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
             name="%MngOtherProp.name"
             class="org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderPropertyPage"
             id="org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderProperties">
@@ -95,8 +95,8 @@
       </managedBuildRevision>
       <tool
             natureFilter="cnature"
-            sources="o"
             name="%ToolName.linker.gnu.c"
+            sources="o"
             outputFlag="-o"
             command="gcc"
             id="cdt.managedbuild.tool.gnu.c.linker">
@@ -110,40 +110,40 @@
                name="%Option.Posix.Linker.NoStartFiles"
                category="gnu.c.link.category.general"
                command="-nostartfiles"
-               id="gnu.c.link.option.nostart"
-               valueType="boolean">
+               valueType="boolean"
+               id="gnu.c.link.option.nostart">
          </option>
          <option
                defaultValue="false"
                name="%Option.Posix.Linker.NoDefLibs"
                category="gnu.c.link.category.general"
                command="-nodefaultlibs"
-               id="gnu.c.link.option.nodeflibs"
-               valueType="boolean">
+               valueType="boolean"
+               id="gnu.c.link.option.nodeflibs">
          </option>
          <option
                defaultValue="false"
                name="%Option.Posix.Linker.NoStdLibs"
                category="gnu.c.link.category.general"
                command="-nostdlib"
-               id="gnu.c.link.option.nostdlibs"
-               valueType="boolean">
+               valueType="boolean"
+               id="gnu.c.link.option.nostdlibs">
          </option>
          <option
                defaultValue="false"
                name="%Option.Posix.Linker.Strip"
                category="gnu.c.link.category.general"
                command="-s"
-               id="gnu.c.link.option.strip"
-               valueType="boolean">
+               valueType="boolean"
+               id="gnu.c.link.option.strip">
          </option>
          <option
                defaultValue="false"
                name="%Option.Posix.Linker.Static"
                category="gnu.c.link.category.general"
                command="-static"
-               id="gnu.c.link.option.noshared"
-               valueType="boolean">
+               valueType="boolean"
+               id="gnu.c.link.option.noshared">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.linker"
@@ -154,17 +154,17 @@
                name="%Option.Posix.Libs"
                category="gnu.c.link.category.libs"
                command="-l"
-               id="gnu.c.link.option.libs"
+               valueType="libs"
                browseType="file"
-               valueType="libs">
+               id="gnu.c.link.option.libs">
          </option>
          <option
                name="%Option.Posix.Libsearch"
                category="gnu.c.link.category.libs"
                command="-L"
-               id="gnu.c.link.option.paths"
+               valueType="stringList"
                browseType="directory"
-               valueType="stringList">
+               id="gnu.c.link.option.paths">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.linker"
@@ -174,22 +174,22 @@
          <option
                name="%Option.Posix.Linker.Flags"
                category="gnu.c.link.category.other"
-               valueType="string"
-               id="gnu.c.link.option.ldflags">
+               id="gnu.c.link.option.ldflags"
+               valueType="string">
          </option>
          <option
                name="%Option.Posix.Linker.XLinker"
                category="gnu.c.link.category.other"
                command="-Xlinker"
-               valueType="stringList"
-               id="gnu.c.link.option.other">
+               id="gnu.c.link.option.other"
+               valueType="stringList">
          </option>
          <option
                name="%Option.Posix.UserObjs"
                category="gnu.c.link.category.other"
-               browseType="file"
+               id="gnu.c.link.option.userobjs"
                valueType="userObjs"
-               id="gnu.c.link.option.userobjs">
+               browseType="file">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.linker"
@@ -201,35 +201,35 @@
                name="%Option.Posix.Linker.Shared"
                category="gnu.c.link.category.shared"
                command="-shared"
-               id="gnu.c.link.option.shared"
-               valueType="boolean">
+               valueType="boolean"
+               id="gnu.c.link.option.shared">
          </option>
          <option
                name="%Option.Posix.Linker.SOName"
                category="gnu.c.link.category.shared"
                command="-Wl,-soname,"
-               id="gnu.c.link.option.soname"
-               valueType="string">
+               valueType="string"
+               id="gnu.c.link.option.soname">
          </option>
          <option
                name="%Option.Posix.Linker.Implib"
                category="gnu.c.link.category.shared"
                command="-Wl,--out-implib,"
-               id="gnu.c.link.option.implname"
-               valueType="string">
+               valueType="string"
+               id="gnu.c.link.option.implname">
          </option>
          <option
                name="%Option.Posix.Linker.Defname"
                category="gnu.c.link.category.shared"
                command="-Wl,--output-def,"
-               id="gnu.c.link.option.defname"
-               valueType="string">
+               valueType="string"
+               id="gnu.c.link.option.defname">
          </option>
       </tool>
       <tool
             natureFilter="ccnature"
-            sources="o"
             name="%ToolName.linker.gnu.cpp"
+            sources="o"
             outputFlag="-o"
             command="g++"
             id="cdt.managedbuild.tool.gnu.cpp.linker">
@@ -243,32 +243,32 @@
                name="%Option.Posix.Linker.NoStartFiles"
                category="gnu.cpp.link.category.options"
                command="-nostartfiles"
-               id="gnu.cpp.link.option.nostart"
-               valueType="boolean">
+               valueType="boolean"
+               id="gnu.cpp.link.option.nostart">
          </option>
          <option
                defaultValue="false"
                name="%Option.Posix.Linker.NoDefLibs"
                category="gnu.cpp.link.category.options"
                command="-nodefaultlibs"
-               id="gnu.cpp.link.option.nodeflibs"
-               valueType="boolean">
+               valueType="boolean"
+               id="gnu.cpp.link.option.nodeflibs">
          </option>
          <option
                defaultValue="false"
                name="%Option.Posix.Linker.NoStdLibs"
                category="gnu.cpp.link.category.options"
                command="-nostdlib"
-               id="gnu.cpp.link.option.nostdlibs"
-               valueType="boolean">
+               valueType="boolean"
+               id="gnu.cpp.link.option.nostdlibs">
          </option>
          <option
                defaultValue="false"
                name="%Option.Posix.Linker.Strip"
                category="gnu.cpp.link.category.options"
                command="-s"
-               id="gnu.cpp.link.option.strip"
-               valueType="boolean">
+               valueType="boolean"
+               id="gnu.cpp.link.option.strip">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.linker"
@@ -279,17 +279,17 @@
                name="%Option.Posix.Libs"
                category="gnu.cpp.link.category.libs"
                command="-l"
-               id="gnu.cpp.link.option.libs"
+               valueType="libs"
                browseType="file"
-               valueType="libs">
+               id="gnu.cpp.link.option.libs">
          </option>
          <option
                name="%Option.Posix.Libsearch"
                category="gnu.cpp.link.category.libs"
                command="-L"
-               id="gnu.cpp.link.option.paths"
+               valueType="stringList"
                browseType="directory"
-               valueType="stringList">
+               id="gnu.cpp.link.option.paths">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.linker"
@@ -299,22 +299,22 @@
          <option
                name="%Option.Posix.Linker.Flags"
                category="gnu.cpp.link.category.other"
-               valueType="string"
-               id="gnu.cpp.link.option.flags">
+               id="gnu.cpp.link.option.flags"
+               valueType="string">
          </option>
          <option
                name="%Option.Posix.Linker.XLinker"
                category="gnu.cpp.link.category.other"
                command="-Xlinker"
-               valueType="stringList"
-               id="gnu.cpp.link.option.other">
+               id="gnu.cpp.link.option.other"
+               valueType="stringList">
          </option>
          <option
                name="%Option.Posix.UserObjs"
                category="gnu.cpp.link.category.other"
-               browseType="file"
+               id="gnu.cpp.link.option.userobjs"
                valueType="userObjs"
-               id="gnu.cpp.link.option.userobjs">
+               browseType="file">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.linker"
@@ -326,38 +326,38 @@
                name="%Option.Posix.Linker.Shared"
                category="gnu.cpp.link.category.shared"
                command="-shared"
-               valueType="boolean"
-               id="gnu.cpp.link.option.shared">
+               id="gnu.cpp.link.option.shared"
+               valueType="boolean">
          </option>
          <option
                name="%Option.Posix.Linker.SOName"
                category="gnu.cpp.link.category.shared"
                command="-Wl,-soname,"
-               valueType="string"
-               id="gnu.cpp.link.option.soname">
+               id="gnu.cpp.link.option.soname"
+               valueType="string">
          </option>
          <option
                name="%Option.Posix.Linker.Implib"
                category="gnu.cpp.link.category.shared"
                command="-Wl,--out-implib,"
-               valueType="string"
-               id="gnu.cpp.link.option.implname">
+               id="gnu.cpp.link.option.implname"
+               valueType="string">
          </option>
          <option
                name="%Option.Posix.Linker.Defname"
                category="gnu.cpp.link.category.shared"
                command="-Wl,--output-def,"
-               valueType="string"
-               id="gnu.cpp.link.option.defname">
+               id="gnu.cpp.link.option.defname"
+               valueType="string">
          </option>
       </tool>
       <tool
             natureFilter="both"
-            sources="o"
             name="%ToolName.archiver.gnu"
-            outputs="a"
-            command="ar"
+            sources="o"
             outputPrefix="lib"
+            command="ar"
+            outputs="a"
             id="cdt.managedbuild.tool.gnu.archiver">
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.archiver"
@@ -368,8 +368,8 @@
                defaultValue="-r"
                name="%Option.Posix.Archiver.Flags"
                category="gnu.lib.category.general"
-               valueType="string"
-               id="gnu.both.lib.option.flags">
+               id="gnu.both.lib.option.flags"
+               valueType="string">
          </option>
       </tool>
       <target
@@ -384,12 +384,12 @@
             makeArguments="-k">
          <tool
                natureFilter="cnature"
-               sources="c"
                name="%ToolName.compiler.gnu.c"
+               sources="c"
                headerExtensions="h"
                outputFlag="-o"
-               outputs="o"
                command="gcc"
+               outputs="o"
                id="cdt.managedbuild.tool.gnu.c.compiler">
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.c.compiler"
@@ -401,16 +401,16 @@
                   name="%Option.Posix.Nostdinc"
                   category="gnu.c.compiler.category.preprocessor"
                   command="-nostdinc"
-                  id="gnu.c.compiler.option.preprocessor.nostdinc"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.preprocessor.nostdinc">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.PreprocOnly"
                   category="gnu.c.compiler.category.preprocessor"
                   command="-E"
-                  id="gnu.c.compiler.option.preprocessor.preprocess"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.preprocessor.preprocess">
             </option>
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.c.compiler"
@@ -421,15 +421,15 @@
                   name="%Option.Posix.DefSym"
                   category="gnu.c.compiler.category.symbols"
                   command="-D"
-                  id="gnu.c.compiler.option.preprocessor.def.symbols"
-                  valueType="definedSymbols">
+                  valueType="definedSymbols"
+                  id="gnu.c.compiler.option.preprocessor.def.symbols">
             </option>
             <option
                   name="%Option.Posix.UndefSym"
                   category="gnu.c.compiler.category.symbols"
                   command="-U"
-                  id="gnu.c.compiler.option.preprocessor.undef.symbol"
-                  valueType="stringList">
+                  valueType="stringList"
+                  id="gnu.c.compiler.option.preprocessor.undef.symbol">
             </option>
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.c.compiler"
@@ -440,9 +440,9 @@
                   name="%Option.Posix.InclPaths"
                   category="gnu.c.compiler.category.dirs"
                   command="-I"
-                  id="gnu.c.compiler.option.include.paths"
+                  browseType="directory"
                   valueType="includePath"
-                  browseType="directory">
+                  id="gnu.c.compiler.option.include.paths">
             </option>
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.c.compiler"
@@ -452,8 +452,8 @@
             <option
                   name="%Option.Posix.OptLevel"
                   category="gnu.c.compiler.category.optimization"
-                  id="gnu.c.compiler.option.optimization.level"
-                  valueType="enumerated">
+                  valueType="enumerated"
+                  id="gnu.c.compiler.option.optimization.level">
                <enumeratedOptionValue
                      name="%Option.Posix.Optimize.None"
                      isDefault="false"
@@ -480,8 +480,8 @@
             <option
                   name="%Option.Posix.Optimize.Flags"
                   category="gnu.c.compiler.category.optimization"
-                  id="gnu.c.compiler.option.optimization.flags"
-                  valueType="string">
+                  valueType="string"
+                  id="gnu.c.compiler.option.optimization.flags">
             </option>
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.c.compiler"
@@ -491,8 +491,8 @@
             <option
                   name="%Option.Posix.DebugLevel"
                   category="gnu.c.compiler.category.debug"
-                  id="gnu.c.compiler.option.debugging.level"
-                  valueType="enumerated">
+                  valueType="enumerated"
+                  id="gnu.c.compiler.option.debugging.level">
                <enumeratedOptionValue
                      name="%Option.Posix.Debug.None"
                      isDefault="false"
@@ -519,24 +519,24 @@
             <option
                   name="%Option.Posix.Debug.Other"
                   category="gnu.c.compiler.category.debug"
-                  id="gnu.c.compiler.option.debugging.other"
-                  valueType="string">
+                  valueType="string"
+                  id="gnu.c.compiler.option.debugging.other">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.gprof"
                   category="gnu.c.compiler.category.debug"
                   command="-pg"
-                  id="gnu.c.compiler.option.debugging.gprof"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.debugging.gprof">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.prof"
                   category="gnu.c.compiler.category.debug"
                   command="-p"
-                  id="gnu.c.compiler.option.debugging.prof"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.debugging.prof">
             </option>
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.c.compiler"
@@ -548,48 +548,48 @@
                   name="%Option.Posix.Warn.Syntax"
                   category="gnu.c.compiler.category.warnings"
                   command="-fsyntax-only"
-                  id="gnu.c.compiler.option.warnings.syntax"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.warnings.syntax">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.Pedandic"
                   category="gnu.c.compiler.category.warnings"
                   command="-pedantic"
-                  id="gnu.c.compiler.option.warnings.pedantic"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.warnings.pedantic">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.PedErrors"
                   category="gnu.c.compiler.category.warnings"
                   command="-pedantic-errors"
-                  id="gnu.c.compiler.option.warnings.pedantic.error"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.warnings.pedantic.error">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.nowarn"
                   category="gnu.c.compiler.category.warnings"
                   command="-w"
-                  id="gnu.c.compiler.option.warnings.nowarn"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.warnings.nowarn">
             </option>
             <option
                   defaultValue="true"
                   name="%Option.Posix.Warn.allwarn"
                   category="gnu.c.compiler.category.warnings"
                   command="-Wall"
-                  id="gnu.c.compiler.option.warnings.allwarn"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.warnings.allwarn">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.toerrs"
                   category="gnu.c.compiler.category.warnings"
                   command="-Werror"
-                  id="gnu.c.compiler.option.warnings.toerrors"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.warnings.toerrors">
             </option>
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.c.compiler"
@@ -600,34 +600,34 @@
                   defaultValue="-c -fmessage-length=0"
                   name="%Option.OtherFlags"
                   category="gnu.c.compiler.category.other"
-                  id="gnu.c.compiler.option.misc.other"
-                  valueType="string">
+                  valueType="string"
+                  id="gnu.c.compiler.option.misc.other">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Verbose"
                   category="gnu.c.compiler.category.other"
                   command="-v"
-                  id="gnu.c.compiler.option.misc.verbose"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.misc.verbose">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Ansi"
                   category="gnu.c.compiler.category.other"
                   command="-ansi"
-                  id="gnu.c.compiler.option.misc.ansi"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.c.compiler.option.misc.ansi">
             </option>
          </tool>
          <tool
                natureFilter="ccnature"
-               sources="c,C,cc,cxx,cpp"
                name="%ToolName.compiler.gnu.cpp"
+               sources="c,C,cc,cxx,cpp"
                headerExtensions="h,H,hpp"
                outputFlag="-o"
-               outputs="o"
                command="g++"
+               outputs="o"
                id="cdt.managedbuild.tool.gnu.cpp.compiler">
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.cpp.compiler"
@@ -639,30 +639,30 @@
                   name="%Option.Posix.Nostdinc"
                   category="gnu.cpp.compiler.category.preprocessor"
                   command="-nostdinc"
-                  id="gnu.cpp.compiler.option.preprocessor.nostdinc"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.cpp.compiler.option.preprocessor.nostdinc">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.PreprocOnly"
                   category="gnu.cpp.compiler.category.preprocessor"
                   command="-E"
-                  id="gnu.cpp.compiler.option.preprocessor.preprocess"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.cpp.compiler.option.preprocessor.preprocess">
             </option>
             <option
                   name="%Option.Posix.DefSym"
                   category="gnu.cpp.compiler.category.preprocessor"
                   command="-D"
-                  id="gnu.cpp.compiler.option.preprocessor.def"
-                  valueType="definedSymbols">
+                  valueType="definedSymbols"
+                  id="gnu.cpp.compiler.option.preprocessor.def">
             </option>
             <option
                   name="%Option.Posix.UndefSym"
                   category="gnu.cpp.compiler.category.preprocessor"
                   command="-U"
-                  id="gnu.cpp.compiler.option.preprocessor.undef"
-                  valueType="stringList">
+                  valueType="stringList"
+                  id="gnu.cpp.compiler.option.preprocessor.undef">
             </option>
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.cpp.compiler"
@@ -673,9 +673,9 @@
                   name="%Option.Posix.InclPaths"
                   category="gnu.cpp.compiler.category.dirs"
                   command="-I"
-                  id="gnu.cpp.compiler.option.include.paths"
+                  browseType="directory"
                   valueType="includePath"
-                  browseType="directory">
+                  id="gnu.cpp.compiler.option.include.paths">
             </option>
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.cpp.compiler"
@@ -685,8 +685,8 @@
             <option
                   name="%Option.Posix.OptLevel"
                   category="gnu.cpp.compiler.category.optimization"
-                  id="gnu.cpp.compiler.option.optimization.level"
-                  valueType="enumerated">
+                  valueType="enumerated"
+                  id="gnu.cpp.compiler.option.optimization.level">
                <enumeratedOptionValue
                      name="%Option.Posix.Optimize.None"
                      command="-O0"
@@ -712,8 +712,8 @@
             <option
                   name="%Option.Posix.Optimize.Flags"
                   category="gnu.cpp.compiler.category.optimization"
-                  id="gnu.cpp.compiler.option.optimization.flags"
-                  valueType="string">
+                  valueType="string"
+                  id="gnu.cpp.compiler.option.optimization.flags">
             </option>
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.cpp.compiler"
@@ -723,8 +723,8 @@
             <option
                   name="%Option.Posix.DebugLevel"
                   category="gnu.cpp.compiler.category.debug"
-                  id="gnu.cpp.compiler.option.debugging.level"
-                  valueType="enumerated">
+                  valueType="enumerated"
+                  id="gnu.cpp.compiler.option.debugging.level">
                <enumeratedOptionValue
                      name="%Option.Posix.Debug.None"
                      isDefault="false"
@@ -751,24 +751,24 @@
             <option
                   name="%Option.Posix.Debug.Other"
                   category="gnu.cpp.compiler.category.debug"
-                  id="gnu.cpp.compiler.option.debugging.other"
-                  valueType="string">
+                  valueType="string"
+                  id="gnu.cpp.compiler.option.debugging.other">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.prof"
                   category="gnu.cpp.compiler.category.debug"
                   command="-p"
-                  id="gnu.cpp.compiler.option.debugging.prof"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.cpp.compiler.option.debugging.prof">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Debug.gprof"
                   category="gnu.cpp.compiler.category.debug"
                   command="-pg"
-                  id="gnu.cpp.compiler.option.debugging.gprof"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.cpp.compiler.option.debugging.gprof">
             </option>
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.cpp.compiler"
@@ -780,48 +780,48 @@
                   name="%Option.Posix.Warn.Syntax"
                   category="gnu.cpp.compiler.category.warnings"
                   command="-fsyntax-only"
-                  id="gnu.cpp.compiler.option.warnings.syntax"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.cpp.compiler.option.warnings.syntax">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.Pedandic"
                   category="gnu.cpp.compiler.category.warnings"
                   command="-pedantic"
-                  id="gnu.cpp.compiler.option.warnings.pedantic"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.cpp.compiler.option.warnings.pedantic">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.PedErrors"
                   category="gnu.cpp.compiler.category.warnings"
                   command="-pedantic-errors"
-                  id="gnu.cpp.compiler.option.warnings.pedantic.error"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.cpp.compiler.option.warnings.pedantic.error">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.nowarn"
                   category="gnu.cpp.compiler.category.warnings"
                   command="-w"
-                  id="gnu.cpp.compiler.option.warnings.nowarn"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.cpp.compiler.option.warnings.nowarn">
             </option>
             <option
                   defaultValue="true"
                   name="%Option.Posix.Warn.allwarn"
                   category="gnu.cpp.compiler.category.warnings"
                   command="-Wall"
-                  id="gnu.cpp.compiler.option.warnings.allwarn"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.cpp.compiler.option.warnings.allwarn">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Warn.toerrs"
                   category="gnu.cpp.compiler.category.warnings"
                   command="-Werror"
-                  id="gnu.cpp.compiler.option.warnings.toerrors"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.cpp.compiler.option.warnings.toerrors">
             </option>
             <optionCategory
                   owner="cdt.managedbuild.tool.gnu.cpp.compiler"
@@ -832,16 +832,16 @@
                   defaultValue="-c -fmessage-length=0"
                   name="%Option.OtherFlags"
                   category="gnu.cpp.compiler.category.other"
-                  id="gnu.cpp.compiler.option.other.other"
-                  valueType="string">
+                  valueType="string"
+                  id="gnu.cpp.compiler.option.other.other">
             </option>
             <option
                   defaultValue="false"
                   name="%Option.Posix.Verbose"
                   category="gnu.cpp.compiler.category.other"
                   command="-v"
-                  id="gnu.cpp.compiler.option.other.verbose"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="gnu.cpp.compiler.option.other.verbose">
             </option>
          </tool>
       </target>
@@ -849,6 +849,7 @@
             isTest="false"
             osList="solaris,linux,hpux,aix,macosx,qnx"
             name="%TargetName.gnu.exe"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
             parent="cdt.managedbuild.target.gnu"
             isAbstract="false"
             id="cdt.managedbuild.target.gnu.exe">
@@ -915,6 +916,7 @@
             isTest="false"
             osList="solaris,linux,hpux,aix,macosx,qnx"
             name="%TargetName.gnu.so"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
             parent="cdt.managedbuild.target.gnu"
             defaultExtension="so"
             isAbstract="false"
@@ -972,13 +974,13 @@
             </toolReference>
          </configuration>
          <toolReference
-               outputs="so"
                outputPrefix="lib"
+               outputs="so"
                id="cdt.managedbuild.tool.gnu.c.linker">
          </toolReference>
          <toolReference
-               outputs="so"
                outputPrefix="lib"
+               outputs="so"
                id="cdt.managedbuild.tool.gnu.cpp.linker">
          </toolReference>
       </target>
@@ -986,6 +988,7 @@
             isTest="false"
             osList="solaris,linux,hpux,aix,macosx,qnx"
             name="%TargetName.gnu.lib"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
             parent="cdt.managedbuild.target.gnu"
             defaultExtension="a"
             isAbstract="false"
@@ -1043,20 +1046,21 @@
             </toolReference>
          </configuration>
          <toolReference
-               outputs="a"
                outputPrefix="lib"
+               outputs="a"
                id="cdt.managedbuild.tool.gnu.archiver">
          </toolReference>
       </target>
       <target
-            isTest="false"
-            osList="win32"
             name="%TargetName.cygw.exe"
-            parent="cdt.managedbuild.target.gnu"
-            binaryParser="org.eclipse.cdt.core.PE"
+            id="cdt.managedbuild.target.gnu.cygwin.exe"
+            isTest="false"
             defaultExtension="exe"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultCygwinScannerInfoCollector"
             isAbstract="false"
-            id="cdt.managedbuild.target.gnu.cygwin.exe">
+            binaryParser="org.eclipse.cdt.core.PE"
+            parent="cdt.managedbuild.target.gnu"
+            osList="win32">
          <configuration
                name="%ConfigName.Dbg"
                id="cdt.managedbuild.config.gnu.cygwin.exe.debug">
@@ -1119,14 +1123,15 @@
          </toolReference>
       </target>
       <target
-            isTest="false"
-            osList="win32"
             name="%TargetName.cygw.so"
+            id="cdt.managedbuild.target.gnu.cygwin.so"
+            isTest="false"
+            defaultExtension="a.dll"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultCygwinScannerInfoCollector"
+            isAbstract="false"
             binaryParser="org.eclipse.cdt.core.PE"
             parent="cdt.managedbuild.target.gnu"
-            defaultExtension="a.dll"
-            isAbstract="false"
-            id="cdt.managedbuild.target.gnu.cygwin.so">
+            osList="win32">
          <configuration
                name="%ConfigName.Dbg"
                id="cdt.managedbuild.config.gnu.cygwin.so.debug">
@@ -1189,14 +1194,15 @@
          </toolReference>
       </target>
       <target
-            isTest="false"
-            osList="win32"
             name="%TargetName.cygw.lib"
-            parent="cdt.managedbuild.target.gnu"
-            binaryParser="org.eclipse.cdt.core.PE"
+            id="cdt.managedbuild.target.gnu.cygwin.lib"
+            isTest="false"
             defaultExtension="a"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultCygwinScannerInfoCollector"
             isAbstract="false"
-            id="cdt.managedbuild.target.gnu.cygwin.lib">
+            binaryParser="org.eclipse.cdt.core.PE"
+            parent="cdt.managedbuild.target.gnu"
+            osList="win32">
          <configuration
                name="%ConfigName.Dbg"
                id="cdt.managedbuild.config.gnu.cygwin.lib.debug">
@@ -1250,8 +1256,8 @@
             </toolReference>
          </configuration>
          <toolReference
-               outputPrefix="lib"
                outputs="a"
+               outputPrefix="lib"
                id="cdt.managedbuild.tool.gnu.archiver">
          </toolReference>
       </target>
@@ -1260,6 +1266,7 @@
             id="cdt.managedbuild.target.gnu.mingw.exe"
             isTest="false"
             defaultExtension="exe"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultMinGWScannerInfoCollector"
             isAbstract="false"
             makeCommand="mingw32-make"
             binaryParser="org.eclipse.cdt.core.PE"
@@ -1331,6 +1338,7 @@
             id="cdt.managedbuild.target.gnu.mingw.so"
             isTest="false"
             defaultExtension="dll"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultMinGWScannerInfoCollector"
             isAbstract="false"
             makeCommand="mingw32-make"
             binaryParser="org.eclipse.cdt.core.PE"
@@ -1402,6 +1410,7 @@
             id="cdt.managedbuild.target.gnu.mingw.lib"
             isTest="false"
             defaultExtension="lib"
+            scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultMinGWScannerInfoCollector"
             isAbstract="false"
             makeCommand="mingw32-make"
             binaryParser="org.eclipse.cdt.core.PE"
@@ -1460,8 +1469,8 @@
             </toolReference>
          </configuration>
          <toolReference
-               outputPrefix="lib"
                outputs="lib"
+               outputPrefix="lib"
                id="cdt.managedbuild.tool.gnu.archiver">
          </toolReference>
       </target>

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
@@ -243,6 +244,42 @@ public class Configuration extends BuildObject implements IConfiguration {
 		
 			return toolRef.createOptionReference(option);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getFilteredTools(org.eclipse.core.resources.IProject)
+	 */
+	public ITool[] getFilteredTools(IProject project) {
+		ITool[] localTools = getTools();
+		Vector tools = new Vector(localTools.length);
+		for (int i = 0; i < localTools.length; i++) {
+			ITool tool = localTools[i];
+			try {
+				// Make sure the tool is right for the project
+				switch (tool.getNatureFilter()) {
+					case ITool.FILTER_C:
+						if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							tools.add(tool);
+						}
+						break;
+					case ITool.FILTER_CC:
+						if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							tools.add(tool);
+						}
+						break;
+					case ITool.FILTER_BOTH:
+						tools.add(tool);
+						break;
+					default:
+						break;
+				}
+			} catch (CoreException e) {
+				continue;
+			}
+		}
+		
+		// Answer the filtered tools as an array
+		return (ITool[])tools.toArray(new ITool[tools.size()]);
 	}
 
 	/* (non-javadoc)

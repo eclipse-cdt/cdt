@@ -23,8 +23,11 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IIncludeEntry;
+import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -33,10 +36,12 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Document;
@@ -50,6 +55,10 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public static final String MINOR_SEPERATOR = "::"; //$NON-NLS-1$
 	private static final QualifiedName defaultConfigProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "defaultConfig");	//$NON-NLS-1$
 	private static final QualifiedName defaultTargetProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "defaultTarget");	//$NON-NLS-1$
+	// The path container used for all managed projects
+	private static final IContainerEntry containerEntry = CoreModel.newContainerEntry(new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER"));	//$NON-NLS-1$
+
+	private ICProject cModelElement; 
 	private String defaultConfigIds;
 	private Map defaultConfigMap;
 	private ITarget defaultTarget;
@@ -61,13 +70,34 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private List targetList;
 	private String version;	
 	
+
 	/**
-	 * Create a new managed build information for the IResource specified in the argument
+	 * For compatability.
 	 * 
 	 * @param owner
 	 */
 	public ManagedBuildInfo(IResource owner) {
+		this(owner, true);
+	}
+	
+	/**
+	 * Create a new managed build information for the IResource specified in the argument
+	 * 
+	 * @param owner
+	 * @param intializeEntries
+	 * @since 2.0
+	 */
+	public ManagedBuildInfo(IResource owner, boolean intializeEntries) {
 		this.owner = owner;
+		cModelElement = CoreModel.getDefault().create(owner.getProject());
+		
+		try {
+			CoreModel.getDefault().setRawPathEntries(cModelElement, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
+		} catch (CModelException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		isDirty = false;
 
 		// The id of the default target from the project persistent settings store
@@ -89,6 +119,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			return;
 		}
 
+		if(intializeEntries) {
+			initializePathEntries();
+		}
 	}
 	
 	/**
@@ -99,13 +132,15 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param element
 	 */
 	public ManagedBuildInfo(IResource owner, Element element) {
-		this(owner);
+		this(owner, false);
 		
 		// Inflate the targets
 		NodeList targetNodes = element.getElementsByTagName(ITarget.TARGET_ELEMENT_NAME);
 		for (int targIndex = targetNodes.getLength() - 1; targIndex >= 0; --targIndex) {
 			new Target(this, (Element)targetNodes.item(targIndex));
 		}
+		
+		initializePathEntries();
 	}
 
 	/* (non-Javadoc)
@@ -273,7 +308,10 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			}
 			// If that failed, look for anything
 			if (defaultTarget == null) {
-				defaultTarget = (ITarget) getTargets().get(0);
+				// Are there any defined targets
+				if (getTargets().size() > 0) {
+					return (ITarget) getTargets().get(0);
+				}
 			}
 		}
 		return defaultTarget;
@@ -283,32 +321,12 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getDefinedSymbols()
 	 */
 	public Map getDefinedSymbols() {
-		IProject project = (IProject)owner;
 		// Return the defined symbols for the default configuration
-		HashMap symbols = new HashMap();
+		HashMap symbols = getMacroPathEntries();
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(owner.getProject());
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
-			try {
-				// Make sure the tool is right for the project
-				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_CC:
-						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_BOTH:
-						break;
-				}
-			} catch (CoreException e) {
-				continue;
-			}
 			// Now extract the valid tool's options
 			IOption[] opts = tool.getOptions();
 			for (int j = 0; j < opts.length; j++) {
@@ -316,7 +334,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
 					try {
 						ArrayList symbolList = new ArrayList();
-						symbolList.addAll(Arrays.asList(option.getBuiltIns()));
 						symbolList.addAll(Arrays.asList(option.getDefinedSymbols()));
 						Iterator iter = symbolList.listIterator();
 						while (iter.hasNext()) {
@@ -324,15 +341,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 							if (symbol.length() == 0){
 								continue;
 							}
-							String key = new String();
-							String value = new String();
-							int index = symbol.indexOf("="); //$NON-NLS-1$
-							if (index != -1) {
-								key = symbol.substring(0, index).trim();
-								value = symbol.substring(index + 1).trim();
-							} else {
-								key = symbol.trim();
-							}
+							String[] tokens = symbol.split("="); //$NON-NLS-1$
+							String key = tokens[0].trim();
+							String value = (tokens.length > 1) ? tokens[1].trim() : new String();
 							symbols.put(key, value);
 						}
 
@@ -426,14 +437,37 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return null;
 	}
 
+	private ArrayList getIncludePathEntries() {
+		// Extract the resolved paths from the project (if any)
+		ArrayList paths = new ArrayList();
+		if (cModelElement != null) {
+			try {
+				IPathEntry[] entries = cModelElement.getResolvedPathEntries();
+				for (int index = 0; index < entries.length; ++index) {
+					int kind = entries[index].getEntryKind();
+					if (kind == IPathEntry.CDT_INCLUDE) {
+						IIncludeEntry include = (IIncludeEntry) entries[index];
+						if (include.isSystemInclude()) {
+							IPath entryPath = include.getFullIncludePath();
+							paths.add(entryPath.toString());
+						}						
+					}
+				}
+			} catch (CModelException e) {
+				// Just return an empty array 
+				paths.clear();
+				return paths;
+			}
+		}
+		return paths;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
 	public String[] getIncludePaths() {
-		IProject project = (IProject)owner;
-		
 		// Return the include paths for the default configuration
-		ArrayList paths = new ArrayList();
+		ArrayList paths = getIncludePathEntries();
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		IPath location = owner.getLocation();
 		// If the build info is out of date this might be null
@@ -441,36 +475,15 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			location = new Path("."); //$NON-NLS-1$
 		}
 		IPath root = location.addTrailingSeparator().append(config.getName());
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getFilteredTools(owner.getProject());
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
-			try {
-				// Make sure the tool is right for the project
-				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_CC:
-						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_BOTH:
-						break;
-				}
-			} catch (CoreException e) {
-				continue;
-			}
 			// The tool checks out for this project, get its options
 			IOption[] opts = tool.getOptions();
 			for (int j = 0; j < opts.length; j++) {
 				IOption option = opts[j];
 				if (option.getValueType() == IOption.INCLUDE_PATH) {
 					try {
-						// Get all the built-in paths from the option
-						paths.addAll(getCompilerPaths(option));
 						// Get all the user-defined paths from the option as absolute paths
 						String[] userPaths = option.getIncludePaths();
 						for (int index = 0; index < userPaths.length; ++index) {
@@ -489,41 +502,30 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				}
 			}
 		}
-		paths.trimToSize();
+		
+		// Answer the results as an array
 		return (String[])paths.toArray(new String[paths.size()]); 
 	}
 
-	/**
-	 * @param owner2
-	 * @return
-	 */
-	private List getCompilerPaths(IOption option) {
-		// Extract the resolved paths from the project (if any)
-		ArrayList paths = new ArrayList();
-		ICProject project = CoreModel.getDefault().create(owner.getProject()); 
-		if (project != null) {
+	private HashMap getMacroPathEntries() {
+		HashMap macros = new HashMap();
+		if (cModelElement != null) {
 			try {
-				IPathEntry[] entries = project.getResolvedPathEntries();
-				for (int index = entries.length - 1; index >=0; --index) {
-					int kind = entries[index].getEntryKind();
-					if (kind == IPathEntry.CDT_INCLUDE) {
-						IIncludeEntry include = (IIncludeEntry) entries[index];
-						if (include.isSystemInclude()) {
-							IPath entryPath = include.getPath();
-							paths.add(entryPath.toString());
-						}						
+				IPathEntry[] entries = cModelElement.getResolvedPathEntries();
+				for (int index = 0; index < entries.length; ++index) {
+					if (entries[index].getEntryKind() == IPathEntry.CDT_MACRO) {
+						IMacroEntry macro = (IMacroEntry) entries[index];
+						macros.put(macro.getMacroName(), macro.getMacroValue());
 					}
 				}
 			} catch (CModelException e) {
-				// See if there are any built-ins from the tool definition
-				return Arrays.asList(option.getBuiltIns());
+				// return an empty map
+				macros.clear();
+				return macros;
 			}
+		
 		}
-//		if (paths.size() == 0) {
-			return Arrays.asList(option.getBuiltIns());
-//		} else {
-//			return paths;
-//		}
+		return macros;
 	}
 
 	/* (non-Javadoc)
@@ -976,6 +978,19 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
+	 * 
+	 */
+	private void initializePathEntries() {
+		try {
+			IPathEntryContainer container = new ManagedBuildCPathEntryContainer(this);
+			CoreModel.getDefault().setPathEntryContainer(new ICProject[]{cModelElement}, container, new NullProgressMonitor());
+		} catch (CModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#removeTarget(java.lang.String)
 	 */
 	public void removeTarget(String id) {
@@ -1045,6 +1060,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			defaultTarget = target;
 			defaultTargetId = target.getId();
 			persistDefaultTarget();
+			initializePathEntries();
 		}
 	}
 	
@@ -1103,6 +1119,18 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 					ITarget target = (ITarget) iter.next();
 					target.updateOwner(resource);
 				}
+				// And finally update the cModelElement
+				cModelElement = CoreModel.getDefault().create(owner.getProject());
+				try {
+					CoreModel.getDefault().setRawPathEntries(cModelElement, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
+				} catch (CModelException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				initializePathEntries();
+				
+				// Save everything
+				setDirty(true);
 			}
 		}
 	}

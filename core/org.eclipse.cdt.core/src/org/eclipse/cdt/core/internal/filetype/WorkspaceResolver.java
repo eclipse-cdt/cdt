@@ -204,10 +204,11 @@ public class WorkspaceResolver extends CFileTypeResolver {
 		}
 		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
 		String s = prefs.getString(PREFS_ASSOCIATIONS_INCLUSION);
+		
 		if (s.length() > 0) {
 			sb.append(';').append(s);
-			prefs.setValue(PREFS_ASSOCIATIONS_INCLUSION, sb.toString());
 		}
+		prefs.setValue(PREFS_ASSOCIATIONS_INCLUSION, sb.toString());
 	}
 
 	public List getDefaultExclusionAssociations() {

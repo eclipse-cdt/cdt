@@ -2376,6 +2376,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_pointer, true, false ));
 			else if( pointerOperator == ASTPointerOperator.VOLATILE_POINTER )
 				symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_pointer, false, true));
+			else if( pointerOperator == ASTPointerOperator.RESTRICT_POINTER )
+				symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_pointer ));
 //			else
 //				assert false : pointerOperator;
         }

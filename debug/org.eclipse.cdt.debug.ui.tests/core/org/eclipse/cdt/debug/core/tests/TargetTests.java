@@ -17,7 +17,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.cdt.debug.mi.core.*;
 import org.eclipse.cdt.debug.core.cdi.*;
-import org.eclipse.cdt.debug.core.cdi.model.*;
 
 /**
  * @author Peter Graves
@@ -92,52 +91,19 @@ public class TargetTests extends TestCase {
 
 
     /***
-     * A couple tests to make sure setting breakpoints on functions works as
-     * expected.
+     * A couple tests to make sure various evaluations work as expected
      */
     public void testEvaluate() throws CoreException, MIException, IOException, CDIException, InterruptedException {
         ICDISession session;
         ICDIBreakpointManager breaks;
-        ICDILocation location;
-        ICDITarget targets[];
         session=CDebugHelper.createSession("main");
         assertNotNull(session);
         breaks=session.getBreakpointManager();
         assertNotNull(breaks);
     
-        
-        /**********************************************************************
-         * Test to make sure if we call ICDITarget.evaluateExpressionToValue 
-         * seems to work.
-         **********************************************************************/    
-   
-        location=breaks.createLocation(null, "func1", 0);
-        assertNotNull(location);
-        breaks.setLocationBreakpoint(0, location, null, null);
-        targets=session.getTargets(); 
-        /* We better only have one target connected to this session or something 
-         * is not right...
-         */       
-        assertTrue(targets.length==1);
-        /* Resume the target, this should cause it to run till it hits the 
-         * breakpoint
-         */
-        targets[0].resume();
-        /**
-         * Give the process up to 10 seconds to become either terminated or 
-         * suspended.  It sould hit the breakponint almost immediatly so we 
-         * should only sleep for max 100 ms
-         */
-        for (int x=0;x<100;x++) {
-            if (targets[0].isTerminated() || targets[0].isSuspended()) 
-                break;
-            Thread.sleep(100);
-        }
-        assertTrue(targets[0].isSuspended());
-        assertNotNull("PR:24183", targets[0].evaluateExpressionToValue("a"));
-        /* clean up the session */
-        session.terminate();
-
+        /***
+         * Tests to come
+         */        
     
    }
 

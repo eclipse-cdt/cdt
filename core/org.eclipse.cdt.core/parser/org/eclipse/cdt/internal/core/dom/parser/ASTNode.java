@@ -19,6 +19,7 @@ public abstract class ASTNode implements IASTNode {
 
     private int length;
     private int offset;
+    private static final IASTNodeLocation[] EMPTY_LOCATION_ARRAY = new IASTNodeLocation[0];
 
     public int getOffset() {
         return offset;
@@ -52,6 +53,7 @@ public abstract class ASTNode implements IASTNode {
      * @see org.eclipse.cdt.core.dom.ast.IASTNode#getNodeLocations()
      */
     public IASTNodeLocation[] getNodeLocations() {
+        if( length == 0 ) return EMPTY_LOCATION_ARRAY;
         return getTranslationUnit().getLocationInfo( offset, length );
     }
     

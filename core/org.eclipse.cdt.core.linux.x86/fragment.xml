@@ -3,7 +3,7 @@
 <fragment
    id="org.eclipse.cdt.core.linux.x86"
    name="X86 Fragment"
-   version="1.0.0"
+   version="3.0.0"
    provider-name="Eclipse.org"
    plugin-id="org.eclipse.cdt.core"
    plugin-version="3.0.0">

@@ -172,4 +172,16 @@ public class NullParserCallback implements IParserCallback {
 	public void declaratorAbort(Object container, Object declarator) {
 	}
 
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionBegin(java.lang.Object)
+	 */
+	public Object expressionBegin(Object container) {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionEnd(java.lang.Object)
+	 */
+	public void expressionEnd(Object expression) {
+	}
+
 }

@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
-import org.eclipse.cdt.internal.core.parser.util.DeclarationSpecifier;
 
 /**
  * @author jcamelon
@@ -16,7 +15,7 @@ import org.eclipse.cdt.internal.core.parser.util.DeclarationSpecifier;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclarationSpecifier.Container, ICElementWrapper {
+public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpecifier.Container, ICElementWrapper {
 
 	private CElement element = null; 
 	private CElement parent = null; 
@@ -137,14 +136,14 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements Declarati
 		return declarators; 
 	}
 	
-	DeclarationSpecifier declSpec = null; 
+	DeclSpecifier declSpec = null; 
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.dom.DeclarationSpecifier.CElementWrapper#getDeclSpecifier()
 	 */
-	public DeclarationSpecifier getDeclSpecifier() {
+	public DeclSpecifier getDeclSpecifier() {
 		if( declSpec == null )
-			declSpec = new DeclarationSpecifier(); 
+			declSpec = new DeclSpecifier(); 
 			
 		return declSpec; 
 	}
@@ -152,7 +151,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements Declarati
 	/**
 	 * @see org.eclipse.cdt.internal.core.dom.DeclarationSpecifier.CElementWrapper#setDeclSpecifier(org.eclipse.cdt.internal.core.dom.DeclarationSpecifier)
 	 */
-	public void setDeclSpecifier(DeclarationSpecifier in) {
+	public void setDeclSpecifier(DeclSpecifier in) {
 		declSpec = in; 
 	}
 	

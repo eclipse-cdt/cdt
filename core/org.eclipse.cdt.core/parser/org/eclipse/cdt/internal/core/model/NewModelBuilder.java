@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
-import org.eclipse.cdt.internal.core.parser.util.DeclarationSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 public class NewModelBuilder implements IParserCallback {
@@ -86,7 +85,7 @@ public class NewModelBuilder implements IParserCallback {
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginDeclarator()
 	 */
 	public Object declaratorBegin(Object container) {
-		DeclarationSpecifier.Container declSpec = (DeclarationSpecifier.Container)container;
+		DeclSpecifier.Container declSpec = (DeclSpecifier.Container)container;
 		List declarators = declSpec.getDeclarators();
 		Declarator declarator =new Declarator();
 		declarators.add( declarator );  
@@ -294,11 +293,23 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorAbort(java.lang.Object, java.lang.Object)
 	 */
 	public void declaratorAbort(Object container, Object declarator) {
-		DeclarationSpecifier.Container declSpec = (DeclarationSpecifier.Container)container;
+		DeclSpecifier.Container declSpec = (DeclSpecifier.Container)container;
 		Declarator toBeRemoved =(Declarator)declarator; 
 		declSpec.removeDeclarator( toBeRemoved ); 
 		toBeRemoved = null; 
 		currName = null;   		
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionBegin(java.lang.Object)
+	 */
+	public Object expressionBegin(Object container) {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionEnd(java.lang.Object)
+	 */
+	public void expressionEnd(Object expression) {
 	}
 
 }

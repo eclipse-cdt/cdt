@@ -437,16 +437,6 @@ c, quick);
 				// doNothing
 			}
 			
-			// assignmentExpression || { initializerList , } || { }
-			try
-			{
-				assignmentExpression();  
-			}
-			catch( Backtrack b )
-			{
-				// doNothing
-			}
-			
 			if (LT(1) == Token.tLBRACE) {
 				// for now, just consume to matching brace
 				consume();

@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.core.parser.util;
 
+import java.util.List;
+
 import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
@@ -141,19 +143,19 @@ public class DeclSpecifier {
 				setVolatile(true);
 				break;
 			case Token.t_char:
-				setType(DeclarationSpecifier.t_char);
+				setType(DeclSpecifier.t_char);
 				break;
 			case Token.t_wchar_t:
-				setType(DeclarationSpecifier.t_wchar_t);
+				setType(DeclSpecifier.t_wchar_t);
 				break;
 			case Token.t_bool:
-				setType(DeclarationSpecifier.t_bool);
+				setType(DeclSpecifier.t_bool);
 				break;
 			case Token.t_short:
 				setShort(true);
 				break;
 			case Token.t_int:
-				setType(DeclarationSpecifier.t_int);
+				setType(DeclSpecifier.t_int);
 				break;
 			case Token.t_long:
 				setLong(true);
@@ -165,16 +167,16 @@ public class DeclSpecifier {
 				setUnsigned(true);
 				break;
 			case Token.t_float:
-				setType(DeclarationSpecifier.t_float);
+				setType(DeclSpecifier.t_float);
 				break;
 			case Token.t_double:
-				setType(DeclarationSpecifier.t_double);
+				setType(DeclSpecifier.t_double);
 				break;
 			case Token.t_void:
-				setType(DeclarationSpecifier.t_void);
+				setType(DeclSpecifier.t_void);
 				break;
 			case Token.tIDENTIFIER:
-				setType(DeclarationSpecifier.t_type);
+				setType(DeclSpecifier.t_type);
 				break;
 		}
 
@@ -187,5 +189,17 @@ public class DeclSpecifier {
 	public int getType() {
 		return declSpecifierSeq & typeMask;
 	}
+
+	public interface Container {
+	
+		public DeclSpecifier getDeclSpecifier();
+	
+		public void setDeclSpecifier( DeclSpecifier in );
+	
+		public void addDeclarator(Object declarator);
+		public void removeDeclarator( Object declarator );
+		public List getDeclarators();
+
+	};
 
 }

@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.core.parser;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
-public class ExpressionEvaluator extends NullParserCallback {
+public class ExpressionEvaluator implements IParserCallback {
 
 	public class ExpressionException extends Exception {
 		public ExpressionException(String msg) {
@@ -107,6 +107,166 @@ public class ExpressionEvaluator extends NullParserCallback {
 	
 	public Object getResult() throws EmptyStackException {
 		return stack.peek();
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#translationUnitBegin()
+	 */
+	public Object translationUnitBegin() {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#translationUnitEnd(java.lang.Object)
+	 */
+	public void translationUnitEnd(Object unit) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#inclusionBegin(java.lang.String, int)
+	 */
+	public void inclusionBegin(String includeFile, int offset) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#inclusionEnd()
+	 */
+	public void inclusionEnd() {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#macro(java.lang.String, int)
+	 */
+	public void macro(String macroName, int offset) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclarationBegin(java.lang.Object)
+	 */
+	public Object simpleDeclarationBegin(Object Container) {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclarationEnd(java.lang.Object)
+	 */
+	public void simpleDeclarationEnd(Object declaration) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#parameterDeclarationBegin(java.lang.Object)
+	 */
+	public Object parameterDeclarationBegin(Object Container) {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#parameterDeclarationEnd(java.lang.Object)
+	 */
+	public void parameterDeclarationEnd(Object declaration) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void simpleDeclSpecifier(Object Container, Token specifier) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void nameBegin(Token firstToken) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void nameEnd(Token lastToken) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorBegin(java.lang.Object)
+	 */
+	public Object declaratorBegin(Object container) {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorId(java.lang.Object)
+	 */
+	public void declaratorId(Object declarator) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorAbort(java.lang.Object, java.lang.Object)
+	 */
+	public void declaratorAbort(Object container, Object declarator) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorEnd(java.lang.Object)
+	 */
+	public void declaratorEnd(Object declarator) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#argumentsBegin(java.lang.Object)
+	 */
+	public Object argumentsBegin(Object declarator) {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#argumentsEnd(java.lang.Object)
+	 */
+	public void argumentsEnd(Object parameterDeclarationClause) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#functionBodyBegin()
+	 */
+	public void functionBodyBegin() {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#functionBodyEnd()
+	 */
+	public void functionBodyEnd() {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public Object classSpecifierBegin(Object container, Token classKey) {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierName(java.lang.Object)
+	 */
+	public void classSpecifierName(Object classSpecifier) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierEnd(java.lang.Object)
+	 */
+	public void classSpecifierEnd(Object classSpecifier) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierBegin(java.lang.Object)
+	 */
+	public Object baseSpecifierBegin(Object containingClassSpec) {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierName(java.lang.Object)
+	 */
+	public void baseSpecifierName(Object baseSpecifier) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void baseSpecifierVisibility(
+		Object baseSpecifier,
+		Token visibility) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierVirtual(java.lang.Object, boolean)
+	 */
+	public void baseSpecifierVirtual(Object baseSpecifier, boolean virtual) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#baseSpecifierEnd(java.lang.Object)
+	 */
+	public void baseSpecifierEnd(Object baseSpecifier) {
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionBegin(java.lang.Object)
+	 */
+	public Object expressionBegin(Object container) {
+		return null;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionEnd(java.lang.Object)
+	 */
+	public void expressionEnd(Object expression) {
 	}
 
 }

@@ -37,7 +37,6 @@ public interface IParserCallback {
 		
 	public Object argumentsBegin( Object declarator );
 	public void argumentsEnd(Object parameterDeclarationClause);
-
 	
 	public void functionBodyBegin();
 	public void functionBodyEnd();
@@ -52,6 +51,8 @@ public interface IParserCallback {
 	public void 	baseSpecifierVirtual( Object baseSpecifier, boolean virtual );
 	public void  	baseSpecifierEnd( Object baseSpecifier );
 	
+	public Object expressionBegin( Object container ); 
 	public void expressionOperator(Token operator) throws Exception;
 	public void expressionTerminal(Token terminal) throws Exception;
+	public void expressionEnd(Object expression );
 }

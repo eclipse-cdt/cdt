@@ -23,4 +23,18 @@ public interface IASTFileLocation extends IASTNodeLocation {
 	 * @return the name of the file
 	 */
 	public String getFileName();
+    
+    /**
+     * Get the starting line number.
+     * 
+     * @return in representing line number
+     */
+    public int getStartingLineNumber();
+    
+    /**
+     * Get the ending line number. 
+     * 
+     * @return int representing line number
+     */
+    public int getEndingLineNumber();
 }

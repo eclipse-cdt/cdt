@@ -87,6 +87,11 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public IASTFileLocation asFileLocation() {
             return rootNode.flattenLocationsToFile(getExpansionLocations());
         }
+        
+        public String toString() {
+            
+            return "Macro Expansion " + definition.getName().toString() + " flattened to " + asFileLocation().toString(); //$NON-NLS-1$ //$NON-NLS-2$
+        }
 
     }
 
@@ -871,10 +876,11 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     }
 
-    public static class FileLocation extends Location implements
+    public class FileLocation extends Location implements
             IASTFileLocation {
 
         private String fileName;
+        private _CompositeFileContext _fileContext;
 
         /**
          * @param length
@@ -900,6 +906,40 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             return this;
         }
 
+        public int getStartingLineNumber() {
+            _CompositeFileContext i = getFileContext();
+            if( i != null )
+                return i.getLineNumber( getNodeOffset() );
+            return 0;
+        }
+
+        private _CompositeFileContext getFileContext() {
+            if( _fileContext == null )
+            {
+                if( fileName.equals( getTranslationUnitPath() ))
+                    _fileContext = tu;
+                else
+                    _fileContext = findInclusion( tu, fileName );
+            }
+            return _fileContext;
+        }
+
+        public int getEndingLineNumber() {
+            _CompositeFileContext i = getFileContext();
+            if( i != null )
+                return i.getLineNumber( getNodeOffset() + getNodeLength());
+            return 0;
+        }
+
+        public String toString() {
+            StringBuffer buffer = new StringBuffer( fileName );
+            buffer.append(" line " ); //$NON-NLS-1$
+            buffer.append( getStartingLineNumber() );
+            buffer.append( " to " ); //$NON-NLS-1$
+            buffer.append( getEndingLineNumber() );
+            return buffer.toString();
+        }
+        
     }
 
     protected static class _Context {
@@ -1048,6 +1088,16 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                 int endOffset, CodeReader reader) {
             super(parent, startOffset, endOffset);
             this.reader = reader;
+        }
+
+        public int getLineNumber(int nodeOffset) {
+            int lineNumber = 1;
+            for( int i = 0; i < nodeOffset; ++i )
+            {
+                if( reader.buffer[i] == '\n')
+                    ++lineNumber;
+            }
+            return lineNumber;
         }
 
     }
@@ -2137,19 +2187,19 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                 endOffset, taken));
     }
 
-    private _Context findInclusion(_CompositeContext context, String path) {
-        _Context foundContext = null;
+    _Inclusion findInclusion(_CompositeContext context, String path) {
+        _Inclusion foundContext = null;
         _Context[] contexts = context.getSubContexts();
-
+        _Inclusion tempContext= null;
         for (int i = 0; foundContext == null && i < contexts.length; i++) {
             if (contexts[i] instanceof _Inclusion) {
-                context = (_Inclusion) contexts[i];
+                tempContext = (_Inclusion) contexts[i];
 
                 // check if the file matches the #include
                 if (CharArrayUtils.equals(
-                        ((_Inclusion) context).reader.filename, path
+                        tempContext.reader.filename, path
                                 .toCharArray())) {
-                    foundContext = context;
+                    foundContext = tempContext;
                     break;
                 }
                 foundContext = findInclusion(context, path);

@@ -481,7 +481,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 				else
 					buffer.append(trimObjectToString(obj.toString()));
 			} else
-				buffer.append(trimObjectToString(obj.toString()));
+				buffer.append(obj.toString());
 			
 			if( obj instanceof IBinding ){
 				buffer.append( OPEN_PAREN );

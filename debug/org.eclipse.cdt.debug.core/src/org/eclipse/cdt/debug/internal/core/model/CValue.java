@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
@@ -25,12 +26,17 @@ import org.eclipse.debug.core.model.IVariable;
  * 
  * @since Aug 9, 2002
  */
-public class CValue extends CDebugElement implements IValue
+public class CValue extends CDebugElement implements ICValue
 {
+	/**
+	 * Cached value.
+	 */
+	private String fValueString = null;
+
 	/**
 	 * Underlying CDI value.
 	 */
-	private ICDIValue fValue;
+	private ICDIValue fCDIValue;
 
 	/**
 	 * List of child variables.
@@ -38,13 +44,19 @@ public class CValue extends CDebugElement implements IValue
 	private List fVariables = Collections.EMPTY_LIST;
 
 	/**
+	 * Type (simple, array, structure or string) of this value.
+	 */
+	private int fType = TYPE_SIMPLE;
+
+	/**
 	 * Constructor for CValue.
 	 * @param target
 	 */
-	public CValue( CDebugTarget target, ICDIValue cdiValue )
+	public CValue( CDebugTarget target, ICDIValue cdiValue ) throws DebugException
 	{
 		super( target );
-		fValue = cdiValue;
+		fCDIValue = cdiValue;
+		calculateType();
 	}
 
 	/* (non-Javadoc)
@@ -52,7 +64,19 @@ public class CValue extends CDebugElement implements IValue
 	 */
 	public String getReferenceTypeName() throws DebugException
 	{
-		return null;
+		String typeName = null;
+		try
+		{
+			if ( fCDIValue != null )
+			{
+				typeName = fCDIValue.getTypeName();
+			}
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( "Operation failed. Reason: ", e );
+		}
+		return typeName;
 	}
 
 	/* (non-Javadoc)
@@ -60,12 +84,11 @@ public class CValue extends CDebugElement implements IValue
 	 */
 	public String getValueString() throws DebugException
 	{
-		String result = null;
-		if ( getUnderlyingValue() != null )
+		if ( fValueString == null && getUnderlyingValue() != null )
 		{
 			try
 			{
-				result = getUnderlyingValue().getValueString();
+				fValueString = processCDIValue( getUnderlyingValue().getValueString() );
 			}
 			catch( CDIException e )
 			{
@@ -73,7 +96,7 @@ public class CValue extends CDebugElement implements IValue
 				requestFailed( "", e );
 			}
 		}
-		return result;
+		return fValueString;
 	}
 
 	/* (non-Javadoc)
@@ -100,11 +123,20 @@ public class CValue extends CDebugElement implements IValue
 		if ( fVariables.size() == 0 )
 		{
 			List vars = getCDIVariables();
-			fVariables = new ArrayList( vars.size() );
-			Iterator it = vars.iterator();
-			while( it.hasNext() )
+			if ( getType() == ICValue.TYPE_ARRAY )
 			{
-				fVariables.add( new CLocalVariable( this, (ICDIVariable)it.next() ) );
+				int length = getNumberOfChildren();
+				if ( length > 0 )
+					fVariables = CArrayPartition.splitArray( (CDebugTarget)getDebugTarget(), vars, 0, length - 1 );
+			}
+			else
+			{
+				fVariables = new ArrayList( vars.size() );
+				Iterator it = vars.iterator();
+				while( it.hasNext() )
+				{
+					fVariables.add( new CLocalVariable( this, (ICDIVariable)it.next() ) );
+				}
 			}
 		}
 		return fVariables;
@@ -119,7 +151,7 @@ public class CValue extends CDebugElement implements IValue
 		{
 			ICDIValue value = getUnderlyingValue();
 			if ( value != null )
-				return value.hasChildren();
+				return value.getChildrenNumber() > 0;
 		}
 		catch( CDIException e )
 		{
@@ -128,21 +160,12 @@ public class CValue extends CDebugElement implements IValue
 		return false;
 	}
 
-	/**
-	 * Creates the appropriate kind of value, or <code>null</code>.
-	 * 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICValue#getUnderlyingValue()
 	 */
-	public static CValue createValue( CDebugTarget target, ICDIValue value ) 
+	public ICDIValue getUnderlyingValue()
 	{
-		return new CValue( target, value );
-	}
-
-	/**
-	 * Returns this value's underlying CDI value
-	 */
-	protected ICDIValue getUnderlyingValue()
-	{
-		return fValue;
+		return fCDIValue;
 	}
 	
 	protected List getCDIVariables() throws DebugException
@@ -160,5 +183,71 @@ public class CValue extends CDebugElement implements IValue
 			targetRequestFailed( "Operation failed. Reason: ", e );
 		}
 		return Collections.EMPTY_LIST;
+	}
+	
+	protected void calculateType() throws DebugException
+	{
+		String stringValue = getValueString();
+		if ( stringValue != null && stringValue.trim().length() > 0 )
+		{
+			stringValue = stringValue.trim();
+			if ( stringValue.charAt( 0 ) == '[' )
+			{
+				fType = TYPE_ARRAY;
+			}
+			else if ( stringValue.charAt( 0 ) == '{' )
+			{
+				fType = TYPE_STRUCTURE;
+			}
+			else if ( stringValue.startsWith( "0x" ) )
+			{
+				fType = TYPE_POINTER;
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICValue#getType()
+	 */
+	public int getType()
+	{
+		return fType;
+	}
+	
+	protected int getNumberOfChildren() throws DebugException
+	{
+		int result = 0;
+		try
+		{
+			result = getUnderlyingValue().getChildrenNumber();
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( "Operation failed. Reason: ", e );
+		}
+		return result;
+	}
+	
+	protected String processCDIValue( String cdiValue )
+	{
+		return cdiValue;
+	}
+
+	public synchronized void setChanged( boolean changed ) throws DebugException
+	{
+		if ( changed )
+		{
+			fValueString = null;
+		}
+/*
+		if ( hasVariables() )
+		{
+			IVariable[] vars = getVariables();
+			for ( int i = 0; i < vars.length; ++i )
+			{
+				((CVariable)vars[i]).setChanged( changed );
+			}
+		}
+*/
 	}
 }

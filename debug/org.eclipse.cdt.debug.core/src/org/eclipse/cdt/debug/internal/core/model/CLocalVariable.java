@@ -158,11 +158,8 @@ public class CLocalVariable extends CModificationVariable
 		try
 		{
 			//setValue( getCurrentValue() );
-			if ( !getValue().hasVariables() )
-			{
-				setChanged( true );
-				getParent().fireChangeEvent( DebugEvent.CONTENT );
-			}
+			setChanged( true );
+			getParent().fireChangeEvent( DebugEvent.CONTENT );
 		}
 		catch( DebugException e )
 		{

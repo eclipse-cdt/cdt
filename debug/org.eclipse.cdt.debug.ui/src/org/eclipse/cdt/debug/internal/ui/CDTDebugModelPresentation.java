@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.core.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.ICBreakpoint;
 import org.eclipse.cdt.debug.core.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.ICWatchpoint;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.IState;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
+import org.eclipse.cdt.debug.internal.core.model.CValue;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -172,6 +174,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 			if ( element instanceof ICBreakpoint ) 
 			{
 				return getBreakpointImage( (ICBreakpoint)element );
+			}
+			if ( element instanceof IVariable ) 
+			{
+				return getVariableImage( (IVariable)element );
 			}
 		}
 		catch( CoreException e )
@@ -366,9 +372,34 @@ public class CDTDebugModelPresentation extends LabelProvider
 		String label = new String();
 		if ( var != null )
 		{
+			if ( isShowVariableTypeNames() )
+			{
+				label += var.getReferenceTypeName() + " ";
+			}
 			label += var.getName();
 			IValue value = var.getValue();
-			label += "= " + value.getValueString();
+			if ( value != null && value.getValueString() != null )
+			{
+				if ( value instanceof ICValue )
+				{
+					switch( ((ICValue)value).getType() )
+					{
+						case ICValue.TYPE_ARRAY:
+							label += value.getValueString();
+							break;
+						case ICValue.TYPE_STRUCTURE:
+							break;
+						default:
+							label += "= " + value.getValueString();
+							break;
+							
+					}
+				}
+				else
+				{
+					label += "= " + value.getValueString();
+				}
+			}
 		}
 		return label;
 	}
@@ -584,5 +615,31 @@ public class CDTDebugModelPresentation extends LabelProvider
 			CDebugUIPlugin.log( e );
 		}
 		return flags;
+	}
+
+	protected Image getVariableImage( IVariable element ) throws DebugException
+	{
+		if ( element != null )
+		{
+			IValue value = element.getValue();
+			if ( value instanceof ICValue )
+				return getValueTypeImage( (ICValue)value );
+		}
+		return null;
+	}
+
+	protected Image getValueTypeImage( ICValue element )
+	{
+		if ( element != null )
+		{
+			if ( element.getType() == ICValue.TYPE_ARRAY ||
+				 element.getType() == ICValue.TYPE_STRUCTURE )
+				return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE,  0 ) );
+			else if ( element.getType() == ICValue.TYPE_POINTER )
+				return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_VARIABLE_POINTER,  0 ) );
+			else
+				return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_VARIABLE_SIMPLE, 0 ) );
+		}
+		return null;
 	}
 }

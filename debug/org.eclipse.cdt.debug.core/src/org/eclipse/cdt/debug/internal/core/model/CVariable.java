@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
 
+import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
@@ -27,7 +28,7 @@ public abstract class CVariable extends CDebugElement
 	/**
 	 * Cache of current value - see #getValue().
 	 */
-	private CValue fValue;
+	private ICValue fValue;
 
 	/**
 	 * Counter corresponding to this variable's debug target
@@ -65,7 +66,7 @@ public abstract class CVariable extends CDebugElement
 		ICDIValue currentValue = getCurrentValue();
 		if ( fValue == null )
 		{
-			fValue = CValue.createValue( (CDebugTarget)getDebugTarget(), currentValue );
+			fValue = CValueFactory.createValue( (CDebugTarget)getDebugTarget(), currentValue );
 		}
 		return fValue;
 	}
@@ -199,17 +200,13 @@ public abstract class CVariable extends CDebugElement
 	
 	protected synchronized void setChanged( boolean changed ) throws DebugException
 	{
-		if ( getValue().hasVariables() )
+		if ( getValue() != null )
 		{
-			IVariable[] vars = getValue().getVariables();
-			for ( int i = 0; i < vars.length; ++i )
+			((CValue)getValue()).setChanged( changed );
+			if ( !getValue().hasVariables() )
 			{
-				((CVariable)vars[i]).setChanged( changed );
+				fChanged = changed;
 			}
-		}
-		else
-		{
-			fChanged = changed;
 		}
 	}
 }

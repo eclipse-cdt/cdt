@@ -11,17 +11,9 @@
 package org.eclipse.cdt.core.filetype;
 
 /**
- * Corresponds to an org.eclipse.cdt.core.CLanguage entry.
+ * Listener interface for clients interested in changes to an
+ * individual resolver.
  */
-public interface ICLanguage {
-
-	/**
-     * @return Id associated with this language.
-     */
-    public String getId();
-	
-	/**
-     * @return Name of this language.
-     */
-    public String getName();
+public interface IResolverChangeListener {
+	public void resolverChanged(ResolverChangeEvent event);
 }

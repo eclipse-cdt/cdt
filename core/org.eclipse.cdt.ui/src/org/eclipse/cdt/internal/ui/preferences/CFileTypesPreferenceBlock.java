@@ -1,7 +1,7 @@
 /**********************************************************************
  * Copyright (c) 2004 TimeSys Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
@@ -58,7 +58,8 @@ public class CFileTypesPreferenceBlock {
 	private ICFileTypeResolver	fResolver;
 	private ArrayList			fAddAssoc;
 	private ArrayList			fRemoveAssoc;
-
+	private boolean				fDirty = false;
+	
 	private TableViewer 		fAssocViewer;
 	private Button				fBtnNew;
 	private Button				fBtnRemove;
@@ -152,9 +153,10 @@ public class CFileTypesPreferenceBlock {
 	}
 	
 	public CFileTypesPreferenceBlock(ICFileTypeResolver input) {
-		fResolver = input;
 		fAddAssoc = new ArrayList();
 		fRemoveAssoc = new ArrayList();
+		setResolver(input);
+		setDirty(false);
 	}
 
 	public Control createControl(Composite parent) {
@@ -277,32 +279,47 @@ public class CFileTypesPreferenceBlock {
 		fAssocViewer.getTable().setEnabled(enabled);
 		fBtnNew.setEnabled(enabled);
 		fBtnRemove.setEnabled(enabled);
+		setDirty(enabled);
 	}
 	
 	public void setResolver(ICFileTypeResolver resolver) {
 		fAddAssoc.clear();
 		fRemoveAssoc.clear();
-		fResolver = resolver;
-		fAssocViewer.setInput(fResolver.getFileTypeAssociations());
+		fResolver = resolver.createWorkingCopy();
+		if (null != fAssocViewer) {
+			fAssocViewer.setInput(fResolver.getFileTypeAssociations());
+		}
+		setDirty(true);
 	}
 
 	public ICFileTypeResolver getResolver() {
 		return fResolver;
 	}
 	
-	public void performApply() {
-		for (Iterator iter = fAddAssoc.iterator(); iter.hasNext();) {
-			ICFileTypeAssociation assoc = (ICFileTypeAssociation) iter.next();
-			fResolver.addAssociation(assoc.getPattern(), assoc.getType());
-		}
+	public void setDirty(boolean dirty) {
+		fDirty = dirty;
+	}
+	
+	public boolean isDirty() {
+		return fDirty;
+	}
 
-		for (Iterator iter = fRemoveAssoc.iterator(); iter.hasNext();) {
-			ICFileTypeAssociation assoc = (ICFileTypeAssociation) iter.next();
-			fResolver.removeAssociation(assoc);
-		}
+	public boolean performOk() {
+		boolean changed = fDirty;
+		
+		if (fDirty) {
+			ICFileTypeAssociation[] add = (ICFileTypeAssociation[]) fAddAssoc.toArray(new ICFileTypeAssociation[fAddAssoc.size()]);
+			ICFileTypeAssociation[] rem = (ICFileTypeAssociation[]) fRemoveAssoc.toArray(new ICFileTypeAssociation[fRemoveAssoc.size()]);
+			
+			fResolver.adjustAssociations(add, rem);
+	
+			fAddAssoc.clear();
+			fRemoveAssoc.clear();
 
-		fAddAssoc.clear();
-		fRemoveAssoc.clear();
+			setDirty(false);
+		}
+		
+		return changed;
 	}
 	
 	private void handleSelectionChanged() {
@@ -325,6 +342,7 @@ public class CFileTypesPreferenceBlock {
 				fAssocViewer.add(assoc);
 				fAddAssoc.add(assoc);
 				fRemoveAssoc.remove(assoc);
+				setDirty(true);
 			}
 		}
 	}
@@ -337,6 +355,7 @@ public class CFileTypesPreferenceBlock {
 				fAssocViewer.remove(assoc);
 				fAddAssoc.remove(assoc);
 				fRemoveAssoc.add(assoc);
+				setDirty(true);
 			}
 		}
 	}

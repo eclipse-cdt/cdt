@@ -1,3 +1,7 @@
+2004-06-09 Alain Magloire
+
+	Patch from Sam Rob to resolve 64022
+
 2004-05-19 Alain Magloire
 	New test provided by Sam Rob added for the resolver.
 

@@ -1,5 +1,9 @@
 2004-06-09 Alain Magloire
 
+	Patch from Sam Rob to resolve 64022
+
+2004-06-09 Alain Magloire
+
 	Make sure to run the PathEntryContainerInitializer.initialize()
 	once.
 	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java

@@ -1,7 +1,7 @@
 /**********************************************************************
  * Copyright (c) 2004 TimeSys Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
@@ -94,16 +94,8 @@ public interface IResolverModel {
 	public ICFileTypeResolver getResolver(IProject project);
 
 	/**
-	 * Create a new file type resolver.  The newly created
-	 * resolver will contain no file type associations.
-	 * 
-	 * @return newly created file type resolver
-	 */
-	public ICFileTypeResolver createResolver();
-
-	/**
 	 * Create a new file type assocation.  The association
-	 * must be added to a type resolver.
+	 * may be added to a type resolver.
 	 * 
 	 * @param pattern filename pattern for the association.
 	 * @param type association file type. 
@@ -111,4 +103,20 @@ public interface IResolverModel {
 	 * @return newly created file type association
 	 */
 	public ICFileTypeAssociation createAssocation(String pattern, ICFileType type);
+
+	/**
+	 * Adds the given listener for model change events to the model.
+	 * Has no effect if an identical listener is already registered.
+	 *  
+	 * @param listener listener to add
+	 */
+	public void addResolverChangeListener(IResolverChangeListener listener);
+
+	/**
+	 * Removes the given change listener from the model.
+	 * Has no effect if an identical listener is not registered.
+	 *  
+	 * @param listener listener to remove
+	 */
+	public void removeResolverChangeListener(IResolverChangeListener listener);
 }

@@ -3,9 +3,11 @@
 	* index/.../index/IndexModel.java (isEnabled):
 	New method check if indexing is enable for a project.
 	(setEnabled) : enable/disable indexing for a project.
+	(removeResource): New method, remove resource from the list.
 	* index/.../internal/core/index/IndexManager.java (addContainer):
 	Check if resource is enable for indexing.
 	(addFile): Check if resource is enable for indexing.
+
 
 2002-11-12 David Inglis
 

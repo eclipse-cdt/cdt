@@ -266,13 +266,15 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected ICProject[] getCProjects() {
 		ICProject cproject[] = CoreModel.getDefault().getCRoot().getCProjects();
 		ArrayList list = new ArrayList(cproject.length);
-		boolean isLocal = filterPlatform.equals(BootLoader.getOS());
+		boolean isNative = filterPlatform.equals(BootLoader.getOS());
 
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;
 			try {
 				cdesciptor = CCorePlugin.getDefault().getCProjectDescription((IProject) cproject[i].getResource());
-				if (filterPlatform.equals("*") || (isLocal && cdesciptor.getPlatform().equalsIgnoreCase("local"))
+				String projectPlatform = cdesciptor.getPlatform();
+				if (filterPlatform.equals("*") || projectPlatform.equals("*") || 
+				    (isNative && cdesciptor.getPlatform().equalsIgnoreCase("native"))
 					|| filterPlatform.equalsIgnoreCase(cdesciptor.getPlatform()) == true) {
 					list.add(cproject[i]);
 				}

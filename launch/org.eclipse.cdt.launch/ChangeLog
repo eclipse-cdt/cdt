@@ -1,4 +1,9 @@
 2002-11-04 David Inglis
+	* src/.../launch/ui/CDebuggerTab.java
+	* src/.../launch/ui/CMainTab.java
+	change "local" to "native" and support "*" as a wildcard for platform.
+	
+2002-11-04 David Inglis
 	* src/.../launch/internal/ui/LocalCLaunchCOnfigurationTabGroup.java
 	don't filter tab list based on mode since the configuration is shared with debug mode.
 

@@ -106,9 +106,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)
 				|| debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH) ) {
 				String supported[] = debugConfigs[i].getPlatforms();
-				boolean isLocal = platform.equals(BootLoader.getOS());
+				boolean isNative = platform.equals(BootLoader.getOS());
 				for (int j = 0; j < supported.length; j++) {
-					if (supported[j].equalsIgnoreCase(platform) || (isLocal && supported[j].equalsIgnoreCase("local"))) {
+					if (supported[j].equalsIgnoreCase(platform) || (isNative && supported[j].equalsIgnoreCase("native"))) {
 						fDCombo.add(debugConfigs[i].getName());
 						fDCombo.setData(Integer.toString(x), debugConfigs[i]);
 						if (selection.equals(debugConfigs[i].getID())) {

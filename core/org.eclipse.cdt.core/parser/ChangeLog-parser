@@ -1,3 +1,6 @@
+2004-02-24 John Camelon
+	Partial Fix for Bug 52534 - Selection Search offset limit reached is broken 
+
 2004-02-18 Andrew Niefer
 	added IUsingDeclarationSymbol and UsingDeclarationSymbol
 	changed IContainerSymbol.addUsingDeclaration to return a IUsingDeclarationSymbol

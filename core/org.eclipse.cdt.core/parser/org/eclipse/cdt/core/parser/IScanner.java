@@ -44,4 +44,9 @@ public interface IScanner  {
 	public void setTokenizingMacroReplacementList(boolean b);
 	public void setThrowExceptionOnBadCharacterRead( boolean throwOnBad );
 
+	/**
+	 * @return
+	 */
+	public boolean isOnTopContext();
+
 }

@@ -35,7 +35,7 @@ public class SelectionParser extends ContextualParser {
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleNewToken(org.eclipse.cdt.core.parser.IToken)
 	 */
 	protected void handleNewToken(IToken value) {
-		if( value != null )
+		if( value != null && scanner.isOnTopContext() )
 		{
 			if( value.getOffset() == offsetRange.getFloorOffset() )
 				firstTokenOfDuple = value;

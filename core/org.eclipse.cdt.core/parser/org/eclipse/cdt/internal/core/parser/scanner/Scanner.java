@@ -3111,4 +3111,11 @@ public class Scanner implements IScanner {
 		return limitReached;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IScanner#isOnTopContext()
+	 */
+	public boolean isOnTopContext() {
+		return ( scannerData.getContextStack().getCurrentContext() == scannerData.getContextStack().getTopContext() );
+	}
+
 }

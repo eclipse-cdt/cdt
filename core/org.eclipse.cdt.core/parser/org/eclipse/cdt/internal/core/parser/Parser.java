@@ -3466,6 +3466,9 @@ public class Parser implements IParserData, IParser
                 }
 				try
                 {
+				    int nameStart = (id != null) ? id.getOffset() : 0;
+				    int nameEnd = (id != null) ? id.getEndOffset() : 0;
+				    int nameLine = (id != null) ? id.getLineNumber() : 0;
                     returnValue.add(
                     	astFactory.createTemplateParameter(
                     		kind,
@@ -3475,10 +3478,9 @@ public class Parser implements IParserData, IParser
                     		null,
 							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null,
 							startingToken.getOffset(), startingToken.getLineNumber(), 
-							(id != null) ? id.getOffset() : 0, 
-							(id != null) ? id.getEndOffset() : 0, 
-							(id != null) ? id.getLineNumber() : 0,
-							lastToken.getEndOffset(), lastToken.getLineNumber(), lastToken.getFilename() ));
+							nameStart, nameEnd, nameLine, 
+							(lastToken != null ) ? lastToken.getEndOffset() : nameEnd, 
+							(lastToken != null ) ? lastToken.getLineNumber() : nameLine, startingToken.getFilename() ));
                 }
 				catch( ASTSemanticException ase )
 				{

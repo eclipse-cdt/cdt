@@ -3152,7 +3152,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         }
         catch (ParserSymbolTableException e)
         {
-        	handleProblem(e.createProblemID(), name );
+        	handleProblem(e.createProblemID(), name, nameOffset, nameEndOffset, nameLine, true );
         }
         ASTTypedef d = new ASTTypedef( typeSymbol, mapping, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, references, filename );
         attachSymbolExtension(typeSymbol, d, true );

@@ -487,7 +487,7 @@ public class ParserSymbolTable {
 				
 				if( foundSymbol.isType( ITypeInfo.t_function ) ){
 					if( foundSymbol.isForwardDeclaration() && foundSymbol.getForwardSymbol() != null &&
-						foundSymbol.getForwardSymbol().getContainingSymbol() == foundSymbol.getContainingSymbol() )
+							!foundSymbol.isTemplateInstance() && foundSymbol.getForwardSymbol().getContainingSymbol() != null)
 					{
 						foundSymbol = foundSymbol.getForwardSymbol();
 					}
@@ -821,6 +821,12 @@ public class ParserSymbolTable {
 				return true;
 			newType = newSymbol.getType();
 		}	
+
+		// handle reverse-forward 'using' decls
+		if( newSymbol.isForwardDeclaration() ){
+			if( newSymbol.getForwardSymbol() == origSymbol )
+				return true;
+		}
 		
 		//handle forward decls
 		if( origSymbol.isForwardDeclaration() ){

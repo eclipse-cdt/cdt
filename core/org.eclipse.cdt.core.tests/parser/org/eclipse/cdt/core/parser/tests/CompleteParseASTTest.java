@@ -2164,5 +2164,65 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         parse( writer.toString() );
         assertFalse( callback.getProblems().hasNext() );
     }
+    
+
+    public void testBug72692A() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "extern double pow(double, double);\n");
+    	writer.write( "extern double pow2(double, double){}\n");
+    	writer.write( "namespace DS {\n");
+    	writer.write( "using ::pow;\n");
+    	writer.write( "using ::pow2;\n");
+    	writer.write( "}\n");
+    	writer.write( "using DS::pow;\n");
+    	writer.write( "using DS::pow2;\n");
+    	parse( writer.toString() );
+	}
+    
+    public void testBug72692B() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "extern double pow(double, double);\n");
+    	writer.write( "namespace DS {\n");
+    	writer.write( "using ::pow;\n");
+    	writer.write( "inline float pow(float __x, float __y)\n" );
+    	writer.write( "{ return ::pow(static_cast<double>(__x), static_cast<double>(__y)); }\n" );
+    	writer.write( "}\n");
+    	writer.write( "using namespace DS;\n");
+    	writer.write( "float foo() { double d1 = 3.0, d2 = 4.0; return pow(d1, d2); }");
+    	parse( writer.toString() );
+	}
+
+    public void testBug72692C() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "extern double pow(double, double){}\n");
+    	writer.write( "namespace DS {\n");
+    	writer.write( "using ::pow;\n");
+    	writer.write( "}\n");
+    	writer.write( "using DS::pow;\n");
+    	parse( writer.toString() );
+	}
+
+    
+    public void testBug74575A() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "double pow(double, double);\n");
+    	writer.write( "float pow(float __x, float __y)\n" );
+    	writer.write( "{ return 0; }\n");
+    	Iterator i = parse( writer.toString() ).getDeclarations();
+    	IASTFunction doublePow = (IASTFunction) i.next();
+    	IASTFunction floatPow = (IASTFunction) i.next();
+    	assertFalse( i.hasNext() );
+    	assertEquals( floatPow.getName(), "pow" );
+    	assertEquals( doublePow.getName(), "pow");
+    	assertEquals( ((IASTSimpleTypeSpecifier)doublePow.getReturnType().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.DOUBLE );
+    	assertEquals( ((IASTSimpleTypeSpecifier)floatPow.getReturnType().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.FLOAT );
+    	assertFalse( doublePow.hasFunctionBody() );
+    	assertTrue( floatPow.hasFunctionBody() ); 
+	}
+    
 }
 

@@ -400,6 +400,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 					addedUsingToContained = true;
 				}
 				clone = (ISymbol) symbol.clone(); //7.3.3-9
+
+				clone.setForwardSymbol(symbol);
+				clone.setIsForwardDeclaration(true);
+				
 				addSymbol( clone );
 			} else {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );

@@ -1172,7 +1172,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		assertEquals( using.getReferencedSymbols().get(0), f1 );
 		
-		IParameterizedSymbol usingF = (IParameterizedSymbol)using.getDeclaredSymbols().get(0); 
+		IParameterizedSymbol usingF = (IParameterizedSymbol)using.getReferencedSymbols().get(0); 
 		
 		look = compUnit.lookup("A".toCharArray()); //$NON-NLS-1$
 		assertEquals( look, A );
@@ -1210,13 +1210,10 @@ public class ParserSymbolTableTest extends TestCase {
 		assertTrue( list.contains( f1 ) );
 		assertTrue( list.contains( f2 ) );
 		assertEquals( list.size(), 2 );
-
-		int index = list.indexOf( f2 );
-		list = using.getDeclaredSymbols();
 		
 		look = bar.unqualifiedFunctionLookup( "f".toCharArray(), paramList ); //$NON-NLS-1$
 		assertTrue( look != null );
-		assertEquals( look, list.get( index ) );
+		assertEquals( look, f2);
 		assertEquals( table.getTypeInfoProvider().numAllocated(), 0 );
 	}
 	

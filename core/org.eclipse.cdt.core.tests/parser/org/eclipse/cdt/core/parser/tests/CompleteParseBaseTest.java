@@ -794,7 +794,8 @@ public class CompleteParseBaseTest extends TestCase
     			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
     	boolean parseResult = parser.parse();
-		if( ! parseResult && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$
+    	// throw exception if there are generated IProblems
+		if( (! parseResult || callback.getProblems().hasNext() ) && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$
 		if( parseResult  )
 			assertTrue( ((CompleteParser)parser).validateCaches());
         return callback.getCompilationUnit();

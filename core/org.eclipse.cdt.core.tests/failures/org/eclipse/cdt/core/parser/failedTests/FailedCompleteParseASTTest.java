@@ -42,6 +42,7 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 		//parse no longer passes
 		try{
 			parse ("class A { int m(int); }; \n A a; int A::*pm = &A::m; \n int f(){} \n int f(int); \n int x = f((a.*pm)(5));"); //$NON-NLS-1$
+			fail();
 		} catch ( ParserException e ){
 			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
 		}
@@ -64,6 +65,7 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 		//parse no longer passes
 		try{
 			parse ("class A { int m(int); }; \n A * a; int A::*pm = &A::m; \n int f(){} \n int f(int); \n int x = f((a->*pm)(5));"); //$NON-NLS-1$
+			fail();
 		} catch ( ParserException e ){
 			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
 		}
@@ -102,6 +104,7 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 		//parse no longer passes
 		try{
 			parse ( "class A { int m; }; \n A a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a.*pm);" ); //$NON-NLS-1$
+			fail();
 		} catch ( ParserException e ){
 			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
 		}
@@ -122,6 +125,7 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 		//parse no longer passes
 		try{
 			parse ("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);"); //$NON-NLS-1$
+			fail();
 		} catch ( ParserException e ){
 			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
 		}
@@ -134,5 +138,32 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		IASTVariable x  = (IASTVariable) i.next();
 //		assertFalse( i.hasNext() );
 //		assertAllReferences( 4 /*should be 5 */, createTaskList( new Task( cl /* , 2 */ ), new Task( a), new Task( pm), new Task( f2)));
-	}	
+	}
+	
+	public void testPredefinedSymbol_bug69791() throws Exception {
+		// GNU builtin type __builtin_va_list
+		try {
+			parse("typedef __builtin_va_list __gnuc_va_list; \n");//$NON-NLS-1$
+			fail();
+		} catch ( ParserException e ){
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
+		}
+//		Iterator i = parse("typedef unsigned char byte; \n").getDeclarations();;//$NON-NLS-1$
+//		IASTTypedefDeclaration td = (IASTTypedefDeclaration) i.next();
+//		assertFalse(i.hasNext());
+	}
+
+	public void testPredefinedSymbol_bug70928() throws Exception {
+		// GNU builtin storage class type __cdecl preceded by a custom return type 
+		try {
+			parse("typedef int size_t; \n size_t __cdecl foo(); \n");//$NON-NLS-1$
+			fail();
+		} catch ( ParserException e ){
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
+		}
+//		Iterator i = parse("typedef int size_t; \n int __cdecl foo(); \n").getDeclarations();//$NON-NLS-1$
+//		IASTTypedefDeclaration td = (IASTTypedefDeclaration) i.next();
+//		IASTFunction fd = (IASTFunction) i.next();
+//		assertFalse(i.hasNext());
+	}
 }

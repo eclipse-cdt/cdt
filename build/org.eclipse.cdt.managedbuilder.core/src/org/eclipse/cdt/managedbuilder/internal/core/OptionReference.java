@@ -286,12 +286,26 @@ public class OptionReference implements IOption {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumCommand(java.lang.String)
 	 */
-	public String getEnumCommand(String name) {
+	public String getEnumCommand(String id) {
 		if (!resolved) {
 			resolveReferences();
 		}
 		if (option != null) {
-			return option.getEnumCommand(name);
+			return option.getEnumCommand(id);
+		} else {
+			return new String();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumName(java.lang.String)
+	 */
+	public String getEnumName(String id) {
+		if (!resolved) {
+			resolveReferences();
+		}
+		if (option != null) {
+			return option.getEnumName(id);
 		} else {
 			return new String();
 		}

@@ -268,6 +268,23 @@ public class Option extends BuildObject implements IOption {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumName(java.lang.String)
+	 */
+	public String getEnumName(String id) {
+		// Sanity
+		if (id == null) return EMPTY_STRING;
+		
+		// First check for the command in ID->name map
+		String name = (String) getEnumNameMap().get(id);
+		if (name == null) {
+			// This may be a 1.2 project or plugin manifest. If so, the argument is the human readable
+			// name of the enumeration.
+			name = id;
+		}
+		return name;
+	}
+
+	/* (non-Javadoc)
 	 * A memory-safe accessor to the map of enumerated option value IDs to the commands
 	 * that a tool understands.
 	 * 

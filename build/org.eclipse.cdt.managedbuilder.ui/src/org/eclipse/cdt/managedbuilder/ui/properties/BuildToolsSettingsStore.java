@@ -232,7 +232,9 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 
 				case IOption.ENUMERATED :
 					try{
-						value = opt.getSelectedEnum();
+						String selId;
+						selId = opt.getSelectedEnum();
+						value = opt.getEnumName(selId);
 					} catch (BuildException e) {
 						break;
 					}

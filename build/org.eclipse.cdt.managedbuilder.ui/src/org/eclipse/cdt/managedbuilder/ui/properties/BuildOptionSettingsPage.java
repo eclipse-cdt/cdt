@@ -68,9 +68,11 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 					fieldsList.add(booleanField);
 					break;
 				case IOption.ENUMERATED :
+					String selId;
 					String sel;
 					try {
-						sel = opt.getSelectedEnum();
+						selId = opt.getSelectedEnum();
+						sel = opt.getEnumName(selId);
 					} catch (BuildException e) {
 						// If we get this exception, then the option type is
 						// wrong

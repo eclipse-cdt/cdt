@@ -304,4 +304,14 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		IASTNode node = parse( code, startIndex, startIndex + 5 );
 		assertNotNull( node );
 	}
+	
+	public void testBug68527() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write("struct X;\n"); //$NON-NLS-1$
+		writer.write("struct X anA;"); //$NON-NLS-1$
+		String code = writer.toString();
+		int startIndex = code.indexOf( "X anA"); //$NON-NLS-1$
+		parse( code, startIndex, startIndex + 1 );
+	}
 }

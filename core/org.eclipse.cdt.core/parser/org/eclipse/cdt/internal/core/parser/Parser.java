@@ -1939,8 +1939,11 @@ public abstract class Parser extends ExpressionParser implements IParser
 		sdw.setTypeSpecifier(elaboratedTypeSpec);
 
 		if (isForewardDecl)
+		{
 			((IASTElaboratedTypeSpecifier) elaboratedTypeSpec).acceptElement(
 					requestor, astFactory.getReferenceManager());
+			handleOffsetableNamedElement((IASTOffsetableNamedElement) elaboratedTypeSpec);
+		}
 	}
 	/**
 	 * Parses the initDeclarator construct of the ANSI C++ spec.

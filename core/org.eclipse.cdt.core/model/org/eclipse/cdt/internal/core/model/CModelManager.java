@@ -737,7 +737,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.filetype.IResolverChangeListener#resolverChanged(org.eclipse.cdt.core.filetype.ResolverChangeEvent)
 	 */
-	public void resolverChanged(ResolverChangeEvent event) {
+	public void resolverChanged(ResolverChangeEvent[] events) {
 		// TODO Auto-generated method stub
 //		boolean isProjectSpecific = false;
 //		ICElement element = null;

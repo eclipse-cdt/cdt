@@ -10,69 +10,127 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.filetype;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.EventObject;
 
-public class ResolverChangeEvent {
-	private ICFileTypeResolver	fResolver;
-	private List				fDeltas = new ArrayList();
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+
+public class ResolverChangeEvent extends EventObject {
+	
+	public static final int EVENT_ADD			= 0x10;
+	public static final int EVENT_REMOVE		= 0x20;
+	public static final int EVENT_SET			= 0x40;
+	public static final int EVENT_MASK			= 0xF0;
+
+	public static final int ELEMENT_LANGUAGE 	= 0x01;
+	public static final int ELEMENT_FILETYPE 	= 0x02;
+	public static final int ELEMENT_ASSOCIATION = 0x04;
+	public static final int ELEMENT_RESOLVER	= 0x08;
+	public static final int ELEMENT_MASK		= 0x0F;
+
+	private Object fElement;
+	private int fEventType;
 
 	/**
-	 * Create a new resolver change event.  The event is empty
-	 * of any change deltas, and references the provided file
-	 * type resolver.
+	 * Create a new change event.
 	 * 
 	 * @param resolver file type resolver this event applies to
 	 */
-	public ResolverChangeEvent(ICFileTypeResolver resolver) {
-		fResolver = resolver;
-	}
-	
-	/**
-	 * @return resolver affected by this change
-	 */
-	public ICFileTypeResolver getResolver() {
-		return fResolver;
+	public ResolverChangeEvent(IContainer container, int eventType, Object element) {
+		super(container);
+		fEventType = eventType;
+		fElement = element;
 	}
 
-	/**
-	 * @return number of resolver deltas involved in this change
-	 */
-	public int getDeltaCount() {
-		return fDeltas.size();
-	}
-	
-	/**
-	 * @return ResolverDelta[] for this change
-	 */
-	public ResolverDelta[] getDeltas() {
-		return (ResolverDelta[]) fDeltas.toArray(new ResolverDelta[fDeltas.size()]);
+	public IContainer getContainer() {
+		return (IContainer)getSource();
 	}
 
-	/**
-	 * Add a new delta to the list of deltas.
-	 * 
-	 * @param delta instance of ResolverDelta to add to the list.
-	 */
-	public void addDelta(ResolverDelta delta) {
-		fDeltas.add(delta);
+	public int getEventType() {
+		return fEventType & EVENT_MASK;
 	}
+
+	public Object getElement() {
+		return fElement;
+	}
+
+	public int getElementType() {
+		if (fElement instanceof ICLanguage) {
+			return ELEMENT_LANGUAGE;
+		} else if (fElement instanceof ICFileType) {
+			return ELEMENT_FILETYPE;
+		} else if (fElement instanceof ICFileTypeAssociation) {
+			return ELEMENT_ASSOCIATION;
+		} else if (fElement instanceof ICFileTypeResolver) {
+			return ELEMENT_RESOLVER;
+		}
+		return 0;
+	}
+
 
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
-		
-		buf.append("ResolverChangeEvent [");
-		buf.append(fDeltas.size());
-		buf.append(" delta(s)]");
-		
-		for (Iterator iter = fDeltas.iterator(); iter.hasNext();) {
-			ResolverDelta element = (ResolverDelta) iter.next();
-			buf.append("\n  ");
-			buf.append(element.toString());
+		buf.append("ResolverChangeEvent ["); //$NON-NLS-1$
+
+		IContainer container = getContainer();
+		if (container instanceof IProject) {
+			buf.append("For project "); //$NON-NLS-1$
+			buf.append(container.getName());
+		} else {
+			buf.append("For workspace"); //$NON-NLS-1$
 		}
-		
+
+		buf.append(' ');
+
+		switch (getEventType()) {
+		case EVENT_ADD:
+			buf.append("add"); //$NON-NLS-1$
+			break;
+		case EVENT_REMOVE:
+			buf.append("remove"); //$NON-NLS-1$
+			break;
+		case EVENT_SET:
+			buf.append("set"); //$NON-NLS-1$
+			break;
+		default:
+			buf.append("?unknown event?"); //$NON-NLS-1$
+		break;
+		}
+		buf.append(' '); 
+		switch (getElementType()) {
+		case ELEMENT_LANGUAGE:
+		{
+			ICLanguage lang = (ICLanguage)getElement();
+			buf.append("language "); //$NON-NLS-1$
+			buf.append(lang.getName());
+			break;
+		}
+		case ELEMENT_FILETYPE:
+		{
+			ICFileType fileType = (ICFileType)getElement();
+			buf.append("filetype "); //$NON-NLS-1$
+			buf.append(fileType.getName());
+			break;
+		}
+		case ELEMENT_ASSOCIATION:
+		{
+			ICFileTypeAssociation association = (ICFileTypeAssociation)getElement();
+			buf.append("assoc "); //$NON-NLS-1$
+			buf.append(association.getPattern());
+			break;
+		}
+		case ELEMENT_RESOLVER:
+		{
+			ICFileTypeResolver resolver = (ICFileTypeResolver)getElement();
+			buf.append("resolver "); //$NON-NLS-1$
+			break;
+		}
+		default:
+			buf.append("?unknown source?"); //$NON-NLS-1$
+		break;
+		}
+	
+		buf.append(']');
 		return buf.toString();
 	}
-
 }

@@ -1,3 +1,12 @@
+2004-08-15 Alain Magloire
+
+	First draft, work in progress.
+	Removing ResolveDelta to make the ResolverChange processing easier.
+	* src/org/eclipse/cdt/core/filetype/IResolverChangeListener
+	* src/org/eclipse/cdt/core/filetype/ResolverChangeEvent.java
+	* src/org/eclipse/cdt/core/internal/filetype/CFiletTypeResolver.java
+	* src/org/eclipse/cdt/core/internal/filetype/ResolverModel.java
+
 2004-08-13 Chris Wiebe
 
 	Extra functionality in type cache to support new class wizard

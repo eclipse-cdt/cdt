@@ -320,7 +320,7 @@ public class CFileTypesPreferenceBlock {
 		return changed;
 	}
 	
-	private void handleSelectionChanged() {
+	protected void handleSelectionChanged() {
 		IStructuredSelection sel = getSelection();
 		fBtnRemove.setEnabled(!sel.isEmpty());
 	}
@@ -329,7 +329,7 @@ public class CFileTypesPreferenceBlock {
 		return CCorePlugin.getDefault().getResolverModel();
 	}
 	
-	private void handleAdd() {
+	protected void handleAdd() {
 		ICFileTypeAssociation assoc = null;
 
 		CFileTypeDialog dlg = new CFileTypeDialog(fBtnNew.getParent().getShell());
@@ -345,7 +345,7 @@ public class CFileTypesPreferenceBlock {
 		}
 	}
 	
-	private void handleRemove() {
+	protected void handleRemove() {
 		IStructuredSelection sel = getSelection();
 		if ((null != sel) && (!sel.isEmpty())) {
 			for (Iterator iter = sel.iterator(); iter.hasNext();) {

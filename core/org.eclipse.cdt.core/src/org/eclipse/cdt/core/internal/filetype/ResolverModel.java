@@ -38,8 +38,9 @@ import org.eclipse.cdt.core.filetype.ICLanguage;
 import org.eclipse.cdt.core.filetype.IResolverChangeListener;
 import org.eclipse.cdt.core.filetype.IResolverModel;
 import org.eclipse.cdt.core.filetype.ResolverChangeEvent;
-import org.eclipse.cdt.core.filetype.ResolverDelta;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -65,7 +66,7 @@ public class ResolverModel implements IResolverModel {
 	/**
 	 * Name used to describe an unknown language or  file type
 	 */
-	public static final String NAME_UNKNOWN	= "Unknown";
+	public static final String NAME_UNKNOWN	= "Unknown"; //$NON-NLS-1$
 
 	/**
 	 * Default language, returned when no other language matches a language id.
@@ -230,10 +231,13 @@ public class ResolverModel implements IResolverModel {
 	 * @return true if the language is added, false otherwise
 	 */
 	public boolean addLanguage(ICLanguage lang) {
-		ResolverChangeEvent event = new ResolverChangeEvent(null);
-		boolean result = addLanguage(lang, event);
+		IContainer root = ResourcesPlugin.getWorkspace().getRoot();
+		List list = new ArrayList(1);
+		boolean result = addLanguage(root, list, lang);
 		if (true == result) {
-			fireEvent(event);
+			ResolverChangeEvent[] events = new ResolverChangeEvent[list.size()];
+			list.toArray(events);
+			fireEvent(events);
 		}
 		return result;
 	}
@@ -250,10 +254,13 @@ public class ResolverModel implements IResolverModel {
 	 * @return true if the file type is added, false otherwise
 	 */
 	public boolean addFileType(ICFileType type) {
-		ResolverChangeEvent event = new ResolverChangeEvent(null);
-		boolean result = addFileType(type, event);
+		IContainer root = ResourcesPlugin.getWorkspace().getRoot();
+		List list = new ArrayList(1);
+		boolean result = addFileType(root, list, type);
 		if (true == result) {
-			fireEvent(event);
+			ResolverChangeEvent[] events = new ResolverChangeEvent[list.size()];
+			list.toArray(events);
+			fireEvent(events);
 		}
 		return result;
 	}
@@ -266,10 +273,13 @@ public class ResolverModel implements IResolverModel {
 	 * @return true if the language is removed, false otherwise
 	 */
 	public boolean removeLanguage(ICLanguage lang) {
-		ResolverChangeEvent event = new ResolverChangeEvent(null);
-		boolean result = removeLanguage(lang, event);
+		IContainer root = ResourcesPlugin.getWorkspace().getRoot();
+		List list = new ArrayList(1);
+		boolean result = removeLanguage(root, list, lang);
 		if (true == result) {
-			fireEvent(event);
+			ResolverChangeEvent[] events = new ResolverChangeEvent[list.size()];
+			list.toArray(events);
+			fireEvent(events);
 		}
 		return result;
 	}
@@ -282,10 +292,13 @@ public class ResolverModel implements IResolverModel {
 	 * @return true if the file type is removed, false otherwise
 	 */
 	public boolean removeFileType(ICFileType type) {
-		ResolverChangeEvent event = new ResolverChangeEvent(null);
-		boolean result = removeFileType(type, event);
+		IContainer root = ResourcesPlugin.getWorkspace().getRoot();
+		List list = new ArrayList(1);
+		boolean result = removeFileType(root, list, type);
 		if (true == result) {
-			fireEvent(event);
+			ResolverChangeEvent[] events = new ResolverChangeEvent[list.size()];
+			list.toArray(events);
+			fireEvent(events);
 		}
 		return result;
 	}
@@ -311,43 +324,46 @@ public class ResolverModel implements IResolverModel {
 	}
 	
 	private static void debugLog(String message) {
-		System.out.println("CDT Resolver: " + message);
+		System.out.println("CDT Resolver: " + message); //$NON-NLS-1$
 	}
 
 	//----------------------------------------------------------------------
 	// Registry change event handling
 	//----------------------------------------------------------------------
 
-	private boolean addLanguage(ICLanguage lang, ResolverChangeEvent event) { 
+	private boolean addLanguage(IContainer container, List list, ICLanguage lang) { 
 		boolean added = false;
 		if (!fLangMap.containsValue(lang)) {
 			fLangMap.put(lang.getId(), lang);
-			if (null != event) {
-				event.addDelta(new ResolverDelta(lang, ResolverDelta.EVENT_ADD));
+			if (null != list) {
+				ResolverChangeEvent event = new ResolverChangeEvent(container, ResolverChangeEvent.EVENT_ADD, lang);
+				list.add(event);
 			}
 			added = true;
 		}
 		return added;
 	}
 	
-	private boolean addFileType(ICFileType type, ResolverChangeEvent event) { 
+	private boolean addFileType(IContainer container, List list, ICFileType type) { 
 		boolean added = false;
 		if (!fTypeMap.containsValue(type)) {
 			fTypeMap.put(type.getId(), type);
-			if (null != event) {
-				event.addDelta(new ResolverDelta(type, ResolverDelta.EVENT_ADD));
+			if (null != list) {
+				ResolverChangeEvent event = new ResolverChangeEvent(container, ResolverChangeEvent.EVENT_ADD, type);
+				list.add(event);
 			}
 			added = true;
 		}
 		return added;
 	}
 
-	private boolean removeLanguage(ICLanguage lang, ResolverChangeEvent event) {
+	private boolean removeLanguage(IContainer container, List list, ICLanguage lang) {
 		boolean removed = (null != fLangMap.remove(lang.getId()));
 		
 		if (removed) {
-			if (null != event) {
-				event.addDelta(new ResolverDelta(lang, ResolverDelta.EVENT_REMOVE));
+			if (null != list) {
+				ResolverChangeEvent event = new ResolverChangeEvent(container, ResolverChangeEvent.EVENT_REMOVE, lang);
+				list.add(event);
 			}
 			ArrayList removeList = new ArrayList();
 			for (Iterator iter = fTypeMap.values().iterator(); iter.hasNext();) {
@@ -357,17 +373,18 @@ public class ResolverModel implements IResolverModel {
 				}
 			}
 			for (Iterator iter = removeList.iterator(); iter.hasNext();) {
-				removeFileType((ICFileType) iter.next(), event);
+				removeFileType(container, list, (ICFileType) iter.next());
 			}
 		}
 		return removed;
 	}
 	
-	private boolean removeFileType(ICFileType type, ResolverChangeEvent event) {
+	private boolean removeFileType(IContainer container, List list, ICFileType type) {
 		boolean removed = (null != fTypeMap.remove(type.getId())); 
 		if (removed) {
-			if (null != event) {
-				event.addDelta(new ResolverDelta(type, ResolverDelta.EVENT_REMOVE));
+			if (null != list) {
+				ResolverChangeEvent event = new ResolverChangeEvent(container, ResolverChangeEvent.EVENT_REMOVE, type);
+				list.add(event);
 			}
 			// TODO: must remove any associations based on this file type as well
 			// Unforuntately, at this point, that means iterating over the contents
@@ -376,18 +393,24 @@ public class ResolverModel implements IResolverModel {
 		return removed;
 	}	
 
-	private void fireEvent(final ResolverChangeEvent event) {
-		final IResolverChangeListener[] listeners;
+	private void fireEvent(final ResolverChangeEvent[] events) {
 		
-		synchronized (fListeners) {
-			if (isDebugging()) {
-				debugLog(event.toString());
-			}
-			if (fListeners.isEmpty()) {
-				return;
-			}
-			listeners = (IResolverChangeListener[]) fListeners.toArray(new IResolverChangeListener[fListeners.size()]);
+		if (events == null || events.length == 0) {
+			return;
 		}
+
+		if (isDebugging()) {
+			for (int i = 0; i < events.length; i++) {
+				debugLog(events[i].toString());
+			}
+		}
+
+		if (fListeners.isEmpty()) {
+			return;
+		}
+
+		final IResolverChangeListener[] listeners;
+		listeners = (IResolverChangeListener[]) fListeners.toArray(new IResolverChangeListener[fListeners.size()]);
 
 		for (int i = 0; i < listeners.length; i++) {
 			final int index = i;
@@ -398,22 +421,27 @@ public class ResolverModel implements IResolverModel {
 					CCorePlugin.log(status);
 				}
 				public void run() throws Exception {
-					listeners[index].resolverChanged(event);
+					listeners[index].resolverChanged(events);
 				}
 			});
 		}
 	}
 
 	private void fireResolverChangeEvent(IProject project, ICFileTypeResolver oldResolver) {
+		IContainer container = project;
 		ICFileTypeResolver	newResolver	= getResolver(project);
-		ResolverChangeEvent event		= new ResolverChangeEvent(newResolver);
-		int					element 	= ResolverDelta.ELEMENT_WORKSPACE;
-		
-		if (null != project) {
-			element = ResolverDelta.ELEMENT_PROJECT; 
-		}
+		//ResolverChangeEvent event		= new ResolverChangeEvent(newResolver);
+		//int					element 	= ResolverDelta.ELEMENT_WORKSPACE;
+		//if (null != project) {
+		//	element = ResolverDelta.ELEMENT_PROJECT; 
+		//}
+		//event.addDelta(new ResolverDelta(ResolverDelta.EVENT_SET, element, project));
 
-		event.addDelta(new ResolverDelta(ResolverDelta.EVENT_SET, element, project));
+		List list = new ArrayList();
+		if (container == null) {
+			container = ResourcesPlugin.getWorkspace().getRoot();
+		}
+		list.add(new ResolverChangeEvent(container, ResolverChangeEvent.EVENT_SET, newResolver));
 		
 		if ((null != oldResolver) && (null != newResolver)) {
 			ICFileTypeAssociation[] oldAssoc = oldResolver.getFileTypeAssociations();
@@ -421,18 +449,21 @@ public class ResolverModel implements IResolverModel {
 				
 			for (int i = 0; i < oldAssoc.length; i++) {
 				if (Arrays.binarySearch(newAssoc, oldAssoc[i], ICFileTypeAssociation.Comparator) < 0) {
-					event.addDelta(new ResolverDelta(oldAssoc[i], ResolverDelta.EVENT_REMOVE));
+					//event.addDelta(new ResolverDelta(oldAssoc[i], ResolverDelta.EVENT_REMOVE));
+					list.add(new ResolverChangeEvent(container, ResolverChangeEvent.EVENT_REMOVE, oldAssoc[i]));
 				}
 			}
 			
 			for (int i = 0; i < newAssoc.length; i++) {
 				if (Arrays.binarySearch(oldAssoc, newAssoc[i], ICFileTypeAssociation.Comparator) < 0) {
-					event.addDelta(new ResolverDelta(newAssoc[i], ResolverDelta.EVENT_ADD));
+					//event.addDelta(new ResolverDelta(newAssoc[i], ResolverDelta.EVENT_ADD));
+					list.add(new ResolverChangeEvent(container, ResolverChangeEvent.EVENT_ADD, newAssoc[i]));
 				}
 			}
 		}
-		
-		fireEvent(event);
+		ResolverChangeEvent[] events = new ResolverChangeEvent[list.size()];
+		list.toArray(events);
+		fireEvent(events);
 	}
 
 	private void initRegistryChangeListener() {
@@ -443,18 +474,20 @@ public class ResolverModel implements IResolverModel {
 		}, CCorePlugin.PLUGIN_ID);
 	}
 
-	private void handleRegistryChanged(IRegistryChangeEvent event) {
+	protected void handleRegistryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[]	deltas = null;
-		ResolverChangeEvent	modelEvent = new ResolverChangeEvent(null);
+		//ResolverChangeEvent	modelEvent = new ResolverChangeEvent(null);
+		List list = new ArrayList();
+		IContainer container = ResourcesPlugin.getWorkspace().getRoot();
 		
 		deltas = event.getExtensionDeltas(CCorePlugin.PLUGIN_ID, EXTENSION_LANG);
 		for (int i = 0; i < deltas.length; i++) {
-			processLanguageExtension(modelEvent, deltas[i].getExtension(), IExtensionDelta.ADDED == deltas[i].getKind());
+			processLanguageExtension(container, list, deltas[i].getExtension(), IExtensionDelta.ADDED == deltas[i].getKind());
 		}
 		
 		deltas = event.getExtensionDeltas(CCorePlugin.PLUGIN_ID, EXTENSION_TYPE);
 		for (int i = 0; i < deltas.length; i++) {
-			processTypeExtension(modelEvent, deltas[i].getExtension(), IExtensionDelta.ADDED == deltas[i].getKind());
+			processTypeExtension(container, list, deltas[i].getExtension(), IExtensionDelta.ADDED == deltas[i].getKind());
 		}
 		
 		deltas = event.getExtensionDeltas(CCorePlugin.PLUGIN_ID, EXTENSION_ASSOC);			
@@ -462,8 +495,11 @@ public class ResolverModel implements IResolverModel {
 			fDefaultResolver	= loadDefaultResolver();
 			fWkspResolver		= loadWorkspaceResolver();
 		}
-		
-		fireEvent(modelEvent);
+		if (!list.isEmpty()) {
+			ResolverChangeEvent[] events = new ResolverChangeEvent[list.size()];
+			list.toArray(events);
+			fireEvent(events);			
+		}
 	}
 
 	//----------------------------------------------------------------------
@@ -476,16 +512,22 @@ public class ResolverModel implements IResolverModel {
 	private void loadDeclaredLanguages() {
 		IExtensionPoint		point 		= getExtensionPoint(EXTENSION_LANG);
 		IExtension[]		extensions 	= point.getExtensions();
-		ResolverChangeEvent	event 		= new ResolverChangeEvent(null);
+		//ResolverChangeEvent	event 		= new ResolverChangeEvent(null);
+		IContainer root = ResourcesPlugin.getWorkspace().getRoot();
+		List list = new ArrayList();
 
 		for (int i = 0; i < extensions.length; i++) {
-			processLanguageExtension(event, extensions[i], true);
+			processLanguageExtension(root, list, extensions[i], true);
 		}
 
 		// Shouldn't have anything listening here, but generating
 		// the events helps maintain internal consistency w/logging
-		
-		fireEvent(event);
+
+		if (!list.isEmpty()) {
+			ResolverChangeEvent[] events = new ResolverChangeEvent[list.size()];
+			list.toArray(events);
+			fireEvent(events);
+		}
 	}
 	
 	/**
@@ -494,19 +536,24 @@ public class ResolverModel implements IResolverModel {
 	private void loadDeclaredTypes() {
 		IExtensionPoint		point 		= getExtensionPoint(EXTENSION_TYPE);
 		IExtension[]		extensions 	= point.getExtensions();
-		ResolverChangeEvent	event 		= new ResolverChangeEvent(null);
+		//ResolverChangeEvent	event 		= new ResolverChangeEvent(null);
+		IContainer root = ResourcesPlugin.getWorkspace().getRoot();
+		List list = new ArrayList();
 
 		for (int i = 0; i < extensions.length; i++) {
-			processTypeExtension(event, extensions[i], true);
+			processTypeExtension(root, list, extensions[i], true);
 		}
 		
 		// Shouldn't have anything listening here, but generating
 		// the events helps maintain internal consistency w/logging
-		
-		fireEvent(event);
+		if (!list.isEmpty()) {
+			ResolverChangeEvent[] events = new ResolverChangeEvent[list.size()];
+			list.toArray(events);
+			fireEvent(events);
+		}		
 	}
 	
-	private void processLanguageExtension(ResolverChangeEvent event, IExtension extension, boolean add) {
+	private void processLanguageExtension(IContainer container, List list, IExtension extension, boolean add) {
 		IConfigurationElement[]	elements = extension.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			String id   = elements[i].getAttribute(ATTR_ID);
@@ -515,9 +562,9 @@ public class ResolverModel implements IResolverModel {
 			try {
 				ICLanguage element = new CLanguage(id, name);
 				if (add) {
-					addLanguage(element, event);
+					addLanguage(container, list, element);
 				} else { 
-					removeLanguage(element, event);
+					removeLanguage(container, list, element);
 				}
 			} catch (IllegalArgumentException e) {
 				CCorePlugin.log(e);
@@ -525,7 +572,7 @@ public class ResolverModel implements IResolverModel {
 		}
 	}
 
-	private void processTypeExtension(ResolverChangeEvent event, IExtension extension, boolean add) {
+	private void processTypeExtension(IContainer container, List list, IExtension extension, boolean add) {
 		IConfigurationElement[]	elements = extension.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			String	id	 = elements[i].getAttribute(ATTR_ID);
@@ -536,9 +583,9 @@ public class ResolverModel implements IResolverModel {
 			try {
 				ICFileType element = new CFileType(id, getLanguageById(lang), name, parseType(type));
 				if (add) {
-					addFileType(element, event);
+					addFileType(container, list, element);
 				} else {
-					removeFileType(element, event);
+					removeFileType(container, list, element);
 				}
 			} catch (IllegalArgumentException e) {
 				CCorePlugin.log(e);
@@ -576,7 +623,7 @@ public class ResolverModel implements IResolverModel {
 	 */
 	private ICFileTypeResolver loadDefaultResolver() {
 		List					assoc		= new ArrayList();
-		ICFileTypeResolver		resolver	= new CFileTypeResolver();
+		ICFileTypeResolver		resolver	= new CFileTypeResolver(ResourcesPlugin.getWorkspace().getRoot());
 		IExtensionPoint			point		= getExtensionPoint(EXTENSION_ASSOC);
 		IExtension[]			extensions	= point.getExtensions();
 		IConfigurationElement[]	elements	= null;
@@ -608,7 +655,7 @@ public class ResolverModel implements IResolverModel {
 		List assocs = new ArrayList();
 		String attr = element.getAttribute(ATTR_PATTERN);
 		if (null != attr) {
-			String[] item = attr.split(",");
+			String[] item = attr.split(","); //$NON-NLS-1$
 			for (int i = 0; i < item.length; i++) {
 				try {
 					assocs.add(createAssocation(item[i].trim(), typeRef));
@@ -683,7 +730,7 @@ public class ResolverModel implements IResolverModel {
 			Properties 		props	= new Properties();
 			FileInputStream	in		= null;
 
-			resolver = new CFileTypeResolver();
+			resolver = new CFileTypeResolver(ResourcesPlugin.getWorkspace().getRoot());
 			
 			try {
 		    	in = new FileInputStream(file);
@@ -781,7 +828,7 @@ public class ResolverModel implements IResolverModel {
 	
 	private ICFileTypeResolver loadProjectResolver(IProject project) {
 		List				assocs		= new ArrayList();
-		ICFileTypeResolver	resolver 	= new CFileTypeResolver();
+		ICFileTypeResolver	resolver 	= new CFileTypeResolver(project);
 		Element				data		= getProjectData(project, false);
 		Node				child 		= ((null != data) ? data.getFirstChild() : null);
 		

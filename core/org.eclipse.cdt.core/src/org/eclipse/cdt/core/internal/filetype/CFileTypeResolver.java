@@ -18,12 +18,21 @@ import java.util.List;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeAssociation;
 import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 public class CFileTypeResolver implements ICFileTypeResolver {
+
+	protected IContainer fContainer;
+
 	// The association list holds a list of known file associations.
 	protected List fAssocList = new ArrayList();
-	
+
 	public CFileTypeResolver() {
+		this(ResourcesPlugin.getWorkspace().getRoot());
+	}
+	public CFileTypeResolver(IContainer container) {
+		fContainer = container;
 	}
 
 	public ICFileTypeAssociation[] getFileTypeAssociations() {
@@ -65,9 +74,9 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 		boolean removed	= doRemoveAssociations(remove);
 		return (added || removed);
 	}
-	
+
 	public ICFileTypeResolver createWorkingCopy() {
-		CFileTypeResolver copy = new CFileTypeResolver();
+		CFileTypeResolver copy = new CFileTypeResolver(fContainer);
 		copy.fAssocList.addAll(fAssocList);
 		return copy;
 	}
@@ -109,6 +118,6 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	}
 	
 	private static void debugLog(String message) {
-		System.out.println("CDT Resolver: " + message);
+		System.out.println("CDT Resolver: " + message); //$NON-NLS-1$
 	}
 }

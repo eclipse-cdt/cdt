@@ -135,20 +135,15 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getRegisters(ICDIRegisterObject[])
 	 */
-	public ICDIRegister[] getRegisters(ICDIRegisterObject[] regs) {
+	public ICDIRegister[] getRegisters(ICDIRegisterObject[] regs) throws CDIException {
 		ICDIRegister[] registers = null;
 		CSession session = getCTarget().getCSession();
 		VariableManager mgr = (VariableManager)session.getVariableManager();
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		try {
-			registers = new ICDIRegister[regs.length];
-			for (int i = 0; i < registers.length; i++) {
-				registers[i] = mgr.createRegister(this, regs[i].getName());
-			}
-		} catch (CDIException e) {
-			//throw e;
-			//System.err.println(e);
+		registers = new ICDIRegister[regs.length];
+		for (int i = 0; i < registers.length; i++) {
+			registers[i] = mgr.createRegister(this, regs[i].getName());
 		}
 		if (registers == null) {
 			registers = new ICDIRegister[0];

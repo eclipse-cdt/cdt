@@ -51,7 +51,7 @@ public interface ICDIStackFrame extends ICDIObject
 	 * @return a collection of registers
 	 * @throws CDIException if this method fails:
 	 */
-	ICDIRegister[] getRegisters(ICDIRegisterObject[] regs);
+	ICDIRegister[] getRegisters(ICDIRegisterObject[] regs) throws CDIException;
 
 	/**
 	 * Returns the level of the stack frame.

@@ -1,3 +1,13 @@
+2003-10-14 Alain Magloire
+
+	Always fetch the addr2line/c++path in the .cdtproject
+
+	* utils/org/eclipse/cdt/utils/elf/BinaryFile.java
+	* utils/org/eclipse/cdt/utils/elf/BinaryObject.java
+	* utils/org/eclipse/cdt/utils/elf/BinaryArchive.java
+	* utils/org/eclipse/cdt/utils/elf/ElfParser.java
+	* utils/org/eclipse/cdt/utils/elf/GNUElfParser.java
+
 2003-10-07 Alain Magloire
 
 	More work on the GNU Elf Binary parser.

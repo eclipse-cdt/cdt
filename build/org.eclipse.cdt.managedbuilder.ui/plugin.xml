@@ -90,6 +90,30 @@
       </page>
    </extension>
       
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
+            name="%MngResourceProp.name"
+            nameFilter="*.cc"
+            class="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage"
+            id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties">
+      </page>
+   </extension>
+      
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
+            name="%MngResourceProp.name"
+            nameFilter="*.cxx"
+            class="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage"
+            id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties">
+      </page>
+   </extension>
+      
 <!-- Managed Make Builder Tool Specifications -->
    <extension
          id="cdt.managed.build.info"

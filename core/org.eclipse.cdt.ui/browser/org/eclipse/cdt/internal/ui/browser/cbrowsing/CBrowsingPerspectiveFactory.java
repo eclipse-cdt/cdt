@@ -50,7 +50,7 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 		folder3.addView(IPageLayout.ID_OUTLINE);
 
 		layout.addActionSet(CUIPlugin.SEARCH_ACTION_SET_ID);
-		layout.addActionSet(CUIPlugin.FOLDER_ACTION_SET_ID);
+		layout.addActionSet(CUIPlugin.ID_CELEMENT_CREATION_ACTION_SET);
 		
 		// views - build console
 		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
@@ -70,9 +70,13 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowInPart(IPageLayout.ID_RES_NAV);
 
 		// new actions - C project creation wizard
+		String[] wizIDs = CUIPlugin.getCProjectWizardIDs();
+		for (int i = 0; i < wizIDs.length; ++i) {
+			layout.addNewWizardShortcut(wizIDs[i]);
+		}
 		layout.addNewWizardShortcut(CUIPlugin.CLASS_WIZARD_ID);
-		layout.addNewWizardShortcut(CUIPlugin.FILE_WIZARD_ID);
 		layout.addNewWizardShortcut(CUIPlugin.FOLDER_WIZARD_ID);
+		layout.addNewWizardShortcut(CUIPlugin.FILE_WIZARD_ID);
 	}
 
 	public void createInitialLayout(IPageLayout layout) {
@@ -83,14 +87,13 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 		
 		// action sets
 		layout.addActionSet(CUIPlugin.SEARCH_ACTION_SET_ID);
-		layout.addActionSet(CUIPlugin.FOLDER_ACTION_SET_ID);
 //		layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 //		layout.addActionSet(JavaUI.ID_ACTION_SET);
-//		layout.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);
+		layout.addActionSet(CUIPlugin.ID_CELEMENT_CREATION_ACTION_SET);
 		layout.addActionSet(IPageLayout.ID_NAVIGATE_ACTION_SET);
 		
 		// views - java
-//		layout.addShowViewShortcut(CUIPlugin.ID_TYPE_HIERARCHY);
+		layout.addShowViewShortcut(CUIPlugin.ID_TYPE_HIERARCHY);
 		layout.addShowViewShortcut(CUIPlugin.CVIEW_ID);
 		layout.addShowViewShortcut(CUIPlugin.ID_PROJECTS_VIEW);
 		layout.addShowViewShortcut(CUIPlugin.ID_NAMESPACES_VIEW);
@@ -111,9 +114,13 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 		
 		// new actions - C project creation wizard
+		String[] wizIDs = CUIPlugin.getCProjectWizardIDs();
+		for (int i = 0; i < wizIDs.length; ++i) {
+			layout.addNewWizardShortcut(wizIDs[i]);
+		}
 		layout.addNewWizardShortcut(CUIPlugin.CLASS_WIZARD_ID);
-		layout.addNewWizardShortcut(CUIPlugin.FILE_WIZARD_ID);
 		layout.addNewWizardShortcut(CUIPlugin.FOLDER_WIZARD_ID);
+		layout.addNewWizardShortcut(CUIPlugin.FILE_WIZARD_ID);
 	}
 
 	private void createVerticalLayout(IPageLayout layout) {
@@ -121,7 +128,7 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 		int relativePos= IPageLayout.LEFT;
 		
 		IPlaceholderFolderLayout placeHolderLeft= layout.createPlaceholderFolder("left", IPageLayout.LEFT, (float)0.25, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
-//		placeHolderLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY); 
+		placeHolderLeft.addPlaceholder(CUIPlugin.ID_TYPE_HIERARCHY); 
 		placeHolderLeft.addPlaceholder(IPageLayout.ID_OUTLINE);
 		placeHolderLeft.addPlaceholder(CUIPlugin.CVIEW_ID);
 		placeHolderLeft.addPlaceholder(IPageLayout.ID_RES_NAV);
@@ -166,7 +173,7 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 		layout.addView(CUIPlugin.ID_MEMBERS_VIEW, IPageLayout.RIGHT, (float)0.50, CUIPlugin.ID_TYPES_VIEW);
 		
 		IPlaceholderFolderLayout placeHolderLeft= layout.createPlaceholderFolder("left", IPageLayout.LEFT, (float)0.25, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
-//		placeHolderLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY); 
+		placeHolderLeft.addPlaceholder(CUIPlugin.ID_TYPE_HIERARCHY); 
 		placeHolderLeft.addPlaceholder(IPageLayout.ID_OUTLINE);
 		placeHolderLeft.addPlaceholder(CUIPlugin.CVIEW_ID);
 		placeHolderLeft.addPlaceholder(IPageLayout.ID_RES_NAV);

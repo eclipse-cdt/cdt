@@ -5,7 +5,8 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -41,7 +42,7 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		folder3.addView(IPageLayout.ID_OUTLINE);
 
 		layout.addActionSet(CUIPlugin.SEARCH_ACTION_SET_ID);
-		layout.addActionSet(CUIPlugin.FOLDER_ACTION_SET_ID);
+		layout.addActionSet(CUIPlugin.ID_CELEMENT_CREATION_ACTION_SET);
 		
 		// views - build console
 		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
@@ -61,8 +62,12 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowInPart(IPageLayout.ID_RES_NAV);
 
 		// new actions - C project creation wizard
+		String[] wizIDs = CUIPlugin.getCProjectWizardIDs();
+		for (int i = 0; i < wizIDs.length; ++i) {
+			layout.addNewWizardShortcut(wizIDs[i]);
+		}
 		layout.addNewWizardShortcut(CUIPlugin.CLASS_WIZARD_ID);
-		layout.addNewWizardShortcut(CUIPlugin.FILE_WIZARD_ID);
 		layout.addNewWizardShortcut(CUIPlugin.FOLDER_WIZARD_ID);
+		layout.addNewWizardShortcut(CUIPlugin.FILE_WIZARD_ID);
 	}
 }

@@ -8,13 +8,13 @@
  * Contributors:
  *     Rational Software - initial implementation
  ******************************************************************************/
-package org.eclipse.cdt.ui.actions;
+package org.eclipse.cdt.internal.ui.wizards;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -37,7 +37,6 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 
 	private Class[] fActivatedOnTypes;
 	private boolean fAcceptEmptySelection;
-	private boolean fNoChecking;
 	
 	/**
 	 * Creates a AbstractOpenWizardAction.
@@ -59,7 +58,6 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 		super(label);
 		fActivatedOnTypes= activatedOnTypes;
 		fAcceptEmptySelection= acceptEmptySelection;
-		fNoChecking= false;
 	}
 
 	/**
@@ -69,7 +67,6 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 	protected AbstractOpenWizardAction() {
 		fActivatedOnTypes= null;
 		fAcceptEmptySelection= true;
-		fNoChecking= true;
 	}
 	
 	protected IWorkbench getWorkbench() {
@@ -209,5 +206,4 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 		}
 		return true;
 	}
-
 }

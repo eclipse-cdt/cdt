@@ -1,3 +1,8 @@
+2004-07-24 Chris Wiebe
+
+	Major clean up patch on the wizards.
+	New button to access them.
+
 2004-07-23 Alain Magloire
 
 	Support for addInclude action, implementation base

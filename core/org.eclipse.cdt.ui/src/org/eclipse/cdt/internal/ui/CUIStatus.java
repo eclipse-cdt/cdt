@@ -22,6 +22,14 @@ public class CUIStatus extends Status {
 		super(severity, CUIPlugin.getPluginId(), code, message, throwable);
 	}
 	
+	public static IStatus createError(int code, Throwable throwable) {
+		String message= throwable.getMessage();
+		if (message == null) {
+			message= throwable.getClass().getName();
+		}
+		return new CUIStatus(IStatus.ERROR, code, message, throwable);
+	}
+
 	public static IStatus createError(int code, String message, Throwable throwable) {
 		return new CUIStatus(IStatus.ERROR, code, message, throwable);
 	}

@@ -50,9 +50,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -67,7 +69,9 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
@@ -86,11 +90,13 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static final String C_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCWizard"; //$NON-NLS-1$
 	public static final String CPP_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCCWizard"; //$NON-NLS-1$
 
+	public final static String CWIZARD_CATEGORY_ID = "org.eclipse.cdt.ui.newCWizards"; //$NON-NLS-1$
+	public final static String CCWIZARD_CATEGORY_ID = "org.eclipse.cdt.ui.newCCWizards"; //$NON-NLS-1$
+	
 	public static final String FILE_WIZARD_ID = "org.eclipse.ui.wizards.new.file"; //$NON-NLS-1$
 	public static final String FOLDER_WIZARD_ID = "org.eclipse.ui.wizards.new.folder"; //$NON-NLS-1$
 	public static final String CLASS_WIZARD_ID = "org.eclipse.cdt.ui.wizards.NewClassWizard"; //$NON-NLS-1$
 	public static final String SEARCH_ACTION_SET_ID = PLUGIN_ID + ".SearchActionSet"; //$NON-NLS-1$
-	public static final String FOLDER_ACTION_SET_ID = PLUGIN_ID + ".CFolderActionSet"; //$NON-NLS-1$
 	public static final String BUILDER_ID = PLUGIN_CORE_ID + ".cbuilder"; //$NON-NLS-1$
 
 	private static CUIPlugin fgCPlugin;
@@ -177,6 +183,14 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */ 
 	public static final String ID_TYPE_HIERARCHY = "org.eclipse.cdt.ui.TypeHierarchyView"; //$NON-NLS-1$
 	
+	
+	/**
+	 * The id of the C Element Creation action set
+	 * (value <code>"org.eclipse.cdt.ui.CElementCreationActionSet"</code>).
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ID_CELEMENT_CREATION_ACTION_SET= "org.eclipse.cdt.ui.CElementCreationActionSet"; //$NON-NLS-1$
 	
 	// -------- static methods --------
 
@@ -647,5 +661,50 @@ public class CUIPlugin extends AbstractUIPlugin {
 		fCEditorTextHoverDescriptors= null;
 	}
 
+	private final static String TAG_WIZARD = "wizard"; //$NON-NLS-1$
+	private final static String ATT_CATEGORY = "category";//$NON-NLS-1$
+	private final static String ATT_PROJECT = "project";//$NON-NLS-1$
+	
+	/**
+	 * Returns IDs of all C project wizards contributed to the workbench.
+	 * 
+	 * @return an array of wizard ids
+	 */
+	public static String[] getCProjectWizardIDs() {
+	    ArrayList CActions = new ArrayList();
+	    ArrayList CCActions = new ArrayList();
+
+	    IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_NEW);
+		if (extensionPoint != null) {
+			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
+			for (int i = 0; i < elements.length; i++) {
+				IConfigurationElement element= elements[i];
+				if (element.getName().equals(TAG_WIZARD)) {
+				    String category = element.getAttribute(ATT_CATEGORY);
+				    if (category != null && (category.equals(CUIPlugin.CCWIZARD_CATEGORY_ID)
+				        	|| category.equals(CUIPlugin.CWIZARD_CATEGORY_ID))) {
+					    String project = element.getAttribute(ATT_PROJECT);
+					    if (project != null && Boolean.valueOf(project).booleanValue()) {
+				            String id = element.getAttribute(IWorkbenchConstants.TAG_ID);
+				            if (id != null) {
+				                if (category.equals(CUIPlugin.CWIZARD_CATEGORY_ID)) {
+				                    if (!CActions.contains(id))
+					                    CActions.add(id);
+				                } else {
+				                    if (!CCActions.contains(id))
+				                        CCActions.add(id);
+				                }
+				            }
+				        }
+				    }
+				}
+			}
+		}
+		
+		//TODO: check for duplicate actions
+		// show C actions, then C++ Actions
+		CActions.addAll(CCActions);
+		return (String[]) CActions.toArray(new String[CActions.size()]);
+	}
 	
 }

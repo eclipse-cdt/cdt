@@ -294,9 +294,11 @@
             name="%NewWizards.class"
             icon="icons/full/ctool16/newclass_wiz.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
-            class="org.eclipse.cdt.ui.wizards.NewClassWizard"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewClassWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewClassWizard">
+            <parameter name="ctype" value="true"/>
+         </class>
          <description>
             %NewWizards.class.description
          </description>
@@ -497,17 +499,27 @@
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="%CFolderActionSet.label"
-            description="%CFolderActionSet.description"
+     <actionSet
+            label="%CElementCreationActionSet.label"
+            description="%CElementCreationActionSet.description"
             visible="false"
-            id="org.eclipse.cdt.ui.CFolderActionSet">
+            id="org.eclipse.cdt.ui.CElementCreationActionSet">
+         <action
+               id="org.eclipse.cdt.ui.actions.NewTypeDropDown"
+               toolbarPath="Normal/CCWizards"
+               class="org.eclipse.cdt.internal.ui.wizards.NewTypeDropDownAction"
+               disabledIcon="icons/full/dtool16/newclass_wiz.gif"
+               icon="icons/full/etool16/newclass_wiz.gif"
+               label="%OpenClassWizardAction.label"
+               pulldown="true"
+               tooltip="%OpenClassWizardAction.tooltip">
+         </action>
          <action
                label="%OpenNewFileWizardAction.label"
                icon="icons/full/ctool16/newfile_wiz.gif"
                class="org.eclipse.cdt.internal.ui.wizards.OpenNewFileWizardAction"
                tooltip="%OpenNewFileWizardAction.tooltip"
-               toolbarPath="Normal/FolderWizards"
+               toolbarPath="Normal/CCWizards"
                id="org.eclipse.cdt.ui.actions.OpenNewFileWizardAction">
          </action>
          <action
@@ -515,22 +527,18 @@
                icon="icons/full/ctool16/newfolder_wiz.gif"
                class="org.eclipse.cdt.internal.ui.wizards.OpenNewFolderWizardAction"
                tooltip="%OpenNewFolderWizardAction.tooltip"
-               toolbarPath="Normal/FolderWizards"
+               toolbarPath="Normal/CCWizards"
                id="org.eclipse.cdt.ui.actions.OpenNewFolderWizardAction">
          </action>
          <action
-               label="%OpenClassWizardAction.label"
-               icon="icons/full/ctool16/newclass_wiz.gif"
-               class="org.eclipse.cdt.ui.actions.OpenClassWizardAction"
-               tooltip="%OpenClassWizardAction.tooltip"
-               toolbarPath="Normal/FolderWizards"
-               id="org.eclipse.cdt.ui.actions.OpenClassWizardAction">
-            <enablement>
-               <objectState
-                     name="projectNature"
-                     value="org.eclipse.cdt.core.ccnature">
-               </objectState>
-            </enablement>
+               id="org.eclipse.cdt.ui.actions.NewProjectDropDown"
+               toolbarPath="Normal/CCWizards"
+               class="org.eclipse.cdt.internal.ui.wizards.NewProjectDropDownAction"
+               disabledIcon="icons/full/dtool16/newcprj_wiz.gif"
+               icon="icons/full/etool16/newcprj_wiz.gif"
+               label="%OpenProjectWizardAction.label"
+               pulldown="true"
+               tooltip="%OpenProjectWizardAction.tooltip">
          </action>
       </actionSet>
    </extension>

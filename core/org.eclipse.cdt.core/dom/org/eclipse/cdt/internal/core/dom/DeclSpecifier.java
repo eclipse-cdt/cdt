@@ -323,11 +323,11 @@ public class DeclSpecifier {
 					type.append(getName().toString());
 				else {
 					if (isUnsigned())
-						type.append("unsigned");
+						type.append("unsigned ");
 					if (isShort())
-						type.append("short");
+						type.append("short ");
 					if (isLong())
-						type.append("long");
+						type.append("long ");
 				}
 				break;
 			default :

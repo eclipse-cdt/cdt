@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.model;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
@@ -44,6 +45,8 @@ import org.eclipse.cdt.internal.core.dom.TemplateParameter;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.Parser;
+import org.eclipse.core.resources.IProject;
+
 public class CModelBuilder {
 	
 	org.eclipse.cdt.internal.core.model.TranslationUnit translationUnit;
@@ -55,6 +58,9 @@ public class CModelBuilder {
 		DOMBuilder domBuilder = new DOMBuilder();
 		String code = translationUnit.getBuffer().getContents();
 		Parser parser = new Parser(code, domBuilder, true);
+		IProject currentProject = translationUnit.getCProject().getProject();
+		boolean hasCppNature = CoreModel.getDefault().hasCCNature(currentProject);
+		parser.setCppNature(hasCppNature);
 		parser.parse();
 		long startTime = System.currentTimeMillis(); 
 		generateModelElements(domBuilder.getTranslationUnit());
@@ -162,11 +168,18 @@ public class CModelBuilder {
 			createTypeDef(parent, declarator, simpleDeclaration);
 		} else {
 			ParameterDeclarationClause pdc = declarator.getParms();
-			if (pdc == null){
+			// variable or field
+			if (pdc == null){	
 				createVariableSpecification(parent, simpleDeclaration, declarator); 
 			}
 			else{
-				createFunctionSpecification(parent, simpleDeclaration, declarator, pdc, false);
+				// pointer to function 
+				if(declarator.getDeclarator() != null){
+					createPointerToFunction(parent, simpleDeclaration, declarator, pdc, false);				
+				}else {
+				// function or method 
+					createFunctionSpecification(parent, simpleDeclaration, declarator, pdc, false);
+				}
 			}
 		}				
 	}
@@ -174,24 +187,11 @@ public class CModelBuilder {
 	private void createTemplateElement(Parent parent, TemplateDeclaration templateDeclaration, SimpleDeclaration simpleDeclaration, Declarator declarator){
 		ParameterDeclarationClause pdc = declarator.getParms();
 		if (pdc != null){
+			// template of function or method
 			ITemplate template = (ITemplate) createFunctionSpecification(parent, simpleDeclaration, declarator, pdc, true);
 			String[] parameterTypes = getTemplateParameters(templateDeclaration);	
 			template.setTemplateParameterTypes(parameterTypes);				
-
 		}
-/*// typedef
-		if(simpleDeclaration.getDeclSpecifier().isTypedef()){
-			createTypeDef(parent, declarator, simpleDeclaration);
-		} else {
-			ParameterDeclarationClause pdc = declarator.getParms();
-			if (pdc == null){
-				createVariableSpecification(parent, simpleDeclaration, declarator); 
-			}
-			else{
-				createFunctionSpecification(parent, simpleDeclaration, declarator, pdc);
-			}
-		}
-*/
 	}
 	private void createInclusion(Parent parent, Inclusion inclusion){
 		// create element
@@ -366,8 +366,7 @@ public class CModelBuilder {
 	}
 
 	private FunctionDeclaration createFunctionSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, ParameterDeclarationClause pdc, boolean isTemplate){
-		boolean pointerToFunction = declarator.getDeclarator() != null; 
-		String declaratorName = pointerToFunction ? declarator.getDeclarator().getName().toString() : declarator.getName().toString();
+		String declaratorName = declarator.getName().toString();
 		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
 		// getParameterTypes
 		List parameterList = pdc.getDeclarations();
@@ -397,7 +396,7 @@ public class CModelBuilder {
 					element = newElement;				
 				}else {
 					MethodTemplate newElement = new MethodTemplate(parent, declaratorName);
-				//	newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
+					newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
 					element = newElement;				
 				}
 				
@@ -438,14 +437,57 @@ public class CModelBuilder {
 		parent.addChild( element ); 	
 
 		// hook up the offsets
-		if( pointerToFunction )
-			element.setIdPos( declarator.getDeclarator().getName().getStartOffset(), declarator.getDeclarator().getName().length() );
-		else
-			element.setIdPos( declarator.getName().getStartOffset(), declarator.getName().length() );		
+		element.setIdPos( declarator.getName().getStartOffset(), declarator.getName().length() );		
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
 		return element;
 	}
-	
+
+	private VariableDeclaration createPointerToFunction(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, ParameterDeclarationClause pdc, boolean isTemplate){
+		String declaratorName = declarator.getDeclarator().getName().toString();
+		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
+		// getParameterTypes
+		List parameterList = pdc.getDeclarations();
+		String[] parameterTypes = new String[parameterList.size()];
+		VariableDeclaration element = null;
+		for( int j = 0; j< parameterList.size(); ++j )
+		{
+			ParameterDeclaration param = (ParameterDeclaration )parameterList.get(j);
+			parameterTypes[j] = new String(getType(param, (Declarator)param.getDeclarators().get(0)));
+		}
+		if(( parent instanceof ITranslationUnit ) 
+			|| ( parent instanceof INamespace ))
+		{		
+			element = new VariableDeclaration(parent, declaratorName);
+		}					
+		StringBuffer typeName = new StringBuffer();
+		typeName.append(getType(simpleDeclaration, declarator));
+		typeName.append("(*)");
+		if(parameterTypes.length > 0){
+			typeName.append("(");
+			int i = 0;
+			typeName.append(parameterTypes[i++]);
+			while (i < parameterTypes.length){
+				typeName.append(", ");
+				typeName.append(parameterTypes[i++]);
+			}
+			typeName.append(")");
+		}
+		else{
+			typeName.append("()");
+		}
+		element.setTypeName( typeName.toString() );
+		element.setVolatile(declSpecifier.isVolatile());
+		element.setStatic(declSpecifier.isStatic());
+		element.setConst(declarator.isConst());				
+
+		// add to parent
+		parent.addChild( element ); 	
+
+		// hook up the offsets
+		element.setIdPos( declarator.getDeclarator().getName().getStartOffset(), declarator.getDeclarator().getName().length() );
+		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
+		return element;
+	}	
 	private String[] getTemplateParameters(ITemplateParameterListOwner templateDeclaration){
 		// add the parameters
 		List templateParameters = templateDeclaration.getTemplateParms().getDeclarations();

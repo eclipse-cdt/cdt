@@ -22,6 +22,7 @@ public class Parser {
 	private IParserCallback callback;
 	private boolean quickParse = false;
 	private boolean parsePassed = true;
+	private boolean cppNature = true;
 	
 	// TO DO: convert to a real symbol table
 	private Map currRegion = new HashMap();
@@ -2237,6 +2238,20 @@ c, quick);
 	protected void backup(Token mark) {
 		currToken = mark;
 		lastToken = null; 
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isCppNature() {
+		return cppNature;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setCppNature(boolean b) {
+		cppNature = b;
 	}
 
 }

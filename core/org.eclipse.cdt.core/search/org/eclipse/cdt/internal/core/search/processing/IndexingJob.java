@@ -61,18 +61,14 @@ public class IndexingJob extends Job {
 		return ASYNC_FINISH;
 	}
 	
-	public void tickUp(){
-		if( progressMonitor != null && progressMonitor.isCanceled() ){
-			jobManager.pause();
-			return;
-		}
+	synchronized public void tickUp(){
 		ticks++;
 		if( ticks > maxTicks )
 			maxTicks = ticks;
 		updateRemainingCount( null );
 	}
 	
-	public void setTicks( int n ){
+	synchronized public void setTicks( int n ){
 		ticks = n;
 		if( maxTicks < ticks )
 			maxTicks = ticks;
@@ -81,7 +77,7 @@ public class IndexingJob extends Job {
 		updateRemainingCount( null );
 	}
 	
-	public int tickDown( String str ){
+	synchronized public int tickDown( String str ){
 		if( progressMonitor != null && progressMonitor.isCanceled() ){
 			jobManager.pause();
 			return 0;

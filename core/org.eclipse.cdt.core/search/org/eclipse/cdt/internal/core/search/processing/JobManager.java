@@ -150,7 +150,7 @@ public abstract class JobManager implements Runnable {
 							JobManager.verbose("-> discarding background job  - " + currentJob); //$NON-NLS-1$
 						currentJob.cancel();
 						if( indexJob != null ){
-							if( indexJob.tickDown( null ) == 0 ){
+							if( indexJob.tickDown( null ) <= 0 ){
 								indexJob.done( OK_STATUS );
 								indexJob = null;
 							}
@@ -211,7 +211,7 @@ public abstract class JobManager implements Runnable {
 				progressString += job.toString();
 				progressString += ")"; //$NON-NLS-1$
 			}
-			if( indexJob.tickDown( progressString ) == 0 ){
+			if( indexJob.tickDown( progressString ) <= 0 ){
 				indexJob.done( OK_STATUS );
 				indexJob = null;
 			}

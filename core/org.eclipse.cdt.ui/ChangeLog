@@ -1,3 +1,8 @@
+2004-08-21 Alain Magloire
+
+	Fix for 69756
+	* plugin.xml
+
 2004-08-20 Chris Wiebe
 
 	class wizard now adds include paths dynamically

@@ -1236,6 +1236,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IASTDeclaration d = declaration();
             IASTDeclarationStatement ds = createDeclarationStatement();
             ds.setDeclaration(d);
+            d.setParent( ds );
+            d.setPropertyInParent( IASTDeclarationStatement.DECLARATION );
+            cleanupLastToken();
             return ds;
         }
 
@@ -2024,9 +2027,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 consume();
                 innerDecl = declarator();
                 consume(IToken.tRPAREN);
+                declaratorName = createName();
             } else if (LT(1) == IToken.tIDENTIFIER) {
                 declaratorName = createName(identifier());
             }
+            else
+                declaratorName = createName();
 
             for (;;) {
                 switch (LT(1)) {
@@ -2126,9 +2132,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IASTFunctionDeclarator fc = createFunctionDeclarator();
             fc.setVarArgs(encounteredVarArgs);
             for (int i = 0; i < parameters.size(); ++i)
-                fc
-                        .addParameterDeclaration((IASTParameterDeclaration) parameters
-                                .get(i));
+            {
+                IASTParameterDeclaration p = (IASTParameterDeclaration) parameters
+                .get(i);
+                p.setParent( fc );
+                p.setPropertyInParent( IASTFunctionDeclarator.FUNCTION_PARAMETER );
+                fc.addParameterDeclaration(p);
+            }
             d = fc;
         } else if (bitField != null) {
             IASTFieldDeclarator fl = createFieldDeclarator();

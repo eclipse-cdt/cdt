@@ -17,7 +17,9 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTDeclarationStatement extends IASTStatement {
 
-	/**
+	public static final ASTNodeProperty DECLARATION = new ASTNodeProperty( "Declaration"); //$NON-NLS-1$
+
+    /**
 	 * Gets the declaration introduced by this statement.
 	 * 
 	 * @return the declaration

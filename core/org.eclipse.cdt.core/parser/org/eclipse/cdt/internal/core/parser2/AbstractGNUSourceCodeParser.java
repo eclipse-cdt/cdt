@@ -436,9 +436,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTCompoundStatement compoundStatement()
             throws EndOfFileException, BacktrackException {
-        IToken la = LA(1);
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
         int startingOffset = consume(IToken.tLBRACE).getOffset();
 
         List statements = Collections.EMPTY_LIST;
@@ -458,6 +455,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         consume(IToken.tRBRACE);
         
         IASTCompoundStatement result = createCompoundStatement();
+        result.setOffset( startingOffset );
         for( int i = 0; i < statements.size(); ++i )
         {
             IASTStatement s = (IASTStatement) statements.get(i);

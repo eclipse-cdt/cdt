@@ -315,7 +315,7 @@ public class TypeMatchLocator implements ISourceElementRequestor, ICSearchConsta
 		
 		IResource resource= null;
 		IPath path= null;
-		Object obj= (Object) resourceStack.top();
+		Object obj= resourceStack.top();
 		if (obj instanceof IResource)
 			resource= (IResource) obj;
 		else
@@ -500,7 +500,7 @@ public class TypeMatchLocator implements ISourceElementRequestor, ICSearchConsta
 		try
 		{
 			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this, ParserUtil.getScannerLogService() );
-			parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
+			parser  = ParserFactory.createParser( scanner, this, ParserMode.STRUCTURAL_PARSE, language, ParserUtil.getParserLogService() );
 		}
 		catch( ParserFactoryError pfe )
 		{

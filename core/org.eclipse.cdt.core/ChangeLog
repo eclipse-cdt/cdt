@@ -1,3 +1,10 @@
+2004-04-07 Alain Magloire
+
+	Using a complete parser is to heavy for the typeInfo
+	falling back to structural.
+
+	* browser/org/eclipse/cdt/internal/core/browser/cache/TypeMatchLocator.java
+
 2004-04-06 Alain Magloire
 
 	Cache the values in the info.

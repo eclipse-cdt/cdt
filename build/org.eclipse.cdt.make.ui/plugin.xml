@@ -122,7 +122,7 @@
          </action>
          <filter
                name="nature"
-               value="org.eclipse.cdt.make.core.StdMakeNature">
+               value="org.eclipse.cdt.make.core.makeNature">
          </filter>
       </objectContribution>
       <objectContribution
@@ -134,7 +134,7 @@
                <not>
                   <objectState
                         name="nature"
-                        value="org.eclipse.cdt.make.core.StdMakeNature">
+                        value="org.eclipse.cdt.make.core.makeNature">
                   </objectState>
                </not>
                <objectState

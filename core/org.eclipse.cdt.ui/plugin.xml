@@ -89,6 +89,14 @@
       </filter>
       <filter
             enabled="false"
+            name="%HideNonCProjects.label"
+            targetId="org.eclipse.cdt.ui.CView"
+            description="%HideNonCProjects.description"
+            class="org.eclipse.cdt.internal.ui.filters.NonCProjectsFilter"
+            id="org.eclipse.cdt.internal.ui.CView.NonCProjectsFilter">
+      </filter>
+      <filter
+            enabled="false"
             name="%HideNonCElements.label"
             targetId="org.eclipse.cdt.ui.CView"
             description="%HideNonCElements.description"

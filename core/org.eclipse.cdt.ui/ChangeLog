@@ -1,3 +1,12 @@
+2004-04-02 Alain Magloire
+
+	Add new filter to hide/show non C Projects.
+
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/filters/NonCProjectsFilter.java
+	* plugin.properties
+	* plugin.xml
+
 2004-04-01 Alain Magloire
 
 	New set of icons to experiment, from Chris.

@@ -154,6 +154,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			}
 		} else if (element instanceof IParent) {
 			return ((IParent)element).getChildren();
+		} else if (element instanceof IProject) {
+			return getResources((IProject)element);
 		} else if (element instanceof IFolder) {
 			return getResources((IFolder)element);
 		}
@@ -322,6 +324,14 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			return children;
 		}
 		return concatenate(children, objects);
+	}
+
+	private Object[] getResources(IProject project) {
+		try {
+			return project.members();
+		} catch (CoreException e) {
+		}
+		return NO_CHILDREN;
 	}
 
 	private Object[] getResources(IFolder folder) {

@@ -124,9 +124,9 @@ MIPlugin.getDefault().debugLog(line);
 					MIEvent event = new MIRunningEvent(type);
 					fireEvent(event);
 				} else if ("exit".equals(state)) {
-					session.getMIInferior().setTerminated();
-					MIEvent event = new MIExitEvent();
-					fireEvent(event);
+					//session.getMIInferior().setTerminated();
+					//MIEvent event = new MIExitEvent();
+					//fireEvent(event);
 				} else if ("connected".equals(state)) {
 					session.getMIInferior().setConnected();
 				}

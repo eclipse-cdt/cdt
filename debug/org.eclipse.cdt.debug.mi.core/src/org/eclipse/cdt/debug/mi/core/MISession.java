@@ -227,7 +227,9 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 		// Destroy any MI Inferior(Process)
 		inferior.destroy();
 
-		getEventQueue().addItem(new MIExitEvent());
+		// Tell the observers that the session
+		// is finish, but we can not use the Event Thread.
+		notifyObservers(new MIExitEvent());
 		
 		// send the exit(-gdb-exit).
 		try {

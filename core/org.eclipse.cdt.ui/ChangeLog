@@ -1,3 +1,7 @@
+2003-06-23 John Camelon
+	Updated Factory infrastructure, constructors, etc. 
+	Introduced Preprocessor class for transitive closure calc. client.  
+
 2003-06-20 Sean Evoy
 	Added (again) the icons required for the new managed project wizard and property pages
 	* icons/full/build16/config-command.gif

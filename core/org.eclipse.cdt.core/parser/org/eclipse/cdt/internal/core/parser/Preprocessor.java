@@ -10,21 +10,41 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-import org.eclipse.cdt.core.parser.ast.IASTFactory;
-import org.eclipse.cdt.internal.core.parser.ast.full.FullParseASTFactory;
-import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
+import java.io.Reader;
+import java.util.Map;
+
+import org.eclipse.cdt.core.parser.IPreprocessor;
+import org.eclipse.cdt.core.parser.ScannerException;
 
 /**
  * @author jcamelon
  *
  */
-public class ParserFactory {
+public class Preprocessor extends Scanner implements IPreprocessor {
 
-	public static IASTFactory createASTFactory( boolean quickParse )
+	/**
+	 * @param reader
+	 * @param filename
+	 * @param defns
+	 */
+	public Preprocessor(Reader reader, String filename, Map defns) {
+		super(reader, filename, defns);
+	}
+
+	public void process()
 	{
-		if( quickParse )
-			return new QuickParseASTFactory(); 
-		else
-			return new FullParseASTFactory(); 
+		try
+		{
+			while( true )
+				nextToken();
+		}
+		catch( ScannerException se )
+		{
+			// callback IProblem here
+		}
+		catch( Parser.EndOfFile eof )
+		{
+			// expected 
+		}
 	}
 }

@@ -76,7 +76,7 @@ public class ASTClassSpecifier extends ASTDeclaration implements IASTQClassSpeci
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getCurrentVisiblity()
 	 */
-	public AccessVisibility getCurrentVisiblity() {
+	public AccessVisibility getCurrentVisibilityMode() {
 		return access;
 	}
 

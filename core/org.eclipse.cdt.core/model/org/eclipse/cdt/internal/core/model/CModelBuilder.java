@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.model;
  *     Rational Software - initial implementation
  ******************************************************************************/
 
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +26,8 @@ import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.ArrayQualifier;
 import org.eclipse.cdt.internal.core.dom.ClassKey;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
@@ -50,7 +53,6 @@ import org.eclipse.cdt.internal.core.dom.TemplateParameter;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.Name;
-import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.core.resources.IProject;
 
 
@@ -68,8 +70,7 @@ public class CModelBuilder {
 		// Note - if a CModel client wishes to have a CModel with valid line numbers
 		// DOMFactory.createDOMBuilder should be given the parameter 'true'
 		DOMBuilder domBuilder = new DOMBuilder();  
-		String code = translationUnit.getBuffer().getContents();
-		IParser parser = new Parser(code, domBuilder, true);
+		IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( translationUnit.getBuffer().getContents() ), null, null, null, ParserMode.QUICK_PARSE ), domBuilder, ParserMode.QUICK_PARSE);
 		parser.mapLineNumbers(requiresLineNumbers);
 		if( translationUnit.getCProject() != null )
 		{

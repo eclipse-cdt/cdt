@@ -138,7 +138,7 @@ public class ASTClassSpecifier implements IASTFClassSpecifier, IPSTSymbolExtensi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getCurrentVisiblity()
 	 */
-	public AccessVisibility getCurrentVisiblity() {
+	public AccessVisibility getCurrentVisibilityMode() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -35,7 +35,7 @@ public class Name {
 	}
 
 	public String toString() {
-		Token t = nameStart;
+		IToken t = nameStart;
 		StringBuffer buffer = new StringBuffer(); 
 		buffer.append( t.getImage() ); 
 		if( t.getType() == IToken.t_operator )

@@ -1,3 +1,6 @@
+2003-06-23 John Camelon
+	Factory/constructor signature updates.  
+
 2003-06-17 Victor Mozgin
 	Added MacroTests.java (invocation in AllCoreTests).
 	Added MacroTests.c to resources.

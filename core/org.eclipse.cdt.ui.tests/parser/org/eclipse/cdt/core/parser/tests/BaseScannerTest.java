@@ -15,10 +15,12 @@ import java.io.StringReader;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.internal.core.parser.Parser;
-import org.eclipse.cdt.internal.core.parser.Scanner;
 
 /**
  * @author jcamelon
@@ -26,7 +28,7 @@ import org.eclipse.cdt.internal.core.parser.Scanner;
  */
 public class BaseScannerTest extends TestCase {
 
-	protected Scanner scanner;
+	protected IScanner scanner;
 	
 	public BaseScannerTest( String x )
 	{
@@ -35,8 +37,7 @@ public class BaseScannerTest extends TestCase {
 
 	public void initializeScanner(String input)
 	{
-		scanner= new Scanner(); 
-		scanner.initialize( new StringReader(input),"TEXT");
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", null, null, ParserMode.COMPLETE_PARSE );
 	}
 
 	public int fullyTokenize() throws Exception

@@ -8,22 +8,27 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser.ast;
-
-import java.util.Iterator;
+package org.eclipse.cdt.core.parser;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOffsetableNamedElement, IASTTemplatedDeclaration {
-
-	public ClassNameType getClassNameType(); 
-
-	public ClassKind getClassKind();
-
-	public Iterator getBaseClauses();
+public class ParserMode {
 	
-	public AccessVisibility getCurrentVisibilityMode(); 
-	 
+	// follow inclusions, parse function/method bodies
+	public static final ParserMode COMPLETE_PARSE = new ParserMode( 1 );
+	
+	// follow inclusions, do not parse function/method bodies
+	public static final ParserMode STRUCTURAL_PARSE = new ParserMode( 2 );
+	
+	// do not follow inclusions, do not parse function/method bodies
+	public static final ParserMode QUICK_PARSE = new ParserMode( 3 );
+	
+	private ParserMode( int value )
+	{
+		this.value = value;
+	}
+	
+	private final int value; 
 }

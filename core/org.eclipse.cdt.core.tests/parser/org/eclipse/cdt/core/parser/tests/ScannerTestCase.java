@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.Token;
@@ -851,7 +852,7 @@ public class ScannerTestCase extends BaseScannerTest
 		try
 		{
 			initializeScanner( "#if X + 5 < 7\n  int found = 1;\n#endif" );
-			scanner.setQuickScan( true );
+			scanner.setMode( ParserMode.QUICK_PARSE );
 			validateToken( IToken.t_int ); 
 			validateIdentifier( "found" ); 
 			validateToken( IToken.tASSIGN ); 
@@ -868,7 +869,7 @@ public class ScannerTestCase extends BaseScannerTest
 		try
 		{
 			initializeScanner( "#if 0\n  int error = 666;\n#endif" ); 
-			scanner.setQuickScan( true ); 
+			scanner.setMode( ParserMode.COMPLETE_PARSE ); 
 			validateEOF(); 
 		}
 		catch( ScannerException se )
@@ -905,11 +906,7 @@ public class ScannerTestCase extends BaseScannerTest
 				initializeScanner("#include <Windows.h>");
 				prepareForWindowsH();
 				int count= fullyTokenize();
-				if (verbose)
-					System.out.println(
-						"For Windows.h, Scanner produced "
-							+ scanner.getCount()
-							+ " tokens");
+
 				validateBalance();
 			}
 
@@ -919,11 +916,6 @@ public class ScannerTestCase extends BaseScannerTest
 				prepareForWindowsRH();
 				validateEOF();
 				validateBalance();
-				if (verbose)
-					System.out.println(
-						"For WinUser.rh, Scanner produced "
-							+ scanner.getCount()
-							+ " tokens");
 			}
 		}
 		catch (Exception e)

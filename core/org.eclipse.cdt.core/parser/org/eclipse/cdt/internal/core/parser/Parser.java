@@ -11,15 +11,13 @@
 
 package org.eclipse.cdt.internal.core.parser;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserCallback;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.AccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ClassKind;
@@ -49,7 +47,7 @@ public class Parser implements IParser {
 	private static int DEFAULT_OFFSET = -1;			// sentinel initial value for offsets  
 	private int firstErrorOffset = DEFAULT_OFFSET;	// offset where the first parse error occurred
 	private IParserCallback callback;				// the parser callback that was registered with us
-	private boolean quickParse = false;				// are we doing the high-level parse, or an in depth parse? 
+	private ParserMode mode = ParserMode.COMPLETE_PARSE; // are we doing the high-level parse, or an in depth parse? 
 	private boolean parsePassed = true;				// did the parse pass?
 	private boolean cppNature = true;				// true for C++, false for C
 	private ISourceElementRequestor requestor = null; // new callback mechanism 
@@ -77,86 +75,18 @@ public class Parser implements IParser {
 	 * @param c				IParserCallback instance that will receive callbacks as we parse
 	 * @param quick			Are we asking for a high level parse or not? 
 	 */
-	public Parser(IScanner s, IParserCallback c, boolean quick) {
+	public Parser(IScanner s, IParserCallback c, ParserMode m) {
 		callback = c;
 		scanner = s;
 		if( c instanceof ISourceElementRequestor )
 			setRequestor( (ISourceElementRequestor)c );
-		quickParse = quick;
-		astFactory = ParserFactory.createASTFactory( quick );
-		scanner.setQuickScan(quick);
+		mode = m;
+		astFactory = ParserFactory.createASTFactory( m );
+		scanner.setMode( m );
 		scanner.setCallback(c);
 		scanner.setASTFactory( astFactory );
 	}
 
-	
-	/**
-	 * An additional constructor provided for ease of use and tezting.  
-	 * 
-	 * @param s				IScanner instance that has been initialized to the code input 
-	 * @param c				IParserCallback instance that will receive callbacks as we parse
-	 */
-	public Parser(IScanner s, IParserCallback c) {
-		this(s, c, false);
-	}
-
-	/**
-	 * An additional constructor provided for ease of use and tezting.  
-	 * 
-	 * @param s				IScanner instance that has been initialized to the code input 
-	 */	
-	public Parser( IScanner s) {
-		this(s, new NullSourceElementRequestor(), false);
-	}
-	
-	
-	/**
-	 * An additional constructor provided for ease of use and tezting.
-	 *
-	 * * @param code	The code that we wish to parse
-	 */
-	public Parser(String code) {
-		this(new Scanner().initialize( new StringReader( code ), null
-));
-	}
-
-	/**
-	 * An additional constructor provided for ease of use and tezting.
-	 * 
-	 * @param code		The code that we wish to parse
-	 * @param c			IParserCallback instance that will receive callbacks as we parse
-	 */
-	public Parser(String code, IParserCallback c) {
-		this(new Scanner().initialize( new StringReader( code ), null
-), c, false);
-	}
-
-
-	/**
-	 * An additional constructor provided for ease of use and tezting.
-	 * 
-	 * @param code			The code that we wish to parse
-	 * @param c				IParserCallback instance that will receive callbacks as we parse
-	 * @param quickParse	Are we asking for a high level parse or not?
-	 */
-	public Parser(String code, IParserCallback c, boolean quickParse ) {
-		this(new Scanner().initialize( new StringReader( code ), null
-), c, quickParse);
-	}
-
-
-	/**
-	 * An additional constructor provided for ease of use and tezting.
-	 * 
-	 * @param stream		An InputStream represnting the code that we wish to parse
-	 * @param c				IParserCallback instance that will receive callbacks as we parse
-	 * @param quickParse	Are we asking for a high level parse or not?
-	 */
-	public Parser(InputStream stream, IParserCallback c, boolean quickParse) {
-		this(new Scanner().initialize( new InputStreamReader(stream), null ), 
-c, quickParse);
-	}
-	
 	private static int parseCount = 0;		// counter that keeps track of the number of times Parser.parse() is called  
 	
 	
@@ -788,7 +718,8 @@ c, quickParse);
                 if (forKR) throw backtrack;                
 				Object function = null; 
 				try{ function = callback.functionBodyBegin(simpleDecl ); } catch( Exception e ) {}
-				if (quickParse) {
+				
+				if ( mode == ParserMode.QUICK_PARSE ) {
 					// speed up the parser by skiping the body
 					// simply look for matching brace and return
 					consume(IToken.tLBRACE);
@@ -868,7 +799,7 @@ c, quickParse);
 		catch( Backtrack bt )
 		{
 			try { callback.constructorChainAbort( constructorChain );} catch( Exception e ) {} 
-			if( ! quickParse )
+			if( mode != ParserMode.QUICK_PARSE )
 				throw backtrack;  
 		}
 		

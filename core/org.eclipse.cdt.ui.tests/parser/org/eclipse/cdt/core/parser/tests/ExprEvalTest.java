@@ -1,12 +1,14 @@
 package org.eclipse.cdt.core.parser.tests;
 
+import java.io.StringReader;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.internal.core.parser.ExpressionEvaluator;
-import org.eclipse.cdt.internal.core.parser.Parser;
 
 public class ExprEvalTest extends TestCase {
 
@@ -20,7 +22,7 @@ public class ExprEvalTest extends TestCase {
 	
 	public void runTest(String code, int expectedValue) throws Exception {
 		ExpressionEvaluator evaluator = new ExpressionEvaluator();
-		IParser parser = new Parser(code, evaluator);
+		IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), null, null, null, null ), evaluator, null);;
 		parser.expression(null);
 		assertEquals(expectedValue, ((Integer)evaluator.getResult()).intValue());
 	}

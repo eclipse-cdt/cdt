@@ -15,13 +15,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import junit.framework.Test;
 
-import org.eclipse.cdt.internal.core.parser.Parser;
+import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -234,7 +237,8 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 		public void run(){
 			try{
 				result = null;
-				Parser parser = new Parser( code, nullCallback, true);
+				IParser parser = ParserFactory.createParser( 
+					ParserFactory.createScanner( new StringReader( code ), null, null, null, ParserMode.QUICK_PARSE ), nullCallback, ParserMode.QUICK_PARSE);
 				parser.setCppNature( cppNature );
 				parser.mapLineNumbers(true);
 				parser.parse();

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -31,6 +32,8 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerContext;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
@@ -44,12 +47,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMacro;
 
 public class Scanner implements IScanner {
 
-	public IScanner initialize(Reader reader, String filename) {
-		init(reader, filename);
-		return this;
-	}
-
-	protected void init(Reader reader, String filename) {
+	public Scanner(Reader reader, String filename, Map defns) {
 		try {
 			//this is a hack to get around a sudden EOF experience
 			contextStack.push(
@@ -65,14 +63,8 @@ public class Scanner implements IScanner {
 		} catch( ScannerException se ) {
 			//won't happen since we aren't adding an include or a macro
 		} 
-	}
-
-	public Scanner() {
-	}
-
-	protected Scanner(Reader reader, String filename, Hashtable defns) {
-		initialize(reader, filename);
-		definitions = defns;
+		if( defns != null )
+			definitions.putAll( defns );
 	}
 
 
@@ -83,6 +75,7 @@ public class Scanner implements IScanner {
 	}
 
 	public void overwriteIncludePath(List newIncludePaths) {
+		if( newIncludePaths == null ) return;
 		includePathNames = null;
 		includePaths = null; 
 		includePathNames = new ArrayList();
@@ -223,7 +216,7 @@ public class Scanner implements IScanner {
 		}
 	}
 
-	private void setCurrentToken(Token t) {
+	private void setCurrentToken(IToken t) {
 		if (currentToken != null)
 			currentToken.setNext(t);
 		currentToken = t;
@@ -235,12 +228,12 @@ public class Scanner implements IScanner {
 			storageBuffer = null; 
 	}
 
-	protected Token newToken(int t, String i, IScannerContext c) {
+	protected IToken newToken(int t, String i, IScannerContext c) {
 		setCurrentToken(new Token(t, i, c));
 		return currentToken;
 	}
 
-	protected Token newToken(int t, String i) {
+	protected IToken newToken(int t, String i) {
 		setCurrentToken(new Token(t, i));
 		return currentToken;
 	}
@@ -345,8 +338,8 @@ public class Scanner implements IScanner {
 	private static HashMap cKeywords = new HashMap(); 
 	private static HashMap ppDirectives = new HashMap();
 
-	private Token currentToken = null;
-	private Token cachedToken = null;
+	private IToken currentToken = null;
+	private IToken cachedToken = null;
 
 	private boolean passOnToClient = true; 
 	private BranchTracker branches = new BranchTracker();
@@ -368,9 +361,10 @@ public class Scanner implements IScanner {
 		tokenizingMacroReplacementList = mr;
 	}
 	
-	private boolean quickScan = false;
-	public void setQuickScan(boolean qs) {
-		quickScan = qs;
+	private ParserMode mode = ParserMode.COMPLETE_PARSE;
+	
+	public void setMode(ParserMode mode) {
+		this.mode = mode;
 	}
 
 	private IParserCallback callback;
@@ -485,7 +479,7 @@ public class Scanner implements IScanner {
 	}
 
 
-	protected Token nextToken( boolean pasting ) throws ScannerException, Parser.EndOfFile
+	public IToken nextToken( boolean pasting ) throws ScannerException, Parser.EndOfFile
 	{
 		if( cachedToken != null ){
 			setCurrentToken( cachedToken );
@@ -569,16 +563,16 @@ public class Scanner implements IScanner {
 					
 					//If the next token is going to be a string as well, we need to concatenate
 					//it with this token.
-					Token returnToken = newToken( type, buff.toString(), contextStack.getCurrentContext());
-					Token next = null;
+					IToken returnToken = newToken( type, buff.toString(), contextStack.getCurrentContext());
+					IToken next = null;
 					try{
 						next = nextToken( true );
 					} catch( Parser.EndOfFile e ){ 
 						next = null;
 					}
 					
-					while( next != null && next.type == returnToken.type ){
-						returnToken.image += next.image;
+					while( next != null && next.getType()  == returnToken.getType() ){
+						returnToken.setImage( returnToken.getImage() + next.getImage() ); 
 						returnToken.setNext( null );
 						currentToken = returnToken; 
 						try{ 
@@ -895,7 +889,7 @@ public class Scanner implements IScanner {
 							// definition 
 							String toBeUndefined = getNextIdentifier();
 							
-							if( ( definitions.remove(toBeUndefined) == null ) && ! quickScan ) 
+							if( ( definitions.remove(toBeUndefined) == null ) && mode == ParserMode.COMPLETE_PARSE ) 
 								throw new ScannerException( "Attempt to #undef symbol " + toBeUndefined + " when it was never defined");
 							
 							skipOverTextUntilNewline();
@@ -993,7 +987,7 @@ public class Scanner implements IScanner {
 
 							String error = getRestOfPreprocessorLine();
 
-							if (!quickScan) {
+							if (mode == ParserMode.COMPLETE_PARSE) {
 								throw new ScannerException("#error " + error);
 							}
 							c = getChar();
@@ -1379,7 +1373,7 @@ public class Scanner implements IScanner {
     // the static instance we always use
     protected static endOfMacroTokenException endOfMacroToken = new endOfMacroTokenException();
     
-    protected IToken nextTokenForStringizing() throws ScannerException, Parser.EndOfFile
+    public IToken nextTokenForStringizing() throws ScannerException, Parser.EndOfFile
     {     
         int c = getChar();
         StringBuffer tokenImage = new StringBuffer();
@@ -1648,7 +1642,7 @@ public class Scanner implements IScanner {
 	protected boolean evaluateExpression(String expression )
 		throws ScannerException {
 			
-		if( quickScan )
+		if( mode == ParserMode.QUICK_PARSE )
 		{
 			if( expression.trim().equals( "0" ) )
 				return false; 
@@ -1659,13 +1653,13 @@ public class Scanner implements IScanner {
 			Object expressionEvalResult = null;
 			try {
 				ExpressionEvaluator evaluator = new ExpressionEvaluator();
-				Scanner trial =
-					new Scanner(
-						// Semicolon makes this valid C (hopefully)
+				IScanner trial =
+					ParserFactory.createScanner(
 						new StringReader(expression + ";"),
 						EXPRESSION,
-						definitions);
-				IParser parser = new Parser(trial, evaluator);
+						definitions, 
+						null, ParserMode.COMPLETE_PARSE );
+				IParser parser = ParserFactory.createParser(trial, evaluator, ParserMode.COMPLETE_PARSE );
 				parser.expression(null); 
 				
 				expressionEvalResult = evaluator.getResult();
@@ -1792,7 +1786,7 @@ public class Scanner implements IScanner {
 		String f = fileName.toString();
 		offset = contextStack.getCurrentContext().getOffset() - f.length() - 1; // -1 for the end quote
 		
-		if( quickScan )
+		if( mode == ParserMode.QUICK_PARSE )
 		{ 
 			if( callback != null )
 			{
@@ -1818,7 +1812,7 @@ public class Scanner implements IScanner {
 		String key = getNextIdentifier();
 		int offset = contextStack.getCurrentContext().getOffset() - key.length() - contextStack.getCurrentContext().undoStackSize();
 
-		if (!quickScan) {
+		if (mode == ParserMode.COMPLETE_PARSE) {
 			String checkForRedefinition = (String) definitions.get(key);
 			if (checkForRedefinition != null) {
 				throw new ScannerException(
@@ -1884,21 +1878,18 @@ public class Scanner implements IScanner {
 			
 			if( ! replacementString.equals( "" ) )
 			{
-				Scanner helperScanner = new Scanner();
-				helperScanner.initialize(
-					new StringReader(replacementString),
-					null);
+				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, null, null, mode );
 				helperScanner.setTokenizingMacroReplacementList( true );
-				Token t = helperScanner.nextToken(false);
+				IToken t = helperScanner.nextToken(false);
 	
 				try {
 					while (true) {
 						//each # preprocessing token in the replacement list shall be followed
 						//by a parameter as the next reprocessing token in the list
-						if( t.type == tPOUND ){
+						if( t.getType() == tPOUND ){
 							macroReplacementTokens.add( t );
 							t = helperScanner.nextToken(false);
-							int index = parameterIdentifiers.indexOf(t.image);
+							int index = parameterIdentifiers.indexOf(t.getImage());
 							if (index == -1 ) {
 								//not found
 								if (throwExceptionOnBadPreprocessorSyntax)
@@ -1985,7 +1976,7 @@ public class Scanner implements IScanner {
     
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        Scanner tokenizer = new Scanner(new StringReader(params), TEXT, definitions);
+        IScanner tokenizer  = ParserFactory.createScanner(new StringReader(params), TEXT, definitions, null, mode );
         Vector parameterValues = new Vector();
         Token t = null;
         String str = new String();

@@ -13,14 +13,17 @@ package org.eclipse.cdt.core.parser.tests;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.Reader;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
 import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
@@ -29,7 +32,6 @@ import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.Parser;
-import org.eclipse.cdt.internal.core.parser.Scanner;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -53,9 +55,7 @@ public class LineNumberTest extends TestCase {
 	
 	public void testLineNos() throws Exception
 	{
-		Scanner scanner = new Scanner(); 
-		Reader reader = new StringReader( "int x = 3;\n foo\nfire\nfoe ");
-		scanner.initialize( reader, "string");
+		IScanner scanner = ParserFactory.createScanner( new StringReader( "int x = 3;\n foo\nfire\nfoe " ), "string", null, null, null );
 		scanner.mapLineNumbers(true);
 		IToken t = scanner.nextToken(); 
 		assertEquals( t.getType(), IToken.t_int );
@@ -92,7 +92,7 @@ public class LineNumberTest extends TestCase {
 	public void testDOMLineNos() throws Exception
 	{
 		DOMBuilder domBuilder = new DOMBuilder();
-		IParser parser = new Parser( fileIn, domBuilder, true ); 
+		IParser parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader( fileIn ), null, null, null, ParserMode.QUICK_PARSE ), domBuilder, ParserMode.QUICK_PARSE ); 
 		parser.mapLineNumbers(true); 
 		if( ! parser.parse() ) fail( "Parse of file failed");
 		

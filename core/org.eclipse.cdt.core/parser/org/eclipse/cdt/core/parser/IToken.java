@@ -20,12 +20,13 @@ public interface IToken {
 	public abstract String toString();
 	public abstract int getType();
 	public abstract String getImage();
+	public void setImage( String i ); 
 	public abstract int getOffset();
 	public abstract int getLength();
 	public abstract int getEndOffset();
 	public abstract int getDelta(IToken other);
-	public abstract Token getNext();
-	public abstract void setNext(Token t);
+	public abstract IToken getNext();
+	public abstract void setNext(IToken t);
 	public abstract boolean looksLikeExpression();
 	public abstract boolean isPointer();
 	public abstract boolean isOperator();

@@ -61,9 +61,9 @@ public class Token implements IToken {
 		return other.getOffset() + other.getLength() - getOffset();
 	}
 	
-	private Token next;
-	public Token getNext() { return next; }
-	public void setNext(Token t) { next = t; }
+	private IToken next;
+	public IToken getNext() { return next; }
+	public void setNext(IToken t) { next = t; }
 	
 	public boolean looksLikeExpression()
 	{
@@ -139,6 +139,13 @@ public class Token implements IToken {
 			default:
 				return false;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IToken#setImage()
+	 */
+	public void setImage( String i ) {
+		image = i; 
 	}
 
 }

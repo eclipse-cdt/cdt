@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.parser.tests;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
@@ -21,7 +22,8 @@ import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.internal.core.parser.Parser;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.core.runtime.Path;
 
 
@@ -51,14 +53,10 @@ public class AutomatedTest extends AutomatedFramework {
 			FileInputStream stream = new FileInputStream( file );
 
 			String filePath = file.getCanonicalPath();
-			String nature = (String)natures.get( filePath );
-			
-			boolean cppNature = nature.equalsIgnoreCase("cpp");
-			
-			parser = new Parser( stream, nullCallback, true);
-			parser.setCppNature( cppNature );
+			parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader (stream), filePath, null, null, ParserMode.QUICK_PARSE ), nullCallback, ParserMode.QUICK_PARSE);
+			parser.setCppNature( ((String)natures.get( filePath )).equalsIgnoreCase("cpp") );
 			parser.mapLineNumbers(true);
-			
+		
 			assertTrue( parser.parse() );
 		} 
 		catch( Throwable e )

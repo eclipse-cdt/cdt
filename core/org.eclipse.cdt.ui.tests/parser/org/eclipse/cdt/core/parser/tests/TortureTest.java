@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -22,8 +23,9 @@ import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
-import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.core.runtime.Path;
 
 
@@ -200,7 +202,8 @@ public class TortureTest extends FractionalAutomatedTest {
 		public void run(){
 			try {           
 				DOMBuilder domBuilder = new DOMBuilder(); 
-				parser = new Parser(code.toString(), domBuilder, quickParse);
+				IParser parser = ParserFactory.createParser( 
+					ParserFactory.createScanner( new StringReader( code ), null, null, null, ParserMode.QUICK_PARSE ), nullCallback, ParserMode.QUICK_PARSE);
 	
 				parser.setCppNature(cppNature);
 				parser.mapLineNumbers(true);

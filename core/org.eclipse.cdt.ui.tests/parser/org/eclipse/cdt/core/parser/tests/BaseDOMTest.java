@@ -10,12 +10,15 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
+import java.io.StringReader;
+
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
-import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
@@ -36,7 +39,8 @@ public class BaseDOMTest extends TestCase {
 	
 	public TranslationUnit parse(String code, boolean quickParse, boolean throwOnError ) throws Exception {
 		DOMBuilder domBuilder = new DOMBuilder(); 
-		IParser parser = new Parser(code, domBuilder, quickParse );
+		ParserMode mode = quickParse ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
+		IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), null, null, null, mode ), domBuilder, mode );
 		if( ! parser.parse() )
 			if( throwOnError ) throw new ParserException( "Parse failure" );
 			else domBuilder.getTranslationUnit().setParseSuccessful( false ); 

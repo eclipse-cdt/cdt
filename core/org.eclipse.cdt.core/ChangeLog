@@ -1,3 +1,10 @@
+2005-03-14 Alain Magloire
+	Fix NPEs: PathEntryManager should be created first, since it will
+	be use by other components.
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* plugin.xml
+
 2005-03-14 Bogdan Gheorghe
 	Added a NPE check to path entry manager
 

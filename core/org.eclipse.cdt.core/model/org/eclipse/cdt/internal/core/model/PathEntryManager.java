@@ -1542,12 +1542,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				IIncludeEntry include = (IIncludeEntry)entry;
 
 				IPath basePath = include.getBasePath();
-				if (varManager != null)
-					basePath = varManager.resolvePath(basePath);
+				basePath = varManager.resolvePath(basePath);
 
 				IPath includePath = include.getIncludePath();
-				if (varManager != null)
-					includePath = varManager.resolvePath(includePath);
+				includePath = varManager.resolvePath(includePath);
 				
 				return CoreModel.newIncludeEntry(resourcePath, basePath, includePath,
 						include.isSystemInclude(), include.getExclusionPatterns(), include.isExported());

@@ -475,15 +475,15 @@
 		  priority="high"/>
 	  <!-- declares a content type for C header files -->
       <content-type id="cHeader" name="%cHeaderName" 
-          base-type="org.eclipse.core.runtime.text"
+          base-type="org.eclipse.cdt.core.cSource"
           priority="high"/>
 	  <!-- declares a content type for C++ source files -->
       <content-type id="cxxSource" name="%cxxSourceName" 
-          base-type="org.eclipse.core.runtime.text"
+          base-type="org.eclipse.cdt.core.cSource"
           priority="high"/>
 	  <!-- declares a content type for C++ header files -->
       <content-type id="cxxHeader" name="%cxxHeaderName" 
-          base-type="org.eclipse.core.runtime.text"
+          base-type="org.eclipse.cdt.core.cxxSource"
           priority="high"/>
 	  <!-- declares a content type for ASM Source files -->
       <content-type id="asmSource" name="%asmSourceName" 
@@ -491,36 +491,36 @@
           priority="high"/>
   </extension>
 
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+  <!--extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cSource"
        file-extensions="c"/>
-   </extension> 
+   </extension--> 
 
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <!--extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxSource"
        file-extensions="cpp,cxx,cc"/>
-   </extension> 
+   </extension--> 
 
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <!--extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-extensions="hpp,hh"/>
-   </extension> 
+   </extension--> 
 
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <!--extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cHeader"
        file-extensions="h"/>
-   </extension> 
+   </extension--> 
 
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <!--extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.asmSource"
        file-extensions="asm,s"/>
-   </extension> 
-
+   </extension-->
+ 
 <!-- =================================================================================== -->
 <!-- Initialize the preference for the Core Plugin                                       -->
 <!-- =================================================================================== -->

@@ -236,6 +236,10 @@ public class CCorePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
+		// Start file type manager first !!
+		fPathEntryVariableManager = new PathEntryVariableManager();
+		fPathEntryVariableManager.startup();
+
 		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
 		
 		//Set debug tracing options
@@ -252,10 +256,6 @@ public class CCorePlugin extends Plugin {
 
 		// Set the default for using the structual parse mode to build the CModel
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
-
-		// Start file type manager
-		fPathEntryVariableManager = new PathEntryVariableManager();
-		fPathEntryVariableManager.startup();
 
 	}
     

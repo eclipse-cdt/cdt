@@ -6,21 +6,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Selecting a binary parser</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
-<script language="JavaScript">
-function changeSize(theImage,wd,ht) {
-	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
-	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
-	else {wdth=wd;hght=ht;}
-	theImage.style.width=wdth; theImage.style.height=hght;
-}
-</script>
 </head>
 <body>
 <h1>Selecting a binary parser</h1>
 
 <p>Selecting the correct parser is important to ensure the accuracy of the C/C++ 
 Projects view and the ability to successfully run and debug your programs. Windows users should select the 
-PE Windows Parser. Solaris, UNIX and Linux users should select the Elf Parser. When 
+PE Windows Parser. UNIX and Linux users should select the Elf Parser. When 
 you select the correct parser for your development environment and build your 
 project, you can view the components of the .o file in the C/C++ Projects view 
 and view the contents of the .o file in the C/C++ editor.</p>
@@ -35,11 +27,13 @@ project properties in the Preferences window for future standard make projects.<
   <li>To set properties for future Standard Make projects, click <b>Window &gt; 
   Preferences </b>. Expand<b> C/C++,</b> click <b>New Make Projects</b>.</li>
   <li>Click the <b>Binary Parser</b> tab.<br>
-  <img src="../images/new_make-binary_parser.png" width="333" height="306" onClick="changeSize(this,333,306);" 
-       alt="Screen Capture for creating a new project" title="click to toggle image size"></li>
+  <img src="../images/new_make-binary_parser.png" alt="Select Binary Parser window"></li>
   <li>In the <b>Binary Parser</b> list, click:</li>
-  <ul><li><b>Elf Parser</b>, if you are a Solaris, UNIX, or Linux user.</li>
-  <li><b>PE Windows Parser</b>, if you are a Windows user.</li></ul>
+  <ul>
+  	<li><b>Elf Parser</b>, if you are a Solaris, UNIX, or Linux user.</li>
+  	<li><b>PE Windows Parser</b>, if you are a Windows user.</li>
+	<li><b>Cygwin PE Parser</b>, if you are using Cygwin.</li>
+  </ul>
   <li>Click <b>OK</b>.</li>
 </ol>
 

@@ -4,13 +4,13 @@
 <head>
 	<meta http-equiv="Content-Language" content="en-us">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>CDT projects</title>
+	<title>Building C/C++ projects</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
 <h1>Building C/C++ projects</h1>
 
-<p>The CDT uses the same make utility and makefile used on the command line. 
+<p>The CDT relies on an external mae utility, such as GNU make, to build a project.  
 The CDT can generate makefiles automatically when you create a Managed Make C project or a Managed Make C++ project. 
 You have the option of creating a Standard Make C project or a Standard Make C++ project and providing the makefile.</p>
 <h2>Required utilities</h2>
@@ -21,13 +21,10 @@ You have the option of creating a Standard Make C project or a Standard Make C++
   <li>Debug (such as gdb). For more information, see <a href="http://sources.redhat.com/gdb/">http://sources.redhat.com/gdb/</a>.</li>
 </ul>
 
-<p>Cygwin contains these utilities for a Windows environment, while running the cygwin installation ensure <tt>gcc</tt> and <tt>make</tt> are selected, they are not installed by default. 
+<p><b>Tip: </b>Cygwin contains these utilities for a Windows environment, while running the cygwin installation ensure <tt>gcc</tt> and <tt>make</tt> are selected, they are not installed by default. 
 For more information, see <a href="http://www.cygwin.com">http://www.cygwin.com</a>. Red Hat users, all you need to build your project is included in the Red Hat Linux installation.
 For other operating systems please refer to your installation documentation.</p>
 </p>
-<p>To test if your compiler was installed correctly open a command prompt or terminal window and type <tt>g++</tt> or <tt>make</tt>. 
-An error message stating the command was not found or not recognized means that the utility is not installed or your path is not configured correctly.</p>  
-<p>To check your path at a command prompt and the appropriate path command (i.e. enter <tt>PATH</tt> for windows users or <tt>echo $PATH</tt> for linux users).  Make sure that the path to your build utility is defined (example <tt>PATH=c:\cygwin\bin</tt>).<p>
 
 <h2>Build terminology</h2>
 
@@ -35,17 +32,13 @@ An error message stating the command was not found or not recognized means that 
 
 <h3>Build Project</h3>
 
-<p>This is an incremental build (make all). Only the components affected by modified files in that particular 
-project are built.</p>
+<p>This is an incremental build (make all, assuming all is defined in your makefile). Only the components affected by modified files in that particular project are built.</p>
 
 <h3>Rebuild Project</h3>
 
-<p>Builds every file in the project whether or not a file has been modified since 
-the last build. A rebuild is a clean followed by a 
-build.</p>
+<p>Builds every file in the project whether or not a file has been modified since the last build. A rebuild is a clean followed by a build.</p>
 
 <p>For more information on builds, see:</p>
-
 <ul>
   <li><b>Workbench User Guide &gt; Concepts &gt; Workbench &gt; Builds</b></li>
   <li><b>Workbench User Guide &gt; Tasks &gt; Building resources</b></li>
@@ -55,39 +48,21 @@ build.</p>
 
 <ul>
   <li>The Console view displays the output of the make utility.</li>
-  <li>The Tasks view displays a list of compiler errors and warnings related to 
-  your projects.</li>
-  <li>Makefile actions are displayed in the Make Targets view.</li>
+  <li>The Tasks view displays a list of compiler errors and warnings related to your projects.</li>
+  <li>Makefile targets are displayed in the Make Targets view.</li>
 </ul>
 
-<p>For more information about the Tasks view, see <b>Workbench User Guide &gt; Reference &gt; User interface information &gt; Views and editors &gt; Tasks 
-view</b>.</p>
+<p>For more information about the Tasks view, see <b>Workbench User Guide &gt; Reference &gt; User interface information &gt; Views and editors &gt; Tasks view</b>.</p>
 
 <h2>Getting a makefile</h2>
 
-<p>You can either create a C project for which you supply the 
+<p>You can either create a C project for which you supply the <b>makefile</b> or create a C project for which the CDT generates makefiles automatically.</p>
 
-<b>makefile</b> 
-or create a C project for which the CDT generates makefiles automatically.
-</p>
-
-<p>To create a new project, from the menu bar choose 
-<b>File > New > Project</b>.
-In the dialog that appears:
-</p>
+<p>To create a new project, from the menu bar choose <b>File > New > Project</b>. In the dialog that appears:</p>
 
 <ul>
-<li>To create a project for which you supply the <b>makefile</b>,
-select either
-<b>Standard Make C project</b> or 
-
-<b>Standard Make C++ project</b>. 
-</li>
-<li>To create a project for which the CDT supplies a basic 
-<b>makefile</b>, select either
-<b>Managed Make C project</b> or 
-<b>Managed Make C++ project</b>. 
-</li>
+	<li>To create a project for which you supply the <b>makefile</b>, select either <b>Standard Make C project</b> or <b>Standard Make C++ project</b>. </li>
+	<li>To create a project for which the CDT supplies a basic  <b>makefile</b>, select either <b>Managed Make C project</b> or <b>Managed Make C++ project</b>. </li>
 </ul>
 
 <h2>Setting build preferences</h2>
@@ -95,75 +70,41 @@ select either
 <p>You can set build preferences in Eclipse:</p>
 
 <dl>
-<dt>Build order</dt>
-<dd>If certain projects must be built before others, 
-you can set the <i>build order</i>. 
-If your project refers to another project, the CDT must build the other project first.
-To set the build order, from the menu bar select
-<b>Window &gt; Preferences &gt; 
-Build Order</b>.
-<p>When you set the build order, the CDT does not rebuild projects 
-that depend 
-on a project; you must rebuild all projects to ensure all changes are 
-propagated.
-</p>
-
-</dd>
-
-<dt>Automatic save</dt>
-
-<dd>You can set the CDT to perform an <i>automatic save</i> of all modified resources 
-when you perform a manual build; from the menu bar, select 
-<b>Windows &gt; Preferences &gt; Workbench</b>.
-By default, this feature is disabled.
-</dd>
+	<dt>Build order</dt>
+		<dd>If certain projects must be built before others, you can set the <i>build order</i>. 
+			If your project refers to another project, the CDT must build the other project first.
+			To set the build order, from the menu bar select <b>Window &gt; Preferences &gt; Build Order</b>.
+			<p>When you set the build order, the CDT does not rebuild projects that depend on a project; 
+			you must rebuild all projects to ensure all changes are propagated.</p></dd>
+	<dt>Automatic save</dt>
+		<dd>You can set the CDT to perform an <i>automatic save</i> of all modified resources when you perform a manual build; 
+			from the menu bar, select <b>Windows &gt; Preferences &gt; Workbench</b>.By default, this feature is enabled.</dd>
 </dl>
 
 <h2>Controlling the building of your project</h2>
 
-<p>The C/C++ compiler that a project uses is controlled by the project's 
-<b>Properties</b> setting.
-To view a project's properties, right-click on the project and select 
-<b>Properties</b>.
-In the dialog that appears, the 
-<b>C/C++ Make Project</b> page enables you 
-to control a variety of settings, including:</p>
-
+<p>The C/C++ compiler that a project uses is controlled by the project's <b>Properties</b> setting.
+To view a project's properties, right-click on the project and select <b>Properties</b>.
+In the dialog that appears, the <b>C/C++ Make Project</b> page enables you to control a variety of settings, including:</p>
 <dl>
-<dt>Build Setting</dt>
-
-<dd>Controls whether the compiler will <b>Stop On Error</b>
-or <b>Keep Going On Error</b>.
-Choosing <b>Keep Going On Error</b> will force the compiler to 
-attempt to build all referenced projects even if the current project has errors.
-</dd>
-<dt>Build Command</dt>
-<dd>Controls which compiler is used.
-By default the compiler is <b>C Builder</b> 
-(<b>gcc</b>).</dd>
-
-<dt>Workbench Build Behavior</dt>
-<dd>Controls the auto-build on save feature and what operations
-are performed during a build and rebuild.</dd>
+	<dt>Build Setting</dt>
+		<dd>Controls whether the compiler will <b>Stop On Error</b>or <b>Keep Going On Error</b>.
+				Choosing <b>Keep Going On Error</b> will force the compiler to attempt to build all referenced projects even if the current project has errors.</dd>
+	<dt>Build Command</dt>
+		<dd>Controls which make is used.</dd>
+	<dt>Workbench Build Behavior</dt>
+		<dd>Controls which makefile target will be built depending on the scope of the build.</dd>
 </dl>
-
-<p>The <b>External Tools Builders</b> page
-enables you to add, reorder, or remove external build tools.
-</p>
 
 <h2>Viewing build information</h2>
 
-<p>Build-related information is displayed as follows:
-</p>
-
+<p>Build-related information is displayed as follows: </p>
 <ul>
-<li>The <b>Console</b> view displays the output of the make utility.</li>
-<li>The <b>Tasks</b> view displays a list 
-of compiler errors and warnings related to your projects.  
-</li>
-<li>Build actions display in the <b>Make Targets</b> view.</li>
-
+	<li>The <b>Console</b> view displays the output of the make utility.</li>
+	<li>The <b>Tasks</b> view displays a list of compiler errors and warnings related to your projects.  </li>
+	<li>Build actions display in the <b>Make Targets</b> view.</li>
 </ul>
+
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>
 <a href="cdt_c_projects.htm">CDT Projects</a><br>

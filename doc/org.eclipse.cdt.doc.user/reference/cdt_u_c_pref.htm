@@ -6,21 +6,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>C/C++ preferences</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
-<script language="JavaScript">
-function changeSize(theImage,wd,ht) {
-	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
-	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
-	else {wdth=wd;hght=ht;}
-	theImage.style.width=wdth; theImage.style.height=hght;
-}
-</script>
 </head>
-<!--INFOPOP
-View information about your program C/C++ environment.
-END INFOPOP-->
 <body>
 
-<h1>C/C++ page, Preferences window</h1>
+<h1>C/C++ preferences</h1>
 
 <p>The C/C++ Preference dialog box allows you to make changes to your C/C++ environment.</p>
 <p><img src="../images/c_cpp_preferences.png" alt="C/C++ Main Preferences Window"></p>
@@ -30,7 +19,9 @@ END INFOPOP-->
   <dt>Show file members in Project View</dt>
   <dd>Select this checkbox to browse your C and C++ file members in the Projects view.</dd>
   <dt>Follow #include's when producing the outline view.</dt>
-  <dd>Select this checkbox to follow all defined #includes when you produce the Outline view.</dd>
+  <dd>Select this checkbox to follow all defined #includes when you produce the Outline view.<br>
+  			<b>Note: </b>This is not recommended for large projects or large files.</dd>
+  
 </dl>
 
 <h2>C/C++ Submenu Items</h2>

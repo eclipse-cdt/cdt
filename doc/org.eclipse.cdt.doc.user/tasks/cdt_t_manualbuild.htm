@@ -18,24 +18,20 @@ or rebuilding projects. You can view the output of the make utility in the conso
 <p><img src="../images/console_build.png" alt="Sample build in console veiw"></p>
 
 
-<p>To rebuild all open projects:</p>
 
-<p>You can manually rebuild all open projects. Depending 
-on the number of projects, the size of the projects, and the number of target 
-architectures, this action can take a significant amount of time. </p>
+<dl>
+  <dt>Incremental Builds</dt>
+  <dd>To incrementally build all open projects, you can select <b>Project &gt; Build All</b> or type <b>CTRL+B</b>.</dd>
+  <dt>Build Individual Projects</dt>
+  <dd>To build individual projects click <b>Project &gt; Build Project</b>.</dd>
+  <dt>Rebuild Projects</dt>
+  <dd>To rebuild a project right click on the project and select <b>Rebuild Project</b>.<br>
+		<b>Note: </b>This will rebuild projects that this project references as well, but will not rebuild projects that references this one.</dd>
+  <dt>Build Automatically</dt>
+  <dd>This performs a Build All whenever any project file is saved, such as your <tt>makefile</tt>.  <br>
+  			<b>Tip: </b>For C/C++ projects this feature should be turned off, to do so select <b>Projects &gt; Build Automatically</b> and ensure there is no checkmark beside the element.</dd>
+</dl>		
 
-<ul>
-  <li>Click <b>Project &gt; Build Project</b>. </li>
-</ul>
-
-<p>To rebuild a single project:</p>
-
-<p>Because rebuilding all  open projects may be time-consuming, you may 
-want to build only certain projects.</p>
-
-<ul>
-  <li>In C/C++ Projects view, right-click a project, and click <b>Rebuild Project</b>.</li>
-</ul>
 
 <p><b>Tip: </b>If you get the error message:</p>
 

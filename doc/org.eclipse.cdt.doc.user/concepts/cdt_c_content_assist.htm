@@ -4,16 +4,8 @@
 <head>
 	<meta http-equiv="Content-Language" content="en-us">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Content assist</title>
+	<title>Content Assist</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
-<script language="JavaScript">
-function changeSize(theImage,wd,ht) {
-	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
-	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
-	else {wdth=wd;hght=ht;}
-	theImage.style.width=wdth; theImage.style.height=hght;
-}
-</script>
 </head>
 
 <body>
@@ -26,8 +18,7 @@ a developer will type, based on the current context, scope, and prefix.</p>
 
 <h2>Code completion</h2>
 
-<p>Content assist provides code completion in the body of a method 
-or a function. For the current project (and any referenced projects) a list is 
+<p>Content assist provides code completion anywhere in the document. For the current project a list is 
 displayed of the elements that begin with the letter combination you entered, and 
 the relevance of each proposal is determined in the following order:</p>
 
@@ -43,20 +34,16 @@ the relevance of each proposal is determined in the following order:</p>
   <li>Enumerations</li>
 </ul>
 
-You trigger the Code completion feature when you call Content Assist (such as when you type <tt>Ctrl+Space</tt>), but you also invoke it when you type 
+You trigger the Code completion feature when you call Content Assist (such as when you type <tt>Ctrl+Space</tt>), but it is autoacivated you type 
 &quot;<b>.</b>&quot;, &quot;<b>-></b>&quot; or &quot;<b>::</b>&quot;.</p>
 
 <p><img src="../images/contentAssist_example.png"  alt="C++ example showing Code Assist popup"></p>
 
-<p>You can view the signature of each item on the list in a pop-up by pointing 
-to it. You can then select an 
-item in the list to  insert it directly into your code. Newly created 
-elements in your current or referenced project(s) must be saved before they will 
-appear in the Content Assist list.</p>
+<p>You can view the signature of each item on the list in a pop-up by pointing to it. You can then select an item in the list to  insert it directly into your code. </p>
 
 <h2>Code templates</h2>
 
-<p>You can create and save code templates for frequently used sections of code. The Content Assist feature also provides quick access to code 
+<p>You can create and save code templates for frequently used sections of code, which will be inserted according to scope. The Content Assist feature also provides quick access to code 
 templates.</p>
 
 <p>When you enter a letter combination in the C/C++ editor, and type <tt>CTRL+SPACE</tt> (or right-click and click <b>Content Assist</b>), a 

@@ -22,20 +22,10 @@
   <dd>If you clear the <b>Use default</b> checkbox type a new make command in this field.</dd>
   <dt>Stop on first build error</dt>
   <dd>Stops the build when an error occurs.</dd>
+  <dt>Workbench Build Behavior</dt>
+  <dd>These settings are what the standard builder will call by default when told to build, rebuild, clean, etc.  You can change these so that new projects will use different targets if the defaults are not appropriate.</dd>
   <dt>Build on resource save (Auto Build)</dt>
-  <dd>Changes the target of the default build make. By default, this option stops the build when an error occurs.<br>
-  <b>Note:</b> This option is only available if you enable it in the workbench preferences.</dd>
-  <dt>Build (Incremental Build)</dt>
-  <dd>Changes the default build make target. By default, this option builds only the components that are affected by the files which were modified in a project.</dd>
-  <dt>Rebuild (Full Build)</dt>
-  <dd>Changes the default build make target. By default, this option builds all files in a project, even if they have not been modified. A rebuild is a clean followed by a 
-  build.</dd>
-  <dt>Clean</dt>
-  <dd>Deletes intermediate files.</dd>
-  <dt>Build Directory</dt>
-  <dd>Specifies the directory where build files are saved.</dd>
-	<dt>Restore Defaults</dt><dd>Returns any changes back to their default setting.</dd>
-	<dt>Apply</dt><dd>Applies any changes.</dd>
+  <dd>This defines what the standard builder will call when a file is saved, it is not recommended to enable Auto Build for C/C++ projects.</dd>
 </dl>
 
 

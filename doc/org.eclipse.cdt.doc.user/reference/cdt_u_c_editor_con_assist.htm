@@ -4,23 +4,12 @@
 <head>
 	<meta http-equiv="Content-Language" content="en-us">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Content Assist page, Preferences window</title>
+	<title>Content Assist preferences</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
-<script language="JavaScript">
-function changeSize(theImage,wd,ht) {
-	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
-	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
-	else {wdth=wd;hght=ht;}
-	theImage.style.width=wdth; theImage.style.height=hght;
-}
-</script>
 </head>
-<!--INFOPOP
-Customize how the Content Assist feature works.
-END INFOPOP-->
 <body>
 
-<h1>Content Assist page, Preferences window</h1>
+<h1>Content Assist preferences</h1>
 
 <p>You can customize the Content Assist feature on the Contents Assist page of the C/C++ Editor Preferences window.  To change the Content Assist preferences click
 <b>Window &gt; Preferences &gt; C/C++ &gt; C++ Editor &gt; Content Assist.</b></p>
@@ -37,13 +26,13 @@ END INFOPOP-->
 	<dd>Proposals, by default, appear in order of relevance determined by context, scope and prefix. Alternatively, you can configure the Content Assist feature to order its proposals alphabetically.</dd> 
 
 	<p><dt>Content Assist parsing timeout (ms)
-	<dd>For very large projects, the Content Assist feature might slow the response of the plug-in as the Content Assist feature searches the project for proposals.  This setting stops the Content Assist search when it reaches the specified threshold.<dd>
+	<dd>For very large projects, the Content Assist feature might slow the response of the plug-in as the Content Assist feature parses the project for proposals.  This setting stops the Content Assist search when it reaches the specified threshold.<dd>
 	
 	<p><dt>Auto activation</dt>
 	<dd>Certain predefined triggers force the Content Assist feature to activate. You can disable the predefined triggers with these checkboxes.
 	
 	<p><dt>Auto activation delay</dt>
-	<dd>Specifies the number of milliseconds before Content Assist is activated.</dd>
+	<dd>Specifies the number of milliseconds before Content Assist is activated, in Autoactivation mode.</dd>
 	
 	<p><dt>Background for completion proposals</dt>
 	<dd>Specifies the background color of the Content Assist dialog box.</dd>

@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Language" content="en-us">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Displaying C/C++ file components in the C/C++ Projects view</title>
+<title>Converting CDT 1.x Projects</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 
@@ -13,7 +13,7 @@
 <h1>Converting CDT 1.x Projects</h1>
 
 <p>There are two ways to update CDT 1.x projects to CDT 2.0, after they have been imported, either restart eclipse, or update them using the <b>Convert to C/C++ Make Project Wizard</b>.</p>
-<p><b>Note:</b> the project must first be imported into your workspace using <b>File > Import > Existing Project into Workspace</b> before you can update the project.
+<p><b>Note:</b> the project must first be imported into your workspace using <b>File > Import > Existing Project into Workspace</b> before you can update the project.</p>
 
 
 <h2>Restart Eclipse</h2>
@@ -32,13 +32,14 @@
 <p>From the <b>Convert to C/C++ Make Project Wizard</b> select the project you want to convert and click <b>Finish</b>.</p>
 <p><img src="../images/convert_proj.png" alt="Convert to C/C++ Make Project Wizard"></p>
 
-<p>&nbsp;</p>
-   
+<p><b>Note: </b>You may need to manually enable Path Discovery for CDT 1.x Standard Make projects, depending on how your CDT project was configured.  
+See <a href="cdt_t_discovery.htm">Set Discovery Options</a> for details.</p>
+
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"></p>
 
 <p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21"><br>
-<a href="cdt_t_add_custom_persp.htm">Adding Convert to a C/C++ Make Project to the New menu</a></p>
-
+<a href="cdt_t_add_custom_persp.htm">Adding Convert to a C/C++ Make Project to the New menu</a><br>
+<a href="cdt_t_discovery.htm">Set Discovery Options</a></p>
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"></p>
 
 <p><img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14"></p>

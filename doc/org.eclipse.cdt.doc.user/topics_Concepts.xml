@@ -5,15 +5,15 @@
 <toc label="Concepts">
 	<topic label="CDT Overview" href="concepts/cdt_c_over_cdt.htm"/> 
 	<topic label="CDT Projects" href="concepts/cdt_c_projects.htm"/> 
-	<topic label="CDT Perspectives" href="concepts/cdt_c_perspectives.htm"/> 
-	<topic label="CDT Views" href="concepts/cdt_c_views.htm"/> 
+	<topic label="Perspectives available to C/C++ developers" href="concepts/cdt_c_perspectives.htm"/> 
+	<topic label="Views in the C/C++ perspective" href="concepts/cdt_c_views.htm"/> 
 	<topic label="Code aids" href="concepts/cdt_o_code_entry.htm">
 		<topic label="Comments" href="concepts/cdt_c_comments.htm"/>
 		<topic label="Content Assist" href="concepts/cdt_c_content_assist.htm"/>
 		<topic label="Templates" href="concepts/cdt_c_templates.htm"/> 
 	</topic>
-	<topic label="Editing" href="concepts/cdt_o_edit.htm"> 
-		<topic label="Editor View" href="concepts/cdt_c_editor.htm"/>
+	<topic label="Editing C/C++ files" href="concepts/cdt_o_edit.htm"> 
+		<topic label="C/C++ editor" href="concepts/cdt_c_editor.htm"/>
 	</topic>
 	<topic label="Navigation aids" href="concepts/cdt_o_nav.htm"> 
 		<topic label="Outline View" href="concepts/cdt_c_outlineview.htm"/> 

@@ -6,22 +6,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Using Content Assist</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
-<script language="JavaScript">
-function changeSize(theImage,wd,ht) {
-	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
-	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
-	else {wdth=wd;hght=ht;}
-	theImage.style.width=wdth; theImage.style.height=hght;
-}
-</script>
 </head>
 
 <body>
 
 <h1>Using Content Assist</h1>
 
-<p>Use Content Assist to insert C/C++ elements of your project or referenced project(s), 
-and code templates into your code. You can insert a code template into your source code rather than retyping 
+<p>Use Content Assist to insert C/C++ elements of your project, and code templates into your code. You can insert a code template into your source code rather than retyping 
 commonly-used snippets of code.</p>
 
 <p>To insert a code template or element:</p>
@@ -48,7 +39,7 @@ commonly-used snippets of code.</p>
   <li>Click <b>Window &gt; Preferences</b>.</li>
   <li>Expand <b>C/C++</b>, and click <b>C/C++ Editor</b>.</li>
   <li>Click the <b>Content Assist</b> tab.<br>
-  <img src="../images/contentAssist_preferences.png"  alt="Content Assist Preferences"</li>
+  <img src="../images/contentAssist_preferences.png"  alt="Content Assist Preferences"></li>
   <li>Do  the following: 
   <ul>
     <li>To change the scope from which Content Assist retrieves its proposals, select 
@@ -58,10 +49,10 @@ commonly-used snippets of code.</p>
     item in the list, select the <b>Insert single proposals automatically</b> check box.</li>
     <li>To automatically insert a proposal, if it is the only one found when Content Assist is invoked, select the <b>Enable auto activation</b> checkbox.</li>
     <li>To display proposals in alphabetical order, rather than by relevance, select the <b>Present proposals in alphabetical order</b> checkbox. </li>
-    <li>To change the timeout delay for Content Assist enter the value for <b>Content Assist parsing timeout</b> in the text box area.</li>
-    <li>Enable Auto activation of content assist for ".", "->" or "::" triggers by selecting the appropriate checkboxes.
-	<li>To change the delay	before invoking Content Assist using the triggers (shown above), enter the new delay in the <b>Auto activation delay</b> text box area.
-    <li>To change the background color of the Content Assist dialog box, click the color palette button.</li>
+    <li>To change the amount of time Content Assist is permitted to parse proposals enter the value for <b>Content Assist parsing timeout</b> in the text box area.</li>
+	<li>Enable Auto activation of content assist for ".", "->" or "::" triggers by selecting the appropriate checkboxes.</li>
+	<li>To change the delay	before Content Assist is automatically invoked for the triggers (shown above), enter the new delay in the <b>Auto activation delay</b> text box area.</li>
+	<li>To change the background color of the Content Assist dialog box, click the color palette button.</li>
     <li>To change the foreground color of the Content Assist dialog box, click the color palette button.</li>
   </ul>
   </li>

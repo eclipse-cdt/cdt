@@ -27,25 +27,29 @@
 		<topic label="C/C++ Icons" href="reference/cdt_u_icons.htm"/>
 	</topic>
 	<topic label="C/C++ Menubar" href="reference/cdt_o_menu.htm">
-		<topic label="File" href="reference/cdt_u_m_file.htm"/>
-		<topic label="Edit" href="reference/cdt_u_m_edit.htm"/>
-		<topic label="Navigate" href="reference/cdt_u_m_navigate.htm"/>
-		<topic label="Search" href="reference/cdt_u_m_search.htm"/>
-		<topic label="Project" href="reference/cdt_u_m_project.htm"/>
-		<topic label="Run" href="reference/cdt_u_m_run.htm"/>
-		<topic label="Window" href="reference/cdt_u_m_window.htm"/>
+		<topic label="File Menu actions" href="reference/cdt_u_m_file.htm"/>
+		<topic label="Edit Menu actions" href="reference/cdt_u_m_edit.htm"/>
+		<topic label="Navigate Menu actions" href="reference/cdt_u_m_navigate.htm"/>
+		<topic label="Search Menu actions" href="reference/cdt_u_m_search.htm"/>
+		<topic label="Project Menu actions" href="reference/cdt_u_m_project.htm"/>
+		<topic label="Run Menu actions" href="reference/cdt_u_m_run.htm"/>
+		<topic label="Window Menu actions" href="reference/cdt_u_m_window.htm"/>
 	</topic>
 	<topic label="C/C++ Toolbar" href="reference/cdt_u_toolbar.htm"/>
+	<topic label="C/C++ Open Type" href="reference/cdt_u_open_type.htm"/>
 	<topic label="C/C++ Find and Replace" href="reference/cdt_u_find_replace.htm"/>
 	<topic label="C/C++ Preferences" href="reference/cdt_u_c_pref.htm">
-		<topic label="Build Console" href="reference/cdt_u_build_pref.htm"/>
-		<topic label="Code Templates" href="reference/cdt_u_code_temp.htm"/>
+		<topic label="Build Console preferences" href="reference/cdt_u_build_pref.htm"/>
+		<topic label="Code Templates preferences" href="reference/cdt_u_code_temp.htm"/>
+		<topic label="Debug preferences" href="reference/cdt_u_debug.htm">
+			<topic label="GDB MI preferences" href="reference/cdt_u_gdb_mi.htm"/>
+			<topic label="Source Code Locations preferences" href="reference/cdt_u_dbg_src.htm"/>
 		<topic label="C/C++ Editor preferences" href="reference/cdt_o_ceditor_pref.htm">
-			<topic label="General" href="reference/cdt_u_c_editor_gen.htm"/>
-			<topic label="Colors" href="reference/cdt_u_c_editor_color.htm"/>
-			<topic label="Content Assist" href="reference/cdt_u_c_editor_con_assist.htm"/>
-			<topic label="Hovers" href="reference/cdt_u_c_editor_hov.htm"/>
-			<topic label="Navigation" href="reference/cdt_u_c_editor_navigation.htm"/>
+			<topic label="General preferences" href="reference/cdt_u_c_editor_gen.htm"/>
+			<topic label="Colors preferences" href="reference/cdt_u_c_editor_color.htm"/>
+			<topic label="Content Assist preferences" href="reference/cdt_u_c_editor_con_assist.htm"/>
+			<topic label="Hovers preferences" href="reference/cdt_u_c_editor_hov.htm"/>
+			<topic label="Navigation preferences" href="reference/cdt_u_c_editor_navigation.htm"/>
 		</topic>
 		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
 		<topic label="Make Targets" href="reference/cdt_u_make_targets_pref.htm"/>
@@ -55,6 +59,7 @@
 			<topic label="Binary Parser" href="reference/cdt_u_newproj_parser_binary.htm"/>
 			<topic label="Discovery Options" href="reference/cdt_u_discovery_preferences.htm"/>
 		</topic>
+		<topic label="Search preferences" href="reference/cdt_u_search_pref.htm">
 	</topic>
 	<topic label="C/C++ Project Properties" href="reference/cdt_u_properties.htm">
 		<topic label="Managed Make Projects" href="reference/cdt_o_mmake_proj.htm">

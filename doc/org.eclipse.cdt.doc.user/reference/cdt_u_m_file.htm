@@ -3,24 +3,14 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>File Menu</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>File Menu actions</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
-<script language="JavaScript">
-function changeSize(theImage,wd,ht) {
-	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
-	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
-	else {wdth=wd;hght=ht;}
-	theImage.style.width=wdth; theImage.style.height=hght;
-}
-</script>
 </head>
 
 <body>
 
 <h1>File Menu actions</h1>
-<p>File Menu Commands:</p>
-
 <p><img src="../images/cdt_menu_file.png" alt="Selecting File Menu" ></p>
 
 <p>
@@ -31,34 +21,28 @@ function changeSize(theImage,wd,ht) {
  <tr valign="top">
   <td valign="top"><b>New</b></td>
   <td valign="top">Create a new project, folder, or file.</td>
-  <td valign="top">&nbsp;</td>
- </tr>
- 
- <tr valign="top">
-  <td valign="top"><b>Open External File...</b></td>
-  <td valign="top">Opens a file in the editor view.</td>
-  <td valign="top">&nbsp;</td>
+  <td valign="top">Alt+Shift+N</td>
  </tr>
  
  <tr>
   <td valign="top"><b>Close</b></td>
   <td valign="top">Close the current editor. 
   If the editor contains unsaved data, a save request dialog is shown.</td>
-  <td valign="top">[Ctrl]+[F4]</td>
+  <td valign="top">Ctrl+F4</td>
  </tr>
  
  <tr>
   <td valign="top"><b>Close All</b></td>
   <td valign="top">Close all editors. 
   If editors contains unsaved data, a save request dialog will be shown.</td>
-  <td valign="top">[Ctrl]+[Shift]+[F4]</td>
+  <td valign="top">Ctrl+Shift+F4</td>
  </tr>
  
  <tr>
   <td valign="top"><b>Save</b></td>
   <td valign="top">Save the content of the current editor. 
   Disabled if the editor does not contain unsaved changes.</td>
-  <td valign="top">[Ctrl]+[S]</td>
+  <td valign="top">Ctrl+S</td>
  </tr>
  
  <tr>
@@ -71,7 +55,7 @@ function changeSize(theImage,wd,ht) {
   <td valign="top"><b>Save All</b></td>
   <td valign="top">Save the content of the current editor. 
   Disabled if no editor contains unsaved changes.</td>
-  <td valign="top">[Ctrl]+[Shift]+[S]</td>
+  <td valign="top">Ctrl+Shift+S</td>
  </tr>
  
  <tr valign="top">
@@ -90,20 +74,32 @@ function changeSize(theImage,wd,ht) {
  <tr valign="top">
   <td valign="top"><b>Rename</b></td>
   <td valign="top">Renames a resource.</td>
-  <td valign="top">&nbsp;</td>
+  <td valign="top">F2</td>
  </tr>
  
  <tr>
   <td valign="top"><b>Refresh</b></td>
   <td valign="top">Refreshes the content of the selected element with the local file system.
   When launched from no specific selection, this command refreshes all projects.</td>
-  <td valign="top">&nbsp;</td>
+  <td valign="top">F5</td>
  </tr>
  
  <tr>
   <td valign="top"><b>Print</b></td>
   <td valign="top">Prints the content of the current editor. Enabled when an editor has the focus.</td>
-  <td valign="top">[Ctrl]+[P]</td>
+  <td valign="top">Ctrl+P</td>
+ </tr>
+ 
+  <tr valign="top">
+  <td valign="top"><b>Switch workspace...</b></td>
+  <td valign="top">Relaunches Eclipse with a new workspace.</td>
+  <td valign="top">&nbsp;</td>
+ </tr>
+  
+ <tr valign="top">
+  <td valign="top"><b>Open External File...</b></td>
+  <td valign="top">Opens a file in the editor view.</td>
+  <td valign="top">&nbsp;</td>
  </tr>
  
  <tr>
@@ -121,7 +117,7 @@ function changeSize(theImage,wd,ht) {
  <tr valign="top">
   <td valign="top"><b>Properties</b></td>
   <td valign="top">Opens the property pages of the select elements.</td>
-  <td valign="top">[Alt]+[Enter]</td>
+  <td valign="top">Alt+Enter</td>
  </tr>
  
  <tr valign="top">
@@ -133,7 +129,6 @@ function changeSize(theImage,wd,ht) {
 </p>
 
 <p>
-<img src="../images/rh03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="300" height="14"><br>
 <img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14">
 </p>
 </body>

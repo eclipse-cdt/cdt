@@ -24,53 +24,53 @@
 			<topic label="Shift lines of code to the left or right" href="tasks/cdt_t_shift_code.htm"/>
 			<topic label="Search for C/C++ elements" href="tasks/cdt_t_search.htm"/>
 			<topic label="Navigate to C/C++ declarations by name" href="tasks/cdt_t_open_declarations.htm"/>
-			<topic label="Adding #include directives" href="cdt_t_add_includes.htm"/>
+			<topic label="Refactoring" href="tasks/cdt_t_refactoring.htm"/>
 		</topic>
 		<topic label="Build your C or C++ projects" href="tasks/cdt_o_build_task.htm">
-			<topic label="Rename a project" href="tasks/cdt_t_proj_rename.htm"/>
-			<topic label="Select referenced projects" href="tasks/cdt_t_proj_ref.htm"/>
-			<topic label="Configure Project Builds" href="tasks/cdt_t_proj_build_set.htm"/>
-			<topic label="Control which build errors are displayed" href="tasks/cdt_t_proj_error_parser.htm"/>
-			<topic label="Select a binary parser" href="tasks/cdt_t_proj_parser.htm"/>
-			<topic label="Include paths and symbols" href="tasks/cdt_t_proj_paths.htm"/>
-			<topic label="Select deployment platform for managed make projects" href="tasks/cdt_t_proj_platf.htm"/>
-			<topic label="Set build order" href="tasks/cdt_t_setbuildorder.htm"/>
-			<topic label="Build your project as required" href="tasks/cdt_t_manualbuild.htm"/>
-			<topic label="Removing Build Automatically" href="cdt_t_autobuild.htm"/>
-			<topic label="Autosaving on manual build" href="tasks/cdt_t_autosave.htm"/>
-			<topic label="Add a make target" href="tasks/cdt_t_addmaketarget.htm"/>
-			<topic label="Customize the Console view" href="tasks/cdt_t_cbuild_pref.htm"/>
-			<topic label="View and manage compile errors" href="tasks/cdt_o_tasksview.htm">
-				<topic label="Jump to errors" href="tasks/cdt_t_jumperror.htm"/>
-				<topic label="Filter errors" href="tasks/cdt_t_filtererror.htm"/>
-				<topic label="Set reminders" href="tasks/cdt_t_setreminder.htm"/>
+			<topic label="Renaming a project" href="tasks/cdt_t_proj_rename.htm"/>
+			<topic label="Selecting referenced projects" href="tasks/cdt_t_proj_ref.htm"/>
+			<topic label="Defining build settings" href="tasks/cdt_t_proj_build_set.htm"/>
+			<topic label="Filtering Errors" href="tasks/cdt_t_proj_error_parser.htm"/>
+			<topic label="Selecting a binary parser" href="tasks/cdt_t_proj_parser.htm"/>
+			<topic label="Adding Include paths and symbols" href="tasks/cdt_t_proj_paths.htm"/>
+			<topic label="Selecting a deployment platform" href="tasks/cdt_t_proj_platf.htm"/>
+			<topic label="Setting build order" href="tasks/cdt_t_setbuildorder.htm"/>
+			<topic label="Building Manually" href="tasks/cdt_t_manualbuild.htm"/>
+			<topic label="Removing Build Automatically" href="tasks/cdt_t_autobuild.htm"/>
+			<topic label="Autosaving on a build" href="tasks/cdt_t_autosave.htm"/>
+			<topic label="Creating a make target" href="tasks/cdt_t_addmaketarget.htm"/>
+			<topic label="Customizing the Console view" href="tasks/cdt_t_cbuild_pref.htm"/>
+			<topic label="Viewing and managing compile errors" href="tasks/cdt_o_tasksview.htm">
+				<topic label="Jumping to errors" href="tasks/cdt_t_jumperror.htm"/>
+				<topic label="Filtering errors" href="tasks/cdt_t_filtererror.htm"/>
+				<topic label="Setting reminders" href="tasks/cdt_t_setreminder.htm"/>
 			</topic>
 		</topic>
-		<topic label="Run/debug your C or C++ projects" href="tasks/cdt_o_run.htm">
-			<topic label="Specify a project and application to run" href="tasks/cdt_o_run_config.htm">
-				<topic label="Select a run or debug configuration" href="tasks/cdt_t_run_config.htm"/>
-				<topic label="Create a run or debug configuration" href="tasks/cdt_t_new_run_config.htm"/>
-				<topic label="Specify a project and application" href="tasks/cdt_t_run_main.htm"/>
-				<topic label="Specify the execution arguments and the working directory" href="tasks/cdt_t_run_arg.htm"/>
-				<topic label="Set the environment variables and values" href="tasks/cdt_t_run_env.htm"/>
-				<topic label="Select a debugger" href="tasks/cdt_t_run_dbg.htm"/>
-				<topic label="Specify the location of source files" href="tasks/cdt_t_run_source.htm"/>
+		<topic label="Running and debugging projects" href="tasks/cdt_o_run.htm">
+			<topic label="Creating or editing a run/debug configuration" href="tasks/cdt_o_run_config.htm">
+				<topic label="Selecting a run or debug configuration" href="tasks/cdt_t_run_config.htm"/>
+				<topic label="Creating a run or debug configuration" href="tasks/cdt_t_new_run_config.htm"/>
+				<topic label="Selecting an application to run or debug" href="tasks/cdt_t_run_main.htm"/>
+				<topic label="Specifying execution arguments" href="tasks/cdt_t_run_arg.htm"/>
+				<topic label="Setting environment variables" href="tasks/cdt_t_run_env.htm"/>
+				<topic label="Defining debug settings" href="tasks/cdt_t_run_dbg.htm"/>
+				<topic label="Specifying the location of source files" href="tasks/cdt_t_run_source.htm"/>
 				<topic label="Specifying the location of the run configuration" href="tasks/cdt_t_run_com.htm"/>
 			</topic>
-			<topic label="Debug an application" href="tasks/cdt_o_debug.htm">
-				<topic label="Start a debug session" href="tasks/cdt_t_debug_prog.htm"/>
-				<topic label="Add, remove, enable or disable breakpoints and watchpoints" href="tasks/cdt_o_brkpnts_watch.htm">
-					<topic label="Add breakpoints" href="tasks/cdt_t_add_brkpnts.htm"/>
-					<topic label="Add watchpoints" href="tasks/cdt_t_add_watch.htm"/>
-					<topic label="Remove breakpoints and watchpoints" href="tasks/cdt_t_rem_wtch_brk.htm"/>
-					<topic label="Enable or disable breakpoints and watchpoints" href="tasks/cdt_t_endis_able_brk_wtch.htm"/>
+			<topic label="Debugging" href="tasks/cdt_o_debug.htm">
+				<topic label="Debugging a program" href="tasks/cdt_t_debug_prog.htm"/>
+				<topic label="Working with breakpoints and watchpoints" href="tasks/cdt_o_brkpnts_watch.htm">
+					<topic label="Adding breakpoints" href="tasks/cdt_t_add_brkpnts.htm"/>
+					<topic label="Adding watchpoints" href="tasks/cdt_t_add_watch.htm"/>
+					<topic label="Removing breakpoints and watchpoints" href="tasks/cdt_t_rem_wtch_brk.htm"/>
+					<topic label="Enabling or disable breakpoints and watchpoints" href="tasks/cdt_t_endis_able_brk_wtch.htm"/>
 				</topic>
-				<topic label="Control your debug execution" href="tasks/cdt_t_controldebug.htm"/>
-				<topic label="Work in disassembly mode" href="tasks/cdt_t_disassembly.htm"/>
-				<topic label="View or change a variable" href="tasks/cdt_t_variables.htm"/>
-				<topic label="Add and expression" href="tasks/cdt_t_expressions.htm"/>
-				<topic label="Change registers or how they are displayed" href="tasks/cdt_t_registers.htm"/>
-				<topic label="Change memory or how it is displayed" href="tasks/cdt_t_memory.htm"/>
+				<topic label="Controlling debug execution" href="tasks/cdt_t_controldebug.htm"/>
+				<topic label="Stepping into assembler funcitons" href="tasks/cdt_t_disassembly.htm"/>
+				<topic label="Working with variables" href="tasks/cdt_t_variables.htm"/>
+				<topic label="Adding expressions" href="tasks/cdt_t_expressions.htm"/>
+				<topic label="Working with registers" href="tasks/cdt_t_registers.htm"/>
+				<topic label="Workign with memory" href="tasks/cdt_t_memory.htm"/>
 			</topic>
 		</topic>
 		<topic label="Searching the CDT" href="tasks/cdt_t_search.htm"/>

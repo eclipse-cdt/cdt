@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Language" content="en-us">
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<title>C/C++ Console View</title>
+<title>Console view</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
@@ -45,25 +45,6 @@ that operates only on the text in the <b>Console</b> view.</dd>
 <dd>Opens a dialog that moves the focus to the line you specify.
 The dialog also indicates the total number of lines in the console buffer.
 </dd>
-<dt>Open on type</dt>
-<dd>This command, which is used with Java programs,
-opens a type in an editor based on content in the console.
-There are two ways this can happen:
-<ul>
-<li>If there is an explicit selection in the console, the selected text is parsed for a type name.</li>
-<li>If there is no selection, but the cursor is placed on a line of output in the console, 
-the entire line is parsed for a type name.</li>
-</ul>
-<p>For example, if the cursor is placed on the following line of output in the console:</p>
-<pre>at com.foo.bar.Application.run(Application.java:58)</pre>
-<p>An editor for the type 
-<b>com.foo.bar.Application</b> is opened and 
-line 58 is selected and displayed. 
-Note that if the word 'Application' had been selected,
-then you would have been prompted to choose a fully qualified instance 
-of 'Application' (if more than one was in the workspace), 
-and an editor would have opened at the beginning of the type.
-</p></dd>
 <dt>Terminate</dt>
 <dd>Terminates the process that is currently associated with the console.</dd>
 </dl>

@@ -1,3 +1,6 @@
+2004-07-09 Hoda Amer
+	Fix for PR 69510 : [C++ Class Wizard] error message in C++ Class Wizard if invoke Class Wizard from existing C++ class in C/C++ Project View
+	
 2004-07-08 Hoda Amer
 	Partial fix for PR 69439: content assist confusion	
 	

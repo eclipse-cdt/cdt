@@ -59,18 +59,6 @@ public class ArchiveContainer extends Parent implements IArchiveContainer {
 		return super.getChildren();
 	}
 
-	void addChildIfLib(IFile file) {
-		CModelManager factory = CModelManager.getDefault();
-		if (factory.isArchive(file)) {
-			ICElement celement = factory.create(file);
-			if (celement != null) {
-				if (celement instanceof IArchive) {
-					addChild (celement);
-				}
-			}
-		}
-	}
-
 	public CElementInfo createElementInfo() {
 		return new CElementInfo(this);
 	}

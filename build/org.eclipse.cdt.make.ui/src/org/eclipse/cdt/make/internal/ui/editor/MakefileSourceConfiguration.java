@@ -15,12 +15,16 @@ import org.eclipse.cdt.make.internal.ui.text.MakefileColorManager;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileCodeScanner;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileCompletionProcessor;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefilePartitionScanner;
+import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileReconcilingStrategy;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
@@ -136,6 +140,19 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 		reconciler.setDamager(dr, MakefilePartitionScanner.MAKEFILE_OTHER);
 		reconciler.setRepairer(dr, MakefilePartitionScanner.MAKEFILE_OTHER);
 		return reconciler;
+	}
+
+	/**
+	 * @see SourceViewerConfiguration#getReconciler(ISourceViewer)
+	 */
+	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+		if (fEditor != null && fEditor.isEditable()) {
+			MonoReconciler reconciler= new MonoReconciler(new MakefileReconcilingStrategy(fEditor), false);
+			reconciler.setDelay(1000);
+			reconciler.setProgressMonitor(new NullProgressMonitor());
+			return reconciler;
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)

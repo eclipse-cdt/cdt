@@ -116,7 +116,11 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			} else if (inputElement instanceof IRule) {
 				directives = ((IRule)inputElement).getCommands();
 			} else if (inputElement instanceof IParent) {
-				directives = ((IParent)inputElement).getDirectives();
+				if (inputElement instanceof IInclude && !showIncludeChildren) {
+					directives = new IDirective[0];
+				} else {
+					directives = ((IParent)inputElement).getDirectives();
+				}
 			} else {
 				directives = new IDirective[0];
 			}
@@ -277,15 +281,21 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 	 * Updates the outline page.
 	 */
 	public void update() {
-		TreeViewer viewer = getTreeViewer();
+		final TreeViewer viewer = getTreeViewer();
 
 		if (viewer != null) {
-			Control control = viewer.getControl();
+			final Control control = viewer.getControl();
 			if (control != null && !control.isDisposed()) {
-				control.setRedraw(false);
-				viewer.setInput(fInput);
-				//viewer.expandAll();
-				control.setRedraw(true);
+				control.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						if (!control.isDisposed()) {
+							control.setRedraw(false);
+							viewer.setInput(fInput);
+							viewer.expandAll();
+							control.setRedraw(true);
+						}
+					}
+				});
 			}
 		}
 	}

@@ -47,7 +47,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	protected MakefileContentOutlinePage page;
 	private IMakefile makefile;
 
-	private MakefileContentOutlinePage getOutlinePage() {
+	public MakefileContentOutlinePage getOutlinePage() {
 		if (page == null) {
 			page = new MakefileContentOutlinePage(this);
 			page.addSelectionChangedListener(this);

@@ -405,6 +405,11 @@ public abstract class JobManager implements Runnable {
 		}
 		awaitingJobs[jobEnd] = job;
 		
+		if (enabledState() ==WAITING){
+			//Put back into enabled state
+			enable();
+		}
+		
 		if( enabledState() == ENABLED ){
 			if( indexJob == null ){
 				indexJob = new IndexingJob( thread, this );

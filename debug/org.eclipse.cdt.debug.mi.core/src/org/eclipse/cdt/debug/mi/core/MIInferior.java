@@ -12,10 +12,12 @@ import java.io.PipedOutputStream;
 
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
+import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoProgram;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfoProgramInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.Spawner;
@@ -171,7 +173,24 @@ public class MIInferior extends Process {
 
 	public synchronized void interrupt() throws MIException {
 		Process gdb = session.getGDBProcess();
-		if (gdb instanceof Spawner) {
+		// Check if they can handle the interrupt
+		// Try the exec-interrupt; this will be for "gdb --async"
+		CommandFactory factory = session.getCommandFactory();
+		MIExecInterrupt interrupt = factory.createMIExecInterrupt();
+		if (interrupt != null) {
+			try {
+				session.postCommand(interrupt);
+				MIInfo info = interrupt.getMIInfo();
+				// Allow (5 secs) for the interrupt to propagate.
+				for (int i = 0;(state == RUNNING) && i < 5; i++) {
+					try {
+						wait(1000);
+					} catch (InterruptedException e) {
+					}
+				}
+			} catch (MIException e) {
+			}
+		} else if (gdb instanceof Spawner) {
 			Spawner gdbSpawner = (Spawner) gdb;
 			gdbSpawner.interrupt();
 			// Allow (5 secs) for the interrupt to propagate.
@@ -191,17 +210,8 @@ public class MIInferior extends Process {
 					}
 				}
 			}
-		} else {
-			// Try the exec-interrupt; this will be for "gdb --async"
-			// CommandFactory factory = session.getCommandFactory();
-			// MIExecInterrupt interrupt = factory.createMIExecInterrupt();
-			// try {
-			// 	session.postCommand(interrupt);
-			// 	MIInfo info = interrupt.getMIInfo();
-			// } catch (MIException e) {
-			// }
-			//throw new MIException("Interruption no supported");
 		}
+
 		// If we've failed throw an exception up.
 		if (state == RUNNING) {
 			throw new MIException("Failed to interrupt");

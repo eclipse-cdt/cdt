@@ -59,7 +59,7 @@ public class TxThread extends Thread {
 				
 					// shove in the pipe
 					String str = cmd.toString();
-					if (out != null) {
+					if (out != null && str.length() > 0) {
 						out.write(str.getBytes());
 						out.flush();
 					}

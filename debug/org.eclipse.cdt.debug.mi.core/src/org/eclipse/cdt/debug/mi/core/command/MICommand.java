@@ -40,6 +40,10 @@ public class MICommand extends Command {
 		return operation;
 	}
 
+	protected void setOperation(String op) {
+		operation = op; 
+	}
+
 	/**
 	 * Returns an array of command's options. An empty collection is 
 	 * returned if there are no options.

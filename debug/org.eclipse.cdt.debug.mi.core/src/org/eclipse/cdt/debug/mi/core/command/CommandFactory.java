@@ -134,7 +134,7 @@ public class CommandFactory {
 	}
 
 	public MIExecInterrupt createMIExecInterrupt() {
-		return new MIExecInterrupt();
+		return null;
 	}
 
 	public MIExecNext createMIExecNext() {

@@ -1,3 +1,12 @@
+2004-01-30 Alain Magloire
+
+	Allow the clients to override the interrupt.
+
+	* src/org/eclipse/cdt/debug/mi/core/MIInferior.java
+	* src/org/eclipse/cdt/debug/mi/core/TxThread.java
+	* src/org/eclipse/cdt/debug/mi/core/command/CommandFactory.java
+	* src/org/eclipse/cdt/debug/mi/core/command/MICommand.java
+
 2004-01-29 Alain Magloire
 
 	The CDT debug ui prefers things to be in ascending

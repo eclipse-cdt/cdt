@@ -11,6 +11,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
@@ -19,6 +20,8 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -99,7 +102,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 
 		if (kind == ICElementDelta.REMOVED) {
-			Object parent = getParent(element);
+			Object parent = internalGetParent(element);
 			postRemove(element);
 			if (updateContainer(element)) {
 				postRefresh(parent);
@@ -107,7 +110,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 
 		if (kind == ICElementDelta.ADDED) {
-			Object parent= getParent(element);
+			Object parent= internalGetParent(element);
 			postAdd(parent, element);
 			if (updateContainer(element)) {
 				postRefresh(parent);
@@ -127,6 +130,13 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 
 		}
 
+		if (delta.getResourceDeltas() != null) {
+			IResourceDelta[] rd= delta.getResourceDeltas();
+			for (int i= 0; i < rd.length; i++) {
+				processResourceDelta(rd[i], element);
+			}
+		}
+
 		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
 		for (int i= 0; i < affectedChildren.length; i++) {
 			processDelta(affectedChildren[i]);
@@ -137,6 +147,48 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		//	updateContainer((ICModel)element);
 		//}
 	}
+
+	/*
+	 * Process resource deltas
+	 */
+	private void processResourceDelta(IResourceDelta delta, Object parent) {
+		int status= delta.getKind();
+		IResource resource= delta.getResource();
+		// filter out changes affecting the output folder
+		if (resource == null) {
+			return;
+		}
+                        
+		// this could be optimized by handling all the added children in the parent
+		if ((status & IResourceDelta.REMOVED) != 0) {
+			if (!(parent instanceof ICContainer)) {
+				// refresh one level above to deal with empty package filtering properly
+				postRefresh(internalGetParent(parent));
+			} else {
+				postRemove(resource);
+			}
+		}
+		if ((status & IResourceDelta.ADDED) != 0) {
+			if (!(parent instanceof ICContainer)) {
+				// refresh one level above to deal with empty package filtering properly
+				postRefresh(internalGetParent(parent));
+			} else {
+				postAdd(parent, resource);
+			}
+		}
+		IResourceDelta[] affectedChildren= delta.getAffectedChildren();
+
+		if (affectedChildren.length > 1) {
+			// more than one child changed, refresh from here downwards
+			postRefresh(resource);
+			return;
+		}
+
+		for (int i= 0; i < affectedChildren.length; i++) {
+			processResourceDelta(affectedChildren[i], resource);
+		}
+	}
+
 
 //	private void updateContainer(ICModel root) {
 //		postRunnable(new Runnable() {
@@ -240,7 +292,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				Control ctrl= fViewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed())
 //			fViewer.remove(element);
-			fViewer.refresh(getParent(element));
+			fViewer.refresh(internalGetParent(element));
 			}
 		});
 	}

@@ -41,7 +41,8 @@ public abstract class JobManager implements Runnable {
 	
 	private int awaitingClients = 0;
 	
-	protected HashSet jobSet = new HashSet();
+	protected HashSet jobSet;
+	
 	public static void verbose(String log) {
 		System.out.println("(" + Thread.currentThread() + ") " + log); //$NON-NLS-1$//$NON-NLS-2$
 	}
@@ -362,6 +363,8 @@ public abstract class JobManager implements Runnable {
 			thread.setPriority(Thread.NORM_PRIORITY-1); 
 			thread.start();
 		}
+		
+		jobSet = new HashSet();
 	}
 	/**
 	 * Infinite loop performing resource indexing

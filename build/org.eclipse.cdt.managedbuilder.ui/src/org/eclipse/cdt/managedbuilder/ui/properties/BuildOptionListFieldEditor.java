@@ -11,7 +11,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -41,7 +41,8 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	private static final String REMOVE = "BuildPropertyCommon.label.remove"; //$NON-NLS-1$
 	private static final String UP = "BuildPropertyCommon.label.up"; //$NON-NLS-1$
 	private static final String DOWN = "BuildPropertyCommon.label.down"; //$NON-NLS-1$
-
+	private static final String EDIT = "BuildPropertyCommon.label.editVar"; //$NON-NLS-1$
+	
 	// UI constants
 	private static final int VERTICAL_DIALOG_UNITS_PER_CHAR = 8;
 	private static final int HORIZONTAL_DIALOG_UNITS_PER_CHAR = 4;
@@ -62,12 +63,14 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 
 	// The button for adding the contents of the text field to the list
 	private Button addButton;
+	// The button for swapping the currently-selected list item down
+	private Button downButton;
+	// The button to start the edit process
+	private Button editButton;
 	// The button for removing the currently-selected list item.
 	private Button removeButton;
 	// The button for swapping the currently selected item up
 	private Button upButton;
-	// The button for swapping the currently-selected list item down
-	private Button downButton;
 
 	/**
 	* @param name the name of the preference this field editor works on
@@ -88,7 +91,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		String input = getNewInputObject();
 		
 		// Add it to the list
-		if (input != null) {
+		if (input != null && input.length() > 0) {
 			int index = list.getSelectionIndex();
 			if (index >= 0) {
 				list.add(input, index + 1);
@@ -115,10 +118,11 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	 * @param container the box for the buttons
 	 */
 	private void createButtons(Composite container) {
-		addButton = createPushButton(container, CUIPlugin.getResourceString(NEW));
-		removeButton = createPushButton(container, CUIPlugin.getResourceString(REMOVE));
-		upButton = createPushButton(container, CUIPlugin.getResourceString(UP));
-		downButton = createPushButton(container, CUIPlugin.getResourceString(DOWN));
+		addButton = createPushButton(container, ManagedBuilderUIPlugin.getResourceString(NEW));
+		editButton = createPushButton(container, ManagedBuilderUIPlugin.getResourceString(EDIT));
+		removeButton = createPushButton(container, ManagedBuilderUIPlugin.getResourceString(REMOVE));
+		upButton = createPushButton(container, ManagedBuilderUIPlugin.getResourceString(UP));
+		downButton = createPushButton(container, ManagedBuilderUIPlugin.getResourceString(DOWN));
 	}
 
 	/**
@@ -166,7 +170,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		controlGroup.setLayoutData(groupData);
 
 		// Make the list
-		list = new List(controlGroup, SWT.BORDER);
+		list = new List(controlGroup, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 	
 		// Create a grid data that takes up the extra space in the dialog and spans one column.
 		GridData listData = new GridData(GridData.FILL_HORIZONTAL);
@@ -209,6 +213,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		buttonGroup.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
 				addButton = null;
+				editButton = null;
 				removeButton = null;
 				upButton = null;
 				downButton = null;
@@ -217,7 +222,6 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	
 		// Create the buttons
 		createButtons(buttonGroup);
-		selectionChanged();
 	}
 
 	/* (non-Javadoc)
@@ -231,20 +235,19 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 				Widget widget = event.widget;
 				if (widget == addButton) {
 					addPressed();
-				} else
-					if (widget == removeButton) {
-						removePressed();
-					} else
-						if (widget == upButton) {
-							upPressed();
-						} else
-							if (widget == downButton) {
-								downPressed();
-							} else
-								if (widget == list) {
-									selectionChanged();
-								}
+				} else if (widget == editButton) {
+					editPressed();
+				} else if (widget == removeButton) {
+					removePressed();
+				} else if (widget == upButton) {
+					upPressed();
+				} else if (widget == downButton) {
+					downPressed();
+				} else if (widget == list) {
+					selectionChanged();
+				}
 			}
+
 		};
 	}
 
@@ -257,6 +260,10 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		swap(false);		
 	}
 
+	private void editPressed() {
+		editSelection();
+	}
+
 	/* (non-Javadoc)
 	 * 
 	 */
@@ -266,7 +273,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		if (index != -1) {
 			String selItem = list.getItem(index);
 			if (selItem != null) {
-				InputDialog dialog = new InputDialog(getShell(), CUIPlugin.getResourceString(TITLE), fieldName, selItem, null);
+				InputDialog dialog = new InputDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(TITLE), fieldName, selItem, null);
 				String newItem = null;
 				if (dialog.open() == InputDialog.OK) {
 					newItem = dialog.getValue();
@@ -290,6 +297,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 				list.add(array[i]);
 			}
 			list.setSelection(0);
+			selectionChanged();
 		}
 	}
 
@@ -304,6 +312,8 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 			for (int i = 0; i < array.length; i++){
 				list.add(array[i]);
 			}
+			list.setSelection(0);
+			selectionChanged();
 		}
 	}
 
@@ -318,12 +328,12 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 
 	protected String getNewInputObject() {
 		// Create a dialog to prompt for a new symbol or path
-		InputDialog dialog = new InputDialog(getShell(), CUIPlugin.getResourceString(TITLE), fieldName, new String(), null);
-		String input = null;
+		InputDialog dialog = new InputDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(TITLE), fieldName, new String(), null);
+		String input = new String();
 		if (dialog.open() == InputDialog.OK) {
 			input = dialog.getValue();
 		}
-		return input.length() == 0 ? null : input;
+		return input;
 	}
 
 	/* (non-Javadoc)
@@ -388,6 +398,8 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		int index = list.getSelectionIndex();
 		int size = list.getItemCount();
 
+		// Enable the edit button if there is at least one item in the list
+		editButton.setEnabled(size > 0);
 		// Enable the remove button if there is at least one item in the list
 		removeButton.setEnabled(size > 0);
 		// Enable the up button IFF there is more than 1 item and selection index is not first item

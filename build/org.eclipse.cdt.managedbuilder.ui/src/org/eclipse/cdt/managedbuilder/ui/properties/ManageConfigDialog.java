@@ -19,7 +19,6 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
@@ -218,7 +217,7 @@ public class ManageConfigDialog extends Dialog {
 		Composite buttonBar = ControlFactory.createComposite(configListGroup, 1);
 		buttonBar.setLayoutData(new GridData());
 
-		newBtn = ControlFactory.createPushButton(buttonBar, CUIPlugin.getResourceString(NEW));
+		newBtn = ControlFactory.createPushButton(buttonBar, ManagedBuilderUIPlugin.getResourceString(NEW));
 		setButtonLayoutData(newBtn);
 		newBtn.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
@@ -230,7 +229,7 @@ public class ManageConfigDialog extends Dialog {
 				newBtn = null;				
 			}
 		});
-		removeBtn = ControlFactory.createPushButton(buttonBar, CUIPlugin.getResourceString(REMOVE));
+		removeBtn = ControlFactory.createPushButton(buttonBar, ManagedBuilderUIPlugin.getResourceString(REMOVE));
 		setButtonLayoutData(removeBtn);
 		removeBtn.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {

@@ -6,6 +6,29 @@
 	* plugin.xml
 	* plugin.properties
 
+2003-11-11 Sean Evoy
+	Work to implement bugzilla 44841:
+	Added a scrollbar to the list control inside the custom list field editor. 
+	Also added an Edit button to the field editor to make it easier for keyboard-only 
+	accessibility.
+	
+	Work for bugzilla 44451:
+	Changed the method that prompts user for information so that if the user cancels 
+	with an empty input dialog, the method always returns an empty string. The responsibility 
+	now rests with the caller to test the return value for length > 0 to decide whether or 
+	not to add string to the list.
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildOptionListFieldEditor.java
+
+	Moved string constants from core UI plugin to build UI plugin. These values are duplicated 
+	in the standadrd make UI plugin anyway, so the argument for keeping them in a common 
+	plugin seems pretty weak. This removes another dependency between the builder UI and 
+	common UI plugin. I did have to change the string resource lookup method in a few of 
+	the UI implementation classes that use the constants.
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/PluginResources.properties
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BrowseEntryDialog.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildToolSettingsPage.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/ManageConfigDialog.java
+	
 2003-10-17 Tom Tromey
 	
 	Changed -werror to -Werror

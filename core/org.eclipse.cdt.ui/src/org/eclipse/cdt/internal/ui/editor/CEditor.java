@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.internal.ui.CPlugin;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -1408,9 +1410,14 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		// Figure out if this is a C or C++ source file
 		String filename = getEditorInput().getName();
-		boolean c_file = false;
-		c_file |= filename.endsWith(".c");
-		c_file |= filename.endsWith(".h");
+		boolean c_file = filename.endsWith(".c");
+		
+		if (!c_file && filename.endsWith(".h")){
+			// ensure that this .h file is part of a C project & not a CPP project
+		
+			IProject project = getInputFile().getProject();
+			c_file = !CoreModel.getDefault().hasCCNature(project);
+		}
 
 		return new AdaptedSourceViewer(parent, ruler, styles, c_file ? LANGUAGE_C : LANGUAGE_CPP);
 	}

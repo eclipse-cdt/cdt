@@ -1,3 +1,8 @@
+2004-09-21 Alain Magloire
+	* model/org/eclipse/cdt/core/model/IBinary.java
+	* model/org/eclipse/cdt/internal/core/model/Archive.java
+	* model/org/eclipse/cdt/internal/core/model/Binary.java
+
 2004-09-21 David Inglis
 
 	Lots of changes to the binary parsers

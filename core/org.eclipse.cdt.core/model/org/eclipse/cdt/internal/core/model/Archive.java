@@ -80,6 +80,16 @@ public class Archive extends Openable implements IArchive {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (IBinaryArchive.class.equals(adapter)) {
+			return getBinaryArchive();
+		}
+		return super.getAdapter(adapter);
+	}
+
 	IBinaryArchive getBinaryArchive() {
 		return binaryArchive;
 	}

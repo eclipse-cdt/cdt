@@ -237,6 +237,12 @@ public class CDebugTarget extends CDebugElement
 	private IFile fExecFile;
 
 	/**
+	 * If is set to 'true' the debugger will try to set breakpoints on 
+	 * the next resume or step call.
+	 */
+	private boolean fSetBreakpoints = true;
+
+	/**
 	 * Constructor for CDebugTarget.
 	 * @param target
 	 */
@@ -257,7 +263,7 @@ public class CDebugTarget extends CDebugElement
 		setName( name );
 		setProcesses( debuggeeProcess, debuggerProcess );
 		setCDITarget( cdiTarget );
-		setBreakpoints( new HashMap( 5 ) );
+		initializeBreakpoints( new HashMap( 5 ) );
 		setExecFile( file );
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
 		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
@@ -279,7 +285,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		initializeState();
 		setSourceSearchPath();
-		initializeBreakpoints();
+		setBreakpoints();
 		initializeRegisters();
 		initializeMemoryManager();
 		getLaunch().addDebugTarget( this );
@@ -310,17 +316,21 @@ public class CDebugTarget extends CDebugElement
 	 * the breakpoint manager.
 	 * 
 	 */
-	protected void initializeBreakpoints()
+	protected void setBreakpoints()
 	{
-		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
-		manager.addBreakpointListener( this );
-		IBreakpoint[] bps = (IBreakpoint[])manager.getBreakpoints( CDebugModel.getPluginIdentifier() );
-		for ( int i = 0; i < bps.length; i++ )
+		if ( getRetryBreakpoints() )
 		{
-			if ( bps[i] instanceof ICBreakpoint ) 
+			IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+			manager.addBreakpointListener( this );
+			IBreakpoint[] bps = (IBreakpoint[])manager.getBreakpoints( CDebugModel.getPluginIdentifier() );
+			for ( int i = 0; i < bps.length; i++ )
 			{
-				breakpointAdded( (ICBreakpoint)bps[i] );
+				if ( bps[i] instanceof ICBreakpoint && findCDIBreakpoint( bps[i] ) == null ) 
+				{
+					breakpointAdded( (ICBreakpoint)bps[i] );
+				}
 			}
+			setRetryBreakpoints( false );
 		}
 	}
 
@@ -528,6 +538,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !isSuspended() ) 
 			return;
+		setBreakpoints();
 		try 
 		{
 			getCDITarget().resume();
@@ -887,6 +898,8 @@ public class CDebugTarget extends CDebugElement
 				if ( source instanceof ICDISharedLibrary )
 				{
 					getSharedLibraryManager().sharedLibraryLoaded( (ICDISharedLibrary)source );
+					if ( ((ICDISharedLibrary)source).areSymbolsLoaded() )
+						setRetryBreakpoints( true );
 				}
 			}
 			else if ( event instanceof ICDISuspendedEvent )
@@ -1575,7 +1588,7 @@ public class CDebugTarget extends CDebugElement
 	 * 
 	 * @param breakpoints breakpoints map
 	 */
-	private void setBreakpoints( HashMap breakpoints )
+	private void initializeBreakpoints( HashMap breakpoints )
 	{
 		fBreakpoints = breakpoints;
 	}
@@ -1834,6 +1847,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !canRunToLine( resource, lineNumber ) )
 			return;
+		setBreakpoints();
 		ICDILocation location = getCDISession().getBreakpointManager().createLocation( resource.getLocation().lastSegment(), null, lineNumber );
 		try
 		{
@@ -2139,6 +2153,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !canRunToAddress( address ) )
 			return;
+		setBreakpoints();
 		ICDILocation location = getCDISession().getBreakpointManager().createLocation( address );
 		try
 		{
@@ -2148,5 +2163,15 @@ public class CDebugTarget extends CDebugElement
 		{
 			targetRequestFailed( e.toString(), e );
 		}
+	}
+	
+	private boolean getRetryBreakpoints()
+	{
+		return fSetBreakpoints;
+	}
+
+	public void setRetryBreakpoints( boolean retry )
+	{
+		fSetBreakpoints = retry;
 	}
 }

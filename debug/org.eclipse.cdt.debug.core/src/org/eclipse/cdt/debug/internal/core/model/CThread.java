@@ -585,6 +585,7 @@ public class CThread extends CDebugElement
 	{
 		if ( !canStepInto() )
 			return;
+		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			if ( getRealSourceMode() == ISourceMode.MODE_SOURCE )
@@ -609,6 +610,7 @@ public class CThread extends CDebugElement
 	{
 		if ( !canStepOver() )
 			return;
+		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			if ( getRealSourceMode() == ISourceMode.MODE_SOURCE )
@@ -633,6 +635,7 @@ public class CThread extends CDebugElement
 	{
 		if ( !canStepReturn() )
 			return;
+		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			getCDIThread().stepReturn();
@@ -834,6 +837,7 @@ public class CThread extends CDebugElement
 	{
 		if ( !canStepIntoInstruction() )
 			return;
+		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			getCDIThread().stepIntoInstruction();
@@ -851,6 +855,7 @@ public class CThread extends CDebugElement
 	{
 		if ( !canStepOverInstruction() )
 			return;
+		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			getCDIThread().stepOverInstruction();

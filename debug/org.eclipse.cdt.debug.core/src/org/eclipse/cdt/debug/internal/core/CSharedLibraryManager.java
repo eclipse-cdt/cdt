@@ -67,6 +67,7 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 		CSharedLibrary library = find( cdiLibrary );
 		if ( library != null )
 		{
+			((CDebugTarget)getDebugTarget()).setRetryBreakpoints( true );
 			library.fireChangeEvent( DebugEvent.STATE );
 		}
 	}

@@ -1,3 +1,9 @@
+2003-01-21 Mikhail Khodjaiants
+	Retry to set breakpoints if shared library's symbols are loaded.
+	* CDebugTarget.java
+	* CThread.java
+	* CSharedLibraryManager.java
+
 2003-01-20 Mikhail Khodjaiants
 	Fix for the 'Show breakpoints supported by selected target' action.
 	* CDebugTarget.java

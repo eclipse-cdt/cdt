@@ -1167,7 +1167,6 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 				ISelection selection = event.getSelection();
 				if (selection != null) {
 					Object element = getSingleElementFromSelection(selection);
-					ICElement cElem = null;
 					if (element instanceof ICElement) {
 						openInEditor((ICElement)element);
 					} else if (element instanceof ITypeInfo) {
@@ -1184,6 +1183,9 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	}
 
 	protected void openTypeInEditor(ITypeInfo info) {
+		if (info == info.getCache().getGlobalNamespace()) {
+			return; // nothing to open
+		}
 		ITypeReference location = info.getResolvedReference();
 		if (location == null) {
 			final ITypeInfo[] typesToResolve = new ITypeInfo[] { info };

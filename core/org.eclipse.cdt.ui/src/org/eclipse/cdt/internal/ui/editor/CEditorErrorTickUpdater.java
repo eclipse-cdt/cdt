@@ -12,9 +12,12 @@ package org.eclipse.cdt.internal.ui.editor;
 
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IAnnotationModelListener;
+import org.eclipse.cdt.internal.ui.util.IProblemChangedListener;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.ProblemsLabelDecorator;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
@@ -25,65 +28,57 @@ import org.eclipse.ui.IEditorInput;
  * on the annotation model of a Java Editor and update the title images when the annotation
  * model changed.
  */
-public class CEditorErrorTickUpdater implements IAnnotationModelListener {
+public class CEditorErrorTickUpdater implements IProblemChangedListener {
 
 	protected CEditor fCEditor;
-	private IAnnotationModel fAnnotationModel;
-	private CElementLabelProvider fLabelProvider;
+	private CUILabelProvider fLabelProvider;
 
 	public CEditorErrorTickUpdater(CEditor editor) {
-		fCEditor= editor;
 		Assert.isNotNull(editor);
+		fCEditor= editor;
+		fLabelProvider=  new CUILabelProvider(0, CElementImageProvider.SMALL_ICONS);
+		fLabelProvider.addLabelDecorator(new ProblemsLabelDecorator(null));
+		CUIPlugin.getDefault().getProblemMarkerManager().addListener(this);
 	}
 
-	/**
-	 * Defines the annotation model to listen to. To be called when the
-	 * annotation model changes.
-	 * @param model The new annotation model or <code>null</code>
-	 * to uninstall.
+	
+	/* (non-Javadoc)
+	 * @see IProblemChangedListener#problemsChanged(IResource[], boolean)
 	 */
-	public void setAnnotationModel(IAnnotationModel model) {
-		if (fAnnotationModel != null) {
-			fAnnotationModel.removeAnnotationModelListener(this);
-		}
-				
-		if (model != null) {
-			if (fLabelProvider == null) {
-				fLabelProvider= new CElementLabelProvider(CElementLabelProvider.SHOW_SMALL_ICONS, CElementLabelProvider.getAdornmentProviders(true, null));
-			}
-			fAnnotationModel=model;
-			fAnnotationModel.addAnnotationModelListener(this);
-			modelChanged(fAnnotationModel);
-		} else {
-			if (fLabelProvider != null) {
-				fLabelProvider.dispose();
-			}
-			fLabelProvider= null;
-			fAnnotationModel= null;
-		}	
-	}
-			
-	/*
-	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
-	 */
-	public void modelChanged(IAnnotationModel model) {
-		Image titleImage= fCEditor.getTitleImage();
-		if (titleImage == null) {
+	public void problemsChanged(IResource[] resourcesChanged, boolean isMarkerChange) {
+		if (isMarkerChange) {
 			return;
 		}
 		IEditorInput input= fCEditor.getEditorInput();
 		if (input != null) { // might run async, tests needed
 			ICElement celement= (ICElement) input.getAdapter(ICElement.class);
-			if (fLabelProvider != null && celement != null) {
-				Image newImage= fLabelProvider.getImage(celement);
-				if (titleImage != newImage) {
-					updatedTitleImage(newImage);
+			if (celement != null) {
+				IResource resource= celement.getResource();
+				if (resource == null) {
+					return;
+				}
+				for (int i = 0; i < resourcesChanged.length; i++){
+					if (resource.equals(resourcesChanged[i])) {
+						updateEditorImage(celement);
+						return;
+					}
 				}
 			}
 		}
+	}	
+			
+	public void updateEditorImage(ICElement celement) {
+		Image titleImage= fCEditor.getTitleImage();
+		if (titleImage == null) {
+			return;
+		}
+		Image newImage= fLabelProvider.getImage(celement);
+		if (titleImage != newImage) {
+			postImageChange(newImage);
+		}
 	}
 	
-	private void updatedTitleImage(final Image newImage) {
+	private void postImageChange(final Image newImage) {
 		Shell shell= fCEditor.getEditorSite().getShell();
 		if (shell != null && !shell.isDisposed()) {
 			shell.getDisplay().syncExec(new Runnable() {
@@ -93,16 +88,9 @@ public class CEditorErrorTickUpdater implements IAnnotationModelListener {
 			});
 		}
 	}	
-	
+		
 	public void dispose() {
-		if (fLabelProvider != null) {
-			fLabelProvider.dispose();
-			fLabelProvider= null;
-		}
-		fAnnotationModel= null;
+		fLabelProvider.dispose();
+		CUIPlugin.getDefault().getProblemMarkerManager().removeListener(this);
 	}
 }
-
-
-
-

@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.util;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.internal.ui.browser.cbrowsing.ProblemsLabelDecorator.ProblemsLabelChangedEvent;
+import org.eclipse.cdt.internal.ui.viewsupport.ProblemsLabelDecorator.ProblemsLabelChangedEvent;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.swt.widgets.Composite;

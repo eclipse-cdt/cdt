@@ -1,3 +1,47 @@
+2004-09-09 David Inglis
+	Fix for 36837 - CVS decoration updating
+
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorErrorTickUpdater.java
+  	* src/org/eclipse/cdt/internal/ui/util/ProblemTreeViewer.java
+
+	removed Eclipse 1.0 way of decorating label providers - use label decorators
+
+  	* src/org/eclipse/cdt/internal/ui/ErrorTickAdornmentProvider.java
+  	* src/org/eclipse/cdt/internal/ui/IAdornmentProvider.java
+
+	refactored to internal.ui.viewsupport
+	
+  	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/AppearanceAwareLabelProvider.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CUILabelProvider.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/ProblemsLabelDecorator.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/DecoratingCLabelProvider.java
+  	* src/org/eclipse/cdt/internal/ui/StandardCElementLabelProvider.java
+  	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPElementLabelProvider.java
+
+	changes due to refactor
+	
+  	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingPart.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/MembersView.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/ProjectsView.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/HierarchyLabelProvider.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/HistoryAction.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/MethodsLabelProvider.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/MethodsViewer.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/TypeHierarchyViewPart.java
+  	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/TypeHierarchyViewer.java
+
+  	* src/org/eclipse/cdt/internal/ui/CWorkbenchAdapter.java
+  	* src/org/eclipse/cdt/internal/ui/compare/CNode.java
+  	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+  	* src/org/eclipse/cdt/internal/ui/cview/CViewLabelProvider.java
+  	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+  	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+  	* src/org/eclipse/cdt/internal/ui/text/contentassist/ResultCollector.java
+  	* src/org/eclipse/cdt/internal/ui/util/IProblemChangedListener.java
+  	* src/org/eclipse/cdt/internal/ui/util/ProblemMarkerManager.java
+  	* src/org/eclipse/cdt/internal/ui/util/ProblemTableViewer.java
+
 2004-09-09 Bogdan Gheorghe
 	Fix for 73406 - Indexer:  Double-Indexing on Specific  Project
 	

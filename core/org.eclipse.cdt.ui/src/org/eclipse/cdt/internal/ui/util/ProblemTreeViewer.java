@@ -5,15 +5,14 @@ package org.eclipse.cdt.internal.ui.util;
  * All Rights Reserved.
  */
 
-import java.util.Set;
+import java.util.ArrayList;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
@@ -24,9 +23,9 @@ import org.eclipse.swt.widgets.Widget;
  * A <code>ProblemItemMapper</code> is contained that maps all items in
  * the tree to underlying resource
  */
-public class ProblemTreeViewer extends TreeViewer implements IProblemChangedListener {
+public class ProblemTreeViewer extends TreeViewer {
 
-	protected ProblemItemMapper fProblemItemMapper;
+	protected ResourceToItemsMapper fResourceToItemsMapper;
 
 	/*
 	 * @see TreeViewer#TreeViewer(Composite)
@@ -53,42 +52,37 @@ public class ProblemTreeViewer extends TreeViewer implements IProblemChangedList
 	}
 	
 	private void initMapper() {
-		fProblemItemMapper= new ProblemItemMapper();
+		fResourceToItemsMapper= new ResourceToItemsMapper(this);
 	}
 	
 	
-	/*
-	 * @see IProblemChangedListener#problemsChanged
-	 */
-	public void problemsChanged(final Set changed) {
-		Control control= getControl();
-		if (control != null && !control.isDisposed()) {
-			control.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					fProblemItemMapper.problemsChanged(changed, (ILabelProvider)getLabelProvider());
-				}
-			});
-		}
-	}
-	
+
 	/*
 	 * @see StructuredViewer#mapElement(Object, Widget)
 	 */
 	protected void mapElement(Object element, Widget item) {
 		super.mapElement(element, item);
 		if (item instanceof Item) {
-			fProblemItemMapper.addToMap(element, (Item) item);
+			fResourceToItemsMapper.addToMap(element, (Item) item);
 		}
 	}
-
+	
 	/*
 	 * @see StructuredViewer#unmapElement(Object, Widget)
 	 */
 	protected void unmapElement(Object element, Widget item) {
 		if (item instanceof Item) {
-			fProblemItemMapper.removeFromMap(element, (Item) item);
+			fResourceToItemsMapper.removeFromMap(element, (Item) item);
 		}		
 		super.unmapElement(element);
+	}
+
+	/*
+	 * @see StructuredViewer#unmapAllElements()
+	 */
+	protected void unmapAllElements() {
+		fResourceToItemsMapper.clearMap();
+		super.unmapAllElements();
 	}
 
 	/*
@@ -100,39 +94,26 @@ public class ProblemTreeViewer extends TreeViewer implements IProblemChangedList
 			super.handleLabelProviderChanged(event);
 			return;
 		}
-		
-		/* 
-		// map the event to the Java elements if possible
-		// this does not handle the ambiguity of default packages
-		Object[] mapped= new Object[source.length];
-		for (int i= 0; i < source.length; i++) {
-			Object o= source[i];
-			// needs to handle the case of:
-			// default package
-			// package fragment root on project
-			if (o instanceof IResource) {
-				IResource r= (IResource)o;
-				IJavaElement element= JavaCore.create(r);
-				if (element != null) 
-					mapped[i]= element;
-				else
-					mapped[i]= o;
-			} else {
-				mapped[i]= o;
+		Object[] changed= event.getElements();
+		if (changed != null && !fResourceToItemsMapper.isEmpty()) {
+			ArrayList others= new ArrayList(changed.length);
+			for (int i= 0; i < changed.length; i++) {
+				Object curr= changed[i];
+				if (curr instanceof IResource) {
+					fResourceToItemsMapper.resourceChanged((IResource) curr);
+				} else {
+					others.add(curr);
+				}
 			}
-		}
-		super.handleLabelProviderChanged(new LabelProviderChangedEvent((IBaseLabelProvider)event.getSource(), mapped));	*/
+			if (others.isEmpty()) {
+				return;
+			}
+			event= new LabelProviderChangedEvent((IBaseLabelProvider) event.getSource(), others.toArray());
+		}		
 		super.handleLabelProviderChanged(event);
 		return;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StructuredViewer#handleInvalidSelection(org.eclipse.jface.viewers.ISelection, org.eclipse.jface.viewers.ISelection)
-	 */
-	protected void handleInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
-		super.handleInvalidSelection(invalidSelection, newSelection);
-	}
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#isExpandable(java.lang.Object)

@@ -5,7 +5,7 @@ package org.eclipse.cdt.internal.ui.util;
  * All Rights Reserved.
  */
 
-import java.util.Set;
+import org.eclipse.core.resources.IResource;
 
 /**
  * Can be added to a ProblemMarkerManager to get notified about error
@@ -17,6 +17,6 @@ public interface IProblemChangedListener {
 	 * @param changedElements  A set of type <code>IPath</code> that
 	 * describe the resources that had an error marker change.
 	 */
-	void problemsChanged(Set changedElements);
+	void problemsChanged(IResource[] changedResources, boolean markerChanged);
 }
 

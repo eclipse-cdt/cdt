@@ -13,10 +13,10 @@ import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
-import org.eclipse.cdt.internal.ui.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.ErrorTickAdornmentProvider;
-import org.eclipse.cdt.internal.ui.IAdornmentProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -83,7 +83,6 @@ public class CElementLabelProvider extends LabelProvider {
 	
 	private WorkbenchLabelProvider fWorkbenchLabelProvider;
 	protected CElementImageProvider fImageLabelProvider;
-	private IAdornmentProvider[] fAdornmentProviders;
 
 	private int fFlags;
 	private int fImageFlags;
@@ -94,18 +93,9 @@ public class CElementLabelProvider extends LabelProvider {
 	}
 
 	public CElementLabelProvider(int flags) {
-		this(flags, null);
-	}
-
-	/**
-	 * @param textFlags Flags defined in <code>CElementLabels</code>.
-	 * @param imageFlags Flags defined in <code>CElementImageProvider</code>.
-	 */
-	public CElementLabelProvider(int flags, IAdornmentProvider[] adormentProviders) {
 		fWorkbenchLabelProvider= new WorkbenchLabelProvider();
 		
 		fImageLabelProvider= new CElementImageProvider();
-		fAdornmentProviders= adormentProviders; 
 
 		fFlags = flags;
 	}
@@ -199,38 +189,13 @@ public class CElementLabelProvider extends LabelProvider {
 	 * @see ILabelProvider#getImage
 	 */
 	public Image getImage(Object element) {
-		return fImageLabelProvider.getImageLabel(element, evaluateImageFlags(element));
+		return fImageLabelProvider.getImageLabel(element, getImageFlags());
 	}
 	
-	protected int evaluateImageFlags(Object element) {
-		int imageFlags= getImageFlags();
-		if (fAdornmentProviders != null) {
-			for (int i= 0; i < fAdornmentProviders.length; i++) {
-				imageFlags |= fAdornmentProviders[i].computeAdornmentFlags(element);
-			}
-		}
-		return imageFlags;
-	}
-	
-	protected Image decorateImage(Image image, Object element) {
-//		if (fLabelDecorators != null && image != null) {
-//			for (int i= 0; i < fLabelDecorators.size(); i++) {
-//				ILabelDecorator decorator= (ILabelDecorator) fLabelDecorators.get(i);
-//				image= decorator.decorateImage(image, element);
-//			}
-//		}
-		return image;
-	}
-
 	/**
 	 * @see IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		if (fAdornmentProviders != null) {
-			for (int i= 0; i < fAdornmentProviders.length; i++) {
-				fAdornmentProviders[i].dispose();
-			}
-		}
 		if (fWorkbenchLabelProvider != null) {
 			fWorkbenchLabelProvider.dispose();
 			fWorkbenchLabelProvider= null;
@@ -244,24 +209,6 @@ public class CElementLabelProvider extends LabelProvider {
 		return (fFlags & flag) != 0;
 	}
 
-	/**
-	 * Turns on the rendering options specified in the given flags.
-	 *
-	 * @param flags the options; a bitwise OR of <code>SHOW_* </code> constants
-	 */
-	public void turnOn(int flags) {
-		fFlags |= flags;
-	}
-
-	/**
-	 * Turns off the rendering options specified in the given flags.
-	 *
-	 * @param flags the initial options; a bitwise OR of <code>SHOW_* </code> constants
-	 */
-	public void turnOff(int flags) {
-		fFlags &= (~flags);
-	}
-	
 	/**
 	 * Gets the image flags.
 	 * Can be overwriten by super classes.
@@ -297,18 +244,5 @@ public class CElementLabelProvider extends LabelProvider {
 			fTextFlags |= CElementLabels.M_POST_QUALIFIED;
 		}
 		return fTextFlags;
-	}
-	
-	public static IAdornmentProvider[] getAdornmentProviders(boolean errortick, IAdornmentProvider extra) {
-		if (errortick) {
-			if (extra == null) {
-				return new IAdornmentProvider[] { new ErrorTickAdornmentProvider() };
-			}
-			return new IAdornmentProvider[] { new ErrorTickAdornmentProvider(), extra };
-		}
-		if (extra != null) {
-			return new IAdornmentProvider[] { extra };
-		}
-		return null;
 	}
 }

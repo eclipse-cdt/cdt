@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.browser.cbrowsing;
+package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -19,7 +19,6 @@ import org.eclipse.cdt.internal.corext.refactoring.ListenerList;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.util.IProblemChangedListener;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
-import org.eclipse.cdt.internal.ui.viewsupport.ImageImageDescriptor;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -159,29 +158,18 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 					case ICElement.C_PROJECT:
 					case ICElement.C_CCONTAINER:
 						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_INFINITE, null);
-//					case ICElement.PACKAGE_FRAGMENT:
-//					case ICElement.CLASS_FILE:
-//						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_ONE, null);
-//					case ICElement.COMPILATION_UNIT:
-//					case ICElement.PACKAGE_DECLARATION:
-//					case ICElement.IMPORT_DECLARATION:
-//					case ICElement.IMPORT_CONTAINER:
-//					case ICElement.TYPE:
-//					case ICElement.INITIALIZER:
-//					case ICElement.METHOD:
-//					case ICElement.FIELD:
-//					case ICElement.LOCAL_VARIABLE:
-//						ICompilationUnit cu= (ICompilationUnit) element.getAncestor(ICElement.COMPILATION_UNIT);
-//						if (cu != null) {
-//							ISourceReference ref= (type == ICElement.COMPILATION_UNIT) ? null : (ISourceReference) element;
-//							// The assumption is that only source elements in compilation unit can have markers
-//							if (cu.isWorkingCopy()) {
-//								// working copy: look at annotation model
-//								return getErrorTicksFromWorkingCopy(cu, ref);
-//							}
-//							return getErrorTicksFromMarkers(cu.getResource(), IResource.DEPTH_ONE, ref);
-//						}
-//						break;
+					case ICElement.C_UNIT:
+						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_ONE, null);
+					case ICElement.C_FUNCTION:
+					case ICElement.C_CLASS:
+					case ICElement.C_UNION:
+					case ICElement.C_STRUCT:
+					case ICElement.C_VARIABLE:
+					case ICElement.C_METHOD:
+						ITranslationUnit tu= ((ISourceReference)element).getTranslationUnit();
+						if (tu != null && tu.exists()) {
+							return getErrorTicksFromMarkers(tu.getResource(), IResource.DEPTH_ONE, tu);
+						}
 					default:
 				}
 			} else if (obj instanceof IResource) {
@@ -315,14 +303,14 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 			fListeners= new ListenerList();
 		}
 		fListeners.add(listener);
-//		if (fProblemChangedListener == null) {
-//			fProblemChangedListener= new IProblemChangedListener() {
-//				public void problemsChanged(IResource[] changedResources, boolean isMarkerChange) {
-//					fireProblemsChanged(changedResources, isMarkerChange);
-//				}
-//			};
-//			CUIPlugin.getDefault().getProblemMarkerManager().addListener(fProblemChangedListener);
-//		}
+		if (fProblemChangedListener == null) {
+			fProblemChangedListener= new IProblemChangedListener() {
+				public void problemsChanged(IResource[] changedResources, boolean isMarkerChange) {
+					fireProblemsChanged(changedResources, isMarkerChange);
+				}
+			};
+			CUIPlugin.getDefault().getProblemMarkerManager().addListener(fProblemChangedListener);
+		}
 	}	
 
 	/* (non-Javadoc)

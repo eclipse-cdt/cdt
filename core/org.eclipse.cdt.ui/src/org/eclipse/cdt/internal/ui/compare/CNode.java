@@ -5,7 +5,7 @@ package org.eclipse.cdt.internal.ui.compare;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.internal.ui.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;

@@ -17,9 +17,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.IStructure;
-import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
@@ -116,23 +116,12 @@ public class HierarchyLabelProvider extends StandardCElementLabelProvider // App
 			return false;
 		}
 		return true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see ILabelProvider#getText
-	 */ 	
-	public String getText(Object element) {
-		String text= super.getText(element);
-//		return decorateText(text, element);
-		return text;
 	}	
-	
 	
 	/* (non-Javadoc)
 	 * @see ILabelProvider#getImage
 	 */ 
 	public Image getImage(Object element) {
-//	    return super.getImage(element);
 		Image result= null;
 		if (element instanceof ICElement) {
 			ImageDescriptor desc= getTypeImageDescriptor((ICElement) element);
@@ -143,9 +132,9 @@ public class HierarchyLabelProvider extends StandardCElementLabelProvider // App
 				result= CUIPlugin.getImageDescriptorRegistry().get(desc);
 			}
 		} else {
-			result= fImageLabelProvider.getImageLabel(element, evaluateImageFlags(element));
+			result= fImageLabelProvider.getImageLabel(element, getImageFlags());
 		}
-		return decorateImage(result, element);
+		return result;
 	}
 
 	private ImageDescriptor getTypeImageDescriptor(ICElement type) {

@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui;
+package org.eclipse.cdt.internal.ui.viewsupport;
 
 
 import org.eclipse.cdt.ui.*;
@@ -20,17 +20,14 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * CElementLabelProvider that respects settings from the Appearance preference page.
  * Triggers a viewer update when a preference changes.
  */
-public class StandardCElementLabelProvider extends CElementLabelProvider implements IPropertyChangeListener {
+public class StandardCElementLabelProvider extends AppearanceAwareLabelProvider implements IPropertyChangeListener {
 
-	//public final static int DEFAULT_FLAGS = SHOW_OVERLAY_ICONS | SHOW_PARAMETERS;
-	public final static int DEFAULT_FLAGS = SHOW_OVERLAY_ICONS ;
-	
 	/**
 	 * Constructor for StandardCElementLabelProvider.
 	 * @see CElementLabelProvider#CElementLabelProvider
 	 */
-	public StandardCElementLabelProvider(int flags, IAdornmentProvider[] adormentProviders) {
-		super(flags, adormentProviders);
+	public StandardCElementLabelProvider(int textFlags, int imageFlags) {
+		super(textFlags, imageFlags);
 		initMasks();
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
@@ -40,7 +37,7 @@ public class StandardCElementLabelProvider extends CElementLabelProvider impleme
 	 * and the ErrorTickAdornmentProvider.
 	 */	
 	public StandardCElementLabelProvider() {
-		this(DEFAULT_FLAGS, new IAdornmentProvider[] { new ErrorTickAdornmentProvider() });
+		super();
 	}
 	
 	private void initMasks() {

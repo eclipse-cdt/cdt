@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.browser.cbrowsing;
+package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.swt.graphics.Color;
 

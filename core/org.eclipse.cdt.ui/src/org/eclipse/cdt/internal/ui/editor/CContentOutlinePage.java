@@ -12,11 +12,11 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
@@ -235,8 +235,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		treeViewer.addSelectionChangedListener(this);
 		
-		CUIPlugin.getDefault().getProblemMarkerManager().addListener(treeViewer);
-				
 		MenuManager manager= new MenuManager(fContextMenuId);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
@@ -277,8 +275,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	}
 	
 	public void dispose() {
-		CUIPlugin.getDefault().getProblemMarkerManager().removeListener(treeViewer);
-		
 		if (treeViewer != null) {
 			treeViewer.removeSelectionChangedListener(this);
 		}

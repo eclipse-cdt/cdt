@@ -8,13 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.browser.cbrowsing;
+package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.internal.ui.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.browser.cbrowsing.StorageLabelProvider;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.core.resources.IStorage;
 
@@ -116,7 +115,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider {
 	protected int evaluateTextFlags(Object element) {
 		return getTextFlags();
 	}
-	
+
 	protected Image decorateImage(Image image, Object element) {
 		if (fLabelDecorators != null && image != null) {
 			for (int i= 0; i < fLabelDecorators.size(); i++) {

@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui;
+package org.eclipse.cdt.internal.ui.viewsupport;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;

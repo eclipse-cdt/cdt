@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.internal.ui.util.ProblemTableViewer;
 import org.eclipse.cdt.internal.ui.util.SelectionUtil;
-import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 import org.eclipse.jface.action.IMenuListener;
@@ -92,9 +92,9 @@ public class MethodsViewer extends ProblemTableViewer {
 		cprovider.showInheritedMethods(on);
 		fShowInheritedMembersAction.setChecked(on);
 		if (on) {
-		    fLabelProvider.turnOn(CElementLabelProvider.SHOW_POST_QUALIFIED);
+		    fLabelProvider.setTextFlags(fLabelProvider.getTextFlags() | CElementLabels.T_POST_QUALIFIED);
 		} else {
-		    fLabelProvider.turnOff(CElementLabelProvider.SHOW_POST_QUALIFIED);
+		    fLabelProvider.setTextFlags(fLabelProvider.getTextFlags() & ~CElementLabels.T_POST_QUALIFIED);
 		}
 		if (on) {
 			sortByDefiningTypeNoRedraw(false);

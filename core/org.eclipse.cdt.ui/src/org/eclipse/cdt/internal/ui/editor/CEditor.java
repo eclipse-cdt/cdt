@@ -214,9 +214,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
-		if (fCEditorErrorTickUpdater != null) {
-			fCEditorErrorTickUpdater.setAnnotationModel(getDocumentProvider().getAnnotationModel(input));
-		}
 		setOutlinePageInput(fOutlinePage, input);
 
 		if (fProjectionModelUpdater != null) {
@@ -506,7 +503,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		}
 
 		if (fCEditorErrorTickUpdater != null) {
-			fCEditorErrorTickUpdater.setAnnotationModel(null);
 			fCEditorErrorTickUpdater.dispose();
 			fCEditorErrorTickUpdater = null;
 		}

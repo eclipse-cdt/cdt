@@ -13,9 +13,8 @@ package org.eclipse.cdt.internal.ui.cview;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.IAdornmentProvider;
-import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
@@ -39,8 +38,8 @@ public class CViewLabelProvider extends StandardCElementLabelProvider {
 	 * @param flags
 	 * @param adormentProviders
 	 */
-	public CViewLabelProvider(int flags, IAdornmentProvider[] adormentProviders) {
-		super(flags, adormentProviders);
+	public CViewLabelProvider(int textFlags, int imageFlags) {
+		super(textFlags, imageFlags);
 	}
 
 	/* (non-Javadoc)

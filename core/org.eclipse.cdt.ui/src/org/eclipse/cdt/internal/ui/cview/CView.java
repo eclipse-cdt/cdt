@@ -34,6 +34,8 @@ import org.eclipse.cdt.internal.ui.drag.TransferDragSourceListener;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CElementSorter;
 import org.eclipse.cdt.ui.CLocalSelectionTransfer;
@@ -49,11 +51,9 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -100,6 +100,7 @@ import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.framelist.FrameList;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
@@ -416,9 +417,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * Sets the label provider for the viewer.
 	 */
 	void initLabelProvider(TreeViewer viewer) {
-		ILabelProvider cProvider = createLabelProvider();
-		ILabelDecorator decorator = CUIPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator();
-		viewer.setLabelProvider(new DecoratingLabelProvider(cProvider, decorator));
+		CUILabelProvider cProvider = createLabelProvider();
+		viewer.setLabelProvider(new DecoratingCLabelProvider(cProvider, true));
 	}
 
 	/**
@@ -509,7 +509,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		viewer.setComparer(new CViewElementComparer());
 		initContentProvider(viewer);
 		initLabelProvider(viewer);
-		CUIPlugin.getDefault().getProblemMarkerManager().addListener(viewer);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 
 		initFilters(viewer);
@@ -565,7 +564,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		return provider;
 	}
 
-	protected ILabelProvider createLabelProvider() {
+	protected CUILabelProvider createLabelProvider() {
 		return new CViewLabelProvider();
 	}
 
@@ -577,7 +576,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		if (viewer != null) {
 			viewer.removeTreeListener(expansionListener);
-			CUIPlugin.getDefault().getProblemMarkerManager().removeListener(viewer);
 		}
 		if (getActionGroup() != null) {
 			getActionGroup().dispose();
@@ -792,17 +790,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			treeViewer.reveal(structuredSelection.getFirstElement());
 		}
-	}
-
-	/**
-	 * Sets the decorator for the package explorer.
-	 * 
-	 * @param decorator
-	 *            a label decorator or <code>null</code> for no decorations.
-	 */
-	public void setLabelDecorator(ILabelDecorator decorator) {
-		ILabelProvider cProvider = createLabelProvider();
-		viewer.setLabelProvider(new DecoratingLabelProvider(cProvider, decorator));
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {

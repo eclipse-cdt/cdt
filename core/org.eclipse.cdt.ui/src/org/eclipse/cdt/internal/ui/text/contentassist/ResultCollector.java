@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.FunctionPrototypeSummary;
 import org.eclipse.jface.resource.ImageDescriptor;

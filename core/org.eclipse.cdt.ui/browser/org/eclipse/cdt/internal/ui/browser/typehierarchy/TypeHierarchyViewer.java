@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.browser.typehierarchy;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
-import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -56,15 +56,10 @@ public abstract class TypeHierarchyViewer extends ProblemTreeViewer {
 	
 	public void setQualifiedTypeName(boolean on) {
 		if (on) {
-		    fLabelProvider.turnOn(CElementLabelProvider.SHOW_POST_QUALIFIED);
+		    fLabelProvider.setTextFlags(fLabelProvider.getTextFlags() | CElementLabels.T_POST_QUALIFIED);
 		} else {
-		    fLabelProvider.turnOff(CElementLabelProvider.SHOW_POST_QUALIFIED);
+		    fLabelProvider.setTextFlags(fLabelProvider.getTextFlags() & ~CElementLabels.T_POST_QUALIFIED);
 		}
-//		if (on) {
-//			fLabelProvider.setTextFlags(fLabelProvider.getTextFlags() | CElementLabels.T_POST_QUALIFIED);
-//		} else {
-//			fLabelProvider.setTextFlags(fLabelProvider.getTextFlags() & ~CElementLabels.T_POST_QUALIFIED);
-//		}
 		refresh();
 	}
 	

@@ -36,7 +36,8 @@ public class GDBTypeParser {
 	String dataType;
 	String name;
 	String out;
-	GDBType gdbType;
+	GDBDerivedType gdbDerivedType;
+	GDBType genericType;
 
 	public class GDBType {
 		public final static int GENERIC = 0;
@@ -68,31 +69,37 @@ public class GDBTypeParser {
 		public int getType() {
 			return type;
 		}
+
 	}
 
 	public class GDBDerivedType extends GDBType {
-		GDBType child;
 		int dimension;
+		GDBType child;
+
 		public GDBDerivedType(GDBType c, int i) {
 			this(c, i, 0);
 		}
 
 		public GDBDerivedType(GDBType c, int t, int dim) {
 			super(t);
-			child = c;
+			setChild(c);
 			dimension = dim;
-		}
-
-		public GDBType getChild() {
-			return child; 
-		}
-
-		public boolean hasChild() {
-			return child != null;
 		}
 
 		public int getDimension() {
 			return dimension;
+		}
+
+		public void setChild(GDBType c) {
+			child = c;
+		}
+
+		public GDBType getChild() {
+			return child;
+		}
+
+		public boolean hasChild() {
+			return child != null;
 		}
 
 		public String toString() {
@@ -102,7 +109,7 @@ public class GDBTypeParser {
 					sb.append(" Function returning " + (hasChild() ? child.toString() : ""));
 				break;
 				case ARRAY:
-					sb.append(" Array[" + dimension + "]" + " to " + (hasChild() ? child.toString() : ""));
+					sb.append(" Array[" + dimension + "]" + " of " + (hasChild() ? child.toString() : ""));
 				break;
 				case REFERENCE:
 					sb.append(" Reference to " + (hasChild() ? child.toString() : ""));
@@ -119,7 +126,10 @@ public class GDBTypeParser {
 	}
 
 	public GDBType getGDBType() {
-		return gdbType;
+		if (gdbDerivedType != null) {
+			return gdbDerivedType;
+		}
+		return genericType;
 	}
 
 	public void verbose() {
@@ -138,16 +148,16 @@ public class GDBTypeParser {
 		index = 0;
 		token = "";
 		dataType = "";
-		
 		out = "";
 		name = "";
+		gdbDerivedType = null;
 
 		// Fetch the datatype.
 		while (getToken() == NAME) {
 			dataType += " " + token;
 		}
 		
-		gdbType = new GDBType(dataType);
+		genericType = new GDBType(dataType);
 
 		// After getting the type move back 
 		//ungetch();
@@ -191,17 +201,44 @@ public class GDBTypeParser {
 		return false;
 	}
 
+	void prependChild(int kind) {
+		prependChild(kind, 0);
+	}
+
+	void prependChild(int kind, int d) {
+		GDBDerivedType dType = new GDBDerivedType(genericType, kind, d);
+		if (gdbDerivedType != null) {
+			// get to the last node in the list and add the new to it
+			GDBType leaf = genericType;
+			GDBDerivedType node;
+			boolean keepGoing =true;
+			for (node = gdbDerivedType; keepGoing;){
+				leaf = node.getChild();
+				if (leaf instanceof GDBDerivedType) {
+					node = (GDBDerivedType)leaf;
+				} else {
+					keepGoing = false;
+				}
+			}
+			node.setChild(dType);
+		} else {
+			gdbDerivedType = dType;
+		}		
+	}
+
+
 	// method returns the next token
 	int getToken() {
 		token = "";
 
 		int c = getch();
-		char character = (char)c;
 
 		// Skip over any space
 		while (isCSpace(c)) {
 			c = getch();
 		}
+
+		char character = (char)c;
 
 		if (c == '(') {
 			if ((c = getch()) == ')') {
@@ -261,11 +298,12 @@ public class GDBTypeParser {
 		dirdcl();
 		while (nstar-- > 0) {
 			out += " pointer to ";
-			gdbType = new GDBDerivedType(gdbType, GDBDerivedType.POINTER);
+			prependChild(GDBType.POINTER);
 		}
 		while (namp-- > 0) {
-			out += " reference to";
-			gdbType = new GDBDerivedType(gdbType, GDBDerivedType.REFERENCE);			
+			out += " reference to ";
+			prependChild(GDBType.REFERENCE);
+			GDBDerivedType referenceType = new GDBDerivedType(genericType, GDBDerivedType.REFERENCE);
 		}
 	}
 
@@ -293,7 +331,7 @@ public class GDBTypeParser {
 			}
 			if (type == PARENS) {
 				out += " function returning ";
-				gdbType = new GDBDerivedType(gdbType, GDBType.FUNCTION);
+				prependChild(GDBType.FUNCTION);
 			} else {
 				int len = 0;
 				if (token.length() > 0) {
@@ -308,7 +346,7 @@ public class GDBTypeParser {
 				} else {
 					out += " array of ";
 				}
-				gdbType = new GDBDerivedType(gdbType, GDBType.ARRAY, len);
+				prependChild(GDBType.ARRAY, len);
 			}
 		}
 	}
@@ -318,6 +356,7 @@ public class GDBTypeParser {
 		GDBTypeParser parser = new GDBTypeParser();
 		System.out.println("char **argv");
 		parser.parse("unsigned long long int **argv");
+		parser.verbose();
 		System.out.println(parser.getGDBType());
 		
 		System.out.println("int (*daytab)[13]");
@@ -327,26 +366,32 @@ public class GDBTypeParser {
 
 		System.out.println("int *daytab[13]");
 		parser.parse("int *daytab[13]");
+		parser.verbose();
 		System.out.println(parser.getGDBType());
 	
 		System.out.println("void *comp()");
 		parser.parse("void *comp()");
+		parser.verbose();
 		System.out.println(parser.getGDBType());
 	
 		System.out.println("void (*comp)()");
 		parser.parse("void (*comp)()");
+		parser.verbose();
 		System.out.println(parser.getGDBType());
 
 		System.out.println("int (*func[15])()");
 		parser.parse("int (*func[15])()");
+		parser.verbose();
 		System.out.println(parser.getGDBType());
 
 		System.out.println("char (*(*x())[])()");
 		parser.parse("char (*(*x())[])()");
+		parser.verbose();
 		System.out.println(parser.getGDBType());
 	
 		System.out.println("char (*(*x[3])())[5]");
 		parser.parse("char (*(*x[3])())[5]");
+		parser.verbose();
 		System.out.println(parser.getGDBType());
 	}
 }

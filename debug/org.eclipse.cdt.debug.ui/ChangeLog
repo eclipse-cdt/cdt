@@ -1,3 +1,8 @@
+2003-01-13 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/internal/ui/editors/DebugTextHover.java (getHoverInfo):
+	IndexArrayOutOfBound exception, do no use the index when doing targetList.add().
+
 2003-01-10 Mikhail Khodjaiants
 	Added contributions of the breakpoint actions to the disassembly editor.
 	* DisassemblyEditor.java

@@ -320,15 +320,18 @@ public class CDescriptor implements ICDescriptor {
 			childNode = list.item(i);
 			if ( childNode.getNodeType() == Node.ELEMENT_NODE ) {
 				if (childNode.getNodeName().equals(PROJECT_EXTENSION)) {
-					decodeProjectExtension((Element)node);
+					//decodeProjectExtension((Element)node);
+					decodeProjectExtension((Element)childNode);
 				} else if (childNode.getNodeName().equals(PATH_ENTRY)) {
-					ICPathEntry entry = decodePathEntry((Element)node);
+					//ICPathEntry entry = decodePathEntry((Element)node);
+					ICPathEntry entry = decodePathEntry((Element)childNode);
 					if (entry != null) {
 						pathEntries.add(entry);
 					}
 				}
 			}
 		}
+		fPathEntries = (ICPathEntry[]) pathEntries.toArray(new ICPathEntry[0]);
 		return ownerID;
 	}
 

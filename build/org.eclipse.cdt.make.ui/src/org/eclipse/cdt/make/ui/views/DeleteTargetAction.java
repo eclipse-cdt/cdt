@@ -59,7 +59,7 @@ public class DeleteTargetAction extends SelectionListenerAction {
 	}
 
 	public void run() {
-		if (canDelete() && confirmDelete() == false)
+		if (!canDelete() || confirmDelete() == false)
 			return;
 		List targets = getTargetsToDelete();
 		IMakeTargetManager manager = MakeCorePlugin.getDefault().getTargetManager();

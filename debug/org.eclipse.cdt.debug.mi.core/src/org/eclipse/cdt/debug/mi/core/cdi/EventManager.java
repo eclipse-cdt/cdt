@@ -227,10 +227,12 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		VariableManager varMgr = getCSession().getVariableManager();
 		RegisterManager regMgr = getCSession().getRegisterManager();
 		MemoryManager memMgr = (MemoryManager)getCSession().getMemoryManager();
+		SharedLibraryManager libMgr = (SharedLibraryManager)getCSession().getSharedLibraryManager();
 		try {
 			varMgr.update();
 			regMgr.update();
 			memMgr.update();
+			libMgr.update();
 		} catch (CDIException e) {
 			//System.out.println(e);
 		}

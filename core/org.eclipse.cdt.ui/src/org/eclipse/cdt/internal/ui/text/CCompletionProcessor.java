@@ -258,15 +258,21 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	private ICCompletionProposal[] evalProposals(IDocument document, int pos, int length) {
 		IRegion region;
 		String frag = "";
-
+	
+		// Move back the pos by one the position is 0-based
+		if (pos > 0) {
+			pos--;
+		}
+	
 		// First, check if we're on a space or trying to open a struct/union
-		if (pos > 2) {
+		if (pos > 1) {
 			try {
 				// If we're on a space and the previous character is valid text,
 				// parse the previous word.
 				if (!Character.isJavaIdentifierPart(document.getChar(pos))) {
 					pos--;
 					if (!Character.isJavaIdentifierPart(document.getChar(pos))) {
+						pos--;
 						// Comment out the dereference code, only useful once we can
 						// know variable types to go fish back structure members
 						//if (document.getChar(offset) == '.') {
@@ -278,7 +284,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 						//}
 					}
 				}
-			} catch (Exception e) {
+			} catch (BadLocationException e) {
 				return null;
 			}
 		}
@@ -288,11 +294,16 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 
 		// If we're currently
 		try {
-			frag = document.get(region.getOffset(), region.getLength());
-			frag = frag.trim();
-			if (frag.length() == 0)
-				// No word is selected...
+			if (region != null) {
+				frag = document.get(region.getOffset(), region.getLength());
+				frag = frag.trim();
+				// No word is selected
+				if (frag.length() == 0) {
+					return null;
+				}
+			} else {
 				return null;
+			}
 		} catch (BadLocationException x) {
 			// ignore
 			return null;

@@ -140,6 +140,54 @@ public class Elf {
 			e_shnum = efile.readShortE();
 			e_shstrndx = efile.readShortE();
 		}
+		
+		protected ELFhdr(byte [] bytes) throws IOException {
+			if(bytes.length <= e_ident.length) {
+				throw new IOException("Not ELF format");
+			}
+			System.arraycopy(bytes, 0, e_ident, 0, e_ident.length);
+			if ( e_ident[ELFhdr.EI_MAG0] != 0x7f || e_ident[ELFhdr.EI_MAG1] != 'E' || 
+				e_ident[ELFhdr.EI_MAG2] != 'L' || e_ident[ELFhdr.EI_MAG3] != 'F' )
+				throw new IOException("Not ELF format");
+			boolean isle = (e_ident[ELFhdr.EI_DATA] == ELFhdr.ELFDATA2LSB);
+			int offset = e_ident.length;
+			e_type = makeShort(bytes, offset, isle); offset += 2;
+			e_machine = makeShort(bytes, offset, isle); offset += 2;
+			e_version = makeInt(bytes, offset, isle); offset += 4;
+			e_entry = makeInt(bytes, offset, isle); offset += 4;
+			e_phoff = makeInt(bytes, offset, isle); offset += 4;
+			e_shoff = makeInt(bytes, offset, isle); offset += 4;
+			e_flags = makeInt(bytes, offset, isle); offset += 4;
+			e_ehsize = makeShort(bytes, offset, isle); offset += 2;
+			e_phentsize = makeShort(bytes, offset, isle); offset += 2;
+			e_phnum = makeShort(bytes, offset, isle); offset += 2;
+			e_shentsize = makeShort(bytes, offset, isle); offset += 2;
+			e_shnum = makeShort(bytes, offset, isle); offset += 2;
+			e_shstrndx = makeShort(bytes, offset, isle); offset += 2;
+		}
+		
+		private final short makeShort(byte [] val, int offset, boolean isle) throws IOException {
+			if (val.length < offset + 2)
+				throw new IOException();
+			if ( isle ) {
+				return (short)((val[offset + 1] << 8) + val[offset + 0]);
+			} else {
+				return (short)((val[offset + 0] << 8) + val[offset + 1]);
+			}
+		}
+	
+		private final long makeInt(byte [] val, int offset, boolean isle) throws IOException
+		{
+			if (val.length < offset + 4)
+				throw new IOException();
+			if ( isle ) {
+				return ((val[offset + 3] << 24) + (val[offset + 2] << 16) + (val[offset + 1] << 8) + val[offset + 0]);
+			} else {
+				return ((val[offset + 0] << 24) + (val[offset + 1] << 16) + (val[offset + 2] << 8) + val[offset + 3]);
+			}
+		}
+
+		
 	}
 
 	public class Section  {
@@ -590,6 +638,10 @@ public class Elf {
 			}
 		}
     }
+    
+    //A hollow entry, to be used with caution in controlled situations
+    protected Elf () {
+    }
 
 	public Elf (String file, long offset) throws IOException {
         commonSetup( file, offset, true );
@@ -656,11 +708,10 @@ public class Elf {
 		}
 	}
 
-
     public Attribute getAttributes() throws IOException {
-        Attribute attrib = new Attribute();
-
-        switch( ehdr.e_type ) {
+		Attribute attrib = new Attribute();
+    
+	    switch( ehdr.e_type ) {
         	case Elf.ELFhdr.ET_CORE:
 				attrib.type = Attribute.ELF_TYPE_CORE;
 				break;
@@ -753,6 +804,7 @@ public class Elf {
 		// getSections
 		// find .debug using toString
 		Section [] sec = getSections();
+		if(sec != null) {
 		for (int i = 0; i < sec.length; i++) {
 			String s = sec[i].toString();
 			if (s.equals(".debug_info")) {
@@ -763,14 +815,25 @@ public class Elf {
 				break;
 			}
 		}
+		}
         return attrib;
     }
-
 
 	public static Attribute getAttributes(String file) throws IOException {
 		Elf elf = new Elf(file);
 		Attribute attrib = elf.getAttributes();
 		elf.dispose();	
+		return attrib;	
+	}
+
+	public static Attribute getAttributes(byte [] array) throws IOException {
+		
+		Elf emptyElf = new Elf();
+		emptyElf.ehdr = emptyElf.new ELFhdr(array);
+		emptyElf.sections = new Elf.Section[0];
+		Attribute attrib = emptyElf.getAttributes();
+		emptyElf.dispose();	
+				
 		return attrib;	
 	}
 	

@@ -22,10 +22,10 @@ import org.eclipse.core.runtime.IPath;
 /**
  */
 public class ElfParser extends AbstractCExtension implements IBinaryParser {
-
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IPath)
-	 */
+	byte [] fCachedByteArray;
+	IPath   fCachedPathEntry;
+	boolean fCachedIsAR;
+	
 	public IBinaryFile getBinary(IPath path) throws IOException {
 		if (path == null) {
 			throw new IOException("path is null");
@@ -33,7 +33,30 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 
 		BinaryFile binary = null;
 		try {
-			Elf.Attribute attribute = Elf.getAttributes(path.toOSString());
+			Elf.Attribute attribute = null;
+			 
+			//Try our luck with the cached entry first, then clear it
+			if(fCachedPathEntry != null && fCachedPathEntry.equals(path)) {			
+				try {
+					//Don't bother with ELF stuff if this is an archive
+					if(fCachedIsAR) {
+						return new BinaryArchive(path);
+					} 
+					//Well, if it wasn't an archive, go for broke
+					attribute = Elf.getAttributes(fCachedByteArray);
+				} catch(Exception ex) {
+					attribute = null;
+				} finally {
+					fCachedPathEntry = null;
+					fCachedByteArray = null;
+				}
+ 			}
+
+			//Take a second run at it if the cache failed. 			
+ 			if(attribute == null) {
+				attribute = Elf.getAttributes(path.toOSString());
+ 			}
+
 			if (attribute != null) {
 				switch (attribute.getType()) {
 					case Attribute.ELF_TYPE_EXE :
@@ -72,7 +95,24 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
 	 */
 	public boolean isBinary(byte[] array, IPath path) {
-		return Elf.isElfHeader(array) || AR.isARHeader(array);
+		boolean isBinaryReturnValue = false;
+
+		if(Elf.isElfHeader(array)) {
+			isBinaryReturnValue = true;
+			fCachedIsAR = false;			
+		} else if(AR.isARHeader(array)) {
+			isBinaryReturnValue = true;
+			fCachedIsAR = true;
+		}
+		
+		//If it is a binary, then cache the array in anticipation that we will be asked to do something with it
+		if(isBinaryReturnValue && array.length > 0) {
+			fCachedPathEntry = path;
+			fCachedByteArray = new byte[array.length];
+			System.arraycopy(array, 0, fCachedByteArray, 0, array.length);
+		}
+		
+		return isBinaryReturnValue;
 	}
 
 }

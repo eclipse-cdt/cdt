@@ -1,3 +1,9 @@
+2004-02-17 David Inglis
+	Fix PR 52095
+	
+	* utils/org/eclipse/cdt/utils/elf/Elf.java
+	* utils/org/eclipse/cdt/utils/ElfParser.java
+	
 2004-02-16 Alain Magloire
 
 	Added new method getElementAtOffset(), with implementation

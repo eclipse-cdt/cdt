@@ -50,7 +50,8 @@ public class CProjectHelper {
         }
         
         if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
-			CCorePlugin.getDefault().mapCProjectOwner(project, "Hi", false);
+        	String projectId = CCorePlugin.PLUGIN_ID + ".make";
+			CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
             addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
         }
         

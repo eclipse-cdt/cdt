@@ -16,7 +16,7 @@ public class MIDataListRegisterValuesInfo extends MIInfo {
 		super(rr);
 	}
 
-	MIRegisterValue[] getRegistersValues () {
+	public MIRegisterValue[] getMIRegisterValues() {
 		if (registers == null) {
 			parse();
 		}

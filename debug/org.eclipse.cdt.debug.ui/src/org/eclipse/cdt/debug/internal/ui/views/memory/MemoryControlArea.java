@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -72,11 +73,10 @@ public class MemoryControlArea extends Composite
 
 	private MemoryPresentation createPresentation()
 	{
-/*
 		IPreferenceStore pstore = CDebugUIPlugin.getDefault().getPreferenceStore();
 		char[] paddingCharStr = pstore.getString( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR ).toCharArray();
-		char paddingChar = ( paddingCharStr.length > 0 ) ? paddingCharStr[0] : '.';
-*/
+		setPaddingChar( ( paddingCharStr.length > 0 ) ? paddingCharStr[0] : '.' );
+
 		return new MemoryPresentation();
 	}
 
@@ -164,10 +164,11 @@ public class MemoryControlArea extends Composite
 		{
 			fMemoryText.setDirtyColor();
 		}
-		else
+		else if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR ) )
 		{
-//			updatePresentation( event );
-//			fMemoryText.refresh();
+			String paddingCharString = (String)event.getNewValue();
+			setPaddingChar( ( paddingCharString.length() > 0 ) ? paddingCharString.charAt( 0 ) : '.' );
+			refresh();
 		}
 	}
 	
@@ -307,6 +308,21 @@ public class MemoryControlArea extends Composite
 	public void setPaddingChar( char paddingChar )
 	{
 		fPaddingChar = paddingChar;
+		if ( getMemoryBlock() != null )
+		{
+			try
+			{
+				getMemoryBlock().reformat( getMemoryBlock().getFormat(),
+										   getMemoryBlock().getWordSize(),
+										   getMemoryBlock().getNumberOfRows(),
+										   getMemoryBlock().getNumberOfColumns(),
+										   fPaddingChar );
+			}
+			catch( DebugException e )
+			{
+				// ignore
+			}
+		}
 	}
 
 	public void setWordSize( int wordSize )

@@ -1,3 +1,8 @@
+2002-11-11 Mikhail Khodjaiants
+	Fix for PR 25988: The 'Padding Character' preference of the Memory view doesn't work.
+	* MemoryControlArea.java
+	* MemoryViewPreferencePage.java
+
 2002-11-05 Mikhail Khodjaiants
 	Implementation of the "Add Global Variables" action of the Expressions view.
 	Action images:

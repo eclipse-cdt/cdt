@@ -96,7 +96,8 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 //		addField( dirty );
 		addField( font );
 
-		StringFieldEditor paddingChar = new StringFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR, "Padding Character:", 1, getFieldEditorParent() );
+//		StringFieldEditor paddingChar = new StringFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR, "Padding Character:", 1, getFieldEditorParent() );
+		StringFieldEditor paddingChar = createPaddingCharacterField();
 		paddingChar.setTextLimit( 1 );
 		addField( paddingChar );
 	}
@@ -135,5 +136,16 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 		boolean ok = super.performOk();
 		CDebugUIPlugin.getDefault().savePluginPreferences();
 		return ok;
+	}
+	
+	private StringFieldEditor createPaddingCharacterField()
+	{
+		return new StringFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR, "Padding Character:", 1, getFieldEditorParent() )
+					{
+						protected boolean doCheckState() 
+						{
+							return ( getTextControl().getText().length() == 1 );
+						}
+					};
 	}
 }

@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -147,9 +146,36 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, e.getMessage(), e);
 		log(status);
 	}
-
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		// dinglis-TODO initializeDefaultPreferences
+	
+	/**
+	* Utility method with conventions
+	*/
+	public static void errorDialog(Shell shell, String title, String message, IStatus s) {
+		log(s);
+		// if the 'message' resource string and the IStatus' message are the same,
+		// don't show both in the dialog
+		if (s != null && message.equals(s.getMessage())) {
+			message = null;
+		}
+		ErrorDialog.openError(shell, title, message, s);
 	}
 
+	/**
+	* Utility method with conventions
+	*/
+	public static void errorDialog(Shell shell, String title, String message, Throwable t) {
+		log(t);
+		IStatus status;
+		if (t instanceof CoreException) {
+			status = ((CoreException) t).getStatus();
+			// if the 'message' resource string and the IStatus' message are the same,
+			// don't show both in the dialog
+			if (status != null && message.equals(status.getMessage())) {
+				message = null;
+			}
+		} else {
+			status = new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1, "Internal Error: ", t); //$NON-NLS-1$	
+		}
+		ErrorDialog.openError(shell, title, message, status);
+	}
 }

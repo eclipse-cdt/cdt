@@ -60,56 +60,58 @@ public class GCCErrorParser implements IErrorParser {
 							return false;
 						}
 					}
-					IFile file = eoParser.findFilePath(fileName);
 
-					if (file != null) {
-						// gnu c: filename:no: (Each undeclared identifier is reported
-						// only once. filename:no: for each function it appears in.)
-						if (desc.startsWith ("(Each undeclared")) {
+					// gnu c: filename:no: (Each undeclared identifier is reported
+					// only once. filename:no: for each function it appears in.)
+					if (desc.startsWith ("(Each undeclared")) {
+						// Do nothing.
+						return false;
+					} else  {
+						String previous = eoParser.getPreviousLine();
+						if (desc.endsWith(")")
+							&& previous.indexOf("(Each undeclared") >= 0 ) {
 							// Do nothing.
 							return false;
-						} else  {
-							String previous = eoParser.getPreviousLine();
-							if (desc.endsWith(")")
-								&& previous.indexOf("(Each undeclared") >= 0 ) {
-								// Do nothing.
-								return false;
-							}
 						}
-						/* See if we can get a var name
-						 * Look for:
-						 * 'foo' undeclared
-						 * 'foo' defined but not used
-						 * conflicting types for 'foo'
-						 *
-						 */ 
-						 int s;
-						 if((s = desc.indexOf("\' undeclared")) != -1) {
-						 	int p = desc.indexOf("`");
-						 	if(p != -1) {
-						 		varName = desc.substring(p+1, s);
-						 		System.out.println("undex varName "+ varName);
-						 	}
-						 } else if((s = desc.indexOf("\' defined but not used")) != -1) {
-						 	int p = desc.indexOf("`");
-						 	if(p != -1) {
-						 		varName = desc.substring(p+1, s);
-						 		System.out.println("unused varName "+ varName);
-						 	}
-						 } else if((s = desc.indexOf("conflicting types for `")) != -1) {
-						 	int p = desc.indexOf("\'", s);
-						 	if(p != -1) {
-						 		varName = desc.substring(desc.indexOf("`") + 1, p);
-						 		System.out.println("confl varName "+ varName);
-						 	}
-						 } else if((s = desc.indexOf("previous declaration of `")) != -1) {
-						 	int p = desc.indexOf("\'", s);
-						 	if(p != -1) {
-						 		varName = desc.substring(desc.indexOf("`") + 1, p);
-						 		System.out.println("prev varName "+ varName);
-						 	}
-						 }
-		    		} else {
+					}
+
+					/* See if we can get a var name
+					 * Look for:
+					 * 'foo' undeclared
+					 * 'foo' defined but not used
+					 * conflicting types for 'foo'
+					 *
+					 */ 
+					 int s;
+					 if((s = desc.indexOf("\' undeclared")) != -1) {
+					 	int p = desc.indexOf("`");
+					 	if (p != -1) {
+					 		varName = desc.substring(p+1, s);
+					 		System.out.println("undex varName "+ varName);
+					 	}
+					 } else if((s = desc.indexOf("\' defined but not used")) != -1) {
+					 	int p = desc.indexOf("`");
+					 	if (p != -1) {
+					 		varName = desc.substring(p+1, s);
+					 		System.out.println("unused varName "+ varName);
+					 	}
+					 } else if((s = desc.indexOf("conflicting types for `")) != -1) {
+					 	int p = desc.indexOf("\'", s);
+					 	if (p != -1) {
+					 		varName = desc.substring(desc.indexOf("`") + 1, p);
+					 		System.out.println("confl varName "+ varName);
+					 	}
+					 } else if((s = desc.indexOf("previous declaration of `")) != -1) {
+					 	int p = desc.indexOf("\'", s);
+					 	if (p != -1) {
+					 		varName = desc.substring(desc.indexOf("`") + 1, p);
+					 		System.out.println("prev varName "+ varName);
+					 	}
+					 }
+
+					IFile file = eoParser.findFilePath(fileName);
+
+					if (file == null) {
 						// Parse the entire project.
 						file = eoParser.findFileName(fileName);
 						if (file != null) {
@@ -119,14 +121,15 @@ public class GCCErrorParser implements IErrorParser {
 								file = null;
 							}
 						}
-
-						// Display the fileName.
-						if (file == null) {
-							desc = fileName + ": " + desc;
-						}
 					}
+					
 					if (desc.startsWith("warning") || desc.startsWith("Warning")) {
 						severity = IMarkerGenerator.SEVERITY_WARNING;
+					}
+					
+					// Display the fileName.
+					if (file == null) {
+						desc = desc +"[" + fileName + "]";
 					}
 					eoParser.generateMarker(file, num, desc, severity, varName);
 				}

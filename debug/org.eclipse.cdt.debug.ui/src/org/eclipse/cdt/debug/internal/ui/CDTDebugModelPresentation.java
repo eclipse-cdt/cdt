@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.IState;
+import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -209,10 +210,19 @@ public class CDTDebugModelPresentation extends LabelProvider
 	{
 		if ( target instanceof IState )
 		{
-			switch( ((IState)target).getCurrentStateId() )
+			IState state = (IState)target;
+			switch( state.getCurrentStateId() )
 			{
 				case IState.EXITED:
-					return getFormattedString( "{0} (Exited)", target.getName() );
+				{
+					Object info = state.getCurrentStateInfo();
+					String label = target.getName() + " (Exited";
+					if ( info != null && info instanceof ICDIExitInfo )
+					{
+						label += ". Exit code = " + ((ICDIExitInfo)info).getCode();
+					}
+					return label + ")";
+				}
 			}
 		}
 		return target.getName();
@@ -248,7 +258,8 @@ public class CDTDebugModelPresentation extends LabelProvider
 			if ( info.getFile() != null )
 			{
 				IPath path = new Path( info.getFile() );
-				label += "at " + ( qualified ? path.toOSString() : path.lastSegment() ) + ":";
+				if ( !path.isEmpty() )
+					label += "at " + ( qualified ? path.toOSString() : path.lastSegment() ) + ":";
 			}
 			if ( info.getFrameLineNumber() != 0 )
 				label += info.getFrameLineNumber();

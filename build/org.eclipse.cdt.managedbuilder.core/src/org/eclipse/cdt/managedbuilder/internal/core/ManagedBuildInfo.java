@@ -233,8 +233,17 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public IConfiguration getDefaultConfiguration() {
 		// Get the default config associated with the project
 		if (defaultConfig == null) {
-			if (defaultConfigId != null && managedProject != null) {
-				defaultConfig = managedProject.getConfiguration(defaultConfigId);
+			if (managedProject != null) {
+				if (defaultConfigId != null) {
+					defaultConfig = managedProject.getConfiguration(defaultConfigId);
+				}
+				if (defaultConfig == null) {
+					IConfiguration[] configs = managedProject.getConfigurations();
+					if (configs.length > 0) {
+						defaultConfig = configs[0];
+						defaultConfigId = defaultConfig.getId();
+					}
+				}
 			}
 		}
 		return defaultConfig;

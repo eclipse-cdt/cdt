@@ -46,8 +46,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	private boolean isExtensionResourceConfig = false;
 	private boolean isDirty = false;
 	private boolean resolved = true;
-	private boolean rebuildNeeded = false;
-
+	
 	/*
 	 *  C O N S T R U C T O R S
 	 */
@@ -508,7 +507,9 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			} else {
 				option.setValue(value);
 			}
-			rebuildNeeded = true;
+		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
+		    //       file rebuilt?  "Clean" its output?  Change its modification date?
+			parent.setRebuildState(true);
 		}
 		return retOpt;
 	}
@@ -546,7 +547,9 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			} else {
 				option.setValue(value);
 			}
-			rebuildNeeded = true;
+		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
+		    //       file rebuilt?  "Clean" its output?  Change its modification date?
+			parent.setRebuildState(true);
 		}
 		return retOpt;
 	}
@@ -607,7 +610,9 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			} else {
 				option.setValue(value);
 			}
-			rebuildNeeded = true;
+		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
+		    //       file rebuilt?  "Clean" its output?  Change its modification date?
+			parent.setRebuildState(true);
 		} 
 		return retOpt;
 	}

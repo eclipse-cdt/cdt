@@ -612,6 +612,7 @@ class UpdateManagedProject12 {
 			
 			// Upgrade the version
 			((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
+			info.setValid(true);
 		}catch (CoreException e){
 			throw e;
 		}catch (Exception e) {

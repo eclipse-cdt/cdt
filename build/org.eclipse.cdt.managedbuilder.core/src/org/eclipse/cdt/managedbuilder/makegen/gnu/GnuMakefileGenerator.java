@@ -352,6 +352,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		
 		if (outputExtension != "") //$NON-NLS-1$
 	        OptDotExt = DOT + outputExtension; 
+
+		IConfiguration config = info.getDefaultConfiguration();
+
+		//	We need to check whether we have any resource specific build  information.
+		IResourceConfiguration resConfig = null;
+		if( config != null ) resConfig = config.getResourceConfiguration(resource.getFullPath().toString());
 		
 		// figure out path to use to resource
 		if(!resourceLocation.toString().startsWith(projectLocation)) {
@@ -366,26 +372,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			resourcePath = relativePath; 
 			
 			// The rule and command to add to the makefile
-			buildRule = relativePath + WILDCARD + OptDotExt + COLON + WHITESPACE + ROOT + SEPARATOR + resourcePath + WILDCARD + DOT + inputExtension;
-		} // end fix for PR 70491
-
-		IConfiguration config = info.getDefaultConfiguration();
-		
-		// For testing only
-/*		if( config.getResourceConfigurations().length > 0) {
-			IResourceConfiguration[] resConfigs = config.getResourceConfigurations();
-			for (int i = 0; i < resConfigs.length; i++) {
-				System.out.println("Name :" + resConfigs[i].getName());				
+			if( resConfig != null) {
+				buildRule = resourcePath + resourceName + OptDotExt + COLON + WHITESPACE + ROOT + SEPARATOR + resourcePath + resourceName + DOT + inputExtension;
+			} else {
+				buildRule = relativePath + WILDCARD + OptDotExt + COLON + WHITESPACE + ROOT + SEPARATOR + resourcePath + WILDCARD + DOT + inputExtension;
 			}
-		}	
-*/
-
-//		We need to check whether we have any resource specific build  information.
-		IResourceConfiguration resConfig = null;
-		if( config != null ) resConfig = config.getResourceConfiguration(resource.getFullPath().toString());
-		if( resConfig != null) {
-			buildRule = resourcePath + resourceName + OptDotExt + COLON + WHITESPACE + "$(ROOT)/" + resourcePath + resourceName + DOT + inputExtension; //$NON-NLS-1$
-		}
+		} // end fix for PR 70491
 		
 		// No duplicates in a makefile
 		if (getRuleList().contains(buildRule)) {
@@ -409,14 +401,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			outflag = tools[0].getOutputFlag();
 			outputPrefix = tools[0].getOutputPrefix();
 			cmd = tools[0].getToolCommand();
-//			The command to build
+			//	The command to build
 			
 			String fileName;
 			String rootDir = "../"; //$NON-NLS-1$
-			if (isItLinked)
+			if (isItLinked) {
 				fileName = resourcePath;
-			else
+			} else {
 				fileName = rootDir + relativePath + resConfig.getName();
+			}
 			
 			inputs = new String[1]; inputs[0] = fileName;
 			String[] flags = null;
@@ -428,10 +421,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			}
 			IManagedCommandLineGenerator cmdLGen = tools[0].getCommandLineGenerator();
 			cmdLInfo = cmdLGen.generateCommandLineInfo( tools[0], cmd, flags, outflag, outputPrefix,
-					resourcePath + resourceName + OptDotExt, inputs, tools[0].getCommandLinePattern() );
+					OUT_MACRO, inputs, tools[0].getCommandLinePattern() );
 	
 			String buildCmd = cmdLInfo.getCommandLine();
-//			String buildCmd = cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + resourceName + OptDotExt + WHITESPACE + fileName;
 			buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
 			buffer.append(TAB + AT + buildCmd);
 		} else {

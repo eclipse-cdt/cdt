@@ -17,7 +17,6 @@ import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoProgram;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfoProgramInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.Spawner;
@@ -109,13 +108,17 @@ public class MIInferior extends Process {
 		return err;
 	}
 
+	public synchronized void waitForSync() throws InterruptedException {
+		while (state != TERMINATED) {
+			wait();
+		}		
+	}
+
 	/**
 	 * @see java.lang.Process#waitFor()
 	 */
-	public synchronized int waitFor() throws InterruptedException {
-		while (state != TERMINATED) {
-			wait();
-		}
+	public int waitFor() throws InterruptedException {
+		waitForSync();
 		return exitValue();
 	}
 
@@ -180,7 +183,8 @@ public class MIInferior extends Process {
 		if (interrupt != null) {
 			try {
 				session.postCommand(interrupt);
-				MIInfo info = interrupt.getMIInfo();
+				// call getMIInfo() even if we discard the value;
+				interrupt.getMIInfo();
 				// Allow (5 secs) for the interrupt to propagate.
 				for (int i = 0;(state == RUNNING) && i < 5; i++) {
 					try {

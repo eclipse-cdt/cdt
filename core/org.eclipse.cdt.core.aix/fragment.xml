@@ -3,10 +3,10 @@
 <fragment
    id="org.eclipse.cdt.core.aix"
    name="%fragmentName.aix"
-   version="2.0.0"
+   version="2.1.0"
    provider-name="Eclipse.org"
    plugin-id="org.eclipse.cdt.core"
-   plugin-version="2.0.0">
+   plugin-version="2.1.0">
 
    <runtime>
       <library name="cdtaix.jar"/>

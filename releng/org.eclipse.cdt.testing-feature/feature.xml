@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.testing"
       label="%featureName"
-      version="2.0.0"
+      version="2.1.0"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 
@@ -38,24 +38,24 @@
          id="org.eclipse.cdt.debug.ui.tests"
          download-size="0"
          install-size="0"
-         version="2.0.0"/>
+         version="2.1.0"/>
 
    <plugin
          id="org.eclipse.cdt.ui.tests"
          download-size="0"
          install-size="0"
-         version="2.0.0"/>
+         version="2.1.0"/>
 
    <plugin
          id="org.eclipse.cdt.testing"
          download-size="0"
          install-size="0"
-         version="2.0.0"/>
+         version="2.1.0"/>
 
    <plugin
          id="org.eclipse.cdt.core.tests"
          download-size="0"
          install-size="0"
-         version="2.0.0"/>
+         version="2.1.0"/>
 
 </feature>

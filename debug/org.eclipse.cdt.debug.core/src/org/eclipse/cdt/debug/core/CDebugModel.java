@@ -108,7 +108,7 @@ public class CDebugModel
 		// Temporary
 		if ( stopInMain )
 		{
-			ICDILocation location = cdiTarget.getSession().getSourceManager().createLocation( "", "main", 0 );
+			ICDILocation location = cdiTarget.getSession().getBreakpointManager().createLocation( "", "main", 0 );
 			try
 			{
 				ICDIBreakpoint bkpt = cdiTarget.getSession().getBreakpointManager().

@@ -12,6 +12,7 @@ import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.MultiLineRule;
+import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
@@ -20,7 +21,7 @@ import org.eclipse.jface.text.rules.WordRule;
 /**
  * This scanner recognizes comments
  */
-public class AsmPartitionScanner extends RuleBasedScanner {
+public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 
 
 	private final static String SKIP= "__skip";

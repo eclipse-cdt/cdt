@@ -77,7 +77,7 @@ public class CDocumentProvider extends FileDocumentProvider {
 			IStorage storage= ((IStorageEditorInput) element).getStorage();
 			
 			document= new CDocument();
-			setDocumentContent(document, storage.getContents());
+			setDocumentContent(document, storage.getContents(), getDefaultEncoding());
 		} else {
 			return null;
 		}

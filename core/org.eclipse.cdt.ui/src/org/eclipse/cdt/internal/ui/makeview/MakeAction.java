@@ -21,6 +21,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -66,10 +67,10 @@ public class MakeAction extends Action  {
 			IWorkbenchPage [] pages = windows[i].getPages();
 			for (int j = 0; j < pages.length; j++) {
 				IWorkbenchPage page = pages[j];
-				IEditorPart[] editors = page.getEditors();
-				for (int k = 0; k < editors.length; k++) {
-					IEditorPart editor = editors[k];
-					if (editor.isDirty()) {
+				IEditorReference[] editorReferences = page.getEditorReferences();
+				for (int k = 0; k < editorReferences.length; k++) {
+					IEditorPart editor = editorReferences[k].getEditor(false);
+					if (editor != null && editor.isDirty()) {
 						IEditorInput input = editor.getEditorInput();
 						if (input instanceof IFileEditorInput) {
 							IFile inputFile = ((IFileEditorInput)input).getFile();

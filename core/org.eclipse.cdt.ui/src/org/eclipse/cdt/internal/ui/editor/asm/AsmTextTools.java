@@ -10,6 +10,8 @@ import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.RuleBasedPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -88,7 +90,7 @@ public class AsmTextTools {
 	/**
 	 * Gets the partition scanner used.
 	 */
-	public RuleBasedScanner getPartitionScanner() {
+	public IPartitionTokenScanner getPartitionScanner() {
 		return fPartitionScanner;
 	}
 	
@@ -101,7 +103,8 @@ public class AsmTextTools {
 			AsmPartitionScanner.C_MULTILINE_COMMENT
 		};
 		
-		return new RuleBasedPartitioner(getPartitionScanner(), types);
+		//return new RuleBasedPartitioner(getPartitionScanner(), types);
+		return new DefaultPartitioner(getPartitionScanner(), types);
 	}
 	
 		

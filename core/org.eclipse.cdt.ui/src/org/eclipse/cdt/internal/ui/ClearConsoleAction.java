@@ -24,9 +24,7 @@ public class ClearConsoleAction extends Action {
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_CLEAR_CONSOLE);
 		fConsoleView= view;
 		setToolTipText(CPlugin.getResourceString("ClearOutputAction.tooltip"));
-		WorkbenchHelp.setHelp(
-			this,
-			new Object[] { ICHelpContextIds.CLEAR_CONSOLE_ACTION });
+		WorkbenchHelp.setHelp(this, ICHelpContextIds.CLEAR_CONSOLE_ACTION);
 	}
 	
 	/**

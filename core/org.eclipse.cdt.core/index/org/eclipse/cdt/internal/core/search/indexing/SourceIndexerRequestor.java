@@ -258,7 +258,6 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		// TODO Auto-generated method stub
 		
 		//System.out.println("New class spec: " + classSpecification.getName());
-		indexer.addClassSpecifier(classSpecification);
 		//System.out.println("enterClassSpecifier");
 
 	}
@@ -383,6 +382,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void exitClassSpecifier(IASTClassSpecifier classSpecification) {
 		// TODO Auto-generated method stub
+		indexer.addClassSpecifier(classSpecification);
 		//System.out.println("exitClassSpecifier");
 	}
 

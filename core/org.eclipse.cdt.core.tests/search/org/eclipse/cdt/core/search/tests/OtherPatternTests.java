@@ -339,7 +339,9 @@ public class OtherPatternTests extends BaseSearchTest {
 		resultCollector.aboutToStart();
 
 		ArrayList matchesList = new ArrayList();
-		MatchLocator matchLocator = new MatchLocator( pattern, resultCollector, scope, monitor );
+		MatchLocator matchLocator = new MatchLocator( pattern, resultCollector, scope);
+		matchLocator.setProgressMonitor(monitor);
+		
 		try {
 			matchLocator.locateMatches( new String [] { path }, workspace, null, matchesList);
 		} catch (InterruptedException e1) {

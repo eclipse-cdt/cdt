@@ -627,7 +627,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private static List fgPreviousSearchPatterns = new ArrayList(20);
 
 	private Button[] fSearchFor;
-	private SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, ENUMTOR, NAMESPACE, DERIVED, UNKNOWN_SEARCH_FOR };
+	private SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, ENUMTOR, NAMESPACE, UNKNOWN_SEARCH_FOR };
 	
 	private String[] fSearchForText= {
 		CSearchMessages.getString("CSearchPage.searchFor.classStruct"), //$NON-NLS-1$
@@ -639,7 +639,6 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		CSearchMessages.getString("CSearchPage.searchFor.enum"),		//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.enumr"),		//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.namespace"),	//$NON-NLS-1$
-		CSearchMessages.getString("CSearchPage.searchFor.derived"),		//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.any") }; 		//$NON-NLS-1$
 		
 		

@@ -104,6 +104,7 @@ public interface IIndexConstants {
 	char UNION_SUFFIX = 'U';
 	char TYPEDEF_SUFFIX = 'T';
 	char DERIVED_SUFFIX = 'D';
+	char FRIEND_SUFFIX = 'F';
 	
 	char TYPE_SUFFIX = 0;
 	char SEPARATOR= '/';

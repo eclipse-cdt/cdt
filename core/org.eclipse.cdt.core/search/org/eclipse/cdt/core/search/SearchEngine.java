@@ -147,13 +147,21 @@ public class SearchEngine implements ICSearchConstants{
 		return CSearchPattern.createPattern( stringPattern, searchFor, limitTo, mode, isCaseSensitive );
 	}
 
+	
+	public void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector, boolean excludeLocalDeclarations) throws InterruptedException {
+
+		MatchLocator matchLocator = new MatchLocator(pattern,collector,scope);
+		matchLocator.setShouldExcludeLocalDeclarations(excludeLocalDeclarations);
+		
+		search(workspace, pattern, scope, collector, excludeLocalDeclarations, matchLocator);
+	}			
 	/**
 	 * @param _workspace
 	 * @param pattern
 	 * @param _scope
 	 * @param _collector
 	 */
-	public void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector, boolean excludeLocalDeclarations) throws InterruptedException {
+	public void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector, boolean excludeLocalDeclarations, IMatchLocator matchLocator) throws InterruptedException {
 		if( VERBOSE ) {
 			System.out.println("Searching for " + pattern + " in " + scope); //$NON-NLS-1$//$NON-NLS-2$
 		}
@@ -192,9 +200,8 @@ public class SearchEngine implements ICSearchConstants{
 				null );
 			
 			subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 95 );
-				
-			MatchLocator matchLocator = new MatchLocator( pattern, collector, scope, subMonitor );
-			matchLocator.setShouldExcludeLocalDeclarations( excludeLocalDeclarations );
+			
+			matchLocator.setProgressMonitor(subMonitor);
 			
 			if( progressMonitor != null && progressMonitor.isCanceled() )
 				throw new InterruptedException();

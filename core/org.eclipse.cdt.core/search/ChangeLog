@@ -1,3 +1,10 @@
+2004-05-06 Bogdan Gheorghe
+	Added friend to ICSearchConstants
+	Created IMatchLocator to allow search users to pass in their own match locators
+	Modified CSearchPattern to create friend search pattern
+	Added Friend pattern
+	Modified MatchLocator to check for class specifiers upon class exit
+
 2004-04-19 Andrew Niefer
 	speed up BasicSearchMatch.compareTo and .hashCode by reducing number of string objects created.
 

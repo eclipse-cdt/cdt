@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -48,6 +49,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	final static int VAR = 5;
 	final static int TYPEDEF = 6;
 	final static int DERIVED = 7;
+	final static int FRIEND = 8;
 	
 	public static boolean VERBOSE = false;
 	
@@ -64,9 +66,9 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		if (classSpecification.getClassKind().equals(ASTClassKind.CLASS))
 		{
 			//Get base clauses
-			Iterator i = classSpecification.getBaseClauses();
-			while (i.hasNext()){
-				IASTBaseSpecifier baseSpec = (IASTBaseSpecifier) i.next();
+			Iterator baseClauses = classSpecification.getBaseClauses();
+			while (baseClauses.hasNext()){
+				IASTBaseSpecifier baseSpec = (IASTBaseSpecifier) baseClauses.next();
 				try {
 					IASTTypeSpecifier typeSpec =  baseSpec.getParentClassSpecifier();
 					if (typeSpec instanceof IASTClassSpecifier){
@@ -75,6 +77,24 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 						this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,DERIVED,ICSearchConstants.DECLARATIONS));
 					}
 				} catch (ASTNotImplementedException e) {}
+			}
+			
+			//Get friends
+			Iterator friends = classSpecification.getFriends();
+			while (friends.hasNext()){
+				Object decl = friends.next();
+				if (decl instanceof IASTClassSpecifier){
+					IASTClassSpecifier friendClassSpec = (IASTClassSpecifier) decl;
+					String[] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedName();
+					this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
+				}
+				else if (decl instanceof IASTFunction){
+					
+				}
+				else if (decl instanceof IASTMethod){
+					//
+				}
+				
 			}
 			
 			this.output.addRef(encodeTypeEntry(classSpecification.getFullyQualifiedName(),CLASS, ICSearchConstants.DECLARATIONS));
@@ -315,6 +335,11 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			
 			case(DERIVED):
 			result[pos++]= DERIVED_SUFFIX;
+			break;
+			
+			case(FRIEND):
+			result[pos++]=FRIEND_SUFFIX;
+			break;
 		}
 		result[pos++] = SEPARATOR;
 		//Encode in the following manner
@@ -428,6 +453,8 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			classType = TYPEDEF_SUFFIX;
 		} else if ( searchFor == ICSearchConstants.DERIVED){
 			classType = DERIVED_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.FRIEND){
+			classType = FRIEND_SUFFIX;
 		} else {
 			//could be TYPE or CLASS_STRUCT, best we can do for these is the prefix
 			return prefix;

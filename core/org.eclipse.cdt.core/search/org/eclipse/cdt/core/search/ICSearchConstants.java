@@ -105,6 +105,8 @@ public interface ICSearchConstants {
 	
 	public static final SearchFor ENUMTOR = new SearchFor( 15 );
 	
+	public static final SearchFor FRIEND = new SearchFor( 16 );
+	
 	/* Nature of match */
 	
 	/**

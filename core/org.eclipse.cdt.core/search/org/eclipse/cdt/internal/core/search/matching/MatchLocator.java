@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -34,15 +33,16 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
@@ -72,17 +72,18 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
-import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.IMatchLocator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -100,7 +101,7 @@ import org.eclipse.core.runtime.Path;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class MatchLocator implements ISourceElementRequestor, ICSearchConstants {
+public class MatchLocator implements IMatchLocator{
 
 
 	ArrayList matchStorage;
@@ -109,12 +110,11 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	/**
 	 * 
 	 */
-	public MatchLocator( ICSearchPattern pattern, ICSearchResultCollector collector, ICSearchScope scope, IProgressMonitor monitor) {
+	public MatchLocator( ICSearchPattern pattern, ICSearchResultCollector collector, ICSearchScope scope) {
 		super();
 		searchPattern = pattern;
 		resultCollector = collector;
-		searchScope = scope;
-		progressMonitor = monitor;		
+		searchScope = scope;	
 	}
 
 	public boolean acceptProblem(IProblem problem) 								{ return DefaultProblemHandler.ruleOnProblem(problem, ParserMode.COMPLETE_PARSE );	}
@@ -293,6 +293,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	}
 
 	public void exitClassSpecifier(IASTClassSpecifier classSpecification) {
+		check(DECLARATIONS, classSpecification);
 		popScope();
 	}
 
@@ -632,5 +633,12 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public boolean parserTimeout() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.search.IMatchLocator#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void setProgressMonitor(IProgressMonitor progressMonitor) {
+		this.progressMonitor = progressMonitor;
 	}
 }

@@ -1105,7 +1105,7 @@ c, quick);
 		try{ ptrOp = callback.pointerOperatorBegin( owner );} catch( Exception e ) {} 
 		
 		if (t == Token.tAMPER) {
-			try{ callback.pointerOperatorType( ptrOp, consume() ); } catch( Exception e ) {}
+			try{ callback.pointerOperatorType( ptrOp, consume(Token.tAMPER) ); } catch( Exception e ) {}
 			try{ callback.pointerOperatorEnd( ptrOp );} catch( Exception e ) {}
 			return;
 		}
@@ -1139,6 +1139,7 @@ c, quick);
 		}
 		
 		backup(mark);
+		try{ callback.pointerOperatorAbort( ptrOp ); } catch( Exception e ) { }
 		throw backtrack;
 	}
 
@@ -1977,7 +1978,8 @@ c, quick);
 			return scanner.nextToken();
 		} catch (EndOfFile e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (ScannerException e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

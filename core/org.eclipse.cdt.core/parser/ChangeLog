@@ -3,6 +3,10 @@
 	references as parameters.  Also support for typedefs as function parameters
 		
 2003-03-31 John Camelon
+	Updated NewModelBuilder to work for ElaboratedTypeSpecifiers, PointerOperators, Const Methods.  
+	Fixed bug35878. 
+
+2003-03-31 John Camelon
 	Updated Scanner to work for Strings literals like L"this string"
 	Updated Scanner to work for floating points literals.
 	Updated Scanner to be more forgiving on errors in QuickScan mode.

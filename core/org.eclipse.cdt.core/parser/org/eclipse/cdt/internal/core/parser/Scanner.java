@@ -586,7 +586,12 @@ public class Scanner implements IScanner {
 				c = getChar();
 				
 				if (c == 'x') {
-					if( ! firstCharZero ) 
+					if( ! firstCharZero && floatingPoint )
+					{
+						ungetChar( c ); 
+						return newToken( Token.tDOT, ".", currentContext ); 
+					}
+					else if( ! firstCharZero ) 
 						throw new ScannerException( "Invalid Hexidecimal @ offset " + currentContext.getOffset() );
 					
 					hex = true;
@@ -706,6 +711,7 @@ public class Scanner implements IScanner {
 					if (throwExceptionOnBadPreprocessorSyntax)
 						throw new ScannerException(
 							BAD_PP + currentContext.getOffset());
+					
 
 				} else {
 					int type = ((Integer) directive).intValue();

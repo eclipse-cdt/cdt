@@ -834,4 +834,11 @@ public class DOMBuilder implements IParserCallback
 	public void templateTypeParameterAbort(Object typeParm) {
 		typeParm = null; 
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorAbort(java.lang.Object)
+	 */
+	public void pointerOperatorAbort(Object ptrOperator) {
+		ptrOperator = null;
+	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.parser.util.*;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 

@@ -704,4 +704,10 @@ public class ExpressionEvaluator implements IParserCallback {
 	public void templateTypeParameterAbort(Object typeParm) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorAbort(java.lang.Object)
+	 */
+	public void pointerOperatorAbort(Object ptrOperator) {
+	}
+
 }

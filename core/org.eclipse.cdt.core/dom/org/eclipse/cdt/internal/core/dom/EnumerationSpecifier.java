@@ -12,8 +12,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.internal.core.parser.util.Name;
@@ -29,7 +29,7 @@ public class EnumerationSpecifier extends TypeSpecifier {
 	}
 	
 	private Name name = null;
-	private List enumeratorDefinitions = new LinkedList();
+	private List enumeratorDefinitions = new ArrayList();
 	
 	public void addEnumeratorDefinition( EnumeratorDefinition def )
 	{

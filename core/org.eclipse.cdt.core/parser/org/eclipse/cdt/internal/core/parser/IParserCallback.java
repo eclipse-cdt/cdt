@@ -46,6 +46,7 @@ public interface IParserCallback {
 	public void   pointerOperatorType( Object ptrOperator, Token type );
 	public void   pointerOperatorName( Object ptrOperator );
 	public void   pointerOperatorCVModifier( Object ptrOperator, Token modifier );
+	public void	  pointerOperatorAbort( Object ptrOperator );
 	public void   pointerOperatorEnd( Object ptrOperator );
 		
 	public Object argumentsBegin( Object declarator );

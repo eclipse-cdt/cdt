@@ -334,16 +334,39 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		Structure elem = new Structure( wrapper.getParent(), wrapper.getKind(), null );
 		wrapper.setElement( elem );
 		wrapper.getParent().addChild(elem);
-		String name = currName.toString(); 
+		String name = wrapper.getName().toString(); 
 		elem.setElementName( name );
-		elem.setIdPos(currName.getStartOffset(), name.length());
-		elem.setPos(currName.getStartOffset(), name.length());
+		elem.setIdPos(wrapper.getName().getStartOffset(), name.length());
+		elem.setPos(wrapper.getName().getStartOffset(), name.length());
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierBegin(java.lang.Object)
 	 */
 	public Object elaboratedTypeSpecifierBegin(Object container, Token classKey) {
-		return null;
+		if( container instanceof SimpleDeclarationWrapper )
+		{
+			SimpleDeclarationWrapper c = (SimpleDeclarationWrapper)container; 
+						
+			int kind;
+			switch (classKey.getType()) {
+				case Token.t_class:
+					kind = ICElement.C_CLASS;
+					break;
+				case Token.t_struct:
+					kind = ICElement.C_STRUCT;
+					break;
+				default:
+					kind = ICElement.C_UNION;
+			}
+					
+			SimpleDeclarationWrapper wrapper = new SimpleDeclarationWrapper();
+			wrapper.setKind( kind );
+			wrapper.setParent( c.getParent() );
+					
+			return wrapper;
+		}
+		else
+			return null;
 	}
 
 	/**
@@ -356,6 +379,11 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierName(java.lang.Object)
 	 */
 	public void elaboratedTypeSpecifierName(Object elab) {
+		if( elab instanceof SimpleDeclarationWrapper )
+		{
+			SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)elab;
+			wrapper.setName( currName );
+		}
 	}
 
 
@@ -399,8 +427,9 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
 	public Object pointerOperatorBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
+		Declarator d = (Declarator)container;
+		PointerOperator po = new PointerOperator(d); 
+		return po;
 	}
 
 
@@ -408,7 +437,8 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorEnd(java.lang.Object)
 	 */
 	public void pointerOperatorEnd(Object ptrOperator) {
-		// TODO Auto-generated method stub
+		PointerOperator po = (PointerOperator)ptrOperator;
+		po.getOwnerDeclarator().addPointerOperator( po );
 		
 	}
 
@@ -417,31 +447,57 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 */
 	public void pointerOperatorName(Object ptrOperator) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorType(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
 	public void pointerOperatorType(Object ptrOperator, Token type) {
-		// TODO Auto-generated method stub
-		
-	}
+		PointerOperator po=(PointerOperator)ptrOperator;
+		switch( type.getType() )
+		{
+			case Token.tSTAR: 
+				po.setKind( PointerOperator.k_pointer );
+				break;
+			case Token.tAMPER:
+				po.setKind( PointerOperator.k_reference );
+				break;
+			default: 
+		}	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
 	public void pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
-		// TODO Auto-generated method stub
-		
+		PointerOperator po=(PointerOperator)ptrOperator;
+		switch( modifier.getType() )
+		{
+			case Token.t_const: 
+				po.setConst( true );
+				break;
+			case Token.t_volatile:
+				po.setVolatile( true );
+				break;
+			default: 
+		}	
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
 	public void declaratorCVModifier(Object declarator, Token modifier) {
-		// TODO Auto-generated method stub
-		
+		Declarator d = (Declarator)declarator;
+		switch( modifier.getType() )
+		{
+			case Token.t_const:
+				d.setConst( true );
+				break;
+			case Token.t_volatile:
+				d.setVolatile(true);
+				break;
+			default:
+				break;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -585,39 +641,32 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierBegin(java.lang.Object)
 	 */
 	public Object enumSpecifierBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
+			return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierId(java.lang.Object)
 	 */
 	public void enumSpecifierId(Object enumSpec) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierAbort(java.lang.Object)
 	 */
 	public void enumSpecifierAbort(Object enumSpec) {
-		// TODO Auto-generated method stub
-		
+		enumSpec = null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object)
 	 */
 	public void enumSpecifierEnd(Object enumSpec) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionBegin(java.lang.Object)
 	 */
 	public Object enumDefinitionBegin(Object enumSpec) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -625,16 +674,12 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionId(java.lang.Object)
 	 */
 	public void enumDefinitionId(Object enumDefn) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
 	 */
 	public void enumDefinitionEnd(Object enumDefn) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -713,32 +758,28 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitInstantiationBegin(java.lang.Object)
 	 */
 	public Object explicitInstantiationBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
+		// until explicit-instantiations are part of the code model just return the container object
+		return container;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitInstantiationEnd(java.lang.Object)
 	 */
 	public void explicitInstantiationEnd(Object instantiation) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitSpecializationBegin(java.lang.Object)
 	 */
 	public Object explicitSpecializationBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
+		//	until explicit-specializations are part of the code model just return the container object
+		return container;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitSpecializationEnd(java.lang.Object)
 	 */
 	public void explicitSpecializationEnd(Object instantiation) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -753,8 +794,8 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateDeclarationBegin(java.lang.Object, boolean)
 	 */
 	public Object templateDeclarationBegin(Object container, boolean exported) {
-		// TODO Auto-generated method stub
-		return null;
+		// until linkageSpecs are part of the code model just return the container object
+		return container;
 	}
 
 	/* (non-Javadoc)
@@ -810,7 +851,13 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 */
 	public void templateTypeParameterAbort(Object typeParm) {
 		// TODO Auto-generated method stub
-		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorAbort(java.lang.Object)
+	 */
+	public void pointerOperatorAbort(Object ptrOperator) {
+		ptrOperator = null; 
 	}
 
 }

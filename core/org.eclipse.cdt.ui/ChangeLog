@@ -1,3 +1,10 @@
+2003-10-10 Alain Magloire
+
+	Add new method getPreferenceStore() in ICOptionPage
+
+	* src/org/eclipse/cdt/ui/dialogs/ICOptionpage.java
+	* src/org/eclipse/cdt/ui/wizard/NewCProjectWizardOptionPage.java
+
 2003-10-08 Alain Magloire
 
 	For Open on the header do a fallback and look for the header

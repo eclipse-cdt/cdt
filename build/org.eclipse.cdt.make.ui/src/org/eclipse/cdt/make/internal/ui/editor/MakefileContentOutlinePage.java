@@ -238,7 +238,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 			viewer.setInput(fInput);
 		}
 
-		MenuManager manager= new MenuManager("#MakefileOutlinerContext");
+		MenuManager manager= new MenuManager("#MakefileOutlinerContext"); //$NON-NLS-1$
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager m) {

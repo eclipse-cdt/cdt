@@ -72,14 +72,14 @@ public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 		rules.add(new EndOfLineRule("unexport", tDef)); //$NON-NLS-1$
 		rules.add(new EndOfLineRule("vpath", tDef)); //$NON-NLS-1$
 		rules.add(new EndOfLineRule("override", tDef)); //$NON-NLS-1$
-		rules.add(new MultiLineRule("define", "endef", tDef)); //$NON-NLS-1$
-		rules.add(new MultiLineRule("override define", "endef", tDef)); //$NON-NLS-1$
+		rules.add(new MultiLineRule("define", "endef", tDef)); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MultiLineRule("override define", "endef", tDef)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Add rules for multi-line comments and javadoc.
-		rules.add(new MultiLineRule("ifdef", "endif", tIf)); //$NON-NLS-1$
-		rules.add(new MultiLineRule("ifndef", "endif", tIf)); //$NON-NLS-1$
-		rules.add(new MultiLineRule("ifeq", "endif", tIf)); //$NON-NLS-1$
-		rules.add(new MultiLineRule("ifnneq", "endif", tIf)); //$NON-NLS-1$
+		rules.add(new MultiLineRule("ifdef", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MultiLineRule("ifndef", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MultiLineRule("ifeq", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MultiLineRule("ifnneq", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Last rule must be supplied with default token!
 		rules.add(new MacroRule(tMacro, tOther)); //$NON-NLS-1$

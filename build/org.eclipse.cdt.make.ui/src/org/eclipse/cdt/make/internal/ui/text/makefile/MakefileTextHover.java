@@ -50,7 +50,7 @@ public class MakefileTextHover implements ITextHover {
 			try {
 				int len = hoverRegion.getLength();
 				int offset = hoverRegion.getOffset();
-				String word = textViewer.getDocument().get(offset, len);
+				textViewer.getDocument().get(offset, len); // check off/len validity
 				if (fEditor != null && len > -1) {
 					IWorkingCopyManager fManager = MakeUIPlugin.getDefault().getWorkingCopyManager();
 					IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());

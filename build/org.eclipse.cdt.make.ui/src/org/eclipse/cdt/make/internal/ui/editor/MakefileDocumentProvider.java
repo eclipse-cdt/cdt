@@ -16,6 +16,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefilePartitionScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -95,7 +96,7 @@ public class MakefileDocumentProvider extends FileDocumentProvider implements IM
 			try {
 				refreshFile(input.getFile());
 			} catch (CoreException x) {
-				handleCoreException(x, "FileDocumentProvider.createElementInfo");
+				handleCoreException(x, MakeUIPlugin.getResourceString("MakeDocumentProvider.exception.createElementInfo")); //$NON-NLS-1$
 			}
 
 			IDocument d = null;

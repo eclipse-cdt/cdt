@@ -17,8 +17,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  */
 public interface IMakefileEditorActionDefinitionIds extends ITextEditorActionDefinitionIds {
 
-	String UNCOMMENT = "org.eclipse.cdt.make.ui.edit.text.makefile.comment";
+	String UNCOMMENT = "org.eclipse.cdt.make.ui.edit.text.makefile.comment"; //$NON-NLS-1$
 
-	String COMMENT = "org.eclipse.cdt.make.ui.edit.text.makefile.uncomment";
+	String COMMENT = "org.eclipse.cdt.make.ui.edit.text.makefile.uncomment"; //$NON-NLS-1$
 
 }

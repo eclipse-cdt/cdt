@@ -84,7 +84,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			} else if (o1 instanceof IRule) {
 				name1 = ((IRule)o1).getTarget().toString();
 			} else {
-				name1 ="";
+				name1 =""; //$NON-NLS-1$
 			}
 
 			if (o2 instanceof IMacroDefinition) {
@@ -92,7 +92,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			} else if (o2 instanceof IRule) {
 				name2 = ((IRule)o1).getTarget().toString();
 			} else {
-				name2 ="";
+				name2 =""; //$NON-NLS-1$
 			}
 
 			//return String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
@@ -137,7 +137,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		for (int i = 0; i < statements.length; i++) {
 			String name = null;
 			Image image = null;
-			String infoString = "";//getContentInfoString(name);
+			String infoString = "";//getContentInfoString(name); //$NON-NLS-1$
 			if (statements[i] instanceof IMacroDefinition) {
 				name = ((IMacroDefinition) statements[i]).getName();
 				image = imageMacro;
@@ -149,7 +149,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			}
 			if (name != null && name.startsWith(wordPart.toString())) {
 				IContextInformation info = new ContextInformation(name, infoString);
-				String displayString = (name.equals(infoString) ? name : name + " - " + infoString);
+				String displayString = (name.equals(infoString) ? name : name + " - " + infoString); //$NON-NLS-1$
 				ICompletionProposal result =
 					new CompletionProposal(
 						name,

@@ -36,9 +36,9 @@ public class AddBuildTargetAction extends Action {
 	};
 
 	public AddBuildTargetAction(MakefileContentOutlinePage outliner) {
-		super("Add To Build Target");
-		setDescription("Add To Build Target");
-		setToolTipText("Add To Build Target");
+		super(MakeUIPlugin.getResourceString("AddBuildTargetAction.title")); //$NON-NLS-1$
+		setDescription(MakeUIPlugin.getResourceString("AddBuildTargetAction.description")); //$NON-NLS-1$
+		setToolTipText(MakeUIPlugin.getResourceString("AddBuildTargetAction.tooltip")); //$NON-NLS-1$
 		fOutliner = outliner;
 	}
 
@@ -82,7 +82,7 @@ public class AddBuildTargetAction extends Action {
 					}
 				}
 			} catch (CoreException e) {
-				MakeUIPlugin.errorDialog(shell, "Internal Error", "", e);
+				MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("AddBuildTargetAction.exception.internal"), e.toString(), e); //$NON-NLS-1$
 				target = null;
 			}
 
@@ -93,7 +93,7 @@ public class AddBuildTargetAction extends Action {
 					dialog = new MakeTargetDialog(shell, target);
 					dialog.open();
 				} catch (CoreException e) {
-					MakeUIPlugin.errorDialog(shell, "Internal Error", "", e);
+					MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("AddBuildTargetAction.exception.internal"), e.toString(), e); //$NON-NLS-1$
 				}
 			}
 		}

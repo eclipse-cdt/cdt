@@ -23,18 +23,18 @@ import org.eclipse.jface.viewers.ViewerSorter;
 
 public class LexicalSortingAction extends Action {
 
-	private static final String ACTION_NAME = "LexicalSortingAction";
-	private static final String DIALOG_STORE_KEY = ACTION_NAME + ".sort";
+	private static final String ACTION_NAME = "LexicalSortingAction"; //$NON-NLS-1$
+	private static final String DIALOG_STORE_KEY = ACTION_NAME + ".sort"; //$NON-NLS-1$
 
 	private LexicalMakefileSorter fSorter;
 	private TreeViewer fTreeViewer;
 
 	public LexicalSortingAction(TreeViewer treeViewer) {
-		super(MakeUIPlugin.getResourceString(ACTION_NAME + ".label"));
+		super(MakeUIPlugin.getResourceString(ACTION_NAME + ".label")); //$NON-NLS-1$
 
-		setDescription(MakeUIPlugin.getResourceString(ACTION_NAME + ".description"));
-		setToolTipText(MakeUIPlugin.getResourceString(ACTION_NAME + ".tooltip"));
-		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_ALPHA_SORTING);
+		setDescription(MakeUIPlugin.getResourceString(ACTION_NAME + ".description")); //$NON-NLS-1$
+		setToolTipText(MakeUIPlugin.getResourceString(ACTION_NAME + ".tooltip")); //$NON-NLS-1$
+		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_ALPHA_SORTING); //$NON-NLS-1$
 
 		fTreeViewer = treeViewer;
 		fSorter = new LexicalMakefileSorter();
@@ -50,7 +50,7 @@ public class LexicalSortingAction extends Action {
 		setChecked(on);
 		fTreeViewer.setSorter(on ? fSorter : null);
 
-		String key = ACTION_NAME + ".tooltip" + (on ? ".on" : ".off");
+		String key = ACTION_NAME + ".tooltip" + (on ? ".on" : ".off"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setToolTipText(MakeUIPlugin.getResourceString(key));
 		if (store) {
 			MakeUIPlugin.getDefault().getDialogSettings().put(DIALOG_STORE_KEY, on);

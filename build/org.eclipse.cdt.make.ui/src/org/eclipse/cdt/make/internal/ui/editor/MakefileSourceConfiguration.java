@@ -163,7 +163,7 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDefaultPrefixes(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
 	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
-		return new String[]{"#"};
+		return new String[]{"#"}; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

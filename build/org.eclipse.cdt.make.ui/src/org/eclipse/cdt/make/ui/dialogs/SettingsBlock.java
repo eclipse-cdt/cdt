@@ -92,6 +92,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		if (fBuildInfo.isStopOnError()) {
 			stopOnErrorButton.setSelection(true);
 		}
+		stopOnErrorButton.setEnabled(fBuildInfo.isDefaultBuildCmd());
 	}
 
 	protected void createBuildCmdControls(Composite parent) {
@@ -143,8 +144,6 @@ public class SettingsBlock extends AbstractCOptionPage {
 		}
 		if (fBuildInfo.isDefaultBuildCmd()) {
 			buildCommand.setEnabled(false);
-		} else {
-			stopOnErrorButton.setEnabled(false);
 		}
 		defButton.setSelection(fBuildInfo.isDefaultBuildCmd());
 	}

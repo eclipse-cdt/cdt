@@ -1,4 +1,0 @@
-2002-10-30 Alain Magloire
-
-	* core/org/eclipse/cdt/debug/core/tests/TargetTests.java: Test number
-	24183 is no longer valid, the method was remove from the CDI API.

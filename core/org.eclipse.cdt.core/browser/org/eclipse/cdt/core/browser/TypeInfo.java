@@ -58,7 +58,10 @@ public class TypeInfo implements ITypeInfo
 		ITypeReference ref = getResolvedReference();
 		if (ref != null) {
 			ICElement[] elems = ref.getCElements();
-			if (elems.length > 1) {
+			if (elems != null && elems.length > 0) {
+				if (elems.length == 1)
+					return elems[0];
+
 				for (int i = 0; i < elems.length; ++i) {
 					ICElement elem = elems[i];
 					if (elem.getElementType() == fElementType && elem.getElementName().equals(getName())) {
@@ -66,8 +69,6 @@ public class TypeInfo implements ITypeInfo
 						return elem;
 					}
 				}
-			} else if (elems.length == 1) {
-				return elems[0];
 			}
 		}
 		return null;

@@ -1,3 +1,8 @@
+2004-07-06 Alain Magloire
+
+	Fix PR 69199
+	* browser/org/eclipse/cdt/core/browser/TypeInfo.java
+
 2004-07-06 Hoda Amer
 	Fix for PR 68933 : [Content Assist] removes asterisks from parameter prompt
 	

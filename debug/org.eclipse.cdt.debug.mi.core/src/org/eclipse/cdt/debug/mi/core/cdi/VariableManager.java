@@ -78,14 +78,15 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		Variable[] vars = getVariables();
 		for (int i = 0; i < vars.length; i++) {
 			if (vars[i].getName().equals(name)) {
-				if (stack != null && vars[i].getStackFrame().equals(stack)) {
+				ICDIStackFrame frame = vars[i].getStackFrame();
+				if (stack == null && frame == null) {
+					return vars[i];
+				} else if (frame != null && stack != null && frame.equals(stack)) {
 					if (vars[i].getVariableObject().getPosition() == position) {
 						if (vars[i].getVariableObject().getStackDepth() == depth) {
 							return vars[i];
 						}
 					}
-				} else {
-					return vars[i];
 				}
 			}
 		}

@@ -1,8 +1,8 @@
-2004-06-07 Alain Magloire
-
-	Fix PR 64328
-	* src/org/eclipse/cdt/internal/ui/poreferences/PreferencesMessages.properties
-
+2004-06-07 Bogdan Gheorghe
+	Fix for Bug 60772
+	
+	* src/org/eclipse/cdt/internal/ui/search/actions/FindAction.java
+	
 2004-06-06 Bogdan Gheorghe
 	Changed MouseClickListener to use Parser KeywordSets 
 	* src/org/eclipse/cdt/internal/ui/editor/MouseClickListener.java

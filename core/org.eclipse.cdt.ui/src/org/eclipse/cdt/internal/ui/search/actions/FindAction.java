@@ -54,6 +54,10 @@ public abstract class FindAction extends SelectionParseAction {
 	 protected CSearchQuery createSearchQuery(String pattern, SearchFor searchFor) {
 	 	CSearchQuery op = null;
 		ICSearchScope scope = getScope();
+		
+		if (scope == null)
+			return null;
+		
 		String scopeDescription = getScopeDescription();
 	
 		//Create a case sensitive search operation - limited by the node
@@ -159,6 +163,10 @@ public abstract class FindAction extends SelectionParseAction {
 		}
 	
 		CSearchQuery job = createSearchQuery(node);
+		
+		if (job == null)
+			return; 
+		
 		NewSearchUI.activateSearchResultView();
 		
 		NewSearchUI.runQuery(job);

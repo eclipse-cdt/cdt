@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt"
       label="%featureName"
-      version="1.0.1"
+      version="1.1.0"
       provider-name="%providerName"
       os=""
       ws=""
@@ -20,65 +20,57 @@
    <url>
       <update label="%updateSiteName" url="http://update.eclipse.org/updates"/>
    </url>
-   
-  <requires>
-  	  <import plugin="org.eclipse.platform" version="2.0.0" match="compatible" />
-  </requires>   
- 
+
+   <requires>
+      <import plugin="org.eclipse.platform" version="2.1.0" match="compatible"/>
+   </requires>
+
    <plugin
          id="org.eclipse.cdt.core"
          download-size="0"
          install-size="0"
-         version="1.0.1">
-   </plugin>
+         version="1.1.0"/>
 
    <plugin
          id="org.eclipse.cdt.ui"
          download-size="0"
          install-size="0"
-         version="1.0.1">
-   </plugin>
+         version="1.1.0"/>
 
    <plugin
          id="org.eclipse.cdt"
          download-size="0"
          install-size="0"
-         version="1.0.1">
-   </plugin>
+         version="1.1.0"/>
 
    <plugin
          id="org.eclipse.cdt.debug.core"
          download-size="0"
          install-size="0"
-         version="1.0.1">
-   </plugin>
+         version="1.1.0"/>
 
    <plugin
          id="org.eclipse.cdt.debug.mi.core"
          download-size="0"
          install-size="0"
-         version="1.0.1">
-   </plugin>
+         version="1.1.0"/>
 
    <plugin
          id="org.eclipse.cdt.debug.ui"
          download-size="0"
          install-size="0"
-         version="1.0.1">
-   </plugin>
+         version="1.1.0"/>
 
    <plugin
          id="org.eclipse.cdt.launch"
          download-size="0"
          install-size="0"
-         version="1.0.1">
-   </plugin>
+         version="1.1.0"/>
 
    <plugin
          id="org.eclipse.cdt.debug.mi.ui"
          download-size="0"
          install-size="0"
-         version="1.0.1">
-   </plugin>
+         version="1.1.0"/>
 
 </feature>

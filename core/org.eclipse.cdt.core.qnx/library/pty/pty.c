@@ -7,7 +7,7 @@
  * Signature: ()I
  */
 JNIEXPORT jstring JNICALL
-Java_org_eclipse_cdt_utils_pty_PTY_forkpty (JNIEnv *env, jobject jobj) {
+Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj) {
 	jfieldID fid; /* Store the field ID */
 	jstring jstr = NULL;
 	int master = -1;

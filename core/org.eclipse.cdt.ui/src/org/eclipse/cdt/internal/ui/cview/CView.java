@@ -414,10 +414,10 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	*/
 	public void createPartControl (Composite parent) {
 
-		viewer= new ProblemTreeViewer (parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		boolean showCUChildren= CPluginPreferencePage.showCompilationUnitChildren();
+		viewer = createViewer(parent);
 		viewer.setUseHashlookup (true);
-		viewer.setContentProvider(new CElementContentProvider (showCUChildren, true));
+		CElementContentProvider provider = createContentProvider();
+		viewer.setContentProvider(provider);
 		setLabelDecorator(PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
 		CUIPlugin.getDefault().getProblemMarkerManager().addListener(viewer);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
@@ -488,6 +488,19 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 
 		fillActionBars();
 
+	}
+
+	protected ProblemTreeViewer createViewer(Composite parent) {
+		return new ProblemTreeViewer (parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+	}
+
+	protected CElementContentProvider createContentProvider() {
+		boolean showCUChildren= CPluginPreferencePage.showCompilationUnitChildren();
+		return new CElementContentProvider(showCUChildren, true);
+	}
+
+	protected StandardCElementLabelProvider createLabelProvider () {
+		return new StandardCElementLabelProvider();
 	}
 
 	/* (non-Javadoc)
@@ -1088,7 +1101,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	 * @param decorator a label decorator or <code>null</code> for no decorations.
 	 */
 	public void setLabelDecorator(ILabelDecorator decorator) {
-		ILabelProvider cProvider= new StandardCElementLabelProvider();
+		ILabelProvider cProvider= createLabelProvider();
 		if (decorator == null) {
 			viewer.setLabelProvider(cProvider);
 		} else {
@@ -1207,8 +1220,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 				if (p != null) {
 					IPath path = new Path(p);
 					ICElement element = factory.create(path);
-					if (element != null)
+					if (element != null) {
 						elements.add(element);
+					}
 				}
 			}
 			viewer.setExpandedElements(elements.toArray());
@@ -1222,8 +1236,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 				if (p != null) {
 					IPath path = new Path(p);
 					ICElement element = factory.create(path);
-					if (element != null)
+					if (element != null) {
 						list.add(element);
+					}
 				}
 			}
 			viewer.setSelection(new StructuredSelection(list));
@@ -1254,9 +1269,10 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	}
 
 	public void saveState(IMemento memento) {
-		if(viewer == null) {
-			if(this.memento != null) //Keep the old state;
+		if (viewer == null) {
+			if (this.memento != null) { //Keep the old state;
 				memento.putMemento(this.memento);
+			}
 			return;
 		}
 
@@ -1273,9 +1289,10 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 						|| o instanceof IBinary || o instanceof IArchive)) {
 					IMemento elementMem = expandedMem.createChild(TAG_ELEMENT);
 					ICElement e = (ICElement)o;
-					IResource res = (IResource)e.getAdapter(IResource.class);
-					if (res != null)
+					IResource res = e.getResource();
+					if (res != null) {
 						elementMem.putString(TAG_PATH, res.getLocation().toOSString());
+					}
 				}
 			}
 		}
@@ -1285,11 +1302,13 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		if(elements.length > 0) {
 			IMemento selectionMem = memento.createChild(TAG_SELECTION);
 			for (int i = 0; i < elements.length; i++) {
-				ICElement e  = (ICElement)elements[i];
-				IResource r  = (IResource)e.getAdapter(IResource.class);
-				if (r != null) {
-					IMemento elementMem = selectionMem.createChild(TAG_ELEMENT);
-					elementMem.putString(TAG_PATH,r.getLocation().toString());
+				if (elements[i] instanceof ICElement) {
+					ICElement e  = (ICElement)elements[i];
+					IResource r  = e.getResource();
+					if (r != null) {
+						IMemento elementMem = selectionMem.createChild(TAG_ELEMENT);
+						elementMem.putString(TAG_PATH,r.getLocation().toString());
+					}
 				}
 			}
 		}

@@ -1,4 +1,9 @@
 2004-11-16 Alain Magloire
+	Optimize things by providing a new method
+	ICDIRegisterGroup.hasRegisters();
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/RegisterGroup.java
+
+2004-11-16 Alain Magloire
 	Remove some warnings and use the new Launch key
 	to decide whether or not to use pseudo tty.
 	* mi/org/eclipse/cdt/debug/mi/core/TxThread.java

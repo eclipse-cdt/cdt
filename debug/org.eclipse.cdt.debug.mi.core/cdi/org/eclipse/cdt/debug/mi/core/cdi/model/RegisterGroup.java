@@ -49,4 +49,11 @@ public class RegisterGroup extends CObject implements ICDIRegisterGroup {
 		return fName;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup#hasRegisters()
+	 */
+	public boolean hasRegisters() throws CDIException {
+		return true;
+	}
+
 }

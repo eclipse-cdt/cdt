@@ -25,4 +25,11 @@ public class DOMFailedTest extends BaseDOMTest  {
 		failTest("FUNCTION_MACRO( 1, a );\n	int i;");
 	}
 
+	public void testBug37019(){
+		failTest("static const A a( 1, 0 );");
+	}
+	
+	public void testBug36932() {
+		failTest("A::A( ) : var( new char [ (unsigned)bufSize ] ) {}");
+	}
 }

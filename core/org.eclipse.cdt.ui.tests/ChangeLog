@@ -1,3 +1,8 @@
+2003-04-28 Andrew Niefer
+	Added DOMFailedTest::testBug37019
+	Added DOMFailedTest::testBug36932
+	Added ScannerFailedTest::testBug37011
+
 2003-04-28 John Camelon
 	Added DOMTests::testOrder().  
 

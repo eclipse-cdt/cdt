@@ -672,6 +672,20 @@ public class CoreModel {
 	}
 
 	/**
+	 * Helper method use by a pathentry container implementing <code>IPathEntryContainerExtension</code>
+	 * It notify the model of changes.
+	 * Note: the paths in the <code>PathEntryContainerChanged[]</code> array must be on
+	 * source that the container was set too.  If not the changes will be silently ignore.
+	 * 
+	 * @param container
+	 * @param changes array of changes.
+	 * @param monitor progress monitor
+	 */
+	public void pathEntryContainerUpdates(IPathEntryContainerExtension container, PathEntryContainerChanged[] changes, IProgressMonitor monitor) {
+		pathEntryManager.pathEntryContainerUpdates(container, changes, monitor);
+	}
+
+	/**
 	 * Sets the pathentries of this project using a list of entries.
 	 * <p>
 	 * Setting the pathentries to <code>null</code> specifies a default

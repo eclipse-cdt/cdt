@@ -1,5 +1,13 @@
+2005-02-14 Alain Magloire
+	Part of 79596
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+	* model/org/eclipse/cdt/core/model/IPathEntryContainerExtension.java
+	* model/org/eclipse/cdt/core/model/IPathEntryContainerExtensionListener.java
+	* model/org/eclipse/cdt/core/model/PathEntryContainerChanged.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+
 2005-02-10 Alain Magloire
-	Second of 79596
+	Second part of 79596
 	* model/org/eclipse/cdt/core/model/IPathEntryContainerExtension.java
 	* model/org/eclipse/cdt/core/model/IPathEntryContainerExtensionListener.java
 	* model/org/eclipse/cdt/core/model/PathEntryContainerChanged.java

@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
-import org.eclipse.cdt.core.model.IPathEntryContainerExtensionListener;
 import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -77,7 +76,7 @@ import org.eclipse.core.runtime.jobs.Job;
  * @author alain
  *  
  */
-public class PathEntryManager implements IPathEntryStoreListener, IElementChangedListener, IPathEntryContainerExtensionListener {
+public class PathEntryManager implements IPathEntryStoreListener, IElementChangedListener {
 
 	// PathEntry extension
 	public final static String PATHENTRY_STORE_ID = "PathEntryStore"; //$NON-NLS-1$
@@ -100,6 +99,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	static final IIncludeEntry[] NO_INCLUDENTRIES = new IIncludeEntry[0];
 
 	static final IMacroEntry[] NO_MACROENTRIES = new IMacroEntry[0];
+
+	static final IPathEntryContainer[] NO_PATHENTRYCONTAINERS = new IPathEntryContainer[0];
 
 	// Synchronized the access of the cache entries.
 	protected Map resolvedMap = new Hashtable();
@@ -182,12 +183,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 		}
 		IPathEntryContainer[] containers = getPathEntryContainers(cproject);
-		if (containers != null) {
-			for (int i = 0; i < containers.length; ++i) {
-				if (containers[i] instanceof IPathEntryContainerExtension) {
-					IIncludeEntry[] incs = ((IPathEntryContainerExtension)containers[i]).getIncludeEntries(resPath);
-					includeList.addAll(Arrays.asList(incs));
-				}
+		for (int i = 0; i < containers.length; ++i) {
+			if (containers[i] instanceof IPathEntryContainerExtension) {
+				IIncludeEntry[] incs = ((IPathEntryContainerExtension)containers[i]).getIncludeEntries(resPath);
+				includeList.addAll(Arrays.asList(incs));
 			}
 		}
 
@@ -259,12 +258,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 		}
 		IPathEntryContainer[] containers = getPathEntryContainers(cproject);
-		if (containers != null) {
-			for (int i = 0; i < containers.length; ++i) {
-				if (containers[i] instanceof IPathEntryContainerExtension) {
-					IMacroEntry[] incs = ((IPathEntryContainerExtension)containers[i]).getMacroEntries(resPath);
-					macroList.addAll(Arrays.asList(incs));
-				}
+		for (int i = 0; i < containers.length; ++i) {
+			if (containers[i] instanceof IPathEntryContainerExtension) {
+				IMacroEntry[] incs = ((IPathEntryContainerExtension)containers[i]).getMacroEntries(resPath);
+				macroList.addAll(Arrays.asList(incs));
 			}
 		}
 
@@ -673,10 +670,12 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 			containerPut(affectedProject, containerPath, newContainer);
 		}
+
 		// Nothing change.
 		if (remaining == 0) {
 			return;
 		}
+
 		// trigger model refresh
 		try {
 			//final boolean canChangeResources =
@@ -719,7 +718,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public synchronized IPathEntryContainer[] getPathEntryContainers(ICProject cproject) {
-		IPathEntryContainer[] pcs = null;
+		IPathEntryContainer[] pcs = NO_PATHENTRYCONTAINERS;
 		Map projectContainers = (Map)Containers.get(cproject);
 		if (projectContainers != null) {
 			Collection collection = projectContainers.values();
@@ -864,16 +863,69 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				oldContainer.notifyAll();
 			}
 		}
-		if (oldContainer instanceof IPathEntryContainerExtension) {
-			((IPathEntryContainerExtension)oldContainer).removeContainerListener(this);
-		}
-		if (container instanceof IPathEntryContainerExtension) {
-			((IPathEntryContainerExtension)container).addContainerListener(this);
-		}
 	}
 
 	private synchronized void containerRemove(ICProject cproject) {
 		Containers.remove(cproject);
+	}
+
+
+	public void pathEntryContainerUpdates(IPathEntryContainerExtension container, PathEntryContainerChanged[] events, IProgressMonitor monitor) {
+		
+		ArrayList list = new ArrayList(events.length);
+		for (int i = 0; i < events.length; ++i) {
+			PathEntryContainerChanged event = events[i];
+			ICElement celement = CoreModel.getDefault().create(event.getPath());
+			if (celement != null) {
+				// Sanity check the container __must__ be set on the project.
+				boolean foundContainer = false;
+				IPathEntryContainer[] containers = getPathEntryContainers(celement.getCProject());
+				for (int k = 0 ; k < containers.length; ++k) {
+					if (containers[k].getPath().equals(container.getPath())) {
+						foundContainer = true;
+						break;
+					}
+				}
+				if (!foundContainer) {
+					continue;
+				}
+				// remove the element info caching.
+				if (celement instanceof IOpenable) {
+					try {
+						((IOpenable)celement).close();
+					} catch (CModelException e) {
+						// ignore.
+					}
+				}
+				int flag =0;
+				if (event.isIncludeChange()) {
+					flag = ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
+				} else if (event.isMacroChange()) {
+					flag = ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
+				}
+				CElementDelta delta = new CElementDelta(celement.getCModel());
+				delta.changed(celement, flag);
+				list.add(delta);
+			}
+		}
+		if (list.size() > 0) {
+			final ICElementDelta[] deltas = new ICElementDelta[list.size()];
+			list.toArray(deltas);
+			try {
+				CoreModel.run(new IWorkspaceRunnable() {
+					
+					public void run(IProgressMonitor progressMonitor) throws CoreException {
+						CModelManager manager = CModelManager.getDefault();
+						for (int i = 0; i < deltas.length; i++) {
+							manager.registerCModelDelta(deltas[i]);
+						}
+						manager.fire(ElementChangedEvent.POST_CHANGE);
+					}
+				}, monitor);
+			} catch (CoreException e) {
+				// log the error.
+			}
+		}
 	}
 
 	public String[] projectPrerequisites(IPathEntry[] entries) throws CModelException {
@@ -1411,45 +1463,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 		}
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IPathEntryContainerExtensionListener#pathEntryContainerChanged(org.eclipse.cdt.core.model.PathEntryContainerChanged[])
-	 */
-	public void pathEntryContainerChanged(PathEntryContainerChanged[] events) {
-		ArrayList list = new ArrayList(events.length);
-		for (int i = 0; i < events.length; ++i) {
-			PathEntryContainerChanged event = events[i];
-			ICElement celement = CoreModel.getDefault().create(event.getPath());
-			if (celement != null) {
-				if (celement instanceof IOpenable) {
-					try {
-						((IOpenable)celement).close();
-					} catch (CModelException e) {
-						// ignore.
-					}
-				}
-				int flag =0;
-				if (event.isIncludeChange()) {
-					flag = ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
-				} else if (event.isMacroChange()) {
-					flag = ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
-				}
-				CElementDelta delta = new CElementDelta(celement.getCModel());
-				delta.changed(celement, flag);
-				list.add(delta);
-			}
-		}
-		if (list.size() > 0) {
-			ICElementDelta[] deltas = new ICElementDelta[list.size()];
-			list.toArray(deltas);
-			CModelManager manager = CModelManager.getDefault();
-			for (int i = 0; i < deltas.length; i++) {
-				manager.registerCModelDelta(deltas[i]);
-			}
-			manager.fire(ElementChangedEvent.POST_CHANGE);
-		}
-
 	}
 
 	protected IPathEntry cloneEntry(IPath rpath, IPathEntry entry) {

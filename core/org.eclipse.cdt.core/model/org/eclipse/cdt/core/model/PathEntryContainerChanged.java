@@ -11,36 +11,45 @@
 
 package org.eclipse.cdt.core.model;
 
-import java.util.EventObject;
-
 import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public class PathEntryContainerChanged extends EventObject {
+public class PathEntryContainerChanged  {
 
 	/**
-	 * 
+	 * Change in the includes settings
 	 */
 	public static final int INCLUDE_CHANGED = 1;
 
 	/**
-	 * 
+	 * Change in the Macro
 	 */
 	public static final int MACRO_CHANGED = 2;
+
+	/**
+	 * Type of changes
+	 */
+	int fType;
+
+	/**
+	 * Affected file
+	 */
+	IPath fPath;
 
 	/**
 	 * Comment for <code>serialVersionUID</code>
 	 */
 	private static final long serialVersionUID = 3257565105200705590L;
 
-	int fType;
 
 	/**
+	 * 
 	 * @param source
+	 * @param type
 	 */
 	public PathEntryContainerChanged(IPath source, int type) {
-		super(source);
+		fPath = source;
 		fType = type;
 	}
 
@@ -49,7 +58,15 @@ public class PathEntryContainerChanged extends EventObject {
 	 * @return path
 	 */
 	public IPath getPath() {
-		return (IPath)getSource();
+		return fPath;
+	}
+
+	/**
+	 * Type of change.
+	 * @return
+	 */
+	public int getType() {
+		return fType;
 	}
 
 	/**

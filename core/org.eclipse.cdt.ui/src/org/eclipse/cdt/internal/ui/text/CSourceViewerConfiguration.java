@@ -24,6 +24,7 @@ import org.eclipse.jface.text.formatter.ContentFormatter;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.IFormattingStrategy;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.Reconciler;
 import org.eclipse.jface.text.rules.RuleBasedPartitioner;
@@ -36,7 +37,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorTextHoverDispatcher;
-import org.eclipse.cdt.internal.ui.text.eclipse2.CPresentationReconciler;
 import org.eclipse.cdt.internal.ui.text.eclipse2.CRuleBasedDamagerRepairer;
 import org.eclipse.cdt.ui.ICDTConstants;
 
@@ -119,7 +119,7 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 
-		CPresentationReconciler reconciler= new CPresentationReconciler();
+		PresentationReconciler reconciler= new PresentationReconciler();
 
 		RuleBasedScanner scanner;
 

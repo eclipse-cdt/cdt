@@ -1,3 +1,6 @@
+2003-08-19 Mikhail Khodjaiants
+	* plugin.properties: "Restore Default Type" changed to "Restore Original Type".
+
 2003-08-13 Mikhail Khodjaiants
 	* CDebugImages.java: new images for the 'Cast to type" and 'Display As Array' dialogs
 	* CastToTypeActionDelegate.java: new image

@@ -129,4 +129,40 @@ public class GCCCompleteParseExtensionsTest extends CompleteParseBaseTest {
 		}
 	}
 
+	public void testBug73954A() throws Exception{
+	    StringWriter writer = new StringWriter();
+		writer.write("void f(){							\n");//$NON-NLS-1$
+		writer.write("	__builtin_expect( 23, 2); 		\n");//$NON-NLS-1$
+		writer.write("	__builtin_prefetch( (const void *)0, 1, 2);				\n");//$NON-NLS-1$
+		writer.write("	__builtin_huge_val();			\n");//$NON-NLS-1$
+		writer.write("	__builtin_huge_valf();			\n");//$NON-NLS-1$
+		writer.write("	__builtin_huge_vall();			\n");//$NON-NLS-1$
+		writer.write("	__builtin_inf();				\n");//$NON-NLS-1$
+		writer.write("	__builtin_inff();				\n");//$NON-NLS-1$
+		writer.write("	__builtin_infl();				\n");//$NON-NLS-1$
+		writer.write("	__builtin_nan(\"\");			\n");//$NON-NLS-1$
+		writer.write("	__builtin_nanf(\"\");			\n");//$NON-NLS-1$
+		writer.write("	__builtin_nanl(\"\");			\n");//$NON-NLS-1$
+		writer.write("	__builtin_nans(\"\");			\n");//$NON-NLS-1$
+		writer.write("	__builtin_nansf(\"\");			\n");//$NON-NLS-1$
+		writer.write("	__builtin_nansl(\"\");			\n");//$NON-NLS-1$
+		writer.write("	__builtin_ffs (0);				\n");//$NON-NLS-1$
+		writer.write("	__builtin_clz (0);				\n");//$NON-NLS-1$
+		writer.write("	__builtin_ctz (0);				\n");//$NON-NLS-1$
+		writer.write("	__builtin_popcount (0);			\n");//$NON-NLS-1$
+		writer.write("	__builtin_parity (0);			\n");//$NON-NLS-1$
+		writer.write("	__builtin_ffsl (0);				\n");//$NON-NLS-1$
+		writer.write("	__builtin_clzl (0);				\n");//$NON-NLS-1$
+		writer.write("	__builtin_ctzl (0);				\n");//$NON-NLS-1$
+		writer.write("	__builtin_popcountl (0);		\n");//$NON-NLS-1$
+		writer.write("	__builtin_parityl (0);			\n");//$NON-NLS-1$
+		writer.write("	__builtin_ffsll (0);			\n");//$NON-NLS-1$
+		writer.write("	__builtin_clzll (0);			\n");//$NON-NLS-1$
+		writer.write("	__builtin_ctzll (0);			\n");//$NON-NLS-1$
+		writer.write("	__builtin_popcountll (0);		\n");//$NON-NLS-1$
+		writer.write("	__builtin_parityll (0); 		\n");//$NON-NLS-1$
+		writer.write("}                                 \n"); //$NON-NLS-1$
+		
+	    parse( writer.toString() );
+	}
 }

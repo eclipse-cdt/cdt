@@ -671,6 +671,35 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			{
 				results.add( "NMS"); //$NON-NLS-1$
 				results.add( "__builtin_va_list "); //$NON-NLS-1$
+				results.add("__builtin_expect"); //$NON-NLS-1$
+				results.add("__builtin_prefetch"); //$NON-NLS-1$
+				results.add("__builtin_huge_val"); //$NON-NLS-1$
+				results.add("__builtin_huge_valf"); //$NON-NLS-1$
+				results.add("__builtin_huge_vall"); //$NON-NLS-1$
+				results.add("__builtin_inf"); //$NON-NLS-1$
+				results.add("__builtin_inff"); //$NON-NLS-1$
+				results.add("__builtin_infl"); //$NON-NLS-1$
+				results.add("__builtin_nan"); //$NON-NLS-1$
+				results.add("__builtin_nanf"); //$NON-NLS-1$
+				results.add("__builtin_nanl"); //$NON-NLS-1$
+				results.add("__builtin_nans"); //$NON-NLS-1$
+				results.add("__builtin_nansf"); //$NON-NLS-1$
+				results.add("__builtin_nansl"); //$NON-NLS-1$
+				results.add("__builtin_ffs"); //$NON-NLS-1$
+				results.add("__builtin_clz"); //$NON-NLS-1$
+				results.add("__builtin_ctz"); //$NON-NLS-1$
+				results.add("__builtin_popcount"); //$NON-NLS-1$
+				results.add("__builtin_parity"); //$NON-NLS-1$
+				results.add("__builtin_ffsl"); //$NON-NLS-1$
+				results.add("__builtin_clzl"); //$NON-NLS-1$
+				results.add("__builtin_ctzl"); //$NON-NLS-1$
+				results.add("__builtin_popcountl"); //$NON-NLS-1$
+				results.add("__builtin_parityl"); //$NON-NLS-1$
+				results.add("__builtin_ffsll"); //$NON-NLS-1$
+				results.add("__builtin_clzll"); //$NON-NLS-1$
+				results.add("__builtin_ctzll"); //$NON-NLS-1$
+				results.add("__builtin_popcountll"); //$NON-NLS-1$
+				results.add("__builtin_parityll"); //$NON-NLS-1$
 			}
 			validateLookupResult(result, results );
 		}

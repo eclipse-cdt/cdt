@@ -67,7 +67,7 @@ public class MIBreakInsert extends MICommand
 		if (isTemporary || isHardware) {
 			i++;
 		}
-		if (condition != null) {
+		if (condition != null && condition.length() > 0) {
 			i += 2;
 		}
 		if (ignoreCount > 0) {

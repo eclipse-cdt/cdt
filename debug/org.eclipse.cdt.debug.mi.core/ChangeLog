@@ -1,3 +1,14 @@
+2003-08-21 Alain Magloire
+
+	GDB varobj for the arrays children name only returns
+	the index.  We need to construct the entire name:
+	char buffer[2]
+	GDB return "0", "1" for the children names.
+	We will return
+	"buffer[0]", "buffer[1]"
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/Variable.java
+
 2003-08-20 Alain Magloire
 
 	GDB/MI altough define an interface that all commands should

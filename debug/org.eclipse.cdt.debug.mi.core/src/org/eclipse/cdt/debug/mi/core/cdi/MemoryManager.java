@@ -87,17 +87,16 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	 * @return Long[] array of modified addresses.
 	 */
 	Long[] compareBlocks (MemoryBlock oldBlock, MemoryBlock newBlock) throws CDIException {
-		if (oldBlock.getStartAddress() != newBlock.getStartAddress()) {
-			return new Long[0];
-		}
 		byte[] oldBytes = oldBlock.getBytes();
 		byte[] newBytes = newBlock.getBytes();
-		List aList = new ArrayList(oldBytes.length);
-		for (int i = 0; i < oldBytes.length; i++) {
-			if (i < newBytes.length) {
+		List aList = new ArrayList(newBytes.length);
+		for (int i = 0; i < newBytes.length; i++) {
+			if (i < oldBytes.length) {
 				if (oldBytes[i] != newBytes[i]) {
-					aList.add(new Long(oldBlock.getStartAddress() + i));
+					aList.add(new Long(newBlock.getStartAddress() + i));
 				}
+			} else {
+				aList.add(new Long(newBlock.getStartAddress() + i));
 			}
 		}
 		return (Long[])aList.toArray(new Long[0]);

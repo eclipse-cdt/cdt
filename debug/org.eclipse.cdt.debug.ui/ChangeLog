@@ -1,3 +1,18 @@
+2003-05-05 Mikhail Khodjaiants
+	New implementation of overlayed images.
+	* OverlayImageDescriptor.java: new
+	* CImageDescriptor.java: removed
+	* CDebugImages.java: new overlay images
+	* CDTDebugModelPresentation.java: presentation of breakpoints and debug elements.
+	* icons/full/ovr16/address_ovr.gif: new
+	* icons/full/ovr16/address_ovr_disabled.gif: new
+	* icons/full/ovr16/function_ovr.gif: new
+	* icons/full/ovr16/function_ovr_disabled.gif: new
+	* icons/full/ovr16/conditional_ovr.gif: new
+	* icons/full/ovr16/conditional_ovr_disabled.gif: new
+	* icons/full/ovr16/error_ovr.gif: new
+	* icons/full/ovr16/warning_ovr.gif: new
+
 2003-04-29 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/internal/ui/editor/CDebugDocumentProvider.java (doSetInput):

@@ -49,8 +49,16 @@ public class CDebugImages
 	/*
 	 * Available cached Images in the C/C++ debug plug-in image registry.
 	 */	
-	public static final String IMG_OBJS_BREAKPOINT_INSTALLED = NAME_PREFIX + "installed_ovr.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED = NAME_PREFIX + "installed_ovr_disabled.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_BREAKPOINT_INSTALLED = NAME_PREFIX + "installed_ovr.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_BREAKPOINT_INSTALLED_DISABLED = NAME_PREFIX + "installed_ovr_disabled.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_BREAKPOINT_CONDITIONAL = NAME_PREFIX + "conditional_ovr.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_BREAKPOINT_CONDITIONAL_DISABLED = NAME_PREFIX + "conditional_ovr_disabled.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_ADDRESS_BREAKPOINT = NAME_PREFIX + "address_ovr.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_ADDRESS_BREAKPOINT_DISABLED = NAME_PREFIX + "address_ovr_disabled.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_FUNCTION_BREAKPOINT = NAME_PREFIX + "function_ovr.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_FUNCTION_BREAKPOINT_DISABLED = NAME_PREFIX + "function_ovr_disabled.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_ERROR = NAME_PREFIX + "error_ovr.gif"; //$NON-NLS-1$
+	public static final String IMG_OVRS_WARNING = NAME_PREFIX + "warning_ovr.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ADDRESS_BREAKPOINT_ENABLED = NAME_PREFIX + "addrbrkp_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_ADDRESS_BREAKPOINT_DISABLED = NAME_PREFIX + "addrbrkpd_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_FUNCTION_BREAKPOINT_ENABLED = NAME_PREFIX + "funbrkp_obj.gif";	//$NON-NLS-1$
@@ -102,12 +110,16 @@ public class CDebugImages
 //	private static final String T_DTOOL = "dtool16"; //$NON-NLS-1$
 //	private static final String T_ETOOL = "etool16"; //$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED = createManaged( T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED );
-	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED_DISABLED = createManaged( T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_ADDRESS_BREAKPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_ADDRESS_BREAKPOINT_ENABLED );
-	public static final ImageDescriptor DESC_OBJS_ADDRESS_BREAKPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_ADDRESS_BREAKPOINT_DISABLED );
-	public static final ImageDescriptor DESC_OBJS_FUNCTION_BREAKPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_FUNCTION_BREAKPOINT_ENABLED );
-	public static final ImageDescriptor DESC_OBJS_FUNCTION_BREAKPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_FUNCTION_BREAKPOINT_DISABLED );
+	public static final ImageDescriptor DESC_OVRS_ERROR = createManaged( T_OVR, IMG_OVRS_ERROR );
+	public static final ImageDescriptor DESC_OVRS_WARNING = createManaged( T_OVR, IMG_OVRS_WARNING );
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_INSTALLED = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_INSTALLED );
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_INSTALLED_DISABLED = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_INSTALLED_DISABLED );
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_CONDITIONAL = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_CONDITIONAL );
+	public static final ImageDescriptor DESC_OVRS_BREAKPOINT_CONDITIONAL_DISABLED = createManaged( T_OVR, IMG_OVRS_BREAKPOINT_CONDITIONAL_DISABLED );
+	public static final ImageDescriptor DESC_OVRS_ADDRESS_BREAKPOINT = createManaged( T_OVR, IMG_OVRS_ADDRESS_BREAKPOINT );
+	public static final ImageDescriptor DESC_OVRS_ADDRESS_BREAKPOINT_DISABLED = createManaged( T_OVR, IMG_OVRS_ADDRESS_BREAKPOINT_DISABLED );
+	public static final ImageDescriptor DESC_OVRS_FUNCTION_BREAKPOINT = createManaged( T_OVR, IMG_OVRS_FUNCTION_BREAKPOINT );
+	public static final ImageDescriptor DESC_OVRS_FUNCTION_BREAKPOINT_DISABLED = createManaged( T_OVR, IMG_OVRS_FUNCTION_BREAKPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_READ_WATCHPOINT_ENABLED );

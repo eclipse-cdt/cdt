@@ -53,6 +53,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -217,9 +218,15 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		if ( breakpoint instanceof ICAddressBreakpoint )
 			return supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
 		if ( breakpoint instanceof ICLineBreakpoint ) {
-			ICSourceLocator sl = getSourceLocator();
-			if ( sl != null )
-				return sl.contains( resource );
+			try {
+				String handle = breakpoint.getSourceHandle();
+				ICSourceLocator sl = getSourceLocator();
+				if ( sl != null )
+					return ( sl.findSourceElement( handle ) != null );
+			}
+			catch( CoreException e ) {
+				return false;
+			}
 		}
 		else {
 			IProject project = resource.getProject();
@@ -522,14 +529,19 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 
 	private ICDIBreakpoint setLineBreakpoint( ICLineBreakpoint breakpoint ) throws CDIException, CoreException {
 		ICDITarget cdiTarget = getCDITarget();
-		ICDILocation location = cdiTarget.createLocation( breakpoint.getMarker().getResource().getLocation().lastSegment(), null, breakpoint.getLineNumber() );
-		ICDICondition condition = createCondition( breakpoint );
-		ICDIBreakpoint cdiBreakpoint = null;
-		synchronized ( getBreakpointMap() ) {
-			cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
-			getBreakpointMap().put( breakpoint, cdiBreakpoint );
+		String handle = breakpoint.getSourceHandle();
+		IPath path = new Path( handle );
+		if ( path.isValidPath( handle ) ) {
+			ICDILocation location = cdiTarget.createLocation( path.lastSegment(), null, breakpoint.getLineNumber() );
+			ICDICondition condition = createCondition( breakpoint );
+			ICDIBreakpoint cdiBreakpoint = null;
+			synchronized ( getBreakpointMap() ) {
+				cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
+				getBreakpointMap().put( breakpoint, cdiBreakpoint );
+			}
+			return cdiBreakpoint;
 		}
-		return cdiBreakpoint;
+		return null;
 	}
 
 	private ICDIBreakpoint setWatchpoint( ICWatchpoint watchpoint ) throws CDIException, CoreException {

@@ -303,7 +303,12 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		}
 		else if ( breakpoint instanceof ILineBreakpoint ) {
 			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ), PropertyPageMessages.getString( "CBreakpointPropertyPage.8" ) ) );  //$NON-NLS-1$//$NON-NLS-2$
-			String fileName = breakpoint.getMarker().getResource().getLocation().toOSString();
+			String fileName = null;
+			try {
+				fileName = breakpoint.getSourceHandle();
+			}
+			catch( CoreException e ) {
+			}
 			if ( fileName != null ) {
 				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.7" ), fileName ) ); //$NON-NLS-1$
 			}

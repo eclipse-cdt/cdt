@@ -1,3 +1,7 @@
+2004-11-09 Mikhail Khodjaiants
+	Partial fix for bug 41725: I can't set a breakpoint in a function where I used attach source.
+	* CBreakpointManager.java
+
 2004-11-09 Alain Magloire
 	Put possiblity to set Exception breakpoint
 	* cdi/org/eclipse/cdt/debug/core/cdi/ICDIBreakpointManagement.java

@@ -695,7 +695,7 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 
 	protected String getLineBreakpointText( ICLineBreakpoint breakpoint, boolean qualified ) throws CoreException {
 		StringBuffer label = new StringBuffer();
-		appendResourceName( breakpoint, label, qualified );
+		appendSourceName( breakpoint, label, qualified );
 		appendLineNumber( breakpoint, label );
 		appendIgnoreCount( breakpoint, label );
 		appendCondition( breakpoint, label );
@@ -704,7 +704,7 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 
 	protected String getWatchpointText( ICWatchpoint watchpoint, boolean qualified ) throws CoreException {
 		StringBuffer label = new StringBuffer();
-		appendResourceName( watchpoint, label, qualified );
+		appendSourceName( watchpoint, label, qualified );
 		appendWatchExpression( watchpoint, label );
 		appendIgnoreCount( watchpoint, label );
 		appendCondition( watchpoint, label );
@@ -713,7 +713,7 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 
 	protected String getAddressBreakpointText( ICAddressBreakpoint breakpoint, boolean qualified ) throws CoreException {
 		StringBuffer label = new StringBuffer();
-		appendResourceName( breakpoint, label, qualified );
+		appendSourceName( breakpoint, label, qualified );
 		appendAddress( breakpoint, label );
 		appendIgnoreCount( breakpoint, label );
 		appendCondition( breakpoint, label );
@@ -722,17 +722,21 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 
 	protected String getFunctionBreakpointText( ICFunctionBreakpoint breakpoint, boolean qualified ) throws CoreException {
 		StringBuffer label = new StringBuffer();
-		appendResourceName( breakpoint, label, qualified );
+		appendSourceName( breakpoint, label, qualified );
 		appendFunction( breakpoint, label );
 		appendIgnoreCount( breakpoint, label );
 		appendCondition( breakpoint, label );
 		return label.toString();
 	}
 
-	protected StringBuffer appendResourceName( ICBreakpoint breakpoint, StringBuffer label, boolean qualified ) {
-		IPath path = breakpoint.getMarker().getResource().getLocation();
-		if ( !path.isEmpty() )
-			label.append( qualified ? path.toOSString() : path.lastSegment() );
+	protected StringBuffer appendSourceName( ICBreakpoint breakpoint, StringBuffer label, boolean qualified ) throws CoreException {
+		String handle = breakpoint.getSourceHandle();
+		if ( !isEmpty( handle ) ) {
+			IPath path = new Path( handle );
+			if ( path.isValidPath( handle ) ) {
+				label.append( qualified ? path.toOSString() : path.lastSegment() );
+			}
+		}
 		return label;
 	}
 

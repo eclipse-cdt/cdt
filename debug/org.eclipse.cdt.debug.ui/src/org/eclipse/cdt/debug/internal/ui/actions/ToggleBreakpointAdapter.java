@@ -326,7 +326,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			return ((IFileEditorInput)input).getFile().getLocation().toOSString();
 		}
 		if ( input instanceof IStorageEditorInput ) {
-			return ((IStorageEditorInput)input).getStorage().getName();
+			return ((IStorageEditorInput)input).getStorage().getFullPath().toOSString();
 		}
 		if ( input instanceof DisassemblyEditorInput ) {
 			return ((DisassemblyEditorInput)input).getModuleFile();

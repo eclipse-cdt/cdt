@@ -109,11 +109,7 @@ public abstract class ConvertProjectWizardPage
     public void createControl(Composite parent) {
 
         Composite  container = new Composite(parent, SWT.NONE);
-        /* Later ... [jng]
-         We need to add help, but cannot extend org.eclipse.ui.IHelpContextIds
-         and there is no constant defined that we can use.
-         see org.eclipse.cdt.ui.wizards.CProjectWizardPage::createControl
-        */
+        
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -261,7 +257,7 @@ public abstract class ConvertProjectWizardPage
      protected void updateSelectionButtons() { 
         
         // update select and deselect buttons as required 
-        Object[] checkedObjects = tableViewer.getCheckedElements(); 
+        Object[] checkedObjects = getCheckedElements(); 
         int totalItems = tableViewer.getTable().getItemCount();
         boolean allSelected = checkedObjects.length == totalItems;
         boolean noneSelected = checkedObjects.length == 0;            
@@ -290,7 +286,7 @@ public abstract class ConvertProjectWizardPage
      */
     protected boolean validatePage() {
 
-        Object[] selection = tableViewer.getCheckedElements();
+        Object[] selection = getCheckedElements();
 
         return ((selection != null) && (selection.length > 0));
     }

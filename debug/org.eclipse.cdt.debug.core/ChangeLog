@@ -1,3 +1,7 @@
+2004-08-14 Alain Magloire
+	Fix for 71992.
+	* CType.java
+
 2004-08-04 Mikhail Khodjaiants
 	Fix for bug 69085: Arrays in the Expressions view 
 	* CArrayPartitionValue.java

@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Plugin;
  * The main plugin class to be used in the desktop.
  */
 public class MakeCorePlugin extends Plugin {
+	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder";
 	//The shared instance.
 	private static MakeCorePlugin plugin;
 	//Resource bundle.

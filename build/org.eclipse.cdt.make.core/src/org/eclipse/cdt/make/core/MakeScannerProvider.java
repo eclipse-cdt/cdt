@@ -59,7 +59,7 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 		return defaultProvider;
 	}
 	
-	public MakeScannerInfo getMakeScannerInfo(IProject project) throws CoreException {
+	public MakeScannerInfo getMakeScannerInfo(IProject project, boolean cacheInfo) throws CoreException {
 		MakeScannerInfo scannerInfo = null;
 		// See if there's already one associated with the resource for this session
 		scannerInfo = (MakeScannerInfo)project.getSessionProperty(scannerInfoProperty);
@@ -71,7 +71,7 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 
 		// There is nothing persisted for the session, or saved in a file so 
 		// create a build info object
-		if (scannerInfo != null) {
+		if (scannerInfo != null && cacheInfo == true) {
 			((IProject)project).setSessionProperty(scannerInfoProperty, scannerInfo);
 		}
 		return scannerInfo;
@@ -110,7 +110,7 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 	public IScannerInfo getScannerInformation(IResource resource) {
 		IScannerInfo info = null;
 		try {
-			info = getMakeScannerInfo((IProject)resource);
+			info = getMakeScannerInfo((IProject)resource, true);
 		} catch (CoreException e) {
 		}
 		return info;

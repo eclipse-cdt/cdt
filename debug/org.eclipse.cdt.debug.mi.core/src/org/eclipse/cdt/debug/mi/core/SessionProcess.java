@@ -69,6 +69,7 @@ public class SessionProcess extends Process {
 					try {
 						session.postCommand(cmd);
 					} catch (MIException e) {
+						//e.printStackTrace();
 						throw new IOException(e.getMessage());
 					}
 				}

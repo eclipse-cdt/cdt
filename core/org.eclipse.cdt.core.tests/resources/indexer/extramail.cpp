@@ -3,6 +3,10 @@
 #include <alloc.h>
 #include <iomanip.h>
 
+#define PRINT(a,b) cout<<(a)<<(b)
+#define CASE break;case
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
 typedef int int32;
 
 static void doSomething();

@@ -1,3 +1,6 @@
+2003-08-11 Bogdan Gheorghe
+	- Added macro declarations to the index
+	
 2003-08-07 Bogdan Gheorghe
 	- Added shutdown cleanup routine in IndexManager
 	

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
@@ -78,6 +79,12 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		}
 	}
 	
+	public void addMacro(IASTMacro macro) {
+		String[] macroName = new String[1];
+		macroName[0] = macro.getName();
+		this.output.addRef(encodeEntry(macroName,MACRO_DECL,MACRO_DECL_LENGTH));
+	}
+		
 	public void addEnumerationReference(IASTEnumerationSpecifier enumeration) {
 		this.output.addRef(encodeTypeEntry(enumeration.getFullyQualifiedName(), ENUM, ICSearchConstants.REFERENCES));
 	}

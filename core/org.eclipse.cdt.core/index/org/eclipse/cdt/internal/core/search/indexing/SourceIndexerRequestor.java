@@ -80,7 +80,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void acceptMacro(IASTMacro macro) {
 		// TODO Auto-generated method stub
-		//System.out.println("acceptMacro");
+		indexer.addMacro(macro);
 	}
 
 	/* (non-Javadoc)

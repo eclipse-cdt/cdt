@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import junit.framework.Test;
@@ -88,7 +89,14 @@ public class IndexManagerTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
+
+		suite.addTest(new IndexManagerTests("testAddNewFileToIndex"));
+		suite.addTest(new IndexManagerTests("testRemoveProjectFromIndex"));
+		suite.addTest(new IndexManagerTests("testRefs"));
+		suite.addTest(new IndexManagerTests("testMacros"));
+		suite.addTest(new IndexManagerTests("testDependencyTree"));
 		suite.addTest(new IndexManagerTests("testIndexShutdown"));
+
 		return suite;
 		//return new TestSuite(IndexManagerTests.class);
 	}
@@ -167,13 +175,12 @@ public class IndexManagerTests extends TestCase {
 
 		if (eresults.length != entryResultModel.length)
 			fail("Entry Result length different from model");
-		
-	
+
 		for (int i=0; i<qresults.length;i++)
 		{
 			assertEquals(queryResultModel[i],qresults[i].toString());
 		}
-		
+	
 		for (int i=0;i<eresults.length; i++)
 		{
 			assertEquals(entryResultModel[i],eresults[i].toString());
@@ -202,7 +209,7 @@ public class IndexManagerTests extends TestCase {
 		
 		if (eresults.length != entryResultModel.length)
 			fail("Entry Result length different from model");
-			
+
 		for (int i=0;i<eresults.length; i++)
 		{
 			assertEquals(entryResultModel[i],eresults[i].toString());
@@ -250,7 +257,7 @@ public class IndexManagerTests extends TestCase {
 	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }", "EntryResult: word=typeDecl/C/Mail, refs={ 2 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 2 }", "EntryResult: word=typeDecl/C/container, refs={ 2 }", "EntryResult: word=typeDecl/C/first_class, refs={ 2 }", "EntryResult: word=typeDecl/C/postcard, refs={ 2 }"};
 	 if (eresults.length != entryResultBeforeModel.length)
 			fail("Entry Result length different from model");	
-	 
+
 	 for (int i=0;i<eresults.length; i++)
 	 {
 		assertEquals(entryResultBeforeModel[i],eresults[i].toString());
@@ -336,7 +343,7 @@ public class IndexManagerTests extends TestCase {
 		
 		if (functionresults.length != functionResultModel.length)
 					fail("Entry Result length different from model for functionDecl");
-	
+
 		for (int i=0;i<functionresults.length; i++)
 		{
 			assertEquals(functionResultModel[i],functionresults[i].toString());
@@ -423,6 +430,33 @@ public class IndexManagerTests extends TestCase {
 		  }
 	}
 	
+  public void testMacros() throws Exception
+  {
+	  //Add a new file to the project, give it some time to index
+	  importFile("extramail.cpp","resources/indexer/extramail.cpp");
+	  //Enable indexing on the created project
+	  //By doing this, we force the Index Manager to indexAll()
+	  indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+	  indexManager.setEnabled(testProject,true);
+	  Thread.sleep(TIMEOUT);
+	  //Make sure project got added to index
+	  IPath testProjectPath = testProject.getFullPath();
+	  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
+	  assertTrue("Index exists for project",ind != null);
+	
+	  IEntryResult[] macroresults = ind.queryEntries(IIndexConstants.MACRO_DECL);
+	  
+	  String [] macroResultModel = {"EntryResult: word=macroDecl/CASE, refs={ 1 }", "EntryResult: word=macroDecl/MAX, refs={ 1 }", "EntryResult: word=macroDecl/PRINT, refs={ 1 }"};
+	   
+	  if (macroresults.length != macroResultModel.length)
+		 fail("Entry Result length different from model for macros");
+
+	  for (int i=0;i<macroresults.length; i++)
+	  {
+		assertEquals(macroResultModel[i],macroresults[i].toString());
+	  }
+  }
+  
   public void testIndexShutdown() throws Exception{
 	//Add a new file to the project, give it some time to index
 	 importFile("reftest.cpp","resources/indexer/reftest.cpp");
@@ -495,6 +529,9 @@ public class IndexManagerTests extends TestCase {
 	if (depTestModelLocal.length != depTestIncludes.length)
 			fail("Number of included files differsfrom model");
 	
+	Arrays.sort(depTestModelLocal);
+	Arrays.sort(depTestIncludes);
+		
 	for (i=0;i<depTestIncludes.length; i++)
 	{
 		assertEquals(depTestModelLocal[i],depTestIncludes[i]);
@@ -514,6 +551,9 @@ public class IndexManagerTests extends TestCase {
 	
 	if (depTest2ModelLocal.length != depTest2Includes.length)
 			fail("Number of included files differsfrom model");
+	
+	Arrays.sort(depTest2ModelLocal);
+	Arrays.sort(depTest2Includes);
 	
 	for (i=0;i<depTest2Includes.length; i++)
 	{

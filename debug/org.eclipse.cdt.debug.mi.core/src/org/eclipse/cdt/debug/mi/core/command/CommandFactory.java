@@ -157,6 +157,10 @@ public class CommandFactory {
 		return new MIExecUntil(location);
 	}
 
+	public MIJump createMIJump(String location) {
+		return new MIJump(location);
+	}
+
 	public MIFileExecFile createMIFileExecFile(String file) {
 		return new MIFileExecFile(file);
 	}

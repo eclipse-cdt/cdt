@@ -19,6 +19,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
 import org.eclipse.cdt.internal.ui.search.CSearchResultPage;
+import org.eclipse.cdt.internal.ui.search.NewSearchResultCollector;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -35,7 +36,7 @@ import org.eclipse.swt.graphics.Point;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class CSearchResultLabelProvider extends LabelProvider {
-
+ 
 	public static final int SHOW_NAME_ONLY		   = 0; 
 	public static final int SHOW_ELEMENT_CONTAINER = 1;
 	public static final int SHOW_CONTAINER_ELEMENT = 2;
@@ -58,6 +59,7 @@ public class CSearchResultLabelProvider extends LabelProvider {
 	public Image getImage( Object element ) {
 		IMatch match = null;
 		int elementType = -1;
+		int visibility = -1;
 		if( element instanceof ISearchResultViewEntry ){
 			ISearchResultViewEntry viewEntry = (ISearchResultViewEntry)element;
 			IMarker marker = viewEntry.getSelectedMarker();
@@ -66,6 +68,7 @@ public class CSearchResultLabelProvider extends LabelProvider {
 				if( match == null )
 					return null;
 				elementType = match.getElementType();
+				visibility = match.getVisibility();
 			} catch (CoreException e) {
 				return null;
 			}
@@ -74,10 +77,20 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			if( match == null )
 				return null;
 			elementType = match.getElementType();
-			
+			visibility = match.getVisibility();
 		} else if (element instanceof ICElement){
 			elementType = ((ICElement) element).getElementType();
-		} 
+		} else if (element instanceof String){
+			String eleString = (String) element;
+			int elIndex = eleString.indexOf(NewSearchResultCollector.ELEMENTTYPE);
+			int vizIndex = eleString.indexOf(NewSearchResultCollector.VISIBILITY);
+			
+			String elType = eleString.substring(elIndex+NewSearchResultCollector.ELEMENTTYPE_LENGTH,vizIndex);
+			String elViz = eleString.substring(vizIndex+NewSearchResultCollector.VISIBILITY_LENGTH,eleString.length());
+			
+			elementType = new Integer(elType).intValue();
+			visibility = new Integer(elViz).intValue();
+		}
 		
 		
 			
@@ -99,7 +112,7 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			case ICElement.C_UNIT:			imageDescriptor = CPluginImages.DESC_OBJS_TUNIT;		break;
 			case ICElement.C_FIELD:		
 			{
-				switch( match.getVisibility() ){
+				switch( visibility ){
 					case ICElement.CPP_PUBLIC:	imageDescriptor = CPluginImages.DESC_OBJS_PUBLIC_FIELD;		break;
 					case ICElement.CPP_PRIVATE:	imageDescriptor = CPluginImages.DESC_OBJS_PRIVATE_FIELD;	break;
 					default:					imageDescriptor = CPluginImages.DESC_OBJS_PROTECTED_FIELD;	break;
@@ -108,7 +121,7 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			}
 			case ICElement.C_METHOD:
 			{
-				switch( match.getVisibility() ){
+				switch( visibility ){
 					case ICElement.CPP_PUBLIC:	imageDescriptor = CPluginImages.DESC_OBJS_PUBLIC_METHOD;	break;
 					case ICElement.CPP_PRIVATE:	imageDescriptor = CPluginImages.DESC_OBJS_PRIVATE_METHOD;	break;
 					default:					imageDescriptor = CPluginImages.DESC_OBJS_PROTECTED_METHOD;	break;
@@ -147,9 +160,21 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			}
 		} else if( element instanceof IMatch ){
 			match = (IMatch) element;
-		}
-		else if ( element instanceof ICElement){
+		} else if ( element instanceof ICElement){
 			return  getElementText((ICElement) element);
+		} else if (element instanceof String){
+			String elString = (String) element;
+			
+			int parentIndex = elString.indexOf(NewSearchResultCollector.PARENT);
+			int nameIndex = elString.indexOf(NewSearchResultCollector.NAME);
+			int locationIndex = elString.indexOf(NewSearchResultCollector.LOCATION);
+			int elementIndex = elString.indexOf(NewSearchResultCollector.ELEMENTTYPE);
+			
+			String elParent = elString.substring(parentIndex+NewSearchResultCollector.PARENT_LENGTH,nameIndex);
+			String elName = elString.substring(nameIndex+NewSearchResultCollector.NAME_LENGTH,locationIndex);
+			String elPath = elString.substring(locationIndex+NewSearchResultCollector.LOCATION_LENGTH, elementIndex);
+			
+			return getCSearchSortElementText(elParent, elName, elPath);
 		}
 		
 		if( match == null )
@@ -189,6 +214,34 @@ public class CSearchResultLabelProvider extends LabelProvider {
 		return result;
 	}
 	
+	/**
+	 * @param element
+	 * @return
+	 */
+	private String getCSearchSortElementText(String parentName, String name, String path) {
+		String result = ""; //$NON-NLS-1$
+		
+		switch( getOrder() ){
+			case SHOW_NAME_ONLY:
+				result = name;
+			case SHOW_ELEMENT_CONTAINER:
+				if( !parentName.equals("") ) //$NON-NLS-1$
+					result = name + " - " + parentName + " ( " + path + " )"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				else
+					result = name+ " ( " + path + " )"; //$NON-NLS-1$ //$NON-NLS-2$
+						
+				break;
+			case SHOW_PATH:
+				result = path + " - " + parentName + "::" + name; //$NON-NLS-1$ //$NON-NLS-2$
+				break;				
+			case SHOW_CONTAINER_ELEMENT:
+				result = parentName + "::" + name + " ( " + path + " )"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				break;
+		}
+	
+		return result;
+	}
+
 	private String getElementText(ICElement element){
 		
 		String result=""; //$NON-NLS-1$

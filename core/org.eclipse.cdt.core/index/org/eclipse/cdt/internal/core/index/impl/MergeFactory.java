@@ -72,6 +72,11 @@ public class MergeFactory {
 	 * Merges the 2 indexes into a new one on the disk.
 	 */
 	public void merge() throws IOException {
+		long startTime = 0;
+		if (IndexManager.VERBOSE){
+			JobManager.verbose("-> starting merge"); //$NON-NLS-1$
+			startTime = System.currentTimeMillis();
+		}
 		try {
 			//init
 			addsInput.open();
@@ -106,6 +111,11 @@ public class MergeFactory {
 			oldInput.close();
 			addsInput.close();
 			mergeOutput.close();
+			
+			if (IndexManager.VERBOSE){
+				long elapsedTime = System.currentTimeMillis() - startTime;
+				JobManager.verbose("-> merge complete: " + (elapsedTime > 0 ? elapsedTime : 0) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 	}
 	/**

@@ -1,3 +1,10 @@
+2004-07-06 Bogdan Gheorghe
+	Handled the case of CContainer in both updateIndexAddResource and
+	updateIndexRemoveResource.
+	
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	
+	
 2004-07-06 Hoda Amer
 	Fix for PR 68933 : [Content Assist] removes asterisks from parameter prompt
 	

@@ -34,7 +34,6 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.Index;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
-import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
 import org.eclipse.cdt.internal.core.search.IndexSelector;
 import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
@@ -539,9 +538,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	/**
 	 * Remove the content of the given source folder from the index.
 	 */
-	public void removeSourceFolderFromIndex(CProject cProject, IPath sourceFolder, char[][] exclusionPatterns) {
-		IProject project = cProject.getProject();
-	
+	public void removeSourceFolderFromIndex(IProject project, IPath sourceFolder, char[][] exclusionPatterns) {
+		
 		if( !isIndexEnabled( project ) )
 			return;
 		

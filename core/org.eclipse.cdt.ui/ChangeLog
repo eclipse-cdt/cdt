@@ -1,3 +1,14 @@
+2004-07-06 Bogdan Gheorghe
+	
+	Added support for search name grouping.
+	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchMatch.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResult.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultPage.java
+	* src/org/eclipse/cdt/internal/ui/search/LevelTreeContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/search/NewSearchResultCollector.java
+	* src/org/eclipse/cdt/ui/CSearchResultLabelProvider.java
+
 2004-07-06 Chris Wiebe
 
 	This patch prevents some NPEs from happening in the class browser.  I

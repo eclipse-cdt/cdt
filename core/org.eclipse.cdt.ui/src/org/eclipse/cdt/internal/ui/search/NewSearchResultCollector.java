@@ -28,6 +28,21 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.search.ui.text.Match;
 
 public class NewSearchResultCollector extends BasicSearchResultCollector {
+	public static final int PARENT_LENGTH = 7;
+	public static final String PARENT = "PARENT:"; //$NON-NLS-1$
+	
+	public static final int NAME_LENGTH = 5;
+	public static final String NAME = "NAME:"; //$NON-NLS-1$
+	
+	public static final int LOCATION_LENGTH = 9;
+	public static final String LOCATION = "LOCATION:"; //$NON-NLS-1$
+	
+	public static final int ELEMENTTYPE_LENGTH = 12;
+	public static final String ELEMENTTYPE = "ELEMENTTYPE:"; //$NON-NLS-1$
+	
+	public static final int VISIBILITY_LENGTH = 11;
+	public static final String VISIBILITY = "VISIBILITY:"; //$NON-NLS-1$
+	
 	private CSearchResult fSearch;
 	private IProgressMonitor fProgressMonitor;
 	private int fMatchCount;
@@ -77,7 +92,9 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
 		fMatchCount++;
 		int start = match.getStartOffset();
 		int end = match.getEndOffset();
-		fSearch.addMatch(new Match(match,start,end-start));
+		String classifier = PARENT + match.getParentName() + NAME + match.getName() + LOCATION + match.getLocation().toOSString() + ELEMENTTYPE + match.getElementType() + VISIBILITY  + match.getVisibility();
+		fSearch.addMatch(new CSearchMatch(classifier,start,end-start, match));
+		
 		return true;
       }
       else {

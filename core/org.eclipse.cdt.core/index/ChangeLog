@@ -1,3 +1,10 @@
+2004-07-06 Bogdan Gheorghe
+	Added timing for merge operations - controlled by Indexer tracing option
+	Modified removeSourceFolderFromIndex in IndexManager to take an IProject
+	
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java	
+	* index/org/eclipse/cdt/internal/core/index/impl/MergeFactory.java
+		
 2004-06-28 Bogdan Gheorghe
 	Fix for Bug 60948: indexer should pick up all headers in include path
 	

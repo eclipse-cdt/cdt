@@ -571,7 +571,11 @@ public class DeltaProcessor {
 			case ICElement.C_PROJECT :
 				this.indexManager.indexAll(element.getCProject().getProject());
 				break;
-	
+            
+			case ICElement.C_CCONTAINER:
+				indexManager.indexSourceFolder(element.getCProject().getProject(),element.getPath(),null);
+			break;
+			
 			case ICElement.C_UNIT:
 				IFile file = (IFile) delta.getResource();
 				IProject filesProject = file.getProject();
@@ -588,19 +592,23 @@ public class DeltaProcessor {
 
 		switch (element.getElementType()) {
 			case ICElement.C_PROJECT :
-						IPath fullPath = element.getCProject().getProject().getFullPath();
-						if( delta.getKind() == IResourceDelta.CHANGED )
-							indexManager.discardJobs(fullPath.segment(0));
-						indexManager.removeIndexFamily(fullPath);
-						// NB: Discarding index jobs belonging to this project was done during PRE_DELETE
-						break;
-						// NB: Update of index if project is opened, closed, or its c nature is added or removed
-						//     is done in updateCurrentDeltaAndIndex
-						
+				IPath fullPath = element.getCProject().getProject().getFullPath();
+				if( delta.getKind() == IResourceDelta.CHANGED )
+					indexManager.discardJobs(fullPath.segment(0));
+				indexManager.removeIndexFamily(fullPath);
+				// NB: Discarding index jobs belonging to this project was done during PRE_DELETE
+				break;
+				// NB: Update of index if project is opened, closed, or its c nature is added or removed
+				//     is done in updateCurrentDeltaAndIndex
+			
+			case ICElement.C_CCONTAINER:
+				indexManager.removeSourceFolderFromIndex(element.getCProject().getProject(),element.getPath(),null);
+				break;
+			
 			case ICElement.C_UNIT:
-						IFile file = (IFile) delta.getResource();
-						indexManager.remove(file.getFullPath().toString(), file.getProject().getFullPath());
-						break;				
+				IFile file = (IFile) delta.getResource();
+				indexManager.remove(file.getFullPath().toString(), file.getProject().getFullPath());
+				break;				
 		}
 	
 

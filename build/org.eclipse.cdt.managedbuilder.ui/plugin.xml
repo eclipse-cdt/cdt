@@ -2084,7 +2084,6 @@
             isAbstract="false">
          <configuration
                name="%ConfigName.Dbg"
-               artifactExtension="exe"               
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
                id="cdt.managedbuild.config.gnu.macosx.exe.debug">
@@ -2154,7 +2153,6 @@
          </configuration>
          <configuration
                name="%ConfigName.Rel"
-               artifactExtension="exe"
                cleanCommand="rm -rf"               
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"                              
                id="cdt.managedbuild.config.macosx.exe.release">

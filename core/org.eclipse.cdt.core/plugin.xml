@@ -439,4 +439,11 @@
       </super>
    </extension>
 
+<!-- =================================================================================== -->
+<!-- Initialize the preference for the Core Plugin                                       -->
+<!-- =================================================================================== -->
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.internal.core.CCorePreferenceInitializer"/>
+   </extension>
+
 </plugin>

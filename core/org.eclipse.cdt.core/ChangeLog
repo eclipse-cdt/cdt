@@ -1,5 +1,10 @@
 2004-09-03 Alain Magloire
 
+	Provide the extension for the Core Plugin Preference Initializer.
+	* plugin.xml
+
+2004-09-03 Alain Magloire
+
 	Add the BinaryModule to the info.
 	* model/org/eclipse/cdt/internal/core/model/BinaryModule.java
 

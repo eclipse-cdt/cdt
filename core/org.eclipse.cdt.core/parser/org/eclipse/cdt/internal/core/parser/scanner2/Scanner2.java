@@ -1271,7 +1271,11 @@ public class Scanner2 implements IScanner, IScannerData {
 					
 					// must be float suffix
 					++bufferPos[bufferStackPos];
-					continue;
+
+					if (buffer[bufferPos[bufferStackPos]] == 'i')
+						continue; // handle GCC extension 5.10 Complex Numbers 
+
+					break; // fix for 77281 (used to be continue)
 
 				case 'p':
 				case 'P':
@@ -1475,7 +1479,8 @@ public class Scanner2 implements IScanner, IScannerData {
 							handleInvalidCompletion();
 						return;
 					case ppError:
-						start = bufferPos[bufferStackPos];
+						skipOverWhiteSpace();
+						start = bufferPos[bufferStackPos] + 1;
 						skipToNewLine();
 						len = bufferPos[bufferStackPos] - start;
 						handleProblem( IProblem.PREPROCESSOR_POUND_ERROR, start, CharArrayUtils.extract( buffer, start, len ));
@@ -2477,7 +2482,14 @@ public class Scanner2 implements IScanner, IScannerData {
 						break;
 					} 
 					return;
-					
+				case '\r':
+					if (escaped && bufferPos[bufferStackPos] < limit && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
+						escaped = false;
+						break;
+					} else if (!escaped && bufferPos[bufferStackPos] < limit && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
+						return;
+					}
+					break;
 			}
 			escaped = false;
 		}

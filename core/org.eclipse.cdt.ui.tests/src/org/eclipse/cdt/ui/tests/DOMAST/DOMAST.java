@@ -287,10 +287,12 @@ public class DOMAST extends ViewPart {
       
       private class InitializeView extends Job {
 
-      	private static final String _PREPROCESSOR_PROBLEMS_ = " preprocessor problems."; //$NON-NLS-1$
-		private static final String _PREPROCESSOR_STATEMENTS_ = " preprocessor statements."; //$NON-NLS-1$
+      	private static final String RETRIEVING_PREPROCESSOR_PROBLEMS = "Retrieving all preprocessor problems from TU"; //$NON-NLS-1$
+		private static final String RETRIEVING_PREPROCESSOR_STATEMENTS = "Retrieving all preprocessor statements from TU"; //$NON-NLS-1$
+		private static final String _PREPROCESSOR_PROBLEMS_ = " preprocessor problems"; //$NON-NLS-1$
+		private static final String _PREPROCESSOR_STATEMENTS_ = " preprocessor statements"; //$NON-NLS-1$
 		private static final String MERGING_ = "Merging "; //$NON-NLS-1$
-		private static final String GROUPING_AST = "Grouping AST View according to includes."; //$NON-NLS-1$
+		private static final String GROUPING_AST = "Grouping AST View according to includes"; //$NON-NLS-1$
 		private static final String GENERATING_INITIAL_TREE = "Generating initial AST Tree for the View"; //$NON-NLS-1$
 		private static final String PARSING_TRANSLATION_UNIT = "Parsing Translation Unit"; //$NON-NLS-1$
 		String name = null;
@@ -326,27 +328,34 @@ public class DOMAST extends ViewPart {
 		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
     	protected IStatus run(IProgressMonitor monitor) {
-			if (file == null || lang == null || monitor == null)
+    		long start=0;
+			long overallStart=System.currentTimeMillis();
+			
+    		if (file == null || lang == null || monitor == null)
 	            return Status.CANCEL_STATUS;
 
 			if (monitor.isCanceled()) return Status.CANCEL_STATUS;
-			monitor.beginTask(name, 5);
+			monitor.beginTask(name, 7);
+			start=System.currentTimeMillis();
 			
 	         IPopulateDOMASTAction action = null;
 	         IASTTranslationUnit tu = null;
 	         try {
 	         	monitor.subTask(PARSING_TRANSLATION_UNIT);
+	         	start=System.currentTimeMillis();
 	            tu = CDOM.getInstance().getASTService().getTranslationUnit(
 	                  file,
 	                  CDOM.getInstance().getCodeReaderFactory(
 	                        CDOM.PARSE_SAVED_RESOURCES));
 	            monitor.worked(1);
+	            System.out.println("[DOM AST View] done " + PARSING_TRANSLATION_UNIT + ": " + (System.currentTimeMillis()- start) );
 	         } catch (IASTServiceProvider.UnsupportedDialectException e) {
 	         	return Status.CANCEL_STATUS;
 	         }
 	         
 	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
 	         monitor.subTask(GENERATING_INITIAL_TREE);
+	         start=System.currentTimeMillis();
 	         if (lang == ParserLanguage.CPP) {
 	            action = new CPPPopulateASTViewAction(tu, monitor);
 	            CPPVisitor.visitTranslationUnit(tu, (CPPBaseVisitorAction) action);
@@ -355,29 +364,46 @@ public class DOMAST extends ViewPart {
 	            CVisitor.visitTranslationUnit(tu, (CBaseVisitorAction) action);
 	         }
 	         monitor.worked(2);
+             System.out.println("[DOM AST View] done " + GENERATING_INITIAL_TREE + ": " + (System.currentTimeMillis()- start) );
 	         
 	         // display roots
 	         root = new TreeParent(null); //$NON-NLS-1$
 	         
 	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
+	         monitor.subTask(RETRIEVING_PREPROCESSOR_STATEMENTS);
+	         start=System.currentTimeMillis();
 	         IASTPreprocessorStatement[] statements = tu.getAllPreprocessorStatements();
+	         monitor.worked(3);
+	         System.out.println("[DOM AST View] done " + RETRIEVING_PREPROCESSOR_STATEMENTS + ": " + (System.currentTimeMillis()- start) );
+	         
 	         monitor.subTask(MERGING_ + statements.length + _PREPROCESSOR_STATEMENTS_);
+	         start=System.currentTimeMillis();
 	         // merge preprocessor statements to the tree
 	         action.mergePreprocessorStatements(statements);
-	         monitor.worked(3);
-
+	         monitor.worked(4);
+	         System.out.println("[DOM AST View] done " + MERGING_ + statements.length + _PREPROCESSOR_STATEMENTS_ + ": " + (System.currentTimeMillis()- start) );
+	         
 	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
+	         monitor.subTask(RETRIEVING_PREPROCESSOR_PROBLEMS);
+	         start=System.currentTimeMillis();
 	         IASTProblem[] problems = tu.getPreprocesorProblems();
+	         monitor.worked(5);
+	         System.out.println("[DOM AST View] done " + RETRIEVING_PREPROCESSOR_PROBLEMS + ": " + (System.currentTimeMillis()- start) );
+	         	         
 	         monitor.subTask(MERGING_ + problems.length + _PREPROCESSOR_PROBLEMS_);
+	         start=System.currentTimeMillis();
 	         // merge preprocessor problems to the tree
 	         action.mergePreprocessorProblems(problems);
-	         monitor.worked(4);
+	         monitor.worked(6);
+	         System.out.println("[DOM AST View] done " + MERGING_ + problems.length + _PREPROCESSOR_PROBLEMS_ + ": " + (System.currentTimeMillis()- start) );
 
 	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
 	         monitor.subTask(GROUPING_AST);
+	         start=System.currentTimeMillis();
 	         // group #includes
 	         action.groupIncludes(statements);
-	         monitor.worked(5);
+	         monitor.worked(7);
+	         System.out.println("[DOM AST View] done " + GROUPING_AST + ": " + (System.currentTimeMillis()- start) );
 
 	         root.addChild(action.getTree());
 	         
@@ -385,6 +411,8 @@ public class DOMAST extends ViewPart {
 	         
 	         monitor.done();
 			
+	         System.out.println("[DOM AST View] finished: " + (System.currentTimeMillis()- overallStart) );
+	         
 			return Status.OK_STATUS;
 		}
 

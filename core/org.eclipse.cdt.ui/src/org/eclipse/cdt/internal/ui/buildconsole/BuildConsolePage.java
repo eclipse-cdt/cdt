@@ -114,17 +114,29 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 		return null;
 	}
 
-	public void consoleChange(IBuildConsoleEvent event) {
+	public void consoleChange(final IBuildConsoleEvent event) {
 		if (event.getType() == IBuildConsoleEvent.CONSOLE_START || event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE) {
-			if (isAvailable()) {
-				if (event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE && getProject() != event.getProject()) {
-					return;
-				}
-				setProject(event.getProject());
-				if (isAvailable()) {
-					setDocument();
-					getConsole().setTitle(getProject());
-				}
+			Control control = getControl();
+			if (control != null && !control.isDisposed()) {
+				Display display = control.getDisplay();
+				display.asyncExec(new Runnable() {
+					
+					/* (non-Javadoc)
+					 * @see java.lang.Runnable#run()
+					 */
+					public void run() {
+						if (isAvailable()) {
+							if (event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE && getProject() != event.getProject()) {
+								return;
+							}
+							setProject(event.getProject());
+							if (isAvailable()) {
+								setDocument();
+								getConsole().setTitle(getProject());
+							}
+						}
+					}
+				});
 			}
 		}
 	}

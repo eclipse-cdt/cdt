@@ -440,4 +440,12 @@ public class DOMLocationTests extends AST2BaseTest {
             assertSoleLocation( endif, code.indexOf( "#endif"), "#endif".length() ); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
+    
+    public void testBug85820() throws Exception {
+		String code = "int *p = (int []){2, 4};"; //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( code, ParserLanguage.C );
+		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+		IASTDeclarator d = sd.getDeclarators()[0];
+		assertSoleLocation( d, code.indexOf("*p = (int []){2, 4}"), "*p = (int []){2, 4}".length() );  //$NON-NLS-1$//$NON-NLS-2$
+	}
 }

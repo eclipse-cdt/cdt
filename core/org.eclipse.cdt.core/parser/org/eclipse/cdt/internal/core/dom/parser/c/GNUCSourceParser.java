@@ -916,7 +916,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 int lastOffset = consume(IToken.tRPAREN).getEndOffset();
                 IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
                 firstExpression = buildTypeIdInitializerExpression(t, i,
-                        offset, lastOffset);
+                        offset, calculateEndOffset(i));
                 break;
             } catch (BacktrackException bt) {
                 backup(m);

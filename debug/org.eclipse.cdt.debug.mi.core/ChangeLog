@@ -1,7 +1,13 @@
 2002-11-06 Alain Magloire
 
-	* src/.../mi/core/cdti/StackFrame.java (getArguments):
-	If an exception was throw, the array may contain null
+	* src/.../mi/core/StackFrame.java (getLocals):
+	If an exception was thrown, the array may contain null
+	entries.  Use a list and catch the exception.
+
+2002-11-06 Alain Magloire
+
+	* src/.../mi/core/cdi/StackFrame.java (getArguments):
+	If an exception was thrown, the array may contain null
 	entries.  Use and a List and catch the exception.
 
 2002-11-05 Alain Magloire

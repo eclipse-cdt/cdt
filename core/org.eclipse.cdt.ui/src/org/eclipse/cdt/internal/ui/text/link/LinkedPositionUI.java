@@ -57,9 +57,9 @@ public class LinkedPositionUI implements LinkedPositionListener,
 	
 	// leave flags
 	private static final int UNINSTALL= 1;			// uninstall linked position manager
-	private static final int COMMIT= 2;				// commit changes
+	public static final int COMMIT= 2;				// commit changes
 	private static final int DOCUMENT_CHANGED= 4;	// document has changed
-	private static final int UPDATE_CARET= 8;		// update caret
+	public static final int UPDATE_CARET= 8;		// update caret
 
 	private static final String CARET_POSITION= "LinkedPositionUI.caret.position";
 	private static final IPositionUpdater fgUpdater= new DefaultPositionUpdater(CARET_POSITION);
@@ -74,6 +74,7 @@ public class LinkedPositionUI implements LinkedPositionListener,
 	private Position fFramePosition;
 	private int fCaretOffset;
 	
+	private ExitPolicy fExitPolicy;
 	private ExitListener fExitListener;
 	
 	/**
@@ -165,7 +166,13 @@ public class LinkedPositionUI implements LinkedPositionListener,
 
 		fCaretOffset= caretOffset;
 	}
-
+	/**
+	 * Sets an <code>ExitPolicy</code> which decides when and how
+	 * the linked mode is exited.
+	 */
+	public void setExitPolicy(ExitPolicy policy) {
+		fExitPolicy= policy;
+	}
 	/**
 	 * Enters the linked mode. The linked mode can be left by calling
 	 * <code>exit</code>.
@@ -309,14 +316,28 @@ public class LinkedPositionUI implements LinkedPositionListener,
 	 * @see VerifyKeyListener#verifyKey(VerifyEvent)
 	 */
 	public void verifyKey(VerifyEvent event) {
+		if (!event.doit )
+			return;
+		
+		Point selection= fViewer.getSelectedRange();
+		int offset= selection.x;
+		int length= selection.y;
+		
+		ExitFlags exitFlags= fExitPolicy == null ? null : fExitPolicy.doExit(fManager, event, offset, length);
+		if (exitFlags != null) {
+			leave(UNINSTALL | exitFlags.flags);
+			event.doit= exitFlags.doit;
+			return;
+		}
+		
 		switch (event.character) {
 		// [SHIFT-]TAB = hop between edit boxes
 		case 0x09:
 			{
-				Point selection= fViewer.getTextWidget().getSelection();
+				selection= fViewer.getTextWidget().getSelection();
 				IRegion region= fViewer.getVisibleRegion();
-				int offset= selection.x + region.getOffset();
-				int length= selection.y - selection.x;
+				offset= selection.x + region.getOffset();
+				length= selection.y - selection.x;
 				
 				// if tab was treated as a document change, would it exceed variable range?
 				if (!LinkedPositionManager.includes(fFramePosition, offset, length)) {
@@ -344,6 +365,12 @@ public class LinkedPositionUI implements LinkedPositionListener,
 			leave(UNINSTALL | COMMIT);
 			event.doit= false;
 			break;
+			
+		case ';':
+			leave(UNINSTALL | COMMIT);
+			event.doit= true;
+			break;
+			
 		}
 	}
 
@@ -502,4 +529,19 @@ public class LinkedPositionUI implements LinkedPositionListener,
 			position.getOffset() >= region.getOffset() &&
 			position.getOffset() + position.getLength() <= region.getOffset() + region.getLength();
 	}
+	
+	
+	public static class ExitFlags {
+		public int flags;	
+		public boolean doit;
+		public ExitFlags(int flags, boolean doit) {
+			this.flags= flags;
+			this.doit= doit;
+		}						
+	}
+	
+	public interface ExitPolicy {
+		ExitFlags doExit(LinkedPositionManager manager, VerifyEvent event, int offset, int length);
+	}
+	
 }

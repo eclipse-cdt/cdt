@@ -117,9 +117,10 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	private SearchEngine searchEngine = null;
 	private CSearchResultLabelProvider labelProvider = null;
 	
-	private int currentOffset = 0;
-	private IWorkingCopy currentSourceUnit = null;
+	private int fCurrentOffset = 0;
+	private IWorkingCopy fCurrentSourceUnit = null;
 	private int fNumberOfComputedResults= 0;
+	private ITextViewer fTextViewer;
 	
 	public CCompletionProcessor(IEditorPart editor) {
 		fEditor = (CEditor) editor;
@@ -369,16 +370,18 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	 * Evaluate the actual proposals for C
 	 */
 	public ICCompletionProposal[] evalProposals(IDocument document, int documentOffset, IWorkingCopy unit, ITextViewer viewer) {
+		// setup the global variables
+		fCurrentOffset = documentOffset;		
+		fCurrentSourceUnit = unit;
+		fTextViewer = viewer;
 		
-		currentOffset = documentOffset;		
-		currentSourceUnit = unit;
 		ArrayList completions = new ArrayList();
 		
-		if (currentSourceUnit == null)
+		if (fCurrentSourceUnit == null)
 			return null;
 		
 		// clear the completion list at the result collector
-		resultCollector.reset();
+		resultCollector.reset(viewer);
 		
 		IASTCompletionNode completionNode = addProposalsFromModel(completions);
 		addProposalsFromSearch(completionNode, completions);
@@ -412,7 +415,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			}
 			try {
 				fTemplateEngine[i].reset();
-				fTemplateEngine[i].complete(viewer, currentOffset, null);
+				fTemplateEngine[i].complete(viewer, fCurrentOffset, null);
 			} catch (Exception x) {
 				CUIPlugin.getDefault().log(x);
 			}
@@ -425,7 +428,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		if(completionNode == null)
 			return;
 		String prefix = completionNode.getCompletionPrefix();
-		int offset = currentOffset - prefix.length();
+		int offset = fCurrentOffset - prefix.length();
 		int length = prefix.length();
 		
 		// calling functions should happen only within the context of a code body
@@ -451,7 +454,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 											   length,
 											   CPluginImages.get(CPluginImages.IMG_OBJS_FUNCTION), 
 											   fproto.getPrototypeString(true),
-											   2);
+											   2,
+											   fTextViewer);
 
 			if(fdesc != null) {
 				proposal.setAdditionalProposalInfo(fdesc);
@@ -482,7 +486,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 
 	private IASTCompletionNode addProposalsFromModel(List completions){
 		//invoke the completion engine
-		IASTCompletionNode completionNode = completionEngine.complete(currentSourceUnit, currentOffset);
+		IASTCompletionNode completionNode = completionEngine.complete(fCurrentSourceUnit, fCurrentOffset);
 		return completionNode;
 	}
 	
@@ -490,7 +494,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		if(completionNode == null)
 			return;
 		String prefix = completionNode.getCompletionPrefix();
-		int offset = currentOffset - prefix.length();
+		int offset = fCurrentOffset - prefix.length();
 		int length = prefix.length();
 		
 		String searchPrefix = prefix + "*";
@@ -510,7 +514,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			List elementsFound = new LinkedList();
 			
 			ICElement[] projectScopeElement = new ICElement[1];
-			projectScopeElement[0] = (ICElement)currentSourceUnit.getCProject();
+			projectScopeElement[0] = (ICElement)fCurrentSourceUnit.getCProject();
 			scope = SearchEngine.createCSearchScope(projectScopeElement, projectScopeAndDependency);
 			
 			// search for global variables, functions, classes, structs, unions, enums, macros, and namespaces

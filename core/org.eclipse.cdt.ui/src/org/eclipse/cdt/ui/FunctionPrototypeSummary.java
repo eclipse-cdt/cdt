@@ -38,6 +38,10 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 		
 		farguments = proto.substring(leftbracket + 1, rightbracket);
 			
+		// fix for bug #44359
+		if(farguments.equals("void"))
+			farguments = "";
+		
 		int nameend = leftbracket - 1;
 		while(proto.charAt(nameend) == ' ') {
 			nameend--;

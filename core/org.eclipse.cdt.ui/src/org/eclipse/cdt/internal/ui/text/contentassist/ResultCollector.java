@@ -20,6 +20,7 @@ import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.FunctionPrototypeSummary;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContextInformation;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
@@ -36,9 +37,11 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 	private Set completions = new HashSet();
 	private ImageDescriptorRegistry registry = CUIPlugin.getImageDescriptorRegistry();
 	private IProblem fLastProblem;	
+	private ITextViewer fTextViewer;
 	
 	public ResultCollector(){
 		completions.clear();
+		fTextViewer = null;
 	}
 	
 	/**
@@ -47,8 +50,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 	public Set getCompletions() {
 		return completions;
 	}
-	public void reset() {
+	public void reset(ITextViewer viewer) {
 		completions.clear();
+		fTextViewer = viewer;
 		fLastProblem = null;
 	}
 	/*
@@ -63,9 +67,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 											length,							
 											image,
 											displayString, // Display string
-											relevance
-										  );
-
+											relevance,
+										    fTextViewer);
+		
 		if(arguments != null && arguments.length() > 0) {
 			proposal.setContextInformation(new ContextInformation(replaceString, arguments));
 		}
@@ -152,8 +156,15 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			replaceString = name;
 			displayString = name;
 			String functionPrototype = returnType + " " + name;
-			if(parameterString != null)
-				functionPrototype += "(" + parameterString + ")";
+			if(parameterString != null){
+				if ((parameterString.indexOf("(") == -1) && (parameterString.indexOf(")") == -1)) 
+				{	
+					functionPrototype += "(" + parameterString + ")";
+				}
+				else {
+					functionPrototype += parameterString;
+				}
+			}
 
 			FunctionPrototypeSummary fproto = new FunctionPrototypeSummary(functionPrototype);
 			if(fproto != null) {						
@@ -253,8 +264,15 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			replaceString = name;
 			displayString = name;
 			String functionPrototype = returnType + " " + name;
-			if(parameterString != null)
-				functionPrototype += "(" + parameterString + ")";
+			if(parameterString != null){
+				if ((parameterString.indexOf("(") != -1) && (parameterString.indexOf(")") != -1))
+				{	
+					functionPrototype += "(" + parameterString + ")";
+				}
+				else {
+					functionPrototype += parameterString;
+				}
+			}
 				
 			FunctionPrototypeSummary fproto = new FunctionPrototypeSummary(functionPrototype);
 			if(fproto != null) {						

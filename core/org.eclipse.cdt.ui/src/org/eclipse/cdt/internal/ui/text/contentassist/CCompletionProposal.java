@@ -5,12 +5,17 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.ui.text.*;
+import org.eclipse.cdt.internal.ui.text.link.LinkedPositionManager;
+import org.eclipse.cdt.internal.ui.text.link.LinkedPositionUI;
+import org.eclipse.cdt.internal.ui.text.link.LinkedPositionUI.ExitFlags;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
@@ -26,6 +31,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	private int fContextInformationPosition;
 	//private IImportDeclaration fImportDeclaration;
 	private char[] fTriggerCharacters;
+	protected ITextViewer fTextViewer;	
 	
 	private int fRelevance;
 
@@ -39,7 +45,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	 * @param displayString the string to be displayed for the proposal
 	 * If set to <code>null</code>, the replacement string will be taken as display string.
 	 */
-	public CCompletionProposal(String replacementString, int replacementOffset, int replacementLength, Image image, String displayString, int relevance) {
+	public CCompletionProposal(String replacementString, int replacementOffset, int replacementLength, Image image, String displayString, int relevance, ITextViewer viewer) {
 		Assert.isNotNull(replacementString);
 		Assert.isTrue(replacementOffset >= 0);
 		Assert.isTrue(replacementLength >= 0);
@@ -50,7 +56,8 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		fImage= image;
 		fDisplayString= displayString != null ? displayString : replacementString;
 		fRelevance= relevance;
-
+		fTextViewer= viewer;
+		
 		//@@@ Is this the best way to do this, likely it isn't
 		if(replacementString.indexOf("()") == -1) {		//Not replacing with a function
 			fCursorPosition = replacementString.length();
@@ -185,7 +192,9 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		}
 						
 		try {		
+			String string;
 			if (trigger == (char) 0) {
+				string= fReplacementString;
 				replace(document, fReplacementOffset, fReplacementLength, replacementStringCopy);
 			} else {
 				StringBuffer buffer= new StringBuffer(replacementStringCopy);
@@ -196,9 +205,28 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 					++fCursorPosition;
 				}
 				
-				replace(document, fReplacementOffset, fReplacementLength, buffer.toString());
+				string= buffer.toString();
+				replace(document, fReplacementOffset, fReplacementLength, string);
 			}
 			
+			if (fTextViewer != null && string != null) {
+				int index= string.indexOf("()"); //$NON-NLS-1$
+				if (index != -1 && index + 1 == fCursorPosition) {
+					//IPreferenceStore preferenceStore= JavaPlugin.getDefault().getPreferenceStore();
+					//if (preferenceStore.getBoolean(PreferenceConstants.EDITOR_CLOSE_BRACKETS)) {
+						int newOffset= fReplacementOffset + fCursorPosition;
+						
+						LinkedPositionManager manager= new LinkedPositionManager(document);
+						manager.addPosition(newOffset, 0);
+						
+						LinkedPositionUI editor= new LinkedPositionUI(fTextViewer, manager);
+						editor.setExitPolicy(new ExitPolicy(')'));
+						editor.setFinalCaretOffset(newOffset + 1);
+						editor.enter();							
+					//}
+				}
+			}
+
 			/*
 			 * The replacement length is used to calculate the new cursor position,
 			 * so after we update the includes adjust the replacement offset.
@@ -396,6 +424,45 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		
 		return true;
 	}
+
+	private static class ExitPolicy implements LinkedPositionUI.ExitPolicy {
+		
+		final char fExitCharacter;
+		
+		public ExitPolicy(char exitCharacter) {
+			fExitCharacter= exitCharacter;
+		}
+
+		/*
+		 * @see org.eclipse.jdt.internal.ui.text.link.LinkedPositionUI.ExitPolicy#doExit(org.eclipse.jdt.internal.ui.text.link.LinkedPositionManager, org.eclipse.swt.events.VerifyEvent, int, int)
+		 */
+		public ExitFlags doExit(LinkedPositionManager manager, VerifyEvent event, int offset, int length) {
+			
+			if (event.character == fExitCharacter) {
+				if (manager.anyPositionIncludes(offset, length))
+					return new ExitFlags(LinkedPositionUI.COMMIT| LinkedPositionUI.UPDATE_CARET, false);
+				else
+					return new ExitFlags(LinkedPositionUI.COMMIT, true);
+			}	
+			
+			switch (event.character) {			
+				case '\b':
+					if (manager.getFirstPosition().length == 0)
+						return new ExitFlags(0, true);
+					else
+						return null;
+					
+				case '\n':
+				case '\r':
+				case ';':
+					return new ExitFlags(LinkedPositionUI.COMMIT, true);
+					
+				default:
+					return null;
+			}						
+		}
+
+	}	
 	
 }
 

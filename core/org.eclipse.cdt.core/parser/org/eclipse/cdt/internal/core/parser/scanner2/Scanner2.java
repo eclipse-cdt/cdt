@@ -1819,7 +1819,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			if( text[i] == '/' && ( i+1 < text.length ) && text[i+1] == '*')
 			{
 				i += 2;
-				while( i < text.length && text[i] != '*' && i+1 < text.length && text[i+1] != '/')
+				while( i < text.length && !(text[i] == '*' && i+1 < text.length && text[i+1] == '/'))
 					++i;
 				++i;
 			}

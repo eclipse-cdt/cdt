@@ -1,3 +1,23 @@
 2002-10-10 Alain Magloire
 
+	The Eclipse/UI/Debug framewok is being very repetive
+	and each command can be ask 2, 3 times.  So we'll try
+	to make certain commands smarter by not reissuing them
+	to gdb if the state is the same.  We do this when
+	selecting the thread and when selecting the stackframe.
+	
+	The other problem is that Eclipse/UI/Debug is calling
+	ICDISession.terminate() twice, this is catch by looking
+	at isTerminated().
+
+	* cdi/CThread.java (setCurrentStackFrame): Make it smarter
+	to not reselect the stack level if it is already at that
+	level.
+
+	* MISession.java (isTerminated): Declare a flag that will
+	hold the state.
+	(terminate): Check if it was call already.
+
+2002-10-10 Alain Magloire
+
 	* SourceManager.java:  Implement getInstructions().

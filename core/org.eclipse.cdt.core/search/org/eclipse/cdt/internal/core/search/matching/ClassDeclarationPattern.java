@@ -13,6 +13,11 @@
  */
 package org.eclipse.cdt.internal.core.search.matching;
 
+import org.eclipse.cdt.core.parser.ast.ClassKind;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
+import org.eclipse.cdt.internal.core.search.CharOperation;
+
 /**
  * @author aniefer
  *
@@ -25,5 +30,54 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		super( matchMode, caseSensitive );
 	}
 	
+	public ClassDeclarationPattern( char[] name, char[][] containers, ClassKind kind, int mode, boolean caseSensitive ){
+		super( mode, caseSensitive );
+		simpleName = caseSensitive ? name : CharOperation.toLowerCase( name );
+		if( caseSensitive || containers == null ){
+			containingTypes = containers;
+		} else {
+			int len = containers.length;
+			this.containingTypes = new char[ len ][];
+			for( int i = 0; i < len; i++ ){
+				this.containingTypes[i] = CharOperation.toLowerCase( containers[i] );
+			}
+		} 
+		classKind = kind;
+	}
+	
+	public int matchLevel( IASTOffsetableElement node ){
+		if( !( node instanceof IASTClassSpecifier ) )
+			return IMPOSSIBLE_MATCH;
+			
+		IASTClassSpecifier clsSpec = (IASTClassSpecifier) node;
+	
+		//check name, if simpleName == null, its treated the same as "*"	
+		if( simpleName != null && !matchesName( simpleName, clsSpec.getName().toCharArray() ) ){
+			return IMPOSSIBLE_MATCH;
+		}
+		
+		//check containing scopes
+		String [] qualifications = clsSpec.getFullyQualifiedName();
+		int size = containingTypes.length;
+		if( qualifications.length < size )
+			return IMPOSSIBLE_MATCH;
+			
+		for( int i = 0; i < containingTypes.length; i++ ){
+			if( !matchesName( containingTypes[i], qualifications[i].toCharArray() ) ){
+				return IMPOSSIBLE_MATCH;
+			}
+		}
+		
+		//check type
+		if( classKind != clsSpec.getClassKind() ){
+			return IMPOSSIBLE_MATCH;
+		}
+		
+		return ACCURATE_MATCH;
+	}
+	
+	private char[] 	  simpleName;
+	private char[][]  containingTypes;
+	private ClassKind classKind;
 	
 }

@@ -1,3 +1,17 @@
+2003-06-27 Andrew Niefer
+Modified:
+	search/org.eclipse.cdt.core.search.matching/MatchLocator.java
+		- enter/exitInclusion
+		- enterClassSpecifier
+	search/org.eclipse.cdt.core.search.matching/CSearchPattern.java
+		- createClassPattern
+		- matchesName
+	search/org.eclipse.cdt.core.search.matching/ClassDeclarationPattern.java
+		- matchLevel
+	search/org.eclipse.cdt.core.search/ICSearchPattern.java
+	search/org.eclipse.cdt.core.search/ICSearchResultCollector.java
+	search/org.eclipse.cdt.core.search/SearchEngine.java
+
 2003-06-25	Bogdan Gheorghe
 
 Modified:

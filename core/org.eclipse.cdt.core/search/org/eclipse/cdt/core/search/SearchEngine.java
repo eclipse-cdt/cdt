@@ -14,12 +14,16 @@
 package org.eclipse.cdt.core.search;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.core.index.IndexManager;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.Util;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
+import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * @author aniefer
@@ -94,9 +98,23 @@ public class SearchEngine {
 			}
 			
 			CModelManager modelManager = CModelManager.getDefault();
-			IndexManager indexManager = null; //modelManager.getIndexManager();
+			IndexManager indexManager = modelManager.getIndexManager();
 			
+			SubProgressMonitor subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 5 );
 			
+			indexManager.performConcurrentJob( 
+				new PatternSearchJob(),
+				ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+				subMonitor );
+			
+			subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 95 );
+				
+			MatchLocator matchLocator = new MatchLocator( pattern, collector, scope, subMonitor );
+			
+			if( progressMonitor != null && progressMonitor.isCanceled() )
+				throw new OperationCanceledException();
+			
+			//matchLocator.locateMatches( pathCollector.getPaths(), workspace, workingCopies );
 		} finally {
 			collector.done();
 		}

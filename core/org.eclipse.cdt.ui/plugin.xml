@@ -946,12 +946,39 @@
          point="org.eclipse.search.searchPages">
       <page
             showScopeSection="true"
-            label="C/CPP Search"
+            label="%CSearchPage.label"
             icon="icons/full/obj16/csearch_obj.gif"
             class="org.eclipse.cdt.internal.ui.search.CSearchPage"
             sizeHint="460, 160"
             id="org.eclipse.cdt.ui.CSearchPage">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.search.searchResultSorters">
+      <sorter
+            pageId="org.eclipse.cdt.ui.CSearchPage"
+            label="%ElementNameSorter.label"
+            class="org.eclipse.cdt.internal.ui.search.ElementNameSorter"
+            tooltip="%ElementNameSorter.tooltip"
+            icon="icons/full/clcl16/search_sortmatch.gif"
+            id="org.eclipse.search.internal.ui.ElementNameSorter" >
+      </sorter>
+      <sorter
+		id="org.eclipse.search.internal.ui.ParentNameSorter"
+		pageId="org.eclipse.cdt.ui.CSearchPage"
+		label="%ParentNameSorter.label"
+		tooltip="%ParentNameSorter.tooltip"
+		icon="icons/full/clcl16/search_sortmatch.gif"
+		class="org.eclipse.cdt.internal.ui.search.ParentNameSorter">
+	</sorter>
+	<sorter
+		id="org.eclipse.search.internal.ui.PathNameSorter"
+		pageId="org.eclipse.cdt.ui.JavaSearchPage"
+		label="%PathNameSorter.label"
+		tooltip="%PathNameSorter.tooltip"
+		icon="icons/full/clcl16/search_sortmatch.gif"
+		class="org.eclipse.cdt.internal.ui.search.PathNameSorter">
+	</sorter>
    </extension>
 
 </plugin>

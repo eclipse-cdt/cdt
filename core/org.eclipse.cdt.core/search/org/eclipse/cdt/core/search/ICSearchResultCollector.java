@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.core.search;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -59,9 +60,10 @@ public interface ICSearchResultCollector {
 		IResource resource,
 		int start,
 		int end,
-		/*IJavaElement*/ Object enclosingElement,
+		ICElement enclosingElement,
 		int accuracy)
 		throws CoreException;
+		
 	/**
 	 * Called when the search has ended.
 	 */
@@ -72,4 +74,5 @@ public interface ICSearchResultCollector {
 	 * @return a progress monitor or null if no progress monitor is provided
 	 */
 	public IProgressMonitor getProgressMonitor();
+
 }

@@ -16,12 +16,15 @@ package org.eclipse.cdt.internal.ui.search;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
@@ -48,7 +51,7 @@ public class CSearchOperation extends WorkspaceModifyOperation {
 		_workspace = workspace;
 		_limitTo = limitTo;
 		_scope = scope;
-		_scopeDecsription = scopeDescription;
+		_scopeDescription = scopeDescription;
 		_collector = collector;
 		_collector.setOperation( this );
 	}
@@ -70,16 +73,73 @@ public class CSearchOperation extends WorkspaceModifyOperation {
 		}
 
 	}
+	
+	/**
+	 * @return
+	 */
+	public String getSingularLabel() {
+		String desc = null;
+		
+		if( _elementPattern != null ){
+			desc = _elementPattern.getElementName();
+		} else {
+			desc = _stringPattern; 
+		}
+		
+		String [] args = new String [] { desc, _scopeDescription };
+		switch( _limitTo ){
+			case ICSearchConstants.DECLARATIONS :
+				return CSearchMessages.getFormattedString( "CSearchOperation.singularDeclarationsPostfix", args ); //$NON_NLS-1$
+			case ICSearchConstants.REFERENCES :
+				return CSearchMessages.getFormattedString( "CSearchOperation.singularReferencesPostfix", args ); //$NON_NLS-1$
+			default:
+				return CSearchMessages.getFormattedString( "CSearchOperation.singularOccurencesPostfix", args ); //$NON_NLS-1$
+		}
+	}
 
+	/**
+	 * @return
+	 */
+	public String getPluralLabelPattern() {
+		String desc = null;
+		
+		if( _elementPattern != null ){
+			desc = _elementPattern.getElementName();
+		} else {
+			desc = _stringPattern; 
+		}
+		
+		String [] args = new String [] { desc, "{0}", _scopeDescription };
+		switch( _limitTo ){
+			case ICSearchConstants.DECLARATIONS :
+				return CSearchMessages.getFormattedString( "CSearchOperation.pluralDeclarationsPostfix", args ); //$NON_NLS-1$
+			case ICSearchConstants.REFERENCES :
+				return CSearchMessages.getFormattedString( "CSearchOperation.pluralReferencesPostfix", args ); //$NON_NLS-1$
+			default:
+				return CSearchMessages.getFormattedString( "CSearchOperation.pluralOccurencesPostfix", args ); //$NON_NLS-1$
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		if( _limitTo == ICSearchConstants.DECLARATIONS ){
+			return CPluginImages.DESC_OBJS_SEARCH_DECL;
+		} else {
+			return CPluginImages.DESC_OBJS_SEARCH_REF;
+		}
+	}
 
 	private CSearchResultCollector 	_collector;
 	private IWorkspace 				_workspace;
 	private ICElement 				_elementPattern;	
 	private ICSearchScope			_scope;
 	private String					_stringPattern;
-	private String					_scopeDecsription;
+	private String					_scopeDescription;
 	private boolean					_caseSensitive;
 	private int						_limitTo;
 	private int						_searchFor;
+
 		
 }

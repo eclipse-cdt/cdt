@@ -160,11 +160,9 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			}
 		};
 
-		fSearchFor[   TYPE    ].addSelectionListener(cElementInitializer);
-		fSearchFor[  FUNCTION   ].addSelectionListener(cElementInitializer);
-		fSearchFor[   MEMBER   ].addSelectionListener(cElementInitializer);
-		fSearchFor[CONSTRUCTOR].addSelectionListener(cElementInitializer);
-		//fSearchFor[  PACKAGE  ].addSelectionListener(cElementInitializer);
+		for( int i = 0; i < fSearchFor.length; i++ ){
+			fSearchFor[ i ].addSelectionListener( cElementInitializer );		
+		}
 
 		setControl( result );
 
@@ -183,7 +181,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 
 		// Pattern text + info
 		Label label = new Label( result, SWT.LEFT );
-		label.setText( CSearchMessages.getString( "SearchPage.expression.label" ) ); //$NON-NLS-1$
+		label.setText( CSearchMessages.getString( "CSearchPage.expression.label" ) ); //$NON-NLS-1$
 		gd = new GridData( GridData.BEGINNING );
 		gd.horizontalSpan = 2;
 		label.setLayoutData( gd );
@@ -210,7 +208,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 
 		// Ignore case checkbox		
 		fCaseSensitive= new Button(result, SWT.CHECK);
-		fCaseSensitive.setText(CSearchMessages.getString("SearchPage.expression.caseSensitive")); //$NON-NLS-1$
+		fCaseSensitive.setText(CSearchMessages.getString("CSearchPage.expression.caseSensitive")); //$NON-NLS-1$
 		gd= new GridData();
 		fCaseSensitive.setLayoutData(gd);
 		fCaseSensitive.addSelectionListener( new SelectionAdapter() {
@@ -259,7 +257,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	
 	private Control createLimitTo( Composite parent ) {
 		Group result = new Group(parent, SWT.NONE);
-		result.setText( CSearchMessages.getString("SearchPage.limitTo.label") ); //$NON-NLS-1$
+		result.setText( CSearchMessages.getString("CSearchPage.limitTo.label") ); //$NON-NLS-1$
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		result.setLayout( layout );
@@ -315,7 +313,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	
 	private Control createSearchFor(Composite parent) {
 		Group result= new Group(parent, SWT.NONE);
-		result.setText(CSearchMessages.getString("SearchPage.searchFor.label")); //$NON-NLS-1$
+		result.setText(CSearchMessages.getString("CSearchPage.searchFor.label")); //$NON-NLS-1$
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 3;
 		result.setLayout(layout);
@@ -566,8 +564,8 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			pattern= p;
 			isCaseSensitive= i;
 			cElement= element;
-			this.scope= scope;
-			this.workingSets= workingSets;
+			this.scope = scope;
+			this.workingSets = workingSets;
 		}
 	}
 	
@@ -579,20 +577,20 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 
 	private Button[] fSearchFor;
 	private String[] fSearchForText= {
-		CSearchMessages.getString("SearchPage.searchFor.type"), //$NON-NLS-1$
-		CSearchMessages.getString("SearchPage.searchFor.method"), //$NON-NLS-1$
-		//CSearchMessages.getString("SearchPage.searchFor.package"), //$NON-NLS-1$
-		CSearchMessages.getString("SearchPage.searchFor.constructor"), //$NON-NLS-1$
-		CSearchMessages.getString("SearchPage.searchFor.field")}; //$NON-NLS-1$
-
+		CSearchMessages.getString("CSearchPage.searchFor.type"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.searchFor.method"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.searchFor.namespace"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.searchFor.constructor"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.searchFor.field")}; //$NON-NLS-1$
+		
 	private Button[] fLimitTo;
 	private String[] fLimitToText= {
-		CSearchMessages.getString("SearchPage.limitTo.declarations"), //$NON-NLS-1$
-		CSearchMessages.getString("SearchPage.limitTo.implementors"), //$NON-NLS-1$
-		CSearchMessages.getString("SearchPage.limitTo.references"), //$NON-NLS-1$
-		CSearchMessages.getString("SearchPage.limitTo.allOccurrences"), //$NON-NLS-1$
-		CSearchMessages.getString("SearchPage.limitTo.readReferences"), //$NON-NLS-1$		
-		CSearchMessages.getString("SearchPage.limitTo.writeReferences")}; //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.limitTo.declarations"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.limitTo.implementors"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.limitTo.references"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.limitTo.allOccurrences"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.limitTo.readReferences"), //$NON-NLS-1$		
+		CSearchMessages.getString("CSearchPage.limitTo.writeReferences")}; //$NON-NLS-1$
 
 	private SearchPatternData fInitialData;
 	private IStructuredSelection fStructuredSelection;

@@ -13,8 +13,18 @@
  */
 package org.eclipse.cdt.internal.core.search.matching;
 
+import java.io.StringReader;
+import java.util.LinkedList;
+
+import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
+import org.eclipse.cdt.internal.core.search.CharOperation;
 
 /**
  * @author aniefer
@@ -22,8 +32,12 @@ import org.eclipse.cdt.core.search.ICSearchPattern;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public abstract class CSearchPattern
-	implements ICSearchConstants, ICSearchPattern {
+public abstract class CSearchPattern implements ICSearchConstants, ICSearchPattern {
+	
+	public static final int IMPOSSIBLE_MATCH = 0;
+	public static final int POSSIBLE_MATCH   = 1;
+	public static final int ACCURATE_MATCH   = 2;
+	public static final int INACCURATE_MATCH = 3;
 
 	/**
 	 * @param matchMode
@@ -50,7 +64,7 @@ public abstract class CSearchPattern
 		CSearchPattern pattern = null;
 		switch( searchFor ){
 			case ICSearchConstants.TYPE:
-				pattern = createTypePattern( patternString, limitTo, matchMode, caseSensitive );
+				pattern = createClassPattern( patternString, limitTo, matchMode, caseSensitive );
 				break;
 			//case ICSearchConstants.METHOD:
 			//	pattern = createMethodPattern( patternString, limitTo, matchMode, caseSensitive );
@@ -109,9 +123,33 @@ public abstract class CSearchPattern
 	 * @param caseSensitive
 	 * @return
 	 */
-	private static CSearchPattern createTypePattern(String patternString, int limitTo, int matchMode, boolean caseSensitive) {
-		// TODO Auto-generated method stub
-		return null;
+	private static CSearchPattern createClassPattern(String patternString, int limitTo, int matchMode, boolean caseSensitive) {
+		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", null, null, ParserMode.QUICK_PARSE );
+		
+		LinkedList list  = new LinkedList();
+		IToken 	   token = null;
+		String 	   name  = new String("");
+		
+		try {
+			while( true ){
+				token = scanner.nextToken();
+				
+				switch( token.getType() ){
+					case IToken.tCOLONCOLON :
+						list.addLast( name.toCharArray() );
+						name = new String("");
+						break;
+					default:
+						name += token.getImage();
+						break;
+				}
+			}
+		} catch (EndOfFile e) {	
+		} catch (ScannerException e) {
+		}
+		 
+		char [][] qualifications = new char[1][];
+		return new ClassDeclarationPattern( name.toCharArray(), (char[][])list.toArray( qualifications ), null, matchMode, caseSensitive );
 	}
 	
 	protected boolean matchesName( char[] pattern, char[] name ){
@@ -122,14 +160,15 @@ public abstract class CSearchPattern
 		if( name != null ){
 			switch( _matchMode ){
 				case EXACT_MATCH:
-					//return CharOperation.equals( pattern, name, _caseSensitive );
+					return CharOperation.equals( pattern, name, _caseSensitive );
 				case PREFIX_MATCH:
-					//return CharOperation.prefixEquals( pattern, name, _caseSensitive );
+					return CharOperation.prefixEquals( pattern, name, _caseSensitive );
 				case PATTERN_MATCH:
 					if( !_caseSensitive ){
-						//pattern = CharOperation.toLowerCase( pattern );
+						pattern = CharOperation.toLowerCase( pattern );
 					}
-					//return CharOperation.match( pattern, name, _caseSensitive );
+					
+					return CharOperation.match( pattern, name, _caseSensitive );
 			}
 		}
 		return false;

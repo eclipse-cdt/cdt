@@ -1,3 +1,25 @@
+2003-06-27 Andrew Niefer
+	Changes for C/C++ Search:
+	Added:
+	* src/org/eclipse/cdt/internal/ui/search/CElementLabels.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultLabelProvider.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchViewActionGroup.java
+	* src/org/eclipse/cdt/internal/ui/search/ElementNameSorter.java
+	* src/org/eclipse/cdt/internal/ui/search/GotoMarkerAction.java
+	* src/org/eclipse/cdt/internal/ui/search/GroupByKeyComputer.java
+	* src/org/eclipse/cdt/internal/ui/search/ParentNameSorter.java
+	* src/org/eclipse/cdt/internal/ui/search/PathNameSorter.java
+	* icons/full/clcl16/search_sortmatch.gif
+	* icons/full/obj16/search_decl_obj.gif
+	* icons/full/obj16/search_ref_obj.gif
+	Modified:
+	* src/org/eclipse/cdt/internal/ui/search/CSearchOperation.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchPage.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultCollector.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties.java
+	* plugin.xml
+	* plugin.properties
+
 2003-06-26 Sean Evoy
 	Added a tab to the new standard make project wizard and CNature project
 	property page. User interacts with two list controls to add include paths

@@ -110,24 +110,22 @@ public class Stabs {
 
 	int read_4_bytes(byte[] bytes, int offset) {
 		if (isLe) {
-			return (
-				((bytes[offset + 3] & 0xff) << 24)
-					+ ((bytes[offset + 2] & 0xff) << 16)
-					+ ((bytes[offset + 1] & 0xff) << 8)
-					+ (bytes[offset] & 0xff));
+			return (((bytes[offset + 3] & 0xff) << 24)
+				| ((bytes[offset + 2] & 0xff) << 16)
+				| ((bytes[offset + 1] & 0xff) << 8)
+				| (bytes[offset] & 0xff));
 		}
-		return (
-			((bytes[offset] & 0xff) << 24)
-				+ ((bytes[offset + 1] & 0xff) << 16)
-				+ ((bytes[offset + 2] & 0xff) << 8)
-				+ (bytes[offset + 3] & 0xff));
+		return (((bytes[offset] & 0xff) << 24)
+			| ((bytes[offset + 1] & 0xff) << 16)
+			| ((bytes[offset + 2] & 0xff) << 8)
+			| (bytes[offset + 3] & 0xff));
 	}
 
 	short read_2_bytes(byte[] bytes, int offset) {
 		if (isLe) {
-			return (short) (((bytes[offset + 1] & 0xff) << 8) + (bytes[offset] & 0xff));
+			return (short) (((bytes[offset + 1] & 0xff) << 8) | (bytes[offset] & 0xff));
 		}
-		return (short) (((bytes[offset] & 0xff) << 8) + (bytes[offset + 1] & 0xff));
+		return (short) (((bytes[offset] & 0xff) << 8) | (bytes[offset + 1] & 0xff));
 	}
 
 	public void parse(IDebugEntryRequestor requestor) {
@@ -191,6 +189,7 @@ public class Stabs {
 		if (inCompilationUnit) {
 			requestor.exitCompilationUnit(value);
 			inCompilationUnit = false;
+			currentFile = null;
 		}
 	}
 
@@ -274,6 +273,7 @@ public class Stabs {
 				if (inCompilationUnit) {
 					requestor.exitCompilationUnit(value);
 					inCompilationUnit = false;
+					currentFile = null;
 				}
 				if (field != null && field.length() > 0) {
 					// if it ends with "/" do not call the entering yet
@@ -288,6 +288,7 @@ public class Stabs {
 						}
 						requestor.enterCompilationUnit(currentFile, value);
 						inCompilationUnit = true;
+						currentFile = null;
 					}
 				}
 				break;

@@ -1,3 +1,7 @@
+2004-07-09 Mikhail Khodjaiants
+	Fix for bug 69221: "Show full paths" doesn't work for shared libraries.
+	* SharedLibrariesView.java
+
 2004-06-29 Mikhail Khodjaiants
 	Temporary fix for bug 68915: Invalid values in the Variables view.
 	* CDebugUIPlugin.java

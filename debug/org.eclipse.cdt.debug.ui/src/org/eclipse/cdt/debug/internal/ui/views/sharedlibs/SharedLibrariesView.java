@@ -23,17 +23,20 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -265,5 +268,17 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 		getSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
 		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugView#getPresentation(java.lang.String)
+	 */
+	public IDebugModelPresentation getPresentation( String id ) {
+		StructuredViewer viewer = getStructuredViewer();
+		if ( viewer != null ) {
+			IBaseLabelProvider lp = viewer.getLabelProvider();
+			return ( lp instanceof SharedLibrariesLabelProvider ) ? (SharedLibrariesLabelProvider)lp : null;
+		}
+		return null;
 	}
 }

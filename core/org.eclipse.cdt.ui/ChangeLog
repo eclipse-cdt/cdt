@@ -1,5 +1,5 @@
 2005-01-24 Alain Magloire
-	PR 83514 patch form Przemek
+	PR 83514 patch from Przemek
 	* src/org/eclipse/cdt/internal/ui/actions/ActionMessages.properties
 	* src/org/eclipse/cdt/internal/ui/text/CoutlineInformaionControl.java
 	* NEWS
@@ -9,7 +9,7 @@
 	* src/org/eclipse/cdt/internal/ui/viewsupport/CElementImageProvider.java
 
 2005-01-20 Alain Magloire
-	PR 82964 patch form Przemek
+	PR 82964 patch from Przemek
 	* icons/full/cview16/view_menu.gif
 	* src/org/eclipse/cdt/internal.ui/CPluginImages.java
 	* src/org/eclipse/cdt/internal/ui/actions/ActionMessages.properties

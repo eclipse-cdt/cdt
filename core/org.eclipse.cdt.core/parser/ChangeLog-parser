@@ -1,3 +1,8 @@
+2004-01-15 Andrew Niefer
+	Modified symbol table constructor to take a ParseMode as a parameter.
+	Modified symbol table to use a TreeMap instead of HashMap when ParseMode is CONTEXTUAL_PARSE
+	Modified ASTNode.lookup to throw ASTNotImplementedException if called when ParseMode is not CONTEXTUAL_PARSE
+	
 2004-01-15 Hoda Amer
 	
 2004-01-15 John Camelon

@@ -26,8 +26,8 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
+import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
 
 /**
@@ -150,12 +150,14 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 			Iterator iter = result.getNodes();
 			
 			IASTVariable anotherVar = (IASTVariable) iter.next();
+			
+			IASTVariable aVar = (IASTVariable) iter.next();
+			
 			if( i != 0 )
 			{
 				IASTFunction foo = (IASTFunction) iter.next();
 				assertEquals( foo.getName(), "foo");
 			}
-			IASTVariable aVar = (IASTVariable) iter.next();
 					
 			assertFalse( iter.hasNext() );
 			assertEquals( anotherVar.getName(), "anotherVar" );
@@ -198,18 +200,8 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		
 		Iterator iter = result.getNodes();
 		
-		IASTMethod aMethod = null;
-		IASTField aField = null;
-		
-		//we can't currently predict the order in this case
-		for( int i = 1; i <= 2; i++ ){
-			IASTNode astNode = (IASTNode) iter.next();
-			if( astNode instanceof IASTMethod ){
-				aMethod = (IASTMethod) astNode;
-			} else{
-				aField = (IASTField) astNode;
-			}
-		}
+		IASTField aField = (IASTField) iter.next();
+		IASTMethod aMethod = (IASTMethod) iter.next();
 		
 		assertFalse( iter.hasNext() );
 		
@@ -561,5 +553,53 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		
 		ILookupResult result = inquestion.lookup( "a", kinds, null );
 		assertEquals(result.getResultsSize(), 3 );
+	}
+	
+	public void testBug48307_FriendFunction_1() throws Exception {
+		StringWriter writer = new StringWriter();
+		writer.write( "class A{ public : void foo(); }; " );
+		writer.write( "class B{ ");
+		writer.write( "   private : int aPrivate;" );
+		writer.write( "   friend void A::foo(); ");
+		writer.write( "};" );
+		writer.write( "void A::foo(){" );
+		writer.write( "   B b;");
+		writer.write( "   b.aP" );
+		
+		String code = writer.toString();
+		int index = code.indexOf( "b.aP" );
+		IASTCompletionNode node = parse( code, index + 4  );
+		
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+				new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, 
+				node.getCompletionContext() );
+
+		assertEquals( result.getResultsSize(), 1 );
+		IASTField field = (IASTField) result.getNodes().next();
+		assertEquals( field.getName(), "aPrivate" );
+	}
+
+	public void testBug48307_FriendFunction_2() throws Exception {
+		StringWriter writer = new StringWriter();
+		writer.write( "void global();" );
+		writer.write( "class B{ ");
+		writer.write( "   private : int aPrivate;" );
+		writer.write( "   friend void global(); ");
+		writer.write( "};" );
+		writer.write( "void global(){" );
+		writer.write( "   B b;");
+		writer.write( "   b.aP" );
+		
+		String code = writer.toString();
+		int index = code.indexOf( "b.aP" );
+		IASTCompletionNode node = parse( code, index + 4  );
+		
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+				new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, 
+				node.getCompletionContext() );
+
+		assertEquals( result.getResultsSize(), 1 );
+		IASTField field = (IASTField) result.getNodes().next();
+		assertEquals( field.getName(), "aPrivate" );
 	}
 }

@@ -22,9 +22,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 
 import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
@@ -43,10 +45,11 @@ public class ParserSymbolTable {
 	/**
 	 * Constructor for ParserSymbolTable.
 	 */
-	public ParserSymbolTable( ParserLanguage language ) {
+	public ParserSymbolTable( ParserLanguage language, ParserMode mode ) {
 		super();
 		_compilationUnit = newContainerSymbol( EMPTY_NAME, TypeInfo.t_namespace );
 		_language = language;
+		_mode = mode;
 	}
 
 	public IContainerSymbol getCompilationUnit(){
@@ -301,7 +304,15 @@ public class ParserSymbolTable {
 		
 		Map declarations = lookIn.getContainedSymbols();
 		
-		Iterator iterator = ( data.mode == LookupMode.PREFIX ) ? declarations.keySet().iterator() : null;
+		Iterator iterator = null;
+		if( data.mode == LookupMode.PREFIX ){
+			if( declarations instanceof SortedMap ){
+				iterator = ((SortedMap)declarations).tailMap( data.name.toLowerCase() ).keySet().iterator();
+			} else {
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_InternalError );
+			}
+		}
+		
 		String name = ( iterator != null && iterator.hasNext() ) ? (String) iterator.next() : data.name;
 		
 		while( name != null ) {
@@ -312,6 +323,8 @@ public class ParserSymbolTable {
 				
 				if( obj != null )
 					found.put( name, obj );
+			} else {
+				break;
 			}
 						
 			if( iterator != null && iterator.hasNext() ){
@@ -328,7 +341,14 @@ public class ParserSymbolTable {
 		if( lookIn instanceof IParameterizedSymbol ){
 			Map parameters = ((IParameterizedSymbol)lookIn).getParameterMap();
 			if( parameters != null ){
-				iterator = ( data.mode == LookupMode.PREFIX ) ? parameters.keySet().iterator() : null;
+				iterator = null;
+				if( data.mode == LookupMode.PREFIX ){
+					if( parameters instanceof SortedMap ){
+						iterator = ((SortedMap) parameters).tailMap( data.name.toLowerCase() ).keySet().iterator();
+					} else {
+						throw new ParserSymbolTableException( ParserSymbolTableException.r_InternalError );
+					}
+				}
 				name = ( iterator != null && iterator.hasNext() ) ? (String) iterator.next() : data.name;
 				while( name != null ){
 					if( nameMatches( data, name ) ){
@@ -337,7 +357,10 @@ public class ParserSymbolTable {
 						if( obj != null ){
 							found.put( name, obj );
 						}
+					} else {
+						break;
 					}
+					
 					if( iterator != null && iterator.hasNext() ){
 						name = (String) iterator.next();
 					} else {
@@ -2184,7 +2207,8 @@ public class ParserSymbolTable {
 
 	//private Stack _contextStack = new Stack();
 	private IContainerSymbol _compilationUnit;
-	private ParserLanguage    _language;
+	private ParserLanguage   _language;
+	private ParserMode		 _mode;
 	private LinkedList undoList = new LinkedList();
 	private HashSet markSet = new HashSet();
 	
@@ -2194,6 +2218,10 @@ public class ParserSymbolTable {
 	
 	public ParserLanguage getLanguage(){
 		return _language;
+	}
+	
+	public ParserMode getParserMode(){
+		return _mode;
 	}
 	
 	protected void pushCommand( Command command ){

@@ -66,6 +66,6 @@ public interface IASTNode {
 	 * @return
 	 * @throws LookupException
 	 */
-	public ILookupResult lookup( String prefix, LookupKind[] kind, IASTNode context) throws LookupException;
+	public ILookupResult lookup( String prefix, LookupKind[] kind, IASTNode context) throws LookupException, ASTNotImplementedException;
 }
 

@@ -18,7 +18,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Command;
 
 /**
@@ -45,8 +47,12 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		ParameterizedSymbol copy = (ParameterizedSymbol)super.clone();
 			
 		copy._parameterList = ( _parameterList != null ) ? (LinkedList) _parameterList.clone() : null;
-		copy._parameterMap	= ( _parameterMap  != null ) ? (HashMap) _parameterMap.clone() : null;
 		
+		if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
+			copy._parameterMap	= ( _parameterMap  != null ) ? (Map) ((TreeMap) _parameterMap).clone() : null;
+		else 
+			copy._parameterMap	= ( _parameterMap  != null ) ? (Map) ((HashMap) _parameterMap).clone() : null;
+			
 		copy._argumentList	  = ( _argumentList != null ) ? (LinkedList) _argumentList.clone() : null;
 		copy._specializations = ( _specializations != null ) ? (LinkedList) _specializations.clone() : null;
 		
@@ -142,7 +148,10 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	 */
 	public Map getParameterMap(){
 		if( _parameterMap == null ){
-			_parameterMap = new HashMap();
+			if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
+				_parameterMap = new TreeMap( new SymbolTableComparator() );
+			else 
+				_parameterMap = new HashMap( );
 		}
 		return _parameterMap;
 	}
@@ -282,7 +291,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	}
 	
 	private 	LinkedList	_parameterList;			//have my cake
-	private 	HashMap		_parameterMap;			//and eat it too
+	private 	Map			_parameterMap;			//and eat it too
 	private		LinkedList	_specializations;		//template specializations
 	private		LinkedList	_argumentList;			//template specialization arguments
 	private 	ISymbol		_returnType;

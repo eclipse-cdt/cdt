@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
@@ -115,11 +116,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
     }
     
-    public CompleteParseASTFactory( ParserLanguage language )
+    public CompleteParseASTFactory( ParserLanguage language, ParserMode mode )
     {
         super();
         
-		pst = new ParserSymbolTable( language );
+		pst = new ParserSymbolTable( language, mode );
     }
 
 	/*

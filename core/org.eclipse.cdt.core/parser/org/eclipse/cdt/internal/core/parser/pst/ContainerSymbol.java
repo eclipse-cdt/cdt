@@ -14,6 +14,7 @@
  
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,7 +22,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.TreeMap;
 
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
@@ -51,9 +54,13 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	public Object clone(){
 		ContainerSymbol copy = (ContainerSymbol)super.clone();
 			
-		copy._usingDirectives  = ( _usingDirectives != null ) ? (LinkedList) _usingDirectives.clone() : null; 
-		copy._containedSymbols = ( _containedSymbols != null )? (HashMap) _containedSymbols.clone() : null;
-
+		copy._usingDirectives  = ( _usingDirectives != null ) ? (LinkedList) _usingDirectives.clone() : null;
+		
+		if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
+			copy._containedSymbols = ( _containedSymbols != null )? (Map)((TreeMap) _containedSymbols).clone() : null;
+		else 
+			copy._containedSymbols = ( _containedSymbols != null )? (Map)((HashMap) _containedSymbols).clone() : null;
+			
 		return copy;	
 	}
 	
@@ -118,7 +125,6 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 					origList.add( origDecl );
 					origList.add( obj );
 			
-					declarations.remove( origDecl );
 					declarations.put( obj.getName(), origList );
 				} else	{
 					origList.add( obj );
@@ -264,7 +270,12 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 */
 	public Map getContainedSymbols(){
 		if( _containedSymbols == null ){
-			_containedSymbols = new HashMap();
+			if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE ){
+				_containedSymbols = new TreeMap( new SymbolTableComparator() );
+			} else {
+				_containedSymbols = new HashMap( );
+			}
+			
 		}
 		return _containedSymbols;
 	}
@@ -760,7 +771,6 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 					}
 				}
 				if( list.size() == 1 ){
-					_context.getContainedSymbols().remove( _symbol.getName() );
 					_context.getContainedSymbols().put( _symbol.getName(), list.getFirst() );
 				}
 			} else if( obj instanceof BasicSymbol ){
@@ -786,8 +796,22 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		private IContainerSymbol _decl;
 		private IContainerSymbol _namespace;
 	}
-
+	
+	static protected class SymbolTableComparator implements Comparator{
+		public int compare( Object o1, Object o2 ){
+			int result = ((String) o1).compareToIgnoreCase( (String) o2 );
+			if( result == 0 ){
+				return ((String) o1).compareTo( (String) o2 );
+			}
+			return result;
+		}
+		
+		public boolean equals( Object obj ){
+			return ( obj instanceof SymbolTableComparator );
+		}
+	}
+	
 	private		LinkedList	_usingDirectives;		//collection of nominated namespaces
-	private		HashMap 	_containedSymbols;		//declarations contained by us.
+	private		Map 		_containedSymbols;		//declarations contained by us.
 
 }

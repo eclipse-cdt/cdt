@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
@@ -31,13 +33,18 @@ public class ASTNode implements IASTNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind, org.eclipse.cdt.core.parser.ast.IASTNode)
 	 */
-	public ILookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) throws LookupException {
+	public ILookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) throws LookupException, ASTNotImplementedException {
+
 		if( ! ( this instanceof ISymbolOwner ) || ( context != null && !(context instanceof ISymbolOwner) ) ){
 			return null;
 		}
 		
 		IContainerSymbol thisContainer = (IContainerSymbol) ((ISymbolOwner)this).getSymbol();
 		IContainerSymbol qualification = null;
+		
+		if( thisContainer.getSymbolTable().getParserMode() != ParserMode.COMPLETION_PARSE ){
+			throw new ASTNotImplementedException();
+		}
 		
 		if( context != null ){
 			ISymbol sym = (IContainerSymbol) ((ISymbolOwner)context).getSymbol();

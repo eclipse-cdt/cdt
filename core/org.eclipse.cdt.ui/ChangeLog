@@ -1,3 +1,6 @@
+2004-01-13 Andrew Niefer
+	Updated CompletionEngine to catch ASTNotImplementedException from IASTNode.lookup
+
 2004-01-15 Hoda Amer
 	Moved Content Assist log to the UI plugin
 	

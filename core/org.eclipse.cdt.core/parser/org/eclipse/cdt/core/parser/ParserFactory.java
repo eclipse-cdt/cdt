@@ -37,7 +37,7 @@ public class ParserFactory {
 		if( mode == ParserMode.QUICK_PARSE )
 			return new QuickParseASTFactory(); 
 		else
-			return new CompleteParseASTFactory( language ); 
+			return new CompleteParseASTFactory( language, mode ); 
 	}
 	
     public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode, ParserLanguage language, IParserLogService log ) throws ParserFactoryError

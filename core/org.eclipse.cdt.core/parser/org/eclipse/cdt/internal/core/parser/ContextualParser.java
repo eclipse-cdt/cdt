@@ -51,7 +51,7 @@ public class ContextualParser extends Parser implements IParser {
 	 */
 	public ContextualParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log) {
 		super(scanner, callback, language, log);
-		astFactory = ParserFactory.createASTFactory( ParserMode.COMPLETE_PARSE, language);
+		astFactory = ParserFactory.createASTFactory( ParserMode.COMPLETION_PARSE, language);
 		scanner.setASTFactory(astFactory);
 	}
 	

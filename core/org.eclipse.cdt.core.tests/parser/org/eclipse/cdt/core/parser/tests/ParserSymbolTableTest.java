@@ -20,6 +20,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
@@ -66,11 +67,11 @@ public class ParserSymbolTableTest extends TestCase {
 	}
 	
 	public ParserSymbolTable newTable(){
-		return newTable( ParserLanguage.CPP );
+		return newTable( ParserLanguage.CPP, ParserMode.COMPLETE_PARSE );
 	}
 	
-	public ParserSymbolTable newTable( ParserLanguage language ){
-		table = new ParserSymbolTable( language );
+	public ParserSymbolTable newTable( ParserLanguage language, ParserMode mode ){
+		table = new ParserSymbolTable( language, mode );
 		return table;
 	}
 	/**
@@ -3011,7 +3012,7 @@ public class ParserSymbolTableTest extends TestCase {
 	 * }
 	 */
 	public void testPrefixLookup_Unqualified() throws Exception {
-		newTable();
+		newTable( ParserLanguage.CPP, ParserMode.COMPLETION_PARSE );
 		
 		ISymbol aVar = table.newSymbol( "aVar", TypeInfo.t_int );
 		table.getCompilationUnit().addSymbol( aVar );
@@ -3042,7 +3043,7 @@ public class ParserSymbolTableTest extends TestCase {
 	 * d.a(CTRL+SPACE)
 	 */
 	public void testPrefixLookup_Qualified() throws Exception {
-		newTable();
+		newTable( ParserLanguage.CPP, ParserMode.COMPLETION_PARSE );
 		
 		ISymbol aVar = table.newSymbol( "aVar", TypeInfo.t_int );
 		table.getCompilationUnit().addSymbol( aVar );
@@ -3082,7 +3083,7 @@ public class ParserSymbolTableTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testPrefixLookup_Inheritance() throws Exception {
-		newTable();
+		newTable( ParserLanguage.CPP, ParserMode.COMPLETION_PARSE );
 		
 		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
 		table.getCompilationUnit().addSymbol( A );
@@ -3143,7 +3144,7 @@ public class ParserSymbolTableTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testPrefixLookup_Ambiguities() throws Exception{
-		newTable();
+		newTable( ParserLanguage.CPP, ParserMode.COMPLETION_PARSE );
 		
 		ISymbol aa = table.newSymbol( "aa", TypeInfo.t_int );
 		table.getCompilationUnit().addSymbol( aa );
@@ -3288,7 +3289,7 @@ public class ParserSymbolTableTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testPrefixFiltering() throws Exception{
-		newTable();
+		newTable( ParserLanguage.CPP, ParserMode.COMPLETION_PARSE );
 		IDerivableContainerSymbol a1 = table.newDerivableContainerSymbol( "a1", TypeInfo.t_struct );
 		table.getCompilationUnit().addSymbol( a1 );
 		

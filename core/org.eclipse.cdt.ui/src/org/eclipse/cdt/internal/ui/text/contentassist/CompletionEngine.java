@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -400,6 +401,10 @@ public class CompletionEngine implements RelevanceConstants{
 		} catch (IASTNode.LookupException ilk ){
 			// do we want to do something here?
 			ilk.printStackTrace();
+			return null;
+		} catch (ASTNotImplementedException e) {
+			// shouldn't happen
+			e.printStackTrace();
 			return null;
 		}
 	}

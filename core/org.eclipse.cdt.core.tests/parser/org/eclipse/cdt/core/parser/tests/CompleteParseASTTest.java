@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -42,7 +41,6 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
-import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 
@@ -1159,49 +1157,5 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		foo = (IASTFunction)i.next();
 		assertTrue( foo.takesVarArgs() );
 		assertAllReferences( 1, createTaskList( new Task( foo ) ) );
-	}
-	
-	public void testBug48307_FriendFunction_1() throws Exception {
-		StringWriter writer = new StringWriter();
-		writer.write( "class A{ public : void foo(); }; " );
-		writer.write( "class B{ ");
-		writer.write( "   private : int aPrivate;" );
-		writer.write( "   friend void A::foo(); ");
-		writer.write( "};" );
-		writer.write( "void A::foo(){}" );
-		
-		Iterator i = parse( writer.toString() ).getDeclarations();
-		
-		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		IASTMethod method = (IASTMethod) i.next();
-		
-		ILookupResult result = method.lookup( "a", new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, classB );
-
-		assertEquals( result.getResultsSize(), 1 );
-		IASTField field = (IASTField) result.getNodes().next();
-		assertEquals( field.getName(), "aPrivate" );
-	}
-
-	public void testBug48307_FriendFunction_2() throws Exception {
-		StringWriter writer = new StringWriter();
-		writer.write( "void global();" );
-		writer.write( "class B{ ");
-		writer.write( "   private : int aPrivate;" );
-		writer.write( "   friend void global(); ");
-		writer.write( "};" );
-		writer.write( "void global(){}" );
-				
-		Iterator i = parse( writer.toString() ).getDeclarations();
-		
-		IASTFunction functionDecl  = (IASTFunction) i.next();
-		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		IASTFunction functionDef = (IASTFunction) i.next();
-		
-		ILookupResult result = functionDef.lookup( "a", new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, classB );
-
-		assertEquals( result.getResultsSize(), 1 );
-		IASTField field = (IASTField) result.getNodes().next();
-		assertEquals( field.getName(), "aPrivate" );
 	}
 }

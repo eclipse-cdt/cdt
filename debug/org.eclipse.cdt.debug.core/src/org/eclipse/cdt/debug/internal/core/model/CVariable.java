@@ -212,9 +212,9 @@ public abstract class CVariable extends CDebugElement
 		{
 			if ( fType == null )
 			{
-				ICDIVariable var = getCDIVariable();
-				if ( var != null && !(var instanceof ErrorVariable) )
-					fType = new CType( var.getType() );
+				ICDIVariableObject varObject = getCDIVariableObject();
+				if ( varObject != null )
+					fType = new CType( varObject.getType() );
 			}
 			return fType;
 		}

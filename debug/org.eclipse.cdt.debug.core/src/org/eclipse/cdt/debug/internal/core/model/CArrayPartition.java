@@ -170,8 +170,9 @@ public class CArrayPartition extends CVariable
 		{
 			try
 			{
-				if ( fCDIVariable != null && !(fCDIVariable instanceof ErrorVariable) )
-					fType = new CType( fCDIVariable.getType() );
+				ICDIVariableObject varObject = getVariableObject();
+				if ( varObject != null )
+					fType = new CType( varObject.getType() );
 			}
 			catch (CDIException e)
 			{

@@ -87,12 +87,11 @@ public class CCorePlugin extends Plugin {
 	public final static String BUILD_SCANNER_INFO_SIMPLE_ID = "ScannerInfoProvider"; //$NON-NLS-1$
 	public final static String BUILD_SCANNER_INFO_UNIQ_ID = PLUGIN_ID + "." + BUILD_SCANNER_INFO_SIMPLE_ID; //$NON-NLS-1$
 	
-	    
-    /**
-     * Possible configurable option ID.
-     * @see #getDefaultOptions
-     */
-    public static final String TRANSLATION_TASK_PRIORITIES = PLUGIN_ID + ".translation.taskPriorities"; //$NON-NLS-1$
+	/**
+	 * Possible configurable option value for TRANSLATION_TASK_PRIORITIES.
+	 * @see #getDefaultOptions
+	 */
+	public static final String TRANSLATION_TASK_PRIORITY_NORMAL = "NORMAL"; //$NON-NLS-1$	    
     /**
      * Possible configurable option value for TRANSLATION_TASK_PRIORITIES.
      * @see #getDefaultOptions
@@ -103,25 +102,6 @@ public class CCorePlugin extends Plugin {
      * @see #getDefaultOptions
      */
     public static final String TRANSLATION_TASK_PRIORITY_LOW = "LOW"; //$NON-NLS-1$
-    /**
-     * Possible configurable option value for TRANSLATION_TASK_PRIORITIES.
-     * @see #getDefaultOptions
-     */
-    public static final String TRANSLATION_TASK_PRIORITY_NORMAL = "NORMAL"; //$NON-NLS-1$
-    /**
-     * Possible configurable option ID.
-     * @see #getDefaultOptions
-     */
-    public static final String TRANSLATION_TASK_TAGS = PLUGIN_ID + ".translation.taskTags"; //$NON-NLS-1$
-    
-    /**
-     * Default task tag
-     */
-    public static final String DEFAULT_TASK_TAG = "TODO"; //$NON-NLS-1$
-    /**
-     * Default task priority
-     */
-    public static final String DEFAULT_TASK_PRIORITY = TRANSLATION_TASK_PRIORITY_NORMAL;
     /**
      * Possible  configurable option ID.
      * @see #getDefaultOptions
@@ -346,24 +326,7 @@ public class CCorePlugin extends Plugin {
         return defaultOptions;
     }
 
-
-    /**
-     * Initializes the default preferences settings for this plug-in.
-     * TODO: Add all options here
-     */
-    protected void initializeDefaultPluginPreferences() 
-    {
-        Preferences preferences = getPluginPreferences();
-        HashSet optionNames = CModelManager.OptionNames;
-    
-        // Compiler settings
-        preferences.setDefault(TRANSLATION_TASK_TAGS, DEFAULT_TASK_TAG); 
-        optionNames.add(TRANSLATION_TASK_TAGS);
-
-        preferences.setDefault(TRANSLATION_TASK_PRIORITIES, DEFAULT_TASK_PRIORITY); 
-        optionNames.add(TRANSLATION_TASK_PRIORITIES);
-    }
-    
+   
     /**
      * Helper method for returning one option value only. Equivalent to <code>(String)CCorePlugin.getOptions().get(optionName)</code>
      * Note that it may answer <code>null</code> if this option does not exist.

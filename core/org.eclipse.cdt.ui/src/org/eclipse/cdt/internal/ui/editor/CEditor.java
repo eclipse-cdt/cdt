@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -136,7 +137,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	public final static String LINKED_POSITION_COLOR = "linkedPositionColor"; //$NON-NLS-1$
 
     /** Preference key for compiler task tags */
-    private final static String TRANSLATION_TASK_TAGS= CCorePlugin.TRANSLATION_TASK_TAGS;
+    private final static String TRANSLATION_TASK_TAGS= CCorePreferenceConstants.TRANSLATION_TASK_TAGS;
 
     /** Preference key for hyperlink enablement */
     public final static String HYPERLINK_ENABLED = "hyperlinkEnable"; //$NON-NLS-1$

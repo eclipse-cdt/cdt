@@ -13,7 +13,6 @@
    </runtime>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
 

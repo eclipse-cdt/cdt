@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
@@ -43,8 +44,8 @@ import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
   */
 public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 
-	private static final String PREF_TRANSLATION_TASK_TAGS= CCorePlugin.TRANSLATION_TASK_TAGS;
-	private static final String PREF_TRANSLATION_TASK_PRIORITIES= CCorePlugin.TRANSLATION_TASK_PRIORITIES;
+	private static final String PREF_TRANSLATION_TASK_TAGS= CCorePreferenceConstants.TRANSLATION_TASK_TAGS;
+	private static final String PREF_TRANSLATION_TASK_PRIORITIES= CCorePreferenceConstants.TRANSLATION_TASK_PRIORITIES;
 	
 	private static final String PRIORITY_HIGH= CCorePlugin.TRANSLATION_TASK_PRIORITY_HIGH;
 	private static final String PRIORITY_NORMAL= CCorePlugin.TRANSLATION_TASK_PRIORITY_NORMAL;

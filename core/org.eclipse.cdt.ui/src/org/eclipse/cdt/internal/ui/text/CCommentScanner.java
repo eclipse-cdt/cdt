@@ -15,12 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.cdt.core.CCorePlugin;
-
-import org.eclipse.cdt.internal.ui.text.IColorManager;
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWordDetector;
@@ -78,7 +74,7 @@ public class CCommentScanner extends AbstractCScanner
         }
     }
     
-    private static final String TRANSLATION_TASK_TAGS= CCorePlugin.TRANSLATION_TASK_TAGS;    
+    private static final String TRANSLATION_TASK_TAGS= CCorePreferenceConstants.TRANSLATION_TASK_TAGS;    
     protected static final String TASK_TAG= ICColorConstants.TASK_TAG;
 
     private TaskTagRule fTaskTagRule;

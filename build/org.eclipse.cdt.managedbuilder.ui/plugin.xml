@@ -539,6 +539,14 @@
                      value="__unix"
                      builtIn="true">
                </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="__cplusplus">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="_GLIBCPP_USE_NAMESPACES=0">
+               </listOptionValue>
             </option>
             <option
                   name="%Option.Posix.UndefSym"
@@ -558,6 +566,26 @@
                   command="-I"
                   valueType="includePath"
                   id="cygwin.compiler.general.include.paths">
+               <listOptionValue
+                     value="C:\cygwin\usr\include\c++\3.3.1"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="C:\cygwin\usr\include\c++\3.3.1\i686-pc-cygwin">
+               </listOptionValue>
+               <listOptionValue
+                     value="C:\cygwin\usr\include\c++\3.3.1\backward"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="C:\cygwin\lib\gcc-lib\i686-pc-cygwin\3.3.1\include"
+                     builtIn="true">
+               </listOptionValue>
+               <listOptionValue
+                     value="C:\cygwin\usr\include"
+                     builtIn="true">
+               </listOptionValue>
                <listOptionValue
                      value="C:\cygwin\usr\include\w32api"
                      builtIn="true">

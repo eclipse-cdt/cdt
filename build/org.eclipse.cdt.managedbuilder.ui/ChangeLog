@@ -1,3 +1,8 @@
+2004-02-27 John Camelon
+	New built-in compiler incldue search paths and defined symbols for the 
+	Gnu C++ compiler on Cygwin.
+	* plugin.xml
+	
 2004-02-23 Sean Evoy
 	Fix for bug 52647.
 	In 1.2, the target stored the raw, overridden build command the user 

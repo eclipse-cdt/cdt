@@ -41,9 +41,9 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	
 	private IAsmSourceLine[] fSourceLines;
 
-	private IAddress fStartAddress;
+	private IAddress fStartAddress = null;
 
-	private IAddress fEndAddress;
+	private IAddress fEndAddress = null;
 	
 	private boolean fMixedMode = false;
 
@@ -103,6 +103,8 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	 */
 	public boolean contains( ICStackFrame frame ) {
 		if ( !getDisassembly().getDebugTarget().equals( frame.getDebugTarget() ) )
+			return false;
+		if ( fStartAddress == null || fEndAddress == null )
 			return false;
 		IAddress address = frame.getAddress();
 		return (address.compareTo( fStartAddress ) >= 0 && address.compareTo( fEndAddress ) <= 0);
@@ -185,11 +187,13 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	}
 
 	private void initializeAddresses() {
-		if ( fSourceLines.length > 0 ) {
-			IAsmInstruction[] instr = fSourceLines[0].getInstructions();
-			fStartAddress = instr[0].getAdress();
-			instr = fSourceLines[fSourceLines.length - 1].getInstructions();
-			fEndAddress = instr[instr.length - 1].getAdress();
+		for ( int i = 0; i < fSourceLines.length; ++i ) {
+			IAsmInstruction[] instr = fSourceLines[i].getInstructions();
+			if ( instr.length > 0 ) {
+				if ( fStartAddress == null )
+					fStartAddress = instr[0].getAdress();
+				fEndAddress = instr[instr.length - 1].getAdress();
+			}
 		}
 	}
 

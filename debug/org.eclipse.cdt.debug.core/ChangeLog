@@ -1,4 +1,8 @@
 2004-11-09 Mikhail Khodjaiants
+	Fix for bug 77275: Disassembly causes Java exception for fn's with 0 bytes fn prologues.
+	* DisassemblyBlock.java
+
+2004-11-09 Mikhail Khodjaiants
 	Partial fix for bug 41725: I can't set a breakpoint in a function where I used attach source.
 	* CBreakpointManager.java
 

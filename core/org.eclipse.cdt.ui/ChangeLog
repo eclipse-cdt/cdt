@@ -1,3 +1,6 @@
+2004-05-05 Andrew Niefer
+	externalize "Libraries" string in LibraryRefContainer
+
 2004-05-04 Hoda Amer
 	Fix for bug#60331 : [Refactoring] All namespace declarations not renamed
 	Fix for bug#59270 : [Refactoring] missing warning/error icons

@@ -82,7 +82,7 @@ public class LibraryRefContainer implements IAdaptable, IWorkbenchAdapter {
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
 	public String getLabel(Object o) {
-		return "Libraries"; //$NON-NLS-1
+		return CViewMessages.getString("LibraryRefContainer.Libraries"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

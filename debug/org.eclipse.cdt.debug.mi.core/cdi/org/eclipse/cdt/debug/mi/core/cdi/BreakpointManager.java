@@ -183,7 +183,7 @@ public class BreakpointManager extends Manager {
 	 * @param breakpoint
 	 * @throws CDIException
 	 */
-	public void enableBreakpoint(ICDIBreakpoint breakpoint) throws CDIException {
+	public void enableBreakpoint(Breakpoint breakpoint) throws CDIException {
 		Target target = (Target)breakpoint.getTarget();
 		List bList = (List)breakMap.get(target);
 		if (bList == null) {
@@ -192,7 +192,7 @@ public class BreakpointManager extends Manager {
 		if (!bList.contains(breakpoint)) {
 			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$
 		}
-		MIBreakpoint[] miBreakpoints = ((Breakpoint)breakpoint).getMIBreakpoints();
+		MIBreakpoint[] miBreakpoints = breakpoint.getMIBreakpoints();
 		if (miBreakpoints == null || miBreakpoints.length == 0) {
 			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$
 		}
@@ -230,7 +230,7 @@ public class BreakpointManager extends Manager {
 	 * @param breakpoint
 	 * @throws CDIException
 	 */
-	public void disableBreakpoint(ICDIBreakpoint breakpoint) throws CDIException {
+	public void disableBreakpoint(Breakpoint breakpoint) throws CDIException {
 		Target target = (Target)breakpoint.getTarget();
 		List bList = (List)breakMap.get(target);
 		if (bList == null) {
@@ -240,7 +240,7 @@ public class BreakpointManager extends Manager {
 			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$
 		}
 
-		MIBreakpoint[] miBreakpoints = ((Breakpoint)breakpoint).getMIBreakpoints();
+		MIBreakpoint[] miBreakpoints = breakpoint.getMIBreakpoints();
 		if (miBreakpoints == null || miBreakpoints.length == 0) {
 			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$			
 		}

@@ -863,7 +863,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		rebuildNeeded = rebuild;
 		// TODO:  Is the appropriate?  Should the rebuild state be stored in the project file?
 		// and in the managed project
-		//managedProject.setRebuildNeeded(rebuild);
+		if (getDefaultConfiguration() != null) {
+			getDefaultConfiguration().setRebuildState(rebuild);
+		}
 	}
 
 	/**

@@ -15,8 +15,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIVariable extends ICDIObject
-{
+public interface ICDIVariable extends ICDIObject {
 	/**
 	 * Returns the name of this variable.
 	 * 
@@ -24,7 +23,7 @@ public interface ICDIVariable extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	String getName() throws CDIException;
-	
+
 	/**
 	 * Returns the type of data this variable is declared.
 	 * 
@@ -32,7 +31,7 @@ public interface ICDIVariable extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	String getTypeName() throws CDIException;
-	
+
 	/**
 	 * Returns the value of this variable.
 	 * 
@@ -40,7 +39,13 @@ public interface ICDIVariable extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICDIValue getValue() throws CDIException;
-	
+
+	/**
+	 * Returns true if the value could be changed.
+	 * @trhows CDIException if the method fails.
+	 */
+	boolean isEditable() throws CDIException;
+
 	/**
 	 * Attempts to set the value of this variable to the value of 
 	 * the given expression.
@@ -48,13 +53,13 @@ public interface ICDIVariable extends ICDIObject
 	 * @param expression - an expression to generate a new value
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	void setValue( String expression ) throws CDIException;
-	
+	void setValue(String expression) throws CDIException;
+
 	/**
 	 * Sets the value of this variable to the given value.
 	 * 
 	 * @param value - a new value
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	void setValue( ICDIValue value ) throws CDIException;	
+	void setValue(ICDIValue value) throws CDIException;
 }

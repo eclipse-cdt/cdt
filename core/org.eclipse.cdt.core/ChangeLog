@@ -1,3 +1,11 @@
+2003-06-05 Alain Magloire
+
+	PR #38380, partially fix; would need more detail form
+	the C Parser to know if the include is <...> or "..."
+
+	* model/org/eclipse/cdt/internal/core/model/Include.java
+	(getIncludeName): implemented.
+
 2003-05-29 Alain Magloire
 
 	PR 38239

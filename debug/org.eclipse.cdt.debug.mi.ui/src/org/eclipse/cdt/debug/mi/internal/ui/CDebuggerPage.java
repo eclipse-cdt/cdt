@@ -4,6 +4,8 @@
  */
 package org.eclipse.cdt.debug.mi.internal.ui;
 
+import java.io.File;
+
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -18,86 +20,133 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class CDebuggerPage extends AbstractLaunchConfigurationTab {
-	
-	protected Text fDebuggerCommandText;
+
+	private Text fGDBCommandText;
+	private Text fGDBInitText;
 	private Button fAutoSoLibButton;
+	private Button fGDBButton;
 
 	public void createControl(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		GridLayout topLayout = new GridLayout();
-		topLayout.numColumns = 2;
-		comp.setLayout(topLayout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		comp.setLayoutData(gd);
-		setControl(comp);	
-		
-		createVerticalSpacer(comp, 2);
-		
-		Label debugCommandLabel= new Label(comp, SWT.NONE);
-		debugCommandLabel.setText("MI Debugger:");
-		
-		fDebuggerCommandText= new Text(comp, SWT.SINGLE | SWT.BORDER);
+		GridData gd;
+		Label label;
+		Button button;
+		Composite comp, subComp;
+
+		comp = new Composite(parent, SWT.NONE);
+		comp.setLayout(new GridLayout());
+		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		setControl(comp);
+
+		subComp = new Composite(comp, SWT.NONE);
+		GridLayout gdbLayout = new GridLayout();
+		gdbLayout.numColumns = 2;
+		gdbLayout.marginHeight = 0;
+		gdbLayout.marginWidth = 0;
+		subComp.setLayout(gdbLayout);
+		subComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		label = new Label(subComp, SWT.NONE);
+		label.setText("GDB debugger:");
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
+
+		fGDBCommandText = new Text(subComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fDebuggerCommandText.setLayoutData(gd);
-		fDebuggerCommandText.addModifyListener(new ModifyListener() {
+		fGDBCommandText.setLayoutData(gd);
+		fGDBCommandText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
 		});
 
-		createVerticalSpacer(comp, 2);
+		button = createPushButton(subComp, "&Browse...", null);
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleGDBButtonSelected();
+				updateLaunchConfigurationDialog();
+			}
+			private void handleGDBButtonSelected() {
+				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
+				dialog.setText("GDB Command");
+				String gdbCommand = fGDBCommandText.getText().trim();
+				int lastSeparatorIndex = gdbCommand.lastIndexOf(File.separator);
+				if (lastSeparatorIndex != -1) {
+					dialog.setFilterPath(gdbCommand.substring(0, lastSeparatorIndex));
+				}
+				String res = dialog.open();
+				if (res == null) {
+					return;
+				}
+				fGDBCommandText.setText(res);
+			}
+		});
 
-		fAutoSoLibButton = new Button(comp, SWT.CHECK ) ;
+		subComp = new Composite(comp, SWT.NONE);
+		gdbLayout = new GridLayout();
+		gdbLayout.numColumns = 2;
+		subComp.setLayout(gdbLayout);
+		subComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		label = new Label(subComp, SWT.NONE);
+		label.setText("GDB command file:");
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
+
+		fGDBInitText = new Text(subComp, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fGDBInitText.setLayoutData(gd);
+		fGDBInitText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		button = createPushButton(subComp, "&Browse...", null);
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleGDBInitButtonSelected();
+				updateLaunchConfigurationDialog();
+			}
+			private void handleGDBInitButtonSelected() {
+				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
+				dialog.setText("GDB command file");
+				String gdbCommand = fGDBInitText.getText().trim();
+				int lastSeparatorIndex = gdbCommand.lastIndexOf(File.separator);
+				if (lastSeparatorIndex != -1) {
+					dialog.setFilterPath(gdbCommand.substring(0, lastSeparatorIndex));
+				}
+				String res = dialog.open();
+				if (res == null) {
+					return;
+				}
+				fGDBInitText.setText(res);
+			}
+		});
+		label = new Label(comp,SWT.WRAP);
+		label.setText("(Warning: Some commands in this file may interfere with the startup operation of the debugger, for example \"run\".)");
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
+		gd.widthHint = 200;
+		label.setLayoutData(gd);
+
+		fAutoSoLibButton = new Button(comp, SWT.CHECK);
 		fAutoSoLibButton.setText("Load shared library symbols automatically");
 		fAutoSoLibButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fAutoSoLibButton.setLayoutData(gd);
-/*
-		ListEditor listEditor = new ListEditor("1", "Shared library search paths:", comp) {
-			protected String createList(String[] items) {
-				StringBuffer buf = new StringBuffer();
-				for (int i = 0; i < items.length; i++) {
-					buf.append(items[i]);
-					buf.append(';');
-				}
-				return buf.toString();
-			}
-			protected String getNewInputObject() {
-//				StringInputDialog dialog= new StringInputDialog(comp.getShell(), "Library Path", null, "Enter a library path", "", null);
-//				if (dialog.open() == dialog.OK) {
-//					return dialog.getValue();
-//				} else {
-//					return null;
-//				}
-				return null;
-			}
-
-			protected String[] parseString(String list) {
-				StringTokenizer st = new StringTokenizer(list, ";");
-				ArrayList v = new ArrayList();
-				while (st.hasMoreElements()) {
-					v.add(st.nextElement());
-				}
-				return (String[]) v.toArray(new String[v.size()]);
-			}
-
-		};
-*/		
-		
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
+		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, "");
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, true);
 	}
 
@@ -105,7 +154,7 @@ public class CDebuggerPage extends AbstractLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-		boolean valid= fDebuggerCommandText.getText().length() != 0;
+		boolean valid = fGDBCommandText.getText().length() != 0;
 		if (valid) {
 			setErrorMessage(null);
 			setMessage(null);
@@ -117,25 +166,31 @@ public class CDebuggerPage extends AbstractLaunchConfigurationTab {
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration) {
-		String debuggerCommand = "gdb";
+		String gdbCommand = "gdb";
+		String gdbInit = "";
 		boolean autosolib = false;
 		try {
-			debuggerCommand = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
+			gdbCommand = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
+			gdbInit = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, "");
 			autosolib = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, true);
 		} catch (CoreException e) {
 		}
-		fDebuggerCommandText.setText(debuggerCommand);
-		fAutoSoLibButton.setSelection(autosolib);		
+		fGDBCommandText.setText(gdbCommand);
+		fGDBInitText.setText(gdbInit);
+		fAutoSoLibButton.setSelection(autosolib);
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		String debuggerCommand = fDebuggerCommandText.getText();
-		debuggerCommand.trim();
-		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, debuggerCommand);
+		String gdbStr = fGDBCommandText.getText();
+		gdbStr.trim();
+		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbStr);
+		gdbStr = fGDBInitText.getText();
+		gdbStr.trim();
+		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, gdbStr);
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, fAutoSoLibButton.getSelection());
 	}
 
 	public String getName() {
-		return "GDB/MI Debugger Options";
+		return "GDB Debugger Options";
 	}
 }

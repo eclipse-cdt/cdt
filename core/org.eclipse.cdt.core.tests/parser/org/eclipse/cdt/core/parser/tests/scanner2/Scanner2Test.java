@@ -1767,5 +1767,59 @@ public class Scanner2Test extends BaseScanner2Test
     	assertEquals( inc.getName(), "foo.h"); //$NON-NLS-1$
 	}
     
+    public void testBug69412() throws Exception
+	{
+    	Callback callback = new Callback( ParserMode.COMPLETE_PARSE );
+    	initializeScanner( "\'\\\\\'", ParserMode.COMPLETE_PARSE, callback ); //$NON-NLS-1$
+    	validateChar( "\\\\"); //$NON-NLS-1$
+    	validateEOF();
+    	assertTrue( callback.problems.isEmpty());
+	}
     
+    public void testBug70072() throws Exception
+	{
+    	initializeScanner( "#if 1/0\nint i;\n#elif 2/0\nint j;\n#endif\nint k;\n" ); //$NON-NLS-1$
+    	fullyTokenize();
+	}
+    
+    public void testBug70261() throws Exception
+	{
+    	initializeScanner( "0X0"); //$NON-NLS-1$
+    	validateInteger( "0X0"); //$NON-NLS-1$
+	}
+    
+    public void testBug62571() throws Exception
+	{
+    	StringBuffer buffer = new StringBuffer( "#define J(X,Y) X##Y\n"); //$NON-NLS-1$
+		buffer.append( "J(A,1Xxyz)\n"); //$NON-NLS-1$
+		buffer.append( "J(B,1X1X1Xxyz)\n");	 //$NON-NLS-1$
+		buffer.append( "J(C,0Xxyz)\n"); //$NON-NLS-1$
+		buffer.append( "J(CC,0Xxyz)\n"); //$NON-NLS-1$
+		buffer.append( "J(D,0xxyz)\n"); //$NON-NLS-1$
+		buffer.append( "J(E,0x0x0xxyz)\n"); //$NON-NLS-1$
+		initializeScanner( buffer.toString() );
+		validateIdentifier( "A1Xxyz"); //$NON-NLS-1$
+		validateIdentifier( "B1X1X1Xxyz"); //$NON-NLS-1$
+		validateIdentifier( "C0Xxyz"); //$NON-NLS-1$
+		validateIdentifier( "CC0Xxyz"); //$NON-NLS-1$
+		validateIdentifier( "D0xxyz"); //$NON-NLS-1$
+		validateIdentifier( "E0x0x0xxyz"); //$NON-NLS-1$
+	}
+    
+    public void testBug69134() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "# ifdef YYDEBUG\n" ); //$NON-NLS-1$
+    	writer.write( "if (yyDebug) {\n" ); //$NON-NLS-1$
+    	writer.write( "(void) fprintf (yyTrace,\n" ); //$NON-NLS-1$
+    	writer.write( "\"  # |Position|State|Mod|Lev|Action |Terminal and Lookahead or Rule\n\");\n" ); //$NON-NLS-1$
+    	writer.write( "yyNl ();\n" ); //$NON-NLS-1$
+    	writer.write( "}\n" ); //$NON-NLS-1$
+    	writer.write( "# endif\n" ); //$NON-NLS-1$
+    	Callback callback = new Callback( ParserMode.COMPLETE_PARSE );
+    	initializeScanner( writer.toString(), ParserMode.COMPLETE_PARSE, callback );
+    	fullyTokenize();
+    	assertTrue( callback.problems.isEmpty() );
+
+	}
 }

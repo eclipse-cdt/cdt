@@ -2210,4 +2210,18 @@ public class QuickParseASTTests extends BaseASTTest
     	parse( buffer.toString() );
 	}
 	
+    public void testBug69161() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "#define MACRO(s) s\n "); //$NON-NLS-1$
+    	writer.write( "char *testQueries[] =\n"); //$NON-NLS-1$
+    	writer.write( "{\n"); //$NON-NLS-1$
+    	writer.write( "MACRO(\",\"),\n");  //$NON-NLS-1$
+    	writer.write( "MACRO(\"(\"),\n"); //$NON-NLS-1$
+    	writer.write( "MACRO(\")\")\n"); //$NON-NLS-1$
+    	writer.write( "};\n"); //$NON-NLS-1$
+    	IASTVariable t = (IASTVariable) assertSoleDeclaration( writer.toString() );
+    	assertTrue( quickParseCallback.problems.isEmpty() );
+    	assertEquals( t.getName(), "testQueries"); //$NON-NLS-1$
+	}
 }

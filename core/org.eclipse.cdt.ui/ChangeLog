@@ -1,3 +1,12 @@
+2002-10-23 Judy N. Green
+	CView overwrite files dialog text changed 
+	so that it is the same in the CView as in the Navigator
+	when dragging and dropping files
+	
+	src/../internal/ui/CPluginResources.properties
+	src/../internal/ui/cview/CViewDropAdapter.java
+	
+
 2002-10-23 David Inglis
 	
 	* src/.../internal/ui/cview/CView.java:

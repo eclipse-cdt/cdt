@@ -147,9 +147,9 @@ public abstract class Parser extends ExpressionParser implements IParser
         {
             try
             {
-                int checkOffset = LA(1).getOffset();
+                int checkOffset = LA(1).hashCode();
                 declaration(compilationUnit, null, null);
-                if (LA(1).getOffset() == checkOffset)
+                if (LA(1).hashCode() == checkOffset)
                     errorHandling();
             }
             catch (EndOfFileException e)
@@ -355,7 +355,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             linkage.enterScope( requestor );    
             linkageDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
-                int checkToken = LA(1).getOffset();
+                int checkToken = LA(1).hashCode();
                 switch (LT(1))
                 {
                     case IToken.tRBRACE :
@@ -369,11 +369,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                         catch (BacktrackException bt)
                         {
                             failParse();
-                            if (checkToken == LA(1).getOffset())
+                            if (checkToken == LA(1).hashCode())
                                 errorHandling();
                         }
                 }
-                if (checkToken == LA(1).getOffset())
+                if (checkToken == LA(1).hashCode())
                     errorHandling();
             }
             // consume the }
@@ -891,7 +891,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             setCompletionValues(scope,CompletionKind.VARIABLE_TYPE, Key.DECLARATION );
             namespaceDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
-                int checkToken = LA(1).getOffset();
+                int checkToken = LA(1).hashCode();
                 switch (LT(1))
                 {
                     case IToken.tRBRACE :
@@ -905,11 +905,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                         catch (BacktrackException bt)
                         {
                             failParse();
-                            if (checkToken == LA(1).getOffset())
+                            if (checkToken == LA(1).hashCode())
                                 errorHandling();
                         }
                 }
-                if (checkToken == LA(1).getOffset())
+                if (checkToken == LA(1).hashCode())
                     errorHandling();
             }
             setCompletionValues(scope, CompletionKind.NO_SUCH_KIND,Key.EMPTY );
@@ -2649,7 +2649,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             handleClassSpecifier( astClassSpecifier );
             memberDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
-                int checkToken = LA(1).getOffset();
+                int checkToken = LA(1).hashCode();
                 switch (LT(1))
                 {
                     case IToken.t_public :
@@ -2679,11 +2679,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                         catch (BacktrackException bt)
                         {
                             failParse();
-                            if (checkToken == LA(1).getOffset())
+                            if (checkToken == LA(1).hashCode())
                                 errorHandling();
                         }
                 }
-                if (checkToken == LA(1).getOffset())
+                if (checkToken == LA(1).hashCode())
                     errorHandling();
             }
             // consume the }
@@ -3092,7 +3092,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         
         while (LT(1) != IToken.tRBRACE)
         {
-        	int checkToken = LA(1).getOffset();
+        	int checkToken = LA(1).hashCode();
         	try
         	{
             	statement((IASTCodeScope) (createNewScope ? newScope : scope) );
@@ -3100,7 +3100,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         	catch( BacktrackException b )
         	{
         		failParse(); 
-        		if( LA(1).getOffset() == checkToken )
+        		if( LA(1).hashCode() == checkToken )
         			errorHandling();
         	}
         	setCompletionValues(((createNewScope ? newScope : scope )), CompletionKind.SINGLE_NAME_REFERENCE, 

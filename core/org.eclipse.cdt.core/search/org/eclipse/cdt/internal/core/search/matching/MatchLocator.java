@@ -490,12 +490,22 @@ public class MatchLocator implements IMatchLocator{
 					MatchLocator.verbose("MatchLocator VM Error: "); //$NON-NLS-1$
 					vmErr.printStackTrace();
 				}
+			} finally { 
+				scopeStack.clear();
+				resourceStack.clear();
+				lastDeclaration = null;
+				currentScope = null;
+				parser = null;
 			}
 			
-			AcceptMatchOperation acceptMatchOp = new AcceptMatchOperation( resultCollector, matchStorage );
-			try {
-				CCorePlugin.getWorkspace().run(acceptMatchOp,null);
-			} catch (CoreException e) {}
+			if( matchStorage.size() > 0 ){
+				AcceptMatchOperation acceptMatchOp = new AcceptMatchOperation( resultCollector, matchStorage );
+				try {
+					CCorePlugin.getWorkspace().run(acceptMatchOp,null);
+				} catch (CoreException e) {}
+				
+				matchStorage.clear();
+			}
 		}
 	}
 	

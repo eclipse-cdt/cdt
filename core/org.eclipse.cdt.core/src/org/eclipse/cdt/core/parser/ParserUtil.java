@@ -94,6 +94,8 @@ public class ParserUtil
 	 */
 	public static IResource getResourceForFilename(String finalPath) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		if( workspace == null )
+			return null;
 		IPath path = new Path( finalPath );
 		
 		if( workspace.getRoot().getLocation().isPrefixOf( path ) )

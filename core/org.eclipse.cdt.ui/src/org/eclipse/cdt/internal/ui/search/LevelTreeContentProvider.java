@@ -62,7 +62,7 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 	}
 
 	public Object getParent(Object child) {
-	
+		Object possibleParent= null;
 		if (child instanceof BasicSearchMatch){ 
 			BasicSearchMatch tempMatch = (BasicSearchMatch)child;
 			ICElement cTransUnit = CCorePlugin.getDefault().getCoreModel().create(tempMatch.getResource());
@@ -72,10 +72,13 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 					child = ((ITranslationUnit) cTransUnit).getElementAtOffset(tempMatch.startOffset);
 				} catch (CModelException e) {}
 			}
-			
+			if( child == null ){
+				possibleParent = cTransUnit;
+			}
 		}
 		
-		Object possibleParent= internalGetParent(child);
+		if( child != null )
+			possibleParent = internalGetParent(child);
 		
 		if (possibleParent instanceof ICElement) {
 			ICElement cElement= (ICElement) possibleParent;

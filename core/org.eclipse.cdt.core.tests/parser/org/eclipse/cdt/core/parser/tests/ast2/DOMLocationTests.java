@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -19,6 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
@@ -27,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
@@ -179,5 +183,40 @@ public class DOMLocationTests extends AST2BaseTest {
       }
    }
 
+   
+   public void testBug83852() throws Exception {
+      String code = "/* blah */ typedef short jc;  int x = 4;  jc myJc = (jc)x; "; //$NON-NLS-1$
+      for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+            : null) {
+         IASTTranslationUnit tu = parse(code, p); 
+         IASTDeclaration [] declarations = tu.getDeclarations();
+         assertEquals( 3, declarations.length );
+         for( int i = 0; i < 3; ++i )
+         {
+            IASTSimpleDeclaration decl = (IASTSimpleDeclaration) declarations[i];
+            int start = 0, length = 0;
+            switch( i )
+            {
+               case 0:
+                  start = code.indexOf( "typedef"); //$NON-NLS-1$
+                  length = "typedef short jc;".length(); //$NON-NLS-1$
+                  break;
+               case 1:
+                  start = code.indexOf( "int x = 4;"); //$NON-NLS-1$
+                  length = "int x = 4;".length(); //$NON-NLS-1$
+                  break;
+               case 2:
+                  start = code.indexOf( "jc myJc = (jc)x;"); //$NON-NLS-1$
+                  length = "jc myJc = (jc)x;".length(); //$NON-NLS-1$
+                  break;
+            }
+            assertSoleLocation( decl, start, length );
+         }
+         IASTInitializerExpression initializer = (IASTInitializerExpression) ((IASTSimpleDeclaration)declarations[2]).getDeclarators()[0].getInitializer();
+         IASTCastExpression castExpression = (IASTCastExpression) initializer.getExpression();
+         IASTTypeId typeId = castExpression.getTypeId();
+         assertSoleLocation( typeId, code.indexOf( "(jc)") + 1, "jc".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+   }
 
 }

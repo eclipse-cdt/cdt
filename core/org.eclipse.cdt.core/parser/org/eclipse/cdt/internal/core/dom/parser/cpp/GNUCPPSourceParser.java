@@ -914,7 +914,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
       IASTTypeId result = createTypeId();
       ((ASTNode) result).setOffsetAndLength(startingOffset, figureEndOffset(
-            declSpecifier, declarator));
+            declSpecifier, declarator) - startingOffset);
 
       result.setDeclSpecifier(declSpecifier);
       declSpecifier.setParent(result);

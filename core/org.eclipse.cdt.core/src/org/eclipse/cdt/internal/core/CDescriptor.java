@@ -205,18 +205,15 @@ public class CDescriptor implements ICDescriptor {
 		return refs;
 	}
 
-	synchronized public ICExtensionReference[] get(String extensionID, boolean update) {
+	synchronized public ICExtensionReference[] get(String extensionID, boolean update) throws CoreException {
 		ICExtensionReference[] refs = get(extensionID);
 		if (refs.length == 0 && update) {
-			try {
-				boolean oldIsInitializing = isInitializing;
-				isInitializing = true;
-				fOwner.update(fProject, this, extensionID);
-				isInitializing = oldIsInitializing;
-				updateIfDirty();
-				refs = get(extensionID);
-			} catch (CoreException e) {
-			}
+			boolean oldIsInitializing = isInitializing;
+			isInitializing = true;
+			fOwner.update(fProject, this, extensionID);
+			isInitializing = oldIsInitializing;
+			updateIfDirty();
+			refs = get(extensionID);
 		}
 		return refs;
 	}

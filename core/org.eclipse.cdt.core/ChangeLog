@@ -1,3 +1,37 @@
+2002-11-23 Alain Magloire
+
+	* model/.../cdt/core/model/CoreModel.java (getBinaryParser):
+	New methods to retrieve the parser for a project.
+	* model/.../cdt/core/model/IBinaryParser.java (getFormat):
+	New method return the format supported.
+	* model/.../internal/core/model/CModelManager.java (getBinaryParser):
+	New methods to retrieve the parser for a project.
+	* model/.../internal/core/model/parser/ElfBinaryFile.java:
+	Move the Symbol class out so it can be shared.
+	* model/.../internal/core/model/parser/ElfParser.java (getFormat):
+	New method.
+	* model/.../internal/core/model/parser/PEBinaryArchive.java: New file.
+	* model/.../internal/core/model/parser/PEBinaryFile.java: New file.
+	* model/.../internal/core/model/parser/PEParser.java: New file.
+	* model/.../internal/core/model/parser/Symbol.java: New file.
+
+	* src/.../cdt/core/CCorePlugin.java (getBinaryParser):
+	New Methods to retrieve the extension-point.
+
+	* utils/.../cdt/utils/coff/Coff.java :
+	Parse the symbols.
+	* utils/.../cdt/utils/coff/PE.java (getAttribute):
+	New helper method/class Attribute.
+	* utils/.../cdt/utils/coff/PEArchive.java :
+	New File.
+	* utils/.../cdt/utils/elf/AR.java (finalize): 
+	Make sure we do not leak fds.
+	* utils/.../cdt/utils/elf/Elf.java (finalize): 
+	Make sure we do not leak fds.
+
+	* plugin.xml: Define two "parser" extension-point.
+
+
 2002-11-22 Alain Magloire
 
 	* src/.../cdt/core/CommandLauncher.java (waitAndRead):

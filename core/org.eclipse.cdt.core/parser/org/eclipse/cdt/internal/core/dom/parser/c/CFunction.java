@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -124,7 +123,7 @@ public class CFunction implements IFunction, ICBinding {
 	 */
 	public IScope getScope() {
 	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
-		return CVisitor.getContainingScope( (IASTDeclaration) dtor.getParent() );
+		return CVisitor.getContainingScope( dtor.getParent() );
 	}
 
 	/* (non-Javadoc)

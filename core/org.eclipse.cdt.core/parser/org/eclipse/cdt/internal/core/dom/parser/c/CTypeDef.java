@@ -11,7 +11,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -63,7 +62,7 @@ public class CTypeDef implements ITypedef, ITypeContainer {
 	 */
 	public IScope getScope() {
 		IASTDeclarator declarator = (IASTDeclarator) name.getParent();
-		return CVisitor.getContainingScope( (IASTDeclaration) declarator.getParent() );
+		return CVisitor.getContainingScope( declarator.getParent() );
 	}
 
     public Object clone(){

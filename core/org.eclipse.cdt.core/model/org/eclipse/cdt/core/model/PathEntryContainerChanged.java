@@ -74,7 +74,7 @@ public class PathEntryContainerChanged  {
 	 * @return
 	 */
 	public boolean isIncludeChange() {
-		return fType == INCLUDE_CHANGED;
+		return (fType & INCLUDE_CHANGED) != 0;
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class PathEntryContainerChanged  {
 	 * @return
 	 */
 	public boolean isMacroChange() {
-		return fType == MACRO_CHANGED;
+		return (fType & MACRO_CHANGED) != 0;
 	}
 
 }

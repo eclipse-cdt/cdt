@@ -1,3 +1,8 @@
+2005-03-03 Vladimir Hirsl
+	Small change for enabling generation of path entry container change events.
+	* model/org/eclipse/cdt/core/model/PathEntryContainerChanged.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+
 2005-03-02 Alain Magloire
 	Fix PR 84527: PathEntryManager marker jobs were start to often.
 	* model/org/eclipse/cdt/internla/core/model/PathEntrymanager.java

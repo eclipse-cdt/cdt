@@ -997,9 +997,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				}
 				int flag =0;
 				if (event.isIncludeChange()) {
-					flag = ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
-				} else if (event.isMacroChange()) {
-					flag = ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
+					flag |= ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
+				} 
+                if (event.isMacroChange()) {
+					flag |= ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
 				}
 				CElementDelta delta = new CElementDelta(celement.getCModel());
 				delta.changed(celement, flag);

@@ -5,8 +5,6 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
@@ -18,7 +16,7 @@ public class GotoErrorAction extends TextEditorAction {
 	
 	
 	public GotoErrorAction(String prefix, boolean forward) {
-		super(CUIPlugin.getResourceBundle(), prefix, null);
+		super(CEditorMessages.getResourceBundle(), prefix, null);
 		fForward= forward;
 	}
 	/**

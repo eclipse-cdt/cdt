@@ -9,7 +9,6 @@ import java.util.ResourceBundle;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -36,7 +35,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		
 		public SelectionAction(String prefix, int operation) {
-			super(CUIPlugin.getResourceBundle(), prefix, null);
+			super(CEditorMessages.getResourceBundle(), prefix, null);
 			fOperationCode= operation;
 			setEnabled(false);
 		}
@@ -56,8 +55,9 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 				ISelectionProvider p= editor.getSelectionProvider();
 				if (p != null) p.addSelectionChangedListener(this);
 				fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
-			} else
+			} else {
 				fOperationTarget= null;
+			}
 				
 			selectionChanged(null);
 		}
@@ -78,8 +78,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 				fOperationTarget.doOperation(fOperationCode);
 		}
 	};
-	
-		
+
 	protected CEditor fCEditor;
 	protected RetargetTextEditorAction fContentAssist;
 	protected RetargetTextEditorAction fAddInclude;
@@ -97,24 +96,36 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		super();
 		
 		ResourceBundle bundle = CEditorMessages.getResourceBundle();
-
-			
-		fShiftRight= new SelectionAction("Editor.ShiftRight.", ITextOperationTarget.SHIFT_RIGHT);		
-		fShiftLeft= new SelectionAction("Editor.ShiftLeft.", ITextOperationTarget.SHIFT_LEFT);
-		
+	
+		fShiftRight= new SelectionAction("ShiftRight.", ITextOperationTarget.SHIFT_RIGHT);		
+		fShiftRight.setActionDefinitionId(ICEditorActionDefinitionIds.SHIFT_RIGHT);
 		CPluginImages.setImageDescriptors(fShiftRight, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_RIGHT);
+
+		fShiftLeft= new SelectionAction("ShiftLeft.", ITextOperationTarget.SHIFT_LEFT);
+		fShiftLeft.setActionDefinitionId(ICEditorActionDefinitionIds.SHIFT_LEFT);
 		CPluginImages.setImageDescriptors(fShiftLeft, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_LEFT);
 		
 		fContentAssist = new RetargetTextEditorAction(bundle, "ContentAssistProposal.");
+		fContentAssist.setActionDefinitionId(ICEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		CPluginImages.setImageDescriptors(fContentAssist, CPluginImages.T_TOOL, CPluginImages.IMG_MENU_COLLAPSE_ALL);
+
 		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection.");
+		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
+
 		fOpenOnSelection = new RetargetTextEditorAction(bundle, "OpenOnSelection.");
 
 		// actions that are "contributed" to editors, they are considered belonging to the active editor
 		fTogglePresentation= new TogglePresentationAction();
+		fTogglePresentation.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_PRESENTATION);
+		
 		//fToggleTextHover= new ToggleTextHoverAction();
-		fPreviousError= new GotoErrorAction("Editor.PreviousError.", false); //$NON-NLS-1$
+
+		fPreviousError= new GotoErrorAction("PreviousError.", false); //$NON-NLS-1$
+		fPreviousError.setActionDefinitionId("org.eclipse.ui.navigate.previous"); //$NON-NLS-1$	
 		CPluginImages.setImageDescriptors(fPreviousError, CPluginImages.T_TOOL, CPluginImages.IMG_TOOL_GOTO_PREV_ERROR);
-		fNextError= new GotoErrorAction("Editor.NextError.", true); //$NON-NLS-1$
+
+		fNextError= new GotoErrorAction("NextError.", true); //$NON-NLS-1$
+		fNextError.setActionDefinitionId("org.eclipse.ui.navigate.next"); //$NON-NLS-1$
 		CPluginImages.setImageDescriptors(fNextError, CPluginImages.T_TOOL, CPluginImages.IMG_TOOL_GOTO_NEXT_ERROR);
 	}	
 
@@ -169,8 +180,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		ITextEditor textEditor= null;
 		if (part instanceof ITextEditor)
 			textEditor= (ITextEditor) part;
-
-			
+		
 		fShiftRight.setEditor(textEditor);
 		fShiftLeft.setEditor(textEditor);
 		fNextError.setEditor(textEditor);
@@ -182,7 +192,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fContentAssist.setAction(getAction(textEditor, "ContentAssistProposal")); //$NON-NLS-1$
 		fAddInclude.setAction(getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
 		fOpenOnSelection.setAction(getAction(textEditor, "OpenOnSelection")); //$NON-NLS-1$
-
 	}
 	
 	/*
@@ -192,6 +201,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	 */
 	public void contributeeToStatusLine(IStatusLineManager statusLineManager) {
 		super.contributeToStatusLine(statusLineManager);
+	}
 
-	}	
 }

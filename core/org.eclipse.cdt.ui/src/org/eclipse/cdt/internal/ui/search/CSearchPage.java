@@ -123,6 +123,10 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			//include those items not represented in the UI
 			searching.add( MACRO );
 			searching.add( TYPEDEF );
+			searching.add( FWD_CLASS );
+			searching.add( FWD_STRUCT );
+			searching.add( FWD_UNION );
+			
 		} else {
 			searching = data.searchFor;
 		}

@@ -1,3 +1,7 @@
+2003-01-23 Mikhail Khodjaiants
+	Ignore the text selection when hovering.
+	* DebugTextHovering.java
+
 2003-01-21 Mikhail Khodjaiants
 	Changed the viewer of the Shared Libraries view to TreeViewer.
 	* SharedLibrariesView.java

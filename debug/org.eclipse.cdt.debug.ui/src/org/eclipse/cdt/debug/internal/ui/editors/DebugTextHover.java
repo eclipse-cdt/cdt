@@ -22,8 +22,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Region;
-import org.eclipse.swt.graphics.Point;
 
 /**
  *
@@ -139,12 +137,14 @@ public class DebugTextHover implements ITextHover
 	 */
 	public IRegion getHoverRegion( ITextViewer viewer, int offset )
 	{
+/*
 		Point selectedRange = viewer.getSelectedRange();
 		if ( selectedRange.x >= 0 && 
 			 selectedRange.y > 0 &&
 			 offset >= selectedRange.x &&
 			 offset <= selectedRange.x + selectedRange.y )
 			return new Region( selectedRange.x, selectedRange.y );
+*/
 		if ( viewer != null )
 			return CDebugUIUtils.findWord( viewer.getDocument(), offset );
 		return null;

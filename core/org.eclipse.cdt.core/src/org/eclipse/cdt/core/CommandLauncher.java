@@ -141,7 +141,7 @@ public class CommandLauncher {
 				 * When the ring buffer when full it returns 0 .
 				 */
 				public synchronized int available() throws IOException {
-					if(in < 0)
+					if(in < 0 || buffer == null)
 						return 0;
 					else if(in == out)
 						return buffer.length;
@@ -158,7 +158,7 @@ public class CommandLauncher {
 				 * When the ring buffer when full returns 0.
 				 */
 				public synchronized int available() throws IOException {
-					if(in < 0)
+					if(in < 0 || buffer == null)
 						return 0;
 					else if(in == out)
 						return buffer.length;

@@ -119,7 +119,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	ResourceWorkingSetFilter workingSetFilter = new ResourceWorkingSetFilter();
 
-	private boolean dragDetected;
+	protected boolean dragDetected;
 	private Listener dragDetectListener;
 
 	// Persistance tags.
@@ -673,12 +673,10 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			IPath path = ((IResource) element).getFullPath();
 			if (path.isRoot()) {
 				return "CVIEW"; //$NON-NLS-1$
-			} else {
-				return path.makeRelative().toString();
 			}
-		} else {
-			return ((ILabelProvider) viewer.getLabelProvider()).getText(element);
+			return path.makeRelative().toString();
 		}
+		return ((ILabelProvider) viewer.getLabelProvider()).getText(element);
 	}
 
 	/**
@@ -725,7 +723,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			}
 		}
 		if (selection.size() > 1) {
-			return "StatusLine"; //$NON-NLS-1$
+			return CViewMessages.getFormattedString("CView.statusLine", //$NON-NLS-1$
+					new String[] { Integer.toString(selection.size())});
 		}
 		return "";//$NON-NLS-1$
 	}
@@ -748,12 +747,12 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		Object input = getViewer().getInput();
 		String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
 		if (input == null || (input instanceof ICModel)) {
-			setTitle(viewName);
+			setPartName(viewName);
 			setTitleToolTip(""); //$NON-NLS-1$
 		} else {
 			ILabelProvider labelProvider = (ILabelProvider) getViewer().getLabelProvider();
 			String inputText = labelProvider.getText(input);
-			setTitle(inputText);
+			setPartName(inputText);
 			setTitleToolTip(getToolTipText(input));
 		}
 	}

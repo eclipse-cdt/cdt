@@ -1,3 +1,11 @@
+2004-07-09 Alain Magloire
+	Pr reported by Alex C.
+	Follow the other views lead and for multiple selection
+	show the number of selections.
+
+	* src/org/eclipse/cdt/interanal/ui/cview/CView.java
+	* src/org/eclipse/cdt/interanal/ui/cview/CViewMessages.properties
+
 2004-07-08 Hoda Amer
 	Partial fix for PR 69439: content assist confusion	
 

@@ -115,8 +115,8 @@ public class CProjectDescriptor implements ICProjectDescriptor {
 		return new CProjectOwner(ownerId);
 	}
 	
-	public String[] getPlatforms() {
-		return new String[0];
+	public String getPlatform() {
+		return "";
 	}
 	
 	protected String getString(Node target, String tagName) {

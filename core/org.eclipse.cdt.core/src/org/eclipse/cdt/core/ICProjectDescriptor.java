@@ -11,7 +11,7 @@ public interface ICProjectDescriptor {
 	public static final String DESCRIPTION_FILE_NAME = ".cdtproject";
 	
 	public ICProjectOwnerInfo getProjectOwner();
-	public String[] getPlatforms();
+	public String getPlatform();
 	public IProject getProject();
 //	public IBuilderInfo getBuilderInfo();
 //  public setBuilder(String id) or should this be add... ?

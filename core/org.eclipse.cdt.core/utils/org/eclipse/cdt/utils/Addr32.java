@@ -21,9 +21,9 @@ public class Addr32 implements IAddress {
 
 	public static final BigInteger MAX_OFFSET = BigInteger.valueOf(MAX_ADDR);
 
-	public static final int BYTES_NUM = 4;
-	public static final int DIGITS_NUM = BYTES_NUM * 2;
-	public static final int CHARS_NUM = DIGITS_NUM + 2;
+	private static final int BYTES_NUM = 4;
+	private static final int DIGITS_NUM = BYTES_NUM * 2;
+	private static final int CHARS_NUM = DIGITS_NUM + 2;
 
 	private final long address;
 
@@ -131,5 +131,9 @@ public class Addr32 implements IAddress {
 
 	public int getCharsNum() {
 		return CHARS_NUM;
+	}
+
+	public int getSize() {
+		return BYTES_NUM;
 	}
 }

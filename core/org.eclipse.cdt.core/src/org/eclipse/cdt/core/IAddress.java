@@ -106,8 +106,16 @@ public interface IAddress extends Comparable
 	/**
 	 * Returns amount of symbols in hex representation. Is identical to 
 	 * toHexAddressString().length(). It is present for perfomance purpose.
+	 * 
 	 * @return the nmber os chararcter symbols to represent this address in hex.
 	 */
 	int getCharsNum();
+	
+	/**
+	 * Returns the address size in bytes.
+	 * 
+	 * @return the number of bytes required to hold this address. 
+	 */
+	int getSize();
 	
 }

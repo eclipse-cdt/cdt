@@ -19,9 +19,9 @@ public class Addr64 implements IAddress {
 
 	public static final BigInteger MAX_OFFSET = new BigInteger("ffffffffffffffff", 16); //$NON-NLS-1$
 
-	public static final int BYTES_NUM = 8;
-	public static final int DIGITS_NUM = BYTES_NUM * 2;
-	public static final int CHARS_NUM = DIGITS_NUM + 2;
+	private static final int BYTES_NUM = 8;
+	private static final int DIGITS_NUM = BYTES_NUM * 2;
+	private static final int CHARS_NUM = DIGITS_NUM + 2;
 
 	private final BigInteger address;
 
@@ -126,6 +126,10 @@ public class Addr64 implements IAddress {
 
 	public int getCharsNum() {
 		return CHARS_NUM;
+	}
+
+	public int getSize() {
+		return BYTES_NUM;
 	}
 }
 

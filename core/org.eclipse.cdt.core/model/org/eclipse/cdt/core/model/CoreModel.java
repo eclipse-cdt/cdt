@@ -761,7 +761,7 @@ public class CoreModel {
 	 *		the entries location are compatible, otherwise a status 
 	 *		object indicating what is wrong with them
 	 */
-	public static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry[] entries) {
+	public static ICModelStatus validatePathEntries(ICProject cProject, IPathEntry[] entries) {
 		return pathEntryManager.validatePathEntry(cProject, entries);
 	}
 

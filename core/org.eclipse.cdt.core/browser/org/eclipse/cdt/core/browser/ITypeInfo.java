@@ -36,6 +36,11 @@ public interface ITypeInfo extends Comparable {
 	public int getCElementType();
 
 	/**
+	 * Sets the CElement type.
+	 */
+	public void setCElementType(int type);
+
+	/**
 	 * Gets the type name.
 	 */
 	public String getName();

@@ -97,7 +97,6 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 		return null;
 	}
 
-//	TODO extra methods eg matchingFirstSegments() etc
 	public boolean isEmpty() {
 		return fSegments.length == 0;
 	}
@@ -179,7 +178,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	
 	public IQualifiedTypeName removeFirstSegments(int count) {
 		if (count == 0) {
-			return new QualifiedTypeName(this);
+			return this;
 		} else if (count >= fSegments.length || count < 0) {
 			return new QualifiedTypeName(new String[0]);
 		} else {
@@ -192,7 +191,7 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 
 	public IQualifiedTypeName removeLastSegments(int count) {
 		if (count == 0) {
-			return new QualifiedTypeName(this);
+			return this;
 		} else if (count >= fSegments.length || count < 0) {
 			return new QualifiedTypeName(new String[0]);
 		} else {

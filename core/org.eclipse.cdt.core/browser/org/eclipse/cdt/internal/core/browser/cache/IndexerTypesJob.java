@@ -149,18 +149,28 @@ public class IndexerTypesJob extends IndexerJob {
 			int[] references = entry.getFileReferences();
 			if (references != null && references.length > 0) {
 				// add new type to cache
-				info = new TypeInfo(type, qualifiedName);
-				fTypeCache.insert(info);
+				if (info != null) {
+					info.setCElementType(type);
+				} else {
+					info = new TypeInfo(type, qualifiedName);
+					fTypeCache.insert(info);
+				}
 
-				for (int i = 0; i < references.length; ++i) {
-					if (monitor.isCanceled())
-						throw new InterruptedException();
-
-					IndexedFile file = input.getIndexedFile(references[i]);
-					if (file != null && file.getPath() != null) {
-						IPath path = PathUtil.getWorkspaceRelativePath(file.getPath());
-						info.addReference(new TypeReference(path, project));
-					}
+//				for (int i = 0; i < references.length; ++i) {
+//					if (monitor.isCanceled())
+//						throw new InterruptedException();
+//
+//					IndexedFile file = input.getIndexedFile(references[i]);
+//					if (file != null && file.getPath() != null) {
+//						IPath path = PathUtil.getWorkspaceRelativePath(file.getPath());
+//						info.addReference(new TypeReference(path, project));
+//					}
+//				}
+				// just grab the first reference
+				IndexedFile file = input.getIndexedFile(references[0]);
+				if (file != null && file.getPath() != null) {
+					IPath path = PathUtil.getWorkspaceRelativePath(file.getPath());
+					info.addReference(new TypeReference(path, project));
 				}
 			}
 		}

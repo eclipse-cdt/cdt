@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.browser.util;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -70,8 +71,24 @@ public class PathUtil {
 		return fullPath;
 	}
 	
+	public static IPath getProjectRelativePath(IPath fullPath, IProject project) {
+		IPath projectPath = project.getFullPath();
+		if (projectPath.isPrefixOf(fullPath)) {
+			return fullPath.removeFirstSegments(projectPath.segmentCount());
+		}
+		projectPath = project.getLocation();
+		if (projectPath.isPrefixOf(fullPath)) {
+			return fullPath.removeFirstSegments(projectPath.segmentCount());
+		}
+		return getWorkspaceRelativePath(fullPath);
+	}
+
 	public static IPath getWorkspaceRelativePath(String fullPath) {
 		return getWorkspaceRelativePath(new Path(fullPath));
+	}
+
+	public static IPath getProjectRelativePath(String fullPath, IProject project) {
+		return getProjectRelativePath(new Path(fullPath), project);
 	}
 
 	public static IPath getRawLocation(IPath wsRelativePath) {

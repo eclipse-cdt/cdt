@@ -110,8 +110,8 @@ public class TypeParser implements ISourceElementRequestor {
 	private IWorkingCopyProvider fWorkingCopyProvider;
 	private IProgressMonitor fProgressMonitor;
 	private ISourceElementCallbackDelegate fLastDeclaration;
-	private SimpleStack fScopeStack = new SimpleStack();
-	private SimpleStack fResourceStack = new SimpleStack();
+	private final SimpleStack fScopeStack = new SimpleStack();
+	private final SimpleStack fResourceStack = new SimpleStack();
 	private ITypeInfo fTypeToFind;
 	private boolean fFoundType;
 
@@ -311,6 +311,8 @@ public class TypeParser implements ISourceElementRequestor {
 			}
 
 			if (reader != null) {
+				fResourceStack.clear();
+				fScopeStack.clear();
 				fResourceStack.push(stackObject);
 				parseContents(path, project, reader, language, progressMonitor);
 				fResourceStack.pop();
@@ -419,7 +421,8 @@ public class TypeParser implements ISourceElementRequestor {
 		} catch (ParserFactoryError e) {
 			CCorePlugin.log(e);
 		} catch (ParseError e) {
-			CCorePlugin.log(e);
+			// no need to log
+			// CCorePlugin.log(e);
 		} catch (OperationCanceledException e) {
 			throw new InterruptedException();
 		} catch (Exception e) {
@@ -622,19 +625,35 @@ public class TypeParser implements ISourceElementRequestor {
 			return;
 		}
 		
-		// collect enclosing names
+		if (fTypeToFind != null) {
+			if ((fTypeToFind.getCElementType() == type || fTypeToFind.isUndefinedType()) && name.equals(fTypeToFind.getName())) {
+				String[] enclosingNames = getEnclosingNames(offsetable);
+				QualifiedTypeName qualifiedName = new QualifiedTypeName(name, enclosingNames);
+				if (qualifiedName.equals(fTypeToFind.getQualifiedTypeName())) {
+					fFoundType = true;
+
+					// add types to cache
+					addType(type, name, enclosingNames, fResourceStack.bottom(), fResourceStack.top(), offset, end - offset);
+					fProgressMonitor.worked(1);
+				}
+			}
+		} else {
+			// add types to cache
+			addType(type, name, getEnclosingNames(offsetable), fResourceStack.bottom(), fResourceStack.top(), offset, end - offset);
+			fProgressMonitor.worked(1);
+		}
+	}
+	
+	private String[] getEnclosingNames(IASTOffsetableNamedElement elem) {
 		String[] enclosingNames = null;
-		if (offsetable instanceof IASTQualifiedNameElement) {
-			String[] names = ((IASTQualifiedNameElement) offsetable).getFullyQualifiedName();
+		if (elem instanceof IASTQualifiedNameElement) {
+			String[] names = ((IASTQualifiedNameElement) elem).getFullyQualifiedName();
 			if (names != null && names.length > 1) {
 				enclosingNames = new String[names.length - 1];
 				System.arraycopy(names, 0, enclosingNames, 0, names.length - 1);
 			}
 		}
-		
-		// add types to cache
-		addType(type, name, enclosingNames, fResourceStack.bottom(), fResourceStack.top(), offset, end - offset);
-		fProgressMonitor.worked(1);
+		return enclosingNames;
 	}
 
 	private int getElementType(IASTOffsetableNamedElement offsetable) {
@@ -667,8 +686,12 @@ public class TypeParser implements ISourceElementRequestor {
 		ITypeInfo info = fTypeCache.getType(type, qualifiedName);
 		if (info == null || info.isUndefinedType()) {
 			// add new type to cache
-			info = new TypeInfo(type, qualifiedName);
-			fTypeCache.insert(info);
+			if (info != null) {
+				info.setCElementType(type);
+			} else {
+				info = new TypeInfo(type, qualifiedName);
+				fTypeCache.insert(info);
+			}
 			
 			TypeReference location;
 			if (originalRef instanceof IWorkingCopy) {
@@ -696,10 +719,6 @@ public class TypeParser implements ISourceElementRequestor {
 			location = new TypeReference(path, fProject, offset, length);
 		}
 		info.addReference(location);
-		
-		if (fTypeToFind != null && fTypeToFind.equals(info)) {
-			fFoundType = true;
-		}
 	}
 
 	/* (non-Javadoc)

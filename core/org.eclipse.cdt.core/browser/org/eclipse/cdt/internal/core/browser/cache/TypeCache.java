@@ -44,11 +44,13 @@ import org.eclipse.core.runtime.jobs.Job;
 public class TypeCache implements ITypeCache {
 
 	private static final int INITIAL_TYPE_COUNT = 100;
-	private final Map fTypeNameMap = new HashMap(INITIAL_TYPE_COUNT);
+	private final Map fTypeKeyMap = new HashMap(INITIAL_TYPE_COUNT);
 	private final IProject fProject;
 	private final IWorkingCopyProvider fWorkingCopyProvider;
 	private final Collection fDeltas = new ArrayList();
 	private final ITypeInfo fGlobalNamespace;
+	
+	private static final int[] ENCLOSING_TYPES = {ICElement.C_NAMESPACE, ICElement.C_CLASS, ICElement.C_STRUCT, 0};
 	
 	private IJobChangeListener fJobChangeListener = new IJobChangeListener() {
 		public void aboutToRun(IJobChangeEvent event) {
@@ -94,7 +96,8 @@ public class TypeCache implements ITypeCache {
 	private static class GlobalNamespace implements IQualifiedTypeName {
 		
 		private static final String GLOBAL_NAMESPACE = TypeCacheMessages.getString("TypeCache.globalNamespace"); //$NON-NLS-1$
-		
+		private static final String[] segments = new String[] { GLOBAL_NAMESPACE };
+
 		public GlobalNamespace() {
 		}
 		
@@ -127,7 +130,7 @@ public class TypeCache implements ITypeCache {
 		}
 		
 		public String[] segments() {
-			return new String[] { GLOBAL_NAMESPACE };
+			return segments;
 		}
 		
 		public String segment(int index) {
@@ -161,11 +164,11 @@ public class TypeCache implements ITypeCache {
 		}
 		
 		public IQualifiedTypeName removeFirstSegments(int count) {
-			return new QualifiedTypeName(this);
+			return this;
 		}
 		
 		public IQualifiedTypeName removeLastSegments(int count) {
-			return new QualifiedTypeName(this);
+			return this;
 		}
 		
 		public boolean isLowLevel() {
@@ -207,6 +210,28 @@ public class TypeCache implements ITypeCache {
 		}
 	}
 	
+	private static class HashKey {
+		private IQualifiedTypeName name;
+		private int type;
+		public HashKey(IQualifiedTypeName name, int type) {
+			this.name = name;
+			this.type = type;
+		}
+		public int hashCode() {
+			return (this.name.hashCode() + this.type);
+		}
+		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof HashKey)) {
+				return false;
+			}
+			HashKey otherKey = (HashKey)obj;
+			return (this.type == otherKey.type && this.name.equals(otherKey.name));
+		}
+	}
+	
 	public TypeCache(IProject project, IWorkingCopyProvider workingCopyProvider) {
 		fProject = project;
 		fWorkingCopyProvider = workingCopyProvider;
@@ -240,89 +265,49 @@ public class TypeCache implements ITypeCache {
 	}
 	
 	public synchronized boolean isEmpty() {
-		return fTypeNameMap.isEmpty();
+		return fTypeKeyMap.isEmpty();
 	}
-
-	public synchronized void insert(ITypeInfo newType) {
-		// check if type already exists
-		Collection typeCollection = (Collection) fTypeNameMap.get(newType.getName());
-		if (typeCollection != null) {
-			for (Iterator typeIter = typeCollection.iterator(); typeIter.hasNext(); ) {
-				ITypeInfo currType = (ITypeInfo) typeIter.next();
-				if (currType.canSubstituteFor(newType)) {
-					// merge references into new type
-					ITypeReference[] refs = currType.getReferences();
-					for (int i = 0; i < refs.length; ++i) {
-						newType.addReference(refs[i]);
-					}
-					// remove the old type
-					currType.setCache(null);
-					typeIter.remove();
-				}
-			}
-		}
 	
+	public synchronized void insert(ITypeInfo newType) {
 		// check if enclosing types are already in cache
 		IQualifiedTypeName enclosingName = newType.getQualifiedTypeName().getEnclosingTypeName();
 		if (enclosingName != null) {
 			while (!enclosingName.isEmpty()) {
 				boolean foundType = false;
-				Collection enclosingCollection = (Collection) fTypeNameMap.get(enclosingName.getName());
-				if (enclosingCollection == null) {
-					enclosingCollection = new HashSet();
-					fTypeNameMap.put(enclosingName.getName(), enclosingCollection);
-				} else {
-					for (Iterator typeIter = enclosingCollection.iterator(); typeIter.hasNext(); ) {
-						ITypeInfo curr = (ITypeInfo) typeIter.next();
-						if (curr.getQualifiedTypeName().equals(enclosingName)) {
-							foundType = true;
-							break;
-						}
-					}
+				// try namespace, class, struct, then undefined
+				ITypeInfo enclosingType = null;
+				for (int i = 0; enclosingType == null && i < ENCLOSING_TYPES.length; ++i) {
+					enclosingType = (ITypeInfo) fTypeKeyMap.get(new HashKey(enclosingName, ENCLOSING_TYPES[i]));
 				}
-				if (!foundType) {
+				if (enclosingType == null) {
 					// create a dummy type to take this place (type 0 == unknown)
 					ITypeInfo dummyType = new TypeInfo(0, enclosingName);
-					enclosingCollection.add(dummyType);
 					dummyType.setCache(this);
+					fTypeKeyMap.put(new HashKey(enclosingName, 0), dummyType);
 				}
 				enclosingName = enclosingName.removeLastSegments(1);
 			}
 		}
 		
-		typeCollection = (Collection) fTypeNameMap.get(newType.getName());
-		if (typeCollection == null) {
-			typeCollection = new HashSet();
-			fTypeNameMap.put(newType.getName(), typeCollection);
-		}
-		typeCollection.add(newType);
+		fTypeKeyMap.put(new HashKey(newType.getQualifiedTypeName(), newType.getCElementType()), newType);
 		newType.setCache(this);
 	}
 	
 	public synchronized void remove(ITypeInfo info) {
-		Collection typeCollection = (Collection) fTypeNameMap.get(info.getName());
-		if (typeCollection != null) {
-			info.setCache(null);
-			typeCollection.remove(info);
-		}
+		fTypeKeyMap.remove(new HashKey(info.getQualifiedTypeName(), info.getCElementType()));
+		info.setCache(null);
 	}
 
 	public synchronized void flush(ITypeSearchScope scope) {
 		if (scope.encloses(fProject)) {
 			flushAll();
 		} else {
-			for (Iterator mapIter = fTypeNameMap.entrySet().iterator(); mapIter.hasNext(); ) {
+			for (Iterator mapIter = fTypeKeyMap.entrySet().iterator(); mapIter.hasNext(); ) {
 				Map.Entry entry = (Map.Entry) mapIter.next();
-				Collection typeCollection = (Collection) entry.getValue();
-				for (Iterator typeIter = typeCollection.iterator(); typeIter.hasNext(); ) {
-					ITypeInfo info = (ITypeInfo) typeIter.next();
-					if (info.isEnclosed(scope)) {
-						info.setCache(null);
-						typeIter.remove();
-					}
-				}
-				if (typeCollection.isEmpty())
+				ITypeInfo info = (ITypeInfo) entry.getValue();
+				if (info.isEnclosed(scope)) {
 					mapIter.remove();
+				}
 			}
 		}
 	}
@@ -342,19 +327,16 @@ public class TypeCache implements ITypeCache {
 			}
 			public boolean shouldContinue() { return true; }
 		});
-		fTypeNameMap.clear();
+		fTypeKeyMap.clear();
 	}
 
 	public synchronized void accept(ITypeInfoVisitor visitor) {
-		for (Iterator mapIter = fTypeNameMap.entrySet().iterator(); mapIter.hasNext(); ) {
+		for (Iterator mapIter = fTypeKeyMap.entrySet().iterator(); mapIter.hasNext(); ) {
 			Map.Entry entry = (Map.Entry) mapIter.next();
-			Collection typeCollection = (Collection) entry.getValue();
-			for (Iterator typeIter = typeCollection.iterator(); typeIter.hasNext(); ) {
-				ITypeInfo info = (ITypeInfo) typeIter.next();
-				if (!visitor.shouldContinue())
-					return; // stop visiting
-				visitor.visit(info);
-			}
+			ITypeInfo info = (ITypeInfo) entry.getValue();
+			if (!visitor.shouldContinue())
+				return; // stop visiting
+			visitor.visit(info);
 		}
 	}
 
@@ -364,10 +346,12 @@ public class TypeCache implements ITypeCache {
 			public boolean visit(ITypeInfo info) {
 				if (scope == null || info.isEnclosed(scope)) {
 					ITypeReference[] refs = info.getReferences();
-					for (int i = 0; i < refs.length; ++i) {
-						IPath path = refs[i].getPath();
-						if (scope == null || scope.encloses(path))
-							pathSet.add(path);
+					if (refs != null) {
+						for (int i = 0; i < refs.length; ++i) {
+							IPath path = refs[i].getPath();
+							if (scope == null || scope.encloses(path))
+								pathSet.add(path);
+						}
 					}
 				}
 				return true;
@@ -393,51 +377,38 @@ public class TypeCache implements ITypeCache {
 	
 	public synchronized ITypeInfo[] getTypes(IQualifiedTypeName qualifiedName) {
 		Collection results = new ArrayList();
-		Collection typeCollection = (Collection) fTypeNameMap.get(qualifiedName.getName());
-		if (typeCollection != null) {
-			for (Iterator typeIter = typeCollection.iterator(); typeIter.hasNext(); ) {
-				ITypeInfo info = (ITypeInfo) typeIter.next();
-				if (info.getQualifiedTypeName().equals(qualifiedName)) {
-					results.add(info);
-				}
+		for (int i = 0; i < ITypeInfo.KNOWN_TYPES.length; ++i) {
+			ITypeInfo info = (ITypeInfo) fTypeKeyMap.get(new HashKey(qualifiedName, ITypeInfo.KNOWN_TYPES[i]));
+			if (info != null) {
+				results.add(info);
 			}
+		}
+		ITypeInfo info = (ITypeInfo) fTypeKeyMap.get(new HashKey(qualifiedName, 0));
+		if (info != null) {
+			results.add(info);
 		}
 		return (ITypeInfo[]) results.toArray(new ITypeInfo[results.size()]);
 	}
 	
 	public synchronized ITypeInfo getType(int type, IQualifiedTypeName qualifiedName) {
-		Collection typeCollection = (Collection) fTypeNameMap.get(qualifiedName.getName());
-		if (typeCollection != null) {
-			for (Iterator typeIter = typeCollection.iterator(); typeIter.hasNext(); ) {
-				ITypeInfo info = (ITypeInfo) typeIter.next();
-				if ((info.getCElementType() == type || info.getCElementType() == 0)
-						&& info.getQualifiedTypeName().equals(qualifiedName)) {
-					return info;
-				}
-			}
+		ITypeInfo info = (ITypeInfo) fTypeKeyMap.get(new HashKey(qualifiedName, type));
+		if (info == null && type != 0) {
+			info = (ITypeInfo) fTypeKeyMap.get(new HashKey(qualifiedName, 0));			
 		}
-		return null;
+		return info;
 	}
 	
 	public synchronized ITypeInfo getEnclosingType(ITypeInfo info, final int[] kinds) {
 		IQualifiedTypeName enclosingName = info.getQualifiedTypeName().getEnclosingTypeName();
 		if (enclosingName != null) {
-			Collection typeCollection = (Collection) fTypeNameMap.get(enclosingName.getName());
-			if (typeCollection != null) {
-				// try namespace, class, struct, then undefined
-				final int[] validKinds = {ICElement.C_NAMESPACE, ICElement.C_CLASS, ICElement.C_STRUCT, 0};
-				for (int i = 0; i < validKinds.length; ++i) {
-					if (ArrayUtil.contains(kinds, validKinds[i])) {
-						for (Iterator typeIter = typeCollection.iterator(); typeIter.hasNext(); ) {
-							ITypeInfo type = (ITypeInfo) typeIter.next();
-							if (type.getCElementType() == validKinds[i]
-								&& type.getQualifiedTypeName().equals(enclosingName)) {
-								return type;
-							}
-						}
-					}
+			// try namespace, class, struct, then undefined
+			ITypeInfo enclosingType = null;
+			for (int i = 0; enclosingType == null && i < ENCLOSING_TYPES.length; ++i) {
+				if (ArrayUtil.contains(kinds, ENCLOSING_TYPES[i])) {
+					enclosingType = (ITypeInfo) fTypeKeyMap.get(new HashKey(enclosingName, ENCLOSING_TYPES[i]));
 				}
 			}
+			return enclosingType;
 		}
 		return null;
 	}
@@ -451,23 +422,12 @@ public class TypeCache implements ITypeCache {
 				return fGlobalNamespace;
 			return null;
 		}
-		String[] segments = qualifiedName.segments();
-		String namespace = segments[0];
-		Collection typeCollection = (Collection) fTypeNameMap.get(namespace);
-		if (typeCollection != null) {
-			// try namespace, then undefined
-			final int[] kinds = {ICElement.C_NAMESPACE, 0};
-			for (int i = 0; i < kinds.length; ++i) {
-				for (Iterator typeIter = typeCollection.iterator(); typeIter.hasNext(); ) {
-					ITypeInfo type = (ITypeInfo) typeIter.next();
-					if (type.getCElementType() == kinds[i]
-						&& type.getQualifiedTypeName().isGlobal()) {
-						return type;
-					}
-				}
-			}
-		}
-		return null;
+		IQualifiedTypeName namespace = qualifiedName.removeLastSegments(qualifiedName.segmentCount()-1);
+		// try namespace, then undefined
+		ITypeInfo namespaceType = (ITypeInfo) fTypeKeyMap.get(new HashKey(namespace, ICElement.C_NAMESPACE));
+		if (namespaceType == null)
+			namespaceType = (ITypeInfo) fTypeKeyMap.get(new HashKey(namespace, 0));
+		return namespaceType;
 	}
 
 	public synchronized boolean hasEnclosedTypes(final ITypeInfo info) {

@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
@@ -23,26 +19,44 @@ public class TypeInfo implements ITypeInfo
 {
 	protected ITypeCache fTypeCache;
 	protected int fElementType;
-	protected QualifiedTypeName fQualifiedName;
-	protected Set fSourceRefs = new HashSet();
+	protected IQualifiedTypeName fQualifiedName;
+	protected ITypeReference[] fSourceRefs = null;
+	protected int fSourceRefsCount = 0;
+
+	protected final static int INITIAL_REFS_SIZE = 1;
+	protected final static int REFS_GROW_BY = 10;
 	protected final static ITypeInfo[] EMPTY_TYPES = new ITypeInfo[0];
 
 	public TypeInfo(int elementType, IQualifiedTypeName typeName) {
 		fElementType = elementType;
-		fQualifiedName = new QualifiedTypeName(typeName);
+		fQualifiedName = typeName;
 	}
 
 	public void addReference(ITypeReference location) {
-		fSourceRefs.add(location);
+		if (fSourceRefs == null) {
+			fSourceRefs = new ITypeReference[INITIAL_REFS_SIZE];
+			fSourceRefsCount = 0;
+		} else if (fSourceRefsCount == fSourceRefs.length) {
+			ITypeReference[] refs = new ITypeReference[fSourceRefs.length + REFS_GROW_BY];
+			System.arraycopy(fSourceRefs, 0, refs, 0, fSourceRefsCount);
+			fSourceRefs = refs;
+		}
+		fSourceRefs[fSourceRefsCount] = location;
+		++fSourceRefsCount;
 	}
 	
 	public ITypeReference[] getReferences() {
-		return (ITypeReference[]) fSourceRefs.toArray(new ITypeReference[fSourceRefs.size()]);
+		if (fSourceRefs != null) {
+			ITypeReference[] refs = new ITypeReference[fSourceRefsCount];
+			System.arraycopy(fSourceRefs, 0, refs, 0, fSourceRefsCount);
+			return refs;
+		}
+		return null;
 	}
 
 	public ITypeReference getResolvedReference() {
-		for (Iterator i = fSourceRefs.iterator(); i.hasNext(); ) {
-			ITypeReference location = (ITypeReference) i.next();
+		for (int i = 0; i < fSourceRefsCount; ++i) {
+			ITypeReference location = fSourceRefs[i];
 			if (location.getLength() != 0) {
 				return location;
 			}
@@ -51,7 +65,7 @@ public class TypeInfo implements ITypeInfo
 	}
 
 	public boolean isReferenced() {
-		return !fSourceRefs.isEmpty();
+		return (fSourceRefs != null);
 	}
 	
 	public boolean isUndefinedType() {
@@ -171,12 +185,12 @@ public class TypeInfo implements ITypeInfo
 			return true;
 
 		// check if path is in scope
-		for (Iterator i = fSourceRefs.iterator(); i.hasNext(); ) {
-			ITypeReference location = (ITypeReference) i.next();
+		for (int i = 0; i < fSourceRefsCount; ++i) {
+			ITypeReference location = fSourceRefs[i];
 			if (scope.encloses(location.getPath()))
 				return true;
 		}
-		
+
 		return false;
 	}
 	

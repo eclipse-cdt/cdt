@@ -31,6 +31,10 @@ public class SimpleStack {
     	items = new ArrayList(initialSize);
     }
     
+    public void clear() {
+    	items.clear();
+    }
+    
     public Object push(Object item) {
     	items.add(item);
     	if (VERBOSE)

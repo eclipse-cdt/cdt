@@ -113,18 +113,14 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 		CStackFrame currentFrame = getCurrentStackFrame();
 		if ( currentFrame != null )
 		{
-	/*
 			try
 			{
-	*/
 				result = getCurrentStackFrame().getCDIStackFrame().getRegisters( fRegisterObjects );
-	/*
 			}
 			catch( CDIException e )
 			{
 				targetRequestFailed( e.getMessage(), null );
 			}
-	*/
 		}
 		return result;
 	}

@@ -1,5 +1,0 @@
-org.eclipse.cdt.ui/debug=true
-
-# Reports contentAssist activity
-org.eclipse.cdt.ui/debug/contentassist=false
-

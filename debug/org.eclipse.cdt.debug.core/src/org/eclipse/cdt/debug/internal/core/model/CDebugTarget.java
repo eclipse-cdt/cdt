@@ -528,6 +528,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
+			setTerminating( false );
 			targetRequestFailed( e.getMessage(), e );
 		}
 	}

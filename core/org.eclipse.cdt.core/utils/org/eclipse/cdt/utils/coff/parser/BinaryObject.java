@@ -58,11 +58,15 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	 */
 	public ISymbol getSymbol(long addr) {
 		ISymbol[] syms = getSymbols();
-		int i = Arrays.binarySearch(syms, new Long(addr));
-		if (i < 0 || i >= syms.length) {
+		int insertion = Arrays.binarySearch(syms, new Long(addr));
+		if (insertion > 0) {
+			return syms[insertion];
+		}
+		if (insertion == -1) {
 			return null;
 		}
-		return syms[i];
+		insertion = -insertion - 1;
+		return syms[insertion - 1];
 	}
 
 	/**
@@ -256,6 +260,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 						if (filename != null && filename.equals("??")) {
 							filename = null;
 						}
+
 						if (filename != null) {
 							if (cygpath != null) {
 								sym.filename =  new Path(cygpath.getFileName(filename));

@@ -86,6 +86,7 @@ public interface IBinaryParser {
 		int getEndLine();
 		IPath getFilename();
 		int getType();
+		int getLineNumber(long offset);
 	}
 
 	IBinaryFile getBinary(IPath path) throws IOException;

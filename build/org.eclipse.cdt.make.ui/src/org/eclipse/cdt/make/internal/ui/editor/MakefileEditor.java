@@ -197,7 +197,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 				if (len > 0) {
 					var = var.substring(0, len);
 				}
-				IRegion region = getFindRepalceDocumentAdapter().search(start, var, true, true, true, false);
+				IRegion region = getFindRepalceDocumentAdapter().find(start, var, true, true, true, false);
 
 				if (region != null) {
 					len = region.getOffset();

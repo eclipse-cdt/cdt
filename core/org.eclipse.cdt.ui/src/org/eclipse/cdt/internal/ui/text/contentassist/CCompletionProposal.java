@@ -35,12 +35,13 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.jface.text.link.ILinkedListener;
-import org.eclipse.jface.text.link.LinkedEnvironment;
+import org.eclipse.jface.text.link.ILinkedModeListener;
+import org.eclipse.jface.text.link.LinkedModeModel;
+import org.eclipse.jface.text.link.LinkedModeUI;
+import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
-import org.eclipse.jface.text.link.LinkedUIControl;
-import org.eclipse.jface.text.link.LinkedUIControl.ExitFlags;
-import org.eclipse.jface.text.link.LinkedUIControl.IExitPolicy;
+import org.eclipse.jface.text.link.LinkedModeUI.ExitFlags;
+import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -49,11 +50,10 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.texteditor.link.EditorHistoryUpdater;
-
+import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 
 public class CCompletionProposal implements ICCompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2, ICompletionProposalExtension3 {
-
+	
 	private String fDisplayString;
 	private String fReplacementString;
 	private int fReplacementOffset;
@@ -118,7 +118,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	
 	/**
 	 * Sets the context information.
-	 * @param contentInformation The context information associated with this proposal
+	 * @param contextInformation The context information associated with this proposal
 	 */
 	public void setContextInformation(IContextInformation contextInformation) {
 		fContextInformation= contextInformation;
@@ -135,7 +135,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	
 	/**
 	 * Sets the proposal info.
-	 * @param additionalProposalInfo The additional information associated with this proposal or <code>null</code>
+	 * @param proposalInfo The additional information associated with this proposal or <code>null</code>
 	 */
 	public void setAdditionalProposalInfo(String proposalInfo) {
 		fProposalInfo= proposalInfo;
@@ -191,22 +191,22 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 				int index= string.indexOf("()"); //$NON-NLS-1$
 				if (index != -1 && index + 1 == fCursorPosition) {
 					IPreferenceStore preferenceStore= CUIPlugin.getDefault().getPreferenceStore();
-					//if (preferenceStore.getBoolean(PreferenceConstants.EDITOR_CLOSE_BRACKETS)) {
+//					if (preferenceStore.getBoolean(PreferenceConstants.EDITOR_CLOSE_BRACKETS)) {
 					if(true){
 						int newOffset= fReplacementOffset + fCursorPosition;
 						
 						LinkedPositionGroup group= new LinkedPositionGroup();
-						group.createPosition(document, newOffset, 0);
+						group.addPosition(new LinkedPosition(document, newOffset, 0, LinkedPositionGroup.NO_STOP));
 						
-						LinkedEnvironment env= new LinkedEnvironment();
-						env.addGroup(group);
-						env.forceInstall();
+						LinkedModeModel model= new LinkedModeModel();
+						model.addGroup(group);
+						model.forceInstall();
 						
-						LinkedUIControl ui= new LinkedUIControl(env, fTextViewer);
-						ui.setPositionListener(new EditorHistoryUpdater());
+						LinkedModeUI ui= new EditorLinkedModeUI(model, fTextViewer);
+						ui.setSimpleMode(true);
 						ui.setExitPolicy(new ExitPolicy(')'));
 						ui.setExitPosition(fTextViewer, newOffset + 1, 0, Integer.MAX_VALUE);
-						ui.setCyclingMode(LinkedUIControl.CYCLE_NEVER);
+						ui.setCyclingMode(LinkedModeUI.CYCLE_NEVER);
 						ui.enter();
 					}
 				}
@@ -278,18 +278,18 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		/*
 		 * @see org.eclipse.jdt.internal.ui.text.link.LinkedPositionUI.ExitPolicy#doExit(org.eclipse.jdt.internal.ui.text.link.LinkedPositionManager, org.eclipse.swt.events.VerifyEvent, int, int)
 		 */
-		public ExitFlags doExit(LinkedEnvironment environment, VerifyEvent event, int offset, int length) {
+		public ExitFlags doExit(LinkedModeModel environment, VerifyEvent event, int offset, int length) {
 			
 			if (event.character == fExitCharacter) {
 				if (environment.anyPositionContains(offset))
-					return new ExitFlags(ILinkedListener.UPDATE_CARET, false);
+					return new ExitFlags(ILinkedModeListener.UPDATE_CARET, false);
 				else
-					return new ExitFlags(ILinkedListener.UPDATE_CARET, true);
+					return new ExitFlags(ILinkedModeListener.UPDATE_CARET, true);
 			}	
 			
 			switch (event.character) {			
 			case ';':
-				return new ExitFlags(ILinkedListener.NONE, true);
+				return new ExitFlags(ILinkedModeListener.NONE, true);
 								
 			default:
 				return null;
@@ -343,10 +343,10 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	 * @see ICompletionProposal#getAdditionalProposalInfo()
 	 */
 	public String getAdditionalProposalInfo() {
-//		if (fProposalInfo != null) {
-//			return fProposalInfo.getInfo();
-//		}
-		return fProposalInfo;
+		if (fProposalInfo != null) {
+			return fProposalInfo;
+		}
+		return null;
 	}
 	
 	/*
@@ -374,7 +374,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getCompletionOffset()
 	 */
-	public int getCompletionOffset() {
+	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
 		return getReplacementOffset();
 	}
 
@@ -415,7 +415,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getReplacementText()
 	 */
-	public CharSequence getCompletionText() {
+	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		String string= getReplacementString();
 		int pos= string.indexOf('(');
 		if (pos > 0)

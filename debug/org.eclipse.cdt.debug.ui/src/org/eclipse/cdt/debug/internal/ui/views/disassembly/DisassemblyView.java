@@ -79,10 +79,10 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
-import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
@@ -179,12 +179,12 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	/**
 	 * Preference key for highlighting current line.
 	 */
-	private final static String CURRENT_LINE = ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
+	private final static String CURRENT_LINE = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
 
 	/**
 	 * Preference key for highlight color of current line.
 	 */
-	private final static String CURRENT_LINE_COLOR = ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
+	private final static String CURRENT_LINE_COLOR = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
 
 	/** 
 	 * The view's context menu id. 

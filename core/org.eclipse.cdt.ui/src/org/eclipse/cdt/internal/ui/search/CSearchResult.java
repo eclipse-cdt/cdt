@@ -20,6 +20,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.IEditorMatchAdapter;
+import org.eclipse.search.ui.text.IFileMatchAdapter;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -152,5 +154,21 @@ public class CSearchResult extends AbstractTextSearchResult {
 			label = cQuery.getPluralLabelPattern();
 		
 		return MessageFormat.format(label, new Object[]{new Integer(matches)});
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getEditorMatchAdapter()
+	 */
+	public IEditorMatchAdapter getEditorMatchAdapter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getFileMatchAdapter()
+	 */
+	public IFileMatchAdapter getFileMatchAdapter() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

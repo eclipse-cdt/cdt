@@ -10,6 +10,7 @@ class FunctionInfo extends SourceManipulationInfo {
 	protected int flags;
 	protected boolean isStatic;
 	protected boolean isVolatile;
+	protected boolean isConst;
 	
 
 	protected FunctionInfo (CElement element) {
@@ -65,6 +66,22 @@ class FunctionInfo extends SourceManipulationInfo {
 		&& (this.isStatic() == ((FunctionInfo)otherInfo).isStatic())
 		&& (this.isVolatile() == ((FunctionInfo)otherInfo).isVolatile())
 		);
+	}
+
+	/**
+	 * Returns the isConst.
+	 * @return boolean
+	 */
+	public boolean isConst() {
+		return isConst;
+	}
+
+	/**
+	 * Sets the isConst.
+	 * @param isConst The isConst to set
+	 */
+	public void setConst(boolean isConst) {
+		this.isConst = isConst;
 	}
 
 }

@@ -59,6 +59,7 @@ public class DOMBuilder implements IParserCallback
 		ClassSpecifier classSpecifier = new ClassSpecifier(kind, decl);
 		classSpecifier.setCurrentVisibility( visibility );
 		classSpecifier.setStartingOffset( classKey.getOffset() );
+		classSpecifier.setClassKeyToken( classKey );
 		decl.setTypeSpecifier(classSpecifier);
 		return classSpecifier;
 	}
@@ -156,7 +157,7 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#inclusionBegin(java.lang.String)
 	 */
 	public void inclusionBegin(String includeFile, int offset, int inclusionBeginOffset) {
-		translationUnit.addInclusion( new Inclusion( includeFile, offset, inclusionBeginOffset, offset + includeFile.length() + 1 ) );
+		translationUnit.addInclusion( new Inclusion( includeFile, offset, inclusionBeginOffset, offset - inclusionBeginOffset + includeFile.length() + 1 ) );
 	}
 
 	/**
@@ -180,7 +181,7 @@ public class DOMBuilder implements IParserCallback
 		((IScope)container).addDeclaration(decl);
 		if( container instanceof ClassSpecifier )
 			decl.setAccessSpecifier(new AccessSpecifier( ((ClassSpecifier)container).getCurrentVisibility() ));
-		((IOffsettable)decl).setStartingOffset( firstToken.getOffset() );
+		((IOffsetable)decl).setStartingOffset( firstToken.getOffset() );
 		return decl;
 	}
 
@@ -188,7 +189,7 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationEnd(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
 	public void simpleDeclarationEnd(Object declaration, Token lastToken) {
-		IOffsettable offsetable = (IOffsettable)declaration;
+		IOffsetable offsetable = (IOffsetable)declaration;
 		offsetable.setTotalLength( lastToken.getOffset() + lastToken.getLength() - offsetable.getStartingOffset());
 	}
 
@@ -364,7 +365,10 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
 	 */
 	public Object simpleDeclSpecifierName(Object declaration) {
-		return declaration;
+		DeclSpecifier.Container decl = (DeclSpecifier.Container)declaration;
+		DeclSpecifier declSpec = decl.getDeclSpecifier(); 
+		declSpec.setName( currName ); 
+		return declSpec;
 	}
 
 	/* (non-Javadoc)
@@ -520,7 +524,8 @@ public class DOMBuilder implements IParserCallback
 	public Object namespaceDefinitionBegin(Object container, Token namespace) {
 		IScope ownerScope = (IScope)container;
 		NamespaceDefinition namespaceDef = new NamespaceDefinition(ownerScope);
-		((IOffsettable)namespaceDef).setStartingOffset( namespace.getOffset() );
+		namespaceDef.setStartToken(namespace);
+		((IOffsetable)namespaceDef).setStartingOffset( namespace.getOffset() );
 		return namespaceDef;
 		
 	}
@@ -637,8 +642,9 @@ public class DOMBuilder implements IParserCallback
 	public Object enumSpecifierBegin(Object container, Token enumKey) {
 		SimpleDeclaration decl = (SimpleDeclaration)container;
 		EnumerationSpecifier es = new EnumerationSpecifier( decl );
+		es.setStartToken(enumKey);
 		decl.setTypeSpecifier(es);
-		((IOffsettable)decl).setStartingOffset( enumKey.getOffset() ); 
+		((IOffsetable)es).setStartingOffset( enumKey.getOffset() ); 
 		return es;
 	}
 
@@ -663,7 +669,7 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object)
 	 */
 	public void enumSpecifierEnd(Object enumSpec, Token closingBrace) {
-		IOffsettable offsetable = (IOffsettable)enumSpec;
+		IOffsetable offsetable = (IOffsetable)enumSpec;
 		offsetable.setTotalLength( closingBrace.getOffset() + closingBrace.getLength() - offsetable.getStartingOffset());
 	}
 
@@ -683,7 +689,7 @@ public class DOMBuilder implements IParserCallback
 	public Object enumeratorId(Object enumDefn) {
 		EnumeratorDefinition definition = (EnumeratorDefinition)enumDefn;
 		definition.setName( currName );
-		((IOffsettable)enumDefn).setStartingOffset( currName.getStartOffset() );
+		((IOffsetable)enumDefn).setStartingOffset( currName.getStartOffset() );
 		return definition;
 	}
 
@@ -691,7 +697,7 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
 	 */
 	public void enumeratorEnd(Object enumDefn, Token lastToken) {
-		IOffsettable offsetable = (IOffsettable)enumDefn;
+		IOffsetable offsetable = (IOffsetable)enumDefn;
 		offsetable.setTotalLength( lastToken.getOffset() + lastToken.getLength() - offsetable.getStartingOffset());
 	}
 

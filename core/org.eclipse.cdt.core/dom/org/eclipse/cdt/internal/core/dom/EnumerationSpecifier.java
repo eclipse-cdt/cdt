@@ -16,13 +16,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
  * @author jcamelon
  *
  */
-public class EnumerationSpecifier extends TypeSpecifier implements IOffsettable {
+public class EnumerationSpecifier extends TypeSpecifier implements IOffsetable {
 	
 	public EnumerationSpecifier(SimpleDeclaration declaration) {
 		super(declaration);
@@ -31,6 +32,7 @@ public class EnumerationSpecifier extends TypeSpecifier implements IOffsettable 
 	private Name name = null;
 	private List enumeratorDefinitions = new ArrayList();
 	private int startingOffset = 0, totalLength = 0;
+	private Token startToken = null;
 	
 	public void addEnumeratorDefinition( EnumeratorDefinition def )
 	{
@@ -86,6 +88,22 @@ public class EnumerationSpecifier extends TypeSpecifier implements IOffsettable 
 	 */
 	public void setTotalLength(int i) {
 		totalLength = i;
+	}
+
+	/**
+	 * Returns the startToken.
+	 * @return Token
+	 */
+	public Token getStartToken() {
+		return startToken;
+	}
+
+	/**
+	 * Sets the startToken.
+	 * @param startToken The startToken to set
+	 */
+	public void setStartToken(Token startToken) {
+		this.startToken = startToken;
 	}
 
 }

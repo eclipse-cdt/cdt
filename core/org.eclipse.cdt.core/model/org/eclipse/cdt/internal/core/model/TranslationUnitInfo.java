@@ -11,7 +11,6 @@ import java.io.StringBufferInputStream;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.parser.CStructurizer;
 import org.eclipse.core.runtime.IPath;
 
@@ -44,9 +43,9 @@ class TranslationUnitInfo extends OpenableInfo {
 			removeChildren();
 			if (CCorePlugin.getDefault().useNewParser()) {
 				// new parser
-				NewModelBuilder modelBuilder = new NewModelBuilder((TranslationUnit)getElement());
-				Parser parser = new Parser(in, modelBuilder, true);
-				parser.parse();
+				CModelBuilder modelBuilder = new CModelBuilder((TranslationUnit)getElement());
+				modelBuilder.parse();
+
 			} else {
 				// cdt 1.0 parser
 				ModelBuilder modelBuilder= new ModelBuilder((TranslationUnit)getElement());

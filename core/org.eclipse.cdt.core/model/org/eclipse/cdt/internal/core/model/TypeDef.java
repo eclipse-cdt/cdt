@@ -16,8 +16,24 @@ import org.eclipse.cdt.core.model.ITypeDef;
 
 public class TypeDef extends SourceManipulation implements ITypeDef{
 	
+	String typeName= "";
 	public TypeDef(ICElement parent, String name) {
 		super(parent, name, CElement.C_TYPEDEF);
+	}
+	/**
+	 * Returns the typeName.
+	 * @return String
+	 */
+	public String getTypeName() {
+		return typeName;
+	}
+
+	/**
+	 * Sets the typeName.
+	 * @param typeName The typeName to set
+	 */
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
 	}
 
 }

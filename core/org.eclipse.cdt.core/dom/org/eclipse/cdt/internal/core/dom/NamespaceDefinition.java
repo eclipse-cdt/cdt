@@ -16,18 +16,20 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
  * @author jcamelon
  *
  */
-public class NamespaceDefinition extends Declaration implements IScope, IOffsettable {
+public class NamespaceDefinition extends Declaration implements IScope, IOffsetable {
 
 	private List declarations = new LinkedList();
 	private IScope ownerScope;
 	private Name name = null;
 	private int startingOffset = 0, totalLength = 0;
+	private Token startToken = null;
 
 	public NamespaceDefinition( IScope owner )
 	{
@@ -98,6 +100,22 @@ public class NamespaceDefinition extends Declaration implements IScope, IOffsett
 	 */
 	public void setTotalLength(int i) {
 		totalLength = i;
+	}
+
+	/**
+	 * Returns the startToken.
+	 * @return Token
+	 */
+	public Token getStartToken() {
+		return startToken;
+	}
+
+	/**
+	 * Sets the startToken.
+	 * @param startToken The startToken to set
+	 */
+	public void setStartToken(Token startToken) {
+		this.startToken = startToken;
 	}
 
 }

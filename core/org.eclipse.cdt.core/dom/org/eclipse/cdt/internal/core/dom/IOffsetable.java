@@ -17,7 +17,7 @@ package org.eclipse.cdt.internal.core.dom;
  * @author jcamelon
  *
  */
-public interface IOffsettable {
+public interface IOffsetable {
 
 	/**
 	 * @return

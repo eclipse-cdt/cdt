@@ -65,6 +65,10 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		else{
 			sig +=  "()";
 		}
+		if(isConst())
+			sig += " const";
+		if(isVolatile())
+			sig += " volatile";
 		return sig;
 	}
 		
@@ -105,7 +109,11 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
 	 */
 	public boolean isConst(){
-		return false;
+		return getFunctionInfo().isConst();
+	}
+
+	public void setConst(boolean isConst){
+		getFunctionInfo().setConst(isConst);
 	}
 
 	/**

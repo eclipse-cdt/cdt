@@ -8,6 +8,8 @@ package org.eclipse.cdt.ui;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.INamespace;
+import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.ErrorTickAdornmentProvider;
@@ -65,17 +67,21 @@ public class CElementLabelProvider extends LabelProvider {
 				case ICElement.C_VARIABLE_DECLARATION:
 					IVariableDeclaration vDecl = (IVariableDeclaration) celem;
 					name =  vDecl.getElementName();
-					name += " : ";
-					name += vDecl.getTypeName();
+					if((vDecl.getTypeName() != null) &&(vDecl.getTypeName().length() > 0)){
+						name += " : ";
+						name += vDecl.getTypeName();
+					}
 				break;
 				case ICElement.C_FUNCTION:
 				case ICElement.C_FUNCTION_DECLARATION:
 				case ICElement.C_METHOD:
 				case ICElement.C_METHOD_DECLARATION:
 					IFunctionDeclaration fDecl = (IFunctionDeclaration) celem;
-					name = fDecl.getSignature();		
-					name += " : ";
-					name += fDecl.getReturnType();
+					name = fDecl.getSignature();
+					if((fDecl.getReturnType() != null) &&(fDecl.getReturnType().length() > 0)){
+						name += " : ";
+						name += fDecl.getReturnType();
+					}
 				break;
 				case ICElement.C_STRUCT:
 				case ICElement.C_UNION:
@@ -85,6 +91,22 @@ public class CElementLabelProvider extends LabelProvider {
 					} else if (celem instanceof IVariableDeclaration) {
 						IVariableDeclaration varDecl = (IVariableDeclaration) celem;
 						name = varDecl.getTypeName();				
+					}
+				break;
+				case ICElement.C_TYPEDEF:
+					ITypeDef tDecl = (ITypeDef) celem;
+					name = tDecl.getElementName();
+					if((tDecl.getTypeName() != null) &&(tDecl.getTypeName().length() > 0)){
+						name += " : ";
+						name += tDecl.getTypeName();				
+					}
+				break;
+				case ICElement.C_NAMESPACE:
+					if((celem.getElementName() != null) && (celem.getElementName().length() > 0)){
+						name = celem.getElementName();
+					} else if (celem instanceof INamespace) {
+						INamespace nDecl = (INamespace) celem;
+						name = nDecl.getTypeName();				
 					}
 				break;
 				default:

@@ -14,6 +14,10 @@ public class VariableDeclaration extends SourceManipulation implements IVariable
 		super(parent, name, CElement.C_VARIABLE_DECLARATION);
 	}
 
+	public VariableDeclaration(ICElement parent, String name, int type) {
+		super(parent, name, type);
+	}
+
 	public int getAccessControl() {
 		return getVariableInfo().getAccessControl();
 	}

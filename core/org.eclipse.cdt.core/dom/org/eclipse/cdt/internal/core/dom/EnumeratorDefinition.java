@@ -18,7 +18,7 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
  * @author jcamelon
  *
  */
-public class EnumeratorDefinition implements IExpressionOwner, IOffsettable {
+public class EnumeratorDefinition implements IExpressionOwner, IOffsetable {
 
 	private Expression initialValue = null;
 	private Name name = null; 

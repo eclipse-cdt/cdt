@@ -8,4 +8,6 @@ package org.eclipse.cdt.core.model;
  * Represents a package declaration in a C translation unit.
  */
 public interface INamespace extends ICElement, IParent, ISourceManipulation, ISourceReference {
+	
+	String getTypeName();
 }

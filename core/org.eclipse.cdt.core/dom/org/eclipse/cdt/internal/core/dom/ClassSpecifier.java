@@ -4,15 +4,17 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.ClassKey;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
-public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsettable {
+public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable {
 
 	private AccessSpecifier access = new AccessSpecifier( AccessSpecifier.v_private );
 	private ClassKey key = new ClassKey();
-	private int startingOffset = 0, totalLength = 0;   
+	private int startingOffset = 0, totalLength = 0;
+	private Token classKeyToken = null;
 
 	public int getClassKey() { return key.getClassKey(); }
 
@@ -81,6 +83,22 @@ public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsettabl
 	 */
 	public void setTotalLength(int i) {
 		totalLength = i;
+	}
+
+	/**
+	 * Returns the classKeyToken.
+	 * @return Token
+	 */
+	public Token getClassKeyToken() {
+		return classKeyToken;
+	}
+
+	/**
+	 * Sets the classKeyToken.
+	 * @param classKeyToken The classKeyToken to set
+	 */
+	public void setClassKeyToken(Token classKeyToken) {
+		this.classKeyToken = classKeyToken;
 	}
 
 }

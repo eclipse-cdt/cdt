@@ -8,7 +8,7 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IField;
 
-public class Field extends SourceManipulation implements IField {
+public class Field extends VariableDeclaration implements IField {
 	
 	public Field(ICElement parent, String name) {
 		super(parent, name, CElement.C_FIELD);
@@ -66,21 +66,8 @@ public class Field extends SourceManipulation implements IField {
 		getFieldInfo().setVisibility(visibility);
 	}
 
-
 	public FieldInfo getFieldInfo(){
 		return (FieldInfo) getElementInfo();
-	}
-
-	/**
-	 * Returns true if the member as class scope.
-	 * For example static methods in C++ have class scope 
-	 *
-	 * @see IMember
-	 * @exception CModelException if this element does not exist or if an
-	 *      exception occurs while accessing its corresponding resource.
-	 */
-	public boolean hasClassScope(){
-		return false;
 	}
 
 	protected CElementInfo createElementInfo () {

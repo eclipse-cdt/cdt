@@ -7,7 +7,7 @@ import java.util.List;
 import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 
-public class SimpleDeclaration extends Declaration implements DeclSpecifier.Container, IOffsettable, TypeSpecifier.IOwner {
+public class SimpleDeclaration extends Declaration implements DeclSpecifier.Container, IOffsetable, TypeSpecifier.IOwner {
 
 	private int startingOffset = 0, totalLength = 0;
 	private AccessSpecifier accessSpecifier = null;

@@ -16,11 +16,11 @@ package org.eclipse.cdt.internal.core.dom;
  * @author jcamelon
  *
  */
-public class PreprocessorStatement {
+public class PreprocessorStatement implements IOffsetable {
 	
-	private final int startingOffset, totalLength;
-	final private int nameOffset;
-	final private String name; 
+	private int startingOffset, totalLength;
+	private final int nameOffset;
+	private final String name; 
 	
 	public PreprocessorStatement( String name, int nameOffset, int startingOffset, int totalLength )
 	{
@@ -61,6 +61,18 @@ public class PreprocessorStatement {
 	
 	public int getNameLength() {
 		return name.length();
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsettable#setStartingOffset(int)
+	 */
+	public void setStartingOffset(int i) {
+		startingOffset = i;
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsettable#setTotalLength(int)
+	 */
+	public void setTotalLength(int i) {
+		totalLength = i;
 	}
 
 }

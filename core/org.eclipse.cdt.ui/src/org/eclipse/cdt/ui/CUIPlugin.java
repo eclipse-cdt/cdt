@@ -17,7 +17,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.cview.CView;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
-import org.eclipse.cdt.internal.ui.editor.IWorkingCopyManager;
+import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage;
@@ -140,10 +140,13 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	private CoreModel fCoreModel;
 	private CDocumentProvider fDocumentProvider;
+	private IWorkingCopyManager fWorkingCopyManager;
 	private CTextTools fTextTools;
 	private AsmTextTools fAsmTextTools;
 	private ProblemMarkerManager fProblemMarkerManager;
 	private BuildConsoleManager fBuildConsoleManager;
+	private ResourceAdapterFactory fResourceAdapterFactory;
+	private CElementAdapterFactory fCElementAdapterFactory;
 
 
 	public CUIPlugin(IPluginDescriptor descriptor) {
@@ -167,8 +170,12 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * Returns the working copy manager
 	 * @return IWorkingCopyManager
 	 */
-	public IWorkingCopyManager getWorkingCopyManager() {
-		return getDocumentProvider();
+	public synchronized IWorkingCopyManager getWorkingCopyManager() {
+		if (fWorkingCopyManager == null) {
+			CDocumentProvider provider = getDocumentProvider();
+			fWorkingCopyManager = new WorkingCopyManager(provider);
+		}
+		return fWorkingCopyManager;
 	}
 
 	/**
@@ -210,7 +217,20 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fBuildConsoleManager.shutdown();
 			fBuildConsoleManager = null;
 		}
+
+		unregisterAdapters();
+
 		super.shutdown();
+
+		if (fWorkingCopyManager != null) {
+			fWorkingCopyManager.shutdown();
+			fWorkingCopyManager= null;
+		}
+                
+		if (fDocumentProvider != null) {
+			fDocumentProvider.shutdown();
+			fDocumentProvider= null;
+		}
 	}
 
 	private void runUI(Runnable run) {
@@ -230,9 +250,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
-		IAdapterManager manager = Platform.getAdapterManager();
-		manager.registerAdapters(new ResourceAdapterFactory(), IResource.class);
-		manager.registerAdapters(new CElementAdapterFactory(), ICElement.class);
+		registerAdapters();
 		runUI(new Runnable() {
 			public void run() {
 				CPluginImages.initialize();
@@ -280,6 +298,21 @@ public class CUIPlugin extends AbstractUIPlugin {
 		if (fProblemMarkerManager == null)
 			fProblemMarkerManager = new ProblemMarkerManager();
 		return fProblemMarkerManager;
+	}
+
+	private void registerAdapters() {
+		fResourceAdapterFactory = new ResourceAdapterFactory();
+		fCElementAdapterFactory = new CElementAdapterFactory();
+
+		IAdapterManager manager = Platform.getAdapterManager();
+		manager.registerAdapters(fResourceAdapterFactory, IResource.class);
+		manager.registerAdapters(fCElementAdapterFactory, ICElement.class);
+	}
+        
+	private void unregisterAdapters() {
+		IAdapterManager manager = Platform.getAdapterManager();
+		manager.unregisterAdapters(fResourceAdapterFactory);
+		manager.unregisterAdapters(fCElementAdapterFactory);
 	}
 
 }

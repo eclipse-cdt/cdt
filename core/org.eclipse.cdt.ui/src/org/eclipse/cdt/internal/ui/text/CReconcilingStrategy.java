@@ -6,11 +6,12 @@ package org.eclipse.cdt.internal.ui.text;
  */
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.IWorkingCopyManager;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -79,8 +80,9 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 	
 	private void reconcile() {
 		try {
-			IWorkingCopy workingCopy = fManager.getWorkingCopy(fEditor.getEditorInput());		
-			if (workingCopy != null) {
+			ITranslationUnit tu = fManager.getWorkingCopy(fEditor.getEditorInput());		
+			if (tu != null && tu.isWorkingCopy()) {
+				IWorkingCopy workingCopy = (IWorkingCopy)tu;
 				// reconcile
 				synchronized (workingCopy) {
 					workingCopy.reconcile(true, fProgressMonitor);

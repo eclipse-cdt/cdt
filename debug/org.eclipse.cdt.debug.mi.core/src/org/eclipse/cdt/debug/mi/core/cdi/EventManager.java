@@ -24,7 +24,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.event.ChangedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.CreatedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.DestroyedEvent;
@@ -282,9 +281,6 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			if (srcMgr.isAutoUpdate()) {
 				srcMgr.update();
 			}
-			// give a chance also to the underlying inferior.
-			MISession mi = session.getMISession();
-			mi.getMIInferior().update();
 		} catch (CDIException e) {
 			//System.out.println(e);
 		}

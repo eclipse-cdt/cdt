@@ -67,10 +67,10 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
     {
     	callback = new CompilationUnitCallback(); 
     	IParser parser = ParserFactory.createParser( 
-    		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(),
+    		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(), //$NON-NLS-1$
     			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
-    	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE");
+    	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$
     	
         return callback.getCompilationUnit();
     }
@@ -84,7 +84,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
     
     public void testEmptyCompilationUnit() throws Exception
     {
-    	IASTScope compilationUnit = parse( "// no real code ");
+    	IASTScope compilationUnit = parse( "// no real code "); //$NON-NLS-1$
 
     	assertNotNull( compilationUnit );
     	assertFalse( compilationUnit.getDeclarations().hasNext() );
@@ -98,10 +98,10 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
     
     public void testSimpleNamespace() throws Exception
     {
-    	Iterator declarations = parse( "namespace A { }").getDeclarations();
+    	Iterator declarations = parse( "namespace A { }").getDeclarations(); //$NON-NLS-1$
     	
     	IASTNamespaceDefinition namespaceDefinition = (IASTNamespaceDefinition)declarations.next(); 
-    	assertEquals( namespaceDefinition.getName(), "A" ); 
+    	assertEquals( namespaceDefinition.getName(), "A" );  //$NON-NLS-1$
     	assertFalse( namespaceDefinition.getDeclarations().hasNext() );
     	
     	try{
@@ -113,40 +113,40 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 
 	public void testMultipleNamespaceDefinitions() throws Exception
 	{
-		Iterator declarations = parse( "namespace A { } namespace A { }").getDeclarations();
+		Iterator declarations = parse( "namespace A { } namespace A { }").getDeclarations(); //$NON-NLS-1$
 		
 		IASTNamespaceDefinition namespaceDefinition = (IASTNamespaceDefinition)declarations.next(); 
-		assertEquals( namespaceDefinition.getName(), "A" );
+		assertEquals( namespaceDefinition.getName(), "A" ); //$NON-NLS-1$
 		assertFalse( declarations.hasNext() );
 	}
 
     public void testNestedNamespaceDefinitions() throws Exception
     {
-		Iterator declarations = parse( "namespace A { namespace B { } }").getDeclarations();
+		Iterator declarations = parse( "namespace A { namespace B { } }").getDeclarations(); //$NON-NLS-1$
 		
 		IASTNamespaceDefinition namespaceDefinition = (IASTNamespaceDefinition)declarations.next(); 
-		assertEquals( namespaceDefinition.getName(), "A" );
+		assertEquals( namespaceDefinition.getName(), "A" ); //$NON-NLS-1$
 		assertFalse( declarations.hasNext() );
 		
 		Iterator subDeclarations = namespaceDefinition.getDeclarations();
 		IASTNamespaceDefinition subDeclaration = (IASTNamespaceDefinition)subDeclarations.next();
-		assertEquals( subDeclaration.getName(), "B" );
+		assertEquals( subDeclaration.getName(), "B" ); //$NON-NLS-1$
 		assertFalse( subDeclarations.hasNext() );
     }
     
     public void testEmptyClassDeclaration() throws Exception
     {
-    	Iterator declarations = parse( "class A { };").getDeclarations();
+    	Iterator declarations = parse( "class A { };").getDeclarations(); //$NON-NLS-1$
     	
     	IASTClassSpecifier classSpec = (IASTClassSpecifier)declarations.next();
-    	assertEquals( classSpec.getName(), "A");
+    	assertEquals( classSpec.getName(), "A"); //$NON-NLS-1$
     	assertFalse( classSpec.getDeclarations().hasNext() ); 
     	assertFalse( declarations.hasNext() );
     }
     
     public void testNestedSubclass() throws Exception
     {
-    	Iterator declarations = parse( "namespace N { class A { }; } class B : protected virtual N::A { };").getDeclarations();
+    	Iterator declarations = parse( "namespace N { class A { }; } class B : protected virtual N::A { };").getDeclarations(); //$NON-NLS-1$
     	
     	IASTNamespaceDefinition namespaceDefinition = (IASTNamespaceDefinition)declarations.next();
     	
@@ -163,41 +163,41 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
     
     public void testSimpleVariable() throws Exception
     {
-    	Iterator declarations = parse( "int x;").getDeclarations();
+    	Iterator declarations = parse( "int x;").getDeclarations(); //$NON-NLS-1$
     	IASTVariable v = (IASTVariable)declarations.next();
-    	assertEquals( v.getName(), "x");
+    	assertEquals( v.getName(), "x"); //$NON-NLS-1$
     	assertFalse( declarations.hasNext() );
     }
     
 	public void testSimpleClassReferenceVariable() throws Exception
 	{
-		Iterator declarations = parse( "class A { } a; A x;").getDeclarations();
+		Iterator declarations = parse( "class A { } a; A x;").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier classA = (IASTClassSpecifier)declarations.next();
 		assertFalse( classA.getDeclarations().hasNext() );
 		
 		IASTVariable a = (IASTVariable)declarations.next();
-		assertEquals( a.getName(), "a");
+		assertEquals( a.getName(), "a"); //$NON-NLS-1$
 		
 		IASTVariable v = (IASTVariable)declarations.next();
-		assertEquals( v.getName(), "x");
+		assertEquals( v.getName(), "x"); //$NON-NLS-1$
 		assertEquals( ((IASTSimpleTypeSpecifier)v.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), classA );
 		assertFalse( declarations.hasNext() );
 	}
  
 	public void testMultipleDeclaratorsVariable() throws Exception
 	{
-		Iterator declarations = parse( "class A { }; A x, y, z;").getDeclarations();
+		Iterator declarations = parse( "class A { }; A x, y, z;").getDeclarations(); //$NON-NLS-1$
 		
 		IASTClassSpecifier classA = (IASTClassSpecifier)declarations.next();
 		
 		IASTVariable v = (IASTVariable)declarations.next();
-		assertEquals( v.getName(), "x");
+		assertEquals( v.getName(), "x"); //$NON-NLS-1$
 		
 		v = (IASTVariable)declarations.next();
-		assertEquals( v.getName(), "y");
+		assertEquals( v.getName(), "y"); //$NON-NLS-1$
 		
 		v = (IASTVariable)declarations.next();
-		assertEquals( v.getName(), "z");
+		assertEquals( v.getName(), "z"); //$NON-NLS-1$
 		
 		assertEquals( ((IASTSimpleTypeSpecifier)v.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), classA );
 		
@@ -206,7 +206,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 	
 	public void testSimpleField() throws Exception
 	{
-		Iterator declarations = parse( "class A { double x; };").getDeclarations();
+		Iterator declarations = parse( "class A { double x; };").getDeclarations(); //$NON-NLS-1$
 		
 		IASTClassSpecifier classA = (IASTClassSpecifier)declarations.next();
 		
@@ -214,7 +214,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 		
 		IASTField f = (IASTField)fields.next();
 		
-		assertEquals( f.getName(), "x" );
+		assertEquals( f.getName(), "x" ); //$NON-NLS-1$
 		
 		assertFalse( fields.hasNext() );
 		assertFalse( declarations.hasNext() );
@@ -224,42 +224,42 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 	
 	public void testSimpleFunction() throws Exception
 	{
-		Iterator declarations = parse( "void foo( void );").getDeclarations();
+		Iterator declarations = parse( "void foo( void );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction function = (IASTFunction)declarations.next();
-		assertEquals( function.getName(), "foo" );
+		assertEquals( function.getName(), "foo" ); //$NON-NLS-1$
 		assertFalse( declarations.hasNext() );
 	}
 	
 	public void testSimpleMethod() throws Exception
 	{
-		Iterator declarations = parse( "class A { void foo(); };").getDeclarations();
+		Iterator declarations = parse( "class A { void foo(); };").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier classA = (IASTClassSpecifier)declarations.next();
 		
 		IASTMethod method = (IASTMethod) classA.getDeclarations().next();
-		assertEquals( method.getName(), "foo" );
+		assertEquals( method.getName(), "foo" ); //$NON-NLS-1$
 	}
 	
 	public void testLinkageSpec() throws Exception
 	{
-		Iterator declarations = parse( "extern \"C\" { int foo(); }").getDeclarations();
+		Iterator declarations = parse( "extern \"C\" { int foo(); }").getDeclarations(); //$NON-NLS-1$
 
 		//7.5-4 A linkage specification does not establish a scope
 		IASTFunction f = (IASTFunction)declarations.next();
-		assertEquals( f.getName(),"foo");
+		assertEquals( f.getName(),"foo"); //$NON-NLS-1$
 		assertFalse( declarations.hasNext() );
 	}
 	
 	public void testSimpleTypedef() throws Exception
 	{
-		Iterator iter = parse( "typedef int myInt;\n myInt var;").getDeclarations();
+		Iterator iter = parse( "typedef int myInt;\n myInt var;").getDeclarations(); //$NON-NLS-1$
 		
 		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)iter.next();
 		
-		assertEquals( typedef.getName(), "myInt");
+		assertEquals( typedef.getName(), "myInt"); //$NON-NLS-1$
 		assertEquals( ((IASTSimpleTypeSpecifier)typedef.getAbstractDeclarator().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.INT );
 		
 		IASTVariable v = (IASTVariable)iter.next();
-		assertEquals( v.getName(), "var");
+		assertEquals( v.getName(), "var"); //$NON-NLS-1$
 		
 		assertFalse( iter.hasNext() );
 		 
@@ -267,7 +267,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 	
 	public void testOverride() throws Exception
 	{
-		Iterator i = parse( "void foo();\n void foo( int );\n").getDeclarations();
+		Iterator i = parse( "void foo();\n void foo( int );\n").getDeclarations(); //$NON-NLS-1$
 		IASTFunction f1 = (IASTFunction)i.next();
 		IASTFunction f2 = (IASTFunction)i.next();
 		assertFalse( i.hasNext() );
@@ -275,7 +275,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 	
 	public void testEnumerations() throws Exception
 	{
-		Iterator declarations = parse( "namespace A { enum E { e1, e2, e3 }; E varE;}").getDeclarations();
+		Iterator declarations = parse( "namespace A { enum E { e1, e2, e3 }; E varE;}").getDeclarations(); //$NON-NLS-1$
 		
 		IASTNamespaceDefinition namespaceA = (IASTNamespaceDefinition)declarations.next(); 
 		
@@ -283,17 +283,17 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 		
 		IASTEnumerationSpecifier enumE = (IASTEnumerationSpecifier)namespaceMembers.next();
 		
-		assertEquals( enumE.getName(), "E");
-		assertQualifiedName( enumE.getFullyQualifiedName(), new String [] { "A", "E" } );
+		assertEquals( enumE.getName(), "E"); //$NON-NLS-1$
+		assertQualifiedName( enumE.getFullyQualifiedName(), new String [] { "A", "E" } ); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		Iterator enumerators = enumE.getEnumerators();
 		IASTEnumerator enumerator_e1 = (IASTEnumerator)enumerators.next();
 		IASTEnumerator enumerator_e2 = (IASTEnumerator)enumerators.next();
 		IASTEnumerator enumerator_e3 = (IASTEnumerator)enumerators.next();
 		assertFalse( enumerators.hasNext() );
-		assertEquals( enumerator_e1.getName(), "e1");
-		assertEquals( enumerator_e2.getName(), "e2");
-		assertEquals( enumerator_e3.getName(), "e3");
+		assertEquals( enumerator_e1.getName(), "e1"); //$NON-NLS-1$
+		assertEquals( enumerator_e2.getName(), "e2"); //$NON-NLS-1$
+		assertEquals( enumerator_e3.getName(), "e3"); //$NON-NLS-1$
 		
 		IASTVariable varE = (IASTVariable)namespaceMembers.next();
 		assertEquals( ((IASTSimpleTypeSpecifier)varE.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), enumE );
@@ -304,7 +304,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 	
 	public void testMethodDefinitions() throws Exception
 	{
-		Iterator i = parse( " class A { void f(); };  void A::f(){ }" ).getDeclarations();
+		Iterator i = parse( " class A { void f(); };  void A::f(){ }" ).getDeclarations(); //$NON-NLS-1$
 		
 		IASTClassSpecifier classA = (IASTClassSpecifier) i.next();
 		assertFalse( i.hasNext() );
@@ -318,7 +318,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 	
 	public void testConstructorsDestructors() throws Exception
 	{
-		Iterator i = parse( "class A { A();  ~A();  };  A::A(){}  A::~A(){}" ).getDeclarations();
+		Iterator i = parse( "class A { A();  ~A();  };  A::A(){}  A::~A(){}" ).getDeclarations(); //$NON-NLS-1$
 		
 		IASTClassSpecifier classA = (IASTClassSpecifier) i.next();
 		
@@ -328,16 +328,16 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 		assertTrue( i.hasNext() );
 		
 		IASTMethod constructor = (IASTMethod) i.next();
-		assertTrue( constructor.getName().equals( "A" ) );
+		assertTrue( constructor.getName().equals( "A" ) ); //$NON-NLS-1$
 		IASTMethod destructor = (IASTMethod) i.next();
-		assertTrue( destructor.getName().equals( "~A" ) );
+		assertTrue( destructor.getName().equals( "~A" ) ); //$NON-NLS-1$
 		
 		assertFalse( i.hasNext() );
 	}
 	
 	public void testUsingDirectives() throws Exception
 	{
-		Iterator i = parse( "namespace NS { int i; }  using namespace NS;" ).getDeclarations();
+		Iterator i = parse( "namespace NS { int i; }  using namespace NS;" ).getDeclarations(); //$NON-NLS-1$
 		
 		IASTNamespaceDefinition ns = (IASTNamespaceDefinition) i.next();
 		IASTUsingDirective using = (IASTUsingDirective) i.next();
@@ -346,7 +346,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 	
 	public void testUsingDeclaration() throws Exception
 	{
-		Iterator i = parse( "namespace NS{ void f(); void f( int ); };  using NS::f;" ).getDeclarations();
+		Iterator i = parse( "namespace NS{ void f(); void f( int ); };  using NS::f;" ).getDeclarations(); //$NON-NLS-1$
 		
 		IASTNamespaceDefinition ns = (IASTNamespaceDefinition) i.next();
 		IASTUsingDeclaration using = (IASTUsingDeclaration) i.next();

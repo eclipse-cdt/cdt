@@ -2176,17 +2176,17 @@ public abstract class Parser extends ExpressionParser implements IParser
                             break overallLoop;
                         
                         IToken beforeCVModifier = mark();
-                        IToken cvModifier = null;
+                        IToken [] cvModifiers = new IToken[2];
+                        int numCVModifiers = 0;
                         IToken afterCVModifier = beforeCVModifier;
                         // const-volatile
                         // 2 options: either this is a marker for the method,
                         // or it might be the beginning of old K&R style parameter declaration, see
                         //      void getenv(name) const char * name; {}
                         // This will be determined further below
-                        if (LT(1) == IToken.t_const
-                            || LT(1) == IToken.t_volatile)
+                        while( (LT(1) == IToken.t_const || LT(1) == IToken.t_volatile) && numCVModifiers < 2 )
                         {
-                            cvModifier = consume();
+                            cvModifiers[numCVModifiers++] = consume();
                             afterCVModifier = mark();
                         }
                         //check for throws clause here 
@@ -2259,14 +2259,14 @@ public abstract class Parser extends ExpressionParser implements IParser
                         {
                             // There were C++-specific clauses after const/volatile modifier
                             // Then it is a marker for the method
-                            if (cvModifier != null)
+                            if ( numCVModifiers > 0 )
                             {
-           
-                                if (cvModifier.getType() == IToken.t_const)
-                                    d.setConst(true);
-                                if (cvModifier.getType()
-                                    == IToken.t_volatile)
-                                    d.setVolatile(true);
+                            	for( int i = 0; i < numCVModifiers; i++ ){
+	                            	if( cvModifiers[i].getType() == IToken.t_const )
+	                                    d.setConst(true);
+	                                if( cvModifiers[i].getType() == IToken.t_volatile )
+                                    	d.setVolatile(true);
+                            	}
                             }
                             afterCVModifier = mark();
                             // In this case (method) we can't expect K&R parameter declarations,

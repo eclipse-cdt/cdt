@@ -2450,7 +2450,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     protected void setMethodTypeInfoBits(IParameterizedSymbol symbol, boolean isConst, boolean isVolatile, boolean isVirtual, boolean isExplicit)
     {
         symbol.getTypeInfo().setBit( isConst, TypeInfo.isConst );
-		symbol.getTypeInfo().setBit( isVolatile, TypeInfo.isConst );
+		symbol.getTypeInfo().setBit( isVolatile, TypeInfo.isVolatile );
 		symbol.getTypeInfo().setBit( isVirtual, TypeInfo.isVirtual );
 		symbol.getTypeInfo().setBit( isExplicit, TypeInfo.isExplicit );
     }

@@ -56,4 +56,22 @@ public abstract class ASTSymbol extends ASTSymbolOwner implements ISymbolOwner, 
 	
 		return null;
     }
+    
+    public boolean shouldFilterLookupResult( ISymbol sym ){
+    	TypeInfo info = null;
+    	try{
+			info = getSymbol().getTypeInfo().getFinalType();
+		} catch( ParserSymbolTableError e ){
+			return true;
+		}
+		
+		if( info.checkBit( TypeInfo.isConst ) && !sym.getTypeInfo().checkBit( TypeInfo.isConst ) )
+			return true;
+		
+		if( info.checkBit( TypeInfo.isVolatile ) && !sym.getTypeInfo().checkBit( TypeInfo.isVolatile ) )
+			return true;
+		
+		return false;
+		
+    }
 }

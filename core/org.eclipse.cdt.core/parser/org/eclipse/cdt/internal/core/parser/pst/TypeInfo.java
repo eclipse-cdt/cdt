@@ -245,16 +245,6 @@ public class TypeInfo {
 												"",         //$NON-NLS-1$   t_templateParameter
 												"typename"  //$NON-NLS-1$   t_typeName
 											 };
-	//Partial ordering :
-	// none		< const
-	// none     < volatile
-	// none		< const volatile
-	// const	< const volatile
-	// volatile < const volatile
-	public static final int cvConst 		= 2;
-	public static final int cvVolatile 		= 3;
-	public static final int cvConstVolatile = 5;
-
 		// Convenience methods
 	public void setBit(boolean b, int mask){
 		if( b ){

@@ -47,7 +47,7 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testTemplateClassDeclaration() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "template < class T > class A {  T t;  }; " );
+		writer.write( "template < class T > class A {  T t;  }; " ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -55,31 +55,31 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		Iterator params = template.getTemplateParameters();
 		
 		IASTTemplateParameter T = (IASTTemplateParameter) params.next();
-		assertEquals( T.getIdentifier(), "T" );
+		assertEquals( T.getIdentifier(), "T" ); //$NON-NLS-1$
 		assertFalse( params.hasNext() );
 		assertFalse( i.hasNext() );
 		
 		i = getDeclarations( template );
 
 		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		assertEquals( classA.getName(), "A" );
+		assertEquals( classA.getName(), "A" ); //$NON-NLS-1$
 		
 		assertFalse( i.hasNext() );
 		
 		i = getDeclarations( classA );
 		
 		IASTField t = (IASTField) i.next();
-		assertEquals( t.getName(), "t" );
+		assertEquals( t.getName(), "t" ); //$NON-NLS-1$
 
 		IASTSimpleTypeSpecifier specifier = (IASTSimpleTypeSpecifier) t.getAbstractDeclaration().getTypeSpecifier();
-		assertEquals( specifier.getTypename(), "T" );
+		assertEquals( specifier.getTypename(), "T" ); //$NON-NLS-1$
 		//assertEquals( specifier.getTypeSpecifier(), T ); //TODO uncomment when bug 54029 is fixed
 	}
 	
 	public void testTemplateFunction() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "template < class T > void f( T t ){} " );
+		writer.write( "template < class T > void f( T t ){} " ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -88,27 +88,27 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		Iterator params = template.getTemplateParameters();
 		
 		IASTTemplateParameter T = (IASTTemplateParameter) params.next();
-		assertEquals( T.getIdentifier(), "T" );
+		assertEquals( T.getIdentifier(), "T" ); //$NON-NLS-1$
 		assertFalse( params.hasNext() );
 		assertFalse( i.hasNext() );
 		
 		i = getDeclarations( template );
 		IASTFunction f = (IASTFunction) i.next();
-		assertEquals( f.getName(), "f" );
+		assertEquals( f.getName(), "f" ); //$NON-NLS-1$
 		
 		params = f.getParameters();
 		IASTParameterDeclaration t = (IASTParameterDeclaration) params.next();
-		assertEquals( t.getName(), "t" );
+		assertEquals( t.getName(), "t" ); //$NON-NLS-1$
 		IASTSimpleTypeSpecifier typeSpec = (IASTSimpleTypeSpecifier) t.getTypeSpecifier();
-		assertEquals( typeSpec.getTypename(), "T" );
+		assertEquals( typeSpec.getTypename(), "T" ); //$NON-NLS-1$
 		//assertEquals( typeSpec.getTypeSpecifier(), T );  //TODO uncomment when bug 54029 is fixed
 	}
 	
 	public void testTemplateFunctionDefinition() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "template <class T> void f( T t );" );
-		writer.write( "template <class U> void f( U u ) { }" );
+		writer.write( "template <class T> void f( T t );" ); //$NON-NLS-1$
+		writer.write( "template <class U> void f( U u ) { }" ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -117,20 +117,20 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		Iterator params = template.getTemplateParameters();
 		
 		IASTTemplateParameter T = (IASTTemplateParameter) params.next();
-		assertEquals( T.getIdentifier(), "T" );
+		assertEquals( T.getIdentifier(), "T" ); //$NON-NLS-1$
 		assertFalse( params.hasNext() );
 		
 		Iterator tempDecls = getDeclarations( template );
 		IASTFunction f = (IASTFunction) tempDecls.next();
-		assertEquals( f.getName(), "f" );
+		assertEquals( f.getName(), "f" ); //$NON-NLS-1$
 		assertFalse( f.hasFunctionBody() );
 		assertFalse( tempDecls.hasNext() );
 		
 		params = f.getParameters();
 		IASTParameterDeclaration t = (IASTParameterDeclaration) params.next();
-		assertEquals( t.getName(), "t" );
+		assertEquals( t.getName(), "t" ); //$NON-NLS-1$
 		IASTSimpleTypeSpecifier typeSpec = (IASTSimpleTypeSpecifier) t.getTypeSpecifier();
-		assertEquals( typeSpec.getTypename(), "T" );
+		assertEquals( typeSpec.getTypename(), "T" ); //$NON-NLS-1$
 		//assertEquals( typeSpec.getTypeSpecifier(), T );  //TODO uncomment when bug 54029 is fixed
 		
 		IASTTemplateDeclaration template2 = (IASTTemplateDeclaration) i.next();
@@ -138,19 +138,19 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		params = template2.getTemplateParameters();
 		
 		IASTTemplateParameter U = (IASTTemplateParameter) params.next();
-		assertEquals( U.getIdentifier(), "U" );
+		assertEquals( U.getIdentifier(), "U" ); //$NON-NLS-1$
 		assertFalse( params.hasNext() );
 		
 		tempDecls = getDeclarations( template2 );
 		IASTFunction f2 = (IASTFunction) tempDecls.next();
-		assertEquals( f2.getName(), "f" );
+		assertEquals( f2.getName(), "f" ); //$NON-NLS-1$
 		assertTrue( f2.previouslyDeclared() );
 		
 		params = f2.getParameters();
 		IASTParameterDeclaration u = (IASTParameterDeclaration) params.next();
-		assertEquals( u.getName(), "u" );
+		assertEquals( u.getName(), "u" ); //$NON-NLS-1$
 		typeSpec = (IASTSimpleTypeSpecifier) u.getTypeSpecifier();
-		assertEquals( typeSpec.getTypename(), "U" );
+		assertEquals( typeSpec.getTypename(), "U" ); //$NON-NLS-1$
 		//assertEquals( typeSpec.getTypeSpecifier(), U );  //TODO uncomment when bug 54029 is fixed
 		
 		assertFalse( i.hasNext() );
@@ -158,12 +158,12 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	
 	public void testClassMemberTemplate() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write( "namespace N { " );
-		writer.write( "   class A { " );
-		writer.write( "      template < class T > T f();" );
-		writer.write( "   }; " );
-		writer.write( "}" );
-		writer.write( "template <class U> U N::A::f() {} " );
+		writer.write( "namespace N { " ); //$NON-NLS-1$
+		writer.write( "   class A { " ); //$NON-NLS-1$
+		writer.write( "      template < class T > T f();" ); //$NON-NLS-1$
+		writer.write( "   }; " ); //$NON-NLS-1$
+		writer.write( "}" ); //$NON-NLS-1$
+		writer.write( "template <class U> U N::A::f() {} " ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -185,7 +185,7 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		i2 = getDeclarations( template );
 		
 		IASTMethod f = (IASTMethod) i2.next();
-		assertEquals( ((IASTSimpleTypeSpecifier)f.getReturnType().getTypeSpecifier()).getTypename(), "T" );
+		assertEquals( ((IASTSimpleTypeSpecifier)f.getReturnType().getTypeSpecifier()).getTypename(), "T" ); //$NON-NLS-1$
 		assertFalse( i2.hasNext() );
 		
 		IASTTemplateDeclaration template2 = (IASTTemplateDeclaration) i.next();
@@ -197,8 +197,8 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		i2 = getDeclarations( template2 );
 		
 		IASTMethod f2 = (IASTMethod) i2.next();
-		assertEquals( ((IASTSimpleTypeSpecifier)f2.getReturnType().getTypeSpecifier()).getTypename(), "U" );
-		assertQualifiedName( f2.getFullyQualifiedName(), new String [] { "N", "A", "f" } );
+		assertEquals( ((IASTSimpleTypeSpecifier)f2.getReturnType().getTypeSpecifier()).getTypename(), "U" ); //$NON-NLS-1$
+		assertQualifiedName( f2.getFullyQualifiedName(), new String [] { "N", "A", "f" } ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertTrue( f2.previouslyDeclared() );
 		assertFalse( i2.hasNext() );
 	}
@@ -206,13 +206,13 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testOverloadedFunctionTemplates() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( " template < class T > void f ( T )   {} " );
-		writer.write( " template < class T > void f ( T * ) {} " );
-		writer.write( " int * p;" );
-		writer.write( " void main () {" );
-		writer.write( "    f( p );" );
-		writer.write( "    f( *p );" );
-		writer.write( " }" );
+		writer.write( " template < class T > void f ( T )   {} " ); //$NON-NLS-1$
+		writer.write( " template < class T > void f ( T * ) {} " ); //$NON-NLS-1$
+		writer.write( " int * p;" ); //$NON-NLS-1$
+		writer.write( " void main () {" ); //$NON-NLS-1$
+		writer.write( "    f( p );" ); //$NON-NLS-1$
+		writer.write( "    f( *p );" ); //$NON-NLS-1$
+		writer.write( " }" ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -240,16 +240,16 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testOverloadedFunctionTemplates_2() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write("template< class T > struct A {  };                 \n");
-		writer.write("template< class T > void h( const T & );	//#1     \n");
-		writer.write("template< class T > void h( A<T>& );		//#2     \n");
-		writer.write("void foo() {                                       \n");
-		writer.write("   A<int> z;                                       \n");
-		writer.write("   h( z );  //calls 2                              \n");
+		writer.write("template< class T > struct A {  };                 \n"); //$NON-NLS-1$
+		writer.write("template< class T > void h( const T & );	//#1     \n"); //$NON-NLS-1$
+		writer.write("template< class T > void h( A<T>& );		//#2     \n"); //$NON-NLS-1$
+		writer.write("void foo() {                                       \n"); //$NON-NLS-1$
+		writer.write("   A<int> z;                                       \n"); //$NON-NLS-1$
+		writer.write("   h( z );  //calls 2                              \n"); //$NON-NLS-1$
 		
-		writer.write("   const A<int> z2;                                \n");
-		writer.write("   h( z2 ); //calls 1 because 2 is not callable.   \n");
-		writer.write( "}                                                 \n");
+		writer.write("   const A<int> z2;                                \n"); //$NON-NLS-1$
+		writer.write("   h( z2 ); //calls 1 because 2 is not callable.   \n"); //$NON-NLS-1$
+		writer.write( "}                                                 \n"); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -290,27 +290,27 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testTemplateClassPartialSpecialization() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "template < class T1, class T2, int I > class A {};  //#1\n" );
-		writer.write( "template < class T, int I >            class A < T, T*, I >   {};  //#2\n");
-		writer.write( "template < class T1, class T2, int I > class A < T1*, T2, I > {};  //#3\n");
-		writer.write( "template < class T >                   class A < int, T*, 5 > {};  //#4\n");
-		writer.write( "template < class T1, class T2, int I > class A < T1, T2*, I > {};  //#5\n");
+		writer.write( "template < class T1, class T2, int I > class A {};  //#1\n" ); //$NON-NLS-1$
+		writer.write( "template < class T, int I >            class A < T, T*, I >   {};  //#2\n"); //$NON-NLS-1$
+		writer.write( "template < class T1, class T2, int I > class A < T1*, T2, I > {};  //#3\n"); //$NON-NLS-1$
+		writer.write( "template < class T >                   class A < int, T*, 5 > {};  //#4\n"); //$NON-NLS-1$
+		writer.write( "template < class T1, class T2, int I > class A < T1, T2*, I > {};  //#5\n"); //$NON-NLS-1$
 
-		writer.write( "A <int, int, 1>   a1;		//uses #1 \n");
-		writer.write( "A <int, int*, 1>  a2;		//uses #2, T is int, I is 1 \n");
-		writer.write( "A <int, char*, 5> a4;		//uses #4, T is char \n");
-		writer.write( "A <int, char*, 1> a5;		//uses #5, T is int, T2 is char, I is1 \n");
+		writer.write( "A <int, int, 1>   a1;		//uses #1 \n"); //$NON-NLS-1$
+		writer.write( "A <int, int*, 1>  a2;		//uses #2, T is int, I is 1 \n"); //$NON-NLS-1$
+		writer.write( "A <int, char*, 5> a4;		//uses #4, T is char \n"); //$NON-NLS-1$
+		writer.write( "A <int, char*, 1> a5;		//uses #5, T is int, T2 is char, I is1 \n"); //$NON-NLS-1$
 
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
-		writer.write( "  A <int*, int*, 2> amgiguous; //ambiguous, matches #3 & #5 \n");
+		writer.write( "  A <int*, int*, 2> amgiguous; //ambiguous, matches #3 & #5 \n"); //$NON-NLS-1$
 		
 		try{
 			//we expect this parse to fail because of the ambiguity in the last line
 			parse( writer.toString() );
 			assertFalse( true );
 		} catch ( ParserException e ){
-			assertEquals( e.getMessage(), "FAILURE" );
+			assertEquals( e.getMessage(), "FAILURE" ); //$NON-NLS-1$
 		}
 	 
 		IASTTemplateDeclaration template1 = (IASTTemplateDeclaration) i.next();
@@ -342,14 +342,14 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testTemplateInstanceAsBaseClause() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "template< class T > class A { T t; };  \n" );
-		writer.write( "class B : public A< int > {};          \n" );
-		writer.write( "void f( int );                         \n" );
+		writer.write( "template< class T > class A { T t; };  \n" ); //$NON-NLS-1$
+		writer.write( "class B : public A< int > {};          \n" ); //$NON-NLS-1$
+		writer.write( "void f( int );                         \n" ); //$NON-NLS-1$
 		
-		writer.write( "void main(){                           \n" );
-		writer.write( "   B b;                                \n" );
-		writer.write( "   f( b.t );                           \n" );  //if this function call is good, it implies that b.t is type int
-		writer.write( "}                                      \n" );
+		writer.write( "void main(){                           \n" ); //$NON-NLS-1$
+		writer.write( "   B b;                                \n" ); //$NON-NLS-1$
+		writer.write( "   f( b.t );                           \n" );  //if this function call is good, it implies that b.t is type int //$NON-NLS-1$
+		writer.write( "}                                      \n" ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -381,13 +381,13 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testTemplateParameterAsBaseClause() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "template < class T > class A : public T {};  \n" );
-		writer.write( "class B { int i; };                           \n" );
-		writer.write( "void main() {                                \n" );
-		writer.write( "   A<B> a;                                   \n" );
-		writer.write( "   a.i;                                      \n" );
-		writer.write( "}                                            \n" );
-		writer.write( "\n" );
+		writer.write( "template < class T > class A : public T {};  \n" ); //$NON-NLS-1$
+		writer.write( "class B { int i; };                           \n" ); //$NON-NLS-1$
+		writer.write( "void main() {                                \n" ); //$NON-NLS-1$
+		writer.write( "   A<B> a;                                   \n" ); //$NON-NLS-1$
+		writer.write( "   a.i;                                      \n" ); //$NON-NLS-1$
+		writer.write( "}                                            \n" ); //$NON-NLS-1$
+		writer.write( "\n" ); //$NON-NLS-1$
 		
 		Iterator iter = parse( writer.toString() ).getDeclarations();
 		
@@ -410,12 +410,12 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 
 	public void testTypedefedTemplate() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write( "template < class T > class _A{ int x; }; \n" );
-		writer.write( "typedef _A < char >  A;                  \n" );
-		writer.write( "void foo() {                             \n" );
-		writer.write( "   A a;                                  \n" );
-		writer.write( "   a.x;                                  \n" );
-		writer.write( "}                                        \n" );
+		writer.write( "template < class T > class _A{ int x; }; \n" ); //$NON-NLS-1$
+		writer.write( "typedef _A < char >  A;                  \n" ); //$NON-NLS-1$
+		writer.write( "void foo() {                             \n" ); //$NON-NLS-1$
+		writer.write( "   A a;                                  \n" ); //$NON-NLS-1$
+		writer.write( "   a.x;                                  \n" ); //$NON-NLS-1$
+		writer.write( "}                                        \n" ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -432,22 +432,22 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	
 	public void testTypedefedTemplate_2() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write( "template < class T > struct A { T x; };      \n" );
-		writer.write( "template < class U > struct B {              \n" );
-		writer.write( "   typedef A< U > AU;                        \n" );
-		writer.write( "   void f( U );                              \n" );
-		writer.write( "   void f( char );                           \n" );
-		writer.write( "   void g(){                                 \n" );
-		writer.write( "      AU au;                                 \n" );
-		writer.write( "      f( au.x );                             \n" );
-		writer.write( "   }                                         \n" );
-		writer.write( "};                                           \n" );
-		writer.write( "void f2( int );                              \n" );
-		writer.write( "void f2( char );                             \n" );
-		writer.write( "void h(){                                    \n" );
-		writer.write( "   B< int >::AU b;                           \n" );
-		writer.write( "   f2( b.x );                                \n" );
-		writer.write( "}                                            \n" );
+		writer.write( "template < class T > struct A { T x; };      \n" ); //$NON-NLS-1$
+		writer.write( "template < class U > struct B {              \n" ); //$NON-NLS-1$
+		writer.write( "   typedef A< U > AU;                        \n" ); //$NON-NLS-1$
+		writer.write( "   void f( U );                              \n" ); //$NON-NLS-1$
+		writer.write( "   void f( char );                           \n" ); //$NON-NLS-1$
+		writer.write( "   void g(){                                 \n" ); //$NON-NLS-1$
+		writer.write( "      AU au;                                 \n" ); //$NON-NLS-1$
+		writer.write( "      f( au.x );                             \n" ); //$NON-NLS-1$
+		writer.write( "   }                                         \n" ); //$NON-NLS-1$
+		writer.write( "};                                           \n" ); //$NON-NLS-1$
+		writer.write( "void f2( int );                              \n" ); //$NON-NLS-1$
+		writer.write( "void f2( char );                             \n" ); //$NON-NLS-1$
+		writer.write( "void h(){                                    \n" ); //$NON-NLS-1$
+		writer.write( "   B< int >::AU b;                           \n" ); //$NON-NLS-1$
+		writer.write( "   f2( b.x );                                \n" ); //$NON-NLS-1$
+		writer.write( "}                                            \n" ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -485,8 +485,8 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	
 	public void testInstantiatingDeferredInstances() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write( "template < class T > struct A { A < T > next; };  \n" );
-		writer.write( "A< int > a; \n" );
+		writer.write( "template < class T > struct A { A < T > next; };  \n" ); //$NON-NLS-1$
+		writer.write( "A< int > a; \n" ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -501,18 +501,18 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	
 	public void testTemplateArgumentDeduction() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write( "template< class T > struct B {};                   \n" );
-		writer.write( "template< class T > struct D : public B < T > {};  \n" );
-		writer.write( "struct D2 : public B< int > {};                    \n" );
-		writer.write( "template< class T > T f( B<T> & ) {}               \n" );
-		writer.write( "void test( int );                                  \n" );
-		writer.write( "void test( char );                                 \n" );
-		writer.write( "void main() {                                      \n" );
-		writer.write( "   D<int> d;                                       \n" );
-		writer.write( "   D2     d2;                                      \n" );
-		writer.write( "   test( f( d ) );                                 \n" );
-		writer.write( "   test( f( d2 ) );                                \n" );
-		writer.write( "}                                                  \n" );
+		writer.write( "template< class T > struct B {};                   \n" ); //$NON-NLS-1$
+		writer.write( "template< class T > struct D : public B < T > {};  \n" ); //$NON-NLS-1$
+		writer.write( "struct D2 : public B< int > {};                    \n" ); //$NON-NLS-1$
+		writer.write( "template< class T > T f( B<T> & ) {}               \n" ); //$NON-NLS-1$
+		writer.write( "void test( int );                                  \n" ); //$NON-NLS-1$
+		writer.write( "void test( char );                                 \n" ); //$NON-NLS-1$
+		writer.write( "void main() {                                      \n" ); //$NON-NLS-1$
+		writer.write( "   D<int> d;                                       \n" ); //$NON-NLS-1$
+		writer.write( "   D2     d2;                                      \n" ); //$NON-NLS-1$
+		writer.write( "   test( f( d ) );                                 \n" ); //$NON-NLS-1$
+		writer.write( "   test( f( d2 ) );                                \n" ); //$NON-NLS-1$
+		writer.write( "}                                                  \n" ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -529,11 +529,11 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	}
 	public void testClassTemplateStaticMemberDefinition() throws Exception {
 		Writer writer = new StringWriter();
-		writer.write( "template< class T > class A{                      \n" );
-		writer.write( "   typedef T * PT;                                \n" );
-		writer.write( "   static T member;                               \n" );
-		writer.write( "};                                                \n" );
-		writer.write( "template< class T> A<T>::PT A<T>::member = null;  \n" );
+		writer.write( "template< class T > class A{                      \n" ); //$NON-NLS-1$
+		writer.write( "   typedef T * PT;                                \n" ); //$NON-NLS-1$
+		writer.write( "   static T member;                               \n" ); //$NON-NLS-1$
+		writer.write( "};                                                \n" ); //$NON-NLS-1$
+		writer.write( "template< class T> A<T>::PT A<T>::member = null;  \n" ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -543,7 +543,7 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		IASTTemplateParameter T2 = (IASTTemplateParameter) template2.getTemplateParameters().next();
 		
 		IASTField member = (IASTField) getDeclarations( template2 ).next();
-		assertEquals( member.getName(), "member" );
+		assertEquals( member.getName(), "member" ); //$NON-NLS-1$
 		
 		assertReferenceTask( new Task( T1, 2, false, false ) );
 		assertReferenceTask( new Task( T2, 2, false, false ) );
@@ -551,23 +551,23 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	
 	public void testTemplateTemplateParameter() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write( " template< class T > class A {                    ");
-		writer.write( "    int x;                                        ");
-		writer.write( " };                                               ");
-		writer.write( " template < class T > class A < T * > {           ");
-		writer.write( "    long x;                                       ");
-		writer.write( " };                                               ");
-		writer.write( " template< template< class U > class V > class C{ ");
-		writer.write( "    V< int > y;                                   ");
-		writer.write( "    V< int * > z;                                 ");
-		writer.write( " };                                               ");
-		writer.write( " void f( int );                                   ");
-		writer.write( " void f( long );                                  ");
-		writer.write( " void main() {                                    ");
-		writer.write( "    C< A > c;                                     ");
-		writer.write( "    f( c.y.x );                                   ");
-		writer.write( "    f( c.z.x );                                   ");
-		writer.write( " }                                                ");
+		writer.write( " template< class T > class A {                    "); //$NON-NLS-1$
+		writer.write( "    int x;                                        "); //$NON-NLS-1$
+		writer.write( " };                                               "); //$NON-NLS-1$
+		writer.write( " template < class T > class A < T * > {           "); //$NON-NLS-1$
+		writer.write( "    long x;                                       "); //$NON-NLS-1$
+		writer.write( " };                                               "); //$NON-NLS-1$
+		writer.write( " template< template< class U > class V > class C{ "); //$NON-NLS-1$
+		writer.write( "    V< int > y;                                   "); //$NON-NLS-1$
+		writer.write( "    V< int * > z;                                 "); //$NON-NLS-1$
+		writer.write( " };                                               "); //$NON-NLS-1$
+		writer.write( " void f( int );                                   "); //$NON-NLS-1$
+		writer.write( " void f( long );                                  "); //$NON-NLS-1$
+		writer.write( " void main() {                                    "); //$NON-NLS-1$
+		writer.write( "    C< A > c;                                     "); //$NON-NLS-1$
+		writer.write( "    f( c.y.x );                                   "); //$NON-NLS-1$
+		writer.write( "    f( c.z.x );                                   "); //$NON-NLS-1$
+		writer.write( " }                                                "); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -589,7 +589,7 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	}
 	
 	public void testBug56834() throws Exception{
-		Iterator i = parse( "template < class T, class U = T > class A;" ).getDeclarations();
+		Iterator i = parse( "template < class T, class U = T > class A;" ).getDeclarations(); //$NON-NLS-1$
 		
 		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
 		
@@ -602,7 +602,7 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	}
 	
 	public void testDefaultTemplateParameters() throws Exception {
-		Iterator i = parse( "template < class T = int > class A{};  A<> a;" ).getDeclarations();
+		Iterator i = parse( "template < class T = int > class A{};  A<> a;" ).getDeclarations(); //$NON-NLS-1$
 		
 		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
 		IASTVariable a = (IASTVariable) i.next();
@@ -610,8 +610,8 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	
 	public void testBug56834WithInstantiation() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write( "template< class T, class U = T > class A {};" );
-		writer.write( "A< char > a;" );
+		writer.write( "template< class T, class U = T > class A {};" ); //$NON-NLS-1$
+		writer.write( "A< char > a;" ); //$NON-NLS-1$
 		Iterator i = parse(  writer.toString() ).getDeclarations();
 		
 		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
@@ -620,9 +620,9 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	
 	public void testDefaultTemplateParameterWithDeferedInstance() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write( "template < class T > class A;  \n" );
-		writer.write( "template < class U, class V = A< U > > class B; \n" );
-		writer.write( "B< int > b;" );
+		writer.write( "template < class T > class A;  \n" ); //$NON-NLS-1$
+		writer.write( "template < class U, class V = A< U > > class B; \n" ); //$NON-NLS-1$
+		writer.write( "B< int > b;" ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -634,9 +634,9 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testExplicitInstantiation() throws Exception{
 		
 		Writer writer = new StringWriter();
-		writer.write( "template < class T > class A { }; " );
-		writer.write( "template class A< int >; " );
-		writer.write( "A< int > a; " );
+		writer.write( "template < class T > class A { }; " ); //$NON-NLS-1$
+		writer.write( "template class A< int >; " ); //$NON-NLS-1$
+		writer.write( "A< int > a; " ); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -651,12 +651,12 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testTemplateParametersInExpressions() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "template < typename _Tp > power( _Tp, unsigned int );     \n" );
-		writer.write( "template < typename _Tp > _Tp helper( _Tp __x, int _n )   \n" );
-		writer.write( "{ " );
-		writer.write( "   return n < 0 ? _Tp( 1 ) / power( __x, -__n )           \n" );
-		writer.write( "                : power( __x, __n );                      \n" );
-		writer.write( "} " );
+		writer.write( "template < typename _Tp > power( _Tp, unsigned int );     \n" ); //$NON-NLS-1$
+		writer.write( "template < typename _Tp > _Tp helper( _Tp __x, int _n )   \n" ); //$NON-NLS-1$
+		writer.write( "{ " ); //$NON-NLS-1$
+		writer.write( "   return n < 0 ? _Tp( 1 ) / power( __x, -__n )           \n" ); //$NON-NLS-1$
+		writer.write( "                : power( __x, __n );                      \n" ); //$NON-NLS-1$
+		writer.write( "} " ); //$NON-NLS-1$
 		
 		parse( writer.toString () );
 	}
@@ -664,11 +664,11 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testBug44338() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "template < bool T > class A {   ");
-		writer.write( "   void foo( bool b = T );      ");
-		writer.write( "};                              ");
-		writer.write( "typedef A< 1 < 2 > A_TRUE;      ");
-		writer.write( "typedef A< ( 1 > 2 ) > A_FALSE; ");
+		writer.write( "template < bool T > class A {   "); //$NON-NLS-1$
+		writer.write( "   void foo( bool b = T );      "); //$NON-NLS-1$
+		writer.write( "};                              "); //$NON-NLS-1$
+		writer.write( "typedef A< 1 < 2 > A_TRUE;      "); //$NON-NLS-1$
+		writer.write( "typedef A< ( 1 > 2 ) > A_FALSE; "); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -680,10 +680,10 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testBug44338_2() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "template < int i > class X {};   ");
-		writer.write( "template < class T > class Y {}; ");
-		writer.write( "Y< X < 1 > > y1;                 ");
-		writer.write( "Y< X < 6 >> 1 > > y2;            ");
+		writer.write( "template < int i > class X {};   "); //$NON-NLS-1$
+		writer.write( "template < class T > class Y {}; "); //$NON-NLS-1$
+		writer.write( "Y< X < 1 > > y1;                 "); //$NON-NLS-1$
+		writer.write( "Y< X < 6 >> 1 > > y2;            "); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -697,21 +697,21 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	{
 		try{
 			//this is expected to fail the parse
-			parse( "template < int i > class X {};  X< 1 > 2 > x; " );
+			parse( "template < int i > class X {};  X< 1 > 2 > x; " ); //$NON-NLS-1$
 			assertTrue( false );
 		} catch ( ParserException e ){
-			assertTrue( e.getMessage().equals( "FAILURE" ) );
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
 		}
 	}
 	
 	public void testBug57754() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write("template < class T > class A{                      ");
-		writer.write("   typedef int _type;                              ");
-		writer.write("   void f( _type, T );                             ");
-		writer.write("};                                                 ");
-		writer.write("template < class T > void A< T >::f( _type, T ) {} ");
+		writer.write("template < class T > class A{                      "); //$NON-NLS-1$
+		writer.write("   typedef int _type;                              "); //$NON-NLS-1$
+		writer.write("   void f( _type, T );                             "); //$NON-NLS-1$
+		writer.write("};                                                 "); //$NON-NLS-1$
+		writer.write("template < class T > void A< T >::f( _type, T ) {} "); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -727,12 +727,12 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testContructorsAndExplicitSpecialization() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write("template < class T > class A {  ");
-		writer.write("   A();                         ");
-		writer.write("   A( int );                    ");
-		writer.write("   ~A();                        ");
-		writer.write("};                              ");
-		writer.write("template <> A< char >::~A();    ");
+		writer.write("template < class T > class A {  "); //$NON-NLS-1$
+		writer.write("   A();                         "); //$NON-NLS-1$
+		writer.write("   A( int );                    "); //$NON-NLS-1$
+		writer.write("   ~A();                        "); //$NON-NLS-1$
+		writer.write("};                              "); //$NON-NLS-1$
+		writer.write("template <> A< char >::~A();    "); //$NON-NLS-1$
 
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -743,16 +743,16 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testTemplateMemberTemplateDefinition() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "template< typename _Tp >  						");
-		writer.write( "class list										");
-		writer.write( "{												");
-		writer.write( "   template<typename _S> void merge(list&, _S);  ");
-		writer.write( "};												");        
+		writer.write( "template< typename _Tp >  						"); //$NON-NLS-1$
+		writer.write( "class list										"); //$NON-NLS-1$
+		writer.write( "{												"); //$NON-NLS-1$
+		writer.write( "   template<typename _S> void merge(list&, _S);  "); //$NON-NLS-1$
+		writer.write( "};												");         //$NON-NLS-1$
 	
-		writer.write( "template < typename _Tp >						");
-		writer.write( "template < typename _S  >						");
-		writer.write( "void list<_Tp>::merge(list<_Tp>& __x, _S __comp)	");
-		writer.write( "{}												");
+		writer.write( "template < typename _Tp >						"); //$NON-NLS-1$
+		writer.write( "template < typename _S  >						"); //$NON-NLS-1$
+		writer.write( "void list<_Tp>::merge(list<_Tp>& __x, _S __comp)	"); //$NON-NLS-1$
+		writer.write( "{}												"); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -763,18 +763,18 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void test_14_7_3__5_ExplicitSpecialization() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write("template< class T > struct A {  ");
-		writer.write("   void f( T ) {}               ");
-		writer.write("};                              ");
-		writer.write("template <> struct A< int >{    ");
-		writer.write("   void f( int );               ");
-		writer.write("};                               ");
-		writer.write("void A< int >::f( int ){ }      ");
+		writer.write("template< class T > struct A {  "); //$NON-NLS-1$
+		writer.write("   void f( T ) {}               "); //$NON-NLS-1$
+		writer.write("};                              "); //$NON-NLS-1$
+		writer.write("template <> struct A< int >{    "); //$NON-NLS-1$
+		writer.write("   void f( int );               "); //$NON-NLS-1$
+		writer.write("};                               "); //$NON-NLS-1$
+		writer.write("void A< int >::f( int ){ }      "); //$NON-NLS-1$
 		
-		writer.write("void main(){                    ");
-		writer.write("   A<int> a;                    ");
-		writer.write("   a.f( 1 );                    ");
-		writer.write("}                               ");
+		writer.write("void main(){                    "); //$NON-NLS-1$
+		writer.write("   A<int> a;                    "); //$NON-NLS-1$
+		writer.write("   a.f( 1 );                    "); //$NON-NLS-1$
+		writer.write("}                               "); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -794,15 +794,15 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void test_14_7_3__11_ExplicitSpecializationArgumentDeduction() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write("template < class T > class Array { };             ");
-		writer.write("template < class T > void sort( Array< T > & );   ");
-		writer.write("template<> void sort( Array< int > & ){}          ");
-		writer.write("void f(){                                         ");
-		writer.write("   Array<int> a1;                                 ");
-		writer.write("   Array<char> a2;                                ");
-		writer.write("   sort( a1 );                                    ");
-		writer.write("   sort( a2 );                                    ");
-		writer.write("}                                                 ");
+		writer.write("template < class T > class Array { };             "); //$NON-NLS-1$
+		writer.write("template < class T > void sort( Array< T > & );   "); //$NON-NLS-1$
+		writer.write("template<> void sort( Array< int > & ){}          "); //$NON-NLS-1$
+		writer.write("void f(){                                         "); //$NON-NLS-1$
+		writer.write("   Array<int> a1;                                 "); //$NON-NLS-1$
+		writer.write("   Array<char> a2;                                "); //$NON-NLS-1$
+		writer.write("   sort( a1 );                                    "); //$NON-NLS-1$
+		writer.write("   sort( a2 );                                    "); //$NON-NLS-1$
+		writer.write("}                                                 "); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -820,13 +820,13 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	
 	public void test_14_8_1__2_ExplicitArgumentSpecification() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write("void f( int ){}                    //#1   \n");
-		writer.write("template < class T > void f( T ){} //#2   \n");
-		writer.write("int main(){                               \n");
-		writer.write("    f( 1 );      //calls #1               \n");
-		writer.write("    f<int>( 1 ); //calls #2               \n");
-		writer.write("    f<>   ( 1 ); //calls #2               \n");
-		writer.write("}                                         \n");
+		writer.write("void f( int ){}                    //#1   \n"); //$NON-NLS-1$
+		writer.write("template < class T > void f( T ){} //#2   \n"); //$NON-NLS-1$
+		writer.write("int main(){                               \n"); //$NON-NLS-1$
+		writer.write("    f( 1 );      //calls #1               \n"); //$NON-NLS-1$
+		writer.write("    f<int>( 1 ); //calls #2               \n"); //$NON-NLS-1$
+		writer.write("    f<>   ( 1 ); //calls #2               \n"); //$NON-NLS-1$
+		writer.write("}                                         \n"); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -841,33 +841,33 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 
 	public void test_14_7_3__12_ExplicitSpecializationOverloadedFunction() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write("template< class T > void f( T );   ");
-		writer.write("template< class T > void f( T * ); ");
-		writer.write("template <> void f< int*>( int * );");
-		writer.write("template <> void f< int >( int * );");
-		writer.write("template <> void f( char );        ");
+		writer.write("template< class T > void f( T );   "); //$NON-NLS-1$
+		writer.write("template< class T > void f( T * ); "); //$NON-NLS-1$
+		writer.write("template <> void f< int*>( int * );"); //$NON-NLS-1$
+		writer.write("template <> void f< int >( int * );"); //$NON-NLS-1$
+		writer.write("template <> void f( char );        "); //$NON-NLS-1$
 
 		parse( writer.toString() );
 	}
 	
 	public void testPartialSpecializationDefinitions() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write("template < class T1, class T2 > class A  { void f(); };");
-		writer.write("template < class T > class A < T, T >    { void f(); };");
-		writer.write("template < class T > class A < char, T > { void f(); };");
+		writer.write("template < class T1, class T2 > class A  { void f(); };"); //$NON-NLS-1$
+		writer.write("template < class T > class A < T, T >    { void f(); };"); //$NON-NLS-1$
+		writer.write("template < class T > class A < char, T > { void f(); };"); //$NON-NLS-1$
 		
-		writer.write("template < class U, class V > void A<U, V>::f(){}      ");
-		writer.write("template < class W > void A < W, W >::f(){}            ");
-		writer.write("template < class X > void A < char, X >::f(){}         ");
+		writer.write("template < class U, class V > void A<U, V>::f(){}      "); //$NON-NLS-1$
+		writer.write("template < class W > void A < W, W >::f(){}            "); //$NON-NLS-1$
+		writer.write("template < class X > void A < char, X >::f(){}         "); //$NON-NLS-1$
 		
-		writer.write("void main(){                                           ");
-		writer.write("   A< int, char > a1;                                  ");
-		writer.write("   a1.f();                                             ");
-		writer.write("   A< int, int > a2;                                   ");
-		writer.write("   a2.f();                                             ");
-		writer.write("   A< char, int > a3;                                  ");
-		writer.write("   a3.f();                                             ");
-		writer.write("}                                                      ");
+		writer.write("void main(){                                           "); //$NON-NLS-1$
+		writer.write("   A< int, char > a1;                                  "); //$NON-NLS-1$
+		writer.write("   a1.f();                                             "); //$NON-NLS-1$
+		writer.write("   A< int, int > a2;                                   "); //$NON-NLS-1$
+		writer.write("   a2.f();                                             "); //$NON-NLS-1$
+		writer.write("   A< char, int > a3;                                  "); //$NON-NLS-1$
+		writer.write("   a3.f();                                             "); //$NON-NLS-1$
+		writer.write("}                                                      "); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
@@ -892,20 +892,20 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	
 	public void test_14_5_2__2_MemberFunctionTemplates() throws Exception{
 		Writer writer = new StringWriter();
-		writer.write("template < class T > struct A {                                        ");
-		writer.write("   void f( int );                                                      ");
-		writer.write("   template < class T2 > void f( T2 );                                 ");
-		writer.write("};                                                                     ");
+		writer.write("template < class T > struct A {                                        "); //$NON-NLS-1$
+		writer.write("   void f( int );                                                      "); //$NON-NLS-1$
+		writer.write("   template < class T2 > void f( T2 );                                 "); //$NON-NLS-1$
+		writer.write("};                                                                     "); //$NON-NLS-1$
 		
-		writer.write("template <> void A<int>::f(int) {}  //non-template member            \n");
-		writer.write("template <> template<> void A<int>::f<>( int ) {} //template member  \n");
+		writer.write("template <> void A<int>::f(int) {}  //non-template member            \n"); //$NON-NLS-1$
+		writer.write("template <> template<> void A<int>::f<>( int ) {} //template member  \n"); //$NON-NLS-1$
 		
-		writer.write("int main(){                                                            ");
-		writer.write("   A< int > ac;                                                        ");
-		writer.write("   ac.f( 1 );   //non-template                                       \n");
-		writer.write("   ac.f( 'c' ); //template                                           \n");
-		writer.write("   ac.f<>(1);   //template                                           \n");
-		writer.write("}                                                                      ");
+		writer.write("int main(){                                                            "); //$NON-NLS-1$
+		writer.write("   A< int > ac;                                                        "); //$NON-NLS-1$
+		writer.write("   ac.f( 1 );   //non-template                                       \n"); //$NON-NLS-1$
+		writer.write("   ac.f( 'c' ); //template                                           \n"); //$NON-NLS-1$
+		writer.write("   ac.f<>(1);   //template                                           \n"); //$NON-NLS-1$
+		writer.write("}                                                                      "); //$NON-NLS-1$
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		

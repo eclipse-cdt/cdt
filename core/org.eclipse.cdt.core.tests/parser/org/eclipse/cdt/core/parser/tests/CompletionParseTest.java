@@ -854,4 +854,81 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertTrue( passed );
 		
 	}
+	
+	public void testBug59893() throws Exception
+	{
+		StringWriter writer = new StringWriter();
+		writer.write( "struct A {  	                 \n" ); //$NON-NLS-1$ 
+		writer.write( "   void f1() const volatile;	 \n" ); //$NON-NLS-1$ 
+		writer.write( "   void f2() const;  		 \n" ); //$NON-NLS-1$
+		writer.write( "   void f3() volatile;        \n" ); //$NON-NLS-1$
+		writer.write( "   void f4();                 \n" ); //$NON-NLS-1$
+		writer.write( "};                            \n" ); //$NON-NLS-1$
+		writer.write( "void main( const A& a1 )      \n" ); //$NON-NLS-1$
+		writer.write( "{                             \n" ); //$NON-NLS-1$
+		writer.write( "   const volatile A * a2;     \n" ); //$NON-NLS-1$
+		writer.write( "   const A * a3;              \n" ); //$NON-NLS-1$
+		writer.write( "   volatile A * a4;           \n" ); //$NON-NLS-1$
+		writer.write( "   A * a5;                    \n" ); //$NON-NLS-1$
+		
+		String code = writer.toString();
+		
+		IASTCompletionNode node = parse( code + "a1. ", code.length() + 3 ); //$NON-NLS-1$
+		
+		assertNotNull( node );
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
+				                                                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
+		                                                         node.getCompletionContext() );
+		assertEquals( result.getResultsSize(), 2 );
+		
+		node = parse( code + "a2-> ", code.length() + 4 ); //$NON-NLS-1$
+		assertNotNull( node );
+		result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
+		                                           new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
+		                                           node.getCompletionContext() );
+		assertEquals( result.getResultsSize(), 1 );
+		
+		node = parse( code + "a3-> ", code.length() + 4 ); //$NON-NLS-1$
+		assertNotNull( node );
+		result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
+		                                           new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
+		                                           node.getCompletionContext() );
+		assertEquals( result.getResultsSize(), 2 );
+		
+		node = parse( code + "a4-> ", code.length() + 4 ); //$NON-NLS-1$
+		assertNotNull( node );
+		result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
+		                                           new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
+		                                           node.getCompletionContext() );
+		assertEquals( result.getResultsSize(), 2 );
+		
+		node = parse( code + "a5-> ", code.length() + 4 ); //$NON-NLS-1$
+		assertNotNull( node );
+		result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
+		                                           new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
+		                                           node.getCompletionContext() );
+		assertEquals( result.getResultsSize(), 4 );
+	}
+	
+	public void testBug59893_Expression() throws Exception
+	{
+		StringWriter writer = new StringWriter();
+		writer.write( "struct A {  	                 \n" ); //$NON-NLS-1$ 
+		writer.write( "   void f2() const;  		 \n" ); //$NON-NLS-1$
+		writer.write( "   void f4();                 \n" ); //$NON-NLS-1$
+		writer.write( "};                            \n" ); //$NON-NLS-1$
+		writer.write( "const A * foo(){}             \n" ); //$NON-NLS-1$
+		writer.write( "void main( )                  \n" ); //$NON-NLS-1$
+		writer.write( "{                             \n" ); //$NON-NLS-1$
+		writer.write( "   foo()->SP                  \n" ); //$NON-NLS-1$
+		
+		String code = writer.toString();
+		int index = code.indexOf( "SP" ); //$NON-NLS-1$
+		
+		IASTCompletionNode node = parse( code, index );
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+                                                                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
+				                                                 node.getCompletionContext() );
+		assertEquals( result.getResultsSize(), 1 );
+	}
 }

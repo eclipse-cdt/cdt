@@ -83,6 +83,9 @@ public class ASTNode implements IASTNode {
 			{
 				iter.remove();
 			}
+			
+			if( context != null && ((ASTNode)context).shouldFilterLookupResult( s ) )
+				iter.remove();
 		}
 		
 		SymbolIterator iterator = new SymbolIterator( lookupResults.iterator() );
@@ -124,6 +127,10 @@ public class ASTNode implements IASTNode {
 	 */
 	public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
 		throw new LookupError();
+	}
+	
+	public boolean shouldFilterLookupResult( ISymbol symbol ){
+		return false;
 	}
 
 	private class Result implements ILookupResult{

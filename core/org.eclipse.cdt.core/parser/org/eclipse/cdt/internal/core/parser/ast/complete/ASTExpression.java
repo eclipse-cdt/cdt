@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
 /**
@@ -310,9 +311,10 @@ public class ASTExpression extends ASTNode implements IASTExpression
 		}
 		return stringRepresentation;
 	}
+	
 	public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
 		ExpressionResult result = getResultType();
-		TypeInfo type = (result != null ) ? getResultType().getResult() : null;
+		TypeInfo type = (result != null ) ? result.getResult() : null;
 		
 		if( type != null ){
 			type = type.getFinalType();
@@ -324,7 +326,25 @@ public class ASTExpression extends ASTNode implements IASTExpression
 		}
 				
 		return null;
-	}	/**
+	}	
+	
+	public boolean shouldFilterLookupResult( ISymbol symbol ){
+		ExpressionResult result = getResultType();
+		TypeInfo type = ( result != null ) ? result.getResult() : null;
+		
+		if( type != null ){
+			type = type.getFinalType();
+			if( type.checkBit( TypeInfo.isConst ) && !symbol.getTypeInfo().checkBit( TypeInfo.isConst ) )
+				return true;
+			
+			if( type.checkBit( TypeInfo.isVolatile ) && !symbol.getTypeInfo().checkBit( TypeInfo.isVolatile ) )
+				return true;
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * @param duple
 	 * @return
 	 */

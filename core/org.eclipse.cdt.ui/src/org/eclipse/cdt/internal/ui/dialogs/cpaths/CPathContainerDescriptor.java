@@ -23,10 +23,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 
-public class CPathContainerDescriptor {
+public class CPathContainerDescriptor implements IContainerDescriptor {
 	private IConfigurationElement fConfigElement;
 
-	private static final String ATT_EXTENSION = "CPathContainerPage"; //$NON-NLS-1$
+	private static final String ATT_EXTENSION = "PathContainerPage"; //$NON-NLS-1$
 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$
@@ -75,12 +75,12 @@ public class CPathContainerDescriptor {
 		return false;
 	}
 
-	public static CPathContainerDescriptor[] getDescriptors() {
+	public static IContainerDescriptor[] getDescriptors() {
 		ArrayList containers= new ArrayList();
 		
 		IExtensionPoint extensionPoint = Platform.getPluginRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, ATT_EXTENSION);
 		if (extensionPoint != null) {
-			CPathContainerDescriptor defaultPage= null;
+			IContainerDescriptor defaultPage= null;
 			String defaultPageName= CPathContainerDefaultPage.class.getName();
 			
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();

@@ -30,25 +30,25 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 
 	protected void fixNestingConflicts(List newEntries, List existing, Set modifiedSourceEntries) {
 		for (int i = 0; i < newEntries.size(); i++) {
-			CPListElement curr = (CPListElement) newEntries.get(i);
+			CPElement curr = (CPElement) newEntries.get(i);
 			addExclusionPatterns(curr, existing, modifiedSourceEntries);
 		}
 	}
 
-	private void addExclusionPatterns(CPListElement newEntry, List existing, Set modifiedEntries) {
+	private void addExclusionPatterns(CPElement newEntry, List existing, Set modifiedEntries) {
 		IPath entryPath = newEntry.getPath();
 		for (int i = 0; i < existing.size(); i++) {
-			CPListElement curr = (CPListElement) existing.get(i);
+			CPElement curr = (CPElement) existing.get(i);
 			if (curr.getEntryKind() == IPathEntry.CDT_SOURCE) {
 				IPath currPath = curr.getPath();
 				if (currPath.isPrefixOf(entryPath) && !currPath.equals(entryPath)) {
-					IPath[] exclusionFilters = (IPath[]) curr.getAttribute(CPListElement.EXCLUSION);
+					IPath[] exclusionFilters = (IPath[]) curr.getAttribute(CPElement.EXCLUSION);
 					if (!CoreModelUtil.isExcludedPath(entryPath.removeFirstSegments(1), exclusionFilters)) {
 						IPath pathToExclude = entryPath.removeFirstSegments(currPath.segmentCount()).addTrailingSeparator();
 						IPath[] newExclusionFilters = new IPath[exclusionFilters.length + 1];
 						System.arraycopy(exclusionFilters, 0, newExclusionFilters, 0, exclusionFilters.length);
 						newExclusionFilters[exclusionFilters.length] = pathToExclude;
-						curr.setAttribute(CPListElement.EXCLUSION, newExclusionFilters);
+						curr.setAttribute(CPElement.EXCLUSION, newExclusionFilters);
 						modifiedEntries.add(curr);
 					}
 				}
@@ -67,7 +67,7 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 
 		List cpelements = input;
 		for (int i = 0; i < cpelements.size(); i++) {
-			CPListElement cpe = (CPListElement) cpelements.get(i);
+			CPElement cpe = (CPElement) cpelements.get(i);
 			if (isEntryKind(cpe.getEntryKind())) {
 				filtered.add(cpe);
 			}

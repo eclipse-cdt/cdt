@@ -77,7 +77,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		List entries = new ArrayList();
 
 		for (int i = 0; i < nElements; i++) {
-			CPListElement currElement = (CPListElement) elements.get(i);
+			CPElement currElement = (CPElement) elements.get(i);
 			entries.add(currElement.getPathEntry());
 		}
 		entries.addAll(fFilteredOut);
@@ -128,7 +128,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		for (int i = 0; i < cPathEntries.length; i++) {
 			IPathEntry curr = cPathEntries[i];
 			if (contains(types, curr.getEntryKind())) {
-				newCPath.add(CPListElement.createFromExisting(curr, fCurrCProject));
+				newCPath.add(CPElement.createFromExisting(curr, fCurrCProject));
 			} else {
 				fFilteredOut.add(curr);
 			}
@@ -155,7 +155,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		int nElements = getCPaths().size();
 		buf.append('[').append(nElements).append(']');
 		for (int i = 0; i < nElements; i++) {
-			CPListElement elem = (CPListElement) getCPaths().get(i);
+			CPElement elem = (CPElement) getCPaths().get(i);
 			elem.appendEncodedSettings(buf);
 		}
 		return buf.toString();
@@ -232,7 +232,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		IPathEntry[] entries = new IPathEntry[elements.size()];
 
 		for (int i = elements.size() - 1; i >= 0; i--) {
-			CPListElement currElement = (CPListElement) elements.get(i);
+			CPElement currElement = (CPElement) elements.get(i);
 			entries[i] = currElement.getPathEntry();
 		}
 
@@ -274,7 +274,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 		// create and set the paths
 		for (int i = 0; i < cPathEntries.size(); i++) {
-			CPListElement entry = ((CPListElement) cPathEntries.get(i));
+			CPElement entry = ((CPElement) cPathEntries.get(i));			
 			IResource res = entry.getResource();
 			if ((res instanceof IFolder) && !res.exists()) {
 				CoreUtility.createFolder((IFolder) res, true, true, null);

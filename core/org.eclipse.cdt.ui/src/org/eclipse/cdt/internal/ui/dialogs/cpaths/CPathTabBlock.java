@@ -60,7 +60,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		};
 		BuildPathAdapter adapter = new BuildPathAdapter();
 
-		fCPathList = new CheckedListDialogField(null, buttonLabels, new CPListLabelProvider());
+		fCPathList = new CheckedListDialogField(null, buttonLabels, new CPElementLabelProvider());
 		fCPathList.setDialogFieldListener(adapter);
 		fCPathList.setLabelText(CPathEntryMessages.getString("CPathsBlock.path.label")); //$NON-NLS-1$
 		fCPathList.setUpButtonIndex(0);
@@ -107,7 +107,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 
 		List exportedEntries = new ArrayList();
 		for (int i = 0; i < cPaths.size(); i++) {
-			CPListElement curr = (CPListElement) cPaths.get(i);
+			CPElement curr = (CPElement) cPaths.get(i);
 			if (curr.isExported() && curr.getEntryKind() != IPathEntry.CDT_SOURCE) {
 				exportedEntries.add(curr);
 			}
@@ -140,12 +140,12 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 
 		List elements = fCPathList.getElements();
 
-		CPListElement entryMissing = null;
+		CPElement entryMissing = null;
 		int nEntriesMissing = 0;
 		IPathEntry[] entries = new IPathEntry[elements.size()];
 
 		for (int i = elements.size() - 1; i >= 0; i--) {
-			CPListElement currElement = (CPListElement) elements.get(i);
+			CPElement currElement = (CPElement) elements.get(i);
 			boolean isChecked = fCPathList.isChecked(currElement);
 			if (currElement.getEntryKind() == IPathEntry.CDT_SOURCE) {
 				if (isChecked) {

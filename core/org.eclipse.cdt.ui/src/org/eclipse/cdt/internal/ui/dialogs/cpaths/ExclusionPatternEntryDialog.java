@@ -52,7 +52,7 @@ public class ExclusionPatternEntryDialog extends StatusDialog {
 	private String fExclusionPattern;
 	private List fExistingPatterns;
 
-	public ExclusionPatternEntryDialog(Shell parent, String patternToEdit, List existingPatterns, CPListElement entryToEdit) {
+	public ExclusionPatternEntryDialog(Shell parent, String patternToEdit, List existingPatterns, CPElement entryToEdit) {
 		super(parent);
 		fExistingPatterns = existingPatterns;
 		if (patternToEdit == null) {

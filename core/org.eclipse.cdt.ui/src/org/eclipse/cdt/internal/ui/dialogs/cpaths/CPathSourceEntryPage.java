@@ -84,11 +84,11 @@ public class CPathSourceEntryPage extends CPathBasePage {
 				/* 3 = IDX_REMOVE */CPathEntryMessages.getString("SourcePathEntryPage.folders.remove.button") //$NON-NLS-1$
 		};
 
-		fFoldersList = new TreeListDialogField(adapter, buttonLabels, new CPListLabelProvider());
+		fFoldersList = new TreeListDialogField(adapter, buttonLabels, new CPElementLabelProvider());
 		fFoldersList.setDialogFieldListener(adapter);
 		fFoldersList.setLabelText(CPathEntryMessages.getString("SourcePathEntryPage.folders.label")); //$NON-NLS-1$
 
-		fFoldersList.setViewerSorter(new CPListElementSorter());
+		fFoldersList.setViewerSorter(new CPElementSorter());
 		fFoldersList.enableButton(IDX_EDIT, false);
 	}
 
@@ -108,8 +108,8 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		fFoldersList.setElements(folders);
 
 		for (int i = 0; i < folders.size(); i++) {
-			CPListElement cpe = (CPListElement) folders.get(i);
-			IPath[] patterns = (IPath[]) cpe.getAttribute(CPListElement.EXCLUSION);
+			CPElement cpe = (CPElement) folders.get(i);
+			IPath[] patterns = (IPath[]) cpe.getAttribute(CPElement.EXCLUSION);
 			if (patterns.length > 0) {
 				fFoldersList.expandElement(cpe, 3);
 			}
@@ -129,8 +129,8 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		// expand
 		List elements = fFoldersList.getElements();
 		for (int i = 0; i < elements.size(); i++) {
-			CPListElement elem = (CPListElement) elements.get(i);
-			IPath[] patterns = (IPath[]) elem.getAttribute(CPListElement.EXCLUSION);
+			CPElement elem = (CPElement) elements.get(i);
+			IPath[] patterns = (IPath[]) elem.getAttribute(CPElement.EXCLUSION);
 			if (patterns.length > 0) {
 				fFoldersList.expandElement(elem, 3);
 			}
@@ -160,21 +160,21 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 
 		public Object[] getChildren(TreeListDialogField field, Object element) {
-			if (element instanceof CPListElement) {
-				return ((CPListElement) element).getChildren();
+			if (element instanceof CPElement) {
+				return ((CPElement) element).getChildren();
 			}
 			return EMPTY_ARR;
 		}
 
 		public Object getParent(TreeListDialogField field, Object element) {
-			if (element instanceof CPListElementAttribute) {
-				return ((CPListElementAttribute) element).getParent();
+			if (element instanceof CPElementAttribute) {
+				return ((CPElementAttribute) element).getParent();
 			}
 			return null;
 		}
 
 		public boolean hasChildren(TreeListDialogField field, Object element) {
-			return (element instanceof CPListElement);
+			return (element instanceof CPElement);
 		}
 
 		// ---------- IDialogFieldListener --------
@@ -225,20 +225,20 @@ public class CPathSourceEntryPage extends CPathBasePage {
 				IProject project = fCurrCProject.getProject();
 				if (project.exists()) {
 					if (hasFolders(project)) {
-						CPListElement[] srcentries = openSourceContainerDialog(null);
+						CPElement[] srcentries = openSourceContainerDialog(null);
 						if (srcentries != null) {
 							for (int i = 0; i < srcentries.length; i++) {
 								elementsToAdd.add(srcentries[i]);
 							}
 						}
 					} else {
-						CPListElement entry = openNewSourceContainerDialog(null, true);
+						CPElement entry = openNewSourceContainerDialog(null, true);
 						if (entry != null) {
 							elementsToAdd.add(entry);
 						}
 					}
 				} else {
-					CPListElement entry = openNewSourceContainerDialog(null, false);
+					CPElement entry = openNewSourceContainerDialog(null, false);
 					if (entry != null) {
 						elementsToAdd.add(entry);
 					}
@@ -274,14 +274,14 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 		Object elem = selElements.get(0);
 		if (fFoldersList.getIndexOfElement(elem) != -1) {
-			editElementEntry((CPListElement) elem);
-		} else if (elem instanceof CPListElementAttribute) {
-			editAttributeEntry((CPListElementAttribute) elem);
+			editElementEntry((CPElement) elem);
+		} else if (elem instanceof CPElementAttribute) {
+			editAttributeEntry((CPElementAttribute) elem);
 		}
 	}
 
-	private void editElementEntry(CPListElement elem) {
-		CPListElement res = null;
+	private void editElementEntry(CPElement elem) {
+		CPElement res = null;
 
 		res = openNewSourceContainerDialog(elem, true);
 
@@ -290,13 +290,13 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 	}
 
-	private void editAttributeEntry(CPListElementAttribute elem) {
+	private void editAttributeEntry(CPElementAttribute elem) {
 		String key = elem.getKey();
-		if (key.equals(CPListElement.EXCLUSION)) {
-			CPListElement selElement = elem.getParent();
+		if (key.equals(CPElement.EXCLUSION)) {
+			CPElement selElement = elem.getParent();
 			ExclusionPatternDialog dialog = new ExclusionPatternDialog(getShell(), selElement);
 			if (dialog.open() == Window.OK) {
-				selElement.setAttribute(CPListElement.EXCLUSION, dialog.getExclusionPattern());
+				selElement.setAttribute(CPElement.EXCLUSION, dialog.getExclusionPattern());
 				fFoldersList.refresh();
 				fCPathList.dialogFieldChanged(); // validate
 			}
@@ -313,10 +313,10 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		List selElements = fFoldersList.getSelectedElements();
 		for (int i = selElements.size() - 1; i >= 0; i--) {
 			Object elem = selElements.get(i);
-			if (elem instanceof CPListElementAttribute) {
-				CPListElementAttribute attrib = (CPListElementAttribute) elem;
+			if (elem instanceof CPElementAttribute) {
+				CPElementAttribute attrib = (CPElementAttribute) elem;
 				String key = attrib.getKey();
-				Object value = key.equals(CPListElement.EXCLUSION) ? new Path[0] : null;
+				Object value = key.equals(CPElement.EXCLUSION) ? new Path[0] : null;
 				attrib.getParent().setAttribute(key, value);
 				selElements.remove(i);
 			}
@@ -335,17 +335,17 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 		for (int i = 0; i < selElements.size(); i++) {
 			Object elem = selElements.get(i);
-			if (elem instanceof CPListElementAttribute) {
-				CPListElementAttribute attrib = (CPListElementAttribute) elem;
-				if (attrib.getKey().equals(CPListElement.EXCLUSION)) {
+			if (elem instanceof CPElementAttribute) {
+				CPElementAttribute attrib = (CPElementAttribute) elem;
+				if (attrib.getKey().equals(CPElement.EXCLUSION)) {
 					if (((IPath[]) attrib.getValue()).length == 0) {
 						return false;
 					}
 				} else if (attrib.getValue() == null) {
 					return false;
 				}
-			} else if (elem instanceof CPListElement) {
-				CPListElement curr = (CPListElement) elem;
+			} else if (elem instanceof CPElement) {
+				CPElement curr = (CPElement) elem;
 				if (curr.getParentContainer() != null) {
 					return false;
 				}
@@ -359,10 +359,10 @@ public class CPathSourceEntryPage extends CPathBasePage {
 			return false;
 		}
 		Object elem = selElements.get(0);
-		if (elem instanceof CPListElement) {
+		if (elem instanceof CPElement) {
 			return false;
 		}
-		if (elem instanceof CPListElementAttribute) {
+		if (elem instanceof CPElementAttribute) {
 			return true;
 		}
 		return false;
@@ -388,7 +388,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		int lastRemovePos = nEntries;
 		int afterLastSourcePos = 0;
 		for (int i = nEntries - 1; i >= 0; i--) {
-			CPListElement cpe = (CPListElement) cpelements.get(i);
+			CPElement cpe = (CPElement) cpelements.get(i);
 			int kind = cpe.getEntryKind();
 			if (isEntryKind(kind)) {
 				if (!srcelements.remove(cpe)) {
@@ -410,7 +410,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 	}
 
-	private CPListElement openNewSourceContainerDialog(CPListElement existing, boolean includeLinked) {
+	private CPElement openNewSourceContainerDialog(CPElement existing, boolean includeLinked) {
 		if (includeLinked) {
 			NewFolderDialog dialog = new NewFolderDialog(getShell(), fCurrCProject.getProject());
 			if (dialog.open() == Window.OK) {
@@ -444,7 +444,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 	}
 
-	private CPListElement[] openSourceContainerDialog(CPListElement existing) {
+	private CPElement[] openSourceContainerDialog(CPElement existing) {
 
 		Class[] acceptedClasses = new Class[] { IProject.class, IFolder.class};
 		List existingContainers = getExistingContainers(null);
@@ -481,7 +481,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
-			CPListElement[] res = new CPListElement[elements.length];
+			CPElement[] res = new CPElement[elements.length];
 			for (int i = 0; i < res.length; i++) {
 				IResource elem = (IResource) elements[i];
 				res[i] = newCPSourceElement(elem);
@@ -491,11 +491,11 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		return null;
 	}
 
-	private List getExistingContainers(CPListElement existing) {
+	private List getExistingContainers(CPElement existing) {
 		List res = new ArrayList();
 		List cplist = fFoldersList.getElements();
 		for (int i = 0; i < cplist.size(); i++) {
-			CPListElement elem = (CPListElement) cplist.get(i);
+			CPElement elem = (CPElement) cplist.get(i);
 			if (elem != existing) {
 				IResource resource = elem.getResource();
 				if (resource instanceof IContainer) { // defensive code
@@ -506,9 +506,9 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		return res;
 	}
 
-	private CPListElement newCPSourceElement(IResource res) {
+	private CPElement newCPSourceElement(IResource res) {
 		Assert.isNotNull(res);
-		return new CPListElement(fCurrCProject, IPathEntry.CDT_SOURCE, res.getFullPath(), res);
+		return new CPElement(fCurrCProject, IPathEntry.CDT_SOURCE, res.getFullPath(), res);
 	}
 
 	/*

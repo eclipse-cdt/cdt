@@ -41,7 +41,7 @@ public class NewSourceFolderDialog extends StatusDialog {
 	private List fExistingFolders;
 	private IProject fCurrProject;
 
-	public NewSourceFolderDialog(Shell parent, String title, IProject project, List existingFolders, CPListElement entryToEdit) {
+	public NewSourceFolderDialog(Shell parent, String title, IProject project, List existingFolders, CPElement entryToEdit) {
 		super(parent);
 		setTitle(title);
 

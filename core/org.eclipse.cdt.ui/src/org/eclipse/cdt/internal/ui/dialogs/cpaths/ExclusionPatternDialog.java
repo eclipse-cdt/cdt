@@ -66,7 +66,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 	
 	
 	private ListDialogField fExclusionPatternList;
-	private CPListElement fCurrElement;
+	private CPElement fCurrElement;
 	private IProject fCurrProject;
 	
 	private IContainer fCurrSourceFolder;
@@ -77,7 +77,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 	private static final int IDX_REMOVE= 4;
 	
 		
-	public ExclusionPatternDialog(Shell parent, CPListElement entryToEdit) {
+	public ExclusionPatternDialog(Shell parent, CPElement entryToEdit) {
 		super(parent);
 		fCurrElement= entryToEdit;
 		setTitle(CPathEntryMessages.getString("ExclusionPatternDialog.title")); //$NON-NLS-1$
@@ -107,7 +107,7 @@ public class ExclusionPatternDialog extends StatusDialog {
 			fCurrSourceFolder= (IContainer) res;
 		}				
 		
-		IPath[] pattern= (IPath[]) entryToEdit.getAttribute(CPListElement.EXCLUSION);
+		IPath[] pattern= (IPath[]) entryToEdit.getAttribute(CPElement.EXCLUSION);
 		
 		ArrayList elements= new ArrayList(pattern.length);
 		for (int i= 0; i < pattern.length; i++) {

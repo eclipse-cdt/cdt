@@ -11,7 +11,7 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.jface.viewers.ViewerSorter;
 
-public class CPListElementSorter extends ViewerSorter {
+public class CPElementSorter extends ViewerSorter {
 
 	private static final int SOURCE = 0;
 	private static final int PROJECT = 1;
@@ -23,8 +23,8 @@ public class CPListElementSorter extends ViewerSorter {
 	 * @see ViewerSorter#category(Object)
 	 */
 	public int category(Object obj) {
-		if (obj instanceof CPListElement) {
-			switch (((CPListElement) obj).getEntryKind()) {
+		if (obj instanceof CPElement) {
+			switch (((CPElement) obj).getEntryKind()) {
 				case IPathEntry.CDT_LIBRARY:
 					return LIBRARY;
 				case IPathEntry.CDT_PROJECT:

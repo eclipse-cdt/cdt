@@ -39,7 +39,7 @@ public class CPathContainerSelectionPage extends WizardPage {
 
 	private static class ClasspathContainerLabelProvider extends LabelProvider {
 		public String getText(Object element) {
-			return ((CPathContainerDescriptor) element).getName();
+			return ((IContainerDescriptor) element).getName();
 		}
 	}
 
@@ -47,14 +47,14 @@ public class CPathContainerSelectionPage extends WizardPage {
 	}
 
 	private ListViewer fListViewer;
-	private CPathContainerDescriptor[] fContainers;
+	private IContainerDescriptor[] fContainers;
 	private IDialogSettings fDialogSettings;
 
 	/**
 	 * Constructor for ClasspathContainerWizardPage.
 	 * @param containerPages
 	 */
-	protected CPathContainerSelectionPage(CPathContainerDescriptor[] containerPages) {
+	protected CPathContainerSelectionPage(IContainerDescriptor[] containerPages) {
 		super("CPathContainerWizardPage"); //$NON-NLS-1$
 		setTitle(CPathEntryMessages.getString("CPathContainerSelectionPage.title")); //$NON-NLS-1$
 		setDescription(CPathEntryMessages.getString("CPathContainerSelectionPage.description")); //$NON-NLS-1$
@@ -109,10 +109,10 @@ public class CPathContainerSelectionPage extends WizardPage {
 	}
 
 
-	public CPathContainerDescriptor getSelected() {
+	public IContainerDescriptor getSelected() {
 		if (fListViewer != null) {
 			ISelection selection= fListViewer.getSelection();
-			return (CPathContainerDescriptor) SelectionUtil.getSingleElement(selection);
+			return (IContainerDescriptor) SelectionUtil.getSingleElement(selection);
 		}
 		return null;
 	}

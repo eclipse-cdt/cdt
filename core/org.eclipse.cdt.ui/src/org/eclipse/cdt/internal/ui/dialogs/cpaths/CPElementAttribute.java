@@ -8,19 +8,19 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
-public class CPListElementAttribute {
+public class CPElementAttribute {
 
-	private CPListElement fParent;
+	private CPElement fParent;
 	private String fKey;
 	private Object fValue;
 
-	public CPListElementAttribute(CPListElement parent, String key, Object value) {
+	public CPElementAttribute(CPElement parent, String key, Object value) {
 		fKey = key;
 		fValue = value;
 		fParent = parent;
 	}
 
-	public CPListElement getParent() {
+	public CPElement getParent() {
 		return fParent;
 	}
 

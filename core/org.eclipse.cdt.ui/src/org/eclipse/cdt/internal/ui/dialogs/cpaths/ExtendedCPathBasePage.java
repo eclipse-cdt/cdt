@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -22,8 +21,6 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.internal.ui.wizards.NewWizardMessages;
-import org.eclipse.cdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
@@ -33,18 +30,13 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -53,23 +45,14 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public abstract class ExtendedCPathBasePage extends CPathBasePage {
 
-	protected ListDialogField fPathList;
-	protected TreeListDialogField fSrcList;
 	protected List fCPathList;
 	protected ICProject fCurrCProject;
 
-	private static final int IDX_ADD = 0;
-	private static final int IDX_ADD_WORKSPACE = 1;
-	private static final int IDX_ADD_CONTRIBUTED = 2;
-	private static final int IDX_EDIT = 4;
-	private static final int IDX_REMOVE = 5;
-	private String fPrefix;
+	private ListDialogField fPathList;
+	private TreeListDialogField fSrcList;
 
 	private class IncludeListAdapter implements IListAdapter, IDialogFieldListener {
 
@@ -77,40 +60,18 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		}
 
 		public void customButtonPressed(ListDialogField field, int index) {
-			switch (index) {
-				case IDX_ADD:
-					addPath();
-					break;
-				case IDX_ADD_WORKSPACE:
-					addFromWorkspace();
-					break;
-				case IDX_ADD_CONTRIBUTED:
-					addContributed();
-					break;
-				case IDX_EDIT:
-					if (canEdit(field.getSelectedElements())) {
-						editPath((CPListElement) field.getSelectedElements().get(0));
-					}
-					break;
-				case IDX_REMOVE:
-					if (canRemove(field.getSelectedElements())) {
-						removePath((CPListElement) field.getSelectedElements().get(0));
-					}
-					break;
-			}
+			buttonPressed(index, field.getSelectedElements());
 		}
 
 		public void selectionChanged(ListDialogField field) {
-			List selected = fPathList.getSelectedElements();
-			fPathList.enableButton(IDX_REMOVE, canRemove(selected));
-			fPathList.enableButton(IDX_EDIT, canEdit(selected));
+			pathSelectionChanged();
 		}
 
 		public void doubleClicked(ListDialogField field) {
 		}
 	}
 
-	private class ModifiedCPListLabelProvider extends CPListLabelProvider implements IColorProvider {
+	private class ModifiedCPListLabelProvider extends CPElementLabelProvider implements IColorProvider {
 
 		private final Color inDirect = new Color(Display.getDefault(), new RGB(170, 170, 170));
 
@@ -186,7 +147,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 
 		public Image getImage(Object element) {
 			Image image = super.getImage(element);
-			if (isPathInheritedFromSelected((CPListElement) element)) {
+			if (isPathInheritedFromSelected((CPElement) element)) {
 				image = new CPListImageDescriptor(image, true).createImage();
 			}
 			return image;
@@ -197,39 +158,34 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		}
 
 		public Color getForeground(Object element) {
-			if (isPathInheritedFromSelected((CPListElement) element)) {
+			if (isPathInheritedFromSelected((CPElement) element)) {
 				return inDirect;
 			}
 			return null;
 		}
 	}
 
-	public ExtendedCPathBasePage(ITreeListAdapter adapter, String prefix) {
-		super(CPathEntryMessages.getString(prefix + ".title")); //$NON-NLS-1$
-		fPrefix = prefix;
+	public ExtendedCPathBasePage(ITreeListAdapter adapter, String title, String pathTitle, String[] buttons) {
+		super(title);
 		IncludeListAdapter includeListAdaper = new IncludeListAdapter();
 
-		String[] buttonLabel = new String[] { /* 0 */CPathEntryMessages.getString(prefix + ".add"), //$NON-NLS-1$
-				/* 1 */CPathEntryMessages.getString(prefix + ".addFromWorkspace"), //$NON-NLS-1$
-				/* 2 */CPathEntryMessages.getString(prefix + ".addContributed"), null, //$NON-NLS-1$
-				/* 4 */CPathEntryMessages.getString(prefix + ".edit"), //$NON-NLS-1$
-				/* 5 */CPathEntryMessages.getString(prefix + ".remove")}; //$NON-NLS-1$
-		fPathList = new ListDialogField(includeListAdaper, buttonLabel, new ModifiedCPListLabelProvider()) {
+		fPathList = new ListDialogField(includeListAdaper, buttons, new ModifiedCPListLabelProvider()) {
 
 			protected int getListStyle() {
 				return super.getListStyle() & ~SWT.MULTI;
 			}
 		};
 		fPathList.setDialogFieldListener(includeListAdaper);
-		fPathList.setLabelText(CPathEntryMessages.getString(prefix + ".listName")); //$NON-NLS-1$
-		fSrcList = new TreeListDialogField(adapter, new String[] { CPathEntryMessages.getString(prefix + ".editSourcePaths")}, //$NON-NLS-1$
+		fPathList.setLabelText(pathTitle);
+		fSrcList = new TreeListDialogField(adapter,
+				null /*new String[]{CPathEntryMessages.getString("ExtendingCPathBasePage.editSourcePaths")}*/, //$NON-NLS-1$
 				new CElementLabelProvider()) {
 
 			protected int getTreeStyle() {
 				return super.getTreeStyle() & ~SWT.MULTI;
 			}
 		};
-		fSrcList.setLabelText(CPathEntryMessages.getString(prefix + ".sourcePaths")); //$NON-NLS-1$
+		fSrcList.setLabelText(CPathEntryMessages.getString("ExtendingCPathBasePage.sourcePaths")); //$NON-NLS-1$
 	}
 
 	public void createControl(Composite parent) {
@@ -239,24 +195,22 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 
 		setControl(composite);
 
-		LayoutUtil.doDefaultLayout(composite, new DialogField[] { fSrcList, fPathList}, true);
+		LayoutUtil.doDefaultLayout(composite, new DialogField[]{fSrcList, fPathList}, true);
 		LayoutUtil.setHorizontalGrabbing(fPathList.getListControl(null));
 
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(30);
 		fPathList.setButtonsMinWidth(buttonBarWidth);
-		fPathList.enableButton(IDX_REMOVE, false);
-		fPathList.enableButton(IDX_EDIT, false);
 	}
 
-	public boolean isEntryKind(int kind) {
-		return kind == getEntryKind();
+	protected ListDialogField getPathList() {
+		return fPathList;
 	}
+	
+	abstract protected void buttonPressed(int indx, List selected);
 
-	abstract protected void addPath();
+	protected abstract void pathSelectionChanged();
 
-	abstract int getEntryKind();
-
-	protected boolean isPathInheritedFromSelected(CPListElement element) {
+	protected boolean isPathInheritedFromSelected(CPElement element) {
 		IPath resPath = element.getPath();
 		List sel = getSelection();
 		if (!sel.isEmpty()) {
@@ -270,29 +224,15 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		return false;
 	}
 
-	protected boolean canRemove(List selected) {
-		return !selected.isEmpty();
-	}
-
-	protected boolean canEdit(List selected) {
-		if( !selected.isEmpty() ) {
-			return !isPathInheritedFromSelected((CPListElement) selected.get(0));			
-		}
-		return false;
-	}
-	
-	protected void editPath(CPListElement element) {
-	}
-
-	protected void removePath(CPListElement element) {
+	protected void removeFromSelectedPath(CPElement element) {
 		ICElement celem = (ICElement) getSelection().get(0);
 		if (!celem.getPath().equals(element.getPath())) {
 			IPath exclude = celem.getPath().removeFirstSegments(element.getPath().segmentCount()).addTrailingSeparator();
-			IPath[] exclusions = (IPath[]) element.getAttribute(CPListElement.EXCLUSION);
+			IPath[] exclusions = (IPath[]) element.getAttribute(CPElement.EXCLUSION);
 			IPath[] newExlusions = new IPath[exclusions.length + 1];
 			System.arraycopy(exclusions, 0, newExlusions, 0, exclusions.length);
 			newExlusions[exclusions.length] = exclude;
-			element.setAttribute(CPListElement.EXCLUSION, newExlusions);
+			element.setAttribute(CPElement.EXCLUSION, newExlusions);
 			selectionChanged(new StructuredSelection(getSelection()));
 		} else {
 			fCPathList.remove(element);
@@ -332,7 +272,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 	protected IPathEntry[] getRawClasspath() {
 		IPathEntry[] currEntries = new IPathEntry[fCPathList.size()];
 		for (int i = 0; i < currEntries.length; i++) {
-			CPListElement curr = (CPListElement) fCPathList.get(i);
+			CPElement curr = (CPElement) fCPathList.get(i);
 			currEntries[i] = curr.getPathEntry();
 		}
 		return currEntries;
@@ -350,7 +290,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		fPathList.setElements(filterList(getCPaths(), selection));
 	}
 
-	private List filterList(List list, IStructuredSelection selection) {
+	protected List filterList(List list, IStructuredSelection selection) {
 		if (selection.isEmpty()) {
 			return list;
 		}
@@ -360,10 +300,10 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		List newList = new ArrayList(list.size());
 		Iterator iter = list.iterator();
 		while (iter.hasNext()) {
-			CPListElement element = (CPListElement) iter.next();
+			CPElement element = (CPElement) iter.next();
 			if (element.getPath().isPrefixOf(resPath)
 					&& (element.getPath().equals(resPath) || !CoreModelUtil.isExcludedPath(resPath.removeFirstSegments(1),
-							(IPath[]) element.getAttribute(CPListElement.EXCLUSION)))) {
+							(IPath[]) element.getAttribute(CPElement.EXCLUSION)))) {
 				newList.add(element);
 			}
 		}
@@ -374,179 +314,6 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 	}
 
 	public void performDefaults() {
-	}
-
-	protected CPListElement[] openContainerSelectionDialog(CPListElement existing) {
-		IPathEntry elem = null;
-		String title;
-		if (existing == null) {
-			title = CPathEntryMessages.getString(fPrefix + ".ContainerDialog.new.title"); //$NON-NLS-1$
-		} else {
-			title = CPathEntryMessages.getString(fPrefix + ".ContainerDialog.edit.title"); //$NON-NLS-1$
-			elem = existing.getPathEntry();
-		}
-		CPathContainerWizard wizard = new CPathContainerWizard(elem, fCurrCProject, getRawClasspath());
-		wizard.setWindowTitle(title);
-		if (CPathContainerWizard.openWizard(getShell(), wizard) == Window.OK) {
-			IPathEntry[] elements = wizard.getNewEntries();
-			if (elements != null) {
-				CPListElement[] res = new CPListElement[elements.length];
-				for (int i = 0; i < res.length; i++) {
-					res[i] = newCPElement(((ICElement) getSelection().get(0)).getResource(), (CPListElement) elements[i]);
-					res[i].setAttribute(CPListElement.BASE_REF, elements[i].getPath());
-				}
-				return res;
-			}
-		}
-		return null;
-	}
-
-	abstract protected CPListElement newCPElement(IResource resource, CPListElement copyFrom);
-
-	private class WorkbenchCPathLabelProvider extends CPListLabelProvider {
-
-		WorkbenchLabelProvider fWorkbenchLabelProvider = new WorkbenchLabelProvider();
-
-		public String getText(Object element) {
-			if (element instanceof CPListElement) {
-				return super.getText(element);
-			}
-			return fWorkbenchLabelProvider.getText(element);
-		}
-
-		public Image getImage(Object element) {
-			if (element instanceof CPListElement) {
-				return super.getImage(element);
-			}
-			return fWorkbenchLabelProvider.getImage(element);
-		}
-	}
-
-	private class WorkbenchCPathContentProvider extends WorkbenchContentProvider {
-
-		public Object[] getChildren(Object element) {
-			if (element instanceof ICProject) {
-				try {
-					IPathEntry[] entries = ((ICProject) element).getRawPathEntries();
-					List list = new ArrayList(entries.length);
-					for (int i = 0; i < entries.length; i++) {
-						if (entries[i].isExported()) {
-							list.add(CPListElement.createFromExisting(entries[i], (ICProject) element));
-						}
-					}
-					return list.toArray();
-				} catch (CModelException e) {
-					CUIPlugin.getDefault().log(e);
-					return new Object[0];
-				}
-			}
-			return super.getChildren(element);
-		}
-
-		public boolean hasChildren(Object element) {
-			if (element instanceof ICProject) {
-				try {
-					IPathEntry[] entries = ((ICProject) element).getRawPathEntries();
-					for (int i = 0; i < entries.length; i++) {
-						if (entries[i].isExported()) {
-							return true;
-						}
-					}
-				} catch (CModelException e) {
-					CUIPlugin.getDefault().log(e);
-					return false;
-				}
-			}
-			return super.hasChildren(element);
-		}
-
-		public Object getParent(Object element) {
-			if (element instanceof CPListElement) {
-				return ((CPListElement) element).getCProject().getProject();
-			}
-			return super.getParent(element);
-		}
-	}
-
-	protected CPListElement[] openWorkspacePathEntryDialog(CPListElement existing) {
-		Class[] acceptedClasses = new Class[] { CPListElement.class};
-		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, existing == null);
-		ViewerFilter filter = new CPListElementFilter((CPListElement[]) fPathList.getElements().toArray(new CPListElement[0]),
-				getEntryKind(), true);
-
-		ILabelProvider lp = new WorkbenchCPathLabelProvider();
-		ITreeContentProvider cp = new WorkbenchCPathContentProvider();
-
-		String title = (existing == null) ? CPathEntryMessages.getString(fPrefix + ".fromWorkspaceDialog.new.title") //$NON-NLS-1$
-				: CPathEntryMessages.getString(fPrefix + ".fromWorkspaceDialog.edit.title"); //$NON-NLS-1$
-		String message = (existing == null) ? CPathEntryMessages.getString(fPrefix + ".fromWorkspaceDialog.new.description") //$NON-NLS-1$
-				: NewWizardMessages.getString(fPrefix + ".fromWorkspaceDialog.edit.description"); //$NON-NLS-1$
-
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), lp, cp);
-		dialog.setValidator(validator);
-		dialog.setTitle(title);
-		dialog.setMessage(message);
-		dialog.addFilter(filter);
-		dialog.setInput(CoreModel.getDefault().getCModel());
-		if (existing == null) {
-			dialog.setInitialSelection(fCurrCProject);
-		} else {
-			dialog.setInitialSelection(existing.getCProject());
-		}
-
-		if (dialog.open() == Window.OK) {
-			Object[] elements = dialog.getResult();
-			CPListElement[] res = new CPListElement[elements.length];
-			for (int i = 0; i < res.length; i++) {
-				res[i] = newCPElement(((ICElement) getSelection().get(0)).getResource(), (CPListElement)elements[i]);
-				res[i].setAttribute(CPListElement.BASE_REF, ((CPListElement)elements[i]).getCProject().getPath());
-			}
-			return res;
-		}
-		return null;
-	}
-
-	protected void addContributed() {
-		CPListElement[] includes = openContainerSelectionDialog(null);
-		if (includes != null) {
-			int nElementsChosen = includes.length;
-			// remove duplicates
-			List cplist = fPathList.getElements();
-			List elementsToAdd = new ArrayList(nElementsChosen);
-
-			for (int i = 0; i < nElementsChosen; i++) {
-				CPListElement curr = includes[i];
-				if (!cplist.contains(curr) && !elementsToAdd.contains(curr)) {
-					elementsToAdd.add(curr);
-				}
-			}
-
-			fPathList.addElements(elementsToAdd);
-			fCPathList.addAll(elementsToAdd);
-			fPathList.postSetSelection(new StructuredSelection(includes));
-		}
-	}
-
-	protected void addFromWorkspace() {
-		CPListElement[] includes = openWorkspacePathEntryDialog(null);
-		if (includes != null) {
-			int nElementsChosen = includes.length;
-			// remove duplicates
-			List cplist = fPathList.getElements();
-			List elementsToAdd = new ArrayList(nElementsChosen);
-
-			for (int i = 0; i < nElementsChosen; i++) {
-				CPListElement curr = includes[i];
-				if (!cplist.contains(curr) && !elementsToAdd.contains(curr)) {
-					elementsToAdd.add(curr);
-				}
-			}
-
-			fPathList.addElements(elementsToAdd);
-			fCPathList.addAll(elementsToAdd);
-			fPathList.postSetSelection(new StructuredSelection(elementsToAdd));
-		}
-
 	}
 
 	//	private IPathEntry[] getUsedPathFiles(CPListElement existing) {

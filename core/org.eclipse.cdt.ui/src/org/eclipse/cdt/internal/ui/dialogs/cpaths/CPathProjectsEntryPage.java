@@ -46,13 +46,13 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 		String[] buttonLabels = new String[] { /* 0 */CPathEntryMessages.getString("ProjectsEntryPage.projects.checkall.button"), //$NON-NLS-1$
 		/* 1 */CPathEntryMessages.getString("ProjectsEntryWorkbookPage.projects.uncheckall.button")}; //$NON-NLS-1$
 
-		fProjectsList = new CheckedListDialogField(null, buttonLabels, new CPListLabelProvider());
+		fProjectsList = new CheckedListDialogField(null, buttonLabels, new CPElementLabelProvider());
 		fProjectsList.setDialogFieldListener(listener);
 		fProjectsList.setLabelText(CPathEntryMessages.getString("ProjectsEntryPage.projects.label")); //$NON-NLS-1$
 		fProjectsList.setCheckAllButtonIndex(0);
 		fProjectsList.setUncheckAllButtonIndex(1);
 
-		fProjectsList.setViewerSorter(new CPListElementSorter());
+		fProjectsList.setViewerSorter(new CPElementSorter());
 		fCPathList = cPathList;
 	}
 
@@ -126,7 +126,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 			// add the projects-cpentries that are already on the C Path
 			List cpelements = fCPathList.getElements();
 			for (int i = cpelements.size() - 1; i >= 0; i--) {
-				CPListElement cpelem = (CPListElement) cpelements.get(i);
+				CPElement cpelem = (CPElement) cpelements.get(i);
 				if (isEntryKind(cpelem.getEntryKind())) {
 					existingProjects.add(cpelem.getResource());
 					projects.add(cpelem);
@@ -137,7 +137,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 			for (int i = 0; i < cprojects.length; i++) {
 				IProject proj = cprojects[i].getProject();
 				if (!existingProjects.contains(proj)) {
-					projects.add(new CPListElement(fCurrCProject, IPathEntry.CDT_PROJECT, proj.getFullPath(), proj));
+					projects.add(new CPElement(fCurrCProject, IPathEntry.CDT_PROJECT, proj.getFullPath(), proj));
 				}
 			}
 		} catch (CModelException e) {
@@ -155,7 +155,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 		List pelements = fCPathList.getElements();
 		// backwards, as entries will be deleted
 		for (int i = pelements.size() - 1; i >= 0; i--) {
-			CPListElement pe = (CPListElement) pelements.get(i);
+			CPElement pe = (CPElement) pelements.get(i);
 			if (isEntryKind(pe.getEntryKind())) {
 				if (!projelements.remove(pe)) {
 					pelements.remove(i);

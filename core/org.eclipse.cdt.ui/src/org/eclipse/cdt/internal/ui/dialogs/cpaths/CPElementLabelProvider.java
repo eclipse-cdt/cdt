@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.ide.IDE;
 
-class CPListLabelProvider extends LabelProvider {
+class CPElementLabelProvider extends LabelProvider {
 
 	private String fNewLabel, fClassLabel, fCreateLabel;
 	private ImageDescriptor fIncludeIcon, fMacroIcon, fLibWSrcIcon, fLibIcon, fExtLibIcon, fExtLibWSrcIcon;
@@ -35,7 +35,7 @@ class CPListLabelProvider extends LabelProvider {
 
 	private ImageDescriptorRegistry fRegistry;
 
-	public CPListLabelProvider() {
+	public CPElementLabelProvider() {
 		fNewLabel = CPathEntryMessages.getString("CPListLabelProvider.new"); //$NON-NLS-1$
 		fClassLabel = CPathEntryMessages.getString("CPListLabelProvider.classcontainer"); //$NON-NLS-1$
 		fCreateLabel = CPathEntryMessages.getString("CPListLabelProvider.willbecreated"); //$NON-NLS-1$
@@ -55,19 +55,21 @@ class CPListLabelProvider extends LabelProvider {
 	}
 
 	public String getText(Object element) {
-		if (element instanceof CPListElement) {
-			return getCPListElementText((CPListElement) element);
-		} else if (element instanceof CPListElementAttribute) {
-			return getCPListElementAttributeText((CPListElementAttribute) element);
+		if (element instanceof CPElement) {
+			return getCPListElementText((CPElement) element);
+		} else if (element instanceof CPElementAttribute) {
+			return getCPListElementAttributeText((CPElementAttribute) element);
+		} else if (element instanceof IPathEntry) {
+			return getCPListElementText(CPElement.createFromExisting((IPathEntry) element, null));
 		}
 		return super.getText(element);
 	}
 
-	public String getCPListElementAttributeText(CPListElementAttribute attrib) {
+	public String getCPListElementAttributeText(CPElementAttribute attrib) {
 		String notAvailable = CPathEntryMessages.getString("CPListLabelProvider.none"); //$NON-NLS-1$
 		StringBuffer buf = new StringBuffer();
 		String key = attrib.getKey();
-		if (key.equals(CPListElement.SOURCEATTACHMENT)) {
+		if (key.equals(CPElement.SOURCEATTACHMENT)) {
 			buf.append(CPathEntryMessages.getString("CPListLabelProvider.source_attachment.label")); //$NON-NLS-1$
 			IPath path = (IPath) attrib.getValue();
 			if (path != null && !path.isEmpty()) {
@@ -75,7 +77,7 @@ class CPListLabelProvider extends LabelProvider {
 			} else {
 				buf.append(notAvailable);
 			}
-		} else if (key.equals(CPListElement.SOURCEATTACHMENTROOT)) {
+		} else if (key.equals(CPElement.SOURCEATTACHMENTROOT)) {
 			buf.append(CPathEntryMessages.getString("CPListLabelProvider.source_attachment_root.label")); //$NON-NLS-1$
 			IPath path = (IPath) attrib.getValue();
 			if (path != null && !path.isEmpty()) {
@@ -84,7 +86,7 @@ class CPListLabelProvider extends LabelProvider {
 				buf.append(notAvailable);
 			}
 		}
-		if (key.equals(CPListElement.EXCLUSION)) {
+		if (key.equals(CPElement.EXCLUSION)) {
 			buf.append(CPathEntryMessages.getString("CPListLabelProvider.exclusion_filter.label")); //$NON-NLS-1$
 			IPath[] patterns = (IPath[]) attrib.getValue();
 			if (patterns != null && patterns.length > 0) {
@@ -101,7 +103,7 @@ class CPListLabelProvider extends LabelProvider {
 		return buf.toString();
 	}
 
-	public String getCPListElementText(CPListElement cpentry) {
+	public String getCPListElementText(CPElement cpentry) {
 		IPath path = cpentry.getPath();
 		switch (cpentry.getEntryKind()) {
 			case IPathEntry.CDT_LIBRARY:
@@ -128,21 +130,24 @@ class CPListLabelProvider extends LabelProvider {
 				return path.lastSegment();
 			case IPathEntry.CDT_INCLUDE:
 				{
-					StringBuffer str = new StringBuffer(((IPath) cpentry.getAttribute(CPListElement.INCLUDE)).toOSString());
-					IPath base = (IPath) cpentry.getAttribute(CPListElement.BASE_REF);
-					if (base != null && base.segmentCount() > 0) {
-						str.append('(');
+					StringBuffer str = new StringBuffer(((IPath) cpentry.getAttribute(CPElement.INCLUDE)).toOSString());
+					IPath base = (IPath) cpentry.getAttribute(CPElement.BASE_REF);
+					if (!base.isEmpty()) {
+						str.append(" - ("); //$NON-NLS-1$
 						str.append(base);
 						str.append(')');
+					} else {
+						path = ((IPath) cpentry.getAttribute(CPElement.BASE)).addTrailingSeparator();
+						str.insert(0, path.toOSString());
 					}
 					return str.toString();
 				}
 			case IPathEntry.CDT_MACRO:
 				{
-					StringBuffer str = new StringBuffer((String) cpentry.getAttribute(CPListElement.MACRO_NAME) + "=" //$NON-NLS-1$
-							+ (String) cpentry.getAttribute(CPListElement.MACRO_VALUE));
-					IPath base = (IPath) cpentry.getAttribute(CPListElement.BASE_REF);
-					if (base != null && base.segmentCount() > 0) {
+					StringBuffer str = new StringBuffer((String) cpentry.getAttribute(CPElement.MACRO_NAME) + "=" //$NON-NLS-1$
+							+ (String) cpentry.getAttribute(CPElement.MACRO_VALUE));
+					IPath base = (IPath) cpentry.getAttribute(CPElement.BASE_REF);
+					if (!base.isEmpty()) {
 						str.append('(');
 						str.append(base);
 						str.append(')');
@@ -151,8 +156,7 @@ class CPListLabelProvider extends LabelProvider {
 				}
 			case IPathEntry.CDT_CONTAINER:
 				try {
-					IPathEntryContainer container = CoreModel.getDefault().getPathEntryContainer(cpentry.getPath(),
-							cpentry.getCProject());
+					IPathEntryContainer container = CoreModel.getPathEntryContainer(cpentry.getPath(), cpentry.getCProject());
 					if (container != null) {
 						return container.getDescription();
 					}
@@ -181,17 +185,20 @@ class CPListLabelProvider extends LabelProvider {
 	}
 
 	private String getPathString(IPath path, boolean isExternal) {
-//		if (ArchiveFileFilter.isArchivePath(path)) {
-//			IPath appendedPath = path.removeLastSegments(1);
-//			String appended = isExternal ? appendedPath.toOSString() : appendedPath.makeRelative().toString();
-//			return CPathEntryMessages.getFormattedString("CPListLabelProvider.twopart", //$NON-NLS-1$
-//					new String[] { path.lastSegment(), appended});
-//		} else {
-			return isExternal ? path.toOSString() : path.makeRelative().toString();
-//		}
+		//		if (ArchiveFileFilter.isArchivePath(path)) {
+		//			IPath appendedPath = path.removeLastSegments(1);
+		//			String appended = isExternal ? appendedPath.toOSString() :
+		// appendedPath.makeRelative().toString();
+		//			return
+		// CPathEntryMessages.getFormattedString("CPListLabelProvider.twopart",
+		// //$NON-NLS-1$
+		//					new String[] { path.lastSegment(), appended});
+		//		} else {
+		return isExternal ? path.toOSString() : path.makeRelative().toString();
+		//		}
 	}
 
-	private ImageDescriptor getCPListElementBaseImage(CPListElement cpentry) {
+	private ImageDescriptor getCPListElementBaseImage(CPElement cpentry) {
 		switch (cpentry.getEntryKind()) {
 			case IPathEntry.CDT_OUTPUT:
 				if (cpentry.getPath().segmentCount() == 1) {
@@ -207,7 +214,7 @@ class CPListLabelProvider extends LabelProvider {
 				}
 			case IPathEntry.CDT_LIBRARY:
 				IResource res = cpentry.getResource();
-				IPath path = (IPath) cpentry.getAttribute(CPListElement.SOURCEATTACHMENT);
+				IPath path = (IPath) cpentry.getAttribute(CPElement.SOURCEATTACHMENT);
 				if (res == null) {
 					if (path == null || path.isEmpty()) {
 						return fExtLibIcon;
@@ -239,8 +246,8 @@ class CPListLabelProvider extends LabelProvider {
 	private static final Point SMALL_SIZE = new Point(16, 16);
 
 	public Image getImage(Object element) {
-		if (element instanceof CPListElement) {
-			CPListElement cpentry = (CPListElement) element;
+		if (element instanceof CPElement) {
+			CPElement cpentry = (CPElement) element;
 			ImageDescriptor imageDescriptor = getCPListElementBaseImage(cpentry);
 			if (imageDescriptor != null) {
 				if (cpentry.isMissing()) {
@@ -248,14 +255,16 @@ class CPListLabelProvider extends LabelProvider {
 				}
 				return fRegistry.get(imageDescriptor);
 			}
-		} else if (element instanceof CPListElementAttribute) {
-			String key = ((CPListElementAttribute) element).getKey();
-			if (key.equals(CPListElement.SOURCEATTACHMENT)) {
+		} else if (element instanceof CPElementAttribute) {
+			String key = ((CPElementAttribute) element).getKey();
+			if (key.equals(CPElement.SOURCEATTACHMENT)) {
 				//				return
 				// fRegistry.get(CPluginImages.DESC_OBJS_SOURCE_ATTACH_ATTRIB);
-			} else if (key.equals(CPListElement.EXCLUSION)) {
+			} else if (key.equals(CPElement.EXCLUSION)) {
 				return CPluginImages.get(CPluginImages.IMG_OBJS_EXCLUDSION_FILTER_ATTRIB);
 			}
+		} else if (element instanceof IPathEntry) {
+			return getImage(CPElement.createFromExisting((IPathEntry) element, null));
 		}
 		return null;
 	}

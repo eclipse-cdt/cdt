@@ -20,17 +20,6 @@ import org.eclipse.cdt.core.model.ICElement;
 
 class TranslationUnitInfo extends CFileInfo {
 
-	/**
-	 * The length of this compilation unit's source code <code>String</code>
-	 */
-	protected int fSourceLength;
-
-	/** 
-	 * Timestamp of original resource at the time this element
-	 * was opened or last updated.
-	 */
-	protected long fTimestamp;
-
 	protected TranslationUnitInfo (CElement element) {
 		super(element);
 	}

@@ -1,3 +1,7 @@
+2002-12-04 Mikhail Khodjaiants
+	Small fix for the Registers view.
+	* RegistersView.java
+
 2002-12-02 Mikhail Khodjaiants
 	If the target is suspended because of error display the error message in the Launch view.
 	* CDTDebugModelPresentation.java

@@ -171,7 +171,7 @@ public class CUISourceLocator implements IPersistableSourceLocator
 			return fNotAskAgain;
 		}
 
-		protected Control createDialogArea(Composite parent)
+		protected Control createDialogArea( Composite parent )
 		{
 			getShell().setText( "Debugger Source Lookup" );
 

@@ -167,7 +167,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	public void dispose()
 	{
 		fModelPresentation.dispose();
-		getSite().getPage().removeSelectionListener( ICDebugUIConstants.ID_REGISTERS_VIEW, this );
+		getSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
 		super.dispose();
 	}

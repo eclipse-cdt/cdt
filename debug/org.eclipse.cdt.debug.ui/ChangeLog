@@ -1,4 +1,10 @@
 2004-05-28 Mikhail Khodjaiants
+	Changed the error handling of the "Add Globals" and "Enable/Disable Variable" actions.
+	* AddGlobalsActionDelegate.java
+	* EnableVariablesActionDelegate.java
+	* ActionMessages.properties
+
+2004-05-28 Mikhail Khodjaiants
 	Removed diassembly editor actions. 
 	* plugin.xml	
 

@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.ui.DebugUITools;
@@ -104,13 +105,17 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 				}
 			}
 		} );
-		if ( getStatus() != null && !getStatus().isOK() ) {
+		IStatus status = getStatus();
+		if ( status != null && !status.isOK() ) {
+			if ( status.isMultiStatus() ) {
+				status = new MultiStatus( status.getPlugin(), status.getCode(), status.getChildren(), ActionMessages.getString( "AddGlobalsActionDelegate.Error(s)_occured_adding_globals_1" ), status.getException() ); //$NON-NLS-1$
+			}
 			IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
 			if ( window != null ) {
-				CDebugUIPlugin.errorDialog( getErrorDialogMessage(), getStatus() );
+				CDebugUIPlugin.errorDialog( getErrorDialogMessage(), status );
 			}
 			else {
-				CDebugUIPlugin.log( getStatus() );
+				CDebugUIPlugin.log( status );
 			}
 		}
 	}

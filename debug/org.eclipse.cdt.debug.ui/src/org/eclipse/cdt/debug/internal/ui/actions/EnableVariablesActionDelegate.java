@@ -15,6 +15,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -81,43 +82,40 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate
 			return;
 
 		final Iterator enum = selection.iterator();
-		final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, CDebugUIPlugin.getResourceString("internal.ui.actions.EnableVariablesActionDelegate.Enable_variables_failed."), null ); //$NON-NLS-1$
-		Runnable runnable = new Runnable()
+		final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, CDebugUIPlugin.getResourceString("internal.ui.actions.EnableVariablesActionDelegate.Exceptions_occurred_enabling_the_variables"), null ); //$NON-NLS-1$
+		BusyIndicator.showWhile( 
+				Display.getCurrent(), 
+				new Runnable()
+					{
+						public void run()
+						{
+							while( enum.hasNext() )
+							{
+								ICVariable var = (ICVariable)enum.next();
+								try
 								{
-									public void run()
+									if ( size > 1 )
 									{
-										while( enum.hasNext() )
-										{
-											ICVariable var = (ICVariable)enum.next();
-											try
-											{
-												if ( size > 1 )
-												{
-													if ( isEnableAction() )
-														var.setEnabled( true );
-													else
-														var.setEnabled( false );
-												}
-												else
-													var.setEnabled( !var.isEnabled() );
-											}
-											catch( DebugException e )
-											{
-												ms.merge( e.getStatus() );
-											}
-										}
-										update();
+										if ( isEnableAction() )
+											var.setEnabled( true );
+										else
+											var.setEnabled( false );
 									}
-								};
-
-		final Display display = CDebugUIPlugin.getStandardDisplay();
-		if ( display.isDisposed() )
-			return;
-		display.asyncExec( runnable );
+									else
+										var.setEnabled( !var.isEnabled() );
+								}
+								catch( DebugException e )
+								{
+									ms.merge( e.getStatus() );
+								}
+							}
+							update();
+						}
+					} );
 
 		if ( !ms.isOK() )
 		{
-			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.EnableVariablesActionDelegate.Exceptions_occurred_enabling_the_variables"), ms ); //$NON-NLS-1$
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.EnableVariablesActionDelegate.Enable_variables_failed."), ms ); //$NON-NLS-1$
 		}
 	}
 

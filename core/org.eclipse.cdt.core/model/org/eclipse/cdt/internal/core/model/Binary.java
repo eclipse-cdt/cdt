@@ -20,12 +20,19 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 
 public class Binary extends Openable implements IBinary {
 
 	private int fBinType;
-
+	private String hasDebug;
+	private String cpu;
+	private String[] needed;
+	private long longData;
+	private long longText;
+	private long longBSS;
+	private String endian;
+	private String soname;
+	
 	private long fLastModification;
 
 	IBinaryFile binaryFile;
@@ -38,10 +45,6 @@ public class Binary extends Openable implements IBinary {
 	public Binary(ICElement parent, IPath path, IBinaryFile bin) {
 		super (parent, path, ICElement.C_BINARY);
 		binaryFile = bin;
-	}
-
-	protected IBinaryFile getBinaryFile() {
-		return binaryFile;
 	}
 
 	public boolean isSharedLib() {
@@ -62,73 +65,110 @@ public class Binary extends Openable implements IBinary {
 
 	public boolean hasDebug() {
 		if (isObject() || isExecutable() || isSharedLib()) {
-			return ((IBinaryObject)getBinaryFile()).hasDebug();
+			if (hasDebug == null || hasChanged()) {
+				hasDebug = Boolean.toString(((IBinaryObject)getBinaryFile()).hasDebug());
+			}
 		}
-		return false;
+		return Boolean.valueOf(hasDebug).booleanValue();
 	}
 
 	public String getCPU() {
 		if (isObject() || isExecutable() || isSharedLib() || isCore()) {
-			return ((IBinaryObject)getBinaryFile()).getCPU();
+			if (cpu == null || hasChanged()) {
+				cpu = ((IBinaryObject)getBinaryFile()).getCPU();
+			}
 		}
-		return "";
+		return (cpu == null ? "" : cpu);
 	}
 
 	public String[] getNeededSharedLibs() {
 		if (isExecutable() || isSharedLib()) {
-			return ((IBinaryExecutable)getBinaryFile()).getNeededSharedLibs();
+			if (needed == null || hasChanged()) {
+				needed = ((IBinaryExecutable)getBinaryFile()).getNeededSharedLibs();
+			}
 		}
-		return new String[0];
+		return (needed == null ? new String[0] : needed);
+	}
+
+	public long getText() {
+		if (isObject() || isExecutable() || isSharedLib()) {
+			if (longText == -1 || hasChanged()) {
+				longText = ((IBinaryObject)getBinaryFile()).getText();
+			}
+		}
+		return longText;
+	}
+
+	public long getData() {
+		if (isObject() || isExecutable() || isSharedLib()) {
+			if (longData == -1 || hasChanged()) {
+				longData = ((IBinaryObject)getBinaryFile()).getData();
+			}
+		}
+		return longData;
+	}
+
+	public long getBSS() {
+		if (isObject() || isExecutable() || isSharedLib()) {
+			if (longBSS == -1 || hasChanged()) {
+				longBSS = ((IBinaryObject)getBinaryFile()).getBSS();
+			}
+		}
+		return longBSS;
+	}
+
+	public String getSoname() {
+		if (isSharedLib()) {
+			if (soname == null || hasChanged()) {
+				soname = ((IBinaryShared)getBinaryFile()).getSoName();
+			}
+		}
+		return (soname == null ? "" : soname);
+	}
+
+	public boolean isLittleEndian() {
+		if (isObject() || isExecutable() || isSharedLib() || isCore()) {
+			if (endian == null || hasChanged()) {
+				endian = Boolean.toString(((IBinaryObject)getBinaryFile()).isLittleEndian());
+			}
+		}
+		return Boolean.valueOf(endian).booleanValue();
+	}
+
+	protected IBinaryFile getBinaryFile() {
+		return binaryFile;
 	}
 	
 	protected int getType() {
-		if (getBinaryFile() != null && (fBinType == 0 || getModificationStamp() != fLastModification )) {
-			fLastModification = getModificationStamp();
+		if (getBinaryFile() != null && (fBinType == 0 || hasChanged())) {
 			fBinType = getBinaryFile().getType();
 		}
 		return fBinType;
 	}
 
+	protected boolean hasChanged() {
+		long modification = getModificationStamp();
+		boolean changed = modification != fLastModification;
+		fLastModification = modification;
+		if (changed) {
+			hasDebug = null;
+			needed = null;
+			cpu = null;
+			endian = null;
+			longBSS = -1;
+			longData = -1;
+			longText = -1;
+			soname = null;
+		}
+		return changed;
+	}
+
 	protected long getModificationStamp() {
 		IResource res = getResource();
-		if (res != null)
+		if (res != null) {
 			return res.getModificationStamp();
-		return 0;
-	}
-
-	public long getText() {
-		if (isObject() || isExecutable() || isSharedLib()) {
-			return ((IBinaryObject)getBinaryFile()).getText();
 		}
 		return 0;
-	}
-
-	public long getData() {
-		if (isObject() || isExecutable() || isSharedLib()) {
-			return ((IBinaryObject)getBinaryFile()).getData();
-		}
-		return 0;
-	}
-
-	public long getBSS() {
-		if (isObject() || isExecutable() || isSharedLib()) {
-			return ((IBinaryObject)getBinaryFile()).getBSS();
-		}
-		return 0;
-	}
-
-	public String getSoname() {
-		if (isSharedLib()) {
-			return ((IBinaryShared)getBinaryFile()).getSoName();
-		}
-		return "";
-	}
-
-	public boolean isLittleEndian() {
-		if (isObject() || isExecutable() || isSharedLib() || isCore()) {
-			return ((IBinaryObject)getBinaryFile()).isLittleEndian();
-		}
-		return false;
 	}
 
 	/* (non-Javadoc)
@@ -177,8 +217,7 @@ public class Binary extends Openable implements IBinary {
 		IPath filename = filename = symbol.getFilename();
 		BinaryFunction function = null;
 
-		// Addr2line returns the funny "??" when it can find the file.
-		if (filename != null && !filename.equals("??")) {
+		if (filename != null) {
 			BinaryModule module = null;
 			if (hash.containsKey(filename)) {
 				module = (BinaryModule)hash.get(filename);
@@ -207,8 +246,7 @@ public class Binary extends Openable implements IBinary {
 	private void addVariable(OpenableInfo info, ISymbol symbol, Map hash) {
 		IPath filename = filename = symbol.getFilename();
 		BinaryVariable variable = null;
-		// Addr2line returns the funny "??" when it can not find the file.
-		if (filename != null && !filename.equals("??")) {
+		if (filename != null) {
 			BinaryModule module = null;
 			if (hash.containsKey(filename)) {
 				module = (BinaryModule)hash.get(filename);

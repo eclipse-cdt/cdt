@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2004 IBM Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -11,140 +11,79 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
-import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.internal.core.ToolReference;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.graphics.Point;
 
-public class BuildToolSettingsPage extends FieldEditorPreferencePage {
+public class BuildToolSettingsPage extends BuildSettingsPage {
+	// Field editor label
+	private static final String COMMAND = "FieldEditors.tool.command";	//$NON-NLS-1$
 
-	// Variables to help map this page back to an option category and tool
-	private IConfiguration configuration;
-	private IOptionCategory category;
+	// Tool the settings belong to
+	private ITool tool;
 	
-	BuildToolSettingsPage(IConfiguration configuration, IOptionCategory category) {
-		// Must be a grid layout and we don't want another set of buttons
-		super(GRID);
-		noDefaultAndApplyButton();
-
-		// Cache the option category this page is created for
-		this.configuration = configuration;
-		this.category = category;
+	BuildToolSettingsPage(IConfiguration configuration, ITool tool) {
+		// Cache the configuration and tool this page is for
+		super(configuration);
+		this.tool = tool;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#computeSize()
 	 */
 	public Point computeSize() {
-		// TODO Auto-generated method stub
 		return super.computeSize();
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	protected void createFieldEditors() {
-		// Get the preference store for the build settings
-		IPreferenceStore settings = getPreferenceStore();
-		setPreferenceStore(settings);
-
-		// Iterate over the options in the category and create a field editor for each
-		IOption[] options = category.getOptions(configuration);
-		for (int index = 0; index < options.length; ++index) {
-			// Get the option
-			IOption opt = options[index];
-			// Figure out which type the option is and add a proper field editor for it
-			switch (opt.getValueType()) {
-				case IOption.STRING :
-					StringFieldEditor stringField = new StringFieldEditor(opt.getId(), opt.getName(), getFieldEditorParent());
-					addField(stringField);
-					break;
-				case IOption.BOOLEAN :
-					BooleanFieldEditor booleanField = new BooleanFieldEditor(opt.getId(), opt.getName(), getFieldEditorParent());
-					addField(booleanField);
-					break;
-				case IOption.ENUMERATED :
-					String sel;
-					try {
-						sel = opt.getSelectedEnum();
-					} catch (BuildException e) {
-						// If we get this exception, then the option type is wrong
-						break;
-					}
-					BuildOptionComboFieldEditor comboField = new BuildOptionComboFieldEditor(opt.getId(), opt.getName(), opt.getApplicableValues(), sel, getFieldEditorParent());
-					addField(comboField); 
-					break;
-				case IOption.STRING_LIST :
-				case IOption.INCLUDE_PATH :
-				case IOption.PREPROCESSOR_SYMBOLS :
-				case IOption.LIBRARIES :
-				case IOption.OBJECTS:
-					BuildOptionListFieldEditor listField = new BuildOptionListFieldEditor(opt.getId(), opt.getName(), getFieldEditorParent());
-					addField(listField); 
-					break;
-				default :
-					SummaryFieldEditor summaryField = new SummaryFieldEditor(opt.getId(), opt.getName(), category.getTool(), getFieldEditorParent());
-					addField(summaryField);
-					break;
-//				default :
-//					break;
-			}
-		}
+		// Load up the preference store
+		super.createFieldEditors();
+		
+		// Add a string editor to edit the tool command
+		StringFieldEditor stringField = new StringFieldEditor(tool.getId(), ManagedBuilderUIPlugin.getResourceString(COMMAND), getFieldEditorParent());
+		stringField.setEmptyStringAllowed(false);
+		addField(stringField);		
 	}
 
 	/**
-	 * @return the option category the page was created for
+	 * Answers <code>true</code> if the receiver manages settings for the argument
+	 * 
+	 * @param tool
+	 * @return
 	 */
-	public IOptionCategory getCategory() {
-		return category;
+	public boolean isForTool(ITool tool) {
+		if (tool != null) {
+			return tool.equals(this.tool);
+		}
+		return false;
 	}
-
-	/**
-	 * @see IPreferencePage#performOk()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		// Write the field editor contents out to the preference store
-		boolean ok = super.performOk();
-
-		// Write the preference store values back to the build model
-		IOption[] options = category.getOptions(configuration);
-		for (int i = 0; i < options.length; i++) {
-			IOption option = options[i];
-
-			// Transfer value from preference store to options
-			switch (option.getValueType()) {
-				case IOption.BOOLEAN :
-					boolean boolVal = getPreferenceStore().getBoolean(option.getId());
-					ManagedBuildManager.setOption(configuration, option, boolVal);
-					break;
-				case IOption.ENUMERATED :
-					String enumVal = getPreferenceStore().getString(option.getId());
-					ManagedBuildManager.setOption(configuration, option, enumVal);
-					break;
-				case IOption.STRING :
-					String strVal = getPreferenceStore().getString(option.getId());
-					ManagedBuildManager.setOption(configuration, option, strVal);
-					break;
-				case IOption.STRING_LIST :
-				case IOption.INCLUDE_PATH :
-				case IOption.PREPROCESSOR_SYMBOLS :
-				case IOption.LIBRARIES :
-				case IOption.OBJECTS:
-					String listStr = getPreferenceStore().getString(option.getId());
-					String[] listVal = BuildToolsSettingsStore.parseString(listStr);
-					ManagedBuildManager.setOption(configuration, option, listVal);
-					break;
-				default :
-					break;
-			}			
+		// Do the super-class thang
+		boolean result =  super.performOk();
+		
+		// Get the actual value out of the field editor
+		String command = getPreferenceStore().getString(tool.getId());
+		if (command.length() == 0) {
+			return result;
 		}
 		
-		return ok;
+		// The tool may be a reference.
+		if (tool instanceof ToolReference) {
+			// If so, just set the command in the reference
+			((ToolReference)tool).setToolCommand(command);
+		} else {
+			configuration.setToolCommand(tool, command);
+		}
+		return result;
 	}
 }

@@ -31,7 +31,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 
 	// List of listeners on the property store
 	private ListenerList listenerList;
-	private Map optionMap;
+	private Map settingsMap;
 	private boolean dirtyFlag;
 	private IConfiguration owner;
 	
@@ -41,7 +41,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		owner = config;
 			
 		// Now populate the options map
-		populateOptionMap();
+		populateSettingsMap();
 	}
 
 
@@ -56,7 +56,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	 * @see org.eclipse.jface.preference.IPreferenceStore#contains(java.lang.String)
 	 */
 	public boolean contains(String name) {
-		return getOptionMap().containsKey(name);
+		return getSettingsMap().containsKey(name);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getBoolean(java.lang.String)
 	 */
 	public boolean getBoolean(String name) {
-		Object b = getOptionMap().get(name);
+		Object b = getSettingsMap().get(name);
 		if (b instanceof Boolean)
 		{
 			return ((Boolean)b).booleanValue();
@@ -182,11 +182,11 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	 * 
 	 * @return
 	 */
-	private Map getOptionMap() {
-		if (optionMap == null) {
-			optionMap = new HashMap();
+	private Map getSettingsMap() {
+		if (settingsMap == null) {
+			settingsMap = new HashMap();
 		}
-		return optionMap;
+		return settingsMap;
 	}
 
 	private void getOptionsForCategory(IOptionCategory cat) {
@@ -210,12 +210,12 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 						// Exception occurs if there's an option value type mismatch
 						break;
 					}
-					getOptionMap().put(name, value);
+					getSettingsMap().put(name, value);
 					break;
 
 				case IOption.ENUMERATED :
 					value = createList(opt.getApplicableValues());
-					getOptionMap().put(name, value);					
+					getSettingsMap().put(name, value);					
 					break;
 					
 				case IOption.STRING :
@@ -224,7 +224,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					} catch (BuildException e) {
 						break;
 					}
-					getOptionMap().put(name, value);
+					getSettingsMap().put(name, value);
 					break;
 					
 				case IOption.STRING_LIST :
@@ -233,7 +233,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					} catch (BuildException e) {
 						break;
 					}
-					getOptionMap().put(name, value);
+					getSettingsMap().put(name, value);
 					break;
 				case IOption.INCLUDE_PATH :
 					try {
@@ -241,7 +241,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					} catch (BuildException e) {
 						break;
 					}
-					getOptionMap().put(name, value);
+					getSettingsMap().put(name, value);
 					break;
 				case IOption.PREPROCESSOR_SYMBOLS :
 					try {
@@ -249,7 +249,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					} catch (BuildException e) {
 						break;
 					}
-					getOptionMap().put(name, value);
+					getSettingsMap().put(name, value);
 					break;
 				case IOption.LIBRARIES :
 					try {
@@ -257,7 +257,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					} catch (BuildException e) {
 						break;
 					}
-					getOptionMap().put(name, value);
+					getSettingsMap().put(name, value);
 					break;
 				case IOption.OBJECTS :
 					try {
@@ -265,7 +265,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					} catch (BuildException e) {
 						break;
 					}
-					getOptionMap().put(name, value);
+					getSettingsMap().put(name, value);
 					break;
 				default :
 					break;
@@ -277,7 +277,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getString(java.lang.String)
 	 */
 	public String getString(String name) {
-		Object s = getOptionMap().get(name);
+		Object s = getSettingsMap().get(name);
 
 		if ( s instanceof String )
 		{
@@ -312,11 +312,15 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	/**
 	 * 
 	 */
-	private void populateOptionMap() {
+	private void populateSettingsMap() {
 		// Each configuration has a list of tools
 		ITool [] tools = owner.getTools();
 		for (int index = 0; index < tools.length; ++index) {
+			// Add the tool to the map
 			ITool tool = tools[index];
+			getSettingsMap().put(tool.getId(), tool.getToolCommand());
+			
+			// Add the options defined for the tool
 			IOptionCategory cat = tool.getTopOptionCategory();
 			getOptionsForCategory(cat);
 		}
@@ -326,10 +330,10 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	 * @see org.eclipse.jface.preference.IPreferenceStore#putValue(java.lang.String, java.lang.String)
 	 */
 	public void putValue(String name, String value) {
-		Object oldValue = getOptionMap().get(name);
+		Object oldValue = getSettingsMap().get(name);
 		if (oldValue == null || !oldValue.equals(value))
 		{
-			getOptionMap().put(name, value);
+			getSettingsMap().put(name, value);
 			setDirty(true);
 		}
 	}
@@ -418,7 +422,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		Object oldValue = getString(name);
 		if (oldValue == null || !oldValue.equals(value))
 		{
-			getOptionMap().put(name, value);
+			getSettingsMap().put(name, value);
 			setDirty(true);
 			firePropertyChangeEvent(name, oldValue, value);
 		}
@@ -431,7 +435,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		boolean oldValue = getBoolean(name);
 		if (oldValue != value)
 		{
-			getOptionMap().put(name, new Boolean(value));
+			getSettingsMap().put(name, new Boolean(value));
 			setDirty(true);
 			firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(value));
 		}

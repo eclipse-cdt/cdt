@@ -1,3 +1,21 @@
+2004-03-02 Sean Evoy
+	Work to support new feature C1, "Set Tool Command in Project". 
+	Created a new preference page that has a single string field editor 
+	(for now) to edit the tool command. There is an externalized string 
+	for the label. Now that there are preference pages for tools and for 
+	options, and both are managed by the property page, the common logic 
+	for both preference pages have been refactored into a superclass. 
+	
+	In the property page, there is now logic for remembering what tool 
+	has been selected as well as what option. The property page now 
+	creates preference pages for tools and options.
+	
+	Updated the settings store to add tools as well as options.
+	
+	Tweaked the logic of the tool/option list provider for the property 
+	page slightly to handle the case where the selection is a tool and 
+	not simply an option.
+
 2004-02-27 John Camelon
 	New built-in compiler incldue search paths and defined symbols for the 
 	Gnu C++ compiler on Cygwin.

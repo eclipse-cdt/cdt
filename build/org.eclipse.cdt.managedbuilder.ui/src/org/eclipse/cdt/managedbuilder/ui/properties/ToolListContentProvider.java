@@ -42,6 +42,11 @@ public class ToolListContentProvider implements ITreeContentProvider{
 				categories[index] = tools[index].getTopOptionCategory();
 			}
 			return categories;
+		} else if (parentElement instanceof ITool) {
+			// If this is a tool, return the categories it contains
+			ITool tool = (ITool)parentElement;
+			IOptionCategory[] children = tool.getTopOptionCategory().getChildCategories();
+			return (children == null) ? EMPTY_ARRAY : children; 
 		} else if (parentElement instanceof IOptionCategory) {
 			// Categories can have child categories
 			IOptionCategory cat = (IOptionCategory)parentElement;

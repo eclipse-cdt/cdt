@@ -106,11 +106,12 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	private ITarget selectedTarget;
 	private IConfiguration [] configurations;
 	private IConfiguration selectedConfiguration;
-	private BuildToolSettingsPage currentSettingsPage;
+	private BuildSettingsPage currentSettingsPage;
 	private Map configToPageListMap;
 	private BuildToolsSettingsStore settingsStore;
 	private IOptionCategory selectedCategory;
 	private Point lastShellSize;
+	private ITool selectedTool;
 
 	/**
 	 * The minimum page size; 200 by 200 by default.
@@ -279,7 +280,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		optionList.setLabelProvider(new ToolListLabelProvider());
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * Method displayOptionsForTool.
 	 * @param toolReference
 	 */
@@ -288,24 +289,26 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		if (category == selectedCategory) {
 			return;
 		}
+		selectedTool = null;
 		selectedCategory = category;
 		
 		// Cache the current build setting page
-		BuildToolSettingsPage oldPage = currentSettingsPage;
+		BuildSettingsPage oldPage = currentSettingsPage;
 		currentSettingsPage = null;
 		
 		// Create a new settings page if necessary
 		List pages = getPagesForConfig();
 		ListIterator iter = pages.listIterator();
 		while (iter.hasNext()) {
-			BuildToolSettingsPage page = (BuildToolSettingsPage) iter.next();
-			if (page.getCategory().equals(category)) {
+			BuildSettingsPage page = (BuildSettingsPage) iter.next();
+			if (page instanceof BuildOptionSettingsPage && 
+					((BuildOptionSettingsPage)page).isForCategory(category)) {
 				currentSettingsPage = page;
 				break;
 			}
 		}
 		if (currentSettingsPage == null) {
-			currentSettingsPage = new BuildToolSettingsPage(selectedConfiguration, category);
+			currentSettingsPage = new BuildOptionSettingsPage(selectedConfiguration, category);
 			pages.add(currentSettingsPage);
 			currentSettingsPage.setContainer(this);
 			if (currentSettingsPage.getControl() == null) {
@@ -327,6 +330,57 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		// Set the size of the scrolled area
 		containerSC.setMinSize(currentSettingsPage.computeSize());
 		settingsPageContainer.layout();
+	}
+
+	/* (non-Javadoc)
+	 * @param tool
+	 */
+	private void displayOptionsForTool(ITool tool) {
+		if (tool == selectedTool) {
+			return;
+		}
+		// Unselect the category
+		selectedCategory = null;
+		// record that the tool selection has changed
+		selectedTool = tool;
+		
+		// Cache the current build setting page
+		BuildSettingsPage oldPage = currentSettingsPage;
+		currentSettingsPage = null;
+
+		// Create a new page if we need one
+		List pages = getPagesForConfig();
+		ListIterator iter = pages.listIterator();
+		while (iter.hasNext()) {
+			BuildSettingsPage page = (BuildSettingsPage) iter.next();
+			if (page instanceof BuildToolSettingsPage && 
+					((BuildToolSettingsPage)page).isForTool(tool)) {
+				currentSettingsPage = page;
+				break;
+			}
+		}
+		if (currentSettingsPage == null) {
+			currentSettingsPage = new BuildToolSettingsPage(selectedConfiguration, tool);
+			pages.add(currentSettingsPage);
+			currentSettingsPage.setContainer(this);
+			if (currentSettingsPage.getControl() == null) {
+				currentSettingsPage.createControl(settingsPageContainer);
+			}
+		}
+		// Make all the other pages invisible
+		Control[] children = settingsPageContainer.getChildren();
+		Control currentControl = currentSettingsPage.getControl();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] != currentControl)
+				children[i].setVisible(false);
+		}
+		currentSettingsPage.setVisible(true);
+		if (oldPage != null)
+			oldPage.setVisible(false);
+
+		// Set the size of the scrolled area
+		containerSC.setMinSize(currentSettingsPage.computeSize());
+		settingsPageContainer.layout();			
 	}
 
 	/* (non-Javadoc)
@@ -523,7 +577,9 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	
 		// Set the option page based on the selection
 		Object element = selection.getFirstElement();
-		if (element instanceof IOptionCategory) {
+		if (element instanceof ITool) {
+			displayOptionsForTool((ITool)element);
+		} else if (element instanceof IOptionCategory) {
 			displayOptionsForCategory((IOptionCategory)element);
 		}
 	}
@@ -702,8 +758,12 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		List pages = getPagesForConfig();
 		ListIterator iter = pages.listIterator();
 		while (iter.hasNext()) {
-			BuildToolSettingsPage page = (BuildToolSettingsPage) iter.next();
-			page.performOk();
+			BuildSettingsPage page = (BuildSettingsPage) iter.next();
+			if (page instanceof BuildToolSettingsPage) {
+				((BuildToolSettingsPage)page).performOk();
+			} else if (page instanceof BuildOptionSettingsPage) {
+				((BuildOptionSettingsPage)page).performOk();				
+			}
 		}
 		
 		// Write out the build model info

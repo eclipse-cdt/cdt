@@ -7,6 +7,7 @@ package org.eclipse.cdt.ui.wizards;
  
 import java.io.File;
 
+import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -29,11 +30,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
-
-import org.eclipse.cdt.internal.ui.CPlugin;
 
 /**
  * Standard main page for a wizard that is creates a project resource.

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.failedTests.LokiFailures;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
 import org.eclipse.cdt.core.search.tests.ClassDeclarationPatternTests;
+import org.eclipse.cdt.core.indexer.tests.IndexManagerTests;
 import org.eclipse.core.boot.IPlatformRunnable;
 
 /**
@@ -80,6 +81,7 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());
 		suite.addTestSuite(ClassDeclarationPatternTests.class );
+		suite.addTest(IndexManagerTests.suite());
 		
 		// Last test to trigger report generation
 		suite.addTest(suite.new GenerateReport("startFailedTests"));

@@ -12,6 +12,10 @@ package org.eclipse.cdt.core.indexer.tests;
 
 import java.io.FileInputStream;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
@@ -33,14 +37,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 /**
  * @author bgheorgh
  */
-public class IndexManagerTest extends TestCase {
+public class IndexManagerTests extends TestCase {
 	IFile file;
 	IFileDocument fileDoc;
 	IProject testProject;
@@ -50,7 +50,7 @@ public class IndexManagerTest extends TestCase {
 	 * Constructor for IndexManagerTest.
 	 * @param name
 	 */
-	public IndexManagerTest(String name) {
+	public IndexManagerTests(String name) {
 		super(name);
 	}
 
@@ -80,7 +80,7 @@ public class IndexManagerTest extends TestCase {
 	}
 
 	public static Test suite() { 
-		return new TestSuite(IndexManagerTest.class);
+		return new TestSuite(IndexManagerTests.class);
 	}
 	/*
 	 * Utils
@@ -97,9 +97,7 @@ public class IndexManagerTest extends TestCase {
 	   if (!project.isOpen()) {
 		 project.open(null);
 	   }  
-	   if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
-		   addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
-	   }
+	  
        //Fill out a project description
 	   IPath defaultPath = Platform.getLocation();
 	   IPath newPath = project.getFullPath();
@@ -110,7 +108,7 @@ public class IndexManagerTest extends TestCase {
 	   description.setLocation(newPath);
 	   //Create the project
 	   IProject cproject = CCorePlugin.getDefault().createCProject(description,project,monitor,CCorePlugin.PLUGIN_ID + ".make"); //.getCoreModel().create(project);
-	   
+	    
 	   return cproject; 
 	}
 	
@@ -149,7 +147,7 @@ public class IndexManagerTest extends TestCase {
 		IQueryResult[] qresults = ind.queryPrefix(prefix);
 		IEntryResult[] eresults = ind.queryEntries(prefix);
 		String [] queryResultModel = {"IndexedFile(1: /IndexerTestProject/mail.cpp)"};
-		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail/, refs={ 1 }", "EntryResult: word=typeDecl/C/Unknown/, refs={ 1 }", "EntryResult: word=typeDecl/C/container/, refs={ 1 }", "EntryResult: word=typeDecl/C/first_class/, refs={ 1 }", "EntryResult: word=typeDecl/C/postcard/, refs={ 1 }"};
+		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 1 }", "EntryResult: word=typeDecl/C/container, refs={ 1 }", "EntryResult: word=typeDecl/C/first_class, refs={ 1 }", "EntryResult: word=typeDecl/C/postcard, refs={ 1 }"};
 		
 		if (qresults.length != queryResultModel.length)
 			fail("Query Result length different from model");
@@ -183,8 +181,8 @@ public class IndexManagerTest extends TestCase {
 		importFile("DocumentManager.h","resources/indexer/DocumentManager.h");
 		Thread.sleep(10000);
 		ind = indexManager.getIndex(testProjectPath,true,true);
-		char[] prefix = "typeDecl/C/CDocumentManager/".toCharArray();
-		String [] entryResultModel ={"EntryResult: word=typeDecl/C/CDocumentManager/, refs={ 1 }"};
+		char[] prefix = "typeDecl/C/CDocumentManager".toCharArray();
+		String [] entryResultModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }"};
 		IEntryResult[] eresults =ind.queryEntries(prefix);
 		
 		if (eresults.length != entryResultModel.length)
@@ -230,7 +228,7 @@ public class IndexManagerTest extends TestCase {
 	 ind = indexManager.getIndex(testProjectPath,true,true);
 	 char[] prefix = "typeDecl/".toCharArray();
 	 IEntryResult[] eresults = ind.queryEntries(prefix);
-	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager/, refs={ 1 }", "EntryResult: word=typeDecl/C/Mail/, refs={ 2 }", "EntryResult: word=typeDecl/C/Unknown/, refs={ 2 }", "EntryResult: word=typeDecl/C/container/, refs={ 2 }", "EntryResult: word=typeDecl/C/first_class/, refs={ 2 }", "EntryResult: word=typeDecl/C/postcard/, refs={ 2 }"};
+	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }", "EntryResult: word=typeDecl/C/Mail, refs={ 2 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 2 }", "EntryResult: word=typeDecl/C/container, refs={ 2 }", "EntryResult: word=typeDecl/C/first_class, refs={ 2 }", "EntryResult: word=typeDecl/C/postcard, refs={ 2 }"};
 	 if (eresults.length != entryResultBeforeModel.length)
 			fail("Entry Result length different from model");	
 	 
@@ -245,7 +243,7 @@ public class IndexManagerTest extends TestCase {
 	 //See if the index is still there
 	 ind = indexManager.getIndex(testProjectPath,true,true);
 	 eresults = ind.queryEntries(prefix);
-	 String [] entryResultAfterModel ={"EntryResult: word=typeDecl/C/CDocumentManager/, refs={ 1 }"};
+	 String [] entryResultAfterModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }"};
 	 if (eresults.length != entryResultAfterModel.length)
 		fail("Entry Result length different from model");
 		

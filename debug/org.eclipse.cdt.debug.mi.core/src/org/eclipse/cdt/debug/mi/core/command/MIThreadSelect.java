@@ -25,6 +25,10 @@ public class MIThreadSelect extends MICommand
 		super("-thread-select", new String[]{Integer.toString(threadNum)});
 	}
 
+	public MIThreadSelectInfo getMIThreadSelectInfo() throws MIException {
+		return (MIThreadSelectInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

@@ -22,14 +22,14 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarEvaluateExpressionInfo;
  *      value=VALUE
  * 
  */
-public class MIVarEvaluateExpression extends MICommand 
-{
+public class MIVarEvaluateExpression extends MICommand {
 	public MIVarEvaluateExpression(String expression) {
-		super("-var-evaluate-expression", new String[]{expression});
+		super("-var-evaluate-expression", new String[] { expression });
 	}
 
-	public MIVarEvaluateExpressionInfo getMIVarEvaluateExpressionInfo() throws MIException {
-		return (MIVarEvaluateExpressionInfo)getMIInfo();
+	public MIVarEvaluateExpressionInfo getMIVarEvaluateExpressionInfo()
+		throws MIException {
+		return (MIVarEvaluateExpressionInfo) getMIInfo();
 	}
 
 	public MIInfo getMIInfo() throws MIException {

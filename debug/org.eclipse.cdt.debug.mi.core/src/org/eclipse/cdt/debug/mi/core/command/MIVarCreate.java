@@ -51,7 +51,7 @@ public class MIVarCreate extends MICommand
 	}
 
 	public MIVarCreate(String name, String frameAddr, String expression) {
-		super("-var-name", new String[]{name, frameAddr, expression});
+		super("-var-create", new String[]{name, frameAddr, expression});
 	}
 
 	public MIVarCreateInfo getMIVarCreateInfo() throws MIException {

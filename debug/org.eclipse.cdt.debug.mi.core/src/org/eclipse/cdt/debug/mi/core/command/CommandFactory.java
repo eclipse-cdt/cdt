@@ -262,7 +262,11 @@ public class CommandFactory {
 		return new MIVarAssign(name, expr);
 	}
 
-	public MIVarUpdate createMIUpdate(String name) {
+	public MIVarUpdate createMIVarUpdate() {
+		return new MIVarUpdate();
+	}
+
+	public MIVarUpdate createMIVarUpdate(String name) {
 		return new MIVarUpdate(name);
 	}
 

@@ -50,6 +50,10 @@ public class MIBreakList extends MICommand
 		super("-break-list");
 	}
 
+	public MIBreakListInfo getMIBreakListInfo() throws MIException {
+		return (MIBreakListInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

@@ -72,6 +72,22 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 		return objdump;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getObjdump(org.eclipse.core.runtime.IPath)
+	 */
+	public NM getNM(IPath path) {
+		IPath nmPath = getNMPath();
+		String nmArgs = getNMArgs();
+		NM nm = null;
+		if (nmPath != null && !nmPath.isEmpty()) {
+			try {
+				nm = new NM(nmPath.toOSString(), nmArgs, path.toOSString());
+			} catch (IOException e1) {
+			}
+		}
+		return nm;
+	}
+
 	protected IPath getAddr2linePath() {
 		ICExtensionReference ref = fExtension.getExtensionReference();
 		String value =  ref.getExtensionData("addr2line"); //$NON-NLS-1$
@@ -115,5 +131,23 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 			value = "strip"; //$NON-NLS-1$
 		}
 		return new Path(value);
+	}
+
+	protected IPath getNMPath() {
+		ICExtensionReference ref = fExtension.getExtensionReference();
+		String value = ref.getExtensionData("nm"); //$NON-NLS-1$
+		if (value == null || value.length() == 0) {
+			value = "nm"; //$NON-NLS-1$
+		}
+		return new Path(value);
+	}
+
+	protected String getNMArgs() {
+		ICExtensionReference ref = fExtension.getExtensionReference();
+		String value =  ref.getExtensionData("nmArgs"); //$NON-NLS-1$
+		if (value == null || value.length() == 0) {
+			value = ""; //$NON-NLS-1$
+		}
+		return value;
 	}
 }

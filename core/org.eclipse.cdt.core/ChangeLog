@@ -1,3 +1,12 @@
+2004-12-02 Alain Magloire
+	Fix for PR 40081.
+	For Cygwin use NM to get the global variables.
+	* utils/org/eclipse/cdt/utils/DefaultGnuToolFactory.java
+	* utils/org/eclipse/cdt/utils/IGnuToolFactory.java
+	* utils/org/eclipse/cdt/utils/NM.java
+	* utils/org/eclipse/cdt/utils/coff/parser/CygwinPEBinaryObject.java
+	* utils/org/eclipse/cdt/utils/coff/parser/PEBinaryObject.java
+	
 2004-11-25 Alain Magloire
 	Fix PR 79076
 	* utils/org/eclipse/cdt/utils/elf/Elf.java

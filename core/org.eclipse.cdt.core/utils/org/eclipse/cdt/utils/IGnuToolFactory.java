@@ -21,4 +21,6 @@ public interface IGnuToolFactory {
 	CPPFilt getCPPFilt();
 
 	Objdump getObjdump(IPath path);
+
+	NM getNM(IPath path);
 }

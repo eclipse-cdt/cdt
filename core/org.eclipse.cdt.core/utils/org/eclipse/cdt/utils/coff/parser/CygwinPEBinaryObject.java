@@ -11,6 +11,8 @@ package org.eclipse.cdt.utils.coff.parser;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.IAddress;
@@ -21,6 +23,7 @@ import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.cdt.utils.ICygwinToolsFactroy;
+import org.eclipse.cdt.utils.NM;
 import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.cdt.utils.coff.Coff;
@@ -97,7 +100,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	}
 
 	private Addr2line getAddr2line() {
-		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getAdapter(ICygwinToolsFactroy.class);
+		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
 			return factory.getAddr2line(getPath());
 		}
@@ -110,7 +113,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getCPPFilt()
 	 */
 	protected CPPFilt getCPPFilt() {
-		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getAdapter(ICygwinToolsFactroy.class);
+		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
 			return factory.getCPPFilt();
 		}
@@ -123,7 +126,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getObjdump()
 	 */
 	protected Objdump getObjdump() {
-		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getAdapter(ICygwinToolsFactroy.class);
+		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
 			return factory.getObjdump(getPath());
 		}
@@ -134,9 +137,19 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 	 * @return
 	 */
 	protected CygPath getCygPath() {
-		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getAdapter(ICygwinToolsFactroy.class);
+		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
 			return factory.getCygPath();
+		}
+		return null;
+	}
+
+	/**
+	 */
+	protected NM getNM() {
+		ICygwinToolsFactroy factory = (ICygwinToolsFactroy)getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
+		if (factory != null) {
+			return factory.getNM(getPath());
 		}
 		return null;
 	}
@@ -166,7 +179,25 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		symbolLoadingAddr2line = getAddr2line(false);
 		symbolLoadingCPPFilt = getCPPFilt();
 		symbolLoadingCygPath = getCygPath();
-		super.loadSymbols(pe);
+
+		
+		ArrayList list = new ArrayList();
+		super.loadSymbols(pe, list);
+
+		// Add any global symbols
+		NM nm = getNM();
+		NM.AddressNamePair[] pairs = nm.getBSSSymbols();
+		for (int i = 0; i < pairs.length; ++i) {
+			addSymbol(pairs[i], list, ISymbol.VARIABLE);
+		}
+//		pairs = nm.getTextSymbols();
+//		for (int i = 0; i < pairs.length; ++i) {
+//			addSymbol(pairs[i], list, ISymbol.FUNCTION);
+//		}
+		symbols = (ISymbol[]) list.toArray(NO_SYMBOLS);
+		Arrays.sort(symbols);
+		list.clear();
+
 		if (symbolLoadingAddr2line != null) {
 			symbolLoadingAddr2line.dispose();
 			symbolLoadingAddr2line = null;
@@ -178,6 +209,49 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		if (symbolLoadingCygPath != null) {
 			symbolLoadingCygPath.dispose();
 			symbolLoadingCygPath = null;
+		}
+	}
+
+	private void addSymbol(NM.AddressNamePair p, List list, int type) {
+		String name = p.name;		
+		if (name != null && name.length() > 0 && Character.isJavaIdentifierStart(name.charAt(0))) {
+			IAddress addr = new Addr32(p.address);
+			int size = 4;
+			if (symbolLoadingCPPFilt != null) {
+				try {
+					name = symbolLoadingCPPFilt.getFunction(name);
+				} catch (IOException e1) {
+					symbolLoadingCPPFilt.dispose();
+					symbolLoadingCPPFilt = null;
+				}
+			}
+			if (symbolLoadingAddr2line != null) {
+				try {
+					String filename = symbolLoadingAddr2line.getFileName(addr);
+					// Addr2line returns the funny "??" when it can not find
+					// the file.
+					if (filename != null && filename.equals("??")) { //$NON-NLS-1$
+						filename = null;
+					}
+					if (filename != null) {
+						try {
+							if (symbolLoadingCygPath != null) {
+								filename = symbolLoadingCygPath.getFileName(filename);
+							}
+						} catch (IOException e) {
+							symbolLoadingCygPath.dispose();
+							symbolLoadingCygPath = null;
+						}
+					}
+					IPath file = filename != null ? new Path(filename) : Path.EMPTY;
+					int startLine = symbolLoadingAddr2line.getLineNumber(addr);
+					int endLine = symbolLoadingAddr2line.getLineNumber(addr.add(size - 1));
+					list.add(new CygwinSymbol(this, name, type, addr, size, file, startLine, endLine));
+				} catch (IOException e) {
+					symbolLoadingAddr2line.dispose();
+					symbolLoadingAddr2line = null;
+				}
+			}
 		}
 	}
 

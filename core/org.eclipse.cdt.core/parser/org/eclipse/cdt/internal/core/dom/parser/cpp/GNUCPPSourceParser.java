@@ -4027,7 +4027,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          switch (LT(1)) {
             case IToken.t_virtual:
                if (firstToken == null)
+               {
                   firstToken = consume(IToken.t_virtual);
+                  last = firstToken;
+               }
                else
                   last = consume(IToken.t_virtual);
                isVirtual = true;
@@ -4035,21 +4038,30 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.t_public:
                visibility = ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.v_public;
                if (firstToken == null)
+               {
                   firstToken = consume();
+                  last = firstToken;
+               }
                else
                   last = consume();
                break;
             case IToken.t_protected:
                visibility = ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.v_protected;
                if (firstToken == null)
+               {
                   firstToken = consume();
+                  last = firstToken;
+               }
                else
                   last = consume();
                break;
             case IToken.t_private:
                visibility = ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.v_private;
                if (firstToken == null)
+               {
                   firstToken = consume();
+                  last = firstToken;
+               }
                else
                   last = consume();
                break;
@@ -4058,6 +4070,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                //to get templates right we need to use the class as the scope
                ITokenDuple d = name();
                name = createName(d);
+               if( firstToken == null )
+                  firstToken = d.getFirstToken();
                last = d.getLastToken();
                break;
             case IToken.tCOMMA:
@@ -4094,7 +4108,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                if (firstToken != null)
                   ((ASTNode) baseSpec)
                         .setOffsetAndLength(firstToken.getOffset(), last
-                              .getOffset()
+                              .getEndOffset()
                               - firstToken.getOffset());
                baseSpec.setVirtual(isVirtual);
                baseSpec.setVisibility(visibility);

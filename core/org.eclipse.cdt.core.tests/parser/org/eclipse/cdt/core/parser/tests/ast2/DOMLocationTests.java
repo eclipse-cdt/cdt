@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -185,7 +186,17 @@ public class DOMLocationTests extends AST2BaseTest {
       assertSoleLocation( namedTypeSpec, code.indexOf( "\nA") + 1, 1 ); //$NON-NLS-1$
    }
 
-
+   public void testBug84375() throws Exception {
+      String code = "class D { public: int x; };\nclass C : public virtual D {};"; //$NON-NLS-1$
+      IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
+      IASTSimpleDeclaration d2 = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+      ICPPASTCompositeTypeSpecifier classSpec = (ICPPASTCompositeTypeSpecifier) d2.getDeclSpecifier();
+      ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier [] bases = classSpec.getBaseSpecifiers();
+      assertSoleLocation( bases[0], code.indexOf( "public virtual D"), "public virtual D".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+      
+      
+   }
+   
    public void testElaboratedTypeSpecifier() throws ParserException {
       String code = "/* blah */ struct A anA; /* blah */"; //$NON-NLS-1$
       for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP

@@ -12,21 +12,23 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Stack;
 
 public class ScannerContext implements IScannerContext
 {
 	private Reader reader;
 	private String filename;
 	private int offset;
-	private int undo; 
-		
+	private Stack undo = new Stack(); 
+	private int kind; 
+				
 	public ScannerContext(){}
-	public IScannerContext initialize(Reader r, String f, int u )
+	public IScannerContext initialize(Reader r, String f, int k)
 	{
 		reader = r;
 		filename = f;
 		offset = 0;
-		undo = u;
+		kind = k; 
 		return this;
 	}
 		
@@ -62,22 +64,44 @@ public class ScannerContext implements IScannerContext
 		return reader;
 	}
 
+	public final int undoStackSize()
+	{
+		return undo.size();
+	}
+
 	/**
 	 * Returns the undo.
 	 * @return int
 	 */
-	public final int getUndo()
+	public final int popUndo()
 	{
-		return undo;
+		return ((Integer)undo.pop()).intValue();
 	}
 
 	/**
 	 * Sets the undo.
 	 * @param undo The undo to set
 	 */
-	public void setUndo(int undo)
+	public void pushUndo(int undo)
 	{
-		this.undo= undo;
+		this.undo.push( new Integer( undo )); 
+	}
+
+
+	/**
+	 * Returns the kind.
+	 * @return int
+	 */
+	public int getKind() {
+		return kind;
+	}
+
+	/**
+	 * Sets the kind.
+	 * @param kind The kind to set
+	 */
+	public void setKind(int kind) {
+		this.kind = kind;
 	}
 
 }

@@ -154,7 +154,6 @@ public class ScannerTestCase extends TestCase
 		"This statement should not be reached "
 			+ "as we sent in bad preprocessor input to the scanner";
 	public final static boolean verbose= false;
-	public final static boolean doConcatenation= false;
 	public final static boolean doIncludeStdio= false;
 	public final static boolean doIncludeWindowsH= false;
 	public final static boolean doIncludeWinUserH= false;
@@ -349,7 +348,7 @@ public class ScannerTestCase extends TestCase
 	public void prepareForWindowsRH()
 	{
 		scanner.addIncludePath(
-			"C:\\Program Files\\Microsoft Visual Studio .NET\\Vc7\\PlatformSDK\\include");
+			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include");
 		scanner.addDefinition("_WIN32_WINNT", "0x0300");
 		scanner.addDefinition("WINVER", "0x0400");
 		scanner.addDefinition("_WIN32_WINDOWS", "0x0300");
@@ -359,51 +358,74 @@ public class ScannerTestCase extends TestCase
 	public void prepareForWindowsH()
 	{
 		scanner.addIncludePath(
-			"C:\\Program Files\\Microsoft Visual Studio .NET\\Vc7\\PlatformSDK\\include");
-		scanner.addIncludePath(
-			"C:\\Program Files\\Microsoft Visual Studio .NET\\Vc7\\include");
+			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include");
 		scanner.addDefinition("_MSC_VER", "1200");
 		scanner.addDefinition("__cplusplus", "1");
 		scanner.addDefinition("__STDC__", "1");
 		scanner.addDefinition("_WIN32", "");		
-		scanner.addDefinition( "__midl", "1000" ); 
+		scanner.addDefinition( "__midl", "1000" );
+		scanner.addDefinition("_WIN32_WINNT", "0x0300");
+		scanner.addDefinition("WINVER", "0x0400");
+		scanner.addDefinition( "_M_IX86", "300");
+		scanner.addDefinition( "_INTEGRAL_MAX_BITS", "64");
 	}
 
 	public void prepareForStdio()
 	{
 		scanner.addIncludePath(
-			"C:\\Program Files\\Microsoft Visual Studio .NET\\Vc7\\include");
+			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include");
 		scanner.addDefinition("_MSC_VER", "1100");
 		scanner.addDefinition("__STDC__", "1");
 		scanner.addDefinition("_INTEGRAL_MAX_BITS", "64");
 		scanner.addDefinition("_WIN32", "");
+		scanner.addDefinition( "_M_IX86", "300");
 	}
 
 	public void testConcatenation()
 	{
-		if (doConcatenation)
+		try
 		{
-			try
-			{
-				initializeScanner("#define F1 3\n#define F2 F1##F1\nint x=F2;");
-				validateToken(Token.t_int);
-				validateDefinition("F1", "3");
-				validateDefinition("F2", "F1##F1");
-				validateIdentifier("x");
-				validateToken(Token.tASSIGN);
-				validateInteger("33");
-				validateToken(Token.tSEMI);
-				validateEOF();
-				
-				initializeScanner("#define PREFIX RT_\n#define RUN PREFIX##Run"); 
-				validateEOF(); 
-				validateDefinition( "PREFIX", "RT_" ); 
-				validateDefinition( "RUN", "RT_Run" );
-			}
-			catch (Exception e)
-			{
-				fail(EXCEPTION_THROWN + e.toString());
-			}
+			initializeScanner("#define F1 3\n#define F2 F1##F1\nint x=F2;");
+			validateToken(Token.t_int);
+			validateDefinition("F1", "3");
+			validateDefinition( "F2", "F1##F1");
+			validateIdentifier("x");
+			validateToken(Token.tASSIGN);
+			validateInteger("33");
+			validateToken(Token.tSEMI);
+			validateEOF();
+			
+			initializeScanner("#define PREFIX RT_\n#define RUN PREFIX##Run"); 
+			validateEOF(); 
+			validateDefinition( "PREFIX", "RT_" ); 
+			validateDefinition( "RUN", "PREFIX##Run" );
+		}
+		catch (Exception e)
+		{
+			fail(EXCEPTION_THROWN + e.toString());
+		}
+		
+		try
+		{
+			initializeScanner( "#define DECLARE_HANDLE(name) struct name##__ { int unused; }; typedef struct name##__ *name\n DECLARE_HANDLE( joe )" );
+			validateToken( Token.t_struct );
+			validateIdentifier( "joe__"); 
+			validateToken( Token.tLBRACE);  
+			validateToken( Token.t_int ); 
+			validateIdentifier( "unused"); 
+			validateToken( Token.tSEMI ); 
+			validateToken( Token.tRBRACE );
+			validateToken( Token.tSEMI ); 
+			validateToken( Token.t_typedef ); 
+			validateToken( Token.t_struct ); 
+			validateIdentifier( "joe__" ); 
+			validateToken( Token.tSTAR ); 
+			validateIdentifier( "joe");  
+			validateEOF();
+		}
+		catch( Exception e )
+		{ 
+			fail(EXCEPTION_THROWN + e.toString());			
 		}
 	}
 
@@ -1089,5 +1111,5 @@ public class ScannerTestCase extends TestCase
 		{
 			fail(EXCEPTION_THROWN + se.toString());			
 		}
-	} 
+	}
 }

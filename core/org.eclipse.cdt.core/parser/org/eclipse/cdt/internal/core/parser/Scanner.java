@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,9 +18,11 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -46,13 +49,13 @@ public class Scanner implements IScanner {
 			new ScannerContext().initialize(
 				new StringReader("\n"),
 				START,
-				NOCHAR));
+				ScannerContext.SENTINEL));
 		if (filename == null)
 			currentContext =
-				new ScannerContext().initialize(reader, TEXT, NOCHAR);
+				new ScannerContext().initialize(reader, TEXT, ScannerContext.TOP ); 
 		else
 			currentContext =
-				new ScannerContext().initialize(reader, filename, NOCHAR);
+				new ScannerContext().initialize(reader, filename, ScannerContext.TOP ); 
 	}
 
 	public Scanner() {
@@ -63,13 +66,19 @@ public class Scanner implements IScanner {
 		definitions = defns;
 	}
 
-	protected void updateContext(Reader reader, String filename) {
-//		if (callback != null)
-//			callback.inclusionBegin(filename); // not quite right ... fix me!!!
+	protected void updateContext(Reader reader, String filename, int type) throws ScannerException {
+		if( type == IScannerContext.INCLUSION )
+		{
+			if( !inclusions.add( filename ) )
+				throw new ScannerException( "Inclusion " + filename + " already encountered." ); 	
+				
+			System.out.println( "Handle inclusion - " + filename );	
+		}
 
 		contextStack.push(currentContext);
 		currentContext =
-			new ScannerContext().initialize(reader, filename, NOCHAR);
+			new ScannerContext().initialize(reader, filename, type );
+			
 	}
 
 	protected boolean rollbackContext() {
@@ -79,26 +88,41 @@ public class Scanner implements IScanner {
 			System.out.println("Error closing reader");
 		}
 
+		if( currentContext.getKind() == IScannerContext.INCLUSION )
+		{
+			inclusions.remove( currentContext.getFilename() );
+			System.out.println( "Completed inclusion - " + currentContext.getFilename() );
+		}
+
 		if (contextStack.isEmpty()) {
 			currentContext = null;
 			return false;
 		}
-
-		//if (callback != null)
-		//	callback.inclusionEnd();
 
 		currentContext = (ScannerContext) contextStack.pop();
 		return true;
 	}
 
 	public void addIncludePath(String includePath) {
-		includePaths.add(includePath);
+		includePathNames.add(includePath);
+		includePaths.add( new File( includePath ) );
 	}
 
 	public void overwriteIncludePath(List newIncludePaths) {
-		includePaths = null;
-		includePaths = new ArrayList();
-		includePaths.addAll(newIncludePaths);
+		includePathNames = null;
+		includePaths = null; 
+		includePathNames = new ArrayList();
+		includePaths = new ArrayList(); 
+		includePathNames.addAll(newIncludePaths);
+		
+		Iterator i = includePathNames.iterator(); 
+		while( i.hasNext() )
+		{
+			String path = (String) i.next();
+			includePaths.add( new File( path )); 
+		}
+		
+		
 	}
 
 	public void addDefinition(String key, IMacroDescriptor macro) {
@@ -114,15 +138,20 @@ public class Scanner implements IScanner {
 	}
 
 	public final Object[] getIncludePaths() {
-		return includePaths.toArray();
+		return includePathNames.toArray();
 	}
 
-	protected void skipOverWhitespace() {
+	protected boolean skipOverWhitespace() {
 		int c = getChar();
+		boolean result = false; 
 		while ((c != NOCHAR) && ((c == ' ') || (c == '\t')))
+		{
 			c = getChar();
+			result = true; 
+		}
 		if (c != NOCHAR)
 			ungetChar(c);
+		return result; 
 
 	}
 
@@ -192,6 +221,12 @@ public class Scanner implements IScanner {
 		currentToken = t;
 	}
 
+	protected void resetStorageBuffer()
+	{
+		if( storageBuffer != null ) 
+			storageBuffer = null; 
+	}
+
 	protected Token newToken(int t, String i, IScannerContext c) {
 		setCurrentToken(new Token(t, i, c));
 		return currentToken;
@@ -201,7 +236,7 @@ public class Scanner implements IScanner {
 		setCurrentToken(new Token(t, i));
 		return currentToken;
 	}
-
+	
 	protected String getNextIdentifier() {
 		StringBuffer buffer = new StringBuffer();
 		skipOverWhitespace();
@@ -225,56 +260,81 @@ public class Scanner implements IScanner {
 		return buffer.toString();
 	}
 
-	protected void handleInclusion(String fileName) throws ScannerException {
-		// Skip over inclusions in quickScan mode
-		if (quickScan)
-			return;
+	protected void handleInclusion(String fileName, boolean useIncludePaths ) throws ScannerException {
 
-		// iterate through the include paths 
-		Iterator iter = includePaths.iterator();
-
-		while (iter.hasNext()) {
-			String path = (String) iter.next();
-
-			java.io.File pathFile = new java.io.File(path);
-			if (pathFile.isDirectory()) {
-				String newPath = pathFile + "\\" + fileName;
-
-				java.io.File includeFile = new java.io.File(newPath);
-
-				if (includeFile.exists() && includeFile.isFile()) {
-					try {
-						FileReader inclusionReader =
-							new FileReader(includeFile);
-						//System.out.println( "Parsing inclusion file " + newPath );
-						updateContext(inclusionReader, newPath);
-						return;
-					} catch (FileNotFoundException fnf) {
-						// do nothing	
+		if( useIncludePaths ) // search include paths for this file
+		{
+			// iterate through the include paths 
+			Iterator iter = includePaths.iterator();
+	
+			while (iter.hasNext()) {
+	
+				File pathFile = (File)iter.next();
+				if (pathFile.isDirectory()) {
+					String newPath = pathFile.getPath() + File.separatorChar + fileName;
+	
+					File includeFile = new File(newPath);
+	
+					if (includeFile.exists() && includeFile.isFile()) {
+						try {
+							FileReader inclusionReader =
+								new FileReader(includeFile);
+							updateContext(inclusionReader, newPath, ScannerContext.INCLUSION );
+							return;
+						} catch (FileNotFoundException fnf) {
+							// do nothing - check the next directory
+						}
 					}
 				}
 			}
 		}
+		else // local inclusion
+		{
+			String currentFilename = currentContext.getFilename(); 
+			File currentIncludeFile = new File( currentFilename );
+			String parentDirectory = currentIncludeFile.getParent();
+			currentIncludeFile = null; 
+			String fullPath = parentDirectory + File.separatorChar + fileName;
+			File includeFile = new File( fullPath );
+			if (includeFile.exists() && includeFile.isFile()) {
+				try {
+					FileReader inclusionReader =
+						new FileReader(includeFile);
+					updateContext(inclusionReader, fullPath, ScannerContext.INCLUSION );
+					return;
+				} catch (FileNotFoundException fnf) {
+					if (throwExceptionOnInclusionNotFound)
+						throw new ScannerException("Cannot find inclusion " + fileName);	
+				}
+			}
+		}
+		
 		if (throwExceptionOnInclusionNotFound)
 			throw new ScannerException("Cannot find inclusion " + fileName);
 	}
 
 	// constants
-	public static final int NOCHAR = -1;
+	private static final int NOCHAR = -1;
 
 	private static final String TEXT = "<text>";
 	private static final String START = "<initial reader>";
 	private static final String EXPRESSION = "<expression>";
+	private static final String PASTING = "<pasting>";
 	private static final String BAD_PP =
 		"Invalid preprocessor directive encountered at offset ";
 	private static final String DEFINED = "defined";
 	private static final String POUND_DEFINE = "#define ";
 
+	public static final int tPOUNDPOUND = -6;
+
 	private IScannerContext currentContext;
 	private Stack contextStack = new Stack();
 
+	private List includePathNames = new ArrayList();
 	private List includePaths = new ArrayList();
 	private Hashtable definitions = new Hashtable();
+	private StringBuffer storageBuffer = null; 
+	private Set inclusions = new HashSet(); 
 	private int count = 0;
 	private static HashMap keywords = new HashMap();
 	private static HashMap ppDirectives = new HashMap();
@@ -295,7 +355,6 @@ public class Scanner implements IScanner {
 	private boolean throwExceptionOnUnboundedString = true;
 	private boolean throwExceptionOnEOFWithinMultilineComment = true;
 	private boolean throwExceptionOnEOFWithoutBalancedEndifs = true;
-	private boolean providedDefinedMacro = true;
 
 	private boolean quickScan = false;
 	public void setQuickScan(boolean qs) {
@@ -314,9 +373,8 @@ public class Scanner implements IScanner {
 		do {
 			done = true;
 
-			if (currentContext.getUndo() != NOCHAR) {
-				c = currentContext.getUndo();
-				currentContext.setUndo(NOCHAR);
+			if (currentContext.undoStackSize() != 0 ) {
+				c = currentContext.popUndo();
 			} else {
 				try {
 					c = currentContext.read();
@@ -354,11 +412,40 @@ public class Scanner implements IScanner {
 	private void ungetChar(int c) {
 		// Should really check whether there already is a char there
 		// If so, we should be using a buffer, instead of a single char
-		currentContext.setUndo(c);
+		currentContext.pushUndo(c);
 	}
 
-	public Token nextToken() throws ScannerException {
+	protected boolean lookAheadForTokenPasting()
+	{
+		int c = getChar(); 
+		if( c == '#' )
+		{
+			c = getChar(); 
+			if( c == '#' )
+			{
+				return true; 
+			}
+			else
+			{
+				ungetChar( c );
+			}
+		}
 
+		ungetChar( c );
+		return false; 
+
+	}
+
+	
+
+	public Token nextToken() throws ScannerException {
+		return nextToken( true ); 
+	}
+
+
+	protected Token nextToken( boolean pasting ) throws ScannerException
+	{
+	
 		count++;
 
 		int c = getChar();
@@ -393,12 +480,9 @@ public class Scanner implements IScanner {
 
 				String ident = buff.toString();
 
-				if (providedDefinedMacro) {
-					if (ident.equals(DEFINED)) {
-						return newToken(Token.tINTEGER, handleDefinedMacro());
-					}
-				}
-
+				if (ident.equals(DEFINED)) 
+					return newToken(Token.tINTEGER, handleDefinedMacro());
+				
 				Object mapping = definitions.get(ident);
 
 				if (mapping != null) {
@@ -411,6 +495,31 @@ public class Scanner implements IScanner {
 				int tokenType = Token.tIDENTIFIER;
 				if (tokenTypeObject != null)
 					tokenType = ((Integer) tokenTypeObject).intValue();
+
+				if( pasting )
+				{
+					if( lookAheadForTokenPasting() )
+					{
+						if( storageBuffer == null )
+							storageBuffer = buff;
+						else
+							storageBuffer.append( ident ); 
+							 
+						c = getChar(); 
+						continue; 	
+					}
+					else
+					{
+						if( storageBuffer != null )
+						{
+							storageBuffer.append( ident );
+							updateContext( new StringReader( storageBuffer.toString()), PASTING, IScannerContext.MACROEXPANSION );
+							storageBuffer = null;  
+							c = getChar(); 
+							continue;
+						}
+					}
+				}
 
 				return newToken(tokenType, ident, currentContext);
 			} else if (c == '"') {
@@ -436,7 +545,18 @@ public class Scanner implements IScanner {
 				}
 
 			} else if ((c >= '0') && (c <= '9')) {
-				StringBuffer buff = new StringBuffer();
+				StringBuffer buff;
+				
+				if( pasting )
+				{
+					if( storageBuffer != null )
+						buff = storageBuffer;
+					else
+						buff = new StringBuffer();
+				}
+				else
+					buff = new StringBuffer();
+					
 				buff.append((char) c);
 
 				c = getChar();
@@ -454,21 +574,52 @@ public class Scanner implements IScanner {
 				}
 
 				ungetChar(c);
+				
+				if( pasting )
+				{
+					if( lookAheadForTokenPasting() )
+					{
+						storageBuffer = buff; 
+						c = getChar(); 
+						continue; 	
+					}
+					else
+					{
+						if( storageBuffer != null )
+						{
+							updateContext( new StringReader( buff.toString()), PASTING, IScannerContext.MACROEXPANSION );
+							storageBuffer = null;  
+							c = getChar(); 
+							continue; 
+						}
+					}
+				}
+				
 				return newToken(
 					Token.tINTEGER,
 					buff.toString(),
 					currentContext);
+				
 			} else if (c == '#') {
 				// lets prepare for a preprocessor statement
 				StringBuffer buff = new StringBuffer();
 				buff.append((char) c);
 
 				// we are allowed arbitrary whitespace after the '#' and before the rest of the text
-				skipOverWhitespace();
+				boolean skipped = skipOverWhitespace();
 
 				c = getChar();
+				
+				if( c == '#' )
+				{
+					if( skipped )
+						throw new ScannerException(BAD_PP + currentContext.getOffset()); 
+					else 
+						return newToken( tPOUNDPOUND, "##" );
+				} 
+				
 				while (((c >= 'a') && (c <= 'z'))
-					|| ((c >= 'A') && (c <= 'Z')) | (c == '_')) {
+					|| ((c >= 'A') && (c <= 'Z')) || (c == '_') ) {
 					buff.append((char) c);
 					c = getChar();
 				}
@@ -1128,14 +1279,14 @@ public class Scanner implements IScanner {
 			}
 	
 			
-			if (expressionEvalResult.getClass() == java.lang.Integer.class) {
+			if (expressionEvalResult instanceof Integer ) {
 				int i = ((Integer) expressionEvalResult).intValue();
 				if (i == 0) {
 					return false;
 				}
 				return true;
 			} else if (
-				expressionEvalResult.getClass() == java.lang.Boolean.class) {
+				expressionEvalResult instanceof Boolean ) {
 				return ((Boolean) expressionEvalResult).booleanValue();
 			} else {
 				throw new ScannerException(
@@ -1189,6 +1340,7 @@ public class Scanner implements IScanner {
 		int offset;
 
 		StringBuffer fileName = new StringBuffer();
+		boolean useIncludePath = true;
 		if (c == '<') {
 			c = getChar();
 			while ((c != '>')) {
@@ -1202,7 +1354,7 @@ public class Scanner implements IScanner {
 				fileName.append((char) c);
 				c = getChar();
 			}
-
+			useIncludePath = false; 
 			// TO DO: Make sure the directory of the current file is in the
 			// inclusion paths.
 		}
@@ -1220,16 +1372,14 @@ public class Scanner implements IScanner {
 			}
 		}
 		else
-			handleInclusion(f.trim());
+			handleInclusion(f.trim(), useIncludePath );
 	}
 
 	protected void poundDefine() throws ScannerException {
 		skipOverWhitespace();
 		// definition 
 		String key = getNextIdentifier();
-		int offset = currentContext.getOffset() - key.length();
-		if( currentContext.getUndo() != Scanner.NOCHAR )
-			offset -= 1;
+		int offset = currentContext.getOffset() - key.length() - currentContext.undoStackSize();
 
 		if (throwExceptionOnRedefinition) {
 			String checkForRedefinition = (String) definitions.get(key);
@@ -1274,11 +1424,11 @@ public class Scanner implements IScanner {
 			helperScanner.initialize(
 				new StringReader(replacementString),
 				null);
-			Token t = helperScanner.nextToken();
+			Token t = helperScanner.nextToken(false);
 
 			while (t.type != Token.tEOF) {
 				macroReplacementTokens.add(t);
-				t = helperScanner.nextToken();
+				t = helperScanner.nextToken(false);
 			}
 
 			IMacroDescriptor descriptor = new MacroDescriptor();
@@ -1295,7 +1445,8 @@ public class Scanner implements IScanner {
 
 			// get what we are to map the name to and add it to the definitions list
 			String value = getRestOfPreprocessorLine();
-			addDefinition(key, value);
+			addDefinition( key, value ); 				
+		
 		} else if (c == '/') {
 			// this could be a comment	
 			c = getChar();
@@ -1333,12 +1484,10 @@ public class Scanner implements IScanner {
 
 	protected void expandDefinition(String symbol, Object expansion)
 		throws ScannerException {
-		if (expansion.getClass() == String.class) {
+		if (expansion instanceof String ) {
 			String replacementValue = (String) expansion;
-			updateContext(
-				new StringReader(replacementValue),
-				POUND_DEFINE + symbol);
-		} else if (expansion.getClass() == MacroDescriptor.class) {
+			updateContext( new StringReader(replacementValue), (POUND_DEFINE + symbol ), ScannerContext.MACROEXPANSION );
+		} else if (expansion instanceof IMacroDescriptor ) {
 			IMacroDescriptor macro = (IMacroDescriptor) expansion;
 			skipOverWhitespace();
 			int c = getChar();
@@ -1359,7 +1508,7 @@ public class Scanner implements IScanner {
 					buffer.append((char) c);
 					c = getChar();
 				}
-				String betweenTheBrackets = buffer.toString();
+				String betweenTheBrackets = buffer.toString().trim();
 				StringTokenizer tokenizer =
 					new StringTokenizer(betweenTheBrackets, ",");
 				Vector parameterValues = new Vector(tokenizer.countTokens());
@@ -1387,29 +1536,39 @@ public class Scanner implements IScanner {
 
 						// is this identifier in the parameterNames
 						// list? 
-
 						int index = parameterNames.indexOf(t.image);
 						if (index == -1 ) {
 							// not found
 							// just add image to buffer
-							buffer.append(t.image);
+							buffer.append(t.image );
 						} else {
 							buffer.append(
-								(String) parameterValues.elementAt(index));
+								(String) parameterValues.elementAt(index) );
 						}
 					} else {
 						buffer.append(t.image);
 					}
+					
+					boolean pastingNext = false;
+					
+					if( i != numberOfTokens - 1)
+					{
+						Token t2 = (Token) tokens.get(i+1);
+						if( t2.getType() == tPOUNDPOUND )
+							pastingNext = true;  
+					}
+					
+					if( t.getType() != tPOUNDPOUND && ! pastingNext )
+						buffer.append( " " ); 
 				}
+				String finalString = buffer.toString(); 
 				updateContext(
-					new StringReader(buffer.toString()),
-					POUND_DEFINE + macro.getSignature());
-			} else {
+					new StringReader(finalString),
+					POUND_DEFINE + macro.getSignature(), ScannerContext.MACROEXPANSION );
+			} else 
 				if (throwExceptionOnBadMacroExpansion)
 					throw new ScannerException(
 						"Improper use of macro " + symbol);
-
-			}
 
 		} else {
 			System.out.println(

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -196,6 +197,46 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		return path.toString();
 	}
 
+	/* (non-Javadoc)
+	 * The raw option string can contain path information that has spaces 
+	 * in them. For example, 
+	 * <p> <pre>
+	 * -I"path\with a\couple of spaces" -O2 -g -fPIC
+	 * </pre><p>
+	 * would yeild
+	 * <p><pre>-I"path\with | a\couple | of | spaces" | -O2 | -g | -fPIC</pre>
+	 * <p>
+	 * As you can see, simply splitting at the whitespaces will yeild a result 
+	 * containing garbage, so the logic of this method must consider whether a 
+	 * token contains the &quot; character. If so, then add it and all of the 
+	 * subsequent tokens until the enclosing &quot; is found. 
+	 *  
+	 * @param rawOptionString
+	 * @return Vector containing all options
+	 */
+	private Vector getOptionVector(String rawOptionString){
+		Vector tokens = new Vector(Arrays.asList(rawOptionString.split("\\s")));	//$NON-NLS-1$
+		Vector output = new Vector(tokens.size());
+
+		Iterator iter = tokens.iterator();
+		while(iter.hasNext()){
+			String token = (String)iter.next();
+			int firstIndex = token.indexOf("\"");	//$NON-NLS-1$
+			int lastIndex = token.lastIndexOf("\"");	//$NON-NLS-1$
+			if (firstIndex != -1 && firstIndex == lastIndex) {
+				// Keep looking
+				while (iter.hasNext()) {
+					String nextToken = (String) iter.next();
+					token += WHITESPACE + nextToken;
+					if (nextToken.indexOf("\"") != -1) break;	//$NON-NLS-1$
+				}
+			}
+			output.add(token);
+		}
+		
+		return output;
+	}
+	
 	/**
 	 * This method parses the string that is entered in the all build option
 	 * field editor and stores the options to the corresponding option fields.
@@ -219,8 +260,10 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		// additional options buffer
 		StringBuffer addnOptions = new StringBuffer();
 		// split all build options string
-		String[] optionsArr = alloptions.split(WHITESPACE);
-		for (int j = 0; j < optionsArr.length; j++) {
+		Vector optionsArr = getOptionVector(alloptions);
+		Iterator optIter = optionsArr.iterator();
+		while(optIter.hasNext()) {
+			String optionValue = (String)optIter.next();
 			boolean optionValueExist = false;
 			// get the options for this tool
 			IOption[] options = tool.getOptions();
@@ -230,13 +273,13 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 				// check whether the option value is "STRING" type
 				Iterator stringOptsIter = stringOptionsMap.values().iterator();
 				while (stringOptsIter.hasNext()) {
-					if (((String) stringOptsIter.next()).indexOf(optionsArr[j]) != -1)
+					if (((String) stringOptsIter.next()).indexOf(optionValue) != -1)
 						optionValueExist = true;
 				}
 				// check whether the option value is "OBJECTS" type
 				Iterator userObjsIter = userObjsMap.values().iterator();
 				while (userObjsIter.hasNext()) {
-					if (((String) userObjsIter.next()).indexOf(optionsArr[j]) != -1)
+					if (((String) userObjsIter.next()).indexOf(optionValue) != -1)
 						optionValueExist = true;
 				}
 				// if the value does not exist in string option or user objects
@@ -247,7 +290,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 					// the option value
 					switch (opt.getValueType()) {
 						case IOption.BOOLEAN :
-							if (opt.getCommand().equals(optionsArr[j])) {
+							if (opt.getCommand().equals(optionValue)) {
 								getPreferenceStore()
 										.setValue(opt.getId(), true);
 								optionValueExist = true;
@@ -258,7 +301,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 							String[] enumValues = opt.getApplicableValues();
 							for (int i = 0; i < enumValues.length; i++) {
 								if (opt.getEnumCommand(enumValues[i]).equals(
-										optionsArr[j])) {
+										optionValue)) {
 									enum = enumValues[i];
 									optionValueExist = true;
 								}
@@ -272,9 +315,9 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 						case IOption.PREPROCESSOR_SYMBOLS :
 						case IOption.LIBRARIES :
 							if (opt.getCommand() != null
-									&& optionsArr[j].startsWith(opt
+									&& optionValue.startsWith(opt
 											.getCommand())) {
-								optionsList.add(optionsArr[j]);
+								optionsList.add(optionValue);
 								optionValueExist = true;
 							}
 							break;
@@ -286,7 +329,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			// If the parsed string does not match with any previous option
 			// values then consider this option as a additional build option
 			if (!optionValueExist) {
-				addnOptions.append(optionsArr[j] + ITool.WHITE_SPACE);
+				addnOptions.append(optionValue + ITool.WHITE_SPACE);
 			}
 		}
 		// check whether some of the "STRING" option value or "OBJECTS" type
@@ -339,8 +382,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			String[] listVal = null;
 			switch (opt.getValueType()) {
 				case IOption.BOOLEAN :
-					ArrayList optsList = new ArrayList(Arrays
-							.asList(optionsArr));
+					ArrayList optsList = new ArrayList(/*Arrays.asList(*/optionsArr)/*)*/;
 					if (opt.getCommand() != null
 							&& !optsList.contains(opt.getCommand()))
 						getPreferenceStore().setValue(opt.getId(), false);

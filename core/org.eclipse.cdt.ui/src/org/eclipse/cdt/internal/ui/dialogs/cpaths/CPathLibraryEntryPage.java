@@ -203,7 +203,8 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		}
 
 		public boolean hasChildren(TreeListDialogField field, Object element) {
-			return (element instanceof CPElement);
+//			return (element instanceof CPElement);
+			return false;
 		}		
 			
 		// ---------- IDialogFieldListener --------

@@ -61,7 +61,6 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		fBuildPathStatus = new StatusInfo();
 
 		setOptionContainer(this);
-
 	}
 
 	// -------- public api --------
@@ -111,7 +110,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 			}
 		}
 		if (cpathEntries != null) {
-			newCPath = getFilteredEntries(cpathEntries, getFilteredTypes());
+			newCPath = getFilteredElements(cpathEntries, getFilteredTypes());
 		} else {
 			newCPath = new ArrayList();
 		}
@@ -122,7 +121,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 	abstract protected void initialize(ICElement element, List cPaths);
 
-	protected ArrayList getFilteredEntries(IPathEntry[] cPathEntries, int[] types) {
+	protected ArrayList getFilteredElements(IPathEntry[] cPathEntries, int[] types) {
 		ArrayList newCPath = new ArrayList();
 		for (int i = 0; i < cPathEntries.length; i++) {
 			IPathEntry curr = cPathEntries[i];

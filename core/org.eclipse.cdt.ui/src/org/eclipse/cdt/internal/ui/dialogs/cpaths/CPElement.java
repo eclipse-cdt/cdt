@@ -286,7 +286,7 @@ public class CPElement {
 			case IPathEntry.CDT_SOURCE:
 				return new Object[] { findAttributeElement(EXCLUSION)};
 			case IPathEntry.CDT_LIBRARY:
-				return new Object[] { findAttributeElement(SOURCEATTACHMENT) };
+//				return new Object[] { findAttributeElement(SOURCEATTACHMENT) };
 			case IPathEntry.CDT_INCLUDE:
 			case IPathEntry.CDT_MACRO:
 				return new Object[0];

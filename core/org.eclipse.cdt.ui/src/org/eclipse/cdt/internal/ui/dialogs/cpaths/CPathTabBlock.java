@@ -33,8 +33,6 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 	private CPathContainerEntryPage fContainerPage;
 	private CPathLibraryEntryPage fLibrariesPage;
 
-//	private CPathOrderExportPage fOrderExportPage;
-
 	private class BuildPathAdapter implements IDialogFieldListener {
 
 		// ---------- IDialogFieldListener --------
@@ -86,8 +84,6 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		addPage(fLibrariesPage);
 		fContainerPage = new CPathContainerEntryPage(fCPathList);
 		addPage(fContainerPage);
-//		fOrderExportPage = new CPathOrderExportPage(fCPathList);
-//		addPage(fOrderExportPage);
 	}
 
 	/*

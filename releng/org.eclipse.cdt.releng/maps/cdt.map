@@ -19,7 +19,7 @@ plugin@org.eclipse.cdt.launch=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tool
 
 plugin@org.eclipse.cdt.doc.user=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-doc/org.eclipse.cdt.doc.user
 
-plugin@org.eclipse.cdt=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.ecilpse.cdt-releng/org.eclipse.cdt
+plugin@org.eclipse.cdt=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt
 feature@org.eclipse.cdt=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt-feature
 
 ! Platform specific

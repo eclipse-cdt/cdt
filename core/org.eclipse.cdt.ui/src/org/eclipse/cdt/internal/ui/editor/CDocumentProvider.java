@@ -870,7 +870,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		IResource resource= info.fCopy.getResource();
 		
 		//Assert.isTrue(resource instanceof IFile);
-		if (!resource.exists()) {
+		if (resource != null && !resource.exists()) {
 			// underlying resource has been deleted, just recreate file, ignore the rest
 			createFileFromDocument(monitor, (IFile) resource, document);
 			return;

@@ -486,9 +486,6 @@ public class Target  implements ICDITarget {
 		MISession mi = session.getMISession();
 		try {
 			mi.getMIInferior().interrupt();
-			if (isRunning()) {
-				throw new CDIException("Unable to suspend target");
-			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}

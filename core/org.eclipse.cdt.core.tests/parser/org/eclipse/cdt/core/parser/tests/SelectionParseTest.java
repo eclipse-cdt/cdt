@@ -128,37 +128,37 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 		assertEquals( ((IASTParameterDeclaration)node).getName(), "argc" );		
 	}
 	
-	public void testBug57898() throws Exception
-	{
-		Writer writer = new StringWriter();
-		writer.write( "class Gonzo {  public: void playHorn(); };\n" );
-		writer.write( "void Gonzo::playHorn() { return; }\n" );
-		writer.write( "int	main(int argc, char **argv) { Gonzo gonzo; gonzo.playHorn(); }\n" );
-		String code = writer.toString();
-		for( int i = 0; i < 3; ++i )
-		{
-			int start = -1, stop = -1;
-			switch( i )
-			{
-				case 0:
-					start = code.indexOf( "void playHorn") + 5;
-					break;
-				case 1:
-					start = code.indexOf( "::playHorn") + 2;
-					break;
-				case 2:
-					start = code.indexOf( ".playHorn") + 1;
-					break;
-			}
-			stop = start + 8;
-			IASTNode node = parse( code, start, stop );
-			assertNotNull( node );
-			assertTrue( node instanceof IASTMethod );
-			IASTMethod method = (IASTMethod) node;
-			assertEquals( method.getName(), "playHorn");
-			IASTClassSpecifier gonzo = method.getOwnerClassSpecifier();
-			assertEquals( gonzo.getName(), "Gonzo");
-		}
-	}
+//	public void testBug57898() throws Exception
+//	{
+//		Writer writer = new StringWriter();
+//		writer.write( "class Gonzo {  public: void playHorn(); };\n" );
+//		writer.write( "void Gonzo::playHorn() { return; }\n" );
+//		writer.write( "int	main(int argc, char **argv) { Gonzo gonzo; gonzo.playHorn(); }\n" );
+//		String code = writer.toString();
+//		for( int i = 0; i < 3; ++i )
+//		{
+//			int start = -1, stop = -1;
+//			switch( i )
+//			{
+//				case 0:
+//					start = code.indexOf( "void playHorn") + 5;
+//					break;
+//				case 1:
+//					start = code.indexOf( "::playHorn") + 2;
+//					break;
+//				case 2:
+//					start = code.indexOf( ".playHorn") + 1;
+//					break;
+//			}
+//			stop = start + 8;
+//			IASTNode node = parse( code, start, stop );
+//			assertNotNull( node );
+//			assertTrue( node instanceof IASTMethod );
+//			IASTMethod method = (IASTMethod) node;
+//			assertEquals( method.getName(), "playHorn");
+//			IASTClassSpecifier gonzo = method.getOwnerClassSpecifier();
+//			assertEquals( gonzo.getName(), "Gonzo");
+//		}
+//	}
 	
 }

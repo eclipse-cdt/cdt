@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
    id="org.eclipse.cdt.debug.mi.core"
-   name="%Plugin.name"
+   name="%pluginName"
    version="1.0.0"
+   provider-name="%providerName"
    class="org.eclipse.cdt.debug.mi.core.MIPlugin">
 
    <runtime>
@@ -18,9 +19,9 @@
    <extension
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger
-	    	id="org.eclipse.cdt.debug.mi.core.CDebugger"
-    		name="%GDBDebugger.name"
-            class="org.eclipse.cdt.debug.mi.core.GDBDebugger">
+            name="%GDBDebugger.name"
+            class="org.eclipse.cdt.debug.mi.core.GDBDebugger"
+            id="org.eclipse.cdt.debug.mi.core.CDebugger">
       </debugger>
    </extension>
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
    id="org.eclipse.cdt.launch"
-   name="CDT Launch Plug-in"
+   name="%pluginName"
    version="1.0.0"
-   provider-name="QNX Software Systems Ltd."
+   provider-name="%providerName"
    class="org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin">
 
    <runtime>

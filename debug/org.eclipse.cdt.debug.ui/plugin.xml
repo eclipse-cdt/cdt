@@ -3,7 +3,7 @@
    id="org.eclipse.cdt.debug.ui"
    name="%pluginName"
    version="1.0.0"
-   provider-name=""
+   provider-name="%providerName"
    class="org.eclipse.cdt.debug.ui.CDebugUIPlugin">
 
    <runtime>

@@ -762,7 +762,6 @@ public final class Scanner implements IScanner, IScannerData {
 //	private boolean enableTrigraphReplacement = true;
 //	private boolean enableTrigraphReplacementInStrings = true;
 	private boolean throwExceptionOnBadCharacterRead = false; 
-	private boolean atEOF = false;
 
 	private boolean tokenizingMacroReplacementList = false;
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$

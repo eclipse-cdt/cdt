@@ -24,7 +24,8 @@ import java.nio.charset.Charset;
  */
 public class CodeReader {
 
-	private static final String NOFILE = "<text>";
+	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
+	private static final String NOFILE = "<text>"; //$NON-NLS-1$
 	
 	public final char[] buffer;
 	public final String filename;
@@ -67,31 +68,30 @@ public class CodeReader {
 		byteBuffer.rewind();
 
 		// TODO use the real encoding
-		CharBuffer charBuffer = Charset.forName("UTF-8").decode(byteBuffer);
+		CharBuffer charBuffer = Charset.forName(UTF_8).decode(byteBuffer);
 		if (charBuffer.hasArray())
 			return charBuffer.array();
-		else {
-			// Got to copy it out
-			char[] buff = new char[charBuffer.length()];
-			charBuffer.get(buff);
-			return buff;
-		}
+		// Got to copy it out
+		char[] buff = new char[charBuffer.length()];
+		charBuffer.get(buff);
+		return buff;
+		
 	}
 	
-	private char[] xload(FileInputStream stream) throws IOException {
+	protected char[] xload(FileInputStream stream) throws IOException {
 		FileChannel channel = stream.getChannel();
 		MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
 
 		// TODO use the real encoding
-		CharBuffer charBuffer = Charset.forName("UTF-8").decode(map);
+		CharBuffer charBuffer = Charset.forName(UTF_8).decode(map);
 		if (charBuffer.hasArray())
 			return charBuffer.array();
-		else {
-			// Got to copy it out
-			char[] buff = new char[charBuffer.length()];
-			charBuffer.get(buff);
-			return buff;
-		}
+		
+		// Got to copy it out
+		char[] buff = new char[charBuffer.length()];
+		charBuffer.get(buff);
+		return buff;
+		
 	}
 	
 	public boolean isFile() {

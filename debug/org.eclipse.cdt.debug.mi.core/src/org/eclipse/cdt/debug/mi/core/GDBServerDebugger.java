@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -33,14 +34,14 @@ public class GDBServerDebugger implements ICDebugger {
 		try {
 			ICDISharedLibraryManager mgr = session.getSharedLibraryManager();
 			if (mgr instanceof SharedLibraryManager) {
-				boolean autolib = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, false);
+				boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, false);
 				try {
 					((SharedLibraryManager)mgr).setAutoLoadSymbols(autolib);
 				} catch (CDIException e) {
 					// ignore this one, cause problems for many gdb.
 				}
 			}			
-			List p = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_SOLIB_PATH, new ArrayList(1));
+			List p = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, new ArrayList(1));
 			if (p.size() > 0) {
 				String[] paths = (String[])p.toArray(new String[0]);
 				mgr.setSharedLibraryPaths(paths);

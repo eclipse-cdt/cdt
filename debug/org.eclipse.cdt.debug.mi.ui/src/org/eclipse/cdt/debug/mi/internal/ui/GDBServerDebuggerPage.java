@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.mi.internal.ui;
 
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
+import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -255,7 +256,7 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		boolean autosolib = false;
 		try {
 			debuggerCommand = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-			autosolib = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, false);
+			autosolib = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, false);
 		} catch (CoreException e) {
 		}
 		try {
@@ -287,7 +288,7 @@ public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
 		hostPort.trim();
 		asyncDev.trim();
 		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEBUG_NAME, debuggerCommand);
-		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, fAutoSoLibButton.getSelection());
+		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, fAutoSoLibButton.getSelection());
 		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, fTCPButton.getSelection());
 		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, hostText);
 		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, hostPort);

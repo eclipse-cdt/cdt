@@ -10,6 +10,10 @@
  ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.ui.views.modules; 
 
+import java.util.HashMap;
+import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICModule;
@@ -28,6 +32,7 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -205,6 +210,10 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 	
 	private ICursorListener fCursorListener;
 
+	private HashMap fSelectionStates = new HashMap( 10 );
+
+	private AbstractViewerState fLastState = null;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
@@ -304,8 +313,26 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 			return;
 		}
 
+		if ( current != null ) {
+			// save state
+			fLastState = getViewerState();
+			fSelectionStates.put( current, fLastState );
+		}		
+
 		showViewer();
 		getViewer().setInput( target );
+
+		// restore state
+		if ( target != null ) {
+			AbstractViewerState state = (AbstractViewerState)fSelectionStates.get( target );
+			if ( state == null ) {
+				// attempt to restore selection/expansion based on last target
+				state = fLastState;
+			}
+			if ( state != null ) {
+				state.restoreState( getModulesViewer() );
+			}
+		}
 	}
 
 	protected TreeViewer createTreeViewer( Composite parent ) {
@@ -757,6 +784,9 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 		if ( element instanceof ICModule ) {
 			return getModuleDetail( ((ICModule)element) );
 		}
+		if ( element instanceof ICElement ) {
+			return element.toString();
+		}
 		return ""; //$NON-NLS-1$
 	}
 
@@ -782,6 +812,24 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 		if ( module.areSymbolsLoaded() ) {
 			sb.append( ModulesMessages.getString( "ModulesView.7" ) ); //$NON-NLS-1$
 			sb.append( module.getSymbolsFileName().toOSString() );
+			sb.append( '\n' );
+		}
+		IBinary binary = (IBinary)module.getAdapter( IBinary.class );
+		if ( binary != null ) {
+			sb.append( ModulesMessages.getString( "ModulesView.8" ) ); //$NON-NLS-1$
+			sb.append( binary.getCPU() );
+			sb.append( '\n' );
+		}
+		IAddress baseAddress = module.getBaseAddress();
+		if ( !baseAddress.isZero() ) {
+			sb.append( ModulesMessages.getString( "ModulesView.9" ) ); //$NON-NLS-1$
+			sb.append( baseAddress.toHexAddressString() );
+			sb.append( '\n' );
+		}
+		long size = module.getSize();
+		if ( size > 0 ) { 
+			sb.append( ModulesMessages.getString( "ModulesView.10" ) ); //$NON-NLS-1$
+			sb.append( size );
 			sb.append( '\n' );
 		}
 		return sb.toString();
@@ -811,5 +859,9 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 			getDetailDocument().removeDocumentListener( getDetailDocumentListener() );
 		}
 		super.dispose();
+	}
+
+	private AbstractViewerState getViewerState() {
+		return new ModulesViewerState( getModulesViewer() );
 	}
 }

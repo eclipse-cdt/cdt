@@ -105,15 +105,18 @@
          <viewShortcut
                id="org.eclipse.cdt.debug.ui.DisassemblyView">
          </viewShortcut>
-         <actionSet
-               id="org.eclipse.cdt.debug.ui.debugActionSet">
-         </actionSet>
          <view
                visible="false"
                relative="org.eclipse.debug.ui.VariableView"
                relationship="stack"
-               id="org.eclipse.cdt.debug.ui.ModulesView"/>
-         <viewShortcut id="org.eclipse.cdt.debug.ui.ModulesView"/>
+               id="org.eclipse.cdt.debug.ui.ModulesView">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.debug.ui.ModulesView">
+         </viewShortcut>
+         <actionSet
+               id="org.eclipse.cdt.debug.ui.debugActionSet">
+         </actionSet>
       </perspectiveExtension>
    </extension>
    <extension
@@ -1062,6 +1065,9 @@
             viewId="org.eclipse.debug.ui.RegisterView"
             contextId="org.eclipse.cdt.debug.ui.debugging">
       </contextViewBinding>
+      <contextViewBinding
+            contextId="org.eclipse.cdt.debug.ui.debugging"
+            viewId="org.eclipse.debug.ui.MemoryView"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">

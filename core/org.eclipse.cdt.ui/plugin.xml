@@ -644,7 +644,7 @@
             id="org.eclipse.cdt.ui.CSearchResultPage">
       </viewPage>
    </extension>
--->
+<!--
    <extension
          point="org.eclipse.ui.propertyPages">
       <page

@@ -163,8 +163,8 @@ public class CommandFactory {
 		return new MIGDBSet(params);
 	}
 
-	public MIGDBSetAutoSolib createMIGDBSetAutoSolib() {
-		return new MIGDBSetAutoSolib();
+	public MIGDBSetAutoSolib createMIGDBSetAutoSolib(boolean set) {
+		return new MIGDBSetAutoSolib(set);
 	}
 
 	public MIGDBSetSolibSearchPath createMIGDBSetSolibSearchPath(String[] params) {

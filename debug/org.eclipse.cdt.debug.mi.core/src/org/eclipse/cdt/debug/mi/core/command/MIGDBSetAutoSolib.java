@@ -14,7 +14,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  * 
  */
 public class MIGDBSetAutoSolib extends MIGDBSet {
-	public MIGDBSetAutoSolib() {
-		super(new String[] {"auto-solib-add"});
+	public MIGDBSetAutoSolib(boolean isSet) {
+		super(new String[] {"auto-solib-add", (isSet) ? "1" : "0"});
 	}
 }

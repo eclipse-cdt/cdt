@@ -108,7 +108,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	public void setAutoSolib() throws CDIException {
 		MISession mi = getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIGDBSetAutoSolib solib = factory.createMIGDBSetAutoSolib();
+		MIGDBSetAutoSolib solib = factory.createMIGDBSetAutoSolib(true);
 		try {
 			mi.postCommand(solib);
 			MIInfo info = solib.getMIInfo();

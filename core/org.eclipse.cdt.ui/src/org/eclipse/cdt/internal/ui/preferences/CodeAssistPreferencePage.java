@@ -43,7 +43,8 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		ArrayList overlayKeys = new ArrayList();
 
 		// temporary
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.USE_DOM));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.DONT_USE_DOM));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.TIME_DOM));
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOINSERT));
@@ -78,7 +79,8 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		contentAssistComposite.setLayout(layout);
 
 		// temporary use DOM
-		addCheckBox(contentAssistComposite, "Use DOM (Work in progress)", ContentAssistPreference.USE_DOM, 0);
+		addCheckBox(contentAssistComposite, "Use Old Content Assist (Work in progress)", ContentAssistPreference.DONT_USE_DOM, 0);
+		addCheckBox(contentAssistComposite, "Print Completion Times (Work in progress)", ContentAssistPreference.TIME_DOM, 0);
 		
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following three radio buttons are grouped together

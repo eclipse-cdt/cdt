@@ -80,12 +80,14 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 					contributor.contributeCompletionProposals(viewer, offset, workingCopy, completionNode, proposals);
 				}
 			}
-			
-			long propTime = System.currentTimeMillis();
-			System.out.println("Completion Parse: " + (stopTime - startTime) + " + Proposals: " //$NON-NLS-1$ //$NON-NLS-2$
-					+ (propTime - stopTime));
-			System.out.flush();
 
+			if (CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.TIME_DOM)) {
+				long propTime = System.currentTimeMillis();
+				System.out.println("Completion Parse: " + (stopTime - startTime) + " + Proposals: " //$NON-NLS-1$ //$NON-NLS-2$
+						+ (propTime - stopTime));
+				System.out.flush();
+			}
+			
 			if (!proposals.isEmpty()) {
 				errorMessage = null;
 				return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);

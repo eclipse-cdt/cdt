@@ -23,7 +23,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public class ContentAssistPreference {
 	
 	// Temporary to use DOM for assist
-	public final static String USE_DOM = "content_assist_use_dom"; //$NON-NLS-1$
+	public final static String DONT_USE_DOM = "content_assist_dont_use_dom"; //$NON-NLS-1$
+	public final static String TIME_DOM = "content_assist_time_dom"; //$NON-NLS-1$
 	
 	/** Preference key for content assist auto activation */
 	//public final static String AUTOACTIVATION=  "content_assist_autoactivation";

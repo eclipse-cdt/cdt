@@ -14,10 +14,13 @@ import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -37,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
  * 
  * @since Jul 25, 2002
  */
-public class MemoryControlArea extends Composite
+public class MemoryControlArea extends Composite implements ITextOperationTarget
 {
 	private MemoryView fMemoryView;
 	private MemoryPresentation fPresentation;
@@ -120,7 +123,18 @@ public class MemoryControlArea extends Composite
 												}
 											}
 										} );
+		text.addFocusListener( new FocusListener()
+									{
+										public void focusGained( FocusEvent e )
+										{
+											fMemoryView.updateObjects();
+										}
 
+										public void focusLost( FocusEvent e )
+										{
+											fMemoryView.updateObjects();
+										}
+									} );
 		fEvaluateButton = new Button( composite, SWT.PUSH );
 		fEvaluateButton.setText( "Evaluate" );
 		fEvaluateButton.setToolTipText( "Evaluate expression to address" );
@@ -475,6 +489,46 @@ public class MemoryControlArea extends Composite
 				fAddressText.setText( CDebugUIUtils.toHexAddressString( getMemoryBlock().getStartAddress() ) );
 				handleAddressEnter();
 			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextOperationTarget#canDoOperation(int)
+	 */
+	public boolean canDoOperation( int operation )
+	{
+		switch( operation )
+		{
+			case CUT:
+			case COPY:
+				return ( fAddressText != null && fAddressText.isFocusControl() && fAddressText.isEnabled() && fAddressText.getSelectionCount() > 0 );
+			case PASTE:
+			case SELECT_ALL:
+				return ( fAddressText != null && fAddressText.isFocusControl() && fAddressText.isEnabled() );
+		}
+		
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
+	 */
+	public void doOperation( int operation )
+	{
+		switch( operation )
+		{
+			case CUT:
+				fAddressText.cut();
+				break;
+			case COPY:
+				fAddressText.copy();
+				break;
+			case PASTE:
+				fAddressText.paste();
+				break;
+			case SELECT_ALL:
+				fAddressText.setSelection( 0, fAddressText.getCharCount() );
+				break;
 		}
 	}
 }

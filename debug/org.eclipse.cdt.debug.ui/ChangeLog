@@ -1,3 +1,11 @@
+2003-06-12 Mikhail Khodjaiants
+	Fixing "trivial" PR 38788: Ctrl-X, Ctrl-C, Ctrl-V, Ctrl-A, Ctrl-Z and Ctrl-Y keys don't work 
+	in the address field of the Memory view. 
+	* MemoryViewAction.java: new
+	* MemoryControlArea.java
+	* MemoryView.java
+	* MemoryViewer.java
+
 2003-06-10 Mikhail Khodjaiants
 	Refactoring: moved the type and value related methods from ICVariable to ICType and ICValue.
 	* CDTDebugModelPresentation.java

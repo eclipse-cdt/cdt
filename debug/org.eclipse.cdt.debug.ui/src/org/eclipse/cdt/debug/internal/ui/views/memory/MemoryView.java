@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.internal.ui.actions.MemoryActionSelectionGroup;
 import org.eclipse.cdt.debug.internal.ui.actions.MemoryFormatAction;
 import org.eclipse.cdt.debug.internal.ui.actions.MemoryNumberOfColumnAction;
 import org.eclipse.cdt.debug.internal.ui.actions.MemorySizeAction;
+import org.eclipse.cdt.debug.internal.ui.actions.MemoryViewAction;
 import org.eclipse.cdt.debug.internal.ui.actions.RefreshMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ShowAsciiAction;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
@@ -31,6 +32,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -43,6 +45,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -83,7 +86,33 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	 */
 	protected void createActions()
 	{
-		IAction action = new RefreshMemoryAction( (MemoryViewer)getViewer() );
+		IAction action = null; 
+		
+		action = new MemoryViewAction( this, ITextOperationTarget.CUT );
+		action.setText( "Cut" );
+		action.setToolTipText( "Cut" );
+		action.setDescription( "Cut" );
+		setGlobalAction( ITextEditorActionConstants.CUT, (MemoryViewAction)action );
+
+		action = new MemoryViewAction( this, ITextOperationTarget.COPY );
+		action.setText( "Copy" );
+		action.setToolTipText( "Copy" );
+		action.setDescription( "Copy" );
+		setGlobalAction( ITextEditorActionConstants.COPY, (MemoryViewAction)action );
+
+		action = new MemoryViewAction( this, ITextOperationTarget.PASTE );
+		action.setText( "Paste" );
+		action.setToolTipText( "Paste" );
+		action.setDescription( "Paste" );
+		setGlobalAction( ITextEditorActionConstants.PASTE, (MemoryViewAction)action );
+
+		action = new MemoryViewAction( this, ITextOperationTarget.SELECT_ALL );
+		action.setText( "Select All" );
+		action.setToolTipText( "Select All" );
+		action.setDescription( "Select All" );
+		setGlobalAction( ITextEditorActionConstants.SELECT_ALL, (MemoryViewAction)action );
+
+		action = new RefreshMemoryAction( (MemoryViewer)getViewer() );
 		action.setEnabled( false );
 		setAction( "RefreshMemory", action ); //$NON-NLS-1$
 		add( (RefreshMemoryAction)action );
@@ -376,5 +405,24 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		{
 			remove( (IUpdate)actions[i] );
 		}
+	}
+
+	private void setGlobalAction( String actionId, MemoryViewAction action )
+	{
+		add( action );
+		getViewSite().getActionBars().setGlobalActionHandler( actionId, action );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter( Class adapter )
+	{
+		if (ITextOperationTarget.class.equals( adapter ) )
+		{
+			return ((MemoryViewer)getViewer()).getTextOperationTarget();
+		}
+
+		return super.getAdapter(adapter);
 	}
 }

@@ -268,14 +268,19 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 
 	protected void loadDebuggerCombo(ICDebugConfiguration[] debugConfigs, String current) {
 		fDCombo.removeAll();
-
+		int select = -1;
 		for (int i = 0; i < debugConfigs.length; i++) {
 			fDCombo.add(debugConfigs[i].getName());
 			fDCombo.setData(Integer.toString(i), debugConfigs[i]);
+			if (debugConfigs[i].getID().equalsIgnoreCase(current)) {
+				select = i;
+			}
 		}
 
 		fPageUpdated = false;
-		fDCombo.setText(current);
+		if (select != -1) {
+			fDCombo.select(select);
+		}
 		//The behaviour is undefined for if the callbacks should be triggered
 		// for this,
 		//so force page update if needed.

@@ -119,15 +119,15 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 			Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
 			boolean shouldUpdate = MessageDialog.openQuestion(shell,
 					ManagedBuilderUIPlugin.getResourceString("ManagedBuildConvert.12x.warning.title"), //$NON-NLS-1$
-					ManagedBuilderUIPlugin.getFormattedString("ManagedBuildConvert.12x.warning.message", new String[]{project.getName()})); //$NON-NLS-1$
+					ManagedBuilderUIPlugin.getFormattedString("ManagedBuildConvert.12x.warning.message", project.getName())); //$NON-NLS-1$
 			if (shouldUpdate) {
 				backupFile.delete(true, monitor);
 			} else {
 				monitor.setCanceled(true);
-				throw new OperationCanceledException(ManagedBuilderUIPlugin.getFormattedString("ManagedBuildConvert.12x.cancelled.message", new String[]{project.getName()}));
+				throw new OperationCanceledException(ManagedBuilderUIPlugin.getFormattedString("ManagedBuildConvert.12x.cancelled.message", project.getName())); //$NON-NLS-1$
 			}
 		}
-		settingsFile.copy(backupFile.getFullPath(), true, monitor); //$NON-NLS-1$
+		settingsFile.copy(backupFile.getFullPath(), true, monitor);
 	}
 	
 	protected static void convertConfiguration(ITarget newTarget, ITarget newParent, Element oldConfig, IProgressMonitor monitor) {
@@ -167,7 +167,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 				defId += ID_STATIC;
 				break;
 		}
-		defId += ID_SEPARATOR + (debug ? "debug" : "release");
+		defId += ID_SEPARATOR + (debug ? "debug" : "release"); //$NON-NLS-1$ //$NON-NLS-2$
 		newParentConfig = newParent.getConfiguration(defId);
 		if (newParentConfig == null) {
 			// Create a default gnu exe release or debug
@@ -364,7 +364,8 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		try {
 			// Create a new target based on the new parent
 			newTarget = ManagedBuildManager.createTarget(project, newParent);
-
+			newTarget.setArtifactName(oldTarget.getAttribute(ITarget.ARTIFACT_NAME));
+			
 			// Create new configurations
 			NodeList configNodes = oldTarget.getElementsByTagName(IConfiguration.CONFIGURATION_ELEMENT_NAME);
 			for (int configIndex = 0; configIndex < configNodes.getLength(); ++configIndex) {
@@ -405,7 +406,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		}
 		
 		// Now complete the new tool id
-		newToolId += ID_SEPARATOR + (cppFlag ? "cpp" : "c") + ID_SEPARATOR;
+		newToolId += ID_SEPARATOR + (cppFlag ? "cpp" : "c") + ID_SEPARATOR; //$NON-NLS-1$ //$NON-NLS-2$
 		switch (toolType) {
 			case TOOL_TYPE_COMPILER:
 				newToolId += TOOL_NAME_COMPILER;
@@ -563,7 +564,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		} catch (InvocationTargetException e) {
 			ManagedBuilderUIPlugin.logException(e, 
 					ManagedBuilderUIPlugin.getResourceString("ManagedBuilderStartup.update.exception.error"),	//$NON-NLS-1$
-					ManagedBuilderUIPlugin.getFormattedString("ManagedBuilderStartup.update.exception.message", new String[]{project.getName()}));	//$NON-NLS-2$
+					ManagedBuilderUIPlugin.getFormattedString("ManagedBuilderStartup.update.exception.message", project.getName()));	//$NON-NLS-1$
 		}
 	}
 

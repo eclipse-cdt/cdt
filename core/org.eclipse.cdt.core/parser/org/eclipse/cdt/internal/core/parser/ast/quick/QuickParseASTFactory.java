@@ -347,4 +347,11 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#lookupSymbolInContext(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public IASTNode lookupSymbolInContext(IASTScope scope, ITokenDuple duple) throws ASTNotImplementedException {
+		throw new ASTNotImplementedException();
+	}
+
 }

@@ -24,7 +24,7 @@ public class ParseError extends Error {
 		
 		// offset specified is within a section of code #if'd out by the preprocessor 
 		// semantic context cannot be provided in this case
-		public static final ParseErrorKind OFFSET_PREPROCESSED_OUT = new ParseErrorKind( 1 );
+		public static final ParseErrorKind OFFSETDUPLE_UNREACHABLE = new ParseErrorKind( 1 );
 		
 		// offset range specified is not a valid identifier or qualified name
 		// semantic context cannot be provided in this case

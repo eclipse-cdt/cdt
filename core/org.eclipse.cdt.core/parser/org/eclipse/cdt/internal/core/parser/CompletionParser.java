@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
+import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -40,21 +41,22 @@ import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 /**
  * @author jcamelon
  */
-public class ContextualParser extends Parser implements IParser {
+public class CompletionParser extends CompleteParser implements IParser {
 
 	protected CompletionKind kind;
-	protected IASTScope scope;
 	protected IASTNode context;
 	protected IToken finalToken;
 	private Set keywordSet;
-
+	protected IASTScope scope;
+	
+	
 	/**
 	 * @param scanner
 	 * @param callback
 	 * @param language
 	 * @param log
 	 */
-	public ContextualParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log) {
+	public CompletionParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log) {
 		super(scanner, callback, language, log);
 		astFactory = ParserFactory.createASTFactory( ParserMode.COMPLETION_PARSE, language);
 		scanner.setASTFactory(astFactory);
@@ -91,29 +93,22 @@ public class ContextualParser extends Parser implements IParser {
 	/**
 	 * @return
 	 */
-	private Set getKeywordSet() {
+	protected Set getKeywordSet() {
 		return keywordSet;
 	}
 
 	/**
 	 * @return
 	 */
-	private String getCompletionPrefix() {
+	protected String getCompletionPrefix() {
 		return ( finalToken == null ? "" : finalToken.getImage() );
 	}
 
 	/**
 	 * @return
 	 */
-	private IASTNode getCompletionContext() {
+	protected IASTNode getCompletionContext() {
 		return context;
-	}
-
-	/**
-	 * @return
-	 */
-	private IASTScope getCompletionScope() {
-		return scope;
 	}
 
 	/**
@@ -123,24 +118,6 @@ public class ContextualParser extends Parser implements IParser {
 		return kind;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IParser#parse(int, int)
-	 */
-	public IASTNode parse(int startingOffset, int endingOffset) {
-		scanner.setOffsetBoundary(endingOffset);
-		translationUnit();
-		return getCompletionContext();
-	}
-	
-	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.Parser#setCurrentScope(org.eclipse.cdt.core.parser.ast.IASTScope)
-	 */
-	protected void setCompletionScope(IASTScope scope) {
-		this.scope = scope;
-	}
-	
 	protected void setCompletionContext( IASTNode node )
 	{
 		this.context = node;
@@ -151,19 +128,6 @@ public class ContextualParser extends Parser implements IParser {
 		this.kind = kind;
 	}    
 	
-	
-	protected void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws BacktrackException, EndOfFileException
-	{
-		if ( isInlineFunction ) 
-			skipOverCompoundStatement();
-		else
-			functionBody(scope);
-	}
-	
-	protected void catchBlockCompoundStatement(IASTScope scope) throws BacktrackException, EndOfFileException 
-	{
-		compoundStatement(scope, true);
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleOffsetLimitException()
@@ -191,7 +155,7 @@ public class ContextualParser extends Parser implements IParser {
 	 * @param object
 	 * @param string
 	 */
-	private void setCompletionValues(CompletionKind kind, Set keywordSet, String prefix ) {
+	protected void setCompletionValues(CompletionKind kind, Set keywordSet, String prefix ) {
 		setCompletionScope(compilationUnit);
 		this.keywordSet = keywordSet;
 		setCompletionKind(kind);
@@ -316,6 +280,24 @@ public class ContextualParser extends Parser implements IParser {
 			catchBlockCompoundStatement(scope);
 		}
 	}
-	
-	
+
+	/**
+	 * @return
+	 */
+	protected IASTScope getCompletionScope() {
+		return scope;
+	}
+
+	public IASTNode parse(int startingOffset, int endingOffset) {
+		throw new ParseError( ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED );
+	}
+
+	protected void setCompletionScope(IASTScope scope) {
+		this.scope = scope;
+	}
+
+	public boolean parse() {
+		throw new ParseError( ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED );	
+	}
+
 }

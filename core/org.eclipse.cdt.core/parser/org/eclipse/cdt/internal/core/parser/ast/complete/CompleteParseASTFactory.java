@@ -2821,4 +2821,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return null;
 		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#lookupSymbolInContext(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public IASTNode lookupSymbolInContext(IASTScope scope, ITokenDuple duple) throws ASTNotImplementedException {
+		ISymbol s = null;
+		try {
+			s = lookupQualifiedName( scopeToSymbol( scope ), duple, new ArrayList(), false );
+		} catch (ASTSemanticException e) {
+		}
+		if ( s == null )
+			return null;
+		return s.getASTExtension().getPrimaryDeclaration();
+	}
 }

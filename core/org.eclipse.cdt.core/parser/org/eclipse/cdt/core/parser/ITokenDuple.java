@@ -12,6 +12,10 @@ package org.eclipse.cdt.core.parser;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
+
 
 /**
  * @author jcamelon
@@ -25,6 +29,8 @@ public interface ITokenDuple {
 	 * @return
 	 */
 	public abstract IToken getLastToken();
+	
+	
 	public abstract Iterator iterator();
 	public abstract String toString();
 	public abstract boolean isIdentifier();
@@ -34,4 +40,6 @@ public interface ITokenDuple {
 	public IToken getToken(int index);
 	
 	public int findLastTokenType( int type );
+	
+	public IASTNode lookup( IASTFactory factory, IASTScope scope );
 }

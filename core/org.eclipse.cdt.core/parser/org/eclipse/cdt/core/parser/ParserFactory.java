@@ -16,10 +16,11 @@ import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
 import org.eclipse.cdt.core.parser.extension.IParserExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.CompleteParser;
-import org.eclipse.cdt.internal.core.parser.ContextualParser;
+import org.eclipse.cdt.internal.core.parser.CompletionParser;
 import org.eclipse.cdt.internal.core.parser.ParserExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 import org.eclipse.cdt.internal.core.parser.QuickParser;
+import org.eclipse.cdt.internal.core.parser.SelectionParser;
 import org.eclipse.cdt.internal.core.parser.StructuralParseCallback;
 import org.eclipse.cdt.internal.core.parser.StructuralParser;
 import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
@@ -57,9 +58,9 @@ public class ParserFactory {
 		else if( ourMode == ParserMode.STRUCTURAL_PARSE )
 			return new StructuralParser( scanner, ourCallback, language, logService );
 		else if( ourMode == ParserMode.COMPLETION_PARSE )
-			return new ContextualParser( scanner, ourCallback, language, logService );
-		else if( ourMode == ParserMode.SELECTION_PARSE )
-			return null; // TODO Implementation required
+			return new CompletionParser( scanner, ourCallback, language, logService );
+		else if (ourMode == ParserMode.SELECTION_PARSE )
+			return new SelectionParser( scanner, ourCallback, language, logService );
 		else
 			return new QuickParser( scanner, ourCallback, language, logService );
     }

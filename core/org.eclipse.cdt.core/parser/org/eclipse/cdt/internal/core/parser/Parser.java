@@ -5293,7 +5293,9 @@ public abstract class Parser implements IParser
     	
         try
         {
-            return scanner.nextToken();
+        	IToken value = scanner.nextToken(); 
+        	handleNewToken( value );
+            return value; 
         }
         catch( OffsetLimitReachedException olre )
         {
@@ -5310,7 +5312,13 @@ public abstract class Parser implements IParser
         }
     }
 
-    protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws EndOfFileException {
+    /**
+	 * @param value
+	 */
+	protected void handleNewToken(IToken value) throws EndOfFileException {
+	}
+	
+	protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws EndOfFileException {
 		// unexpected, throw EOF instead (equivalent)
 		throw new EndOfFileException();
 	}

@@ -240,5 +240,7 @@ public interface IASTFactory
 	 * @param kind
 	 * @param firstExpression
 	 */
-	public IASTNode getCompletionContext(Kind kind, IASTExpression expression); 						
+	public IASTNode getCompletionContext(Kind kind, IASTExpression expression);
+	
+	public IASTNode lookupSymbolInContext( IASTScope scope, ITokenDuple duple ) throws ASTNotImplementedException;
 }

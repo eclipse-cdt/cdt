@@ -8,7 +8,6 @@ package org.eclipse.cdt.internal.ui.text;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -18,25 +17,20 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
 public class CReconcilingStrategy implements IReconcilingStrategy {
 
 
-	private CContentOutlinePage fOutliner;
 	private ITextEditor fEditor;	
 	private IWorkingCopyManager fManager;
-	private IDocumentProvider fDocumentProvider;
 	private IProgressMonitor fProgressMonitor;
 
 
 	public CReconcilingStrategy(CEditor editor) {
-		fOutliner= editor.getOutlinePage();
 		fEditor= editor;
 		fManager= CUIPlugin.getDefault().getWorkingCopyManager();
-		fDocumentProvider= CUIPlugin.getDefault().getDocumentProvider();
 	}
 	
 	/**
@@ -69,21 +63,20 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 	}
 	
 	private void reconcile() {
-		boolean somethingHasChanged = false;
 		try {
 			ITranslationUnit tu = fManager.getWorkingCopy(fEditor.getEditorInput());		
 			if (tu != null && tu.isWorkingCopy()) {
 				IWorkingCopy workingCopy = (IWorkingCopy)tu;
 				// reconcile
 				synchronized (workingCopy) {
-					somethingHasChanged = workingCopy.reconcile(true, fProgressMonitor);
+					workingCopy.reconcile(true, fProgressMonitor);
 				}
 			}
 			
 			// update participants
 			if (fEditor instanceof IReconcilingParticipant /*&& !fProgressMonitor.isCanceled()*/) {
 				IReconcilingParticipant p= (IReconcilingParticipant) fEditor;
-				p.reconciled(somethingHasChanged);
+				p.reconciled(true);
 			}
 			
 		} catch(CModelException e) {

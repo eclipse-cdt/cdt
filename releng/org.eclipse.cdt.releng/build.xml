@@ -140,7 +140,7 @@
 	<target name="mailFail" if="hasErrors">
 		<mail subject="CDT ${branchVersion} Build ${buildId} failed"
 			tolist="${mailto}" from="dschaefe@ca.ibm.com">
-			<message src="compile.log"/>
+			<message src="compilelog.txt"/>
 		</mail>
 	</target>
 

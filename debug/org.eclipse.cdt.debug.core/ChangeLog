@@ -1,4 +1,8 @@
 2003-06-06 Mikhail Khodjaiants
+	Correct presentation of the full names of variables that contain pointers.
+	* CVariable.java
+
+2003-06-06 Mikhail Khodjaiants
 	Changed the implementation of the'getName' method of CVariable to return 
 	the actual names of array members.
 	* CArrayPartition.java

@@ -358,6 +358,7 @@ public abstract class CVariable extends CDebugElement
 		if ( fName == null )
 		{
 			String cdiName = ( getOriginalCDIVariable() != null ) ? getOriginalCDIVariable().getName() : null;
+			fName = cdiName;
 			if ( cdiName != null && getParent() instanceof ICValue )
 			{
 				CVariable parent = getParentVariable();
@@ -369,10 +370,6 @@ public abstract class CVariable extends CDebugElement
 				{
 					fName = parent.getName() + '[' + cdiName + ']';
 				}
-			}
-			else
-			{
-				fName = cdiName;
 			}
 		}
 		return fName;
@@ -796,8 +793,27 @@ public abstract class CVariable extends CDebugElement
 		{
 			sb.insert( 0, '(' );
 			if ( i > 0 )
-				sb.append( ( vars[i - 1].isPointer() ) ? "->" : "." );
-			sb.append( vars[i].getName() );
+			{
+				if ( vars[i - 1].isPointer() )
+				{
+					if ( vars[i].getName().charAt( 0 ) == '*' && vars[i-1].getName().equals( vars[i].getName().substring( 1 ) ) )
+					{
+						sb.insert( 0, '*' );
+					}
+					else
+					{
+						sb.append( "->" );
+						sb.append( vars[i].getName() );
+					}
+				}
+				else
+				{
+					sb.append( '.' );
+					sb.append( vars[i].getName() );
+				}
+			}
+			else
+				sb.append( vars[i].getName() );
 			sb.append( ')' );
 		}
 		return sb.toString();

@@ -9,7 +9,6 @@ import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
-import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -33,7 +32,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	protected Button fStopInMain;
 	protected Button fAttachButton;
 	protected Button fRunButton;
-
+	private final boolean DEFAULT_STOP_AT_MAIN = true;
 	public void createControl(Composite parent) {
 		GridData gd;
 
@@ -154,7 +153,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		super.setDefaults(config);
-		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, DEFAULT_STOP_AT_MAIN);
 		config.setAttribute(
 			ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 			ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
@@ -165,7 +164,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		try {
 			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, "");
 			loadDebuggerComboBox(config, id);
-			if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false) == true) {
+			if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, DEFAULT_STOP_AT_MAIN) == true) {
 				fStopInMain.setSelection(true);
 			}
 		}

@@ -102,7 +102,7 @@ public class CThread extends CObject implements ICDIThread {
 		
 		// Check to see if we are already at this level
 		StackFrame current = getCurrentStackFrame();
-		if (current.getLevel() == frameNum) {
+		if (current != null && current.getLevel() == frameNum) {
 			// noop
 			return;
 		}

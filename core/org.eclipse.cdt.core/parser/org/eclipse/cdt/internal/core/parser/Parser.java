@@ -14,20 +14,32 @@ package org.eclipse.cdt.internal.core.parser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.cdt.internal.core.model.Util;
 
+/**
+ * This is our first implementation of the IParser interface, serving as a parser for
+ * ANSI C and C++.
+ * 
+ * From time to time we will make reference to the ANSI ISO specifications.
+ * 
+ * @author jcamelon
+ */
 public class Parser implements IParser {
 
-	private static int DEFAULT_OFFSET = -1; 
-	private int firstErrorOffset = DEFAULT_OFFSET;
-	private IParserCallback callback;
-	private boolean quickParse = false;
-	private boolean parsePassed = true;
-	private boolean cppNature = true;
+	private static int DEFAULT_OFFSET = -1;			// sentinel initial value for offsets  
+	private int firstErrorOffset = DEFAULT_OFFSET;	// offset where the first parse error occurred
+	private IParserCallback callback;				// the parser callback that was registered with us
+	private boolean quickParse = false;				// are we doing the high-level parse, or an in depth parse? 
+	private boolean parsePassed = true;				// did the parse pass?
+	private boolean cppNature = true;				// true for C++, false for C
 	
+	/**
+	 * This is the single entry point for setting parsePassed to 
+	 * false, and also making note what token offset we failed upon. 
+	 * 
+	 * @throws EndOfFile
+	 */
 	protected void failParse() throws EndOfFile
 	{
 		if( firstErrorOffset == DEFAULT_OFFSET )
@@ -35,10 +47,16 @@ public class Parser implements IParser {
 		parsePassed = false;
 	}
 	
-	// TO DO: convert to a real symbol table
-	private Map currRegion = new HashMap();
 	
-	public Parser(IScanner s, IParserCallback c, boolean quick) throws Exception {
+	/**
+	 * This is the standard cosntructor that we expect the Parser to be instantiated 
+	 * with.  
+	 * 
+	 * @param s				IScanner instance that has been initialized to the code input 
+	 * @param c				IParserCallback instance that will receive callbacks as we parse
+	 * @param quick			Are we asking for a high level parse or not? 
+	 */
+	public Parser(IScanner s, IParserCallback c, boolean quick) {
 		callback = c;
 		scanner = s;
 		quickParse = quick;
@@ -46,39 +64,81 @@ public class Parser implements IParser {
 		scanner.setCallback(c);
 	}
 
-	public Parser(IScanner s, IParserCallback c) throws Exception {
+	
+	/**
+	 * An additional constructor provided for ease of use and tezting.  
+	 * 
+	 * @param s				IScanner instance that has been initialized to the code input 
+	 * @param c				IParserCallback instance that will receive callbacks as we parse
+	 */
+	public Parser(IScanner s, IParserCallback c) {
 		this(s, c, false);
 	}
-	
-	public Parser( IScanner s) throws Exception {
+
+	/**
+	 * An additional constructor provided for ease of use and tezting.  
+	 * 
+	 * @param s				IScanner instance that has been initialized to the code input 
+	 */	
+	public Parser( IScanner s) {
 		this(s, new NullParserCallback(), false);
 	}
 	
-	public Parser(String code) throws Exception {
+	
+	/**
+	 * An additional constructor provided for ease of use and tezting.
+	 *
+	 * * @param code	The code that we wish to parse
+	 */
+	public Parser(String code) {
 		this(new Scanner().initialize( new StringReader( code ), null
 ));
 	}
 
-	public Parser(String code, IParserCallback c) throws Exception {
+	/**
+	 * An additional constructor provided for ease of use and tezting.
+	 * 
+	 * @param code		The code that we wish to parse
+	 * @param c			IParserCallback instance that will receive callbacks as we parse
+	 */
+	public Parser(String code, IParserCallback c) {
 		this(new Scanner().initialize( new StringReader( code ), null
 ), c, false);
 	}
 
-	public Parser(String code, IParserCallback c, boolean quickParse ) throws Exception {
+
+	/**
+	 * An additional constructor provided for ease of use and tezting.
+	 * 
+	 * @param code			The code that we wish to parse
+	 * @param c				IParserCallback instance that will receive callbacks as we parse
+	 * @param quickParse	Are we asking for a high level parse or not?
+	 */
+	public Parser(String code, IParserCallback c, boolean quickParse ) {
 		this(new Scanner().initialize( new StringReader( code ), null
 ), c, quickParse);
 	}
 
 
-
-	public Parser(InputStream stream, IParserCallback c, boolean quick) throws Exception {
+	/**
+	 * An additional constructor provided for ease of use and tezting.
+	 * 
+	 * @param stream		An InputStream represnting the code that we wish to parse
+	 * @param c				IParserCallback instance that will receive callbacks as we parse
+	 * @param quickParse	Are we asking for a high level parse or not?
+	 */
+	public Parser(InputStream stream, IParserCallback c, boolean quickParse) {
 		this(new Scanner().initialize( new InputStreamReader(stream), null ), 
-c, quick);
+c, quickParse);
 	}
 	
-	private static int parseCount = 0;
+	private static int parseCount = 0;		// counter that keeps track of the number of times Parser.parse() is called  
 	
-	public boolean parse() throws Backtrack {
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParser#parse()
+	 */
+	public boolean parse()  {
 		long startTime = System.currentTimeMillis();
 		translationUnit();
 		// For the debuglog to take place, you have to call
@@ -92,11 +152,11 @@ c, quick);
 	}
 	
 	/**
-	 * translationUnit
-	 * : (declaration)*
+	 * This is the top-level entry point into the ANSI C++ grammar.  
 	 * 
+	 * translationUnit  : (declaration)*
 	 */
-	protected void translationUnit() throws Backtrack {
+	protected void translationUnit()  {
 		try { callback.setParser( this ); } catch( Exception e) {}
 		Object translationUnit = null;
 		try{ translationUnit = callback.translationUnitBegin();} catch( Exception e ) {}
@@ -112,10 +172,11 @@ c, quick);
 				// Good
 				break;
 			} catch (Backtrack b) {
-				// Mark as failure and try to reach a recovery point
-				failParse(); 
 				
 				try {
+					// Mark as failure and try to reach a recovery point
+					failParse(); 
+
 					if (lastBacktrack != null && lastBacktrack == LA(1)) {
 						// we haven't progressed from the last backtrack
 						// try and find tne next definition
@@ -130,16 +191,21 @@ c, quick);
 			}
 			catch( Exception e )
 			{
-				failParse(); 
+				// we've done the best we can
 			}
 		}
 		try{ callback.translationUnitEnd(translationUnit);} catch( Exception e ) {}
 	}
 
-	protected void errorHandling() throws Backtrack {
+	/**
+	 * This function is called whenever we encounter and error that we cannot backtrack out of and we 
+	 * still wish to try and continue on with the parse to do a best-effort parse for our client. 
+	 * 
+	 * @throws EndOfFile  	We can potentially hit EndOfFile here as we are skipping ahead.  
+	 */
+	protected void errorHandling() throws EndOfFile  {
 		failParse();
 		consume();
-		// TODO - we should really check for matching braces too
 		int depth = 0; 
 		while ( ! ( (LT(1) == Token.tSEMI && depth == 0 ) || ( LT(1) == Token.tRBRACE && depth == 1 ) ) ){
 			switch( LT(1))
@@ -159,8 +225,7 @@ c, quick);
 	}
 	
 	/**
-	 * 
-	 * The merger of using-declaration and using-directive.  
+	 * The merger of using-declaration and using-directive in ANSI C++ grammar.  
 	 * 
 	 * using-declaration:
 	 *	using typename? ::? nested-name-specifier unqualified-id ;
@@ -168,8 +233,8 @@ c, quick);
 	 * using-directive:
 	 *  using namespace ::? nested-name-specifier? namespace-name ;
 	 * 
-	 * @param container
-	 * @throws Backtrack
+	 * @param container		Callback object representing the scope these definitions fall into. 
+	 * @throws Backtrack	request for a backtrack
 	 */
 	protected void usingClause( Object container ) throws Backtrack
 	{
@@ -244,11 +309,14 @@ c, quick);
 	}
 	
 	/**
+	 * Implements Linkage specification in the ANSI C++ grammar. 
+	 * 
 	 * linkageSpecification
 	 * : extern "string literal" declaration
 	 * | extern "string literal" { declaration-seq } 
-	 * @param container
-	 * @throws Exception
+	 * 
+	 * @param container Callback object representing the scope these definitions fall into.
+	 * @throws Backtrack	request for a backtrack
 	 */
 	protected void linkageSpecification( Object container ) throws Backtrack
 	{
@@ -296,31 +364,17 @@ c, quick);
 		}
 	}
 	
-	/*
+	/**
 	 * 
-	 * template-declaration:	export? template <template-parameter-list> declaration
+	 * Represents the emalgamation of template declarations, template instantiations and 
+	 * specializations in the ANSI C++ grammar.  
+	 * 
+	 * template-declaration:	export? template < template-parameter-list > declaration
 	 * explicit-instantiation:	template declaration
 	 * explicit-specialization:	template <> declaration
-	 * 
-	 * template-parameter-list:	template-parameter
-	 *							template-parameter-list , template-parameter
-	 * template-parameter:		type-parameter
-	 *							parameter-declaration
-	 * type-parameter:			class identifier?
-	 *							class identifier? = type-id
-	 * 							typename identifier?
-	 * 							typename identifier? = type-id
-	 *							template < template-parameter-list > class identifier?
-	 *							template < template-parameter-list > class identifier? = id-expression
-	 * template-id:				template-name < template-argument-list?>
-	 * template-name:			identifier
-	 * template-argument-list:	template-argument
-	 *							template-argument-list , template-argument
-	 * template-argument:		assignment-expression
-	 *							type-id
-	 *							id-expression
-	 * 
-	 * @param container
+	 *  
+	 * @param container			Callback object representing the scope these definitions fall into.
+	 * @throws Backtrack		request for a backtrack
 	 */
 	protected void templateDeclaration( Object container ) throws Backtrack
 	{
@@ -374,10 +428,34 @@ c, quick);
 		}
 	}
 
-	protected void templateParameterList( Object templateDeclaration ) throws EndOfFile, Backtrack {
+	/**
+	 * 
+	 * 
+	 * 
+ 	 * template-parameter-list:	template-parameter
+	 *							template-parameter-list , template-parameter
+	 * template-parameter:		type-parameter
+	 *							parameter-declaration
+	 * type-parameter:			class identifier?
+	 *							class identifier? = type-id
+	 * 							typename identifier?
+	 * 							typename identifier? = type-id
+	 *							template < template-parameter-list > class identifier?
+	 *							template < template-parameter-list > class identifier? = id-expression
+	 * template-id:				template-name < template-argument-list?>
+	 * template-name:			identifier
+	 * template-argument-list:	template-argument
+	 *							template-argument-list , template-argument
+	 * template-argument:		assignment-expression
+	 *							type-id
+	 *							id-expression
+	 *
+	 * @param templateDeclaration		Callback's templateDeclaration which serves as a scope to this list.  
+	 * @throws Backtrack				request for a backtrack
+	 */
+	protected void templateParameterList( Object templateDeclaration ) throws Backtrack {
 		// if we have gotten this far then we have a true template-declaration
-		// iterate through the template parameter listtt
-		
+		// iterate through the template parameter list
 		Object templateParameterList = null;
 		
 		try { templateParameterList = callback.templateParameterListBegin( templateDeclaration ); } catch( Exception e ) {}
@@ -448,6 +526,8 @@ c, quick);
 	}
 	
 	/**
+	 * The most abstract construct within a translationUnit : a declaration.  
+	 * 
 	 * declaration
 	 * : {"asm"} asmDefinition
 	 * | {"namespace"} namespaceDefinition
@@ -464,6 +544,9 @@ c, quick);
 	 *   - usingDirective into usingDeclaration
 	 *   - explicitInstantiation and explicitSpecialization into
 	 *       templateDeclaration
+	 * 
+	 * @param container		IParserCallback object which serves as the owner scope for this declaration.  
+	 * @throws Backtrack	request a backtrack
 	 */
 	protected void declaration( Object container ) throws Backtrack {
 		switch (LT(1)) {
@@ -497,26 +580,28 @@ c, quick);
 				Token mark = mark(); 
 				try
 				{
-					simpleDeclaration( container, true );
+					simpleDeclaration( container, true ); // try it first with the original strategy 
 				}
 				catch( Backtrack bt)
 				{ 
+					// did not work 
 					backup( mark );
-					simpleDeclaration( container, false );
+					simpleDeclaration( container, false ); // try it again with the second strategy
 				}
 		}
 	}
 	
 	/**
-	 *  namespaceDefinition()
+	 *  Serves as the namespace declaration portion of the ANSI C++ grammar.  
 	 * 
 	 * 	namespace-definition:
 	 *		namespace identifier { namespace-body } | namespace { namespace-body }
 	 *	 namespace-body:
 	 *		declaration-seq?
-	 * 
-	 */
-	
+	 * @param container		IParserCallback object which serves as the owner scope for this declaration.  
+	 * @throws Backtrack	request a backtrack
+
+	 */	
 	protected void namespaceDefinition( Object container ) throws Backtrack
 	{
 		Object namespace = null;
@@ -566,16 +651,23 @@ c, quick);
 	}
 	
 	
+
 	/**
+	 * Serves as the catch-all for all complicated declarations, including function-definitions.  
+	 * 
 	 * simpleDeclaration
 	 * : (declSpecifier)* (initDeclarator ("," initDeclarator)*)? 
-	 *     (";" | {"{"} functionBody)
+	 *     (";" | { functionBody }
 	 * 
 	 * Notes:
 	 * - append functionDefinition stuff to end of this rule
 	 * 
 	 * To do:
-	 * - work in ctorInitializer and functionTryBlock
+	 * - work in functionTryBlock
+	 * 
+	 * @param container			IParserCallback object which serves as the owner scope for this declaration.
+	 * @param tryConstructor	true == take strategy1 (constructor ) : false == take strategy 2 ( pointer to function) 
+	 * @throws Backtrack		request a backtrack
 	 */
 	protected void simpleDeclaration( Object container, boolean tryConstructor ) throws Backtrack {
 		Object simpleDecl = null; 
@@ -637,6 +729,17 @@ c, quick);
 		try{ callback.simpleDeclarationEnd(simpleDecl, lastToken);} catch( Exception e ) {}
 	}
 
+	/**
+	 * This method parses a constructor chain 
+	 * ctorinitializer:	 : meminitializerlist
+	 * meminitializerlist: meminitializer | meminitializer , meminitializerlist
+	 * meminitializer: meminitializerid | ( expressionlist? ) 
+	 * meminitializerid:	::? nestednamespecifier?
+	 * 						classname
+	 * 						identifier
+	 * @param declarator	IParserCallback object that represents the declarator (constructor) that owns this initializer
+	 * @throws Backtrack	request a backtrack
+	 */
 	protected void ctorInitializer(Object declarator) throws Backtrack  {
 		consume( Token.tCOLON );
 		
@@ -686,6 +789,12 @@ c, quick);
 	}
 	
 	
+	/**
+	 * This routine parses a parameter declaration 
+	 * 
+	 * @param containerObject	The IParserCallback object representing the parameterDeclarationClause owning the parm. 
+	 * @throws Backtrack		request a backtrack
+	 */
 	protected void parameterDeclaration( Object containerObject ) throws Backtrack
 	{
 		Token current = LA(1);
@@ -708,12 +817,15 @@ c, quick);
 		 
 	}
 	
+	/**
+	 * This class represents the state and strategy for parsing declarationSpecifierSequences
+	 */
 	private class Flags
 	{
-		private boolean encounteredTypename = false;
-		private boolean encounteredRawType = false;
-		private final boolean parm; 
-		private final boolean constructor; 
+		private boolean encounteredTypename = false;	// have we encountered a typeName yet? 
+		private boolean encounteredRawType = false;		// have we encountered a raw type yet? 
+		private final boolean parm; 					// is this for a simpleDeclaration or parameterDeclaration?
+		private final boolean constructor; 				// are we attempting the constructor strategy? 
 		
 		public Flags( boolean parm, boolean c)
 		{
@@ -723,14 +835,14 @@ c, quick);
 		
 
 		/**
-		 * @return
+		 * @return	true if we have encountered a simple type up to this point, false otherwise
 		 */
 		public boolean haveEncounteredRawType() {
 			return encounteredRawType;
 		}
 
 		/**
-		 * @return
+		 * @return  true if we have encountered a typename up to this point, false otherwise
 		 */
 		public boolean haveEncounteredTypename() {
 			return encounteredTypename;
@@ -739,28 +851,28 @@ c, quick);
 
 
 		/**
-		 * @param b
+		 * @param b - set to true if we encounter a raw type (int, short, etc.)
 		 */
 		public void setEncounteredRawType(boolean b) {
 			encounteredRawType = b;
 		}
 
 		/**
-		 * @param b
+		 * @param b - set to true if we encounter a typename
 		 */
 		public void setEncounteredTypename(boolean b) {
 			encounteredTypename = b;
 		}
 
 		/**
-		 * @return
+		 * @return true if we are parsing for a ParameterDeclaration
 		 */
 		public boolean isForParameterDeclaration() {
 			return parm;
 		}
 
 		/**
-		 * @return
+		 * @return whether or not we are attempting the constructor strategy or not 
 		 */
 		public boolean isForConstructor() {
 			return constructor;
@@ -768,6 +880,11 @@ c, quick);
 
 	}
 	
+	/**
+	 * @param flags			input flags that are used to make our decision 
+	 * @return				whether or not this looks like a constructor (true or false)
+	 * @throws EndOfFile	we could encounter EOF while looking ahead
+	 */
 	private boolean lookAheadForConstructor( Flags flags ) throws EndOfFile
 	{
 		return 		(
@@ -791,6 +908,11 @@ c, quick);
 				;
 	}
 	
+	/**
+	 * @param flags			input flags that are used to make our decision 
+	 * @return				whether or not this looks like a a declarator follows
+	 * @throws EndOfFile	we could encounter EOF while looking ahead
+	 */
 	private boolean lookAheadForDeclarator( Flags flags ) throws EndOfFile
 	{
 		return 
@@ -809,7 +931,10 @@ c, quick);
 	}
 	
 	
+
 	/**
+	 * This function parses a declaration specifier sequence, as according to the ANSI C++ spec. 
+	 * 
 	 * declSpecifier
 	 * : "auto" | "register" | "static" | "extern" | "mutable"
 	 * | "inline" | "virtual" | "explicit"
@@ -825,6 +950,11 @@ c, quick);
 	 * - folded in storageClassSpecifier, typeSpecifier, functionSpecifier
 	 * - folded elaboratedTypeSpecifier into classSpecifier and enumSpecifier
 	 * - find template names in name
+	 * 
+	 * @param decl				IParserCallback object representing the declaration that owns this specifier sequence
+	 * @param parm				Is this for a parameter declaration (true) or simple declaration (false)
+	 * @param tryConstructor	true for constructor, false for pointer to function strategy
+	 * @throws Backtrack		request a backtrack
 	 */
 	protected void declSpecifierSeq( Object decl, boolean parm, boolean tryConstructor ) throws Backtrack {
 		Flags flags = new Flags( parm, tryConstructor ); 
@@ -952,6 +1082,12 @@ c, quick);
 		}
 	}
 
+	/**
+	 * Parse an elaborated type specifier.  
+	 * 
+	 * @param decl			Declaration which owns the elaborated type 
+	 * @throws Backtrack	request a backtrack
+	 */
 	private void elaboratedTypeSpecifier(Object decl) throws Backtrack {
 		// this is an elaborated class specifier
 		Object elab = null; 
@@ -964,6 +1100,11 @@ c, quick);
 	}
 
 
+	/**
+	 * Parse an identifier.  
+	 * 
+	 * @throws Backtrack	request a backtrack
+	 */
 	protected void identifier() throws Backtrack {
 		Token first = consume(Token.tIDENTIFIER); // throws backtrack if its not that
 		try
@@ -972,11 +1113,13 @@ c, quick);
 			callback.nameEnd(first);
 		} catch( Exception e ) {}
 	}
-	
-	
-	/* class-name: identifier | template-id
-	 * template-id: template-name < template-argument-list opt >
-	 * template-name : identifier
+
+	/**
+	 * Parses a className.  
+	 * 
+	 * class-name: identifier | template-id
+	 * 
+	 * @throws Backtrack
 	 */
 	protected void className() throws Backtrack
 	{	
@@ -996,7 +1139,17 @@ c, quick);
 			throw backtrack;
 	}
 
-	protected Token templateId() throws Backtrack, EndOfFile {
+	/**
+	 * Parse a template-id, according to the ANSI C++ spec.  
+	 * 
+	 * template-id: template-name < template-argument-list opt >
+	 * template-name : identifier
+	 * 
+	 * @return		the last token that we consumed in a successful parse 
+	 * 
+	 * @throws Backtrack	request a backtrack
+	 */
+	protected Token templateId() throws Backtrack {
 		Token first = consume( Token.tIDENTIFIER );
 		consume( Token.tLT );
 		
@@ -1022,15 +1175,15 @@ c, quick);
 	}
 	
 	/**
+	 * Parse a name.
+	 * 
 	 * name
 	 * : ("::")? name2 ("::" name2)*
 	 * 
 	 * name2
 	 * : IDENTIFER
 	 * 
-	 * To Do:
-	 * - Handle template ids
-	 * - Handle unqualifiedId
+	 * @throws Backtrack	request a backtrack
 	 */
 	protected void name() throws Backtrack {
 		Token first = LA(1);
@@ -1116,9 +1269,17 @@ c, quick);
 
 	}
 
+
 	/**
+	 * Parse a const-volatile qualifier.  
+	 * 
 	 * cvQualifier
 	 * : "const" | "volatile"
+	 * 
+	 * TODO: fix this 
+	 * @param ptrOp		Pointer Operator that const-volatile applies to. 		  		
+	 * @return			Returns the same object sent in.
+	 * @throws Backtrack
 	 */
 	protected Object cvQualifier( Object ptrOp ) throws Backtrack {
 		switch (LT(1)) {
@@ -1132,11 +1293,13 @@ c, quick);
 	}
 	
 	/**
+	 * Parses the initDeclarator construct of the ANSI C++ spec.
+	 * 
 	 * initDeclarator
 	 * : declarator ("=" initializerClause | "(" expressionList ")")?
-	 * 
-	 * To Do:
-	 * - handle initializers
+	 * @param owner			IParserCallback object that represents the owner declaration object.  
+	 * @return				declarator that this parsing produced.  
+	 * @throws Backtrack	request a backtrack
 	 */
 	protected Object initDeclarator( Object owner ) throws Backtrack {
 		Object declarator = declarator( owner );
@@ -1203,6 +1366,8 @@ c, quick);
 	}
 	
 	/**
+	 * Parse a declarator, as according to the ANSI C++ specification. 
+	 * 
 	 * declarator
 	 * : (ptrOperator)* directDeclarator
 	 * 
@@ -1215,6 +1380,10 @@ c, quick);
 	 * 
 	 * declaratorId
 	 * : name
+	 * 
+ 	 * @param container		IParserCallback object that represents the owner declaration.  
+	 * @return				declarator that this parsing produced.
+	 * @throws Backtrack	request a backtrack
 	 */
 	protected Object declarator( Object container ) throws Backtrack {
 		
@@ -1490,10 +1659,15 @@ c, quick);
 	}
 	
 	/**
+	 * Parse a Pointer Operator.   
+	 * 
 	 * ptrOperator
 	 * : "*" (cvQualifier)*
 	 * | "&"
 	 * | name "*" (cvQualifier)*
+	 * 
+	 * @param owner 		Declarator that this pointer operator corresponds to.  
+	 * @throws Backtrack 	request a backtrack
 	 */
 	protected void ptrOperator(Object owner) throws Backtrack {
 		int t = LT(1);
@@ -1541,6 +1715,8 @@ c, quick);
 
 
 	/**
+	 * Parse an enumeration specifier, as according to the ANSI specs in C & C++.  
+	 * 
 	 * enumSpecifier:
 	 * 		"enum" (name)? "{" (enumerator-list) "}"
 	 * enumerator-list:
@@ -1550,6 +1726,9 @@ c, quick);
 	 * 	enumerator
 	 *  enumerator = constant-expression
 	 * enumerator: identifier 
+	 * 
+	 * @param	owner		IParserCallback object that represents the declaration that owns this type specifier. 
+	 * @throws	Backtrack	request a backtrack
 	 */
 	protected void enumSpecifier( Object owner ) throws Backtrack
 	{
@@ -1617,8 +1796,13 @@ c, quick);
 	}
 
 	/**
+	 * Parse a class/struct/union definition. 
+	 * 
 	 * classSpecifier
 	 * : classKey name (baseClause)? "{" (memberSpecification)* "}"
+	 * 
+	 * @param	owner		IParserCallback object that represents the declaration that owns this classSpecifier
+	 * @throws	Backtrack	request a backtrack
 	 */
 	protected void classSpecifier( Object owner ) throws Backtrack {
 		Token classKey = null;
@@ -1655,7 +1839,6 @@ c, quick);
 		
 		// base clause
 		if (LT(1) == Token.tCOLON) {
-			consume();
 			baseSpecifier( classSpec );
 		}
 		
@@ -1698,8 +1881,21 @@ c, quick);
 
 	}
 
+	/**
+	 * Parse the subclass-baseclauses for a class specification.  
+	 * 
+	 * baseclause:	: basespecifierlist
+	 * basespecifierlist: 	basespecifier
+	 * 						basespecifierlist, basespecifier
+	 * basespecifier:	::? nestednamespecifier? classname
+	 * 					virtual accessspecifier? ::? nestednamespecifier? classname
+	 * 					accessspecifier virtual? ::? nestednamespecifier? classname
+	 * accessspecifier:	private | protected | public
+	 * @param classSpecOwner
+	 * @throws Backtrack
+	 */
 	protected void baseSpecifier( Object classSpecOwner ) throws Backtrack {
-
+		consume( Token.tCOLON );
 		Object baseSpecifier = null; 
 		
 		try { baseSpecifier = callback.baseSpecifierBegin( classSpecOwner ); 	} catch( Exception e )	{}	
@@ -1735,11 +1931,21 @@ c, quick);
 		try { callback.baseSpecifierEnd( baseSpecifier ); } catch( Exception e ){}
 	}
 	
+	/**
+	 * Parses a function body. 
+	 * 
+	 * @throws Backtrack	request a backtrack
+	 */
 	protected void functionBody() throws Backtrack {
 		compoundStatement();
 	}
 	
-	// Statements
+	
+	/**
+	 * Parses a statement. 
+	 * 
+	 * @throws Backtrack	request a backtrack
+	 */
 	protected void statement() throws Backtrack {
 		Object expression = null; 
 		switch (LT(1)) {
@@ -1876,14 +2082,23 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @throws Backtrack
+	 */
 	protected void condition() throws Backtrack {
 		// TO DO
 	}
 	
+	/**
+	 * @throws Backtrack
+	 */
 	protected void forInitStatement() throws Backtrack {
 		// TO DO
 	}
 	
+	/**
+	 * @throws Backtrack
+	 */
 	protected void compoundStatement() throws Backtrack {
 		consume(Token.tLBRACE);
 		while (LT(1) != Token.tRBRACE)
@@ -1891,11 +2106,17 @@ c, quick);
 		consume();
 	}
 	
-	// Expressions
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void constantExpression( Object expression ) throws Backtrack {
 		conditionalExpression( expression );
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParser#expression(java.lang.Object)
+	 */
 	public void expression( Object expression ) throws Backtrack {
 		assignmentExpression( expression );
 		
@@ -1906,6 +2127,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void assignmentExpression( Object expression ) throws Backtrack {
 		if (LT(1) == Token.t_throw) {
 			throwExpression(expression);
@@ -1934,6 +2159,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void throwExpression( Object expression ) throws Backtrack {
 		consume(Token.t_throw);
 		
@@ -1943,6 +2172,11 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @return
+	 * @throws Backtrack
+	 */
 	protected boolean conditionalExpression( Object expression ) throws Backtrack {
 		logicalOrExpression( expression );
 		
@@ -1956,6 +2190,10 @@ c, quick);
 			return false;
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void logicalOrExpression( Object expression ) throws Backtrack {
 		logicalAndExpression( expression );
 		
@@ -1966,6 +2204,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void logicalAndExpression( Object expression ) throws Backtrack {
 		inclusiveOrExpression( expression );
 		
@@ -1976,6 +2218,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void inclusiveOrExpression( Object expression ) throws Backtrack {
 		exclusiveOrExpression(expression);
 		
@@ -1986,6 +2232,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void exclusiveOrExpression( Object expression ) throws Backtrack {
 		andExpression( expression );
 		
@@ -1997,6 +2247,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void andExpression( Object expression ) throws Backtrack {
 		equalityExpression(expression);
 		
@@ -2009,6 +2263,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void equalityExpression(Object expression) throws Backtrack {
 		relationalExpression(expression);
 		
@@ -2026,6 +2284,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void relationalExpression(Object expression) throws Backtrack {
 		shiftExpression(expression);
 		
@@ -2061,6 +2323,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void shiftExpression( Object expression ) throws Backtrack {
 		additiveExpression(expression);
 		
@@ -2078,6 +2344,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void additiveExpression( Object expression ) throws Backtrack {
 		multiplicativeExpression(expression);
 		
@@ -2095,6 +2365,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void multiplicativeExpression( Object expression ) throws Backtrack {
 		pmExpression( expression );
 		
@@ -2113,6 +2387,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void pmExpression( Object expression ) throws Backtrack {
 		castExpression( expression );
 		
@@ -2161,6 +2439,9 @@ c, quick);
 		unaryExpression(expression);
 	}
 	
+	/**
+	 * @throws Backtrack
+	 */
 	protected void typeId() throws Backtrack {
 		try {
 			name();
@@ -2216,6 +2497,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void deleteExpression( Object expression ) throws Backtrack {
 		if (LT(1) == Token.tCOLONCOLON) {
 			// global scope
@@ -2234,6 +2519,7 @@ c, quick);
 	}
 	
 	/**
+	 * Pazse a new-expression.  
 	 * 
 	 * @param expression
 	 * @throws Backtrack
@@ -2286,6 +2572,10 @@ c, quick);
 		
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void unaryExpression( Object expression ) throws Backtrack {
 		switch (LT(1)) {
 			case Token.tSTAR:
@@ -2343,6 +2633,10 @@ c, quick);
 		}
 	}
 
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void postfixExpression( Object expression) throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_typename:
@@ -2431,6 +2725,10 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @param expression
+	 * @throws Backtrack
+	 */
 	protected void primaryExpression( Object expression ) throws Backtrack {
 		int type = LT(1);
 		switch (type) {
@@ -2464,6 +2762,9 @@ c, quick);
 		}
 	}
 	
+	/**
+	 * @throws Exception
+	 */
 	protected void varName() throws Exception {
 		if (LT(1) == Token.tCOLONCOLON)
 			consume();
@@ -2503,22 +2804,37 @@ c, quick);
 		}
 	}
 	
-	// Backtracking
+	/**
+	 * Class that represents the a request to backtrack. 
+	 */
 	public static class Backtrack extends Exception {
 	}
 	
+	// the static instance we always use
 	private static Backtrack backtrack = new Backtrack();
 	
-	// End of file generally causes backtracking
+	/**
+	 * Class that represents encountering EOF.  
+	 *
+	 * End of file generally causes backtracking 
+	 */ 
 	public static class EndOfFile extends Backtrack {
 	}
 	
+	// the static instance we always use
 	public static EndOfFile endOfFile = new EndOfFile();
 	
 	// Token management
 	private IScanner scanner;
-	private Token currToken, lastToken;
+	private Token 	currToken,		// current token we plan to consume next 
+					lastToken;		// last token we consumed
 	
+	/**
+	 * Fetches a token from the scanner. 
+	 * 
+	 * @return				the next token from the scanner
+	 * @throws EndOfFile	thrown when the scanner.nextToken() yields no tokens
+	 */
 	private Token fetchToken() throws EndOfFile {
 		try {
 			return scanner.nextToken();
@@ -2530,6 +2846,13 @@ c, quick);
 		}
 	}
 
+	/**
+	 * Look Ahead in the token list to see what is coming.  
+	 * 
+	 * @param i		How far ahead do you wish to peek?
+	 * @return		the token you wish to observe
+	 * @throws EndOfFile	if looking ahead encounters EOF, throw EndOfFile 
+	 */
 	protected Token LA(int i) throws EndOfFile {
 		if (i < 1)
 			// can't go backwards
@@ -2549,10 +2872,23 @@ c, quick);
 		return retToken;
 	}
 
+	/**
+	 * Look ahead in the token list and return the token type.  
+	 * 
+	 * @param i				How far ahead do you wish to peek?
+	 * @return				The type of that token
+	 * @throws EndOfFile	if looking ahead encounters EOF, throw EndOfFile
+	 */
 	protected int LT(int i) throws EndOfFile {
 		return LA(i).type;
 	}
 	
+	/**
+	 * Consume the next token available, regardless of the type.  
+	 * 
+	 * @return				The token that was consumed and removed from our buffer.  
+	 * @throws EndOfFile	If there is no token to consume.  
+	 */
 	protected Token consume() throws EndOfFile {
 		if (currToken == null)
 			currToken = fetchToken();
@@ -2564,6 +2900,13 @@ c, quick);
 		return lastToken;
 	}
 	
+	/**
+	 * Consume the next token available only if the type is as specified.  
+	 * 
+	 * @param type			The type of token that you are expecting.  	
+	 * @return				the token that was consumed and removed from our buffer. 
+	 * @throws Backtrack	If LT(1) != type 
+	 */
 	protected Token consume(int type) throws Backtrack {
 		if (LT(1) == type)
 			return consume();
@@ -2571,26 +2914,39 @@ c, quick);
 			throw backtrack;
 	}
 	
+	/**
+	 * Mark our place in the buffer so that we could return to it should we have to.  
+	 * 
+	 * @return				The current token. 
+	 * @throws EndOfFile	If there are no more tokens.
+	 */
 	protected Token mark() throws EndOfFile {
 		if (currToken == null)
 			currToken = fetchToken();
 		return currToken;
 	}
 	
+	/**
+	 * Rollback to a previous point, reseting the queue of tokens.  
+	 * 
+	 * @param mark		The point that we wish to restore to.  
+	 *  
+	 */
 	protected void backup(Token mark) {
 		currToken = mark;
-		lastToken = null; 
+		lastToken = null; 	// this is not entirely right ... 
 	}
 
-	/**
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParser#isCppNature()
 	 */
 	public boolean isCppNature() {
 		return cppNature;
 	}
 
-	/**
-	 * @param b
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParser#setCppNature(boolean)
 	 */
 	public void setCppNature(boolean b) {
 		cppNature = b;
@@ -2598,17 +2954,14 @@ c, quick);
 			scanner.setCppNature( b ); 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParser#getLineNumberForOffset(int)
+	 */
 	public int getLineNumberForOffset(int offset) throws NoSuchMethodException
 	{
 		return scanner.getLineNumberForOffset(offset);
 	}
 	
-	public int getLastLineNumber() throws NoSuchMethodException{
-		if( lastToken != null ){
-			return scanner.getLineNumberForOffset( lastToken.offset );
-		}
-		return -1;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParser#mapLineNumbers(boolean)

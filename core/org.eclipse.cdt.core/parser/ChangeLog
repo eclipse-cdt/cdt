@@ -1,3 +1,6 @@
+2003-04-30 John Camelon
+	Added some Javadoc to IParser.java and Parser.java.  
+
 2003-04-28 John Camelon
 	Fixed Bug 37019  - RTS: Parser fails on variable defn using constructor 
 	Fixed Bug 36767  - STL Testing: Parser is confused and goes into template function body 

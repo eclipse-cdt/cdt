@@ -1310,5 +1310,61 @@ public class AST2CPPTests extends AST2BaseTest {
         assertTrue( CharArrayUtils.equals( T.getNameCharArray(), "T".toCharArray() ) ) ; //$NON-NLS-1$
         assertEquals( T.getName(), "T" ); //$NON-NLS-1$
    }
+   
+   public void testArgumentDependantLookup() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append("namespace NS {                \n"); //$NON-NLS-1$
+       buffer.append("   class T {};                \n"); //$NON-NLS-1$
+       buffer.append("   void f( T );               \n"); //$NON-NLS-1$
+       buffer.append("}                             \n"); //$NON-NLS-1$
+       buffer.append("NS::T parm;                   \n"); //$NON-NLS-1$
+       buffer.append("int main() {                  \n"); //$NON-NLS-1$
+       buffer.append("   f( parm );                 \n"); //$NON-NLS-1$
+       buffer.append("}                             \n"); //$NON-NLS-1$
+       
+       IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+       CPPNameCollector col = new CPPNameCollector();
+       CPPVisitor.visitTranslationUnit(tu, col);
+
+       ICPPNamespace NS = (ICPPNamespace) col.getName(0).resolveBinding();
+       ICPPClassType T = (ICPPClassType) col.getName(1).resolveBinding();
+       IFunction f = (IFunction) col.getName(2).resolveBinding();
+       IVariable parm = (IVariable) col.getName(8).resolveBinding();
+       
+       assertInstances( col, NS, 2 );
+       assertInstances( col, T, 4 );
+       assertInstances( col, f, 2 );
+       assertInstances( col, parm, 2 );
+   }
+   
+   public void testArgumentDependantLookup_2() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace NS1{                       \n" ); //$NON-NLS-1$
+		buffer.append("   void f( void * );                 \n" ); //$NON-NLS-1$
+		buffer.append("}                                    \n" ); //$NON-NLS-1$
+		buffer.append("namespace NS2{                       \n" ); //$NON-NLS-1$
+		buffer.append("   using namespace NS1;              \n" ); //$NON-NLS-1$
+		buffer.append("   class B {};                       \n" ); //$NON-NLS-1$
+		buffer.append("   void f( void * );                 \n" ); //$NON-NLS-1$
+		buffer.append("}                                    \n" ); //$NON-NLS-1$
+		buffer.append("class A : public NS2::B {} *a;       \n" ); //$NON-NLS-1$
+		buffer.append("int main() {                         \n" ); //$NON-NLS-1$
+		buffer.append("   f( a );                           \n" ); //$NON-NLS-1$
+		buffer.append("}                                    \n" ); //$NON-NLS-1$
+		
+       IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
+       CPPNameCollector col = new CPPNameCollector();
+       CPPVisitor.visitTranslationUnit(tu, col);
+
+       IFunction fref = (IFunction) col.getName(14).resolveBinding();
+       IFunction f1 = (IFunction) col.getName(1).resolveBinding();
+       IFunction f2 = (IFunction) col.getName(6).resolveBinding();
+       
+       assertSame( f2, fref );
+       assertNotNull( f1 );
+       assertNotNull( f2 );
+       
+       
+   }
 }
 

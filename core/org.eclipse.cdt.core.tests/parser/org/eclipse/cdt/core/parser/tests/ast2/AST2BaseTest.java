@@ -274,7 +274,7 @@ public class AST2BaseTest extends TestCase {
             if( collector.getName( i ).resolveBinding() == binding )
                 count++;
         
-        assertEquals( count, num );
+        assertEquals( num, count );
     }
 
 }

@@ -128,7 +128,6 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
 
 /**
  * @author aniefer
@@ -1654,7 +1653,7 @@ public class CPPVisitor {
 					return e.getProblem();
 				}
 			} else if( op == IASTUnaryExpression.op_amper ){
-			    return new CPointerType( type );
+			    return new CPPPointerType( type );
 			}
 			return type;
 	    }

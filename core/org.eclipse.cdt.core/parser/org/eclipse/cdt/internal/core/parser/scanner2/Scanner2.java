@@ -36,7 +36,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionDirective;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
-import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro.Expansion;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
@@ -628,21 +627,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		--bufferPos[bufferStackPos];
 		
 		// Check for macro expansion
-		
-		// First look up the stack at the function style macro expansion args
-		Object expObject = null;
-		int tmpPos = bufferStackPos + 1;
-		while (--tmpPos >= 0
-				&& bufferData[tmpPos] instanceof FunctionStyleMacro.Expansion) {
-			expObject = ((FunctionStyleMacro.Expansion)bufferData[tmpPos])
-				.definitions.get(buffer, start, len);
-			if (expObject != null)
-				break;
-		}
-
+		Object expObject = definitions.get(buffer, start, len);
 		if (expObject == null) {
-			// now check regular macros
-			expObject = definitions.get(buffer, start, len);
 			
 			// but not if it has been expanded on the stack already
 			// i.e. recursion avoidance
@@ -1521,13 +1507,13 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 	}
 	
-	private void handleFunctionStyleMacro2(FunctionStyleMacro macro) {
+	private void handleFunctionStyleMacro(FunctionStyleMacro macro) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 
 		skipOverWhiteSpace();
 
-		if (++buffer[bufferStackPos] >= limit
+		if (++bufferPos[bufferStackPos] >= limit
 				|| buffer[bufferPos[bufferStackPos]] != '(')
 			return;
 		
@@ -1600,26 +1586,34 @@ public class Scanner2 implements IScanner, IScannerData {
 			char[] expansion,
 			CharArrayObjectMap argmap,
 			char[] result) {
-		
+
+		// The current position in the expansion string that we are looking at
 		int pos = -1;
+		// The last position in the expansion string that was copied over
 		int lastcopy = -1;
+		// The current write offset in the result string - also tells us the length of the result string
 		int outpos = 0;
-		int limit = expansion.length;
+		// The first character in the current block of white space - there are times when we don't
+		// want to copy over the whitespace
 		int wsstart = -1;
 		
+		int limit = expansion.length;
+		
 		while (++pos < limit) {
-			boolean hex = false;
 			char c = expansion[pos];
 			
 			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') {
 
+				wsstart = -1;
 				int idstart = pos;
 				while (++pos < limit) {
 					c = expansion[pos];
 					if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-							|| (c >= '0' && c <= '9') || c == '_'))
+							|| (c >= '0' && c <= '9') || c == '_')) {
 						break;
+					}
 				}
+				--pos;
 				
 				Object repObject = argmap.get(expansion, idstart, pos - idstart + 1);
 				if (repObject != null) {
@@ -1636,10 +1630,15 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (result != null)
 						System.arraycopy(rep, 0, result, outpos, rep.length);
 					outpos += rep.length;
+
+					lastcopy = pos;
 				}
 				
 			} else if (c >= '0' && c < '9') {
 				
+				// skip over numbers - note the expanded definition of a number
+				// to include alphanumeric characters - gcc seems to operate this way
+				wsstart = -1;
 				while (++pos < limit) {
 					c = expansion[pos];
 					if (!((c >= '0' && c <= '9') || c == '.' || c == '_') 
@@ -1649,6 +1648,8 @@ public class Scanner2 implements IScanner, IScannerData {
 
 			} else if (c == '"') {
 				
+				// skip over strings
+				wsstart = -1;
 				boolean escaped = false;
 				while (++pos < limit) {
 					c = expansion[pos];
@@ -1662,7 +1663,9 @@ public class Scanner2 implements IScanner, IScannerData {
 				}
 				
 			} else if (c == '\'') {
-				
+
+				// skip over character literals
+				wsstart = -1;
 				boolean escaped = false;
 				while (++pos < limit) {
 					c = expansion[pos];
@@ -1676,12 +1679,14 @@ public class Scanner2 implements IScanner, IScannerData {
 				}
 				
 			} else if (c == ' ' || c == '\t') {
-				
+
+				// obvious whitespace
 				if (wsstart < 0)
 					wsstart = pos;
 				
 			} else if (c == '/' && pos + 1 < limit) {
-				
+
+				// less than obvious, comments are whitespace
 				c = expansion[++pos];
 				if (c == '/') {
 					// copy up to here or before the last whitespace
@@ -1706,7 +1711,9 @@ public class Scanner2 implements IScanner, IScannerData {
 							break;
 						}
 					}
-				}
+				} else 
+					wsstart = -1;
+
 				
 			} else if (c == '\\' && pos + 1 < limit
 					&& expansion[pos + 1] == 'n') {
@@ -1721,7 +1728,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (wsstart < 0)
 						wsstart = pos - 1;
 					while (++pos < limit) {
-						switch (expansion[++pos]) {
+						switch (expansion[pos]) {
 							case ' ':
 							case '\t':
 								continue;
@@ -1729,12 +1736,43 @@ public class Scanner2 implements IScanner, IScannerData {
 							case '/':
 								if (pos + 1 < limit) {
 									c = expansion[pos + 1];
-									if (c == '/');
+									if (c == '/')
+										// skip over everything
+										pos = expansion.length;
+									else if (c == '*') {
+										++pos;
+										while (++pos < limit) {
+											if (expansion[pos] == '*'
+													&& pos + 1 < limit
+													&& expansion[pos + 1] == '/') {
+												++pos;
+												break;
+											}
+										}
+										continue;
+									}
 								}
 						}
 						break;
 					}
+
+					// copy everything up to the whitespace
+					int n = wsstart - (++lastcopy);
+					if (n > 0 && result != null)
+						System.arraycopy(expansion, lastcopy, result, outpos, n);
+					outpos += n;
+					
+					// skip over the ## and the whitespace around it
+					lastcopy = --pos;
+					wsstart = -1;
+
+				} else {
+					// stringify
 				}
+			} else {
+				
+				// not sure what it is but it sure ain't whitespace
+				wsstart = -1;
 			}
 			
 		}
@@ -1747,80 +1785,6 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 		
 		return outpos;
-	}
-	
-	private void handleFunctionStyleMacro(FunctionStyleMacro macro) {
-		char[] buffer = bufferStack[bufferStackPos];
-		int limit = bufferLimit[bufferStackPos];
-		
-		skipOverWhiteSpace();
-		
-		if (++bufferPos[bufferStackPos] >= limit
-				|| buffer[bufferPos[bufferStackPos]] != '(')
-			return;
-
-		FunctionStyleMacro.Expansion exp = macro.new Expansion();
-		char[][] arglist = macro.arglist;
-		int currarg = -1;
-
-		while (bufferPos[bufferStackPos] < limit) {
-			if (++currarg >= arglist.length || arglist[currarg] == null)
-				// too many args
-				break;
-
-			skipOverWhiteSpace();
-			
-			int pos = ++bufferPos[bufferStackPos];
-			char c = buffer[pos];
-			if (c == ')') {
-				// end of macro
-				break;
-			} else if (c == ',') {
-				// empty arg
-				exp.definitions.put(arglist[currarg], emptyCharArray);
-				continue;
-			}
-			
-			// peel off the arg
-			--bufferPos[bufferStackPos];
-			int argend = bufferPos[bufferStackPos];
-			int argstart = argend + 1;
-			
-			// Loop looking for end of argument
-			int argparens = 0;
-			while (bufferPos[bufferStackPos] < limit) {
-				skipOverMacroArg();
-				argend = bufferPos[bufferStackPos];
-				skipOverWhiteSpace();
-				
-				if (++bufferPos[bufferStackPos] >= limit)
-					break;
-				c = buffer[bufferPos[bufferStackPos]];
-				if (c == '(')
-					++argparens;
-				else if (c == ')') {
-					if (argparens == 0)
-						break;
-					--argparens;
-				} else if (c == ',')
-					break;
-			}
-			
-			char[] arg = emptyCharArray;
-			int arglen = argend - argstart + 1;
-			if (arglen > 0) {
-				arg = new char[arglen];
-				System.arraycopy(buffer, argstart, arg, 0, arglen);
-			}
-			exp.definitions.put(arglist[currarg], arg);
-			
-			if (c == ')')
-				break;
-		}
-		
-		char[] expText = macro.expansion;
-		if (expText.length > 0)
-			pushContext(expText, exp);
 	}
 
 	// standard built-ins

@@ -414,14 +414,10 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		gd.horizontalAlignment = GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
 
-		label = new Label(stylesComposite, SWT.LEFT);
-		label.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.bold")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalAlignment = GridData.BEGINNING;
-		label.setLayoutData(gd);
-
 		fBoldCheckBox = new Button(stylesComposite, SWT.CHECK);
+		fBoldCheckBox.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.bold"));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan=2;
 		gd.horizontalAlignment = GridData.BEGINNING;
 		fBoldCheckBox.setLayoutData(gd);
 

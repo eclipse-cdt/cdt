@@ -1,3 +1,12 @@
+2004-06-22 Tanya Wolff
+	Fix for Bug 49883:  duplicate mnemonics on editor preferences page.
+	Also flipped label/checkbox presentation for "bold" so the mnemonic would work. 
+	Removed unneeded keys.
+	
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties
+		
+
 2004-06-22 Bogdan Gheorghe
 	Fix for 68028: Open Declaration into closed project causes PartInitException
 	

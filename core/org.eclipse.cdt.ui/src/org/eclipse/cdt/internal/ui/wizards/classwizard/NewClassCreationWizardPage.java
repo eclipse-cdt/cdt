@@ -152,8 +152,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	private NewClassCodeGenerator fCodeGenerator = null;
 
 	//TODO this should be a prefs option
-	private boolean fCreateIncludePathsAsNeeded = false;
-	private boolean fWarnIfBaseClassNotInPath = true;
+	private boolean fWarnIfBaseClassNotInPath = false;
 	
 	
 	public NewClassCreationWizardPage() {
@@ -1088,7 +1087,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		StatusInfo status = new StatusInfo();
 		IProject project = getCurrentProject();
 	    if (project != null) {
-	        if (!fCreateIncludePathsAsNeeded && fWarnIfBaseClassNotInPath) {
+	        if (fWarnIfBaseClassNotInPath) {
 			    // make sure all classes belong to the project
 			    IBaseClassInfo[] baseClasses = getBaseClasses();
 			    for (int i = 0; i < baseClasses.length; ++i) {

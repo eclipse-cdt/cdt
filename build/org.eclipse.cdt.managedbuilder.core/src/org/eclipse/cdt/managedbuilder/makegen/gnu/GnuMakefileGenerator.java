@@ -462,7 +462,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				if (info.buildsFileType(ext)) {
  					// look for the extension in the map
  					StringBuffer bufferForExtension = new StringBuffer();
- 					bufferForExtension.append(extensionToRuleStringMap.get(ext).toString());
+ 					String rule = (String) extensionToRuleStringMap.get(ext);
+ 					if (rule == null) continue;
+ 					bufferForExtension.append(rule);
  					if(bufferForExtension != null &&
  							!getOutputExtensions().contains(bufferForExtension.toString())) {
  						

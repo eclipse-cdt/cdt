@@ -10,7 +10,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.build.managed.tests.StandardBuildTests;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.filetype.tests.ResolverTests;
 import org.eclipse.cdt.core.indexer.tests.DependencyTests;
@@ -58,7 +57,6 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(CDescriptorTests.suite());
 		//suite.addTest(GCCErrorParserTests.suite());
 		suite.addTest(ResolverTests.suite());
-		suite.addTest(StandardBuildTests.suite());
 		suite.addTest(ParserTestSuite.suite());
 		suite.addTest(AllCoreTests.suite());
 		suite.addTest(BinaryTests.suite());

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="build"/>
 	<classpathentry kind="src" path="misc"/>
 	<classpathentry kind="src" path="failures"/>
 	<classpathentry kind="src" path="model"/>

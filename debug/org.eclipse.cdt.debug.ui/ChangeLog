@@ -1,4 +1,8 @@
 2003-07-28 Mikhail Khodjaiants
+	Refactoring: moved the 'isNaN', 'isPositiveInfinity' and 'isNegativeInfinity' to the 'CDebugUtils' class.
+	* CDTDebugModelPresentation.java
+
+2003-07-28 Mikhail Khodjaiants
 	Refactoring: moved the 'CDebugUtils' class to the 'org.eclipse.cdt.debug.core' package - 
 	the methods of this class are mostly used in UI plugins.
 	* CDTDebugModelPresentation.java

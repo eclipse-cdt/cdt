@@ -17,6 +17,12 @@ import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatValue;
+import org.eclipse.cdt.debug.core.model.ICValue;
+import org.eclipse.cdt.debug.internal.core.model.CValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -336,5 +342,78 @@ public class CDebugUtils
 	public static String getMethodQualifiedName( IMethod method )
 	{
 		return null;
+	}
+
+	public static boolean isNaN( ICValue value )
+	{
+		if ( value instanceof CValue )
+		{
+			try 
+			{
+				ICDIValue cdiValue = ((CValue)value).getUnderlyingValue();
+				if ( cdiValue instanceof ICDIDoubleValue )
+				{
+					return Double.isNaN( ((ICDIDoubleValue)cdiValue).doubleValue() );
+				}
+				if ( cdiValue instanceof ICDIFloatValue )
+				{
+					return Float.isNaN( ((ICDIFloatValue)cdiValue).floatValue() );
+				}
+			}
+			catch( CDIException e ) 
+			{
+			}
+		}
+		return false;
+	}
+
+	public static boolean isPositiveInfinity( ICValue value )
+	{
+		if ( value instanceof CValue )
+		{
+			try 
+			{
+				ICDIValue cdiValue = ((CValue)value).getUnderlyingValue();
+				if ( cdiValue instanceof ICDIDoubleValue )
+				{
+					double dbl = ((ICDIDoubleValue)cdiValue).doubleValue();
+					return ( Double.isInfinite( dbl ) && Double.POSITIVE_INFINITY == dbl );
+				}
+				if ( cdiValue instanceof ICDIFloatValue )
+				{
+					float flt = ((ICDIFloatValue)cdiValue).floatValue();
+					return ( Float.isInfinite( flt ) && Float.POSITIVE_INFINITY == flt );
+				}
+			}
+			catch( CDIException e ) 
+			{
+			}
+		}
+		return false;
+	}
+
+	public static boolean isNegativeInfinity( ICValue value )
+	{
+		if ( value instanceof CValue )
+		{
+			try 
+			{
+				ICDIValue cdiValue = ((CValue)value).getUnderlyingValue();
+				if ( cdiValue instanceof ICDIDoubleValue )
+				{
+					double dbl = ((ICDIDoubleValue)cdiValue).doubleValue();
+					return ( Double.isInfinite( dbl ) && Double.NEGATIVE_INFINITY == dbl );
+				}
+				if ( cdiValue instanceof ICDIFloatValue )
+				{
+					float flt = ((ICDIFloatValue)cdiValue).floatValue();
+					return ( Float.isInfinite( flt ) && Float.NEGATIVE_INFINITY == flt );
+				}
+			}
+			catch( CDIException e ) 
+			{
+			}
+		}
+		return false;
 	}
 }

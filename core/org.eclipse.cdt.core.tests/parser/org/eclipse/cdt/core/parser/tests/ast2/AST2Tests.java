@@ -283,7 +283,7 @@ public class AST2Tests extends TestCase {
 		ICompositeType type_myS = (ICompositeType)typedef_myS.getType();
 		// the variable myS
 		IVariable var_myS = (IVariable)name_myS.resolveBinding();
-		assertEquals(type_myS, var_myS.getType());
+		assertEquals(typedef_S, var_myS.getType());
 		assertEquals(var_myS, ref_myS.getName().resolveBinding());
 		IField field_x = (IField)name_x.resolveBinding();
 		assertEquals(field_x, fieldref.getFieldName().resolveBinding());

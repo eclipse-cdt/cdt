@@ -23,4 +23,13 @@ public interface ICompositeType extends IType {
 	 * @return List of IField
 	 */
 	public List getFields();
+	
+	/**
+	 * returns the field that matches name,
+	 * or null if there is no such field.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public IField findField( String name );
 }

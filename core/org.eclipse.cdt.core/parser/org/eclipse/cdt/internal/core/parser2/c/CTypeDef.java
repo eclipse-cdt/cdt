@@ -18,31 +18,32 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 
 /**
- * Created on Nov 5, 2004
+ * Created on Nov 8, 2004
  * @author aniefer
  */
-public class CVariable implements IVariable {
-	final IASTName name;
+public class CTypeDef implements ITypedef {
+	private final IASTName name; 
 	
-	public CVariable( IASTName name ){
+	public CTypeDef( IASTName name ){
 		this.name = name;
 	}
-	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
+	 * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
 	 */
 	public IType getType() {
 		IASTDeclarator declarator = (IASTDeclarator) name.getParent();
 		IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) declarator.getParent();
+		
 		IASTDeclSpecifier declSpec = declaration.getDeclSpecifier();
-		if( declSpec instanceof ICASTTypedefNameSpecifier ){
-			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
-			return (IType) nameSpec.getName().resolveBinding();
+		if( declSpec instanceof ICASTCompositeTypeSpecifier ){
+			ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) declSpec;
+			return (IType) compTypeSpec.getName().resolveBinding();
 		}
+
 		return null;
 	}
 
@@ -60,4 +61,5 @@ public class CVariable implements IVariable {
 		IASTDeclarator declarator = (IASTDeclarator) name.getParent();
 		return CVisitor.getContainingScope( (IASTDeclaration) declarator.getParent() );
 	}
+
 }

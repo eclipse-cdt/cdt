@@ -1046,7 +1046,8 @@
    <extension
          point="org.eclipse.cdt.ui.textHovers">
       <hover
-            name="%DebugTextHover"
+            label="%DebugTextHover.label"
+            description="%DebugTextHover.description"
             perspective="org.eclipse.debug.ui.DebugPerspective"
             class="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover"
             id="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover">

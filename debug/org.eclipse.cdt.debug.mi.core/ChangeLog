@@ -1,3 +1,14 @@
+2003-08-29 Mikhail Khodjaiants
+	
+	Added new command - 'set stop-on-solib-events'.
+	 
+	* src/org/eclipse/cdt/debug/mi/core/command/MIGDBSetStopOnSolibEvents.java
+	* src/org/eclipse/cdt/debug/mi/core/command/CommandFactory.java
+
+	Implementation of the new methods added to the 'ICDISharedLibraryManager' interface.
+	
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java
+
 2003-08-26 Alain Magloire
 
 	This is still a hack: "info shared"  the real solution

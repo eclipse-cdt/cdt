@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetAutoSolib;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetSolibSearchPath;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSetStopOnSolibEvents;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShow;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowSolibSearchPath;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoSharedLibrary;
@@ -168,6 +169,37 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 		return false;
 	}
 
+	public void setStopOnSolibEvents(boolean set) throws CDIException {
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIGDBSetStopOnSolibEvents stop = factory.createMIGDBSetStopOnSolibEvents(set);
+		try {
+			mi.postCommand(stop);
+			stop.getMIInfo();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+	}
+
+	public boolean isStopOnSolibEvents() throws CDIException {
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIGDBShow show = factory.createMIGDBShow(new String[]{"stop-on-solib-events"});
+		try {
+			mi.postCommand(show);
+			MIGDBShowInfo info = show.getMIGDBShowInfo();
+			String value = info.getValue();
+			if (value != null) {
+				return value.equalsIgnoreCase("1");
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+		return false;
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#setSharedLibraryPaths(String[])
 	 */
@@ -268,4 +300,19 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 		autoupdate = update;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#supportsAutoLoadSymbols()
+	 */
+	public boolean supportsAutoLoadSymbols()
+	{
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#supportsStopOnSolibEvents()
+	 */
+	public boolean supportsStopOnSolibEvents()
+	{
+		return true;
+	}
 }

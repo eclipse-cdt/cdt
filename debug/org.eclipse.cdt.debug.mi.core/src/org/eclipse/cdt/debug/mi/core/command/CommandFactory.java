@@ -181,6 +181,10 @@ public class CommandFactory {
 		return new MIGDBSetAutoSolib(set);
 	}
 
+	public MIGDBSetStopOnSolibEvents createMIGDBSetStopOnSolibEvents(boolean set) {
+		return new MIGDBSetStopOnSolibEvents(set);
+	}
+
 	public MIGDBSetSolibSearchPath createMIGDBSetSolibSearchPath(String[] params) {
 		return new MIGDBSetSolibSearchPath(params);
 	}

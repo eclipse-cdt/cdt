@@ -48,7 +48,7 @@ public class WorkingCopyTests extends TestCase {
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite();
+		TestSuite suite= new TestSuite(WorkingCopyTests.class.getName());
 		suite.addTest(new WorkingCopyTests("testWorkingCopy"));
 		//suite.addTest(new WorkingCopyTests("testHashing"));
 		return suite;

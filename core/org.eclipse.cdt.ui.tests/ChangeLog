@@ -1,3 +1,7 @@
+2003-06-10 Brent Nicolle
+	Added some Interface tests of (IInclude, IMacro, IStructure).
+	Made sure all the Test Suites have names in the JUnit hierarchy.
+	
 2003-06-09 Victor Mozgin
 	Moved testBug36769() from ACEFailedTest.java to DOMTests.java.
 	Removed ACEFailedTest.java as it is empty now.

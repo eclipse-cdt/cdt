@@ -59,7 +59,7 @@ public class CModelElementsTests extends TestCase {
 	private NullProgressMonitor monitor;
 		
 	public static Test suite() {
-		TestSuite suite= new TestSuite();
+		TestSuite suite= new TestSuite(CModelElementsTests.class.getName());
 		suite.addTest(new CModelElementsTests("testCModelElements"));
 		return suite;
 	}		

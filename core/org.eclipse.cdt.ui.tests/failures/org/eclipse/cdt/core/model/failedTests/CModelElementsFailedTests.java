@@ -49,7 +49,7 @@ public class CModelElementsFailedTests extends TestCase {
 	private NullProgressMonitor monitor;
 		
 	public static Test suite() {
-		TestSuite suite= new TestSuite();
+		TestSuite suite= new TestSuite(CModelElementsFailedTests.class.getName());
 		suite.addTest(new CModelElementsFailedTests("testBug36379"));
 		return suite;
 	}		

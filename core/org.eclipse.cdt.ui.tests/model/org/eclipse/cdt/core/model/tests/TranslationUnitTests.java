@@ -157,7 +157,14 @@ public class TranslationUnitTests extends TestCase {
     }
     
     public static TestSuite suite() {
-        return new TestSuite(TranslationUnitTests.class);
+		TestSuite suite= new TestSuite(TranslationUnitTests.class.getName());
+		suite.addTest(new TranslationUnitTests("testIsTranslationUnit"));
+		suite.addTest(new TranslationUnitTests("testGetChildren"));
+		suite.addTest(new TranslationUnitTests("testGetElement"));
+		suite.addTest(new TranslationUnitTests("testBug23478A"));
+		suite.addTest(new TranslationUnitTests("testBug23478B"));
+		// TODO: suite.addTest(new TranslationUnitTests("testGetElementAtLine"));
+		return suite;
     }
     
     public static void main (String[] args){
@@ -183,7 +190,7 @@ public class TranslationUnitTests extends TestCase {
      * Simple sanity tests to make sure TranslationUnit.getChildren seems to 
      * basicly work 
      */
-    public void testGetChildern() {
+    public void testGetChildren() {
         ITranslationUnit myTranslationUnit;
         ICElement[] elements;
         int x;

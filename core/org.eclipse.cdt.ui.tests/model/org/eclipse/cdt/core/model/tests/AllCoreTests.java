@@ -25,16 +25,17 @@ public class AllCoreTests {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite();
+        TestSuite suite = new TestSuite(AllCoreTests.class.getName());
 
         // Just add more test cases here as you create them for 
         // each class being tested
-        
+		suite.addTest(AllLanguageInterfaceTests.suite());
         suite.addTest(CModelTests.suite());
         suite.addTest(CModelExceptionTest.suite());
         suite.addTest(FlagTests.suite());
         suite.addTest(ArchiveTests.suite());
         suite.addTest(TranslationUnitTests.suite());
+		
         return suite;
         
     }

@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.model.tests.CModelElementsTests;
  */
 public class ParserTestSuite extends TestCase {
 	public static Test suite() { 
-		TestSuite suite= new TestSuite(); 
+		TestSuite suite= new TestSuite(ParserTestSuite.class.getName()); 
 		suite.addTestSuite(BranchTrackerTest.class);
 		suite.addTestSuite(ScannerTestCase.class);
 		suite.addTestSuite(ExprEvalTest.class);

@@ -2986,7 +2986,7 @@ c, quickParse);
 		} catch (EndOfFile e) {
 			throw e;
 		} catch (ScannerException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			return fetchToken();  
 		}
 	}

@@ -50,7 +50,7 @@ public class AllBuildTests extends TestCase {
 	}
 	
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(AllBuildTests.class.getName());
 		
 		suite.addTest(new AllBuildTests("testExtensions"));
 		suite.addTest(new AllBuildTests("testProject"));

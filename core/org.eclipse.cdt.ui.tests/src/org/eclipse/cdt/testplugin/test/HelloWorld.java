@@ -22,7 +22,7 @@ public class HelloWorld extends TestCase {
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite();
+		TestSuite suite= new TestSuite(HelloWorld.class.getName());
 		suite.addTest(new HelloWorld("test1"));
 		return suite;
 	}		

@@ -59,7 +59,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite();
+		TestSuite suite= new TestSuite(ElementDeltaTests.class.getName());
 		suite.addTest(new ElementDeltaTests("testElementDeltas"));
 		return suite;
 	}		

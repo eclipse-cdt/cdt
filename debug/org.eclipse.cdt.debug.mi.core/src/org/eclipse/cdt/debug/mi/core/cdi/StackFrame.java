@@ -93,7 +93,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocalVariables()
 	 */
 	public ICDIVariable[] getLocalVariables() throws CDIException {
-		ICDIVariable[] variables = null;
+		List cdiList = new ArrayList();
 		CSession session = getCTarget().getCSession();
 		VariableManager mgr = (VariableManager)session.getVariableManager();
 		MISession mi = session.getMISession();
@@ -109,12 +109,12 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			}
 			args = info.getLocals();
 			if (args != null) {
-				variables = new ICDIVariable[args.length];
-				for (int i = 0; i < variables.length; i++) {
-					variables[i] = mgr.createVariable(this, args[i].getName());
+				for (int i = 0; i < args.length; i++) {
+					try {
+						cdiList.add(mgr.createVariable(this, args[i].getName()));
+					} catch (CDIException e) {
+					}
 				}
-			} else {
-				variables = new ICDIVariable[0];
 			}
 		} catch (MIException e) {
 			//throw new CDIException(e.getMessage());
@@ -123,10 +123,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			//throw e;
 			//System.err.println(e);
 		}
-		if (variables == null) {
-			variables = new ICDIVariable[0];
-		}
-		return variables;
+		return (ICDIVariable[])cdiList.toArray(new ICDIVariable[0]);
 	}
 
 	/**

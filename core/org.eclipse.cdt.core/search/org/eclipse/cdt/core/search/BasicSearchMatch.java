@@ -71,6 +71,14 @@ public class BasicSearchMatch implements IMatch {
 	public IResource getResource() {
 		return resource;
 	}
+	
+	public IPath getLocation() {
+		if(resource != null)
+			return resource.getLocation();
+		else if (path != null)
+			return path;
+		else return null;
+	}
 
 	public int getStartOffset() {
 		return startOffset;

@@ -306,10 +306,10 @@ public class CModelElementsTests extends TestCase {
 		checkLineNumbers((CElement)var3, 75, 75);
 		
 		// MyPackage ---> function pointer: orig_malloc_hook
-//		IVariable vDecl2 = (IVariable) nsVars.get(3);
-//		assertEquals(vDecl2.getElementName(), new String("orig_malloc_hook"));
-//		assertEquals(vDecl2.getTypeName(), new String ("void*(*)(const char*, int, size_t)"));
-//		checkLineNumbers((CElement)vDecl2, 81, 81);
+		IVariable vDecl2 = (IVariable) nsVars.get(3);
+		assertEquals(vDecl2.getElementName(), new String("orig_malloc_hook"));
+		assertEquals(vDecl2.getTypeName(), new String ("void*(*)(const char*, int, size_t)"));
+		checkLineNumbers((CElement)vDecl2, 81, 81);
 	}
 
 	private void checkVariableDeclarations(IParent namespace){
@@ -324,20 +324,14 @@ public class CModelElementsTests extends TestCase {
 	private void checkFunctions(IParent namespace){
 		ArrayList nsFunctionDeclarations = namespace.getChildrenOfType(ICElement.C_FUNCTION_DECLARATION);
 
-		// MyPackage ---> function pointer: orig_malloc_hook
-		IFunctionDeclaration pointerToFunction = (IFunctionDeclaration) nsFunctionDeclarations.get(0);
-		assertEquals(pointerToFunction.getElementName(), new String("orig_malloc_hook"));
-//		assertEquals(pointerToFunction.getReturnType(), new String ("void*(*)(const char*, int, size_t)"));
-		checkLineNumbers((CElement)pointerToFunction, 81, 81);
-
 		//	MyPackage ---> function: void foo()
-		IFunctionDeclaration f1 = (IFunctionDeclaration) nsFunctionDeclarations.get(1);
+		IFunctionDeclaration f1 = (IFunctionDeclaration) nsFunctionDeclarations.get(0);
 		assertEquals(f1.getElementName(), new String("foo"));
 		assertEquals(f1.getReturnType(), new String("void"));
 		checkLineNumbers((CElement)f1, 85, 85);
 		
 		//	MyPackage ---> function: char* foo(int&, char**)
-		IFunctionDeclaration f2 = (IFunctionDeclaration) nsFunctionDeclarations.get(2);
+		IFunctionDeclaration f2 = (IFunctionDeclaration) nsFunctionDeclarations.get(1);
 		assertEquals(f2.getElementName(), new String("foo"));
 		assertEquals(f2.getReturnType(), new String("char*"));
 		checkLineNumbers((CElement)f2, 87, 88);

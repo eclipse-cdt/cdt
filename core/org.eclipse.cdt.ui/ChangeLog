@@ -1,3 +1,6 @@
+2003-07-30 Hoda Amer
+	The New Class Wizard uses search to look for base classes in the workspace.
+
 2003-07-29 Andrew Niefer
 	- Refactoring Search Result Collecting:
 		* CSearchResultCollector now extends BasicSearchResultCollector

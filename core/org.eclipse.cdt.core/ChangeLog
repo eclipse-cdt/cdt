@@ -1,3 +1,6 @@
+2003-07-30 Hoda Amer
+	The C Model recognizes pointers to functions.
+
 2003-07-29 Alain Magloire
 
 	To discover if an application has debug info for DWARF-2 format

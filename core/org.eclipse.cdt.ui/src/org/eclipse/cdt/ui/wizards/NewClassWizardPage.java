@@ -15,7 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,6 +27,12 @@ import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.search.BasicSearchMatch;
+import org.eclipse.cdt.core.search.BasicSearchResultCollector;
+import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.core.search.ICSearchPattern;
+import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
@@ -42,7 +48,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFie
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
-import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.CodeGeneration;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -103,7 +109,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	// the created class element
 	private /*IStructure*/ ICElement createdClass = null;
 	
-	private ArrayList elementsOfTypeClassInProject = null;
+	private List elementsOfTypeClassInProject = null;
 	
 	// Controls
 	private StringDialogField fClassNameDialogField;
@@ -118,6 +124,9 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	private IStatus fCurrStatus;
 	protected IStatus fClassNameStatus;
 	protected IStatus fBaseClassStatus;
+
+	BasicSearchResultCollector  resultCollector;
+	SearchEngine searchEngine;
 
 	// -------------------- Initialization ------------------
 	public NewClassWizardPage(IStructuredSelection selection) {
@@ -162,6 +171,9 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 
 		fClassNameStatus=  new StatusInfo();
 		fBaseClassStatus=  new StatusInfo();
+
+		resultCollector = new BasicSearchResultCollector ();
+		searchEngine = new SearchEngine();
 
 	}
 	
@@ -297,9 +309,9 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	
 	private void classPageChangeControlPressed(DialogField field) {
 		if (field == fBaseClassDialogField) {
-			ICElement element= chooseBaseClass();
+			BasicSearchMatch element= (BasicSearchMatch)chooseBaseClass();
 			if (element != null) {
-				fBaseClassDialogField.setText(element.getElementName());
+				fBaseClassDialogField.setText(element.getName());
 			}
 		}
 	}
@@ -376,7 +388,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		return null;
 	}
 	
-	private void getChildrenOfTypeClass(IParent parent, ArrayList elementsFound, IProgressMonitor monitor, int worked){
+	private void getChildrenOfTypeClass(IParent parent, List elementsFound, IProgressMonitor monitor, int worked){
 		ICElement[] elements = parent.getChildren();
 		monitor.worked( worked );
 		
@@ -391,20 +403,29 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		}
 	}
 	
-	private ArrayList getClassElementsInProject(){
+	private void searchForClasses(ICProject cProject, List elementsFound, IProgressMonitor monitor, int worked){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "*", ICSearchConstants.CLASS, ICSearchConstants.DECLARATIONS, false );
+		//  TODO: change that to project scope later
+		ICSearchScope scope = SearchEngine.createWorkspaceScope();;
+
+		searchEngine.search(CUIPlugin.getWorkspace(), pattern, scope, resultCollector);
+		elementsFound.addAll(resultCollector.getSearchResults());
+	}
+	
+	private List getClassElementsInProject(){
 		return elementsOfTypeClassInProject;
 	}
 	
-	private ArrayList findClassElementsInProject(){		
+	private List findClassElementsInProject(){		
 		if(eSelection == null){
-			return new ArrayList();			
+			return new LinkedList();			
 		}
 
 		if(	elementsOfTypeClassInProject != null ){
 			return elementsOfTypeClassInProject;
 		}
 
-		elementsOfTypeClassInProject = new ArrayList();		
+		elementsOfTypeClassInProject = new LinkedList();		
 		IRunnableWithProgress runnable= new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				if (monitor == null) {
@@ -413,7 +434,8 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 				monitor.beginTask(NewWizardMessages.getString("NewClassWizardPage.operations.getProjectClasses"), 5); //$NON-NLS-1$
 				try{
 					ICProject cProject = eSelection.getCProject();
-					getChildrenOfTypeClass((IParent)cProject, elementsOfTypeClassInProject, monitor, 1);
+					searchForClasses(cProject, elementsOfTypeClassInProject, monitor, 1);
+					//getChildrenOfTypeClass((IParent)cProject, elementsOfTypeClassInProject, monitor, 1);
 					monitor.worked(5);
 				} finally{
 					monitor.done();
@@ -431,18 +453,18 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		return elementsOfTypeClassInProject;				
 	}
 	
-	protected ICElement chooseBaseClass(){
+	protected Object chooseBaseClass(){
 		// find the available classes in this project
-		ArrayList elementsFound = findClassElementsInProject();
+		List elementsFound = findClassElementsInProject();
 		
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new CElementLabelProvider());
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new CSearchResultLabelProvider());
 		dialog.setTitle(NewWizardMessages.getString("BaseClassSelectionDialog.title")); //$NON-NLS-1$
 		dialog.setMessage(NewWizardMessages.getString("BaseClassSelectionDialog.message")); //$NON-NLS-1$
 		dialog.setElements(elementsFound.toArray());
 		dialog.setFilter("*");
 		
 		if (dialog.open() == ElementListSelectionDialog.OK) {
-			ICElement element= (ICElement) dialog.getFirstResult();
+			Object element= dialog.getFirstResult();
 			return element;
 		}		
 		return null;
@@ -738,11 +760,11 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		if((baseClassName != null) && (baseClassName.length() > 0))
 		{
 			extendingBase = true;
-			ArrayList classElements = findClassElementsInProject();
-			ICElement baseClass = findInList(baseClassName, classElements);
+			List classElements = findClassElementsInProject();
+			BasicSearchMatch baseClass = (BasicSearchMatch)findInList(baseClassName, classElements);
 
 			if(baseClass != null){
-				baseClassFileName = baseClass.getUnderlyingResource().getName();
+				baseClassFileName = baseClass.getLocation().toString();
 			} else {
 				baseClassFileName = baseClassName + HEADER_EXT;
 			}
@@ -930,7 +952,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		// class name must follow the C/CPP convensions
 
 		// if class does not exist, give warning 
-		ArrayList elementsFound = findClassElementsInProject();
+		List elementsFound = findClassElementsInProject();
 		if(!foundInList(getBaseClassName(), elementsFound)){
 			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.warning.BaseClassNotExists")); //$NON-NLS-1$
 		}
@@ -938,17 +960,17 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		
 	}
 	
-	private ICElement findInList(String name, ArrayList elements){
+	private Object findInList(String name, List elements){
 		Iterator i = elements.iterator();
 		while (i.hasNext()){
-			ICElement element = (ICElement)i.next();
-			if (name.equals(element.getElementName()))
+			BasicSearchMatch element = (BasicSearchMatch)i.next();
+			if (name.equals(element.getName()))
 				return element;
 		}
 		return null;
 	}
 	
-	private boolean foundInList(String name, ArrayList elements){
+	private boolean foundInList(String name, List elements){
 		if(findInList(name, elements) != null)
 			return true;
 		else

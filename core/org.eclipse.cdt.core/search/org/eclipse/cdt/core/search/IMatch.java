@@ -14,6 +14,7 @@
 package org.eclipse.cdt.core.search;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * @author aniefer
@@ -32,6 +33,8 @@ public interface IMatch {
 	String getParentName();
 
 	IResource getResource();
+	
+	IPath getLocation();
 
 	int getStartOffset();
 	

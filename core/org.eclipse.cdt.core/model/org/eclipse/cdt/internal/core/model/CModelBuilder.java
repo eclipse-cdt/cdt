@@ -164,23 +164,8 @@ public class CModelBuilder {
 		if(declaration instanceof IASTTypedefDeclaration ) {
 			generateModelElements(parent, (IASTTypedefDeclaration) declaration);
 		}
-
-/*		if ((declaration instanceof IASTPointerToFunction) 
-		|| (declaration instanceof IASTPointerToMethod)) 
-		{
-			createPointerToFunction(parent, declaration, false); 
-		}	
-		// variable or field	
-		else */ 
-		if (declaration instanceof IASTVariable)
-		{
-			createVariableSpecification(parent, (IASTVariable)declaration, false); 
-		}	
-		// function or method 
-		else if(declaration instanceof IASTFunction ) 
-		{
-			createFunctionSpecification(parent, (IASTFunction)declaration, false);
-		}
+		
+		createSimpleElement(parent, declaration, false);
 	}
 	
 	protected void generateModelElements (Parent parent, IASTNamespaceDefinition declaration) throws ASTNotImplementedException{
@@ -208,31 +193,13 @@ public class CModelBuilder {
 			CElement element = createAbstractElement(parent, abstractDeclaration , true);			
 			// set the element position		
 			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
-			// set the element lines
-			//element.setLines(templateDeclaration.getTopLine(), templateDeclaration.getBottomLine());
 			// set the template parameters				
 			String[] parameterTypes = getTemplateParameters(templateDeclaration);
 			ITemplate classTemplate = (ITemplate) element;
 			classTemplate.setTemplateParameterTypes(parameterTypes);				
 		}
 		ITemplate template = null;
-
-/*		if ((declaration instanceof IASTPointerToFunction) 
-			|| (declaration instanceof IASTPointerToMethod))
-		{
-			template = (ITemplate) createPointerToFunction(parent, declaration, true); 
-		}	
-		// template of variable or field	
-		else */ 
-		if (declaration instanceof IASTVariable) 
-		{
-			template = (ITemplate) createVariableSpecification(parent, (IASTVariable)declaration, true); 
-		}	
-		// Template of function or method 
-		else if(declaration instanceof IASTFunction ) 
-		{
-			template = (ITemplate) createFunctionSpecification(parent, (IASTFunction)declaration, true);
-		}		
+		template = (ITemplate) createSimpleElement(parent, declaration, true);
 	 	 
  		if(template != null){
 			CElement element = (CElement)template;
@@ -276,6 +243,21 @@ public class CModelBuilder {
 			}
 		}				
 		return element;		
+	}
+	
+	private CElement createSimpleElement(Parent parent, IASTDeclaration declaration, boolean isTemplate)throws ASTNotImplementedException{
+
+		CElement element = null;
+		if (declaration instanceof IASTVariable)
+		{
+			element = createVariableSpecification(parent, (IASTVariable)declaration, isTemplate); 
+		}	
+		// function or method 
+		else if(declaration instanceof IASTFunction ) 
+		{
+			element = createFunctionSpecification(parent, (IASTFunction)declaration, isTemplate);
+		}		
+		return element;
 	}
 	
 	protected Include createInclusion(Parent parent, IASTInclusion inclusion){
@@ -642,9 +624,22 @@ public class CModelBuilder {
 		type.append(getPointerOperation(declaration));
 		type.append(getArrayQualifiers(declaration));
 		
+		type.append(getPointerToFunctionType(declaration));
 		return type.toString();
 	}
 	    
+	private String getPointerToFunctionType(IASTAbstractDeclaration declaration){
+		StringBuffer type = new StringBuffer();
+		ASTPointerOperator po = declaration.getPointerToFunctionOperator();
+		if(po != null){
+			type.append("(");
+			type.append(getPointerOperator(po));
+			type.append(")");
+			String[] parameters =getParameterTypes(declaration.getParameters()); 
+			type.append(getParametersString(parameters));
+		}
+		return type.toString();
+	}
 	private String getDeclarationType(IASTAbstractDeclaration declaration){
 		StringBuffer type = new StringBuffer();
 		
@@ -657,7 +652,7 @@ public class CModelBuilder {
 		}else if(typeSpecifier instanceof IASTSimpleTypeSpecifier){		
 			IASTSimpleTypeSpecifier simpleSpecifier = (IASTSimpleTypeSpecifier) typeSpecifier;		
 			type.append(simpleSpecifier.getTypename());
-		} 
+		}
 		return type.toString();	
 	}
 	
@@ -686,21 +681,28 @@ public class CModelBuilder {
 		Iterator i = declaration.getPointerOperators();
 		while(i.hasNext()){
 			ASTPointerOperator po = (ASTPointerOperator) i.next();
-			if(po == ASTPointerOperator.POINTER)
-				pointerString.append("*");
-
-			if(po == ASTPointerOperator.REFERENCE)
-				pointerString.append("&");
-
-			if(po == ASTPointerOperator.CONST_POINTER)
-				pointerString.append(" const");
-
-			if(po == ASTPointerOperator.VOLATILE_POINTER)
-				pointerString.append(" volatile");				
+			pointerString.append(getPointerOperator(po));
 		}
 		return pointerString.toString();
 	}
+	
+	private String getPointerOperator(ASTPointerOperator po){
+		String pointerString ="";
+		if(po == ASTPointerOperator.POINTER)
+			pointerString = ("*");
 
+		if(po == ASTPointerOperator.REFERENCE)
+			pointerString =("&");
+
+		if(po == ASTPointerOperator.CONST_POINTER)
+			pointerString =("* const");
+
+		if(po == ASTPointerOperator.VOLATILE_POINTER)
+			pointerString =("* volatile");
+			
+		return pointerString;						
+	}
+	
 	private String getArrayQualifiers(IASTAbstractDeclaration declaration){		
 		StringBuffer arrayString = new StringBuffer();
 		Iterator i  = declaration.getArrayModifiers(); 
@@ -714,18 +716,21 @@ public class CModelBuilder {
     private String[] getFunctionParameterTypes(IASTFunction functionDeclaration)
     {
     	Iterator parameters = functionDeclaration.getParameters();
-    	List paramList = new ArrayList();
-    	while (parameters.hasNext()){
+    	return getParameterTypes(parameters);
+    }
+
+	private String[] getParameterTypes(Iterator parameters){
+		List paramList = new ArrayList();
+		while (parameters.hasNext()){
 			IASTParameterDeclaration param = (IASTParameterDeclaration)parameters.next();
 			paramList.add(getType(param));
-    	}
+		}
 		String[] parameterTypes = new String[paramList.size()];
 		for(int i=0; i<paramList.size(); ++i){
 			parameterTypes[i] = (String)paramList.get(i); 
 		}
-    	return parameterTypes;
-    }
-	
+		return parameterTypes;			
+	}
 	private String getParametersString(String[] parameterTypes) 
 	{
 		StringBuffer parameters = new StringBuffer("");

@@ -5,6 +5,10 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -27,8 +31,8 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public class VariableFormatActionDelegate implements IObjectActionDelegate
 {
-	private int fFormat = ICDIFormat.DECIMAL;
-	private ICVariable fVariable = null;
+	private int fFormat = ICDIFormat.NATURAL;
+	private ICVariable[] fVariables = null;
 
 	/**
 	 * Constructor for VariableFormatActionDelegate.
@@ -50,7 +54,8 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 	 */
 	public void run( IAction action )
 	{
-		if ( getVariable() != null )
+		ICVariable[] vars = getVariables();
+		if ( vars != null && vars.length > 0 )
 		{
 			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), 
 													DebugException.REQUEST_FAILED, "", null ); 
@@ -61,7 +66,7 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 											{
 												try
 												{
-													doAction( getVariable() );
+													doAction( getVariables() );
 												}
 												catch( DebugException e )
 												{
@@ -92,41 +97,48 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 	{
 		if ( selection instanceof IStructuredSelection )
 		{
-			Object element = ((IStructuredSelection)selection).getFirstElement();
-			if ( element instanceof ICVariable )
+			List list = new ArrayList();
+			IStructuredSelection ssel = (IStructuredSelection)selection;
+			Iterator i = ssel.iterator();
+			while ( i.hasNext() )
 			{
-				boolean enabled = enablesFor( (ICVariable)element );
-				action.setEnabled( enabled );
-				if ( enabled )
+				Object o = i.next();
+				if ( o instanceof ICVariable )
 				{
-					action.setChecked( ( ((ICVariable)element).getFormat() == fFormat ) );
-					setVariable( (ICVariable)element );
-					return;
+					ICVariable var = (ICVariable)o;
+					boolean enabled = var.isEditable();
+					action.setEnabled( enabled );
+					if ( enabled )
+					{
+						action.setChecked( var.getFormat() == fFormat );
+						list.add(o);
+					}
 				}
 			}
+			setVariables( (ICVariable[])list.toArray( new ICVariable[list.size()] ) );
+		} 
+		else 
+		{
+			action.setChecked( false );
+			action.setEnabled( false );
 		}
-		action.setChecked( false );
-		action.setEnabled( false );
-		setVariable( null );
 	}
 	
-	private boolean enablesFor( ICVariable var )
+	protected void doAction( ICVariable[] vars ) throws DebugException
 	{
-		return var.isEditable();
-	}
-	
-	private void setVariable( ICVariable var )
-	{
-		fVariable = var;
-	}
-	
-	protected ICVariable getVariable()
-	{
-		return fVariable;
+		for( int i = 0; i < vars.length; i++ )
+		{
+			vars[i].setFormat( fFormat );
+		}
 	}
 
-	protected void doAction( ICVariable var ) throws DebugException
+	protected ICVariable[] getVariables()
 	{
-		var.setFormat( fFormat );
+		return fVariables;
+	}
+
+	private void setVariables( ICVariable[] variables )
+	{
+		fVariables = variables;
 	}
 }

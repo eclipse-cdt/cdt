@@ -151,7 +151,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			buffer.append(node);
 			return buffer.toString();
 		} else if ( node instanceof IASTTranslationUnit ) {
-			String fileName = getFilename();
+			String fileName = ((IASTTranslationUnit)node).getFilePath();
 			int lastSlash = fileName.lastIndexOf(FILE_SEPARATOR);
 			
 			if (lastSlash > 0) {
@@ -277,7 +277,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	{
 		if ( node == null ) return BLANK_STRING;
 	   IASTNodeLocation [] location = node.getNodeLocations();
-	   if( location.length > 0 && location[0] instanceof IASTFileLocation )
+	   if( location.length == 1 && location[0] instanceof IASTFileLocation )
 	      return ((IASTFileLocation)location[0]).getFileName();
        IASTFileLocation f = node.getTranslationUnit().flattenLocationsToFile(location);
        if( f == null )

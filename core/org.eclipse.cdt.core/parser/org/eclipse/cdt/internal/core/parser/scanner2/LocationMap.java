@@ -1091,6 +1091,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
         public int getLineNumber(int nodeOffset) {
+            if( nodeOffset >= reader.buffer.length )
+                return 1;
             int lineNumber = 1;
             for( int i = 0; i < nodeOffset; ++i )
             {
@@ -2322,6 +2324,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                 filename = result[0].getFileName();
                 length = result[0].getNodeLength();
             } else {
+                if( result[i] != null && !result[i].getFileName().equals( filename ) )
+                    return null;
                 if (result[i] != null
                         && result[i].getNodeOffset() != (offset + length))
                     return null;

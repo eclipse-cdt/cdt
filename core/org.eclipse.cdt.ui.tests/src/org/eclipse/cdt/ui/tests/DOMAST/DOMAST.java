@@ -103,6 +103,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.views.properties.PropertySheet;
 
 /**
@@ -947,7 +948,7 @@ public class DOMAST extends ViewPart {
    }
       
    private class ASTHighlighterAction extends Action {
-	IEditorPart aPart = null;
+       IEditorPart aPart = null;
 
       public ASTHighlighterAction(IEditorPart part) {
          this.aPart = part;
@@ -975,7 +976,7 @@ public class DOMAST extends ViewPart {
       public void run() {
          ISelection selection = viewer.getSelection();
          Object obj = ((IStructuredSelection) selection).getFirstElement();
-         if (aPart instanceof CEditor && obj instanceof DOMASTNodeLeaf) {
+         if (obj instanceof DOMASTNodeLeaf) {
             String filename = ((DOMASTNodeLeaf) obj).getFilename();
             
             if (filename.equals(DOMASTNodeLeaf.BLANK_STRING))
@@ -1001,10 +1002,17 @@ public class DOMAST extends ViewPart {
                   return;
                }
             }
-            ((CEditor) aPart).selectAndReveal(((DOMASTNodeLeaf) obj).getOffset(),
-                  ((DOMASTNodeLeaf) obj).getLength());
-
+            
+            if( aPart instanceof AbstractTextEditor )
+            {
+                ((AbstractTextEditor) aPart).selectAndReveal(((DOMASTNodeLeaf) obj).getOffset(),
+                      ((DOMASTNodeLeaf) obj).getLength());
+            }
+            else
+                System.out.println( "aPart instanceof " + aPart.getClass().getName() );
+    
             aPart.getSite().getPage().activate(aPart.getSite().getPage().findView(VIEW_ID));
+            
          }
       }
    }

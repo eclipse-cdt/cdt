@@ -680,7 +680,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	protected void appendBuildSubdirectory(IResource resource) {
 		IContainer container = resource.getParent();
 		if (!getSubdirList().contains(container)) {
-			getSubdirList().add(container);			
+			getSubdirList().add(container);		
 		}
 	}
 	
@@ -1064,7 +1064,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		// Create the file if it does not exist
 		ByteArrayInputStream contents = new ByteArrayInputStream(new byte[0]);
 		try {
-			newFile.create(contents, false, monitor);
+			newFile.create(contents, false, new SubProgressMonitor(monitor, 1));
 			// Make sure the new file is marked as derived
 			if (!newFile.isDerived()) {
 				newFile.setDerived(true);

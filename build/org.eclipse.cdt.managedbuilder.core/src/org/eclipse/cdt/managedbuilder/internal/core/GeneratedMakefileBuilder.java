@@ -59,10 +59,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
 	private static final String REFRESH_ERROR = BUILD_ERROR + ".refresh";	//$NON-NLS-1$
 	private static final String BUILD_FINISHED = MESSAGE + ".finished";	//$NON-NLS-1$
-	private static final String INCREMENTAL = MESSAGE + ".incremental";	//$NON-NLS-1$
 	private static final String MAKE = MESSAGE + ".make";	//$NON-NLS-1$
-	private static final String REBUILD = MESSAGE + ".rebuild";	//$NON-NLS-1$
-	private static final String START = MESSAGE + ".starting";	//$NON-NLS-1$
 	private static final String REFRESH = MESSAGE + ".updating";	//$NON-NLS-1$
 	private static final String MARKERS = MESSAGE + ".creating.markers";	//$NON-NLS-1$
 	private static final String CONSOLE_HEADER = MESSAGE + ".console.header";	//$NON-NLS-1$
@@ -103,11 +100,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		String statusMsg = ManagedMakeMessages.getFormattedString(START, getProject().getName());
 		IProject[] deps = getProject().getReferencedProjects();
-		if (statusMsg != null) {
-			monitor.subTask(statusMsg);
-		}
 		
 		// Get the build information
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
@@ -190,11 +183,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			}
 		}
 
-		// Need to report status to the user
-		String statusMsg = ManagedMakeMessages.getFormattedString(REBUILD, getProject().getName());
-		monitor.subTask(statusMsg);
-
 		// Regenerate the makefiles for this project
+		String statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.rebuild.makefiles", getProject().getName());	//$NON-NLS-1$
+		monitor.subTask(statusMsg);
 		String targetID = info.getDefaultTarget().getParent().getId();
 		generator = ManagedBuildManager.getMakefileGenerator(targetID);
 		generator.initialize(getProject(), info, monitor);
@@ -204,8 +195,11 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			// Throw the exception back to the builder
 			throw e;
 		}
-		
+		monitor.worked(1);
+
 		// Now call make
+		statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.starting", getProject().getName());	//$NON-NLS-1$
+		monitor.subTask(statusMsg);
 		IPath topBuildDir = generator.getBuildWorkingDir();
 		if (topBuildDir != null) {
 			invokeMake(true, topBuildDir, info, monitor);
@@ -213,15 +207,22 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			monitor.done();
 			return;
 		}
+		monitor.worked(1);
 		
 		// Now regenerate the dependencies
+		statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.regen.deps", getProject().getName());	//$NON-NLS-1$
+		monitor.subTask(statusMsg);
 		try {
 			generator.regenerateDependencies(false);
 		} catch (CoreException e) {
 			// Throw the exception back to the builder
 			throw e;
 		}
-		
+		monitor.worked(1);
+
+		// Say bye bye
+		statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	//$NON-NLS-1$
+		monitor.subTask(statusMsg);
 	}
 
 	/**
@@ -306,15 +307,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @throws CoreException
 	 */
 	protected void incrementalBuild(IResourceDelta delta, IManagedBuildInfo info, IProgressMonitor monitor) throws CoreException {
-		// Rebuild the resource tree in the delta
-		String statusMsg = null;
-		
 		// Need to report status to the user
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		statusMsg = ManagedMakeMessages.getFormattedString(INCREMENTAL, getProject().getName());
-		monitor.subTask(statusMsg);
 		
 		// Regenerate the makefiles for any managed projects this project depends on
 		IProject[] deps = getProject().getReferencedProjects();
@@ -336,6 +332,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 
 		// Ask the makefile generator to generate any makefiles needed to build delta
+		String statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.update.makefiles", getProject().getName());	//$NON-NLS-1$
+		monitor.subTask(statusMsg);
 		String targetID = info.getDefaultTarget().getParent().getId();
 		generator = ManagedBuildManager.getMakefileGenerator(targetID);
 		generator.initialize(getProject(), info, monitor);
@@ -345,9 +343,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			// Throw the exception back to the builder
 			ManagedBuilderCorePlugin.log(e);
 			throw e;
-		}	
+		}
+		monitor.worked(1);
 
 		// Run the build
+		statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.starting", getProject().getName());
+		monitor.subTask(statusMsg);
 		IPath buildDir = new Path(info.getConfigurationName());
 		if (buildDir != null) {
 			invokeMake(false, buildDir, info, monitor);
@@ -355,15 +356,23 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			monitor.done();
 			return;
 		}
+		monitor.worked(1);
 		
 		// Generate the dependencies for all changes
+		statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.updating.deps", getProject().getName());	//$NON-NLS-1$
+		monitor.subTask(statusMsg);
 		try {
 			generator.generateDependencies();
 		} catch (CoreException e) {
 			ManagedBuilderCorePlugin.log(e);
 			throw e;
 		}
-	}
+		monitor.worked(1);
+
+		// Say bye bye
+		statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	//$NON-NLS-1$
+		monitor.subTask(statusMsg);
+}
 
 	/* (non-Javadoc)
 	 * @param fullBuild

@@ -1,3 +1,6 @@
+2003-07-28 John Camelon
+	Fixed Bug 40730 : Parser is not searching the include path for #include"<name>" 
+
 2003-07-28 Victor Mozgin
 	Fixed PR 39537 : Parser fails if template parameters contain '>' or '<'  characters.
 

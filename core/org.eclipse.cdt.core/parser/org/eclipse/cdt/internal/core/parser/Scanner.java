@@ -322,9 +322,14 @@ public class Scanner implements IScanner {
 					inclusionReader =
 						new FileReader(includeFile);
 				} catch (FileNotFoundException fnf) {
-					if (throwExceptionOnInclusionNotFound)
-						throw new ScannerException("Cannot find inclusion " + fileName);	
+					// the spec says that if finding in the local directory fails, search the include paths
+					handleInclusion( fileName, true, nameOffset, beginOffset, endOffset );
 				}
+			}
+			else
+			{
+				// the spec says that if finding in the local directory fails, search the include paths
+				handleInclusion( fileName, true, nameOffset, beginOffset, endOffset );
 			}
 		}
 

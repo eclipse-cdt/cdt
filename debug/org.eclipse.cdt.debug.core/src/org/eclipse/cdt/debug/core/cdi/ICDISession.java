@@ -13,8 +13,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
  * 
  * @since Jun 28, 2002
  */
-public interface ICDISession
-{
+public interface ICDISession {
 	/**
 	 * Returns all the debug targets associatd with this sesion, 
 	 * or an empty collection if no debug targets are associated 
@@ -25,12 +24,20 @@ public interface ICDISession
 	ICDITarget[] getTargets();
 
 	/**
+	 * Returns the current debug target associatd with this sesion, 
+	 * or null if no debug targets are associated with this session. 
+	 * 
+	 * @return ICDITarget the current debug target
+	 */
+	ICDITarget getCurrentTarget();
+
+	/**
 	 * Sets the value of a debug session attribute.
 	 *
 	 * @param key the attribute key
 	 * @param value the attribute value
 	 */
-	void setAttribute( String key, String value );
+	void setAttribute(String key, String value);
 
 	/**
 	 * Returns the value of a debug session attribute.
@@ -38,7 +45,7 @@ public interface ICDISession
 	 * @param key the attribute key
 	 * @return value the attribute value, or <code>null</code> if undefined
 	 */
-	String getAttribute( String key );
+	String getAttribute(String key);
 
 	/**
 	 * Returns the breakpoint manager of this debug session.
@@ -59,7 +66,7 @@ public interface ICDISession
 	 * 
 	 * @return the expression manager
 	 */
-	ICDIVariableManager getVariableManager();
+	ICDIExpressionManager getExpressionManager();
 
 	/**
 	 * Returns the memory manager of this debug session.

@@ -425,8 +425,11 @@ public class DeltaProcessor {
 	 * resource by the sender of this method.
 	 */
 	protected void traverseDelta(ICElement parent, IResourceDelta delta) {
+		boolean updateChildren = true;
 		try {
-			ICElement current = updateCurrentDeltaAndIndex(delta);
+			IResource resource = delta.getResource();
+			ICElement current = createElement(resource);
+			updateChildren = updateCurrentDeltaAndIndex(delta);
 			if (current == null || current instanceof ISourceRoot ||
 					(current instanceof ICProject && !((ICProject)current).getProject().isOpen())) {
 				nonCResourcesChanged(parent, delta);
@@ -435,9 +438,11 @@ public class DeltaProcessor {
 			}
 		} catch (CModelException e) {
 		}
-		IResourceDelta [] children = delta.getAffectedChildren();
-		for (int i = 0; i < children.length; i++) {
-			traverseDelta(parent, children[i]);
+		if (updateChildren){
+			IResourceDelta [] children = delta.getAffectedChildren();
+			for (int i = 0; i < children.length; i++) {
+				traverseDelta(parent, children[i]);
+			}
 		}
 	}
 
@@ -480,7 +485,7 @@ public class DeltaProcessor {
 	 * Returns whether the children of the given delta must be processed.
 	 * @throws a CModelException if the delta doesn't correspond to a c element of the given type.
 	 */
-	private ICElement updateCurrentDeltaAndIndex(IResourceDelta delta) throws CModelException {
+	private boolean updateCurrentDeltaAndIndex(IResourceDelta delta) throws CModelException {
 
 		IResource resource = delta.getResource();
 		ICElement element = createElement(resource);
@@ -491,14 +496,14 @@ public class DeltaProcessor {
 					updateIndexAddResource(element, delta);
 					elementAdded(element, delta);
 				}
-				break;
+				return true;
 
 			case IResourceDelta.REMOVED :
 				if (element != null) {
 					updateIndexRemoveResource(element, delta);
 					elementRemoved(element, delta);
 				}
-				break;
+				return true;
 
 			case IResourceDelta.CHANGED :
 				int flags = delta.getFlags();
@@ -523,6 +528,8 @@ public class DeltaProcessor {
 								elementClosed(element, delta);
 								updateIndexRemoveResource(element, delta);
 							}
+							//Don't process children
+							return false; 
 						}
 					} 
 					if ((flags & IResourceDelta.DESCRIPTION) != 0) {
@@ -541,13 +548,14 @@ public class DeltaProcessor {
 									elementRemoved(element, delta);
 									updateIndexRemoveResource(element, delta);
 								}
+								return false;
 							}
 						}
 					}
 				}
-				break;
+				return true;
 		}
-		return element;
+		return true;
 	}
 
 	protected void updateIndexAddResource(ICElement element, IResourceDelta delta) {

@@ -98,7 +98,9 @@ public class IndexAllProject extends IndexRequest {
 					this.manager.request(new AddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), this.manager));
 				}
 			}
-
+			
+			// request to save index when all cus have been indexed
+			this.manager.request(new SaveIndex(this.indexPath, this.manager));
 		} catch (CoreException e) {
 			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to index " + this.project + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$

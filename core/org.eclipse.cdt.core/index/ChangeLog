@@ -1,4 +1,7 @@
 2004-05-18 Bogdan Gheorghe
+	IndexAllProject - restored the save request.
+	
+2004-05-18 Bogdan Gheorghe
 	First go at putting in source folder indexing. Index All events will index
 	source folders (still need to put in includes indexing). DeltaProcessor only
 	forwards events for source files so individual indexing doesn't need to be

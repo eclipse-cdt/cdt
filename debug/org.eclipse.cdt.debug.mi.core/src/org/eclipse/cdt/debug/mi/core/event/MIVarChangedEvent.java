@@ -14,19 +14,18 @@ package org.eclipse.cdt.debug.mi.core.event;
 public class MIVarChangedEvent extends MIChangedEvent {
 
 	String varName;
-	boolean inScope;
 
-	public MIVarChangedEvent(int token, String var, boolean scope) {
+	public MIVarChangedEvent(String var) {
+		this(0, var);
+	}
+
+	public MIVarChangedEvent(int token, String var) {
 		super(token);
 		varName = var;
-		inScope = scope;
 	}
 
 	public String getVarName() {
 		return varName;
 	}
 
-	public boolean isInScope() {
-		return inScope;
-	}
 }

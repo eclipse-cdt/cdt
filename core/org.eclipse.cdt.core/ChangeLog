@@ -1,3 +1,9 @@
+2002-11-13 Alain Magloire
+
+	* src/.../internal/core/CBuilder.java (invokeMake):
+	Always parse the argument for errors even when the
+	build was cancelled.
+
 2002-11-12 Alain Magloire
 
 	* index/.../internal/core/index/CTagsRunner.java (run):

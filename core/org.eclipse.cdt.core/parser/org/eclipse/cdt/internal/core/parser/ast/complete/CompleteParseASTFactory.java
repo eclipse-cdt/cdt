@@ -3294,11 +3294,47 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#lookupSymbolInContext(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ITokenDuple)
 	 */
-	public IASTNode lookupSymbolInContext(IASTScope scope, ITokenDuple duple) throws ASTNotImplementedException {
+	public IASTNode lookupSymbolInContext(IASTScope scope, ITokenDuple duple, IASTNode reference) throws ASTNotImplementedException {
 		ISymbol s = null;
-		try {
-			s = lookupQualifiedName( scopeToSymbol( scope ), duple, new ArrayList(), false );
-		} catch (ASTSemanticException e) {
+		if( reference == null ) {
+			try {
+				s = lookupQualifiedName( scopeToSymbol( scope ), duple, new ArrayList(), false );
+			} catch (ASTSemanticException e) {
+			}
+		}
+		else
+		{
+			if( reference instanceof ASTExpression )
+			{
+				ASTExpression expression = (ASTExpression) reference;
+				if( expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION )
+				{
+					try {
+						s = lookupQualifiedName( scopeToSymbol( scope ), duple, new ArrayList(), false );
+					} catch (ASTSemanticException e1) {
+					}
+				}
+				else
+				{
+					ASTExpression ownerExpression = expression.findOwnerExpressionForIDExpression( duple );
+					if( ownerExpression == null ) return null;
+					if( ownerExpression.getExpressionKind().isPostfixMemberReference() )
+					{
+						try {
+							s = lookupQualifiedName( getSearchScope(ownerExpression.getExpressionKind(), ownerExpression.getLHSExpression(), scopeToSymbol(scope)), duple, new ArrayList(), false );
+						} catch (ASTSemanticException e) {
+							return null;
+						}
+					}
+					else
+					{
+						try {
+							s = lookupQualifiedName( scopeToSymbol( scope ), duple, new ArrayList(), false );
+						} catch (ASTSemanticException e1) {
+						}						
+					}
+				}
+			}
 		}
 		if ( s == null ) return null;
 		return s.getASTExtension().getPrimaryDeclaration();
@@ -3314,7 +3350,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( expression instanceof ASTExpression)
 			{
 				try {
-					return lookupSymbolInContext(scope, ((ASTExpression)expression).getIdExpressionTokenDuple());
+					return lookupSymbolInContext(scope, ((ASTExpression)expression).getIdExpressionTokenDuple(), null);
 				} catch (ASTNotImplementedException e) {
 //	            	assert false : e;
 				}

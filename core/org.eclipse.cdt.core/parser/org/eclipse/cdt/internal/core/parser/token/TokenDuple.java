@@ -18,10 +18,6 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
-import org.eclipse.cdt.core.parser.ast.IASTFactory;
-import org.eclipse.cdt.core.parser.ast.IASTNode;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 
 /**
  * @author jcamelon
@@ -362,19 +358,6 @@ public class TokenDuple implements ITokenDuple {
         
         return lastFound;
     }
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ITokenDuple#lookup(org.eclipse.cdt.core.parser.ast.IASTFactory)
-	 */
-	public IASTNode lookup(IASTFactory factory, IASTScope scope) {
-		// check syntax of the node
-		
-		try {
-			return factory.lookupSymbolInContext(scope, this );
-		} catch (ASTNotImplementedException e) {
-			return null;
-		}
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getEndOffset()

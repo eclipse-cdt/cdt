@@ -20,8 +20,12 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.OffsetDuple;
@@ -40,6 +44,7 @@ public class SelectionParser extends ContextualParser {
 	private IASTNode ourContext = null;
 	private ITokenDuple greaterContextDuple = null;
 	private boolean pastPointOfSelection = false;
+	private IASTNode contextNode = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleNewToken(org.eclipse.cdt.core.parser.IToken)
@@ -58,7 +63,7 @@ public class SelectionParser extends ContextualParser {
 				TraceUtil.outputTrace(log, "Offset Ceiling Hit w/token \"", null, value.getImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
 				lastTokenOfDuple = value;
 			}
-			if( lastTokenOfDuple != null && lastTokenOfDuple.getEndOffset() >= offsetRange.getCeilingOffset() )
+			if( tokenDupleCompleted() )
 			{
 				if ( ourScope == null )
 					ourScope = getCompletionScope();
@@ -73,6 +78,16 @@ public class SelectionParser extends ContextualParser {
 	
 	
 	
+	/**
+	 * @return
+	 */
+	protected boolean tokenDupleCompleted() {
+		return lastTokenOfDuple != null && lastTokenOfDuple.getEndOffset() >= offsetRange.getCeilingOffset();
+	}
+
+
+
+
 	/**
 	 * @param scanner
 	 * @param callback
@@ -121,30 +136,55 @@ public class SelectionParser extends ContextualParser {
 		// reconcile the name to look up first
 		if( ! duple.equals( greaterContextDuple ))
 		{
-			// 3 cases
-			
+			// 3 cases			
 			// duple is prefix of greaterContextDuple
-			if( duple.getFirstToken().equals( greaterContextDuple.getFirstToken() ))
-			{
-				//	=> do not use greaterContextDuple
-				finalDuple = duple;
-			}
-			// duple is suffix of greaterContextDuple
-			else if( duple.getLastToken().equals( greaterContextDuple.getLastToken() ))
-			{
-				//  => use greaterContextDuple
-				finalDuple = greaterContextDuple;
-			}
+			// or duple is suffix of greaterContextDuple
 			// duple is a sub-duple of greaterContextDuple
+			if( duple.getFirstToken().equals( greaterContextDuple.getFirstToken() ))
+				finalDuple = duple; //	=> do not use greaterContextDuple
+			else if( duple.getLastToken().equals( greaterContextDuple.getLastToken() ))
+				finalDuple = greaterContextDuple; //  => use greaterContextDuple
 			else
-			{
-				//	=> throw ParseError
 				throw new ParseError( ParseError.ParseErrorKind.OFFSET_RANGE_NOT_NAME );
-			}
 		}
 		else
 			finalDuple = greaterContextDuple;
-		return finalDuple.lookup( astFactory, ourScope );
+		
+		
+		return lookupNode(finalDuple);
+	}
+
+
+
+
+	/**
+	 * @param finalDuple
+	 * @return
+	 */
+	protected IASTNode lookupNode(ITokenDuple finalDuple) {
+		if( contextNode == null ) return null;
+		if( contextNode instanceof IASTDeclaration )
+		{
+			if( contextNode instanceof IASTOffsetableNamedElement )
+			{
+				if( ((IASTOffsetableNamedElement)contextNode).getName().equals( finalDuple.toString() ) )
+					return contextNode;
+			}
+			try {
+				return astFactory.lookupSymbolInContext( ourScope, finalDuple, null );
+			} catch (ASTNotImplementedException e) {
+				return null;
+			}
+		}
+		else if( contextNode instanceof IASTExpression )
+		{
+			try {
+				return astFactory.lookupSymbolInContext( ourScope, finalDuple, contextNode );
+			} catch (ASTNotImplementedException e) {
+				return null;
+			}
+		}
+		return null;
 	}
 
 
@@ -188,5 +228,34 @@ public class SelectionParser extends ContextualParser {
 			if( tokensFound == 2 )
 				greaterContextDuple = tokenDuple;
 		}
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#endDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
+	 */
+	protected void endDeclaration(IASTDeclaration declaration)
+			throws EndOfFileException {
+		if( ! tokenDupleCompleted() )
+			super.endDeclaration(declaration);
+		else
+		{
+			contextNode = declaration;
+			throw new EndOfFileException();
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#endExpressionStatement(org.eclipse.cdt.core.parser.ast.IASTExpression)
+	 */
+	protected void endExpressionStatement(IASTExpression expression)
+			throws EndOfFileException {
+		if( ! tokenDupleCompleted() )
+			super.endExpressionStatement(expression);
+		else
+		{
+			contextNode = expression;
+			throw new EndOfFileException();
+		}
+		
 	}
 }

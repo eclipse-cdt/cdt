@@ -155,7 +155,7 @@ public class ContextualParser extends CompleteParser {
 		setCompletionKeywords(key);
 		ITokenDuple duple = new TokenDuple( first, last );
 		try {
-			setCompletionContext( astFactory.lookupSymbolInContext( scope, duple ) );
+			setCompletionContext( astFactory.lookupSymbolInContext( scope, duple, null ) );
 		} catch (ASTNotImplementedException e) {
 		}
 		setCompletionFunctionName();

@@ -878,7 +878,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#lookupSymbolInContext(org.eclipse.cdt.core.parser.ast.IASTScope,
 	 *           org.eclipse.cdt.core.parser.ITokenDuple)
 	 */
-	public IASTNode lookupSymbolInContext(IASTScope scope, ITokenDuple duple)
+	public IASTNode lookupSymbolInContext(IASTScope scope, ITokenDuple duple, IASTNode reference)
 		throws ASTNotImplementedException {
 		return null;
 	}

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
+import org.eclipse.cdt.core.parser.ast.IASTNode.LookupError;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
@@ -310,7 +311,6 @@ public class ASTExpression extends ASTNode implements IASTExpression
 		}
 		return stringRepresentation;
 	}
-	
 	public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
 		ExpressionResult result = getResultType();
 		TypeInfo type = (result != null ) ? getResultType().getResult() : null;
@@ -325,5 +325,36 @@ public class ASTExpression extends ASTNode implements IASTExpression
 		}
 				
 		return null;
+	}	/**
+	 * @param duple
+	 * @return
+	 */
+	public ASTExpression findOwnerExpressionForIDExpression(ITokenDuple duple) {
+		if( isIDExpressionForDuple( lhs, duple ) || isIDExpressionForDuple(rhs, duple) || isIDExpressionForDuple(thirdExpression, duple))
+			return this;
+		ASTExpression result = recursiveFindExpressionForDuple(lhs, duple);
+		if( result != null ) return result;
+		result = recursiveFindExpressionForDuple(rhs, duple);
+		if( result != null ) return result;
+		result = recursiveFindExpressionForDuple(thirdExpression, duple);
+		return result;
+	}
+	
+	/**
+	 * @param duple
+	 * @return
+	 */
+	private ASTExpression recursiveFindExpressionForDuple(IASTExpression expression, ITokenDuple duple) {
+		return ((ASTExpression)expression).findOwnerExpressionForIDExpression(duple);
+	}
+	
+	protected boolean isIDExpressionForDuple( IASTExpression expression, ITokenDuple duple )
+	{
+		if( expression == null ) return false;
+		if( expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION &&
+			expression instanceof ASTExpression && 
+			((ASTExpression)expression).getIdExpressionTokenDuple().equals( duple ) )
+			return true;
+		return false;
 	}
 }

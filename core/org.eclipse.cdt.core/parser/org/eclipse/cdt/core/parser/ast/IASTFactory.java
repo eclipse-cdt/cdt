@@ -239,7 +239,7 @@ public interface IASTFactory
      */
     public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier);
 	
-	public IASTNode lookupSymbolInContext( IASTScope scope, ITokenDuple duple ) throws ASTNotImplementedException;
+	public IASTNode lookupSymbolInContext( IASTScope scope, ITokenDuple duple, IASTNode reference ) throws ASTNotImplementedException;
 
 	/**
 	 * @param log

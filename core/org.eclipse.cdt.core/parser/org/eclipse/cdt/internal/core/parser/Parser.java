@@ -2840,10 +2840,12 @@ public abstract class Parser extends ExpressionParser implements IParser
             case IToken.t_break :
                 consume();
                 consume(IToken.tSEMI);
+                cleanupLastToken();
                 return;
             case IToken.t_continue :
                 consume();
                 consume(IToken.tSEMI);
+                cleanupLastToken();
                 return;
             case IToken.t_return :
                 consume();
@@ -2853,19 +2855,23 @@ public abstract class Parser extends ExpressionParser implements IParser
                     retVal.acceptElement(requestor);
                 }
                 consume(IToken.tSEMI);
+                cleanupLastToken();
                 return;
             case IToken.t_goto :
                 consume();
                 consume(IToken.tIDENTIFIER);
                 consume(IToken.tSEMI);
+                cleanupLastToken();
                 return;
             case IToken.t_try :
                 consume();
                 compoundStatement(scope,true);
                 catchHandlerSequence(scope);
+                cleanupLastToken();
                 return;
             case IToken.tSEMI :
                 consume();
+            	cleanupLastToken();
                 return;
             default :
                 // can be many things:
@@ -2876,6 +2882,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     consume(IToken.tIDENTIFIER);
                     consume(IToken.tCOLON);
                     statement(scope);
+                    cleanupLastToken();
                     return;
                 }
                 // expressionStatement
@@ -2887,6 +2894,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     IASTExpression expressionStatement = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.STATEMENT);
                    	consume(IToken.tSEMI);
                    	expressionStatement.acceptElement( requestor );
+                   	endExpressionStatement(expressionStatement);
                     return;
                 }
                 catch (BacktrackException b)

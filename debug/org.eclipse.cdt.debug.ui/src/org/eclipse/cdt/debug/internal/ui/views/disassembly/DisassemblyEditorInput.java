@@ -23,6 +23,8 @@ import org.eclipse.cdt.debug.core.model.IDisassemblyBlock;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
@@ -46,6 +48,8 @@ public class DisassemblyEditorInput implements IEditorInput {
 	private IDisassemblyBlock fBlock;
 
 	private String fContents = ""; //$NON-NLS-1$
+	
+	private IRegion[] fSourceRegions = new IRegion[0];
 
 	/**
 	 * Constructor for DisassemblyEditorInput.
@@ -186,6 +190,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 	}
 
 	private void createContents() {
+		fSourceRegions = new IRegion[0];
 		StringBuffer lines = new StringBuffer();
 		int maxFunctionName = 0;
 		int maxOpcodeLength = 0;
@@ -209,13 +214,16 @@ public class DisassemblyEditorInput implements IEditorInput {
 			}
 			int instrPos = calculateInstructionPosition( maxFunctionName, maxOffset );
 			int argPosition = instrPos + maxOpcodeLength + 1;
+			if ( fBlock.isMixedMode() )
+				fSourceRegions = new IRegion[mi.length]; 
 			for ( int j = 0; j < mi.length; ++j ) {
-				if ( fBlock.isMixedMode() )
-					lines.append( getSourceLineString( mi[j] ) );
+				if ( fBlock.isMixedMode() ) {
+					String sl = getSourceLineString( mi[j] );
+					fSourceRegions[j] = new Region( lines.length(), sl.length() );
+					lines.append( sl );
+				}
 				IAsmInstruction[] instructions = mi[j].getInstructions();
 				for( int i = 0; i < instructions.length; ++i ) {
-//					if ( fBlock.isMixedMode() )
-//						lines.append( "\t" ); //$NON-NLS-1$
 					lines.append( getInstructionString( instructions[i], instrPos, argPosition ) );
 				}
 			}
@@ -260,5 +268,18 @@ public class DisassemblyEditorInput implements IEditorInput {
 			text = DisassemblyMessages.getString( "DisassemblyEditorInput.source_line_is_not_available_1" ) + '\n'; //$NON-NLS-1$
 		}
 		return text;
+	}
+
+//	private void addSourceLineRegion( int offset, int length ) {
+//		if ( fTextPresentation != null ) {
+//			fTextPresentation.addStyleRange( new StyleRange( offset, 
+//															 length, 
+//															 JFaceResources.getColorRegistry().get( IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR ),
+//															 null ) );
+//		}
+//	}
+
+	public IRegion[] getSourceRegions() {
+		return this.fSourceRegions;
 	}
 }

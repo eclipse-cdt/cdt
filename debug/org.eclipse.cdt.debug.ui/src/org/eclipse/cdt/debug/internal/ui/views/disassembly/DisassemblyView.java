@@ -38,9 +38,11 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IOverviewRuler;
@@ -58,6 +60,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -278,7 +281,6 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		getSourceViewerDecorationSupport( viewer );
 		
 		EditorsPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
-		CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
 
 		getSite().getPage().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		getSite().setSelectionProvider( viewer.getSelectionProvider() );
@@ -346,7 +348,15 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange( PropertyChangeEvent event ) {
-		// TODO Auto-generated method stub
+		String propertyName = event.getProperty();
+		if ( IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR.equals( propertyName ) ) {
+			IEditorInput input = getInput();
+			if ( input instanceof DisassemblyEditorInput )
+				getSourceViewer().changeTextPresentation( createTextPresentation( ((DisassemblyEditorInput)input).getSourceRegions() ), true );
+		}
+		else if ( IInternalCDebugUIConstants.DISASSEMBLY_FONT.equals( propertyName ) ) {
+			getSourceViewer().getTextWidget().setFont(JFaceResources.getFont( IInternalCDebugUIConstants.DISASSEMBLY_FONT ) );			
+		}
 	}
 
 	/* (non-Javadoc)
@@ -388,6 +398,8 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	private SourceViewer createSourceViewer( Composite parent, IVerticalRuler vertRuler, IOverviewRuler ovRuler ) {
 		DisassemblyViewer viewer = new DisassemblyViewer( parent, vertRuler, ovRuler );
 		viewer.setRangeIndicator( new DefaultRangeIndicator() );
+		JFaceResources.getFontRegistry().addListener( this );
+		JFaceResources.getColorRegistry().addListener( this );
 		return viewer;
 	}
 
@@ -449,6 +461,8 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		}
 		getSourceViewer().setDocument( getDocumentProvider().getDocument( input ), 
 									   getDocumentProvider().getAnnotationModel( input ) );
+		if ( input instanceof DisassemblyEditorInput )
+			getSourceViewer().changeTextPresentation( createTextPresentation( ((DisassemblyEditorInput)input).getSourceRegions() ), true );
 		updateObjects();
 	}
 
@@ -457,8 +471,9 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 */
 	public void dispose() {
 		getSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		JFaceResources.getFontRegistry().removeListener( this );
+		JFaceResources.getColorRegistry().removeListener( this );
 		EditorsPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
-		CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
 
 		if ( fSourceViewerDecorationSupport != null ) {
 			fSourceViewerDecorationSupport.dispose();
@@ -879,5 +894,16 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 
 	private IVerticalRuler getVerticalRuler() {
 		return this.fVerticalRuler;
+	}
+
+	private TextPresentation createTextPresentation( IRegion[] regions ) {
+		TextPresentation p = new TextPresentation();
+		for ( int i = 0; i < regions.length; ++i ) {
+			p.addStyleRange( new StyleRange( regions[i].getOffset(), 
+											 regions[i].getLength(), 
+											 JFaceResources.getColorRegistry().get( IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR ),
+											 null ) );
+		}
+		return p;
 	}
 }

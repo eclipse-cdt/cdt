@@ -1282,7 +1282,7 @@
       <colorDefinition
             label="%DisassemblySourceLineColor.label"
             categoryId="org.eclipse.cdt.debug.ui.presentation"
-            value="COLOR_BLUE"
+            value="COLOR_DARK_BLUE"
             id="org.eclipse.cdt.debug.ui.disassembly.sourceLineColor">
          <description>%DisassemblySourceLineColor.description</description>
       </colorDefinition>

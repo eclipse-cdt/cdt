@@ -27,6 +27,12 @@ public interface IInternalCDebugUIConstants {
 	 */ 
 	public static final String DISASSEMBLY_FONT = PREFIX + "disassemblyFont"; //$NON-NLS-1$	
 
+	/**
+	 * The color id to highlight the source lines in disassembly view. This color is managed via
+	 * the workbench font preference page.
+	 */ 
+	public static final String DISASSEMBLY_SOURCE_LINE_COLOR = PREFIX + "disassembly.sourceLineColor"; //$NON-NLS-1$	
+
 	//Current stack frame instruction pointer
 	public static final String DISASM_INSTRUCTION_POINTER = PREFIX + "disassemblyInstructionPointer"; //$NON-NLS-1$
 

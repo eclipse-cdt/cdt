@@ -112,12 +112,13 @@ public abstract class JobManager implements Runnable {
 		if (VERBOSE)
 			JobManager.verbose("DISCARD   background job family - " + jobFamily); //$NON-NLS-1$
 
-		int oldEnabledState = enabledState();
+		int oldEnabledState = 0;
 		try {
 			IJob currentJob;
 			// cancel current job if it belongs to the given family
 			synchronized(this){
 				currentJob = this.currentJob();
+				oldEnabledState = enabledState();
 				disable();
 			}
 			if (currentJob != null 

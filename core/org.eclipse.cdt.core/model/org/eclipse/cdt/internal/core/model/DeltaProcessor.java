@@ -584,7 +584,10 @@ public class DeltaProcessor {
 
 		switch (element.getElementType()) {
 			case ICElement.C_PROJECT :
-						indexManager.removeIndexFamily(element.getCProject().getProject().getFullPath());
+						IPath fullPath = element.getCProject().getProject().getFullPath();
+						if( delta.getKind() == IResourceDelta.CHANGED )
+							indexManager.discardJobs(fullPath.segment(0));
+						indexManager.removeIndexFamily(fullPath);
 						// NB: Discarding index jobs belonging to this project was done during PRE_DELETE
 						break;
 						// NB: Update of index if project is opened, closed, or its c nature is added or removed

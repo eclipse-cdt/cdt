@@ -1,3 +1,6 @@
+2004-06-18 Andrew Niefer
+	- DeltaProcessor.updateIndexRemoveResource() : discard if removing a project, discard index jobs for that project.
+
 2004-06-15 Hoda Amer
 	Fix for PR 63207:  ITranslationUnit.getElementAtOffset(i) does not factor in multiple namespace decl
 	

@@ -1,3 +1,9 @@
+2004-06-18 Andrew Niefer
+	- call InderManager.jobFinishedNotification( this ) from IndexRequest.cancel() so that the IndexManager's jobSet doesn't 
+	  become stale.
+	- in JobManager.discardJobs, move getting the old enabledState into the synchronized block so that we can be sure its 
+	  reset correctly
+
 2004-06-16 Bogdan Gheorghe
 	- Removed reporting index failed messages from log
 	

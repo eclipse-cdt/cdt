@@ -34,13 +34,14 @@ public abstract class IndexRequest implements IJob {
 	}
 	
 	public void cancel() {
+		this.manager.jobFinishedNotification( this );
 		this.manager.jobWasCancelled(this.indexPath);
 		this.isCancelled = true;
 	}
 	
 	public boolean isReadyToRun() {
 		IProject project = CCorePlugin.getWorkspace().getRoot().getProject(indexPath.segment(0));
-		if ( !this.manager.isIndexEnabled( project ) )
+		if ( !project.isAccessible() || !this.manager.isIndexEnabled( project ) )
 			return false;
 		
 		// tag the index as inconsistent

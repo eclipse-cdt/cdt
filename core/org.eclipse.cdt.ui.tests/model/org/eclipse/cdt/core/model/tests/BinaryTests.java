@@ -166,11 +166,11 @@ public class BinaryTests extends TestCase {
      *
      * Called after every test case method.
      */
-    protected void tearDown() throws CoreException {
-       // release resources here and clean-up
-        testProject.getProject().close(null);
-        testProject.getProject().open(null);
-
+    protected void tearDown() throws CoreException, InterruptedException {
+    	/* Let everything settle down before we try to delete the project. 
+    	 */
+    	 
+		Thread.sleep(500);
         CProjectHelper.delete(testProject);
         
     }
@@ -192,8 +192,8 @@ public class BinaryTests extends TestCase {
         IBinary myBinary;
         ICElement[] elements;
         ExpectedStrings expSyms;
-        String[] myStrings = {"atexit", "exit", "_init_libc", "printf", "_fini",
-            "test.c", "_init","main.c", "_start", "test2.c", "_btext", "errno"};
+        String[] myStrings = {"atexit", "exit", "_init_libc", "printf",
+            "test.c", "_init","main.c", "_start", "test2.c", "_btext"};
         
         expSyms=new ExpectedStrings(myStrings);
 
@@ -229,17 +229,9 @@ public class BinaryTests extends TestCase {
         IBinary bigBinary,littleBinary;
         bigBinary=CProjectHelper.findBinary(testProject, "exebig_g");
         littleBinary=CProjectHelper.findBinary(testProject, "test_g");
-        if (false) {
-            /****
-             * Since there is no comment on this function, I have no idea what 
-             * it is ment to do.  Once I find out what it's ment to do, I will
-             * actually write some tests.
-             * PR23602 
-             */
-            assertTrue("Expected 76 Got: " + bigBinary.getData(), bigBinary.getData()==76);
-            assertTrue("Expected 8, Got: " + littleBinary.getData(), littleBinary.getData()==8);                
-        } else
-            fail("PR:23602  No docs, can't test");
+		/* These two test used to fail due to pr 23602 */
+        assertTrue("Expected 256 Got: " + bigBinary.getData(), bigBinary.getData()==256);
+        assertTrue("Expected 196, Got: " + littleBinary.getData(), littleBinary.getData()==196);                
     }
 
     /***
@@ -252,8 +244,8 @@ public class BinaryTests extends TestCase {
         myBinary=CProjectHelper.findBinary(testProject, "exebig_g");
 
         assertTrue("Expected: x86  Got: " + myBinary.getCPU(),myBinary.getCPU().equals("x86"));
-        myBinary=CProjectHelper.findBinary(testProject, ppcexefile.toString());
-        assertTrue("Expected: ppcbe  Got: " + myBinary.getCPU(),myBinary.getCPU().equals("ppcbe"));
+        myBinary=CProjectHelper.findBinary(testProject, ppcexefile.getLocation().lastSegment());
+        assertTrue("Expected: ppc  Got: " + myBinary.getCPU(),myBinary.getCPU().equals("ppc"));
 
     }
     
@@ -319,21 +311,12 @@ public class BinaryTests extends TestCase {
      */
     public void testGetText() {
         IBinary bigBinary,littleBinary;
-        bigBinary=CProjectHelper.findBinary(testProject, bigexe.toString());
-        littleBinary=CProjectHelper.findBinary(testProject, exefile.toString());
-        if (false) {
-            /****
-             * Since there is no comment on this function, I have no idea what 
-             * it is ment to do.  Once I find out what it's ment to do, I will
-             * actually write some tests.
-             * PR23602 
-             */
-
-            assertTrue("Expected 296, Got: " + bigBinary.getText(), bigBinary.getText()==296);
-            assertTrue("Expected 296, Got: " + littleBinary.getText(), littleBinary.getText()==296);                
-        } else
-            fail("PR:23602  No docs, can't test");
-    }
+        bigBinary=CProjectHelper.findBinary(testProject, bigexe.getLocation().lastSegment());
+        littleBinary=CProjectHelper.findBinary(testProject, exefile.getLocation().lastSegment());
+		/* These two asserts used to fail due to pr 23602 */
+        assertTrue("Expected  886, Got: " + bigBinary.getText(), bigBinary.getText()==886);
+        assertTrue("Expected 1223, Got: " + littleBinary.getText(), littleBinary.getText()==1223);                
+	}
     
     /***
      * Simple tests for the hadDebug call

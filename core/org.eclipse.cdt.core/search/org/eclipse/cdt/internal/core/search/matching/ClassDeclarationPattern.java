@@ -73,17 +73,13 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	}
 	
 	public int matchLevel( ISourceElementCallbackDelegate node, LimitTo limit ){
-		if( searchFor == TYPEDEF ){
-			if( !( node instanceof IASTTypedefDeclaration ) )
-				return IMPOSSIBLE_MATCH;
-		} else if( searchFor == ENUM ){
-			if( !( node instanceof IASTEnumerationSpecifier ) )
-				return IMPOSSIBLE_MATCH;
-		} else if ( !( node instanceof IASTClassSpecifier ) &&
-					!( node instanceof IASTElaboratedTypeSpecifier ) &&
-					!( node instanceof IASTTypedefDeclaration ) &&
-					!( node instanceof IASTEnumerationSpecifier) )
+		if ( !( node instanceof IASTClassSpecifier )          &&
+		     !( node instanceof IASTElaboratedTypeSpecifier ) &&
+		     !( node instanceof IASTTypedefDeclaration )      &&
+		     !( node instanceof IASTEnumerationSpecifier)     )
 		{
+			return IMPOSSIBLE_MATCH;
+		} else if( searchFor != TYPE && ((searchFor == TYPEDEF) ^ (node instanceof IASTTypedefDeclaration)) ) {
 			return IMPOSSIBLE_MATCH;
 		}
 		

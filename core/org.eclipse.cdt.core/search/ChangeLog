@@ -1,3 +1,7 @@
+2004-05-21 Andrew Niefer
+	bug 62731 - [Search] typedefs are appearing as union declarations
+	* search/org/eclipse/cdt/internal/core/search/matching/ClassDeclarationPattern.java
+	
 2004-05-21 Bogdan Gheorghe
 	bug 63320 - Search does not consider working copies
 	Added a check to turn off indexer timer thread, if number entered is <= 0

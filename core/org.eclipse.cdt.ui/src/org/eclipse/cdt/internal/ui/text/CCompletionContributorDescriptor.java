@@ -37,7 +37,6 @@ public class CCompletionContributorDescriptor {
 	private IConfigurationElement fConfigurationElement;
 	private ICCompletionContributor fContributorInstance;
 	private ITranslationUnit fLastUnit;
-	private Boolean fStatus;
 	private boolean fLastResult;
 
 	private static final String ID= "id"; //$NON-NLS-1$
@@ -47,10 +46,6 @@ public class CCompletionContributorDescriptor {
 		fConfigurationElement= element;
 		fContributorInstance= null;
 		fLastUnit= null;
-		fStatus= null; // undefined
-		if (fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT).length == 0) {
-			fStatus= Boolean.TRUE;
-		}
 	}
 			
 	public IStatus checkSyntax() {
@@ -63,10 +58,6 @@ public class CCompletionContributorDescriptor {
 	}
 	
 	private boolean matches(ITranslationUnit unit) {
-		if (fStatus != null) {
-			return fStatus.booleanValue();
-		}
-		
 		IConfigurationElement[] children= fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT);
 		if (children.length == 1) {
 			if (unit.equals(fLastUnit)) {
@@ -87,7 +78,6 @@ public class CCompletionContributorDescriptor {
 				CUIPlugin.getDefault().log(e);
 			}
 		}
-		fStatus= Boolean.FALSE;
 		return false;
 	}
 
@@ -118,10 +108,6 @@ public class CCompletionContributorDescriptor {
 
 
 	private boolean matches(IProject project) {
-		if (fStatus != null) {
-			return fStatus.booleanValue();
-		}
-		
 		IConfigurationElement[] children= fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT);
 		if (children.length == 1 && project != null) {
 			try {
@@ -137,7 +123,6 @@ public class CCompletionContributorDescriptor {
 				CUIPlugin.getDefault().log(e);
 			}
 		}
-		fStatus= Boolean.FALSE;
 		return false;
 	}
 

@@ -61,9 +61,11 @@ public class CCompletionContributorManager {
 					IProject project = context.getProject();
 					c = desc[i].getCCompletionContributor(project);
 				}
-				IFunctionSummary f = c.getFunctionInfo(context, name);
-				if (f != null) {
-					return f;
+				if (c != null) {
+					IFunctionSummary f = c.getFunctionInfo(context, name);
+					if (f != null) {
+						return f;
+					}
 				}
 			} catch (CoreException e) {
 				//
@@ -88,18 +90,17 @@ public class CCompletionContributorManager {
 					IProject project = context.getProject();
 					c = desc[i].getCCompletionContributor(project);
 				}
-				if (c == null) {
-					continue;
-				}
-				IFunctionSummary[] f = c.getMatchingFunctions(context, frag);
-				if (f != null) {
-					if (fs == null) {
-						fs = f;
-					} else {
-						IFunctionSummary[] dest = new IFunctionSummary[fs.length + f.length];
-						System.arraycopy(fs, 0, dest, 0, fs.length);
-						System.arraycopy(f, 0, dest, fs.length, f.length);
-						fs = dest;
+				if (c != null) {
+					IFunctionSummary[] f = c.getMatchingFunctions(context, frag);
+					if (f != null) {
+						if (fs == null) {
+							fs = f;
+						} else {
+							IFunctionSummary[] dest = new IFunctionSummary[fs.length + f.length];
+							System.arraycopy(fs, 0, dest, 0, fs.length);
+							System.arraycopy(f, 0, dest, fs.length, f.length);
+							fs = dest;
+						}
 					}
 				}
 			} catch (CoreException e) {

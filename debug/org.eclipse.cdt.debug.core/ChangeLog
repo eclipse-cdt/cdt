@@ -1,3 +1,8 @@
+2004-07-15 Alain Magloire
+
+	org.eclipse.cdt.debug.core.cdi.model.type should
+	be in the cdi source folder.
+
 2004-07-09 Mikhail Khodjaiants
 	Cleanup. Added support of "CDebugElementState".
 	* ICDebugElement.java

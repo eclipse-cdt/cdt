@@ -2,12 +2,10 @@
 <html lang="en">
 
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Content Assist page, Preferences window</title>
-<link rel="stylesheet" type="text/css" href="../help.css">
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Content Assist page, Preferences window</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <!--INFOPOP
 Customize how the Content Assist feature works.
@@ -16,24 +14,38 @@ END INFOPOP-->
 
 <h1>Content Assist page, Preferences window</h1>
 
-<p>The Contents Assist page of the Preferences window, lets you customize how the Content Assist feature works.</p>
+<p>You can customize the Content Assist feature on the Contents Assist page of the C/C++ Editor Preferences window.  To change the Content Assist preferences click
+<b>Window &gt; Preferences &gt; C/C++ &gt; C++ Editor &gt; Content Assist.</b></p>
+<p>
+<img src="../images/contentAssist_preferences.png" border="0" width="667" height="525" alt="Content Assist Preferences Dialog Box">
+</p>
+
 
 <dl>
-  <dt>Insert single proposals automatically</dt>
-  <dd>Inserts an element into your code when it is the only item in the Content Assist 
-  list.</dd>
-  <dt>Enable auto activation</dt>
-  <dd>Opens Content Assist when you type the first letter 
-  of an element in the C/C++ editor for which there is a code template or an 
-  element that begins with the same letter.</dd>
-  <dt>Auto activation delay</dt>
-  <dd>Specifies the number of seconds before Content Assist is 
-  activated.</dd>
-  <dt>Auto activation triggers for C:</dt>
-  <dd>Specifies a character that, if typed in the C/C++ editor, causes code assist to 
-  be invoked immediately&nbsp; before the delay times out.</dd>
-  <dt>Background for completion proposals</dt>
-  <dd>Specifies the background color for the Content Assist dialog box.</dd>
+	<p><dt>Search scope for completion proposals</dt>
+	<dd>You can configure the Content Assist feature to select proposals from items contained only in the current file and included files, or from the current project.</dd>
+	
+	<p><dt>Insert single proposals automatically</dt>
+  	<dd>Inserts an element into your code when the Content Assist feature finds only one proposal.</dd>
+	
+	<p><dt>Present proposals in alphabetical order</dt>
+	<dd>Proposals, by default, appear in order of relevance determined by context, scope and prefix. Alternatively, you can configure the Content Assist feature to order its proposals alphabetically.</dd> 
+
+	<p><dt>Content Assist parsing timeout (in milliseconds)
+	<dd>For very large projects, the Content Assist feature might slow the response of the plugin as the Content Assist feature searches the project for proposals.  This setting stops the Content Assist search when it reaches the specified threshold.<dd>
+	
+	<p><dt>Auto activation</dt>
+	<dd>Certain predefined triggers force the Content Assist feature to activate. You can disable the predefined triggers with these checkboxes.
+	
+	<p><dt>Auto activation delay</dt>
+	<dd>Specifies the number of milliseconds before Content Assist is activated.</dd>
+	
+	<p><dt>Background for completion proposals</dt>
+	<dd>Specifies the background color of the Content Assist dialog box.</dd>
+	
+	<p><dt>Foreground for completion proposals</dt>
+	<dd>Specifies the foreground color of the Content Assist dialog box.</dd>
+	
 </dl>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>

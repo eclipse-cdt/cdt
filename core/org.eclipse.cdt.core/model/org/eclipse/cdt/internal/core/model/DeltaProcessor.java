@@ -332,9 +332,9 @@ public class DeltaProcessor {
 		CElementDelta elementDelta = fCurrentDelta.find(parent);
 		if (elementDelta == null) {
 			fCurrentDelta.changed(parent, ICElementDelta.F_CONTENT);
-			elementDelta = fCurrentDelta;
+		} else {
+			elementDelta.addResourceDelta(delta);
 		}
-		elementDelta.addResourceDelta(delta);
 		if (parent instanceof CContainer) {
 			CElementInfo info = ((CContainer)parent).getElementInfo();
 			if (info instanceof CContainerInfo) {

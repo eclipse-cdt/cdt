@@ -6,6 +6,9 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+
 /**
  * 
  * A base class for all mi requests.
@@ -23,4 +26,6 @@ public abstract class Command
 	public abstract String getToken();
 
 	public abstract String toString();
+
+	public abstract MIInfo parse(MIOutput out);
 }

@@ -6,6 +6,9 @@
  
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+
 /**
  * 
  * Represents a CLI command.
@@ -27,5 +30,8 @@ public class CLICommand extends Command
 	public String toString(){
 		return "";
 	}
-	
+
+	public MIInfo parse (MIOutput out) {
+		return new MIInfo();
+	}
 }

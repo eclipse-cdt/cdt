@@ -6,6 +6,9 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+
 /**
  * 
  * Represents a MI command.
@@ -15,13 +18,34 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MICommand extends Command
 {
+	final String[] empty = new String[0];
+	String[] options = empty;
+	String[] parameters = empty;
+	String operation = "";
+	String token;
+
+	public MICommand(String oper) {
+		this.operation = oper;
+	}
+
+	public MICommand(String oper, String[] param) {
+		this.operation = oper;
+		this.parameters = param;
+	}
+
+	public MICommand(String oper, String[] opt, String[] param) {
+		this.operation = oper;
+		this.options = opt;
+		this.parameters = param;
+	}
+
 	/**
 	 * Returns the operation of this command.
 	 * 
 	 * @return the operation of this command
 	 */
 	public String getOperation() {
-		return "";
+		return operation;
 	}
 	
 	/**
@@ -31,7 +55,11 @@ public class MICommand extends Command
 	 * @return an array of command's options
 	 */
 	public String[] getOptions() {
-		return new String[0];
+		return options;
+	}
+
+	public void setOptions(String[] opt) {
+		options = opt;
 	}
 	
 	/**
@@ -41,14 +69,40 @@ public class MICommand extends Command
 	 * @return an array of command's parameters
 	 */
 	public String[] getParameters() {
-		return new String[0];
+		return parameters;
+	}
+
+	public void setParameters(String[] p) {
+		parameters = p;
 	}
 
 	public String toString() {
-		return "";
+		String command =  getToken() + "-" + getOperation(); 
+		if (options != null && options.length > 0) {
+			for (int i = 0; i < options.length; i++) {
+				command += " " + options[i];
+			}
+		}
+		if (parameters != null && parameters.length > 0) {
+			if (options != null && options.length > 0) {
+				command += " --";
+			}
+			for (int i = 0; i < parameters.length; i++) {
+				command += " " + parameters[i];
+			}
+		}
+		return command;
 	}
 
 	public String getToken() {
-		return "";
+		return token;
+	}
+
+	public void setToken(String t) {
+		token = t;
+	}
+
+	public MIInfo parse (MIOutput out) {
+		return new MIInfo();
 	}
 }

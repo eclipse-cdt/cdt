@@ -3,6 +3,12 @@ package org.eclipse.cdt.core.suite;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestListener;
@@ -16,6 +22,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.testing.ITestHarness;
 import org.eclipse.ui.testing.TestableObject;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.ProcessingInstruction;
 
 /**
  * @see IPlatformRunnable
@@ -26,6 +36,11 @@ public class RunTests implements IPlatformRunnable, ITestHarness, TestListener {
 	private PrintStream stream;
 	private String testReport;
 	private String pluginName = "org.eclipse.cdt.core.tests";
+	Document doc;
+	Element testRun;
+	Element testSuite;
+	Element testClass;
+	Element test;
 	
 	/**
 	 *
@@ -95,22 +110,29 @@ public class RunTests implements IPlatformRunnable, ITestHarness, TestListener {
 				TestResult results = new TestResult();
 				results.addListener(RunTests.this);
 				
-				stream.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
-				stream.print("<?xml-stylesheet type=\"text/xsl\" href=\"");
-				stream.print(testReport);
-				stream.println("\"?>");
-				
-				stream.print("<testRun name=\"");
-				stream.print(pluginName);
-				stream.println("\">");
-				
-				startSuite(AutomatedIntegrationSuite.class.getName());
-				AutomatedIntegrationSuite.suite().run(results);
-				endSuite();
-				
-				stream.print("</testRun>");
-				results.removeListener(RunTests.this);
-				results.stop();
+				try {
+					doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+
+					ProcessingInstruction pi = doc.createProcessingInstruction("xml-stylesheet", "type=\"text/xsl\" href=\"" + testReport +"\"");
+					doc.appendChild(pi);
+					
+					testRun = doc.createElement("testRun");
+					doc.appendChild(testRun);
+					testRun.setAttribute("name", pluginName);
+					
+					startSuite(AutomatedIntegrationSuite.class.getName());
+					AutomatedIntegrationSuite.suite().run(results);
+					currentTest = null;
+					
+					results.removeListener(RunTests.this);
+					results.stop();
+					
+					Transformer transformer = TransformerFactory.newInstance().newTransformer();
+					transformer.transform(new DOMSource(doc), new StreamResult(stream));
+				} catch (Throwable t) {
+					System.out.println("runTests failed");
+					t.printStackTrace();
+				}
 			}
 		});
 		testableObject.testingFinished();
@@ -137,31 +159,25 @@ public class RunTests implements IPlatformRunnable, ITestHarness, TestListener {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestListener#endTest(junit.framework.Test)
 	 */
-	public void endTest(Test test) {
+	public void endTest(Test t) {
 		double time = (System.currentTimeMillis() - startTime) / 1000.0;
 		
-		stream.print(" time=\"");
-		stream.print(time);
-		stream.print("\" result=\"");
+		test.setAttribute("time", String.valueOf(time));
 		
-		boolean printerror = false;
+		String result;
 		if (failure == null)
-			stream.print("pass");
-		else if (failure instanceof AssertionFailedError)
-			stream.print("failed");
+			result = "pass";
 		else {
-			stream.print("error");
-			printerror = true;
+			CDATASection data = doc.createCDATASection(failure.toString());
+			test.appendChild(data);
+			
+			if (failure instanceof AssertionFailedError)
+				result = "failed";
+			else
+				result = "error";
 		}
 
-		stream.print("\"");
-		
-		if (printerror) {
-			stream.println(">");
-			failure.printStackTrace(stream);
-			stream.println("\t\t\t</test>");
-		} else
-			stream.println("/>");
+		test.setAttribute("result", result);
 		
 		failure = null;
 	}
@@ -173,21 +189,19 @@ public class RunTests implements IPlatformRunnable, ITestHarness, TestListener {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestListener#startTest(junit.framework.Test)
 	 */
-	public void startTest(Test test) {
-		if (test.getClass() != currentTest) {
-			if (currentTest != null)
-				endClass();
-			stream.print("\t\t<testClass name=\"");
-			stream.print(test.getClass().getName());
-			stream.println("\">");
-			currentTest = test.getClass();
+	public void startTest(Test t) {
+		if (t.getClass() != currentTest) {
+			currentTest = t.getClass();
+			testClass = doc.createElement("testClass");
+			testSuite.appendChild(testClass);
+			testClass.setAttribute("name", currentTest.getName());
 		}
-
-		String name = test.toString();
+		
+		test = doc.createElement("test");
+		testClass.appendChild(test);
+		String name = t.toString();
 		name = name.substring(0, name.indexOf('('));
-		stream.print("\t\t\t<test name=\"");
-		stream.print(name);
-		stream.print("\"");
+		test.setAttribute("name", name);
 		
 		startTime = System.currentTimeMillis();
 	}
@@ -195,20 +209,9 @@ public class RunTests implements IPlatformRunnable, ITestHarness, TestListener {
 	// Report Generator
 	
 	private void startSuite(String name) {
-		stream.print("\t<testSuite name=\"");
-		stream.print(name);
-		stream.println("\">");
+		testSuite = doc.createElement("testSuite");
+		testRun.appendChild(testSuite);
+		testSuite.setAttribute("name", name);
 	}
-	
-	private void endSuite() {
-		if (currentTest != null) {
-			endClass();
-			currentTest = null;
-		}
-		stream.println("\t</testSuite>");
-	}
-	
-	private void endClass() {
-		stream.println("\t\t</testClass>");
-	}
+
 }

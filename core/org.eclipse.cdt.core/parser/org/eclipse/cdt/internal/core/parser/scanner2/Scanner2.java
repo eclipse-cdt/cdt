@@ -2139,6 +2139,51 @@ public class Scanner2 implements IScanner, IScannerData {
 		return encounteredMultiLineComment;
 	}
 	
+	private int indexOfNextNonWhiteSpace( char[] buffer, int start, int limit ) {
+	    if( start < 0 || start >= buffer.length || limit > buffer.length )
+	        return -1;
+	    
+		int pos = start + 1;
+		while( pos < limit ) {
+			switch (buffer[pos++]) {
+				case ' ':
+				case '\t':
+				case '\r':
+					continue;
+				case '/':
+					if( pos < limit) {
+						if( buffer[pos] == '/') {
+							// C++ comment, skip rest of line
+						    while( ++pos < limit ){
+						        switch( buffer[pos] ){
+						            case '\\' : ++pos; break;
+						            case '\n' : break;
+						        }
+						    }
+						} else if (buffer[pos] == '*') {
+							// C comment, find closing */
+						    while( ++pos < limit ){
+						        if( buffer[pos] == '*' && pos + 1 < limit && buffer[pos+1] == '/' )
+						        {
+						            pos += 2;
+						            break;
+						        }
+						    }
+						}
+					}
+					continue;
+				case '\\':
+					if (pos < limit && (buffer[pos] == '\n' || buffer[pos] == '\r') ) {
+					    ++pos;
+					    continue;
+					}
+			}
+			// fell out of switch without continuing, we're done
+			return --pos;
+		}
+		return pos;
+	}
+	
 	private void skipOverNonWhiteSpace(){
 	    skipOverNonWhiteSpace( false );
 	}
@@ -2367,8 +2412,36 @@ public class Scanner2 implements IScanner, IScannerData {
 			skipOverWhiteSpace();
 		}
 
-		if (++bufferPos[bufferStackPos] >= limit
-				|| buffer[bufferPos[bufferStackPos]] != '(' )
+		if( ++bufferPos[bufferStackPos] >= limit ){
+		    //allow a macro boundary cross here, but only if the caller was prepared to accept a bufferStackPos change
+		    if( pushContext )
+		    {
+		        int idx = -1;
+		        int stackpPos = bufferStackPos;
+		        while( bufferData[stackpPos] != null && bufferData[stackpPos] instanceof MacroData ){
+		            stackpPos--;
+		            if( stackpPos < 0 ) return emptyCharArray;
+		            idx = indexOfNextNonWhiteSpace( bufferStack[stackpPos], bufferPos[stackpPos], bufferLimit[stackpPos] );
+		            if( idx >= bufferLimit[stackpPos] ) continue;
+		            if( idx > 0 && bufferStack[stackpPos][idx] == '(' ) break;
+                    return emptyCharArray;
+		        }
+		        if( idx == -1 )
+		            return emptyCharArray;
+		        
+		        MacroData data = (MacroData) bufferData[stackpPos+1];
+		        for( int i = bufferStackPos; i > stackpPos; i-- )
+		            popContext();
+		        
+		        bufferPos[bufferStackPos] = idx;
+		        buffer = bufferStack[bufferStackPos];
+		        limit = bufferLimit[bufferStackPos];
+		        start = data.startOffset;
+		    } else {
+		        return emptyCharArray;
+		    }
+		}
+		if( buffer[bufferPos[bufferStackPos]] != '(' )
 			return emptyCharArray;
 		
 		char[][] arglist = macro.arglist;

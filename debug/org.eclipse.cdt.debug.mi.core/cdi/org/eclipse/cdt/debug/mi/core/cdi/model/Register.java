@@ -26,6 +26,16 @@ public class Register extends Variable implements ICDIRegister {
 		super(obj, var);
 	}
 
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#getQualifiedName()
+	 */
+	public String getQualifiedName() throws CDIException {
+		if (qualifiedName == null) {
+			qualifiedName = "$" + getFullName(); //$NON-NLS-1$
+		}
+		return qualifiedName;
+	}
+
 	public ICDIVariable[] getChildren() throws CDIException {
 			Session session = (Session)(getTarget().getSession());
 			MISession mi = session.getMISession();

@@ -1,5 +1,9 @@
 2004-05-28 Alain Magloire
 
+	QuickFix for PR 58249
+
+2004-05-28 Alain Magloire
+
 	Error in looking for the CIdentifier.
 	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
 

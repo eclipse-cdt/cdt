@@ -1,3 +1,8 @@
+2004-06-14 Mikhail Khodjaiants
+	Added transparency to the icons.
+	* icons/full/cview16/sharedlibraries_view.gif
+	* icons/full/eview16/sharedlibraries_view.gif
+
 2004-06-12 Mikhail Khodjaiants
 	Added the superclass for action delegates of views different than the Debug view and 
 	driven by the selection in the Debug view.

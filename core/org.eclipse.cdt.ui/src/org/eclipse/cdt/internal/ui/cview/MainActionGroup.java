@@ -18,12 +18,10 @@ import org.eclipse.cdt.internal.ui.editor.FileSearchActionInWorkingSet;
 import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
 import org.eclipse.cdt.internal.ui.editor.SearchDialogAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -364,7 +362,6 @@ public class MainActionGroup extends CViewActionGroup {
 	}
 
 	public void dispose() {
-		IWorkspace workspace = CUIPlugin.getWorkspace();
 		importAction.dispose();
 		exportAction.dispose();
 		refactorGroup.dispose();

@@ -33,7 +33,7 @@ public class AsmTextTools {
         public void propertyChange(Preferences.PropertyChangeEvent event) {
             adaptToPreferenceChange(new PropertyChangeEvent(event.getSource(), event.getProperty(), event.getOldValue(), event.getNewValue()));
         }
-    };
+    }
     
 	/** The color manager -- use the same as for C code */
 	private CColorManager fColorManager;

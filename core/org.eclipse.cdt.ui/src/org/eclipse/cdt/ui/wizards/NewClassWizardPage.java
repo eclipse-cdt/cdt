@@ -387,7 +387,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	private boolean isSelectionCPP(IStructuredSelection sel){
 		IProject project = getSelectionProject(sel);
 		if (project != null)
-			return CoreModel.getDefault().hasCCNature(project);
+			return CoreModel.hasCCNature(project);
 		else
 			return false;
 	}

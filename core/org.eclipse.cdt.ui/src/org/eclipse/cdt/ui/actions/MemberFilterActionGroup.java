@@ -220,7 +220,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 	 */
 	public void fillActionBars(IActionBars actionBars) {
 		contributeToToolBar(actionBars.getToolBarManager());
-	};
+	}
 	
 	/**
 	 * Adds the filter actions to the given tool bar

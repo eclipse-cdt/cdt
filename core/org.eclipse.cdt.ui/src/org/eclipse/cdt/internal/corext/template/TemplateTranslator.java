@@ -194,8 +194,8 @@ public class TemplateTranslator {
 					break;
 				
 				default:
-					if (!Character.isUnicodeIdentifierStart((char) ch) &&
-						!Character.isUnicodeIdentifierPart((char) ch))
+					if (!Character.isUnicodeIdentifierStart(ch) &&
+						!Character.isUnicodeIdentifierPart(ch))
 					{
 						// illegal identifier character
 						fErrorMessage= TemplateMessages.getString("TemplateTranslator.error.invalid.identifier"); //$NON-NLS-1$

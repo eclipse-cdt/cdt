@@ -411,9 +411,9 @@ public abstract class OptionsConfigurationBlock {
 						switch(proxy.getType()) {
 						case IResource.FILE :
 							IFile file = (IFile)proxy.requestResource();
-							CoreModel cModel = CCorePlugin.getDefault().getCoreModel();
 	
-							if (cModel.isTranslationUnit(file)) {
+							if (CoreModel.isTranslationUnit(file)) {
+								CoreModel cModel = CoreModel.getDefault();
 								ITranslationUnit translationUnit = (ITranslationUnit)cModel.create(file);
 								
 								try {

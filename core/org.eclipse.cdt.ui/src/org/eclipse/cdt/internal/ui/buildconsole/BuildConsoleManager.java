@@ -76,7 +76,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		CUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 
 			public void run() {
-				IWorkbenchWindow window = CUIPlugin.getDefault().getActiveWorkbenchWindow();
+				IWorkbenchWindow window = CUIPlugin.getActiveWorkbenchWindow();
 				if (window != null) {
 					IWorkbenchPage page = window.getActivePage();
 					if (page != null) {

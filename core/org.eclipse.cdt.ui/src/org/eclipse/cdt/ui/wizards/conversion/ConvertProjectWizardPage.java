@@ -387,7 +387,7 @@ public abstract class ConvertProjectWizardPage
 
         // ensure we only present open, valid candidates to the user
         for (int i = 0; i < projects.length; i++) {
-            next = (IProject)projects[i];
+            next = projects[i];
 
             if ((next != null) 
                     && next.isOpen() 

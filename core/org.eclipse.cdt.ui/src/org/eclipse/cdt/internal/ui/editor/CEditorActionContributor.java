@@ -77,7 +77,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 			if (fOperationCode != -1 && fOperationTarget != null)
 				fOperationTarget.doOperation(fOperationCode);
 		}
-	};
+	}
 
 	protected CEditor fCEditor;
 	protected RetargetTextEditorAction fContentAssist;

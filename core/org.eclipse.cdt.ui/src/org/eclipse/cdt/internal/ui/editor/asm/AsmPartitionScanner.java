@@ -56,7 +56,7 @@ public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 		public boolean isWordPart(char c) {
 			return (c == '*' || c == '/');
 		}
-	};
+	}
 	
 	/**
 	 * Word rule for empty comments.
@@ -87,8 +87,7 @@ public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 		public IToken getSuccessToken() {
 			return fSuccessToken;
 		}
-	};
-
+	}
 
 	/**
 	 * Creates the partitioner and sets up the appropriate rules.

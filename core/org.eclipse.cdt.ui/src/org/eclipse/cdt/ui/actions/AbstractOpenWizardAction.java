@@ -116,7 +116,7 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 
 
 	protected IStructuredSelection getCurrentSelection() {
-		IWorkbenchWindow window= CUIPlugin.getDefault().getActiveWorkbenchWindow();
+		IWorkbenchWindow window= CUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
 			ISelection selection= window.getSelectionService().getSelection();
 			if (selection instanceof IStructuredSelection) {
@@ -137,7 +137,7 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 		if (!checkWorkspaceNotEmpty()) {
 			return;
 		}
-*/		Shell shell= CUIPlugin.getDefault().getActiveWorkbenchShell();
+*/		Shell shell= CUIPlugin.getActiveWorkbenchShell();
 		try {
 			Wizard wizard= createWizard();
 			if (wizard instanceof IWorkbenchWizard) {
@@ -145,7 +145,7 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 			}
 			
 			WizardDialog dialog= new WizardDialog(shell, wizard);
-			PixelConverter converter= new PixelConverter(CUIPlugin.getDefault().getActiveWorkbenchShell());
+			PixelConverter converter= new PixelConverter(CUIPlugin.getActiveWorkbenchShell());
 			
 			dialog.setMinimumPageSize(converter.convertWidthInCharsToPixels(70), converter.convertHeightInCharsToPixels(20));
 			dialog.create();
@@ -197,11 +197,11 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 	protected boolean checkWorkspaceNotEmpty() {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		if (workspace.getRoot().getProjects().length == 0) {
-			Shell shell= CUIPlugin.getDefault().getActiveWorkbenchShell();
+			Shell shell= CUIPlugin.getActiveWorkbenchShell();
 			String title= NewWizardMessages.getString("AbstractOpenWizardAction.noproject.title"); //$NON-NLS-1$
 			String message= NewWizardMessages.getString("AbstractOpenWizardAction.noproject.message"); //$NON-NLS-1$
 			if (MessageDialog.openQuestion(shell, title, message)) {
-				IWorkbenchWindow window= CUIPlugin.getDefault().getActiveWorkbenchWindow();
+				IWorkbenchWindow window= CUIPlugin.getActiveWorkbenchWindow();
 				(new NewProjectAction(window)).run();
 				return workspace.getRoot().getProjects().length != 0;
 			}
@@ -209,7 +209,5 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 		}
 		return true;
 	}
-	
-	
-}
 
+}

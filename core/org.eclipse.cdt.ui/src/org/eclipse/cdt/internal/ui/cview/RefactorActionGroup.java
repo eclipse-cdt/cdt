@@ -102,7 +102,7 @@ public class RefactorActionGroup extends CViewActionGroup {
 	}
 
 	protected void makeActions() {
-		TreeViewer treeViewer = (TreeViewer) getCView().getViewer();
+		TreeViewer treeViewer = getCView().getViewer();
 		Shell shell = getCView().getSite().getShell();
 		clipboard = new Clipboard(shell.getDisplay());
 		

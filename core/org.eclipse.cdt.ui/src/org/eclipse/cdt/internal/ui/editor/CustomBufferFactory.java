@@ -37,7 +37,7 @@ public class CustomBufferFactory implements IBufferFactory {
 		if (owner instanceof IWorkingCopy) {
 
 			IWorkingCopy unit= (IWorkingCopy) owner;
-			ITranslationUnit original= (ITranslationUnit) unit.getOriginalElement();
+			ITranslationUnit original= unit.getOriginalElement();
 			IResource resource= original.getResource();
 			if (resource instanceof IFile) {
 				IFile fFile = (IFile)resource;

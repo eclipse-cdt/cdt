@@ -90,7 +90,7 @@ public class FileSearchActionInWorkingSet extends Action {
 			IResource[] result = new IResource[resourceList.size()];
 			resourceList.toArray(result);
 			
-			SearchScope scope= new SearchScope("File Search",(IResource []) result); //$NON-NLS-1$
+			SearchScope scope= new SearchScope("File Search", result); //$NON-NLS-1$
 	
 			
 			TextSearchOperation op= new TextSearchOperation(

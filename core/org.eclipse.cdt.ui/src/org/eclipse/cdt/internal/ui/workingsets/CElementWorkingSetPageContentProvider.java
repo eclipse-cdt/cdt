@@ -29,7 +29,7 @@ class CElementWorkingSetPageContentProvider extends WorkbenchContentProvider {
 			IProject[] projects = root.getProjects();
 			List list = new ArrayList(projects.length);
 			for (int i = 0; i < projects.length; i++) {
-				if (CoreModel.getDefault().hasCNature(projects[i])) {
+				if (CoreModel.hasCNature(projects[i])) {
 					list.add(projects[i]);
 				}
 			}

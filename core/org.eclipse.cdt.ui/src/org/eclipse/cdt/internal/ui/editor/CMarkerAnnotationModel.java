@@ -8,7 +8,6 @@ package org.eclipse.cdt.internal.ui.editor;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
-import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 
@@ -25,7 +24,7 @@ public class CMarkerAnnotationModel extends ResourceMarkerAnnotationModel {
 	 * @see AbstractMarkerAnnotationModel#createMarkerAnnotation(IMarker)
 	 */
 	protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
-		String markerType = MarkerUtilities.getMarkerType(marker);
+		//String markerType = MarkerUtilities.getMarkerType(marker);
 		return new CMarkerAnnotation(marker, fDocument);
 	}
 	/**

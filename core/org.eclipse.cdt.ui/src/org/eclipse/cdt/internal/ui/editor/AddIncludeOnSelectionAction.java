@@ -62,7 +62,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	private ITranslationUnit getTranslationUnit () {
 		ITranslationUnit unit = null;
 		if(fEditor != null) {
-			IEditorInput editorInput= (IEditorInput)fEditor.getEditorInput();
+			IEditorInput editorInput= fEditor.getEditorInput();
 			unit = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
 		}
 		return unit;

@@ -161,7 +161,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		} else { 
 			//Defer to the nature of the project
 			IFile file = fEditor.getInputFile();
-			if (file != null && CoreModel.getDefault().hasCCNature(file.getProject())) {
+			if (file != null && CoreModel.hasCCNature(file.getProject())) {
 					return true;
 			} else {
 				return false;
@@ -583,7 +583,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 						default:
 							visibility = ASTAccessVisibility.PRIVATE;
 							break;
-					};
+					}
 					resultCollector.acceptField(
 							match.getName(), 
 							match.getReturnType(), 
@@ -614,7 +614,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 						default:
 							visibility = ASTAccessVisibility.PRIVATE;
 							break;
-					};
+					}
 					resultCollector.acceptMethod(
 							match.getName(), 
 							null,

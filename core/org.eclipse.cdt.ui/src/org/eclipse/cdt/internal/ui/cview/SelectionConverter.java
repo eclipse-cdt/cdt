@@ -41,7 +41,7 @@ public class SelectionConverter {
 			for (int i = 0; i < elements.length; i++) {
 				Object e = elements[i];
 				if (e instanceof ICElement) {
-					converted.add((ICElement)e);
+					converted.add(e);
 				} else if (e instanceof IAdaptable) {
 					ICElement c = (ICElement) ((IAdaptable) e).getAdapter(ICElement.class);
 					if (c != null) {
@@ -60,7 +60,7 @@ public class SelectionConverter {
 			for (int i = 0; i < elements.length; i++) {
 				Object e = elements[i];
 				if (e instanceof IResource) {
-					converted.add((IResource)e);
+					converted.add(e);
 				} else if (e instanceof IAdaptable) {
 					IResource r = (IResource) ((IAdaptable) e).getAdapter(IResource.class);
 					if (r != null) {

@@ -35,7 +35,7 @@ public class DeleteTaskAction extends ActionDelegate implements IObjectActionDel
 				return;
 			}
 			try {
-				List list = ((IStructuredSelection) selection).toList();
+				List list = selection.toList();
 				List listMarkers = new ArrayList();
 				Iterator iterator = list.iterator();
 				while (iterator.hasNext()) {

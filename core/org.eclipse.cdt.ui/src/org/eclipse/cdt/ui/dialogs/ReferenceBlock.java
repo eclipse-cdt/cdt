@@ -71,7 +71,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 				ArrayList aList = new ArrayList(15);
 				final IProject[] projects = ((IWorkspace)element).getRoot().getProjects();
 				for (int i = 0; i < projects.length; i++) {
-					if (CoreModel.getDefault().hasCNature(projects[i])) {
+					if (CoreModel.hasCNature(projects[i])) {
 						// Do not show the actual project being look at
 						if ((getContainer().getProject() != null) && getContainer().getProject().equals(projects[i])) {
 							continue;

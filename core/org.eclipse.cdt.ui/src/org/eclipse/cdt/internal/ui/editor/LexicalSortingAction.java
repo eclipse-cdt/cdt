@@ -77,6 +77,6 @@ public class LexicalSortingAction extends Action {
 			}
 			return 0;
 		}
-	};
+	}
 	
-};
+}

@@ -19,11 +19,12 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
  * @author aniefer
  */
-public class CPPTypedef implements ITypedef, ICPPTypeContainer {
+public class CPPTypedef implements ITypedef, ITypeContainer {
 	private IASTDeclarator declarator = null;
 	/**
 	 * @param declarator

@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -63,9 +65,9 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
@@ -75,10 +77,10 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
-import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
  * Created on Nov 5, 2004
@@ -215,12 +217,8 @@ public class CVisitor {
 		} else {
 		    type = getExpressionType( fieldOwner );
 		}
-	    while( type != null && (type instanceof ITypedef || type instanceof ICPointerType)) {
-	    	if (type instanceof ITypedef) {
-	    		type = ((ITypedef)type).getType();
-	    	} else if (type instanceof ICPointerType) {
-	    		type = ((ICPointerType)type).getType();
-	    	}
+	    while( type != null && type instanceof ITypeContainer) {
+    		type = ((ITypeContainer)type).getType();
 	    }
 		
 		if( type != null && type instanceof ICompositeType ){
@@ -899,8 +897,10 @@ public class CVisitor {
 			lastType = (IType) nameSpec.getName().resolveBinding();			
 			
 			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
-
-			if (pointerChain != null) return pointerChain;
+			if (pointerChain != null) lastType = pointerChain;
+			
+			IType arrayChain = setupArrayChain(declarator, lastType);
+			if (arrayChain != null) lastType = arrayChain;
 			
 			return lastType;
 		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
@@ -912,8 +912,10 @@ public class CVisitor {
 			lastType = (IType) elabTypeSpec.getName().resolveBinding();
 			
 			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
-
-			if (pointerChain != null) return pointerChain;
+			if (pointerChain != null) lastType = pointerChain;
+			
+			IType arrayChain = setupArrayChain(declarator, lastType);
+			if (arrayChain != null) lastType = arrayChain;
 			
 			return lastType;
 		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
@@ -925,8 +927,10 @@ public class CVisitor {
 			lastType = (IType) compTypeSpec.getName().resolveBinding();
 			
 			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
-
-			if (pointerChain != null) return pointerChain;
+			if (pointerChain != null) lastType = pointerChain;
+			
+			IType arrayChain = setupArrayChain(declarator, lastType);
+			if (arrayChain != null) lastType = arrayChain;
 			
 			return lastType;
 		} else if (declSpec instanceof ICASTSimpleDeclSpecifier) {
@@ -937,11 +941,34 @@ public class CVisitor {
 				lastType = new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
 			
 			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
-
-			if (pointerChain != null) return pointerChain;
-
+			if (pointerChain != null) lastType = pointerChain;
+			
+			IType arrayChain = setupArrayChain(declarator, lastType);
+			if (arrayChain != null) lastType = arrayChain;
+			
 			return lastType;
 		}
+		return null;
+	}
+	
+	private static IType setupArrayChain(IASTDeclarator decl, IType lastType) {
+		if (decl instanceof IASTArrayDeclarator) {
+			int i=0;
+			IASTArrayModifier[] mods = ((IASTArrayDeclarator)decl).getArrayModifiers();
+			
+			CArrayType arrayType = new CArrayType(lastType); 
+			if (mods[i] instanceof ICASTArrayModifier) {
+				arrayType.setModifiedArrayModifier((ICASTArrayModifier)mods[i]);
+			}
+			for (; i < ((IASTArrayDeclarator)decl).getArrayModifiers().length - 1; i++) {
+				arrayType = new CArrayType(arrayType);
+				if (mods[i] instanceof ICASTArrayModifier) {
+					arrayType.setModifiedArrayModifier((ICASTArrayModifier)mods[i]);
+				}
+			}
+			return arrayType;
+		}
+		
 		return null;
 	}
 

@@ -13,11 +13,12 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
  * @author dsteffle
  */
-public class CPointerType implements ICPointerType {
+public class CPointerType implements ICPointerType, ITypeContainer {
 
 	IType nextType = null;
 	ICASTPointer pointer = null;

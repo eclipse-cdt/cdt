@@ -16,11 +16,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
  * @author aniefer
  */
-public class CPPQualifierType implements IQualifierType, ICPPTypeContainer {
+public class CPPQualifierType implements IQualifierType, ITypeContainer {
     private boolean isConst = false;
     private boolean isVolatile = false;
     private IType type = null;

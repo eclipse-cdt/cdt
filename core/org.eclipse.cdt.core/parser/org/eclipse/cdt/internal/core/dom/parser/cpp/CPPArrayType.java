@@ -16,11 +16,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
  * @author aniefer
  */
-public class CPPArrayType implements IArrayType, ICPPTypeContainer {
+public class CPPArrayType implements IArrayType, ITypeContainer {
     private IType type = null;
     
     public CPPArrayType( IType type ){

@@ -8,17 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package org.eclipse.cdt.core.dom.ast.c;
 
-/*
- * Created on Dec 13, 2004
- */
-package org.eclipse.cdt.internal.core.dom.parser.cpp;
-
-import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 
 /**
- * @author aniefer
+ * @author dsteffle
  */
-public interface ICPPTypeContainer extends IType{
-    IType getType();
+public interface ICArrayType extends IArrayType {
+	public boolean isConst();
+	public boolean isRestrict();
+	public boolean isVolatile();
+	public boolean isStatic();
+	public boolean isVariableLength();
 }

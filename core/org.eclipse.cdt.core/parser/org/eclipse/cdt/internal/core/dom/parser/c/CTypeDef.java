@@ -18,12 +18,13 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
  * Created on Nov 8, 2004
  * @author aniefer
  */
-public class CTypeDef implements ITypedef {
+public class CTypeDef implements ITypedef, ITypeContainer {
 	private final IASTName name; 
 	private IType type = null;
 	

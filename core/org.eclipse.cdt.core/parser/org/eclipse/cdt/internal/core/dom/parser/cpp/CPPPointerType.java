@@ -16,11 +16,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
  * @author aniefer
  */
-public class CPPPointerType implements IPointerType, ICPPTypeContainer {
+public class CPPPointerType implements IPointerType, ITypeContainer {
 	private IASTPointer operator = null;
 	private IType type = null;
 	/**

@@ -18,11 +18,12 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
  * @author dsteffle
  */
-public class CQualifierType implements ICQualifierType {
+public class CQualifierType implements ICQualifierType, ITypeContainer {
 
 	IASTDeclSpecifier declSpec = null;
 	IType type = null;
@@ -74,9 +75,9 @@ public class CQualifierType implements ICQualifierType {
 			} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
 				IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
 				type = (IType) compTypeSpec.getName().resolveBinding();
-			} 
-			
-			type = new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
+			} else {
+			    type = new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
+			}
 		}
 		
 		return type;

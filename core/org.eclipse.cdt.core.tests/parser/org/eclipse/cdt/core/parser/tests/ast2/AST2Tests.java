@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -58,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
+import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -1009,6 +1011,55 @@ public class AST2Tests extends AST2BaseTest {
         IType t_AP = AP.getType();
         assertTrue( t_AP instanceof IPointerType );
         assertSame( ((IPointerType) t_AP).getType(), A );
+    }
+    
+    public void testArrayTypes() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "int a[restrict];       \n" ); //$NON-NLS-1$
+        buffer.append( "char * b[][];    \n" ); //$NON-NLS-1$
+        buffer.append( "const char * const c[][][]; \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IVariable a = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+        IVariable b = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
+        IVariable c = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+        
+        IType t_a_1 = a.getType();
+        assertTrue( t_a_1 instanceof ICArrayType );
+        assertTrue( ((ICArrayType)t_a_1).isRestrict() );
+        IType t_a_2 = ((IArrayType)t_a_1).getType();
+        assertTrue( t_a_2 instanceof IBasicType );
+        assertEquals( ((IBasicType)t_a_2).getType(), IBasicType.t_int ); 
+
+        IType t_b_1 = b.getType();
+        assertTrue( t_b_1 instanceof IArrayType );
+        IType t_b_2 = ((IArrayType)t_b_1).getType();
+        assertTrue( t_b_2 instanceof IArrayType );
+        IType t_b_3 = ((IArrayType)t_b_2).getType();
+        assertTrue( t_b_3 instanceof IPointerType);
+        IType t_b_4 = ((IPointerType)t_b_3).getType();
+        assertTrue( t_b_4 instanceof IBasicType);
+        assertEquals( ((IBasicType)t_b_4).getType(), IBasicType.t_char );
+        
+        IType t_c_1 = c.getType();
+        assertTrue( t_c_1 instanceof IArrayType );
+        IType t_c_2 = ((IArrayType)t_c_1).getType();
+        assertTrue( t_c_2 instanceof IArrayType );
+        IType t_c_3 = ((IArrayType)t_c_2).getType();
+        assertTrue( t_c_3 instanceof IArrayType );
+        IType t_c_4 = ((IArrayType)t_c_3).getType();
+        assertTrue( t_c_4 instanceof IPointerType );
+        assertTrue( ((IPointerType)t_c_4).isConst());
+        IType t_c_5 = ((IPointerType)t_c_4).getType();
+        assertTrue( t_c_5 instanceof IQualifierType );
+        assertTrue( ((IQualifierType)t_c_5).isConst());
+        IType t_c_6 = ((IQualifierType)t_c_5).getType();
+        assertTrue( t_c_6 instanceof IBasicType );
+        assertEquals( ((IBasicType)t_c_6).getType(), IBasicType.t_char);
     }
     
     public void _testFunctionTypes() throws Exception{

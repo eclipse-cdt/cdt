@@ -858,7 +858,7 @@ public class CPPVisitor {
 		if( declarator instanceof IASTArrayDeclarator ){
 			IASTArrayModifier [] mods = ((IASTArrayDeclarator) declarator).getArrayModifiers();
 			for( int i = 0; i < mods.length; i++ ){
-				if( !visitExpression( mods[i].getConstantExpression(), action ) ) return false;
+				if( mods[i].getConstantExpression() != null && !visitExpression( mods[i].getConstantExpression(), action ) ) return false;
 			}
 		}
 		
@@ -971,7 +971,8 @@ public class CPPVisitor {
 		    if( !visitName( ((IASTFieldReference)expression).getFieldName(), action ) ) return false;
 		} else if( expression instanceof IASTFunctionCallExpression ){
 		    if( !visitExpression( ((IASTFunctionCallExpression)expression).getFunctionNameExpression(), action ) ) return false;
-		    if( !visitExpression( ((IASTFunctionCallExpression)expression).getParameterExpression(), action ) ) return false;
+		    if( ((IASTFunctionCallExpression)expression).getParameterExpression() != null )
+		    	if( !visitExpression( ((IASTFunctionCallExpression)expression).getParameterExpression(), action ) ) return false;
 		} else if( expression instanceof IASTIdExpression ){
 		    if( !visitName( ((IASTIdExpression)expression).getName(), action ) ) return false;
 		} else if( expression instanceof IASTTypeIdExpression ){

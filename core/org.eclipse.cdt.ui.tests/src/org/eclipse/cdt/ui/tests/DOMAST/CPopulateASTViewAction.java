@@ -12,7 +12,6 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
-import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -22,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -161,7 +159,7 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 	}
 	
 	private void mergeNode(ASTNode node) {
-		addRoot(node); // TODO Devin need to figure out how to merge these based on location
+		addRoot(node);
 		
 		if (node instanceof ASTObjectMacro)
 			addRoot(((ASTObjectMacro)node).getName());

@@ -179,7 +179,7 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 	}
 
 	private void mergeNode(ASTNode node) {
-		addRoot(node); // TODO Devin need to figure out how to merge these based on location
+		addRoot(node);
 		
 		if (node instanceof ASTObjectMacro)
 			addRoot(((ASTObjectMacro)node).getName());

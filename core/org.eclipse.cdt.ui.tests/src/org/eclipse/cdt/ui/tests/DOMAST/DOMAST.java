@@ -464,7 +464,7 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
          if (aPart instanceof CEditor && obj instanceof TreeObject) {
             String filename = ((TreeObject) obj).getFilename();
             
-            if (filename.equals(TreeObject.BLANK_FILENAME))
+            if (filename.equals(TreeObject.BLANK_STRING))
             	return;
             
             IResource r = ParserUtil.getResourceForFilename(filename);

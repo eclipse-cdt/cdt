@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap;
 
 /**
  * @author dsteffle
@@ -26,7 +28,30 @@ public class TreeParent extends TreeObject {
 		children = new ArrayList();
 	}
 	public void addChild(TreeObject child) {
-		children.add(child);
+		int index = 0;
+		for(int i=0; i<children.size(); i++) {
+			TreeObject treeObj = (TreeObject)children.get(i);
+			int treeObjOffset = 0;
+			int childObjOffset = 0;
+			if( treeObj.getNode() instanceof ASTNode )
+				treeObjOffset = ((ASTNode)treeObj.getNode()).getOffset();
+			else if( treeObj.getNode() instanceof LocationMap.ScannerASTNode )
+				treeObjOffset = ((LocationMap.ScannerASTNode)child.getNode()).getOffset();
+			
+			if( child.getNode() instanceof ASTNode )
+				childObjOffset = ((ASTNode)child.getNode()).getOffset();
+			else if( child.getNode() instanceof LocationMap.ScannerASTNode )
+				childObjOffset = ((LocationMap.ScannerASTNode)child.getNode()).getOffset();
+			
+			if ( treeObjOffset < childObjOffset ){ 
+				index = i+1;
+			} else {
+				break;
+			}
+		}
+		
+		children.add(index, child);
+					
 		child.setParent(this);
 	}
 	public void removeChild(TreeObject child) {

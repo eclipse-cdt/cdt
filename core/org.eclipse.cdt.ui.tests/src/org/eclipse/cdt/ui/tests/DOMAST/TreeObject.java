@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 public class TreeObject implements IAdaptable {
 	private static final String FILE_SEPARATOR = "\\";
-	public static final String BLANK_FILENAME = ""; //$NON-NLS-1$
+	public static final String BLANK_STRING = ""; //$NON-NLS-1$
 	private static final String IGCCAST_PREFIX = "IGCCAST"; //$NON-NLS-1$
 	private static final String IGNUAST_PREFIX = "IGNUAST"; //$NON-NLS-1$
 	private static final String IGPPAST_PREFIX = "IGPPAST"; //$NON-NLS-1$
@@ -65,7 +65,7 @@ public class TreeObject implements IAdaptable {
 	}
 	
 	public String toString() {
-	    if( node == null ) return BLANK_FILENAME; //$NON-NLS-1$
+	    if( node == null ) return BLANK_STRING; //$NON-NLS-1$
 		StringBuffer buffer = new StringBuffer();
 		
 		Class[] classes = node.getClass().getInterfaces();
@@ -79,12 +79,14 @@ public class TreeObject implements IAdaptable {
 		}
 		
 		if ( node instanceof IASTSimpleDeclaration ) {
+			String name = null;
 			IASTDeclarator[] decltors = ((IASTSimpleDeclaration)node).getDeclarators();
 			
 			if ( decltors.length > 0 ) {
 				buffer.append(START_OF_LIST);
 				for (int i=0; i<decltors.length; i++) {
-					buffer.append(decltors[i].getName());
+					name = getDeclaratorName(decltors[i]);
+					buffer.append(name);
 					
 					if (i+1<decltors.length)
 						buffer.append(LIST_SEPARATOR);
@@ -92,7 +94,7 @@ public class TreeObject implements IAdaptable {
 			}
 			return buffer.toString();
 		} else if ( node instanceof IASTFunctionDefinition ) {
-			String name = ((IASTFunctionDefinition)node).getDeclarator().getName().toString();
+			String name = getDeclaratorName( ((IASTFunctionDefinition)node).getDeclarator() );
 			if (name != null) {
 				buffer.append(START_OF_LIST);
 				buffer.append(name);
@@ -122,17 +124,29 @@ public class TreeObject implements IAdaptable {
 		
 		return buffer.toString();
 	}
+	
+	private String getDeclaratorName(IASTDeclarator decltor) {
+		String name = BLANK_STRING;
+		while (decltor != null && decltor.getName() != null && decltor.getName().toString() == null) {
+			decltor = decltor.getNestedDeclarator();
+		}
+		if (decltor != null && decltor.getName() != null) {
+			name = decltor.getName().toString();
+		}
+		return name;
+	}
+	
 	public Object getAdapter(Class key) {
 		return null;
 	}
 	
 	public String getFilename()
 	{
-		if ( node == null ) return BLANK_FILENAME;
+		if ( node == null ) return BLANK_STRING;
 	   IASTNodeLocation [] location = node.getNodeLocations();
 	   if( location.length > 0 && location[0] instanceof IASTFileLocation )
 	      return ((IASTFileLocation)location[0]).getFileName();
-	   return BLANK_FILENAME; //$NON-NLS-1$
+	   return BLANK_STRING; //$NON-NLS-1$
 	}
 	
 	public int getOffset() {

@@ -1400,7 +1400,7 @@ public class CVisitor {
 		} else if( statement instanceof IASTDeclarationStatement ){
 			if( !visitDeclaration( ((IASTDeclarationStatement)statement).getDeclaration(), action ) ) return false;
 		} else if( statement instanceof IASTExpressionStatement ){
-		    if( !visitExpression( ((IASTExpressionStatement)statement).getExpression(), action ) ) return false;
+		    if( ((IASTExpressionStatement)statement).getExpression() != null && !visitExpression( ((IASTExpressionStatement)statement).getExpression(), action ) ) return false;
 		} else if( statement instanceof IASTCaseStatement ){
 		    if( !visitExpression( ((IASTCaseStatement)statement).getExpression(), action ) ) return false;
 		} else if( statement instanceof IASTDoStatement ){
@@ -1478,7 +1478,7 @@ public class CVisitor {
 		    if( !visitName( ((IASTFieldReference)expression).getFieldName(), action ) ) return false;
 		} else if( expression instanceof IASTFunctionCallExpression ){
 		    if( !visitExpression( ((IASTFunctionCallExpression)expression).getFunctionNameExpression(), action ) ) return false;
-		    if( !visitExpression( ((IASTFunctionCallExpression)expression).getParameterExpression(), action ) ) return false;
+		    if( ((IASTFunctionCallExpression)expression).getParameterExpression() != null && !visitExpression( ((IASTFunctionCallExpression)expression).getParameterExpression(), action ) ) return false;
 		} else if( expression instanceof IASTIdExpression ){
 		    if( !visitName( ((IASTIdExpression)expression).getName(), action ) ) return false;
 		} else if( expression instanceof IASTTypeIdExpression ){

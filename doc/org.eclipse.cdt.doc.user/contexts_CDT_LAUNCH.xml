@@ -52,4 +52,10 @@
    	label="&sourcePage;"/>
 </context>
 
+<context id ="run_dbg_comm">
+   <description>Click below to see help.</description>
+   <topic href="reference/run_dbg_comm"
+   	label="Common"/>
+</context>
+
 </contexts>

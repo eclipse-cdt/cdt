@@ -125,7 +125,7 @@
 </context>
 <context id ="c_editor_hov">
    <description>Click below to see help.</description>
-   <topic href="cdt_u_c_editor_hov.htm"
+   <topic href="reference/cdt_u_c_editor_hov.htm"
    	label="Editor Hovers Preferences"/>
 </context>
 <context id ="c_editor_navigation">
@@ -175,7 +175,7 @@
 </context>
 <context id ="man_prop_build">
    <description>Click below to see help.</description>
-   <topic href="cdt_u_mprop_build.htm"
+   <topic href="reference/cdt_u_mprop_build.htm"
    	label="Build"/>
 </context>
 <context id ="man_prop_file_types">

@@ -26,7 +26,7 @@ public class CCompletionContributorManager {
 
 	static private List fCompletionContributors;
 	static boolean fContributorsLoaded = false;
-	public static final String CONTRIBUTION_EXTENSION = "CCompletionContributor";
+	public static final String CONTRIBUTION_EXTENSION = "CCompletionContributor"; //$NON-NLS-1$
 	static private CCompletionContributorManager fInstance;
 
 	private CCompletionContributorManager() {
@@ -93,11 +93,11 @@ public class CCompletionContributorManager {
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
-				if (elements[i].getName().equals("provider")) {
+				if (elements[i].getName().equals("provider")) { //$NON-NLS-1$
 					try {
 						final ICCompletionContributor c;
 						// Instantiate the classe
-						c = (ICCompletionContributor) elements[i].createExecutableExtension("class");
+						c = (ICCompletionContributor) elements[i].createExecutableExtension("class"); //$NON-NLS-1$
 						ISafeRunnable runnable = new ISafeRunnable() {
 							public void run() throws Exception {
 								// Initialize

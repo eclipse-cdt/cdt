@@ -232,7 +232,7 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDefaultPrefixes(ISourceViewer, String)
 	 */
 	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
-		return new String[] { "//", "" };
+		return new String[] { "//", "" }; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -240,11 +240,11 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	public String getDefaultPrefix(ISourceViewer sourceViewer, String contentType) {
 		if(IDocument.DEFAULT_CONTENT_TYPE.equals(contentType))
-			return "//";
+			return "//"; //$NON-NLS-1$
 		if(CPartitionScanner.C_SINGLE_LINE_COMMENT.equals(contentType))
-			return "//";
+			return "//"; //$NON-NLS-1$
 		if(CPartitionScanner.C_MULTILINE_COMMENT.equals(contentType))
-			return "//";
+			return "//"; //$NON-NLS-1$
 		return null;
 	}
 

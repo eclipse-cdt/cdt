@@ -29,8 +29,8 @@ public class FindDeclarationsInWorkingSetAction extends FindAction {
 	 */
 	public FindDeclarationsInWorkingSetAction(IWorkbenchSite site) {
 		this(site,
-				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.label"),
-				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.tooltip"));
+				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.label"), //$NON-NLS-1$
+				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.tooltip")); //$NON-NLS-1$
 	}
 
 	/**
@@ -38,8 +38,8 @@ public class FindDeclarationsInWorkingSetAction extends FindAction {
 	 */
 	public FindDeclarationsInWorkingSetAction(CEditor editor) {
 		this(editor,
-				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.label"),
-				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.tooltip"));
+				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.label"), //$NON-NLS-1$
+				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.tooltip")); //$NON-NLS-1$
 	}
 
 	public FindDeclarationsInWorkingSetAction(CEditor editor, String label, String tooltip){
@@ -62,7 +62,7 @@ public class FindDeclarationsInWorkingSetAction extends FindAction {
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScopeDescription()
 	 */
 	protected String getScopeDescription() {
-		return CSearchMessages.getString("WorkingSetScope");
+		return CSearchMessages.getString("WorkingSetScope"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScope()

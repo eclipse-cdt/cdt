@@ -70,13 +70,13 @@ import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
  */
 public class CEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	protected final String[][] fListModel = new String[][] { { "Multi-line comment", ICColorConstants.C_MULTI_LINE_COMMENT }, {
-			"Single-line comment", ICColorConstants.C_SINGLE_LINE_COMMENT }, {
-			"Keywords", ICColorConstants.C_KEYWORD }, {
-			"Built-in types", ICColorConstants.C_TYPE }, {
-			"Strings", ICColorConstants.C_STRING }, {
-			"Others", ICColorConstants.C_DEFAULT }, {
-            PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR }
+	protected final String[][] fListModel = new String[][] { { PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.MultiLine"), ICColorConstants.C_MULTI_LINE_COMMENT }, { //$NON-NLS-1$
+			PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.singleLine"), ICColorConstants.C_SINGLE_LINE_COMMENT }, { //$NON-NLS-1$
+			PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.keywords"), ICColorConstants.C_KEYWORD }, { //$NON-NLS-1$
+			PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.builtInTypes"), ICColorConstants.C_TYPE }, { //$NON-NLS-1$
+			PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.strings"), ICColorConstants.C_STRING }, { //$NON-NLS-1$
+			PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.others"), ICColorConstants.C_DEFAULT }, { //$NON-NLS-1$
+            PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR } //$NON-NLS-1$
 	};
 
 	protected final String[][] fAppearanceColorListModel = new String[][] { { "Line number color", ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR }, //$NON-NLS-1$
@@ -141,7 +141,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	private Button fShowInTextCheckBox;
 
 	public CEditorPreferencePage() {
-		setDescription(CUIPlugin.getResourceString("CEditorPreferencePage.description"));
+		setDescription(CUIPlugin.getResourceString("CEditorPreferencePage.description")); //$NON-NLS-1$
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		MarkerAnnotationPreferences preferences = new MarkerAnnotationPreferences();
 		fAnnotationColorListModel = createAnnotationTypeListModel(preferences);
@@ -164,17 +164,17 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,CEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_MULTI_LINE_COMMENT));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_MULTI_LINE_COMMENT + "_bold"));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_MULTI_LINE_COMMENT + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_SINGLE_LINE_COMMENT));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_SINGLE_LINE_COMMENT + "_bold"));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_SINGLE_LINE_COMMENT + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_KEYWORD));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_KEYWORD + "_bold"));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_KEYWORD + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_TYPE));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_TYPE + "_bold"));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_TYPE + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_STRING));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_STRING + "_bold"));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_STRING + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_DEFAULT));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_DEFAULT + "_bold"));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_DEFAULT + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.MATCHING_BRACKETS_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.MATCHING_BRACKETS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
@@ -251,22 +251,22 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(CEditor.SPACES_FOR_TABS, false);
 
 		PreferenceConverter.setDefault(store, ICColorConstants.C_MULTI_LINE_COMMENT, new RGB(63, 127, 95));
-		store.setDefault(ICColorConstants.C_MULTI_LINE_COMMENT + "_bold", false);
+		store.setDefault(ICColorConstants.C_MULTI_LINE_COMMENT + "_bold", false); //$NON-NLS-1$
 
 		PreferenceConverter.setDefault(store, ICColorConstants.C_SINGLE_LINE_COMMENT, new RGB(63, 125, 95));
-		store.setDefault(ICColorConstants.C_SINGLE_LINE_COMMENT + "_bold", false);
+		store.setDefault(ICColorConstants.C_SINGLE_LINE_COMMENT + "_bold", false); //$NON-NLS-1$
 
 		PreferenceConverter.setDefault(store, ICColorConstants.C_KEYWORD, new RGB(127, 0, 85));
-		store.setDefault(ICColorConstants.C_KEYWORD + "_bold", true);
+		store.setDefault(ICColorConstants.C_KEYWORD + "_bold", true); //$NON-NLS-1$
 
 		PreferenceConverter.setDefault(store, ICColorConstants.C_TYPE, new RGB(127, 0, 85));
-		store.setDefault(ICColorConstants.C_TYPE + "_bold", true);
+		store.setDefault(ICColorConstants.C_TYPE + "_bold", true); //$NON-NLS-1$
 
 		PreferenceConverter.setDefault(store, ICColorConstants.C_STRING, new RGB(42, 0, 255));
-		store.setDefault(ICColorConstants.C_STRING + "_bold", false);
+		store.setDefault(ICColorConstants.C_STRING + "_bold", false); //$NON-NLS-1$
 
 		PreferenceConverter.setDefault(store, ICColorConstants.C_DEFAULT, new RGB(0, 0, 0));
-		store.setDefault(ICColorConstants.C_DEFAULT + "_bold", false);
+		store.setDefault(ICColorConstants.C_DEFAULT + "_bold", false); //$NON-NLS-1$
 
 		PreferenceConverter.setDefault(store, CEditor.LINKED_POSITION_COLOR, new RGB(0, 200, 100));
 
@@ -311,7 +311,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		String key = fListModel[i][1];
 		RGB rgb = PreferenceConverter.getColor(fOverlayStore, key);
 		fForegroundColorEditor.setColorValue(rgb);
-		fBoldCheckBox.setSelection(fOverlayStore.getBoolean(key + "_bold"));
+		fBoldCheckBox.setSelection(fOverlayStore.getBoolean(key + "_bold")); //$NON-NLS-1$
 	}
 
 	private Control createAnnotationsPage(Composite parent) {
@@ -321,7 +321,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		composite.setLayout(layout);
 
 		Label label = new Label(composite, SWT.LEFT);
-		label.setText("Annotation Presentation Options");
+		label.setText(PreferencesMessages.getString("CEditorPreferencePage.annotationsPage.presentationOptions")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -350,21 +350,21 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		optionsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fShowInTextCheckBox = new Button(optionsComposite, SWT.CHECK);
-		fShowInTextCheckBox.setText("Show In Text");
+		fShowInTextCheckBox.setText(PreferencesMessages.getString("CEditorPreferencePage.annotationsPage.showInText")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 2;
 		fShowInTextCheckBox.setLayoutData(gd);
 
 		fShowInOverviewRulerCheckBox = new Button(optionsComposite, SWT.CHECK);
-		fShowInOverviewRulerCheckBox.setText("Show In Overview Ruler");
+		fShowInOverviewRulerCheckBox.setText(PreferencesMessages.getString("CEditorPreferencePage.annotationsPage.showInOverview")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 2;
 		fShowInOverviewRulerCheckBox.setLayoutData(gd);
 
 		label = new Label(optionsComposite, SWT.LEFT);
-		label.setText("Annotations Color");
+		label.setText(PreferencesMessages.getString("CEditorPreferencePage.annotationsPage.color")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		label.setLayoutData(gd);
@@ -469,7 +469,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		backgroundComposite.setLayout(layout);
 
 		Label label = new Label(backgroundComposite, SWT.NULL);
-		label.setText("Bac&kground Color:");
+		label.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.backgroundColor")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -485,14 +485,14 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		};
 
 		fBackgroundDefaultRadioButton = new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-		fBackgroundDefaultRadioButton.setText("S&ystem Default");
+		fBackgroundDefaultRadioButton.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.systemDefault")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fBackgroundDefaultRadioButton.setLayoutData(gd);
 		fBackgroundDefaultRadioButton.addSelectionListener(backgroundSelectionListener);
 
 		fBackgroundCustomRadioButton = new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-		fBackgroundCustomRadioButton.setText("C&ustom");
+		fBackgroundCustomRadioButton.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.custom")); //$NON-NLS-1$
 		fBackgroundCustomRadioButton.addSelectionListener(backgroundSelectionListener);
 
 		fBackgroundColorEditor = new ColorEditor(backgroundComposite);
@@ -502,7 +502,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		fBackgroundColorButton.setLayoutData(gd);
 
 		label = new Label(colorComposite, SWT.LEFT);
-		label.setText("Fo&reground:");
+		label.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.foreground")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite editorComposite = new Composite(colorComposite, SWT.NULL);
@@ -528,7 +528,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		label = new Label(stylesComposite, SWT.LEFT);
-		label.setText("C&olor:");
+		label.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.color")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		label.setLayoutData(gd);
@@ -540,7 +540,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		foregroundColorButton.setLayoutData(gd);
 
 		label = new Label(stylesComposite, SWT.LEFT);
-		label.setText("&Bold:");
+		label.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.bold")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		label.setLayoutData(gd);
@@ -551,7 +551,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		fBoldCheckBox.setLayoutData(gd);
 
 		label = new Label(colorComposite, SWT.LEFT);
-		label.setText("Preview:");
+		label.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.preview")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Control previewer = createPreviewer(colorComposite);
@@ -600,7 +600,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 			public void widgetSelected(SelectionEvent e) {
 				int i = fList.getSelectionIndex();
 				String key = fListModel[i][1];
-				fOverlayStore.setValue(key + "_bold", fBoldCheckBox.getSelection());
+				fOverlayStore.setValue(key + "_bold", fBoldCheckBox.getSelection()); //$NON-NLS-1$
 			}
 		});
 
@@ -619,7 +619,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		initializeViewerColors(fPreviewViewer);
 
-		String content = loadPreviewContentFromFile("ColorSettingPreviewCode.txt");
+		String content = loadPreviewContentFromFile("ColorSettingPreviewCode.txt"); //$NON-NLS-1$
 		IDocument document = new Document(content);
 		IDocumentPartitioner partitioner = fCTextTools.createDocumentPartitioner();
 		partitioner.connect(document);
@@ -727,31 +727,31 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.numColumns = 2;
 		behaviorComposite.setLayout(layout);
 
-		String label = "Text &font:";
+		String label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.textFont"); //$NON-NLS-1$
 		addTextFontEditor(behaviorComposite, label, JFaceResources.TEXT_FONT);
 
-		label = "Displayed &tab width:";
+		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.tabWidth"); //$NON-NLS-1$
 		addTextField(behaviorComposite, label, CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH, 2, 0, true);
 
-		label = "Print margin col&umn:";
+		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.marginColumn"); //$NON-NLS-1$
 		addTextField(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 4, 0, true);
 
-		label = "Insert &space for tabs";
+		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.tabSpace"); //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, CEditor.SPACES_FOR_TABS, 0);
 
-		label = "Highlight &matching brackets";
+		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.matchingBrackets"); //$NON-NLS-1$
 		fBracketHighlightButton = addCheckBox(behaviorComposite, label, CEditor.MATCHING_BRACKETS, 0);
 
 		label = "Show line numbers"; //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
 
-		label = "Highlight &current line";
+		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.highlightLine"); //$NON-NLS-1$
 		fLineHighlightButton = addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
 
 		label = "Show overview ruler"; //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
 
-		label = "Show print &margin";
+		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.printMargin"); //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
 
 		Label l = new Label(behaviorComposite, SWT.LEFT);
@@ -834,47 +834,47 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following three radio buttons are grouped together
-		String label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupTitle");
+		String label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupTitle"); //$NON-NLS-1$
 		Group searchGroup = addGroupBox(contentAssistComposite, label, 2);
 		
-		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupCurrentFileOption");
+		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupCurrentFileOption"); //$NON-NLS-1$
 		addRadioButton(searchGroup, label, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, 0);
 		
-		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupCurrentProjectOption");
+		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupCurrentProjectOption"); //$NON-NLS-1$
 		addRadioButton(searchGroup, label, ContentAssistPreference.PROJECT_SEARCH_SCOPE, 0);
 		
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		
 		
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.insertSingleProposalAutomatically");
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.insertSingleProposalAutomatically"); //$NON-NLS-1$
 		addCheckBox(contentAssistComposite, label, ContentAssistPreference.AUTOINSERT, 0);
 		
-		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.showProposalsInAlphabeticalOrder");
+		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.showProposalsInAlphabeticalOrder"); //$NON-NLS-1$
 		addCheckBox(contentAssistComposite, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following items are grouped for Auto Activation
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationGroupTitle");
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationGroupTitle"); //$NON-NLS-1$
 		Group enableGroup = addGroupBox(contentAssistComposite, label, 2);
 		
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableDot");
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableDot"); //$NON-NLS-1$
 		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT, 0);
 
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableArrow");
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableArrow"); //$NON-NLS-1$
 		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW, 0);
 		
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableDoubleColon");
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableDoubleColon"); //$NON-NLS-1$
 		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON, 0);
 		
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationDelay");
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationDelay"); //$NON-NLS-1$
 		addTextField(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 0, true);
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
-		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.completionProposalBackgroundColor");
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.completionProposalBackgroundColor"); //$NON-NLS-1$
 		addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_BACKGROUND, 0);
 
-		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.completionProposalForegroundColor");
+		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.completionProposalForegroundColor"); //$NON-NLS-1$
 		addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_FOREGROUND, 0);
 
 //		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.parameterBackgroundColor"); 
@@ -901,22 +901,22 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setText(PreferencesMessages.getString("CEditorPreferencePage.generalTabTitle"));
+		item.setText(PreferencesMessages.getString("CEditorPreferencePage.generalTabTitle")); //$NON-NLS-1$
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createBehaviorPage(folder));
 
 		item = new TabItem(folder, SWT.NONE);
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
-		item.setText(PreferencesMessages.getString("CEditorPreferencePage.annotationTabTitle"));
+		item.setText(PreferencesMessages.getString("CEditorPreferencePage.annotationTabTitle")); //$NON-NLS-1$
 		item.setControl(createAnnotationsPage(folder));
 
 		item = new TabItem(folder, SWT.NONE);
-		item.setText(PreferencesMessages.getString("CEditorPreferencePage.colorsTabTitle"));
+		item.setText(PreferencesMessages.getString("CEditorPreferencePage.colorsTabTitle")); //$NON-NLS-1$
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createColorPage(folder));
 
 		item = new TabItem(folder, SWT.NONE);
-		item.setText(PreferencesMessages.getString("CEditorPreferencePage.contentAssistTabTitle"));
+		item.setText(PreferencesMessages.getString("CEditorPreferencePage.contentAssistTabTitle")); //$NON-NLS-1$
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createContentAssistPage(folder));
 
@@ -1149,7 +1149,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		layout.numColumns = 3;
 		editorComposite.setLayout(layout);
 		fFontEditor = new WorkbenchChainedTextFontFieldEditor(key, label, editorComposite);
-		fFontEditor.setChangeButtonText("C&hange...");
+		fFontEditor.setChangeButtonText(PreferencesMessages.getString("CEditorPreferencePage.textFont.changeButton")); //$NON-NLS-1$
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;

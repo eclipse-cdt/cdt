@@ -88,8 +88,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 	 */
 	public void acceptField(String name, String returnType, ASTAccessVisibility visibility, 
 	int completionStart, int completionLength, int relevance) {
-		String replaceString = "";
-		String displayString = "";
+		String replaceString = ""; //$NON-NLS-1$
+		String displayString = ""; //$NON-NLS-1$
 		Image image = null;
 		StringBuffer infoString = new StringBuffer();
 		
@@ -97,7 +97,7 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		replaceString = name;
 		displayString = name;
 		if(returnType != null)
-			displayString+= " : " + returnType;
+			displayString+= " : " + returnType; //$NON-NLS-1$
 	
 		// get the image 	
 		ImageDescriptor imageDescriptor = CElementImageProvider.getFieldImageDescriptor(visibility);
@@ -116,8 +116,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionStart,
 		int completionLength,
 		int relevance) {		
-			String replaceString = "";
-			String displayString = "";
+			String replaceString = ""; //$NON-NLS-1$
+			String displayString = ""; //$NON-NLS-1$
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
 		
@@ -145,9 +145,9 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionStart,
 		int completionLength,
 		int relevance) {
-			String replaceString = "";
-			String displayString = "";
-			String arguments = "";
+			String replaceString = ""; //$NON-NLS-1$
+			String displayString = ""; //$NON-NLS-1$
+			String arguments = ""; //$NON-NLS-1$
 			
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
@@ -155,11 +155,11 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			// fill the replace, display and info strings
 			replaceString = name;
 			displayString = name;
-			String functionPrototype = returnType + " " + name;
+			String functionPrototype = returnType + " " + name; //$NON-NLS-1$
 			if(parameterString != null){
-				if ((parameterString.indexOf("(") == -1) && (parameterString.indexOf(")") == -1)) 
+				if ((parameterString.indexOf("(") == -1) && (parameterString.indexOf(")") == -1))  //$NON-NLS-1$ //$NON-NLS-2$
 				{	
-					functionPrototype += "(" + parameterString + ")";
+					functionPrototype += "(" + parameterString + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				else {
 					functionPrototype += parameterString;
@@ -168,7 +168,7 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 
 			FunctionPrototypeSummary fproto = new FunctionPrototypeSummary(functionPrototype);
 			if(fproto != null) {						
-				replaceString = fproto.getName() + "()";
+				replaceString = fproto.getName() + "()"; //$NON-NLS-1$
 				displayString = fproto.getPrototypeString(true);
 				infoString.append(displayString);
 				arguments = fproto.getArguments();
@@ -194,8 +194,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionLength,
 		int relevance) {
 		
-		String replaceString = "";
-		String displayString = "";
+		String replaceString = ""; //$NON-NLS-1$
+		String displayString = ""; //$NON-NLS-1$
 		Image image = null;
 		StringBuffer infoString = new StringBuffer();
 		
@@ -203,7 +203,7 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		replaceString = name;
 		displayString = name;
 		if(returnType != null)
-			displayString+= " : " + returnType;
+			displayString+= " : " + returnType; //$NON-NLS-1$
 		
 		// get the image 	
 		ImageDescriptor imageDescriptor = CElementImageProvider.getLocalVariableImageDescriptor();
@@ -223,15 +223,15 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionLength,
 		int relevance) {
 		
-			String replaceString = "";
-			String displayString = "";
-			String arguments = "";
+			String replaceString = ""; //$NON-NLS-1$
+			String displayString = ""; //$NON-NLS-1$
+			String arguments = ""; //$NON-NLS-1$
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
-			String prototype = "";
+			String prototype = ""; //$NON-NLS-1$
 			
 			// fill the replace, display and info strings
-			final String DEFINE ="#define "; 
+			final String DEFINE ="#define ";  //$NON-NLS-1$
 			if(name.startsWith(DEFINE)){
 				prototype = name.substring(DEFINE.length(), name.length());				
 			}else {
@@ -245,7 +245,7 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			}else {
 				FunctionPrototypeSummary fproto = new FunctionPrototypeSummary(prototype);
 				if(fproto != null) {						
-					replaceString = fproto.getName() + "()";
+					replaceString = fproto.getName() + "()"; //$NON-NLS-1$
 					displayString = fproto.getPrototypeString(true, false);
 					infoString.append(displayString);
 					arguments = fproto.getArguments();
@@ -276,20 +276,20 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionLength,
 		int relevance) {
 		
-			String replaceString = "";
-			String displayString = "";
-			String arguments = "";
+			String replaceString = ""; //$NON-NLS-1$
+			String displayString = ""; //$NON-NLS-1$
+			String arguments = ""; //$NON-NLS-1$
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
 		
 			// fill the replace, display and info strings
 			replaceString = name;
 			displayString = name;
-			String functionPrototype = returnType + " " + name;
+			String functionPrototype = returnType + " " + name; //$NON-NLS-1$
 			if(parameterString != null){
-				if ((parameterString.indexOf("(") == -1) && (parameterString.indexOf(")") == -1))
+				if ((parameterString.indexOf("(") == -1) && (parameterString.indexOf(")") == -1)) //$NON-NLS-1$ //$NON-NLS-2$
 				{	
-					functionPrototype += "(" + parameterString + ")";
+					functionPrototype += "(" + parameterString + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				else {
 					functionPrototype += parameterString;
@@ -298,7 +298,7 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 				
 			FunctionPrototypeSummary fproto = new FunctionPrototypeSummary(functionPrototype);
 			if(fproto != null) {						
-				replaceString = fproto.getName() + "()";
+				replaceString = fproto.getName() + "()"; //$NON-NLS-1$
 				displayString = fproto.getPrototypeString(true);
 				infoString.append(displayString);
 				arguments = fproto.getArguments();
@@ -322,8 +322,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionStart,
 		int completionLength,
 		int relevance) {
-			String replaceString = "";
-			String displayString = "";
+			String replaceString = ""; //$NON-NLS-1$
+			String displayString = ""; //$NON-NLS-1$
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
 		
@@ -349,8 +349,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionStart,
 		int completionLength,
 		int relevance) {
-			String replaceString = "";
-			String displayString = "";
+			String replaceString = ""; //$NON-NLS-1$
+			String displayString = ""; //$NON-NLS-1$
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
 		
@@ -375,8 +375,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionStart,
 		int completionLength,
 		int relevance) {
-			String replaceString = "";
-			String displayString = "";
+			String replaceString = ""; //$NON-NLS-1$
+			String displayString = ""; //$NON-NLS-1$
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
 		
@@ -402,8 +402,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionStart,
 		int completionLength,
 		int relevance) {
-			String replaceString = "";
-			String displayString = "";
+			String replaceString = ""; //$NON-NLS-1$
+			String displayString = ""; //$NON-NLS-1$
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
 		
@@ -411,7 +411,7 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			replaceString = name;
 			displayString = name;
 			if(returnType != null)
-				displayString+= " : " + returnType;
+				displayString+= " : " + returnType; //$NON-NLS-1$
 	
 			// get the image 	
 			ImageDescriptor imageDescriptor = CElementImageProvider.getVariableImageDescriptor();
@@ -429,8 +429,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionStart,
 		int completionLength,
 		int relevance) {
-			String replaceString = "";
-			String displayString = "";
+			String replaceString = ""; //$NON-NLS-1$
+			String displayString = ""; //$NON-NLS-1$
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
 		
@@ -457,8 +457,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionStart,
 		int completionLength,
 		int relevance) {
-			String replaceString = "";
-			String displayString = "";
+			String replaceString = ""; //$NON-NLS-1$
+			String displayString = ""; //$NON-NLS-1$
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
 		
@@ -485,8 +485,8 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionStart,
 		int completionLength,
 		int relevance) {
-		String replaceString = "";
-		String displayString = "";
+		String replaceString = ""; //$NON-NLS-1$
+		String displayString = ""; //$NON-NLS-1$
 		Image image = null;
 		StringBuffer infoString = new StringBuffer();
 		

@@ -100,9 +100,9 @@ public class AddIncludeOperation extends WorkspaceModifyOperation {
 				
 				if(toAdd.size() > 0) {
 					// So we have our list. Now insert.
-					StringBuffer insert = new StringBuffer("");
+					StringBuffer insert = new StringBuffer(""); //$NON-NLS-1$
 					for(int j = 0; j < toAdd.size(); j++) {
-						insert.append("#include <" + ((IRequiredInclude)toAdd.get(j)).getIncludeName() + ">\n");
+						insert.append("#include <" + ((IRequiredInclude)toAdd.get(j)).getIncludeName() + ">\n"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					int pos;
 					

@@ -14,14 +14,14 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class BinaryPropertySource implements IPropertySource {
 	
-	private final static String ELF_CPU= "CElementProperties.elf_cpu";
-	private final static String ELF_TEXT= "CElementProperties.elf_text";
-	private final static String ELF_DATA= "CElementProperties.elf_data";
-	private final static String ELF_BSS= "CElementProperties.elf_bss";
-	private final static String ELF_TYPE= "CElementProperties.elf_type";
-	private final static String ELF_HAS_DEBUG= "CElementProperties.elf_has_debug";
-	private final static String ELF_SONAME= "CElementProperties.elf_soname";
-	private final static String ELF_NEEDED= "CElementProperties.elf_needed";
+	private final static String ELF_CPU= "CElementProperties.elf_cpu"; //$NON-NLS-1$
+	private final static String ELF_TEXT= "CElementProperties.elf_text"; //$NON-NLS-1$
+	private final static String ELF_DATA= "CElementProperties.elf_data"; //$NON-NLS-1$
+	private final static String ELF_BSS= "CElementProperties.elf_bss"; //$NON-NLS-1$
+	private final static String ELF_TYPE= "CElementProperties.elf_type"; //$NON-NLS-1$
+	private final static String ELF_HAS_DEBUG= "CElementProperties.elf_has_debug"; //$NON-NLS-1$
+	private final static String ELF_SONAME= "CElementProperties.elf_soname"; //$NON-NLS-1$
+	private final static String ELF_NEEDED= "CElementProperties.elf_needed"; //$NON-NLS-1$
 	
 	private IBinary binary;
 	
@@ -120,20 +120,20 @@ public class BinaryPropertySource implements IPropertySource {
 			}
 		} else if (name.equals(ICElementPropertyConstants.P_ELF_NEEDED)) {
 			String[] needed = binary.getNeededSharedLibs();
-			String need = "";
+			String need = ""; //$NON-NLS-1$
 			for (int i = 0; i < needed.length; i++) {
-				need += " " + needed[i];
+				need += " " + needed[i]; //$NON-NLS-1$
 			}
 			return need.trim();
 		} else if (name.equals(ICElementPropertyConstants.P_ELF_TYPE)) {
 			if (binary.isObject()) {
-				return "object";
+				return "object"; //$NON-NLS-1$
 			} else if (binary.isExecutable()) {
-				return "executable";
+				return "executable"; //$NON-NLS-1$
 			} else if (binary.isSharedLib()) {
-				return "shared library";
+				return "shared library"; //$NON-NLS-1$
 			} else if (binary.isCore()) {
-				return "core file";
+				return "core file"; //$NON-NLS-1$
 			}
 		}
 		return null;

@@ -100,7 +100,7 @@ public class CElementSorter extends ViewerSorter {
 			return 120;
 		} else if (element instanceof IVariable) {
 			String name = ((ICElement)element).getElementName();
-			if (name.startsWith("__")) {
+			if (name.startsWith("__")) { //$NON-NLS-1$
 				return 122;
 			}
 			if (name.charAt(0) == '_') {
@@ -109,7 +109,7 @@ public class CElementSorter extends ViewerSorter {
 			return 130;
 		} else if (element instanceof IFunction) {
 			String name = ((ICElement)element).getElementName();
-			if (name.startsWith("__")) {
+			if (name.startsWith("__")) { //$NON-NLS-1$
 				return 132;
 			}
 			if (name.charAt(0) == '_') {
@@ -124,7 +124,7 @@ public class CElementSorter extends ViewerSorter {
 			return 170;
 		} else if (element instanceof ICElement) {
 			String name = ((ICElement)element).getElementName();
-			if (name.startsWith("__")) {
+			if (name.startsWith("__")) { //$NON-NLS-1$
 				return 172;
 			}
 			if (name.charAt(0) == '_') {

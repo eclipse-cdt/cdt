@@ -42,5 +42,5 @@ public class GroupByKeyComputer implements IGroupByKeyComputer {
 		} catch (CoreException e) {
 		}
 		
-		return match.getParentName() + "::" + match.getName() + " - " + match.getLocation();	}
+		return match.getParentName() + "::" + match.getName() + " - " + match.getLocation(); //$NON-NLS-1$ //$NON-NLS-2$	}
 }

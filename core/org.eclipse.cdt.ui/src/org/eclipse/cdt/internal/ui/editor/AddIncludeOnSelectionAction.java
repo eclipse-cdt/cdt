@@ -77,7 +77,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				else if (editorInput instanceof IStorageEditorInput)
 					unit = new CFileElementWorkingCopy((IStorageEditorInput)editorInput, provider);
 				else
-					throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "no Editor Input", null));
+					throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, CEditorMessages.getString("AddIncludeOnSelectionAction.error.noInput"), null)); //$NON-NLS-1$
 
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e.getStatus());

@@ -418,7 +418,7 @@ public class CDocumentProvider extends FileDocumentProvider {
 			if (((IEditorInputDelegate) element).getDelegate() != null)
 				return super.getStatus(((IEditorInputDelegate) element).getDelegate());
 			else
-				return new Status(IStatus.INFO,CUIPlugin.getPluginId(),0,"",null);
+				return new Status(IStatus.INFO,CUIPlugin.getPluginId(),0,"",null); //$NON-NLS-1$
 		}
 		return super.getStatus(element);
 	}

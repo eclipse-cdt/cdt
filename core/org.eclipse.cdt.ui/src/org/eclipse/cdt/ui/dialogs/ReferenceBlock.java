@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -38,9 +39,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class ReferenceBlock extends AbstractCOptionPage {
 
-	private static final String PREFIX = "ReferenceBlock"; // $NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$
-	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$
+	private static final String PREFIX = "ReferenceBlock"; // $NON-NLS-1$ //$NON-NLS-1$
+	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$ //$NON-NLS-1$
+	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$ //$NON-NLS-1$
 
 	private CheckboxTableViewer referenceProjectsViewer;
 
@@ -160,7 +161,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask("Reference Projects", 1);
+			monitor.beginTask(CUIMessages.getString("ReferenceBlock.task.ReferenceProjects"), 1); //$NON-NLS-1$
 			try {
 				IProjectDescription description = project.getDescription();
 				description.setReferencedProjects(refProjects);

@@ -94,22 +94,22 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		ResourceBundle bundle = CEditorMessages.getResourceBundle();
 	
-		fShiftRight= new SelectionAction("ShiftRight.", ITextOperationTarget.SHIFT_RIGHT);		
+		fShiftRight= new SelectionAction("ShiftRight.", ITextOperationTarget.SHIFT_RIGHT);		 //$NON-NLS-1$
 		fShiftRight.setActionDefinitionId(ICEditorActionDefinitionIds.SHIFT_RIGHT);
 		CPluginImages.setImageDescriptors(fShiftRight, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_RIGHT);
 
-		fShiftLeft= new SelectionAction("ShiftLeft.", ITextOperationTarget.SHIFT_LEFT);
+		fShiftLeft= new SelectionAction("ShiftLeft.", ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
 		fShiftLeft.setActionDefinitionId(ICEditorActionDefinitionIds.SHIFT_LEFT);
 		CPluginImages.setImageDescriptors(fShiftLeft, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_LEFT);
 		
-		fContentAssist = new RetargetTextEditorAction(bundle, "ContentAssistProposal.");
+		fContentAssist = new RetargetTextEditorAction(bundle, "ContentAssistProposal."); //$NON-NLS-1$
 		fContentAssist.setActionDefinitionId(ICEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		CPluginImages.setImageDescriptors(fContentAssist, CPluginImages.T_TOOL, CPluginImages.IMG_MENU_COLLAPSE_ALL);
 
-		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection.");
+		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection."); //$NON-NLS-1$
 		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
 
-		fOpenOnSelection = new RetargetTextEditorAction(bundle, "OpenOnSelection.");
+		fOpenOnSelection = new RetargetTextEditorAction(bundle, "OpenOnSelection."); //$NON-NLS-1$
 
 		// actions that are "contributed" to editors, they are considered belonging to the active editor
 		fTogglePresentation= new TogglePresentationAction();

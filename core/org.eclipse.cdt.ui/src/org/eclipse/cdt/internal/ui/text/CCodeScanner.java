@@ -25,27 +25,35 @@ public final class CCodeScanner extends AbstractCScanner {
 	
 
 	private static String[] fgKeywords= { 
-			"asm", "auto",
-			"break", 
-			"case", 
-			"const", "continue",
-			"default", "do",
-			"else",	"enum",	"extern", 
-			"for",
-			"goto", 
-			"if", "inline", 
-			"register", "return", "restrict",
-			"sizeof", "static", "struct", "switch", 
-			"typedef", 
-			"union",
-			"volatile", 
-			"while", "_Pragma"
+			"asm", "auto", 							//$NON-NLS-1$ //$NON-NLS-2$
+			"break",  								//$NON-NLS-1$
+			"case",  								//$NON-NLS-1$
+			"const", "continue",					//$NON-NLS-1$ //$NON-NLS-2$
+			"default", "do",						//$NON-NLS-1$ //$NON-NLS-2$
+			"else",	"enum",	"extern",  				//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"for", 									//$NON-NLS-1$
+			"goto",  								//$NON-NLS-1$
+			"if", "inline",  						//$NON-NLS-1$ //$NON-NLS-2$
+			"register", "return", "restrict", 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"sizeof", "static", "struct", "switch", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"typedef",  							//$NON-NLS-1$
+			"union", 								//$NON-NLS-1$
+			"volatile",  							//$NON-NLS-1$
+			"while", "_Pragma" 						//$NON-NLS-1$ //$NON-NLS-2$
 	};
 
 
-	private static String[] fgTypes= { "char", "double", "float", "int", "long", "short", "signed", "unsigned", "void", "_Bool", "_Complex", "_Imaginary"};
-	private static String[] fgConstants= { "NULL", "__DATE__", "__LINE__", "__TIME__", "__FILE__", "__STDC__"};
-	private static String[] fgPreprocessor= { "#define", "#undef", "#include", "#error", "#warning", "#pragma", "#ifdef", "#ifndef", "#if", "#else", "#elif", "#endif", "#line"};
+	private static String[] fgTypes= { "char", "double", "float",				//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+			                           "int", "long", "short", 					//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+									   "signed", "unsigned", "void", 			//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+									   "_Bool", "_Complex", "_Imaginary"};  	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+	private static String[] fgConstants= { "NULL", "__DATE__", "__LINE__",  	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
+			                           "__TIME__", "__FILE__", "__STDC__"}; 	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+	private static String[] fgPreprocessor= { "#define", "#undef", "#include",	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
+			                                  "#error", "#warning", "#pragma", 	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+											  "#ifdef", "#ifndef", "#if", 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+											  "#else", "#elif", "#endif", 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+											  "#line"}; 						//$NON-NLS-1$ 
 
 	
 	private static String[] fgTokenProperties= {
@@ -81,7 +89,7 @@ public final class CCodeScanner extends AbstractCScanner {
 		// Add rule for strings
 		Token token= getToken(ICColorConstants.C_STRING);
 		// Add rule for strings and character constants.
-		rules.add(new SingleLineRule("'", "'", token, '\\'));
+		rules.add(new SingleLineRule("'", "'", token, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 				
 		
 		// Add generic whitespace rule.

@@ -26,12 +26,12 @@ import org.eclipse.jface.text.rules.WordRule;
 public class CPartitionScanner extends RuleBasedPartitionScanner {
 
 
-	private final static String SKIP= "__skip";
+	private final static String SKIP= "__skip"; //$NON-NLS-1$
 
 
-	public final static String C_MULTILINE_COMMENT= "c_multi_line_comment";
-	public final static String C_SINGLE_LINE_COMMENT= "c_single_line_comment";
-	public final static String C_STRING= "c_string";
+	public final static String C_MULTILINE_COMMENT= "c_multi_line_comment"; //$NON-NLS-1$
+	public final static String C_SINGLE_LINE_COMMENT= "c_single_line_comment"; //$NON-NLS-1$
+	public final static String C_STRING= "c_string"; //$NON-NLS-1$
 
 
 	/**
@@ -106,12 +106,12 @@ public class CPartitionScanner extends RuleBasedPartitionScanner {
 
 
 		// Add rule for single line comments.
-		rules.add(new EndOfLineRule("//", single_comment));
+		rules.add(new EndOfLineRule("//", single_comment)); //$NON-NLS-1$
 
 
 		// Add rule for strings and character constants.
-		rules.add(new SingleLineRule("\"", "\"", string, '\\'));
-		rules.add(new SingleLineRule("'", "'", skip, '\\'));
+		rules.add(new SingleLineRule("\"", "\"", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new SingleLineRule("'", "'", skip, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Add special case word rule.
 		EmptyCommentRule wordRule= new EmptyCommentRule(comment);
@@ -119,7 +119,7 @@ public class CPartitionScanner extends RuleBasedPartitionScanner {
 
 
 		// Add rules for multi-line comments.
-		rules.add(new MultiLineRule("/*", "*/", comment));
+		rules.add(new MultiLineRule("/*", "*/", comment)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPredicateRule[] result= new IPredicateRule[rules.size()];
 		rules.toArray(result);

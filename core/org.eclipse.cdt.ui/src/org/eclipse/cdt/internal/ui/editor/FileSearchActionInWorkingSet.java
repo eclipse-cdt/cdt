@@ -37,14 +37,14 @@ import org.eclipse.ui.PlatformUI;
 public class FileSearchActionInWorkingSet extends Action {
 
 
-	private static final String PREFIX= "FileSearchActionInWorkingSet.";
+	private static final String PREFIX= "FileSearchActionInWorkingSet."; //$NON-NLS-1$
 	
 	private ISelectionProvider fSelectionProvider;
 
 	public FileSearchActionInWorkingSet(ISelectionProvider provider) {
-		super(CUIPlugin.getResourceString(PREFIX + "label"));
-		setDescription(CUIPlugin.getResourceString(PREFIX + "description"));
-		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip"));
+		super(CUIPlugin.getResourceString(PREFIX + "label")); //$NON-NLS-1$
+		setDescription(CUIPlugin.getResourceString(PREFIX + "description")); //$NON-NLS-1$
+		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip")); //$NON-NLS-1$
 		
 		if(provider instanceof CContentOutlinePage) {
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_OPEN_INCLUDE);
@@ -90,13 +90,13 @@ public class FileSearchActionInWorkingSet extends Action {
 			IResource[] result = new IResource[resourceList.size()];
 			resourceList.toArray(result);
 			
-			SearchScope scope= new SearchScope("File Search",(IResource []) result);
+			SearchScope scope= new SearchScope("File Search",(IResource []) result); //$NON-NLS-1$
 	
 			
 			TextSearchOperation op= new TextSearchOperation(
 				CUIPlugin.getWorkspace(),
 				search_name,
-				"",
+				"", //$NON-NLS-1$
 				scope,
 				col);
 				

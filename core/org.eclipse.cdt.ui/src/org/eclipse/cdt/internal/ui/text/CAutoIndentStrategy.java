@@ -115,7 +115,7 @@ public class CAutoIndentStrategy extends DefaultAutoIndentStrategy {
 			int whiteend= findEndOfWhiteSpace(d, start, end);
 			return d.get(start, whiteend - start);
 		} else {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 
@@ -218,7 +218,7 @@ public class CAutoIndentStrategy extends DefaultAutoIndentStrategy {
 	public void customizeDocumentCommand(IDocument d, DocumentCommand c) {
 		if (c.length == 0 && c.text != null && endsWithDelimiter(d, c.text))
 			smartIndentAfterNewLine(d, c);
-		else if ("}".equals(c.text)) {
+		else if ("}".equals(c.text)) { //$NON-NLS-1$
 			smartInsertAfterBracket(d, c);
 		}
 	}

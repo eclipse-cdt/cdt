@@ -114,7 +114,7 @@ public class TemplateProposal implements ICCompletionProposal {
 		for (int i= 0; i != variables.length; i++) {
 			TemplatePosition variable= variables[i];
 			
-			if (variable.getName().equals("cursor"))
+			if (variable.getName().equals("cursor")) //$NON-NLS-1$
 				return variable.getOffsets()[0];
 		}
 

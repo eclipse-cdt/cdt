@@ -10,6 +10,7 @@ import java.util.Vector;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -67,9 +68,9 @@ import org.eclipse.ui.PlatformUI;
 public abstract class ConvertProjectWizardPage
     extends WizardPage {
 
-	public static final String  KEY_TITLE = "ConvertionWizard.title";
-    public static final String  KEY_CONVERTING = "ConvertionWizard.converting";
-    private static final String PROJECT_LIST = "ConversionWizard.projectlist";
+	public static final String  KEY_TITLE = "ConvertionWizard.title"; //$NON-NLS-1$
+    public static final String  KEY_CONVERTING = "ConvertionWizard.converting"; //$NON-NLS-1$
+    private static final String PROJECT_LIST = "ConversionWizard.projectlist"; //$NON-NLS-1$
 
 	protected boolean convertToC = false;
     protected boolean convertToCC = true;
@@ -138,7 +139,7 @@ public abstract class ConvertProjectWizardPage
     protected void addToMainPage(Composite container){
        
 		// Add convert to C or C/C++ buttons
-		Composite area = ControlFactory.createGroup(container, "Convert to C or C++", 2);
+		Composite area = ControlFactory.createGroup(container, CUIMessages.getString("ConvertProjectWizardPage.convertTo"), 2); //$NON-NLS-1$
 		
 
 		SelectionListener cListener =  new SelectionAdapter() {
@@ -149,13 +150,13 @@ public abstract class ConvertProjectWizardPage
 			}
 		};
 		cRadioButton = ControlFactory.createRadioButton(area, 
-							  "C Project",
-							  "C ",
+							  CUIMessages.getString("ConvertProjectWizardPage.CProject"), //$NON-NLS-1$
+							  "C ", //$NON-NLS-1$
 			  			      cListener);
 		cRadioButton.setSelection(convertToC);			  			      
 		ccRadioButton = ControlFactory.createRadioButton(area, 
-							  "C++ Project",
-							  "C++",
+							  CUIMessages.getString("ConvertProjectWizardPage.CppProject"), //$NON-NLS-1$
+							  "C++", //$NON-NLS-1$
 			  			      cListener);	
 		ccRadioButton.setSelection(convertToCC);			  			      
 				
@@ -359,7 +360,7 @@ public abstract class ConvertProjectWizardPage
                 return ((IProject)obj).getName();
             }
 
-            return "";
+            return ""; //$NON-NLS-1$
         }
 
         public Image getColumnImage(Object obj, int index) {

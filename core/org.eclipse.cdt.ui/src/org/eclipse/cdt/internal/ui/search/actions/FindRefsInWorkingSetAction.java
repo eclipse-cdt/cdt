@@ -24,14 +24,14 @@ public class FindRefsInWorkingSetAction extends FindAction {
 	
 	public FindRefsInWorkingSetAction(CEditor editor) {
 		this(editor,
-		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.label"),
-		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.tooltip"));
+		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.label"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.tooltip")); //$NON-NLS-1$
 	}
 	
 	public FindRefsInWorkingSetAction(IWorkbenchSite site){
 		this(site,
-		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.label"),
-		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.tooltip"));
+		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.label"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.tooltip")); //$NON-NLS-1$
 	}
 	/**
 	 * @param editor
@@ -65,7 +65,7 @@ public class FindRefsInWorkingSetAction extends FindAction {
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScopeDescription()
 	 */
 	protected String getScopeDescription() {
-		return CSearchMessages.getString("WorkingSetScope");
+		return CSearchMessages.getString("WorkingSetScope"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScope()

@@ -20,17 +20,17 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class BuildConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String PREF_CONSOLE_FONT = "consoleFont";
-	private static final String PREF_CLEAR_CONSOLE = "clearConsole";
-	private static final String PREF_CONSOLE_ON_TOP = "consoleOnTop";
-	private static final String PREF_AUTO_OPEN_CONSOLE = "autoOpenConsole";
-	public static final String PREF_BUILDCONSOLE_LINES = "buildConsoleLines";
+	public static final String PREF_CONSOLE_FONT = "consoleFont"; //$NON-NLS-1$
+	private static final String PREF_CLEAR_CONSOLE = "clearConsole"; //$NON-NLS-1$
+	private static final String PREF_CONSOLE_ON_TOP = "consoleOnTop"; //$NON-NLS-1$
+	private static final String PREF_AUTO_OPEN_CONSOLE = "autoOpenConsole"; //$NON-NLS-1$
+	public static final String PREF_BUILDCONSOLE_LINES = "buildConsoleLines"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_LINES_ERROR = "CBasePreferencePage.buildConsole.errorMessage"; //$NON-NLS-1$
 
-	private static final String CLEAR_CONSOLE_LABEL= "CBasePreferencePage.clearConsole.label";
-	private static final String CONSOLE_ON_TOP_LABEL= "CBasePreferencePage.consoleOnTop.label";
-	private static final String AUTO_OPEN_CONSOLE_LABEL= "CBasePreferencePage.autoOpenConsole.label";
-	private static final String CONSOLE_FONT_LABEL= "CBasePreferencePage.consoleFont.label";
+	private static final String CLEAR_CONSOLE_LABEL= "CBasePreferencePage.clearConsole.label"; //$NON-NLS-1$
+	private static final String CONSOLE_ON_TOP_LABEL= "CBasePreferencePage.consoleOnTop.label"; //$NON-NLS-1$
+	private static final String AUTO_OPEN_CONSOLE_LABEL= "CBasePreferencePage.autoOpenConsole.label"; //$NON-NLS-1$
+	private static final String CONSOLE_FONT_LABEL= "CBasePreferencePage.consoleFont.label"; //$NON-NLS-1$
 
 	public BuildConsolePreferencePage() {
 		super(GRID);
@@ -50,7 +50,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 			new BooleanFieldEditor(PREF_CONSOLE_ON_TOP, CUIPlugin.getResourceString(CONSOLE_ON_TOP_LABEL), parent);
 		addField(consoleOnTop);
 
-		IntegerFieldEditor buildCount = new IntegerFieldEditor( PREF_BUILDCONSOLE_LINES, "&Build console lines: ", parent );
+		IntegerFieldEditor buildCount = new IntegerFieldEditor( PREF_BUILDCONSOLE_LINES, PreferencesMessages.getString("BuildConsolePreferencePage.fieldEditors.buildConsoleLines"), parent ); //$NON-NLS-1$
 		buildCount.setErrorMessage(CUIPlugin.getResourceString(PREF_BUILDCONSOLE_LINES_ERROR));
 		buildCount.setValidRange( 10, Integer.MAX_VALUE );
 		addField( buildCount );

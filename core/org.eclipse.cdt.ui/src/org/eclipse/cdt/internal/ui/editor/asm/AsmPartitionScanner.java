@@ -111,19 +111,19 @@ public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 
 
 		// Add rule for single line comments.
-		rules.add(new EndOfLineRule("//", single_comment));
+		rules.add(new EndOfLineRule("//", single_comment)); //$NON-NLS-1$
 		rules.add(new EndOfLineRule("#", single_comment)); //$NON-NLS-1$
 
 		// Add rule for strings and character constants.
-		rules.add(new SingleLineRule("\"", "\"", string, '\\'));
-		rules.add(new SingleLineRule("'", "'", string, '\\'));
+		rules.add(new SingleLineRule("\"", "\"", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new SingleLineRule("'", "'", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		EmptyCommentRule wordRule= new EmptyCommentRule(comment);
 		rules.add(wordRule);
 
 
 		// Add rules for multi-line comments.
-		rules.add(new MultiLineRule("/*", "*/", comment));
+		rules.add(new MultiLineRule("/*", "*/", comment)); //$NON-NLS-1$ //$NON-NLS-2$
 
 
 		IPredicateRule[] result= new IPredicateRule[rules.size()];

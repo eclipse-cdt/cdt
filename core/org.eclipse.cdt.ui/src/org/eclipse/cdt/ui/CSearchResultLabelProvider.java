@@ -120,35 +120,35 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			try {
 				match = (IMatch) marker.getAttribute(CSearchResultCollector.IMATCH);
 			} catch (CoreException e) {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 		} else if( element instanceof IMatch ){
 			match = (IMatch) element;
 		}
 		
 		if( match == null )
-			return "";
+			return ""; //$NON-NLS-1$
 		
 		IResource resource = match.getResource();
 		
-		String result = "";
-		String path = (resource != null ) ? resource.getFullPath().toString() : "";
+		String result = ""; //$NON-NLS-1$
+		String path = (resource != null ) ? resource.getFullPath().toString() : ""; //$NON-NLS-1$
 		
 		switch( getOrder() ){
 			case SHOW_NAME_ONLY:
 				result = match.getName();
 			case SHOW_ELEMENT_CONTAINER:
-				if( !match.getParentName().equals("") )
-					result = match.getName() + " - " + match.getParentName() + " ( " + path + " )";
+				if( !match.getParentName().equals("") ) //$NON-NLS-1$
+					result = match.getName() + " - " + match.getParentName() + " ( " + path + " )"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				else
-					result = match.getName() + " ( " + path + " )";
+					result = match.getName() + " ( " + path + " )"; //$NON-NLS-1$ //$NON-NLS-2$
 						
 				break;
 			case SHOW_PATH:
-				result = path + " - " + match.getParentName()+ "::" + match.getName();
+				result = path + " - " + match.getParentName()+ "::" + match.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 				break;				
 			case SHOW_CONTAINER_ELEMENT:
-				result = match.getParentName() + "::" + match.getName() + " ( " + path + " )";
+				result = match.getParentName() + "::" + match.getName() + " ( " + path + " )"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				break;
 		}
 		

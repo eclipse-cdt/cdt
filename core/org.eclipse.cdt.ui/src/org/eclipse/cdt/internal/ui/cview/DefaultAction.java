@@ -21,8 +21,8 @@ public class DefaultAction extends Action {
 
 	public void run() {
 		MessageBox errorMsg = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-		errorMsg.setText("WIP");
-		errorMsg.setMessage ("Work In Progress");
+		errorMsg.setText(CViewMessages.getString("DefaultAction.WIP")); //$NON-NLS-1$
+		errorMsg.setMessage (CViewMessages.getString("DefaultAction.workInProgress")); //$NON-NLS-1$
 		errorMsg.open();
 	}
 }

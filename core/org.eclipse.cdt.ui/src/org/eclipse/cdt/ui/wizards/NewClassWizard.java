@@ -31,9 +31,9 @@ public class NewClassWizard extends BasicNewResourceWizard implements INewWizard
 	private NewClassWizardPage fPage;
 	private String wz_title;
 
-	private static final String WZ_TITLE = "NewClassWizard.title";
-	private static final String WZ_DESC = "NewClassWizard.description";
-	private static final String PAGE_TITLE = "NewClassWizard.page.title";
+	private static final String WZ_TITLE = "NewClassWizard.title"; //$NON-NLS-1$
+	private static final String WZ_DESC = "NewClassWizard.description"; //$NON-NLS-1$
+	private static final String PAGE_TITLE = "NewClassWizard.page.title"; //$NON-NLS-1$
 
 	/**
 	 * "NewClassWizard" constructor.

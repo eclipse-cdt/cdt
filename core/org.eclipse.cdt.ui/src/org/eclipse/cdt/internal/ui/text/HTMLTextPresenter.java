@@ -142,7 +142,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 			
 			if (line != null) {
 				append(buffer, LINE_DELIM, lineFormatted ? presentation : null);
-				append(buffer, (""), presentation);
+				append(buffer, (""), presentation); //$NON-NLS-1$
 			}
 			
 			return trim(buffer, presentation);

@@ -16,7 +16,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  */
 public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 
-	private static final String C_SEARCH_PAGE_ID= "org.eclipse.cdt.ui.CSearchPage"; 
+	private static final String C_SEARCH_PAGE_ID= "org.eclipse.cdt.ui.CSearchPage";  //$NON-NLS-1$
 
 	private IWorkbenchWindow fWindow;
 	

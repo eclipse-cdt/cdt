@@ -86,8 +86,8 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 
 		IActionBars actionBars = getViewSite().getActionBars();
 		fClearOutputAction = new ClearConsoleAction(this);
-		fCopyAction = new BuildConsoleAction(bundle, "Editor.Copy.", fTextViewer, ITextOperationTarget.COPY);
-		fSelectAllAction = new BuildConsoleAction(bundle, "Editor.SelectAll.", fTextViewer, ITextOperationTarget.SELECT_ALL);
+		fCopyAction = new BuildConsoleAction(bundle, "Editor.Copy.", fTextViewer, ITextOperationTarget.COPY); //$NON-NLS-1$
+		fSelectAllAction = new BuildConsoleAction(bundle, "Editor.SelectAll.", fTextViewer, ITextOperationTarget.SELECT_ALL); //$NON-NLS-1$
 
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, fCopyAction);
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, fSelectAllAction);
@@ -151,7 +151,7 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 		String title = origTitle;
 		IProject project = getProject();
 		if (project != null) {
-			title += " [" + project.getName() + "]";
+			title += " [" + project.getName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		setTitle(title);
 	}
@@ -190,7 +190,7 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 	 * Initializes the context menu
 	 */
 	protected void initializeContextMenu(Control parent) {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {

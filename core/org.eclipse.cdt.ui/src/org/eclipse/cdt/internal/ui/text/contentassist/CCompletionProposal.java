@@ -59,9 +59,9 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		fTextViewer= viewer;
 		
 		//@@@ Is this the best way to do this, likely it isn't
-		if(replacementString.indexOf("()") == -1) {		//Not replacing with a function
+		if(replacementString.indexOf("()") == -1) {		//Not replacing with a function //$NON-NLS-1$
 			fCursorPosition = replacementString.length();
-		} else if(displayString.indexOf("()") == -1) { 	//Assume that there are arguments between ()
+		} else if(displayString.indexOf("()") == -1) { 	//Assume that there are arguments between () //$NON-NLS-1$
 			fCursorPosition = replacementString.length() - 1;
 		} else {
 			fCursorPosition = replacementString.length();
@@ -180,7 +180,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 //		}
 		
 		try {
-			functionBracketIndex = fReplacementString.indexOf("()");
+			functionBracketIndex = fReplacementString.indexOf("()"); //$NON-NLS-1$
 			isBeforeBracket = document.getChar(fReplacementOffset + fReplacementLength) == '(';
 			
 			//Strip the brackets off the function if inserting right before brackets

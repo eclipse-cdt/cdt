@@ -117,7 +117,7 @@ public class TemplateSet {
 				Node enabledNode= attributes.getNamedItem(ENABLED_ATTRIBUTE);
 
 				if (name == null || description == null || context == null)
-					throw new SAXException("Missing required attribute");
+					throw new SAXException(TemplateMessages.getString("TemplateSet.error.missingAttribute")); //$NON-NLS-1$
 
 				boolean enabled= (enabledNode == null) || (enabledNode.getNodeValue().equals("true")); //$NON-NLS-1$
 

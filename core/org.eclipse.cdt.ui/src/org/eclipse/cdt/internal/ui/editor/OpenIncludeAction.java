@@ -44,18 +44,18 @@ import org.eclipse.ui.PlatformUI;
 public class OpenIncludeAction extends Action {
 
 
-	private static final String PREFIX= "OpenIncludeAction.";
+	private static final String PREFIX= "OpenIncludeAction."; //$NON-NLS-1$
 	
-	private static final String DIALOG_TITLE= PREFIX + "dialog.title";
-	private static final String DIALOG_MESSAGE= PREFIX + "dialog.message";
+	private static final String DIALOG_TITLE= PREFIX + "dialog.title"; //$NON-NLS-1$
+	private static final String DIALOG_MESSAGE= PREFIX + "dialog.message"; //$NON-NLS-1$
 	
 	private ISelectionProvider fSelectionProvider;
 
 
 	public OpenIncludeAction(ISelectionProvider provider) {
-		super(CUIPlugin.getResourceString(PREFIX + "label"));
-		setDescription(CUIPlugin.getResourceString(PREFIX + "description"));
-		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip"));
+		super(CUIPlugin.getResourceString(PREFIX + "label")); //$NON-NLS-1$
+		setDescription(CUIPlugin.getResourceString(PREFIX + "description")); //$NON-NLS-1$
+		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip")); //$NON-NLS-1$
 		
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_OPEN_INCLUDE);
 		
@@ -120,7 +120,7 @@ public class OpenIncludeAction extends Action {
 
 	private void findFile(String[] includePaths,  String name, ArrayList list)  throws CoreException {
 		for (int i = 0; i < includePaths.length; i++) {
-			IPath path = new Path(includePaths[i] + "/" + name);
+			IPath path = new Path(includePaths[i] + "/" + name); //$NON-NLS-1$
 			File file = path.toFile();
 			if (file.exists()) {
 				list.add(path);
@@ -154,7 +154,7 @@ public class OpenIncludeAction extends Action {
 			public String getText(Object element) {
 				if (element instanceof IPath) {
 					IPath file= (IPath)element;
-					return file.lastSegment() + " - "  + file.toString();
+					return file.lastSegment() + " - "  + file.toString(); //$NON-NLS-1$
 				}
 				return super.getText(element);
 			}

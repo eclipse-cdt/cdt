@@ -30,14 +30,14 @@ public class FindDeclarationsAction extends FindAction {
 	
 	public FindDeclarationsAction(CEditor editor){
 		this(editor,
-			CSearchMessages.getString("CSearch.FindDeclarationAction.label"),
-			CSearchMessages.getString("CSearch.FindDeclarationAction.tooltip"));
+			CSearchMessages.getString("CSearch.FindDeclarationAction.label"), //$NON-NLS-1$
+			CSearchMessages.getString("CSearch.FindDeclarationAction.tooltip")); //$NON-NLS-1$
 	}
 	
 	public FindDeclarationsAction(IWorkbenchSite site){
 		this(site,
-			CSearchMessages.getString("CSearch.FindDeclarationAction.label"),
-			CSearchMessages.getString("CSearch.FindDeclarationAction.tooltip"));
+			CSearchMessages.getString("CSearch.FindDeclarationAction.label"), //$NON-NLS-1$
+			CSearchMessages.getString("CSearch.FindDeclarationAction.tooltip")); //$NON-NLS-1$
 	}
 	/**
 	 * @param site
@@ -61,7 +61,7 @@ public class FindDeclarationsAction extends FindAction {
 	 */
 	protected String getScopeDescription() {
 		// TODO Auto-generated method stub
-		return CSearchMessages.getString("WorkspaceScope");
+		return CSearchMessages.getString("WorkspaceScope"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getLimitTo()

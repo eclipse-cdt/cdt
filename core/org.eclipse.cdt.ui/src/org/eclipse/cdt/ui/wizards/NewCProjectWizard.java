@@ -101,7 +101,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	protected abstract void doRunEpilogue(IProgressMonitor monitor);
 
 	protected IStatus isValidName(String name) {
-		return new Status(IStatus.OK, CUIPlugin.PLUGIN_ID, 0, "", null);
+		return new Status(IStatus.OK, CUIPlugin.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
 
 	/**
@@ -110,7 +110,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	 * @return IStatus
 	 */
 	protected IStatus isValidLocation(String projectFieldContents) {
-		return new Status(IStatus.OK, CUIPlugin.PLUGIN_ID, 0, "", null);
+		return new Status(IStatus.OK, CUIPlugin.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
 
 	/**

@@ -96,9 +96,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public class NewClassWizardPage extends WizardPage implements Listener {
 	// the page name
-	private final static String PAGE_NAME= "NewClassWizardPage";
-	private final String HEADER_EXT = ".h";
-	private final String BODY_EXT = ".cpp";
+	private final static String PAGE_NAME= "NewClassWizardPage"; //$NON-NLS-1$
+	private final String HEADER_EXT = ".h"; //$NON-NLS-1$
+	private final String BODY_EXT = ".cpp"; //$NON-NLS-1$
 	
 	// the current resource selection
 	private	IStructuredSelection currentSelection;
@@ -147,37 +147,37 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 
 		fClassNameDialogField= new StringDialogField();
 		fClassNameDialogField.setDialogFieldListener(adapter);
-		fClassNameDialogField.setLabelText(NewWizardMessages.getString("NewClassWizardPage.classname.label"));
+		fClassNameDialogField.setLabelText(NewWizardMessages.getString("NewClassWizardPage.classname.label")); //$NON-NLS-1$
 
 		fBaseClassDialogField= new StringButtonDialogField(adapter);
 		fBaseClassDialogField.setDialogFieldListener(adapter);
-		fBaseClassDialogField.setLabelText(NewWizardMessages.getString("NewClassWizardPage.baseclass.label"));
-		fBaseClassDialogField.setButtonLabel(NewWizardMessages.getString("NewClassWizardPage.baseclass.button"));
+		fBaseClassDialogField.setLabelText(NewWizardMessages.getString("NewClassWizardPage.baseclass.label")); //$NON-NLS-1$
+		fBaseClassDialogField.setButtonLabel(NewWizardMessages.getString("NewClassWizardPage.baseclass.button")); //$NON-NLS-1$
 
 		String[] buttonNames1= new String[] {
-			/* 0 == PUBLIC_INDEX */ NewWizardMessages.getString("NewClassWizardPage.baseclass.access.public"),
-			/* 1 == PROTECTED_INDEX */ NewWizardMessages.getString("NewClassWizardPage.baseclass.access.protected"),
-			/* 2 == PRIVATE_INDEX */ NewWizardMessages.getString("NewClassWizardPage.baseclass.access.private"),
-			/* 3 == DEFAULT_INDEX */ NewWizardMessages.getString("NewClassWizardPage.baseclass.access.access")
+			/* 0 == PUBLIC_INDEX */ NewWizardMessages.getString("NewClassWizardPage.baseclass.access.public"), //$NON-NLS-1$
+			/* 1 == PROTECTED_INDEX */ NewWizardMessages.getString("NewClassWizardPage.baseclass.access.protected"), //$NON-NLS-1$
+			/* 2 == PRIVATE_INDEX */ NewWizardMessages.getString("NewClassWizardPage.baseclass.access.private"), //$NON-NLS-1$
+			/* 3 == DEFAULT_INDEX */ NewWizardMessages.getString("NewClassWizardPage.baseclass.access.access") //$NON-NLS-1$
 		};
 		fAccessButtons= new SelectionButtonDialogFieldGroup(SWT.RADIO, buttonNames1, 4);
 		fAccessButtons.setDialogFieldListener(adapter);
-		fAccessButtons.setLabelText(NewWizardMessages.getString("NewClassWizardPage.baseclass.access.label"));
+		fAccessButtons.setLabelText(NewWizardMessages.getString("NewClassWizardPage.baseclass.access.label")); //$NON-NLS-1$
 		fAccessButtons.setSelection(0, true);
 
 		String[] buttonNames2= new String[] {
-			/* 0 == INLINE_INDEX */ NewWizardMessages.getString("NewClassWizardPage.constdest.inline"),
-			/* 1 == VIRTUAL_DEST_INDEX */ NewWizardMessages.getString("NewClassWizardPage.constdest.virtualdestructor"),
-			/* 2 == INCLUDE_GUARD_INDEX */ NewWizardMessages.getString("NewClassWizardPage.constdest.includeguard"),
+			/* 0 == INLINE_INDEX */ NewWizardMessages.getString("NewClassWizardPage.constdest.inline"), //$NON-NLS-1$
+			/* 1 == VIRTUAL_DEST_INDEX */ NewWizardMessages.getString("NewClassWizardPage.constdest.virtualdestructor"), //$NON-NLS-1$
+			/* 2 == INCLUDE_GUARD_INDEX */ NewWizardMessages.getString("NewClassWizardPage.constdest.includeguard"), //$NON-NLS-1$
 		};				
 		
 		fConstDestButtons= new SelectionButtonDialogFieldGroup(SWT.CHECK, buttonNames2, 3);
 		fConstDestButtons.setDialogFieldListener(adapter);
 				
 		linkedResourceGroupForHeader = new LinkToFileGroup(adapter, this);
-		linkedResourceGroupForHeader.setLabelText(NewWizardMessages.getString("NewClassWizardPage.files.header"));
+		linkedResourceGroupForHeader.setLabelText(NewWizardMessages.getString("NewClassWizardPage.files.header")); //$NON-NLS-1$
 		linkedResourceGroupForBody = new LinkToFileGroup(adapter, this);
-		linkedResourceGroupForBody.setLabelText(NewWizardMessages.getString("NewClassWizardPage.files.body"));
+		linkedResourceGroupForBody.setLabelText(NewWizardMessages.getString("NewClassWizardPage.files.body")); //$NON-NLS-1$
 
 		fClassNameStatus=  new StatusInfo();
 		fBaseClassStatus=  new StatusInfo();
@@ -444,7 +444,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}
 	
 	private void searchForClasses(ICProject cProject, List elementsFound, IProgressMonitor monitor, int worked){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "*", ICSearchConstants.CLASS, ICSearchConstants.DECLARATIONS, false );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "*", ICSearchConstants.CLASS, ICSearchConstants.DECLARATIONS, false ); //$NON-NLS-1$
 		ICElement[] elements = new ICElement[1];
 		elements[0] = cProject;
 		ICSearchScope scope = SearchEngine.createCSearchScope(elements, true);
@@ -505,7 +505,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		dialog.setTitle(NewWizardMessages.getString("BaseClassSelectionDialog.title")); //$NON-NLS-1$
 		dialog.setMessage(NewWizardMessages.getString("BaseClassSelectionDialog.message")); //$NON-NLS-1$
 		dialog.setElements(elementsFound.toArray());
-		dialog.setFilter("*");
+		dialog.setFilter("*"); //$NON-NLS-1$
 		
 		if (dialog.open() == ElementListSelectionDialog.OK) {
 			Object element= dialog.getFirstResult();
@@ -537,12 +537,12 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	
 	public String getAccess(){
 		if(fAccessButtons.isSelected(0))
-			return "public";
+			return "public"; //$NON-NLS-1$
 		else if(fAccessButtons.isSelected(1))
-			return "protected";
+			return "protected"; //$NON-NLS-1$
 		else if(fAccessButtons.isSelected(2))
-			return "private";
-		else return ""; 
+			return "private"; //$NON-NLS-1$
+		else return "";  //$NON-NLS-1$
 	}
 	
 	public ITranslationUnit getCreatedClassHeaderFile(){
@@ -571,7 +571,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		try{
 			
 			String lineDelimiter= null;	
-			lineDelimiter= System.getProperty("line.separator", "\n"); 
+			lineDelimiter= System.getProperty("line.separator", "\n");  //$NON-NLS-1$ //$NON-NLS-2$
 			
 			parentHeaderTU = createTranslationUnit(linkedResourceGroupForHeader);		
 			parentBodyTU = createTranslationUnit(linkedResourceGroupForBody);		
@@ -802,7 +802,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		StringBuffer text = new StringBuffer();
 		boolean extendingBase = false;
 		String baseClassName = getBaseClassName();
-		String baseClassFileName = "";
+		String baseClassFileName = ""; //$NON-NLS-1$
 		if((baseClassName != null) && (baseClassName.length() > 0))
 		{
 			extendingBase = true;
@@ -819,74 +819,74 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		}
 		
 		if(isIncludeGuard()){
-			text.append("#ifndef ");
+			text.append("#ifndef "); //$NON-NLS-1$
 			text.append(getNewClassName().toUpperCase());
-			text.append("_H");
+			text.append("_H"); //$NON-NLS-1$
 			text.append(lineDelimiter);
-			text.append("#define ");
+			text.append("#define "); //$NON-NLS-1$
 			text.append(getNewClassName().toUpperCase());
-			text.append("_H");
+			text.append("_H"); //$NON-NLS-1$
 			text.append(lineDelimiter);
 			text.append(lineDelimiter);
 		}
 		
 		if(extendingBase){
-			text.append("#include \"");
+			text.append("#include \""); //$NON-NLS-1$
 			text.append(baseClassFileName);
 			text.append('\"');
 			text.append(lineDelimiter);			
 			text.append(lineDelimiter);			
 		}
-		text.append("class ");
+		text.append("class "); //$NON-NLS-1$
 		text.append(getNewClassName());
 		if(extendingBase){
-			text.append(" : ");
+			text.append(" : "); //$NON-NLS-1$
 			text.append(getAccess());
-			text.append(" ");
+			text.append(" "); //$NON-NLS-1$
 			text.append(baseClassName);
 		}
-		text.append("{");
+		text.append("{"); //$NON-NLS-1$
 		text.append(lineDelimiter);			
 		
-		text.append("public:");
+		text.append("public:"); //$NON-NLS-1$
 		text.append(lineDelimiter);			
 		text.append(lineDelimiter);			
 		
 		// constructor
 		text.append('\t');
 		text.append(getNewClassName());
-		text.append("()");
+		text.append("()"); //$NON-NLS-1$
 		if(isInline()){
-			text.append(" {}");
+			text.append(" {}"); //$NON-NLS-1$
 			text.append(lineDelimiter);						
 		}else {
-			text.append(";");
+			text.append(";"); //$NON-NLS-1$
 			text.append(lineDelimiter);						
 		}
 		
 		// destructor
 		text.append('\t');		
 		if(isVirtualDestructor()){
-			text.append("virtual ");
+			text.append("virtual "); //$NON-NLS-1$
 		}
-		text.append("~");
+		text.append("~"); //$NON-NLS-1$
 		text.append(getNewClassName());
-		text.append("()");
+		text.append("()"); //$NON-NLS-1$
 		if(isInline()){
-			text.append(" {}");
+			text.append(" {}"); //$NON-NLS-1$
 			text.append(lineDelimiter);						
 		}else {
-			text.append(";");
+			text.append(";"); //$NON-NLS-1$
 			text.append(lineDelimiter);						
 		}
-		text.append("};");
+		text.append("};"); //$NON-NLS-1$
 		text.append(lineDelimiter);		
 		
 		if(isIncludeGuard()){
 			text.append(lineDelimiter);
-			text.append("#endif // ");
+			text.append("#endif // "); //$NON-NLS-1$
 			text.append(getNewClassName().toUpperCase());
-			text.append("_H");
+			text.append("_H"); //$NON-NLS-1$
 			text.append(lineDelimiter);		
 		}
 					
@@ -895,9 +895,9 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		
 	protected String constructBodyFileContent(String lineDelimiter){
 		StringBuffer text = new StringBuffer();
-		text.append("#include \"");
+		text.append("#include \""); //$NON-NLS-1$
 		text.append(getCreatedClassHeaderFile().getElementName());
-		text.append("\"");
+		text.append("\""); //$NON-NLS-1$
 		text.append(lineDelimiter);			
 		text.append(lineDelimiter);			
 		
@@ -906,20 +906,20 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			
 		// constructor
 		text.append(getNewClassName());
-		text.append("::"); 
+		text.append("::");  //$NON-NLS-1$
 		text.append(getNewClassName());
-		text.append("()");
+		text.append("()"); //$NON-NLS-1$
 		text.append(lineDelimiter);			
-		text.append("{}");
+		text.append("{}"); //$NON-NLS-1$
 		text.append(lineDelimiter);			
 		
 		// destructor
 		text.append(getNewClassName());
-		text.append("::~"); 
+		text.append("::~");  //$NON-NLS-1$
 		text.append(getNewClassName());
-		text.append("()"); 
+		text.append("()");  //$NON-NLS-1$
 		text.append(lineDelimiter);			
-		text.append("{}"); 
+		text.append("{}");  //$NON-NLS-1$
 		text.append(lineDelimiter);				
 		return text.toString();
 	}
@@ -969,7 +969,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			status.setError(NewWizardMessages.getString("NewClassWizardPage.error.EnterClassName")); //$NON-NLS-1$
 			return status;
 		}
-		if (className.indexOf("::") != -1) {
+		if (className.indexOf("::") != -1) { //$NON-NLS-1$
 			status.setError(NewWizardMessages.getString("NewClassWizardPage.error.QualifiedName")); //$NON-NLS-1$
 			return status;
 		}

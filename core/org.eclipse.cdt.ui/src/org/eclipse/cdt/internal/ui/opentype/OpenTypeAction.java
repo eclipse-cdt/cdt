@@ -123,7 +123,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 			// could not find definition
 			String path= selection.getFilePath();
 			if (path == null || path.length() == 0)
-				path= "Unknown";
+				path= OpenTypeMessages.getString("TypeSelectionDialog.unknown"); //$NON-NLS-1$
 			String title= OpenTypeMessages.getString("TypeSelectionDialog.errorTitle"); //$NON-NLS-1$
 			String message= OpenTypeMessages.getFormattedString("TypeSelectionDialog.dialogMessage", path); //$NON-NLS-1$
 			MessageDialog.openError(parent, title, message);

@@ -136,11 +136,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	private CEditorErrorTickUpdater fCEditorErrorTickUpdater;
 
 	/* Preference key for matching brackets */
-	public final static String MATCHING_BRACKETS = "matchingBrackets";
+	public final static String MATCHING_BRACKETS = "matchingBrackets"; //$NON-NLS-1$
 	/* Preference key for matching brackets color */
-	public final static String MATCHING_BRACKETS_COLOR = "matchingBracketsColor";
+	public final static String MATCHING_BRACKETS_COLOR = "matchingBracketsColor"; //$NON-NLS-1$
 	/** Preference key for inserting spaces rather than tabs */
-	public final static String SPACES_FOR_TABS = "spacesForTabs";
+	public final static String SPACES_FOR_TABS = "spacesForTabs"; //$NON-NLS-1$
 	/** Preference key for linked position color */
 	public final static String LINKED_POSITION_COLOR = "linkedPositionColor"; //$NON-NLS-1$
 
@@ -456,18 +456,18 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 		action = new ContentAssistAction(CEditorMessages.getResourceBundle(), "ContentAssistProposal.", this); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		setAction("ContentAssistProposal", action);
+		setAction("ContentAssistProposal", action); //$NON-NLS-1$
 		markAsStateDependentAction("ContentAssistProposal", true); //$NON-NLS-1$
 
 		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
-		setAction("ContentAssistTip", action);
+		setAction("ContentAssistTip", action); //$NON-NLS-1$
 
 		setAction("AddIncludeOnSelection", new AddIncludeOnSelectionAction(this)); //$NON-NLS-1$
 	
 		action = new OpenDeclarationsAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
-		setAction("OpenDeclarations", action);
+		setAction("OpenDeclarations", action); //$NON-NLS-1$
 
 		action = new ShowInCViewAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CVIEW);
@@ -506,7 +506,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		}
 		
 		if (FileSearchAction.canActionBeAdded(getSelectionProvider().getSelection())) {
-			MenuManager fileSearch = new MenuManager("File Search");
+			MenuManager fileSearch = new MenuManager(CEditorMessages.getString("CEditor.menu.fileSearch")); //$NON-NLS-1$
 			fileSearch.add(fFileSearchAction);
 			fileSearch.add(fFileSearchActionInWorkingSet);
 			search.add(fileSearch);
@@ -701,7 +701,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 	static class TabConverter implements ITextConverter {
 
-		private String fTabString = "";
+		private String fTabString = ""; //$NON-NLS-1$
 		private int tabRatio = 0;
 
 		public void setNumberOfSpacesPerTab(int ratio) {
@@ -715,7 +715,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
 			String text = command.text;
 			StringBuffer buffer = new StringBuffer();
-			final String TAB = "\t";
+			final String TAB = "\t"; //$NON-NLS-1$
 			// create tokens including the tabs
 			StringTokenizer tokens = new StringTokenizer(text, TAB, true);
 
@@ -751,8 +751,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	};
 
 	/* Source code language to display */
-	public final static String LANGUAGE_CPP = "CEditor.language.cpp";
-	public final static String LANGUAGE_C = "CEditor.language.c";
+	public final static String LANGUAGE_CPP = "CEditor.language.cpp"; //$NON-NLS-1$
+	public final static String LANGUAGE_C = "CEditor.language.c"; //$NON-NLS-1$
 
 	/**
 	 * Adapted source viewer for CEditor
@@ -840,9 +840,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		// Figure out if this is a C or C++ source file
 		String filename = getEditorInput().getName();
-		boolean c_file = filename.endsWith(".c");
+		boolean c_file = filename.endsWith(".c"); //$NON-NLS-1$
 
-		if (!c_file && filename.endsWith(".h")) {
+		if (!c_file && filename.endsWith(".h")) { //$NON-NLS-1$
 			// ensure that this .h file is part of a C project & not a CPP project
 
 			IFile file = getInputFile();
@@ -922,7 +922,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
 	 */
 	protected void initializeKeyBindingScopes() {
-		setKeyBindingScopes(new String [] { "org.eclipse.cdt.ui.cEditorScope" } );
+		setKeyBindingScopes(new String [] { "org.eclipse.cdt.ui.cEditorScope" } ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

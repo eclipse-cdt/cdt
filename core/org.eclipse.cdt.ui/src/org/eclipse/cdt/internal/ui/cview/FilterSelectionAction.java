@@ -34,7 +34,7 @@ class FilterSelectionAction extends SelectionProviderAction {
 	 */
 	public FilterSelectionAction(Shell shell, CView cview, String label) {
 		super(cview.getViewer(), label);
-		setToolTipText("Filter Selection Action");
+		setToolTipText(CViewMessages.getString("FilterSelectionAction.toolTip")); //$NON-NLS-1$
 		setEnabled(true);
 		this.shell= shell;
 		this.cview= cview;
@@ -53,10 +53,10 @@ class FilterSelectionAction extends SelectionProviderAction {
 				cview.getViewer(),
 				contentProvider,
 				new LabelProvider(),
-				"Select the filters to apply (matching files will be hidden):");
+				CViewMessages.getString("FilterSelectionAction.selectFilters")); //$NON-NLS-1$
 	
 		dialog.setInitialSelections(contentProvider.getInitialSelections());
-		dialog.setTitle("C/C++ File Filters");
+		dialog.setTitle(CViewMessages.getString("FilterSelectionAction.title")); //$NON-NLS-1$
 		dialog.open();
 		if (dialog.getReturnCode() == Window.OK) {
 			Object[] results= dialog.getResult();

@@ -97,11 +97,11 @@ public class CSearchOperation implements IRunnableWithProgress,ICSearchConstants
 		String [] args = new String [] { desc, _scopeDescription };
 
 		if( _limitTo == DECLARATIONS ){
-			return CSearchMessages.getFormattedString( "CSearchOperation.singularDeclarationsPostfix", args ); //$NON_NLS-1$
+			return CSearchMessages.getFormattedString( "CSearchOperation.singularDeclarationsPostfix", args ); //$NON_NLS-1$ //$NON-NLS-1$
 		} else if( _limitTo == REFERENCES ){
-			return CSearchMessages.getFormattedString( "CSearchOperation.singularReferencesPostfix", args ); //$NON_NLS-1$
+			return CSearchMessages.getFormattedString( "CSearchOperation.singularReferencesPostfix", args ); //$NON_NLS-1$ //$NON-NLS-1$
 		} else {
-			return CSearchMessages.getFormattedString( "CSearchOperation.singularOccurrencesPostfix", args ); //$NON_NLS-1$
+			return CSearchMessages.getFormattedString( "CSearchOperation.singularOccurrencesPostfix", args ); //$NON_NLS-1$ //$NON-NLS-1$
 		}
 	}
 
@@ -117,13 +117,13 @@ public class CSearchOperation implements IRunnableWithProgress,ICSearchConstants
 			desc = _stringPattern; 
 	//	}
 		
-		String [] args = new String [] { desc, "{0}", _scopeDescription };
+		String [] args = new String [] { desc, "{0}", _scopeDescription }; //$NON-NLS-1$
 		if( _limitTo == DECLARATIONS ){
-			return CSearchMessages.getFormattedString( "CSearchOperation.pluralDeclarationsPostfix", args ); //$NON_NLS-1$
+			return CSearchMessages.getFormattedString( "CSearchOperation.pluralDeclarationsPostfix", args ); //$NON_NLS-1$ //$NON-NLS-1$
 		} else if ( _limitTo == REFERENCES ){
-			return CSearchMessages.getFormattedString( "CSearchOperation.pluralReferencesPostfix", args ); //$NON_NLS-1$
+			return CSearchMessages.getFormattedString( "CSearchOperation.pluralReferencesPostfix", args ); //$NON_NLS-1$ //$NON-NLS-1$
 		} else {
-			return CSearchMessages.getFormattedString( "CSearchOperation.pluralOccurrencesPostfix", args ); //$NON_NLS-1$
+			return CSearchMessages.getFormattedString( "CSearchOperation.pluralOccurrencesPostfix", args ); //$NON_NLS-1$ //$NON-NLS-1$
 		}
 	}
 

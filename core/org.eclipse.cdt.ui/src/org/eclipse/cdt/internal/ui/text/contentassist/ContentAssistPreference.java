@@ -25,35 +25,35 @@ public class ContentAssistPreference {
 	/** Preference key for content assist auto activation */
 	//public final static String AUTOACTIVATION=  "content_assist_autoactivation";
 	/** Preference key for content assist auto activation delay */
-	public final static String AUTOACTIVATION_DELAY=  "content_assist_autoactivation_delay";
+	public final static String AUTOACTIVATION_DELAY=  "content_assist_autoactivation_delay"; //$NON-NLS-1$
 	/** Preference key for content assist proposal color */
-	public final static String PROPOSALS_FOREGROUND=  "content_assist_proposals_foreground";
+	public final static String PROPOSALS_FOREGROUND=  "content_assist_proposals_foreground"; //$NON-NLS-1$
 	/** Preference key for content assist proposal color */
-	public final static String PROPOSALS_BACKGROUND=  "content_assist_proposals_background";
+	public final static String PROPOSALS_BACKGROUND=  "content_assist_proposals_background"; //$NON-NLS-1$
 	/** Preference key for content assist parameters color */
-	public final static String PARAMETERS_FOREGROUND=  "content_assist_parameters_foreground";
+	public final static String PARAMETERS_FOREGROUND=  "content_assist_parameters_foreground"; //$NON-NLS-1$
 	/** Preference key for content assist parameters color */
-	public final static String PARAMETERS_BACKGROUND=  "content_assist_parameters_background";
+	public final static String PARAMETERS_BACKGROUND=  "content_assist_parameters_background"; //$NON-NLS-1$
 	/** Preference key for content assist auto insert */
-	public final static String AUTOINSERT=  "content_assist_autoinsert";
+	public final static String AUTOINSERT=  "content_assist_autoinsert"; //$NON-NLS-1$
 	
 	/** Preference key for C/CPP content assist auto activation triggers */
-	public final static String AUTOACTIVATION_TRIGGERS_DOT= "content_assist_autoactivation_trigger_dot";
-	public final static String AUTOACTIVATION_TRIGGERS_ARROW= "content_assist_autoactivation_trigger_arrow";
-	public final static String AUTOACTIVATION_TRIGGERS_DOUBLECOLON= "content_assist_autoactivation_trigger_doublecolon";
+	public final static String AUTOACTIVATION_TRIGGERS_DOT= "content_assist_autoactivation_trigger_dot"; //$NON-NLS-1$
+	public final static String AUTOACTIVATION_TRIGGERS_ARROW= "content_assist_autoactivation_trigger_arrow"; //$NON-NLS-1$
+	public final static String AUTOACTIVATION_TRIGGERS_DOUBLECOLON= "content_assist_autoactivation_trigger_doublecolon"; //$NON-NLS-1$
 	
 	/** Preference key for visibility of proposals */
-	public final static String SHOW_DOCUMENTED_PROPOSALS= "content_assist_show_visible_proposals";
+	public final static String SHOW_DOCUMENTED_PROPOSALS= "content_assist_show_visible_proposals"; //$NON-NLS-1$
 	/** Preference key for alphabetic ordering of proposals */
-	public final static String ORDER_PROPOSALS= "content_assist_order_proposals";
+	public final static String ORDER_PROPOSALS= "content_assist_order_proposals"; //$NON-NLS-1$
 	/** Preference key for case sensitivity of propsals */
 	//public final static String CASE_SENSITIVITY= "content_assist_case_sensitivity";
 	/** Preference key for adding imports on code assist */
-	public final static String ADD_INCLUDE= "content_assist_add_import";	
+	public final static String ADD_INCLUDE= "content_assist_add_import";	 //$NON-NLS-1$
 	/** Preference key for completion search scope */
-	public final static String CURRENT_FILE_SEARCH_SCOPE= "content_assist_current_file_search_scope";	
+	public final static String CURRENT_FILE_SEARCH_SCOPE= "content_assist_current_file_search_scope";	 //$NON-NLS-1$
 	/** Preference key for completion search scope */
-	public final static String PROJECT_SEARCH_SCOPE= "content_assist_project_search_scope";	
+	public final static String PROJECT_SEARCH_SCOPE= "content_assist_project_search_scope";	 //$NON-NLS-1$
 	
 	private static Color getColor(IPreferenceStore store, String key, IColorManager manager) {
 		RGB rgb= PreferenceConverter.getColor(store, key);
@@ -77,16 +77,16 @@ public class ContentAssistPreference {
 		if (jcp == null)
 			return;
 
-		String triggers = "";
+		String triggers = ""; //$NON-NLS-1$
 		boolean useDotAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
 		if(useDotAsTrigger)
-			triggers = ".";
+			triggers = "."; //$NON-NLS-1$
 		boolean useArrowAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
 		if(useArrowAsTrigger)
-			triggers += ">";
+			triggers += ">"; //$NON-NLS-1$
 		boolean useDoubleColonAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
 		if(useDoubleColonAsTrigger)
-			triggers += ":";
+			triggers += ":"; //$NON-NLS-1$
 		jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 					
 		boolean enabled= store.getBoolean(SHOW_DOCUMENTED_PROPOSALS);
@@ -149,19 +149,19 @@ public class ContentAssistPreference {
 		if (AUTOACTIVATION_TRIGGERS_DOT.equals(key)) {
 			boolean useDotAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
 			if (useDotAsTrigger){
-				String triggers= ".";
+				String triggers= "."; //$NON-NLS-1$
 				jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 			}
 		} else if (AUTOACTIVATION_TRIGGERS_ARROW.equals(key)) {
 			boolean useArrowAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
 			if (useArrowAsTrigger){
-				String triggers= ">";
+				String triggers= ">"; //$NON-NLS-1$
 				jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 			}
 		} else if (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(key)) {
 			boolean useDoubleColonAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
 			if (useDoubleColonAsTrigger){
-				String triggers= ":";
+				String triggers= ":"; //$NON-NLS-1$
 				jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 			}
 		} else if (SHOW_DOCUMENTED_PROPOSALS.equals(key)) {

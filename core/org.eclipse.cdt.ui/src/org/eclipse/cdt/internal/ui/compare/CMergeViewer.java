@@ -24,7 +24,7 @@ import org.eclipse.jface.text.source.SourceViewer;
 
 public class CMergeViewer extends TextMergeViewer {
 	
-	private static final String TITLE= "CMergeViewer.title";
+	private static final String TITLE= "CMergeViewer.title"; //$NON-NLS-1$
 		
 		
 	public CMergeViewer(Composite parent, int styles, CompareConfiguration mp) {

@@ -36,8 +36,8 @@ public class BuildGroup extends CViewActionGroup {
 	private BuildAction rebuildAction;
 
 	// Menu tags for the build
-	final String BUILD_GROUP_MARKER = "buildGroup";
-	final String BUILD_GROUP_MARKER_END = "end-buildGroup";
+	final String BUILD_GROUP_MARKER = "buildGroup"; //$NON-NLS-1$
+	final String BUILD_GROUP_MARKER_END = "end-buildGroup"; //$NON-NLS-1$
 
 	public BuildGroup(CView cview) {
 		super(cview);

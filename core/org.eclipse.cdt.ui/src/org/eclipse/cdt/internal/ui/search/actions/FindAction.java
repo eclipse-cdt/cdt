@@ -259,7 +259,7 @@ public abstract class FindAction extends Action {
 	}
 	
 	private void operationNotAvailableDialog(){
-		MessageDialog.openInformation(fEditor.getSite().getShell(),CSearchMessages.getString("CSearchOperation.operationUnavailable.title"), CSearchMessages.getString("CSearchOperation.operationUnavailable.message"));
+		MessageDialog.openInformation(fEditor.getSite().getShell(),CSearchMessages.getString("CSearchOperation.operationUnavailable.title"), CSearchMessages.getString("CSearchOperation.operationUnavailable.message")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	abstract protected String getScopeDescription(); 

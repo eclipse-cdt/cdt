@@ -80,7 +80,7 @@ public class CompletionEngine implements RelevanceConstants {
 	IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 	private Map macroMap = new HashMap();
 	
-	private static final String exceptionKeyword = "...";
+	private static final String exceptionKeyword = "..."; //$NON-NLS-1$
 	// scope relevance element counters
 	private int numFields = 0;
 	private int numVariables = 0;
@@ -329,7 +329,7 @@ public class CompletionEngine implements RelevanceConstants {
 			addKeywordToCompletions(keyword);
 			numOfKeywords++;
 		}
-		log("No of Keywords       = " + numOfKeywords);
+		log("No of Keywords       = " + numOfKeywords); //$NON-NLS-1$
 	}
 	
 	private void addMacroToCompletions (String macroName){
@@ -344,7 +344,7 @@ public class CompletionEngine implements RelevanceConstants {
 			addMacroToCompletions(macro);
 			numOfMacros++;
 		}
-		log("No of Macros         = " + numOfMacros);
+		log("No of Macros         = " + numOfMacros); //$NON-NLS-1$
 	}
 	
 	
@@ -363,13 +363,13 @@ public class CompletionEngine implements RelevanceConstants {
 	}
 	private void addToCompletions (ILookupResult result){
 		if(result == null){
-			log("Lookup Results       = null ................. !!! No Lookup Results found !!! ");
+			log("Lookup Results       = null ................. !!! No Lookup Results found !!! "); //$NON-NLS-1$
 			return;
 		}
 		Iterator nodes = result.getNodes();
 		int numberOfElements = result.getResultsSize();
 		
-		log("No of Lookup Results = " + numberOfElements);
+		log("No of Lookup Results = " + numberOfElements); //$NON-NLS-1$
 		
 		resetElementNumbers();
 		while (nodes.hasNext()){
@@ -403,7 +403,7 @@ public class CompletionEngine implements RelevanceConstants {
 		while( i.hasNext() )
 		{
 			String key = (String) i.next();
-			String value = "";
+			String value = ""; //$NON-NLS-1$
 			if(key.length() > prefix.length()) {
 				value = key.substring(0, prefix.length());
 			}else {
@@ -507,8 +507,8 @@ public class CompletionEngine implements RelevanceConstants {
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 			kinds[0] = IASTNode.LookupKind.ALL; 
 			String prefix = completionNode.getCompletionPrefix();
-			if(prefix.equals("("))
-				prefix = "";
+			if(prefix.equals("(")) //$NON-NLS-1$
+				prefix = ""; //$NON-NLS-1$
 			result = lookup(searchNode, prefix, kinds, completionNode.getCompletionContext());
 			addToCompletions(result);
 		
@@ -605,21 +605,21 @@ public class CompletionEngine implements RelevanceConstants {
 		// 1- Parse the translation unit
 		IASTCompletionNode completionNode = parse(sourceUnit, completionOffset);
 		
-		log("");
+		log(""); //$NON-NLS-1$
 		
 		if (completionNode == null){
-			log("Null Completion Node Error");
+			log("Null Completion Node Error"); //$NON-NLS-1$
 			return null;
 		}
 		
-		log    ("Offset  = " + completionOffset);
-		logNode("Scope   = " , completionNode.getCompletionScope());
-		logNode("Context = " , completionNode.getCompletionContext());
-		logKind("Kind    = ", completionNode.getCompletionKind());		
-		log	   ("Prefix  = " + completionNode.getCompletionPrefix());
+		log    ("Offset  = " + completionOffset); //$NON-NLS-1$
+		logNode("Scope   = " , completionNode.getCompletionScope()); //$NON-NLS-1$
+		logNode("Context = " , completionNode.getCompletionContext()); //$NON-NLS-1$
+		logKind("Kind    = ", completionNode.getCompletionKind());		 //$NON-NLS-1$
+		log	   ("Prefix  = " + completionNode.getCompletionPrefix()); //$NON-NLS-1$
 
 		if (completionNode.getCompletionScope() == null){
-			log("Null Completion Scope Error");
+			log("Null Completion Scope Error"); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -693,7 +693,7 @@ public class CompletionEngine implements RelevanceConstants {
 			addKeywordsToCompletions( completionNode.getKeywords());
 		}
 		
-		log("Time spent in Completion Engine = "+ ( System.currentTimeMillis() - startTime ) + " ms");		
+		log("Time spent in Completion Engine = "+ ( System.currentTimeMillis() - startTime ) + " ms");		 //$NON-NLS-1$ //$NON-NLS-2$
 		return completionNode;
 			
 	}
@@ -701,39 +701,39 @@ public class CompletionEngine implements RelevanceConstants {
 		if (! CCorePlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST) )
 			return;
 		
-		String kindStr = "";
+		String kindStr = ""; //$NON-NLS-1$
 		if(kind == IASTCompletionNode.CompletionKind.MEMBER_REFERENCE)
-			kindStr = "MEMBER_REFERENCE";
+			kindStr = "MEMBER_REFERENCE"; //$NON-NLS-1$
 //		else if(kind == IASTCompletionNode.CompletionKind.SCOPED_REFERENCE)
 //			kindStr = "SCOPED_REFERENCE";
 		else if(kind == IASTCompletionNode.CompletionKind.FIELD_TYPE)
-			kindStr = "FIELD_TYPE Class Scope";
+			kindStr = "FIELD_TYPE Class Scope"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)
-			kindStr = "VARIABLE_TYPE Global Scope";
+			kindStr = "VARIABLE_TYPE Global Scope"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.ARGUMENT_TYPE)
-			kindStr = "ARGUMENT_TYPE";
+			kindStr = "ARGUMENT_TYPE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
-			kindStr = "SINGLE_NAME_REFERENCE";
+			kindStr = "SINGLE_NAME_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.TYPE_REFERENCE)
-			kindStr = "TYPE_REFERENCE";
+			kindStr = "TYPE_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.CLASS_REFERENCE)
-			kindStr = "CLASS_REFERENCE";
+			kindStr = "CLASS_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.NAMESPACE_REFERENCE)
-			kindStr = "NAMESPACE_REFERENCE";
+			kindStr = "NAMESPACE_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.EXCEPTION_REFERENCE)
-			kindStr = "EXCEPTION_REFERENCE";
+			kindStr = "EXCEPTION_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.MACRO_REFERENCE)
-			kindStr = "MACRO_REFERENCE";
+			kindStr = "MACRO_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.CONSTRUCTOR_REFERENCE)
-			kindStr = "CONSTRUCTOR_REFERENCE";
+			kindStr = "CONSTRUCTOR_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.NEW_TYPE_REFERENCE)
-			kindStr = "NEW_TYPE_REFERENCE";
+			kindStr = "NEW_TYPE_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.PREPROCESSOR_DIRECTIVE)
-			kindStr = "PREPROCESSOR_DIRECTIVE";
+			kindStr = "PREPROCESSOR_DIRECTIVE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.USER_SPECIFIED_NAME)
-			kindStr = "USER_SPECIFIED_NAME";
+			kindStr = "USER_SPECIFIED_NAME"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND)
-			kindStr = "NO_SUCH_KIND";
+			kindStr = "NO_SUCH_KIND"; //$NON-NLS-1$
 
 		log (message + kindStr);
 	}
@@ -742,34 +742,34 @@ public class CompletionEngine implements RelevanceConstants {
 			return;
 		
 		if(node == null){
-			log(message + "null");
+			log(message + "null"); //$NON-NLS-1$
 			return;
 		}
 		if(node instanceof IASTMethod){
-			String name = "Method: ";
+			String name = "Method: "; //$NON-NLS-1$
 			name += ((IASTMethod)node).getName();
 			log(message + name);
 			return;
 		}
 		if(node instanceof IASTFunction){
-			String name = "Function: ";
+			String name = "Function: "; //$NON-NLS-1$
 			name += ((IASTFunction)node).getName();
 			log(message + name);
 			return;
 		}
 		if(node instanceof IASTClassSpecifier){
-			String name = "Class: ";
+			String name = "Class: "; //$NON-NLS-1$
 			name += ((IASTClassSpecifier)node).getName();
 			log(message + name);
 			return;
 		}
 		if(node instanceof IASTCompilationUnit){
-			String name = "Global";
+			String name = "Global"; //$NON-NLS-1$
 			log(message + name);
 			return;
 		}
 		if(node instanceof IASTCodeScope){
-			String name = "Code Scope";
+			String name = "Code Scope"; //$NON-NLS-1$
 			log(message + name);
 			return;
 		}
@@ -782,43 +782,43 @@ public class CompletionEngine implements RelevanceConstants {
 		if (! CCorePlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST))
 			return;
 		
-		StringBuffer kindName = new StringBuffer("Looking For ");
+		StringBuffer kindName = new StringBuffer("Looking For "); //$NON-NLS-1$
 		for(int i = 0; i<kinds.length; i++){
 			LookupKind kind = kinds[i];
 			if(kind == IASTNode.LookupKind.ALL)
-				kindName.append("ALL");
+				kindName.append("ALL"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.STRUCTURES)				
-				kindName.append("STRUCTURES");
+				kindName.append("STRUCTURES"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.STRUCTS)				
-				kindName.append("STRUCTS");
+				kindName.append("STRUCTS"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.UNIONS)				
-				kindName.append("UNIONS");
+				kindName.append("UNIONS"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.CLASSES)				
-				kindName.append("CLASSES");
+				kindName.append("CLASSES"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.FUNCTIONS)				
-				kindName.append("FUNCTIONS");
+				kindName.append("FUNCTIONS"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.VARIABLES)				
-				kindName.append("VARIABLES");
+				kindName.append("VARIABLES"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.LOCAL_VARIABLES)				
-				kindName.append("LOCAL_VARIABLES");
+				kindName.append("LOCAL_VARIABLES"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.MEMBERS)				
-				kindName.append("MEMBERS");
+				kindName.append("MEMBERS"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.METHODS)				
-				kindName.append("METHODS");
+				kindName.append("METHODS"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.FIELDS)				
-				kindName.append("FIELDS");
+				kindName.append("FIELDS"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.CONSTRUCTORS)				
-				kindName.append("CONSTRUCTORS");
+				kindName.append("CONSTRUCTORS"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.NAMESPACES)				
-				kindName.append("NAMESPACES"); 
+				kindName.append("NAMESPACES");  //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.ENUMERATIONS)				
-				kindName.append("ENUMERATIONS"); 
+				kindName.append("ENUMERATIONS");  //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.ENUMERATORS)				
-				kindName.append("ENUMERATORS");
+				kindName.append("ENUMERATORS"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.THIS)				
-				kindName.append("THIS");
+				kindName.append("THIS"); //$NON-NLS-1$
 
-			kindName.append(", ");
+			kindName.append(", "); //$NON-NLS-1$
 		}
 		log (kindName.toString());
 	}

@@ -70,7 +70,7 @@ public class CParseTreeBuilder extends SourceElementRequestorAdapter {
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterCompilationUnit(org.eclipse.cdt.core.parser.ast.IASTCompilationUnit)
 	 */
 	public void enterCompilationUnit(IASTCompilationUnit compilationUnit) {
-		push(ICElement.C_UNIT, "Translation Unit", 0);
+		push(ICElement.C_UNIT, "Translation Unit", 0); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -112,21 +112,21 @@ public class CParseTreeBuilder extends SourceElementRequestorAdapter {
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterTemplateDeclaration(org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
 	 */
 	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) {
-		push(ICElement.C_TEMPLATE_VARIABLE, "export", declaration.getStartingOffset());
+		push(ICElement.C_TEMPLATE_VARIABLE, "export", declaration.getStartingOffset()); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterTemplateInstantiation(org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation)
 	 */
 	public void enterTemplateInstantiation(IASTTemplateInstantiation instantiation) {
-		push(ICElement.C_TEMPLATE_VARIABLE, "template instanciation", instantiation.getStartingOffset());
+		push(ICElement.C_TEMPLATE_VARIABLE, "template instantiation", instantiation.getStartingOffset()); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterTemplateSpecialization(org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization)
 	 */
 	public void enterTemplateSpecialization(IASTTemplateSpecialization specialization) {
-		push(ICElement.C_TEMPLATE_VARIABLE, "template specialization", specialization.getStartingOffset());
+		push(ICElement.C_TEMPLATE_VARIABLE, "template specialization", specialization.getStartingOffset()); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

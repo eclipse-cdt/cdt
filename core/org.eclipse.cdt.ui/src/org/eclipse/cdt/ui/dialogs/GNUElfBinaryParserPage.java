@@ -16,6 +16,7 @@ import java.io.File;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
@@ -60,7 +61,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 		String addr2line = fAddr2LineCommandText.getText().trim();
 		String cppfilt = fCPPFiltCommandText.getText().trim();
 
-		monitor.beginTask("Saving Attributes", 1);
+		monitor.beginTask(CUIMessages.getString("BinaryParserPage.task.savingAttributes"), 1); //$NON-NLS-1$
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj);
@@ -84,13 +85,13 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 				cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 			}
 			if (cext.length > 0) {
-				String orig = cext[0].getExtensionData("addr2line");
+				String orig = cext[0].getExtensionData("addr2line"); //$NON-NLS-1$
 				if (orig == null || !orig.equals(addr2line)) {
-					cext[0].setExtensionData("addr2line", addr2line);
+					cext[0].setExtensionData("addr2line", addr2line); //$NON-NLS-1$
 				}
-				orig = cext[0].getExtensionData("c++filt");
+				orig = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$
 				if (orig == null || !orig.equals(cppfilt)) {
-					cext[0].setExtensionData("c++filt", cppfilt);
+					cext[0].setExtensionData("c++filt", cppfilt); //$NON-NLS-1$
 				}
 			} 
 		} else {
@@ -114,8 +115,8 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj);
 				ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 				if (cext.length > 0) {
-					addr2line = cext[0].getExtensionData("addr2line");
-					cppfilt = cext[0].getExtensionData("c++filt");
+					addr2line = cext[0].getExtensionData("addr2line"); //$NON-NLS-1$
+					cppfilt = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$
 				}
 			} catch (CoreException e) {
 			}
@@ -126,8 +127,8 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 				cppfilt = store.getString(PREF_CPPFILT_PATH);
 			}
 		}
-		fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line);
-		fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt);
+		fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line); //$NON-NLS-1$
+		fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -137,7 +138,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 		Composite comp = ControlFactory.createCompositeEx(parent, 2, GridData.FILL_HORIZONTAL);
 		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
 
-		Label label = ControlFactory.createLabel(comp, "addr2line Command:");
+		Label label = ControlFactory.createLabel(comp, CUIMessages.getString("BinaryParserPage.label.addr2lineCommand")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -149,7 +150,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 			}
 		});
 
-		Button button = ControlFactory.createPushButton(comp, "&Browse...");
+		Button button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleAddr2LineButtonSelected();
@@ -158,7 +159,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 
 			private void handleAddr2LineButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText("addr2line Command");
+				dialog.setText("addr2line Command"); //$NON-NLS-1$
 				String command = fAddr2LineCommandText.getText().trim();
 				int lastSeparatorIndex = command.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
@@ -172,7 +173,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 			}
 		});
 
-		label = ControlFactory.createLabel(comp, "c++filt Command:");
+		label = ControlFactory.createLabel(comp, CUIMessages.getString("BinaryParserPage.label.cppfiltCommand")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -185,7 +186,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 				//updateLaunchConfigurationDialog();
 			}
 		});
-		button = ControlFactory.createPushButton(comp, "&Browse...");
+		button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleCPPFiltButtonSelected();
@@ -194,7 +195,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 
 			private void handleCPPFiltButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText("c++filt Command");
+				dialog.setText("c++filt Command"); //$NON-NLS-1$
 				String command = fCPPFiltCommandText.getText().trim();
 				int lastSeparatorIndex = command.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {

@@ -30,9 +30,9 @@ public class Util implements IDebugLogConstants{
 			while (message.length() > 100) {	
 				String partial = message.substring(0, 100);
 				message = message.substring(100);
-				System.out.println(partial + "\\");
+				System.out.println(partial + "\\"); //$NON-NLS-1$
 			}
-			if (message.endsWith("\n")) {
+			if (message.endsWith("\n")) { //$NON-NLS-1$
 				System.err.print(message);
 			} else {
 				System.out.println(message);

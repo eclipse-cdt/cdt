@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
@@ -41,9 +42,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
-	private static final String PREFIX = "ErrorParserBlock"; // $NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$
-	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$
+	private static final String PREFIX = "ErrorParserBlock"; // $NON-NLS-1$ //$NON-NLS-1$
+	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$ //$NON-NLS-1$
+	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$ //$NON-NLS-1$
 
 	private static String[] EMPTY = new String[0];
 	private Preferences fPrefs;
@@ -84,7 +85,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 			 */
 			public String getText(Object element) {
 				String name = (String)mapParsers.get(element.toString());
-				return name != null ? name : "";
+				return name != null ? name : ""; //$NON-NLS-1$
 			}
 		};
 	}
@@ -97,7 +98,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		String parserIDs = prefs.getString(ErrorParserManager.PREF_ERROR_PARSER);
 		String[] empty = new String[0];
 		if (parserIDs != null && parserIDs.length() > 0) {
-			StringTokenizer tok = new StringTokenizer(parserIDs, ";");
+			StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
 			List list = new ArrayList(tok.countTokens());
 			while (tok.hasMoreElements()) {
 				list.add(tok.nextToken());
@@ -181,20 +182,20 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 		String[] buttonLabels = new String[] {
 			/* 0 */
-			"Up", //$NON-NLS-1$
+			CUIMessages.getString("AbstractErrorParserBlock.label.up"),  //$NON-NLS-1$
 			/* 1 */
-			"Down", //$NON-NLS-1$
+			CUIMessages.getString("AbstractErrorParserBlock.label.down"),  //$NON-NLS-1$
 			/* 2 */
 			null,
 			/* 3 */
-			"Select All", //$NON-NLS-1$
+			CUIMessages.getString("AbstractErrorParserBlock.label.selectAll"),  //$NON-NLS-1$
 			/* 4 */
-			"Unselect All" //$NON-NLS-1$
+			CUIMessages.getString("AbstractErrorParserBlock.label.unselectAll")  //$NON-NLS-1$
 		};
 
 		fErrorParserList = new CheckedListDialogField(null, buttonLabels, getLabelProvider());
 		fErrorParserList.setDialogFieldListener(getFieldListenerAdapter());
-		fErrorParserList.setLabelText("Error Parsers"); //$NON-NLS-1$
+		fErrorParserList.setLabelText(CUIMessages.getString("AbstractErrorParserBlock.label.errorParsers"));  //$NON-NLS-1$
 		fErrorParserList.setUpButtonIndex(0);
 		fErrorParserList.setDownButtonIndex(1);
 		fErrorParserList.setCheckAllButtonIndex(3);
@@ -212,7 +213,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask("Setting Error Parsers...", 1);
+			monitor.beginTask(CUIMessages.getString("AbstractErrorParserBlock.task.setErrorParser"), 1); //$NON-NLS-1$
 			List elements = fErrorParserList.getElements();
 			int count = elements.size();
 			List list = new ArrayList(count);

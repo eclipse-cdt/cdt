@@ -23,9 +23,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class CPluginPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 
-	private static final String LINK_TO_EDITOR_LABEL= "CBasePreferencePage.linkToEditor.label";
-	private static final String SHOW_CU_CHILDREN_LABEL= "CBasePreferencePage.CUChildren.label";
-	private static final String USE_STRUCTURAL_PARSE_MODE_LABEL= "CBasePreferencePage.OutlineView.structuralParseMode.label";
+	private static final String LINK_TO_EDITOR_LABEL= "CBasePreferencePage.linkToEditor.label"; //$NON-NLS-1$
+	private static final String SHOW_CU_CHILDREN_LABEL= "CBasePreferencePage.CUChildren.label"; //$NON-NLS-1$
+	private static final String USE_STRUCTURAL_PARSE_MODE_LABEL= "CBasePreferencePage.OutlineView.structuralParseMode.label"; //$NON-NLS-1$
 	
 	public CPluginPreferencePage() {
 		super(GRID);

@@ -97,7 +97,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 		// otherwise we need to find the first one not inside of quotes
 		int indexOfStringStart = pos;
 		
-		final String QUOTE = "\"";
+		final String QUOTE = "\""; //$NON-NLS-1$
 		indexOfStringStart =  text.indexOf(QUOTE, indexOfStringStart);
 		int newPosition = -1;
 		currentPosition = pos; // reinitialize currentPosition
@@ -168,9 +168,9 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 					if(line >= 0 && line == -1) {
 						try {
 							int position = fDocument.getLineOffset(line);
-							System.out.println("offset " + position);
+							System.out.println("offset " + position); //$NON-NLS-1$
 							String text = fDocument.get(position, fDocument.getLineLength(line));
-							System.out.println("text:" + text);
+							System.out.println("text:" + text); //$NON-NLS-1$
 						} catch (BadLocationException e) {}
 					}
 				}
@@ -194,8 +194,8 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	 */
 	public String getMessage() {
 		if (fIsProblemMarker)
-			return getMarker().getAttribute(IMarker.MESSAGE, "");
-		return "";
+			return getMarker().getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -231,7 +231,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	 * @see IProblemAnnotation#getArguments()
 	 */
 	public String[] getArguments() {
-		String [] s = {"problem", "here"};
+		String [] s = {"problem", "here"}; //$NON-NLS-1$ //$NON-NLS-2$
 		//if (fIsProblemMarker)
 		//	return Util.getProblemArgumentsFromMarker(getMarker().getAttribute(CCorePlugin.C_PROBLEMMARKER));
 		return s;

@@ -19,18 +19,18 @@ public class StubUtility {
 	 * @see org.eclipse.jdt.ui.CodeGeneration#getTypeComment(ICompilationUnit, String, String)
 	 */	
 	public static String getHeaderFileContent(ITranslationUnit cu, String typeComment, String typeContent, String lineDelimiter) throws CoreException {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	/**
 	 * @see org.eclipse.jdt.ui.CodeGeneration#getTypeComment(ICompilationUnit, String, String)
 	 */	
 	public static String getBodyFileContent(ITranslationUnit cu, String typeComment, String typeContent, String lineDelimiter) throws CoreException {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	/*
 	 * @see org.eclipse.jdt.ui.CodeGeneration#getTypeComment(ICompilationUnit, String, String)
 	 */		
 	public static String getClassComment(ITranslationUnit cu, String typeQualifiedName, String lineDelim) throws CoreException {
-		return "";
+		return ""; //$NON-NLS-1$
 	}	
 }

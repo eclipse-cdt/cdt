@@ -106,7 +106,7 @@ public class CElementLabelProvider extends LabelProvider {
 					IVariableDeclaration vDecl = (IVariableDeclaration) celem;
 					name.append(vDecl.getElementName());
 					if((vDecl.getTypeName() != null) &&(vDecl.getTypeName().length() > 0)){
-						name.append(" : ");
+						name.append(" : "); //$NON-NLS-1$
 						name.append(vDecl.getTypeName());
 					}
 				break;
@@ -117,7 +117,7 @@ public class CElementLabelProvider extends LabelProvider {
 					IFunctionDeclaration fDecl = (IFunctionDeclaration) celem;
 					name.append(fDecl.getSignature());
 					if((fDecl.getReturnType() != null) &&(fDecl.getReturnType().length() > 0)){
-						name.append(" : ");
+						name.append(" : "); //$NON-NLS-1$
 						name.append(fDecl.getReturnType());
 					}
 				break;
@@ -135,7 +135,7 @@ public class CElementLabelProvider extends LabelProvider {
 					ITypeDef tDecl = (ITypeDef) celem;
 					name.append(tDecl.getElementName());
 					if((tDecl.getTypeName() != null) &&(tDecl.getTypeName().length() > 0)){
-						name.append(" : ");
+						name.append(" : "); //$NON-NLS-1$
 						name.append(tDecl.getTypeName());				
 					}
 				break;
@@ -164,7 +164,7 @@ public class CElementLabelProvider extends LabelProvider {
 
 			if (celem instanceof IBinary) {
 				IBinary bin = (IBinary)celem;
-				name.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]");
+				name.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			return name.toString();
 		}

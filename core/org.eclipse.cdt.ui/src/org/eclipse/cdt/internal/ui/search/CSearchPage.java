@@ -534,7 +534,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		//outliune view will confuse methods with functions, so if the 
 		//name contains a "::", treat it as a method
 		String pattern = element.getElementName();
-		boolean forceMethod = ( pattern.indexOf("::") != -1 );
+		boolean forceMethod = ( pattern.indexOf("::") != -1 ); //$NON-NLS-1$
 		
 		switch ( element.getElementType() ){
 			case ICElement.C_TEMPLATE_FUNCTION:	   /*fall through to function */
@@ -580,7 +580,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			i++;
 			if (!pattern.equals(match.pattern))
 				match= null;
-		};
+		}
 		if (match == null) {
 			match= new SearchPatternData(
 							getSearchFor(),
@@ -599,7 +599,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			match.cElement= fCElement;
 			match.scope= getContainer().getSelectedScope();
 			match.workingSets= getContainer().getSelectedWorkingSets();
-		};
+		}
 		return match;
 	}
 	

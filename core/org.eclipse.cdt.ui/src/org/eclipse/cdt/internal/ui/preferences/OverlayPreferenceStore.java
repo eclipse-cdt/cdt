@@ -176,7 +176,7 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 		} else if (STRING == d) {
 			
 			if (forceInitialization)
-				target.setValue(key.fKey, "1");
+				target.setValue(key.fKey, "1"); //$NON-NLS-1$
 			target.setValue(key.fKey, orgin.getString(key.fKey));
 			target.setDefault(key.fKey, orgin.getDefaultString(key.fKey));
 			

@@ -50,12 +50,12 @@ public class DefaultCEditorTextHover implements ITextHover
 
 			IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(expression);
 			if(fs != null) {
-				buffer.append("<b>Name:</b> ");
+				buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.name")); //$NON-NLS-1$
 				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getName()));
-				buffer.append("<br><b>Protoype:</b> ");
+				buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.prototype")); //$NON-NLS-1$
 				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getPrototype().getPrototypeString(false)));
 				if(fs.getDescription() != null) {
-					buffer.append("<br><b>Description:</b><br>");
+					buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.description")); //$NON-NLS-1$
 					//Don't convert this description since it could already be formatted
 					buffer.append(fs.getDescription());
 				}

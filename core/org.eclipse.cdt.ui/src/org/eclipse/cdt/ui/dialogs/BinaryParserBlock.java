@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -39,9 +40,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BinaryParserBlock extends AbstractBinaryParserPage {
 
-	private static final String PREFIX = "BinaryParserBlock"; // $NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$
-	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$
+	private static final String PREFIX = "BinaryParserBlock"; // $NON-NLS-1$ //$NON-NLS-1$
+	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$ //$NON-NLS-1$
+	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$ //$NON-NLS-1$
 
 	private static String[][] radios;
 	protected Combo comboBox;
@@ -65,7 +66,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 		ControlFactory.createEmptySpace(control, 2);
 
-		Label label = ControlFactory.createLabel(control, "Binary Parser:");
+		Label label = ControlFactory.createLabel(control, CUIMessages.getString("BinaryParserBlock.binaryParser")); //$NON-NLS-1$
 		label.setLayoutData(new GridData());
 		comboBox = new Combo(control, SWT.DROP_DOWN | SWT.READ_ONLY);
 		GridData gd = new GridData(GridData.GRAB_HORIZONTAL);
@@ -88,7 +89,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 		// Add the Parser UI contribution.
 		Group parserGroup = new Group(control, SWT.SHADOW_ETCHED_IN);
-		parserGroup.setText("Binary Parser Options");
+		parserGroup.setText(CUIMessages.getString("BinaryParserBlock.binaryParserOptions")); //$NON-NLS-1$
 		GridLayout tabHolderLayout = new GridLayout();
 		tabHolderLayout.marginHeight = 0;
 		tabHolderLayout.marginWidth = 0;
@@ -108,7 +109,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask("Setting Binary Parser...", 2);
+		monitor.beginTask(CUIMessages.getString("BinaryParserBlock.settingBinaryParser"), 2); //$NON-NLS-1$
 		String selected = comboBox.getText();
 		if (selected != null) {
 			if (initial == null || !selected.equals(initial)) {

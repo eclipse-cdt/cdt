@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.CoreException;
@@ -132,7 +133,7 @@ public abstract class TabFolderOptionBlock {
 			try {
 				tab.performApply(new NullProgressMonitor());
 			} catch (CoreException e) {
-				CUIPlugin.errorDialog(composite.getShell(), "Error", "Error setting options", e);
+				CUIPlugin.errorDialog(composite.getShell(), CUIMessages.getString("TabFolderOptionBlock.error"), CUIMessages.getString("TabFolderOptionBlock.error.settingOptions"), e); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;
 			}
 		}

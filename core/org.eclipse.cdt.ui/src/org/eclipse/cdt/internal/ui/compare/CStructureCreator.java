@@ -36,7 +36,7 @@ import org.eclipse.jface.text.IDocument;
  */
 public class CStructureCreator implements IStructureCreator {
 
-	private static final String NAME = "CStructureCreator.name";
+	private static final String NAME = "CStructureCreator.name"; //$NON-NLS-1$
 
 	public CStructureCreator() {
 	}
@@ -66,7 +66,7 @@ public class CStructureCreator implements IStructureCreator {
 		}
 		Document doc = new Document(s);
 
-		CNode root = new CNode(null, ICElement.C_UNIT, "root", doc, 0, 0);
+		CNode root = new CNode(null, ICElement.C_UNIT, "root", doc, 0, 0); //$NON-NLS-1$
 
 		ISourceElementRequestor builder = new CParseTreeBuilder(root, doc);
 		try {
@@ -74,7 +74,7 @@ public class CStructureCreator implements IStructureCreator {
 			//are bugs while parsing C files, we might want to create a separate Structure
 			//compare for c files, but we'll never be completely right about .h files
 			IScanner scanner =
-				ParserFactory.createScanner(new StringReader(s), "code", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, builder, new NullLogService());
+				ParserFactory.createScanner(new StringReader(s), "code", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, builder, new NullLogService()); //$NON-NLS-1$
 			IParser parser = ParserFactory.createParser(scanner, builder, ParserMode.QUICK_PARSE, ParserLanguage.CPP, ParserUtil.getParserLogService() );
 			parser.parse();
 		} catch (Exception e) {

@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
 
 public class CEditorMessages 
 {
-	private static final String RESOURCE_BUNDLE = "org.eclipse.cdt.internal.ui.editor.CEditorMessages";
+	private static final String RESOURCE_BUNDLE = "org.eclipse.cdt.internal.ui.editor.CEditorMessages"; //$NON-NLS-1$
 
 
 	private static ResourceBundle fgResourceBundle = ResourceBundle.getBundle( RESOURCE_BUNDLE );
@@ -35,7 +35,7 @@ public class CEditorMessages
 		} 
 		catch( MissingResourceException e ) 
 		{
-			return "!" + key + "!";
+			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

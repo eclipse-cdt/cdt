@@ -99,7 +99,7 @@ public class PreprocessorRule extends WordRule implements IRule {
 
 			scanner.unread();
 
-			IToken token = (IToken) fWords.get("#" + fBuffer.toString());
+			IToken token = (IToken) fWords.get("#" + fBuffer.toString()); //$NON-NLS-1$
 			if (token != null)
 				return token;
 

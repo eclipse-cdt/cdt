@@ -106,7 +106,7 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 		 		 try {
 		 		 		 ITextSelection selection= (ITextSelection) fEditor.getSelectionProvider().getSelection();
 		 		 		 String sel = selection.getText();
-		 		 		 if (sel.equals(""))
+		 		 		 if (sel.equals("")) //$NON-NLS-1$
 		 		 		 {
 		 		 		 		 int selStart =  selection.getOffset();
 		 		 		 

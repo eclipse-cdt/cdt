@@ -23,32 +23,44 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public final class CppCodeScanner extends AbstractCScanner {
 
 	private static String[] fgKeywords= { 
-			"and", "and_eq", "asm", "auto", 
-			"bitand", "bitor", "break",
-			"case", "catch", "class", "compl", "const", "const_cast", "continue",
-			"default", "delete", "do", "dynamic_cast",
-			"else", "enum", "explicit", "export", "extern",
-			"false", "final", "finally", "for",	"friend",
-			"goto", 
-			"if", "inline",
-			"mutable",
-			"namespace", "new", "not", "not_eq",
-			"operator", "or", "or_eq", 
-			"private", "protected", "public", 
-			"redeclared", "register", "reinterpret_cast", "return", "restrict",
-			"sizeof", "static", "static_cast", "struct", "switch", 
-			"template", "this", "throw", "true", "try", "typedef", "typeid", "typename",
-			"union", "using",
-			"virtual", "volatile", 
-			"while",
-			"xor", "xor_eq"
+			"and", "and_eq", "asm", "auto",  					//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"bitand", "bitor", "break", 						//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"case", "catch", "class", "compl", "const", "const_cast", "continue", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			"default", "delete", "do", "dynamic_cast", 			//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"else", "enum", "explicit", "export", "extern", 	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"false", "final", "finally", "for",	"friend", 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"goto",  											//$NON-NLS-1$
+			"if", "inline", 									//$NON-NLS-1$ //$NON-NLS-2$
+			"mutable", 											//$NON-NLS-1$
+			"namespace", "new", "not", "not_eq", 				//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"operator", "or", "or_eq",  						//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"private", "protected", "public",  					//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"redeclared", "register", "reinterpret_cast", "return", "restrict", 		 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"sizeof", "static", "static_cast", "struct", "switch", 						 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"template", "this", "throw", "true", "try", "typedef", "typeid", "typename", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+			"union", "using", 									//$NON-NLS-1$ //$NON-NLS-2$
+			"virtual", "volatile",  							//$NON-NLS-1$ //$NON-NLS-2$
+			"while", 											//$NON-NLS-1$
+			"xor", "xor_eq" 									//$NON-NLS-1$ //$NON-NLS-2$
 
 	};
 
 
-	private static String[] fgTypes= { "bool", "char", "double", "float", "int", "long", "short", "signed", "unsigned", "void", "wchar_t", "_Bool", "_Complex", "_Imaginary"};
-	private static String[] fgConstants= { "false", "NULL", "true", "__DATE__", "__LINE__", "__TIME__", "__FILE__", "__STDC__"};
-	private static String[] fgPreprocessor= { "#define", "#undef", "#include", "#error", "#warning", "#pragma", "#ifdef", "#ifndef", "#line", "#undef", "#if", "#else", "#elif", "#endif"};
+	private static String[] fgTypes= { "bool", "char", "double",		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
+			                           "float", "int", "long", 			//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+									   "short", "signed", "unsigned", 	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+									   "void", "wchar_t", "_Bool", 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+									   "_Complex", "_Imaginary"}; 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	
+	private static String[] fgConstants= { "false", "NULL", "true", 			//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+			                               "__DATE__", "__LINE__", "__TIME__", 	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+										   "__FILE__", "__STDC__"};				//$NON-NLS-1$ //$NON-NLS-2$ 
+	
+	private static String[] fgPreprocessor= { "#define", "#undef", "#include",	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
+			                                  "#error", "#warning", "#pragma", 	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+											  "#ifdef", "#ifndef", "#line", 	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+											  "#undef", "#if", "#else", 		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+											  "#elif", "#endif"}; 				//$NON-NLS-1$ //$NON-NLS-2$ 
 
 	
 	private static String[] fgTokenProperties= {
@@ -84,7 +96,7 @@ public final class CppCodeScanner extends AbstractCScanner {
 		// Add rule for strings
 		Token token= getToken(ICColorConstants.C_STRING);
 		// Add rule for strings and character constants.
-		rules.add(new SingleLineRule("'", "'", token, '\\'));
+		rules.add(new SingleLineRule("'", "'", token, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				
 		

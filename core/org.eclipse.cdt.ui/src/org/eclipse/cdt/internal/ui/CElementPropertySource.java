@@ -15,7 +15,7 @@ import org.eclipse.cdt.ui.*;
 
 public class CElementPropertySource implements IPropertySource {
 	
-	private final static String LABEL= "CElementProperties.name";
+	private final static String LABEL= "CElementProperties.name"; //$NON-NLS-1$
 	
 	private ICElement fCElement;
 	

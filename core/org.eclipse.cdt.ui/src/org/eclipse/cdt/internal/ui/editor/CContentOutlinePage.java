@@ -69,7 +69,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private ActionGroup fSelectionSearchGroup;
 	
 	public CContentOutlinePage(CEditor editor) {
-		this("#TranslationUnitOutlinerContext", editor);
+		this("#TranslationUnitOutlinerContext", editor); //$NON-NLS-1$
 	}
 	
 	public CContentOutlinePage(String contextMenuID, CEditor editor) {
@@ -150,7 +150,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		}
 		
 		if (FileSearchAction.canActionBeAdded(getSelection())) {
-			MenuManager fileSearch = new MenuManager("File Search");
+			MenuManager fileSearch = new MenuManager(CEditorMessages.getString("CContentOutlinePage.menu.fileSearch")); //$NON-NLS-1$
 			fileSearch.add(fFileSearchAction);
 			fileSearch.add(fFileSearchActionInWorkingSet);
 			menu.add(fileSearch);
@@ -213,7 +213,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 				// If it is an IStorage it means that there is no underlying IFile.
 				fInput = new CFileElementWorkingCopy((IStorageEditorInput)editorInput, provider);
 			} else {
-				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "no Editor Input", null));
+				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, CEditorMessages.getString("CContentOutlinePage.error.noInput"), null)); //$NON-NLS-1$
 			}
 			treeViewer.setInput(fInput);
 		} catch (CoreException e) {

@@ -62,8 +62,8 @@ class ShowLibrariesAction extends SelectionProviderAction {
 	private void updateToolTipText() {
 		CLibFilter filter = cview.getLibraryFilter();
 		if (filter.getShowLibraries())
-			setToolTipText("Hide Referenced Libs");
+			setToolTipText(CViewMessages.getString("ShowLibrariesAction.hideReferenced.tooltip")); //$NON-NLS-1$
 		else 
-			setToolTipText("Show Referenced Libs");
+			setToolTipText(CViewMessages.getString("ShowLibrariesAction.showReferenced.tooltip")); //$NON-NLS-1$
 	}
 }

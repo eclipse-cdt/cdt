@@ -23,10 +23,10 @@ public class ClearConsoleAction extends Action {
 
 
 	public ClearConsoleAction(BuildConsoleView view) {
-		super(CUIPlugin.getResourceString("ClearOutputAction.label"));
+		super(CUIPlugin.getResourceString("ClearOutputAction.label")); //$NON-NLS-1$
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_CLEAR_CONSOLE);
 		fConsoleView= view;
-		setToolTipText(CUIPlugin.getResourceString("ClearOutputAction.tooltip"));
+		setToolTipText(CUIPlugin.getResourceString("ClearOutputAction.tooltip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, ICHelpContextIds.CLEAR_CONSOLE_ACTION);
 	}
 	

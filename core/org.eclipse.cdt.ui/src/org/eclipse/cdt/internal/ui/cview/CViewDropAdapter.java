@@ -352,7 +352,7 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	 */
 	public String queryOverwrite(String pathString) {
 		final String returnCode[] = {CANCEL};
-		final String msg = pathString + " " + CUIPlugin.getResourceString("CViewDragNDrop.txt") ; //$NON-NLS-1$
+		final String msg = pathString + " " + CUIPlugin.getResourceString("CViewDragNDrop.txt") ; //$NON-NLS-1$ //$NON-NLS-2$
 		final String[] options = {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL};
 		getDisplay().syncExec(new Runnable() {
 			public void run() {

@@ -289,7 +289,7 @@ public class CElementLabels {
 		//qualification
 		if( getFlag( flags, M_FULLY_QUALIFIED ) ){
 			getTypeLabel( method.getParent(), T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
-			buf.append( "::" );
+			buf.append( "::" ); //$NON-NLS-1$
 		}
 		
 		buf.append( method.getElementName() );
@@ -333,7 +333,7 @@ public class CElementLabels {
 					}
 					buf.append( types[i] );
 				}
-				buf.append( " )" );
+				buf.append( " )" ); //$NON-NLS-1$
 			}
 		}
 		

@@ -77,7 +77,7 @@ public class TypeSearchMatch extends BasicSearchMatch
 		if (parentName != null && parentName.length() > 0) {
 			buf.append(OpenTypeMessages.getString("TypeInfoLabelProvider.colon")); //$NON-NLS-1$
 			buf.append(parentName);
-			buf.append("::");
+			buf.append("::"); //$NON-NLS-1$
 		}
 		String name = getName();
 		if (name != null && name.length() > 0)
@@ -122,7 +122,7 @@ public class TypeSearchMatch extends BasicSearchMatch
 				String parentName = getParentName();
 				while (parentElement != null && parentName != null && parentName.length() > 0)
 				{
-					int pos = parentName.indexOf("::");
+					int pos = parentName.indexOf("::"); //$NON-NLS-1$
 					if (pos >= 0) {
 						parentElement = findCElement(parentElement, parentName.substring(0, pos));
 						parentName = parentName.substring(pos + 2);

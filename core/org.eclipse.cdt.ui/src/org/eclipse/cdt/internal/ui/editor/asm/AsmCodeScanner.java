@@ -32,17 +32,17 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public final class AsmCodeScanner extends AbstractCScanner {
 	
 	private static String[] fgKeywords= { 
-			".set", ".section",  
-			".global",".file", 
-			".extern", ".macro", ".endm", 
-			".if", ".ifdef", ".ifndef", ".else", ".endif",
-			".include", ".globl", 
-			".text",".data", ".rodata", ".common", ".debug", ".ctor", ".dtor", 
-			".ascii", ".asciz", ".byte", ".long", ".size", ".align", ".type"
+			".set", ".section",   							//$NON-NLS-1$ //$NON-NLS-2$
+			".global",".file",  							//$NON-NLS-1$ //$NON-NLS-2$
+			".extern", ".macro", ".endm",  					//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			".if", ".ifdef", ".ifndef", ".else", ".endif", 	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			".include", ".globl",  							//$NON-NLS-1$ //$NON-NLS-2$
+			".text",".data", ".rodata", ".common", ".debug", ".ctor", ".dtor",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			".ascii", ".asciz", ".byte", ".long", ".size", ".align", ".type" 	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	};
 
 
-	private static String[] fgTypes= { "char", "double", "float", "int", "long", "short", "signed", "unsigned", "void"};
+	private static String[] fgTypes= { "char", "double", "float", "int", "long", "short", "signed", "unsigned", "void"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 	
 	private static String[] fgTokenProperties= {
 		ICColorConstants.C_KEYWORD,
@@ -78,11 +78,11 @@ public final class AsmCodeScanner extends AbstractCScanner {
 		Token token= getToken(ICColorConstants.C_SINGLE_LINE_COMMENT);
 		
 		// Add rule for single line comments.
-		rules.add(new EndOfLineRule("#", token));
+		rules.add(new EndOfLineRule("#", token)); //$NON-NLS-1$
 		
 		token= getToken(ICColorConstants.C_STRING);
 		// Add rule for strings and character constants.
-		rules.add(new SingleLineRule("'", "'", token, '\\'));
+		rules.add(new SingleLineRule("'", "'", token, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 		//rules.add(new SingleLineRule("\"", "\"", token, '\\'));
 				
 		Token other= getToken(ICColorConstants.C_DEFAULT);		
@@ -111,7 +111,7 @@ public final class AsmCodeScanner extends AbstractCScanner {
 							return fDefaultToken;
 						} else {
 							fBuffer.append((char) c);
-							IToken token= (IToken) fWords.get(":");
+							IToken token= (IToken) fWords.get(":"); //$NON-NLS-1$
 							if (token != null)
 								return token;
 						}
@@ -145,7 +145,7 @@ public final class AsmCodeScanner extends AbstractCScanner {
 		};
 		
 		token= getToken(ICColorConstants.C_TYPE);
-		labelRule.addWord(":", token);
+		labelRule.addWord(":", token); //$NON-NLS-1$
 		//wordRule.setColumnConstraint(0);
 		rules.add(labelRule);
 		
@@ -158,7 +158,7 @@ public final class AsmCodeScanner extends AbstractCScanner {
 		rules.add(wordRule);
 		
 		token= getToken(ICColorConstants.C_KEYWORD);
-		WordPatternRule regPattern = new WordPatternRule(new AsmWordDetector('%', (char)0), "%", null, token);
+		WordPatternRule regPattern = new WordPatternRule(new AsmWordDetector('%', (char)0), "%", null, token); //$NON-NLS-1$
 		rules.add(regPattern);
 
 		setDefaultReturnToken(getToken(ICColorConstants.C_DEFAULT));

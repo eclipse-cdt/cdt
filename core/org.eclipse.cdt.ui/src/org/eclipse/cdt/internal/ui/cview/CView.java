@@ -131,8 +131,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	static final String TAG_SORTER = "sorter"; //$NON-NLS-1$
 
 	//Menu tags
-	final String WORKING_GROUP_MARKER = "workingSetGroup";
-	final String WORKING_GROUP_MARKER_END = "end-workingSetGroup";
+	final String WORKING_GROUP_MARKER = "workingSetGroup"; //$NON-NLS-1$
+	final String WORKING_GROUP_MARKER_END = "end-workingSetGroup"; //$NON-NLS-1$
 
 	private IPartListener partListener = new IPartListener() {
 
@@ -730,19 +730,19 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 					if (celement instanceof IBinaryContainer) {
 						ICProject cproj = celement.getCProject();
 						if (cproj != null) {
-							return cproj.getPath() + " - binaries";
+							return cproj.getPath() + CViewMessages.getString("CView.binaries"); //$NON-NLS-1$
 						}
 					} else if (celement instanceof IArchiveContainer) {
 						ICProject cproj = celement.getCProject();
 						if (cproj != null) {
-							return cproj.getPath() + " - archives";
+							return cproj.getPath() + CViewMessages.getString("CView.archives"); //$NON-NLS-1$
 						}
 					} else if (celement instanceof IBinaryModule) {
 						IBinary bin = ((IBinaryModule) celement).getBinary();
-						return bin.getPath() + ":" + celement.getElementName();
+						return bin.getPath() + ":" + celement.getElementName(); //$NON-NLS-1$
 					}
 				} else if (celement.getElementType() > ICElement.C_UNIT) {
-					return celement.getPath().toString() + " - [" + celement.getElementName() + "]";
+					return celement.getPath().toString() + " - [" + celement.getElementName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return celement.getElementName();
 			} else {
@@ -750,7 +750,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			}
 		}
 		if (selection.size() > 1) {
-			return "StatusLine";
+			return "StatusLine"; //$NON-NLS-1$
 		}
 		return "";//$NON-NLS-1$
 	}

@@ -289,7 +289,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	
 	private SourceViewer createViewer(Composite parent) {
 		Label label= new Label(parent, SWT.NONE);
-		label.setText("Preview:");
+		label.setText(PreferencesMessages.getString("TemplatePreferencePage.Viewer.preview")); //$NON-NLS-1$
 		GridData data= new GridData();
 		data.horizontalSpan= 2;
 		label.setLayoutData(data);
@@ -396,8 +396,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 			if (!newTemplate.getName().equals(template.getName()) &&
 				MessageDialog.openQuestion(getShell(),
-				TemplateMessages.getString("TemplatePreferencePage.question.create.new.title"),
-				TemplateMessages.getString("TemplatePreferencePage.question.create.new.message")))
+				TemplateMessages.getString("TemplatePreferencePage.question.create.new.title"), //$NON-NLS-1$
+				TemplateMessages.getString("TemplatePreferencePage.question.create.new.message"))) //$NON-NLS-1$
 			{
 				template= newTemplate;
 				fTemplates.add(template);
@@ -474,8 +474,8 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 	private boolean confirmOverwrite(File file) {
 		return MessageDialog.openQuestion(getShell(),
-			TemplateMessages.getString("TemplatePreferencePage.export.exists.title"),
-			TemplateMessages.getFormattedString("TemplatePreferencePage.export.exists.message", file.getAbsolutePath()));
+			TemplateMessages.getString("TemplatePreferencePage.export.exists.title"), //$NON-NLS-1$
+			TemplateMessages.getFormattedString("TemplatePreferencePage.export.exists.message", file.getAbsolutePath())); //$NON-NLS-1$
 	}
 	
 	protected void remove() {

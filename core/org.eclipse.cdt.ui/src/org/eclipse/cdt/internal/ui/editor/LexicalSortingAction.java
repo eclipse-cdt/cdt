@@ -17,17 +17,17 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 public class LexicalSortingAction extends Action {
 	
-	private static final String ACTION_NAME= "LexicalSortingAction";
-	private static final String DIALOG_STORE_KEY= ACTION_NAME + ".sort";
+	private static final String ACTION_NAME= "LexicalSortingAction"; //$NON-NLS-1$
+	private static final String DIALOG_STORE_KEY= ACTION_NAME + ".sort"; //$NON-NLS-1$
 	
 	private LexicalCSorter fSorter;
 	private TreeViewer fTreeViewer;
 	
 	public LexicalSortingAction(TreeViewer treeViewer) {
-		super(CUIPlugin.getResourceString(ACTION_NAME + ".label"));
+		super(CUIPlugin.getResourceString(ACTION_NAME + ".label")); //$NON-NLS-1$
 		
-		setDescription(CUIPlugin.getResourceString(ACTION_NAME + ".description"));
-		setToolTipText(CUIPlugin.getResourceString(ACTION_NAME + ".tooltip"));
+		setDescription(CUIPlugin.getResourceString(ACTION_NAME + ".description")); //$NON-NLS-1$
+		setToolTipText(CUIPlugin.getResourceString(ACTION_NAME + ".tooltip")); //$NON-NLS-1$
 	
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ALPHA_SORTING);
 	
@@ -46,7 +46,7 @@ public class LexicalSortingAction extends Action {
 		setChecked(on);
 		fTreeViewer.setSorter(on ? fSorter : null);
 		
-		String key= ACTION_NAME + ".tooltip" + (on ? ".on" : ".off");
+		String key= ACTION_NAME + ".tooltip" + (on ? ".on" : ".off"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setToolTipText(CUIPlugin.getResourceString(key));
 		
 		if (store) {

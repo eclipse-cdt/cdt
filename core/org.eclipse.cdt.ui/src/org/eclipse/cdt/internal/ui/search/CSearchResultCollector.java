@@ -36,7 +36,7 @@ import org.eclipse.search.ui.SearchUI;
  */
 public class CSearchResultCollector extends BasicSearchResultCollector{
 	
-	public static final String IMATCH = "IMatchObject";
+	public static final String IMATCH = CSearchMessages.getString("CSearchResultCollector.4"); //$NON-NLS-1$
 	
 	/**
 	 * 

@@ -147,15 +147,15 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		}
 		if (filename == null) {
 			return true;
-		} else if (filename.endsWith(".c")) { 
+		} else if (filename.endsWith(".c")) {  //$NON-NLS-1$
 			//Straight C files are always C
 			return false;
 		} else if (
-				filename.endsWith(".cpp")
-				|| filename.endsWith(".cc")
-				|| filename.endsWith(".cxx")
-				|| filename.endsWith(".C")
-				|| filename.endsWith(".hxx")) {
+				filename.endsWith(".cpp") //$NON-NLS-1$
+				|| filename.endsWith(".cc") //$NON-NLS-1$
+				|| filename.endsWith(".cxx") //$NON-NLS-1$
+				|| filename.endsWith(".C") //$NON-NLS-1$
+				|| filename.endsWith(".hxx")) { //$NON-NLS-1$
 				return true;
 		} else { 
 			//Defer to the nature of the project
@@ -452,7 +452,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		}
 		
 		for (int i = 0; i < summary.length; i++) {
-			String fname = summary[i].getName() + "()";
+			String fname = summary[i].getName() + "()"; //$NON-NLS-1$
 			String fdesc = summary[i].getDescription();
 			IFunctionSummary.IFunctionPrototypeSummary fproto = summary[i].getPrototype();
 			String fargs = fproto.getArguments();
@@ -485,7 +485,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			case ICElement.C_METHOD:
 			case ICElement.C_METHOD_DECLARATION:
 			{
-				return (new FunctionPrototypeSummary ( match.getReturnType() + " " + match.getName() ));
+				return (new FunctionPrototypeSummary ( match.getReturnType() + " " + match.getName() )); //$NON-NLS-1$
 			}
 		default:
 			return null;						
@@ -506,7 +506,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		int offset = fCurrentOffset - prefix.length();
 		int length = prefix.length();
 		
-		String searchPrefix = prefix + "*";
+		String searchPrefix = prefix + "*"; //$NON-NLS-1$
 		
 		// figure out the search scope
 		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();

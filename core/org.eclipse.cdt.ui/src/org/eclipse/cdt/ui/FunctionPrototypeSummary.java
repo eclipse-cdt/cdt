@@ -25,11 +25,11 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 		//If there are brackets missing, then assume void parameters
 		if(leftbracket == -1 || rightbracket == -1) {
 			if(leftbracket != -1) {
-				proto = proto.substring(leftbracket) + ")";
+				proto = proto.substring(leftbracket) + ")"; //$NON-NLS-1$
 			} else if(rightbracket != -1) {
-				proto = proto.substring(rightbracket - 1) + "()";				
+				proto = proto.substring(rightbracket - 1) + "()";				 //$NON-NLS-1$
 			} else {
-				proto = proto + "()";
+				proto = proto + "()"; //$NON-NLS-1$
 			}
 		
 			leftbracket = proto.indexOf('(');
@@ -39,8 +39,8 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 		farguments = proto.substring(leftbracket + 1, rightbracket);
 			
 		// fix for bug #44359
-		if(farguments.equals("void"))
-			farguments = "";
+		if(farguments.equals("void")) //$NON-NLS-1$
+			farguments = ""; //$NON-NLS-1$
 		
 		int nameend = leftbracket - 1;
 		while(proto.charAt(nameend) == ' ') {
@@ -56,7 +56,7 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 			
 		if(namestart == 0) {
 			//@@@ Should this be int instead?
-			freturn = "void";
+			freturn = "void"; //$NON-NLS-1$
 		} else {
 			freturn = proto.substring(0, namestart).trim();
 		}
@@ -82,16 +82,16 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 		StringBuffer buffer = new StringBuffer();
 		if((!namefirst) && (appendReturnType)) {
 			buffer.append(getReturnType());
-			buffer.append(" ");
+			buffer.append(" "); //$NON-NLS-1$
 		}
 		buffer.append(getName());
-		buffer.append("(");
+		buffer.append("("); //$NON-NLS-1$
 		if(getArguments() != null) {
 			buffer.append(getArguments());
 		}
-		buffer.append(")");
+		buffer.append(")"); //$NON-NLS-1$
 		if((namefirst) && (appendReturnType) ) {
-			buffer.append(" ");
+			buffer.append(" "); //$NON-NLS-1$
 			buffer.append(getReturnType());
 		}
 		return buffer.toString();

@@ -8,15 +8,15 @@ package org.eclipse.cdt.ui;
 public interface ICDTConstants 
 {
 	// CDT Extension Points
-	public static final String EP_TEXT_HOVERS = "textHovers";
+	public static final String EP_TEXT_HOVERS = "textHovers"; //$NON-NLS-1$
 
 	// Persistance tags.
-	public static final String TAG_TEXT_HOVER = "textHover";
+	public static final String TAG_TEXT_HOVER = "textHover"; //$NON-NLS-1$
 
 	// Atributes
-	public static final String ATT_CLASS = "class";
-	public static final String ATT_ID = "id";
-	public static final String ATT_NAME = "name";
-	public static final String ATT_PERSPECTIVE = "perspective";
+	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
+	public static final String ATT_ID = "id"; //$NON-NLS-1$
+	public static final String ATT_NAME = "name"; //$NON-NLS-1$
+	public static final String ATT_PERSPECTIVE = "perspective"; //$NON-NLS-1$
 }
 

@@ -35,14 +35,14 @@ import org.eclipse.ui.PlatformUI;
 public class FileSearchAction extends Action {
 
 
-	private static final String PREFIX= "FileSearchAction.";
+	private static final String PREFIX= "FileSearchAction."; //$NON-NLS-1$
 	
 	private ISelectionProvider fSelectionProvider;
 
 	public FileSearchAction(ISelectionProvider provider) {
-		super(CUIPlugin.getResourceString(PREFIX + "label"));
-		setDescription(CUIPlugin.getResourceString(PREFIX + "description"));
-		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip"));
+		super(CUIPlugin.getResourceString(PREFIX + "label")); //$NON-NLS-1$
+		setDescription(CUIPlugin.getResourceString(PREFIX + "description")); //$NON-NLS-1$
+		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip")); //$NON-NLS-1$
 		
 		if(provider instanceof CContentOutlinePage) {
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_OPEN_INCLUDE);
@@ -85,7 +85,7 @@ public class FileSearchAction extends Action {
 			// FIXME: For C/C++ not all files rely on extension to be C++ for <cstring>
 			String[] cexts = CoreModel.getDefault().getTranslationUnitExtensions();
 			for (int i = 0; i < cexts.length; i++) {
-				scope.addExtension("*." + cexts[i]);
+				scope.addExtension("*." + cexts[i]); //$NON-NLS-1$
 			}
 //			scope.addExtension("*.c");
 //			scope.addExtension("*.h");
@@ -95,7 +95,7 @@ public class FileSearchAction extends Action {
 			TextSearchOperation op= new TextSearchOperation(
 				CUIPlugin.getWorkspace(),
 				search_name,
-				"",
+				"", //$NON-NLS-1$
 				scope,
 				col);
 

@@ -35,16 +35,16 @@ public class TypeSearchOperation implements IRunnableWithProgress {
 
 		// search for namespaces, classes, structs, unions, enums and typedefs
 		pattern = new OrPattern();
-		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, false));
+		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
 		pattern.addPattern(
-			SearchEngine.createSearchPattern("*", ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, false));
-		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.CLASS, ICSearchConstants.DECLARATIONS, false));
-		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.STRUCT, ICSearchConstants.DECLARATIONS, false));
+			SearchEngine.createSearchPattern("*", ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
+		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.CLASS, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
+		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.STRUCT, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
 		pattern.addPattern(
-			SearchEngine.createSearchPattern("*", ICSearchConstants.CLASS_STRUCT, ICSearchConstants.DECLARATIONS, false));
-		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.UNION, ICSearchConstants.DECLARATIONS, false));
-		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false));
-		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.TYPEDEF, ICSearchConstants.DECLARATIONS, false));
+			SearchEngine.createSearchPattern("*", ICSearchConstants.CLASS_STRUCT, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
+		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.UNION, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
+		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
+		pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.TYPEDEF, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
 	}
 
 	public void run(IProgressMonitor monitor) throws InterruptedException {

@@ -59,28 +59,28 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	private ISharedTextColors fSharedTextColors;
 
-	public static final String PLUGIN_ID = "org.eclipse.cdt.ui";
-	public static final String PLUGIN_CORE_ID = "org.eclipse.cdt.core";
-	public static final String EDITOR_ID = PLUGIN_ID + ".editor.CEditor";
-	public static final String CONSOLE_ID = PLUGIN_ID + ".BuildConsoleView";
-	public static final String CVIEW_ID = PLUGIN_ID + ".CView";
-	public static final String C_PROBLEMMARKER = PLUGIN_CORE_ID + ".problem";
+	public static final String PLUGIN_ID = "org.eclipse.cdt.ui"; //$NON-NLS-1$
+	public static final String PLUGIN_CORE_ID = "org.eclipse.cdt.core"; //$NON-NLS-1$
+	public static final String EDITOR_ID = PLUGIN_ID + ".editor.CEditor"; //$NON-NLS-1$
+	public static final String CONSOLE_ID = PLUGIN_ID + ".BuildConsoleView"; //$NON-NLS-1$
+	public static final String CVIEW_ID = PLUGIN_ID + ".CView"; //$NON-NLS-1$
+	public static final String C_PROBLEMMARKER = PLUGIN_CORE_ID + ".problem"; //$NON-NLS-1$
 
-	public static final String C_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCWizard";
-	public static final String CPP_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCCWizard";
+	public static final String C_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCWizard"; //$NON-NLS-1$
+	public static final String CPP_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCCWizard"; //$NON-NLS-1$
 
-	public static final String FILE_WIZARD_ID = "org.eclipse.ui.wizards.new.file";
-	public static final String FOLDER_WIZARD_ID = "org.eclipse.ui.wizards.new.folder";
-	public static final String CLASS_WIZARD_ID = "org.eclipse.cdt.ui.wizards.NewClassWizard";
-	public static final String SEARCH_ACTION_SET_ID = PLUGIN_ID + ".SearchActionSet";
-	public static final String FOLDER_ACTION_SET_ID = PLUGIN_ID + ".CFolderActionSet";
-	public static final String BUILDER_ID = PLUGIN_CORE_ID + ".cbuilder";
+	public static final String FILE_WIZARD_ID = "org.eclipse.ui.wizards.new.file"; //$NON-NLS-1$
+	public static final String FOLDER_WIZARD_ID = "org.eclipse.ui.wizards.new.folder"; //$NON-NLS-1$
+	public static final String CLASS_WIZARD_ID = "org.eclipse.cdt.ui.wizards.NewClassWizard"; //$NON-NLS-1$
+	public static final String SEARCH_ACTION_SET_ID = PLUGIN_ID + ".SearchActionSet"; //$NON-NLS-1$
+	public static final String FOLDER_ACTION_SET_ID = PLUGIN_ID + ".CFolderActionSet"; //$NON-NLS-1$
+	public static final String BUILDER_ID = PLUGIN_CORE_ID + ".cbuilder"; //$NON-NLS-1$
 
 	private static CUIPlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
 	
-	static String SEPARATOR = System.getProperty("file.separator");
+	static String SEPARATOR = System.getProperty("file.separator"); //$NON-NLS-1$
 
 	private static final String CONTENTASSIST = CUIPlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
 	
@@ -88,7 +88,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	static {
 		try {
-			fgResourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.internal.ui.CPluginResources");
+			fgResourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.internal.ui.CPluginResources"); //$NON-NLS-1$
 		}
 		catch (MissingResourceException x) {
 			fgResourceBundle = null;
@@ -111,10 +111,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 			return fgResourceBundle.getString(key);
 		}
 		catch (MissingResourceException e) {
-			return "!" + key + "!";
+			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		catch (NullPointerException e) {
-			return "#" + key + "#";
+			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -158,7 +158,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	public void log(Throwable e) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, "Error", e));
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
 	}
 
 	public void log(IStatus status) {

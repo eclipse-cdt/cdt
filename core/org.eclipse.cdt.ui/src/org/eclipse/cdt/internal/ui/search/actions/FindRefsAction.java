@@ -25,14 +25,14 @@ public class FindRefsAction extends FindAction {
 	 */
 	public FindRefsAction(CEditor editor) {
 		this(editor,
-		CSearchMessages.getString("CSearch.FindReferencesAction.label"),
-		CSearchMessages.getString("CSearch.FindReferencesAction.tooltip"));
+		CSearchMessages.getString("CSearch.FindReferencesAction.label"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearch.FindReferencesAction.tooltip")); //$NON-NLS-1$
 	}
 	
 	public FindRefsAction(IWorkbenchSite site){
 		this(site,
-		CSearchMessages.getString("CSearch.FindReferencesAction.label"),
-		CSearchMessages.getString("CSearch.FindReferencesAction.tooltip"));
+		CSearchMessages.getString("CSearch.FindReferencesAction.label"), //$NON-NLS-1$
+		CSearchMessages.getString("CSearch.FindReferencesAction.tooltip")); //$NON-NLS-1$
 	} 
 	/**
 	 * @param editor
@@ -61,7 +61,7 @@ public class FindRefsAction extends FindAction {
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScopeDescription()
 	 */
 	protected String getScopeDescription() {
-		return CSearchMessages.getString("WorkspaceScope");
+		return CSearchMessages.getString("WorkspaceScope"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScope()

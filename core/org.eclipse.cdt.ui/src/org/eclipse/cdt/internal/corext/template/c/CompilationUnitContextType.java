@@ -26,7 +26,7 @@ public abstract class CompilationUnitContextType extends ContextType {
 	
 	protected static class ReturnType extends TemplateVariable {
 	 	public ReturnType() {
-	 	 	super("return_type", TemplateMessages.getString("JavaContextType.variable.description.return.type"));
+	 	 	super("return_type", TemplateMessages.getString("JavaContextType.variable.description.return.type")); //$NON-NLS-1$ //$NON-NLS-2$
 	 	}
 	 	public String evaluate(TemplateContext context) {
 			/* IJavaElement element= ((CompilationUnitContext) context).findEnclosingElement(IJavaElement.METHOD);
@@ -47,7 +47,7 @@ public abstract class CompilationUnitContextType extends ContextType {
 
 	protected static class File extends TemplateVariable {
 		public File() {
-			super("file", TemplateMessages.getString("JavaContextType.variable.description.file"));
+			super("file", TemplateMessages.getString("JavaContextType.variable.description.file")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		public String evaluate(TemplateContext context) {
 			//ICompilationUnit unit= ((CompilationUnitContext) context).getCompilationUnit();
@@ -80,13 +80,13 @@ public abstract class CompilationUnitContextType extends ContextType {
 	protected static class Method extends EnclosingJavaElement {
 		public Method() {
 			//super("enclosing_method", TemplateMessages.getString("JavaContextType.variable.description.enclosing.method"), IJavaElement.METHOD);
-			super("enclosing_method", TemplateMessages.getString("JavaContextType.variable.description.enclosing.method"), 0);
+			super("enclosing_method", TemplateMessages.getString("JavaContextType.variable.description.enclosing.method"), 0); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	protected static class Type extends EnclosingJavaElement {
 		public Type() {
-			super("enclosing_type", TemplateMessages.getString("JavaContextType.variable.description.enclosing.type"), 0);
+			super("enclosing_type", TemplateMessages.getString("JavaContextType.variable.description.enclosing.type"), 0); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 /*
@@ -98,13 +98,13 @@ public abstract class CompilationUnitContextType extends ContextType {
 */
 	protected static class Package extends EnclosingJavaElement {
 		public Package() {
-			super("enclosing_package", TemplateMessages.getString("JavaContextType.variable.description.enclosing.package"), 0);
+			super("enclosing_package", TemplateMessages.getString("JavaContextType.variable.description.enclosing.package"), 0); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}	
 
 	protected static class Project extends EnclosingJavaElement {
 		public Project() {
-			super("enclosing_project", TemplateMessages.getString("JavaContextType.variable.description.enclosing.project"), 0);
+			super("enclosing_project", TemplateMessages.getString("JavaContextType.variable.description.enclosing.project"), 0); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}	
 /*
@@ -120,7 +120,7 @@ public abstract class CompilationUnitContextType extends ContextType {
 */
 	protected static class Arguments extends TemplateVariable {
 		public Arguments() {
-			super("enclosing_method_arguments", TemplateMessages.getString("JavaContextType.variable.description.enclosing.method.arguments"));
+			super("enclosing_method_arguments", TemplateMessages.getString("JavaContextType.variable.description.enclosing.method.arguments")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		public String evaluate(TemplateContext context) {
 			/*IJavaElement element= ((CompilationUnitContext) context).findEnclosingElement(IJavaElement.METHOD);

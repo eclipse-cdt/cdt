@@ -102,7 +102,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			super.clear();
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					fDocument.set("");
+					fDocument.set(""); //$NON-NLS-1$
 				}
 			});
 		}

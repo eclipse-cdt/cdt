@@ -77,7 +77,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -86,6 +85,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -1267,8 +1267,8 @@ public class CPPSemantics {
 	    if( node.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
 	    
 	    ASTNode nd = null;
-	    if( obj instanceof ICPPBinding ){
-	        ICPPBinding cpp = (ICPPBinding) obj;
+	    if( obj instanceof ICPPInternalBinding ){
+	        ICPPInternalBinding cpp = (ICPPInternalBinding) obj;
 	        IASTNode[] n = cpp.getDeclarations();
 	        
 	        if( n != null && n.length > 0 )
@@ -1332,8 +1332,8 @@ public class CPPSemantics {
 
 	        if( !( temp instanceof ICPPMember ) && !declaredBefore )
                 continue;
-	        if( temp instanceof ICPPCompositeBinding ){
-	        	IBinding [] bindings = ((ICPPCompositeBinding) temp).getBindings();
+	        if( temp instanceof ICPPUsingDeclaration ){
+	        	IBinding [] bindings = ((ICPPUsingDeclaration) temp).getDelegates();
 	        	mergeResults( data, bindings, false );
 	        	items = (Object[]) data.foundItems;
 	        	continue;
@@ -1357,17 +1357,16 @@ public class CPPSemantics {
 	        IBinding [] bindings = null;
 	        if( obj != null ){
 	            if( fns != null ) return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
-	            if( type == null ) return obj;
+	//            if( type == null ) return obj;
 	            bindings = (IBinding[]) ArrayUtil.append( IBinding.class, bindings, obj );
 	            bindings = (IBinding[]) ArrayUtil.append( IBinding.class, bindings, type );
 	        } else {
-	            if( fns == null ) return type;
-	            bindings = (IBinding[]) ArrayUtil.addAll( IBinding.class, bindings, fns );
+//	            if( fns == null ) return type;
 	            bindings = (IBinding[]) ArrayUtil.append( IBinding.class, bindings, type );
+	            bindings = (IBinding[]) ArrayUtil.addAll( IBinding.class, bindings, fns );
 	        }
 	        bindings = (IBinding[]) ArrayUtil.trim( IBinding.class, bindings );
-	        if( bindings.length == 1 ) return bindings[0];
-	        ICPPCompositeBinding composite = new CPPCompositeBinding( bindings );
+	        ICPPUsingDeclaration composite = new CPPUsingDeclaration( data.astName, bindings );
 	        return composite;	
 	    }
 	        
@@ -1412,9 +1411,9 @@ public class CPPSemantics {
 		int size = functions.length;
 		for( int i = 0; i < size && functions[i] != null; i++ ){
 			fName = (IFunction) functions[i];
-			function = (ICPPASTFunctionDeclarator) ((ICPPBinding)fName).getDefinition();
+			function = (ICPPASTFunctionDeclarator) ((ICPPInternalBinding)fName).getDefinition();
 			if( function == null ){
-			    IASTNode [] nodes = ((ICPPBinding) fName).getDeclarations();
+			    IASTNode [] nodes = ((ICPPInternalBinding) fName).getDeclarations();
 			    if( nodes != null && nodes.length > 0 )
 			    	function = (ICPPASTFunctionDeclarator) nodes[0];
 			}
@@ -1500,9 +1499,7 @@ public class CPPSemantics {
 	        return null;
 	    
 		if( data.forUsingDeclaration() ){
-			if( fns.length == 1 )
-				return fns[ 0 ];
-			return new CPPCompositeBinding( fns );
+			return new CPPUsingDeclaration( data.astName, fns );
 		}
 		
 		//we don't have any arguments with which to resolve the function
@@ -1547,9 +1544,9 @@ public class CPPSemantics {
 			if( currFn == null || bestFn == currFn )
 				continue;
 			
-			ICPPASTFunctionDeclarator currDtor = (ICPPASTFunctionDeclarator) ((ICPPBinding)currFn).getDefinition();
+			ICPPASTFunctionDeclarator currDtor = (ICPPASTFunctionDeclarator) ((ICPPInternalBinding)currFn).getDefinition();
 			if( currDtor == null ){
-			    IASTNode[] nodes = ((ICPPBinding) currFn).getDeclarations();
+			    IASTNode[] nodes = ((ICPPInternalBinding) currFn).getDeclarations();
 			    if( nodes != null && nodes.length > 0 )
 			        currDtor = (ICPPASTFunctionDeclarator) nodes[0];
 			}
@@ -2023,7 +2020,7 @@ public class CPPSemantics {
 	
 	static private boolean isCompleteType( IType type ){
 		type = getUltimateType( type, false );
-		if( type instanceof ICPPClassType && ((ICPPBinding)type).getDefinition() == null ){
+		if( type instanceof ICPPClassType && ((ICPPInternalBinding)type).getDefinition() == null ){
 			return false;
 		}
 		return true;
@@ -2305,14 +2302,10 @@ public class CPPSemantics {
 		        binding = null;
 		    
 		    if( binding != null )
-			    if( binding instanceof ICPPCompositeBinding ){
-			        try {
-	                    IBinding [] bs = ((ICPPCompositeBinding)binding).getBindings();
-	                    for( int j = 0; j < bs.length; j++ ){
-	                        set.put( bs[j] );
-	                    }
-	                } catch ( DOMException e1 ) {
-	                }
+		    	if( binding instanceof ICPPUsingDeclaration ){
+		    		set.addAll( ((ICPPUsingDeclaration)binding).getDelegates() );
+		    	} else if( binding instanceof CPPCompositeBinding ){
+                    set.addAll( ((CPPCompositeBinding)binding).getBindings() );
 			    } else {
 			        set.put( binding );
 			    }

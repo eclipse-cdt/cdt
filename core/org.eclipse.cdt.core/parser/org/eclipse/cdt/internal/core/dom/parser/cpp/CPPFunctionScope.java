@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
@@ -111,4 +112,15 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
         return null;
     }
 
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
+     */
+    public IASTName getScopeName() throws DOMException {
+        IASTNode node = getPhysicalNode();
+        if( node instanceof ICPPASTFunctionDeclarator ){
+            return ((ICPPASTFunctionDeclarator)node).getName();
+        }
+        return null;
+    }
 }

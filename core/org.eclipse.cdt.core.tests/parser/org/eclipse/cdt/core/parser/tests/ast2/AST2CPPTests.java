@@ -52,16 +52,21 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
@@ -848,10 +853,17 @@ public class AST2CPPTests extends AST2BaseTest {
         IFunction g = (IFunction) collector.getName(2).resolveBinding();
         ICPPNamespace X = (ICPPNamespace) collector.getName(3).resolveBinding();
 
-        assertInstances(collector, f, 5);
+        ICPPUsingDeclaration using = (ICPPUsingDeclaration) collector.getName(5).resolveBinding();
+        ICPPDelegate [] delegates = using.getDelegates();
+        assertEquals( delegates.length, 1 );
+        assertSame( delegates[0].getBinding(), f );
+        assertInstances(collector, delegates[0], 2);
         assertInstances(collector, A, 2);
         assertInstances(collector, X, 3);
-        assertInstances(collector, g, 5);
+        
+        ICPPUsingDeclaration using_g = (ICPPUsingDeclaration) collector.getName(8).resolveBinding();
+        assertSame( using_g.getDelegates()[0].getBinding(), g );
+        assertInstances(collector, using_g.getDelegates()[0], 2);
     }
 
     public void testFunctionDeclarations() throws Exception {
@@ -1055,8 +1067,12 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals(col.size(), 8);
         ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
         IVariable x = (IVariable) col.getName(1).resolveBinding();
+        ICPPNamespace B = (ICPPNamespace) col.getName(2).resolveBinding();
+        assertTrue( B instanceof ICPPDelegate );
+        assertSame( ((ICPPDelegate)B).getBinding(), A );
 
-        assertInstances(col, A, 4);
+        assertInstances(col, A, 2);
+        assertInstances(col, B, 2);
         assertInstances(col, x, 3);
     }
 
@@ -1288,7 +1304,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         assertEquals(col.size(), 11);
 
-        IVariable a1 = (IVariable) col.getName(4).resolveBinding();
+        ICPPVariable a1 = (ICPPVariable) col.getName(4).resolveBinding();
         IVariable a2 = (IVariable) col.getName(10).resolveBinding();
         assertSame(a1, a2);
     }
@@ -2250,6 +2266,10 @@ public class AST2CPPTests extends AST2BaseTest {
         IBinding x_ref = col.getName(4).resolveBinding();
         IEnumerator RED = (IEnumerator) col.getName(6).resolveBinding();
         
+        String [] s = ((ICPPBinding)RED).getQualifiedName();
+        assertEquals( s[0], "RED" ); //$NON-NLS-1$
+        assertTrue( ((ICPPBinding)RED).isGloballyQualified() );
+        
         IASTName [] decls = tu.getDeclarations( enum_x );
         assertEquals( decls.length, 1 );
         assertSame( decls[0], col.getName(3) );
@@ -2343,13 +2363,19 @@ public class AST2CPPTests extends AST2BaseTest {
         tu.accept(col);
         
         IFunction f1 = (IFunction) col.getName(2).resolveBinding();
-        IFunction f2 = (IFunction) col.getName(5).resolveBinding();
+        ICPPFunction f2 = (ICPPFunction) col.getName(5).resolveBinding();
         assertSame( f1, f2 );  
 
         IASTName [] decls = tu.getDeclarations( f2 );
         assertEquals( decls.length, 2 );
         assertSame( decls[0], col.getName(2) );
         assertSame( decls[1], col.getName(5) );
+        
+        String [] s = f2.getQualifiedName();
+        assertEquals( s[0], "Q" ); //$NON-NLS-1$
+        assertEquals( s[1], "V" ); //$NON-NLS-1$
+        assertEquals( s[2], "f" ); //$NON-NLS-1$
+        assertTrue( f2.isGloballyQualified() );
     }
     
     public void test86371() throws Exception {
@@ -2368,17 +2394,28 @@ public class AST2CPPTests extends AST2BaseTest {
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         
-        IFunction f_ref = (IFunction) col.getName(12).resolveBinding(); 
+        ICPPFunction f_ref = (ICPPFunction) col.getName(12).resolveBinding();
+        assertTrue( f_ref instanceof ICPPDelegate );
         IFunction g_ref = (IFunction) col.getName(15).resolveBinding();
         
-        IFunction f = (IFunction) col.getName(1).resolveBinding();
-        assertSame( f_ref, f );
+        ICPPFunction f = (ICPPFunction) col.getName(1).resolveBinding();
+        assertSame( ((ICPPDelegate)f_ref).getBinding(), f );
         
         IFunction g = (IFunction) col.getName(13).resolveBinding();
         assertSame( g, g_ref );
         
-        assertInstances( col, f_ref, 4 );
+        assertInstances( col, f_ref, 1 );
         assertInstances( col, g_ref, 2 );
+        
+        String [] s = f_ref.getQualifiedName();
+        assertEquals( s[0], "D" ); //$NON-NLS-1$
+        assertEquals( s[1], "f" ); //$NON-NLS-1$
+        assertTrue( f_ref.isGloballyQualified() );
+        
+        s = f.getQualifiedName();
+        assertEquals( s[0], "B" ); //$NON-NLS-1$
+        assertEquals( s[1], "f" ); //$NON-NLS-1$
+        assertTrue( f.isGloballyQualified() );
     }
     
     public void testBug86369() throws Exception {
@@ -2393,17 +2430,34 @@ public class AST2CPPTests extends AST2BaseTest {
         tu.accept(col);
         
         ICPPNamespace ns = (ICPPNamespace) col.getName(0).resolveBinding();
+        ICPPNamespace alias = (ICPPNamespace) col.getName(1).resolveBinding();
+        
+        String [] s = ns.getQualifiedName();
+        assertEquals( s[0], "Company_with_veryblahblah" ); //$NON-NLS-1$
+        s = alias.getQualifiedName();
+        assertEquals( s[0], "CWVLN" ); //$NON-NLS-1$
+        
+        assertTrue( alias instanceof ICPPDelegate );
+        assertSame( ((ICPPDelegate)alias).getBinding(), ns );
+        
         IASTName [] refs = tu.getReferences( ns );
-        assertEquals( refs.length, 3 );
+        assertEquals( refs.length, 2 );
         assertSame( refs[0], col.getName(2) );
         assertSame( refs[1], col.getName(4) );
-        assertSame( refs[2], col.getName(6) );
+
         IASTName [] decls = tu.getDeclarations( ns );
-        assertEquals( decls.length, 4 );
+        assertEquals( decls.length, 1 );
         assertSame( decls[0], col.getName(0) );
-        assertSame( decls[1], col.getName(1) );
-        assertSame( decls[2], col.getName(3) );
-        assertSame( decls[3], col.getName(5) );
+        
+        refs = tu.getReferences( alias );
+        assertEquals( refs.length, 1 );
+        assertSame( refs[0], col.getName(6) );
+        
+        decls = tu.getDeclarations( alias );
+        assertEquals( decls.length, 3 );
+        assertSame( decls[0], col.getName(1) );
+        assertSame( decls[1], col.getName(3) );
+        assertSame( decls[2], col.getName(5) );
     }
     
     public void testBug86470_1() throws Exception {
@@ -2418,11 +2472,23 @@ public class AST2CPPTests extends AST2BaseTest {
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         
-        IBinding b = col.getName(7).resolveBinding();
-        IASTName [] decls = tu.getDeclarations( b );
+        ICPPUsingDeclaration u = (ICPPUsingDeclaration) col.getName(7).resolveBinding();
+        
+        IASTName [] decls = tu.getDeclarations( u );
         assertEquals( decls.length, 2 );
         assertSame( decls[0], col.getName(1) );
         assertSame( decls[1], col.getName(3) );
+        
+        ICPPDelegate [] delegates = u.getDelegates();
+        assertEquals( delegates.length, 2 );
+        
+        decls = tu.getDeclarations( delegates[0] );
+        assertEquals( decls.length, 1 );
+        assertSame( decls[0], col.getName(7) );
+        
+        decls = tu.getDeclarations( delegates[0].getBinding() );
+        assertEquals( decls.length, 1 );
+        assertSame( decls[0], col.getName(1) );
     }
     
     public void testBug86470_2() throws Exception {
@@ -2448,8 +2514,8 @@ public class AST2CPPTests extends AST2BaseTest {
         
         IFunction f_decl = (IFunction) col.getName(10).resolveBinding();
         IFunction f_ref = (IFunction) col.getName(19).resolveBinding();
-        
-        assertSame( f_decl, f_ref );
+        assertTrue( f_ref instanceof ICPPDelegate );
+        assertSame( f_decl, ((ICPPDelegate)f_ref).getBinding() );
     }
     
     public void testBug86470_3() throws Exception {
@@ -2471,13 +2537,16 @@ public class AST2CPPTests extends AST2BaseTest {
         IBinding ref1 = col.getName(8).resolveBinding();
         IBinding ref2 = col.getName(9).resolveBinding();
         
+        assertTrue( ref1 instanceof ICPPDelegate );
+        assertTrue( ref2 instanceof ICPPDelegate );
+        
         ICPPClassType g_struct = (ICPPClassType) col.getName(1).resolveBinding();
         IFunction g_func = (IFunction) col.getName(2).resolveBinding();
         
-        assertSame( g_struct, ref2 );
-        assertSame( g_func, ref1 );
+        assertSame( g_struct, ((ICPPDelegate)ref2).getBinding() );
+        assertSame( g_func, ((ICPPDelegate)ref1).getBinding() );
         
-        ICPPCompositeBinding comp = (ICPPCompositeBinding) col.getName(7).resolveBinding();
+        ICPPUsingDeclaration comp = (ICPPUsingDeclaration) col.getName(7).resolveBinding();
         IASTName [] decls = tu.getDeclarations(comp);
         assertEquals( decls.length, 2 );
         assertSame( decls[0], col.getName(1) );
@@ -2503,14 +2572,29 @@ public class AST2CPPTests extends AST2BaseTest {
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         
-        IBinding ref1 = col.getName(11).resolveBinding();
-        IBinding ref2 = col.getName(12).resolveBinding();
+        ICPPBinding ref1 = (ICPPBinding) col.getName(11).resolveBinding();
+        ICPPBinding ref2 = (ICPPBinding) col.getName(12).resolveBinding();
         
         ICPPClassType x_struct = (ICPPClassType) col.getName(3).resolveBinding();
         IVariable x_var = (IVariable) col.getName(1).resolveBinding();
         
-        assertSame( x_struct, ref2 );
-        assertSame( x_var, ref1 );
+        assertTrue( ref1 instanceof ICPPDelegate );
+        assertTrue( ref2 instanceof ICPPDelegate );
+        assertSame( x_struct, ((ICPPDelegate)ref2).getBinding() );
+        assertSame( x_var, ((ICPPDelegate)ref1).getBinding() );
+        
+        IASTName [] refs = tu.getReferences( x_struct );
+        assertEquals( refs.length, 1 );
+        assertSame( refs[0], col.getName(10) );
+		
+        String [] s = ref2.getQualifiedName();
+        assertEquals( s[0], "x" ); //$NON-NLS-1$
+        assertFalse( ref2.isGloballyQualified() );
+        
+        s = x_struct.getQualifiedName();
+        assertEquals( s[0], "B" ); //$NON-NLS-1$
+        assertEquals( s[1], "x" ); //$NON-NLS-1$
+        assertTrue( x_struct.isGloballyQualified() );
     }
     
     public void testBug86470_5() throws Exception {
@@ -2529,9 +2613,20 @@ public class AST2CPPTests extends AST2BaseTest {
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         
-        IFunction f = (IFunction) col.getName(3).resolveBinding();
+        ICPPFunction f = (ICPPFunction) col.getName(3).resolveBinding();
         
-        assertInstances( col, f, 2 );
+        ICPPFunction f_ref = (ICPPFunction) col.getName(11).resolveBinding();
+        assertTrue( f_ref instanceof ICPPDelegate );
+        assertSame( ((ICPPDelegate)f_ref).getBinding(), f );
+        
+        String [] s = f_ref.getQualifiedName();
+        assertEquals( s[0], "f" ); //$NON-NLS-1$
+        assertFalse( f_ref.isGloballyQualified() );
+        
+        s = f.getQualifiedName();
+        assertEquals( s[0], "A" ); //$NON-NLS-1$
+        assertEquals( s[1], "f" ); //$NON-NLS-1$
+        assertTrue( f.isGloballyQualified() );
     }
     
     public void testBug86678 () throws Exception {
@@ -2592,6 +2687,10 @@ public class AST2CPPTests extends AST2BaseTest {
         IParameter b = (IParameter) col.getName(2).resolveBinding();
         IParameter c = (IParameter) col.getName(3).resolveBinding();
         
+        String [] s = ((ICPPBinding)a).getQualifiedName();
+        assertEquals( s[0], "a" ); //$NON-NLS-1$
+        assertFalse( ((ICPPBinding)a).isGloballyQualified() );
+        
         assertInstances( col, m, 3 );
         assertInstances( col, a, 3 );
         assertInstances( col, b, 3 );
@@ -2609,8 +2708,17 @@ public class AST2CPPTests extends AST2BaseTest {
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         
-        IFunction g1 = (IFunction) col.getName(0).resolveBinding();
+        ICPPFunction g1 = (ICPPFunction) col.getName(0).resolveBinding();
         ICPPMethod g2 = (ICPPMethod) col.getName(9).resolveBinding();
+        
+        String [] s = g1.getQualifiedName();
+        assertEquals( s[0], "g" ); //$NON-NLS-1$
+        assertTrue( g1.isGloballyQualified() );
+        
+        s = g2.getQualifiedName();
+        assertEquals( s[0], "X" ); //$NON-NLS-1$
+        assertEquals( s[1], "g" ); //$NON-NLS-1$
+        assertTrue( g2.isGloballyQualified() );
         
         assertInstances( col, g1, 1 );
         assertInstances( col, g2, 2 );
@@ -2642,6 +2750,16 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPField x = (ICPPField) col.getName(23).resolveBinding();
         ICPPMethod f = (ICPPMethod) col.getName(24).resolveBinding();
         
+        String [] s= f.getQualifiedName();
+        assertEquals( s[0], "B" ); //$NON-NLS-1$
+        assertEquals( s[1], "f" ); //$NON-NLS-1$
+        assertTrue( f.isGloballyQualified() );
+        
+        s = x.getQualifiedName();
+        assertEquals( s[0], "B" ); //$NON-NLS-1$
+        assertEquals( s[1], "x" ); //$NON-NLS-1$
+        assertTrue( x.isGloballyQualified() );
+        
         IProblemBinding y = (IProblemBinding) col.getName(25).resolveBinding();
         IProblemBinding g = (IProblemBinding) col.getName(26).resolveBinding();
         
@@ -2663,7 +2781,13 @@ public class AST2CPPTests extends AST2BaseTest {
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         
-        IVariable c = (IVariable) col.getName(1).resolveBinding();
+        ICPPVariable c = (ICPPVariable) col.getName(1).resolveBinding();
+        
+        String [] s = c.getQualifiedName();
+        assertEquals( s.length, 2 );
+        assertEquals( s[0], "C" ); //$NON-NLS-1$
+        assertEquals( s[1], "c" ); //$NON-NLS-1$
+        assertTrue( c.isGloballyQualified() );
 
         IASTName [] refs = tu.getReferences( c );
         assertEquals( refs.length, 1 );
@@ -2683,8 +2807,16 @@ public class AST2CPPTests extends AST2BaseTest {
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         
-        IVariable v1 = (IVariable) col.getName(2).resolveBinding();
-        IVariable v2 = (IVariable) col.getName(3).resolveBinding();
+        ICPPVariable v1 = (ICPPVariable) col.getName(2).resolveBinding();
+        ICPPVariable v2 = (ICPPVariable) col.getName(3).resolveBinding();
+        
+        String [] s = v1.getQualifiedName();
+        assertEquals( s[0], "v1" ); //$NON-NLS-1$
+        assertFalse( v1.isGloballyQualified() );
+        
+        s = v2.getQualifiedName();
+        assertEquals( s[0], "v2" ); //$NON-NLS-1$
+        assertFalse( v2.isGloballyQualified() );
         
         ICPPBlockScope scope = (ICPPBlockScope) v2.getScope();
         IBinding [] bs = scope.find( "v1" ); //$NON-NLS-1$
@@ -2746,8 +2878,20 @@ public class AST2CPPTests extends AST2BaseTest {
         IBinding [] bs = scope.find( "f" ); //$NON-NLS-1$
         assertEquals( bs.length, 3 );
         assertSame( bs[0], f3 );
-        assertSame( bs[1], f1 );
-        assertSame( bs[2], f2 );
+        assertSame( ((ICPPDelegate)bs[1]).getBinding(), f1 );
+        assertSame( ((ICPPDelegate)bs[2]).getBinding(), f2 );
+        
+        String [] s = ((ICPPDelegate)bs[1]).getQualifiedName();
+        assertEquals( s.length, 1 );
+        assertEquals( s[0], "f" ); //$NON-NLS-1$
+        assertFalse( ((ICPPDelegate)bs[1]).isGloballyQualified() );
+        
+        s = ((ICPPBinding) ((ICPPDelegate)bs[1]).getBinding()).getQualifiedName();
+        assertEquals( s.length, 2 );
+        assertEquals( s[0], "A"); //$NON-NLS-1$
+        assertEquals( s[1], "f" ); //$NON-NLS-1$
+        assertTrue( ((ICPPBinding) ((ICPPDelegate)bs[1]).getBinding()).isGloballyQualified() );
+        
     }
     
     public void testFind_4() throws Exception {
@@ -2881,6 +3025,36 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( B.getID(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND );
         IProblemBinding C = (IProblemBinding) col.getName(3).resolveBinding();
         assertEquals( C.getID(), IProblemBinding.SEMANTIC_BAD_SCOPE );
+    }
+    
+    public void testNamespaceAlias_2() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("namespace A { int i; }      \n"); //$NON-NLS-1$
+    	buffer.append("namespace B = A;            \n"); //$NON-NLS-1$
+    	buffer.append("void f() {                  \n"); //$NON-NLS-1$
+    	buffer.append("   B::i;                    \n"); //$NON-NLS-1$
+    	buffer.append("}                           \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
+        ICPPNamespaceAlias alias = (ICPPNamespaceAlias) col.getName(6).resolveBinding();
+        ICPPVariable i = (ICPPVariable) col.getName(7).resolveBinding();
+        
+        assertInstances( col, A, 2 );
+        assertInstances( col, alias, 2 );
+        assertInstances( col, i, 3 );
+        
+        String [] s = i.getQualifiedName();
+        assertEquals( s[0], "A" ); //$NON-NLS-1$
+        assertEquals( s[1], "i" ); //$NON-NLS-1$
+        assertTrue( i.isGloballyQualified() );
+        
+        s = alias.getQualifiedName();
+        assertEquals( s[0], "B" ); //$NON-NLS-1$
+        assertTrue( alias.isGloballyQualified() );
     }
 }
 

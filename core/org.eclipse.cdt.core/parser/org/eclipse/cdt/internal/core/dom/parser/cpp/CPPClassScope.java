@@ -239,4 +239,15 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			implicits = new ICPPMethod[] { new CPPMethod.CPPMethodProblem( IProblemBinding.SEMANTIC_INVALID_TYPE, CPPSemantics.EMPTY_NAME_ARRAY ) };
 		return implicits;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
+     */
+    public IASTName getScopeName() throws DOMException {
+        IASTNode node = getPhysicalNode();
+        if( node instanceof ICPPASTCompositeTypeSpecifier ){
+            return ((ICPPASTCompositeTypeSpecifier)node).getName();
+        }
+        return null;
+    }
 }

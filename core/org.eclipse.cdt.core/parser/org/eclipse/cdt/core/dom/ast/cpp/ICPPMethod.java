@@ -10,11 +10,10 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IFunction;
 
 /**
  * @author Doug Schaefer
  */
-public interface ICPPMethod extends IFunction, ICPPMember {
+public interface ICPPMethod extends ICPPFunction, ICPPMember {
 
 }

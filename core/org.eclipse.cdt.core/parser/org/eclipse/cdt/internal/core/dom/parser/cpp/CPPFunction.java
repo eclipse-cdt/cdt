@@ -25,23 +25,43 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author aniefer
  */
-public class CPPFunction implements IFunction, ICPPBinding {
+public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
     
-    public static class CPPFunctionProblem extends ProblemBinding implements IFunction {
+    public static class CPPFunctionDelegate extends CPPDelegate implements ICPPFunction {
+        public CPPFunctionDelegate( IASTName name, ICPPFunction binding ) {
+            super( name, binding );
+        }
+
+        public IParameter[] getParameters() throws DOMException {
+            return ((ICPPFunction)getBinding()).getParameters();
+        }
+        public IScope getFunctionScope() throws DOMException {
+            return ((ICPPFunction)getBinding()).getFunctionScope();
+        }
+        public IFunctionType getType() throws DOMException {
+            return ((ICPPFunction)getBinding()).getType();
+        }
+        public boolean isStatic() throws DOMException {
+            return ((ICPPFunction)getBinding()).isStatic();
+        }
+    }
+    public static class CPPFunctionProblem extends ProblemBinding implements ICPPFunction {
         public CPPFunctionProblem( int id, char[] arg ) {
             super( id, arg );
         }
@@ -59,6 +79,15 @@ public class CPPFunction implements IFunction, ICPPBinding {
         }
 
         public boolean isStatic() throws DOMException {
+            throw new DOMException( this );
+        }
+        public String[] getQualifiedName() throws DOMException {
+            throw new DOMException( this );
+        }
+        public char[][] getQualifiedNameCharArray() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isGloballyQualified() throws DOMException {
             throw new DOMException( this );
         }
     }
@@ -214,29 +243,35 @@ public class CPPFunction implements IFunction, ICPPBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-	    ICPPASTDeclSpecifier declSpec = null;
-	    if( definition != null ){
-	    	IASTNode node = definition.getParent();
-	    	while( node instanceof IASTDeclarator )
-	    		node = node.getParent();
-	        IASTFunctionDefinition def = (IASTFunctionDefinition) node;
-		    declSpec = (ICPPASTDeclSpecifier) def.getDeclSpecifier();    
-	    } else {
-	    	IASTNode node = declarations[0].getParent();
-	    	while( node instanceof IASTDeclarator )
-	    		node = node.getParent();
-	        IASTSimpleDeclaration decl = (IASTSimpleDeclaration)node; 
-	        declSpec = (ICPPASTDeclSpecifier) decl.getDeclSpecifier();
-	    }	
-
-	    IScope scope = CPPVisitor.getContainingScope( definition != null ? definition : declarations[0] );
-	    if( declSpec.isFriend() && scope instanceof ICPPClassScope ){
-	        try {
-                while( scope instanceof ICPPClassScope ){
-	                scope = scope.getParent();
-                }
-	        } catch ( DOMException e ) {
-            }
+	    IASTName n = definition != null ? definition.getName() : declarations[0].getName();
+	    if( n instanceof ICPPASTQualifiedName ){
+	    	IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
+	    	n = ns[ ns.length - 1 ];
+	    }
+	    IScope scope = CPPVisitor.getContainingScope( n );
+	    if( scope instanceof ICPPClassScope ){
+	    	ICPPASTDeclSpecifier declSpec = null;
+		    if( definition != null ){
+		    	IASTNode node = definition.getParent();
+		    	while( node instanceof IASTDeclarator )
+		    		node = node.getParent();
+		        IASTFunctionDefinition def = (IASTFunctionDefinition) node;
+			    declSpec = (ICPPASTDeclSpecifier) def.getDeclSpecifier();    
+		    } else {
+		    	IASTNode node = declarations[0].getParent();
+		    	while( node instanceof IASTDeclarator )
+		    		node = node.getParent();
+		        IASTSimpleDeclaration decl = (IASTSimpleDeclaration)node; 
+		        declSpec = (ICPPASTDeclSpecifier) decl.getDeclSpecifier();
+		    }
+		    if( declSpec.isFriend() ) {
+		        try {
+	                while( scope instanceof ICPPClassScope ){
+		                scope = scope.getParent();
+	                }
+		        } catch ( DOMException e ) {
+	            }
+		    }
 	    }
 		return scope;
 	}
@@ -337,4 +372,39 @@ public class CPPFunction implements IFunction, ICPPBinding {
         bits |= 2 << 2;
         return false;
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
+     */
+    public String[] getQualifiedName() {
+        return CPPVisitor.getQualifiedName( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
+     */
+    public char[][] getQualifiedNameCharArray() {
+        return CPPVisitor.getQualifiedNameCharArray( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
+     */
+    public boolean isGloballyQualified() throws DOMException {
+        IScope scope = getScope();
+        while( scope != null ){
+            if( scope instanceof ICPPBlockScope )
+                return false;
+            scope = scope.getParent();
+        }
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public ICPPDelegate createDelegate( IASTName name ) {
+        return new CPPFunctionDelegate( name, this );
+    }
+
 }

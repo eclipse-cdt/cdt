@@ -13,7 +13,10 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
@@ -39,4 +42,15 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 	public void addUsingDirective(IASTNode directive) {
 		usings = (IASTNode[]) ArrayUtil.append( IASTNode.class, usings, directive );
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
+     */
+    public IASTName getScopeName() throws DOMException {
+        IASTNode node = getPhysicalNode();
+        if( node instanceof ICPPASTNamespaceDefinition ){
+            return ((ICPPASTNamespaceDefinition)node).getName();
+        }
+        return null;
+    }
 }

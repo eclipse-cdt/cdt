@@ -17,13 +17,12 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author aniefer
  */
-public class CPPCompositeBinding implements ICPPCompositeBinding {
+public class CPPCompositeBinding implements IBinding {
 
 	IBinding [] bindings = null;
 	

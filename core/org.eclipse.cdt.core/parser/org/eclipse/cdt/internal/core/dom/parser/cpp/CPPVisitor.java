@@ -94,12 +94,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
@@ -123,7 +125,8 @@ public class CPPVisitor {
 		if( parent instanceof IASTNamedTypeSpecifier  ||
 		    parent instanceof ICPPASTQualifiedName    ||
 			parent instanceof ICPPASTBaseSpecifier 	  ||
-			parent instanceof ICPPASTConstructorChainInitializer ) 
+			parent instanceof ICPPASTConstructorChainInitializer ||
+			name.getPropertyInParent() == ICPPASTNamespaceAlias.MAPPING_NAME ) 
 		{
 			binding = CPPSemantics.resolveBinding( name ); 
 			if( binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName ){
@@ -345,8 +348,25 @@ public class CPPVisitor {
 		} else if( declaration instanceof ICPPASTUsingDirective ){
 			return CPPSemantics.resolveBinding( ((ICPPASTUsingDirective) declaration).getQualifiedName() );
 		} else if( declaration instanceof ICPPASTNamespaceAlias ) {
-			ICPPASTNamespaceAlias alias = (ICPPASTNamespaceAlias) declaration;
-			return CPPSemantics.resolveBinding( alias.getMappingName() );
+		    ICPPASTNamespaceAlias alias = (ICPPASTNamespaceAlias) declaration;
+		    ICPPScope scope = (ICPPScope) getContainingScope( declaration );
+		    IBinding binding;
+		    try{
+		        binding = scope.getBinding( alias.getAlias(), false );
+		        if( binding == null ){
+		            IBinding namespace = alias.getMappingName().resolveBinding();
+		            if( namespace instanceof ICPPNamespace ){
+		                binding = new CPPNamespaceAlias( alias.getAlias(), (ICPPNamespace) namespace );
+		                scope.addName( alias.getAlias() );
+		            } else {
+		                binding = new ProblemBinding( IProblemBinding.SEMANTIC_NAME_NOT_FOUND, alias.getAlias().toCharArray() );
+		            }
+		        }
+		    } catch( DOMException e ){
+		        binding = e.getProblem();
+		    }
+			
+			return binding;
 		}
 		
 			
@@ -815,7 +835,7 @@ public class CPPVisitor {
 			else if( binding instanceof ICPPNamespace) {
 				kind = KIND_NAMESPACE;
 			}
-			else if( binding instanceof ICPPCompositeBinding )
+			else if( binding instanceof ICPPUsingDeclaration )
 			    kind = KIND_COMPOSITE;
 			else 
 				kind = KIND_OBJ_FN;
@@ -836,7 +856,8 @@ public class CPPVisitor {
 				case KIND_TYPE:
 				case KIND_COMPOSITE:
 				    if( prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
-				        prop == IASTEnumerationSpecifier.ENUMERATION_NAME )
+				        prop == IASTEnumerationSpecifier.ENUMERATION_NAME ||
+						prop == ICPPASTUsingDeclaration.NAME )
 				    {
 				        break;
 				    } else if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ){
@@ -859,7 +880,8 @@ public class CPPVisitor {
 					    return PROCESS_CONTINUE;
 				case KIND_OBJ_FN:
 					if( prop == IASTDeclarator.DECLARATOR_NAME ||
-					    prop == IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_NAME )
+					    prop == IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_NAME ||
+						prop == ICPPASTUsingDeclaration.NAME )
 					{
 						break;
 					}
@@ -875,26 +897,56 @@ public class CPPVisitor {
 			
 			if( binding != null )
 			{
-			    IBinding candidate = name.resolveBinding();
-
-		        boolean found = false;
-		        if( binding instanceof ICPPCompositeBinding ){
-                    try {
-                        found = ArrayUtil.contains( ((ICPPCompositeBinding)binding).getBindings(), candidate ); 
+			    IBinding potential = name.resolveBinding();
+			    IBinding [] bs = null;
+			    IBinding candidate = null;
+			    int n = -1;
+			    if( potential instanceof ICPPUsingDeclaration ){
+			        try {
+                        bs = ((ICPPUsingDeclaration)potential).getDelegates();
                     } catch ( DOMException e ) {
+                        return PROCESS_CONTINUE;
                     }
+			        candidate = bs[ ++n ];
 			    } else {
-			        found = ( binding == candidate );   
+			        candidate = potential;
 			    }
 			        
-			    if( found ){
-					if( decls.length == idx ){
-						IASTName [] temp = new IASTName[ decls.length * 2 ];
-						System.arraycopy( decls, 0, temp, 0, decls.length );
-						decls = temp;
-					}
-					decls[idx++] = name;
-			    }
+			    while( candidate != null ) {
+			        boolean found = false;
+			        if( binding instanceof ICPPUsingDeclaration ){
+			        	ICPPDelegate [] delegates = null;
+						try {
+							delegates = ((ICPPUsingDeclaration)binding).getDelegates();
+						} catch (DOMException e1) {
+						}
+						if( delegates != null ){
+			        		for (int i = 0; i < delegates.length; i++) {
+								if( delegates[i].getBinding() == candidate ){
+									found = true;
+									break;
+								}
+							}	
+						}
+				    } else {
+//				    	if( candidate instanceof ICPPDelegate )
+//				    		found = ( ((ICPPDelegate)candidate).getBinding() == binding );
+//			    		else
+			    			found = ( binding == candidate );   
+				    }
+				        
+			        if( found ){
+						if( decls.length == idx ){
+							IASTName [] temp = new IASTName[ decls.length * 2 ];
+							System.arraycopy( decls, 0, temp, 0, decls.length );
+							decls = temp;
+						}
+						decls[idx++] = name;
+				    }
+				    if( n > -1 && ++n < bs.length ){
+				        candidate = bs[n];
+				    } else break;
+			    }   
 			}
 			return PROCESS_CONTINUE;
 		}
@@ -937,7 +989,7 @@ public class CPPVisitor {
 			}
 			else if( binding instanceof ICPPNamespace) {
 				kind = KIND_NAMESPACE;
-			} else if( binding instanceof ICPPCompositeBinding )
+			} else if( binding instanceof ICPPUsingDeclaration )
 			    kind = KIND_COMPOSITE;
 			else 
 				kind = KIND_OBJ_FN;
@@ -1009,9 +1061,9 @@ public class CPPVisitor {
 			    IBinding [] bs = null;
 			    IBinding candidate = null;
 			    int n = -1;
-			    if( potential instanceof ICPPCompositeBinding ){
+			    if( potential instanceof ICPPUsingDeclaration ){
 			        try {
-                        bs = ((ICPPCompositeBinding)potential).getBindings();
+                        bs = ((ICPPUsingDeclaration)potential).getDelegates();
                     } catch ( DOMException e ) {
                         return PROCESS_CONTINUE;
                     }
@@ -1022,13 +1074,15 @@ public class CPPVisitor {
 			        
 			    while( candidate != null ) {
 			        boolean found = false;
-			        if( binding instanceof ICPPCompositeBinding ){
+			        if( binding instanceof ICPPUsingDeclaration ){
 	                    try {
-	                        found = ArrayUtil.contains( ((ICPPCompositeBinding)binding).getBindings(), candidate ); 
+	                        found = ArrayUtil.contains( ((ICPPUsingDeclaration)binding).getDelegates(), candidate ); 
 	                    } catch ( DOMException e ) {
 	                    }
+				    } else if( potential instanceof ICPPUsingDeclaration ){
+				        found = ( binding == ((ICPPDelegate)candidate).getBinding() );   
 				    } else {
-				        found = ( binding == candidate );   
+				    	found = (binding == candidate );
 				    }
 				        
 				    if( found ){
@@ -1457,4 +1511,52 @@ public class CPPVisitor {
 	    tu.accept( action );
 	    return action.getDeclarations();
 	}
+	
+	public static String [] getQualifiedName( IBinding binding ){
+	    IASTName [] ns = null;
+	    try {
+            ICPPScope scope = (ICPPScope) binding.getScope();
+            while( scope != null ){
+                if( scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope ) 
+                    break;
+            
+                IASTName n = scope.getScopeName();
+                ns = (IASTName[]) ArrayUtil.append( IASTName.class, ns, n );
+                scope = (ICPPScope) scope.getParent();
+            }
+        } catch ( DOMException e ) {
+        }
+        ns = (IASTName[]) ArrayUtil.trim( IASTName.class, ns );
+        String [] result = new String[ ns.length + 1 ];
+        for( int i = ns.length - 1; i >= 0; i-- ){
+            result[ ns.length - i - 1 ] = ns[i].toString();
+        }
+        result[ns.length] = binding.getName();
+	    return result;
+	}
+	
+	public static char [][] getQualifiedNameCharArray( IBinding binding ) {
+	    IASTName [] ns = null;
+	    try {
+            ICPPScope scope = (ICPPScope) binding.getScope();
+            while( scope != null ){
+                if( scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope ) 
+                    break;
+                if( scope instanceof ICPPNamespaceScope && scope.getScopeName().toCharArray().length == 0 )
+                    break;
+                IASTName n = scope.getScopeName();
+                ns = (IASTName[]) ArrayUtil.append( IASTName.class, ns, n );
+                scope = (ICPPScope) scope.getParent();
+            }
+        } catch ( DOMException e ) {
+        }
+        ns = (IASTName[]) ArrayUtil.trim( IASTName.class, ns );
+        char[] [] result = new char[ ns.length + 1 ][];
+        for( int i = ns.length - 1; i >= 0; i-- ){
+            result[ ns.length - i - 1 ] = ns[i].toCharArray();
+        }
+        result[ns.length] = binding.getNameCharArray();
+	    return result;
+	}
+	
 }

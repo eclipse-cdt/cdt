@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -21,11 +22,25 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 
 /**
  * @author aniefer
  */
-public class CPPParameter implements IParameter, ICPPBinding {
+public class CPPParameter implements IParameter, ICPPInternalBinding, ICPPVariable {
+    public static class CPPParameterDelegate extends CPPDelegate implements IParameter, ICPPVariable {
+        public CPPParameterDelegate( IASTName name, IParameter binding ) {
+            super( name, binding );
+        }
+        public IType getType() throws DOMException {
+            return ((IParameter)getBinding()).getType();
+        }
+        public boolean isStatic() throws DOMException {
+            return ((IParameter)getBinding()).isStatic();
+        }
+    }
+    
 	private IType type = null;
 	private IASTName [] declarations = null;
 	
@@ -134,6 +149,34 @@ public class CPPParameter implements IParameter, ICPPBinding {
      */
     public boolean isStatic() {
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
+     */
+    public String[] getQualifiedName() {
+        return new String [] { getName() };
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
+     */
+    public char[][] getQualifiedNameCharArray() {
+        return new char[][]{ getNameCharArray() };
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
+     */
+    public boolean isGloballyQualified() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public ICPPDelegate createDelegate( IASTName name ) {
+        return new CPPParameterDelegate( name, this );
     }
 
 }

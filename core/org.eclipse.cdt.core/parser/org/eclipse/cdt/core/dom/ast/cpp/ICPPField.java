@@ -15,6 +15,6 @@ import org.eclipse.cdt.core.dom.ast.IField;
 /**
  * @author Doug Schaefer
  */
-public interface ICPPField extends IField, ICPPMember {
+public interface ICPPField extends IField, ICPPMember, ICPPVariable {
 
 }

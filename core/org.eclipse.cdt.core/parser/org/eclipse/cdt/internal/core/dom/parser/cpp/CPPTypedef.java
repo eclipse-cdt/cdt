@@ -20,12 +20,30 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
  * @author aniefer
  */
-public class CPPTypedef implements ITypedef, ITypeContainer, ICPPBinding {
+public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding, ICPPBinding {
+    public static class CPPTypedefDelegate extends CPPDelegate implements ITypedef {
+        public CPPTypedefDelegate( IASTName name, ITypedef binding ) {
+            super( name, binding );
+        }
+        public IType getType() throws DOMException {
+            return ((ITypedef)getBinding()).getType();
+        }
+        public Object clone() {
+            try {
+                return super.clone();
+            } catch ( CloneNotSupportedException e ) {
+            }
+            return null;
+        }
+    }
 	private IASTName typedefName = null;
 	private IType type = null;
 	
@@ -125,4 +143,38 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPBinding {
         }
         return t;
     }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
+     */
+    public String[] getQualifiedName() {
+        return CPPVisitor.getQualifiedName( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
+     */
+    public char[][] getQualifiedNameCharArray() {
+        return CPPVisitor.getQualifiedNameCharArray( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
+     */
+    public boolean isGloballyQualified() throws DOMException {
+        IScope scope = getScope();
+        while( scope != null ){
+            if( scope instanceof ICPPBlockScope )
+                return false;
+            scope = scope.getParent();
+        }
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public ICPPDelegate createDelegate( IASTName name ) {
+        return new CPPTypedefDelegate( name, this );
+    }
+
 }

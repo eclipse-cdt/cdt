@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
@@ -33,7 +34,15 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * @author aniefer
  */
 public class CPPMethod extends CPPFunction implements ICPPMethod {
-
+    public static class CPPMethodDelegate extends CPPFunction.CPPFunctionDelegate implements ICPPMethod {
+        public CPPMethodDelegate( IASTName name, ICPPMethod binding ) {
+            super( name, binding );
+        }
+        public int getVisibility() throws DOMException {
+            return ((ICPPMethod)getBinding()).getVisibility();
+        }
+    }
+    
     public static class CPPMethodProblem extends CPPFunctionProblem implements ICPPMethod {
         /**
          * @param id
@@ -145,24 +154,11 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return declarations[0].getName().toCharArray();
 	}
 
-//    /* (non-Javadoc)
-//     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#isStatic()
-//     */
-//    public boolean isStatic() throws DOMException {
-//        IASTDeclarator dtor = (IASTDeclarator) getPrimaryDeclaration();
-//        if( dtor == null ) return false;
-//        
-//        while( dtor.getPropertyInParent() == IASTDeclarator.NESTED_DECLARATOR )
-//            dtor = (IASTDeclarator) dtor.getParent();
-//        
-//        IASTNode node = dtor.getParent();
-//        if( node instanceof IASTSimpleDeclaration ){
-//            ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)node).getDeclSpecifier();
-//            return (declSpec.getStorageClass() == IASTDeclSpecifier.sc_static );
-//        } else if( node instanceof IASTFunctionDefinition ){
-//            ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)node).getDeclSpecifier();
-//            return (declSpec.getStorageClass() == IASTDeclSpecifier.sc_static );
-//        }
-//        return false;
-//    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public ICPPDelegate createDelegate( IASTName name ) {
+        return new CPPMethodDelegate( name, this );
+    }
+
 }

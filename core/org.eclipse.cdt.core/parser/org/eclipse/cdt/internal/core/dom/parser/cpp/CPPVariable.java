@@ -21,17 +21,30 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author aniefer
  */
-public class CPPVariable implements IVariable, ICPPBinding {
-    public static class CPPVariableProblem extends ProblemBinding implements IVariable{
+public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
+    public static class CPPVariableDelegate extends CPPDelegate implements ICPPVariable {
+        public CPPVariableDelegate( IASTName name, ICPPVariable binding ) {
+            super( name, binding );
+        }
+        public IType getType() throws DOMException {
+            return ((ICPPVariable)getBinding()).getType();
+        }
+        public boolean isStatic() throws DOMException {
+            return ((ICPPVariable)getBinding()).isStatic();
+        }
+    }
+    public static class CPPVariableProblem extends ProblemBinding implements ICPPVariable{
         public CPPVariableProblem( int id, char[] arg ) {
             super( id, arg );
         }
@@ -41,6 +54,15 @@ public class CPPVariable implements IVariable, ICPPBinding {
         }
 
         public boolean isStatic() throws DOMException {
+            throw new DOMException( this );
+        }
+        public String[] getQualifiedName() throws DOMException {
+            throw new DOMException( this );
+        }
+        public char[][] getQualifiedNameCharArray() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isGloballyQualified() throws DOMException {
             throw new DOMException( this );
         }
     }
@@ -185,4 +207,39 @@ public class CPPVariable implements IVariable, ICPPBinding {
         }
         return false;
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
+     */
+    public String[] getQualifiedName() {
+        return CPPVisitor.getQualifiedName( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
+     */
+    public char[][] getQualifiedNameCharArray() {
+        return CPPVisitor.getQualifiedNameCharArray( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
+     */
+    public boolean isGloballyQualified() throws DOMException {
+        IScope scope = getScope();
+        while( scope != null ){
+            if( scope instanceof ICPPBlockScope )
+                return false;
+            scope = scope.getParent();
+        }
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public ICPPDelegate createDelegate( IASTName name ) {
+        return new CPPVariableDelegate( name, this );
+    }
+
 }

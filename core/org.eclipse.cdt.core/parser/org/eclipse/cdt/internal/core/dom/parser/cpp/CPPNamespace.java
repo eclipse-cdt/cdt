@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -33,7 +35,15 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 /**
  * @author aniefer
  */
-public class CPPNamespace implements ICPPNamespace, ICPPBinding {
+public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
+    public static class CPPNamespaceDelegate extends CPPDelegate implements ICPPNamespace {
+        public CPPNamespaceDelegate( IASTName name, ICPPNamespace binding ) {
+            super( name, binding );
+        }
+        public ICPPNamespaceScope getNamespaceScope() throws DOMException {
+            return ((ICPPNamespace)getBinding()).getNamespaceScope();
+        }
+    }
 	private static final char[] EMPTY_CHAR_ARRAY = { };
 	
 	IASTName [] namespaceDefinitions = null;
@@ -163,5 +173,47 @@ public class CPPNamespace implements ICPPNamespace, ICPPBinding {
 	public IASTNode getPhysicalNode() {
 		return ( tu != null ? (IASTNode) tu : namespaceDefinitions[0] );
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName() {
+        return CPPVisitor.getQualifiedName( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
+     */
+    public char[][] getFullyQualifiedNameCharArray() {
+        return CPPVisitor.getQualifiedNameCharArray( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
+     */
+    public String[] getQualifiedName() {
+        return CPPVisitor.getQualifiedName( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
+     */
+    public char[][] getQualifiedNameCharArray() {
+        return CPPVisitor.getQualifiedNameCharArray( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
+     */
+    public boolean isGloballyQualified() {
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public ICPPDelegate createDelegate( IASTName name ) {
+        return new CPPNamespaceDelegate( name, this );
+    }
 
 }

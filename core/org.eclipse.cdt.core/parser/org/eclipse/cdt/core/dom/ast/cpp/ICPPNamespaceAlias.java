@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,23 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 /*
- * Created on Dec 1, 2004
+ * Created on Mar 17, 2005
  */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
-
 /**
- * This interface represents a C++ namespace
- * 
  * @author aniefer
  */
-public interface ICPPNamespace extends ICPPBinding {
-	/**
-	 * get the scope object associated with this namespace
-	 * 
-	 * @return
-	 * @throws DOMException
-	 */
-	public ICPPNamespaceScope getNamespaceScope() throws DOMException;
+public interface ICPPNamespaceAlias extends ICPPNamespace, ICPPDelegate {
+
 }

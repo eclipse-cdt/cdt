@@ -10,18 +10,15 @@
  *******************************************************************************/
 
 /*
- * Created on Jan 24, 2005
+ * Created on Mar 15, 2005
  */
-package org.eclipse.cdt.internal.core.dom.parser.cpp;
+package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 
 /**
  * @author aniefer
  */
-public interface ICPPBinding {
-    //methods required by the CPPVisitor but not meant for the public interface
-    
-    IASTNode [] getDeclarations();
-    IASTNode getDefinition();
+public interface ICPPVariable extends IVariable, ICPPBinding {
+
 }

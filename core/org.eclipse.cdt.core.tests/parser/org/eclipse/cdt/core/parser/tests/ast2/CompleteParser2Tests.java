@@ -51,11 +51,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -380,7 +382,11 @@ public class CompleteParser2Tests extends TestCase {
 	
 	public void testUsingClauses() throws Exception
 	{
-	    IASTTranslationUnit tu = parse( "namespace A { namespace B { int x;  class C { static int y = 5; }; } } \n using namespace A::B;\n using A::B::x;using A::B::C;using A::B::C::y;"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "namespace A { namespace B { int x;  class C { static int y = 5; }; } } \n " + //$NON-NLS-1$
+	    		                        "using namespace A::B;\n " + //$NON-NLS-1$
+	    		                        "using A::B::x;" + //$NON-NLS-1$
+	    		                        "using A::B::C;" + //$NON-NLS-1$
+	    		                        "using A::B::C::y;"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
  		tu.accept( col );
  		
@@ -391,11 +397,20 @@ public class CompleteParser2Tests extends TestCase {
  		ICPPClassType C =  (ICPPClassType) col.getName(3).resolveBinding();
  		ICPPField y = (ICPPField) col.getName(4).resolveBinding();
  		
+ 		ICPPUsingDeclaration using_x = (ICPPUsingDeclaration) col.getName(11).resolveBinding();
+ 		ICPPUsingDeclaration using_C = (ICPPUsingDeclaration) col.getName(15).resolveBinding();
+ 		ICPPUsingDeclaration using_y = (ICPPUsingDeclaration) col.getName(20).resolveBinding();
+ 		
  		assertInstances( col, A, 5 );
  		assertInstances( col, B, 6 );
- 		assertInstances( col, x, 3 );
- 		assertInstances( col, C, 4 );
- 		assertInstances( col, y, 3 );
+ 		assertInstances( col, x, 1 );
+ 		assertInstances( col, C, 2 );
+ 		assertInstances( col, y, 1 );
+ 		
+ 		ICPPDelegate [] ds = using_x.getDelegates();
+ 		assertSame( ds[0].getBinding(), x );
+ 		assertSame( using_C.getDelegates()[0].getBinding(), C );
+ 		assertSame( using_y.getDelegates()[0].getBinding(), y );
 	}
 	
 	public void testEnumerations() throws Exception
@@ -506,10 +521,16 @@ public class CompleteParser2Tests extends TestCase {
  		ICPPClassType A = (ICPPClassType) col.getName(3).resolveBinding();
  		ICPPMethod bar = (ICPPMethod) col.getName(4).resolveBinding();
  		
+ 		ICPPUsingDeclaration using_foo = (ICPPUsingDeclaration) col.getName(8).resolveBinding();
+ 		ICPPUsingDeclaration using_bar = (ICPPUsingDeclaration) col.getName(11).resolveBinding();
+ 		
  		assertInstances( col, N, 2 );
- 		assertInstances( col, foo, 3 );
+ 		assertInstances( col, foo, 1 );
  		assertInstances( col, A, 2 );
- 		assertInstances( col, bar, 3 );	
+ 		assertInstances( col, bar, 1 );
+ 		
+ 		assertSame( using_foo.getDelegates()[0].getBinding(), foo );
+ 		assertSame( using_bar.getDelegates()[0].getBinding(), bar );
 	}
 	
 	public void testLinkageSpec() throws Exception

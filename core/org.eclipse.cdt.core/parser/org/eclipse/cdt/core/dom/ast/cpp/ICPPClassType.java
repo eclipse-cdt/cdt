@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
  * 
  * @author Doug Schaefer
  */
-public interface ICPPClassType extends ICompositeType {
+public interface ICPPClassType extends ICompositeType, ICPPBinding {
 
 	public static final int k_class = ICPPASTCompositeTypeSpecifier.k_class;
 

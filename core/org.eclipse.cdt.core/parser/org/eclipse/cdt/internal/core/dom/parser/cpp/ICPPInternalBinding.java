@@ -8,24 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Dec 1, 2004
- */
-package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
+/*
+ * Created on Jan 24, 2005
+ */
+package org.eclipse.cdt.internal.core.dom.parser.cpp;
+
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 
 /**
- * This interface represents a C++ namespace
- * 
  * @author aniefer
  */
-public interface ICPPNamespace extends ICPPBinding {
-	/**
-	 * get the scope object associated with this namespace
-	 * 
-	 * @return
-	 * @throws DOMException
-	 */
-	public ICPPNamespaceScope getNamespaceScope() throws DOMException;
+public interface ICPPInternalBinding {
+    //methods required by the CPPVisitor but not meant for the public interface
+    
+    IASTNode [] getDeclarations();
+    IASTNode getDefinition();
+    
+    ICPPDelegate createDelegate( IASTName name );
 }

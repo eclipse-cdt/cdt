@@ -36,14 +36,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -53,7 +55,48 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 /**
  * @author aniefer
  */
-public class CPPClassType implements ICPPClassType, ICPPBinding {
+public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
+    public static class CPPClassTypeDelegate extends CPPDelegate implements ICPPClassType {
+        public CPPClassTypeDelegate( IASTName name, ICPPClassType cls ){
+            super( name, cls );
+        }
+        public ICPPBase[] getBases() throws DOMException {
+            return ((ICPPClassType)getBinding()).getBases();
+        }
+        public IField[] getFields() throws DOMException {
+            return ((ICPPClassType)getBinding()).getFields();
+        }
+        public IField findField( String name ) throws DOMException {
+            return ((ICPPClassType)getBinding()).findField( name );
+        }
+        public ICPPField[] getDeclaredFields() throws DOMException {
+            return ((ICPPClassType)getBinding()).getDeclaredFields();
+        }
+        public ICPPMethod[] getMethods() throws DOMException {
+            return ((ICPPClassType)getBinding()).getMethods();
+        }
+        public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+            return ((ICPPClassType)getBinding()).getAllDeclaredMethods();
+        }
+        public ICPPMethod[] getDeclaredMethods() throws DOMException {
+            return ((ICPPClassType)getBinding()).getDeclaredMethods();
+        }
+        public ICPPConstructor[] getConstructors() throws DOMException {
+            return ((ICPPClassType)getBinding()).getConstructors();
+        }
+        public IBinding[] getFriends() throws DOMException {
+            return ((ICPPClassType)getBinding()).getFriends();
+        }
+        public int getKey() throws DOMException {
+            return ((ICPPClassType)getBinding()).getKey();
+        }
+        public IScope getCompositeScope() throws DOMException {
+            return ((ICPPClassType)getBinding()).getCompositeScope();
+        }
+        public Object clone() {
+            return ((ICPPClassType)getBinding()).clone();
+        }
+    }
 	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType{
         public CPPClassTypeProblem( int id, char[] arg ) {
             super( id, arg );
@@ -97,6 +140,15 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 		}
         public IBinding[] getFriends() throws DOMException {
 			throw new DOMException( this );
+        }
+        public String[] getQualifiedName() throws DOMException {
+            throw new DOMException( this );
+        }
+        public char[][] getQualifiedNameCharArray() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isGloballyQualified() throws DOMException {
+            throw new DOMException( this );
         }
     }
 	
@@ -357,8 +409,8 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
             } else if( decls[i] instanceof ICPPASTUsingDeclaration ){
                 IASTName n = ((ICPPASTUsingDeclaration)decls[i]).getName();
                 binding = n.resolveBinding();
-                if( binding instanceof ICPPCompositeBinding ){
-                    IBinding [] bs = ((ICPPCompositeBinding)binding).getBindings();
+                if( binding instanceof ICPPUsingDeclaration ){
+                    IBinding [] bs = ((ICPPUsingDeclaration)binding).getDelegates();
                     for ( int j = 0; j < bs.length; j++ ) {
                         if( bs[j] instanceof ICPPField )
                             result = (ICPPField[]) ArrayUtil.append( ICPPField.class, result, bs[j] );
@@ -437,8 +489,8 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
             } else if( decls[i] instanceof ICPPASTUsingDeclaration ){
                 IASTName n = ((ICPPASTUsingDeclaration)decls[i]).getName();
                 binding = n.resolveBinding();
-                if( binding instanceof ICPPCompositeBinding ){
-                    IBinding [] bs = ((ICPPCompositeBinding)binding).getBindings();
+                if( binding instanceof ICPPUsingDeclaration ){
+                    IBinding [] bs = ((ICPPUsingDeclaration)binding).getDelegates();
                     for ( int j = 0; j < bs.length; j++ ) {
                         if( bs[j] instanceof ICPPMethod )
                             result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, bs[j] );
@@ -530,5 +582,39 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
         }
         
         return (IBinding[]) ArrayUtil.trim( IBinding.class, resultSet.keyArray(), true );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
+     */
+    public String[] getQualifiedName() {
+        return CPPVisitor.getQualifiedName( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
+     */
+    public char[][] getQualifiedNameCharArray() {
+        return CPPVisitor.getQualifiedNameCharArray( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
+     */
+    public boolean isGloballyQualified() throws DOMException {
+        IScope scope = getScope();
+        while( scope != null ){
+            if( scope instanceof ICPPBlockScope )
+                return false;
+            scope = scope.getParent();
+        }
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public ICPPDelegate createDelegate( IASTName name ) {
+        return new CPPClassTypeDelegate( name, this );
     }
 }

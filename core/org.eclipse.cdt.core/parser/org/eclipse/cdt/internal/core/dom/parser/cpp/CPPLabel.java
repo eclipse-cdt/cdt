@@ -19,11 +19,13 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 
 /**
  * @author aniefer
  */
-public class CPPLabel implements ILabel, ICPPBinding {
+public class CPPLabel implements ILabel, ICPPInternalBinding, ICPPBinding {
     private IASTName statement;
     /**
      * @param gotoStatement
@@ -92,5 +94,35 @@ public class CPPLabel implements ILabel, ICPPBinding {
     public void setLabelStatement( IASTName labelStatement ) {
         statement = labelStatement;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
+     */
+    public String[] getQualifiedName() {
+        return new String[] { getName() };
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
+     */
+    public char[][] getQualifiedNameCharArray() {
+        return new char [] [] { getNameCharArray() };
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
+     */
+    public boolean isGloballyQualified() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public ICPPDelegate createDelegate( IASTName name ) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 
 }

@@ -8,24 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
 /*
- * Created on Dec 1, 2004
+ * Created on Mar 15, 2005
  */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 
 /**
- * This interface represents a C++ namespace
- * 
  * @author aniefer
  */
-public interface ICPPNamespace extends ICPPBinding {
-	/**
-	 * get the scope object associated with this namespace
-	 * 
-	 * @return
-	 * @throws DOMException
-	 */
-	public ICPPNamespaceScope getNamespaceScope() throws DOMException;
+public interface ICPPFunction extends IFunction, ICPPBinding {
+
 }

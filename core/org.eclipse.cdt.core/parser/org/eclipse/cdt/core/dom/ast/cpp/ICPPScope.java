@@ -26,6 +26,13 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  */
 public interface ICPPScope extends IScope {
 
+    /**
+     * Get the name for this scope, may be null 
+     * @return
+     * @throws DOMException
+     */
+    public IASTName getScopeName() throws DOMException;
+    
 	/**
 	 * Add an IASTName to be cached in this scope
 	 * 

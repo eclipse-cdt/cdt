@@ -19,8 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
@@ -54,6 +54,9 @@ abstract public class CPPScope implements ICPPScope{
 		public boolean isFullyCached() {
 			return false;
 		}
+        public IASTName getScopeName() throws DOMException {
+            throw new DOMException( this );
+        }
     }
     public static class CPPTemplateProblem extends CPPScopeProblem {
 		public CPPTemplateProblem(int id, char[] arg) {
@@ -136,8 +139,8 @@ abstract public class CPPScope implements ICPPScope{
     				}
 	        		binding = ((CPPASTName)n).getBinding();
 	        	}
-	        	if( binding instanceof ICPPCompositeBinding ){
-	        		return CPPSemantics.resolveAmbiguities( name, ((ICPPCompositeBinding)binding).getBindings() );
+	        	if( binding instanceof ICPPUsingDeclaration ){
+	        		return CPPSemantics.resolveAmbiguities( name, ((ICPPUsingDeclaration)binding).getDelegates() );
 	        	}
 	        	return binding;
 	        }

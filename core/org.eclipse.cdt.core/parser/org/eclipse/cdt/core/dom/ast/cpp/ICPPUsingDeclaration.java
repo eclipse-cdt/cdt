@@ -8,27 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
 /*
- * Created on Dec 16, 2004
+ * Created on Mar 16, 2005
  */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
- * This binding is a container for other bindings. It is used in instances where
- * an IASTName refers to more than one binding, for example a using declaration
- * refering to a set of overloaded functions.
+ * A using declaration introduces a name into the declarative region in which 
+ * it appears, that name is a synonym of some entity declared elsewhere
  * 
+ * The using declaration is both a declaration of a new binding and a reference to a
+ * previously declared binding
  * @author aniefer
  */
-public interface ICPPCompositeBinding extends IBinding {
-	/**
-	 * get the bindings
-	 * 
-	 * @return
-	 * @throws DOMException
-	 */
-	IBinding[] getBindings() throws DOMException;
+public interface ICPPUsingDeclaration extends ICPPBinding {
+    /**
+     * Return an array of bindings that were declared by this using declaration.
+     * Each of these bindings delegates to some previously declared binding to which it
+     * is a reference. 
+     * @return
+     */
+    ICPPDelegate [] getDelegates() throws DOMException;
 }

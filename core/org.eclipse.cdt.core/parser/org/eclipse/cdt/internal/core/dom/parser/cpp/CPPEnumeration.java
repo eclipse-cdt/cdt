@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -21,11 +22,26 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 
 /**
  * @author aniefer
  */
-public class CPPEnumeration implements IEnumeration, ICPPBinding {
+public class CPPEnumeration implements IEnumeration, ICPPInternalBinding, ICPPBinding {
+    public static class CPPEnumerationDelegate extends CPPDelegate implements IEnumeration {
+        public CPPEnumerationDelegate( IASTName name, IEnumeration binding ) {
+            super( name, binding );
+        }
+        public IEnumerator[] getEnumerators() throws DOMException {
+            return ((IEnumeration)getBinding()).getEnumerators();
+        }
+        public Object clone() {
+            return ((IEnumeration)getBinding()).clone();
+        }
+        
+    }
     private IASTName enumName;
     /**
      * @param specifier
@@ -100,4 +116,37 @@ public class CPPEnumeration implements IEnumeration, ICPPBinding {
         return bindings;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
+     */
+    public String[] getQualifiedName() {
+        return CPPVisitor.getQualifiedName( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
+     */
+    public char[][] getQualifiedNameCharArray() {
+        return CPPVisitor.getQualifiedNameCharArray( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
+     */
+    public boolean isGloballyQualified() throws DOMException {
+        IScope scope = getScope();
+        while( scope != null ){
+            if( scope instanceof ICPPBlockScope )
+                return false;
+            scope = scope.getParent();
+        }
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public ICPPDelegate createDelegate( IASTName name ) {
+        return new CPPEnumerationDelegate( name, this );
+    }
 }

@@ -52,11 +52,10 @@ public class CValue extends CDebugElement implements ICValue
 	 * Constructor for CValue.
 	 * @param target
 	 */
-	public CValue( CDebugTarget target, ICDIValue cdiValue ) throws DebugException
+	public CValue( CDebugTarget target, ICDIValue cdiValue )
 	{
 		super( target );
 		fCDIValue = cdiValue;
-		calculateType();
 	}
 
 	/* (non-Javadoc)
@@ -185,13 +184,16 @@ public class CValue extends CDebugElement implements ICValue
 		return Collections.EMPTY_LIST;
 	}
 	
-	protected void calculateType() throws DebugException
+	protected void calculateType( String stringValue )
 	{
-		String stringValue = getValueString();
 		if ( stringValue != null && stringValue.trim().length() > 0 )
 		{
 			stringValue = stringValue.trim();
-			if ( stringValue.charAt( 0 ) == '[' )
+			if ( stringValue.charAt( stringValue.length() - 1 ) == '\'' )
+			{
+				fType = TYPE_CHAR;
+			}
+			else if ( stringValue.charAt( 0 ) == '[' )
 			{
 				fType = TYPE_ARRAY;
 			}
@@ -230,7 +232,17 @@ public class CValue extends CDebugElement implements ICValue
 	
 	protected String processCDIValue( String cdiValue )
 	{
-		return cdiValue;
+		String result = null;
+		if ( cdiValue != null )
+		{
+			result = cdiValue.trim();
+			calculateType( result );
+			if ( getType() == TYPE_CHAR )
+			{
+				result = getCharValue( result );
+			}
+		}
+		return result;
 	}
 
 	public synchronized void setChanged( boolean changed ) throws DebugException
@@ -253,5 +265,30 @@ public class CValue extends CDebugElement implements ICValue
 		{
 			((CVariable)it.next()).dispose();
 		}
+	}
+	
+	private String getCharValue( String value )
+	{
+		char result = '.';
+		int index = value.indexOf( ' ' );
+		if ( index > 0 )
+		{
+			try
+			{
+				short shortValue = Short.parseShort( value.substring( 0, index ), 10 );
+				if ( shortValue >= 0 )
+				{
+					result = (char)shortValue;
+					if ( Character.isISOControl( result ) )
+					{
+						result = '.';
+					}
+				}
+			}
+			catch( NumberFormatException e )
+			{
+			}
+		}
+		return String.valueOf( result );
 	}
 }

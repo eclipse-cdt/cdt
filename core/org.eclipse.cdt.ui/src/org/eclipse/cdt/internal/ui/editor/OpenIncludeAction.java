@@ -23,6 +23,8 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -83,7 +85,8 @@ public class OpenIncludeAction extends Action {
 					if (info != null) {
 						String[] includePaths = info.getIncludePaths();
 						findFile(includePaths, includeName, filesFound);
-					} else {
+					}
+					if (filesFound.size() == 0) {
 						// Fall back and search the project
 						findFile(proj, new Path(includeName), filesFound);
 					}
@@ -125,17 +128,24 @@ public class OpenIncludeAction extends Action {
 		}
 	}
 
-	private void findFile(IContainer parent, IPath name, ArrayList list) throws CoreException {
-		IResource found= parent.findMember(name);
-		if (found != null && found.getType() == IResource.FILE) {
-			list.add(found.getLocation());
-		}
-		IResource[] children= parent.members();
-		for (int i= 0; i < children.length; i++) {
-			if (children[i] instanceof IContainer) {
-				findFile((IContainer)children[i], name, list);
+	/**
+	 * Recuse in the project.
+	 * @param parent
+	 * @param name
+	 * @param list
+	 * @throws CoreException
+	 */
+	private void findFile(IContainer parent, final IPath name, final ArrayList list) throws CoreException {
+		parent.accept(new IResourceProxyVisitor() {
+
+			public boolean visit(IResourceProxy proxy) throws CoreException {
+				if (proxy.getType() == IResource.FILE && proxy.getName().equalsIgnoreCase(name.lastSegment())) {
+					list.add(proxy.requestResource().getLocation());
+					return false;
+				}
+				return true;
 			}
-		}		
+		}, 0);
 	}
 
 

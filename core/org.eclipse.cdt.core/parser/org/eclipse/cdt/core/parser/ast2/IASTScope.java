@@ -20,7 +20,7 @@ public interface IASTScope {
 	 */
 	public IASTDeclaration getFirstDeclaration();
 	
-	public void setFirstDeclaration(IASTDeclaration declaration);
+	public void appendDeclaration(IASTDeclaration declaration);
 
 	/**
 	 * @return the container scope of this scope

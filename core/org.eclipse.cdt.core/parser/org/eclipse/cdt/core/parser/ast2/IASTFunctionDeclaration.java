@@ -27,7 +27,7 @@ public interface IASTFunctionDeclaration extends IASTDeclaration {
 	 */
 	public IASTParameterDeclaration getFirstParameterDeclaration();
 	
-	public void setFirstParameterDeclaration(IASTParameterDeclaration parameterDeclaration);
+	public void appendParameterDeclaration(IASTParameterDeclaration parameterDeclaration);
 
 	/**
 	 * @return the function this declaration is declaring,

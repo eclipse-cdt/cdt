@@ -16,6 +16,8 @@ package org.eclipse.cdt.core.parser.ast2;
  * always instances of IASTParameter and are declared with
  * IASTVariableDeclarations in the parameter list.
  * 
+ * A function is also a scope.
+ * 
  * @author Doug Schaefer
  */
 public interface IASTFunction extends IASTNode {

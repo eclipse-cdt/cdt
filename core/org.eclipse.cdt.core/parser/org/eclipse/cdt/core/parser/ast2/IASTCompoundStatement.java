@@ -8,24 +8,23 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast2;
-
-import org.eclipse.cdt.core.parser.ast2.IASTPointerType;
-import org.eclipse.cdt.core.parser.ast2.IASTType;
+package org.eclipse.cdt.core.parser.ast2;
 
 /**
  * @author Doug Schaefer
  */
-public class ASTPointerType extends ASTType implements IASTPointerType {
+public interface IASTCompoundStatement extends IASTStatement {
 
-	private IASTType type;
+	/**
+	 * @return the first statement in this compound statement
+	 */
+	public IASTStatement getFirstStatement();
 	
-	public IASTType getType() {
-		return type;
-	}
-	
-	public void setType(IASTType type) {
-		this.type = type; 
-	}
+	/**
+	 * Append a statement to the list of statements in this compound statement
+	 * 
+	 * @param statement
+	 */
+	public void appendStatement(IASTStatement statement);
 	
 }

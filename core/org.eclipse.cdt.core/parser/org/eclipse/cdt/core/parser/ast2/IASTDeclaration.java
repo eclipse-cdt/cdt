@@ -37,8 +37,6 @@ public interface IASTDeclaration extends IASTNode {
 	 */
 	public IASTDeclaration getNextDeclaration();
 	
-	public void setNextDeclaration(IASTDeclaration next);
-
 	/**
 	 * @return is this a forward declaration, i.e., the thing
 	 * it is declaring is not defined at the same point.

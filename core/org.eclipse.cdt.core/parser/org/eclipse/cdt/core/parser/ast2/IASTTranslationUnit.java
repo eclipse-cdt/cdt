@@ -11,7 +11,9 @@
 package org.eclipse.cdt.core.parser.ast2;
 
 /**
+ * The tranlation unit represents a compilable unit of source.
+ * 
  * @author Doug Schaefer
  */
-public interface IASTTranslationUnit extends IASTScope {
+public interface IASTTranslationUnit extends IASTNode {
 }

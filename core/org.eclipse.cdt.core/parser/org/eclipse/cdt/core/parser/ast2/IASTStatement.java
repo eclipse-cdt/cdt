@@ -22,4 +22,5 @@ public interface IASTStatement extends IASTNode {
 	 */
 	public IASTStatement getNextStatement();
 	
+	public void setNextStatement(IASTStatement statement);
 }

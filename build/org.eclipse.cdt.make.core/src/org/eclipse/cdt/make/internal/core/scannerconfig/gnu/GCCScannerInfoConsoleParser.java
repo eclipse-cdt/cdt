@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
-import java.util.StringTokenizer;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.cdt.core.IMarkerGenerator;
@@ -21,6 +19,8 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParse
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -67,10 +67,21 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 		}
 		// Known patterns:
 		// (a) gcc|g++ ... -Dxxx -Iyyy ...
-		StringTokenizer scanner = new StringTokenizer(line);
-		if (scanner.countTokens() <= 1)
+		ArrayList allTokens = new ArrayList();
+		String[] tokens = line.split("\"");
+		for (int i = 0; i < tokens.length; ++i) {
+			if (i % 2 == 0) { // even tokens need further tokenization
+				String[] sTokens = tokens[i].split("\\s");
+				allTokens.addAll(Arrays.asList(sTokens));
+			}
+			else {
+				allTokens.add(tokens[i]);
+			}
+		}
+		if (allTokens.size() <= 1)
 			return false;
-		String token = scanner.nextToken().toLowerCase();
+		Iterator I = allTokens.iterator();
+		String token = ((String) I.next()).toLowerCase();
 		if (token.endsWith("gcc") || token.endsWith("g++")) {//$NON-NLS-1$ //$NON-NLS-2$
 			// Recognized gcc or g++ compiler invocation
 			List includes = new ArrayList();
@@ -80,27 +91,30 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 			rc = true;
 			String fileName = null;
 			String cashedToken = null;
-			while (scanner.hasMoreTokens()) {
+			while (I.hasNext()) {
 				if (cashedToken == null) {
-					token = scanner.nextToken();
+					token = (String) I.next();
 				}
 				else {
 					token = cashedToken;
 					cashedToken = null;
 				}
+				if (token.length() == 0) {
+					continue;
+				}
 				if (token.startsWith("-D")) {//$NON-NLS-1$
 					String symbol = token.substring(2);
 					if (symbol.length() == 0) {
-						if (scanner.hasMoreTokens()) {
-							symbol = scanner.nextToken();
-							if (symbol.startsWith("-")) {	//$NON-NLS-1$
-								cashedToken = symbol;
-								continue;
-							}
+						if (I.hasNext()) {
+							symbol = (String) I.next();
 						}
 						else {
 							continue;
 						}
+					}
+					if (symbol.charAt(0) == '-') {
+						cashedToken = symbol;
+						continue;
 					}
 					if (!symbols.contains(symbol))
 						symbols.add(symbol);
@@ -108,16 +122,16 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 				else if (token.startsWith("-I")) {//$NON-NLS-1$
 					String iPath = token.substring(2);
 					if (iPath.length() == 0) {
-						if (scanner.hasMoreTokens()) {
-							iPath = scanner.nextToken();
-							if (iPath.startsWith("-")) {	//$NON-NLS-1$
-								cashedToken = iPath;
-								continue;
-							}
+						if (I.hasNext()) {
+							iPath = (String) I.next();
 						}
 						else {
 							continue;
 						}
+					}
+					if (iPath.charAt(0) == '-') {
+						cashedToken = iPath;
+						continue;
 					}
 					String nPath = fUtil.normalizePath(iPath);
 					if (!includes.contains(nPath))

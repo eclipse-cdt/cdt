@@ -44,6 +44,9 @@ public class CygpathTranslator {
 		ISafeRunnable runnable = new ISafeRunnable() {
 			public void run() throws Exception {
 				transPath = platformRun();
+				if (transPath.startsWith("cygpath:")) {	//$NON-NLS-1$
+					transPath = null;
+				}
 			}
 
 			public void handleException(Throwable exception) {

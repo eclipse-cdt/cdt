@@ -300,11 +300,17 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 			IPath realPath = new Path(includePath);
 			if (!realPath.toFile().exists()) {
 				String translatedPath = new CygpathTranslator(currentProject, includePath).run();
-				if (!translatedPath.equals(includePath)) {
-					// Check if the translated path exists
-					IPath transPath = new Path(translatedPath);
-					if (transPath.toFile().exists()) {
-						translatedIncludePaths.add(translatedPath);
+				if (translatedPath != null) {
+					if (!translatedPath.equals(includePath)) {
+						// Check if the translated path exists
+						IPath transPath = new Path(translatedPath);
+						if (transPath.toFile().exists()) {
+							translatedIncludePaths.add(translatedPath);
+						}
+						else {
+							// TODO VMIR for now add even if it does not exist
+							translatedIncludePaths.add(translatedPath);
+						}
 					}
 					else {
 						// TODO VMIR for now add even if it does not exist
@@ -312,8 +318,8 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 					}
 				}
 				else {
-					// TODO VMIR for now add even if it does not exist
-					translatedIncludePaths.add(translatedPath);
+					TraceUtil.outputError("CygpathTranslator unable to translate path: ",//$NON-NLS-1$
+							includePath);
 				}
 			}
 			else {

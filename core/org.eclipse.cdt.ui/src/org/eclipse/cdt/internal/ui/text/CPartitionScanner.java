@@ -23,16 +23,7 @@ import org.eclipse.jface.text.rules.WordRule;
 /**
  * This scanner recognizes comments
  */
-public class CPartitionScanner extends RuleBasedPartitionScanner {
-
-
-	private final static String SKIP= "__skip"; //$NON-NLS-1$
-
-
-	public final static String C_MULTILINE_COMMENT= "c_multi_line_comment"; //$NON-NLS-1$
-	public final static String C_SINGLE_LINE_COMMENT= "c_single_line_comment"; //$NON-NLS-1$
-	public final static String C_STRING= "c_string"; //$NON-NLS-1$
-
+public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPartitions {
 
 	/**
 	 * Detector for empty comments.

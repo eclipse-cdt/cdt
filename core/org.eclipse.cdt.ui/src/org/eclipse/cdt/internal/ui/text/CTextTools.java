@@ -170,9 +170,9 @@ public class CTextTools {
 	public IDocumentPartitioner createDocumentPartitioner() {
 		
 		String[] types= new String[] {
-			CPartitionScanner.C_MULTILINE_COMMENT,
-			CPartitionScanner.C_SINGLE_LINE_COMMENT,
-			CPartitionScanner.C_STRING
+			ICPartitions.C_MULTILINE_COMMENT,
+			ICPartitions.C_SINGLE_LINE_COMMENT,
+			ICPartitions.C_STRING
 		};
 		
 		return new DefaultPartitioner(getPartitionScanner(), types);

@@ -829,6 +829,30 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
+            name="%ActionDefinition.addBlockComment.name"
+            description="%ActionDefinition.addBlockComment.description"
+            category="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.add.block.comment">
+      </command>
+      <keyBinding
+            string="Ctrl+Shift+/"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.edit.text.c.add.block.comment"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.removeBlockComment.name"
+            description="%ActionDefinition.removeBlockComment.description"
+            category="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.remove.block.comment">
+      </command>
+      <keyBinding
+            string="Ctrl+Shift+\"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.edit.text.c.remove.block.comment"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.opendecl.name"
             category="org.eclipse.cdt.ui.category.source"
             description="%ActionDefinition.opendecl.description"

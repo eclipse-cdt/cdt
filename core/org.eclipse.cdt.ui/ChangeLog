@@ -1,3 +1,21 @@
+2004-12-03 Alain Magloire
+	Implement comment blocks(Code take from JDT Editor)
+	This seems to be of importance for some ISV(including QNX)
+	So we move it here to the branch also.
+
+	* src/org/eclipse/cdt/internal/ui/action/AddBlockCommentAction.java
+	* src/org/eclipse/cdt/internal/ui/action/BlockCommentAction.java
+	* src/org/eclipse/cdt/internal/ui/action/RemoveBlockCommentAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+	* src/org/eclipse/cdt/internal/ui/editor/ICEditorActionDefinitionIds.java
+	* src/org/eclipse/cdt/internal/ui/text/	CPartitionScanner.java
+	* src/org/eclipse/cdt/internal/ui/text/CTextTools.java
+	* src/org/eclipse/cdt/internal/ui/text/FastCPartitionScanner.java
+	* src/org/eclipse/cdt/internal/ui/text/ICPartitions.java
+	* plugin.xml
+	* plugin.properties
+
 2004-12-02 Alain Magloire
 	Fix for 40081
 	Textfield to choose NM.

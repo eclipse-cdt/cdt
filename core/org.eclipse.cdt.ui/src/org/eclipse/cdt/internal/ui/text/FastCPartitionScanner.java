@@ -17,12 +17,7 @@ import org.eclipse.jface.text.rules.Token;
  * This scanner recognizes the C multi line comments, C single line comments,
  * C strings and C characters.
  */
-public class FastCPartitionScanner implements IPartitionTokenScanner {
-
-	private final static String SKIP= "__skip"; //$NON-NLS-1$	
-	public final static String C_STRING= "c_string"; //$NON-NLS-1$
-	public final static String C_SINGLE_LINE_COMMENT= "c_single_line_comment"; //$NON-NLS-1$
-	public final static String C_MULTI_LINE_COMMENT= "c_multi_line_comment"; //$NON-NLS-1$
+public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitions {
 
 	// states
 	private static final int CCODE= 0;	
@@ -63,7 +58,7 @@ public class FastCPartitionScanner implements IPartitionTokenScanner {
 	private final IToken[] fTokens= new IToken[] {
 		new Token(null),
 		new Token(C_SINGLE_LINE_COMMENT),
-		new Token(C_MULTI_LINE_COMMENT),
+		new Token(C_MULTILINE_COMMENT),
 		new Token(SKIP),
 		new Token(C_STRING)
 	};
@@ -411,7 +406,7 @@ public class FastCPartitionScanner implements IPartitionTokenScanner {
 		else if (contentType.equals(C_SINGLE_LINE_COMMENT))
 			return SINGLE_LINE_COMMENT;
 
-		else if (contentType.equals(C_MULTI_LINE_COMMENT))
+		else if (contentType.equals(C_MULTILINE_COMMENT))
 			return MULTI_LINE_COMMENT;
 
 		else if (contentType.equals(C_STRING))

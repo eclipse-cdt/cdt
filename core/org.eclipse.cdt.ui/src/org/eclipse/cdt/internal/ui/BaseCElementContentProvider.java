@@ -333,7 +333,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	}
 	
 	private Object[] filterNonCResources(Object[] objects, ICProject cproject) {
-		ICElement[] binaries = getExecutables(cproject);
+		ICElement[] binaries = getBinaries(cproject);
 		ICElement[] archives = getArchives(cproject);
 		ISourceRoot[] roots = null;
 		try {
@@ -424,6 +424,25 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				if (bin.isExecutable()) {
 					list.add(bin);
 				}
+			}
+		}
+		IBinary[] bins = new IBinary[list.size()];
+		list.toArray(bins);
+		return bins;
+	}
+
+	protected IBinary[] getBinaries(ICProject cproject) {
+		IBinaryContainer container = cproject.getBinaryContainer();
+		return getBinaries(container);
+	}
+
+	protected IBinary[] getBinaries(IBinaryContainer container) {
+		ICElement[] celements = container.getChildren();
+		ArrayList list = new ArrayList(celements.length);
+		for (int i = 0; i < celements.length; i++) {
+			if (celements[i] instanceof IBinary) {
+				IBinary bin = (IBinary)celements[i];
+				list.add(bin);
 			}
 		}
 		IBinary[] bins = new IBinary[list.size()];

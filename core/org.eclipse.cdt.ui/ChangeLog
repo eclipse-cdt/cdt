@@ -1,3 +1,10 @@
+2004-04-06 Alain Magloire
+
+	Bug fixes and support for external headers.
+
+	* src/org/eclipse/cdt/internal/ui/BaseCElmentContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
+
 2004-04-05 Alain Magloire
 
 	Changing the sequence when we shutdown, this will

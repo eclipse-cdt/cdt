@@ -155,8 +155,11 @@ public class EditorUtility {
 			if (element instanceof ITranslationUnit) {
 				ITranslationUnit unit= (ITranslationUnit) element;
 				IResource resource= unit.getResource();
-				if (resource instanceof IFile)
+				if (resource instanceof IFile) {
 					return new FileEditorInput((IFile) resource);
+				} else {
+					return new ExternalEditorInput(getStorage(unit));					
+				}
 			}
                         
 			if (element instanceof IBinary) {
@@ -300,6 +303,16 @@ public class EditorUtility {
 		IStorage store = null;
 		try {
 			store = new FileStorage (new ByteArrayInputStream(bin.getBuffer().getContents().getBytes()), bin.getPath());
+		} catch (CModelException e) {
+			// nothing;
+		}
+		return store;
+	}
+	
+	public static IStorage getStorage(ITranslationUnit tu) {
+		IStorage store = null;
+		try {
+			store = new FileStorage (new ByteArrayInputStream(tu.getBuffer().getContents().getBytes()), tu.getPath());
 		} catch (CModelException e) {
 			// nothing;
 		}

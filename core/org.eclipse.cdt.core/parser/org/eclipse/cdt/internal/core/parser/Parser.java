@@ -752,14 +752,9 @@ public class Parser implements IParserData, IParser
 			ITokenDuple nameDuple = null;
 			if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON) {
 				try {
-					try {
-						nameDuple = name(d.getScope(),
+					nameDuple = name(d.getScope(),
 								CompletionKind.SINGLE_NAME_REFERENCE,
 								KeywordSetKey.EMPTY);
-					} catch (OffsetLimitReachedException olre) {
-						backup(mark);
-						return null;
-					}
 				} catch (BacktrackException bt) {
 					backup(mark);
 					return null;

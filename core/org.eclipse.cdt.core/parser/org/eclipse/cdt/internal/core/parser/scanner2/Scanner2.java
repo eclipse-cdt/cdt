@@ -1124,7 +1124,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return lineNum;
 	}
 
-	private IToken scanNumber() {
+	private IToken scanNumber() throws EndOfFileException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int start = bufferPos[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
@@ -1158,6 +1158,9 @@ public class Scanner2 implements IScanner, IScannerData {
 					continue;
 				
 				case '.':
+					if( isLimitReached() )
+						handleNoSuchCompletion();
+					
 					if (isFloat){
 						// second dot
 					    handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, start, null );
@@ -3080,6 +3083,10 @@ public class Scanner2 implements IScanner, IScannerData {
 		throw new OffsetLimitReachedException( node );
 	}
 
+	protected void handleNoSuchCompletion() throws EndOfFileException
+	{
+		throw new OffsetLimitReachedException( new ASTCompletionNode( IASTCompletionNode.CompletionKind.NO_SUCH_KIND, null, null, EMPTY_STRING, KeywordSets.getKeywords(KeywordSetKey.EMPTY, language ) , EMPTY_STRING, null)); 
+	}
 	
 	protected void handleInvalidCompletion() throws EndOfFileException
 	{

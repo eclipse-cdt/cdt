@@ -1,4 +1,3 @@
-package org.eclipse.cdt.ui.dialogs;
 /***********************************************************************
  * Copyright (c) 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
@@ -9,6 +8,7 @@ package org.eclipse.cdt.ui.dialogs;
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
+package org.eclipse.cdt.ui.dialogs;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,9 +31,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-public class BinaryParserBlock extends AbstractCOptionPage {
+public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 	private static final String PREFIX = "BinaryParserBlock"; // $NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$
@@ -67,6 +68,7 @@ public class BinaryParserBlock extends AbstractCOptionPage {
 		comboBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				getContainer().updateContainer();
+				handleBinaryParserChanged();
 			}
 		});
 		Iterator items = idMap.keySet().iterator();
@@ -77,6 +79,23 @@ public class BinaryParserBlock extends AbstractCOptionPage {
 		if (initial != null) {
 			comboBox.setText(initial);
 		}
+
+		// Add the Parser UI contribution.
+		Group parserGroup = new Group(control, SWT.SHADOW_ETCHED_IN);
+		parserGroup.setText("Binary Parser Options");
+		GridLayout tabHolderLayout = new GridLayout();
+		tabHolderLayout.marginHeight = 0;
+		tabHolderLayout.marginWidth = 0;
+		tabHolderLayout.numColumns = 1;
+		parserGroup.setLayout(tabHolderLayout);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		parserGroup.setLayoutData(gd);
+		// Must set the composite parent to super class.
+		setCompositeParent(parserGroup);
+		// fire a change event, to quick start.
+		handleBinaryParserChanged();
+
 		setControl(control);
 	}
 
@@ -99,6 +118,10 @@ public class BinaryParserBlock extends AbstractCOptionPage {
 		} else {
 			fPrefs.setDefault(CCorePlugin.PREF_BINARY_PARSER, (String) idMap.get(initial));
 		}
+		// Give a chance to the contributions to save.
+		// We have to do it last to make sure the parser id is save
+		// in .cdtproject
+		super.performApply(monitor);
 	}
 
 	public void setContainer(ICOptionContainer container) {
@@ -147,7 +170,15 @@ public class BinaryParserBlock extends AbstractCOptionPage {
 			initial = point.getExtension(id).getLabel();
 		}
 		comboBox.setText(initial);
+		// Give a change to the UI contributors to react.
+		// But do it last after the comboBox is set.
+		super.performDefaults();
 		getContainer().updateContainer();
+	}
+
+	protected String getCurrentBinaryParserID() {
+		String selected = comboBox.getText();
+		return (String) idMap.get(selected);
 	}
 
 }

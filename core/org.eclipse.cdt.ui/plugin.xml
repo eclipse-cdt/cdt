@@ -25,6 +25,8 @@
 
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
+   <extension-point id="BinaryParserPage" name="Binary Parser Page"/>
+
 <!-- =========================================================================== -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
 <!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
@@ -600,6 +602,15 @@
                id="org.eclipse.search.SearchResultView">
          </part>
       </actionSetPartAssociation>
+   </extension>
+
+   <extension
+         point="org.eclipse.cdt.ui.BinaryParserPage">
+      <parserPage
+            class="org.eclipse.cdt.ui.dialogs.GNUElfBinaryParserPage"
+            id="ElfBinaryParserPage"
+            parserID="org.eclipse.cdt.core.GNU_ELF">
+      </parserPage>
    </extension>
 
 </plugin>

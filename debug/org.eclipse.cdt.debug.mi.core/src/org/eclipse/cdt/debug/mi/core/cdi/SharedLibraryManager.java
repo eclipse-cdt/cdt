@@ -40,25 +40,6 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 		delList = new ArrayList(1);
 	}
 
-	public void loadSymbols(ICDISharedLibrary slib) throws CDIException {
-		// FIXME: use the command factory for this so we can overload.
-		if (slib.areSymbolsLoaded()) {
-			return;
-		}
-		CSession s = getCSession();
-		CLICommand cmd = new CLICommand("shared " + slib.getFileName());
-		try {
-			s.getMISession().postCommand(cmd);
-			MIInfo info = cmd.getMIInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
-			}
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		}
-		update();
-	}
-
 	public void update() throws CDIException {
 		MIShared[] miLibs = new MIShared[0];
 		CSession s = getCSession();
@@ -149,6 +130,48 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 	public ICDISharedLibrary[] getSharedLibraries() throws CDIException {
 		update();
 		return (ICDISharedLibrary[])sharedList.toArray(new ICDISharedLibrary[0]);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#loadSymbols()
+	 */
+	public void loadSymbols() throws CDIException {
+		CSession s = getCSession();
+		CLICommand cmd = new CLICommand("shared");
+		try {
+			s.getMISession().postCommand(cmd);
+			MIInfo info = cmd.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+		update();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#loadSymbols(ICDISharedLibrary[])
+	 */
+	public void loadSymbols(ICDISharedLibrary[] libs) throws CDIException {
+		// FIXME: use the command factory for this so we can overload.
+		for (int i = 0; i < libs.length; i++) {
+			if (libs[i].areSymbolsLoaded()) {
+				continue;
+			}
+			CSession s = getCSession();
+			CLICommand cmd = new CLICommand("shared " + libs[i].getFileName());
+			try {
+				s.getMISession().postCommand(cmd);
+				MIInfo info = cmd.getMIInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
+			}
+		}
+		update();
 	}
 
 }

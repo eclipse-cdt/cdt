@@ -40,10 +40,10 @@
             id="org.eclipse.cdt.debug.mi.core.CygwinCDebugger">
       </debugger>
       <debugger
-            platform="native"
+            platform="*"
             name="%GDBServer.name"
             modes="run"
-            cpu="native"
+            cpu="*"
             class="org.eclipse.cdt.debug.mi.core.GDBServerDebugger"
             id="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger">
       </debugger>

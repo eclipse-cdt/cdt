@@ -89,6 +89,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
@@ -118,11 +119,14 @@ public class CPPSemantics {
 		public boolean ignoreUsingDirectives = false;
 		public boolean usingDirectivesOnly = false;
 		public boolean forceQualified = false;
-		public Object [] foundItems = null;
+		public boolean forUserDefinedConversion = false;
+		public boolean forAssociatedScopes = false;
+		public boolean prefixLookup = false;
+		
+		public Object foundItems = null;
 		public Object [] functionParameters;
-		public boolean forUserDefinedConversion;
-        public ProblemBinding problem;
-        public boolean forAssociatedScopes = false;
+		public ProblemBinding problem;
+        
 		
 		public LookupData( IASTName n ){
 			astName = n;
@@ -214,6 +218,15 @@ public class CPPSemantics {
             {
                 return true;
             }
+            return false;
+        }
+        public boolean hasResults(){
+            if( foundItems == null )
+                return false;
+            if( foundItems instanceof Object [] )
+                return ((Object[])foundItems).length != 0;
+            if( foundItems instanceof CharArrayObjectMap )
+                return ((CharArrayObjectMap)foundItems).size() != 0;
             return false;
         }
 	}
@@ -549,7 +562,46 @@ public class CPPSemantics {
 	    }
 	    return (ICPPScope) CPPVisitor.getContainingScope( name );
 	}
-	
+	private static void mergeResults( LookupData data, Object results, boolean scoped ){
+	    if( !data.prefixLookup ){
+	        if( results instanceof IBinding ){
+	            data.foundItems = ArrayUtil.append( Object.class, (Object[]) data.foundItems, results );
+	        } else if( results instanceof Object[] ){
+	            data.foundItems = ArrayUtil.addAll( Object.class, (Object[])data.foundItems, (Object[])results );
+	        }
+	    } else {
+	        Object [] objs = (Object[]) results;
+	        CharArrayObjectMap resultMap = (CharArrayObjectMap) data.foundItems;
+	        if( objs != null ) {
+	    		for( int i = 0; i < objs.length && objs[i] != null; i++ ){
+	    		    char [] n = null;
+	    		    if( objs[i] instanceof IBinding )
+	    		        n = ((IBinding)objs[i]).getNameCharArray();
+	    		    else
+	    		        n = ((IASTName)objs[i]).toCharArray();
+    		        if( !resultMap.containsKey( n ) ){
+	    				resultMap.put( n, objs[i] );
+	    			} else if( !scoped ) {
+	    			    Object obj = resultMap.get( n );
+	    			    if( obj instanceof Object [] ) {
+	    			        if( objs[i] instanceof IBinding )
+	    			            obj = ArrayUtil.append( Object.class, (Object[]) obj, objs[i] );
+	    			        else
+	    			            obj = ArrayUtil.addAll( Object.class, (Object[])obj, (Object[]) objs[i] );
+	    			    } else {
+	    			        if( objs[i] instanceof IBinding )
+	    			            obj = new Object [] { obj, objs[i] };
+	    			        else {
+	    			            Object [] temp = new Object [ ((Object[])objs[i]).length + 1 ];
+	    			            temp[0] = obj;
+	    			            obj = ArrayUtil.addAll( Object.class, temp, (Object[]) objs[i] );
+	    			        }
+	    			    } 
+	    			}
+	    		}
+	        }
+	    }
+	}
 	static private void lookup( CPPSemantics.LookupData data, Object start ) throws DOMException{
 		IASTNode node = data.astName;
 
@@ -566,19 +618,18 @@ public class CPPSemantics {
 			
 			ArrayWrapper directives = null;
 			if( !data.usingDirectivesOnly ){
-				IBinding binding = scope.getBinding( data.astName );
+				IBinding binding = data.prefixLookup ? null : scope.getBinding( data.astName );
 				if( binding == null ){
 				    directives = new ArrayWrapper();
-				    data.foundItems = lookupInScope( data, scope, blockItem, directives );
+				    mergeResults( data, lookupInScope( data, scope, blockItem, directives ), true );
 				} else {
-				    data.foundItems = ArrayUtil.append( Object.class, data.foundItems, binding );
+				    mergeResults( data, binding, true );
 				}
 			}
 				
-			
 			if( !data.ignoreUsingDirectives ) {
 				data.visited.clear();
-				if( data.foundItems == null || data.foundItems.length == 0 ){
+				if( data.prefixLookup || !data.hasResults() ){
 					Object[] transitives = lookupInNominated( data, scope, null );
 					
 					processDirectives( data, scope, transitives );
@@ -588,21 +639,21 @@ public class CPPSemantics {
 					while( !data.usingDirectives.isEmpty() && data.usingDirectives.get( scope ) != null ){
 						transitives = lookupInNominated( data, scope, transitives );
 		
-						if( !data.qualified() || data.foundItems == null ){
+						if( !data.qualified() || ( data.prefixLookup || !data.hasResults()) ){
 							processDirectives( data, scope, transitives );
 						}
 					}
 				}
 			}
 			
-			if( data.problem != null || data.foundItems != null && data.foundItems.length != 0 )
+			if( !data.prefixLookup && (data.problem != null || data.hasResults()) )
 				return;
 			
 			if( !data.usingDirectivesOnly && scope instanceof ICPPClassScope ){
-				data.foundItems = lookupInParents( data, (ICPPClassScope) scope );
+				mergeResults( data, lookupInParents( data, (ICPPClassScope) scope ), true );
 			}
 			
-			if( data.problem != null || data.foundItems != null && data.foundItems.length != 0 )
+			if( !data.prefixLookup && (data.problem != null || data.hasResults()) )
 				return;
 			
 			//if still not found, loop and check our containing scope
@@ -888,11 +939,8 @@ public class CPPSemantics {
 				}
 				data.visited.put( temp );
 				ArrayWrapper usings = new ArrayWrapper();
-				Object[] found = lookupInScope( data, temp, null, usings );
-				if( data.foundItems == null )
-					data.foundItems = found;
-				else if( found != null )
-					data.foundItems = ArrayUtil.addAll( Object.class, data.foundItems, found );
+				IASTName[] found = lookupInScope( data, temp, null, usings );
+				mergeResults( data, found, false );
 				
 				//only consider the transitive using directives if we are an unqualified
 				//lookup, or we didn't find the name in decl
@@ -918,9 +966,9 @@ public class CPPSemantics {
 		    while( dtor.getNestedDeclarator() != null )
 		    	dtor = dtor.getNestedDeclarator();
 			IASTName declName = dtor.getName();
-			if( CharArrayUtils.equals( declName.toCharArray(), data.name ) ){
-				return declName;
-			}
+			if( nameMatches( data, declName.toCharArray() ) ) {
+		        return declName;
+		    }
 		}
 		if( declaration == null )
 			return null;
@@ -935,7 +983,7 @@ public class CPPSemantics {
 						declarator = declarator.getNestedDeclarator();
 					if( data.considerConstructors() || !CPPVisitor.isConstructor( scope, declarator ) ){
 						IASTName declaratorName = declarator.getName();
-						if( CharArrayUtils.equals( declaratorName.toCharArray(), data.name ) ){
+						if( nameMatches( data, declaratorName.toCharArray() ) ) {
 							return declaratorName;
 						}
 					}
@@ -946,18 +994,18 @@ public class CPPSemantics {
 			IASTDeclSpecifier declSpec = simpleDeclaration.getDeclSpecifier();
 			if( declSpec instanceof IASTElaboratedTypeSpecifier ){
 				IASTName elabName = ((IASTElaboratedTypeSpecifier)declSpec).getName();
-				if( CharArrayUtils.equals( elabName.toCharArray(), data.name ) ){
+				if( nameMatches( data, elabName.toCharArray() ) ) {
 					return elabName;
 				}
 			} else if( declSpec instanceof ICPPASTCompositeTypeSpecifier ){
 				IASTName compName = ((IASTCompositeTypeSpecifier)declSpec).getName();
-				if( CharArrayUtils.equals( compName.toCharArray(), data.name ) ){
+				if( nameMatches( data, compName.toCharArray() ) ) {
 					return compName;
 				}
 			} else if( declSpec instanceof IASTEnumerationSpecifier ){
 			    IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpec;
 			    IASTName eName = enumeration.getName();
-			    if( CharArrayUtils.equals( eName.toCharArray(), data.name ) ){
+			    if( nameMatches( data, eName.toCharArray() ) ) {
 					return eName;
 				}
 			    if( !data.typesOnly() ) {
@@ -967,7 +1015,7 @@ public class CPPSemantics {
 				        IASTEnumerator enumerator = list[i];
 				        if( enumerator == null ) break;
 				        eName = enumerator.getName();
-				        if( CharArrayUtils.equals( eName.toCharArray(), data.name ) ){
+				        if( nameMatches( data, eName.toCharArray() ) ) {
 							return eName;
 						}
 				    }
@@ -980,16 +1028,16 @@ public class CPPSemantics {
 				IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
 				name = ns[ ns.length - 1 ];
 			}
-			if( CharArrayUtils.equals( name.toCharArray(), data.name ) ){
+			if( nameMatches( data, name.toCharArray() ) ) {
 				return name;
 			}
 		} else if( declaration instanceof ICPPASTNamespaceDefinition ){
 			IASTName namespaceName = ((ICPPASTNamespaceDefinition) declaration).getName();
-			if( CharArrayUtils.equals( namespaceName.toCharArray(), data.name ) )
+			if( nameMatches( data, namespaceName.toCharArray() ) )
 				return namespaceName;
 		} else if( declaration instanceof ICPPASTNamespaceAlias ){
 			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
-			if( CharArrayUtils.equals( alias.toCharArray(), data.name ) )
+			if( nameMatches( data, alias.toCharArray() ) )
 				return alias;
 		}
 		
@@ -1003,7 +1051,7 @@ public class CPPSemantics {
 			//check the function itself
 			IASTName declName = declarator.getName();
 			if( data.considerConstructors() || !CPPVisitor.isConstructor( scope, declarator ) ){
-				if( CharArrayUtils.equals( declName.toCharArray(), data.name ) ){
+			    if( nameMatches( data, declName.toCharArray() ) ) {
 					return declName;
 				}
 			}
@@ -1018,7 +1066,7 @@ public class CPPSemantics {
 						while( dtor.getNestedDeclarator() != null )
 							dtor = dtor.getNestedDeclarator();
 						declName = dtor.getName();
-						if( CharArrayUtils.equals( declName.toCharArray(), data.name ) ){
+						if( nameMatches( data, declName.toCharArray() ) ) {
 							return declName;
 						}
 					}
@@ -1029,6 +1077,11 @@ public class CPPSemantics {
 		return null;
 	}
 
+	private static final boolean nameMatches( LookupData data, char[] potential ){
+	    return ( (data.prefixLookup && CharArrayUtils.equals( potential, 0, data.name.length, data.name )) || 
+			     (!data.prefixLookup && CharArrayUtils.equals( potential, data.name )) );
+	}
+	
 	private static void addDefinition( IBinding binding, IASTName name ){
 		if( binding instanceof IFunction ){
 			IASTNode node =  name.getParent();
@@ -1071,7 +1124,7 @@ public class CPPSemantics {
 	}
 	
 	static private IBinding resolveAmbiguities( CPPSemantics.LookupData data, IASTName name ) throws DOMException {
-	    if( data.foundItems == null || data.foundItems.length == 0 )
+	    if( !data.hasResults() || data.prefixLookup )
 	        return null;
 	      
 	    IBinding type = null;
@@ -1079,8 +1132,9 @@ public class CPPSemantics {
 	    IBinding temp = null;
 	    IFunction[] fns = null;
 	    
-	    for( int i = 0; i < data.foundItems.length && data.foundItems[i] != null; i++ ){
-	        Object o = data.foundItems[i];
+	    Object [] items = (Object[]) data.foundItems;
+	    for( int i = 0; i < items.length && items[i] != null; i++ ){
+	        Object o = items[i];
 	        if( o instanceof IASTName )
 	            temp = ((IASTName) o).resolveBinding();
 	        else if( o instanceof IBinding ){
@@ -1092,7 +1146,8 @@ public class CPPSemantics {
 
 	        if( temp instanceof ICPPCompositeBinding ){
 	        	IBinding [] bindings = ((ICPPCompositeBinding) temp).getBindings();
-	        	data.foundItems = ArrayUtil.addAll( Object.class, data.foundItems, bindings );
+	        	//data.foundItems = ArrayUtil.addAll( Object.class, data.foundItems, bindings );
+	        	mergeResults( data, bindings, false );
 	        	continue;
 	        } else if( temp instanceof IType ){
 	        	if( type == null ){
@@ -1587,10 +1642,11 @@ public class CPPSemantics {
 	        } catch ( DOMException e1 ) {
 	            return null;
 	        }
-	        if( data.foundItems != null && data.foundItems.length > 0 ){
+	        if( data.hasResults() ){
+	            Object [] items = (Object[]) data.foundItems;
 	            IBinding temp = null;
-	            for( int i = 0; i < data.foundItems.length; i++ ){
-	                Object o = data.foundItems[i];
+	            for( int i = 0; i < items.length; i++ ){
+	                Object o = items[i];
 	                if( o == null ) break;
 	                if( o instanceof IASTName )
 	    	            temp = ((IASTName) o).resolveBinding();
@@ -2056,4 +2112,50 @@ public class CPPSemantics {
         
 		return binding;
 	}
+	
+    public static IBinding [] prefixLookup( IASTName name ){
+        LookupData data = createLookupData( name, true );
+        data.prefixLookup = true;
+        data.foundItems = new CharArrayObjectMap( 2 );
+        
+        try {
+            lookup( data, name );
+        } catch ( DOMException e ) {
+        }
+        CharArrayObjectMap map = (CharArrayObjectMap) data.foundItems;
+        IBinding [] result = null;
+        if( !map.isEmpty() ){
+            char [] key = null;
+            Object obj = null;
+            int size = map.size(); 
+            for( int i = 0; i < size; i++ ) {
+                key = map.keyAt( i );
+                obj = map.get( key );
+                if( obj instanceof IBinding )
+                    result = (IBinding[]) ArrayUtil.append( IBinding.class, result, obj );
+                else {
+                    Object item = null;
+                    if( obj instanceof Object[] ){
+                        Object[] objs = (Object[]) obj;
+                        if( objs.length > 1 && objs[1] != null )
+                            continue;
+                        item = objs[0];
+                    } else {
+                        item = obj;
+                    }
+                    
+                    if( item instanceof IBinding )
+                        result = (IBinding[]) ArrayUtil.append( IBinding.class, result, item );
+                    else {
+                        IBinding binding = ((IASTName) item).resolveBinding();
+                        if( binding != null && !(binding instanceof IProblemBinding))
+                            result = (IBinding[]) ArrayUtil.append( IBinding.class, result, binding );
+                    }
+                        
+                }
+            }
+        }
+        return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
+    }
+
 }

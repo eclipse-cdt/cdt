@@ -1898,5 +1898,29 @@ public class AST2CPPTests extends AST2BaseTest {
         IVariable g = (IVariable) col.getName(3).resolveBinding();
         assertInstances( col, g, 3 );
     }
+    
+    public void testPrefixLookup() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "struct A {            \n"); //$NON-NLS-1$
+        buffer.append( "    int a2;           \n"); //$NON-NLS-1$
+        buffer.append( "};                    \n"); //$NON-NLS-1$
+        buffer.append( "struct B : public A { \n"); //$NON-NLS-1$
+        buffer.append( "    int a1;           \n"); //$NON-NLS-1$
+        buffer.append( "    void f();         \n"); //$NON-NLS-1$
+        buffer.append( "}                     \n"); //$NON-NLS-1$
+        buffer.append( "int a3;               \n"); //$NON-NLS-1$
+        buffer.append( "void B::f(){          \n"); //$NON-NLS-1$
+        buffer.append( "   int a4;            \n"); //$NON-NLS-1$
+        buffer.append( "   a;                 \n"); //$NON-NLS-1$
+        buffer.append( "}                     \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        IASTName name = col.getName(11);
+        IBinding [] bs = CPPSemantics.prefixLookup( name );
+        assertEquals( 4, bs.length );
+    }
 }
 

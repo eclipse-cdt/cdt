@@ -160,26 +160,27 @@ public class MIInferior extends Process {
 				interrupt();
 				session.postCommand(abort);
 				MIInfo info = abort.getMIInfo();
+				setTerminated();
 			} catch (MIException e) {
 			}
-			setTerminated();
 		}
 	}
 
-	public void interrupt() {
+	public void interrupt() throws MIException {
 		Process gdb = session.getMIProcess();
 		if (gdb instanceof Spawner) {
 			Spawner gdbSpawner = (Spawner)gdb;
 			gdbSpawner.interrupt();
 		} else {
-			// Try the exec-interrupt;
-			CommandFactory factory = session.getCommandFactory();
-			MIExecInterrupt interrupt = factory.createMIExecInterrupt();
-			try {
-				session.postCommand(interrupt);
-				MIInfo info = interrupt.getMIInfo();
-			} catch (MIException e) {
-			}
+			// Try the exec-interrupt; this will be for "gdb --async"
+			// CommandFactory factory = session.getCommandFactory();
+			// MIExecInterrupt interrupt = factory.createMIExecInterrupt();
+			// try {
+			// 	session.postCommand(interrupt);
+			// 	MIInfo info = interrupt.getMIInfo();
+			// } catch (MIException e) {
+			// }
+			throw new MIException("Interruption no supported");
 		}
 	}
 

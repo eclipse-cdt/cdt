@@ -115,7 +115,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 				symbols.remove( i-- );
 				size--;
 			} else if( templatesIdx < templatesSize ) {
-				ITemplateSymbol template = (ITemplateSymbol) templates.get( templatesIdx-- );
+				ITemplateSymbol template = (ITemplateSymbol) templates.get( templatesIdx++ );
 				if( template.getParameterList().size() == 0 ){
 					templateParamState = true;
 					container = sym;

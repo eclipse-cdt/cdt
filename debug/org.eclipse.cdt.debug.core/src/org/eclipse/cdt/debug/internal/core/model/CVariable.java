@@ -73,6 +73,11 @@ public abstract class CVariable extends CDebugElement
 	 */
 	private String fName = null;
 
+	/**
+	 * The full name of this variable.
+	 */
+	private String fQualifiedName = null;
+
 	private Boolean fEditable = null;
 
 	/**
@@ -778,45 +783,49 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public String getQualifiedName() throws DebugException
 	{
-		LinkedList list = new LinkedList();
-		list.add( this );
-		CVariable var = getParentVariable();
-		while( var != null )
+		if ( fQualifiedName == null )
 		{
-			if ( !( var.getType() instanceof ICDIArrayType ) && !( var instanceof CArrayPartition ) && !var.isAccessSpecifier() )
-				list.addFirst( var );
-			var = var.getParentVariable();
-		}
-		StringBuffer sb = new StringBuffer();
-		CVariable[] vars = (CVariable[])list.toArray( new CVariable[list.size()] );
-		for ( int i = 0; i < vars.length; ++i )
-		{
-			sb.insert( 0, '(' );
-			if ( i > 0 )
+			LinkedList list = new LinkedList();
+			list.add( this );
+			CVariable var = getParentVariable();
+			while( var != null )
 			{
-				if ( vars[i - 1].isPointer() )
+				if ( !( var.getType() instanceof ICDIArrayType ) && !( var instanceof CArrayPartition ) && !var.isAccessSpecifier() )
+					list.addFirst( var );
+				var = var.getParentVariable();
+			}
+			StringBuffer sb = new StringBuffer();
+			CVariable[] vars = (CVariable[])list.toArray( new CVariable[list.size()] );
+			for ( int i = 0; i < vars.length; ++i )
+			{
+				sb.insert( 0, '(' );
+				if ( i > 0 )
 				{
-					if ( vars[i].getName().charAt( 0 ) == '*' && vars[i-1].getName().equals( vars[i].getName().substring( 1 ) ) )
+					if ( vars[i - 1].isPointer() )
 					{
-						sb.insert( 0, '*' );
+						if ( vars[i].getName().charAt( 0 ) == '*' && vars[i-1].getName().equals( vars[i].getName().substring( 1 ) ) )
+						{
+							sb.insert( 0, '*' );
+						}
+						else
+						{
+							sb.append( "->" );
+							sb.append( vars[i].getName() );
+						}
 					}
 					else
 					{
-						sb.append( "->" );
+						sb.append( '.' );
 						sb.append( vars[i].getName() );
 					}
 				}
 				else
-				{
-					sb.append( '.' );
 					sb.append( vars[i].getName() );
-				}
+				sb.append( ')' );
 			}
-			else
-				sb.append( vars[i].getName() );
-			sb.append( ')' );
+			fQualifiedName = sb.toString();
 		}
-		return sb.toString();
+		return fQualifiedName;
 	}
 
 	protected boolean isAccessSpecifier() throws DebugException

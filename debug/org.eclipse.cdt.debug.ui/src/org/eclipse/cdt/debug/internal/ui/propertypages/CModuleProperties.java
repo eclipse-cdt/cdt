@@ -10,7 +10,7 @@
  ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.ui.propertypages; 
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import org.eclipse.cdt.debug.core.model.ICModule;
  
 /**
@@ -25,31 +25,52 @@ public class CModuleProperties {
 	final static public String SYMBOLS_LOADED = "symbolsLoaded";  //$NON-NLS-1$
 	final static public String SYMBOLS_FILE = "symbolsFile";  //$NON-NLS-1$
 
-	private HashMap fMap;
+	public class Property {
+
+		private String fKey;
+		private Object fValue;
+
+		/**
+		 * Constructor for Property.
+		 */
+		public Property( String key, Object value ) {
+			fKey = key;
+			fValue = value;
+		}
+
+		public String getKey() {
+			return fKey;
+		}
+
+		public Object getValue() {
+			return fValue;
+		}
+	}
+
+	private ArrayList fProperties;
 
 	static CModuleProperties create( ICModule module ) {
-		CModuleProperties p = new CModuleProperties();
-		p.setProperty( TYPE, new Integer( module.getType() ) );
-		p.setProperty( CPU, module.getCPU() );
-		p.setProperty( BASE_ADDRESS, module.getBaseAddress() );
-		p.setProperty( SIZE, new Long( module.getSize() ) );
-		p.setProperty( SYMBOLS_LOADED, new Boolean( module.areSymbolsLoaded() ) );
-		p.setProperty( SYMBOLS_FILE, module.getSymbolsFileName() );
-		return p;
+		return new CModuleProperties( module );
 	}
 
 	/** 
 	 * Constructor for CModuleProperties. 
 	 */
-	private CModuleProperties() {
-		fMap = new HashMap( 5 );
+	private CModuleProperties( ICModule module ) {
+		fProperties = new ArrayList( 10 );
+		fProperties.add( new Property( TYPE, new Integer( module.getType() ) ) );
+		fProperties.add( new Property( CPU, module.getCPU() ) );
+		fProperties.add( new Property( BASE_ADDRESS, module.getBaseAddress() ) );
+		fProperties.add( new Property( SIZE, new Long( module.getSize() ) ) );
+		fProperties.add( new Property( SYMBOLS_LOADED, new Boolean( module.areSymbolsLoaded() ) ) );
+		fProperties.add( new Property( SYMBOLS_FILE, module.getSymbolsFileName() ) );
 	}
 
-	private void setProperty( String key, Object value ) {
-		fMap.put( key, value );
+	public Property[] getProperties() {
+		return (Property[])fProperties.toArray( new Property[fProperties.size()] );
 	}
 
-	public Object[] getProperties() {
-		return fMap.entrySet().toArray();
+	public void dispose() {
+		fProperties.clear();
 	}
 }

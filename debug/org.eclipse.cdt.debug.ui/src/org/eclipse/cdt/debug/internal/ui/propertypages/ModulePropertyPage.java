@@ -10,7 +10,6 @@
  ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.ui.propertypages; 
 
-import java.util.Map;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
@@ -49,59 +48,57 @@ public class ModulePropertyPage extends PropertyPage {
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
 		public String getColumnText( Object element, int columnIndex ) {
-			if ( element instanceof Map.Entry ) {
-				Map.Entry entry = (Map.Entry)element;
-				if ( CModuleProperties.TYPE.equals( entry.getKey() ) ) {
+			if ( element instanceof CModuleProperties.Property ) {
+				CModuleProperties.Property property = (CModuleProperties.Property)element;
+				if ( CModuleProperties.TYPE.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
-						return "Type";
+						return PropertyPageMessages.getString( "ModulePropertyPage.0" ); //$NON-NLS-1$
 					}
-					else {
-						Integer type = (Integer)entry.getValue();
-						if ( type.intValue() == ICModule.EXECUTABLE ) {
-							return "executable";
-						}
-						if ( type.intValue() == ICModule.SHARED_LIBRARY ) {
-							return "shared library";
-						}
-						if ( type.intValue() == ICModule.CORE ) {
-							return "core file";
-						}
+					Integer type = (Integer)property.getValue();
+					if ( type.intValue() == ICModule.EXECUTABLE ) {
+						return PropertyPageMessages.getString( "ModulePropertyPage.1" ); //$NON-NLS-1$
+					}
+					if ( type.intValue() == ICModule.SHARED_LIBRARY ) {
+						return PropertyPageMessages.getString( "ModulePropertyPage.2" ); //$NON-NLS-1$
+					}
+					if ( type.intValue() == ICModule.CORE ) {
+						return PropertyPageMessages.getString( "ModulePropertyPage.3" ); //$NON-NLS-1$
 					}
 				}
-				else if ( CModuleProperties.CPU.equals( entry.getKey() ) ) {
+				else if ( CModuleProperties.CPU.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
-						return "CPU";
+						return PropertyPageMessages.getString( "ModulePropertyPage.4" ); //$NON-NLS-1$
 					}
-					String cpu = (String)entry.getValue();
-					return ( cpu != null ) ? cpu : "not available";
+					String cpu = (String)property.getValue();
+					return ( cpu != null ) ? cpu : PropertyPageMessages.getString( "ModulePropertyPage.5" ); //$NON-NLS-1$
 				}
-				else if ( CModuleProperties.BASE_ADDRESS.equals( entry.getKey() ) ) {
+				else if ( CModuleProperties.BASE_ADDRESS.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
-						return "Base address";
+						return PropertyPageMessages.getString( "ModulePropertyPage.6" ); //$NON-NLS-1$
 					}
-					IAddress address = (IAddress)entry.getValue();
-					return ( address != null && !address.isZero() ) ? address.toHexAddressString() : "not available";
+					IAddress address = (IAddress)property.getValue();
+					return ( address != null && !address.isZero() ) ? address.toHexAddressString() : PropertyPageMessages.getString( "ModulePropertyPage.7" ); //$NON-NLS-1$
 				}
-				else if ( CModuleProperties.SIZE.equals( entry.getKey() ) ) {
+				else if ( CModuleProperties.SIZE.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
-						return "Size";
+						return PropertyPageMessages.getString( "ModulePropertyPage.8" ); //$NON-NLS-1$
 					}
-					Long size = (Long)entry.getValue();
-					return ( size != null && size.longValue() > 0 ) ? size.toString() : "not available";
+					Long size = (Long)property.getValue();
+					return ( size != null && size.longValue() > 0 ) ? size.toString() : PropertyPageMessages.getString( "ModulePropertyPage.9" ); //$NON-NLS-1$
 				}
-				else if ( CModuleProperties.SYMBOLS_LOADED.equals( entry.getKey() ) ) {
+				else if ( CModuleProperties.SYMBOLS_LOADED.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
-						return "Symbols";
+						return PropertyPageMessages.getString( "ModulePropertyPage.10" ); //$NON-NLS-1$
 					}
-					Boolean loaded = (Boolean)entry.getValue();
-					return ( loaded != null && loaded.booleanValue() ) ? "loaded" : "not loaded";
+					Boolean loaded = (Boolean)property.getValue();
+					return ( loaded != null && loaded.booleanValue() ) ? PropertyPageMessages.getString( "ModulePropertyPage.11" ) : PropertyPageMessages.getString( "ModulePropertyPage.12" ); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				else if ( CModuleProperties.SYMBOLS_FILE.equals( entry.getKey() ) ) {
+				else if ( CModuleProperties.SYMBOLS_FILE.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
-						return "Symbols file";
+						return PropertyPageMessages.getString( "ModulePropertyPage.13" ); //$NON-NLS-1$
 					}
-					IPath path = (IPath)entry.getValue();
-					return ( path != null ) ? path.toOSString() : "not found";
+					IPath path = (IPath)property.getValue();
+					return ( path != null ) ? path.toOSString() : PropertyPageMessages.getString( "ModulePropertyPage.14" ); //$NON-NLS-1$
 				}
 			}
 			return null;
@@ -109,6 +106,8 @@ public class ModulePropertyPage extends PropertyPage {
 	}
 
 	public class ModulePropertyContentProvider implements IStructuredContentProvider {
+
+		private CModuleProperties fProperties = null;
 
 		/** 
 		 * Constructor for ModulePropertyContentProvider. 
@@ -122,7 +121,10 @@ public class ModulePropertyPage extends PropertyPage {
 		 */
 		public Object[] getElements( Object inputElement ) {
 			if ( inputElement instanceof ICModule ) {
-				return CModuleProperties.create( (ICModule)inputElement ).getProperties();
+				if ( fProperties == null ) {
+					fProperties = CModuleProperties.create( (ICModule)inputElement );
+				}
+				return fProperties.getProperties();
 			}
 			return new Object[0];
 		}
@@ -131,12 +133,23 @@ public class ModulePropertyPage extends PropertyPage {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
+			disposeProperties();
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) {
+			if ( oldInput != null && oldInput.equals( newInput ) )
+				return;
+			disposeProperties();
+		}
+
+		private void disposeProperties() {
+			if ( fProperties != null ) {
+				fProperties.dispose();
+				fProperties = null;
+			}
 		}
 	}
 

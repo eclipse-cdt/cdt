@@ -28,6 +28,7 @@ public class AllLanguageInterfaceTests {
 		suite.addTest(IIncludeTests.suite());
 		suite.addTest(IMacroTests.suite());
 		suite.addTest(IStructureTests.suite());
+		suite.addTest(ITemplateTests.suite());
 		return suite;
         
 	}

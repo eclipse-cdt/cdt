@@ -14,12 +14,12 @@ import junit.framework.TestSuite;
  * AllTests.java
  * This is the main entry point for running this suite of JUnit tests
  * for all tests within the package "org.eclipse.cdt.core.model"
- * 
+ *
  * @author Judy N. Green
  * @since Jul 19, 2002
  */
 public class AllCoreTests {
-	
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
     }
@@ -27,7 +27,7 @@ public class AllCoreTests {
     public static Test suite() {
         TestSuite suite = new TestSuite(AllCoreTests.class.getName());
 
-        // Just add more test cases here as you create them for 
+        // Just add more test cases here as you create them for
         // each class being tested
 		suite.addTest(AllLanguageInterfaceTests.suite());
         suite.addTest(CModelTests.suite());
@@ -35,9 +35,10 @@ public class AllCoreTests {
         suite.addTest(FlagTests.suite());
         suite.addTest(ArchiveTests.suite());
         suite.addTest(TranslationUnitTests.suite());
-		
+		suite.addTest(DeclaratorsTests.suite());
+
         return suite;
-        
+
     }
 } // End of AllCoreTests.java
 

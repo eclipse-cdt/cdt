@@ -66,3 +66,9 @@ void func3()
 {
 	printf("This is not really here\n");
 }
+
+bool KRFunction( parm1, parm2, parm3 )
+const char* parm1;
+int (*parm2)(float);
+{
+}

@@ -304,6 +304,12 @@ public class CModelElementsTests extends TestCase {
 		assertEquals(var3.getElementName(), new String("vuShort"));
 		assertEquals(var3.getTypeName(), new String("unsigned short "));
 		checkLineNumbers((CElement)var3, 75, 75);
+		
+		// MyPackage ---> function pointer: orig_malloc_hook
+		IVariable vDecl2 = (IVariable) nsVars.get(3);
+		assertEquals(vDecl2.getElementName(), new String("orig_malloc_hook"));
+		assertEquals(vDecl2.getTypeName(), new String ("void*(*)(const char*, int, size_t)"));
+		checkLineNumbers((CElement)vDecl2, 81, 81);
 	}
 
 	private void checkVariableDeclarations(IParent namespace){
@@ -313,12 +319,6 @@ public class CModelElementsTests extends TestCase {
 		assertEquals(vDecl1.getElementName(), new String("evar"));
 		assertEquals(vDecl1.getTypeName(), new String("int"));
 		checkLineNumbers((CElement)vDecl1, 79, 79);
-
-//		// MyPackage ---> function pointer: orig_malloc_hook
-//		IVariableDeclaration vDecl2 = (IVariableDeclaration) nsVarDecls.get(1);
-//		assertEquals(vDecl2.getElementName(), new String("orig_malloc_hook"));
-//		assertEquals(vDecl2.getTypeName(), new String ("void*(*)(const char*, int, size_t)"));
-//		checkLineNumbers((CElement)vDecl2, 81, 81);
 	}
 	
 	private void checkFunctions(IParent namespace){

@@ -1,16 +1,20 @@
 2003-06-17 Brent Nicolle
 	Added Interface tests of IStructure.java.
 
+2003-06-17 Victor Mozgin
+	Added DeclaratorsTests.java (invocation in AllCoreTests).
+	Added DeclaratorsTests.cpp to org.eclipse.cdt.core.model.tests.resources.
+
+2003-06-16 Victor Mozgin
+	Added testOldKRFunctionDeclarations() to DOMTests.
+	Added testKRFunctionDeclarations() to TranslationUnitTests.
+
 2003-06-16 Vladimir Hirsl
 	Added /build, /parser, /failures and /suite directories to the library. 
 	Copied resources from /model/org.eclipse.cdt.core.model.tests.resources
 	                 to /model/org/clipse/cdt/core/model/tests/resources/cmodel.
 	Added class AISResultPrinter to format test results.  
 	Class AutomatedIntegrationSuite now implements IPlatformRunnable.
-
-2003-06-17 Victor Mozgin
-	Added DeclaratorsTests.java (invocation in AllCoreTests).
-	Added DeclaratorsTests.cpp to org.eclipse.cdt.core.model.tests.resources.
 
 2003-06-14 Victor Mozgin
 	Moved testBugSingleton192() from LokiFailures to DOMTests.

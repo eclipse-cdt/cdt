@@ -309,6 +309,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	}
 	
 	private static class ASTPropertySource implements IPropertySource {
+		private static final IPropertyDescriptor[] BLANK_DESCRIPTORS = new IPropertyDescriptor[0];
 		private static final String OPEN_PAREN = " ("; //$NON-NLS-1$
 		private static final String CLOSE_PAREN = ")"; //$NON-NLS-1$
 		private static final String L_BRACKET_STRING = "["; //$NON-NLS-1$
@@ -360,6 +361,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		
 		private IPropertyDescriptor[] getPropertyDescriptors(Object obj) {
 			IPropertyDescriptor[] desc = new IPropertyDescriptor[DEFAULT_DESCRIPTOR_SIZE];
+			if (obj==null) return BLANK_DESCRIPTORS;
 			Class objClass = obj.getClass();
 			Class[] interfaces = objClass.getInterfaces();
 			

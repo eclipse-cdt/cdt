@@ -81,6 +81,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -130,12 +131,12 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.parser.SimpleDeclarationStrategy;
 import org.eclipse.cdt.internal.core.parser.TemplateParameterManager;
+import org.eclipse.cdt.internal.core.parser.token.OperatorTokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 
 /**
@@ -148,6 +149,7 @@ import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
  */
 public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
+   private static final String COMPL = "~"; //$NON-NLS-1$
    private static final String CONST_CAST = "const_cast"; //$NON-NLS-1$
    private static final String REINTERPRET_CAST = "reinterpret_cast"; //$NON-NLS-1$
    private static final String STATIC_CAST = "static_cast"; //$NON-NLS-1$
@@ -422,12 +424,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       return last;
    }
 
-   protected ITokenDuple operatorId(IToken originalToken,
+   protected IASTName operatorId(IToken originalToken,
          TemplateParameterManager templateArgs) throws BacktrackException,
          EndOfFileException {
       // we know this is an operator
       IToken operatorToken = consume(IToken.t_operator);
       IToken toSend = null;
+   	  IASTTypeId typeId = null;
       if (LA(1).isOperator() || LT(1) == IToken.tLPAREN
             || LT(1) == IToken.tLBRACKET) {
          if ((LT(1) == IToken.t_new || LT(1) == IToken.t_delete)
@@ -452,7 +455,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       } else {
          // must be a conversion function
          IToken t = LA(1);
-         typeId(true, false);
+         typeId = typeId(true, false);
          if (t != LA(1)) {
             while (t.getNext() != LA(1)) {
                t = t.getNext();
@@ -474,12 +477,18 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             hasTemplateId = true;
          }
 
-         ITokenDuple duple = TokenFactory
+		 ITokenDuple duple = TokenFactory
                .createTokenDuple(originalToken == null ? operatorToken
                      : originalToken, toSend, (hasTemplateId ? templateArgs
                      .getTemplateArgumentsList() : null));
 
-         return duple;
+		 OperatorTokenDuple operator= new OperatorTokenDuple(duple);
+		 if (typeId!=null) { // if it's a conversion operator
+			 operator.setConversionOperator(true);
+			 operator.setTypeId(typeId);
+		 }
+		 
+         return createName(operator);
       } finally {
          if (grabbedNewInstance)
             TemplateParameterManager.returnInstance(templateArgs);
@@ -1528,7 +1537,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                   isTemplate = true;
                }
 
-               IASTName name = createName(idExpression());
+               IASTName name = idExpression();
 
                ICPPASTFieldReference fieldReference = createFieldReference();
                ((ASTNode) fieldReference).setOffsetAndLength(
@@ -1556,7 +1565,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                   isTemplate = true;
                }
 
-               name = createName(idExpression());
+               name = idExpression();
 
                fieldReference = createFieldReference();
                ((ASTNode) fieldReference).setOffsetAndLength(
@@ -1728,11 +1737,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          case IToken.t_operator:
          case IToken.tCOMPL:
 		 {
-            ITokenDuple duple = idExpression();
-            IASTName name = createName(duple);
+            IASTName name = idExpression();
             IASTIdExpression idExpression = createIdExpression();
-            ((ASTNode) idExpression).setOffsetAndLength(duple.getStartOffset(),
-                  duple.getEndOffset() - duple.getStartOffset());
+			((ASTNode) idExpression).setOffsetAndLength(((ASTNode)name).getOffset(),
+                  ((ASTNode)name).getOffset() + ((ASTNode)name).getLength() - ((ASTNode)name).getOffset());
             idExpression.setName(name);
             name.setParent(idExpression);
             name.setPropertyInParent(IASTIdExpression.ID_NAME);
@@ -1772,11 +1780,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       return new CPPASTIdExpression();
    }
 
-   protected ITokenDuple idExpression() throws EndOfFileException,
+   protected IASTName idExpression() throws EndOfFileException,
          BacktrackException {
-      ITokenDuple duple = null;
+      IASTName name = null;
       try {
-         duple = name();
+		 name = createName(name());
       } catch (BacktrackException bt) {
          IToken mark = mark();
          if (LT(1) == IToken.tCOLONCOLON || LT(1) == IToken.tIDENTIFIER) {
@@ -1791,16 +1799,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
 
             if (LT(1) == IToken.t_operator)
-               duple = operatorId(start, null);
+               name = operatorId(start, null);
             else {
                backup(mark);
                throwBacktrack(start.getOffset(), end.getEndOffset()
                      - start.getOffset());
             }
          } else if (LT(1) == IToken.t_operator)
-            duple = operatorId(null, null);
+            name = operatorId(null, null);
       }
-      return duple;
+      return name;
 
    }
 
@@ -2543,6 +2551,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          else
             // templateID
             subName = createTemplateID(segments[i]);
+		 
+		 if (i==segments.length-1 && 
+				 duple instanceof OperatorTokenDuple) { // make sure the last segment is an OperatorName/ConversionName
+			 subName = createOperatorName((OperatorTokenDuple)duple, subName);
+		 }
+		 
          subName.setParent(result);
          subName.setPropertyInParent(ICPPASTQualifiedName.SEGMENT_NAME);
          ((ASTNode) subName).setOffsetAndLength(segments[i].getStartOffset(),
@@ -2598,8 +2612,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       if( duple.getTemplateIdArgLists() != null )
       	return createTemplateID( duple );
 	  
-	  // We're a single token
-      CPPASTName name = new CPPASTName(duple.toCharArray());
+	  // We're a single name
+      IASTName name = new CPPASTName(duple.toCharArray());
+	  if (duple instanceof OperatorTokenDuple) {
+		  name = createOperatorName((OperatorTokenDuple)duple, name);
+	  }
+	  
 	  IToken token = duple.getFirstToken();
 	  switch (token.getType()) {
 	  case IToken.tCOMPLETION:
@@ -2608,9 +2626,31 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		  break;
 	  }
 
-      name.setOffsetAndLength(duple.getStartOffset(), duple.getEndOffset()
-            - duple.getStartOffset());
+	  ((ASTNode)name).setOffsetAndLength(duple.getStartOffset(), duple.getEndOffset()
+           - duple.getStartOffset());
+	  
       return name;
+   }
+   
+   protected IASTName createOperatorName(OperatorTokenDuple duple, IASTName name) {
+	   IASTName aName=null;
+	   
+	   if (duple.isConversionOperator()) {
+		   aName = new CPPASTConversionName(name.toCharArray());
+		   IASTTypeId typeId = duple.getTypeId();
+		   typeId.setParent(aName);
+		   typeId.setPropertyInParent(ICPPASTConversionName.TYPE_ID);
+		   ((CPPASTConversionName)aName).setTypeId(typeId);
+	   } else {
+		   aName = new CPPASTOperatorName(name.toCharArray());
+	   }
+	   
+	   if (name instanceof ICPPASTTemplateId) {
+		   ((ICPPASTTemplateId)name).setTemplateName(aName);
+		   return name;
+	   }
+	   
+	   return aName;
    }
 
    /**
@@ -2923,7 +2963,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     * @throws EndOfFileException
     *            we could encounter EOF while looking ahead
     */
-   protected boolean lookAheadForConstructorOrConversion(Flags flags)
+   protected boolean lookAheadForConstructorOrOperator(Flags flags)
          throws EndOfFileException {
       if (flags.isForParameterDeclaration())
          return false;
@@ -2931,9 +2971,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          return true;
 
       IToken mark = mark();
-      ITokenDuple duple = null;
+      IASTName name = null;
       try {
-         duple = consumeTemplatedOperatorName();
+         name = consumeTemplatedOperatorName();
       } catch (BacktrackException e) {
          backup(mark);
          return false;
@@ -2942,50 +2982,48 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          return false;
       }
 
-      if (duple == null) {
+      if (name == null) {
          backup(mark);
          return false;
       }
 
-      ITokenDuple leadingSegments = duple.getLeadingSegments();
-      if (leadingSegments == null) {
-         backup(mark);
-         return false;
-      }
-      ITokenDuple lastSegment = duple.getLastSegment();
-      char[] className = lastSegment.extractNameFromTemplateId();
-      if (className == null || CharArrayUtils.equals(className, EMPTY_STRING)) {
-         backup(mark);
-         return false;
-      }
-
-      ITokenDuple secondlastSegment = leadingSegments.getLastSegment();
-      if (secondlastSegment == null) {
-         backup(mark);
-         return false;
-      }
-      char[] otherName = secondlastSegment.extractNameFromTemplateId();
-      if (otherName == null || CharArrayUtils.equals(otherName, EMPTY_STRING)) {
-         backup(mark);
-         return false;
-      }
-
-      if (lastSegment.isConversion()) {
-         backup(mark);
-         return true;
-      }
-
-      if (CharArrayUtils.equals(className, otherName)) {
-         backup(mark);
-         return true;
-      }
-      char[] destructorName = CharArrayUtils.concat(
-            "~".toCharArray(), otherName); //$NON-NLS-1$
-      if (CharArrayUtils.equals(destructorName, className)) {
-         backup(mark);
-         return true;
-      }
-
+	  // constructor/conversion must be an ICPPASTQualifiedName (i.e. can't be defined for the global scope)
+	  if (name instanceof ICPPASTQualifiedName) {
+		  IASTName[] segments = ((ICPPASTQualifiedName)name).getNames();
+		  
+		  int len = segments.length;
+		  if (len >= 2) {
+			  if (segments[0].toString().length() == 0) {
+				  backup(mark);
+				  return false;
+			  }
+			  
+			  if (((ICPPASTQualifiedName)name).isConversionOrOperator()) { // conversion or operator
+				  backup(mark);
+				  return true;
+			  }
+			  
+			  if (segments[len-1].toString().equals(segments[len-2].toString())) { // constructor
+				  backup(mark);
+				  return true;
+			  }
+			  
+			  StringBuffer destructorName = new StringBuffer();
+			  destructorName.append(COMPL);
+			  destructorName.append(segments[len-2]);
+			  if (segments[len-1].toString().equals(destructorName.toString())) { // destructor
+				  backup(mark);
+				  return true;
+			  }  
+		  } else {
+			  backup(mark);
+			  return false;
+		  }
+	  } else {
+		  backup(mark);
+		  return false;
+	  }
+	  
       backup(mark);
       return false;
    }
@@ -3185,7 +3223,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                if (parm && flags.haveEncounteredTypename())
                   break declSpecifiers;
 
-               if (lookAheadForConstructorOrConversion(flags))
+               if (lookAheadForConstructorOrOperator(flags))
                   break declSpecifiers;
 
                if (lookAheadForDeclarator(flags))
@@ -3600,10 +3638,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             declaratorName = createName();
          } else {
             try {
-               ITokenDuple d = consumeTemplatedOperatorName();
-               declaratorName = createName(d);
+               declaratorName = consumeTemplatedOperatorName();
                finalOffset = calculateEndOffset(declaratorName);
-               if (d.isConversion())
+               if (declaratorName instanceof ICPPASTQualifiedName && ((ICPPASTQualifiedName)declaratorName).isConversionOrOperator())
                   isFunction = true;
             } catch (BacktrackException bt) {
                declaratorName = createName();
@@ -3899,7 +3936,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       return new CPPASTDeclarator();
    }
 
-   protected ITokenDuple consumeTemplatedOperatorName()
+   protected IASTName consumeTemplatedOperatorName()
          throws EndOfFileException, BacktrackException {
       TemplateParameterManager argumentList = TemplateParameterManager
             .getInstance();
@@ -3908,12 +3945,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return operatorId(null, null);
 
          try {
-            return name();
+            return createName(name());
          } catch (BacktrackException bt) {
          }
          IToken start = null;
-
-         boolean hasTemplateId = false;
 
          IToken mark = mark();
          if (LT(1) == IToken.tCOLONCOLON || LT(1) == IToken.tIDENTIFIER) {
@@ -3922,28 +3957,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
             if (start.getType() == IToken.tIDENTIFIER) {
                end = consumeTemplateArguments(end, argumentList);
-               if (end != null && end.getType() == IToken.tGT)
-                  hasTemplateId = true;
             }
 
             while (LT(1) == IToken.tCOLONCOLON || LT(1) == IToken.tIDENTIFIER) {
                end = consume();
                if (end.getType() == IToken.tIDENTIFIER) {
                   end = consumeTemplateArguments(end, argumentList);
-                  if (end.getType() == IToken.tGT)
-                     hasTemplateId = true;
                }
             }
-            if (LT(1) == IToken.t_operator)
-               end = operatorId(start, (hasTemplateId ? argumentList : null))
-                     .getLastToken();
-            else {
-               int endOffset = (end != null) ? end.getEndOffset() : 0;
-               backup(mark);
-               throwBacktrack(mark.getOffset(), endOffset - mark.getOffset());
+			
+            if (LT(1) == IToken.t_operator) {
+				return operatorId(start, argumentList );
             }
-            return TokenFactory.createTokenDuple(start, end, argumentList
-                  .getTemplateArgumentsList());
+
+			int endOffset = (end != null) ? end.getEndOffset() : 0;
+            backup(mark);
+            throwBacktrack(mark.getOffset(), endOffset - mark.getOffset());
          }
          int endOffset = (mark != null) ? mark.getEndOffset() : 0;
          backup(mark);
@@ -4533,15 +4562,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createName(org.eclipse.cdt.core.parser.IToken)
     */
    protected IASTName createName(IToken token) {
-      CPPASTName n = new CPPASTName(token.getCharImage());
+      IASTName n = null;
+	  
+	  if (token instanceof OperatorTokenDuple) {
+		  n = createOperatorName((OperatorTokenDuple)token, n);
+	  } else {
+		  n = new CPPASTName(token.getCharImage());			  
+	  }
+	  
 	  switch (token.getType()) {
 	  case IToken.tCOMPLETION:
 	  case IToken.tEOC:
 		  createCompletionNode(token).addName(n);
 		  break;
 	  }
-      n.setOffsetAndLength(token.getOffset(), token.getLength());
-      return n;
+	  ((ASTNode)n).setOffsetAndLength(token.getOffset(), token.getLength());
+      
+	  return n;
    }
 
    /*

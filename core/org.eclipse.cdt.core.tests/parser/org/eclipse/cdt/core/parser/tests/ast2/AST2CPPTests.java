@@ -28,8 +28,10 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -49,6 +51,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
@@ -3194,5 +3198,75 @@ public class AST2CPPTests extends AST2BaseTest {
         IEnumerator one = (IEnumerator) col.getName(3).resolveBinding();
         assertSame( one.getType(), e );
     }
+	
+	
+	public void testOperatorConversionNames() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+    	buffer.append("class Foo {\n"); //$NON-NLS-1$
+		buffer.append("public:\n"); //$NON-NLS-1$
+		buffer.append("operator int();\n"); //$NON-NLS-1$
+		buffer.append("char& operator[](unsigned int);\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+		
+		IASTName name1 = col.getName(1);
+		IASTName name2 = col.getName(2);
+		
+		assertNotNull(name1);
+		assertNotNull(name2);
+		
+		assertTrue(name1 instanceof ICPPASTConversionName);
+		assertTrue(name2 instanceof ICPPASTOperatorName);
+		
+		IASTTypeId typeId = ((ICPPASTConversionName)name1).getTypeId();
+		assertNotNull(typeId);
+		assertEquals( ((IASTSimpleDeclSpecifier)typeId.getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_int );
+		
+	}
+	
+    public void testBug36769B() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+    	buffer.append("class X { operator int(); }; \n"); //$NON-NLS-1$
+		buffer.append("X::operator int() { } \n"); //$NON-NLS-1$
+		buffer.append("template <class A,B> class X<A,C> { operator int(); }; \n"); //$NON-NLS-1$
+		buffer.append("template <class A,B> X<A,C>::operator int() { } \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+		
+		// 1,4,12,21  - conversion
+		// 2, 16 .isConversion
+		
+		assertEquals(col.size(), 22);
+		
+		assertNotNull(col.getName(1));
+		assertNotNull(col.getName(4));
+		assertNotNull(col.getName(12));
+		assertNotNull(col.getName(21));
+		assertNotNull(col.getName(2));
+		assertNotNull(col.getName(16));
+		
+		// ensure the conversions are conversions
+		assertTrue(col.getName(1) instanceof ICPPASTConversionName);
+		assertTrue(col.getName(4) instanceof ICPPASTConversionName);
+		assertTrue(col.getName(12) instanceof ICPPASTConversionName);
+		assertTrue(col.getName(21) instanceof ICPPASTConversionName);
+		assertNotNull(((ICPPASTConversionName)col.getName(1)).getTypeId());
+		assertNotNull(((ICPPASTConversionName)col.getName(4)).getTypeId());
+		assertNotNull(((ICPPASTConversionName)col.getName(12)).getTypeId());
+		assertNotNull(((ICPPASTConversionName)col.getName(21)).getTypeId());
+		
+		// ensure qualified name isConversionOrOperator
+		assertTrue(col.getName(2) instanceof ICPPASTQualifiedName);
+		assertTrue(col.getName(16) instanceof ICPPASTQualifiedName);
+		assertTrue(((ICPPASTQualifiedName)col.getName(2)).isConversionOrOperator());
+		assertTrue(((ICPPASTQualifiedName)col.getName(16)).isConversionOrOperator());
+    }
+
+	
 }
 

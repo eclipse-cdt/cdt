@@ -56,4 +56,12 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 	 *            boolean
 	 */
 	public void setFullyQualified(boolean value);
+	
+	/**
+	 * This is used to check if the ICPPASTQualifiedName's last segment is
+	 * an ICPPASTConversionName or an ICPPASTOperatorName.
+	 * 
+	 * @return
+	 */
+	public boolean isConversionOrOperator();
 }

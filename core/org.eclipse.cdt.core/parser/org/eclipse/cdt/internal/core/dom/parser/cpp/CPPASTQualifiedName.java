@@ -15,7 +15,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 
 /**
  * @author jcamelon
@@ -257,6 +260,24 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	public void setBinding(IBinding binding) {
 		removeNullNames();
 		names[names.length - 1].setBinding( binding );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#isConversionOrOperator()
+	 */
+	public boolean isConversionOrOperator() {
+		IASTName[] nonNullNames = getNames(); // ensure no null names
+		
+		int len=nonNullNames.length;
+		if (nonNullNames[len-1] instanceof ICPPASTConversionName || nonNullNames[len-1] instanceof ICPPASTOperatorName) return true;
+		
+		// check templateId's name
+		if (nonNullNames[len-1] instanceof ICPPASTTemplateId) {
+			IASTName tempName = ((ICPPASTTemplateId)nonNullNames[len-1]).getTemplateName();
+			if (tempName instanceof ICPPASTConversionName || tempName instanceof ICPPASTOperatorName) return true;
+		}
+		
+		return false;
 	}
 
 }

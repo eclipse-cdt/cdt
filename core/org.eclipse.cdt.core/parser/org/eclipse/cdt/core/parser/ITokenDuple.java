@@ -69,8 +69,4 @@ public interface ITokenDuple {
 	
 	public void freeReferences( );
 	public void acceptElement( ISourceElementRequestor requestor );
-    /**
-     * @return
-     */
-    public abstract boolean isConversion();
 }

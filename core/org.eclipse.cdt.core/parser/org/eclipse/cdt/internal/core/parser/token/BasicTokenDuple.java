@@ -598,15 +598,4 @@ public class BasicTokenDuple implements ITokenDuple {
 	public char[] getFilename() {
 		return firstToken.getFilename();
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ITokenDuple#isConversion()
-     */
-    public boolean isConversion() {
-        int index = findLastTokenType( IToken.t_operator );
-        if( index == -1 ) return false;
-        return true;
-    }
-
-	
 }

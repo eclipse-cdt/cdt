@@ -23,21 +23,21 @@ import org.eclipse.jface.text.rules.Token;
 
 public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 	// Partition types
-	public final static String MAKE_COMMENT = "makefile_comment"; //$NON-NLS-1$
-	public final static String MAKE_MACRO_ASSIGNEMENT = "makefile_macro_assignement"; //$NON-NLS-1$
-	public final static String MAKE_INCLUDE_BLOCK = "makefile_include_block"; //$NON-NLS-1$
-	public final static String MAKE_IF_BLOCK = "makefile_if_block"; //$NON-NLS-1$
-	public final static String MAKE_DEF_BLOCK = "makefile_def_block"; //$NON-NLS-1$
-	public final static String MAKE_OTHER = "makefile_other"; //$NON-NLS-1$
+	public final static String MAKEFILE_COMMENT = "makefile_comment"; //$NON-NLS-1$
+	public final static String MAKEFILE_MACRO_ASSIGNEMENT = "makefile_macro_assignement"; //$NON-NLS-1$
+	public final static String MAKEFILE_INCLUDE_BLOCK = "makefile_include_block"; //$NON-NLS-1$
+	public final static String MAKEFILE_IF_BLOCK = "makefile_if_block"; //$NON-NLS-1$
+	public final static String MAKEFILE_DEF_BLOCK = "makefile_def_block"; //$NON-NLS-1$
+	public final static String MAKEFILE_OTHER = "makefile_other"; //$NON-NLS-1$
 
 	public final static String[] TYPES =
 		new String[] {
-			MAKE_COMMENT,
-			MAKE_MACRO_ASSIGNEMENT,
-			MAKE_INCLUDE_BLOCK,
-			MAKE_IF_BLOCK,
-			MAKE_DEF_BLOCK,
-			MAKE_OTHER,
+			MAKEFILE_COMMENT,
+			MAKEFILE_MACRO_ASSIGNEMENT,
+			MAKEFILE_INCLUDE_BLOCK,
+			MAKEFILE_IF_BLOCK,
+			MAKEFILE_DEF_BLOCK,
+			MAKEFILE_OTHER,
 		// All other
 	};
 
@@ -53,12 +53,12 @@ public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 	public MakefilePartitionScanner() {
 		super();
 
-		IToken tComment = new Token(MAKE_COMMENT);
-		IToken tMacro = new Token(MAKE_MACRO_ASSIGNEMENT);
-		IToken tInclude = new Token(MAKE_INCLUDE_BLOCK);
-		IToken tIf = new Token(MAKE_IF_BLOCK);
-		IToken tDef = new Token(MAKE_DEF_BLOCK);
-		IToken tOther = new Token(MAKE_OTHER);
+		IToken tComment = new Token(MAKEFILE_COMMENT);
+		IToken tMacro = new Token(MAKEFILE_MACRO_ASSIGNEMENT);
+		IToken tInclude = new Token(MAKEFILE_INCLUDE_BLOCK);
+		IToken tIf = new Token(MAKEFILE_IF_BLOCK);
+		IToken tDef = new Token(MAKEFILE_DEF_BLOCK);
+		IToken tOther = new Token(MAKEFILE_OTHER);
 
 		List rules = new ArrayList();
 

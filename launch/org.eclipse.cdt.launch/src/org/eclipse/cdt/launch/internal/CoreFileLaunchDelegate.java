@@ -81,7 +81,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 							iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(exePath.toOSString()));
 						}
 						CDIDebugModel.newDebugTarget(launch, project.getProject(), targets[i], renderTargetLabel(debugConfig),
-														iprocess, exeFile, true, false, false);
+								iprocess, exeFile, true, false, false);
 					}
 				} catch (CoreException e) {
 					try {
@@ -103,12 +103,9 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		// consult a status handler
 		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(fPromptStatus);
 		if (prompter != null) {
-			try {
-				Object result = prompter.handleStatus(processPrompt, new Object[]{project, debugConfig});
-				if (result instanceof IPath) {
-					return (IPath)result;
-				}
-			} catch (CoreException e) {
+			Object result = prompter.handleStatus(processPrompt, new Object[]{project, debugConfig});
+			if (result instanceof IPath) {
+				return (IPath)result;
 			}
 		}
 		return null;
@@ -124,7 +121,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 	 * @see org.eclipse.cdt.launch.AbstractCLaunchConfigurationDelegate#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) {
 		return true; // no pre launch check for core file
 	}
 }

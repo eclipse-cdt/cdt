@@ -199,6 +199,7 @@ public class ErrorParserManager extends OutputStream {
 		try {
 			String line = rd.readLine();
 			while (line != null) {
+				line = line.trim();
 				processLine(line);
 				previousLine = line;
 				line = rd.readLine();

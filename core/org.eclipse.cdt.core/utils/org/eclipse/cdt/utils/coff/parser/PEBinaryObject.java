@@ -43,7 +43,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getType()
 	 */
 	public int getType() {
-		return IBinaryFile.CORE;
+		return IBinaryFile.OBJECT;
 	}
 
 	/**

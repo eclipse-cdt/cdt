@@ -1,3 +1,13 @@
+2004-04-03 Alain Magloire
+
+	Fix for PR 57287
+
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	
+	* model/org/eclipse/cdt/internal/core/model/PEBinaryObject.java
+
 2004-04-02 Alain Magloire
 
 	Use the the Job manager for the binary runner.

@@ -412,6 +412,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						if (pinfo.vLib != null) {
 							releaseCElement(pinfo.vLib);
 						}
+						pinfo.resetCaches();
 						IProject project = celement.getCProject().getProject();
 						removeBinaryRunner(project);
 					}

@@ -84,6 +84,9 @@ public class PathEntryManager implements ICDescriptorListener {
 	 * pathentry containers pool
 	 */
 	public static HashMap Containers = new HashMap(5);
+
+	static final IPathEntry[] NO_PATHENTRIES = new IPathEntry[0];
+
 	HashMap resolvedMap = new HashMap();
 	private static PathEntryManager pathEntryManager;
 
@@ -145,6 +148,10 @@ public class PathEntryManager implements ICDescriptorListener {
 	}
 
 	public IPathEntry[] getRawPathEntries(ICProject cproject) throws CModelException {
+		CModelManager factory = CModelManager.getDefault();
+		if (!(factory.hasCNature(cproject.getProject()) || factory.hasCCNature(cproject.getProject()))) {
+			return NO_PATHENTRIES;
+		}
 		ArrayList pathEntries = new ArrayList();
 		try {
 			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(cproject.getProject());

@@ -1,3 +1,32 @@
+2003-03-27 Alain Magloire
+
+	Some changes in the Core Model to make it closer to JDT, the hierarchy is now:
+	ICModel
+		ICProject
+			ICContainer
+				ITranslationUnit
+				IArchive
+				IBinary
+
+	We now adjust the code.
+
+	src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	src/org/eclipse/cdt/internal/ui/BinaryPropertySource.java
+	src/org/eclipse/cdt/internal/ui/CElementAdapterFactory.java
+	src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	src/org/eclipse/cdt/internal/ui/ErrorTickAdornmentProvider.java
+	src/org/eclipse/cdt/internal/ui/compare/CStructureCreator.java
+	src/org/eclipse/cdt/internal/ui/cview/CPatternFilter.java
+	src/org/eclipse/cdt/internal/ui/cview/CView.java
+	src/org/eclipse/cdt/internal/ui/cview/CViewDragAdapter.java
+	src/org/eclipse/cdt/internal/ui/cview/CViewSorter.java
+	src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java
+	src/org/eclipse/cdt/internal/ui/editor/DocumentAdapter.java
+	src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
+	src/org/eclipse/cdt/ui/CElementContentProvider.java
+	src/org/eclipse/cdt/ui/CElementLabelProvider.java
+	src/org/eclipse/cdt/ui/CUIPlugin.java
+
 2003-03-19 Alain Magloire
 
 	Patch From Amer Hoda, to use the Working Copy of ICElement use in

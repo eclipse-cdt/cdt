@@ -1,3 +1,18 @@
+2003-03-27 Alain Magloire
+
+	Changes were done in the Core Model API, the hierarchy is now
+	ICModel
+		ICProject
+			ICContainer
+				ITranslationUnit
+				IArchive
+				IBinary
+	We adjust the tests.
+	* model/org/eclipse/cdt/core/model/tests/ArchiveTests.java
+	* model/org/eclipse/cdt/core/model/tests/BinaryTests.java
+	* model/org/eclipse/cdt/core/model/tests/TranslationUniTests.java
+	* model/org/eclipse/cdt/core/model/tests/WorkingCopyTests.java
+
 2003-03-26 Andrew Niefer
 	In ParserSymbolTableTest : 
 		updated all tests to reflect TypeInfo changes

@@ -1,3 +1,8 @@
+2003-03-27 Alain Magloire
+
+	Adjust the code because of refactoring.
+	ICFolder and ICResource are removed.
+
 2003-01-29 Peter Graves
  
    Fixed warnings when accessing static methods

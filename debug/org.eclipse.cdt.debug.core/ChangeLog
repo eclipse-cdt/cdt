@@ -1,3 +1,8 @@
+2003-03027 Alain Magloire
+
+	Adjust the code refactor in the CoreModel for IBinary
+	* CDebugTarget.java
+
 2003-03-18 Mikhail Khodjaiants
 	Removed the gdb-specific variable parsing.
 	* ICValue.java

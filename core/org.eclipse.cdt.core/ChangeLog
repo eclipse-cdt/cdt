@@ -1,3 +1,102 @@
+2003-03-27 Alain Magloire
+
+	Some changes in the Core Model to make it closer to JDT, the hierarchy is now:
+	ICModel
+		ICProject
+			ICContainer
+				ITranslationUnit
+				IArchive
+				IBinary
+
+	All the C Resources above implements IParent, ICElement and IOpenable.
+	The rationale is that in the old hierarchy, we were putting things in the model
+	that the did not belong to the a C/C++ Model, for example a "README" file
+	was map to CFile or CResource bloating the LRU cache, those resources did
+	not contribute any info to the model and would make the indexer job more
+	complex.  A new method been added getNonCResources() to retrieve those elements.
+	Note CResource, CFolder, CFile are removed.
+	Also refactors:
+	- ICOpenable to IOpenable
+	- ICRoot to ICModel
+	- ICRootInfo to ICModelInfo
+	- Move internal/core/model/IBuffer* classes to core/model/IBuffer*
+
+	index/org/eclipse/cdt/internal/core/index/IndexManager.java
+	model/org/eclipse/cdt/core/model/BufferChangedEvent.java
+	model/org/eclipse/cdt/core/model/CoreModel.java
+	model/org/eclipse/cdt/core/model/IArchive.java
+	model/org/eclipse/cdt/core/model/IArchiveContainer.java
+	model/org/eclipse/cdt/core/model/IBinary.java
+	model/org/eclipse/cdt/core/model/IBinaryContainer.java
+	odel/org/eclipse/cdt/core/model/IBinaryContainer.java
+	model/org/eclipse/cdt/core/model/IBuffer.java
+	model/org/eclipse/cdt/core/model/IBufferChangedListener.java
+	model/org/eclipse/cdt/core/model/ICContainer.java
+	model/org/eclipse/cdt/core/model/ICElement.java
+	model/org/eclipse/cdt/core/model/ICFile.java
+	model/org/eclipse/cdt/core/model/ICFolder.java
+	model/org/eclipse/cdt/core/model/ICModel.java
+	model/org/eclipse/cdt/core/model/ICOpenable.java
+	model/org/eclipse/cdt/core/model/ICProject.java
+	model/org/eclipse/cdt/core/model/ICResource.java
+	model/org/eclipse/cdt/core/model/ICRoot.java
+	model/org/eclipse/cdt/core/model/IOpenable.java
+	model/org/eclipse/cdt/core/model/ITranslationUnit.java
+	model/org/eclipse/cdt/internal/core/model/Archive.java
+	model/org/eclipse/cdt/internal/core/model/ArchiveContainer.java
+	model/org/eclipse/cdt/internal/core/model/ArchiveContainerInfo.java
+	model/org/eclipse/cdt/internal/core/model/ArchiveInfo.java
+	model/org/eclipse/cdt/internal/core/model/Binary.java
+	model/org/eclipse/cdt/internal/core/model/BinaryContainer.java
+	model/org/eclipse/cdt/internal/core/model/BinaryContainerInfo.java
+	model/org/eclipse/cdt/internal/core/model/BinaryInfo.java
+	model/org/eclipse/cdt/internal/core/model/BinaryRunner.java
+	model/org/eclipse/cdt/internal/core/model/Buffer.java
+	model/org/eclipse/cdt/internal/core/model/BufferChangedEvent.java
+	model/org/eclipse/cdt/internal/core/model/BufferManager.java
+	model/org/eclipse/cdt/internal/core/model/CContainer.java
+	model/org/eclipse/cdt/internal/core/model/CContainerInfo.java
+	model/org/eclipse/cdt/internal/core/model/CElement.java
+	model/org/eclipse/cdt/internal/core/model/CElementDelta.java
+	model/org/eclipse/cdt/internal/core/model/CElementDeltaBuilder.java
+	model/org/eclipse/cdt/internal/core/model/CElementInfo.java
+	model/org/eclipse/cdt/internal/core/model/CFile.java
+	model/org/eclipse/cdt/internal/core/model/CFileInfo.java
+	model/org/eclipse/cdt/internal/core/model/CFolder.java
+	model/org/eclipse/cdt/internal/core/model/CFolderInfo.java
+	model/org/eclipse/cdt/internal/core/model/CModel.java
+	model/org/eclipse/cdt/internal/core/model/CModelCache.java
+	model/org/eclipse/cdt/internal/core/model/CModelInfo.java
+	model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	model/org/eclipse/cdt/internal/core/model/CModelOperation.java
+	model/org/eclipse/cdt/internal/core/model/CProject.java
+	model/org/eclipse/cdt/internal/core/model/CProjectInfo.java
+	model/org/eclipse/cdt/internal/core/model/CResource.java
+	model/org/eclipse/cdt/internal/core/model/CResourceInfo.java
+	model/org/eclipse/cdt/internal/core/model/CRoot.java
+	model/org/eclipse/cdt/internal/core/model/CRootInfo.java
+	model/org/eclipse/cdt/internal/core/model/CommitWorkingCopyOperation.java
+	model/org/eclipse/cdt/internal/core/model/CopyElementsOperation.java
+	model/org/eclipse/cdt/internal/core/model/CopyResourceElementsOperation.java
+	model/org/eclipse/cdt/internal/core/model/CreateElementInTUOperation.java
+	model/org/eclipse/cdt/internal/core/model/DeleteResourceElementsOperation.java
+	model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	model/org/eclipse/cdt/internal/core/model/ElementCache.java
+	model/org/eclipse/cdt/internal/core/model/FieldInfo.java
+	model/org/eclipse/cdt/internal/core/model/FunctionInfo.java
+	model/org/eclipse/cdt/internal/core/model/IBuffer.java
+	model/org/eclipse/cdt/internal/core/model/IBufferChangedListener.java
+	model/org/eclipse/cdt/internal/core/model/IBufferFactory.java
+	model/org/eclipse/cdt/internal/core/model/IWorkingCopy.java
+	model/org/eclipse/cdt/internal/core/model/Openable.java
+	model/org/eclipse/cdt/internal/core/model/OpenableInfo.java
+	model/org/eclipse/cdt/internal/core/model/Parent.java
+	model/org/eclipse/cdt/internal/core/model/SourceManipulation.java
+	model/org/eclipse/cdt/internal/core/model/SourceManipulationInfo.java
+	model/org/eclipse/cdt/internal/core/model/TranslationUnit.java
+	model/org/eclipse/cdt/internal/core/model/TranslationUnitInfo.java
+
+
 2003-03-20 Alain Magloire
 
 	Patch from Amer Hoda

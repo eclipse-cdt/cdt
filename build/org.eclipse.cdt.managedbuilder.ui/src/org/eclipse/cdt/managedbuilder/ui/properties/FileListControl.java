@@ -26,6 +26,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -231,9 +232,10 @@ public class FileListControl {
 		// list control
 		list = new List(filePanel, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		grid4 = new GridData(GridData.FILL_BOTH);
-		grid4.heightHint = 38;
 		// force the list to be no wider than the title bar
-		grid4.widthHint = titlePanel.getSize().x;
+		Point preferredSize = titlePanel.computeSize(SWT.DEFAULT, SWT.DEFAULT); 
+		grid4.widthHint = preferredSize.x;
+		grid4.heightHint = preferredSize.y * 3;
 		grid4.horizontalSpan = 2;
 		list.setLayoutData(grid4);
 		list.addSelectionListener(getSelectionListener());

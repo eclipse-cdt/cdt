@@ -141,7 +141,6 @@ public class BuildInfoFactory {
 			return getString(BUILD_TARGET_FULL);
 		}
 
-
 		public boolean getBoolean(String property) {
 			return Boolean.valueOf(getString(property)).booleanValue();
 		}
@@ -180,7 +179,7 @@ public class BuildInfoFactory {
 		public void setBuildArguments(String args) throws CoreException {
 			putValue(BUILD_ARGUMENTS, args);
 		}
-		
+
 		public String[] getErrorParsers() {
 			String parsers = getString(ErrorParserManager.PREF_ERROR_PARSER);
 			if (parsers != null && parsers.length() > 0) {
@@ -193,7 +192,7 @@ public class BuildInfoFactory {
 			}
 			return new String[0];
 		}
-		
+
 		public void setErrorParsers(String[] parsers) throws CoreException {
 			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < parsers.length; i++) {
@@ -245,13 +244,16 @@ public class BuildInfoFactory {
 			ICommand builder;
 			builder = MakeProjectNature.getBuildSpec(project, builderID);
 			if (builder == null) {
-				throw new CoreException(
-					new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("BuildInfoFactory.Missing_Builder") + builderID, null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("BuildInfoFactory.Missing_Builder") + builderID, null)); //$NON-NLS-1$
 			}
 			args = builder.getArguments();
 		}
 
 		public void putValue(String name, String value) throws CoreException {
+			String curValue = (String) args.get(name);
+			if (curValue != null && curValue.equals(value)) {
+				return;
+			}
 			ICommand builder = MakeProjectNature.getBuildSpec(project, builderID);
 			args.put(name, value);
 			builder.setArguments(args);
@@ -259,7 +261,7 @@ public class BuildInfoFactory {
 		}
 
 		public String getString(String name) {
-			String value = (String)args.get(name);
+			String value = (String) args.get(name);
 			return value == null ? "" : value; //$NON-NLS-1$
 		}
 
@@ -282,7 +284,7 @@ public class BuildInfoFactory {
 		}
 
 		public String getString(String name) {
-			return (String)args.get(name);
+			return (String) args.get(name);
 		}
 
 		public String getBuilderID() {

@@ -147,7 +147,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		return new String[0];
 	}
 
-	protected boolean hasTargetBuilder(IProject project) {
+	public boolean hasTargetBuilder(IProject project) {
 		try {
 			if (project.isAccessible()) {
 				IProjectDescription description = project.getDescription();

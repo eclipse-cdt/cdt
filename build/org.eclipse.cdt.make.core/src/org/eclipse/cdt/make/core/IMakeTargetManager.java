@@ -27,6 +27,7 @@ public interface IMakeTargetManager {
 	
 	String getBuilderID(String targetBuilderID);
 	
+	boolean hasTargetBuilder(IProject project);
 	String[] getTargetBuilders(IProject project);
 				
 	void addListener(IMakeTargetListener listener);

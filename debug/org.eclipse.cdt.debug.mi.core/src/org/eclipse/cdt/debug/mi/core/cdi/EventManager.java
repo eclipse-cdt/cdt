@@ -277,10 +277,11 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					if (cthread != null) {
 						cthread.getCurrentStackFrame();
 					} else {
-						return false;
+						return true;
 					}
 			} catch (CDIException e1) {
 				//e1.printStackTrace();
+				return true;
 			}
 		}
 

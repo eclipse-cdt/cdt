@@ -67,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
@@ -301,6 +302,16 @@ public class CPPSemantics {
 			}
 		} else if( parent instanceof ICPPASTFieldReference ){
 			data.qualified = true;
+			
+			if( parent.getParent() instanceof IASTFunctionCallExpression ){
+			    IASTExpression exp = ((IASTFunctionCallExpression)parent.getParent()).getParameterExpression();
+				if( exp instanceof IASTExpressionList )
+					data.functionParameters = ((IASTExpressionList) exp ).getExpressions();
+				else if( exp != null )
+					data.functionParameters = new IASTExpression [] { exp };
+				else
+					data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
+			}
 		} else if( parent instanceof ICPPASTUsingDeclaration ){
 			data.forUsingDeclaration = true;
 		}
@@ -552,8 +563,16 @@ public class CPPSemantics {
 		IASTNode item = ( nodes != null ? (nodes.length > 0 ? nodes[++idx] : null ) : parent );
 	
 		while( item != null ) {
-			if( item == null || item == blockItem || ( blockItem != null && ((ASTNode)item).getOffset() > ((ASTNode) blockItem).getOffset() ))
+			if( item == null || ( blockItem != null && ((ASTNode)item).getOffset() > ((ASTNode) blockItem).getOffset() ))
 				break;
+			if( item == blockItem ){
+			    if( !(item instanceof IASTNamespaceDefinition)  &&
+			        !(item instanceof IASTSimpleDeclaration && 
+			           ((IASTSimpleDeclaration)item).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) )
+			    {
+			        break;
+			    }
+			}
 			
 			if( item instanceof ICPPASTUsingDirective && !data.ignoreUsingDirectives ) {
 				if( usingDirectives != null )

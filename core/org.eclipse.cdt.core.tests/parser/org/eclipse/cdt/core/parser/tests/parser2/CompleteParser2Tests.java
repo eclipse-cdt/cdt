@@ -1004,36 +1004,102 @@ public class CompleteParser2Tests extends TestCase {
 	
 	public void testSimpleDoStatement() throws Exception
 	{
-		parse( "const int x = 3; int counter = 0; void foo() { do { ++counter; } while( counter != x ); } "); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "const int x = 3; int counter = 0; void foo() { do { ++counter; } while( counter != x ); } "); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 6 );
+ 		IVariable x = (IVariable) col.getName(0).resolveBinding();
+ 		IVariable counter = (IVariable) col.getName(1).resolveBinding();
+ 		assertInstances( col, x, 2 );
+ 		assertInstances( col, counter, 3 );
 	}
 	
 	public void testThrowStatement() throws Exception
 	{
-		parse( "class A { }; void foo() throw ( A ) { throw A; throw; } "); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "class A { }; void foo() throw ( A ) { throw A; throw; } "); //$NON-NLS-1$
+	    CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 4 );
+ 		ICompositeType A = (ICompositeType) col.getName(0).resolveBinding();
+
+ 		assertInstances( col, A, 3 );
 	}
 	
 	public void testScoping() throws Exception
 	{
-		parse( "void foo() { int x = 3; if( x == 1 ) { int x = 4; } else int x = 2; }");  //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "void foo() { int x = 3; if( x == 1 ) { int x = 4; } else int x = 2; }");  //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 5 );
+ 		IVariable x1 = (IVariable) col.getName(1).resolveBinding();
+ 		IVariable x2 = (IVariable) col.getName(3).resolveBinding();
+ 		IVariable x3 = (IVariable) col.getName(4).resolveBinding();
+ 		
+ 		assertInstances( col, x1, 2 );
+ 		assertInstances( col, x2, 1 );
+ 		assertInstances( col, x3, 1 );
 	}
 	
 	public void testEnumeratorReferences() throws Exception
 	{
-		parse( "enum E { e1, e2, e3 }; E anE = e1;"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "enum E { e1, e2, e3 }; E anE = e1;"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 7 );
+ 		IEnumeration E = (IEnumeration) col.getName(0).resolveBinding();
+ 		IEnumerator e1 = (IEnumerator) col.getName(1).resolveBinding();
+ 		IEnumerator e2 = (IEnumerator) col.getName(2).resolveBinding();
+ 		IEnumerator e3 = (IEnumerator) col.getName(3).resolveBinding();
+ 		IVariable anE =  (IVariable) col.getName(5).resolveBinding();
+ 		
+ 		assertInstances( col, E, 2 );
+ 		assertInstances( col, e1, 2 );
+ 		assertInstances( col, e2, 1 );
+ 		assertInstances( col, e3, 1 );
+ 		assertInstances( col, anE, 1 );
 	}
 	
 	public void testBug42840() throws Exception
 	{
-		parse( "void foo(); void foo() { } class SearchMe { };"); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "void foo(); void foo() { } class SearchMe { };"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 3 );
+ 		IFunction foo = (IFunction) col.getName(0).resolveBinding();
+ 		
+ 		assertInstances( col, foo, 2 );
 	}
 	
 	public void testBug42872() throws Exception
 	{
-		parse( "struct B {}; struct D : B {}; void foo(D* dp) { B* bp = dynamic_cast<B*>(dp); }" );  //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "struct B {}; struct D : B {}; void foo(D* dp) { B* bp = dynamic_cast<B*>(dp); }" );  //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 10 );
+ 		ICompositeType B = (ICompositeType) col.getName(0).resolveBinding();
+ 		ICompositeType D = (ICompositeType) col.getName(1).resolveBinding();
+ 		
+ 		assertInstances( col, B, 4 );
+ 		assertInstances( col, D, 2 );
 	}
 	
 	public void testBug43503A() throws Exception {
-		parse("class SD_01 { void f_SD_01() {}}; int main(){ SD_01 * a = new SD_01(); a->f_SD_01();	} "); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse("class SD_01 { void f_SD_01() {}}; int main(){ SD_01 * a = new SD_01(); a->f_SD_01();	} "); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 8 );
+ 		ICompositeType SD_01 = (ICompositeType) col.getName(0).resolveBinding();
+ 		ICPPMethod f_SD_01 = (ICPPMethod) col.getName(1).resolveBinding();
+ 		
+ 		assertInstances( col, SD_01, 3 );
+ 		assertInstances( col, f_SD_01, 2 );
 	}	
 	
 	
@@ -1050,19 +1116,48 @@ public class CompleteParser2Tests extends TestCase {
 		code.write( "bool OperatorOverload::operator!=( const class OperatorOverload& that )\n" ); //$NON-NLS-1$
 		code.write( "{ return false; }\n" ); //$NON-NLS-1$
 
-		parse( code.toString() );
+		IASTTranslationUnit tu = parse( code.toString() );
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 12 );
+ 		ICompositeType OperatorOverload = (ICompositeType) col.getName(0).resolveBinding();
+ 		ICPPMethod op1 = (ICPPMethod) col.getName(1).resolveBinding();
+ 		ICPPMethod op2 = (ICPPMethod) col.getName(4).resolveBinding();
+ 		
+ 		assertInstances( col, OperatorOverload, 5 );
+ 		assertInstances( col, op1, 1 );
+ 		assertInstances( col, op2, 3 );
 	}
 	/** 
 	 * class A { static int x; } int A::x = 5;
 	 */
 	public void testBug43373() throws Exception
 	{
-		parse( "class A { static int x; }; int A::x = 5;" ); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "class A { static int x; }; int A::x = 5;" ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 5 );
+ 		ICompositeType A = (ICompositeType) col.getName(0).resolveBinding();
+ 		ICPPField x = (ICPPField) col.getName(1).resolveBinding();
+ 		
+ 		assertInstances( col, A, 2 );
+ 		assertInstances( col, x, 3 );
 	}
 	
 	public void testBug39504() throws Exception
 	{
-		parse( "const int w = 2; int x[ 5 ]; int y = sizeof (x[w]);" ); //$NON-NLS-1$
+	    IASTTranslationUnit tu = parse( "const int w = 2; int x[ 5 ]; int y = sizeof (x[w]);" ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 5 );
+ 		IVariable w = (IVariable) col.getName(0).resolveBinding();
+ 		IVariable x = (IVariable) col.getName(1).resolveBinding();
+ 		
+ 		assertInstances( col, w, 2 );
+ 		assertInstances( col, x, 2 );		
 	}
 	
 	public void testBug43375() throws Exception
@@ -1074,24 +1169,40 @@ public class CompleteParser2Tests extends TestCase {
 	{
 		StringBuffer buff = new StringBuffer(); 
 		
-		buff.append( "class SD_02 {"); //$NON-NLS-1$
-		buff.append( "	public:"); //$NON-NLS-1$
-		buff.append( " void f_SD_02();"); //$NON-NLS-1$
-		buff.append( " };"); //$NON-NLS-1$
-		buff.append( "class SD_01 {\n");  //$NON-NLS-1$
-		buff.append( "	public:\n"); //$NON-NLS-1$
-		buff.append( "		SD_02 *next;");      // REFERENCE SD_02 //$NON-NLS-1$
-		buff.append( "		void f_SD_01();\n"); //$NON-NLS-1$
-		buff.append( "};\n"); //$NON-NLS-1$
-		buff.append( "int main(){\n"); //$NON-NLS-1$
-		buff.append( "	SD_01 a = new SD_01();\n");  // REFERENCE SD_01 * 2 //$NON-NLS-1$
-		buff.append( "	a->f_SD_01();\n");			// REFERENCE a && REFERENCE f_SD_01 //$NON-NLS-1$
-		buff.append( "}\n"); //$NON-NLS-1$
-		buff.append( "void SD_01::f_SD_01()\n");	// REFERENCE SD_01 //$NON-NLS-1$
-		buff.append( "{\n"); //$NON-NLS-1$
-		buff.append( "   next->f_SD_02();\n");		// REFERENCE next && reference f_SD_02 //$NON-NLS-1$
-		buff.append( "}\n"); //$NON-NLS-1$
-		parse( buff.toString() );
+		buff.append( "class SD_02 {                "); //$NON-NLS-1$
+		buff.append( "	public:                    "); //$NON-NLS-1$
+		buff.append( "   void f_SD_02();           "); //$NON-NLS-1$
+		buff.append( " };                          "); //$NON-NLS-1$
+		buff.append( "class SD_01 {              \n"); //$NON-NLS-1$
+		buff.append( " public:                   \n"); //$NON-NLS-1$
+		buff.append( "   SD_02 *next;            \n"); //$NON-NLS-1$  // REFERENCE SD_02 
+		buff.append( "   void f_SD_01();         \n"); //$NON-NLS-1$
+		buff.append( "};                         \n"); //$NON-NLS-1$
+		buff.append( "int main(){                \n"); //$NON-NLS-1$
+		buff.append( "   SD_01 a = new SD_01();  \n"); //$NON-NLS-1$  // REFERENCE SD_01 * 2 
+		buff.append( "   a->f_SD_01();           \n"); //$NON-NLS-1$  // REFERENCE a && REFERENCE f_SD_01 
+		buff.append( "}                          \n"); //$NON-NLS-1$
+		buff.append( "void SD_01::f_SD_01()      \n"); //$NON-NLS-1$ // REFERENCE SD_01 
+		buff.append( "{                          \n"); //$NON-NLS-1$
+		buff.append( "   next->f_SD_02();        \n"); //$NON-NLS-1$ // REFERENCE next && reference f_SD_02 
+		buff.append( "}                          \n"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( buff.toString() );
+		
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 17 );
+ 		ICompositeType SD_02 = (ICompositeType) col.getName(0).resolveBinding();
+ 		ICPPMethod f_SD_02 = (ICPPMethod) col.getName(1).resolveBinding();
+ 		ICompositeType SD_01 = (ICompositeType) col.getName(2).resolveBinding();
+ 		ICPPField next = (ICPPField) col.getName(4).resolveBinding();
+ 		ICPPMethod f_SD_01 = (ICPPMethod) col.getName(5).resolveBinding();
+ 		
+ 		assertInstances( col, SD_02, 2 );
+ 		assertInstances( col, f_SD_02, 2 );
+ 		assertInstances( col, SD_01, 4 );
+ 		assertInstances( col, next, 2 );
+ 		assertInstances( col, f_SD_01, 4 );
 	}
 		
 	public void testBug43679_A () throws Exception

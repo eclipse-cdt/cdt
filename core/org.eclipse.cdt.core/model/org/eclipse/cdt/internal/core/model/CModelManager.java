@@ -7,17 +7,23 @@ package org.eclipse.cdt.internal.core.model;
  
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.IBinaryParser;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICFile;
@@ -26,7 +32,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.internal.core.model.parser.ElfParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -46,7 +51,7 @@ import org.eclipse.core.runtime.QualifiedName;
 
 public class CModelManager implements IResourceChangeListener {
 
-	private HashMap fParsedResources =  new HashMap();	
+	private Map fParsedResources =  Collections.synchronizedMap(new HashMap());
 
 	final static String BINARY_PARSER= "binaryparser";
 
@@ -327,8 +332,31 @@ public class CModelManager implements IResourceChangeListener {
 			parent.removeChild(celement);
 		}
 		try {
+			// Remove in the hashMap all the prefixOf the resource, this
+			// will catch things when it is a container to remove the entire hierarchy
 			IResource res = celement.getUnderlyingResource();
-			fParsedResources.remove(res);
+			if (res != null) {
+				IPath resPath = res.getFullPath();
+				if (resPath != null) {
+					ArrayList list = new ArrayList();
+					Set s = fParsedResources.keySet();
+					synchronized (s) {
+						Iterator keys = s.iterator();
+						while (keys.hasNext()) {
+							IResource r = (IResource)keys.next();
+							IPath p = r.getFullPath();
+							if (p != null && resPath.isPrefixOf(p)) {
+//System.out.println("Removing [" + resPath + "] " + p);
+								list.add(r);
+							}
+						}
+					}
+					for (int i = 0; i < list.size(); i++) {
+						fParsedResources.remove((IResource)list.get(i));
+					}
+				}
+				fParsedResources.remove(res);
+			}
 		} catch (CModelException e) {
 		}
 	}
@@ -348,21 +376,17 @@ public class CModelManager implements IResourceChangeListener {
 		return null;
 	}
 
-	public static IBinaryParser getBinaryParser(IProject project) {
+	public IBinaryParser getBinaryParser(IProject project) {
 		// It is in the property of the project of the cdtproject
 		// For now the default is Elf.
 		IBinaryParser parser = (IBinaryParser)fParsers.get(project);
 		if (parser == null) {
-			String format = null;
-			// FIXME: Ask the .cdtproject second.
-			try {
-				if (project != null) {
-					format = project.getPersistentProperty(binaryParserKey);
-				}
-			} catch (CoreException e) {
+			String format = getBinaryParserFormat(project);
+			if (format == null || format.length() == 0) {
+				format = getDefaultBinaryParserFormat();
 			}
 			if (format != null && format.length() > 0) {
-				parser = CoreModel.getDefault().getBinaryParser(format);
+				parser = CCorePlugin.getDefault().getBinaryParser(format);
 			}
 			if (parser == null) {
 				parser = defaultBinaryParser;
@@ -372,17 +396,67 @@ public class CModelManager implements IResourceChangeListener {
 		return parser;
 	}
 
-	public static void setBinaryParser(IProject project, String format) {
+	public String getDefaultBinaryParserFormat() {
+		String format = CCorePlugin.getDefault().getPluginPreferences().getDefaultString(BINARY_PARSER);
+		if (format == null || format.length() == 0) {
+			return "ELF";
+		}
+		return format;
+	}
+
+	public String getBinaryParserFormat(IProject project) {
+		// It can be in the property of the project or in the .cdtproject
+		String format = null;
+		// FIXME: Ask the .cdtproject.
+		try {
+			if (project != null) {
+				format = project.getPersistentProperty(binaryParserKey);
+			}
+		} catch (CoreException e) {
+		}
+		return format;
+	}
+
+	public void setDefaultBinaryParserFormat(String format) {
+		CCorePlugin.getDefault().getPluginPreferences().setDefault(BINARY_PARSER, format);
+	}
+
+	public void setBinaryParserFormat(IProject project, String format, IProgressMonitor monitor) {
 		try {
 			if (project != null) {
 				project.setPersistentProperty(binaryParserKey, format);
 				fParsers.remove(project);
+				IPath projPath = project.getFullPath();
+				if (projPath != null) {
+					Collection c = fParsedResources.values();
+					ArrayList list = new ArrayList();
+					synchronized (c) {
+						Iterator values = c.iterator();
+						while (values.hasNext()) {
+							ICElement ce = (ICElement)values.next();
+							if (!(ce instanceof ICRoot || ce instanceof ICProject)) {
+							   	if (ce.getCProject().getProject().equals(project)) {
+									list.add(ce);
+								}
+							}
+						}
+					}
+					for (int i = 0; i < list.size(); i++) {
+						ICElement ce = (ICElement)list.get(i);
+						releaseCElement(ce);
+					}
+				}
+				// Fired and ICElementDelta.PARSER_CHANGED
+				CElementDelta delta = new CElementDelta(getCRoot());
+				delta.binaryParserChanged(create(project));
+				registerCModelDelta(delta);
+				fire();
 			}
 		} catch (CoreException e) {
 		}
 	}
 	
-	public static boolean isSharedLib(IFile file) {
+	public boolean isSharedLib(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
 			IBinaryFile bin = parser.getBinary(file);
@@ -393,7 +467,7 @@ public class CModelManager implements IResourceChangeListener {
 		return false;
 	}
 
-	public static boolean isObject(IFile file) {
+	public boolean isObject(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
 			IBinaryFile bin = parser.getBinary(file);
@@ -404,7 +478,7 @@ public class CModelManager implements IResourceChangeListener {
 		return false;
 	}
 
-	public static boolean isExecutable(IFile file) {
+	public boolean isExecutable(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
 			IBinaryFile bin = parser.getBinary(file);
@@ -415,7 +489,7 @@ public class CModelManager implements IResourceChangeListener {
 		return false;
 	}
 
-	public static boolean isBinary(IFile file) {
+	public boolean isBinary(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
 			IBinaryFile bin = parser.getBinary(file);
@@ -429,7 +503,7 @@ public class CModelManager implements IResourceChangeListener {
 		return false;
 	}
 
-	public static boolean isArchive(IFile file) {
+	public boolean isArchive(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
 			IBinaryFile bin = parser.getBinary(file);
@@ -440,11 +514,11 @@ public class CModelManager implements IResourceChangeListener {
 		return false;
 	}
 
-	public static boolean isTranslationUnit(IFile file) {
+	public boolean isTranslationUnit(IFile file) {
 		return isValidTranslationUnitName(file.getName());
 	}
 
-	public static boolean isValidTranslationUnitName(String name){
+	public boolean isValidTranslationUnitName(String name){
 		if (name == null) {
 			return false;
 		}
@@ -461,7 +535,7 @@ public class CModelManager implements IResourceChangeListener {
 	}
 
 	/* Only project with C nature and Open.  */
-	public static boolean hasCNature (IProject p) {
+	public boolean hasCNature (IProject p) {
 		boolean ok = false;
 		try {
 			ok = (p.isOpen() && p.hasNature(CProjectNature.C_NATURE_ID));
@@ -474,7 +548,7 @@ public class CModelManager implements IResourceChangeListener {
 	}
 
 	/* Only project with C++ nature and Open.  */
-	public static boolean hasCCNature (IProject p) {
+	public boolean hasCCNature (IProject p) {
 		boolean ok = false;
 		try {
 			ok = (p.isOpen() && p.hasNature(CCProjectNature.CC_NATURE_ID));

@@ -32,7 +32,7 @@ public class LexicalSortingAction extends Action {
 		fViewer= viewer;
 		fPreferenceKey= "LexicalSortingAction." + id + ".isChecked"; //$NON-NLS-1$ //$NON-NLS-2$
 		setText(CBrowsingMessages.getString("LexicalSortingAction.label")); //$NON-NLS-1$
-		CPluginImages.setImageDescriptors(this, "T_LCL", CPluginImages.IMG_ALPHA_SORTING); //$NON-NLS-1$ //$NON-NLS-2$
+		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ALPHA_SORTING); //$NON-NLS-1$ //$NON-NLS-2$
 		setToolTipText(CBrowsingMessages.getString("LexicalSortingAction.tooltip")); //$NON-NLS-1$
 		setDescription(CBrowsingMessages.getString("LexicalSortingAction.description")); //$NON-NLS-1$
 		boolean checked= CUIPlugin.getDefault().getPreferenceStore().getBoolean(fPreferenceKey); //$NON-NLS-1$

@@ -1,5 +1,10 @@
 2004-06-08 Alain Magloire
 
+	Fix for bug 65173
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/LexicalSortingAction.java
+
+2004-06-08 Alain Magloire
+
 	Fix For Bug 65172
 	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingContentProvider.java
 

@@ -208,43 +208,39 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			throw new CDIException("Not a CDT breakpoint");
 		}
 
-		// We only suppor expression not ignore count reset.
+		boolean state = suspendInferior();
+		CSession s = getCSession();
+		CommandFactory factory = s.getMISession().getCommandFactory();
+
+		// reset the values to sane states.
 		String exprCond = condition.getExpression();
-		if (exprCond != null) {
-			boolean state = suspendInferior();
-			CSession s = getCSession();
-			CommandFactory factory = s.getMISession().getCommandFactory();
+		if (exprCond == null) {
+			exprCond = "";
+		}
+		int ignoreCount = condition.getIgnoreCount();
+		if (ignoreCount < 0) { 
+			ignoreCount = 0;
+		}
+
+		try {
 			MIBreakCondition breakCondition =
 				factory.createMIBreakCondition(number, exprCond);
-			try {
-				s.getMISession().postCommand(breakCondition);
-				MIInfo info = breakCondition.getMIInfo();
-				if (info == null) {
-					throw new CDIException("No answer");
-				}
-			} catch (MIException e) {
-				throw new CDIException(e.getMessage());
-			} finally {
-				resumeInferior(state);
+			s.getMISession().postCommand(breakCondition);
+			MIInfo info = breakCondition.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
 			}
-		} else {
-			int ignoreCount = condition.getIgnoreCount();
-			boolean state = suspendInferior();
-			CSession s = getCSession();
-			CommandFactory factory = s.getMISession().getCommandFactory();
 			MIBreakAfter breakAfter =
 				factory.createMIBreakAfter(number, ignoreCount);
-			try {
-				s.getMISession().postCommand(breakAfter);
-				MIInfo info = breakAfter.getMIInfo();
-				if (info == null) {
-					throw new CDIException("No answer");
-				}
-			} catch (MIException e) {
-				throw new CDIException(e.getMessage());
-			} finally {
-				resumeInferior(state);
+			s.getMISession().postCommand(breakAfter);
+			info = breakAfter.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
 			}
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		} finally {
+			resumeInferior(state);
 		}
 	}
 

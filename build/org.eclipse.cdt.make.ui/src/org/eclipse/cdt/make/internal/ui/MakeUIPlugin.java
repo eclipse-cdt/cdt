@@ -1,0 +1,155 @@
+package org.eclipse.cdt.make.internal.ui;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+/**
+ * The main plugin class to be used in the desktop.
+ */
+public class MakeUIPlugin extends AbstractUIPlugin {
+	//The shared instance.
+	private static MakeUIPlugin plugin;
+	//Resource bundle.
+	private ResourceBundle resourceBundle;
+
+	/**
+	 * The constructor.
+	 */
+	public MakeUIPlugin(IPluginDescriptor descriptor) {
+		super(descriptor);
+		plugin = this;
+		try {
+			resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.make.internal.ui.MakeResources"); //$NON-NLS-1$
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
+	}
+
+	/**
+	 * Returns the shared instance.
+	 */
+	public static MakeUIPlugin getDefault() {
+		return plugin;
+	}
+
+	/**
+	 * Returns the workspace instance.
+	 */
+	public static IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
+	}
+
+	public static Shell getActiveWorkbenchShell() {
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getShell();
+		}
+		return null;
+	}
+
+	public static IWorkbenchWindow getActiveWorkbenchWindow() {
+		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}
+	
+	/**
+	 * Returns the string from the plugin's resource bundle,
+	 * or 'key' if not found.
+	 */
+	public static String getResourceString(String key) {
+		ResourceBundle bundle = MakeUIPlugin.getDefault().getResourceBundle();
+		try {
+			return bundle.getString(key);
+		} catch (MissingResourceException e) {
+			return key;
+		}
+	}
+
+	/**
+	 * Returns the plugin's resource bundle,
+	 */
+	public ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+
+	/**
+		 * Convenience method which returns the unique identifier of this plugin.
+		 */
+	public static String getUniqueIdentifier() {
+		if (getDefault() == null) {
+			// If the default instance is not yet initialized,
+			// return a static identifier. This identifier must
+			// match the plugin id defined in plugin.xml
+			return "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
+		}
+		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
+
+	public static void log(IStatus status) {
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
+
+	public static void logErrorMessage(String message) {
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, message, null));
+	}
+
+	public static void logException(Throwable e, final String title, String message) {
+		if (e instanceof InvocationTargetException) {
+			e = ((InvocationTargetException) e).getTargetException();
+		}
+		IStatus status = null;
+		if (e instanceof CoreException)
+			status = ((CoreException) e).getStatus();
+		else {
+			if (message == null)
+				message = e.getMessage();
+			if (message == null)
+				message = e.toString();
+			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, message, e);
+		}
+		ResourcesPlugin.getPlugin().getLog().log(status);
+		Display display;
+		display = Display.getCurrent();
+		if (display == null)
+			display = Display.getDefault();
+		final IStatus fstatus = status;
+		display.asyncExec(new Runnable() {
+			public void run() {
+				ErrorDialog.openError(null, title, null, fstatus);
+			}
+		});
+	}
+
+	public static void logException(Throwable e) {
+		logException(e, null, null);
+	}
+
+	public static void log(Throwable e) {
+		if (e instanceof InvocationTargetException)
+			e = ((InvocationTargetException) e).getTargetException();
+		IStatus status = null;
+		if (e instanceof CoreException)
+			status = ((CoreException) e).getStatus();
+		else
+			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, e.getMessage(), e);
+		log(status);
+	}
+
+	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		// dinglis-TODO initializeDefaultPreferences
+	}
+
+}

@@ -112,7 +112,7 @@ public class CPathContainerWizard extends Wizard {
 				allContainers.add(0, new ProjectContainerDescriptor(fFilterType));
 			}
 			fSelectionWizardPage = new CPathContainerSelectionPage(
-					(IContainerDescriptor[]) allContainers.toArray(new IContainerDescriptor[0]));
+					(IContainerDescriptor[])allContainers.toArray(new IContainerDescriptor[0]));
 			addPage(fSelectionWizardPage);
 
 			// add as dummy, will not be shown
@@ -162,7 +162,8 @@ public class CPathContainerWizard extends Wizard {
 			fContainerPage = getContainerPage(selected);
 			return fContainerPage;
 		} else if (page == fContainerPage) {
-			if ( fContainerPage.getContainerEntries().length > 0 && fContainerPage.getContainerEntries()[0] != null) {
+			if (fContainerPage.finish() && fContainerPage.getContainerEntries().length > 0
+					&& fContainerPage.getContainerEntries()[0] != null) {
 				fFilterPage.setParentEntry(fContainerPage.getContainerEntries()[0]);
 			}
 			return fFilterPage;

@@ -100,7 +100,9 @@ public class CPathFilterPage extends WizardPage {
 		} else if (fParentEntry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
 			try {
 				IPathEntryContainer container = CoreModel.getPathEntryContainer(fParentEntry.getPath(), fCElement.getCProject());
-				fPaths = Arrays.asList(container.getPathEntries());
+				if (container != null) {
+					fPaths = Arrays.asList(container.getPathEntries());
+				}
 			} catch (CModelException e) {
 			}
 		}

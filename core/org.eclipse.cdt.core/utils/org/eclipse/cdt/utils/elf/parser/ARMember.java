@@ -14,6 +14,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.cdt.utils.Addr2line;
+import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;
@@ -63,15 +65,13 @@ public class ARMember extends BinaryObject {
 		throw new IOException("No file assiocated with Binary");
 	}
 
-	protected void addSymbols(Elf.Symbol[] array, int type) {
+	protected void addSymbols(Elf.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt) {
 		for (int i = 0; i < array.length; i++) {
 			Symbol sym = new Symbol(this);
 			sym.type = type;
 			sym.name = array[i].toString();
 			sym.addr = array[i].st_value;
 			addSymbol(sym);
-			// This can fail if we use addr2line
-			// but we can safely ignore the error.
 		}
 	}
 

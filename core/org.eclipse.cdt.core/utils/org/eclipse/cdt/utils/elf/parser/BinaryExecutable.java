@@ -11,23 +11,14 @@
 package org.eclipse.cdt.utils.elf.parser;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
-import org.eclipse.cdt.utils.elf.Elf.Attribute;
-import org.eclipse.cdt.utils.elf.ElfHelper.Sizes;
 import org.eclipse.core.runtime.IPath;
 
 /**
  */
 public class BinaryExecutable extends BinaryObject implements IBinaryExecutable {
-	long timestamp;
-	String soname;
-	String[] needed;
-	Sizes sizes;
-	Attribute attribute;
-	ArrayList symbols;
 
 	public BinaryExecutable(IPath path) throws IOException {
 		super(path);

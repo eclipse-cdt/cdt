@@ -10,9 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.utils.elf.parser;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
@@ -32,8 +30,6 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	protected String soname;
 	protected String[] needed;
 	protected int type = IBinaryFile.OBJECT;
-
-	private long timestamp;
 	private Sizes sizes;
 	private Attribute attribute;
 	private ArrayList symbols;
@@ -120,6 +116,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	public void setType(int t) {
 		type = t;
 	}
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getSymbols()
 	 */
@@ -137,30 +134,10 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getContents()
-	 */
-	public InputStream getContents() {
-		InputStream stream = null;
-		if (path != null) {
-			try {
-				stream = new FileInputStream(path.toFile());
-			} catch (IOException e) {
-			}
-		}
-		if (stream == null) {
-			stream = super.getContents();
-		}
-		return stream;
-	}
-
-	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getName()
 	 */
 	public String getName() {
-		if (path != null) {
-			return path.lastSegment().toString();
-		}
-		return "";
+		return getPath().lastSegment().toString();
 	}
 
 	public String toString() {
@@ -187,18 +164,8 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 		return sizes;
 	}
 
-	boolean hasChanged() {
-		long modification = path.toFile().lastModified();
-		boolean changed = modification != timestamp;
-		timestamp = modification;
-		return changed;
-	}
-
 	protected ElfHelper getElfHelper() throws IOException {
-		if (path != null) {
-			return new ElfHelper(path.toOSString());
-		}
-		throw new IOException("No file assiocated with Binary");
+		return new ElfHelper(getPath().toOSString());
 	}
 
 	protected void loadInformation() throws IOException {
@@ -275,7 +242,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 			}
 			sym.addr = array[i].st_value;
 			sym.filename = null;
-			sym.startLine =  -1;
+			sym.startLine =  0;
 			sym.endLine = sym.startLine;
 			if (addr2line != null) {
 				try {
@@ -291,30 +258,6 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 
 	protected void addSymbol(Symbol sym) {
 		symbols.add(sym);
-	}
-
-	protected Addr2line getAddr2Line() {
-		IPath addr2LinePath = getAddr2LinePath();
-		Addr2line addr2line = null;
-		if (addr2LinePath != null && !addr2LinePath.isEmpty()) {
-			try {
-				addr2line = new Addr2line(addr2LinePath.toOSString(), getPath().toOSString());
-			} catch (IOException e1) {
-			}
-		}
-		return addr2line;
-	}
-
-	protected CPPFilt getCPPFilt() {
-		IPath cppFiltPath = getCPPFiltPath();
-		CPPFilt cppfilt = null;
-		if (cppFiltPath != null && ! cppFiltPath.isEmpty()) {
-			try {
-				cppfilt = new CPPFilt(cppFiltPath.toOSString());
-			} catch (IOException e2) {
-			}
-		}
-		return cppfilt;
 	}
 
 }

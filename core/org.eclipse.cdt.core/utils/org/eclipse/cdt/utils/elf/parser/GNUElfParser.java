@@ -14,6 +14,9 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.utils.*;
+import org.eclipse.cdt.utils.Addr2line;
+import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -56,4 +59,29 @@ public class GNUElfParser extends ElfParser implements IBinaryParser, IToolsProv
 		}
 		return new Path(value);
 	}
+
+	public Addr2line getAddr2Line(IPath path) {
+		IPath addr2LinePath = getAddr2LinePath();
+		Addr2line addr2line = null;
+		if (addr2LinePath != null && !addr2LinePath.isEmpty()) {
+			try {
+				addr2line = new Addr2line(addr2LinePath.toOSString(), path.toOSString());
+			} catch (IOException e1) {
+			}
+		}
+		return addr2line;
+	}
+
+	public CPPFilt getCPPFilt() {
+		IPath cppFiltPath = getCPPFiltPath();
+		CPPFilt cppfilt = null;
+		if (cppFiltPath != null && ! cppFiltPath.isEmpty()) {
+			try {
+				cppfilt = new CPPFilt(cppFiltPath.toOSString());
+			} catch (IOException e2) {
+			}
+		}
+		return cppfilt;
+	}
+
 }

@@ -583,7 +583,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 	 * @param element the source range to be shown in the editor, can be null.
 	 * @param moveCursor if true the editor is scrolled to show the range.
 	 */
-	private void setSelection(ISourceRange element, boolean moveCursor) {
+	public void setSelection(ISourceRange element, boolean moveCursor) {
 		if (element != null) {
 			try {
 				IRegion alternateRegion = null;

@@ -18,73 +18,75 @@ public interface IBinaryParser {
 	/**
 	 * Represents a binary file for example an ELF executable.
 	 */
-	public interface IBinaryFile extends IAdaptable {
-		public int OBJECT = 0x1;
-		public int EXECUTABLE = 0x02;
-		public int SHARED = 0x04;
-		public int ARCHIVE = 0x08;
-		public int CORE = 0x10;
+	interface IBinaryFile extends IAdaptable {
+		static final int OBJECT = 0x1;
+		static final int EXECUTABLE = 0x02;
+		static final int SHARED = 0x04;
+		static final int ARCHIVE = 0x08;
+		static final int CORE = 0x10;
 
-		public IPath getPath();
-		public int getType();
-		public InputStream getContents();
+		IPath getPath();
+		int getType();
+		InputStream getContents();
 	}
 
 	/**
 	 * Represents an archive.
 	 */
-	public interface IBinaryArchive extends IBinaryFile {
-		public IBinaryObject[] getObjects();
+	interface IBinaryArchive extends IBinaryFile {
+		IBinaryObject[] getObjects();
 	}
 
 	/**
 	 * Represents a binary, for example an ELF excutable.
 	 */
-	public interface IBinaryObject extends IBinaryFile {
+	interface IBinaryObject extends IBinaryFile {
 
-		public boolean hasDebug();
+		boolean hasDebug();
 
-		public String getCPU();
+		String getCPU();
 
-		public long getText();
+		long getText();
 
-		public long getData();
+		long getData();
 
-		public long getBSS();
+		long getBSS();
         
-		public boolean isLittleEndian();
+		boolean isLittleEndian();
 
-		public ISymbol[] getSymbols();
+		ISymbol[] getSymbols();
 		
-		public String getName();
+		String getName();
 
 	}
 
 	/**
 	 * An executable.
 	 */
-	public interface IBinaryExecutable extends IBinaryObject {
-		public String[] getNeededSharedLibs();
+	interface IBinaryExecutable extends IBinaryObject {
+		String[] getNeededSharedLibs();
 	}
 
 	/**
 	 * A DLL.
 	 */
-	public interface IBinaryShared extends IBinaryExecutable {
-		public String getSoName();
+	interface IBinaryShared extends IBinaryExecutable {
+		String getSoName();
 	}
 
-	public interface ISymbol {
-		public int FUNCTION = 0x01;
-		public int VARIABLE = 0x02;
+	interface ISymbol {
+		static final int FUNCTION = 0x01;
+		static final int VARIABLE = 0x02;
 	
-		public String getName();
-		public int getLineNumber();
-		public String getFilename();
-		public int getType();
+		String getName();
+		long getAdress();
+		int getStartLine();
+		int getEndLine();
+		String getFilename();
+		int getType();
 	}
 
-	public IBinaryFile getBinary(IPath path) throws IOException;
+	IBinaryFile getBinary(IPath path) throws IOException;
 	
-	public String getFormat();
+	String getFormat();
 }

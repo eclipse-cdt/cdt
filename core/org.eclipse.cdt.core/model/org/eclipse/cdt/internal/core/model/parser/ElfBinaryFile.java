@@ -321,12 +321,14 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile, IBinar
 			Symbol sym = new Symbol();
 			sym.type = type;
 			sym.name = array[i].toString();
+			sym.addr = array[i].st_value;
 			try {
 				// This can fail if we use addr2line
 				// but we can safely ignore the error.
 				if (header == null) {
 					sym.filename = array[i].getFilename();
-					sym.lineno = array[i].getFuncLineNumber();
+					sym.startLine = array[i].getFuncLineNumber();
+					sym.endLine = sym.startLine;
 				}
 			} catch (IOException e) {
 				//e.printStackTrace();

@@ -10,7 +10,9 @@ import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 public class Symbol implements ISymbol {
 
 	public String filename;
-	public int lineno;
+	public int startLine;
+	public int endLine;
+	public long addr;
 	public String name;
 	public int type;
 
@@ -21,12 +23,6 @@ public class Symbol implements ISymbol {
 		return filename;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getLineNumber()
-	 */
-	public int getLineNumber() {
-		return lineno;
-	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getName()
@@ -40,6 +36,27 @@ public class Symbol implements ISymbol {
 	 */
 	public int getType() {
 		return type;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getAdress()
+	 */
+	public long getAdress() {
+		return addr;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getEndLine()
+	 */
+	public int getEndLine() {
+		return endLine;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getStartLine()
+	 */
+	public int getStartLine() {
+		return startLine;
 	}
 
 }

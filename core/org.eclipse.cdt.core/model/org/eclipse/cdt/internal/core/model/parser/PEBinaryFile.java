@@ -281,7 +281,9 @@ public class PEBinaryFile extends PlatformObject implements IBinaryFile,
 				Symbol sym = new Symbol();
 				sym.filename = null;
 				sym.name = name;
-				sym.lineno = 0;
+				sym.addr = peSyms[i].n_value;
+				sym.startLine = 0;
+				sym.endLine = 0;
 				sym.type = peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
 				symbols.add(sym);
 			}

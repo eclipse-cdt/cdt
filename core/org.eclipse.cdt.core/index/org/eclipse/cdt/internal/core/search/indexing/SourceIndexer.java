@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -89,7 +90,7 @@ public class SourceIndexer extends AbstractIndexer {
 			boolean retVal = parser.parse();
 			
 			if (!retVal)
-				org.eclipse.cdt.internal.core.model.Util.log(null, "Failed to index " + resourceFile.getFullPath());
+				org.eclipse.cdt.internal.core.model.Util.log(null, "Failed to index " + resourceFile.getFullPath(), ICLogConstants.CDT);
 			
 			if (AbstractIndexer.VERBOSE){
 				if (!retVal)

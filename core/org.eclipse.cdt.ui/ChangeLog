@@ -1,3 +1,7 @@
+2003-09-30 Bogdan Gheorghe
+	- Added F3 key binding for the Open Declarations Action
+	- Bug 42047: Added Ctrl+H binding for the C++ Search Dialog
+	
 2003-09-30 Andrew Niefer
 	Bug 43923 - Search: Results pane title missing Working Set's name
 	- implement CSearchUtil.toString( IWorkingSet [] )

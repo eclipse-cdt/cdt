@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.CPathEntry;
 import org.eclipse.cdt.internal.core.model.BufferManager;
@@ -113,7 +114,7 @@ public class CCorePlugin extends Plugin {
      * @see #getDefaultOptions
      */
     public static final String CORE_ENCODING = PLUGIN_ID + ".encoding"; //$NON-NLS-1$
-
+	public CDTLogWriter cdtLog = null;
 
 	private static CCorePlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
@@ -211,6 +212,10 @@ public class CCorePlugin extends Plugin {
 		if (fCoreModel != null) {
 			fCoreModel.shutdown();
 		}
+		
+		if (cdtLog != null) {
+		   cdtLog.shutdown();
+		}
 	}
 
 	/**
@@ -218,7 +223,9 @@ public class CCorePlugin extends Plugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
-
+		
+		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile());
+		
 		//Set debug tracing options
 		CCorePlugin.getDefault().configurePluginDebugOptions();
 		

@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IParser;
@@ -4987,6 +4988,7 @@ public class Parser implements IParser
         catch (ScannerException e)
         {
             Util.debugLog( "ScannerException thrown : " + e.getMessage(), IDebugLogConstants.PARSER );
+			org.eclipse.cdt.internal.core.model.Util.log(e, "Scanner Exception", ICLogConstants.CDT); //$NON-NLS-1$h
             if( e.isSeriousError(mode) )
             {
             	failParse(); 

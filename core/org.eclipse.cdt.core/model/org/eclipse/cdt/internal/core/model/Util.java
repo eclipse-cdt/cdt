@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.internal.core.model.IDebugLogConstants.DebugLogConstant;
@@ -21,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-public class Util {
+public class Util implements ICLogConstants {
 	
 	public static boolean VERBOSE_PARSER = false;
 	public static boolean VERBOSE_MODEL = false;
@@ -151,32 +152,37 @@ public class Util {
 			}
 		}
 	}
-	
 	/*
 	 * Add a log entry
 	 */
-	public static void log(Throwable e, String message) {
+	public static void log(Throwable e, String message, LogConst logType) {
 		IStatus status= new Status(
 			IStatus.ERROR, 
 			CCorePlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
 			IStatus.ERROR, 
 			message, 
 			e); 
-		Util.log(status);			
+		Util.log(status, logType);			
 	}	
 	
-	public static void log(IStatus status){
-		CCorePlugin.getDefault().getLog().log(status);
+	public static void log(IStatus status, LogConst logType){
+	 if (logType.equals(ICLogConstants.PDE)){
+			CCorePlugin.getDefault().getLog().log(status);		
+	 } 
+	 else if (logType.equals(ICLogConstants.CDT)){
+			CCorePlugin.getDefault().cdtLog.log(status);
+	 }	
 	}
 	
-	public static void log(String message){
+	public static void log(String message, LogConst logType){
 		IStatus status = new Status(IStatus.INFO, 
 		CCorePlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
 		IStatus.INFO,
 		message,
 		null);
-		Util.log(status);
+		Util.log(status, logType);
 	}
+	
 	
 	public static void debugLog(String message, DebugLogConstant client) {
 		if( CCorePlugin.getDefault() == null ) return;

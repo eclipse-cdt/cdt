@@ -47,6 +47,11 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.java.toggle.presentation"</code>).
 	 */
 	public static final String TOGGLE_PRESENTATION= "org.eclipse.cdt.ui.edit.text.c.toggle.presentation"; //$NON-NLS-1$
+	/**
+	 * Action definition ID of the open declaration action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.java.toggle.presentation"</code>).
+	 */
+	public static final String OPEN_DECL= "org.eclipse.cdt.ui.edit.opendecl"; //$NON-NLS-1$
 
 
 }

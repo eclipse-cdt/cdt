@@ -435,7 +435,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		setAction("ContentAssistTip", action);
 
 		setAction("AddIncludeOnSelection", new AddIncludeOnSelectionAction(this)); //$NON-NLS-1$
-		setAction("OpenDeclarations", new OpenDeclarationsAction(this));
+	
+		action = new OpenDeclarationsAction(this);
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
+		setAction("OpenDeclarations", action);
 
 		fFileSearchAction = new FileSearchAction(getSelectionProvider());
 		

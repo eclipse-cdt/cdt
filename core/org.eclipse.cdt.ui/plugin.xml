@@ -386,6 +386,18 @@
             command="org.eclipse.cdt.ui.edit.text.c.uncomment"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%ActionDefinition.opendecl.name"
+            description="%ActionDefinition.opendecl.description"
+            category="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.opendecl">
+      </command>
+      <keyBinding
+            string="F3"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.edit.opendecl"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    <extension
          id="org.eclipse.cdt.ui.CSearchPage"
@@ -394,6 +406,7 @@
       <page
             showScopeSection="true"
             label="%CSearchPage.label"
+            extensions="c:90,cpp:90, cxx:90, cc:90, h:90, hh:90, hpp:90"
             icon="icons/full/obj16/csearch_obj.gif"
             class="org.eclipse.cdt.internal.ui.search.CSearchPage"
             sizeHint="460, 160"

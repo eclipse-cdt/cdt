@@ -1,3 +1,6 @@
+2003-09-30 Bogdan Gheorghe
+	- changed logging in JobManager to use new ICLogConstants
+	
 2003-09-30 Andrew Niefer
 	-fix bug43862 - Cannot find macro delcarations using all occurences.
 	  * modified CSearchPattern.createMacroPattern

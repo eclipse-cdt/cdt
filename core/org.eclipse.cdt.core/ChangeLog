@@ -1,3 +1,17 @@
+2003-09-30 Bogdan Gheorghe
+	
+	- Created CDTLogWriter class
+	- Added CDTLogWriter startup/shutdown to CCorePlugin
+	- Changed  Util class to make use of ICLogConstants to distinguish
+	  between PDE and CDT logs.
+	- Modified the Buffer class to log errors to the CDT log
+	  
+	 * src/org/eclipse/cdt/core/CCorePlugin.java
+	 * src/org/eclipse/cdt/core/ICLogConstants.java
+	 * src/org/eclipse/cdt/internal/core/CDTLogWriter.java
+	 * model/org/eclipse/cdt/internal/core/model/Util.java
+	 * model/org/eclipse/cdt/internal/core/model/Buffer.java
+	 
 2003-09-25 Bogdan Gheorghe
 
 	- Got rid of refs to old dependency service; restructured

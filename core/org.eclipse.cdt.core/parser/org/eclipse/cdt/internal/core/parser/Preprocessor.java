@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.io.Reader;
 
+import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IPreprocessor;
 import org.eclipse.cdt.core.parser.IProblemReporter;
@@ -48,7 +49,7 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 		catch( ScannerException se )
 		{
 			// callback IProblem here
-			org.eclipse.cdt.internal.core.model.Util.log(se, "Preprocessor Exception"); //$NON-NLS-1$h
+			org.eclipse.cdt.internal.core.model.Util.log(se, "Preprocessor Exception", ICLogConstants.CDT); //$NON-NLS-1$h
 			
 		}
 		catch( EndOfFile eof )

@@ -1,3 +1,5 @@
+2003-09-30 Bogdan Gheorghe
+	Added CDT log dump  in Parser.fetchToken to catch HandleInclusion failures
 2003-09-30 John Camelon
 	Fixed Bug 43503 : Search:f_SD_01 cannot be found in ManyClasses20 Project 
 	Fixed Bug 43680 : Fix Parser Error Handling 

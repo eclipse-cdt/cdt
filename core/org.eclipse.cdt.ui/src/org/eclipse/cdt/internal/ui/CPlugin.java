@@ -282,6 +282,14 @@ public class CPlugin extends AbstractUIPlugin {
 		super.shutdown();
 	}		
 	
+	public static Display getStandardDisplay() {
+		Display display;
+		display= Display.getCurrent();
+		if (display == null)
+			display= Display.getDefault();
+		return display;		
+	}
+
 	/**
 	 * @see Plugin#startup
 	 */
@@ -290,8 +298,13 @@ public class CPlugin extends AbstractUIPlugin {
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new ResourceAdapterFactory(), IResource.class);
 		manager.registerAdapters(new CElementAdapterFactory(), ICElement.class);
-		CPluginImages.initialize();
-		
+		getStandardDisplay().asyncExec(
+			new Runnable() {
+				public void run() {
+					CPluginImages.initialize();
+				}
+			}
+		);
 	}
 	
 	/**

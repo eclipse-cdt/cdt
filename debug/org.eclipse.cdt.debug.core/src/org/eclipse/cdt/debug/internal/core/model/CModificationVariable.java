@@ -24,8 +24,6 @@ import org.eclipse.debug.core.model.IValue;
  */
 public abstract class CModificationVariable extends CVariable
 {
-	private Boolean fEditable = null;
-
 	/**
 	 * Constructor for CModificationVariable.
 	 * @param parent
@@ -41,26 +39,8 @@ public abstract class CModificationVariable extends CVariable
 	 */
 	public boolean supportsValueModification()
 	{
-		if ( fEditable == null )
-		{
-			CDebugTarget target = (CDebugTarget)getDebugTarget().getAdapter( CDebugTarget.class );
-			if ( target != null && !target.isCoreDumpTarget() )
-			{
-				try
-				{
-					fEditable = new Boolean( getCDIVariable().isEditable() );
-				}
-				catch( CDIException e )
-				{
-					logError( e );
-				}
-			}
-			else
-			{
-				fEditable = new Boolean( false );
-			}
-		}
-		return ( fEditable != null ) ? fEditable.booleanValue() : false;
+		CDebugTarget target = (CDebugTarget)getDebugTarget().getAdapter( CDebugTarget.class );
+		return ( target != null && !target.isCoreDumpTarget() && isEditable() );
 	}
 
 	/**

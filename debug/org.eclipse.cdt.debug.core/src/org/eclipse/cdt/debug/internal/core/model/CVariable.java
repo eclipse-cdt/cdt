@@ -57,6 +57,8 @@ public abstract class CVariable extends CDebugElement
 	 */
 	protected ICValue fValue;
 
+	private Boolean fEditable = null;
+
 	/**
 	 * Counter corresponding to this variable's debug target
 	 * suspend count indicating the last time this value 
@@ -436,6 +438,7 @@ public abstract class CVariable extends CDebugElement
 				((CValue)fValue).dispose();
 				fValue = null;
 			}
+			fEditable = null;
 			fTypeName = null;
 			fireChangeEvent( DebugEvent.STATE );
 		}
@@ -471,6 +474,7 @@ public abstract class CVariable extends CDebugElement
 			((CValue)fValue).dispose();
 			fValue = null;
 		}
+		fEditable = null;
 		fTypeName = null;
 		fireChangeEvent( DebugEvent.STATE );
 	}
@@ -480,7 +484,8 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public boolean supportsCasting()
 	{
-		return supportsValueModification();
+		CDebugTarget target = (CDebugTarget)getDebugTarget().getAdapter( CDebugTarget.class );
+		return ( target != null && isEditable() );
 	}
 	
 	protected ICDIVariable getOriginalCDIVariable()
@@ -502,8 +507,7 @@ public abstract class CVariable extends CDebugElement
 	{
 		try
 		{
-			ICDIVariableObject originalVarObject = getCDISession().getVariableManager().getVariableObject( cdiFrame, getOriginalCDIVariable().getName() );
-			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObjectAsType( originalVarObject, type );
+			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObjectAsType( getOriginalCDIVariable(), type );
 			return getCDISession().getVariableManager().createVariable( varObject );
 		}
 		catch( CDIException e )
@@ -517,8 +521,7 @@ public abstract class CVariable extends CDebugElement
 	{
 		try
 		{
-			ICDIVariableObject originalVarObject = getCDISession().getVariableManager().getVariableObject( cdiFrame, getOriginalCDIVariable().getName() );
-			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObjectAsArray( originalVarObject, type, start, end );
+			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObjectAsArray( getOriginalCDIVariable(), type, start, end );
 			return getCDISession().getVariableManager().createVariable( varObject );
 		}
 		catch( CDIException e )
@@ -572,6 +575,7 @@ public abstract class CVariable extends CDebugElement
 				((CValue)fValue).dispose();
 				fValue = null;
 			}
+			fEditable = null;
 			fTypeName = null;
 			fireChangeEvent( DebugEvent.STATE );
 		}
@@ -582,14 +586,42 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public boolean supportsCastToArray()
 	{
+		CDebugTarget target = (CDebugTarget)getDebugTarget().getAdapter( CDebugTarget.class );
+		return ( target != null && isEditable() && hasChildren() );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#hasChildren()
+	 */
+	public boolean hasChildren()
+	{
 		try
 		{
-			return ( supportsValueModification() && getValue().hasVariables() );
+			return ( getValue() != null && getValue().hasVariables() );
 		}
 		catch( DebugException e )
 		{
 			logError( e );
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isEditable()
+	 */
+	public boolean isEditable()
+	{
+		if ( fEditable == null )
+		{
+			try
+			{
+				fEditable = new Boolean( getCDIVariable().isEditable() );
+			}
+			catch( CDIException e )
+			{
+				logError( e );
+			}
+		}
+		return ( fEditable != null ) ? fEditable.booleanValue() : false;
 	}
 }

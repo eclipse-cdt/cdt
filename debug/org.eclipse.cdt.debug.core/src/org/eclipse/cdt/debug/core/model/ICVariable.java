@@ -21,4 +21,8 @@ public interface ICVariable extends IVariable
 	void setFormat( int format ) throws DebugException;
 	
 	void refresh() throws DebugException;
+	
+	boolean isEditable();
+	
+	boolean hasChildren();
 }

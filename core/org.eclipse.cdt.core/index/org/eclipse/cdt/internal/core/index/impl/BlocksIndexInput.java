@@ -30,6 +30,7 @@ public class BlocksIndexInput extends IndexInput {
 	protected FileListBlock currentFileListBlock;
 	protected int currentFileListBlockNum;
 	protected int currentIndexBlockNum;
+	protected int currentIncludeBlockNum;
 	protected IndexBlock currentIndexBlock;
 	protected IndexBlock currentIncludeIndexBlock;
 	private RandomAccessFile raf;
@@ -408,7 +409,7 @@ public class BlocksIndexInput extends IndexInput {
 		//if end of the current block, we load the next one.
 		boolean endOfBlock= !currentIncludeIndexBlock.nextEntry(currentIncludeEntry);
 		if (endOfBlock) {
-			currentIncludeIndexBlock= getIndexBlock(++currentIndexBlockNum);
+			currentIncludeIndexBlock= getIndexBlock(++currentIncludeBlockNum);
 			currentIncludeIndexBlock.nextEntry(currentWordEntry);
 		}
 	}
@@ -418,8 +419,8 @@ public class BlocksIndexInput extends IndexInput {
 	protected void setFirstInclude() throws IOException {
 		includePosition= 1;
 		if (getNumIncludes() > 0) {
-			currentIndexBlockNum= summary.getFirstIncludeBlockNum();
-			currentIncludeIndexBlock= getIndexBlock(currentIndexBlockNum);
+			currentIncludeBlockNum= summary.getFirstIncludeBlockNum();
+			currentIncludeIndexBlock= getIndexBlock(currentIncludeBlockNum);
 			currentIncludeEntry= new IncludeEntry(0);
 			currentIncludeIndexBlock.reset();
 			currentIncludeIndexBlock.nextEntry(currentIncludeEntry);

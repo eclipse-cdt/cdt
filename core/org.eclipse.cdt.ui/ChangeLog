@@ -1,3 +1,12 @@
+2002-11-13 Alain Magloire
+
+	* src/.../wizards/CProjectWizard.java (isValidName):
+	New method to give a change to the wizard to check
+	the validity of a project name.
+	* src/.../wizard/CProjectWizardPage.java (CProjectWizardPage):
+	Takes new argument, the CProjectWizard.
+	(validatePage): calls isValidName() to check if name is valid.
+
 2002-11-13 David Inglis	
 	
 	* plugin.properties

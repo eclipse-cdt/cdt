@@ -507,7 +507,7 @@ public class MatchLocator implements IMatchLocator{
 							if (currentResource.isAccessible() && currentResource instanceof IFile) {
 								IFile file = (IFile) currentResource;
 								contents = file.getContents();
-								reader = new CodeReader(currentResource.getLocation().toOSString(), contents);
+								reader = new CodeReader(currentResource.getLocation().toOSString(), file.getCharset(), contents);
 								realPath = currentResource.getLocation();
 								project = file.getProject();
 							} else {

@@ -103,7 +103,7 @@ public class SourceIndexer extends AbstractIndexer {
 		InputStream contents = null;
 		try {
 			contents = resourceFile.getContents();
-			CodeReader reader = new CodeReader(resourceFile.getLocation().toOSString(), contents);
+			CodeReader reader = new CodeReader(resourceFile.getLocation().toOSString(), resourceFile.getCharset(), contents);
 			parser = ParserFactory.createParser( 
 							ParserFactory.createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getScannerLogService(), null ), 
 							requestor, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );

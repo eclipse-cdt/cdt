@@ -32,33 +32,56 @@ import org.eclipse.cdt.debug.mi.core.output.MIWhatisInfo;
 public class VariableObject extends CObject implements ICDIVariableObject {
 
 	// Casting info.
-	public String casting_type;
-	public int casting_index;
-	public int casting_length;
-
-	Type type = null;
-	String typename = null;
-	String sizeof = null;
+	String castingType;
+	int castingIndex;
+	int castingLength;
 
 	String name;
 	int position;
 	ICDIStackFrame frame;
 	int stackdepth;
+	
+	String qualifiedName = null;
+	Type type = null;
+	String typename = null;
+	String sizeof = null;
 
-	public VariableObject(VariableObject obj, String n) {
+	/**
+	 * Copy constructor.
+	 * @param obj
+	 */
+	public VariableObject(VariableObject obj) {
 		super(obj.getTarget());
-		name = n;
+		name = obj.getName();
 		try {
 			frame = obj.getStackFrame();
 		} catch (CDIException e) {
 		}
 		position = obj.getPosition();
 		stackdepth = obj.getStackDepth();
+		castingIndex = obj.getCastingArrayStart();
+		castingLength = obj.getCastingArrayEnd();
+		castingType = obj.getCastingType();
 	}
+//	public VariableObject(VariableObject obj, String n) {
+//		super(obj.getTarget());
+//		name = n;
+//		try {
+//			frame = obj.getStackFrame();
+//		} catch (CDIException e) {
+//		}
+//		position = obj.getPosition();
+//		stackdepth = obj.getStackDepth();
+//	}
 
 	public VariableObject(ICDITarget target, String n, ICDIStackFrame stack, int pos, int depth) {
+		this(target, n, null, stack, pos, depth);
+	}
+
+	public VariableObject(ICDITarget target, String n, String q, ICDIStackFrame stack, int pos, int depth) {
 		super(target);
 		name = n;
+		qualifiedName = q;
 		frame = stack;
 		position = pos;
 		stackdepth = depth;
@@ -70,6 +93,57 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 
 	public int getStackDepth() {
 		return stackdepth;
+	}
+
+	public void setCastingArrayStart(int start) {
+		castingIndex = start;
+	}
+	public int getCastingArrayStart() {
+		return castingIndex;
+	}
+
+	public void setCastingArrayEnd(int end) {
+		castingLength = end;
+	}
+	public int getCastingArrayEnd() {
+		return castingLength;
+	}
+
+	public void setCastingType(String t) {
+		castingType = t;
+	}
+	public String getCastingType() {
+		return castingType;
+	}
+	
+	/**
+	 * If the variable was a cast encode the string appropriately for GDB.
+	 * For example castin to an array is of 2 elements:
+	 *  (foo)@2
+	 * @return
+	 */
+	public String encodeVariable() {
+		StringBuffer buffer = new StringBuffer();
+		if (castingLength > 0 || castingIndex > 0) {
+			buffer.append("(");
+			//buffer.append('(');
+			if (castingType != null && castingType.length() > 0) {
+				buffer.append('(').append(castingType).append(')');
+			}
+			buffer.append(getName());
+			//buffer.append(')');
+			if (castingIndex != 0) {
+					buffer.append('+').append(castingIndex);
+			}
+			buffer.append(')');
+			buffer.append('@').append(castingLength - castingIndex);
+		} else if (castingType != null && castingType.length() > 0) {
+			buffer.append('(').append(castingType).append(')');
+			buffer.append('(').append(getName()).append(')');
+		} else {
+			buffer.append(getName());
+		}
+		return buffer.toString();
 	}
 
 	/**
@@ -182,5 +256,16 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 		}
 		return typename;
 	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getQualifiedName()
+	 */
+	public String getQualifiedName() throws CDIException {
+		if (qualifiedName == null) {
+			qualifiedName = encodeVariable();
+		}
+		return qualifiedName;
+	}
+
 
 }

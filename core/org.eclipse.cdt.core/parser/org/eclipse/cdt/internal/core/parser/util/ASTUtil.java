@@ -103,10 +103,13 @@ public class ASTUtil {
 			if(clause != null){
 				IASTExpression expression = clause.getAssigmentExpression();
 				if(expression != null){
-					String literal = expression.getLiteralString();
-					if(literal.length() > 0)
+					String literal = (expression.getLiteralString().length() > 0 
+									? expression.getLiteralString() 
+									: expression.getIdExpression() );
+					if(literal.length() > 0){
 						initializer.append("=");
 						initializer.append(literal);
+					}
 				}
 			}
 		}

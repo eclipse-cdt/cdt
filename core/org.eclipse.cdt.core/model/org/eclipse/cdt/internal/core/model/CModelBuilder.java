@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
@@ -380,6 +381,13 @@ public class CModelBuilder {
 	
 	private Enumerator createEnumerator(Parent enum, IASTEnumerator enumDef){
 		Enumerator element = new Enumerator (enum, enumDef.getName().toString());
+		IASTExpression initialValue = enumDef.getInitialValue();
+		if(initialValue != null){
+			if(initialValue.getLiteralString().length() > 0)
+				element.setConstantExpression(initialValue.getLiteralString());
+			else 
+				element.setConstantExpression(initialValue.getIdExpression());
+		}
 		// add to parent
 		enum.addChild(element);
 		// set enumerator position

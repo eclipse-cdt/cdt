@@ -16,9 +16,12 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 
 /**
  * @author hamer
+ * 
+ * Testing Function/Method scope, a class context, with a prefix
+ * After a .
  *
  */
-public class CompletionProposalsTest2  extends CompletionProposalsTest{
+public class CompletionProposalsTest2  extends CompletionProposalsBaseTest{
 	private final String fileName = "CompletionTestStart2.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";

@@ -1,3 +1,7 @@
+2004-01-16 Hoda Amer
+	Modified CModelElementsTest to test for enumerator constant expression 
+	Bug#47552
+	
 2004-01-15 Andrew Niefer
 	Moved testBug48307_FriendFunction_1 & testBug48307_FriendFunction_2 to ContextualParseTest
 	Updated ContextualParseTest now that the order of prefix lookup results is predictable.

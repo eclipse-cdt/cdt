@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-public abstract class CompletionProposalsTest  extends TestCase{
+public abstract class CompletionProposalsBaseTest  extends TestCase{
 	private final String pluginName = "org.eclipse.cdt.ui.tests";
 	private final String projectName = "TestProject1";
 	private final String projectType = "bin";
@@ -56,7 +56,7 @@ public abstract class CompletionProposalsTest  extends TestCase{
 	private Document document = null;
 	
 		
-	public CompletionProposalsTest(String name) {
+	public CompletionProposalsBaseTest(String name) {
 		super(name);
 	}
 	
@@ -84,9 +84,9 @@ public abstract class CompletionProposalsTest  extends TestCase{
 		fCFile = fCProject.getProject().getFile(fileName);
 		if ( (!fCFile.exists()) &&( !fHeaderFile.exists() )) {
 			try{
-				String fileFullPath = pluginRoot+ getFileFullPath();
 				FileInputStream headerFileIn = new FileInputStream(pluginRoot+ getHeaderFileFullPath()); 
 				fHeaderFile.create(headerFileIn,false, monitor);  
+				String fileFullPath = pluginRoot+ getFileFullPath();
 				FileInputStream bodyFileIn = new FileInputStream(fileFullPath); 
 				fCFile.create(bodyFileIn,false, monitor);        
 			} catch (CoreException e) {
@@ -164,9 +164,9 @@ public abstract class CompletionProposalsTest  extends TestCase{
 			assertEquals(prefix, getExpectedPrefix());
 			
 			String[] expected = getExpectedResultsValues();
-			assertEquals(results.length, expected.length);
+			assertTrue(results.length >= expected.length);
 			
-			for (int i = 0; i<results.length; i++){
+			for (int i = 0; i<expected.length; i++){
 				ICompletionProposal proposal = results[i];
 				String displayString = proposal.getDisplayString();
 				assertEquals(displayString, expected[i]);

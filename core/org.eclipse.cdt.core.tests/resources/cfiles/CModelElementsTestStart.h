@@ -55,7 +55,7 @@ namespace MyPackage
 	// check enums
 	// enum without name
 	enum { 
-		first, 
+		first = 1, 
 		second, 
 		third 
 	}

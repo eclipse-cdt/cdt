@@ -13,8 +13,12 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.io.CharArrayReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -41,7 +45,6 @@ import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
-import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
@@ -49,8 +52,8 @@ import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
+import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.parser.util.ASTUtil;
 import org.eclipse.cdt.internal.ui.util.IDebugLogConstants;
@@ -92,6 +95,7 @@ public class CompletionEngine implements RelevanceConstants{
 												"template",
 											 }; 
 	private static final String exceptionKeyword = "...";
+	private Map macroMap = new HashMap();
 	// scope relevance element counters
 	private int numFields = 0;
 	private int numVariables = 0;
@@ -104,7 +108,6 @@ public class CompletionEngine implements RelevanceConstants{
 	private int numEnumerations = 0;
 	private int numEnumerators = 0;
 	private int numNamespaces = 0;
-	private int numMacros = 0;
 	
 	public CompletionEngine(ICompletionRequestor completionRequestor){
 			requestor = completionRequestor;
@@ -183,9 +186,11 @@ public class CompletionEngine implements RelevanceConstants{
 		ParserLanguage language = CoreModel.getDefault().hasCCNature(project) ? ParserLanguage.CPP : ParserLanguage.C;
 	
 		IParser parser = null;
+		IScanner scanner = null;
+		macroMap.clear();
 		try
 		{
-			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETION_PARSE, language, requestor, ParserUtil.getParserLogService() );
+			scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETION_PARSE, language, requestor, ParserUtil.getParserLogService() );
 			parser  = ParserFactory.createParser( scanner, requestor, ParserMode.COMPLETION_PARSE, language, ParserUtil.getParserLogService() );
 		}
 		catch( ParserFactoryError pfe )
@@ -196,6 +201,7 @@ public class CompletionEngine implements RelevanceConstants{
 			IASTCompletionNode result = null;
 			try {
 				result = parser.parse(completionOffset);
+				macroMap = scanner.getDefinitions();
 			} catch (ParseError e ) {
 				//TODO - this can be more than just a Not Implemented exception
 			}
@@ -300,14 +306,6 @@ public class CompletionEngine implements RelevanceConstants{
 					completionStart, completionLength, relevance);
 			}				
 		}
-		else if(node instanceof IASTMacro){
-			numMacros++;
-			IASTMacro macro = (IASTMacro)node;
-			int relevance = computeRelevance(ICElement.C_MACRO, prefix, macro.getName());
-			relevance += totalNumberOfResults - numMacros;
-			
-			requestor.acceptMacro(macro.getName(), completionStart, completionLength, relevance);
-		}
 		else if(node instanceof IASTNamespaceDefinition){
 			numNamespaces++;
 			IASTNamespaceDefinition namespace = (IASTNamespaceDefinition)node;
@@ -349,6 +347,22 @@ public class CompletionEngine implements RelevanceConstants{
 		log("No of Keywords       = " + numOfKeywords);
 	}
 	
+	private void addMacroToCompletions (String macroName){
+		int relevance = MACRO_TYPE_RELEVANCE;
+		requestor.acceptMacro(macroName, completionStart, completionLength, relevance);		
+	}
+
+	private void addMacrosToCompletions(Iterator macros){
+		int numOfMacros = 0;
+		while (macros.hasNext()){
+			String macro = (String) macros.next();
+			addMacroToCompletions(macro);
+			numOfMacros++;
+		}
+		log("No of Macros         = " + numOfMacros);
+	}
+	
+	
 	private void resetElementNumbers(){
 		numFields = 0;
 		numVariables = 0;
@@ -361,11 +375,12 @@ public class CompletionEngine implements RelevanceConstants{
 		numEnumerations = 0;
 		numEnumerators = 0;
 		numNamespaces = 0;
-		numMacros = 0;
 	}
 	private void addToCompletions (ILookupResult result){
-		if(result == null)
+		if(result == null){
+			log("Lookup Results       = null ................. !!! No Lookup Results found !!! ");
 			return;
+		}
 		Iterator nodes = result.getNodes();
 		int numberOfElements = result.getResultsSize();
 		
@@ -379,7 +394,7 @@ public class CompletionEngine implements RelevanceConstants{
 		return ;
 	}
 
-	private List lookupKeyword(String prefix, int lookupType){
+	private List lookupKeywords(String prefix, int lookupType){
 		List result = new ArrayList();
 		switch (lookupType){
 			case BASIC_TYPES_KEYWORDS:
@@ -408,6 +423,30 @@ public class CompletionEngine implements RelevanceConstants{
 			return null;
 		}
 	}
+	
+	private List lookupMacros(String prefix){	
+		Set keySet = new TreeSet(macroMap.keySet());
+		Iterator i = keySet.iterator();
+		
+		List resultSet = new ArrayList(); 
+		while( i.hasNext() )
+		{
+			String key = (String) i.next();
+			String value = "";
+			if(key.length() > prefix.length()) {
+				value = key.substring(0, prefix.length());
+			}else {
+				value = key;
+			}
+			if( value.equalsIgnoreCase( prefix ) ) {
+				resultSet.add( key );
+			}
+			else if( value.compareToIgnoreCase( prefix ) > 0 ) 
+				break;
+		}
+		return resultSet;		
+	}
+	
 	private void completionOnMemberReference(IASTCompletionNode completionNode){
 		// Completing after a dot
 		// 1. Get the search scope node
@@ -428,26 +467,41 @@ public class CompletionEngine implements RelevanceConstants{
 		IASTScope searchNode = completionNode.getCompletionScope();
 		
 		ILookupResult result = null;
-		// lookup fields and methods with the right visibility
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[8];
-		kinds[0] = IASTNode.LookupKind.FIELDS; 
-		kinds[1] = IASTNode.LookupKind.METHODS;
-		kinds[2] = IASTNode.LookupKind.VARIABLES; 
-		kinds[3] = IASTNode.LookupKind.STRUCTURES; 
-		kinds[4] = IASTNode.LookupKind.ENUMERATIONS; 
-		kinds[5] = IASTNode.LookupKind.NAMESPACES;
-		kinds[6] = IASTNode.LookupKind.FUNCTIONS;
-		kinds[7] = IASTNode.LookupKind.LOCAL_VARIABLES; 
+		if (completionNode.getCompletionPrefix().length() > 0){
+			// lookup fields and methods with the right visibility
+			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[8];
+			kinds[0] = IASTNode.LookupKind.FIELDS; 
+			kinds[1] = IASTNode.LookupKind.METHODS;
+			kinds[2] = IASTNode.LookupKind.VARIABLES; 
+			kinds[3] = IASTNode.LookupKind.STRUCTURES; 
+			kinds[4] = IASTNode.LookupKind.ENUMERATIONS; 
+			kinds[5] = IASTNode.LookupKind.NAMESPACES;
+			kinds[6] = IASTNode.LookupKind.FUNCTIONS;
+			kinds[7] = IASTNode.LookupKind.LOCAL_VARIABLES; 
+			
+			result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+			addToCompletions (result);
+	
+			List macros = lookupMacros(completionNode.getCompletionPrefix());
+			addMacrosToCompletions(macros.iterator());
+		} 
+		else // prefix is empty
+		{
+			// instead of only fields and methods
+			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+			kinds[0] = IASTNode.LookupKind.THIS;
+ 
+			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+			addToCompletions(result);
+		}
 		
-		result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-		addToCompletions (result);
 	}
 	private void completionOnScopedReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node
 		// the search node is the name before the qualification 
 		IASTScope searchNode = completionNode.getCompletionScope();
 		// here we have to look for anything that could be referenced within this scope
-		// 1. lookup local variables, global variables, functions, methods, structures, enums, macros, and namespaces
+		// 1. lookup local variables, global variables, functions, methods, structures, enums, and namespaces
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[4];
 		kinds[0] = IASTNode.LookupKind.VARIABLES; 
 		kinds[1] = IASTNode.LookupKind.STRUCTURES; 
@@ -482,6 +536,12 @@ public class CompletionEngine implements RelevanceConstants{
 		completionOnTypeReference(completionNode);
 		// 2. Get the search scope node
 		IASTScope searchNode = completionNode.getCompletionScope();
+
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+		kinds[0] = IASTNode.LookupKind.NAMESPACES; 
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		addToCompletions(result);
+		
 		// TODO
 		// 3. provide a template for constructor/ destructor
 		// 4. lookup methods
@@ -497,36 +557,33 @@ public class CompletionEngine implements RelevanceConstants{
 	private void completionOnVariableType(IASTCompletionNode completionNode){
 		// 1. basic completion on all types
 		completionOnTypeReference(completionNode);
+		
+		IASTScope searchNode = completionNode.getCompletionScope();
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+		kinds[0] = IASTNode.LookupKind.NAMESPACES; 
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		addToCompletions(result);
 	}
 	private void completionOnSingleNameReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node
 		// the search node is the code scope inwhich completion is requested
 		IASTScope searchNode = completionNode.getCompletionScope();
-		// if prefix is not empty
-		if (completionNode.getCompletionPrefix().length() > 0){
-			// here we have to look for any names that could be referenced within this scope
-			// 1. lookup local variables, global variables, functions, methods, structures, enums, macros, and namespaces
-			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[7];
-			kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
-			kinds[1] = IASTNode.LookupKind.FIELDS; 
-			kinds[2] = IASTNode.LookupKind.VARIABLES; 
-			kinds[3] = IASTNode.LookupKind.METHODS; 
-			kinds[4] = IASTNode.LookupKind.FUNCTIONS; 
-			kinds[5] = IASTNode.LookupKind.NAMESPACES; 
-			kinds[6] = IASTNode.LookupKind.ENUMERATORS; 
-			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-			addToCompletions(result);
-		} else // prefix is empty
-		{
-			// instead of only fields and methods
-			// kinds[0] = IASTNode.LookupKind.THIS 
-			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[3];
-			kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
-			kinds[1] = IASTNode.LookupKind.FIELDS; 
-			kinds[2] = IASTNode.LookupKind.METHODS; 
-			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-			addToCompletions(result);
-		}
+		// here we have to look for any names that could be referenced within this scope
+		// 1. lookup local variables, global variables, functions, methods, structures, enums, macros, and namespaces
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[7];
+		kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
+		kinds[1] = IASTNode.LookupKind.FIELDS; 
+		kinds[2] = IASTNode.LookupKind.VARIABLES; 
+		kinds[3] = IASTNode.LookupKind.METHODS; 
+		kinds[4] = IASTNode.LookupKind.FUNCTIONS; 
+		kinds[5] = IASTNode.LookupKind.NAMESPACES; 
+		kinds[6] = IASTNode.LookupKind.ENUMERATORS; 
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		addToCompletions(result);
+
+		List macros = lookupMacros(completionNode.getCompletionPrefix());
+		addMacrosToCompletions(macros.iterator());
+
 	}
 
 	private void completionOnClassReference(IASTCompletionNode completionNode){
@@ -559,10 +616,8 @@ public class CompletionEngine implements RelevanceConstants{
 		// 1. Get the search scope node 
 		IASTScope searchNode = completionNode.getCompletionScope();
 		// only look for macros
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-		kinds[0] = IASTNode.LookupKind.MACROS; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-		addToCompletions(result);
+		List result = lookupMacros(completionNode.getCompletionPrefix());
+		addMacrosToCompletions(result.iterator());
 	}
 	private void completionOnFunctionReference(IASTCompletionNode completionNode){
 		// TODO: complete the lookups
@@ -579,7 +634,7 @@ public class CompletionEngine implements RelevanceConstants{
 	private void completionOnKeyword(IASTCompletionNode completionNode){
 		// lookup every type of keywords
 		// 1. basic types keword list
-		List result = lookupKeyword(completionNode.getCompletionPrefix(), BASIC_TYPES_KEYWORDS);
+		List result = lookupKeywords(completionNode.getCompletionPrefix(), BASIC_TYPES_KEYWORDS);
 		addKeywordsToCompletions(result.iterator());
 	}
 	
@@ -800,8 +855,6 @@ public class CompletionEngine implements RelevanceConstants{
 				kindName.append("CONSTRUCTORS");
 			else if(kind == IASTNode.LookupKind.NAMESPACES)				
 				kindName.append("NAMESPACES"); 
-			else if(kind == IASTNode.LookupKind.MACROS)				
-				kindName.append("MACROS"); 
 			else if(kind == IASTNode.LookupKind.ENUMERATIONS)				
 				kindName.append("ENUMERATIONS"); 
 			else if(kind == IASTNode.LookupKind.ENUMERATORS)				

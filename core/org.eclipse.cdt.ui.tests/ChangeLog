@@ -1,3 +1,7 @@
+2004-01-16 Hoda Amer
+	Added More success JUnit tests.
+	Added two failed JUnit tests.
+	
 2004-01-15 Hoda Amer
 	Moved Content Assist testing to the UI.tests plugin
 	Started a new framework of JUnit tests for content assist.

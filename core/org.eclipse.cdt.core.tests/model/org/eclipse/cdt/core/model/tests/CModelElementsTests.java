@@ -273,10 +273,11 @@ public class CModelElementsTests extends TestCase {
 		checkElementOffset((CElement)enum);
 		checkLineNumbers((CElement)enum, 57, 61);
 	
-		// 	enum ---> enumerator: first
+		// 	enum ---> enumerator: first = 1
 		ArrayList enumEnumerators = enum.getChildrenOfType(ICElement.C_ENUMERATOR);
 		IEnumerator first = (IEnumerator) enumEnumerators.get(0);
 		assertEquals(first.getElementName(), new String("first"));
+		assertEquals("1", first.getConstantExpression());
 		checkElementOffset((CElement)first);
 		// 	enum ---> enumerator: second
 		IEnumerator second = (IEnumerator) enumEnumerators.get(1);

@@ -17,40 +17,38 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Global scope, declaration start, with a prefix
+ * Testing Function/Method scope, statement start, with no prefix
+ * Lookup.THIS
  *
  */
-public class CompletionProposalsTest3  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart3.cpp";
+public class CompletionProposalsTest5  extends CompletionProposalsBaseTest{
+	private final String fileName = "CompletionTestStart5.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTCompilationUnit";
+	private final String expectedScopeName = "ASTMethod";
 	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE;
-	private final String expectedPrefix = "a";
+	private final CompletionKind expectedKind = CompletionKind.STATEMENT_START;
+	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
-			"aClass",
-			"anotherClass",
-			"anEnumeration",
-			"AStruct",
-			"AMacro"
+			"anotherField : int",
+			"anotherMethod() void"
 	};
 	
-	public CompletionProposalsTest3(String name) {
+	public CompletionProposalsTest5(String name) {
 		super(name);
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionProposalsTest2.class.getName());
-		suite.addTest(new CompletionProposalsTest2("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionProposalsTest5.class.getName());
+		suite.addTest(new CompletionProposalsTest5("testCompletionProposals"));
 		return suite;
 	}		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" c.a ") + 4;
+		return getBuffer().indexOf("    ") + 2;
 	}
 
 	/* (non-Javadoc)

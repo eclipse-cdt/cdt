@@ -9,9 +9,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.ui.tests.text.PartitionTokenScannerTest;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsTest1;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsTest2;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsTest3;
+import org.eclipse.cdt.ui.tests.text.contentassist.*;
+import org.eclipse.cdt.ui.tests.text.contentassist.failedtests.*;
 import org.eclipse.cdt.ui.tests.textmanipulation.TextBufferTest;
 
 
@@ -33,11 +32,22 @@ public class AutomatedSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public AutomatedSuite() {
+		
+		// Success Tests
 		addTest(PartitionTokenScannerTest.suite());
 		addTest(TextBufferTest.suite());
 		addTest(CompletionProposalsTest1.suite());
 		addTest(CompletionProposalsTest2.suite());
 		addTest(CompletionProposalsTest3.suite());
+		addTest(CompletionProposalsTest4.suite());
+		addTest(CompletionProposalsTest5.suite());
+		addTest(CompletionProposalsTest6.suite());
+		addTest(CompletionProposalsTest7.suite());
+		
+		// Failed Tests
+		addTest(CompletionProposalsFailedTest1.suite());
+		addTest(CompletionProposalsFailedTest2.suite());
+		
 	}
 	
 }

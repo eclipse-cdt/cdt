@@ -1,3 +1,7 @@
+2004-10-25 David Inglis
+	Deprecated environment launch constent in favor of the constant provided by the debug.core.
+	* src/org/eclipse/cdt/debug/core/ICDTLaunchConfigurationConstants.java
+	
 2004-10-25 Alain Magloire
 	Remove of the class ICDIExpressionManager.
 	instead new clas ICDIExpressionManagegment that is on the ICDITarget

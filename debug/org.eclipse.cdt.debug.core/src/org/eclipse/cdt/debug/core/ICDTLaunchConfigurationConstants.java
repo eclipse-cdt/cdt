@@ -50,12 +50,15 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether the current enviroment should be inherited when the application
 	 * is launched.
+	 * @deprecated - see ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES
 	 */
 	public static final String ATTR_PROGRAM_ENVIROMENT_INHERIT = CDT_LAUNCH_ID + ".ENVIRONMENT_INHERIT"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a Map specifying the
 	 * environment to use when launching a C/C++ application.
+	 * 
+	 * @deprecated - see ILaunchManager.ATTR_ENVIRONMENT_VARIABLES
 	 */
 	public static final String ATTR_PROGRAM_ENVIROMENT_MAP = CDT_LAUNCH_ID + ".ENVIRONMENT_MAP"; //$NON-NLS-1$
 

@@ -54,4 +54,11 @@ public abstract class ASTNode implements IASTNode {
     public IASTNodeLocation[] getNodeLocations() {
         return getTranslationUnit().getLocationInfo( offset, length );
     }
+    
+    /* (non-Javadoc)
+    * @see org.eclipse.cdt.core.dom.ast.IASTNode#getUnpreprocessedSignature()
+    */
+   public String getUnpreprocessedSignature() {
+      return getTranslationUnit().getUnpreprocessedSignature( getNodeLocations() );
+   }
 }

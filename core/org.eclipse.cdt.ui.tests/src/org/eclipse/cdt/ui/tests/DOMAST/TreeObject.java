@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -111,7 +112,13 @@ public class TreeObject implements IAdaptable {
 			}
 			
 			return buffer.toString();
+		} else if( node instanceof IASTDeclSpecifier )
+		{
+		    buffer.append( START_OF_LIST );
+		    buffer.append( ((IASTDeclSpecifier)node).getUnpreprocessedSignature() );
+		    return buffer.toString();
 		}
+		
 		
 		return buffer.toString();
 	}

@@ -43,6 +43,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     private static final IASTPreprocessorMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTPreprocessorMacroDefinition[0];
     private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = new IASTPreprocessorIncludeStatement[0];
     private static final IASTProblem[] EMPTY_PROBLEM_ARRAY = new IASTProblem[0];
+    private static final String EMPTY_STRING = ""; //$NON-NLS-1$
     
     public void addDeclaration( IASTDeclaration d )
     {
@@ -222,4 +223,13 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
         }
         return result;
     }
+
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getUnpreprocessedSignature(org.eclipse.cdt.core.dom.ast.IASTNodeLocation[])
+    */
+   public String getUnpreprocessedSignature(IASTNodeLocation[] locations) {
+      if( resolver == null ) return EMPTY_STRING;
+      return new String( resolver.getUnpreprocessedSignature(locations) );
+   }
 }

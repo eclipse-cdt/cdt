@@ -27,6 +27,9 @@ public interface ILocationResolver {
 
 	public IASTNodeLocation [] getLocations( int offset, int length );
     public IASTNodeLocation    getLocation( int offset );
+    
+    public char [] getUnpreprocessedSignature( IASTNodeLocation [] locations );
+    
     public IASTProblem[] getScannerProblems();
 
     public String getTranslationUnitPath();

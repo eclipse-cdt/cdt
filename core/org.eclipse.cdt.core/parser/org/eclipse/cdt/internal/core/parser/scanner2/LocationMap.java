@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
@@ -1008,6 +1009,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
    protected static final int V_INCLUSIONS = 2;
    protected static final int V_PROBLEMS   = 3;
    protected static final int V_MACRODEFS  = 4;
+   private static final char[] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 
    protected static void collectContexts(int key, _Context source, List result) {
       switch (key) {
@@ -1032,6 +1034,51 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          for (int i = 0; i < l.size(); ++i)
             collectContexts(key, (_Context) l.get(i), result);
       }
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getSignature(org.eclipse.cdt.core.dom.ast.IASTNodeLocation[])
+    */
+   public char[] getUnpreprocessedSignature( IASTNodeLocation[] locations) {
+      
+      switch ( locations.length )
+      {
+         case 1:
+            if( locations[0] instanceof IASTFileLocation )
+            {
+               IASTNodeLocation nodeLocation = locations[0];
+               char [] name = ((IASTFileLocation)nodeLocation).getFileName().toCharArray();
+               if( readerCompatable( nodeLocation, tu.reader, name ) )
+                     return CharArrayUtils.extract( tu.reader.buffer, nodeLocation.getNodeOffset(), nodeLocation.getNodeLength() );
+               List inclusions = new ArrayList();
+               collectContexts( V_INCLUSIONS, tu, inclusions );
+               for( int i = 0; i < inclusions.size(); ++i )
+               {
+                  _Inclusion inc = (_Inclusion) inclusions.get(i);
+                  if( readerCompatable( nodeLocation, inc.reader, name ) )
+                     return CharArrayUtils.extract( inc.reader.buffer, nodeLocation.getNodeOffset(), nodeLocation.getNodeLength() );
+               }
+            }
+            return EMPTY_CHAR_ARRAY;
+         case 0:
+            return EMPTY_CHAR_ARRAY;
+         default:
+            //TODO 
+            return EMPTY_CHAR_ARRAY;
+      }
+   }
+
+   /**
+    * @param nodeLocation
+    * @param reader
+    * @param name
+    * @return
+    */
+   private boolean readerCompatable(IASTNodeLocation nodeLocation, CodeReader reader, char[] name) {
+      if( !CharArrayUtils.equals( reader.filename, name )) return false;
+      if( nodeLocation.getNodeOffset() > reader.buffer.length ) return false;
+      if( nodeLocation.getNodeOffset() + nodeLocation.getNodeLength() > reader.buffer.length ) return false;
+      return true;
    }
 
 }

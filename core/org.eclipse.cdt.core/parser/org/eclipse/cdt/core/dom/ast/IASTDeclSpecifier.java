@@ -37,4 +37,6 @@ public interface IASTDeclSpecifier extends IASTNode {
 	public boolean isInline();
 	public void setInline( boolean value );
 	
+	public String getUnpreprocessedSignature();
+	
 }

@@ -28,8 +28,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 public class CLabel implements ILabel {
     
     public static class CLabelProblem extends ProblemBinding implements ILabel {
-        public CLabelProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CLabelProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
 
         public IASTLabelStatement getLabelStatement() throws DOMException{

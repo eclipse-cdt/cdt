@@ -31,8 +31,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  */
 abstract public class CPPScope implements ICPPScope{
     public static class CPPScopeProblem extends ProblemBinding implements ICPPScope {
-        public CPPScopeProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CPPScopeProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
         public void addName( IASTName name ) throws DOMException {
             throw new DOMException( this );
@@ -59,8 +59,8 @@ abstract public class CPPScope implements ICPPScope{
         }
     }
     public static class CPPTemplateProblem extends CPPScopeProblem {
-		public CPPTemplateProblem(int id, char[] arg) {
-			super(id, arg);
+		public CPPTemplateProblem( IASTNode node, int id, char[] arg) {
+			super( node, id, arg);
 		}
     }
 

@@ -367,7 +367,7 @@ public class CPPVisitor {
 		                binding = new CPPNamespaceAlias( alias.getAlias(), (ICPPNamespace) namespace );
 		                scope.addName( alias.getAlias() );
 		            } else {
-		                binding = new ProblemBinding( IProblemBinding.SEMANTIC_NAME_NOT_FOUND, alias.getAlias().toCharArray() );
+		                binding = new ProblemBinding( alias.getAlias(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND, alias.getAlias().toCharArray() );
 		            }
 		        }
 		    } catch( DOMException e ){
@@ -494,7 +494,7 @@ public class CPPVisitor {
 			    	if( t1.equals( t2 ) ){
 			    		((CPPVariable)binding).addDeclaration( declarator.getName() );
 			    	} else {
-			    		binding = new ProblemBinding( IProblemBinding.SEMANTIC_INVALID_REDECLARATION, declarator.getName().toCharArray() );
+			    		binding = new ProblemBinding( declarator.getName(), IProblemBinding.SEMANTIC_INVALID_REDECLARATION, declarator.getName().toCharArray() );
 			    	}
 			    } else if( simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier ){
 					binding = new CPPField( declarator.getName() ); 
@@ -637,7 +637,7 @@ public class CPPVisitor {
 					} else if( binding instanceof IProblemBinding ){
 						if( binding instanceof ICPPScope )
 							return (IScope) binding;
-						return new CPPScope.CPPScopeProblem( IProblemBinding.SEMANTIC_BAD_SCOPE, names[i-1].toCharArray() );
+						return new CPPScope.CPPScopeProblem( names[i-1], IProblemBinding.SEMANTIC_BAD_SCOPE, names[i-1].toCharArray() );
 					}
 				}
 				else if( ((ICPPASTQualifiedName)parent).isFullyQualified() )
@@ -1481,7 +1481,7 @@ public class CPPVisitor {
                         return e.getProblem();
                     }
 	            }
-	            return new ProblemBinding( IProblemBinding.SEMANTIC_INVALID_TYPE, new char[0] );
+	            return new ProblemBinding( binary, IProblemBinding.SEMANTIC_INVALID_TYPE, new char[0] );
 	        }
 	        return type;
 	    }

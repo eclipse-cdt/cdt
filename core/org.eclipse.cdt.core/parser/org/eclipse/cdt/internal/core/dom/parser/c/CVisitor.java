@@ -475,7 +475,7 @@ public class CVisitor {
 	        if( binding instanceof CEnumeration )
 	            ((CEnumeration)binding).addDefinition( name );
 	        else
-	            return new ProblemBinding(IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
+	            return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
 	    } else {
 	        binding = new CEnumeration( name );
 	        try {
@@ -507,7 +507,7 @@ public class CVisitor {
 	                }
 	            }
 	            //label not found
-	            return new CLabel.CLabelProblem( IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND, gotoName );
+	            return new CLabel.CLabelProblem( ((IASTGotoStatement)statement).getName(), IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND, gotoName );
 	        }
 	    } else if( statement instanceof IASTLabelStatement ){
 	        IASTName name = ((IASTLabelStatement)statement).getName();
@@ -655,7 +655,7 @@ public class CVisitor {
 			    if( binding instanceof IFunction )
 			        ((CFunction)binding).addDeclarator( (IASTStandardFunctionDeclarator) declarator );
 			    else 
-			        binding = new ProblemBinding( IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
+			        binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
 			} else {
 				binding = createBinding(declarator);
 			}
@@ -666,7 +666,7 @@ public class CVisitor {
 				    if( binding instanceof IFunction )
 				        ((CFunction)binding).addDeclarator( (ICASTKnRFunctionDeclarator) declarator );
 				    else 
-				        binding = new ProblemBinding( IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
+				        binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
 				} else { 
 					binding = createBinding(declarator);
 				}

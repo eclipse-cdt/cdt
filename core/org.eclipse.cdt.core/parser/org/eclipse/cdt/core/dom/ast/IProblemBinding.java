@@ -33,6 +33,11 @@ public interface IProblemBinding extends IBinding, IScope, IType {
      */
     String getMessage();
     
+    /**
+     * get the AST node that this problem was created for
+     * @return
+     */
+    public IASTNode getASTNode();
     /*
      * Parser Semantic Problems
      * All Semantic problems take a char[] as an argument

@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IField;
 
 /**
@@ -20,8 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IField;
  */
 public class CField extends CVariable implements IField {
     public static class CFieldProblem extends CVariable.CVariableProblem implements IField {
-        public CFieldProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CFieldProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
     }
 	/**

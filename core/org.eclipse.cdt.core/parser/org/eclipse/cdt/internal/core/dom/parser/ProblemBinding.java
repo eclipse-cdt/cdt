@@ -32,12 +32,17 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
 public class ProblemBinding implements IProblemBinding, IType, IScope {
     private final int id;
     private final char [] arg;
-    
+    private IASTNode node;
     private String message = null;
     
-    public ProblemBinding( int id, char [] arg ){
+    public ProblemBinding( IASTNode node, int id, char [] arg ){
         this.id = id;
         this.arg = arg;
+        this.node = node;
+    }
+    
+    public IASTNode getASTNode(){
+        return node;
     }
     
     protected final static String PROBLEM_PATTERN = "BaseProblemFactory.problemPattern"; //$NON-NLS-1$

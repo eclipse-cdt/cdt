@@ -95,7 +95,7 @@ public class CStructure implements ICompositeType, ICInternalBinding {
 	    if( definition == null ){
 	        ICASTCompositeTypeSpecifier temp = checkForDefinition( (IASTElaboratedTypeSpecifier) declarations[0].getParent() );
 	        if( temp == null )
-	            return new IField [] { new CField.CFieldProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+	            return new IField [] { new CField.CFieldProblem( declarations[0], IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
 	        definition = temp.getName();
 	    }
 	    ICASTCompositeTypeSpecifier compSpec = (ICASTCompositeTypeSpecifier) definition.getParent();
@@ -134,7 +134,7 @@ public class CStructure implements ICompositeType, ICInternalBinding {
 	    if( definition == null ){
 	        ICASTCompositeTypeSpecifier temp = checkForDefinition( (IASTElaboratedTypeSpecifier) declarations[0].getParent() );
 	        if( temp == null )
-	            return new CField.CFieldProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() );
+	            return new CField.CFieldProblem( declarations[0], IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() );
 	        definition = temp.getName();
 	    }
 	    

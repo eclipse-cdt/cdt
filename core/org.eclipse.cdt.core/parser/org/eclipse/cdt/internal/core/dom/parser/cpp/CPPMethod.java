@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -48,8 +49,8 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
          * @param id
          * @param arg
          */
-        public CPPMethodProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CPPMethodProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
 
         public int getVisibility() throws DOMException {

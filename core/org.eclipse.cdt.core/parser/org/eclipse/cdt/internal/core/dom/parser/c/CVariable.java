@@ -29,8 +29,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  */
 public class CVariable implements IVariable, ICInternalBinding {
     public static class CVariableProblem extends ProblemBinding implements IVariable {
-        public CVariableProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CVariableProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
 
         public IType getType() throws DOMException {

@@ -467,7 +467,7 @@ public class CPPSemantics {
 		    
 		}        
         if( data.astName.getPropertyInParent() == IASTNamedTypeSpecifier.NAME && !( binding instanceof IType || binding instanceof ICPPConstructor) ){
-            binding = new ProblemBinding( IProblemBinding.SEMANTIC_INVALID_TYPE, data.name );
+            binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name );
         }
         
 		if( binding != null && !( binding instanceof IProblemBinding ) ){
@@ -476,7 +476,7 @@ public class CPPSemantics {
 		    } 
 		}
 		if( binding == null )
-			binding = new ProblemBinding(IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.name );
+			binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.name );
         return binding;
     }
 
@@ -807,7 +807,7 @@ public class CPPSemantics {
 					    visitVirtualBaseClasses( data, cls );
 					}
 				} else {
-				    data.problem = new ProblemBinding( IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, bases[i].getName().toCharArray() );
+				    data.problem = new ProblemBinding( bases[i].getName(), IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, bases[i].getName().toCharArray() );
 				    return null;
 				}
 			}	
@@ -821,13 +821,13 @@ public class CPPSemantics {
 							Object [] r = (Object[]) result;
 							for( int j = 0; j < r.length && r[j] != null; j++ ) {
 								if( checkForAmbiguity( r[j], inherited ) ){
-								    data.problem = new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name ); 
+								    data.problem = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name ); 
 								    return null;
 								}
 							}
 						} else {
 							if( checkForAmbiguity( result, inherited ) ){
-							    data.problem = new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name ); 
+							    data.problem = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name ); 
 							    return null;
 							}
 						}
@@ -1377,7 +1377,7 @@ public class CPPSemantics {
 	        	if( type == null ){
 	                type = temp;
 	            } else if( type != temp ) {
-	                return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+	                return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	            }
 	        } else if( temp instanceof IFunction ){
 	        	fns = (IFunction[]) ArrayUtil.append( IFunction.class, fns, temp );
@@ -1385,14 +1385,14 @@ public class CPPSemantics {
 	        	if( obj == null )
 	        		obj = temp;
 	        	else if( obj != temp ){
-	        	    return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+	        	    return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	        	}
 	        }
 	    }
 	    if( data.forUsingDeclaration() ){
 	        IBinding [] bindings = null;
 	        if( obj != null ){
-	            if( fns != null ) return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+	            if( fns != null ) return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	//            if( type == null ) return obj;
 	            bindings = (IBinding[]) ArrayUtil.append( IBinding.class, bindings, obj );
 	            bindings = (IBinding[]) ArrayUtil.append( IBinding.class, bindings, type );
@@ -1412,7 +1412,7 @@ public class CPPSemantics {
 	    }
 	    if( fns != null){
 	    	if( obj != null )
-	    		return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+	    		return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	    	return resolveFunction( data, fns );
 	    }
 	    
@@ -1690,7 +1690,7 @@ public class CPPSemantics {
 
 		
 		if( ambiguous || bestHasAmbiguousParam ){
-			return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+			return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 		}
 						
 		return bestFn;
@@ -1724,7 +1724,7 @@ public class CPPSemantics {
         while( type != null ){
             type = (type != null) ? getUltimateType( type, false ) : null;
             if( type == null || !( type instanceof IFunctionType ) )
-                return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+                return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 
             for( int i = 0; i < fns.length; i++ ){
                 IFunction fn = (IFunction) fns[i];
@@ -1738,7 +1738,7 @@ public class CPPSemantics {
                     if( result == null )
                         result = fn;
                     else
-                        return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+                        return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
                 }
             }
 
@@ -1749,7 +1749,7 @@ public class CPPSemantics {
             }
         }
                 
-        return ( result != null ) ? result : new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name ); 
+        return ( result != null ) ? result : new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name ); 
     }
 
     private static Object getTargetType( LookupData data ){

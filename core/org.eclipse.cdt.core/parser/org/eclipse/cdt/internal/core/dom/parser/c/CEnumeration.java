@@ -123,7 +123,7 @@ public class CEnumeration implements IEnumeration {
         if( definition == null ){
             checkForDefinition();
             if( definition == null )
-                return new IEnumerator[] { new CEnumerator.CEnumeratorProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, declarations[0].toCharArray() ) };
+                return new IEnumerator[] { new CEnumerator.CEnumeratorProblem( declarations[0], IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, declarations[0].toCharArray() ) };
         }
         
         IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) definition.getParent();

@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 
@@ -35,8 +36,8 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
          * @param id
          * @param arg
          */
-        public CPPFieldProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CPPFieldProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
 
         public int getVisibility() throws DOMException {

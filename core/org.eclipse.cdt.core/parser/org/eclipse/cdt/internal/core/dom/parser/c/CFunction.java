@@ -125,7 +125,7 @@ public class CFunction implements IFunction, ICInternalBinding {
 				    if( decl != null ) {
 				        result[i] = (IParameter) decl.getName().resolveBinding();
 				    } else {
-				        result[i] = new CParameter.CParameterProblem( IProblemBinding.SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND, names[i].toCharArray() );
+				        result[i] = new CParameter.CParameterProblem( names[i], IProblemBinding.SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND, names[i].toCharArray() );
 				    }
 				}
 			}

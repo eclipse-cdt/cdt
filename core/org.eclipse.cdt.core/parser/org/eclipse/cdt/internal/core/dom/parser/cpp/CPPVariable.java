@@ -45,8 +45,8 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
         }
     }
     public static class CPPVariableProblem extends ProblemBinding implements ICPPVariable{
-        public CPPVariableProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CPPVariableProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
 
         public IType getType() throws DOMException {

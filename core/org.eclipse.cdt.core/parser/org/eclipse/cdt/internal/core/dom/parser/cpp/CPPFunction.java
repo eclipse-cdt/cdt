@@ -62,8 +62,8 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
         }
     }
     public static class CPPFunctionProblem extends ProblemBinding implements ICPPFunction {
-        public CPPFunctionProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CPPFunctionProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
 
         public IParameter[] getParameters() throws DOMException {

@@ -31,8 +31,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  */
 public class CParameter implements IParameter {
     public static class CParameterProblem extends ProblemBinding implements IParameter {
-        public CParameterProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CParameterProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
 
         public IType getType() throws DOMException {

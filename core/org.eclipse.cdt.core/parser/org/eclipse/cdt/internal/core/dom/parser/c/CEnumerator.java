@@ -30,8 +30,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  */
 public class CEnumerator implements IEnumerator {
     public static class CEnumeratorProblem extends ProblemBinding implements IEnumerator {
-        public CEnumeratorProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CEnumeratorProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
 
         public IType getType() throws DOMException {

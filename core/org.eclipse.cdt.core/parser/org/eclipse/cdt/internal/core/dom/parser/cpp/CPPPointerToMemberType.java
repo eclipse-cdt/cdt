@@ -77,7 +77,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements
 			if( binding instanceof ICPPClassType ){
 				clsType = (ICPPClassType) binding;
 			} else {
-				clsType = new CPPClassType.CPPClassTypeProblem( IProblemBinding.SEMANTIC_INVALID_TYPE, name.toCharArray() );
+				clsType = new CPPClassType.CPPClassTypeProblem( name, IProblemBinding.SEMANTIC_INVALID_TYPE, name.toCharArray() );
 			}
 		}
 		return clsType;

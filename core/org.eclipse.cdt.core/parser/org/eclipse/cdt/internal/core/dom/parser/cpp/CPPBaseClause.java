@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
@@ -27,8 +28,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  */
 public class CPPBaseClause implements ICPPBase {
     static public class CPPBaseProblem extends ProblemBinding implements ICPPBase {
-        public CPPBaseProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CPPBaseProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
         public ICPPClassType getBaseClass() throws DOMException {
             throw new DOMException( this );
@@ -56,10 +57,10 @@ public class CPPBaseClause implements ICPPBase {
     	if( baseClass instanceof ICPPClassType )
     		return (ICPPClassType) baseClass;
     	else if( baseClass instanceof IProblemBinding ){
-    		return new CPPClassType.CPPClassTypeProblem( ((IProblemBinding)baseClass).getID(), base.getName().toCharArray() );
+    		return new CPPClassType.CPPClassTypeProblem( base.getName(), ((IProblemBinding)baseClass).getID(), base.getName().toCharArray() );
     	}
     	
-        return new CPPClassType.CPPClassTypeProblem( IProblemBinding.SEMANTIC_NAME_NOT_FOUND, base.getName().toCharArray() );
+        return new CPPClassType.CPPClassTypeProblem( base.getName(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND, base.getName().toCharArray() );
     }
 
     /* (non-Javadoc)

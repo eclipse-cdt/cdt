@@ -98,8 +98,8 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
         }
     }
 	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType{
-        public CPPClassTypeProblem( int id, char[] arg ) {
-            super( id, arg );
+        public CPPClassTypeProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
         }
 
 		public ICPPBase[] getBases() throws DOMException {
@@ -249,8 +249,10 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
 	public IField[] getFields() throws DOMException {
 	    if( definition == null ){
 	        checkForDefinition();
-	        if( definition == null )
-	            return new IField [] { new CPPField.CPPFieldProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+	        if( definition == null ){
+	            IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+	            return new IField [] { new CPPField.CPPFieldProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+	        }
 	    }
 
 		IField[] fields = getDeclaredFields();
@@ -272,7 +274,8 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
                 if( field == null )
                     field = (IField) bindings[i];
                 else {
-                    return new CPPField.CPPFieldProblem( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, name.toCharArray() );
+                    IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+                    return new CPPField.CPPFieldProblem( node, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, name.toCharArray() );
                 }
             }
         }
@@ -369,7 +372,8 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
 		if( definition == null ){
             checkForDefinition();
             if( definition == null ){
-                return new ICPPBase [] { new CPPBaseClause.CPPBaseProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+                IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+                return new ICPPBase [] { new CPPBaseClause.CPPBaseProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
             }
         }
 		ICPPASTBaseSpecifier [] bases = getCompositeTypeSpecifier().getBaseSpecifiers();
@@ -391,7 +395,8 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
 	    if( definition == null ){
             checkForDefinition();
             if( definition == null ){
-                return new ICPPField[] { new CPPField.CPPFieldProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+                IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+                return new ICPPField[] { new CPPField.CPPFieldProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
             }
         }
 	    IBinding binding = null;
@@ -445,8 +450,10 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
 		if( definition == null ){
 	        checkForDefinition();
-	        if( definition == null )
-	            return new ICPPMethod [] { new CPPMethod.CPPMethodProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+	        if( definition == null ){
+	            IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+	            return new ICPPMethod [] { new CPPMethod.CPPMethodProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+	        }
 	    }
 
 		ICPPMethod[] methods = getDeclaredMethods();
@@ -464,7 +471,8 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
 	    if( definition == null ){
             checkForDefinition();
             if( definition == null ){
-                return new ICPPMethod[] { new CPPMethod.CPPMethodProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+                IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+                return new ICPPMethod[] { new CPPMethod.CPPMethodProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
             }
         }
 	    IBinding binding = null;
@@ -520,7 +528,8 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
         if( definition == null ){
             checkForDefinition();
             if( definition == null ){
-                return new ICPPConstructor [] { new CPPConstructor.CPPConstructorProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+                IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+                return new ICPPConstructor [] { new CPPConstructor.CPPConstructorProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
             }
         }
         
@@ -552,7 +561,8 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
         if( definition == null ){
             checkForDefinition();
             if( definition == null ){
-                return new IBinding [] { new ProblemBinding( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+                IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+                return new IBinding [] { new ProblemBinding( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
             }
         }
         ObjectSet resultSet = new ObjectSet(2);

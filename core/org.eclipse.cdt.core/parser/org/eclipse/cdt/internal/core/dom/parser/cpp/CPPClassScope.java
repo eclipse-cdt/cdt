@@ -239,7 +239,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 */
 	public ICPPMethod[] getImplicitMethods() {
 		if( implicits == null )
-			implicits = new ICPPMethod[] { new CPPMethod.CPPMethodProblem( IProblemBinding.SEMANTIC_INVALID_TYPE, CPPSemantics.EMPTY_NAME_ARRAY ) };
+			implicits = new ICPPMethod[] { new CPPMethod.CPPMethodProblem( null, IProblemBinding.SEMANTIC_INVALID_TYPE, CPPSemantics.EMPTY_NAME_ARRAY ) };
 		return implicits;
 	}
 

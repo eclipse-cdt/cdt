@@ -1,3 +1,13 @@
+2003-02-04 Alain Magloire
+
+	Refactor MISignal in MISigHandle to not confus with 
+	CLI command "signal SIGNAL".
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Signal.java:
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SignalManager.java:
+	* src/org/eclipse/cdt/debug/mi/core/output/MIInfoSignalsInfo.java:
+	* src/org/eclipse/cdt/debug/mi/core/output/MISigHandle.java:
+
 2003-02-03 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java:

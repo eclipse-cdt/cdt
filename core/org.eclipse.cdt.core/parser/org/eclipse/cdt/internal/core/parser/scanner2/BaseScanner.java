@@ -1467,7 +1467,10 @@ abstract class BaseScanner implements IScanner {
      * @see org.eclipse.cdt.core.parser.IScanner#isOnTopContext()
      */
     public boolean isOnTopContext() {
-        return bufferStackPos <= 0;
+		for (int i = 1; i <= bufferStackPos; ++i)
+			if (bufferData[i] instanceof InclusionData)
+				return false;
+		return true;
     }
 
     protected IToken lastToken;

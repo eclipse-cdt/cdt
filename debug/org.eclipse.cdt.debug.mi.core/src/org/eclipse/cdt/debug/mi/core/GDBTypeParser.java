@@ -109,6 +109,10 @@ public class GDBTypeParser {
 			return name;
 		}
 
+		public String verbose() {
+			return name;
+		}
+
 		public int getType() {
 			return type;
 		}
@@ -147,18 +151,43 @@ public class GDBTypeParser {
 
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
+			String childTypeName = (hasChild() ? child.toString() : "");
+			sb.append(childTypeName);
 			switch (getType()) {
 				case FUNCTION :
-					sb.append(" function returning " + (hasChild() ? child.toString() : ""));
+					sb.append("()");
+					//sb.append(" function returning " + (hasChild() ? child.toString() : ""));
 					break;
 				case ARRAY :
-					sb.append(" array[" + dimension + "]" + " of " + (hasChild() ? child.toString() : ""));
+					sb.append("[" + dimension + "]");
+					//sb.append(" array[" + dimension + "]" + " of " + (hasChild() ? child.toString() : ""));
 					break;
 				case REFERENCE :
-					sb.append(" reference to " + (hasChild() ? child.toString() : ""));
+					sb.append("&");
+					//sb.append(" reference to " + (hasChild() ? child.toString() : ""));
 					break;
 				case POINTER :
-					sb.append(" pointer to " + (hasChild() ? child.toString() : ""));
+					sb.append("*");
+					//sb.append(" pointer to " + (hasChild() ? child.toString() : ""));
+					break;
+			}
+			return sb.toString();
+		}
+
+		public String verbose() {
+			StringBuffer sb = new StringBuffer();
+			switch (getType()) {
+				case FUNCTION :
+					sb.append(" function returning " + (hasChild() ? child.verbose() : ""));
+					break;
+				case ARRAY :
+					sb.append(" array[" + dimension + "]" + " of " + (hasChild() ? child.verbose() : ""));
+					break;
+				case REFERENCE :
+					sb.append(" reference to " + (hasChild() ? child.verbose() : ""));
+					break;
+				case POINTER :
+					sb.append(" pointer to " + (hasChild() ? child.verbose() : ""));
 					break;
 			}
 			return sb.toString();
@@ -362,38 +391,38 @@ public class GDBTypeParser {
 
 		System.out.println("struct link { int i; int j; struct link * next} *");
 		parser.parse("struct link { int i; int j; struct link * next} *");
-		System.out.println(parser.getGDBType());
+		System.out.println(parser.getGDBType().verbose());
 
 		System.out.println("char **argv");
 		parser.parse("unsigned long long int **argv");
-		System.out.println(parser.getGDBType());
+		System.out.println(parser.getGDBType().verbose());
 
 		System.out.println("int (*daytab)[13]");
 		parser.parse("int (*daytab)[13]");
-		System.out.println(parser.getGDBType());
+		System.out.println(parser.getGDBType().verbose());
 
 		System.out.println("int *daytab[13]");
 		parser.parse("int *daytab[13]");
-		System.out.println(parser.getGDBType());
+		System.out.println(parser.getGDBType().verbose());
 
 		System.out.println("void *comp()");
 		parser.parse("void *comp()");
-		System.out.println(parser.getGDBType());
+		System.out.println(parser.getGDBType().verbose());
 
 		System.out.println("void (*comp)()");
 		parser.parse("void (*comp)()");
-		System.out.println(parser.getGDBType());
+		System.out.println(parser.getGDBType().verbose());
 
 		System.out.println("int (*func[15])()");
 		parser.parse("int (*func[15])()");
-		System.out.println(parser.getGDBType());
+		System.out.println(parser.getGDBType().verbose());
 
 		System.out.println("char (*(*x())[])()");
 		parser.parse("char (*(*x())[])()");
-		System.out.println(parser.getGDBType());
+		System.out.println(parser.getGDBType().verbose());
 
 		System.out.println("char (*(*x[3])())[5]");
 		parser.parse("char (*(*x[3])())[5]");
-		System.out.println(parser.getGDBType());
+		System.out.println(parser.getGDBType().verbose());
 	}
 }

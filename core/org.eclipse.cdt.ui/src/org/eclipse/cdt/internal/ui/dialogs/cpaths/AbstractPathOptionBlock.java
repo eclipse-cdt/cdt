@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock implements ICOptionContainer {
 
-	private List fFilteredOut = new ArrayList();
 	private StatusInfo fCPathStatus;
 	private StatusInfo fBuildPathStatus;
 
@@ -69,17 +68,40 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	 * @return Returns the current class path (raw). Note that the entries
 	 *         returned must not be valid.
 	 */
-	public IPathEntry[] getRawCPath() {
+	public IPathEntry[] getRawCPath() throws CModelException{
 		List elements = getCPaths();
-		int nElements = elements.size();
-		List entries = new ArrayList();
 
-		for (int i = 0; i < nElements; i++) {
-			CPElement currElement = (CPElement) elements.get(i);
-			entries.add(currElement.getPathEntry());
+		IPathEntry[] entries = fCurrCProject.getRawPathEntries();
+		List cpath = new ArrayList(elements.size() + entries.length);
+
+		int[] applyTypes = getAppliedFilteredTypes(); 
+		// create and set the paths
+		for (int i = 0; i < elements.size(); i++) {
+			CPElement entry = ((CPElement) elements.get(i));			
+			for(int j = 0; j < applyTypes.length; j++) {
+				if (entry.getEntryKind() == applyTypes[j]) {
+					cpath.add(entry.getPathEntry());
+					break;
+				}
+			}
 		}
-		entries.addAll(fFilteredOut);
-		return (IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]);
+
+		// add entries which do not match type being applyed by the ui block
+		for(int i = 0; i < entries.length; i++) {
+			int pathType = entries[i].getEntryKind();
+			boolean found = false;
+			for(int j = 0; j < applyTypes.length; j++) {
+				if (pathType == applyTypes[j]) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				cpath.add(entries[i]);
+			}
+		}
+		
+		return (IPathEntry[]) cpath.toArray(new IPathEntry[cpath.size()]);
 	}
 
 	/**
@@ -117,19 +139,17 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		initialize(element, newCPath);
 	}
 
-	abstract protected int[] getFilteredTypes();
+	abstract protected int[] getFilteredTypes(); // path type which block would like access to
+	abstract protected int[] getAppliedFilteredTypes(); // path type which block modifies 
 
 	abstract protected void initialize(ICElement element, List cPaths);
 
 	protected ArrayList getFilteredElements(IPathEntry[] cPathEntries, int[] types) {
 		ArrayList newCPath = new ArrayList();
-		fFilteredOut.clear();
 		for (int i = 0; i < cPathEntries.length; i++) {
 			IPathEntry curr = cPathEntries[i];
 			if (contains(types, curr.getEntryKind())) {
 				newCPath.add(CPElement.createFromExisting(curr, fCurrCProject));
-			} else {
-				fFilteredOut.add(curr);
 			}
 		}
 		return newCPath;
@@ -267,20 +287,41 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		// 10 monitor steps to go
 
 		monitor.worked(2);
+		
+		IPathEntry[] entries = fCurrCProject.getRawPathEntries();
+		
+		List cpath = new ArrayList(cPathEntries.size() + entries.length);
 
-		List cpath = new ArrayList(cPathEntries.size() + fFilteredOut.size());
-
+		int[] applyTypes = getAppliedFilteredTypes(); 
 		// create and set the paths
 		for (int i = 0; i < cPathEntries.size(); i++) {
 			CPElement entry = ((CPElement) cPathEntries.get(i));			
-			IResource res = entry.getResource();
-			if ((res instanceof IFolder) && !res.exists()) {
-				CoreUtility.createFolder((IFolder) res, true, true, null);
+			for(int j = 0; j < applyTypes.length; j++) {
+				if (entry.getEntryKind() == applyTypes[j]) {
+					IResource res = entry.getResource();
+					if ((res instanceof IFolder) && !res.exists()) {
+						CoreUtility.createFolder((IFolder) res, true, true, null);
+					}
+					cpath.add(entry.getPathEntry());
+					break;
+				}
 			}
-			cpath.add(entry.getPathEntry());
 		}
-		cpath.addAll(fFilteredOut);
 
+		// add entries which do not match type being applyed by the ui block
+		for(int i = 0; i < entries.length; i++) {
+			int pathType = entries[i].getEntryKind();
+			boolean found = false;
+			for(int j = 0; j < applyTypes.length; j++) {
+				if (pathType == applyTypes[j]) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				cpath.add(entries[i]);
+			}
+		}
 		monitor.worked(1);
 
 		getCProject().setRawPathEntries((IPathEntry[]) cpath.toArray(new IPathEntry[cpath.size()]),

@@ -23,8 +23,6 @@ import org.eclipse.swt.widgets.Control;
 
 public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implements IStatusChangeListener {
 
-	private int[] pathTypes = {IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO, IPathEntry.CDT_CONTAINER};
-
 	private CPathIncludeSymbolEntryPage fIncludeSymbols;
 
 	private List fCPaths;
@@ -68,9 +66,13 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 	}
 
 	protected int[] getFilteredTypes() {
-		return pathTypes;
+		return new int[] {IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO, IPathEntry.CDT_CONTAINER};
 	}
 
+	protected int[] getAppliedFilteredTypes() {
+		return new int[] {IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO};
+	}
+	
 	protected void initialize(ICElement element, List cPaths) {
 		fCPaths = cPaths;
 

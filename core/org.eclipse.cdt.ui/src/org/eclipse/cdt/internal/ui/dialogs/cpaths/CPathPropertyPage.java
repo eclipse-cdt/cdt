@@ -15,8 +15,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
-import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
-import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
@@ -42,7 +40,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 /**
  * @see PropertyPage
  */
-public class CPathPropertyPage extends PropertyPage implements IStatusChangeListener, IPathEntryStoreListener {
+public class CPathPropertyPage extends PropertyPage implements IStatusChangeListener{
 
 	private static final String PAGE_SETTINGS = "CPathsPropertyPage"; //$NON-NLS-1$
 	private static final String INDEX = "pageIndex"; //$NON-NLS-1$
@@ -64,12 +62,6 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		} else if (!project.isOpen()) {
 			result = createForClosedProject(parent);
 		} else {
-			try {
-				fStore = CoreModel.getPathEntryStore(getProject());
-				fStore.addPathEntryStoreListener(this);
-			} catch (CoreException e) {
-			}
-
 			result = createWithCProject(parent, project);
 		}
 		Dialog.applyDialogFont(result);
@@ -201,16 +193,6 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		return true;
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
-	public void dispose() {
-		if (fStore != null) {
-			fStore.removePathEntryStoreListener(this);
-		}
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -230,32 +212,6 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 		if (fCPathsBlock != null) {
 			getSettings().put(INDEX, fCPathsBlock.getPageIndex());
 		}
-		if (fStore != null) {
-			fStore.removePathEntryStoreListener(this);
-		}
 		return super.performCancel();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.resources.IPathEntryStoreListener#pathEntryStoreChanged(org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent)
-	 */
-	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
-		if (event.hasContentChanged()) {
-			Control control = getControl();
-			if (control != null && !control.isDisposed()) {
-				control.getDisplay().asyncExec(new Runnable() {
-
-					public void run() {
-						Control control = getControl();
-						if (control != null && !control.isDisposed()) {
-							fCPathsBlock.init(CoreModel.getDefault().create(getProject()), null);
-						}
-					}
-				});
-			}
-
-		}
 	}
 }

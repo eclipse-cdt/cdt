@@ -11,6 +11,7 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
@@ -249,7 +250,11 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 					public void run() {
 						Control control = getControl();
 						if (control != null && !control.isDisposed()) {
-							fIncludesSymbolsBlock.init(getCElement(), null);
+							try {
+								fIncludesSymbolsBlock.init(getCElement(), fIncludesSymbolsBlock.getRawCPath());
+							} catch (CModelException e) {
+								CUIPlugin.getDefault().log(e);
+							}
 						}
 					}
 				});

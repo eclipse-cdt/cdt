@@ -22,9 +22,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 public class CPathTabBlock extends AbstractPathOptionBlock {
+	
+	private final int[] pathTypes = {IPathEntry.CDT_SOURCE, IPathEntry.CDT_PROJECT, IPathEntry.CDT_OUTPUT, IPathEntry.CDT_LIBRARY,IPathEntry.CDT_CONTAINER};
 
-	private int[] pathTypes = {IPathEntry.CDT_SOURCE, IPathEntry.CDT_PROJECT, IPathEntry.CDT_OUTPUT, IPathEntry.CDT_LIBRARY,
-			IPathEntry.CDT_CONTAINER};
 	private ListDialogField fCPathList;
 
 	private CPathSourceEntryPage fSourcePage;
@@ -118,6 +118,9 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		return pathTypes;
 	}
 
+	protected int[] getAppliedFilteredTypes() {
+		return pathTypes;
+	}
 	/**
 	 * Validates the build path.
 	 */

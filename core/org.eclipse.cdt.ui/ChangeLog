@@ -1,3 +1,6 @@
+2004-09-09 Bogdan Gheorghe
+	Fix for 73406 - Indexer:  Double-Indexing on Specific  Project
+	
 2004-09-09 Chris Wiebe
 
 	limit base class selection to referenced projects

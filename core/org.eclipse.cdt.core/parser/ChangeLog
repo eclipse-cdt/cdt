@@ -1,3 +1,7 @@
+2003-09-05 Hoda Amer
+	- Added references to variables with pointers in solution 
+	of bug#42453:Expression result types not computed
+	
 2003-09-05 John Camelon
 	Continue to add support for parsing within function bodies.  
 	Add workaround for 1.2 for inline function declaration-before-use chicken-and-egg.

@@ -779,6 +779,28 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			result.add(info);
 			return result;
 		}
+		if (expression.getExpressionKind() == IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION){
+			TypeInfo info = null;
+			List lhsResult = ((ASTExpression)expression.getLHSExpression()).getResultType();
+			if( lhsResult.iterator().hasNext())
+				info = (TypeInfo)lhsResult.iterator().next();
+			if ((info != null) && (info.getTypeSymbol() != null)){
+				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_reference));				
+			}
+			result.add(info);
+			return result;
+		}
+		if (expression.getExpressionKind() == IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION){
+			TypeInfo info = null;
+			List lhsResult = ((ASTExpression)expression.getLHSExpression()).getResultType();
+			if( lhsResult.iterator().hasNext())
+				info = (TypeInfo)lhsResult.iterator().next();
+			if ((info != null)&& (info.getTypeSymbol() != null)){
+				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_pointer));				
+			}
+			result.add(info);
+			return result;
+		}
 		if ((expression.getExpressionKind() == IASTExpression.Kind.ADDITIVE_PLUS) 
 		|| (expression.getExpressionKind() == IASTExpression.Kind.ADDITIVE_MINUS) ){
 			ASTExpression right = (ASTExpression)expression.getLHSExpression();

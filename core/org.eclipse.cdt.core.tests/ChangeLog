@@ -1,3 +1,7 @@
+2003-09-05 Hoda Amer
+	Added tests to CompleteParseASTTest to test the expression result type
+	for function calls that reference variables with pointers (bug#42453).
+	
 2003-09-05 John Camelon
 	Added CompleteParseASTTest::testSimpleIfStatement(), testSimpleWhileStatement(). 
 	testSimpleSwitchStatement(), testSimpleDoStatement().

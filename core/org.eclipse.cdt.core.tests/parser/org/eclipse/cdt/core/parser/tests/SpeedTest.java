@@ -10,11 +10,12 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 
 // A test that just calculates the speed of the parser
 // Eventually, we'll peg a max time and fail the test if it exceeds it
@@ -22,13 +23,17 @@ public class SpeedTest extends TestCase {
 
 	public static void main(String[] args) {
 		try {
-			new SpeedTest().test();
+			new SpeedTest().runTest(1);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 	}
-	
+
 	public void test() throws Exception {
+		runTest(10);
+	}
+	
+	private void runTest(int n) throws Exception {
 		String code =
 			"#include <windows.h>\n" +
 			"#include <stdio.h>\n" +
@@ -36,15 +41,24 @@ public class SpeedTest extends TestCase {
 		
 		CodeReader reader = new CodeReader(code.toCharArray());
 		IScannerInfo info = mingwScannerInfo(false);
-		//IScannerInfo info = msvcScannerInfo(quick);
-		testParse(reader, false, info, ParserLanguage.CPP);
+		//IScannerInfo info = msvcScannerInfo(false);
+		long totalTime = 0;
+		for (int i = 0; i < n; ++i) {
+			long time = testParse(reader, false, info, ParserLanguage.CPP);
+			if (i > 0)
+				totalTime += time;
+		}
+		
+		if (n > 0) {
+			System.out.println("Average Time: " + (totalTime / (n - 1)) + " millisecs");
+		}
 	}
 
 	/**
 	 * @param path
 	 * @param quick TODO
 	 */
-	protected void testParse(CodeReader reader, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
+	protected long testParse(CodeReader reader, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE;
 		IScanner scanner = ParserFactory.createScanner(reader, info, mode, lang, CALLBACK, null, Collections.EMPTY_LIST ); 
 		IParser parser = ParserFactory.createParser( scanner, CALLBACK, mode, lang, null);
@@ -54,9 +68,10 @@ public class SpeedTest extends TestCase {
 		totalTime = System.currentTimeMillis() - startTime;
 		System.out.println( "Resulting parse took " + totalTime + " millisecs " +
 				scanner.getCount() + " tokens");
+		return totalTime;
 	}
 
-	private static final QuickParseCallback CALLBACK = new QuickParseCallback();
+	private static final ISourceElementRequestor CALLBACK = new NullSourceElementRequestor();
 
 	/**
 	 * @param quick

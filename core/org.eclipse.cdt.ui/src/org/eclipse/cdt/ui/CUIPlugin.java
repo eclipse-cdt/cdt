@@ -52,8 +52,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static final String C_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCWizard";
 	public static final String CPP_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCCWizard";
 
-	public static final String FILE_WIZARD_ID = PLUGIN_ID + ".wizards.new.BasicNewFileResourceWizard";
-	public static final String FOLDER_WIZARD_ID = PLUGIN_ID + ".wizards.new.BasicNewFolderResourceWizard";
+	public static final String FILE_WIZARD_ID = "org.eclipse.ui.wizards.new.file";
+	public static final String FOLDER_WIZARD_ID = "org.eclipse.ui.wizards.new.folder";
 
 	public static final String FOLDER_ACTION_SET_ID = PLUGIN_ID + ".CFolderActionSet";
 	public static final String BUILDER_ID = PLUGIN_CORE_ID + ".cbuilder";

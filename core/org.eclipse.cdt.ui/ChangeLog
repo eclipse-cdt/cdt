@@ -1,3 +1,8 @@
+2004-09-02 Alain Magloire
+	
+	Deal with WorkingCopy vs TranslationUnit in the hashCode.
+	* src/org/eclipse/cdt/internal/ui/cview/CViewElementComparer.java
+
 2004-09-02 Bogdan Gheorghe
 	Fix for 72816: [Search] Selection Search For Working Set
 	

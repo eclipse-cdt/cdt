@@ -58,15 +58,13 @@ public class CViewElementComparer implements IElementComparer {
 		ICElement c1= (o1 instanceof ICElement) ? (ICElement)o1 : null;
 		if (c1 == null)
 			return o1.hashCode();
-		if (c1 instanceof ITranslationUnit) {
-			ITranslationUnit t1= (ITranslationUnit)c1;
-			if (t1.isWorkingCopy()) {
-				c1= ((IWorkingCopy)t1).getOriginalElement();
-			}
-		}
-		if (c1 == null) {
+		ITranslationUnit u1= (ITranslationUnit)c1.getAncestor(ICElement.C_UNIT);
+		if (u1 == null || !u1.isWorkingCopy())
 			return o1.hashCode();
-		}
+		// From here on c1 is a working copy.
+		c1= ((IWorkingCopy)u1).getOriginal(c1);
+		if (c1 == null)
+			return o1.hashCode();		
 		return c1.hashCode();
 	}
 }

@@ -101,7 +101,6 @@ public class RegistersView extends AbstractDebugEventHandlerView
 		action.setToolTipText( "Auto-Refresh" );
 		WorkbenchHelp.setHelp( action, ICDebugHelpContextIds.AUTO_REFRESH_REGISTERS_ACTION );
 		action.setEnabled( false );
-		action.setChecked( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_REGISTERS_AUTO_REFRESH ) );
 		setAction( "AutoRefresh", action ); //$NON-NLS-1$
 		add( (AutoRefreshAction)action );
 

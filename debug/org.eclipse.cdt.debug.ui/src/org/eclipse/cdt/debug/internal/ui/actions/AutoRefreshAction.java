@@ -25,7 +25,7 @@ public class AutoRefreshAction extends Action implements IUpdate
 	 */
 	public AutoRefreshAction( Viewer viewer, String text )
 	{
-		super( text );
+		super( text, Action.AS_CHECK_BOX );
 		fViewer = viewer;
 	}
 

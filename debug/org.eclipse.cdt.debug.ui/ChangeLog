@@ -1,4 +1,10 @@
 2003-04-01 Mikhail Khodjaiants
+	Changed implementation and initialization of 'AutoRefreshAction'.
+	* AutoRefreshAction.java
+	* RegistersView.java
+	* SharedLibrariesView.java
+
+2003-04-01 Mikhail Khodjaiants
 	Removed the 'Show Type Names' preference from the Registers view's preference page.
 	* ShowRegisterTypesAction.java
 	* RegistersViewPreferencePage.java

@@ -15,11 +15,9 @@ import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshAction;
 import org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllAction;
 import org.eclipse.cdt.debug.internal.ui.actions.RefreshAction;
-import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -147,7 +145,6 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 		action.setToolTipText( "Auto-Refresh" );
 		WorkbenchHelp.setHelp( action, ICDebugHelpContextIds.AUTO_REFRESH_SHARED_LIBRARIES_ACTION );
 		action.setEnabled( false );
-		action.setChecked( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH ) );
 		setAction( "AutoRefresh", action ); //$NON-NLS-1$
 		add( (AutoRefreshAction)action );
 

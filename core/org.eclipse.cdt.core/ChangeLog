@@ -1,5 +1,12 @@
 2003-11-19 Alain Magloire
 
+	getBinaryParser() the call to the CDescriptor should set the update
+	argument to true.
+	
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+
+2003-11-19 Alain Magloire
+
 	Improve performance by not loading the symbols right away.
 
 	* model/org/eclipse/cdt/internal/core/model/Binary.java

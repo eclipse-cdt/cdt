@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -971,5 +972,45 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, A, 4 );
         assertInstances( col, x, 3 );
     }
+    
+    public void _testBug84250() throws Exception{
+   		StringBuffer buffer = new StringBuffer();
+   		buffer.append("void f() {                 \n"); //$NON-NLS-1$
+   		buffer.append("   int ( *p ) [2];         \n"); //$NON-NLS-1$
+   		buffer.append("   (&p)[0] = 1;            \n"); //$NON-NLS-1$
+   		buffer.append("}                          \n"); //$NON-NLS-1$
+   		
+   		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+
+        assertEquals(col.size(), 3);
+        IVariable p = (IVariable) col.getName(1).resolveBinding();
+        assertTrue( p.getType() instanceof IPointerType );
+        assertTrue( ((IPointerType)p.getType()).getType() instanceof IArrayType );
+        IArrayType at = (IArrayType) ((IPointerType)p.getType()).getType();
+        assertTrue( at.getType() instanceof IBasicType );
+        
+        assertInstances( col, p, 2 );
+   }
+   public void _testBug84250_2() throws Exception{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("void f() {                 \n"); //$NON-NLS-1$
+		buffer.append("   int ( *p ) [2];         \n"); //$NON-NLS-1$
+		buffer.append("   (&p)[0] = 1;            \n"); //$NON-NLS-1$
+		buffer.append("}                          \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+	
+	    assertEquals(col.size(), 3);
+	    
+	    IVariable p_ref = (IVariable) col.getName(2).resolveBinding();
+	    IVariable p_decl = (IVariable) col.getName(1).resolveBinding();
+	    
+	    assertSame( p_ref, p_decl );
+	}
+
 }
 

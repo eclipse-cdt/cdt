@@ -2620,6 +2620,45 @@ public class AST2Tests extends AST2BaseTest {
        assertInstances( col, e, 2 );
    }
    
+   public void testBug84185() throws Exception{
+   		StringBuffer buffer = new StringBuffer();
+   		buffer.append("void f() {                 \n"); //$NON-NLS-1$
+   		buffer.append("   int ( *p ) [2];         \n"); //$NON-NLS-1$
+   		buffer.append("   (&p)[0] = 1;            \n"); //$NON-NLS-1$
+   		buffer.append("}                          \n"); //$NON-NLS-1$
+   		
+   		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
+        CNameCollector col = new CNameCollector();
+        CVisitor.visitTranslationUnit(tu, col);
+
+        assertEquals(col.size(), 3);
+        IVariable p = (IVariable) col.getName(1).resolveBinding();
+        assertTrue( p.getType() instanceof IPointerType );
+        assertTrue( ((IPointerType)p.getType()).getType() instanceof IArrayType );
+        IArrayType at = (IArrayType) ((IPointerType)p.getType()).getType();
+        assertTrue( at.getType() instanceof IBasicType );
+        
+        assertInstances( col, p, 2 );
+   }
+   public void testBug84185_2() throws Exception{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("void f() {                 \n"); //$NON-NLS-1$
+		buffer.append("   int ( *p ) [2];         \n"); //$NON-NLS-1$
+		buffer.append("   (&p)[0] = 1;            \n"); //$NON-NLS-1$
+		buffer.append("}                          \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
+	    CNameCollector col = new CNameCollector();
+	    CVisitor.visitTranslationUnit(tu, col);
+	
+	    assertEquals(col.size(), 3);
+	    
+	    IVariable p_ref = (IVariable) col.getName(2).resolveBinding();
+	    IVariable p_decl = (IVariable) col.getName(1).resolveBinding();
+	    
+	    assertSame( p_ref, p_decl );
+	}
+   
    public void testBug84176() throws Exception {
       StringBuffer buffer = new StringBuffer( "// example from: C99 6.5.2.5-16\n" ); //$NON-NLS-1$
       buffer.append( "struct s { int i; };\n"); //$NON-NLS-1$

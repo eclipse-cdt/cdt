@@ -1631,8 +1631,8 @@ public class CompleteParser2Tests extends TestCase {
 		CPPNameCollector col = new CPPNameCollector();
 		CPPVisitor.visitTranslationUnit( tu, col );
 		
-		assertEquals( col.size(), 5 );
-		ICPPField pfi = (ICPPField)col.getName(3).resolveBinding();
+		assertEquals( col.size(), 4 );
+		ICPPField pfi = (ICPPField)col.getName(2).resolveBinding();
 		
 		assertNotNull( pfi );
 		assertTrue( pfi.getType() instanceof IPointerType );

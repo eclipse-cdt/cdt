@@ -367,8 +367,11 @@ public class CPPVisitor {
 		} else if( parent instanceof IASTParameterDeclaration ){
 			IASTParameterDeclaration param = (IASTParameterDeclaration) parent;
 			IASTStandardFunctionDeclarator fDtor = (IASTStandardFunctionDeclarator) param.getParent();
-			IFunction function = (IFunction) fDtor.getName().resolveBinding();
-			binding = ((CPPFunction) function).resolveParameter( param );
+			IBinding temp = fDtor.getName().resolveBinding();
+			if( temp instanceof IFunction ){
+				CPPFunction function = (CPPFunction) temp;
+				binding = function.resolveParameter( param );
+			}
 		} else if( parent instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;			
 			if( simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
@@ -898,7 +901,9 @@ public class CPPVisitor {
 	        }
 		}
 			
-		if( declarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR ){
+		if( declarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR &&
+			declarator.getNestedDeclarator() == null )
+		{
 			if( !visitName( declarator.getName(), action ) ) return false;
 		}
 		

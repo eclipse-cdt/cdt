@@ -703,7 +703,7 @@ public class CVisitor {
                         }
 				}
 		    }
-		} else if ( parent instanceof IASTFunctionDeclarator ) {
+		} else if ( parent instanceof IASTDeclarator ) {
 			binding = createBinding(declarator);
 		}
 		
@@ -1159,6 +1159,9 @@ public class CVisitor {
 				IASTDeclarator [] declarators = simpleDeclaration.getDeclarators();
 				for( int i = 0; i < declarators.length; i++ ){
 					IASTDeclarator declarator = declarators[i];
+					while( declarator.getNestedDeclarator() != null ){
+						declarator = declarator.getNestedDeclarator();
+					}
 					tempName = declarator.getName();
 					if( CharArrayUtils.equals( tempName.toCharArray(), name.toCharArray() ) ){
 						return tempName.resolveBinding();
@@ -1351,7 +1354,10 @@ public class CVisitor {
 	        }
 		}
 		
-		if( declarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR ){
+		//having a nested declarator implies that the name on this declarator is empty
+		if( declarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR &&
+			declarator.getNestedDeclarator() == null )
+		{
 			if( !visitName( declarator.getName(), action ) ) return false;
 		}
 		
@@ -1652,8 +1658,8 @@ public class CVisitor {
 			
 			return lastType;
 			
-		// if it's a function declarator then use recursion to get the parent's type
-		} else if (declarator.getParent() instanceof IASTFunctionDeclarator) {
+		// if it's a declarator then use recursion to get the parent's type
+		} else if (declarator.getParent() instanceof IASTDeclarator) {
 			IASTDeclarator origDecltor = (IASTDeclarator)declarator.getParent();
 			IType lastType = createType(origDecltor.getName(), isParm); // use recursion to get the type of the IASTDeclarator's parent
 			
@@ -1667,7 +1673,7 @@ public class CVisitor {
 				
 				lastType = new CFunctionType(lastType, getParmTypes((IASTFunctionDeclarator)declarator));
 				
-			// if it was a function declarator and its parent is not a function definition then do cleanup from the recursion here (setup pointers/arrays/ and check if need function type)
+			// if it was a declarator and its parent is not a function definition then do cleanup from the recursion here (setup pointers/arrays/ and check if need function type)
 			} else {
 				if (declarator.getPointerOperators() != IASTDeclarator.EMPTY_DECLARATOR_ARRAY) 
 					lastType = setupPointerChain(declarator.getPointerOperators(), lastType);

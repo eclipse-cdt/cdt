@@ -471,7 +471,7 @@ public class CCorePlugin extends Plugin {
 		if (project != null) {
 			try {
 				ICDescriptor cdesc = (ICDescriptor) getCProjectDescription(project);
-				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID);
+				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID, true);
 				if (cextensions.length > 0)
 					parser = (IBinaryParser) cextensions[0].createExtension();
 			} catch (CoreException e) {

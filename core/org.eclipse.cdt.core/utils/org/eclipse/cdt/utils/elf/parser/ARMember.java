@@ -13,9 +13,11 @@ package org.eclipse.cdt.utils.elf.parser;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.IToolsProvider;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;
@@ -26,8 +28,8 @@ import org.eclipse.core.runtime.IPath;
 public class ARMember extends BinaryObject {
 	AR.ARHeader header;
 
-	public ARMember(IPath p, AR.ARHeader h) throws IOException {
-		super(p, new ElfHelper(h.getElf()));
+	public ARMember(IPath p, AR.ARHeader h, IToolsProvider provider) throws IOException {
+		super(p, new ElfHelper(h.getElf()), provider);
 		header = h;
 	}
 
@@ -65,13 +67,13 @@ public class ARMember extends BinaryObject {
 		throw new IOException("No file assiocated with Binary");
 	}
 
-	protected void addSymbols(Elf.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt) {
+	protected void addSymbols(Elf.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt, List list) {
 		for (int i = 0; i < array.length; i++) {
 			Symbol sym = new Symbol(this);
 			sym.type = type;
 			sym.name = array[i].toString();
 			sym.addr = array[i].st_value;
-			addSymbol(sym);
+			list.add(sym);
 		}
 	}
 

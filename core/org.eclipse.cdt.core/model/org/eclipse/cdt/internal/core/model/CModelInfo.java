@@ -21,7 +21,7 @@ public class CModelInfo extends CContainerInfo {
 	}
 
 	/**
-	 * Compute the non-java resources contained in this java project.
+	 * Compute the non-C resources contained in this C project.
 	 */
 	private Object[] computeNonCResources() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();

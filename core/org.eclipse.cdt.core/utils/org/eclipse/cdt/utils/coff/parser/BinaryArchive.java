@@ -38,7 +38,7 @@ public class BinaryArchive extends BinaryFile implements IBinaryArchive {
 				ar = new PEArchive(getPath().toOSString());
 				PEArchive.ARHeader[] headers = ar.getHeaders();
 				for (int i = 0; i < headers.length; i++) {
-					IBinaryObject bin = new ARMember(path, headers[i]);
+					IBinaryObject bin = new ARMember(path, headers[i], toolsProvider);
 					children.add(bin);
 				}
 			} catch (IOException e) {

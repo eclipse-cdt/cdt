@@ -1,11 +1,19 @@
+/**********************************************************************
+ * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
@@ -13,27 +21,29 @@ import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.CygPath;
+import org.eclipse.cdt.utils.ICygwinToolsProvider;
 import org.eclipse.cdt.utils.coff.Coff;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PE.Attribute;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  */
 public class BinaryObject extends BinaryFile implements IBinaryObject {
 
 	PE.Attribute attribute;
-	ArrayList symbols;
+	ISymbol[] symbols;
 	int type = IBinaryFile.OBJECT;
-
+	private ISymbol[] NO_SYMBOLS = new ISymbol[0];
+	
 	public BinaryObject(IPath p) throws IOException {
 		super(p);
-		loadInformation();
-		hasChanged();
 	}
 
-	public BinaryObject(IPath p, PE pe) throws IOException {
+	public BinaryObject(IPath p, PE pe, ICygwinToolsProvider provider) throws IOException {
 		super(p);
+		setToolsProvider(provider);
 		loadInformation(pe);
 		pe.dispose();
 		hasChanged();
@@ -41,6 +51,18 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 
 	public void setType(int t) {
 		type = t;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbol(long)
+	 */
+	public ISymbol getSymbol(long addr) {
+		ISymbol[] syms = getSymbols();
+		int i = Arrays.binarySearch(syms, new Long(addr));
+		if (i < 0 || i >= syms.length) {
+			return null;
+		}
+		return syms[i];
 	}
 
 	/**
@@ -87,15 +109,15 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	 */
 	public ISymbol[] getSymbols() {
 		if (hasChanged() || symbols == null) {
-			if (symbols == null) {
-				symbols = new ArrayList(5);
-			}
 			try {
 				loadInformation();
 			} catch (IOException e) {
 			}
+			if (symbols == null) {
+				symbols = NO_SYMBOLS;
+			}
 		}
-		return (ISymbol[])symbols.toArray(new ISymbol[0]);
+		return symbols;
 	}
 
 	/**
@@ -163,11 +185,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 
 	private void loadInformation(PE pe) throws IOException {
 		loadAttribute(pe);
-		if (symbols != null) {
-			symbols.clear();
-			loadSymbols(pe);
-			symbols.trimToSize();
-		}
+		loadSymbols(pe);
 	}
 
 	private void loadAttribute(PE pe) throws IOException {
@@ -175,13 +193,14 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	}
 
 	private void loadSymbols(PE pe) throws IOException {
+		ArrayList list = new ArrayList();
 		Addr2line addr2line = getAddr2Line();
 		CPPFilt cppfilt = getCPPFilt();
 		CygPath cygpath = getCygPath();
 
 		Coff.Symbol[] peSyms = pe.getSymbols();
 		byte[] table = pe.getStringTable();
-		addSymbols(peSyms, table, addr2line, cppfilt, cygpath);
+		addSymbols(peSyms, table, addr2line, cppfilt, cygpath, list);
 
 		if (addr2line != null) {
 			addr2line.dispose();
@@ -192,10 +211,13 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 		if (cygpath != null) {
 			cygpath.dispose();
 		}
-		symbols.trimToSize();
+
+		symbols = (ISymbol[])list.toArray(NO_SYMBOLS);
+		Arrays.sort(symbols);
+		list.clear();
 	}
 
-	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, Addr2line addr2line, CPPFilt cppfilt, CygPath cygpath) {
+	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, Addr2line addr2line, CPPFilt cppfilt, CygPath cygpath, List list) {
 		for (int i = 0; i < peSyms.length; i++) {
 			if (peSyms[i].isFunction() || peSyms[i].isPointer() ||peSyms[i].isArray()) {
 				String name = peSyms[i].getName(table);
@@ -220,20 +242,21 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 				sym.endLine = 0;
 				if (addr2line != null) {
 					try {
-						sym.filename =  addr2line.getFileName(sym.addr);
-						if (cygpath != null)
-							sym.filename =  cygpath.getFileName(sym.filename);
+						String filename =  addr2line.getFileName(sym.addr);
+						if (filename != null) {
+							if (cygpath != null) {
+								sym.filename =  new Path(cygpath.getFileName(filename));
+							} else {
+								sym.filename = new Path(filename);
+							}
+						}
 						sym.startLine = addr2line.getLineNumber(sym.addr);
 					} catch (IOException e) {
 					}
 				}
-				addSymbol(sym);
+				list.add(sym);
 			}
 		}
-	}
-
-	protected void addSymbol(Symbol sym) {
-		symbols.add(sym);
 	}
 
 }

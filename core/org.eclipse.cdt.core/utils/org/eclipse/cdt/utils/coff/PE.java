@@ -438,6 +438,12 @@ public class PE {
 		return attrib;
 	}
 
+	public static boolean isExeHeader(byte[] e_signature) {
+		if (e_signature.length < 2 || e_signature[0] != 'M' || e_signature[1] != 'Z')
+			return false;
+		return true;
+	}
+
 	public static Attribute getAttributes(String file) throws IOException {
 		PE pe = new PE(file);
 		Attribute attrib = pe.getAttribute();

@@ -12,17 +12,21 @@ package org.eclipse.cdt.utils.elf.parser;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.IToolsProvider;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
 import org.eclipse.cdt.utils.elf.ElfHelper.Sizes;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  */
@@ -32,19 +36,31 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	protected int type = IBinaryFile.OBJECT;
 	private Sizes sizes;
 	private Attribute attribute;
-	private ArrayList symbols;
+	private ISymbol[] symbols;
+	private ISymbol[] NO_SYMBOLS = new ISymbol[0];
 
 	public BinaryObject(IPath path) throws IOException {
 		super(path);
-		loadInformation();
-		hasChanged();
 	}
 
-	public BinaryObject(IPath path, ElfHelper helper) throws IOException {
+	public BinaryObject(IPath path, ElfHelper helper, IToolsProvider provider) throws IOException {
 		super(path);
+		setToolsProvider(provider);
 		loadInformation(helper);
 		helper.dispose();
 		hasChanged();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbol(long)
+	 */
+	public ISymbol getSymbol(long addr) {
+		ISymbol[] syms = getSymbols();
+		int i = Arrays.binarySearch(syms, new Long(addr));
+		if (i < 0 || i >= syms.length) {
+			return null;
+		}
+		return syms[i];
 	}
 
 	/**
@@ -129,15 +145,15 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	 */
 	public ISymbol[] getSymbols() {
 		if (hasChanged() || symbols == null) {
-			if (symbols == null) {
-				symbols = new ArrayList(5);
-			}
 			try {
 				loadInformation();
 			} catch (IOException e) {
 			}
+			if (symbols == null) {
+				symbols = NO_SYMBOLS;
+			}
 		}
-		return (ISymbol[]) symbols.toArray(new ISymbol[0]);
+		return symbols;
 	}
 
 	/**
@@ -189,11 +205,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 
 	private void loadInformation(ElfHelper helper) throws IOException {
 		loadAttributes(helper);
-		if (symbols != null) {
-			symbols.clear();
-			loadSymbols(helper);
-			symbols.trimToSize();
-		}
+		loadSymbols(helper);
 	}
 
 	private void loadAttributes(ElfHelper helper) throws IOException {
@@ -208,25 +220,18 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	}
 
 	private void loadSymbols(ElfHelper helper) throws IOException {
-		Elf.Dynamic[] sharedlibs = helper.getNeeded();
-		needed = new String[sharedlibs.length];
-		for (int i = 0; i < sharedlibs.length; i++) {
-			needed[i] = sharedlibs[i].toString();
-		}
-		sizes = helper.getSizes();
-		soname = helper.getSoname();
-		attribute = helper.getElf().getAttributes();
+		ArrayList list = new ArrayList();
 		// Hack should be remove when Elf is clean
 		helper.getElf().setCppFilter(false);
 
 		Addr2line addr2line = getAddr2Line();
 		CPPFilt cppfilt = getCPPFilt();
 
-		addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION, addr2line, cppfilt);
-		addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION, addr2line, cppfilt);
-		addSymbols(helper.getExternalObjects(), ISymbol.VARIABLE, addr2line, cppfilt);
-		addSymbols(helper.getLocalObjects(), ISymbol.VARIABLE, addr2line, cppfilt);
-		symbols.trimToSize();
+		addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION, addr2line, cppfilt, list);
+		addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION, addr2line, cppfilt, list);
+		addSymbols(helper.getExternalObjects(), ISymbol.VARIABLE, addr2line, cppfilt, list);
+		addSymbols(helper.getLocalObjects(), ISymbol.VARIABLE, addr2line, cppfilt, list);
+		list.trimToSize();
 
 		if (addr2line != null) {
 			addr2line.dispose();
@@ -234,9 +239,13 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 		if (cppfilt != null) {
 			cppfilt.dispose();
 		}
+
+		symbols = (ISymbol[])list.toArray(NO_SYMBOLS);
+		Arrays.sort(symbols);
+		list.clear();
 	}
 
-	protected void addSymbols(Elf.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt) {
+	protected void addSymbols(Elf.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt, List list) {
 		for (int i = 0; i < array.length; i++) {
 			Symbol sym = new Symbol(this);
 			sym.type = type;
@@ -253,18 +262,15 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 			sym.endLine = sym.startLine;
 			if (addr2line != null) {
 				try {
-					sym.filename =  addr2line.getFileName(sym.addr);
+					String filename =  addr2line.getFileName(sym.addr);
+					sym.filename = (filename != null) ? new Path(filename) : null;
 					sym.startLine = addr2line.getLineNumber(sym.addr);
 					sym.endLine = addr2line.getLineNumber(sym.addr + array[i].st_size - 1);
 				} catch (IOException e) {
 				}
 			}
-			addSymbol(sym);
+			list.add(sym);
 		}
-	}
-
-	protected void addSymbol(Symbol sym) {
-		symbols.add(sym);
 	}
 
 }

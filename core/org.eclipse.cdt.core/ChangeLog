@@ -1,3 +1,31 @@
+2003-11-18 Alain Magloire
+
+	Attempt to address performance problems from the binary parser
+	on big projects.  The problem is that files are open multiple
+	times to detect if they are binaries or archives.   We can
+	not really rely on the filename or extension.  A new method
+	as been added to the IBinaryParser interface, isBinary()
+	taken an intial byte[].
+
+	* model/org/eclipse/cdt/internal/core/model/Binary.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/NullBinaryParser.java
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/IBinaryParser.java
+	* utils/org/eclipse/cdt/utils/coff/PE.java
+	* utils/org/eclipse/cdt/utils/coff/PEArchive.java
+	* utils/org/eclipse/cdt/utils/coff/parser/ARMember.java
+	* utils/org/eclipse/cdt/utils/coff/parser/BinaryArchive.java
+	* utils/org/eclipse/cdt/utils/coff/parser/BinaryObject.java
+	* utils/org/eclipse/cdt/utils/coff/parser/PEParser.java
+	* utils/org/eclipse/cdt/utils/coff/parser/Symbol.java
+	* utils/org/eclipse/cdt/utils/elf/AR.java 
+	* utils/org/eclipse/cdt/utils/elf/parser/ARMember.java
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryArchive.java
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryObject.java
+	* utils/org/eclipse/cdt/utils/elf/parser/ElfParser.java
+	* utils/org/eclipse/cdt/utils/elf/parser/Symbol.java
+
 2003-11-17 Doug Schaefer
 	Nothing just testing the commit logs
 

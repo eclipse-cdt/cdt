@@ -707,6 +707,13 @@ public class Elf {
 		return attrib;	
 	}
 	
+	public static boolean isElfHeader(byte[] e_ident) {
+		if (e_ident.length < 4 || e_ident[ELFhdr.EI_MAG0] != 0x7f || e_ident[ELFhdr.EI_MAG1] != 'E' || 
+			e_ident[ELFhdr.EI_MAG2] != 'L' || e_ident[ELFhdr.EI_MAG3] != 'F')
+			return false;
+		return true;
+	}
+
 	public void dispose() {
 		if (addr2line != null) {
 			addr2line.dispose();

@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.core.model;
  */
  
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -97,6 +98,11 @@ public class CModelManager implements IResourceChangeListener {
 	 * The list of started BinaryRunners on projects.
 	 */
 	private HashMap binaryRunners = new HashMap();
+
+	/**
+	 * Map of the binary parser for each project.
+	 */
+	private HashMap binaryParsersMap = new HashMap();
 	
 	/**
 	 * The lis of the SourceMappers on projects.
@@ -345,7 +351,14 @@ public class CModelManager implements IResourceChangeListener {
 
 	public IBinaryParser getBinaryParser(IProject project) {
 		try {
-			return CCorePlugin.getDefault().getBinaryParser(project);
+			IBinaryParser parser =  (IBinaryParser)binaryParsersMap.get(project);
+			if (parser == null) {
+				parser = CCorePlugin.getDefault().getBinaryParser(project);
+			}
+			if (parser != null) {
+				binaryParsersMap.put(project, parser);
+				return parser;
+			}
 		} catch (CoreException e) {
 		}
 		return new NullBinaryParser();
@@ -354,8 +367,22 @@ public class CModelManager implements IResourceChangeListener {
 	public IBinaryFile createBinaryFile(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
-			return parser.getBinary(file.getLocation());
+			InputStream is = file.getContents();
+			byte[] bytes = new byte[128];
+			int count = is.read(bytes);
+			is.close();
+			if (count > 0 && count < bytes.length) {
+				byte[] array = new byte[count];
+				System.arraycopy(bytes, 0, array, 0, count);
+				bytes = array;
+			}
+			IPath location = file.getLocation();
+			if (parser.isBinary(bytes, location)) {
+				return parser.getBinary(location);
+			}
 		} catch (IOException e) {
+		} catch (CoreException e) {
+			//e.printStackTrace();
 		}
 		return null;
 	}
@@ -372,6 +399,7 @@ public class CModelManager implements IResourceChangeListener {
 				// but it has the side of effect of removing the CProject also
 				// so we have to recall create again.
 				releaseCElement(celement);
+				binaryParsersMap.remove(project);
 				celement = create(project);
 				Parent parent = (Parent)celement.getParent();
 				CElementInfo info = (CElementInfo)parent.getElementInfo();
@@ -750,6 +778,7 @@ public class CModelManager implements IResourceChangeListener {
 		break;
 		}
 	}
+
 	/** 
 	 * Returns the set of elements which are out of synch with their buffers.
 	 */
@@ -820,5 +849,6 @@ public class CModelManager implements IResourceChangeListener {
 		if (runner != null) {
 			runner.stop();
 		}
+		binaryParsersMap.remove(project);
 	}
 }

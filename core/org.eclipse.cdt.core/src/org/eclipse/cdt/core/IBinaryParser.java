@@ -55,7 +55,9 @@ public interface IBinaryParser {
 		boolean isLittleEndian();
 
 		ISymbol[] getSymbols();
-		
+
+		ISymbol getSymbol(long addr);
+
 		String getName();
 
 	}
@@ -74,7 +76,7 @@ public interface IBinaryParser {
 		String getSoName();
 	}
 
-	interface ISymbol {
+	interface ISymbol extends Comparable {
 		static final int FUNCTION = 0x01;
 		static final int VARIABLE = 0x02;
 	
@@ -82,11 +84,13 @@ public interface IBinaryParser {
 		long getAddress();
 		int getStartLine();
 		int getEndLine();
-		String getFilename();
+		IPath getFilename();
 		int getType();
 	}
 
 	IBinaryFile getBinary(IPath path) throws IOException;
+
+	boolean isBinary(byte[] array, IPath path);
 	
 	String getFormat();
 }

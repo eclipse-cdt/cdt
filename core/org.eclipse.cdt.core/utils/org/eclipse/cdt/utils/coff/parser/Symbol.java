@@ -14,12 +14,13 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.Addr2line;
+import org.eclipse.core.runtime.IPath;
 
 public class Symbol implements ISymbol {
 
 	BinaryObject binary;
 
-	public String filename;
+	public IPath filename;
 	public int startLine;
 	public int endLine;
 	public long addr;
@@ -32,7 +33,7 @@ public class Symbol implements ISymbol {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getFilename()
 	 */
-	public String getFilename() {
+	public IPath getFilename() {
 		return filename;
 	}
 
@@ -86,6 +87,24 @@ public class Symbol implements ISymbol {
 		} catch (IOException e) {		
 		}
 		return line;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object obj) {
+		long thisVal = 0;
+		long anotherVal = 0;
+		if (obj instanceof Symbol) {
+			Symbol sym = (Symbol) obj;
+			thisVal = this.addr;
+			anotherVal = sym.addr;
+		} else if (obj instanceof Long) {
+			Long val = (Long) obj;
+			anotherVal = val.longValue();
+			thisVal = (long) this.addr;
+		}
+		return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
 	}
 
 }

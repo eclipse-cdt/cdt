@@ -16,6 +16,7 @@ import java.io.IOException;
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.coff.PE;
+import org.eclipse.cdt.utils.coff.PEArchive;
 import org.eclipse.cdt.utils.coff.PE.Attribute;
 import org.eclipse.core.runtime.IPath;
 
@@ -68,6 +69,13 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 */
 	public String getFormat() {
 		return "PE";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
+	 */
+	public boolean isBinary(byte[] array, IPath path) {
+		return PE.isExeHeader(array) || PEArchive.isARHeader(array);
 	}
 
 }

@@ -174,19 +174,18 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	private void addFunction(OpenableInfo info, ISymbol symbol, Map hash) {
-		String filename = filename = symbol.getFilename();
+		IPath filename = filename = symbol.getFilename();
 		BinaryFunction function = null;
 
 		// Addr2line returns the funny "??" when it can find the file.
 		if (filename != null && !filename.equals("??")) {
 			BinaryModule module = null;
-			IPath path = new Path(filename);
-			if (hash.containsKey(path)) {
-				module = (BinaryModule)hash.get(path);
+			if (hash.containsKey(filename)) {
+				module = (BinaryModule)hash.get(filename);
 			} else {
 				// A special container we do not want the file to be parse.
-				module = new BinaryModule(this, path);
-				hash.put(path, module);
+				module = new BinaryModule(this, filename);
+				hash.put(filename, module);
 				info.addChild(module);
 			}
 			function = new BinaryFunction(module, symbol.getName(), symbol.getAddress());
@@ -206,17 +205,16 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	private void addVariable(OpenableInfo info, ISymbol symbol, Map hash) {
-		String filename = filename = symbol.getFilename();
+		IPath filename = filename = symbol.getFilename();
 		BinaryVariable variable = null;
 		// Addr2line returns the funny "??" when it can not find the file.
 		if (filename != null && !filename.equals("??")) {
 			BinaryModule module = null;
-			IPath path = new Path(filename);
-			if (hash.containsKey(path)) {
-				module = (BinaryModule)hash.get(path);
+			if (hash.containsKey(filename)) {
+				module = (BinaryModule)hash.get(filename);
 			} else {
-				module = new BinaryModule(this, path);
-				hash.put(path, module);
+				module = new BinaryModule(this, filename);
+				hash.put(filename, module);
 				info.addChild(module);
 			}
 			variable = new BinaryVariable(module, symbol.getName(), symbol.getAddress());

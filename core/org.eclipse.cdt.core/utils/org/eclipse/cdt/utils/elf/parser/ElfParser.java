@@ -14,6 +14,7 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
 import org.eclipse.core.runtime.IPath;
@@ -65,6 +66,13 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 	 */
 	public String getFormat() {
 		return "ELF";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
+	 */
+	public boolean isBinary(byte[] array, IPath path) {
+		return Elf.isElfHeader(array) || AR.isARHeader(array);
 	}
 
 }

@@ -39,6 +39,12 @@
 <!-- Extension Point: IBinaryParser, use to detect wheter an IFile is a binary           -->
 <!-- =================================================================================== -->
    <extension-point id="BinaryParser" name="BinaryParser"/>
+<!-- =================================================================================== -->
+<!-- Extension Point: IPathEntryStore, use to provide a storage for PathEtnry            -->
+<!-- =================================================================================== -->
+   <extension-point id="PathEntryStore" name="PathEntryStore"/>
+<!-- =================================================================================== -->
+<!-- =================================================================================== -->
    <extension-point id="ScannerInfoProvider" name="Scanner Information Provider"/>
 <!-- =================================================================================== -->
 <!-- Extension Point: CFileType and CFileTypeAssociation for translation unit ident      -->
@@ -91,6 +97,20 @@
          </run>
       </cextension>
    </extension>
+<!-- =================================================================================== -->
+<!-- Define the default PathEntry store provided by the CDT                                 -->
+<!-- =================================================================================== -->
+   <extension
+         id="cdtPathEntryStore"
+         name="Path Entry Store"
+         point="org.eclipse.cdt.core.PathEntryStore">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.internal.core.model.PathEntryStore">
+         </run>
+      </cextension>
+   </extension>
+
 <!-- =================================================================================== -->
 <!-- Define the list of Error Parser provided by the CDT                                 -->
 <!-- =================================================================================== -->

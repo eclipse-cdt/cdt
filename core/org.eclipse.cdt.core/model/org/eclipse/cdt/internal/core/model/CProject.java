@@ -13,10 +13,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.BinaryParserConfig;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
@@ -150,17 +150,13 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	public ILibraryReference[] getLibraryReferences() throws CModelException {
-		IBinaryParser[] binParsers = null;
-		try {
-			binParsers = CCorePlugin.getDefault().getBinaryParser(getProject());
-		} catch (CoreException e) {
-		}
+		BinaryParserConfig[] binConfigs = CModelManager.getDefault().getBinaryParser(getProject());
 		IPathEntry[] entries = getResolvedPathEntries();
 		ArrayList list = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
 				ILibraryEntry entry = (ILibraryEntry) entries[i];
-				ILibraryReference lib = getLibraryReference(this, binParsers, entry);
+				ILibraryReference lib = getLibraryReference(this, binConfigs, entry);
 				if (lib != null) {
 					list.add(lib);
 				}
@@ -169,19 +165,16 @@ public class CProject extends Openable implements ICProject {
 		return (ILibraryReference[]) list.toArray(new ILibraryReference[0]);
 	}
 
-	public static ILibraryReference getLibraryReference(ICProject cproject, IBinaryParser[] binParsers, ILibraryEntry entry) {
-		if (binParsers == null) {
-			try {
-				binParsers = CCorePlugin.getDefault().getBinaryParser(cproject.getProject());
-			} catch (CoreException e) {
-			}
+	public static ILibraryReference getLibraryReference(ICProject cproject, BinaryParserConfig[] binConfigs, ILibraryEntry entry) {
+		if (binConfigs == null) {
+			binConfigs = CModelManager.getDefault().getBinaryParser(cproject.getProject());
 		}
 		ILibraryReference lib = null;
-		if (binParsers != null) {
-			for (int i = 0; i < binParsers.length; i++) {
+		if (binConfigs != null) {
+			for (int i = 0; i < binConfigs.length; i++) {
 				IBinaryFile bin;
 				try {
-					bin = binParsers[i].getBinary(entry.getPath());
+					bin = binConfigs[i].getBinaryParser().getBinary(entry.getPath());
 					if (bin != null) {
 						if (bin.getType() == IBinaryFile.ARCHIVE) {
 							lib = new LibraryReferenceArchive(cproject, entry, (IBinaryArchive)bin);

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
@@ -74,7 +75,13 @@ public class CCorePlugin extends Plugin {
 	public final static String PREF_USE_STRUCTURAL_PARSE_MODE = "useStructualParseMode"; //$NON-NLS-1$
 	
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
-	
+
+	// PathEntry extension
+	public final static String PATHENTRY_STORE_ID = "PathEntryStore"; //$NON-NLS-1$
+	public final static String PATHENTRY_STORE_UNIQ_ID = PLUGIN_ID + "." + PATHENTRY_STORE_ID; //$NON-NLS-1$
+	// default store for pathentry
+	public final static String DEFAULT_PATHENTRY_STORE_ID = PLUGIN_ID + ".cdtPathEntryStore"; //$NON-NLS-1$
+
 	// Build Model Interface Discovery
 	public final static String BUILD_SCANNER_INFO_SIMPLE_ID = "ScannerInfoProvider"; //$NON-NLS-1$
 	public final static String BUILD_SCANNER_INFO_UNIQ_ID = PLUGIN_ID + "." + BUILD_SCANNER_INFO_SIMPLE_ID; //$NON-NLS-1$
@@ -618,6 +625,53 @@ public class CCorePlugin extends Plugin {
 			throw new CoreException(s);
 		}
 		return parser;
+	}
+
+	public IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
+		IPathEntryStore store = null;
+		if (project != null) {
+			try {
+				ICDescriptor cdesc = getCProjectDescription(project);
+				ICExtensionReference[] cextensions = cdesc.get(PATHENTRY_STORE_UNIQ_ID, true);
+				if (cextensions.length > 0) {
+					ArrayList list = new ArrayList(cextensions.length);
+					for (int i = 0; i < cextensions.length; i++) {
+						try {
+							store = (IPathEntryStore) cextensions[i].createExtension();
+							break;
+						} catch (ClassCastException e) {
+							//
+							log(e);
+						}
+					}
+				}
+			} catch (CoreException e) {
+				// ignore since we fall back to a default....
+			}
+		}
+		if (store == null) {
+			store = getDefaultPathEntryStore();
+		}
+		return store;
+	}
+
+	public IPathEntryStore getDefaultPathEntryStore() throws CoreException {
+		IPathEntryStore store = null;
+		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(PATHENTRY_STORE_ID);
+		IExtension extension = extensionPoint.getExtension(DEFAULT_PATHENTRY_STORE_ID);
+		if (extension != null) {
+			IConfigurationElement element[] = extension.getConfigurationElements();
+			for (int i = 0; i < element.length; i++) {
+				if (element[i].getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
+					store = (IPathEntryStore) element[i].createExecutableExtension("run"); //$NON-NLS-1$
+					break;
+				}
+			}
+		} else {
+			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CCorePlugin.exception.noBinaryFormat"), null); //$NON-NLS-1$
+			throw new CoreException(s);
+		}
+		return store;
 	}
 
 	/**

@@ -16,17 +16,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CDescriptorEvent;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorListener;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
@@ -36,7 +33,9 @@ import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.PathEntryContainerInitializer;
-import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.core.resources.IPathEntryStore;
+import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
+import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -49,35 +48,14 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * @author alain
  *  
  */
-public class PathEntryManager implements ICDescriptorListener {
+public class PathEntryManager implements IPathEntryStoreListener, IElementChangedListener {
 
 	static String CONTAINER_INITIALIZER_EXTPOINT_ID = "pathEntryContainerInitializer"; //$NON-NLS-1$
-	static String PATH_ENTRY = "pathentry"; //$NON-NLS-1$
-	static String PATH_ENTRY_ID = "org.eclipse.cdt.core.pathentry"; //$NON-NLS-1$
-	static String ATTRIBUTE_KIND = "kind"; //$NON-NLS-1$
-	static String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
-	static String ATTRIBUTE_BASE_PATH = "base-path"; //$NON-NLS-1$
-	static String ATTRIBUTE_BASE_REF = "base-ref"; //$NON-NLS-1$
-	static String ATTRIBUTE_EXPORTED = "exported"; //$NON-NLS-1$
-	static String ATTRIBUTE_SOURCEPATH = "sourcepath"; //$NON-NLS-1$
-	static String ATTRIBUTE_ROOTPATH = "roopath"; //$NON-NLS-1$
-	static String ATTRIBUTE_PREFIXMAPPING = "prefixmapping"; //$NON-NLS-1$
-	static String ATTRIBUTE_EXCLUDING = "excluding"; //$NON-NLS-1$
-	static String ATTRIBUTE_INCLUDE = "include"; //$NON-NLS-1$
-	static String ATTRIBUTE_SYSTEM = "system"; //$NON-NLS-1$
-	static String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
-	static String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
-	static String VALUE_TRUE = "true"; //$NON-NLS-1$
-	final static IPathEntry[] EMPTY = {};
 	/**
 	 * An empty array of strings indicating that a project doesn't have any prerequesite projects.
 	 */
@@ -90,8 +68,10 @@ public class PathEntryManager implements ICDescriptorListener {
 	static final IPathEntry[] NO_PATHENTRIES = new IPathEntry[0];
 
 	HashMap resolvedMap = new HashMap();
-	private static PathEntryManager pathEntryManager;
 
+	HashMap storeMap = new HashMap();
+
+	private static PathEntryManager pathEntryManager;
 	private PathEntryManager() {
 	}
 
@@ -101,10 +81,7 @@ public class PathEntryManager implements ICDescriptorListener {
 	public static PathEntryManager getDefault() {
 		if (pathEntryManager == null) {
 			pathEntryManager = new PathEntryManager();
-			// Register the Core Model on the Descriptor
-			// Manager, it needs to know about changes.
-			CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(pathEntryManager);
-
+			CoreModel.getDefault().addElementChangedListener(pathEntryManager);
 		}
 		return pathEntryManager;
 	}
@@ -228,23 +205,14 @@ public class PathEntryManager implements ICDescriptorListener {
 	}
 
 	public IPathEntry[] getRawPathEntries(ICProject cproject) throws CModelException {
-		CModelManager factory = CModelManager.getDefault();
-		if (!(CoreModel.hasCNature(cproject.getProject()) || CoreModel.hasCCNature(cproject.getProject()))) {
+		IProject project = cproject.getProject();
+		if (!(CoreModel.hasCNature(project) || CoreModel.hasCCNature(project))) {
 			return NO_PATHENTRIES;
 		}
-		ArrayList pathEntries = new ArrayList();
+		IPathEntry[] pathEntries = NO_PATHENTRIES;
 		try {
-			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(cproject.getProject());
-			Element element = cdesc.getProjectData(PATH_ENTRY_ID);
-			NodeList list = element.getChildNodes();
-			for (int i = 0; i < list.getLength(); i++) {
-				Node childNode = list.item(i);
-				if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-					if (childNode.getNodeName().equals(PATH_ENTRY)) {
-						pathEntries.add(decodePathEntry(cproject, (Element) childNode));
-					}
-				}
-			}
+			IPathEntryStore store = getPathEntryStore(project);
+			pathEntries = store.getRawPathEntries(project);
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}
@@ -254,8 +222,8 @@ public class PathEntryManager implements ICDescriptorListener {
 		// if no source is specified we return the project
 		boolean foundSource = false;
 		boolean foundOutput = false;
-		for (int i = 0; i < pathEntries.size(); i++) {
-			IPathEntry rawEntry = (IPathEntry) pathEntries.get(i);
+		for (int i = 0; i < pathEntries.length; i++) {
+			IPathEntry rawEntry = (IPathEntry) pathEntries[i];
 			if (rawEntry.getEntryKind() == IPathEntry.CDT_SOURCE) {
 				foundSource = true;
 			}
@@ -265,12 +233,18 @@ public class PathEntryManager implements ICDescriptorListener {
 		}
 
 		if (!foundSource) {
-			pathEntries.add(CoreModel.newSourceEntry(cproject.getPath()));
+			IPathEntry[] newEntries = new IPathEntry[pathEntries.length + 1];
+			System.arraycopy(pathEntries, 0, newEntries, 0, pathEntries.length);
+			newEntries[pathEntries.length] = CoreModel.newSourceEntry(cproject.getPath());
+			pathEntries = newEntries;
 		}
 		if (!foundOutput) {
-			pathEntries.add(CoreModel.newOutputEntry(cproject.getPath()));
+			IPathEntry[] newEntries = new IPathEntry[pathEntries.length + 1];
+			System.arraycopy(pathEntries, 0, newEntries, 0, pathEntries.length);
+			newEntries[pathEntries.length] = CoreModel.newOutputEntry(cproject.getPath());
+			pathEntries = newEntries;
 		}
-		return (IPathEntry[]) pathEntries.toArray(EMPTY);
+		return pathEntries;
 	}
 
 	public void setPathEntryContainer(ICProject[] affectedProjects, IPathEntryContainer newContainer, IProgressMonitor monitor)
@@ -486,21 +460,9 @@ public class PathEntryManager implements ICDescriptorListener {
 
 	public void saveRawPathEntries(ICProject cproject, IPathEntry[] newRawEntries) throws CModelException {
 		try {
-			ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(cproject.getProject());
-			Element rootElement = descriptor.getProjectData(PATH_ENTRY_ID);
-			// Clear out all current children
-			Node child = rootElement.getFirstChild();
-			while (child != null) {
-				rootElement.removeChild(child);
-				child = rootElement.getFirstChild();
-			}
-			// Save the entries
-			if (newRawEntries != null && newRawEntries.length > 0) {
-				// Serialize the include paths
-				Document doc = rootElement.getOwnerDocument();
-				encodePathEntries(cproject.getPath(), doc, rootElement, newRawEntries);
-			}
-			descriptor.saveProjectData();
+			IProject project = cproject.getProject();
+			IPathEntryStore store = getPathEntryStore(project);
+			store.setRawPathEntries(project, newRawEntries);
 			resolvedMap.remove(cproject);
 		} catch (CoreException e) {
 			throw new CModelException(e);
@@ -653,255 +615,70 @@ public class PathEntryManager implements ICDescriptorListener {
 		return containerIDs;
 	}
 
-	static IPathEntry decodePathEntry(ICProject cProject, Element element) throws CModelException {
-		IPath projectPath = cProject.getProject().getFullPath();
-		
-		// kind
-		String kindAttr = element.getAttribute(ATTRIBUTE_KIND);
-		int kind = PathEntry.kindFromString(kindAttr);
-		
-		// exported flag
-		boolean isExported = false;
-		if (element.hasAttribute(ATTRIBUTE_EXPORTED)) {
-			isExported = element.getAttribute(ATTRIBUTE_EXPORTED).equals(VALUE_TRUE);
+	IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
+		IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
+		if (store == null) {
+			store = CCorePlugin.getDefault().getPathEntryStore(project);
+			storeMap.put(project, store);
+			store.addPathEntryStoreListener(this);
 		}
-
-		// get path and ensure it is absolute
-		//String pathAttr = element.getAttribute(ATTRIBUTE_PATH);
-		IPath path = new Path(element.getAttribute(ATTRIBUTE_PATH));
-		if (!path.isAbsolute()) {
-			path = projectPath.append(path);
-		}
-
-		// check fo the base path
-		IPath basePath = new Path(element.getAttribute(ATTRIBUTE_BASE_PATH));
-
-		// get the base ref
-		IPath baseRef = new Path(element.getAttribute(ATTRIBUTE_BASE_REF));
-
-		// source attachment info (optional)
-		IPath sourceAttachmentPath = element.hasAttribute(ATTRIBUTE_SOURCEPATH) ? new Path(
-				element.getAttribute(ATTRIBUTE_SOURCEPATH)) : null;
-		IPath sourceAttachmentRootPath = element.hasAttribute(ATTRIBUTE_ROOTPATH) ? new Path(
-				element.getAttribute(ATTRIBUTE_ROOTPATH)) : null;
-		IPath sourceAttachmentPrefixMapping = element.hasAttribute(ATTRIBUTE_PREFIXMAPPING) ? new Path(
-				element.getAttribute(ATTRIBUTE_PREFIXMAPPING)) : null;
-		
-		// exclusion patterns (optional)
-		String exclusion = element.getAttribute(ATTRIBUTE_EXCLUDING);
-		IPath[] exclusionPatterns = APathEntry.NO_EXCLUSION_PATTERNS;
-		if (!exclusion.equals("")) { //$NON-NLS-1$
-			char[][] patterns = CharOperation.splitOn('|', exclusion.toCharArray());
-			int patternCount;
-			if ((patternCount = patterns.length) > 0) {
-				exclusionPatterns = new IPath[patternCount];
-				for (int j = 0; j < patterns.length; j++) {
-					exclusionPatterns[j] = new Path(new String(patterns[j]));
-				}
-			}
-		}
-		
-		// recreate the entry
-		switch (kind) {
-			case IPathEntry.CDT_PROJECT :
-				return CoreModel.newProjectEntry(path, isExported);
-			case IPathEntry.CDT_LIBRARY :
-				if (!baseRef.isEmpty()) {
-					return CoreModel.newLibraryRefEntry(baseRef, path);
-				}
-				return CoreModel.newLibraryEntry(basePath, path, sourceAttachmentPath, sourceAttachmentRootPath,
-					sourceAttachmentPrefixMapping, isExported);
-			case IPathEntry.CDT_SOURCE :
-				{
-					// must be an entry in this project or specify another
-					// project
-					String projSegment = path.segment(0);
-					if (projSegment != null && projSegment.equals(cProject.getElementName())) { // this
-						// project
-						return CoreModel.newSourceEntry(path, exclusionPatterns);
-					} else { // another project
-						return CoreModel.newProjectEntry(path, isExported);
-					}
-				}
-			case IPathEntry.CDT_OUTPUT :
-				{
-					return CoreModel.newOutputEntry(path, exclusionPatterns);
-				}
-			case IPathEntry.CDT_INCLUDE :
-				{
-					// include path info
-					IPath includePath = new Path(element.getAttribute(ATTRIBUTE_INCLUDE));
-					// isSysteminclude
-					boolean isSystemInclude = false;
-					if (element.hasAttribute(ATTRIBUTE_SYSTEM)) {
-						isSystemInclude = element.getAttribute(ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
-					}
-					if (!baseRef.isEmpty()) {
-						return CoreModel.newIncludeRefEntry(path, baseRef, includePath);
-					}
-					return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns, isExported);
-				}
-			case IPathEntry.CDT_MACRO :
-				{
-					String macroName = element.getAttribute(ATTRIBUTE_NAME);
-					String macroValue = element.getAttribute(ATTRIBUTE_VALUE);
-					if (!baseRef.isEmpty()) {
-						return CoreModel.newMacroRefEntry(path, baseRef, macroName);
-					}
-					return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);
-				}
-			case IPathEntry.CDT_CONTAINER :
-				{
-					IPath id = new Path(element.getAttribute(ATTRIBUTE_PATH));
-					return CoreModel.newContainerEntry(id, isExported);
-				}
-			default :
-				{
-					ICModelStatus status = new CModelStatus(ICModelStatus.ERROR, "PathEntry: unknown kind (" + kindAttr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-					throw new CModelException(status);
-				}
-		}
+		return store;
 	}
 
-	static void encodePathEntries(IPath projectPath, Document doc, Element configRootElement, IPathEntry[] entries) {
-		Element element;
-		for (int i = 0; i < entries.length; i++) {
-			element = doc.createElement(PATH_ENTRY);
-
-			configRootElement.appendChild(element);
-			int kind = entries[i].getEntryKind();
-			// Set the kind
-			element.setAttribute(ATTRIBUTE_KIND, PathEntry.kindToString(kind));
-
-			// translate the project prefix.
-			IPath xmlPath = entries[i].getPath();
-			if (xmlPath == null) {
-				xmlPath = new Path("");
-			}
-			if (kind != IPathEntry.CDT_CONTAINER) {
-				// translate to project relative from absolute (unless a device path)
-				if (xmlPath.isAbsolute()) {
-					if (projectPath != null && projectPath.isPrefixOf(xmlPath)) {
-						if (xmlPath.segment(0).equals(projectPath.segment(0))) {
-							xmlPath = xmlPath.removeFirstSegments(1);
-							xmlPath = xmlPath.makeRelative();
-						} else {
-							xmlPath = xmlPath.makeAbsolute();
-						}
-					}
-				}
-			}
-
-			// Save the path
-			element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
-
-			// Specifics to the entries
-			switch(kind) {
-				case IPathEntry.CDT_SOURCE:
-				case IPathEntry.CDT_OUTPUT:
-				case IPathEntry.CDT_PROJECT:
-				case IPathEntry.CDT_CONTAINER:
-					break;
-				case IPathEntry.CDT_LIBRARY: {
-					ILibraryEntry lib = (ILibraryEntry) entries[i];
-					IPath sourcePath = lib.getSourceAttachmentPath();
-					if (sourcePath != null) {
-						// translate to project relative from absolute 
-						if (projectPath != null && projectPath.isPrefixOf(sourcePath)) {
-							if (sourcePath.segment(0).equals(projectPath.segment(0))) {
-								sourcePath = sourcePath.removeFirstSegments(1);
-								sourcePath = sourcePath.makeRelative();
-							}
-						}
-						element.setAttribute(ATTRIBUTE_SOURCEPATH, sourcePath.toString());
-					}
-					if (lib.getSourceAttachmentRootPath() != null) {
-						element.setAttribute(ATTRIBUTE_ROOTPATH, lib.getSourceAttachmentRootPath().toString());
-					}
-					if (lib.getSourceAttachmentPrefixMapping() != null) {
-						element.setAttribute(ATTRIBUTE_PREFIXMAPPING, lib.getSourceAttachmentPrefixMapping().toString());
-					}
-					break;
-				}
-				case IPathEntry.CDT_INCLUDE: {
-					IIncludeEntry include = (IIncludeEntry) entries[i];
-					IPath includePath = include.getIncludePath();
-					element.setAttribute(ATTRIBUTE_INCLUDE, includePath.toString());
-					if (include.isSystemInclude()) {
-						element.setAttribute(ATTRIBUTE_SYSTEM, VALUE_TRUE);
-					}
-					break;
-				}
-				case IPathEntry.CDT_MACRO: {
-					IMacroEntry macro = (IMacroEntry) entries[i];
-					element.setAttribute(ATTRIBUTE_NAME, macro.getMacroName());
-					element.setAttribute(ATTRIBUTE_VALUE, macro.getMacroValue());
-					break;
-				}
-			}
-
-			if (entries[i] instanceof APathEntry) {
-				APathEntry entry = (APathEntry) entries[i];
-
-				// save the basePath or the baseRef
-				IPath basePath = entry.getBasePath();
-				IPath baseRef = entry.getBaseReference();
-				if (basePath != null && !basePath.isEmpty()) {
-					element.setAttribute(ATTRIBUTE_BASE_PATH, basePath.toString());
-				} else if (baseRef != null && !baseRef.isEmpty()) {
-					element.setAttribute(ATTRIBUTE_BASE_REF, baseRef.toString());
-				}
-
-				// Save the exclusions attributes
-				IPath[] exclusionPatterns = entry.getExclusionPatterns();
-				if (exclusionPatterns.length > 0) {
-					StringBuffer excludeRule = new StringBuffer(10);
-					for (int j = 0, max = exclusionPatterns.length; j < max; j++) {
-						if (j > 0) {
-							excludeRule.append('|');
-						}
-						excludeRule.append(exclusionPatterns[j]);
-					}
-					element.setAttribute(ATTRIBUTE_EXCLUDING, excludeRule.toString());
-				}
-			}
-
-			// Save the export attribute
-			if (entries[i].isExported()) {
-				element.setAttribute(ATTRIBUTE_EXPORTED, VALUE_TRUE);
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.ICDescriptorListener#descriptorChanged(org.eclipse.cdt.core.CDescriptorEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.resources.IPathEntryStoreListener#pathEntryStoreChanged(org.eclipse.cdt.core.resources.PathEntryChangedEvent)
 	 */
-	public void descriptorChanged(CDescriptorEvent event) {
-		if (event.getType() == CDescriptorEvent.CDTPROJECT_CHANGED) {
-			ICDescriptor cdesc = event.getDescriptor();
-			if (cdesc != null) {
-				CModelManager manager = CModelManager.getDefault();
-				IProject project = cdesc.getProject();
-				if (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project)) {
-					ICProject cproject = manager.create(project);
-					try {
-						IPathEntry[] oldResolvedEntries = getResolvedPathEntries(cproject);
-						resolvedMap.remove(cproject);
-						IPathEntry[] newResolvedEntries = getResolvedPathEntries(cproject);
-						ICElementDelta[] deltas = generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
-						if (deltas.length > 0) {
-							cproject.close();
-							for (int i = 0; i < deltas.length; i++) {
-								manager.registerCModelDelta(deltas[i]);
-							}
-							manager.fire(ElementChangedEvent.POST_CHANGE);
-						}
-					} catch (CModelException e) {
+	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
+		IProject project = event.getProject();
+		if (project != null && (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project))) {
+			CModelManager manager = CModelManager.getDefault();
+			ICProject cproject = manager.create(project);
+			try {
+				IPathEntry[] oldResolvedEntries = getResolvedPathEntries(cproject);
+				resolvedMap.remove(cproject);
+				IPathEntry[] newResolvedEntries = getResolvedPathEntries(cproject);
+				ICElementDelta[] deltas = generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
+				if (deltas.length > 0) {
+					cproject.close();
+					for (int i = 0; i < deltas.length; i++) {
+						manager.registerCModelDelta(deltas[i]);
 					}
+					manager.fire(ElementChangedEvent.POST_CHANGE);
 				}
+			} catch (CModelException e) {
 			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
+	 */
+	public void elementChanged(ElementChangedEvent event) {
+		try {
+			processDelta(event.getDelta());
+		} catch(CModelException e) {
+		}
+	}
+
+	protected void processDelta(ICElementDelta delta) throws CModelException {
+		int kind= delta.getKind();
+		int flags= delta.getFlags();
+		ICElement element= delta.getElement();
+
+		//System.out.println("Processing " + element);
+
+		// handle closing and removing of projects
+		if (((flags & ICElementDelta.F_CLOSED) != 0) || (kind == ICElementDelta.REMOVED)) {
+			if (element.getElementType() == ICElement.C_PROJECT) {
+				IProject project = element.getCProject().getProject();
+				IPathEntryStore store = (IPathEntryStore)storeMap.remove(project);
+				store.removePathEntryStoreListener(this);
+				resolvedMap.remove(project);
+			}
+		}
+		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
+		for (int i= 0; i < affectedChildren.length; i++) {
+			processDelta(affectedChildren[i]);
 		}
 	}
 }

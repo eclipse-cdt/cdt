@@ -1,3 +1,9 @@
+2004-11-10 Alain Magloire
+	Fix for PR 78308, on deleting of non-C resources, no deltas
+	was fired.
+
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+
 2004-11-05 Alain Magloire
 	More framework for the formatter.
 	* src/org/eclipse/cdt/core/ToolFactory.java

@@ -63,7 +63,7 @@ public class CTagsEntry implements ITagEntry {
 		String delim = TAB_SEPARATOR;
 		StringTokenizer st = new StringTokenizer(line, delim);
 		for (int state = 0; st.hasMoreTokens(); state++) {
-			String token = st.nextToken(delim);
+			String token = st.nextToken();
 			switch (state) {
 				case 0: // TAG_NAME:
 					tagName = token;
@@ -71,33 +71,52 @@ public class CTagsEntry implements ITagEntry {
 
 				case 1: // FILE_NAME:
 					fileName = token;
-					delim = PATTERN_SEPARATOR;
 				break;
 
 				case 2: // PATTERN;
 					try {
-						String sub = token.substring(1);
+						String sub = token.trim();
 						if (Character.isDigit(sub.charAt(0))) {
 							lineNumber = Integer.parseInt(sub);
 						} else {
+							// Filter out the prepend delimeter.
+							if (sub.startsWith("/") || sub.startsWith("?")) {
+								sub = sub.substring(1);
+							}
+							if (sub.startsWith("^")) {
+								sub = sub.substring(1);
+							}
+
 							// Filter out the delimiters
-							int i = sub.indexOf("/^");
-							int j = sub.lastIndexOf("$/");
-							try {
-								if(i >= 0 && j >= 0 ) {
-									sub = sub.substring(i + 2, j);
-								} else if(i >= 0) {
-									sub = sub.substring(i + 2, sub.length()-1);
-								}
-							} catch (Exception e) {}
+							if (sub.endsWith("\"")) {
+								int j = sub.lastIndexOf('"');
+								sub = sub.substring(0, j);
+							}
+							if (sub.endsWith(";")) {
+								int j = sub.lastIndexOf(';');
+								sub = sub.substring(0, j);
+							}
+							if (sub.endsWith("?")) {
+								int j = sub.lastIndexOf('?');
+								sub = sub.substring(0, j);
+							}
+							if (sub.endsWith("/")) {
+								int j = sub.lastIndexOf('/');
+								sub = sub.substring(0, j);
+							}
+							if (sub.endsWith("$")) {			
+								int j = sub.lastIndexOf('$');
+								sub = sub.substring(0, j);
+							}
 							pattern = sub;
 						}
 					} catch (NumberFormatException e) {
+						pattern = token;
 						//e.printStackTrace();
 					} catch (IndexOutOfBoundsException e) {
+						pattern = token;
 						//e.printStackTrace();
 					}
-					delim = TAB_SEPARATOR;
 				break;
 
 				default: // EXTENSION_FIELDS:

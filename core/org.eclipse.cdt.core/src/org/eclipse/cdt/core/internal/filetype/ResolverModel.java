@@ -594,12 +594,9 @@ public class ResolverModel implements IResolverModel {
 		return custom.booleanValue();
 	}
 	
-	private ICDescriptor getProjectDescriptor(IProject project) {
+	private ICDescriptor getProjectDescriptor(IProject project) throws CoreException {
 		ICDescriptor descriptor = null;
-		try {
-			descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
-		} catch (CoreException e) {
-		}
+		descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 		return descriptor;
 	}
 	
@@ -638,7 +635,7 @@ public class ResolverModel implements IResolverModel {
 	}
 
 	public void saveProjectResolver(IProject project, ICFileTypeResolver resolver) {
-		ResolverModel	model	= ResolverModel.getDefault();
+		//ResolverModel	model	= ResolverModel.getDefault();
 		Element			root	= getProjectData(project);
 		Document 		doc 	= root.getOwnerDocument();
 		Node			child	= root.getFirstChild();

@@ -1,3 +1,8 @@
+2004-06-07 Alain Magloire
+
+	Fix for PR 65524
+	* src/org/eclipse/cdt/core/internal/filetype/ResolverModel.java
+
 2004-06-04 Alain Magloire
 
 	Potential deadlock in CElement.getElementInfo()

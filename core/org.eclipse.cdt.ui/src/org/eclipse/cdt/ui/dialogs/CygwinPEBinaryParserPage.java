@@ -87,17 +87,17 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 				}
 				for (int i = 0; i < cext.length; i++) {
 					if (cext[i].getID().equals(parserID)) {
-						String orig = cext[0].getExtensionData("addr2line"); //$NON-NLS-1$
+						String orig = cext[i].getExtensionData("addr2line"); //$NON-NLS-1$
 						if (orig == null || !orig.equals(addr2line)) {
-							cext[0].setExtensionData("addr2line", addr2line); //$NON-NLS-1$
+							cext[i].setExtensionData("addr2line", addr2line); //$NON-NLS-1$
 						}
-						orig = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$
+						orig = cext[i].getExtensionData("c++filt"); //$NON-NLS-1$
 						if (orig == null || !orig.equals(cppfilt)) {
-							cext[0].setExtensionData("c++filt", cppfilt); //$NON-NLS-1$
+							cext[i].setExtensionData("c++filt", cppfilt); //$NON-NLS-1$
 						}
-						orig = cext[0].getExtensionData("cygpath"); //$NON-NLS-1$
+						orig = cext[i].getExtensionData("cygpath"); //$NON-NLS-1$
 						if (orig == null || !orig.equals(cygpath)) {
-							cext[0].setExtensionData("cygpath", cygpath); //$NON-NLS-1$
+							cext[i].setExtensionData("cygpath", cygpath); //$NON-NLS-1$
 						}
 					}
 				}
@@ -122,28 +122,21 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		String cppfilt = null;
 		String cygpath = null;
 		IProject proj = getContainer().getProject();
-		if (proj != null) {
-			try {
-				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj);
-				ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-				if (cext.length > 0) {
-					addr2line = cext[0].getExtensionData("addr2line"); //$NON-NLS-1$;
-					cppfilt = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$;
-					cygpath = cext[0].getExtensionData("cygpath"); //$NON-NLS-1$;
-				}
-			} catch (CoreException e) {
-			}
-		} else {
-			Preferences store = getContainer().getPreferences();
-			if (store != null) {
+		Preferences store = getContainer().getPreferences();
+		if (store != null) {
+			if (proj != null) {
 				addr2line = store.getString(PREF_ADDR2LINE_PATH);
 				cppfilt = store.getString(PREF_CPPFILT_PATH);
 				cygpath = store.getString(PREF_CYGPATH_PATH);
+			} else {
+				addr2line = store.getDefaultString(PREF_ADDR2LINE_PATH);
+				cppfilt = store.getDefaultString(PREF_CPPFILT_PATH);
+				cygpath = store.getDefaultString(PREF_CYGPATH_PATH);
 			}
+			fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line); //$NON-NLS-1$;
+			fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$;
+			fCygPathCommandText.setText((cygpath == null || cygpath.length() == 0) ? "cygpath" : cygpath); //$NON-NLS-1$;
 		}
-		fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line); //$NON-NLS-1$;
-		fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$;
-		fCygPathCommandText.setText((cygpath == null || cygpath.length() == 0) ? "cygpath" : cygpath); //$NON-NLS-1$;
 	}
 
 	/*
@@ -269,7 +262,35 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		});
 
 		setControl(comp);
-		performDefaults();
+		initializeValues();
 	}
 
+	private void initializeValues() {
+		String addr2line = null;
+		String cppfilt = null;
+		String cygpath = null;
+		IProject proj = getContainer().getProject();
+		if (proj != null) {
+			try {
+				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj);
+				ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+				if (cext.length > 0) {
+					addr2line = cext[0].getExtensionData("addr2line"); //$NON-NLS-1$;
+					cppfilt = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$;
+					cygpath = cext[0].getExtensionData("cygpath"); //$NON-NLS-1$;
+				}
+			} catch (CoreException e) {
+			}
+		} else {
+			Preferences store = getContainer().getPreferences();
+			if (store != null) {
+				addr2line = store.getString(PREF_ADDR2LINE_PATH);
+				cppfilt = store.getString(PREF_CPPFILT_PATH);
+				cygpath = store.getString(PREF_CYGPATH_PATH);
+			}
+		}
+		fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line); //$NON-NLS-1$;
+		fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$;
+		fCygPathCommandText.setText((cygpath == null || cygpath.length() == 0) ? "cygpath" : cygpath); //$NON-NLS-1$;
+	}
 }

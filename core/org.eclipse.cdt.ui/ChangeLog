@@ -1,3 +1,15 @@
+2004-04-02 David Inglis
+
+	Support selection of multiple binary parsers.
+	
+	* plugin.xml
+	* src/org/eclipse/cdt/internal/ui/CUIMessages.properties
+	* src/org/eclipse/cdt/ui/dialogs/AbstractBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/AbstractCOptionPage.java
+	* src/org/eclipse/cdt/ui/dialogs/BinaryParserBlock.java
+	* src/org/eclipse/cdt/ui/dialogs/CygwinPEBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/GNUElfBinaryParserPage.java
+
 2004-04-02 Alain Magloire
 
 	Add new filter to hide/show non C Projects.

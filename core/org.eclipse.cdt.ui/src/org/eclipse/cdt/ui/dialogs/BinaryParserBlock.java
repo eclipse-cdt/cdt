@@ -10,8 +10,13 @@
  ***********************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -19,6 +24,13 @@ import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
@@ -28,81 +40,142 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 	private static final String PREFIX = "BinaryParserBlock"; //$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label";  //$NON-NLS-1$
+	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
 	private static final String DESC = PREFIX + ".desc"; //$NON-NLS-1$
 
-	protected Combo comboBox;
-	HashMap idMap = new HashMap();
-	String initial;
-	Preferences fPrefs;
+	protected CheckedListDialogField binaryList;
+	Map configMap;
+	List initialSelected;
 
-	public BinaryParserBlock(Preferences prefs) {
+	protected class BinaryParserConfiguration {
+
+		IExtension fExtension;
+		public BinaryParserConfiguration(IExtension extension) {
+			fExtension = extension;
+		}
+
+		public String getID() {
+			return fExtension.getUniqueIdentifier();
+		}
+
+		public String getName() {
+			return fExtension.getLabel();
+		}
+
+		public String toString() {
+			return fExtension.getUniqueIdentifier();
+		}
+
+		public boolean equals(Object obj) {
+			if (obj instanceof BinaryParserConfiguration) {
+				return this.getID().equals(((BinaryParserConfiguration) obj).getID());
+			}
+			return super.equals(obj);
+		}
+	}
+
+	protected class BinaryParserLabelProvider extends LabelProvider {
+
+		public String getText(Object element) {
+			return ((BinaryParserConfiguration) element).getName();
+		}
+	}
+
+	public BinaryParserBlock() {
 		super(CUIPlugin.getResourceString(LABEL));
 		setDescription(CUIPlugin.getResourceString(DESC));
-		fPrefs = prefs;
+		String[] buttonLabels = new String[]{
+		/* 0 */CUIMessages.getString("BinaryParserBlock.button.up"), //$NON-NLS-1$
+				/* 1 */CUIMessages.getString("BinaryParserBlock.button.down")}; //$NON-NLS-1$
+
+		IListAdapter listAdapter = new IListAdapter() {
+
+			public void customButtonPressed(ListDialogField field, int index) {
+			}
+
+			public void selectionChanged(ListDialogField field) {
+				handleBinaryParserChanged();
+			}
+
+			public void doubleClicked(ListDialogField field) {
+			}
+
+		};
+
+		binaryList = new CheckedListDialogField(listAdapter, buttonLabels, new BinaryParserLabelProvider()) {
+
+			protected int getListStyle() {
+				int style = super.getListStyle();
+				return style & ~SWT.MULTI;
+			}
+		};
+		binaryList.setDialogFieldListener(new IDialogFieldListener() {
+
+			public void dialogFieldChanged(DialogField field) {
+				if (getContainer() != null) {
+					getContainer().updateContainer();
+					handleBinaryParserChanged();
+				}
+			}
+		});
+		binaryList.setLabelText(CUIMessages.getString("BinaryParserBlock.binaryParser")); //$NON-NLS-1$
+		binaryList.setUpButtonIndex(0);
+		binaryList.setDownButtonIndex(1);
+		initializeParserList();
+	}
+
+	private void initializeParserList() {
+		IExtensionPoint point = CCorePlugin.getDefault().getDescriptor().getExtensionPoint(CCorePlugin.BINARY_PARSER_SIMPLE_ID);
+		if (point != null) {
+			IExtension[] exts = point.getExtensions();
+			configMap = new HashMap(exts.length);
+			for (int i = 0; i < exts.length; i++) {
+				configMap.put(exts[i].getUniqueIdentifier(), new BinaryParserConfiguration(exts[i]));
+			}
+		}
 	}
 
 	public void createControl(Composite parent) {
-		Composite control = ControlFactory.createComposite(parent, 2);
-		((GridLayout) control.getLayout()).makeColumnsEqualWidth = false;
-		((GridLayout) control.getLayout()).marginWidth = 5;
-		setControl(control);
+		PixelConverter converter = new PixelConverter(parent);
+
+		Composite composite = ControlFactory.createComposite(parent, 1);
+		((GridData) (composite.getLayoutData())).horizontalAlignment = GridData.FILL_HORIZONTAL;
+		setControl(composite);
 
 		WorkbenchHelp.setHelp(getControl(), ICHelpContextIds.BINARY_PARSER_PAGE);
 
-		ControlFactory.createEmptySpace(control, 2);
+		Composite listComposite = ControlFactory.createComposite(composite, 1);
+		LayoutUtil.doDefaultLayout(listComposite, new DialogField[]{binaryList}, true);
+		LayoutUtil.setHorizontalGrabbing(binaryList.getListControl(null));
 
-		Label label = ControlFactory.createLabel(control, CUIMessages.getString("BinaryParserBlock.binaryParser")); //$NON-NLS-1$
-		label.setLayoutData(new GridData());
-		comboBox = new Combo(control, SWT.DROP_DOWN | SWT.READ_ONLY);
-		GridData gd = new GridData(GridData.GRAB_HORIZONTAL);
-		gd.grabExcessHorizontalSpace = true;
-		comboBox.setLayoutData(gd);
-		comboBox.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				getContainer().updateContainer();
-				handleBinaryParserChanged();
-			}
-		});
-		Iterator items = idMap.keySet().iterator();
-		while (items.hasNext()) {
-			comboBox.add((String) items.next());
-		}
-
-		if (initial != null) {
-			comboBox.setText(initial);
-		}
+		int buttonBarWidth = converter.convertWidthInCharsToPixels(15);
+		binaryList.setButtonsMinWidth(buttonBarWidth);
 
 		// Add the Parser UI contribution.
-		Group parserGroup = new Group(control, SWT.SHADOW_ETCHED_IN);
+		Group parserGroup = new Group(composite, SWT.SHADOW_ETCHED_IN);
 		parserGroup.setText(CUIMessages.getString("BinaryParserBlock.binaryParserOptions")); //$NON-NLS-1$
-		GridLayout tabHolderLayout = new GridLayout();
-		tabHolderLayout.marginHeight = 0;
-		tabHolderLayout.marginWidth = 0;
-		tabHolderLayout.numColumns = 1;
-		parserGroup.setLayout(tabHolderLayout);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
+
+		GridData gd = new GridData();
+		gd.heightHint = converter.convertHorizontalDLUsToPixels(150);
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		gd.grabExcessVerticalSpace = true;
 		parserGroup.setLayoutData(gd);
 		// Must set the composite parent to super class.
 		setCompositeParent(parserGroup);
 		// fire a change event, to quick start.
 		handleBinaryParserChanged();
+		parent.layout(true);
 
 	}
 
@@ -111,42 +184,56 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(CUIMessages.getString("BinaryParserBlock.settingBinaryParser"), 2); //$NON-NLS-1$
-		final String selected = comboBox.getText();
+		List parsers = binaryList.getElements();
+		final List selected = new ArrayList(); // must do this to get proper order.
+		for (int i = 0; i < parsers.size(); i++) {
+			if (binaryList.isChecked(parsers.get(i))) {
+				selected.add(parsers.get(i));
+			}
+		}
 		if (selected != null) {
 			if (getContainer().getProject() != null) {
 				ICDescriptorOperation op = new ICDescriptorOperation() {
 
 					public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-						if (initial == null || !selected.equals(initial)) {
+						if (initialSelected == null || !selected.equals(initialSelected)) {
 							descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-							descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, (String) idMap.get(selected));
+							for (int i = 0; i < selected.size(); i++) {
+								descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID,
+										((BinaryParserConfiguration) selected.get(i)).getID());
+							}
 						}
 						monitor.worked(1);
 						// Give a chance to the contributions to save.
 						// We have to do it last to make sure the parser id
 						// is save
 						// in .cdtproject
-						ICOptionPage page = getCurrentBinaryParserPage();
-						if (page != null) {
-							page.performApply(new SubProgressMonitor(monitor, 1));
+						for (int i = 0; i < selected.size(); i++) {
+							ICOptionPage page = getBinaryParserPage(((BinaryParserConfiguration) selected.get(i)).getID());
+							if (page != null && page.getControl() != null) {
+								page.performApply(new SubProgressMonitor(monitor, 1));
+							}
 						}
 					}
 				};
 				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(getContainer().getProject(), op, monitor);
 			} else {
-				if (initial == null || !selected.equals(initial)) {
-					fPrefs.setValue(CCorePlugin.PREF_BINARY_PARSER, (String) idMap.get(selected));
+				if (initialSelected == null || !selected.equals(initialSelected)) {
+					Preferences store = getContainer().getPreferences();
+					if (store != null) {
+						store.setValue(CCorePlugin.PREF_BINARY_PARSER, arrayToString(selected.toArray()));
+					}
 				}
 				monitor.worked(1);
 				// Give a chance to the contributions to save.
-				// We have to do it last to make sure the parser id is save
-				// in .cdtproject
-				ICOptionPage page = getCurrentBinaryParserPage();
-				if (page != null) {
-					page.performApply(new SubProgressMonitor(monitor, 1));
+				for (int i = 0; i < selected.size(); i++) {
+					ICOptionPage page = getBinaryParserPage(((BinaryParserConfiguration) selected.get(i)).getID());
+					if (page != null && page.getControl() != null) {
+						page.performApply(new SubProgressMonitor(monitor, 1));
+					}
 				}
 			}
-			initial = selected;
+			initialSelected = selected;
 		}
 		monitor.done();
 	}
@@ -154,67 +241,132 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	public void setContainer(ICOptionContainer container) {
 		super.setContainer(container);
 
-		IExtensionPoint point = CCorePlugin.getDefault().getDescriptor().getExtensionPoint(CCorePlugin.BINARY_PARSER_SIMPLE_ID);
-		if (point != null) {
-			IExtension[] exts = point.getExtensions();
-			for (int i = 0; i < exts.length; i++) {
-				idMap.put(exts[i].getLabel(), exts[i].getUniqueIdentifier());
-			}
-		}
+		List elements = new ArrayList();
+
 		if (getContainer().getProject() != null) {
 			try {
 				ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(getContainer().getProject());
 				ICExtensionReference[] ref = desc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-				if (ref.length > 0) {
-					IExtension ext = point.getExtension(ref[0].getID());
-					if (ext != null) {
-						initial = ext.getLabel();
+				initialSelected = new ArrayList(ref.length);
+				for (int i = 0; i < ref.length; i++) {
+					if (configMap.get(ref[i].getID()) != null) {
+						initialSelected.add(configMap.get(ref[i].getID()));
+						elements.add(configMap.get(ref[i].getID()));
 					}
 				}
-
 			} catch (CoreException e) {
 			}
-		}
-		if (initial == null) {
-			String id = fPrefs.getString(CCorePlugin.PREF_BINARY_PARSER);
-			if (id == null || id.length() == 0) {
-				initial = point.getExtension(CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID).getLabel();
-			} else {
-				IExtension ext = point.getExtension(id);
-				if (ext != null) {
-					initial = ext.getLabel();
+			Iterator iter = configMap.entrySet().iterator();
+			while (iter.hasNext()) {
+				Entry entry = (Entry) iter.next();
+				if (!elements.contains(entry.getValue())) {
+					elements.add(entry.getValue());
 				}
-
 			}
+			binaryList.setElements(elements);
+			if (initialSelected != null)
+				binaryList.setCheckedElements(initialSelected);
 		}
+		if (initialSelected == null) {
+			Preferences store = getContainer().getPreferences();
+			String id = null;
+			if (store != null) {
+				id = store.getString(CCorePlugin.PREF_BINARY_PARSER);
+			}
 
+			if (id != null && id.length() > 0) {
+				String[] ids = parseStringToArray(id);
+				initialSelected = new ArrayList(ids.length);
+				for (int i = 0; i < ids.length; i++) {
+					if (configMap.get(ids[i]) != null) {
+						initialSelected.add(configMap.get(ids[i]));
+						elements.add(configMap.get(ids[i]));
+					}
+				}
+			}
+			Iterator iter = configMap.entrySet().iterator();
+			while (iter.hasNext()) {
+				Entry entry = (Entry) iter.next();
+				if (!elements.contains(entry.getValue())) {
+					elements.add(entry.getValue());
+				}
+			}
+			binaryList.setElements(elements);
+			if (initialSelected != null)
+				binaryList.setCheckedElements(initialSelected);
+			// reset this since we only want to prevent applying non-changed selections on the project
+			// and project creation we always want to apply selection.
+			initialSelected = null;
+		}
+	}
+	private String arrayToString(Object[] array) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < array.length; i++) {
+			buf.append(array[i].toString()).append(';');
+		}
+		return buf.toString();
+	}
+
+	private String[] parseStringToArray(String syms) {
+		if (syms != null && syms.length() > 0) {
+			StringTokenizer tok = new StringTokenizer(syms, ";"); //$NON-NLS-1$
+			ArrayList list = new ArrayList(tok.countTokens());
+			while (tok.hasMoreElements()) {
+				list.add(tok.nextToken());
+			}
+			return (String[]) list.toArray(new String[list.size()]);
+		}
+		return new String[0];
 	}
 
 	public void performDefaults() {
-		IExtensionPoint point = CCorePlugin.getDefault().getDescriptor().getExtensionPoint(CCorePlugin.BINARY_PARSER_SIMPLE_ID);
-		String id;
-		if (getContainer().getProject() != null) {
-			id = fPrefs.getString(CCorePlugin.PREF_BINARY_PARSER);
-		} else {
-			id = fPrefs.getDefaultString(CCorePlugin.PREF_BINARY_PARSER);
+		String id = null;
+
+		// default current pages.
+		List selected = binaryList.getCheckedElements();
+		for (int i = 0; i < selected.size(); i++) {
+			ICOptionPage page = getBinaryParserPage(((BinaryParserConfiguration) selected.get(i)).getID());
+			if (page != null) {
+				page.performDefaults();
+			}
 		}
-		String selected;
-		if (id == null || id.length() == 0) {
-			selected = point.getExtension(CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID).getLabel();
-		} else {
-			selected = point.getExtension(id).getLabel();
+		Preferences store = getContainer().getPreferences();
+		if (store != null) {
+			if (getContainer().getProject() != null) {
+				id = store.getString(CCorePlugin.PREF_BINARY_PARSER);
+			} else {
+				id = store.getDefaultString(CCorePlugin.PREF_BINARY_PARSER);
+			}
 		}
-		comboBox.setText(selected);
+		//default selection
+		selected.clear();
+		if (id != null) {
+			String[] ids = parseStringToArray(id);
+			for (int i = 0; i < ids.length; i++) {
+				if (configMap.get(ids[i]) != null) {
+					selected.add(configMap.get(ids[i]));
+				}
+			}
+		}
+		binaryList.setCheckedElements(selected);
 		// Give a change to the UI contributors to react.
 		// But do it last after the comboBox is set.
 		handleBinaryParserChanged();
-		super.performDefaults();
 		getContainer().updateContainer();
 	}
 
 	protected String getCurrentBinaryParserID() {
-		String selected = comboBox.getText();
-		return (String) idMap.get(selected);
+		List list = binaryList.getSelectedElements();
+		if (list.size() > 0) {
+			BinaryParserConfiguration selected = (BinaryParserConfiguration) list.get(0);
+			if (binaryList.isChecked(selected)) {
+				return selected.getID();
+			}
+		}
+		return null;
 	}
 
+	protected String[] getBinaryParserIDs() {
+		return (String[]) configMap.keySet().toArray(new String[configMap.keySet().size()]);
+	}
 }

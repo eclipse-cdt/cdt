@@ -556,9 +556,6 @@
             class="org.eclipse.cdt.ui.dialogs.GNUElfBinaryParserPage"
             id="ElfBinaryParserPage">
       </parserPage>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.ui.BinaryParserPage">
       <parserPage
             parserID="org.eclipse.cdt.core.Cygwin_PE"
             class="org.eclipse.cdt.ui.dialogs.CygwinPEBinaryParserPage"

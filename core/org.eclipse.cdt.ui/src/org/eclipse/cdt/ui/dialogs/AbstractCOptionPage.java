@@ -22,15 +22,15 @@ public abstract class AbstractCOptionPage extends DialogPage implements ICOption
 	private ICOptionContainer fContainer;
 	
 
-	public AbstractCOptionPage() {
+	protected AbstractCOptionPage() {
 		super();
 	}
 
-	public AbstractCOptionPage(String title) {
+	protected AbstractCOptionPage(String title) {
 		super(title);
 	}
 
-	public AbstractCOptionPage(String title, ImageDescriptor image) {
+	protected AbstractCOptionPage(String title, ImageDescriptor image) {
 		super(title, image);
 	}
 

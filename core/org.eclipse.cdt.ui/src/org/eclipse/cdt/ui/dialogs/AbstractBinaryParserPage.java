@@ -7,7 +7,7 @@
  * 
  * Contributors:
  * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ ***********************************************************************/
 
 package org.eclipse.cdt.ui.dialogs;
 
@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -22,7 +23,6 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 
@@ -31,17 +31,48 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 
 	// Composite parent provided by the block.
 	protected Composite fCompositeParent;
+	private ICOptionPage fCurrentPage;
 
-	public AbstractBinaryParserPage() {
-		super();
+	protected class BinaryParserPageConfiguration {
+
+		ICOptionPage page;
+		IConfigurationElement fElement;
+
+		public BinaryParserPageConfiguration(IConfigurationElement element) {
+			fElement = element;
+		}
+
+		public ICOptionPage getPage() throws CoreException {
+			if (page == null) {
+				page = (ICOptionPage) fElement.createExecutableExtension("class"); //$NON-NLS-1$
+			}
+			return page;
+		}
 	}
 
-	public AbstractBinaryParserPage(String title) {
+	protected AbstractBinaryParserPage(String title) {
 		super(title);
+		initializeParserPageMap();
+
 	}
 
-	public AbstractBinaryParserPage(String title, ImageDescriptor image) {
+	protected AbstractBinaryParserPage(String title, ImageDescriptor image) {
 		super(title, image);
+		initializeParserPageMap();
+	}
+
+	private void initializeParserPageMap() {
+		fParserPageMap = new HashMap(5);
+
+		IPluginDescriptor descriptor = CUIPlugin.getDefault().getDescriptor();
+		IExtensionPoint extensionPoint = descriptor.getExtensionPoint("BinaryParserPage"); //$NON-NLS-1$
+		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
+		for (int i = 0; i < infos.length; i++) {
+			if (infos[i].getName().equals("parserPage")) { //$NON-NLS-1$
+				String id = infos[i].getAttribute("parserID"); //$NON-NLS-1$
+				fParserPageMap.put(id, new BinaryParserPageConfiguration(infos[i]));
+			}
+		}
 	}
 
 	protected Composite getCompositeParent() {
@@ -50,110 +81,81 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 
 	protected void setCompositeParent(Composite parent) {
 		fCompositeParent = parent;
+		fCompositeParent.setLayout(new TabFolderLayout());
 	}
 
-	/**
-	 * Save the current Binary parser page.
-	 */
-	protected void setCurrentBinaryParserPage(ICOptionPage current) {
-		fCurrentBinaryParserPage = current;
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		handleBinaryParserChanged();
 	}
-                                                                                                                             
-	/**
-	 * Get the current Binary parser page.
-	 */
-	protected ICOptionPage getCurrentBinaryParserPage() {
-		return fCurrentBinaryParserPage;
-	}
-
 	/**
 	 * Notification that the user changed the selection of the Binary Parser.
 	 */
 	protected void handleBinaryParserChanged() {
-		loadDynamicBinaryParserArea();
-	}
-
-	/**
-	 * Show the contributed piece of UI that was registered for the Binary parser id.
-	 */
-	protected void loadDynamicBinaryParserArea() {
-		// Dispose of any current child widgets in the tab holder area
-		Control[] children = getCompositeParent().getChildren();
-		for (int i = 0; i < children.length; i++) {
-			children[i].dispose();
+		if (getCompositeParent() == null) {
+			return;
 		}
-
-		// Retrieve the dynamic UI for the current parser
-		String parserID = getCurrentBinaryParserID();
-		ICOptionPage page = getBinaryParserPage(parserID);
-		if (page != null) {
-			Composite parent = getCompositeParent();
-			page.setContainer(getContainer());
-			page.createControl(parent);
-			page.getControl().setVisible(true);
-			parent.layout(true);
-		}
-		setCurrentBinaryParserPage(page);
-	}
-
-	public void setContainer(ICOptionContainer container) {
-		super.setContainer(container);
-		initializeParserPageMap();
-		ICOptionPage page = getCurrentBinaryParserPage();
-		if (page != null)
-			page.setContainer(container);
-	}
-
-	public ICOptionPage getBinaryParserPage(String parserID) {
-		if (fParserPageMap == null) {
-			initializeParserPageMap();
-		}
-		IConfigurationElement configElement = (IConfigurationElement) fParserPageMap.get(parserID);
-		ICOptionPage page = null;
-		if (configElement != null) {
-			try {
-				page = (ICOptionPage) configElement.createExecutableExtension("class"); //$NON-NLS-1$
-			} catch (CoreException ce) {
-				//ce.printStackTrace();
+		String[] enabled = getBinaryParserIDs();
+		ICOptionPage page;
+		for (int i = 0; i < enabled.length; i++) { // create all enabled pages
+			page = getBinaryParserPage(enabled[i]);
+			if (page != null) {
+				if (page.getControl() == null) {
+					Composite parent = getCompositeParent();
+					page.setContainer(getContainer());
+					page.createControl(parent);
+					parent.layout(true);
+				} else {
+					page.setVisible(false);
+				}
 			}
 		}
-		return page;
+		// Retrieve the dynamic UI for the current parser
+		String parserID = getCurrentBinaryParserID();
+		page = getBinaryParserPage(parserID);
+		if (page != null) {
+			page.setVisible(true);
+		}
+		setCurrentPage(page);
 	}
 
-	protected void initializeParserPageMap() {
-		fParserPageMap = new HashMap(5);
+	protected ICOptionPage getCurrentPage() {
+		return fCurrentPage;
+	}
 
-		IPluginDescriptor descriptor = CUIPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint = descriptor.getExtensionPoint("BinaryParserPage"); //$NON-NLS-1$
-		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-		for (int i = 0; i < infos.length; i++) {
-			String id = infos[i].getAttribute("parserID"); //$NON-NLS-1$
-			fParserPageMap.put(id, infos[i]);
+	protected void setCurrentPage(ICOptionPage page) {
+		fCurrentPage = page;
+	}
+
+	protected ICOptionPage getBinaryParserPage(String parserID) {
+		BinaryParserPageConfiguration configElement = (BinaryParserPageConfiguration) fParserPageMap.get(parserID);
+		if (configElement != null) {
+			try {
+				return configElement.getPage();
+			} catch (CoreException e) {
+			}
 		}
+		return null;
 	}
 
 	abstract protected String getCurrentBinaryParserID();
 
+	abstract protected String[] getBinaryParserIDs();
+
 	abstract public void createControl(Composite parent);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void performApply(IProgressMonitor monitor) throws CoreException {
-		ICOptionPage page = getCurrentBinaryParserPage();
-		if (page != null) {
-			page.performApply(monitor);
-		}
-	}
+	abstract public void performApply(IProgressMonitor monitor) throws CoreException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
-	public void performDefaults() {
-		ICOptionPage page = getCurrentBinaryParserPage();
-		if (page != null) {
-			page.performDefaults();
-		}
-	}
+	abstract public void performDefaults();
 
 }

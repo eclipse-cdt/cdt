@@ -469,4 +469,11 @@ public class NullSourceElementRequestor implements ISourceElementRequestor
 		// TODO Auto-generated method stub
 		
 	} 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#parserTimeout()
+	 */
+	public boolean parserTimeout() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

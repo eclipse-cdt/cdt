@@ -115,6 +115,7 @@ public class EditTemplateDialog extends StatusDialog {
 			assistant.enableAutoActivation(enabled);
 			
 			assistant.setAutoActivationDelay(store.getInt(ContentAssistPreference.AUTOACTIVATION_DELAY));
+			
 			assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 			assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 			//assistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));

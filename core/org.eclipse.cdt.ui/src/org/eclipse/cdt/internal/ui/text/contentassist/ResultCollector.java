@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;

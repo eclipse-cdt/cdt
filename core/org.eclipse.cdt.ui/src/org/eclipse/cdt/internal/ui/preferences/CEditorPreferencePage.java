@@ -189,6 +189,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOINSERT));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.TIMEOUT_DELAY));		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_BACKGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FOREGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND));
@@ -278,6 +279,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		store.setDefault(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, true);
 		store.setDefault(ContentAssistPreference.PROJECT_SEARCH_SCOPE, false);
+
+		store.setDefault(ContentAssistPreference.TIMEOUT_DELAY, 3000);
 		
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW, true);
@@ -849,12 +852,15 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		
-		
 		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.insertSingleProposalAutomatically"); //$NON-NLS-1$
 		addCheckBox(contentAssistComposite, label, ContentAssistPreference.AUTOINSERT, 0);
 		
 		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.showProposalsInAlphabeticalOrder"); //$NON-NLS-1$
 		addCheckBox(contentAssistComposite, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
+
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.timeoutDelay"); //$NON-NLS-1$
+		addTextField(contentAssistComposite, label, ContentAssistPreference.TIMEOUT_DELAY, 6, 0, true);
+
 
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following items are grouped for Auto Activation

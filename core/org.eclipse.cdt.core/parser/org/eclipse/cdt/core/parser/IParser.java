@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 
 
-
 /**
  * This is the external interface that all C and C++ parsers in the CDT
  * must implement. 
@@ -35,7 +34,7 @@ public interface IParser  {
 	 * @param offset  offset in the input file where code completion is being requested for 
 	 * @return	an IASTCompletionConstruct that provides a mechanism for determining C/C++ code completion contributions
 	 */
-	public IASTCompletionNode parse( int offset ) throws ParseError;
+	public IASTCompletionNode parse( int offset) throws ParseError;
 	
 	/**
 	 * 
@@ -51,7 +50,7 @@ public interface IParser  {
 	 * @return		-1 for no error, otherwise the character offset where we encountered 
 	 * 				our first unrecoverable error.
 	 */
-	public int getLastErrorOffset(); 
+	public int getLastErrorOffset();
 	
 	
 }

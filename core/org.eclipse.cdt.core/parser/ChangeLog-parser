@@ -1,3 +1,7 @@
+2004-03-25 Hoda Amer
+	Joined effort with Bogdan: Added a parserTimeout() method to ISourceElementRequestor
+	and the ability for the parser to timeout.
+	
 2004-03-23 Andrew Niefer
 	-fix recursive loop leading to StackOverFlowException during template instantiation
 	-fix copy constructors for templated classes

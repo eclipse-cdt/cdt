@@ -491,4 +491,11 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	public Reader createReader(String finalPath) {
 		return ParserUtil.createReader(finalPath);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#parserTimeout()
+	 */
+	public boolean parserTimeout() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.io.CharArrayReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +57,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.parser.util.ASTUtil;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.util.IDebugLogConstants;
 import org.eclipse.cdt.internal.ui.util.Util;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -79,8 +79,10 @@ public class CompletionEngine implements RelevanceConstants {
 	int completionLength = 0;
 	IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 	private Map macroMap = null;
+	private ContentAssistElementRequestor elementRequestor = null;
 	
 	private static final String exceptionKeyword = "..."; //$NON-NLS-1$
+/*	
 	// scope relevance element counters
 	private int numFields = 0;
 	private int numVariables = 0;
@@ -94,9 +96,10 @@ public class CompletionEngine implements RelevanceConstants {
 	private int numEnumerators = 0;
 	private int numNamespaces = 0;
 	private int numTypedefs = 0;
-	
+*/	
 	public CompletionEngine(ICompletionRequestor completionRequestor){
 			requestor = completionRequestor;
+			elementRequestor = new ContentAssistElementRequestor();
 	}
 	
 	private int computeCaseMatchingRelevance(String prefix, String proposalName){
@@ -154,7 +157,6 @@ public class CompletionEngine implements RelevanceConstants {
 		return relevance;
 	}
 	private IASTCompletionNode parse(IWorkingCopy sourceUnit, int completionOffset){
-		ContentAssistElementRequestor requestor = new ContentAssistElementRequestor();
 		// Get resource info
 		IResource currentResource = sourceUnit.getResource();
 		IPath realPath = currentResource.getLocation(); 
@@ -177,8 +179,8 @@ public class CompletionEngine implements RelevanceConstants {
 		IScanner scanner = null;
 		try
 		{
-			scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETION_PARSE, language, requestor, ParserUtil.getScannerLogService() );
-			parser  = ParserFactory.createParser( scanner, requestor, ParserMode.COMPLETION_PARSE, language, ParserUtil.getParserLogService() );
+			scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETION_PARSE, language, elementRequestor, ParserUtil.getScannerLogService() );
+			parser  = ParserFactory.createParser( scanner, elementRequestor, ParserMode.COMPLETION_PARSE, language, ParserUtil.getParserLogService() );
 		}
 		catch( ParserFactoryError pfe )
 		{
@@ -187,10 +189,26 @@ public class CompletionEngine implements RelevanceConstants {
 		if(parser != null){
 			IASTCompletionNode result = null;
 			try {
+				// set timeout
+				IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+				int timeout = store.getInt(ContentAssistPreference.TIMEOUT_DELAY);
+				elementRequestor.setTimeout(timeout);
+
+				// start timer
+				elementRequestor.startTimer();
+				long parserTime = System.currentTimeMillis();				
 				result = parser.parse(completionOffset);
+				log("Time spent in Parser = "+ ( System.currentTimeMillis() - parserTime ) + " ms");		 //$NON-NLS-1$ //$NON-NLS-2$
+				
 				macroMap = scanner.getDefinitions();
 			} catch (ParseError e ) {
-				//TODO - this can be more than just a Not Implemented exception
+				if(e.getErrorKind() == ParseError.ParseErrorKind.TIMEOUT){
+					log("Timeout received !!!!!! "); //$NON-NLS-1$;
+					requestor.acceptError(new Problem(CUIMessages.getString("CEditor.contentassist.timeout"))); //$NON-NLS-1$;
+				}
+			} finally {
+				// stop timer
+				elementRequestor.stopTimer();
 			}
 			return result;
 		} else {
@@ -200,20 +218,20 @@ public class CompletionEngine implements RelevanceConstants {
 	
 	private void addNodeToCompletions(IASTNode node, String prefix, int totalNumberOfResults){
 		if(node instanceof IASTField){
-			numFields++;
+//			numFields++;
 			IASTField field = (IASTField)node;
 			int relevance = computeRelevance(ICElement.C_FIELD, prefix, field.getName());
-			relevance += totalNumberOfResults - numFields;
+			//relevance += totalNumberOfResults - numFields;
 			
 			requestor.acceptField(field.getName(), 
 					ASTUtil.getType(field.getAbstractDeclaration()),
 					field.getVisiblity(), completionStart, completionLength, relevance);
 		}
 		else if (node instanceof IASTParameterDeclaration){
-			numLocalVariables++;
+//			numLocalVariables++;
 			IASTParameterDeclaration param = (IASTParameterDeclaration) node;
 			int relevance = computeRelevance(ICElement.C_VARIABLE_LOCAL, prefix, param.getName());
-			relevance += totalNumberOfResults - numLocalVariables;
+			//relevance += totalNumberOfResults - numLocalVariables;
 			
 			requestor.acceptLocalVariable(param.getName(), 
 					ASTUtil.getType(param),
@@ -224,17 +242,17 @@ public class CompletionEngine implements RelevanceConstants {
 			// get the container to check if it is a local variable
 			IASTNode container = variable.getOwnerScope();
 			if(container instanceof IASTCodeScope){
-				numLocalVariables++;
+//				numLocalVariables++;
 				int relevance = computeRelevance(ICElement.C_VARIABLE_LOCAL, prefix, variable.getName());
-				relevance += totalNumberOfResults - numLocalVariables;
+				//relevance += totalNumberOfResults - numLocalVariables;
 				
 				requestor.acceptLocalVariable(variable.getName(), 
 						ASTUtil.getType(variable.getAbstractDeclaration()),
 						completionStart, completionLength, relevance);
 			}else {
-			numVariables++;
+//			numVariables++;
 			int relevance = computeRelevance(ICElement.C_VARIABLE, prefix, variable.getName());
-			relevance += totalNumberOfResults - numVariables;
+			//relevance += totalNumberOfResults - numVariables;
 			
 			requestor.acceptVariable(variable.getName(), 
 				ASTUtil.getType(variable.getAbstractDeclaration()),
@@ -242,10 +260,10 @@ public class CompletionEngine implements RelevanceConstants {
 			}
 		}
 		else if(node instanceof IASTMethod) {
-			numMethods++;
+//			numMethods++;
 			IASTMethod method = (IASTMethod)node;
 			int relevance = computeRelevance(ICElement.C_METHOD, prefix, method.getName());
-			relevance += totalNumberOfResults - numMethods;
+			//relevance += totalNumberOfResults - numMethods;
 			
 			String parameterString = ASTUtil.getParametersString(ASTUtil.getFunctionParameterTypes(method));
 			requestor.acceptMethod(method.getName(), 
@@ -254,10 +272,10 @@ public class CompletionEngine implements RelevanceConstants {
 				method.getVisiblity(), completionStart, completionLength, relevance);
 		}
 		else if(node instanceof IASTFunction){
-			numFunctions++;
+//			numFunctions++;
 			IASTFunction function = (IASTFunction)node;
 			int relevance = computeRelevance(ICElement.C_FUNCTION, prefix, function.getName());
-			relevance += totalNumberOfResults - numFunctions;
+			//relevance += totalNumberOfResults - numFunctions;
 			
 			String parameterString = ASTUtil.getParametersString(ASTUtil.getFunctionParameterTypes(function));
 			requestor.acceptFunction(function.getName(), 
@@ -269,59 +287,59 @@ public class CompletionEngine implements RelevanceConstants {
 			IASTClassSpecifier classSpecifier = (IASTClassSpecifier)node;
 			ASTClassKind classkind = classSpecifier.getClassKind();
 			if(classkind == ASTClassKind.CLASS){
-				numClasses++;
+//				numClasses++;
 				int relevance = computeRelevance(ICElement.C_CLASS, prefix, classSpecifier.getName());
-				relevance += totalNumberOfResults - numClasses;
+				//relevance += totalNumberOfResults - numClasses;
 				
 				requestor.acceptClass(classSpecifier.getName(), 
 					completionStart, completionLength, relevance);
 			}
 			if(classkind == ASTClassKind.STRUCT){
-				numStructs++;
+//				numStructs++;
 				int relevance = computeRelevance(ICElement.C_STRUCT, prefix, classSpecifier.getName());
-				relevance += totalNumberOfResults - numStructs;
+				//relevance += totalNumberOfResults - numStructs;
 				
 				requestor.acceptStruct(classSpecifier.getName(), 
 					completionStart, completionLength, relevance);
 			}
 			if(classkind == ASTClassKind.UNION){
-				numUnions++;
+//				numUnions++;
 				int relevance = computeRelevance(ICElement.C_UNION, prefix, classSpecifier.getName());
-				relevance += totalNumberOfResults - numUnions;
+				//relevance += totalNumberOfResults - numUnions;
 				
 				requestor.acceptUnion(classSpecifier.getName(), 
 					completionStart, completionLength, relevance);
 			}				
 		}
 		else if(node instanceof IASTNamespaceDefinition){
-			numNamespaces++;
+//			numNamespaces++;
 			IASTNamespaceDefinition namespace = (IASTNamespaceDefinition)node;
 			int relevance = computeRelevance(ICElement.C_NAMESPACE, prefix, namespace.getName());
-			relevance += totalNumberOfResults - numNamespaces;
+			//relevance += totalNumberOfResults - numNamespaces;
 			
 			requestor.acceptNamespace(namespace.getName(), completionStart, completionLength, relevance);
 		}
 		else if(node instanceof IASTEnumerationSpecifier){
-			numEnumerations++;
+//			numEnumerations++;
 			IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier)node;
 			int relevance = computeRelevance(ICElement.C_ENUMERATION, prefix, enumeration.getName());
-			relevance += totalNumberOfResults - numEnumerations;
+			//relevance += totalNumberOfResults - numEnumerations;
 			
 			requestor.acceptEnumeration(enumeration.getName(), completionStart, completionLength, relevance);
 		}
 		else if(node instanceof IASTEnumerator){
-			numEnumerators++;
+//			numEnumerators++;
 			IASTEnumerator enumerator = (IASTEnumerator)node;
 			int relevance = computeRelevance(ICElement.C_ENUMERATOR, prefix, enumerator.getName());
-			relevance += totalNumberOfResults - numEnumerators;
+			//relevance += totalNumberOfResults - numEnumerators;
 			
 			requestor.acceptEnumerator(enumerator.getName(), completionStart, completionLength, relevance);
 		}
 		else if(node instanceof IASTTypedefDeclaration){
-			numTypedefs++;
+//			numTypedefs++;
 			IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)node;
 			int relevance = computeRelevance(ICElement.C_TYPEDEF, prefix, typedef.getName());
-			relevance += totalNumberOfResults - numTypedefs;
+			//relevance += totalNumberOfResults - numTypedefs;
 			
 			requestor.acceptTypedef(typedef.getName(), completionStart, completionLength, relevance);
 		}
@@ -357,7 +375,7 @@ public class CompletionEngine implements RelevanceConstants {
 		log("No of Macros         = " + numOfMacros); //$NON-NLS-1$
 	}
 	
-	
+/*	
 	private void resetElementNumbers(){
 		numFields = 0;
 		numVariables = 0;
@@ -372,6 +390,7 @@ public class CompletionEngine implements RelevanceConstants {
 		numNamespaces = 0;
 		numTypedefs = 0;
 	}
+*/
 	private void addToCompletions (ILookupResult result){
 		if(result == null){
 			log("Lookup Results       = null ................. !!! No Lookup Results found !!! "); //$NON-NLS-1$
@@ -382,7 +401,7 @@ public class CompletionEngine implements RelevanceConstants {
 		
 		log("No of Lookup Results = " + numberOfElements); //$NON-NLS-1$
 		
-		resetElementNumbers();
+//		resetElementNumbers();
 		while (nodes.hasNext()){
 			IASTNode node = (IASTNode) nodes.next();
 			addNodeToCompletions(node, result.getPrefix(), numberOfElements);	
@@ -461,7 +480,6 @@ public class CompletionEngine implements RelevanceConstants {
 //		kinds[4] = IASTNode.LookupKind.TYPEDEFS; 
 //		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 //		addToCompletions(result);
-//		// TODO
 //		// lookup static members (field / methods) in type
 //	}
 	private void completionOnTypeReference(IASTCompletionNode completionNode){
@@ -591,7 +609,7 @@ public class CompletionEngine implements RelevanceConstants {
 		// basic completion on all types
 		completionOnTypeReference(completionNode);
 	}
-		// TODO: complete the lookups
+
 	private void completionOnConstructorReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
 		IASTScope searchNode = completionNode.getCompletionScope();

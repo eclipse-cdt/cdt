@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
+import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -2492,6 +2493,11 @@ public class ExpressionParser implements IExpressionParser {
 	 * @throws EndOfFileException	if looking ahead encounters EOF, throw EndOfFile 
 	 */
 	protected IToken LA(int i) throws EndOfFileException {
+		
+		if (parserTimeout()){
+			throw new ParseError( ParseError.ParseErrorKind.TIMEOUT );
+    	}
+		
 	    if (i < 1) // can't go backwards
 	        return null;
 	    if (currToken == null)
@@ -2524,6 +2530,7 @@ public class ExpressionParser implements IExpressionParser {
 	 * @throws EndOfFileException	If there is no token to consume.  
 	 */
 	protected IToken consume() throws EndOfFileException {
+		
 	    if (currToken == null)
 	        currToken = fetchToken();
 	    if (currToken != null)
@@ -2658,5 +2665,8 @@ public class ExpressionParser implements IExpressionParser {
 	public char[] getCurrentFilename() {
 		return scanner.getCurrentFilename();
 	}
-
+	
+	protected boolean parserTimeout(){
+		return false;
+	}
 }

@@ -608,4 +608,11 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public Reader createReader(String finalPath) {
 		return ParserUtil.createReader(finalPath);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#parserTimeout()
+	 */
+	public boolean parserTimeout() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -26,6 +26,8 @@ public class ContentAssistPreference {
 	//public final static String AUTOACTIVATION=  "content_assist_autoactivation";
 	/** Preference key for content assist auto activation delay */
 	public final static String AUTOACTIVATION_DELAY=  "content_assist_autoactivation_delay"; //$NON-NLS-1$
+	/** Preference key for content assist timeout delay */
+	public final static String TIMEOUT_DELAY=  "content_assist_timeout_delay"; //$NON-NLS-1$
 	/** Preference key for content assist proposal color */
 	public final static String PROPOSALS_FOREGROUND=  "content_assist_proposals_foreground"; //$NON-NLS-1$
 	/** Preference key for content assist proposal color */
@@ -120,6 +122,7 @@ public class ContentAssistPreference {
 		int delay= store.getInt(AUTOACTIVATION_DELAY);
 		assistant.setAutoActivationDelay(delay);
 		
+		delay= store.getInt(TIMEOUT_DELAY);
 		Color c1= getColor(store, PROPOSALS_FOREGROUND, manager);
 		assistant.setProposalSelectorForeground(c1);
 		

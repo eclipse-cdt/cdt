@@ -690,6 +690,13 @@ public class CompleteParseBaseTest extends TestCase
 			
 		}
     
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#parserTimeout()
+		 */
+		public boolean parserTimeout() {
+			// TODO Auto-generated method stub
+			return false;
+		}
     }
     
     protected Iterator getNestedScopes( IASTCodeScope scope )

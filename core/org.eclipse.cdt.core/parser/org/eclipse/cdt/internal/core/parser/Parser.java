@@ -72,7 +72,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 {
     private static final List EMPTY_LIST = new ArrayList();
     protected ISourceElementRequestor requestor = null;
-    
+   
     
     
     /**
@@ -693,6 +693,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         IASTTemplate ownerTemplate, CompletionKind overideKind)
         throws EndOfFileException, BacktrackException
     {
+    	
     	IASTCompletionNode.CompletionKind kind = getCompletionKindForDeclaration(scope, overideKind);
     	setCompletionValues(scope, kind, Key.DECLARATION );
 
@@ -2631,6 +2632,7 @@ public abstract class Parser extends ExpressionParser implements IParser
      */
     protected void statement(IASTCodeScope scope) throws EndOfFileException, BacktrackException
     {
+  
     	setCompletionValues(scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.STATEMENT);
     	
         switch (LT(1))
@@ -3009,5 +3011,12 @@ public abstract class Parser extends ExpressionParser implements IParser
 	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setupASTFactory(org.eclipse.cdt.core.parser.IScanner, org.eclipse.cdt.core.parser.ParserLanguage)
 	 */
 	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#parserTimeout()
+	 */
+	protected boolean parserTimeout() {
+		// TODO Auto-generated method stub
+		return requestor.parserTimeout();
 	}
 }

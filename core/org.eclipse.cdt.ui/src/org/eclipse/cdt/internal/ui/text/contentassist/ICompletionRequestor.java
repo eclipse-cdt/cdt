@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
-import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public interface ICompletionRequestor {

@@ -29,6 +29,8 @@ public class ParseError extends Error {
 		// offset range specified is not a valid identifier or qualified name
 		// semantic context cannot be provided in this case
 		public static final ParseErrorKind OFFSET_RANGE_NOT_NAME = new ParseErrorKind( 2 );
+
+		public static final ParseErrorKind TIMEOUT = new ParseErrorKind( 3 );
 		
 		/**
 		 * @param enumValue

@@ -519,19 +519,19 @@ public class CCorePlugin extends Plugin {
 						IBinaryParser parser = null;
 						try {
 							parser = (IBinaryParser) cextensions[i].createExtension();
-						} catch (ClassCastException e) {
-							//
-						}
-						if (parser != null) {
 							BinaryParserConfig config = new BinaryParserConfig(parser, cextensions[i].getID());
 							list.add(config);
+						} catch (CoreException e) {
+							Status s = new Status(IStatus.WARNING, PLUGIN_ID, -1, "Binary Parser failure", e); //$NON-NLS-1$
+							log(s); 
+						} catch (ClassCastException e) {
+							log(e);
 						}
 					}
 					configs = new BinaryParserConfig[list.size()];
 					list.toArray(configs);
 				}
 			} catch (CoreException e) {
-				log(e);
 				// ignore
 			}
 		}

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.search.tests;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
@@ -35,6 +36,7 @@ public class ParseTestOnSearchFiles extends TestCase
 {
     private FileInputStream fileIn;
     private String name;
+    private String fullPathName;
     /**
      * 
      */
@@ -52,13 +54,15 @@ public class ParseTestOnSearchFiles extends TestCase
     
 	protected void setUp() throws Exception {	
 		name = "resources/search/classDecl.cpp";
-        fileIn = new FileInputStream(CTestPlugin.getDefault().getFileInPlugin(new Path(name)));
+		File f = CTestPlugin.getDefault().getFileInPlugin(new Path(name));
+		fullPathName = f.getAbsolutePath();
+        fileIn = new FileInputStream(f);
 	}
 	
 	public void testParseOfAndrewsFile() throws Exception
 	{
 		ISourceElementRequestor requestor = new NullSourceElementRequestor();
-		IScanner scanner = ParserFactory.createScanner( new InputStreamReader( fileIn ), name, new ScannerInfo(), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, requestor, new NullLogService() );
+		IScanner scanner = ParserFactory.createScanner( new InputStreamReader( fileIn ), fullPathName, new ScannerInfo(), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, requestor, new NullLogService() );
 		IParser parser = ParserFactory.createParser( scanner, requestor, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, null );
 		assertTrue( parser.parse() );
 	}

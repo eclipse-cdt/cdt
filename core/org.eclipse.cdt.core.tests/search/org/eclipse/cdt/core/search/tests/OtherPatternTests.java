@@ -32,7 +32,6 @@ import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * @author aniefer

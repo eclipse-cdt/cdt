@@ -1,7 +1,13 @@
+2003-11-19 Mikhail Khodjaiants
+
+	Fix for PR 45533: MIException while creating MISession can leave an orphan gdb process. 
+	* src/org/eclipse/cdt/debug/mi/internal/ui/preferences/MIPreferencePage.java: 
+	added a text field for the launch timeout. 
+
 2003-11-06 Alain Magloire
 
 	Patch from Ashish Karkare(TimeSys)
-	*src/org/eclipse/cdt/debug/mi/uui/internal/ui/GDBServerDebuggerPage.java
+	*src/org/eclipse/cdt/debug/mi/internal/ui/GDBServerDebuggerPage.java
 	Add a new Combo that  helps select a reasonable line speed, and storing
 	the selected value as a configuration attribute.
 

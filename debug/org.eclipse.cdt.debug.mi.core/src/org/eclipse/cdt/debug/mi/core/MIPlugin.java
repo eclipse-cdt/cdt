@@ -378,7 +378,8 @@ public class MIPlugin extends Plugin {
 	 * @see org.eclipse.core.runtime.Plugin#initializeDefaultPluginPrefrences()
 	 */
 	protected void initializeDefaultPluginPreferences() {
-		getPluginPreferences().setDefault(IMIConstants.PREF_REQUEST_TIMEOUT, MISession.REQUEST_TIMEOUT);
+		getPluginPreferences().setDefault(IMIConstants.PREF_REQUEST_TIMEOUT, IMIConstants.DEF_REQUEST_TIMEOUT);
+		getPluginPreferences().setDefault(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT, IMIConstants.DEF_REQUEST_LAUNCH_TIMEOUT);
 	}
 
 	/* (non-Javadoc)

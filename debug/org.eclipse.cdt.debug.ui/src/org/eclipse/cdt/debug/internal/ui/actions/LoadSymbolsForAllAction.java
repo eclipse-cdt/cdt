@@ -72,7 +72,7 @@ public class LoadSymbolsForAllAction extends Action implements IUpdate
 				}
 				catch( DebugException e )
 				{
-					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("ui.actions.LoadSymbolsForAllAction.Unable_to_load_symbols."), e.getStatus() ); //$NON-NLS-1$
+					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.LoadSymbolsForAllAction.Unable_to_load_symbols."), e.getStatus() ); //$NON-NLS-1$
 				}
 			}
 		}

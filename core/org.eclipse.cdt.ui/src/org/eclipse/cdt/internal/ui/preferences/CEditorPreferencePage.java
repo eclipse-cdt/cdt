@@ -470,8 +470,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private Control createPreviewer(Composite parent) {
 
-		fCTextTools = new CTextTools(fOverlayStore);
-
+		fCTextTools = CUIPlugin.getDefault().getTextTools();
 		fPreviewViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
 		fPreviewViewer.configure(new CSourceViewerConfiguration(fCTextTools, null));
 		fPreviewViewer.getTextWidget().setFont(JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT));

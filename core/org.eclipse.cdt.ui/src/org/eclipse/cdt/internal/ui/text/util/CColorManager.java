@@ -69,7 +69,7 @@ public class CColorManager implements IColorManager, IColorManagerExtension {
 	 * @see IColorManager#dispose
 	 */
 	public void dispose() {
-		// nothing to dispose
+		dispose(Display.getCurrent());
 	}
 	
 	/*

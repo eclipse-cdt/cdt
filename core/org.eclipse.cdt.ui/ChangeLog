@@ -1,5 +1,11 @@
 2004-09-14 Alain Magloire
 
+	Pr 73831. Tentative fix
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencPage.java
+	* src/org/eclipse/cdt/internal/ui/text/util/CColorManager.java
+
+2004-09-14 Alain Magloire
+
 	Define contentTypes for some of the
 	extension points.
 	* plugin.xml

@@ -33,8 +33,6 @@ public class MakefileSimpleMacroRule extends PatternRule {
 		while ((c = scanner.read()) != ICharacterScanner.EOF) {
 			if ('(' == (char) c)
 				++nOfBrackets;
-			if ('(' == (char)c)
-				--nOfBrackets;
 
 			if (fEndSequence.length > 0 && c == fEndSequence[0]) {
 				// Check if the specified end sequence has been found.

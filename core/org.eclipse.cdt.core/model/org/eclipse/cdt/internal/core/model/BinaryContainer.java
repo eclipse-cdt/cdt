@@ -50,10 +50,10 @@ public class BinaryContainer extends Parent implements IBinaryContainer {
 
 	public ICElement [] getChildren(boolean sync) {
 		// The first time probe the entire project to discover binaries.
-		if (!cProject.hasRunElf()) {
-			cProject.setRunElf(true);
-			ElfRunner runner = new ElfRunner(cProject);
-			Thread thread = new Thread(runner, "Elf Runner");
+		if (!cProject.hasStartBinaryRunner()) {
+			cProject.setStartBinaryRunner(true);
+			BinaryRunner runner = new BinaryRunner(cProject);
+			Thread thread = new Thread(runner, "Binary Runner");
 			// thread.setPriority(Thread.NORM_PRIORITY - 1);
 			thread.setDaemon(true);
 			thread.start();
@@ -67,17 +67,9 @@ public class BinaryContainer extends Parent implements IBinaryContainer {
 		return super.getChildren();
 	}
 
-	public IResource getCorrespondingResource() {
-		return null;
-	}
-
-	//public IResource getUnderlyingResource() {
-	//	return null;
-	//}
-
 	void addChildIfExec(CoreModel factory, IFile file) {
 		// Attempt to speed things up by rejecting up front
-		// Things we know should not be Elf/Binary files.
+		// Things we know should not be Binary files.
 		if (!factory.isTranslationUnit(file)) {
 			ICElement celement = factory.create(file);
 			if (celement != null) {

@@ -41,10 +41,10 @@ public class ArchiveContainer extends Parent implements IArchiveContainer {
 	}
 
 	public ICElement [] getChildren(boolean sync) {
-		if (!cProject.hasRunElf()) {
+		if (!cProject.hasStartBinaryRunner()) {
 			// It is vital to set this to true first, if not we are going to loop
-			cProject.setRunElf(true);
-			ElfRunner runner = new ElfRunner(cProject);
+			cProject.setStartBinaryRunner(true);
+			BinaryRunner runner = new BinaryRunner(cProject);
 			Thread thread = new Thread(runner, "Archive Runner");
 			// thread.setPriority(Thread.NORM_PRIORITY - 1);
 			thread.setDaemon(true);

@@ -1,3 +1,10 @@
+2003-09-25 Alain Magloire
+
+	Add HelpContext IDs in the preference page.
+	For annotation page and color Page
+
+	* src/org/eclipse/cdt/internal/ui/CEditorPreferencePage.java
+
 2003-09-24 Alain Magloire
 
 	Remove of unuse function with the clean up of Translation Unit

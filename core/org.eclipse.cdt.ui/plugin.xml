@@ -162,7 +162,7 @@
 <!-- For C Conversion Wizard -->
       <wizard
             name="%StdMakeConversionWizard.name"
-            icon="icons/full/ctool16/newcc_app.gif"
+            icon="icons/full/ctool16/convert-normal.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.ui.wizards.conversion.ConvertToStdMakeConversionWizard"
             project="true"
@@ -192,7 +192,7 @@
 <!-- For C++ Conversion Wizard -->
       <wizard
             name="%StdMakeConversionWizard.name"
-            icon="icons/full/ctool16/newcc_app.gif"
+            icon="icons/full/ctool16/convert-normal.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             class="org.eclipse.cdt.ui.wizards.conversion.ConvertToStdMakeConversionWizard"
             project="true"

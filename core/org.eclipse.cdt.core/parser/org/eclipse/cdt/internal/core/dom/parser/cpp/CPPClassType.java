@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -39,8 +41,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -88,6 +94,9 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 		public List find(String name) throws DOMException {
 			throw new DOMException( this );
 		}
+        public IBinding[] getFriends() throws DOMException {
+			throw new DOMException( this );
+        }
     }
 	
 	private ICPPASTCompositeTypeSpecifier definition;
@@ -185,7 +194,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 
 		IASTDeclaration[] members = definition.getMembers();
 		int size = members.length;
-		IField[] fields = new IField[ size ];
+		IField[] fields = null;
 		if( size > 0 ){
 
 			for( int i = 0; i < size; i++ ){
@@ -196,13 +205,13 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 						IASTDeclarator declarator = declarators[i];
 						IBinding binding = declarator.getName().resolveBinding();
 						if( binding != null && binding instanceof IField )
-							fields[i] = (IField) binding;
+							fields = (IField[]) ArrayUtil.append( IField.class, fields, binding );
 					}
 				}
 			}
 			
 		}
-		return fields;
+		return (IField[]) ArrayUtil.trim( IField.class, fields );
 	}
 
 	/* (non-Javadoc)
@@ -236,7 +245,22 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 			IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
 			name = ns[ ns.length - 1 ];
 		}
-		return CPPVisitor.getContainingScope( name );
+		IScope scope = CPPVisitor.getContainingScope( name );
+		if( definition == null && name.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME ){
+		    IASTNode node = declarations[0].getParent();
+		    if( node instanceof IASTFunctionDefinition || node instanceof IASTParameterDeclaration ||
+		        ( node instanceof IASTSimpleDeclaration && 
+		          ( ((IASTSimpleDeclaration) node).getDeclarators().length > 0 || declarations[0].isFriend() ) ) )
+		    {
+	            while( scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope ){
+					try {
+						scope = (ICPPScope) scope.getParent();
+					} catch (DOMException e1) {
+					}
+				}
+		    }
+		}
+		return scope;
 	}
 
 	/* (non-Javadoc)
@@ -370,5 +394,44 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
         }
         
         return ((CPPClassScope)scope).getConstructors();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getFriends()
+     */
+    public IBinding[] getFriends() {
+        if( definition == null ){
+            checkForDefinition();
+            if( definition == null ){
+                return new IBinding [] { new ProblemBinding( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+            }
+        }
+        ObjectSet resultSet = new ObjectSet(2);
+        IASTDeclaration [] members = definition.getMembers();
+        for( int i = 0; i < members.length; i++ ){
+			if( members[i] instanceof IASTSimpleDeclaration ){
+			    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)members[i]).getDeclSpecifier();
+			    if( declSpec.isFriend() ){
+			        IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
+			        if( declSpec instanceof ICPPASTElaboratedTypeSpecifier && dtors.length == 0 ){
+			        	resultSet.put( ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding() );
+			        } else {
+					    for( int j = 0; j < dtors.length; j++ ){
+					        if( dtors[j] == null ) break;
+					        resultSet.put( dtors[j].getName().resolveBinding() );
+					    }    
+			        }
+			    }
+			} else if( members[i] instanceof IASTFunctionDefinition ){
+			    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)members[i]).getDeclSpecifier();
+			    if( declSpec.isFriend() ){
+			        IASTDeclarator dtor = ((IASTFunctionDefinition)members[i]).getDeclarator();
+			        resultSet.put( dtor.getName().resolveBinding() );
+			    }
+			    
+			}
+        }
+        
+        return (IBinding[]) ArrayUtil.trim( IBinding.class, resultSet.keyArray(), true );
     }
 }

@@ -1248,7 +1248,8 @@ public class AST2CPPTests extends AST2BaseTest {
 
         ICPPClassType Node = (ICPPClassType) col.getName(1).resolveBinding();
         ICPPClassType Data = (ICPPClassType) col.getName(3).resolveBinding();
-
+        assertSame( Data.getScope(),  tu.getScope() );
+        
         assertInstances(col, Node, 3);
         assertInstances(col, Data, 2);
     }
@@ -1701,6 +1702,98 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, N, 4 );
         assertInstances( col, A, 5 );
         assertInstances( col, pm, 2 );
+    }
+    
+    public void testFriend_1() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class A {                       \n"); //$NON-NLS-1$
+        buffer.append("   friend void set();           \n"); //$NON-NLS-1$
+        buffer.append("   friend class B;              \n"); //$NON-NLS-1$
+        buffer.append("};                              \n"); //$NON-NLS-1$
+        buffer.append("void set();                     \n"); //$NON-NLS-1$
+        buffer.append("class B{};                      \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+        IFunction set = (IFunction) col.getName(1).resolveBinding();
+        ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
+        
+        assertInstances( col, set, 2 );
+        assertInstances( col, B, 2 );
+        
+        IBinding [] friends = A.getFriends();
+        assertEquals( 2, friends.length );
+        assertSame( friends[0], set );
+        assertSame( friends[1], B );
+    }
+    
+    public void testBug59149() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class A { friend class B; friend class B; }; \n"); //$NON-NLS-1$
+        buffer.append("class B{};                                   \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
+        ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+        
+        assertInstances( col, B, 3 );
+        
+        IBinding [] friends = A.getFriends();
+        assertEquals( friends.length, 1 );
+        assertSame( friends[0], B );
+    }
+    public void testBug59302() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "class A {                      \n"); //$NON-NLS-1$
+        buffer.append( "   public: class N {};         \n"); //$NON-NLS-1$
+        buffer.append( "};                             \n"); //$NON-NLS-1$
+        buffer.append( "class B {                      \n"); //$NON-NLS-1$
+        buffer.append( "   friend class A::N;          \n"); //$NON-NLS-1$
+        buffer.append( "};                             \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        ICPPClassType N = (ICPPClassType) col.getName(5).resolveBinding();
+        ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+        ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
+        assertInstances( col, N, 3 );
+        
+        IBinding [] friends = B.getFriends();
+        assertEquals( friends.length, 1 );
+        assertSame( friends[0], N );
+        
+        assertEquals( A.getFriends().length, 0 );
+        assertEquals( N.getFriends().length, 0 );
+    }
+    
+    public void testBug75482() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "class A {                      \n"); //$NON-NLS-1$
+        buffer.append( "   friend class B *helper();   \n");  //$NON-NLS-1$
+        buffer.append( "};                             \n"); //$NON-NLS-1$
+                
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        IFunction helper = (IFunction) col.getName(2).resolveBinding();
+        assertSame( helper.getScope(), tu.getScope() );
+        
+        ICPPClassType B = (ICPPClassType) col.getName(1).resolveBinding();
+        ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+        assertSame( B.getScope(), A.getScope() );
+        
+        IBinding [] friends = A.getFriends();
+        assertEquals( friends.length, 1 );
+        assertSame( friends[0], helper );
     }
 }
 

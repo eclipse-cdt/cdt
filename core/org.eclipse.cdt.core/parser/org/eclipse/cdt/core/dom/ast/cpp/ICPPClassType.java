@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 
@@ -78,4 +79,5 @@ public interface ICPPClassType extends ICompositeType {
      */
     public ICPPConstructor[] getConstructors() throws DOMException;
 	
+    public IBinding [] getFriends() throws DOMException;
 }

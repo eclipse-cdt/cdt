@@ -18,13 +18,16 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -152,7 +155,25 @@ public class CPPFunction implements IFunction, ICPPBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope( definition != null ? definition : declarations[0] );
+	    ICPPASTDeclSpecifier declSpec = null;
+	    if( definition != null ){
+	        IASTFunctionDefinition def = (IASTFunctionDefinition) definition.getParent();
+		    declSpec = (ICPPASTDeclSpecifier) def.getDeclSpecifier();    
+	    } else {
+	        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) declarations[0].getParent();
+	        declSpec = (ICPPASTDeclSpecifier) decl.getDeclSpecifier();
+	    }	
+
+	    IScope scope = CPPVisitor.getContainingScope( definition != null ? definition : declarations[0] );
+	    if( declSpec.isFriend() && scope instanceof ICPPClassScope ){
+	        try {
+                while( scope instanceof ICPPClassScope ){
+	                scope = scope.getParent();
+                }
+	        } catch ( DOMException e ) {
+            }
+	    }
+		return scope;
 	}
 
 	/* (non-Javadoc)

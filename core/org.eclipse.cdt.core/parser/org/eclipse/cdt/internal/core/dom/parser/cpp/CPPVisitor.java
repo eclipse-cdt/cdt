@@ -93,6 +93,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
@@ -255,10 +256,14 @@ public class CPPVisitor {
 	    IASTNode parent = elabType.getParent();
 	    IBinding binding = null;
 	    boolean mustBeSimple = true;
+	    boolean isFriend = false;
 	    if( parent instanceof IASTSimpleDeclaration ){
 	        IASTDeclarator [] dtors = ((IASTSimpleDeclaration)parent).getDeclarators();
-	        if( dtors.length > 0 ){
+	        ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+	        isFriend = declSpec.isFriend() && dtors.length == 0;
+	        if( dtors.length > 0 || isFriend ){
 	        	binding = CPPSemantics.resolveBinding( elabType.getName() );
+	        	mustBeSimple = !isFriend;
 	        } else {
 	        	mustBeSimple = false;
 	        }
@@ -291,6 +296,13 @@ public class CPPVisitor {
 				} catch (DOMException e1) {
 				}
 			}
+		}
+		if( scope instanceof ICPPClassScope && isFriend ){
+	        try {
+	            while( scope instanceof ICPPClassScope )
+	                scope = (ICPPScope) scope.getParent();
+            } catch ( DOMException e1 ) {
+		    }
 		}
         try {
             binding = scope.getBinding( elabType.getName() );
@@ -369,6 +381,15 @@ public class CPPVisitor {
 		}
 		
 		ICPPScope scope = (ICPPScope) getContainingScope( parent );
+		if( parent instanceof IASTSimpleDeclaration && scope instanceof ICPPClassScope ){
+		    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+		    if( declSpec.isFriend() ){
+		        try {
+                    scope = (ICPPScope) scope.getParent();
+                } catch ( DOMException e1 ) {
+                }
+		    }
+		}
 		IBinding binding;
         try {
             binding = ( scope != null ) ? scope.getBinding( declarator.getName() ) : null;

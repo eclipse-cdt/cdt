@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -55,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -192,6 +195,22 @@ public class CPPSemantics {
 		        p1 = p1.getParent();
 		    return ( p1 instanceof IASTIdExpression && p1.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME );
 		}
+        public boolean checkWholeClassScope() {
+            if( astName == null ) return false;
+            ASTNodeProperty prop = astName.getPropertyInParent();
+            if( prop == IASTIdExpression.ID_NAME || 
+				prop == IASTFieldReference.FIELD_NAME || 
+				prop == ICASTFieldDesignator.FIELD_NAME ||
+				prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
+				prop == ICPPASTUsingDeclaration.NAME ||
+				prop == IASTFunctionCallExpression.FUNCTION_NAME ||
+				prop == ICPPASTUsingDeclaration.NAME ||
+				prop == IASTNamedTypeSpecifier.NAME )
+            {
+                return true;
+            }
+            return false;
+        }
 	}
 
 	static protected class Cost
@@ -805,11 +824,11 @@ public class CPPSemantics {
 		}
 		
 		int idx = -1;
-		boolean classScope = ( scope instanceof ICPPClassScope );
+		boolean checkWholeClassScope = ( scope instanceof ICPPClassScope ) && data.checkWholeClassScope();
 		IASTNode item = ( nodes != null ? (nodes.length > 0 ? nodes[++idx] : null ) : parent );
 	
 		while( item != null ) {
-			if( !classScope && blockItem != null && ((ASTNode)item).getOffset() > ((ASTNode) blockItem).getOffset() )
+			if( !checkWholeClassScope && blockItem != null && ((ASTNode)item).getOffset() > ((ASTNode) blockItem).getOffset() )
 				break;
 			
 			if( item != blockItem || data.includeBlockItem( item ) ){
@@ -829,7 +848,7 @@ public class CPPSemantics {
 					}
 				}
 			}
-			if( item == blockItem && !classScope )
+			if( item == blockItem && !checkWholeClassScope )
 				break;
 			if( idx > -1 && ++idx < nodes.length ){
 				item = nodes[idx];

@@ -1,3 +1,7 @@
+2004-06-08 Tanya Wolff
+	Fix for bug 66197 : I18N: Invalid key in Code Templates export message
+	* src/org/eclipse/cdt/internal/corext.template/TemplateMessages.properties
+
 2004-06-08 Alain Magloire
 
 	Fix for PR 66186.

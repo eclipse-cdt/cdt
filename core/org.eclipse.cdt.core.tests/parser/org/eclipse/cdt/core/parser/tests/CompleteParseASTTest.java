@@ -1550,4 +1550,15 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 
 		assertEquals( count, 2 );
 	}
+	
+	public void testBug59149() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "class A{ friend class B; friend class B; };" );
+		writer.write( "class B{ };" );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTClassSpecifier B = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+	}
 }

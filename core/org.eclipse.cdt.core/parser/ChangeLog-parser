@@ -1,4 +1,7 @@
 2004-04-19 Andrew Niefer
+	fix bug 59149  [Parser] Redundant friend declaration fails parse 
+	
+2004-04-19 Andrew Niefer
 	fix problems with explicit specialization
 
 2004-04-16 Andrew Niefer

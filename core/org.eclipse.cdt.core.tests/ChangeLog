@@ -1,4 +1,7 @@
 2004-04-19 Andrew Niefer
+	added parser/CompleteParseASTTest.testBug59149()
+
+2004-04-19 Andrew Niefer
 	added parser/CompleteParseASTTemplateTest.test_14_7_3__5_ExplicitSpecialization()
 	uncommented & modified parser/ParserSymbolTableTemplateTests.test_14_7_3__5_ExplicitSpecialization()
 

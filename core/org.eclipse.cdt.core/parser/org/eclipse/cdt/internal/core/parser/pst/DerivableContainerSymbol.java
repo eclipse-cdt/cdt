@@ -296,9 +296,6 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * 7.3.1.2-3 If a friend declaration in a non-local class first declares a
 	 * class or function, the friend class or function is a member of the
 	 * innermost enclosing namespace.
-	 * 
-	 * TODO: if/when the parser symbol table starts caring about visibility
-	 * (public/protected/private) we will need to do more to record friendship.
 	 */
 	public void addFriend( ISymbol friend ){
 		//is this symbol already in the table?
@@ -306,11 +303,16 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		if( containing == null ){
 			//its not, it goes in the innermost enclosing namespace
 			IContainerSymbol enclosing = getContainingSymbol();
+			
+			boolean local = enclosing.isType( TypeInfo.t_constructor ) ||
+							enclosing.isType( TypeInfo.t_function )    ||
+							enclosing.isType( TypeInfo.t_block );
+			
 			while( enclosing != null && !enclosing.isType( TypeInfo.t_namespace ) ){
 				enclosing = enclosing.getContainingSymbol();
 			}
 			
-			friend.setIsInvisible( true );
+			friend.setIsInvisible( local );
 			friend.setIsForwardDeclaration( true );
 			try {
 				enclosing.addSymbol( friend );
@@ -344,6 +346,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			}
 		}
 		data.stopAt = enclosing;
+		data.returnInvisibleSymbols = true;
 	
 		ParserSymbolTable.lookup( data, this );
 		return ParserSymbolTable.resolveAmbiguities( data ); 

@@ -465,7 +465,7 @@ public class ParserSymbolTable {
 				symbol = ( temp != null ) ? temp : symbol;
 			}
 			
-			if( !symbol.getIsInvisible() && checkType( data, symbol ) ){//, data.type, data.upperType ) ){
+			if( ( data.returnInvisibleSymbols || !symbol.getIsInvisible() ) && checkType( data, symbol ) ){
 				foundSymbol = symbol;
 				
 				if( foundSymbol.isType( TypeInfo.t_function ) ){
@@ -2109,6 +2109,7 @@ public class ParserSymbolTable {
 		public boolean usingDirectivesOnly = false;
 		public boolean forUserDefinedConversion = false;
 		public boolean exactFunctionsOnly = false;
+		public boolean returnInvisibleSymbols = false;
 		
 		public Map foundItems = null;
 		

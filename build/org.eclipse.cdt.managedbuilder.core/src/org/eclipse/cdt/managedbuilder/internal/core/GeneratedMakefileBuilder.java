@@ -617,10 +617,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				
 				// Remove all markers for this project
 				removeAllMarkers(currentProject);
-				for (int i = 0; i < referencedProjects.length; i++) {
-					IProject project = referencedProjects[i];
-					removeAllMarkers(project);
-				} 
 
 				// Get the arguments to be passed to make from build model
 				ArrayList makeArgs = new ArrayList();
@@ -674,16 +670,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						errMsg = launcher.getErrorMessage();
 					}
 				
-					// Force a resync of the projects without allowing the user to cancel.
+					// Force a resync of the project without allowing the user to cancel.
 					// This is probably unkind, but short of this there is no way to insure
 					// the UI is up-to-date with the build results
 					monitor.subTask(ManagedMakeMessages.getResourceString(REFRESH));
 					try {
 						currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
-						for (int j = 0; j < referencedProjects.length; ++j) {
-							IProject project = referencedProjects[j];
-							project.refreshLocal(IResource.DEPTH_INFINITE, null);
-						}
 					} catch (CoreException e) {
 						monitor.subTask(ManagedMakeMessages.getResourceString(REFRESH_ERROR));
 					}
@@ -716,6 +708,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				addBuilderMarkers(epm);
 				epm.reportProblems();
 			}
+		} catch (OperationCanceledException e) {
+			throw e;
 		} catch (Exception e) {
 			forgetLastBuiltState();
 		} finally {

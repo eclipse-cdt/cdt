@@ -1301,13 +1301,24 @@ public class CPPSemantics {
     		return (IBinding) bindings[0];
 	    }
 	    
-	    LookupData data = createLookupData( name, false );
-	    data.foundItems = bindings;
-	    try {
-            return resolveAmbiguities( data, name );
-        } catch ( DOMException e ) {
-            return e.getProblem();
+	    if( name.getPropertyInParent() != STRING_LOOKUP_PROPERTY ) {
+		    LookupData data = createLookupData( name, false );
+		    data.foundItems = bindings;
+		    try {
+	            return resolveAmbiguities( data, name );
+	        } catch ( DOMException e ) {
+	            return e.getProblem();
+	        }
+	    }
+	    
+        IBinding [] result = null;
+        for ( int i = 0; i < bindings.length; i++ ) {
+            if( bindings[i] instanceof IASTName )
+                result = (IBinding[]) ArrayUtil.append( IBinding.class, result, ((IASTName)bindings[i]).resolveBinding() );
+            else if( bindings[i] instanceof IBinding )
+                result = (IBinding[]) ArrayUtil.append( IBinding.class, result, bindings[i] );
         }
+        return new CPPCompositeBinding( result );
 	}
 	
 	static public boolean declaredBefore( Object obj, IASTNode node ){

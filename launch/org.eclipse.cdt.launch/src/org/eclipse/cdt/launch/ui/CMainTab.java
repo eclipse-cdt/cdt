@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
@@ -276,6 +275,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 				}
 			}
 			catch (CoreException e) {
+				e.printStackTrace();
 			}
 		}
 		return (ICProject[]) list.toArray(new ICProject[list.size()]);

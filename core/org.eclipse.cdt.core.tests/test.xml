@@ -30,11 +30,11 @@
     <property name="cdt-folder" 
               value="${eclipse-home}/cdt_folder"/>
     <delete dir="${cdt-folder}" quiet="true"/>
-    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${cdt-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 
-                value="org.eclipse.cdt.core.model.tests.AllCoreTests"/>
+                value="org.eclipse.cdt.core.suite.AutomatedIntegrationSuite"/>
     </ant>
   </target>
 

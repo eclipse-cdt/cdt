@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.sdk"
       label="%featureName"
-      version="2.1.0"
+      version="2.1.1"
       provider-name="%providerName">
 
    <description>
@@ -18,22 +18,22 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://update.eclipse.org/tools/cdt/updates/release"/>
+      <update label="%updateSiteName" url="http://update.eclipse.org/tools/cdt/releases/new"/>
    </url>
 
    <includes
          id="org.eclipse.cdt.source"
-         version="2.1.0"/>
+         version="2.1.1"/>
 
    <includes
          id="org.eclipse.cdt"
-         version="2.1.0"
+         version="2.1.1"
          name="%featureName"/>
 
    <plugin
          id="org.eclipse.cdt.sdk"
          download-size="0"
          install-size="0"
-         version="2.1.0"/>
+         version="2.1.1"/>
 
 </feature>

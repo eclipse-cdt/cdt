@@ -1,3 +1,8 @@
+2003-08-07 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:
+	Update the interface to reflect ICDIVariableManager.
+
 2003-08-06 Mikhail Khodjaiants
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ArrayValue.java:
 	Removed the unused local variable 'children' from the 'getVariables' method.

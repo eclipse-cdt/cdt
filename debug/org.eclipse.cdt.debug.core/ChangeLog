@@ -1,3 +1,13 @@
+2003-08-07 Alain Magloire
+
+	* ICDIVariableManager.java:
+	Remove the unused method getVariableObject(ICDIStackframe, String)
+	and getArgumentObject(ICDIStackframe, String).
+	Rename getVariableObject(String, String, String) to
+	getGlobalVariableObject.
+
+	* CDebugModel.java: Refactoring of ICDIVariableManager.
+
 2003-08-06 Mikhail Khodjaiants
 	Added the implementation of the 'getType' and 'getTypeName' methods of the 'CVaraible:ErrorVariable' class.
 	* CVariable.java

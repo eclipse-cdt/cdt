@@ -24,7 +24,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 
@@ -71,7 +70,6 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 	 * @see PreferencePage#performOk
 	 */
 	public boolean performOk() {
-		Shell shell = getControl().getShell();
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				fOptionBlock.performApply(monitor);
@@ -79,9 +77,8 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		};
 		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
 		try {
-			new ProgressMonitorDialog(shell).run(false, true, op);
+			new ProgressMonitorDialog(getShell()).run(false, true, op);
 		} catch (InvocationTargetException e) {
-			// dinglis-TODO show/log errors
 			return false;
 		} catch (InterruptedException e) {
 			// cancelled

@@ -328,7 +328,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			addProposalsFromSearch(fCurrentCompletionNode, completions);
 			addProposalsFromCompletionContributors(fCurrentCompletionNode, completions);
 			addProposalsFromTemplates(viewer, fCurrentCompletionNode, completions);		
-			return (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]);
+			return order( (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]));
 		}
 		return null;			
 	}

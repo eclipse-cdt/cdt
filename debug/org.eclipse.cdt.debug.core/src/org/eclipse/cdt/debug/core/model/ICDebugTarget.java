@@ -30,32 +30,6 @@ public interface ICDebugTarget extends IDebugTarget,
 									   ITargetProperties {
 
 	/**
-	 * Returns the shared libraries loaded in this debug target. An
-	 * empty collection is returned if no shared libraries are loaded.
-	 * 
-	 * @return a collection of shred libraries
-	 * 
-	 * @throws DebugException
-	 */
-	public ICSharedLibrary[] getSharedLibraries() throws DebugException;
-
-	/**
-	 * Returns whether there are shared libraries currently loaded in this debug target.
-	 * 
-	 * @return whether there are shared libraries currently loaded in this debug target
-	 * 
-	 * @throws DebugException
-	 */
-	public boolean hasSharedLibraries() throws DebugException;
-
-	/**
-	 * Load the symbols of all shared objects.
-	 * 
-	 * @throws DebugException
-	 */
-	public void loadSymbols() throws DebugException;
-
-	/**
 	 * Returns whether this target is little endian.
 	 * 
 	 * @return whether this target is little endian

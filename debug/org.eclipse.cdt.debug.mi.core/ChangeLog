@@ -1,3 +1,20 @@
+2003-02-01 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ChangedEvent.java:
+	Support for ICDISignal event.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Signal.java (handle):
+	Implemented.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java (update):
+	Support for ICDISignal event.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SignalManager.java (handle):
+	New method.
+	* src/org/eclipse/cdt/debug/mi/core/command/CommandFactory.java (createMIHandle):
+	New method
+	* src/org/eclipse/cdt/debug/mi/core/command/MIHandle.java:
+	New File.
+	* src/org/eclipse/cdt/debug/mi/core/CLICommand.java:
+	Check for "handle" and "signal" cli command.
+
 2003-01-31 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/event/DestroyedEvent.java:

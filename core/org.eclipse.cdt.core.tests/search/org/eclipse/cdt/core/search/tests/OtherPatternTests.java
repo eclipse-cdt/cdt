@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
@@ -322,5 +323,21 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 4 );
+	}
+	
+	public void testBug42911(){
+		BasicSearchMatch match1 = new BasicSearchMatch();
+		BasicSearchMatch match2 = new BasicSearchMatch();
+		
+		assertTrue( match1.equals( match2 ) );
+		assertTrue( match2.equals( match1 ) );
+		
+		match1.setName( "IWasSaying" );
+		match1.setParentName( "boo" );
+		match1.setReturnType( "urns" );
+		
+		assertFalse( match1.equals( match2 ) );
+		assertFalse( match2.equals( match1 ) );
+		
 	}
 }

@@ -4,6 +4,10 @@
 		- modify MatchLocator.report to use IASTOffsetableNamedElement.getNameEndOffset()
 
 2003-09-29 Andrew Niefer
+	-bug42911 - Search: cannot find beyond use of data member
+	   - fix NPE's in BasicSearchMatch.equals & hashCode
+
+2003-09-29 Andrew Niefer
 	-fix NPE if IScannerInfoProvider returns null IScannerInfo
 
 2003-09-25 Andrew Niefer

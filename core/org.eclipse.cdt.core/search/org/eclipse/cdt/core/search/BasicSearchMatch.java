@@ -43,7 +43,10 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		hashString += name;
 		hashString += ":" + parentName;
 		hashString += ":" + returnType;
-		hashString += ":" + getLocation().toString();
+		
+		if( getLocation() != null)
+			hashString += ":" + getLocation().toString();
+			
 		hashString += ":" + startOffset + ":" + endOffset;
 		hashString += ":" + type + ":" + visibility;
 		
@@ -64,9 +67,16 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		if( type != match.getElementType() || visibility != match.getVisibility() )
 			return false;
 			
-		if( !name.equals( match.getName() ) 
-		 || !parentName.equals( match.getParentName() )
-		 || !returnType.equals( match.getReturnType() ) )
+		if( ( name != null && match.getName() != null && !name.equals( match.getName() ) ) 
+		 ||	name != match.getName() )
+			return false; 
+		 	
+		if( ( parentName != null && match.getParentName() != null && !parentName.equals( match.getParentName() ) ) 
+		 ||	parentName != match.getParentName() )
+			return false; 
+					 	
+		if( ( returnType != null && match.getReturnType() != null && !returnType.equals( match.getReturnType() ) ) 
+		 ||	returnType != match.getReturnType() )
 			return false; 
 		
 		IPath thisPath = getLocation();

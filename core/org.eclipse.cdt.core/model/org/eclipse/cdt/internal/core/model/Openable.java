@@ -308,7 +308,7 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 		IResource res = getResource();
 		if (res != null) {
 			ResourceAttributes attributes = res.getResourceAttributes();
-			if (attributes.isReadOnly()) {
+			if (attributes != null && attributes.isReadOnly()) {
 				throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
 			}
 		}

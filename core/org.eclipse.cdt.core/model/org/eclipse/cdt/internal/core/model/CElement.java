@@ -166,7 +166,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		IResource r = getUnderlyingResource();
 		if (r != null) {
 			ResourceAttributes attributes = r.getResourceAttributes();
-			return attributes.isReadOnly();
+			if (attributes != null) {
+				return attributes.isReadOnly();
+			}
 		}			
 		return false;
 	}

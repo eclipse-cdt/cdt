@@ -64,6 +64,7 @@ public class ModulesViewEventHandler extends AbstractDebugEventHandler {
 		if ( isAvailable() ) {
 			getView().showViewer();
 			getTreeViewer().refresh( element );
+			getTreeViewer().setSelection( getTreeViewer().getSelection() );
 		}
 	}
 }

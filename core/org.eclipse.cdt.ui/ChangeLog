@@ -1,3 +1,11 @@
+2004-04-15 David Inglis
+
+	simple refactor
+	
+	 - refactor/org/eclipse/cdt/internal/ui/refactoring/ListContentProvider.java
+	 * refactor/org/eclipse/cdt/internal/ui/refactoring/RefactoringSaveHelper.java
+	 + src/org/eclipse/cdt/internal/ui/viewsupport/ListContentProvider.java
+
 2004-04-15 Chris Wiebe
 
 	Make some helper functions static for ease of use ...

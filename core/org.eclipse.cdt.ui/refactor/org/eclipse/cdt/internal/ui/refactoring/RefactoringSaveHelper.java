@@ -37,7 +37,7 @@ import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.refactoring.ListDialog;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.refactoring.ListContentProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 
 public class RefactoringSaveHelper {
 

@@ -23,6 +23,10 @@ public class CLocalVariable extends CDebugElement
 							implements IVariable, 
 									   ICEventListener
 {
+	/**
+	 * Underlying CDI variable.
+	 */
+	private ICVariable fCDIVariable;
 
 	/**
 	 * Constructor for CLocalVariable.
@@ -31,6 +35,7 @@ public class CLocalVariable extends CDebugElement
 	public CLocalVariable( CStackFrame stackFrame, ICVariable cdiVariable )
 	{
 		super( (CDebugTarget)stackFrame.getDebugTarget() );
+		fCDIVariable = cdiVariable;
 	}
 
 	/* (non-Javadoc)
@@ -108,5 +113,16 @@ public class CLocalVariable extends CDebugElement
 	public boolean verifyValue( IValue value ) throws DebugException
 	{
 		return false;
+	}
+
+	/**
+	 * Returns the underlying CDI variable that this model object is 
+	 * a proxy to.
+	 * 
+	 * @return the underlying CDI variable
+	 */
+	protected ICVariable getCDIVariable()
+	{
+		return fCDIVariable;
 	}
 }

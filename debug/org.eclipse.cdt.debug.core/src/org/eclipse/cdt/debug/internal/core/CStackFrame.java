@@ -7,13 +7,17 @@ package org.eclipse.cdt.debug.internal.core;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICLocation;
 import org.eclipse.cdt.debug.core.cdi.event.ICEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICArgument;
+import org.eclipse.cdt.debug.core.cdi.model.ICObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICVariable;
 import org.eclipse.debug.core.DebugException;
@@ -36,6 +40,11 @@ public class CStackFrame extends CDebugElement
 	 * Underlying CDI stack frame.
 	 */
 	private ICStackFrame fCDIStackFrame;
+
+	/**
+	 * The last (previous) CDI stack frame.
+	 */
+	private ICStackFrame fLastCDIStackFrame;
 
 	/**
 	 * Containing thread.
@@ -85,9 +94,13 @@ public class CStackFrame extends CDebugElement
 	{
 		if ( fVariables == null )
 		{
-			fVariables = new ArrayList();
-			fVariables.addAll( getCDIArguments() );
-			fVariables.addAll( getCDILocalVariables() );
+			List vars = getAllCDIVariables();
+			fVariables = new ArrayList( vars.size() );
+			Iterator it = vars.iterator();
+			while( it.hasNext() )
+			{
+				fVariables.add( new CLocalVariable( this, (ICVariable)it.next() ) );
+			}
 		}
 		else if ( fRefreshVariables )
 		{
@@ -98,11 +111,38 @@ public class CStackFrame extends CDebugElement
 	}
 
 	/**
-	 * Incrementally updates this stack frames variables.
+	 * Incrementally updates this stack frame's variables.
 	 * 
 	 */
 	protected void updateVariables() throws DebugException 
 	{
+		List locals = null;
+		locals = getAllCDIVariables();
+		int localIndex = -1;
+		int index = 0;
+		while( index < fVariables.size() )
+		{
+			CLocalVariable local = (CLocalVariable)fVariables.get( index );
+			localIndex = locals.indexOf( local.getCDIVariable() );
+			if ( localIndex >= 0 )
+			{
+				// update variable with new underling CDI LocalVariable
+				locals.remove( localIndex );
+				index++;
+			}
+			else
+			{
+				// remove variable
+				fVariables.remove( index );
+			}
+		}
+
+		// add any new locals
+		Iterator newOnes = locals.iterator();
+		while( newOnes.hasNext() )
+		{
+			fVariables.add( new CLocalVariable( this, (ICVariable)newOnes.next() ) );
+		}
 	}
 
 	/**
@@ -128,7 +168,15 @@ public class CStackFrame extends CDebugElement
 	 */
 	public int getLineNumber() throws DebugException
 	{
-		return 0;
+		if ( isSuspended() )
+		{
+			ICLocation location = getCDIStackFrame().getLocation();
+			if ( location != null )
+			{
+				return location.getLineNumber();
+			}
+		}
+		return -1;
 	}
 
 	/* (non-Javadoc)
@@ -136,7 +184,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public int getCharStart() throws DebugException
 	{
-		return 0;
+		return -1;
 	}
 
 	/* (non-Javadoc)
@@ -144,7 +192,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public int getCharEnd() throws DebugException
 	{
-		return 0;
+		return -1;
 	}
 
 	/* (non-Javadoc)
@@ -160,7 +208,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public IRegisterGroup[] getRegisterGroups() throws DebugException
 	{
-		return null;
+		return new IRegisterGroup[0];
 	}
 
 	/* (non-Javadoc)
@@ -168,13 +216,13 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean hasRegisterGroups() throws DebugException
 	{
-		return false;
+		return getRegisterGroups().length > 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICEventListener#handleDebugEvent(ICEvent)
 	 */
-	public void handleDebugEvent(ICEvent event)
+	public void handleDebugEvent( ICEvent event )
 	{
 	}
 
@@ -183,7 +231,15 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean canStepInto()
 	{
-		return false;
+		try
+		{
+			return exists() && isTopStackFrame() && getThread().canStepInto();
+		}
+		catch( DebugException e )
+		{
+			logError( e );
+			return false;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -191,7 +247,15 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean canStepOver()
 	{
-		return false;
+		try
+		{
+			return exists() && getThread().canStepOver();
+		}
+		catch( DebugException e )
+		{
+			logError( e );
+			return false;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -199,6 +263,24 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean canStepReturn()
 	{
+		try
+		{
+			if ( !exists() )
+			{
+				return false;
+			}
+			List frames = ((CThread)getThread()).computeStackFrames();
+			if ( frames != null && !frames.isEmpty() )
+			{
+				boolean bottomFrame = this.equals( frames.get( frames.size() - 1 ) );
+				boolean aboveObsoleteFrame = false;
+				return !bottomFrame && getThread().canStepReturn();
+			}
+		}
+		catch( DebugException e )
+		{
+			logError( e );
+		}
 		return false;
 	}
 
@@ -207,7 +289,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean isStepping()
 	{
-		return false;
+		return getThread().isStepping();
 	}
 
 	/* (non-Javadoc)
@@ -215,6 +297,11 @@ public class CStackFrame extends CDebugElement
 	 */
 	public void stepInto() throws DebugException
 	{
+		if ( !canStepInto() )
+		{
+			return;
+		}
+		getThread().stepInto();
 	}
 
 	/* (non-Javadoc)
@@ -222,6 +309,18 @@ public class CStackFrame extends CDebugElement
 	 */
 	public void stepOver() throws DebugException
 	{
+		if ( !canStepOver() )
+		{
+			return;
+		}
+		if ( isTopStackFrame() )
+		{
+			getThread().stepOver();
+		}
+		else
+		{
+			((CThread)getThread()).stepToFrame( this );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -229,6 +328,24 @@ public class CStackFrame extends CDebugElement
 	 */
 	public void stepReturn() throws DebugException
 	{
+		if ( !canStepReturn() )
+		{
+			return;
+		}
+		if ( isTopStackFrame() )
+		{
+			getThread().stepReturn();
+		}
+		else
+		{
+			List frames = ((CThread)getThread()).computeStackFrames();
+			int index = frames.indexOf( this );
+			if ( index >= 0 && index < frames.size() - 1 )
+			{
+				IStackFrame nextFrame = (IStackFrame)frames.get( index + 1 );
+				((CThread)getThread()).stepToFrame( nextFrame );
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -236,7 +353,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean canResume()
 	{
-		return false;
+		return getThread().canResume();
 	}
 
 	/* (non-Javadoc)
@@ -244,7 +361,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean canSuspend()
 	{
-		return false;
+		return getThread().canSuspend();
 	}
 
 	/* (non-Javadoc)
@@ -252,7 +369,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean isSuspended()
 	{
-		return false;
+		return getThread().isSuspended();
 	}
 
 	/* (non-Javadoc)
@@ -260,6 +377,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public void resume() throws DebugException
 	{
+		getThread().resume();
 	}
 
 	/* (non-Javadoc)
@@ -267,6 +385,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public void suspend() throws DebugException
 	{
+		getThread().suspend();
 	}
 
 	/* (non-Javadoc)
@@ -274,7 +393,16 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean canTerminate()
 	{
-		return false;
+		boolean exists = false;
+		try
+		{
+			exists = exists();
+		}
+		catch( DebugException e )
+		{
+			logError( e );
+		}
+		return exists && getThread().canTerminate() || getDebugTarget().canTerminate();
 	}
 
 	/* (non-Javadoc)
@@ -282,7 +410,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean isTerminated()
 	{
-		return false;
+		return getThread().isTerminated();
 	}
 
 	/* (non-Javadoc)
@@ -290,6 +418,14 @@ public class CStackFrame extends CDebugElement
 	 */
 	public void terminate() throws DebugException
 	{
+		if ( getThread().canTerminate() )
+		{
+			getThread().terminate();
+		}
+		else
+		{
+			getDebugTarget().terminate();
+		}
 	}
 
 	/**
@@ -311,6 +447,16 @@ public class CStackFrame extends CDebugElement
 	 */
 	protected void setCDIStackFrame( ICStackFrame frame ) 
 	{
+		if ( frame != null )
+		{
+			fLastCDIStackFrame = frame;
+		}
+		else
+		{
+			fLastCDIStackFrame = fCDIStackFrame;
+		}
+		fCDIStackFrame = frame;
+		fRefreshVariables = true;
 	}
 
 	/**
@@ -320,7 +466,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	protected ICStackFrame getLastCDIStackFrame()
 	{
-		return null;
+		return fLastCDIStackFrame;
 	}
 
 	/**
@@ -330,7 +476,8 @@ public class CStackFrame extends CDebugElement
 	 */
 	protected static boolean equalFrame( ICStackFrame frameOne, ICStackFrame frameTwo )
 	{
-		return false;
+		return ( frameOne.getParent().equals( frameTwo.getParent() ) && 
+				 frameOne.getLocation().equals( frameTwo.getLocation() ) );
 	}
 
 	protected boolean exists() throws DebugException
@@ -366,13 +513,10 @@ public class CStackFrame extends CDebugElement
 	 */
 	protected List getCDILocalVariables() throws DebugException
 	{
-		List list = Collections.EMPTY_LIST;
+		List list = new ArrayList();
 		try
 		{
-			ICVariable[] vars = getCDIStackFrame().getLocalVariables();
-			list = new ArrayList( vars.length );
-			for ( int i = 0; i < vars.length; ++i )
-				list.add( new CLocalVariable( this, vars[i] ) );
+			list.add( Arrays.asList( getCDIStackFrame().getLocalVariables() ) );
 		}
 		catch( CDIException e )
 		{
@@ -388,18 +532,29 @@ public class CStackFrame extends CDebugElement
 	 */
 	protected List getCDIArguments() throws DebugException
 	{
-		List list = Collections.EMPTY_LIST;
+		List list = new ArrayList();
 		try
 		{
-			ICArgument[] args = getCDIStackFrame().getArguments();
-			list = new ArrayList( args.length );
-			for ( int i = 0; i < args.length; ++i )
-				list.add( new CLocalVariable( this, args[i] ) );
+			list.add( Arrays.asList( getCDIStackFrame().getArguments() ) );
 		}
 		catch( CDIException e )
 		{
 			targetRequestFailed( MessageFormat.format( "{0} occurred retrieving arguments", new String[] { e.toString() } ), e );
 		}
 		return list;
+	}
+	
+	protected List getAllCDIVariables() throws DebugException
+	{
+		List list = new ArrayList();
+		list.add( getCDIArguments() );
+		list.add( getCDILocalVariables() );
+		return list;
 	} 
+
+	protected boolean isTopStackFrame() throws DebugException
+	{
+		IStackFrame tos = getThread().getTopStackFrame();
+		return tos != null && tos.equals( this );
+	}
 }

@@ -13,11 +13,11 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
-import org.eclipse.cdt.debug.core.IInstructionStep;
 import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICSessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICSignal;
@@ -47,7 +47,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IStep;
 import org.eclipse.debug.core.model.IThread;
 
 /**
@@ -119,7 +118,7 @@ public class CDebugTarget extends CDebugElement
 	/**
 	 * The debug configuration of this session
 	 */
-	private CDebugConfiguration fConfig;	
+	private ICDebugConfiguration fConfig;	
 
 	/**
 	 * Whether terminate is supported.
@@ -159,7 +158,7 @@ public class CDebugTarget extends CDebugElement
 		setName( name );
 		setProcess( process );
 		setCDITarget( cdiTarget );
-		fConfig = new CDebugConfiguration( cdiTarget.getSession() );
+		fConfig = cdiTarget.getSession().getConfiguration();
 		fSupportsTerminate = allowsTerminate & fConfig.supportsTerminate();
 		fSupportsDisconnect = allowsDisconnect & fConfig.supportsDisconnect();
 		setThreadList( new ArrayList( 5 ) );

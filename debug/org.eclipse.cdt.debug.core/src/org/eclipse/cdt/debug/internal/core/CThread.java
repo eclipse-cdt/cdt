@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.IInstructionStep;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICSessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICSignal;
@@ -83,7 +84,7 @@ public class CThread extends CDebugElement
 	/**
 	 * The debug configuration of this session.
 	 */
-	private CDebugConfiguration fConfig;	
+	private ICDebugConfiguration fConfig;	
 
 	/**
 	 * Constructor for CThread.
@@ -93,7 +94,7 @@ public class CThread extends CDebugElement
 	{
 		super( target );
 		setCDIThread( cdiThread );
-		fConfig = new CDebugConfiguration( getCDISession() );
+		fConfig = getCDISession().getConfiguration();
 		initialize();
 		getCDISession().getEventManager().addEventListener( this );
 	}
@@ -895,5 +896,23 @@ public class CThread extends CDebugElement
 	{
 		getCDISession().getEventManager().removeEventListener( this );
 		disposeStackFrames();
+	}
+
+	/**
+	 * Steps until the specified stack frame is the top frame. Provides
+	 * ability to step over/return in the non-top stack frame.
+	 * This method is synchronized, such that the step request
+	 * begins before a background evaluation can be performed.
+	 * 
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * </ul>
+	 */
+	protected synchronized void stepToFrame( IStackFrame frame ) throws DebugException
+	{
+		if ( !canStepReturn() )
+		{
+			return;
+		}
 	}
 }

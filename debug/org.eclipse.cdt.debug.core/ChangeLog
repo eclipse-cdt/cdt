@@ -1,4 +1,9 @@
 2003-04-21 Mikhail Khodjaiants
+	Disconnnect: target should be disconnected before terminate the session 
+	because of race condition.
+	* CDebugTarget.java
+
+2003-04-21 Mikhail Khodjaiants
 	Unnecessary error logging (bug 36682).
 	* CValue.java
 

@@ -802,6 +802,15 @@ public class CDebugTarget extends CDebugElement
 		try
 		{
 			getCDITarget().disconnect();
+			try
+			{
+				// wait until the target is disconnected ????
+				for( int i = 0; !isDisconnected() && i < 5; ++i )
+					Thread.sleep( 1000 );
+			}
+			catch( InterruptedException ie )
+			{
+			}
 			getCDISession().terminate();
 		}
 		catch( CDIException e )

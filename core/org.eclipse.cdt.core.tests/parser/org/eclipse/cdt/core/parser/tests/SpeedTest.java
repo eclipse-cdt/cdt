@@ -40,8 +40,7 @@ public class SpeedTest extends TestCase {
 			"#include <iostream>\n";
 		
 		CodeReader reader = new CodeReader(code.toCharArray());
-		IScannerInfo info = mingwScannerInfo(false);
-		//IScannerInfo info = msvcScannerInfo(false);
+		IScannerInfo info = getScannerInfo(false);
 		long totalTime = 0;
 		for (int i = 0; i < n; ++i) {
 			long time = testParse(reader, false, info, ParserLanguage.CPP);
@@ -73,11 +72,19 @@ public class SpeedTest extends TestCase {
 
 	private static final ISourceElementRequestor CALLBACK = new NullSourceElementRequestor();
 
-	/**
-	 * @param quick
-	 * @return
-	 */
-	protected IScannerInfo msvcScannerInfo(boolean quick) {
+	protected IScannerInfo getScannerInfo(boolean quick) {
+		if (quick)
+			return new ScannerInfo();
+		
+		String config = System.getProperty("speedTest.config"); 
+
+		if (config != null && config.equals("msvc"))
+			return msvcScannerInfo(false);
+		else
+			return mingwScannerInfo(false);
+	}
+	
+	private IScannerInfo msvcScannerInfo(boolean quick) {
 		if( quick )
 			return new ScannerInfo();
 		Map definitions = new Hashtable();
@@ -90,7 +97,7 @@ public class SpeedTest extends TestCase {
 		return new ScannerInfo( definitions, includePaths );
 	}
 
-	protected IScannerInfo mingwScannerInfo(boolean quick) {
+	private IScannerInfo mingwScannerInfo(boolean quick) {
 		// TODO It would be easier and more flexible if we used discovery for this
 		if( quick )
 			return new ScannerInfo();

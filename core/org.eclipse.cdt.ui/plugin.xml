@@ -390,16 +390,6 @@
             id="org.eclipse.cdt.ui.cProjectNatureImage">
       </image>
    </extension>
-<!-- =========================================================================== -->
-<!-- Debug Model Presentation                                                      -->
-<!-- =========================================================================== -->
-   <extension
-         point="org.eclipse.debug.ui.debugModelPresentations">
-      <debugModelPresentation
-            class="org.eclipse.cdt.core.debug.ui.CDebugModelPresentation"
-            id="org.eclipse.cdt.ui">
-      </debugModelPresentation>
-   </extension>
    <extension
          point="org.eclipse.cdt.core.CBuildConsole">
       <CBuildConsole

@@ -8,12 +8,13 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui;
+package org.eclipse.cdt.ui.dialogs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
@@ -39,6 +40,8 @@ public abstract class ErrorParserBlock extends AbstractCOptionPage {
 	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$
 	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$
 
+	private final static String PREF_ERROR_PARSER = "errorOutputParser"; // $NON-NLS-1$
+
 	private static String[] EMPTY = new String[0];
 	private Preferences fPrefs;
 	private HashMap mapParsers = new HashMap();
@@ -57,8 +60,6 @@ public abstract class ErrorParserBlock extends AbstractCOptionPage {
 	}
 
 	public ErrorParserBlock(Preferences prefs) {
-		//super(CUIPlugin.getResourceString(LABEL));
-		//setDescription(CUIPlugin.getResourceString(DESC));
 		super("Error Parsers");
 		setDescription("Set the error parser for this project");
 	}
@@ -81,7 +82,17 @@ public abstract class ErrorParserBlock extends AbstractCOptionPage {
 	}
 
 	protected String[] getErrorParserIDs(Preferences prefs) {
-		return CCorePlugin.getDefault().getPreferenceErrorParserIDs(prefs);
+		String parserIDs = prefs.getString(PREF_ERROR_PARSER);
+		String[] empty = new String[0];
+		if (parserIDs != null && parserIDs.length() > 0) {
+			StringTokenizer tok = new StringTokenizer(parserIDs, ";");
+			List list = new ArrayList(tok.countTokens());
+			while (tok.hasMoreElements()) {
+				list.add(tok.nextToken());
+			}
+			return (String[]) list.toArray(empty);
+		}
+		return empty;
 	}
 
 	/**
@@ -99,7 +110,11 @@ public abstract class ErrorParserBlock extends AbstractCOptionPage {
 	public abstract void saveErrorParsers(IProject project, String[] parserIDs);
 
 	public void saveErrorParsers(Preferences prefs, String[] parserIDs) {
-		CCorePlugin.getDefault().setPreferenceErrorParser(prefs, parserIDs);
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < parserIDs.length; i++) {
+			buf.append(parserIDs[i]).append(';');
+		}
+		prefs.setValue(PREF_ERROR_PARSER, buf.toString());
 	}
 
 	protected void initMapParsers() {
@@ -149,15 +164,15 @@ public abstract class ErrorParserBlock extends AbstractCOptionPage {
 
 		String[] buttonLabels = new String[] {
 			/* 0 */
-			"up", //$NON-NLS-1$
+			"Up", //$NON-NLS-1$
 			/* 1 */
-			"down", //$NON-NLS-1$
+			"Down", //$NON-NLS-1$
 			/* 2 */
 			null,
 			/* 3 */
-			"checkall", //$NON-NLS-1$
+			"Select All", //$NON-NLS-1$
 			/* 4 */
-			"uncheckall" //$NON-NLS-1$
+			"Unselect All" //$NON-NLS-1$
 		};
 
 		fErrorParserList = new CheckedListDialogField(null, buttonLabels, getLabelProvider());
@@ -181,7 +196,7 @@ public abstract class ErrorParserBlock extends AbstractCOptionPage {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask("Reference Projects", 1);
+			monitor.beginTask("Setting Error Parsers...", 1);
 			List list = fErrorParserList.getCheckedElements();
 			
 			String[] parserIDs = (String[])list.toArray(EMPTY);
@@ -190,6 +205,8 @@ public abstract class ErrorParserBlock extends AbstractCOptionPage {
 			} else {
 				saveErrorParsers(project, parserIDs);
 			}
+			monitor.worked(1);
+			monitor.done();
 		}
 	}
 

@@ -1,4 +1,4 @@
-package org.eclipse.cdt.ui;
+package org.eclipse.cdt.ui.dialogs;
 /***********************************************************************
  * Copyright (c) 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;

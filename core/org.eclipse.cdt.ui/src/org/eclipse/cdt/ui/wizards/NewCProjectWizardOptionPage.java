@@ -8,8 +8,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-import org.eclipse.cdt.ui.TabFolderOptionBlock;
-import org.eclipse.cdt.ui.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;

@@ -1,3 +1,18 @@
+2003-09-03 David Inglis
+	- src/org/eclipse/cdt/ui/TabFolderOptionBlock.java
+	- src/org/eclipse/cdt/ui/AbstractCOptionPage.java
+	- src/org/eclipse/cdt/ui/BinaryParserBlock.java
+	- src/org/eclipse/cdt/ui/ErrorParserBlock.java
+	- src/org/eclipse/cdt/ui/ICOptionContainer.java
+	- src/org/eclipse/cdt/ui/ICOptionPage.java
+	- src/org/eclipse/cdt/ui/IndexerBlock.java
+	- src/org/eclipse/cdt/ui/ReferenceBlock.java
+	- src/org/eclipse/cdt/ui/TabFolderOptionBlock.java
+	moved to org.eclipse.cdt.ui.dialogs package.
+	
+	* src/org/eclipse/cdt/ui/wizards/NewCProjectWizardOptionPage.java
+	change due to refactor
+	
 2003-09-03 Alain Magloire
 
 	Change to abstract and let the client provides the saving algorithm.

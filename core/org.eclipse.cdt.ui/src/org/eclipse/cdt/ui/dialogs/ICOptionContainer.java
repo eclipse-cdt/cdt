@@ -1,4 +1,4 @@
-package org.eclipse.cdt.ui;
+package org.eclipse.cdt.ui.dialogs;
 
 /***********************************************************************
  * Copyright (c) 2003 IBM Corporation and others.

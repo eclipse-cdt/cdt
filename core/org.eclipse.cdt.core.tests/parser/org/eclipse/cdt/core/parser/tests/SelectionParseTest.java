@@ -381,4 +381,22 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		assertEquals( classSpecifier.getClassKind(), ASTClassKind.UNION );
 		assertEquals( classSpecifier.getName(), "Squaw"); //$NON-NLS-1$
 	}
+	
+	public void test72220() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "const int FOUND_ME = 1;\n" ); //$NON-NLS-1$
+		writer.write( "class Test{\n" ); //$NON-NLS-1$
+		writer.write( "public:\n" ); //$NON-NLS-1$
+		writer.write( "const int findCode() const;\n" ); //$NON-NLS-1$
+		writer.write( "};\n" ); //$NON-NLS-1$
+		writer.write( "const int Test::findCode() const {\n" ); //$NON-NLS-1$
+		writer.write( "return FOUND_ME;\n" ); //$NON-NLS-1$
+		writer.write( "}\n" ); //$NON-NLS-1$
+		String code = writer.toString();
+		int startIndex = code.indexOf( "return ") + "return ".length();  //$NON-NLS-1$ //$NON-NLS-2$
+		IASTNode node = parse( code, startIndex, startIndex + 8 );
+		assertTrue( node instanceof IASTVariable );
+		assertEquals( ((IASTVariable)node).getName(), "FOUND_ME" ); //$NON-NLS-1$
+	}
 }

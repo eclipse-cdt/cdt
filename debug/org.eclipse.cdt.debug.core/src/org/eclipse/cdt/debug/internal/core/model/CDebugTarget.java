@@ -1788,15 +1788,14 @@ public class CDebugTarget extends CDebugElement
 	public void setCurrentThread( IThread thread ) throws DebugException
 	{
 		if ( !isSuspended() || !isAvailable() || thread == null || !(thread instanceof CThread) )
-		{
 			return;
-		}
 		try
 		{
 			CThread oldThread = (CThread)getCurrentThread();
-			if ( !oldThread.equals( thread ) )
+			if ( !thread.equals( oldThread ) )
 			{
-				oldThread.setCurrent( false );
+				if ( oldThread != null )
+					oldThread.setCurrent( false );
 				getCDITarget().setCurrentThread( ((CThread)thread).getCDIThread() );
 				((CThread)thread).setCurrent( true );
 			}

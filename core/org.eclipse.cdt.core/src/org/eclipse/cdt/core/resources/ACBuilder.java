@@ -34,9 +34,10 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			 */
 			if ((cur != null) && (cur.length > 0)) {
 				for (int i = 0; i < cur.length; i++) {
-					if ((((Integer) cur[i].getAttribute(IMarker.LOCATION)).intValue() == lineNumber)
-						&& (((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue() == severity)
-						&& (((String) cur[i].getAttribute(IMarker.MESSAGE)).equals(errorDesc))) {
+					int line = ((Integer) cur[i].getAttribute(IMarker.LOCATION)).intValue();
+					int sev = ((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue();
+					String mesg = (String) cur[i].getAttribute(IMarker.MESSAGE);
+					if (line == lineNumber && sev == mapMarkerSeverity(severity) && mesg.equals(errorDesc)) {
 						return;
 					}
 				}

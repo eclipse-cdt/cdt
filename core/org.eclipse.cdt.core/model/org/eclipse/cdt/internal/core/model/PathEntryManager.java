@@ -171,7 +171,7 @@ public class PathEntryManager {
 			return;
 		}
 
-		IPath containerPath = (newContainer == null) ? new Path("") : newContainer.getPath();
+		IPath containerPath = (newContainer == null) ? new Path("") : newContainer.getPath(); //$NON-NLS-1$
 		final int projectLength = affectedProjects.length;
 		final ICProject[] modifiedProjects = new ICProject[projectLength];
 		System.arraycopy(affectedProjects, 0, modifiedProjects, 0, projectLength);

@@ -90,7 +90,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 		if (attr != null) {
 			return attribute.getCPU();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -285,7 +285,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 				try {
 					String filename =  addr2line.getFileName(sym.addr);
 					// Addr2line returns the funny "??" when it can not find the file.
-					sym.filename = (filename != null && !filename.equals("??")) ? new Path(filename) : null;
+					sym.filename = (filename != null && !filename.equals("??")) ? new Path(filename) : null; //$NON-NLS-1$
 					sym.startLine = addr2line.getLineNumber(sym.addr);
 					sym.endLine = addr2line.getLineNumber(sym.addr + sym.size - 1);
 				} catch (IOException e) {

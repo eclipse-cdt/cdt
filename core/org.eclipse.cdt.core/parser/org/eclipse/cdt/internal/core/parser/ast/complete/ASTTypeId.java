@@ -49,7 +49,7 @@ public class ASTTypeId implements IASTTypeId
     public ASTTypeId( Type kind, ITokenDuple duple, List pointerOps, List arrayMods, String signature, 
 		boolean isConst, boolean isVolatile, boolean isUnsigned, boolean isSigned, boolean isShort, boolean isLong, boolean isTypeName )
     {
- 		typeName = ( duple == null ) ? "" : duple.toString() ;
+ 		typeName = ( duple == null ) ? "" : duple.toString() ; //$NON-NLS-1$
  		this.tokenDuple = duple;
  		this.kind = kind;
  		this.pointerOps = pointerOps; 

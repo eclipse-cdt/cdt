@@ -1,3 +1,6 @@
+2004-02-26 Andrew Niefer
+	mark strings that don't need to be externalized for translation
+
 2004-02-25 Bogdan Gheorghe
 	Added a check to make sure that the parser is in the top context before throwing
 	an EOF exception in SeletionParser.

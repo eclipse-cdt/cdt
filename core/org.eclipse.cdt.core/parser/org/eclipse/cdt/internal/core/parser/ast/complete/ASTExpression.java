@@ -52,7 +52,7 @@ public class ASTExpression implements IASTExpression
     	this.newDescriptor = newDescriptor;
     	this.references = references;
     	this.idExpressionDuple = idExpression;
-    	this.idExpression = idExpressionDuple == null ? "" : idExpressionDuple.toString();
+    	this.idExpression = idExpressionDuple == null ? "" : idExpressionDuple.toString(); //$NON-NLS-1$
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getExpressionKind()

@@ -47,12 +47,12 @@ public class Objdump {
 	}
 	
 	public Objdump(String file) throws IOException {
-		this("objdump", new String[0], file);
+		this("objdump", new String[0], file); //$NON-NLS-1$
 	}
 
 	void init(String command, String[] params, String file) throws IOException {
 		if (params == null || params.length == 0) {
-			args = new String[] { command, "-C", "-x", "-S", file };
+			args = new String[] { command, "-C", "-x", "-S", file }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
 			args = new String[params.length + 1];
 			args[0] = command;

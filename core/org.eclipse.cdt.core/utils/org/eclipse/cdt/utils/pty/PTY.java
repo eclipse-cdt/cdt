@@ -65,7 +65,7 @@ public class PTY {
 
 	static {
 		try {
-			System.loadLibrary("pty");
+			System.loadLibrary("pty"); //$NON-NLS-1$
 			hasPTY = true;
 		} catch (SecurityException e) {
 		} catch (UnsatisfiedLinkError e) {

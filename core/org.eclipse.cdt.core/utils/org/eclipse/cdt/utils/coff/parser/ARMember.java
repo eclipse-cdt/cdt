@@ -59,7 +59,7 @@ public class ARMember extends BinaryObject {
 		if (header != null) {
 			return header.getObjectName();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	protected PE getPE() throws IOException {

@@ -87,7 +87,7 @@ public class KeywordSets {
 	static 
 	{
 		MACRO_ONLY = new HashSet();
-		MACRO_ONLY.add("defined()" );
+		MACRO_ONLY.add("defined()" ); //$NON-NLS-1$
 	}
 	
 	

@@ -124,7 +124,7 @@ public class CModelBuilder {
 					new StringReader( code ), 
 					(translationUnit.getUnderlyingResource() != null ? 
 					 translationUnit.getUnderlyingResource().getLocation().toOSString() :
-					 ""),
+					 ""), //$NON-NLS-1$
 					scanInfo, 
 					mode, 
 					language, 
@@ -171,7 +171,7 @@ public class CModelBuilder {
 		// For the debuglog to take place, you have to call
 		// Util.setDebugging(true);
 		// Or set debug to true in the core plugin preference 
-		Util.debugLog("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms", IDebugLogConstants.MODEL);
+		Util.debugLog("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms", IDebugLogConstants.MODEL); //$NON-NLS-1$ //$NON-NLS-2$
 		return this.newElements;
 		
 	}	
@@ -345,7 +345,7 @@ public class CModelBuilder {
 		// create element
 		String type = "namespace"; //$NON-NLS-1$
 		String nsName = (nsDef.getName() == null )  
-						? "" 
+						? ""  //$NON-NLS-1$
 						: nsDef.getName().toString();
 		Namespace element = new Namespace ((ICElement)parent, nsName );
 		// add to parent
@@ -364,7 +364,7 @@ public class CModelBuilder {
 		// create element
 		String type = "enum"; //$NON-NLS-1$
 		String enumName = (enumSpecifier.getName() == null )
-						  ? "" 
+						  ? ""  //$NON-NLS-1$
 						  : enumSpecifier.getName().toString();
 		Enumeration element = new Enumeration ((ICElement)parent, enumName );
 		// add to parent
@@ -418,7 +418,7 @@ public class CModelBuilder {
 				kind = ICElement.C_TEMPLATE_CLASS;
 			type = "class"; //$NON-NLS-1$
 			className = (classSpecifier.getName() == null )
-						? ""
+						? "" //$NON-NLS-1$
 						: classSpecifier.getName().toString();				
 		}
 		if(classkind == ASTClassKind.STRUCT){
@@ -428,7 +428,7 @@ public class CModelBuilder {
 				kind = ICElement.C_TEMPLATE_STRUCT;
 			type = "struct"; //$NON-NLS-1$
 			className = (classSpecifier.getName() == null ) 
-						? "" 
+						? ""  //$NON-NLS-1$
 						: classSpecifier.getName().toString();				
 		}
 		if(classkind == ASTClassKind.UNION){
@@ -438,7 +438,7 @@ public class CModelBuilder {
 				kind = ICElement.C_TEMPLATE_UNION;
 			type = "union"; //$NON-NLS-1$
 			className = (classSpecifier.getName() == null )
-						? "" 
+						? ""  //$NON-NLS-1$
 						: classSpecifier.getName().toString();				
 		}
 		

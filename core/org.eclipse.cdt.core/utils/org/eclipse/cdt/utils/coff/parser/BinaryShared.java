@@ -38,7 +38,7 @@ public class BinaryShared extends BinaryExecutable implements IBinaryShared {
 		if (soname != null) {
 			return soname;
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**

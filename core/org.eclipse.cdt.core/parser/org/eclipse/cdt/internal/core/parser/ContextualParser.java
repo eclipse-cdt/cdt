@@ -72,7 +72,7 @@ public class ContextualParser extends CompleteParser {
 	 * @return
 	 */
 	protected String getCompletionPrefix() {
-		return ( finalToken == null ? "" : finalToken.getImage() );
+		return ( finalToken == null ? "" : finalToken.getImage() ); //$NON-NLS-1$
 	}
 
 	/**

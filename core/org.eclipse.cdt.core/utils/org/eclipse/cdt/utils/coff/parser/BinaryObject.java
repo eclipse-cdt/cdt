@@ -96,7 +96,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 		if (attr != null) {
 			return attribute.getCPU();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryShared#getSoName()
 	 */
 	public String getSoName() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	protected PE getPE() throws IOException {
@@ -262,7 +262,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 					try {
 						String filename =  addr2line.getFileName(sym.addr);
 						// Addr2line returns the funny "??" when it can not find the file.
-						if (filename != null && filename.equals("??")) {
+						if (filename != null && filename.equals("??")) { //$NON-NLS-1$
 							filename = null;
 						}
 

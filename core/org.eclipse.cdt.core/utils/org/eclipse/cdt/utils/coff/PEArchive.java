@@ -222,9 +222,9 @@ public class PEArchive {
 	 */
 	public PEArchive(String filename) throws IOException {
 		this.filename = filename;
-		rfile = new RandomAccessFile(filename, "r");
+		rfile = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 		String hdr = rfile.readLine();
-		if (hdr == null || hdr.compareTo("!<arch>") != 0) {
+		if (hdr == null || hdr.compareTo("!<arch>") != 0) { //$NON-NLS-1$
 			rfile.close();
 			throw new IOException("Not a valid archive file.");
 		}
@@ -255,7 +255,7 @@ public class PEArchive {
 				//
 				// If the name is "//" then this is the string table section.
 				//
-				if (name.compareTo("//") == 0)
+				if (name.compareTo("//") == 0) //$NON-NLS-1$
 					strtbl_pos = pos;
 
 				//
@@ -306,14 +306,14 @@ public class PEArchive {
 			if (names != null && !stringInStrings(object_name, names))
 				continue;
 
-			object_name = "" + count + "_" + object_name;
+			object_name = "" + count + "_" + object_name; //$NON-NLS-1$ //$NON-NLS-2$
 			count++;
 
 			byte[] data = headers[i].getObjectData();
 			File output = new File(outdir, object_name);
 			names_used.add(object_name);
 
-			RandomAccessFile rfile = new RandomAccessFile(output, "rw");
+			RandomAccessFile rfile = new RandomAccessFile(output, "rw"); //$NON-NLS-1$
 			rfile.write(data);
 			rfile.close();
 		}

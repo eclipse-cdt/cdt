@@ -1017,7 +1017,7 @@ public class ParserSymbolTable {
 				//the only way we get here and have no parameters, is if we are looking
 				//for a function that takes void parameters ie f( void )
 				parameterList = new LinkedList();
-				parameterList.add( currFn.getSymbolTable().newSymbol( "", TypeInfo.t_void ) );
+				parameterList.add( currFn.getSymbolTable().newSymbol( "", TypeInfo.t_void ) ); //$NON-NLS-1$
 			} else {
 				parameterList = currFn.getParameterList();
 			}

@@ -19,7 +19,7 @@ public class CygPath {
 	private BufferedWriter stdin;
 
 	public CygPath(String command) throws IOException {		
-		String[] args = {command, "--windows", "--file", "-"};
+		String[] args = {command, "--windows", "--file", "-"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		cygpath = ProcessFactory.getFactory().exec(args);
 		//cppfilt = new Spawner(args);
 		stdin = new BufferedWriter(new OutputStreamWriter(cygpath.getOutputStream()));
@@ -27,11 +27,11 @@ public class CygPath {
 	}
 
 	public CygPath() throws IOException {
-		this("cygpath");
+		this("cygpath"); //$NON-NLS-1$
 	}
 
 	public String getFileName(String name) throws IOException {
-		stdin.write(name + "\n");
+		stdin.write(name + "\n"); //$NON-NLS-1$
 		stdin.flush();
 		String str = stdout.readLine();
 		if ( str != null ) {

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Coff {
 
-	public static final String NL = System.getProperty("line.separator", "\n");
+	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	FileHeader filehdr;
 	OptionalHeader opthdr;
 	RandomAccessFile rfile;
@@ -78,19 +78,19 @@ public class Coff {
 
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("FILE HEADER VALUES").append(NL);
+			buffer.append("FILE HEADER VALUES").append(NL); //$NON-NLS-1$
 
-			buffer.append("f_magic = ").append(f_magic).append(NL);
-			buffer.append("f_nscns = ").append(f_nscns).append(NL);
+			buffer.append("f_magic = ").append(f_magic).append(NL); //$NON-NLS-1$
+			buffer.append("f_nscns = ").append(f_nscns).append(NL); //$NON-NLS-1$
 
-			buffer.append("f_timdat = ");
+			buffer.append("f_timdat = "); //$NON-NLS-1$
 			buffer.append(DateFormat.getDateInstance().format(new Date(f_timdat)));
 			buffer.append(NL);
 
-			buffer.append("f_symptr = ").append(f_symptr).append(NL);
-			buffer.append("f_nsyms = ").append(f_nsyms).append(NL);
-			buffer.append("f_opthdr = ").append(f_opthdr).append(NL);
-			buffer.append("f_flags = ").append(f_flags).append(NL);
+			buffer.append("f_symptr = ").append(f_symptr).append(NL); //$NON-NLS-1$
+			buffer.append("f_nsyms = ").append(f_nsyms).append(NL); //$NON-NLS-1$
+			buffer.append("f_opthdr = ").append(f_opthdr).append(NL); //$NON-NLS-1$
+			buffer.append("f_flags = ").append(f_flags).append(NL); //$NON-NLS-1$
 			return buffer.toString();
 		}
 	}
@@ -128,15 +128,15 @@ public class Coff {
 
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("OPTIONAL HEADER VALUES").append(NL);
-			buffer.append("magic      = ").append(magic).append(NL);
-			buffer.append("vstamp     = ").append(vstamp).append(NL);
-			buffer.append("tsize      = ").append(tsize).append(NL);
-			buffer.append("dsize      = ").append(dsize).append(NL);
-			buffer.append("bsize      = ").append(bsize).append(NL);
-			buffer.append("entry      = ").append(entry).append(NL);
-			buffer.append("text_start = ").append(text_start).append(NL);
-			buffer.append("data_start = ").append(data_start).append(NL);
+			buffer.append("OPTIONAL HEADER VALUES").append(NL); //$NON-NLS-1$
+			buffer.append("magic      = ").append(magic).append(NL); //$NON-NLS-1$
+			buffer.append("vstamp     = ").append(vstamp).append(NL); //$NON-NLS-1$
+			buffer.append("tsize      = ").append(tsize).append(NL); //$NON-NLS-1$
+			buffer.append("dsize      = ").append(dsize).append(NL); //$NON-NLS-1$
+			buffer.append("bsize      = ").append(bsize).append(NL); //$NON-NLS-1$
+			buffer.append("entry      = ").append(entry).append(NL); //$NON-NLS-1$
+			buffer.append("text_start = ").append(text_start).append(NL); //$NON-NLS-1$
+			buffer.append("data_start = ").append(data_start).append(NL); //$NON-NLS-1$
 			return buffer.toString();
 		}
 	}
@@ -146,11 +146,11 @@ public class Coff {
 		public final static int SCNHSZ = 40;
 
 		/* names of "special" sections */
-		public final static String _TEXT = ".text";
-		public final static String _DATA = ".data";
-		public final static String _BSS = ".bss";
-		public final static String _COMMENT = ".comment";
-		public final static String _LIB = ".lib";
+		public final static String _TEXT = ".text"; //$NON-NLS-1$
+		public final static String _DATA = ".data"; //$NON-NLS-1$
+		public final static String _BSS = ".bss"; //$NON-NLS-1$
+		public final static String _COMMENT = ".comment"; //$NON-NLS-1$
+		public final static String _LIB = ".lib"; //$NON-NLS-1$
 
 		/* s_flags "type".  */
 		public final static int STYP_REG = 0x0000;    /* "regular": allocated, relocated,
@@ -256,17 +256,17 @@ public class Coff {
 
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("SECTION HEADER VALUES").append(NL);
+			buffer.append("SECTION HEADER VALUES").append(NL); //$NON-NLS-1$
 			buffer.append(new String(s_name)).append(NL);
-			buffer.append("s_paddr = ").append(s_paddr).append(NL);
-			buffer.append("s_vaddr = ").append(s_vaddr).append(NL);
-			buffer.append("s_size = ").append(s_size).append(NL);
-			buffer.append("s_scnptr = ").append(s_scnptr).append(NL);
-			buffer.append("s_relptr = ").append(s_relptr).append(NL);
-			buffer.append("s_lnnoptr = ").append(s_lnnoptr).append(NL);
-			buffer.append("s_nreloc = ").append(s_nreloc).append(NL);
-			buffer.append("s_nlnno = ").append(s_nlnno).append(NL);
-			buffer.append("s_flags = ").append(s_flags).append(NL);
+			buffer.append("s_paddr = ").append(s_paddr).append(NL); //$NON-NLS-1$
+			buffer.append("s_vaddr = ").append(s_vaddr).append(NL); //$NON-NLS-1$
+			buffer.append("s_size = ").append(s_size).append(NL); //$NON-NLS-1$
+			buffer.append("s_scnptr = ").append(s_scnptr).append(NL); //$NON-NLS-1$
+			buffer.append("s_relptr = ").append(s_relptr).append(NL); //$NON-NLS-1$
+			buffer.append("s_lnnoptr = ").append(s_lnnoptr).append(NL); //$NON-NLS-1$
+			buffer.append("s_nreloc = ").append(s_nreloc).append(NL); //$NON-NLS-1$
+			buffer.append("s_nlnno = ").append(s_nlnno).append(NL); //$NON-NLS-1$
+			buffer.append("s_flags = ").append(s_flags).append(NL); //$NON-NLS-1$
 ///*
 			try {
 				Reloc[] rcs = getRelocs();
@@ -310,9 +310,9 @@ public class Coff {
 
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("RELOC VALUES").append(NL);
-			buffer.append("r_vaddr = ").append(r_vaddr);
-			buffer.append(" r_symndx = ").append(r_symndx).append(NL);
+			buffer.append("RELOC VALUES").append(NL); //$NON-NLS-1$
+			buffer.append("r_vaddr = ").append(r_vaddr); //$NON-NLS-1$
+			buffer.append(" r_symndx = ").append(r_symndx).append(NL); //$NON-NLS-1$
 			return buffer.toString();
 		}
 	}
@@ -339,10 +339,10 @@ public class Coff {
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			if (l_lnno == 0) {
-				buffer.append("Function address = ").append(l_addr).append(NL);
+				buffer.append("Function address = ").append(l_addr).append(NL); //$NON-NLS-1$
 			} else {
-				buffer.append("line# ").append(l_lnno);
-				buffer.append(" at address = ").append(l_addr).append(NL);
+				buffer.append("line# ").append(l_lnno); //$NON-NLS-1$
+				buffer.append(" at address = ").append(l_addr).append(NL); //$NON-NLS-1$
 			}
 			return buffer.toString();
 		}
@@ -400,7 +400,7 @@ public class Coff {
 					return new String(_n_name, 0, i);
 				}
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 
 		public String getName(byte[] table) {
@@ -550,7 +550,7 @@ public class Coff {
 	}
 
 	public Coff(String filename) throws IOException {
-		this(new RandomAccessFile(filename, "r"), 0);
+		this(new RandomAccessFile(filename, "r"), 0); //$NON-NLS-1$
 	}
 
 	public Coff(RandomAccessFile file, long offset) throws IOException {

@@ -21,22 +21,22 @@ public class EnvironmentReader {
 		if (null != envVars)
 			return (Properties)envVars.clone();
 
-		String OS = System.getProperty("os.name").toLowerCase();
+		String OS = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 		Process p = null;
 		envVars = new Properties();
 		rawVars = new Vector(32);
-		String command = "env";
+		String command = "env"; //$NON-NLS-1$
 		InputStream in = null;
 		boolean check_ready = false;
 		boolean isWin32 = false;
-		if (OS.startsWith("windows 9") || OS.startsWith("windows me")) { // 95, 98, me
-			command = "command.com /c set";
+		if (OS.startsWith("windows 9") || OS.startsWith("windows me")) { // 95, 98, me //$NON-NLS-1$ //$NON-NLS-2$
+			command = "command.com /c set"; //$NON-NLS-1$
 			//The buffered stream doesn't always like windows 98
 			check_ready = true;
 			isWin32 = true;
 		} else 
-		if (OS.startsWith("windows ")) {
-			command = "cmd.exe /c set";
+		if (OS.startsWith("windows ")) { //$NON-NLS-1$
+			command = "cmd.exe /c set"; //$NON-NLS-1$
 			isWin32 = true;
 		}
 		try {
@@ -54,7 +54,7 @@ public class EnvironmentReader {
 					String value = line.substring(idx + 1);
 					envVars.setProperty(key, value);
 				} else {
-					envVars.setProperty(line, "");
+					envVars.setProperty(line, ""); //$NON-NLS-1$
 				}
 				if (check_ready && br.ready() == false) {
 					break;

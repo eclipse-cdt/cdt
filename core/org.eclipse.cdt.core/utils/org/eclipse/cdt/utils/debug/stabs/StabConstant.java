@@ -64,94 +64,94 @@ public final class StabConstant {
 	public static String type2String(int t) {
 		switch (t) {
 				case N_UNDF :
-					return "UNDF";
+					return "UNDF"; //$NON-NLS-1$
 				case N_GSYM :
-					return "GSYM";
+					return "GSYM"; //$NON-NLS-1$
 				case N_FNAME :
-					return "FNAME";
+					return "FNAME"; //$NON-NLS-1$
 				case N_FUN :
-					return "FUN";
+					return "FUN"; //$NON-NLS-1$
 				case N_STSYM :
-					return "STSYM";
+					return "STSYM"; //$NON-NLS-1$
 				case N_LCSYM :
-					return "LCSYM";
+					return "LCSYM"; //$NON-NLS-1$
 				case N_MAIN :
-					return "MAIN";
+					return "MAIN"; //$NON-NLS-1$
 				case N_ROSYM :
-					return "ROSYM";
+					return "ROSYM"; //$NON-NLS-1$
 				case N_PC :
-					return "PC";
+					return "PC"; //$NON-NLS-1$
 				case N_NSYMS :
-					return "SSYMS";
+					return "SSYMS"; //$NON-NLS-1$
 				case N_NOMAP :
-					return "NOMAP";
+					return "NOMAP"; //$NON-NLS-1$
 				case N_OBJ :
-					return "OBJ";
+					return "OBJ"; //$NON-NLS-1$
 				case N_OPT :
-					return "OPT";
+					return "OPT"; //$NON-NLS-1$
 				case N_RSYM :
-					return "RSYM";
+					return "RSYM"; //$NON-NLS-1$
 				case N_M2C :
-					return "M2C";
+					return "M2C"; //$NON-NLS-1$
 				case N_SLINE :
-					return "SLINE";
+					return "SLINE"; //$NON-NLS-1$
 				case N_DSLINE :
-					return "DSLINE";
+					return "DSLINE"; //$NON-NLS-1$
 				case N_BSLINE :
-					return "BSLINE";
+					return "BSLINE"; //$NON-NLS-1$
 				case N_DEFD :
-					return "DEFD";
+					return "DEFD"; //$NON-NLS-1$
 				case N_FLINE :
-					return "FLINE";
+					return "FLINE"; //$NON-NLS-1$
 				case N_EHDECL :
-					return "EHDECL";
+					return "EHDECL"; //$NON-NLS-1$
 				case N_CATCH :
-					return "CATCH";
+					return "CATCH"; //$NON-NLS-1$
 				case N_SSYM :
-					return "SSYM";
+					return "SSYM"; //$NON-NLS-1$
 				case N_ENDM :
-					return "ENDM";
+					return "ENDM"; //$NON-NLS-1$
 				case N_SO :
-					return "SO";
+					return "SO"; //$NON-NLS-1$
 				case N_LSYM :
-					return "LSYM";
+					return "LSYM"; //$NON-NLS-1$
 				case N_BINCL :
-					return "BINCL";
+					return "BINCL"; //$NON-NLS-1$
 				case N_SOL :
-					return "SOL";
+					return "SOL"; //$NON-NLS-1$
 				case N_PSYM :
-					return "PSYM";
+					return "PSYM"; //$NON-NLS-1$
 				case N_EINCL :
-					return "EINCL";
+					return "EINCL"; //$NON-NLS-1$
 				case N_ENTRY :
-					return "ENTRY";
+					return "ENTRY"; //$NON-NLS-1$
 				case N_LBRAC :
-					return "LBRAC";
+					return "LBRAC"; //$NON-NLS-1$
 				case N_EXCL :
-					return "EXCL";
+					return "EXCL"; //$NON-NLS-1$
 				case N_SCOPE:
-					return "SCOPE";
+					return "SCOPE"; //$NON-NLS-1$
 				case N_RBRAC :
-					return "RBRAC";
+					return "RBRAC"; //$NON-NLS-1$
 				case N_BCOMM :
-					return "COMM";
+					return "COMM"; //$NON-NLS-1$
 				case N_ECOMM :
-					return "ECOMM";
+					return "ECOMM"; //$NON-NLS-1$
 				case N_ECOML :
-					return "ECOML";
+					return "ECOML"; //$NON-NLS-1$
 				case N_WITH :
-					return "WITH";
+					return "WITH"; //$NON-NLS-1$
 				case N_NBTEXT :
-					return "NBTEXT";
+					return "NBTEXT"; //$NON-NLS-1$
 				case N_NBDATA :
-					return "NBDATA";
+					return "NBDATA"; //$NON-NLS-1$
 				case N_NBBSS :
-					return "NBBSS";
+					return "NBBSS"; //$NON-NLS-1$
 				case N_NBSTS :
-					return "NBSTS";
+					return "NBSTS"; //$NON-NLS-1$
 				case N_NBLCS :
-					return "NBLCS";
+					return "NBLCS"; //$NON-NLS-1$
 			}
-			return "" + t;
+			return "" + t; //$NON-NLS-1$
 	}
 }

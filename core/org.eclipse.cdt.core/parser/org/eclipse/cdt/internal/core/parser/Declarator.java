@@ -39,7 +39,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     private boolean pureVirtual = false;
     private final IDeclaratorOwner owner;
 	private Declarator ownedDeclarator = null; 
-	private String name = ""; 
+	private String name = "";  //$NON-NLS-1$
 	private IASTInitializerClause initializerClause = null;
 	private List ptrOps = new ArrayList();
 	private List parameters = new ArrayList();

@@ -29,7 +29,7 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 	{
 		this.name = name;
 		this.expansionSignature = expansionSignature;
-		fullSignature = "#define " + name + " " + expansionSignature;
+		fullSignature = "#define " + name + " " + expansionSignature; //$NON-NLS-1$ //$NON-NLS-2$
 		tokenizedExpansion = EMPTY_LIST;
 	}
 	

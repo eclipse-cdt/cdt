@@ -75,7 +75,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 		DebugSym sym = new DebugSym();
 		sym.name = name;
 		sym.addr = address;
-		sym.type = "CU";
+		sym.type = "CU"; //$NON-NLS-1$
 		sym.filename = name;
 		currentCU = sym;
 		list.add(sym);
@@ -110,7 +110,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 		DebugSym sym = new DebugSym();
 		sym.name = name;
 		sym.addr = address;
-		sym.type = "Func";
+		sym.type = "Func"; //$NON-NLS-1$
 		if (currentCU != null) {
 			sym.filename = currentCU.filename;
 		}
@@ -145,10 +145,10 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	 */
 	public void acceptStatement(int line, long address) {
 		DebugSym sym = new DebugSym();
-		sym.name = "";
+		sym.name = ""; //$NON-NLS-1$
 		sym.addr = address;
 		sym.startLine = line;
-		sym.type = "SLINE";
+		sym.type = "SLINE"; //$NON-NLS-1$
 		if (currentFunction != null) {
 			if (currentFunction.startLine == 0) {
 				currentFunction.startLine = line;
@@ -186,7 +186,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 		DebugSym sym = new DebugSym();
 		sym.name = name;
 		sym.addr = offset;
-		sym.type = "PARAM";
+		sym.type = "PARAM"; //$NON-NLS-1$
 		if (currentCU != null) {
 			sym.filename = currentCU.filename;
 		}
@@ -200,7 +200,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 		DebugSym sym = new DebugSym();
 		sym.name = name;
 		sym.addr = address;
-		sym.type = "VAR";
+		sym.type = "VAR"; //$NON-NLS-1$
 		if (currentCU != null) {
 			sym.filename = currentCU.filename;
 		}

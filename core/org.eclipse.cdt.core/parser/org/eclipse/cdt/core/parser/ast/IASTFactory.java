@@ -221,8 +221,8 @@ public interface IASTFactory
 	
 	public boolean queryIsTypeName( IASTScope scope, ITokenDuple nameInQuestion ) ;
 
-	static final String DOUBLE_COLON = "::";
-	static final String TELTA = "~";
+	static final String DOUBLE_COLON = "::"; //$NON-NLS-1$
+	static final String TELTA = "~"; //$NON-NLS-1$
 	/**
 	 * @param scope
 	 * @return

@@ -120,7 +120,7 @@ public class DebugAddr2line {
 			String function = addr2line.getFunction(address);
 			String filename = addr2line.getFileName(address);
 			System.out.println(Long.toHexString(address));
-			System.out.println(filename + ":" + function + ":" + startLine + ":" + endLine);
+			System.out.println(filename + ":" + function + ":" + startLine + ":" + endLine); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -34,11 +34,11 @@ public class Node {
 	
 	public String toString() {
 	 StringBuffer tempBuffer = new StringBuffer();
-	 tempBuffer.append("[FileRef: ");
+	 tempBuffer.append("[FileRef: "); //$NON-NLS-1$
 	 tempBuffer.append(fileRef);
-	 tempBuffer.append(", Id: ");
+	 tempBuffer.append(", Id: "); //$NON-NLS-1$
 	 tempBuffer.append(nodeId);	
-	 tempBuffer.append("]");
+	 tempBuffer.append("]"); //$NON-NLS-1$
 	 return tempBuffer.toString();
 	}
 

@@ -423,7 +423,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	ISymbol namespaceSymbol  = null; 
 
     	
-    	if( ! identifier.equals( "" ) )
+    	if( ! identifier.equals( "" ) ) //$NON-NLS-1$
     	{
 	    	try
 	        {
@@ -443,7 +443,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         else
         {
         	namespaceSymbol = pst.newContainerSymbol( identifier, TypeInfo.t_namespace );
-        	if( identifier.equals( "" ) )
+        	if( identifier.equals( "" ) ) //$NON-NLS-1$
         		namespaceSymbol.setContainingSymbol( pstScope );	
         	else
         	{
@@ -544,7 +544,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         TypeInfo.eType pstType = classKindToTypeInfo(kind);		
 		List references = new ArrayList();
 
-		String newSymbolName = "";
+		String newSymbolName = ""; //$NON-NLS-1$
 		
 		if( name != null ){
 			IToken lastToken = name.getLastToken();
@@ -561,7 +561,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		
 		ISymbol classSymbol = null;
-		if( !newSymbolName.equals("") ){
+		if( !newSymbolName.equals("") ){ //$NON-NLS-1$
 			try
 			{
 				classSymbol = currentScopeSymbol.lookupMemberForDefinition(newSymbolName);
@@ -870,7 +870,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		// go up the scope until you hit a class
 		if (kind == IASTExpression.Kind.PRIMARY_THIS){
 			try{
-				symbol = startingScope.lookup("this");
+				symbol = startingScope.lookup("this"); //$NON-NLS-1$
 			}catch (ParserSymbolTableException e){
 				throw new ASTSemanticException();
 			}
@@ -1515,7 +1515,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         getExpressionReferences( expressionList, references ); 
         return new ASTConstructorMemberInitializer( 
         	expressionList, 
-        	duple == null ? "" : duple.toString(), 
+        	duple == null ? "" : duple.toString(),  //$NON-NLS-1$
 			duple == null ? 0 : duple.getFirstToken().getOffset(),
         	references, requireReferenceResolution );
     }
@@ -1551,7 +1551,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			type = TypeInfo.t__Bool;
 	
 		List references = new ArrayList(); 
-		ISymbol s = pst.newSymbol( "", type );
+		ISymbol s = pst.newSymbol( "", type ); //$NON-NLS-1$
 		if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
 		{
 			// lookup the duple
@@ -1849,7 +1849,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	    	newReferences.add( createReference( xrefSymbol, elab.getName(), elab.getNameOffset()) );  
 	    }
 	    
-	    String paramName = "";
+	    String paramName = ""; //$NON-NLS-1$
 	    if(absDecl instanceof IASTParameterDeclaration){
 	    	paramName = ((IASTParameterDeclaration)absDecl).getName();
 	    }
@@ -2091,7 +2091,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			while( initializers.hasNext())
 			{
 				IASTConstructorMemberInitializer initializer = (IASTConstructorMemberInitializer)initializers.next();
-				if( !initializer.getName().equals( "") &&
+				if( !initializer.getName().equals( "") && //$NON-NLS-1$
 					initializer instanceof ASTConstructorMemberInitializer && 
 					((ASTConstructorMemberInitializer)initializer).requiresNameResolution() ) 
 				{
@@ -2157,7 +2157,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		int tokencount = tokenizer.countTokens();
 		if(tokencount > 1){
 			List tokens = new ArrayList();
-			String oneToken = "";
+			String oneToken = ""; //$NON-NLS-1$
 			// This is NOT a function. This is a method definition
 			while (tokenizer.hasMoreTokens()){
 				oneToken = tokenizer.nextToken();
@@ -2696,7 +2696,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	public IASTCodeScope createNewCodeBlock(IASTScope scope) {
 		IContainerSymbol symbol = scopeToSymbol( scope );
 		
-		IContainerSymbol newScope = pst.newContainerSymbol("", TypeInfo.t_block);
+		IContainerSymbol newScope = pst.newContainerSymbol("", TypeInfo.t_block); //$NON-NLS-1$
 		newScope.setContainingSymbol(symbol);
 		
 		ASTCodeScope codeScope = new ASTCodeScope( newScope );
@@ -2742,7 +2742,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods) throws ASTSemanticException
     {
         ASTTypeId result = 
-        	new ASTTypeId( kind, name, pointerOps, arrayMods, "", //TODO 
+        	new ASTTypeId( kind, name, pointerOps, arrayMods, "", //TODO  //$NON-NLS-1$
         	isConst, isVolatile, isUnsigned, isSigned, isShort, isLong, isTypename );
         result.setTypeSymbol( createSymbolForTypeId( scope, result ) );
         return result;
@@ -2780,7 +2780,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( id == null ) return null;
     	
     	ASTTypeId typeId = (ASTTypeId)id;
-		ISymbol result = pst.newSymbol( "", CompleteParseASTFactory.getTypeKind(id));
+		ISymbol result = pst.newSymbol( "", CompleteParseASTFactory.getTypeKind(id)); //$NON-NLS-1$
     	
     	result.getTypeInfo().setBit( id.isConst(), TypeInfo.isConst );
 		result.getTypeInfo().setBit( id.isVolatile(), TypeInfo.isVolatile );

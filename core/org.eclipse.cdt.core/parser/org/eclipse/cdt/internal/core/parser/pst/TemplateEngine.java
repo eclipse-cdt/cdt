@@ -785,7 +785,7 @@ public final class TemplateEngine {
 			ISymbol param = (ISymbol) iterator.next();
 			//template type parameter
 			if( param.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName ){
-				val = new TypeInfo( TypeInfo.t_type, 0, template.getSymbolTable().newSymbol( "", TypeInfo.t_class ) );
+				val = new TypeInfo( TypeInfo.t_type, 0, template.getSymbolTable().newSymbol( "", TypeInfo.t_class ) ); //$NON-NLS-1$
 			} 
 			//template parameter
 			else if ( param.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ) {
@@ -823,7 +823,7 @@ public final class TemplateEngine {
 		} catch ( ParserSymbolTableException e ){
 			//we shouldn't get this because there aren't any other symbols in the template
 		}
-		ISymbol param = specialization.getSymbolTable().newSymbol( "", TypeInfo.t_type );
+		ISymbol param = specialization.getSymbolTable().newSymbol( "", TypeInfo.t_type ); //$NON-NLS-1$
 		LinkedList args = new LinkedList( specialization.getArgumentList() );
 		
 		param.setTypeSymbol( specialization.instantiate( args ) );

@@ -66,7 +66,7 @@ public class FunctionTemplate extends FunctionDeclaration implements ITemplate{
 			int i = 0;
 			sig.append(paramTypes[i++]);
 			while (i < paramTypes.length){
-				sig.append(", ");
+				sig.append(", "); //$NON-NLS-1$
 				sig.append(paramTypes[i++]);
 			}
 			sig.append(">"); //$NON-NLS-1$

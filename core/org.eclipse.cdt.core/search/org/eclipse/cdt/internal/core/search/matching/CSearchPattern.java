@@ -181,7 +181,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			scanner =
 				ParserFactory.createScanner(
 					new StringReader(patternString),
-					"TEXT",
+					"TEXT", //$NON-NLS-1$
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
@@ -252,7 +252,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			scanner =
 				ParserFactory.createScanner(
 					new StringReader(patternString),
-					"TEXT",
+					"TEXT", //$NON-NLS-1$
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
@@ -286,7 +286,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		}
 				
 		int index = patternString.indexOf( '(' );
-		String paramString = ( index == -1 ) ? "" : patternString.substring( index );
+		String paramString = ( index == -1 ) ? "" : patternString.substring( index ); //$NON-NLS-1$
 		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index );
 		
 		IScanner scanner=null;
@@ -294,7 +294,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			scanner =
 				ParserFactory.createScanner(
 					new StringReader(nameString),
-					"TEXT",
+					"TEXT", //$NON-NLS-1$
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
@@ -353,7 +353,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			scanner =
 				ParserFactory.createScanner(
 					new StringReader(patternString),
-					"TEXT",
+					"TEXT", //$NON-NLS-1$
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
@@ -406,17 +406,17 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	private static LinkedList scanForParameters( String paramString ) {
 		LinkedList list = new LinkedList();
 		
-		if( paramString == null || paramString.equals("") )
+		if( paramString == null || paramString.equals("") ) //$NON-NLS-1$
 			return list;
 		
-		String functionString = "void f " + paramString + ";";
+		String functionString = "void f " + paramString + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 				
 		IScanner scanner=null;
 		try {
 			scanner =
 				ParserFactory.createScanner(
 					new StringReader(functionString),
-					"TEXT",
+					"TEXT", //$NON-NLS-1$
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
@@ -456,7 +456,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			
 			if (param == null){
 				//This means that no params have been added (i.e. empty brackets - void case)
-				param = "void ".toCharArray();
+				param = "void ".toCharArray(); //$NON-NLS-1$
 				list.add (param); 
 			}
 		}
@@ -467,7 +467,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	static public char [] getParamString( IASTParameterDeclaration param ){
 		if( param == null ) return null;
 		 
-		String signature = "";
+		String signature = ""; //$NON-NLS-1$
 		
 		IASTTypeSpecifier typeSpec = param.getTypeSpecifier();
 		if( typeSpec instanceof IASTSimpleTypeSpecifier ){
@@ -476,13 +476,13 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		} else if( typeSpec instanceof IASTElaboratedTypeSpecifier ){
 			IASTElaboratedTypeSpecifier elaborated = (IASTElaboratedTypeSpecifier)typeSpec;
 			if( elaborated.getClassKind() == ASTClassKind.CLASS ){
-				signature += "class ";
+				signature += "class "; //$NON-NLS-1$
 			} else if( elaborated.getClassKind() == ASTClassKind.ENUM ) {
-				signature += "enum ";
+				signature += "enum "; //$NON-NLS-1$
 			} else if( elaborated.getClassKind() == ASTClassKind.STRUCT ) {
-				signature += "struct ";
+				signature += "struct "; //$NON-NLS-1$
 			} else if( elaborated.getClassKind() == ASTClassKind.UNION ) {
-				signature += "union";
+				signature += "union"; //$NON-NLS-1$
 			}
 
 			signature += elaborated.getName();
@@ -494,29 +494,29 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			signature += enumSpec.getName();
 		}
 		
-		signature += " ";
+		signature += " "; //$NON-NLS-1$
 		
-		if( param.isConst() ) signature += "const ";
-		if( param.isVolatile() ) signature += "volatile ";
+		if( param.isConst() ) signature += "const "; //$NON-NLS-1$
+		if( param.isVolatile() ) signature += "volatile "; //$NON-NLS-1$
 
 		Iterator ptrs = param.getPointerOperators();
 		while( ptrs.hasNext() ){
 			ASTPointerOperator ptrOp = (ASTPointerOperator) ptrs.next();
 			if( ptrOp == ASTPointerOperator.POINTER ){
-				signature += " * ";
+				signature += " * "; //$NON-NLS-1$
 			} else if( ptrOp == ASTPointerOperator.REFERENCE ){
-				signature += " & ";
+				signature += " & "; //$NON-NLS-1$
 			} else if( ptrOp == ASTPointerOperator.CONST_POINTER ){
-				signature += " const * ";
+				signature += " const * "; //$NON-NLS-1$
 			} else if( ptrOp == ASTPointerOperator.VOLATILE_POINTER ){
-				signature += " volatile * ";
+				signature += " volatile * "; //$NON-NLS-1$
 			}
 		}
 
 		Iterator arrayModifiers = param.getArrayModifiers();
 		while( arrayModifiers.hasNext() ){
 			arrayModifiers.next();
-			signature += " [] ";
+			signature += " [] "; //$NON-NLS-1$
 		}
 
 		return signature.toCharArray();
@@ -525,7 +525,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	static private LinkedList scanForNames( IScanner scanner, IToken unusedToken ){
 		LinkedList list = new LinkedList();
 		
-		String name  = new String("");
+		String name  = new String(""); //$NON-NLS-1$
 		
 		try {
 			IToken token = ( unusedToken != null ) ? unusedToken : scanner.nextToken();
@@ -540,12 +540,12 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 				switch( token.getType() ){
 					case IToken.tCOLONCOLON :
 						list.addLast( name.toCharArray() );
-						name = new String("");
+						name = new String(""); //$NON-NLS-1$
 						lastTokenWasOperator = false;
 						break;
 					
 					case IToken.t_operator :
-						name += token.getImage() + " ";
+						name += token.getImage() + " "; //$NON-NLS-1$
 						lastTokenWasOperator = true;
 						break;
 					
@@ -562,7 +562,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 									token.getType() != IToken.tRBRACKET &&
 									token.getType()!= IToken.tGT
 								 ){
-							name += " ";
+							name += " "; //$NON-NLS-1$
 						} else {
 							encounteredWild = false;
 						}
@@ -581,8 +581,8 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					} catch ( ScannerException e ){
 						if( e.getProblem().getID() == IProblem.SCANNER_BAD_CHARACTER ){
 							//TODO : This may not be \\, it could be another bad character
-							if( !encounteredWild && !lastTokenWasOperator ) name += " ";
-							name += "\\";
+							if( !encounteredWild && !lastTokenWasOperator ) name += " "; //$NON-NLS-1$
+							name += "\\"; //$NON-NLS-1$
 							encounteredWild = true;
 							lastTokenWasOperator = false;
 							prev = null;

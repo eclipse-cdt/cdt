@@ -35,14 +35,14 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
 	static 
 	{
 		nameMap  = new Hashtable();
-		nameMap.put( Type.BOOL, "bool");
-		nameMap.put( Type.CHAR, "char");
-		nameMap.put( Type.DOUBLE, "double");
-		nameMap.put( Type.FLOAT, "float");
-		nameMap.put( Type.INT, "int");
-		nameMap.put( Type.VOID, "void" );
-		nameMap.put( Type.WCHAR_T, "wchar_t" );
-		nameMap.put( Type._BOOL, "_Bool");
+		nameMap.put( Type.BOOL, "bool"); //$NON-NLS-1$
+		nameMap.put( Type.CHAR, "char"); //$NON-NLS-1$
+		nameMap.put( Type.DOUBLE, "double"); //$NON-NLS-1$
+		nameMap.put( Type.FLOAT, "float"); //$NON-NLS-1$
+		nameMap.put( Type.INT, "int"); //$NON-NLS-1$
+		nameMap.put( Type.VOID, "void" ); //$NON-NLS-1$
+		nameMap.put( Type.WCHAR_T, "wchar_t" ); //$NON-NLS-1$
+		nameMap.put( Type._BOOL, "_Bool"); //$NON-NLS-1$
 	}
     /**
      * @param kind
@@ -63,9 +63,9 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
 		if( this.kind == IASTSimpleTypeSpecifier.Type.CHAR || this.kind == IASTSimpleTypeSpecifier.Type.WCHAR_T )
 		{
 			if (isUnsigned())
-				type.append("unsigned ");
+				type.append("unsigned "); //$NON-NLS-1$
 			else if( isSigned() )
-				type.append("signed ");
+				type.append("signed "); //$NON-NLS-1$
 			type.append( (String)nameMap.get( this.kind ));
 		}
 		else if( this.kind == Type.BOOL || this.kind == Type.VOID || this.kind == Type._BOOL )
@@ -75,47 +75,47 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
 		else if( this.kind == Type.INT )
 		{
 			if (isUnsigned())
-				type.append("unsigned ");
+				type.append("unsigned "); //$NON-NLS-1$
 			if (isShort())
-				type.append("short ");
+				type.append("short "); //$NON-NLS-1$
 			if (isLong())
-				type.append("long ");
+				type.append("long "); //$NON-NLS-1$
 			type.append( (String)nameMap.get( this.kind ));
 		}
 		else if( this.kind == Type.FLOAT )
 		{
 			type.append( (String)nameMap.get( this.kind ));
 			if( isComplex() )
-				type.append( "_Complex" );
+				type.append( "_Complex" ); //$NON-NLS-1$
 			else if( isImaginary() )
-				type.append( "_Imaginary" );
+				type.append( "_Imaginary" ); //$NON-NLS-1$
 		}
 		else if( this.kind == Type.DOUBLE )
 		{
 			if (isLong())
-				type.append("long ");
+				type.append("long "); //$NON-NLS-1$
 			type.append( (String)nameMap.get( this.kind ));
 			if( isComplex() )
-				type.append( "_Complex" );
+				type.append( "_Complex" ); //$NON-NLS-1$
 			else if( isImaginary() )
-				type.append( "_Imaginary" );
+				type.append( "_Imaginary" ); //$NON-NLS-1$
 		}
 		else if( this.kind == Type.CLASS_OR_TYPENAME || this.kind == Type.TEMPLATE )
 		{
 			if (isTypename() )
-				type.append("typename ");
+				type.append("typename "); //$NON-NLS-1$
 			type.append(typeName.toString());
 		}
 		else if( this.kind == Type.UNSPECIFIED )
 		{
 			if (isUnsigned())
-				type.append("unsigned ");
+				type.append("unsigned "); //$NON-NLS-1$
 			if (isShort())
-				type.append("short ");
+				type.append("short "); //$NON-NLS-1$
 			if (isLong())
-				type.append("long ");
+				type.append("long "); //$NON-NLS-1$
 			if (isSigned())
-				type.append("signed ");
+				type.append("signed "); //$NON-NLS-1$
 		}
 		this.typeName = type.toString();
     }

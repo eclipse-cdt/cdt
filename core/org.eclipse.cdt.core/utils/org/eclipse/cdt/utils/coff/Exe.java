@@ -9,7 +9,7 @@ import java.io.RandomAccessFile;
 
 public class Exe {
 
-	public static final String NL = System.getProperty("line.separator", "\n");
+	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	protected RandomAccessFile rfile;
 	ExeHeader ehdr;
 
@@ -66,59 +66,59 @@ public class Exe {
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 
-			buffer.append("EXE HEADER VALUES").append(NL);
-			buffer.append("signature ");
-			buffer.append((char)e_signature[0] + " " + (char)e_signature[1]);
+			buffer.append("EXE HEADER VALUES").append(NL); //$NON-NLS-1$
+			buffer.append("signature "); //$NON-NLS-1$
+			buffer.append((char)e_signature[0] + " " + (char)e_signature[1]); //$NON-NLS-1$
 			buffer.append(NL);
 
-			buffer.append("lastsize: 0x");
+			buffer.append("lastsize: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_lastsize).longValue()));
 			buffer.append(NL);
 
-			buffer.append("nblocks: 0x");
+			buffer.append("nblocks: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_nblocks).longValue()));
 			buffer.append(NL);
 
-			buffer.append("nreloc: 0x");
+			buffer.append("nreloc: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_nreloc).longValue()));
 			buffer.append(NL);
 
-			buffer.append("hdrsize: 0x");
+			buffer.append("hdrsize: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_hdrsize).longValue()));
 			buffer.append(NL);
 
-			buffer.append("minalloc: 0x");
+			buffer.append("minalloc: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_minalloc).longValue()));
 			buffer.append(NL);
 
-			buffer.append("maxalloc: 0x");
+			buffer.append("maxalloc: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_maxalloc).longValue()));
 			buffer.append(NL);
-			buffer.append("ss: 0x");
+			buffer.append("ss: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_ss).longValue()));
 			buffer.append(NL);
 
-			buffer.append("sp: 0x");
+			buffer.append("sp: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_sp).longValue()));
 			buffer.append(NL);
 
-			buffer.append("checksum: 0x");
+			buffer.append("checksum: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_checksum).longValue()));
 			buffer.append(NL);
 
-			buffer.append("ip: 0x");
+			buffer.append("ip: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_ip).longValue()));
 			buffer.append(NL);
 
-			buffer.append("cs: 0x");
+			buffer.append("cs: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_cs).longValue()));
 			buffer.append(NL);
 
-			buffer.append("relocoffs: 0x");
+			buffer.append("relocoffs: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_relocoffs).longValue()));
 			buffer.append(NL);
 
-			buffer.append("overlay: 0x");
+			buffer.append("overlay: 0x"); //$NON-NLS-1$
 			buffer.append(Long.toHexString(new Short(e_noverlay).longValue()));
 			buffer.append(NL);
 			return buffer.toString();
@@ -137,7 +137,7 @@ public class Exe {
 	}
 
 	public Exe(String file) throws IOException {
-		rfile = new RandomAccessFile(file, "r");
+		rfile = new RandomAccessFile(file, "r"); //$NON-NLS-1$
 		try {
 			ehdr = new ExeHeader(rfile);
 		} finally {

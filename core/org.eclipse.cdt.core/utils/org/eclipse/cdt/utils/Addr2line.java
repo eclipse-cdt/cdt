@@ -20,19 +20,19 @@ public class Addr2line {
 	private String lastaddr, lastsymbol, lastline;
 
 	public Addr2line(String command, String file) throws IOException {
-		String[] args = {command, "-C", "-f", "-e", file};
+		String[] args = {command, "-C", "-f", "-e", file}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		addr2line = ProcessFactory.getFactory().exec(args);
 		stdin = new BufferedWriter(new OutputStreamWriter(addr2line.getOutputStream()));
 		stdout = new BufferedReader(new InputStreamReader(addr2line.getInputStream()));			
 	}
 
 	public Addr2line(String file) throws IOException {
-		this("addr2line", file);
+		this("addr2line", file); //$NON-NLS-1$
 	}
 
 	private void getOutput(String address) throws IOException {
 		if ( address.equals(lastaddr) == false ) {
-				stdin.write(address + "\n");
+				stdin.write(address + "\n"); //$NON-NLS-1$
 				stdin.flush();
 				lastsymbol = stdout.readLine();
 				lastline = stdout.readLine();
@@ -92,7 +92,7 @@ public class Addr2line {
 			if (line != null) {
 				int colon = line.lastIndexOf(':');
 				String number = line.substring(colon + 1);
-				if (!number.startsWith("0")) {
+				if (!number.startsWith("0")) { //$NON-NLS-1$
 					return Integer.parseInt(number);
 				}
 			}

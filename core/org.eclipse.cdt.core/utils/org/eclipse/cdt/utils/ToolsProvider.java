@@ -80,36 +80,36 @@ public class ToolsProvider implements IToolsProvider {
 
 	IPath getAddr2LinePath() {
 		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("addr2line"); //$NON-NLS-1
+		String value =  ref.getExtensionData("addr2line"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
-			value = "addr2line"; //$NON-NLS-1
+			value = "addr2line"; //$NON-NLS-1$
 		}
 		return new Path(value);
 	}
 
 	IPath getObjdumpPath() {
 		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("objdump"); //$NON-NLS-1
+		String value =  ref.getExtensionData("objdump"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
-			value = "objdump"; //$NON-NLS-1
+			value = "objdump"; //$NON-NLS-1$
 		}
 		return new Path(value);
 	}
 	
 	String getObjdumpArgs() {
 		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("objdumpArgs"); //$NON-NLS-1
+		String value =  ref.getExtensionData("objdumpArgs"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
-			value = ""; //$NON-NLS-1
+			value = ""; //$NON-NLS-1$
 		}
 		return value;
 	}
 	
 	IPath getCPPFiltPath() {
 		ICExtensionReference ref = getExtensionReference();
-		String value = ref.getExtensionData("c++filt"); //$NON-NLS-1
+		String value = ref.getExtensionData("c++filt"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
-			value = "c++filt"; //$NON-NLS-1
+			value = "c++filt"; //$NON-NLS-1$
 		}
 		return new Path(value);
 	}

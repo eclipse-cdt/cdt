@@ -63,13 +63,13 @@ public class StringField {
 		if (name.length() > 1 && name.charAt(0) == '$') {
 			switch (name.charAt(1)) {
 			case 't' :
-				name = "this";
+				name = "this"; //$NON-NLS-1$
 				break;
 			case 'v' :
 				/* Was: name = "vptr"; */
 				break;
 			case 'e' :
-				name = "eh_throw";
+				name = "eh_throw"; //$NON-NLS-1$
 				break;
 			case '_' :
 				/* This was an anonymous type that was never fixed up. */

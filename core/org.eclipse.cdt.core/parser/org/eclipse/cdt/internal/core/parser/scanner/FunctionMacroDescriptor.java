@@ -74,23 +74,23 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 		StringBuffer buffer = new StringBuffer( 128 ); 
 		int count = getParameters().size(); 
 		
-		buffer.append( "MacroDescriptor with name=" + getName() + "\n" );
-		buffer.append( "Number of parameters = " + count + "\n" ); 
+		buffer.append( "MacroDescriptor with name=" + getName() + "\n" ); //$NON-NLS-2$
+		buffer.append( "Number of parameters = " + count + "\n" );  //$NON-NLS-2$
 		Iterator iter = getParameters().iterator(); 
 		int current = 0; 
 		while( iter.hasNext() )
 		{
-			buffer.append( "Parameter #" + current++ + " with name=" + (String) iter.next() + "\n" ); 
+			buffer.append( "Parameter #" + current++ + " with name=" + (String) iter.next() + "\n" );  //$NON-NLS-3$
 		}
 		
 		count = getTokenizedExpansion().size();
 		iter = getTokenizedExpansion().iterator(); 
 		
-		buffer.append( "Number of tokens = " + count + "\n" ); 
+		buffer.append( "Number of tokens = " + count + "\n" );  //$NON-NLS-2$
 		current = 0; 
 		while( iter.hasNext() )
 		{
-			buffer.append( "Token #" + current++ + " is " + ((IToken)iter.next()).toString() + "\n" ); 
+			buffer.append( "Token #" + current++ + " is " + ((IToken)iter.next()).toString() + "\n" );  //$NON-NLS-3$
 		}
 		
 		return buffer.toString(); 

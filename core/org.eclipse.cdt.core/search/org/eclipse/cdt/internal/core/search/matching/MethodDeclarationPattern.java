@@ -102,7 +102,7 @@ public class MethodDeclarationPattern extends CSearchPattern {
 
 			Iterator params = function.getParameters();
 				
-			if (!params.hasNext() && CharOperation.equals(parameterNames[0], "void ".toCharArray())){
+			if (!params.hasNext() && CharOperation.equals(parameterNames[0], "void ".toCharArray())){ //$NON-NLS-1$
 			//All empty lists have transformed to void, this function has no parms
 				return ACCURATE_MATCH;
 			}

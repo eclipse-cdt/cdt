@@ -67,7 +67,7 @@ public class ElfHelper {
 	private void loadDynamics() throws IOException {
 		if (dynamics == null) {
 			dynamics = new Elf.Dynamic[0];
-			Elf.Section dynSect = elf.getSectionByName(".dynamic");
+			Elf.Section dynSect = elf.getSectionByName(".dynamic"); //$NON-NLS-1$
 			if (dynSect != null) {
 				dynamics = elf.getDynamicSections(dynSect);
 			}
@@ -258,7 +258,7 @@ public class ElfHelper {
 	}
 
 	public String getSoname() throws IOException {
-		String soname = "";
+		String soname = ""; //$NON-NLS-1$
 
 		loadDynamics();
 
@@ -310,7 +310,7 @@ public class ElfHelper {
 		loadSections();
 
 		for (int i = 0; i < sections.length; i++) {
-			if (sections[i].toString().compareTo("QNX_usage") == 0) {
+			if (sections[i].toString().compareTo("QNX_usage") == 0) { //$NON-NLS-1$
 				File file = new File(elf.getFilename());
 
 				String full_usage = new String(sections[i].loadSectionData());
@@ -327,7 +327,7 @@ public class ElfHelper {
 				return buffer.toString();
 			}
 		}
-		return new String("");
+		return new String(""); //$NON-NLS-1$
 	}
 
 	public Sizes getSizes() throws IOException {

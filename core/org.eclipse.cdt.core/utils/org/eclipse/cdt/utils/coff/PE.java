@@ -53,7 +53,7 @@ import org.eclipse.cdt.utils.coff.Exe.ExeHeader;
  */
 public class PE {
 
-	public static final String NL = System.getProperty("line.separator", "\n");
+	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	RandomAccessFile rfile;
 	String filename;
 	ExeHeader exeHeader;
@@ -129,8 +129,8 @@ public class PE {
 
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("DOS STUB VALUES").append(NL);
-			buffer.append("e_lfanew = ").append(e_lfanew).append(NL);
+			buffer.append("DOS STUB VALUES").append(NL); //$NON-NLS-1$
+			buffer.append("e_lfanew = ").append(e_lfanew).append(NL); //$NON-NLS-1$
 			buffer.append(new String(dos_message)).append(NL);
 			return buffer.toString();
 		}
@@ -195,28 +195,28 @@ public class PE {
 
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("NT OPTIONAL HEADER VALUES").append(NL);
-			buffer.append("ImageBase = ").append(ImageBase).append(NL);
-			buffer.append("SexctionAlignement = ").append(SectionAlignment).append(NL);
-			buffer.append("FileAlignment = ").append(FileAlignment).append(NL);
-			buffer.append("MajorOSVersion = ").append(MajorOperatingSystemVersion).append(NL);
-			buffer.append("MinorOSVersion = ").append(MinorOperatingSystemVersion).append(NL);
-			buffer.append("MajorImageVersion = ").append(MajorImageVersion).append(NL);
-			buffer.append("MinorImageVersion = ").append(MinorImageVersion).append(NL);
-			buffer.append("MajorSubVersion = ").append(MajorSubsystemVersion).append(NL);
-			buffer.append("MinorSubVersion = ").append(MinorSubsystemVersion).append(NL);
-			buffer.append("Reserved = ").append(Reserved).append(NL);
-			buffer.append("SizeOfImage = ").append(SizeOfImage).append(NL);
-			buffer.append("SizeOfHeaders = ").append(SizeOfHeaders).append(NL);
-			buffer.append("CheckSum = ").append(CheckSum).append(NL);
-			buffer.append("Subsystem = ").append(Subsystem).append(NL);
-			buffer.append("DLL = ").append(DLLCharacteristics).append(NL);
-			buffer.append("StackReserve = ").append(SizeOfStackReserve).append(NL);
-			buffer.append("StackCommit = ").append(SizeOfStackCommit).append(NL);
-			buffer.append("HeapReserve = ").append(SizeOfHeapReserve).append(NL);
-			buffer.append("HeapCommit = ").append(SizeOfHeapCommit).append(NL);
-			buffer.append("LoaderFlags = ").append(LoaderFlags).append(NL);;
-			buffer.append("#Rva size = ").append(NumberOfRvaAndSizes).append(NL);
+			buffer.append("NT OPTIONAL HEADER VALUES").append(NL); //$NON-NLS-1$
+			buffer.append("ImageBase = ").append(ImageBase).append(NL); //$NON-NLS-1$
+			buffer.append("SexctionAlignement = ").append(SectionAlignment).append(NL); //$NON-NLS-1$
+			buffer.append("FileAlignment = ").append(FileAlignment).append(NL); //$NON-NLS-1$
+			buffer.append("MajorOSVersion = ").append(MajorOperatingSystemVersion).append(NL); //$NON-NLS-1$
+			buffer.append("MinorOSVersion = ").append(MinorOperatingSystemVersion).append(NL); //$NON-NLS-1$
+			buffer.append("MajorImageVersion = ").append(MajorImageVersion).append(NL); //$NON-NLS-1$
+			buffer.append("MinorImageVersion = ").append(MinorImageVersion).append(NL); //$NON-NLS-1$
+			buffer.append("MajorSubVersion = ").append(MajorSubsystemVersion).append(NL); //$NON-NLS-1$
+			buffer.append("MinorSubVersion = ").append(MinorSubsystemVersion).append(NL); //$NON-NLS-1$
+			buffer.append("Reserved = ").append(Reserved).append(NL); //$NON-NLS-1$
+			buffer.append("SizeOfImage = ").append(SizeOfImage).append(NL); //$NON-NLS-1$
+			buffer.append("SizeOfHeaders = ").append(SizeOfHeaders).append(NL); //$NON-NLS-1$
+			buffer.append("CheckSum = ").append(CheckSum).append(NL); //$NON-NLS-1$
+			buffer.append("Subsystem = ").append(Subsystem).append(NL); //$NON-NLS-1$
+			buffer.append("DLL = ").append(DLLCharacteristics).append(NL); //$NON-NLS-1$
+			buffer.append("StackReserve = ").append(SizeOfStackReserve).append(NL); //$NON-NLS-1$
+			buffer.append("StackCommit = ").append(SizeOfStackCommit).append(NL); //$NON-NLS-1$
+			buffer.append("HeapReserve = ").append(SizeOfHeapReserve).append(NL); //$NON-NLS-1$
+			buffer.append("HeapCommit = ").append(SizeOfHeapCommit).append(NL); //$NON-NLS-1$
+			buffer.append("LoaderFlags = ").append(LoaderFlags).append(NL);; //$NON-NLS-1$
+			buffer.append("#Rva size = ").append(NumberOfRvaAndSizes).append(NL); //$NON-NLS-1$
 			return buffer.toString();
 		}
 	}
@@ -232,8 +232,8 @@ public class PE {
 
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("rva = ").append(rva).append(" ");
-			buffer.append("size = ").append(size).append(NL);
+			buffer.append("rva = ").append(rva).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append("size = ").append(size).append(NL); //$NON-NLS-1$
 			return buffer.toString();
 		}
 	}
@@ -264,11 +264,11 @@ public class PE {
 
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("rva = ").append(rva);
-			buffer.append(" timestamp = ").append(timestamp);
-			buffer.append(" forwarder = ").append(forwarder);
-			buffer.append(" name = ").append(name);
-			buffer.append(" thunk = ").append(thunk).append(NL);
+			buffer.append("rva = ").append(rva); //$NON-NLS-1$
+			buffer.append(" timestamp = ").append(timestamp); //$NON-NLS-1$
+			buffer.append(" forwarder = ").append(forwarder); //$NON-NLS-1$
+			buffer.append(" name = ").append(name); //$NON-NLS-1$
+			buffer.append(" thunk = ").append(thunk).append(NL); //$NON-NLS-1$
 			return buffer.toString();
 		}
 	}
@@ -283,7 +283,7 @@ public class PE {
 
 	public PE (String filename, long pos, boolean filter) throws IOException {
 		try {
-			rfile = new RandomAccessFile(filename, "r");
+			rfile = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 			this.filename = filename;
 			rfile.seek(pos);
 		
@@ -349,55 +349,55 @@ public class PE {
 		// Machine type.
 		switch (filhdr.f_magic) {
 			case PEConstants.IMAGE_FILE_MACHINE_UNKNOWN:
-				attrib.cpu = "none";
+				attrib.cpu = "none"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_ALPHA:
-				attrib.cpu = "alpha";
+				attrib.cpu = "alpha"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_ARM:
-				attrib.cpu = "arm";
+				attrib.cpu = "arm"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
-				attrib.cpu = "arm64";
+				attrib.cpu = "arm64"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_I386:
-				attrib.cpu = "x86";
+				attrib.cpu = "x86"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_IA64:
-				attrib.cpu = "ia64";
+				attrib.cpu = "ia64"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_M68K:
-				attrib.cpu = "m68k";
+				attrib.cpu = "m68k"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_MIPS16:
-				attrib.cpu = "mips16";
+				attrib.cpu = "mips16"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU:
-				attrib.cpu = "mipsfpu";
+				attrib.cpu = "mipsfpu"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU16:
-				attrib.cpu = "mipsfpu16";
+				attrib.cpu = "mipsfpu16"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_POWERPC:
-				attrib.cpu = "powerpc";
+				attrib.cpu = "powerpc"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_R3000:
-				attrib.cpu = "r3000";
+				attrib.cpu = "r3000"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_R4000:
-				attrib.cpu = "r4000";
+				attrib.cpu = "r4000"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_R10000:
-				attrib.cpu = "r10000";
+				attrib.cpu = "r10000"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_SH3:
-				attrib.cpu = "sh3";
+				attrib.cpu = "sh3"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_SH4:
-				attrib.cpu = "sh4";
+				attrib.cpu = "sh4"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_THUMB:
-				attrib.cpu = "thumb";
+				attrib.cpu = "thumb"; //$NON-NLS-1$
 			break;
 		}
 
@@ -583,8 +583,8 @@ public class PE {
 		try {
 			ImageDataDirectory[] dirs = getImageDataDirectories();
 			for (int i = 0; i < dirs.length; i++) {
-				buffer.append("Entry ").append(i);
-				buffer.append(" ").append(dirs[i]);
+				buffer.append("Entry ").append(i); //$NON-NLS-1$
+				buffer.append(" ").append(dirs[i]); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -622,7 +622,7 @@ public class PE {
 
 	RandomAccessFile getRandomAccessFile () throws IOException {
 		if (rfile == null) {
-			rfile = new RandomAccessFile(filename, "r");
+			rfile = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 		}
 		return rfile;
 	}

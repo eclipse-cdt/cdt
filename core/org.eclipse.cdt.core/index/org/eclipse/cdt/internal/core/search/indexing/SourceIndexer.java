@@ -101,18 +101,18 @@ public class SourceIndexer extends AbstractIndexer {
 			boolean retVal = parser.parse();
 			
 			if (!retVal)
-				org.eclipse.cdt.internal.core.model.Util.log(null, "Failed to index " + resourceFile.getFullPath(), ICLogConstants.CDT);
+				org.eclipse.cdt.internal.core.model.Util.log(null, "Failed to index " + resourceFile.getFullPath(), ICLogConstants.CDT); //$NON-NLS-1$
 
 			if (AbstractIndexer.VERBOSE){
 				if (!retVal)
-					AbstractIndexer.verbose("PARSE FAILED " + resourceFile.getName().toString());
+					AbstractIndexer.verbose("PARSE FAILED " + resourceFile.getName().toString()); //$NON-NLS-1$
 				else
-					AbstractIndexer.verbose("PARSE SUCCEEDED " + resourceFile.getName().toString());			
+					AbstractIndexer.verbose("PARSE SUCCEEDED " + resourceFile.getName().toString());			 //$NON-NLS-1$
 			}	
 		}
 		catch ( VirtualMachineError vmErr){
 			if (vmErr instanceof OutOfMemoryError){
-				org.eclipse.cdt.internal.core.model.Util.log(null, "Out Of Memory error: " + vmErr.getMessage() + " on File: " + resourceFile.getName(), ICLogConstants.CDT);
+				org.eclipse.cdt.internal.core.model.Util.log(null, "Out Of Memory error: " + vmErr.getMessage() + " on File: " + resourceFile.getName(), ICLogConstants.CDT); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		catch ( Exception ex ){

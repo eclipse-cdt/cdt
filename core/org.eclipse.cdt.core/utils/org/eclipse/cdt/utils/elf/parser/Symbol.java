@@ -131,7 +131,7 @@ public class Symbol implements ISymbol, Comparable {
 						stopAddr2Line();
 					}
 				};
-				new Thread(worker, "Addr2line Reaper").start();
+				new Thread(worker, "Addr2line Reaper").start(); //$NON-NLS-1$
 			}
 		} else {
 			timestamp = System.currentTimeMillis();

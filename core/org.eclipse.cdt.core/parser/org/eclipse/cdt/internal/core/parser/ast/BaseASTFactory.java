@@ -60,7 +60,7 @@ public class BaseASTFactory  {
     public IASTDesignator createDesignator(DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier)
     {
         return new ASTDesignator( kind, constantExpression, 
-        		fieldIdentifier == null ? "" : fieldIdentifier.getImage(), 
+        		fieldIdentifier == null ? "" : fieldIdentifier.getImage(),  //$NON-NLS-1$
         		fieldIdentifier == null ? -1 : fieldIdentifier.getOffset() );
     }
 

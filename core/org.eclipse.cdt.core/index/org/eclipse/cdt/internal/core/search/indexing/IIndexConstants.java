@@ -60,10 +60,10 @@ public interface IIndexConstants {
 	char[] TYPEDEF_DECL = "typeDecl/T/".toCharArray(); //$NON-NLS-1$
 	int TYPEDEF_DECL_LENGTH = 11;
 	
-	char[] MACRO_DECL = "macroDecl/".toCharArray();
+	char[] MACRO_DECL = "macroDecl/".toCharArray(); //$NON-NLS-1$
 	int MACRO_DECL_LENGTH = 10;
 	
-	char[] INCLUDE_REF = "includeRef/".toCharArray();
+	char[] INCLUDE_REF = "includeRef/".toCharArray(); //$NON-NLS-1$
 	int INCLUDE_REF_LENGTH = 11;
 	//a Var REF will be treated as  a typeREF
 	//char[] VAR_REF= "varRef/".toCharArray(); //$NON-NLS-1$

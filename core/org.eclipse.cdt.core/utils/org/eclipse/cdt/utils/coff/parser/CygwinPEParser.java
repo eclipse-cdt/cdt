@@ -40,7 +40,7 @@ public class CygwinPEParser extends PEParser implements IBinaryParser, ICygwinTo
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
 	 */
 	public String getFormat() {
-		return "Cygwin PE";
+		return "Cygwin PE"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -38,17 +38,17 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	}
 	
 	public int hashCode(){
-		String hashString = "";
+		String hashString = ""; //$NON-NLS-1$
 		
 		hashString += name;
-		hashString += ":" + parentName;
-		hashString += ":" + returnType;
+		hashString += ":" + parentName; //$NON-NLS-1$
+		hashString += ":" + returnType; //$NON-NLS-1$
 		
 		if( getLocation() != null)
-			hashString += ":" + getLocation().toString();
+			hashString += ":" + getLocation().toString(); //$NON-NLS-1$
 			
-		hashString += ":" + startOffset + ":" + endOffset;
-		hashString += ":" + type + ":" + visibility;
+		hashString += ":" + startOffset + ":" + endOffset; //$NON-NLS-1$ //$NON-NLS-2$
+		hashString += ":" + type + ":" + visibility; //$NON-NLS-1$ //$NON-NLS-2$
 		
 		return hashString.hashCode();
 	}
@@ -108,11 +108,11 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		String str1 = getLocation().toString();
 		String str2 = match.getLocation().toString();
 		
-		str1 += " " + getStartOffset()+ " ";
-		str2 += " " + match.getStartOffset()+ " ";
+		str1 += " " + getStartOffset()+ " "; //$NON-NLS-1$ //$NON-NLS-2$
+		str2 += " " + match.getStartOffset()+ " "; //$NON-NLS-1$ //$NON-NLS-2$
 		
-		str1 += getName() + " " + getParentName()+ " " + getReturnType();
-		str2 += match.getName() + " " + match.getParentName()+ " " + getReturnType();
+		str1 += getName() + " " + getParentName()+ " " + getReturnType(); //$NON-NLS-1$ //$NON-NLS-2$
+		str2 += match.getName() + " " + match.getParentName()+ " " + getReturnType(); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		return str1.compareTo( str2 );
 	}

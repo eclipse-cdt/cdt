@@ -1,3 +1,6 @@
+2004-02-26 Andrew Niefer
+	Mark strings that don't need to be externalized for translation
+
 2004-02-26 Alain Magloire
 
 	To catch with the documentation change to ICElementDelta

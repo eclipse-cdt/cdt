@@ -69,7 +69,7 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
 	 */
 	public String getFormat() {
-		return "PE";
+		return "PE"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

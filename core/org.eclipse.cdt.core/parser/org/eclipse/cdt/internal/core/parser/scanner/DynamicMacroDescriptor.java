@@ -64,7 +64,7 @@ public class DynamicMacroDescriptor implements IMacroDescriptor {
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getCompleteSignature()
 	 */
 	public String getCompleteSignature() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

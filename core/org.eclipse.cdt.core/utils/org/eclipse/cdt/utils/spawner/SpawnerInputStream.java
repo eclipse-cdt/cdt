@@ -74,7 +74,7 @@ class SpawnerInputStream extends InputStream {
 	private native int close0(int fd) throws IOException;
 
 	static {
-		System.loadLibrary("spawner");
+		System.loadLibrary("spawner"); //$NON-NLS-1$
 	}
 
 }

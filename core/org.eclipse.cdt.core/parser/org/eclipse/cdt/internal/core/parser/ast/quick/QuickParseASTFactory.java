@@ -129,7 +129,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ast.ClassKind, org.eclipse.cdt.core.parser.ast.ClassNameType, org.eclipse.cdt.core.parser.ast.AccessVisibility, org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
 	 */
 	public IASTClassSpecifier createClassSpecifier(IASTScope scope, ITokenDuple name, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine ) {
-		return new ASTClassSpecifier( scope, name == null ? "" : name.toString() , kind, type, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, access );
+		return new ASTClassSpecifier( scope, name == null ? "" : name.toString() , kind, type, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, access ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -164,9 +164,9 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 		if( CREATE_EXCESS_CONSTRUCTS )
 		{
 			try {
-				return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, extensionFactory.createExpressionExtension() );
+				return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, extensionFactory.createExpressionExtension() ); //$NON-NLS-1$
 			} catch (ASTNotImplementedException e) {
-				return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, new IASTExpressionExtension() {
+				return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, new IASTExpressionExtension() { //$NON-NLS-1$
 	
 					public void setExpression(IASTExpression expression) {
 					}
@@ -331,7 +331,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     public IASTTypeId createTypeId(IASTScope scope, Type kind, boolean isConst, boolean isVolatile, boolean isShort, 
 	boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods)
     {
-        return new ASTTypeId( kind, name == null ? "" : name.toString(), pointerOps, arrayMods, isConst, 
+        return new ASTTypeId( kind, name == null ? "" : name.toString(), pointerOps, arrayMods, isConst,  //$NON-NLS-1$
         	isVolatile, isUnsigned, isSigned, isShort, isLong, isTypename );
     }
 

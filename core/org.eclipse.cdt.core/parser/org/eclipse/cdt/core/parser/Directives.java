@@ -15,18 +15,18 @@ package org.eclipse.cdt.core.parser;
  */
 public class Directives {
 
-	public static final String POUND_DEFINE = "#define";
-	public static final String POUND_UNDEF = "#undef";
-	public static final String POUND_IF = "#if";
-	public static final String POUND_IFDEF = "#ifdef";
-	public static final String POUND_IFNDEF = "#ifndef";
-	public static final String POUND_ELSE = "#else";
-	public static final String POUND_ENDIF = "#endif";
-	public static final String POUND_INCLUDE = "#include";
-	public static final String POUND_LINE = "#line";
-	public static final String POUND_ERROR = "#error";
-	public static final String POUND_PRAGMA = "#pragma";
-	public static final String POUND_ELIF = "#elif";
-	public static final String POUND_BLANK = "#";
+	public static final String POUND_DEFINE = "#define"; //$NON-NLS-1$
+	public static final String POUND_UNDEF = "#undef"; //$NON-NLS-1$
+	public static final String POUND_IF = "#if"; //$NON-NLS-1$
+	public static final String POUND_IFDEF = "#ifdef"; //$NON-NLS-1$
+	public static final String POUND_IFNDEF = "#ifndef"; //$NON-NLS-1$
+	public static final String POUND_ELSE = "#else"; //$NON-NLS-1$
+	public static final String POUND_ENDIF = "#endif"; //$NON-NLS-1$
+	public static final String POUND_INCLUDE = "#include"; //$NON-NLS-1$
+	public static final String POUND_LINE = "#line"; //$NON-NLS-1$
+	public static final String POUND_ERROR = "#error"; //$NON-NLS-1$
+	public static final String POUND_PRAGMA = "#pragma"; //$NON-NLS-1$
+	public static final String POUND_ELIF = "#elif"; //$NON-NLS-1$
+	public static final String POUND_BLANK = "#"; //$NON-NLS-1$
 	
 }

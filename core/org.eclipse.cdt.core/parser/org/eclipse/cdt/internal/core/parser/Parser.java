@@ -106,12 +106,12 @@ public abstract class Parser extends ExpressionParser implements IParser
         // Util.setDebugging(true);
         // Or set debug to true in the core plugin preference 
         log.traceLog(
-            "Parse "
+            "Parse " //$NON-NLS-1$
                 + (++parseCount)
-                + ": "
+                + ": " //$NON-NLS-1$
                 + (System.currentTimeMillis() - startTime)
-                + "ms"
-                + (parsePassed ? "" : " - parse failure") );
+                + "ms" //$NON-NLS-1$
+                + (parsePassed ? "" : " - parse failure") ); //$NON-NLS-1$ //$NON-NLS-2$
         return parsePassed;
     }
         
@@ -575,7 +575,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     returnValue.add(
                     	astFactory.createTemplateParameter(
                     		kind,
-                    		( id == null )? "" : id.getImage(),
+                    		( id == null )? "" : id.getImage(), //$NON-NLS-1$
                     		(typeId == null) ? null : typeId.getTypeOrClassName(),
                     		null,
                     		null));
@@ -613,8 +613,8 @@ public abstract class Parser extends ExpressionParser implements IParser
                     returnValue.add(
                         astFactory.createTemplateParameter(
                             IASTTemplateParameter.ParamKind.TEMPLATE_LIST,
-                            ( optionalId == null )? "" : optionalId.getImage(),
-                            ( optionalTypeId == null )  ? "" : optionalTypeId.toString(),
+                            ( optionalId == null )? "" : optionalId.getImage(), //$NON-NLS-1$
+                            ( optionalTypeId == null )  ? "" : optionalTypeId.toString(), //$NON-NLS-1$
                             null,
                             subResult));
                 }
@@ -650,7 +650,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                                 declarator.getPointerOperators(),
                                 declarator.getArrayModifiers(),
                                 null, null, declarator.getName() == null
-                                                ? ""
+                                                ? "" //$NON-NLS-1$
                                                 : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), wrapper.getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), wrapper.getEndLine()),
                             null));
                 }
@@ -831,7 +831,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 namespaceDefinition = 
                     astFactory.createNamespaceDefinition(
                         scope,
-                        (identifier == null ? "" : identifier.getImage()),
+                        (identifier == null ? "" : identifier.getImage()), //$NON-NLS-1$
                         first.getOffset(),
                         first.getLineNumber(), 
                         (identifier == null ? first.getOffset() : identifier.getOffset()), 
@@ -2112,7 +2112,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                                         {
                                             failParse();
                                             log.traceLog(
-                                                "Unexpected Token ="
+                                                "Unexpected Token =" //$NON-NLS-1$
                                                     + image );
                                             consume();
                                             // eat this token anyway
@@ -2141,7 +2141,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                         // check for optional pure virtual							
                         if (LT(1) == IToken.tASSIGN
                             && LT(2) == IToken.tINTEGER
-                            && LA(2).getImage().equals("0"))
+                            && LA(2).getImage().equals("0")) //$NON-NLS-1$
                         {
                             consume(IToken.tASSIGN);
                             consume(IToken.tINTEGER);
@@ -2265,7 +2265,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             {
                 enumeration = astFactory.createEnumerationSpecifier(
                         sdw.getScope(),
-                        ((identifier == null) ? "" : identifier.getImage()),
+                        ((identifier == null) ? "" : identifier.getImage()), //$NON-NLS-1$
                         mark.getOffset(), 
                         mark.getLineNumber(), 
                          ((identifier == null)

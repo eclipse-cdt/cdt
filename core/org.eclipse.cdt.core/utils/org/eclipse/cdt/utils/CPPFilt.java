@@ -27,11 +27,11 @@ public class CPPFilt {
 	}
 
 	public CPPFilt() throws IOException {
-		this("c++filt");
+		this("c++filt"); //$NON-NLS-1$
 	}
 
 	public String getFunction(String symbol) throws IOException {
-		stdin.write(symbol + "\n");
+		stdin.write(symbol + "\n"); //$NON-NLS-1$
 		stdin.flush();
 		String str = stdout.readLine();
 		if ( str != null ) {

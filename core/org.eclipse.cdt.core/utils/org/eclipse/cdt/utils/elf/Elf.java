@@ -32,7 +32,7 @@ public class Elf {
     private Symbol[] dynsym_symbols;
 	private Section  dynsym_sym;
 
-	protected String EMPTY_STRING = "";
+	protected String EMPTY_STRING = ""; //$NON-NLS-1$
 
 
 	public class ELFhdr {
@@ -311,7 +311,7 @@ public class Elf {
 		private String cppFilt(String in) {
             if (cppFiltEnabled) {
 				try {
-					if (in.indexOf("__") != -1 || in.indexOf("_._") != -1) {
+					if (in.indexOf("__") != -1 || in.indexOf("_._") != -1) { //$NON-NLS-1$ //$NON-NLS-2$
 						if (cppFilt == null) {
 							cppFilt = new CPPFilt();
 						}
@@ -383,7 +383,7 @@ public class Elf {
 					if (line != null) {
 						int colon = line.lastIndexOf(':');
 						String number = line.substring(colon + 1);
-						if (!number.startsWith("0")) {
+						if (!number.startsWith("0")) { //$NON-NLS-1$
 							break; // bail out
 						}
 					}
@@ -628,7 +628,7 @@ public class Elf {
         this.cppFiltEnabled = filton;
 
 		try {
-	        efile = new ERandomAccessFile(file, "r");
+	        efile = new ERandomAccessFile(file, "r"); //$NON-NLS-1$
     	    efile.setFileOffset( offset );
 			ehdr = new ELFhdr();
 			this.file = file;
@@ -729,69 +729,69 @@ public class Elf {
 		switch (ehdr.e_machine) {
 			case Elf.ELFhdr.EM_386 :
 			case Elf.ELFhdr.EM_486 :
-				attrib.cpu = "x86";
+				attrib.cpu = "x86"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_68K:
-				attrib.cpu = "m68k";
+				attrib.cpu = "m68k"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_PPC :
 			case Elf.ELFhdr.EM_CYGNUS_POWERPC :
 			case Elf.ELFhdr.EM_RS6000 :
-				attrib.cpu = "ppc";
+				attrib.cpu = "ppc"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_PPC64 :
-				attrib.cpu = "ppc64";
+				attrib.cpu = "ppc64"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_SH :
-				attrib.cpu = "sh";
+				attrib.cpu = "sh"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_ARM :
-				attrib.cpu = "arm";
+				attrib.cpu = "arm"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_MIPS_RS3_LE :
 			case Elf.ELFhdr.EM_MIPS :
-				attrib.cpu = "mips";
+				attrib.cpu = "mips"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_SPARC32PLUS:
 			case Elf.ELFhdr.EM_SPARC:
 			case Elf.ELFhdr.EM_SPARCV9:
-				attrib.cpu = "sparc";
+				attrib.cpu = "sparc"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_H8_300:
 			case Elf.ELFhdr.EM_H8_300H:
-				attrib.cpu = "h8300";
+				attrib.cpu = "h8300"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_V850:
 			case Elf.ELFhdr.EM_CYGNUS_V850:
-				attrib.cpu = "v850";
+				attrib.cpu = "v850"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_MN10300:
 			case Elf.ELFhdr.EM_CYGNUS_MN10300:
-				attrib.cpu = "mn10300";
+				attrib.cpu = "mn10300"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_MN10200:
 			case Elf.ELFhdr.EM_CYGNUS_MN10200:
-				attrib.cpu = "mn10200";
+				attrib.cpu = "mn10200"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_M32R:
-				attrib.cpu = "m32r";
+				attrib.cpu = "m32r"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_FR30:
 			case Elf.ELFhdr.EM_CYGNUS_FR30:
-				attrib.cpu = "fr30";
+				attrib.cpu = "fr30"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_XSTORMY16:
-				attrib.cpu = "xstormy16";
+				attrib.cpu = "xstormy16"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_CYGNUS_FRV:
-				attrib.cpu = "frv";
+				attrib.cpu = "frv"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_IQ2000:
-				attrib.cpu = "iq2000";
+				attrib.cpu = "iq2000"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NONE:
 			default:
-				attrib.cpu = "none";
+				attrib.cpu = "none"; //$NON-NLS-1$
 		}
 		switch (ehdr.e_ident[Elf.ELFhdr.EI_DATA]) {
 			case Elf.ELFhdr.ELFDATA2LSB :
@@ -807,10 +807,10 @@ public class Elf {
 		if(sec != null) {
 		for (int i = 0; i < sec.length; i++) {
 			String s = sec[i].toString();
-			if (s.equals(".debug_info")) {
+			if (s.equals(".debug_info")) { //$NON-NLS-1$
 				attrib.debugType = Attribute.DEBUG_TYPE_DWARF; 
 				break;
-			} else if (s.equals(".stab")) {
+			} else if (s.equals(".stab")) { //$NON-NLS-1$
 				attrib.debugType = Attribute.DEBUG_TYPE_STABS;
 				break;
 			}

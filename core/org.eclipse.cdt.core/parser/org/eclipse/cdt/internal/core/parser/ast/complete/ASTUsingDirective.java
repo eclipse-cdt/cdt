@@ -56,7 +56,7 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
         {
         	buffer.append( fqn[ i ] );
         	if( i + 1 != fqn.length ) 
-        		buffer.append( "::");
+        		buffer.append( "::"); //$NON-NLS-1$
         }
         return buffer.toString();
     }

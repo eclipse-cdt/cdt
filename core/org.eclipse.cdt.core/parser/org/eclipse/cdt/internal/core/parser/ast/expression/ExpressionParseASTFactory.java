@@ -384,7 +384,7 @@ public class ExpressionParseASTFactory implements IASTFactory {
 				rhs,
 				thirdExpression,
 				typeId,
-				idExpression == null ? "" : idExpression.toString(),
+				idExpression == null ? "" : idExpression.toString(), //$NON-NLS-1$
 				literal,
 				newDescriptor,
 				extensionFactory.createExpressionExtension());
@@ -395,7 +395,7 @@ public class ExpressionParseASTFactory implements IASTFactory {
 				rhs,
 				thirdExpression,
 				typeId,
-				idExpression == null ? "" : idExpression.toString(),
+				idExpression == null ? "" : idExpression.toString(), //$NON-NLS-1$
 				literal,
 				newDescriptor,
 				new IASTExpressionExtension() {

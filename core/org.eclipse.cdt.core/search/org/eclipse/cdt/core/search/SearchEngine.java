@@ -169,7 +169,7 @@ public class SearchEngine implements ICSearchConstants{
 			//initialize progress monitor
 			IProgressMonitor progressMonitor = collector.getProgressMonitor();
 			if( progressMonitor != null ){
-				progressMonitor.beginTask( Util.bind("engine.searching"), 100 ); //$NON_NLS-1$
+				progressMonitor.beginTask( Util.bind("engine.searching"), 100 ); //$NON_NLS-1$ //$NON-NLS-1$
 			}
 			
 			/* index search */

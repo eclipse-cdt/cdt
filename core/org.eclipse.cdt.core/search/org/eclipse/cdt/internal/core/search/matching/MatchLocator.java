@@ -361,7 +361,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		
 		int length = paths.length;
 		if( progressMonitor != null ){
-			progressMonitor.beginTask( "", length );
+			progressMonitor.beginTask( "", length ); //$NON-NLS-1$
 		}
 		
 		for( int i = 0; i < length; i++ ){
@@ -448,7 +448,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			}
 			
 			if (VERBOSE)
-			  MatchLocator.verbose("*** New Search for path: " + pathString);
+			  MatchLocator.verbose("*** New Search for path: " + pathString); //$NON-NLS-1$
 			  
 			
 			try{ 
@@ -461,7 +461,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			}
 			catch(VirtualMachineError vmErr){
 				if (VERBOSE){
-					MatchLocator.verbose("MatchLocator VM Error: ");
+					MatchLocator.verbose("MatchLocator VM Error: "); //$NON-NLS-1$
 					vmErr.printStackTrace();
 				}
 			}
@@ -483,7 +483,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				offset = reference.getOffset();
 				end = offset + reference.getName().length();
 				if (VERBOSE)
-					MatchLocator.verbose("Report Match: " + reference.getName());
+					MatchLocator.verbose("Report Match: " + reference.getName()); //$NON-NLS-1$
 			} else if( node instanceof IASTOffsetableNamedElement ){
 				IASTOffsetableNamedElement offsetableElement = (IASTOffsetableNamedElement) node;
 				offset = offsetableElement.getNameOffset() != 0 ? offsetableElement.getNameOffset() 
@@ -494,7 +494,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				}
 																						  
 				if (VERBOSE)
-					MatchLocator.verbose("Report Match: " + offsetableElement.getName());
+					MatchLocator.verbose("Report Match: " + offsetableElement.getName()); //$NON-NLS-1$
 			}
 		
 			IMatch match = null;
@@ -591,7 +591,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
     }
 
 	public static void verbose(String log) {
-	  System.out.println("(" + Thread.currentThread() + ") " + log); 
+	  System.out.println("(" + Thread.currentThread() + ") " + log);  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* (non-Javadoc)

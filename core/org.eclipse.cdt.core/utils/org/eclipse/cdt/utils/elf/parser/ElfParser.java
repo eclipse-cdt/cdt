@@ -88,7 +88,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
 	 */
 	public String getFormat() {
-		return "ELF";
+		return "ELF"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

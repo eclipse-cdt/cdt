@@ -30,20 +30,20 @@ import org.eclipse.cdt.utils.elf.Elf;
 public class Dwarf {
 
 	/* Section names. */
-	final static String DWARF_DEBUG_INFO = ".debug_info";
-	final static String DWARF_DEBUG_ABBREV = ".debug_abbrev";
-	final static String DWARF_DEBUG_ARANGES = ".debug_aranges";
-	final static String DWARF_DEBUG_LINE = ".debug_line";
-	final static String DWARF_DEBUG_FRAME = ".debug_frame";
-	final static String DWARF_EH_FRAME = ".eh_frame";
-	final static String DWARF_DEBUG_LOC = ".debug_loc";
-	final static String DWARF_DEBUG_PUBNAMES = ".debug_pubnames";
-	final static String DWARF_DEBUG_STR = ".debug_str";
-	final static String DWARF_DEBUG_FUNCNAMES = ".debug_funcnames";
-	final static String DWARF_DEBUG_TYPENAMES = ".debug_typenames";
-	final static String DWARF_DEBUG_VARNAMES = ".debug_varnames";
-	final static String DWARF_DEBUG_WEAKNAMES = ".debug_weaknames";
-	final static String DWARF_DEBUG_MACINFO = ".debug_macinfo";
+	final static String DWARF_DEBUG_INFO = ".debug_info"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_ABBREV = ".debug_abbrev"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_ARANGES = ".debug_aranges"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_LINE = ".debug_line"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_FRAME = ".debug_frame"; //$NON-NLS-1$
+	final static String DWARF_EH_FRAME = ".eh_frame"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_LOC = ".debug_loc"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_PUBNAMES = ".debug_pubnames"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_STR = ".debug_str"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_FUNCNAMES = ".debug_funcnames"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_TYPENAMES = ".debug_typenames"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_VARNAMES = ".debug_varnames"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_WEAKNAMES = ".debug_weaknames"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_MACINFO = ".debug_macinfo"; //$NON-NLS-1$
 	final static String[] DWARF_SCNNAMES =
 		{
 			DWARF_DEBUG_INFO,
@@ -68,10 +68,10 @@ public class Dwarf {
 		byte addressSize;
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
-			sb.append("Length: " + length).append("\n");
-			sb.append("Version: " + version).append("\n");
-			sb.append("Abbreviation: " + abbreviationOffset).append("\n");
-			sb.append("Address size: " + addressSize).append("\n");
+			sb.append("Length: " + length).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("Version: " + version).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("Abbreviation: " + abbreviationOffset).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("Address size: " + addressSize).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			return sb.toString();
 		}
 	}
@@ -102,8 +102,8 @@ public class Dwarf {
 		}
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
-			sb.append("name: " + Long.toHexString(name));
-			sb.append(" value: " + Long.toHexString(form));
+			sb.append("name: " + Long.toHexString(name)); //$NON-NLS-1$
+			sb.append(" value: " + Long.toHexString(form)); //$NON-NLS-1$
 			return sb.toString();
 		}
 	}
@@ -340,7 +340,7 @@ public class Dwarf {
 					header.abbreviationOffset = read_4_bytes(data, offset + 6);
 					header.addressSize = data[offset + 10];
 
-					System.out.println("Compilation Unit @ " + Long.toHexString(offset));
+					System.out.println("Compilation Unit @ " + Long.toHexString(offset)); //$NON-NLS-1$
 					System.out.println(header);
 
 					// read the abbrev section.
@@ -562,7 +562,7 @@ public class Dwarf {
 	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List list) {
 		int len = list.size();
 		int tag = (int) entry.tag;
-		System.out.println("Abbrev Number " + entry.code);
+		System.out.println("Abbrev Number " + entry.code); //$NON-NLS-1$
 		for (int i = 0; i < len; i++) {
 			AttributeValue av = (AttributeValue) list.get(i);
 			System.out.println(av);
@@ -656,7 +656,7 @@ public class Dwarf {
 	void processSubProgram(IDebugEntryRequestor requestor, List list) {
 		long lowPC = 0;
 		long highPC = 0;
-		String funcName = "";
+		String funcName = ""; //$NON-NLS-1$
 		boolean isExtern = false;
 
 		for (int i = 0; i < list.size(); i++) {
@@ -683,7 +683,7 @@ public class Dwarf {
 			} catch (ClassCastException e) {
 			}
 		}
-		requestor.enterFunction(funcName, new DebugUnknownType(""), isExtern, lowPC);
+		requestor.enterFunction(funcName, new DebugUnknownType(""), isExtern, lowPC); //$NON-NLS-1$
 		requestor.exitFunction(highPC);
 	}
 

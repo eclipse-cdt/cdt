@@ -39,9 +39,9 @@ import org.eclipse.cdt.utils.elf.Elf;
 
 public class Stabs {
 
-	final static String LLLOW = "01000000000000000000000";
-	final static String LLHIGH = "0777777777777777777777";
-	final static String ULLHIGH = "01777777777777777777777";
+	final static String LLLOW = "01000000000000000000000"; //$NON-NLS-1$
+	final static String LLHIGH = "0777777777777777777777"; //$NON-NLS-1$
+	final static String ULLHIGH = "01777777777777777777777"; //$NON-NLS-1$
 
 	byte[] stabData;
 	byte[] stabstrData;
@@ -55,7 +55,7 @@ public class Stabs {
 	String currentFile;
 
 	Map mapTypes = new HashMap();
-	DebugType voidType = new DebugBaseType("void", 0, false);
+	DebugType voidType = new DebugBaseType("void", 0, false); //$NON-NLS-1$
 
 	public Stabs(String file) throws IOException {
 		Elf exe = new Elf(file);
@@ -77,9 +77,9 @@ public class Stabs {
 		Elf.Section[] sections = exe.getSections();
 		for (int i = 0; i < sections.length; i++) {
 			String name = sections[i].toString();
-			if (name.equals(".stab")) {
+			if (name.equals(".stab")) { //$NON-NLS-1$
 				data = sections[i].loadSectionData();
-			} else if (name.equals(".stabstr")) {
+			} else if (name.equals(".stabstr")) { //$NON-NLS-1$
 				stabstr = sections[i].loadSectionData();
 			}
 		}
@@ -163,7 +163,7 @@ public class Stabs {
 			// According to the spec all the other fields are duplicated so we
 			// still have the data.
 			// From the spec continuation line on AIX is '?'
-			if (field.endsWith("\\") || field.endsWith("?")) {
+			if (field.endsWith("\\") || field.endsWith("?")) { //$NON-NLS-1$ //$NON-NLS-2$
 				field = field.substring(0, field.length() - 1);
 				if (holder == null) {
 					holder = field;
@@ -215,7 +215,7 @@ public class Stabs {
 				}
 				// Start a new Function
 				if (field.length() == 0) {
-					field = " anon ";
+					field = " anon "; //$NON-NLS-1$
 				}
 				inFunction = true;
 				parseStabString(requestor, field, value);
@@ -278,7 +278,7 @@ public class Stabs {
 				if (field != null && field.length() > 0) {
 					// if it ends with "/" do not call the entering yet
 					// we have to concatenate the next one.
-					if (field.endsWith("/")) {
+					if (field.endsWith("/")) { //$NON-NLS-1$
 						currentFile = field;
 					} else {
 						if (currentFile != null) {
@@ -314,7 +314,7 @@ public class Stabs {
 					String information = sf.getTypeInformation();
 					String paramName = sf.getName();
 					DebugParameterKind paramKind = DebugParameterKind.REGISTER_REFERENCE;
-					DebugType paramType = parseStabType("", information);
+					DebugType paramType = parseStabType("", information); //$NON-NLS-1$
 					requestor.acceptParameter(paramName, paramType, paramKind, value);
 				}
 				break;
@@ -339,7 +339,7 @@ public class Stabs {
 				{
 					String excName = sf.getName();
 					String information = sf.getTypeInformation();
-					DebugType excType = parseStabType("", information);
+					DebugType excType = parseStabType("", information); //$NON-NLS-1$
 					requestor.acceptCaughtException(excName, excType, value);
 				}
 				break;
@@ -351,7 +351,7 @@ public class Stabs {
 				{
 					String funcName = sf.getName();
 					String funcInfo = sf.getTypeInformation();
-					DebugType funcType = parseStabType("", funcInfo);
+					DebugType funcType = parseStabType("", funcInfo); //$NON-NLS-1$
 					boolean funcGlobal = sf.getSymbolDescriptor() == 'F';
 					requestor.enterFunction(funcName, funcType, funcGlobal, value);
 				}
@@ -362,7 +362,7 @@ public class Stabs {
 					String varName = sf.getName();
 					String varInfo = sf.getTypeInformation();
 					DebugVariableKind varKind = DebugVariableKind.GLOBAL;
-					DebugType varType = parseStabType("", varInfo);
+					DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
 					requestor.acceptVariable(varName, varType, varKind, value);
 				}
 				break;
@@ -389,7 +389,7 @@ public class Stabs {
 					String paramName = sf.getName();
 					String paramInfo = sf.getTypeInformation();
 					DebugParameterKind paramKind = DebugParameterKind.STACK;
-					DebugType paramType = parseStabType("", paramInfo);
+					DebugType paramType = parseStabType("", paramInfo); //$NON-NLS-1$
 					requestor.acceptParameter(paramName, paramType, paramKind, value);
 				}
 				break;
@@ -405,7 +405,7 @@ public class Stabs {
 					String paramName = sf.getName();
 					String paramInfo = sf.getTypeInformation();
 					DebugParameterKind paramKind = DebugParameterKind.REGISTER;
-					DebugType paramType = parseStabType("", paramInfo);
+					DebugType paramType = parseStabType("", paramInfo); //$NON-NLS-1$
 					requestor.acceptParameter(paramName, paramType, paramKind, value);
 				}
 				break;
@@ -423,7 +423,7 @@ public class Stabs {
 					String varName = sf.getName();
 					String varInfo = sf.getTypeInformation();
 					DebugVariableKind varKind = DebugVariableKind.REGISTER;
-					DebugType varType = parseStabType("", varInfo);
+					DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
 					requestor.acceptVariable(varName, varType, varKind, value);
 				}
 				break;
@@ -434,7 +434,7 @@ public class Stabs {
 					String varName = sf.getName();
 					String varInfo = sf.getTypeInformation();
 					DebugVariableKind varKind = DebugVariableKind.STATIC;
-					DebugType varType = parseStabType("", varInfo);
+					DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
 					requestor.acceptVariable(varName, varType, varKind, value);
 				}
 				break;
@@ -471,7 +471,7 @@ public class Stabs {
 					String paramName = sf.getName();
 					String paramInfo = sf.getTypeInformation();
 					DebugParameterKind paramKind = DebugParameterKind.REFERENCE;
-					DebugType paramType = parseStabType("", paramInfo);
+					DebugType paramType = parseStabType("", paramInfo); //$NON-NLS-1$
 					requestor.acceptParameter(paramName, paramType, paramKind, value);
 				}
 				break;
@@ -482,7 +482,7 @@ public class Stabs {
 					String varName = sf.getName();
 					String varInfo = sf.getTypeInformation();
 					DebugVariableKind varKind = DebugVariableKind.LOCAL_STATIC;
-					DebugType varType = parseStabType("", varInfo);
+					DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
 					requestor.acceptVariable(varName, varType, varKind, value);
 				}
 				break;
@@ -502,7 +502,7 @@ public class Stabs {
 					String varName = sf.getName();
 					String varInfo = sf.getTypeInformation();
 					DebugVariableKind varKind = DebugVariableKind.LOCAL;
-					DebugType varType = parseStabType("", varInfo);
+					DebugType varType = parseStabType("", varInfo); //$NON-NLS-1$
 					requestor.acceptVariable(varName, varType, varKind, value);
 				}
 				break;
@@ -535,7 +535,7 @@ public class Stabs {
 				// Reference (C++)
 			case '&' :
 				{
-					DebugType subType = parseStabType("", reader);
+					DebugType subType = parseStabType("", reader); //$NON-NLS-1$
 					type = new DebugReferenceType(subType);
 				}
 				break;
@@ -547,7 +547,7 @@ public class Stabs {
 				// pointer type.
 			case '*' :
 				{
-					DebugType subType = parseStabType("", reader);
+					DebugType subType = parseStabType("", reader); //$NON-NLS-1$
 					type = new DebugPointerType(subType);
 				}
 				break;
@@ -603,7 +603,7 @@ public class Stabs {
 				// Function type
 			case 'f' :
 				{
-					DebugType subType = parseStabType("", reader);
+					DebugType subType = parseStabType("", reader); //$NON-NLS-1$
 					type = new DebugFunctionType(subType);
 				}
 				break;
@@ -723,11 +723,11 @@ public class Stabs {
 		StringBuffer sb = new StringBuffer();
 		int c = reader.read();
 		if (c == 's') {
-			sb.append("struct ");
+			sb.append("struct "); //$NON-NLS-1$
 		} else if (c == 'u') {
-			sb.append("union ");
+			sb.append("union "); //$NON-NLS-1$
 		} else if (c == 'e') {
-			sb.append("enum ");
+			sb.append("enum "); //$NON-NLS-1$
 		} else {
 			sb.append((char) c);
 		}
@@ -885,7 +885,7 @@ public class Stabs {
 		// we only understand range for an array.
 		int c = reader.read();
 		if (c == 'r') {
-			DebugType index_type = parseStabType("", reader);
+			DebugType index_type = parseStabType("", reader); //$NON-NLS-1$
 
 			c = reader.read();
 			// Check ';'
@@ -944,7 +944,7 @@ public class Stabs {
 			}
 
 			// The array_content_type
-			DebugType subType = parseStabType("", reader);
+			DebugType subType = parseStabType("", reader); //$NON-NLS-1$
 
 			return new DebugArrayType(subType, upper - lower + 1);
 		}
@@ -1044,7 +1044,7 @@ public class Stabs {
 		String name = sb.toString();
 
 		// get the type of the field
-		DebugType fieldType = parseStabType("", reader);
+		DebugType fieldType = parseStabType("", reader); //$NON-NLS-1$
 
 		c = reader.read();
 		// Sanity check: we should have ',' here.
@@ -1173,9 +1173,9 @@ public class Stabs {
 			if (lowerBound == 0 && upperBound == -1) {
 				// if the lower bound is 0 and the upper bound is -1,
 				// it means unsigned int
-				if (name.equals("long long int")) {
+				if (name.equals("long long int")) { //$NON-NLS-1$
 					rangeType = new DebugBaseType(name, 8, true);
-				} else if (name.equals("long long unsigned int")) {
+				} else if (name.equals("long long unsigned int")) { //$NON-NLS-1$
 					rangeType = new DebugBaseType(name, 8, true);
 				} else {
 					rangeType = new DebugBaseType(name, 4, true);
@@ -1242,7 +1242,7 @@ public class Stabs {
 				case 'e' :
 					{
 						int val = 0;
-						DebugType type = parseStabType("", reader);
+						DebugType type = parseStabType("", reader); //$NON-NLS-1$
 						c = reader.read();
 						if (c == ',') {
 							StringBuffer sb = new StringBuffer();
@@ -1293,13 +1293,13 @@ public class Stabs {
 						}
 						try {
 							String s = sb.toString();
-							if (s.equals("-INF")) {
+							if (s.equals("-INF")) { //$NON-NLS-1$
 								val = Double.NEGATIVE_INFINITY;
-							} else if (s.equals("INF")) {
+							} else if (s.equals("INF")) { //$NON-NLS-1$
 								val = Double.POSITIVE_INFINITY;
-							} else if (s.equals("QNAN")) {
+							} else if (s.equals("QNAN")) { //$NON-NLS-1$
 								val = Double.NaN;
-							} else if (s.equals("SNAN")) {
+							} else if (s.equals("SNAN")) { //$NON-NLS-1$
 								val = Double.NaN;
 							} else {
 								val = Double.parseDouble(s);

@@ -106,11 +106,11 @@ public class ASTExpression implements IASTExpression {
 		{
 			try
 			{
-				if( getLiteralString().startsWith( "0x") || getLiteralString().startsWith( "0x") )
+				if( getLiteralString().startsWith( "0x") || getLiteralString().startsWith( "0x") ) //$NON-NLS-1$ //$NON-NLS-2$
 				{
                     return Integer.parseInt( getLiteralString().substring(2), 16 );
 				}
-				if( getLiteralString().startsWith( "0") && getLiteralString().length() > 1 )
+				if( getLiteralString().startsWith( "0") && getLiteralString().length() > 1 ) //$NON-NLS-1$
 					return Integer.parseInt( getLiteralString().substring(1), 8 );
 				return Integer.parseInt( getLiteralString() );
 			}

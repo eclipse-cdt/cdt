@@ -601,7 +601,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                             declarator.getPointerOperators(),
                             declarator.getArrayModifiers(),
                             null, null, declarator.getName() == null
-                                            ? ""
+                                            ? "" //$NON-NLS-1$
                                             : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), getEndLine()));
                 }
                 catch (Exception e)

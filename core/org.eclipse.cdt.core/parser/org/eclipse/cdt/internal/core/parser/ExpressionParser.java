@@ -431,7 +431,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null);
+	                    null, "", null); //$NON-NLS-1$
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -541,7 +541,7 @@ public class ExpressionParser implements IExpressionParser {
 	            null,
 	            null,
 	            null,
-	            null, "", null);
+	            null, "", null); //$NON-NLS-1$
 	    }
 	    catch (ASTSemanticException e)
 	    {
@@ -574,7 +574,7 @@ public class ExpressionParser implements IExpressionParser {
 	                secondExpression,
 	                thirdExpression,
 	                null,
-	                null, "", null);
+	                null, "", null); //$NON-NLS-1$
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -609,7 +609,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null);
+	                    null, "", null); //$NON-NLS-1$
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -642,7 +642,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null);
+	                    null, "", null); //$NON-NLS-1$
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -676,7 +676,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null);
+	                    null, "", null); //$NON-NLS-1$
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -711,7 +711,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null);
+	                    null, "", null); //$NON-NLS-1$
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -745,7 +745,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null);
+	                    null, "", null); //$NON-NLS-1$
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -786,7 +786,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null);
+	                            null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -863,7 +863,7 @@ public class ExpressionParser implements IExpressionParser {
 	                                secondExpression,
 	                                null,
 	                                null,
-	                                null, "", null);
+	                                null, "", null); //$NON-NLS-1$
 	                    }
 	                    catch (ASTSemanticException e)
 	                    {
@@ -907,7 +907,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null);
+	                            null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -950,7 +950,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null);
+	                            null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -1004,7 +1004,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null);
+	                            null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -1047,7 +1047,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null);
+	                            null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -1090,7 +1090,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    null,
 	                    null,
 	                    typeId,
-	                    null, "", null);
+	                    null, "", null); //$NON-NLS-1$
 	            }
 	            catch (ASTSemanticException e)
 	            {
@@ -1331,7 +1331,7 @@ public class ExpressionParser implements IExpressionParser {
 	            null,
 	            null,
 	            null,
-	            null, "", null);
+	            null, "", null); //$NON-NLS-1$
 	    }
 	    catch (ASTSemanticException e)
 	    {
@@ -1468,7 +1468,7 @@ public class ExpressionParser implements IExpressionParser {
 								return astFactory.createExpression(
 									scope, IASTExpression.Kind.NEW_TYPEID, 
 									null, null, null, typeId, null, 
-									"", astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
+									"", astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions)); //$NON-NLS-1$
 							}
 							catch (ASTSemanticException e)
 							{
@@ -1516,7 +1516,7 @@ public class ExpressionParser implements IExpressionParser {
 	    return astFactory.createExpression(
 	    	scope, IASTExpression.Kind.NEW_TYPEID, 
 			null, null, null, typeId, null, 
-			"", astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
+			"", astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions)); //$NON-NLS-1$
 		}
 		catch (ASTSemanticException e)
 		{
@@ -1600,7 +1600,7 @@ public class ExpressionParser implements IExpressionParser {
 	                        null,
 	                        null,
 	                        d,
-	                        null, "", null);
+	                        null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -1619,7 +1619,7 @@ public class ExpressionParser implements IExpressionParser {
 	                        null,
 	                        null,
 	                        null,
-	                        null, "", null);
+	                        null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e1)
 	                {
@@ -1693,7 +1693,7 @@ public class ExpressionParser implements IExpressionParser {
 													null, 
 													null, 
 													nestedName,
-													"", 
+													"",  //$NON-NLS-1$
 													null );
 				} catch (ASTSemanticException ase ) {
 					throw backtrack;
@@ -1801,7 +1801,7 @@ public class ExpressionParser implements IExpressionParser {
 	                        null,
 	                        null,
 	                        typeId,
-	                        null, "", null);
+	                        null, "", null); //$NON-NLS-1$
 	            }
 	            catch (ASTSemanticException e6)
 	            {
@@ -1835,7 +1835,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null);
+	                            null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e2)
 	                {
@@ -1861,7 +1861,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null);
+	                            null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e3)
 	                {
@@ -1884,7 +1884,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            null,
 	                            null,
 	                            null,
-	                            null, "", null);
+	                            null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e1)
 	                {
@@ -1907,7 +1907,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            null,
 	                            null,
 	                            null,
-	                            null, "", null);
+	                            null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e4)
 	                {
@@ -1948,7 +1948,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null);
+	                            null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e5)
 	                {
@@ -1988,7 +1988,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null);
+	                            null, "", null); //$NON-NLS-1$
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -2045,7 +2045,7 @@ public class ExpressionParser implements IExpressionParser {
 	            null,
 	            null,
 	            null,
-	            null, "", null);
+	            null, "", null); //$NON-NLS-1$
 	    }
 	    catch (ASTSemanticException e)
 	    {
@@ -2177,7 +2177,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    null,
 	                    null,
 	                    null,
-	                    null, "", null);
+	                    null, "", null); //$NON-NLS-1$
 	            }
 	            catch (ASTSemanticException e7)
 	            {
@@ -2199,7 +2199,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    null,
 	                    null,
 	                    null,
-	                    null, "", null);
+	                    null, "", null); //$NON-NLS-1$
 	            }
 	            catch (ASTSemanticException e6)
 	            {
@@ -2263,7 +2263,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    null,
 	                	null,
 						null,
-	                    duple, "", null);
+	                    duple, "", null); //$NON-NLS-1$
 	            }
 	            catch (ASTSemanticException e8)
 	            {
@@ -2282,7 +2282,7 @@ public class ExpressionParser implements IExpressionParser {
 							null,
 							null,
 							null,
-							null, "", null);
+							null, "", null); //$NON-NLS-1$
 				} catch (ASTSemanticException e9) {
 					// TODO Auto-generated catch block
 					e9.printStackTrace();
@@ -2322,7 +2322,7 @@ public class ExpressionParser implements IExpressionParser {
 	    }
 	    catch (ScannerException e)
 	    {
-	        log.traceLog( "ScannerException thrown : " + e.getProblem().getMessage() );
+	        log.traceLog( "ScannerException thrown : " + e.getProblem().getMessage() ); //$NON-NLS-1$
 			log.errorLog( "Scanner Exception: " + e.getProblem().getMessage()); //$NON-NLS-1$h
 	        failParse(); 
 	        return fetchToken();
@@ -2438,7 +2438,7 @@ public class ExpressionParser implements IExpressionParser {
 				assignmentExpression,
 	            null,
 	            null,
-	            null, "", null);
+	            null, "", null); //$NON-NLS-1$
 	    }
 	    catch (ASTSemanticException e)
 	    {
@@ -2469,7 +2469,7 @@ public class ExpressionParser implements IExpressionParser {
 	            null,
 	            null,
 	            null,
-	            null, "", null);
+	            null, "", null); //$NON-NLS-1$
 	    }
 	    catch (ASTSemanticException e)
 	    {
@@ -2497,7 +2497,7 @@ public class ExpressionParser implements IExpressionParser {
 	            null,
 	            null,
 	            duple,
-	            null, "", null);
+	            null, "", null); //$NON-NLS-1$
 	    }
 	    catch (ASTSemanticException e)
 	    {

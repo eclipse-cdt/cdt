@@ -31,7 +31,7 @@ public class DebugType {
 			int size = arrayType.getSize();
 			DebugType type = arrayType.getComponentType();
 			sb.append(type.toString());
-			sb.append(" [").append(size).append(']');
+			sb.append(" [").append(size).append(']'); //$NON-NLS-1$
 		} else if (this instanceof DebugDerivedType) {
 			DebugDerivedType derived = (DebugDerivedType)this;
 			DebugType component = derived.getComponentType();
@@ -42,9 +42,9 @@ public class DebugType {
 				sb.append(component.toString());
 			}
 			if (this instanceof DebugPointerType) {
-				sb.append(" *");
+				sb.append(" *"); //$NON-NLS-1$
 			} else if (this instanceof DebugReferenceType) {
-				sb.append(" &");
+				sb.append(" &"); //$NON-NLS-1$
 			} else if (this instanceof DebugCrossRefType && component == null) {
 				DebugCrossRefType crossRef = (DebugCrossRefType)this;
 				sb.append(crossRef.getCrossRefName());
@@ -58,27 +58,27 @@ public class DebugType {
 			DebugFunctionType function = (DebugFunctionType)this;
 			DebugType type = function.getReturnType();
 			sb.append(type.toString());
-			sb.append(" (*())");
+			sb.append(" (*())"); //$NON-NLS-1$
 		} else if (this instanceof DebugEnumType) {
 			DebugEnumType enum = (DebugEnumType)this;
 			DebugEnumField[] fields = enum.getDebugEnumFields();
-			sb.append("enum ").append(enum.getName()).append(" {");
+			sb.append("enum ").append(enum.getName()).append(" {"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int i = 0; i < fields.length; i++) {
 				if (i > 0) {
 					sb.append(',');
 				}
 				sb.append(' ').append(fields[i].getName());
-				sb.append(" = ").append(fields[i].getValue());
+				sb.append(" = ").append(fields[i].getValue()); //$NON-NLS-1$
 			}
-			sb.append(" }");
+			sb.append(" }"); //$NON-NLS-1$
 		} else if (this instanceof DebugStructType) {
 			DebugStructType struct = (DebugStructType)this;
 			if (struct.isUnion()) {
-				sb.append("union ");
+				sb.append("union "); //$NON-NLS-1$
 			} else {
-				sb.append("struct ");
+				sb.append("struct "); //$NON-NLS-1$
 			}
-			sb.append(struct.getName()).append(" {");
+			sb.append(struct.getName()).append(" {"); //$NON-NLS-1$
 			DebugField[] fields = struct.getDebugFields();
 			for (int i = 0; i < fields.length; i++) {
 				if (i > 0) {
@@ -87,7 +87,7 @@ public class DebugType {
 				sb.append(' ').append(fields[i].getDebugType());
 				sb.append(' ').append(fields[i].getName());
 			}
-			sb.append(" }");
+			sb.append(" }"); //$NON-NLS-1$
 		} else if (this instanceof DebugUnknownType) {
 			DebugUnknownType unknown = (DebugUnknownType)this;
 			sb.append(unknown.getName());

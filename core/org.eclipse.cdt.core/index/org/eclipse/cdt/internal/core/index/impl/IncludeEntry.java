@@ -189,17 +189,17 @@ public class IncludeEntry {
 	
 	public String toString() {
 		StringBuffer tempBuffer = new StringBuffer();
-		tempBuffer.append("<Name: ");
+		tempBuffer.append("<Name: "); //$NON-NLS-1$
 		tempBuffer.append(fFile);
-		tempBuffer.append(", Id: ");
+		tempBuffer.append(", Id: "); //$NON-NLS-1$
 		tempBuffer.append(fId);
-		tempBuffer.append(", Refs:{");
+		tempBuffer.append(", Refs:{"); //$NON-NLS-1$
 		for (int i = 0; i < fRefs.length; i++){
 			if (i > 0) tempBuffer.append(',');
 			tempBuffer.append(' ');
 			tempBuffer.append(fRefs[i]);
 		}
-		tempBuffer.append("}, Parents:{");
+		tempBuffer.append("}, Parents:{"); //$NON-NLS-1$
 		Iterator x = fParent.iterator();
 		while (x.hasNext())
 		{
@@ -210,7 +210,7 @@ public class IncludeEntry {
 				tempBuffer.append(' ');
 			}
 		}
-		tempBuffer.append("}, Children:{");
+		tempBuffer.append("}, Children:{"); //$NON-NLS-1$
 		Iterator y = fChild.iterator();
 		while (y.hasNext())
 		{
@@ -221,7 +221,7 @@ public class IncludeEntry {
 				tempBuffer.append(' ');
 			}
 		}
-		tempBuffer.append("} >");
+		tempBuffer.append("} >"); //$NON-NLS-1$
 		return tempBuffer.toString();
 	}
 }

@@ -87,7 +87,7 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 			
 		result.startOffset = start;
 		result.endOffset = end;
-		result.parentName = "";
+		result.parentName = ""; //$NON-NLS-1$
 		
 		IASTOffsetableNamedElement offsetable = null;
 
@@ -99,7 +99,7 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 			result.name = offsetable.getName();
 		}
 		
-		result.parentName = "";
+		result.parentName = ""; //$NON-NLS-1$
 		String [] names = null;
 		if( offsetable instanceof IASTEnumerator ){
 			IASTEnumerator enumerator = (IASTEnumerator) offsetable;
@@ -111,7 +111,7 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 		if( names != null ){
 			for( int i = 0; i < names.length - 1; i++ ){
 				if( i > 0 )
-					result.parentName += "::";
+					result.parentName += "::"; //$NON-NLS-1$
 			
 				result.parentName += names[ i ];
 			}
@@ -136,9 +136,9 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 	 */
 	private String getParameterString(IASTFunction function) {
 		if( function == null )
-			return "";
+			return ""; //$NON-NLS-1$
 		
-		String paramString = "(";
+		String paramString = "("; //$NON-NLS-1$
 			
 		Iterator iter = function.getParameters();
 		
@@ -146,11 +146,11 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 		while( iter.hasNext() ){
 			IASTParameterDeclaration param = (IASTParameterDeclaration) iter.next();
 			
-			if( !first ) paramString += ", ";
+			if( !first ) paramString += ", "; //$NON-NLS-1$
 			
 			IASTTypeSpecifier typeSpec = param.getTypeSpecifier();
 			if( param.isConst() )
-				paramString += "const ";
+				paramString += "const "; //$NON-NLS-1$
 
 			if( typeSpec instanceof IASTSimpleTypeSpecifier ){
 				paramString += ((IASTSimpleTypeSpecifier)typeSpec).getTypename();
@@ -159,30 +159,30 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 			} else if( typeSpec instanceof IASTElaboratedTypeSpecifier ){
 				ASTClassKind kind = ((IASTElaboratedTypeSpecifier)typeSpec).getClassKind();
 				if( kind == ASTClassKind.CLASS ){
-					paramString += "class ";
+					paramString += "class "; //$NON-NLS-1$
 				} else if( kind == ASTClassKind.STRUCT ){
-					paramString += "struct ";
+					paramString += "struct "; //$NON-NLS-1$
 				} else if( kind == ASTClassKind.ENUM ){
-					paramString += "enum ";
+					paramString += "enum "; //$NON-NLS-1$
 				} else if( kind == ASTClassKind.UNION ){
-					paramString += "union ";
+					paramString += "union "; //$NON-NLS-1$
 				}
 				paramString += ((IASTElaboratedTypeSpecifier)typeSpec).getName();
 			}
 				
 			Iterator ptrs = param.getPointerOperators();
-			if( ptrs.hasNext() ) paramString += " ";
+			if( ptrs.hasNext() ) paramString += " "; //$NON-NLS-1$
 			
 			while( ptrs.hasNext() ){
 				ASTPointerOperator ptr = (ASTPointerOperator)ptrs.next();
 				if( ptr == ASTPointerOperator.POINTER )
-					paramString += "*";
+					paramString += "*"; //$NON-NLS-1$
 				else if( ptr == ASTPointerOperator.REFERENCE )
-					paramString += "&";
+					paramString += "&"; //$NON-NLS-1$
 				else if( ptr == ASTPointerOperator.CONST_POINTER )
-					paramString += " const * ";
+					paramString += " const * "; //$NON-NLS-1$
 				else if( ptr == ASTPointerOperator.VOLATILE_POINTER )
-					paramString += " volatile * ";
+					paramString += " volatile * "; //$NON-NLS-1$
 					
 				ptr = ASTPointerOperator.POINTER;
 			}
@@ -190,7 +190,7 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 			first = false;
 		}
 		
-		paramString += ")";
+		paramString += ")"; //$NON-NLS-1$
 		return paramString;
 	}
 

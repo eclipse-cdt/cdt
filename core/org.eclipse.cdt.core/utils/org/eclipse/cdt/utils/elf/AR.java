@@ -197,7 +197,7 @@ public class AR {
 				efile.seek(elf_offset);
 				efile.read(temp);
 			} else {
-				efile = new ERandomAccessFile(filename, "r");
+				efile = new ERandomAccessFile(filename, "r"); //$NON-NLS-1$
 				efile.seek(elf_offset);
 				efile.read(temp);
 				efile.close();
@@ -229,9 +229,9 @@ public class AR {
 	 */
 	public AR(String filename) throws IOException {
 		this.filename = filename;
-		efile = new ERandomAccessFile(filename, "r");
+		efile = new ERandomAccessFile(filename, "r"); //$NON-NLS-1$
 		String hdr = efile.readLine();
-		if (hdr == null || hdr.compareTo("!<arch>") != 0) {
+		if (hdr == null || hdr.compareTo("!<arch>") != 0) { //$NON-NLS-1$
 			efile.close();
 			throw new IOException("Not a valid archive file.");
 		}
@@ -262,7 +262,7 @@ public class AR {
 				//
 				// If the name is "//" then this is the string table section.
 				//
-				if (name.compareTo("//") == 0)
+				if (name.compareTo("//") == 0) //$NON-NLS-1$
 					strtbl_pos = pos;
 
 				//
@@ -312,14 +312,14 @@ public class AR {
 			if (names != null && !stringInStrings(object_name, names))
 				continue;
 
-			object_name = "" + count + "_" + object_name;
+			object_name = "" + count + "_" + object_name; //$NON-NLS-1$ //$NON-NLS-2$
 			count++;
 
 			byte[] data = headers[i].getObjectData();
 			File output = new File(outdir, object_name);
 			names_used.add(object_name);
 
-			RandomAccessFile rfile = new RandomAccessFile(output, "rw");
+			RandomAccessFile rfile = new RandomAccessFile(output, "rw"); //$NON-NLS-1$
 			rfile.write(data);
 			rfile.close();
 		}

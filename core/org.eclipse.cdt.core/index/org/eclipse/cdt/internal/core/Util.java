@@ -374,14 +374,14 @@ public class Util {
 		String[] sourceExtensions = CModelManager.sourceExtensions;
 		String[] headerExtensions = CModelManager.headerExtensions;
 		
-		int dot =fileName.lastIndexOf(".");
+		int dot =fileName.lastIndexOf("."); //$NON-NLS-1$
 		
 		//No extension, give benefit of doubt
 		if (dot == -1)
 		 return true;
 		 
 	    //Extract extension
-		String extension = "";
+		String extension = ""; //$NON-NLS-1$
 	    if (dot + 1 <= fileName.length())
 	    	extension = fileName.substring(dot + 1);
 	    

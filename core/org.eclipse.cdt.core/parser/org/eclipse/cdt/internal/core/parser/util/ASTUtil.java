@@ -50,22 +50,22 @@ public class ASTUtil {
 			{				
 				IASTTemplateParameter.ParamKind kind = parameter.getTemplateParameterKind();
 				if(kind == IASTTemplateParameter.ParamKind.CLASS){
-					paramType.append("class");
+					paramType.append("class"); //$NON-NLS-1$
 				}
 				if(kind == IASTTemplateParameter.ParamKind.TYPENAME){
-					paramType.append("typename");
+					paramType.append("typename"); //$NON-NLS-1$
 				}
 				if(kind == IASTTemplateParameter.ParamKind.TEMPLATE_LIST){
-					paramType.append("template<");
+					paramType.append("template<"); //$NON-NLS-1$
 					String[] subParams = getTemplateParameters(parameter.getTemplateParameters());
 					int p = 0; 
 					if ( subParams.length > 0)
 						paramType.append(subParams[p++]);
 					while( p < subParams.length){
-						paramType.append(", ");
+						paramType.append(", "); //$NON-NLS-1$
 						paramType.append(subParams[p++]);							
 					}
-					paramType.append(">");
+					paramType.append(">"); //$NON-NLS-1$
 				}
 				if(kind == IASTTemplateParameter.ParamKind.PARAMETER){
 					paramType.append(getType(parameter.getParameterDeclaration()));				
@@ -107,7 +107,7 @@ public class ASTUtil {
 									? expression.getLiteralString() 
 									: expression.getIdExpression() );
 					if(literal.length() > 0){
-						initializer.append("=");
+						initializer.append("="); //$NON-NLS-1$
 						initializer.append(literal);
 					}
 				}
@@ -119,9 +119,9 @@ public class ASTUtil {
 		StringBuffer type = new StringBuffer();
 		ASTPointerOperator po = declaration.getPointerToFunctionOperator();
 		if(po != null){
-			type.append("(");
+			type.append("("); //$NON-NLS-1$
 			type.append(getPointerOperator(po));
-			type.append(")");
+			type.append(")"); //$NON-NLS-1$
 			String[] parameters =getParameterTypes(declaration.getParameters(), false /* replace with takeVarArgs() later*/); 
 			type.append(getParametersString(parameters));
 		}
@@ -131,7 +131,7 @@ public class ASTUtil {
 		StringBuffer type = new StringBuffer();
 		
 		if(declaration.isConst())
-			type.append("const ");
+			type.append("const "); //$NON-NLS-1$
 		IASTTypeSpecifier typeSpecifier = declaration.getTypeSpecifier();
 		if(typeSpecifier instanceof IASTElaboratedTypeSpecifier){
 			IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier) typeSpecifier;
@@ -147,18 +147,18 @@ public class ASTUtil {
 		StringBuffer type = new StringBuffer();
 		ASTClassKind t = elab.getClassKind();
 		if( t == ASTClassKind.CLASS){
-			type.append("class");
+			type.append("class"); //$NON-NLS-1$
 		} 
 		else if( t == ASTClassKind.STRUCT){
-			type.append("struct");
+			type.append("struct"); //$NON-NLS-1$
 		}
 		else if( t == ASTClassKind.UNION){
-			type.append("union");
+			type.append("union"); //$NON-NLS-1$
 		}
 		else if( t == ASTClassKind.STRUCT){
-			type.append("enum");
+			type.append("enum"); //$NON-NLS-1$
 		}
-		type.append(" ");
+		type.append(" "); //$NON-NLS-1$
 		type.append(elab.getName().toString());
 		return type.toString();
 	}
@@ -174,18 +174,18 @@ public class ASTUtil {
 	}
 	
 	public static String getPointerOperator(ASTPointerOperator po){
-		String pointerString ="";
+		String pointerString =""; //$NON-NLS-1$
 		if(po == ASTPointerOperator.POINTER)
-			pointerString = ("*");
+			pointerString = ("*"); //$NON-NLS-1$
 
 		if(po == ASTPointerOperator.REFERENCE)
-			pointerString =("&");
+			pointerString =("&"); //$NON-NLS-1$
 
 		if(po == ASTPointerOperator.CONST_POINTER)
-			pointerString =("* const");
+			pointerString =("* const"); //$NON-NLS-1$
 
 		if(po == ASTPointerOperator.VOLATILE_POINTER)
-			pointerString =("* volatile");
+			pointerString =("* volatile"); //$NON-NLS-1$
 			
 		return pointerString;						
 	}
@@ -195,7 +195,7 @@ public class ASTUtil {
 		Iterator i  = declaration.getArrayModifiers(); 
 		while (i.hasNext()){
 			i.next();
-			arrayString.append("[]");				
+			arrayString.append("[]");				 //$NON-NLS-1$
 		}
 		return arrayString.toString();
 	}
@@ -221,24 +221,24 @@ public class ASTUtil {
 		}
 		// add the ellipse to the parameter type list
 		if(takesVarArgs)
-			parameterTypes[paramListSize-1] = "...";
+			parameterTypes[paramListSize-1] = "..."; //$NON-NLS-1$
 		return parameterTypes;			
 	}
 	public static String getParametersString(String[] parameterTypes) 
 	{
-		StringBuffer parameters = new StringBuffer("");
+		StringBuffer parameters = new StringBuffer(""); //$NON-NLS-1$
 		
 		if ((parameterTypes != null) && (parameterTypes.length > 0)) {
-			parameters.append("(");
+			parameters.append("("); //$NON-NLS-1$
 			int i = 0;
 			parameters.append(parameterTypes[i++]);
 			while (i < parameterTypes.length) {
-				parameters.append(", ");
+				parameters.append(", "); //$NON-NLS-1$
 				parameters.append(parameterTypes[i++]);
 			}
-			parameters.append(")");
+			parameters.append(")"); //$NON-NLS-1$
 		} else {
-			if (parameterTypes != null) parameters.append("()");
+			if (parameterTypes != null) parameters.append("()"); //$NON-NLS-1$
 		}
 		
 		return parameters.toString();

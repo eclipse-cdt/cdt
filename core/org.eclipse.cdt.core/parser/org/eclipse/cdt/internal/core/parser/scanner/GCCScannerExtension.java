@@ -26,8 +26,8 @@ public class GCCScannerExtension implements IScannerExtension {
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#initializeMacroValue(java.lang.String)
 	 */
 	public String initializeMacroValue(String original) {
-		if( original == null || original.trim().equals( "") )
-			return "1";
+		if( original == null || original.trim().equals( "") ) //$NON-NLS-1$
+			return "1"; //$NON-NLS-1$
 		return original;
 	}
 
@@ -37,11 +37,11 @@ public class GCCScannerExtension implements IScannerExtension {
 	public void setupBuiltInMacros(ParserLanguage language) {
 		if( language == ParserLanguage.CPP )
 			if( scannerData.getScanner().getDefinition( IScanner.__CPLUSPLUS ) == null )
-				scannerData.getScanner().addDefinition( IScanner.__CPLUSPLUS, new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1"));
+				scannerData.getScanner().addDefinition( IScanner.__CPLUSPLUS, new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1")); //$NON-NLS-1$
 		if( scannerData.getScanner().getDefinition(IScanner.__STDC_HOSTED__) == null )
-			scannerData.getScanner().addDefinition(IScanner.__STDC_HOSTED__, new ObjectMacroDescriptor( IScanner.__STDC_HOSTED__, "0"));
+			scannerData.getScanner().addDefinition(IScanner.__STDC_HOSTED__, new ObjectMacroDescriptor( IScanner.__STDC_HOSTED__, "0")); //$NON-NLS-1$
 		if( scannerData.getScanner().getDefinition( IScanner.__STDC_VERSION__) == null )
-			scannerData.getScanner().addDefinition( IScanner.__STDC_VERSION__, new ObjectMacroDescriptor( IScanner.__STDC_VERSION__, "199001L"));
+			scannerData.getScanner().addDefinition( IScanner.__STDC_VERSION__, new ObjectMacroDescriptor( IScanner.__STDC_VERSION__, "199001L")); //$NON-NLS-1$
 	}
 
 	public void setScannerData(IScannerData scannerData) {
@@ -60,7 +60,7 @@ public class GCCScannerExtension implements IScannerExtension {
 	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#canHandlePreprocessorDirective(java.lang.String)
 	 */
 	public boolean canHandlePreprocessorDirective(String directive) {
-		if( directive.equals("#include_next")) return true;
+		if( directive.equals("#include_next")) return true; //$NON-NLS-1$
 		return false;
 	}
 
@@ -68,7 +68,7 @@ public class GCCScannerExtension implements IScannerExtension {
 	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#handlePreprocessorDirective(java.lang.String, java.lang.String)
 	 */
 	public void handlePreprocessorDirective(String directive, String restOfLine) {
-		if( directive.equals("#include_next") )
+		if( directive.equals("#include_next") ) //$NON-NLS-1$
 		{
 			// figure out the name of the current file and its path
 			// search through include paths 

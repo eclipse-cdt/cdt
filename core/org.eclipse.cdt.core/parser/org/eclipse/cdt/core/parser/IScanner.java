@@ -10,14 +10,14 @@ import org.eclipse.cdt.core.parser.ast.IASTFactory;
  */
 public interface IScanner  {
 
-	public static final String __CPLUSPLUS = "__cplusplus";
-	public static final String __STDC_VERSION__ = "__STDC_VERSION__";
-	public static final String __STDC_HOSTED__ = "__STDC_HOSTED__";
-	public static final String __STDC__ = "__STDC__";
-	public static final String __FILE__ = "__FILE__";
-	public static final String __TIME__ = "__TIME__";
-	public static final String __DATE__ = "__DATE__";
-	public static final String __LINE__ = "__LINE__";
+	public static final String __CPLUSPLUS = "__cplusplus"; //$NON-NLS-1$
+	public static final String __STDC_VERSION__ = "__STDC_VERSION__"; //$NON-NLS-1$
+	public static final String __STDC_HOSTED__ = "__STDC_HOSTED__"; //$NON-NLS-1$
+	public static final String __STDC__ = "__STDC__"; //$NON-NLS-1$
+	public static final String __FILE__ = "__FILE__"; //$NON-NLS-1$
+	public static final String __TIME__ = "__TIME__"; //$NON-NLS-1$
+	public static final String __DATE__ = "__DATE__"; //$NON-NLS-1$
+	public static final String __LINE__ = "__LINE__"; //$NON-NLS-1$
 	
 	public static final int tPOUNDPOUND = -6;
 	public static final int tPOUND      = -7;

@@ -40,7 +40,7 @@ public class GNUElfParser extends ElfParser implements IBinaryParser, IToolsProv
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
 	 */
 	public String getFormat() {
-		return "GNU ELF";
+		return "GNU ELF"; //$NON-NLS-1$
 	}
 
 

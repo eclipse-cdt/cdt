@@ -36,7 +36,7 @@ public class Token implements IToken {
 	
 	public String toString()
 	{
-		return "Token type=" + type + "  image =" + image + " offset=" + offset; 	
+		return "Token type=" + type + "  image =" + image + " offset=" + offset; 	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public int type;

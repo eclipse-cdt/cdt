@@ -43,9 +43,9 @@ public class CygwinToolsProvider extends ToolsProvider implements ICygwinToolsPr
 
 	public IPath getCygPathPath() {
 		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("cygpath"); //$NON-NLS-1
+		String value =  ref.getExtensionData("cygpath"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
-			value = "cygpath"; //$NON-NLS-1
+			value = "cygpath"; //$NON-NLS-1$
 		}
 		return new Path(value);
 	}

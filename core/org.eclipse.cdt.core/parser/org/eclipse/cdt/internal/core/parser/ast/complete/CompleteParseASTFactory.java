@@ -2018,33 +2018,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		else if( absDecl.getTypeSpecifier() instanceof IASTClassSpecifier )
 		{
-			ASTClassKind kind = ((IASTClassSpecifier)absDecl.getTypeSpecifier()).getClassKind();
-			if( kind == ASTClassKind.CLASS )
-				type.setType(TypeInfo.t_class);
-			else if( kind == ASTClassKind.STRUCT )
-				type.setType(TypeInfo.t_struct);
-			else if( kind == ASTClassKind.UNION )
-				type.setType(TypeInfo.t_union);
-//			else
-//				assert false : this;
+			type.setType( TypeInfo.t_type );
+			type.setTypeSymbol( ((ASTClassSpecifier)absDecl.getTypeSpecifier()).getSymbol() );
 		}
 		else if( absDecl.getTypeSpecifier() instanceof IASTEnumerationSpecifier )
 		{
-			type.setType(TypeInfo.t_enumeration);
+			type.setType( TypeInfo.t_type );
+			type.setTypeSymbol( ((ASTEnumerationSpecifier)absDecl.getTypeSpecifier()).getSymbol() );
 		}
 		else if( absDecl.getTypeSpecifier() instanceof IASTElaboratedTypeSpecifier )
 		{
-			ASTClassKind kind = ((IASTElaboratedTypeSpecifier)absDecl.getTypeSpecifier()).getClassKind();
-			if( kind == ASTClassKind.CLASS )
-				type.setType(TypeInfo.t_class);
-			else if( kind == ASTClassKind.STRUCT )
-				type.setType(TypeInfo.t_struct);
-			else if( kind == ASTClassKind.UNION )
-				type.setType(TypeInfo.t_union);
-			else if( kind == ASTClassKind.ENUM )
-				type.setType(TypeInfo.t_enumeration);
-//			else
-//				assert false : this;
+			type.setType( TypeInfo.t_type );
+			type.setTypeSymbol( ((ASTElaboratedTypeSpecifier)absDecl.getTypeSpecifier()).getSymbol() );
 		}
 //		else
 //			assert false : this; 		
@@ -2072,10 +2057,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if (absDecl.getTypeSpecifier() == null)
 			return;
 	
-		// now determined by another function    		
-		TypeInfo.eType type = getParameterTypeInfo(absDecl).getType();
+		// now determined by another function    
+		TypeInfo info = getParameterTypeInfo( absDecl );
+		TypeInfo.eType type = info.getType();
 		
-		ISymbol xrefSymbol = null;
+		ISymbol xrefSymbol = info.getTypeSymbol();
 		List newReferences = null; 
 		int infoBits = 0;
 	    if( absDecl.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ) 
@@ -2104,8 +2090,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	    }
 	    
 	    ISymbol paramSymbol = pst.newSymbol( paramName, type );
-	    if( xrefSymbol != null )
-	    	paramSymbol.setTypeSymbol( xrefSymbol.getTypeSymbol() );
+	    if( xrefSymbol != null ){
+	    	if( absDecl.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier )
+	    		paramSymbol.setTypeSymbol( xrefSymbol.getTypeSymbol() );
+	    	else 
+	    		paramSymbol.setTypeSymbol( xrefSymbol );
+	    }
 	    
 	    paramSymbol.getTypeInfo().setTypeInfo( infoBits );
 	    paramSymbol.getTypeInfo().setBit( absDecl.isConst(), TypeInfo.isConst );

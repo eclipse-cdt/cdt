@@ -74,6 +74,28 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 
 	}
 
+	protected IASTCompletionNode parse(String code, int offset, ParserLanguage lang ) throws Exception {
+		callback = new FullParseCallback();
+		IParser parser = null;
+	
+		parser =
+			ParserFactory.createParser(
+				ParserFactory.createScanner(
+					new StringReader(code),
+					"completion-test",
+					new ScannerInfo(),
+					ParserMode.COMPLETION_PARSE,
+					lang,
+					callback,
+					new NullLogService(), null),
+				callback,
+				ParserMode.COMPLETION_PARSE,
+				lang,
+				null);
+		
+		return parser.parse( offset );
+	
+	}
 	public void testBaseCase_SimpleDeclaration() throws Exception
 	{
 		StringWriter writer = new StringWriter(); 
@@ -862,4 +884,27 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 		
 	}
 	
+	public void testBug58492() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write("struct Cube {                       ");
+		writer.write("   int nLen;                        ");
+		writer.write("   int nWidth;                      ");
+		writer.write("   int nHeight;                     ");
+		writer.write("};                                  ");
+		writer.write("int volume( struct Cube * pCube ) { ");
+		writer.write("   pCube->SP                        ");
+
+		String code = writer.toString();
+		IASTCompletionNode node = parse( code, code.indexOf("SP"), ParserLanguage.C );
+		
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(),
+				                                                 new IASTNode.LookupKind[] {IASTNode.LookupKind.ALL },
+																 node.getCompletionContext() );
+		assertEquals( result.getResultsSize(), 3 );
+		Iterator i = result.getNodes();
+		assertTrue( i.next() instanceof IASTField );
+		assertTrue( i.next() instanceof IASTField );
+		assertTrue( i.next() instanceof IASTField );
+	}	
 }

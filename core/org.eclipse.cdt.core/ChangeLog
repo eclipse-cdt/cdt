@@ -1,3 +1,16 @@
+2004-04-02 Alain Magloire
+
+	Use the the Job manager for the binary runner.
+
+	* model/org/eclipse/cdt/internal/core/model/BinaryRunner.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	* model/org/eclipse/cdt/internal/core/model/CProjectInfo.java
+	* model/org/eclipse/cdt/internal/core/model/LibraryReference.java
+	* model/org/eclipse/cdt/internal/core/model/LibraryReferenceArchive.java
+	* model/org/eclipse/cdt/internal/core/model/LibraryReferenceShared.java
+	* model/org/eclipse/cdt/core/model/ILibraryReference.java
+
 2004-04-02 David Inglis
 
 	Fixed problem with .cdtproject not getting updated.

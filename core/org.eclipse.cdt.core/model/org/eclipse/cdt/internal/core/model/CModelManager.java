@@ -308,6 +308,64 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		return celement;	
 	}
 
+	public ICElement create(IFile file, IBinaryFile bin, ICProject cproject) {
+		if (file == null) {
+			return null;
+		}
+		if (bin == null) {
+			return create(file, cproject);
+		}
+		if (cproject == null) {
+			cproject = create(file.getProject());
+		}
+		ICElement celement = null;
+		try {
+			ISourceRoot[] roots = cproject.getAllSourceRoots();
+			for (int i = 0; i < roots.length; ++i) {
+				ISourceRoot root = roots[i];
+				if (root.isOnSourceEntry(file)) {
+					IPath rootPath = root.getPath();
+					IPath resourcePath = file.getFullPath();
+					IPath path = resourcePath.removeFirstSegments(rootPath.segmentCount());
+					String fileName = path.lastSegment();
+					path = path.removeLastSegments(1);
+					String[] segments = path.segments();
+					ICContainer cfolder = root;
+					for (int j = 0; j < segments.length; j++) {
+						cfolder = cfolder.getCContainer(segments[j]);
+					}
+					
+					if (bin.getType() == IBinaryFile.ARCHIVE) {
+						celement = new Archive(cfolder, file, (IBinaryArchive)bin);
+						ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
+						vlib.addChild(celement);
+					} else {
+						celement = new Binary(cfolder, file, (IBinaryObject)bin);
+						BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
+						vbin.addChild(celement);
+					}
+					break;
+				}
+			}
+
+			// try in the outputEntry and save in the container
+			if (celement == null) {
+				if (bin.getType() == IBinaryFile.ARCHIVE) {
+					ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
+					ICElement archive = new Archive(vlib, file, (IBinaryArchive)bin);
+					vlib.addChild(archive);
+				} else {
+					BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
+					IBinary binary = new Binary(vbin, file, (IBinaryObject)bin);
+					vbin.addChild(binary);
+				}
+			}
+		} catch (CModelException e) {
+			//
+		}
+		return celement;	
+	}
+
 	public void releaseCElement(ICElement celement) {
 
 		// Guard.

@@ -6,9 +6,7 @@ package org.eclipse.cdt.internal.core.model;
  */
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
@@ -18,24 +16,35 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
 
-public class BinaryRunner {
+public class BinaryRunner implements IJobChangeListener {
 	IProject project;
 	ICProject cproject;
-	Thread runner;
+	Job runner;
 	ArchiveContainer vlib;
 	BinaryContainer vbin;
-	
+	boolean done = false;
+
 	public BinaryRunner(IProject prj) {
 		project = prj;
 		cproject = CModelManager.getDefault().create(project);
 	}
 	
 	public void start() {
-		runner = new Thread(new Runnable() {
-			public void run() {
+		String taskName = CCorePlugin.getResourceString("CoreModel.BinaryRunner.Binary_Search_Thread"); //$NON-NLS-1
+		Job runner = new Job(taskName) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
 				if (cproject == null || Thread.currentThread().isInterrupted()) {
-					return;
+					return Status.CANCEL_STATUS;
 				}
 				vbin = (BinaryContainer)cproject.getBinaryContainer();
 				vlib = (ArchiveContainer)cproject.getArchiveContainer();
@@ -56,12 +65,13 @@ public class BinaryRunner {
 				// Tell the listeners we are done.
 				synchronized(BinaryRunner.this) {
 					BinaryRunner.this.notifyAll();
-					runner = null;
+					BinaryRunner.this.runner = null;
 				}
+				return Status.OK_STATUS;
 			}
-
-		}, CCorePlugin.getResourceString("CoreModel.BinaryRunner.Binary_Search_Thread")); //$NON-NLS-1$
-		runner.start();
+		};
+		runner.schedule();
+		
 	}
 
 
@@ -69,7 +79,7 @@ public class BinaryRunner {
 	 * wrap the wait call and the interrupteException.
 	 */
 	public synchronized void waitIfRunning() {
-		while (runner != null && runner.isAlive()) {
+		while (runner != null && !done) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -78,8 +88,8 @@ public class BinaryRunner {
 	}
 	
 	public void stop() {
-		if ( runner != null && runner.isAlive()) {
-			runner.interrupt();
+		if ( runner != null && !done) {
+			runner.cancel();
 		}
 	}
 
@@ -107,20 +117,8 @@ public class BinaryRunner {
 		if (!factory.isTranslationUnit(file)) {
 			IBinaryFile bin = factory.createBinaryFile(file);
 			if (bin != null) {
-				ICElement parent = factory.create(file.getParent(), null);
-				if (bin.getType() == IBinaryFile.ARCHIVE) {
-					if (parent == null) {
-						parent = vlib;
-					}
-					Archive ar = new Archive(parent, file, (IBinaryArchive)bin);
-					vlib.addChild(ar);
-				} else {
-					if (parent == null) {
-						parent = vbin;
-					}
-					Binary binary = new Binary(parent, file, (IBinaryObject)bin);
-					vbin.addChild(binary);
-				}
+				// Create the file will add it to the {Archive,Binary}Containery.
+				factory.create(file, bin, null);
 			}
 		}
 	}
@@ -138,11 +136,52 @@ public class BinaryRunner {
 			}
 			if (cproject.isOnOutputEntry(res)) {
 				if (res instanceof IFile) {
-					runner.addChildIfBinary((IFile)res);
+					if (runner != null) {
+						runner.addChildIfBinary((IFile)res);
+					}
 					return false;
 				}
 			}
 			return true;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 */
+	public void aboutToRun(IJobChangeEvent event) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#awake(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 */
+	public void awake(IJobChangeEvent event) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 */
+	public void done(IJobChangeEvent event) {
+		done = true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#running(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 */
+	public void running(IJobChangeEvent event) {
+		done = false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 */
+	public void scheduled(IJobChangeEvent event) {
+		done = false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#sleeping(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 */
+	public void sleeping(IJobChangeEvent event) {
 	}
 }

@@ -8,4 +8,10 @@ package org.eclipse.cdt.core.model;
 /**
  */
 public interface ILibraryReference extends IParent, ICElement {
+	
+	/**
+	 * Return the pathEntry.
+	 * @return
+	 */
+	ILibraryEntry getLibraryEntry();
 }

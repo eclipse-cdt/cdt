@@ -45,4 +45,11 @@ public class LibraryReference extends Parent implements ILibraryReference {
 		return entry.getPath();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ILibraryReference#getLibraryEntry()
+	 */
+	public ILibraryEntry getLibraryEntry() {
+		return entry;
+	}
+
 }

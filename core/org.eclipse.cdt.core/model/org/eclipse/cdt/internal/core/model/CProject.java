@@ -580,8 +580,20 @@ public class CProject extends Openable implements ICProject {
 			if (pinfo.vLib != null) {
 				pinfo.vLib.close();
 			}
+			pinfo.resetCaches();
 			CModelManager.getDefault().removeBinaryRunner(this);
 		}
 		super.closing(info);
 	}
+
+	/*
+	 * Resets this project's caches
+	 */
+	public void resetCaches() {
+		CProjectInfo pinfo = (CProjectInfo) CModelManager.getDefault().peekAtInfo(this);
+		if (pinfo != null){
+			pinfo.resetCaches();
+		}
+	}
+
 }

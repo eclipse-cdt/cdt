@@ -7,9 +7,11 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -24,6 +26,7 @@ class CProjectInfo extends OpenableInfo {
 
 	BinaryContainer vBin;
 	ArchiveContainer vLib;
+	ILibraryReference[] libReferences;
 	Object[] nonCResources = null;
 
 	/**
@@ -117,4 +120,19 @@ class CProjectInfo extends OpenableInfo {
 	public void setNonCResources(Object[] resources) {
 		nonCResources = resources;
 	}
+
+	/*
+	 * Reset the source roots and other caches
+	 */
+	public void resetCaches() {
+		if (libReferences != null) {
+			for (int i = 0; i < libReferences.length; i++) {
+				try {
+					((CElement)libReferences[i]).close();
+				} catch (CModelException e) {
+				}
+			}
+		}
+	}
+
 }

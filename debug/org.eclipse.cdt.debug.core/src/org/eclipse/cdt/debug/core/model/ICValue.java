@@ -28,7 +28,7 @@ public interface ICValue extends IValue
 	 */
 	String getUnderlyingValueString();
 
-	String computeDetail();
+	String evaluateAsExpression();
 
 	void setChanged(  boolean changed ) throws DebugException;
 }

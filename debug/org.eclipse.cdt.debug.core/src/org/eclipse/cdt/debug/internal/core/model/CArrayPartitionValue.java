@@ -148,7 +148,7 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICValue#computeDetail()
 	 */
-	public String computeDetail()
+	public String evaluateAsExpression()
 	{
 		return null;
 	}

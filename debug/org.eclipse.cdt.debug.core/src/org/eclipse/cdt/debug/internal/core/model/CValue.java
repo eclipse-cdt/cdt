@@ -537,9 +537,9 @@ public class CValue extends CDebugElement implements ICValue
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICValue#computeDetail()
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#evaluateAsExpression()
 	 */
-	public String computeDetail()
+	public String evaluateAsExpression()
 	{
 		ICExpressionEvaluator ee = (ICExpressionEvaluator)getDebugTarget().getAdapter( ICExpressionEvaluator.class );
 		String valueString = null; 

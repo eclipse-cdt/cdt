@@ -1,4 +1,10 @@
 2003-06-05 Mikhail Khodjaiants
+	Renamed the 'computeDetail' method of the 'ICValue' interface to 'evaluateAsExpression'.
+	* ICValue.java
+	* CArrayPartitionValue.java
+	* CValue.java
+ 
+2003-06-05 Mikhail Khodjaiants
 	Removed the redundant methods from the 'ICDIFloatingPointValue' interface.
 	* ICDIFloatingPointValue.java
 	* CValue.java

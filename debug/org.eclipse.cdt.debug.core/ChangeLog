@@ -1,4 +1,9 @@
 2004-11-08 Alain Magloire
+	Bug in CVariableFactory for globals, the filename of the 
+	binary was use instead of the filename of the symbol.
+	* src/org/eclipse/cdt/debug/internal/core/model/CVariableFactory.java
+
+2004-11-08 Alain Magloire
 	New class ICDIFunctionFinished.
 	It return the return value of the function.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/ICDIFunctionFinished.java

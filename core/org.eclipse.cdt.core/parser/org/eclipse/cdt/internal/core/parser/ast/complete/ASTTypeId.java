@@ -43,7 +43,7 @@ public class ASTTypeId implements IASTTypeId
     private final String typeName;
     private final List pointerOps;
     private final Type kind;
-    private List references = new ArrayList(); 
+    private List references = null; 
     private ISymbol symbol;
 
     /**
@@ -218,6 +218,8 @@ public class ASTTypeId implements IASTTypeId
      */
     public void addReferences(List list, ReferenceCache cache)
     {
+    	if( references == null )
+    		references = new ArrayList( list.size() );
     	for( int i = 0; i < list.size(); ++i )
     		references.add( list.get(i) );
     }

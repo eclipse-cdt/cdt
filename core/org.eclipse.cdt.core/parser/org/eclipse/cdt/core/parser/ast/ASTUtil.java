@@ -134,6 +134,12 @@ public class ASTUtil {
 		}else if(typeSpecifier instanceof IASTSimpleTypeSpecifier){		
 			IASTSimpleTypeSpecifier simpleSpecifier = (IASTSimpleTypeSpecifier) typeSpecifier;		
 			type.append(simpleSpecifier.getTypename());
+		}else if(typeSpecifier instanceof IASTClassSpecifier){		
+			IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpecifier;		
+			type.append(classSpecifier.getName());
+		}else if(typeSpecifier instanceof IASTEnumerationSpecifier){		
+			IASTEnumerationSpecifier enumSpecifier = (IASTEnumerationSpecifier) typeSpecifier;		
+			type.append(enumSpecifier.getName());
 		}
 		return type.toString();	
 	}

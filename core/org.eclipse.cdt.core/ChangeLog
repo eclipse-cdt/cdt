@@ -1,3 +1,6 @@
+2004-06-14 Hoda Amer
+	Fix for PR 63243: [Outline View] Missing user defined type if declare variable along with the C++ elem (struct, enum, union)
+	
 2004-06-11 Alain Magloire
 
 	The IncludeEntry LibraryEntry getFullIncludePath()

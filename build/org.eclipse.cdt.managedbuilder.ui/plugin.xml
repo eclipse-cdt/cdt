@@ -2137,12 +2137,10 @@
                   </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug"
-					  outputs="exe"
 					  superClass="cdt.managedbuild.tool.macosx.c.linker">
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug"
-					  outputs="exe"
 					  superClass="cdt.managedbuild.tool.macosx.cpp.linker">
 				  </tool>                                     
 				  <tool
@@ -2206,12 +2204,10 @@
                    </tool>
 				   <tool
 				       id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.release"
-					   outputs="exe"
 					   superClass="cdt.managedbuild.tool.macosx.c.linker">
 					</tool>
 					<tool
 					    id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.release"
-						outputs="exe"
 						superClass="cdt.managedbuild.tool.macosx.cpp.linker">
 					</tool>                   
 				  <tool

@@ -11,15 +11,9 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
-import org.eclipse.cdt.debug.core.cdi.CDIException;
-
 /**
  * ICDIThreadStorage
  */
-public interface ICDIThreadStorage extends ICDIVariable {
+public interface ICDIThreadStorage extends ICDIVariable, ICDIThreadStorageDescriptor {
 
-	/**
-	 * @return ICDIThread
-	 */
-	ICDIThread getThread() throws CDIException;
 }

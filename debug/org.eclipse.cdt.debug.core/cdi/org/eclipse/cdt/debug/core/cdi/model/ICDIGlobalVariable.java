@@ -14,6 +14,6 @@ package org.eclipse.cdt.debug.core.cdi.model;
 /**
  * ICDIGlobalVariable
  */
-public interface ICDIGlobalVariable extends ICDIVariable {
+public interface ICDIGlobalVariable extends ICDIVariable, ICDIGlobalVariableDescriptor {
 
 }

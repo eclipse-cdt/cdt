@@ -11,16 +11,9 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
-import org.eclipse.cdt.debug.core.cdi.CDIException;
-
 /**
  * ICDILocalVariable
  */
-public interface ICDILocalVariable extends ICDIVariable {
+public interface ICDILocalVariable extends ICDIVariable, ICDILocalVariableDescriptor {
 
-	/**
-	 * 
-	 * @return ICDIStackFrame
-	 */
-	ICDIStackFrame getStackFrame() throws CDIException;
 }

@@ -16,8 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 /**
  * ICDIThreadStorageDescriptor
  */
-public interface ICDIThreadStorageDescriptor extends
-		ICDIVariableDescriptor {
+public interface ICDIThreadStorageDescriptor extends ICDIVariableDescriptor {
 
 	/**
 	 * Return the thread.

@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * The BrowseEntryDialog allows clients to prompt the user for a path location.
@@ -152,7 +151,7 @@ public class BrowseEntryDialog extends SelectionStatusDialog {
 		// Instantiate the macros button
 		advancedButton = new Button(parent, SWT.PUSH);
 		applyDialogFont(advancedButton);
-		advancedButton.setText(IDEWorkbenchMessages.getString(SHOW));
+		advancedButton.setText(ManagedBuilderUIMessages.getResourceString(SHOW));
 		setButtonLayoutData(advancedButton);
 		GridData data = (GridData) advancedButton.getLayoutData();
 		data.horizontalAlignment = GridData.BEGINNING;
@@ -275,16 +274,16 @@ public class BrowseEntryDialog extends SelectionStatusDialog {
 			macroComposite = ControlFactory.createComposite(composite, 1);
 			shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 			shell.setSize(shellSize);
-			advancedButton.setText(IDEWorkbenchMessages.getString(HIDE)); 
+			advancedButton.setText(ManagedBuilderUIMessages.getResourceString(HIDE)); 
 		} else if (macroComposite.getVisible()) {
 			macroComposite.setVisible(false);
 			shell.setSize(shellSize.x, basicShellHeight);
-			advancedButton.setText(IDEWorkbenchMessages.getString(SHOW));
+			advancedButton.setText(ManagedBuilderUIMessages.getResourceString(SHOW));
 		} else {
 			macroComposite.setVisible(true);
 			shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 			shell.setSize(shellSize);
-			advancedButton.setText(IDEWorkbenchMessages.getString(HIDE));
+			advancedButton.setText(ManagedBuilderUIMessages.getResourceString(HIDE));
 		}
 		
 	}
@@ -322,7 +321,7 @@ public class BrowseEntryDialog extends SelectionStatusDialog {
 		folderName = text.getText();
 		// Empty or null string is invalid
 		if (folderName == null || folderName.equals("")) { //$NON-NLS-1$
-			updateStatus(IStatus.ERROR, IDEWorkbenchMessages.getString(EMPTY));
+			updateStatus(IStatus.ERROR, ManagedBuilderUIMessages.getResourceString(EMPTY));
 			return;
 		} else {
 			// Make sure that the specified location exists

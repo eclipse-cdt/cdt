@@ -1,3 +1,8 @@
+2005-04-05 Alain Magloire
+	Build for Eclipse-31M6
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BrowseEntryDialog.java
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/PluginResources.properties
+
 2005-03-16 Alain Magloire
 	Patch from Tracy Miranda to fix PR 88160
 	* src/org/eclipse/cdt/managedbuilder/ui/properties/NewConfigurationDialog.java

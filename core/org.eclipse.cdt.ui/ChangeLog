@@ -1,3 +1,8 @@
+2005-01-18 Alain Magloire
+	DnD fixes, PR 50578
+	* src/org/eclipse/cdt/internal/ui/cview/CViewDropAdapter.java
+	* src/org/eclipse/cdt/internal/ui/drag/DelegatinDragAdapter.java
+
 2005-01-11 David Inglis
 	Further fix to 36837
 	

@@ -9,12 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -25,7 +21,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -75,86 +70,7 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 		
 		super.dragEnter(event);
 	}
-
 	
-	public void dropAccept(DropTargetEvent event){
-		if (getCurrentOperation() == DND.DROP_MOVE){
-			validateMove(event);
-		}
-	} 
-
-	/**
-	 * @param event
-	 */
-	private void validateMove(DropTargetEvent event) {
-		ICElement currentContainer = null;
-
-		Object currentTarget = getCurrentTarget();
-		if (currentTarget instanceof ICElement){
-			currentContainer =(ICElement) currentTarget;		
-		} else {
-			return;
-		}
-		
-		if ((!((currentContainer instanceof ICContainer) ||
-			  (currentContainer instanceof ICProject))) ||
-			  currentContainer.isReadOnly()){
-			event.detail = DND.DROP_NONE;
-			return;
-		} 
-		
-		ISelection sel = this.getViewer().getSelection();
-		if (sel instanceof IStructuredSelection){
-			StructuredSelection structSel = (StructuredSelection) sel;
-			Iterator iter=structSel.iterator(); 
-			while (iter.hasNext()){
-				Object tempSelection = iter.next();
-				if (tempSelection instanceof ICElement){
-					
-					if (tempSelection instanceof ICProject){
-						event.detail = DND.DROP_NONE;
-						break;
-					}
-					
-					ICElement tempElement = (ICElement) tempSelection;
-					ICElement tempElementParent = tempElement.getParent();
-					
-					if (tempElementParent.equals(currentContainer) ||
-						tempElement.equals(currentContainer) ||
-						tempElement.equals(currentContainer.getParent()) ||
-						tempElement.isReadOnly()){
-						event.detail = DND.DROP_NONE;
-						break;
-					}
-				}
-				else if (tempSelection instanceof IResource){
-					
-					if (tempSelection instanceof IProject){
-						event.detail = DND.DROP_NONE;
-						break;
-					}
-					
-				
-					IResource tempResource = (IResource) tempSelection;
-					IResource tempResourceParent = tempResource.getParent();
-					//Apples to apples...
-					IResource resourceCurrentContainer = currentContainer.getResource();
-				
-					if (tempResourceParent.equals(resourceCurrentContainer) ||
-						tempResource.equals(resourceCurrentContainer) ||
-						tempResource.equals(resourceCurrentContainer.getParent()) ||
-						tempResource.isReadOnly()){
-						event.detail = DND.DROP_NONE;
-						break;
-					}
-					
-				}
-			}
-		}
-		
-	}
-
-
 	/**
 	 * Returns an error status with the given info.
 	 */
@@ -462,11 +378,6 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	public boolean validateDrop(Object target, int dragOperation, TransferData transferType) {
 		if (dragOperation != DND.DROP_NONE) {
 			lastValidOperation = dragOperation;
-		}
-		if (FileTransfer.getInstance().isSupportedType(transferType) &&
-			lastValidOperation != DND.DROP_COPY) {
-			// only allow copying when dragging from outside Eclipse
-			return false;
 		}
 
 		if (super.validateDrop(target, dragOperation, transferType)) {

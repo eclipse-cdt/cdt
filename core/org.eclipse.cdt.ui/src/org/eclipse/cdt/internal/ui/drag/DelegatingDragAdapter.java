@@ -11,9 +11,15 @@
 package org.eclipse.cdt.internal.ui.drag;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
@@ -50,9 +56,25 @@ public class DelegatingDragAdapter implements DragSourceListener {
 	public void dragStart(DragSourceEvent event) {
 		selected = null;
 
-		if (provider.getSelection().isEmpty()) {
+		IStructuredSelection selection = (IStructuredSelection) provider.getSelection();
+
+		if (selection.isEmpty()) {
 			event.doit = false;
 			return;
+		}
+
+		for (Iterator i = selection.iterator(); i.hasNext();) {
+			Object next = i.next();
+			IResource res = null;
+			if (next instanceof IResource) {
+				res = (IResource)next;
+			} else if (next instanceof IAdaptable) {
+				res = (IResource)((IAdaptable)next).getAdapter(IResource.class);
+			}
+			if (!(res instanceof IFile || res instanceof IFolder)) {
+					event.doit = false;
+					return;
+			}
 		}
 
 		// Workaround for 1GEUS9V

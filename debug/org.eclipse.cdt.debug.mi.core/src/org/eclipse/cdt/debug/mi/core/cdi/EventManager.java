@@ -422,17 +422,25 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 
 				int miLevel = 0;
 				int tid = 0;
-				ICDIThread currentThread = null;
+				ICDIThread oldThread = null;
 				try {
-					currentThread = currentTarget.getCurrentThread();
+					oldThread = currentTarget.getCurrentThread();
 				} catch (CDIException e1) {
 				}
-				if (currentThread instanceof Thread) {
-					tid = ((Thread)currentThread).getId();
+				if (oldThread instanceof Thread) {
+					tid = ((Thread)oldThread).getId();
+				}
+				// select the old thread now
+				if (tid > 0) {
+					MIThreadSelect selectThread = factory.createMIThreadSelect(tid);
+					try {
+						mi.postCommand(selectThread);
+					} catch (MIException e) {
+					}
 				}
 				ICDIStackFrame frame = null;
 				try {
-					frame = currentThread.getCurrentStackFrame();
+					frame = oldThread.getCurrentStackFrame();
 				} catch (CDIException e2) {
 				}
 				int count = 0;
@@ -456,13 +464,6 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					// level of the old stack.  The -1 is because gdb level is zero-based
 					miLevel = count - frame.getLevel() - 1;
 				}
-				if (tid > 0) {
-					MIThreadSelect selectThread = factory.createMIThreadSelect(tid);
-					try {
-						mi.postCommand(selectThread);
-					} catch (MIException e) {
-					}
-				}
 				if (miLevel >= 0) {
 					MIStackSelectFrame selectFrame = factory.createMIStackSelectFrame(miLevel);
 					MIExecFinish finish = factory.createMIExecFinish();
@@ -471,6 +472,17 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 						mi.postCommand(finish);
 					} catch (MIException e) {
 					}
+				} else {
+					// if we are still at the same level in the backtrace
+					// for example the StopEventLib was on a different thread
+					// redo the last command.
+					Command cmd = lastUserCommand;
+					lastUserCommand = null;
+					try {
+						mi.postCommand(cmd);
+					} catch (MIException e) {
+						// ignore
+					}					
 				}
 				return true;
 			} else if (lastUserCommand != null) {

@@ -10,9 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.corext.util;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 
 public class CModelUtil {
 	/**
@@ -34,5 +38,38 @@ public class CModelUtil {
 			return (((IWorkingCopy)unit).getOriginalElement());
 		}
 		return unit;
+	}
+
+	/**
+	 * Returns the source root of <code>ICElement</code>. If the given
+	 * element is already a source root, the element itself is returned.
+	 */
+	public static ISourceRoot getSourceRoot(ICElement element) {
+		ICElement root = element;
+		while (root != null) {
+			if (root instanceof ISourceRoot)
+				return (ISourceRoot)root;
+			ICElement parent = root.getAncestor(ICElement.C_CCONTAINER);
+			if (parent == root)
+				return null;
+			root = parent;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns <code>true</code> if the given source root is
+	 * referenced. This means it is own by a different project but is referenced
+	 * by the root's parent. Returns <code>false</code> if the given root
+	 * doesn't have an underlying resource.
+	 */
+	public static boolean isReferenced(ISourceRoot root) {
+		IResource resource= root.getResource();
+		if (resource != null) {
+			IProject project= resource.getProject();
+			IProject container= root.getCProject().getProject();
+			return !container.equals(project);
+		}
+		return false;
 	}
 }

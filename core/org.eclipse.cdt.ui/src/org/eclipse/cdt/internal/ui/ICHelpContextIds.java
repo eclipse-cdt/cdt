@@ -82,5 +82,24 @@ public interface ICHelpContextIds {
 	public static final String RENAME_TYPE_WIZARD_PAGE= 	PREFIX + "rename_type_wizard_page_context"; //$NON-NLS-1$
 	public static final String RENAME_FIELD_WIZARD_PAGE=	PREFIX + "rename_field_wizard_page_context"; //$NON-NLS-1$
 	public static final String RENAME_RESOURCE_WIZARD_PAGE=	PREFIX + "rename_resource_wizard_page_context"; //$NON-NLS-1$
-	
+
+	public static final String EDIT_WORKING_SET_ACTION= PREFIX + "edit_working_set_action"; //$NON-NLS-1$
+	public static final String CLEAR_WORKING_SET_ACTION= PREFIX + "clear_working_set_action"; //$NON-NLS-1$
+	public static final String SELECT_WORKING_SET_ACTION= PREFIX + "select_working_set_action"; //$NON-NLS-1$	
+
+	// view parts
+	public static final String TYPE_HIERARCHY_VIEW= PREFIX + "type_hierarchy_view_context"; //$NON-NLS-1$
+	public static final String PACKAGES_VIEW= PREFIX + "package_view_context"; //$NON-NLS-1$
+	public static final String PROJECTS_VIEW= PREFIX + "projects_view_context"; //$NON-NLS-1$
+	public static final String PACKAGES_BROWSING_VIEW= PREFIX + "packages_browsing_view_context"; //$NON-NLS-1$
+	public static final String TYPES_VIEW= PREFIX + "types_view_context"; //$NON-NLS-1$
+	public static final String MEMBERS_VIEW= PREFIX + "members_view_context"; //$NON-NLS-1$
+
+	public static final String OPEN_C_BROWSING_PERSPECTIVE_ACTION = PREFIX + "open_c_browsing_perspective_action"; //$NON-NLS-1$
+	public static final String OPEN_PROJECT_ACTION = PREFIX + "open_project_action"; //$NON-NLS-1$
+
+	public static final String OPEN_TYPE_ACTION = PREFIX + "open_type_action"; //$NON-NLS-1$
+	public static final String OPEN_TYPE_IN_HIERARCHY_ACTION = PREFIX + "open_type_in_hierarchy_action"; //$NON-NLS-1$
+
+	public static final String LEXICAL_SORTING_BROWSING_ACTION= 						PREFIX + "lexical_sorting_browsing_action"; //$NON-NLS-1$
 }

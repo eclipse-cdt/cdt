@@ -26,7 +26,8 @@ public class TypeInfoLabelProvider extends LabelProvider {
 
 	public static final int SHOW_TYPE_ONLY= 0x01;
 	public static final int SHOW_ENCLOSING_TYPE_ONLY= 0x02;
-	public static final int SHOW_PATH= 0x04;
+	public static final int SHOW_FULLY_QUALIFIED= 0x04;
+	public static final int SHOW_PATH= 0x08;
 
 	private static final Image HEADER_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT_HEADER);
 	private static final Image SOURCE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT);
@@ -71,6 +72,8 @@ public class TypeInfoLabelProvider extends LabelProvider {
 			} else {
 				buf.append(TypeInfoMessages.getString("TypeInfoLabelProvider.globalScope")); //$NON-NLS-1$
 			}
+		} else if (isSet(SHOW_FULLY_QUALIFIED)) {
+			buf.append(qualifiedName.getFullyQualifiedName());
 		}
 		
 		if (isSet(SHOW_PATH)) {

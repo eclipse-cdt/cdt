@@ -100,6 +100,40 @@ public interface ITypeCache extends ISchedulingRule {
 	 */
 	public ITypeInfo getType(int type, IQualifiedTypeName qualifiedName);
 
+	/** Gets the first enclosing type which matches one of the given kinds.
+	 * 
+	 * @param info the given type
+	 * @param kinds Array containing CElement types: C_NAMESPACE, C_CLASS, C_STRUCT
+	 *
+	 * @return the enclosing type, or <code>null</code> if not found.
+	 */
+	public ITypeInfo getEnclosingType(ITypeInfo info, int[] kinds);
+	
+
+	/** Gets the root namespace of which encloses the given type.
+	 *
+	 * @param info the given type
+	 * @param includeGlobalNamespace <code>true</code> if the global (default) namespace should be returned
+	 * @return the enclosing namespace, or <code>null</code> if not found.
+	 */
+	public ITypeInfo getRootNamespace(ITypeInfo info, boolean includeGlobalNamespace);
+	
+	/** Returns whether any types are enclosed by the given type.
+	 *
+	 * @param info the given type
+	 * @return <code>true</code> if the given type encloses other types.
+	 */
+	public boolean hasEnclosedTypes(ITypeInfo info);
+
+	/** Gets the types which are enclosed by the given type.
+	 *
+	 * @param info the given type
+	 * @param kinds Array containing CElement types: C_NAMESPACE, C_CLASS,
+	 *              C_UNION, C_ENUMERATION, C_TYPEDEF
+	 * @return the enclosed types, or an empty array if not found.
+	 */
+	public ITypeInfo[] getEnclosedTypes(ITypeInfo info, int kinds[]);
+	
 	/** Returns the project associated with this cache.
 	 * 
 	 * @return the project
@@ -120,4 +154,5 @@ public interface ITypeCache extends ISchedulingRule {
 	public void locateType(ITypeInfo info, int priority, int delay);
 	public ITypeReference locateTypeAndWait(ITypeInfo info, int priority, IProgressMonitor monitor);
 	
+	public ITypeInfo getGlobalNamespace();
 }

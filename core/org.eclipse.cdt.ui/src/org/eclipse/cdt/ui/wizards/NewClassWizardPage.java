@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
-import org.eclipse.cdt.core.browser.TypeInfo;
+import org.eclipse.cdt.core.browser.UnknownTypeInfo;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -1063,8 +1063,8 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	private ITypeInfo findInList(ITypeInfo[] elements, IQualifiedTypeName typeName) {
 		if (elements == null || elements.length == 0)
 			return null;
-		
-		TypeInfo key = new TypeInfo(0, typeName, null);
+
+		ITypeInfo key = new UnknownTypeInfo(typeName);
 		int index = Arrays.binarySearch(elements, key, TYPE_NAME_COMPARATOR);
 		if (index >= 0 && index < elements.length) {
 			for (int i = index - 1; i >= 0; --i) {

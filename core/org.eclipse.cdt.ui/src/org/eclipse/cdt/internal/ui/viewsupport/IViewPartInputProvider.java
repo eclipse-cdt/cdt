@@ -1,18 +1,25 @@
 /*******************************************************************************
- * Copyright (c) 2004 QNX Software Systems and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- *     QNX Software Systems - initial API and implementation
+ *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.browser;
+package org.eclipse.cdt.internal.ui.viewsupport;
 
-public interface ITypeInfoVisitor {
+/**
+ * Interface common to all view parts that provide an input.
+ */
+public interface IViewPartInputProvider {
 	
-	public boolean visit(ITypeInfo info);
+	/**
+	 * Returns the input.
+	 *
+	 * @return the input object
+	 */
+	public Object getViewPartInput();
 
-	public boolean shouldContinue();
 }

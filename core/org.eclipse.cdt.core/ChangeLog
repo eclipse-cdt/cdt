@@ -1,3 +1,8 @@
+2004-05-26 Alain Magloire
+
+	Jumbo Patch from Chris Wiebe.
+	Putting a starting skeleton for C Browsing.
+
 2004-05-25 Alain Magloire
 	Update the necessary classes to use the new
 	ResolverModel.

@@ -16,19 +16,20 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
+import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
 import org.eclipse.core.resources.IProject;
 
-public class TypeInfo implements ITypeInfo, Comparable
+public class TypeInfo implements ITypeInfo
 {
-	private ITypeCache fTypeCache;
-	private int fElementType;
-	private QualifiedTypeName fQualifiedName;
-	private Set fSourceRefs = new HashSet();
+	protected ITypeCache fTypeCache;
+	protected int fElementType;
+	protected QualifiedTypeName fQualifiedName;
+	protected Set fSourceRefs = new HashSet();
+	protected final static ITypeInfo[] EMPTY_TYPES = new ITypeInfo[0];
 
-	public TypeInfo(int elementType, IQualifiedTypeName typeName, ITypeCache typeCache) {
+	public TypeInfo(int elementType, IQualifiedTypeName typeName) {
 		fElementType = elementType;
 		fQualifiedName = new QualifiedTypeName(typeName);
-		fTypeCache = typeCache;
 	}
 
 	public void addReference(ITypeReference location) {
@@ -57,10 +58,28 @@ public class TypeInfo implements ITypeInfo, Comparable
 		return fElementType == 0;
 	}
 	
-	public boolean isQualifierType() {
-		return (fElementType == ICElement.C_NAMESPACE
-			|| fElementType == ICElement.C_CLASS
-			|| fElementType == ICElement.C_STRUCT);
+	public boolean canSubstituteFor(ITypeInfo info) {
+		return isExactMatch(info);
+	}
+	
+	protected boolean isExactMatch(ITypeInfo info) {
+		if (hashCode() != info.hashCode())
+			return false;
+		if (fElementType == info.getCElementType() 
+			&& fQualifiedName.equals(info.getQualifiedTypeName())) {
+			IProject project1 = getEnclosingProject();
+			IProject project2 = info.getEnclosingProject();
+			if (project1 == null && project2 == null)
+				return true;
+			if (project1 == null || project2 == null)
+				return false;
+			return project1.equals(project2);
+		}
+		return false;
+	}
+	
+	public boolean exists() {
+		return fTypeCache != null;
 	}
 	
 	public int getCElementType() {
@@ -79,33 +98,68 @@ public class TypeInfo implements ITypeInfo, Comparable
 		return fQualifiedName.getName();
 	}
 	
-	public ITypeInfo getEnclosingType() {
-		ITypeInfo enclosingType = null;
+	public boolean isEnclosedType() {
+		return (fQualifiedName.getEnclosingNames() != null);
+	}
+
+	public ITypeInfo getEnclosingType(int kinds[]) {
 		if (fTypeCache != null) {
-			IQualifiedTypeName parentName = fQualifiedName.getEnclosingTypeName();
-			if (parentName != null) {
-				ITypeInfo[] types = fTypeCache.getTypes(parentName);
-				for (int i = 0; i < types.length; ++i) {
-					ITypeInfo info = types[i];
-					if (info.isQualifierType()) {
-						enclosingType = info;
-						break;
-					} else if (info.isUndefinedType()) {
-						enclosingType = info;
-						// don't break, in case we can still find a defined type
-					}
-				}
-			}
+			return fTypeCache.getEnclosingType(this, kinds);
 		}
-		return enclosingType;
+		return null;
+	}
+
+	public ITypeInfo getEnclosingType() {
+		return getEnclosingType(KNOWN_TYPES);
 	}
 	
+	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
+		if (fTypeCache != null) {
+			return fTypeCache.getRootNamespace(this, true);
+		}
+		return null;
+	}
+	
+	public boolean isEnclosingType() {
+		return (fElementType == ICElement.C_NAMESPACE
+			|| fElementType == ICElement.C_CLASS
+			|| fElementType == ICElement.C_STRUCT);
+	}
+	
+	public boolean encloses(ITypeInfo info) {
+		if (isEnclosingType() && fTypeCache == info.getCache()) {
+			return fQualifiedName.isPrefixOf(info.getQualifiedTypeName());
+		}
+		return false;
+	}
+	
+	public boolean isEnclosed(ITypeInfo info) {
+		return info.encloses(this);
+	}
+
+	public boolean hasEnclosedTypes() {
+		if (isEnclosingType() && fTypeCache != null) {
+			return fTypeCache.hasEnclosedTypes(this);
+		}
+		return false;
+	}
+	
+	public ITypeInfo[] getEnclosedTypes() {
+		return getEnclosedTypes(KNOWN_TYPES);
+	}
+
+	public ITypeInfo[] getEnclosedTypes(int kinds[]) {
+		if (fTypeCache != null) {
+			return fTypeCache.getEnclosedTypes(this, kinds);
+		}
+		return EMPTY_TYPES;
+	}
+
 	public IProject getEnclosingProject() {
 		if (fTypeCache != null) {
 			return fTypeCache.getProject();
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	public String toString() {
@@ -141,20 +195,7 @@ public class TypeInfo implements ITypeInfo, Comparable
 		if (!(obj instanceof TypeInfo)) {
 			return false;
 		}
-		ITypeInfo info= (TypeInfo)obj;
-		if (hashCode() != info.hashCode())
-			return false;
-		if (fElementType == info.getCElementType() 
-			&& fQualifiedName.equals(info.getQualifiedTypeName())) {
-			IProject project1 = getEnclosingProject();
-			IProject project2 = info.getEnclosingProject();
-			if (project1 == null && project2 == null)
-				return true;
-			if (project1 == null || project2 == null)
-				return false;
-			return project1.equals(project2);
-		}
-		return false;
+		return isExactMatch((TypeInfo)obj);
 	}
 	
 	public int compareTo(Object obj) {
@@ -171,17 +212,14 @@ public class TypeInfo implements ITypeInfo, Comparable
 	}
 
 	public static boolean isValidType(int type) {
-		switch (type) {
-			case ICElement.C_NAMESPACE:
-			case ICElement.C_CLASS:
-			case ICElement.C_STRUCT:
-			case ICElement.C_UNION:
-			case ICElement.C_ENUMERATION:
-			case ICElement.C_TYPEDEF:
-				return true;
-			
-			default:
-				return false;
-		}
+		return ArrayUtil.contains(KNOWN_TYPES, type);
+	}
+	
+	public ITypeCache getCache() {
+		return fTypeCache;
+	}
+
+	public void setCache(ITypeCache typeCache) {
+		fTypeCache = typeCache;
 	}
 }

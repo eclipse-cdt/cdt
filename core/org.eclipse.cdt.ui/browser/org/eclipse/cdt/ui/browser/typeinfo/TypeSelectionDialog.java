@@ -21,7 +21,6 @@ import java.util.Set;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
-import org.eclipse.cdt.core.browser.TypeInfo;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -55,7 +54,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		
 		private StringMatcher fNameMatcher = null;
 		private StringMatcher[] fSegmentMatchers = null;
-		private boolean fMatchRootQualifier = false;
+		private boolean fMatchGlobalNamespace = false;
 		private Collection fVisibleTypes = new HashSet();
 		private boolean fShowLowLevelTypes = false;
 		
@@ -71,7 +70,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			// append wildcard to innermost segment
 			segments[length-1] = adjustPattern(segments[length-1]);
 			
-			fMatchRootQualifier = false;
+			fMatchGlobalNamespace = false;
 			fSegmentMatchers = new StringMatcher[length];
 			int count = 0;
 			for (int i = 0; i < length; ++i) {
@@ -80,7 +79,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 					fSegmentMatchers[count++] = new StringMatcher(segments[i], ignoreCase, ignoreWildCards);
 				} else if (i == 0) {
 					// allow outermost segment to be blank (e.g. "::foo*")
-					fMatchRootQualifier = true;
+					fMatchGlobalNamespace = true;
 				} else {
 					// skip over blank segments (e.g. treat "foo::::b*" as "foo::b*")
 				}
@@ -125,7 +124,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			if (!(element instanceof ITypeInfo))
 				return false;
 
-			TypeInfo info = (TypeInfo) element;
+			ITypeInfo info = (ITypeInfo) element;
 			IQualifiedTypeName qualifiedName = info.getQualifiedTypeName();
 			
 			if (fVisibleTypes != null && !fVisibleTypes.contains(new Integer(info.getCElementType())))
@@ -133,57 +132,33 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 			if (!fShowLowLevelTypes && qualifiedName.isLowLevel())
 				return false;
-
-			if (!fMatchRootQualifier && !fNameMatcher.match(qualifiedName.getName()))
-				return false;
-
-			return matchQualifiedName(qualifiedName);
+			
+			if (fSegmentMatchers.length == 1 && !fMatchGlobalNamespace)
+				return fNameMatcher.match(qualifiedName.getName());
+			
+			return matchQualifiedName(info);
 		}
 
-		private boolean matchQualifiedName(IQualifiedTypeName qualifiedName) {
+		private boolean matchQualifiedName(ITypeInfo info) {
+			IQualifiedTypeName qualifiedName = info.getQualifiedTypeName();
 			String[] segments = qualifiedName.segments();
-			boolean matchFound = false;
-			boolean moreNames = true;
-			int matchOffset = 0;
-			while (!matchFound && moreNames) {
-				matchFound = true;
-				for (int i = 0; i < fSegmentMatchers.length; ++i) {
-					int dropOut = 0;
-					if (i < (segments.length - matchOffset)) {
-						// ok to continue
-//						dropOut = false;
-					} else {
-						++dropOut;
-					}
-					
-					if (matchOffset + i >= segments.length) {
-						++dropOut;
-					}
-
-					if (dropOut > 0) {
-						if (dropOut != 2) {
-							// shouldn't get here
-							matchFound = false;
-							moreNames = false;
-						}
-						matchFound = false;
-						moreNames = false;
-						break;
-					}
-					
-					StringMatcher matcher = fSegmentMatchers[i];
-					String name = segments[matchOffset + i];
-					if (name == null || !matcher.match(name)) {
-						matchFound = false;
-						break;
-					}
-				}
-				
-				if (fMatchRootQualifier) {
-					// must match outermost name (eg ::foo)
-					moreNames = false;
-				} else {
-					++matchOffset;
+			if (fSegmentMatchers.length != segments.length)
+				return false;
+			
+			if (fMatchGlobalNamespace) {
+				// must match global namespace (eg ::foo)
+				if (info.getRootNamespace(false) != null)
+					return false;
+			}
+			
+			boolean matchFound = true;
+			int max = Math.min(fSegmentMatchers.length, segments.length);
+			for (int i = 0; i < max; ++i) {
+				StringMatcher matcher = fSegmentMatchers[i];
+				String name = segments[i];
+				if (name == null || !matcher.match(name)) {
+					matchFound = false;
+					break;
 				}
 			}
 			return matchFound;

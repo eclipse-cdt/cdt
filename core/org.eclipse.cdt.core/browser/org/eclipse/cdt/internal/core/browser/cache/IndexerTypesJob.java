@@ -148,12 +148,10 @@ public class IndexerTypesJob extends IndexerJob {
 		if (info == null || info.isUndefinedType()) {
 			int[] references = entry.getFileReferences();
 			if (references != null && references.length > 0) {
-				if (info == null) {
-					info = new TypeInfo(type, qualifiedName, fTypeCache);
-					fTypeCache.insert(info);
-				} else {
-					info.setCElementType(type);
-				}
+				// add new type to cache
+				info = new TypeInfo(type, qualifiedName);
+				fTypeCache.insert(info);
+
 				for (int i = 0; i < references.length; ++i) {
 					if (monitor.isCanceled())
 						throw new InterruptedException();

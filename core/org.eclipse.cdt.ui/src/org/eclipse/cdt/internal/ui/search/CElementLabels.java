@@ -14,10 +14,16 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethod;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -268,8 +274,16 @@ public class CElementLabels {
 	
 	public static void getElementLabel(ICElement element, int flags, StringBuffer buf) {
 		int type= element.getElementType();
+		ISourceRoot root= null;
 		
-		switch( type ){
+		if (type != ICElement.C_MODEL && type != ICElement.C_PROJECT && !(type == ICElement.C_CCONTAINER && element instanceof ISourceRoot))
+			root= CModelUtil.getSourceRoot(element);
+		if (root != null && getFlag(flags, PREPEND_ROOT_PATH)) {
+			getSourceRootLabel(root, ROOT_QUALIFIED, buf);
+			buf.append(CONCAT_STRING);
+		}		
+		
+		switch (type) {
 			case ICElement.C_METHOD : 
 				getMethodLabel( (IMethod) element, flags, buf );
 				break;
@@ -277,7 +291,29 @@ public class CElementLabels {
 			case ICElement.C_STRUCT:
 			case ICElement.C_UNION:
 			case ICElement.C_ENUMERATION:
-			//	getTypeLabel( (IType) element, flags, buf );
+				getTypeLabel( element, flags, buf );
+				break;
+			case ICElement.C_UNIT: 
+				getTranslationUnitLabel((ITranslationUnit) element, flags, buf);
+				break;	
+			case ICElement.C_CCONTAINER:
+				ICContainer container = (ICContainer) element;
+				if (container instanceof ISourceRoot)
+					getSourceRootLabel((ISourceRoot) container, flags, buf);
+				else
+					getContainerLabel(container, flags, buf);
+				break;
+			case ICElement.C_PROJECT:
+			case ICElement.C_MODEL:
+				buf.append(element.getElementName());
+				break;
+			default:
+				buf.append(element.getElementName());
+		}
+		
+		if (root != null && getFlag(flags, APPEND_ROOT_PATH)) {
+			buf.append(CONCAT_STRING);
+			getSourceRootLabel(root, ROOT_QUALIFIED, buf);
 		}
 	}
 	
@@ -355,12 +391,104 @@ public class CElementLabels {
 		}
 	}
 	
-	public static void getTypeLabel(ICElement type, int flags, StringBuffer buf) {
-		if( !(type instanceof IStructure) ){
-			return;
-		}
+	/**
+	 * Appends the label for a source root to a StringBuffer. Considers the ROOT_* flags.
+	 */	
+	public static void getSourceRootLabel(ISourceRoot root, int flags, StringBuffer buf) {
+//		if (root.isArchive())
+//			getArchiveLabel(root, flags, buf);
+//		else
+			getFolderLabel(root, flags, buf);
 	}
 	
+	/**
+	 * Appends the label for a container to a StringBuffer. Considers the ROOT_* flags.
+	 */	
+	public static void getContainerLabel(ICContainer container, int flags, StringBuffer buf) {
+		getFolderLabel(container, flags, buf);
+	}
+
+	private static void getFolderLabel(ICContainer container, int flags, StringBuffer buf) {
+		IResource resource= container.getResource();
+		boolean rootQualified= getFlag(flags, ROOT_QUALIFIED);
+		boolean referencedQualified= getFlag(flags, REFERENCED_ROOT_POST_QUALIFIED)
+			&& (container instanceof ISourceRoot && CModelUtil.isReferenced((ISourceRoot)container))
+			&& resource != null;
+		if (rootQualified) {
+			buf.append(container.getPath().makeRelative().toString());
+		} else {
+			if (resource != null)
+				buf.append(resource.getProjectRelativePath().toString());
+			else
+				buf.append(container.getElementName());
+			if (referencedQualified) {
+				buf.append(CONCAT_STRING);
+				buf.append(resource.getProject().getName());
+			} else if (getFlag(flags, ROOT_POST_QUALIFIED)) {
+				buf.append(CONCAT_STRING);
+				buf.append(container.getParent().getElementName());
+			}
+		}
+	}
+
+	/**
+	 * Appends the label for a translation unit to a StringBuffer. Considers the CU_* flags.
+	 */
+	public static void getTranslationUnitLabel(ITranslationUnit tu, int flags, StringBuffer buf) {
+		if (getFlag(flags, CU_QUALIFIED)) {
+			ISourceRoot root= CModelUtil.getSourceRoot(tu);
+//			if (!pack.isDefaultPackage()) {
+				buf.append(root.getElementName());
+				buf.append('.');
+//			}
+		}
+		buf.append(tu.getElementName());
+		
+		if (getFlag(flags, CU_POST_QUALIFIED)) {
+			buf.append(CONCAT_STRING);
+			getSourceRootLabel((ISourceRoot) tu.getParent(), 0, buf);
+		}		
+	}
+
+	/**
+	 * Appends the label for a type to a StringBuffer. Considers the T_* flags.
+	 */		
+	public static void getTypeLabel(ICElement elem, int flags, StringBuffer buf) {
+		if (getFlag(flags, T_FULLY_QUALIFIED)) {
+			ISourceRoot root= CModelUtil.getSourceRoot(elem);
+			getSourceRootLabel(root, (flags & P_COMPRESSED), buf);
+			buf.append(root.getElementName());
+			buf.append('.');
+		}
+		
+		String typeName= elem.getElementName();
+		if (typeName.length() == 0) { // anonymous
+//			try {
+//				String superclassName= Signature.getSimpleName(type.getSuperclassName());
+//				typeName= CUIMessages.getFormattedString("JavaElementLabels.anonym_type" , superclassName); //$NON-NLS-1$
+//			} catch (CModelException e) {
+//				//ignore
+//				typeName= CUIMessages.getString("JavaElementLabels.anonym"); //$NON-NLS-1$
+//			}
+		}
+		buf.append(typeName);
+		
+//		// post qualification
+//		if (getFlag(flags, T_POST_QUALIFIED)) {
+//			buf.append(CONCAT_STRING);
+//			IType declaringType= type.getDeclaringType();
+//			if (declaringType != null) {
+//				getTypeLabel(declaringType, T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf);
+//				int parentType= type.getParent().getElementType();
+//				if (parentType == ICElement.METHOD || parentType == ICElement.FIELD || parentType == ICElement.INITIALIZER) { // anonymous or local
+//					buf.append('.');
+//					getElementLabel(type.getParent(), 0, buf);
+//				}
+//			} else {
+//				getPackageFragmentLabel(type.getPackageFragment(), (flags & P_COMPRESSED), buf);
+//			}
+//		}
+	}
 	
 	private static boolean getFlag(int flags, int flag) {
 		return (flags & flag) != 0;

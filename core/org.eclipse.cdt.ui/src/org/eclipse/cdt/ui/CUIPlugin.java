@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.corext.refactoring.base.Refactoring;
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
@@ -101,6 +102,61 @@ public class CUIPlugin extends AbstractUIPlugin {
 	static String SEPARATOR = System.getProperty("file.separator"); //$NON-NLS-1$
 
 	private static final String CONTENTASSIST = CUIPlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
+
+	
+	/**
+	 * The id of the C perspective
+	 * (value <code>"org.eclipse.cdt.ui.CPerspective"</code>).
+	 */	
+	public static final String ID_CPERSPECTIVE = PLUGIN_ID + ".CPerspective"; //$NON-NLS-1$
+
+	/**
+	 * The id of the C hierarchy perspective
+	 * (value <code>"org.eclipse.cdt.ui.CHierarchyPerspective"</code>).
+	 */	
+	public static final String ID_CHIERARCHY_PERSPECTIVE = PLUGIN_ID + ".CHierarchyPerspective"; //$NON-NLS-1$
+
+	/**
+	 * The id of the C Browsing Perspective
+	 * (value <code>"org.eclipse.cdt.ui.CBrowsingPerspective"</code>).
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ID_CBROWSING_PERSPECTIVE = PLUGIN_ID + ".CBrowsingPerspective"; //$NON-NLS-1$
+
+	/**
+	 * The view part id of the C Browsing Projects view
+	 * (value <code>"org.eclipse.cdt.ui.ProjectsView"</code>).
+	 * 
+	 * @since 2.0
+	 */
+	public static String ID_PROJECTS_VIEW = PLUGIN_ID + ".ProjectsView"; //$NON-NLS-1$
+
+	/**
+	 * The view part id of the C Browsing Namespaces view
+	 * (value <code>"org.eclipse.cdt.ui.NamespacesView"</code>).
+	 * 
+	 * @since 2.0
+	 */
+	public static String ID_NAMESPACES_VIEW = PLUGIN_ID + ".NamespacesView"; //$NON-NLS-1$
+
+	/**
+	 * The view part id of the C Browsing Types view
+	 * (value <code>"org.eclipse.cdt.ui.TypesView"</code>).
+	 * 
+	 * @since 2.0
+	 */
+	public static String ID_TYPES_VIEW = PLUGIN_ID + ".TypesView"; //$NON-NLS-1$
+
+	/**
+	 * The view part id of the C Browsing Members view
+	 * (value <code>"org.eclipse.cdt.ui.MembersView"</code>).
+	 * 
+	 * @since 2.0
+	 */
+	public static String ID_MEMBERS_VIEW = PLUGIN_ID + ".MembersView"; //$NON-NLS-1$
+
+	
 	
 	// -------- static methods --------
 
@@ -182,6 +238,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public void log(IStatus status) {
 		getLog().log(status);
 	}
+	
+	public void logErrorMessage(String message) {
+		log(new Status(IStatus.ERROR, getPluginId(), ICStatusConstants.INTERNAL_ERROR, message, null));
+	}
+	
 
 	/**
 	* Utility method with conventions

@@ -17,8 +17,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCacheMessages;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
@@ -130,9 +132,11 @@ public class AllTypesCache {
 		TypeSearchScope workspaceScope = new TypeSearchScope(true);
 		IProject[] projects = workspaceScope.getEnclosingProjects();
 		ITypeInfoVisitor visitor = new ITypeInfoVisitor() {
-			public void visit(ITypeInfo info) {
+			public boolean visit(ITypeInfo info) {
 				fAllTypes.add(info);
+				return true;
 			}
+			public boolean shouldContinue() { return true; }
 		};
 		for (int i = 0; i < projects.length; ++i) {
 			fgTypeCacheManager.getCache(projects[i]).accept(visitor);
@@ -153,11 +157,14 @@ public class AllTypesCache {
 		final int[] fKinds = kinds;
 		IProject[] projects = scope.getEnclosingProjects();
 		ITypeInfoVisitor visitor = new ITypeInfoVisitor() {
-			public void visit(ITypeInfo info) {
-				if (info.isEnclosed(fScope) && ArrayUtil.contains(fKinds, info.getCElementType())) {
+			public boolean visit(ITypeInfo info) {
+				if (ArrayUtil.contains(fKinds, info.getCElementType())
+					&& (fScope != null && info.isEnclosed(fScope))) {
 					fTypesFound.add(info);
 				}
+				return true;
 			}
+			public boolean shouldContinue() { return true; }
 		};
 		for (int i = 0; i < projects.length; ++i) {
 			fgTypeCacheManager.getCache(projects[i]).accept(visitor);
@@ -180,15 +187,48 @@ public class AllTypesCache {
 		final IQualifiedTypeName fQualifiedName = qualifiedName;
 		IProject[] projects = scope.getEnclosingProjects();
 		ITypeInfoVisitor visitor = new ITypeInfoVisitor() {
-			public void visit(ITypeInfo info) {
-				if ((fScope != null && info.isEnclosed(fScope)) && fQualifiedName.equals(info.getQualifiedTypeName())
-						&& ArrayUtil.contains(fKinds, info.getCElementType())) {
+			public boolean visit(ITypeInfo info) {
+				if (ArrayUtil.contains(fKinds, info.getCElementType())
+						&& fQualifiedName.equals(info.getQualifiedTypeName())
+						&& (fScope != null && info.isEnclosed(fScope))) {
 					fTypesFound.add(info);
 				}
+				return true;
 			}
+			public boolean shouldContinue() { return true; }
 		};
 		for (int i = 0; i < projects.length; ++i) {
 			fgTypeCacheManager.getCache(projects[i]).accept(visitor);
+		}
+		return (ITypeInfo[]) fTypesFound.toArray(new ITypeInfo[fTypesFound.size()]);
+	}
+
+	/**
+	 * Returns all namespaces in the given scope.
+	 * 
+	 * @param scope The search scope
+	 * @param includeGlobalNamespace <code>true</code> if the global (default) namespace should be returned
+	 */
+	public static ITypeInfo[] getNamespaces(ITypeSearchScope scope, boolean includeGlobalNamespace) {
+		final Collection fTypesFound = new ArrayList();
+		final ITypeSearchScope fScope = scope;
+		IProject[] projects = scope.getEnclosingProjects();
+		ITypeInfoVisitor visitor = new ITypeInfoVisitor() {
+			public boolean visit(ITypeInfo info) {
+				if (info.getCElementType() == ICElement.C_NAMESPACE
+					&& (fScope != null && info.isEnclosed(fScope))) {
+					fTypesFound.add(info);
+				}
+				return true;
+			}
+			public boolean shouldContinue() { return true; }
+		};
+		for (int i = 0; i < projects.length; ++i) {
+			ITypeCache cache = fgTypeCacheManager.getCache(projects[i]);
+			cache.accept(visitor);
+			if (includeGlobalNamespace) {
+				fTypesFound.add(cache.getGlobalNamespace());
+			}
 		}
 		return (ITypeInfo[]) fTypesFound.toArray(new ITypeInfo[fTypesFound.size()]);
 	}

@@ -10,9 +10,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
-public interface ITypeInfoVisitor {
-	
-	public boolean visit(ITypeInfo info);
+public class UnknownTypeInfo extends TypeInfo {
 
-	public boolean shouldContinue();
+	public UnknownTypeInfo(IQualifiedTypeName typeName) {
+		super(0, typeName);
+	}
+	
+	public boolean isUndefinedType() {
+		return true;
+	}
+
+	public boolean canSubstituteFor(ITypeInfo info) {
+		if (fTypeCache == info.getCache()) {
+			int compareType = info.getCElementType();
+			if (fElementType == 0 || compareType == 0 || fElementType == compareType) {
+				return fQualifiedName.equals(info.getQualifiedTypeName());
+			}
+		}
+		return false;
+	}
 }

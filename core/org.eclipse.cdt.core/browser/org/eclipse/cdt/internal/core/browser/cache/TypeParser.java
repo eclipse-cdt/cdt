@@ -186,6 +186,9 @@ public class TypeParser implements ISourceElementRequestor {
 		
 		fScope = new TypeSearchScope();
 		ITypeReference[] refs = info.getReferences();
+		if (refs == null || refs.length == 0)
+			return false;	// no source references
+		
 		fScope.add(refs[0].getPath(), false, null);
 //		for (int i = 0; i < refs.length; ++i) {
 //			ITypeReference location = refs[i];
@@ -420,15 +423,13 @@ public class TypeParser implements ISourceElementRequestor {
 			IParser parser = ParserFactory.createParser(scanner, this, ParserMode.STRUCTURAL_PARSE, language, ParserUtil.getParserLogService());
 			parser.parse();
 		} catch (ParserFactoryError e) {
-			e.printStackTrace();
+			CCorePlugin.log(e);
 		} catch (ParseError e) {
-			e.printStackTrace();
+			CCorePlugin.log(e);
 		} catch (OperationCanceledException e) {
 			throw new InterruptedException();
 		} catch (Exception e) {
-			e.printStackTrace();
-		} catch (VirtualMachineError e) {
-			e.printStackTrace();
+			CCorePlugin.log(e);
 		} finally {
 			fProgressMonitor = null;
 		}
@@ -671,12 +672,9 @@ public class TypeParser implements ISourceElementRequestor {
 		QualifiedTypeName qualifiedName = new QualifiedTypeName(name, enclosingNames);
 		ITypeInfo info = fTypeCache.getType(type, qualifiedName);
 		if (info == null || info.isUndefinedType()) {
-			if (info == null) {
-				info = new TypeInfo(type, qualifiedName, fTypeCache);
-				fTypeCache.insert(info);
-			} else {
-				info.setCElementType(type);
-			}
+			// add new type to cache
+			info = new TypeInfo(type, qualifiedName);
+			fTypeCache.insert(info);
 			
 			TypeReference location;
 			if (originalRef instanceof IWorkingCopy) {

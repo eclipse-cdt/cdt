@@ -39,7 +39,7 @@ public class MISession extends Observable {
 
 	MIParser parser;
 
-	long cmdTimeout = 0000; // 20 * 1000 (~ 20 secs);
+	long cmdTimeout = 10000; // 10 * 1000 (~ 10 secs);
 
 	final int STOPPED = 0;
 	final int RUNNING = 1;
@@ -144,14 +144,14 @@ public class MISession extends Observable {
 	}
 
 	/**
-	 * Return the default Command Timeout, default 20 secs.
+	 * Return the default Command Timeout, default 10 secs.
 	 */
 	public long getCommandTimeout() {
 		return cmdTimeout;
 	}
 
 	/**
-	 * postCommand(cmd, 20 secs) 
+	 * postCommand(cmd, 10 secs) 
 	 */
 	public void postCommand(Command cmd) throws MIException {
 		postCommand(cmd, cmdTimeout);

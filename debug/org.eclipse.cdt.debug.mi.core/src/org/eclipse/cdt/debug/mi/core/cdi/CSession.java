@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICBreakpointManager;
+import org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICEventManager;
 import org.eclipse.cdt.debug.core.cdi.ICExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICMemoryManager;
@@ -121,6 +122,13 @@ public class CSession implements ICSession {
 	 */
 	public void terminate() throws CDIException {
 		session.terminate();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICSuration()
+	 */
+	public ICDebugConfiguration getConfiguration() {
+		return null;
 	}
 
 }

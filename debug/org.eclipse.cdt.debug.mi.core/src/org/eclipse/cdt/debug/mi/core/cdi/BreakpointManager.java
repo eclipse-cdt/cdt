@@ -23,20 +23,24 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 public class BreakpointManager implements ICBreakpointManager {
 
 	MISession session;
+	ICBreakpoint[] breakpoints = new ICBreakpoint[0];
 	
 	public BreakpointManager(MISession s) {
 		session = s;
 	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpointManager#deleteAllBreakpoints()
 	 */
 	public void deleteAllBreakpoints() throws CDIException {
+		deleteBreakpoints(breakpoints);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpointManager#deleteBreakpoint(ICBreakpoint)
 	 */
 	public void deleteBreakpoint(ICBreakpoint breakpoint) throws CDIException {
+		deleteBreakpoints(new ICBreakpoint[]{breakpoint});
 	}
 
 	/**
@@ -58,7 +62,7 @@ public class BreakpointManager implements ICBreakpointManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpointManager#getBreakpoints()
 	 */
 	public ICBreakpoint[] getBreakpoints() throws CDIException {
-		return null;
+		return breakpoints;
 	}
 
 	/**
@@ -106,5 +110,4 @@ public class BreakpointManager implements ICBreakpointManager {
 	public ICSession getSession() {
 		return null;
 	}
-
 }

@@ -91,14 +91,11 @@ import org.eclipse.ui.actions.AddBookmarkAction;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.CopyResourceAction;
-import org.eclipse.ui.actions.CreateFileAction;
-import org.eclipse.ui.actions.CreateFolderAction;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.MoveResourceAction;
-import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.OpenFileAction;
-import org.eclipse.ui.actions.OpenPerspectiveMenu;
+import org.eclipse.ui.actions.OpenInNewWindowAction;
 import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.actions.OpenSystemEditorAction;
 import org.eclipse.ui.actions.OpenWithMenu;
@@ -137,9 +134,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	RefreshAction refreshAction;
 	RenameResourceAction renameResourceAction;
 	MoveResourceAction moveResourceAction;
-	CreateFileAction createFileAction;
-	CreateFolderAction createFolderAction;
-	NewWizardAction newWizardAction;
 
 	CloseResourceAction closeProjectAction;
 	OpenResourceAction openProjectAction;
@@ -516,18 +510,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		renameResourceAction = new RenameResourceAction(shell, viewer.getTree());
 		deleteResourceAction = new DeleteResourceAction(shell);
 		
-		createFileAction = new CreateFileAction(shell);
-		// overwrite the default name
-		String fileLabel = CUIPlugin.getDefault().getResourceBundle().getString("CreateFileAction.text");
-		createFileAction.setText(fileLabel);
-		
-		createFolderAction = new CreateFolderAction(shell);
-		// overwrite the default name
-		String folderLabel = CUIPlugin.getDefault().getResourceBundle().getString("CreateFolderAction.text");
-		createFolderAction.setText(folderLabel);
-		
-		
-		newWizardAction = new NewWizardAction();
 		IWorkspace workspace = CUIPlugin.getWorkspace();
 
 		openProjectAction = new OpenResourceAction(shell);
@@ -610,8 +592,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	 * Be sure to invoke after actions objects have updated, since can* methods delegate to action objects.
 	 */
 	void updateGlobalActions(IStructuredSelection selection) {
-		createFileAction.selectionChanged (selection);
-		createFolderAction.selectionChanged (selection);
 		deleteResourceAction.selectionChanged(selection);
 		addBookmarkAction.selectionChanged(selection);
 
@@ -705,15 +685,8 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		IAdaptable element = (IAdaptable)selection.getFirstElement();
 		IResource resource = (IResource)element.getAdapter(IResource.class);
 
-		if (selection.size() == 1) {
-			if (resource != null && resource instanceof IContainer) {
-				newMenu.add (createFileAction);
-				newMenu.add (createFolderAction);
-			}
-		}
-		//new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
-		newMenu.add(new Separator());
-		newMenu.add(newWizardAction);
+		new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
+
 		menu.add(newMenu);
 
 		if (resource == null)
@@ -885,11 +858,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		if (!(resource instanceof IContainer))
 			return;
 
-		// Create a menu flyout.
-		MenuManager submenu = new MenuManager("Open In Perspective"); //$NON-NLS-1$
-		submenu.add(new OpenPerspectiveMenu(getSite().getWorkbenchWindow(), resource));
-		menu.add(submenu);
-
+		menu.add(new OpenInNewWindowAction(getSite().getWorkbenchWindow(), resource));
 	}
 
 

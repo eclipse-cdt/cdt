@@ -106,7 +106,7 @@ public class GDBTypeParser {
 				derived = (GDBDerivedType)gdbType;
 				gdbType = derived.getChild();
 				if (type == GDBType.FUNCTION) {
-					sb.append("()");
+					sb.append("()"); //$NON-NLS-1$
 				} else if (type == GDBType.ARRAY) {
 					sb.append('[').append(derived.getDimension()).append(']');
 				} else if (type == GDBType.POINTER) {
@@ -116,10 +116,17 @@ public class GDBTypeParser {
 					} else if (childType == GDBType.GENERIC) {
 						sb.insert(0, '*');
 					} else {
-						sb.insert(0, "(*").append(")");
+						sb.insert(0, "(*").append(')'); //$NON-NLS-1$
 					}
 				} else if (type == GDBType.REFERENCE) {
-					sb.insert(0, "(&").append(")");
+					int childType = (gdbType != null) ? gdbType.getType() : GDBType.GENERIC; 
+					if (childType == GDBType.POINTER || childType == GDBType.REFERENCE) {
+						sb.append("&"); //$NON-NLS-1$
+					} else if (childType == GDBType.GENERIC) {
+						sb.insert(0, '&');
+					} else {
+						sb.insert(0, "(&").append(')'); //$NON-NLS-1$
+					}
 				}
 			} else {
 				sb.insert(0, ' ');

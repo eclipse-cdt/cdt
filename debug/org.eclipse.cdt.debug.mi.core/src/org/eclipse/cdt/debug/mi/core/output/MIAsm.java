@@ -72,7 +72,7 @@ public class MIAsm {
 			}
 
 			if (value != null && value instanceof MIConst) {
-				str = ((MIConst)value).getString();
+				str = ((MIConst)value).getCString();
 			}
 
 			if (var.equals("address")) {

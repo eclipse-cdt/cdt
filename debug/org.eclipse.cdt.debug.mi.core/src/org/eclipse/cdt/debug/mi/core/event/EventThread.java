@@ -22,7 +22,6 @@ public class EventThread extends Thread {
 	/*
 	 */
 	public void run () {
-		session.setDirty();
 		session.notifyObservers(events);
 	}
 }

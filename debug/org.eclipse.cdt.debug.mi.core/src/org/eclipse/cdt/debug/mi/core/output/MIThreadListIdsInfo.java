@@ -47,7 +47,7 @@ public class MIThreadListIdsInfo extends MIInfo {
 			if (var.equals("thread-id")) {
 				MIValue value = results[i].getMIValue();
 				if (value instanceof MIConst) {
-					String str = ((MIConst)value).getString();
+					String str = ((MIConst)value).getCString();
 					try {
 						threadIds[i] = Integer.parseInt(str.trim());
 					} catch (NumberFormatException e) {

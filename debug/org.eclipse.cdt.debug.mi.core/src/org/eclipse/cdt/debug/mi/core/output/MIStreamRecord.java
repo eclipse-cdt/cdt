@@ -14,6 +14,10 @@ public abstract class MIStreamRecord extends MIOOBRecord {
 		cstring = str;
 	} 
 
+	public String getString () {
+		return MIConst.getString(getCString());
+	}
+
 	public String toString() {
 		if (this instanceof MIConsoleStreamOutput) {
 			return "~\"" + cstring + "\"\n";

@@ -28,7 +28,7 @@ public class MIStackInfoDepthInfo extends MIInfo {
 					if (var.equals("depth")) {
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							String str = ((MIConst)val).getString();
+							String str = ((MIConst)val).getCString();
 							try {
 								depth = Integer.parseInt(str.trim());
 							} catch (NumberFormatException e) {

@@ -45,7 +45,7 @@ public class MIDataListRegisterNamesInfo extends MIInfo {
 		MIValue[] values = list.getMIValues();
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] instanceof MIConst) {
-				String str = ((MIConst)values[i]).getString();
+				String str = ((MIConst)values[i]).getCString();
 				if (str != null && str.length() > 0) {
 					aList.add(str);
 				}

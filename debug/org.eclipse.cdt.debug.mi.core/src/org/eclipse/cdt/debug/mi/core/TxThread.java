@@ -19,7 +19,6 @@ public class TxThread extends Thread {
 		super("MI TX Thread");
 		session = s;
 		token = 1;
-		setDaemon(true);
 	}
 
 	public void run () {
@@ -30,7 +29,11 @@ public class TxThread extends Thread {
 				// removeCommand() will block until a command is available.
 				try {
 					cmd = txQueue.removeCommand();
-				} catch (Exception e) {
+				} catch (InterruptedException e) {
+					// signal by the session of time to die.
+					if (session.getChannelOutputStream() == null) {
+						throw new IOException();
+					}
 					//e.printStackTrace();
 				}
 

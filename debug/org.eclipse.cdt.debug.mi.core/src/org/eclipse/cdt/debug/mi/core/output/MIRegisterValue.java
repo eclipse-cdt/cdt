@@ -61,7 +61,7 @@ public class MIRegisterValue {
 			String aName = "";
 			MIValue value = args[0].getMIValue();
 			if (value != null && value instanceof MIConst) {
-				aName = ((MIConst)value).getString();
+				aName = ((MIConst)value).getCString();
 			} else {
 				aName = "";
 			}
@@ -70,7 +70,7 @@ public class MIRegisterValue {
 			String aValue = "";
 			value = args[1].getMIValue();
 			if (value != null && value instanceof MIConst) {
-				aValue = ((MIConst)value).getString();
+				aValue = ((MIConst)value).getCString();
 			} else {
 				aValue = "";
 			}

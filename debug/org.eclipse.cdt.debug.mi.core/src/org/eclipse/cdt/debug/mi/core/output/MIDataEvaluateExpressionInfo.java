@@ -31,7 +31,7 @@ public class MIDataEvaluateExpressionInfo extends MIInfo{
 					if (var.equals("value")) {
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
-							expr = ((MIConst)value).getString();
+							expr = ((MIConst)value).getCString();
 						}
 					}
 				}

@@ -117,8 +117,8 @@ public class MIParser {
 				if (token.charAt(0) == '^') {
 					token.deleteCharAt(0);
 					rr = processMIResultRecord(token, id);
-				//} else if(token.startsWith(MIOutput.terminator)) {
-				//  break;
+				} else if(token.toString().startsWith(MIOutput.terminator)) {
+					break;
 				} else {
 					MIOOBRecord band = processMIOOBRecord(token, id);
 					if (band != null) {
@@ -137,7 +137,7 @@ public class MIParser {
 	/**
 	 * Assuming '^' was deleted.
 	 */
-	MIResultRecord processMIResultRecord(StringBuffer buffer, int id) {
+	private MIResultRecord processMIResultRecord(StringBuffer buffer, int id) {
 		MIResultRecord rr = new MIResultRecord();
 		rr.setToken(id);
 		if (buffer.toString().startsWith(MIResultRecord.DONE)) {
@@ -171,7 +171,7 @@ public class MIParser {
 
 	/**
 	 */
-	MIOOBRecord processMIOOBRecord(StringBuffer buffer, int id) {
+	private MIOOBRecord processMIOOBRecord(StringBuffer buffer, int id) {
 		MIOOBRecord oob = null;
 		char c = buffer.charAt(0);
 		if (c == '*' || c == '+' || c == '=') {
@@ -220,6 +220,10 @@ public class MIParser {
 					stream = new MILogStreamOutput();
 					break;
 			}
+			// translateCString() assumes that the leading " is deleted
+			if (buffer.length() > 0 && buffer.charAt(0) == '"') {
+				buffer.deleteCharAt(0);
+			}
 			stream.setCString(translateCString(buffer));
 			oob = stream;
 		}
@@ -229,7 +233,7 @@ public class MIParser {
 	/**
 	 * Assuming that the usual leading comma was consume.
 	 */
-	MIResult[] processMIResults(StringBuffer buffer) {
+	private MIResult[] processMIResults(StringBuffer buffer) {
 		List aList = new ArrayList();
 		MIResult result = processMIResult(buffer);
 		if (result != null) {
@@ -249,7 +253,7 @@ public class MIParser {
 	 * Construct the MIResult.  Characters will be consume/delete
 	 * has moving forward constructing the AST.
 	 */
-	MIResult processMIResult(StringBuffer buffer) {
+	private MIResult processMIResult(StringBuffer buffer) {
 		MIResult result = new MIResult();
 		int equal;
 		if (buffer.length() > 0 && Character.isLetter(buffer.charAt(0))
@@ -270,7 +274,7 @@ public class MIParser {
 	/**
 	 * Find a MIValue implementation or return null.
 	 */
-	MIValue processMIValue(StringBuffer buffer) {
+	private MIValue processMIValue(StringBuffer buffer) {
 		MIValue value = null;
 		if (buffer.length() > 0) {
 			if (buffer.charAt(0) == '{') {
@@ -294,7 +298,7 @@ public class MIParser {
 	 * go to the closing '}' consuming/deleting all the characters.
 	 * This is usually call by processMIvalue();
 	 */
-	MIValue processMITuple(StringBuffer buffer) {
+	private MIValue processMITuple(StringBuffer buffer) {
 		MITuple tuple = new MITuple();
 		MIResult[] results = null;
 		// Catch closing '}'
@@ -315,7 +319,7 @@ public class MIParser {
 	 * Assuming the leading '[' was deleted, find the closing
 	 * ']' consuming/delete chars from the StringBuffer.
 	 */
-	MIValue processMIList(StringBuffer buffer) {
+	private MIValue processMIList(StringBuffer buffer) {
 		MIList list = new MIList();
 		List valueList = new ArrayList();
 		List resultList = new ArrayList();
@@ -345,7 +349,7 @@ public class MIParser {
 		return list;
 	}
 
-	String translateCString(StringBuffer buffer) {
+	private String translateCString(StringBuffer buffer) {
 		boolean escape = false;
 		boolean closingQuotes = false;
 
@@ -356,14 +360,14 @@ public class MIParser {
 			char c = buffer.charAt(index);
 			if (c == '\\') {
 				if (escape) {
-					sb.append('\\').append(c);
+					sb.append(c);
 					escape = false;
 				} else {
 					escape = true;
 				}
 			} else if (c == '"') {
 				if (escape) {
-					sb.append('\\').append(c);;
+					sb.append(c);;
 					escape = false;
 				} else {
 					// Bail out.

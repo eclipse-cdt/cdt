@@ -105,7 +105,7 @@ public class MIDataReadMemoryInfo extends MIInfo {
 					MIValue value = results[i].getMIValue();
 					String str = "";
 					if (value != null && value instanceof MIConst) {
-						str = ((MIConst)value).getString();
+						str = ((MIConst)value).getCString();
 					}
 
 					if (var.equals("addr")) {

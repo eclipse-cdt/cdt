@@ -44,7 +44,7 @@ public class MIArg {
 		for (int i = 0; i < results.length; i++) {
 			MIValue value = results[i].getMIValue();
 			if (value instanceof MIConst) {
-				String str = ((MIConst)value).getString();
+				String str = ((MIConst)value).getCString();
 				aList.add(new MIArg(str, ""));
 			}
 		}
@@ -63,7 +63,7 @@ public class MIArg {
 			String aName = "";
 			MIValue value = args[0].getMIValue();
 			if (value != null && value instanceof MIConst) {
-				aName = ((MIConst)value).getString();
+				aName = ((MIConst)value).getCString();
 			} else {
 				aName = "";
 			}
@@ -72,7 +72,7 @@ public class MIArg {
 			String aValue = "";
 			value = args[1].getMIValue();
 			if (value != null && value instanceof MIConst) {
-				aValue = ((MIConst)value).getString();
+				aValue = ((MIConst)value).getCString();
 			} else {
 				aValue = "";
 			}

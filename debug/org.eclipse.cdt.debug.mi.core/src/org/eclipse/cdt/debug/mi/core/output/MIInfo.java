@@ -64,7 +64,7 @@ public class MIInfo {
 					if (var.equals("msg")) {
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
-							String s = ((MIConst)value).getString();
+							String s = ((MIConst)value).getCString();
 							return s;
 						}
 					}

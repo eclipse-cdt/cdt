@@ -47,7 +47,7 @@ public class MIMemory {
 			MIValue value = results[i].getMIValue();
 			String str = "";
 			if (value != null && value instanceof MIConst) {
-				str = ((MIConst)value).getString();
+				str = ((MIConst)value).getCString();
 			}
 
 			if (var.equals("addr")) {
@@ -70,7 +70,7 @@ public class MIMemory {
 		data = new long[values.length];
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] instanceof MIConst) {
-				String str = ((MIConst)values[i]).getString();
+				String str = ((MIConst)values[i]).getCString();
 				try {
 					data[i] = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {

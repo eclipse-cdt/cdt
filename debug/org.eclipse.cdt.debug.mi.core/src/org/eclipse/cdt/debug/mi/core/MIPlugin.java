@@ -15,16 +15,16 @@ public class MIPlugin extends Plugin {
 	private static MIPlugin plugin;
 
 	/**
-	* The constructor.
-	*/
+	 * The constructor.
+	 */
 	public MIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
 	}
 
 	/**
-	* Returns the shared instance.
-	*/
+	 * Returns the singleton.
+	 */
 	public static MIPlugin getDefault() {
 		return plugin;
 	}

@@ -26,6 +26,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.parser.CStructurizer;
 import org.eclipse.cdt.internal.parser.IStructurizerCallback;
@@ -69,14 +70,20 @@ public class CStructureCreator implements IStructureCreator {
 		DocumentInputStream is= new DocumentInputStream(doc);
 		IStructurizerCallback callback= new CNodeTreeConstructor(root, doc);
 		try {
-			CStructurizer.getCStructurizer().parse(callback, is);
+			if (CCorePlugin.getDefault().useNewParser()) {
+				// new parser
+				ComparatorModelBuilder modelBuilder = new ComparatorModelBuilder(callback, (s != null ? s : ""));
+				modelBuilder.parse();
+			} else {
+				CStructurizer.getCStructurizer().parse(callback, is);
+			}
 		} catch (NodeConstructorError e) {
 			System.out.println("Parse error: " + e);
 			return null;
 		} catch (IOException e) {
 			return null;
-		}				
-		
+		}
+
 		return root;
 	}	
 

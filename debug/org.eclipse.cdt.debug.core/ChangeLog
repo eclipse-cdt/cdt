@@ -1,8 +1,12 @@
 2004-09-07 Alain Magloire
 	Remove ICDIBreakpointManager.java
+	Remove ICDICatchEvent/ICDICatchpoint
+	add ICDIExceptionpoint
+
 	* ICDISession.java
 	* CDIDebugModel.java
 	* CDebugTarget.java
+	* ICDIExceptionpoint.java
 
 2004-09-07 Mikhail Khodjaiants
 	Moved to the new breakpoint management API.

@@ -1,3 +1,7 @@
+2003-09-02 Hoda Amer
+	Modified CCompletionProposalsTest to complete on a body file 
+	that includes a header file.
+	
 2003-08-28 Andrew Niefer
 	Modified BaseSearchTest.setup to properly include the "include.h" file
 

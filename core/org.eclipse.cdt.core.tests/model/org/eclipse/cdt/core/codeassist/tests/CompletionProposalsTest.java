@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
@@ -43,6 +44,7 @@ public class CompletionProposalsTest  extends TestCase{
 	private final static long MAGIC_NUMBER = 1000;
 	private ICProject fCProject;
 	private IFile headerFile;
+	private IFile bodyFile;
 	private NullProgressMonitor monitor;
 		
 	public static Test suite() {
@@ -60,11 +62,14 @@ public class CompletionProposalsTest  extends TestCase{
 		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
 	
 		fCProject= CProjectHelper.createCProject("TestProject1", "bin");
-		headerFile = fCProject.getProject().getFile("CompletionProposalsTest.h");
-		if (!headerFile.exists()) {
+		bodyFile = fCProject.getProject().getFile("CompletionProposalsTestStart.cpp");
+		headerFile = fCProject.getProject().getFile("CompletionProposalsTestStart.h");
+		if ((!headerFile.exists()) || (!bodyFile.exists())) {
 			try{
-				FileInputStream fileIn = new FileInputStream(pluginRoot+ "resources/cfiles/CompletionProposalsTestStart.h"); 
-				headerFile.create(fileIn,false, monitor);        
+				FileInputStream bodyFileIn = new FileInputStream(pluginRoot+ "resources/cfiles/CompletionProposalsTestStart.cpp"); 
+				bodyFile.create(bodyFileIn,false, monitor);        
+				FileInputStream headerFileIn = new FileInputStream(pluginRoot+ "resources/cfiles/CompletionProposalsTestStart.h"); 
+				headerFile.create(headerFileIn,false, monitor);        
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
@@ -97,9 +102,10 @@ public class CompletionProposalsTest  extends TestCase{
 			
 	public void testCompletionProposals(){
 		try{
-			TranslationUnit tu = new TranslationUnit(fCProject, headerFile);
+			TranslationUnit headerTu = new TranslationUnit(fCProject, headerFile);
+			TranslationUnit tu = new TranslationUnit(fCProject, bodyFile);
 			Document document = new Document(tu.getBuffer().getContents());
-			int pos = 399;
+			int pos = 255;
 			int length = 0;
 			CCompletionProcessor completionProcessor = new CCompletionProcessor(null);
 			ICompletionProposal[] results = completionProcessor.evalProposals(document, pos, length, tu);
@@ -108,36 +114,30 @@ public class CompletionProposalsTest  extends TestCase{
 			} catch (InterruptedException e1) {
 				fail( "Bogdan's hack did not suffice");
 			}
-			assertEquals(results.length, 9);
+			assertEquals(results.length, 7);
 			for (int i = 0; i<results.length; i++){
 				ICompletionProposal proposal = results[i];
 				String displayString = proposal.getDisplayString();
 				switch(i){
 					case 0:
-						assertEquals(displayString, "anotherField");
-					break;	
-					case 1:
 						assertEquals(displayString, "aVariable");
 					break;	
+					case 1:
+						assertEquals(displayString, "aFunction() void");
+					break;	
 					case 2:
-						assertEquals(displayString, "anotherMethod(int, char) void");
-					break;	
-					case 3:
-						assertEquals(displayString, "aFunction(char, int) void");
-					break;	
-					case 4:
 						assertEquals(displayString, "aClass");
 					break;	
-					case 5:
+					case 3:
 						assertEquals(displayString, "anotherClass");
 					break;	
-					case 6:
+					case 4:
 						assertEquals(displayString, "aStruct");
 					break;	
-					case 7:
+					case 5:
 						assertEquals(displayString, "aMacro");
 					break;	
-					case 8:
+					case 6:
 						assertEquals(displayString, "anEnumeration");
 					break;	
 				}

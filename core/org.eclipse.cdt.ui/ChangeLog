@@ -1,5 +1,16 @@
 2003-04-29 Alain Magloire
 
+	PR 36759, Outliner did not update.
+
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java (setOutlinePageInput):
+	New method to notify the outliner when the input changed.
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java (createElementInfo):
+	Use getBufferFactory(), parent class may overload.
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutliner.java (setInput):
+	New method to notify the Outliner that the CEditor changed input.
+
+2003-04-29 Alain Magloire
+
 	* src/org/eclipse/cdt/internal/ui/compare/ComparatorModelBuilder.java:
 	Fix NPE, PR 36976.
 

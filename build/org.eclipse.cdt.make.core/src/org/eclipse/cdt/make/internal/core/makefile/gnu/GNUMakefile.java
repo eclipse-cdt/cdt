@@ -98,7 +98,7 @@ public class GNUMakefile extends AbstractMakefile {
 			if (GNUMakefileUtil.isEndef(line)) {
 				// We should have a "define" for a "endef".
 				if (!defines.empty()) {
-					DefineVariable def = (DefineVariable) defines.pop();
+					VariableDefinition def = (VariableDefinition) defines.pop();
 					def.setEndLine(endLine);
 				}
 				Endef endef = createEndef();

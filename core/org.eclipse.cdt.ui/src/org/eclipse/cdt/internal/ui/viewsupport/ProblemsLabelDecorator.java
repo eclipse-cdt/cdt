@@ -41,6 +41,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 
 /**
  * LabelDecorator that decorates an element's image with error and warning overlays that 
@@ -168,7 +169,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 					case ICElement.C_METHOD:
 						ITranslationUnit tu= ((ISourceReference)element).getTranslationUnit();
 						if (tu != null && tu.exists()) {
-							return getErrorTicksFromMarkers(tu.getResource(), IResource.DEPTH_ONE, tu);
+							return getErrorTicksFromMarkers(tu.getResource(), IResource.DEPTH_ONE, (ISourceReference)element);
 						}
 					default:
 				}
@@ -216,7 +217,14 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	private boolean isMarkerInRange(IMarker marker, ISourceReference sourceElement) throws CoreException {
 		if (marker.isSubtypeOf(IMarker.TEXT)) {
 			int pos= marker.getAttribute(IMarker.CHAR_START, -1);
-			return isInside(pos, sourceElement);
+			if (pos == -1) {
+				int line= MarkerUtilities.getLineNumber(marker);
+				if (line >= 0) {
+					return isInside( -1, line, sourceElement);
+				}
+			}
+			return isInside(pos, -1, sourceElement);
+			
 		}
 		return false;
 	}
@@ -249,7 +257,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 			IMarker marker= ((MarkerAnnotation) annot).getMarker();
 			if (marker.exists() && marker.isSubtypeOf(IMarker.PROBLEM)) {
 				Position pos= model.getPosition(annot);
-				if (pos != null && (sourceElement == null || isInside(pos.getOffset(), sourceElement))) {
+				if (pos != null && (sourceElement == null || isInside(pos.getOffset(), -1, sourceElement))) {
 					return marker;
 				}
 			}
@@ -266,11 +274,14 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	 * 
 	 * @since 2.1
 	 */
-	protected boolean isInside(int pos, ISourceReference sourceElement) throws CoreException {
+	protected boolean isInside(int offSet, int line, ISourceReference sourceElement) throws CoreException {
 		ISourceRange range= sourceElement.getSourceRange();
 		if (range != null) {
+			if (offSet ==-1) {
+				return (line >= range.getStartLine() && line <= range.getEndLine());
+			}
 			int rangeOffset= range.getStartPos();
-			return (rangeOffset <= pos && rangeOffset + range.getLength() > pos);			
+			return (rangeOffset <= offSet && rangeOffset + range.getLength() > offSet);			
 		}
 		return false;
 	}	

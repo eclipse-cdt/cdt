@@ -16,6 +16,7 @@ import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -231,7 +232,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		
 		//treeViewer.setContentProvider(new CElementContentProvider(true, true));
 		treeViewer.setContentProvider(new CContentOutlinerProvider(this));
-		treeViewer.setLabelProvider(new StandardCElementLabelProvider());
+		treeViewer.setLabelProvider(new DecoratingCLabelProvider(new StandardCElementLabelProvider(), true));
 		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		treeViewer.addSelectionChangedListener(this);
 		

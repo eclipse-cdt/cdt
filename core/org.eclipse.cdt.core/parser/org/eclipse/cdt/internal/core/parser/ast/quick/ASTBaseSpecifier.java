@@ -14,8 +14,8 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 
 /**
  * @author jcamelon
@@ -58,7 +58,7 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#getParentClassSpecifier()
      */
-    public IASTClassSpecifier getParentClassSpecifier() throws ASTNotImplementedException
+    public IASTTypeSpecifier getParentClassSpecifier() throws ASTNotImplementedException
     {
         throw new ASTNotImplementedException();
     }

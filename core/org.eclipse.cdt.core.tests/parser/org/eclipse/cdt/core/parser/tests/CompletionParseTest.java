@@ -734,7 +734,6 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 		assertEquals( result.getResultsSize(), matches.size() );
 		
 		Iterator iter = result.getNodes();
-		int assertionCount = 0;
 		while( iter.hasNext() )
 		{
 			IASTOffsetableNamedElement element = (IASTOffsetableNamedElement) iter.next();
@@ -746,7 +745,6 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 	 * @return
 	 */
 	protected IASTCompilationUnit getCompilationUnit() {
-		CompleteParseBaseTest.Scope s = (Scope) callback.getCompilationUnit();
 		IASTCompilationUnit compilationUnit = (IASTCompilationUnit) ((Scope) callback.getCompilationUnit()).getScope();
 		return compilationUnit;
 	}
@@ -826,8 +824,9 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 		
 		Iterator i = result.getNodes();
 		
-		IASTField bmember = (IASTField) i.next();
-		IASTField amember = (IASTField) i.next();
+		assertTrue( i.next() instanceof IASTField );
+		assertTrue( i.next() instanceof IASTField );
+		assertFalse( i.hasNext() );
 	}
 	
 }

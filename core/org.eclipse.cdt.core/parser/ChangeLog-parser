@@ -1,3 +1,6 @@
+2004-04-08 John Camelon
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=57800.
+
 2004-04-07 John Camelon
 	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=50808.
 	Provided partial fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=50807.

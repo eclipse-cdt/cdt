@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
 /**
@@ -67,9 +67,9 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#getParentClassSpecifier()
      */
-    public IASTClassSpecifier getParentClassSpecifier()
+    public IASTTypeSpecifier getParentClassSpecifier()
     {
-        return (IASTClassSpecifier)symbol.getASTExtension().getPrimaryDeclaration();
+        return (IASTTypeSpecifier)symbol.getASTExtension().getPrimaryDeclaration();
     }
 
     /* (non-Javadoc)

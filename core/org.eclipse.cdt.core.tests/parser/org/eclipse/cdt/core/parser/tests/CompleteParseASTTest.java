@@ -1411,4 +1411,21 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		
 		assertAllReferences( 2, createTaskList( new Task( outerS ), new Task( innerS ) ) );
 	}
+	
+	public void testBug57800() throws Exception
+	{
+		Writer writer= new StringWriter();
+		writer.write( "class G2 { int j; };");
+		writer.write( "typedef G2 AltG2;");
+		writer.write( "class AltG3 : AltG2 {  int x;};");
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		IASTClassSpecifier G2 = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTTypedefDeclaration AltG2 = (IASTTypedefDeclaration) i.next();
+		IASTClassSpecifier AltG3 = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		assertFalse( i.hasNext() );
+		Iterator baseClauses = AltG3.getBaseClauses();
+		IASTBaseSpecifier baseClause = (IASTBaseSpecifier) baseClauses.next();
+		assertFalse( baseClauses.hasNext() );
+		baseClause.getParentClassSpecifier();
+	}
 }

@@ -22,7 +22,7 @@ public interface IASTBaseSpecifier extends ISourceElementCallbackDelegate {
 	public ASTAccessVisibility getAccess(); 
 	public boolean isVirtual(); 
 	public String getParentClassName(); 
-	public IASTClassSpecifier getParentClassSpecifier() throws ASTNotImplementedException;
+	public IASTTypeSpecifier getParentClassSpecifier() throws ASTNotImplementedException;
 	public int                getNameOffset(); 
 
 }

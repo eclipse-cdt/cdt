@@ -1,3 +1,7 @@
+2004-04-08 John Camelon
+	Removed warnings from CompletionTests.
+	Added CompleteParseASTTest::testBug57800().
+
 2004-04-07 Andrew Niefer
 	added CompletionParseTest.testCompletionWithTemplateInstanceAsParent()
 

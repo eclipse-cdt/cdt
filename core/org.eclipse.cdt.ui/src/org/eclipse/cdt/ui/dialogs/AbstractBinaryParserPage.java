@@ -92,8 +92,8 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 			page.createControl(parent);
 			page.getControl().setVisible(true);
 			parent.layout(true);
-			setCurrentBinaryParserPage(page);
 		}
+		setCurrentBinaryParserPage(page);
 	}
 
 	public void setContainer(ICOptionContainer container) {

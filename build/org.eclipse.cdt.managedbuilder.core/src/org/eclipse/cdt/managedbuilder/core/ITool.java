@@ -24,27 +24,30 @@ public interface ITool extends IBuildObject {
 	public static final String OUTPUT_PREFIX = "outputPrefix";	//$NON-NLS-1$
 	public static final String OUTPUTS = "outputs";	//$NON-NLS-1$
 	public static final String SOURCES = "sources";	//$NON-NLS-1$
+	public static final String INTERFACE_EXTS = "headerExtensions";	//$NON-NLS-1$
 	public static final String WHITE_SPACE = " ";	//$NON-NLS-1$
 
 	/**
 	 * Return <code>true</code> if the receiver builds files with the
 	 * specified extension, else <code>false</code>.
 	 * 
-	 * @param extension
-	 * @return
+	 * @param extension file extension of the source
+	 * @return boolean
 	 */
 	public boolean buildsFileType(String extension);
 
 	/**
 	 * Get a particular option.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id unique identifier of the option to search for
+	 * @return IOption
 	 */
 	public IOption getOption(String id);
 	
 	/**
-	 * Returns the options that may be customized for this tool.
+	 * Answers the options that may be customized for this tool.
+	 * 
+	 * @return IOption[]
 	 */
 	public IOption[] getOptions();
 	
@@ -53,7 +56,7 @@ public interface ITool extends IBuildObject {
 	 * or <code>null</code> if the tool does not understand that extension.
 	 * 
 	 * @param inputExtension The extension of the source file. 
-	 * @return
+	 * @return String
 	 */
 	public String getOutputExtension(String inputExtension);
 	
@@ -62,27 +65,27 @@ public interface ITool extends IBuildObject {
 	 * control the name of the output artifact. For example, the GCC compile and 
 	 * linker use '-o', while the archiver does not. 
 	 * 
-	 * @return
+	 * @return String
 	 */
 	public String getOutputFlag();
 
 	/**
 	 * Answers the prefix that the tool should prepend to the name of the build artifact.
 	 * For example, a librarian usually prepends 'lib' to the target.a
-	 * @return
+	 * @return String
 	 */
 	public String getOutputPrefix();
 
 	/**
 	 * Return the target that defines this tool, if applicable
-	 * @return
-	 */
+	 * @return ITarget
+	 */ 
 	public ITarget getTarget();
 	
 	/**
 	 * Answers the command-line invocation defined for the receiver.
 	 * 
-	 * @return
+	 * @return String
 	 */
 	public String getToolCommand();
 	
@@ -90,7 +93,7 @@ public interface ITool extends IBuildObject {
 	 * Answers the additional command line arguments the user has specified for
 	 * the tool.
 	 * 
-	 * @return
+	 * @return String
 	 */
 	public String getToolFlags() throws BuildException ;
 	
@@ -99,18 +102,26 @@ public interface ITool extends IBuildObject {
 	 * These categories are organized into a tree.  This is the root
 	 * of that tree.
 	 * 
-	 * @return
+	 * @return IOptionCategory
 	 */
 	public IOptionCategory getTopOptionCategory();
 	
 	/**
+	 * Answers <code>true</code> if the tool considers the file extension to be 
+	 * one associated with a header file.
+	 * 
+	 * @param ext file extension of the source
+	 * @return boolean
+	 */
+	public boolean isHeaderFile(String ext);
+
+	/**
 	 * Answers <code>true</code> if the receiver builds a file with the extension specified
 	 * in the argument, else <code>false</code>.
 	 * 
-	 * @param outputExtension
-	 * @return
+	 * @param outputExtension extension of the file being produced by a tool
+	 * @return boolean
 	 */
 	public boolean producesFileType(String outputExtension);
 
-	
 }

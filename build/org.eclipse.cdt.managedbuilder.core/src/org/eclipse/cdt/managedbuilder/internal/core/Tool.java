@@ -36,16 +36,17 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private static final IOptionCategory[] EMPTY_CATEGORIES = new IOptionCategory[0];
 	private static final IOption[] EMPTY_OPTIONS = new IOption[0];
 
-	private ITarget target;
-	private List options;
-	private Map optionMap;
-	private List childOptionCategories;
 	private Map categoryMap;
+	private List childOptionCategories;
 	private String command;
 	private List inputExtensions;
+	private List interfaceExtensions;
+	private Map optionMap;
+	private List options;
 	private String outputExtension;
 	private String outputFlag;
 	private String outputPrefix;
+	private ITarget target;
 	
 	public Tool(Target target) {
 		this.target = target;
@@ -78,7 +79,17 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		while (tokenizer.hasMoreElements()) {
 			getInputExtensions().add(tokenizer.nextElement());
 		}
-				
+		
+		// Get the interface (header file) extensions
+		String headers = element.getAttribute(INTERFACE_EXTS);
+		if (headers == null) {
+			headers = new String();
+		}
+		tokenizer = new StringTokenizer(headers, DEFAULT_SEPARATOR);
+		while (tokenizer.hasMoreElements()) {
+			getInterfaceExtensions().add(tokenizer.nextElement());
+		}
+		
 		// Get the output extension
 		outputExtension = element.getAttribute(ITool.OUTPUTS) == null ? 
 			new String() : 
@@ -170,13 +181,23 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 
 	/* (non-Javadoc)
-	 * @return
+	 * Safe accessor method to retrieve the list of valid source extensions 
+	 * the receiver know how to build.
+	 * 
+	 * @return List
 	 */
 	private List getInputExtensions() {
 		if (inputExtensions == null) {
 			inputExtensions = new ArrayList();
 		}
 		return inputExtensions;
+	}
+	
+	private List getInterfaceExtensions() {
+		if (interfaceExtensions == null) {
+			interfaceExtensions = new ArrayList();
+		}
+		return interfaceExtensions;
 	}
 
 	/* (non-Javadoc)
@@ -348,6 +369,16 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			}
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isHeaderFile(java.lang.String)
+	 */
+	public boolean isHeaderFile(String ext) {
+		if (ext == null) {
+			return false;
+		}
+		return getInterfaceExtensions().contains(ext);
 	}
 
 	/* (non-Javadoc)

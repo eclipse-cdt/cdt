@@ -42,6 +42,7 @@
          <tool
                sources="foo,bar"
                name="Root Tool"
+               headerExtensions="baz"
                outputFlag="-r"
                outputs="toor"
                command="doIt"
@@ -160,6 +161,7 @@
          <tool
                sources="yarf"
                name="Sub Tool"
+               headerExtensions="arf,barf"
                outputs="bus"
                outputPrefix="lib"
                id="tool.sub">

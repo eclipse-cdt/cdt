@@ -677,7 +677,8 @@ public class ManagedBuildTests extends TestCase {
 		// Root Config
 		IConfiguration rootConfig = configs[0];
 		assertEquals("Root Config", rootConfig.getName());
-		// Tools
+
+		// Tool elements
 		tools = rootConfig.getTools();
 		assertEquals(1, tools.length);
 		assertEquals("Root Tool", tools[0].getName());
@@ -687,6 +688,9 @@ public class ManagedBuildTests extends TestCase {
 		assertTrue(tools[0].producesFileType("toor"));
 		assertEquals("doIt", tools[0].getToolCommand());
 		assertEquals("", tools[0].getOutputPrefix());
+		// The root tool defines one valid header file extension
+		assertTrue(rootTool.isHeaderFile("baz"));
+		assertTrue(tools[0].isHeaderFile("baz"));
 
 		// Partially Overriden Configuration
 		assertEquals("Root Override Config", configs[1].getName());
@@ -722,6 +726,7 @@ public class ManagedBuildTests extends TestCase {
 		assertTrue(tools[0].buildsFileType("foo"));
 		assertTrue(tools[0].buildsFileType("bar"));
 		assertTrue(tools[0].producesFileType("toor"));
+		assertTrue(tools[0].isHeaderFile("baz"));
 		assertEquals("doIt", tools[0].getToolCommand());
 		
 		// Completely Overridden configuration
@@ -813,6 +818,8 @@ public class ManagedBuildTests extends TestCase {
 		assertTrue(subTool.producesFileType("bus"));
 		assertEquals("", subTool.getToolCommand());
 		assertEquals("lib", subTool.getOutputPrefix());
+		assertTrue(subTool.isHeaderFile("arf"));
+		assertTrue(subTool.isHeaderFile("barf"));
 
 		// Do a sanity check on the options 
 		assertEquals("Include Paths", subOpts[0].getName());

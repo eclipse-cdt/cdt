@@ -539,6 +539,22 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return isDirty;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#isHeaderFile(java.lang.String)
+	 */
+	public boolean isHeaderFile(String ext) {
+		// Check to see if there is a rule to build a file with this extension
+		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		ITool[] tools = config.getTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			if (tool.isHeaderFile(ext)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Write the contents of the build model to the persistent store specified in the 
 	 * argument.

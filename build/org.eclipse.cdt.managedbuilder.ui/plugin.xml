@@ -79,6 +79,7 @@
          <tool
                sources="c,cc,cpp,cxx,C"
                name="%ToolName.compiler"
+               headerExtensions="h,H,hpp"
                outputFlag="-o"
                outputs="o"
                command="g++"
@@ -219,13 +220,29 @@
                   id="cygwin.preprocessor.undef.symbol">
             </option>
             <optionCategory
-                  owner="org.eclipse.cdt.build.tool.cygwin.compiler"
-                  name="%OptionCategory.General"
-                  id="cygwin.compiler.category.general">
+                  name="%OptionCategory.Dirs"
+                  id="cygwin.gnu.compiler.category.dirs"
+                  owner="org.eclipse.cdt.build.tool.cygwin.compiler">
+            </optionCategory>
+            <option
+                  name="Include Paths"
+                  category="cygwin.gnu.compiler.category.dirs"
+                  command="-I"
+                  valueType="includePath"
+                  id="cygwin.compiler.general.include.paths">
+               <listOptionValue
+                     value="C:\cygwin\usr\include\w32api"
+                     builtIn="true">
+               </listOptionValue>
+            </option>
+            <optionCategory
+                  name="%OptionCategory.Optimize"
+                  id="cygwin.gnu.compiler.category.optimization"
+                  owner="org.eclipse.cdt.build.tool.cygwin.compiler">
             </optionCategory>
             <option
                   name="Optimization Level"
-                  category="cygwin.compiler.category.general"
+                  category="cygwin.gnu.compiler.category.optimization"
                   valueType="enumerated"
                   id="cygwin.compiler.general.optimization.level">
                <enumeratedOptionValue
@@ -252,8 +269,19 @@
                </enumeratedOptionValue>
             </option>
             <option
+                  category="cygwin.gnu.compiler.category.optimization"
+                  name="Other optimization flags"
+                  id="cygwin.compiler.optimization.flags"
+                  valueType="string">
+            </option>
+            <optionCategory
+                  name="%OptionCategory.Debug"
+                  id="cygwin.gnu.compiler.category.debug"
+                  owner="org.eclipse.cdt.build.tool.cygwin.compiler">
+            </optionCategory>
+            <option
                   name="Debug Level"
-                  category="cygwin.compiler.category.general"
+                  category="cygwin.gnu.compiler.category.debug"
                   valueType="enumerated"
                   id="cygwin.compiler.debugging.level">
                <enumeratedOptionValue
@@ -280,15 +308,26 @@
                </enumeratedOptionValue>
             </option>
             <option
-                  name="Include Paths"
-                  category="cygwin.compiler.category.general"
-                  command="-I"
-                  valueType="includePath"
-                  id="cygwin.compiler.general.include.paths">
-               <listOptionValue
-                     value="C:\cygwin\usr\include\w32api"
-                     builtIn="true">
-               </listOptionValue>
+                  category="cygwin.gnu.compiler.category.debug"
+                  name="Other debugging flags"
+                  id="cygwin.gnu.compiler.debugging.other"
+                  valueType="string">
+            </option>
+            <option
+                  category="cygwin.gnu.compiler.category.debug"
+                  id="cygwin.gnu.compiler.debugging.prof"
+                  command="-p"
+                  name="Generate prof information (-p)"
+                  defaultValue="false"
+                  valueType="boolean">
+            </option>
+            <option
+                  category="cygwin.gnu.compiler.category.debug"
+                  id="cygwin.gnu.compiler.debugging.gprof"
+                  command="-pg"
+                  name="Generate gprof information (-pg)"
+                  defaultValue="false"
+                  valueType="boolean">
             </option>
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.compiler"
@@ -783,6 +822,7 @@
          <tool
                sources="c,C,cc,cxx,cpp"
                name="%ToolName.compiler"
+               headerExtensions="h,H,hpp"
                outputFlag="-o"
                outputs="o"
                command="g++"
@@ -1403,6 +1443,7 @@
          <tool
                sources="c,C,cc,cxx,cpp"
                name="%ToolName.compiler"
+               headerExtensions="h,H,hpp"
                outputFlag="-o"
                outputs="o"
                command="g++"

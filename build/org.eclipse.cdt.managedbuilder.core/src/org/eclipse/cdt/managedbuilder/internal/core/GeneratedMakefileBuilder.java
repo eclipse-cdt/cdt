@@ -36,6 +36,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -127,7 +128,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		for (int i = 0; i < deps.length; i++) {
 			IProject project = deps[i];
 			IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(project);
-			depInfo.setDirty(false);
+			// May not be a managed project 
+			if (depInfo != null) {
+				depInfo.setDirty(false);
+			}
 		} 
 		
 		// Ask build mechanism to compute deltas for project dependencies next time
@@ -183,11 +187,14 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			// Throw the exception back to the builder
 			throw e;
 		}
-		IPath topBuildDir = generator.getTopBuildDir();
 		
 		// Now call make
-		invokeMake(true, topBuildDir.removeFirstSegments(1), info, monitor);
-		monitor.worked(1);		
+		IPath topBuildDir = generator.getTopBuildDir();
+		if (topBuildDir != null) {
+			invokeMake(true, topBuildDir.removeFirstSegments(1), info, monitor);
+		} else {
+			monitor.done();
+		}
 	}
 
 	/* (non-javadoc)
@@ -280,8 +287,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		// Run the build
 		IPath buildDir = new Path(info.getConfigurationName());
 		invokeMake(false, buildDir, info, monitor);
-		
-		monitor.worked(1);		
 	}
 
 	protected void invokeMake(boolean fullBuild, IPath buildDir, IManagedBuildInfo info, IProgressMonitor monitor) {
@@ -292,6 +297,21 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 
 		try {
+			// Figure out the working directory for the build and make sure there is a makefile there 
+			IPath workingDirectory = getWorkingDirectory().append(buildDir);
+			IWorkspace workspace = currentProject.getWorkspace();
+			if (workspace == null) {
+				return;
+			}
+			IWorkspaceRoot root = workspace.getRoot();
+			if (root == null) {
+				return;
+			}
+			IPath makefile = workingDirectory.addTrailingSeparator().append(MakefileGenerator.MAKEFILE_NAME);
+			if (root.getFileForLocation(makefile) == null) {
+				return; 
+			}
+
 			// Flag to the user that make is about to be called
 			IPath makeCommand = new Path(info.getMakeCommand()); 
 			if (makeCommand != null) {
@@ -313,8 +333,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					removeAllMarkers(project);
 				} 
 
-				IPath workingDirectory = getWorkingDirectory().append(buildDir);
-	
 				// Get the arguments to be passed to make from build model
 				ArrayList makeArgs = new ArrayList();
 				String args = info.getMakeArguments();

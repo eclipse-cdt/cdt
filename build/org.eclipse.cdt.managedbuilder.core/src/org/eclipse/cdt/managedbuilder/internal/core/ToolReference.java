@@ -257,6 +257,13 @@ public class ToolReference implements ITool {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isHeaderFile(java.lang.String)
+	 */
+	public boolean isHeaderFile(String ext) {
+		return parent.isHeaderFile(ext);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
 	 */
 	public boolean producesFileType(String outputExtension) {

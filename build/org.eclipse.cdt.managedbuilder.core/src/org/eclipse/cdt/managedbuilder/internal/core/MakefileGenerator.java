@@ -44,6 +44,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 
@@ -61,10 +62,10 @@ public class MakefileGenerator {
 
 	// String constants for makefile contents
 	protected static final String COLON = ":";
-	protected static final String DEPFILE_NAME = "module.dep";	//$NON-NLS-1$
+	protected static final String DEPFILE_NAME = "subdir.dep";	//$NON-NLS-1$
 	protected static final String DOT = ".";
 	protected static final String MAKEFILE_NAME = "makefile";	//$NON-NLS-1$
-	protected static final String MODFILE_NAME = "module.mk";	//$NON-NLS-1$
+	protected static final String MODFILE_NAME = "subdir.mk";	//$NON-NLS-1$
 	protected static final String LINEBREAK = "\\";
 	protected static final String NEWLINE = System.getProperty("line.separator");
 	protected static final String SEMI_COLON = ";";
@@ -81,10 +82,9 @@ public class MakefileGenerator {
 	protected IProject project;
 	protected List ruleList;
 	protected IPath topBuildDir;
-	
 	private String target;
-	
 	private String extension;
+
 	/**
 	 * This class is used to recursively walk the project and determine which
 	 * modules contribute buildable source files. 
@@ -142,6 +142,61 @@ public class MakefileGenerator {
 			this.info = info;
 		}
 
+		/* (non-javadoc)
+		 * Answers a list of resource names in the workspace that depend on the resource 
+		 * specified in the argument.
+		 * 
+		 * @param resource the root of the dependency tree
+		 * @return IResource[]
+		 */
+		private IResource[] findDependencies(IResource resource) {
+			PathCollector pathCollector = new PathCollector();
+			ICSearchScope scope = SearchEngine.createWorkspaceScope();
+			CSearchPattern pattern = CSearchPattern.createPattern(resource.getLocation().toOSString(), ICSearchConstants.INCLUDE, ICSearchConstants.REFERENCES, ICSearchConstants.EXACT_MATCH, true);
+			IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+			indexManager.performConcurrentJob(
+				new PatternSearchJob(
+					(CSearchPattern) pattern,
+					scope,
+					pathCollector, 
+					indexManager),
+				ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+				null);
+			
+			// We will get back an array of resource names relative to the workspace
+			String[] deps = pathCollector.getPaths();
+			
+			// Convert them to something useful
+			List depList = new ArrayList();
+			IResource res = null;
+			IWorkspaceRoot root = null;
+			if (generator.project != null) { 
+				root = generator.project.getWorkspace().getRoot();
+			}
+			for (int index = 0; index < deps.length; ++index) {
+				res = root.findMember(deps[index]);
+				if (res != null) {
+					depList.add(res); 
+				}
+			}
+			
+			return (IResource[]) depList.toArray(new IResource[depList.size()]);
+		}
+		
+		private void handleHeaderDependency(IResource resource, boolean moved) {
+			// If this is a move and the resource is external to the project, touch that resource
+			if (resource.getProject().equals(generator.project)) {
+				generator.appendModifiedSubdirectory(resource);
+			} else {
+				if (moved) {
+					try {
+						resource.touch(new NullProgressMonitor());
+					} catch (CoreException e) {
+					}
+				}
+			}
+		}
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
@@ -153,40 +208,53 @@ public class MakefileGenerator {
 			// What kind of resource change has occurred
 			if (resource.getType() == IResource.FILE) {
 				String ext = resource.getFileExtension();
+				boolean moved = false;
 				switch (delta.getKind()) {
 					case IResourceDelta.ADDED:
-					case IResourceDelta.REMOVED:
-						// Add the container of the resource and any resources that depend on it
+						moved = delta.getFlags() == IResourceDelta.MOVED_TO;
+					if (!generator.isGeneratedResource(resource)) {
+						// This is a source file so just add its container
 						if (info.buildsFileType(ext)) {
-							if (!generator.isGeneratedResource(resource)) {
-								// Here's the container
+							generator.appendModifiedSubdirectory(resource);
+						} else if (info.isHeaderFile(ext)) {
+							// Add the container of the resource and any resources that depend on it
+							generator.appendModifiedSubdirectory(resource);
+							IResource[] deps = findDependencies(resource);
+							for (int i = 0; i < deps.length; ++i){
+								handleHeaderDependency(deps[i], moved);
+							}
+						}
+					}
+					break;
+					case IResourceDelta.REMOVED:
+						moved = delta.getFlags() == IResourceDelta.MOVED_FROM; 
+						if (!generator.isGeneratedResource(resource)) {
+							// This is a source file so just add its container
+							if (info.buildsFileType(ext)) {
 								generator.appendModifiedSubdirectory(resource);
-								// and all the dependents
-								PathCollector pathCollector = new PathCollector();
-								ICSearchScope scope = SearchEngine.createWorkspaceScope();
-								CSearchPattern pattern = CSearchPattern.createPattern(resource.getLocation().toOSString(),ICSearchConstants.INCLUDE, ICSearchConstants.REFERENCES,ICSearchConstants.EXACT_MATCH,true);
-								IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-							    indexManager.performConcurrentJob( 
-								  new PatternSearchJob(
-									  (CSearchPattern) pattern,
-									  scope,
-									  pathCollector,
-									  indexManager 
-								  ),
-								  ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-								  null );
-								 String[] deps = pathCollector.getPaths();
-								 if (deps.length > 0 ) {
-								 	for (int i=0; i<deps.length; i++){
-										generator.appendModifiedSubdirectory(resource);
-								 	}
+							} else if (info.isHeaderFile(ext)) {
+								// Add the container of the resource and any resources that depend on it
+								generator.appendModifiedSubdirectory(resource);
+								IResource[] deps = findDependencies(resource);
+								for (int i = 0; i < deps.length; ++i){
+									handleHeaderDependency(deps[i], moved);
 								}
 							}
 						}
 						break;
 					case IResourceDelta.CHANGED:
-						if (info.buildsFileType(ext)) {
-							keepLooking = true;
+						if (!generator.isGeneratedResource(resource)) {
+							if (info.buildsFileType(ext)) {
+								keepLooking = true;
+							} else if (info.isHeaderFile(ext)) {
+								// Add the container of the resource and any resources that depend on it
+								generator.appendModifiedSubdirectory(resource);
+								IResource[] deps= findDependencies(resource);
+								for (int i = 0; i < deps.length; ++i){
+									handleHeaderDependency(deps[i], moved);
+								}
+								// That does it for this directory, so don't bother to keep looking
+							}
 						}
 						break;
 					default:
@@ -360,7 +428,7 @@ public class MakefileGenerator {
 		// Now add the makefile instruction to include all the subdirectory makefile fragments
 		buffer.append(NEWLINE);
 		buffer.append(ManagedBuilderCorePlugin.getResourceString(MOD_INCL) + NEWLINE);
-		buffer.append("-include ${patsubst %, %/module.mk, $(SUBDIRS)}" + NEWLINE);
+		buffer.append("-include ${patsubst %, %/subdir.mk, $(SUBDIRS)}" + NEWLINE);
 
 		buffer.append(NEWLINE + NEWLINE);
 		return buffer;
@@ -521,7 +589,7 @@ public class MakefileGenerator {
 		buffer.append(".PHONY: all clean deps" + NEWLINE + NEWLINE);
 		
 		buffer.append(ManagedBuilderCorePlugin.getResourceString(DEP_INCL) + NEWLINE);
-		buffer.append("-include ${patsubst %, %/module.dep, $(SUBDIRS)}" + NEWLINE);
+		buffer.append("-include ${patsubst %, %/subdir.dep, $(SUBDIRS)}" + NEWLINE);
 		return buffer;
 	}
 
@@ -581,7 +649,7 @@ public class MakefileGenerator {
 	 * Adds the container of the argument to the list of folders in the project that
 	 * contribute source files to the build. The resource visitor has already established 
 	 * that the build model knows how to build the files. It has also checked that
-	 * the resouce is not generated as part of the build.
+	 * the resource is not generated as part of the build.
 	 *  
 	 * @param resource
 	 */
@@ -590,6 +658,7 @@ public class MakefileGenerator {
 		if (!getSubdirList().contains(container)) {
 			getSubdirList().add(container);		
 		}
+			
 	}
 	
 	/**
@@ -788,7 +857,7 @@ public class MakefileGenerator {
 	public IPath getTopBuildDir() {
 		return topBuildDir;
 	}
-
+	
 	/**
 	 * Answers <code>true</code> if the argument is found in a generated container 
 	 * @param resource
@@ -870,9 +939,14 @@ public class MakefileGenerator {
 		// Visit the resources in the project
 		ResourceProxyVisitor visitor = new ResourceProxyVisitor(this, info);
 		project.accept(visitor, IResource.NONE);
-
+		
 		// See if the user has cancelled the build
 		checkCancel();
+
+		// Populate the makefile if any source files have been found in the project
+		if (getSubdirList().isEmpty()) {
+			return;
+		}
 
 		// Create the top-level directory for the build output
 		topBuildDir = createDirectory(info.getConfigurationName());
@@ -881,7 +955,6 @@ public class MakefileGenerator {
 		IPath makefilePath = topBuildDir.addTrailingSeparator().append(MAKEFILE_NAME);
 		IFile makefileHandle = createFile(makefilePath);
 		
-		// Populate the makefile
 		populateTopMakefile(makefileHandle, true);
 		checkCancel();
 		

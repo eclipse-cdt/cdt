@@ -1,3 +1,31 @@
+2003-09-30 Sean Evoy
+	Fix for bug 41826.
+	
+	Finished the use case for changing header files and triggering a build. I had 
+	to add a new attribute to the build model schema to allow a build information 
+	client to determine that a file is considered a header file.
+	* schema/ManagedBuildTools.exsd
+	
+	The ITool, and its implementors now have a method to test if an extension is 
+	considered to belong to a header file. The Tool also pays attention to the new 
+	attribute when it reads itself in from the plugin file.
+	* src/org/eclipse/cdt/managedbuilder/core/ITool.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ToolReference.java
+
+	There is a method for clients of this information on the BuildInfo interface and 
+	its implementor.
+	* src/org/eclipse/cdt/managedbuilder/core/IManagedBuildInfo.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ManagedBuildInfo.java
+	
+	The builder had to be tweaked in order to behave correctly on a build of an 
+	empty project or non-managed projects.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/GeneratedMakefileBuilder.java
+
+	The makefile generator had to be tweaked to properly add folders that are effected 
+	by header file changes.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+
 2003-09-26 Sean Evoy
 	A partial implementation for bug 41826. This patch contains the logic to properly 
 	respond in the face of the following project changes:

@@ -1,3 +1,11 @@
+2003-09-30 Sean Evoy
+	Fix for bug 41826.
+	Updated the plugin file so that tool specifications have the new attribute 
+	for header files. The test for the managed builder now insure that those 
+	values are properly read.
+	*  plugin.xml
+	*  build/org/eclipse/cdt/core/build/managed/tests/ManagedBuildTests.java
+
 2003-09-30 John Camelon
 	Updated CompleteParseASTTest::testBug42872()
 	Moved FailedCompleteParseASTTest::testBug43503() to CompleteParseASTTest::testBug43503A().  

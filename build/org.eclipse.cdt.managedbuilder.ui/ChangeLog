@@ -1,3 +1,10 @@
+2003-09-30 Sean Evoy
+	Fix for bug 41826.
+
+	Updated the tool specifications for Win32, Linux, and Solaris so that header 
+	file extension info is available.
+	* plugin.xml
+
 2003-09-25 Sean Evoy
 	For bug (really an enhancement request)43756, I added the word default to a 
 	widget label to try and make it clear that a new configuration will be based 

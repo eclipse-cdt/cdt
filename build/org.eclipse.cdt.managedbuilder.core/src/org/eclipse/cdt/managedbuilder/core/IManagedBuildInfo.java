@@ -168,8 +168,8 @@ public interface IManagedBuildInfo {
 	 * Returns a <code>String</code> containing the command-line invocation 
 	 * for the tool associated with the source extension.
 	 * 
-	 * @param extension
-	 * @return
+	 * @param extension the file extension of the file to be built
+	 * @return String
 	 */
 	public String getToolForSource(String extension);
 
@@ -183,7 +183,10 @@ public interface IManagedBuildInfo {
 	public String getToolForTarget(String extension);
 	
 	/**
-	 * @param extension
+	 * Answers a <code>String</code> array containing the contents of the 
+	 * user objects option, if one is defined for the target.
+	 * 
+	 * @param extension the file ecxtension of the build target
 	 * @return
 	 */
 	public String[] getUserObjectsForTarget(String extension);
@@ -191,10 +194,19 @@ public interface IManagedBuildInfo {
 	/**
 	 * Answers true if the build model has been changed by the user.
 	 * 
-	 * @return
+	 * @return boolean
 	 */
 	public boolean isDirty();
 	
+	/**
+	 * Answers <code>true</code> if the extension matches one of the special 
+	 * file extensions the tools for the target consider to be a header file. 
+	 * 
+	 * @param ext the file extension of the resource
+	 * @return boolean
+	 */
+	public boolean isHeaderFile(String ext);
+
 	/**
 	 * Set the dirty flag for the build model to the value of the argument.
 	 * 
@@ -216,5 +228,4 @@ public interface IManagedBuildInfo {
 	 * @param target
 	 */
 	public void setDefaultTarget(ITarget target);
-
 }

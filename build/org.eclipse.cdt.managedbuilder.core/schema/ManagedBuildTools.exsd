@@ -104,11 +104,18 @@
          <attribute name="dependencyCalculator" type="string">
             <annotation>
                <documentation>
-                  This is an optional field that specifies the class that provides the dependency calculation for a given tool.
+                  This is an optional field that specifies the class that provides the dependency calculation for a given tool. This field is unused in CDT 1.2.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.internal.core.sourcedependency.ISourceDependency"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="headerExtensions" type="string">
+            <annotation>
+               <documentation>
+                  A comma-separated list of file extensions that are used for header files. Since many other files depend on the interfaces defined in header files, the build system needs to be able to determine that a header file has changed to properly rebuild its dependents.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

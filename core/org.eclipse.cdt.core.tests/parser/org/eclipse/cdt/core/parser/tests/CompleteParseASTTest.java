@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
 import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
@@ -112,7 +113,7 @@ public class CompleteParseASTTest extends TestCase
          */
         public void acceptVariable(IASTVariable variable)
         {
-        	
+        	getCurrentScope().addDeclaration( variable );
         }
 
         /* (non-Javadoc)
@@ -612,5 +613,52 @@ public class CompleteParseASTTest extends TestCase
 		assertEquals( callback.getReferences().size(), 2 );
     }
     
+    public void testSimpleVariable() throws Exception
+    {
+    	Iterator declarations = parse( "int x;").getDeclarations();
+    	IASTVariable v = (IASTVariable)declarations.next();
+    	assertEquals( v.getName(), "x");
+    	assertEquals( ((IASTSimpleTypeSpecifier)v.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.INT ); 
+    }
     
+	public void testSimpleClassReferenceVariable() throws Exception
+	{
+		Iterator declarations = parse( "class A { }; A x;").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		IASTVariable v = (IASTVariable)declarations.next();
+		assertEquals( v.getName(), "x");
+		assertEquals( ((IASTSimpleTypeSpecifier)v.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), classA ); 
+	}
+    
+	public void testNestedClassReferenceVariable() throws Exception
+	{
+		Iterator declarations = parse( "namespace N { class A { }; } N::A x;").getDeclarations();
+		IASTNamespaceDefinition namespace = (IASTNamespaceDefinition)declarations.next();
+		Iterator iter = getDeclarations( namespace );
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)iter.next()).getTypeSpecifier();
+		IASTVariable v = (IASTVariable)declarations.next();
+		assertEquals( v.getName(), "x");
+		assertEquals( ((IASTSimpleTypeSpecifier)v.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), classA );
+		assertEquals( callback.getReferences().size(), 2 ); 
+	}
+	
+	public void testMultipleDeclaratorsVariable() throws Exception
+	{
+		Iterator declarations = parse( "class A { }; A x, y, z;").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		IASTVariable v = (IASTVariable)declarations.next();
+		assertEquals( v.getName(), "x");
+		assertEquals( ((IASTSimpleTypeSpecifier)v.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), classA );
+		assertEquals( callback.getReferences().size(), 3 );  
+	}
+	
+	public void testSimpleField() throws Exception
+	{
+		Iterator declarations = parse( "class A { double x; };").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		Iterator fields =getDeclarations(classA);
+		IASTField f = (IASTField)fields.next(); 
+		assertEquals( f.getName(), "x" );
+		assertEquals( ((IASTSimpleTypeSpecifier)f.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.DOUBLE ); 
+	}
 }

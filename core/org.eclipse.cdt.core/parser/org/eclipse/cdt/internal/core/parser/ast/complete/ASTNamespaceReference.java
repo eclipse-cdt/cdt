@@ -10,10 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
-import org.eclipse.cdt.core.parser.ast.IASTScopedElement;
 
 /**
  * @author jcamelon
@@ -39,7 +39,7 @@ public class ASTNamespaceReference
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTReference#getReferencedElement()
      */
-    public IASTScopedElement getReferencedElement()
+    public ISourceElementCallbackDelegate getReferencedElement()
     {
         return reference;
     }

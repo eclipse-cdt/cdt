@@ -10,14 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
-import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
-
 /**
  * @author jcamelon
  *
  */
-public interface IASTEnumerator extends IASTOffsetableNamedElement, ISourceElementCallbackDelegate  {
-
-	public IASTEnumerationSpecifier getOwnerEnumerationSpecifier(); 
-	public IASTExpression getInitialValue(); 
+public interface IASTEnumeratorReference extends IASTReference
+{
 }

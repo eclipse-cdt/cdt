@@ -48,5 +48,7 @@ public interface IASTSimpleTypeSpecifier extends IASTTypeSpecifier
 	public boolean    isShort(); 
 	public boolean    isSigned(); 
 	public boolean    isUnsigned();
-	public boolean    isTypename();  
+	public boolean    isTypename();
+	
+	public IASTTypeSpecifier getTypeSpecifier() throws ASTNotImplementedException;   
 }

@@ -14,7 +14,9 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 
 /**
  * @author jcamelon
@@ -149,5 +151,13 @@ public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
     public boolean isTypename()
     {
         return isTypename;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#getTypeSpecifier()
+     */
+    public IASTTypeSpecifier getTypeSpecifier() throws ASTNotImplementedException
+    {
+    	throw new ASTNotImplementedException(); 
     }
 }

@@ -19,7 +19,6 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfo;
 
 /**
  * @author aniefer

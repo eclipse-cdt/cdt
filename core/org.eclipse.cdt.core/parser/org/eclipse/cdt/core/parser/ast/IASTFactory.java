@@ -116,13 +116,13 @@ public interface IASTFactory
         ITokenDuple duple,
         IASTExpression expressionList);
     public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(
+        IASTScope scope,
         IASTSimpleTypeSpecifier.Type kind,
         ITokenDuple typeName,
         boolean isShort,
         boolean isLong,
         boolean isSigned,
-        boolean isUnsigned,
-        boolean isTypename);
+        boolean isUnsigned, boolean isTypename) throws ASTSemanticException;
     public IASTFunction createFunction(
         IASTScope scope,
         String name,

@@ -21,6 +21,6 @@ public interface IASTReference extends ISourceElementCallbackDelegate
 
 	public int                getOffset();
 	public String			  getName(); 
-	public IASTScopedElement  getReferencedElement(); 
+	public ISourceElementCallbackDelegate  getReferencedElement(); 
 	
 }

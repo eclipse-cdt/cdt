@@ -14,12 +14,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfo;
 /**
  * @author jcamelon
  *
  */
-public interface ISymbol {
+public interface ISymbol extends Cloneable {
 
 	public ParserSymbolTable getSymbolTable();
 	
@@ -78,4 +77,9 @@ public interface ISymbol {
 	}
 	*/
 	public int getDepth();
+
+    /**
+     * @param name
+     */
+    public void setName(String name);
 }

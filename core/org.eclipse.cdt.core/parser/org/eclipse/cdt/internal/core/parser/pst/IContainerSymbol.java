@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfo;
 
 /**
  * @author aniefer

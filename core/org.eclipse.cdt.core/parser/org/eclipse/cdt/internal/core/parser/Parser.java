@@ -428,7 +428,7 @@ public class Parser implements IParser
         
         try
         {
-            List parms = templateParameterList();
+            List parms = templateParameterList(scope);
             consume(IToken.tGT);
             IASTTemplateDeclaration templateDecl = astFactory.createTemplateDeclaration( scope, parms, exported, firstToken.getOffset() );
             templateDecl.enterScope( requestor );
@@ -466,7 +466,7 @@ public class Parser implements IParser
      * @param templateDeclaration		Callback's templateDeclaration which serves as a scope to this list.  
      * @throws Backtrack				request for a backtrack
      */
-    protected List templateParameterList()
+    protected List templateParameterList(IASTScope scope)
         throws Backtrack
     {
         // if we have gotten this far then we have a true template-declaration
@@ -518,7 +518,7 @@ public class Parser implements IParser
                 IToken kind = consume(IToken.t_template);
                 consume(IToken.tLT);
 
-                List subResult = templateParameterList();
+                List subResult = templateParameterList(scope);
                 consume(IToken.tGT);
                 consume(IToken.t_class);
                 IToken optionalId = null;
@@ -551,7 +551,7 @@ public class Parser implements IParser
             else
             {
                 ParameterCollection c = new ParameterCollection();
-                parameterDeclaration(c);
+                parameterDeclaration(c, scope);
                 DeclarationWrapper wrapper =
                     (DeclarationWrapper)c.getParameters().get(0);
                 Declarator declarator =
@@ -764,16 +764,21 @@ public class Parser implements IParser
             new DeclarationWrapper(scope, LA(1).getOffset(), ownerTemplate);
 
         declSpecifierSeq(false, tryConstructor, sdw);
-        if (sdw.getTypeSpecifier() == null )
-            sdw.setTypeSpecifier(
-                astFactory.createSimpleTypeSpecifier(
-                    sdw.getSimpleType(),
-                    sdw.getName(),
-                    sdw.isShort(),
-                    sdw.isLong(),
-                    sdw.isSigned(),
-                    sdw.isUnsigned(),
-                    sdw.isTypeNamed()));
+        try
+        {       
+	        if (sdw.getTypeSpecifier() == null )
+	            sdw.setTypeSpecifier(
+	                astFactory.createSimpleTypeSpecifier(
+	                    scope,
+	                    sdw.getSimpleType(),
+	                    sdw.getName(),
+	                    sdw.isShort(),
+	                    sdw.isLong(),
+	                    sdw.isSigned(),
+	                    sdw.isUnsigned(), sdw.isTypeNamed()));
+        } catch( ASTSemanticException se )
+        {
+        }
         
         Declarator declarator = null;
         if (LT(1) != IToken.tSEMI)
@@ -947,7 +952,7 @@ public class Parser implements IParser
      * @throws Backtrack		request a backtrack
      */
     protected void parameterDeclaration(
-        IParameterCollection collection)
+        IParameterCollection collection, IASTScope scope)
         throws Backtrack
     {
         IToken current = LA(1);
@@ -955,18 +960,23 @@ public class Parser implements IParser
         DeclarationWrapper sdw =
             new DeclarationWrapper(null, current.getOffset(), null);
         declSpecifierSeq(true, false, sdw);
-        if (sdw.getTypeSpecifier() == null
-            && sdw.getSimpleType()
-                != IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
-            sdw.setTypeSpecifier(
-                astFactory.createSimpleTypeSpecifier(
-                    sdw.getSimpleType(),
-                    sdw.getName(),
-                    sdw.isShort(),
-                    sdw.isLong(),
-                    sdw.isSigned(),
-                    sdw.isUnsigned(),
-                    sdw.isTypeNamed()));
+        try
+        {
+	        if (sdw.getTypeSpecifier() == null
+	            && sdw.getSimpleType()
+	                != IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
+	            sdw.setTypeSpecifier(
+	                astFactory.createSimpleTypeSpecifier(
+	                    scope,
+	                    sdw.getSimpleType(),
+	                    sdw.getName(),
+	                    sdw.isShort(),
+	                    sdw.isLong(),
+	                    sdw.isSigned(),
+	                    sdw.isUnsigned(), sdw.isTypeNamed()));
+        }
+        catch( ASTSemanticException se ) { }
+        
         if (LT(1) != IToken.tSEMI)
             try
             {
@@ -1618,7 +1628,7 @@ public class Parser implements IParser
         DeclarationWrapper sdw)
         throws Backtrack
     {
-        Declarator d = declarator(sdw);
+        Declarator d = declarator(sdw, sdw.getScope());
         // handle = initializerClause
         if (LT(1) == IToken.tASSIGN)
         {
@@ -1713,7 +1723,7 @@ public class Parser implements IParser
      * @throws Backtrack	request a backtrack
      */
     protected Declarator declarator(
-        IDeclaratorOwner owner)
+        IDeclaratorOwner owner, IASTScope scope)
         throws Backtrack
     {
         Declarator d = null;
@@ -1736,7 +1746,7 @@ public class Parser implements IParser
             if (LT(1) == IToken.tLPAREN)
             {
                 consume();
-                declarator(d);
+                declarator(d, scope);
                 consume(IToken.tRPAREN);
             }
             else if (LT(1) == IToken.t_operator)
@@ -1806,7 +1816,7 @@ public class Parser implements IParser
                                     default :
                                         if (seenParameter)
                                             throw backtrack;
-                                        parameterDeclaration(d);
+                                        parameterDeclaration(d, scope);
                                         seenParameter = true;
                                 }
                             }

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
@@ -106,5 +107,23 @@ public class ASTEnumerator
     public IASTExpression getInitialValue()
     {
         return initialValue;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void acceptElement(ISourceElementRequestor requestor)
+    {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void enterScope(ISourceElementRequestor requestor)
+    {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void exitScope(ISourceElementRequestor requestor)
+    {
     }
 }

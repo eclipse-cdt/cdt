@@ -15,6 +15,7 @@ import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -167,6 +168,9 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 				//fInput = new CFileElementWorkingCopy((IFileEditorInput)editorInput, provider);
 				IWorkingCopyManager wcManager = CUIPlugin.getDefault().getWorkingCopyManager();
 				fInput = (WorkingCopy)wcManager.getWorkingCopy(editorInput);
+				if (fInput == null) {
+					fInput = new CFileElementWorkingCopy((IFileEditorInput)editorInput, provider);
+				}
 			} else if (editorInput instanceof IStorageEditorInput){
 				// CHECKPOINT: do we create a CFileElementWorkingCopy or just a working copy for the IStorageEditorInput?
 				//fInput = ((CUIPlugin.ElementFactory)plugin.getCCore()).createWorkingCopy((IStorageEditorInput)editorInput, provider);

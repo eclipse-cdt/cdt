@@ -200,7 +200,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		
 		setEditorContextMenuId("#CEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#CEditorRulerContext"); //$NON-NLS-1$
-		//setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
+		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 		
 		fCEditorErrorTickUpdater= new CEditorErrorTickUpdater(this);
 	}

@@ -42,7 +42,7 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 
-public class CDocumentProvider extends FileDocumentProvider implements IWorkingCopyManager {
+public class CDocumentProvider extends FileDocumentProvider {
 
 	static private class RegisteredReplace {
 		IDocumentListener fOwner;
@@ -393,5 +393,19 @@ public class CDocumentProvider extends FileDocumentProvider implements IWorkingC
 		}
 	}
 
+	/**
+	 * 
+	 */
+	public void shutdown() {
+		// TODO Auto-generated method stub	
+	}
+
+	/**
+	 * @param input
+	 * @return
+	 */
+	public boolean isConnected(IEditorInput input) {
+		return getElementInfo(input) != null;
+	}
 	
 }

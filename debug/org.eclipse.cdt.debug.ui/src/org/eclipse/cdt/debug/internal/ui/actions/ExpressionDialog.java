@@ -85,6 +85,7 @@ public class ExpressionDialog extends Dialog
 	private void initializeDataWidgets()
 	{
 		fTextExpression.setText( fExpression );
+		fTextExpression.setSelection( fExpression.length() );
 		fTextExpression.selectAll();
 		setOkButtonState();
 	}

@@ -438,7 +438,7 @@
                name="%Option.Posix.UndefSym"
                id="gnu.windres.option.preprocessor.undefined.symbols"/>
       </tool-->
-      <tool
+      <!--tool
             command="as"
             sources="s,S"
             outputs="o"
@@ -478,7 +478,7 @@
                category="gnu.asm.category.general"
                name="%Option.Gnu.Assembler.version"
                id="gnu.both.asm.option.version"/>
-      </tool>
+      </tool-->
       <target
             name="%TargetName.gnu"
             id="cdt.managedbuild.target.gnu"
@@ -953,7 +953,6 @@
                   valueType="boolean">
             </option>
          </tool>
-         <toolReference id="cdt.managedbuild.tool.gnu.assembler"/>
       </target>
       <target
             isAbstract="false"

@@ -19,10 +19,15 @@ public class ParserSymbolTableException extends Exception {
 
 	/**
 	 * Constructor for ParserSymbolTableException.
-	 * @param arg0
+	 * @param int r: reason
 	 */
-	public ParserSymbolTableException( String s ) {
-		super( s );
+	public ParserSymbolTableException( int r ) {
+		reason = r;
 	}
 
+	public static final int r_Unspecified   = -1;
+	public static final int r_AmbiguousName =  0;
+	public static final int r_BadTypeInfo   =  1;
+	
+	public int reason = -1;
 }

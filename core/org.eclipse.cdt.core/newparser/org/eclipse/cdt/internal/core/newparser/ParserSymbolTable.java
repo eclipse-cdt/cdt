@@ -35,9 +35,13 @@ public class ParserSymbolTable {
 	}
 	
 	public Declaration Lookup( String name ) throws ParserSymbolTableException {
-		return ( (Declaration) _contextStack.peek() ).Lookup( name );
+		return ( (Declaration) _contextStack.peek() ).Lookup( -1, name );
 	}
-	 
+	
+	public Declaration ElaboratedLookup( int type, String name ) throws ParserSymbolTableException{
+		return ( (Declaration) _contextStack.peek() ).Lookup( type, name );
+	}
+	
 	public void addDeclaration( Declaration obj ){
 		((Declaration) _contextStack.peek() ).addDeclaration( obj );
 	}

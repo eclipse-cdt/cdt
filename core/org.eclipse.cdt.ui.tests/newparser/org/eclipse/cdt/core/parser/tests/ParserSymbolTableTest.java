@@ -94,6 +94,21 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( pushing, popped );
 		assertEquals( table.peek(), table.getCompilationUnit() );
 	}
+
+	public void testSimpleSetGetObject() throws Exception{
+		newTable();
+		
+		Declaration decl = new Declaration( "x" );
+		Object obj = new Object();
+		
+		decl.setObject( obj );
+		
+		table.addDeclaration( decl );
+		
+		Declaration look = table.Lookup( "x" );
+		
+		assertEquals( look.getObject(), obj );
+	}
 	
 	/**
 	 * testHide
@@ -289,5 +304,197 @@ public class ParserSymbolTableTest extends TestCase {
 		catch( ParserSymbolTableException e){
 			assertTrue( true );
 		}
+	}
+	
+	/**
+	 * testStaticEnumParentLookup
+	 * 
+	 * @throws Exception
+	 * 
+	 *             D   D
+	 *             |   |
+	 *             B   C
+	 *              \ /
+	 *               A
+	 * 
+	 * Things defined in D are not ambiguous if they are static or an enum
+	 */
+	public void testStaticEnumParentLookup() throws Exception{
+		newTable();
+		
+		Declaration a = new Declaration( "a" );
+		Declaration b = new Declaration( "b" );
+		Declaration c = new Declaration( "c" );
+		Declaration d = new Declaration( "d" );
+	
+		table.addDeclaration( a );
+		table.addDeclaration( b );
+		table.addDeclaration( c );
+		table.addDeclaration( d );
+		
+		Declaration enum = new Declaration("enum");
+		enum.setType( Declaration.t_enum );
+		
+		Declaration stat = new Declaration("static");
+		stat.setStatic(true);
+		
+		Declaration x = new Declaration("x");
+		
+		table.push(d);
+		table.addDeclaration( enum );
+		table.addDeclaration( stat );
+		table.addDeclaration( x );
+		table.pop();
+		
+		a.addParent( b );
+		a.addParent( c );
+		b.addParent( d );
+		c.addParent( d );
+		
+		table.push( a );
+		try{
+			table.Lookup( "enum" );
+			assertTrue( true );	
+		}
+		catch ( ParserSymbolTableException e){
+			assertTrue( false );
+		}
+		
+		try{
+			table.Lookup( "static" );
+			assertTrue( true );	
+		}
+		catch ( ParserSymbolTableException e){
+			assertTrue( false );
+		}
+		
+		try{
+			table.Lookup( "x" );
+			assertTrue( false );	
+		}
+		catch ( ParserSymbolTableException e){
+			assertTrue( true );
+		}
+	}
+	
+	/**
+	 * testElaboratedLookup
+	 * @throws Exception
+	 * test lookup of hidden names using elaborated type spec
+	 */
+	public void testElaboratedLookup() throws Exception{
+		newTable();
+		
+		Declaration cls = new Declaration( "class" );
+		cls.setType( Declaration.t_class );
+		
+		Declaration struct = new Declaration("struct");
+		struct.setType( Declaration.t_struct );
+		
+		Declaration union = new Declaration("union");
+		union.setType( Declaration.t_union );
+		
+		Declaration hideCls = new Declaration( "class" );
+		Declaration hideStruct = new Declaration("struct");
+		Declaration hideUnion = new Declaration("union");
+		
+		Declaration a = new Declaration("a");
+		Declaration b = new Declaration("b");
+		
+		table.push(a);
+		table.addDeclaration(hideCls);
+		table.addDeclaration(hideStruct);
+		table.addDeclaration(hideUnion);
+		
+		a.addParent( b );
+		
+		table.push(b);
+		table.addDeclaration(cls);
+		table.addDeclaration(struct);
+		table.addDeclaration(union);
+		table.pop();
+		
+		Declaration look = table.ElaboratedLookup( Declaration.t_class, "class" );
+		assertEquals( look, cls );
+		look = table.ElaboratedLookup( Declaration.t_struct, "struct" );
+		assertEquals( look, struct );
+		look = table.ElaboratedLookup( Declaration.t_union, "union" );
+		assertEquals( look, union );
+	}
+	
+	/**
+	 * testDeclarationType
+	 * @throws Exception
+	 * test the use of Declaration type in the scenario
+	 * 		A a;
+	 * 		a.member <=...>;
+	 * where A was previously declared
+	 */
+	public void testDeclarationType() throws Exception{
+		newTable();
+		//pre-condition
+		Declaration A = new Declaration("A");
+		table.addDeclaration(A);
+
+		Declaration member = new Declaration("member");
+		table.push(A);
+		table.addDeclaration(member);
+		table.pop();
+				
+		//at time of "A a;"
+		Declaration look = table.Lookup("A");
+		assertEquals( look, A );
+		Declaration a = new Declaration("a");
+		a.setTypeDeclaration( look );
+		table.addDeclaration( a );
+		
+		//later "a.member"
+		look = table.Lookup("a");
+		assertEquals( look, a );
+		Declaration type = look.getTypeDeclaration();
+		assertEquals( type, A );
+		table.push(type);
+		look = table.Lookup("member");
+		assertEquals( look, member );
+	}
+	
+	/**
+	 * testFunctions
+	 * @throws Exception
+	 * Functions are stored by signature. Where the signature can really be of
+	 * any for you like, as long as it can't possibly be a regular name (ie
+	 * including the parenthese is good...)
+	 * So lookup of function names proceeds inthe same manner as normal names,
+	 * this test doesn't really test anything new
+	 */
+	
+	public void testFunctions() throws Exception{
+		newTable();
+		
+		Declaration cls = new Declaration( "class");
+		Declaration f1 = new Declaration("foo()");
+		Declaration f2 = new Declaration("foo(int)");
+		Declaration f3 = new Declaration("foo(int,char)");
+		
+		table.addDeclaration(cls);
+		table.push(cls);
+		
+		table.addDeclaration( f1 );
+		table.addDeclaration( f2 );
+		table.addDeclaration( f3 );
+		
+		//return type can be specified by setting the TypeDeclaration
+		Declaration returnType = new Declaration("return");
+		f1.setTypeDeclaration( returnType );
+		f2.setTypeDeclaration( returnType );
+		f3.setTypeDeclaration( returnType );
+		
+		assertEquals( table.Lookup("foo()"), f1 );
+		assertEquals( table.Lookup("foo(int)"), f2 );
+		assertEquals( table.Lookup("foo(int,char)"), f3 );
+		
+		//notice that, with the current implementation, you can't do a lookup
+		//on just the function name without the rest of the signature
+		assertEquals( table.Lookup("foo"), null );
 	}
 }

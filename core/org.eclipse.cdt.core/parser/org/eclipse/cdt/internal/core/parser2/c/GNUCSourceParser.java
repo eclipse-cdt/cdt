@@ -1580,74 +1580,40 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             for (;;) {
                 switch (LT(1)) {
                 case IToken.tLPAREN:
-                    boolean failed = false;
-                    // temporary fix for initializer/function declaration
-                    // ambiguity
-                    if (!LA(2).looksLikeExpression()) {
-                        if (LT(2) == IToken.tIDENTIFIER) {
-                            IToken newMark = mark();
-                            consume(IToken.tLPAREN);
-                            ITokenDuple queryName = null;
-                            try {
-                                try {
-                                    IToken i = identifier();
-                                    queryName = TokenFactory.createTokenDuple(
-                                            i, i);
-                                    // look it up
-                                    failed = true;
-                                } catch (Exception e) {
-                                    int endOffset = (lastToken != null) ? lastToken
-                                            .getEndOffset()
-                                            : 0;
-                                    logException(
-                                            "declarator:queryIsTypeName", e); //$NON-NLS-1$
-                                    throwBacktrack(startingOffset, endOffset,
-                                            line, newMark.getFilename());
-                                }
-                            } catch (BacktrackException b) {
-                                failed = true;
-                            }
-
-                            if (queryName != null)
-                                queryName.freeReferences();
-                            backup(newMark);
+                    // parameterDeclarationClause
+                    //                        d.setIsFunction(true);
+                    // TODO need to create a temporary scope object here
+                    consume(IToken.tLPAREN);
+                    isFunction = true;
+                    boolean seenParameter = false;
+                    parameterDeclarationLoop: for (;;) {
+                        switch (LT(1)) {
+                        case IToken.tRPAREN:
+                            consume();
+                            break parameterDeclarationLoop;
+                        case IToken.tELLIPSIS:
+                            consume();
+                            encounteredVarArgs = true;
+                            break;
+                        case IToken.tCOMMA:
+                            consume();
+                            seenParameter = false;
+                            break;
+                        default:
+                            int endOffset = (lastToken != null) ? lastToken
+                                    .getEndOffset() : 0;
+                            if (seenParameter)
+                                throwBacktrack(startingOffset, endOffset,
+                                        line, fn);
+                            IASTParameterDeclaration pd = parameterDeclaration();
+                            if (parameters == Collections.EMPTY_LIST)
+                                parameters = new ArrayList(
+                                        DEFAULT_PARAMETERS_LIST_SIZE);
+                            parameters.add(pd);
+                            seenParameter = true;
                         }
                     }
-                    if ((!LA(2).looksLikeExpression() && !failed)) {
-                        // parameterDeclarationClause
-                        //                        d.setIsFunction(true);
-                        // TODO need to create a temporary scope object here
-                        consume(IToken.tLPAREN);
-                        isFunction = true;
-                        boolean seenParameter = false;
-                        parameterDeclarationLoop: for (;;) {
-                            switch (LT(1)) {
-                            case IToken.tRPAREN:
-                                consume();
-                                break parameterDeclarationLoop;
-                            case IToken.tELLIPSIS:
-                                consume();
-                                encounteredVarArgs = true;
-                                break;
-                            case IToken.tCOMMA:
-                                consume();
-                                seenParameter = false;
-                                break;
-                            default:
-                                int endOffset = (lastToken != null) ? lastToken
-                                        .getEndOffset() : 0;
-                                if (seenParameter)
-                                    throwBacktrack(startingOffset, endOffset,
-                                            line, fn);
-                                IASTParameterDeclaration pd = parameterDeclaration();
-                                if (parameters == Collections.EMPTY_LIST)
-                                    parameters = new ArrayList(
-                                            DEFAULT_PARAMETERS_LIST_SIZE);
-                                parameters.add(pd);
-                                seenParameter = true;
-                            }
-                        }
-                    }
+                    
                     break;
                 case IToken.tLBRACKET:
                     if( arrayMods == Collections.EMPTY_LIST )

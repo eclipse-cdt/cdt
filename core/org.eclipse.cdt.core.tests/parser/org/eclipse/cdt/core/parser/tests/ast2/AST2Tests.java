@@ -712,5 +712,11 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals( label_1, label_2 );
     }
     
+    public void testAnonStruct() throws Exception
+    {
+        StringBuffer buffer = new StringBuffer( "typedef struct { } X;\n"); //$NON-NLS-1$
+        buffer.append( "int f( X x );"); //$NON-NLS-1$
+        parse( buffer.toString(), ParserLanguage.C );
+    }
 }
 

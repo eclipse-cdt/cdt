@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003,2004 IBM Rational Software and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,9 +31,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- * 
- */
 public class Configuration extends BuildObject implements IConfiguration {
 
 	private ITarget target;
@@ -105,7 +102,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 
 			// Make a new ToolReference based on the tool in the ref
 			ToolReference newRef = new ToolReference(this, toolRef.getTool());
-			List optRefs = toolRef.getLocalOptionRefs();
+			List optRefs = toolRef.getOptionReferenceList();
 			Iterator optIter = optRefs.listIterator();
 			while (optIter.hasNext()) {
 				OptionReference optRef = (OptionReference)optIter.next();
@@ -195,11 +192,11 @@ public class Configuration extends BuildObject implements IConfiguration {
 		getLocalToolReferences().add(toolRef);
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @param option
 	 * @return
 	 */
-	public OptionReference createOptionReference(IOption option) {
+	private OptionReference createOptionReference(IOption option) {
 		if (option instanceof OptionReference) {
 			OptionReference optionRef = (OptionReference)option;
 			ToolReference toolRef = optionRef.getToolReference();
@@ -310,7 +307,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// Get all the option references I add for this tool
 		ToolReference toolRef = getToolReference(tool);
 		if (toolRef != null) {
-			references.addAll(toolRef.getLocalOptionRefs());
+			references.addAll(toolRef.getOptionReferenceList());
 		}
 		
 		// See if there is anything that my parents add that I don't
@@ -425,7 +422,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		else {
 			oldValue = option.getStringValue(); 
 		}
-		if (!oldValue.equals(value))
+		if (oldValue != null && !oldValue.equals(value))
 			createOptionReference(option).setValue(value);
 	}
 
@@ -458,11 +455,23 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if(!Arrays.equals(value, oldValue))
 			createOptionReference(option).setValue(value);
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setToolCommand(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String)
 	 */
-	public String toString() {
-		return new String("Configuration: ") + getName();
+	public void setToolCommand(ITool tool, String command) {
+		// Make sure the command is different
+		if (command != null && !tool.getToolCommand().equals(command)) {
+			// Does this config have a ref to the tool
+			ToolReference ref = getToolReference(tool);
+			if (ref == null) {
+				// Then make one
+				ref = new ToolReference(this, tool);
+			}
+			// Set the ref's command
+			if (ref != null) {
+				ref.setToolCommand(command);
+			}
+		}
 	}
 }

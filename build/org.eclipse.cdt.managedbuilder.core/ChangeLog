@@ -1,3 +1,10 @@
+2004-03-02 Sean Evoy
+	Work to support feature C1, "Set Tool Command in Project". 
+	Now it is possible to store an overridden tool command in a tool 
+	reference. The tool command can be overridden directly in an 
+	existing reference, or through the configuration, which creates a 
+	new tool reference.
+
 2004-02-26 Jeremiah Lott
 	Added a header to the automatically generated makefiles to alert users 
 	not to edit them. Also added includes directives to bring in user-supplied 

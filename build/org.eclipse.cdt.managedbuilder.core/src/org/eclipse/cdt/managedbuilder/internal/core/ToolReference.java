@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003,2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -27,42 +26,46 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- * 
- */
 public class ToolReference implements ITool {
 	private String command;
 	private List optionReferences;
-	private Map optionRefMap;
 	private IBuildObject owner;
 	private ITool parent;
 	
 	/**
-	 * Created a tool reference on the fly based on an existing tool.
+	 * Create a new tool reference based on information contained in 
+	 * a project file.
 	 * 
-	 * @param owner The <code>BuildObject</code> the receiver will be added to.
-	 * @param parent The <code>ITool</code>tool the reference will be based on.
+	 * @param owner The <code>Configuration</code> the receiver will be added to.
+	 * @param element The element defined in the project file containing build information
+	 * for the receiver.
 	 */
-	public ToolReference(BuildObject owner, ITool parent) {
+	public ToolReference(BuildObject owner, Element element) {
 		this.owner = owner;
-		this.parent = parent;
 		
 		if (owner instanceof Configuration) {
+			Target parentTarget = (Target) ((Configuration)owner).getTarget();
+			parent = ((Target)parentTarget.getParent()).getTool(element.getAttribute(ID));
 			((Configuration)owner).addToolReference(this);
 		} else if (owner instanceof Target) {
+			parent = ((Target)((Target)owner).getParent()).getTool(element.getAttribute(ID));
 			((Target)owner).addToolReference(this);
+		}
+
+		// Get the overridden tool command (if any)
+		if (element.hasAttribute(ITool.COMMAND)) {
+			command = element.getAttribute(ITool.COMMAND);
+		}
+	
+		NodeList configElements = element.getChildNodes();
+		for (int i = 0; i < configElements.getLength(); ++i) {
+			Node configElement = configElements.item(i);
+			if (configElement.getNodeName().equals(ITool.OPTION_REF)) {
+				new OptionReference(this, (Element)configElement);
+			}
 		}
 	}
 
-	/**
-	 * Adds the option reference specified in the argument to the receiver.
-	 * 
-	 * @param optionRef
-	 */
-	public void addOptionReference(OptionReference optionRef) {
-		getLocalOptionRefs().add(optionRef);
-	}
-	
 	/**
 	 * Created tool reference from an extension defined in a plugin manifest.
 	 * 
@@ -90,41 +93,60 @@ public class ToolReference implements ITool {
 	}
 
 	/**
-	 * Create a new tool reference based on information contained in a project file.
+	 * Created a tool reference on the fly based on an existing tool.
 	 * 
-	 * @param owner The <code>Configuration</code> the receiver will be added to.
-	 * @param element The element defined in the project file containing build information
-	 * for the receiver.
+	 * @param owner The <code>BuildObject</code> the receiver will be added to.
+	 * @param parent The <code>ITool</code>tool the reference will be based on.
 	 */
-	public ToolReference(BuildObject owner, Element element) {
+	public ToolReference(BuildObject owner, ITool parent) {
 		this.owner = owner;
+		this.parent = parent;
 		
 		if (owner instanceof Configuration) {
-			Target parentTarget = (Target) ((Configuration)owner).getTarget();
-			parent = ((Target)parentTarget.getParent()).getTool(element.getAttribute(ID));
 			((Configuration)owner).addToolReference(this);
 		} else if (owner instanceof Target) {
-			parent = ((Target)((Target)owner).getParent()).getTool(element.getAttribute(ID));
 			((Target)owner).addToolReference(this);
 		}
+	}
+
+	/**
+	 * Adds the option reference specified in the argument to the receiver.
+	 * 
+	 * @param optionRef
+	 */
+	public void addOptionReference(OptionReference optionRef) {
+		getOptionReferenceList().add(optionRef);
+	}
 	
-		NodeList configElements = element.getChildNodes();
-		for (int i = 0; i < configElements.getLength(); ++i) {
-			Node configElement = configElements.item(i);
-			if (configElement.getNodeName().equals(ITool.OPTION_REF)) {
-				new OptionReference(this, (Element)configElement);
-			}
-		}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#handlesFileType(java.lang.String)
+	 */
+	public boolean buildsFileType(String extension) {
+		// The tool reference does not override this value
+		return parent.buildsFileType(extension);
 	}
 
-	public boolean ownedByConfiguration(IConfiguration config) {
-		if (owner instanceof Configuration) {
-			return ((IConfiguration)owner).equals(config);
-		} else {
-			return false;
+	/**
+	 * Answers a reference to the option. If the reference does not exist, 
+	 * a new reference is created. 
+	 * 
+	 * @param option
+	 * @return OptionReference
+	 */
+	public OptionReference createOptionReference(IOption option) {
+		// Check if the option reference already exists
+		OptionReference ref = getOptionReference(option);
+		if (ref == null) {
+			ref = new OptionReference(this, option); 
 		}
+		return ref;
 	}
-
+	
+	/**
+	 * Answers the tool the receiver is a reference to.
+	 * 
+	 * @return
+	 */
 	public ITool getTool() {
 		return parent;
 	}
@@ -133,7 +155,7 @@ public class ToolReference implements ITool {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolCommand()
 	 */
 	public String getToolCommand() {
-		return parent.getToolCommand();
+		return (command == null) ? parent.getToolCommand() : command;
 	}
 
 	/* (non-Javadoc)
@@ -203,14 +225,6 @@ public class ToolReference implements ITool {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#createOption()
-	 */
-	public IOption createOption() {
-		
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOptions()
 	 */
 	public IOption[] getOptions() {
@@ -243,21 +257,9 @@ public class ToolReference implements ITool {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getTarget()
-	 */
-/*	public ITarget getTarget() {
-		if (owner instanceof IConfiguration) {
-			return ((IConfiguration)owner).getTarget();
-		} else {
-			return (ITarget)owner;
-		}
-	}
-*/
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getTopOptionCategory()
 	 */
 	public IOptionCategory getTopOptionCategory() {
-		// The tool reference does not override this value
 		return parent.getTopOptionCategory();
 	}
 
@@ -267,14 +269,6 @@ public class ToolReference implements ITool {
 	public boolean isHeaderFile(String ext) {
 		// The tool reference does not override this value
 		return parent.isHeaderFile(ext);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
-	 */
-	public boolean producesFileType(String outputExtension) {
-		// The tool reference does not override this value
-		return parent.producesFileType(outputExtension);
 	}
 
 	protected List getAllOptionRefs() {
@@ -296,6 +290,78 @@ public class ToolReference implements ITool {
 	public String getName() {
 		// The tool reference does not override this value
 		return parent.getName();
+	}
+
+	/* (non-javadoc)
+	 * Answers an option reference that overrides the option, or <code>null</code>
+	 * 
+	 * @param option
+	 * @return OptionReference
+	 */
+	private OptionReference getOptionReference(IOption option) {
+		// Get all the option references for this option
+		Iterator iter = getAllOptionRefs().listIterator();
+		while (iter.hasNext()) {
+			OptionReference optionRef = (OptionReference) iter.next();
+			if (optionRef.references(option))
+				return optionRef;
+		}
+
+		return null;
+	}
+	
+	protected List getOptionReferenceList() {
+		if (optionReferences == null) {
+			optionReferences = new ArrayList();
+			optionReferences.clear();
+		}
+		return optionReferences;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getNatureFilter()
+	 */
+	public int getNatureFilter() {
+		// The tool reference does not override this value
+		return parent.getNatureFilter();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
+	 */
+	public IOption getOption(String id) {
+		//TODO Implement this
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutput(java.lang.String)
+	 */
+	public String getOutputExtension(String inputExtension) {
+		// The tool reference does not override this value
+		return parent.getOutputExtension(inputExtension);
+	}
+
+	/**
+	 * Answers <code>true</code> if the owner of the receiver matches 
+	 * the argument.
+	 * 
+	 * @param config
+	 * @return
+	 */
+	public boolean ownedByConfiguration(IConfiguration config) {
+		if (owner instanceof Configuration) {
+			return ((IConfiguration)owner).equals(config);
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
+	 */
+	public boolean producesFileType(String outputExtension) {
+		// The tool reference does not override this value
+		return parent.producesFileType(outputExtension);
 	}
 
 	/**
@@ -323,80 +389,6 @@ public class ToolReference implements ITool {
 		}
 	}
 	
-	/* (non-javadoc)
-	 * Answers an option reference that overrides the option, or <code>null</code>
-	 * 
-	 * @param option
-	 * @return OptionReference
-	 */
-	private OptionReference getOptionReference(IOption option) {
-		// Get all the option references for this option
-		Iterator iter = getAllOptionRefs().listIterator();
-		while (iter.hasNext()) {
-			OptionReference optionRef = (OptionReference) iter.next();
-			if (optionRef.references(option))
-				return optionRef;
-		}
-
-		return null;
-	}
-	
-	protected List getLocalOptionRefs() {
-		if (optionReferences == null) {
-			optionReferences = new ArrayList();
-			optionReferences.clear();
-		}
-		return optionReferences;
-	}
-	
-	/**
-	 * Answers a reference to the option. If the reference does not exist, 
-	 * a new reference is created. 
-	 * 
-	 * @param option
-	 * @return OptionReference
-	 */
-	public OptionReference createOptionReference(IOption option) {
-		// Check if the option reference already exists
-		OptionReference ref = getOptionReference(option);
-		if (ref == null) {
-			ref = new OptionReference(this, option); 
-		}
-		return ref;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#handlesFileType(java.lang.String)
-	 */
-	public boolean buildsFileType(String extension) {
-		// The tool reference does not override this value
-		return parent.buildsFileType(extension);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getNatureFilter()
-	 */
-	public int getNatureFilter() {
-		// The tool reference does not override this value
-		return parent.getNatureFilter();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
-	 */
-	public IOption getOption(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutput(java.lang.String)
-	 */
-	public String getOutputExtension(String inputExtension) {
-		// The tool reference does not override this value
-		return parent.getOutputExtension(inputExtension);
-	}
-
 	/**
 	 * Persist receiver to project file.
 	 * 
@@ -406,7 +398,14 @@ public class ToolReference implements ITool {
 	 */
 	public void serialize(Document doc, Element element) {
 		element.setAttribute(ITool.ID, parent.getId());
-		Iterator iter = getLocalOptionRefs().listIterator();
+
+		// Output the command if overridden
+		if (command != null) {
+			element.setAttribute(ITool.COMMAND, command);
+		}
+		
+		// Output the option references
+		Iterator iter = getOptionReferenceList().listIterator();
 		while (iter.hasNext()) {
 			OptionReference optionRef = (OptionReference) iter.next();
 			Element optionRefElement = doc.createElement(ITool.OPTION_REF);
@@ -415,14 +414,24 @@ public class ToolReference implements ITool {
 		}
 	}
 
+	/**
+	 * Sets the command in the receiver to be the argument.
+	 * 
+	 * @param cmd
+	 */
+	public void setToolCommand(String cmd) {
+		if (cmd != null && !cmd.equals(command)) {
+			command = cmd;
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		String answer = new String();
-		
+		String answer = new String();	
 		if (parent != null) {
-			answer += "Reference to tool: " + parent.getName();	//$NON-NLS-1$ 
+			answer += "Reference to " + parent.getName();	//$NON-NLS-1$ 
 		}
 		
 		if (answer.length() > 0) {

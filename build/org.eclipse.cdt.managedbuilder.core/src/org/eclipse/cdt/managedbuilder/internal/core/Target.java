@@ -694,13 +694,6 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return new String("Target: ") + getName();
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#updateOwner(org.eclipse.core.resources.IResource)
 	 */
 	public void updateOwner(IResource resource) {
@@ -709,5 +702,4 @@ public class Target extends BuildObject implements ITarget {
 			owner = resource;
 		}
 	}
-
 }

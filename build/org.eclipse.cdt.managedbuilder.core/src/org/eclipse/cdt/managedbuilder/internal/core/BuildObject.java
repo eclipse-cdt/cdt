@@ -46,4 +46,10 @@ public class BuildObject implements IBuildObject {
 		this.name = name;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return name;
+	}
 }

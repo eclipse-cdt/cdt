@@ -178,10 +178,6 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		return null;
 	}
 
-/*	public ITarget getTarget() {
-		return target;	
-	}
-*/	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getTool()
 	 */

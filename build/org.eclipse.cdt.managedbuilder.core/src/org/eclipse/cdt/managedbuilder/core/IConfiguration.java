@@ -80,4 +80,12 @@ public interface IConfiguration extends IBuildObject {
 	public void setOption(IOption option, String[] value)
 		throws BuildException;
 
+	/**
+	 * Overrides the tool command for a tool defined in the receiver.
+	 * 
+	 * @param tool
+	 * @param command
+	 */
+	public void setToolCommand(ITool tool, String command);
+
 }

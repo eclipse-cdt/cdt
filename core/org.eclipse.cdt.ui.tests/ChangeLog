@@ -3,6 +3,11 @@
 	Renamed them to testBug36766and36769x(), as they cover both PRs.
 	Added testBug36766and36769D() - test for templated destructor.
 
+2003-06-09 Victor Mozgin
+	Moved testBug36701() from ScannerFailedTests.java to ScannerTestCase.java.
+	Renamed it to testBug36701A() and fixed it.
+	Added ScannerTestCase.testBug36701B().
+
 2003-06-05 John Camelon
 	Moved testBug23478A() & testBug23478B() from failed tests to TranslationUnitTests.java.
 	Removed TranslationUnitFailedTests.java as it was empty. 

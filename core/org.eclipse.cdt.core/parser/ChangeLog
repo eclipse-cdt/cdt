@@ -6,6 +6,9 @@
 	Fixes for templated constructor/destructor/operator declarations.
 	This fixed PR 36766, 36767, 36769 (STL parsing problems).
 
+2003-06-09 Victor Mozgin
+	Fixed Bug 36701 - Scanner looses non-token chars while macro stringizing
+
 2003-06-06 Victor Mozgin
 	Fixed Bug 38065 - Scanner skipped backslashes inside the code
 

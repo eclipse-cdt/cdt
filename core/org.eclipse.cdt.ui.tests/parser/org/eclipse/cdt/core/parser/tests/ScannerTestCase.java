@@ -17,51 +17,43 @@ import org.eclipse.cdt.internal.core.parser.Token;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class ScannerTestCase extends BaseScannerTest
-{
-	public class TableRow
-	{
+public class ScannerTestCase extends BaseScannerTest {
+	public class TableRow {
 		private int[] values;
 		private int length;
 
-		public TableRow(int[] v)
-		{
-			length= v.length;
-			values= new int[length];
+		public TableRow(int[] v) {
+			length = v.length;
+			values = new int[length];
 			System.arraycopy(v, 0, values, 0, length);
 		}
 
-		public String toString()
-		{
-			StringBuffer s= new StringBuffer();
-			for (int i= 0; i < length; ++i)
-			{
-				s.append("var").append(i).append("=").append(values[i]).append(" ");
+		public String toString() {
+			StringBuffer s = new StringBuffer();
+			for (int i = 0; i < length; ++i) {
+				s.append("var").append(i).append("=").append(values[i]).append(
+					" ");
 			}
 			return s.toString();
 		}
 
-		public String symbolName(int index)
-		{
+		public String symbolName(int index) {
 			return "DEFINITION" + index;
 		}
 
-		public int symbolValue(int index)
-		{
+		public int symbolValue(int index) {
 			return new Long(Math.round(Math.pow(index, index))).intValue();
 		}
 
-		public String generateCode()
-		{
-			if (length < 2)
-			{
+		public String generateCode() {
+			if (length < 2) {
 				return "Array must have at least 2 elements";
 			}
-			int numberOfElsifs= length - 1;
-			StringBuffer buffer= new StringBuffer();
+			int numberOfElsifs = length - 1;
+			StringBuffer buffer = new StringBuffer();
 			buffer.append("#if ").append(values[0]).append("\n#\tdefine ");
 			buffer.append(symbolName(0)).append(" ").append(symbolValue(0));
-			for (int i= 0; i < numberOfElsifs; ++i)
+			for (int i = 0; i < numberOfElsifs; ++i)
 				buffer
 					.append("\n#elif ")
 					.append(values[1 + i])
@@ -78,12 +70,9 @@ public class ScannerTestCase extends BaseScannerTest
 			return buffer.toString();
 		}
 
-		public int selectWinner()
-		{
-			for (int i= 0; i < values.length; ++i)
-			{
-				if (values[i] != 0)
-				{
+		public int selectWinner() {
+			for (int i = 0; i < values.length; ++i) {
+				if (values[i] != 0) {
 					return i;
 				}
 			}
@@ -93,119 +82,97 @@ public class ScannerTestCase extends BaseScannerTest
 		 * Returns the length.
 		 * @return int
 		 */
-		public int getLength()
-		{
+		public int getLength() {
 			return length;
 		}
 
 	}
 
-	public class TruthTable
-	{
+	public class TruthTable {
 		private int numberOfVariables;
 		private int numberOfRows;
 		public TableRow[] rows;
 
-		public TruthTable(int n)
-		{
-			numberOfVariables= n;
-			numberOfRows= new Long(Math.round(Math.pow(2, n))).intValue();
+		public TruthTable(int n) {
+			numberOfVariables = n;
+			numberOfRows = new Long(Math.round(Math.pow(2, n))).intValue();
 
-			rows= new TableRow[numberOfRows];
-			for (int i= 0; i < numberOfRows; ++i)
-			{
-				String Z= Integer.toBinaryString(i);
+			rows = new TableRow[numberOfRows];
+			for (int i = 0; i < numberOfRows; ++i) {
+				String Z = Integer.toBinaryString(i);
 
-				int[] input= new int[numberOfVariables];
-				for (int j= 0; j < numberOfVariables; ++j)
-				{
-					int padding= numberOfVariables - Z.length();
-					int k= 0;
-					for (; k < padding; ++k)
-					{
-						input[k]= 0;
+				int[] input = new int[numberOfVariables];
+				for (int j = 0; j < numberOfVariables; ++j) {
+					int padding = numberOfVariables - Z.length();
+					int k = 0;
+					for (; k < padding; ++k) {
+						input[k] = 0;
 					}
-					for (int l= 0; l < Z.length(); ++l)
-					{
-						char c= Z.charAt(l);
-						int value= Character.digit(c, 10);
-						input[k++]= value;
+					for (int l = 0; l < Z.length(); ++l) {
+						char c = Z.charAt(l);
+						int value = Character.digit(c, 10);
+						input[k++] = value;
 					}
 				}
-				rows[i]= new TableRow(input);
+				rows[i] = new TableRow(input);
 			}
 		}
 		/**
 		 * Returns the numberOfRows.
 		 * @return int
 		 */
-		public int getNumberOfRows()
-		{
+		public int getNumberOfRows() {
 			return numberOfRows;
 		}
 
 	}
 
-	public final static boolean doIncludeStdio= false;
-	public final static boolean doIncludeWindowsH= false;
-	public final static boolean doIncludeWinUserH= false;
-	
-	public final static int SIZEOF_TRUTHTABLE = 10; 
+	public final static boolean doIncludeStdio = false;
+	public final static boolean doIncludeWindowsH = false;
+	public final static boolean doIncludeWinUserH = false;
 
+	public final static int SIZEOF_TRUTHTABLE = 10;
 
-	public void testWeirdStrings()
-	{
-		try
-		{
-			initializeScanner( "Living Life L\"LONG\"");
-			validateIdentifier( "Living" );
-			validateIdentifier( "Life" );
+	public void testWeirdStrings() {
+		try {
+			initializeScanner("Living Life L\"LONG\"");
+			validateIdentifier("Living");
+			validateIdentifier("Life");
 			validateString("LONG", true);
 			validateEOF();
-		}
-		catch( ScannerException se )
-		{
+		} catch (ScannerException se) {
 			fail(EXCEPTION_THROWN + se.toString());
 		}
-		
+
 	}
-	
-	
-	public void testNumerics()
-	{
-		try
-		{
+
+	public void testNumerics() {
+		try {
 			initializeScanner("3.0 0.9 .5 3. 4E5 2.01E-03 ...");
-			validateFloatingPointLiteral( "3.0");
-			validateFloatingPointLiteral( "0.9");
-			validateFloatingPointLiteral( ".5");
-			validateFloatingPointLiteral( "3."); 
-			validateFloatingPointLiteral( "4E5");
-			validateFloatingPointLiteral( "2.01E-03" );
-			validateToken( Token.tELIPSE );
+			validateFloatingPointLiteral("3.0");
+			validateFloatingPointLiteral("0.9");
+			validateFloatingPointLiteral(".5");
+			validateFloatingPointLiteral("3.");
+			validateFloatingPointLiteral("4E5");
+			validateFloatingPointLiteral("2.01E-03");
+			validateToken(Token.tELIPSE);
 			validateEOF();
-		}
-		catch( ScannerException se )
-		{
+		} catch (ScannerException se) {
 			fail(EXCEPTION_THROWN + se.toString());
 		}
-		
+
 	}
-	
 
 	/**
 	 * Constructor for ScannerTestCase.
 	 * @param name
 	 */
-	public ScannerTestCase(String name)
-	{
+	public ScannerTestCase(String name) {
 		super(name);
 	}
 
-	public void testPreprocessorDefines()
-	{
-		try
-		{
+	public void testPreprocessorDefines() {
+		try {
 			initializeScanner("#define SIMPLE_NUMERIC 5\nint x = SIMPLE_NUMERIC");
 			validateToken(Token.t_int);
 			validateDefinition("SIMPLE_NUMERIC", "5");
@@ -276,10 +243,8 @@ public class ScannerTestCase extends BaseScannerTest
 			validateEOF();
 			validateDefinition("MULTICOMMENT", "X  + Y");
 
-			for (int i= 0; i < 7; ++i)
-			{
-				switch (i)
-				{
+			for (int i = 0; i < 7; ++i) {
+				switch (i) {
 					case 0 :
 						initializeScanner("#define SIMPLE_STRING This is a simple string.\n");
 						break;
@@ -304,8 +269,7 @@ public class ScannerTestCase extends BaseScannerTest
 				}
 				validateEOF();
 
-				switch (i)
-				{
+				switch (i) {
 					case 0 :
 						validateDefinition(
 							"SIMPLE_STRING",
@@ -336,15 +300,12 @@ public class ScannerTestCase extends BaseScannerTest
 							"This 	is a simple 	string.		Continue please.");
 				}
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 	}
 
-	public void prepareForWindowsRH()
-	{
+	public void prepareForWindowsRH() {
 		scanner.addIncludePath(
 			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include");
 		scanner.addDefinition("_WIN32_WINNT", "0x0300");
@@ -353,84 +314,73 @@ public class ScannerTestCase extends BaseScannerTest
 		scanner.addDefinition("_MSC_VER", "1200");
 	}
 
-	public void prepareForWindowsH()
-	{
+	public void prepareForWindowsH() {
 		scanner.addIncludePath(
 			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include");
 		scanner.addDefinition("_MSC_VER", "1200");
 		scanner.addDefinition("__cplusplus", "1");
 		scanner.addDefinition("__STDC__", "1");
-		scanner.addDefinition("_WIN32", "");		
-		scanner.addDefinition( "__midl", "1000" );
+		scanner.addDefinition("_WIN32", "");
+		scanner.addDefinition("__midl", "1000");
 		scanner.addDefinition("_WIN32_WINNT", "0x0300");
 		scanner.addDefinition("WINVER", "0x0400");
-		scanner.addDefinition( "_M_IX86", "300");
-		scanner.addDefinition( "_INTEGRAL_MAX_BITS", "64");
+		scanner.addDefinition("_M_IX86", "300");
+		scanner.addDefinition("_INTEGRAL_MAX_BITS", "64");
 	}
 
-	public void prepareForStdio()
-	{
+	public void prepareForStdio() {
 		scanner.addIncludePath(
 			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include");
 		scanner.addDefinition("_MSC_VER", "1100");
 		scanner.addDefinition("__STDC__", "1");
 		scanner.addDefinition("_INTEGRAL_MAX_BITS", "64");
 		scanner.addDefinition("_WIN32", "");
-		scanner.addDefinition( "_M_IX86", "300");
+		scanner.addDefinition("_M_IX86", "300");
 	}
 
-	public void testConcatenation()
-	{
-		try
-		{
+	public void testConcatenation() {
+		try {
 			initializeScanner("#define F1 3\n#define F2 F1##F1\nint x=F2;");
 			validateToken(Token.t_int);
 			validateDefinition("F1", "3");
-			validateDefinition( "F2", "F1##F1");
+			validateDefinition("F2", "F1##F1");
 			validateIdentifier("x");
 			validateToken(Token.tASSIGN);
 			validateInteger("33");
 			validateToken(Token.tSEMI);
 			validateEOF();
-			
-			initializeScanner("#define PREFIX RT_\n#define RUN PREFIX##Run"); 
-			validateEOF(); 
-			validateDefinition( "PREFIX", "RT_" ); 
-			validateDefinition( "RUN", "PREFIX##Run" );
-		}
-		catch (Exception e)
-		{
+
+			initializeScanner("#define PREFIX RT_\n#define RUN PREFIX##Run");
+			validateEOF();
+			validateDefinition("PREFIX", "RT_");
+			validateDefinition("RUN", "PREFIX##Run");
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
-		
-		try
-		{
-			initializeScanner( "#define DECLARE_HANDLE(name) struct name##__ { int unused; }; typedef struct name##__ *name\n DECLARE_HANDLE( joe )" );
-			validateToken( Token.t_struct );
-			validateIdentifier( "joe__"); 
-			validateToken( Token.tLBRACE);  
-			validateToken( Token.t_int ); 
-			validateIdentifier( "unused"); 
-			validateToken( Token.tSEMI ); 
-			validateToken( Token.tRBRACE );
-			validateToken( Token.tSEMI ); 
-			validateToken( Token.t_typedef ); 
-			validateToken( Token.t_struct ); 
-			validateIdentifier( "joe__" ); 
-			validateToken( Token.tSTAR ); 
-			validateIdentifier( "joe");  
+
+		try {
+			initializeScanner("#define DECLARE_HANDLE(name) struct name##__ { int unused; }; typedef struct name##__ *name\n DECLARE_HANDLE( joe )");
+			validateToken(Token.t_struct);
+			validateIdentifier("joe__");
+			validateToken(Token.tLBRACE);
+			validateToken(Token.t_int);
+			validateIdentifier("unused");
+			validateToken(Token.tSEMI);
+			validateToken(Token.tRBRACE);
+			validateToken(Token.tSEMI);
+			validateToken(Token.t_typedef);
+			validateToken(Token.t_struct);
+			validateIdentifier("joe__");
+			validateToken(Token.tSTAR);
+			validateIdentifier("joe");
 			validateEOF();
-		}
-		catch( Exception e )
-		{ 
-			fail(EXCEPTION_THROWN + e.toString());			
+		} catch (Exception e) {
+			fail(EXCEPTION_THROWN + e.toString());
 		}
 	}
 
-	public void testSimpleIfdef()
-	{
-		try
-		{
+	public void testSimpleIfdef() {
+		try {
 
 			initializeScanner("#define SYMBOL 5\n#ifdef SYMBOL\nint counter(SYMBOL);\n#endif");
 
@@ -465,43 +415,35 @@ public class ScannerTestCase extends BaseScannerTest
 			validateInteger("101");
 			validateToken(Token.tSEMI);
 			validateEOF();
-			
-			initializeScanner( "/* NB: This is #if 0'd out */"); 
-			validateEOF(); 
 
-		}
-		catch (Exception e)
-		{
+			initializeScanner("/* NB: This is #if 0'd out */");
+			validateEOF();
+
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 	}
 
-	public void testMultipleLines() throws Exception
-	{
-		Writer code = new StringWriter(); 
-		code.write( "#define COMPLEX_MACRO 33 \\\n");
-		code.write( "	+ 44\n\nCOMPLEX_MACRO");
-		initializeScanner( code.toString() );
-		validateInteger( "33" );
-		validateToken( Token.tPLUS );
-		validateInteger( "44" );
+	public void testMultipleLines() throws Exception {
+		Writer code = new StringWriter();
+		code.write("#define COMPLEX_MACRO 33 \\\n");
+		code.write("	+ 44\n\nCOMPLEX_MACRO");
+		initializeScanner(code.toString());
+		validateInteger("33");
+		validateToken(Token.tPLUS);
+		validateInteger("44");
 	}
 
-	public void testSlightlyComplexIfdefStructure()
-	{
-		try
-		{
+	public void testSlightlyComplexIfdefStructure() {
+		try {
 			initializeScanner("#ifndef BASE\n#define BASE 10\n#endif\n#ifndef BASE\n#error BASE is defined\n#endif");
 			validateEOF();
 			validateBalance();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 
-		try
-		{
+		try {
 			initializeScanner("#ifndef ONE\n#define ONE 1\n#ifdef TWO\n#define THREE ONE + TWO\n#endif\n#endif\nint three(THREE);");
 
 			validateToken(Token.t_int);
@@ -574,17 +516,13 @@ public class ScannerTestCase extends BaseScannerTest
 			validateDefinition("ONE", "1");
 			validateDefinition("TWO", "2");
 
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 	}
 
-	public void testIfs()
-	{
-		try
-		{
+	public void testIfs() {
+		try {
 			initializeScanner("#if 0\n#error NEVER\n#endif\n");
 			validateEOF();
 			validateBalance();
@@ -607,44 +545,33 @@ public class ScannerTestCase extends BaseScannerTest
 			validateDefinition("T", "X + Y");
 			validateDefinition("Z", "T + 1");
 
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 
-		try
-		{
+		try {
 			initializeScanner("#if ( 10 / 5 ) != 2\n#error 10/5 seems to not equal 2 anymore\n#endif\n");
 			validateEOF();
 			validateBalance();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 
-		try
-		{
+		try {
 			initializeScanner("#ifndef FIVE \n#define FIVE 5\n#endif \n#ifndef TEN\n#define TEN 2 * FIVE\n#endif\n#if TEN != 10\n#define MISTAKE 1\n#error Five does not equal 10\n#endif\n");
 			scanner.addDefinition("FIVE", "55");
 			validateEOF();
 			fail(EXPECTED_FAILURE);
-		}
-		catch (ScannerException se)
-		{
+		} catch (ScannerException se) {
 			validateBalance(1);
 			validateDefinition("FIVE", "55");
 			validateDefinition("TEN", "2 * FIVE");
 			validateDefinition("MISTAKE", "1");
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 
-		try
-		{
+		try {
 			initializeScanner("#if ((( FOUR / TWO ) * THREE )< FIVE )\n#error 6 is not less than 5 \n#endif\n#if ( ( FIVE * ONE ) != (( (FOUR) + ONE ) * ONE ) )\n#error 5 should equal 5\n#endif \n");
 
 			scanner.addDefinition("ONE", "1");
@@ -661,14 +588,13 @@ public class ScannerTestCase extends BaseScannerTest
 			validateDefinition("FOUR", "(TWO * TWO)");
 			validateDefinition("FIVE", "(THREE + TWO)");
 
-			TruthTable table= new TruthTable(SIZEOF_TRUTHTABLE);
-			int numberOfRows= table.getNumberOfRows();
-			TableRow[] rows= table.rows;
+			TruthTable table = new TruthTable(SIZEOF_TRUTHTABLE);
+			int numberOfRows = table.getNumberOfRows();
+			TableRow[] rows = table.rows;
 
-			for (int i= 0; i < numberOfRows; ++i)
-			{
-				TableRow row= rows[i];
-				String code= row.generateCode();
+			for (int i = 0; i < numberOfRows; ++i) {
+				TableRow row = rows[i];
+				String code = row.generateCode();
 				if (verbose)
 					System.out.println("\n\nRow " + i + " has code\n" + code);
 				initializeScanner(code);
@@ -676,33 +602,24 @@ public class ScannerTestCase extends BaseScannerTest
 				validateBalance();
 				validateAllDefinitions(row);
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 
-		try
-		{
+		try {
 			initializeScanner("#if ! 0\n#error Correct!\n#endif");
-			Token t= scanner.nextToken();
+			Token t = scanner.nextToken();
 			fail(EXPECTED_FAILURE);
-		}
-		catch (ScannerException se)
-		{
+		} catch (ScannerException se) {
 			validateBalance(1);
 			assertTrue(se.getMessage().equals("#error Correct!"));
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 	}
 
-	public void testPreprocessorMacros()
-	{
-		try
-		{
+	public void testPreprocessorMacros() {
+		try {
 			initializeScanner("#define GO(x) x+1\nint y(5);\ny = GO(y);");
 			validateToken(Token.t_int);
 			validateIdentifier("y");
@@ -711,14 +628,14 @@ public class ScannerTestCase extends BaseScannerTest
 			validateToken(Token.tRPAREN);
 			validateToken(Token.tSEMI);
 
-			IMacroDescriptor descriptor=
+			IMacroDescriptor descriptor =
 				(IMacroDescriptor) scanner.getDefinition("GO");
-			List parms= descriptor.getParameters();
+			List parms = descriptor.getParameters();
 			assertNotNull(parms);
 			assertTrue(parms.size() == 1);
-			String parm1= (String) parms.get(0);
+			String parm1 = (String) parms.get(0);
 			assertTrue(parm1.equals("x"));
-			List expansion= descriptor.getTokenizedExpansion();
+			List expansion = descriptor.getTokenizedExpansion();
 			assertNotNull(parms);
 			assertTrue(expansion.size() == 3);
 			assertTrue(((Token) expansion.get(0)).type == Token.tIDENTIFIER);
@@ -761,12 +678,13 @@ public class ScannerTestCase extends BaseScannerTest
 			validateToken(Token.tSEMI);
 			validateEOF();
 
-			IMacroDescriptor macro= (IMacroDescriptor) scanner.getDefinition("SUM");
-			List params= macro.getParameters();
+			IMacroDescriptor macro =
+				(IMacroDescriptor) scanner.getDefinition("SUM");
+			List params = macro.getParameters();
 			assertNotNull(params);
 			assertTrue(params.size() == 7);
 
-			List tokens= macro.getTokenizedExpansion();
+			List tokens = macro.getTokenizedExpansion();
 			assertNotNull(tokens);
 			assertTrue(tokens.size() == 15);
 
@@ -833,59 +751,43 @@ public class ScannerTestCase extends BaseScannerTest
 			initializeScanner("#if defined( NOTHING ) \nint x = NOTHING;\n#endif");
 			validateEOF();
 			validateBalance();
-			
-			
-				
-			
 
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 	}
 
-	public void testQuickScan() throws Parser.EndOfFile
-	{
-		try
-		{
-			initializeScanner( "#if X + 5 < 7\n  int found = 1;\n#endif" );
-			scanner.setQuickScan( true );
-			validateToken( Token.t_int ); 
-			validateIdentifier( "found" ); 
-			validateToken( Token.tASSIGN ); 
-			validateInteger( "1"); 
-			validateToken( Token.tSEMI );
-			validateEOF(); 
-			 	
-		} 
-		catch( ScannerException se )
-		{
-			fail( EXCEPTION_THROWN + se.getMessage() );
+	public void testQuickScan() throws Parser.EndOfFile {
+		try {
+			initializeScanner("#if X + 5 < 7\n  int found = 1;\n#endif");
+			scanner.setQuickScan(true);
+			validateToken(Token.t_int);
+			validateIdentifier("found");
+			validateToken(Token.tASSIGN);
+			validateInteger("1");
+			validateToken(Token.tSEMI);
+			validateEOF();
+
+		} catch (ScannerException se) {
+			fail(EXCEPTION_THROWN + se.getMessage());
 		}
-		
-		try
-		{
-			initializeScanner( "#if 0\n  int error = 666;\n#endif" ); 
-			scanner.setQuickScan( true ); 
-			validateEOF(); 
+
+		try {
+			initializeScanner("#if 0\n  int error = 666;\n#endif");
+			scanner.setQuickScan(true);
+			validateEOF();
+		} catch (ScannerException se) {
+			fail(EXCEPTION_THROWN + se.getMessage());
 		}
-		catch( ScannerException se )
-		{
-			fail( EXCEPTION_THROWN + se.getMessage() );
-		}
-		
+
 	}
 
-	public void testInclusions()
-	{
-		try
-		{
-			if (doIncludeStdio)
-			{
+	public void testInclusions() {
+		try {
+			if (doIncludeStdio) {
 				initializeScanner("#include <stdio.h>");
 				prepareForStdio();
-				int count= fullyTokenize();
+				int count = fullyTokenize();
 				if (verbose)
 					System.out.println(
 						"For stdio.h, Scanner produced " + count + " tokens");
@@ -893,17 +795,16 @@ public class ScannerTestCase extends BaseScannerTest
 
 				initializeScanner("#include \\\n<\\\nstdio.h   \\\n>");
 				prepareForStdio();
-				count= fullyTokenize();
+				count = fullyTokenize();
 				if (verbose)
 					System.out.println(
 						"For stdio.h, Scanner produced " + count + " tokens");
 			}
 
-			if (doIncludeWindowsH)
-			{
+			if (doIncludeWindowsH) {
 				initializeScanner("#include <Windows.h>");
 				prepareForWindowsH();
-				int count= fullyTokenize();
+				int count = fullyTokenize();
 				if (verbose)
 					System.out.println(
 						"For Windows.h, Scanner produced "
@@ -912,8 +813,7 @@ public class ScannerTestCase extends BaseScannerTest
 				validateBalance();
 			}
 
-			if (doIncludeWinUserH)
-			{
+			if (doIncludeWinUserH) {
 				initializeScanner("#include <WinUser.rh>");
 				prepareForWindowsRH();
 				validateEOF();
@@ -924,31 +824,23 @@ public class ScannerTestCase extends BaseScannerTest
 							+ scanner.getCount()
 							+ " tokens");
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 
 	}
 
-	public void testOtherPreprocessorCommands()
-	{
-		try
-		{
+	public void testOtherPreprocessorCommands() {
+		try {
 			initializeScanner("#\n#\t\n#define MAX_SIZE 1024\n#\n#  ");
 			validateEOF();
 			validateDefinition("MAX_SIZE", "1024");
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 
-		for (int i= 0; i < 4; ++i)
-		{
-			switch (i)
-			{
+		for (int i = 0; i < 4; ++i) {
+			switch (i) {
 				case 0 :
 					initializeScanner("#  ape");
 					break;
@@ -963,187 +855,166 @@ public class ScannerTestCase extends BaseScannerTest
 					break;
 			}
 
-			try
-			{
+			try {
 				validateEOF();
 				fail(EXPECTED_FAILURE);
-			}
-			catch (ScannerException se)
-			{
+			} catch (ScannerException se) {
 				validateBalance();
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				fail(EXCEPTION_THROWN + e.toString());
 			}
 		}
 
 	}
 
-	public void validateAllDefinitions(TableRow row)
-	{
-		int winner= row.selectWinner();
-		int rowLength= row.getLength();
-		for (int i= 0; i <= rowLength; ++i)
-		{
+	public void validateAllDefinitions(TableRow row) {
+		int winner = row.selectWinner();
+		int rowLength = row.getLength();
+		for (int i = 0; i <= rowLength; ++i) {
 			if (i == winner)
 				validateDefinition(row.symbolName(i), row.symbolValue(i));
 			else
 				validateAsUndefined(row.symbolName(i));
 		}
 	}
-	
-	public void testBug36287() throws Exception
-	{
-		initializeScanner( "X::X( const X & rtg_arg ) : U( rtg_arg ) , Z( rtg_arg.Z ) , er( rtg_arg.er ){}" );
+
+	public void testBug36287() throws Exception {
+		initializeScanner("X::X( const X & rtg_arg ) : U( rtg_arg ) , Z( rtg_arg.Z ) , er( rtg_arg.er ){}");
 		validateIdentifier("X");
-		validateToken( Token.tCOLONCOLON);
+		validateToken(Token.tCOLONCOLON);
 		validateIdentifier("X");
-		validateToken( Token.tLPAREN );
-		validateToken( Token.t_const );
+		validateToken(Token.tLPAREN);
+		validateToken(Token.t_const);
 		validateIdentifier("X");
-		validateToken( Token.tAMPER );
-		validateIdentifier( "rtg_arg");
-		validateToken( Token.tRPAREN );  
-		validateToken( Token.tCOLON );
-		validateIdentifier( "U");
-		validateToken( Token.tLPAREN );
-		validateIdentifier( "rtg_arg");
-		validateToken( Token.tRPAREN );
-		validateToken( Token.tCOMMA );
-		validateIdentifier( "Z");
-		validateToken( Token.tLPAREN );
-		validateIdentifier( "rtg_arg");
-		validateToken( Token.tDOT );
-		validateIdentifier( "Z");
-		validateToken( Token.tRPAREN );
-		validateToken( Token.tCOMMA );
-		validateIdentifier( "er");
-		validateToken( Token.tLPAREN );
-		validateIdentifier( "rtg_arg");
-		validateToken( Token.tDOT );
-		validateIdentifier( "er");
-		validateToken( Token.tRPAREN );
-		validateToken( Token.tLBRACE);
-		validateToken( Token.tRBRACE);
+		validateToken(Token.tAMPER);
+		validateIdentifier("rtg_arg");
+		validateToken(Token.tRPAREN);
+		validateToken(Token.tCOLON);
+		validateIdentifier("U");
+		validateToken(Token.tLPAREN);
+		validateIdentifier("rtg_arg");
+		validateToken(Token.tRPAREN);
+		validateToken(Token.tCOMMA);
+		validateIdentifier("Z");
+		validateToken(Token.tLPAREN);
+		validateIdentifier("rtg_arg");
+		validateToken(Token.tDOT);
+		validateIdentifier("Z");
+		validateToken(Token.tRPAREN);
+		validateToken(Token.tCOMMA);
+		validateIdentifier("er");
+		validateToken(Token.tLPAREN);
+		validateIdentifier("rtg_arg");
+		validateToken(Token.tDOT);
+		validateIdentifier("er");
+		validateToken(Token.tRPAREN);
+		validateToken(Token.tLBRACE);
+		validateToken(Token.tRBRACE);
 		validateEOF();
-		
-		initializeScanner( "foo.*bar");
+
+		initializeScanner("foo.*bar");
 		validateIdentifier("foo");
-		validateToken( Token.tDOTSTAR );
+		validateToken(Token.tDOTSTAR);
 		validateIdentifier("bar");
 		validateEOF();
-		
-		initializeScanner( "foo...bar");
+
+		initializeScanner("foo...bar");
 		validateIdentifier("foo");
-		validateToken( Token.tELIPSE );
+		validateToken(Token.tELIPSE);
 		validateIdentifier("bar");
 		validateEOF();
 	}
 
-	public void testBug35892()
-	{
-		try
-		{
-			initializeScanner( "'c'" ); 
-			validateChar( 'c' );
-			validateEOF(); 
-		}
-		catch( ScannerException se )
-		{
-			fail( EXCEPTION_THROWN  + se.getMessage() );
+	public void testBug35892() {
+		try {
+			initializeScanner("'c'");
+			validateChar('c');
+			validateEOF();
+		} catch (ScannerException se) {
+			fail(EXCEPTION_THROWN + se.getMessage());
 		}
 	}
 
-	public void testBug36045() throws Exception
-	{
+	public void testBug36045() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append( '"' );
-		buffer.append( '\\');
-		buffer.append( '"'); 
-		buffer.append( '"');
-		
-		buffer.append( '"');
-		buffer.append( '\\');
-		buffer.append( '\\');
-		buffer.append( '"');
-		buffer.append( "\n\n");
-		initializeScanner( buffer.toString());
-		validateString( "\\\"\\\\");
+		buffer.append('"');
+		buffer.append('\\');
+		buffer.append('"');
+		buffer.append('"');
+
+		buffer.append('"');
+		buffer.append('\\');
+		buffer.append('\\');
+		buffer.append('"');
+		buffer.append("\n\n");
+		initializeScanner(buffer.toString());
+		validateString("\\\"\\\\");
 	}
 
-	public void testConditionalWithBraces()
-	{
-		try
-		{
-			for( int i = 0; i < 4; ++i )
-			{
-				initializeScanner( "int foobar(int a) { if(a == 0) {\n#ifdef THIS\n} else {}\n#elif THAT\n} else {}\n#endif\nreturn 0;}" );
-				switch( i )
-				{
-					case 0:
-						scanner.addDefinition( "THIS", "1");
-						scanner.addDefinition( "THAT", "1" );  
-						break; 
-					case 1:
-						scanner.addDefinition( "THIS", "1");
-						scanner.addDefinition( "THAT", "0" );  
-						break; 						
-					case 2:
-						scanner.addDefinition( "THAT", "1" );
-						break; 
-					case 3: 
-						scanner.addDefinition( "THAT", "0" );
+	public void testConditionalWithBraces() {
+		try {
+			for (int i = 0; i < 4; ++i) {
+				initializeScanner("int foobar(int a) { if(a == 0) {\n#ifdef THIS\n} else {}\n#elif THAT\n} else {}\n#endif\nreturn 0;}");
+				switch (i) {
+					case 0 :
+						scanner.addDefinition("THIS", "1");
+						scanner.addDefinition("THAT", "1");
+						break;
+					case 1 :
+						scanner.addDefinition("THIS", "1");
+						scanner.addDefinition("THAT", "0");
+						break;
+					case 2 :
+						scanner.addDefinition("THAT", "1");
+						break;
+					case 3 :
+						scanner.addDefinition("THAT", "0");
 						break;
 				}
-					
-				validateToken( Token.t_int ); 
-				validateIdentifier( "foobar"); 
-				validateToken( Token.tLPAREN ); 
-				validateToken( Token.t_int ); 
-				validateIdentifier( "a" ); 
-				validateToken( Token.tRPAREN ); 
-				validateToken( Token.tLBRACE ); 
-				validateToken( Token.t_if ); 
-				validateToken( Token.tLPAREN );
-				validateIdentifier( "a" );
-				validateToken( Token.tEQUAL );
-				validateInteger( "0" );
-				validateToken( Token.tRPAREN );
-				validateToken( Token.tLBRACE );
-				
-				if( i <= 1 )
-				{
-					validateToken( Token.tRBRACE ); 
-					validateToken( Token.t_else ); 
-					validateToken( Token.tLBRACE );
-					validateToken( Token.tRBRACE );
+
+				validateToken(Token.t_int);
+				validateIdentifier("foobar");
+				validateToken(Token.tLPAREN);
+				validateToken(Token.t_int);
+				validateIdentifier("a");
+				validateToken(Token.tRPAREN);
+				validateToken(Token.tLBRACE);
+				validateToken(Token.t_if);
+				validateToken(Token.tLPAREN);
+				validateIdentifier("a");
+				validateToken(Token.tEQUAL);
+				validateInteger("0");
+				validateToken(Token.tRPAREN);
+				validateToken(Token.tLBRACE);
+
+				if (i <= 1) {
+					validateToken(Token.tRBRACE);
+					validateToken(Token.t_else);
+					validateToken(Token.tLBRACE);
+					validateToken(Token.tRBRACE);
 				}
-					
-				if( i == 2 )
-				{
-					validateToken( Token.tRBRACE ); 
-					validateToken( Token.t_else ); 
-					validateToken( Token.tLBRACE );
-					validateToken( Token.tRBRACE );
+
+				if (i == 2) {
+					validateToken(Token.tRBRACE);
+					validateToken(Token.t_else);
+					validateToken(Token.tLBRACE);
+					validateToken(Token.tRBRACE);
 				}
-					
-				validateToken( Token.t_return ); 
-				validateInteger( "0"); 
-				validateToken( Token.tSEMI ); 
-				validateToken( Token.tRBRACE ); 
+
+				validateToken(Token.t_return);
+				validateInteger("0");
+				validateToken(Token.tSEMI);
+				validateToken(Token.tRBRACE);
 				validateEOF();
 			}
-		} catch( ScannerException se )
-		{
-			fail(EXCEPTION_THROWN + se.toString());			
+		} catch (ScannerException se) {
+			fail(EXCEPTION_THROWN + se.toString());
 		}
 	}
-	
-	public void testNestedRecursiveDefines() throws Exception
-	{
-		initializeScanner( "#define C B A\n#define B C C\n#define A B\nA" );
-		
+
+	public void testNestedRecursiveDefines() throws Exception {
+		initializeScanner("#define C B A\n#define B C C\n#define A B\nA");
+
 		validateIdentifier("B");
 		validateDefinition("A", "B");
 		validateDefinition("B", "C C");
@@ -1153,200 +1024,204 @@ public class ScannerTestCase extends BaseScannerTest
 		validateIdentifier("A");
 		validateEOF();
 	}
-	
-	public void testBug36316() throws Exception
-	{
-		initializeScanner( "#define A B->A\nA" );
-	
+
+	public void testBug36316() throws Exception {
+		initializeScanner("#define A B->A\nA");
+
 		validateIdentifier("B");
 		validateDefinition("A", "B->A");
 		validateToken(Token.tARROW);
 		validateIdentifier("A");
 		validateEOF();
 	}
-	
-	public void testBug36434() throws Exception
-	{
-		initializeScanner( "#define X(Y)");
+
+	public void testBug36434() throws Exception {
+		initializeScanner("#define X(Y)");
 		validateEOF();
-		IMacroDescriptor macro = (IMacroDescriptor)scanner.getDefinition( "X" );
-		assertNotNull( macro ); 
-		assertEquals( macro.getParameters().size(), 1 );
-		assertEquals( (String)macro.getParameters().get(0), "Y" );
-		assertEquals( macro.getTokenizedExpansion().size(), 0 );
+		IMacroDescriptor macro = (IMacroDescriptor) scanner.getDefinition("X");
+		assertNotNull(macro);
+		assertEquals(macro.getParameters().size(), 1);
+		assertEquals((String) macro.getParameters().get(0), "Y");
+		assertEquals(macro.getTokenizedExpansion().size(), 0);
 	}
-	
-	public void testBug36047() throws Exception
-	{
-		StringWriter writer = new StringWriter(); 
-		writer.write( "# define MAD_VERSION_STRINGIZE(str)	#str\n" ); 
-		writer.write( "# define MAD_VERSION_STRING(num)	MAD_VERSION_STRINGIZE(num)\n" ); 
-		writer.write( "# define MAD_VERSION		MAD_VERSION_STRING(MAD_VERSION_MAJOR) \".\" \\\n" );
-		writer.write( "                         MAD_VERSION_STRING(MAD_VERSION_MINOR) \".\" \\\n" );
-		writer.write( "                         MAD_VERSION_STRING(MAD_VERSION_PATCH) \".\" \\\n" );
-		writer.write( "                         MAD_VERSION_STRING(MAD_VERSION_EXTRA)\n" );
-		writer.write( "# define MAD_VERSION_MAJOR 2\n" );
-		writer.write( "# define MAD_VERSION_MINOR 1\n" );
-		writer.write( "# define MAD_VERSION_PATCH 3\n" );
-		writer.write( "# define MAD_VERSION_EXTRA boo\n" );
-		writer.write( "MAD_VERSION\n" );
-		initializeScanner( writer.toString() );
-		  
-		validateString( "2.1.3.boo" );
-		
-		validateEOF(); 
+
+	public void testBug36047() throws Exception {
+		StringWriter writer = new StringWriter();
+		writer.write("# define MAD_VERSION_STRINGIZE(str)	#str\n");
+		writer.write(
+			"# define MAD_VERSION_STRING(num)	MAD_VERSION_STRINGIZE(num)\n");
+		writer.write(
+			"# define MAD_VERSION		MAD_VERSION_STRING(MAD_VERSION_MAJOR) \".\" \\\n");
+		writer.write(
+			"                         MAD_VERSION_STRING(MAD_VERSION_MINOR) \".\" \\\n");
+		writer.write(
+			"                         MAD_VERSION_STRING(MAD_VERSION_PATCH) \".\" \\\n");
+		writer.write(
+			"                         MAD_VERSION_STRING(MAD_VERSION_EXTRA)\n");
+		writer.write("# define MAD_VERSION_MAJOR 2\n");
+		writer.write("# define MAD_VERSION_MINOR 1\n");
+		writer.write("# define MAD_VERSION_PATCH 3\n");
+		writer.write("# define MAD_VERSION_EXTRA boo\n");
+		writer.write("MAD_VERSION\n");
+		initializeScanner(writer.toString());
+
+		validateString("2.1.3.boo");
+
+		validateEOF();
 	}
-	
-	public void testBug36475() throws Exception
-	{
-		StringWriter writer = new StringWriter(); 
-		writer.write( " \"A\" \"B\" \"C\" " ); 
-		
-		initializeScanner( writer.toString() );
-		  
-		validateString( "ABC" );
-		validateEOF(); 
+
+	public void testBug36475() throws Exception {
+		StringWriter writer = new StringWriter();
+		writer.write(" \"A\" \"B\" \"C\" ");
+
+		initializeScanner(writer.toString());
+
+		validateString("ABC");
+		validateEOF();
 	}
-	
-	public void testBug36509() throws Exception 
-	{ 
-		StringWriter writer = new StringWriter(); 
-		writer.write("#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\\n"); 
-		writer.write("                    x ## s, x ## t) \n"); 
+
+	public void testBug36509() throws Exception {
+		StringWriter writer = new StringWriter();
+		writer.write(
+			"#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\\n");
+		writer.write("                    x ## s, x ## t) \n");
 		writer.write("debug(1, 2);");
-		   
-		initializeScanner( writer.toString() ); 
+
+		initializeScanner(writer.toString());
 		//printf("x1=%d, x2= %s", x1, x2); 
-		validateIdentifier( "printf" ); 
-		validateToken( Token.tLPAREN ); 
-		validateString("x1= %d, x2= %s"); 
-		validateToken(Token.tCOMMA); 
-		validateIdentifier("x1"); 
-		validateToken(Token.tCOMMA); 
-		validateIdentifier("x2"); 
-		validateToken(Token.tRPAREN); 
-		validateToken(Token.tSEMI); 
+		validateIdentifier("printf");
+		validateToken(Token.tLPAREN);
+		validateString("x1= %d, x2= %s");
+		validateToken(Token.tCOMMA);
+		validateIdentifier("x1");
+		validateToken(Token.tCOMMA);
+		validateIdentifier("x2");
+		validateToken(Token.tRPAREN);
+		validateToken(Token.tSEMI);
 		validateEOF();
 	}
-	
-	public void testBug36695() throws Exception
-	{
+
+	public void testBug36695() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("\'\\4\'  \'\\n\'");
-		initializeScanner( writer.toString() );
-		
-		validateChar( "\\4" );
-		validateChar( "\\n" );
+		initializeScanner(writer.toString());
+
+		validateChar("\\4");
+		validateChar("\\n");
 		validateEOF();
 	}
-	
-	public void testBug36521() throws Exception 
-	{ 
-		StringWriter writer = new StringWriter(); 
-		writer.write("#define str(s)      # s\n"); 
-		writer.write("fputs(str(strncmp(\"abc\\0d\", \"abc\", \'\\4\')\n"); 
-		writer.write("        == 0), s);\n"); 
-		                         
-		initializeScanner( writer.toString() ); 
-		validateIdentifier("fputs"); 
-		validateToken(Token.tLPAREN); 
-		validateString("strncmp ( \\\"abc\\\\0d\\\" , \\\"abc\\\" , '\\\\4' ) == 0"); 
-		validateToken(Token.tCOMMA); 
-		validateIdentifier("s"); 
-		validateToken(Token.tRPAREN); 
-		validateToken(Token.tSEMI); 
-	}
-	
-	public void testBug36770() throws Exception
-	{
+
+	public void testBug36521() throws Exception {
 		StringWriter writer = new StringWriter();
-		writer.write( "#define A 0\n" );
-		writer.write( "#if ( A == 1 )\n");
-		writer.write( "#  define foo 1\n");
-		writer.write( "#else\n");
-		writer.write( "# define foo 2\n");
-		writer.write( "#endif\n");
-		writer.write( "foo\n");
-	
-		initializeScanner( writer.toString() );
-		validateInteger( "2" );
+		writer.write("#define str(s)      # s\n");
+		writer.write("fputs(str(strncmp(\"abc\\0d\", \"abc\", \'\\4\')\n");
+		writer.write("        == 0), s);\n");
+
+		initializeScanner(writer.toString());
+		validateIdentifier("fputs");
+		validateToken(Token.tLPAREN);
+		validateString("strncmp ( \\\"abc\\\\0d\\\" , \\\"abc\\\" , '\\\\4' ) == 0");
+		validateToken(Token.tCOMMA);
+		validateIdentifier("s");
+		validateToken(Token.tRPAREN);
+		validateToken(Token.tSEMI);
+	}
+
+	public void testBug36770() throws Exception {
+		StringWriter writer = new StringWriter();
+		writer.write("#define A 0\n");
+		writer.write("#if ( A == 1 )\n");
+		writer.write("#  define foo 1\n");
+		writer.write("#else\n");
+		writer.write("# define foo 2\n");
+		writer.write("#endif\n");
+		writer.write("foo\n");
+
+		initializeScanner(writer.toString());
+		validateInteger("2");
 		validateEOF();
 	}
-		
-	public void testBug36816() throws Exception
-	{
-		initializeScanner( "#include \"foo.h" );
-		try{
+
+	public void testBug36816() throws Exception {
+		initializeScanner("#include \"foo.h");
+		try {
 			validateEOF();
-		} catch ( ScannerException e ){
-			assertTrue( e.getMessage().equals( "Ill-formed #include: reached end of line before \"" ));
+		} catch (ScannerException e) {
+			assertTrue(
+				e.getMessage().equals(
+					"Ill-formed #include: reached end of line before \""));
 		}
-	
-		initializeScanner( "#include <foo.h" );
-		try{
+
+		initializeScanner("#include <foo.h");
+		try {
 			validateEOF();
-		} catch ( ScannerException e ){
-			assertTrue( e.getMessage().equals( "Ill-formed #include: reached end of line before >" ));
-		}		
-		initializeScanner( "#define FOO(A" );
-		try{
-			validateEOF();
-		} catch( ScannerException e ){
-			assertTrue( e.getMessage().equals( "Unexpected newline in macro formal parameter list."));
+		} catch (ScannerException e) {
+			assertTrue(
+				e.getMessage().equals(
+					"Ill-formed #include: reached end of line before >"));
 		}
-		initializeScanner( "#define FOO(A \\ B" );
-		try{
+		initializeScanner("#define FOO(A");
+		try {
 			validateEOF();
-		} catch( ScannerException e ){
-			assertTrue( e.getMessage().equals( "Unexpected '\\' in macro formal parameter list."));
+		} catch (ScannerException e) {
+			assertTrue(
+				e.getMessage().equals(
+					"Unexpected newline in macro formal parameter list."));
 		}
-		
-		initializeScanner( "#define FOO(A,\\\nB) 1\n FOO(foo" );
-		try{
+		initializeScanner("#define FOO(A \\ B");
+		try {
+			validateEOF();
+		} catch (ScannerException e) {
+			assertTrue(
+				e.getMessage().equals(
+					"Unexpected '\\' in macro formal parameter list."));
+		}
+
+		initializeScanner("#define FOO(A,\\\nB) 1\n FOO(foo");
+		try {
 			validateInteger("1");
-		} catch( ScannerException e ){
-			assertTrue( e.getMessage().equals( "Improper use of macro FOO" ) );
+		} catch (ScannerException e) {
+			assertTrue(e.getMessage().equals("Improper use of macro FOO"));
 		}
 	}
-	
-	public void testBug36255() throws Exception
-	{
+
+	public void testBug36255() throws Exception {
 		StringWriter writer = new StringWriter();
-		writer.write( "#if defined ( A ) \n" );
-		writer.write( "   #if defined ( B ) && ( B != 0 ) \n" );
-		writer.write( "      boo\n" );
-		writer.write( "   #endif /*B*/\n" );
-		writer.write( "#endif /*A*/" );
-		
-		initializeScanner( writer.toString() );
+		writer.write("#if defined ( A ) \n");
+		writer.write("   #if defined ( B ) && ( B != 0 ) \n");
+		writer.write("      boo\n");
+		writer.write("   #endif /*B*/\n");
+		writer.write("#endif /*A*/");
+
+		initializeScanner(writer.toString());
 		validateEOF();
 	}
-	
-	public void testBug37011() throws Exception{
+
+	public void testBug37011() throws Exception {
 		StringWriter writer = new StringWriter();
-		writer.write( "#define A \"//\"");
-		
-		initializeScanner( writer.toString() );
-		
+		writer.write("#define A \"//\"");
+
+		initializeScanner(writer.toString());
+
 		validateEOF();
 		validateDefinition("A", "\"//\"");
 	}
 
-	public void testOtherPreprocessorDefines() throws Exception{
+	public void testOtherPreprocessorDefines() throws Exception {
 		StringWriter writer = new StringWriter();
-		writer.write( "#define A a//boo\n" );
-		writer.write( "#define B a /*boo*/ a\n" );
-		writer.write( "#define C a \" //boo \"\n" );
-		writer.write( "#define D a \\\"//boo\n" );
-		writer.write( "#define E a \\n \"\\\"\"\n" );
-		writer.write( "#define F a\\\n b\n" );
-		writer.write( "#define G a '\"'//boo\n" );
-		writer.write( "#define H a '\\'//b'\"/*bo\\o*/\" b\n" );
-		 
-		initializeScanner( writer.toString() );
-		
+		writer.write("#define A a//boo\n");
+		writer.write("#define B a /*boo*/ a\n");
+		writer.write("#define C a \" //boo \"\n");
+		writer.write("#define D a \\\"//boo\n");
+		writer.write("#define E a \\n \"\\\"\"\n");
+		writer.write("#define F a\\\n b\n");
+		writer.write("#define G a '\"'//boo\n");
+		writer.write("#define H a '\\'//b'\"/*bo\\o*/\" b\n");
+
+		initializeScanner(writer.toString());
+
 		validateEOF();
-		
+
 		validateDefinition("A", "a");
 		validateDefinition("B", "a  a");
 		validateDefinition("C", "a \" //boo \"");
@@ -1356,28 +1231,49 @@ public class ScannerTestCase extends BaseScannerTest
 		validateDefinition("G", "a '\"'");
 		validateDefinition("H", "a '\\'//b'\"/*bo\\o*/\" b");
 	}
-	
-	public void testBug38065() throws Exception
-	{
-		initializeScanner( "Foo\\\nBar" );
-		
+
+	public void testBug38065() throws Exception {
+		initializeScanner("Foo\\\nBar");
+
 		validateIdentifier("FooBar");
 		validateEOF();
-		
+
 		try {
-			initializeScanner( "Foo\\Bar" );
-			
+			initializeScanner("Foo\\Bar");
+
 			validateIdentifier("Foo");
 			validateIdentifier("Bar");
 			validateEOF();
-			
+
 		} catch (ScannerException se) {
 			// if Scanner.throwExceptionOnBadCharacterRead == true
 			// we might end up with valid ScannerException "Invalid character ..."
 			// for '\'
-			assertTrue(se.getMessage().equals("Invalid character '\\' read @ offset 5 of file TEXT"));
+			assertTrue(
+				se.getMessage().equals(
+					"Invalid character '\\' read @ offset 5 of file TEXT"));
 		}
 	}
 
-	
+	public void testBug36701A() throws Exception {
+		StringWriter writer = new StringWriter();
+		writer.write("#define str(s) # s\n");
+		writer.write("str( @ \\n )\n");
+
+		initializeScanner(writer.toString());
+		validateString("@ \\\\n");
+		validateEOF();
+	}
+
+	public void testBug36701B() throws Exception {
+		StringWriter writer = new StringWriter();
+		writer.write("#define str(s) # s\n");
+		writer.write("str( @ /*ff*/  \\n  hh  \"aa\"  )\n");
+
+		initializeScanner(writer.toString());
+		validateString("@ \\\\n hh \\\"aa\\\"");
+		validateEOF();
+	}
 }
+
+

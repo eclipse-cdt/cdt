@@ -1360,6 +1360,120 @@ public class Scanner implements IScanner {
 		throw Parser.endOfFile;
 	}
 
+
+    protected static class endOfMacroTokenException extends Exception {};
+    // the static instance we always use
+    protected static endOfMacroTokenException endOfMacroToken = new endOfMacroTokenException();
+    
+    protected Token nextTokenForStringizing() throws ScannerException, Parser.EndOfFile
+    {     
+        int c = getChar();
+        StringBuffer tokenImage = new StringBuffer();
+
+        try {
+        while (c != NOCHAR) {
+
+            if ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n')) {
+                
+                if (tokenImage.length() > 0) throw endOfMacroToken;                
+                c = getChar();
+                continue;
+                
+            } else if (c == '"') {
+       
+                if (tokenImage.length() > 0) throw endOfMacroToken;
+                 
+                // string
+                StringBuffer buff = new StringBuffer(); 
+                int beforePrevious = NOCHAR;
+                int previous = c;
+                c = getChar(true);
+
+                for( ; ; )
+                {
+                    if ( c =='"' ) break;
+                    if( c == NOCHAR) break;  
+                    buff.append((char) c);
+                    beforePrevious = previous;
+                    previous = c;
+                    c = getChar(true);
+                }
+
+                if (c != NOCHAR ) 
+                {
+                    return newToken( Token.tSTRING, buff.toString(), contextStack.getCurrentContext());
+    
+                } else {
+                    if (throwExceptionOnUnboundedString)
+                        throw new ScannerException(
+                            "Unbounded string" );
+                }
+        
+            } else {
+                switch (c) {
+                    case '\'' :
+                    if (tokenImage.length() > 0) throw endOfMacroToken;
+                        c = getChar( true ); 
+                        int next = getChar( true );
+                        if( c == '\\' ){
+                            c = next;
+                            next = getChar( true );
+                            if( next == '\'' )
+                                return newToken( Token.tCHAR, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
+                            else if( throwExceptionOnBadCharacterRead )
+                                throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
+                        } else if( next == '\'' )
+                            return newToken( Token.tCHAR, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
+                        else
+                            if( throwExceptionOnBadCharacterRead )
+                                throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
+                    case ',' :
+                        if (tokenImage.length() > 0) throw endOfMacroToken;
+                        return newToken(Token.tCOMMA, ",", contextStack.getCurrentContext());
+                    case '(' :
+                        if (tokenImage.length() > 0) throw endOfMacroToken;
+                        return newToken(Token.tLPAREN, "(", contextStack.getCurrentContext());
+                    case ')' :
+                        if (tokenImage.length() > 0) throw endOfMacroToken;
+                        return newToken(Token.tRPAREN, ")", contextStack.getCurrentContext());
+                    case '/' :
+                        if (tokenImage.length() > 0) throw endOfMacroToken;
+                        c = getChar();
+                        switch (c) {
+                            case '/' :
+                                c = getChar();
+                                while (c != '\n' && c != NOCHAR)
+                                    c = getChar();
+                                continue;
+                            case '*' :
+                                skipOverMultilineComment();
+                                c = getChar();
+                                continue;
+                            default:
+                                tokenImage.append('/');
+                                continue;
+                        }
+                    default :
+                        tokenImage.append((char)c);
+                        c = getChar();
+                }
+            }
+        }
+        } catch (endOfMacroTokenException e) {
+            // unget the first character after the end of token
+            ungetChar(c);            
+        }
+        
+        // return completed token
+        if (tokenImage.length() > 0) {
+            return newToken(Token.tIDENTIFIER, tokenImage.toString(), contextStack.getCurrentContext());
+        }
+        
+        // we're done
+        throw Parser.endOfFile;
+    }
+
+
 	static {
 		cppKeywords.put("and", new Integer(Token.t_and));
 		cppKeywords.put("and_eq", new Integer(Token.t_and_eq));
@@ -1839,7 +1953,49 @@ public class Scanner implements IScanner {
 			callback.macro( key, offset, beginning, contextStack.getCurrentContext().getOffset() );
 		}
 	}
-	
+    
+    protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
+        
+        Scanner tokenizer = new Scanner(new StringReader(params), TEXT, definitions);
+        Vector parameterValues = new Vector();
+        Token t = null;
+        String str = new String();
+        boolean space = false;
+        int nParen = 0;
+        
+        try {
+            while (true) {
+                t = forStringizing ? tokenizer.nextTokenForStringizing() : tokenizer.nextToken(false);
+                if (t.type == Token.tLPAREN) {
+                    nParen++;
+                } else if (t.type == Token.tRPAREN) {
+                    nParen--;
+                } else if (t.type == Token.tCOMMA && nParen == 0) {
+                    parameterValues.add(str);
+                    str = "";
+                    space = false;
+                    continue;
+                }
+
+                if (space)
+                    str += ' ';
+
+                switch (t.type) {
+                    case Token.tSTRING :  str += '\"' + t.image + '\"'; break;
+                    case Token.tLSTRING : str += "L\"" + t.image + '\"'; break;
+                    case Token.tCHAR :    str += '\'' + t.image + '\'';  break;
+                    default :             str += t.image; break;
+                }
+                space = true;
+            }
+        } catch (Parser.EndOfFile e) {
+            // Good
+            parameterValues.add(str);
+        }
+        
+        return parameterValues;
+    }
+    	
 	protected void expandDefinition(String symbol, Object expansion)
 		throws ScannerException {
 		if (expansion instanceof String ) {
@@ -1868,43 +2024,11 @@ public class Scanner implements IScanner {
 				}
 				
 				String betweenTheBrackets = buffer.toString().trim();
-
-				Scanner tokenizer = new Scanner( new StringReader(betweenTheBrackets), TEXT, definitions );
-				Vector parameterValues = new Vector();
-				Token t = null;
-				String str = new String();
-				boolean space = false;
-				int nParen = 0;
-				try{
-					while (true) {
-						t = tokenizer.nextToken(false);
-						if( t.type == Token.tLPAREN ){
-							nParen++;
-						} else if ( t.type == Token.tRPAREN ){
-							nParen--;
-						} else if( t.type == Token.tCOMMA && nParen == 0 ){
-							parameterValues.add( str );
-							str = "";
-							space = false;
-							continue;
-						}
-											
-						if( space )
-							str += ' ';
-							
-						switch( t.type )
-						{
-							case Token.tSTRING:  str += '\"' + t.image + '\"';  break;
-							case Token.tLSTRING: str += "L\"" + t.image + '\"';	break;
-							case Token.tCHAR:	 str += '\'' + t.image + '\''; 	break;
-							default:			 str += t.image;				break;
-						}
-						space = true;
-					}
-				} catch (Parser.EndOfFile e) {
-					// Good
-					parameterValues.add( str );
-				}
+                
+                Vector parameterValues = getMacroParameters(betweenTheBrackets, false);
+                Vector parameterValuesForStringizing = getMacroParameters(betweenTheBrackets, true);
+                Token t = null;
+                
 				// create a string that represents what needs to be tokenized
 				buffer = new StringBuffer();
 				List tokens = macro.getTokenizedExpansion();
@@ -1944,7 +2068,7 @@ public class Scanner implements IScanner {
 								throw new ScannerException(	"Improper use of the # preprocessing token." );	
 						} else {
 							buffer.append('\"');
-							String value = (String)parameterValues.elementAt(index);
+							String value = (String)parameterValuesForStringizing.elementAt(index);
 							char val [] = value.toCharArray();
 							char ch;
 							int length = value.length();
@@ -1987,7 +2111,8 @@ public class Scanner implements IScanner {
 					}
 					
 					if( t.getType() != tPOUNDPOUND && ! pastingNext )
-						buffer.append( " " ); 
+						if (i < (numberOfTokens-1)) // Do not append to the last one 
+                            buffer.append( " " ); 
 				}
 				String finalString = buffer.toString(); 
 				contextStack.updateContext(

@@ -1296,6 +1296,7 @@ public class CDebugTarget extends CDebugElement
 		if ( event.getSource() instanceof ICDITarget )
 		{
 			suspendThreads( event );
+			fireSuspendEvent( DebugEvent.UNSPECIFIED );
 		}
 		// We need this for debuggers that don't have notifications 
 		// for newly created threads.

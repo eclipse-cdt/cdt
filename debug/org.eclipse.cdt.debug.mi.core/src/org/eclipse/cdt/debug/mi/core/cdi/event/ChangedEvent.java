@@ -4,7 +4,6 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi.event;
 
-import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
@@ -18,8 +17,6 @@ import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibChangedEvent;
@@ -35,19 +32,27 @@ public class ChangedEvent implements ICDIChangedEvent {
 
 	public ChangedEvent(Session s, MIVarChangedEvent var) {
 		session = s;
+
+		// Try the Variable manager.
 		VariableManager mgr = (VariableManager)session.getVariableManager();
 		String varName = var.getVarName();
-		Variable variable = mgr.getVariable(varName);
-		if (variable != null) {
-			source = variable;
-		} else {
+		source = mgr.getVariable(varName);
+
+		// Try the Expression manager
+		if (source == null) {
 			ExpressionManager expMgr = (ExpressionManager)session.getExpressionManager();
-			variable = expMgr.getExpression(varName);
-			if (variable != null) {
-				source = variable;
-			} else {
-				source = new CObject(session.getCurrentTarget());
-			}
+			source = expMgr.getExpression(varName);
+		}
+
+		// Try the Register manager
+		if (source == null) {
+			RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
+			source = regMgr.getRegister(varName);
+		}
+
+		// Fall back
+		if (source == null) {
+			source = new CObject(session.getCurrentTarget());
 		}
 	}
 
@@ -55,14 +60,8 @@ public class ChangedEvent implements ICDIChangedEvent {
 		session = s;
 		RegisterManager mgr = (RegisterManager)session.getRegisterManager();
 		int regno = var.getNumber();
-		Register reg = null;
-		try {
-			reg = mgr.getRegister(regno);
-		} catch (CDIException e) {
-		}
-		if (reg != null) {
-			source = reg;
-		} else {
+		source = mgr.getRegister(regno);
+		if (source == null) {
 			source = new CObject(session.getCurrentTarget());
 		}
 	}

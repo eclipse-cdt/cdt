@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongLongType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
@@ -41,6 +42,8 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.type.IncompleteType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.IntValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.LongLongValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.LongValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.PointerValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.ReferenceValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ShortValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.Type;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.WCharValue;
@@ -171,8 +174,10 @@ public class Variable extends CObject implements ICDIVariable {
 				value = new Value(this);
 			} else if (t instanceof ICDIPointerType) {
 				//((ICDIPointerType)t).getComponentType();
-				//value = new PointerValue(this);
-				value = new Value(this);
+				value = new PointerValue(this);
+				//value = new Value(this);
+			} else if (t instanceof ICDIReferenceType) {
+				value = new ReferenceValue(this);
 			} else if (t instanceof ICDIArrayType) {
 				//((ICDIArrayType)t).getComponentType();
 				//value = new ArrayValue(this);

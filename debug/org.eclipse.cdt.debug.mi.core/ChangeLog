@@ -1,3 +1,13 @@
+2003-06-04 Mikhail Khodjaiants
+	Added some missing types and methods for the type parsing.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ArrayType.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/DoubleValue.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/FloatingPointValue.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/FloatValue.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/PointerValue.java: new
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ReferenceValue.java: new
+
 2003-06-03 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java:

@@ -76,7 +76,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		Label label= getLabelControl(parent);
 		label.setLayoutData(gridDataForLabel(1));
 			
-		//Button checkButton = getLinkCheckButtonControl(parent);		
+		getLinkCheckButtonControl(parent);		
 
 		Text text= getTextControl(parent);
 		text.setLayoutData(gridDataForText(1));

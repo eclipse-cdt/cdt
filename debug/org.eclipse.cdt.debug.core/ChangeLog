@@ -1,5 +1,13 @@
 2002-10-12 Alain Magloire
 
+	* core/cdi/model/ICDIMemoryBlock (supportValueModification):
+	Remove the method, it should be part of a ICDIConfiguration.
+
+	* core/cdi/ICDIMemoryManager (getBlock): Rename to getMemoryBlock
+	(createMemoryBlock): New method to get a memory block.
+
+2002-10-12 Alain Magloire
+
 	* core/cdi/ICDILocation (getInstructions): Methods
 	removed is now part of SourceManager.
 

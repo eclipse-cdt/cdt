@@ -1,5 +1,47 @@
 2002-10-12 Alain Magloire
 
+	There are some serious problems with gdb/mi, for example
+	the most recurrent one is when using -data-disassemble
+	in a threaded program, GNU/Linux uses a thread manager
+	when trying to access the stackframe, gdb usually coredumps
+	with an assert, it goes something like this:
+	54 0-data-disassemble -f manager.c -l 136 -n 100 0
+
+&"Cannot access memory at address 0x4002d794\n"
+^error,msg="Cannot access memory at address 0x4002d794"
+(gdb) 
+-data-disassemble -s 0x4002d900 -e 0x4002d964 0
+&"Cannot access memory at address 0x4002d900\n"
+^error,msg="Cannot access memory at address 0x4002d900"
+(gdb) 
+-thread-select 2
+&"ui-out.c:133: gdb-internal-error: push_level: Assertion `uiout->level >= 0 && uiout->level < MAX_UI_OUT_LEVELS' failed.\n"
+
+	The RxThread will spawn a thread to terminate the session
+	and clear the receiving queue.
+
+
+	* RxThread.java (run): When the thread is being cancel() or
+	running out of run(), clear the receiving queue(rxQueue) and
+	notify any commands waiting.
+
+	* TxTread.java (run): Before putting the command in the
+	receiving queue(rxQueue) check to see if the thread is
+	still running.
+	When the thread is being cancel() or running out of run(),
+	clear the transmition queue(txQueue) an notify any commands
+	waiting.
+
+	* Queue.java (clearItems): New method that clear the items
+	on the queue and returning them.
+
+	* CommandQueue.java (clearCommands): New method calls super.clearItems()
+	whith the appropriate castings.
+
+	* cdi/CThread.java (setCurrentStackFrame): Check for null.
+
+2002-10-12 Alain Magloire
+
 	The memory block is implemented with
 	-data-read-memory (MIDataReadMemory)
 	Since the ICDIMemoryBlock only have

@@ -1,4 +1,8 @@
 2002-11-19 Mikhail Khodjaiants
+	Fix for bug 26693.
+	* SwitchToDisassemblyActionDelegate.java
+
+2002-11-19 Mikhail Khodjaiants
 	Fix for bug 26401.
 	* ExpressionDialog.java: Highlight the content of the expression field on intialization.
 

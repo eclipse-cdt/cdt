@@ -9,10 +9,12 @@ import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
 
 /**
@@ -38,13 +40,14 @@ public class SwitchToDisassemblyActionDelegate extends AbstractListenerActionDel
 				((CDebugElement)element).fireChangeEvent( DebugEvent.CLIENT_REQUEST );
 				if ( fViewPart != null && fViewPart instanceof ISelectionChangedListener )
 				{
-					final ISelectionChangedListener view = (ISelectionChangedListener)fViewPart;
+					final AbstractDebugView view = (AbstractDebugView)fViewPart;
 					fViewPart.getViewSite().getShell().getDisplay().asyncExec( 
 									new Runnable()
 										{
 											public void run()
 											{
-												view.selectionChanged( null );
+												Viewer viewer = view.getViewer();
+												viewer.setSelection( viewer.getSelection() );
 											}
 										} );
 				}

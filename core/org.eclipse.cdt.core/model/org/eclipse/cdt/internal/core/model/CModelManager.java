@@ -82,7 +82,9 @@ public class CModelManager implements IResourceChangeListener {
 	 */
 	protected ArrayList fElementChangedListeners= new ArrayList();
 
-	public static final String [] cExtensions = {"c", "cxx", "cc", "C", "cpp", "h", "hh"};
+	public static final String [] sourceExtensions = {"c", "cxx", "cc", "C", "cpp"};
+
+	public static final String [] headerExtensions = {"h", "hh", "hpp"};
 
 	static CModelManager factory = null;
 	
@@ -527,11 +529,29 @@ public class CModelManager implements IResourceChangeListener {
 			return false;
 		}
 		String ext = name.substring(index + 1);
-		for (int i = 0; i < cExtensions.length; i++) {
-			if (ext.equals(cExtensions[i]))
+		String[] cexts = getTranslationUnitExtensions();
+		for (int i = 0; i < cexts.length; i++) {
+			if (ext.equals(cexts[i]))
 				return true;
 		}
 		return false;
+	}
+	
+	public String[] getHeaderExtensions() {
+		return headerExtensions;
+	}
+	
+	public String[] getSourceExtensions() {
+		return sourceExtensions;
+	}
+
+	public String[] getTranslationUnitExtensions() {
+		String[] headers = getHeaderExtensions();
+		String[] sources = getSourceExtensions();
+		String[] cexts = new String[headers.length + sources.length];
+		System.arraycopy(sources, 0, cexts, 0, sources.length);
+		System.arraycopy(headers, 0, cexts, sources.length, headers.length);
+		return cexts;
 	}
 
 	/* Only project with C nature and Open.  */

@@ -800,6 +800,8 @@ public class CPPVisitor {
 			if( name instanceof ICPPASTQualifiedName ) return PROCESS_CONTINUE;
 			
 			ASTNodeProperty prop = name.getPropertyInParent();
+			if( prop == ICPPASTQualifiedName.SEGMENT_NAME )
+				prop = name.getParent().getPropertyInParent();
 			
 			switch( kind ){
 				case KIND_LABEL:

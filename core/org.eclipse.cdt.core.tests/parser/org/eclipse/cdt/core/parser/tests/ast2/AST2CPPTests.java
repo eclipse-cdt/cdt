@@ -1400,5 +1400,30 @@ public class AST2CPPTests extends AST2BaseTest {
         IProblemBinding problem = (IProblemBinding) col.getName(12).resolveBinding();
         assertEquals( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, problem.getID() );
    }
+   
+   public void testBug84703() throws Exception {
+   		StringBuffer buffer = new StringBuffer();
+   		buffer.append("struct B {          \n" ); //$NON-NLS-1$
+		buffer.append("   void mutate();   \n" ); //$NON-NLS-1$
+		buffer.append("};                  \n" ); //$NON-NLS-1$
+		buffer.append("void g() {          \n" ); //$NON-NLS-1$
+		buffer.append("   B* pb = new B(); \n" ); //$NON-NLS-1$
+		buffer.append("   pb->mutate();    \n" ); //$NON-NLS-1$
+		buffer.append("}                   \n" ); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        assertEquals( 8, col.size() );
+        
+        ICPPMethod mutate = (ICPPMethod) col.getName(1).resolveBinding();
+        ICPPClassType B = (ICPPClassType) col.getName(0).resolveBinding();
+        IVariable pb = (IVariable) col.getName(4).resolveBinding();
+        
+        assertInstances( col, pb, 2 );
+        assertInstances( col, mutate, 2 );
+        assertInstances( col, B, 2 );
+   }
 }
 

@@ -375,7 +375,6 @@ public class RxThread extends Thread {
 			session.getMIInferior().setSuspended();
 		} else if ("exited-normally".equals(reason) ||
 			"exited-signalled".equals(reason) ||
-			"exited-signalled".equals(reason) ||
 			"exited".equals(reason)) {
 			if (exec != null) {
 				event = new MIInferiorExitEvent(exec);

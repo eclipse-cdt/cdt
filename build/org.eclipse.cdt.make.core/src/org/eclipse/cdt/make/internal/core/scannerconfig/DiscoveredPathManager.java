@@ -121,7 +121,9 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 	public void removeDiscoveredInfo(IProject project) {
 		ScannerConfigUtil.getDiscoveredScannerConfigStore(project, true);
 		DiscoveredPathInfo info = (DiscoveredPathInfo)fDiscoveredMap.remove(project);
-		fireUpdate(INFO_REMOVED, info);
+		if (info != null) {
+			fireUpdate(INFO_REMOVED, info);
+		}
 	}
 
 	public void updateDiscoveredInfo(IDiscoveredPathInfo info) throws CoreException {

@@ -298,27 +298,29 @@ public final class ScannerConfigUtil {
 	}
 	
 	public static IPath getDiscoveredScannerConfigStore(IProject project, boolean delete) {
-		if (project != null) {
+		String fileName = null;
+		try {
+			fileName = project.getPersistentProperty(discoveredScannerConfigFileNameProperty);
+		} catch (CoreException e) {
+			MakeCorePlugin.log(e.getStatus());
+		}
+		if (fileName == null) {
+			fileName = String.valueOf(sRandom.nextLong()) + ".sc"; //$NON-NLS-1$
 			try {
-				String fileName = project.getPersistentProperty(discoveredScannerConfigFileNameProperty);
-				if (fileName == null) {
-					fileName = String.valueOf(sRandom.nextLong()) + ".sc"; //$NON-NLS-1$
-					project.setPersistentProperty(discoveredScannerConfigFileNameProperty, fileName);
-				}
-
-				IPath path = MakeCorePlugin.getWorkingDirectory();
-				path = path.append(fileName);
-				if (delete) {
-					File file = path.toFile();
-					if (file.exists()) {
-						file.delete();
-					}
-				}
-				return path;
+				project.setPersistentProperty(discoveredScannerConfigFileNameProperty, fileName);
 			} catch (CoreException e) {
 				MakeCorePlugin.log(e.getStatus());
 			}
 		}
-		return null;
+
+		IPath path = MakeCorePlugin.getWorkingDirectory();
+		path = path.append(fileName);
+		if (delete) {
+			File file = path.toFile();
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+		return path;
 	}
 }

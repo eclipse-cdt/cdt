@@ -1,3 +1,10 @@
+2004-05-07 Alain Magloire
+
+	Bug in the PathEntyrManager, the container
+	entries where not resolved.
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryStore.java
+
 2004-04-04 Alain Magloire
 
 	Race condition causing deadlocks fix.

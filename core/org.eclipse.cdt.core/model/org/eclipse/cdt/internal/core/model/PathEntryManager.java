@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
+import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IProjectEntry;
@@ -103,7 +104,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						IPathEntry[] containerEntries = container.getPathEntries();
 						if (containerEntries != null) {
 							for (int j = 0; j < containerEntries.length; j++) {
-								list.add(containerEntries[j]);
+								IPathEntry newEntry = cloneEntry(cproject.getPath(), containerEntries[j]);
+								list.add(newEntry);
 							}
 						}
 					}
@@ -481,7 +483,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return null;
 	}
 
-	public IPathEntryContainer containerGet(ICProject project, IPath containerPath) {
+	public synchronized IPathEntryContainer containerGet(ICProject project, IPath containerPath) {
 		Map projectContainers = (Map) Containers.get(project);
 		if (projectContainers == null) {
 			projectContainers = new HashMap();
@@ -491,7 +493,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return container;
 	}
 
-	public void containerPut(ICProject project, IPath containerPath, IPathEntryContainer container) {
+	public synchronized void containerPut(ICProject project, IPath containerPath, IPathEntryContainer container) {
 		Map projectContainers = (Map) Containers.get(project);
 		if (projectContainers == null) {
 			projectContainers = new HashMap();
@@ -758,6 +760,44 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
 		for (int i= 0; i < affectedChildren.length; i++) {
 			processDelta(affectedChildren[i]);
+		}
+	}
+
+	protected IPathEntry cloneEntry(IPath rpath, IPathEntry entry) {
+		IPath entryPath = entry.getPath(); 
+		IPath resourcePath = (entryPath == null || entryPath.isEmpty()) ? rpath : entryPath;
+		switch(entry.getEntryKind()) {
+			case IPathEntry.CDT_INCLUDE: {
+				IIncludeEntry include = (IIncludeEntry)entry;
+				return CoreModel.newIncludeEntry(resourcePath, include.getBasePath(), include.getIncludePath(),
+						include.isSystemInclude(), include.getExclusionPatterns(), include.isExported());
+			}
+			case IPathEntry.CDT_LIBRARY: {
+				ILibraryEntry library = (ILibraryEntry)entry;
+				return CoreModel.newLibraryEntry(resourcePath, library.getBasePath(), library.getLibraryPath(),
+						library.getSourceAttachmentPath(), library.getSourceAttachmentRootPath(),
+						library.getSourceAttachmentPrefixMapping(), library.isExported());
+			}
+			case IPathEntry.CDT_MACRO: {
+				IMacroEntry macro = (IMacroEntry)entry;
+				return CoreModel.newMacroEntry(resourcePath, macro.getMacroName(), macro.getMacroValue(),
+						macro.getExclusionPatterns(), macro.isExported());
+			}
+			case IPathEntry.CDT_OUTPUT: {
+				IOutputEntry out = (IOutputEntry)entry;
+				return CoreModel.newOutputEntry(out.getPath(), out.getExclusionPatterns());
+			}
+			case IPathEntry.CDT_PROJECT: {
+				IProjectEntry projEntry = (IProjectEntry)entry;
+				return CoreModel.newProjectEntry(projEntry.getPath(), projEntry.isExported());
+			}
+			case IPathEntry.CDT_SOURCE: {
+				ISourceEntry source = (ISourceEntry)entry;
+				return CoreModel.newSourceEntry(source.getPath(), source.getExclusionPatterns());
+			}
+			case IPathEntry.CDT_CONTAINER:
+			default:
+				return CoreModel.newContainerEntry(entry.getPath(), entry.isExported());
 		}
 	}
 }

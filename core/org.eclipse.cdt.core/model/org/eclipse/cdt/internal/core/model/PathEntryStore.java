@@ -146,7 +146,7 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 		// exclusion patterns (optional)
 		String exclusion = element.getAttribute(ATTRIBUTE_EXCLUDING);
 		IPath[] exclusionPatterns = APathEntry.NO_EXCLUSION_PATTERNS;
-		if (!exclusion.equals("")) { //$NON-NLS-1$
+		if (exclusion != null && exclusion.length() > 0) {
 			char[][] patterns = CharOperation.splitOn('|', exclusion.toCharArray());
 			int patternCount;
 			if ((patternCount = patterns.length) > 0) {

@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.sourcelookup.INewSourceLocationWizard;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
@@ -386,8 +387,11 @@ public class CDebugEditor extends CEditor
 	{
 		IEditorInput newInput = input;
 		if ( input instanceof EditorInputDelegate && ((EditorInputDelegate)input).getDelegate() != null )
+		{
 			newInput = ((EditorInputDelegate)input).getDelegate();
+		}
 		super.doSetInput( newInput );
+		CUIPlugin.getDefault().getWorkingCopyManager().connect(input);
 	}
 
 	protected void attachSourceLocation()
@@ -435,6 +439,8 @@ public class CDebugEditor extends CEditor
 						{
 							newInput = new ExternalEditorInput( (IStorage)newElement );
 						}
+						IEditorInput oldInput = ((EditorInputDelegate)getEditorInput()).getDelegate();
+						CUIPlugin.getDefault().getWorkingCopyManager().disconnect(oldInput);
 						((EditorInputDelegate)getEditorInput()).setDelegate( newInput );
 						resetInput( element.getStackFrame() );
 					}
@@ -492,4 +498,19 @@ public class CDebugEditor extends CEditor
 		else
 			super.updatePartControl( input );
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		IEditorInput input = getEditorInput();
+		IEditorInput newInput = input;
+		if ( input instanceof EditorInputDelegate && ((EditorInputDelegate)input).getDelegate() != null )
+		{
+			newInput = ((EditorInputDelegate)input).getDelegate();
+		}
+		CUIPlugin.getDefault().getWorkingCopyManager().disconnect(newInput);
+		super.dispose();
+	}
+
 }

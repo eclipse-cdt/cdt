@@ -342,7 +342,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 					{
 						try
 						{
-							((ISwitchToThread)((IThread)element).getDebugTarget()).setCurrentThread( (IThread)element );
 							if ( !sameThread( (IDebugElement)element ) )
 							{
 								((ISwitchToThread)((IThread)element).getDebugTarget()).setCurrentThread( (IThread)element );

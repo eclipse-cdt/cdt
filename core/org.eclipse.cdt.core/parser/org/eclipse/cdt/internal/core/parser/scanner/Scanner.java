@@ -1194,6 +1194,7 @@ public class Scanner implements IScanner {
 							c = getChar();
 							continue;
 						case PreprocessorDirectives.IF :
+							//TODO add in content assist stuff here
 							// get the rest of the line		
 							int currentOffset = getCurrentOffset();
 							String expression = getRestOfPreprocessorLine();
@@ -1210,6 +1211,7 @@ public class Scanner implements IScanner {
 
 
 						case PreprocessorDirectives.IFDEF :
+							//TODO add in content assist stuff here
 							skipOverWhitespace();
 							if (getDefinition(getNextIdentifier()) == null) {
 								// not defined	
@@ -1234,6 +1236,7 @@ public class Scanner implements IScanner {
 							continue;
 
 						case PreprocessorDirectives.IFNDEF :
+							//TODO add in content assist stuff here
 							skipOverWhitespace();
 							if (getDefinition(getNextIdentifier()) != null) {
 								// not defined	
@@ -1247,6 +1250,7 @@ public class Scanner implements IScanner {
 							continue;
 
 						case PreprocessorDirectives.ELSE :
+							//TODO add in content assist stuff here
 							try
 							{
 								passOnToClient = branches.poundelse();
@@ -1264,6 +1268,7 @@ public class Scanner implements IScanner {
 							continue;
 
 						case PreprocessorDirectives.ELIF :
+							//TODO add in content assist stuff here
 							int co = getCurrentOffset();
 							String elsifExpression = getRestOfPreprocessorLine().trim();
 
@@ -1291,7 +1296,6 @@ public class Scanner implements IScanner {
 							continue;
 
 						case PreprocessorDirectives.LINE :
-							//TO DO 
 							skipOverTextUntilNewline();
 							c = getChar();
 							continue;
@@ -1839,7 +1843,7 @@ public class Scanner implements IScanner {
 		
 		if( finalToken.getEndOffset() == offsetLimit )
 			throw new OffsetLimitReachedException(finalToken);
-		throw new OffsetLimitReachedException( null );
+		throw new OffsetLimitReachedException( (IToken)null );
 	}
 
 

@@ -10,16 +10,26 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
+import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
+
 /**
  * @author jcamelon
  */
 public class OffsetLimitReachedException extends EndOfFileException {
 
+	private final IASTCompletionNode node;
 	private final IToken finalToken;
-
+	
+	public OffsetLimitReachedException( IASTCompletionNode node )
+	{
+		this.node = node;
+		finalToken = null;
+	}
+	
 	public OffsetLimitReachedException( IToken token )
 	{
 		finalToken = token;
+		node = null;
 	}
 	
 	/**
@@ -28,5 +38,17 @@ public class OffsetLimitReachedException extends EndOfFileException {
 	public IToken getFinalToken() {
 		return finalToken;
 	}
+	
+	/**
+	 * @return returns the IASTCompletionNode
+	 */
+	public IASTCompletionNode getCompletionNode()
+	{
+		return node;
+	}
+
+    /**
+	 * @author jcamelon
+	 */
 
 }

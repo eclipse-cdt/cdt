@@ -13,6 +13,13 @@ package org.eclipse.cdt.make.internal.core.makefile;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.make.core.makefile.IInferenceRule;
+import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
+import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.makefile.IRule;
+import org.eclipse.cdt.make.core.makefile.IStatement;
+import org.eclipse.cdt.make.core.makefile.ITargetRule;
+
 /**
  * Makefile : ( statement ) *
  * statement :   rule | macro_definition | comments | empty
@@ -29,99 +36,148 @@ import java.util.List;
  * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
  */
 
-public abstract class AbstractMakefile {
+public abstract class AbstractMakefile implements IMakefile {
 
 	public AbstractMakefile() {
 	}
 
-	public abstract Statement[] getStatements();
-	public abstract void addStatement(Statement statement);
+	public abstract IStatement[] getStatements();
+	public abstract IStatement[] getBuiltins();
+	public abstract void addStatement(IStatement statement);
 
-	public Rule[] getRules() {
-		Statement[] stmts = getStatements();
+	public IRule[] getRules() {
+		IStatement[] stmts = getStatements();
 		List array = new ArrayList(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
-			if (stmts[i] instanceof Rule) {
+			if (stmts[i] instanceof IRule) {
 				array.add(stmts[i]);
 			}
 		}
-		return (Rule[]) array.toArray(new Rule[0]);
+		return (IRule[]) array.toArray(new IRule[0]);
 	}
 
-	public Rule getRule(String target) {
-		Rule[] rules = getRules();
+	public IRule[] getRule(String target) {
+		IRule[] rules = getRules();
+		List array = new ArrayList(rules.length);
 		for (int i = 0; i < rules.length; i++) {
 			if (rules[i].getTarget().equals(target)) {
-				return rules[i];
-			}
-		}
-		return null;
-	}
-
-	public InferenceRule[] getInferenceRules() {
-		Rule[] rules = getRules();
-		List array = new ArrayList(rules.length);
-		for (int i = 0; i < rules.length; i++) {
-			if (rules[i] instanceof InferenceRule) {
 				array.add(rules[i]);
 			}
 		}
-		return (InferenceRule[]) array.toArray(new InferenceRule[0]);
+		return (IRule[]) array.toArray(new IRule[0]);
 	}
 
-	public InferenceRule getInferenceRule(String target) {
-		InferenceRule[] irules = getInferenceRules();
+	public IInferenceRule[] getInferenceRules() {
+		IRule[] rules = getRules();
+		List array = new ArrayList(rules.length);
+		for (int i = 0; i < rules.length; i++) {
+			if (rules[i] instanceof IInferenceRule) {
+				array.add(rules[i]);
+			}
+		}
+		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
+	}
+
+	public IInferenceRule[] getInferenceRule(String target) {
+		IInferenceRule[] irules = getInferenceRules();
+		List array = new ArrayList(irules.length);
 		for (int i = 0; i < irules.length; i++) {
 			if (irules[i].getTarget().equals(target)) {
-				return irules[i];
+				array.add(irules[i]);
 			}
 		}
-		return null;
+		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
 	}
 
-	public TargetRule[] getTargetRules() {
-		Rule[] rules = getRules();
-		List array = new ArrayList(rules.length);
-		for (int i = 0; i < rules.length; i++) {
-			if (rules[i] instanceof TargetRule) {
-				array.add(rules[i]);
+	public ITargetRule[] getTargetRules() {
+		IRule[] trules = getRules();
+		List array = new ArrayList(trules.length);
+		for (int i = 0; i < trules.length; i++) {
+			if (trules[i] instanceof ITargetRule) {
+				array.add(trules[i]);
 			}
 		}
-		return (TargetRule[]) array.toArray(new TargetRule[0]);
+		return (ITargetRule[]) array.toArray(new ITargetRule[0]);
 	}
 
-	public TargetRule getTargetRule(String target) {
-		TargetRule[] trules = getTargetRules();
+	public ITargetRule[] getTargetRule(String target) {
+		ITargetRule[] trules = getTargetRules();
+		List array = new ArrayList(trules.length);
 		for (int i = 0; i < trules.length; i++) {
 			if (trules[i].getTarget().equals(target)) {
-				return trules[i];
+				array.add(trules[i]);
 			}
 		}
-		return null;
+		return (ITargetRule[]) array.toArray(new ITargetRule[0]);
 	}
 
-	public MacroDefinition[] getMacroDefinitions() {
-		Statement[] stmts = getStatements();
+	public IMacroDefinition[] getMacroDefinitions() {
+		IStatement[] stmts = getStatements();
 		List array = new ArrayList(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
-			if (stmts[i] instanceof MacroDefinition) {
+			if (stmts[i] instanceof IMacroDefinition) {
 				array.add(stmts[i]);
 			}
 		}
-		return (MacroDefinition[]) array.toArray(new MacroDefinition[0]);
+		return (IMacroDefinition[]) array.toArray(new IMacroDefinition[0]);
 	}
 
-	public MacroDefinition getMacroDefinition(String name) {
-		MacroDefinition[] variables = getMacroDefinitions();
+	public IMacroDefinition[] getMacroDefinition(String name) {
+		IMacroDefinition[] variables = getMacroDefinitions();
+		List array = new ArrayList(variables.length);
 		for (int i = 0; i < variables.length; i++) {
 			if (variables[i].getName().equals(name)) {
-				return variables[i];
+				array.add(variables[i]);
 			}
 		}
-		return null;
+		return (IMacroDefinition[]) array.toArray(new IMacroDefinition[0]);
 	}
 
-	public void addStatements(Statement[] stmts) {
+	public IMacroDefinition[] getBuiltinMacroDefinitions() {
+		IStatement[] stmts = getBuiltins();
+		List array = new ArrayList(stmts.length);
+		for (int i = 0; i < stmts.length; i++) {
+			if (stmts[i] instanceof IMacroDefinition) {
+				array.add(stmts[i]);
+			}
+		}
+		return (IMacroDefinition[]) array.toArray(new IMacroDefinition[0]);
+	}
+
+	public IMacroDefinition[] getBuiltinMacroDefinition(String name) {
+		IMacroDefinition[] variables = getBuiltinMacroDefinitions();
+		List array = new ArrayList(variables.length);
+		for (int i = 0; i < variables.length; i++) {
+			if (variables[i].getName().equals(name)) {
+				array.add(variables[i]);
+			}
+		}
+		return (IMacroDefinition[]) array.toArray(new IMacroDefinition[0]);
+	}
+
+	public IInferenceRule[] getBuiltinInferenceRules() {
+		IStatement[] stmts = getBuiltins();
+		List array = new ArrayList(stmts.length);
+		for (int i = 0; i < stmts.length; i++) {
+			if (stmts[i] instanceof IInferenceRule) {
+				array.add(stmts[i]);
+			}
+		}
+		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
+	}
+
+	public IInferenceRule[] getBuiltinInferenceRule(String target) {
+		IInferenceRule[] irules = getBuiltinInferenceRules();
+		List array = new ArrayList(irules.length);
+		for (int i = 0; i < irules.length; i++) {
+			if (irules[i].getTarget().equals(target)) {
+				array.add(irules[i]);
+			}
+		}
+		return (IInferenceRule[]) array.toArray(new IInferenceRule[0]);
+	}
+
+	public void addStatements(IStatement[] stmts) {
 		for (int i = 0; i < stmts.length; i++) {
 			addStatement(stmts[i]);
 		}

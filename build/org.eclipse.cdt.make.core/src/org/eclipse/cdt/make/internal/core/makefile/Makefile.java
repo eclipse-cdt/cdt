@@ -14,6 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.cdt.make.core.makefile.*;
+
 /**
  * Makefile : ( statement ) *
  * statement :   rule | macro_definition | comments | empty
@@ -46,10 +48,10 @@ public abstract class Makefile {
 		return filename;
 	}
 
-	public Rule[] getRules() {
+	public IInferenceRule[] getRules() {
 		return null;
 	}
-	public Rule getRule(String target) {
+	public IInferenceRule getRule(String target) {
 		return null;
 	}
 	public InferenceRule[] getInferenceRules() {
@@ -58,23 +60,23 @@ public abstract class Makefile {
 	public InferenceRule getInferenceRule(String target) {
 		return null;
 	}
-	public TargetRule[] getTargetRules() {
+	public ITargetRule[] getTargetRules() {
 		return null;
 	}
-	public TargetRule getTargetRule(String target) {
+	public ITargetRule getTargetRule(String target) {
 		return null;
 	}
 
-	public Rule[] getBuiltinRules() {
+	public IInferenceRule[] getBuiltinRules() {
 		return null;
 	}
-	public Rule getBuiltinRule(String target) {
+	public IInferenceRule getBuiltinRule(String target) {
 		return null;
 	}
-	public Rule[] getBuiltinInferenceRules() {
+	public IInferenceRule[] getBuiltinInferenceRules() {
 		return null;
 	}
-	public Rule getBuiltinInferenceRule(String target) {
+	public IInferenceRule getBuiltinInferenceRule(String target) {
 		return null;
 	}
 

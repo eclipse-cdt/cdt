@@ -10,22 +10,16 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
+import org.eclipse.cdt.make.core.makefile.ICommand;
+
 /**
  * Makefile : ( statement ) *
  * statement : command | ..  
  * command : <tab> prefix_command string <nl>
  * prefix_command : '-' | '@' | '+'
  */
+public class Command extends Statement implements ICommand {
 
-public class Command extends Statement {
-
-	final public static char HYPHEN = '-';
-	final public static String HYPHEN_STRING = "-";
-	final public static char AT = '@';
-	final public static String AT_STRING = "@";
-	final public static char PLUS = '+';
-	final public static String PLUS_STRING = "+";
-	final public static char TAB = '\t';
 	final public static char NL = '\n';
 
 	String command = "";

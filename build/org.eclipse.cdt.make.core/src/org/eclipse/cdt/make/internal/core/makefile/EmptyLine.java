@@ -10,19 +10,22 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
-public class EmptyLine extends Statement {
+import org.eclipse.cdt.make.core.makefile.IEmptyLine;
 
-	final public static String newline = "\n";
-	final public static char nl = '\n';
+public class EmptyLine extends Statement implements IEmptyLine {
+
+	final public static char NL = '\n';
+	final public static String NL_STRING = "\n";
 
 	public EmptyLine() {
+		super();
 	}
 
 	public String toString() {
-		return newline;
+		return NL_STRING;
 	}
 
-	public boolean equals(EmptyLine stmt) {
+	public boolean equals(IEmptyLine stmt) {
 		return true;
 	}
 }

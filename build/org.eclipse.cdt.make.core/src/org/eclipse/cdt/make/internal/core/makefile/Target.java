@@ -12,18 +12,22 @@ package org.eclipse.cdt.make.internal.core.makefile;
 
 import java.io.File;
 
-public class Target {
+import org.eclipse.cdt.make.core.makefile.*;
 
-	File file;
-	TargetRule rule;
+public class Target implements ITarget {
 
-	public Target(TargetRule r) {
-		rule = r;
-		file = new File(rule.getTarget());
+	String target;
+
+	public Target(String t) {
+		target = t;
+	}
+
+	public String toString() {
+		return target;
 	}
 
 	public boolean exits() {
-		return file.exists();
+		return new File(target).exists();
 	}
 
 	public int make(boolean echo) {
@@ -35,6 +39,6 @@ public class Target {
 	}
 
 	public long lastModified() {
-		return file.lastModified();
+		return new File(target).lastModified();
 	}
 }

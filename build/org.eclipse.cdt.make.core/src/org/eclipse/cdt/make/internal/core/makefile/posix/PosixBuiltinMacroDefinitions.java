@@ -32,7 +32,7 @@ public class PosixBuiltinMacroDefinitions {
 			new MacroDefinition("SCCSFLAGS="),
 			new MacroDefinition("SCCSGETFLAGS=-s")};
 
-	MacroDefinition getMacroDefinition(String name) {
+	public MacroDefinition getMacroDefinition(String name) {
 		for (int i = 0; i < macros.length; i++) {
 			if (name.equals(macros[i].getName())) {
 				return macros[i];
@@ -41,7 +41,7 @@ public class PosixBuiltinMacroDefinitions {
 		return null;
 	}
 
-	MacroDefinition[] getMacroDefinitions() {
+	public MacroDefinition[] getMacroDefinitions() {
 		return macros;
 	}
 }

@@ -10,13 +10,24 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
+import org.eclipse.cdt.make.core.makefile.ICommand;
+import org.eclipse.cdt.make.core.makefile.ITarget;
+
 public class InferenceRule extends Rule {
 
-	public InferenceRule(String target) {
+	public InferenceRule(String tgt) {
+		this (new Target(tgt));
+	}
+
+	public InferenceRule(ITarget target) {
 		this(target, new Command[0]);
 	}
 
-	public InferenceRule(String target, Command[] commands) {
+	public InferenceRule(String tgt, ICommand[] commands) {
+		this(new Target(tgt), commands);
+	}
+
+	public InferenceRule(ITarget target, ICommand[] commands) {
 		super(target, commands);
 	}
 
@@ -27,7 +38,7 @@ public class InferenceRule extends Rule {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(target).append(':');
 		buffer.append('\n');
-		Command[] cmds = getCommands();
+		ICommand[] cmds = getCommands();
 		for (int i = 0; i < cmds.length; i++) {
 			buffer.append(cmds[i].toString());
 		}

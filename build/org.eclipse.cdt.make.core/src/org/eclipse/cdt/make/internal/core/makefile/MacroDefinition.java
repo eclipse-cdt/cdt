@@ -10,9 +10,11 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
+import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
+
 /**
  */
-public class MacroDefinition extends Statement {
+public class MacroDefinition extends Statement implements IMacroDefinition {
 	String name;
 	StringBuffer value;
 

@@ -108,7 +108,7 @@ public class PosixBuiltinRules {
 					new Command("rm -f $*.o")})
 		};
 
-	InferenceRule getInferenceRule(String name) {
+	public InferenceRule getInferenceRule(String name) {
 		for (int i = 0; i < rules.length; i++) {
 			if (name.equals(rules[i].getTarget())) {
 				return rules[i];
@@ -117,7 +117,7 @@ public class PosixBuiltinRules {
 		return null;
 	}
 
-	InferenceRule[] getInferenceRules() {
+	public InferenceRule[] getInferenceRules() {
 		return rules;
 	}
 }

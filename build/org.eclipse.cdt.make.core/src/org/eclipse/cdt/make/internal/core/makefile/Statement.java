@@ -10,7 +10,43 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
-public abstract class Statement {
+import org.eclipse.cdt.make.core.makefile.IStatement;
+
+public abstract class Statement implements IStatement {
+
+	int endLine;
+	int startLine;
+
+	public Statement() {
+	}
 
 	public abstract String toString();
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IStatement#getEndLine()
+	 */
+	public int getEndLine() {
+		return endLine;
+	}
+
+	public void setEndLine(int lineno) {
+		endLine = lineno;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IStatement#getStartLine()
+	 */
+	public int getStartLine() {
+		return startLine;
+	}
+
+	public void setStartLine(int lineno) {
+		startLine = lineno;
+	}
+
+	public void setLines(int start, int end) {
+		setStartLine(start);
+		setEndLine(end);
+	}
+
 }

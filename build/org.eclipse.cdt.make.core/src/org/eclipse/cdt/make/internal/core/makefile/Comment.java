@@ -10,15 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
-public class Comment extends Statement {
+import org.eclipse.cdt.make.core.makefile.IComment;
 
-	final public static char pound = '#';
-	final public static String square = "#";
+public class Comment extends Statement implements IComment {
 
 	String comment;
 
 	public Comment(String cmt) {
-		if (cmt.startsWith(square)) {
+		if (cmt.startsWith(POUND_STRING)) {
 			comment = cmt.substring(1);
 		} else {
 			comment = cmt;
@@ -27,7 +26,7 @@ public class Comment extends Statement {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(square).append(comment).append('\n');
+		buffer.append(POUND_STRING).append(comment).append('\n');
 		return buffer.toString();
 	}
 

@@ -10,22 +10,25 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.posix;
 
-import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.make.core.makefile.IStatement;
 import org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile;
 import org.eclipse.cdt.make.internal.core.makefile.Command;
 import org.eclipse.cdt.make.internal.core.makefile.Comment;
 import org.eclipse.cdt.make.internal.core.makefile.EmptyLine;
 import org.eclipse.cdt.make.internal.core.makefile.InferenceRule;
+import org.eclipse.cdt.make.internal.core.makefile.MacroDefinition;
+import org.eclipse.cdt.make.internal.core.makefile.MakefileReader;
 import org.eclipse.cdt.make.internal.core.makefile.Rule;
 import org.eclipse.cdt.make.internal.core.makefile.Statement;
+import org.eclipse.cdt.make.internal.core.makefile.Target;
 import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
-import org.eclipse.cdt.make.internal.core.makefile.Util;
-import org.eclipse.cdt.make.internal.core.makefile.MacroDefinition;
+import org.eclipse.cdt.make.internal.core.makefile.MakefileUtil;
 
 /**
  * Makefile : ( statement ) *
@@ -48,85 +51,117 @@ public class PosixMakefile extends AbstractMakefile {
 	List statements;
 
 	public PosixMakefile(String name) throws IOException {
-		this(new BufferedReader(new FileReader(name)));
+		this(new FileReader(name));
 	}
 
-	public PosixMakefile(BufferedReader reader) throws IOException {
+	public PosixMakefile(Reader reader) throws IOException {
+		this(new MakefileReader(reader));
+	}
+
+	public PosixMakefile(MakefileReader reader) throws IOException {
 		super();
 		statements = new ArrayList();
 		parse(reader);
 	}
 
-	void parse(BufferedReader br) throws IOException {
+	void parse(MakefileReader reader) throws IOException {
 		String line;
 		Rule rule = null;
-		while ((line = Util.readLine(br)) != null) {
-			if (line.length() == 0) {
-				// Empty Line.
-				statements.add(new EmptyLine());
-			} else if (line.startsWith("#")) {
+		int startLine = 0;
+		int endLine = 0;
+		while ((line = reader.readLine()) != null) {
+			startLine = endLine + 1;
+			endLine = reader.getLineNumber();
+			// Strip away any comments.
+			int pound = MakefileUtil.indexOfComment(line);
+			if (pound != -1) {
 				// Comment.
-				statements.add(new Comment(line));
-			} else if (line.startsWith("\t")) {
+				Statement stmt = new Comment(line.substring(pound + 1));
+				stmt.setLines(startLine, endLine);
+				addStatement(stmt);
+				line = line.substring(0, pound);
+			}
+			if (MakefileUtil.isEmptyLine(line)) {
+				// Empty Line.
+				Statement stmt = new EmptyLine();
+				stmt.setLines(startLine, endLine);
+				addStatement(stmt);
+			} else if (MakefileUtil.isCommand(line)) {
 				// Command.
 				Command cmd = new Command(line);
 				if (rule != null) {
 					rule.addCommand(cmd);
+					rule.setEndLine(endLine);
 				} else {
 					throw new IOException("Error Parsing");
 				}
-			} else if (line.startsWith(".")) {
+			} else if (MakefileUtil.isInferenceRule(line)) {
 				// Inference Rule
 				String tgt;
-				int index = Util.indexOf(line, ':');
+				int index = MakefileUtil.indexOf(line, ':');
 				if (index != -1) {
 					tgt = line.substring(0, index);
 				} else {
 					tgt = line;
 				}
-				rule = new InferenceRule(tgt);
-				statements.add(rule);
-			} else {
-				char[] array = line.toCharArray();
-				if (Util.isMacroDefinition(array)) {
-					// MacroDefinition
-					statements.add(new MacroDefinition(line));
-				} else if (Util.isRule(array)) {
-					String[] targets;
-					String[] reqs = new String[0];
-					String cmd = null;
-					int index = Util.indexOf(array, ':');
-					if (index != -1) {
-						String target = line.substring(0, index);
-						// Break the targets
-						targets = Util.findTargets(target.trim());
+				rule = new InferenceRule(new Target(tgt));
+				rule.setLines(startLine, endLine);
+				addStatement(rule);
+			} else if (MakefileUtil.isMacroDefinition(line)) {
+				// MacroDefinition
+				Statement stmt = new MacroDefinition(line);
+				stmt.setLines(startLine, endLine);
+				addStatement(stmt);
+			} else if (MakefileUtil.isTargetRule(line)) {
+				String[] targets;
+				String[] reqs = new String[0];
+				String cmd = null;
+				int index = MakefileUtil.indexOf(line.toCharArray(), ':');
+				if (index != -1) {
+					String target = line.substring(0, index);
+					// Break the targets
+					targets = MakefileUtil.findTargets(target.trim());
 
-						String req = line.substring(index + 1);
-						int semicolon = Util.indexOf(req, ';');
-						if (semicolon != -1) {
-							cmd = req.substring(semicolon + 1);
-							req = req.substring(0, semicolon);
-						}
-						reqs = Util.findPrerequisites(req.trim());
-					} else {
-						targets = new String[] { line };
+					String req = line.substring(index + 1);
+					int semicolon = MakefileUtil.indexOf(req, ';');
+					if (semicolon != -1) {
+						cmd = req.substring(semicolon + 1);
+						req = req.substring(0, semicolon);
 					}
-
-					for (int i = 0; i < targets.length; i++) {
-						rule = new TargetRule(targets[i], reqs);
-						statements.add(rule);
-						if (cmd != null) {
-							rule.addCommand(new Command(cmd));
-						}
-					}
+					reqs = MakefileUtil.findPrerequisites(req.trim());
 				} else {
+					targets = MakefileUtil.findTargets(line);
 				}
+
+				Target[] preqs = new Target[reqs.length];
+				for (int i = 0; i < reqs.length; i++) {
+					preqs[i] = new Target(reqs[i]);
+				}
+				for (int i = 0; i < targets.length; i++) {
+					rule = new TargetRule(new Target(targets[i]), preqs);
+					rule.setLines(startLine, endLine);
+					addStatement(rule);
+					if (cmd != null) {
+						rule.addCommand(new Command(cmd));
+					}
+				}
+			} else {
+					// ???
 			}
 		}
 	}
 
-	public Statement[] getStatements() {
-		return (Statement[]) statements.toArray(new Statement[0]);
+	public IStatement[] getStatements() {
+		return (IStatement[]) statements.toArray(new Statement[0]);
+	}
+
+	public IStatement[] getBuiltins() {
+		IStatement[] macros = new PosixBuiltinMacroDefinitions().getMacroDefinitions();
+		IStatement[] rules = new PosixBuiltinRules().getInferenceRules();
+		IStatement[] stmts = new IStatement[macros.length + rules.length];
+		System.arraycopy(macros, 0, stmts, 0, macros.length);
+		System.arraycopy(rules, 0, stmts, macros.length, rules.length);
+		return stmts;
 	}
 
 	public void addStatement(Statement stmt) {
@@ -140,7 +175,7 @@ public class PosixMakefile extends AbstractMakefile {
 				filename = args[0];
 			}
 			PosixMakefile makefile = new PosixMakefile(filename);
-			Statement[] statements = makefile.getStatements();
+			IStatement[] statements = makefile.getStatements();
 			for (int i = 0; i < statements.length; i++) {
 				//System.out.println("Rule[" + i +"]");
 				System.out.print(statements[i]);
@@ -148,6 +183,13 @@ public class PosixMakefile extends AbstractMakefile {
 		} catch (IOException e) {
 			System.out.println(e);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile#addStatement(org.eclipse.cdt.make.core.makefile.IStatement)
+	 */
+	public void addStatement(IStatement statement) {
+		statements.add(statement);
 	}
 
 }

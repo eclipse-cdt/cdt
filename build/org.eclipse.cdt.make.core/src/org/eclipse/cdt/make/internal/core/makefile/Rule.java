@@ -10,45 +10,50 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
-public abstract class Rule extends Statement {
+import org.eclipse.cdt.make.core.makefile.ICommand;
+import org.eclipse.cdt.make.core.makefile.IInferenceRule;
+import org.eclipse.cdt.make.core.makefile.IRule;
+import org.eclipse.cdt.make.core.makefile.ITarget;
 
-	Command[] commands;
-	String target;
+public abstract class Rule extends Statement implements IRule, IInferenceRule {
 
-	public Rule(String target) {
-		this(target, new Command[0]);
+	ICommand[] commands;
+	ITarget target;
+
+	public Rule(ITarget tgt) {
+		this(tgt, new Command[0]);
 	}
 
-	public Rule(String tgt, Command[] cmds) {
+	public Rule(ITarget tgt, ICommand[] cmds) {
 		target = tgt;
 		commands = cmds;
 	}
 
-	public Command[] getCommands() {
+	public ICommand[] getCommands() {
 		return commands;
 	}
 
-	public void setCommand(Command[] cmds) {
+	public void setCommand(ICommand[] cmds) {
 		commands = cmds;
 	}
 
-	public String getTarget() {
+	public ITarget getTarget() {
 		return target;
 	}
 
-	public void setTarget(String tgt) {
+	public void setTarget(ITarget tgt) {
 		target = tgt;
 	}
 
-	public void addCommand(Command cmd) {
-		Command[] newCmds = new Command[commands.length + 1];
+	public void addCommand(ICommand cmd) {
+		ICommand[] newCmds = new ICommand[commands.length + 1];
 		System.arraycopy(commands, 0, newCmds, 0, commands.length);
 		newCmds[commands.length] = cmd;
 		commands = newCmds;
 	}
 
-	public void addCommands(Command[] cmds) {
-		Command[] newCmds = new Command[commands.length + cmds.length];
+	public void addCommands(ICommand[] cmds) {
+		ICommand[] newCmds = new ICommand[commands.length + cmds.length];
 		System.arraycopy(commands, 0, newCmds, 0, commands.length);
 		System.arraycopy(cmds, 0, newCmds, commands.length, cmds.length);
 		commands = newCmds;

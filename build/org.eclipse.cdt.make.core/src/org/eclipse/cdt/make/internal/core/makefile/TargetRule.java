@@ -10,6 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
+import org.eclipse.cdt.make.core.makefile.ICommand;
+import org.eclipse.cdt.make.core.makefile.ITarget;
+import org.eclipse.cdt.make.core.makefile.ITargetRule;
+
 /**
  * Makefile : ( statement ) *
  * statement :   rule | macro_definition | comments | empty
@@ -26,28 +30,28 @@ package org.eclipse.cdt.make.internal.core.makefile;
  * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
  */
 
-public class TargetRule extends Rule {
+public class TargetRule extends Rule implements ITargetRule {
 
-	String[] dependencies;
+	ITarget[] dependencies;
 
-	public TargetRule(String target) {
-		this(target, new String[0]);
+	public TargetRule(ITarget target) {
+		this(target, new ITarget[0]);
 	}
 
-	public TargetRule(String target, String[] pres) {
-		this(target, pres, new Command[0]);
+	public TargetRule(ITarget target, ITarget[] deps) {
+		this(target, deps, new ICommand[0]);
 	}
 
-	public TargetRule(String target, String[] deps, Command[] commands) {
+	public TargetRule(ITarget target, ITarget[] deps, ICommand[] commands) {
 		super(target, commands);
 		dependencies = deps;
 	}
 
-	public String[] getDependencies() {
+	public ITarget[] getDependencies() {
 		return dependencies;
 	}
 
-	public void setDependecies(String[] reqs) {
+	public void setDependecies(ITarget[] reqs) {
 		dependencies = reqs;
 	}
 
@@ -63,7 +67,7 @@ public class TargetRule extends Rule {
 				buffer.append(dependencies[i]).append(' ');
 			}
 			buffer.append('\n');
-			Command[] cmds = getCommands();
+			ICommand[] cmds = getCommands();
 			for (int i = 0; i < cmds.length; i++) {
 				buffer.append(cmds[i].toString());
 			}

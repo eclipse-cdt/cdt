@@ -1,3 +1,7 @@
+2003-03-28 Mikhail Khodjaiants
+	Correction of the previous patch.
+	* MIAsm.java
+
 2003-03-27 Mikhail Khodjaiants
 	Applied patch from Chris Songer: Assembly View Fixups
 	* Instruction.java

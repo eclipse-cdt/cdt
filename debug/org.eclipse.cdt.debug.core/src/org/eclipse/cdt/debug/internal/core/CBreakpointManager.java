@@ -353,30 +353,19 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			String condition = breakpoint.getCondition();
 			String oldCondition = ( delta != null ) ? delta.getAttribute( ICBreakpoint.CONDITION, "" ) : condition; //$NON-NLS-1$
 			String[] newThreadIs = getThreadNames( breakpoint );
+			Boolean enabled0 = null;
+			ICDICondition condition0 = null;
 			if ( enabled != oldEnabled && enabled != cdiBreakpoint.isEnabled() ) {
-				DebugPlugin.getDefault().asyncExec( new Runnable() {				
-					public void run() {
-						try {
-							cdiBreakpoint.setEnabled( enabled );
-						}
-						catch( CDIException e ) {
-						} 
-					}
-				} );
+				enabled0 = ( enabled ) ? Boolean.TRUE : Boolean.FALSE;
 			}
 			if ( ignoreCount != oldIgnoreCount || condition.compareTo( oldCondition ) != 0 || areThreadFiltersChanged( newThreadIs, cdiBreakpoint ) ) {
 				final ICDICondition cdiCondition = cdiTarget.createCondition( ignoreCount, condition, newThreadIs  );
-				if ( ! cdiCondition.equals( cdiBreakpoint.getCondition() ) ) {
-					DebugPlugin.getDefault().asyncExec( new Runnable() {	
-						public void run() {
-							try {
-								cdiBreakpoint.setCondition( cdiCondition );
-							}
-							catch( CDIException e ) {
-							} 
-						}
-					} );
+				if ( !cdiCondition.equals( cdiBreakpoint.getCondition() ) ) {
+					condition0 = cdiCondition;
 				}
+			}
+			if ( enabled0 != null || condition0 != null ) {
+				changeBreakpointPropertiesOnTarget( cdiBreakpoint, enabled0, condition0 );
 			}
 		}
 		catch( CoreException e ) {
@@ -385,6 +374,27 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		catch( CDIException e ) {
 			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.4" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
 		}
+	}
+
+	private void changeBreakpointPropertiesOnTarget( final ICDIBreakpoint breakpoint, final Boolean enabled, final ICDICondition condition ) {
+		DebugPlugin.getDefault().asyncExec( new Runnable() {				
+			public void run() {
+				if ( enabled != null ) {
+					try {
+						breakpoint.setEnabled( enabled.booleanValue() );
+					}
+					catch( CDIException e ) {
+					}
+				}
+				if ( condition != null ) {
+					try {
+						breakpoint.setCondition( condition );
+					}
+					catch( CDIException e ) {
+					}
+				}
+			}
+		} );			
 	}
 
 	private void handleBreakpointCreatedEvent( final ICDIBreakpoint cdiBreakpoint ) {

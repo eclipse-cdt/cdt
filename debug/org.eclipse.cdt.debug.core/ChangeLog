@@ -1,3 +1,7 @@
+2004-11-15 Mikhail Khodjaiants
+	Batch breakpoint updates in one job.
+	* CBreakpointManager.java
+
 2004-11-12 Mikhail Khodjaiants
 	Apply the breakpoint's condition changes to the associated gdb breakpoint 
 	only if there are differences.

@@ -1,6 +1,11 @@
 2004-01-29 Mikhail Khodjaiants
+	Fire sets of debug events instead of firing it one by one.
+	* CDebugTarget.java
+	* CThread.java
+	
+2004-01-29 Mikhail Khodjaiants
 	Added DebugEvent factory methods to 'CDebugElement'.
-	CDebugElement.java
+	* CDebugElement.java
 
 2004-01-15 Mikhail Khodjaiants
 	Fix for bug 48682: IThread.getBreakpoints() stubbed out.

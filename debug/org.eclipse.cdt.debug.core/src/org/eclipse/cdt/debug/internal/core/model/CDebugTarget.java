@@ -137,6 +137,8 @@ public class CDebugTarget extends CDebugElement
 		}
 	}
 
+	private boolean fSuspending;
+
 	/**
 	 * The type of this target.
 	 */
@@ -346,6 +348,16 @@ public class CDebugTarget extends CDebugElement
 		}
 		for ( int i = 0; i < threads.length; ++i )
 			createThread( threads[i] );
+		
+		// Fire thread creation events.
+		List list = getThreadList();
+		ArrayList debugEvents = new ArrayList( list.size() );
+		Iterator it = list.iterator();
+		while( it.hasNext() )
+		{
+			debugEvents.add( ((CThread)it.next()).createCreateEvent() );
+		}
+		fireEventSet( (DebugEvent[])debugEvents.toArray( new DebugEvent[debugEvents.size()] ) );
 	}
 
 	/**
@@ -526,16 +538,34 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void terminate() throws DebugException
 	{
-		try
+		if ( isTerminating() ) 
 		{
-			setTerminating( true );
-			getCDITarget().terminate();
+			return;
 		}
-		catch( CDIException e )
-		{
-			setTerminating( false );
-			targetRequestFailed( e.getMessage(), e );
-		}
+		setTerminating( true );
+		DebugPlugin.getDefault().asyncExec( 
+						new Runnable() 
+							{
+								public void run() 
+								{
+									try 
+									{
+										getCDITarget().terminate();
+									}
+									catch( CDIException e ) 
+									{
+										setTerminating( false );
+										try 
+										{
+											targetRequestFailed( e.getMessage(), e );
+										} 
+										catch( DebugException e1 ) 
+										{
+											CDebugUtils.error( e1.getStatus(), CDebugTarget.this );
+										}
+									}
+								}
+							} );
 	}
 
 	/**
@@ -593,7 +623,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void resume() throws DebugException
 	{
-		if ( !isSuspended() ) 
+		if ( !isSuspended() && !isSuspending() ) 
 			return;
 		try 
 		{
@@ -610,18 +640,41 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void suspend() throws DebugException
 	{
-		if ( isSuspended() )
+		if ( isSuspended() || isSuspending() )
 			return;
-		try
-		{
-			getCDITarget().suspend();
-		}
-		catch( CDIException e )
-		{
-			targetRequestFailed( e.getMessage(), e );
-		}
+		
+		setSuspending(true);
+		DebugPlugin.getDefault().asyncExec(new Runnable() {
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() { 
+				try {
+					getCDITarget().suspend();
+				} catch( CDIException e ) {
+					try {
+						targetRequestFailed( e.getMessage(), e );
+					} catch (DebugException e1) {
+						CDebugUtils.error(e1.getStatus(), CDebugTarget.this);
+					}
+					
+				} finally {
+					setSuspending(false);					
+				}
+			}
+		});
 	}
 
+	protected void setSuspending( boolean value ) 
+	{
+		fSuspending = value;
+	}
+
+	protected boolean isSuspending() 
+	{
+		return fSuspending;
+	}
+	
 	/**
 	 * Notifies threads that they have been suspended.
 	 * 
@@ -641,42 +694,50 @@ public class CDebugTarget extends CDebugElement
 	 */
 	protected synchronized List refreshThreads()
 	{
-		ArrayList list = new ArrayList( 5 );
 		ArrayList newThreads = new ArrayList( 5 );
+		ArrayList list = new ArrayList( 5 );
+		ArrayList debugEvents = new ArrayList( 5 );
+		List oldList = (List)getThreadList().clone();
+
+		ICDIThread[] cdiThreads = new ICDIThread[0];
 		try
 		{
-			ICDIThread[] cdiThreads = getCDITarget().getThreads();
-			for ( int i = 0; i < cdiThreads.length; ++i )
-			{
-				CThread thread = findThread( cdiThreads[i] ); 
-				if ( thread == null )
-				{
-					thread = new CThread( this, cdiThreads[i] );
-					newThreads.add( thread );
-				}
-				else
-				{
-					getThreadList().remove( thread );
-				}
-				list.add( thread );
-			}
-			Iterator it = getThreadList().iterator();
-			while( it.hasNext() )
-			{
-				((CThread)it.next()).terminated();
-			}
-			getThreadList().clear();
-			setThreadList( list );
-			it = newThreads.iterator();
-			while( it.hasNext() )
-			{
-				((CThread)it.next()).fireCreationEvent();
-			}
+			cdiThreads = getCDITarget().getThreads();
 		}
 		catch( CDIException e )
 		{
 			CDebugCorePlugin.log( e );
 		}
+		for ( int i = 0; i < cdiThreads.length; ++i )
+		{
+			CThread thread = findThread( oldList, cdiThreads[i] ); 
+			if ( thread == null )
+			{
+				thread = new CThread( this, cdiThreads[i] );
+				newThreads.add( thread );
+			}
+			else
+			{
+				oldList.remove( thread );
+			}
+			list.add( thread );
+		}
+		
+		Iterator it = oldList.iterator();
+		while( it.hasNext() )
+		{
+			CThread thread = (CThread)it.next();
+			thread.terminated();
+			debugEvents.add( thread.createTerminateEvent() );
+		}
+		setThreadList( list );
+		it = newThreads.iterator();
+		while( it.hasNext() )
+		{
+			debugEvents.add( ((CThread)it.next()).createCreateEvent() );
+		}
+		if ( debugEvents.size() > 0 )
+			fireEventSet( (DebugEvent[])debugEvents.toArray( new DebugEvent[debugEvents.size()] ) );
 		setCurrentThread();
 		return newThreads;
 	}
@@ -684,8 +745,13 @@ public class CDebugTarget extends CDebugElement
 	/**
 	 * Notifies threads that they have been resumed
 	 */
-	protected void resumeThreads( ICDIResumedEvent event )
+	protected synchronized void resumeThreads( List debugEvents, int detail )
 	{
+		Iterator it = getThreadList().iterator();
+		while( it.hasNext() )
+		{
+			((CThread)it.next()).resumed( detail, debugEvents );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1179,13 +1245,17 @@ public class CDebugTarget extends CDebugElement
 	 */
 	protected void removeAllThreads()
 	{
-		Iterator itr = getThreadList().iterator();
+		List threads = getThreadList();
 		setThreadList( new ArrayList( 0 ) );
-		while( itr.hasNext() )
+		ArrayList debugEvents = new ArrayList( threads.size() );
+		Iterator it = threads.iterator();
+		while( it.hasNext() )
 		{
-			CThread thread = (CThread)itr.next();
+			CThread thread = (CThread)it.next();
 			thread.terminated();
+			debugEvents.add( thread.createTerminateEvent() );
 		}
+		fireEventSet( (DebugEvent[])debugEvents.toArray( new DebugEvent[debugEvents.size()] ) );
 	}
 
 	/**
@@ -1218,7 +1288,6 @@ public class CDebugTarget extends CDebugElement
 	{
 		CThread thread = new CThread( this, cdiThread );
 		getThreadList().add( thread );
-		thread.fireCreationEvent();
 		return thread;
 	}
 
@@ -1233,7 +1302,6 @@ public class CDebugTarget extends CDebugElement
 		CThread thread = new CThread( this, cdiThread );
 		thread.setRunning( true );
 		getThreadList().add( thread );
-		thread.fireCreationEvent();
 		return thread;
 	}
 
@@ -1249,7 +1317,6 @@ public class CDebugTarget extends CDebugElement
 		if ( event.getSource() instanceof ICDITarget )
 		{
 			suspendThreads( event );
-			fireSuspendEvent( DebugEvent.UNSPECIFIED );
 		}
 		// We need this for debuggers that don't have notifications 
 		// for newly created threads.
@@ -1399,7 +1466,7 @@ public class CDebugTarget extends CDebugElement
 		setCurrentStateId( IState.RUNNING );
 		setCurrentStateInfo( null );
 		resetStatus();
-		resumeThreads( event );
+		ArrayList debugEvents = new ArrayList( 10 );
 		int detail = DebugEvent.UNSPECIFIED;
 		switch( event.getType() )
 		{
@@ -1418,9 +1485,11 @@ public class CDebugTarget extends CDebugElement
 				detail = DebugEvent.STEP_RETURN;
 				break;
 		}
+		resumeThreads( debugEvents, detail );
 		if ( getRunningInfo() == null )
 			setRunningInfo( event.getType() );
-		fireResumeEvent( detail );
+		debugEvents.add( createResumeEvent( detail ) );
+		fireEventSet( (DebugEvent[])debugEvents.toArray( new DebugEvent[debugEvents.size()] ) );
 	}
 	
 	private void handleEndSteppingRange( ICDIEndSteppingRange endSteppingRange )
@@ -1526,10 +1595,11 @@ public class CDebugTarget extends CDebugElement
 	{
 		ICDIThread cdiThread = (ICDIThread)event.getSource();
 		CThread thread = findThread( cdiThread );
-		if ( thread == null ) 
-		{
-			createThread( cdiThread );
-		} 
+		if ( thread == null )
+		{ 
+			thread = createThread( cdiThread );
+			thread.fireCreationEvent();
+		}
 	}
 
 	private void handleThreadTerminatedEvent( ICDIDestroyedEvent event )
@@ -1540,6 +1610,7 @@ public class CDebugTarget extends CDebugElement
 		{
 			getThreadList().remove( thread );
 			thread.terminated();
+			thread.fireTerminateEvent();
 		}
 	}
 
@@ -1553,6 +1624,17 @@ public class CDebugTarget extends CDebugElement
 	public CThread findThread( ICDIThread cdiThread )
 	{
 		List threads = getThreadList();
+		for ( int i = 0; i < threads.size(); i++ )
+		{
+			CThread t = (CThread)threads.get( i );
+			if ( t.getCDIThread().equals( cdiThread ) )
+				return t;
+		}
+		return null;
+	}
+
+	public CThread findThread( List threads, ICDIThread cdiThread )
+	{
 		for ( int i = 0; i < threads.size(); i++ )
 		{
 			CThread t = (CThread)threads.get( i );
@@ -2285,5 +2367,21 @@ public class CDebugTarget extends CDebugElement
 				list.add( bkpt );
 		}
 		return (IBreakpoint[])list.toArray( new IBreakpoint[list.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString()
+	{
+		String result = "";
+		try
+		{
+			result = getName();
+		}
+		catch( DebugException e )
+		{
+		}
+		return result;
 	}
 }

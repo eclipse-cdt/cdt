@@ -1,3 +1,8 @@
+2004-08-11 Bogdan Gheorghe	
+ 	Fix for 71964: Search parses too many times
+ 	
+ 	* search/org/eclipse/cdt/internal/core/search/matching/MatchLocators.java
+ 	
 2004-08-11 Bogdan Gheorghe
 	Fix for Bug 59493: need to refine index query for open-type 
 	

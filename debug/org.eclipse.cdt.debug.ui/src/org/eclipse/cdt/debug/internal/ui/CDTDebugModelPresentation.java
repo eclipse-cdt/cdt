@@ -6,8 +6,13 @@
 
 package org.eclipse.cdt.debug.internal.ui;
 
+import java.util.HashMap;
+
 import org.eclipse.cdt.debug.core.IState;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IDisconnect;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -26,6 +31,18 @@ import org.eclipse.ui.IEditorInput;
 public class CDTDebugModelPresentation extends LabelProvider
 									   implements IDebugModelPresentation
 {
+	/**
+	 * Qualified names presentation property (value <code>"org.eclipse.debug.ui.displayQualifiedNames"</code>).
+	 * When <code>DISPLAY_QUALIFIED_NAMES</code> is set to <code>True</code>,
+	 * this label provider should use fully qualified type names when rendering elements.
+	 * When set to <code>False</code>,this label provider should use simple names
+	 * when rendering elements.
+	 * @see #setAttribute(String, Object)
+	 */
+	public final static String DISPLAY_QUALIFIED_NAMES = "DISPLAY_QUALIFIED_NAMES"; //$NON-NLS-1$
+	
+	protected HashMap fAttributes = new HashMap(3);
+
 	private static CDTDebugModelPresentation fInstance = null;
 
 	/**
@@ -34,7 +51,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 	public CDTDebugModelPresentation()
 	{
 		super();
-		fInstance = new CDTDebugModelPresentation();
+		fInstance = this;
 	}
 
 	public static CDTDebugModelPresentation getDefault()
@@ -47,6 +64,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 */
 	public void setAttribute( String attribute, Object value )
 	{
+		if ( value != null )
+		{
+			fAttributes.put( attribute, value );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -85,66 +106,66 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 */
 	public String getText( Object element )
 	{
-		if ( element instanceof IDebugTarget )
-			return getTargetText( (IDebugTarget)element );
-		if ( element instanceof IThread )
-			return getThreadText( (IThread)element );
-		return super.getText( element );
-	}
-	
-	protected String getTargetText( IDebugTarget target )
-	{
-		if ( target instanceof IState )
+		boolean showQualified= isShowQualifiedNames();
+		StringBuffer label = new StringBuffer();
+		try
 		{
-			IState state = (IState)target.getAdapter( IState.class );
-			if ( state != null )
+			if ( element instanceof IDebugTarget )
+				label.append( getTargetText( (IDebugTarget)element, showQualified ) );
+			else if ( element instanceof IThread )
+				label.append( getThreadText( (IThread)element, showQualified ) );
+			
+			if ( element instanceof ITerminate )
 			{
-				switch( state.getCurrentStateId() )
+				if ( ((ITerminate)element).isTerminated() )
 				{
-					case IState.ATTACHING:
-						break;
-					case IState.CORE_DUMP_FILE:
-						break;
-					case IState.DISCONNECTING:
-						break;
-					case IState.DISCONNECTED:
-						break;
-					case IState.RUNNING:
-						break;
-					case IState.STARTING:
-						break;
-					case IState.STEPPING:
-						break;
-					case IState.SUSPENDED:
-						break;
-					case IState.TERMINATED:
-						break;
+					label.insert( 0, "<terminated>" );
+					return label.toString();
 				}
 			}
-		}
-		return super.getText( target );
-	}
-	
-	protected String getThreadText( IThread thread )
-	{
-		if ( thread instanceof IState )
-		{
-			IState state = (IState)thread.getAdapter( IState.class );
-			if ( state != null )
+			if ( element instanceof IDisconnect )
 			{
-				switch( state.getCurrentStateId() )
+				if ( ((IDisconnect)element).isDisconnected() )
 				{
-					case IState.CORE_DUMP_FILE:
-						break;
-					case IState.RUNNING:
-						break;
-					case IState.STEPPING:
-						break;
-					case IState.SUSPENDED:
-						break;
+					label.insert( 0, "<disconnected>" );
+					return label.toString();
 				}
 			}
+
+			if ( label.length() > 0 )
+			{
+				return label.toString();
+			}
 		}
-		return super.getText( thread );
+		catch ( DebugException e )
+		{		
+			return "<not_responding>";
+		}
+
+		return null;
+	}
+
+	protected boolean isShowQualifiedNames()
+	{
+		Boolean showQualified = (Boolean)fAttributes.get( DISPLAY_QUALIFIED_NAMES );
+		showQualified = showQualified == null ? Boolean.FALSE : showQualified;
+		return showQualified.booleanValue();
+	}
+
+	protected boolean isShowVariableTypeNames()
+	{
+		Boolean show = (Boolean)fAttributes.get( DISPLAY_VARIABLE_TYPE_NAMES );
+		show = show == null ? Boolean.FALSE : show;
+		return show.booleanValue();
+	}
+	
+	protected String getTargetText( IDebugTarget target, boolean qualified ) throws DebugException
+	{
+		return target.getName();
+	}
+	
+	protected String getThreadText( IThread thread, boolean qualified ) throws DebugException
+	{
+		return thread.getName();
 	}
 }

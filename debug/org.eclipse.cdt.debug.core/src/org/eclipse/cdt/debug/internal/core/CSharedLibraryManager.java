@@ -143,10 +143,6 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 	
 	protected ICDIManager getCDIManager()
 	{
-//		if ( getDebugTarget() != null )
-//		{
-//			return getDebugTarget().getCDISession().getSharedLibraryManager();
-//		}
 		return null;
 	}
 
@@ -155,7 +151,6 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 	 */
 	public void loadSymbols( ICSharedLibrary[] libraries ) throws DebugException
 	{
-		ICDITarget target = getDebugTarget().getCDITarget();
 		for (int i = 0; i < libraries.length; ++i)
 		{
 			try 

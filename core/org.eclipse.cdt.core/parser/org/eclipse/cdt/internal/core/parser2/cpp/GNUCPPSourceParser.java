@@ -98,6 +98,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
@@ -139,6 +140,7 @@ import org.eclipse.cdt.internal.core.parser2.IProblemRequestor;
  */
 public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     
+    private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE = 4;
     private ScopeStack templateIdScopes = new ScopeStack();
     protected IASTTranslationUnit translationUnit;
     private static class ScopeStack {
@@ -2557,7 +2559,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             
             if( hasFunctionTryBlock && declarator instanceof ICPPASTFunctionTryBlockDeclarator )
             {
-                catchHandlerSequence( ((ICPPASTFunctionTryBlockDeclarator)declarator));
+                List handlers = new ArrayList( DEFAULT_CATCH_HANDLER_LIST_SIZE );
+                catchHandlerSequence( handlers);
+                for( int i = 0; i < handlers.size(); ++i )
+                {
+                    ICPPASTCatchHandler handler = (ICPPASTCatchHandler) handlers.get(i);
+                    ((ICPPASTFunctionTryBlockDeclarator)declarator).addCatchHandler( handler );
+                    handler.setParent( declarator );
+                    handler.setPropertyInParent( ICPPASTFunctionTryBlockDeclarator.CATCH_HANDLER );
+                }
             }
             return funcDefinition;
         }
@@ -3952,7 +3962,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTBaseSpecifier();
     }
 
-    protected void catchHandlerSequence(ICPPASTFunctionTryBlockDeclarator declarator)
+    protected void catchHandlerSequence(List collection)
             throws EndOfFileException, BacktrackException {
         if (LT(1) != IToken.t_catch) {
             IToken la = LA(1);
@@ -3993,9 +4003,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     compoundStatement.setParent( handler );
                     compoundStatement.setPropertyInParent( ICPPASTCatchHandler.CATCH_BODY );
                 }
-                declarator.addCatchHandler( handler );
-                handler.setParent( declarator );
-                handler.setPropertyInParent( ICPPASTFunctionTryBlockDeclarator.CATCH_HANDLER );                
+                collection.add( handler );
             } catch (BacktrackException bte) {
                 failParse(bte);
                 failParseWithErrorHandling();
@@ -4579,7 +4587,29 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	cleanupLastToken();
         	IASTNullStatement null_statement = createNullStatement();
         	((ASTNode)null_statement).setOffset( startOffset );
+        	cleanupLastToken();
         	return null_statement;
+		case IToken.t_try :
+			int startO = consume().getOffset();
+			IASTStatement tryBlock = compoundStatement();
+			List catchHandlers = new ArrayList( DEFAULT_CATCH_HANDLER_LIST_SIZE );
+			catchHandlerSequence(catchHandlers);
+			cleanupLastToken();
+			ICPPASTTryBlockStatement tryStatement = createTryBlockStatement();
+			((ASTNode)tryStatement).setOffset( startO );
+			tryStatement.setTryBody( tryBlock );
+			tryBlock.setParent( tryStatement );
+			tryBlock.setPropertyInParent( ICPPASTTryBlockStatement.BODY );
+			
+			for( int i = 0; i < catchHandlers.size(); ++i )
+			{
+			    ICPPASTCatchHandler handler = (ICPPASTCatchHandler) catchHandlers.get(i);
+			    tryStatement.addCatchHandler( handler );
+			    handler.setParent( tryStatement );
+			    handler.setPropertyInParent( ICPPASTTryBlockStatement.CATCH_HANDLER );
+			}
+			return tryStatement;
+
         default:
             // can be many things:
             // label
@@ -4622,6 +4652,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return ds;
         }
     
+    }
+
+    /**
+     * @return
+     */
+    protected ICPPASTTryBlockStatement createTryBlockStatement() {
+        return new CPPASTTryBlockStatement();
     }
 
     

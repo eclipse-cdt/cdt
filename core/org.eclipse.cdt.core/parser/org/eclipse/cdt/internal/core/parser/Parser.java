@@ -152,7 +152,7 @@ public class Parser implements IParser
 
 		compilationUnit.enterScope( requestor );            
         IToken lastBacktrack = null;
-        IToken checkToken;
+        IToken checkToken = null;
         while (true)
         {
             try
@@ -192,7 +192,11 @@ public class Parser implements IParser
             }
             catch (Exception e)
             {
-                // we've done the best we can
+                try {
+					failParse();
+				} catch (EndOfFile e1) {
+				} 
+                break;
             }
         }
         compilationUnit.exitScope( requestor );

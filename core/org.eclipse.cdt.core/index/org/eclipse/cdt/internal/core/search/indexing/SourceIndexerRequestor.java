@@ -272,6 +272,9 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	public void acceptClassReference(IASTClassReference reference) {
 		// TODO Auto-generated method stub
 		//System.out.println("acceptClassReference");
+		if (reference.getReferencedElement() instanceof IASTClassSpecifier)
+		indexer.addClassReference((IASTClassSpecifier)reference.getReferencedElement());
+		
 	}
 
 	/* (non-Javadoc)
@@ -374,41 +377,45 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void acceptNamespaceReference(IASTNamespaceReference reference) {
 		// TODO Auto-generated method stub
-		
+		if (reference.getReferencedElement() instanceof IASTNamespaceDefinition)
+		indexer.addNamespaceReference((IASTNamespaceDefinition)reference.getReferencedElement());	
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumerationReference(org.eclipse.cdt.core.parser.ast.IASTEnumerationReference)
 	 */
 	public void acceptEnumerationReference(IASTEnumerationReference reference) {
 		// TODO Auto-generated method stub
-		
+		if (reference.getReferencedElement() instanceof IASTEnumerationSpecifier)
+		  indexer.addEnumerationReference((IASTEnumerationSpecifier) reference.getReferencedElement());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptVariableReference(org.eclipse.cdt.core.parser.ast.IASTVariableReference)
 	 */
 	public void acceptVariableReference(IASTVariableReference reference) {
 		// TODO Auto-generated method stub
-		
+		if (reference.getReferencedElement() instanceof IASTVariable)
+			indexer.addVariableReference((IASTVariable)reference.getReferencedElement());
+	
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFunctionReference(org.eclipse.cdt.core.parser.ast.IASTFunctionReference)
 	 */
 	public void acceptFunctionReference(IASTFunctionReference reference) {
-		// TODO Auto-generated method stub
-		
+		if (reference.getReferencedElement() instanceof IASTFunction)
+			indexer.addFunctionReference((IASTFunction) reference.getReferencedElement());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFieldReference(org.eclipse.cdt.core.parser.ast.IASTFieldReference)
 	 */
 	public void acceptFieldReference(IASTFieldReference reference) {
-		// TODO Auto-generated method stub
-		
+		if (reference.getReferencedElement() instanceof IASTField)
+		  indexer.addFieldReference((IASTField) reference.getReferencedElement());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptMethodReference(org.eclipse.cdt.core.parser.ast.IASTMethodReference)
 	 */
 	public void acceptMethodReference(IASTMethodReference reference) {
-		// TODO Auto-generated method stub
-		
+		if (reference.getReferencedElement() instanceof IASTMethod)
+		 indexer.addMethodReference((IASTMethod) reference.getReferencedElement());
 	}
 }

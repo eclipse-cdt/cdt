@@ -1,3 +1,6 @@
+2003-07-25 Bogdan Gheorghe
+	Added new indexer test for refs
+	
 2003-07-24 John Camelon
 	Updated CompleteParseASTTests for Method/Field updates.
 	Fixed TortureTest's parser mode switch (was always QuickParsing). 

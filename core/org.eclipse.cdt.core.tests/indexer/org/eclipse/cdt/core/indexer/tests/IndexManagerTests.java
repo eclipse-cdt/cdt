@@ -51,7 +51,7 @@ public class IndexManagerTests extends TestCase {
 	IProject testProject;
 	NullProgressMonitor monitor;
     IndexManager indexManager;
-    public static final int TIMEOUT = 1500;
+    public static final int TIMEOUT = 10000;
 	/**
 	 * Constructor for IndexManagerTest.
 	 * @param name
@@ -84,10 +84,10 @@ public class IndexManagerTests extends TestCase {
 	}
 
 	public static Test suite() {
-		//TestSuite suite = new TestSuite();
-		//suite.addTest(new IndexManagerTests("testDependencyTree"));
-		//return suite;
-		return new TestSuite(IndexManagerTests.class);
+		TestSuite suite = new TestSuite();
+		suite.addTest(new IndexManagerTests("testRefs"));
+		return suite;
+		//return new TestSuite(IndexManagerTests.class);
 	}
 	/*
 	 * Utils
@@ -282,6 +282,8 @@ public class IndexManagerTests extends TestCase {
 		IIndex ind = indexManager.getIndex(testProjectPath,true,true);
 		assertTrue("Index exists for project",ind != null);
 	
+		IEntryResult[] typerefreesults = ind.queryEntries(IIndexConstants.TYPE_REF);
+		
 		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/Unknown/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/container/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/first_class/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/postcard/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/E/test/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/V/x/Z, refs={ 1 }"};
 		IEntryResult[] typedeclresults =ind.queryEntries(IIndexConstants.TYPE_DECL);
 
@@ -349,6 +351,75 @@ public class IndexManagerTests extends TestCase {
 		}
   }
   
+  public void testRefs() throws Exception{
+		  //Add a new file to the project, give it some time to index
+		  importFile("reftest.cpp","resources/indexer/reftest.cpp");
+		  //Enable indexing on the created project
+		  //By doing this, we force the Index Manager to indexAll()
+		  indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+		  indexManager.setEnabled(testProject,true);
+		  Thread.sleep(TIMEOUT);
+		  //Make sure project got added to index
+		  IPath testProjectPath = testProject.getFullPath();
+		  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
+		  assertTrue("Index exists for project",ind != null);
+		  
+		  String [] typeRefEntryResultModel ={"EntryResult: word=typeRef/C/C/B/A, refs={ 1 }", "EntryResult: word=typeRef/E/e1/B/A, refs={ 1 }", "EntryResult: word=typeRef/V/x/B/A, refs={ 1 }"};
+		  IEntryResult[] typerefresults = ind.queryEntries(IIndexConstants.TYPE_REF);
+
+		  if (typerefresults.length != typeRefEntryResultModel.length)
+			  fail("Entry Result length different from model for typeRef");
+	
+		  for (int i=0;i<typerefresults.length; i++)
+		  {
+			  assertEquals(typeRefEntryResultModel[i],typerefresults[i].toString());
+		  }
+	
+		  String [] funRefEntryResultModel ={"EntryResult: word=functionRef/something/A, refs={ 1 }"};
+		  IEntryResult[] funRefresults = ind.queryEntries(IIndexConstants.FUNCTION_REF);
+		
+		  if (funRefresults.length != funRefEntryResultModel.length)
+					  fail("Entry Result length different from model for funcRef");
+	
+		  for (int i=0;i<funRefresults.length; i++)
+		  {
+		   assertEquals(funRefEntryResultModel[i],funRefresults[i].toString());
+		  }
+				
+		  String [] namespaceRefResultModel = {"EntryResult: word=namespaceRef/A, refs={ 1 }", "EntryResult: word=namespaceRef/B/A, refs={ 1 }"};
+		  IEntryResult[] namespacerefresults = ind.queryEntries(IIndexConstants.NAMESPACE_REF);
+		
+		  if (namespacerefresults.length != namespaceRefResultModel.length)
+				  fail("Entry Result length different from model for namespaceRef");
+	
+		  for (int i=0;i<namespacerefresults.length; i++)
+		  {
+			  assertEquals(namespaceRefResultModel[i],namespacerefresults[i].toString());
+		  }
+				
+		  String [] fieldRefResultModel = {"EntryResult: word=fieldRef/y/C/B/A, refs={ 1 }"};
+		  IEntryResult[] fieldrefresults = ind.queryEntries(IIndexConstants.FIELD_REF);
+	
+		  if (fieldrefresults.length != fieldRefResultModel.length)
+				  fail("Entry Result length different from model for fieldRef");
+	
+		  for (int i=0;i<fieldrefresults.length; i++)
+		  {
+			  assertEquals(fieldRefResultModel[i],fieldrefresults[i].toString());
+		  }
+	
+		  String [] methodRefResultModel = {"EntryResult: word=methodRef/bar/C/B/A, refs={ 1 }"};	
+		  IEntryResult[] methodrefresults = ind.queryEntries(IIndexConstants.METHOD_REF);
+		
+		  if (methodrefresults.length != methodRefResultModel.length)
+				  fail("Entry Result length different from model for methodRef");
+	
+		  for (int i=0;i<methodrefresults.length; i++)
+		  {
+			  assertEquals(methodRefResultModel[i],methodrefresults[i].toString());
+		  }
+	}
+	
   public void testDependencyTree() throws Exception{
 	//Add a file to the project
 	IFile depTest = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");

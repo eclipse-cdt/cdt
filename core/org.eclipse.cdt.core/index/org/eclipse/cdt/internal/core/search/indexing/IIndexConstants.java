@@ -19,11 +19,15 @@ public interface IIndexConstants {
 	char[] REF= "ref/".toCharArray(); //$NON-NLS-1$
 	
 	char[] TYPE_REF= "typeRef/".toCharArray(); //$NON-NLS-1$
+	int TYPE_REF_LENGTH = 8;
+	
 	char[] TYPE_DECL = "typeDecl/".toCharArray(); //$NON-NLS-1$
 	char[] TYPE_ALL = "type".toCharArray(); //$NON-NLS-1$
 	int TYPE_DECL_LENGTH = 9;
 	
 	char[] FUNCTION_REF= "functionRef/".toCharArray(); //$NON-NLS-1$
+	int FUNCTION_REF_LENGTH=12;
+	
 	char[] FUNCTION_DECL= "functionDecl/".toCharArray(); //$NON-NLS-1$
 	char[] FUNCTION_ALL= "function".toCharArray(); //$NON-NLS-1$
 	int FUNCTION_DECL_LENGTH = 13;
@@ -32,17 +36,23 @@ public interface IIndexConstants {
 	char[] CONSTRUCTOR_DECL= "constructorDecl/".toCharArray(); //$NON-NLS-1$
 	
 	char[] NAMESPACE_REF= "namespaceRef/".toCharArray(); //$NON-NLS-1$
+	int NAMESPACE_REF_LENGTH=13;
+	
 	char[] NAMESPACE_DECL= "namespaceDecl/".toCharArray(); //$NON-NLS-1$
 	char[] NAMESPACE_ALL = "namespace".toCharArray(); //$NON-NLS-1$
 	int NAMESPACE_DECL_LENGTH = 14;
 	
 		
 	char[] FIELD_REF= "fieldRef/".toCharArray(); //$NON-NLS-1$
+	int FIELD_REF_LENGTH=9;
+	
 	char[] FIELD_DECL= "fieldDecl/".toCharArray(); //$NON-NLS-1$
 	char[] FIELD_ALL= "field".toCharArray(); //$NON-NLS-1$
 	int FIELD_DECL_LENGTH = 10;
 	
 	char[] METHOD_REF= "methodRef/".toCharArray(); //$NON-NLS-1$
+	int METHOD_REF_LENGTH = 10;
+	
 	char[] METHOD_DECL= "methodDecl/".toCharArray(); //$NON-NLS-1$
 	char[] METHOD_ALL= "method".toCharArray(); //$NON-NLS-1$
 	int METHOD_DECL_LENGTH = 11;

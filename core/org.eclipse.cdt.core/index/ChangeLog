@@ -1,3 +1,14 @@
+2003-07-25 Bogdan Gheorghe
+	- Changed parser to COMPLETE mode
+	- Added functionRef, methodRef, typeRef, namespaceRef, fieldRef
+	
+	Modified:
+	* index/org/eclipse/cdt/internal/core/search/indexing/AbstractIndexer.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/IIndexConstants.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexer.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexerRequestor.java
+	
+	
 2003-07-24 Andrew Niefer
 	- added TYPE_ALL, FUNCTION_ALL, METHOD_ALL, NAMESPACE_ALL, FIELD_ALL constants to IIndexConstants
 	- modified AbstractIndexer prefix functions to properly handle searching for all occurences

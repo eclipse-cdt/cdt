@@ -66,9 +66,15 @@ import org.eclipse.core.runtime.Path;
 		this.paths.add(resourcePath);
 	}
 	/**
+	* @see IIndexSearchRequestor
+	*/
+	public void acceptFunctionDeclaration(String resourcePath, char[] methodName, int parameterCount) {
+		this.paths.add(resourcePath);
+	}
+	/**
 	 * @see IIndexSearchRequestor
 	 */
-	public void acceptMethodDeclaration(String resourcePath, char[] methodName, int parameterCount) {
+	public void acceptMethodDeclaration(String resourcePath, char[] methodName, int parameterCount, char[][] enclosingTypeNames) {
 			
 		this.paths.add(resourcePath);
 	}
@@ -105,6 +111,24 @@ import org.eclipse.core.runtime.Path;
 		this.paths.add(resourcePath);
 	}
 	/**
+	 * @see IIndexSearchRequestor
+	 */
+	public void acceptNamespaceDeclaration(String resourcePath, char[] typeName, char[][] enclosingTypeNames) {
+		this.paths.add(resourcePath);
+	}
+	/**
+	 * @see IIndexSearchRequestor
+	 */
+	public void acceptVariableDeclaration(String resourcePath, char[] simpleTypeName) {
+		this.paths.add(resourcePath);
+	}
+	/**
+	 * @see IIndexSearchRequestor
+	 */
+	public void acceptFieldDeclaration(String resourcePath, char[] simpleTypeName, char[][] enclosingTypeNames) {
+		this.paths.add(resourcePath);
+	}
+	/**
 	 * Returns the files that correspond to the paths that have been collected.
 	 */
 	public IFile[] getFiles(IWorkspace workspace) {
@@ -128,4 +152,7 @@ import org.eclipse.core.runtime.Path;
 		}
 		return result;
 	}
+
+	
+
 }

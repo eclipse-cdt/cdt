@@ -46,7 +46,7 @@ void acceptFieldReference(String resourcePath, char[] fieldName);
  * Accepts the declaration of a method in the compilation unit with the given resource path.
  * The method is declared with a given method name and number of arguments.
  */
-void acceptMethodDeclaration(String resourcePath, char[] methodName, int parameterCount);
+void acceptMethodDeclaration(String resourcePath, char[] methodName, int parameterCount, char[][] enclosingTypeNames);
 /**
  * Accepts the reference to a method in the compilation unit with the given resource path.
  * The method is referenced using the given selector and a number of arguments.
@@ -66,4 +66,18 @@ void acceptSuperTypeReference(String resourcePath, char[] qualification, char[] 
  * Note that the resource path can be null if the search query doesn't require it.
  */
 void acceptTypeReference(String resourcePath, char[] typeName);
+/**
+ * Accepts the declaration of a namespace in the compilation unit with the given resource path.
+ */
+void acceptNamespaceDeclaration(String resourcePath, char[] typeName, char[][] enclosingTypeNames);
+/**
+ * Accepts the declaration of a function in the compilation unit with the given resource path.
+ * The function is declared with a given function name and number of arguments.
+ */
+void acceptFunctionDeclaration(String resourcePath, char[] methodName, int parameterCount);
+
+void acceptVariableDeclaration(String resourcePath, char[] simpleTypeName);
+
+void acceptFieldDeclaration(String resourcePath, char[] simpleTypeName, char[][] enclosingTypeNames);
+
 }

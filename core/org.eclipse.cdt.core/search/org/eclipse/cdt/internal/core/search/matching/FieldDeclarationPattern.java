@@ -13,11 +13,17 @@
  */
 package org.eclipse.cdt.internal.core.search.matching;
 
+import java.io.IOException;
+
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
+import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
+import org.eclipse.cdt.internal.core.index.impl.IndexInput;
+import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.cdt.internal.core.search.CharOperation;
+import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 
 
@@ -87,6 +93,19 @@ public class FieldDeclarationPattern extends VariableDeclarationPattern {
 				this.decodedQualifications[ i ] = temp[ temp.length - i - 1 ];
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#feedIndexRequestor(org.eclipse.cdt.internal.core.search.IIndexSearchRequestor, int, int[], org.eclipse.cdt.internal.core.index.impl.IndexInput, org.eclipse.cdt.core.search.ICSearchScope)
+	 */
+	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references, IndexInput input, ICSearchScope scope) throws IOException {
+		for (int i = 0, max = references.length; i < max; i++) {
+			IndexedFile file = input.getIndexedFile(references[i]);
+			String path;
+			if (file != null && scope.encloses(path =file.getPath())) {
+				requestor.acceptFieldDeclaration(path, decodedSimpleName,decodedQualifications);
+			}
+		}	
 	}
 
 	protected boolean matchIndexEntry() {

@@ -10,9 +10,15 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
+
 /**
  * @author dsteffle
  */
 public interface IPopulateDOMASTAction {
 	public TreeParent getTree();
+	public void mergePreprocessorStatements(IASTPreprocessorStatement[] statements);
+	public void mergePreprocessorProblems(IASTProblem[] problems);
+	public void groupIncludes(IASTPreprocessorStatement[] statements);
 }

@@ -48,12 +48,18 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAct
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
@@ -83,11 +89,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.DrillDownAdapter;
@@ -109,8 +113,10 @@ import org.eclipse.ui.part.ViewPart;
  */
 
 public class DOMAST extends ViewPart {
+   private static final String DOM_AST_HAS_NO_CONTENT = "DOM AST has no content"; //$NON-NLS-1$
+   private static final String SEARCH_FOR_IASTNAME = "Search for IASTName"; //$NON-NLS-1$
    private static final String CLEAR = "Clear"; //$NON-NLS-1$
-private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"; //$NON-NLS-1$
+   private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"; //$NON-NLS-1$
    private static final String EXTENSION_CXX = "CXX"; //$NON-NLS-1$
    private static final String EXTENSION_CPP = "CPP"; //$NON-NLS-1$
    private static final String EXTENSION_CC = "CC"; //$NON-NLS-1$
@@ -134,6 +140,7 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
    private Action			   expandAllAction;
    private Action			   collapseAllAction;
    private Action			   clearAction;
+   private Action			   searchNamesAction;
    private IFile               file              = null;
    private IEditorPart         part              = null;
    private ParserLanguage              lang              = null;
@@ -149,23 +156,46 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
 
    public class ViewContentProvider implements IStructuredContentProvider,
          ITreeContentProvider {
-      private TreeParent invisibleRoot;
-      private IFile      aFile = null;
+      private static final String POPULATING_AST_VIEW = "Populating AST View"; //$NON-NLS-1$
+	private TreeParent invisibleRoot;
+      private TreeParent tuTreeParent = null;
+      private IASTTranslationUnit tu = null;
 
-      /**
-       *  
-       */
       public ViewContentProvider() {
       }
 
-      /**
-       *  
-       */
       public ViewContentProvider(IFile file) {
-         this.aFile = file;
+      	this(file, null);
       }
+      
+      public ViewContentProvider(IFile file, Object[] expanded) {
+       	StartInitializingASTView job = new StartInitializingASTView(new InitializeView(POPULATING_AST_VIEW, this, viewer, file), expanded);
+   		job.schedule();
 
-      public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+     }
+      
+      public TreeParent getTUTreeParent() {
+      	if (tuTreeParent == null && invisibleRoot != null) {
+      		for(int i=0; i<invisibleRoot.getChildren().length; i++) {
+      			if (invisibleRoot.getChildren()[i] instanceof TreeParent && invisibleRoot.getChildren()[i].getNode() instanceof IASTTranslationUnit){
+      	      		tuTreeParent = (TreeParent)invisibleRoot.getChildren()[i];
+      			}
+      		}
+      	}
+      	
+      	return tuTreeParent;
+      }
+      
+      public IASTTranslationUnit getTU() {
+      	if (tu == null && invisibleRoot != null) {
+      		for(int i=0; i<invisibleRoot.getChildren().length; i++) {
+      			if (invisibleRoot.getChildren()[i] instanceof TreeParent && invisibleRoot.getChildren()[i].getNode() instanceof IASTTranslationUnit){
+      	      		tu = (IASTTranslationUnit)invisibleRoot.getChildren()[i].getNode();
+      			}
+      		}
+      	}
+      	
+      	return tu;
       }
 
       public void dispose() {
@@ -200,31 +230,202 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
          return false;
       }
 
-      private void initialize() {
-         if (aFile == null || lang == null)
-            return;
-
-         IPopulateDOMASTAction action = null;
-         IASTTranslationUnit tu = null;
-         try {
-            tu = CDOM.getInstance().getASTService().getTranslationUnit(
-                  aFile,
-                  CDOM.getInstance().getCodeReaderFactory(
-                        CDOM.PARSE_SAVED_RESOURCES));
-         } catch (IASTServiceProvider.UnsupportedDialectException e) {
-            return;
-         }
-         if (lang == ParserLanguage.CPP) {
-            action = new CPPPopulateASTViewAction(tu);
-            CPPVisitor.visitTranslationUnit(tu, (CPPBaseVisitorAction) action);
-         } else {
-            action = new CPopulateASTViewAction(tu);
-            CVisitor.visitTranslationUnit(tu, (CBaseVisitorAction) action);
-         }
-         // display roots
-         invisibleRoot = new TreeParent(null); //$NON-NLS-1$
-         invisibleRoot.addChild(action.getTree());
+      private class StartInitializingASTView extends Job {
+      	private static final String INITIALIZE_AST_VIEW = "Initialize AST View"; //$NON-NLS-1$
+		InitializeView job = null;
+      	Object[] expanded = null;
+      	
+      	public StartInitializingASTView(InitializeView job, Object[] expanded) {
+      		super(INITIALIZE_AST_VIEW);
+      		this.job = job;
+      		this.expanded = expanded;
+      	}
+      	
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+		    job.schedule();
+	      	
+		    try {
+		    	job.join();
+		    } catch (InterruptedException ie) {
+		    	return Status.CANCEL_STATUS;
+		    }
+	      		
+	    	CTestPlugin.getStandardDisplay().asyncExec(new InitializeRunnable(viewer)); // update the view from the Display thread
+	    	// if there are objects to expand then do so now
+	    	if (expanded != null) {
+	    		CTestPlugin.getStandardDisplay().asyncExec(new Runnable() {
+					public void run() {
+			         	// set the expansion of the view based on the original snapshot (educated guess)
+			         	Tree tree = viewer.getTree();
+			         	expandTreeIfNecessary(tree.getItems(), expanded);
+						
+					}
+					
+					private void expandTreeIfNecessary(TreeItem[] tree, Object[] expanded) {
+			     		for( int i=0; i<tree.length; i++) {
+			     			for( int j=0; j<expanded.length; j++) {
+				     			if (expanded[j] instanceof TreeObject &&
+				     					tree[i].getData() instanceof TreeObject &&
+				     					((TreeObject)expanded[j]).toString().equals(((TreeObject)tree[i].getData()).toString()) && 
+				     					((TreeObject)expanded[j]).getOffset() == (((TreeObject)tree[i].getData()).getOffset())) {
+				     				tree[i].setExpanded(true);
+				     				viewer.refresh();
+				     				expandTreeIfNecessary(tree[i].getItems(), expanded);
+				     			}
+			     			}
+			     		}
+			     	}});
+	    	}
+	    	
+			return job.getResult();
+		}
+      	
       }
+      
+      private class InitializeView extends Job {
+
+      	private static final String _PREPROCESSOR_PROBLEMS_ = " preprocessor problems."; //$NON-NLS-1$
+		private static final String _PREPROCESSOR_STATEMENTS_ = " preprocessor statements."; //$NON-NLS-1$
+		private static final String MERGING_ = "Merging "; //$NON-NLS-1$
+		private static final String GROUPING_AST = "Grouping AST View according to includes."; //$NON-NLS-1$
+		private static final String GENERATING_INITIAL_TREE = "Generating initial AST Tree for the View"; //$NON-NLS-1$
+		private static final String PARSING_TRANSLATION_UNIT = "Parsing Translation Unit"; //$NON-NLS-1$
+		String name = null;
+      	TreeParent root = null;
+      	ViewContentProvider provider = null;
+      	TreeViewer view = null;
+      	IFile file = null;
+      	
+    	/**
+		 * @param name
+		 */
+		public InitializeView(String name, ViewContentProvider provider, TreeViewer view, IFile file) {
+			super(name);
+			this.name = name;
+			setUser(true);
+			this.provider = provider;
+			this.view = view;
+			this.file = file;
+		}
+		
+	    public TreeParent getInvisibleRoot() {
+	      	return root;
+	    }
+
+		/**
+    	 * @return Returns the scheduling rule for this operation
+    	 */
+    	public ISchedulingRule getScheduleRule() {
+    		return ResourcesPlugin.getWorkspace().getRoot();
+    	}
+    	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+    	protected IStatus run(IProgressMonitor monitor) {
+			if (file == null || lang == null || monitor == null)
+	            return Status.CANCEL_STATUS;
+
+			if (monitor.isCanceled()) return Status.CANCEL_STATUS;
+			monitor.beginTask(name, 5);
+			
+	         IPopulateDOMASTAction action = null;
+	         IASTTranslationUnit tu = null;
+	         try {
+	         	monitor.subTask(PARSING_TRANSLATION_UNIT);
+	            tu = CDOM.getInstance().getASTService().getTranslationUnit(
+	                  file,
+	                  CDOM.getInstance().getCodeReaderFactory(
+	                        CDOM.PARSE_SAVED_RESOURCES));
+	            monitor.worked(1);
+	         } catch (IASTServiceProvider.UnsupportedDialectException e) {
+	         	return Status.CANCEL_STATUS;
+	         }
+	         
+	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
+	         monitor.subTask(GENERATING_INITIAL_TREE);
+	         if (lang == ParserLanguage.CPP) {
+	            action = new CPPPopulateASTViewAction(tu, monitor);
+	            CPPVisitor.visitTranslationUnit(tu, (CPPBaseVisitorAction) action);
+	         } else {
+	            action = new CPopulateASTViewAction(tu, monitor);
+	            CVisitor.visitTranslationUnit(tu, (CBaseVisitorAction) action);
+	         }
+	         monitor.worked(2);
+	         
+	         // display roots
+	         root = new TreeParent(null); //$NON-NLS-1$
+	         
+	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
+	         IASTPreprocessorStatement[] statements = tu.getAllPreprocessorStatements();
+	         monitor.subTask(MERGING_ + statements.length + _PREPROCESSOR_STATEMENTS_);
+	         // merge preprocessor statements to the tree
+	         action.mergePreprocessorStatements(statements);
+	         monitor.worked(3);
+
+	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
+	         IASTProblem[] problems = tu.getPreprocesorProblems();
+	         monitor.subTask(MERGING_ + problems.length + _PREPROCESSOR_PROBLEMS_);
+	         // merge preprocessor problems to the tree
+	         action.mergePreprocessorProblems(problems);
+	         monitor.worked(4);
+
+	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
+	         monitor.subTask(GROUPING_AST);
+	         // group #includes
+	         action.groupIncludes(statements);
+	         monitor.worked(5);
+
+	         root.addChild(action.getTree());
+	         
+	         provider.setInvisibleRoot(root);
+	         
+	         monitor.done();
+			
+			return Status.OK_STATUS;
+		}
+
+      }
+      
+      private void initialize() {
+      	invisibleRoot = new TreeParent(null); // blank the AST View, when the job above is complete it will update the AST View with the proper tree
+      }
+      
+      protected void setInvisibleRoot(TreeParent root) {
+      	invisibleRoot = root;
+      }
+
+	  	public class InitializeRunnable implements Runnable {
+			TreeViewer view = null;
+			
+			public InitializeRunnable(TreeViewer view) {
+				this.view = view;
+			}
+			
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				view.refresh();
+				
+				if (view.getTree().getItems().length > 0) {
+					TreeItem[] selection = new TreeItem[1];
+					selection[0] = view.getTree().getItems()[0];
+					
+					// select the first item to prevent it from being selected accidentally (and possibly switching editors accidentally)
+					view.getTree().setSelection(selection);
+				}
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
    }
 
    class ViewLabelProvider extends LabelProvider {
@@ -305,41 +506,20 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
    public void createPartControl(Composite parent) {
 
       if (part == null) {
-         IWorkbenchPage[] pages = PlatformUI.getWorkbench()
-               .getActiveWorkbenchWindow().getPages();
-
-         if (pages.length == 0) {
-            // TODO determine how to hide view if no pages found and part==null
-         }
-
-         outerLoop: for (int i = 0; i < pages.length; i++) {
-            IEditorReference[] editorRefs = pages[i].getEditorReferences();
-            for (int j = 0; j < editorRefs.length; j++) {
-               part = editorRefs[j].getEditor(false);
-               if (part instanceof CEditor) {
-                  // TODO set the language properly if implement the above TODO
-                  lang = ParserLanguage.CPP;
-                  break outerLoop;
-               }
-            }
-         }
-
-         if (PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-               .getActivePage() != null
-               && PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                     .getActivePage().getActiveEditor() != null)
-            part = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                  .getActivePage().getActiveEditor();
+         part = getActiveEditor();
+         
+         if (!(part instanceof CEditor)) return;
       }
 
       viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
       drillDownAdapter = new DrillDownAdapter(viewer);
 
-      if (part instanceof CEditor)
-         viewer.setContentProvider(new ViewContentProvider(((CEditor) part)
-               .getInputFile()));
-      else
+      if (part instanceof CEditor) {
+         viewer.setContentProvider(new ViewContentProvider(((CEditor) part).getInputFile()));
+      	 setFile(((CEditor) part).getInputFile());
+      } else {
          viewer.setContentProvider(new ViewContentProvider(null)); // don't attempt to create a view based on old file info
+      }
 
       viewer.setLabelProvider(new ViewLabelProvider());
       viewer.setInput(getViewSite());
@@ -353,6 +533,7 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
 
    public void setContentProvider(ViewContentProvider vcp) {
       viewer.setContentProvider(vcp);
+      
    }
 
    private void hookContextMenu() {
@@ -393,9 +574,6 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
    }
 
    private void fillLocalPullDown(IMenuManager manager) {
-      //		manager.add(action1); // TODO determine the groups/filters to use
-      //		manager.add(new Separator());
-      //		manager.add(action2);
    }
 
    void fillContextMenu(IMenuManager manager) {
@@ -408,13 +586,15 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
    }
 
    private void fillLocalToolBar(IToolBarManager manager) {
-      manager.add(expandAllAction);
+   	  manager.add(expandAllAction);
       manager.add(collapseAllAction);
       manager.add(new Separator());
    	  manager.add(refreshAction);
    	  manager.add(loadActiveEditorAction);
    	  manager.add(new Separator());
    	  manager.add(clearAction);
+      manager.add(new Separator());
+      manager.add(searchNamesAction);
       manager.add(new Separator());
       drillDownAdapter.addNavigationActions(manager);
    }
@@ -423,19 +603,7 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
  	  loadActiveEditorAction = new Action() {
         public void run() {
         	// get the active editor
-        	IEditorPart editor = null;
-        	if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null &&
-        			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages() != null) {			
-	        	IWorkbenchPage[] pages = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages();
-	
-	        	outerLoop: for(int i=0; i<pages.length; i++) {
-	        		editor = pages[i].getActiveEditor();
-	        		if (editor instanceof CEditor) {
-	        			break outerLoop;
-	        		}
-	        	}
-        	}
-
+        	IEditorPart editor = getActiveEditor();
         	if (editor instanceof CEditor) {
 	    		IViewPart tempView = null;
 	
@@ -456,15 +624,7 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
 	    				
 	    				((DOMAST)tempView).setFile(aFile);
 	    				((DOMAST)tempView).setPart(editor);
-	    				
-	    				IProject project = aFile.getProject();
-	    				ICFileType type = CCorePlugin.getDefault().getFileType(project, aFile.getFullPath().lastSegment());
-	    				String lid = type.getLanguage().getId();
-	    				if ( lid != null && lid.equals(ICFileTypeConstants.LANG_CXX) ) {
-	    					((DOMAST)tempView).setLang(ParserLanguage.CPP);
-	    				} else {
-	    					((DOMAST)tempView).setLang(ParserLanguage.C);
-	    				}
+	    				((DOMAST)tempView).setLang(getLanguageFromFile(aFile));
 	    				((DOMAST)tempView).setContentProvider(((DOMAST)tempView).new ViewContentProvider(((CEditor)editor).getInputFile()));
 	    			}
 	    		}
@@ -478,32 +638,12 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
      loadActiveEditorAction.setImageDescriptor(DOMASTPluginImages.DESC_DEFAULT);
    	
      refreshAction = new Action() {
-     	private void expandTreeIfNecessary(TreeItem[] tree, Object[] expanded) {
-     		for( int i=0; i<tree.length; i++) {
-     			for( int j=0; j<expanded.length; j++) {
-	     			if (expanded[j] instanceof TreeObject &&
-	     					tree[i].getData() instanceof TreeObject &&
-	     					((TreeObject)expanded[j]).toString().equals(((TreeObject)tree[i].getData()).toString()) && 
-	     					((TreeObject)expanded[j]).getOffset() == (((TreeObject)tree[i].getData()).getOffset())) {
-	     				tree[i].setExpanded(true);
-	     				viewer.refresh();
-	     				expandTreeIfNecessary(tree[i].getItems(), expanded);
-	     			}
-     			}
-     		}
-     	}
-     	
          public void run() {
             // take a snapshot of the tree expansion
          	Object[] expanded = viewer.getExpandedElements();
-         	
+
          	// set the new content provider
-         	setContentProvider(new ViewContentProvider(file));
-            
-         	// set the expansion of the view based on the original snapshot (educated guess)
-         	Tree tree = viewer.getTree();
-         	expandTreeIfNecessary(tree.getItems(), expanded);
-         	
+         	setContentProvider(new ViewContentProvider(file, expanded));
          }
       };
       refreshAction.setText(REFRESH_DOM_AST);
@@ -538,6 +678,24 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
      clearAction.setToolTipText(CLEAR);
      clearAction.setImageDescriptor(DOMASTPluginImages.DESC_CLEAR);
      
+     searchNamesAction = new Action() {
+        private void performSearch() {
+        	if (viewer.getTree().getItems().length == 0) {
+        		showMessage(DOM_AST_HAS_NO_CONTENT);
+        	}
+        	
+        	FindIASTNameDialog dialog = new FindIASTNameDialog(getSite().getShell(), new FindIASTNameTarget(viewer, lang));
+        	dialog.open();
+       }
+     	
+     	public void run() {
+     		performSearch();
+        }
+     };
+     searchNamesAction.setText(SEARCH_FOR_IASTNAME);
+     searchNamesAction.setToolTipText(SEARCH_FOR_IASTNAME);
+     searchNamesAction.setImageDescriptor(DOMASTPluginImages.DESC_SEARCH_NAMES);
+     
       openDeclarationsAction = new DisplayDeclarationsAction();
       openDeclarationsAction.setText(OPEN_DECLARATIONS);
       openDeclarationsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
@@ -551,6 +709,29 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
       singleClickAction = new ASTHighlighterAction(part);
    }
 
+   private IEditorPart getActiveEditor() {
+   	IEditorPart editor = null;
+   	
+   	if (getSite().getPage().isEditorAreaVisible()) {
+	   	editor = getSite().getPage().getActiveEditor();
+	    part = editor;
+	    lang = lang = getLanguageFromFile(((CEditor)editor).getInputFile());
+   	}
+
+   	return editor;
+   }
+   
+   private ParserLanguage getLanguageFromFile(IFile file) {
+   	IProject project = file.getProject();
+	ICFileType type = CCorePlugin.getDefault().getFileType(project, file.getFullPath().lastSegment());
+	String lid = type.getLanguage().getId();
+	if ( lid != null && lid.equals(ICFileTypeConstants.LANG_CXX) ) {
+		return ParserLanguage.CPP;
+	}
+	
+	return ParserLanguage.C;
+   }
+   
    private class ASTHighlighterAction extends Action {
 	IEditorPart aPart = null;
 
@@ -668,51 +849,6 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
 	        NewSearchUI.runQuery(job);
 	     }
    }
-   
-   // TODO need to create a new action with the following for annotations (get
-   // declarations/references)
-   //	ISelection selection = viewer.getSelection();
-   //	Object obj = ((IStructuredSelection)selection).getFirstElement();
-   //	
-   //	if (aPart instanceof CEditor) {
-   //		IAnnotationModel aModel =
-   // ((CEditor)aPart).getDocumentProvider().getAnnotationModel(aPart.getEditorInput());
-   //		if ( aModel != null && obj instanceof TreeObject &&
-   // !(((TreeObject)obj).getNode() instanceof IASTTranslationUnit) ) {
-   //			Iterator itr = aModel.getAnnotationIterator();
-   //			while (itr.hasNext()) {
-   //				aModel.removeAnnotation((Annotation)itr.next());
-   //			}
-   //			
-   //			ASTViewAnnotation annotation = new ASTViewAnnotation();
-   //			annotation.setType(CMarkerAnnotation.WARNING_ANNOTATION_TYPE);
-   //			aModel.addAnnotation(annotation, new
-   // Position(((TreeObject)obj).getOffset(), ((TreeObject)obj).getLength()));
-   //		}
-   //	}
-
-   // TODO implement annotation for things like open declarations/references
-   //	private class ASTViewAnnotation extends Annotation implements
-   // IAnnotationPresentation {
-   //
-   //		/* (non-Javadoc)
-   //		 * @see org.eclipse.jface.text.source.IAnnotationPresentation#getLayer()
-   //		 */
-   //		public int getLayer() {
-   //			return IAnnotationAccessExtension.DEFAULT_LAYER;
-   //		}
-   //
-   //		/* (non-Javadoc)
-   //		 * @see
-   // org.eclipse.jface.text.source.IAnnotationPresentation#paint(org.eclipse.swt.graphics.GC,
-   // org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
-   //		 */
-   //		public void paint(GC gc, Canvas canvas, Rectangle r) {
-   //		    // TODO implement this annotation image for
-   //			ImageUtilities.drawImage(ASTViewPluginImages.get(ASTViewPluginImages.IMG_TO_DRAW),
-   // gc, canvas, r, SWT.CENTER, SWT.TOP);
-   //		}
-   //	}
 
    private void hookSingleClickAction() {
       viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -734,11 +870,6 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
       viewer.getControl().setFocus();
    }
 
-   public void setFile(IFile file) {
-      this.file = file;
-      viewer.setContentProvider(new ViewContentProvider(file));
-   }
-
    public void setPart(IEditorPart part) {
       this.part = part;
 
@@ -748,6 +879,10 @@ private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.D
 
    public void setLang(ParserLanguage lang) {
       this.lang = lang;
+   }
+   
+   public void setFile(IFile file) {
+    this.file = file;
    }
 
 }

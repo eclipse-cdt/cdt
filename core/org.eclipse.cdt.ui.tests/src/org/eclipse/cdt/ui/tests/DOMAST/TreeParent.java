@@ -13,15 +13,15 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author dsteffle
  */
 public class TreeParent extends TreeObject {
-	private ArrayList children; // TODO might want to use a HashTable/HashMap or wrap one so finding the parent node is faster
+	private ArrayList children;
 
 	public TreeParent(IASTNode node) {
 		super(node);
@@ -168,5 +168,67 @@ public class TreeParent extends TreeObject {
 		
 		return null; // nothing found
 	}
+	
+	/**
+	 * Returns the TreeParent that corresponds to the IASTName.  This is based on string and offset equality.
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public TreeParent findTreeObjectForIASTName(IASTName name) {
+		if (name == null) return null;
+		
+		Iterator itr = children.iterator();
+		while (itr.hasNext()) {
+			Object o = itr.next();
+			if (o != null && o instanceof TreeParent) {
+				if (treeParentHasName((TreeParent)o, name)) return (TreeParent)o;
+			
+				if ( ((TreeParent)o).hasChildren() ){
+					TreeParent tree = findTreeObjectForIASTName( ((TreeParent)o).getChildren(), name );
+					if (tree != null) return tree;
+				}
+			}
+		}
+		
+		return null; // nothing found
+	}
+	
+	/**
+	 * Returns the TreeParent that corresponds to the IASTName.  This is based on string and offset equality.
+	 * 
+	 * @param trees
+	 * @param node
+	 * @return
+	 */
+	private TreeParent findTreeObjectForIASTName(TreeObject[] trees, IASTName name) {
+		for (int i=0; i<trees.length; i++) {
+			
+			if (trees[i] != null && trees[i] instanceof TreeParent) {
+				if (treeParentHasName((TreeParent)trees[i], name)) return (TreeParent)trees[i];
+				
+				if ( ((TreeParent)trees[i]).hasChildren() ){
+					TreeParent tree = findTreeObjectForIASTName( ((TreeParent)trees[i]).getChildren(), name );
+					if (tree != null) return tree;
+				}
+			}
+		}
+		
+		return null; // nothing found
+	}
 
+	private boolean treeParentHasName(TreeParent tp, IASTName name) {
+		if ( tp.getNode() instanceof IASTName && 
+				tp.getNode() instanceof ASTNode &&
+				name instanceof ASTNode) {
+			IASTName treeName = (IASTName)tp.getNode();
+			ASTNode treeNode = (ASTNode)tp.getNode();
+			if (treeName.toString().equals(name.toString()) && treeNode.getOffset() == ((ASTNode)name).getOffset() ) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 }

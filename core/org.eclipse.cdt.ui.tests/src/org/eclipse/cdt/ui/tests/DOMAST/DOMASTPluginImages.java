@@ -75,6 +75,7 @@ public class DOMASTPluginImages {
 	public static final String IMG_EXPAND_ALL = NAME_PREFIX + "expandall.gif"; //$NON-NLS-1$
 	public static final String IMG_COLLAPSE_ALL = NAME_PREFIX + "collapseall.gif"; //$NON-NLS-1$
 	public static final String IMG_CLEAR = NAME_PREFIX + "clear.gif"; //$NON-NLS-1$
+	public static final String IMG_SEARCH_NAMES = NAME_PREFIX + "search_ref_obj.gif"; //$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_IASTArrayModifier= createManaged(ICON_PREFIX, IMG_IASTArrayModifier);
 	public static final ImageDescriptor DESC_IASTDeclaration= createManaged(ICON_PREFIX, IMG_IASTDeclaration);
@@ -99,6 +100,7 @@ public class DOMASTPluginImages {
 	public static final ImageDescriptor DESC_EXPAND_ALL= createManaged(ICON_PREFIX, IMG_EXPAND_ALL);
 	public static final ImageDescriptor DESC_COLLAPSE_ALL= createManaged(ICON_PREFIX, IMG_COLLAPSE_ALL);
 	public static final ImageDescriptor DESC_CLEAR= createManaged(ICON_PREFIX, IMG_CLEAR);
+	public static final ImageDescriptor DESC_SEARCH_NAMES= createManaged(ICON_PREFIX, IMG_SEARCH_NAMES);
 	
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);

@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction;
 import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTInclusionStatement;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @author dsteffle
@@ -55,20 +56,23 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 		processEnumerators    = true;
 	}
 
-	TreeParent root = null; // TODO what about using a hashtable/hashmap for the tree?
+	TreeParent root = null;
+	IProgressMonitor monitor = null;
 	
-	public CPopulateASTViewAction(IASTTranslationUnit tu) {
+	public CPopulateASTViewAction(IASTTranslationUnit tu, IProgressMonitor monitor) {
 		root = new TreeParent(tu);
+		this.monitor = monitor;
 	}
 	
-	private void addRoot(IASTNode node) {
-		if (node == null) return;
+	private int addRoot(IASTNode node) {
+		if (monitor != null && monitor.isCanceled()) return PROCESS_ABORT;
+		if (node == null) return PROCESS_CONTINUE;
 		
 		IASTNodeLocation[] nodeLocations = node.getNodeLocations();
         if (!(nodeLocations.length > 0 && 
 				nodeLocations[0].getNodeOffset() >= 0 &&
 				nodeLocations[0].getNodeLength() > 0))
-			return;
+			return PROCESS_CONTINUE;
 		
 		TreeParent parent = root.findTreeParentForNode(node);
 		
@@ -85,21 +89,22 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 			tree.setFiltersFlag(TreeObject.FLAG_PREPROCESSOR);
 		if (node instanceof IASTPreprocessorIncludeStatement)
 			tree.setFiltersFlag(TreeObject.FLAG_INCLUDE_STATEMENTS);
+		
+		return PROCESS_CONTINUE;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 	 */
 	public int processDeclaration(IASTDeclaration declaration) {
-		addRoot(declaration);
-		return PROCESS_CONTINUE;
+		return addRoot(declaration);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 	 */
 	public int processDeclarator(IASTDeclarator declarator) {
-		addRoot(declarator);
+		int ret = addRoot(declarator);
 		
 		IASTPointerOperator[] ops = declarator.getPointerOperators();
 		for(int i=0; i<ops.length; i++)
@@ -111,47 +116,42 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 				addRoot(mods[i]);	
 		}
 		
-		return PROCESS_CONTINUE;
+		return ret;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDesignator(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
 	 */
 	public int processDesignator(ICASTDesignator designator) {
-		addRoot(designator);
-		return PROCESS_CONTINUE;
+		return addRoot(designator);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 	 */
 	public int processDeclSpecifier(IASTDeclSpecifier declSpec) {
-		addRoot(declSpec);
-		return PROCESS_CONTINUE;
+		return addRoot(declSpec);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 	 */
 	public int processEnumerator(IASTEnumerator enumerator) {
-		addRoot(enumerator);
-		return PROCESS_CONTINUE;
+		return addRoot(enumerator);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 	 */
 	public int processExpression(IASTExpression expression) {
-		addRoot(expression);
-		return PROCESS_CONTINUE;
+		return addRoot(expression);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
 	 */
 	public int processInitializer(IASTInitializer initializer) {
-		addRoot(initializer);
-		return PROCESS_CONTINUE;
+		return addRoot(initializer);
 	}
 	
 	/* (non-Javadoc)
@@ -159,7 +159,7 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 	 */
 	public int processName(IASTName name) {
 		if ( name.toString() != null )
-			addRoot(name);
+			return addRoot(name);
 		return PROCESS_CONTINUE;
 	}
 	
@@ -168,24 +168,21 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 	 */
 	public int processParameterDeclaration(
 			IASTParameterDeclaration parameterDeclaration) {
-		addRoot(parameterDeclaration);
-		return PROCESS_CONTINUE;
+		return addRoot(parameterDeclaration);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 	 */
 	public int processStatement(IASTStatement statement) {
-		addRoot(statement);
-		return PROCESS_CONTINUE;
+		return addRoot(statement);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 	 */
 	public int processTypeId(IASTTypeId typeId) {
-		addRoot(typeId);
-		return PROCESS_CONTINUE;
+		return addRoot(typeId);
 	}
 	
 	private void mergeNode(ASTNode node) {
@@ -195,43 +192,34 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 			addRoot(((IASTPreprocessorMacroDefinition)node).getName());
 	}
 	
-	private void mergePreprocessorStatements(IASTPreprocessorStatement[] statements) {
+	public void mergePreprocessorStatements(IASTPreprocessorStatement[] statements) {
 		for(int i=0; i<statements.length; i++) {
+			if (monitor != null && monitor.isCanceled()) return;
+			
 			if (statements[i] instanceof ASTNode)
 				mergeNode((ASTNode)statements[i]);
 		}
 	}
 	
-	private void mergePreprocessorProblems(IASTProblem[] problems) {
+	public void mergePreprocessorProblems(IASTProblem[] problems) {
 		for(int i=0; i<problems.length; i++) {
+			if (monitor != null && monitor.isCanceled()) return;
+			
 			if (problems[i] instanceof ASTNode)
 			   mergeNode((ASTNode)problems[i]);
 		}
 	}
 	
 	public TreeParent getTree() {
-		if (root.getNode() instanceof IASTTranslationUnit) {
-			IASTTranslationUnit tu = (IASTTranslationUnit)root.getNode();
-			
-			IASTPreprocessorStatement[] statements = tu.getAllPreprocessorStatements();
-			// merge preprocessor statements to the tree
-			mergePreprocessorStatements(statements);
-			
-			// merge preprocessor problems to the tree
-			mergePreprocessorProblems(tu.getPreprocesorProblems());
-			
-			// group #includes
-			groupIncludes(statements);
-		}
-		
 		return root;
 	}
 	
-	private void groupIncludes(IASTPreprocessorStatement[] statements) {
+	public void groupIncludes(IASTPreprocessorStatement[] statements) {
 		// get all of the includes from the preprocessor statements (need the object since .equals isn't implemented)
 		IASTPreprocessorIncludeStatement[] includes = new IASTPreprocessorIncludeStatement[INITIAL_INCLUDE_STATEMENT_SIZE];
 		int index = 0;
 		for(int i=0; i<statements.length; i++) {
+			if (monitor != null && monitor.isCanceled()) return;
 			if (index+1 > includes.length) {
 				IASTPreprocessorIncludeStatement[] newIncludes = new IASTPreprocessorIncludeStatement[includes.length * 2];
 				for (int j=0; j<includes.length; j++) {
@@ -247,6 +235,7 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 		// get the tree model elements corresponding to the includes
 		TreeParent[] treeIncludes = new TreeParent[includes.length];
 		for (int i=0; i<treeIncludes.length; i++) {
+			if (monitor != null && monitor.isCanceled()) return;
 			treeIncludes[i] = root.findTreeObject(includes[i]);
 		}
 		
@@ -257,6 +246,7 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 			if (treeIncludes[i] == null) continue;
 
 			for(int j=root.getChildren().length-1; j>=0; j--) {
+				if (monitor != null && monitor.isCanceled()) return;
 				child = root.getChildren()[j]; 
 			
 				if (treeIncludes[i] != child &&

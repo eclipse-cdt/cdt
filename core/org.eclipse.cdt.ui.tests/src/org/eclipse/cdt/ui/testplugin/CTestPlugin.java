@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.swt.widgets.Display;
 
 
 public class CTestPlugin extends Plugin {
@@ -52,6 +53,14 @@ public class CTestPlugin extends Plugin {
 	
 	public static String getPluginId() {
 		return PLUGIN_ID;
+	}
+	
+	public static Display getStandardDisplay() {
+		Display display= Display.getCurrent();
+		if (display == null) {
+			display= Display.getDefault();
+		}
+		return display;		
 	}
 
 }

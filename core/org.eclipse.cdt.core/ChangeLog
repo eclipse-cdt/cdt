@@ -1,3 +1,16 @@
+2003-03-20 Alain Magloire
+
+	Patch from Amer Hoda
+	This patch adds the functionnality of the C Element Deltas for translation
+	unit. It figures the addes/deleted C elements with each elementChanged event.
+	
+	* model/org/eclipse/cdt/internal/core/model/CElement.java:
+	New method isIdentical().
+	* model/org/eclipse/cdt/internal/core/model/CElementDeltabuilder.java:
+	First implementation.
+	* model/org/eclipse/cdt/internal/core/model/SourceManipulation.java:
+	New method hasSameContentAs() and getModifiers().
+
 2003-03-19 Alain Magloire
 
 	Patch from Amer Hoda.

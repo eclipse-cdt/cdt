@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.cview.CViewMessages;
@@ -41,6 +42,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -186,6 +188,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
 		
 		treeViewer.setInput(fInput);
+		WorkbenchHelp.setHelp(control, ICHelpContextIds.COUTLINE_VIEW);	
 	}
 	
 	public void dispose() {

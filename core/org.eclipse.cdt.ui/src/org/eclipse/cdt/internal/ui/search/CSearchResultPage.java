@@ -12,10 +12,12 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import java.util.HashMap;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.search.actions.GroupAction;
 import org.eclipse.cdt.internal.ui.search.actions.SortAction;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -35,8 +37,10 @@ import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -66,6 +70,10 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		initGroupingActions();
 	}
 	
+	public void createControl(Composite parent) {
+		super.createControl( parent );
+		WorkbenchHelp.setHelp(parent, ICHelpContextIds.C_SEARCH_VIEW);	
+	}
 	
 	/**
 	 * 

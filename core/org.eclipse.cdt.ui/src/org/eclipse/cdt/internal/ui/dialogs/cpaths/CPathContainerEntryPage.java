@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
@@ -30,6 +31,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CPathContainerEntryPage extends CPathBasePage {
 
@@ -114,6 +116,8 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		});
 
 		setControl(composite);
+		
+		WorkbenchHelp.setHelp(composite, ICHelpContextIds.PROJECT_PATHS_CONTAINERS);
 	}
 
 	private class ContainersAdapter implements IDialogFieldListener, ITreeListAdapter {

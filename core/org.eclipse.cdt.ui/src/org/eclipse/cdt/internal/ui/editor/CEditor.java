@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
@@ -78,6 +79,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
@@ -605,6 +607,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
+		WorkbenchHelp.setHelp(parent, ICHelpContextIds.CEDITOR_VIEW);	
 		fSelectionUpdateListener = new ISelectionChangedListener() {
 			private Runnable fRunnable = new Runnable() {
 				public void run() {

@@ -887,7 +887,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		navCheck.setLayoutData(gd);
 		navCheck.addSelectionListener(fCheckBoxListener);
 		fCheckBoxes.put(navCheck, CEditor.HYPERLINK_ENABLED);
-
+		
+		WorkbenchHelp.setHelp(navComposite, ICHelpContextIds.C_EDITOR_NAVIGATION_PAGE);	
 		return navComposite;
 	}
 

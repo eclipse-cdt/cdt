@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.wizards.TypedElementSelectionValidator;
@@ -60,6 +61,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class CPathIncludeSymbolEntryPage extends CPathBasePage {
@@ -201,6 +203,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		fIncludeSymPathsList.setButtonsMinWidth(buttonBarWidth);
 		setControl(composite);
 		fIncludeSymPathsList.getTreeViewer().addFilter(fFilter);
+		WorkbenchHelp.setHelp(composite, ICHelpContextIds.PROJECT_INCLUDE_PATHS_SYMBOLS);
 	}
 
 	public Image getImage() {

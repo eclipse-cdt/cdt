@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
@@ -46,6 +47,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.dialogs.ResourceSorter;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -166,6 +168,8 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		fLibrariesList.getTreeViewer().setSorter(new CPElementSorter());
 
 		setControl(composite);
+		
+		WorkbenchHelp.setHelp(composite, ICHelpContextIds.PROJECT_PATHS_LIBRARIES);
 	}
 
 	private class LibrariesAdapter implements IDialogFieldListener, ITreeListAdapter {

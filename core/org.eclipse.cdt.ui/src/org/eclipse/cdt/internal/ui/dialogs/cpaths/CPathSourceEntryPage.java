@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
@@ -47,6 +48,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.NewFolderDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -136,6 +138,8 @@ public class CPathSourceEntryPage extends CPathBasePage {
 			}
 		}
 		setControl(composite);
+		
+		WorkbenchHelp.setHelp(composite, ICHelpContextIds.PROJECT_PATHS_SOURCE);	
 	}
 
 	private class SourceContainerAdapter implements ITreeListAdapter, IDialogFieldListener {

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.preferences;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
 import org.eclipse.cdt.core.filetype.IResolverModel;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -23,6 +24,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /*
  * The preference page used for displaying/editing CDT file
@@ -90,6 +92,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		fUseProject.setSelection(custom);
 		fPrefsBlock.setEnabled(custom);
 		
+		WorkbenchHelp.setHelp( topPane, ICHelpContextIds.FILE_TYPES_STD_PAGE );
 		return topPane;
 	}
 	

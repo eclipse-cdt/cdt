@@ -33,12 +33,17 @@ public interface ICHelpContextIds {
 	public static final String PREVIOUS_PROBLEM_ACTION= PREFIX + "previous_problem_action";	//$NON-NLS-1$
 	
 	// Preference/property pages
-	public static final String C_PREF_PAGE = PREFIX + "new_c_pref_page_context"; //$NON-NLS-1$
-	public static final String C_EDITOR_PREF_PAGE = PREFIX + "new_c_editor_pref_page_context"; //$NON-NLS-1$
+	public static final String C_PREF_PAGE = PREFIX + "c_pref"; //$NON-NLS-1$
+	public static final String C_EDITOR_PREF_PAGE = PREFIX + "c_editor_gen"; //$NON-NLS-1$
 	public static final String C_EDITOR_ANNOTATIONS_PREF_PAGE = PREFIX + "new_c_editor_annotations_pref_page_context"; //$NON-NLS-1$
-	public static final String C_EDITOR_COLORS_PREF_PAGE = PREFIX + "new_c_editor_colors_pref_page_context"; //$NON-NLS-1$
-	public static final String C_EDITOR_CONTENT_ASSIST_PREF_PAGE = PREFIX + "new_c_editor_content_assist_pref_page_context"; //$NON-NLS-1$
-	public static final String TEMPLATE_PREFERENCE_PAGE = PREFIX + "new_c_templates_pref_page_context"; //$NON-NLS-1$
+	public static final String C_EDITOR_COLORS_PREF_PAGE = PREFIX + "c_editor_color"; //$NON-NLS-1$
+	public static final String C_EDITOR_CONTENT_ASSIST_PREF_PAGE = PREFIX + "c_editor_con_assist"; //$NON-NLS-1$
+	public static final String C_EDITOR_NAVIGATION_PAGE = PREFIX + "c_editor_navigation"; //$NON-NLS-1$
+	public static final String C_EDITOR_HOVERS_PAGE = PREFIX + "c_editor_hov"; //$NON-NLS-1$
+	public static final String FILE_TYPES_STD_PAGE = PREFIX + "std_prop_file_types"; //$NON-NLS-1$
+	public static final String FILE_TYPES_MAN_PAGE = PREFIX + "std_prop_file_types"; //$NON-NLS-1$
+	public static final String FILE_TYPES_PREF_PAGE = PREFIX + "c_file_types"; //$NON-NLS-1$
+	public static final String TEMPLATE_PREFERENCE_PAGE = PREFIX + "code_temp"; //$NON-NLS-1$
 	public static final String LAUNCH_PROPERTY_PAGE = PREFIX + "new_launch_property_page_context"; //$NON-NLS-1$
 	public static final String PROJECT_PROPERTY_PAGE = PREFIX + "new_project_property_page_context"; //$NON-NLS-1$
 
@@ -48,8 +53,15 @@ public interface ICHelpContextIds {
 	public static final String TODO_TASK_PROPERTY_PAGE = PREFIX + "tasktags_property_page_context"; //$NON-NLS-1$
 	public static final String TODO_TASK_PREFERENCE_PAGE = PREFIX + "tasktags_preference_page_context"; //$NON-NLS-1$
 
-	public static final String BINARY_PARSER_PAGE = PREFIX + "cdt_binary_parser_page"; //$NON-NLS-1$
-	public static final String ERROR_PARSERS_PAGE = PREFIX + "cdt_error_parsers_page"; //$NON-NLS-1$
+	public static final String BINARY_PARSER_PAGE = PREFIX + "newproj_parser_binary"; //$NON-NLS-1$
+	public static final String ERROR_PARSERS_PAGE = PREFIX + "newproj_parser_error"; //$NON-NLS-1$
+	public static final String PROJECT_PATHS_SOURCE = PREFIX + "std_prop_source"; //$NON-NLS-1$
+	public static final String PROJECT_PATHS_OUTPUT = PREFIX + "std_prop_output"; //$NON-NLS-1$
+	public static final String PROJECT_PATHS_PROJECTS = PREFIX + "std_prop_projects"; //$NON-NLS-1$
+	public static final String PROJECT_PATHS_LIBRARIES = PREFIX + "std_prop_libraries"; //$NON-NLS-1$
+	public static final String PROJECT_PATHS_CONTAINERS	 = PREFIX + "std_prop_containers"; //$NON-NLS-1$
+	public static final String PROJECT_REFERENCES = PREFIX + "std_prop_references";  //$NON-NLS-1$
+	public static final String PROJECT_INCLUDE_PATHS_SYMBOLS = PREFIX + "std_prop_include";  //$NON-NLS-1$
 
 	// Console view
 	public static final String CLEAR_CONSOLE_ACTION = PREFIX + "clear_console_action_context"; //$NON-NLS-1$
@@ -60,7 +72,7 @@ public interface ICHelpContextIds {
 
 	public static final String COLLAPSE_ALL_ACTION = PREFIX + "collapse_all_action"; //$NON-NLS-1$
 
-	public static final String C_SEARCH_PAGE = PREFIX + "c_search_page"; //$NON-NLS-1$
+	public static final String C_SEARCH_PAGE = PREFIX + "cdt_u_search"; //$NON-NLS-1$
 
 	public static final String COPY_ACTION = PREFIX + "copy_action_context"; //$NON-NLS-1$
 
@@ -102,4 +114,11 @@ public interface ICHelpContextIds {
 	public static final String OPEN_TYPE_IN_HIERARCHY_ACTION = PREFIX + "open_type_in_hierarchy_action"; //$NON-NLS-1$
 
 	public static final String LEXICAL_SORTING_BROWSING_ACTION= 						PREFIX + "lexical_sorting_browsing_action"; //$NON-NLS-1$
+	
+	public static final String PROJECT_INDEXER_PROPERTIES = PREFIX +  "std_prop_indexer"; //$NON-NLS-1$
+	public static final String CEDITOR_VIEW = PREFIX + "editor_view"; //$NON-NLS-1$
+	public static final String COUTLINE_VIEW = PREFIX + "outline_view"; //$NON-NLS-1$
+	public static final String CPROJECT_VIEW = PREFIX + "projects_view"; //$NON-NLS-1$
+	public static final String C_SEARCH_VIEW = PREFIX + "search_view"; //$NON-NLS-1$
+	
 }

@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
@@ -58,6 +59,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * CEditorHoverConfigurationBlock
@@ -358,6 +360,8 @@ public class CEditorHoverConfigurationBlock {
 		initialize();
 
 		Dialog.applyDialogFont(hoverComposite);
+		
+		WorkbenchHelp.setHelp(hoverComposite, ICHelpContextIds.C_EDITOR_HOVERS_PAGE);	
 		return hoverComposite;
 	}
 	

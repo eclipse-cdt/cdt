@@ -51,4 +51,9 @@ public interface ICDIStackFrame extends ICDIObject
 	 * @return the level of the stack frame 
 	 */
 	int getLevel();
+	
+	/**
+	 * Return true if the frames are the same.
+	 */
+	boolean equals(ICDIStackFrame stackframe);
 }

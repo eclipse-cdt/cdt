@@ -4,8 +4,8 @@
       label="%featureName"
       version="1.0.0"
       provider-name="%providerName"
-      os="linux,qnx,solaris,win32"
-      ws="gtk,motif,photon,win32"
+      os=""
+      ws=""
       nl="en_US"
       image="eclipse_update_120.jpg">
 
@@ -13,8 +13,8 @@
       %description
    </description>
 
-   <license>
-      %license
+   <license url="%licenseURL">
+         %license
    </license>
 
    <url>

@@ -199,24 +199,14 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertAllReferences( 1, createTaskList( new Task( foo )));
 	}
 	
-	// Kind POSTFIX_TYPENAME_IDENTIFIER
+//	// Kind POSTFIX_TYPENAME_IDENTIFIER
 //	public void testPostfixTypenameIdentifier() throws Exception{
-//		Iterator i = parse( "class A {}; \n int foo(); int foo( A a ); \n int x = foo( typename A(); );").getDeclarations();
+//		Iterator i = parse( "class A {}; \n int foo(); int foo( A a ); \n int x = foo( typename A() );").getDeclarations();
 //		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 //		IASTFunction f1 = (IASTFunction) i.next();
 //		IASTFunction f2 = (IASTFunction) i.next();
 //		IASTVariable x  = (IASTVariable) i.next();
-//		Iterator members = getDeclarations(cl);
-//		IASTField m = (IASTField)members.next();
-//		Iterator references = callback.getReferences().iterator();
-//		IASTClassReference clr= (IASTClassReference)references.next();
-//		assertEquals(clr.getReferencedElement(), cl);
-//		IASTVariableReference ar = (IASTVariableReference)references.next();
-//		assertEquals(ar.getReferencedElement(), a);
-//		IASTFieldReference mr = (IASTFieldReference) references.next();
-//		assertEquals(mr.getReferencedElement(), m);
-//		IASTFunctionReference fr = (IASTFunctionReference) references.next();
-//		assertEquals(fr.getReferencedElement(), f2);   		
+//		assertAllReferences( 3, createTaskList( new Task( cl, 2 ), new Task( f2)  ) );
 //	}
 	
 	// Kind POSTFIX_TYPENAME_TEMPLATEID

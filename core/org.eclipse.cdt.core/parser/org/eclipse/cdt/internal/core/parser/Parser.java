@@ -4082,8 +4082,45 @@ public class Parser implements IParser
         switch (LT(1))
         {
             case IToken.t_typename :
-                consume(); //TODO: the rest of this 
-                break;
+                consume(IToken.t_typename);
+                ITokenDuple nestedName = name();
+				boolean templateTokenConsumed = false;
+				if( LT(1) == IToken.t_template )
+				{
+				  consume( IToken.t_template ); 
+				  templateTokenConsumed = true;
+				}
+				IToken current = mark(); 
+				ITokenDuple templateId = null;
+				try
+				{
+					templateId = new TokenDuple( current, templateId() ); 
+				}
+				catch( Backtrack bt )
+				{
+					if( templateTokenConsumed )
+						throw bt;
+					backup( current );
+				}
+                consume( IToken.tLPAREN ); 
+                IASTExpression expressionList = expression( scope ); 
+                consume( IToken.tRPAREN );
+                try {
+					firstExpression = 
+						astFactory.createExpression( scope, 
+													(( templateId != null )? IASTExpression.Kind.POSTFIX_TYPENAME_TEMPLATEID : IASTExpression.Kind.POSTFIX_TYPENAME_IDENTIFIER ), 
+													expressionList, 
+													null, 
+													null, 
+													null, 
+													nestedName,
+													"", 
+													null );
+				} catch (ASTSemanticException ase ) {
+					failParse();
+					throw backtrack;
+				}
+                break;                
                 // simple-type-specifier ( assignment-expression , .. )
             case IToken.t_char :
                 firstExpression =
@@ -4224,7 +4261,7 @@ public class Parser implements IParser
                     break;
                 case IToken.tLPAREN :
                     // function call
-                    consume();
+                    consume(IToken.tLPAREN);
                     secondExpression = expression(scope);
                     consume(IToken.tRPAREN);
                     try

@@ -1,3 +1,6 @@
+2003-09-25 John Camelon
+	Partial fix for Bug 43221 : POSTFIX_TYPENAME_IDENTIFIER not implemented 
+
 2003-09-24 John Camelon
 	Fixed Bug 43106 : Symbol Table support needed to resolve types
 	Fixed Bug 43375 : isExtern not returning true for extern declarations 

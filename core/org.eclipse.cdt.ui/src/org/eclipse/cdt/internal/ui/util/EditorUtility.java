@@ -8,6 +8,7 @@ package org.eclipse.cdt.internal.ui.util;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -17,12 +18,12 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
@@ -118,7 +119,7 @@ public class EditorUtility {
 
 	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
 		if (!file.getProject().isAccessible()){
-			closedProject();
+			closedProject(file.getProject());
 			return null;
 		}
 		
@@ -148,13 +149,16 @@ public class EditorUtility {
 	}
 
 	/**
+	 * @param project
 	 * 
 	 */
-	private static void closedProject() {
+	private static void closedProject(IProject project) {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
-		errorMsg.setText("ARGHH!"); //$NON-NLS-1$
-		errorMsg.setMessage ("You tried to open that which cannot be opened..."); //$NON-NLS-1$
+		errorMsg.setText(CUIPlugin.getResourceString("EditorUtility.closedproject")); //$NON-NLS-1$
+		String desc= CUIPlugin.getResourceString("Editorutility.closedproject.description");
+		errorMsg.setMessage (MessageFormat.format(desc, new Object[]{project.getName()})); //$NON-NLS-1$
 		errorMsg.open();
+		
 	}
 
 	private static IEditorPart openInEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {

@@ -1,3 +1,10 @@
+2004-06-22 Bogdan Gheorghe
+	Fix for 68028: Open Declaration into closed project causes PartInitException
+	
+	* src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
+	* src/org/eclipse/cdt/internal/ui/util/OpenIncludeAction.java
+	
+ 
 2004-06-21 Bogdan Gheorghe
 	Fixed opening search external markers.
 

@@ -38,6 +38,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
@@ -97,6 +99,7 @@ public class OpenIncludeAction extends Action {
 			IPath fileToOpen;
 			int nElementsFound= filesFound.size();
 			if (nElementsFound == 0) {
+				noElementsFound();
 				fileToOpen= null;
 			} else if (nElementsFound == 1) {
 				fileToOpen= (IPath) filesFound.get(0);
@@ -121,6 +124,16 @@ public class OpenIncludeAction extends Action {
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e.getStatus());
 		}
+	}
+
+	/**
+	 * 
+	 */
+	private void noElementsFound() {
+		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
+		errorMsg.setText(CUIPlugin.getResourceString("OpenIncludeAction.error")); //$NON-NLS-1$
+		errorMsg.setMessage (CUIPlugin.getResourceString("OpenIncludeAction.error.description")); //$NON-NLS-1$
+		errorMsg.open();
 	}
 
 	private void findFile(String[] includePaths,  String name, ArrayList list)  throws CoreException {

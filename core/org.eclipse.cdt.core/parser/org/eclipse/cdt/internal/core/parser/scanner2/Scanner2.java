@@ -47,6 +47,7 @@ import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.cdt.internal.core.parser.token.SimpleExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
@@ -73,6 +74,17 @@ public class Scanner2 implements IScanner, IScannerData {
 			this.reader = reader; 
 			this.inclusion = inclusion;
 		}
+	}
+	
+	private static class MacroData {
+	    public MacroData( int start, int end, IMacro macro ){
+	        this.startOffset = start;
+	        this.endOffset = end;
+	        this.macro = macro;
+	    }
+	    public final int startOffset;
+	    public final int endOffset;
+	    public final IMacro macro;
 	}
 	
 	private ISourceElementRequestor requestor;
@@ -859,27 +871,28 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @return
 	 */
 	private IToken newToken( int signal ) {
-	    if( bufferData[bufferStackPos] instanceof IMacro )
+	    if( bufferData[bufferStackPos] instanceof MacroData )
 		{
 			int mostRelevant;
 			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
 				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
 					break;
-			int endOffset = bufferPos[mostRelevant] - ((IMacro)bufferData[bufferStackPos]).getName().length + SimpleToken.getCharImage( signal ).length + 1;
-			return new SimpleToken( signal, endOffset, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1));
+			MacroData data = (MacroData)bufferData[mostRelevant + 1];
+			return new SimpleExpansionToken( signal, data.startOffset, data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1)); 
 		}
 		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1)  );
 	}
 
 	private IToken newToken( int signal, char [] buffer )
 	{
-		if( bufferData[bufferStackPos] instanceof IMacro )
+		if( bufferData[bufferStackPos] instanceof MacroData )
 		{
 			int mostRelevant;
 			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
 				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
 					break;
-			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((IMacro)bufferData[bufferStackPos]).getName().length, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1));
+			MacroData data = (MacroData)bufferData[mostRelevant + 1];
+			return new ImagedExpansionToken( signal, buffer, data.startOffset, data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1));
 		}
 		IToken i = new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
 		if( buffer != null && buffer.length == 0 && signal != IToken.tSTRING && signal != IToken.tLSTRING )
@@ -939,14 +952,14 @@ public class Scanner2 implements IScanner, IScannerData {
 				ObjectStyleMacro expMacro = (ObjectStyleMacro)expObject;
 				char[] expText = expMacro.expansion;
 				if (expText.length > 0)
-					pushContext(expText, expMacro);
+					pushContext(expText, new MacroData( bufferPos[bufferStackPos] - expMacro.name.length + 1, bufferPos[bufferStackPos], expMacro ));
 			}
 			else if( expObject instanceof DynamicStyleMacro )
 			{
 				DynamicStyleMacro expMacro = (DynamicStyleMacro) expObject;
 				char[] expText = expMacro.execute();
 				if (expText.length > 0)
-					pushContext(expText, expMacro);
+					pushContext(expText, new MacroData(bufferPos[bufferStackPos] - expMacro.name.length + 1, bufferPos[bufferStackPos], expMacro));
 				
 			} else if (expObject instanceof char[]) {
 				char[] expText = (char[])expObject;
@@ -983,8 +996,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		// i.e. recursion avoidance
 		if( macro != null && !isLimitReached() )
 			for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos)
-				if( bufferData[stackPos] != null && bufferData[stackPos] instanceof IMacro && 
-				    CharArrayUtils.equals(macro.getName(), ((IMacro)bufferData[stackPos]).getName()) ) 
+				if( bufferData[stackPos] != null && bufferData[stackPos] instanceof MacroData && 
+				    CharArrayUtils.equals(macro.getName(), ((MacroData)bufferData[stackPos]).macro.getName()) ) 
 				{
 					return false;
 				}
@@ -2342,7 +2355,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private char[] handleFunctionStyleMacro(FunctionStyleMacro macro, boolean pushContext) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
-
+		int start = bufferPos[bufferStackPos] - macro.name.length + 1;
 		skipOverWhiteSpace();
 		while( 	bufferPos[bufferStackPos] < limit && 
 				buffer[bufferPos[bufferStackPos]] == '\\' && 
@@ -2407,7 +2420,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		char[] result = new char[size];
 		expandFunctionStyleMacro(macro.expansion, argmap, result);
 		if( pushContext )
-			pushContext(result, macro);
+			pushContext(result, new MacroData( start, bufferPos[bufferStackPos], macro ) );
 		return result;
 	}
 
@@ -2476,7 +2489,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			    System.arraycopy( arg, end + 1, result, start + expansion.length, limit - end - 1 );
 			
 			//we need to put the macro on the context stack in order to detect recursive macros
-			pushContext( emptyCharArray, expObject );
+			pushContext( emptyCharArray, new MacroData( start, start + ((IMacro)expObject).getName().length, (IMacro)expObject) );
 			arg = replaceArgumentMacros( result );  //rescan for more macros
 			popContext();
 		}

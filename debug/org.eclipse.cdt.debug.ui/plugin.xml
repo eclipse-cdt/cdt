@@ -208,6 +208,20 @@
                </pluginState>
             </enablement>
          </action>
+         <action
+               label="%ShowFullPathsAction.label"
+               icon="icons/full/clcl16/show_paths.gif"
+               helpContextId="show_full_paths_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               menubarPath="renderGroup"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
       </viewerContribution>
       <viewerContribution
             targetID="#CEditorRulerContext"
@@ -289,6 +303,24 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesAction">
          </action>
       </objectContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.BreakpointView"
+            id="org.eclipse.cdt.debug.ui.breakpointview.popupMenu">
+         <action
+               label="%ShowFullPathsAction.label"
+               icon="icons/full/clcl16/show_paths.gif"
+               helpContextId="show_full_paths_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               menubarPath="renderGroup"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+      </viewerContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -306,6 +338,36 @@
                helpContextId="restart_action_context"
                label="%RestartAction.label"
                tooltip="%RestartAction.tooltip">
+         </action>
+      </viewContribution>
+      <viewContribution
+            targetID="org.eclipse.debug.ui.DebugView"
+            id="org.eclipse.cdt.debug.ui.debugview.toolbar">
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               toolbarPath="renderGroup"
+               hoverIcon="icons/full/clcl16/show_paths.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               disabledIcon="icons/full/dlcl16/show_paths.gif"
+               icon="icons/full/elcl16/show_parents.gif"
+               helpContextId="show_full_paths_action_context"
+               label="%ShowFullPathsAction.label"
+               tooltip="%ShowFullPathsAction.tooltip">
+         </action>
+      </viewContribution>
+      <viewContribution
+            targetID="org.eclipse.debug.ui.BreakpointView"
+            id="org.eclipse.cdt.debug.ui.breakpointview.toolbar">
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               toolbarPath="renderGroup"
+               hoverIcon="icons/full/clcl16/show_paths.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               disabledIcon="icons/full/dlcl16/show_paths.gif"
+               icon="icons/full/elcl16/show_parents.gif"
+               helpContextId="show_full_paths_action_context"
+               label="%ShowFullPathsAction.label"
+               tooltip="%ShowFullPathsAction.tooltip">
          </action>
       </viewContribution>
    </extension>
@@ -368,6 +430,9 @@
             id="org.eclipse.cdt.debug.ui.cDebugActionGroup">
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate">
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
          </action>
       </debugActionGroup>
    </extension>

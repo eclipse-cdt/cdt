@@ -73,7 +73,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 * when rendering elements.
 	 * @see #setAttribute(String, Object)
 	 */
-	public final static String DISPLAY_QUALIFIED_NAMES = "DISPLAY_QUALIFIED_NAMES"; //$NON-NLS-1$
+	public final static String DISPLAY_FULL_PATHS = "DISPLAY_FULL_PATHS"; //$NON-NLS-1$
 	
 	protected HashMap fAttributes = new HashMap(3);
 
@@ -303,7 +303,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 
 	protected boolean isShowQualifiedNames()
 	{
-		Boolean showQualified = (Boolean)fAttributes.get( DISPLAY_QUALIFIED_NAMES );
+		Boolean showQualified = (Boolean)fAttributes.get( DISPLAY_FULL_PATHS );
 		showQualified = showQualified == null ? Boolean.FALSE : showQualified;
 		return showQualified.booleanValue();
 	}

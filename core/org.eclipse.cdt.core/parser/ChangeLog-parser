@@ -1,3 +1,8 @@
+2004-03-16 Dave Daoust
+	refactor scanner for performance improvements
+	-changes to accountForUndo, now named readFromStream
+	-changes to checking for valid macros
+
 2004-03-15 Andrew Niefer
 	Templates:
 	- added ISourceElementRequestor.acceptTemplateParameterReference

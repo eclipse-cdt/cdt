@@ -82,11 +82,11 @@ public class GCCScannerExtension implements IScannerExtension {
 		{
 			scannerData.getLogService().traceLog( "GCCScannerExtension handling #include_next directive" ); //$NON-NLS-1$
 			// figure out the name of the current file and its path
-			IScannerContext context = scannerData.getContextStack().getCurrentContext();
-			if( context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
-			{
-				//handle appropriate error
-			}
+//			IScannerContext context = scannerData.getContextStack().getCurrentContext();
+//			if( context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
+//			{
+//				//handle appropriate error
+//			}
 //			String fullInclusionPath = context.getFilename();
 //			IASTInclusion inclusion = context.getExtension();
 			

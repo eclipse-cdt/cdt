@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 
@@ -24,7 +23,6 @@ public class ScannerContext implements IScannerContext
     private int macroLength = -1;
 	private int line = 1;
 	private int offset;
-	private Stack undo = new Stack(); 
 	private ContextKind kind; 
 				
     /* (non-Javadoc)
@@ -108,18 +106,15 @@ public class ScannerContext implements IScannerContext
 		return line;
 	}
 
-	/**
-	 * Returns the reader.
-	 * @return Reader
+	/*	 there are never more than 2 elements in the unget stack! 
+	 *   trigraphs may involve 2, but in general there is a single element
+	 *	 I have made room for 10 -- just in case :-) 
 	 */
-	public final Reader getReader()
-	{
-		return reader;
-	}
-
+	private int pos = 0;
+	private int undo[] = new int[10];  
 	public final int undoStackSize()
 	{
-		return undo.size();
+		return pos;
 	}
 
 	/**
@@ -128,7 +123,7 @@ public class ScannerContext implements IScannerContext
 	 */
 	public final int popUndo()
 	{
-		int c = ((Integer)undo.pop()).intValue();
+		int c = undo[--pos];
 		if ((char)c == '\n') line++;
 		return c;
 	}
@@ -137,10 +132,18 @@ public class ScannerContext implements IScannerContext
 	 * Sets the undo.
 	 * @param undo The undo to set
 	 */
-	public void pushUndo(int undo)
+	public final void pushUndo(int c)
 	{
-		if ((char)undo == '\n') line--;
-		this.undo.push( new Integer( undo )); 
+		if ((char)c == '\n') line--;
+		undo[pos++] = c; 
+	}
+	/**
+	 * Returns the reader.
+	 * @return Reader
+	 */
+	public final Reader getReader()
+	{
+		return reader;
 	}
 
 

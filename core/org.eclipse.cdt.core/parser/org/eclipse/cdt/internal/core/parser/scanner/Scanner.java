@@ -721,7 +721,7 @@ public class Scanner implements IScanner {
 		return getChar();
 	}
 	
-	int getChar() throws ScannerException
+	final int getChar() throws ScannerException
 	{
 		return getChar( false );
 	}
@@ -731,12 +731,14 @@ public class Scanner implements IScanner {
 		
 		lastContext = scannerData.getContextStack().getCurrentContext();
 		
-		if (scannerData.getContextStack().getCurrentContext() == null)
+		if (lastContext == null)
 			// past the end of file
 			return c;
 
-        c = accountForUndo(c);
-    	int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
+       	if (lastContext.undoStackSize() != 0 )
+    		c = lastContext.popUndo();
+    	else
+    		c = readFromStream();
 		
 		if (enableTrigraphReplacement && (!insideString || enableTrigraphReplacementInStrings)) {
 			// Trigraph processing
@@ -747,39 +749,39 @@ public class Scanner implements IScanner {
 					c = getChar(insideString);
 					switch (c) {
 						case '(':
-							expandDefinition("??(", "[", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??(", "[", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case ')':
-							expandDefinition("??)", "]", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??)", "]", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '<':
-							expandDefinition("??<", "{", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??<", "{", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '>':
-							expandDefinition("??>", "}", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??>", "}", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '=':
-							expandDefinition("??=", "#", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??=", "#", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '/':
-							expandDefinition("??/", "\\", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??/", "\\", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '\'':
-							expandDefinition("??\'", "^", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??\'", "^", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '!':
-							expandDefinition("??!", "|", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??!", "|", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '-':
-							expandDefinition("??-", "~", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??-", "~", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						default:
@@ -805,10 +807,10 @@ public class Scanner implements IScanner {
 				if (c == '<') {
 					c = getChar(false);
 					if (c == '%') {
-						expandDefinition("<%", "{", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+						expandDefinition("<%", "{", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else if (c == ':') {
-						expandDefinition("<:", "[", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+						expandDefinition("<:", "[", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else {
 						// Not a digraph
@@ -818,7 +820,7 @@ public class Scanner implements IScanner {
 				} else if (c == ':') {
 					c = getChar(false);
 					if (c == '>') {
-						expandDefinition(":>", "]", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+						expandDefinition(":>", "]", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else {
 						// Not a digraph
@@ -828,10 +830,10 @@ public class Scanner implements IScanner {
 				} else if (c == '%') {
 					c = getChar(false);
 					if (c == '>') {
-						expandDefinition("%>", "}", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+						expandDefinition("%>", "}", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else if (c == ':') {
-						expandDefinition("%:", "#", baseOffset); //$NON-NLS-1$ //$NON-NLS-2$
+						expandDefinition("%:", "#", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else {
 						// Not a digraph
@@ -845,38 +847,29 @@ public class Scanner implements IScanner {
 		return c;
 	}
 
-    protected int accountForUndo(int c)
+    protected int readFromStream()
     {
-        boolean done;
-        do {
-        	done = true;
-        
-        	if (scannerData.getContextStack().getCurrentContext().undoStackSize() != 0 ) {
-        		c = scannerData.getContextStack().getCurrentContext().popUndo();
-        	} else {
-        		try {
-        			c = scannerData.getContextStack().getCurrentContext().read();
-        			if (c == NOCHAR) {
-        				if (scannerData.getContextStack().rollbackContext(scannerData.getClientRequestor()) == false) {
-        					c = NOCHAR;
-        					break;
-        				} else {
-        					done = false;
-        				}
-        			}
-        		} catch (IOException e) {
-        			if (scannerData.getContextStack().rollbackContext(scannerData.getClientRequestor()) == false) {
-        				c = NOCHAR;
-        			} else {
-        				done = false;
-        			}
-        		}
-        	}
-        } while (!done);
-        return c;
+    	int c;
+    	try {
+    		c = scannerData.getContextStack().getCurrentContext().read();
+    	}
+    	catch (IOException e) {
+    		c = NOCHAR;
+    	}
+    	
+    	if (c != NOCHAR)
+    		return c;
+    	
+    	if (scannerData.getContextStack().rollbackContext(scannerData.getClientRequestor()) == false)
+    		return NOCHAR;
+    	
+    	if (scannerData.getContextStack().getCurrentContext().undoStackSize() != 0 )
+    		return scannerData.getContextStack().getCurrentContext().popUndo();
+    	
+    	return readFromStream();
     }
 
-	void ungetChar(int c) throws ScannerException{
+	final void ungetChar(int c) throws ScannerException{
 		scannerData.getContextStack().getCurrentContext().pushUndo(c);
 		try
 		{
@@ -1220,9 +1213,12 @@ public class Scanner implements IScanner {
 		if (directive == null) {
 			if( scannerExtension.canHandlePreprocessorDirective( token ) )
 				scannerExtension.handlePreprocessorDirective( token, getRestOfPreprocessorLine() );
-			StringBuffer buffer = new StringBuffer( "#"); //$NON-NLS-1$
-			buffer.append( token );
-			handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
+			else
+			{
+				StringBuffer buffer = new StringBuffer( "#"); //$NON-NLS-1$
+				buffer.append( token );
+				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
+			}
 			return null;
 		}
 
@@ -1432,12 +1428,12 @@ public class Scanner implements IScanner {
 
 		c = getChar();				
 		
+		// do the least expensive tests first!
 		while (
-				Character.isUnicodeIdentifierPart( (char)c)
-//			((c >= 'a') && (c <= 'z'))
-//			|| ((c >= 'A') && (c <= 'Z'))
-//			|| ((c >= '0') && (c <= '9'))
-//			|| (c == '_')
+			((c >= 'a') && (c <= 'z'))
+			|| ((c >= 'A') && (c <= 'Z'))
+			|| ((c >= '0') && (c <= '9'))
+			|| (c == '_') || Character.isUnicodeIdentifierPart( (char)c)
 			) {
 			buff.append((char) c);
 			c = getChar();
@@ -2545,7 +2541,37 @@ public class Scanner implements IScanner {
 		return macroReplacementTokens;
 	}
 	
+	protected IMacroDescriptor createObjectMacroDescriptor(String key, String value ) {
+		StringBuffer signatureBuffer  = new StringBuffer();
+		signatureBuffer.append( key );
+		signatureBuffer.append( ' ' );
+		signatureBuffer.append( value );
+
+//		List macroReplacementTokens;
+//		if (value.trim().equals( "" ))
+//			macroReplacementTokens = new ArrayList();
+//		else
+//			macroReplacementTokens = tokenizeReplacementString( NO_OFFSET_LIMIT, key, value, null ); 
+		
+		List macroReplacementTokens = new ArrayList();
+		if( !value.trim().equals( "" ) )  //$NON-NLS-1$
+		{	
+
+			Token t = new Token(
+					IToken.tIDENTIFIER, 
+					value, 
+					scannerData.getContextStack().getCurrentContext(),
+					scannerData.getContextStack().getCurrentLineNumber()
+					);
+			macroReplacementTokens.add( t );
+		}
 	
+		return new ObjectMacroDescriptor( key, 
+				signatureBuffer.toString(), 
+				macroReplacementTokens, 
+				value);
+	}
+
 	protected void poundDefine(int beginning, int beginningLine ) throws ScannerException, EndOfFileException {
 		StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
 		skipOverWhitespace();
@@ -2636,8 +2662,9 @@ public class Scanner implements IScanner {
 		}
 		else if ((c == '\n') || (c == '\r'))
 		{
-			checkValidMacroRedefinition(key, previousDefinition, "", beginning);				 //$NON-NLS-1$
-			addDefinition( key, "" ); //$NON-NLS-1$
+			descriptor = createObjectMacroDescriptor(key, ""); //$NON-NLS-1$
+			checkValidMacroRedefinition(key, previousDefinition, descriptor, beginning);
+			addDefinition( key, descriptor ); 
 		}
 		else if ((c == ' ') || (c == '\t') ) {
 			// this is a simple definition 
@@ -2646,8 +2673,9 @@ public class Scanner implements IScanner {
 			// get what we are to map the name to and add it to the definitions list
 			String value = getRestOfPreprocessorLine();
 			
-			checkValidMacroRedefinition(key, previousDefinition, value, beginning);
-			addDefinition( key, value ); 
+			descriptor = createObjectMacroDescriptor(key, value);
+			checkValidMacroRedefinition(key, previousDefinition, descriptor, beginning);
+			addDefinition( key, descriptor ); 
 		
 		} else if (c == '/') {
 			// this could be a comment	
@@ -2655,20 +2683,23 @@ public class Scanner implements IScanner {
 			if (c == '/') // one line comment
 				{
 				skipOverSinglelineComment();
-				checkValidMacroRedefinition(key, previousDefinition, "", beginning); //$NON-NLS-1$
-				addDefinition(key, ""); //$NON-NLS-1$
+				descriptor = createObjectMacroDescriptor(key, ""); //$NON-NLS-1$
+				checkValidMacroRedefinition(key, previousDefinition, descriptor, beginning);
+				addDefinition(key, descriptor); 
 			} else if (c == '*') // multi-line comment
 				{
 				if (skipOverMultilineComment()) {
 					// we have gone over a newline
 					// therefore, this symbol was defined to an empty string
-					checkValidMacroRedefinition(key, previousDefinition, "", beginning); //$NON-NLS-1$
-					addDefinition(key, ""); //$NON-NLS-1$
+					descriptor = createObjectMacroDescriptor(key, ""); //$NON-NLS-1$
+					checkValidMacroRedefinition(key, previousDefinition, descriptor, beginning); 
+					addDefinition(key, descriptor);
 				} else {
 					String value = getRestOfPreprocessorLine();
 					
-					checkValidMacroRedefinition(key, previousDefinition, "", beginning); //$NON-NLS-1$
-					addDefinition(key, value);
+					descriptor = createObjectMacroDescriptor(key, value);
+					checkValidMacroRedefinition(key, previousDefinition, descriptor, beginning); 
+					addDefinition(key, descriptor);
 				}
 			} else {
 				// this is not a comment 
@@ -2698,40 +2729,6 @@ public class Scanner implements IScanner {
             /* do nothing */
         } 
 	}
-
-	protected void checkValidMacroRedefinition(
-			String key,
-			IMacroDescriptor previousDefinition,
-			String newDefinition, int beginningOffset )
-	throws ScannerException 
-	{
-		StringBuffer buffer = new StringBuffer(key);
-		buffer.append( ' ');
-		buffer.append(newDefinition);
-		IMacroDescriptor newMacro = new ObjectMacroDescriptor( key, buffer.toString(), 
-				tokenizeReplacementString( NO_OFFSET_LIMIT, key, newDefinition, null ), newDefinition );
-		checkValidMacroRedefinition( key, previousDefinition, newMacro, beginningOffset );
-	}
-	
-	
-	protected void checkValidMacroRedefinition(
-			String key,
-			String previousDefinition,
-			String newDefinition, int beginningOffset )
-	throws ScannerException 
-	{
-		StringBuffer oldMacro = new StringBuffer( key );
-		oldMacro.append( ' ');
-		StringBuffer newMacro = new StringBuffer( oldMacro.toString() );
-		oldMacro.append( previousDefinition );
-		newMacro.append( newDefinition );
-		IMacroDescriptor prevMacroDescriptor = new ObjectMacroDescriptor( key, oldMacro.toString(), 
-				tokenizeReplacementString( NO_OFFSET_LIMIT, key, previousDefinition, null ), previousDefinition );
-		IMacroDescriptor newMacroDescriptor = new ObjectMacroDescriptor( key, newMacro.toString(), 
-				tokenizeReplacementString( NO_OFFSET_LIMIT, key, newDefinition, null ), newDefinition );
-		checkValidMacroRedefinition( key, prevMacroDescriptor, newMacroDescriptor, beginningOffset );
-	}
-	
 
 	protected void checkValidMacroRedefinition(
 		String key,

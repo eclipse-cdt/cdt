@@ -12,6 +12,7 @@ import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -426,7 +427,8 @@ public class DeltaProcessor {
 	protected void traverseDelta(ICElement parent, IResourceDelta delta) {
 		try {
 			ICElement current = updateCurrentDeltaAndIndex(delta);
-			if (current == null || (current instanceof ICProject && !((ICProject)current).getProject().isOpen())) {
+			if (current == null || current instanceof ISourceRoot ||
+					(current instanceof ICProject && !((ICProject)current).getProject().isOpen())) {
 				nonCResourcesChanged(parent, delta);
 			} else {
 				parent = current;

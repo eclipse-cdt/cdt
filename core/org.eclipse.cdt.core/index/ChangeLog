@@ -1,3 +1,8 @@
+2004-07-12 Bogdan Gheorghe
+	Fix for Bug 69166: NPE in IndexerModelListener.processDelta
+	
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexerModelListener.java	
+	
 2004-06-25 Bogdan Gheorghe
 	Indirect fix for Bug 65551: [Search] Search for Variable references should not include parameters
 	Instead of excluding parameter references from searches, added parm declarations to the index (for

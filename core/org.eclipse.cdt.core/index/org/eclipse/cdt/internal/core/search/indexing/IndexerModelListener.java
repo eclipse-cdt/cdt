@@ -63,6 +63,9 @@ public class IndexerModelListener implements IElementChangedListener {
 					IResource tempResource = element.getResource();
 					SourceRoot tempRootElement = null;
 					
+					if (tempResource == null)
+						return;
+					
 					switch(tempResource.getType())
 					{
 						case IResource.FILE:

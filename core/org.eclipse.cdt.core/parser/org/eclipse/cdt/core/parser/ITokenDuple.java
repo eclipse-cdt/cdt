@@ -32,4 +32,6 @@ public interface ITokenDuple {
 	
 	public abstract ITokenDuple getSubrange( int startIndex, int endIndex );
 	public IToken getToken(int index);
+	
+	public int findLastTokenType( int type );
 }

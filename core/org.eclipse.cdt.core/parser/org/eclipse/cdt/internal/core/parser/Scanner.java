@@ -1047,8 +1047,7 @@ public class Scanner implements IScanner {
 							// definition 
 							String toBeUndefined = getNextIdentifier();
 							
-							if( ( definitions.remove(toBeUndefined) == null ) && mode == ParserMode.COMPLETE_PARSE ) 
-								throw new ScannerException( ScannerException.ErrorCode.UNDEF_DEFINITION_NOT_FOUND, toBeUndefined, getCurrentFile(), getCurrentOffset() );
+							definitions.remove(toBeUndefined);
 							
 							skipOverTextUntilNewline();
 							c = getChar();

@@ -2602,7 +2602,7 @@ public class Parser implements IParser
                         access,
                         classKey.getOffset(),
             			duple == null ?  classKey.getOffset() : duple.getFirstToken().getOffset(), 
-						duple == null ?  classKey.getEndOffset() : duple.getFirstToken().getOffset() );
+						duple == null ?  classKey.getEndOffset() : duple.getFirstToken().getEndOffset() );
         }
         catch (ASTSemanticException e)
         {

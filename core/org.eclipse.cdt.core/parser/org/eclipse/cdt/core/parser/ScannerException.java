@@ -33,7 +33,6 @@ public class ScannerException extends Exception {
 		public static final ErrorCode BAD_HEXIDECIMAL_FORMAT = new ErrorCode( 7 );
 		public static final ErrorCode INVALID_PREPROCESSOR_DIRECTIVE = new ErrorCode( 8 );
 		public static final ErrorCode ATTEMPTED_REDEFINITION = new ErrorCode( 9 );
-		public static final ErrorCode UNDEF_DEFINITION_NOT_FOUND = new ErrorCode( 10 );
 		public static final ErrorCode INVALID_ESCAPE_CHARACTER_SEQUENCE = new ErrorCode( 11 );
 		public static final ErrorCode EXPRESSION_EVALUATION_ERROR = new ErrorCode( 12 );
 		public static final ErrorCode UNEXPECTED_EOF = new ErrorCode(13);
@@ -82,7 +81,6 @@ public class ScannerException extends Exception {
 					this == ErrorCode.UNEXPECTED_EOF  ||
 					this == ErrorCode.MACRO_USAGE_ERROR  ||
 					this == ErrorCode.MACRO_PASTING_ERROR ||
-					this == ErrorCode.UNDEF_DEFINITION_NOT_FOUND || 
 					this == ErrorCode.EXPRESSION_EVALUATION_ERROR ||
 					this == ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE || 
 					this == ErrorCode.ATTEMPTED_REDEFINITION )
@@ -114,7 +112,6 @@ public class ScannerException extends Exception {
 		errorMessages.put( ErrorCode.DEFINITION_NOT_FOUND, "Definition not found: " ); 
 		errorMessages.put( ErrorCode.MALFORMED_MACRO_DEFN, "Macro definition malformed: " ); 
 		errorMessages.put( ErrorCode.ATTEMPTED_REDEFINITION, "" );
-		errorMessages.put( ErrorCode.UNDEF_DEFINITION_NOT_FOUND, "" );
 		errorMessages.put( ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE, "" );
 		errorMessages.put( ErrorCode.EXPRESSION_EVALUATION_ERROR, "" );
 		errorMessages.put( ErrorCode.MACRO_USAGE_ERROR, "" );

@@ -1418,7 +1418,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 */
 	public IASTFunction createFunction(
 	    IASTScope scope,
-	    String name,
+	    ITokenDuple name,
 	    List parameters,
 	    IASTAbstractDeclaration returnType,
 	    IASTExceptionSpecification exception,
@@ -1441,43 +1441,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IContainerSymbol ownerScope = scopeToSymbol( scope );		
 		
 		// check if this is a method in a body file
-		StringTokenizer tokenizer = new StringTokenizer(name,DOUBLE_COLON);
-		int tokencount = tokenizer.countTokens();
-		if(tokencount > 1){
-			List tokens = new ArrayList();
-			String oneToken = "";
-			// This is NOT a function. This is a method definition
-			while (tokenizer.hasMoreTokens()){
-				oneToken = tokenizer.nextToken();
-				tokens.add(oneToken);
-			}
-				
-			String functionName = oneToken;
-//			String parentName = name.substring(0, name.lastIndexOf(DOUBLE_COLON));
+		Iterator tokenizer = name.iterator();
+		if(name.length() > 1){
+			IContainerSymbol parentScope = (IContainerSymbol)
+				lookupQualifiedName( 
+					ownerScope, 
+					name.getSubrange( 0, name.findLastTokenType( IToken.tCOLONCOLON ) - 1), 
+					references, 
+					false );
 			
-			int numOfTokens = 1;
-			int offset = nameOffset;
-			IContainerSymbol parentScope = ownerScope;
-			Iterator i = tokens.iterator();
-			while (i.hasNext() && (numOfTokens++) < tokens.size()){
-				String token = (String) i.next();
-				IContainerSymbol parentSymbol =
-				(IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_class, null, offset, references, false);
-				if(parentSymbol == null){
-					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_namespace, null, offset, references, false);						
-				}
-				if(parentSymbol == null){
-					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_struct, null, offset, references, false);						
-				}
-				if(parentSymbol == null){
-					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_union, null, offset, references, false);						
-				}				if(parentSymbol == null)
-					break;
-				else {
-					parentScope = parentSymbol;
-					offset += token.length()+ DOUBLE_COLON.length();
-				}
-			}
 			
 			if((parentScope != null) && 
 			( (parentScope.getType() == TypeInfo.t_class) 
@@ -1485,14 +1457,35 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			|| (parentScope.getType() == TypeInfo.t_union))
 			){
 				IASTScope methodParentScope = (IASTScope)parentScope.getASTExtension().getPrimaryDeclaration();
-				return createMethod(methodParentScope, functionName,nameEndOffset, parameters, returnType,
-				exception, isInline, isFriend, isStatic, startOffset, offset,
-				ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
-				ASTAccessVisibility.PRIVATE, constructorChain, references, isFunctionDefinition);
+				ITokenDuple newName = name.getSubrange( 
+					name.findLastTokenType( IToken.tCOLONCOLON) + 1, 
+					name.length() - 1  );
+                return createMethod(
+                    methodParentScope,
+                    newName.toString(), 
+                    parameters,
+                    returnType,
+                    exception,
+                    isInline,
+                    isFriend,
+                    isStatic,
+                    startOffset,
+                    newName.getFirstToken().getOffset(),
+                    nameEndOffset,
+                    ownerTemplate,
+                    isConst,
+                    isVolatile,
+                    isVirtual,
+                    isExplicit,
+                    isPureVirtual,
+                    ASTAccessVisibility.PRIVATE,
+                    constructorChain,
+                    references,
+                    isFunctionDefinition);
 			}
 		}
 	
-		IParameterizedSymbol symbol = pst.newParameterizedSymbol( name, TypeInfo.t_function );
+		IParameterizedSymbol symbol = pst.newParameterizedSymbol( name.getLastToken().getImage(), TypeInfo.t_function );
 		setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
 		
 		setParameter( symbol, returnType, false, references );
@@ -1514,7 +1507,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			IParameterizedSymbol functionDeclaration = null; 
 			
 			functionDeclaration = 
-				(IParameterizedSymbol) lookupQualifiedName(ownerScope, name, TypeInfo.t_function, functionParameters, 0, new ArrayList(), false);                
+				(IParameterizedSymbol) lookupQualifiedName(ownerScope, name.getLastToken().getImage(), TypeInfo.t_function, functionParameters, 0, new ArrayList(), false);                
 
 			if( functionDeclaration != null )
 			{
@@ -1741,8 +1734,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isPureVirtual, 
 		ASTAccessVisibility visibility, List constructorChain, boolean isFunctionDefinition ) throws ASTSemanticException
 	{
-		return createMethod(scope, name, nameEndOffset, parameters, returnType,
-		exception, isInline, isFriend, isStatic, startOffset, nameOffset,
+		return createMethod(scope, name, parameters, returnType, exception,
+		isInline, isFriend, isStatic, startOffset, nameOffset, nameEndOffset,
 		ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
 		visibility, constructorChain, null, isFunctionDefinition );
 	}   
@@ -1750,8 +1743,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     public IASTMethod createMethod(
         IASTScope scope,
         String name,
-        int nameEndOffset, 
-        List parameters,
+        List parameters, 
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,
         boolean isInline,
@@ -1759,6 +1751,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isStatic,
         int startOffset,
         int nameOffset,
+        int nameEndOffset,
         IASTTemplate ownerTemplate,
         boolean isConst,
         boolean isVolatile,

@@ -1,3 +1,8 @@
+2003-10-01 John Camelon
+	Fixed Bug 43987 : Search results: Declaration of class not highlighted when selected 
+	Fixed Bug 43997 : Search results: selection includes preceding whitespace 
+	Fixed Bug 44034 : Scanner failure on #undef 
+
 2003-10-01 Bogdan Gheorghe
 	Modified CDT log dump in Parser.fetchToken to include error message
 

@@ -132,7 +132,7 @@ public interface IASTFactory
         boolean isUnsigned, boolean isTypename) throws ASTSemanticException, Exception;
     public IASTFunction createFunction(
         IASTScope scope,
-        String name,
+        ITokenDuple name,
         List parameters,
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,

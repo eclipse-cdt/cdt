@@ -153,5 +153,24 @@ public class TokenDuple implements ITokenDuple {
         }
         return null;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ITokenDuple#findLastTokenType(int)
+     */
+    public int findLastTokenType(int type)
+    {
+		int count = 0; 
+		int lastFound = -1;
+        Iterator i = iterator();
+        while( i.hasNext() )
+        {
+        	IToken token = (IToken)i.next();
+        	if( token.getType() == type )
+        		lastFound = count; 
+        	++count;
+        }
+        
+        return lastFound;
+    }
 	
 }

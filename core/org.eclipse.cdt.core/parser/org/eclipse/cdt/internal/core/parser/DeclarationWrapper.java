@@ -503,7 +503,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         {
             return astFactory.createFunction(
                 scope,
-            	nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
+            	nested ? declarator.getOwnedDeclarator().getNamedDuple() : declarator.getNamedDuple(),
                 createParameterList(declarator.getParameters()),
                 astFactory.createAbstractDeclaration(
                     constt,

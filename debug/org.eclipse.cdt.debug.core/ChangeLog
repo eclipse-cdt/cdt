@@ -1,4 +1,8 @@
 2003-09-09 Mikhail Khodjaiants
+	Fix for PR 39680: Gash in error message for memory view.
+	* CDebugModel.java
+
+2003-09-09 Mikhail Khodjaiants
 	Final fix for PR 39484: Move 'getType' method from ICDIVariable to ICDIVaraibleObject.
 	* CArrayPartition.java
 	* CVariable.java

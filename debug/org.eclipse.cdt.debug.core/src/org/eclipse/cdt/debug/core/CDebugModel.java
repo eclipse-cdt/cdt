@@ -613,7 +613,7 @@ public class CDebugModel
 				throw new DebugException( new Status( IStatus.ERROR, 
 													  getPluginIdentifier(),
 													  DebugException.TARGET_REQUEST_FAILED, 
-													  e.getMessage(), 
+													  e.getDetailMessage(), 
 													  null ) );
 			}
 		}
@@ -650,7 +650,7 @@ public class CDebugModel
 				throw new DebugException( new Status( IStatus.ERROR, 
 													  getPluginIdentifier(),
 													  DebugException.TARGET_REQUEST_FAILED, 
-													  e.getMessage(), 
+													  e.getDetailMessage(), 
 													  null ) );
 			}
 		}

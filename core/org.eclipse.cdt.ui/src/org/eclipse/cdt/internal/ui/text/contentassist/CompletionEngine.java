@@ -463,7 +463,7 @@ public class CompletionEngine implements RelevanceConstants {
 			kinds[0] = IASTNode.LookupKind.STRUCTURES; 				
 			kinds[1] = IASTNode.LookupKind.ENUMERATIONS;
 			kinds[2] = IASTNode.LookupKind.NAMESPACES;
-			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
+			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 			addToCompletions(result);
 		} else // prefix is empty, we can not look for everything 
 		{
@@ -475,17 +475,20 @@ public class CompletionEngine implements RelevanceConstants {
 		// 1. basic completion on all types
 		completionOnTypeReference(completionNode);
 		// 2. Get the search scope node
-		// TODO
+		IASTScope searchNode = completionNode.getCompletionScope();
 		// 3. provide a template for constructor/ destructor
-		// 4. lookup methods
-		// we are at a field declaration place, the user could be trying to override a function.
-		// We have to lookup functions that could be overridden here.
-//		LookupResult result;
-//		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-//		kinds[0] = IASTNode.LookupKind.METHODS; 
-//		result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-//		addToCompletions(result);
-		
+		if(completionNode.getCompletionPrefix().length() == 0){
+			if(searchNode instanceof IASTClassSpecifier){
+				IASTClassSpecifier classSpec = (IASTClassSpecifier)searchNode;
+				if (classSpec.getClassKind() == ASTClassKind.CLASS ) {
+					ILookupResult result = null;
+					IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+					kinds[0] = IASTNode.LookupKind.STRUCTURES; 
+					result = lookup(searchNode, classSpec.getName(), kinds, completionNode.getCompletionContext());
+					addToCompletions(result);
+				}
+			}		
+		}
 	}
 	private void completionOnVariableType(IASTCompletionNode completionNode){
 		// 1. basic completion on all types
@@ -505,7 +508,7 @@ public class CompletionEngine implements RelevanceConstants {
 			String prefix = completionNode.getCompletionPrefix();
 			if(prefix.equals("("))
 				prefix = "";
-			result = lookup(searchNode, prefix, kinds, null);
+			result = lookup(searchNode, prefix, kinds, completionNode.getCompletionContext());
 			addToCompletions(result);
 		
 			List macros = lookupMacros(completionNode.getCompletionPrefix());
@@ -531,7 +534,7 @@ public class CompletionEngine implements RelevanceConstants {
 		// only look for classes
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.CLASSES; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
 	}
 	
@@ -541,7 +544,7 @@ public class CompletionEngine implements RelevanceConstants {
 		// only look for namespaces
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.NAMESPACES; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
 	}
 	private void completionOnExceptionReference(IASTCompletionNode completionNode){
@@ -568,7 +571,7 @@ public class CompletionEngine implements RelevanceConstants {
 //			IASTClassSpecifier classContext = (IASTClassSpecifier) context;
 //			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 //			kinds[0] = IASTNode.LookupKind.STRUCTURES; 
-//			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
+//			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 //			addToCompletions(result);			
 //		}
 		// basic completion on all types
@@ -581,7 +584,7 @@ public class CompletionEngine implements RelevanceConstants {
 		// only lookup constructors
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 		kinds[0] = IASTNode.LookupKind.CONSTRUCTORS; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
 	}
 	private void completionOnFunctionReference(IASTCompletionNode completionNode){
@@ -591,7 +594,7 @@ public class CompletionEngine implements RelevanceConstants {
 		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[2];
 		kinds[0] = IASTNode.LookupKind.FUNCTIONS; 
 		kinds[1] = IASTNode.LookupKind.METHODS; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
 	}
 	

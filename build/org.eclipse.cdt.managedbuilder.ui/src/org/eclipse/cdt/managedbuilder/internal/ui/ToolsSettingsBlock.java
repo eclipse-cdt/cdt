@@ -17,12 +17,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
-import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildOptionSettingsPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildSettingsPage;
@@ -31,6 +28,8 @@ import org.eclipse.cdt.managedbuilder.ui.properties.BuildToolsSettingsStore;
 import org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.ToolListContentProvider;
 import org.eclipse.cdt.managedbuilder.ui.properties.ToolListLabelProvider;
+import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -47,13 +46,13 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 
@@ -404,15 +403,24 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 		settingsStore = store; 
 		
-		// Select the first tool in the list
-		Object[] elements = null;
+		// Determine what the selection in the tree should be
 		Object primary = null;
-		if( element instanceof IProject){
-			elements = provider.getElements(parent.getSelectedConfiguration());
-		} else if ( element instanceof IFile) {
-			elements = provider.getElements(resParent.getCurrentResourceConfig());
+		if (selectedTool != null) {
+			// There is a selected tool defined
+			primary = selectedTool;
+		} else if (selectedCategory != null) {
+			// There is a selected option or category
+			primary = selectedCategory;
+		} else {
+			// Select the first tool in the list
+			Object[] elements = null;
+			if( element instanceof IProject){
+				elements = provider.getElements(parent.getSelectedConfiguration());
+			} else if ( element instanceof IFile) {
+				elements = provider.getElements(resParent.getCurrentResourceConfig());
+			}
+			primary = elements.length > 0 ? elements[0] : null;			
 		}
-		primary = elements.length > 0 ? elements[0] : null;
 		
 		if (primary != null) {
 			optionList.setSelection(new StructuredSelection(primary));

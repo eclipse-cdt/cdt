@@ -1,3 +1,8 @@
+2003-03-17 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/StackFrame.java:
+	getArguments() and getLocalVariable() are caching the results.
+
 2003-03-16 Alain Magloire
 
 	GDB/MI does not keep the stack level, from what we expect.  In gdb, the

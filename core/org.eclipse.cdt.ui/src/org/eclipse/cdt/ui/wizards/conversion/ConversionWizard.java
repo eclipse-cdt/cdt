@@ -7,13 +7,10 @@ package org.eclipse.cdt.ui.wizards.conversion;
  
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.CProjectWizard;
-
+import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
-import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.IWorkbench;
 
 /**
@@ -27,7 +24,7 @@ import org.eclipse.ui.IWorkbench;
  * @see CtoCCConversionWizard#addPages
  */
 public abstract class ConversionWizard
-    extends CProjectWizard {
+    extends NewCProjectWizard {
 
     // Titles and descriptions may be overwritten by subclasses through the accessor methods.
     private static final String WZ_TITLE = "ConversionWizard.title"; //$NON-NLS-1$
@@ -106,16 +103,6 @@ public abstract class ConversionWizard
     protected static String getPrefix() {
 
         return PREFIX;
-    }
-
-    /**
-     * Method addTabItems, allows subclasses to add additional pages
-     * 
-     * @see org.eclipse.cdt.ui.wizards.CProjectWizard#addTabItems(TabFolder)
-     */
-    public void addTabItems(TabFolder folder) {
-
-        // we have no tabs, but must implement this abstract method
     }
 
     /**

@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.resources.MakeUtil;
 import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
@@ -29,9 +28,6 @@ import org.eclipse.cdt.internal.ui.editor.FileSearchAction;
 import org.eclipse.cdt.internal.ui.editor.FileSearchActionInWorkingSet;
 import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
 import org.eclipse.cdt.internal.ui.editor.SearchDialogAction;
-import org.eclipse.cdt.internal.ui.makeview.MakeAction;
-import org.eclipse.cdt.internal.ui.makeview.MakeTarget;
-import org.eclipse.cdt.internal.ui.makeview.MakeTargetAction;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
@@ -140,7 +136,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	AddBookmarkAction addBookmarkAction;
 	//BuildAction buildAction;
 	//BuildAction rebuildAction;
-	MakeTargetAction makeTargetAction;
 	CopyResourceAction copyResourceAction;
 	DeleteResourceAction deleteResourceAction;
 	OpenFileAction openFileAction;
@@ -594,7 +589,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		refreshAction = new RefreshAction(shell);
 		buildAction = new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		rebuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
-		makeTargetAction = new MakeTargetAction(shell);
 		moveResourceAction = new MoveResourceAction (shell);
 		copyResourceAction = new CopyResourceAction(shell);
 		renameResourceAction = new RenameResourceAction(shell, viewer.getTree());
@@ -660,7 +654,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	 * E.g. A project was opened or closed.
 	 */
 	void updateActions(IStructuredSelection selection) {
-		makeTargetAction.selectionChanged(selection);
 		copyResourceAction.selectionChanged(selection);
 		refreshAction.selectionChanged(selection);
 		moveResourceAction.selectionChanged(selection);
@@ -775,7 +768,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		
 		newMenu.add(goIntoAction);		
 		
-		NewWizardMenu newWizMenu = new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
+		new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
 
 		menu.add(newMenu);
 
@@ -830,32 +823,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 				//menu.add(buildAction);
 			//}
 		//}
-		boolean isContainer = (resource instanceof IContainer);
-		if (isContainer) {
-			MakeTarget[] aBuild = new MakeTarget[1];
-			aBuild[0] = new MakeTarget(resource, "all");
-			menu.add(new MakeAction(aBuild, getViewSite().getShell(), "Build"));
-
-			MakeTarget[] aReBuild = new MakeTarget[1];
-			aReBuild[0] = new MakeTarget(resource, "clean all");
-			menu.add(new MakeAction(aReBuild, getViewSite().getShell(), "Rebuild"));
-			MakeTarget[] aClean = new MakeTarget[1];
-			aClean[0] = new MakeTarget(resource, "clean");
-			menu.add(new MakeAction(aClean, getViewSite().getShell(), "Clean"));
-		
-			MenuManager submenu= new MenuManager("Make");
-			String [] directives = MakeUtil.getPersistentTargets(resource);
-			if (directives.length > 0) {
-				for (int i = 0; i < directives.length; i++) {
-					MakeTarget[] a = new MakeTarget[1];
-					a[0] = new MakeTarget(resource, directives[i]);
-					submenu.add(new MakeAction(a, getViewSite().getShell(), directives[i]));
-				}
-			}
-			menu.add(submenu);
-		
-			menu.add(makeTargetAction);
-		}
 		menu.add(new GroupMarker(BUILD_GROUP_MARKER_END));
 	}
 

@@ -67,7 +67,7 @@ import org.eclipse.ui.PlatformUI;
 public abstract class ConvertProjectWizardPage
     extends WizardPage {
 
-    public static final String  KEY_TITLE = "ConvertionWizard.title";
+	public static final String  KEY_TITLE = "ConvertionWizard.title";
     public static final String  KEY_CONVERTING = "ConvertionWizard.converting";
     private static final String PROJECT_LIST = "ConversionWizard.projectlist";
 
@@ -504,15 +504,19 @@ public abstract class ConvertProjectWizardPage
     	}                           	
     }
 	protected void addCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException{
-     	CCorePlugin.getDefault().convertProjectToC(project, monitor, CCorePlugin.PLUGIN_ID + ".make", addMakeBuilder);  //$NON-NLS-1$
+		if ( getWizard() instanceof ConversionWizard) {
+     		CCorePlugin.getDefault().convertProjectToC(project, monitor, ((ConversionWizard)getWizard()).getProjectID());
+		}
      }
      
      protected void addCCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException{
-     	if (project.hasNature(CProjectNature.C_NATURE_ID)) {     		
-	     	CCorePlugin.getDefault().convertProjectFromCtoCC(project, monitor);  //$NON-NLS-1$
-     	} else {
-	     	CCorePlugin.getDefault().convertProjectToCC(project, monitor, CCorePlugin.PLUGIN_ID + ".make", addMakeBuilder);  //$NON-NLS-1$
-     	}
+		if ( getWizard() instanceof ConversionWizard) {
+	     	if (project.hasNature(CProjectNature.C_NATURE_ID)) {     		
+		     	CCorePlugin.getDefault().convertProjectFromCtoCC(project, monitor);
+     		} else {
+	     		CCorePlugin.getDefault().convertProjectToCC(project, monitor, ((ConversionWizard)getWizard()).getProjectID());
+     		}
+		}
      }
     
 }

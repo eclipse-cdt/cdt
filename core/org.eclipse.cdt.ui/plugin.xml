@@ -129,13 +129,6 @@
             class="org.eclipse.cdt.internal.ui.cview.CView"
             id="org.eclipse.cdt.ui.CView">
       </view>
-      <view
-            name="%MakeView.name"
-            icon="icons/full/obj16/build_menu.gif"
-            category="org.eclipse.cdt.ui.views"
-            class="org.eclipse.cdt.internal.ui.makeview.MakeView"
-            id="org.eclipse.cdt.ui.MakeView">
-      </view>
    </extension>
 <!-- The wizards -->
 <!-- For C Wizards -->
@@ -145,61 +138,11 @@
             name="%newCWizardsCategory.name"
             id="org.eclipse.cdt.ui.newCWizards">
       </category>
-      <wizard
-            name="%StdCWizard.name"
-            icon="icons/full/ctool16/newc_app.gif"
-            category="org.eclipse.cdt.ui.newCWizards"
-            class="org.eclipse.cdt.ui.wizards.StdCWizard"
-            project="true"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.StdCWizard">
-         <description>
-            %StdCWizard.description
-         </description>
-      </wizard>
-<!-- For C Conversion Wizard -->
-      <wizard
-            name="%StdMakeConversionWizard.name"
-            icon="icons/full/ctool16/convert-normal.gif"
-            category="org.eclipse.cdt.ui.newCWizards"
-            class="org.eclipse.cdt.ui.wizards.conversion.ConvertToStdMakeConversionWizard"
-            project="true"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.ConvertToStdMakeConversionWizard">
-         <description>
-            %StdMakeConversionWizard.description
-         </description>
-      </wizard>
 <!-- For C++ Wizards -->
       <category
             name="%newCCWizardsCategory.name"
             id="org.eclipse.cdt.ui.newCCWizards">
       </category>
-      <wizard
-            name="%StdCCWizard.name"
-            icon="icons/full/ctool16/newcc_app.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
-            class="org.eclipse.cdt.ui.wizards.StdCCWizard"
-            project="true"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.StdCCWizard">
-         <description>
-            %StdCCWizard.description
-         </description>
-      </wizard>
-<!-- For C++ Conversion Wizard -->
-      <wizard
-            name="%StdMakeConversionWizard.name"
-            icon="icons/full/ctool16/convert-normal.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
-            class="org.eclipse.cdt.ui.wizards.conversion.ConvertToStdMakeConversionWizard"
-            project="true"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.ConvertToStdMakeConversionWizard">
-         <description>
-            %StdMakeConversionWizard.description
-         </description>
-      </wizard>
 <!-- File and Folder Wizards -->
       <wizard
             name="%NewWizards.folder"

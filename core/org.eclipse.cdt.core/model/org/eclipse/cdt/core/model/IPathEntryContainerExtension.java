@@ -37,4 +37,16 @@ public interface IPathEntryContainerExtension extends IPathEntryContainer {
 	 * @see IPathEntry
 	 */
 	IMacroEntry[] getMacroEntries(IPath path);
+
+	/**
+	 * 
+	 * @param listener
+	 */
+	void addContainerListener(IPathEntryContainerExtensionListener listener);
+
+	/**
+	 * 
+	 * @param listener
+	 */
+	void removeContainerListener(IPathEntryContainerExtensionListener listener);
 }

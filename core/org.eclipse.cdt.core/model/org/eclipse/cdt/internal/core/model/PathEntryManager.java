@@ -37,14 +37,17 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
+import org.eclipse.cdt.core.model.IPathEntryContainerExtensionListener;
 import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.model.PathEntryContainerChanged;
 import org.eclipse.cdt.core.model.PathEntryContainerInitializer;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
@@ -74,7 +77,7 @@ import org.eclipse.core.runtime.jobs.Job;
  * @author alain
  *  
  */
-public class PathEntryManager implements IPathEntryStoreListener, IElementChangedListener {
+public class PathEntryManager implements IPathEntryStoreListener, IElementChangedListener, IPathEntryContainerExtensionListener {
 
 	// PathEntry extension
 	public final static String PATHENTRY_STORE_ID = "PathEntryStore"; //$NON-NLS-1$
@@ -861,6 +864,12 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				oldContainer.notifyAll();
 			}
 		}
+		if (oldContainer instanceof IPathEntryContainerExtension) {
+			((IPathEntryContainerExtension)oldContainer).removeContainerListener(this);
+		}
+		if (container instanceof IPathEntryContainerExtension) {
+			((IPathEntryContainerExtension)container).addContainerListener(this);
+		}
 	}
 
 	private synchronized void containerRemove(ICProject cproject) {
@@ -1402,6 +1411,45 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.IPathEntryContainerExtensionListener#pathEntryContainerChanged(org.eclipse.cdt.core.model.PathEntryContainerChanged[])
+	 */
+	public void pathEntryContainerChanged(PathEntryContainerChanged[] events) {
+		ArrayList list = new ArrayList(events.length);
+		for (int i = 0; i < events.length; ++i) {
+			PathEntryContainerChanged event = events[i];
+			ICElement celement = CoreModel.getDefault().create(event.getPath());
+			if (celement != null) {
+				if (celement instanceof IOpenable) {
+					try {
+						((IOpenable)celement).close();
+					} catch (CModelException e) {
+						// ignore.
+					}
+				}
+				int flag =0;
+				if (event.isIncludeChange()) {
+					flag = ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
+				} else if (event.isMacroChange()) {
+					flag = ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
+				}
+				CElementDelta delta = new CElementDelta(celement.getCModel());
+				delta.changed(celement, flag);
+				list.add(delta);
+			}
+		}
+		if (list.size() > 0) {
+			ICElementDelta[] deltas = new ICElementDelta[list.size()];
+			list.toArray(deltas);
+			CModelManager manager = CModelManager.getDefault();
+			for (int i = 0; i < deltas.length; i++) {
+				manager.registerCModelDelta(deltas[i]);
+			}
+			manager.fire(ElementChangedEvent.POST_CHANGE);
+		}
+
 	}
 
 	protected IPathEntry cloneEntry(IPath rpath, IPathEntry entry) {

@@ -26,14 +26,12 @@
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="Binary Parser Page"/>
-
 <!-- =========================================================================== -->
-<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
-   <extension-point id="CToolTabGroup" name="C/C++ Tool Configuration Tabs" schema="schema/CToolTabGroup.exsd"/>
 
 <!-- Implement our filters for C-View.  -->
    <extension
@@ -132,8 +130,8 @@
             id="org.eclipse.cdt.ui.CView">
       </view>
    </extension>
-<!-- The wizards -->
 <!-- For C Wizards -->
+<!-- The wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -440,94 +438,6 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
-<!--
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            name="Build Configurations"
-            icon="icons/full/build16/build_configs.gif"
-            category="org.eclipse.cdt.ui.views"
-            class="org.eclipse.cdt.ui.builder.internal.CBuildConfigView"
-            id="org.eclipse.cdt.ui.builder.internal.BuildConfigView">
-      </view>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.CBuildConfiguration">
-      <configuration
-            natures="*"
-            name="Debug"
-            class="org.eclipse.cdt.core.builder.CDebugBuildConfigurationProvider"
-            id="org.eclipse.cdt.core.builder.debugBuildConfiguration">
-      </configuration>
-      <configuration
-            natures="*"
-            name="Release"
-            class="org.eclipse.cdt.core.builder.CReleaseBuildConfigurationProvider"
-            id="org.eclipse.cdt.core.builder.releaseBuildConfiguration">
-      </configuration>
-      <configuration
-            natures="*"
-            name="Profile"
-            class="org.eclipse.cdt.core.builder.CProfileBuildConfigurationProvider"
-            id="org.eclipse.cdt.core.builder.profileBuildConfiguration">
-      </configuration>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.CToolchain">
-      <provider
-            natures="*"
-            class="org.eclipse.cdt.gnu.tools.CGnuToolchainProvider"
-            id="org.eclipse.cdt.gnu.tools.native">
-      </provider>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.CToolType">
-      <type
-            name="RPC Protocol Compiler"
-            id="org.eclipse.cdt.core.tool.rpcgen">
-      </type>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.CTool">
-      <tool
-            name="RPC Protocol Compiler"
-            type="org.eclipse.cdt.gnu.tools.rpcgen"
-            class="org.eclipse.cdt.gnu.tools.CToolRpcgen"
-            id="org.eclipse.cdt.gnu.tool.rpcgen">
-      </tool>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.CBuildVariable">
-      <variable
-            class="org.eclipse.cdt.gnu.tools.CStandardCVars"
-            id="org.eclipse.cdt.gnu.tools.stdCVars">
-      </variable>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.ui.CToolTabGroup">
-      <toolTabGroup
-            class="org.eclipse.cdt.gnu.tools.CTabGroupCC"
-            toolId="org.eclipse.cdt.gnu.tools.cc"
-            id="org.eclipse.cdt.gnu.tools.tabGroupCC">
-      </toolTabGroup>
-      <toolTabGroup
-            class="org.eclipse.cdt.gnu.tools.CTabGroupCXX"
-            toolId="org.eclipse.cdt.gnu.tools.cxx"
-            id="org.eclipse.cdt.gnu.tools.tabGroupCXX">
-      </toolTabGroup>
-      <toolTabGroup
-            class="org.eclipse.cdt.gnu.tools.CTabGroupCPP"
-            toolId="org.eclipse.cdt.gnu.tools.cpp"
-            id="org.eclipse.cdt.gnu.tools.tabGroupCPP">
-      </toolTabGroup>
-      <toolTabGroup
-            class="org.eclipse.cdt.gnu.tools.CTabGroupLD"
-            toolId="org.eclipse.cdt.gnu.tools.ld"
-            id="org.eclipse.cdt.gnu.tools.tabGroupLD">
-      </toolTabGroup>
-   </extension>
- -->
-   
    <extension
          id="org.eclipse.cdt.ui.CSearchPage"
          name="CSearchPage"
@@ -603,13 +513,12 @@
          </part>
       </actionSetPartAssociation>
    </extension>
-
    <extension
          point="org.eclipse.cdt.ui.BinaryParserPage">
       <parserPage
+            parserID="org.eclipse.cdt.core.GNU_ELF"
             class="org.eclipse.cdt.ui.dialogs.GNUElfBinaryParserPage"
-            id="ElfBinaryParserPage"
-            parserID="org.eclipse.cdt.core.GNU_ELF">
+            id="ElfBinaryParserPage">
       </parserPage>
    </extension>
 

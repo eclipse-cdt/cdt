@@ -23,98 +23,31 @@
 
 
    <extension-point id="CProject" name="%CProject.name"/>
-
 <!-- =================================================================================== -->
 <!-- Extension Point:(Deprecated, to be removed)                                         -->
 <!-- =================================================================================== -->
-
    <extension-point id="CBuildModel" name="%CBuilder.name"/>
-
 <!-- =================================================================================== -->
 <!-- Extension Point:(Deprecated, to be removed) Default command for the MakeBuilder     -->
 <!-- =================================================================================== -->
-
    <extension-point id="CBuildCommand" name="%CBuildCommand.name"/>
-
 <!-- =================================================================================== -->
 <!-- Extension Point:(work in progress) IConsole, customize a C Build console output     -->
 <!-- =================================================================================== -->
-
    <extension-point id="CBuildConsole" name="%CBuildConsole.name"/>
-
 <!-- =================================================================================== -->
 <!-- Extension Point: IProcessList, returns a list of running processes                  -->
 <!-- =================================================================================== -->
-
    <extension-point id="ProcessList" name="%ProcessList.name" schema="schema/ProcessList.exsd"/>
-
 <!-- =================================================================================== -->
 <!-- Extension Point: IErrorParser, error parsers use when building                      -->
 <!-- =================================================================================== -->
-
    <extension-point id="ErrorParser" name="%ErrorParser.name"/>
-
 <!-- =================================================================================== -->
 <!-- Extension Point: IBinaryParser, use to detect wheter an IFile is a binary           -->
 <!-- =================================================================================== -->
-
    <extension-point id="BinaryParser" name="BinaryParser"/>
-
-<!-- =================================================================================== -->
-<!-- Extension Point: ????????????????                                                   -->
-<!-- =================================================================================== -->
-
-   <extension-point id="CToolchain" name="C/C++ Toolchain Provider" schema="schema/CToolchain.exsd"/>
-   <extension-point id="CBuildConfiguration" name="C/C++ Build Configuration" schema="schema/CBuildConfiguration.exsd"/>
-   <extension-point id="CTool" name="C/C++ Tool" schema="schema/CTool.exsd"/>
-   <extension-point id="CBuildVariable" name="C/C++ Build Variable" schema="schema/CBuildVariable.exsd"/>
-   <extension-point id="CToolType" name="C/C++ Tool Type" schema="schema/CToolType.exsd"/>
    <extension-point id="ScannerInfoProvider" name="Scanner Information Provider"/>
-
-
-<!-- =================================================================================== -->
-<!-- Extension Point: ????????????????                                                   -->
-<!-- =================================================================================== -->
-
-   <extension
-         point="org.eclipse.cdt.core.CToolType">
-      <type
-            name="C Compiler"
-            id="org.eclipse.cdt.core.tool.c_compiler">
-      </type>
-      <type
-            name="C++ Compiler"
-            id="org.eclipse.cdt.core.tool.c++_compiler">
-      </type>
-      <type
-            name="Preprocessor"
-            id="org.eclipse.cdt.core.tool.c_preprocessor">
-      </type>
-      <type
-            name="Assembler"
-            id="org.eclipse.cdt.core.tool.assembler">
-      </type>
-      <type
-            name="Linker"
-            id="org.eclipse.cdt.core.tool.linker">
-      </type>
-      <type
-            name="Archiver"
-            id="org.eclipse.cdt.core.tool.archiver">
-      </type>
-      <type
-            name="Debugger"
-            id="org.eclipse.cdt.core.tool.debugger">
-      </type>
-      <type
-            name="Profiler"
-            id="org.eclipse.cdt.core.tool.profiler">
-      </type>
-      <type
-            name="Symbol Stripper"
-            id="org.eclipse.cdt.core.tool.strip">
-      </type>
-   </extension>
 
 <!-- =================================================================================== -->
 <!-- Define the list of the Binary Parser provided by the CDT                            -->
@@ -129,8 +62,7 @@
          </run>
       </cextension>
    </extension>
-
-   <!-- extension
+<!-- extension
          id="GNU_ELF"
          name="GNU Elf Parser"
          point="org.eclipse.cdt.core.BinaryParser">
@@ -140,7 +72,6 @@
          </run>
       </cextension>
    </extension -->
-
    <extension
          id="PE"
          name="PE Windows Parser"
@@ -151,7 +82,6 @@
          </run>
       </cextension>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- Define the list of Error Parser provided by the CDT                                 -->
 <!-- =================================================================================== -->
@@ -163,7 +93,6 @@
             class="org.eclipse.cdt.internal.errorparsers.GCCErrorParser">
       </errorparser>
    </extension>
-
    <extension
          id="GASErrorParser"
          name="CDT GNU Assembler Error Parser"
@@ -172,7 +101,6 @@
             class="org.eclipse.cdt.internal.errorparsers.GASErrorParser">
       </errorparser>
    </extension>
-
    <extension
          id="GLDErrorParser"
          name="CDT GNU Linker Error Parser"
@@ -181,7 +109,6 @@
             class="org.eclipse.cdt.internal.errorparsers.GLDErrorParser">
       </errorparser>
    </extension>
-
    <extension
          id="MakeErrorParser"
          name="CDT GNU Make Error Parser"
@@ -190,7 +117,6 @@
             class="org.eclipse.cdt.internal.errorparsers.MakeErrorParser">
       </errorparser>
    </extension>
-
    <extension
          id="VCErrorParser"
          name="CDT Visual C Error Parser"
@@ -199,11 +125,9 @@
             class="org.eclipse.cdt.internal.errorparsers.VCErrorParser">
       </errorparser>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- Eclipse Builder provided by the CDT, to be removed to the MakePlugin                -->
 <!-- =================================================================================== -->
-
    <extension
          id="cbuilder"
          name="C Builder"
@@ -214,11 +138,9 @@
          </run>
       </builder>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- CDT customized problem markers: C Problem markers                                   -->
 <!-- =================================================================================== -->
-
    <extension
          id="problem"
          name="%CProblemMarker.name"
@@ -230,11 +152,9 @@
             type="org.eclipse.core.resources.textmarker">
       </super>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- CDT C Nature                                                                        -->
 <!-- =================================================================================== -->
-
    <extension
          id="cnature"
          name="%cnature.name"
@@ -245,11 +165,9 @@
          </run>
       </runtime>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- CDT C++ Nature                                                                      -->
 <!-- =================================================================================== -->
-
    <extension
          id="ccnature"
          name="%cnature.name"
@@ -260,23 +178,18 @@
          </run>
       </runtime>
    </extension>
-
-
 <!-- =================================================================================== -->
 <!-- Deprecated Make default command, will be removed.                                   -->
 <!-- =================================================================================== -->
-
    <extension
          point="org.eclipse.cdt.core.CBuildCommand">
       <buildcommand
             command="make">
       </buildcommand>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- Deprecated Make owner, will be removed.                                             -->
 <!-- =================================================================================== -->
-
    <extension
          id="make"
          name="%makeproject.name"
@@ -285,11 +198,9 @@
             class="org.eclipse.cdt.internal.core.make.MakeProject">
       </cproject>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- Deprecated Make builder, will be removed.                                           -->
 <!-- =================================================================================== -->
-
    <extension
          id="makeBuilder"
          name="%makebuildmodel.name"
@@ -298,11 +209,9 @@
             class="org.eclipse.cdt.internal.core.make.MakeBuilder">
       </run>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- Some well known C file extensions override for the team plugins                     -->
 <!-- =================================================================================== -->
-
    <extension
          point="org.eclipse.team.core.fileTypes">
       <fileTypes
@@ -358,11 +267,9 @@
             extension=".cdtproject">
       </fileTypes>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- Some well known C file extensions override for the team plugins                     -->
 <!-- =================================================================================== -->
-
    <extension
          point="org.eclipse.team.core.ignore">
       <ignore
@@ -390,11 +297,9 @@
             pattern="*.exe">
       </ignore>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- Extension Point(Note:Temporary): IScannerInfoProvider for the standard Builder      -->
 <!-- =================================================================================== -->
-
    <extension
          id="StandardBuildManager"
          point="org.eclipse.cdt.core.ScannerInfoProvider">
@@ -404,13 +309,18 @@
          </run>
       </cextension>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- =================================================================================== -->
-
-    <extension id="task" name="%CTaskName" point="org.eclipse.core.resources.markers">
-        <super type="org.eclipse.core.resources.taskmarker"/> 
-        <persistent value="true"/>
-    </extension>
+   <extension
+         id="task"
+         name="%CTaskName"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.taskmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
 
 </plugin>

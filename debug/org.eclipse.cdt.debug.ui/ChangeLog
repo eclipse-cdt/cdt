@@ -1,3 +1,8 @@
+2004-04-23 Mikhail Khodjaiants
+	Fix for bug 58711: Breakpoint race condition.
+	Notify the Breakpoint Manager when the install count of breakpoint is changed.
+	* CBreakpointUpdater.java
+
 2004-04-21 Mikhail Khodjaiants
 	Implementing the Disassembly view. 
 	New annotation model is added to show breakpoint markers.

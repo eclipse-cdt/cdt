@@ -1,3 +1,9 @@
+2002-10-24 Alain Magloire
+
+	* src/.../core/output/MIConst.java (isoC): Change to return
+	a string instead '\n' is platform dependent and has to be
+	translate to "\r\n" for SWT widgets to work correctly on windows.
+
 2002-10-23 Alain Magloire
 
 	gdb/mi for program control command will fire a change state event:

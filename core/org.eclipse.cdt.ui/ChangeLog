@@ -1,3 +1,8 @@
+2005-02-25 Alain Magloire
+	Fix PR 86718: Dialog shows twice
+	* src/org/eclipse/cdt/internal/ui/cview/OpenProjectGroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/RefactorActionGroup.java
+
 2005-01-20 Alain Magloire
 	Fix PR 82323
 	* src/org/eclipse/cdt/internal/ui/utils/ResourceToItemsMapper.java

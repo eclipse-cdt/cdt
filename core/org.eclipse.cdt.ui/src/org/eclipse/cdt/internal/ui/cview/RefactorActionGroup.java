@@ -95,10 +95,14 @@ public class RefactorActionGroup extends CViewActionGroup {
 			if (deleteAction.isEnabled()) {
 				deleteAction.run();
 			}
+			// Swallow the event
+			event.doit = false;
 		} else if (event.keyCode == SWT.F2 && event.stateMask == 0) {
 			if (renameAction.isEnabled()) {
 				renameAction.run();
 			}
+			// Swallow the event
+			event.doit = false;
 		}
 	}
 

@@ -300,10 +300,13 @@ private boolean isPositionedCorrectly(ICElement element) {
 	while(lastNewPrevious != newPrevious) {
 		if (isIdentical((CElement)oldPrevious, (CElement)newPrevious))
 			return true;
+		ICElement tempLastPrevious = lastNewPrevious; //JOHNC added this
 		lastNewPrevious = newPrevious;
 		// if newPrevious is null at this time we should exit the loop.
 		if (newPrevious == null) break;
-		newPrevious = (this.getNewPosition(newPrevious)).previous;
+		ICElement tempPrevious = (this.getNewPosition(newPrevious)).previous; //JOHNC added this
+		if( tempLastPrevious == tempPrevious ) break; // JOHNC added this
+		newPrevious = tempPrevious;
 	}
 	return false;
 }

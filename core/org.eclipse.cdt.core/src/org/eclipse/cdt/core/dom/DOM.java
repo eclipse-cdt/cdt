@@ -9,6 +9,8 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.cdt.core.dom;
+import org.eclipse.cdt.core.dom.IASTServiceProvider;
+import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 
 /**
  * @author jcamelon

@@ -22,11 +22,15 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
@@ -42,8 +46,9 @@ import org.eclipse.ui.IFileEditorInput;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class CSearchResult extends AbstractTextSearchResult {
+public class CSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
 	CSearchQuery cQuery;
+	private static final Match[] NO_MATCHES= new Match[0];
 	
 	public CSearchResult(CSearchQuery query){
 		cQuery = query;
@@ -101,7 +106,22 @@ public class CSearchResult extends AbstractTextSearchResult {
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#isShownInEditor(org.eclipse.search.ui.text.Match, org.eclipse.ui.IEditorPart)
 	 */
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
-		// TODO Auto-generated method stub
+		IEditorInput editorInput= editor.getEditorInput();
+		if (match.getElement() instanceof BasicSearchMatch) {
+			BasicSearchMatch searchMatch = (BasicSearchMatch) match.getElement();
+			if (editorInput instanceof IFileEditorInput){
+				IFile inputFile= ((IFileEditorInput)editorInput).getFile();
+				IResource matchFile = searchMatch.getResource();
+				if (matchFile != null)
+					return inputFile.equals(matchFile);
+				else
+					return false;
+			}
+		} else if (match.getElement() instanceof IFile) {
+			if (editorInput instanceof IFileEditorInput) {
+				return ((IFileEditorInput)editorInput).getFile().equals(match.getElement());
+			}
+		}
 		return false;
 	}
 	/* (non-Javadoc)
@@ -112,12 +132,8 @@ public class CSearchResult extends AbstractTextSearchResult {
 		if (editorInput instanceof IFileEditorInput)  {
 			IFileEditorInput fileEditorInput= (IFileEditorInput) editorInput;
 			return findContainedMatches(fileEditorInput.getFile());
-		} /*else if (editorInput instanceof IClassFileEditorInput) {
-			IClassFileEditorInput classFileEditorInput= (IClassFileEditorInput) editorInput;
-			Set matches= new HashSet();
-			collectMatches(matches, classFileEditorInput.getClassFile());
-			return (Match[]) matches.toArray(new Match[matches.size()]);
-		}*/
+		} 
+		
 		return null;
 	}
 	/* (non-Javadoc)
@@ -171,7 +187,7 @@ public class CSearchResult extends AbstractTextSearchResult {
 	 */
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	/* (non-Javadoc)
@@ -179,6 +195,53 @@ public class CSearchResult extends AbstractTextSearchResult {
 	 */
 	public IFileMatchAdapter getFileMatchAdapter() {
 		// TODO Auto-generated method stub
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.text.IEditorMatchAdapter#computeContainedMatches(org.eclipse.search.ui.text.AbstractTextSearchResult, org.eclipse.ui.IEditorPart)
+	 */
+	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
+		IEditorInput editorInput= editor.getEditorInput();
+		if (editorInput instanceof IFileEditorInput)  {
+			IFileEditorInput fileEditorInput= (IFileEditorInput) editorInput;
+			return computeContainedMatches(result, fileEditorInput.getFile());
+		} 
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.text.IFileMatchAdapter#computeContainedMatches(org.eclipse.search.ui.text.AbstractTextSearchResult, org.eclipse.core.resources.IFile)
+	 */
+	public Match[] computeContainedMatches(AbstractTextSearchResult result, IFile file) {
+		ICElement cElement= CoreModel.getDefault().create(file);
+		if (!(cElement instanceof ITranslationUnit))
+			return NO_MATCHES;
+		Set matches= new HashSet();
+		Object[] test=result.getElements();
+		collectMatches(matches, test, file);
+		return (Match[]) matches.toArray(new Match[matches.size()]);
+	}
+
+	/**
+	 * @param matches
+	 * @param test
+	 * @param file
+	 */
+	private void collectMatches(Set matches, Object[] test, IFile file) {
+		
+		for (int i=0; i<test.length; i++){
+			BasicSearchMatch tempMatch = (BasicSearchMatch) test[i];
+			if (tempMatch.getResource().equals(file)){
+				Match[] m= getMatches(tempMatch);
+				
+				if (m.length != 0) {
+					for (int j= 0; j < m.length; j++) {
+						matches.add(m[j]);
+					}
+				}
+			}
+		}
+	}
+	
 }

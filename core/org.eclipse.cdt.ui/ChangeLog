@@ -1,3 +1,6 @@
+2004-06-27 Bogdan Gheorghe
+	Fix for Bug 67987: [Search] C Search results do no show up as editor annotations
+	
 2004-06-24 Hoda Amer
 	Changing Refactoring name collision from Error to FatalError
 	

@@ -167,7 +167,7 @@ public class IndexManagerTests extends TestCase {
 		assertTrue("Entry Results exist", eresults != null);
 		
 		String [] queryResultModel = {"IndexedFile(1: /IndexerTestProject/mail.cpp)"};
-		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 1 }", "EntryResult: word=typeDecl/C/container, refs={ 1 }", "EntryResult: word=typeDecl/C/first_class, refs={ 1 }", "EntryResult: word=typeDecl/C/postcard, refs={ 1 }","EntryResult: word=typeDecl/D/Mail, refs={ 1 }", "EntryResult: word=typeDecl/D/first_class, refs={ 1 }", "EntryResult: word=typeDecl/D/postcard, refs={ 1 }","EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }", "EntryResult: word=typeDecl/V/size, refs={ 1 }", "EntryResult: word=typeDecl/V/temp, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }"};
+		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 1 }", "EntryResult: word=typeDecl/C/container, refs={ 1 }", "EntryResult: word=typeDecl/C/first_class, refs={ 1 }", "EntryResult: word=typeDecl/C/postcard, refs={ 1 }","EntryResult: word=typeDecl/D/Mail, refs={ 1 }", "EntryResult: word=typeDecl/D/first_class, refs={ 1 }", "EntryResult: word=typeDecl/D/postcard, refs={ 1 }","EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }", "EntryResult: word=typeDecl/V/index, refs={ 1 }", "EntryResult: word=typeDecl/V/mail, refs={ 1 }","EntryResult: word=typeDecl/V/size, refs={ 1 }", "EntryResult: word=typeDecl/V/temp, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }"};
 		
 		
 		if (qresults.length != queryResultModel.length)
@@ -271,7 +271,7 @@ public class IndexManagerTests extends TestCase {
 	 IEntryResult[] eresults = ind.queryEntries(prefix);
 	 assertTrue("Entry result found for typdeDecl/", eresults != null);
 	 
-	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }", "EntryResult: word=typeDecl/C/Mail, refs={ 2 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 2 }", "EntryResult: word=typeDecl/C/container, refs={ 2 }", "EntryResult: word=typeDecl/C/first_class, refs={ 2 }", "EntryResult: word=typeDecl/C/postcard, refs={ 2 }",  "EntryResult: word=typeDecl/D/Mail, refs={ 2 }", "EntryResult: word=typeDecl/D/first_class, refs={ 2 }", "EntryResult: word=typeDecl/D/postcard, refs={ 2 }","EntryResult: word=typeDecl/V/PO_Box, refs={ 2 }", "EntryResult: word=typeDecl/V/size, refs={ 2 }", "EntryResult: word=typeDecl/V/temp, refs={ 2 }", "EntryResult: word=typeDecl/V/x, refs={ 2 }"};
+	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }", "EntryResult: word=typeDecl/C/Mail, refs={ 2 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 2 }", "EntryResult: word=typeDecl/C/container, refs={ 2 }", "EntryResult: word=typeDecl/C/first_class, refs={ 2 }", "EntryResult: word=typeDecl/C/postcard, refs={ 2 }",  "EntryResult: word=typeDecl/D/Mail, refs={ 2 }", "EntryResult: word=typeDecl/D/first_class, refs={ 2 }", "EntryResult: word=typeDecl/D/postcard, refs={ 2 }", "EntryResult: word=typeDecl/V/, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 2 }", "EntryResult: word=typeDecl/V/index, refs={ 2 }", "EntryResult: word=typeDecl/V/mail, refs={ 2 }", "EntryResult: word=typeDecl/V/size, refs={ 2 }", "EntryResult: word=typeDecl/V/temp, refs={ 2 }", "EntryResult: word=typeDecl/V/x, refs={ 2 }"};
 	 if (eresults.length != entryResultBeforeModel.length)
 			fail("Entry Result length different from model");	
 
@@ -291,7 +291,7 @@ public class IndexManagerTests extends TestCase {
 	 eresults = ind.queryEntries(prefix);
 	 assertTrue("Entry exists", eresults != null);
 		
-	 String [] entryResultAfterModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }"};
+	 String [] entryResultAfterModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }", "EntryResult: word=typeDecl/V/, refs={ 1 }"};
 	 if (eresults.length != entryResultAfterModel.length)
 		fail("Entry Result length different from model");
 		
@@ -314,7 +314,7 @@ public class IndexManagerTests extends TestCase {
 		IEntryResult[] typerefreesults = ind.queryEntries(IIndexConstants.TYPE_REF);
 		assertTrue("Type Ref Results exist", typerefreesults != null);
 		
-		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/Unknown/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/container/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/first_class/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/postcard/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/D/Mail/Y/X/Z, refs={ 1 }", "EntryResult: word=typeDecl/D/first_class/Y/X/Z, refs={ 1 }", "EntryResult: word=typeDecl/D/postcard/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/E/test/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/T/int32, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }", "EntryResult: word=typeDecl/V/size, refs={ 1 }", "EntryResult: word=typeDecl/V/temp, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }", "EntryResult: word=typeDecl/V/x/Z, refs={ 1 }"};
+		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/Unknown/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/container/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/first_class/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/postcard/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/D/Mail/Y/X/Z, refs={ 1 }", "EntryResult: word=typeDecl/D/first_class/Y/X/Z, refs={ 1 }", "EntryResult: word=typeDecl/D/postcard/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/E/test/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/T/int32, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }","EntryResult: word=typeDecl/V/index, refs={ 1 }", "EntryResult: word=typeDecl/V/mail, refs={ 1 }", "EntryResult: word=typeDecl/V/size, refs={ 1 }", "EntryResult: word=typeDecl/V/temp, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }", "EntryResult: word=typeDecl/V/x/Z, refs={ 1 }"};
 
 		IEntryResult[] typedeclresults =ind.queryEntries(IIndexConstants.TYPE_DECL);
 		assertTrue("Type Decl Results exist", typedeclresults != null);

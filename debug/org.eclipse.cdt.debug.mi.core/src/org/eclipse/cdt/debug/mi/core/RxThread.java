@@ -122,6 +122,12 @@ public class RxThread extends Thread {
 				int id = rr.getToken();
 				Command cmd = rxQueue.removeCommand(id);
 
+				// Clear the accumulate oobList on each new Result Command
+				// response.
+				MIOOBRecord [] oobRecords =
+					(MIOOBRecord[])oobList.toArray(new MIOOBRecord[0]); 
+				oobList.clear();
+				
 				// Check if the state changed.
 				String state = rr.getResultClass();
 				if ("running".equals(state)) {
@@ -154,17 +160,11 @@ public class RxThread extends Thread {
 				} else if ("error".equals(state)) {
 					if (session.getMIInferior().isRunning()) {
 						session.getMIInferior().setSuspended();
-						MIEvent event = new MIErrorEvent(rr);
+						MIEvent event = new MIErrorEvent(rr, oobRecords);
 						session.fireEvent(event);
 					}
 				}
 
-				// Clear the accumulate oobList on each new Result Command
-				// response.
-				MIOOBRecord [] oobRecords =
-					(MIOOBRecord[])oobList.toArray(new MIOOBRecord[0]); 
-				oobList.clear();
-				
 				// Notify the waiting command.
 				if (cmd != null) {
 					synchronized (cmd) {
@@ -286,6 +286,9 @@ public class RxThread extends Thread {
 					}
 				}
 			}
+			// Accumulate the Log Stream Output response for parsing.
+			// Some commands will put valuable info  in the Log Stream.
+			oobList.add(stream);
 		}
 	}
 

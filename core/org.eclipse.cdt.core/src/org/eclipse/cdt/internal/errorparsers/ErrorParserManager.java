@@ -17,18 +17,22 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.resources.ACBuilder;
+
 public class ErrorParserManager {
 	
 	private static String PREF_ERROR_PARSER= "errorOutputParser";
 	
-	private ACBuilder fBuilder;
+	private IProject fProject;
+	private IMarkerGenerator fMarkerGenerator;
 	private Map fFilesInProject;
 	private List fNameConflicts;
 	
@@ -41,12 +45,15 @@ public class ErrorParserManager {
 	
 	static String SEPARATOR = System.getProperty("file.separator");
 
-	
 	public ErrorParserManager(ACBuilder builder) {
-		fBuilder= builder;
+		this(builder.getProject(), builder);
+	}
+
+	public ErrorParserManager(IProject project, IMarkerGenerator markerGenerator) {
+		fProject= project;
+		fMarkerGenerator= markerGenerator;
 		fFilesInProject= new HashMap();
 		fNameConflicts= new ArrayList();
-		
 		fErrorParsers= new ArrayList();
 		fDirectoryStack = new Vector();
 		fBaseDirectory = null;
@@ -161,8 +168,8 @@ public class ErrorParserManager {
 		fNameConflicts.clear();
 		
 		List collectedFiles= new ArrayList();		
-		fBaseDirectory = fBuilder.getProject().getLocation();
-		collectFiles(fBuilder.getProject(), collectedFiles);		
+		fBaseDirectory = fProject.getLocation();
+		collectFiles(fProject, collectedFiles);
 		
 		for (int i= 0; i < collectedFiles.size(); i++) {
 			IFile curr= (IFile)collectedFiles.get(i);
@@ -243,7 +250,7 @@ public class ErrorParserManager {
 		} else {
 			path = (IPath)getWorkingDirectory().append(filePath);
 		}	
-		return (IFile)fBuilder.getProject().getFile(path);
+		return (IFile)fProject.getFile(path);
 	}
 
 	/**
@@ -251,9 +258,10 @@ public class ErrorParserManager {
 	 */	
 	public void generateMarker(IResource file, int lineNumber, String desc, int severity, String varName) {
 		if (file == null) {
-			fBuilder.addMarker (fBuilder.getProject(), lineNumber, desc, severity, varName);
+			fMarkerGenerator.addMarker (fProject, lineNumber, desc, severity, varName);
+
 		} else {
-			fBuilder.addMarker(file, lineNumber, desc, severity, varName);
+			fMarkerGenerator.addMarker(file, lineNumber, desc, severity, varName);
 		}
 	}		
 

@@ -24,4 +24,11 @@ public interface IMILaunchConfigurationConstants {
 	 * Debuger/gdb/MI property.
 	 */
 	public static final String ATTR_AUTO_SOLIB = MIPlugin.getUniqueIdentifier() + ".AUTO_SOLIB"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. Boolean value to set the auto-solib-add
+	 * Debuger/gdb/MI property.
+	 */
+	public static final String ATTR_GDB_INIT = MIPlugin.getUniqueIdentifier() + ".GDB_INIT"; //$NON-NLS-1$
+
 }

@@ -158,8 +158,8 @@ public class ToolReference implements IToolReference {
 		outputFlag = parent.getOutputFlag();
 		outputPrefix = parent.getOutputPrefix();
 		String[] extensions = parent.getOutputExtensions();
+		outputExtensions = new String();
 		if (extensions != null) {
-			outputExtensions = new String();
 			for (int index = 0; index < extensions.length; ++index) {
 				if (extensions[index] == null) continue;
 				outputExtensions += extensions[index];
@@ -503,6 +503,7 @@ public class ToolReference implements IToolReference {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputExtensions()
 	 */
 	public String[] getOutputExtensions() {
+		if (outputExtensions == null) outputExtensions = new String();
 		return outputExtensions.split(DEFAULT_SEPARATOR);
 	}
 	

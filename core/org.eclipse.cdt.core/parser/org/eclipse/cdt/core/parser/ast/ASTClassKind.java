@@ -16,17 +16,16 @@ import org.eclipse.cdt.core.parser.Enum;
  * @author jcamelon
  *
  */
-public class TemplateDeclarationType extends Enum {
-	
-	public static final TemplateDeclarationType CLASS = new TemplateDeclarationType(1);
-	public static final TemplateDeclarationType FUNCTION = new TemplateDeclarationType( 2 );
-	public static final TemplateDeclarationType MEMBERCLASS = new TemplateDeclarationType( 3 );
-	public static final TemplateDeclarationType METHOD = new TemplateDeclarationType( 4 );
-	public static final TemplateDeclarationType FIELD = new TemplateDeclarationType( 5 ); 
-	
-	private TemplateDeclarationType( int t )
+public class ASTClassKind extends Enum {
+
+	public final static ASTClassKind CLASS = new ASTClassKind( 1 );
+	public final static ASTClassKind STRUCT = new ASTClassKind( 2 );
+	public final static ASTClassKind UNION = new ASTClassKind( 3 );
+	public final static ASTClassKind ENUM = new ASTClassKind( 4 );
+
+	private ASTClassKind( int value )
 	{
-		super( t ); 
+		super( value ); 
 	}
 
 }

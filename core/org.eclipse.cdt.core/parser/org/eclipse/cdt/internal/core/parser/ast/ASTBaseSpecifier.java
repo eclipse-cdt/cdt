@@ -10,7 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast;
 
-import org.eclipse.cdt.core.parser.ast.AccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 
@@ -22,9 +22,9 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier {
 
 	private final IASTClassSpecifier baseClass; 
 	private final boolean isVirtual;
-	private final AccessVisibility visibility; 
+	private final ASTAccessVisibility visibility; 
 	
-	public ASTBaseSpecifier( IASTClassSpecifier c, AccessVisibility a, boolean virtual )
+	public ASTBaseSpecifier( IASTClassSpecifier c, ASTAccessVisibility a, boolean virtual )
 	{
 		isVirtual = virtual; 
 		baseClass = c; 
@@ -34,7 +34,7 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#getAccess()
 	 */
-	public AccessVisibility getAccess() {
+	public ASTAccessVisibility getAccess() {
 		return visibility;
 	}
 

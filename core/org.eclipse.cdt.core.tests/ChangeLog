@@ -1,3 +1,6 @@
+2003-07-07 John Camelon
+	Update ClassDeclarationPatternTests::testBug39652(). 
+
 2003-07-04 John Camelon
 	Moved testBug39652() from failed search tests to ClassDeclarationPatternTests.
 

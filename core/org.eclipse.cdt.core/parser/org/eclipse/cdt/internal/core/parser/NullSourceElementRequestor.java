@@ -8,7 +8,6 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
-import org.eclipse.cdt.core.parser.ast.IASTConstructor;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -161,12 +160,6 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
      * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptField(org.eclipse.cdt.core.parser.ast.IASTField)
      */
     public void acceptField(IASTField field) {
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptConstructor(org.eclipse.cdt.core.parser.ast.IASTConstructor)
-     */
-    public void acceptConstructor(IASTConstructor constructor) {
     }
 
     /* (non-Javadoc)

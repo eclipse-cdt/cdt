@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.parser.ast;
  */
 public interface IASTBaseSpecifier {
 
-	public AccessVisibility getAccess(); 
+	public ASTAccessVisibility getAccess(); 
 	public boolean isVirtual(); 
 	public IASTClassSpecifier getParent(); 
 

@@ -9,7 +9,6 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
-import org.eclipse.cdt.core.parser.ast.IASTConstructor;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -1178,13 +1177,6 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptConstructor(org.eclipse.cdt.core.parser.ast.IASTConstructor)
-	 */
-	public void acceptConstructor(IASTConstructor constructor) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitTemplateDeclaration(org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)

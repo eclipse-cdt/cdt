@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.core.search.indexing;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.parser.ast.ClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.IDocument;
@@ -33,15 +33,15 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	}
 	
 	public void addClassSpecifier(IASTClassSpecifier classSpecification){
-		if (classSpecification.getClassKind().equals(ClassKind.CLASS))
+		if (classSpecification.getClassKind().equals(ASTClassKind.CLASS))
 		{
 			this.output.addRef(encodeTypeEntry(classSpecification.getName().toCharArray(),CLASS));
 		}		
-		else if (classSpecification.getClassKind().equals(ClassKind.STRUCT))
+		else if (classSpecification.getClassKind().equals(ASTClassKind.STRUCT))
 		{
 			this.output.addRef(encodeTypeEntry(classSpecification.getName().toCharArray(),STRUCT));
 		}
-		else if (classSpecification.getClassKind().equals(ClassKind.UNION))
+		else if (classSpecification.getClassKind().equals(ASTClassKind.UNION))
 		{
 			this.output.addRef(encodeTypeEntry(classSpecification.getName().toCharArray(),UNION));			
 		}

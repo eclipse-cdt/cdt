@@ -13,7 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.search.matching;
 
-import org.eclipse.cdt.core.parser.ast.ClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.internal.core.search.CharOperation;
@@ -30,7 +30,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		super( matchMode, caseSensitive );
 	}
 	
-	public ClassDeclarationPattern( char[] name, char[][] containers, ClassKind kind, int mode, boolean caseSensitive ){
+	public ClassDeclarationPattern( char[] name, char[][] containers, ASTClassKind kind, int mode, boolean caseSensitive ){
 		super( mode, caseSensitive );
 		simpleName = caseSensitive ? name : CharOperation.toLowerCase( name );
 		if( caseSensitive || containers == null ){
@@ -90,6 +90,6 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	
 	private char[] 	  simpleName;
 	private char[][]  containingTypes;
-	private ClassKind classKind;
+	private ASTClassKind classKind;
 	
 }

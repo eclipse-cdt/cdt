@@ -77,7 +77,6 @@ public class MatchLocator implements ISourceElementRequestor {
 	public void acceptElaboratedTypeSpecifier(IASTElaboratedTypeSpecifier elaboratedTypeSpec){  }
 	public void acceptMethodDeclaration(IASTMethod method) 						{	}
 	public void acceptField(IASTField field) 									{	}
-	public void acceptConstructor(IASTConstructor constructor) 					{	}	
 	public void enterFunctionBody(IASTFunction function) 						{	}
 	public void enterCompilationUnit(IASTCompilationUnit compilationUnit) 		{	}
 	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) 		{	}

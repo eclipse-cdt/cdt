@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
-import org.eclipse.cdt.internal.core.parser.IASTArrayModifier;
+import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 
 /**
  * @author jcamelon
@@ -55,9 +55,9 @@ public interface IASTFactory {
 	
 	public IASTClassSpecifier createClassSpecifier( IASTScope scope,
 		String name,  
-		ClassKind kind, 
+		ASTClassKind kind, 
 		ClassNameType type, 
-		AccessVisibility access, 
+		ASTAccessVisibility access, 
 		IASTTemplateDeclaration ownerTemplateDeclaration, int startingOffset, int nameOffset );
 
 	/**
@@ -66,9 +66,9 @@ public interface IASTFactory {
 	 * @param visibility
 	 * @param string
 	 */
-	public void addBaseSpecifier(IASTClassSpecifier astClassSpec, boolean isVirtual, AccessVisibility visibility, String string);
+	public void addBaseSpecifier(IASTClassSpecifier astClassSpec, boolean isVirtual, ASTAccessVisibility visibility, String string);
 
-    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(ClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset );
+    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset );
     public IASTEnumerationSpecifier createEnumerationSpecifier(String name, int startingOffset, int nameOffset );
     public void addEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int endingOffset);
     

@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
-import org.eclipse.cdt.core.parser.ast.ClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.internal.core.search.CharOperation;
@@ -146,15 +146,15 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		} catch (ScannerException e) {
 		}
 		
-		ClassKind kind = null;
+		ASTClassKind kind = null;
 		if( searchFor == CLASS ){
-			kind = ClassKind.CLASS;
+			kind = ASTClassKind.CLASS;
 		} else if( searchFor == STRUCT ) {
-			kind = ClassKind.STRUCT;
+			kind = ASTClassKind.STRUCT;
 		} else if ( searchFor == ENUM ) {
-			kind = ClassKind.ENUM;
+			kind = ASTClassKind.ENUM;
 		} else if ( searchFor == UNION ) {
-			kind = ClassKind.UNION;
+			kind = ASTClassKind.UNION;
 		}
 		
 		char [][] qualifications = new char[0][];

@@ -16,8 +16,8 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
-import org.eclipse.cdt.core.parser.ast.AccessVisibility;
-import org.eclipse.cdt.core.parser.ast.ClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -39,8 +39,8 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.SimpleType;
-import org.eclipse.cdt.internal.core.parser.IASTArrayModifier;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
+import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
@@ -165,7 +165,7 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ast.ClassKind, org.eclipse.cdt.core.parser.ast.ClassNameType, org.eclipse.cdt.core.parser.ast.AccessVisibility, org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
 	 */
-	public IASTClassSpecifier createClassSpecifier(IASTScope scope, String name, ClassKind kind, ClassNameType type, AccessVisibility access, IASTTemplateDeclaration ownerTemplateDeclaration, int startingOffset, int nameOffset) {
+	public IASTClassSpecifier createClassSpecifier(IASTScope scope, String name, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, IASTTemplateDeclaration ownerTemplateDeclaration, int startingOffset, int nameOffset) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -173,7 +173,7 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#addBaseSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier, boolean, org.eclipse.cdt.core.parser.ast.AccessVisibility, java.lang.String)
 	 */
-	public void addBaseSpecifier(IASTClassSpecifier astClassSpec, boolean isVirtual, AccessVisibility visibility, String string) {
+	public void addBaseSpecifier(IASTClassSpecifier astClassSpec, boolean isVirtual, ASTAccessVisibility visibility, String string) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -181,7 +181,7 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createElaboratedTypeSpecifier(org.eclipse.cdt.core.parser.ast.ClassKind, java.lang.String, int, int)
      */
-    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(ClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset )
+    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset )
     {
         // TODO Auto-generated method stub
         return null;

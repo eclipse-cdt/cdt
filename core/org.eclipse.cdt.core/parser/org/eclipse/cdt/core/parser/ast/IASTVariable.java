@@ -16,4 +16,13 @@ package org.eclipse.cdt.core.parser.ast;
  */
 public interface IASTVariable {
 
+	public boolean isAuto(); 
+	public boolean isRegister(); 
+	public boolean isStatic(); 
+	public boolean isExtern(); 
+	public boolean isMutable(); 
+	
+	public IASTAbstractDeclarator getAbstractDeclaration(); 
+	public String getName(); 
+	public IASTInitializerClause getInitializerClause(); 
 }

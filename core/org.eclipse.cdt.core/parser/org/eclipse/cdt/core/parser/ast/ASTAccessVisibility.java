@@ -16,16 +16,15 @@ import org.eclipse.cdt.core.parser.Enum;
  * @author jcamelon
  *
  */
-public class ClassKind extends Enum {
+public class ASTAccessVisibility extends Enum {
 
-	public final static ClassKind CLASS = new ClassKind( 1 );
-	public final static ClassKind STRUCT = new ClassKind( 2 );
-	public final static ClassKind UNION = new ClassKind( 3 );
-	public final static ClassKind ENUM = new ClassKind( 4 );
+	public static final ASTAccessVisibility PUBLIC = new ASTAccessVisibility( 1 );
+	public static final ASTAccessVisibility PROTECTED = new ASTAccessVisibility( 2 );
+	public static final ASTAccessVisibility PRIVATE = new ASTAccessVisibility( 3 );
 
-	private ClassKind( int value )
+	private ASTAccessVisibility( int constant)
 	{
-		super( value ); 
+		super( constant ); 
 	}
-
+	 
 }

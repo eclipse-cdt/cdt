@@ -17,7 +17,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.parser.ast.AccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.ast.full.ASTCompilationUnit;
 import org.eclipse.cdt.internal.core.parser.ast.full.IASTFCompilationUnit;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
@@ -266,10 +266,10 @@ public class ParserSymbolTableTest extends TestCase {
 		IDerivableContainerSymbol c    = table.newDerivableContainerSymbol("C");
 		
 		IDerivableContainerSymbol a    = table.newDerivableContainerSymbol("A");
-		a.addParent( c, true, AccessVisibility.PUBLIC );
+		a.addParent( c, true, ASTAccessVisibility.PUBLIC );
 		
 		IDerivableContainerSymbol b    = table.newDerivableContainerSymbol("B");
-		b.addParent( c, true, AccessVisibility.PUBLIC );
+		b.addParent( c, true, ASTAccessVisibility.PUBLIC );
 		
 		decl.addParent( a );
 		decl.addParent( b );

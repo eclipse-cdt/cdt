@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.parser;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
-import org.eclipse.cdt.core.parser.ast.IASTConstructor;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -65,7 +64,6 @@ public interface ISourceElementRequestor {
 	public void enterMethodBody( IASTMethod method );
 	public void exitMethodBody( IASTMethod method );
 	public void acceptField( IASTField field );
-	public void acceptConstructor( IASTConstructor constructor );
 
 	public void acceptClassReference( IASTClassSpecifier classSpecifier, int referenceOffset );
 	

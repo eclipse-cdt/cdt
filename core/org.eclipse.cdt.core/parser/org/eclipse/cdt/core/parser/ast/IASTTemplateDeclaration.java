@@ -18,7 +18,7 @@ import java.util.Iterator;
  */
 public interface IASTTemplateDeclaration {
 
-	public TemplateDeclarationType getTemplateDeclarationType(); 
+	public ASTTemplateDeclarationType getTemplateDeclarationType(); 
 	public Iterator getTemplateParameters(); 
 
 }

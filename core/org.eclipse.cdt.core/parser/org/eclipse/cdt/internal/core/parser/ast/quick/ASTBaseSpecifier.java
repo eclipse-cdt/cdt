@@ -10,7 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
-import org.eclipse.cdt.core.parser.ast.AccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 
@@ -20,11 +20,11 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
  */
 public class ASTBaseSpecifier implements IASTBaseSpecifier {
 
-	private final AccessVisibility visibility; 
+	private final ASTAccessVisibility visibility; 
 	private final boolean isVirtual; 
 	private final IASTClassSpecifier parentClass;
 	
-	public ASTBaseSpecifier( IASTClassSpecifier classSpec, boolean v, AccessVisibility a )
+	public ASTBaseSpecifier( IASTClassSpecifier classSpec, boolean v, ASTAccessVisibility a )
 	{
 		parentClass = classSpec; 
 		isVirtual = v; 
@@ -33,25 +33,22 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#getAccess()
 	 */
-	public AccessVisibility getAccess() {
-		// TODO Auto-generated method stub
-		return null;
+	public ASTAccessVisibility getAccess() {
+		return visibility;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#isVirtual()
 	 */
 	public boolean isVirtual() {
-		// TODO Auto-generated method stub
-		return false;
+		return isVirtual;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#getParent()
 	 */
 	public IASTClassSpecifier getParent() {
-		// TODO Auto-generated method stub
-		return null;
+		return parentClass;
 	}
 
 }

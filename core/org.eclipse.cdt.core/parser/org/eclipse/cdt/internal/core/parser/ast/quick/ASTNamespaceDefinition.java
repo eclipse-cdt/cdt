@@ -23,14 +23,14 @@ import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
  * @author jcamelon
  *
  */
-public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamespaceDefinition, IASTQScope {
+public class ASTNamespaceDefinition extends ASTQualifiedNamedDeclaration implements IASTNamespaceDefinition, IASTQScope {
 
 	private final String name;
 	private NamedOffsets offsets = new NamedOffsets(); 
 	
 	public ASTNamespaceDefinition( IASTScope scope, String name )
 	{
-		super( scope );
+		super( scope, name );
 		this.name = name; 
 	}
 	/* (non-Javadoc)

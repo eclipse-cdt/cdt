@@ -16,6 +16,6 @@ package org.eclipse.cdt.core.parser.ast;
  */
 public interface IASTTemplateSpecialization {
 
-	public TemplateDeclarationType getTemplateDeclarationType(); 
+	public ASTTemplateDeclarationType getTemplateDeclarationType(); 
 	public IASTTemplateDeclaration getTemplateDeclaration(); 
 }

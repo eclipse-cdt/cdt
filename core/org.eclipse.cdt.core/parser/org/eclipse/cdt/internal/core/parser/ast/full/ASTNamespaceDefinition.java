@@ -108,5 +108,14 @@ public class ASTNamespaceDefinition implements IASTFNamespaceDefinition {
 	 */
 	public IASTScope getOwnerScope() {
 		return (IPSTContainerExtension)symbol.getContainingSymbol().getASTNode();
-	} 
+	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    } 
 }

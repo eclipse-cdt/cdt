@@ -10,7 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
-import org.eclipse.cdt.core.parser.ast.ClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 
@@ -23,14 +23,14 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
 
 	private Offsets offsets = new Offsets();
 	private final String typeName;
-	private final ClassKind classKind;  
+	private final ASTClassKind classKind;  
     /**
      * @param elaboratedClassKind
      * @param typeName
      * @param startingOffset
      * @param endOffset
      */
-    public ASTElaboratedTypeSpecifier(ClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset)
+    public ASTElaboratedTypeSpecifier(ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset)
     {
     	classKind = elaboratedClassKind; 
     	this.typeName = typeName;
@@ -47,7 +47,7 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#getClassKind()
      */
-    public ClassKind getClassKind()
+    public ASTClassKind getClassKind()
     {
         return classKind;
     }

@@ -12,15 +12,11 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
-import org.eclipse.cdt.core.parser.ast.AccessVisibility;
-import org.eclipse.cdt.core.parser.ast.ClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
@@ -29,57 +25,33 @@ import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
  *
  */
 public class ASTClassSpecifier
-    extends ASTDeclaration
+    extends ASTQualifiedNamedDeclaration
     implements IASTQClassSpecifier, IASTQScope
 {
     public ASTClassSpecifier(
         IASTScope scope,
         String name,
-        ClassKind kind,
+        ASTClassKind kind,
         ClassNameType type,
-        AccessVisibility access,
+        ASTAccessVisibility access,
         IASTTemplateDeclaration ownerTemplateDeclaration)
     {
-        super(scope);
+        super(scope, name );
         classNameType = type;
         classKind = kind;
         this.access = access;
         this.name = name;
         templateOwner = ownerTemplateDeclaration;
-        
-        Stack names = new Stack();
-        IASTScope parent = getOwnerScope();
-        
-        names.push( name ); // push on our own name
-        while (parent != null)
-        {
-            if (parent instanceof IASTNamespaceDefinition
-                || parent instanceof IASTClassSpecifier)
-            {
-                names.push(((IASTOffsetableNamedElement)parent).getName());
-                parent = ((IASTDeclaration)parent).getOwnerScope();
-            }
-            break;
-        }
-        if (names.size() != 0)
-        {
-            qualifiedNames = new String[names.size()];
-            int counter = 0;
-            while (!names.empty())
-                qualifiedNames[counter++] = (String)names.pop();
-        }
-        else 
-        	qualifiedNames = null;
     }
-    private final String[] qualifiedNames;
+    
     private IASTTemplateDeclaration templateOwner = null;
     private final String name;
     private List declarations = new ArrayList();
     private List baseClauses = new ArrayList();
-    private AccessVisibility access;
+    private ASTAccessVisibility access;
     private NamedOffsets offsets = new NamedOffsets();
     private final ClassNameType classNameType;
-    private final ClassKind classKind;
+    private final ASTClassKind classKind;
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getClassNameType()
      */
@@ -90,7 +62,7 @@ public class ASTClassSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getClassKind()
      */
-    public ClassKind getClassKind()
+    public ASTClassKind getClassKind()
     {
         return classKind;
     }
@@ -104,7 +76,7 @@ public class ASTClassSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getCurrentVisiblity()
      */
-    public AccessVisibility getCurrentVisibilityMode()
+    public ASTAccessVisibility getCurrentVisibilityMode()
     {
         return access;
     }
@@ -184,12 +156,5 @@ public class ASTClassSpecifier
     public void addBaseClass(IASTBaseSpecifier baseSpecifier)
     {
         baseClauses.add(baseSpecifier);
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getFullyQualifiedName()
-     */
-    public String[] getFullyQualifiedName()
-    {
-        return qualifiedNames;
     }
 }

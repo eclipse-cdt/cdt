@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.parser.ast.IASTVariable;
  * @author jcamelon
  *
  */
-public class DeclarationWrapper
+public class DeclarationWrapper implements IDeclaratorOwner
 {
 	private final IASTScope scope;
 	private IASTTypeSpecifier typeSpecifier;
@@ -285,9 +285,9 @@ public class DeclarationWrapper
 		declarators.add( d );
 	}
 	
-	public List getDeclarators()
+	public Iterator getDeclarators()
 	{
-		return Collections.unmodifiableList( declarators );
+		return Collections.unmodifiableList( declarators ).iterator();
 	}
 
     /**
@@ -342,7 +342,7 @@ public class DeclarationWrapper
      */
     private IASTMethod createMethodASTNode(Declarator declarator)
     {
-        // TODO Auto-generated method stub
+        
         return null;
     }
     /**
@@ -371,6 +371,13 @@ public class DeclarationWrapper
     {
         // TODO Auto-generated method stub
         return null;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.IDeclaratorOwner#getDeclarationWrapper()
+     */
+    public DeclarationWrapper getDeclarationWrapper()
+    {
+        return this;
     }
   
 }

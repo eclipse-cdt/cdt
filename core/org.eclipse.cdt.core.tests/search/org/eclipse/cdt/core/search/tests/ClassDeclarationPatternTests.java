@@ -96,13 +96,13 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 		initialize( pattern );
 		matchLocator.locateMatches( new String[] { cppPath }, null, null );
 		matches = resultCollector.getMatches();
-		assertTrue( matches == null );
+		assertTrue( matches != null );
 		
 		pattern = CSearchPattern.createPattern( "NS::B::A", TYPE, DECLARATIONS, EXACT_MATCH, true );
 		initialize( pattern );
 		matchLocator.locateMatches( new String[] { cppPath }, null, null );
 		matches = resultCollector.getMatches();
-		assertTrue( matches == null );
+		assertTrue( matches != null );
 	}
 	
 	public void failingtestMatchStruct(){

@@ -22,7 +22,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.cdt.core.parser.ast.AccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.ast.full.IPSTSymbolExtension;
 
 /**
@@ -2337,9 +2337,9 @@ public class ParserSymbolTable {
 		}
 	
 		public void addParent( ISymbol parent ){
-			addParent( parent, false, AccessVisibility.PUBLIC );
+			addParent( parent, false, ASTAccessVisibility.PUBLIC );
 		}
-		public void addParent( ISymbol parent, boolean virtual, AccessVisibility visibility ){
+		public void addParent( ISymbol parent, boolean virtual, ASTAccessVisibility visibility ){
 			if( _parentScopes == null ){
 				_parentScopes = new LinkedList();
 			}
@@ -3104,7 +3104,7 @@ public class ParserSymbolTable {
 		
 		public class ParentWrapper implements IDerivableContainerSymbol.IParentSymbol
 		{
-			public ParentWrapper( ISymbol p, boolean v, AccessVisibility s ){
+			public ParentWrapper( ISymbol p, boolean v, ASTAccessVisibility s ){
 				parent    = p;
 				isVirtual = v;
 				access = s;
@@ -3128,11 +3128,11 @@ public class ParserSymbolTable {
 			
 			private boolean isVirtual = false;
 			private ISymbol parent = null;
-			private final AccessVisibility access; 
+			private final ASTAccessVisibility access; 
 			/**
 			 * @return
 			 */
-			public AccessVisibility getAccess() {
+			public ASTAccessVisibility getAccess() {
 				return access;
 			}
 

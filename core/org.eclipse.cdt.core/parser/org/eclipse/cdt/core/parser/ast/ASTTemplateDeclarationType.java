@@ -10,33 +10,23 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
-import java.util.Iterator;
-
 import org.eclipse.cdt.core.parser.Enum;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOffsetableNamedElement, IASTTemplatedDeclaration, IASTQualifiedNameElement {
-
-	public class ClassNameType extends Enum {
-
-		public static final ClassNameType IDENTIFIER = new ClassNameType( 1 );
-		public static final ClassNameType TEMPLATE   = new ClassNameType( 2 ); 
- 
-		private ClassNameType( int t )
-		{
-			super( t );
-		}
+public class ASTTemplateDeclarationType extends Enum {
+	
+	public static final ASTTemplateDeclarationType CLASS = new ASTTemplateDeclarationType(1);
+	public static final ASTTemplateDeclarationType FUNCTION = new ASTTemplateDeclarationType( 2 );
+	public static final ASTTemplateDeclarationType MEMBERCLASS = new ASTTemplateDeclarationType( 3 );
+	public static final ASTTemplateDeclarationType METHOD = new ASTTemplateDeclarationType( 4 );
+	public static final ASTTemplateDeclarationType FIELD = new ASTTemplateDeclarationType( 5 ); 
+	
+	private ASTTemplateDeclarationType( int t )
+	{
+		super( t ); 
 	}
 
-	public ClassNameType getClassNameType(); 
-
-	public ASTClassKind getClassKind();
-
-	public Iterator getBaseClauses();
-	
-	public ASTAccessVisibility getCurrentVisibilityMode(); 
-	 
 }

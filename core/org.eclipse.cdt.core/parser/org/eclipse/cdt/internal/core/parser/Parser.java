@@ -25,8 +25,8 @@ import org.eclipse.cdt.core.parser.ITranslationResult;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
-import org.eclipse.cdt.core.parser.ast.AccessVisibility;
-import org.eclipse.cdt.core.parser.ast.ClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.internal.core.model.Util;
+import org.eclipse.cdt.internal.core.parser.ast.*;
 
 
 /**
@@ -1668,21 +1669,21 @@ public class Parser implements IParser
         // this is an elaborated class specifier
         Object elab = null;
         IToken t = consume();
-        ClassKind eck = null; 
+        ASTClassKind eck = null; 
         
         switch( t.getType() )
         {
         	case Token.t_class:
-				eck = ClassKind.CLASS;
+				eck = ASTClassKind.CLASS;
 				break;
         	case Token.t_struct:
-				eck = ClassKind.STRUCT;
+				eck = ASTClassKind.STRUCT;
 				break;
         	case Token.t_union:
-				eck = ClassKind.UNION;
+				eck = ASTClassKind.UNION;
 				break;        	
         	case Token.t_enum:
-        		eck = ClassKind.ENUM;
+        		eck = ASTClassKind.ENUM;
         		break;
         	default: 
         		break;
@@ -1922,7 +1923,7 @@ public class Parser implements IParser
     protected DeclaratorDuple initDeclarator(Object owner, DeclarationWrapper sdw)
         throws Backtrack
     {
-        DeclaratorDuple duple = declarator(owner, sdw, null);
+        DeclaratorDuple duple = declarator(owner, sdw);
         Object declarator = duple.getObject();
         Declarator d = duple.getDeclarator();
       
@@ -2076,21 +2077,17 @@ public class Parser implements IParser
      * @return				declarator that this parsing produced.
      * @throws Backtrack	request a backtrack
      */
-    protected DeclaratorDuple declarator(Object container, DeclarationWrapper sdw, Declarator owningDeclarator) throws Backtrack
+    protected DeclaratorDuple declarator(Object container, IDeclaratorOwner owner) throws Backtrack
     {
 		Object declarator = null;
 		Declarator d = null;
+		DeclarationWrapper sdw = owner.getDeclarationWrapper();
 
 		overallLoop:
         do
         { 
 			declarator = null;
-			d = null;
-           
-            if( sdw != null ) 
-            	d = new Declarator( sdw );
-            else if( owningDeclarator != null )
-            	d = new Declarator( owningDeclarator );
+			d = new Declarator( owner );
             	
             try
             {
@@ -2113,7 +2110,7 @@ public class Parser implements IParser
             if (LT(1) == IToken.tLPAREN)
             {
                 consume();
-                DeclaratorDuple subDeclarator = declarator(declarator, null, d);
+                DeclaratorDuple subDeclarator = declarator(declarator, d);
                 consume(IToken.tRPAREN);
                 try
                 {
@@ -2354,23 +2351,12 @@ public class Parser implements IParser
                                 try
                                 {
                                     do
-                                    {
-                                    	IASTScope s = null;
-                                    	if( sdw != null )
-                                    		s = sdw.getScope();
-                                    	else
-                                    	{
-                                    		Declarator i = owningDeclarator; 
-                                    		while( i.getOwnerDeclarator() != null )
-                                    			i = i.getOwnerDeclarator(); 
-                                    		s = i.getOwner().getScope();
-                                    	}
-                                    	
+                                    {                                    	
                                         simpleDeclaration(
                                             oldKRParameterDeclarationClause,
                                             false,
                                             true,
-                                            s);
+                                            sdw.getScope());
                                     }
                                     while (LT(1) != IToken.tLBRACE);
                                 }
@@ -2495,8 +2481,9 @@ public class Parser implements IParser
             }
         }
         while (true);
-		if( sdw == null )
-			owningDeclarator.setOwnedDeclarator(d);
+        
+		if( d.getOwner() instanceof Declarator )
+			((Declarator)d.getOwner()).setOwnedDeclarator(d);
 		return new DeclaratorDuple( declarator, d );
         
     }
@@ -2849,8 +2836,8 @@ public class Parser implements IParser
         throws Backtrack
     {
         ClassNameType nameType = ClassNameType.IDENTIFIER;
-        ClassKind classKind = null;
-        AccessVisibility access = AccessVisibility.PUBLIC;
+        ASTClassKind classKind = null;
+        ASTAccessVisibility access = ASTAccessVisibility.PUBLIC;
         IToken classKey = null;
         IToken mark = mark();
         // class key
@@ -2858,16 +2845,16 @@ public class Parser implements IParser
         {
             case IToken.t_class :
                 classKey = consume();
-                classKind = ClassKind.CLASS;
-                access = AccessVisibility.PRIVATE;
+                classKind = ASTClassKind.CLASS;
+                access = ASTAccessVisibility.PRIVATE;
                 break;
             case IToken.t_struct :
                 classKey = consume();
-                classKind = ClassKind.STRUCT;
+                classKind = ASTClassKind.STRUCT;
                 break;
             case IToken.t_union :
                 classKey = consume();
-                classKind = ClassKind.UNION;
+                classKind = ASTClassKind.UNION;
                 break;
             default :
                 throw backtrack;
@@ -3008,7 +2995,7 @@ public class Parser implements IParser
         {
         }
         boolean isVirtual = false;
-        AccessVisibility visibility = AccessVisibility.PUBLIC;
+        ASTAccessVisibility visibility = ASTAccessVisibility.PUBLIC;
         ITokenDuple nameDuple = null;
         baseSpecifierLoop : for (;;)
         {
@@ -3046,10 +3033,10 @@ public class Parser implements IParser
                     catch (Exception e)
                     {
                     }
-                    visibility = AccessVisibility.PROTECTED;
+                    visibility = ASTAccessVisibility.PROTECTED;
                     break;
                 case IToken.t_private :
-                    visibility = AccessVisibility.PRIVATE;
+                    visibility = ASTAccessVisibility.PRIVATE;
                     try
                     {
                         callback.baseSpecifierVisibility(
@@ -3080,7 +3067,7 @@ public class Parser implements IParser
                             visibility,
                             nameDuple.toString());
                         isVirtual = false;
-                        visibility = AccessVisibility.PUBLIC;
+                        visibility = ASTAccessVisibility.PUBLIC;
                         nameDuple = null;
                         callback.baseSpecifierEnd(baseSpecifier);
                         baseSpecifier =

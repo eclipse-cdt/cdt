@@ -12,8 +12,8 @@ package org.eclipse.cdt.internal.core.parser.ast.full;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.parser.ast.AccessVisibility;
-import org.eclipse.cdt.core.parser.ast.ClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
@@ -26,11 +26,11 @@ import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 public class ASTClassSpecifier implements IASTFClassSpecifier, IPSTSymbolExtension {
 
 	private final IDerivableContainerSymbol symbol;
-	private final ClassKind classKind;
+	private final ASTClassKind classKind;
 	private final ClassNameType type;
 	private final String name;   
 
-	public ASTClassSpecifier( IDerivableContainerSymbol symbol, String name, ClassNameType type, ClassKind kind )
+	public ASTClassSpecifier( IDerivableContainerSymbol symbol, String name, ClassNameType type, ASTClassKind kind )
 	{
 		this.name = name; 
 		this.symbol = symbol;
@@ -56,7 +56,7 @@ public class ASTClassSpecifier implements IASTFClassSpecifier, IPSTSymbolExtensi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getClassKind()
 	 */
-	public ClassKind getClassKind() {
+	public ASTClassKind getClassKind() {
 		return classKind;
 	}
 
@@ -137,7 +137,7 @@ public class ASTClassSpecifier implements IASTFClassSpecifier, IPSTSymbolExtensi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getCurrentVisiblity()
 	 */
-	public AccessVisibility getCurrentVisibilityMode() {
+	public ASTAccessVisibility getCurrentVisibilityMode() {
 		// TODO Auto-generated method stub
 		return null;
 	}

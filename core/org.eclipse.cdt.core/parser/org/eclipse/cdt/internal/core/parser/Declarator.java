@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ITokenDuple;
@@ -19,19 +20,19 @@ import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
+import org.eclipse.cdt.internal.core.parser.ast.*;
 
 /**
  * @author jcamelon
  *
  */
-public class Declarator implements IParameterCollection 
+public class Declarator implements IParameterCollection, IDeclaratorOwner
 {
 	private boolean isFunction;
     private boolean hasFunctionBody;
     private IASTExpression constructorExpression;
     private boolean pureVirtual = false;
-    private final DeclarationWrapper owner1;
-	private final Declarator owner2;
+    private final IDeclaratorOwner owner;
 	private Declarator ownedDeclarator = null; 
 	private String name = ""; 
 	private IASTInitializerClause initializerClause = null;
@@ -48,17 +49,11 @@ public class Declarator implements IParameterCollection
 	
 	private int nameStartOffset, nameEndOffset; 
 
-    public Declarator( DeclarationWrapper owner )
+    public Declarator( IDeclaratorOwner owner )
 	{
-		this.owner1 = owner;
-		owner2 = null; 
+		this.owner = owner; 
 	}
 	
-	public Declarator( Declarator owner )
-	{
-		owner2 = owner;
-		owner1 = null;
-	}
     /**
      * @return
      */
@@ -86,9 +81,9 @@ public class Declarator implements IParameterCollection
     /**
      * @return
      */
-    public DeclarationWrapper getOwner()
+    public IDeclaratorOwner getOwner()
     {
-        return owner1;
+        return owner;
     }
 
     /**
@@ -113,14 +108,6 @@ public class Declarator implements IParameterCollection
     public void setNameStartOffset(int i)
     {
         nameStartOffset = i;
-    }
-
-    /**
-     * @return
-     */
-    public Declarator getOwnerDeclarator()
-    {
-        return owner2;
     }
 
     /**
@@ -354,4 +341,27 @@ public class Declarator implements IParameterCollection
         isFunction = b;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.IDeclaratorOwner#getDeclarators()
+     */
+    public Iterator getDeclarators()
+    {
+		List l = new ArrayList(); 
+		if( ownedDeclarator != null )
+			l.add( ownedDeclarator );
+        return l.iterator();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.IDeclaratorOwner#getDeclarationWrapper()
+     */
+    public DeclarationWrapper getDeclarationWrapper()
+    {
+    	Declarator d = this;
+    	while( d.getOwner() instanceof Declarator )
+    		d = (Declarator)d.getOwner();
+    	return (DeclarationWrapper)d.getOwner(); 
+    }
+
+	
 }

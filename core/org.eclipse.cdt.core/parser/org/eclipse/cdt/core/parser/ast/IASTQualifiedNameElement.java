@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTConstructor {
-
+public interface IASTQualifiedNameElement
+{
+	public String[] getFullyQualifiedName();
 }

@@ -14,6 +14,6 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTField {
+public interface IASTField extends IASTVariable {
 
 }

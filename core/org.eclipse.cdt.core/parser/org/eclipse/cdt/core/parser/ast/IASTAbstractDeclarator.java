@@ -10,16 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import java.util.List;
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTFunction {
-	
-	public boolean isInline(); 
-	public boolean isFriend();
-	public boolean isStatic();
-
-	public IASTAbstractDeclarator getReturnType();   
-
+public interface IASTAbstractDeclarator
+{
+	public IASTTypeSpecifier getTypeSpecifier(); 
+	public List getPointerOperators(); 
 }

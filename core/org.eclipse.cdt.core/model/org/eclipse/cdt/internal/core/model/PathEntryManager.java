@@ -626,10 +626,13 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		if (projectContainers == null) {
 			projectContainers = new HashMap();
 			Containers.put(cproject, projectContainers);
-			// Initialize the first time with a lock
-			projectContainers.put(containerPath, new PathEntryContainerLock());
 		}
 		IPathEntryContainer container = (IPathEntryContainer) projectContainers.get(containerPath);
+		// Initialize the first time with a lock
+		if (container == null) {
+			container = new PathEntryContainerLock();
+			projectContainers.put(containerPath, container);
+		}
 		return container;
 	}
 

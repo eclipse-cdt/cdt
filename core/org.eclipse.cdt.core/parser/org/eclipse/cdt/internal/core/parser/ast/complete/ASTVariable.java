@@ -166,6 +166,9 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
         	initializerClause.acceptElement(requestor);
         if( constructorExpression != null )
         	constructorExpression.acceptElement(requestor);
+		if( getAbstractDeclaration() != null )
+			getAbstractDeclaration().acceptElement(requestor);
+
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

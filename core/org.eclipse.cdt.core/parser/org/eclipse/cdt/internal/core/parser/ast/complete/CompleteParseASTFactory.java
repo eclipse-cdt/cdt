@@ -483,7 +483,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					symbol = (IContainerSymbol)symbol.lookup( t.getImage() );
 				else
 					symbol = symbol.lookupNestedNameSpecifier( t.getImage() );
-				references.add( createReference( symbol, t.getImage(), t.getOffset() ));
+				
+				if( symbol != null )
+					references.add( createReference( symbol, t.getImage(), t.getOffset() ));
+				else
+					throw new ASTSemanticException();
 			}
 			catch( ParserSymbolTableException pste )
 			{
@@ -687,18 +691,24 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExceptionSpecification(java.util.List)
      */
-    public IASTExceptionSpecification createExceptionSpecification(List typeIds)
+    public IASTExceptionSpecification createExceptionSpecification(IASTScope scope, List typeIds) throws ASTSemanticException
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createArrayModifier(org.eclipse.cdt.core.parser.ast.IASTExpression)
-     */
-    public IASTArrayModifier createArrayModifier(IASTExpression exp)
-    {
-        // TODO Auto-generated method stub
-        return null;
+    	List references = new ArrayList(); 
+    	List newTypeIds = new ArrayList(); 
+        if( typeIds != null )
+        {
+        	Iterator iter =typeIds.iterator();
+        	while( iter.hasNext() )
+        	{
+        		ITokenDuple duple = (ITokenDuple)iter.next();
+        		if( duple != null )
+        		{
+        			lookupQualifiedName( scopeToSymbol( scope ), duple, references, false  );
+        			newTypeIds.add( duple.toString() );
+        		}
+        	}
+        }
+        return new ASTExceptionSpecification( newTypeIds, references );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createConstructorMemberInitializer(org.eclipse.cdt.core.parser.ITokenDuple, org.eclipse.cdt.core.parser.ast.IASTExpression)
@@ -784,8 +794,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                     	typeSymbol = ((IContainerSymbol)typeSymbol).lookupNestedNameSpecifier( current.getImage());
                     else
 						typeSymbol = ((IContainerSymbol)typeSymbol).lookup( current.getImage());
-						
-                    references.add( createReference( typeSymbol, current.getImage(), current.getOffset() ));
+					
+					if( typeSymbol != null )	
+                    	references.add( createReference( typeSymbol, current.getImage(), current.getOffset() ));
+                    else
+                    	throw new ASTSemanticException();
                 }
                 catch (ParserSymbolTableException e)
                 {

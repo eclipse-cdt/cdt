@@ -12,11 +12,13 @@ package org.eclipse.cdt.core.parser.ast;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTExceptionSpecification
+public interface IASTExceptionSpecification extends ISourceElementCallbackDelegate
 {
 	public Iterator getTypeIds(); 
 }

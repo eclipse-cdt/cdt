@@ -12,11 +12,13 @@ package org.eclipse.cdt.core.parser.ast;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTAbstractDeclaration extends IASTTypeSpecifierOwner
+public interface IASTAbstractDeclaration extends IASTTypeSpecifierOwner, ISourceElementCallbackDelegate
 {
 	public boolean isConst();
 	public boolean isVolatile();

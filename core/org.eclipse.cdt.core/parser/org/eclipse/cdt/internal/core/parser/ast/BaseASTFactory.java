@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
@@ -63,6 +64,11 @@ public class BaseASTFactory  {
     public IASTInitializerClause createInitializerClause(IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses)
     {
     	return new ASTInitializerClause( kind, assignmentExpression, initializerClauses );
+    }
+
+    public IASTArrayModifier createArrayModifier(IASTExpression exp)
+    {
+        return new ASTArrayModifier( exp );
     }
 
 

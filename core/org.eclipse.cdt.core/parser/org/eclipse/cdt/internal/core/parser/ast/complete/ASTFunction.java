@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
@@ -191,13 +192,22 @@ public class ASTFunction extends ASTScope implements IASTFunction
     public void acceptElement(ISourceElementRequestor requestor)
     {
         requestor.acceptFunctionDeclaration(this);
+        functionCallbacks(requestor);
+    }
+    
+    protected  void functionCallbacks(ISourceElementRequestor requestor)
+    {
         references.processReferences(requestor);
-        processParameterInitializers(requestor);
+        processParameterInitializersAndArrayMods(requestor);
+        if( getReturnType() != null )
+        	getReturnType().acceptElement(requestor);
+        if( getExceptionSpec() != null )
+        	getExceptionSpec().acceptElement(requestor);
     }
     /**
      * @param requestor
      */
-    protected void processParameterInitializers(ISourceElementRequestor requestor)
+    protected void processParameterInitializersAndArrayMods(ISourceElementRequestor requestor)
     {
         Iterator i = parameters.iterator();
         while( i.hasNext() )
@@ -205,6 +215,11 @@ public class ASTFunction extends ASTScope implements IASTFunction
         	IASTParameterDeclaration parm = (IASTParameterDeclaration)i.next();
         	if( parm.getDefaultValue() != null )
         		parm.getDefaultValue().acceptElement(requestor);
+        	Iterator arrays = parm.getArrayModifiers();
+        	while( arrays.hasNext() )
+        	{
+        		((IASTArrayModifier)arrays.next()).acceptElement(requestor);
+        	}
         }
     }
 
@@ -215,8 +230,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     public void enterScope(ISourceElementRequestor requestor)
     {
 		requestor.enterFunctionBody( this );
-		references.processReferences(requestor);
-		processParameterInitializers(requestor);
+		functionCallbacks( requestor );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

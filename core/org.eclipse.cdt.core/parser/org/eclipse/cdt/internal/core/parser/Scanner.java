@@ -308,6 +308,9 @@ public class Scanner implements IScanner {
 					}
 				}
 			}
+			
+			if (throwExceptionOnInclusionNotFound && inclusionReader == null )
+				throw new ScannerException("Cannot find inclusion " + fileName);
 		}
 		else // local inclusion
 		{
@@ -332,9 +335,6 @@ public class Scanner implements IScanner {
 				handleInclusion( fileName, true, nameOffset, beginOffset, endOffset );
 			}
 		}
-
-		if (throwExceptionOnInclusionNotFound && inclusionReader == null )
-			throw new ScannerException("Cannot find inclusion " + fileName);
 		
 		IASTInclusion inclusion = astFactory.createInclusion( fileName, newPath, !useIncludePaths, beginOffset, endOffset, nameOffset ); 
 		contextStack.updateContext(inclusionReader, newPath, ScannerContext.INCLUSION, inclusion, requestor );

@@ -1968,10 +1968,18 @@ public class Parser implements IParser
                                     }
                                 }
                                 if (exceptionSpecIds != null)
-                                    d.setExceptionSpecification(
-                                        astFactory
-                                            .createExceptionSpecification(
-                                            exceptionSpecIds));
+                                    try
+                                    {
+                                        d.setExceptionSpecification(
+                                            astFactory
+                                                .createExceptionSpecification(
+                                                d.getDeclarationWrapper().getScope(), exceptionSpecIds));
+                                    }
+                                    catch (ASTSemanticException e)
+                                    {
+                                        failParse();
+                                        throw backtrack;
+                                    }
                             }
                             // check for optional pure virtual							
                             if (LT(1) == IToken.tASSIGN

@@ -1,3 +1,7 @@
+2003-08-14 John Camelon
+	Added CompleteParseASTTest::testArrayModExpression(), testPointerVariable() & 
+	testExceptionSpecification().  
+
 2003-08-13 John Camelon
 	Added testBug41520() to FullParseFailedTests.java.  
 	Added testConstructorChain() to CompleteParseASTTest.java

@@ -13,8 +13,10 @@ package org.eclipse.cdt.internal.core.parser.ast;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 
 /**
@@ -65,6 +67,7 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
      */
     public Iterator getPointerOperators()
     {
+    	if( pointerOperators == null ) return new EmptyIterator();
         return pointerOperators.iterator();
     }
     /* (non-Javadoc)
@@ -72,6 +75,7 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
      */
     public Iterator getArrayModifiers()
     {
+		if( arrayModifiers == null ) return new EmptyIterator();
         return arrayModifiers.iterator();
     }
     /* (non-Javadoc)
@@ -79,6 +83,7 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
      */
     public Iterator getParameters()
     {
+		if( parms == null ) return new EmptyIterator();
         return parms.iterator();
     }
     /* (non-Javadoc)
@@ -94,5 +99,26 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
     public boolean isVolatile()
     {
         return isVolatile;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void acceptElement(ISourceElementRequestor requestor)
+    {
+    	Iterator arrayMods = getArrayModifiers();
+    	while( arrayMods.hasNext() )
+    		((IASTArrayModifier)arrayMods.next()).acceptElement(requestor);
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void enterScope(ISourceElementRequestor requestor)
+    {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     */
+    public void exitScope(ISourceElementRequestor requestor)
+    {
     }
 }

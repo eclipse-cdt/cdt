@@ -1,3 +1,7 @@
+2003-08-14 John Camelon
+	Added X-Reference support for ArrayModifiers and Exception Specifications.  
+	Fixed Bug 41551  -  HandleInclusion always throws ScannerException on local includes.
+
 2003-08-13 John Camelon
 	Added constructor expression support for variables.  
 	Added constructor chain x-reference support for methods. 

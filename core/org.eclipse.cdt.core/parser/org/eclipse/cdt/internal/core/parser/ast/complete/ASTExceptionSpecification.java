@@ -8,15 +8,14 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.quick;
+package org.eclipse.cdt.internal.core.parser.ast.complete;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
+import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
 /**
  * @author jcamelon
@@ -24,16 +23,16 @@ import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
  */
 public class ASTExceptionSpecification implements IASTExceptionSpecification
 {
-	private final List typeIds; 
+	private final List typeIds;
+	private final ASTReferenceStore store;  
     /**
-     * @param typeIds
+     * @param newTypeIds
+     * @param references
      */
-    public ASTExceptionSpecification(List typeIds)
+    public ASTExceptionSpecification(List newTypeIds, List references)
     {
-    	Iterator i = typeIds.iterator();
-    	this.typeIds = new ArrayList();
-    	while( i.hasNext() )
-    		this.typeIds.add( ((ITokenDuple)i.next()).toString() );
+        this.typeIds = newTypeIds;
+        store = new ASTReferenceStore( references );        
     }
 
     /* (non-Javadoc)
@@ -41,6 +40,7 @@ public class ASTExceptionSpecification implements IASTExceptionSpecification
      */
     public Iterator getTypeIds()
     {
+        if( typeIds == null ) return new EmptyIterator();
         return typeIds.iterator();
     }
 
@@ -49,6 +49,7 @@ public class ASTExceptionSpecification implements IASTExceptionSpecification
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
+        store.processReferences(requestor);
     }
 
     /* (non-Javadoc)

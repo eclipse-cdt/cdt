@@ -53,7 +53,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.parser.ast.quick.ASTArrayModifier;
+import org.eclipse.cdt.internal.core.parser.ast.ASTArrayModifier;
 import org.eclipse.core.resources.IProject;
 
 

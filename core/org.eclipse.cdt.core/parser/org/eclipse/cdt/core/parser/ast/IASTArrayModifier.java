@@ -10,12 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTArrayModifier
+public interface IASTArrayModifier extends ISourceElementCallbackDelegate
 {
 	public IASTExpression getExpression(); 
 }

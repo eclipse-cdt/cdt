@@ -126,8 +126,11 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     public void acceptElement(ISourceElementRequestor requestor)
     {
         requestor.acceptMethodDeclaration(this);
-        references.processReferences(requestor);
-        processParameterInitializers(requestor);
+        methodCallbacks(requestor);
+    }
+    protected void methodCallbacks(ISourceElementRequestor requestor)
+    {
+        functionCallbacks(requestor);
         processConstructorChain(requestor);
     }
     
@@ -149,8 +152,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     public void enterScope(ISourceElementRequestor requestor)
     {
 		requestor.enterMethodBody(this);
-		references.processReferences(requestor);
-		processConstructorChain(requestor);
+		methodCallbacks( requestor );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

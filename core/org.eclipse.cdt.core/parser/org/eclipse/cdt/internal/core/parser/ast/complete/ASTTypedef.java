@@ -70,7 +70,8 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
     public void acceptElement(ISourceElementRequestor requestor)
     {
         requestor.acceptTypedefDeclaration(this);
-        referenceStore.processReferences(requestor);        
+        referenceStore.processReferences(requestor);
+        getAbstractDeclarator().acceptElement( requestor );
     }
 
     /* (non-Javadoc)

@@ -102,7 +102,7 @@ public interface IASTFactory
         IASTInitializerClause.Kind kind,
         IASTExpression assignmentExpression,
         List initializerClauses);
-    public IASTExceptionSpecification createExceptionSpecification(List typeIds);
+    public IASTExceptionSpecification createExceptionSpecification(IASTScope scope, List typeIds) throws ASTSemanticException;
     /**
      * @param exp
      */

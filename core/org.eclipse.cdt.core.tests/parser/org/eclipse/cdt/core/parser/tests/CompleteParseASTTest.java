@@ -887,6 +887,9 @@ public class CompleteParseASTTest extends TestCase
 			assertEquals( fqnClass[i], fqnElab[i]);
 		assertEquals( callback.getReferences().size(), 1 );
 		assertEquals( callback.getForewardDecls().size(), 1 );
+		IASTClassReference ref = (IASTClassReference)callback.getReferences().get(0);
+		assertTrue( ref.getReferencedElement() instanceof IASTElaboratedTypeSpecifier );
+		assertEquals( ref.getReferencedElement(), elab );
 	}
 		
 	
@@ -947,4 +950,35 @@ public class CompleteParseASTTest extends TestCase
 		assertEquals( reference2.getReferencedElement(), variableX ); 
 	}
 	
+	public void testArrayModExpression() throws Exception
+	{
+		Iterator i = parse( "const int x = 5; int y [ x ]; ").getDeclarations();
+		IASTVariable varX = (IASTVariable)i.next();
+		IASTVariable varY = (IASTVariable)i.next(); 
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 1 );
+	}
+
+
+	public void testPointerVariable() throws Exception
+	{
+		Iterator i = parse( "class A { }; A * anA;").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTVariable varAnA = (IASTVariable)i.next();
+		assertFalse( i.hasNext() ); 
+		assertEquals( callback.getReferences().size(), 1 ); 
+		IASTClassReference ref = (IASTClassReference)callback.getReferences().get(0);
+		assertEquals( ref.getReferencedElement(), classA );
+	}	
+	
+	public void testExceptionSpecification() throws Exception
+	{
+		Iterator i = parse( "class A { }; void foo( void ) throw ( A );").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTFunction function = (IASTFunction)i.next();
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 1 );
+		IASTClassReference ref = (IASTClassReference)callback.getReferences().get(0);
+		assertEquals( ref.getReferencedElement(), classA );		
+	} 
 }

@@ -464,7 +464,7 @@ public class MISession extends Observable {
 		} catch (InterruptedException e) {
 		}
 
-		// Allow (10 secs) for the EventThread  to finish processing the queue.
+		// Kill the event Thread ... if it is not us.
 		if (!eventThread.equals(Thread.currentThread())) {			
 			// Kill the event Thread.
 			try {

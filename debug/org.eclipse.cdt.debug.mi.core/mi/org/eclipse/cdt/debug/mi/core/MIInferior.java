@@ -178,7 +178,7 @@ public class MIInferior extends Process {
 			abort.getMIInfo();
 			setTerminated(abort.getToken(), true);
 		} else if (session.isCoreSession() && !isTerminated()){
-			setTerminated(0, true);
+			setTerminated();
 		}
 	}
 

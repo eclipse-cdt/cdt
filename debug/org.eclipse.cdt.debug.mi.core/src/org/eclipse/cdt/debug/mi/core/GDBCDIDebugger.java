@@ -249,8 +249,8 @@ public class GDBCDIDebugger implements ICDIDebugger {
 	protected String renderDebuggerProcessLabel() {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
-		return MessageFormat.format(format, new String[]{
-				"Debugger Process", timestamp}); //$NON-NLS-1$
+		String message = MIPlugin.getResourceString("src.GDBDebugger.Debugger_process");
+		return MessageFormat.format(format, new String[]{message, timestamp}); //$NON-NLS-1$
 	}
 
 	/**

@@ -93,6 +93,16 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	private class PathEntryContainerLock implements IPathEntryContainer {
 
+		boolean runInitializer;
+
+		public boolean isContainerInitialize() {
+			return runInitializer;
+		}
+
+		public void setContainerInitialize(boolean init) {
+			runInitializer = init;
+		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPathEntries()
 		 */
@@ -113,8 +123,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		public IPath getPath() {
 			return Path.EMPTY;
 		}
-		
 	}
+
 	/**
 	 * Return the singleton.
 	 */
@@ -504,39 +514,51 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		// Try the cache.
 		IPathEntryContainer container = containerGet(project, containerPath);
 		if (container instanceof PathEntryContainerLock) {
-			synchronized(container) {
-				IPathEntryContainer newContainer = containerGet(project, containerPath);
-				if (newContainer == container) {
-					// remove the lock.
-					final PathEntryContainerInitializer initializer = getPathEntryContainerInitializer(containerPath.segment(0));
-					if (initializer != null) {
-						final boolean[] ok = {true};
-						// wrap initializer call with Safe runnable in case
-						// initializer would be
-						// causing some grief
-						Platform.run(new ISafeRunnable() {
-							
-							public void handleException(Throwable exception) {
-								IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR,
-										"Exception occurred in container initializer: "+initializer, exception); //$NON-NLS-1$
-								CCorePlugin.log(status);
-								ok[0] = false;
-							}
-								
-							public void run() throws Exception {
-								initializer.initialize(containerPath, project);
-							}
-						});
-						// retrieve value (if initialization was successful)
-						container = containerGet(project, containerPath);
-						if (!ok[0]) {
-							containerPut(project, containerPath, null); // flush
+			boolean runInitializer = false;
+			PathEntryContainerLock lock = (PathEntryContainerLock)container;
+			synchronized(lock) {
+				if (!lock.isContainerInitialize()) {
+					runInitializer = true;
+					lock.setContainerInitialize(runInitializer);
+				} else {
+					// Wait for the inialization to finish.
+					while(containerGet(project, containerPath) instanceof PathEntryContainerLock) {
+						try {
+							lock.wait();
+						} catch (InterruptedException e) {
+							//e.printStackTrace();
 						}
 					}
-				} else { 
-					container = newContainer;
 				}
 			}
+			if (runInitializer) {
+				// remove the lock.
+				final PathEntryContainerInitializer initializer = getPathEntryContainerInitializer(containerPath.segment(0));
+				if (initializer != null) {
+					final boolean[] ok = {true};
+					// wrap initializer call with Safe runnable in case
+					// initializer would be
+					// causing some grief
+					Platform.run(new ISafeRunnable() {
+						
+						public void handleException(Throwable exception) {
+							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR,
+									"Exception occurred in container initializer: "+initializer, exception); //$NON-NLS-1$
+							CCorePlugin.log(status);
+							ok[0] = false;
+						}
+							
+						public void run() throws Exception {
+							initializer.initialize(containerPath, project);
+						}
+					});
+					if (!ok[0]) {
+						containerPut(project, containerPath, null); // flush and notify
+					}
+				}
+			} 
+			// retrieve new value
+			container = containerGet(project, containerPath);
 		}
 		return container;
 	}
@@ -601,7 +623,12 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			projectContainers = new HashMap();
 			Containers.put(cproject, projectContainers);
 		}
-		projectContainers.put(containerPath, container);
+		IPathEntryContainer oldContainer = (IPathEntryContainer)projectContainers.put(containerPath, container);
+		if (oldContainer instanceof PathEntryContainerLock) {
+			synchronized (oldContainer) {
+				oldContainer.notifyAll();
+			}
+		}
 	}
 
 	private synchronized void containerRemove(ICProject cproject) {

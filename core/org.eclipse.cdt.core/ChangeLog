@@ -1,3 +1,9 @@
+2004-06-09 Alain Magloire
+
+	Make sure to run the PathEntryContainerInitializer.initialize()
+	once.
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+
 2004-06-09 Hoda Amer
 	Fix for PR 62656 : [Saving]  a cpp file after copying/renaming a function in front of a constructor locks Eclipse
 	

@@ -5,18 +5,17 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi;
 
-import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIWatchpointScopeEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIWatchpointTriggerEvent;
 
 /**
  *
@@ -34,8 +33,10 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 	public ICDISessionObject getReason() {
 		if (event instanceof MIBreakpointEvent) {
 			return new BreakpointHit(session, (MIBreakpointEvent)event);
-		} else if (event instanceof MIWatchpointEvent) {
-			return new WatchpointTrigger(session, (MIWatchpointEvent)event);
+		} else if (event instanceof MIWatchpointTriggerEvent) {
+			return new WatchpointTrigger(session, (MIWatchpointTriggerEvent)event);
+		} else if (event instanceof MIWatchpointScopeEvent) {
+			return new WatchpointScope(session, (MIWatchpointScopeEvent)event);
 		} else if (event instanceof MISteppingRangeEvent) {
 			return new EndSteppingRange(session);
 		} else if (event instanceof MISignalEvent) {

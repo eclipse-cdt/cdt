@@ -7,21 +7,15 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
-import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIWatchpointScopeEvent;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class WatchpointScope extends SessionObject implements ICDIWatchpointScope {
 
-	MIWatchpointEvent watchEvent;
+	MIWatchpointScopeEvent watchEvent;
 
-	public WatchpointScope(CSession session, MIWatchpointEvent e) {
+	public WatchpointScope(CSession session, MIWatchpointScopeEvent e) {
 		super(session);
 		watchEvent = e;
 	}

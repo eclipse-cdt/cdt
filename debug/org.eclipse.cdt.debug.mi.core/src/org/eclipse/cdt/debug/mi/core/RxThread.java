@@ -27,7 +27,8 @@ import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIStoppedEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIWatchpointScopeEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIWatchpointTriggerEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIAsyncRecord;
 import org.eclipse.cdt.debug.mi.core.output.MIConsoleStreamOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIConst;
@@ -311,9 +312,15 @@ MIPlugin.getDefault().debugLog(line);
 			}
 		} else if ("watchpoint-trigger".equals(reason)) {
 			if (exec != null) {
-				event = new MIWatchpointEvent(exec);
+				event = new MIWatchpointTriggerEvent(exec);
 			} else if (rr != null) {
-				event = new MIWatchpointEvent(rr);
+				event = new MIWatchpointTriggerEvent(rr);
+			}
+		} else if ("watchpoint-scope".equals(reason)) {
+			if (exec != null) {
+				event = new MIWatchpointScopeEvent(exec);
+			} else if (rr != null) {
+				event = new MIWatchpointScopeEvent(rr);
 			}
 		} else if ("end-stepping-range".equals(reason)) {
 			if (exec != null) {

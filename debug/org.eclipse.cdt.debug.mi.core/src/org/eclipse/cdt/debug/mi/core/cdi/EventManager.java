@@ -27,7 +27,8 @@ import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIStoppedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIWatchpointScopeEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIWatchpointTriggerEvent;
 
 /**
  */
@@ -108,8 +109,11 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		if (event instanceof MIBreakpointEvent) {
 			MIBreakpointEvent breakEvent = (MIBreakpointEvent) event;
 			threadId = breakEvent.getThreadId();
-		} else if (event instanceof MIWatchpointEvent) {
-			MIWatchpointEvent watchEvent = (MIWatchpointEvent) event;
+		} else if (event instanceof MIWatchpointTriggerEvent) {
+			MIWatchpointTriggerEvent watchEvent = (MIWatchpointTriggerEvent) event;
+			threadId = watchEvent.getThreadId();
+		} else if (event instanceof MIWatchpointScopeEvent) {
+			MIWatchpointScopeEvent watchEvent = (MIWatchpointScopeEvent) event;
 			threadId = watchEvent.getThreadId();
 		} else if (event instanceof MISteppingRangeEvent) {
 			MISteppingRangeEvent rangeEvent = (MISteppingRangeEvent) event;

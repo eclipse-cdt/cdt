@@ -6,14 +6,18 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
-import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
+import org.eclipse.cdt.debug.mi.core.event.MIWatchpointTriggerEvent;
 
 /**
  */
-public class WatchpointTrigger extends WatchpointScope implements ICDIWatchpointTrigger {
+public class WatchpointTrigger extends SessionObject implements ICDIWatchpointTrigger {
 
-	public WatchpointTrigger(CSession session, MIWatchpointEvent e) {
-		super(session, e);
+	MIWatchpointTriggerEvent watchEvent;
+
+	public WatchpointTrigger(CSession session, MIWatchpointTriggerEvent e) {
+		super(session);
+		watchEvent = e;
 	}
 
 	/**
@@ -28,6 +32,19 @@ public class WatchpointTrigger extends WatchpointScope implements ICDIWatchpoint
 	 */
 	public String getOldValue() {
 		return watchEvent.getOldValue();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger#getWatchpoint()
+	 */
+	public ICDIWatchpoint getWatchpoint() {
+		int number = watchEvent.getNumber();
+		// Ask the breakpointManager for the breakpoint
+		BreakpointManager mgr = (BreakpointManager)getCSession().getBreakpointManager();
+		// We need to return the same object as the reason.
+		Watchpoint point = mgr.getWatchpoint(number);
+		// FIXME: if point ==null ??? Create a new breakpoint ?
+		return point;
 	}
 
 }

@@ -2123,5 +2123,17 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	writer.write( "}\n" );
     	parse( writer.toString() );
 	}
+    
+    public void testBug69526() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "unsigned inkernel;\n" );
+    	writer.write( "#define lock_kernel() (inkernel |= 0x01)" );
+    	writer.write( "int main(int argc, char **argv) {" );
+    	writer.write( "lock_kernel();" );
+    	writer.write( "}" );
+    	parse( writer.toString() );
+	}
+
 }
 

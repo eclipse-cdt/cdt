@@ -58,7 +58,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 	
 	{
 		
-		(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
+		//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 		monitor = new NullProgressMonitor();
 		
 		workspace = ResourcesPlugin.getWorkspace();

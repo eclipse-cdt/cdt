@@ -112,7 +112,7 @@ import org.eclipse.core.runtime.Platform;
 			fail("Unable to create project");	
 		
 		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		indexManager.reset();
+		//indexManager.reset();
 		
 		TypeCacheManager typeCacheManager = TypeCacheManager.getInstance();
 		typeCacheManager.setProcessTypeCacheEvents(false);

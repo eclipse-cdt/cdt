@@ -111,7 +111,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 			fail("Unable to create project");	 //$NON-NLS-1$
 		
 		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		indexManager.reset();
+		//indexManager.reset();
 		//Get the indexer used for the test project
 		sourceIndexer = (SourceIndexer) indexManager.getIndexerForProject(testProject);
 		sourceIndexer.addIndexChangeListener(this);

@@ -55,7 +55,7 @@ public class ContentAssistTests extends TestCase {
     static FileManager 				fileManager;
     static boolean 					disabledHelpContributions = false;
     {
-		(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
+		//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 		monitor = new NullProgressMonitor();
 		
 		workspace = ResourcesPlugin.getWorkspace();

@@ -96,7 +96,7 @@ public class FileBasePluginTest extends TestCase {
 
     private void initialize(Class aClassName){
         if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
-			(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
+			//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 			monitor = new NullProgressMonitor();
 			
 			workspace = ResourcesPlugin.getWorkspace();

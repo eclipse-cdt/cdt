@@ -76,7 +76,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
 		typeCacheManager.setProcessTypeCacheEvents(false);
 		
         IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-        indexManager.reset();
+        //indexManager.reset();
         
 		sourceIndexer = (SourceIndexer) CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(project); 
         sourceIndexer.addIndexChangeListener( this );

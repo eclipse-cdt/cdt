@@ -64,9 +64,9 @@ public class IndexManager extends JobManager{
     //Upgrade index version
     private boolean upgradeIndexEnabled = false;
     private int		upgradeIndexProblems = 0;
-	private boolean	upgradeProjects	= true;
    
-  
+	private ReadWriteMonitor monitor = new ReadWriteMonitor();
+	
     /**
      * Create an indexer only on request
      */
@@ -96,36 +96,75 @@ public class IndexManager extends JobManager{
 	/**
 	 * Flush current state
 	 */
-	public void reset() {
+	public synchronized void reset() {
 		super.reset();
 		
 		initializeIndexersMap();
 		this.indexerMap = new HashMap(5);
+		try{
+		monitor.enterWrite();
+		initializeIndexerID();
+		} finally {
+		monitor.exitWrite();
+		}
 	}
 	
 
 
 	
-	public synchronized String getIndexerID(IProject project) throws CoreException {
-		//See if there's already one associated with the resource for this session
-		 String indexerID = (String) project.getSessionProperty(indexerIDKey);
-
-		// Try to load one for the project
-		if (indexerID == null) {
-			indexerID = loadIndexerIDFromCDescriptor(project);
-		}
-	
-		// There is nothing persisted for the session, or saved in a file so
-		// create a build info object
-		if (indexerID != null) {
-			project.setSessionProperty(indexerIDKey, indexerID);
-		}
-		else{
-			//Hmm, no persisted indexer value. Could be an old project - need to run project
-			//update code here	
+	/**
+	 * 
+	 */
+	private void initializeIndexerID() {
+		IProject[] projects = CCorePlugin.getWorkspace().getRoot().getProjects();
+		//Make sure that all projects are added to the indexer map and updated
+		//where neccesary
+		for (int i=0; i<projects.length; i++){
+			try {
+				initializeIndexer(projects[i]);
+			} catch (CoreException e) {}
 		}
 		
-		return indexerID;
+	}
+
+	private ICDTIndexer initializeIndexer(IProject project) throws CoreException {
+
+		ICDTIndexer indexer = null;
+		indexer = (ICDTIndexer) indexerMap.get(project);
+		
+		if (indexer == null){
+			String indexerID = null;
+			try {
+				//Indexer has not been created yet for this session
+				//Check to see if the indexer has been set in a session property 
+				indexerID = (String) project.getSessionProperty(indexerIDKey);
+			} catch (CoreException e) {}
+			
+			if (indexerID == null){
+				try{
+				//Need to load the indexer from descriptor
+				indexerID = loadIndexerIDFromCDescriptor(project);
+				} catch (CoreException e){}
+			}
+			
+			//Make sure that we have an indexer ID
+			if (indexerID == null) {
+				//No persisted info on file? Must be old project - run temp. upgrade
+				indexerID = doProjectUpgrade(project);
+				doSourceIndexerUpgrade(project);
+			}
+			
+			//If we're asking for the null indexer,return null
+			if (indexerID == null ||
+				indexerID.equals(nullIndexerID)) 
+				return null;
+			
+			//Create the indexer and store it
+			indexer = getIndexer(indexerID);
+			indexerMap.put(project,indexer);
+			
+		}
+		return indexer;
 	}
 	
 	/**
@@ -332,7 +371,10 @@ public class IndexManager extends JobManager{
 	}
 	
 	public synchronized ICDTIndexer getIndexerForProject(IProject project){
-		
+		//Make sure we're not updating list
+		monitor.enterRead();
+		//All indexers that were previously persisted should have been loaded at 
+		//this point
 		ICDTIndexer indexer = null;
 		indexer = (ICDTIndexer) indexerMap.get(project);
 		
@@ -344,37 +386,21 @@ public class IndexManager extends JobManager{
 				indexerID = (String) project.getSessionProperty(indexerIDKey);
 			} catch (CoreException e) {}
 			
-			if (indexerID == null){
-				try{
-				//Need to load the indexer from descriptor
-				indexerID = loadIndexerIDFromCDescriptor(project);
-				} catch (CoreException e){}
-			}
-			
-			//Make sure that we have an indexer ID
-			if (indexerID == null && upgradeProjects) {
-				//No persisted info on file? Must be old project - run temp. upgrade
-				indexerID = doProjectUpgrade(project);
-				doSourceIndexerUpgrade(project);
-			}
-			
-			//If we're asking for the null indexer,return null
-			if (indexerID == null ||
-				indexerID.equals(nullIndexerID)) 
-				return null;
-			
+			//Any persisted indexders would have been loaded in the initialization
 			//Create the indexer and store it
 			indexer = getIndexer(indexerID);
 			indexerMap.put(project,indexer);
 			
+			monitor.exitRead();
 		}
+		
 		return indexer;
 	}
 	
    /**
 	 * @param project
 	 */
-	private void doSourceIndexerUpgrade(IProject project) {
+	private synchronized void doSourceIndexerUpgrade(IProject project) {
 		ICDescriptor descriptor = null;
 		Element rootElement = null;
 		IProject newProject = null;
@@ -429,7 +455,7 @@ public class IndexManager extends JobManager{
 /**
 	 * @return
 	 */
-	private String doProjectUpgrade(IProject project) {
+	private synchronized String doProjectUpgrade(IProject project) {
 		ICDescriptor descriptor = null;
 		Element rootElement = null;
 		IProject newProject = null;
@@ -562,18 +588,9 @@ protected ICDTIndexer getIndexer(String indexerId) {
    	while (i.hasNext()){
    		IProject tempProject = (IProject) i.next();
    		ICDTIndexer indexer = (ICDTIndexer) indexerMap.get(tempProject);
-   		indexer.notifyIdle(idlingTime);
+   		if (indexer != null)
+   			indexer.notifyIdle(idlingTime);
    	}
    }
-
-
-
-
-/**
- * 
- */
-public void disableUpgrades() {
-	upgradeProjects = false;
-}
    
 }

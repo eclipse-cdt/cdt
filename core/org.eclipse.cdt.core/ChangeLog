@@ -1,3 +1,8 @@
+2005-03-14 Bogdan Gheorghe
+	Added a NPE check to path entry manager
+
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	
 2005-03-13 Bogdan Gheorghe
 	Added support for new indexer framework
 	

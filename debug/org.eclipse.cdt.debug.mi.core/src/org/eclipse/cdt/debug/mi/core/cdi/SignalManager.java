@@ -178,12 +178,12 @@ public class SignalManager extends SessionObject implements ICDISignalManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#update()
 	 */
 	public void update() throws CDIException {
-		if (signalsList == null) {
-			signalsList = Collections.synchronizedList(new ArrayList(5));
-		}
 		Session session = (Session)getSession();
 		MISigHandle[] miSigs = getMISignals();
 		List eventList = new ArrayList(miSigs.length);
+		if (signalsList == null) {
+			signalsList = Collections.synchronizedList(new ArrayList(5));
+		}
 		for (int i = 0; i < miSigs.length; i++) {
 			ICDISignal sig = findSignal(miSigs[i].getName());
 			if (sig != null) {

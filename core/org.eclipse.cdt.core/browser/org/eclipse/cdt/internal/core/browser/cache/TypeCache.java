@@ -89,7 +89,8 @@ public class TypeCache implements ITypeCache {
 				TypeCacherJob deltaJob = (TypeCacherJob)job;
 				IStatus status = event.getResult();
 				if (status != null) {
-					boolean jobFinished = status.equals(Status.OK_STATUS);
+					boolean jobFinished = (status.equals(Status.OK_STATUS)
+						&& !deltaJob.isIndexerBusy());
 					// remove the completed deltas
 					synchronized(fDeltas) {
 						for (Iterator i = fDeltas.iterator(); i.hasNext(); ) {

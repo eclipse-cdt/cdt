@@ -15,11 +15,14 @@ import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -36,12 +39,14 @@ public class TypeCacherJob extends BasicJob {
 	private ITypeCache fTypeCache;
 	private TypeCacheDelta[] fDeltas;
 	private boolean fEnableIndexing;
+	private boolean fIndexerIsBusy;
 
 	public TypeCacherJob(ITypeCache typeCache, TypeCacheDelta[] deltas, boolean enableIndexing) {
 		super(TypeCacheMessages.getString("TypeCacherJob.defaultJobName"), FAMILY); //$NON-NLS-1$
 		fTypeCache = typeCache;
 		fDeltas = deltas;
 		fEnableIndexing = enableIndexing;
+		fIndexerIsBusy = false;
 		fIndexManager = CModelManager.getDefault().getIndexManager();
 		setPriority(BUILD);
 		setSystem(true);
@@ -55,6 +60,10 @@ public class TypeCacherJob extends BasicJob {
 
 	public TypeCacheDelta[] getDeltas() {
 		return fDeltas;
+	}
+
+	public boolean isIndexerBusy() {
+	    return fIndexerIsBusy;
 	}
 
 	/* (non-Javadoc)
@@ -118,12 +127,7 @@ public class TypeCacherJob extends BasicJob {
 		fTypeCache.flush(scope);
 		if (!scope.encloses(project)) {
 			if (project.exists() && project.isOpen()) {
-				success = false;
-				if (fEnableIndexing) {
-					success = fIndexManager.performConcurrentJob(
-						new IndexerDependenciesJob(fIndexManager, fTypeCache, scope),
-						ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, monitor, null);
-				}
+			    success = doIndexerJob(new IndexerDependenciesJob(fIndexManager, fTypeCache, scope), monitor);
 			}
 		}
 
@@ -140,12 +144,7 @@ public class TypeCacherJob extends BasicJob {
 		
 		monitor.beginTask("", 100); //$NON-NLS-1$
 		if (project.exists() && project.isOpen()) {
-			success = false;
-			if (fEnableIndexing) {
-				success = fIndexManager.performConcurrentJob(
-						new IndexerTypesJob(fIndexManager, fTypeCache, scope),
-						ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, monitor, null);
-			}
+		    success = doIndexerJob(new IndexerTypesJob(fIndexManager, fTypeCache, scope), monitor);
 		}
 
 		if (!success || monitor.isCanceled()) {
@@ -155,6 +154,26 @@ public class TypeCacherJob extends BasicJob {
 		monitor.done();
 	}
 	
+	private boolean doIndexerJob(IndexerJob job, IProgressMonitor monitor) {
+		if (!fEnableIndexing) {
+		    return false;
+		}
+		
+		// check if indexer is busy
+		fIndexerIsBusy = false;
+		try {
+			fIndexManager.performConcurrentJob(new DummyIndexerJob(fIndexManager, fTypeCache.getProject()),
+				ICSearchConstants.CANCEL_IF_NOT_READY_TO_SEARCH, new NullProgressMonitor(), null);
+		} catch (OperationCanceledException e) {
+	        fIndexerIsBusy = true;
+		}
+		
+		// do an immediate (but possibly incomplete) search
+	    // if fIndexerIsBusy the cache will stay dirty and we'll hit the indexer again next time
+		return fIndexManager.performConcurrentJob(job,
+			ICSearchConstants.FORCE_IMMEDIATE_SEARCH, monitor, null);
+	}
+
 	private static final int PATH_ENTRY_FLAGS = ICElementDelta.F_ADDED_PATHENTRY_SOURCE
 		| ICElementDelta.F_REMOVED_PATHENTRY_SOURCE
 		| ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE
@@ -221,5 +240,15 @@ public class TypeCacherJob extends BasicJob {
 			}
 		}
 	}
+	
+	private static final class DummyIndexerJob extends IndexerJob {
+	    public DummyIndexerJob(IndexManager indexManager, IProject project) {
+	        super(indexManager, project);
+	    }
+		protected boolean processIndex(IIndex index, IProject project, IProgressMonitor progressMonitor) throws InterruptedException {
+		    return false;
+		}
+	};
+	
 }
 

@@ -1,3 +1,22 @@
+2003-06-25 Alain Magloire
+
+	Patch from Chris Songer, excerpt from its email:
+	The MIParser is O(N^2) time in the length of a line returned from GDB. 
+	While not an issue for OOB messages, this can be quite an issue for array 
+	retrieval from the target and other potentially long messages. It's N^2 
+	because it relies on StringBuffer.deleteCharAt( 0 ) and 
+	StringBuffer.delete( 0, X ). These operations appear to do a copy of the 
+	remaining data in the Sun Java library rather than bumping some index.
+
+	The following diffs are code that we are using on 1.0.1 to correct this 
+	issue. It's relatively new, so there may be some bugs but has certainly 
+	performed just fine in our initial regressions. Because of that I'm not 
+	sending it in as a patch, more an FYI really. The basic change is exactly 
+	what you'd expect: these diffs make MIParser use a new type of string 
+	buffer that's quite efficient at deleting from the head of the array.
+
+	* src/org/eclipse/cdt/debug/mi/core/output/MIParser.java
+
 2003-06-18 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ChangedEvent.java:

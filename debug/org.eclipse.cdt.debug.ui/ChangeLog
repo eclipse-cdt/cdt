@@ -1,4 +1,8 @@
 2004-07-09 Mikhail Khodjaiants
+	Renamed "ICDebugElementErrorStatus" to "ICDebugElementStatus".
+	* CDTDebugModelPresentation.java
+
+2004-07-09 Mikhail Khodjaiants
 	Fix for bug 69221: "Show full paths" doesn't work for shared libraries.
 	* SharedLibrariesView.java
 

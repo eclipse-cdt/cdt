@@ -24,7 +24,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
+import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
@@ -194,12 +194,12 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 		Image baseImage = getBaseImage( element );
 		if ( baseImage != null ) {
 			ImageDescriptor[] overlays = new ImageDescriptor[]{ null, null, null, null };
-			if ( element instanceof ICDebugElementErrorStatus && !((ICDebugElementErrorStatus)element).isOK() ) {
-				switch( ((ICDebugElementErrorStatus)element).getSeverity() ) {
-					case ICDebugElementErrorStatus.WARNING:
+			if ( element instanceof ICDebugElementStatus && !((ICDebugElementStatus)element).isOK() ) {
+				switch( ((ICDebugElementStatus)element).getSeverity() ) {
+					case ICDebugElementStatus.WARNING:
 						overlays[OverlayImageDescriptor.BOTTOM_LEFT] = CDebugImages.DESC_OVRS_WARNING;
 						break;
-					case ICDebugElementErrorStatus.ERROR:
+					case ICDebugElementStatus.ERROR:
 						overlays[OverlayImageDescriptor.BOTTOM_LEFT] = CDebugImages.DESC_OVRS_ERROR;
 						break;
 				}
@@ -283,8 +283,8 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 	 */
 	public String getText( Object element ) {
 		StringBuffer baseText = new StringBuffer( getBaseText( element ) );
-		if ( element instanceof ICDebugElementErrorStatus && !((ICDebugElementErrorStatus)element).isOK() ) {
-			baseText.append( getFormattedString( " <{0}>", ((ICDebugElementErrorStatus)element).getMessage() ) ); //$NON-NLS-1$
+		if ( element instanceof ICDebugElementStatus && !((ICDebugElementStatus)element).isOK() ) {
+			baseText.append( getFormattedString( " <{0}>", ((ICDebugElementStatus)element).getMessage() ) ); //$NON-NLS-1$
 		}
 		return baseText.toString();
 	}

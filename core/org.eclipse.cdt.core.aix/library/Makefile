@@ -9,7 +9,7 @@ CFLAGS = -I. -I$(JDK_INCLUDES)
 
 LIB_NAME_SPAWNER = libspawner.so
 LIB_NAME_FULL_SPAWNER = ../os/aix/ppc/libspawner.so
-OBJS_SPAWNER=spawner.o io.o exec_unix.o pfind.o
+OBJS_SPAWNER=spawner.o io.o exec_unix.o exec_pty.o openpty.o pfind.o
 
 LIB_NAME_PTY = libpty.so
 LIB_NAME_FULL_PTY = ../os/aix/ppc/libpty.so

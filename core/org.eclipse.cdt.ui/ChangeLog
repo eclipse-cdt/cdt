@@ -1,4 +1,8 @@
-2005-02-016 Alain Magloire
+2005-02-09 Alain Magloire
+	PR 84841: Description of the template in the hover was incorrect.
+	* src/org/eclipse/cdt/internal/ui/text/TemplateEngine.java
+
+2005-02-06 Alain Magloire
 	PR 84423, Patch from :  Tomaszewski Przemek
 	Added keybinding next/previous(CTRL-SHIFT-UP/DOWN) to from
 	member to member in the CEditor(PR 84423).

@@ -13,10 +13,13 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
 import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
@@ -25,8 +28,10 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 
 public class TemplateEngine {
 
@@ -35,6 +40,18 @@ public class TemplateEngine {
 
 	public class CTemplateProposal extends TemplateProposal implements ICCompletionProposal {
 		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getInformationControlCreator()
+		 */
+		public IInformationControlCreator getInformationControlCreator() {
+			return new IInformationControlCreator() {
+				public IInformationControl createInformationControl(Shell parent) {
+					int shellStyle= SWT.RESIZE;
+					int style= SWT.V_SCROLL | SWT.H_SCROLL;				
+					return new SourceViewerInformationControl(parent, shellStyle, style);
+				}
+			};
+		}
 		/**
 		 * @param template
 		 * @param context
@@ -114,6 +131,6 @@ public class TemplateEngine {
 			if (context.canEvaluate(templates[i]))
 				fProposals.add(new CTemplateProposal(templates[i], context, region, CPluginImages.get(CPluginImages.IMG_OBJS_TEMPLATE)));
 	}
-
+	
 }
 

@@ -1,3 +1,7 @@
+2003-05-02 Mikhail Khodjaiants
+	Notify the Launch view about stack changes when handling the 'Resumed' event.
+	* CThread.java
+
 2003-05-01 Mikhail Khodjaiants
 	Implementation of termination policy.
 	* ICDIConfiguration.java: new "terminateSessionOnExit" method added.

@@ -903,33 +903,30 @@ public class CThread extends CDebugElement
 		setRunning( true );
 		setLastStackFrame( null );
 		int state = IState.RUNNING;
-		int detail = DebugEvent.UNSPECIFIED;
-		switch( event.getType() )
-		{
-			case ICDIResumedEvent.CONTINUE:
-				detail = DebugEvent.RESUME;
-				break;
-			case ICDIResumedEvent.STEP_INTO:
-			case ICDIResumedEvent.STEP_INTO_INSTRUCTION:
-				detail = DebugEvent.STEP_INTO;
-				break;
-			case ICDIResumedEvent.STEP_OVER:
-			case ICDIResumedEvent.STEP_OVER_INSTRUCTION:
-				detail = DebugEvent.STEP_OVER;
-				break;
-			case ICDIResumedEvent.STEP_RETURN:
-				detail = DebugEvent.STEP_RETURN;
-				break;
-		}
+		int detail = DebugEvent.RESUME;
 		if ( isCurrent() && event.getType() != ICDIResumedEvent.CONTINUE )
 		{
 			preserveStackFrames();
+			switch( event.getType() )
+			{
+				case ICDIResumedEvent.STEP_INTO:
+				case ICDIResumedEvent.STEP_INTO_INSTRUCTION:
+					detail = DebugEvent.STEP_INTO;
+					break;
+				case ICDIResumedEvent.STEP_OVER:
+				case ICDIResumedEvent.STEP_OVER_INSTRUCTION:
+					detail = DebugEvent.STEP_OVER;
+					break;
+				case ICDIResumedEvent.STEP_RETURN:
+					detail = DebugEvent.STEP_RETURN;
+					break;
+			}
 			state = IState.STEPPING;
 		}
 		else
 		{
 			disposeStackFrames();
-			state = IState.RUNNING;
+			fireChangeEvent( DebugEvent.CONTENT );
 		}
 		setCurrentStateId( state );
 		setCurrentStateInfo( null );

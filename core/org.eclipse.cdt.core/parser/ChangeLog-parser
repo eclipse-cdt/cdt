@@ -1,3 +1,13 @@
+2004-01-27 Andrew Niefer
+	Updates to handle _Bool
+	 - modified  CompleteParseASTFactory.getParameterTypeInfo
+				 CompleteParseASTFactory.createReference 
+				 CompleteParseASTFactory.usualArithmeticConversions
+				 CompleteParseASTFactory.getTypeKind
+				 Parser.typeId
+				 TypeFilter.shouldAccept
+				 TypeInfo.equals
+
 2004-01-26 John Camelon
 	Added traceLogs into Scanner.  
 	Fixed Bug 46402 : expression evaluation error on branch not taken

@@ -986,6 +986,25 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertEquals( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type._BOOL );
 	}
 	
+	public void testCBoolAsParameter() throws Exception
+	{
+		Iterator i = parse( "void f( _Bool b ) {} " +
+							"_Bool g( _Bool b ) {} " +
+							"void main(){" +
+							"   _Bool b;  " +
+							"   f(b);" +
+							"	f( g( (_Bool) 1 )  );" +
+							"}", 
+							true, ParserLanguage.C ).getDeclarations();
+		
+		IASTFunction f = (IASTFunction) i.next();
+		IASTFunction g = (IASTFunction) i.next();
+		IASTFunction main = (IASTFunction) i.next();
+		IASTVariable b = (IASTVariable) getDeclarations( main ).next();
+		
+		assertAllReferences( 4, createTaskList( new Task( f, 2 ), new Task( b ), new Task( g ) ) );
+	}
+	
 	public void testBug44510() throws Exception
 	{
 		Iterator i = parse( "int initialize(); " +

@@ -1,3 +1,6 @@
+2004-01-27 Andrew Niefer
+	Added CompleteParseASTTest.testCBoolAsParameter
+	
 2004-01-26 John Camelon
 	Updated clients to use new Scanner logging service.
 	Added ScannerTestCase.testBug46402().  

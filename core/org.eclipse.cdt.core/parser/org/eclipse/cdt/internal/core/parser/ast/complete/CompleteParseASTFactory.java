@@ -699,7 +699,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				( symbol.getType() == TypeInfo.t_int )   ||
 				( symbol.getType() == TypeInfo.t_float )||
 				( symbol.getType() == TypeInfo.t_double ) ||    
-				( symbol.getType() == TypeInfo.t_void )  )
+				( symbol.getType() == TypeInfo.t_void ) ||
+				( symbol.getType() == TypeInfo.t__Bool) )
 			
 		{
 			if( symbol.getContainingSymbol().getType() == TypeInfo.t_class || 
@@ -977,8 +978,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			rhs = rhs.getTypeSymbol().getTypeInfo();  
 		}
 		
-		if( !lhs.isType(TypeInfo.t_bool, TypeInfo.t_enumerator ) && 
-			!rhs.isType(TypeInfo.t_bool, TypeInfo.t_enumerator ) ) 
+		if( !lhs.isType(TypeInfo.t__Bool, TypeInfo.t_enumerator ) && 
+			!rhs.isType(TypeInfo.t__Bool, TypeInfo.t_enumerator ) ) 
 		{
 			throw new ASTSemanticException(); 
 		}
@@ -1751,6 +1752,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				type.setType(TypeInfo.t_wchar_t);
 			else if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
 				type.setType(TypeInfo.t_type);
+			else if( kind == IASTSimpleTypeSpecifier.Type._BOOL ){
+				type.setType( TypeInfo.t__Bool );
+			}
 			else
 				throw new ASTSemanticException(); 
 		}
@@ -2728,6 +2732,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		 IASTSimpleTypeSpecifier.Type type = id.getKind();
 		 if( type == IASTSimpleTypeSpecifier.Type.BOOL )
 			 return TypeInfo.t_bool;
+		 else if( type == IASTSimpleTypeSpecifier.Type._BOOL )
+		     return TypeInfo.t__Bool;
 		 else if( type == IASTSimpleTypeSpecifier.Type.CHAR )
 			 return TypeInfo.t_char;
 		 else if( type == IASTSimpleTypeSpecifier.Type.DOUBLE )

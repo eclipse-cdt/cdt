@@ -4078,7 +4078,13 @@ public abstract class Parser implements IParser
 						consume();
 						break;
 
-                        
+					case IToken.t__Bool :
+						if( encounteredType ) break simpleMods;
+						encounteredType = true;                    
+						kind = IASTSimpleTypeSpecifier.Type._BOOL;
+						consume();
+						break;
+						
                     default :
                         break simpleMods;
                 }

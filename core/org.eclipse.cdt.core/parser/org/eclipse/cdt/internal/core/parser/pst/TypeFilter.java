@@ -74,7 +74,7 @@ public class TypeFilter {
 				return false;
 			}
 		} 
-		else if ( typeInfo.isType( TypeInfo.t_type ) || typeInfo.isType( TypeInfo.t_bool, TypeInfo.t_void ) )
+		else if ( typeInfo.isType( TypeInfo.t_type ) || typeInfo.isType( TypeInfo.t__Bool, TypeInfo.t_void ) )
 		{
 			if( ( acceptedKinds.contains( LookupKind.VARIABLES ) 	   && !symbolIsMember && !symbolIsLocal ) ||
 				( acceptedKinds.contains( LookupKind.LOCAL_VARIABLES ) && !symbolIsMember && symbolIsLocal )  ||

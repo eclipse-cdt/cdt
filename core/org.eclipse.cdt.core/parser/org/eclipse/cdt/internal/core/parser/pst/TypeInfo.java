@@ -479,8 +479,8 @@ public class TypeInfo {
 			result &= _typeDeclaration.equals( type._typeDeclaration );
 		} else {
 			if( _typeDeclaration != null && type._typeDeclaration != null   &&
-				_typeDeclaration.isType( TypeInfo.t_bool, TypeInfo.t_void ) &&
-				type._typeDeclaration.isType( TypeInfo.t_bool, TypeInfo.t_void ) )
+				_typeDeclaration.isType( TypeInfo.t__Bool, TypeInfo.t_void ) &&
+				type._typeDeclaration.isType( TypeInfo.t__Bool, TypeInfo.t_void ) )
 			{
 				//if typeDeclaration is a basic type, then only need the types the same
 				result &= ( _typeDeclaration.getType() == type._typeDeclaration.getType() );		

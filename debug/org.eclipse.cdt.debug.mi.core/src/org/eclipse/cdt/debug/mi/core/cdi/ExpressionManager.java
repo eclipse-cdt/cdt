@@ -21,17 +21,20 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
 import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
+import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
 import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
  */
-public class ExpressionManager extends SessionObject implements ICDIExpressionManager, IUpdateListener {
+public class ExpressionManager extends SessionObject implements ICDIExpressionManager{
 
 	private List expList;
 	private boolean autoupdate;
+	MIVarChange[] noChanges = new MIVarChange[0];
 
 	public ExpressionManager(Session session) {
 		super(session);
@@ -138,25 +141,31 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#update()
 	 */
 	public void update() throws CDIException {
-		Session session = (Session)getSession();
-		UpdateManager mgr = session.getUpdateManager();
-		mgr.update();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.mi.core.cdi.IUpdateListener#changeList(MIVarChange[])
-	 */
-	public void changeList(MIVarChange[] changes) {
-		List eventList = new ArrayList(changes.length);
-		for (int i = 0 ; i < changes.length; i++) {
-			String varName = changes[i].getVarName();
-			Expression expression = getExpression(varName);
-			if (expression != null) {
-				eventList.add(new MIVarChangedEvent(0, varName, changes[i].isInScope()));
-			}
-		}
+		List eventList = new ArrayList();
 		Session session = (Session)getSession();
 		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		Expression[] exps = (Expression[])expList.toArray(new Expression[0]);
+		for (int i = 0; i < exps.length; i++) {
+			String varName = exps[i].getMIVar().getVarName();
+			MIVarChange[] changes = noChanges;
+			MIVarUpdate update = factory.createMIVarUpdate(varName);
+			try {
+				mi.postCommand(update);
+				MIVarUpdateInfo info = update.getMIVarUpdateInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
+				changes = info.getMIVarChanges();
+			} catch (MIException e) {
+				//throw new MI2CDIException(e);
+				eventList.add(new MIVarChangedEvent(0, varName, false));
+			}
+			for (int j = 0 ; j < changes.length; j++) {
+				String n = changes[j].getVarName();
+				eventList.add(new MIVarChangedEvent(0, n, changes[j].isInScope()));
+			}
+		}
 		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
 		mi.fireEvents(events);
 	}

@@ -29,6 +29,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIStackListArguments;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListLocals;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
+import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIArg;
@@ -38,13 +39,15 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
 import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
  */
-public class VariableManager extends SessionObject implements ICDIVariableManager, IUpdateListener {
+public class VariableManager extends SessionObject implements ICDIVariableManager {
 
 	List variableList;
 	boolean autoupdate;
+	MIVarChange[] noChanges = new MIVarChange[0];
 
 	public VariableManager(Session session) {
 		super(session);
@@ -413,24 +416,6 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.mi.core.cdi.IVarUpdateListener#changeList(MIVarChange[])
-	 */
-	public void changeList(MIVarChange[] changes) {
-		List eventList = new ArrayList(changes.length);
-		for (int i = 0 ; i < changes.length; i++) {
-			String varName = changes[i].getVarName();
-			Variable variable = getVariable(varName);
-			if (variable != null) {
-				eventList.add(new MIVarChangedEvent(0, varName, changes[i].isInScope()));
-			}
-		}
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
-		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
-		mi.fireEvents(events);
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#isAutoUpdate()
 	 */
 	public boolean isAutoUpdate() {
@@ -451,9 +436,33 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#createArgument(ICDIArgumentObject)
 	 */
 	public void update() throws CDIException {
+		List eventList = new ArrayList();
 		Session session = (Session)getSession();
-		UpdateManager mgr = session.getUpdateManager();
-		mgr.update();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		Variable[] vars = getVariables();
+		for (int i = 0; i < vars.length; i++) {
+			String varName = vars[i].getMIVar().getVarName();
+			MIVarChange[] changes = noChanges;
+			MIVarUpdate update = factory.createMIVarUpdate(varName);
+			try {
+				mi.postCommand(update);
+				MIVarUpdateInfo info = update.getMIVarUpdateInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
+				changes = info.getMIVarChanges();
+			} catch (MIException e) {
+				//throw new MI2CDIException(e);
+				eventList.add(new MIVarChangedEvent(0, varName, false));
+			}
+			for (int j = 0 ; j < changes.length; j++) {
+				String n = changes[j].getVarName();
+				eventList.add(new MIVarChangedEvent(0, n, changes[j].isInScope()));
+			}
+		}
+		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
+		mi.fireEvents(events);
 	}
 
 }

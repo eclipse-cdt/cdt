@@ -21,13 +21,10 @@
       <update label="%updateSiteName" url="http://update.eclipse.org/updates"/>
    </url>
    
-   <includes
-         id="org.eclipse.cdt"
-         version="1.0.1"
-         name="%featureName"
-         match="equivalent">
-   </includes>
-   
+  <requires>
+  	  <import plugin="org.eclipse.platform" version="2.0.0" match="compatible" />
+  </requires>   
+ 
    <plugin
          id="org.eclipse.cdt.core"
          download-size="0"

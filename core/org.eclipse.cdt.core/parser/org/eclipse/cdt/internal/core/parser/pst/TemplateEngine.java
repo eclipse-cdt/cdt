@@ -61,8 +61,6 @@ public final class TemplateEngine {
 				TypeInfo newInfo = new TypeInfo( info );
 				newInfo.setTypeSymbol( info.getTypeSymbol().instantiate( template, argMap ) );
 				return newInfo;
-			} else if( info.checkBit( TypeInfo.isTypedef ) && info.getTypeSymbol() != null ){
-				return instantiateTypeInfo( info.getTypeSymbol().getTypeInfo(), template, argMap );
 			}
 			return info;
 		}
@@ -443,7 +441,7 @@ public final class TemplateEngine {
 		if( p.isType( TypeInfo.t_type ) ){
 			symbol = p.getTypeSymbol();
 			ISymbol aSymbol = a.getTypeSymbol();
-			if( symbol == null || ( a.isType( TypeInfo.t_type) && aSymbol == null ) )
+			if( symbol == null || ( a.isType( TypeInfo.t_type) && aSymbol == null ) || a.isType( TypeInfo.t_undef ))
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 			if( symbol instanceof IDeferredTemplateInstance || symbol.isTemplateInstance() ){
 				return deduceFromTemplateTemplateArguments(map, symbol, aSymbol);	

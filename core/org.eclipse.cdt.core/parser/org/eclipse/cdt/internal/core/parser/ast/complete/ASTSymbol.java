@@ -12,8 +12,11 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableError;
+import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
 /**
  * @author jcamelon
@@ -37,4 +40,20 @@ public abstract class ASTSymbol extends ASTSymbolOwner implements ISymbolOwner, 
     	return null;
     }
 
+    public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
+    	ISymbol sym = getSymbol();
+		TypeInfo info = null;
+		try{
+			info = sym.getTypeInfo().getFinalType();
+		} catch( ParserSymbolTableError e ){
+			throw new LookupError();
+		}
+		
+		if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() != null && info.getTypeSymbol() instanceof IContainerSymbol )
+			return (IContainerSymbol) info.getTypeSymbol();
+		else if( sym instanceof IContainerSymbol )
+			return (IContainerSymbol) sym;
+	
+		return null;
+    }
 }

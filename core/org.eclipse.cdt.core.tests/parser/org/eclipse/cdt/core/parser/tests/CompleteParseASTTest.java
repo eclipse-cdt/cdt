@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
@@ -1657,4 +1658,26 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	assertAllReferences( 3, createTaskList( new Task( A, 2 ), new Task( a )));
 	}
     
+    public void testBug50984_ASTMethod_getOwnerClassSpecifier_ClassCastException() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "template < typename _OutIter >                                 " );
+    	writer.write( "class num_put {                                                " );
+    	writer.write( "   typedef _OutIter iter_type;                                 " );
+    	writer.write( "   template< typename _ValueT >                                " );
+    	writer.write( "    iter_type _M_convert_float( iter_type );                   " );
+    	writer.write( "};                                                             " );
+    	writer.write( "template < typename _OutIter >                                 " );
+    	writer.write( "template < typename _ValueT  >                                 " );
+    	writer.write( "_OutIter num_put<_OutIter>::_M_convert_float( _OutIter ) { }   " );
+    	
+    	Iterator i = parse( writer.toString() ).getDeclarations();
+    	
+    	IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+    	IASTClassSpecifier num_put = (IASTClassSpecifier) template.getOwnedDeclaration();
+    	IASTTemplateDeclaration defn = (IASTTemplateDeclaration) i.next();
+    	IASTMethod convert = (IASTMethod) defn.getOwnedDeclaration();
+    	
+    	assertEquals( convert.getOwnerClassSpecifier(), num_put );
+   	}
 }

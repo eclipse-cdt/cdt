@@ -95,9 +95,6 @@ public class ParserSymbolTable {
 		return new TemplateFactory( this );
 	}
 	
-//	public ISpecializedSymbol newSpecializedSymbol( String name, TypeInfo.eType type ){
-//		return new Declaration( this, name, type );
-//	}		
 	/**
 	 * Lookup the name from LookupData starting in the inDeclaration
 	 * @param data
@@ -107,10 +104,6 @@ public class ParserSymbolTable {
 	 */
 	static protected void lookup( LookupData data, IContainerSymbol inSymbol ) throws ParserSymbolTableException
 	{
-//		if( data.type != TypeInfo.t_any && data.type.compareTo(TypeInfo.t_class) < 0 && data.upperType.compareTo(TypeInfo.t_union) > 0 ){
-//			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
-//		}
-		
 		//handle namespace aliases
 		if( inSymbol.isType( TypeInfo.t_namespace ) ){
 			ISymbol symbol = inSymbol.getTypeSymbol();
@@ -953,27 +946,6 @@ public class ParserSymbolTable {
 				resolvedSymbol = resolveFunction( data, functionList );
 			}
 		}
-		if( resolvedSymbol != null && resolvedSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
-			ISymbol symbol = resolvedSymbol.getTypeSymbol();
-			if( symbol == null )
-				return resolvedSymbol;
-			
-			TypeInfo info = ParserSymbolTable.getFlatTypeInfo( symbol.getTypeInfo() );
-			
-			symbol = info.getTypeSymbol();
-			ISymbol newSymbol = null;
-			if( symbol != null ){
-				newSymbol = (ISymbol) symbol.clone();
-				newSymbol.setName( resolvedSymbol.getName() );
-			} else {
-				newSymbol = resolvedSymbol.getSymbolTable().newSymbol( resolvedSymbol.getName() );
-				newSymbol.setTypeInfo( info );
-			}
-			newSymbol.setASTExtension( resolvedSymbol.getASTExtension() );
-			newSymbol.setContainingSymbol( resolvedSymbol.getContainingSymbol() );
-			resolvedSymbol = newSymbol;
-		}
-		
 		return resolvedSymbol;
 	}
 
@@ -1978,7 +1950,6 @@ public class ParserSymbolTable {
 	 * The top level TypeInfo represents modifications to the object and the
 	 * remaining TypeInfo's represent the object.
 	 */
-	// TODO move this to ITypeInfo ?
 	static protected TypeInfo getFlatTypeInfo( TypeInfo topInfo ){
 		TypeInfo returnInfo = topInfo;
 		TypeInfo info = null;
@@ -2270,7 +2241,6 @@ public class ParserSymbolTable {
 		}
 		
 		if( ! (qualifyingSymbol instanceof IDerivableContainerSymbol) ){
-//			throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError ); //TODO - Andrew, why is this an error?
 			return ASTAccessVisibility.PUBLIC;
 		}
 		

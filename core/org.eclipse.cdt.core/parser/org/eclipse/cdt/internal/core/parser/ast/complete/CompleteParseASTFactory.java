@@ -2879,14 +2879,22 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int startingLine, int nameOffset, int nameEndOffset, int nameLine) throws ASTSemanticException
     {
     	IContainerSymbol containerSymbol = scopeToSymbol(scope);
-    	ISymbol newSymbol = pst.newSymbol( name, TypeInfo.t_type);
-    	newSymbol.getTypeInfo().setBit( true,TypeInfo.isTypedef );
-    
-		ISymbol typeSymbol = cloneSimpleTypeSymbol( EMPTY_STRING, mapping, new ArrayList() ); 
+		ISymbol typeSymbol = cloneSimpleTypeSymbol( name, mapping, new ArrayList() );
+		
+		if( typeSymbol == null )
+			handleProblem( scope, IProblem.SEMANTICS_RELATED, name, nameOffset, nameEndOffset, nameLine );
+		
 		setPointerOperators( typeSymbol, mapping.getPointerOperators(), mapping.getArrayModifiers() );
 		
-		newSymbol.setTypeSymbol( typeSymbol );
-		
+		if( typeSymbol.getType() != TypeInfo.t_type ){
+			ISymbol newSymbol = pst.newSymbol( name, TypeInfo.t_type);
+	    	newSymbol.getTypeInfo().setBit( true,TypeInfo.isTypedef );
+	    	newSymbol.setTypeSymbol( typeSymbol );
+	    	typeSymbol = newSymbol;
+		} else {
+			typeSymbol.getTypeInfo().setBit( true,TypeInfo.isTypedef );
+		}
+	
     	List references = new ArrayList();
 		if( mapping.getTypeSpecifier() instanceof ASTSimpleTypeSpecifier ) 
 	    {
@@ -2895,14 +2903,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	
     	try
         {
-            containerSymbol.addSymbol( newSymbol );
+            containerSymbol.addSymbol( typeSymbol );
         }
         catch (ParserSymbolTableException e)
         {
         	handleProblem(e.createProblemID(), name );
         }
-        ASTTypedef d = new ASTTypedef( newSymbol, mapping, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, references );
-        attachSymbolExtension(newSymbol, d, true );
+        ASTTypedef d = new ASTTypedef( typeSymbol, mapping, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, references );
+        attachSymbolExtension(typeSymbol, d, true );
         return d; 
     }
     /* (non-Javadoc)

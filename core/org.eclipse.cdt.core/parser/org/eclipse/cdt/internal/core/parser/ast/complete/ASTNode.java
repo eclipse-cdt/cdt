@@ -17,9 +17,6 @@ import java.util.ListIterator;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
-import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ast.SymbolIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IExtensibleSymbol;
@@ -28,7 +25,6 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableError;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.TypeFilter;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
 /**
  * @author aniefer
@@ -40,7 +36,7 @@ public class ASTNode implements IASTNode {
 	 */
 	public ILookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) throws LookupError, ASTNotImplementedException {
 
-		if( ! ( this instanceof ISymbolOwner ) || ( context != null && !(context instanceof ISymbolOwner) ) ){
+		if( ! ( this instanceof ISymbolOwner ) ){
 			return null;
 		}
 		
@@ -49,7 +45,7 @@ public class ASTNode implements IASTNode {
 			throw new LookupError();
 		}
 		IContainerSymbol thisContainer = (IContainerSymbol) symbol; 
-		IContainerSymbol qualification = getQualificationSymbol(context);
+		IContainerSymbol qualification = ( context != null ) ? ((ASTNode)context).getLookupQualificationSymbol() : null;
 		
 		if( thisContainer.getSymbolTable().getParserMode() != ParserMode.COMPLETION_PARSE ){
 			throw new ASTNotImplementedException();
@@ -126,33 +122,8 @@ public class ASTNode implements IASTNode {
 	 * @return
 	 * @throws LookupError
 	 */
-	protected IContainerSymbol getQualificationSymbol(IASTNode context) throws LookupError {
-		if( context == null )
-			return null;
-	
-		ISymbol sym = null;	
-		if( context instanceof IASTTypedefDeclaration ||
-			context instanceof IASTVariable           ||
-			context instanceof IASTParameterDeclaration )
-		{
-			sym = ((ISymbolOwner)context).getSymbol();
-			TypeInfo info = null;
-			try{
-				info = sym.getTypeInfo().getFinalType();
-			} catch( ParserSymbolTableError e ){
-				throw new LookupError();
-			}
-			sym = info.getTypeSymbol();
-		}
-		else
-		{
-			sym = (IContainerSymbol) ((ISymbolOwner)context).getSymbol();	
-		}
-		
-		if( sym == null || !(sym instanceof IContainerSymbol) ){
-			throw new LookupError();
-		}
-		return (IContainerSymbol) sym;
+	public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
+		throw new LookupError();
 	}
 
 	private class Result implements ILookupResult{

@@ -304,17 +304,18 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 			}
 		}
 
-		if( found != null && found.getTypeInfo().isForwardDeclaration() && found.getTypeSymbol() == symbol ){
+		if( found != null ){
 			//in defining the explicit specialization for a member function, the factory would have set 
 			//the specialization as the definition of the original declaration, which it is not
-			found.setTypeSymbol( null );
-		}
-		
-		//TODO, once we can instantiate members as we need them instead of at the same time as the class
-		//then found should stay as the instance, for now though, we need the original (not 100% correct
-		//but the best we can do for now)
-		while( found.isTemplateInstance() ){
-			found = found.getInstantiatedSymbol();
+			if( found.getTypeInfo().isForwardDeclaration() && found.getTypeSymbol() == symbol )
+				found.setTypeSymbol( null );
+			
+			//TODO, once we can instantiate members as we need them instead of at the same time as the class
+			//then found should stay as the instance, for now though, we need the original (not 100% correct
+			//but the best we can do for now)
+			while( found.isTemplateInstance() ){
+				found = found.getInstantiatedSymbol();
+			}
 		}
 		
 		if( found != null ){

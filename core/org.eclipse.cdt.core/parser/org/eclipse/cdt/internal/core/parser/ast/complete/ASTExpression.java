@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
+import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
 /**
  * @author jcamelon
@@ -307,5 +309,21 @@ public class ASTExpression extends ASTNode implements IASTExpression
 			stringRepresentation = buffer.toString();
 		}
 		return stringRepresentation;
+	}
+	
+	public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
+		ExpressionResult result = getResultType();
+		TypeInfo type = (result != null ) ? getResultType().getResult() : null;
+		
+		if( type != null ){
+			type = type.getFinalType();
+			if( type.isType( TypeInfo.t_type ) && 
+				type.getTypeSymbol() != null   && type.getTypeSymbol() instanceof IContainerSymbol )
+			{
+				return (IContainerSymbol) type.getTypeSymbol();
+			}
+		}
+				
+		return null;
 	}
 }

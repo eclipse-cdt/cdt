@@ -139,7 +139,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 						if( newContainer.getContainedSymbols().containsKey( newSymbol.getName() ) ){
 							Object obj = newContainer.getContainedSymbols().get( newSymbol.getName() );
 							if( obj instanceof List ){
-								((List) obj).add( obj );
+								((List) obj).add( newSymbol );
 							} else {
 								List list = new LinkedList();
 								list.add( obj );

@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
  * @author jcamelon
  *
  */
-public interface IASTTemplateParameter  extends IASTTemplateParameterList, ISourceElementCallbackDelegate {
+public interface IASTTemplateParameter  extends IASTTemplateParameterList, IASTTypeSpecifier, ISourceElementCallbackDelegate {
 
 	public class ParamKind extends Enum
 	{

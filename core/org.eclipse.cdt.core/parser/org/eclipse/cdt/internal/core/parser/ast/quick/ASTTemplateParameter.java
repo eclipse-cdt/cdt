@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 
@@ -92,6 +94,13 @@ public class ASTTemplateParameter implements IASTTemplateParameter
 	 * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
 	 */
 	public void exitScope(ISourceElementRequestor requestor) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind[], org.eclipse.cdt.core.parser.ast.IASTNode)
+	 */
+	public ILookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) throws LookupError, ASTNotImplementedException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

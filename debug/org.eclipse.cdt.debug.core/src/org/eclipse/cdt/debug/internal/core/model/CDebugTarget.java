@@ -1823,7 +1823,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void setCurrentThread( IThread thread ) throws DebugException
 	{
-		if ( !isAvailable() || thread == null || !(thread instanceof CThread) )
+		if ( !isSuspended() || !isAvailable() || thread == null || !(thread instanceof CThread) )
 		{
 			return;
 		}

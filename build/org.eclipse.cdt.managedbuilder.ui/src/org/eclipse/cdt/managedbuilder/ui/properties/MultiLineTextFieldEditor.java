@@ -236,11 +236,10 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 
 		title = new Label(parent, SWT.UP);
+		title.setFont(parent.getFont());
 		this.compTitle = getLabelText();
 		title.setText(this.compTitle);
-		GridData gd1 = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		gd1.widthHint = 80;
-		title.setLayoutData(gd1);
+		title.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 		textField = getTextControl(parent);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);

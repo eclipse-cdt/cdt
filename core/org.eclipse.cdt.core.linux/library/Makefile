@@ -7,7 +7,7 @@ JDK_OS_INCLUDES=/usr/local/jdk/include/linux
 CC=gcc
 LIB_NAME = libspawner.so
 LIB_NAME_FULL = ../os/linux/x86/libspawner.so
-OBJS=spawner.o io.o exec_unix.o
+OBJS=spawner.o io.o exec_unix.o pfind.o
 CPPFLAGS = -I. -I$(JDK_INCLUDES) -I$(JDK_OS_INCLUDES)
 CFLAGS +=-fpic  -D_REENTRANT
 

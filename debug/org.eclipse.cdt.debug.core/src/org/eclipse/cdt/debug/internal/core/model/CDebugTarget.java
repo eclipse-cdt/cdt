@@ -228,40 +228,6 @@ public class CDebugTarget extends CDebugElement
 						 String name,
 						 IProcess debuggeeProcess,
 						 IProcess debuggerProcess,
-						 IProject project,
-						 boolean allowsTerminate,
-						 boolean allowsDisconnect )
-	{
-		super( null );
-		setLaunch( launch );
-		setTargetType( targetType );
-		setDebugTarget( this );
-		setName( name );
-		setProcesses( debuggeeProcess, debuggerProcess );
-		setCDITarget( cdiTarget );
-		setBreakpoints( new HashMap( 5 ) );
-		setTemporaryBreakpoints( new ArrayList() );
-		getLaunch().setSourceLocator( createSourceLocator( project ) );
-		setConfiguration( cdiTarget.getSession().getConfiguration() );
-		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
-		fSupportsDisconnect = allowsDisconnect & getConfiguration().supportsDisconnect();
-		setThreadList( new ArrayList( 5 ) );
-		initialize();
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
-		DebugPlugin.getDefault().getExpressionManager().addExpressionListener( this );
-		getCDISession().getEventManager().addEventListener( this );
-	}
-
-	/**
-	 * Constructor for CDebugTarget.
-	 * @param target
-	 */
-	public CDebugTarget( ILaunch launch,
-						 int targetType, 
-						 ICDITarget cdiTarget, 
-						 String name,
-						 IProcess debuggeeProcess,
-						 IProcess debuggerProcess,
 						 IFile file,
 						 boolean allowsTerminate,
 						 boolean allowsDisconnect )

@@ -316,7 +316,7 @@ public class CModelManager implements IResourceChangeListener {
 			registerCModelDelta(delta); 
 		} else if (type == ICElement.C_BINARY) {
 			if (! ((IBinary)celement).isObject()) {
-System.out.println("RELEASE Binary " + celement.getElementName());
+//System.out.println("RELEASE Binary " + celement.getElementName());
 				CProject cproj = (CProject)celement.getCProject();
 				BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
 				container.removeChild(celement);

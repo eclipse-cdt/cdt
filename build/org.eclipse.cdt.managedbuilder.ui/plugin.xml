@@ -1193,7 +1193,7 @@
                outputs="exe"
                id="cdt.managedbuild.tool.gnu.cpp.linker">
          </toolReference>
-         <toolReference id="cdt.managedbuild.tool.gnu.windres"/>
+         <!--toolReference id="cdt.managedbuild.tool.gnu.windres"/-->
       </target>
       <target
             name="%TargetName.cygw.so"

@@ -109,7 +109,8 @@ import org.eclipse.ui.part.ViewPart;
  */
 
 public class DOMAST extends ViewPart {
-   private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"; //$NON-NLS-1$
+   private static final String CLEAR = "Clear"; //$NON-NLS-1$
+private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"; //$NON-NLS-1$
    private static final String EXTENSION_CXX = "CXX"; //$NON-NLS-1$
    private static final String EXTENSION_CPP = "CPP"; //$NON-NLS-1$
    private static final String EXTENSION_CC = "CC"; //$NON-NLS-1$
@@ -132,6 +133,7 @@ public class DOMAST extends ViewPart {
    private Action              refreshAction;
    private Action			   expandAllAction;
    private Action			   collapseAllAction;
+   private Action			   clearAction;
    private IFile               file              = null;
    private IEditorPart         part              = null;
    private ParserLanguage              lang              = null;
@@ -408,8 +410,11 @@ public class DOMAST extends ViewPart {
    private void fillLocalToolBar(IToolBarManager manager) {
       manager.add(expandAllAction);
       manager.add(collapseAllAction);
+      manager.add(new Separator());
    	  manager.add(refreshAction);
    	  manager.add(loadActiveEditorAction);
+   	  manager.add(new Separator());
+   	  manager.add(clearAction);
       manager.add(new Separator());
       drillDownAdapter.addNavigationActions(manager);
    }
@@ -522,7 +527,17 @@ public class DOMAST extends ViewPart {
      collapseAllAction.setText(COLLAPSE_ALL);
      collapseAllAction.setToolTipText(COLLAPSE_ALL);
      collapseAllAction.setImageDescriptor(DOMASTPluginImages.DESC_COLLAPSE_ALL);
-      
+
+     clearAction = new Action() {
+        public void run() {
+        	viewer.setContentProvider(new ViewContentProvider(null));
+        	viewer.refresh();
+        }
+     };
+     clearAction.setText(CLEAR);
+     clearAction.setToolTipText(CLEAR);
+     clearAction.setImageDescriptor(DOMASTPluginImages.DESC_CLEAR);
+     
       openDeclarationsAction = new DisplayDeclarationsAction();
       openDeclarationsAction.setText(OPEN_DECLARATIONS);
       openDeclarationsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()

@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ClearMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.actions.MemoryActionSelectionGroup;
+import org.eclipse.cdt.debug.internal.ui.actions.MemoryFormatAction;
 import org.eclipse.cdt.debug.internal.ui.actions.MemoryNumberOfColumnAction;
 import org.eclipse.cdt.debug.internal.ui.actions.MemorySizeAction;
 import org.eclipse.cdt.debug.internal.ui.actions.RefreshMemoryAction;
@@ -57,6 +58,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 								   IDebugExceptionHandler
 {
 	private IDebugModelPresentation fModelPresentation = null;
+	private MemoryActionSelectionGroup fMemoryFormatGroup = null;
 	private MemoryActionSelectionGroup fMemorySizeGroup = null;
 	private MemoryActionSelectionGroup fMemoryNumberOfColumnsGroup = null;
 
@@ -108,6 +110,9 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		setAction( "ShowAscii", action ); //$NON-NLS-1$
 		add( (ShowAsciiAction)action );
 
+		fMemoryFormatGroup = new MemoryActionSelectionGroup();
+		createFormatActionGroup( fMemoryFormatGroup );
+
 		fMemorySizeGroup = new MemoryActionSelectionGroup();
 		createSizeActionGroup( fMemorySizeGroup );
 
@@ -147,7 +152,17 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		menu.appendToGroup( ICDebugUIConstants.MEMORY_GROUP, getAction( "ClearMemory" ) ); //$NON-NLS-1$
 		menu.appendToGroup( ICDebugUIConstants.MEMORY_GROUP, getAction( "SaveMemoryChanges" ) ); //$NON-NLS-1$
 
-		MenuManager subMenu = new MenuManager( "Memory Unit Size         " );
+		MenuManager subMenu = new MenuManager( "Format" );
+		{
+			IAction[] actions = fMemoryFormatGroup.getActions();
+			for ( int i = 0; i < actions.length; ++i )
+			{
+				subMenu.add( actions[i] );
+			}
+		}
+		menu.appendToGroup( ICDebugUIConstants.FORMAT_GROUP, subMenu );
+
+		subMenu = new MenuManager( "Memory Unit Size         " );
 		{
 			IAction[] actions = fMemorySizeGroup.getActions();
 			for ( int i = 0; i < actions.length; ++i )
@@ -220,6 +235,8 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	 */
 	public void dispose()
 	{
+		removeActionGroup( fMemoryFormatGroup );
+		fMemoryFormatGroup.dispose();
 		removeActionGroup( fMemorySizeGroup );
 		fMemorySizeGroup.dispose();
 		removeActionGroup( fMemoryNumberOfColumnsGroup );
@@ -309,6 +326,21 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		for ( int i = 0; i < items.length; ++i )
 		{
 			super.createContextMenu( ((MemoryControlArea)items[i].getControl()).getMemoryText().getControl() );
+		}
+	}
+	
+	private void createFormatActionGroup( MemoryActionSelectionGroup group )
+	{
+		int[] formats = new int[] { IFormattedMemoryBlock.MEMORY_FORMAT_HEX,
+									IFormattedMemoryBlock.MEMORY_FORMAT_SIGNED_DECIMAL,
+									IFormattedMemoryBlock.MEMORY_FORMAT_UNSIGNED_DECIMAL }; 
+		for ( int i = 0; i < formats.length; ++i )
+		{
+			MemoryFormatAction action = new MemoryFormatAction( group, (MemoryViewer)getViewer(), formats[i] );
+			action.setEnabled( false );
+			setAction( action.getActionId(), action ); //$NON-NLS-1$
+			add( action );
+			group.addAction( action );
 		}
 	}
 	

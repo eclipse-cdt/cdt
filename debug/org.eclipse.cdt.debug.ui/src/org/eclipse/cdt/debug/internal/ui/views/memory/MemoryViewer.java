@@ -170,6 +170,12 @@ public class MemoryViewer extends ContentViewer
 		return null;
 	}
 	
+	public boolean canChangeFormat( int format )
+	{
+		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
+		return ( block != null && block.canChangeFormat( format ) );
+	}
+	
 	public boolean canUpdate()
 	{
 		return ( ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock() != null );
@@ -224,6 +230,22 @@ public class MemoryViewer extends ContentViewer
 	public boolean canShowAscii()
 	{
 		return ((MemoryControlArea)fTabFolder.getSelection().getControl()).getPresentation().canDisplayAscii();
+	}
+	
+	public int getCurrentFormat()
+	{
+		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
+		return ( block != null ) ? block.getFormat() : 0;
+	}
+	
+	public void setFormat( int format ) throws DebugException
+	{
+		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
+		if ( block != null )
+		{ 
+			block.reformat( format, block.getWordSize(), block.getNumberOfRows(), block.getNumberOfColumns() );
+			((MemoryControlArea)fTabFolder.getSelection().getControl()).refresh();
+		}
 	}
 	
 	public int getCurrentWordSize()

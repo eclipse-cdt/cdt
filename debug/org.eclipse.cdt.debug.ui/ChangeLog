@@ -1,3 +1,12 @@
+2002-11-03 Mikhail Khodjaiants
+	Implementation of the "Format/Decimal" and "Format/Unsigned Decimal" actions of the Memory view.
+	* MemoryFormataction.java
+	* MemorySizeAction.java
+	* MemoryNumberOfColumnsAction.java
+	* MemoryPresentation.java
+	* MemoryViewer.java
+	* MemoryView.java
+
 2002-11-01 Mikhail Khodjaiants
 	Implementing decimal format support of the Memory view.
 	* MemoryPresentation.java

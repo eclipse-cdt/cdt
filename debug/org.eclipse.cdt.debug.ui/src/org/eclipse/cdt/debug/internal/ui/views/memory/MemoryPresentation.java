@@ -525,6 +525,8 @@ public class MemoryPresentation
 	{
 		switch( wordSize )
 		{
+			case IFormattedMemoryBlock.MEMORY_SIZE_BYTE:
+				return ( signed ) ? 4 : 3;
 			case IFormattedMemoryBlock.MEMORY_SIZE_HALF_WORD:
 				return ( signed ) ? 6 : 5;
 			case IFormattedMemoryBlock.MEMORY_SIZE_WORD:
@@ -545,13 +547,17 @@ public class MemoryPresentation
 	private String convertToDecimal( int wordSize, String item, boolean signed )
 	{
 		String result = "";
+		boolean le = getMemoryBlock().isLittleEndian();
 		switch( wordSize )
 		{
+			case IFormattedMemoryBlock.MEMORY_SIZE_BYTE:
+				result = Long.toString( ( signed ) ? CDebugUtils.toByte( item.toCharArray(), le ) : CDebugUtils.toUnsignedByte( item.toCharArray(), le ) );
+				break;
 			case IFormattedMemoryBlock.MEMORY_SIZE_HALF_WORD:
-				result = Long.toString( CDebugUtils.toShort( item.toCharArray(), signed ) );
+				result = Long.toString( ( signed ) ? CDebugUtils.toShort( item.toCharArray(), le ) : CDebugUtils.toUnsignedShort( item.toCharArray(), le ) );
 				break;
 			case IFormattedMemoryBlock.MEMORY_SIZE_WORD:
-				result = Long.toString( CDebugUtils.toInt( item.toCharArray(), signed ) );
+				result = Long.toString( ( signed ) ? CDebugUtils.toInt( item.toCharArray(), le ) : CDebugUtils.toUnsignedInt( item.toCharArray(), le ) );
 				break;
 		}
 		return CDebugUtils.prependString( result, getDataItemLength(), ' ' );

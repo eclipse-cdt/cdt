@@ -53,7 +53,6 @@ public class StandardBuildManager implements IScannerInfoProvider {
 		try {
 			buildInfo = (IStandardBuildInfo)resource.getSessionProperty(buildInfoProperty);
 		} catch (CoreException e) {
-			return buildInfo;
 		}
 
 		// Try to load one for the project		

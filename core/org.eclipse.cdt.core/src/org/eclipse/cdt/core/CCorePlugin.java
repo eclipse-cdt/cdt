@@ -518,8 +518,8 @@ public class CCorePlugin extends Plugin {
 			projectHandle.open(monitor);
 
 			// Add C Nature ... does not add duplicates
-			CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
 			mapCProjectOwner(projectHandle, projectID, false);
+			CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
 		} finally {
 			//monitor.done();
 		}

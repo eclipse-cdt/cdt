@@ -3,6 +3,7 @@
 	<name>org.eclipse.cdt.debug.core</name>
 	<comment></comment>
 	<projects>
+		<project>org.eclipse.cdt.core</project>
 		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime</project>

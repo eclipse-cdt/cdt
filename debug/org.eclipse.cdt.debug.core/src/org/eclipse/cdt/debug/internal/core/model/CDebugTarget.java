@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +17,6 @@ import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICBreakpoint;
 import org.eclipse.cdt.debug.core.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
-import org.eclipse.cdt.debug.core.ICSourceLocator;
 import org.eclipse.cdt.debug.core.ICWatchpoint;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
@@ -53,12 +53,16 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
+import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.CSourceLocator;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -177,11 +181,6 @@ public class CDebugTarget extends CDebugElement
 	private int fSuspendCount = 0;
 
 	/**
-	 * The source locator for this target.
-	 */
-	private ICSourceLocator fSourceLocator = null;
-
-	/**
 	 * Collection of breakpoints added to this target. Values are of type <code>ICBreakpoint</code>.
 	 */
 	private HashMap fBreakpoints;
@@ -216,11 +215,12 @@ public class CDebugTarget extends CDebugElement
 		setCDITarget( cdiTarget );
 		setBreakpoints( new HashMap( 5 ) );
 		setTemporaryBreakpoints( new ArrayList() );
+// Temporary
+		getLaunch().setSourceLocator( createSourceLocator( project ) );
+
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
 		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
 		fSupportsDisconnect = allowsDisconnect & getConfiguration().supportsDisconnect();
-		fSourceLocator = createSourceLocator( project );
-		launch.setSourceLocator( fSourceLocator );
 		setThreadList( new ArrayList( 5 ) );
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
@@ -355,9 +355,9 @@ public class CDebugTarget extends CDebugElement
 		if ( breakpoint instanceof ICBreakpoint )
 		{
 			ISourceLocator sl =  getSourceLocator();
-			if ( sl != null && sl instanceof ICSourceLocator )
+			if ( sl != null && sl instanceof CSourceLocator )
 			{
-				return ((ICSourceLocator)sl).contains( breakpoint.getMarker().getResource() );
+				return ((CSourceLocator)sl).contains( breakpoint.getMarker().getResource() );
 			}
 			return true;
 		}
@@ -1513,21 +1513,6 @@ public class CDebugTarget extends CDebugElement
 		super.fireSuspendEvent( detail );
 	}
 	
-	/**
-	 * Creates the source locator for this target.
-	 * 
-	 * @return the source locator for this target
-	 */
-	private ICSourceLocator createSourceLocator( IProject project )
-	{
-		return new CSourceLocator( this, project );
-	}
-	
-	protected ICSourceLocator getSourceLocator()
-	{
-		return fSourceLocator;
-	}
-	
 	protected void setCurrentThread()
 	{
 		ICDIThread currentCDIThread = null;
@@ -1850,5 +1835,19 @@ public class CDebugTarget extends CDebugElement
 		{
 			targetRequestFailed( e.getMessage(), null );
 		}
+	}
+
+	protected ISourceLocator getSourceLocator()
+	{
+		return getLaunch().getSourceLocator();
+	}
+	
+	protected ISourceLocator createSourceLocator( IProject project )
+	{
+		CSourceLocator locator = new CSourceLocator( project );
+		List list = Arrays.asList( locator.getSourceLocations() );
+		list.add( new CDirectorySourceLocation( new Path( project.getLocation().toOSString() ) ) );
+		locator.setSourceLocations( (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] ) );
+		return locator;
 	}
 }

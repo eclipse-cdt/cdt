@@ -22,8 +22,10 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
@@ -177,7 +179,9 @@ public class CStackFrame extends CDebugElement
 	{
 		if ( isSuspended() )
 		{
-			return ((CDebugTarget)getDebugTarget()).getSourceLocator().getLineNumber( this );
+			ISourceLocator locator = ((CDebugTarget)getDebugTarget()).getSourceLocator();
+			if ( locator != null && locator instanceof ICSourceLocator )
+				return ((ICSourceLocator)locator).getLineNumber( this );
 		}
 		return -1;
 	}

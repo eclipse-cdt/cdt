@@ -3,11 +3,13 @@
  * All Rights Reserved.
  * 
  */
-package org.eclipse.cdt.debug.core;
+package org.eclipse.cdt.debug.core.sourcelookup;
 
+import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ISourceLocator;
 
@@ -77,10 +79,16 @@ public interface ICSourceLocator extends ISourceLocator
 	Object getSourceElementForAddress( long address );
 	
 	/**
-	 * Returns whether the given resource is contained in this source locator.
+	 * Returns the source locations of this locator.
 	 * 
-	 * @param resource the resource
-	 * @return whether the given resource is contained in this source locator
+	 * @return the source locations of this locator
 	 */
-	boolean contains( IResource resource ); 
+	ICSourceLocation[] getSourceLocations();
+	
+	/**
+	 * Sets the source locations of this locator.
+	 * 
+	 * @param location - an array of source locations
+	 */
+	void setSourceLocations( ICSourceLocation[] locations );
 }

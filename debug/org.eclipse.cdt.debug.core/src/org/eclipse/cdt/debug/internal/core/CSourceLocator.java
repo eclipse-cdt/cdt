@@ -6,9 +6,13 @@
 
 package org.eclipse.cdt.debug.internal.core;
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.ICSourceLocator;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
+import org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.model.*;
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.resources.IContainer;
@@ -30,14 +34,9 @@ import org.eclipse.debug.core.model.IStackFrame;
 public class CSourceLocator implements ICSourceLocator
 {
 	/**
-	 * The project in which to look for source.
+	 * The array of source locations associated with this locator.
 	 */
-	private IProject fProject;
-
-	/**
-	 * The debug target this source locator is associated with.
-	 */
-	private CDebugTarget fTarget;
+	private ICSourceLocation[] fSourceLocations;
 
 	/**
 	 * The source presentation mode.
@@ -49,10 +48,17 @@ public class CSourceLocator implements ICSourceLocator
 	/**
 	 * Constructor for CSourceLocator.
 	 */
-	public CSourceLocator( CDebugTarget target, IProject project )
+	public CSourceLocator( IProject project )
 	{
-		fProject = project;
-		fTarget = target;
+		fSourceLocations = getDefaultSourceLocations( project );
+	}
+
+	/**
+	 * Constructor for CSourceLocator.
+	 */
+	public CSourceLocator( ICSourceLocation[] locations )
+	{
+		fSourceLocations = locations;
 	}
 
 	/* (non-Javadoc)
@@ -129,12 +135,27 @@ public class CSourceLocator implements ICSourceLocator
 	private Object getSourceInput( IStackFrameInfo info )
 	{
 		Object result = null;
-		if ( info != null && fProject != null )
+		if ( info != null )
 		{
 			setInternalMode( ICSourceLocator.MODE_SOURCE );
 			String fileName = info.getFile();
 			if ( fileName != null && fileName.length() > 0 )
-				result = findFile( fProject, fileName );
+			{
+				ICSourceLocation[] locations = getSourceLocations();
+				for ( int i = 0; i < locations.length; ++i )
+				{
+					try
+					{
+						result = locations[i].findSourceElement( fileName );
+					}
+					catch( CoreException e )
+					{
+						// do nothing
+					}
+					if ( result != null )
+						break;
+				}
+			}
 		}		
 		// switch to assembly mode if source file not found	
 /*
@@ -144,84 +165,30 @@ public class CSourceLocator implements ICSourceLocator
 		return result;
 	}
 
-	private Object findFile( IProject project, String fileName )
-	{
-		IPath path = new Path( fileName );
-		fileName = path.toOSString();
-
-		/*
-		 * We have a few possible cases: either we get a source file name with no path,
-		 * or we get a fully-qualified filename from the debugger.
-		 */
-		String pPath = new String( project.getLocation().toOSString() );
-		int i;
-
-		if ( (i = fileName.indexOf( pPath )) >= 0 ) 
-		{
-			i += pPath.length() + 1;
-			if ( fileName.length() > i )
-				return project.getFile( fileName.substring( i ) );
-		} 
-		// Then just do a search on our project, and if that fails, any dependent projects
-		IFile f = null;
-		try 
-		{
-			f = findFile( (IContainer)project, path );
-			if ( f != null ) 
-				return f;
-			if ( f == null ) 
-			{
-				IProject[] p = project.getReferencedProjects();
-				for ( int j= 0; j < p.length; j++ ) 
-				{
-					if ( (f = findFile( (IContainer)p[j], new Path( fileName ) )) != null ) 
-					{
-						return f;
-					}
-				}
-			}
-		} 
-		catch( CoreException e ) 
-		{
-		}
-		if ( f != null )
-			return f;
-		// Search for an external file
-//		return findExternalFile( fileName );
-		return null;
-	}
-
-	private IFile findFile( IContainer parent, IPath name ) throws CoreException 
-	{
-		if ( name.isAbsolute() )
-		{
-			if ( name.toOSString().startsWith( parent.getLocation().toOSString() ) )
-			{
-				name = new Path( name.toOSString().substring( parent.getLocation().toOSString().length() + 1 ) );
-			}
-		}
-		IResource found = parent.findMember( name );
-		if ( found != null && found.getType() == IResource.FILE ) 
-		{
-			return (IFile)found;
-		}
-		IResource[] children= parent.members();
-		for ( int i= 0; i < children.length; i++ ) 
-		{
-			if ( children[i] instanceof IContainer ) 
-			{
-				return findFile( (IContainer)children[i], name );
-			}
-		}
-		return null;		
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getSourceElement(String)
 	 */
 	public Object getSourceElement( String fileName )
 	{
-		return findFile( fProject, fileName );
+		Object result = null;
+		if ( fileName != null && fileName.length() > 0 )
+		{
+			ICSourceLocation[] locations = getSourceLocations();
+			for ( int i = 0; i < locations.length; ++i )
+			{
+				try
+				{
+					result = locations[i].findSourceElement( fileName );
+				}
+				catch( CoreException e )
+				{
+					// do nothing
+				}
+				if ( result != null )
+					break;
+			}
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -245,59 +212,77 @@ public class CSourceLocator implements ICSourceLocator
 	 */
 	public boolean contains( IResource resource )
 	{
-		if ( resource instanceof IProject )
+		ICSourceLocation[] locations = getSourceLocations();
+		for ( int i = 0; i < locations.length; ++i )
 		{
-			if ( fProject.equals( resource ) )
+			if ( resource instanceof IProject )
 			{
-				return true;
-			}
-			IProject[] projects = getReferencedProjects();
-			for ( int i = 0; i < projects.length; ++i )
-			{
-				if ( projects[i].equals( resource ) )
+				if ( locations[i] instanceof CProjectSourceLocation && 
+					 ((CProjectSourceLocation)locations[i]).equals( resource ) )
 				{
 					return true;
 				}
 			}
-			return false;
-		}
-		if ( resource instanceof IFile )
-		{
-			return containsFile( resource.getLocation() );
-		}
-		return false;
-	}
-	
-	protected IProject[] getReferencedProjects()
-	{
-		IProject[] projects = new IProject[0];
-		try
-		{
-			projects = fProject.getReferencedProjects();
-		}
-		catch( CoreException e )
-		{
-			CDebugCorePlugin.log( e );
-		}
-		return projects;
-	}
-	
-	protected boolean containsFile( IPath path )
-	{
-		try 
-		{
-			if ( findFile( (IContainer)fProject, path ) != null )
-				return true;
-			IProject[] p = fProject.getReferencedProjects();
-			for ( int j= 0; j < p.length; j++ ) 
+			if ( resource instanceof IFile )
 			{
-				if ( findFile( (IContainer)p[j], path ) != null ) 
-					return true;
+				try
+				{
+					if ( locations[i].findSourceElement( resource.getLocation().toOSString() ) != null )
+						return true;
+				}
+				catch( CoreException e )
+				{
+				}
 			}
-		} 
-		catch( CoreException e ) 
-		{
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getSourceLocations()
+	 */
+	public ICSourceLocation[] getSourceLocations()
+	{
+		return fSourceLocations;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#setSourceLocations(ICSourceLocation[])
+	 */
+	public void setSourceLocations( ICSourceLocation[] locations )
+	{
+		fSourceLocations = locations;
+	}
+
+	/**
+	 * Returns a default collection of source locations for
+	 * the given project. Default source locations consist
+	 * of the given project and all of its referenced projects .
+	 * 
+	 * @param project a project
+	 * @return a collection of source locations for all required
+	 *  projects
+	 * @exception CoreException 
+	 */
+	public static ICSourceLocation[] getDefaultSourceLocations( IProject project )
+	{
+		ArrayList list = new ArrayList();
+		if ( project != null )
+		{
+			try
+			{
+				IProject[] projects = project.getReferencedProjects();
+				list.add( new CProjectSourceLocation( project ) );
+				for ( int i = 0; i < projects.length; i++ )
+				{
+					list.add( new CProjectSourceLocation( projects[i] ) );
+				}
+			}
+			catch( CoreException e )
+			{
+				// do nothing
+			}
+		}
+		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
 	}
 }

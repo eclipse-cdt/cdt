@@ -32,6 +32,9 @@ public class Elf {
     private Symbol[] dynsym_symbols;
 	private Section  dynsym_sym;
 
+	private String EMPTY_STRING = "";
+
+
 	public class ELFhdr {
 		/* e_ident offsets */
 		public final static int EI_MAG0 = 0;
@@ -162,19 +165,22 @@ public class Elf {
 		public String toString() {
 			try {
 				if ( section_strtab == null ) {
-					section_strtab = new byte[(int)sections[ehdr.e_shstrndx].sh_size];
+					int size = (int)sections[ehdr.e_shstrndx].sh_size;
+					if ( size > efile.length() )
+						return EMPTY_STRING;
+					section_strtab = new byte[size];
 					efile.seek(sections[ehdr.e_shstrndx].sh_offset);
 					efile.read(section_strtab);
 				}
 				int str_size = 0;
 				if ( sh_name > sh_size || ( sh_name + str_size + 1) > section_strtab.length) {
-					return "";
+					return EMPTY_STRING;
 				}
 				while( section_strtab[(int)sh_name + str_size] != 0)
 					str_size++;
 				return new String(section_strtab, (int)sh_name, str_size);
 			} catch (IOException e) {
-				return "";
+				return EMPTY_STRING;
 			}
 		}
 	}
@@ -183,7 +189,7 @@ public class Elf {
 		StringBuffer str = new StringBuffer();
 		byte tmp;
 		if ( index > section.sh_size ) {
-				return "";
+				return EMPTY_STRING;
 			}
 		efile.seek(section.sh_offset + index);
 		while( true ) {
@@ -282,7 +288,7 @@ public class Elf {
 					Section symstr = sections[(int)sym_section.sh_link];
 					name = cppFilt(string_from_elf_section(symstr, (int)st_name ));
 				} catch (IOException e ) {
-					return "";
+					return EMPTY_STRING;
 				}
 			}
 			return name;
@@ -501,11 +507,11 @@ public class Elf {
 							Section symstr = sections[(int)section.sh_link];
 							name = string_from_elf_section(symstr, (int)d_val);
 						} catch (IOException e) {
-							name = "";
+							name = EMPTY_STRING;
 						}
 						break;
 					default:
-						name = "";
+						name = EMPTY_STRING;
 				} 
 			}
 			return name;

@@ -93,7 +93,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilte
 				String programName = AbstractCLaunchDelegate.getProgramName(config);
 				String projectName = AbstractCLaunchDelegate.getProjectName(config);
 				String name = bin.getResource().getProjectRelativePath().toString();
-				if (projectName != null && programName.equals(name)) {
+				if (programName != null && programName.equals(name)) {
 					if (projectName != null && projectName.equals(bin.getCProject().getProject().getName())) {
 						candidateConfigs.add(config);
 					}
@@ -332,9 +332,12 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilte
 	 * @param mode
 	 */
 	private void searchAndLaunch(final Object[] elements, String mode) {
-		final List results = new ArrayList();
 		if (elements != null && elements.length > 0) {
-			try {
+			IBinary bin = null;
+			if (elements.length == 1 && elements[0] instanceof IBinary) {
+				bin = (IBinary)elements[0];
+			} else {
+				final List results = new ArrayList();
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 				IRunnableWithProgress runnable = new IRunnableWithProgress() {
 					public void run(IProgressMonitor pm) throws InterruptedException {
@@ -368,20 +371,25 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilte
 						}
 					}
 				};
-				dialog.run(true, true, runnable);
-			} catch (InterruptedException e) {
-				return;
-			} catch (InvocationTargetException e) {
-				MessageDialog.openError(getShell(), "Application Launcher", e.getMessage());
-				return;
-			}
-			if (results.size() == 0) {
-				MessageDialog.openError(getShell(), "Application Launcher", "Launch failed no binaries");
-			} else {
-				IBinary bin = chooseBinary(results, mode);
-				if (bin != null) {
-					launch(bin, mode);
+				try {
+					dialog.run(true, true, runnable);
+				} catch (InterruptedException e) {
+					return;
+				} catch (InvocationTargetException e) {
+					MessageDialog.openError(getShell(), "Application Launcher", e.getMessage());
+					return;
 				}
+				int count = results.size();
+				if (count == 0) {
+					MessageDialog.openError(getShell(), "Application Launcher", "Launch failed no binaries");
+				} else if (count > 1) {
+					bin = chooseBinary(results, mode);
+				} else {
+					bin = (IBinary)results.get(0);
+				}
+			}
+			if (bin != null) {
+				launch(bin, mode);
 			}
 		} else {
 			MessageDialog.openError(getShell(), "Application Launcher", "Launch failed no project selected");

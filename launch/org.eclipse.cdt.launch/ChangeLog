@@ -1,6 +1,13 @@
 2004-02-18 Alain Magloire
 
-	Remove dprecated Eclipse-2.0 calls;
+	filterClass contribution to be able to use
+	the "Run" context menu shortcut.
+
+	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortcut.java
+
+2004-02-18 Alain Magloire
+
+	Remove deprecated Eclipse-2.0 calls;
 
 	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortcut.java
 

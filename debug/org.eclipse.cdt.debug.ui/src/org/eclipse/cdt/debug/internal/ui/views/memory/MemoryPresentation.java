@@ -425,7 +425,7 @@ public class MemoryPresentation
 		switch( getDataFormat() )
 		{
 			case IFormattedMemoryBlock.MEMORY_FORMAT_HEX:
-				return item;
+				return convertToHex( getWordSize(), item );
 			case IFormattedMemoryBlock.MEMORY_FORMAT_SIGNED_DECIMAL:
 				return convertToDecimal( getWordSize(), item, true );
 			case IFormattedMemoryBlock.MEMORY_FORMAT_UNSIGNED_DECIMAL:
@@ -455,6 +455,25 @@ public class MemoryPresentation
 			return getMemoryBlock().getWordSize();
 		}
 		return 0;
+	}
+
+	/**
+	 * Performs endianness swap (in a brainless, but right most of the time) fashion.
+	 * @param item
+	 * @return
+	 */
+	private String convertToHex( int wordsize, String item )
+	{
+		if( !getMemoryBlock().isLittleEndian() || wordsize == IFormattedMemoryBlock.MEMORY_SIZE_BYTE )
+			return item;
+
+		int length = item.length();
+		StringBuffer ret = new StringBuffer( length );
+		for( int i = length - 2 ; i >= 0 ; i -= 2 )
+		{
+			ret.append( item.substring( i, i + 2 ) ); 
+		}		 
+		return ret.toString();
 	}
 	
 	private String convertToDecimal( int wordSize, String item, boolean signed )

@@ -1,4 +1,8 @@
 2004-02-10 Mikhail Khodjaiants
+	Fix for bug 40108: The memory view does not handle big/little endian.
+	* MemoryPresentation.java
+
+2004-02-10 Mikhail Khodjaiants
 	Fix for bug 51519: Enable 'Format' action if multiple variables are selected. 
 	* VariableFormatActionDelegate.java
 

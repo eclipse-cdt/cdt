@@ -1,3 +1,13 @@
+2003-04-12 Alain Magloire
+
+	Bug 36424,
+	The Binaries/Archives were not deleted in the virtual containers.
+	
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java:
+	createElement() checks for the binaries in the virtual containers also.
+	* mode/org/eclipse/cdt/internal/core/model/CModelManager.java:
+	Remove unused methods.
+
 2003-04-09 Alain Magloire
 
 	Give a chance to the manager to initialize and shutdown gracefully.

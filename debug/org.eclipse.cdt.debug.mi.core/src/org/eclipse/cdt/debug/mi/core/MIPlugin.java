@@ -66,16 +66,16 @@ public class MIPlugin extends Plugin {
 	 * @throws IOException
 	 */
 	public ICDISession createCSession(String program) throws IOException, MIException {
- 		String[] args;
+		String[] args;
 		PTY pty = null;
 		try {
 			pty = new PTY();
 			String ttyName = pty.getSlaveName();
-			args = new String[]{"gdb", "-q", "-nw", "-tty", ttyName, "-i", "mi", program};
+			args = new String[] {"gdb", "-q", "-nw", "-tty", ttyName, "-i", "mi", program};
 		} catch (IOException e) {
 			//e.printStackTrace();
 			pty = null;
-			args = new String[]{"gdb", "-q", "-nw", "-i", "mi", program};
+			args = new String[] {"gdb", "-q", "-nw", "-i", "mi", program};
 		}
 
 		Process gdb = ProcessFactory.getFactory().exec(args);
@@ -104,7 +104,7 @@ public class MIPlugin extends Plugin {
 	 * @throws IOException
 	 */
 	public ICDISession createCSession(String program, String core) throws IOException, MIException {
-		String[]args = new String[]{"gdb", "--quiet", "-nw", "-i", "mi", program, core};
+		String[] args = new String[] {"gdb", "--quiet", "-nw", "-i", "mi", program, core};
 		Process gdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(gdb);
 		return new CSession(session);
@@ -118,7 +118,7 @@ public class MIPlugin extends Plugin {
 	 * @throws IOException
 	 */
 	public ICDISession createCSession(String program, int pid) throws IOException, MIException {
-		String[]args = new String[]{"gdb", "--quiet", "-nw", "-i", "mi", program};
+		String[] args = new String[] {"gdb", "--quiet", "-nw", "-i", "mi", program};
 		Process gdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(gdb);
 		try {
@@ -130,24 +130,34 @@ public class MIPlugin extends Plugin {
 				throw new IOException("No answer");
 			}
 			//@@@ We have to manually set the suspended state when we attach
-			//(assuming the attach works) as a safeguard since GDB man not
-			//notice the attach (the behaviour in gdb 5.0).
 			session.getMIInferior().setSuspended();
 		} catch (MIException e) {
 			throw new IOException("Failed to attach");
 		}
 		return new CSession(session, true);
 	}
-	
-	
+
+	/**
+	 * Convenience method which returns the unique identifier of this plugin.
+	 */
+	public static String getUniqueIdentifier() {
+		if (getDefault() == null) {
+			// If the default instance is not yet initialized,
+			// return a static identifier. This identifier must
+			// match the plugin id defined in plugin.xml
+			return "org.eclipse.cdt.debug.mi.core"; //$NON-NLS-1$
+		}
+		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
+
 	public static void debugLog(String message) {
-	//	if ( getDefault().isDebugging() ) {
-	//		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
-			if (message.endsWith("\n")) {
-				System.err.print(message);
-			} else {
-				System.err.println(message);
-			}
-	//	}
+		//	if ( getDefault().isDebugging() ) {
+		//		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
+		if (message.endsWith("\n")) {
+			System.err.print(message);
+		} else {
+			System.err.println(message);
+		}
+		//	}
 	}
 }

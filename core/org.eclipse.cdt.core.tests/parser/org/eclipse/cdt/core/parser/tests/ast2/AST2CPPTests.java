@@ -1339,11 +1339,9 @@ public class AST2CPPTests extends AST2BaseTest {
                 .getExpression();
         type = CPPVisitor.getExpressionType(ue);
 
-        //when 84749 is fixed, remove this assert and uncomment below.
-        assertSame(type, A);
-        //   		assertTrue( type instanceof IQualifierType );
-        //   		assertSame( ((IQualifierType) type).getType(), A );
-        //   		assertTrue( ((IQualifierType) type).isConst() );
+   		assertTrue( type instanceof IQualifierType );
+   		assertSame( ((IQualifierType) type).getType(), A );
+   		assertTrue( ((IQualifierType) type).isConst() );
     }
 
     public void testBug84710() throws Exception {

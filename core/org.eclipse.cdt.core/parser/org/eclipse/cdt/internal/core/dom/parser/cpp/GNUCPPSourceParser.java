@@ -3705,7 +3705,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         isPureVirtual = true;
                      }
                   }
-                  if (afterCVModifier != LA(1) || LT(1) == IToken.tSEMI) {
+                  if (afterCVModifier != LA(1) || LT(1) == IToken.tSEMI || LT(1) == IToken.tLBRACE) {
                      // There were C++-specific clauses after
                      // const/volatile modifier
                      // Then it is a marker for the method

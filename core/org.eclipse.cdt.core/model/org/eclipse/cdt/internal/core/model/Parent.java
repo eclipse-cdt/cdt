@@ -54,8 +54,7 @@ public abstract class Parent extends CElement {
 		CElementInfo info = getElementInfo();
 		if (info != null)
 			return info.getChildren();
-		else 
-			return new ICElement[]{};
+		return NO_ELEMENTS;
 	}
 
 	/**

@@ -90,8 +90,6 @@ exec0(const char *path, char *const argv[], char *const envp[],
 
 	} else if (childpid != 0) { /* parent */
 
-		char b;
-
 		if (channels != NULL) {
 			/* close the read end of pipe1 */
 			if (close(pipe0[0]) == -1)

@@ -62,8 +62,6 @@ ptym_open(char * pts_name)
 	fdm = open(pts_name, O_RDWR);
 	if (fdm < 0)
 		return -1;
-	if (fdm < 0)
-		return -1;
 	if (grantpt(fdm) < 0) { /* grant access to slave */
 		close(fdm);
 		return -2;
@@ -91,6 +89,7 @@ ptys_open(int fdm, char * pts_name)
 		close(fdm);
 		return -5;
 	}
+
 	if (ioctl(fds, I_PUSH, "ptem") < 0) {
 		printf("pterm:%s\n", strerror(errno));
 		close(fdm);

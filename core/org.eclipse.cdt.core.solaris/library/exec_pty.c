@@ -7,6 +7,8 @@
 #include <libgen.h>
 #include <stdlib.h>
 #include <termios.h>
+#include <stropts.h>
+#include <sys/ioctl.h>
 
 /* from pfind.c */
 extern char *pfind(const char *name);
@@ -71,7 +73,7 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 			dup2(fds, STDIN_FILENO);   /* dup stdin */
 			dup2(fds, STDOUT_FILENO);  /* dup stdout */
 			dup2(pipe2[1], STDERR_FILENO);  /* dup stderr */
-			close(fds);  /* done with fds. */
+			close(fds);  /* done with 	fds. */
 		}
 
 		/* Close all the fd's in the child */
@@ -93,6 +95,7 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 
 	} else if (childpid != 0) { /* parent */
 
+		ioctl(fdm, I_PUSH, "ptem");
 		set_noecho(fdm);
 		if (channels != NULL) {
 			/* close the write end of pipe1 */
@@ -127,14 +130,21 @@ int main(int argc, char **argv, char **envp) {
 	fdm = ptym_open(pts_name);
 	status =  exec_pty(path, argv, envp, ".", channels, pts_name, fdm);
 	if (status >= 0) {
-		app_stdin = fdopen(channels[0], "w");	
+		//app_stdin = fdopen(channels[0], "w");	
 		app_stdout = fdopen(channels[1], "r");	
 		app_stderr = fdopen(channels[2], "r");	
-		if (app_stdout == NULL || app_stderr == NULL || app_stdin == NULL) {
+		if (app_stdout == NULL || app_stderr == NULL /*|| app_stdin == NULL*/) {
 			fprintf(stderr, "PROBLEMS\n");
 		} else {
-			fputs("foo\n", app_stdin);
-			fputs("bar\n", app_stdin);
+			printf("PID %d\n", status);
+			if (isatty(fdm)) {
+				printf("Is atty\n");
+			}
+			write(fdm, "foo\n", 4);
+			write(fdm, "bar\n", 4);
+			//fputs("foo\n", app_stdin);
+			//fputs("bar\n", app_stdin);
+			//fflush(app_stdin);
 			while(fgets(buffer, sizeof buffer, app_stdout) != NULL) {
 				fprintf(stdout, "STDOUT: %s\n", buffer);
 			}

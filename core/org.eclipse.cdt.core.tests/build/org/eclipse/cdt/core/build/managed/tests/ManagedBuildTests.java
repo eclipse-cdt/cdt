@@ -46,7 +46,6 @@ import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionReference;
-import org.eclipse.cdt.managedbuilder.internal.core.ToolReference;
 import org.eclipse.cdt.testplugin.FileManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -859,7 +858,7 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("Root Override Config", configs[1].getName());
 		tools = configs[1].getTools();
 		assertEquals(1, tools.length);
-		assertTrue(tools[0] instanceof ToolReference);
+		assertTrue(tools[0] instanceof IToolReference);
 		assertEquals("Root Tool", tools[0].getName());
 		topCategory = tools[0].getTopOptionCategory();
 		options = topCategory.getOptions(configs[1]);
@@ -896,7 +895,7 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("Complete Override Config", configs[2].getName());
 		tools = configs[2].getTools();
 		assertEquals(1, tools.length);
-		assertTrue(tools[0] instanceof ToolReference);
+		assertTrue(tools[0] instanceof IToolReference);
 		assertEquals("Root Tool", tools[0].getName());
 		topCategory = tools[0].getTopOptionCategory();
 		options = topCategory.getOptions(configs[2]);
@@ -966,7 +965,7 @@ public class ManagedBuildTests extends TestCase {
 		ITool toolRef = tools[2];
 		
 		// Make sure the 3rd tool is a tool reference
-		assertTrue(toolRef instanceof ToolReference);
+		assertTrue(toolRef instanceof IToolReference);
 		
 		// Make sure we get all the tool settings
 		assertEquals(toolRef.getName(), indyToolName);
@@ -1009,7 +1008,7 @@ public class ManagedBuildTests extends TestCase {
 		}
 		
 		// Test that the tool command can be changed through the reference
-		((ToolReference)toolRef).setToolCommand(newCmd);
+		((IToolReference)toolRef).setToolCommand(newCmd);
 		assertEquals(toolRef.getToolCommand(), newCmd);
 	}
 
@@ -1126,7 +1125,7 @@ public class ManagedBuildTests extends TestCase {
 		// get the tool reference from the child
 		ITool[] childTools = child.getTools();
 		assertEquals(2, childTools.length);
-		ToolReference childToolRef = (ToolReference)childTools[1];
+		IToolReference childToolRef = (IToolReference)childTools[1];
 		assertEquals(parentTool, childToolRef.getTool());
 		
 		// get and check the option reference
@@ -1137,7 +1136,7 @@ public class ManagedBuildTests extends TestCase {
 		// get the tool reference from the grandchild
 		ITool[] grandTools = grandchild.getTools();
 		assertEquals(3, grandTools.length);
-		ToolReference grandToolRef = (ToolReference)grandTools[2];
+		IToolReference grandToolRef = (IToolReference)grandTools[2];
 		assertEquals(parentTool, grandToolRef.getTool());
 		
 	}

@@ -97,7 +97,18 @@ public class SourceIndexer extends AbstractIndexer {
 		{
 		}
 		
-		boolean retVal = parser.parse();
+		ParserRunner p = new ParserRunner(parser);
+		Thread t = new Thread(p, "CDT Indexer Parser Runner");
+		t.start();
+		
+		try{
+			t.join();
+		}
+		catch (InterruptedException e){
+			org.eclipse.cdt.internal.core.model.Util.log(null, "Parser Runner InterruptedException - file: " + resourceFile.getFullPath(), ICLogConstants.CDT);
+		}
+		
+		boolean retVal = p.getResult();
 		
 		if (!retVal)
 			org.eclipse.cdt.internal.core.model.Util.log(null, "Failed to index " + resourceFile.getFullPath(), ICLogConstants.CDT);
@@ -119,5 +130,27 @@ public class SourceIndexer extends AbstractIndexer {
 	 */
 	public IFile getResourceFile() {
 		return resourceFile;
+	}
+	
+	class ParserRunner implements Runnable {
+		IParser parser;
+		boolean retVal;
+		ParserRunner(IParser parser){
+			this.parser = parser;
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
+		public void run() {
+			try{
+				retVal=parser.parse();
+			}
+			catch (Exception e){
+				org.eclipse.cdt.internal.core.model.Util.log(null, "Parser Runner Exception " + resourceFile.getFullPath() + " Message: " + e.getMessage(), ICLogConstants.CDT);
+			}
+		}
+		
+		boolean getResult(){ return retVal;}
+		
 	}
 }

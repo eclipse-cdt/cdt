@@ -1,3 +1,17 @@
+2004-02-09 Bogdan Gheorghe
+	PR 51232
+	
+	- Added a layer of separation between the parser and the indexer: we now
+	  create a worker thread to run the parser in. This allows the indexer to 
+	  finish all scheduled jobs regardless of how the parser performs on
+	  individual files (i.e. indexing no longer affected by parser failures)
+	  
+	- Modified some of the stored index block reading routines to use separate
+	  counters, thus avoiding potential EOF exceptions.
+	  
+    * index/org/eclipse/cdt/internal/core/index/impl/BlocksIndexInput.java
+	* index/org/eclipse/cdt/internal/core/index/search/indexing/SourceIndexer.java
+	
 2004-02-03 Alain Magloire
 
 	PR 51106                                                                                                                   

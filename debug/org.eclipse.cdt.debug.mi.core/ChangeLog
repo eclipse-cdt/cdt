@@ -1,3 +1,40 @@
+2003-01-08 Alain Magloire
+
+	CLIProcessor a new class to recognise the CLI(Command Line Interface)
+	of gdb example:
+	 (gdb) next
+	 (gdb) n
+	 (gdb) b
+	 (gdb) break
+           etc ..:
+	When the patterns are discover, the class will generate some events
+	to warn te UI that something change.
+
+	* src/.../mi/core/cdi/BreakpointManager.java (update):
+	Send a -break-list and generate events for any difference, in
+	the breakpoints that we know about.
+	(deleteBreakpoint): Take as argument the breakpoint number.
+	(getBreakpoints): Call update() to generate events if new breakpoints.
+	(getMIBreakpoints): return the MIBreakpoints.
+	* src/.../mi/core/cdi/ChangedEvent.java (ChangedEvent):
+	New constructor with MIBreakPointChangedEvent.
+	* src/.../mi/core/cdi/DestroyedEvent.java (DestroyedEvent):
+	New constructor with MIBreakPointDeletedEvent.
+	* src/.../mi/core/cdi/Created.java: New file.
+	* src/.../mi/core/cdi/EventManager.java (update):
+	Watch for the new MIBreakPoint*Events.
+	* src/.../mi/core/event/MIBreakPointCreatedEvent.java: New file.
+	* src/.../mi/core/event/MIBreakPointChangedEvent.java: New file.
+	* src/.../mi/core/event/MIBreakPointDeletedEvent.java: New file.
+	* src/.../mi/core/event/MICreatedEvent.java: New file.
+	* src/.../mi/core/event/MIDestroyedEvent.java: New file.
+	* src/.../mi/core/event/MIInferiorExitEvent.java: Extends MIDestroyedEvent
+	* src/.../mi/core/event/MIThreadExitEvent.java: Extends MIDestroyedEvent
+	* src/.../mi/core/event/MIGDBExitEvent.java: Extends MIDestroyedEvent
+	* src/.../mi/core/event/MIDetachedEvent.java: Extends MIDestroyedEvent
+	* src/.../mi/core/CLIProcessor.java: New file.
+	* src/.../mi/core/TxThread.java: New file.
+
 2003-01-07 Alain Magloire
 
 	* src/.../mi/core/MIInferior.java (getOutputStream): Remove useless assignement.

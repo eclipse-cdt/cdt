@@ -1,3 +1,7 @@
+2004-04-19 Mikhail Khodjaiants
+	Display global variable name in the error message when the "Add Globals" action fails.
+	* CDebugModel.java
+
 2004-04-16 Mikhail Khodjaiants
 	Stack frame should provide an adapter for IRunToAddress.
 	* CStackFrame.java

@@ -6,12 +6,6 @@
 
 package org.eclipse.cdt.debug.core;
 
-import java.util.HashMap;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.IFunction;
-import org.eclipse.cdt.core.model.IMethod;
-import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -24,25 +18,14 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
-import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
-import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
-import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
-import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
-import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
-import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CCoreFileDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.cdt.debug.internal.core.model.CFormattedMemoryBlock;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -51,10 +34,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
@@ -289,9 +269,10 @@ public class CDebugModel
 	{
 		if ( target != null && target instanceof CDebugTarget )
 		{
+			ICDIVariableObject vo = null;
 			try
 			{
-				ICDIVariableObject vo = ((CDebugTarget)target).getCDISession().getVariableManager().getGlobalVariableObject( fileName.lastSegment(), null, name );
+				vo = ((CDebugTarget)target).getCDISession().getVariableManager().getGlobalVariableObject( fileName.lastSegment(), null, name );
 				ICDIVariable cdiVariable = ((CDebugTarget)target).getCDISession().getVariableManager().createVariable( vo );
 				return new CExpression( (CDebugTarget)target, cdiVariable );
 			}
@@ -300,7 +281,7 @@ public class CDebugModel
 				throw new DebugException( new Status( IStatus.ERROR, 
 													  getPluginIdentifier(),
 													  DebugException.TARGET_REQUEST_FAILED, 
-													  e.getMessage(), 
+													  ( vo != null ) ? vo.getName() + ": " + e.getMessage() : e.getMessage(),  //$NON-NLS-1$
 													  null ) );
 			}
 		}

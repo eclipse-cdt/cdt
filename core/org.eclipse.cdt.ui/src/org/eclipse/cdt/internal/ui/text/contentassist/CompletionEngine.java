@@ -14,15 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -57,9 +55,9 @@ import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.CharOperation;
-import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.util.IDebugLogConstants;
 import org.eclipse.cdt.internal.ui.util.Util;
@@ -82,7 +80,7 @@ public class CompletionEngine implements RelevanceConstants {
 	int completionLength = 0;
 	int completionOrigin = 0;
 	IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
-	private Map macroMap = null;
+	private CharArrayObjectMap macroMap = null;
 	private ContentAssistElementRequestor elementRequestor = null;
 	
 	private static final String exceptionKeyword = "..."; //$NON-NLS-1$
@@ -190,7 +188,7 @@ public class CompletionEngine implements RelevanceConstants {
 				result = parser.parse(completionOffset);
 				log("Time spent in Parser = "+ ( System.currentTimeMillis() - parserTime ) + " ms");		 //$NON-NLS-1$ //$NON-NLS-2$
 				
-				macroMap = scanner.getDefinitions();
+				macroMap = scanner.getRealDefinitions();
 			} catch (ParseError e ) {
 				if(e.getErrorKind() == ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED){
 					log("Timeout received !!!!!! "); //$NON-NLS-1$;
@@ -443,54 +441,21 @@ public class CompletionEngine implements RelevanceConstants {
 	}
 	
 	private List lookupMacros(String prefix){	
-		Set keySet = new TreeSet(macroMap.keySet());
-		Iterator i = keySet.iterator();
+	    //simply doing a linear search on the keys will be faster than sorting them 
+	    //and then searching the sorted list.
+	    char [] prefixArray = prefix.toCharArray();
+		char [] key;
+
 		final int length = prefix.length();
-		String newPrefix = prefix.toUpperCase();
 		List resultSet = new ArrayList();
-		String key = null;
-		String value = null; //$NON-NLS-1$
-		while( i.hasNext() )
-		{
-			key = (String) i.next();	
-			if( key.length() < length )
+		for( int i = 0; i < macroMap.size(); i++ ){
+		    key = macroMap.keyAt( i );
+		    if( key.length < length )
 				continue;
-			
-			if(key.length() > length) {
-				value = key.substring(0, length).toUpperCase();
-			}else {
-				value = key;
-			}
-			
-			if( value.equals( newPrefix ) ) {
-				Object macroD = macroMap.get(key);
-				if( macroD instanceof FunctionStyleMacro )
-				{
-					FunctionStyleMacro f = ((FunctionStyleMacro)macroD);
-					StringBuffer buffer = new StringBuffer( String.valueOf( f.name ));
-					buffer.append( "("); //$NON-NLS-1$
-					if( f.arglist != null )
-					{
-						for( int j = 0; j < f.arglist.length; ++j )
-						{
-							if( f.arglist[j] != null )
-								buffer.append( f.arglist[j]);
-							if( j != f.arglist.length -1 && f.arglist[j+1] != null )
-								buffer.append( ","); //$NON-NLS-1$
-						}
-					}
-					buffer.append( ")"); //$NON-NLS-1$
-					String result = buffer.toString();
-					resultSet.add( result );
-				}
-				else if (macroD instanceof ObjectStyleMacro  )
-				{
-					String v = String.valueOf( ((ObjectStyleMacro)macroD).name);
-					resultSet.add( v );
-				}
-			}
-			else if( key.compareTo( prefix ) > 0 )					
-				break;
+		    if( CharArrayUtils.equals( key, 0, length, prefixArray, true ) ){
+		        IMacro macro = (IMacro) macroMap.getAt( i );
+		        resultSet.add( String.valueOf( macro.getSignature() ) );
+		    }
 		}
 		return resultSet;		
 	}

@@ -399,4 +399,30 @@ public class CompleteParsePluginTest extends TestCase {
         assertEquals( i.next(), CallbackTracker.EXIT_COMPILATION_UNIT );
         assertFalse( i.hasNext() );
     }
+    
+    public void testBug72506() throws Exception{
+        String vers = "int i;\n"; //$NON-NLS-1$
+        String code = "#define INCFILE(x) vers ## x\n" + //$NON-NLS-1$
+        		      "#define xstr(x) str(x)\n" + //$NON-NLS-1$
+        		      "#define str(x) #x\n" + //$NON-NLS-1$
+        		      "#include xstr(INCFILE(2).h)\n"; //$NON-NLS-1$
+        
+        importFile( "vers2.h", vers ); //$NON-NLS-1$
+        IFile cpp = importFile( "code.cpp", code ); //$NON-NLS-1$
+        
+        List calls = new ArrayList();
+        
+        parse( cpp, calls );
+        
+        Iterator i = calls.iterator();
+        assertEquals( i.next(), CallbackTracker.ENTER_COMPILATION_UNIT );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_MACRO );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_MACRO );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_MACRO );
+        assertEquals( i.next(), CallbackTracker.ENTER_INCLUSION );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_VARIABLE );
+        assertEquals( i.next(), CallbackTracker.EXIT_INCLUSION );
+        assertEquals( i.next(), CallbackTracker.EXIT_COMPILATION_UNIT );
+        assertFalse( i.hasNext() );
+    }
 }

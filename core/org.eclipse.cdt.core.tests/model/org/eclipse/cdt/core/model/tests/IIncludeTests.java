@@ -80,7 +80,7 @@ public class IIncludeTests extends IntegratedCModelTest {
 			new String("resync_after_bad_parse_3"),
 			new String("invalid.h"),  // C-spec does not allow this, but that's OK for our present purposes
 			new String("myInclude1.h"),
-//			new String("vers2.h")						
+			new String("vers2.h")						
 		};
 		assertEquals( getIncludeNameList.length, theIncludes.length );
 		for( int i=0; i<getIncludeNameList.length; i++ )

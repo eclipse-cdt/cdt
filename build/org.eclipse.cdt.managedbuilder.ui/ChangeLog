@@ -1,3 +1,11 @@
+2003-11-10 Tanya Wolff
+
+	I18N-Externalized strings from plugin.xml.
+	I18N-Added keys & strings to plugin.properties.
+	Fixed an id error in linux c compiler debugger options.
+	* plugin.xml
+	* plugin.properties
+
 2003-10-17 Tom Tromey
 	
 	Changed -werror to -Werror

@@ -108,7 +108,7 @@
             </option>
             <optionCategory
                   owner="cdt.build.tool.cygwin.gnu.c.compiler"
-                  name="Symbols"
+                  name="%OptionCategory.Symbols"
                   id="cygwin.gnu.c.compiler.category.symbols">
             </optionCategory>
             <option
@@ -219,7 +219,7 @@
                   id="cygwin.gnu.c.compiler.category.dirs">
             </optionCategory>
             <option
-                  name="Include Paths"
+                  name="%Option.Posix.InclPaths"
                   category="cygwin.gnu.c.compiler.category.dirs"
                   command="-I"
                   valueType="includePath"
@@ -235,7 +235,7 @@
                   id="cygwin.gnu.c.compiler.category.optimization">
             </optionCategory>
             <option
-                  name="Optimization Level"
+                  name="%Option.Posix.OptLevel"
                   category="cygwin.gnu.c.compiler.category.optimization"
                   valueType="enumerated"
                   id="cygwin.gnu.c.compiler.general.optimization.level">
@@ -263,7 +263,7 @@
                </enumeratedOptionValue>
             </option>
             <option
-                  name="Other optimization flags"
+                  name="%Option.Posix.Optimize.Flags"
                   category="cygwin.gnu.c.compiler.category.optimization"
                   valueType="string"
                   id="cygwin.gnu.c.compiler.optimization.flags">
@@ -274,28 +274,28 @@
                   id="cygwin.gnu.c.compiler.category.debug">
             </optionCategory>
             <option
-                  name="Debug Level"
+                  name="%Option.Posix.DebugLevel"
                   category="cygwin.gnu.c.compiler.category.debug"
                   valueType="enumerated"
                   id="cygwin.c.compiler.debugging.level">
                <enumeratedOptionValue
-                     name="None"
+                     name="%Option.Posix.Debug.None"
                      isDefault="false"
                      id="cygwin.gnu.c.debugging.level.none">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Minimal (-g1)"
+                     name="%Option.Posix.Debug.Min"
                      command="-g1"
                      id="cygwin.gnu.c.debugging.level.minimal">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Default (-g)"
+                     name="%Option.Posix.Debug.Def"
                      isDefault="true"
                      command="-g"
                      id="cygwin.gnu.c.debugging.level.default">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Maximum (-g3)"
+                     name="%Option.Posix.Debug.Max"
                      isDefault="false"
                      command="-g3"
                      id="cygwin.gnu.c.debugging.level.max">
@@ -303,14 +303,14 @@
             </option>
             <option
                   defaultValue="-gstabs"
-                  name="Other debugging flags"
+                  name="%Option.Posix.Debug.Other"
                   category="cygwin.gnu.c.compiler.category.debug"
                   valueType="string"
                   id="cygwin.gnu.c.compiler.debugging.other">
             </option>
             <option
                   defaultValue="false"
-                  name="Generate gprof information (-pg)"
+                  name="%Option.Posix.Debug.gprof"
                   category="cygwin.gnu.c.compiler.category.debug"
                   command="-pg"
                   valueType="boolean"
@@ -318,7 +318,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Generate prof information (-p)"
+                  name="%Option.Posix.Debug.prof"
                   category="cygwin.gnu.c.compiler.category.debug"
                   command="-p"
                   valueType="boolean"
@@ -331,7 +331,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Check syntax only (-fsyntax-only)"
+                  name="%Option.Posix.Warn.Syntax"
                   category="cygwin.c.compiler.category.warnings"
                   command="-fsyntax-only"
                   valueType="boolean"
@@ -339,7 +339,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic (-pedantic)"
+                  name="%Option.Posix.Warn.Pedandic"
                   category="cygwin.c.compiler.category.warnings"
                   command="-pedantic"
                   valueType="boolean"
@@ -347,7 +347,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic warnings as errors (-pedantic-errors)"
+                  name="%Option.Posix.Warn.PedErrors"
                   category="cygwin.c.compiler.category.warnings"
                   command="-pedantic-errors"
                   valueType="boolean"
@@ -355,7 +355,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Inhibit all warnings (-w)"
+                  name="%Option.Posix.Warn.nowarn"
                   category="cygwin.c.compiler.category.warnings"
                   command="-w"
                   valueType="boolean"
@@ -363,7 +363,7 @@
             </option>
             <option
                   defaultValue="true"
-                  name="All warnings (-Wall)"
+                  name="%Option.Posix.Warn.allwarn"
                   category="cygwin.c.compiler.category.warnings"
                   command="-Wall"
                   valueType="boolean"
@@ -371,7 +371,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-Werror)"
+                  name="%Option.Posix.Warn.toerrs"
                   category="cygwin.c.compiler.category.warnings"
                   command="-Werror"
                   valueType="boolean"
@@ -438,7 +438,7 @@
             </option>
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.compiler"
-                  name="Symbols"
+                  name="%OptionCategory.Symbols"
                   id="cygwin.gnu.compiler.category.symbols">
             </optionCategory>
             <option
@@ -549,7 +549,7 @@
                   id="cygwin.gnu.compiler.category.dirs">
             </optionCategory>
             <option
-                  name="Include Paths"
+                  name="%Option.Posix.InclPaths"
                   category="cygwin.gnu.compiler.category.dirs"
                   command="-I"
                   valueType="includePath"
@@ -565,7 +565,7 @@
                   id="cygwin.gnu.compiler.category.optimization">
             </optionCategory>
             <option
-                  name="Optimization Level"
+                  name="%Option.Posix.OptLevel"
                   category="cygwin.gnu.compiler.category.optimization"
                   valueType="enumerated"
                   id="cygwin.compiler.general.optimization.level">
@@ -593,7 +593,7 @@
                </enumeratedOptionValue>
             </option>
             <option
-                  name="Other optimization flags"
+                  name="%Option.Posix.Optimize.Flags"
                   category="cygwin.gnu.compiler.category.optimization"
                   valueType="string"
                   id="cygwin.compiler.optimization.flags">
@@ -604,28 +604,28 @@
                   id="cygwin.gnu.compiler.category.debug">
             </optionCategory>
             <option
-                  name="Debug Level"
+                  name="%Option.Posix.DebugLevel"
                   category="cygwin.gnu.compiler.category.debug"
                   valueType="enumerated"
                   id="cygwin.compiler.debugging.level">
                <enumeratedOptionValue
-                     name="None"
+                     name="%Option.Posix.Debug.None"
                      isDefault="false"
                      id="cygwin.debugging.level.none">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Minimal (-g1)"
+                     name="%Option.Posix.Debug.Min"
                      command="-g1"
                      id="cygwin.debugging.level.minimal">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Default (-g)"
+                     name="%Option.Posix.Debug.Def"
                      isDefault="true"
                      command="-g"
                      id="cygwin.debugging.level.default">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Maximum (-g3)"
+                     name="%Option.Posix.Debug.Max"
                      isDefault="false"
                      command="-g3"
                      id="cygwin.debugging.level.max">
@@ -633,14 +633,14 @@
             </option>
             <option
                   defaultValue="-gstabs"
-                  name="Other debugging flags"
+                  name="%Option.Posix.Debug.Other"
                   category="cygwin.gnu.compiler.category.debug"
                   valueType="string"
                   id="cygwin.gnu.compiler.debugging.other">
             </option>
             <option
                   defaultValue="false"
-                  name="Generate prof information (-p)"
+                  name="%Option.Posix.Debug.prof"
                   category="cygwin.gnu.compiler.category.debug"
                   command="-p"
                   valueType="boolean"
@@ -648,7 +648,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Generate gprof information (-pg)"
+                  name="%Option.Posix.Debug.gprof"
                   category="cygwin.gnu.compiler.category.debug"
                   command="-pg"
                   valueType="boolean"
@@ -661,7 +661,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Check syntax only (-fsyntax-only)"
+                  name="%Option.Posix.Warn.Syntax"
                   category="cygwin.compiler.category.warnings"
                   command="-fsyntax-only"
                   valueType="boolean"
@@ -669,7 +669,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic (-pedantic)"
+                  name="%Option.Posix.Warn.Pedandic"
                   category="cygwin.compiler.category.warnings"
                   command="-pedantic"
                   valueType="boolean"
@@ -677,7 +677,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic warnings as errors (-pedantic-errors)"
+                  name="%Option.Posix.Warn.PedErrors"
                   category="cygwin.compiler.category.warnings"
                   command="-pedantic-errors"
                   valueType="boolean"
@@ -685,7 +685,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Inhibit all warnings (-w)"
+                  name="%Option.Posix.Warn.nowarn"
                   category="cygwin.compiler.category.warnings"
                   command="-w"
                   valueType="boolean"
@@ -693,7 +693,7 @@
             </option>
             <option
                   defaultValue="true"
-                  name="All warnings (-Wall)"
+                  name="%Option.Posix.Warn.allwarn"
                   category="cygwin.compiler.category.warnings"
                   command="-Wall"
                   valueType="boolean"
@@ -701,7 +701,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-Werror)"
+                  name="%Option.Posix.Warn.toerrs"
                   category="cygwin.compiler.category.warnings"
                   command="-Werror"
                   valueType="boolean"
@@ -743,23 +743,23 @@
             <toolReference
                   id="org.eclipse.cdt.build.tool.cygwin.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      command="-O3"
                      id="cygwin.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="cygwin.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.cygwin.gnu.c.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="cygwin.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="cygwin.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -770,12 +770,12 @@
             <toolReference
                   id="org.eclipse.cdt.build.tool.cygwin.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      command="-O0"
                      id="cygwin.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      command="-g3"
                      id="cygwin.compiler.debugging.level">
                </optionReference>
@@ -783,11 +783,11 @@
             <toolReference
                   id="cdt.build.tool.cygwin.gnu.c.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="cygwin.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="cygwin.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -869,7 +869,7 @@
                   id="cygwin.gnu.c.linker.category.other">
             </optionCategory>
             <option
-                  name="Linker Flags"
+                  name="%Option.Posix.Linker.Flags"
                   category="cygwin.gnu.c.linker.category.other"
                   valueType="string"
                   id="cygwin.gnu.c.link.ldflags">
@@ -965,7 +965,7 @@
                   id="cygwin.gnu.linker.category.other">
             </optionCategory>
             <option
-                  name="Linker Flags"
+                  name="%Option.Posix.Linker.Flags"
                   category="cygwin.gnu.linker.category.other"
                   valueType="string"
                   id="cygwin.link.ld.flags">
@@ -999,23 +999,23 @@
             <toolReference
                   id="org.eclipse.cdt.build.tool.cygwin.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      command="-O3"
                      id="cygwin.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="cygwin.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.cygwin.gnu.c.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="cygwin.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="cygwin.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -1026,12 +1026,12 @@
             <toolReference
                   id="org.eclipse.cdt.build.tool.cygwin.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      command="-O0"
                      id="cygwin.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      command="-g3"
                      id="cygwin.compiler.debugging.level">
                </optionReference>
@@ -1039,11 +1039,11 @@
             <toolReference
                   id="cdt.build.tool.cygwin.gnu.c.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="cygwin.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="cygwin.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -1127,7 +1127,7 @@
             </optionCategory>
             <option
                   defaultValue="-shared"
-                  name="Linker Flags"
+                  name="%Option.Posix.Linker.Flags"
                   category="cygwin.gnu.c.solink.category.other"
                   valueType="string"
                   id="cygwin.gnu.c.solink.ldflags">
@@ -1217,7 +1217,7 @@
             </optionCategory>
             <option
                   defaultValue="-shared"
-                  name="Linker Flags"
+                  name="%Option.Posix.Linker.Flags"
                   category="cygwin.gnu.solink.category.other"
                   valueType="string"
                   id="cygwin.solink.ld.flags">
@@ -1251,12 +1251,12 @@
             <toolReference
                   id="org.eclipse.cdt.build.tool.cygwin.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      command="-O3"
                      id="cygwin.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="cygwin.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -1267,12 +1267,12 @@
             <toolReference
                   id="org.eclipse.cdt.build.tool.cygwin.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      command="-O0"
                      id="cygwin.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      command="-g3"
                      id="cygwin.compiler.debugging.level">
                </optionReference>
@@ -1293,7 +1293,7 @@
             </optionCategory>
             <option
                   defaultValue="-Wl,--export-all-symbols -Wl,--enable-auto-import"
-                  name="Linker Flags"
+                  name="%Option.Posix.Linker.Flags"
                   category="cygwin.explink.category.general"
                   valueType="string"
                   id="cygwin.explink.ld.flags">
@@ -1328,23 +1328,23 @@
             <toolReference
                   id="org.eclipse.cdt.build.tool.cygwin.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      command="-O3"
                      id="cygwin.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="cygwin.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.cygwin.gnu.c.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="cygwin.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="cygwin.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -1355,12 +1355,12 @@
             <toolReference
                   id="org.eclipse.cdt.build.tool.cygwin.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      command="-O0"
                      id="cygwin.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      command="-g3"
                      id="cygwin.compiler.debugging.level">
                </optionReference>
@@ -1368,11 +1368,11 @@
             <toolReference
                   id="cdt.build.tool.cygwin.gnu.c.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="cygwin.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="cygwin.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -1391,7 +1391,7 @@
             </optionCategory>
             <option
                   defaultValue="-r"
-                  name="Archiver Flags"
+                  name="%Option.Posix.Archiver.Flags"
                   category="cygwin.ar.category.general"
                   valueType="string"
                   id="cygwin.ar.flags">
@@ -1440,7 +1440,7 @@
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.c.compiler"
-                  name="Symbols"
+                  name="%OptionCategory.Symbols"
                   id="linux.gnu.c.compiler.category.symbols">
             </optionCategory>
             <option
@@ -1523,7 +1523,7 @@
                   id="linux.gnu.c.compiler.category.dirs">
             </optionCategory>
             <option
-                  name="Include Paths"
+                  name="%Option.Posix.InclPaths"
                   category="linux.gnu.c.compiler.category.dirs"
                   command="-I"
                   valueType="includePath"
@@ -1535,7 +1535,7 @@
                   id="linux.gnu.c.compiler.category.optimization">
             </optionCategory>
             <option
-                  name="Optimization Level"
+                  name="%Option.Posix.OptLevel"
                   category="linux.gnu.c.compiler.category.optimization"
                   valueType="enumerated"
                   id="linux.gnu.c.compiler.general.optimization.level">
@@ -1563,7 +1563,7 @@
                </enumeratedOptionValue>
             </option>
             <option
-                  name="Other optimization flags"
+                  name="%Option.Posix.Optimize.Flags"
                   category="linux.gnu.c.compiler.category.optimization"
                   valueType="string"
                   id="linux.gnu.c.compiler.optimization.flags">
@@ -1574,42 +1574,42 @@
                   id="linux.gnu.c.compiler.category.debug">
             </optionCategory>
             <option
-                  name="Debug Level"
+                  name="%Option.Posix.DebugLevel"
                   category="linux.gnu.c.compiler.category.debug"
                   valueType="enumerated"
                   id="linux.c.compiler.debugging.level">
                <enumeratedOptionValue
-                     name="None"
+                     name="%Option.Posix.Debug.None"
                      isDefault="false"
                      id="linux.gnu.c.debugging.level.none">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Minimal (-g1)"
+                     name="%Option.Posix.Debug.Min"
                      command="-g1"
                      id="linux.gnu.c.debugging.level.minimal">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Default (-g)"
+                     name="%Option.Posix.Debug.Def"
                      isDefault="true"
                      command="-g"
                      id="linux.gnu.c.debugging.level.default">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Maximum (-g3)"
+                     name="%Option.Posix.Debug.Max"
                      isDefault="false"
                      command="-g3"
                      id="linux.gnu.c.debugging.level.max">
                </enumeratedOptionValue>
             </option>
             <option
-                  name="Other debugging flags"
+                  name="%Option.Posix.Debug.Other"
                   category="linux.gnu.c.compiler.category.debug"
                   valueType="string"
                   id="linux.gnu.c.compiler.debugging.other">
             </option>
             <option
                   defaultValue="false"
-                  name="Generate gprof information (-pg)"
+                  name="%Option.Posix.Debug.gprof"
                   category="linux.gnu.c.compiler.category.debug"
                   command="-pg"
                   valueType="boolean"
@@ -1617,7 +1617,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Generate prof information (-p)"
+                  name="%Option.Posix.Debug.prof"
                   category="linux.gnu.c.compiler.category.debug"
                   command="-p"
                   valueType="boolean"
@@ -1630,7 +1630,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Check syntax only (-fsyntax-only)"
+                  name="%Option.Posix.Warn.Syntax"
                   category="linux.c.compiler.category.warnings"
                   command="-fsyntax-only"
                   valueType="boolean"
@@ -1638,7 +1638,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic (-pedantic)"
+                  name="%Option.Posix.Warn.Pedandic"
                   category="linux.c.compiler.category.warnings"
                   command="-pedantic"
                   valueType="boolean"
@@ -1646,7 +1646,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic warnings as errors (-pedantic-errors)"
+                  name="%Option.Posix.Warn.PedErrors"
                   category="linux.c.compiler.category.warnings"
                   command="-pedantic-errors"
                   valueType="boolean"
@@ -1654,7 +1654,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Inhibit all warnings (-w)"
+                  name="%Option.Posix.Warn.nowarn"
                   category="linux.c.compiler.category.warnings"
                   command="-w"
                   valueType="boolean"
@@ -1662,7 +1662,7 @@
             </option>
             <option
                   defaultValue="true"
-                  name="All warnings (-Wall)"
+                  name="%Option.Posix.Warn.allwarn"
                   category="linux.c.compiler.category.warnings"
                   command="-Wall"
                   valueType="boolean"
@@ -1670,7 +1670,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-Werror)"
+                  name="%Option.Posix.Warn.toerrs"
                   category="linux.c.compiler.category.warnings"
                   command="-Werror"
                   valueType="boolean"
@@ -1815,7 +1815,7 @@
                   id="linux.gnu.compiler.category.dirs">
             </optionCategory>
             <option
-                  name="Include search paths (-I)"
+                  name="%Option.Posix.InclPaths"
                   category="linux.gnu.compiler.category.dirs"
                   command="-I"
                   valueType="includePath"
@@ -1835,7 +1835,7 @@
                   id="linux.gnu.compiler.category.optimization">
             </optionCategory>
             <option
-                  name="Optimization Level"
+                  name="%Option.Posix.OptLevel"
                   category="linux.gnu.compiler.category.optimization"
                   valueType="enumerated"
                   id="linux.gnu.compiler.optimization.level">
@@ -1862,7 +1862,7 @@
                </enumeratedOptionValue>
             </option>
             <option
-                  name="Other optimization flags"
+                  name="%Option.Posix.Optimize.Flags"
                   category="linux.gnu.compiler.category.optimization"
                   valueType="string"
                   id="linux.compiler.optimization.flags">
@@ -1873,42 +1873,42 @@
                   id="linux.gnu.compiler.category.debug">
             </optionCategory>
             <option
-                  name="Debug Level"
+                  name="%Option.Posix.DebugLevel"
                   category="linux.gnu.compiler.category.debug"
                   valueType="enumerated"
                   id="linux.gnu.compiler.debugging.level">
                <enumeratedOptionValue
-                     name="None"
+                     name="%Option.Posix.Debug.None"
                      isDefault="false"
                      id="linux.gnu.compiler.debugging.level.none">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Minimal (-g1)"
+                     name="%Option.Posix.Debug.Min"
                      command="-g1"
                      id="linux.gnu.compiler.debugging.level.minimal">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Default (-g)"
+                     name="%Option.Posix.Debug.Def"
                      isDefault="true"
                      command="-g"
                      id="linux.gnu.compiler.debugging.level.default">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Maximum (-g3)"
+                     name="%Option.Posix.Debug.Max"
                      isDefault="false"
                      command="-g3"
                      id="linux.gnu.compiler.debugging.level.max">
                </enumeratedOptionValue>
             </option>
             <option
-                  name="Other debugging flags"
+                  name="%Option.Posix.Debug.Other"
                   category="linux.gnu.compiler.category.debug"
                   valueType="string"
                   id="linux.gnu.compiler.debugging.other">
             </option>
             <option
                   defaultValue="false"
-                  name="Generate prof information (-p)"
+                  name="%Option.Posix.Debug.prof"
                   category="linux.gnu.compiler.category.debug"
                   command="-p"
                   valueType="boolean"
@@ -1916,7 +1916,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Generate gprof information (-pg)"
+                  name="%Option.Posix.Debug.gprof"
                   category="linux.gnu.compiler.category.debug"
                   command="-pg"
                   valueType="boolean"
@@ -1929,7 +1929,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Check syntax only (-fsyntax-only)"
+                  name="%Option.Posix.Warn.Syntax"
                   category="linux.gnu.compiler.category.warnings"
                   command="-fsyntax-only"
                   valueType="boolean"
@@ -1937,7 +1937,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic (-pedantic)"
+                  name="%Option.Posix.Warn.Pedandic"
                   category="linux.gnu.compiler.category.warnings"
                   command="-pedantic"
                   valueType="boolean"
@@ -1945,7 +1945,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic warnings as errors (-pedantic-errors)"
+                  name="%Option.Posix.Warn.PedErrors"
                   category="linux.gnu.compiler.category.warnings"
                   command="-pedantic-errors"
                   valueType="boolean"
@@ -1953,7 +1953,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Inhibit all warnings (-w)"
+                  name="%Option.Posix.Warn.nowarn"
                   category="linux.gnu.compiler.category.warnings"
                   command="-w"
                   valueType="boolean"
@@ -1961,7 +1961,7 @@
             </option>
             <option
                   defaultValue="true"
-                  name="All warnings (-Wall)"
+                  name="%Option.Posix.Warn.allwarn"
                   category="linux.gnu.compiler.category.warnings"
                   command="-Wall"
                   valueType="boolean"
@@ -1969,7 +1969,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-Werror)"
+                  name="%Option.Posix.Warn.toerrs"
                   category="linux.gnu.compiler.category.warnings"
                   command="-Werror"
                   valueType="boolean"
@@ -2010,22 +2010,22 @@
             <toolReference
                   id="cdt.build.tool.linux.gnu.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="linux.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="linux.gnu.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.linux.gnu.c.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="linux.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="linux.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -2036,22 +2036,22 @@
             <toolReference
                   id="cdt.build.tool.linux.gnu.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="linux.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="linux.gnu.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.linux.gnu.c.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="linux.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="linux.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -2133,7 +2133,7 @@
                   id="linux.gnu.c.linker.category.other">
             </optionCategory>
             <option
-                  name="Linker Flags"
+                  name="%Option.Posix.Linker.Flags"
                   category="linux.gnu.c.linker.category.other"
                   valueType="string"
                   id="linux.gnu.c.link.ldflags">
@@ -2263,22 +2263,22 @@
             <toolReference
                   id="cdt.build.tool.linux.gnu.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="linux.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="linux.gnu.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.linux.gnu.c.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="linux.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="linux.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -2289,23 +2289,23 @@
             <toolReference
                   id="cdt.build.tool.linux.gnu.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="linux.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="linux.gnu.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.linux.gnu.c.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="linux.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
-                     id="linux.gnu.c.compiler.general.optimization.level">
+                     defaultValue="%Option.Posix.Debug.Max"
+                     id="linux.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
          </configuration>
@@ -2389,7 +2389,7 @@
             </optionCategory>
             <option
                   defaultValue="-shared"
-                  name="Linker Flags"
+                  name="%Option.Posix.Linker.Flags"
                   category="linux.gnu.c.solink.category.other"
                   valueType="string"
                   id="linux.gnu.c.solink.ldflags">
@@ -2514,22 +2514,22 @@
             <toolReference
                   id="cdt.build.tool.linux.gnu.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="linux.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="linux.gnu.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.linux.gnu.c.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="linux.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="linux.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -2540,22 +2540,22 @@
             <toolReference
                   id="cdt.build.tool.linux.gnu.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="linux.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="linux.gnu.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.linux.gnu.c.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="linux.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="linux.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -2575,7 +2575,7 @@
             </optionCategory>
             <option
                   defaultValue="-r"
-                  name="Archiver Flags"
+                  name="%Option.Posix.Archiver.Flags"
                   category="linux.gnu.lib.category.general"
                   valueType="string"
                   id="linux.gnu.lib.flags">
@@ -2624,7 +2624,7 @@
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.c.compiler"
-                  name="Symbols"
+                  name="%OptionCategory.Symbols"
                   id="solaris.gnu.c.compiler.category.symbols">
             </optionCategory>
             <option
@@ -2699,7 +2699,7 @@
                   id="solaris.gnu.c.compiler.category.dirs">
             </optionCategory>
             <option
-                  name="Include Paths"
+                  name="%Option.Posix.InclPaths"
                   category="solaris.gnu.c.compiler.category.dirs"
                   command="-I"
                   valueType="includePath"
@@ -2711,7 +2711,7 @@
                   id="solaris.gnu.c.compiler.category.optimization">
             </optionCategory>
             <option
-                  name="Optimization Level"
+                  name="%Option.Posix.OptLevel"
                   category="solaris.gnu.c.compiler.category.optimization"
                   valueType="enumerated"
                   id="solaris.gnu.c.compiler.general.optimization.level">
@@ -2739,7 +2739,7 @@
                </enumeratedOptionValue>
             </option>
             <option
-                  name="Other optimization flags"
+                  name="%Option.Posix.Optimize.Flags"
                   category="solaris.gnu.c.compiler.category.optimization"
                   valueType="string"
                   id="solaris.gnu.c.compiler.optimization.flags">
@@ -2750,42 +2750,42 @@
                   id="solaris.gnu.c.compiler.category.debug">
             </optionCategory>
             <option
-                  name="Debug Level"
+                  name="%Option.Posix.DebugLevel"
                   category="solaris.gnu.c.compiler.category.debug"
                   valueType="enumerated"
                   id="solaris.c.compiler.debugging.level">
                <enumeratedOptionValue
-                     name="None"
+                     name="%Option.Posix.Debug.None"
                      isDefault="false"
                      id="solaris.gnu.c.debugging.level.none">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Minimal (-g1)"
+                     name="%Option.Posix.Debug.Min"
                      command="-g1"
                      id="solaris.gnu.c.debugging.level.minimal">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Default (-g)"
+                     name="%Option.Posix.Debug.Def"
                      isDefault="true"
                      command="-g"
                      id="solaris.gnu.c.debugging.level.default">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Maximum (-g3)"
+                     name="%Option.Posix.Debug.Max"
                      isDefault="false"
                      command="-g3"
                      id="solaris.gnu.c.debugging.level.max">
                </enumeratedOptionValue>
             </option>
             <option
-                  name="Other debugging flags"
+                  name="%Option.Posix.Debug.Other"
                   category="solaris.gnu.c.compiler.category.debug"
                   valueType="string"
                   id="solaris.gnu.c.compiler.debugging.other">
             </option>
             <option
                   defaultValue="false"
-                  name="Generate gprof information (-pg)"
+                  name="%Option.Posix.Debug.gprof"
                   category="solaris.gnu.c.compiler.category.debug"
                   command="-pg"
                   valueType="boolean"
@@ -2793,7 +2793,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Generate prof information (-p)"
+                  name="%Option.Posix.Debug.prof"
                   category="solaris.gnu.c.compiler.category.debug"
                   command="-p"
                   valueType="boolean"
@@ -2806,7 +2806,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Check syntax only (-fsyntax-only)"
+                  name="%Option.Posix.Warn.Syntax"
                   category="solaris.c.compiler.category.warnings"
                   command="-fsyntax-only"
                   valueType="boolean"
@@ -2814,7 +2814,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic (-pedantic)"
+                  name="%Option.Posix.Warn.Pedandic"
                   category="solaris.c.compiler.category.warnings"
                   command="-pedantic"
                   valueType="boolean"
@@ -2822,7 +2822,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic warnings as errors (-pedantic-errors)"
+                  name="%Option.Posix.Warn.PedErrors"
                   category="solaris.c.compiler.category.warnings"
                   command="-pedantic-errors"
                   valueType="boolean"
@@ -2830,7 +2830,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Inhibit all warnings (-w)"
+                  name="%Option.Posix.Warn.nowarn"
                   category="solaris.c.compiler.category.warnings"
                   command="-w"
                   valueType="boolean"
@@ -2838,7 +2838,7 @@
             </option>
             <option
                   defaultValue="true"
-                  name="All warnings (-Wall)"
+                  name="%Option.Posix.Warn.allwarn"
                   category="solaris.c.compiler.category.warnings"
                   command="-Wall"
                   valueType="boolean"
@@ -2846,7 +2846,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-Werror)"
+                  name="%Option.Posix.Warn.toerrs"
                   category="solaris.c.compiler.category.warnings"
                   command="-Werror"
                   valueType="boolean"
@@ -2976,7 +2976,7 @@
                   id="solaris.gnu.compiler.category.dirs">
             </optionCategory>
             <option
-                  name="Include search paths (-I)"
+                  name="%Option.Posix.InclPaths"
                   category="solaris.gnu.compiler.category.dirs"
                   command="-I"
                   valueType="includePath"
@@ -2996,7 +2996,7 @@
                   id="solaris.gnu.compiler.category.optimization">
             </optionCategory>
             <option
-                  name="Optimization Level"
+                  name="%Option.Posix.OptLevel"
                   category="solaris.gnu.compiler.category.optimization"
                   valueType="enumerated"
                   id="solaris.gnu.compiler.optimization.level">
@@ -3023,7 +3023,7 @@
                </enumeratedOptionValue>
             </option>
             <option
-                  name="Other optimization flags"
+                  name="%Option.Posix.Optimize.Flags"
                   category="solaris.gnu.compiler.category.optimization"
                   valueType="string"
                   id="solaris.compiler.optimization.flags">
@@ -3034,42 +3034,42 @@
                   id="solaris.gnu.compiler.category.debug">
             </optionCategory>
             <option
-                  name="Debug Level"
+                  name="%Option.Posix.DebugLevel"
                   category="solaris.gnu.compiler.category.debug"
                   valueType="enumerated"
                   id="solaris.gnu.compiler.debugging.level">
                <enumeratedOptionValue
-                     name="None"
+                     name="%Option.Posix.Debug.None"
                      isDefault="false"
                      id="solaris.gnu.compiler.debugging.level.none">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Minimal (-g1)"
+                     name="%Option.Posix.Debug.Min"
                      command="-g1"
                      id="solaris.gnu.compiler.debugging.level.minimal">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Default (-g)"
+                     name="%Option.Posix.Debug.Def"
                      isDefault="true"
                      command="-g"
                      id="solaris.gnu.compiler.debugging.level.default">
                </enumeratedOptionValue>
                <enumeratedOptionValue
-                     name="Maximum (-g3)"
+                     name="%Option.Posix.Debug.Max"
                      isDefault="false"
                      command="-g3"
                      id="solaris.gnu.compiler.debugging.level.max">
                </enumeratedOptionValue>
             </option>
             <option
-                  name="Other debugging flags"
+                  name="%Option.Posix.Debug.Other"
                   category="solaris.gnu.compiler.category.debug"
                   valueType="string"
                   id="solaris.gnu.compiler.debugging.other">
             </option>
             <option
                   defaultValue="false"
-                  name="Generate prof information (-p)"
+                  name="%Option.Posix.Debug.prof"
                   category="solaris.gnu.compiler.category.debug"
                   command="-p"
                   valueType="boolean"
@@ -3077,7 +3077,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Generate gprof information (-pg)"
+                  name="%Option.Posix.Debug.gprof"
                   category="solaris.gnu.compiler.category.debug"
                   command="-pg"
                   valueType="boolean"
@@ -3090,7 +3090,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Check syntax only (-fsyntax-only)"
+                  name="%Option.Posix.Warn.Syntax"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-fsyntax-only"
                   valueType="boolean"
@@ -3098,7 +3098,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic (-pedantic)"
+                  name="%Option.Posix.Warn.Pedandic"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-pedantic"
                   valueType="boolean"
@@ -3106,7 +3106,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Pedantic warnings as errors (-pedantic-errors)"
+                  name="%Option.Posix.Warn.PedErrors"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-pedantic-errors"
                   valueType="boolean"
@@ -3114,7 +3114,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Inhibit all warnings (-w)"
+                  name="%Option.Posix.Warn.nowarn"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-w"
                   valueType="boolean"
@@ -3122,7 +3122,7 @@
             </option>
             <option
                   defaultValue="true"
-                  name="All warnings (-Wall)"
+                  name="%Option.Posix.Warn.allwarn"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-Wall"
                   valueType="boolean"
@@ -3130,7 +3130,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-Werror)"
+                  name="%Option.Posix.Warn.toerrs"
                   category="solaris.gnu.compiler.category.warnings"
                   command="-Werror"
                   valueType="boolean"
@@ -3171,22 +3171,22 @@
             <toolReference
                   id="cdt.build.tool.solaris.gnu.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="solaris.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="solaris.gnu.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.solaris.gnu.c.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="solaris.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="solaris.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -3197,22 +3197,22 @@
             <toolReference
                   id="cdt.build.tool.solaris.gnu.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="solaris.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="solaris.gnu.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.solaris.gnu.c.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="solaris.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="solaris.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -3294,7 +3294,7 @@
                   id="solaris.gnu.c.linker.category.other">
             </optionCategory>
             <option
-                  name="Linker Flags"
+                  name="%Option.Posix.Linker.Flags"
                   category="solaris.gnu.c.linker.category.other"
                   valueType="string"
                   id="solaris.gnu.c.link.ldflags">
@@ -3424,11 +3424,11 @@
             <toolReference
                   id="cdt.build.tool.solaris.gnu.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="solaris.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="solaris.gnu.compiler.debugging.level">
                </optionReference>
                <optionReference
@@ -3439,11 +3439,11 @@
             <toolReference
                   id="cdt.build.tool.solaris.gnu.c.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="solaris.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="solaris.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -3454,22 +3454,22 @@
             <toolReference
                   id="cdt.build.tool.solaris.gnu.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="solaris.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="solaris.gnu.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.solaris.gnu.c.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="solaris.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="solaris.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -3554,7 +3554,7 @@
             </optionCategory>
             <option
                   defaultValue="-shared -fPIC"
-                  name="Linker Flags"
+                  name="%Option.Posix.Linker.Flags"
                   category="solaris.gnu.c.solink.category.other"
                   valueType="string"
                   id="solaris.gnu.c.solink.ldflags">
@@ -3679,22 +3679,22 @@
             <toolReference
                   id="cdt.build.tool.solaris.gnu.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="solaris.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="solaris.gnu.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.solaris.gnu.c.compiler">
                <optionReference
-                     defaultValue="Optimize most (-O3)"
+                     defaultValue="%Option.Posix.Optimize.Most"
                      id="solaris.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="None"
+                     defaultValue="%Option.Posix.Debug.None"
                      id="solaris.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -3705,22 +3705,22 @@
             <toolReference
                   id="cdt.build.tool.solaris.gnu.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="solaris.gnu.compiler.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="solaris.gnu.compiler.debugging.level">
                </optionReference>
             </toolReference>
             <toolReference
                   id="cdt.build.tool.solaris.gnu.c.compiler">
                <optionReference
-                     defaultValue="None (-O0)"
+                     defaultValue="%Option.Posix.Optimize.None"
                      id="solaris.gnu.c.compiler.general.optimization.level">
                </optionReference>
                <optionReference
-                     defaultValue="Maximum (-g3)"
+                     defaultValue="%Option.Posix.Debug.Max"
                      id="solaris.c.compiler.debugging.level">
                </optionReference>
             </toolReference>
@@ -3740,7 +3740,7 @@
             </optionCategory>
             <option
                   defaultValue="-r"
-                  name="Archiver Flags"
+                  name="%Option.Posix.Archiver.Flags"
                   category="solaris.gnu.lib.category.general"
                   valueType="string"
                   id="solaris.gnu.lib.flags">

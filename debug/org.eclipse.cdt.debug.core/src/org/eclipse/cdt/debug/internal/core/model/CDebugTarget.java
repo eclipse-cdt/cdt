@@ -445,8 +445,13 @@ public class CDebugTarget extends CDebugElement
 	 * Notifies threads that they have been suspended.
 	 * 
 	 */
-	protected void suspendThreads()
+	protected void suspendThreads( ICDISuspendedEvent event )
 	{
+		Iterator it = getThreadList().iterator();
+		while( it.hasNext() )
+		{
+			((CThread)it.next()).handleDebugEvent( event );
+		}
 	}
 
 	/**
@@ -491,6 +496,7 @@ public class CDebugTarget extends CDebugElement
 		{
 			CDebugCorePlugin.log( e );
 		}
+		setCurrentThread();
 		return newThreads;
 	}
 
@@ -698,7 +704,7 @@ public class CDebugTarget extends CDebugElement
 					handleSuspendedEvent( (ICDISuspendedEvent)event );
 				}
 			}
-			else if ( event instanceof ICDIResumedEvent || source instanceof ICDIThread )
+			else if ( event instanceof ICDIResumedEvent )
 			{
 				if ( source instanceof ICDITarget )
 				{
@@ -995,7 +1001,13 @@ public class CDebugTarget extends CDebugElement
 		ICDISessionObject reason = event.getReason();
 		setCurrentStateInfo( reason );
 		List newThreads = refreshThreads();
-		if ( event.getSource() instanceof ICDIThread )
+		if ( event.getSource() instanceof ICDITarget )
+		{
+			suspendThreads( event );
+		}
+		// We need this for debuggers that don't have notifications 
+		// for newly created threads.
+		else if ( event.getSource() instanceof ICDIThread )
 		{
 			CThread thread = findThread( (ICDIThread)event.getSource() );
 			if ( thread != null && newThreads.contains( thread ) )
@@ -1023,7 +1035,25 @@ public class CDebugTarget extends CDebugElement
 		setCurrentStateId( IState.RUNNING );
 		setCurrentStateInfo( null );
 		resumeThreads( event );
-		fireResumeEvent( DebugEvent.UNSPECIFIED );
+		int detail = DebugEvent.UNSPECIFIED;
+		switch( event.getType() )
+		{
+			case ICDIResumedEvent.CONTINUE:
+				detail = DebugEvent.CLIENT_REQUEST;
+				break;
+			case ICDIResumedEvent.STEP_INTO:
+			case ICDIResumedEvent.STEP_INTO_INSTRUCTION:
+				detail = DebugEvent.STEP_INTO;
+				break;
+			case ICDIResumedEvent.STEP_OVER:
+			case ICDIResumedEvent.STEP_OVER_INSTRUCTION:
+				detail = DebugEvent.STEP_OVER;
+				break;
+			case ICDIResumedEvent.STEP_RETURN:
+				detail = DebugEvent.STEP_RETURN;
+				break;
+		}
+		fireResumeEvent( detail );
 	}
 	
 	private void handleEndSteppingRange( ICDIEndSteppingRange endSteppingRange )
@@ -1239,5 +1269,28 @@ public class CDebugTarget extends CDebugElement
 	protected ICSourceLocator getSourceLocator()
 	{
 		return fSourceLocator;
+	}
+	
+	protected void setCurrentThread()
+	{
+		ICDIThread currentCDIThread = null;
+		try
+		{
+			currentCDIThread = getCDITarget().getCurrentThread();
+		}
+		catch( CDIException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
+		Iterator it = getThreadList().iterator();
+		while( it.hasNext() )
+		{
+			CThread thread = (CThread)it.next();
+			thread.setCurrent( currentCDIThread != null && thread.getCDIThread().equals( currentCDIThread ) );
+		}
+		if ( currentCDIThread == null && !getThreadList().isEmpty() )
+		{
+			((CThread)getThreadList().get( 0 )).setCurrent( true );
+		}
 	}
 }

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.IInstructionStep;
 import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IState;
@@ -88,6 +89,11 @@ public class CThread extends CDebugElement
 	 * The debug configuration of this session.
 	 */
 	private ICDIConfiguration fConfig;	
+
+	/**
+	 * Whether this thread is current.
+	 */
+	private boolean fIsCurrent = false;	
 
 	/**
 	 * Constructor for CThread.
@@ -381,7 +387,8 @@ public class CThread extends CDebugElement
 		{
 			if ( event instanceof ICDISuspendedEvent )
 			{
-				if ( source instanceof ICDIThread )
+				if ( ( source instanceof ICDIThread && getCDIThread().equals( (ICDIThread)source ) ) ||
+					   source instanceof ICDITarget )
 				{
 					handleSuspendedEvent( (ICDISuspendedEvent)event );
 				}
@@ -415,13 +422,6 @@ public class CThread extends CDebugElement
 					handleChangedEvent( (ICDIChangedEvent)event );
 				}
 			}
-			//else if ( event instanceof ICDISteppingEvent )
-			//{
-			//	if ( source instanceof ICDIThread )
-			//	{
-			//		handleSteppingEvent( (ICDISteppingEvent)event );
-			//	}
-			//}
 		}
 	}
 
@@ -780,25 +780,34 @@ public class CThread extends CDebugElement
 	private void handleSuspendedEvent( ICDISuspendedEvent event )
 	{
 		setRunning( false );
+		if ( event.getSource() instanceof ICDITarget ) 
+		{
+			if ( isCurrent() )
+			{
+				setCurrentStateId( IState.SUSPENDED );
+				ICDISessionObject reason = event.getReason();
+				setCurrentStateInfo( reason );
+				if ( reason instanceof ICDIEndSteppingRange )
+				{
+					handleEndSteppingRange( (ICDIEndSteppingRange)reason );
+				}
+				else if ( reason instanceof ICDIBreakpoint )
+				{
+					handleBreakpointHit( (ICDIBreakpoint)reason );
+				}
+				else if ( reason instanceof ICDISignal )
+				{
+					handleSuspendedBySignal( (ICDISignal)reason );
+				}
+				else
+				{
+					fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
+				}
+			}
+			return;
+		}
 		setCurrentStateId( IState.SUSPENDED );
-		ICDISessionObject reason = event.getReason();
-		setCurrentStateInfo( reason );
-		if ( reason instanceof ICDIEndSteppingRange )
-		{
-			handleEndSteppingRange( (ICDIEndSteppingRange)reason );
-		}
-		else if ( reason instanceof ICDIBreakpoint )
-		{
-			handleBreakpointHit( (ICDIBreakpoint)reason );
-		}
-		else if ( reason instanceof ICDISignal )
-		{
-			handleSuspendedBySignal( (ICDISignal)reason );
-		}
-		else
-		{
-			fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
-		}
+		setCurrentStateInfo( null );
 	}
 
 	private void handleResumedEvent( ICDIResumedEvent event )
@@ -807,28 +816,35 @@ public class CThread extends CDebugElement
 		setCurrentStateId( IState.RUNNING );
 		setCurrentStateInfo( null );
 		int detail = DebugEvent.UNSPECIFIED;
-		switch( event.getType() )
+		if ( isCurrent() )
 		{
-			case ICDIResumedEvent.CONTINUE:
-				detail = DebugEvent.CLIENT_REQUEST;
-				disposeStackFrames();
-				break;
-			case ICDIResumedEvent.STEP_INTO:
-			case ICDIResumedEvent.STEP_INTO_INSTRUCTION:
-				detail = DebugEvent.STEP_INTO;
-				preserveStackFrames();
-				break;
-			case ICDIResumedEvent.STEP_OVER:
-			case ICDIResumedEvent.STEP_OVER_INSTRUCTION:
-				detail = DebugEvent.STEP_OVER;
-				preserveStackFrames();
-				break;
-			case ICDIResumedEvent.STEP_RETURN:
-				detail = DebugEvent.STEP_RETURN;
-				preserveStackFrames();
-				break;
+			switch( event.getType() )
+			{
+				case ICDIResumedEvent.CONTINUE:
+					detail = DebugEvent.CLIENT_REQUEST;
+					disposeStackFrames();
+					break;
+				case ICDIResumedEvent.STEP_INTO:
+				case ICDIResumedEvent.STEP_INTO_INSTRUCTION:
+					detail = DebugEvent.STEP_INTO;
+					preserveStackFrames();
+					break;
+				case ICDIResumedEvent.STEP_OVER:
+				case ICDIResumedEvent.STEP_OVER_INSTRUCTION:
+					detail = DebugEvent.STEP_OVER;
+					preserveStackFrames();
+					break;
+				case ICDIResumedEvent.STEP_RETURN:
+					detail = DebugEvent.STEP_RETURN;
+					preserveStackFrames();
+					break;
+			}
 		}
-		fireResumeEvent( detail );
+		else
+		{
+			disposeStackFrames();
+			fireResumeEvent( DebugEvent.CLIENT_REQUEST );
+		}
 	}
 	
 	private void handleEndSteppingRange( ICDIEndSteppingRange endSteppingRange )
@@ -920,5 +936,15 @@ public class CThread extends CDebugElement
 		{
 			((IRestart)getDebugTarget()).restart();
 		}
+	}
+	
+	protected boolean isCurrent()
+	{
+		return fIsCurrent;
+	}
+	
+	protected void setCurrent( boolean current )
+	{
+		fIsCurrent = current;
 	}
 }

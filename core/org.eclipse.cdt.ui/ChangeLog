@@ -1,3 +1,10 @@
+2004-04-15 Chris Wiebe
+
+	Make some helper functions static for ease of use ...
+	and to get rid of some annoying warnings.
+
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+
 2004-04-15 Mikhail Khodjaiants
 	Removed dependencies to 'org.eclipse.debug.core' and 'org.eclipse.debug.ui'.
 	* plugin.xml

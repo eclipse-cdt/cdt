@@ -148,24 +148,25 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static ResourceBundle getResourceBundle() {
 		return fgResourceBundle;
 	}
-
-	public IWorkbenchWindow getActiveWorkbenchWindow() {
+	
+	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 
-	/**
-	 * @return
-	 */
 	public static IWorkbenchPage getActivePage() {
-		IWorkbenchWindow window = getDefault().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
 		if (window != null) {
 			return window.getActivePage();
 		}
 		return null;
 	}
 
-	public Shell getActiveWorkbenchShell() {
-		return getActiveWorkbenchWindow().getShell();
+	public static Shell getActiveWorkbenchShell() {
+		 IWorkbenchWindow window= getActiveWorkbenchWindow();
+		 if (window != null) {
+		 	return window.getShell();
+		 }
+		 return null;
 	}
 
 	public static CUIPlugin getDefault() {

@@ -1,3 +1,7 @@
+2005-02-16 Alain Magloire
+	Fix for PR 85625, The IBinary info were not remove in the cache.
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+
 2005-01-19 Alain Magloire
 	PR 83224
 	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java

@@ -16,7 +16,9 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
 
 /**
@@ -81,8 +83,22 @@ public class MakeCorePlugin extends Plugin {
 		}
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
+
 	protected void initializeDefaultPluginPreferences() {
-		BuildInfoFactory.initializeDefaultPreferences(getPluginPreferences());
+		IMakeBuilderInfo info = BuildInfoFactory.create(getPluginPreferences(), MakeBuilder.BUILDER_ID, true);
+		try {
+			info.setBuildCommand(new Path("make"));
+			info.setBuildLocation(new Path(""));
+			info.setStopOnError(false);
+			info.setUseDefaultBuildCmd(true);
+			info.setAutoBuildEnable(false);
+			info.setAutoBuildTarget("all");
+			info.setIncrementalBuildEnable(true);
+			info.setIncrementalBuildTarget("all");
+			info.setFullBuildEnable(true);
+			info.setFullBuildTarget("clean all");
+		} catch (CoreException e) {
+		}
 		getPluginPreferences().setDefault(CCorePlugin.PREF_BINARY_PARSER, CCorePlugin.PLUGIN_ID + ".ELF");
 	}
 }

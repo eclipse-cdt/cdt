@@ -39,19 +39,15 @@ public class MakeProjectNature implements IProjectNature {
 		project.setDescription(description, monitor);
 	}
 
-	public static ICommand getBuildSpec(IProject project) throws CoreException {
+	public static ICommand getBuildSpec(IProject project, String builderID) throws CoreException {
 		IProjectDescription description = project.getDescription();
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(MakeBuilder.BUILDER_ID)) {
+			if (commands[i].getBuilderName().equals(builderID)) {
 				return commands[i];
 			}
 		}
 		return null;
-	}
-
-	public void addToBuildSpec(String builderID, IProgressMonitor mon) throws CoreException {
-		addToBuildSpec(getProject(), builderID, mon);
 	}
 
 	/**
@@ -79,15 +75,11 @@ public class MakeProjectNature implements IProjectNature {
 		}
 	}
 
-	public void removeBuildSpec(IProgressMonitor mon) throws CoreException {
-		removeFromBuildSpec(MakeBuilder.BUILDER_ID, mon);
-	}
-
 	/**
 		* Removes the given builder from the build spec for the given project.
 		*/
-	public void removeFromBuildSpec(String builderID, IProgressMonitor mon) throws CoreException {
-		IProjectDescription description = getProject().getDescription();
+	public static void removeFromBuildSpec(IProject project, String builderID, IProgressMonitor mon) throws CoreException {
+		IProjectDescription description = project.getDescription();
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
 			if (commands[i].getBuilderName().equals(builderID)) {
@@ -98,15 +90,19 @@ public class MakeProjectNature implements IProjectNature {
 				break;
 			}
 		}
-		getProject().setDescription(description, mon);
+		project.setDescription(description, mon);
+	}
+
+	public void addBuildSpec() throws CoreException {
+		addToBuildSpec(getProject(), MakeBuilder.BUILDER_ID, null);
 	}
 
 	/**
 		* @see IProjectNature#configure
 		*/
 	public void configure() throws CoreException {
-		addToBuildSpec(MakeBuilder.BUILDER_ID, null);
-		IMakeBuilderInfo info = BuildInfoFactory.create(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID);
+		addBuildSpec();
+		IMakeBuilderInfo info = BuildInfoFactory.create(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, false);
 		fBuildInfo.setBuildLocation(info.getBuildLocation());
 
 
@@ -124,11 +120,15 @@ public class MakeProjectNature implements IProjectNature {
 		fBuildInfo.setFullBuildTarget(info.getFullBuildTarget());
 	}
 
+	public void removeBuildSpec() throws CoreException {
+		removeFromBuildSpec(getProject(), MakeBuilder.BUILDER_ID, null);
+	}
+
 	/**
-		* @see IProjectNature#deconfigure
-		*/
+	 * @see IProjectNature#deconfigure
+	 */
 	public void deconfigure() throws CoreException {
-		removeFromBuildSpec(MakeBuilder.BUILDER_ID, null);
+		removeBuildSpec();
 	}
 
 	/**
@@ -148,5 +148,4 @@ public class MakeProjectNature implements IProjectNature {
 		} catch (CoreException e) {
 		}
 	}
-
 }

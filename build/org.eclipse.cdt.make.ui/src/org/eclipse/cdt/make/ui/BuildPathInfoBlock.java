@@ -268,6 +268,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		if (getContainer().getProject() != null) {
 			// dinglis-TODO: set list to preference settings
 		}
+		getContainer().updateContainer();
 	}
 
 	/*
@@ -363,8 +364,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	 * @see org.eclipse.cdt.ui.wizards.IWizardTab#getControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		this.shell = parent.getShell();
-
 		// Create the composite control for the tab
 		int tabColumns = 3;
 		Font font = parent.getFont();

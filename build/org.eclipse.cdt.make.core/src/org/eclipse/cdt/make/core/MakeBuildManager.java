@@ -58,28 +58,17 @@ public class MakeBuildManager extends AbstractCExtension implements IScannerInfo
 	private static IMakeBuilderInfo findBuildInfo(IResource resource, boolean create) throws CoreException {
 		IMakeBuilderInfo buildInfo = null;
 		// See if there's already one associated with the resource for this session
-		try {
-			buildInfo = (IMakeBuilderInfo)resource.getSessionProperty(buildInfoProperty);
-		} catch (CoreException e) {
-		}
+		buildInfo = (IMakeBuilderInfo)resource.getSessionProperty(buildInfoProperty);
 
 		// Try to load one for the project		
 		if (buildInfo == null && resource instanceof IProject) {
-			try {
-				buildInfo = loadBuildInfo((IProject)resource);
-			} catch (CoreException e) {
-			}
+			buildInfo = loadBuildInfo((IProject)resource);
 		}
 
 		// There is nothing persisted for the session, or saved in a file so 
 		// create a build info object
-		if (buildInfo == null && create) {
-			buildInfo = BuildInfoFactory.create((IProject)resource, MakeBuilder.BUILDER_ID);
-			try {
-				((IProject)resource).setSessionProperty(buildInfoProperty, buildInfo);
-			} catch (CoreException e) {
-				buildInfo = null;
-			}
+		if (buildInfo != null) {
+			((IProject)resource).setSessionProperty(buildInfoProperty, buildInfo);
 		}
 		return buildInfo;
 	}
@@ -185,7 +174,6 @@ public class MakeBuildManager extends AbstractCExtension implements IScannerInfo
 		}
 		buildInfo.setIncludePaths((String[]) includes.toArray(new String[includes.size()]));
 		buildInfo.setPreprocessorSymbols((String[]) symbols.toArray(new String[symbols.size()]));
-		project.setSessionProperty(buildInfoProperty, buildInfo);
 		return buildInfo;
 	}
 

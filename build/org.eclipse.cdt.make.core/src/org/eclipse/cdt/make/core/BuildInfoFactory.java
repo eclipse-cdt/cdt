@@ -25,32 +25,34 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Status;
 
 public class BuildInfoFactory {
 
-	public static final String PREFIX = MakeCorePlugin.getUniqueIdentifier();
+	private static final String PREFIX = MakeCorePlugin.getUniqueIdentifier();
 
-	public static final String BUILD_COMMAND = PREFIX + ".buildCommand";
-	public static final String BUILD_LOCATION = PREFIX + ".buildLocation";
-	public static final String STOP_ON_ERROR = PREFIX + ".stopOnError";
-	public static final String USE_DEFAULT_BUILD_CMD = PREFIX + ".useDefaultBuildCmd";
-	public static final String BUILD_TARGET_AUTO = PREFIX + ".autoBuildTarget";
-	public static final String BUILD_TARGET_INCREMENTAL = PREFIX + ".incrementalBuildTarget";
-	public static final String BUILD_TARGET_FULL = PREFIX + ".fullBuildTarget";
-	public static final String BUILD_FULL_ENABLED = PREFIX + ".enableFullBuild";
-	public static final String BUILD_INCREMENTAL_ENABLED = PREFIX + ".enabledIncrementalBuild";
-	public static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild";
-	public static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments";
+	private static final String BUILD_COMMAND = PREFIX + ".buildCommand";
+	private static final String BUILD_LOCATION = PREFIX + ".buildLocation";
+	private static final String STOP_ON_ERROR = PREFIX + ".stopOnError";
+	private static final String USE_DEFAULT_BUILD_CMD = PREFIX + ".useDefaultBuildCmd";
+	private static final String BUILD_TARGET_AUTO = PREFIX + ".autoBuildTarget";
+	private static final String BUILD_TARGET_INCREMENTAL = PREFIX + ".incrementalBuildTarget";
+	private static final String BUILD_TARGET_FULL = PREFIX + ".fullBuildTarget";
+	private static final String BUILD_FULL_ENABLED = PREFIX + ".enableFullBuild";
+	private static final String BUILD_INCREMENTAL_ENABLED = PREFIX + ".enabledIncrementalBuild";
+	private static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild";
+	private static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments";
 
-	public abstract static class Store implements IMakeBuilderInfo, IScannerInfo {
+	private abstract static class Store implements IMakeBuilderInfo, IScannerInfo {
 		// List of include paths
 		protected List pathList;
 		protected List symbolList;
 
-		public void setUseDefaultBuildCmd(boolean on) {
+		public void setUseDefaultBuildCmd(boolean on) throws CoreException {
 			putValue(USE_DEFAULT_BUILD_CMD, new Boolean(on).toString());
 		}
 
@@ -61,7 +63,7 @@ public class BuildInfoFactory {
 			return getBoolean(USE_DEFAULT_BUILD_CMD);
 		}
 
-		public void setBuildCommand(IPath location) {
+		public void setBuildCommand(IPath location) throws CoreException {
 			putValue(BUILD_COMMAND, location.toString());
 		}
 
@@ -100,7 +102,7 @@ public class BuildInfoFactory {
 
 		protected abstract String getBuilderID();
 
-		public void setBuildLocation(IPath location) {
+		public void setBuildLocation(IPath location) throws CoreException {
 			putValue(BUILD_LOCATION, location.toString());
 		}
 
@@ -109,7 +111,7 @@ public class BuildInfoFactory {
 			return new Path(location == null ? "" : location);
 		}
 
-		public void setStopOnError(boolean enabled) {
+		public void setStopOnError(boolean enabled) throws CoreException {
 			putValue(STOP_ON_ERROR, new Boolean(enabled).toString());
 		}
 
@@ -117,7 +119,7 @@ public class BuildInfoFactory {
 			return getBoolean(STOP_ON_ERROR);
 		}
 
-		public void setAutoBuildTarget(String target) {
+		public void setAutoBuildTarget(String target) throws CoreException {
 			putValue(BUILD_TARGET_AUTO, target);
 		}
 
@@ -125,7 +127,7 @@ public class BuildInfoFactory {
 			return getString(BUILD_TARGET_AUTO);
 		}
 
-		public void setIncrementalBuildTarget(String target) {
+		public void setIncrementalBuildTarget(String target) throws CoreException {
 			putValue(BUILD_TARGET_INCREMENTAL, target);
 		}
 
@@ -133,7 +135,7 @@ public class BuildInfoFactory {
 			return getString(BUILD_TARGET_INCREMENTAL);
 		}
 
-		public void setFullBuildTarget(String target) {
+		public void setFullBuildTarget(String target) throws CoreException {
 			putValue(BUILD_TARGET_FULL, target);
 		}
 
@@ -157,7 +159,7 @@ public class BuildInfoFactory {
 		 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 		 */
 		public String[] getIncludePaths() {
-			return (String[]) getPathList().toArray(new String[getPathList().size()]);
+			return (String[])getPathList().toArray(new String[getPathList().size()]);
 		}
 
 		/* (non-Javadoc)
@@ -194,7 +196,7 @@ public class BuildInfoFactory {
 		}
 
 		public String[] getPreprocessorSymbols() {
-			return (String[]) getSymbolList().toArray(new String[getSymbolList().size()]);
+			return (String[])getSymbolList().toArray(new String[getSymbolList().size()]);
 		}
 
 		protected List getSymbolList() {
@@ -208,10 +210,10 @@ public class BuildInfoFactory {
 			return Boolean.valueOf(getString(property)).booleanValue();
 		}
 
-		public abstract void putValue(String name, String value);
+		public abstract void putValue(String name, String value) throws CoreException;
 		public abstract String getString(String property);
 
-		public void setAutoBuildEnable(boolean enabled) {
+		public void setAutoBuildEnable(boolean enabled) throws CoreException {
 			putValue(BUILD_AUTO_ENABLED, new Boolean(enabled).toString());
 		}
 
@@ -219,7 +221,7 @@ public class BuildInfoFactory {
 			return getBoolean(BUILD_AUTO_ENABLED);
 		}
 
-		public void setIncrementalBuildEnable(boolean enabled) {
+		public void setIncrementalBuildEnable(boolean enabled) throws CoreException {
 			putValue(BUILD_INCREMENTAL_ENABLED, new Boolean(enabled).toString());
 		}
 
@@ -227,7 +229,7 @@ public class BuildInfoFactory {
 			return getBoolean(BUILD_INCREMENTAL_ENABLED);
 		}
 
-		public void setFullBuildEnable(boolean enabled) {
+		public void setFullBuildEnable(boolean enabled) throws CoreException {
 			putValue(BUILD_FULL_ENABLED, new Boolean(enabled).toString());
 		}
 
@@ -239,30 +241,35 @@ public class BuildInfoFactory {
 			return getString(BUILD_ARGUMENTS);
 		}
 
-		public void setBuildArguments(String args) {
+		public void setBuildArguments(String args) throws CoreException {
 			putValue(BUILD_ARGUMENTS, args);
 		}
 	}
 
-	public static class Preference extends Store {
+	private static class Preference extends Store {
 		private Preferences prefs;
 		private String builderID;
+		private boolean useDefaults;
 
-		public Preference(Preferences prefs, String builderID) {
+		public Preference(Preferences prefs, String builderID, boolean useDefaults) {
 			this.prefs = prefs;
 			this.builderID = builderID;
+			this.useDefaults = useDefaults;
 		}
 
 		public void putValue(String name, String value) {
-			prefs.setValue(name, value);
+			if (useDefaults) {
+				prefs.setDefault(name, value);
+			} else {
+				prefs.setValue(name, value);
+			}
 		}
 
 		public String getString(String property) {
+			if (useDefaults) {
+				return prefs.getDefaultString(property);
+			}
 			return prefs.getString(property);
-		}
-
-		public void setDefault(String name, String value) {
-			prefs.setDefault(name, value);
 		}
 
 		protected String getBuilderID() {
@@ -270,34 +277,33 @@ public class BuildInfoFactory {
 		}
 	}
 
-	public static class BuildProperty extends Store {
+	private static class BuildProperty extends Store {
 		private IProject project;
 		private String builderID;
-		
-		public BuildProperty(IProject project, String builderID) {
+		private Map args;
+
+		public BuildProperty(IProject project, String builderID) throws CoreException {
 			this.project = project;
 			this.builderID = builderID;
+			ICommand builder;
+			builder = MakeProjectNature.getBuildSpec(project, builderID);
+			if (builder == null) {
+				throw new CoreException(
+					new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, "Missing Builder: " + builderID, null));
+			}
+			args = builder.getArguments();
 		}
 
-		public void putValue(String name, String value) {
-			try {
-				ICommand builder = MakeProjectNature.getBuildSpec(project);
-				Map args = builder.getArguments();
-				args.put(name, value);
-				builder.setArguments(args);
-			} catch (CoreException e) {
-			}
+		public void putValue(String name, String value) throws CoreException {
+			ICommand builder = MakeProjectNature.getBuildSpec(project, builderID);
+			args.put(name, value);
+			builder.setArguments(args);
+			project.setDescription(project.getDescription(), null);
 		}
 
 		public String getString(String name) {
-			ICommand builder;
-			try {
-				builder = MakeProjectNature.getBuildSpec(project);
-				Map args = builder.getArguments();
-				return (String) args.get(name);
-			} catch (CoreException e) {
-			}
-			return null;
+			String value = (String)args.get(name);
+			return value == null ? "" : value;
 		}
 
 		public String getBuilderID() {
@@ -305,7 +311,7 @@ public class BuildInfoFactory {
 		}
 	}
 
-	public static class BuildArguments extends Store {
+	private static class BuildArguments extends Store {
 		private Map args;
 		private String builderID;
 
@@ -315,10 +321,11 @@ public class BuildInfoFactory {
 		}
 
 		public void putValue(String name, String value) {
+			args.put(name, value);
 		}
 
 		public String getString(String name) {
-			return (String) args.get(name);
+			return (String)args.get(name);
 		}
 
 		public String getBuilderID() {
@@ -326,28 +333,15 @@ public class BuildInfoFactory {
 		}
 	}
 
-	public static IMakeBuilderInfo create(Preferences prefs, String builderID) {
-		return new BuildInfoFactory.Preference(prefs, builderID);
+	public static IMakeBuilderInfo create(Preferences prefs, String builderID, boolean useDefaults) {
+		return new BuildInfoFactory.Preference(prefs, builderID, useDefaults);
 	}
 
-	public static IMakeBuilderInfo create(IProject project, String builderID) {
+	public static IMakeBuilderInfo create(IProject project, String builderID) throws CoreException {
 		return new BuildInfoFactory.BuildProperty(project, builderID);
 	}
 
 	public static IMakeBuilderInfo create(Map args, String builderID) {
 		return new BuildInfoFactory.BuildArguments(args, builderID);
-	}
-
-	public static void initializeDefaultPreferences(Preferences prefs) {
-		prefs.setDefault(BUILD_COMMAND, "make");
-		prefs.setDefault(BUILD_LOCATION, "");
-		prefs.setDefault(STOP_ON_ERROR, new Boolean(false).toString());
-		prefs.setDefault(USE_DEFAULT_BUILD_CMD, new Boolean(true).toString());
-		prefs.setDefault(BUILD_AUTO_ENABLED, new Boolean(false).toString());
-		prefs.setDefault(BUILD_FULL_ENABLED, new Boolean(true).toString());
-		prefs.setDefault(BUILD_INCREMENTAL_ENABLED, new Boolean(true).toString());
-		prefs.setDefault(BUILD_TARGET_AUTO, "all");
-		prefs.setDefault(BUILD_TARGET_INCREMENTAL, "all");
-		prefs.setDefault(BUILD_TARGET_FULL, "clean all");
 	}
 }

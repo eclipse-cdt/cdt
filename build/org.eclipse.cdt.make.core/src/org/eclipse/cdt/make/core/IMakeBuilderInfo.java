@@ -11,6 +11,7 @@ package org.eclipse.cdt.make.core;
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 public interface IMakeBuilderInfo {
@@ -30,21 +31,20 @@ public interface IMakeBuilderInfo {
 	public String[] getPreprocessorSymbols();
     public String[] getIncludePaths();
     
-	void setBuildLocation(IPath location);
-    void setStopOnError(boolean on);
-	void setUseDefaultBuildCmd(boolean on);
-    void setBuildCommand(IPath command);
-	void setBuildArguments(String args);
+	void setBuildLocation(IPath location) throws CoreException;
+    void setStopOnError(boolean on) throws CoreException;
+	void setUseDefaultBuildCmd(boolean on) throws CoreException;
+    void setBuildCommand(IPath command) throws CoreException;
+	void setBuildArguments(String args) throws CoreException;
     
-    void setAutoBuildEnable(boolean enabled);
-	void setAutoBuildTarget(String target);
-	void setIncrementalBuildEnable(boolean enabled);
-	void setIncrementalBuildTarget(String target);
-	void setFullBuildEnable(boolean enabled);
-	void setFullBuildTarget(String target);
+    void setAutoBuildEnable(boolean enabled) throws CoreException;
+	void setAutoBuildTarget(String target) throws CoreException;
+	void setIncrementalBuildEnable(boolean enabled) throws CoreException;
+	void setIncrementalBuildTarget(String target) throws CoreException;
+	void setFullBuildEnable(boolean enabled) throws CoreException;
+	void setFullBuildTarget(String target) throws CoreException;
 	
 	public void setPreprocessorSymbols(String[] symbols);
 	public void setIncludePaths(String[] paths);
-
 }
 

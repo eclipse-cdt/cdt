@@ -50,14 +50,14 @@ import org.eclipse.core.runtime.Platform;
  */
 public class BaseSearchTest extends TestCase implements ICSearchConstants {
 
-	ICSearchScope 			scope;
+	ICSearchScope 			scope;	
 	IFile 					file;
 	IProject 				testProject;
 	NullProgressMonitor		monitor;
 	IWorkspace 				workspace;
 	CSearchResultCollector	resultCollector;
 	SearchEngine			searchEngine;
-    FileManager 			fileManager;
+	FileManager 			fileManager;
     
 	public BaseSearchTest(String name) {
 		super(name);
@@ -65,7 +65,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-
+		(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 		monitor = new NullProgressMonitor();
 		
 		workspace = ResourcesPlugin.getWorkspace();
@@ -85,10 +85,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		importFile("include.h", "resources/search/include.h");
 		
 		scope = SearchEngine.createWorkspaceScope();
-		
-		IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		indexManager.setEnabled(testProject,true);
-		
+	
 		resultCollector = new CSearchResultCollector();
 		resultCollector.setProgressMonitor( monitor );
 		
@@ -149,8 +146,8 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		}
 	 }
 	 catch (CoreException e){
-	 	cproject = project;
-	 	cproject.open(null);
+		cproject = project;
+		cproject.open(null);
 	 }
 
 	return cproject;

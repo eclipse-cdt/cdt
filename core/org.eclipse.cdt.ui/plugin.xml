@@ -27,9 +27,9 @@
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="Binary Parser Page"/>
 <!-- =========================================================================== -->
-<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
 
@@ -130,8 +130,8 @@
             id="org.eclipse.cdt.ui.CView">
       </view>
    </extension>
-<!-- For C Wizards -->
 <!-- The wizards -->
+<!-- For C Wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -235,40 +235,6 @@
             class="org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage"
             id="org.eclipse.cdt.ui.preferneces.CBuildConsolePreferernces">
       </page>
-<!-- This code is disable for CDT-1.2: Alain
-      <page
-            name="%todoTaskPrefName"
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPreferencePage"
-            id="org.eclipse.cdt.ui.preferences.TodoTaskPreferencePage">
-      </page>
--->
-   </extension>
-   <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
-            name="%CProjectPropertyPage.name"
-            class="org.eclipse.cdt.internal.ui.preferences.CProjectPropertyPage"
-            id="org.eclipse.cdt.ui.preferences.CProjectPropertyPage">
-         <filter
-               name="nature"
-               value="org.eclipse.cdt.core.cnature">
-         </filter>
-      </page>
-<!-- This code is disable for CDT-1.2, does not work correctly: Alain
-      <page
-            objectClass="org.eclipse.core.resources.IProject"
-            name="%todoPageName"
-            class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPropertyPage"
-            id="org.eclipse.cdt.ui.propertyPages.TodoTaskPropertyPage">
-         <filter
-               name="nature"
-               value="org.eclipse.cdt.core.cnature">
-         </filter>
-      </page>
--->
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">

@@ -1,3 +1,9 @@
+2003-09-22 Bogdan Gheorghe
+	- modified CompletionProposalsTests, BaseSearchTest
+	 to avoid using isEnabled for the IndexManager
+	- Reordered the IndexManagerTests suite to allow all
+	  tests to be run
+	  
 2003-09-22 Andrew Niefer
 	- modified resources/cfiles/CompletionProposalsTestStart.cpp
 	- modified CompletionProposalsTest.testCompletionProposals

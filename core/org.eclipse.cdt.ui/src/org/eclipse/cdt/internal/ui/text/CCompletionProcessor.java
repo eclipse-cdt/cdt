@@ -601,4 +601,5 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			proposal.setAdditionalProposalInfo(infoString.toString());
 		}
 	}
+
 }

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -25,6 +26,10 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.core.search.ICSearchPattern;
+import org.eclipse.cdt.core.search.ICSearchResultCollector;
+import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
@@ -33,6 +38,7 @@ import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
+import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -52,13 +58,13 @@ import org.eclipse.core.runtime.Platform;
  * @author bgheorgh
  */
 public class IndexManagerTests extends TestCase {
-	IFile file;
-	IFileDocument fileDoc;
-	IProject testProject;
-	NullProgressMonitor monitor;
-    IndexManager indexManager;
-    
-    public static final int TIMEOUT = 10000;
+	IFile 					file;
+	IFileDocument 			fileDoc;
+	IProject 				testProject;
+	NullProgressMonitor		monitor;
+	IndexManager 			indexManager;
+	
+	public static final int TIMEOUT = 5000;
 	/**
 	 * Constructor for IndexManagerTest.
 	 * @param name
@@ -78,8 +84,9 @@ public class IndexManagerTests extends TestCase {
 		testProject = createProject("IndexerTestProject");
 		if (testProject==null)
 			fail("Unable to create project");	
-			
-	
+		
+		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+		indexManager.reset();
 	}
 	/*
 	 * @see TestCase#tearDown()
@@ -103,17 +110,18 @@ public class IndexManagerTests extends TestCase {
 		TestSuite suite = new TestSuite(IndexManagerTests.class.getName());
 
 		suite.addTest(new IndexManagerTests("testAddNewFileToIndex"));
-		suite.addTest(new IndexManagerTests("testRemoveProjectFromIndex"));
-		suite.addTest(new IndexManagerTests("testRefs"));
-		suite.addTest(new IndexManagerTests("testMacros"));
 		suite.addTest(new IndexManagerTests("testForwardDeclarations"));
-		//suite.addTest(new IndexManagerTests("testIndexContents"));
-		//suite.addTest(new IndexManagerTests("testIndexAll"));
-		suite.addTest(new IndexManagerTests("testDependencyTree"));
+		suite.addTest(new IndexManagerTests("testIndexAll"));
+		suite.addTest(new IndexManagerTests("testIndexContents"));
+		suite.addTest(new IndexManagerTests("testMacros"));
+		suite.addTest(new IndexManagerTests("testRefs"));
+		suite.addTest(new IndexManagerTests("testRemoveFileFromIndex"));
+		suite.addTest(new IndexManagerTests("testRemoveProjectFromIndex"));
 		suite.addTest(new IndexManagerTests("testIndexShutdown"));
-
+		suite.addTest(new IndexManagerTests("testDependencyTree"));
+		
 		return suite;
-	//	return new TestSuite(IndexManagerTests.class);
+	
 	}
 	/*
 	 * Utils
@@ -127,13 +135,13 @@ public class IndexManagerTests extends TestCase {
 		   if (!project.exists()) {
 			 project.create(null);
 		   } else {
-		     project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			 project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		   }
 		   if (!project.isOpen()) {
 			 project.open(null);
 		   }  
 		  
-	       //Fill out a project description
+		   //Fill out a project description
 		   IPath defaultPath = Platform.getLocation();
 		   IPath newPath = project.getFullPath();
 		   if (defaultPath.equals(newPath))
@@ -159,7 +167,7 @@ public class IndexManagerTests extends TestCase {
 	
 	private IFile importFile(String fileName, String resourceLocation)throws Exception{
 	   //Obtain file handle
-       file = testProject.getProject().getFile(fileName); 
+	   file = testProject.getProject().getFile(fileName); 
 	   String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
 	   //Create file input stream
 	   monitor = new NullProgressMonitor();
@@ -185,11 +193,7 @@ public class IndexManagerTests extends TestCase {
 	public void testIndexAll() throws Exception {
 		//Add a file to the project
 		importFile("mail.cpp","resources/indexer/mail.cpp");
-		//Enable indexing on the created project
-		//By doing this, we force the Index Manager to indexAll()
-		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		indexManager.setEnabled(testProject,true);
-		Thread.sleep(1500);
+		Thread.sleep(5000);
 		IIndex ind = indexManager.getIndex(testProject.getFullPath(),true,true);
 		assertTrue("Index exists for project",ind != null);
 		
@@ -201,7 +205,7 @@ public class IndexManagerTests extends TestCase {
 		assertTrue("Entry Results exist", eresults != null);
 		
 		String [] queryResultModel = {"IndexedFile(1: /IndexerTestProject/mail.cpp)"};
-		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 1 }", "EntryResult: word=typeDecl/C/container, refs={ 1 }", "EntryResult: word=typeDecl/C/first_class, refs={ 1 }", "EntryResult: word=typeDecl/C/postcard, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }"};
+		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 1 }", "EntryResult: word=typeDecl/C/container, refs={ 1 }", "EntryResult: word=typeDecl/C/first_class, refs={ 1 }", "EntryResult: word=typeDecl/C/postcard, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }", "EntryResult: word=typeDecl/V/size, refs={ 1 }", "EntryResult: word=typeDecl/V/temp, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }"};
 		
 		if (qresults.length != queryResultModel.length)
 			fail("Query Result length different from model");
@@ -225,9 +229,8 @@ public class IndexManagerTests extends TestCase {
 		importFile("mail.cpp","resources/indexer/mail.cpp");
 		//Enable indexing on the created project
 		//By doing this, we force the Index Manager to indexAll()
-		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		indexManager.setEnabled(testProject,true);
-		Thread.sleep(TIMEOUT);
+		
+		Thread.sleep(10000);
 		//Make sure project got added to index
 		IPath testProjectPath = testProject.getFullPath();
 		IIndex ind = indexManager.getIndex(testProjectPath,true,true);
@@ -235,6 +238,7 @@ public class IndexManagerTests extends TestCase {
 		//Add a new file to the project, give it some time to index
 		importFile("DocumentManager.h","resources/indexer/DocumentManager.h");
 		importFile("DocumentManager.cpp","resources/indexer/DocumentManager.cpp");
+	
 		Thread.sleep(10000);
 		ind = indexManager.getIndex(testProjectPath,true,true);
 		
@@ -256,10 +260,7 @@ public class IndexManagerTests extends TestCase {
 	public void testRemoveProjectFromIndex() throws Exception{
 	  //Add a file to the project
 	  importFile("mail.cpp","resources/indexer/mail.cpp");
-	  //Enable indexing on the created project
-	  //By doing this, we force the Index Manager to indexAll()
-	  indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-	  indexManager.setEnabled(testProject,true);
+	  
 	  Thread.sleep(TIMEOUT);
 	  //Make sure project got added to index
 	  IPath testProjectPath = testProject.getFullPath();
@@ -289,10 +290,7 @@ public class IndexManagerTests extends TestCase {
 	public void testRemoveFileFromIndex() throws Exception{
 	 //Add a file to the project
 	 importFile("mail.cpp","resources/indexer/mail.cpp");
-	 //Enable indexing on the created project
-	 //By doing this, we force the Index Manager to indexAll()
-	 indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-	 indexManager.setEnabled(testProject,true);
+
 	 Thread.sleep(TIMEOUT);
 	 //Make sure project got added to index
 	 IPath testProjectPath = testProject.getFullPath();
@@ -300,6 +298,7 @@ public class IndexManagerTests extends TestCase {
 	 assertTrue("Index exists for project",ind != null);
 	 //Add a new file to the project
 	 importFile("DocumentManager.h","resources/indexer/DocumentManager.h");
+	 importFile("DocumentManager.cpp","resources/indexer/DocumentManager.cpp");
 	 Thread.sleep(10000);
 	 //Do a "before" deletion comparison
 	 ind = indexManager.getIndex(testProjectPath,true,true);
@@ -307,7 +306,7 @@ public class IndexManagerTests extends TestCase {
 	 IEntryResult[] eresults = ind.queryEntries(prefix);
 	 assertTrue("Entry result found for typdeDecl/", eresults != null);
 	 
-	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }", "EntryResult: word=typeDecl/C/Mail, refs={ 2 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 2 }", "EntryResult: word=typeDecl/C/container, refs={ 2 }", "EntryResult: word=typeDecl/C/first_class, refs={ 2 }", "EntryResult: word=typeDecl/C/postcard, refs={ 2 }"};
+	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }", "EntryResult: word=typeDecl/C/Mail, refs={ 2 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 2 }", "EntryResult: word=typeDecl/C/container, refs={ 2 }", "EntryResult: word=typeDecl/C/first_class, refs={ 2 }", "EntryResult: word=typeDecl/C/postcard, refs={ 2 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 2 }", "EntryResult: word=typeDecl/V/size, refs={ 2 }", "EntryResult: word=typeDecl/V/temp, refs={ 2 }", "EntryResult: word=typeDecl/V/x, refs={ 2 }"};
 	 if (eresults.length != entryResultBeforeModel.length)
 			fail("Entry Result length different from model");	
 
@@ -329,7 +328,7 @@ public class IndexManagerTests extends TestCase {
 		fail("Entry Result length different from model");
 		
 	 for (int i=0;i<eresults.length; i++)
-     {
+	 {
 		assertEquals(entryResultAfterModel[i],eresults[i].toString());
 	 }
 	}
@@ -337,10 +336,7 @@ public class IndexManagerTests extends TestCase {
 	public void testIndexContents() throws Exception{
 		//Add a new file to the project, give it some time to index
 		importFile("extramail.cpp","resources/indexer/extramail.cpp");
-		//Enable indexing on the created project
-		//By doing this, we force the Index Manager to indexAll()
-		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		indexManager.setEnabled(testProject,true);
+	
 		Thread.sleep(TIMEOUT);
 		//Make sure project got added to index
 		IPath testProjectPath = testProject.getFullPath();
@@ -350,7 +346,8 @@ public class IndexManagerTests extends TestCase {
 		IEntryResult[] typerefreesults = ind.queryEntries(IIndexConstants.TYPE_REF);
 		assertTrue("Type Ref Results exist", typerefreesults != null);
 		
-		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/Unknown/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/container/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/first_class/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/postcard/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/E/test/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/T/int32, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }", "EntryResult: word=typeDecl/V/x/Z, refs={ 1 }"};
+		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/Unknown/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/container/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/first_class/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/postcard/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/E/test/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/T/int32, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }", "EntryResult: word=typeDecl/V/size, refs={ 1 }", "EntryResult: word=typeDecl/V/temp, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }", "EntryResult: word=typeDecl/V/x/Z, refs={ 1 }"};
+
 		IEntryResult[] typedeclresults =ind.queryEntries(IIndexConstants.TYPE_DECL);
 		assertTrue("Type Decl Results exist", typedeclresults != null);
 		
@@ -409,21 +406,19 @@ public class IndexManagerTests extends TestCase {
 			assertEquals(functionResultModel[i],functionresults[i].toString());
 		}
 		
-		String [] methodResultModel = {"EntryResult: word=methodDecl/Mail/Mail/Y/X/Z, refs={ 1 }",
-										"EntryResult: word=methodDecl/Unknown/Unknown/Y/X/Z, refs={ 1 }",
+		String [] methodResultModel = {"EntryResult: word=methodDecl/Mail/Mail/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/Unknown/Unknown/Y/X/Z, refs={ 1 }", 
 										"EntryResult: word=methodDecl/container/container/Y/X/Z, refs={ 1 }", 
-										"EntryResult: word=methodDecl/first_class/first_class/Y/X/Z, refs={ 1 }",
-										//"EntryResult: word=methodDecl/operator=/Y/X/Z, refs={ 1 }", 
-										"EntryResult: word=methodDecl/operator=/container/Y/X/Z, refs={ 1 }",
-										//"EntryResult: word=methodDecl/operator[]/Y/X/Z, refs={ 1 }",
-										"EntryResult: word=methodDecl/operator[]/container/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/first_class/first_class/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/operator =/container/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/operator []/container/Y/X/Z, refs={ 1 }", 
 										"EntryResult: word=methodDecl/postcard/postcard/Y/X/Z, refs={ 1 }", 
 										"EntryResult: word=methodDecl/print/Mail/Y/X/Z, refs={ 1 }", 
-										"EntryResult: word=methodDecl/print/Unknown/Y/X/Z, refs={ 1 }",
+										"EntryResult: word=methodDecl/print/Unknown/Y/X/Z, refs={ 1 }", 
 										"EntryResult: word=methodDecl/print/first_class/Y/X/Z, refs={ 1 }", 
 										"EntryResult: word=methodDecl/print/postcard/Y/X/Z, refs={ 1 }", 
 										"EntryResult: word=methodDecl/size/container/Y/X/Z, refs={ 1 }", 
-										"EntryResult: word=methodDecl/~container/container/Y/X/Z, refs={ 1 }" };
+										"EntryResult: word=methodDecl/~container/container/Y/X/Z, refs={ 1 }"};
 									   
 									    
 									   
@@ -443,10 +438,7 @@ public class IndexManagerTests extends TestCase {
   public void testRefs() throws Exception{
 		  //Add a new file to the project, give it some time to index
 		  importFile("reftest.cpp","resources/indexer/reftest.cpp");
-		  //Enable indexing on the created project
-		  //By doing this, we force the Index Manager to indexAll()
-		  indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		  indexManager.setEnabled(testProject,true);
+	
 		  Thread.sleep(TIMEOUT);
 		  //Make sure project got added to index
 		  IPath testProjectPath = testProject.getFullPath();
@@ -518,10 +510,7 @@ public class IndexManagerTests extends TestCase {
   {
 	  //Add a new file to the project, give it some time to index
 	  importFile("extramail.cpp","resources/indexer/extramail.cpp");
-	  //Enable indexing on the created project
-	  //By doing this, we force the Index Manager to indexAll()
-	  indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-	  indexManager.setEnabled(testProject,true);
+
 	  Thread.sleep(TIMEOUT);
 	  //Make sure project got added to index
 	  IPath testProjectPath = testProject.getFullPath();
@@ -545,10 +534,7 @@ public class IndexManagerTests extends TestCase {
   public void testIndexShutdown() throws Exception{
 	//Add a new file to the project, give it some time to index
 	 importFile("reftest.cpp","resources/indexer/reftest.cpp");
-	 //Enable indexing on the created project
-	 //By doing this, we force the Index Manager to indexAll()
-	 indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-	 indexManager.setEnabled(testProject,true);
+
 	 Thread.sleep(TIMEOUT);
 	 //Make sure project got added to index
 	 IPath testProjectPath = testProject.getFullPath();
@@ -578,22 +564,20 @@ public class IndexManagerTests extends TestCase {
 					fail("Shutdown did not delete .index file");
 				}
 		}
-   	}
+	}
   }
   
   public void testForwardDeclarations() throws Exception{
 	//Add a new file to the project, give it some time to index
 	importFile("reftest.cpp","resources/indexer/reftest.cpp");
-	//Enable indexing on the created project
-	//By doing this, we force the Index Manager to indexAll()
-	indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-	indexManager.setEnabled(testProject,true);
+
 	Thread.sleep(TIMEOUT);
 	 //Make sure project got added to index
 	 IPath testProjectPath = testProject.getFullPath();
 	 IIndex ind = indexManager.getIndex(testProjectPath,true,true);
 	 assertTrue("Index exists for project",ind != null);
 
+	//IEntryResult[] fwdDclResults = ind.queryEntries("typeDecl/C/ForwardA/A".toCharArray());
 	 IEntryResult[] fwdDclResults = ind.queryEntries("typeDecl/C/ForwardA/A".toCharArray());
 	 assertTrue("Entry exists",fwdDclResults != null);
 	 
@@ -621,11 +605,6 @@ public class IndexManagerTests extends TestCase {
 	}
   }
   
-  public void testFunctionDeclarations2() throws Exception{
-  	
-  }
-  
-  
   public void testDependencyTree() throws Exception{
 	//Add a file to the project
 	IFile depTest = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");
@@ -639,7 +618,7 @@ public class IndexManagerTests extends TestCase {
 	//Enable indexing on the created project
 	//By doing this, we force the Dependency Manager to do a g()
 	DependencyManager dependencyManager = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
-	dependencyManager.setEnabled(testProject,true);
+	//dependencyManager.setEnabled(testProject,true);
 	Thread.sleep(10000);
 	String[] depTestModel = {File.separator + "IndexerTestProject" + File.separator + "d.h", File.separator + "IndexerTestProject" + File.separator + "Inc1.h", File.separator + "IndexerTestProject" + File.separator + "c.h", File.separator + "IndexerTestProject" + File.separator + "a.h", File.separator + "IndexerTestProject" + File.separator + "DepTest.h"};
 	String[] depTest2Model = {File.separator + "IndexerTestProject" + File.separator + "d.h", File.separator + "IndexerTestProject" + File.separator + "DepTest2.h"};
@@ -706,4 +685,5 @@ public class IndexManagerTests extends TestCase {
 		}
 		return tempLocalArray;
 	}
+	
 }

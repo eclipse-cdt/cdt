@@ -1,14 +1,27 @@
-<<<<<<< ChangeLog
-<<<<<<< ChangeLog
-2003-09-19 Hoda Amer
+2003-09-22 Bogdan Gheorghe
+	Got rid of the C/C++ Project property page (only the indexer tab
+	was left). Here are the changes:
+	
+	Modified:
+	* plugin.xml
+	* org.eclipse.cdt.internal.ui.text.CCompletionProcessor
+	* org.eclipse.cdt.internal.ui.editor.DefaultCEditorTextHover
+	
+	Deleted:
+	* org.eclipse.cdt.ui.wizards.IndexerBlock
+	
+	Slated for deletion before 1.2 GA:
+	* org.eclipse.cdt.internal.ui.preferences.CProjectPropertyPage
+	* org.eclipse.cdt.internal.ui.preferences.CProjectOptionBlock
+	* org.eclipse.cdt.ui.dialogs.IndexerBlock
+	
+2003-09-22 Hoda Amer
 	Solutions to 
 	bug#43162 : Code Assist not showing the right return value
 	Bug#43145 : foo function still showing in Code Assist even if "f" is deleted
 	Bug#42810 : Code Assist adding characters after pressing <enter>
 	Bug#42861 : Code Assist should be case insensitive. 
 	
-=======
-=======
 2003-09-22 Andrew Niefer
 	fix for bug 43327 Code Complete finds local variables  
 	- update calls to SearchEngine.search.  CodeCompletion passes true for excludeLocalDeclarations

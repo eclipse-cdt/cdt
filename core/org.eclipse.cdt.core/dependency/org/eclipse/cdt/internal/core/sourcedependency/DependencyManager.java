@@ -247,10 +247,10 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 		if (CCorePlugin.getDefault() == null) return;
 		
 		 /******
-		 *TODO: Remove these methods once the depTree is
+		 *TODO: BOG Remove these methods once the depTree is
 		 *fully integrated
 		 */
-		 if (!isEnabled(project)) return;
+//		 if (!isEnabled(project)) return;
 
 		// check if the same request is not already in the queue
 		DependencyRequest request = new EntireProjectDependencyTree(project, this);
@@ -378,46 +378,46 @@ public class DependencyManager extends JobManager implements ISourceDependency {
 			request(job);
 	}
 	
-	/*************
-	 *TODO: Remove these methods once the depTree is
-	 *fully integrated
-	 * START OF TEMP D-TREE ENABLE SECTION
-	 */
-	final static String DEP_MODEL_ID = CCorePlugin.PLUGIN_ID + ".dependencytree";
-	final static String ACTIVATION = "enable";
-	
-	static QualifiedName activationKey = new QualifiedName(DEP_MODEL_ID, ACTIVATION);
-	
-	public boolean isEnabled(IProject project) {
-		String prop = null;
-		try {
-			if (project != null) {
-				prop = project.getPersistentProperty(activationKey);
-			}
-		} catch (CoreException e) {
-		}
-		return ((prop != null) && prop.equalsIgnoreCase("true"));
-	}
-	
-	public void setEnabled(IProject project, boolean on) {
-		try {
-			if (project != null) {
-				Boolean newValue = new Boolean(on);
-				Boolean oldValue = new Boolean(isEnabled(project));
-				if (!oldValue.equals(newValue)) {
-					project.setPersistentProperty(activationKey, newValue.toString());
-					if (on) {
-						generateEntireDependencyTree(project);
-					} else {
-						//remove(project);
-					}
-				}
-			}
-		} catch (CoreException e) {
-		}
-	}
-
-	/************
-	 * END OF TEMP D-TREE ENABLE SECTION
-	 */
+//	/*************
+//	 *TODO: Remove these methods once the depTree is
+//	 *fully integrated
+//	 * START OF TEMP D-TREE ENABLE SECTION
+//	 */
+//	final static String DEP_MODEL_ID = CCorePlugin.PLUGIN_ID + ".dependencytree";
+//	final static String ACTIVATION = "enable";
+//	
+//	static QualifiedName activationKey = new QualifiedName(DEP_MODEL_ID, ACTIVATION);
+//	
+//	public boolean isEnabled(IProject project) {
+//		String prop = null;
+//		try {
+//			if (project != null) {
+//				prop = project.getPersistentProperty(activationKey);
+//			}
+//		} catch (CoreException e) {
+//		}
+//		return ((prop != null) && prop.equalsIgnoreCase("true"));
+//	}
+//	
+//	public void setEnabled(IProject project, boolean on) {
+//		try {
+//			if (project != null) {
+//				Boolean newValue = new Boolean(on);
+//				Boolean oldValue = new Boolean(isEnabled(project));
+//				if (!oldValue.equals(newValue)) {
+//					project.setPersistentProperty(activationKey, newValue.toString());
+//					if (on) {
+//						generateEntireDependencyTree(project);
+//					} else {
+//						//remove(project);
+//					}
+//				}
+//			}
+//		} catch (CoreException e) {
+//		}
+//	}
+//
+//	/************
+//	 * END OF TEMP D-TREE ENABLE SECTION
+//	 */
 }

@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -122,7 +121,6 @@ public class CCorePlugin extends Plugin {
 
 	private CDescriptorManager fDescriptorManager;
 	private CoreModel fCoreModel;
-	private IndexModel fIndexModel;
 
 	// -------- static methods --------
 
@@ -210,9 +208,7 @@ public class CCorePlugin extends Plugin {
 		if (fDescriptorManager != null) {
 			fDescriptorManager.shutdown();
 		}
-		if (fIndexModel != null) {
-			fIndexModel.shutdown();
-		}
+		
 		if (fCoreModel != null) {
 			fCoreModel.shutdown();
 		}
@@ -231,11 +227,7 @@ public class CCorePlugin extends Plugin {
 		fCoreModel = CoreModel.getDefault();
 		fCoreModel.startup();
 
-		// Fired up the indexer. It should delay itself for 10 seconds
-		fIndexModel = IndexModel.getDefault();
-		fIndexModel.startup();
-		
-		//Fired up the new indexer
+		//Fired up the indexer
 		fCoreModel.startIndexing();
 		
 		//Fire up dependency manager
@@ -515,10 +507,6 @@ public class CCorePlugin extends Plugin {
 
 	public CoreModel getCoreModel() {
 		return fCoreModel;
-	}
-
-	public IndexModel getIndexModel() {
-		return fIndexModel;
 	}
 
 	public ICDescriptor getCProjectDescription(IProject project) throws CoreException {

@@ -11,7 +11,7 @@ package org.eclipse.cdt.internal.ui.preferences;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
-
+//TODO: BOG UI Get rid before final 1.2
 public class CProjectOptionBlock extends TabFolderOptionBlock {
 
 	public CProjectOptionBlock(ICOptionContainer parent) {

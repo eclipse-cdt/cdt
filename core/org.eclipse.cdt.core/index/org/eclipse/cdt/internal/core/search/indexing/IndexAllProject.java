@@ -76,10 +76,10 @@ public class IndexAllProject extends IndexRequest {
 				indexedFileNames.put(results[i].getPath(), DELETED);
 			final long indexLastModified = max == 0 ? 0L : index.getIndexFile().lastModified();
 
-			CModel model = (CModel) CModelManager.getDefault().getCModel();
-			ICProject cProject = model.getCProject(project.getName());
-			ICElement[] kids = cProject.getChildren();
-			IPath cProjectPath = cProject.getPath(); 
+//			CModel model = (CModel) CModelManager.getDefault().getCModel();
+//			ICProject cProject = model.getCProject(project.getName());
+//			ICElement[] kids = cProject.getChildren();
+			IPath cProjectPath = project.getFullPath(); 
 			
 			IWorkspaceRoot root = this.project.getWorkspace().getRoot();
 			IResource sourceFolder = root.findMember(cProjectPath);

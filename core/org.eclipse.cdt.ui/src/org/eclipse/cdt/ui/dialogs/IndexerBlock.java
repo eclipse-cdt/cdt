@@ -11,7 +11,6 @@ package org.eclipse.cdt.ui.dialogs;
 ***********************************************************************/
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -22,13 +21,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-
+//TODO: BOG UI Get rid before final 1.2
 public class IndexerBlock extends AbstractCOptionPage {
 	private static final String PREFIX = "IndexerBlock"; // $NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$
 	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$
 
-	private Button indexerSwitch;
 	private Button indexerSwitch2;
 	private Button dTreeSwitch;
 
@@ -43,10 +41,6 @@ public class IndexerBlock extends AbstractCOptionPage {
 		grid.numColumns = 1;
 		composite.setLayout(grid);
 
-		indexerSwitch = new Button(composite, SWT.CHECK | SWT.RIGHT);
-		indexerSwitch.setAlignment(SWT.LEFT);
-		indexerSwitch.setText("Enable CTAGS indexing service for this project");
-
 		indexerSwitch2 = new Button(composite, SWT.CHECK | SWT.RIGHT);
 		indexerSwitch2.setAlignment(SWT.LEFT);
 		indexerSwitch2.setText("Enable NEW indexing service for this project");
@@ -57,23 +51,18 @@ public class IndexerBlock extends AbstractCOptionPage {
 
 		IProject project = getContainer().getProject();
 		if (project != null) {
-			IndexModel indexer = CCorePlugin.getDefault().getIndexModel();
-			IndexManager newIndexer = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-			if (indexerSwitch != null) {
-				//indexerSwitch.setAlignment(SWT.LEFT);
-				//indexerSwitch.setText("Enable indexing service for this project");
-				indexerSwitch.setSelection(indexer.isEnabled(project));
-			}
+			
+//			IndexManager newIndexer = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+//			
+//			if (indexerSwitch2 != null) {
+//				indexerSwitch2.setSelection(newIndexer.isEnabled(project));
+//			}
 
-			if (indexerSwitch2 != null) {
-				indexerSwitch2.setSelection(newIndexer.isEnabled(project));
-			}
-
-			DependencyManager depManager = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
-
-			if (dTreeSwitch != null) {
-				dTreeSwitch.setSelection(depManager.isEnabled(project));
-			}
+//			DependencyManager depManager = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
+//
+//			if (dTreeSwitch != null) {
+//				dTreeSwitch.setSelection(depManager.isEnabled(project));
+//			}
 		}
 		setControl(composite);
 	}
@@ -81,20 +70,16 @@ public class IndexerBlock extends AbstractCOptionPage {
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		IProject project = getContainer().getProject();
 		if (project != null) {
-			IndexModel indexer = CCorePlugin.getDefault().getIndexModel();
-			indexer.setEnabled(project, indexerSwitch.getSelection());
+//			IndexManager newIndexer = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+//			newIndexer.setEnabled(project, indexerSwitch2.getSelection());
 
-			IndexManager newIndexer = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-			newIndexer.setEnabled(project, indexerSwitch2.getSelection());
-
-			DependencyManager depManager = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
-			depManager.setEnabled(project, dTreeSwitch.getSelection());
+//			DependencyManager depManager = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
+//			depManager.setEnabled(project, dTreeSwitch.getSelection());
 		}
 	}
 
 	public void performDefaults() {
 		if (getContainer().getProject() != null) {
-			indexerSwitch.setSelection(false);
 			indexerSwitch2.setSelection(false);
 			dTreeSwitch.setSelection(false);
 		}

@@ -1,3 +1,26 @@
+2003-09-22 Bogdan Gheorghe
+	
+	Took out the old CTags Indexer. Modified IndexAllProject to get
+	the project path straight from the resource (bypassing the CModelManager).
+	Commented out the enable section in IndexManager.
+	
+	Modified
+	* org.eclipse.cdt.internal.core.search.indexing.IndexAllProject
+	* org.eclipse.cdt.internal.core.search.indexing.IndexManager
+	
+	Deleted
+	* org.eclipse.cdt.core.index.IndexModel
+	* org.eclipse.cdt.core.index.ITagEntry
+	* org.eclipse.cdt.core.index.TagFlags
+	* org.eclipse.cdt.internal.core.index.CTagsCmd
+	* org.eclipse.cdt.internal.core.index.CTagsEntry
+	* org.eclipse.cdt.internal.core.index.CTagsFileReader
+	* org.eclipse.cdt.internal.core.index.CTagsFileWriter
+	* org.eclipse.cdt.internal.core.index.CTagsHeader
+	* org.eclipse.cdt.internal.core.index.CTagsRunner
+	* org.eclipse.cdt.internal.core.index.IndexManager
+	* org.eclipse.cdt.internal.core.index.RequestList
+	
 2003-09-16 Andrew Niefer
 	- add parameter references to index
 	- modify CharOperation.match to allow escaping wildcards (bug43063)

@@ -1,3 +1,6 @@
+2003-09-22 Bogdan Gheorghe
+	- Took out enable section for DependencyManager
+	
 2003-09-11 Bogdan Gheorghe
 	- Added null guard to DependencyManager.getDependencyTree(), 
 	  DependencyTree.getFileDependencies()

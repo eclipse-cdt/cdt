@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
-
+//TODO: BOG UI Get rid before final 1.2
 public class CProjectPropertyPage extends PropertyPage implements ICOptionContainer {
 
 	private CProjectOptionBlock fOptionBlock;

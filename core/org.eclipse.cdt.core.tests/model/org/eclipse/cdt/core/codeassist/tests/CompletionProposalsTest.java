@@ -80,7 +80,7 @@ public class CompletionProposalsTest  extends TestCase{
 
 		// use the new indexer
 		IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		indexManager.setEnabled(fCProject.getProject(),true);
+		indexManager.reset();
 		
 	}
 

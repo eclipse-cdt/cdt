@@ -61,8 +61,8 @@ import org.w3c.dom.NodeList;
 public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	// The path container used for all managed projects
 	public static final IContainerEntry containerEntry = CoreModel.newContainerEntry(new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER"));	//$NON-NLS-1$
-	private static final QualifiedName defaultConfigProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "defaultConfig");	//$NON-NLS-1$
-	private static final QualifiedName defaultTargetProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "defaultTarget");	//$NON-NLS-1$
+	private static final QualifiedName defaultConfigProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), DEFAULT_CONFIGURATION);
+	private static final QualifiedName defaultTargetProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), DEFAULT_TARGET);
 	public static final String MAJOR_SEPERATOR = ";"; //$NON-NLS-1$
 	public static final String MINOR_SEPERATOR = "::"; //$NON-NLS-1$
 	private static final String EMPTY_STRING = new String();

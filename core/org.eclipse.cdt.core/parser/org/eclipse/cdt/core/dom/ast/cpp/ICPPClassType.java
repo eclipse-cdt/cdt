@@ -71,4 +71,3 @@ public interface ICPPClassType extends ICompositeType {
 	public List getDeclaredMethods();
 	
 }
-

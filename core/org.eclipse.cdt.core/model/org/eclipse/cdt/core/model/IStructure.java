@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.model;
 /**
  * Represent struct(ure), class or union.
  */
-public interface IStructure extends IInheritance, IParent, IVariableDeclaration {
+public interface IStructure extends IInheritance, IParent, IStructureDeclaration {
 	public IField getField(String name);
 	
 	/**
@@ -38,27 +38,6 @@ public interface IStructure extends IInheritance, IParent, IVariableDeclaration 
 	 * @throws CModelException
 	 */
 	public IMethodDeclaration [] getMethods() throws CModelException;
-
-	/**
-	 * Checks if the structure is a Union
-	 * @return boolean
-	 * @throws CModelException
-	 */
-	public boolean isUnion() throws CModelException;
-
-	/**
-	 * Checks if the structure is a class
-	 * @return boolean
-	 * @throws CModelException
-	 */
-	public boolean isClass() throws CModelException;
-
-	/**
-	 * Checks if the structure is a struct
-	 * @return boolean
-	 * @throws CModelException
-	 */
-	public boolean isStruct() throws CModelException;
 
 	/**
 	 * Checks if the structure is abstract

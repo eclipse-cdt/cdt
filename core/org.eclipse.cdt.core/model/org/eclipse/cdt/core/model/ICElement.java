@@ -177,6 +177,24 @@ public interface ICElement extends IAdaptable {
 	static final int C_TEMPLATE_VARIABLE = 84;
 
 	/**
+	 * Declaration of a structure without the definition.
+	 * struct C;
+	 */
+	static final int C_STRUCT_DECLARATION = 85;
+
+	/**
+	 * Declaration of a class without the definition.
+	 * class C;
+	 */
+	static final int C_CLASS_DECLARATION = 86;
+
+	/**
+	 * Declaration of a union without the definition.
+	 * struct C;
+	 */
+	static final int C_UNION_DECLARATION = 87;
+
+	/**
 	 * Modifier indicating a class constructor
 	 */
 	static final int C_CLASS_CTOR = 0x100;

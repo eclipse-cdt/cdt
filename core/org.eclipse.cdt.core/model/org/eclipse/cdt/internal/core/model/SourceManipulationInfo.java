@@ -5,15 +5,12 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import java.io.IOException;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /** 
@@ -43,23 +40,39 @@ class SourceManipulationInfo extends CElementInfo {
 	 * @see ISourceReference
 	 */
 	public String getSource() throws CModelException {
-		ITranslationUnit tu = getTranslationUnit();
-		if (tu != null) {
-			try {
-				IResource res = tu.getResource();
-				if (res != null && res instanceof IFile) {
-					StringBuffer buffer = Util.getContent((IFile)res);
-					return  buffer.substring(getElement().getStartPos(),
-							getElement().getStartPos() + getElement().getLength());
-				}
-			} catch (IOException e) {
-				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
-			} catch (StringIndexOutOfBoundsException bound) {
-				// This is not good we screwed up the offset some how
-				throw new CModelException(bound, ICModelStatusConstants.INDEX_OUT_OF_BOUNDS);
-			}
+		ITranslationUnit unit = getTranslationUnit();
+		IBuffer buffer = unit.getBuffer();
+		if (buffer == null) {
+			return null;
 		}
-		return ""; //$NON-NLS-1$
+		int offset = getElement().getStartPos();
+		int length = getElement().getLength();
+		if (offset == -1 || length == 0 ) {
+			return null;
+		}
+		try {
+			return buffer.getText(offset, length);
+		} catch(RuntimeException e) {
+			return null;
+		}
+
+//		ITranslationUnit tu = getTranslationUnit();
+//		if (tu != null) {
+//			try {
+//				IResource res = tu.getResource();
+//				if (res != null && res instanceof IFile) {
+//					StringBuffer buffer = Util.getContent((IFile)res);
+//					return  buffer.substring(getElement().getStartPos(),
+//							getElement().getStartPos() + getElement().getLength());
+//				}
+//			} catch (IOException e) {
+//				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
+//			} catch (StringIndexOutOfBoundsException bound) {
+//				// This is not good we screwed up the offset some how
+//				throw new CModelException(bound, ICModelStatusConstants.INDEX_OUT_OF_BOUNDS);
+//			}
+//		}
+//		return ""; //$NON-NLS-1$
 	}
 
 	/**

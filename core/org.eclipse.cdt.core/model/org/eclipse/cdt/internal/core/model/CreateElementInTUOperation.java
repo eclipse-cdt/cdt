@@ -5,22 +5,14 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.eclipse.cdt.core.model.*;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * <p>This abstract class implements behavior common to <code>CreateElementInCUOperations</code>.
@@ -62,7 +54,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 	/**
 	 * The element that is being created.
 	 */
-	protected ISourceReference fCreatedElement = null;
+	protected String fCreatedElement = null;
 
 	/**
 	 * The element that the newly created element is
@@ -129,6 +121,8 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 		setRelativePosition(sibling, INSERT_BEFORE);
 	}
 
+	protected abstract String generateElement(ITranslationUnit unit) throws CModelException;
+	
 	/**
 	 * Execute the operation - generate new source for the compilation unit
 	 * and save the results.
@@ -139,7 +133,7 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 		beginTask(getMainTaskName(), getMainAmountOfWork());
 		CElementDelta delta = newCElementDelta();
 		ITranslationUnit unit = getTranslationUnit();
-		// generateNewTranslationUnitDOM(unit);
+		fCreatedElement = generateElement(unit);
 		insertElement();
 		if (fCreationOccurred) {
 			//a change has really occurred
@@ -147,29 +141,23 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 			if (buffer == null) return;
 			char[] bufferContents = buffer.getCharacters();
 			if (bufferContents == null) return;
-			//char[] elementContents = normalizeCRS(..);
-			char[] elementContents = fCreatedElement.getSource().toCharArray();
-			//IFile file = (IFile)((ICResource)unit).getResource();
-			//StringBuffer buffer = getContent(file);
+			char[] elementContents = Util.normalizeCRs(getCreatedElementCharacters(), bufferContents);
 			switch (fReplacementLength) {
 				case -1 : 
 					// element is append at the end
-					//buffer.append(fCreatedElement.getSource());
 					buffer.append(elementContents);
 					break;
 
 				case 0 :
 					// element is inserted
-					//buffer.insert(fInsertionPosition, fCreatedElement.getSource());
 					buffer.replace(fInsertionPosition, 0, elementContents);
 					break;
 
 				default :
 					// element is replacing the previous one
-					buffer.replace(fInsertionPosition, fReplacementLength, fCreatedElement.getSource());
+					buffer.replace(fInsertionPosition, fReplacementLength, elementContents);
 			}
 			unit.save(null, false);
-			//save(buffer, file);
 			boolean isWorkingCopy = unit.isWorkingCopy();
 			//if (isWorkingCopy) {
 			//	this.setAttributes(...);
@@ -187,6 +175,10 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 			}
 		}
 		done();
+	}
+
+	private char[] getCreatedElementCharacters() {
+		return fCreatedElement.toCharArray();
 	}
 
 	/**
@@ -314,9 +306,6 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 		}
 		if (fAnchorElement != null) {
 			ICElement domPresentParent = fAnchorElement.getParent();
-			//if (domPresentParent.getElementType() == ICElement.IMPORT_CONTAINER) {
-			//	domPresentParent = domPresentParent.getParent();
-			//}
 			if (!domPresentParent.equals(getParentElement())) {
 				return new CModelStatus(ICModelStatusConstants.INVALID_SIBLING, fAnchorElement);
 			}
@@ -324,106 +313,4 @@ public abstract class CreateElementInTUOperation extends CModelOperation {
 		return CModelStatus.VERIFIED_OK;
 	}
 
-
-	StringBuffer getContent(IFile file) throws CModelException {
-		InputStream stream = null;
-		try {
-			stream = new BufferedInputStream(file.getContents(true));
-		} catch (CoreException e) {
-			throw new CModelException(e);
-		}
-		try {
-			char [] b = getInputStreamAsCharArray(stream, -1, null);
-			return new StringBuffer(b.length).append(b);
-		} catch (IOException e) {
-			throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-			}
-		}
-	}
-
-	/**
-	 * Returns the given input stream's contents as a character array.
-	 * If a length is specified (ie. if length != -1), only length chars
-	 * are returned. Otherwise all chars in the stream are returned.
-	 * Note this doesn't close the stream.
-	 * @throws IOException if a problem occured reading the stream.
-	 */
-	public static char[] getInputStreamAsCharArray(InputStream stream, int length, String encoding)
-		throws IOException {
-		InputStreamReader reader = null;
-		reader = encoding == null
-			? new InputStreamReader(stream)
-			: new InputStreamReader(stream, encoding);
-		char[] contents;
-		if (length == -1) {
-			contents = new char[0];
-			int contentsLength = 0;
-			int charsRead = -1;
-			do {
-				int available = stream.available();
-
-				// resize contents if needed
-				if (contentsLength + available > contents.length) {
-					System.arraycopy(
-						contents,
-						0,
-						contents = new char[contentsLength + available],
-						0,
-						contentsLength);
-				}
-
-				// read as many chars as possible
-				charsRead = reader.read(contents, contentsLength, available);
-
-				if (charsRead > 0) {
-					// remember length of contents
-					contentsLength += charsRead;
-				}
-			} while (charsRead > 0);
-
-			// resize contents if necessary
-			if (contentsLength < contents.length) {
-				System.arraycopy(
-					contents,
-					0,
-					contents = new char[contentsLength],
-					0,
-					contentsLength);
-			}
-		} else {
-			contents = new char[length];
-			int len = 0;
-			int readSize = 0;
-			while ((readSize != -1) && (len != length)) {
-				// See PR 1FMS89U
-				// We record first the read size. In this case len is the actual read size.
-				len += readSize;
-				readSize = reader.read(contents, len, length - len);
-			}
-			// See PR 1FMS89U
-		// Now we need to resize in case the default encoding used more than one byte for each
-		// character
-			if (len != length)
-				System.arraycopy(contents, 0, (contents = new char[len]), 0, len);
-		}
-
-		return contents;
-	}
-
-	void save (StringBuffer buffer, IFile file) throws CModelException {
-		byte[] bytes = buffer.toString().getBytes();
-		ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-		// use a platform operation to update the resource contents
-		try {
-			boolean force = true;
-			file.setContents(stream, force, true, null); // record history
-		} catch (CoreException e) {
-			throw new CModelException(e);
-		}
-	}
 }

@@ -1,14 +1,18 @@
+/**********************************************************************
+ * Copyright (c) 2002,2003,2004,2005 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
+
 package org.eclipse.cdt.internal.core.model;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ICModelStatus;
-import org.eclipse.cdt.core.model.ICModelStatusConstants;
 
 /**
  * Implements functionality common to
@@ -16,9 +20,15 @@ import org.eclipse.cdt.core.model.ICModelStatusConstants;
  */
 public abstract class CreateMemberOperation extends CreateElementInTUOperation {
 	/**
-	 * The source code for the new member.
+	 * The element Name
 	 */
-	protected String fSource = null;
+	protected String fName;
+
+	/**
+	 * Element Type;
+	 */
+	protected String fReturnType;
+
 
 	/**
 	 * The name of the <code>DOMNode</code> that may be used to
@@ -31,9 +41,10 @@ public abstract class CreateMemberOperation extends CreateElementInTUOperation {
 	 * When executed, this operation will create a type member
 	 * in the given parent element with the specified source.
 	 */
-	public CreateMemberOperation(ICElement parentElement, String source, boolean force) {
+	public CreateMemberOperation(IStructure parentElement, String name, String returnType, boolean force) {
 		super(parentElement);
-		fSource= source;
+		fName = name;
+		fReturnType = returnType;
 		fForce= force;
 	}
 
@@ -65,9 +76,6 @@ public abstract class CreateMemberOperation extends CreateElementInTUOperation {
 		ICModelStatus status = super.verify();
 		if (!status.isOK()) {
 			return status;
-		}
-		if (fSource == null) {
-			return new CModelStatus(ICModelStatusConstants.INVALID_CONTENTS);
 		}
 		if (!fForce) {
 			//check for name collisions

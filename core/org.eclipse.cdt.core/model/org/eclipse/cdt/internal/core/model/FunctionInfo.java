@@ -55,6 +55,7 @@ class FunctionInfo extends SourceManipulationInfo {
 		return (super.hasSameContentsAs(otherInfo)
 		&& (this.isStatic() == ((FunctionInfo)otherInfo).isStatic())
 		&& (this.isVolatile() == ((FunctionInfo)otherInfo).isVolatile())
+		&& (this.isConst() == ((FunctionInfo)otherInfo).isConst())
 		);
 	}
 

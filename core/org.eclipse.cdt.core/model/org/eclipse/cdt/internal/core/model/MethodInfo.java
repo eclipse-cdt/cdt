@@ -19,7 +19,6 @@ public class MethodInfo extends FunctionInfo {
 	boolean isInline = false;
 	boolean isVirtual = false;
 	boolean isFriend = false;
-	boolean isConst = false;
 	ASTAccessVisibility visibility = null;
 		
 	MethodInfo(CElement element) {
@@ -58,14 +57,6 @@ public class MethodInfo extends FunctionInfo {
 	public void setFriend(boolean isFriend){
 		this.isFriend = isFriend;
 	}
-
-	public boolean isConst(){
-		return isConst;
-	}
-
-	public void setConst(boolean isConst){
-		this.isConst = isConst;
-	}
 	
 	/**
 	 * Returns the visibility.
@@ -88,7 +79,6 @@ public class MethodInfo extends FunctionInfo {
 	 */
 	public boolean hasSameContentsAs(SourceManipulationInfo otherInfo) {
 		return (super.hasSameContentsAs(otherInfo)
-		&&  (isConst == ((MethodInfo)otherInfo).isConst())
 		&&  (isPureVirtual == ((MethodInfo)otherInfo).isPureVirtual())
 		&& 	(isInline == ((MethodInfo)otherInfo).isInline())
 		&& 	(isVirtual == ((MethodInfo)otherInfo).isVirtual())

@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -35,7 +36,7 @@ public class CConventions {
 	private final static String scopeResolutionOperator= "::"; //$NON-NLS-1$
 	private final static char fgDot= '.';
 
-	private final static String ILLEGAL_FILE_CHARS = "/\\:<>?*|\"";
+	private final static String ILLEGAL_FILE_CHARS = "/\\:<>?*|\""; //$NON-NLS-1$
 	
 	private static boolean isLegalIdentifier(String name) {
 		if (name == null) {
@@ -288,6 +289,34 @@ public class CConventions {
 			return validateIdentifier(name.substring(1));
 		}
 		return validateIdentifier(name);
+	}
+
+	/**
+	 * Validate the given include name.
+	 * <p>
+	 * The name of an include without the surroounding double quotes or brakets
+	 * For example, <code>stdio.h</code> or <code>iostream</code>.
+	 *
+	 * @param name the include declaration
+	 * @return a status object with code <code>IStatus.OK</code> if
+	 *		the given name is valid as an include name, otherwise a status 
+	 *		object indicating what is wrong with the name
+	 */
+
+	public static IStatus validateIncludeName(IProject project, String name) {
+		String[] segments = new Path(name).segments();
+		for (int i = 0; i < segments.length; ++i) {
+			IStatus status;
+			if (i == (segments.length - 1)) {
+				status = validateHeaderFileName(project, segments[i]);
+			} else {
+				status = validateFileName(segments[i]);
+			}
+			if (!status.isOK()) {
+				return status;
+			}
+		}
+		return CModelStatus.VERIFIED_OK;
 	}
 
 	public static boolean isValidIdentifier(String name){

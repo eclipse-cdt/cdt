@@ -71,7 +71,8 @@ public class CModelBuilder {
 	
 	private org.eclipse.cdt.internal.core.model.TranslationUnit translationUnit;
 	private Map newElements;
-	private IQuickParseCallback quickParseCallback; 
+	private IQuickParseCallback quickParseCallback;
+	private static char[] EMPTY_CHAR_ARRAY = {};
 	// indicator if the unit has parse errors
 	private boolean hasNoErrors = false;
 
@@ -103,7 +104,7 @@ public class CModelBuilder {
 	{
 		IProject currentProject = null;
 		boolean hasCppNature = true;
-		String code = ""; //$NON-NLS-1$
+		char[] code = EMPTY_CHAR_ARRAY; //$NON-NLS-1$
 		
 		// get the current project
 		if (translationUnit != null && translationUnit.getCProject() != null) {
@@ -116,7 +117,7 @@ public class CModelBuilder {
 		}
 		// get the code to parse
 		try{
-			code = translationUnit.getBuffer().getContents();
+			code = translationUnit.getBuffer().getCharacters();
 		} catch (CModelException e) {
 			
 		}
@@ -165,8 +166,8 @@ public class CModelBuilder {
 
 			CodeReader reader =
 				translationUnit.getUnderlyingResource() != null
-					? new CodeReader(translationUnit.getUnderlyingResource().getLocation().toOSString(), code.toCharArray())
-					: new CodeReader(code.toCharArray());
+					? new CodeReader(translationUnit.getUnderlyingResource().getLocation().toOSString(), code)
+					: new CodeReader(code);
 			parser = ParserFactory.createParser( 
 				ParserFactory.createScanner(
 					reader,
@@ -309,7 +310,7 @@ public class CModelBuilder {
 	private void generateModelElements (Parent parent, IASTAbstractTypeSpecifierDeclaration abstractDeclaration) throws CModelException, ASTNotImplementedException
 	{
 		// IASTAbstractTypeSpecifierDeclaration 
-		CElement element = createAbstractElement(parent, abstractDeclaration, false);
+		CElement element = createAbstractElement(parent, abstractDeclaration, false, true);
 	}
 
 	private void generateModelElements (Parent parent, IASTTemplateDeclaration templateDeclaration) throws CModelException, ASTNotImplementedException
@@ -318,7 +319,7 @@ public class CModelBuilder {
 		IASTDeclaration declaration = templateDeclaration.getOwnedDeclaration();
 		if(declaration instanceof IASTAbstractTypeSpecifierDeclaration){
 			IASTAbstractTypeSpecifierDeclaration abstractDeclaration = (IASTAbstractTypeSpecifierDeclaration)declaration ;
-			CElement element = createAbstractElement(parent, abstractDeclaration , true);
+			CElement element = createAbstractElement(parent, abstractDeclaration , true, true);
 			if(element != null){			
 				// set the element position		
 				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
@@ -360,7 +361,7 @@ public class CModelBuilder {
 	{
 		TypeDef typeDef = createTypeDef(parent, declaration);
 		IASTAbstractDeclaration abstractDeclaration = declaration.getAbstractDeclarator();
-		CElement element = createAbstractElement(parent, abstractDeclaration, false);
+		CElement element = createAbstractElement(parent, abstractDeclaration, false, true);
 	}
 		
 	private CElement createClassSpecifierElement(Parent parent, IASTClassSpecifier classSpecifier, boolean isTemplate)throws ASTNotImplementedException, CModelException{
@@ -377,7 +378,7 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	private CElement createAbstractElement(Parent parent, IASTTypeSpecifierOwner abstractDeclaration, boolean isTemplate)throws ASTNotImplementedException, CModelException{
+	private CElement createAbstractElement(Parent parent, IASTTypeSpecifierOwner abstractDeclaration, boolean isTemplate, boolean isDeclaration)throws ASTNotImplementedException, CModelException{
 		CElement element = null;
 		if(abstractDeclaration != null){
 			IASTTypeSpecifier typeSpec = abstractDeclaration.getTypeSpecifier();
@@ -391,9 +392,11 @@ public class CModelBuilder {
 			else if (typeSpec instanceof IASTClassSpecifier){
 				IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpec;
 				element = createClassSpecifierElement (parent, classSpecifier, isTemplate);
-			} else if (typeSpec instanceof IASTElaboratedTypeSpecifier){
+			} else if (isDeclaration && typeSpec instanceof IASTElaboratedTypeSpecifier) {
 				// This is not a model element, so we don't create anything here.
 				// However, do we need to do anything else?
+				IASTElaboratedTypeSpecifier elabSpecifier = (IASTElaboratedTypeSpecifier) typeSpec;
+				element = createElaboratedTypeSpecifier(parent, elabSpecifier);				
 			}
 		}				
 		return element;		
@@ -414,6 +417,32 @@ public class CModelBuilder {
 		return element;
 	}
 	
+	private StructureDeclaration createElaboratedTypeSpecifier(Parent parent, IASTElaboratedTypeSpecifier typeSpec) throws CModelException{
+		// create element
+		ASTClassKind classkind = typeSpec.getClassKind();
+		int kind = -1;
+		if (classkind == ASTClassKind.CLASS) {
+			kind = ICElement.C_CLASS_DECLARATION;
+		} else if (classkind == ASTClassKind.STRUCT) {
+			kind = ICElement.C_STRUCT_DECLARATION;
+		} else if (classkind == ASTClassKind.UNION) {
+			kind = ICElement.C_UNION_DECLARATION;
+		}
+		String className = (typeSpec.getName() == null)
+		? "" //$NON-NLS-1$
+		: typeSpec.getName().toString();				
+		StructureDeclaration element = new StructureDeclaration(parent, className, kind);
+
+		// add to parent
+		parent.addChild(element);
+		// set position
+		element.setIdPos(typeSpec.getNameOffset(), typeSpec.getNameEndOffset() - typeSpec.getNameOffset());
+		element.setPos(typeSpec.getStartingOffset(), typeSpec.getEndingOffset() - typeSpec.getStartingOffset());
+		element.setLines(typeSpec.getStartingLine(), typeSpec.getEndingLine());
+		this.newElements.put(element, element.getElementInfo());
+		return element;
+	}
+
 	private Include createInclusion(Parent parent, IASTInclusion inclusion) throws CModelException{
 		// create element
 		Include element = new Include(parent, inclusion.getName(), !inclusion.isLocal());
@@ -600,7 +629,7 @@ public class CModelBuilder {
 		}
 		
 		IASTAbstractDeclaration abstractDeclaration = varDeclaration.getAbstractDeclaration();
-    	CElement abstractElement = createAbstractElement (parent, abstractDeclaration , isTemplate);
+    	CElement abstractElement = createAbstractElement (parent, abstractDeclaration , isTemplate, false);
 
 		VariableDeclaration element = null;
 		if(varDeclaration instanceof IASTField){

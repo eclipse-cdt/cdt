@@ -48,7 +48,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * or <code>null</code> if this operation
 	 * does not operate with specific parent elements.
 	 */
-	protected ICElement[] fParentElements;
+	protected ICElement[] parentElements;
 
 	/**
 	 * An empty collection of <code>ICElement</code>s - the common
@@ -107,7 +107,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	protected CModelOperation(ICElement[] elementsToProcess, ICElement[] parentElements) {
 		fElementsToProcess = elementsToProcess;
-		fParentElements= parentElements;
+		this.parentElements= parentElements;
 	}
 
 	/**
@@ -115,7 +115,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	protected CModelOperation(ICElement[] elementsToProcess, ICElement[] parentElements, boolean force) {
 		fElementsToProcess = elementsToProcess;
-		fParentElements= parentElements;
+		this.parentElements= parentElements;
 		fForce= force;
 	}
 
@@ -387,10 +387,10 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * or <code>null</code> if not applicable.
 	 */
 	protected ICElement getParentElement() {
-		if (fParentElements == null || fParentElements.length == 0) {
+		if (parentElements == null || parentElements.length == 0) {
 			return null;
 		}
-		return fParentElements[0];
+		return parentElements[0];
 	}
 
 	/**
@@ -398,7 +398,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * or <code>null</code> if not applicable.
 	 */
 	protected ICElement[] getParentElements() {
-		return fParentElements;
+		return parentElements;
 	}
 
 	/**

@@ -1,3 +1,26 @@
+2005-01-22 Alain Magloire
+	PR 38958
+	Part implementation of the CreateXXXOperation classes.
+	* model/org/eclipse/cdt/core/model/ICElement.java
+	* model/org/eclipse/cdt/core/model/IStructure.java
+	* model/org/eclipse/cdt/core/model/IStructureDeclaration.java
+	* model/org/eclipse/cdt/internal/core/model/CModelBuiilder.java
+	* model/org/eclipse/cdt/internal/core/model/CModelOperation.java
+	* model/org/eclipse/cdt/internal/core/model/CopyElementOperation.java
+	* model/org/eclipse/cdt/internal/core/model/CreateElementIntTUOperation.java
+	* model/org/eclipse/cdt/internal/core/model/CreateFieldOperation.java
+	* model/org/eclipse/cdt/internal/core/model/CreateIncludeOperation.java
+	* model/org/eclipse/cdt/internal/core/model/CreateMethodOperation.java
+	* model/org/eclipse/cdt/internal/core/model/CreateSourceReferenceOperation.java
+	* model/org/eclipse/cdt/internal/core/model/FuntionInfo.java
+	* model/org/eclipse/cdt/internal/core/model/FuntionDeclaration.java
+	* model/org/eclipse/cdt/internal/core/model/Structure.java
+	* model/org/eclipse/cdt/internal/core/model/StructureDeclaratin.java
+	* model/org/eclipse/cdt/internal/core/model/StructureInfo.java
+	* model/org/eclipse/cdt/internal/core/model/MethodInfo.java
+	* model/org/eclipse/cdt/internal/core/model/util.java
+	* model/org/eclipse/cdt/internal/core/model/SurceManipulationInfo.java
+	
 2005-01-19 Alain Magloire
 	PR 83224
 	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java

@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
-public class Structure extends SourceManipulation implements  IStructure {
+public class Structure extends StructureDeclaration implements  IStructure {
 	
 	Map superClassesNames = new TreeMap();
 
@@ -66,18 +66,6 @@ public class Structure extends SourceManipulation implements  IStructure {
 		return null;
 	}
 
-	public boolean isUnion() throws CModelException {
-		return getStructureInfo().isUnion();
-	}
-
-	public boolean isClass() throws CModelException {
-		return getStructureInfo().isClass();
-	}
-
-	public boolean isStruct() throws CModelException {
-		return getStructureInfo().isStruct();
-	}
-
 	public boolean isAbstract() throws CModelException {
 		IMethodDeclaration[] methods = getMethods();
 		for(int i=0; i<methods.length; i++){
@@ -95,53 +83,13 @@ public class Structure extends SourceManipulation implements  IStructure {
 	public ASTAccessVisibility getSuperClassAccess(String name){
 		return (ASTAccessVisibility)superClassesNames.get(name);
 	}
-
-	public String getTypeName() throws CModelException {
-		return getStructureInfo().getTypeName();
-	}
 	
-	public void setTypeName(String type) throws CModelException{
-		getStructureInfo().setTypeString(type);
-	}
-	
-	public boolean isConst() throws CModelException {
-		return getStructureInfo().isConst();
-	}
-
-	public void setConst(boolean isConst) throws CModelException {
-		getStructureInfo().setConst(isConst);
-	}
-
-	public boolean isVolatile() throws CModelException {
-		return getStructureInfo().isVolatile();
-	}
-
-	public void setVolatile(boolean isVolatile) throws CModelException {
-		getStructureInfo().setVolatile(isVolatile);
-	}
-
-	public boolean isStatic() throws CModelException {
-		return getStructureInfo().isStatic();
-	}
-	
-	public void setStatic(boolean isStatic) throws CModelException {
-		getStructureInfo().setStatic(isStatic);
-	}
-	
-	public StructureInfo getStructureInfo() throws CModelException{
-		return (StructureInfo) getElementInfo();
-	}
-
 	public void addSuperClass(String name) {
 		superClassesNames.put(name, ASTAccessVisibility.PUBLIC);
 	}
 
 	public void addSuperClass(String name, ASTAccessVisibility access) {
 		superClassesNames.put(name, access);
-	}
-
-	protected CElementInfo createElementInfo () {
-		return new StructureInfo(this);
 	}
 
 }

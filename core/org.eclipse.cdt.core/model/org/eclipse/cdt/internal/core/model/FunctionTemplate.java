@@ -17,12 +17,11 @@ import org.eclipse.cdt.core.model.ITemplate;
 
 public class FunctionTemplate extends FunctionDeclaration implements ITemplate{
 	
-	protected static final String[] fgEmptyList= new String[] {};
 	protected String[] templateParameterTypes;
 	
 	public FunctionTemplate(ICElement parent, String name) {
 		super(parent, name, ICElement.C_TEMPLATE_FUNCTION);
-		templateParameterTypes= fgEmptyList;
+		templateParameterTypes= fgEmptyStrings;
 	}
 	
 	/**

@@ -9,6 +9,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ICModelStatus;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 /**
  * <p>This operation creates a field declaration in a type.
  *
@@ -20,6 +21,11 @@ import org.eclipse.cdt.core.model.ICModelStatus;
  */
 public class CreateFieldOperation extends CreateMemberOperation {
 	/**
+	 * Initializer for Element
+	 */
+	String fInitializer;
+
+	/**
 	 * When executed, this operation will create a field with the given name
 	 * in the given type with the specified source.
 	 *
@@ -27,8 +33,9 @@ public class CreateFieldOperation extends CreateMemberOperation {
 	 * declaration, or as the first member in the type if there are no
 	 * field declarations.
 	 */
-	public CreateFieldOperation(IStructure parentElement, String source, boolean force) {
-		super(parentElement, source, force);
+	public CreateFieldOperation(IStructure parentElement, String name, String returnType, String initializer, boolean force) {
+		super(parentElement, name, returnType, force);
+		fInitializer = initializer;
 	}
 
 	/**
@@ -63,13 +70,28 @@ public class CreateFieldOperation extends CreateMemberOperation {
 	 * @see CreateElementInCUOperation#generateResultHandle
 	 */
 	protected ICElement generateResultHandle() {
-		return getStructure().getField(fSource);
+		return getStructure().getField(fName);
 	}
 
 	/**
 	 * @see CreateTypeMemberOperation#verifyNameCollision
 	 */
 	protected ICModelStatus verifyNameCollision() {
-		return CModelStatus.VERIFIED_OK;
+		return super.verifyNameCollision();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CreateElementInTUOperation#generateElement(org.eclipse.cdt.core.model.ITranslationUnit)
+	 */
+	protected String generateElement(ITranslationUnit unit) throws CModelException {
+		StringBuffer sb = new StringBuffer();
+		sb.append(fReturnType).append(' ');
+		sb.append(fName);
+		if (fInitializer != null && fInitializer.length() > 0) {
+			sb.append(' ').append('=').append(' ');
+			sb.append(fInitializer);
+		}
+		sb.append(';');
+		return sb.toString();
 	}
 }

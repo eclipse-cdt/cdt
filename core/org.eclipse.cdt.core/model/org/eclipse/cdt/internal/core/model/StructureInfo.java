@@ -1,5 +1,3 @@
-package org.eclipse.cdt.internal.core.model;
-
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
@@ -10,19 +8,27 @@ package org.eclipse.cdt.internal.core.model;
  * Contributors: 
  * Rational Software - Initial API and implementation
 ***********************************************************************/
+package org.eclipse.cdt.internal.core.model;
+
 import org.eclipse.cdt.core.model.ICElement;
 
-public class StructureInfo extends VariableInfo {
-	
+public class StructureInfo extends SourceManipulationInfo {
+
+	protected String typeStr;
+	protected boolean isStatic;
+	protected boolean isVolatile;
+	protected boolean isConst;
+
 	protected StructureInfo (CElement element) {
-		super(element);
-		
-		if (element.getElementType() == ICElement.C_CLASS)
-			this.setTypeName("class"); //$NON-NLS-1$
-		else if (element.getElementType() == ICElement.C_UNION)
-			this.setTypeName("union"); //$NON-NLS-1$
-		else
-			this.setTypeName("struct"); //$NON-NLS-1$
+		super(element);		
+	}
+
+	protected String getTypeName(){
+		return typeStr;
+	}
+	
+	protected void setTypeName(String type){
+		typeStr = type;
 	}
 
 	public boolean isUnion() {
@@ -37,5 +43,52 @@ public class StructureInfo extends VariableInfo {
 		return element.getElementType() == ICElement.C_STRUCT;
 	}
 
-}
+	/**
+	 * Returns the isStatic.
+	 * @return boolean
+	 */
+	public boolean isStatic() {
+		return isStatic;
+	}
 
+	/**
+	 * Sets the isStatic.
+	 * @param isStatic The isStatic to set
+	 */
+	public void setStatic(boolean isStatic) {
+		this.isStatic = isStatic;
+	}
+
+	/**
+	 * Returns the isVolatile.
+	 * @return boolean
+	 */
+	public boolean isVolatile() {
+		return isVolatile;
+	}
+
+	/**
+	 * Sets the isVolatile.
+	 * @param isVolatile The isVolatile to set
+	 */
+	public void setVolatile(boolean isVolatile) {
+		this.isVolatile = isVolatile;
+	}
+
+	/**
+	 * Returns the isConst.
+	 * @return boolean
+	 */
+	public boolean isConst() {
+		return isConst;
+	}
+
+	/**
+	 * Sets the isConst.
+	 * @param isConst The isConst to set
+	 */
+	public void setConst(boolean isConst) {
+		this.isConst = isConst;
+	}
+
+}

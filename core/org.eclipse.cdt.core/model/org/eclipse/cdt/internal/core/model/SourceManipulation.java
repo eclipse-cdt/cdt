@@ -23,6 +23,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class SourceManipulation extends Parent implements ISourceManipulation, ISourceReference {
 
+	/**
+	 * An empty list of Strings
+	 */
+	protected static final String[] fgEmptyStrings = {};
+
 	public SourceManipulation(ICElement parent, String name, int type) {
 		super(parent, name, type);
 	}

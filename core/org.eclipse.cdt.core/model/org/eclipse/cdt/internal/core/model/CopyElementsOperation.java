@@ -9,6 +9,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * This operation copies/moves a collection of elements from their current
@@ -77,27 +79,53 @@ public class CopyElementsOperation extends MultiOperation {
 	 * Returns the nested operation to use for processing this element
 	 */
 	protected CModelOperation getNestedOperation(ICElement element) {
-		//ICElement dest = getDestinationParent(element);
-		switch (element.getElementType()) {
-			//case ICElement.C_INCLUDE:
-			//	return new CreateIncludeOperation(element, dest);
-			//case ICElement.C_FUNCTION_DECLARATION :
-			//	return new CreateFunctionDeclarationOperation(element, dest);
-			//case ICElement.C_FUNCTION :
-			//	return new CreateFunctionOperation(element, dest);
-			//case ICElement.C_STRUCTURE :
-			//	return new CreateStructureOperation(element, dest, fForce);
-			//case ICElement.C_METHOD :
-			//	return new CreateMethodOperation(element, dest, fForce);
-			//case ICElement.C_FIELD :
-			//	return new CreateFieldOperation(element, dest, fForce);
-			//case ICElement.C_VARIABLE:
-			//	return new CreateVariableOperation(element, dest);
-			default :
-				return null;
-		}
+		ICElement dest = getDestinationParent(element);
+		ITranslationUnit unit = (ITranslationUnit)dest.getAncestor(ICElement.C_UNIT);
+		String name = element.getElementName();
+		int type = element.getElementType();
+		return new CreateSourceReferenceOperation(unit, name, type, getSourceFor(element));
+//		switch (element.getElementType()) {
+//			case ICElement.C_INCLUDE: {
+//				IInclude include = (IInclude)element;
+//				return new CreateIncludeOperation(include.getIncludeName(), include.isStandard(), unit);
+//			}
+//			case ICElement.C_FUNCTION_DECLARATION : {
+//				IFunctionDeclaration declaration = (IFunctionDeclaration)element;
+//				return new CreateFunctionDeclarationOperation(declaration.getElementName(), unit);
+//			}
+//			case ICElement.C_FUNCTION : {
+//				IFunction function = (IFunction)element;
+//				return new CreateFunctionOperation(function, unit);
+//			}
+//			case ICElement.C_STRUCTURE :
+//				return new CreateStructureOperation(element, dest, fForce);
+//			case ICElement.C_METHOD : {
+//				IMethod method = (IMethod)element;
+//				return new CreateMethodOperation(method, unit, fForce);
+//			}
+//			case ICElement.C_FIELD :
+//				return new CreateFieldOperation(element, dest, fForce);
+//			case ICElement.C_VARIABLE:
+//				return new CreateVariableOperation(element, dest);
+//			default :
+//				return null;
+//		}
 	}
 
+	/**
+	 * Returns the cached source for this element or compute it if not already cached.
+	 */
+	private String getSourceFor(ICElement element)  {
+		if (element instanceof ISourceReference) {
+			ISourceReference source = (ISourceReference)element;
+			try {
+				return source.getSource();
+			} catch (CModelException e) {
+				//
+			}
+		}
+		return ""; //$NON-NLS-1$
+	}
 	/**
 	 * Copy/move the element from the source to destination, renaming
 	 * the elements as specified, honoring the collision policy.
@@ -129,10 +157,10 @@ public class CopyElementsOperation extends MultiOperation {
 		}
 		executeNestedOperation(op, 1);
 
-		//if (isInTUOperation && isMove()) {
-		//	DeleteElementsOperation deleteOp = new DeleteElementsOperation(new ICElement[] { element }, fForce);
-		//	executeNestedOperation(deleteOp, 1);
-		//}
+//		if (isInTUOperation && isMove()) {
+//			DeleteElementsOperation deleteOp = new DeleteElementsOperation(new ICElement[] { element }, fForce);
+//			executeNestedOperation(deleteOp, 1);
+//		}
 	}
 
 	/**

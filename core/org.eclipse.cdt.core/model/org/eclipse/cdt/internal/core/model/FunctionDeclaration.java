@@ -10,21 +10,17 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 
 public class FunctionDeclaration extends SourceManipulation implements IFunctionDeclaration {
-	/**
-	 * An empty list of Strings
-	 */
-	protected static final String[] fgEmptyList= new String[] {};
 	protected String[] fParameterTypes;
 	protected String returnType;
 	
 	public FunctionDeclaration(ICElement parent, String name) {
 		super(parent, name, ICElement.C_FUNCTION_DECLARATION);
-		fParameterTypes= fgEmptyList;
+		fParameterTypes= fgEmptyStrings;
 	}
 
 	public FunctionDeclaration(ICElement parent, String name, int type) {
 		super(parent, name, type);
-		fParameterTypes= fgEmptyList;
+		fParameterTypes= fgEmptyStrings;
 	}
 
 	public String getReturnType(){

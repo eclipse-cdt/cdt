@@ -351,9 +351,18 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.core.parser.IScanner#nextToken()
 	 */
 	public IToken nextToken() throws EndOfFileException {
+	    boolean exception = false;
 		if (nextToken == null && !finished ) {
-			nextToken = fetchToken();
-			if (nextToken == null)
+			try
+			{
+				nextToken = fetchToken();
+			}
+			catch( Exception e )
+			{
+			    exception = true;
+				errorHandle();
+			}
+			if (nextToken == null && !exception)
 			{
 			    finished = true;
 			}
@@ -374,10 +383,22 @@ public class Scanner2 implements IScanner, IScannerData {
 			lastToken.setNext(nextToken);
 		IToken oldToken = lastToken;
 		lastToken = nextToken;
-		nextToken = fetchToken();
 		
-		if (nextToken == null)
-			finished = true;
+		try
+		{
+			nextToken = fetchToken();
+		}
+		catch( Exception e )
+		{
+		    nextToken = null;
+		    exception = true;
+			errorHandle();
+		}
+		
+		if (nextToken == null ){
+		    if(!exception)
+		        finished = true;
+		}
 		else if (nextToken.getType() == IToken.tPOUNDPOUND) {
 			// time for a pasting
 			IToken token2 = fetchToken();
@@ -407,6 +428,13 @@ public class Scanner2 implements IScanner, IScannerData {
 		return lastToken;
 	}
 	
+	/**
+	 * 
+	 */
+	protected void errorHandle() {
+		++bufferPos[bufferStackPos];
+	}
+
 	/**
 	 * 
 	 */
@@ -2184,7 +2212,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		int limit = bufferLimit[bufferStackPos];
 
 		skipOverWhiteSpace();
-		while( 	buffer[bufferPos[bufferStackPos]] == '\\' && 
+		while( 	bufferPos[bufferStackPos] < limit && 
+				buffer[bufferPos[bufferStackPos]] == '\\' && 
 				bufferPos[bufferStackPos] + 1 < buffer.length && 
 				buffer[bufferPos[bufferStackPos]+1] == '\n' ) 
 		{

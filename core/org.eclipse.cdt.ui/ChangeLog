@@ -1,3 +1,12 @@
+2003-03-20 Alain Magloire
+
+	Patch from Chris Songer.
+
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java:
+	The method setSelection() did not deal correctly with element
+	that did not have a offset, for example the a IBinary element
+	will have line number.
+
 2002-12-12 Judy N Green
 	*src/org/eclipse/cdt/internal/ui/editor/CEditor.java
 	Fixed Bugzilla bug PR 25176

@@ -1,7 +1,7 @@
 package org.eclipse.cdt.debug.testplugin;
 
 import java.io.IOException;
-
+import java.io.File;
 import org.eclipse.cdt.debug.core.cdi.*;
 import org.eclipse.cdt.debug.mi.core.*;
 import org.eclipse.core.runtime.Path;
@@ -39,7 +39,7 @@ public class CDebugHelper {
             exename+="sol/" + exe;
         else
            return(null);
-        session=mi.createCSession(null, null, null, exename);
+        session=mi.createCSession(null, new File(exename), new File("."), null);
 		return(session);
 	}
 	

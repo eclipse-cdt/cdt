@@ -10,7 +10,7 @@
  ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.ui.views.modules; 
 
-import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
+import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -37,11 +37,11 @@ public class ModulesViewEventHandler extends AbstractDebugEventHandler {
 			switch( event.getKind() ) {
 				case DebugEvent.CREATE:
 				case DebugEvent.TERMINATE:
-					if ( event.getSource() instanceof IDebugTarget || event.getSource() instanceof ICSharedLibrary )
+					if ( event.getSource() instanceof IDebugTarget || event.getSource() instanceof ICModule )
 						refresh();
 					break;
 				case DebugEvent.CHANGE :
-					if ( event.getSource() instanceof ICSharedLibrary )
+					if ( event.getSource() instanceof ICModule )
 						refresh( event.getSource() );
 					break;
 			}

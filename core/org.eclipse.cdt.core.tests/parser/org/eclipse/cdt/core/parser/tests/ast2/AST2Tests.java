@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -2599,5 +2600,23 @@ public class AST2Tests extends AST2BaseTest {
        IASTProblem [] ps = CVisitor.getProblems( tu );
        assertEquals( ps.length, 1 );
        ps[0].getMessage();
+   }
+
+   public void testEnumerationForwards() throws Exception{
+       StringBuffer buffer = new StringBuffer();
+       buffer.append( "enum e;          \n;" ); //$NON-NLS-1$
+       buffer.append( "enum e{ one };   \n;" ); //$NON-NLS-1$
+
+       IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
+       CNameCollector col = new CNameCollector();
+       CVisitor.visitTranslationUnit(tu, col);
+
+       assertEquals(col.size(), 3);
+       IEnumeration e = (IEnumeration) col.getName(0).resolveBinding();
+       IEnumerator[] etors = e.getEnumerators();
+       assertTrue( etors.length == 1 );
+       assertFalse( etors[0] instanceof IProblemBinding );
+       
+       assertInstances( col, e, 2 );
    }
 }

@@ -98,6 +98,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction;
 
 /**
@@ -502,11 +503,26 @@ public class CVisitor {
 	}
 
 	private static IBinding createBinding( ICASTEnumerationSpecifier enumeration ){
-	    IEnumeration binding = new CEnumeration( enumeration );
-	    try {
-            ((ICScope)binding.getScope()).addBinding( binding );
+	    IASTName name = enumeration.getName();
+	    ICScope scope = (ICScope) getContainingScope( enumeration );
+	    IBinding binding;
+        try {
+            binding = scope.getBinding( ICScope.NAMESPACE_TYPE_TAG, name.toCharArray() );
         } catch ( DOMException e ) {
+            binding = null;
         }
+        if( binding != null ){
+	        if( binding instanceof CEnumeration )
+	            ((CEnumeration)binding).addDefinition( name );
+	        else
+	            return new ProblemBinding(IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
+	    } else {
+	        binding = new CEnumeration( name );
+	        try {
+                scope.addBinding( binding );
+            } catch ( DOMException e1 ) {
+            }
+	    } 
         return binding; 
 	}
 	private static IBinding createBinding( IASTEnumerator enumerator ){
@@ -551,11 +567,20 @@ public class CVisitor {
 				//forward declaration
 				IBinding binding = resolveBinding( elabTypeSpec, CURRENT_SCOPE | TAGS );
 				if( binding == null ){
-					binding = new CStructure( elabTypeSpec );
+				    if( elabTypeSpec.getKind() == IASTElaboratedTypeSpecifier.k_enum ){
+				        binding = new CEnumeration( elabTypeSpec.getName() );
+				    } else {
+				        binding = new CStructure( elabTypeSpec );    
+				    }
+					
 					try {
                         ((ICScope) binding.getScope()).addBinding( binding );
                     } catch ( DOMException e ) {
                     }
+				} else {
+				    if( binding instanceof CEnumeration ){
+				        ((CEnumeration)binding).addDeclaration( elabTypeSpec.getName() );
+				    }
 				}
 				return binding;
 			} 
@@ -1242,10 +1267,17 @@ public class CVisitor {
 						}
 					} else if( node instanceof IASTSimpleDeclaration && decl instanceof ICASTElaboratedTypeSpecifier){
 						IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) node;
-						if( simpleDecl.getDeclSpecifier() instanceof ICASTCompositeTypeSpecifier ){
-							ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) simpleDecl.getDeclSpecifier();
-							if( CharArrayUtils.equals( compTypeSpec.getName().toCharArray(), declName ) ){
-								return compTypeSpec;
+						IASTDeclSpecifier declSpec = simpleDecl.getDeclSpecifier();
+						IASTName name = null;
+						
+						if( declSpec instanceof ICASTCompositeTypeSpecifier ){
+						    name = ((ICASTCompositeTypeSpecifier)declSpec).getName();
+						} else if( declSpec instanceof ICASTEnumerationSpecifier ){
+						    name = ((ICASTEnumerationSpecifier)declSpec).getName();
+						}
+						if( name !=  null ){
+						    if( CharArrayUtils.equals( name.toCharArray(), declName ) ){
+								return declSpec;
 							}
 						}
 					} else if( node instanceof IASTSimpleDeclaration && decl instanceof IASTDeclarator ){

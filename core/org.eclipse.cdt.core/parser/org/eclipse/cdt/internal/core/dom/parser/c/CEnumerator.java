@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -21,11 +22,21 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author aniefer
  */
 public class CEnumerator implements IEnumerator {
+    public static class CEnumeratorProblem extends ProblemBinding implements IEnumerator {
+        public CEnumeratorProblem( int id, char[] arg ) {
+            super( id, arg );
+        }
+
+        public IType getType() throws DOMException {
+            throw new DOMException( this );
+        }
+    }
 
     private final IASTEnumerator enumerator;
     public CEnumerator( IASTEnumerator enumtor ){

@@ -291,10 +291,8 @@ public class ScannerConfigInfoFactory {
 			IProjectDescription description = project.getDescription();
 			ICommand builder = ScannerConfigNature.getBuildSpec(description, builderID);
 			args.put(name, value);
-			ICommand newBuilder = description.newCommand();
-			newBuilder.setBuilderName(builder.getBuilderName());
-			newBuilder.setArguments(args);
-			description = MakeProjectNature.setBuildSpec(description, newBuilder);
+			builder.setArguments(args);
+			MakeProjectNature.setBuildSpec(description, builder);
 			project.setDescription(description, null);
 		}
 

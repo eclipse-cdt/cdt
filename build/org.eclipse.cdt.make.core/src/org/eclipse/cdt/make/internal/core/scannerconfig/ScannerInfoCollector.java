@@ -294,7 +294,10 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 			String includePath = (String) i.next();
 			IPath realPath = new Path(includePath);
 			if (!realPath.toFile().exists()) {
-				String translatedPath = new CygpathTranslator(currentProject, includePath).run();
+				String translatedPath = includePath;
+				if (Platform.getOS().equals(Platform.OS_WIN32)) {
+					translatedPath = new CygpathTranslator(currentProject, includePath).run();
+				}
 				if (translatedPath != null) {
 					if (!translatedPath.equals(includePath)) {
 						// Check if the translated path exists

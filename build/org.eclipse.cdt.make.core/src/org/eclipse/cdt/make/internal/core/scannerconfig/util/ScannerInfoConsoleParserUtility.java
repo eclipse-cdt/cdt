@@ -322,7 +322,7 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 		for (Iterator i = includes.iterator(); i.hasNext(); ) {
 			String include = (String) i.next();
 			IPath includePath = new Path(include);
-			if (!includePath.isAbsolute()) {
+			if (!includePath.isAbsolute() && !includePath.isUNC()) {	// do not translate UNC paths
 				// First try the current working directory
 				IPath cwd = getWorkingDirectory();
 				if (!cwd.isAbsolute()) {

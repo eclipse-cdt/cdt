@@ -71,8 +71,6 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	private static final String PREFIX_BP = "BuildPathInfoBlock"; //$NON-NLS-1$
 	private static final String SC_GROUP_LABEL = PREFIX_BP + ".scGroup.label"; //$NON-NLS-1$
 	private static final String SC_ENABLED_LABEL = PREFIX_BP + ".scGroup.enabled.label"; //$NON-NLS-1$
-	//	private static final String SC_OPTIONS_LABEL = PREFIX +
-	// ".scGroup.options.label"; //$NON-NLS-1$
 	private static final String MISSING_BUILDER_MSG = "ScannerConfigOptionsDialog.label.missingBuilderInformation"; //$NON-NLS-1$
 
 	private static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
@@ -156,11 +154,15 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 				IScannerConfigBuilderInfo buildInfo;
 				IProject project = getContainer().getProject();
 				if (project != null) {
+					if (needsSCNature) {
+						ScannerConfigNature.addScannerConfigNature(getContainer().getProject());
+						needsSCNature = false;
+					}
 					buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
 					if (isScannerConfigDiscoveryEnabled()) {
-						createDiscoveredPathContainer(project);
+						createDiscoveredPathContainer(project, monitor);
 					} else {
-						removeDiscoveredPathContainer(project);
+						removeDiscoveredPathContainer(project, monitor);
 					}
 					// create a new discovered scanner config store
 					MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
@@ -193,9 +195,10 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	}
 	/**
 	 * @param project
+	 * @param monitor
 	 * @throws CModelException
 	 */
-	private void createDiscoveredPathContainer(IProject project) throws CModelException {
+	private void createDiscoveredPathContainer(IProject project, IProgressMonitor monitor) throws CModelException {
 		IPathEntry container = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
 		ICProject cProject = CoreModel.getDefault().create(project);
 		if (cProject != null) {
@@ -203,13 +206,12 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 			List newEntries = new ArrayList(Arrays.asList(entries));
 			if (!newEntries.contains(container)) {
 				newEntries.add(container);
-				cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]),
-						new NullProgressMonitor());
+				cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);
 			}
 		}
 	}
 
-	private void removeDiscoveredPathContainer(IProject project) throws CModelException {
+	private void removeDiscoveredPathContainer(IProject project, IProgressMonitor monitor) throws CModelException {
 		IPathEntry container = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
 		ICProject cProject = CoreModel.getDefault().create(project);
 		if (cProject != null) {
@@ -217,8 +219,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 			List newEntries = new ArrayList(Arrays.asList(entries));
 			if (newEntries.contains(container)) {
 				newEntries.remove(container);
-				cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]),
-						new NullProgressMonitor());
+				cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);
 			}
 		}
 	}
@@ -326,30 +327,12 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		// VMIR* old projects will have discovery disabled by default
 		scEnabledButton.setSelection(needsSCNature ? false : fBuildInfo.isAutoDiscoveryEnabled());
 		scEnabledButton.addSelectionListener(new SelectionAdapter() {
-
 			public void widgetSelected(SelectionEvent e) {
-				handleScannerConfigEnable();
+				enableAllControls();
 			}
 		});
 		//		handleScannerConfigEnable(); Only if true in VMIR*
 		return true;
-	}
-
-	/**
-	 * Handles scanner configuration discovery selection change
-	 */
-	private void handleScannerConfigEnable() {
-		boolean enable = scEnabledButton.getSelection();
-		if (enable && needsSCNature) {
-			// first install the SC nature
-			try {
-				ScannerConfigNature.addScannerConfigNature(getContainer().getProject());
-				needsSCNature = false;
-			} catch (CoreException e) {
-				MakeCorePlugin.log(e.getStatus());
-			}
-		}
-		enableAllControls();
 	}
 
 	/**

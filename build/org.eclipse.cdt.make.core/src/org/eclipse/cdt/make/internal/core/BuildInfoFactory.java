@@ -24,6 +24,7 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -316,7 +317,7 @@ public class BuildInfoFactory {
 			this.project = project;
 			this.builderID = builderID;
 			ICommand builder;
-			builder = MakeProjectNature.getBuildSpec(project, builderID);
+			builder = MakeProjectNature.getBuildSpec(project.getDescription(), builderID);
 			if (builder == null) {
 				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("BuildInfoFactory.Missing_Builder") + builderID, null)); //$NON-NLS-1$
 			}
@@ -328,10 +329,14 @@ public class BuildInfoFactory {
 			if (curValue != null && curValue.equals(value)) {
 				return;
 			}
-			ICommand builder = MakeProjectNature.getBuildSpec(project, builderID);
+			IProjectDescription description = project.getDescription();
+			ICommand builder = MakeProjectNature.getBuildSpec(description, builderID);
 			args.put(name, value);
-			builder.setArguments(args);
-			project.setDescription(project.getDescription(), null);
+			ICommand newBuilder = description.newCommand();
+			newBuilder.setBuilderName(builder.getBuilderName());
+			newBuilder.setArguments(args);
+			description = MakeProjectNature.setBuildSpec(description, newBuilder);
+			project.setDescription(description, null);
 		}
 
 		protected String getString(String name) {

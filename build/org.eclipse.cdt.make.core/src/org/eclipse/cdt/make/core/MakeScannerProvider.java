@@ -28,7 +28,10 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.resources.ScannerProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Element;
@@ -175,22 +178,27 @@ public class MakeScannerProvider extends ScannerProvider {
 	 * 
 	 * @param project
 	 */
-	public static void updateScannerInfo(MakeScannerInfo scannerInfo) throws CoreException {
-		IProject project = scannerInfo.getProject();
+	public static void updateScannerInfo(final MakeScannerInfo scannerInfo) throws CoreException {
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IProject project = scannerInfo.getProject();
 
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 
-		Element rootElement = descriptor.getProjectData(CDESCRIPTOR_ID);
+				Element rootElement = descriptor.getProjectData(CDESCRIPTOR_ID);
 
-		// Clear out all current children
-		// Note: Probably would be a better idea to merge in the data
-		Node child = rootElement.getFirstChild();
-		while (child != null) {
-			rootElement.removeChild(child);
-			child = rootElement.getFirstChild();
-		}
+				// Clear out all current children
+				// Note: Probably would be a better idea to merge in the data
+				Node child = rootElement.getFirstChild();
+				while (child != null) {
+					rootElement.removeChild(child);
+					child = rootElement.getFirstChild();
+				}
 
-		descriptor.saveProjectData();
-		migrateToCPathEntries(scannerInfo);
+				descriptor.saveProjectData();
+				migrateToCPathEntries(scannerInfo);
+			}
+		}, null); 
 	}
 }

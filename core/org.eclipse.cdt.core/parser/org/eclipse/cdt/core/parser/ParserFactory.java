@@ -51,6 +51,17 @@ public class ParserFactory {
 			return new CompleteParseASTFactory( provider, language, mode, extensionFactory.createASTExtension( mode )); 
 	}
 	
+	
+	
+    /**
+     * @param scanner		tokenizer to retrieve C/C++ tokens
+     * @param callback		the callback that reports results to the client
+     * @param mode			the parser mode you wish to use
+     * @param language		C or C++
+     * @param log			a log utility to output errors
+     * @return
+     * @throws ParserFactoryError - erroneous input provided
+     */
     public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode, ParserLanguage language, IParserLogService log ) throws ParserFactoryError
     {
     	if( scanner == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_SCANNER );
@@ -71,6 +82,18 @@ public class ParserFactory {
 			return new QuickParser( scanner, ourCallback, language, logService, extension );
     }
  	 	
+    /**
+     * @param input			the java.io.Reader that reads the source-code input you want parsed
+     * @param fileName		the absolute path of the file you are parsing (necessary for determining location of local inclusions) 
+     * @param config		represents the include-paths and preprocessor definitions you wish to initialize the scanner with
+     * @param mode			the parser mode you wish to use
+     * @param language		C or C++
+     * @param requestor		the callback that reports results to the client
+     * @param log			a log utility to output errors
+     * @param workingCopies	a java.util.List of IWorkingCopy buffers if you wish for include files to use CDT Working Copies rather than saved files
+     * @return
+     * @throws ParserFactoryError - erroneous input provided
+     */
     public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError
     {
     	if( input == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_READER );

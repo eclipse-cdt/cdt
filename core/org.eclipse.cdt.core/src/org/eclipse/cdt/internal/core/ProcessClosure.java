@@ -5,12 +5,12 @@ package org.eclipse.cdt.internal.core;
  * All Rights Reserved.
  */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 
@@ -29,7 +29,7 @@ public class ProcessClosure {
 		private InputStream fInputStream;
 		private OutputStream fOutputStream;
 		private boolean fFinished = false;
-				
+		private String lineSeparator;		
 		/*
 		 * outputStream can be null
 		 */
@@ -38,6 +38,7 @@ public class ProcessClosure {
 			fOutputStream= out;
 			fInputStream= in;
 			setDaemon(true);
+			lineSeparator =	(String) System.getProperty("line.separator");
 		}
 		
 		public void run() {
@@ -46,9 +47,9 @@ public class ProcessClosure {
 				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fOutputStream));
 				String line;
 				while ((line = reader.readLine()) != null) {
+					line += lineSeparator;
 					char[] array = line.toCharArray();
 					writer.write(array, 0, array.length);
-					writer.newLine();
 					writer.flush();
 				}
 			} catch (IOException x) {

@@ -1,3 +1,24 @@
+2002-10-23 David Inglis
+
+	Error parsing is now done as the streams from the commands
+	are read, this reduces memory usage during the build
+	process, and we can now add options to the build console to
+	only keep 'n' lines of output, again reducing the memory 
+	usage. Also refactored IErrorParser and ErrorParserManager out
+	of internal.
+	
+	* src/.../errorparser/ErrorParserManager.java:
+	* src/.../errorparser/IErrorParser.java:
+	* src/.../internal/errorparser/GASErrorParser.java:
+	* src/.../internal/errorparser/GCCErrorParser.java:
+	* src/.../internal/errorparser/GLDErrorParser.java:
+	* src/.../internal/errorparser/MakeErrorParser.java:
+	* src/.../internal/errorparser/VCErrorParser.java:
+	* src/.../internal/core/CBuilder.java:
+	* src/.../internal/core/ProcessCloseure.java:
+	* src/.../core/ConsoleOutputStream.java:
+	
+	
 2002-10-22 Alain Magloire
 
 	* src/.../internal/parser/LinePositionInputStream.java:

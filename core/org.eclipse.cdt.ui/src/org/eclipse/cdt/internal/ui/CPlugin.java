@@ -151,7 +151,6 @@ public class CPlugin extends AbstractUIPlugin {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
 					fDocument.set("");
-					fContent.setLength(0);
 				}
 			});
 		}
@@ -172,7 +171,7 @@ public class CPlugin extends AbstractUIPlugin {
 						bringConsoleOnTop();
 					try {
 						int len = fDocument.getLength ();
-						fDocument.replace(len, 0, getContent(len));
+						fDocument.replace(len, 0, readBuffer());
 					} catch (BadLocationException x) {
 					}
 				}
@@ -207,37 +206,6 @@ public class CPlugin extends AbstractUIPlugin {
 	public CPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		fgCPlugin= this;
-/*		
-		fModel = new ACDebugModel() {
-    		public Object createPresentation() {
-    			return new CDebugModelPresentation();
-    		}
-		
-    		public String getIdentifier() {
-    			return PLUGIN_ID;
-    		}
-    
-			public IMarker createBreakpoint( final IResource resource, 
-											final Map attributes,
-											final String markerType ) throws CoreException {
-
-				class BreakpointRunnable implements IWorkspaceRunnable {
-					IMarker fBreakpoint = null;
-		
-					public void run( IProgressMonitor monitor ) throws CoreException 
-					{
-						fBreakpoint = resource.createMarker( markerType );
-						fBreakpoint.setAttributes( attributes );
-					}
-				};
-				BreakpointRunnable r = new BreakpointRunnable();
-			
-				resource.getWorkspace().run( r, null );
-		
-				return r.fBreakpoint;
-			}
-		};
-*/		
 		fConsoleDocument= new ConsoleDocument();
 		fDocumentProvider= null;
 		fTextTools= null;

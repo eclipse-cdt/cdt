@@ -5,6 +5,8 @@ package org.eclipse.cdt.internal.errorparsers;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.errorparsers.ErrorParserManager;
+import org.eclipse.cdt.errorparsers.IErrorParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 
@@ -37,7 +39,7 @@ public class GCCErrorParser implements IErrorParser {
 					String fileName = line.substring(0, firstColon);
 					String lineNumber = line.substring(firstColon + 1, secondColon);
 					String varName = null;
-					String desc = line.substring(secondColon + 2);
+					String desc = line.substring(secondColon + 1).trim();
 					int severity = IMarker.SEVERITY_ERROR;
 					int	num  = 0;
 

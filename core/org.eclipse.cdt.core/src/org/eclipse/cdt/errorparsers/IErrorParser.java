@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.errorparsers;
+package org.eclipse.cdt.errorparsers;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.

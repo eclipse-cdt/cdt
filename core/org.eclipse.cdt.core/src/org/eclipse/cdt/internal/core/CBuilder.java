@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.MakeUtil;
-import org.eclipse.cdt.internal.errorparsers.ErrorParserManager;
+import org.eclipse.cdt.errorparsers.ErrorParserManager;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -110,13 +110,13 @@ public class CBuilder extends ACBuilder {
 					}
 					env = (String []) envList.toArray(new String [envList.size()]);
 				}
-
-				launcher.execute(makepath, userArgs, env, workingDirectory);
-				if (launcher.waitAndRead(cos, cos, subMonitor) != CommandLauncher.OK)
-					errMsg = launcher.getErrorMessage();
+				ErrorParserManager epm= new ErrorParserManager(this);
+				epm.setOutputStream(cos);
 				
+				launcher.execute(makepath, userArgs, env, workingDirectory);
+				if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(), subMonitor) != CommandLauncher.OK)
+					errMsg = launcher.getErrorMessage();
 				monitor.setCanceled(false);
-
 				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
 				subMonitor.subTask("Refresh From Local");
 
@@ -127,10 +127,6 @@ public class CBuilder extends ACBuilder {
 
 				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
 				subMonitor.subTask("Parsing");
-				cos.flush();
-
-				ErrorParserManager epm= new ErrorParserManager(this);
-				epm.parse(cos.getContent());
 
 				if (errMsg != null) {
 					String errorDesc= CCorePlugin.getFormattedString(BUILD_ERROR, makepath.toString());
@@ -142,6 +138,8 @@ public class CBuilder extends ACBuilder {
 					cos.write(buf.toString().getBytes());
 					cos.flush();
 				}
+				epm.close();
+				epm.reportProblems();
 				subMonitor.done();
 			}
 		} catch (Exception e) {

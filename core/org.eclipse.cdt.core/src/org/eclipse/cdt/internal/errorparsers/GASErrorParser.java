@@ -5,6 +5,8 @@ package org.eclipse.cdt.internal.errorparsers;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.errorparsers.ErrorParserManager;
+import org.eclipse.cdt.errorparsers.IErrorParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 

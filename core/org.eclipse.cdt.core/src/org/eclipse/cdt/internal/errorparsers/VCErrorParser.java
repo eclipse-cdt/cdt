@@ -8,6 +8,8 @@ package org.eclipse.cdt.internal.errorparsers;
 import java.io.File;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.errorparsers.ErrorParserManager;
+import org.eclipse.cdt.errorparsers.IErrorParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 

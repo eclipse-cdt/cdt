@@ -1210,11 +1210,11 @@
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
                <toolChain
-		          id="cdt.managedbuild.toolchain.gnu.exe.debug"
-		          name="%ToolChainName.Dbg"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
-		          osList="solaris,linux,hpux,aix,qnx"
-		          archList="all">
+                     archList="all"
+                     osList="solaris,linux,hpux,aix,qnx"
+                     name="%ToolChainName.Dbg"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.exe.debug">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.exe.debug"
 		              name="%PlatformName.Dbg"
@@ -1277,11 +1277,11 @@
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
                <toolChain
-		          id="cdt.managedbuild.toolchain.gnu.exe.release"
-		          name="%ToolChainName.Rel"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
-		          osList="solaris,linux,hpux,aix,qnx"
-		          archList="all">
+                     archList="all"
+                     osList="solaris,linux,hpux,aix,qnx"
+                     name="%ToolChainName.Rel"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.exe.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.exe.release"
 		              name="%PlatformName.Rel"		             
@@ -1352,11 +1352,11 @@
                errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"                          
                id="cdt.managedbuild.config.gnu.so.debug">
                <toolChain
-		          id="cdt.managedbuild.toolchain.gnu.so.debug"
-		          name="%ToolChainName.Dbg"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"		          
-		          osList="solaris,linux,hpux,aix,qnx"                
-		          archList="all">
+                     archList="all"
+                     osList="solaris,linux,hpux,aix,qnx"
+                     name="%ToolChainName.Dbg"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.so.debug">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.so.debug"
 		              name="%PlatformName.Dbg"
@@ -1434,11 +1434,11 @@
                errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
                id="cdt.managedbuild.config.gnu.so.release">
                <toolChain
-		          id="cdt.managedbuild.toolchain.gnu.so.release"
-		          name="%ToolChainName.Rel"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"		          
-		          osList="solaris,linux,hpux,aix,qnx"                
-		          archList="all">
+                     archList="all"
+                     osList="solaris,linux,hpux,aix,qnx"
+                     name="%ToolChainName.Rel"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.so.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.so.release"
 		              name="%PlatformName.Rel"
@@ -1523,11 +1523,11 @@
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
 			   id="cdt.managedbuild.config.gnu.lib.debug">
                <toolChain
-		          id="cdt.managedbuild.toolchain.gnu.lib.debug"
-		          name="%ToolChainName.Dbg"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"		          
-		          osList="solaris,linux,hpux,aix,qnx"                
-		          archList="all">
+                     archList="all"
+                     osList="solaris,linux,hpux,aix,qnx"
+                     name="%ToolChainName.Dbg"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.lib.debug">
 				  <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.lib.debug"
 				 	  name="%PlatformName.Dbg"
@@ -1589,11 +1589,11 @@
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
                id="cdt.managedbuild.config.gnu.lib.release">
                <toolChain
-		          id="cdt.managedbuild.toolchain.gnu.lib.release"
-		          name="%ToolChainName.Rel"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"		          
-		          osList="solaris,linux,hpux,aix,qnx"                
-		          archList="all">
+                     archList="all"
+                     osList="solaris,linux,hpux,aix,qnx"
+                     name="%ToolChainName.Rel"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.lib.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.gnu.platform.lib.release"
 		              name="%PlatformName.Rel"
@@ -1661,12 +1661,12 @@
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
                id="cdt.managedbuild.config.gnu.cygwin.exe.debug">
-               <toolChain   
-                  id="cdt.managedbuild.toolchain.gnu.cygwin.exe.debug"
-                  name="%ToolChainName.Dbg"
-                  scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
-                  osList="win32"
-                  archList="all">
+               <toolChain
+                     archList="all"
+                     osList="win32"
+                     name="%ToolChainName.Dbg"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.cygwin.exe.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.exe.debug"
 				 	  name="%PlatformName.Dbg"
@@ -1731,12 +1731,12 @@
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
                id="cdt.managedbuild.config.gnu.cygwin.exe.release">
-               <toolChain   
-                  id="cdt.managedbuild.toolchain.gnu.cygwin.exe.release"
-                  name="%ToolChainName.Rel"
-                  scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
-                  osList="win32"
-                  archList="all">
+               <toolChain
+                     archList="all"
+                     osList="win32"
+                     name="%ToolChainName.Rel"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.cygwin.exe.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.exe.release"
 				 	  name="%PlatformName.Rel"
@@ -1809,11 +1809,11 @@
                errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
                id="cdt.managedbuild.config.gnu.cygwin.so.debug">
                <toolChain
-                  id="cdt.managedbuild.toolchain.gnu.cygwin.so.debug"
-		          name="%ToolChainName.Dbg"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
-                  osList="win32"
-                  archList="all">
+                     archList="all"
+                     osList="win32"
+                     name="%ToolChainName.Dbg"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.cygwin.so.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.so.debug"
 				 	  name="%PlatformName.Dbg"
@@ -1889,11 +1889,11 @@
                errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
                id="cdt.managedbuild.config.gnu.cygwin.so.release">               
                <toolChain
-                  id="cdt.managedbuild.toolchain.gnu.cygwin.so.release"
-		          name="%ToolChainName.Rel"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
-                  osList="win32"
-                  archList="all">
+                     archList="all"
+                     osList="win32"
+                     name="%ToolChainName.Rel"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.cygwin.so.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.so.release"
 				 	  name="%PlatformName.Rel"
@@ -1975,12 +1975,12 @@
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
                id="cdt.managedbuild.config.gnu.cygwin.lib.debug">
-               <toolChain   
-                  id="cdt.managedbuild.toolchain.gnu.cygwin.lib.debug"
-                  name="%ToolChainName.Dbg"
-                  scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"                  
-				  osList="win32"
-                  archList="all">
+               <toolChain
+                     archList="all"
+                     osList="win32"
+                     name="%ToolChainName.Dbg"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.cygwin.lib.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.lib.debug"
 				 	  name="%PlatformName.Dbg"
@@ -2042,11 +2042,11 @@
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
                id="cdt.managedbuild.config.gnu.cygwin.lib.release">
                <toolChain
-                  id="cdt.managedbuild.toolchain.gnu.cygwin.lib.release"
-                  name="%ToolChainName.Rel"
-                  scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"                  
-				  osList="win32"
-                  archList="all">
+                     archList="all"
+                     osList="win32"
+                     name="%ToolChainName.Rel"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.cygwin.lib.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.lib.release"
 				 	  name="%PlatformName.Rel"
@@ -2113,12 +2113,12 @@
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
                id="cdt.managedbuild.config.gnu.macosx.exe.debug">
-               <toolChain   
-                  id="cdt.managedbuild.toolchain.gnu.macosx.exe.debug"
-                  name="%ToolChainName.Dbg"
-                  scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"                  
-                  osList="macosx"
-                  archList="all">
+               <toolChain
+                     archList="all"
+                     osList="macosx"
+                     name="%ToolChainName.Dbg"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.macosx.exe.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.exe.debug"
 				 	  name="%PlatformName.Dbg"
@@ -2180,12 +2180,12 @@
                cleanCommand="rm -rf"               
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"                              
                id="cdt.managedbuild.config.macosx.exe.release">
-               <toolChain   
-                  id="cdt.managedbuild.toolchain.gnu.macosx.exe.release"
-                  name="%ToolChainName.Rel"
-                  scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"                  
-                  osList="macosx"
-                  archList="all">
+               <toolChain
+                     archList="all"
+                     osList="macosx"
+                     name="%ToolChainName.Rel"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.macosx.exe.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.exe.release"
 				 	  name="%PlatformName.Rel"
@@ -2255,12 +2255,12 @@
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"                              
                id="cdt.managedbuild.config.macosx.so.debug">
-               <toolChain   
-                  id="cdt.managedbuild.toolchain.gnu.macosx.so.debug"
-                  name="%ToolChainName.Dbg"
-                  scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"                  
-                  osList="macosx"
-                  archList="all">
+               <toolChain
+                     archList="all"
+                     osList="macosx"
+                     name="%ToolChainName.Dbg"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.macosx.so.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.so.debug"
 				 	  name="%PlatformName.Dbg"
@@ -2346,12 +2346,12 @@
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
                id="cdt.managedbuild.config.macosx.so.release">
-               <toolChain   
-                  id="cdt.managedbuild.toolchain.gnu.macosx.so.release"
-                  name="%ToolChainName.Rel"
-                  scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"                  
-                  osList="macosx"
-                  archList="all">
+               <toolChain
+                     archList="all"
+                     osList="macosx"
+                     name="%ToolChainName.Rel"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.macosx.so.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.so.release"
 				 	  name="%PlatformName.Rel"
@@ -2444,12 +2444,12 @@
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
                id="cdt.managedbuild.config.macosx.lib.debug">
-               <toolChain   
-                  id="cdt.managedbuild.toolchain.gnu.macosx.lib.debug"
-                  name="%ToolChainName.Dbg"
-                  scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"                  
-                  osList="macosx"
-                  archList="all">
+               <toolChain
+                     archList="all"
+                     osList="macosx"
+                     name="%ToolChainName.Dbg"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.macosx.lib.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.lib.debug"
 				 	  name="%PlatformName.Dbg"
@@ -2510,12 +2510,12 @@
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"               
                id="cdt.managedbuild.config.macosx.lib.release">
-               <toolChain   
-                  id="cdt.managedbuild.toolchain.gnu.macosx.lib.release"
-                  name="%ToolChainName.Rel"
-                  scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"                  
-                  osList="macosx"
-                  archList="all">
+               <toolChain
+                     archList="all"
+                     osList="macosx"
+                     name="%ToolChainName.Rel"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
+                     id="cdt.managedbuild.toolchain.gnu.macosx.lib.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.macosx.lib.release"
 				 	  name="%PlatformName.Rel"

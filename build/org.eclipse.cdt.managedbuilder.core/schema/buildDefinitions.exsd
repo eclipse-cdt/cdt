@@ -259,14 +259,11 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="scannerInfoCollector" type="string">
+         <attribute name="scannerConfigDiscoveryProfileId" type="string">
             <annotation>
                <documentation>
-                  Specifies a class that implements the &lt;code&gt;IManagedScannerInfoCollector&lt;/code&gt; for gathering the built-in compiler settings for a toolchain.
+                  Specifies an id of scanner configuration discovery profile for gathering the built-in compiler settings for a toolchain.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>

@@ -18,15 +18,14 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
-import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,7 +50,7 @@ public class ToolChain extends BuildObject implements IToolChain {
 	private List osList;
 	private List archList;
 	private Boolean isAbstract;
-	private IConfigurationElement scannerInfoCollectorElement;
+    private String scannerConfigDiscoveryProfileId;
 	//  Miscellaneous
 	private boolean isExtensionToolChain = false;
 	private boolean isDirty = false;
@@ -206,7 +205,9 @@ public class ToolChain extends BuildObject implements IToolChain {
 		if (toolChain.isAbstract != null) {
 			isAbstract = new Boolean(toolChain.isAbstract.booleanValue());
 		}
-		scannerInfoCollectorElement = toolChain.scannerInfoCollectorElement; 
+        if (toolChain.scannerConfigDiscoveryProfileId != null) {
+            scannerConfigDiscoveryProfileId = new String(toolChain.scannerConfigDiscoveryProfileId);
+        }
 
 		//  Clone the children
 		if (toolChain.builder != null) {
@@ -291,12 +292,9 @@ public class ToolChain extends BuildObject implements IToolChain {
 		// Get the semicolon separated list of IDs of the error parsers
 		errorParserIds = element.getAttribute(ERROR_PARSERS);
 		
-		// Store the configuration element IFF there is a scanner info collector defined 
-		String scannerInfoCollector = element.getAttribute(SCANNER_INFO_ID); 
-		if (scannerInfoCollector != null && element instanceof DefaultManagedConfigElement) {
-			scannerInfoCollectorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
-		}
-							  
+		// Get the scanner config discovery profile id
+        scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
+        
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
@@ -361,6 +359,11 @@ public class ToolChain extends BuildObject implements IToolChain {
 			errorParserIds = element.getAttribute(ERROR_PARSERS);
 		}
 		
+        // Get the scanner config discovery profile id
+        if (element.hasAttribute(SCANNER_CONFIG_PROFILE_ID)) {
+            scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
+        }
+        
 		// Get the comma-separated list of valid OS
 		if (element.hasAttribute(OS_LIST)) {
 			String os = element.getAttribute(OS_LIST);
@@ -413,6 +416,10 @@ public class ToolChain extends BuildObject implements IToolChain {
 		if (errorParserIds != null) {
 			element.setAttribute(ERROR_PARSERS, errorParserIds);
 		}
+        
+        if (scannerConfigDiscoveryProfileId != null) {
+            element.setAttribute(SCANNER_CONFIG_PROFILE_ID, scannerConfigDiscoveryProfileId);
+        }
 
 		if (osList != null) {
 			Iterator osIter = osList.listIterator();
@@ -840,25 +847,29 @@ public class ToolChain extends BuildObject implements IToolChain {
 		setDirty(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getScannerInfoCollectorElement()
-	 */
-	public IConfigurationElement getScannerInfoCollectorElement() {
-		if (scannerInfoCollectorElement == null) {
-			if (superClass != null) {
-				return superClass.getScannerInfoCollectorElement();
-			}
-		}
-		return scannerInfoCollectorElement;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setScannerInfoCollectorElement(IConfigurationElement)
-	 */
-	public void setScannerInfoCollectorElement(IConfigurationElement element) {
-		scannerInfoCollectorElement = element;
-		setDirty(true);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getScannerConfigDiscoveryProfileId()
+     */
+    public String getScannerConfigDiscoveryProfileId() {
+        if (scannerConfigDiscoveryProfileId == null) {
+            if (superClass != null) {
+                return superClass.getScannerConfigDiscoveryProfileId();
+            }
+        }
+        return scannerConfigDiscoveryProfileId;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setScannerConfigDiscoveryProfileId(java.lang.String)
+     */
+    public void setScannerConfigDiscoveryProfileId(String profileId) {
+		if (scannerConfigDiscoveryProfileId == null && profileId == null) return;
+        if (scannerConfigDiscoveryProfileId == null ||
+                !scannerConfigDiscoveryProfileId.equals(profileId)) {
+            scannerConfigDiscoveryProfileId = profileId;
+            setDirty(true);
+        }
+    }
 	
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
@@ -962,4 +973,5 @@ public class ToolChain extends BuildObject implements IToolChain {
 			}
 		}
 	}
+
 }

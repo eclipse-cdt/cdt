@@ -1213,7 +1213,7 @@
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.exe.debug"
 		          name="Dbg ToolChain"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
+		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
 		          osList="solaris,linux,hpux,aix,qnx"
 		          archList="all">
 		          <targetPlatform
@@ -1280,7 +1280,7 @@
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.exe.release"
 		          name="Rel ToolChain"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
+		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
 		          osList="solaris,linux,hpux,aix,qnx"
 		          archList="all">
 		          <targetPlatform
@@ -1354,7 +1354,7 @@
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.so.debug"
 		          name="so Debug ToolChain"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"		          
+		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
 		          osList="solaris,linux,hpux,aix,qnx"                
 		          archList="all">
 		          <targetPlatform
@@ -1435,7 +1435,7 @@
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.so.release"
 		          name="so Release ToolChain"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"		          
+		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
 		          osList="solaris,linux,hpux,aix,qnx"                
 		          archList="all">
 		          <targetPlatform
@@ -1523,7 +1523,7 @@
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.lib.debug"
 		          name="Dbg TC"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"		          
+		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
 		          osList="solaris,linux,hpux,aix,qnx"                
 		          archList="all">
 				  <targetPlatform
@@ -1588,7 +1588,7 @@
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.lib.release"
 		          name="Rel TC"
-		          scannerInfoCollector="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"		          
+		          scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"		          
 		          osList="solaris,linux,hpux,aix,qnx"                
 		          archList="all">
 		          <targetPlatform

@@ -98,6 +98,19 @@
       </scannerInfoProvider>
    </extension>
    <extension
+         id="GCCWinManagedMakePerProjectProfile"
+         name="GNU C/C++ managed make per project SCD profile (Windows)"
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"/>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}"
+               command="gcc"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
+   <extension
          point="org.eclipse.team.core.fileTypes">
       <fileTypes
             extension="cdtbuild"

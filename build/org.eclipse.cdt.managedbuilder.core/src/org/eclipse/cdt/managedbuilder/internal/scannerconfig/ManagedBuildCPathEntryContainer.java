@@ -56,7 +56,7 @@ import org.eclipse.core.runtime.Platform;
  */
 public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
     // Managed make per project scanner configuration discovery profile
-    private static final String MM_PP_DISCOVERY_PROFILE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".GCCManagedMakePerProjectProfile"; //$NON-NLS-1$
+    public static final String MM_PP_DISCOVERY_PROFILE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".GCCManagedMakePerProjectProfile"; //$NON-NLS-1$
     private static final String SPECS_FILE_PROVIDER = "specsFile"; //$NON-NLS-1$
     
 	private static final String BUILDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".ScannerConfigBuilder"; //$NON-NLS-1$
@@ -175,7 +175,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 
         final IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.
                 createScannerConfigBuildInfo2(MakeCorePlugin.getDefault().getPluginPreferences(),
-                                              MM_PP_DISCOVERY_PROFILE_ID, false);
+                        profileInstance.getProfile().getId(), false);
         final IExternalScannerInfoProvider esiProvider = profileInstance.createExternalScannerInfoProvider(SPECS_FILE_PROVIDER);
         
 		// Set the arguments for the provider
@@ -210,10 +210,17 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information has not been loaded yet");	//$NON-NLS-1$
 			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
 		}
-		
+		// get the associated scanner config discovery profile id
+        String scdProfileId = ManagedBuildManager.getScannerInfoProfileId(defaultConfig);
+        if (scdProfileId == null) {
+            // scanner config profile not defined
+            ManagedBuildCPathEntryContainer.outputError(project.getName(), "Scanner config discovery profile not specified for the configuration");    //$NON-NLS-1$
+            return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+        }
+        
 		// See if we can load a dynamic resolver
         SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
-                getSCProfileInstance(project, MM_PP_DISCOVERY_PROFILE_ID);
+                getSCProfileInstance(project, scdProfileId);
         IScannerInfoCollector collector = profileInstance.createScannerInfoCollector();
         
         synchronized(this) {

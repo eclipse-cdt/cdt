@@ -60,7 +60,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
-import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -560,30 +559,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return ManagedCommandLineGenerator.getCommandLineGenerator();
 	}
 
-	/** 
-	 * Targets may have a scanner collector defined that knows how to discover 
-	 * built-in compiler defines and includes search paths. Find the scanner 
-	 * collector implementation for the target specified.
-	 * 
-	 * @param string the unique id of the target to search for
-	 * @return an implementation of <code>IManagedScannerInfoCollector</code>
-	 */
-	public static IManagedScannerInfoCollector getScannerInfoCollector(IConfiguration config) {
-		try {
-			IToolChain toolChain = config.getToolChain();
-			IConfigurationElement element = toolChain.getScannerInfoCollectorElement();
-			if (element != null) {
-				if (element.getAttribute(IToolChain.SCANNER_INFO_ID) != null) {
-					return (IManagedScannerInfoCollector) element.createExecutableExtension(IToolChain.SCANNER_INFO_ID);
-				}
-			}
-		} 
-		catch (CoreException e) {
-			// Probably not defined
-		}
-		return null;
-	}
-
+    /** 
+     * Targets may have a scanner config discovery profile defined that knows  
+     * how to discover built-in compiler defines and includes search paths. 
+     * Find the profile for the target specified.
+     * 
+     * @param string the unique id of the target to search for
+     * @return scanner configuration discovery profile id
+     */
+    public static String getScannerInfoProfileId(IConfiguration config) {
+        IToolChain toolChain = config.getToolChain();
+        return toolChain.getScannerConfigDiscoveryProfileId();
+    }
+    
 	/**
 	 * Gets the currently selected target.  This is used while the project
 	 * property pages are displayed

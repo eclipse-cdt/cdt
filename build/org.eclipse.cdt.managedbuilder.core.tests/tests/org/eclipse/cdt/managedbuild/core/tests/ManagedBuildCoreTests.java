@@ -262,7 +262,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		String expectedArguments = "-k";
 		String[] expectedBuilderName = {"so Debug Builder",
 				                        "so Release Builder"};
-		String expectedScannerInfo = "org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector";
+		String expectedScannerConfigDiscoveryProfileId = "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile";
 	    String[] expectedToolChainName = {"so Debug ToolChain",
 	                                      "so Release ToolChain"};
 		String[] expectedToolId1 = {"cdt.managedbuild.tool.testgnu.c.linker.so.debug",
@@ -332,10 +332,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		     assertEquals(expectedParserId, configs[iconfig].getErrorParserIds());
 		     assertTrue(Arrays.equals(toolChain.getOSList(), (String[]) expectedOSListarr.toArray(new String[expectedSizeOSList])));
 		     assertTrue(Arrays.equals(toolChain.getArchList(), expectedArchList));
-		     IConfigurationElement element = toolChain.getScannerInfoCollectorElement();	     	   
-			 if (element != null) {
-				 assertEquals(element.getAttribute(IToolChain.SCANNER_INFO_ID), expectedScannerInfo);						
-			 }
+             assertEquals(expectedScannerConfigDiscoveryProfileId, toolChain.getScannerConfigDiscoveryProfileId());
 		
 			 // Fetch and check platform
 			 //		     		     
@@ -467,7 +464,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		String expectedArguments = "-k";
 		String[] expectedBuilderName = {"Dbg B",
 				                        "Rel B"};
-		String expectedScannerInfo = "org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector";
+        String expectedScannerConfigDiscoveryProfileId = "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile";
 	    String[] expectedToolId1 = {"cdt.managedbuild.tool.testgnu.cpp.compiler.lib.debug",
 	                                "cdt.managedbuild.tool.testgnu.cpp.compiler.lib.release"};		     
 	    String expectedSuperToolId1 = "cdt.managedbuild.tool.testgnu.cpp.compiler";		    
@@ -532,10 +529,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		     assertEquals(expectedParserId, configs[iconfig].getErrorParserIds());
 		     assertTrue(Arrays.equals(toolChain.getOSList(), (String[]) expectedOSListarr.toArray(new String[expectedSizeOSList])));
 		     assertTrue(Arrays.equals(toolChain.getArchList(), expectedArchList));
-		     IConfigurationElement element = toolChain.getScannerInfoCollectorElement();	     	   
-			 if (element != null) {
-				 assertEquals(element.getAttribute(IToolChain.SCANNER_INFO_ID), expectedScannerInfo);						
-			 }
+             assertEquals(expectedScannerConfigDiscoveryProfileId, toolChain.getScannerConfigDiscoveryProfileId());
 		
 			 // Fetch and check platform
 			 //		     		     

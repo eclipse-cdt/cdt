@@ -19,18 +19,19 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
-import org.eclipse.cdt.managedbuilder.core.ITarget;
-import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolReference;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
-import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.ITarget;
+import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
 import org.w3c.dom.Document;
@@ -1009,10 +1010,10 @@ public class Target extends BuildObject implements ITarget {
 			toolChain.setIsAbstract(isAbstract);
 			toolChain.setOSList(getTargetOSList());
 			toolChain.setArchList(getTargetArchList());
-			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
-			if (element instanceof DefaultManagedConfigElement) {
-				toolChain.setScannerInfoCollectorElement(((DefaultManagedConfigElement)element).getConfigurationElement());
-			}
+            // In target element had a scannerInfoCollector element here which
+            // is now replaced with scanner config discovery profile id.
+            // Using the default per project profile for managed make
+            toolChain.setScannerConfigDiscoveryProfileId(ManagedBuildCPathEntryContainer.MM_PP_DISCOVERY_PROFILE_ID);
 			// Create the Builder
 			subId = id + ".builder"; 	//$NON-NLS-1$
 			subName = name + ".builder"; 	//$NON-NLS-1$
@@ -1021,6 +1022,7 @@ public class Target extends BuildObject implements ITarget {
 			builder.setIsAbstract(isAbstract);
 			builder.setCommand(getMakeCommand());
 			builder.setArguments(getMakeArguments());
+            IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			if (element instanceof DefaultManagedConfigElement) {
 				builder.setBuildFileGeneratorElement(((DefaultManagedConfigElement)element).getConfigurationElement());
 			}

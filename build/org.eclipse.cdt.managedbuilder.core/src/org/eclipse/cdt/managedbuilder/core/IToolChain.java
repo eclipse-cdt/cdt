@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
-import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
  * This class represents a tool-integrator-defined, ordered set of tools 
@@ -34,7 +33,7 @@ public interface IToolChain extends IBuildObject {
 	public static final String ARCH_LIST = "archList";					//$NON-NLS-1$
 	public static final String ERROR_PARSERS = "errorParsers";			//$NON-NLS-1$
 	// The attribute name for the scanner info collector
-	public static final String SCANNER_INFO_ID = "scannerInfoCollector"; //$NON-NLS-1$
+	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
 
 	/**
 	 * Returns the configuration that is the parent of this tool-chain.
@@ -212,18 +211,18 @@ public interface IToolChain extends IBuildObject {
 	public void setErrorParserIds(String ids);
 
 	/**
-	 * Returns the plugin.xml element of the scannerInfoCollector extension or <code>null</code> if none. 
+	 * Returns the scanner config discovery profile id or <code>null</code> if none. 
 	 *  
-	 * @return IConfigurationElement
+	 * @return String
 	 */
-	public IConfigurationElement getScannerInfoCollectorElement();
+	public String getScannerConfigDiscoveryProfileId();
 
 	/**
-	 * Sets the ScannerInfoCollector plugin.xml element
+	 * Sets the scanner config discovery profile id.
 	 * 
-	 * @param element
+	 * @param profileId
 	 */
-	public void setScannerInfoCollectorElement(IConfigurationElement element);
+	public void setScannerConfigDiscoveryProfileId(String profileId);
 
 	/**
 	 * Returns <code>true</code> if this tool-chain has changes that need to 

@@ -184,4 +184,36 @@ public class NullParserCallback implements IParserCallback {
 	public void expressionEnd(Object expression) {
 	}
 
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierAbort(java.lang.Object)
+	 */
+	public void classSpecifierAbort(Object classSpecifier) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierSafe(java.lang.Object)
+	 */
+	public void classSpecifierSafe(Object classSpecifier) {
+	}
+
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierBegin(java.lang.Object)
+	 */
+	public Object elaboratedTypeSpecifierBegin(Object container, Token classKey) {
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierEnd(java.lang.Object)
+	 */
+	public void elaboratedTypeSpecifierEnd(Object elab) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierName(java.lang.Object)
+	 */
+	public void elaboratedTypeSpecifierName(Object elab) {
+	}
+
 }

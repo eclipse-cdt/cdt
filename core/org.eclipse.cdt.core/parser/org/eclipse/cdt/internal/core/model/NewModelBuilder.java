@@ -35,8 +35,6 @@ public class NewModelBuilder implements IParserCallback {
 		return translationUnit;
 	}
 	
-	
-	private Token classKey;
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginClass(String, String)
 	 */
@@ -55,24 +53,21 @@ public class NewModelBuilder implements IParserCallback {
 			default:
 				kind = ICElement.C_UNION;
 		}
-		this.classKey = classKey;
 		
-		Structure elem = new Structure( c.getParent(), kind, null );
-		c.getParent().addChild(elem); 
-		return new SimpleDeclarationWrapper( elem ); 
+		SimpleDeclarationWrapper wrapper = new SimpleDeclarationWrapper();
+		wrapper.setKind( kind );
+		wrapper.setParent( c.getParent() );
+		
+		return wrapper;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classSpecifierName() 
 	 */
-	public void classSpecifierName(Object classSpecifier) {
-
-		SimpleDeclarationWrapper container = (SimpleDeclarationWrapper)classSpecifier; 
-		String name = currName.toString(); 
-		Structure elem = ((Structure)container.getElement());
-		elem.setElementName( name );
-		elem.setIdPos(currName.getStartOffset(), name.length());
-		elem.setPos(currName.getStartOffset(), name.length());
+	public void classSpecifierName(Object classSpecifier) 
+	{
+		SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)classSpecifier;
+		wrapper.setName( currName );
 	}
 
 	/**
@@ -310,6 +305,45 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionEnd(java.lang.Object)
 	 */
 	public void expressionEnd(Object expression) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierAbort(java.lang.Object)
+	 */
+	public void classSpecifierAbort(Object classSpecifier) {
+		classSpecifier = null; 
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierSafe(java.lang.Object)
+	 */
+	public void classSpecifierSafe(Object classSpecifier) {
+		SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)classSpecifier;
+		Structure elem = new Structure( wrapper.getParent(), wrapper.getKind(), null );
+		wrapper.setElement( elem );
+		wrapper.getParent().addChild(elem);
+		String name = currName.toString(); 
+		elem.setElementName( name );
+		elem.setIdPos(currName.getStartOffset(), name.length());
+		elem.setPos(currName.getStartOffset(), name.length());
+	}
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierBegin(java.lang.Object)
+	 */
+	public Object elaboratedTypeSpecifierBegin(Object container, Token classKey) {
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierEnd(java.lang.Object)
+	 */
+	public void elaboratedTypeSpecifierEnd(Object elab) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierName(java.lang.Object)
+	 */
+	public void elaboratedTypeSpecifierName(Object elab) {
 	}
 
 }

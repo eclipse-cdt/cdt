@@ -1,3 +1,8 @@
+2003-03-13 John Camelon
+	Moved ## token to IScanner from Scanner.
+	Updated IParserCallback and implementations to deal with Elaborated Type Specifiers. 
+	Moved IScope into the internal DOM package.
+
 2003-03-11 John Camelon
 	added ChangeLog to parser directory
 	updated IParserCallback (and all implementors) for expressions 

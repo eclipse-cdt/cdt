@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface IScanner {
 	
+	public static final int tPOUNDPOUND = -6;
+	
 	public IScanner initialize( Reader sourceToBeRead, String fileName );
 	
 	public void addDefinition(String key, IMacroDescriptor macroToBeAdded );

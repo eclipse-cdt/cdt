@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
+import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
  * @author jcamelon
@@ -19,6 +20,8 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 
 	private CElement element = null; 
 	private CElement parent = null; 
+	int kind; 
+	private Name name = null;
 
 	public SimpleDeclarationWrapper( CElement item )
 	{
@@ -160,6 +163,38 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 */
 	public void removeDeclarator(Object declarator) {
 		declarators.remove( declarator );
+	}
+
+	/**
+	 * Returns the name.
+	 * @return Name
+	 */
+	public Name getName() {
+		return name;
+	}
+
+	/**
+	 * Sets the name.
+	 * @param name The name to set
+	 */
+	public void setName(Name name) {
+		this.name = name;
+	}
+
+	/**
+	 * Returns the kind.
+	 * @return int
+	 */
+	public int getKind() {
+		return kind;
+	}
+
+	/**
+	 * Sets the kind.
+	 * @param kind The kind to set
+	 */
+	public void setKind(int kind) {
+		this.kind = kind;
 	}
 
 }

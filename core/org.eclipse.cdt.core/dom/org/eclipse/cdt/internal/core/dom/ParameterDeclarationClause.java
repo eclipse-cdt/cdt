@@ -3,7 +3,6 @@ package org.eclipse.cdt.internal.core.dom;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.IScope;
 
 /**
  * @author jcamelon

@@ -84,7 +84,7 @@ c, quick);
 				lastToken = currToken;
 				declaration( translationUnit );
 				if( currToken == lastToken )
-					skipToNextSemi();
+					consumeToNextSemicolon();
 			} catch (Backtrack b) {
 				// Mark as failure and try to reach a recovery point
 				parsePassed = false;
@@ -92,7 +92,7 @@ c, quick);
 				if (lastBacktrack != null && lastBacktrack == LA(1)) {
 					// we haven't progressed from the last backtrack
 					// try and find tne next definition
-					skipToNextSemi();
+					consumeToNextSemicolon();
 				} else {
 					// start again from here
 					lastBacktrack = LA(1);
@@ -102,7 +102,7 @@ c, quick);
 		callback.translationUnitEnd(translationUnit);
 	}
 
-	public void skipToNextSemi() {
+	protected void consumeToNextSemicolon() {
 		for (int t = LT(1); t != Token.tEOF; t = LT(1)) {
 			consume();
 			// TO DO: we should really check for matching braces too
@@ -338,8 +338,20 @@ c, quick);
 				case Token.t_class:
 				case Token.t_struct:
 				case Token.t_union:
-					classSpecifier(decl);
-					return;
+					try
+					{
+						classSpecifier(decl);
+						return;
+					}
+					catch( Backtrack bt )
+					{
+						// this is an elaborated class specifier
+						Object elab = callback.elaboratedTypeSpecifierBegin( decl, consume() ); 
+						name(); 
+						callback.elaboratedTypeSpecifierName( elab ); 
+						callback.elaboratedTypeSpecifierEnd( elab );
+						
+					}
 				case Token.t_enum:
 					enumSpecifier(decl);
 					break;
@@ -638,6 +650,7 @@ c, quick);
 	public void classSpecifier( Object owner ) throws Exception {
 		Token classKey = null;
 		
+		Token mark = mark();
 		// class key
 		switch (LT(1)) {
 			case Token.t_class:
@@ -656,8 +669,17 @@ c, quick);
 			name();
 			callback.classSpecifierName(classSpec);			
 		}
-
-		//currRegion.put(name.getImage(), classKey);
+		
+		if( LT(1) != Token.tCOLON && LT(1) != Token.tLBRACE )
+		{
+			// this is not a classSpecification
+			callback.classSpecifierAbort( classSpec );
+			classSpec = null; 	
+			backup( mark ); 
+			throw backtrack; 
+		}
+		else
+			callback.classSpecifierSafe( classSpec );
 		
 		// base clause
 		if (LT(1) == Token.tCOLON) {
@@ -693,7 +715,7 @@ c, quick);
 						declaration(classSpec);
 				}
 				if (lastToken == currToken)
-					skipToNextSemi();
+					consumeToNextSemicolon();
 			}
 			// consume the }
 			consume();

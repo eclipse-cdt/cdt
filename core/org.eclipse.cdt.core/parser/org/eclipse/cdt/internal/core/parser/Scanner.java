@@ -325,8 +325,6 @@ public class Scanner implements IScanner {
 	private static final String DEFINED = "defined";
 	private static final String POUND_DEFINE = "#define ";
 
-	public static final int tPOUNDPOUND = -6;
-
 	private IScannerContext currentContext;
 	private Stack contextStack = new Stack();
 

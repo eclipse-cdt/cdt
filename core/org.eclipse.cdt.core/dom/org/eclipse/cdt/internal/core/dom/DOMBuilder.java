@@ -1,7 +1,6 @@
 package org.eclipse.cdt.internal.core.dom;
 
 
-import org.eclipse.cdt.core.dom.IScope;
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
@@ -275,6 +274,53 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionEnd(java.lang.Object)
 	 */
 	public void expressionEnd(Object expression) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierAbort(java.lang.Object)
+	 */
+	public void classSpecifierAbort(Object classSpecifier) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierSafe(java.lang.Object)
+	 */
+	public void classSpecifierSafe(Object classSpecifier) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierBegin(java.lang.Object)
+	 */
+	public Object elaboratedTypeSpecifierBegin(Object container, Token classKey) {
+		int kind = ClassSpecifier.t_struct;
+		
+		switch (classKey.getType()) {
+			case Token.t_class:
+				kind = ClassSpecifier.t_class;
+				break;
+			case Token.t_struct:
+				kind = ClassSpecifier.t_struct;
+				break;
+			case Token.t_union:
+				kind = ClassSpecifier.t_union;
+				break;			
+		}
+
+		ElaboratedTypeSpecifier elab = new ElaboratedTypeSpecifier( kind, (SimpleDeclaration)container );
+		return elab; 
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierEnd(java.lang.Object)
+	 */
+	public void elaboratedTypeSpecifierEnd(Object elab) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierName(java.lang.Object)
+	 */
+	public void elaboratedTypeSpecifierName(Object elab) {
+		((ElaboratedTypeSpecifier)elab).setName( currName );
 	}
 
 }

@@ -43,6 +43,8 @@ public interface IParserCallback {
 	
 	public Object classSpecifierBegin(Object container, Token classKey);
 	public void classSpecifierName(Object classSpecifier);
+	public void classSpecifierAbort( Object classSpecifier ); 
+	public void classSpecifierSafe( Object classSpecifier );
 	public void classSpecifierEnd(Object classSpecifier);
 	
 	public Object	baseSpecifierBegin( Object containingClassSpec );
@@ -51,8 +53,12 @@ public interface IParserCallback {
 	public void 	baseSpecifierVirtual( Object baseSpecifier, boolean virtual );
 	public void  	baseSpecifierEnd( Object baseSpecifier );
 	
-	public Object expressionBegin( Object container ); 
-	public void expressionOperator(Token operator) throws Exception;
-	public void expressionTerminal(Token terminal) throws Exception;
-	public void expressionEnd(Object expression );
+	public Object 	expressionBegin( Object container ); 
+	public void 	expressionOperator(Token operator) throws Exception;
+	public void 	expressionTerminal(Token terminal) throws Exception;
+	public void 	expressionEnd(Object expression );
+	
+	public Object	elaboratedTypeSpecifierBegin( Object container, Token classKey ); 
+	public void  	elaboratedTypeSpecifierName( Object elab ); 
+	public void 	elaboratedTypeSpecifierEnd( Object elab );
 }

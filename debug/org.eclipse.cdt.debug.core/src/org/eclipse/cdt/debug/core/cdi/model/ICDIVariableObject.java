@@ -6,6 +6,9 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
+
 
 /**
  * 
@@ -13,9 +16,39 @@ package org.eclipse.cdt.debug.core.cdi.model;
 public interface ICDIVariableObject extends ICDIObject {
 
 	/**
-	 * Method getName.
-	 * @return String
+	 * Returns the name of this variable.
+	 * 
+	 * @return String the name of this variable
 	 */
-	public String getName();
+	String getName();
+	
+	/**
+	 * Returns the stackframe where the variable was found
+	 * may return null.
+	 * 
+	 * @return the stackframe
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	ICDIStackFrame getStackFrame() throws CDIException;
 
+	/**
+	 * Returns the type of data this variable is declared.
+	 * 
+	 * @return the type of data this variable is declared
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	ICDIType getType() throws CDIException;
+	
+	/**
+	 * Returns the type of data this variable is declared.
+	 * 
+	 * @return the type of data this variable is declared
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	String getTypeName() throws CDIException;
+
+	/**
+	 * @return
+	 */
+	//int sizeof() throws CDIException;
 }

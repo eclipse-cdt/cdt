@@ -18,7 +18,7 @@ public class NullParserCallback implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#inclusionBegin(java.lang.String, int)
 	 */
-	public void inclusionBegin(String includeFile, int offset) {
+	public void inclusionBegin(String includeFile, int offset, int inclusionBeginOffset) {
 	}
 
 	/* (non-Javadoc)
@@ -30,13 +30,13 @@ public class NullParserCallback implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#macro(java.lang.String, int)
 	 */
-	public void macro(String macroName, int offset) {
+	public void macro(String macroName, int offset, int macroBeginOffset, int macroEndOffset) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclarationBegin(java.lang.Object)
 	 */
-	public Object simpleDeclarationBegin(Object Container) {
+	public Object simpleDeclarationBegin(Object Container, Token firstToken) {
 		return null;
 	}
 
@@ -55,7 +55,7 @@ public class NullParserCallback implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclarationEnd(java.lang.Object)
 	 */
-	public void simpleDeclarationEnd(Object declaration) {
+	public void simpleDeclarationEnd(Object declaration, Token lastToken) {
 	}
 
 	/* (non-Javadoc)
@@ -224,7 +224,7 @@ public class NullParserCallback implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierEnd(java.lang.Object)
 	 */
-	public void classSpecifierEnd(Object classSpecifier) {
+	public void classSpecifierEnd(Object classSpecifier, Token closingBrace) {
 	}
 
 	/* (non-Javadoc)
@@ -317,7 +317,7 @@ public class NullParserCallback implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationBegin(java.lang.Object)
 	 */
-	public Object namespaceDefinitionBegin(Object container) {
+	public Object namespaceDefinitionBegin(Object container, Token namespace) {
 		return null;
 	}
 
@@ -336,7 +336,7 @@ public class NullParserCallback implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationEnd(java.lang.Object)
 	 */
-	public void namespaceDefinitionEnd(Object namespace) {
+	public void namespaceDefinitionEnd(Object namespace, Token closingBrace) {
 	}
 
 	/* (non-Javadoc)
@@ -432,26 +432,26 @@ public class NullParserCallback implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object)
 	 */
-	public void enumSpecifierEnd(Object enumSpec) {
+	public void enumSpecifierEnd(Object enumSpec, Token closingBrace) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionBegin(java.lang.Object)
 	 */
-	public Object enumDefinitionBegin(Object enumSpec) {
+	public Object enumeratorBegin(Object enumSpec) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionId(java.lang.Object)
 	 */
-	public void enumDefinitionId(Object enumDefn) {
+	public void enumeratorId(Object enumDefn) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
 	 */
-	public void enumDefinitionEnd(Object enumDefn) {
+	public void enumeratorEnd(Object enumDefn, Token lastToken) {
 	}
 
 	/* (non-Javadoc)

@@ -40,6 +40,11 @@ public class Token {
 	public int getOffset() { return offset; }
 	public int getLength() { return image.length(); }
 	
+	public int getDelta( Token other )
+	{
+		return other.getOffset() + other.getLength() - getOffset();
+	}
+	
 	private Token next;
 	public Token getNext() { return next; }
 	public void setNext(Token t) { next = t; }

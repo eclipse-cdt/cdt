@@ -12,9 +12,9 @@
 package org.eclipse.cdt.internal.core.parser;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Iterator;
 
 import org.eclipse.cdt.internal.core.parser.util.TypeInfo;
 

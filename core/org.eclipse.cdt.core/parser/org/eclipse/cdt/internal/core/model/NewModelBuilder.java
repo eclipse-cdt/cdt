@@ -83,7 +83,11 @@ public class NewModelBuilder implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#endClass()
 	 */
-	public void classSpecifierEnd(Object classSpecifier) {
+	public void classSpecifierEnd(Object classSpecifier, Token closingBrace) {
+		SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)classSpecifier;
+		Structure s = (Structure)wrapper.getElement();
+		s.setPos( wrapper.getClassKind().getOffset(), 
+			wrapper.getClassKind().getDelta( closingBrace ));
 	}
 
 	/**
@@ -121,10 +125,10 @@ public class NewModelBuilder implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#macro(String)
 	 */
-	public void macro(String macroName, int offset) {
+	public void macro(String macroName, int offset, int macroBeginOffset, int macroEndOffset) {
 		Macro elem = new Macro((TranslationUnit)translationUnit.getElement(), macroName);
 		elem.setIdPos(offset, macroName.length());
-		elem.setPos(offset, macroName.length());
+		elem.setPos(macroBeginOffset, macroEndOffset - macroBeginOffset);
 
 		((TranslationUnit)translationUnit.getElement()).addChild(elem);
 	}
@@ -135,12 +139,13 @@ public class NewModelBuilder implements IParserCallback {
 	 * @see 
 org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(Token)
 	 */
-	public Object simpleDeclarationBegin(Object container) {
+	public Object simpleDeclarationBegin(Object container, Token firstToken) {
 		ICElementWrapper wrapper = (ICElementWrapper)container;
 		// Assuming that the parent is the container's element 
 		IParent parent = (IParent)wrapper.getElement();
 		SimpleDeclarationWrapper result = new SimpleDeclarationWrapper();
 		result.setParent( parent );
+		result.setFirst( firstToken );
 		// A special case to transfere the visibility
 		if( wrapper instanceof SimpleDeclarationWrapper ){
 			result.setCurrentVisibility(((SimpleDeclarationWrapper)wrapper).getCurrentVisibility());
@@ -151,13 +156,13 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	
 
 	/**
-	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginInclusion(String)
+	 * @see org.eclipse.cdt.internal.core.newmparser.IParserCallback#beginInclusion(String)
 	 */
-	public void inclusionBegin(String includeFile, int offset) {
+	public void inclusionBegin(String includeFile, int offset, int inclusionBeginOffset) {
 		Include elem = new Include(((TranslationUnit)translationUnit.getElement()), includeFile);
 		((TranslationUnit)translationUnit.getElement()).addChild(elem);
 		elem.setIdPos(offset, includeFile.length());
-		elem.setPos(offset, includeFile.length());
+		elem.setPos(inclusionBeginOffset, offset + includeFile.length() + 1 );
 	}
 
 	/**
@@ -186,8 +191,9 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationEnd(java.lang.Object)
 	 */
-	public void simpleDeclarationEnd(Object declaration) {
+	public void simpleDeclarationEnd(Object declaration, Token lastToken) {
 		SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)declaration; 
+		wrapper.setLast( lastToken );
 		wrapper.createElements();
 	}
 
@@ -267,7 +273,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#functionBodyEnd()
 	 */
-	public void functionBodyEnd(Object functionBody) {
+	public void functionBodyEnd(Object functionBody ) {
 	}
 
 	/**
@@ -358,13 +364,11 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		{ 	
 			elem.setTypeName( wrapper.getClassKind().getImage() );
 			elem.setIdPos(wrapper.getName().getStartOffset(), elementName.length());
-			elem.setPos(wrapper.getName().getStartOffset(), elementName.length());
 		}
 		else
 		{
 			elem.setTypeName( wrapper.getClassKind().getImage() );
-			elem.setIdPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());
-			elem.setPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());		
+			elem.setIdPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());		
 		}
 	}
 	/**
@@ -551,10 +555,10 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationBegin(java.lang.Object)
 	 */
-	public Object namespaceDefinitionBegin(Object container) {
+	public Object namespaceDefinitionBegin(Object container, Token namespace) {
 
 		ICElementWrapper c = (ICElementWrapper)container; 
-		NamespaceWrapper wrapper = new NamespaceWrapper((IParent)c.getElement());		
+		NamespaceWrapper wrapper = new NamespaceWrapper((IParent)c.getElement(), namespace);		
 		return wrapper;  	
 	}
 
@@ -574,8 +578,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		realParent.addChild( newNameSpace );
 
 		// set the positions
-		newNameSpace.setIdPos(wrapper.getName().getStartOffset(), namespaceName.length());
-		newNameSpace.setPos(wrapper.getName().getStartOffset(), namespaceName.length());		
+		newNameSpace.setIdPos(wrapper.getName().getStartOffset(), namespaceName.length());	
 	}
 
 	/* (non-Javadoc)
@@ -588,7 +591,10 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationEnd(java.lang.Object)
 	 */
-	public void namespaceDefinitionEnd(Object namespace) {
+	public void namespaceDefinitionEnd(Object namespace, Token closingBrace) {
+		NamespaceWrapper wrapper = (NamespaceWrapper)namespace;
+		Namespace celement = (Namespace)wrapper.getElement();
+		celement.setPos( wrapper.getFirstToken().getOffset(), wrapper.getFirstToken().getDelta(closingBrace));
 	}
 
 	/* (non-Javadoc)
@@ -696,7 +702,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object)
 	 */
-	public void enumSpecifierEnd(Object enumSpec) {
+	public void enumSpecifierEnd(Object enumSpec, Token closingBrace) {
 		EnumerationWrapper wrapper = (EnumerationWrapper)enumSpec;
 		 
 		List enumerators = wrapper.getEnumerators();
@@ -716,7 +722,8 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 			String enumeratorName = subwrapper.getName().toString();
 
 			enumerator.setIdPos(subwrapper.getName().getStartOffset(), enumeratorName.length());
-			enumerator.setPos(subwrapper.getName().getStartOffset(), enumeratorName.length());
+			enumerator.setPos(subwrapper.getName().getStartOffset(), 
+				subwrapper.getName().getNameStart().getDelta( subwrapper.getLastToken()));
 			 
 			enumeration.addChild( enumerator );
 		}
@@ -725,19 +732,19 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		if( wrapper.getName() != null )
 		{ 	
 			enumeration.setIdPos(wrapper.getName().getStartOffset(), enumName.length());
-			enumeration.setPos(wrapper.getName().getStartOffset(), enumName.length());
 		}
 		else
 		{
 			enumeration.setIdPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());
-			enumeration.setPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());		
 		}
+		enumeration.setPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getDelta( closingBrace ));
+
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionBegin(java.lang.Object)
 	 */
-	public Object enumDefinitionBegin(Object enumSpec) {
+	public Object enumeratorBegin(Object enumSpec) {
 		EnumerationWrapper wrapper = (EnumerationWrapper)enumSpec; 
 		EnumeratorWrapper result = new EnumeratorWrapper(wrapper); 
 		return result; 
@@ -746,7 +753,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionId(java.lang.Object)
 	 */
-	public void enumDefinitionId(Object enumDefn) {
+	public void enumeratorId(Object enumDefn) {
 		EnumeratorWrapper wrapper = (EnumeratorWrapper)enumDefn; 
 		wrapper.setName( currName ); 
 	}
@@ -754,8 +761,9 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
 	 */
-	public void enumDefinitionEnd(Object enumDefn) {
+	public void enumeratorEnd(Object enumDefn, Token lastToken) {
 		EnumeratorWrapper wrapper = (EnumeratorWrapper)enumDefn;
+		wrapper.setLastToken( lastToken );
 		wrapper.getParent().addEnumerator( wrapper );
 	}
 

@@ -15,14 +15,14 @@ public interface IParserCallback {
 	public Object translationUnitBegin();
 	public void translationUnitEnd(Object unit);
 	
-	public void inclusionBegin(String includeFile, int offset);
+	public void inclusionBegin(String includeFile, int nameBeginOffset, int inclusionBeginOffset);
 	public void inclusionEnd();
-	public void macro(String macroName, int offset);
+	public void macro(String macroName, int macroNameOffset, int macroBeginOffset, int macroEndOffset);
 	
-	public Object simpleDeclarationBegin(Object Container);
+	public Object simpleDeclarationBegin(Object Container, Token firstToken);
 	public void simpleDeclSpecifier(Object Container, Token specifier);
 	public void simpleDeclSpecifierName( Object declaration );
-	public void simpleDeclarationEnd(Object declaration);
+	public void simpleDeclarationEnd(Object declaration, Token lastToken);
 
 	public Object parameterDeclarationBegin( Object Container ); 
 	public void  parameterDeclarationEnd( Object declaration ); 
@@ -60,7 +60,7 @@ public interface IParserCallback {
 	public void classSpecifierAbort( Object classSpecifier ); 
 	public void classSpecifierSafe( Object classSpecifier );
 	public void classMemberVisibility( Object classSpecifier, Token visibility );
-	public void classSpecifierEnd(Object classSpecifier);
+	public void classSpecifierEnd(Object classSpecifier, Token closingBrace );
 	
 	public Object	baseSpecifierBegin( Object containingClassSpec );
 	public void	baseSpecifierName( Object baseSpecifier );
@@ -78,10 +78,10 @@ public interface IParserCallback {
 	public void  	elaboratedTypeSpecifierName( Object elab ); 
 	public void 	elaboratedTypeSpecifierEnd( Object elab );
 	
-	public Object	namespaceDefinitionBegin( Object container ); 
+	public Object	namespaceDefinitionBegin( Object container, Token namespace ); 
 	public void		namespaceDefinitionId( Object namespace );
 	public void 	namespaceDefinitionAbort( Object namespace );
-	public void		namespaceDefinitionEnd( Object namespace );
+	public void		namespaceDefinitionEnd( Object namespace, Token closingBrace );
 
 	public Object   linkageSpecificationBegin( Object container, String literal );
 	public void     linkageSpecificationEnd( Object linkageSpec );
@@ -99,11 +99,11 @@ public interface IParserCallback {
 	public Object	enumSpecifierBegin( Object container, Token enumKey );
 	public void		enumSpecifierId( Object enumSpec );
 	public void		enumSpecifierAbort( Object enumSpec );
-	public void 	enumSpecifierEnd( Object enumSpec );
+	public void 	enumSpecifierEnd( Object enumSpec, Token closingBrace );
 	
-	public Object	enumDefinitionBegin( Object enumSpec );
-	public void		enumDefinitionId( Object enumDefn );
-	public void		enumDefinitionEnd( Object enumDefn );
+	public Object	enumeratorBegin( Object enumSpec );
+	public void		enumeratorId( Object enumDefn );
+	public void		enumeratorEnd( Object enumDefn, Token lastToken );
 	
 	public void		asmDefinition( Object container, String assemblyCode );
 	

@@ -1,7 +1,8 @@
 package org.eclipse.cdt.internal.core.model;
 
-import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**********************************************************************
@@ -19,11 +20,13 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
 public class NamespaceWrapper implements ICElementWrapper{
 	private Name name; 
 	private final IParent parent;
-	private ICElement element;   
+	private ICElement element; 
+	private Token firstToken; 
 	
-	public NamespaceWrapper( IParent incoming)
+	public NamespaceWrapper( IParent incoming, Token namespace)
 	{
 		this.parent= incoming;
+		firstToken = namespace;
 	}
 
 	/**
@@ -63,5 +66,13 @@ public class NamespaceWrapper implements ICElementWrapper{
 	public void setElement(ICElement item) {
 		element = item;
 	}
+
+	/**
+	 * @return
+	 */
+	public Token getFirstToken() {
+		return firstToken;
+	}
+
 
 }

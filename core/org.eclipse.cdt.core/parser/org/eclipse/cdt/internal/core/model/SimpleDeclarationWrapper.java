@@ -3,9 +3,9 @@ package org.eclipse.cdt.internal.core.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.parser.Token;
@@ -22,6 +22,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	private ICElement element = null; 
 	private IParent parent = null; 
 
+	Token first = null, last = null;
 	private Name name = null;
 	private boolean functionDefinition = false; 
 
@@ -147,13 +148,13 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 			{
 				// hook up the offsets
 				declaration.setIdPos( currentDeclarator.getName().getStartOffset(), currentDeclarator.getName().length() );
-				declaration.setPos( currentDeclarator.getName().getStartOffset(), currentDeclarator.getName().length());
 			}
 			else
 			{
 				declaration.setIdPos( classKind.getOffset(), classKind.getImage().toString().length());
-				declaration.setPos( classKind.getOffset(), classKind.getImage().toString().length());
 			}
+
+			declaration.setPos( getFirst().getOffset(), getFirst().getDelta( getLast() ));
 			
 			// add to parent
 			parentElement.addChild( declaration ); 	
@@ -413,6 +414,34 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 */
 	public void setClassKind(Token classKind) {
 		this.classKind = classKind;
+	}
+
+	/**
+	 * @return
+	 */
+	public Token getFirst() {
+		return first;
+	}
+
+	/**
+	 * @return
+	 */
+	public Token getLast() {
+		return last;
+	}
+
+	/**
+	 * @param token
+	 */
+	public void setFirst(Token token) {
+		first = token;
+	}
+
+	/**
+	 * @param token
+	 */
+	public void setLast(Token token) {
+		last = token;
 	}
 
 }

@@ -12,6 +12,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
@@ -22,6 +23,7 @@ public class EnumeratorWrapper {
 
 	private final EnumerationWrapper parent;
 	private Name name;  
+	private Token lastToken = null; 
 	
 	EnumeratorWrapper( EnumerationWrapper myParent )
 	{
@@ -48,6 +50,20 @@ public class EnumeratorWrapper {
 	 */
 	public void setName(Name name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return
+	 */
+	public Token getLastToken() {
+		return lastToken;
+	}
+
+	/**
+	 * @param token
+	 */
+	public void setLastToken(Token token) {
+		lastToken = token;
 	}
 
 }

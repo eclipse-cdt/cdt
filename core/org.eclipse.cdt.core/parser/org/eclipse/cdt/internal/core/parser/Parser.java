@@ -459,9 +459,8 @@ c, quick);
 	
 	protected void namespaceDefinition( Object container ) throws Backtrack
 	{
-		consume( Token.t_namespace);
 		Object namespace = null;
-		try{ namespace = callback.namespaceDefinitionBegin( container );} catch( Exception e ) {}
+		try{ namespace = callback.namespaceDefinitionBegin( container, consume( Token.t_namespace) );} catch( Exception e ) {}
 
 		// optional name 		
 		if( LT(1) == Token.tIDENTIFIER )
@@ -487,8 +486,8 @@ c, quick);
 					consumeToNextSemicolon();
 			}
 			// consume the }
-			consume();
-			try{ callback.namespaceDefinitionEnd( namespace );} catch( Exception e ) {}
+			
+			try{ callback.namespaceDefinitionEnd( namespace, consume( Token.tRBRACE ));} catch( Exception e ) {}
 		}
 		else
 		{
@@ -511,7 +510,8 @@ c, quick);
 	 */
 	protected void simpleDeclaration( Object container ) throws Backtrack {
 		Object simpleDecl = null; 
-		try{ simpleDecl = callback.simpleDeclarationBegin( container);} catch( Exception e ) {}
+		Token lastToken = null; 
+		try{ simpleDecl = callback.simpleDeclarationBegin( container, LA(1));} catch( Exception e ) {}
 		declSpecifierSeq(simpleDecl, false);
 		Object declarator = null; 
 
@@ -534,7 +534,7 @@ c, quick);
 		
 		switch (LT(1)) {
 			case Token.tSEMI:
-				consume();
+				lastToken = consume(Token.tSEMI);
 				break;
 			case Token.tCOLON:
 				ctorInitializer(declarator);					
@@ -545,10 +545,11 @@ c, quick);
 				if (quickParse) {
 					// speed up the parser by skiping the body
 					// simply look for matching brace and return
-					consume(Token.tLBRACE);
+					lastToken = consume(Token.tLBRACE);
 					int depth = 1;
 					while (depth > 0) {
-						switch (consume().getType()) {
+						lastToken = consume(); 
+						switch (lastToken.getType()) {
 							case Token.tRBRACE:
 								--depth;
 								break;
@@ -560,13 +561,13 @@ c, quick);
 				} else {
 					functionBody();
 				}
-				try{ callback.functionBodyEnd(function);} catch( Exception e ) {}
+				try{ callback.functionBodyEnd(function );} catch( Exception e ) {}
 				break;
 			default:
 				break;
 		}
 		
-		try{ callback.simpleDeclarationEnd(simpleDecl);} catch( Exception e ) {}
+		try{ callback.simpleDeclarationEnd(simpleDecl, lastToken);} catch( Exception e ) {}
 	}
 
 	protected void ctorInitializer(Object declarator) throws Backtrack  {
@@ -1269,9 +1270,9 @@ c, quick);
 				if( LT(1) == Token.tIDENTIFIER )
 				{
 					defn = null; 
-					try{ defn = callback.enumDefinitionBegin( enumSpecifier );} catch( Exception e ) {}
+					try{ defn = callback.enumeratorBegin( enumSpecifier );} catch( Exception e ) {}
 					identifier();
-					try{ callback.enumDefinitionId( defn ); } catch( Exception e ) {}
+					try{ callback.enumeratorId( defn ); } catch( Exception e ) {}
 				}
 				else
 				{
@@ -1288,21 +1289,20 @@ c, quick);
 					try{ callback.expressionEnd( expression );} catch( Exception e ) {}
 				}
 				
-				try{ callback.enumDefinitionEnd( defn );} catch( Exception e ) {}
-				
+
+				try{ callback.enumeratorEnd( defn, lastToken );} catch( Exception e ) {}				
 				if( LT(1) == Token.tRBRACE )
 					break;
+			
 				
 				if( LT(1) != Token.tCOMMA )
 				{
 					try{ callback.enumSpecifierAbort( enumSpecifier );} catch( Exception e ) {}
 					throw backtrack; 					
 				}
-				consume(Token.tCOMMA); // if we made it this far 
+				consume(Token.tCOMMA);
 			}
-			consume( Token.tRBRACE );
-			
-			try{ callback.enumSpecifierEnd( enumSpecifier );} catch( Exception e ) {}
+			try{ callback.enumSpecifierEnd( enumSpecifier, consume( Token.tRBRACE ) );} catch( Exception e ) {}
 		}
 		else
 		{
@@ -1357,9 +1357,8 @@ c, quick);
 			baseSpecifier( classSpec );
 		}
 		
-		// If we don't get a "{", assume elaborated type
 		if (LT(1) == Token.tLBRACE) {
-			consume();
+			consume(Token.tLBRACE);
 			
 			memberDeclarationLoop:
 			while (LT(1) != Token.tRBRACE) {
@@ -1382,10 +1381,10 @@ c, quick);
 					consumeToNextSemicolon();
 			}
 			// consume the }
-			consume();
+			try{ callback.classSpecifierEnd(classSpec, consume( Token.tRBRACE )); } catch( Exception e ) {}
 		}
 		
-		try{ callback.classSpecifierEnd(classSpec); } catch( Exception e ) {}
+
 	}
 
 	protected void baseSpecifier( Object classSpecOwner ) throws Backtrack {
@@ -2063,7 +2062,7 @@ c, quick);
 	
 	// Token management
 	private IScanner scanner;
-	private Token currToken;
+	private Token currToken, lastToken;
 	
 	private Token fetchToken() throws EndOfFile {
 		try {
@@ -2103,9 +2102,9 @@ c, quick);
 		if (currToken == null)
 			currToken = fetchToken();
 
-		Token retToken = currToken;
+		lastToken = currToken;
 		currToken = currToken.getNext();
-		return retToken;
+		return lastToken;
 	}
 	
 	protected Token consume(int type) throws Backtrack {
@@ -2123,6 +2122,7 @@ c, quick);
 	
 	protected void backup(Token mark) {
 		currToken = mark;
+		lastToken = null; 
 	}
 
 }

@@ -53,4 +53,11 @@ public class Name {
 	{
 		return getEndOffset() - getStartOffset() + nameEnd.getImage().length();
 	}
+	/**
+	 * @return
+	 */
+	public Token getNameStart() {
+		return nameStart;
+	}
+
 }

@@ -718,6 +718,7 @@ public class Scanner implements IScanner {
 					currentContext);
 				
 			} else if (c == '#') {
+				int beginningOffset = currentContext.getOffset();
 				// lets prepare for a preprocessor statement
 				StringBuffer buff = new StringBuffer();
 				buff.append((char) c);
@@ -761,7 +762,7 @@ public class Scanner implements IScanner {
 								continue;
 							}
 
-							poundDefine();
+							poundDefine(beginningOffset);
 
 							c = getChar();
 							continue;
@@ -773,7 +774,7 @@ public class Scanner implements IScanner {
 								continue;
 							}
 
-							poundInclude();
+							poundInclude( beginningOffset );
 
 							c = getChar();
 							continue;
@@ -1465,7 +1466,7 @@ public class Scanner implements IScanner {
 		return encounteredNewline;
 	}
 
-	protected void poundInclude() throws ScannerException {
+	protected void poundInclude( int beginningOffset ) throws ScannerException {
 		skipOverWhitespace();
 		int c = getChar();
 		int offset;
@@ -1498,7 +1499,7 @@ public class Scanner implements IScanner {
 			{
 				offset = currentContext.getOffset() - f.length() - 1; // -1 for the end quote
 				
-				callback.inclusionBegin( f, offset );
+				callback.inclusionBegin( f, offset, beginningOffset );
 				callback.inclusionEnd();  
 			}
 		}
@@ -1506,7 +1507,7 @@ public class Scanner implements IScanner {
 			handleInclusion(f.trim(), useIncludePath );
 	}
 
-	protected void poundDefine() throws ScannerException, Parser.EndOfFile {
+	protected void poundDefine(int beginning) throws ScannerException, Parser.EndOfFile {
 		skipOverWhitespace();
 		// definition 
 		String key = getNextIdentifier();
@@ -1614,7 +1615,7 @@ public class Scanner implements IScanner {
 
 		// call the callback accordingly
 		if( callback != null )
-			callback.macro( key, offset );
+			callback.macro( key, offset, beginning, currentContext.getOffset() );
 	}
 
 	protected void expandDefinition(String symbol, Object expansion)

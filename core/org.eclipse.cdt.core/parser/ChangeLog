@@ -1,3 +1,7 @@
+2003-04-04 John Camelon
+	Fixed defect 35939.  Proper CElement::pos() is set on Simple Declarations, 
+	Class Specifications, Namespaces, Enumerations and Enumerators, Macros and Inclusions.  
+
 2003-04-03 John Camelon
 	Fixed defects 36019, 36020, 36045.  
 	Finished template declarations and their callbacks for the DOM (not the Code Model).  

@@ -72,7 +72,7 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classEnd()
 	 */
-	public void classSpecifierEnd(Object classSpecifier) {
+	public void classSpecifierEnd(Object classSpecifier, Token closingBrace) {
 	}
 
 	/**
@@ -141,13 +141,13 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#functionBodyEnd()
 	 */
-	public void functionBodyEnd(Object functionBody) {
+	public void functionBodyEnd(Object functionBody ) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#inclusionBegin(java.lang.String)
 	 */
-	public void inclusionBegin(String includeFile, int offset) {
+	public void inclusionBegin(String includeFile, int offset, int inclusionBeginOffset) {
 	}
 
 	/**
@@ -159,13 +159,13 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#macro(java.lang.String)
 	 */
-	public void macro(String macroName, int offset) {
+	public void macro(String macroName, int offset, int macroBeginOffset, int macroEndOffset) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationBegin(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public Object simpleDeclarationBegin(Object container) {
+	public Object simpleDeclarationBegin(Object container, Token firstToken) {
 		SimpleDeclaration decl = new SimpleDeclaration();
 		((IScope)container).addDeclaration(decl);
 		return decl;
@@ -174,7 +174,7 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationEnd(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void simpleDeclarationEnd(Object declaration) {
+	public void simpleDeclarationEnd(Object declaration, Token lastToken) {
 	}
 
 	/**
@@ -488,10 +488,10 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationBegin(java.lang.Object)
 	 */
-	public Object namespaceDefinitionBegin(Object container) {
+	public Object namespaceDefinitionBegin(Object container, Token namespace) {
 		IScope ownerScope = (IScope)container;
-		NamespaceDefinition namespace = new NamespaceDefinition(ownerScope);
-		return namespace;
+		NamespaceDefinition namespaceDef = new NamespaceDefinition(ownerScope);
+		return namespaceDef;
 		
 	}
 
@@ -512,7 +512,7 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationEnd(java.lang.Object)
 	 */
-	public void namespaceDefinitionEnd(Object namespace) {
+	public void namespaceDefinitionEnd(Object namespace, Token closingBrace) {
 		NamespaceDefinition ns = (NamespaceDefinition)namespace; 
 		ns.getOwnerScope().addDeclaration(ns);
 	}
@@ -626,13 +626,13 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object)
 	 */
-	public void enumSpecifierEnd(Object enumSpec) {
+	public void enumSpecifierEnd(Object enumSpec, Token closingBrace) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionBegin(java.lang.Object)
 	 */
-	public Object enumDefinitionBegin(Object enumSpec) {
+	public Object enumeratorBegin(Object enumSpec) {
 		EnumerationSpecifier es = (EnumerationSpecifier)enumSpec;
 		EnumeratorDefinition definition = new EnumeratorDefinition();
 		es.addEnumeratorDefinition(definition);
@@ -642,7 +642,7 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionId(java.lang.Object)
 	 */
-	public void enumDefinitionId(Object enumDefn) {
+	public void enumeratorId(Object enumDefn) {
 		EnumeratorDefinition definition = (EnumeratorDefinition)enumDefn;
 		definition.setName( currName );
 	}
@@ -650,7 +650,7 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
 	 */
-	public void enumDefinitionEnd(Object enumDefn) {
+	public void enumeratorEnd(Object enumDefn, Token lastToken) {
 	}
 
 	/* (non-Javadoc)

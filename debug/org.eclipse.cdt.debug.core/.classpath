@@ -5,7 +5,6 @@
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.debug.core"/>
     <classpathentry kind="src" path="/org.eclipse.cdt.core"/>
-    <classpathentry exported="true" kind="src" path="/org.eclipse.cdt.core.win32"/>
     <classpathentry kind="src" path="/org.apache.xerces"/>
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="src" path="/org.eclipse.core.boot"/>

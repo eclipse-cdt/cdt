@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
+ 
 public abstract class JobManager implements Runnable {
 
 	/* queue of jobs to execute */
@@ -175,7 +175,7 @@ public abstract class JobManager implements Runnable {
 		if( enabled == WAITING ){
 			//stop waiting, restore the indexing Job for progress
 			indexJob = new IndexingJob( thread, this );
-			indexJob.setTicks( jobSet.size() );
+			indexJob.setTicks(awaitingJobsCount());
 		}
 		enabled = ENABLED;
 		if (VERBOSE)
@@ -409,8 +409,7 @@ public abstract class JobManager implements Runnable {
 			//Put back into enabled state
 			enable();
 		}
-		
-		if( enabledState() == ENABLED ){
+		else if( enabledState() == ENABLED ){
 			if( indexJob == null ){
 				indexJob = new IndexingJob( thread, this );
 			} else {

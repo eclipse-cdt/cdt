@@ -1,3 +1,9 @@
+2004-06-25 Bogdan Gheorghe
+	Fix for 68550: [Indexer] Cannot restart indexer by touching .c/.cpp/.cc files
+	
+	* search/org/eclipse/cdt/internal/core/search/processing/JobManager.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java
+	
 2004-06-24 Bogdan Gheorghe
 	Fix for 66695: [Indexer] Manually add an include path to a file/folder 
 	is ignored by indexer

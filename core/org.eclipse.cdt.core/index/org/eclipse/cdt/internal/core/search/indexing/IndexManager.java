@@ -64,7 +64,7 @@ import org.w3c.dom.Node;
 public class IndexManager extends JobManager implements IIndexConstants {
 	/* number of file contents in memory */
 	public static int MAX_FILES_IN_MEMORY = 0;
-
+ 
 	public IWorkspace workspace;
 	public SimpleLookupTable indexNames = new SimpleLookupTable();
 	private Map indexes = new HashMap(5);
@@ -166,8 +166,11 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		if (indexEnabled){
 			AddCompilationUnitToIndex job = new AddCompilationUnitToIndex(resource, indexedContainer, this);
 			
-			if (!jobSet.add(job.resource.getLocation()))
+			//If we are in WAITING mode, we need to kick ourselves into enablement
+			if (!jobSet.add(job.resource.getLocation()) &&
+				enabledState()==ENABLED)
 				return;
+			
 			
 			if (this.awaitingJobsCount() < MAX_FILES_IN_MEMORY) {
 				// reduces the chance that the file is open later on, preventing it from being deleted

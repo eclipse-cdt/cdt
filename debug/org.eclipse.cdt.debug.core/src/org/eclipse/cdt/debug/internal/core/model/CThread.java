@@ -975,11 +975,11 @@ public class CThread extends CDebugElement
 		{
 			return;
 		}
-		((CDebugTarget)getDebugTarget()).resetRegisters();
 		try
 		{
 			if ( getLastStackFrame() != null )
 			{ 
+				((CDebugTarget)getDebugTarget()).resetRegisters();
 				getCDIThread().setCurrentStackFrame( ((CStackFrame)frame).getCDIStackFrame() );
 			}
 			setLastStackFrame( (CStackFrame)frame );

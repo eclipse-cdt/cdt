@@ -1,3 +1,6 @@
+2002-10-15 Mikhail Khodjaiants
+	* CThread.java: The previous fix should be done only when switching between frames of the same thread.
+
 2002-10-14 Mikhail Khodjaiants
 	* CThread.java: Reset the register's change flag before switching to another frame.
 

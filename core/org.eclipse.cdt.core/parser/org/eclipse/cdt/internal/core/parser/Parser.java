@@ -1746,11 +1746,14 @@ public abstract class Parser extends ExpressionParser implements IParser
     {
         // handle initializer
         final IASTScope scope = d.getDeclarationWrapper().getScope();
+        setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
 		if (LT(1) == IToken.tASSIGN)
         {
             consume(IToken.tASSIGN);
+            setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY);
             IASTInitializerClause clause = initializerClause(scope);
 			d.setInitializerClause(clause);
+			setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
         }
         else if (LT(1) == IToken.tLPAREN )
         {
@@ -1759,8 +1762,10 @@ public abstract class Parser extends ExpressionParser implements IParser
             try
             {
                 consume(IToken.tLPAREN); // EAT IT!
+                setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY);
                 IASTExpression astExpression = null;
                 astExpression = expression(scope);
+                setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
                 consume(IToken.tRPAREN);
                 d.setConstructorExpression(astExpression);
             } catch( BacktrackException bt )
@@ -1773,10 +1778,14 @@ public abstract class Parser extends ExpressionParser implements IParser
     
     protected void optionalCInitializer( Declarator d ) throws EndOfFileException, BacktrackException
     {
+    	final IASTScope scope = d.getDeclarationWrapper().getScope();
+    	setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
     	if( LT(1) == IToken.tASSIGN )
     	{
     		consume( IToken.tASSIGN );
-    		d.setInitializerClause( cInitializerClause(d.getDeclarationWrapper().getScope(), EMPTY_LIST ) );
+    		setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY);
+			d.setInitializerClause( cInitializerClause(scope, EMPTY_LIST ) );
+			setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
     	}
     }
     /**

@@ -210,9 +210,11 @@
 						    				<xsl:value-of select="substring-after(@label,'CDT Build 2.0.0.')"/>
 						    				<xsl:text>.zip</xsl:text>
 						    			</xsl:attribute>
-						    			<xsl:text>org.eclipse.cdt.testing-I</xsl:text>
-					    				<xsl:value-of select="substring-after(@label,'CDT Build 2.0.0.')"/>
-						    			<xsl:text>.zip</xsl:text>
+						    			<font size="1">
+							    			<xsl:text>org.eclipse.cdt.testing-I</xsl:text>
+						    				<xsl:value-of select="substring-after(@label,'CDT Build 2.0.0.')"/>
+							    			<xsl:text>.zip</xsl:text>
+							    		</font>
 					    			</a>
 					    		</td>
 					    	</tr>

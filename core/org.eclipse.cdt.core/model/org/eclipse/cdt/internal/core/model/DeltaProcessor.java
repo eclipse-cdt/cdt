@@ -499,18 +499,15 @@ public class DeltaProcessor {
 				if (element != null) {
 					updateIndexAddResource(element, delta);
 					elementAdded(element, delta);
-					//If new project has been added, don't need to add the children 
-					//as the indexing job will do that for us
-					if (element.getElementType() == ICElement.C_PROJECT) return false;
 				}
-				return true;
+				return false;
 
 			case IResourceDelta.REMOVED :
 				if (element != null) {
 					updateIndexRemoveResource(element, delta);
 					elementRemoved(element, delta);
 				}
-				return true;
+				return false;
 
 			case IResourceDelta.CHANGED :
 				int flags = delta.getFlags();

@@ -1,3 +1,10 @@
+2004-6-29 Alain Magloire
+
+	Extend on the fix by Bogdan PR 67656 and
+	do not get the children for ADDED/REMOVE case
+
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	
 2004-06-28 Bogdan Gheorghe
 	Fix for 67656: [Indexer] getting called twice after creating a project with a file system
 	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java

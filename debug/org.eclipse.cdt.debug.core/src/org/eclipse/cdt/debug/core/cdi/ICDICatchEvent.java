@@ -12,5 +12,5 @@ package org.eclipse.cdt.debug.core.cdi;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDICatchEvent {
+public interface ICDICatchEvent extends ICDISessionObject {
 }

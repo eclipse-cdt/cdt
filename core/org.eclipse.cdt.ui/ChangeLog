@@ -1,3 +1,8 @@
+2002-10-28 David Inglis	
+	
+	* /src/.../ui/cview/CView.java
+	Hookup actions to global actions in Projects menu, (build actions and close project).
+
 2002-10-25 Judy N. Green
 	Removed a redundant "Eclipse Platform" from the plugin.properties file.
 	It was resulting in weird looking titles.

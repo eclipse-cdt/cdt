@@ -8,11 +8,35 @@ package org.eclipse.cdt.internal.ui.cview;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IArchive;
+import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBinaryContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICFile;
+import org.eclipse.cdt.core.model.ICRoot;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.resources.MakeUtil;
+import org.eclipse.cdt.internal.ui.CContentProvider;
+import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
+import org.eclipse.cdt.internal.ui.makeview.MakeAction;
+import org.eclipse.cdt.internal.ui.makeview.MakeTarget;
+import org.eclipse.cdt.internal.ui.makeview.MakeTargetAction;
+import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -63,6 +87,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.AddBookmarkAction;
+import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.CopyResourceAction;
 import org.eclipse.ui.actions.CreateFileAction;
@@ -73,6 +98,7 @@ import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenPerspectiveMenu;
+import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.actions.OpenSystemEditorAction;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.actions.RefreshAction;
@@ -87,28 +113,6 @@ import org.eclipse.ui.views.framelist.ForwardAction;
 import org.eclipse.ui.views.framelist.FrameList;
 import org.eclipse.ui.views.framelist.GoIntoAction;
 import org.eclipse.ui.views.framelist.UpAction;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IArchiveContainer;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.IBinaryContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICFile;
-import org.eclipse.cdt.core.model.ICRoot;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.resources.MakeUtil;
-import org.eclipse.cdt.internal.ui.CContentProvider;
-import org.eclipse.cdt.internal.ui.CPlugin;
-import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
-import org.eclipse.cdt.internal.ui.makeview.MakeAction;
-import org.eclipse.cdt.internal.ui.makeview.MakeTarget;
-import org.eclipse.cdt.internal.ui.makeview.MakeTargetAction;
-import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 
 
 
@@ -135,7 +139,11 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	CreateFileAction createFileAction;
 	CreateFolderAction createFolderAction;
 	NewWizardAction newWizardAction;
-	CloseResourceAction closeResourceAction;
+
+	CloseResourceAction closeProjectAction;
+	OpenResourceAction openProjectAction;
+	BuildAction buildAction;
+	BuildAction rebuildAction;
 
 	// CElement action
 	OpenIncludeAction openIncludeAction;
@@ -350,6 +358,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	void handleSelectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		updateStatusLine(sel);
+		updateActions(sel);
 		updateGlobalActions(sel);
 		goIntoAction.update();
 		linkToEditor(sel);
@@ -438,6 +447,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 			viewer.removeTreeListener(expansionListener);
 			CPlugin.getDefault().getProblemMarkerManager().removeListener(viewer);
 		}
+		IWorkspace workspace = CPlugin.getWorkspace();
+		workspace.removeResourceChangeListener(closeProjectAction);
+		workspace.removeResourceChangeListener(openProjectAction);
 		super.dispose();
 	}
 
@@ -492,8 +504,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		openFileAction = new OpenFileAction(getSite().getPage());
 		openSystemEditorAction = new OpenSystemEditorAction(getSite().getPage());
 		refreshAction = new RefreshAction(shell);
-		//buildAction = new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-		//rebuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
+		buildAction =
+			new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		rebuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
 		makeTargetAction = new MakeTargetAction(shell);
 		moveResourceAction = new MoveResourceAction (shell);
 		copyResourceAction = new CopyResourceAction(shell);
@@ -512,7 +525,12 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		
 		
 		newWizardAction = new NewWizardAction();
-		closeResourceAction = new CloseResourceAction(shell);
+		IWorkspace workspace = CPlugin.getWorkspace();
+
+		openProjectAction = new OpenResourceAction(shell);
+		workspace.addResourceChangeListener(openProjectAction, IResourceChangeEvent.POST_CHANGE);
+		closeProjectAction = new CloseResourceAction(shell);
+		workspace.addResourceChangeListener(closeProjectAction, IResourceChangeEvent.POST_CHANGE);
 
 		//sortByNameAction = new SortViewAction(this, false);
 		//sortByTypeAction = new SortViewAction(this, true);
@@ -546,6 +564,21 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		IActionBars actionBars = getViewSite().getActionBars();
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, deleteResourceAction);
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.BOOKMARK, addBookmarkAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.REFRESH,
+			refreshAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.BUILD_PROJECT,
+			buildAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.REBUILD_PROJECT,
+			rebuildAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.OPEN_PROJECT,
+			openProjectAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.CLOSE_PROJECT,
+			closeProjectAction);
 
 	}
 
@@ -556,8 +589,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	 * E.g. A project was opened or closed.
 	 */
 	void updateActions(IStructuredSelection selection) {
-		//buildAction.selectionChanged(selection);
-		//rebuildAction.selectionChanged(selection);
 		makeTargetAction.selectionChanged(selection);
 		copyResourceAction.selectionChanged(selection);
 		refreshAction.selectionChanged(selection);
@@ -566,7 +597,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		openSystemEditorAction.selectionChanged(selection);
 		propertyDialogAction.selectionChanged(selection);
 		renameResourceAction.selectionChanged(selection);
-		closeResourceAction.selectionChanged(selection);
 		//sortByTypeAction.selectionChanged(selection);
 		//sortByNameAction.selectionChanged(selection);
 		updateGlobalActions(selection);
@@ -590,6 +620,13 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyResourceAction);
 		actionBars.updateActionBars();
 		renameResourceAction.selectionChanged(selection);
+		
+		refreshAction.selectionChanged(selection);
+		buildAction.selectionChanged(selection);
+		rebuildAction.selectionChanged(selection);
+		openProjectAction.selectionChanged(selection);
+		closeProjectAction.selectionChanged(selection);
+
 	}
 
 
@@ -770,7 +807,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		menu.add(new Separator ());
 
 		if (resource instanceof IProject) {
-			menu.add(closeResourceAction);
+			menu.add(closeProjectAction);
 		}
 
 		if (resource instanceof IFile || resource instanceof IFolder) {

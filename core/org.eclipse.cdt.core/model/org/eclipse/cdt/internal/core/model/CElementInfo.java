@@ -16,6 +16,11 @@ import org.eclipse.core.resources.IResource;
  */
 class CElementInfo {
 
+	/**
+	 * Shared empty collection used for efficiency.
+	 */
+	static Object[] NO_NON_C_RESOURCES = new Object[] {};
+
 	protected CElement element;
 
 	/**

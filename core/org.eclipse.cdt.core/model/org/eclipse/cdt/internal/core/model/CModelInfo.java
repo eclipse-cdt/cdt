@@ -11,7 +11,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 /**
  * @see ICModel
  */
-public class CModelInfo extends CContainerInfo {
+public class CModelInfo extends OpenableInfo {
+
+	Object[] nonCResources = null;
 
 	/**
 	 * Constructs a new C Model Info 
@@ -55,6 +57,13 @@ public class CModelInfo extends CContainerInfo {
 			nonCResources = computeNonCResources();
 		}
 		return nonCResources;
+	}
+
+	/**
+	 * @return
+	 */
+	public void setNonCResources(Object[] resources) {
+		nonCResources = resources;
 	}
 
 }

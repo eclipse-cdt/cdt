@@ -161,11 +161,14 @@ public interface ICModel extends ICElement, IParent, IOpenable {
 	/**
 	 * Returns the C project with the given name. This is a handle-only method. 
 	 * The project may or may not exist.
+	 * 
+	 * @param name of the Project
 	 */
 	ICProject getCProject(String name);
 
 	/**
 	 * Returns the C projects.
+	 * 
 	 */
 	ICProject[] getCProjects();
 

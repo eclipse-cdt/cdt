@@ -21,11 +21,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class CContainerInfo extends OpenableInfo {
 
-	/**
-	 * Shared empty collection used for efficiency.
-	 */
-	static Object[] NO_NON_C_RESOURCES = new Object[] {};
-
 	Object[] nonCResources = null;
 
 	/**

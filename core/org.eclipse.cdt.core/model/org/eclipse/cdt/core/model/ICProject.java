@@ -45,10 +45,24 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 
 	/**
 	 * Returns the source root folders of the project.
+	 * 
+	 * <p>NOTE: This is equivalent to <code>getChildren()</code>.
+	 * 
 	 * @return ISourceRoot - root folders
 	 * @exception CModelException
 	 */
 	ISourceRoot[] getSourceRoots() throws CModelException;
+
+	/**
+	 * Returns all of the existing source roots that exist
+	 * on the pathentry, in the order they are defined by the ".cdtproject".
+	 *
+	 * @return all of the existing package fragment roots that exist
+	 * on the classpath
+	 * @exception JavaModelException if this element does not exist or if an
+	 *		exception occurs while accessing its corresponding resource
+	 */
+	ISourceRoot[] getAllSourceRoots() throws CModelException;
 
 	/**
 	 * 

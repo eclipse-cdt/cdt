@@ -120,6 +120,18 @@ public class CContainer extends Openable implements ICContainer {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.cdt.core.model.ICContainer#getCContainers()
+	 */
+	public ICContainer[] getCContainers() throws CModelException {
+		List list = getChildrenOfType(C_CCONTAINER);
+		ICContainer[] array = new ICContainer[list.size()];
+		list.toArray(array);
+		return array;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.model.ICContainer#getCContainer(java.lang.String)
 	 */
 	public ICContainer getCContainer(String name) {
@@ -239,13 +251,4 @@ public class CContainer extends Openable implements ICContainer {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.model.ICContainer#getCContainers()
-	 */
-	public ICContainer[] getCContainers() throws CModelException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

@@ -1,3 +1,22 @@
+2004-03-21 Alain Magloire
+
+	The methods CoreModel.create() are now handle operation.
+	Meaning it will generate a ICElement even if the file does
+	not exists.  ICModel and ICProject no longer implements
+	ICContainer.
+
+	* model/org/eclipse/cdt/core/model/ICModel.java
+	* model/org/eclipse/cdt/core/model/ICProject.java
+
+	* model/eclipse/cdt/internal/core/model/CContainer.java
+	* model/eclipse/cdt/internal/core/model/CContainerInfo.java
+	* model/eclipse/cdt/internal/core/model/CModel.java
+	* model/eclipse/cdt/internal/core/model/CModelInfo.java
+	* model/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/eclipse/cdt/internal/core/model/CProject.java
+	* model/eclipse/cdt/internal/core/model/CCProjectInfo.java
+	* model/eclipse/cdt/internal/core/model/DeltaProcessor.java
+
 2004-03-19 David Inglis
 	
 	* model/org/eclipse/cdt/core/model/CoreModel.java

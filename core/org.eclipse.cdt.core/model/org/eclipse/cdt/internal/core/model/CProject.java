@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.IBinaryParser;
@@ -40,7 +41,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 
-public class CProject extends CContainer implements ICProject {
+public class CProject extends Openable implements ICProject {
 
 	private static final String CUSTOM_DEFAULT_OPTION_VALUE = "#\r\n\r#custom-non-empty-default-value#\r\n\r#"; //$NON-NLS-1$
 
@@ -85,6 +86,39 @@ public class CProject extends CContainer implements ICProject {
 			//throws exception if the project is not open.
 		}
 		return false;
+	}
+
+	public static boolean hasCCNature(IProject p) {
+		try {
+			return p.hasNature(CCProjectNature.CC_NATURE_ID);
+		} catch (CoreException e) {
+			//throws exception if the project is not open.
+		}
+		return false;
+	}
+
+	private boolean isCProject() {
+		return hasCNature(getProject()) || hasCCNature(getProject());
+	}
+
+	/**
+	 * Returns true if this handle represents the same C project
+	 * as the given handle. Two handles represent the same
+	 * project if they are identical or if they represent a project with 
+	 * the same underlying resource and occurrence counts.
+	 *
+	 * @see CElement#equals(Object)
+	 */
+	public boolean equals(Object o) {
+	
+		if (this == o)
+			return true;
+	
+		if (!(o instanceof CProject))
+			return false;
+	
+		CProject other = (CProject) o;
+		return getProject().equals(other.getProject());
 	}
 
 	protected CElementInfo createElementInfo() {
@@ -255,6 +289,9 @@ public class CProject extends CContainer implements ICProject {
 	 * Project preferences may include custom encoding.
 	 */
 	private Preferences getPreferences() {
+		if (!(isCProject())) {
+			return null;
+		}
 		Preferences preferences = new Preferences();
 		Iterator iter = CModelManager.OptionNames.iterator();
 
@@ -281,6 +318,9 @@ public class CProject extends CContainer implements ICProject {
 	private void savePreferences(Preferences preferences) {
 		if (preferences == null)
 			return;
+		if (!isCProject()) {
+			return; // ignore
+		}
 		Iterator iter = CModelManager.OptionNames.iterator();
 
 		while (iter.hasNext()) {
@@ -305,6 +345,9 @@ public class CProject extends CContainer implements ICProject {
 	 * Set cached preferences, no preferences are saved, only info is updated
 	 */
 	private void setPreferences(Preferences preferences) {
+		if (!isCProject()) {
+			return; // ignore
+		}
 		// Do nothing
 	}
 
@@ -355,9 +398,31 @@ public class CProject extends CContainer implements ICProject {
 	 * @see org.eclipse.cdt.core.model.ICProject#getSourceRoots()
 	 */
 	public ISourceRoot[] getSourceRoots() throws CModelException {
+		Object[] children;
+		int length;
+
+		children = getChildren();
+		length = children.length; 
+		ISourceRoot[] roots = new ISourceRoot[length]; 
+		System.arraycopy(children, 0, roots, 0, length);
+			
+		return roots;
+
+		//return computeSourceRoots();
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	public ISourceRoot[] getAllSourceRoots() throws CModelException {
 		return computeSourceRoots();
 	}
 
+	/**
+	 * 
+	 */
 	public IOutputEntry[] getOutputEntries() throws CModelException {
 		IPathEntry[] entries = getResolvedPathEntries();
 		ArrayList list = new ArrayList(entries.length);
@@ -371,6 +436,9 @@ public class CProject extends CContainer implements ICProject {
 		return outputs;
 	}
 
+	/**
+	 * 
+	 */
 	public boolean isOnOutputEntry(IResource resource) {
 		IPath path = resource.getFullPath();
 		
@@ -394,8 +462,7 @@ public class CProject extends CContainer implements ICProject {
 	}
 
 	private boolean isOnOutputEntry(IOutputEntry entry, IPath path) {
-		if (entry.getPath().isPrefixOf(path) 
-				&& !Util.isExcluded(path, entry.fullExclusionPatternChars())) {
+		if (entry.getPath().isPrefixOf(path) && !Util.isExcluded(path, entry.fullExclusionPatternChars())) {
 			return true;
 		}
 		return false;
@@ -484,4 +551,20 @@ public class CProject extends CContainer implements ICProject {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICElement#exists()
+	 */
+	public boolean exists() {
+		if (!isCProject()) {
+			return false;
+		}
+		return super.exists();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICProject#getNonCResources()
+	 */
+	public Object[] getNonCResources() throws CModelException {
+		return ((CProjectInfo) getElementInfo()).getNonCResources(getResource());
+	}
 }

@@ -31,9 +31,11 @@ public class CModel extends Openable implements ICModel {
 		super (null, root, ICElement.C_MODEL);
 	}
 
-	public ICProject getCProject(String name) {
-		IProject project = getWorkspace().getRoot().getProject(name);			
-		return CModelManager.getDefault().create(project);			
+	public boolean equals(Object o) {
+		if (!(o instanceof CModel)) {
+			return false;
+		}
+		return super.equals(o);
 	}
 
 	public ICProject[] getCProjects() {
@@ -41,6 +43,14 @@ public class CModel extends Openable implements ICModel {
 		ICProject[] array= new ICProject[list.size()];
 		list.toArray(array);
 		return array;
+	}
+
+	/**
+	 * ICModel#getCProject(String)
+	 */
+	public ICProject getCProject(String name) {
+		IProject project = ((IWorkspaceRoot)getResource()).getProject(name);			
+		return CModelManager.getDefault().create(project);			
 	}
 
 	/**

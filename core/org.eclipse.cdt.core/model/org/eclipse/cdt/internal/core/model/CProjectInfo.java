@@ -20,10 +20,11 @@ import org.eclipse.core.runtime.IPath;
  * Info for ICProject.
  */
 
-class CProjectInfo extends CContainerInfo {
+class CProjectInfo extends OpenableInfo {
 
 	BinaryContainer vBin;
 	ArchiveContainer vLib;
+	Object[] nonCResources = null;
 
 	/**
 	 */
@@ -54,7 +55,8 @@ class CProjectInfo extends CContainerInfo {
 		if (nonCResources != null)
 			return nonCResources;
 
-		// determine if src == project and/or if bin == project
+		CProject cproject = (CProject)getElement();
+		// determine if src == project
 		IPath projectPath = res.getProject().getFullPath();
 		ISourceRoot root = null;
 		ICElement[] elements = getChildren();
@@ -108,4 +110,11 @@ class CProjectInfo extends CContainerInfo {
 		return nonCResources;
 	}
 
+	/**
+	 * @param container
+	 * @return
+	 */
+	public void setNonCResources(Object[] resources) {
+		nonCResources = resources;
+	}
 }

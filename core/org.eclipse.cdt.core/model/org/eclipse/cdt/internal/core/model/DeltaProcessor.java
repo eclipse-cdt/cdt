@@ -9,7 +9,6 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinaryContainer;
-import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
@@ -18,7 +17,6 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -70,7 +68,7 @@ public class DeltaProcessor {
 				ICProject cpj = manager.create((IProject)resParent);
 				if (cpj != null) {
 					try {
-						ISourceRoot[] roots = cpj.getSourceRoots();
+						ISourceRoot[] roots = cpj.getAllSourceRoots();
 						for (int i = 0; i < roots.length; i++) {
 							if (roots[i].isOnSourceEntry(resource)) {
 								parent = roots[i];
@@ -139,22 +137,6 @@ public class DeltaProcessor {
 			}				
 		}
 
-		// return an handler
-		if (celement == null) {
-			IResource resParent = resource.getParent();
-			ICElement parent = manager.create(resParent, null);
-			if (parent instanceof ICContainer) {
-				String name = resource.getName();
-				if (resource instanceof IFile) {
-					if (manager.isValidTranslationUnitName(name)) {
-						celement = ((ICContainer)parent).getTranslationUnit(name);
-					}
-				} else if (resource instanceof IFolder) {
-					celement = ((ICContainer)parent).getCContainer(name);
-				}
-			}
-		}
-	
 		return celement;
 	}
 
@@ -440,13 +422,18 @@ public class DeltaProcessor {
 		} else {
 			elementDelta.addResourceDelta(delta);
 		}
-		if (parent instanceof CContainer) {
-			// if info not created yet no need to null NonCResources...
-			if (CModelManager.getDefault().peekAtInfo(parent) != null) {
-				CElementInfo info = ((CContainer)parent).getElementInfo();
-				if (info instanceof CContainerInfo) {
-					((CContainerInfo)info).setNonCResources(null);
-				}
+		if (parent instanceof Openable && ((Openable)parent).isOpen()) {			
+			CElementInfo info = ((Openable)parent).getElementInfo();
+			switch (parent.getElementType()) {
+			case ICElement.C_MODEL:
+				((CModelInfo)info).setNonCResources(null);
+				break;
+			case ICElement.C_PROJECT:
+				((CProjectInfo)info).setNonCResources(null);
+				break;
+			case ICElement.C_CCONTAINER:
+				((CContainerInfo)info).setNonCResources(null);
+				break;
 			}
 		}
 	}

@@ -390,6 +390,13 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		return MessageFormat.format(format, new String[]{commandLine, timestamp});
 	}
 
+	// temporary fix for #66015
+	protected String renderDebuggerProcessLabel() {
+		String format = "{0} ({1})"; //$NON-NLS-1$
+		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
+		return MessageFormat.format(format, new String[]{LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Debugger_Process"), timestamp}); //$NON-NLS-1$
+	}
+
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
 		String name = getProjectName(config);
 		if (name == null) {

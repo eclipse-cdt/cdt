@@ -99,7 +99,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
 					debugger =  dsession.getSessionProcess();
 					if ( debugger != null ) {
-						debuggerProcess = DebugPlugin.newProcess(launch, debugger, LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Debugger_Process")); //$NON-NLS-1$
+						debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
 					}
 					boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 					CDebugModel.newDebugTarget(
@@ -121,7 +121,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					dsession = debugConfig.getDebugger().createAttachSession(config, exeFile, pid);
 					debugger = dsession.getSessionProcess();
 					if ( debugger != null ) {
-						debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console"); //$NON-NLS-1$
+						debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
 						launch.removeProcess(debuggerProcess);
 					}
 					CDebugModel.newAttachDebugTarget(

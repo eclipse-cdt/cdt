@@ -1,4 +1,11 @@
 2004-05-09 Mikhail Khodjaiants
+	Added the rendering method for debugger processes.
+	* src/org/eclise/cdt/launch/AbstractCLaunchDelegate.java
+	* src/org/eclise/cdt/launch/internal/CoreFileLaunchDelegate.java
+	* src/org/eclise/cdt/launch/internal/LocalCLaunchConfigurationDelegate.java
+	* src/org/eclipse/cdt/launch/internal/ui/LaunchUIPluginResources.properties
+
+2004-05-09 Mikhail Khodjaiants
 	Fix for bug 66015: I18N: English "Debug Console" in Debug and Console views.
 	Warning cleanup.
 	* src/org/eclise/cdt/launch/internal/CoreFileLaunchDelegate.java

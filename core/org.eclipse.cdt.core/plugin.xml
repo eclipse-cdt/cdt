@@ -100,7 +100,7 @@
    <!-- This is for backward compatibility: an Typo was introduce in on of the realease
         and "ELF" instead of "Elf" -->
    <extension
-         id="TYPO_Elf"
+         id="Elf"
          name="%ElfParser.name"
          point="org.eclipse.cdt.core.BinaryParser">
       <cextension>

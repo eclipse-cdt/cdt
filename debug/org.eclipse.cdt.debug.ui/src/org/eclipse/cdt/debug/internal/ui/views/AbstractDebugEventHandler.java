@@ -13,6 +13,7 @@ import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableTreeViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -209,7 +210,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 * Returns this event handler's viewer as a table
 	 * viewer or <code>null</code> if none.
 	 * 
-	 * @return this event handler's viewer as a tree
+	 * @return this event handler's viewer as a table
 	 * viewer or <code>null</code> if none
 	 */
 	protected TableViewer getTableViewer()
@@ -217,6 +218,22 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 		if ( getViewer() instanceof TableViewer )
 		{
 			return (TableViewer)getViewer();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns this event handler's viewer as a table tree
+	 *  viewer or <code>null</code> if none.
+	 * 
+	 * @return this event handler's viewer as a table tree 
+	 * viewer or <code>null</code> if none
+	 */
+	protected TableTreeViewer getTableTreeViewer()
+	{
+		if ( getViewer() instanceof TableTreeViewer )
+		{
+			return (TableTreeViewer)getViewer();
 		}
 		return null;
 	}

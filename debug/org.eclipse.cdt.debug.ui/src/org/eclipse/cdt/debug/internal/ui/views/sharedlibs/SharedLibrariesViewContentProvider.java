@@ -88,7 +88,7 @@ public class SharedLibrariesViewContentProvider implements ITreeContentProvider
 	 */
 	public boolean hasChildren( Object parent )
 	{
-		if ( parent != null && parent instanceof ICSharedLibraryManager )
+		if ( parent instanceof ICSharedLibraryManager )
 		{
 			return ( ((ICSharedLibraryManager)parent).getSharedLibraries().length > 0 );
 		}

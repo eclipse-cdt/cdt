@@ -50,4 +50,28 @@ public class SharedLibrariesViewEventHandler extends AbstractDebugEventHandler
 			}
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler#refresh()
+	 */
+	public void refresh()
+	{
+		if ( isAvailable() )
+		{
+			getView().showViewer();
+			getTableTreeViewer().refresh();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler#refresh(java.lang.Object)
+	 */
+	protected void refresh( Object element )
+	{
+		if ( isAvailable() )
+		{
+			getView().showViewer();
+			getTableTreeViewer().refresh( element );
+		}
+	}
 }

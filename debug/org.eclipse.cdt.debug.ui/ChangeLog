@@ -1,4 +1,12 @@
 2003-02-07 Mikhail Khodjaiants
+	The viewer type of the 'Shared Libraries' view changed to 'TableTreeViewer'.
+	* CDTDebugModelPresentation.java
+	* AbstractDebugEventHandler.java
+	* SharedLibrariesView.java
+	* SharedLibrariesViewContentProvider.java
+	* SharedLibrariesViewEventHandler.java
+
+2003-02-07 Mikhail Khodjaiants
 	The 'Resume Without Signal' action added to the 'Run' menu of the workbench window.
 	* SignalZeroWorkbenchActionDelegate.java: new
 	* plugin.xml

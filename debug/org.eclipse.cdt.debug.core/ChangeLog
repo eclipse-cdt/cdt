@@ -1,3 +1,7 @@
+2004-10-24 Alain Magloire
+	Provide a context for ICDITarget.evaluateExpressionTtoString()
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java
+
 2004-10-22 Mikhail Khodjaiants
 	Fire the suspend event for the current thread on the target creation.
 	* CDebugTarget.java

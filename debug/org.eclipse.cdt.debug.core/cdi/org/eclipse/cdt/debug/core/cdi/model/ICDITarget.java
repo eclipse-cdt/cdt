@@ -38,12 +38,24 @@ public interface ICDITarget extends ICDIThreadGroup, ICDISessionObject {
 	/**
 	 * Evaluates the expression specified by the given string.
 	 * Returns the evaluation result as a String.
-	 * 
+	 *
+	 * @deprecated 
 	 * @param - expression string to be evaluated
 	 * @return the result of the evaluation
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	String evaluateExpressionToString(String expressionText)
+		throws CDIException;
+
+	/**
+	 * Evaluates the expression specified by the given string.
+	 * Returns the evaluation result as a String.
+	 * 
+	 * @param - expression string to be evaluated
+	 * @return the result of the evaluation
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	String evaluateExpressionToString(ICDIStackFrame context, String expressionText)
 		throws CDIException;
 
 	/**

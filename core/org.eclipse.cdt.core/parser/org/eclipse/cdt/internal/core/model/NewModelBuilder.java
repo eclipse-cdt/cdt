@@ -684,6 +684,7 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		Parent realParent = (Parent)wrapper.getParent();
 		String enumName = ( wrapper.getName() == null ) ? "" : wrapper.getName().toString();
 		Enumeration enumeration = new Enumeration( (ICElement)realParent, enumName );
+		enumeration.setTypeName( "enum" ); 
 		realParent.addChild( enumeration );
 		
 		// create the list 
@@ -691,20 +692,25 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		while( i.hasNext())
 		{
 			EnumeratorWrapper subwrapper = (EnumeratorWrapper)i.next(); 
-			Enumerator enumerator = new Enumerator( enumeration, subwrapper.getName().toString() ); 
+			Enumerator enumerator = new Enumerator( enumeration, subwrapper.getName().toString() );
+			String enumeratorName = subwrapper.getName().toString();
+
+			enumerator.setIdPos(subwrapper.getName().getStartOffset(), enumeratorName.length());
+			enumerator.setPos(subwrapper.getName().getStartOffset(), enumeratorName.length());
+			 
 			enumeration.addChild( enumerator );
 		}
 		
 		// do the offsets
 		if( wrapper.getName() != null )
 		{ 	
-			elem.setIdPos(wrapper.getName().getStartOffset(), enumName.length());
-			elem.setPos(wrapper.getName().getStartOffset(), enumName.length());
+			enumeration.setIdPos(wrapper.getName().getStartOffset(), enumName.length());
+			enumeration.setPos(wrapper.getName().getStartOffset(), enumName.length());
 		}
 		else
 		{
-			elem.setIdPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());
-			elem.setPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());		
+			enumeration.setIdPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());
+			enumeration.setPos(wrapper.getClassKind().getOffset(), wrapper.getClassKind().getLength());		
 		}
 	}
 

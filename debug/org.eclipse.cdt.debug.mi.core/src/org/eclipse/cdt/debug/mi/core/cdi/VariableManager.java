@@ -13,7 +13,6 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -92,11 +91,13 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		int depth = v.getStackDepth();
 		Variable[] vars = getVariables();
 		for (int i = 0; i < vars.length; i++) {
-			if (vars[i].getName().equals(name) &&
-			    vars[i].casting_index == v.casting_index &&
-			    vars[i].casting_length == v.casting_length &&
-			    ((vars[i].casting_type == null && v.casting_type == null) ||
-			     (vars[i].casting_type != null && v.casting_type != null && vars[i].casting_type.equals(v.casting_type)))) {
+			if (vars[i].getName().equals(name)
+				&& vars[i].getCastingArrayStart() == v.getCastingArrayStart()
+				&& vars[i].getCastingArrayEnd() == v.getCastingArrayEnd()
+				&& ((vars[i].getCastingType() == null && v.getCastingType() == null)
+					|| (vars[i].getCastingType() != null
+						&& v.getCastingType() != null
+						&& vars[i].getCastingType().equals(v.getCastingType())))) {
 				ICDIStackFrame frame = vars[i].getStackFrame();
 				if (stack == null && frame == null) {
 					return vars[i];
@@ -123,49 +124,29 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 * Check the type
 	 */
 	public void checkType(String type) throws CDIException {
-		try {
-				MISession mi = ((Session)getSession()).getMISession();
+		if (type != null && type.length() > 0) {
+			try {
+				MISession mi = ((Session) getSession()).getMISession();
 				CommandFactory factory = mi.getCommandFactory();
 				MIPType ptype = factory.createMIPType(type);
 				mi.postCommand(ptype);
 				MIPTypeInfo info = ptype.getMIPtypeInfo();
 				if (info == null) {
-						throw new CDIException("No answer");
+					throw new CDIException("No answer");
 				}
-		} catch (MIException e) {
+			} catch (MIException e) {
 				throw new MI2CDIException(e);
-		}
-	}
-
-	public static String encodeVariable(VariableObject varObj) {
-		StringBuffer buffer = new StringBuffer();
-		if (varObj.casting_length > 0 || varObj.casting_index > 0) {
-			buffer.append("*(");
-			buffer.append('(');
-			if (varObj.casting_type != null && varObj.casting_type.length() > 0) {
-				buffer.append('(').append(varObj.casting_type).append(')');
 			}
-			buffer.append(varObj.getName());
-			buffer.append(')');
-			if (varObj.casting_index != 0) {
-					buffer.append('+').append(varObj.casting_index);
-			}
-			buffer.append(')');
-			buffer.append('@').append(varObj.casting_length - varObj.casting_index);
-		} else if (varObj.casting_type != null && varObj.casting_type.length() > 0) {
-			buffer.append('(').append(varObj.casting_type).append(')');
-			buffer.append('(').append(varObj.getName()).append(')');
 		} else {
-			buffer.append(varObj.getName());
+			throw new CDIException("Unkown type");
 		}
-		return buffer.toString();
 	}
 
 	/**
 	 * Tell gdb to remove the underlying var-object also.
 	 */
 	void removeMIVar(MIVar miVar) throws CDIException {
-		Session session = (Session)getSession();
+		Session session = (Session) getSession();
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarDelete var = factory.createMIVarDelete(miVar.getVarName());
@@ -198,18 +179,18 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	public ICDIArgument createArgument(ICDIArgumentObject a) throws CDIException {
 		ArgumentObject argObj = null;
 		if (a instanceof ArgumentObject) {
-			argObj = (ArgumentObject)a;
+			argObj = (ArgumentObject) a;
 		}
 		if (argObj != null) {
 			Variable variable = findVariable(argObj);
 			Argument argument = null;
 			if (variable != null && variable instanceof Argument) {
-				argument = (Argument)variable;
+				argument = (Argument) variable;
 			}
 			if (argument == null) {
-				String name = encodeVariable(argObj);
+				String name = argObj.getQualifiedName();
 				ICDIStackFrame stack = argObj.getStackFrame();
-				Session session = (Session)getSession();
+				Session session = (Session) getSession();
 				ICDIThread currentThread = null;
 				ICDIStackFrame currentFrame = null;
 				if (stack != null) {
@@ -239,14 +220,13 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			}
 			return argument;
 		}
-		throw  new CDIException("Wrong variable type");
+		throw new CDIException("Wrong variable type");
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getArgumentObject(ICDIStackFrame, String)
 	 */
-	public ICDIArgumentObject getArgumentObject(ICDIStackFrame stack, String name)
-		throws CDIException {
+	public ICDIArgumentObject getArgumentObject(ICDIStackFrame stack, String name) throws CDIException {
 		ICDIArgumentObject[] argsObjects = getArgumentObjects(stack);
 		for (int i = 0; i < argsObjects.length; i++) {
 			if (argsObjects[i].getName().equals(name)) {
@@ -261,7 +241,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 */
 	public ICDIArgumentObject[] getArgumentObjects(ICDIStackFrame frame) throws CDIException {
 		List argObjects = new ArrayList();
-		Session session = (Session)getSession();
+		Session session = (Session) getSession();
 		ICDITarget currentTarget = session.getCurrentTarget();
 		ICDIThread currentThread = currentTarget.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
@@ -273,8 +253,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			int level = frame.getLevel();
 			// Need the GDB/MI view of leve which the reverse i.e. Highest frame is 0
 			int miLevel = depth - level;
-			MIStackListArguments listArgs =
-			factory.createMIStackListArguments(false, miLevel, miLevel);
+			MIStackListArguments listArgs = factory.createMIStackListArguments(false, miLevel, miLevel);
 			MIArg[] args = null;
 			mi.postCommand(listArgs);
 			MIStackListArgumentsInfo info = listArgs.getMIStackListArgumentsInfo();
@@ -288,8 +267,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			if (args != null) {
 				ICDITarget tgt = frame.getThread().getTarget();
 				for (int i = 0; i < args.length; i++) {
-					ArgumentObject arg = new ArgumentObject(tgt, args[i].getName(),
-					 frame, args.length - i, level);
+					ArgumentObject arg = new ArgumentObject(tgt, args[i].getName(), frame, args.length - i, level);
 					argObjects.add(arg);
 				}
 			}
@@ -298,7 +276,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		} finally {
 			currentThread.setCurrentStackFrame(currentFrame);
 		}
-		return (ICDIArgumentObject[])argObjects.toArray(new ICDIArgumentObject[0]);
+		return (ICDIArgumentObject[]) argObjects.toArray(new ICDIArgumentObject[0]);
 	}
 
 	/**
@@ -342,51 +320,20 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjectAsArray(ICDIVariableObject, String, int, int)
 	 */
-	public ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject object, String type, int start, int length) throws CDIException {
+	public ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject object, String type, int start, int length)
+		throws CDIException {
 		VariableObject obj = null;
 		if (object instanceof VariableObject) {
-			obj = (VariableObject)object;
+			obj = (VariableObject) object;
 		}
 		if (obj != null) {
 			// Check if the type is valid.
-			if (type != null && type.length() > 0) {
-				try {
-					MISession mi = ((Session)getSession()).getMISession();
-					CommandFactory factory = mi.getCommandFactory();
-					MIPType ptype = factory.createMIPType(type);
-					mi.postCommand(ptype);
-					MIPTypeInfo info = ptype.getMIPtypeInfo();
-					if (info == null) {
-						throw new CDIException("No answer");
-					}
-				} catch (MIException e) {
-					throw new MI2CDIException(e);
-				}
-			}
-
-			// Should we provide a getRegisterObjectAsArray ?
-			StringBuffer buffer = new StringBuffer();
-			if (obj instanceof ICDIRegisterObject) {
-				buffer.append("$" + obj.getName());
-			} else {
-				buffer.append(obj.getName());
-			}
-			VariableObject vo = new VariableObject(obj, buffer.toString());
-
-			// Carry the the old casting type over
-			buffer.setLength(0);
-			if (obj.casting_type != null && obj.casting_type.length() > 0) {
-				buffer.append("(").append(obj.casting_type).append(")");
-			}
-			if (type != null && type.length() > 0) {
-				buffer.append(type);
-			}
-			vo.casting_type = buffer.toString();
-
-			// Carry any other info to the new VariableObject
-			vo.casting_index = obj.casting_index + start;
-			vo.casting_length = obj.casting_length + length;
-
+			checkType(type);
+			VariableObject vo = new VariableObject(obj.getTarget(),
+			 obj.getQualifiedName(), obj.getStackFrame(), obj.getPosition(), obj.getStackDepth());
+			vo.setCastingType(type);
+			vo.setCastingArrayStart(start);
+			vo.setCastingArrayEnd(length);
 			return vo;
 		}
 		throw new CDIException("Unknown variable object");
@@ -398,34 +345,20 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	public ICDIVariableObject getVariableObjectAsType(ICDIVariableObject object, String type) throws CDIException {
 		VariableObject obj = null;
 		if (object instanceof VariableObject) {
-			obj = (VariableObject)object;
+			obj = (VariableObject) object;
 		}
 		if (obj != null) {
-			StringBuffer buffer = new StringBuffer();
-			if (type != null && type.length() > 0) {
-				// Check if the type is valid.
-				try {
-					MISession mi = ((Session)getSession()).getMISession();
-					CommandFactory factory = mi.getCommandFactory();
-					MIPType ptype = factory.createMIPType(type);
-					mi.postCommand(ptype);
-					MIPTypeInfo info = ptype.getMIPtypeInfo();
-					if (info == null) {
-						throw new CDIException("No answer");
-					}
-				} catch (MIException e) {
-					throw new MI2CDIException(e);
-				}
-				buffer.append('(').append(type).append(')');
-			}
-			buffer.append('(');
-			if (obj instanceof ICDIRegisterObject) {
-				buffer.append("$" + obj.getName());
-			} else {
-				buffer.append(obj.getName());
-			}
-			buffer.append(')');
-			return new VariableObject(obj, buffer.toString());
+			// throw an exception if not a good type.
+			checkType(type);
+			VariableObject vo =
+				new VariableObject(
+					obj.getTarget(),
+					obj.getQualifiedName(),
+					obj.getStackFrame(),
+					obj.getPosition(),
+					obj.getStackDepth());
+			vo.setCastingType(type);
+			return vo;
 		}
 		throw new CDIException("Unknown variable object");
 	}
@@ -435,7 +368,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 */
 	public ICDIVariableObject[] getLocalVariableObjects(ICDIStackFrame frame) throws CDIException {
 		List varObjects = new ArrayList();
-		Session session = (Session)getSession();
+		Session session = (Session) getSession();
 		ICDITarget currentTarget = session.getCurrentTarget();
 		ICDIThread currentThread = currentTarget.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
@@ -455,8 +388,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			if (args != null) {
 				ICDITarget tgt = frame.getThread().getTarget();
 				for (int i = 0; i < args.length; i++) {
-					VariableObject varObj = new VariableObject(tgt, args[i].getName(),
-						 frame, args.length - i, level);
+					VariableObject varObj = new VariableObject(tgt, args[i].getName(), frame, args.length - i, level);
 					varObjects.add(varObj);
 				}
 			}
@@ -465,7 +397,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		} finally {
 			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
-		return (ICDIVariableObject[])varObjects.toArray(new ICDIVariableObject[0]);
+		return (ICDIVariableObject[]) varObjects.toArray(new ICDIVariableObject[0]);
 	}
 
 	/**
@@ -486,13 +418,13 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	public ICDIVariable createVariable(ICDIVariableObject v) throws CDIException {
 		VariableObject varObj = null;
 		if (v instanceof VariableObject) {
-			varObj = (VariableObject)v;
+			varObj = (VariableObject) v;
 		}
 		if (varObj != null) {
 			Variable variable = findVariable(varObj);
 			if (variable == null) {
-				String name = encodeVariable(varObj);
-				Session session = (Session)getSession();
+				String name = varObj.getQualifiedName();
+				Session session = (Session) getSession();
 				ICDIStackFrame stack = varObj.getStackFrame();
 				ICDIThread currentThread = null;
 				ICDIStackFrame currentFrame = null;
@@ -532,9 +464,9 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	public void destroyVariable(ICDIVariable var) throws CDIException {
 		if (var instanceof Variable) {
 			// Fire  a destroyEvent ?
-			Variable variable = (Variable)var;
+			Variable variable = (Variable) var;
 			MIVarDeletedEvent del = new MIVarDeletedEvent(variable.getMIVar().getVarName());
-			Session session = (Session)getSession();
+			Session session = (Session) getSession();
 			MISession mi = session.getMISession();
 			mi.fireEvent(del);
 		}
@@ -569,7 +501,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		int high = 0;
 		int low = 0;
 		List eventList = new ArrayList();
-		Session session = (Session)getSession();
+		Session session = (Session) getSession();
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		Variable[] vars = getVariables();
@@ -584,7 +516,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 					high = currentStack.getLevel();
 				}
 				if (high > 0) {
-						high--;
+					high--;
 				}
 				low = high - MAX_STACK_DEPTH;
 				if (low < 0) {
@@ -610,7 +542,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 					//throw new MI2CDIException(e);
 					eventList.add(new MIVarDeletedEvent(varName));
 				}
-				for (int j = 0 ; j < changes.length; j++) {
+				for (int j = 0; j < changes.length; j++) {
 					String n = changes[j].getVarName();
 					if (changes[j].isInScope()) {
 						eventList.add(new MIVarChangedEvent(n));
@@ -620,7 +552,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				}
 			}
 		}
-		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
+		MIEvent[] events = (MIEvent[]) eventList.toArray(new MIEvent[0]);
 		mi.fireEvents(events);
 	}
 
@@ -634,10 +566,11 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 * @param frames
 	 * @return
 	 */
-	boolean isVariableNeedsToBeUpdate(Variable variable, ICDIStackFrame current, ICDIStackFrame[] frames, int low) throws CDIException {
+	boolean isVariableNeedsToBeUpdate(Variable variable, ICDIStackFrame current, ICDIStackFrame[] frames, int low)
+		throws CDIException {
 		ICDIStackFrame varStack = variable.getStackFrame();
 		boolean inScope = false;
-		
+
 		// Something wrong and the program terminated bail out here.
 		if (current == null || frames == null) {
 			return false;

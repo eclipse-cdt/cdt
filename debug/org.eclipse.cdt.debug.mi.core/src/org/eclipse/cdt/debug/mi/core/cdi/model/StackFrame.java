@@ -25,6 +25,8 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	MIFrame frame;
 	Thread cthread;
 	int level;
+	ICDIArgument[] args;
+	ICDIVariable[] locals;
 
 	/*
  	 * 
@@ -71,12 +73,14 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getArguments()
 	 */
 	public ICDIArgument[] getArguments() throws CDIException {
-		Session session = (Session)getTarget().getSession();
-		VariableManager mgr = (VariableManager)session.getVariableManager();
-		ICDIArgumentObject[] argObjs = mgr.getArgumentObjects(this);
-		ICDIArgument[] args = new ICDIArgument[argObjs.length];
-		for (int i = 0; i < args.length; i++) {
-			args[i] = mgr.createArgument(argObjs[i]);
+		if (args == null) {
+			Session session = (Session)getTarget().getSession();
+			VariableManager mgr = (VariableManager)session.getVariableManager();
+			ICDIArgumentObject[] argObjs = mgr.getArgumentObjects(this);
+			args = new ICDIArgument[argObjs.length];
+			for (int i = 0; i < args.length; i++) {
+				args[i] = mgr.createArgument(argObjs[i]);
+			}
 		}
 		return args;
 	}
@@ -85,14 +89,16 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocalVariables()
 	 */
 	public ICDIVariable[] getLocalVariables() throws CDIException {
-		Session session = (Session)getTarget().getSession();
-		VariableManager mgr = (VariableManager)session.getVariableManager();
-		ICDIVariableObject[] varObjs = mgr.getLocalVariableObjects(this);
-		ICDIVariable[] vars = new ICDIVariable[varObjs.length];
-		for (int i = 0; i < vars.length; i++) {
-			vars[i] = mgr.createVariable(varObjs[i]);
+		if (locals == null) {
+			Session session = (Session)getTarget().getSession();
+			VariableManager mgr = (VariableManager)session.getVariableManager();
+			ICDIVariableObject[] varObjs = mgr.getLocalVariableObjects(this);
+			locals = new ICDIVariable[varObjs.length];
+			for (int i = 0; i < locals.length; i++) {
+				locals[i] = mgr.createVariable(varObjs[i]);
+			}
 		}
-		return vars;
+		return locals;
 	}
 
 	/**
@@ -112,6 +118,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	public int getLevel() {
 		return level;
 	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#equals(ICDIStackFrame)
 	 */

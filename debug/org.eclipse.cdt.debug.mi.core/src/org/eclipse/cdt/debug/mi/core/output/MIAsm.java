@@ -82,9 +82,7 @@ public class MIAsm {
 				while( (index < chars.length) && (chars[index] > '\u0020'))
 					index++;
 
-				// guard all whitespace
-				if( index < chars.length )
-					opcode = str.substring( 0, index );
+				opcode = str.substring( 0, index );
 
 				// skip any whitespace characters
 				while( index < chars.length && chars[index] >= '\u0000' && chars[index] <= '\u0020')

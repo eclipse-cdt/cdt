@@ -8,9 +8,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.launch.internal;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.IProcessInfo;
-import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
@@ -20,27 +17,21 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
-import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.dialogs.TwoPaneElementSelector;
+import org.eclipse.debug.core.IStatusHandler;
 
 public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 
@@ -114,78 +105,20 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 	}
 
 	protected int promptForProcessID(ILaunchConfiguration config) throws CoreException {
-		final Shell shell = LaunchUIPlugin.getShell();
-		final int pidResult[] = {-1};
-		if (shell == null) {
-			abort(LaunchMessages.getString("LocalAttachLaunchDelegate.No_Shell_available_in_Launch"), null, //$NON-NLS-1$
-					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-		}
-		Display display = shell.getDisplay();
-		display.syncExec(new Runnable() {
-
-			public void run() {
-				ILabelProvider provider = new LabelProvider() {
-
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-					 */
-					public String getText(Object element) {
-						IProcessInfo info = (IProcessInfo)element;
-						IPath path = new Path(info.getName());
-						return path.lastSegment() + " - " + info.getPid(); //$NON-NLS-1$
-					}
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-					 */
-					public Image getImage(Object element) {
-						return LaunchImages.get(LaunchImages.IMG_OBJS_EXEC);
-					}
-				};
-				ILabelProvider qprovider = new LabelProvider() {
-
-					public String getText(Object element) {
-						IProcessInfo info = (IProcessInfo)element;
-						return info.getName();
-					}
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-					 */
-					public Image getImage(Object element) {
-						return LaunchImages.get(LaunchImages.IMG_OBJS_EXEC);
-					}
-				};
-				TwoPaneElementSelector dialog = new TwoPaneElementSelector(shell, provider, qprovider);
-				dialog.setTitle(LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process")); //$NON-NLS-1$
-				dialog.setMessage(LaunchMessages.getString("LocalAttachLaunchDelegate.Select_Process_to_attach_debugger_to")); //$NON-NLS-1$
-				IProcessList plist = null;
-				try {
-					plist = CCorePlugin.getDefault().getProcessList();
-				} catch (CoreException e) {
-					LaunchUIPlugin.errorDialog(
-												LaunchMessages.getString("LocalAttachLaunchDelegate.CDT_Launch_Error"), e.getStatus()); //$NON-NLS-1$
+		IStatus fPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null);  //$NON-NLS-1$//$NON-NLS-2$
+		IStatus processPrompt = new Status(IStatus.INFO, "org.eclipse.cdt.launch", 100, "", null);  //$NON-NLS-1$//$NON-NLS-2$
+		// consult a status handler
+		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(fPromptStatus);
+		if (prompter != null) {
+			try {
+				Object result = prompter.handleStatus(processPrompt, config);
+				if (result instanceof Integer) {
+					return ((Integer)result).intValue();
 				}
-				if (plist == null) {
-					MessageDialog.openError(
-											shell,
-											LaunchMessages.getString("LocalAttachLaunchDelegate.CDT_Launch_Error"), LaunchMessages.getString("LocalAttachLaunchDelegate.Platform_cannot_list_processes")); //$NON-NLS-1$ //$NON-NLS-2$
-					return;
-				}
-				dialog.setElements(plist.getProcessList());
-				if (dialog.open() == Window.OK) {
-					IProcessInfo info = (IProcessInfo)dialog.getFirstResult();
-					if (info != null) {
-						pidResult[0] = info.getPid();
-					}
-				}
+			} catch (CoreException e) {
 			}
-		});
-		return pidResult[0];
+		}
+		return -1;
 	}
 
 	/*

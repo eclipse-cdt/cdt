@@ -1,11 +1,11 @@
-/*******************************************************************************
- * Copyright (c) 2002 - 2004 QNX Software Systems and others. All rights
- * reserved. This program and the accompanying materials are made available
- * under the terms of the Common Public License v1.0 which accompanies this
- * distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
+/***************************************************************************************************
+ * Copyright (c) 2002 - 2004 QNX Software Systems and others. All rights reserved. This program and
+ * the accompanying materials are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: QNX Software Systems - Initial API and implementation
- ******************************************************************************/
+ **************************************************************************************************/
 package org.eclipse.cdt.launch.internal;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
@@ -23,18 +23,16 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
 
 public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 
@@ -100,34 +98,18 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 	}
 
 	protected IPath promptForCoreFilePath(final IProject project, final ICDebugConfiguration debugConfig) throws CoreException {
-		final Shell shell = LaunchUIPlugin.getShell();
-		final String res[] = {null};
-		if (shell == null) {
-			abort(LaunchMessages.getString("CoreFileLaunchDelegate.No_Shell_available_in_Launch"), null, //$NON-NLS-1$
-					ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-		}
-		Display display = shell.getDisplay();
-		display.syncExec(new Runnable() {
-
-			public void run() {
-				FileDialog dialog = new FileDialog(shell);
-				dialog.setText(LaunchMessages.getString("CoreFileLaunchDelegate.Select_Corefile")); //$NON-NLS-1$
-
-				String initPath = null;
-				try {
-					initPath = project.getPersistentProperty(new QualifiedName(LaunchUIPlugin.getUniqueIdentifier(), "SavePath")); //$NON-NLS-1$
-				} catch (CoreException e) {
+		IStatus fPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null); //$NON-NLS-1$//$NON-NLS-2$
+		IStatus processPrompt = new Status(IStatus.INFO, "org.eclipse.cdt.launch", 101, "", null); //$NON-NLS-1$//$NON-NLS-2$
+		// consult a status handler
+		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(fPromptStatus);
+		if (prompter != null) {
+			try {
+				Object result = prompter.handleStatus(processPrompt, new Object[]{project, debugConfig});
+				if (result instanceof IPath) {
+					return (IPath)result;
 				}
-				if (initPath == null || initPath.equals("")) { //$NON-NLS-1$
-					initPath = project.getLocation().toString();
-				}
-				dialog.setFilterExtensions(debugConfig.getCoreFileExtensions());
-				dialog.setFilterPath(initPath);
-				res[0] = dialog.open();
+			} catch (CoreException e) {
 			}
-		});
-		if (res[0] != null) {
-			return new Path(res[0]);
 		}
 		return null;
 	}

@@ -760,7 +760,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @throws CoreException
 	 */
 	protected Properties getEnvironmentAsProperty(ILaunchConfiguration config) throws CoreException {
-		String[] envp = getEnvironmentArray(config);
+		String[] envp = getEnvironment(config);
 		Properties p = new Properties( );
 		for( int i = 0; i < envp.length; i++ ) {
 			int idx = envp[i].indexOf('=');

@@ -1,3 +1,17 @@
+2004-11-1  David Inglis
+	Use status handlers to prompt for launch input (process id and core file).
+
+	* plugin.xml
+	* src/org/eclipse/cdt/launch/internal/CoreFileLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/LocalAttachLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/ui/CoreFilePrompter.java
+	* src/org/eclipse/cdt/launch/internal/ui/ProcessPrompter.java
+	
+2004-11-01 David Inglis
+	getEnvironmentAsProperty was not using new getEnviroment().
+	
+	* src/org/eclipse/cdt/launch/AbstractCLaunchDelegate.java
+	
 2004-10-22 David Inglis
 	Added variables support to arguments, environment and working directory.
 

@@ -131,5 +131,19 @@
             id="org.eclipse.cdt.launch.CPropertyTester">
       </propertyTester>
    </extension>
-
+   <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            code="100"
+            plugin="org.eclipse.cdt.launch"
+            class="org.eclipse.cdt.launch.internal.ui.ProcessPrompter"
+            id="org.eclipse.cdt.launch.statusHandler.processPrompter">
+      </statusHandler>  
+      <statusHandler
+            code="101"
+            plugin="org.eclipse.cdt.launch"
+            class="org.eclipse.cdt.launch.internal.ui.CoreFilePrompter"
+            id="org.eclipse.cdt.launch.statusHandler.coreFilePrompter">
+      </statusHandler>  
+	</extension>
 </plugin>

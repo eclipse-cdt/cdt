@@ -97,7 +97,7 @@ public class CDebugModel {
 		if ( target != null && target instanceof CDebugTarget ) {
 			try {
 				ICDIExpression expression = ((CDebugTarget)target).getCDITarget().createExpression( addressExpression );
-				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDISession().getMemoryManager().createMemoryBlock( expression.getExpressionText(), wordSize * numberOfRows * numberOfColumns );
+				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDITarget().createMemoryBlock( expression.getExpressionText(), wordSize * numberOfRows * numberOfColumns );
 				return new CFormattedMemoryBlock( (CDebugTarget)target, cdiMemoryBlock, expression, format, wordSize, numberOfRows, numberOfColumns, paddingChar );
 			}
 			catch( CDIException e ) {
@@ -111,7 +111,7 @@ public class CDebugModel {
 		if ( target != null && target instanceof CDebugTarget ) {
 			try {
 				ICDIExpression expression = ((CDebugTarget)target).getCDITarget().createExpression( addressExpression );
-				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDISession().getMemoryManager().createMemoryBlock( expression.getExpressionText(), wordSize * numberOfRows * numberOfColumns );
+				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDITarget().createMemoryBlock( expression.getExpressionText(), wordSize * numberOfRows * numberOfColumns );
 				return new CFormattedMemoryBlock( (CDebugTarget)target, cdiMemoryBlock, expression, format, wordSize, numberOfRows, numberOfColumns );
 			}
 			catch( CDIException e ) {

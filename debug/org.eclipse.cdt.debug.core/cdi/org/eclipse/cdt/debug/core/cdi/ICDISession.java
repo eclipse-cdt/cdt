@@ -59,14 +59,6 @@ public interface ICDISession {
 	 */
 	ICDIRegisterManager getRegisterManager();
 
-
-	/**
-	 * Returns the memory manager of this debug session.
-	 * 
-	 * @return the memory manager
-	 */
-	ICDIMemoryManager getMemoryManager();
-
 	/**
 	 * Returns the event manager of this debug session.
 	 * 

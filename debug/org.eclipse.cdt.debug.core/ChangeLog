@@ -1,4 +1,15 @@
 2004-10-26 Alain Magloire
+	Remove ICDIMemoryManager for ICDIMemoryBlockManagement
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDIMemoryManager.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIMemoryBlockManagement.java
+
+	* CDebugModel.java
+	* CExtendedMemoryBlock.java
+	* CFormattedMemoryBlock.java
+
+2004-10-26 Alain Magloire
 	Remove of ICDISourceManager in CDI
 	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java
 	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISourceManager.java

@@ -232,7 +232,7 @@ public class CExtendedMemoryBlock extends CDebugElement implements IExtendedMemo
 		ICDIMemoryBlock cdiBlock = getCDIBlock();
 		if ( cdiBlock != null ) {
 			try {
-				((CDebugTarget)getDebugTarget()).getCDISession().getMemoryManager().removeBlock( cdiBlock );
+				((CDebugTarget)getDebugTarget()).getCDITarget().removeBlocks( new ICDIMemoryBlock[] {cdiBlock} );
 			}
 			catch( CDIException e ) {
 				CDebugCorePlugin.log( e );
@@ -322,7 +322,7 @@ public class CExtendedMemoryBlock extends CDebugElement implements IExtendedMemo
 	}
 
 	private ICDIMemoryBlock createCDIBlock( BigInteger address, long length ) throws CDIException {
-		ICDIMemoryBlock block = ((CDebugTarget)getDebugTarget()).getCDISession().getMemoryManager().createMemoryBlock( address.toString(), (int)length );
+		ICDIMemoryBlock block = ((CDebugTarget)getDebugTarget()).getCDITarget().createMemoryBlock( address.toString(), (int)length );
 		getCDISession().getEventManager().addEventListener( this );
 		return block;
 	}
@@ -331,7 +331,7 @@ public class CExtendedMemoryBlock extends CDebugElement implements IExtendedMemo
 		ICDIMemoryBlock block = getCDIBlock();
 		if ( block != null ) {
 			try {
-				((CDebugTarget)getDebugTarget()).getCDISession().getMemoryManager().removeBlock( block );
+				((CDebugTarget)getDebugTarget()).getCDITarget().removeBlocks( new ICDIMemoryBlock[]{ block  });
 			}
 			catch( CDIException e ) {
 				DebugPlugin.log( e );

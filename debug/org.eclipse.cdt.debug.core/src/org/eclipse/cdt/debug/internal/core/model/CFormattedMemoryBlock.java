@@ -373,7 +373,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 		{
 			try
 			{
-				((CDebugTarget)getDebugTarget()).getCDISession().getMemoryManager().removeBlock( fCDIMemoryBlock );
+				((CDebugTarget)getDebugTarget()).getCDITarget().removeBlocks( new ICDIMemoryBlock[] { fCDIMemoryBlock } );
 			}
 			catch( CDIException e )
 			{

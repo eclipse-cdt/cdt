@@ -356,7 +356,7 @@
          </action>
       </objectContribution>
       <viewerContribution
-            targetID="#CRulerContext"
+            targetID="#CEditorRulerContext"
             id="org.eclipse.cdt.ui.editor.CEditorPopupActions">
          <action
                label="%AddTask.label"

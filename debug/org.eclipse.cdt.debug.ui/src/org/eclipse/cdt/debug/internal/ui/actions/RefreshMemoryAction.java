@@ -28,11 +28,11 @@ public class RefreshMemoryAction extends SelectionProviderAction implements IUpd
 	 * Constructor for RefreshMemoryAction.
 	 */
 	public RefreshMemoryAction( MemoryViewer viewer ) {
-		super( viewer, "Refresh" ); //$NON-NLS-1$
+		super( viewer, ActionMessages.getString("RefreshMemoryAction.1") );  //$NON-NLS-1$
 		fMemoryViewer = viewer;
 		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_REFRESH );
 		setDescription( ActionMessages.getString( "RefreshMemoryAction.0" ) ); //$NON-NLS-1$
-		setToolTipText( ActionMessages.getString( "RefreshMemoryAction.1" ) ); //$NON-NLS-1$
+		setToolTipText( ActionMessages.getString("RefreshMemoryAction.2") ); //$NON-NLS-1$
 		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.REFRESH_MEMORY_ACTION );
 	}
 

@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
@@ -92,7 +93,11 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 				if (group.getResource().getType() == IResource.PROJECT) {
 					return group.getResource().getName();
 				}
-				return group.getResource().getProjectRelativePath().toString();
+				StringBuffer label = new StringBuffer(group.getResource().getProjectRelativePath().toString());
+				if (!group.getResource().exists()) {
+					label.append(fCreateLabel);
+				}
+				return label.toString();
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -348,7 +353,13 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 				case IPathEntry.CDT_LIBRARY :
 					return CPluginImages.get(CPluginImages.IMG_OBJS_LIBRARY);
 				case -1 :
-					return fCImages.getImageLabel( ((CPElementGroup)element).getResource(), CElementImageProvider.SMALL_ICONS);
+					IResource res = ((CPElementGroup)element).getResource();
+					IWorkbenchAdapter adapter = (IWorkbenchAdapter)res.getAdapter(IWorkbenchAdapter.class);
+					ImageDescriptor imageDescriptor = adapter.getImageDescriptor(res);
+					if (!res.exists()) {
+						imageDescriptor = new CPListImageDescriptor(imageDescriptor, CPListImageDescriptor.WARNING, SMALL_SIZE);
+					}
+					return fRegistry.get(imageDescriptor);
 			}
 		}
 		return null;

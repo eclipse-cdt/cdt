@@ -560,7 +560,7 @@ public class CDescriptor implements ICDescriptor {
 		NodeList nodes = doc.getDocumentElement().getElementsByTagName(PROJECT_DATA_ITEM);
 		for (int i = 0; i < nodes.getLength(); ++i) {
 			Element element = (Element)nodes.item(i);
-			if (element.getAttribute(PROJECT_DATA_ID).equals(id))
+			if (element != null && element.getAttribute(PROJECT_DATA_ID).equals(id))
 				return element;
 		}
 

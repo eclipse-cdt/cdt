@@ -114,7 +114,10 @@ public class SourceLookupBlock
 			{
 				if ( element instanceof IProjectSourceLocation )
 				{
-					return CDebugImages.get( CDebugImages.IMG_OBJS_PROJECT );
+					if ( ((IProjectSourceLocation)element).getProject().isOpen() )
+						return CDebugImages.get( CDebugImages.IMG_OBJS_PROJECT );
+					else
+						return CDebugImages.get( CDebugImages.IMG_OBJS_CLOSED_PROJECT );
 				}
 				if ( element instanceof IDirectorySourceLocation )
 				{
@@ -342,12 +345,12 @@ public class SourceLookupBlock
 		List list = getReferencedProjects( project );
 		IProject[] refs = (IProject[])list.toArray( new IProject[list.size()] );
 		ICSourceLocation loc = getLocationForProject( project, locations );
-		boolean checked = ( loc != null && !((IProjectSourceLocation)loc).isGeneric() );
+		boolean checked = ( loc != null && ((IProjectSourceLocation)loc).isGeneric() );
 		if ( loc == null )
 			loc = SourceLocationFactory.createProjectSourceLocation( project, true );
 		fGeneratedSourceListField.addElement( loc );
 		fGeneratedSourceListField.setChecked( loc, checked );
-		
+
 		for ( int i = 0; i < refs.length; ++i )
 		{
 			loc = getLocationForProject( refs[i], locations );

@@ -1,4 +1,10 @@
 2003-07-24 Mikhail Khodjaiants
+	New icon for closed projects.
+	* icons/full/obj16/cproject_obj.gif: new
+	* CDebugImages.java
+	* SourceLookupBlock.java
+
+2003-07-24 Mikhail Khodjaiants
 	When initializing the generic source locations list filter out non-generic locations.
 	* SourceLookupBlock.java
 

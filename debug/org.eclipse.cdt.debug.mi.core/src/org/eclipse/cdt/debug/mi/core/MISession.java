@@ -249,6 +249,14 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 		// The Event Thread is being kill below.
 		notifyObservers(new MIGDBExitEvent());
 		
+		// {in,out}Channel is use as predicate/condition
+		// in the {RX,TX,Event}Thread to detect termination
+		// and bail out.  So they are set to null.
+		InputStream inGDB = inChannel;
+		inChannel = null;
+		OutputStream outGDB = outChannel;
+		outChannel = null;
+
 		// send the exit(-gdb-exit).
 		try {
 			MIGDBExit exit = factory.createMIGDBExit();
@@ -258,20 +266,17 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 		
 		// Close the input GDB prompt
 		try {
-			if (inChannel != null)
-				inChannel.close();
+			if (inGDB != null)
+				inGDB.close();
 		} catch (IOException e) {
 		}
-		inChannel = null;
 
 		// Close the output GDB prompt
 		try {
-			if (outChannel != null)
-				outChannel.close();
+			if (outGDB != null)
+				outGDB.close();
 		} catch (IOException e) {
 		}
-		// This is __needed__ to stop the txThread and eventThread.
-		outChannel = null;
 		
 		// Kill the Transmition thread.
 		try {
@@ -309,7 +314,7 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 		} catch (IOException e) {
 		}
 		
-		// Make sure it gdb is killed.
+		// Make sure gdb is killed.
 		// FIX: Spawner will do the waitFor();
 		if (miProcess != null) {
 			miProcess.destroy();

@@ -839,6 +839,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 		if (tu == null)
 			return EMPTY_LOCATION_ARRAY;
 		_Context c = findContextForOffset(offset);
+		if( c == null ) 
+		   return EMPTY_LOCATION_ARRAY;
 		if (c.context_ends >= offset + length)
 			return createSoleLocation(c, offset, length);
 

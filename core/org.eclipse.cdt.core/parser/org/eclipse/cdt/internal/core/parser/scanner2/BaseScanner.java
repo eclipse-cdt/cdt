@@ -334,7 +334,7 @@ abstract class BaseScanner implements IScanner {
          long r1 = unaryExpression();
          for (int t = LA(); t == tMULT || t == tDIV; t = LA()) {
             int position = pos; // for IProblem /0 below, need position before
-                                // consume()
+            // consume()
             consume();
             long r2 = unaryExpression();
             if (t == tMULT)
@@ -973,7 +973,7 @@ abstract class BaseScanner implements IScanner {
                         }
                         continue;
                      } else if (buffer[p + 1] == '*') { // C comment, find
-                                                        // closing */
+                        // closing */
                         for (bufferPos[bufferStackPos] += 2; bufferPos[bufferStackPos] < limit; ++bufferPos[bufferStackPos]) {
                            p = bufferPos[bufferStackPos];
                            if (buffer[p] == '*' && p + 1 < limit
@@ -1247,6 +1247,7 @@ abstract class BaseScanner implements IScanner {
          System.arraycopy(oldLineOffsets, 0, lineOffsets, 0,
                oldLineOffsets.length);
 
+         
       }
 
       bufferStack[bufferStackPos] = buffer;
@@ -1283,6 +1284,8 @@ abstract class BaseScanner implements IScanner {
    }
 
    protected Object popContext() {
+      //NOTE - do not set counters to 0 or -1 or something
+      //Subclasses may require those values in their popContext()
       bufferStack[bufferStackPos] = null;
 
       Object result = bufferData[bufferStackPos];
@@ -1293,7 +1296,6 @@ abstract class BaseScanner implements IScanner {
          pushForcedInclusion();
       return result;
    }
-
    /**
     *  
     */
@@ -2466,19 +2468,19 @@ abstract class BaseScanner implements IScanner {
                      skipOverConditionalCode(true);
                      if (isLimitReached())
                         handleInvalidCompletion();
-                     processIf( pos, bufferPos[bufferStackPos], true );
+                     processIf(pos, bufferPos[bufferStackPos], true);
                   }
-                  processIf( pos, bufferPos[bufferStackPos], false );
+                  processIf(pos, bufferPos[bufferStackPos], false);
                   return;
                case ppElse:
                case ppElif:
                   // Condition must have been true, skip over the rest
 
                   if (branchState(type == ppElse ? BRANCH_ELSE : BRANCH_ELIF)) {
-                     if( type == ppElse )
-                        processElse( pos, bufferPos[bufferStackPos], false );
+                     if (type == ppElse)
+                        processElse(pos, bufferPos[bufferStackPos], false);
                      else
-                        processElsif( pos, bufferPos[bufferStackPos], false );
+                        processElsif(pos, bufferPos[bufferStackPos], false);
                      skipToNewLine();
                      skipOverConditionalCode(false);
                   } else {
@@ -2501,17 +2503,17 @@ abstract class BaseScanner implements IScanner {
                      len = bufferPos[bufferStackPos] - start;
                   handleProblem(IProblem.PREPROCESSOR_POUND_ERROR, start,
                         CharArrayUtils.extract(buffer, start, len));
-                  processError( pos, pos + len );
+                  processError(pos, pos + len);
                   break;
                case ppEndif:
                   if (!branchState(BRANCH_END))
                      handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION,
                            start, ppKeywords.findKey(buffer, start, len));
-                  processEndif( pos, bufferPos[bufferStackPos ] );
+                  processEndif(pos, bufferPos[bufferStackPos]);
                   break;
                case ppPragma:
                   skipToNewLine();
-                  processPragma( pos, bufferPos[bufferStackPos ]);
+                  processPragma(pos, bufferPos[bufferStackPos]);
                default:
                   problem = true;
                   break;
@@ -2545,17 +2547,20 @@ abstract class BaseScanner implements IScanner {
     * @param endPos
     */
    protected abstract void processError(int startPos, int endPos);
+
    protected abstract void processElsif(int startPos, int endPos, boolean taken);
+
    protected abstract void processElse(int startPos, int endPos, boolean taken);
-   
+
    /**
     * @param pos
     * @param i
     * @param b
     */
-   protected abstract void processIf(int startPos, int endPos, boolean taken );
+   protected abstract void processIf(int startPos, int endPos, boolean taken);
 
-   protected void handlePPInclude(int pos2, boolean include_next, int startingLineNumber) {
+   protected void handlePPInclude(int pos2, boolean include_next,
+         int startingLineNumber) {
       char[] buffer = bufferStack[bufferStackPos];
       int limit = bufferLimit[bufferStackPos];
 
@@ -2576,95 +2581,95 @@ abstract class BaseScanner implements IScanner {
       char c = buffer[pos];
       int start;
       int length;
-      
+
       switch (c) {
-      case '\n' :
-         return;
-      case '"' :
-         nameLine = getLineNumber(bufferPos[bufferStackPos]);
-         local = true;
-         start = bufferPos[bufferStackPos] + 1;
-         length = 0;
-         boolean escaped = false;
-         while (++bufferPos[bufferStackPos] < limit) {
-            ++length;
-            c = buffer[bufferPos[bufferStackPos]];
-            if (c == '"') {
-               if (!escaped)
-                  break;
-            } else if (c == '\\') {
-               escaped = !escaped;
-               continue;
+         case '\n':
+            return;
+         case '"':
+            nameLine = getLineNumber(bufferPos[bufferStackPos]);
+            local = true;
+            start = bufferPos[bufferStackPos] + 1;
+            length = 0;
+            boolean escaped = false;
+            while (++bufferPos[bufferStackPos] < limit) {
+               ++length;
+               c = buffer[bufferPos[bufferStackPos]];
+               if (c == '"') {
+                  if (!escaped)
+                     break;
+               } else if (c == '\\') {
+                  escaped = !escaped;
+                  continue;
+               }
+               escaped = false;
             }
-            escaped = false;
-         }
-         --length;
+            --length;
 
-         filename = new String(buffer, start, length);
-         nameOffset = start;
-         nameEndOffset = start + length;
-         endOffset = start + length + 1;
-         break;
-      case '<' : 
-         nameLine = getLineNumber(bufferPos[bufferStackPos]);
-         local = false;
-         start = bufferPos[bufferStackPos] + 1;
-         length = 0;
-
-         while (++bufferPos[bufferStackPos] < limit
-               && buffer[bufferPos[bufferStackPos]] != '>')
-            ++length;
-         endOffset = start + length + 1;
-         nameOffset = start;
-         nameEndOffset = start + length;
-
-         filename = new String(buffer, start, length);
-         break;
-      default: 
-         // handle macro expansions
-         int startPos = pos;
-         int len = 1;
-         while (++bufferPos[bufferStackPos] < limit) {
-            c = buffer[bufferPos[bufferStackPos]];
-            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'
-                  || (c >= '0' && c <= '9')
-                  || Character.isUnicodeIdentifierPart(c)) {
-               ++len;
-               continue;
-            } else if (c == '\\'
-                  && bufferPos[bufferStackPos] + 1 < buffer.length
-                  && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
-               // escaped newline
-               ++bufferPos[bufferStackPos];
-               len += 2;
-               continue;
-            }
+            filename = new String(buffer, start, length);
+            nameOffset = start;
+            nameEndOffset = start + length;
+            endOffset = start + length + 1;
             break;
-         }
+         case '<':
+            nameLine = getLineNumber(bufferPos[bufferStackPos]);
+            local = false;
+            start = bufferPos[bufferStackPos] + 1;
+            length = 0;
 
-         Object expObject = definitions.get(buffer, startPos, len);
+            while (++bufferPos[bufferStackPos] < limit
+                  && buffer[bufferPos[bufferStackPos]] != '>')
+               ++length;
+            endOffset = start + length + 1;
+            nameOffset = start;
+            nameEndOffset = start + length;
 
-         if (expObject != null) {
-            --bufferPos[bufferStackPos];
-            char[] t = null;
-            if (expObject instanceof FunctionStyleMacro) {
-               t = handleFunctionStyleMacro((FunctionStyleMacro) expObject,
-                     false);
-            } else if (expObject instanceof ObjectStyleMacro) {
-               t = ((ObjectStyleMacro) expObject).expansion;
+            filename = new String(buffer, start, length);
+            break;
+         default:
+            // handle macro expansions
+            int startPos = pos;
+            int len = 1;
+            while (++bufferPos[bufferStackPos] < limit) {
+               c = buffer[bufferPos[bufferStackPos]];
+               if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'
+                     || (c >= '0' && c <= '9')
+                     || Character.isUnicodeIdentifierPart(c)) {
+                  ++len;
+                  continue;
+               } else if (c == '\\'
+                     && bufferPos[bufferStackPos] + 1 < buffer.length
+                     && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
+                  // escaped newline
+                  ++bufferPos[bufferStackPos];
+                  len += 2;
+                  continue;
+               }
+               break;
             }
-            if (t != null) {
-               t = replaceArgumentMacros(t);
-               if ((t[t.length - 1] == t[0]) && (t[0] == '\"')) {
-                  local = true;
-                  filename = new String(t, 1, t.length - 2);
-               } else if (t[0] == '<' && t[t.length - 1] == '>') {
-                  local = false;
-                  filename = new String(t, 1, t.length - 2);
+
+            Object expObject = definitions.get(buffer, startPos, len);
+
+            if (expObject != null) {
+               --bufferPos[bufferStackPos];
+               char[] t = null;
+               if (expObject instanceof FunctionStyleMacro) {
+                  t = handleFunctionStyleMacro((FunctionStyleMacro) expObject,
+                        false);
+               } else if (expObject instanceof ObjectStyleMacro) {
+                  t = ((ObjectStyleMacro) expObject).expansion;
+               }
+               if (t != null) {
+                  t = replaceArgumentMacros(t);
+                  if ((t[t.length - 1] == t[0]) && (t[0] == '\"')) {
+                     local = true;
+                     filename = new String(t, 1, t.length - 2);
+                  } else if (t[0] == '<' && t[t.length - 1] == '>') {
+                     local = false;
+                     filename = new String(t, 1, t.length - 2);
+                  }
                }
             }
-         }
-         break;
+            break;
       }
 
       if (filename == null || filename == EMPTY_STRING) {
@@ -2684,94 +2689,92 @@ abstract class BaseScanner implements IScanner {
          quickParsePushPopInclusion(inclusion);
          return;
       }
-      
+
       CodeReader reader = null;
-	  File currentDirectory = null;
-	  if (local || include_next) {
-			// if the include is eclosed in quotes OR we are in an include_next then we need to know what the current directory is!
-			File file = new File(String.valueOf(getCurrentFilename()));
-			currentDirectory = file.getParentFile();
-	  }
-	  
+      File currentDirectory = null;
+      if (local || include_next) {
+         // if the include is eclosed in quotes OR we are in an include_next
+         // then we need to know what the current directory is!
+         File file = new File(String.valueOf(getCurrentFilename()));
+         currentDirectory = file.getParentFile();
+      }
 
-	  if (local && !include_next) {
-			// Check to see if we find a match in the current directory
-			if (currentDirectory != null) {
-				String absolutePath = currentDirectory.getAbsolutePath();
-				reader = createReader(absolutePath, filename);
-				if (reader != null) {
-					pushContext(reader.buffer, new InclusionData(reader,
-							createInclusionConstruct(fileNameArray,
-									reader.filename, local, startOffset,
-									startingLineNumber, nameOffset,
-									nameEndOffset, nameLine, endOffset,
-									endLine, false)));
-					return;
-				}
-			}
-		}
-
-         // if we're not include_next, then we are looking for the
-         // first occurance of the file, otherwise, we ignore all the paths before the 
-		 // current directory
-         if (includePaths != null) {
-    	  	int startpos = 0;
-    	  	if (include_next)
-    	  		startpos = findIncludePos(includePaths, currentDirectory) + 1;
-            for (int i = startpos; i < includePaths.length; ++i) {
-            	reader = createReader(includePaths[i], filename);
-				if (reader != null) {
-					pushContext(reader.buffer, new InclusionData(reader,
-							createInclusionConstruct(fileNameArray,
-									reader.filename, local, startOffset,
-									startingLineNumber, nameOffset,
-									nameEndOffset, nameLine, endOffset,
-									endLine, false)));
-					return;
-				}
-			}
+      if (local && !include_next) {
+         // Check to see if we find a match in the current directory
+         if (currentDirectory != null) {
+            String absolutePath = currentDirectory.getAbsolutePath();
+            reader = createReader(absolutePath, filename);
+            if (reader != null) {
+               pushContext(reader.buffer, new InclusionData(reader,
+                     createInclusionConstruct(fileNameArray, reader.filename,
+                           local, startOffset, startingLineNumber, nameOffset,
+                           nameEndOffset, nameLine, endOffset, endLine, false)));
+               return;
+            }
          }
-        
-        handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset, fileNameArray);
-   }
-   
-   private CodeReader createReader(String path, String fileName)
-   {
-   	String finalPath = ScannerUtility.createReconciledPath(path, fileName);
-   	char [] finalPathc = finalPath.toCharArray();
-   	CodeReader reader = (CodeReader) fileCache.get(finalPathc);
-	if (reader != null)
-		return reader;  // found the file in the cache
-	
-	// create a new reader on this file (if the file does not exist we will get null)
-	reader = createReaderDuple(finalPath);
-	if (reader == null) 
-		return null;  // the file was not found
-	
-	if (reader.filename != null)
-		// put the full requested path in the cache -- it is more likely 
-		// to match next time than the reader.filename
-		fileCache.put(finalPathc, reader);
-	return reader;
+      }
+
+      // if we're not include_next, then we are looking for the
+      // first occurance of the file, otherwise, we ignore all the paths before
+      // the
+      // current directory
+      if (includePaths != null) {
+         int startpos = 0;
+         if (include_next)
+            startpos = findIncludePos(includePaths, currentDirectory) + 1;
+         for (int i = startpos; i < includePaths.length; ++i) {
+            reader = createReader(includePaths[i], filename);
+            if (reader != null) {
+               pushContext(reader.buffer, new InclusionData(reader,
+                     createInclusionConstruct(fileNameArray, reader.filename,
+                           local, startOffset, startingLineNumber, nameOffset,
+                           nameEndOffset, nameLine, endOffset, endLine, false)));
+               return;
+            }
+         }
+      }
+
+      handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset,
+            fileNameArray);
    }
 
-   private int findIncludePos( String[] paths, File currentDirectory)
-   {
-   		for (int i = 0; i < paths.length; ++i)
-			try {
-				String path = new File(paths[i]).getCanonicalPath();
-				String parent = currentDirectory.getCanonicalPath();
-				if (path.equals(parent))
-					return i;
-			} catch (IOException e) {
-			}
+   protected CodeReader createReader(String path, String fileName) {
+      String finalPath = ScannerUtility.createReconciledPath(path, fileName);
+      char[] finalPathc = finalPath.toCharArray();
+      CodeReader reader = (CodeReader) fileCache.get(finalPathc);
+      if (reader != null)
+         return reader; // found the file in the cache
 
-		return -1;
+      // create a new reader on this file (if the file does not exist we will
+      // get null)
+      reader = createReaderDuple(finalPath);
+      if (reader == null)
+         return null; // the file was not found
+
+      if (reader.filename != null)
+         // put the full requested path in the cache -- it is more likely
+         // to match next time than the reader.filename
+         fileCache.put(finalPathc, reader);
+      return reader;
    }
+
+   private int findIncludePos(String[] paths, File currentDirectory) {
+      for (int i = 0; i < paths.length; ++i)
+         try {
+            String path = new File(paths[i]).getCanonicalPath();
+            String parent = currentDirectory.getCanonicalPath();
+            if (path.equals(parent))
+               return i;
+         } catch (IOException e) {
+         }
+
+      return -1;
+   }
+
    /**
-	 * @param finalPath
-	 * @return
-	 */
+    * @param finalPath
+    * @return
+    */
    protected abstract CodeReader createReaderDuple(String finalPath);
 
    /**
@@ -2859,7 +2862,7 @@ abstract class BaseScanner implements IScanner {
          if (CharArrayUtils.equals(buffer, bufferPos[bufferStackPos] + 1,
                VA_ARGS_CHARARRAY.length, VA_ARGS_CHARARRAY)) {
             usesVarArgInDefinition = true; // __VA_ARGS__ is in definition, used
-                                           // to check C99 6.10.3-5
+            // to check C99 6.10.3-5
             varArgDefinitionInd = bufferPos[bufferStackPos] + 1;
          }
 
@@ -2874,7 +2877,7 @@ abstract class BaseScanner implements IScanner {
             boolean isArg = false;
             if (bufferPos[bufferStackPos] + 1 < limit) {
                ++bufferPos[bufferStackPos]; //advances us past the # (or last
-                                            // whitespace)
+               // whitespace)
                for (int i = 0; i < arglist.length && arglist[i] != null; i++) {
                   if (bufferPos[bufferStackPos] + arglist[i].length - 1 < limit) {
                      if (arglist[i].length > 3
@@ -2994,7 +2997,7 @@ abstract class BaseScanner implements IScanner {
                && bufferPos[bufferStackPos] + 2 < limit
                && buffer[bufferPos[bufferStackPos] + 2] == '.') {
             bufferPos[bufferStackPos]--; // move back and let skipOverIdentifier
-                                         // handle the ellipsis
+            // handle the ellipsis
          } else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
                || c == '_' || Character.isUnicodeIdentifierPart(c))) {
             if (reportProblems) {
@@ -3103,7 +3106,7 @@ abstract class BaseScanner implements IScanner {
          handleCompletionOnDefinition(new String(buffer, idstart, idlen));
 
       skipToNewLine();
-      processUndef( pos, bufferPos[bufferStackPos] );
+      processUndef(pos, bufferPos[bufferStackPos]);
 
       definitions.remove(buffer, idstart, idlen);
    }
@@ -3114,7 +3117,8 @@ abstract class BaseScanner implements IScanner {
     */
    protected abstract void processUndef(int pos, int endPos);
 
-   protected void handlePPIfdef(int pos, boolean positive) throws EndOfFileException {
+   protected void handlePPIfdef(int pos, boolean positive)
+         throws EndOfFileException {
       char[] buffer = bufferStack[bufferStackPos];
       int limit = bufferLimit[bufferStackPos];
 
@@ -3161,18 +3165,19 @@ abstract class BaseScanner implements IScanner {
       branchState(BRANCH_IF);
 
       if ((definitions.get(buffer, idstart, idlen) != null) == positive) {
-         processIfdef( pos, bufferPos[bufferStackPos], positive, true );
+         processIfdef(pos, bufferPos[bufferStackPos], positive, true);
          return;
       }
 
-      processIfdef( pos, bufferPos[bufferStackPos], positive, false );
+      processIfdef(pos, bufferPos[bufferStackPos], positive, false);
       // skip over this group
       skipOverConditionalCode(true);
       if (isLimitReached())
          handleInvalidCompletion();
    }
 
-   protected abstract void processIfdef(int startPos, int endPos, boolean positive, boolean taken);
+   protected abstract void processIfdef(int startPos, int endPos,
+         boolean positive, boolean taken);
 
    // checkelse - if potential for more, otherwise skip to endif
    protected void skipOverConditionalCode(boolean checkelse) {
@@ -3218,21 +3223,25 @@ abstract class BaseScanner implements IScanner {
                         ++nesting;
                         branchState(BRANCH_IF);
                         skipToNewLine();
-                        if( type == ppIfdef )
-                           processIfdef( startPos, bufferPos[bufferStackPos], true, false );
-                        else if( type == ppIfndef )
-                           processIfdef( startPos, bufferPos[bufferStackPos], false, false );
+                        if (type == ppIfdef)
+                           processIfdef(startPos, bufferPos[bufferStackPos],
+                                 true, false);
+                        else if (type == ppIfndef)
+                           processIfdef(startPos, bufferPos[bufferStackPos],
+                                 false, false);
                         else
-                           processIf( startPos, bufferPos[bufferStackPos], false );
+                           processIf(startPos, bufferPos[bufferStackPos], false);
                         break;
                      case ppElse:
                         if (branchState(BRANCH_ELSE)) {
                            skipToNewLine();
                            if (checkelse && nesting == 0) {
-                              processElse( startPos, bufferPos[ bufferStackPos], true );
+                              processElse(startPos, bufferPos[bufferStackPos],
+                                    true);
                               return;
                            }
-                           processElse( startPos, bufferPos[ bufferStackPos], false );
+                           processElse(startPos, bufferPos[bufferStackPos],
+                                 false);
                         } else {
                            //problem, ignore this one.
                            handleProblem(
@@ -3251,18 +3260,18 @@ abstract class BaseScanner implements IScanner {
                               if (expressionEvaluator.evaluate(buffer, start,
                                     len, definitions,
                                     getLineNumber(bufferPos[bufferStackPos]),
-                                    getCurrentFilename()) != 0)
-                              {
+                                    getCurrentFilename()) != 0) {
                                  // condition passed, we're good
-                                 processElsif( start, bufferPos[bufferStackPos], true);
+                                 processElsif(start, bufferPos[bufferStackPos],
+                                       true);
                                  return;
                               }
-                              processElsif( start, bufferPos[bufferStackPos], false );
-                           }
-                           else
-                           {
+                              processElsif(start, bufferPos[bufferStackPos],
+                                    false);
+                           } else {
                               skipToNewLine();
-                              processElsif( start, bufferPos[bufferStackPos], false );
+                              processElsif(start, bufferPos[bufferStackPos],
+                                    false);
                            }
                         } else {
                            //problem, ignore this one.
@@ -3274,7 +3283,7 @@ abstract class BaseScanner implements IScanner {
                         break;
                      case ppEndif:
                         if (branchState(BRANCH_END)) {
-                           processEndif( startPos, bufferPos[ bufferStackPos ]);
+                           processEndif(startPos, bufferPos[bufferStackPos]);
                            if (nesting > 0) {
                               --nesting;
                            } else {
@@ -3593,7 +3602,7 @@ abstract class BaseScanner implements IScanner {
 
                if (c2 == ')') { // good
                   bufferPos[bufferStackPos] = end; // point at the end of ... to
-                                                   // get the argument
+                  // get the argument
                   return;
                }
 
@@ -4395,8 +4404,7 @@ abstract class BaseScanner implements IScanner {
       return language;
    }
 
-   protected CodeReader getMainReader()
-   {
+   protected CodeReader getMainReader() {
       if (bufferData != null && bufferData[0] != null
             && bufferData[0] instanceof CodeReader)
          return ((CodeReader) bufferData[0]);
@@ -4430,25 +4438,25 @@ abstract class BaseScanner implements IScanner {
       return 0;
    }
 
-   protected final CharArrayIntMap  keywords;
-   protected static CharArrayIntMap ckeywords;
-   protected static CharArrayIntMap cppkeywords;
-   protected static CharArrayIntMap ppKeywords;
-   protected static final int       ppIf           = 0;
-   protected static final int       ppIfdef        = 1;
-   protected static final int       ppIfndef       = 2;
-   protected static final int       ppElif         = 3;
-   protected static final int       ppElse         = 4;
-   protected static final int       ppEndif        = 5;
-   protected static final int       ppInclude      = 6;
-   protected static final int       ppDefine       = 7;
-   protected static final int       ppUndef        = 8;
-   protected static final int       ppError        = 9;
-   protected static final int       ppInclude_next = 10;
-   protected static final int       ppPragma = 11;
+   protected final CharArrayIntMap          keywords;
+   protected static CharArrayIntMap         ckeywords;
+   protected static CharArrayIntMap         cppkeywords;
+   protected static CharArrayIntMap         ppKeywords;
+   protected static final int               ppIf            = 0;
+   protected static final int               ppIfdef         = 1;
+   protected static final int               ppIfndef        = 2;
+   protected static final int               ppElif          = 3;
+   protected static final int               ppElse          = 4;
+   protected static final int               ppEndif         = 5;
+   protected static final int               ppInclude       = 6;
+   protected static final int               ppDefine        = 7;
+   protected static final int               ppUndef         = 8;
+   protected static final int               ppError         = 9;
+   protected static final int               ppInclude_next  = 10;
+   protected static final int               ppPragma        = 11;
 
-   protected static final char[]    TAB            = { '\t' };
-   protected static final char[]    SPACE          = { ' ' };
+   protected static final char[]            TAB             = { '\t' };
+   protected static final char[]            SPACE           = { ' ' };
    private static final MacroExpansionToken EXPANSION_TOKEN = new MacroExpansionToken();
 
    static {

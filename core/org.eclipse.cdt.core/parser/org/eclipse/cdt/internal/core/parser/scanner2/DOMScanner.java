@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -31,9 +30,8 @@ import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
  */
 public class DOMScanner extends BaseScanner {
 
-   private final ICodeReaderFactory codeReaderFactory;
-   private int                      globalCounter = 0;
-   private int                      contextDelta  = 0;
+   protected final ICodeReaderFactory codeReaderFactory;
+   protected int						[] bufferDelta = new int[ bufferInitialSize ];
 
    private static class DOMInclusion {
       public final char[] pt;
@@ -138,16 +136,25 @@ public class DOMScanner extends BaseScanner {
     *      java.lang.Object)
     */
    protected void pushContext(char[] buffer, Object data) {
+      if( bufferStackPos + 1 == bufferDelta.length )
+      {
+         int size = bufferDelta.length * 2;
+         int[] oldBufferDelta = bufferDelta;
+         bufferDelta = new int[size];
+         System.arraycopy(oldBufferDelta, 0, bufferDelta, 0, oldBufferDelta.length);
+      }
+
       if (data instanceof InclusionData) {
+         
          if (log.isTracing()) {
             StringBuffer b = new StringBuffer("Entering inclusion "); //$NON-NLS-1$
             b.append(((InclusionData) data).reader.filename);
             log.traceLog(b.toString());
          }
+         
          DOMInclusion inc = ((DOMInclusion) ((InclusionData) data).inclusion);
-         globalCounter += getCurrentOffset();
-         locationMap.startInclusion(((InclusionData)data).reader, inc.o, globalCounter);
-         contextDelta = 0;
+         locationMap.startInclusion(((InclusionData)data).reader, inc.o, resolveOffset( getCurrentOffset() ));
+         bufferDelta[bufferStackPos + 1 ] = 0;
       }
       super.pushContext(buffer, data);
    }
@@ -161,22 +168,36 @@ public class DOMScanner extends BaseScanner {
       //TODO calibrate offsets
       Object result = super.popContext();
       if (result instanceof CodeReader) {
-         globalCounter += (((CodeReader) result).buffer.length - contextDelta);
-         locationMap.endTranslationUnit(globalCounter);
+         locationMap.endTranslationUnit( bufferDelta[0] + ((CodeReader)result).buffer.length );
       }
       if (result instanceof InclusionData) {
+         CodeReader codeReader = ((InclusionData) result).reader;
          if (log.isTracing()) {
             StringBuffer buffer = new StringBuffer("Exiting inclusion "); //$NON-NLS-1$
-            buffer
-                  .append(((InclusionData) bufferData[bufferStackPos]).reader.filename);
+            buffer.append(codeReader.filename);
             log.traceLog(buffer.toString());
          }
 
-         globalCounter += (((InclusionData) result).reader.buffer.length - contextDelta);
-         contextDelta = getCurrentOffset();
-         locationMap.endInclusion(globalCounter);
+         locationMap.endInclusion(getGlobalCounter( bufferStackPos + 1  ) + bufferPos[ bufferStackPos + 1 ]);
+         bufferDelta[ bufferStackPos ] += bufferDelta[ bufferStackPos + 1 ] + codeReader.buffer.length;
       }
       return result;
+   }
+   
+   protected int getGlobalCounter( int value )
+   {
+      if( value < 0 ) return 0;
+      int result = bufferDelta[ value ];
+      for( int i = value - 1; i >= 0; --i )
+         result += bufferPos[ i ] + bufferDelta[ i ]; 
+      
+      return result;
+      
+   }
+   
+   protected int getGlobalCounter()
+   {
+      return getGlobalCounter( bufferStackPos );
    }
 
    /**
@@ -252,7 +273,7 @@ public class DOMScanner extends BaseScanner {
     * @return
     */
    private int resolveOffset(int offset) {
-      return globalCounter - contextDelta + offset;
+      return getGlobalCounter() + offset;
    }
 
    /*
@@ -264,16 +285,6 @@ public class DOMScanner extends BaseScanner {
    protected void postConstructorSetup(CodeReader reader, IScannerInfo info) {
       super.postConstructorSetup(reader, info);
       locationMap.startTranslationUnit(getMainReader());
-   }
-
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#throwEOF()
-    */
-   protected void throwEOF() throws EndOfFileException {
-      locationMap.endTranslationUnit(globalCounter);
-      super.throwEOF();
    }
 
    /* (non-Javadoc)

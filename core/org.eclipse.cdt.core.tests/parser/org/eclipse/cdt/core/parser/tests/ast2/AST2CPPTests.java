@@ -2533,5 +2533,30 @@ public class AST2CPPTests extends AST2BaseTest {
         
         assertInstances( col, f, 2 );
     }
+    
+    public void testBug86678 () throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class B;                                 \n"); //$NON-NLS-1$
+        buffer.append("class A {                                \n"); //$NON-NLS-1$
+        buffer.append("   int i;                                \n"); //$NON-NLS-1$
+        buffer.append("   friend void f( B * );                 \n"); //$NON-NLS-1$
+        buffer.append("};                                       \n"); //$NON-NLS-1$
+        buffer.append("class B : public A {};                   \n"); //$NON-NLS-1$
+        buffer.append("void f( B* p ) {                         \n"); //$NON-NLS-1$
+        buffer.append("   p->i = 1;                             \n"); //$NON-NLS-1$
+        buffer.append("}                                        \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        ICPPClassType B = (ICPPClassType) col.getName(6).resolveBinding();
+        ICPPField i = (ICPPField) col.getName(12).resolveBinding();
+        IParameter p = (IParameter) col.getName(10).resolveBinding();
+        
+        assertInstances( col, B, 4 );
+        assertInstances( col, i, 2 );
+        assertInstances( col, p, 3 );
+    }
 }
 

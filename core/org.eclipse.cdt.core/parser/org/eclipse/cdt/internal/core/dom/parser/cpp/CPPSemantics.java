@@ -1240,7 +1240,7 @@ public class CPPSemantics {
 	        } else if( temp instanceof IType ){
 	        	if( type == null ){
 	                type = temp;
-	            } else {
+	            } else if( type != temp ) {
 	                return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	            }
 	        } else if( temp instanceof IFunction ){

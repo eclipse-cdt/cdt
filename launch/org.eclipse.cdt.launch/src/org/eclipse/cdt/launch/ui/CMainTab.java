@@ -320,6 +320,10 @@ public class CMainTab extends CLaunchConfigurationTab {
 			setErrorMessage("Program not specified");
 			return false;
 		}
+		if ( name.equals(".") || name.equals("..")) {
+			setErrorMessage("Program does not exist");
+			return false;
+		}
 		if (!project.getFile(name).exists()) {
 			setErrorMessage("Program does not exist");
 			return false;

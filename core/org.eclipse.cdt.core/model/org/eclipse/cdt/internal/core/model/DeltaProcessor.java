@@ -353,7 +353,7 @@ public class DeltaProcessor {
 	protected void traverseDelta(ICElement parent, IResourceDelta delta) {
 		try {
 			ICElement current = updateCurrentDeltaAndIndex(delta);
-			if (current == null) {
+			if (current == null || (current instanceof ICProject && !((ICProject)current).getProject().isOpen())) {
 				nonCResourcesChanged(parent, delta);
 			} else {
 				parent = current;
@@ -362,7 +362,7 @@ public class DeltaProcessor {
 		}
 		IResourceDelta [] children = delta.getAffectedChildren();
 		for (int i = 0; i < children.length; i++) {
-				traverseDelta(parent, children[i]);
+			traverseDelta(parent, children[i]);
 		}
 	}
 

@@ -131,11 +131,15 @@ public class CTarget  implements ICDITarget {
 	 */
 	void updateState(int newThreadId) {
 		CThread[] oldThreads = currentThreads;
+
+		// If we use "info threads" in getCThreads() this
+		// will be overwritten.  However if we use -stack-list-threads
+		// it does not provide to the current thread
+		currentThreadId = newThreadId;
 		// get the new Threads.
 		CThread[] newThreads = getCThreads();
 
 		currentThreads = newThreads;
-		currentThreadId = newThreadId;
 
 		// Fire destroyedEvent for old threads.
 		if (oldThreads != null && oldThreads.length > 0) {

@@ -18,6 +18,7 @@ import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeScannerInfo;
 import org.eclipse.cdt.make.core.MakeScannerProvider;
+import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -38,6 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BuildPathInfoBlock extends AbstractCOptionPage {
 
@@ -386,6 +388,9 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		Composite composite = ControlFactory.createComposite(parent, tabColumns);
 		composite.setFont(font);
 		GridData gd;
+		setControl(composite);
+
+		WorkbenchHelp.setHelp(getControl(), IMakeHelpContextIds.MAKE_PATH_SYMBOL_SETTINGS);
 
 		// Create a label for the include paths control
 		Label paths = ControlFactory.createLabel(composite, CUIPlugin.getResourceString(PATHS));
@@ -416,7 +421,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		enablePathButtons();
 		symbolList.select(0);
 		enableSymbolButtons();
-		setControl(composite);
 	}
 
 	private String[] getPathListContents() {

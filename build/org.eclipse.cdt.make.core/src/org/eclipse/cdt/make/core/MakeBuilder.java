@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -110,8 +111,14 @@ public class MakeBuilder extends ACBuilder {
 				// remove all markers for this project
 				removeAllMarkers(currProject);
 
-				IPath workingDirectory = info.getBuildLocation();
-				if (workingDirectory.isEmpty()) {
+				IPath workingDirectory = null;
+				if (!info.getBuildLocation().isEmpty()) {
+					IResource res = currProject.getParent().findMember(info.getBuildLocation());
+					if ( res instanceof IContainer && res.exists()) {
+						workingDirectory = res.getLocation();
+					}
+				}
+				if ( workingDirectory == null) {
 					workingDirectory = currProject.getLocation();
 				}
 				String[] targets = getTargets(kind, info);

@@ -8,6 +8,7 @@ package org.eclipse.cdt.make.ui.dialogs;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -30,6 +31,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SettingsBlock extends AbstractCOptionPage {
 
@@ -220,15 +223,23 @@ public class SettingsBlock extends AbstractCOptionPage {
 		browse.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE));
 		browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), getContainer().getProject(),  true, "Selection Locations to build from.");
+				if ( dialog.open() == ContainerSelectionDialog.OK ) {
+					Object[] selection = dialog.getResult();
+					if (selection.length > 0) {
+						buildLocation.setText(((IPath)selection[0]).toOSString());
+					}					
+				}
 			}
 		});
-		browse.setEnabled(false);
 		buildLocation.setText(fBuildInfo.getBuildLocation().toOSString());
 	}
 
 	public void createControl(Composite parent) {
 		Composite composite = ControlFactory.createComposite(parent, 1);
 		setControl(composite);
+
+		WorkbenchHelp.setHelp(getControl(), IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);
 
 		if (fBuildInfo == null) {
 			ControlFactory.createEmptySpace(composite);

@@ -2224,4 +2224,12 @@ public class QuickParseASTTests extends BaseASTTest
     	assertTrue( quickParseCallback.problems.isEmpty() );
     	assertEquals( t.getName(), "testQueries"); //$NON-NLS-1$
 	}
+    
+    public void testBug73524() throws Exception
+    {
+    	Writer writer = new StringWriter();
+    	writer.write( "static char fmt_1002[] = \"(/,\\002At iterate\\002,i5,4x,\\002f= \\002,1p,d12\\\r\n" ); //$NON-NLS-1$
+    	writer.write( ".5,4x,\\002|proj g|= \\002,1p,d12.5)\";" ); //$NON-NLS-1$
+    	IASTVariable v = (IASTVariable) assertSoleDeclaration( writer.toString(), ParserLanguage.C );
+    }
 }

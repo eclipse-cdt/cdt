@@ -55,7 +55,7 @@ import org.eclipse.core.runtime.Plugin;
  */
 public class PathEntryManager implements IPathEntryStoreListener, IElementChangedListener {
 
-	static String CONTAINER_INITIALIZER_EXTPOINT_ID = "pathEntryContainerInitializer"; //$NON-NLS-1$
+	static String CONTAINER_INITIALIZER_EXTPOINT_ID = "PathEntryContainerInitializer"; //$NON-NLS-1$
 	/**
 	 * An empty array of strings indicating that a project doesn't have any prerequesite projects.
 	 */

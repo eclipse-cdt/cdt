@@ -1,3 +1,14 @@
+2002-12-10 Alain Magloire
+
+	There is a bug in IMB j9 VM in the PipedInputStream class, when the
+	buffer is full it is returning 0 instead of buffer.length.  We
+	go around by overloading the available() method.  This should
+	be remove once the bug is fix.
+
+	* src/org.eclipse.cdt.core/CCommandLauncher.java (waitAndRead):
+	overload available() method in the input stream.
+	Set the error message correctly when the command is canceled.
+
 2002-12-06 Alain Magloire
 
 	* indexer/.../internal/core/index/CTagsentry.java (parse): Remove

@@ -1,3 +1,15 @@
+2003-04-17 Alain Magloire
+
+	Bug 36584
+	
+	When switching the through the CEditor the range was not 
+	save.
+	
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java:
+	setSelection(ICElement), new method
+	* src/org/eclipse/cdt/internal/util/EditorUtility.java:
+	revealInEditor use setSelection(ICElement).
+
 2003-04-16 Alain Magloire
 
 	Bug 36582

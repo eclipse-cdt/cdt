@@ -6,6 +6,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Customizing the C-Build view</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -13,8 +21,8 @@
 <h1>Build Console page, Preferences window</h1>
 
 <p>You can customize the appearance of the Build Console view.</p>
-
-<p><img src="../images/BuildConsole.png" border="0" width="635" height="539" alt="Build Console Preferences Dialog Box"></p>
+<p><img src="../images/BuildConsole.png" width="318" height="270" onClick="changeSize(this,318,270);" 
+	    alt="Build Console Preferences Dialog Box" title="click to toggle image size"></p>
 
 <dl>
   <dt>Always clear console before building</dt>

@@ -6,6 +6,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Outline view</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -15,7 +23,8 @@
 <p>The Outline view displays an outline of a structured C/C++ file that is currently 
 open in the editor area, by listing the structural elements. </p>
 
-<img src="../images/outlineView.png" border="0" width="838" height="312" alt="Outline View screen capture">
+<img src="../images/outlineView.png" width="429" height="156" onClick="changeSize(this,429,156);" 
+	     alt="Screen capture detailing a sample application in the editor with corrisponding element in the Outline View" title="click to toggle image size"></li>
 
 <p>The Outline view shows the following elements in the source file in the order 
 in which they occur:</p>

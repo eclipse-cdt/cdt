@@ -6,6 +6,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Content assist</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -38,7 +46,8 @@ the relevance of each proposal is determined in the following order:</p>
 You trigger the Code completion feature when you call Content Assist (such as when you type <tt>Ctrl+Space</tt>), but you also invoke it when you type 
 &quot<b>.</b>&quot, &quot<b>-></b>&quot or &quot<b>::</b>&quot.</p>
 
-<img src="../images/contentAssist_example.gif" border="0" width="598" height="544" alt="C++ example showing Code Assist popup">
+<p><img src="../images/contentAssist_example.gif" width="299" height="272" onClick="changeSize(this,299,272);" 
+     alt="C++ example showing Code Assist popup" title="click to toggle image size"></p>
 
 <p>You can view the signature of each item on the list in a pop-up by pointing 
 to it. You can then select an 
@@ -56,7 +65,8 @@ list of code elements and code templates that start with the letter combination 
 
 <p>You can then select a code template from the list and it is inserted directly into your code.</p>
 
-<p><img border="0" src="../images/editor_c_codetemplates_use.gif" width="483" height="333" alt="C++ example showing Code Assist popup"></p>
+<img src="../images/editor_c_codetemplates_use.gif" width="242" height="167" onClick="changeSize(this,242,167);" 
+     alt="C++ example showing Code Assist popup" title="click to toggle image size"></p>
 
 <p>For example, the code template <samp>do while statement</samp> contains the following code:</p>
 

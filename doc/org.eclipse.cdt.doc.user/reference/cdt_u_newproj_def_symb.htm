@@ -6,6 +6,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Paths and symbols page, C/C++ Properties window</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 <!--INFOPOP
 Enter include paths and symbols.
@@ -16,8 +24,8 @@ END INFOPOP-->
 <h1>Manage defined symbols dialog box</h1>
 
 <p>You can manage preprocessor symbols from the Manage defined symbols dialog box.</p>
-<p><img src="../images/manage_defined_symbols.png" border="0" width="589" height="484" alt="Manage Defined Symbols Dialog Box"></p>
-
+<p><img src="../images/manage_defined_symbols.png" width="295" height="242" onClick="changeSize(this,295,242);" 
+        alt="Manage Defined Symbols Dialog Box" title="click to toggle image size"></p>
 <dl>
   <dt>New</dt>
   <dd>Enter a new defined symbol.</dd>

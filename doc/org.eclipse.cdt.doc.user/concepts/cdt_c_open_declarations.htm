@@ -6,6 +6,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Open declarations</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -13,7 +21,10 @@
 <h1>Open declarations</h1>
 
 <p>You can select an element name in your code and quickly navigate to its declaration.</p>
-<img src="../images/openDeclarations.png" border="0" width="416" height="279" alt="screen capture showing Open Declarations option">
+
+<img src="../images/openDeclarations.png" width="208" height="140" onClick="changeSize(this,208,140);" 
+     alt="screen capture showing Open Declarations option" title="click to toggle image size">
+
 <p>If the search finds only one matching declaration, you will immediately jump to the declaration, even if it is in another file.  If 
 the search finds multiple declarations, a windowed list of prospects will appear.</p>
 
@@ -25,11 +36,8 @@ the search finds multiple declarations, a windowed list of prospects will appear
 declaration</a><br>
 <a href="../tasks/cdt_t_search.htm">Searching for C/C++ elements</a></p>
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
-<br>
-&nbsp;</p>
-<p>&nbsp;</p>
-<p>
-<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER="0" width="324" height="14"> </p>
+
+<p><img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER="0" width="324" height="14"> </p>
 
 </body>
 

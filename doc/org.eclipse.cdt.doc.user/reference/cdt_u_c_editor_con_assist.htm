@@ -6,6 +6,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Content Assist page, Preferences window</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 <!--INFOPOP
 Customize how the Content Assist feature works.
@@ -16,10 +24,8 @@ END INFOPOP-->
 
 <p>You can customize the Content Assist feature on the Contents Assist page of the C/C++ Editor Preferences window.  To change the Content Assist preferences click
 <b>Window &gt; Preferences &gt; C/C++ &gt; C++ Editor &gt; Content Assist.</b></p>
-<p>
-<img src="../images/contentAssist_preferences.png" border="0" width="667" height="525" alt="Content Assist Preferences Dialog Box">
-</p>
-
+<p><img src="../images/contentAssist_preferences.png" width="334" height="263" onClick="changeSize(this,334,263);" 
+	     alt="Content Assist Preferences Dialog Box" title="click to toggle image size"></p>
 
 <dl>
 	<p><dt>Search scope for completion proposals</dt>

@@ -6,15 +6,26 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Building manually</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
 
 <h1>Building manually</h1>
 
-<p>Manual builds let you choose the scope of a build, whether to build, 
-or rebuild projects. You can view the output of the make utility in the 
-console.</p>
+<p>Manual builds let you choose the scope of a build, as well as options for building, 
+or rebuilding projects. You can view the output of the make utility in the console.</p>
+
+<p><img src="../images/console_build.png" width="300" height="75" onClick="changeSize(this,300,75);" 
+	     alt="Screen capture showing sample build in console veiw" title="click to toggle image size"></p>
+
 
 <p>To rebuild all open projects:</p>
 

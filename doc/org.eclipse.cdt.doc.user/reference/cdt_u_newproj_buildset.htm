@@ -6,17 +6,22 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Make Builder page, C/C++ Properties window</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
-<!--INFOPOP
-Define the build settings for the current project.
-END INFOPOP-->
-
 <body>
 
 <h1>Make Builder page, C/C++ Preferences window</h1>
 
 <p>You can define build settings on the Make Builder page of the C/C++ Preferences window.</p>
-<p><img src="../images/new_make-builder.png" border="0" width="732" height="611" alt="Make Builder Preferences Dialog Box"></p>
+<p><img src="../images/new_make-builder.png" width="366" height="306" onClick="changeSize(this,366,306);" 
+	    alt="Make Builder Preferences Dialog Box" title="click to toggle image size"></p>
 <dl>
   <dt>Use default</dt>
   <dd>Select this checkbox to use the default make command. Clear the check box to specify a new make command.</dd>

@@ -6,6 +6,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Customizing the C-Build view</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -14,8 +22,8 @@
 
 <p>You can customize Make options.</p>
 
-<p><img src="../images/make_targets.png" border="0" width="570" height="494" alt="Make Targets Preferences Dialog Box"></p>
-
+<p><img src="../images/make_targets.png" width="285" height="247" onClick="changeSize(this,285,247);" 
+	    alt="Make Targets Preferences Dialog Box" title="click to toggle image size"></p>
 <dl>
   <dt>Build make target in the background</dt>
   <dd>Select this checkbox to perform builds in the background.</dd>

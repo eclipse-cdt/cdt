@@ -6,6 +6,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Project file views</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -27,7 +35,9 @@
 </ul>
 
 Files that you select in the C/C++ Projects view  affect the information that is displayed in other views.</p>
-<img src="../images/projectsView.png" border="0" width="244" height="425" alt="Example of a Projects View Window">
+
+<img src="../images/projectsView.png" width="122" height="213" onClick="changeSize(this,122,213);" 
+     alt="Screen capture showing Projects Vieww" title="click to toggle image size">
 
 <h2>Navigator view</h2>
 
@@ -41,7 +51,8 @@ item does, select an item and press F1. </p>
 <p>By default, the Navigator view is included in the Resources perspective. To add it to the current perspective, click 
 <b>Window > Show View > Navigator</b>.</p>
 
-<img src="../images/navigatorView.png" border="0" width="243" height="234" alt="Example of a Navigator View Window">
+<img src="../images/navigatorView.png" width="122" height="117" onClick="changeSize(this,122,117);" 
+     alt="Screen capture showing Projects Vieww" title="click to toggle image size">
 
 <h3>Toolbar icons</h3>
 <p><table border="1" >

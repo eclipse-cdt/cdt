@@ -6,17 +6,23 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Binary Parser, C/C++ Properties window</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
-<!--INFOPOP
-Select a binary parser for the target platform.
-END INFOPOP-->
 
 <body>
 
 <h1>Binary Parser page, C/C++ Preferences window</h1>
 
 <p>You can view a list of binary parsers on the Binary Parser page of the C/C++ Preferences window.</p>
-<p><img src="../images/new_make-binary_parser.png" border="0" width="665" height="611" alt="Make Binary Parser Preferences Dialog Box"></p>
+<p><img src="../images/new_make-binary_parser.png" width="333" height="306" onClick="changeSize(this,333,306);" 
+       alt="Make Binary Parser Preferences Dialog Box" title="click to toggle image size"></p>
 <dl>
   <dt>Binary Parser</dt>
   <dd>Select a binary parser from the list.</dd>

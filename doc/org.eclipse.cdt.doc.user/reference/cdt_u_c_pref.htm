@@ -6,6 +6,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>C/C++ preferences</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 <!--INFOPOP
 View information about your program C/C++ environment.
@@ -15,7 +23,8 @@ END INFOPOP-->
 <h1>C/C++ page, Preferences window</h1>
 
 <p>The C/C++ Preference dialog box allows you to make changes to your C/C++ environment.</p>
-<p><img src="../images/c_cpp_preferences.png" border="0" width="635" height="539" alt="C/C++ Main Preferences Window"></p>
+<p>	<img src="../images/c_cpp_preferences.png" width="318" height="270" onClick="changeSize(this,318,270);" 
+	     alt="C/C++ Main Preferences Window" title="click to toggle image size"></p>
 <dl>
   <dt>Link view selection to active editor</dt>
   <dd>Select this checkbox to open an item selectedin the Projects view, in the Editor view.</dd>

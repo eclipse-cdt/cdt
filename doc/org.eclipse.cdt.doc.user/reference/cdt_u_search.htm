@@ -6,16 +6,22 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>C/C++ search page, Search dialog box</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
-<!--INFOPOP
-Search for C/C++ elements.
-END INFOPOP-->
 <body>
 
 <h1>C/C++ search page, Search dialog box</h1>
 
 <p>You can search for C/C++ elements on the C/C++ search page of the Search dialog box.</p>
-<p><img src="../images/search.png" border="0" width="512" height="394" alt="Search Dialog Box"></p>
+<p><img src="../images/search.png" width="256" height="197" onClick="changeSize(this,256,197);" 
+	    alt="Editor General Preferences Dialog Box" title="click to toggle image size"></p>
 <dl>
   <dt>Search string</dt>
   <dd>Specifies a search string.</dd>

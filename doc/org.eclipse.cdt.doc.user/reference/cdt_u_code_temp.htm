@@ -6,6 +6,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Code Templates page, Preferences window</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 <!--INFOPOP
 Create, edit, remove, import, or export code templates.
@@ -18,8 +26,8 @@ END INFOPOP-->
 <p>You can manipulate any of the common code templates that are predefined within the CDT. To modify, delete, export, 
 import, or create your own templates click <b>Window &gt; Preferences &gt; C/C++ &gt; Code Templates</b>.</p>
 
-<img src="../images/code_templates.png" border="0" width="737" height="539" alt="Code Templates Dialog Box">
-
+<img src="../images/code_templates.png" width="369" height="270" onClick="changeSize(this,369,270);" 
+     alt="Code Templates  Dialog Box" title="click to toggle image size">
 <dl>
   <dt>New</dt>
   <dd>Creates a new code template.</dd>

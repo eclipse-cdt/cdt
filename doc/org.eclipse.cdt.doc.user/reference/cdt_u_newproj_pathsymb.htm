@@ -6,17 +6,23 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Paths and symbols page, C/C++ Properties window</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
-<!--INFOPOP
-Enter include paths and symbols.
-END INFOPOP-->
 
 <body>
 
 <h1>Paths and Symbols page, C/C++ Preferences window</h1>
 
 <p>You can define include paths and preprocessor symbols on the Paths and Symbols page of the C/C++ Preferences window.</p>
-<p><img src="../images/new_make-paths_symbols.png" border="0" width="615" height="612" alt="Make Paths and Symbols Preferences Dialog Box"></p>
+<p><img src="../images/new_make-paths_symbols.png" width="308" height="306" onClick="changeSize(this,308,306);" 
+       alt="Make Paths and Symbols Preferences Dialog Box" title="click to toggle image size"></p>
 
 <dl>
   <dt>Automate scanner configuration discovery</dt>

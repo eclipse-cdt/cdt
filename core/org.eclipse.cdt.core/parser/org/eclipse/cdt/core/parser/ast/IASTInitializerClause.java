@@ -22,9 +22,11 @@ public interface IASTInitializerClause extends ISourceElementCallbackDelegate{
 
 	public class Kind extends Enum  
 	{
-		public static final Kind ASSIGNMENT_EXPRESSION = new Kind( 1 );
+        public static final Kind ASSIGNMENT_EXPRESSION = new Kind( 1 );
 		public static final Kind INITIALIZER_LIST      = new Kind( 2 );
 		public static final Kind EMPTY                 = new Kind( 3 );
+		public static final Kind DESIGNATED_INITIALIZER_LIST = new Kind( 4 );
+		public static final Kind DESIGNATED_ASSIGNMENT_EXPRESSION = new Kind( 5 );
 
 		/**
 		 * @param enumValue
@@ -37,5 +39,9 @@ public interface IASTInitializerClause extends ISourceElementCallbackDelegate{
 	public Kind getKind(); 
 	public Iterator getInitializers(); 
 	public IASTExpression getAssigmentExpression(); 
+	public Iterator getDesignators(); 
+	
+	public void setOwnerVariableDeclaration( IASTVariable declaration );
+	public IASTVariable getOwnerVariableDeclaration();
 	
 }

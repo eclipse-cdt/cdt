@@ -36,8 +36,8 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITranslationOptions;
 import org.eclipse.cdt.core.parser.ITranslationResult;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
@@ -2119,12 +2119,8 @@ public class Scanner implements IScanner {
 		String key = getNextIdentifier();
 		int offset = contextStack.getCurrentContext().getOffset() - key.length() - contextStack.getCurrentContext().undoStackSize();
 
-		if (mode == ParserMode.COMPLETE_PARSE) {
-			String checkForRedefinition = (String) definitions.get(key);
-			if (checkForRedefinition != null) {
-				throw new ScannerException( ScannerException.ErrorCode.ATTEMPTED_REDEFINITION, key, getCurrentFile(), getCurrentOffset());
-			}
-		}
+		// store the previous definition to check against later
+		Object previousDefinition = definitions.get( key );
 
 		// get the next character
 		// the C++ standard says that macros must not put
@@ -2217,12 +2213,15 @@ public class Scanner implements IScanner {
 				parameterIdentifiers,
 				macroReplacementTokens,
 				key + "(" + parameters + ")");
+				
+			checkValidMacroRedefinition(key, previousDefinition, descriptor);
 			addDefinition(key, descriptor);
 
 		}
 		else if ((c == '\n') || (c == '\r'))
 		{
-			addDefinition( key, "" ); 
+			checkValidMacroRedefinition(key, previousDefinition, "");				
+			addDefinition( key, "" );
 		}
 		else if ((c == ' ') || (c == '\t') ) {
 			// this is a simple definition 
@@ -2230,7 +2229,9 @@ public class Scanner implements IScanner {
 
 			// get what we are to map the name to and add it to the definitions list
 			String value = getRestOfPreprocessorLine();
-			addDefinition( key, value ); 				
+			
+			checkValidMacroRedefinition(key, previousDefinition, value);
+			addDefinition( key, value ); 
 		
 		} else if (c == '/') {
 			// this could be a comment	
@@ -2238,27 +2239,31 @@ public class Scanner implements IScanner {
 			if (c == '/') // one line comment
 				{
 				skipOverSinglelineComment();
+				checkValidMacroRedefinition(key, previousDefinition, "");
 				addDefinition(key, "");
 			} else if (c == '*') // multi-line comment
 				{
 				if (skipOverMultilineComment()) {
 					// we have gone over a newline
 					// therefore, this symbol was defined to an empty string
+					checkValidMacroRedefinition(key, previousDefinition, "");
 					addDefinition(key, "");
 				} else {
 					String value = getRestOfPreprocessorLine();
+					
+					checkValidMacroRedefinition(key, previousDefinition, "");
 					addDefinition(key, value);
 				}
 			} else {
 				// this is not a comment 
 				// it is a bad statement
 				if (throwExceptionOnBadPreprocessorSyntax)
-				throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
+					throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
 			}
 		} else {
 			Util.debugLog("Scanner : Encountered unexpected character " + ((char) c), IDebugLogConstants.PARSER);
 			if (throwExceptionOnBadPreprocessorSyntax)
-			throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
+				throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
 		}
 		
 		try
@@ -2269,6 +2274,75 @@ public class Scanner implements IScanner {
         {
             /* do nothing */
         } 
+	}
+
+
+
+	protected void checkValidMacroRedefinition(
+		String key,
+		Object previousDefinition,
+		Object newDefinition )
+		throws ScannerException 
+		{
+			if( mode == ParserMode.COMPLETE_PARSE && previousDefinition != null ) 
+			{
+				if( newDefinition instanceof IMacroDescriptor )
+				{
+					if( previousDefinition instanceof IMacroDescriptor )
+					{
+						if( ((IMacroDescriptor)previousDefinition).compatible( (IMacroDescriptor) newDefinition ) )
+							return; 		
+					}					
+				}
+				else if( newDefinition instanceof String )
+				{				 
+					
+					if( previousDefinition instanceof String ) 
+					{
+						Scanner previous = new Scanner( new StringReader( (String)previousDefinition ), "redef-test", new ScannerInfo(), null, null, new NullSourceElementRequestor(), 
+							mode, language );
+						Scanner current = new Scanner( new StringReader( (String)newDefinition ), "redef-test", new ScannerInfo(), null, null, new NullSourceElementRequestor(), 
+													mode, language );
+						for ( ; ; )
+						{
+							IToken p = null;
+							IToken c = null;
+							try
+							{
+								p = previous.nextToken(); 
+								c = current.nextToken();
+								
+								if ( c.equals( p ) ) continue;
+								break; 
+								
+							}
+							catch( EndOfFile eof )
+							{
+								if( ( p != null ) && ( c == null ) )
+									break;
+								if( p == null )
+								{
+									try
+									{
+										c = current.nextToken(); 
+										break; 
+									}
+									catch( EndOfFile eof2 )
+									{
+										return;
+									}
+								}
+							}
+						} 
+					}
+				}
+				
+				throw new ScannerException(
+					ScannerException.ErrorCode.ATTEMPTED_REDEFINITION, 
+					key, 
+					getCurrentFile(),
+					getCurrentOffset());
+			}			
 	}
     
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
@@ -2464,24 +2538,22 @@ public class Scanner implements IScanner {
 		skipOverWhitespace();
 
 		int c = getChar();
+		
+		String definitionIdentifier = null;
+		if (c == '(') {
 
-		if (c != '(') {
-			if (throwExceptionOnBadMacroExpansion)
-				throw new ScannerException( ScannerException.ErrorCode.MACRO_USAGE_ERROR, "defined()", getCurrentFile(), getCurrentOffset() );
-		}
-
-		StringBuffer buffer = new StringBuffer();
-		c = getChar();
-		while ((c != NOCHAR) && (c != ')')) {
-			buffer.append((char) c);
+			definitionIdentifier = getNextIdentifier(); 
+			skipOverWhitespace(); 
 			c = getChar();
+			if (c != ')')
+				if (throwExceptionOnBadMacroExpansion)
+					throw new ScannerException( ScannerException.ErrorCode.MACRO_USAGE_ERROR, "defined()", getCurrentFile(), getCurrentOffset() );
 		}
-		if (c == NOCHAR) {
-			if (throwExceptionOnBadMacroExpansion)
-			throw new ScannerException( ScannerException.ErrorCode.MACRO_USAGE_ERROR, "defined()", getCurrentFile(), getCurrentOffset() );
-		}
-
-		String definitionIdentifier = buffer.toString().trim();
+		else
+		{
+			ungetChar(c); 
+			definitionIdentifier = getNextIdentifier(); 
+		}		
 
 		if (definitions.get(definitionIdentifier) != null)
 			return "1";

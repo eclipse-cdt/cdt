@@ -107,4 +107,20 @@ public class MacroDescriptor implements IMacroDescriptor {
 		return signature;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#compatible(org.eclipse.cdt.core.parser.IMacroDescriptor)
+	 */
+	public boolean compatible(IMacroDescriptor descriptor) {
+		if( descriptor.getName() == null ) return false;
+		if( descriptor.getTokenizedExpansion() == null ) return false;
+		if( descriptor.getParameters() == null ) return false;
+		if( ! name.equals( descriptor.getName() )) return false;
+		if( descriptor.getParameters().size() != identifierParameters.size() ) return false; 
+		if( descriptor.getTokenizedExpansion().size() != tokenizedExpansion.size() ) return false;
+		
+		if( ! (descriptor.getParameters().containsAll( identifierParameters ) )) return false;
+		if( ! (descriptor.getTokenizedExpansion().containsAll( tokenizedExpansion ))) return false;
+		return true;
+	}
+
 }

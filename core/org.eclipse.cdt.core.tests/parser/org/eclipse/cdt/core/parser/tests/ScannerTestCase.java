@@ -1411,5 +1411,88 @@ public class ScannerTestCase extends BaseScannerTest
 		validateWideChar( "hijklmnop");
 		validateEOF();
 	}
+
+	public void testBug45476() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer(); 
+		buffer.append( "#define X 5\n");
+		buffer.append( "#if defined X\n");
+		buffer.append( "#define Y 10\n");
+		buffer.append( "#endif");
+		initializeScanner( buffer.toString() );
+		validateEOF(); 
+		validateDefinition( "Y", "10");
+	}
     
+    public void testBug45477() throws Exception
+    {
+    	StringBuffer buffer = new StringBuffer(); 
+		buffer.append( "#define D\n" ); 
+		buffer.append( "#define D\n" ); 
+		buffer.append( "#define sum(x,y) x+y\n" );
+		buffer.append( "#define E 3\n" ); 
+		buffer.append( "#define E 3\n" ); 		 
+		buffer.append( "#define sum(x,y) x+y\n");
+		buffer.append( "#if defined(D)\n" );
+		buffer.append( "printf\n" ); 
+		buffer.append( "#endif\n" );
+		buffer.append( "#if defined(sum)\n" );
+		buffer.append( "scanf\n" ); 
+		buffer.append( "#endif\n" );
+		buffer.append( "#if defined(E)\n" );
+		buffer.append( "sprintf\n" ); 
+		buffer.append( "#endif\n" );
+		initializeScanner( buffer.toString() );
+		validateIdentifier( "printf" ); 
+		validateIdentifier( "scanf");
+		validateIdentifier( "sprintf" );
+		validateEOF();
+
+		for( int i = 0; i < 5; ++i)
+		{		
+		
+			buffer = new StringBuffer(); 
+			
+			buffer.append( "#define D blah\n" );
+			
+			switch( i )
+			{
+				case 0:
+					buffer.append( "#define D\n");
+					break; 
+				case 1:
+					buffer.append( "#define D( x ) echo\n");
+					break; 
+				case 2: 
+					buffer.append( "#define D ACDC\n");
+					break; 
+				case 3:
+					buffer.append( "#define D defined( D )\n");
+					break; 
+				case 4:
+					buffer.append( "#define D blahh\n");
+					break; 
+ 
+			}
+				
+			initializeScanner( buffer.toString() ); 
+			try
+			{
+				validateEOF();
+				fail( "Should not reach here"); 
+			}
+			catch( ScannerException se )
+			{
+					assertEquals( se.getErrorCode(), ScannerException.ErrorCode.ATTEMPTED_REDEFINITION );
+			}
+		}
+		
+		buffer = new StringBuffer(); 
+		buffer.append( "#define X 5\n");
+		buffer.append( "#define Y 7\n");
+		buffer.append( "#define SUMXY X    _+     Y");
+		buffer.append( "#define SUMXY   X + Y");
+		initializeScanner(buffer.toString());
+		validateEOF(); 
+    }
 }

@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
@@ -915,5 +916,59 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTMethod constructor = (IASTMethod) i.next();
 		assertEquals( constructor.getName(), "B" );
 		assertTrue( constructor.previouslyDeclared() );
-	}	
+	}
+	
+	public void testCDesignatedInitializers() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "struct Inner { int a,b,c; };"); 
+		buffer.append( "struct A { int x; int y[]; struct Inner innerArray[]; int z []; };");
+		buffer.append( "struct A myA = { .x = 4, .y[3] = 4, .y[4] = 3, .innerArray[0].a = 3, .innerArray[1].b = 5, .innerArray[2].c=6, .z = { 1,4,5} };");
+		Iterator i = parse( buffer.toString(), true, ParserLanguage.C ).getDeclarations();
+		IASTClassSpecifier Inner  = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		Iterator members = getDeclarations(Inner);
+		IASTField a = (IASTField)members.next();
+		IASTField b = (IASTField)members.next();
+		IASTField c = (IASTField)members.next();
+		assertFalse( members.hasNext());
+		IASTClassSpecifier A = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		members = getDeclarations( A );
+		IASTField x = (IASTField)members.next();
+		IASTField y = (IASTField)members.next(); 
+		IASTField innerArray = (IASTField)members.next();
+		IASTField z = (IASTField)members.next();
+		assertFalse( members.hasNext() );
+		IASTVariable myA = (IASTVariable)i.next(); 
+		assertFalse( i.hasNext() );
+		assertAllReferences( 12, createTaskList( new Task( A ), 
+												new Task( x ), 
+												new Task( y, 2 ), 
+												new Task( Inner ), 
+												new Task( innerArray, 3), 
+												new Task( a ), 
+												new Task( b ), 
+												new Task( c ), 
+												new Task( z ) ) );
+	}
+	
+	public void testBug39551A() throws Exception
+	{
+		IASTFunction function = (IASTFunction)parse("extern float _Complex conjf (float _Complex);", true, ParserLanguage.C).getDeclarations().next();
+		assertEquals( function.getName(), "conjf");
+		assertTrue( ((IASTSimpleTypeSpecifier)function.getReturnType().getTypeSpecifier()).isComplex() );
+	}
+
+	public void testBug39551B() throws Exception
+	{
+		IASTVariable variable = (IASTVariable)parse("_Imaginary double id = 99.99 * __I__;", true, ParserLanguage.C).getDeclarations().next();
+		assertEquals( variable.getName(), "id");
+		assertTrue( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).isImaginary() );
+	}
+	
+	public void testCBool() throws Exception
+	{
+		IASTVariable variable = (IASTVariable)parse( "_Bool x;", true, ParserLanguage.C ).getDeclarations().next();
+		assertEquals( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type._BOOL );
+	}
+		
 }

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 import java.util.Iterator;
+
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 /**
  * @author jcamelon

@@ -151,5 +151,21 @@ public class Token implements IToken {
 	public void setImage( String i ) {
 		image = i; 
 	}
+	
+	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object other) {
+		if( other == null ) return false;
+		if( !( other instanceof IToken ) ) 
+			return false;
+		if( !(((IToken)other).getImage().equals( image ))) 
+			return false;
+		if( ((IToken)other).getType() != type ) 
+			return false;
+		return true;
+	}
 
 }

@@ -1,3 +1,16 @@
+2003-10-24 John Camelon
+	Added testBug45476() to ScannerTestCase.  
+	Added testBug45477() to ScannerTestCase. 
+	
+2003-10-24 John Camelon
+	Moved testBug39542() from ASTFailedTests to QuickParseASTTests.
+	Moved testBug39549() from ASTFailedTests to QuickParseASTTests.
+	Added testCDesignatedInitializers() to CompleteParseASTTests.
+	Moved testBug39551A() from ASTFailedTests to QuickParseASTTests. 
+	Moved testBug39551B() from ASTFailedTests to QuickParseASTTests. 
+	Added testCBool() to QuickParseASTTests.  
+	Added testBug39551A(), testBug39551B() and testCBool to CompleteParseTests.  
+
 2003-10-21 John Camelon
 	Moved testBug40007() from ASTFailedTests to QuickParseASTTests.  
 	Added QuickParseASTTests::testBug40759().  

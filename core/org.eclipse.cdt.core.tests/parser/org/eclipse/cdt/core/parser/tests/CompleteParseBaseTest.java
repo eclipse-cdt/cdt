@@ -669,14 +669,20 @@ public class CompleteParseBaseTest extends TestCase
     
     protected IASTScope parse( String code ) throws ParserException
     {
-    	return parse( code, true );
+    	return parse( code, true, ParserLanguage.CPP );
     }
-    protected IASTScope parse(String code, boolean throwOnError) throws ParserException
+    
+    protected IASTScope parse( String code, boolean throwOnError ) throws ParserException
+    {
+    	return parse( code, throwOnError, ParserLanguage.CPP );
+    }
+    
+    protected IASTScope parse(String code, boolean throwOnError, ParserLanguage language) throws ParserException
     {
     	callback = new FullParseCallback(); 
     	IParser parser = ParserFactory.createParser( 
     		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(),
-    			ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback ), callback, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP	
+    			ParserMode.COMPLETE_PARSE, language, callback ), callback, ParserMode.COMPLETE_PARSE, language	
     		);
     	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE");
         return callback.getCompilationUnit();
@@ -835,6 +841,27 @@ public class CompleteParseBaseTest extends TestCase
         result.add( task6 );
         return result;
     }
+
+	protected List createTaskList(Task task, Task task2, Task task3, Task task4, Task task5, Task task6, Task task7)
+	{
+		List result = createTaskList( task, task2, task3, task4, task5, task6 );
+		result.add( task7 );
+		return result;
+	}
+	
+	protected List createTaskList(Task task, Task task2, Task task3, Task task4, Task task5, Task task6, Task task7, Task task8 )
+	{
+		List result = createTaskList( task, task2, task3, task4, task5, task6, task7 );
+		result.add( task8 );
+		return result;
+	}
+
+	protected List createTaskList(Task task, Task task2, Task task3, Task task4, Task task5, Task task6, Task task7, Task task8, Task task9 )
+	{
+		List result = createTaskList( task, task2, task3, task4, task5, task6, task7, task8 );
+		result.add( task9 );
+		return result;
+	}
 
 	public boolean qualifiedNamesEquals( String [] fromAST, String [] theTruth)
 	{

@@ -846,9 +846,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         IASTUnaryExpression result = createUnaryExpression();
         ((ASTNode)result).setOffset(offset);
         result.setOperator(operator);
-        result.setOperand(operand);
-        operand.setParent(result);
-        operand.setPropertyInParent(IASTUnaryExpression.OPERAND);
+        if( operand != null )
+        {
+	        result.setOperand(operand);
+	        operand.setParent(result);
+	        operand.setPropertyInParent(IASTUnaryExpression.OPERAND);
+        }
         return result;
     }
 

@@ -44,7 +44,7 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.tests.parser2.QuickParser2Tests.ProblemCollector;
+import org.eclipse.cdt.core.parser.tests.parser2.ProblemCollector;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser2.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.parser2.c.ANSICParserExtensionConfiguration;

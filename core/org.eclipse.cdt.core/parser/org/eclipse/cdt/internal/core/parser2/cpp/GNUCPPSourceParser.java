@@ -708,7 +708,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTExpression throwExpression() throws EndOfFileException,
             BacktrackException {
         IToken throwToken = consume(IToken.t_throw);
-        IASTExpression throwExpression = expression();
+        IASTExpression throwExpression = null; 
+        try
+        {
+            throwExpression = expression();
+        }
+        catch( BacktrackException bte )
+        {
+        }
         return buildUnaryExpression( ICPPASTUnaryExpression.op_throw, throwExpression, throwToken.getOffset() );
     }
 
@@ -4431,34 +4438,75 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return compound;
         // selection statement
         case IToken.t_if:
-    		startOffset = consume(IToken.t_if).getOffset();
-    		consume(IToken.tLPAREN);
-    		IASTExpression if_condition = condition();
-    		consume(IToken.tRPAREN);
-    		IASTStatement then_clause = statement();
-    		IASTStatement else_clause = null;
-    		if (LT(1) == IToken.t_else) {
-    			consume(IToken.t_else);
-    			else_clause = statement();
-    		}
-    		
-    		IASTIfStatement if_stmt = createIfStatement();
-    		if_stmt.setCondition( if_condition );
-    		((ASTNode)if_stmt).setOffset( startOffset );
-    	    if_condition.setParent( if_stmt );
-    	    if_condition.setPropertyInParent( IASTIfStatement.CONDITION );
-    	    if_stmt.setThenClause( then_clause );
-    	    then_clause.setParent( if_stmt );
-    	    then_clause.setPropertyInParent( IASTIfStatement.THEN );
-    	    if( else_clause != null )
-    	    {
-    	        if_stmt.setElseClause( else_clause );
-    	        else_clause.setParent( if_stmt );
-    	        else_clause.setPropertyInParent( IASTIfStatement.ELSE );
-    	    }
-    		cleanupLastToken();
-    		return if_stmt;
-        case IToken.t_switch:
+            IASTIfStatement if_statement = null;
+		    if_loop: while( true ){
+				int so = consume(IToken.t_if).getOffset();
+				consume(IToken.tLPAREN);
+				IToken start = LA(1);
+				boolean passedCondition = true;
+				IASTExpression condition = null;
+				try {
+					condition = condition();
+					consume(IToken.tRPAREN);
+				} catch (BacktrackException b) {
+				    //if the problem has no offset info, make a new one that does
+				    if( b.getProblem() != null && b.getProblem().getSourceLineNumber() == -1 ){
+				        IProblem p = b.getProblem();
+				        IProblem p2 = problemFactory.createProblem( p.getID(), start.getOffset(), 
+	                            		   lastToken != null ? lastToken.getEndOffset() : start.getEndOffset(), 
+		                                   start.getLineNumber(), p.getOriginatingFileName(),
+		                                   p.getArguments() != null ? p.getArguments().toCharArray() : null,
+		                                   p.isWarning(), p.isError() );
+				        b.initialize( p2 );
+				    }
+					failParse(b);
+					failParseWithErrorHandling();
+					passedCondition = false;
+				}
+				
+				IASTStatement thenClause = null;
+				if( passedCondition ){
+				    thenClause = statement();
+				}
+				
+				IASTIfStatement new_if_statement = createIfStatement();
+				((ASTNode)new_if_statement).setOffset( so );
+				new_if_statement.setCondition( condition );
+				condition.setParent( new_if_statement );
+				condition.setPropertyInParent( IASTIfStatement.CONDITION );
+				if( thenClause != null )
+				{
+				    new_if_statement.setThenClause( thenClause );
+				    thenClause.setParent( new_if_statement );
+				    thenClause.setPropertyInParent(IASTIfStatement.THEN );
+				}
+				if (LT(1) == IToken.t_else) {
+					consume(IToken.t_else);
+					if (LT(1) == IToken.t_if) {
+						//an else if, don't recurse, just loop and do another if
+						cleanupLastToken();
+						if( if_statement != null )
+						{
+						    if_statement.setElseClause( new_if_statement );
+						    new_if_statement.setParent( if_statement );
+						    new_if_statement.setPropertyInParent( IASTIfStatement.ELSE );
+						    if_statement = new_if_statement;
+						}
+						continue if_loop;
+					} 
+					IASTStatement elseStatement = statement();
+					new_if_statement.setElseClause( elseStatement );
+					elseStatement.setParent( new_if_statement );
+					elseStatement.setPropertyInParent( IASTIfStatement.ELSE );
+					if_statement = new_if_statement;
+				}
+				else
+				    if_statement = new_if_statement;
+				break if_loop;
+		    }
+	    	cleanupLastToken();
+			return if_statement;
+		case IToken.t_switch:
             startOffset = consume( IToken.t_switch ).getOffset();
             consume(IToken.tLPAREN);
             IASTExpression switch_condition = condition();

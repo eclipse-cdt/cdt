@@ -12,15 +12,11 @@ package org.eclipse.cdt.core.parser.tests.parser2;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
@@ -29,7 +25,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.cdt.internal.core.parser2.IProblemRequestor;
 import org.eclipse.cdt.internal.core.parser2.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.parser2.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.c.GCCParserExtensionConfiguration;
@@ -45,34 +40,7 @@ import org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguratio
  */
 public class QuickParser2Tests extends TestCase {
 
-    /**
-     * @author jcamelon
-     */
-    public static class ProblemCollector implements IProblemRequestor {
-
-        List problems = new ArrayList();
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.cdt.internal.core.parser2.IProblemRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
-         */
-        public boolean acceptProblem(IProblem problem) {
-            problems.add(problem);
-            return true;
-        }
-
-        /**
-         * @return
-         */
-        public boolean hasNoProblems() {
-            return problems.isEmpty();
-        }
-
-    }
-
     private static final NullLogService NULL_LOG = new NullLogService();
-
     private static final NullSourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
 
     /**
@@ -1409,7 +1377,7 @@ public class QuickParser2Tests extends TestCase {
             parser2 = new GNUCSourceParser(scanner, ParserMode.QUICK_PARSE,
                     collector, NULL_LOG, config);
         }
-        IASTTranslationUnit tu = parser2.parse();
+        parser2.parse();
         if (parser2.encounteredError() && expectedToPass)
             throw new ParserException("FAILURE"); //$NON-NLS-1$
         if (expectedToPass)

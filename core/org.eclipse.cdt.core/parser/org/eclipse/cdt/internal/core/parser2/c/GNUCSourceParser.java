@@ -45,13 +45,17 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -193,112 +197,131 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     protected List designatorList() throws EndOfFileException,
             BacktrackException {
+        //designated initializers for C
         List designatorList = Collections.EMPTY_LIST;
-        // designated initializers for C
-
+        
         if (LT(1) == IToken.tDOT || LT(1) == IToken.tLBRACKET) {
-
             while (LT(1) == IToken.tDOT || LT(1) == IToken.tLBRACKET) {
-                IToken id = null;
-                Object constantExpression = null;
-                /* IASTDesignator.DesignatorKind */Object kind = null;
-
                 if (LT(1) == IToken.tDOT) {
-                    consume(IToken.tDOT);
-                    id = identifier();
-                    //        kind = IASTDesignator.DesignatorKind.FIELD;
+                    int offset = consume(IToken.tDOT).getOffset();
+                    IToken id = identifier();
+                    ICASTFieldDesignator designator = createFieldDesignator();
+                    designator.setOffset( offset );
+                    IASTName n = createName( id );
+                    designator.setName( n );
+                    n.setParent( designator );
+                    n.setPropertyInParent( ICASTFieldDesignator.FIELD_NAME );
+                    if( designatorList == Collections.EMPTY_LIST )
+                        designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
+                    designatorList.add( designator );
                 } else if (LT(1) == IToken.tLBRACKET) {
                     IToken mark = consume(IToken.tLBRACKET);
-                    constantExpression = expression();
-                    if (LT(1) != IToken.tRBRACKET) {
-                        backup(mark);
-                        if (supportGCCStyleDesignators
-                                && (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tLBRACKET)) {
-
-                            Object d = null;
-                            if (LT(1) == IToken.tIDENTIFIER) {
-                                IToken identifier = identifier();
-                                consume(IToken.tCOLON);
-                                d = null; /*
-                                           * astFactory.createDesignator(
-                                           * IASTDesignator.DesignatorKind.FIELD,
-                                           * null, identifier, null );
-                                           */
-                            } else if (LT(1) == IToken.tLBRACKET) {
-                                consume(IToken.tLBRACKET);
-                                Object constantExpression1 = expression();
-                                consume(IToken.tELLIPSIS);
-                                Object constantExpression2 = expression();
-                                consume(IToken.tRBRACKET);
-                                Map extensionParms = new Hashtable();
-                                extensionParms.put(null, //IASTGCCDesignator.SECOND_EXRESSION,
-                                        constantExpression2);
-                                d = null; /*
-                                           * astFactory.createDesignator(
-                                           * IASTGCCDesignator.DesignatorKind.SUBSCRIPT_RANGE,
-                                           * constantExpression1, null,
-                                           * extensionParms );
-                                           */
-                            }
-
-                            if (d != null) {
-                                if (designatorList == Collections.EMPTY_LIST)
-                                    designatorList = new ArrayList(
-                                            DEFAULT_DESIGNATOR_LIST_SIZE);
-                                designatorList.add(d);
-                            }
-                            break;
-                        }
+                    int offset = mark.getOffset();
+                    IASTExpression constantExpression = expression();
+                    if (LT(1) == IToken.tRBRACKET) {
+                        consume(IToken.tRBRACKET);
+                        ICASTArrayDesignator designator = createArrayDesignator();
+                        designator.setOffset( offset );
+                        designator.setSubscriptExpression( constantExpression );
+                        constantExpression.setParent( designator );
+                        constantExpression.setPropertyInParent( ICASTArrayDesignator.SUBSCRIPT_EXPRESSION );
+                        if( designatorList == Collections.EMPTY_LIST )
+                            designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
+                        designatorList.add( designator );
+                        continue;
                     }
-                    consume(IToken.tRBRACKET);
-                    //        kind = IASTDesignator.DesignatorKind.SUBSCRIPT;
+                    backup(mark);
+                    if (supportGCCStyleDesignators ) {
+                        int startOffset = consume(IToken.tLBRACKET).getOffset();
+                        IASTExpression constantExpression1 = expression();
+                        consume(IToken.tELLIPSIS);
+                        IASTExpression constantExpression2 = expression();
+                        consume(IToken.tRBRACKET);
+                        IGCCASTArrayRangeDesignator designator = createArrayRangeDesignator();
+                        designator.setOffset( startOffset );
+                        designator.setRangeFloor( constantExpression1 );
+                        constantExpression1.setParent( designator );
+                        constantExpression1.setPropertyInParent( IGCCASTArrayRangeDesignator.SUBSCRIPT_FLOOR_EXPRESSION );
+                        designator.setRangeCeiling( constantExpression2 );
+                        constantExpression2.setParent( designator );
+                        constantExpression2.setPropertyInParent( IGCCASTArrayRangeDesignator.SUBSCRIPT_CEILING_EXPRESSION );
+                        if( designatorList == Collections.EMPTY_LIST )
+                            designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
+                        designatorList.add( designator );                                
+                    }
+                } else if ( supportGCCStyleDesignators && LT(1) == IToken.tIDENTIFIER )
+                {
+                    IToken identifier = identifier();
+                    consume(IToken.tCOLON);
+                    ICASTFieldDesignator designator = createFieldDesignator();
+                    designator.setOffset( identifier.getOffset() );
+                    IASTName n = createName( identifier );
+                    designator.setName( n );
+                    n.setParent( designator );
+                    n.setPropertyInParent( ICASTFieldDesignator.FIELD_NAME );
+                    if( designatorList == Collections.EMPTY_LIST )
+                        designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
+                    designatorList.add( designator );                    
                 }
-
-                Object d = null; /*
-                                  * astFactory.createDesignator(kind,
-                                  * constantExpression, id, null);
-                                  */
-                if (designatorList == Collections.EMPTY_LIST)
-                    designatorList = new ArrayList(DEFAULT_DESIGNATOR_LIST_SIZE);
-                designatorList.add(d);
-
             }
         } else {
             if (supportGCCStyleDesignators
                     && (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tLBRACKET)) {
-                Object d = null;
+
                 if (LT(1) == IToken.tIDENTIFIER) {
                     IToken identifier = identifier();
                     consume(IToken.tCOLON);
-                    d = null; /*
-                               * astFactory.createDesignator(
-                               * IASTDesignator.DesignatorKind.FIELD, null,
-                               * identifier, null );
-                               */
+                    ICASTFieldDesignator designator = createFieldDesignator();
+                    designator.setOffset( identifier.getOffset() );
+                    IASTName n = createName( identifier );
+                    designator.setName( n );
+                    n.setParent( designator );
+                    n.setPropertyInParent( ICASTFieldDesignator.FIELD_NAME );
+                    if( designatorList == Collections.EMPTY_LIST )
+                        designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
+                    designatorList.add( designator );
                 } else if (LT(1) == IToken.tLBRACKET) {
-                    consume(IToken.tLBRACKET);
-                    Object constantExpression1 = expression();
+                    int startOffset = consume(IToken.tLBRACKET).getOffset();
+                    IASTExpression constantExpression1 = expression();
                     consume(IToken.tELLIPSIS);
-                    Object constantExpression2 = expression();
+                    IASTExpression constantExpression2 = expression();
                     consume(IToken.tRBRACKET);
-                    Map extensionParms = new Hashtable();
-                    extensionParms.put(null, //IASTGCCDesignator.SECOND_EXRESSION,
-                            constantExpression2);
-                    d = null; /*
-                               * astFactory.createDesignator(
-                               * IASTGCCDesignator.DesignatorKind.SUBSCRIPT_RANGE,
-                               * constantExpression1, null, extensionParms );
-                               */
-                }
-                if (d != null) {
-                    if (designatorList == Collections.EMPTY_LIST)
-                        designatorList = new ArrayList(
-                                DEFAULT_DESIGNATOR_LIST_SIZE);
-                    designatorList.add(d);
+                    IGCCASTArrayRangeDesignator designator = createArrayRangeDesignator();
+                    designator.setOffset( startOffset );
+                    designator.setRangeFloor( constantExpression1 );
+                    constantExpression1.setParent( designator );
+                    constantExpression1.setPropertyInParent( IGCCASTArrayRangeDesignator.SUBSCRIPT_FLOOR_EXPRESSION );
+                    designator.setRangeCeiling( constantExpression2 );
+                    constantExpression2.setParent( designator );
+                    constantExpression2.setPropertyInParent( IGCCASTArrayRangeDesignator.SUBSCRIPT_CEILING_EXPRESSION );
+                    if( designatorList == Collections.EMPTY_LIST )
+                        designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
+                    designatorList.add( designator );                                
                 }
             }
         }
         return designatorList;
+    }
+
+    /**
+     * @return
+     */
+    protected IGCCASTArrayRangeDesignator createArrayRangeDesignator() {
+        return new CASTArrayRangeDesignator();
+    }
+
+    /**
+     * @return
+     */
+    protected ICASTArrayDesignator createArrayDesignator() {
+        return new CASTArrayDesignator();
+    }
+
+    /**
+     * @return
+     */
+    protected ICASTFieldDesignator createFieldDesignator() {
+        return new CASTFieldDesignator();
     }
 
     protected IASTDeclaration declaration() throws EndOfFileException,
@@ -1617,6 +1640,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             declSpec.setStorageClass(storageClass);
 
             declSpec.setOffset(startingOffset);
+            IASTName name = createName( identifier );
+            declSpec.setName( name );
+            name.setParent( declSpec );
+            name.setPropertyInParent( IASTTypedefNameSpecifier.NAME );
             return declSpec;
         }
         if (simpleType != IASTSimpleDeclSpecifier.t_unspecified || isLong

@@ -17,7 +17,9 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTTypedefNameSpecifier extends IASTDeclSpecifier {
 
-	/**
+	public static final ASTNodeProperty NAME = new ASTNodeProperty( "Name"); //$NON-NLS-1$
+
+    /**
 	 * @return the typedef name.
 	 */
 	public IASTName getName();

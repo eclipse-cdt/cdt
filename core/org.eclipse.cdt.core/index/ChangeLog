@@ -1,7 +1,8 @@
 2004-02-03 Alain Magloire
-                                                                                                                             
+
+	PR 51106                                                                                                                   
     Patches from Thomas Fletcher dealing with the indexer.
-                                                                                                                             
+
     - Remove assumed throw/catch of an exception to be a regular occurance
     and replace with explicit test and return for bounds access to the
     particular array.

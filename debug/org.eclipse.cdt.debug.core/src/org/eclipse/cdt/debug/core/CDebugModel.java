@@ -90,6 +90,17 @@ public class CDebugModel
 											   final boolean stopInMain ) throws DebugException
 	{
 		final IDebugTarget[] target = new IDebugTarget[1];
+
+		// Temporary
+		try
+		{
+			cdiTarget.getSession().addSearchPaths( new String[] { project.getLocation().toOSString() } );
+		}
+		catch( CDIException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
+
 		IWorkspaceRunnable r = new IWorkspaceRunnable()
 		{
 			public void run( IProgressMonitor m )
@@ -110,15 +121,6 @@ public class CDebugModel
 		catch( CoreException e )
 		{
 			CDebugCorePlugin.log( e );
-		}
-		// Temporary
-		try
-		{
-			cdiTarget.getSession().addSearchPaths( new String[] { project.getLocation().toOSString() } );
-		}
-		catch( CDIException e )
-		{
-			((CDebugElement)target[0]).targetRequestFailed( "Operation failed. Reason: ", e );
 		}
 		
 		if ( stopInMain )

@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -63,22 +64,36 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 	}
 
 	public synchronized void updateProject(IProject project) {
+		// TODO finer-grained flush needed, for now just flush the whole map
+	    fTypeToElementMap.clear();
+	    fElementToTypeMap.clear();
 	    addCacheDelta(project, null);
 	}
 
+	public synchronized void processElementChanged(ElementChangedEvent event, boolean enableIndexing) {
+	    int deltaCount = processDelta(event.getDelta());
+	    if (deltaCount > 0) {
+			// TODO finer-grained flush needed, for now just flush the whole map
+		    fTypeToElementMap.clear();
+		    fElementToTypeMap.clear();
+	        reconcile(enableIndexing, Job.BUILD, 0);
+	    }
+	}
+	
 	private static final int PATH_ENTRY_FLAGS = ICElementDelta.F_ADDED_PATHENTRY_SOURCE
 		| ICElementDelta.F_REMOVED_PATHENTRY_SOURCE
 		| ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE
 		| ICElementDelta.F_CHANGED_PATHENTRY_MACRO
 		| ICElementDelta.F_PATHENTRY_REORDER;
 
-	public synchronized void processDelta(ICElementDelta delta) {
+	private int processDelta(ICElementDelta delta) {
 		ICElement elem = delta.getElement();
 		boolean added = (delta.getKind() == ICElementDelta.ADDED);
 		boolean removed = (delta.getKind() == ICElementDelta.REMOVED);
 		boolean contentChanged = ((delta.getFlags() & ICElementDelta.F_CONTENT) != 0);
 		boolean pathEntryChanged = ((delta.getFlags() & PATH_ENTRY_FLAGS) != 0);
 		boolean hasChildren = ((delta.getFlags() & ICElementDelta.F_CHILDREN) != 0);
+		int deltaCount = 0;
 
 		switch (elem.getElementType()) {
 			case ICElement.C_PROJECT:
@@ -87,6 +102,7 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 				IProject project = cProject.getProject();
 				if (added || removed || pathEntryChanged) {
 					addCacheDelta(project, delta);
+					++deltaCount;
 				}
 			}
 			break;
@@ -96,11 +112,12 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 				IProject project = cProject.getProject();
 				ITranslationUnit unit = (ITranslationUnit) elem;
 				if (unit.isWorkingCopy()) {
-					processWorkingCopyDelta(delta);
-					return;
+					deltaCount += processWorkingCopyDelta(delta);
+					return deltaCount;
 				} else {
 					if (added || removed || pathEntryChanged || contentChanged) {
 						addCacheDelta(project, delta);
+						++deltaCount;
 					}
 				}
 			}
@@ -119,6 +136,7 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 				IProject project = cProject.getProject();
 				if (added || removed) {
 					addCacheDelta(project, delta);
+					++deltaCount;
 				}
 			}
 			break;
@@ -128,10 +146,12 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 			ICElementDelta[] children = delta.getAffectedChildren();
 			if (children != null) {
 				for (int i = 0; i < children.length; ++i) {
-					processDelta(children[i]);
+				    deltaCount += processDelta(children[i]);
 				}
 			}
 		}
+
+		return deltaCount;
 	}
 	
 	private void addCacheDelta(IProject project, ICElementDelta delta) {
@@ -140,14 +160,11 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 	    } else {
 	        getCache(project).addDelta(new TypeCacheDelta(project, delta));
 	    }
-		// TODO finer-grained flush needed, for now just flush the whole map
-	    fTypeToElementMap.clear();
-	    fElementToTypeMap.clear();
 	}
 
-	public synchronized void processWorkingCopyDelta(ICElementDelta delta) {
+	private int processWorkingCopyDelta(ICElementDelta delta) {
 		// ignore workies copies for now
-		return;
+		return 0;
 /*		ICElement elem = delta.getElement();
 		boolean added = (delta.getKind() == ICElementDelta.ADDED);
 		boolean removed = (delta.getKind() == ICElementDelta.REMOVED);
@@ -197,6 +214,7 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 	}
 	
 	public synchronized ITypeCache getCache(IProject project) {
+	    Assert.isNotNull(project);
 		synchronized(fCacheMap) {
 			ITypeCache cache = (ITypeCache) fCacheMap.get(project);
 			if (cache == null) {
@@ -305,11 +323,6 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 		return location;
 	}
 	
-	public synchronized void processElementChanged(ElementChangedEvent event, boolean enableIndexing) {
-	    processDelta(event.getDelta());
-		reconcile(enableIndexing, Job.BUILD, 0);
-	}
-	
     public void addTypeCacheChangedListener(ITypeCacheChangedListener listener) {
     	// add listener only if it is not already present
         synchronized(fChangeListeners) {
@@ -349,9 +362,11 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
     }
     
     public ITypeInfo getTypeForElement(ICElement element, boolean forceUpdate, boolean forceResolve, boolean enableIndexing, IProgressMonitor monitor) {
-        ITypeInfo cachedInfo = (ITypeInfo) fElementToTypeMap.get(element);
-        if (cachedInfo != null && cachedInfo.exists())
-            return cachedInfo;
+        if (element.exists()) {
+	        ITypeInfo cachedInfo = (ITypeInfo) fElementToTypeMap.get(element);
+	        if (cachedInfo != null && cachedInfo.exists())
+	            return cachedInfo;
+        }
         
 		IQualifiedTypeName qualifiedName = TypeUtil.getFullyQualifiedName(element);
 		if (qualifiedName != null) {
@@ -383,9 +398,11 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
     }
 
     public ICElement getElementForType(ITypeInfo type, boolean forceUpdate, boolean forceResolve, boolean enableIndexing, IProgressMonitor monitor) {
-        ICElement cachedElem = (ICElement) fTypeToElementMap.get(type);
-        if (cachedElem != null && cachedElem.exists())
-            return cachedElem;
+        if (type.exists()) {
+            ICElement cachedElem = (ICElement) fTypeToElementMap.get(type);
+	        if (cachedElem != null && cachedElem.exists())
+	            return cachedElem;
+        }
         
         IProject project = type.getEnclosingProject();
 	    ITypeCache cache = getCache(project);

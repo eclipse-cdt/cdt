@@ -259,6 +259,8 @@ public class MakeTargetDialog extends Dialog {
 			public void handleEvent(Event e) {
 				if (commandText.getText().equals("")) { //$NON-NLS-1$
 					fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyBuildCommand")); //$NON-NLS-1$
+				} else {
+					fStatusLine.setErrorMessage(null); //$NON-NLS-1$
 				}
 				updateButtons();
 			}

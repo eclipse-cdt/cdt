@@ -490,18 +490,15 @@ System.out.println("RELEASE Binary " + cfile.getElementName());
 	public void resourceChanged(IResourceChangeEvent event) {
 
 		if (event.getSource() instanceof IWorkspace) {
-			IResource resource = event.getResource();
+			//IResource resource = event.getResource();
 			IResourceDelta delta = event.getDelta();
 			switch(event.getType()){
 				case IResourceChangeEvent.PRE_DELETE :
-					if(resource.getType() == IResource.PROJECT
-						&& hasCNature((IProject)resource)) {
-						releaseCElement(resource);
-					}
+					// Do something relevant?
 				break;
 
 				case IResourceChangeEvent.PRE_AUTO_BUILD :
-					// will close project if affected by the property file change
+					// No need now.
 				break;
 
 				case IResourceChangeEvent.POST_CHANGE :

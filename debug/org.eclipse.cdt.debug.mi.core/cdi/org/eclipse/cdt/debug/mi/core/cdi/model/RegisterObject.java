@@ -15,4 +15,16 @@ public class RegisterObject extends VariableObject implements ICDIRegisterObject
 		super(target, name, fn, null, i, 0);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject#getFullName()
+	 */
+	public String getFullName() {
+		if (fullName == null) {
+			String n = getName();
+			if (!n.startsWith("$")) { //$NON-NLS-1$
+				fullName = "$" + n; //$NON-NLS-1$
+			}
+		}
+		return fullName;
+	}
 }

@@ -15,11 +15,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.WizardPage;
 
 /**
- * Base class for wizard page responsible to create Java elements. The class
- * provides API to update the wizard's statis line and OK button according to
+ * Base class for wizard page responsible to create C elements. The class
+ * provides API to update the wizard's status line and OK button according to
  * the value of a <code>IStatus</code> object.
- * 
- * @since 2.0
  */
 public abstract class NewElementWizardPage extends WizardPage {
 
@@ -34,8 +32,8 @@ public abstract class NewElementWizardPage extends WizardPage {
 	 */	
 	public NewElementWizardPage(String name) {
 		super(name);
-		fPageVisible= false;
-		fCurrStatus=  new StatusInfo();
+		fPageVisible = false;
+		fCurrStatus =  new StatusInfo();
 	}
 		
 	// ---- WizardPage ----------------
@@ -45,12 +43,12 @@ public abstract class NewElementWizardPage extends WizardPage {
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		fPageVisible= visible;
+		fPageVisible = visible;
 		// policy: wizards are not allowed to come up with an error message
 		if (visible && fCurrStatus.matches(IStatus.ERROR)) {
-			StatusInfo status= new StatusInfo();
+			StatusInfo status = new StatusInfo();
 			status.setError("");  //$NON-NLS-1$
-			fCurrStatus= status;
+			fCurrStatus = status;
 		} 
 		updateStatus(fCurrStatus);
 	}	
@@ -61,7 +59,7 @@ public abstract class NewElementWizardPage extends WizardPage {
 	 * @param status status to apply
 	 */
 	protected void updateStatus(IStatus status) {
-		fCurrStatus= status;
+		fCurrStatus = status;
 		setPageComplete(!status.matches(IStatus.ERROR));
 		if (fPageVisible) {
 			StatusUtil.applyToStatusLine(this, status);

@@ -1,3 +1,9 @@
+2004-08-06 Chris Wiebe
+
+	Added new element wizard classes.
+	* src/org/eclipse/cdt/internal/ui/wizards/NewElementWizard.java
+	* src/org/eclipse/cdt/internal/ui/wizards/NewElementWizardPage.java
+	
 2004-08-04 Alain Magloire
 
 	Provide filters for the Outliner.

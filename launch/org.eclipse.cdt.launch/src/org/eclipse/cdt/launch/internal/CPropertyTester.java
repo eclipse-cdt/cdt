@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -41,9 +40,9 @@ public class CPropertyTester extends PropertyTester {
 	private boolean isExecutable(Object receiver) {
 		ICElement celement = null;
 		if (receiver instanceof IAdaptable) {
-			IFile file = (IFile) ((IAdaptable)receiver).getAdapter(IResource.class);
-			if (file != null) {
-				celement = CoreModel.getDefault().create(file);
+			IResource res = (IResource) ((IAdaptable)receiver).getAdapter(IResource.class);
+			if (res != null) {
+				celement = CoreModel.getDefault().create(res);
 			}
 		}
 		return (celement != null && celement instanceof IBinary);

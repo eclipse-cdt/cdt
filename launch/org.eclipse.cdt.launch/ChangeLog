@@ -1,3 +1,7 @@
+2005-01-19 Alain Magloire
+	PR 82930
+	* src/org/eclipse/cdt/launch/internal/CPropertyTester.java
+
 2004-12-20 Alain Magloire
 
 	PR 81321

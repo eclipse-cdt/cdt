@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -39,8 +40,10 @@ import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
+import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
 import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.PathEntryContainerInitializer;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
@@ -90,6 +93,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	private static HashMap Containers = new HashMap(5);
 
 	static final IPathEntry[] NO_PATHENTRIES = new IPathEntry[0];
+
+	static final IIncludeEntry[] NO_INCLUDENTRIES = new IIncludeEntry[0];
+
+	static final IMacroEntry[] NO_MACROENTRIES = new IMacroEntry[0];
 
 	// Synchronized the access of the cache entries.
 	protected Map resolvedMap = new Hashtable();
@@ -150,6 +157,165 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			CoreModel.getDefault().addElementChangedListener(pathEntryManager);
 		}
 		return pathEntryManager;
+	}
+
+	public IIncludeEntry[] getIncludeEntries(IPath resPath) throws CModelException {
+		ICElement celement = CoreModel.getDefault().create(resPath);
+		if (celement instanceof ITranslationUnit) {
+			return getIncludeEntries((ITranslationUnit)celement);
+		}
+		return NO_INCLUDENTRIES;
+	}
+
+	public IIncludeEntry[] getIncludeEntries(ITranslationUnit cunit) throws CModelException {
+		ArrayList includeList = new ArrayList();
+		ICProject cproject = cunit.getCProject();
+		IPath resPath = cunit.getPath();
+		// Do this first so the containers get inialized.
+		IPathEntry[] entries = getResolvedPathEntries(cproject);
+		for (int i = 0; i < entries.length; ++i) {
+			if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
+				includeList.add(entries[i]);
+			}
+		}
+		IPathEntryContainer[] containers = getPathEntryContainers(cproject);
+		if (containers != null) {
+			for (int i = 0; i < containers.length; ++i) {
+				if (containers[i] instanceof IPathEntryContainerExtension) {
+					IIncludeEntry[] incs = ((IPathEntryContainerExtension)containers[i]).getIncludeEntries(resPath);
+					includeList.addAll(Arrays.asList(incs));
+				}
+			}
+		}
+
+		IIncludeEntry[] includes = (IIncludeEntry[]) includeList.toArray(new IIncludeEntry[includeList.size()]);
+		// Clear the list since we are reusing it.
+		includeList.clear();
+
+		// We need to reorder the include/macros:
+		// includes with the closest match to the resource will come first
+		// /project/src/file.c  --> /usr/local/include
+		// /project             --> /usr/include
+		// 
+		//  /usr/local/include must come first.
+		//
+		int count = resPath.segmentCount();
+		for (int i = 0; i < count; i++) {
+			IPath newPath = resPath.removeLastSegments(i);
+			for (int j = 0; j < includes.length; j++) {
+				IPath otherPath = includes[j].getPath();
+				if (newPath.equals(otherPath)) {
+					includeList.add(includes[j]);
+				}
+			}
+		}
+
+		// Since the include that comes from a project contribution are not
+		// tied to a resource they are added last.
+		for (int i = 0; i < entries.length; i++) {
+			IPathEntry entry = entries[i];
+			if (entry != null && entry.getEntryKind() == IPathEntry.CDT_PROJECT) {
+				IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(entry.getPath());
+				if (res != null && res.getType() == IResource.PROJECT) {
+					ICProject refCProject = CoreModel.getDefault().create((IProject)res);
+					if (refCProject != null) {
+						IPathEntry[] projEntries = refCProject.getResolvedPathEntries();
+						for (int j = 0; j < projEntries.length; j++) {
+							IPathEntry projEntry = projEntries[j];
+							if (projEntry.isExported()) {
+								if (projEntry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+									IIncludeEntry include = (IIncludeEntry)projEntry;
+									includeList.add(include);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return (IIncludeEntry[])includeList.toArray(new IIncludeEntry[includeList.size()]);		
+	}
+
+	public IMacroEntry[] getMacroEntries(IPath resPath)  throws CModelException {
+		ICElement celement = CoreModel.getDefault().create(resPath);
+		if (celement instanceof ITranslationUnit) {
+			return getMacroEntries((ITranslationUnit)celement);
+		}
+		return NO_MACROENTRIES;
+	}
+
+	public IMacroEntry[] getMacroEntries(ITranslationUnit cunit) throws CModelException  {
+		ArrayList macroList = new ArrayList();
+		ICProject cproject = cunit.getCProject();
+		IPath resPath = cunit.getPath();
+		// Do this first so the containers get inialized.
+		IPathEntry[] entries = getResolvedPathEntries(cproject);
+		for (int i = 0; i < entries.length; ++i) {
+			if (entries[i].getEntryKind() == IPathEntry.CDT_MACRO) {
+				macroList.add(entries[i]);
+			}
+		}
+		IPathEntryContainer[] containers = getPathEntryContainers(cproject);
+		if (containers != null) {
+			for (int i = 0; i < containers.length; ++i) {
+				if (containers[i] instanceof IPathEntryContainerExtension) {
+					IMacroEntry[] incs = ((IPathEntryContainerExtension)containers[i]).getMacroEntries(resPath);
+					macroList.addAll(Arrays.asList(incs));
+				}
+			}
+		}
+
+		IMacroEntry[] macros = (IMacroEntry[]) macroList.toArray(new IMacroEntry[macroList.size()]);
+		macroList.clear();
+		
+		// For the macros the closest symbol will override 
+		// /projec/src/file.c --> NDEBUG=1
+		// /project/src       --> NDEBUG=0
+		//
+		// We will use NDEBUG=1 only
+		int count = resPath.segmentCount();
+		Map symbolMap = new HashMap();
+		for (int i = 0; i < count; i++) {
+			IPath newPath = resPath.removeLastSegments(i);
+			for (int j = 0; j < macros.length; j++) {
+				IPath otherPath = macros[j].getPath();
+				if (newPath.equals(otherPath)) {
+					String key = macros[j].getMacroName();
+					if (!symbolMap.containsKey(key)) {
+						symbolMap.put(key, macros[j]);
+					}
+				}
+			}
+		}
+
+		// Add the Project contributions last.
+		for (int i = 0; i < entries.length; i++) {
+			IPathEntry entry = entries[i];
+			if (entry != null && entry.getEntryKind() == IPathEntry.CDT_PROJECT) {
+				IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(entry.getPath());
+				if (res != null && res.getType() == IResource.PROJECT) {
+					ICProject refCProject = CoreModel.getDefault().create((IProject)res);
+					if (refCProject != null) {
+						IPathEntry[] projEntries = refCProject.getResolvedPathEntries();
+						for (int j = 0; j < projEntries.length; j++) {
+							IPathEntry projEntry = projEntries[j];
+							if (projEntry.isExported()) {
+								if (projEntry.getEntryKind() == IPathEntry.CDT_MACRO) {
+									IMacroEntry macro = (IMacroEntry)entry;
+									String key = macro.getMacroName();
+									if (!symbolMap.containsKey(key)) {
+										symbolMap.put(key, macro);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return (IMacroEntry[])symbolMap.values().toArray(NO_MACROENTRIES);
+
 	}
 
 	public IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
@@ -547,6 +713,16 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		} catch (CoreException e) {
 			//
 		}
+	}
+
+	public synchronized IPathEntryContainer[] getPathEntryContainers(ICProject cproject) {
+		IPathEntryContainer[] pcs = null;
+		Map projectContainers = (Map)Containers.get(cproject);
+		if (projectContainers != null) {
+			Collection collection = projectContainers.values();
+			pcs = (IPathEntryContainer[]) collection.toArray(new IPathEntryContainer[collection.size()]);
+		}
+		return pcs;
 	}
 
 	public IPathEntryContainer getPathEntryContainer(IContainerEntry entry, ICProject cproject) throws CModelException {

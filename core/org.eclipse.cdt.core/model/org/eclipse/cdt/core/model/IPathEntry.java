@@ -74,15 +74,15 @@ public interface IPathEntry {
 	 * <li><code>CDT_OUTPUT</code> - this entry describes output location
 	 */
 	int getEntryKind();
-	
+
 	/**
-	 * Returns the affected IPath
-	 *
-	 * @return IPath
+	 * 
+	 * @return true if exported.
 	 */
 	boolean isExported();
 
 	/**
+	 * Returns the affected IPath
 	 * 
 	 * @return IPath
 	 */

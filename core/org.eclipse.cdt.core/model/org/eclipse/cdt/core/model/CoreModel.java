@@ -706,7 +706,7 @@ public class CoreModel {
 	}
 
 	/**
-	 * This method returs the resolved pathentries for the project All
+	 * This method returns the resolved pathentries for the project All
 	 * pathEntry.CDT_CONTAINER entries in the project's will be replaced by the
 	 * entries they resolve to.
 	 * <p>
@@ -722,6 +722,42 @@ public class CoreModel {
 	 */
 	public static IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
 		return pathEntryManager.getResolvedPathEntries(cproject);
+	}
+
+	/**
+	 * This method returns the include entries associated with a translation unit
+	 * if the path does not refer to a valid translation unit an empty is return.
+	 * <p>
+	 * The resulting resolved entries are accurate for the given point in time.
+	 * If the project's raw entries are later modified they can become out of
+	 * date. Because of this, hanging on resolved pathentries is not
+	 * recommended.
+	 * </p>
+	 * 
+	 * @return the resolved entries for the project
+	 * @exception CModelException
+	 * @see IPathEntry
+	 */
+	public static IIncludeEntry[] getIncludeEntries(IPath path) throws CModelException {
+		return pathEntryManager.getIncludeEntries(path);
+	}
+
+	/**
+	 * This method returns the macro entries associated with a translation unit
+	 * if the path does not refer to a valid translation unit an empty array is return.
+	 * <p>
+	 * The resulting resolved entries are accurate for the given point in time.
+	 * If the project's raw entries are later modified they can become out of
+	 * date. Because of this, hanging on resolved pathentries is not
+	 * recommended.
+	 * </p>
+	 * 
+	 * @return the resolved entries for the project
+	 * @exception CModelException
+	 * @see IPathEntry
+	 */
+	public static IMacroEntry[] getMacroEntries(IPath path) throws CModelException {
+		return pathEntryManager.getMacroEntries(path);
 	}
 
 	/**

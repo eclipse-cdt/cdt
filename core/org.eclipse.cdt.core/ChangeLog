@@ -1,3 +1,11 @@
+2005-02-10 Alain Magloire
+	Part of the fix for 79596
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+	* model/org/eclipse/cdt/core/model/IPathEntry.java
+	* model/org/eclipse/cdt/core/model/IPathEntryContainerExtension.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	* src/org/eclipse/cdt/core/resources/ScannerProvider.java
+
 2005-01-29 Alain Magloire
 	Copy the spaces and Newlines.
 	* model/org/eclipse/cdt/internal/core/model/CopylementsOperation.java

@@ -7,7 +7,7 @@ package org.eclipse.cdt.internal.core.model.parser;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.model.IBinaryParser;
+import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PEArchive;
 import org.eclipse.core.resources.IFile;

@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
+import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.IBinaryParser;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryExecutable;
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile;
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryShared;
-import org.eclipse.cdt.core.model.IBinaryParser.ISymbol;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -160,7 +160,7 @@ class BinaryInfo extends CFileInfo {
 	IBinaryObject getBinaryObject() {
 		if (binary == null) {
 			IProject project = getElement().getCProject().getProject();
-			IBinaryParser parser = CModelManager.getBinaryParser(project);
+			IBinaryParser parser = CModelManager.getDefault().getBinaryParser(project);
 			if (parser != null) {
 				try {
 					IFile file = (IFile) getElement().getUnderlyingResource();

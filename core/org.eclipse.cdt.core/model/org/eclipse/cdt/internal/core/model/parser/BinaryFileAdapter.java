@@ -7,7 +7,7 @@ package org.eclipse.cdt.internal.core.model.parser;
  
 import java.io.InputStream;
 
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.internal.core.model.Resource;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;

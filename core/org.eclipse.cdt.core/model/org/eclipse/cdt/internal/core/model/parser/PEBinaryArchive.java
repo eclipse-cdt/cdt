@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryArchive;
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile;
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.utils.coff.PEArchive;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;

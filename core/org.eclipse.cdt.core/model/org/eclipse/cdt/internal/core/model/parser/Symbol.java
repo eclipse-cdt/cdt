@@ -1,6 +1,6 @@
 package org.eclipse.cdt.internal.core.model.parser;
 
-import org.eclipse.cdt.core.model.IBinaryParser.ISymbol;
+import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.

@@ -7,8 +7,8 @@ package org.eclipse.cdt.internal.core.model.parser;
  
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryArchive;
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.internal.core.model.Container;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;

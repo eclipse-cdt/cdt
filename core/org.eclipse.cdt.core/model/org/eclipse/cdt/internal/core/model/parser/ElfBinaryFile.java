@@ -10,11 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryExecutable;
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile;
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.core.model.IBinaryParser.IBinaryShared;
-import org.eclipse.cdt.core.model.IBinaryParser.ISymbol;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
+import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;

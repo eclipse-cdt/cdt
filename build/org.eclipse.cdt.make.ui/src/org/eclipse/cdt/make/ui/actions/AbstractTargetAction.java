@@ -10,6 +10,7 @@ package org.eclipse.cdt.make.ui.actions;
 
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.core.resources.IContainer;
@@ -58,8 +59,8 @@ public abstract class AbstractTargetAction
 			IStructuredSelection sel = (IStructuredSelection) selection;
 			Object obj = sel.getFirstElement();
 			if (obj instanceof ICElement) {
-				if ( obj instanceof ICContainer) {
-					fContainer = (IContainer) ((ICContainer) obj).getUnderlyingResource();
+				if ( obj instanceof ICContainer || obj instanceof ICProject) {
+					fContainer = (IContainer) ((ICElement) obj).getUnderlyingResource();
 				} else {
 					obj = ((ICElement)obj).getResource();
 					if ( obj != null) {

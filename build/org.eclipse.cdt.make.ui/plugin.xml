@@ -85,6 +85,29 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
+            objectClass="org.eclipse.cdt.core.model.ICProject"
+            adaptable="false"
+            id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
+         <action
+               label="%ActionMakeCreateTarget.label"
+               class="org.eclipse.cdt.make.ui.actions.CreateTargetAction"
+               menubarPath="buildGroup"
+               enablesFor="1"
+               id="org.eclipse.cdt.make.ui.CViewCreateTargetAction">
+         </action>
+         <action
+               label="%ActionMakeBuildTarget.label"
+               class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
+               menubarPath="buildGroup"
+               enablesFor="1"
+               id="org.eclipse.cdt.make.ui.CViewBuildTargetAction">
+         </action>
+         <filter
+               name="projectNature"
+               value="org.eclipse.cdt.make.core.makeNature">
+         </filter>
+      </objectContribution>
+      <objectContribution
             objectClass="org.eclipse.cdt.core.model.ICContainer"
             adaptable="false"
             id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
@@ -331,6 +354,9 @@
                   <objectClass
                         name="org.eclipse.cdt.core.model.ICContainer">
                   </objectClass>
+                  <objectClass
+                        name="org.eclipse.cdt.core.model.ICProject">
+                  </objectClass>
                </or>
             </enablement>
          </action>
@@ -348,6 +374,9 @@
                   </objectClass>
                   <objectClass
                         name="org.eclipse.cdt.core.model.ICContainer">
+                  </objectClass>
+                  <objectClass
+                        name="org.eclipse.cdt.core.model.ICProject">
                   </objectClass>
                </or>
             </enablement>

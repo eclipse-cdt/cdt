@@ -3,6 +3,7 @@
  * All Rights Reserved.
  * 
  */
+
 package org.eclipse.cdt.debug.core;
 
 /**
@@ -13,4 +14,6 @@ package org.eclipse.cdt.debug.core;
 public interface IExecFileInfo
 {
 	public boolean isLittleEndian();
+	
+	public IGlobalVariable[] getGlobals();
 }

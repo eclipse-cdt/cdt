@@ -13,6 +13,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.debug.core.IDebuggerProcessSupport;
 import org.eclipse.cdt.debug.core.IExecFileInfo;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
+import org.eclipse.cdt.debug.core.IGlobalVariable;
 import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IRunToLine;
 import org.eclipse.cdt.debug.core.IState;
@@ -2009,5 +2011,64 @@ public class CDebugTarget extends CDebugElement
 	private void setExecFile( IFile file )
 	{
 		fExecFile = file;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IExecFileInfo#getGlobals()
+	 */
+	public IGlobalVariable[] getGlobals()
+	{
+		ArrayList list = new ArrayList();
+		if ( getExecFile() != null && CoreModel.isBinary( getExecFile() ) )
+		{
+			ICFile cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
+			if ( cFile instanceof IBinary )
+			{
+				list.addAll( getCFileGlobals( cFile ) );
+			}
+		}
+		return (IGlobalVariable[])list.toArray( new IGlobalVariable[list.size()] );
+	}
+
+	private List getCFileGlobals( ICFile file )
+	{
+		ArrayList list = new ArrayList();
+		ICElement[] elements = file.getChildren();
+		for ( int i = 0; i < elements.length; ++i )
+		{
+			if ( elements[i] instanceof org.eclipse.cdt.core.model.IVariable )
+			{
+				list.add( createGlobalVariable( (org.eclipse.cdt.core.model.IVariable)elements[i] ) );
+			}
+			else if ( elements[i] instanceof org.eclipse.cdt.core.model.ICFile )
+			{
+				list.addAll( getCFileGlobals( (org.eclipse.cdt.core.model.ICFile)elements[i] ) );
+			}
+		}
+		return list;
+	}
+
+	private IGlobalVariable createGlobalVariable( final org.eclipse.cdt.core.model.IVariable var )
+	{
+		return new IGlobalVariable()
+				  {
+				  	  public String getName()
+				  	  {
+				  	  	  return var.getElementName();
+				  	  }
+				  	  
+				  	  public IPath getPath()
+				  	  {
+						  IPath path = null;
+						  if ( var.getParent() != null && var.getParent() instanceof ICFile )
+						  {
+						  	  if ( !(var.getParent() instanceof IBinary) )
+						  	  {
+							  	  path = ((ICFile)var.getParent()).getFile().getLocation();
+						  	  }
+						  }
+						  return path;
+				  	  }
+				  };
 	}
 }

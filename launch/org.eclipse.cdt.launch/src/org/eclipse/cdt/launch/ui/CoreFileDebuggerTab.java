@@ -84,6 +84,21 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 		setInitializing(false);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		setInitializing(true);
+		try {
+			String id = workingCopy.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
+			loadDebuggerComboBox(workingCopy, id);
+		} catch (CoreException e) {
+		}
+		setInitializing(false);
+		super.activated(workingCopy);
+	}
+	
 	public boolean isValid(ILaunchConfiguration config) {
 		if (!validateDebuggerConfig(config)) {
 			return false;
@@ -106,6 +121,7 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 		}
 		return true;
 	}
+	
 	protected void loadDebuggerComboBox(ILaunchConfiguration config, String selection) {
 		ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
 		String projectPlatform = getProjectPlatform(config);

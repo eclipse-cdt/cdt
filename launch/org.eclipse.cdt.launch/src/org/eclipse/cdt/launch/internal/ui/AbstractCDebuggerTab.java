@@ -137,7 +137,6 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 			setInitializeDefault(false);
 			getDynamicTab().initializeFrom(wc);
 		}
-		updateLaunchConfigurationDialog();
 	}
 
 	/**

@@ -118,15 +118,17 @@ public class MIInferior extends Process {
 	 * @see java.lang.Process#exitValue()
 	 */
 	public int exitValue() {
-		if (isTerminated() && !session.isTerminated()) {
-			CommandFactory factory = session.getCommandFactory();
-			MIGDBShowExitCode code = factory.createMIGDBShowExitCode();
-			try {
-				session.postCommand(code);
-				MIGDBShowExitCodeInfo info = code.getMIGDBShowExitCodeInfo();
-				return info.getCode();
-			} catch (MIException e) {
-				return 0;
+		if (isTerminated()) {
+			if (!session.isTerminated()) {
+				CommandFactory factory = session.getCommandFactory();
+				MIGDBShowExitCode code = factory.createMIGDBShowExitCode();
+				try {
+					session.postCommand(code);
+					MIGDBShowExitCodeInfo info = code.getMIGDBShowExitCodeInfo();
+					return info.getCode();
+				} catch (MIException e) {
+					return 0;
+				}
 			}
 		}
 		throw new IllegalThreadStateException();

@@ -1,4 +1,8 @@
-2002-12-18 Mikhail Khodjaiants
+2003-01-02 Mikhail Khodjaiants
+	If breakpoint or watchpoint has been disabled before launching the debugger doesn't disable it.
+	* CDebugTarget.java
+
+2002-12-29 Mikhail Khodjaiants
 	Implementation of the 'Source Lookup' property page.
 	* IDirectorySourceLocation.java: new interface
 	* IProjectSourceLocation.java: new interface

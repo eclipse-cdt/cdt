@@ -1714,7 +1714,7 @@ public class QuickParseASTTests extends BaseASTTest
 	
 	public void testBug39553() throws Exception	
 	{
-		parse("#define COMP_INC \"foobar.h\"  \n" + "#include COMP_INC"); //$NON-NLS-1$ //$NON-NLS-2$
+		parse("#define COMP_INC \"foobar.h\"  \n" + "#include COMP_INC\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue( quickParseCallback.getInclusions().hasNext() );
 	}
 	

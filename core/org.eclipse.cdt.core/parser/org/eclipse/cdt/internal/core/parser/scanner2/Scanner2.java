@@ -349,6 +349,8 @@ public class Scanner2 implements IScanner, IScannerData {
 				case 'L':
 					if (pos + 1 < limit && buffer[pos + 1] == '"')
 						return scanString();
+					if (pos + 1 < limit && buffer[pos + 1] == '\'')
+						return scanCharLiteral();
 					
 					IToken t = scanIdentifier();
 					if (t instanceof MacroExpansionToken)
@@ -768,8 +770,14 @@ public class Scanner2 implements IScanner, IScannerData {
 		int start = bufferPos[bufferStackPos] + 1;
 		int limit = bufferLimit[bufferStackPos];
 
+		int tokenType = IToken.tCHAR;
+		if (buffer[bufferPos[bufferStackPos]] == 'L') {
+			++bufferPos[bufferStackPos];
+			tokenType = IToken.tLCHAR;
+		}
+
 		if (start >= limit) {
-			return new ImagedToken(IToken.tCHAR, new String(emptyCharArray));
+			return new ImagedToken(tokenType, new String(emptyCharArray));
 		}
 
 		int length = 0;
@@ -940,34 +948,22 @@ public class Scanner2 implements IScanner, IScannerData {
  
 				case 'u':
 				case 'U':
-					// unsigned suffix
-					if (++bufferPos[bufferStackPos] < limit) {
-						switch (buffer[bufferPos[bufferStackPos]]) {
-						case 'l':
-						case 'L':
-							if (++bufferPos[bufferStackPos]  < limit) {
-								switch (buffer[bufferPos[bufferStackPos]]) {
-									case 'l':
-									case 'L':
-										// long long
-										++bufferPos[bufferStackPos];
-								}
-							}
-						}
-					}
-					break;
-				
-				case 'l':
 				case 'L':
-					if (++bufferPos[bufferStackPos]  < limit) {
+				case 'l':
+					// unsigned suffix
+					suffixLoop: 
+					while(++bufferPos[bufferStackPos]  < limit) {
 						switch (buffer[bufferPos[bufferStackPos]]) {
+							case 'U':
+							case 'u':
 							case 'l':
 							case 'L':
-								// long long
-								++bufferPos[bufferStackPos];
+								break;
+							default:
+								
+								break suffixLoop;
 						}
 					}
-					// long or long long
 					break;
 					
 				default:
@@ -1207,6 +1203,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
+		int startingOffset = bufferPos[bufferStackPos]; //TODO this is wrong
+		int startingLine = 0, endingLine = 0, nameLine = 0;
 		skipOverWhiteSpace();
 		
 		// get the Identifier
@@ -1305,10 +1303,12 @@ public class Scanner2 implements IScanner, IScannerData {
 		text = removedEscapedNewline( text );
 			
 		// Throw it in
-		definitions.put(name,
-				arglist == null
+		definitions.put(name, 	arglist == null
 				? new ObjectStyleMacro(name, text)
-				: new FunctionStyleMacro(name, text, arglist));
+						: new FunctionStyleMacro(name, text, arglist) );
+		
+		requestor.acceptMacro( getASTFactory().createMacro( new String( name ), startingOffset, startingLine, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, null )); //TODO - IMacroDescriptor? 
+		
 	}
 	
 	
@@ -2136,6 +2136,10 @@ public class Scanner2 implements IScanner, IScannerData {
 				"__attribute__".toCharArray(), //$NON-NLS-1$
 				emptyCharArray,
 				new char[][] { "arg".toCharArray() }); //$NON-NLS-1$
+	private static final FunctionStyleMacro _Pragma = new FunctionStyleMacro( 
+			"_Pragma".toCharArray(),  //$NON-NLS-1$
+			emptyCharArray, 
+			new char[][] { "arg".toCharArray() } ); //$NON-NLS-1$
 
 	private IASTFactory astFactory;
 	
@@ -2154,6 +2158,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		definitions.put(__volatile__.name, __volatile__);
 		if( language == ParserLanguage.CPP )
 			definitions.put(__asm__.name, __asm__);
+		else
+			definitions.put(_Pragma.name, _Pragma );
 		
 		/*
 		

@@ -419,9 +419,9 @@ public class CElementLabels {
 		if (rootQualified) {
 			buf.append(container.getPath().makeRelative().toString());
 		} else {
-			if (resource != null)
-				buf.append(resource.getProjectRelativePath().toString());
-			else
+//			if (resource != null)
+//				buf.append(resource.getProjectRelativePath().toString());
+//			else
 				buf.append(container.getElementName());
 			if (referencedQualified) {
 				buf.append(CONCAT_STRING);

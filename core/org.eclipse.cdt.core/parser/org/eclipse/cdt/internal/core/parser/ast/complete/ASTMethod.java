@@ -225,13 +225,13 @@ public class ASTMethod extends ASTFunction implements IASTMethod
 	 * @return
 	 * @throws LookupError
 	 */
-	protected List performPrefixLookup(String prefix, IContainerSymbol thisContainer, IContainerSymbol qualification, TypeFilter filter, List paramList) throws LookupError {
+	protected List performPrefixLookup(char[] prefix, IContainerSymbol thisContainer, IContainerSymbol qualification, TypeFilter filter, List paramList) throws LookupError {
 		if( filter.isLookingInThis() ){
 			try{
 				ISymbol thisPointer = thisContainer.lookup( ParserSymbolTable.THIS );
 				ISymbol thisClass = ( thisPointer != null ) ? thisPointer.getTypeSymbol() : null; 
 				if( thisClass != null && thisClass instanceof IContainerSymbol ){
-					return ((IContainerSymbol) thisClass).prefixLookup( filter, prefix.toCharArray(), true, paramList );
+					return ((IContainerSymbol) thisClass).prefixLookup( filter, prefix, true, paramList );
 				}	
 			} catch (ParserSymbolTableException e) {
 				throw new LookupError();

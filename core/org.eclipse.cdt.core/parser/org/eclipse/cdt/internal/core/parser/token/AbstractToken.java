@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 
 
 /**
@@ -79,7 +80,7 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 			return false;
 		if( ((IToken)other).getType() != getType() ) 
 			return false;
-		if( !(((IToken)other).getImage().equals( getImage() ))) 
+		if( !CharArrayUtils.equals( ((IToken)other).getCharImage(), getCharImage() ) ) 
 			return false;
 		return true;
 	}

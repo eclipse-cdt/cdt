@@ -322,7 +322,8 @@ public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode
 	public IASTExpression getRHSExpression();
 	public IASTExpression getThirdExpression();
 	public String getLiteralString(); 
-	public String     getIdExpression();
+	public String getIdExpression();
+	public char[] getIdExpressionCharArray();
 	public IASTTypeId getTypeId(); 	
 	public IASTNewExpressionDescriptor getNewExpressionDescriptor(); 
 	

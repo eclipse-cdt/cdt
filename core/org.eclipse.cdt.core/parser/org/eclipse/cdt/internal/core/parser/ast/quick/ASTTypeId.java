@@ -74,6 +74,9 @@ public class ASTTypeId implements IASTTypeId
     {
         return String.valueOf(name);
     }
+    public char[] getTypeOrClassNameCharArray(){
+    	return name;
+    }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypeId#getPointerOperators()
      */
@@ -95,6 +98,10 @@ public class ASTTypeId implements IASTTypeId
     {
         return String.valueOf(completeSignature);
     }
+    public char[] getFullSignatureCharArray(){
+    	return completeSignature;
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypeId#createTypeSymbol(org.eclipse.cdt.core.parser.ast.IASTFactory)
      */

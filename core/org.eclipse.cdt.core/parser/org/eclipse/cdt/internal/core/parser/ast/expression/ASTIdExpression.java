@@ -39,6 +39,9 @@ public class ASTIdExpression extends ASTExpression implements IASTExpression {
 		return String.valueOf(idExpression);
 	}
 	
+	public char[] getIdExpressionCharArray(){
+		return idExpression;
+	}
 	public String toString(){
 		return ASTUtil.getExpressionString( this );
 	}

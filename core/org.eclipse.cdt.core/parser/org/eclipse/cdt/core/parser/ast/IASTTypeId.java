@@ -23,6 +23,7 @@ public interface IASTTypeId extends ISourceElementCallbackDelegate
 {
 	public IASTSimpleTypeSpecifier.Type getKind(); 
 	public String getTypeOrClassName(); 
+	public char[] getTypeOrClassNameCharArray();
 	public Iterator getPointerOperators();
 	public Iterator getArrayModifiers();
 	
@@ -36,6 +37,7 @@ public interface IASTTypeId extends ISourceElementCallbackDelegate
 	
 	
 	public String  getFullSignature(); 
+	public char[]  getFullSignatureCharArray();
 	public ISymbol getTypeSymbol() throws ASTNotImplementedException;
 	/**
 	 * @param manager

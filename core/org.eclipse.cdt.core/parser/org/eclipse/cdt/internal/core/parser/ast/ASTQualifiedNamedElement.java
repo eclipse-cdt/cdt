@@ -40,7 +40,7 @@ public class ASTQualifiedNamedElement implements IASTQualifiedNameElement
 			if (parent instanceof IASTNamespaceDefinition
 				|| parent instanceof IASTClassSpecifier )
 			{
-				names.push(((IASTOffsetableNamedElement)parent).getName().toCharArray());
+				names.push(((IASTOffsetableNamedElement)parent).getNameCharArray());
 				if( parent instanceof IASTScopedElement  )
 					parent = ((IASTScopedElement)parent).getOwnerScope();				
 			}

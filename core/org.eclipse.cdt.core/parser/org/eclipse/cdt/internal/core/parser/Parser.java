@@ -60,6 +60,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 
 /**
@@ -1555,7 +1556,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 				className = duple.getToken(index);
 			}
 
-			boolean result = className.getImage().equals(duple.getLastToken());
+			boolean result = CharArrayUtils.equals( className.getCharImage(), duple.getLastToken().getCharImage() );
 			backup(mark);
 			return result;
 		} finally {

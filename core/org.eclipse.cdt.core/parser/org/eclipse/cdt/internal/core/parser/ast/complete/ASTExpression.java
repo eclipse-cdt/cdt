@@ -252,6 +252,7 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 	}
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final char[] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 
 	public IASTExpression getLHSExpression() {
 		return null;
@@ -271,6 +272,10 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 
 	public String getIdExpression() {
 		return EMPTY_STRING;
+	}
+	
+	public char[] getIdExpressionCharArray(){
+		return EMPTY_CHAR_ARRAY;
 	}
 
 	public IASTTypeId getTypeId() {

@@ -74,7 +74,7 @@ public class ASTNode implements IASTNode {
 			filter.addAcceptedType( LookupKind.ALL );
 		}
 		
-		List lookupResults = performPrefixLookup(prefix, thisContainer, qualification, filter, parameters);
+		List lookupResults = performPrefixLookup(prefix.toCharArray(), thisContainer, qualification, filter, parameters);
 		
 		if(lookupResults == null)
 			return null;
@@ -111,13 +111,13 @@ public class ASTNode implements IASTNode {
 	 * @return
 	 * @throws LookupError
 	 */
-	protected List performPrefixLookup(String prefix, IContainerSymbol thisContainer, IContainerSymbol qualification, TypeFilter filter, List paramList) throws LookupError {
+	protected List performPrefixLookup(char[] prefix, IContainerSymbol thisContainer, IContainerSymbol qualification, TypeFilter filter, List paramList) throws LookupError {
 		List results = null;
 		try {
 			if( qualification != null ){
-				results = qualification.prefixLookup( filter, prefix.toCharArray(), true, paramList );
+				results = qualification.prefixLookup( filter, prefix, true, paramList );
 			} else {
-				results = thisContainer.prefixLookup( filter, prefix.toCharArray(), false, paramList );
+				results = thisContainer.prefixLookup( filter, prefix, false, paramList );
 			}
 		} catch (ParserSymbolTableException e) {
 			throw new LookupError();

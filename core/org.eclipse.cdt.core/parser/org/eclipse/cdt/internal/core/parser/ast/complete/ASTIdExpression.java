@@ -40,6 +40,10 @@ public class ASTIdExpression extends ASTExpression {
 		return String.valueOf( idExpressionValue );
 	}
 	
+	public char[] getIdExpressionCharArray(){
+		return idExpressionValue;
+	}
+	
 	public ITokenDuple getIdExpressionTokenDuple()
 	{
 		return idExpression;

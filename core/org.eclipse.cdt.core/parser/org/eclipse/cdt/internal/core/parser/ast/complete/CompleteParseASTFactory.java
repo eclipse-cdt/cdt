@@ -575,7 +575,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         	}
 	        try
 	        {
-	            endResult = scopeToSymbol(scope).addUsingDeclaration( name.getLastToken().getImage().toCharArray(), containerSymbol );
+	            endResult = scopeToSymbol(scope).addUsingDeclaration( name.getLastToken().getCharImage(), containerSymbol );
 	        }
 	        catch (ParserSymbolTableException e)
 	        {
@@ -583,7 +583,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	        }
         } else
 			try {
-				endResult = scopeToSymbol(scope).addUsingDeclaration(name.getLastToken().getImage().toCharArray());
+				endResult = scopeToSymbol(scope).addUsingDeclaration(name.getLastToken().getCharImage());
 			} catch (ParserSymbolTableException e) {
 				handleProblem(e.createProblemID(), name.getLastToken().getCharImage(), startingOffset, endingOffset, startingLine, true );
 	        }
@@ -1131,7 +1131,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					idExpression.toString()
     				);
     	}
-    	else if( literal != null && !literal.equals( String.valueOf(EMPTY_STRING) )) 
+    	else if( literal != null && literal.length > 0 ) 
     	{
        		TraceUtil.outputTrace(
        				logService,
@@ -2803,7 +2803,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					
 					try
                     {
-                        lookup = ((IContainerSymbol)currentSymbol).lookup( designator.fieldName().toCharArray() );
+                        lookup = ((IContainerSymbol)currentSymbol).lookup( designator.fieldNameCharArray() );
                     }
                     catch (ParserSymbolTableException e){
                         break;
@@ -2815,7 +2815,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                     try
                     {
                     	if( lookup != null )
-                    		addReference( clause.getReferences(), createReference( lookup, designator.fieldNameArray(), designator.fieldOffset() ));
+                    		addReference( clause.getReferences(), createReference( lookup, designator.fieldNameCharArray(), designator.fieldOffset() ));
                     }
                     catch (ASTSemanticException e1)
                     {
@@ -3529,7 +3529,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( typeSymbol == null /*|| typeSymbol.getType() == TypeInfo.t_type*/ )
 			{
 				freeReferences( refs );
-				handleProblem( scope, IProblem.SEMANTIC_INVALID_TYPE, id.getTypeOrClassName().toCharArray() );
+				handleProblem( scope, IProblem.SEMANTIC_INVALID_TYPE, typeId.getTypeOrClassNameCharArray() );
 			}
             result.setTypeSymbol( typeSymbol );
             typeId.addReferences( refs, cache );

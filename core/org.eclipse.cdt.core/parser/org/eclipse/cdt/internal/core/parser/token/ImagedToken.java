@@ -46,7 +46,7 @@ public class ImagedToken extends SimpleToken {
 		return new String( image );
 	}
 	
-	public char[] getCharImage() {
+	public final char[] getCharImage() {
 		return image;
 	}
 	/* (non-Javadoc)

@@ -203,6 +203,9 @@ public class ASTExpression implements IASTExpression {
     {
     	return null;
     }
+    public char[] getIdExpressionCharArray(){
+    	return null;
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTExpression#reconcileReferences()

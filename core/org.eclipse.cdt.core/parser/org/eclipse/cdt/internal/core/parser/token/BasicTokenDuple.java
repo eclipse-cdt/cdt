@@ -185,6 +185,35 @@ public class BasicTokenDuple implements ITokenDuple {
 		
 	}
 
+	public static int getCharArrayLength( IToken f, IToken l ){
+		if( f == l )
+			return f.getCharImage().length;
+		
+		IToken prev = null;
+		IToken iter = f;
+		
+		int length = 0;
+		for( ; ; ){
+			if( iter == null ) return 0;
+			if( prev != null && prev.getType() != IToken.tCOLONCOLON && 
+								prev.getType() != IToken.tIDENTIFIER && 
+								prev.getType() != IToken.tLT &&
+								prev.getType() != IToken.tCOMPL &&
+								iter.getType() != IToken.tGT && 
+								prev.getType() != IToken.tLBRACKET && 
+								iter.getType() != IToken.tRBRACKET && 
+								iter.getType() != IToken.tCOLONCOLON )
+			{
+				length++;
+			}
+			length += iter.getCharImage().length;
+			if( iter == l ) break;
+			prev = iter;
+			iter = iter.getNext();
+		}
+		return length;
+	}
+	
 	public static char[] createCharArrayRepresentation( IToken f, IToken l)
 	{
 		if( f == l ) return f.getCharImage();
@@ -192,29 +221,8 @@ public class BasicTokenDuple implements ITokenDuple {
 		IToken prev = null;
 		IToken iter = f;
 		
-		//first figure out how long the array should be
-		int length = 0;
-		for( ; ; ){
-			if( prev != null && 
-			    prev.getType() != IToken.tCOLONCOLON && 
-				prev.getType() != IToken.tIDENTIFIER && 
-				prev.getType() != IToken.tLT &&
-				prev.getType() != IToken.tCOMPL &&
-				iter.getType() != IToken.tGT && 
-				prev.getType() != IToken.tLBRACKET && 
-				iter.getType() != IToken.tRBRACKET && 
-				iter.getType() != IToken.tCOLONCOLON )
-			{
-				length++;
-			}
-			if( iter == null ) return EMPTY_STRING;
-			length += iter.getCharImage().length;
-			if( iter == l ) break;
-			prev = iter;
-			iter = iter.getNext();
-		}
-		prev = null;
-		iter = f;
+		int length = getCharArrayLength( f, l );
+		
 		char[] buff = new char[ length ];
 		int i = 0; 
 		for( ; ; )
@@ -386,43 +394,51 @@ public class BasicTokenDuple implements ITokenDuple {
 	    if( argLists == null || argLists[ argLists.length - 1 ] == null )
 	        return nameDuple.toCharArray();
 	 	
-    	Iterator i = nameDuple.iterator();
+	    AbstractToken i = (AbstractToken) nameDuple.getFirstToken();
+	    IToken last = nameDuple.getLastToken();
     	
-    	if( !i.hasNext() )
+    	if( i == null )
     		return EMPTY_STRING;
+   	
+    	char[] tempArray = i.getCharImage();
     	
-    	StringBuffer nameBuffer = new StringBuffer();
-    	IToken token = (IToken) i.next();
-    	nameBuffer.append( token.getImage() );
+    	if( i == last )
+    		return tempArray;
     	
-    	if( !i.hasNext() )
-    		return nameBuffer.toString().toCharArray();
-		
+    	
+    	char[] nameBuffer = new char[ getCharArrayLength( i, lastToken ) ];
+    	
+    	CharArrayUtils.overWrite( nameBuffer, 0, tempArray );
+    	int idx = tempArray.length;
+    	
     	//appending of spaces needs to be the same as in toString()
     	    	
     	//destructors
-    	if( token.getType() == IToken.tCOMPL ){
-    		token = (IToken) i.next();
-    		nameBuffer.append( token.getImage() );
+    	if( i.getType() == IToken.tCOMPL ){
+    		i = (AbstractToken) i.next;
+    		tempArray = i.getCharImage();
+    		CharArrayUtils.overWrite( nameBuffer, idx, tempArray );
+    		idx += tempArray.length;
     	} 
     	//operators
-    	else if( token.getType() == IToken.t_operator ){
-    		token = (IToken) i.next();
-    		nameBuffer.append( ' ' );
+    	else if( i.getType() == IToken.t_operator ){
+    		i = (AbstractToken) i.next;
+    		nameBuffer[ idx++ ] = ' ';
 	
-		    IToken first = token;
+		    IToken first = i;
 		    IToken temp = null;
-		    while( i.hasNext() ){
-		        temp = (IToken) i.next();
+		    while( i != last ){
+		        temp = (IToken) i.next;
 		        if( temp.getType() != IToken.tLT )
-		            token = temp;
+		            i = (AbstractToken) temp;
 		        else
 		            break;
 		    }
-	        nameBuffer.append( createCharArrayRepresentation( first, token ) );
+		    CharArrayUtils.overWrite( nameBuffer, idx, createCharArrayRepresentation( first, i ) );
+		    idx += getCharArrayLength( first, i );
     	}
     	
-    	return nameBuffer.toString().toCharArray();
+    	return CharArrayUtils.extract( nameBuffer, 0, idx );
     }
 
 	/* (non-Javadoc)

@@ -72,7 +72,7 @@ public class ContextualParser extends CompleteParser {
 	protected IASTNode context;
 	protected IToken finalToken;
 	protected Set keywordSet;
-	protected String functionOrConstructorName = "";//$NON-NLS-1$
+	protected char[] functionOrConstructorName = EMPTY_STRING;
 
 	/**
 	 * @return
@@ -162,7 +162,7 @@ public class ContextualParser extends CompleteParser {
 		setCompletionFunctionName();
 	}
 
-	private String currentFunctionName = String.valueOf(EMPTY_STRING);
+	private char[] currentFunctionName = EMPTY_STRING;
 	protected IASTExpression parameterListExpression;
 	
 	
@@ -217,7 +217,7 @@ public class ContextualParser extends CompleteParser {
 	/**
 	 * @return
 	 */
-	protected String getCompletionFunctionName() {
+	protected char[] getCompletionFunctionName() {
 		return functionOrConstructorName;
 	}
 	
@@ -225,7 +225,7 @@ public class ContextualParser extends CompleteParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setCurrentFunctionName(java.lang.String)
 	 */
-	protected void setCurrentFunctionName(String functionName) {
+	protected void setCurrentFunctionName(char[] functionName) {
 		currentFunctionName = functionName;
 	}
 	

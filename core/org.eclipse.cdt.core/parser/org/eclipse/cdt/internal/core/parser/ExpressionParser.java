@@ -1956,7 +1956,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		if (LT(1) == IToken.tLPAREN) {
 			consume(IToken.tLPAREN);
 			setCurrentFunctionName(((typeId != null) ? typeId
-					.getFullSignature() : String.valueOf(EMPTY_STRING)));
+					.getFullSignatureCharArray() : EMPTY_STRING));
 			setCompletionValues(scope, CompletionKind.CONSTRUCTOR_REFERENCE);
 			if (templateIdScopes != null) {
 				templateIdScopes.push(new Integer(IToken.tLPAREN));
@@ -1967,7 +1967,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			newInitializerExpressions.add(expression(scope,
 					CompletionKind.CONSTRUCTOR_REFERENCE, key));
 
-			setCurrentFunctionName(String.valueOf(EMPTY_STRING));
+			setCurrentFunctionName(EMPTY_STRING);
 			consume(IToken.tRPAREN);
 			if (templateIdScopes != null) {
 				templateIdScopes.pop();
@@ -1995,7 +1995,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	/**
 	 * @param functionName 
 	 */
-	protected void setCurrentFunctionName(String functionName) {
+	protected void setCurrentFunctionName(char[] functionName) {
 	}
 
 	/**
@@ -2297,12 +2297,12 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					if (firstExpression != null) {
 						if (firstExpression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION)
 							setCurrentFunctionName(firstExpression
-									.getIdExpression());
+									.getIdExpressionCharArray());
 						else if (firstExpression.getRHSExpression() != null
 								&& firstExpression.getRHSExpression()
 										.getIdExpression() != null) {
 							setCurrentFunctionName(firstExpression
-									.getRHSExpression().getIdExpression());
+									.getRHSExpression().getIdExpressionCharArray());
 							context = astFactory
 									.expressionToMostPreciseASTNode(scope,
 											firstExpression.getLHSExpression());
@@ -2316,7 +2316,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 							CompletionKind.FUNCTION_REFERENCE, context);
 					secondExpression = expression(scope,
 							CompletionKind.FUNCTION_REFERENCE, key);
-					setCurrentFunctionName(String.valueOf(EMPTY_STRING));
+					setCurrentFunctionName(EMPTY_STRING);
 					endOffset = consume(IToken.tRPAREN).getEndOffset();
 					if (templateIdScopes != null) {
 						templateIdScopes.pop();
@@ -2477,12 +2477,12 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		int line = la.getLineNumber();
 		char [] fn = la.getFilename();
 		la = null;
-		String typeName = consume().getImage();
+		char[] typeName = consume().getCharImage();
 		consume(IToken.tLPAREN);
 		setCurrentFunctionName(typeName);
 		IASTExpression inside = expression(scope,
 				CompletionKind.CONSTRUCTOR_REFERENCE, key);
-		setCurrentFunctionName(String.valueOf(EMPTY_STRING));
+		setCurrentFunctionName(EMPTY_STRING);
 		int endOffset = consume(IToken.tRPAREN).getEndOffset();
 		try {
 			return astFactory.createExpression(scope, type, inside, null, null,

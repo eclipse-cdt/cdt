@@ -59,7 +59,7 @@ public class ASTDesignator implements IASTDesignator
     {
         return String.valueOf(fieldName);
     }
-    public char[] fieldNameArray(){
+    public char[] fieldNameCharArray(){
         return fieldName;
     }
     /* (non-Javadoc)

@@ -248,7 +248,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      */
     public IASTTemplateParameter createTemplateParameter(IASTTemplateParameter.ParamKind kind, char[] identifier, IASTTypeId defaultValue, IASTParameterDeclaration parameter, List parms, IASTCodeScope parameterScope, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn)
     {
-        return new ASTTemplateParameter( kind, identifier, defaultValue != null ? defaultValue.getTypeOrClassName().toCharArray() : EMPTY_STRING, parameter, parms, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine, fn ); //$NON-NLS-1$
+        return new ASTTemplateParameter( kind, identifier, defaultValue != null ? defaultValue.getTypeOrClassNameCharArray() : EMPTY_STRING, parameter, parms, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine, fn ); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

@@ -1677,6 +1677,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 		}
 		symbol.setIsForwardDeclaration(!isFunctionDefinition);
+		boolean previouslyDeclared = false; 
 		
 		if( isFunctionDefinition )
 		{
@@ -1697,6 +1698,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			
 			if( functionDeclaration != null )
 			{
+				previouslyDeclared = true;
 				functionDeclaration.setTypeSymbol( symbol );
 				// set the definition visibility = declaration visibility
 				ASTMethodReference reference = (ASTMethodReference) functionReferences.iterator().next();
@@ -1719,8 +1721,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			throw new ASTSemanticException();   
 		}
 
-		boolean previouslyDeclared = false; 
-		//TODO : Hoda - if symbol was previously declared in PST, then set this to true
   
         ASTMethod method = new ASTMethod( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain );
         try

@@ -1,3 +1,6 @@
+2003-09-16 John Camelon
+	Implement CompleteParse IASTFunction::previouslyDeclared(). 
+
 2003-09-16 Hoda Amer
 	In completeParseASTFactory.getExpressionResultType(): Added the support 
 	for expression type PRIMARY_THIS.

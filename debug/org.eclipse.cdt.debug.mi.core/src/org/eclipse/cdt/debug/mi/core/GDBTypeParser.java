@@ -396,11 +396,6 @@ public class GDBTypeParser {
 
 		GDBTypeParser parser = new GDBTypeParser();
 
-		System.out.println("int (*func[15])()"); //$NON-NLS-1$
-		parser.parse("int (*func[15])()"); //$NON-NLS-1$
-		System.out.println(parser.getGDBType().verbose());
-		System.out.println();
-
 		System.out.println("struct link { int i; int j; struct link * next;} *"); //$NON-NLS-1$
 		parser.parse("struct link { int i; int j; struct link * next} *"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());

@@ -38,7 +38,10 @@ public class ManagedBuildPathEntryContainerInitializer extends PathEntryContaine
 	 */
 	public void initialize(IPath containerPath, ICProject project) throws CoreException {
 		if (VERBOSE) {
-			System.out.println(TRACE_HEADER + project.getProject().getName() + TRACE_FOOTER + "Initializing path entry container");
+			System.out.println(TRACE_HEADER + 
+					project.getProject().getName() + 
+					TRACE_FOOTER + 
+					"Initializing path entry container");	//$NON-NLS-1$
 		}
 		CoreModel.getDefault().setPathEntryContainer(new ICProject[]{project}, new ManagedBuildCPathEntryContainer(project.getProject()), null);
 	}

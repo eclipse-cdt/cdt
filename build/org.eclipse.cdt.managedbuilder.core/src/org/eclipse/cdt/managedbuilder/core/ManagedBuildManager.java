@@ -108,6 +108,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static final String PROJECT_VERSION_ERROR ="ManagedBuildManager.error.project.version.error";	//$NON-NLS-1$
 	private static final String MANIFEST_ERROR_HEADER = "ManagedBuildManager.error.manifest.header";	//$NON-NLS-1$
 	public  static final String MANIFEST_ERROR_RESOLVING = "ManagedBuildManager.error.manifest.resolving";	//$NON-NLS-1$
+	public  static final String MANIFEST_ERROR_DUPLICATE = "ManagedBuildManager.error.manifest.duplicate";	//$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	
 	// This is the version of the manifest and project files that
@@ -914,7 +915,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 		
 		projectTypes.add(projectType);
-		getExtensionProjectTypeMap().put(projectType.getId(), projectType);
+		Object previous = getExtensionProjectTypeMap().put(projectType.getId(), projectType);
+		if (previous != null) {
+			// Report error
+			ManagedBuildManager.OutputDuplicateIdError(
+					"ProjectType",	//$NON-NLS-1$
+					projectType.getId());			
+		}
 	}
 	
 	/**
@@ -925,7 +932,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param configuration 
 	 */
 	public static void addExtensionConfiguration(Configuration configuration) {
-		getExtensionConfigurationMap().put(configuration.getId(), configuration);
+		Object previous = getExtensionConfigurationMap().put(configuration.getId(), configuration);
+		if (previous != null) {
+			// Report error
+			ManagedBuildManager.OutputDuplicateIdError(
+					"Configuration",	//$NON-NLS-1$
+					configuration.getId());			
+		}
 	}
 	
 	/**
@@ -936,7 +949,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param resourceConfiguration 
 	 */
 	public static void addExtensionResourceConfiguration(ResourceConfiguration resourceConfiguration) {
-		getExtensionResourceConfigurationMap().put(resourceConfiguration.getId(), resourceConfiguration);
+		Object previous = getExtensionResourceConfigurationMap().put(resourceConfiguration.getId(), resourceConfiguration);
+		if (previous != null) {
+			// Report error
+			ManagedBuildManager.OutputDuplicateIdError(
+					"ResourceConfiguration",	//$NON-NLS-1$
+					resourceConfiguration.getId());			
+		}
 	}
 	
 	/**
@@ -947,7 +966,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param toolChain 
 	 */
 	public static void addExtensionToolChain(ToolChain toolChain) {
-		getExtensionToolChainMap().put(toolChain.getId(), toolChain);
+		Object previous = getExtensionToolChainMap().put(toolChain.getId(), toolChain);
+		if (previous != null) {
+			// Report error
+			ManagedBuildManager.OutputDuplicateIdError(
+					"ToolChain",	//$NON-NLS-1$
+					toolChain.getId());			
+		}
 	}
 		
 	/**
@@ -960,7 +985,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param tool
 	 */
 	public static void addExtensionTool(Tool tool) {
-		getExtensionToolMap().put(tool.getId(), tool);
+		Object previous = getExtensionToolMap().put(tool.getId(), tool);
+		if (previous != null) {
+			// Report error
+			ManagedBuildManager.OutputDuplicateIdError(
+					"Tool",	//$NON-NLS-1$
+					tool.getId());			
+		}
 	}
 	
 	/**
@@ -971,7 +1002,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param targetPlatform 
 	 */
 	public static void addExtensionTargetPlatform(TargetPlatform targetPlatform) {
-		getExtensionTargetPlatformMap().put(targetPlatform.getId(), targetPlatform);
+		Object previous = getExtensionTargetPlatformMap().put(targetPlatform.getId(), targetPlatform);
+		if (previous != null) {
+			// Report error
+			ManagedBuildManager.OutputDuplicateIdError(
+					"TargetPlatform",	//$NON-NLS-1$
+					targetPlatform.getId());			
+		}
 	}
 	
 	/**
@@ -982,7 +1019,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param Builder 
 	 */
 	public static void addExtensionBuilder(Builder builder) {
-		getExtensionBuilderMap().put(builder.getId(), builder);
+		Object previous = getExtensionBuilderMap().put(builder.getId(), builder);
+		if (previous != null) {
+			// Report error
+			ManagedBuildManager.OutputDuplicateIdError(
+					"Builder",	//$NON-NLS-1$
+					builder.getId());			
+		}
 	}
 	
 	/**
@@ -993,7 +1036,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param option 
 	 */
 	public static void addExtensionOption(Option option) {
-		getExtensionOptionMap().put(option.getId(), option);
+		Object previous = getExtensionOptionMap().put(option.getId(), option);
+		if (previous != null) {
+			// Report error
+			ManagedBuildManager.OutputDuplicateIdError(
+					"Option",	//$NON-NLS-1$
+					option.getId());			
+		}
 	}
 	
 	/**
@@ -1004,7 +1053,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param optionCategory 
 	 */
 	public static void addExtensionOptionCategory(OptionCategory optionCategory) {
-		getExtensionOptionCategoryMap().put(optionCategory.getId(), optionCategory);
+		Object previous = getExtensionOptionCategoryMap().put(optionCategory.getId(), optionCategory);
+		if (previous != null) {
+			// Report error
+			ManagedBuildManager.OutputDuplicateIdError(
+					"OptionCategory",	//$NON-NLS-1$
+					optionCategory.getId());			
+		}
 	}
 	
 	/**
@@ -1875,6 +1930,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		msgs[3] = id;
 		ManagedBuildManager.OutputManifestError(
 			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_RESOLVING, msgs));
+	}
+	
+	public static void OutputDuplicateIdError(String type, String id) {
+		String[] msgs = new String[2];
+		msgs[0] = type;
+		msgs[1] = id;
+		ManagedBuildManager.OutputManifestError(
+			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_DUPLICATE, msgs));
 	}
 	
 	public static void OutputManifestError(String message) {

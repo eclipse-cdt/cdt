@@ -1526,7 +1526,11 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	
 	private String evaluateCommand( String command, String values ) {
 	    if( command == null ) return values.trim();
-	    if( command.indexOf( "$(" ) > 0 ) return command.replaceAll( "\\$\\([value|Value|VALUE]\\)", values.trim() ).trim(); //$NON-NLS-1$ //$NON-NLS-2$
-	    else return (new String(command + values)).trim();
+	    if( command.indexOf( "${" ) >= 0 ) { //$NON-NLS-1$
+	    	return command.replaceAll("\\$\\{[vV][aA][lL][uU][eE]\\}", values.trim() ).trim(); //$NON-NLS-1$
+	    }
+	    else {
+	    	return (new String(command + values)).trim();
+	    }
 	}
 }

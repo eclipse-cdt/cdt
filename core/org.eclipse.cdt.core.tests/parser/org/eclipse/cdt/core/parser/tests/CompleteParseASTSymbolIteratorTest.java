@@ -370,4 +370,45 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
         assertEquals( i.next(), helper );
         assertFalse( i.hasNext() );
     }
+    
+    public void testBug77010() throws Exception
+    {
+        Writer writer = new StringWriter();
+        writer.write(" struct Example{                                \n"); //$NON-NLS-1$
+        writer.write("    int                *deref();                \n"); //$NON-NLS-1$
+        writer.write("    int const          *deref() const;          \n"); //$NON-NLS-1$
+        writer.write("    int       volatile *deref()       volatile; \n"); //$NON-NLS-1$
+        writer.write("    int const volatile *deref() const volatile; \n"); //$NON-NLS-1$
+        writer.write(" };                                             \n"); //$NON-NLS-1$
+        
+        Iterator i = parse( writer.toString() ).getDeclarations();
+        
+        IASTClassSpecifier Example = (IASTClassSpecifier) i.next();
+        assertFalse( i.hasNext() );
+        i = Example.getDeclarations();
+        IASTMethod deref = (IASTMethod) i.next();
+        assertFalse( deref.getReturnType().isConst() );
+        assertFalse( deref.getReturnType().isVolatile() );
+        assertFalse( deref.isConst() );
+        assertFalse( deref.isVolatile() );
+        
+        deref = (IASTMethod) i.next();
+        assertTrue( deref.getReturnType().isConst() );
+        assertFalse( deref.getReturnType().isVolatile() );
+        assertTrue( deref.isConst() );
+        assertFalse( deref.isVolatile() );
+        
+        deref = (IASTMethod) i.next();
+        assertFalse( deref.getReturnType().isConst() );
+        assertTrue( deref.getReturnType().isVolatile() );
+        assertFalse( deref.isConst() );
+        assertTrue( deref.isVolatile() );
+        
+        deref = (IASTMethod) i.next();
+        assertTrue( deref.getReturnType().isConst() );
+        assertTrue( deref.getReturnType().isVolatile() );
+        assertTrue( deref.isConst() );
+        assertTrue( deref.isVolatile() );
+        assertFalse( i.hasNext() );
+    }
 }

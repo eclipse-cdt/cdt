@@ -901,7 +901,9 @@ public class ParserSymbolTable {
 			
 			//if none of them are static, then the function can be overloaded if they differ in the type
 			//of their implicit object parameter.
-			if( origSymbol.compareCVQualifiersTo( newSymbol ) != 0 ){
+			if( (origSymbol.getTypeInfo().getTypeBits()& ( ITypeInfo.isConst | ITypeInfo.isVolatile )) !=
+			    (newSymbol.getTypeInfo().getTypeBits() & ( ITypeInfo.isConst | ITypeInfo.isVolatile )) )
+			{
 				return true;
 			}
 			

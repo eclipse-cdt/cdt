@@ -815,11 +815,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		int lineNumber = breakpoint.getLineNumber();
 		if ( lineNumber > 0 )
 		{
-			label.append( " [" ); //$NON-NLS-1$
-			label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.line") ); //$NON-NLS-1$
-			label.append( ' ' );
-			label.append( lineNumber );
-			label.append( ']' );
+			label.append( MessageFormat.format( CDebugUIPlugin.getResourceString( "internal.ui.CDTDebugModelPresentation.line" ), new String[] { Integer.toString( lineNumber ) } ) ); //$NON-NLS-1$
 		}
 		return label;
 	}
@@ -829,9 +825,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		try
 		{
 			long address = Long.parseLong( breakpoint.getAddress() );
-			label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.address") ); //$NON-NLS-1$
-			label.append( CDebugUtils.toHexAddressString( address ) );
-			label.append( ']' );
+			label.append( MessageFormat.format( CDebugUIPlugin.getResourceString( "internal.ui.CDTDebugModelPresentation.address" ), new String[] { CDebugUtils.toHexAddressString( address ) } ) ); //$NON-NLS-1$
 		}
 		catch( NumberFormatException e )
 		{
@@ -844,11 +838,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		String function = breakpoint.getFunction();
 		if ( function != null && function.trim().length() > 0 )
 		{
-			label.append( " [" ); //$NON-NLS-1$
-			label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.function") ); //$NON-NLS-1$
-			label.append( ' ' );
-			label.append( function.trim() );
-			label.append( ']' );
+			label.append( MessageFormat.format( CDebugUIPlugin.getResourceString( "internal.ui.CDTDebugModelPresentation.function" ), new String[] { function.trim() } ) ); //$NON-NLS-1$
 		}
 		return label;
 	}
@@ -858,11 +848,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		int ignoreCount = breakpoint.getIgnoreCount();
 		if ( ignoreCount > 0 )
 		{
-			label.append( " [" ); //$NON-NLS-1$
-			label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.ignore_count") ); //$NON-NLS-1$
-			label.append( ' ' );
-			label.append( ignoreCount );
-			label.append( ']' );
+			label.append( MessageFormat.format( CDebugUIPlugin.getResourceString( "internal.ui.CDTDebugModelPresentation.ignore_count" ), new String[] { Integer.toString( ignoreCount ) } ) ); //$NON-NLS-1$
 		}
 		return label;
 	}
@@ -886,7 +872,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			label.append(' ');
 			label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.at") );  //$NON-NLS-1$
-			label.append( '\'' );
+			label.append( " \'" ); //$NON-NLS-1$
 			label.append( expression );
 			label.append( '\'' );
 		}

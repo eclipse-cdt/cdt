@@ -1,3 +1,11 @@
+2003-09-13 Andrew Niefer
+	-Searching for Typedefs: (bug42902)
+		- modified setElementInfo in BasicSearchResultCollector
+		- added TYPEDEF to ICSearchConstants
+		- modified CSearchPattern & ClassDeclarationPattern
+		- implemented acceptTypedef* in MatchLocator
+	- modified BasicSearchMatch to implement Comparable
+
 2003-09-11 Andrew Niefer
 	- Modified ICSearchResultCollector.createMatch to not take a parent parameter
 	- modified BasicSearchResultCollector to create the parent string from the fully qualified name of the node

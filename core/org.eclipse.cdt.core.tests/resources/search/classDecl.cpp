@@ -41,7 +41,9 @@ namespace NS3{
 }
 
 A::B b1;
-NS::B b2;
+
+typedef NS::B NS_B;
+NS_B b2;
 
 union u{
 };

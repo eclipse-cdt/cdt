@@ -1,3 +1,10 @@
+2003-09-13 Andrew Niefer
+	- bug42836 - prepopulate template classes from Outline View
+	- bug43016 - Search: Cannot find macro declarations 
+	- bug42902 - Search: Cannot find typedef 
+		- modified performAction & determineInitValuesFrom in CSearchPage
+		- modified getImage in CSearchResultLabelProvider
+		
 2003-09-11 Andrew Niefer
 	- bug42837 - fixed populating search dialog on function declarations
 		- modified determineInitValuesFrom in CSearchPage

@@ -97,6 +97,8 @@ public interface ICSearchConstants {
 	
 	public static final SearchFor CLASS_STRUCT = new SearchFor( 11 );
 	
+	public static final SearchFor TYPEDEF = new SearchFor( 12 );
+	
 	/* Nature of match */
 	
 	/**

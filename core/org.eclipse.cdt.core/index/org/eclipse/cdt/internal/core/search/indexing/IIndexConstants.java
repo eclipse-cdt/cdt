@@ -57,8 +57,8 @@ public interface IIndexConstants {
 	char[] METHOD_ALL= "method".toCharArray(); //$NON-NLS-1$
 	int METHOD_DECL_LENGTH = 11;
 		
-	char[] TYPEDEF_DECL = "typedefDecl/".toCharArray(); //$NON-NLS-1$
-	int TYPEDEF_DECL_LENGTH = 12;
+	char[] TYPEDEF_DECL = "typeDecl/T/".toCharArray(); //$NON-NLS-1$
+	int TYPEDEF_DECL_LENGTH = 11;
 	
 	char[] MACRO_DECL = "macroDecl/".toCharArray();
 	int MACRO_DECL_LENGTH = 10;
@@ -92,6 +92,7 @@ public interface IIndexConstants {
 	char STRUCT_SUFFIX = 'S';
 	char ENUM_SUFFIX = 'E';
 	char UNION_SUFFIX = 'U';
+	char TYPEDEF_SUFFIX = 'T';
 	
 	char TYPE_SUFFIX = 0;
 	char SEPARATOR= '/';

@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.search.tests;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.IMatch;
@@ -122,20 +123,16 @@ public class OtherPatternTests extends BaseSearchTest {
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
 		
-		Iterator iter = matches.iterator();
+		TreeSet sorted = new TreeSet( matches );
+		
+		Iterator iter = sorted.iterator();
 		IMatch match = (IMatch) iter.next();
-		if( match.getName().equals("b2") ){
-			assertTrue( match.getParentName().equals("") );
-			match = (IMatch) iter.next();
-			assertTrue( match.getName().equals( "C" ) );
-			assertTrue( match.getParentName().equals( "NS3" ));
-		} else {
-			assertTrue( match.getName().equals( "C" ) );
-			assertTrue( match.getParentName().equals( "NS3" ));
-			match = (IMatch) iter.next();
-			assertTrue( match.getName().equals( "b2" ) );
-			assertTrue( match.getParentName().equals( "" ));
-		}
+		
+		assertTrue( match.getName().equals( "C" ) );
+		assertTrue( match.getParentName().equals( "NS3" ));
+		match = (IMatch) iter.next();
+		assertTrue( match.getName().equals( "NS_B" ) );
+		assertTrue( match.getParentName().equals( "" ));
 	}
 	
 	public void testFieldDeclaration(){

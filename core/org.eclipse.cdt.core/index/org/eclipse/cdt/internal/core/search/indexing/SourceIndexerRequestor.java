@@ -366,6 +366,8 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void acceptTypedefReference(IASTTypedefReference reference) {
 		// TODO Auto-generated method stub
+		if( reference.getReferencedElement() instanceof IASTTypedefDeclaration )
+			indexer.addTypedefReference( (IASTTypedefDeclaration) reference.getReferencedElement() );
 		
 	}
 	/* (non-Javadoc)

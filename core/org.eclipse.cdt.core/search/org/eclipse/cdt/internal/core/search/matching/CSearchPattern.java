@@ -90,7 +90,10 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		}
 		
 		CSearchPattern pattern = null;
-		if( searchFor == TYPE || searchFor == CLASS || searchFor == STRUCT || searchFor == ENUM || searchFor == UNION || searchFor == CLASS_STRUCT ){
+		if( searchFor == TYPE || searchFor == CLASS || searchFor == STRUCT || 
+			searchFor == ENUM || searchFor == UNION || searchFor == CLASS_STRUCT  ||
+			searchFor == TYPEDEF )
+		{
 			pattern = createClassPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == METHOD || searchFor == FUNCTION ){
 			pattern = createMethodPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
@@ -257,6 +260,15 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			orPattern.addPattern( createClassPattern( patternString, STRUCT, limitTo, matchMode, caseSensitive ) );
 			return orPattern;
 		}
+//		 else if( searchFor == TYPE ){
+//			OrPattern orPattern = new OrPattern();
+//			orPattern.addPattern( createClassPattern( patternString, CLASS, limitTo, matchMode, caseSensitive ) );
+//			orPattern.addPattern( createClassPattern( patternString, STRUCT, limitTo, matchMode, caseSensitive ) );
+//			orPattern.addPattern( createClassPattern( patternString, UNION, limitTo, matchMode, caseSensitive ) );
+//			orPattern.addPattern( createClassPattern( patternString, ENUM, limitTo, matchMode, caseSensitive ) );
+//			orPattern.addPattern( createClassPattern( patternString, TYPEDEF, limitTo, matchMode, caseSensitive ) );
+//			return orPattern;
+//		}
 		
 		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, null );
 		
@@ -270,28 +282,22 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		}
 		
 		if( token != null ){
+			boolean nullifyToken = true;
 			if( token.getType() == IToken.t_class ){
-				kind = ASTClassKind.CLASS;
+				searchFor = CLASS;
 			} else if ( token.getType() == IToken.t_struct ){
-				kind = ASTClassKind.STRUCT;
+				searchFor = STRUCT;
 			} else if ( token.getType() == IToken.t_union ){
-				kind = ASTClassKind.UNION;
+				searchFor = UNION;
 			} else if ( token.getType() == IToken.t_enum ){
-				kind = ASTClassKind.ENUM;
-			}
-			if( kind != null ){
-				token = null;
+				searchFor = ENUM;
+			} else if ( token.getType() == IToken.t_typedef ){
+				searchFor = TYPEDEF;
 			} else {
-				if( searchFor == CLASS ){
-					kind = ASTClassKind.CLASS;
-				} else if( searchFor == STRUCT ) {
-					kind = ASTClassKind.STRUCT;
-				} else if ( searchFor == ENUM ) {
-					kind = ASTClassKind.ENUM;
-				} else if ( searchFor == UNION ) {
-					kind = ASTClassKind.UNION;
-				}		
+				nullifyToken = false;
 			}
+			if( nullifyToken )
+				token = null;
 		}
 			
 		LinkedList list = scanForNames( scanner, token );
@@ -299,7 +305,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		char[] name = (char [])list.removeLast();
 		char [][] qualifications = new char[0][];
 		
-		return new ClassDeclarationPattern( name, (char[][])list.toArray( qualifications ), kind, matchMode, limitTo, caseSensitive );
+		return new ClassDeclarationPattern( name, (char[][])list.toArray( qualifications ), searchFor, limitTo, matchMode, caseSensitive );
 	}
 
 

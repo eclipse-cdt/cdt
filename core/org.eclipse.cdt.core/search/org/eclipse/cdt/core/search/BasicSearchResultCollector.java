@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -252,6 +253,8 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 			match.type = ICElement.C_FUNCTION;
 			IASTFunction function = (IASTFunction)node;
 			match.isStatic = function.isStatic();
+		} else if ( node instanceof IASTTypedefDeclaration ){
+			match.type = ICElement.C_TYPEDEF;
 		}
 	}
 	

@@ -1,3 +1,6 @@
+2003-09-13 Andrew Niefer
+	- added testBadParameterInfo to ParserSymbolTableTest
+
 2003-09-12 Hoda Amer
     - Added lots of test cases to CompleteParseASTExpressionTest
     
@@ -5,9 +8,6 @@
 	Created QuickParseASTTests::testBug42985(). 
 	Moved LokiFailures::testBug40419() to QuickParseASTTests. 
 	Deleted LokiFailures as it was empty. 
-
-2003-09-12 Andrew Niefer
-	- added testBadParameterInfo to ParserSymbolTableTest
 
 2003-09-11 Andrew Niefer
 	Created search/SearchTestSuite

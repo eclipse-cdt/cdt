@@ -107,6 +107,8 @@ public class IndexManagerTests extends TestCase {
 		suite.addTest(new IndexManagerTests("testRefs"));
 		suite.addTest(new IndexManagerTests("testMacros"));
 		suite.addTest(new IndexManagerTests("testForwardDeclarations"));
+		//suite.addTest(new IndexManagerTests("testIndexContents"));
+		//suite.addTest(new IndexManagerTests("testIndexAll"));
 		suite.addTest(new IndexManagerTests("testDependencyTree"));
 		suite.addTest(new IndexManagerTests("testIndexShutdown"));
 
@@ -193,7 +195,7 @@ public class IndexManagerTests extends TestCase {
 		IQueryResult[] qresults = ind.queryPrefix(prefix);
 		IEntryResult[] eresults = ind.queryEntries(prefix);
 		String [] queryResultModel = {"IndexedFile(1: /IndexerTestProject/mail.cpp)"};
-		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 1 }", "EntryResult: word=typeDecl/C/container, refs={ 1 }", "EntryResult: word=typeDecl/C/first_class, refs={ 1 }", "EntryResult: word=typeDecl/C/postcard, refs={ 1 }"};
+		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 1 }", "EntryResult: word=typeDecl/C/container, refs={ 1 }", "EntryResult: word=typeDecl/C/first_class, refs={ 1 }", "EntryResult: word=typeDecl/C/postcard, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }"};
 		
 		if (qresults.length != queryResultModel.length)
 			fail("Query Result length different from model");
@@ -269,7 +271,7 @@ public class IndexManagerTests extends TestCase {
 		try {
 			testProject.delete(true,monitor);
 		} catch (CoreException e) {
-			Thread.sleep(1000);
+			Thread.sleep(5000);
 			testProject.delete(true,monitor);
 		}
 		
@@ -334,7 +336,7 @@ public class IndexManagerTests extends TestCase {
 	
 		IEntryResult[] typerefreesults = ind.queryEntries(IIndexConstants.TYPE_REF);
 		
-		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/Unknown/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/container/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/first_class/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/postcard/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/E/test/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/V/x/Z, refs={ 1 }"};
+		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/Unknown/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/container/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/first_class/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/postcard/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/E/test/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/T/int32, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }", "EntryResult: word=typeDecl/V/x, refs={ 1 }", "EntryResult: word=typeDecl/V/x/Z, refs={ 1 }"};
 		IEntryResult[] typedeclresults =ind.queryEntries(IIndexConstants.TYPE_DECL);
 
 		if (typedeclresults.length != typeDeclEntryResultModel.length)
@@ -345,7 +347,7 @@ public class IndexManagerTests extends TestCase {
 			assertEquals(typeDeclEntryResultModel[i],typedeclresults[i].toString());
 		}
 	
-		String [] typeDefEntryResultModel ={"EntryResult: word=typedefDecl/int32, refs={ 1 }"};
+		String [] typeDefEntryResultModel ={"EntryResult: word=typeDecl/T/int32, refs={ 1 }"};
 		IEntryResult[] typedefresults =ind.queryEntries(IIndexConstants.TYPEDEF_DECL);
 		
 		if (typedefresults.length != typeDefEntryResultModel.length)
@@ -367,7 +369,7 @@ public class IndexManagerTests extends TestCase {
 			assertEquals(namespaceResultModel[i],namespaceresults[i].toString());
 		}
 				
-		String [] fieldResultModel = {"EntryResult: word=fieldDecl/array/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/bye/test/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/cool/test/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/hi/test/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/index/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/postage/Mail/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/sz/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/type/Mail/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/why/test/Y/X/Z, refs={ 1 }"};
+		String [] fieldResultModel = {"EntryResult: word=fieldDecl/array/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/bye/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/cool/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/hi/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/index/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/postage/Mail/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/sz/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/type/Mail/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/why/Y/X/Z, refs={ 1 }"};
 		IEntryResult[] fieldresults =ind.queryEntries(IIndexConstants.FIELD_DECL);
 	
 		if (fieldresults.length != fieldResultModel.length)
@@ -378,7 +380,7 @@ public class IndexManagerTests extends TestCase {
 			assertEquals(fieldResultModel[i],fieldresults[i].toString());
 		}
 	
-		String [] functionResultModel = {"EntryResult: word=functionDecl/doSomething, refs={ 1 }"};	
+		String [] functionResultModel = {"EntryResult: word=functionDecl/doSomething, refs={ 1 }", "EntryResult: word=functionDecl/main/Y/X/Z, refs={ 1 }"};
 		IEntryResult[] functionresults =ind.queryEntries(IIndexConstants.FUNCTION_DECL);
 		
 		if (functionresults.length != functionResultModel.length)
@@ -389,7 +391,25 @@ public class IndexManagerTests extends TestCase {
 			assertEquals(functionResultModel[i],functionresults[i].toString());
 		}
 		
-		String [] methodResultModel = {"EntryResult: word=methodDecl/operator<</Mail/Y/X/Z, refs={ 1 }","EntryResult: word=methodDecl/operator=/container/Y/X/Z, refs={ 1 }","EntryResult: word=methodDecl/operator[]/container/Y/X/Z, refs={ 1 }","EntryResult: word=methodDecl/print/Mail/Y/X/Z, refs={ 1 }"};	
+		String [] methodResultModel = {"EntryResult: word=methodDecl/Mail/Mail/Y/X/Z, refs={ 1 }",
+										"EntryResult: word=methodDecl/Unknown/Unknown/Y/X/Z, refs={ 1 }",
+										"EntryResult: word=methodDecl/container/container/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/first_class/first_class/Y/X/Z, refs={ 1 }",
+										//"EntryResult: word=methodDecl/operator=/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/operator=/container/Y/X/Z, refs={ 1 }",
+										//"EntryResult: word=methodDecl/operator[]/Y/X/Z, refs={ 1 }",
+										"EntryResult: word=methodDecl/operator[]/container/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/postcard/postcard/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/print/Mail/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/print/Unknown/Y/X/Z, refs={ 1 }",
+										"EntryResult: word=methodDecl/print/first_class/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/print/postcard/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/size/container/Y/X/Z, refs={ 1 }", 
+										"EntryResult: word=methodDecl/~container/container/Y/X/Z, refs={ 1 }" };
+									   
+									    
+									   
+	
 		IEntryResult[] methodresults =ind.queryEntries(IIndexConstants.METHOD_DECL);
 		
 		if (methodresults.length != methodResultModel.length)

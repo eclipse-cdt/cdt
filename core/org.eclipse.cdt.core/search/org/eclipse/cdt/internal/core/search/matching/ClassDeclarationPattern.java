@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
@@ -37,11 +38,11 @@ import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 
 public class ClassDeclarationPattern extends CSearchPattern {
 
-	public ClassDeclarationPattern( int matchMode, boolean caseSensitive ){
-		super( matchMode, caseSensitive, DECLARATIONS );
-	}
+//	public ClassDeclarationPattern( int matchMode, boolean caseSensitive ){
+//		super( matchMode, caseSensitive, DECLARATIONS );
+//	}
 	
-	public ClassDeclarationPattern( char[] name, char[][] containers, ASTClassKind kind, int mode, LimitTo limit, boolean caseSensitive ){
+	public ClassDeclarationPattern( char[] name, char[][] containers, SearchFor searchFor, LimitTo limit, int mode, boolean caseSensitive ){
 		super( mode, caseSensitive, limit );
 		
 		simpleName = caseSensitive ? name : CharOperation.toLowerCase( name );
@@ -55,14 +56,35 @@ public class ClassDeclarationPattern extends CSearchPattern {
 			}
 		} 
 		
-		classKind = kind;
+		this.searchFor = searchFor;
+		
+		if( searchFor == CLASS ){
+			classKind = ASTClassKind.CLASS;
+		} else if( searchFor == STRUCT ) {
+			classKind = ASTClassKind.STRUCT;
+		} else if ( searchFor == ENUM ) {
+			classKind = ASTClassKind.ENUM;
+		} else if ( searchFor == UNION ) {
+			classKind = ASTClassKind.UNION;
+		} else {
+			classKind = null;		
+		}
+		
 	}
 	
 	public int matchLevel( ISourceElementCallbackDelegate node, LimitTo limit ){
-		
-		if( !( node instanceof IASTClassSpecifier ) && !( node instanceof IASTEnumerationSpecifier ) && !(node instanceof IASTElaboratedTypeSpecifier) )
+		if( searchFor == TYPEDEF ){
+			if( !( node instanceof IASTTypedefDeclaration ) )
+				return IMPOSSIBLE_MATCH;
+		} else if( searchFor == ENUM ){
+			if( !( node instanceof IASTEnumerationSpecifier ) )
+				return IMPOSSIBLE_MATCH;
+		} else if ( !( node instanceof IASTClassSpecifier ) &&
+					!( node instanceof IASTElaboratedTypeSpecifier ) )
+		{
 			return IMPOSSIBLE_MATCH;
-			
+		}
+		
 		if( ! canAccept( limit ) )
 			return IMPOSSIBLE_MATCH;
 		
@@ -71,9 +93,11 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		{
 			nodeName = ((IASTElaboratedTypeSpecifier)node).getName();
 		}
-		else
+		else if( node instanceof IASTOffsetableNamedElement )
 		{
 			nodeName = ((IASTOffsetableNamedElement)node).getName();
+		} else {
+			return IMPOSSIBLE_MATCH;
 		}
 		
 		//check name, if simpleName == null, its treated the same as "*"	
@@ -102,8 +126,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 			} else if (node instanceof IASTElaboratedTypeSpecifier ){
 				IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) node;
 				return ( classKind == elabTypeSpec.getClassKind() ) ? ACCURATE_MATCH : IMPOSSIBLE_MATCH;
-			
-			}	
+			}
 		}
 		
 		return ACCURATE_MATCH;
@@ -122,6 +145,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	private char[] 	  simpleName;
 	private char[][]  qualifications;
 	private ASTClassKind classKind;
+	private SearchFor    searchFor;
 	
 	protected char[] decodedSimpleName;
 	private char[][] decodedContainingTypes;
@@ -174,10 +198,10 @@ public class ClassDeclarationPattern extends CSearchPattern {
 
 	public char[] indexEntryPrefix() {
 		return AbstractIndexer.bestTypePrefix(
+				searchFor,
 				getLimitTo(),
 				simpleName,
 				qualifications,
-				classKind,
 				_matchMode,
 				_caseSensitive
 		);
@@ -186,6 +210,9 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	protected boolean matchIndexEntry() {
 		//check type matches
 		if( classKind == null ){
+			if( searchFor == TYPEDEF && decodedType != TYPEDEF_SUFFIX ){
+				return false;
+			}
 			//don't match variable entries
 			if( decodedType == VAR_SUFFIX ){
 				return false;

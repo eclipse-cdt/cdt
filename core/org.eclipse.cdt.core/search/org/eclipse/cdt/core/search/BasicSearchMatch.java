@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IPath;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class BasicSearchMatch implements IMatch {
+public class BasicSearchMatch implements IMatch, Comparable {
 
 	public BasicSearchMatch() {
 	}
@@ -75,6 +75,25 @@ public class BasicSearchMatch implements IMatch {
 		}
 
 		return true;
+	}
+	
+	public int compareTo( Object o ){
+		if( !( o instanceof BasicSearchMatch ) ){
+			throw new ClassCastException();
+		}
+		
+		BasicSearchMatch match = (BasicSearchMatch) o;
+		
+		String str1 = getLocation().toString();
+		String str2 = match.getLocation().toString();
+		
+		str1 += " " + getStartOffset()+ " ";
+		str2 += " " + match.getStartOffset()+ " ";
+		
+		str1 += getName() + " " + getParentName();
+		str2 += match.getName() + " " + match.getParentName();
+		
+		return str1.compareTo( str2 );
 	}
 	
 	public String name 		  = null;

@@ -274,5 +274,14 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 			assertTrue( match.getParentName().equals("") );
 		}
 	}
+	
+	public void testbug42902_TypeDefs(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern("NS_B", TYPEDEF, ALL_OCCURRENCES, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		Set matches = resultCollector.getSearchResults();
+		
+		assertEquals( matches.size(), 2 );
+	}
 }
 

@@ -1,3 +1,10 @@
+2003-09-13 Andrew Niefer
+	- add Typedefs to index as Types with suffix T (bug42902)
+		- added addTypedefReference to AbstractIndexer
+		- modified bestTypePrefix in AbstractIndexer
+		- added TYPEDEF_DECL, TYPEDEF_SUFFIX to IIndexConstants
+		- modified acceptTypedefReference in SourceIndexerRequestor
+
 2003-09-09 Andrew Niefer
 	Enumerator references
  	 - Added createEnumeratorFullyQualifiedName in AbstractIndexer

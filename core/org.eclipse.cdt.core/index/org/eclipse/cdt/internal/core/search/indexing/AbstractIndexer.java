@@ -41,7 +41,8 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	final static int UNION = 3;
 	final static int ENUM = 4;
 	final static int VAR = 5;
-
+	final static int TYPEDEF = 6;
+	
 	public static boolean VERBOSE = false;
 	
 	public AbstractIndexer() {
@@ -185,6 +186,10 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	public void addNamespaceReference(IASTNamespaceDefinition namespace) {
 		this.output.addRef(encodeEntry(namespace.getFullyQualifiedName(),NAMESPACE_REF,NAMESPACE_REF_LENGTH));
 	}
+	
+	public void addTypedefReference( IASTTypedefDeclaration typedef ){
+		this.output.addRef( encodeTypeEntry( typedef.getFullyQualifiedName(), TYPEDEF, ICSearchConstants.REFERENCES) );
+	}
 
 	private void addSuperTypeReference(int modifiers, char[] packageName, char[] typeName, char[][] enclosingTypeNames, char classOrInterface, char[] superTypeName, char superClassOrInterface){
 
@@ -264,6 +269,10 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			
 			case (VAR):
 			result[pos++] = VAR_SUFFIX;
+			break;
+			
+			case (TYPEDEF):
+			result[pos++] = TYPEDEF_SUFFIX;
 			break;
 		}
 		result[pos++] = SEPARATOR;
@@ -350,7 +359,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	 * Type entries are encoded as follow: 'typeDecl/' ('C' | 'S' | 'U' ) '/'  TypeName '/' 
 	 * Current encoding is optimized for queries: all classes
 	 */
-	public static final char[] bestTypePrefix( LimitTo limitTo, char[] typeName, char[][] containingTypes, ASTClassKind classKind, int matchMode, boolean isCaseSensitive) {
+	public static final char[] bestTypePrefix( SearchFor searchFor, LimitTo limitTo, char[] typeName, char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
 		char [] prefix = null;
 		if( limitTo == DECLARATIONS ){
 			prefix = TYPE_DECL;
@@ -359,21 +368,22 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		} else {
 			return TYPE_ALL;
 		}
-
-		//Class kind not provided, best we can do
-		if (classKind == null){
-			return prefix;
-		}
-						
-		char classType=CLASS_SUFFIX;
-		if (classKind == ASTClassKind.STRUCT){
+					
+		char classType = 0;
+		
+		if( searchFor == ICSearchConstants.CLASS ){
+			classType = CLASS_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.STRUCT ){
 			classType = STRUCT_SUFFIX;
-		}
-		else if (classKind == ASTClassKind.UNION){
+		} else if ( searchFor == ICSearchConstants.UNION ){
 			classType = UNION_SUFFIX;
-		}
-		else if (classKind == ASTClassKind.ENUM){
+		} else if ( searchFor == ICSearchConstants.ENUM ){
 			classType = ENUM_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.TYPEDEF ){
+			classType = TYPEDEF_SUFFIX;
+		} else {
+			//could be TYPE or CLASS_STRUCT, best we can do for these is the prefix
+			return prefix;
 		}
 		
 		return bestPrefix( prefix, classType, typeName, containingTypes, matchMode, isCaseSensitive );

@@ -114,11 +114,8 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void acceptUsingDirective(IASTUsingDirective usageDirective) 		{	}
 	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) 	{	}
 	public void acceptASMDefinition(IASTASMDefinition asmDefinition) 			{	}
-	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef) 		{	}
-	
 	public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration) {}
-	public void acceptTypedefReference( IASTTypedefReference reference )        {	}
-	
+
 	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {	}
 	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) 	{	}
 	public void enterTemplateSpecialization(IASTTemplateSpecialization specialization) 		{	}
@@ -132,6 +129,15 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void enterCodeBlock(IASTCodeScope scope) {	}
 	public void exitCodeBlock(IASTCodeScope scope) 	{	}
 	
+	
+	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef){
+		lastDeclaration = typedef;
+		check( DECLARATIONS, typedef );
+	}
+	
+	public void acceptTypedefReference( IASTTypedefReference reference ){
+		check( REFERENCES, reference );
+	}
 	
 	public void acceptEnumeratorReference(IASTEnumeratorReference reference){
 		check( REFERENCES, reference );	

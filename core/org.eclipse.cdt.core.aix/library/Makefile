@@ -1,8 +1,8 @@
 # makefile for libspawner.so
 
 #set JDK_INCLUDES
-JDK_INCLUDES=/usr/java131/include
-
+JDK_INCLUDES=/opt/ibm-jdk1.4.2/include
+RM=rm
 CC=xlc
 CFLAGS = -I. -I$(JDK_INCLUDES)
 #CFLAGS +=-fpic  -D_REENTRANT

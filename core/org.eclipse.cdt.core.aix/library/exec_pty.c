@@ -102,7 +102,7 @@ exec_pty(const char *path, char *const argv[], char *const envp[],
 			channels[0] = fdm; /* Input Stream. */
 			channels[1] = fdm; /* Output Stream.  */
 			channels[2] = pipe2[0]; /* stderr Stream.  */
-			//channels[2] = fdm; /* Input Stream.  */
+			/*channels[2] = fdm;  Input Stream.  */
 		}
 
 		free(full_path);

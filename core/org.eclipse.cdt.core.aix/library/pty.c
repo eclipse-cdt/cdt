@@ -18,7 +18,7 @@ Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj) {
 
 	master = ptym_open(line);
 	if (master >= 0) {
-		// turn off echo
+		/* turn off echo */
 		set_noecho(master);
 
 		/* Get a reference to the obj's class */

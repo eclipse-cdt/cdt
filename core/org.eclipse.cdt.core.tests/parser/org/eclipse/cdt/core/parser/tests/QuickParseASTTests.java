@@ -2254,4 +2254,14 @@ public class QuickParseASTTests extends BaseASTTest
 	{
     	parse( "const char * x = __FILE__;"); //$NON-NLS-1$
 	}
+    
+    public void testBug68116() throws Exception
+	{
+    	StringBuffer buffer = new StringBuffer( "char dummy[] = \"0123456789" ); //$NON-NLS-1$
+    	for( int i = 0; i < 5000; ++i )
+    		buffer.append( "0123456789"); //$NON-NLS-1$
+    	buffer.append( "\";"); //$NON-NLS-1$
+    	parse( buffer.toString() );
+	}
+	
 }

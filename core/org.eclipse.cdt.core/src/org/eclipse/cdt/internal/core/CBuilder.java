@@ -91,7 +91,6 @@ public class CBuilder extends ACBuilder {
 
 	private boolean invokeMake(boolean fullBuild, IProgressMonitor monitor) {
 		boolean isClean = false;
-		boolean fatalBuild = false;
 		boolean isCanceled = false;
 		IProject currProject = getProject();
 		SubProgressMonitor subMonitor = null;
@@ -161,7 +160,7 @@ public class CBuilder extends ACBuilder {
 				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
 				subMonitor.subTask("Parsing");
 
-				fatalBuild = epm.reportProblems();
+				epm.reportProblems();
 
 				if (errMsg != null) {
 					String errorDesc = CCorePlugin.getFormattedString(BUILD_ERROR, makepath.toString());
@@ -170,7 +169,6 @@ public class CBuilder extends ACBuilder {
 					buf.append("(").append(errMsg).append(")");
 					cos.write(buf.toString().getBytes());
 					cos.flush();
-					fatalBuild = true;
 				}
 				subMonitor.done();
 				monitor.setCanceled(isCanceled);
@@ -181,7 +179,7 @@ public class CBuilder extends ACBuilder {
 			CCorePlugin.log(e);
 		}
 		monitor.done();
-		return (isClean || fatalBuild);
+		return (isClean);
 	}
 
 	/**

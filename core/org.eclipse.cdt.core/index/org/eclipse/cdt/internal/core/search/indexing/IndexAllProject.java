@@ -97,15 +97,14 @@ public class IndexAllProject extends IndexRequest {
 									if (isCancelled) return false;
 									switch(proxy.getType()) {
 										case IResource.FILE :
-										//TODO: BOG Put the file name checking back
-										//if (Util.isCCFileName(proxy.getName())) {
+										if (Util.isCCFileName(proxy.getName())) {
 											IResource resource = proxy.requestResource();
 											if (resource.getLocation() != null && (patterns == null || !Util.isExcluded(resource, patterns))) {
 												String name = new IFileDocument((IFile) resource).getName();
 												indexedFileNames.put(name, resource);
 											}
-										//}
-										//	return false;
+										}
+										return false;
 			
 										case IResource.FOLDER :
 												if (patterns != null && Util.isExcluded(proxy.requestResource(), patterns))

@@ -1,3 +1,7 @@
+2003-10-27 Bogdan Gheorghe
+	- Modified CCompletionProcessor.java to use new performConcurrentJob
+	- Modified CSearchOperation - no longer a WorkspaceModifyOperation (see Bug 45324)
+	
 2003-10-27 Hoda Amer
 
 	Fixed bug#44507 outline flickers with CDT1.2 RC0

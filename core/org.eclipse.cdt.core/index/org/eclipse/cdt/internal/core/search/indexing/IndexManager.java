@@ -31,8 +31,10 @@ import org.eclipse.cdt.internal.core.search.IndexSelector;
 import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
 import org.eclipse.cdt.internal.core.search.processing.IJob;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
+import org.eclipse.cdt.internal.core.sourcedependency.UpdateDependency;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -103,7 +105,6 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * Note: the actual operation is performed in background
 	 */
 	public void addSource(IFile resource, IPath indexedContainer){
-	
 		if (CCorePlugin.getDefault() == null) return;	
 		AddCompilationUnitToIndex job = new AddCompilationUnitToIndex(resource, indexedContainer, this);
 		if (this.awaitingJobsCount() < MAX_FILES_IN_MEMORY) {
@@ -111,6 +112,13 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			if (!job.initializeContents()) return;
 		}
 		request(job);
+	}
+	
+	public void updateDependencies(IResource resource){
+		if (CCorePlugin.getDefault() == null) return;	
+			UpdateDependency job = new UpdateDependency(resource);
+		
+			request(job);
 	}
 	
 	String computeIndexName(IPath path) {

@@ -27,6 +27,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -36,7 +37,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class CSearchOperation extends WorkspaceModifyOperation implements ICSearchConstants{
+public class CSearchOperation implements IRunnableWithProgress,ICSearchConstants{
 	public CSearchOperation(IWorkspace workspace, String pattern, boolean caseSensitive, List searchFor, LimitTo limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector) {
 		this( workspace, limitTo, scope, scopeDescription, collector );
 		_stringPattern = pattern;
@@ -56,8 +57,7 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void execute(IProgressMonitor monitor)
-		throws CoreException, InvocationTargetException, InterruptedException 
+	public void run(IProgressMonitor monitor)throws InvocationTargetException
 	{
 		_collector.setProgressMonitor( monitor );	
 		
@@ -79,6 +79,8 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 		}
 		
 		engine.search( _workspace, pattern, _scope, _collector, false );
+	
+		
 	}
 	
 	/**
@@ -146,6 +148,7 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 	private boolean					_caseSensitive;
 	private LimitTo					_limitTo;
 	private List					_searchFor;
+
 
 		
 }

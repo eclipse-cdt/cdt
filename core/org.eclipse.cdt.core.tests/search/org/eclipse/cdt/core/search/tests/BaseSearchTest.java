@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
 import org.eclipse.cdt.testplugin.FileManager;
 import org.eclipse.core.internal.resources.ResourceException;

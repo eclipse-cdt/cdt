@@ -1,3 +1,6 @@
+2003-10-23 Bogdan Gheorghe
+	- Added UpdateDependency job
+	
 2003-09-25 Bogdan Gheorghe
 	- As a result of folding the dependency service into the indexer
 	  have removed the following files:

@@ -5,7 +5,6 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchiveContainer;
@@ -15,20 +14,12 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.search.PathCollector;
-import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  * This class is used by <code>CModelManager</code> to convert
@@ -511,35 +502,8 @@ public class DeltaProcessor {
 		String fileExtension = resource.getFileExtension();
 		
 		if ((fileExtension != null) &&
-			(isValidHeader(fileExtension)))
-		{
-			PathCollector pathCollector = new PathCollector();
-			//SubProgressMonitor subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 5 );
-			ICSearchScope scope = SearchEngine.createWorkspaceScope();
-			CSearchPattern pattern = CSearchPattern.createPattern(resource.getLocation().toOSString(),ICSearchConstants.INCLUDE, ICSearchConstants.REFERENCES,ICSearchConstants.EXACT_MATCH,true);
-			IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-			indexManager.performConcurrentJob( 
-				new PatternSearchJob(
-					(CSearchPattern) pattern,
-					scope,
-					pathCollector,
-					indexManager 
-				),
-				ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-				null );
-				
-			String[] iPath = pathCollector.getPaths();
-			for (int i=0;i<iPath.length; i++){
-				IPath pathToReindex = new Path(iPath[i]);
-				IWorkspaceRoot workRoot = element.getCProject().getProject().getWorkspace().getRoot();
-				IFile fileToReindex = workRoot.getFile(pathToReindex);
-				
-				if (fileToReindex!=null && fileToReindex.exists() ) {
-					if (VERBOSE)
-					 System.out.println("Going to reindex " + fileToReindex.getName());
-					this.indexManager.addSource(fileToReindex,fileToReindex.getProject().getProject().getFullPath());
-				}
-			}
+			(isValidHeader(fileExtension))){
+			indexManager.updateDependencies(resource);
 		}
 	}	
 	

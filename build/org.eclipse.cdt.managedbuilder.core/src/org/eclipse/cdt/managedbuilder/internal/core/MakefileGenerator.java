@@ -161,7 +161,7 @@ public class MakefileGenerator {
 					pathCollector, 
 					indexManager),
 				ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-				null);
+				null, null);
 			
 			// We will get back an array of resource names relative to the workspace
 			String[] deps = pathCollector.getPaths();
@@ -341,7 +341,7 @@ public class MakefileGenerator {
 					// ASk the dep generator to find all the deps for this resource
 					ArrayList dependencies = new ArrayList();
 					try {
-						indexManager.performConcurrentJob(new DependencyQueryJob(project, (IFile)resource, indexManager, dependencies), ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
+						indexManager.performConcurrentJob(new DependencyQueryJob(project, (IFile)resource, indexManager, dependencies), ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null, null);
 					} catch (Exception e) {
 						continue;
 					}

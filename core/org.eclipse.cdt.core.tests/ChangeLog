@@ -2,6 +2,9 @@
     Updated ASTFailedTests::testBug39702() to fail more accurately.
     Added testSimpleFunctionBody(), testSimpleForLoop() to CompleteParseASTTest.java.
 
+2003-09-04 Andrew Niefer
+	Added testBug42541 to CompleParseASTTests.java
+
 2003-09-04 Hoda Amer
 	Call to ASTExpression getTypeId() changed to getTypeIdString().
 	

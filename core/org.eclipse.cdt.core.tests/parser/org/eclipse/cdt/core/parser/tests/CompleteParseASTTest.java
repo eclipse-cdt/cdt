@@ -596,5 +596,16 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertFalse( i.hasNext() );
 		assertEquals( callback.getReferences().size(), 5 );
 	}
+
+	public void testBug42541() throws Exception
+	{
+		Iterator i = parse( "union{ int v; char a; } id;" ).getDeclarations();
+		IASTVariable id = (IASTVariable)i.next();
+		
+		IASTClassSpecifier union = (IASTClassSpecifier) id.getAbstractDeclaration().getTypeSpecifier();
+		Iterator sub = getDeclarations( union );
+		IASTField intV  = (IASTField)sub.next();
+		IASTField charA = (IASTField)sub.next();
+	}
 	
 }

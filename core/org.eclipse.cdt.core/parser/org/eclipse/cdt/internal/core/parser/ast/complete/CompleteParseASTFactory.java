@@ -432,35 +432,42 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IContainerSymbol currentScopeSymbol = scopeToSymbol(scope);
         TypeInfo.eType pstType = classKindToTypeInfo(kind);		
 		List references = new ArrayList();
-		IToken lastToken = name.getLastToken();
-		if( name.length() != 1 ) // qualified name 
-		{
-			 ITokenDuple containerSymbolName = 
-			 	name.getSubrange( 0, name.length() - 3 ); // -1 for index, -2 for last hop of qualified name
-			 currentScopeSymbol = (IContainerSymbol)lookupQualifiedName( currentScopeSymbol, 
-			 	containerSymbolName, references, true);
-			 if( currentScopeSymbol == null )
-			 	throw new ASTSemanticException();
+
+		String newSymbolName = "";
+		
+		if( name != null ){
+			IToken lastToken = name.getLastToken();
+			if( name.length() != 1 ) // qualified name 
+			{
+				 ITokenDuple containerSymbolName = 
+					name.getSubrange( 0, name.length() - 3 ); // -1 for index, -2 for last hop of qualified name
+				 currentScopeSymbol = (IContainerSymbol)lookupQualifiedName( currentScopeSymbol, 
+					containerSymbolName, references, true);
+				 if( currentScopeSymbol == null )
+					throw new ASTSemanticException();
+			}
+			newSymbolName = lastToken.getImage();
 		}
 		
 		ISymbol classSymbol = null;
-        try
-        {
-            classSymbol = currentScopeSymbol.lookupMemberForDefinition(lastToken.getImage());
-        }
-        catch (ParserSymbolTableException e)
-        {
-            throw new ASTSemanticException();
-        }
-        
-        if( classSymbol != null && ! classSymbol.isForwardDeclaration() )
-			throw new ASTSemanticException();
-		
-		if( classSymbol != null && classSymbol.getType() != pstType )
-			throw new ASTSemanticException();
+		if( !newSymbolName.equals("") ){
+			try
+			{
+				classSymbol = currentScopeSymbol.lookupMemberForDefinition(newSymbolName);
+			}
+			catch (ParserSymbolTableException e)
+			{
+				throw new ASTSemanticException();
+			}
+	        
+			if( classSymbol != null && ! classSymbol.isForwardDeclaration() )
+				throw new ASTSemanticException();
+			
+			if( classSymbol != null && classSymbol.getType() != pstType )
+				throw new ASTSemanticException();
+		}
 
-
-		IDerivableContainerSymbol newSymbol = pst.newDerivableContainerSymbol( lastToken.getImage(), pstType );
+		IDerivableContainerSymbol newSymbol = pst.newDerivableContainerSymbol( newSymbolName, pstType );
 		
 		if( classSymbol != null )
 			classSymbol.setTypeSymbol( newSymbol );

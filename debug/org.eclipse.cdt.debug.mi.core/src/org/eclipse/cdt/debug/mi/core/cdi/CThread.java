@@ -23,6 +23,7 @@ public class CThread extends CObject implements ICDIThread {
 
 	int id;
 	static StackFrame[] noStack = new StackFrame[0];
+	StackFrame currentFrame;
 	
 	public CThread(CTarget target, int threadId) {
 		super(target);
@@ -37,12 +38,8 @@ public class CThread extends CObject implements ICDIThread {
 		return Integer.toString(id);
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#finish()
-	 */
-	public void finish() throws CDIException {
-		getCTarget().setCurrentThread(this);
-		getTarget().finish();
+	StackFrame getCurrentStackFrame() {
+		return currentFrame;
 	}
 
 	/**
@@ -71,11 +68,11 @@ public class CThread extends CObject implements ICDIThread {
 			}
 			return stack;
 		} catch (MIException e) {
-			//throw new CDIException(e.toString());
-			System.out.println(e);
+			//throw new CDIException(e.getMessage());
+			//System.out.println(e);
 		} catch (CDIException e) {
 			//throw e;
-			System.out.println(e);
+			//System.out.println(e);
 		}
 		return stack;
 	}
@@ -86,17 +83,22 @@ public class CThread extends CObject implements ICDIThread {
 	public void setCurrentStackFrame(StackFrame stackframe) throws CDIException {
 		MISession mi = getCTarget().getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		int frameNum = stackframe.getLevel();
+		int frameNum = 0;
+		if (stackframe != null) {
+			frameNum = stackframe.getLevel();
+		}
 		MIStackSelectFrame frame = factory.createMIStackSelectFrame(frameNum);
 		try {
+			// Set ourself as the current thread first.
 			getCTarget().setCurrentThread(this);
 			mi.postCommand(frame);
 			MIInfo info = frame.getMIInfo();
 			if (info == null) {
 				throw new CDIException("No answer");
 			}
+			currentFrame = stackframe;
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -105,6 +107,14 @@ public class CThread extends CObject implements ICDIThread {
 	 */
 	public boolean isSuspended() {
 		return getTarget().isSuspended();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#finish()
+	 */
+	public void finish() throws CDIException {
+		getCTarget().setCurrentThread(this);
+		getTarget().finish();
 	}
 
 	/**

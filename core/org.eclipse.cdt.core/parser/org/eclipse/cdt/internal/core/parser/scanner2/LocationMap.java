@@ -31,7 +31,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
    private static final IASTProblem[] EMPTY_PROBLEMS_ARRAY = new IASTProblem[0];
    private static final IASTNodeLocation [] EMPTY_LOCATION_ARRAY = new IASTNodeLocation[0];
    private char[]                     tu_filename = EMPTY_CHAR_ARRAY ;
-   private int finalOffset  = 0;
+//   private int finalOffset  = 0;
 
    /**
     *  
@@ -107,7 +107,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#endTranslationUnit(int)
     */
    public void endTranslationUnit(int offset) {
-      this.finalOffset  = offset;
+//      this.finalOffset  = offset;
    }
 
    /*

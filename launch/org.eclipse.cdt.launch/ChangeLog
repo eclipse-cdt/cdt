@@ -1,8 +1,16 @@
+2004-04-23 David Inglis
+
+	fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=59680
+	
+	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortcut.java
+	* src/org/eclipse/cdt/launch/internal/CPropertyTester.java
+	* plugin.xml
+	
 2004-04-19 Alain Magloire
 	Core Model interface throws Exception
 
 	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortcut.java
-	* sr/org/eclipse/cdt/launch/ui/CMaintab.java
+	* src/org/eclipse/cdt/launch/ui/CMaintab.java
 
 2004-04-06 Mikhail Khodjaiants
 

@@ -93,7 +93,6 @@ public class MakeBuilder extends ACBuilder {
 	private boolean invokeMake(int kind, IMakeBuilderInfo info, IProgressMonitor monitor) {
 		boolean isClean = false;
 		IProject currProject = getProject();
-		SubProgressMonitor subMonitor = null;
 
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -115,9 +114,9 @@ public class MakeBuilder extends ACBuilder {
 				String[] targets = getTargets(kind, info);
 				if (targets.length != 0 && targets[targets.length - 1].equals("clean")) //$NON-NLS-1$
 					isClean = true;
+
 				// Before launching give visual cues via the monitor
-				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-				subMonitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Invoking_Command") + buildCommand.toString()); //$NON-NLS-1$
+				monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Invoking_Command") + buildCommand.toString()); //$NON-NLS-1$
 
 				String errMsg = null;
 				CommandLauncher launcher = new CommandLauncher();
@@ -167,13 +166,13 @@ public class MakeBuilder extends ACBuilder {
 						p.getOutputStream().close();
 					} catch (IOException e) {
 					}
-					if (launcher.waitAndRead(stdout, stderr, subMonitor) != CommandLauncher.OK)
+					if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK)
 						errMsg = launcher.getErrorMessage();
 
-					subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-					subMonitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Updating_project")); //$NON-NLS-1$
+					monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Updating_project")); //$NON-NLS-1$
 
 					try {
+						currProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 						// Do not allow the cancel of the refresh, since the builder is external
 						// to Eclipse, files may have been created/modified and we will be out-of-sync.
 						// The caveat is for hugue projects, it may take sometimes at every build.
@@ -202,14 +201,14 @@ public class MakeBuilder extends ACBuilder {
 				stdout.close();
 				stderr.close();
 
+				monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
 				epm.reportProblems();
-
-				subMonitor.done();
 			}
 		} catch (Exception e) {
 			CCorePlugin.log(e);
+		} finally {
+			monitor.done();
 		}
-		monitor.done();
 		return (isClean);
 	}
 

@@ -4,10 +4,9 @@
       label="%featureName"
       version="1.0.1"
       provider-name="%providerName"
-      os="solaris"
-      ws="motif"
-      nl="en_US"
-      arch="sparc"
+      os=""
+      ws=""
+      nl=""
       image="eclipse_update_120.jpg">
 
    <description>
@@ -80,14 +79,6 @@
          download-size="0"
          install-size="0"
          version="1.0.1">
-   </plugin>
-
-   <plugin
-         id="org.eclipse.cdt.core.solaris"
-         download-size="0"
-         install-size="0"
-         version="1.0.1"
-         fragment="true">
    </plugin>
 
 </feature>

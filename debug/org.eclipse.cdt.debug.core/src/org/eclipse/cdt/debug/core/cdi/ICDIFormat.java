@@ -8,9 +8,11 @@ package org.eclipse.cdt.debug.core.cdi;
  * Format constants.
  */
 public interface ICDIFormat {
-	public static int NATURAL = 0;
-	public static int DECIMAL = 1;
-	public static int BINARY  = 2;
-	public static int OCTAL = 3;
-	public static int HEXADECIMAL = 4;
+
+	final static int NATURAL = 0;
+	final static int DECIMAL = 1;
+	final static int BINARY  = 2;
+	final static int OCTAL = 3;
+	final static int HEXADECIMAL = 4;
+
 }

@@ -12,8 +12,8 @@ package org.eclipse.cdt.debug.core.cdi;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDILocation
-{
+public interface ICDILocation {
+
 	/**
 	 * Returns the address of this location.
 	 * 
@@ -50,4 +50,5 @@ public interface ICDILocation
 	 * place.
 	 */
 	boolean equals(ICDILocation location);
+
 }

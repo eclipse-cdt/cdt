@@ -15,8 +15,8 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
  * 
  * @since Jul 10, 2002
  */
-public interface ICDIEventManager extends ICDISessionObject
-{
+public interface ICDIEventManager extends ICDISessionObject {
+
 	/**
 	 * Adds the given listener to the collection of registered 
 	 * event listeners. Has no effect if an identical listener is 
@@ -34,4 +34,5 @@ public interface ICDIEventManager extends ICDISessionObject
 	 * @param listener - the listener to remove
 	 */
 	void removeEventListener( ICDIEventListener listener );
+
 }

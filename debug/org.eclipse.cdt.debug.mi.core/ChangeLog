@@ -1,3 +1,8 @@
+2002-10-30 Alain Magloire
+
+	* src/.../core/cdi/MemoryBlock.java (setValue): reuse refresh()
+	to update the memory and fire any MemoryChangedEvents.
+
 2002-10-26 Alain Magloire
 
 	* src/.../core/cdi/MemoryBlock.java (setValue): Generate

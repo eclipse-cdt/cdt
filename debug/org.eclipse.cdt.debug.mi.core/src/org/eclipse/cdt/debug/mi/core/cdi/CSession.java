@@ -31,7 +31,6 @@ public class CSession implements ICDISession, ICDISessionObject {
 	MISession session;
 	BreakpointManager breakpointManager;
 	EventManager eventManager;
-	ExpressionManager expressionManager;
 	VariableManager variableManager;
 	MemoryManager memoryManager;
 	SignalManager signalManager;
@@ -44,7 +43,6 @@ public class CSession implements ICDISession, ICDISessionObject {
 		breakpointManager = new BreakpointManager(this);
 		eventManager = new EventManager(this);
 		s.addObserver(eventManager);
-		expressionManager = new ExpressionManager(this);
 		variableManager = new VariableManager(this);
 		memoryManager = new MemoryManager(this);
 		signalManager = new SignalManager(this);
@@ -85,7 +83,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getVariableManager()
 	 */
 	public ICDIExpressionManager getExpressionManager() {
-		return expressionManager;
+		return variableManager;
 	}
 
 	/**

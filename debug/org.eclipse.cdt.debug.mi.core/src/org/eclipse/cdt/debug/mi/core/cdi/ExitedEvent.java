@@ -26,7 +26,7 @@ public class ExitedEvent implements ICDIExitedEvent {
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIExitedEvent#getExitInfo()
 	 */
 	public ICDIExitInfo getExitInfo() {
-		return new ExitInfo(session);
+		return new ExitInfo(session, event);
 	}
 
 	/**

@@ -6,20 +6,24 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
+import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 
 /**.
  */
 public class ExitInfo extends SessionObject implements ICDIExitInfo {
 
-	public ExitInfo(CSession session) {
+	MIInferiorExitEvent event;
+
+	public ExitInfo(CSession session, MIInferiorExitEvent e) {
 		super(session);
+		event = e;
 	}
 	
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExitInfo#getCode()
 	 */
 	public int getCode() {
-		return getCSession().getCTarget().getProcess().exitValue();
+		return event.getExitCode();
 	}
 
 }

@@ -15,6 +15,7 @@ import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
@@ -74,10 +75,13 @@ public class CExpression extends CVariable implements IExpression {
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
 			if ( event instanceof ICDIResumedEvent ) {
-				if ( event.getSource() instanceof ICDITarget && getCDITarget().equals( event.getSource() ) ) {
-					setChanged( false );
+				ICDIObject source = event.getSource();
+				if ( source != null ) {
+					ICDITarget cdiTarget = source.getTarget();
+					if (  getCDITarget().equals( cdiTarget ) ) {
+						setChanged( false );
+					}
 				}
-				break;
 			}
 		}
 		super.handleDebugEvents( events );

@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
@@ -637,16 +638,15 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			ICDIObject source = event.getSource();
 			if ( source == null )
 				continue;
-			if ( source instanceof ICDIVariable && iv.isSameVariable( (ICDIVariable)source ) ) {
-				if ( source.getTarget().equals( getCDITarget() ) ) {
-					if ( event instanceof ICDIChangedEvent ) {
-						if ( source instanceof ICDIVariable ) {
-							handleChangedEvent( (ICDIChangedEvent)event );
-						}
+			ICDITarget target = source.getTarget();
+			if ( target.equals( getCDITarget() ) ) {
+				if ( event instanceof ICDIChangedEvent ) {
+					if ( source instanceof ICDIVariable && iv.isSameVariable( (ICDIVariable)source ) ) {
+						handleChangedEvent( (ICDIChangedEvent)event );
 					}
-					else if ( event instanceof ICDIResumedEvent ) {
-						handleResumedEvent( (ICDIResumedEvent)event );
-					}
+				}
+				else if ( event instanceof ICDIResumedEvent ) {
+					handleResumedEvent( (ICDIResumedEvent)event );
 				}
 			}
 		}

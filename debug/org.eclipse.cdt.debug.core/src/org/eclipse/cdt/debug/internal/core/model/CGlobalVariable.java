@@ -10,6 +10,10 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 
@@ -37,5 +41,24 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 	 */
 	public boolean canEnableDisable() {
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
+	 */
+	public void handleDebugEvents( ICDIEvent[] events ) {
+		for( int i = 0; i < events.length; i++ ) {
+			ICDIEvent event = events[i];
+			if ( event instanceof ICDIResumedEvent ) {
+				ICDIObject source = event.getSource();
+				if ( source != null ) {
+					ICDITarget cdiTarget = source.getTarget();
+					if (  getCDITarget().equals( cdiTarget ) ) {
+						setChanged( false );
+					}
+				}
+			}
+		}
+		super.handleDebugEvents( events );
 	}
 }

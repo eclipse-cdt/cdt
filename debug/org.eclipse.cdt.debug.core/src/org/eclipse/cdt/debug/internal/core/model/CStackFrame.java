@@ -583,7 +583,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 			return;
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() ) {
-			((CVariable)it.next()).setChanged( false );
+			((AbstractCVariable)it.next()).setChanged( false );
 		}
 	}
 

@@ -1,4 +1,11 @@
 2004-08-05 Mikhail Khodjaiants
+	Fixed the "resumed" event handler of the variable types.
+	* CExpression.java
+	* CGlobalVariable.java
+	* CStackFrame.java
+	* CVariable.java
+ 
+2004-08-05 Mikhail Khodjaiants
 	Added the abstract prototypes for some generic methods.
 	* AbstractCValue.java
 	* AbstractCVariable.java

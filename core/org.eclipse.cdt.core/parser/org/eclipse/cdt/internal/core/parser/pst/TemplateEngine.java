@@ -731,7 +731,7 @@ public final class TemplateEngine {
 		
 		IContainerSymbol templatedSymbol = spec1.getTemplatedSymbol();
 		if( !( templatedSymbol instanceof IParameterizedSymbol ) )
-			throw new ParserSymbolTableException( ParserSymbolTableException.r_InternalError );
+			throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError );
 		
 		IParameterizedSymbol function = (IParameterizedSymbol)templatedSymbol;
 		function = (IParameterizedSymbol) function.instantiate( spec1, map );
@@ -742,7 +742,7 @@ public final class TemplateEngine {
 		
 		templatedSymbol = spec2.getTemplatedSymbol();
 		if( !( templatedSymbol instanceof IParameterizedSymbol ) )
-			throw new ParserSymbolTableException( ParserSymbolTableException.r_InternalError );
+			throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError );
 		
 		function = (IParameterizedSymbol)templatedSymbol;
 		function = (IParameterizedSymbol) function.instantiate( spec2, map );

@@ -20,7 +20,17 @@ import java.util.Map;
 public interface ISymbol extends Cloneable,  IExtensibleSymbol {
 
 	public Object clone();
-		
+	
+	/**
+	 * 
+	 * @param args
+	 * @return
+	 * @throws ParserSymbolTableException
+	 * Exceptions can be thrown when a IDeferredTemplateInstance must be instantiated
+	 * Reason:
+	 *     r_BadTemplateArgument if an argument does not match the corresponding parameter type
+	 *     r_Ambiguous if more than one specialization can be used but none is more specialized than all the others
+	 */
 	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException;
 
 	public void setName(String name);

@@ -19,6 +19,15 @@ import java.util.Map;
 
 public interface ITemplateSymbol extends IParameterizedSymbol {
 	
+	/**
+	 * 
+	 * @param param
+	 * @throws ParserSymbolTableException
+	 * Reason:
+	 *    r_BadTemplateParameter if the Parameter does not have type TypeInfo.t_templateParameter
+	 *                           or if the parameter has the same name as the template
+	 *                           or if the parameter is a non-type parameter and does not have a valid type (14.1-4, 14.1-7)
+	 */
 	public void addTemplateParameter( ISymbol param ) throws ParserSymbolTableException;
 	
 	public boolean	hasSpecializations();
@@ -34,7 +43,18 @@ public interface ITemplateSymbol extends IParameterizedSymbol {
 	public List findArgumentsFor( IContainerSymbol instance );
 	
 	public void addInstantiation( IContainerSymbol instance, List args );
-	public ISymbol instantiate( List args ) throws ParserSymbolTableException; 
+	
+	/**
+	 * 
+	 * @param args
+	 * @return
+	 * @throws ParserSymbolTableException
+	 * Reason:
+	 *     r_BadTemplateArgument if an argument does not match the corresponding parameter type
+	 *     r_Ambiguous if more than one specialization can be used but none is more specialized than all the others
+	 */
+	public ISymbol instantiate( List args ) throws ParserSymbolTableException;
+	
 	public IDeferredTemplateInstance deferredInstance( List args );
 
 }

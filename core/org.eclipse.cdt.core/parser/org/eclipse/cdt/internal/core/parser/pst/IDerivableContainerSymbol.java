@@ -33,12 +33,40 @@ public interface IDerivableContainerSymbol extends IContainerSymbol {
 	public List getParents();
 	public boolean hasParents();
 	
+	/**
+	 * 
+	 * @param constructor
+	 * @throws ParserSymbolTableException
+	 * Reason:
+	 *    r_BadTypeInfo if the symbol being added is not of type TypeInfo.t_constructor
+	 *    r_InvalidOverload if the constructor being added is not a valid overload of existing constructors
+	 */
 	public void addConstructor( IParameterizedSymbol constructor ) throws ParserSymbolTableException;
 	public void addCopyConstructor() throws ParserSymbolTableException;
+	
+	/**
+	 * 
+	 * @param parameters
+	 * @return
+	 * @throws ParserSymbolTableException
+	 * Reason:
+	 *    r_Ambiguous if more than one constructor can be used with the given parameters
+	 */
 	public IParameterizedSymbol lookupConstructor( List parameters ) throws ParserSymbolTableException;
+	
 	public List getConstructors();
 	
-	public void addFriend( ISymbol friend ) throws ParserSymbolTableException;
+	public void addFriend( ISymbol friend );
+	
+	/**
+	 * Lookups
+	 * @throws ParserSymbolTableException
+	 *   Reason:   r_Ambiguous if more than one symbol with the given name is found and we can't resolve which one to use
+	 *             r_UnableToResolveFunction if an overloaded function is found and no parameter information has been provided
+	 *             r_BadTypeInfo if during lookup of the name, we come across a class inheriting from a symbol which is not an
+	 *                            IDerivableContainerSymbol
+	 *             r_CircularInheritance if during lookup of the name, we come across a class with a circular inheritance tree
+	 */
 	public ISymbol lookupForFriendship( String name ) throws ParserSymbolTableException;
 	public IParameterizedSymbol lookupFunctionForFriendship( String name, List parameters ) throws ParserSymbolTableException;
 	

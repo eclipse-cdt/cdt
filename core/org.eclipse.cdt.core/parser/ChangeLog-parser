@@ -1,3 +1,7 @@
+2004-02-16 Andrew Niefer
+	bug 52120 document symbol table use of ParserSymbolTableException
+	also clean up a couple of exceptions
+
 2004-02-12 Andrew Niefer
 	Fixed up symbol table handling of const & volatile
 	fixed bug 47628 - signed char is parsed as char 

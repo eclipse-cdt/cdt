@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -2622,12 +2621,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                 	throw new ASTSemanticException();
                 }
 			} else if( isFriend ){
-				try {
-					((IDerivableContainerSymbol)currentScopeSymbol).addFriend( checkSymbol );
-				} catch (ParserSymbolTableException e1) {
-					throw new ASTSemanticException();
-				}
-				
+				((IDerivableContainerSymbol)currentScopeSymbol).addFriend( checkSymbol );
 			}
  		}
  		

@@ -173,7 +173,12 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		TypeInfo param = new TypeInfo( TypeInfo.t_type, TypeInfo.isConst, this, new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference, false, false ), false ); 
 		parameters.add( param );
 		
-		IParameterizedSymbol constructor = lookupConstructor( parameters );
+		IParameterizedSymbol constructor = null;
+		try{
+			constructor = lookupConstructor( parameters );
+		} catch ( ParserSymbolTableException e ){
+			
+		}
 		
 		if( constructor == null ){
 			constructor = getSymbolTable().newParameterizedSymbol( getName(), TypeInfo.t_constructor );
@@ -280,7 +285,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * TODO: if/when the parser symbol table starts caring about visibility
 	 * (public/protected/private) we will need to do more to record friendship.
 	 */
-	public void addFriend( ISymbol friend ) throws ParserSymbolTableException{
+	public void addFriend( ISymbol friend ){
 		//is this symbol already in the table?
 		IContainerSymbol containing = friend.getContainingSymbol();
 		if( containing == null ){
@@ -292,7 +297,10 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			
 			friend.setIsInvisible( true );
 			friend.setIsForwardDeclaration( true );
-			enclosing.addSymbol( friend );
+			try {
+				enclosing.addSymbol( friend );
+			} catch (ParserSymbolTableException e) {
+			}
 		}
 		
 		getFriends().add( friend );

@@ -1616,4 +1616,12 @@ public class ScannerTestCase extends BaseScannerTest
     	initializeScanner( writer.toString(), ParserMode.QUICK_PARSE, callback );
     	fullyTokenize();
 	}
+    
+    public void testBug62009() throws Exception
+	{
+    	Callback callback = new Callback( ParserMode.QUICK_PARSE );
+    	initializeScanner( "#define def(x) (x#)\ndef(orange)\n", ParserMode.QUICK_PARSE, callback ); //$NON-NLS-1$
+    	fullyTokenize();
+    	assertFalse( callback.problems.isEmpty() );
+	}
 }

@@ -2654,9 +2654,10 @@ public class Scanner implements IScanner {
 
 	protected List tokenizeReplacementString( int beginning, String key, String replacementString, List parameterIdentifiers ) 
 	{
-		List macroReplacementTokens = new ArrayList();
+		
 		if( replacementString.trim().equals( "" ) )  //$NON-NLS-1$
-			return macroReplacementTokens;
+			return Collections.EMPTY_LIST;
+		List macroReplacementTokens = new ArrayList();
 		IScanner helperScanner=null;
 		try {
 			helperScanner = new Scanner( 
@@ -2702,7 +2703,7 @@ public class Scanner implements IScanner {
 								strbuff.append( replacementString );
 								handleProblem( IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, strbuff.toString(),
 										beginning, false, true ); 									
-								return null;
+								return Collections.EMPTY_LIST;
 							}
 						}
 					}
@@ -3097,7 +3098,13 @@ public class Scanner implements IScanner {
 							strbuff.startString();
 							strbuff.append(cache);
 						}
-						t = (SimpleToken) tokens.get( ++i );
+						++i;
+						if( tokens.size() == i ){
+							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, expansion.getName(), getCurrentOffset(), false, true );
+							return;
+						} 
+							
+						t = (SimpleToken) tokens.get( i );
 						int index = parameterNames.indexOf(t.getImage());
 						if( index == -1 ){
 							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, expansion.getName(), getCurrentOffset(), false, true );

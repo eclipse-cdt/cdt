@@ -49,7 +49,7 @@ public class MakeScannerProvider extends ScannerProvider {
 	// Name we will use to store build property with the project
 	private static final QualifiedName scannerInfoProperty = new QualifiedName(MakeCorePlugin.getUniqueIdentifier(),
 			"makeBuildInfo"); //$NON-NLS-1$
-	private static final String CDESCRIPTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeScannerInfo"; //$NON-NLS-1$
+	static final String CDESCRIPTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeScannerInfo"; //$NON-NLS-1$
 
 	public static final String INCLUDE_PATH = "includePath"; //$NON-NLS-1$
 	public static final String PATH = "path"; //$NON-NLS-1$
@@ -132,7 +132,7 @@ public class MakeScannerProvider extends ScannerProvider {
 		return info;
 	}
 
-	private static void migrateToCPathEntries(MakeScannerInfo info) throws CoreException {
+	static void migrateToCPathEntries(MakeScannerInfo info) throws CoreException {
 		Map symbols = info.getDefinedSymbols();
 		String[] includes = info.getIncludePaths();
 		ICProject cProject = CoreModel.getDefault().create(info.getProject());

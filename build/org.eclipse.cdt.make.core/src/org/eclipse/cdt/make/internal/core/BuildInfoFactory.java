@@ -377,7 +377,7 @@ public class BuildInfoFactory {
 		}
 
 		protected String getString(String name) {
-			return args.get(name) != null ? (String)args.get(name) : "";
+			return args.get(name) != null ? (String)args.get(name) : ""; //$NON-NLS-1$
 		}
 
 		protected String getBuilderID() {

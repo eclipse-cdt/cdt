@@ -32,8 +32,8 @@ import org.eclipse.core.runtime.Platform;
  */
 public class CygpathTranslator {
 	IProject project;
-	private String orgPath;
-	private String transPath;
+	String orgPath;
+	String transPath;
 
 	public CygpathTranslator(IProject project, String path) {
 		this.project = project;
@@ -61,7 +61,7 @@ public class CygpathTranslator {
 	/**
 	 * @return
 	 */
-	private String platformRun() {
+	String platformRun() {
 		CommandLauncher launcher = new CommandLauncher();
 		launcher.showCommand(false);
 

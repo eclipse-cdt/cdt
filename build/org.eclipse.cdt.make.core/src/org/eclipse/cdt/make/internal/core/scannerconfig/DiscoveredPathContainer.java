@@ -32,7 +32,7 @@ public class DiscoveredPathContainer implements IPathEntryContainer {
 	public static IPath CONTAINER_ID = new Path("org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"); //$NON-NLS-1$
 
 	private final IProject fProject;
-	private static Map fgPathEntries;
+	static Map fgPathEntries;
 
 	public DiscoveredPathContainer(IProject project) {
 		fProject = project;

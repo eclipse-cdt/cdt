@@ -52,7 +52,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 	
 	private static final String EXTERNAL_SI_PROVIDER_ERROR = "ExternalScannerInfoProvider.Provider_Error"; //$NON-NLS-1$
 	private static final String EXTERNAL_SI_PROVIDER_CONSOLE_ID = MakeCorePlugin.getUniqueIdentifier() + ".ExternalScannerInfoProviderConsole";	//$NON-NLS-1$
-	private static final String LANG_ENV_VAR = "LANG";
+	private static final String LANG_ENV_VAR = "LANG"; //$NON-NLS-1$
 	
 	private IPath fWorkingDirectory;
 	private IPath fCompileCommand;

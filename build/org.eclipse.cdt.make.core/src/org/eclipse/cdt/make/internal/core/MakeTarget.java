@@ -38,7 +38,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	private IPath buildCommand;
 	private boolean isDefaultBuildCmd;
 	private boolean isStopOnError;
-	private boolean runAllBuidlers = true;
+	boolean runAllBuidlers = true;
 	private String targetBuilderID;
 	private IContainer container;
 

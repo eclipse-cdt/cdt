@@ -3,48 +3,23 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Creating a make target</title>
+<title>Creating a Make Target</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 
 <body>
 
-<h1>Creating a make target</h1>
+<h1>Creating a Make Target</h1>
 
-<p>A make target is an action called by the make utility to perform a customized 
-build-related task. For example, many makefiles support a target named clean, 
-which is called using make clean. You can call your own target (such as myMakeAction) to be called as make myMakeAction.</p>
-
-<p>You can also use a make target 
-to pass options such as CPULIST=x86, which causes the make utility to build only 
-for x86. These options work only if they are already defined in the makefile. </p>
-
-<p>If you have added your own make targets, you can configure the CDT to call them 
-specifically. For more information, see <a href="cdt_t_proj_build_set.htm">
-Defining build settings</a>.</p>
-
-<p>To create a customized make target:</p>
-
+<p>To create a make target:</p>
 <ol>
-  <li>In the C/C++ Projects view, right-click a project, and select <b>Create Make 
-  Target</b>.</li>
-  <li>In the <b>Target Name</b> box, type the name of the make target.</li>
-  <li>In the <b>Build Target</b> box, type a build target.</li>
-  <li>Select <b>Stop On First Build Error</b> to stop the build when an error is encountered.</li>
-  <li>Select <b>Run all project builders</b> to run all builds.</li>
-  <li>Select one of the following:</li>
-  <ul>
-  <li>Select the <b>Use Default</b> check box to use the default make command.</li>
-  <li>Clear the <b>Use Default</b> check box to use a different make utility to build your project and 
-  enter your own command in the <b>Build Command</b> box.</li>
-  </ul>
-<li>Click <b>OK</b>.</li>
-  <p>The target option is added under the <b>Build Make Target</b> menu item on the C/C++ 
-Projects view context menu.</p>
-  <p>You can view the output of the make utility in the Console view.</p>
+  <li>Right click on the project and select <b>Create Make Target...</b></li><br>
+  <img src="../images/create_make_target.png"   alt="Select Create Make Target"><br>&nbsp;</li>
+  <li>Enter the Target name and build options and click <b>Create</b>.<br>
+  <img src="../images/create_make_target_win.png"   alt="Create Make Target Window"><br>&nbsp;</li>
+  <li>The make target will appear in the Make Targets view.<br>
+  <img src="../images/view_make_targets.png"   alt="Make Targets View"><br>&nbsp;</li>
 </ol>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
@@ -52,10 +27,11 @@ Projects view context menu.</p>
 <a href="../concepts/cdt_c_build_over.htm">Build overview</a></p>
 <p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
-<a href="cdt_t_proj_build_set.htm">Defining build settings</a><br>
+<a href="cdt_t_proj_build_set.htm">Defining Build Settings</a><br>
 <a href="cdt_o_build_task.htm">Building</a></p>
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
-<a href="../reference/cdt_u_newproj_buildset.htm">Make Builder page, C/C++ Properties window</a></p>
+<a href="../reference/cdt_u_create_make_target.htm">Create a Make Target</a><br>
+<a href="../reference/cdt_u_make_targets_view.htm">Make Target View</a></p>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
 
 </body>

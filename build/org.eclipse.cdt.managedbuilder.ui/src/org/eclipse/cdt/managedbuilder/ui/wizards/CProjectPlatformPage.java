@@ -44,29 +44,32 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.help.WorkbenchHelp;
 
+/**
+ * Class that implements the target and configuration selection page in the new 
+ * project wizard for managed builder projects.
+ * 
+ * @since 1.2
+ */
 public class CProjectPlatformPage extends WizardPage {
-	/*
-	 * Bookeeping variables
-	 */
-	private ArrayList selectedConfigurations;
-	protected ITarget selectedTarget;
-	protected String[] targetNames;
-	protected ArrayList targets;
-	protected NewManagedProjectWizard parentWizard;
-
 	/*
 	 * Dialog variables and string constants
 	 */
-	protected Combo platformSelection;
-	protected CheckboxTableViewer tableViewer;
-	protected Button showAll;
 	private static final String PREFIX = "PlatformBlock"; //$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
 	private static final String TIP = PREFIX + ".tip"; //$NON-NLS-1$
-	private static final String TARGET_TIP = TIP + ".platform"; //$NON-NLS-1$
-	private static final String TARGET_LABEL = LABEL + ".platform"; //$NON-NLS-1$
 	private static final String CONFIG_LABEL = LABEL + ".configs"; //$NON-NLS-1$
 	private static final String SHOWALL_LABEL = LABEL + ".showall"; //$NON-NLS-1$
+	private static final String TARGET_LABEL = LABEL + ".platform"; //$NON-NLS-1$
+	private static final String TARGET_TIP = TIP + ".platform"; //$NON-NLS-1$
+
+	protected NewManagedProjectWizard parentWizard;
+	protected Combo platformSelection;
+	private ArrayList selectedConfigurations;
+	protected ITarget selectedTarget;
+	protected Button showAll;
+	protected CheckboxTableViewer tableViewer;
+	protected String[] targetNames;
+	protected ArrayList targets;
 
 	/**
 	 * Constructor.
@@ -208,6 +211,13 @@ public class CProjectPlatformPage extends WizardPage {
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH + 50;
 		platformSelection.setLayoutData(gd);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getProject()
+	 */
+	public IProject getProject() {
+		return ((NewCProjectWizard)getWizard()).getNewProject();
+	}
 	
 	/**
 	 * @return
@@ -230,6 +240,7 @@ public class CProjectPlatformPage extends WizardPage {
 		// Get the selections from the table viewer
 		selectedConfigurations.clear();
 		selectedConfigurations.addAll(Arrays.asList(tableViewer.getCheckedElements()));
+		setPageComplete(validatePage());
 	}
 
 	/**
@@ -320,13 +331,12 @@ public class CProjectPlatformPage extends WizardPage {
 	 */
 	private boolean validatePage() {
 		// TODO some validation ... maybe
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getProject()
-	 */
-	public IProject getProject() {
-		return ((NewCProjectWizard)getWizard()).getNewProject();
+		if ((tableViewer.getCheckedElements()).length > 0) {
+			setErrorMessage(null);
+			return true;
+		} else {
+			setErrorMessage(ManagedBuilderUIMessages.getResourceString("PlatformBlock.message.error.noconfigs"));	//$NON-NLS-1$
+			return false;
+		}
 	}
 }

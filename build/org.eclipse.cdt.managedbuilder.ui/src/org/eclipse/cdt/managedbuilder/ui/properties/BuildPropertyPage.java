@@ -903,6 +903,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		
 		// Find the configurations defined for the platform
 		configurations = selectedTarget.getConfigurations();
+		if (configurations.length == 0) return;
 		
 		// Clear and replace the contents of the selector widget
 		configSelector.removeAll();

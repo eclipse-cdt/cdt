@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2004 IBM Software Corporation and others.
+ * Copyright (c) 2002,2005 IBM Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -82,6 +82,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private Map targetMap;
 	
 	private boolean isReadOnly = false;
+	private boolean bIsContainerInited = false;
 	
 
 	/**
@@ -738,6 +739,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return boolean
+	 */
+	public boolean isContainerInited() {
+		return bIsContainerInited;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#needsRebuild()
 	 */
@@ -886,6 +895,13 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			this.version = version;
 			//setDirty(true);  - It is primarily up to the ManagedProject to maintain the dirty state
 		}
+	}
+
+	/**
+	 * @param boolean
+	 */
+	public void setContainerInited(boolean bInited) {
+		 bIsContainerInited = bInited;
 	}
 	
 	/* (non-Javadoc)

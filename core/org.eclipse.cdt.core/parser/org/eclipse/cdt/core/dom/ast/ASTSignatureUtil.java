@@ -142,7 +142,9 @@ public class ASTSignatureUtil {
 			
 			for(int i=0; i<names.length; i++) {
 				if (names[i] != null) {
-					result[i] = getSignature(((ICASTKnRFunctionDeclarator)decltor).getDeclaratorForParameterName(names[i]));
+					final IASTDeclarator declaratorForParameterName = ((ICASTKnRFunctionDeclarator)decltor).getDeclaratorForParameterName(names[i]);
+                    if( declaratorForParameterName != null )
+                        result[i] = getSignature(declaratorForParameterName);
 				}
 			}
 		}

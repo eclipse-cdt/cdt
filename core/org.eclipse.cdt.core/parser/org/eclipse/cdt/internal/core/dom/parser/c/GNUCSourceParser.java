@@ -1910,8 +1910,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             ICASTKnRFunctionDeclarator functionDecltor = createKnRFunctionDeclarator();
             parmDeclarations = removeNullDeclarations(parmDeclarations);
             for (int i = 0; i < parmDeclarations.length; ++i) {
-                if (parmDeclarations[i] != null
-                        && !(parmDeclarations[i] instanceof IASTProblemDeclaration)) {
+                if (parmDeclarations[i] != null) {
                     parmDeclarations[i].setParent(functionDecltor);
                     parmDeclarations[i]
                             .setPropertyInParent(ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER);

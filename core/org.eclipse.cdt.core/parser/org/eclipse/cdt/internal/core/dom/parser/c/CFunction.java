@@ -220,7 +220,8 @@ public class CFunction implements IFunction, ICInternalBinding {
         			break;
         	}
         	knrParamDtor = CVisitor.getKnRParameterDeclarator( fKnRDtor, paramName );
-        	paramName = knrParamDtor.getName();
+            if( knrParamDtor != null )
+                paramName = knrParamDtor.getName();
     	}
     	
     	//create a new binding and set it for the corresponding parameter in all known defns and decls

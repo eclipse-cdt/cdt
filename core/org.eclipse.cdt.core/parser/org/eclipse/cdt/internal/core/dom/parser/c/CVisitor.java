@@ -1601,7 +1601,8 @@ public class CVisitor {
 			
 		    for( int i = 0; i < parms.length; i++ ){
 		        IASTDeclarator dtor = getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) decltor, parms[i] );
-		        parmTypes[i] = createType( dtor );
+                if( dtor != null )
+                    parmTypes[i] = createType( dtor );
 		    }
 		    return parmTypes;
 		} else {

@@ -62,6 +62,7 @@ public class MIBreakpoint {
 	boolean isAWpt;
 	boolean isRWpt;
 	boolean isWWpt;
+	boolean isHdw;
 
 	public MIBreakpoint(MITuple tuple) {
 		parse(tuple);
@@ -75,10 +76,6 @@ public class MIBreakpoint {
 		return type;
 	}
 
-	public boolean isHardware() {
-		return getType().startsWith("hw") || isWatchpoint();
-	}
-
 	public boolean isTemporary() {
 		return getDisposition().equals("del");
 	}
@@ -89,6 +86,15 @@ public class MIBreakpoint {
 
 	public void setWatcpoint(boolean w) {
 		isWpt = w;
+	}
+
+	public boolean isHardware() {
+		return isHdw;
+	}
+
+	public void setHardware(boolean hd) {
+		isWpt = hd;
+		isHdw = hd;
 	}
 
 	public boolean isAccessWatchpoint() {
@@ -183,6 +189,29 @@ public class MIBreakpoint {
 				}
 			} else if (var.equals("type")) {
 				type = str;
+				//type="hw watchpoint"
+				if (type.startsWith("hw")) {
+					isHdw = true;
+					isWWpt = true;
+					isWpt = true;
+				}
+				//type="acc watchpoint"
+				if (type.startsWith("acc")) {
+					isWWpt = true;
+					isRWpt = true;
+					isWpt = true;
+				}
+				//type="read watchpoint"
+				if (type.startsWith("read")) {
+					isRWpt = true;
+					isWpt = true;
+				}
+				// ??
+				if (type.equals("watchpoint")) {
+					isWpt = true;
+				}
+				// type="breakpoint"
+				// default ok.
 			} else if (var.equals("disp")) {
 				disp = str;
 			} else if (var.equals("enabled")) {

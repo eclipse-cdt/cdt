@@ -62,7 +62,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	public ICDIVariable[] getLocalVariables() throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		VariableManager mgr = (VariableManager)session.getVariableManager();
-		ICDIVariableObject[] varObjs = mgr.getVariableObjects(this);
+		ICDIVariableObject[] varObjs = mgr.getLocalVariableObjects(this);
 		ICDIVariable[] vars = new ICDIVariable[varObjs.length];
 		for (int i = 0; i < vars.length; i++) {
 			vars[i] = mgr.createVariable(varObjs[i]);

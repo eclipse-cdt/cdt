@@ -1,3 +1,8 @@
+2003-01-28 Alain Magloire
+
+	* src/.../launch/internal/CApplicationLaunchShortCut.java (getCLaunchConfigType):
+	Change to protected.
+
 2003-01-16 David Inglis
 	* src/.../launch/ui/CDebuggerTab.java
 	made 'revert' work properly within the debugger tab.

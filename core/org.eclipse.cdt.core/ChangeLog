@@ -1,3 +1,42 @@
+2002-11-27 Alain Magloire
+
+	* model/.../cdt/core/model/CoreModel.java:
+	Remove the static qualifiers and force people to use getDefault().
+	(getBinaryParserFormat): New method to retrieve the format of a project.
+	(setBinaryParserFormat): New method to set the format of a project.
+	(getDefaultBinaryParserFormat): New method to retrieve the default format.
+	(setDefaultBinaryParserFormat): New method to set the default format.
+	* model/.../cdt/core/model/IBinaryParser.java: Move to be is the src directory.
+	* model/.../cdt/core/model/ICElementDelta.java: New Flag for the binary parser.
+	* model/.../internal/core/model/parser/BinaryContainerAdapter.java:
+	* model/.../internal/core/model/parser/BinaryFileAdapter.java:
+	* model/.../internal/core/model/parser/ElfBinaryArchive.java:
+	* model/.../internal/core/model/parser/ElfBinaryFile.java:
+	* model/.../internal/core/model/parser/PEBinaryArchive.java:
+	* model/.../internal/core/model/parser/PEBinaryFile.java:
+	* model/.../internal/core/model/parser/PEParser.java:
+	* model/.../internal/core/model/parser/ElfParser.java:
+	* model/.../internal/core/model/parser/Symbol.java:
+	* model/.../internal/core/model/ArchiveInfo.java:
+	* model/.../internal/core/model/BinaryInfo.java:
+	Organize imports.
+	* model/.../internal/core/model/CElementDelta.java (binaryParserChanged):
+	New method.
+	* model/.../internal/core/model/CModelManager.java (releaseCElement):
+	Remove the children of a container in the hashmap.
+	(getDefaultBinaryParserFormat): Return the default format.
+	(setDefaultBinaryParserFormat): set the default format.
+	(setBinaryParserFormat): remove the all the children and fire a binary parser change.
+
+	* src/../cdt/core/CCorePlugin.java (getBinaryParserConfigurations):
+	New method to search for the extension points.
+	* src/../cdt/core/IBinaryParser.java: New file
+	* src/../cdt/core/IBinaryParserConfiguration.java: New file
+	* src/../internal/cdt/core/BinaryParserConfiguration.java: New file
+
+	* plugin.xml: Binary parsers extension points.
+	
+
 2002-11-23 Alain Magloire
 
 	* model/.../cdt/core/model/CoreModel.java (getBinaryParser):

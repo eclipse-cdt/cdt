@@ -1,3 +1,13 @@
+2002-11-27 Alain Magloire
+
+	* src/.../internal/ui/preferences/CProjectPropertyPage.java:
+	Added BinaryParserBlock part of the tab items.
+	(performOK): run this method in a runnable to allow cancellation.
+	* src/.../internal/ui/CContentProvider.java (processDelta):
+	Catch binary parser changes.
+	* src/.../ui/wizards/BinaryParserBlock.java: TabItem to change binary parser.
+	* src/.../ui/wizards/StdMakeProjectWizard.java: TabItem to change binary parser.
+
 2002-11-25 David Inglis
 	* src/.../internal/ui/editor/CEditor.java:(extends TextEditor)
 	* src/.../internal/ui/editor/CEditorActionContributor.java:(extends TextEditorActionContributor)

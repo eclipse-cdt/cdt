@@ -60,16 +60,24 @@ public class CElementLabelProvider extends LabelProvider {
 			
 			String name;
 			switch(celem.getElementType()){
+				case ICElement.C_FIELD:
+				case ICElement.C_VARIABLE:
+				case ICElement.C_VARIABLE_DECLARATION:
+					IVariableDeclaration vDecl = (IVariableDeclaration) celem;
+					name =  vDecl.getElementName();
+					name += " : ";
+					name += vDecl.getTypeName();
+				break;
 				case ICElement.C_FUNCTION:
 				case ICElement.C_FUNCTION_DECLARATION:
 				case ICElement.C_METHOD:
 				case ICElement.C_METHOD_DECLARATION:
-					IFunctionDeclaration fdecl = (IFunctionDeclaration) celem;
-					name = fdecl.getSignature();		
+					IFunctionDeclaration fDecl = (IFunctionDeclaration) celem;
+					name = fDecl.getSignature();		
 				break;
 				case ICElement.C_STRUCT:
 				case ICElement.C_ENUMERATION:
-					if(celem.getElementName() != null){
+					if((celem.getElementName() != null) && (celem.getElementName().length() > 0)){
 						name = celem.getElementName();
 					} else {
 						IVariableDeclaration varDecl = (IVariableDeclaration) celem;

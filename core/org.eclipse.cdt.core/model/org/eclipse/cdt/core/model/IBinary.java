@@ -32,4 +32,7 @@ public interface IBinary extends ICFile {
 	public long getData();
 
 	public long getBSS();
+	
+	public boolean isLittleEndian();
+
 }

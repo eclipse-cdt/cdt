@@ -590,6 +590,7 @@ public class Elf {
 		String cpu;
 		int type;
 		boolean bDebug;
+		boolean isle;
 
 		public String getCPU() {
 			return cpu;
@@ -601,6 +602,10 @@ public class Elf {
 		
 		public boolean hasDebug() {
 			return bDebug;
+		}
+
+		public boolean isLittleEndian() {
+			return isle;
 		}
 	}
 
@@ -649,13 +654,15 @@ public class Elf {
 			default:
 				attrib.cpu = "none";
 		}
-		if ( !bSkipElfData) {
+		if (!bSkipElfData) {
 			switch (ehdr.e_ident[Elf.ELFhdr.EI_DATA]) {
 				case Elf.ELFhdr.ELFDATA2LSB :
 					attrib.cpu+= "le";
+					attrib.isle = true;
 					break;
 				case Elf.ELFhdr.ELFDATA2MSB :
 					attrib.cpu += "be";
+					attrib.isle = false;
 					break;
 			}
 		}

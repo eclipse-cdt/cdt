@@ -74,7 +74,15 @@ public class Binary extends CFile implements IBinary {
 		return ((BinaryInfo)getElementInfo()).getSoname();
 	}
 
+	/**
+	 * @see org.eclipse.cdt.core.model.IBinary#isLittleEndian()
+	 */
+	public boolean isLittleEndian() {
+		return  ((BinaryInfo)getElementInfo()).isLittleEndian();
+	}
+
 	public CElementInfo createElementInfo() {
 		return new BinaryInfo(this);
 	}
+
 }

@@ -114,6 +114,14 @@ class BinaryInfo extends CFileInfo {
 		return soname;
 	}
 
+	public boolean isLittleEndian() {
+		init();
+		if (attribute != null) {
+			return attribute.isLittleEndian();
+		}
+		return false;
+	}
+	
 	private void addFunction(Elf.Symbol [] symbol, boolean external) {
 		for (int i = 0; i < symbol.length; i++) {
 			ICElement parent = getElement();
@@ -244,6 +252,7 @@ class BinaryInfo extends CFileInfo {
 
 			sizes = helper.getSizes();
 			soname = helper.getSoname();
+			
 			attribute = helper.getElf().getAttributes();
 			helper.dispose();
 		} catch (IOException e) {

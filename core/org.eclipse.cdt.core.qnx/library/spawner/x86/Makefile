@@ -1,4 +1,4 @@
-LIST=ALL
+LIST=VARIANT
 ifndef QRECURSE
 QRECURSE=recurse.mk
 ifdef QCONFIG

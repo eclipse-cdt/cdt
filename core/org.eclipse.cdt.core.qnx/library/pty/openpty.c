@@ -55,7 +55,8 @@ int
 ptym_open(char * pts_name)
 {
 	char *ptr1, *ptr2;
-
+	int fdm;
+	
 	strcpy(pts_name, "/dev/ptyXY");
 	/* array index: 012345689 (for references in following code) */
 	for (ptr1 = "pqrstuvwxyzPQRST"; *ptr1 != 0; ptr1++) {
@@ -81,7 +82,7 @@ ptym_open(char * pts_name)
 int
 ptys_open(int fdm, char * pts_name)
 {
-	int gid;
+	int gid, fds;
 	struct group *grptr;
 
 	grptr = getgrnam("tty");

@@ -24,7 +24,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
-import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -88,7 +87,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					if (wd != null) {
 						opt.setWorkingDirectory(wd.getAbsolutePath());
 					}
-					opt.setEnvironment(getEnvironmentProperty(config));
+					opt.setEnvironment(expandEnvironment(config));
 					ICDITarget dtarget = dsession.getTargets()[0];
 					Process process = dtarget.getProcess();
 					IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
@@ -193,8 +192,8 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 	 */
 	protected Process exec(String[] cmdLine, Properties environ, File workingDirectory) throws CoreException {
 		Process p = null;
-		Properties props = EnvironmentReader.getEnvVars();
-		props.putAll(environ);
+		Properties props = getDefaultEnvironment();
+		props.putAll(expandEnvironment(environ));
 		String[] envp = null;
 		ArrayList envList = new ArrayList();
 		Enumeration names = props.propertyNames();

@@ -20,7 +20,7 @@ public class MIResultRecord {
 	String resultClass = "";
 	int token = -1;
 
-	public int geToken() {
+	public int getToken() {
 		return token;
 	}
 

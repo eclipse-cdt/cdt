@@ -62,7 +62,7 @@ public class PreferenceConstants {
 	 * </p>
 	 */
 	public static final String PREF_USE_STRUCTURAL_PARSE_MODE= "org.eclipse.cdt.ui.editor.UseStructuralMode"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls if segmented view (show selected element only) is turned on or off.
 	 * <p>
@@ -121,7 +121,24 @@ public class PreferenceConstants {
      * @since 2.1
      */
     public final static String EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER= "taskIndicationInOverviewRuler"; //$NON-NLS-1$ 
-    
+ 
+	/**
+	 * A named preference that controls if correction indicators are shown in the UI.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public final static String EDITOR_CORRECTION_INDICATION= "CEditor.ShowTemporaryProblem"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls if temporary problems are evaluated and shown in the UI.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public final static String EDITOR_EVALUATE_TEMPORARY_PROBLEMS= "handleTemporaryProblems"; //$NON-NLS-1$
+
+
     public static final String REFACTOR_ERROR_PAGE_SEVERITY_THRESHOLD= "Refactoring.ErrorPage.severityThreshold"; //$NON-NLS-1$
     public static final String REFACTOR_FATAL_SEVERITY= "4"; //$NON-NLS-1$
     public static final String REFACTOR_ERROR_SEVERITY= "3"; //$NON-NLS-1$
@@ -151,5 +168,9 @@ public class PreferenceConstants {
         
         PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_TASK_TAG_COLOR, new RGB(127, 159, 191));
         store.setDefault(PreferenceConstants.EDITOR_TASK_TAG_BOLD, true);
+
+		store.setDefault(PreferenceConstants.EDITOR_CORRECTION_INDICATION, false);
+		store.setDefault(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, false);
+
     }
 }

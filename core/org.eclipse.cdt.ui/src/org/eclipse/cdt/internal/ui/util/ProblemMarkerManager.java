@@ -7,8 +7,10 @@ package org.eclipse.cdt.internal.ui.util;
 
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.internal.ui.editor.TranslationUnitAnnotationModelEvent;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,7 +25,12 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.jface.text.source.AnnotationModelEvent;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelListener;
+import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.swt.widgets.Display;
 
 
 /**
@@ -31,7 +38,7 @@ import org.eclipse.jface.util.ListenerList;
  * Viewers showing error ticks should register as listener to
  * this type.
  */
-public class ProblemMarkerManager implements IResourceChangeListener {
+public class ProblemMarkerManager implements IResourceChangeListener, IAnnotationModelListener, IAnnotationModelListenerExtension {
 
 	/**
 	 * Visitors used to filter the element delta changes
@@ -113,17 +120,42 @@ public class ProblemMarkerManager implements IResourceChangeListener {
 			CUIPlugin.getDefault().log(e.getStatus());
 		}
 
-		if (changedElements.size() > 0) {
+		if (!changedElements.isEmpty()) {
 			fireChanges(changedElements);
 		}
+
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
+	 */
+	public void modelChanged(IAnnotationModel model) {
+		// no action
+	}
+
+	/* (non-Javadoc)
+	 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
+	 */
+	public void modelChanged(AnnotationModelEvent event) {
+		if (event instanceof TranslationUnitAnnotationModelEvent) {
+			TranslationUnitAnnotationModelEvent cuEvent= (TranslationUnitAnnotationModelEvent) event;
+			if (cuEvent.includesProblemMarkerAnnotationChanges()) {
+				//IResource[] changes= new IResource[] {cuEvent.getUnderlyingResource()};
+				IResource res = cuEvent.getUnderlyingResource();
+				if (res != null) {
+					fireChanges(Collections.singleton(res.getFullPath()));
+				}
+			}
+		}
+	}	
+
 	/**
 	 * Adds a listener for problem marker changes.
 	 */
 	public void addListener(IProblemChangedListener listener) {
 		if (fListeners.isEmpty()) { 
 			CUIPlugin.getWorkspace().addResourceChangeListener(this);
+			CUIPlugin.getDefault().getDocumentProvider().addGlobalAnnotationModelListener(this);
 		}
 		fListeners.add(listener);
 	}
@@ -135,15 +167,23 @@ public class ProblemMarkerManager implements IResourceChangeListener {
 		fListeners.remove(listener);
 		if (fListeners.isEmpty()) {
 			CUIPlugin.getWorkspace().removeResourceChangeListener(this);
+			CUIPlugin.getDefault().getDocumentProvider().removeGlobalAnnotationModelListener(this);
 		}
 	}
 	
-	private void fireChanges(Set changes) {
-		Object[] listeners= fListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			IProblemChangedListener curr= (IProblemChangedListener) listeners[i];
-			curr.problemsChanged(changes);
-		}			
+	private void fireChanges(final Set changes) {
+		Display display= SWTUtil.getStandardDisplay();
+		if (display != null && !display.isDisposed()) {
+			display.asyncExec(new Runnable() {
+				public void run() {		
+					Object[] listeners= fListeners.getListeners();
+					for (int i= 0; i < listeners.length; i++) {
+						IProblemChangedListener curr= (IProblemChangedListener) listeners[i];
+						curr.problemsChanged(changes);
+					}
+				}
+			});
+		}
 	}
  }
 

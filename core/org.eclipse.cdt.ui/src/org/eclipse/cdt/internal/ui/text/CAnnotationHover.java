@@ -88,7 +88,7 @@ public class CAnnotationHover implements IAnnotationHover {
 	 */
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		List markers= getMarkersForLine(sourceViewer, lineNumber);
-		if (markers != null) {
+		if (markers != null && markers.size() > 0) {
 			
 			if (markers.size() == 1) {
 				

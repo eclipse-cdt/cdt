@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
+import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IFile;
@@ -45,16 +46,26 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 * never true if this translation unit is not a working copy.
 	 */
 	protected int useCount = 1;
-	
+
+	/**
+	 * If set, this is the problem requestor which will be used to notify problems
+	 * detected during reconciling.
+	 */
+	protected IProblemRequestor problemRequestor;
+
 	/**
 	 * Creates a working copy of this element
 	 */
 	public WorkingCopy(ICElement parent, IFile file, IBufferFactory bufferFactory) {
+		this(parent, file, bufferFactory, null);
+	}
+	public WorkingCopy(ICElement parent, IFile file, IBufferFactory bufferFactory, IProblemRequestor requestor) {
 		super(parent, file);
 		this.bufferFactory = 
 			bufferFactory == null ? 
 				getBufferManager() :
 				bufferFactory;
+		this.problemRequestor = requestor;
 	}
 
 	public WorkingCopy(ICElement parent, IPath path, IBufferFactory bufferFactory) {
@@ -206,11 +217,17 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 * something other than navigation 	or if this is a working copy being
 	 * opened after it has been destroyed.
 	 */
-	public void open(IProgressMonitor pm) throws CModelException {
+	public void open(IProgressMonitor monitor) throws CModelException {
 		if (this.useCount == 0) { // was destroyed
 			throw newNotPresentException();
 		} else {
-			super.open(pm);
+			super.open(monitor);
+			if (monitor != null && monitor.isCanceled()) return;
+			if (this.problemRequestor != null && this.problemRequestor.isActive()){
+				this.problemRequestor.beginReporting();
+				TranslationUnitProblemFinder.process(this, this.problemRequestor, monitor); 
+				this.problemRequestor.endReporting();
+			}
 		}
 	}
 	/**

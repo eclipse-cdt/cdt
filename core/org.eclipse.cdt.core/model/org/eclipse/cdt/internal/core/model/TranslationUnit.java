@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ISourceManipulation;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
@@ -366,6 +367,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor,IBufferFactory factory)
 		throws CModelException {
+		return getSharedWorkingCopy(monitor, factory, null);
+	}
+	
+	/**
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getSharedWorkingCopy(IProgressMonitor, IBufferFactory)
+	 */
+	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor,IBufferFactory factory, IProblemRequestor requestor)
+		throws CModelException {
 	
 		// if factory is null, default factory must be used
 		if (factory == null) factory = BufferManager.getDefaultBufferManager();
@@ -388,15 +397,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			return workingCopy;
 
 		} else {
-			workingCopy = (WorkingCopy)this.getWorkingCopy(monitor, factory);
-			perFactoryWorkingCopies.put(this, workingCopy);
-
-			// report added java delta
-//			CElementDelta delta = new CElementDelta(this.getCModel());
-//			delta.added(workingCopy);
-//			manager.fire(delta, CModelManager.DEFAULT_CHANGE_EVENT);
-
-			return workingCopy;
+			CreateWorkingCopyOperation op = new CreateWorkingCopyOperation(this, perFactoryWorkingCopies, factory, requestor);
+			runOperation(op, monitor);
+			return (IWorkingCopy)op.getResultElements()[0];
 		}
 	}
 	/**

@@ -5,25 +5,39 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.search.ui.SearchUI;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
 
-public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnotation {		
-	
+public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnotation, ICAnnotation {		
+
+	public static final String C_MARKER_TYPE_PREFIX= "org.eclipse.cdt"; //$NON-NLS-1$
+	public static final String ERROR_ANNOTATION_TYPE= "org.eclipse.cdt.ui.error"; //$NON-NLS-1$
+	public static final String WARNING_ANNOTATION_TYPE= "org.eclipse.cdt.ui.warning"; //$NON-NLS-1$
+	public static final String INFO_ANNOTATION_TYPE= "org.eclipse.cdt.ui.info"; //$NON-NLS-1$
+	public static final String TASK_ANNOTATION_TYPE= "org.eclipse.ui.workbench.texteditor.task"; //$NON-NLS-1$
+
 	private boolean fIsProblemMarker;
 	private IDocument fDocument;
 	private int error_start = -1;
 	private int error_length = 0;
+
+	private ICAnnotation fOverlay;
 
 	public CMarkerAnnotation(IMarker marker, IDocument document) {
 		super(marker);
@@ -173,7 +187,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 		
 		super.initialize();
 	}
-	
+
 	/**
 	 * @see IProblemAnnotation#getMessage()
 	 */
@@ -245,4 +259,76 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	public int getErrorLength() {
 		return error_length;
 	}
+
+	/**
+	 * Overlays this annotation with the given cAnnotation.
+	 * 
+	 * @param cAnnotation annotation that is overlaid by this annotation
+	 */
+	public void setOverlay(ICAnnotation cAnnotation) {
+		if (fOverlay != null)
+			fOverlay.removeOverlaid(this);
+			
+		fOverlay= cAnnotation;
+		if (!isMarkedDeleted())
+			markDeleted(fOverlay != null);
+		
+		if (fOverlay != null)
+			fOverlay.addOverlaid(this);
+	}
+
+	/*
+	 * @see ICAnnotation#hasOverlay()
+	 */
+	public boolean hasOverlay() {
+		return fOverlay != null;
+	}
+	
+	/*
+	 * @see org.eclipse.cdt.internal.ui.editor.ICAnnotation#getOverlay()
+	 */
+	public ICAnnotation getOverlay() {
+		return fOverlay;
+	}
+	
+	/*
+	 * @see ICAnnotation#addOverlaid(ICAnnotation)
+	 */
+	public void addOverlaid(ICAnnotation annotation) {
+		// not supported
+	}
+
+	/*
+	 * @see ICAnnotation#removeOverlaid(ICAnnotation)
+	 */
+	public void removeOverlaid(ICAnnotation annotation) {
+		// not supported
+	}
+	
+	/*
+	 * @see ICAnnotation#getOverlaidIterator()
+	 */
+	public Iterator getOverlaidIterator() {
+		// not supported
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.ui.javaeditor.IJavaAnnotation#getCompilationUnit()
+	 */
+	public ITranslationUnit getTranslationUnit() {
+		ICElement element= CoreModel.getDefault().create(getMarker().getResource());
+		if (element instanceof ITranslationUnit) {
+			return (ITranslationUnit)element;
+		}
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.cdt.internal.ui.editor.ICAnnotation#getImage(org.eclipse.swt.widgets.Display)
+	 */
+	public Image getImage(Display display) {
+		return super.getImage(display);
+	}
+
 }

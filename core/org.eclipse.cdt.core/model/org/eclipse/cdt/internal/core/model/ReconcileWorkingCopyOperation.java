@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
+import org.eclipse.cdt.core.model.IProblemRequestor;
 
 /**
  * Reconcile a working copy and signal the changes through a delta.
@@ -57,12 +58,12 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 			if (forceProblemDetection && wasConsistent){
 				if (fMonitor != null && fMonitor.isCanceled()) return;
 		
-				//IProblemRequestor problemRequestor = workingCopy.problemRequestor;
-				//if (problemRequestor != null && problemRequestor.isActive()){
-				//	problemRequestor.beginReporting();
-				//	CompilationUnitProblemFinder.process(workingCopy, problemRequestor, fMonitor);
-				//	problemRequestor.endReporting();
-				//}
+				IProblemRequestor problemRequestor = workingCopy.problemRequestor;
+				if (problemRequestor != null && problemRequestor.isActive()){
+					problemRequestor.beginReporting();
+					TranslationUnitProblemFinder.process(workingCopy, problemRequestor, fMonitor);
+					problemRequestor.endReporting();
+				}
 			}
 			
 			// register the deltas

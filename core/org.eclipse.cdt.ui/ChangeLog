@@ -1,5 +1,10 @@
 2002-11-13 Alain Magloire
 
+	* src/.../internal/ui/editor/ProblemPainter.java (hasProblem):
+	Check for NPE, dispose may have been called.
+
+2002-11-13 Alain Magloire
+
 	* src/.../wizards/CProjectWizard.java (isValidName):
 	New method to give a change to the wizard to check
 	the validity of a project name.

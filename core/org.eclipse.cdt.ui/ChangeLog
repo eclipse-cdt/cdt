@@ -1,3 +1,7 @@
+2005-01-28 Alain Magloire
+	Add Indexer search in the Source Hover implementation.
+	* src/org/eclipse/cdt/intenal/ui/text/CSourceHover.java
+
 2005-01-28 David Inglis
 
 	Implement Eclipse 3.0 Next/Prev Annonation retargetable actions for CEditor with Problems

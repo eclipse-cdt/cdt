@@ -12,16 +12,27 @@
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.search.BasicSearchResultCollector;
+import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.OrPattern;
+import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.codemanipulation.StubUtility;
 import org.eclipse.cdt.internal.ui.text.CCodeReader;
 import org.eclipse.cdt.internal.ui.util.Strings;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -67,9 +78,14 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				expression = expression.trim();
 				if (expression.length() == 0)
 					return null;
+
 				ICElement curr = copy.getElement(expression);
 				if (curr == null) {
-					return null;
+					// Try with the indexer
+					curr = findMatches(expression);
+					if (curr == null) {
+						return null;
+					}
 				}
 				String source= ((ISourceReference) curr).getSource();
 				if (source == null || source.trim().length() == 0)
@@ -136,6 +152,59 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		return source.substring(i);
 	}
 
+	private ICElement findMatches(String name) {
+		IEditorPart editor = getEditor();
+		if (editor != null) {
+			IEditorInput input= editor.getEditorInput();
+			IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
+			IWorkingCopy copy = manager.getWorkingCopy(input);
+
+			if (copy != null) {
+				try {
+					BasicSearchResultCollector searchResultCollector = new BasicSearchResultCollector();			
+					ICProject cproject = copy.getCProject();
+					ICSearchScope scope = SearchEngine.createCSearchScope(new ICElement[]{cproject}, true);
+					OrPattern orPattern = new OrPattern();
+					orPattern.addPattern(SearchEngine.createSearchPattern( 
+							name, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, false));
+					orPattern.addPattern(SearchEngine.createSearchPattern( 
+							name, ICSearchConstants.TYPE, ICSearchConstants.DEFINITIONS, false));
+					orPattern.addPattern(SearchEngine.createSearchPattern( 
+							name, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false));
+					orPattern.addPattern(SearchEngine.createSearchPattern( 
+							name, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, false));				
+					orPattern.addPattern(SearchEngine.createSearchPattern( 
+							name, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false));
+					orPattern.addPattern(SearchEngine.createSearchPattern( 
+							name, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false));
+					
+					SearchEngine searchEngine = new SearchEngine();
+					searchEngine.setWaitingPolicy(ICSearchConstants.FORCE_IMMEDIATE_SEARCH);
+					searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, searchResultCollector, true);
+					
+					Set set = searchResultCollector.getSearchResults();
+					if (set != null) {
+						IMatch[] matches = new IMatch[set.size()];
+						set.toArray(matches);
+						IResource resource = matches[0].getResource();
+						if (resource != null) {
+							ICElement celement = CoreModel.getDefault().create(resource);
+							if (celement instanceof ITranslationUnit) {							
+								return ((ITranslationUnit)celement).getElement(name);
+							}
+						}
+					}
+				}catch (InterruptedException e) {
+					//
+				} catch (CModelException e) {
+					//
+				}
+			}
+		}
+		return null;
+	}
+
+
 	/*
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 * @since 3.0
@@ -161,5 +230,4 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 			}
 		};
 	}
-
 }

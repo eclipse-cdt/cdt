@@ -119,7 +119,7 @@ public interface IContainerSymbol extends ISymbol {
 	 *      r_BadTemplateArgument if (14.3.1, 14.3.2) a template argument is invalid
 	 */
 	public ISymbol lookupTemplateId( String name, List arguments ) throws ParserSymbolTableException;
-	public ISymbol lookupFunctionTemplateId( String name, List parameters, List arguments ) throws ParserSymbolTableException;
+	public ISymbol lookupFunctionTemplateId( String name, List parameters, List arguments, boolean forDefinition ) throws ParserSymbolTableException;
 	
 	public IContainerSymbol lookupTemplateIdForDefinition( String name, List arguments ) throws ParserSymbolTableException;
 	

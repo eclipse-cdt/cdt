@@ -566,7 +566,7 @@ public class ParserSymbolTable {
 		
 		if( numTemplateFunctions > 0 ){
 			if( data.parameters != null && !data.exactFunctionsOnly ){
-				List fns  = TemplateEngine.selectTemplateFunctions( templateFunctionSet, data.parameters );
+				List fns  = TemplateEngine.selectTemplateFunctions( templateFunctionSet, data.parameters, data.templateParameters );
 				functionSet.addAll( fns );
 				numFunctions = functionSet.size();
 			} else {
@@ -1163,6 +1163,18 @@ public class ParserSymbolTable {
 							ambiguous = false;
 						}
 					}
+					//we prefer normal functions over template functions, unless the specified template arguments
+					else if( bestFn.isTemplateInstance() && !currFn.isTemplateInstance() ){
+						if( data.templateParameters == null )
+							hasBetter = true;
+						else
+							ambiguous = false;
+					} else if( !bestFn.isTemplateInstance() && currFn.isTemplateInstance() ){
+						if( data.templateParameters == null )
+							ambiguous = false;
+						else
+							hasBetter = true;
+					} 
 				}
 				if( hasBetter ){
 					//the new best function.

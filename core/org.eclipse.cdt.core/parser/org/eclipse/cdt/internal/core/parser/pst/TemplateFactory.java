@@ -56,7 +56,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addTemplateId(org.eclipse.cdt.internal.core.parser.pst.ISymbol, java.util.List)
 	 */
 	public void addTemplateId(ISymbol symbol, List args) throws ParserSymbolTableException {
-		ISymbol previous = findPreviousSymbol( symbol );
+		ISymbol previous = findPreviousSymbol( symbol, args );
 		ITemplateSymbol origTemplate = (previous != null ) ? (ITemplateSymbol) previous.getContainingSymbol() : null;
 		
 		if( origTemplate == null ){
@@ -149,7 +149,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		}
 	}
 	
-	private ISymbol findPreviousSymbol( ISymbol symbol ) throws ParserSymbolTableException{
+	private ISymbol findPreviousSymbol( ISymbol symbol, List args ) throws ParserSymbolTableException{
 		ISymbol previous = null;
 		
 		List argList = null;
@@ -163,7 +163,10 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		}
 		
 		if( symbol.isType( TypeInfo.t_function ) ){
-			previous = lookupMethodForDefinition( symbol.getName(), argList );
+			if( args != null )
+				previous = lookupFunctionTemplateId( symbol.getName(), argList, args, false );
+			else
+				previous = lookupMethodForDefinition( symbol.getName(), argList );
 		} else if ( symbol.isType( TypeInfo.t_constructor ) ){
 			previous = lookupConstructor( argList );
 		} else {
@@ -174,10 +177,25 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	
 	private void basicTemplateDeclaration( ISymbol symbol ) throws ParserSymbolTableException{
 		ITemplateSymbol template = (ITemplateSymbol)templates.get( 0 );
+
+		
 		if( template.getParameterList().size() == 0 ){
-			//explicit specialization
+			//explicit specialization, deduce some arguments and use addTemplateId
+			ISymbol previous = findPreviousSymbol( symbol, new LinkedList() );
+			if( previous == null )
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
+			
+			List args = null;
+			if( symbol instanceof IParameterizedSymbol ){
+				args = TemplateEngine.resolveTemplateFunctionArguments( null, (ITemplateSymbol)previous.getContainingSymbol(), (IParameterizedSymbol) symbol );
+			}
+			if( args != null )
+				addTemplateId( symbol, args );
+			else
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
+			
 		} else {
-			ISymbol previous = findPreviousSymbol( symbol );
+			ISymbol previous = findPreviousSymbol( symbol, null );			
 			
 			if( previous == null ){
 				//new template
@@ -228,7 +246,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	}
 	
 	private void memberDeclaration( ISymbol symbol ) throws ParserSymbolTableException{
-		ISymbol previous = findPreviousSymbol( symbol );
+		ISymbol previous = findPreviousSymbol( symbol, null );
 		if( previous == null ) {
 			//??
 		} else {
@@ -855,8 +873,14 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupFunctionTemplateId(java.lang.String, java.util.List, java.util.List)
 	 */
-	public ISymbol lookupFunctionTemplateId(String name, List parameters, List arguments) throws ParserSymbolTableException {
-		// TODO Auto-generated method stub
-		return null;
+	public ISymbol lookupFunctionTemplateId(String name, List parameters, List arguments, boolean forDefinition) throws ParserSymbolTableException {
+		IContainerSymbol last = getLastSymbol();
+		if( last != null ){
+			IParameterizedSymbol found = (IParameterizedSymbol) last.lookupFunctionTemplateId( name, parameters, arguments, forDefinition );
+			if( found != null ){
+				return found;
+			}
+		}
+		return getContainingSymbol().lookupFunctionTemplateId( name, parameters, arguments, forDefinition );
 	}
 }

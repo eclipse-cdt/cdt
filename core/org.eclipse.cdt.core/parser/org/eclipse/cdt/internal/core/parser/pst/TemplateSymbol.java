@@ -277,6 +277,11 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		}
 		if( found == null && getTemplatedSymbol().getName().equals( symbol.getName() ) ){
 			found = getTemplatedSymbol();
+			
+			IContainerSymbol instance = findInstantiation( args );
+			if( instance != null ){
+				_instantiations.remove( findArgumentsFor( instance ) );
+			}
 		}
 		
 		if( found != null ){

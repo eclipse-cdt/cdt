@@ -882,7 +882,7 @@ public final class TemplateEngine {
 		return info;
 	}
 	
-	static protected List selectTemplateFunctions( Set templates, List arguments ) throws ParserSymbolTableException{
+	static protected List selectTemplateFunctions( Set templates, List functionArguments, List templateArguments ) throws ParserSymbolTableException{
 		if( templates == null || templates.size() == 0 )
 			return null;
 		
@@ -894,15 +894,28 @@ public final class TemplateEngine {
 			IParameterizedSymbol fn = (IParameterizedSymbol) iter.next();
 			ITemplateSymbol template = (ITemplateSymbol) fn.getContainingSymbol();
 			
-			Map map = deduceTemplateArguments( template, arguments );
+			Map map = deduceTemplateArguments( template, functionArguments );
 			
 			if( map == null )
 				continue;
 			
 			Iterator paramIter = template.getParameterList().iterator();
+			Iterator argsIter = (templateArguments != null ) ? templateArguments.iterator() : null;
 			List instanceArgs = new LinkedList();
 			while( paramIter.hasNext() ){
-				instanceArgs.add( map.get( paramIter.next() ) );
+				ISymbol param = (ISymbol) paramIter.next();
+				TypeInfo arg = (TypeInfo) (( argsIter != null && argsIter.hasNext() )? argsIter.next() : null);
+				TypeInfo mapped = (TypeInfo) map.get( param );
+				
+				if( arg != null && mapped != null )
+					if( arg.equals( mapped ) )
+						instanceArgs.add( arg );
+					else
+						continue;
+				else if( arg == null && mapped == null )
+					continue;
+				else 
+					instanceArgs.add( (arg != null) ? arg : mapped );
 			}
 			
 			IContainerSymbol instance = (IContainerSymbol) template.instantiate( instanceArgs );
@@ -1222,6 +1235,41 @@ public final class TemplateEngine {
 		
 		return template;
 	}
+	
+	static protected List resolveTemplateFunctionArguments( List args, ITemplateSymbol template, IParameterizedSymbol fn )
+	{
+		List resultList = new LinkedList();
+		
+		List params = template.getParameterList();
+		Map map = null;
+		
+		Iterator pIter = params.iterator();
+		Iterator aIter = ( args != null ) ? args.iterator() : null;
+		while( pIter.hasNext() ){
+			ISymbol param = (ISymbol) pIter.next();
+			TypeInfo arg = null;
+			if( aIter != null && aIter.hasNext() ){
+				arg = (TypeInfo) aIter.next();
+			} else {
+				if( map == null ){
+					map = deduceTemplateArgumentsUsingParameterList( template, fn );
+					if(map == null )
+						return null;
+				}
+				if( map.containsKey( param ) ){
+					arg = (TypeInfo) map.get( param );
+				}
+			}
+			
+			if( arg == null || !matchTemplateParameterAndArgument( param, arg ) )
+				return null;
+			
+			resultList.add( arg );
+		}
+		
+		return resultList;
+	}
+	
 	static protected ISymbol checkForTemplateExplicitSpecialization( ITemplateSymbol template, ISymbol symbol, List arguments ){
 		if( !template.getExplicitSpecializations().isEmpty() ){
 			//TODO: could optimize this if we had a TypeInfo.hashCode()

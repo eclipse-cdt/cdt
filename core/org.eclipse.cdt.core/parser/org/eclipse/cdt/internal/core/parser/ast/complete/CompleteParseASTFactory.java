@@ -213,7 +213,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					}
 					else {
 						if( arguments != null )
-							result = startingScope.lookupFunctionTemplateId( name, new LinkedList( parameters), new LinkedList( arguments ) );
+							result = startingScope.lookupFunctionTemplateId( name, new LinkedList( parameters), new LinkedList( arguments ), ( lookupType == LookupType.FORDEFINITION ) );
 						else if( lookupType == LookupType.QUALIFIED )
 							result = startingScope.qualifiedFunctionLookup(name, new LinkedList(parameters));
 						else if( lookupType == LookupType.UNQUALIFIED || lookupType == LookupType.FORPARENTSCOPE)

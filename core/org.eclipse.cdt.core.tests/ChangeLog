@@ -1,3 +1,8 @@
+2004-04-20 Andrew Niefer
+	-added parser/CompleteParseASTTemplateTest.test_14_7_3__11_ExplicitSpecializationArgumentDeduction()
+	-added parser/CompleteParseASTTemplateTest.test_14_8_1__2_ExplicitArgumentSpecification()
+	-uncommented and modified parser/ParserSymbolTableTemplateTests.test_14_7_3__11_ExplicitSpecializationArgumentDeduction()
+
 2004-04-20 John Camelon
 	Updated CompletionParseTest for CompletionKind updates.  
 

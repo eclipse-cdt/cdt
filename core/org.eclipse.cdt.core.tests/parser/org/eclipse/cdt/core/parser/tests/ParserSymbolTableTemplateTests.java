@@ -1888,63 +1888,62 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	 * @throws Exception
 	 */
 	public void test_14_7_3__11_ExplicitSpecializationArgumentDeduction() throws Exception{
-		//TODO
-//		newTable();
-//		
-//		ITemplateSymbol templateArray = table.newTemplateSymbol( "Array" );
-//		templateArray.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
-//		
-//		ITemplateFactory factory = table.newTemplateFactory();
-//		factory.setContainingSymbol( table.getCompilationUnit() );
-//		factory.pushTemplate( templateArray );
-//		
-//		IDerivableContainerSymbol array = table.newDerivableContainerSymbol( "Array", TypeInfo.t_class );
-//		factory.addSymbol( array );
-//		
-//		ITemplateSymbol templateSort = table.newTemplateSymbol( "sort" );
-//		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
-//		templateSort.addTemplateParameter( T );
-//		
-//		factory = table.newTemplateFactory();
-//		factory.setContainingSymbol( table.getCompilationUnit() );
-//		factory.pushTemplate( templateSort );
-//		
-//		IParameterizedSymbol sort = table.newParameterizedSymbol( "sort", TypeInfo.t_function );
-//		
-//		List args = new LinkedList();
-//		args.add( new TypeInfo( TypeInfo.t_type, 0, T ) );
-//
-//		ISymbol arrayLook = factory.lookupTemplateId( "Array", args );
-//		sort.addParameter( arrayLook, 0, new PtrOp( PtrOp.t_reference ), false );
-//		
-//		factory.addSymbol( sort );
-//
-//		ITemplateSymbol temp = table.newTemplateSymbol( "" );
-//		factory = table.newTemplateFactory();
-//		
-//		factory.setContainingSymbol( table.getCompilationUnit() );
-//		factory.pushTemplate( temp );
-//				
-//		IParameterizedSymbol newSort = table.newParameterizedSymbol( "sort", TypeInfo.t_function );
-//		args.clear();
-//		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
-//		arrayLook = table.getCompilationUnit().lookupTemplateId( "Array", args );
-//		assertTrue( arrayLook.isTemplateInstance() );
-//		assertEquals( arrayLook.getInstantiatedSymbol(), array );
-//		newSort.addParameter( arrayLook, 0, new PtrOp( PtrOp.t_reference ), false );
-//		
-//		factory.addSymbol( newSort );
-//		
-//		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
-//		a.setTypeSymbol( arrayLook );
-//		
-//		args.clear();
-//		args.add( new TypeInfo( TypeInfo.t_type, 0, a ) );
-//		
-//		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "sort", args );
-//		
-//		assertTrue( look.isTemplateInstance() );
-//		assertEquals( look.getInstantiatedSymbol(), newSort );
+		newTable();
+		
+		ITemplateSymbol templateArray = table.newTemplateSymbol( "Array" );
+		templateArray.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		
+		ITemplateFactory factory = table.newTemplateFactory();
+		factory.setContainingSymbol( table.getCompilationUnit() );
+		factory.pushTemplate( templateArray );
+		
+		IDerivableContainerSymbol array = table.newDerivableContainerSymbol( "Array", TypeInfo.t_class );
+		factory.addSymbol( array );
+		
+		ITemplateSymbol templateSort = table.newTemplateSymbol( "sort" );
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		templateSort.addTemplateParameter( T );
+		
+		factory = table.newTemplateFactory();
+		factory.setContainingSymbol( table.getCompilationUnit() );
+		factory.pushTemplate( templateSort );
+		
+		IParameterizedSymbol sort = table.newParameterizedSymbol( "sort", TypeInfo.t_function );
+		
+		List args = new LinkedList();
+		args.add( new TypeInfo( TypeInfo.t_type, 0, T ) );
+
+		ISymbol arrayLook = factory.lookupTemplateId( "Array", args );
+		sort.addParameter( arrayLook, 0, new PtrOp( PtrOp.t_reference ), false );
+		
+		factory.addSymbol( sort );
+
+		ITemplateSymbol temp = table.newTemplateSymbol( "" );
+		factory = table.newTemplateFactory();
+		
+		factory.setContainingSymbol( table.getCompilationUnit() );
+		factory.pushTemplate( temp );
+				
+		IParameterizedSymbol newSort = table.newParameterizedSymbol( "sort", TypeInfo.t_function );
+		args.clear();
+		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+		arrayLook = table.getCompilationUnit().lookupTemplateId( "Array", args );
+		assertTrue( arrayLook.isTemplateInstance() );
+		assertEquals( arrayLook.getInstantiatedSymbol(), array );
+		newSort.addParameter( arrayLook, 0, new PtrOp( PtrOp.t_reference ), false );
+		
+		factory.addSymbol( newSort );
+		
+		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
+		a.setTypeSymbol( arrayLook );
+		
+		args.clear();
+		args.add( new TypeInfo( TypeInfo.t_type, 0, a ) );
+		
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "sort", args );
+		
+		assertTrue( look.isTemplateInstance() );
+		assertEquals( look.getInstantiatedSymbol(), newSort );
 	}
 	
 	/**

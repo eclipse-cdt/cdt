@@ -767,6 +767,22 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupFunctionTemplateId(java.lang.String, java.util.List, java.util.List)
+	 */
+	public ISymbol lookupFunctionTemplateId(String name, List parameters, List arguments, boolean forDefinition) throws ParserSymbolTableException {
+		LookupData data = new LookupData( name, TypeInfo.t_function );
+		data.exactFunctionsOnly = forDefinition;
+		data.parameters = parameters;
+		data.templateParameters = arguments;
+		
+		ParserSymbolTable.lookup( data, this );
+		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
+
+		return found;
+	}
+
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupTemplateIdForDefinition(java.lang.String, java.util.List)
 	 */
 	public IContainerSymbol lookupTemplateIdForDefinition(String name, List arguments) throws ParserSymbolTableException {
@@ -1112,14 +1128,4 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	public void addTemplateId(ISymbol symbol, List args) throws ParserSymbolTableException {
 		throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupFunctionTemplateId(java.lang.String, java.util.List, java.util.List)
-	 */
-	public ISymbol lookupFunctionTemplateId(String name, List parameters, List arguments) throws ParserSymbolTableException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
 }

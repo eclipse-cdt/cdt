@@ -787,4 +787,51 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		
 		assertAllReferences( 5, createTaskList( new Task( T ), new Task( ASpec, 2 ), new Task( a ), new Task( f ) ) );
 	}
+	public void test_14_7_3__11_ExplicitSpecializationArgumentDeduction() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write("template < class T > class Array { };             ");
+		writer.write("template < class T > void sort( Array< T > & );   ");
+		writer.write("template<> void sort( Array< int > & ){}          ");
+		writer.write("void f(){                                         ");
+		writer.write("   Array<int> a1;                                 ");
+		writer.write("   Array<char> a2;                                ");
+		writer.write("   sort( a1 );                                    ");
+		writer.write("   sort( a2 );                                    ");
+		writer.write("}                                                 ");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration templateArray = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration templateSort = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration sortSpec = (IASTTemplateDeclaration) i.next();
+		IASTFunction f = (IASTFunction) i.next();
+		
+		IASTFunction sort1 = (IASTFunction) templateSort.getOwnedDeclaration();
+		IASTFunction sort2 = (IASTFunction) sortSpec.getOwnedDeclaration();
+		
+		assertReferenceTask( new Task( sort1, 1, false, false ) );
+		assertReferenceTask( new Task( sort2, 1, false, false ) );
+	}
+	
+	public void test_14_8_1__2_ExplicitArgumentSpecification() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write("void f( int ){}                    //#1   \n");
+		writer.write("template < class T > void f( T ){} //#2   \n");
+		writer.write("int main(){                               \n");
+		writer.write("    f( 1 );      //calls #1               \n");
+		writer.write("    f<int>( 1 ); //calls #2               \n");
+		writer.write("    f<>   ( 1 ); //calls #2               \n");
+		writer.write("}                                         \n");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTFunction f1 = (IASTFunction) i.next();
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTFunction f2 = (IASTFunction) template.getOwnedDeclaration();
+		IASTFunction main = (IASTFunction) i.next();
+		
+		assertReferenceTask( new Task( f1, 1, false, false ) );
+		assertReferenceTask( new Task( f2, 2, false, false ) );
+	}
 }

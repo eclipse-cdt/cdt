@@ -277,6 +277,11 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		boolean indexEnabled = isIndexEnabled(project);
 		
 		if (indexEnabled){
+			if( enabledState() == WAITING ){
+				//if we are paused because the user cancelled a previous index, this is a good
+				//enough reason to restart
+				enable();
+			}
 			// check if the same request is not already in the queue
 			IndexRequest request = new IndexAllProject(project, this);
 			for (int i = this.jobEnd; i > this.jobStart; i--) // NB: don't check job at jobStart, as it may have already started (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=32488)

@@ -35,9 +35,9 @@ public abstract class JobManager implements Runnable {
 	protected Thread thread;
 
 	/* flag indicating whether job execution is enabled or not */
-	private static final int ENABLED = 1;
-	private static final int DISABLED = 0;
-	private static final int WAITING = 2;
+	public static final int ENABLED = 1;
+	public static final int DISABLED = 0;
+	public static final int WAITING = 2;
 	private int enabled = ENABLED;
 
 	public static boolean VERBOSE = false;
@@ -379,10 +379,12 @@ public abstract class JobManager implements Runnable {
 		}
 		awaitingJobs[jobEnd] = job;
 		
-		if( indexJob == null ){
-			indexJob = new IndexingJob( thread, this );
-		} else {
-			indexJob.tickUp();
+		if( enabledState() == ENABLED ){
+			if( indexJob == null ){
+				indexJob = new IndexingJob( thread, this );
+			} else {
+				indexJob.tickUp();
+			}
 		}
 		
 		if (VERBOSE)

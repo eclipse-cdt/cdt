@@ -179,7 +179,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			resolvedEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES);
 			if (generateMarkers) {
 				final ICProject finalCProject = cproject;
-				final IPathEntry[] finalEntries = resolvedEntries; 
+				final IPathEntry[] finalEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES); 
 				Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
 					/* (non-Javadoc)
 					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)

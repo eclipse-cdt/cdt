@@ -1,3 +1,11 @@
+2004-07-15 Alain Magloire
+
+	Check for Empty path in the binary and copy the []IPathEntry
+	for the manager.
+
+	* model/org/eclipse/cdt/internal/core/model/Binary.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+
 2004-07-15 Chris Wiebe
 
 	Initial draft for the type hierarchy view.

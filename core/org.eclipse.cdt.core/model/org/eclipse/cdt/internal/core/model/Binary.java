@@ -251,7 +251,7 @@ public class Binary extends Openable implements IBinary {
 		IPath filename = filename = symbol.getFilename();
 		BinaryFunction function = null;
 
-		if (filename != null) {
+		if (filename != null && !filename.isEmpty()) {
 			BinaryModule module = null;
 			if (hash.containsKey(filename)) {
 				module = (BinaryModule)hash.get(filename);

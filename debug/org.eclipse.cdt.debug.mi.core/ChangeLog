@@ -1,3 +1,23 @@
+2003-07-16 Alain Magloire
+
+	Provide FunctionValue, PointerValue and ArrayValue.
+	For ArrayValue apply the patch from Chris Songer, excerpt from
+	his email:
+		Given GDB performance, we saw CDT start to time out on large array 
+ 		requests. The following patch corrects this by scaling the time out with 
+		the number of children being retrieved. I have not looked at the head on 
+		this so your mileage may vary. On 1.0.1 with this and the MIParser change 
+		you can open 16k arrays.
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/AggregateValue.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/DerivedValue.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/PointerValue.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ReferenceValueValue.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ArrayValue.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/StructValue.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Value.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
+
 2003-07-10 Alain Magloire
 
 	In the case of not having a PTY to unmixed inferior output from gdb commands

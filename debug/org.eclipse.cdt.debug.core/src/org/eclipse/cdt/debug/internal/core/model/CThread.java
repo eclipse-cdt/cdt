@@ -1129,6 +1129,8 @@ public class CThread extends CDebugElement
 	{
 		if ( adapter.equals( IRunToLine.class ) )
 			return this;
+		if ( adapter.equals( IState.class ) )
+			return this;
 		return super.getAdapter(adapter);
 	}
 	

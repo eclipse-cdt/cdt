@@ -13,7 +13,6 @@ import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
-import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryEvent;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
@@ -455,6 +454,8 @@ public class CDTDebugModelPresentation extends LabelProvider
 					return label + ")";
 				}
 				case IState.SUSPENDED:
+					return target.getName() + " (Suspended)";
+/*
 				{
 					Object info = state.getCurrentStateInfo();
 					if ( info != null && info instanceof ICDISignalReceived )
@@ -490,6 +491,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 						return target.getName() + " (Suspended)";
 					}
 				}
+*/
 			}
 		}
 		return target.getName();
@@ -497,23 +499,60 @@ public class CDTDebugModelPresentation extends LabelProvider
 	
 	protected String getThreadText( IThread thread, boolean qualified ) throws DebugException
 	{
+		String threadName = getFormattedString( "Thread [{0}]", thread.getName() );
 		ICDebugTargetType targetType = (ICDebugTargetType)thread.getDebugTarget().getAdapter( ICDebugTargetType.class );
 		int type = ( targetType != null ) ? targetType.getTargetType() : ICDebugTargetType.TARGET_TYPE_UNKNOWN;
 		if ( type == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP )
 		{
-			return getFormattedString( "Thread [{0}]", thread.getName() );
+			return threadName;
 		}
 		if ( thread.isTerminated() )
 		{
-			return getFormattedString( "Thread [{0}] (Terminated)", thread.getName() );
+			return getFormattedString( "{0} (Terminated)", threadName );
 		}
 		if ( thread.isStepping() )
 		{
-			return getFormattedString( "Thread [{0}] (Stepping)", thread.getName());
+			return getFormattedString( "{0} (Stepping)", threadName );
 		}
 		if ( !thread.isSuspended() )
 		{
-			return getFormattedString( "Thread [{0}] (Running)", thread.getName() );
+			return getFormattedString( "{0} (Running)", threadName );
+		}
+		if ( thread.isSuspended() )
+		{
+			IState state = (IState)thread.getAdapter( IState.class );
+			if ( state != null )
+			{
+				Object info = state.getCurrentStateInfo();
+				if ( info != null && info instanceof ICDISignalReceived )
+				{
+					ICDISignal signal = ((ICDISignalReceived)info).getSignal();
+					String label = threadName + 
+								   MessageFormat.format( " (Suspended: Signal ''{0}'' received. Description: {1})", 
+														 new String[] { signal.getName(), signal.getDescription() } );
+					return label;
+				}
+				if ( info != null && info instanceof ICDIWatchpointTrigger )
+				{
+					String label = threadName + 
+								   MessageFormat.format( " (Suspended: Watchpoint triggered. Old value: ''{0}''. New value: ''{1}'')", 
+														 new String[] { ((ICDIWatchpointTrigger)info).getOldValue(), 
+																		((ICDIWatchpointTrigger)info).getNewValue() } );
+					return label;
+				}
+				if ( info != null && info instanceof ICDIWatchpointScope )
+				{
+					return threadName + " (Suspended: Watchpoint is out of scope)";
+				}
+				if ( info != null && info instanceof ICDIBreakpointHit )
+				{
+					return threadName + " (Suspended: Breakpoint hit)";
+				}
+				if ( info != null && info instanceof ICDISharedLibraryEvent )
+				{
+					return threadName + " (Suspended: Shared library event)";
+				}
+			}
 		}
 		return getFormattedString( "Thread [{0}] (Suspended)", thread.getName() );
 	}

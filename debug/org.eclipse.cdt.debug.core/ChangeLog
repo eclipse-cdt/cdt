@@ -1,3 +1,7 @@
+2004-02-16 Mikhail Khodjaiants
+	Fix for bug 52135: Debugger should indicate which thread triggered breakpoint.
+	* CThread.java
+
 2004-02-11 Mikhail Khodjaiants
 	In the 'reset' method check if value is an instance of CValue before type casting.
 	* CVariable.java

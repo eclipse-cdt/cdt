@@ -22,5 +22,7 @@ public class DisassemblyEditor extends AsmTextEditor
 	{
 		super();
 		setDocumentProvider( CDebugUIPlugin.getDefault().getDisassemblyDocumentProvider() );
+		setEditorContextMenuId("#DisassemblyEditorContext"); //$NON-NLS-1$
+		setRulerContextMenuId("#DisassemblyEditorRulerContext"); //$NON-NLS-1$
 	}
 }

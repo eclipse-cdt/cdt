@@ -517,6 +517,92 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.NaturalVariableFormatActionDelegate">
          </action>
       </objectContribution>
+      <viewerContribution
+            targetID="#DisassemblyEditorRulerContext"
+            id="org.eclipse.cdt.debug.ui.DisassemblyEditorRulerActions">
+<!--
+         <action
+               label="%RunToLineAction.label"
+               icon="icons/full/clcl16/runtoline_co.gif"
+               helpContextId="run_to_line_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate">
+         </action>
+-->
+         <action
+               label="%BreakpointProperties.label"
+               helpContextId="breakpoint_properties_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               label="%EnableBreakpoint.label"
+               helpContextId="enable_disable_breakpoint_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               label="%AddBreakpoint.label"
+               helpContextId="manage_breakpoint_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#DisassemblyEditorContext"
+            id="org.eclipse.cdt.debug.ui.DisassemblyEditorPopupActions">
+         <action
+               label="%AddExpressionAction.label"
+               icon="icons/full/obj16/expression_obj.gif"
+               helpContextId="add_expression_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               label="%RunToLineAction.label"
+               icon="icons/full/clcl16/runtoline_co.gif"
+               helpContextId="run_to_line_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+      </viewerContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -657,6 +743,38 @@
             </enablement>
          </action>
       </editorContribution>
+      <editorContribution
+            targetID="org.eclipse.cdt.ui.editor.asm.AsmEditor"
+            id="org.eclipse.cdt.ui.editor.asm.AsmEditor.BreakpointRulerActions">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               actionID="RulerDoubleClick"
+               label="%Dummy.label"
+               id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+      </editorContribution>
+      <editorContribution
+            targetID="org.eclipse.cdt.debug.ui.DisassemblyEditor"
+            id="org.eclipse.cdt.debug.ui.DisassemblyEditor.BreakpointRulerActions">
+         <action
+               actionID="RulerDoubleClick"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               label="%Dummy.label"
+               id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
+         </action>
+      </editorContribution>
    </extension>
    <extension
          point="org.eclipse.cdt.ui.textHovers">
@@ -725,8 +843,8 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%DisassemblyEditor.name"
-            extensions="dasm"
             icon="icons/full/obj16/disassembly_obj.gif"
+            extensions="dasm"
             class="org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditor"
             id="org.eclipse.cdt.debug.ui.DisassemblyEditor">
       </editor>

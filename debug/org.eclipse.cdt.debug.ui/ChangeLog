@@ -1,4 +1,9 @@
 2003-01-10 Mikhail Khodjaiants
+	Added contributions of the breakpoint actions to the disassembly editor.
+	* DisassemblyEditor.java
+	* plugin.xml
+
+2003-01-10 Mikhail Khodjaiants
 	Implementation of address breakpoints.
 	* CDebugImages.java
 	* CDTDebugModelPresentation.java

@@ -145,7 +145,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		} finally {
 			resumeInferior(state);
 		}
@@ -174,7 +174,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		} finally {
 			// Resume the program and enable events.
 			resumeInferior(state);
@@ -202,7 +202,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		} finally {
 			resumeInferior(state);
 		}
@@ -248,7 +248,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		} finally {
 			resumeInferior(state);
 		}
@@ -276,7 +276,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			}
 			// FIXME: Generate a DestroyEvent for deleted ones.
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		return (ICDIBreakpoint[]) listBreakpoints();
 	}
@@ -342,7 +342,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("Error parsing");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		} finally {
 			resumeInferior(state);
 		}
@@ -377,7 +377,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				throw new CDIException("Parsing Error");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		} finally {
 			resumeInferior(state);
 		}

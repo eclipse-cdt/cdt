@@ -107,7 +107,7 @@ public class CTarget  implements ICDITarget {
 				}
 				currentThreadId = info.getNewThreadId();
 			} catch (MIException e) {
-				throw new CDIException(e.getMessage());
+				throw new MI2CDIException(e);
 			}
 
 			// Resetting threads may change the value of
@@ -246,7 +246,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		lastExecutionToken = run.getToken();
 	}
@@ -268,7 +268,7 @@ public class CTarget  implements ICDITarget {
 					throw new CDIException("No answer");
 				}
 			} catch (MIException e) {
-				throw new CDIException(e.getMessage());
+				throw new MI2CDIException(e);
 			}
 			lastExecutionToken = cont.getToken();
 		} else if (mi.getMIInferior().isTerminated()) {
@@ -293,7 +293,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		lastExecutionToken = step.getToken();
 	}
@@ -312,7 +312,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		lastExecutionToken = stepi.getToken();
 	}
@@ -331,7 +331,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		lastExecutionToken = next.getToken();
 	}
@@ -350,7 +350,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		lastExecutionToken = nexti.getToken();
 	}
@@ -369,7 +369,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		lastExecutionToken = finish.getToken();
 	}
@@ -383,7 +383,7 @@ public class CTarget  implements ICDITarget {
 		try {
 			mi.getMIInferior().interrupt();
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -401,7 +401,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		// Unfortunately -target-detach does not generate an
 		// event so we do it here.
@@ -424,7 +424,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		lastExecutionToken = finish.getToken();
 	}
@@ -451,7 +451,7 @@ public class CTarget  implements ICDITarget {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		lastExecutionToken = until.getToken();
 
@@ -475,7 +475,7 @@ public class CTarget  implements ICDITarget {
 			}
 			return info.getExpression();
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 

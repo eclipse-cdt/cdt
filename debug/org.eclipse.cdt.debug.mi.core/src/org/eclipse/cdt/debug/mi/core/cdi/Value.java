@@ -18,12 +18,6 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarListChildrenInfo;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class Value extends CObject implements ICDIValue {
 
@@ -120,7 +114,7 @@ public class Value extends CObject implements ICDIValue {
 
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		return variables;
 	}

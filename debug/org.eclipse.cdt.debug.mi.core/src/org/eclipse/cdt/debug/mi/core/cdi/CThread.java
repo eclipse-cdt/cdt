@@ -106,7 +106,7 @@ public class CThread extends CObject implements ICDIThread {
 			getCTarget().setCurrentThread(oldThread);
 			return info.getDepth();
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 			//System.out.println(e);
 		}
 	}
@@ -189,7 +189,7 @@ public class CThread extends CObject implements ICDIThread {
 			regMgr.update();
 
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 

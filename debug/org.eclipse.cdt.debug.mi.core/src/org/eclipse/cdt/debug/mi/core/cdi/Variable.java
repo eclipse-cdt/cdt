@@ -20,7 +20,6 @@ import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
 
 /**
- * @author alain
  */
 public class Variable extends CObject implements ICDIVariable {
 
@@ -89,7 +88,7 @@ public class Variable extends CObject implements ICDIVariable {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		
 		// If the assign was succesfull fire a MIVarChangedEvent()
@@ -112,7 +111,7 @@ public class Variable extends CObject implements ICDIVariable {
 			}
 			return info.isEditable();
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -131,7 +130,7 @@ public class Variable extends CObject implements ICDIVariable {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 

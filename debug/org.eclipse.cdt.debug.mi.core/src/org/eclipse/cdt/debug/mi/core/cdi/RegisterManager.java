@@ -52,7 +52,7 @@ public class RegisterManager extends SessionObject {
 			}
 			return regs;
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -119,7 +119,7 @@ public class RegisterManager extends SessionObject {
 			MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
 			mi.fireEvents(events);
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 

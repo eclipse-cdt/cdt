@@ -130,7 +130,7 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 			}
 			return info;
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 

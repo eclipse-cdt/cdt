@@ -18,12 +18,6 @@ import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class RuntimeOptions implements ICDIRuntimeOptions {
 

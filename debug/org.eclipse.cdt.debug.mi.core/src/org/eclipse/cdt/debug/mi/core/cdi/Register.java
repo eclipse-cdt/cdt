@@ -168,7 +168,7 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 					}
 				}
 			} catch (MIException e) {
-				throw new CDIException(e.getMessage());
+				throw new MI2CDIException(e);
 			}
 		} else {
 			String u = getUniqName();
@@ -214,7 +214,7 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 		// If the assign was succesfull fire a MIRegisterChangedEvent()
 		MIRegisterChangedEvent change = new MIRegisterChangedEvent(registers.getToken(),

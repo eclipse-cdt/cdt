@@ -177,7 +177,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 					throw new CDIException("No answer");
 				}
 			} catch (MIException e) {
-				throw new CDIException(e.getMessage());
+				throw new MI2CDIException(e);
 			}
 		}
 		// If the assign was succesfull fire a MIChangedEvent() via refresh.

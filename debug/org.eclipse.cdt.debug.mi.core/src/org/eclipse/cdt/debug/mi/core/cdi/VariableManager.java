@@ -117,7 +117,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 			MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
 			mi.fireEvents(events);
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 
@@ -139,7 +139,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 				element.name = name;
 				element.stackframe = stack;
 			} catch (MIException e) {
-				throw new CDIException(e.getMessage());
+				throw new MI2CDIException(e);
 			}
 		}
 		return element;
@@ -163,7 +163,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 			mi.postCommand(var);
 			var.getMIInfo();
 		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
+			throw new MI2CDIException(e);
 		}
 	}
 

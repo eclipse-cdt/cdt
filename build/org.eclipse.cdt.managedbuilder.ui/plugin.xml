@@ -490,6 +490,7 @@
       <tool
             natureFilter="cnature"
             sources="o"
+            outputs=""
             name="%ToolName.linker.macosx.c"
             outputFlag="-o"
             command="gcc"
@@ -603,6 +604,7 @@
       <tool
             natureFilter="ccnature"
             sources="o"
+            outputs=""
             name="%ToolName.linker.macosx.cpp"
             outputFlag="-o"
             command="g++"

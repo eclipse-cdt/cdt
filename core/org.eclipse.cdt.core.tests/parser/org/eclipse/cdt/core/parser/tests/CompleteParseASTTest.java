@@ -1580,4 +1580,22 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	IASTSimpleTypeSpecifier simpleTypeSpec = ((IASTSimpleTypeSpecifier)bar.getReturnType().getTypeSpecifier());
 		assertEquals( simpleTypeSpec.getType(), IASTGCCSimpleTypeSpecifier.Type.TYPEOF );
     }
+    
+    public void testBug59302() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write("class A { class N{}; };         ");
+    	writer.write("class B { friend class A::N; }; ");
+    	
+    	Iterator i = parse( writer.toString() ).getDeclarations();
+    	IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+    	IASTClassSpecifier B = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+    	
+    	i = getDeclarations( A );
+    	IASTClassSpecifier N = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+    	
+    	assertFalse( A.getFriends().hasNext() );
+    	assertEquals( B.getFriends().next(), N );
+	}
+	
 }

@@ -1,4 +1,7 @@
 2004-04-20 Andrew Niefer
+	fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=59302 - Nested friend mishandled
+
+2004-04-20 Andrew Niefer
 	- implement IContainerSymbol.lookupFunctionTemplateId
 	- handle explicit template argument specification
 	- better handling of explicit specializations that use argument deduction

@@ -2863,6 +2863,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind kind, ITokenDuple name, int startingOffset, int startingLine, int endOffset, int endingLine, boolean isForewardDecl, boolean isFriend) throws ASTSemanticException
     {
 		IContainerSymbol currentScopeSymbol = scopeToSymbol(scope);
+		IContainerSymbol originalScope = currentScopeSymbol;
+		
 		TypeInfo.eType pstType = classKindToTypeInfo(kind);
 		List references = new ArrayList();
 		IToken nameToken = name.getFirstToken();
@@ -2932,8 +2934,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			checkSymbol.setIsForwardDeclaration(true);
 			try {
 				if (isFriend) {
-					((IDerivableContainerSymbol) currentScopeSymbol)
-							.addFriend(checkSymbol);
+					((IDerivableContainerSymbol) originalScope).addFriend(checkSymbol);
 				} else {
 					if (!isTemplateId)
 						currentScopeSymbol.addSymbol(checkSymbol);
@@ -2953,8 +2954,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					references, isForewardDecl);
 			attachSymbolExtension(checkSymbol, elab, !isForewardDecl);
 		} else if (isFriend) {
-			((IDerivableContainerSymbol) currentScopeSymbol)
-					.addFriend(checkSymbol);
+			((IDerivableContainerSymbol) originalScope).addFriend(checkSymbol);
 		}
 		if (checkSymbol != null) {
 			if (scope instanceof IASTTemplateInstantiation) {

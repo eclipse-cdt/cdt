@@ -10,23 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
+import org.eclipse.cdt.debug.core.model.CVariableFormat;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Dec 16, 2002
+ * The delegate of the "Natural Format" action.
  */
-public class NaturalVariableFormatActionDelegate extends VariableFormatActionDelegate
-{
+public class NaturalVariableFormatActionDelegate extends VariableFormatActionDelegate {
+
 	/**
 	 * Constructor for NaturalVariableFormatActionDelegate.
-	 * @param format
 	 */
-	public NaturalVariableFormatActionDelegate()
-	{
-		super( ICDIFormat.NATURAL );
+	public NaturalVariableFormatActionDelegate() {
+		super( CVariableFormat.NATURAL );
 	}
-
 }

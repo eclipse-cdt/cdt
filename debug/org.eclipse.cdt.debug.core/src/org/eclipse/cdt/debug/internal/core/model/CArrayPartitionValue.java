@@ -8,27 +8,21 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
-import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- *
- * The value for an array partition.
- * 
- * @since Sep 9, 2002
+ * A value for an array partition.
  */
-public class CArrayPartitionValue extends CDebugElement implements ICValue
-{
+public class CArrayPartitionValue extends AbstractCValue {
+
 	/**
 	 * The underlying CDI variable.
 	 */
@@ -37,7 +31,7 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	/**
 	 * Parent variable.
 	 */
-	private CVariable fParent = null;
+	private AbstractCVariable fParent = null;
 
 	/**
 	 * List of child variables.
@@ -50,10 +44,8 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 
 	/**
 	 * Constructor for CArrayPartitionValue.
-	 * @param target
 	 */
-	public CArrayPartitionValue( CVariable parent, ICDIVariable cdiVariable, int start, int end )
-	{
+	public CArrayPartitionValue( AbstractCVariable parent, ICDIVariable cdiVariable, int start, int end ) {
 		super( (CDebugTarget)parent.getDebugTarget() );
 		fCDIVariable = cdiVariable;
 		fParent = parent;
@@ -61,115 +53,108 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 		fEnd = end;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
-	public String getReferenceTypeName() throws DebugException
-	{
-		return null;
+	public String getReferenceTypeName() throws DebugException {
+		return ( getParentVariable() != null ) ? getParentVariable().getReferenceTypeName() : null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
-	public String getValueString() throws DebugException
-	{
-		return null;
+	public String getValueString() throws DebugException {
+		return ""; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
-	public boolean isAllocated() throws DebugException
-	{
+	public boolean isAllocated() throws DebugException {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
-	public IVariable[] getVariables() throws DebugException
-	{
+	public IVariable[] getVariables() throws DebugException {
 		List list = getVariables0();
 		return (IVariable[])list.toArray( new IVariable[list.size()] );
 	}
 
-	protected synchronized List getVariables0() throws DebugException 
-	{
+	protected synchronized List getVariables0() throws DebugException {
 		if ( !isAllocated() || !hasVariables() )
 			return Collections.EMPTY_LIST;
-		if ( fVariables.size() == 0 )
-		{
+		if ( fVariables.size() == 0 ) {
 			fVariables = CArrayPartition.splitArray( this, getCDIVariable(), getStart(), getEnd() );
 		}
 		return fVariables;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
-	public boolean hasVariables() throws DebugException
-	{
+	public boolean hasVariables() throws DebugException {
 		return true;
 	}
- 
-	protected int getStart()
-	{
+
+	protected int getStart() {
 		return fStart;
 	}
 
-	protected int getEnd()
-	{
+	protected int getEnd() {
 		return fEnd;
 	}
 
-	public void setChanged( boolean changed ) throws DebugException
-	{
+	public void setChanged( boolean changed ) throws DebugException {
 		Iterator it = fVariables.iterator();
-		while( it.hasNext() )
-		{
+		while( it.hasNext() ) {
 			((CVariable)it.next()).setChanged( changed );
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICValue#computeDetail()
 	 */
-	public String evaluateAsExpression()
-	{
+	public String evaluateAsExpression() {
 		ICExpressionEvaluator ee = (ICExpressionEvaluator)getDebugTarget().getAdapter( ICExpressionEvaluator.class );
-		String valueString = null; 
-		if ( ee != null && ee.canEvaluate() )
-		{
-			try
-			{
+		String valueString = null;
+		if ( ee != null && ee.canEvaluate() ) {
+			try {
 				if ( getParentVariable() != null )
-					valueString = ee.evaluateExpressionToString( getParentVariable().getQualifiedName() );
+					valueString = ee.evaluateExpressionToString( getParentVariable().getExpressionString() );
 			}
-			catch( DebugException e )
-			{
+			catch( DebugException e ) {
 				valueString = e.getMessage();
 			}
 		}
 		return valueString;
 	}
 
-	public CVariable getParentVariable()
-	{
+	public AbstractCVariable getParentVariable() {
 		return fParent;
 	}
 
-	protected ICDIVariable getCDIVariable()
-	{
+	protected ICDIVariable getCDIVariable() {
 		return fCDIVariable;
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		Iterator it = fVariables.iterator();
-		while( it.hasNext() )
-		{
-			((CVariable)it.next()).dispose();
+		while( it.hasNext() ) {
+			((AbstractCVariable)it.next()).dispose();
 		}
 	}
 }

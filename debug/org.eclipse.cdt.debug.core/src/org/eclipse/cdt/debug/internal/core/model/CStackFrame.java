@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
@@ -109,7 +108,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 				fVariables = new ArrayList( vars.size() );
 				Iterator it = vars.iterator();
 				while( it.hasNext() ) {
-					fVariables.add( new CModificationVariable( this, (ICDIVariableObject)it.next() ) );
+					fVariables.add( CVariableFactory.createVariable( this, (ICDIVariableObject)it.next() ) );
 				}
 			}
 			else if ( refreshVariables() ) {
@@ -140,7 +139,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		// add any new locals
 		Iterator newOnes = locals.iterator();
 		while( newOnes.hasNext() ) {
-			fVariables.add( new CModificationVariable( this, (ICDIVariableObject)newOnes.next() ) );
+			fVariables.add( CVariableFactory.createVariable( this, (ICDIVariableObject)newOnes.next() ) );
 		}
 	}
 
@@ -582,14 +581,9 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	private void preserveVariables() {
 		if ( fVariables == null )
 			return;
-		try {
-			Iterator it = fVariables.iterator();
-			while( it.hasNext() ) {
-				((CVariable)it.next()).setChanged( false );
-			}
-		}
-		catch( DebugException e ) {
-			CDebugCorePlugin.log( e );
+		Iterator it = fVariables.iterator();
+		while( it.hasNext() ) {
+			((CVariable)it.next()).setChanged( false );
 		}
 	}
 
@@ -597,7 +591,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		Iterator it = list.iterator();
 		while( it.hasNext() ) {
 			ICDIVariableObject newVarObject = (ICDIVariableObject)it.next();
-			if ( var.sameVariableObject( newVarObject ) )
+			if ( var.sameVariable( newVarObject ) )
 				return newVarObject;
 		}
 		return null;

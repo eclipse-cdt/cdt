@@ -10,23 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
+import org.eclipse.cdt.debug.core.model.CVariableFormat;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Dec 16, 2002
+ * The delegate of the "Decimal Format" action.
  */
-public class DecVariableFormatActionDelegate extends VariableFormatActionDelegate
-{
+public class DecVariableFormatActionDelegate extends VariableFormatActionDelegate {
 
 	/**
 	 * Constructor for DecVariableFormatActionDelegate.
-	 * @param format
 	 */
-	public DecVariableFormatActionDelegate()
-	{
-		super( ICDIFormat.DECIMAL );
+	public DecVariableFormatActionDelegate() {
+		super( CVariableFormat.DECIMAL );
 	}
 }

@@ -129,7 +129,7 @@ public class CastToTypeActionDelegate extends ActionDelegate implements IObjectA
 		if ( selection instanceof IStructuredSelection ) {
 			Object element = ((IStructuredSelection)selection).getFirstElement();
 			if ( element instanceof ICastToType ) {
-				boolean enabled = ((ICastToType)element).supportsCasting();
+				boolean enabled = ((ICastToType)element).canCast();
 				action.setEnabled( enabled );
 				if ( enabled ) {
 					setCastToType( (ICastToType)element );

@@ -11,31 +11,48 @@
 package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValueModification;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Dec 15, 2002
+ * C/C++ specific extension <code>IVariable</code>. 
  */
-public interface ICVariable extends IVariable
-{
-	int getFormat();
-	
-	void setFormat( int format ) throws DebugException;
-	
-	ICType getType() throws DebugException;
-	
-	boolean isEditable();
-	
-	boolean hasChildren();
+public interface ICVariable extends IVariable, ICDebugElement, IFormatSupport, ICastToArray, IValueModification {
 
+	/**
+	 * Returns the type of this variable.
+	 * 
+	 * @return the type of this variable
+	 * @throws DebugException
+	 */
+	ICType getType() throws DebugException;
+
+	/**
+	 * Returns whether this variable is enabled.
+	 * 
+	 * @return whether this variable is enabled
+	 */
 	boolean isEnabled();
 
+	/**
+	 * Sets the enabled state of this action.
+	 * 
+	 * @param enabled <code>true</code> to enable, and <code>false</code> to disable
+	 * @throws DebugException
+	 */
 	void setEnabled( boolean enabled ) throws DebugException;
 
+	/**
+	 * Returns whether this variable supports enable/disable operation.
+	 * 
+	 * @return whether this variable supports enable/disable operation
+	 */
 	boolean canEnableDisable();
 
+	/**
+	 * Returns whether this variable is an argument.
+	 * 
+	 * @return whether this variable is an argument
+	 */
 	boolean isArgument();
 }

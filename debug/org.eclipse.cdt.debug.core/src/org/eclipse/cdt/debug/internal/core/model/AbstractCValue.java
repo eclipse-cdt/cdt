@@ -8,10 +8,21 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  ***********************************************************************/ 
-package org.eclipse.cdt.debug.core.model; 
- 
+package org.eclipse.cdt.debug.internal.core.model; 
+
+import org.eclipse.cdt.debug.core.model.ICValue;
+
 /**
- * Represents a global C/C++ variable.
+ * The abstract super class for the C/C++ value types.
  */
-public interface ICGlobalVariable extends ICVariable {
+public abstract class AbstractCValue extends CDebugElement implements ICValue {
+
+	/** 
+	 * Constructor for AbstractCValue. 
+	 */
+	public AbstractCValue( CDebugTarget target ) {
+		super( target );
+	}
+
+	abstract public void dispose();
 }

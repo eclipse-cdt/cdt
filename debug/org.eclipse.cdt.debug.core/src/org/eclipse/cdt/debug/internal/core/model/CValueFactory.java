@@ -8,37 +8,34 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointValue;
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.cdt.debug.core.model.ICValue;
 
 /**
- *
- * Generates values for variable and expressions.
- * 
- * @since Sep 9, 2002
+ * The value factory for variable and expressions.
  */
-public class CValueFactory
-{
-	static public CValue createValue( CVariable parent, ICDIValue cdiValue ) throws DebugException
-	{
+public class CValueFactory {
+
+	static public CValue createValue( CVariable parent, ICDIValue cdiValue ) {
 		if ( cdiValue instanceof ICDIFloatingPointValue ) {
 			return new CFloatingPointValue( parent, cdiValue );
 		}
 		return new CValue( parent, cdiValue );
 	}
 
-	static public CArrayPartitionValue createArrayValue( CVariable parent, ICDIVariable cdiVariable, int start, int end ) throws DebugException
-	{
+	static public CArrayPartitionValue createArrayValue( AbstractCVariable parent, ICDIVariable cdiVariable, int start, int end ) {
 		return new CArrayPartitionValue( parent, cdiVariable, start, end );
 	}
 
-	static public CValue createGlobalValue( CVariable parent, ICDIValue cdiValue ) throws DebugException
-	{
+	static public CValue createGlobalValue( CVariable parent, ICDIValue cdiValue ) {
 		return new CGlobalValue( parent, cdiValue );
+	}
+
+	static public ICValue createValueWithError( CVariable parent, String message ) {
+		return new CValue( parent, message );
 	}
 }

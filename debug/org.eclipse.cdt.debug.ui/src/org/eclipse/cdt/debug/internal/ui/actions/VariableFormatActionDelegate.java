@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
+import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.MultiStatus;
@@ -28,18 +28,18 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
- * The delegate of the "Format" action.
+ * The superclass of the all format action delegates.
  */
-public class VariableFormatActionDelegate implements IObjectActionDelegate {
+public abstract class VariableFormatActionDelegate implements IObjectActionDelegate {
 
-	private int fFormat = ICDIFormat.NATURAL;
+	private CVariableFormat fFormat = CVariableFormat.NATURAL;
 
 	private ICVariable[] fVariables = null;
 
 	/**
 	 * Constructor for VariableFormatActionDelegate.
 	 */
-	public VariableFormatActionDelegate( int format ) {
+	public VariableFormatActionDelegate( CVariableFormat format ) {
 		fFormat = format;
 	}
 
@@ -91,7 +91,7 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate {
 				Object o = i.next();
 				if ( o instanceof ICVariable ) {
 					ICVariable var = (ICVariable)o;
-					boolean enabled = var.isEditable();
+					boolean enabled = var.supportsFormatting();
 					action.setEnabled( enabled );
 					if ( enabled ) {
 						action.setChecked( var.getFormat() == fFormat );
@@ -109,7 +109,7 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate {
 
 	protected void doAction( ICVariable[] vars ) throws DebugException {
 		for( int i = 0; i < vars.length; i++ ) {
-			vars[i].setFormat( fFormat );
+			vars[i].changeFormat( fFormat );
 		}
 	}
 

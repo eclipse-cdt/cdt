@@ -1,3 +1,33 @@
+2004-08-04 Mikhail Khodjaiants
+	New implementation of the variable types.
+	* CDIDebugModel.java
+	* CVariableFormat.java: new
+	* ICastToArray.java
+	* ICastToType.java
+	* ICGlobalVariable.java
+	* ICType.java
+	* ICValue.java
+	* ICVariable.java
+	* IFormatSupport.java: new
+	* CGlobalVariableManager.java
+	* CoreModelMessages.properties
+	* AbstractCValue.java: new
+	* AbstractCVariable.java: new
+	* CArrayPartition.java
+	* CArrayPartitionValue.java
+	* CDebugTarget.java
+	* CExpression.java
+	* CGlobalVariable.java
+	* CRegister.java
+	* CRegisterGroup.java
+	* CStackFrame.java
+	* CType.java
+	* CValue.java
+	* CValueFactory.java
+	* CVariable.java
+	* CVariableFactory.java: new
+	* CModificationVariable: deleted
+
 2004-07-23 Mikhail Khodjaiants
 	Marked the expression creation methods as deprecated in CDebugModel.
 	* CDebugModel.java

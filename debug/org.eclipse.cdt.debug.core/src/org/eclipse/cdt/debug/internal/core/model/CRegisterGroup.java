@@ -14,12 +14,11 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IRegisterGroup;
 
 /**
- * Represents a group of registers of a debug target.
+ * Represents a group of registers.
  */
 public class CRegisterGroup extends CDebugElement implements IRegisterGroup {
 
@@ -39,32 +38,31 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup {
 		fRegisters = new IRegister[regObjects.length];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#getName()
 	 */
 	public String getName() throws DebugException {
 		return fName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#getRegisters()
 	 */
 	public IRegister[] getRegisters() throws DebugException {
 		for ( int i = 0; i < fRegisters.length; ++i ) {
 			if ( fRegisters[i] == null ) {
-				fRegisters[i] = new CRegister( this, getCDIRegister( fRegisterObjects[i] ) );
+				try {
+					fRegisters[i] = new CRegister( this, getCDIRegister( fRegisterObjects[i] ) );
+				}
+				catch( DebugException e ) {
+					fRegisters[i] = new CRegister( this, fRegisterObjects[i], e.getMessage() );
+				}
 			}
 		}
 		return fRegisters;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#hasRegisters()
 	 */
 	public boolean hasRegisters() throws DebugException {
@@ -81,23 +79,20 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup {
 	}
 
 	private ICDIRegister getCDIRegister( ICDIRegisterObject ro ) throws DebugException {
+		ICDIRegister register = null;
 		try {
-			return ((CDebugTarget)getDebugTarget()).getCDISession().getRegisterManager().createRegister( ro );
+			register = ((CDebugTarget)getDebugTarget()).getCDISession().getRegisterManager().createRegister( ro );
 		}
 		catch( CDIException e ) {
-			return new CRegister.ErrorRegister( ro, e );
+			requestFailed( e.getMessage(), null );
 		}
+		return register;
 	}
 
 	public void resetChangeFlags() {
 		for ( int i = 0; i < fRegisters.length; ++i ) {
 			if ( fRegisters[i] != null ) {
-				try {
-					((CRegister)fRegisters[i]).setChanged( false );
-				}
-				catch( DebugException e ) {
-					DebugPlugin.log( e );
-				}
+				((CRegister)fRegisters[i]).setChanged( false );
 			}
 		}
 	}

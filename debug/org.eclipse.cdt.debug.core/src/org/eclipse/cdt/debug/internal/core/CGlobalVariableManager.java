@@ -86,7 +86,8 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 			fGlobals.removeAll( Arrays.asList( globals ) );
 		}
 		for ( int i = 0; i < globals.length; ++i ) {
-			globals[i].dispose();
+			if ( globals[i] instanceof CVariable )
+				((CVariable)globals[i]).dispose();
 		}
 		getDebugTarget().fireChangeEvent( DebugEvent.CONTENT );
 	}
@@ -101,7 +102,8 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 			fGlobals.clear();
 		}
 		for ( int i = 0; i < globals.length; ++i ) {
-			((CVariable)globals[i]).dispose();
+			if ( globals[i] instanceof CVariable )
+				((CVariable)globals[i]).dispose();
 		}
 		getDebugTarget().fireChangeEvent( DebugEvent.CONTENT );
 	}
@@ -109,7 +111,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 	public void dispose() {
 		Iterator it = fGlobals.iterator();
 		while( it.hasNext() ) {
-			((ICGlobalVariable)it.next()).dispose();
+			((CVariable)it.next()).dispose();
 		}
 		fGlobals.clear();
 	}

@@ -280,7 +280,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 		if ( selection instanceof IStructuredSelection ) {
 			Object element = ((IStructuredSelection)selection).getFirstElement();
 			if ( element instanceof ICastToArray ) {
-				boolean enabled = ((ICastToArray)element).supportsCastToArray();
+				boolean enabled = ((ICastToArray)element).canCastToArray();
 				action.setEnabled( enabled );
 				if ( enabled ) {
 					setCastToArray( (ICastToArray)element );

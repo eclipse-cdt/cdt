@@ -10,22 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
+import org.eclipse.cdt.debug.core.model.CVariableFormat;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Dec 16, 2002
+ * The delegate of the "Hexadecimal Format" action.
  */
-public class HexVariableFormatActionDelegate extends VariableFormatActionDelegate
-{
+public class HexVariableFormatActionDelegate extends VariableFormatActionDelegate {
+
 	/**
 	 * Constructor for HexVariableFormatActionDelegate.
-	 * @param format
 	 */
-	public HexVariableFormatActionDelegate()
-	{
-		super( ICDIFormat.HEXADECIMAL );
+	public HexVariableFormatActionDelegate() {
+		super( CVariableFormat.HEXADECIMAL );
 	}
 }

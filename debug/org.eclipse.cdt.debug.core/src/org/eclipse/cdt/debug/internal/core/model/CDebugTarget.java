@@ -34,7 +34,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo;
-import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
@@ -1294,14 +1293,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.debug.core.IExpressionListener#expressionRemoved(org.eclipse.debug.core.model.IExpression)
 	 */
 	public void expressionRemoved( IExpression expression ) {
-		if ( expression != null && expression.getDebugTarget().equals( this ) && expression instanceof CExpression ) {
-			ICDIExpressionManager em = getCDISession().getExpressionManager();
-			try {
-				em.destroyExpression( ((CExpression)expression).getCDIExpression() );
-			}
-			catch( CDIException e ) {
-				// do nothing
-			}
+		if ( expression instanceof CExpression && expression.getDebugTarget().equals( this ) ) {
+			((CExpression)expression).dispose();
 		}
 	}
 

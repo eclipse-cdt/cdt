@@ -8,13 +8,13 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntegralType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
@@ -22,61 +22,46 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.core.model.ICType;
 
 /**
- * Enter type comment.
- * 
- * @since Jun 10, 2003
+ * The CDI-based implementation of <code>ICType</code>.
  */
-public class CType implements ICType
-{
+public class CType implements ICType {
+
+	/**
+	 * The underlying CDI type.
+	 */
 	private ICDIType fCDIType;
 
-	public CType( ICDIType cdiType )
-	{
+	/** 
+	 * Constructor for CType. 
+	 */
+	public CType( ICDIType cdiType ) {
 		setCDIType( cdiType );
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.type.ICType#getName()
+	 * @see org.eclipse.cdt.debug.core.model.ICType#getName()
 	 */
-	public String getName()
-	{
+	public String getName() {
 		return ( fCDIType != null ) ? fCDIType.getTypeName() : null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter( Class adapter )
-	{
-		if ( ICType.class.equals( adapter ) )
-			return this;
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.type.ICType#dispose()
-	 */
-	public void dispose()
-	{
+	public void dispose() {
 		fCDIType = null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.type.ICType#getArrayDimensions()
+	 * @see org.eclipse.cdt.debug.core.model.ICType#getArrayDimensions()
 	 */
-	public int[] getArrayDimensions()
-	{
+	public int[] getArrayDimensions() {
 		int length = 0;
 		ICDIType type = getCDIType();
-		while( type instanceof ICDIArrayType )
-		{
+		while( type instanceof ICDIArrayType ) {
 			++length;
 			type = ( type instanceof ICDIDerivedType ) ? ((ICDIDerivedType)type).getComponentType() : null;
 		}
 		int[] dims = new int[length];
 		type = getCDIType();
-		for ( int i = length; i > 0; --i )
-		{
+		for( int i = length; i > 0; --i ) {
 			dims[i - 1] = ((ICDIArrayType)type).getDimension();
 			type = ((ICDIDerivedType)type).getComponentType();
 		}
@@ -84,69 +69,64 @@ public class CType implements ICType
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.type.ICType#isArray()
+	 * @see org.eclipse.cdt.debug.core.model.ICType#isArray()
 	 */
-	public boolean isArray()
-	{
+	public boolean isArray() {
 		return ( getCDIType() instanceof ICDIArrayType );
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.type.ICType#isCharacter()
+	 * @see org.eclipse.cdt.debug.core.model.ICType#isCharacter()
 	 */
-	public boolean isCharacter()
-	{
+	public boolean isCharacter() {
 		return ( getCDIType() instanceof ICDICharType );
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.type.ICType#isFloatingPointType()
+	 * @see org.eclipse.cdt.debug.core.model.ICType#isFloatingPointType()
 	 */
-	public boolean isFloatingPointType()
-	{
+	public boolean isFloatingPointType() {
 		return ( getCDIType() instanceof ICDIFloatingPointType );
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.type.ICType#isPointer()
+	 * @see org.eclipse.cdt.debug.core.model.ICType#isPointer()
 	 */
-	public boolean isPointer()
-	{
+	public boolean isPointer() {
 		return ( getCDIType() instanceof ICDIPointerType );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICType#isReference()
 	 */
-	public boolean isReference()
-	{
+	public boolean isReference() {
 		return ( getCDIType() instanceof ICDIReferenceType );
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.type.ICType#isStructure()
+	 * @see org.eclipse.cdt.debug.core.model.ICType#isStructure()
 	 */
-	public boolean isStructure()
-	{
+	public boolean isStructure() {
 		return ( getCDIType() instanceof ICDIStructType );
 	}
 
-	protected ICDIType getCDIType()
-	{
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICType#isUnsigned()
+	 */
+	public boolean isUnsigned() {
+		ICDIType cdiType = getCDIType();
+		return ( cdiType instanceof ICDIIntegralType ) ? ((ICDIIntegralType)cdiType).isUnsigned() : false;
+	}
+
+	protected ICDIType getCDIType() {
 		return fCDIType;
 	}
 
-	protected void setCDIType( ICDIType type )
-	{
+	protected void setCDIType( ICDIType type ) {
 		fCDIType = type;
 	}
 
-	protected boolean hasChildren()
-	{
-		ICDIType type = getCDIType();
-		if ( type instanceof ICDIStructType || type instanceof ICDIArrayType || 
-			 type instanceof ICDIPointerType || type instanceof ICDIReferenceType )
-			return true;
-		return false;
+	protected boolean isAggregate() {
+		return ( isArray() || isStructure() || isPointer() || isReference() );
 	}
 }

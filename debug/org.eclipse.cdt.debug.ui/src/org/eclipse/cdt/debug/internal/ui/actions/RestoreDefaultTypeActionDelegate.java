@@ -110,6 +110,6 @@ public class RestoreDefaultTypeActionDelegate extends ActionDelegate implements 
 	}
 
 	protected void doAction( ICastToType castToType ) throws DebugException {
-		castToType.restoreDefault();
+		castToType.restoreOriginal();
 	}
 }

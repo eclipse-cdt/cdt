@@ -709,7 +709,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		addTextField(contentAssistComposite, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 0, true);
 		
 		label= "Auto activation &triggers for C:";
-		addTextField(contentAssistComposite, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_C, 25, 0, true);
+		addTextField(contentAssistComposite, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_C, 25, 0, false);
 		
 		//label= "Auto activation triggers for &JavaDoc:";
 		//addTextField(contentAssistComposite, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVADOC, 25, 0);

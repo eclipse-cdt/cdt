@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -38,20 +39,27 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private static final IOptionCategory[] EMPTY_CATEGORIES = new IOptionCategory[0];
 	private static final IOption[] EMPTY_OPTIONS = new IOption[0];
 
+	private Vector categoryIds;
 	private Map categoryMap;
 	private List childOptionCategories;
 	private String command;
 	private List inputExtensions;
 	private List interfaceExtensions;
 	private int natureFilter;
+	private Vector optionList;
 	private Map optionMap;
-	private List options;
 	private String outputExtension;
 	private String outputFlag;
 	private String outputPrefix;
 	private boolean resolved = true;
 	
 
+	/**
+	 * Constructor to create a tool based on an element from the plugin
+	 * manifest. 
+	 * 
+	 * @param element The element containing the information about the tool.
+	 */
 	public Tool(IManagedConfigElement element) {
 		loadFromManifest(element);
 
@@ -64,7 +72,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * defined in the plugin.xml manifest. 
 	 * 
 	 * @param target The target the receiver will belong to.
-	 * @param element The element containing the information.
+	 * @param element The element containing the information about the tool.
 	 */
 	public Tool(Target target, IManagedConfigElement element) {
 		loadFromManifest(element);
@@ -73,12 +81,28 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		target.addTool(this);
 	}
 	
-	public IOptionCategory getOptionCategory(String id) {
-		return (IOptionCategory)categoryMap.get(id);
+	/**
+	 * @param category
+	 */
+	public void addChildCategory(IOptionCategory category) {
+		if (childOptionCategories == null)
+			childOptionCategories = new ArrayList();
+		childOptionCategories.add(category);
 	}
 	
-	void addOptionCategory(IOptionCategory category) {
-		categoryMap.put(category.getId(), category);
+	/**
+	 * @param option
+	 */
+	public void addOption(Option option) {
+		getOptionList().add(option);
+		getOptionMap().put(option.getId(), option);
+	}
+	
+	protected void addOptionCategory(IOptionCategory category) {
+		// To preserve the order of the categories, record the ids in the order they are read
+		getCategoryIds().add(category.getId());
+		// Map the categories by ID for resolution later
+		getCategoryMap().put(category.getId(), category);
 	}
 	
 	/* (non-Javadoc)
@@ -91,31 +115,56 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		return getInputExtensions().contains(extension);
 	}
 
-	/**
-	 * @param category
+	/* (non-Javadoc)
+	 * Memory-safe way to access the vector of category IDs
 	 */
-	public void addChildCategory(IOptionCategory category) {
-		if (childOptionCategories == null)
-			childOptionCategories = new ArrayList();
-		childOptionCategories.add(category);
+	private Vector getCategoryIds() {
+		if (categoryIds == null) {
+			categoryIds = new Vector();
+		}
+		return categoryIds;
 	}
 	
-	public IOption[] getOptions() {
-		if (options != null)
-			return (IOption[])options.toArray(new IOption[options.size()]);
-		else
-			return EMPTY_OPTIONS;
+	/* (non-Javadoc)
+	 * Memeory-safe way to access the map of category IDs to categories
+	 */
+	private Map getCategoryMap() {
+		if (categoryMap == null) {
+			categoryMap = new HashMap();
+		}
+		return categoryMap;
 	}
-
-	public void addOption(Option option) {
-		if (options == null) {
-			options = new ArrayList();
+	
+	/* (non-Javadoc)
+	 * Memory-safe way to access the list of options
+	 */
+	private Vector getOptionList() {
+		if (optionList == null) {
+			optionList = new Vector();
+		}
+		return optionList;
+	}
+	
+	/* (non-Javadoc)
+	 * Memory-safe way to access the list of IDs to options
+	 */
+	private Map getOptionMap() {
+		if (optionMap == null) {
 			optionMap = new HashMap();
 		}
-		options.add(option);
-		optionMap.put(option.getId(), option);
+		return optionMap;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOptions()
+	 */
+	public IOption[] getOptions() {
+		return (IOption[])getOptionList().toArray(new IOption[getOptionList().size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getTopOptionCategory()
+	 */
 	public IOptionCategory getTopOptionCategory() {
 		return this;
 	}
@@ -189,7 +238,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolFlags()
 	 */
 	public String getToolFlags() throws BuildException {
-		// Get all of the options
+		// Get all of the optionList
 		StringBuffer buf = new StringBuffer();
 		IOption[] opts = getOptions();
 		for (int index = 0; index < opts.length; index++) {
@@ -310,7 +359,18 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
 	 */
 	public IOption getOptionById(String id) {
-		return (IOption)optionMap.get(id);
+		return (IOption)getOptionMap().get(id);
+	}
+
+	/**
+	 * Answers the <code>IOptionCategory</code> that has the unique identifier 
+	 * specified in the argument. 
+	 * 
+	 * @param id The unique identifier of the option category
+	 * @return <code>IOptionCategory</code> with the id specified in the argument
+	 */
+	public IOptionCategory getOptionCategory(String id) {
+		return (IOptionCategory)getCategoryMap().get(id);
 	}
 
 	/* (non-Javadoc)
@@ -337,6 +397,11 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		return getInterfaceExtensions().contains(ext);
 	}
 
+	/* (non-Javadoc)
+	 * Load the tool information from the XML element specified in the 
+	 * argument
+	 * @param element An XML element containing the tool information 
+	 */
 	protected void loadFromManifest(IManagedConfigElement element) {
 		// setup for resolving
 		ManagedBuildManager.putConfigElement(this, element);
@@ -400,10 +465,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			element.getAttribute(ITool.OUTPUT_PREFIX);
 
 		// set up the category map
-		categoryMap = new HashMap();
 		addOptionCategory(this);
 
-		// Check for options
+		// Check for optionList
 		IManagedConfigElement[] toolElements = element.getChildren();
 		for (int l = 0; l < toolElements.length; ++l) {
 			IManagedConfigElement toolElement = toolElements[l];
@@ -416,21 +480,30 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
+	 */
+	public boolean producesFileType(String outputExtension) {
+		return this.outputExtension.equals(outputExtension);
+	}
+
+	/**
+	 * 
+	 */
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
-//			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			// Tool doesn't have any references, but children might
-			if (options != null) {
-				Iterator optionIter = options.iterator();
-				while (optionIter.hasNext()) {
-					Option current = (Option)optionIter.next();
-					current.resolveReferences();
-				}
+			Iterator optionIter = getOptionList().iterator();
+			while (optionIter.hasNext()) {
+				Option current = (Option)optionIter.next();
+				current.resolveReferences();
 			}
-			Iterator catIter = categoryMap.values().iterator();
+			// Somewhat wasteful, but use the vector to retrieve the categories in proper order
+			Iterator catIter = getCategoryIds().iterator();
 			while (catIter.hasNext()) {
-				IOptionCategory current = (IOptionCategory)catIter.next();
+				String id = (String)catIter.next();
+				IOptionCategory current = (IOptionCategory)getCategoryMap().get(id);
 				if (current instanceof Tool) {
 					((Tool)current).resolveReferences();
 				} else if (current instanceof OptionCategory) {
@@ -439,12 +512,4 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			}
 		}		
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
-	 */
-	public boolean producesFileType(String outputExtension) {
-		return this.outputExtension.equals(outputExtension);
-	}
-
 }

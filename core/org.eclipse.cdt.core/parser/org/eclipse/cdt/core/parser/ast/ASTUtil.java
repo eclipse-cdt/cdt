@@ -337,14 +337,24 @@ public class ASTUtil {
 			return expression.getLiteralString();
 		
 		StringBuffer buffer = new StringBuffer();
+		boolean quoted = false;
+		String literalString = expression.getLiteralString();
 		if( kind == Kind.PRIMARY_CHAR_LITERAL ){
-			buffer.append( '\'' );
-			buffer.append( expression.getLiteralString() );
-			buffer.append( '\'' );
+			quoted = ( literalString.charAt(0) == literalString.charAt(literalString.length() - 1 ) && 
+					   literalString.charAt(0) == '\'' ); 
+			if( !quoted )
+				buffer.append( '\'' );
+			buffer.append( literalString );
+			if( !quoted )
+				buffer.append( '\'' );
 		} else if( kind == Kind.PRIMARY_STRING_LITERAL ) {
-			buffer.append( '"' );
+			quoted = ( literalString.charAt(0) == literalString.charAt(literalString.length() - 1 ) && 
+					   literalString.charAt(0) == '\"' ); 
+			if( !quoted )
+				buffer.append( '"' );
 			buffer.append( expression.getLiteralString() );
-			buffer.append( '"' );
+			if( !quoted )
+				buffer.append( '"' );
 		}
 		return buffer.toString();
 	}

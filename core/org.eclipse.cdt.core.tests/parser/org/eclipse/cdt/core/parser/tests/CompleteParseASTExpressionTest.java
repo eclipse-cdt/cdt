@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.tests;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
@@ -247,8 +248,11 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		
 		i = getDeclarations( test );
 		IASTVariable someInt = (IASTVariable) i.next();
-		IASTExpression exp = someInt.getInitializerClause().getAssigmentExpression(); 
-		assertEquals( exp.toString(), "foo(int(3), short(4), double(3.0), float(4.0), char('a'), wchar_t('a'), signed(2), unsigned(3), bool(false), long(3))" ); //$NON-NLS-1$
+		IASTExpression exp = someInt.getInitializerClause().getAssigmentExpression();
+		if( ParserFactory.USE_NEW_SCANNER )
+			assertEquals( exp.toString(), "foo(int(3), short(4), double(3.0), float(4.0), char('a'), wchar_t('a'), signed(2), unsigned(3), bool(false), long(3L))" ); //$NON-NLS-1$
+		else
+			assertEquals( exp.toString(), "foo(int(3), short(4), double(3.0), float(4.0), char('a'), wchar_t('a'), signed(2), unsigned(3), bool(false), long(3))" ); //$NON-NLS-1$
 	}
 	
 	// Kind POSTFIX_TYPENAME_IDENTIFIER

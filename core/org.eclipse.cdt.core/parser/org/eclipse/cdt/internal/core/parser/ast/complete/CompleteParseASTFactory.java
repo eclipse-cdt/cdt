@@ -1320,7 +1320,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				parameters = expResultList.getResultList();
 								 
 			}else {
-				parameters = new ArrayList();
+				parameters = new ArrayList(1);
 				parameters.add(expResult.getResult());
 			}
 			if( functionScope.equals( startingScope ) )

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.token;
 
+import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.ContextStack;
 import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
 
@@ -76,6 +77,8 @@ public class ImagedToken extends SimpleToken {
 	public int getLength() {
 		if( getCharImage() == null )
 			return 0;
+		if( ParserFactory.USE_NEW_SCANNER )
+			return getCharImage().length;
 		switch( getType() )
 		{
 			case tSTRING:

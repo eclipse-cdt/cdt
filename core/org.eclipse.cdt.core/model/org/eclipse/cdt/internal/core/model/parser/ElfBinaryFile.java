@@ -226,6 +226,10 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 				case Attribute.ELF_TYPE_OBJ:
 					type = IBinaryFile.OBJECT;
 				break;
+				
+				case Attribute.ELF_TYPE_CORE:
+					type = IBinaryFile.CORE;
+				break;
 			}
 		}
 		return type;

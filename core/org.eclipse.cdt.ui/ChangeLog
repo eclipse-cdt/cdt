@@ -1,5 +1,22 @@
 2003-04-05 Alain Magloire
 
+	Implement the new CollapseAll button to be consistent with the
+	JDT package explorer.
+
+	* icons/full/clcl16/collapseall.gif:
+	* icons/full/dlcl16/collapseall.gif:
+	* icons/full/elcl16/collapseall.gif:
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java:
+	New icon.
+
+	* src/org/eclipse/cdt/internal/ui/cview/CollapseAllAction.java:
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java:
+	* src/org/eclipse/cdt/internal/ui/cview/CViewMessages.java:
+	* src/org/eclipse/cdt/internal/ui/cview/CViewMessages.properties:
+	* src/org/eclipse/cdt/internal/ui/ICHelpContextIds.java:
+
+2003-04-05 Alain Magloire
+
 	The way the working copy was implemented, the outline could not
 	work with file outside of the C Model, for example a c file in
 	a non C project.  Also some other extended the CEditor to reuse

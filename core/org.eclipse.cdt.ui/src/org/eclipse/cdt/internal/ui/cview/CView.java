@@ -168,6 +168,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	CWorkingSetFilter workingSetFilter = new CWorkingSetFilter ();
 	ActionContributionItem adjustWorkingSetContributions [] = new ActionContributionItem[5];
 
+	// Collapsing
+	CollapseAllAction collapseAllAction;
+
 	// Persistance tags.
 	static final String TAG_SELECTION= "selection"; //$NON-NLS-1$
 	static final String TAG_EXPANDED= "expanded"; //$NON-NLS-1$
@@ -566,8 +569,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		openFileAction = new OpenFileAction(getSite().getPage());
 		openSystemEditorAction = new OpenSystemEditorAction(getSite().getPage());
 		refreshAction = new RefreshAction(shell);
-		buildAction =
-			new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		buildAction = new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		rebuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
 		makeTargetAction = new MakeTargetAction(shell);
 		moveResourceAction = new MoveResourceAction (shell);
@@ -616,22 +618,13 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		IActionBars actionBars = getViewSite().getActionBars();
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, deleteResourceAction);
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.BOOKMARK, addBookmarkAction);
-		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.REFRESH,
-			refreshAction);
-		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.BUILD_PROJECT,
-			buildAction);
-		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.REBUILD_PROJECT,
-			rebuildAction);
-		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.OPEN_PROJECT,
-			openProjectAction);
-		actionBars.setGlobalActionHandler(
-			IWorkbenchActionConstants.CLOSE_PROJECT,
-			closeProjectAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.REFRESH, refreshAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.BUILD_PROJECT, buildAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.REBUILD_PROJECT, rebuildAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.OPEN_PROJECT, openProjectAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.CLOSE_PROJECT, closeProjectAction);
 
+		collapseAllAction = new CollapseAllAction(this);
 	}
 
 	/**
@@ -1027,6 +1020,8 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		toolBar.add(backAction);
 		toolBar.add(forwardAction);
 		toolBar.add(upAction);
+		toolBar.add(new Separator());
+		toolBar.add(collapseAllAction);
 		actionBars.updateActionBars();
 
 		IMenuManager menu = actionBars.getMenuManager();
@@ -1145,6 +1140,22 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 
 	private boolean isActivePart() {
 		return this == getSite().getPage().getActivePart();
+	}
+
+	/* (non-Javadoc)
+	 * @see IViewPartInputProvider#getViewPartInput()
+	 */
+	public Object getViewPartInput() {
+		if (viewer != null) {
+			return viewer.getInput();
+		}
+		return null;
+	}
+
+	public void collapseAll() {
+		viewer.getControl().setRedraw(false);          
+		viewer.collapseToLevel(getViewPartInput(), TreeViewer.ALL_LEVELS);
+		viewer.getControl().setRedraw(true);
 	}
 
 	void restoreFilters() {

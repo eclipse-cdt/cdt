@@ -113,6 +113,7 @@ public class CPluginImages {
 	public static final String IMG_MENU_SHIFT_LEFT= NAME_PREFIX + "shift_l_edit.gif";
 	public static final String IMG_MENU_OPEN_INCLUDE= NAME_PREFIX + "open_incl.gif";
 	public static final String IMG_MENU_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif";
+	public static final String IMG_MENU_COLLAPSE_ALL= NAME_PREFIX + "collapseall.gif";
 	public static final String IMG_CLEAR_CONSOLE= NAME_PREFIX + "clear_co.gif";
 	public static final String IMG_ALPHA_SORTING= NAME_PREFIX + "alphab_sort_co.gif";
 	public static final String IMG_TOOL_GOTO_PREV_ERROR= NAME_PREFIX + "prev_error_nav.gif";

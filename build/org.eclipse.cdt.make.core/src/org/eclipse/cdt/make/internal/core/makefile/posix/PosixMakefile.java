@@ -18,17 +18,18 @@ import java.util.List;
 
 import org.eclipse.cdt.make.core.makefile.IStatement;
 import org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile;
+import org.eclipse.cdt.make.internal.core.makefile.BadStatement;
 import org.eclipse.cdt.make.internal.core.makefile.Command;
 import org.eclipse.cdt.make.internal.core.makefile.Comment;
 import org.eclipse.cdt.make.internal.core.makefile.EmptyLine;
 import org.eclipse.cdt.make.internal.core.makefile.InferenceRule;
 import org.eclipse.cdt.make.internal.core.makefile.MacroDefinition;
 import org.eclipse.cdt.make.internal.core.makefile.MakefileReader;
+import org.eclipse.cdt.make.internal.core.makefile.MakefileUtil;
 import org.eclipse.cdt.make.internal.core.makefile.Rule;
 import org.eclipse.cdt.make.internal.core.makefile.Statement;
 import org.eclipse.cdt.make.internal.core.makefile.Target;
 import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
-import org.eclipse.cdt.make.internal.core.makefile.MakefileUtil;
 
 /**
  * Makefile : ( statement ) *
@@ -146,7 +147,9 @@ public class PosixMakefile extends AbstractMakefile {
 					}
 				}
 			} else {
-					// ???
+				Statement stmt = new BadStatement(line);
+				stmt.setLines(startLine, endLine);
+				addStatement(stmt);
 			}
 		}
 	}

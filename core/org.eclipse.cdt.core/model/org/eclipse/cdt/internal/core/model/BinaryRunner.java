@@ -40,8 +40,10 @@ public class BinaryRunner extends Thread {
 			// What is wrong ?
 			e.printStackTrace();
 		}
-		fireEvents(cbin);
-		fireEvents(clib);
+		if (!isInterrupted()) {
+			fireEvents(cbin);
+			fireEvents(clib);
+		}
 		// Tell the listeners we are done.
 		synchronized(this) {
 			notifyAll();
@@ -99,6 +101,9 @@ public class BinaryRunner extends Thread {
 		}
 
 		public boolean visit(IResource res) throws CoreException {
+			if (Thread.currentThread().isInterrupted()) {
+				return false;
+			}
 			if (res instanceof IFile) {
 				runner.addChildIfBinary((IFile)res);
 				return false;

@@ -67,40 +67,7 @@ public class BinaryContainer extends Parent implements IBinaryContainer {
 		return super.getChildren();
 	}
 
-	void addChildIfExec(CoreModel factory, IFile file) {
-		// Attempt to speed things up by rejecting up front
-		// Things we know should not be Binary files.
-		if (!factory.isTranslationUnit(file)) {
-			ICElement celement = factory.create(file);
-			if (celement != null) {
-				if (celement instanceof IBinary) {
-					IBinary bin = (IBinary)celement;
-					if (bin.isExecutable() || bin.isSharedLib()) {
-						addChild (bin);
-					}
-				}
-			}
-		}
-	}
-
 	public CElementInfo createElementInfo() {
 		return new CElementInfo(this);
-	}
-
-	class Visitor implements IResourceVisitor {
-		CoreModel factory = CoreModel.getDefault();
-		BinaryContainer cbin;
-
-		public Visitor (BinaryContainer element) {
-			cbin = element;
-		}
-
-		public boolean visit(IResource res) throws CoreException {
-			if (res instanceof IFile) {
-				cbin.addChildIfExec(factory, (IFile)res);
-				return false;
-			}
-			return true;
-		}
 	}
 }

@@ -59,8 +59,6 @@ import org.eclipse.debug.core.model.IStackFrame;
  */
 public class CThread extends CDebugElement implements ICThread, IRestart, IResumeWithoutSignal, ISwitchToFrame, ICDIEventListener {
 
-	private boolean fSuspending;
-
 	private final static int MAX_STACK_DEPTH = 100;
 
 	/**
@@ -88,10 +86,19 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 */
 	private boolean fIsCurrent = false;
 
+	/**
+	 * The last selected frame in this thread, <code>null</code> if thread is not suspended.
+	 */
 	private CStackFrame fLastStackFrame = null;
 
+	/**
+	 * The depth of the current stack.  
+	 */
 	private int fLastStackDepth = 0;
 
+	/**
+	 * Whether this thread is disposed.
+	 */
 	private boolean fDisposed = false;
 
 	/**
@@ -450,14 +457,6 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		} );
 	}
 
-	protected void setSuspending( boolean value ) {
-		fSuspending = value;
-	}
-
-	protected boolean isSuspending() {
-		return fSuspending;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
 	 */
@@ -680,7 +679,6 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	protected void terminated() {
 		setState( CDebugElementState.TERMINATED );
 		dispose();
-		cleanup();
 	}
 
 	private void handleSuspendedEvent( ICDISuspendedEvent event ) {
@@ -869,6 +867,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 
 	protected void dispose() {
 		fDisposed = true;
+		cleanup();
 	}
 
 	protected boolean isDisposed() {

@@ -1,4 +1,8 @@
 2004-07-21 Mikhail Khodjaiants
+	CThread cleanup.
+	* CThread.java
+
+2004-07-21 Mikhail Khodjaiants
 	Copied the target factory methods from CDebugModel to CDIDebugModel.
 	Marked the old methods as deprecated.
 	* CDebugModel.java

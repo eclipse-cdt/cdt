@@ -33,6 +33,8 @@ import org.eclipse.debug.core.model.IValue;
  */
 public class CExpression extends CVariable implements IExpression {
 
+	private String fText;
+
 	private ICDIExpression fCDIExpression;
 	
 	private CStackFrame fStackFrame;
@@ -46,7 +48,8 @@ public class CExpression extends CVariable implements IExpression {
 	 */
 	public CExpression( CStackFrame frame, ICDIExpression cdiExpression, ICDIVariableDescriptor varObject ) {
 		super( frame, varObject );
-		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ))) ;
+		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
+		fText = cdiExpression.getExpressionText();
 		fCDIExpression = cdiExpression;
 		fStackFrame = frame;
 	}
@@ -55,7 +58,7 @@ public class CExpression extends CVariable implements IExpression {
 	 * @see org.eclipse.debug.core.model.IExpression#getExpressionText()
 	 */
 	public String getExpressionText() {
-		return fCDIExpression.getExpressionText();
+		return fText;
 	}
 
 	/* (non-Javadoc)

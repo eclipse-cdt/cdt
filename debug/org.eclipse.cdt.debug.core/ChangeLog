@@ -1,3 +1,7 @@
+2004-12-08 Mikhail Khodjaiants
+	Fix for bug 79678: NPE in Expression.
+	* CExpression.java
+
 2004-12-01 Mikhail Khodjaiants
 	New fix for bug 80034: Expressions view does not display correct no. of elements in array.
 	* CValueFactory.java

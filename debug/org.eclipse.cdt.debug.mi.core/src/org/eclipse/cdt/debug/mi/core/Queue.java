@@ -61,6 +61,14 @@ public class Queue {
 		return array;
 	}
 
+	public boolean isEmpty() {
+		boolean empty;
+		synchronized (list) {
+			empty = list.isEmpty();
+		}
+		return empty;
+	}
+
 //	private static void print(String msg) {
 //		String name = Thread.currentThread().getName();
 //		System.out.println(name + ": " + msg);

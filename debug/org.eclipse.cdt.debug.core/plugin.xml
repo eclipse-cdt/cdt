@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.cdt.debug.core"
+   name="CDT Debug Core Plug-in"
+   version="1.0.0"
+   provider-name="QNX"
+   class="org.eclipse.cdt.debug.core.CDebugCorePlugin">
+
+   <runtime>
+      <library name="cdebugcore.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+   </requires>
+
+
+</plugin>

@@ -36,8 +36,6 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	protected int fStartLine;
 	protected int fEndLine;
 
-	protected CElement[] empty = new CElement[0];
-	
 	protected CElement(ICElement parent, String name, int type) {
 		fParent= parent;
 		fName= name;

@@ -94,23 +94,6 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 		return copy;
 	}
 	/*
-	 * @see org.eclipse.cdt.ui.IWorkingCopyManager#getWorkingCopy(org.eclipse.cdt.core.model.ITranslationUnit)
-	 */
-	public IWorkingCopy getWorkingCopy(ITranslationUnit unit){
-		if((fMap == null) || (fMap.size() == 0)){
-			return null;
-		} else {
-			List copies = new ArrayList(fMap.values());
-			Iterator i = copies.iterator();
-			while (i.hasNext()){
-				IWorkingCopy copy = (IWorkingCopy)i.next();
-				if(copy.getOriginalElement().equals(unit))
-					return copy;
-			}
-		}
-		return null;
-	}
-	/*
 	 * @see org.eclipse.cdt.internal.ui.editor.IWorkingCopyManagerExtension#setWorkingCopy(org.eclipse.ui.IEditorInput, org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
 	public void setWorkingCopy(IEditorInput input, IWorkingCopy workingCopy) {

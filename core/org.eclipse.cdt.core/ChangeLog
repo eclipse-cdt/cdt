@@ -1,3 +1,6 @@
+2004-03-01 Hoda Amer
+	Removing the "empty" array in the CElement that was not used anywhere !
+	
 2004-03-01 Alain Magloire
 
 	Fix to PR 53253. From Steve Garbarini

@@ -3,8 +3,11 @@ package org.eclipse.cdt.make.internal.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,6 +17,10 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -33,7 +40,8 @@ import org.w3c.dom.NodeList;
 
 public class ProjectTargets {
 
-	private static final String MAKE_TARGET_KEY = MakeCorePlugin.getUniqueIdentifier() + ".buildtargets";
+	private static final String MAKE_TARGET_KEY =
+		MakeCorePlugin.getUniqueIdentifier() + ".buildtargets";
 	private static final String TARGETS_EXT = "targets"; //$NON-NLS-1$
 
 	private static final String BUILD_TARGET_ELEMENT = "buildTargets"; //$NON-NLS-1$
@@ -45,13 +53,15 @@ public class ProjectTargets {
 	private static final String TARGET_USE_DEFAULT_CMD = "useDefaultCommand"; //$NON-NLS-1$
 	private static final String TARGET_ARGUMENTS = "buildArguments"; //$NON-NLS-1$
 	private static final String TARGET_COMMAND = "buildCommand"; //$NON-NLS-1$
+	private static final String BAD_TARGET = "buidlTarget"; //$NON-NLS-1$
 	private static final String TARGET = "buidlTarget"; //$NON-NLS-1$
 
 	private HashMap targetMap = new HashMap();
 
 	private IProject project;
 
-	public ProjectTargets(MakeTargetManager manager, IProject project) throws CoreException {
+	public ProjectTargets(MakeTargetManager manager, IProject project)
+		throws CoreException {
 		boolean writeTargets = false;
 		File targetFile = null;
 
@@ -62,8 +72,12 @@ public class ProjectTargets {
 		//Historical ... fall back to the workspace and look in previous
 		// location
 		if (document == null || !document.hasChildNodes()) {
-			IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(
-					TARGETS_EXT);
+			IPath targetFilePath =
+				MakeCorePlugin
+					.getDefault()
+					.getStateLocation()
+					.append(project.getName())
+					.addFileExtension(TARGETS_EXT);
 			targetFile = targetFilePath.toFile();
 			try {
 				InputStream input = new FileInputStream(targetFile);
@@ -78,8 +92,9 @@ public class ProjectTargets {
 			extractMakeTargetsFromDocument(document, manager);
 			if (writeTargets) {
 				try {
-					saveTargets();
-				} catch (IOException e) {
+					Document doc = getAsXML();
+					translateDocumentToCDTProject(doc);
+				} catch (Exception e) {
 					targetFile = null;
 				}
 				if (targetFile != null) {
@@ -91,7 +106,11 @@ public class ProjectTargets {
 
 	protected String getString(Node target, String tagName) {
 		Node node = searchNode(target, tagName);
-		return node != null ? (node.getFirstChild() == null ? null : node.getFirstChild().getNodeValue()) : null;
+		return node != null
+			? (node.getFirstChild() == null
+				? null
+				: node.getFirstChild().getNodeValue())
+			: null;
 	}
 
 	protected Node searchNode(Node target, String tagName) {
@@ -128,8 +147,7 @@ public class ProjectTargets {
 	public void add(MakeTarget target) throws CoreException {
 		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
 		if (list != null && list.contains(target)) {
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
-					MakeCorePlugin.getResourceString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
 		}
 		if (list == null) {
 			list = new ArrayList();
@@ -165,7 +183,11 @@ public class ProjectTargets {
 	protected Document getAsXML() throws IOException {
 		Document doc;
 		try {
-			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			doc =
+				DocumentBuilderFactory
+					.newInstance()
+					.newDocumentBuilder()
+					.newDocument();
 		} catch (ParserConfigurationException ex) {
 			//This should never happen.
 			throw new IOException("Error creating new XML storage document"); //$NON-NLS-1$
@@ -177,7 +199,8 @@ public class ProjectTargets {
 			List targets = (List) ((Map.Entry) container.next()).getValue();
 			for (int i = 0; i < targets.size(); i++) {
 				MakeTarget target = (MakeTarget) targets.get(i);
-				targetsRootElement.appendChild(createTargetElement(doc, target));
+				targetsRootElement.appendChild(
+					createTargetElement(doc, target));
 			}
 		}
 		return doc;
@@ -187,10 +210,13 @@ public class ProjectTargets {
 		Element targetElem = doc.createElement(TARGET_ELEMENT);
 		targetElem.setAttribute(TARGET_ATTR_NAME, target.getName());
 		targetElem.setAttribute(TARGET_ATTR_ID, target.getTargetBuilderID());
-		targetElem.setAttribute(TARGET_ATTR_PATH, target.getContainer().getProjectRelativePath().toString());
+		targetElem.setAttribute(
+			TARGET_ATTR_PATH,
+			target.getContainer().getProjectRelativePath().toString());
 		Element elem = doc.createElement(TARGET_COMMAND);
 		targetElem.appendChild(elem);
-		elem.appendChild(doc.createTextNode(target.getBuildCommand().toString()));
+		elem.appendChild(
+			doc.createTextNode(target.getBuildCommand().toString()));
 
 		elem = doc.createElement(TARGET_ARGUMENTS);
 		elem.appendChild(doc.createTextNode(target.getBuildArguments()));
@@ -201,26 +227,47 @@ public class ProjectTargets {
 		targetElem.appendChild(elem);
 
 		elem = doc.createElement(TARGET_STOP_ON_ERROR);
-		elem.appendChild(doc.createTextNode(new Boolean(target.isStopOnError()).toString()));
+		elem.appendChild(
+			doc.createTextNode(new Boolean(target.isStopOnError()).toString()));
 		targetElem.appendChild(elem);
 
 		elem = doc.createElement(TARGET_USE_DEFAULT_CMD);
-		elem.appendChild(doc.createTextNode(new Boolean(target.isDefaultBuildCmd()).toString()));
+		elem.appendChild(
+			doc.createTextNode(
+				new Boolean(target.isDefaultBuildCmd()).toString()));
 		targetElem.appendChild(elem);
 		return targetElem;
 	}
 
 	public void saveTargets() throws IOException {
+		Document doc = getAsXML();
+		//Historical method would save the output to the stream specified
+		//translateDocumentToOutputStream(doc, output);
 		try {
-			Document doc = getAsXML();
-			//Historical method would save the output to the stream specified
-			//translateDocumentToOutputStream(doc, output);
 			translateDocumentToCDTProject(doc);
-		} catch (CoreException ex) {
-			throw new IOException(ex.getMessage());
+		} catch (Exception e) {
+			IPath targetFilePath =
+				MakeCorePlugin
+					.getDefault()
+					.getStateLocation()
+					.append(project.getName())
+					.addFileExtension(TARGETS_EXT);
+			File targetFile = targetFilePath.toFile();
+			saveTargets(doc, new FileOutputStream(targetFile));
 		}
 	}
 
+	protected void saveTargets(Document doc, OutputStream output) throws IOException {
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		format.setPreserveSpace(true);
+		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				new OutputStreamWriter(output, "UTF8"),
+				format);
+		serializer.asDOMSerializer().serialize(doc);
+	}
 	/**
 	 * This output method saves the information into the .cdtproject metadata
 	 * file.
@@ -228,9 +275,11 @@ public class ProjectTargets {
 	 * @param doc
 	 * @throws IOException
 	 */
-	protected void translateDocumentToCDTProject(Document doc) throws CoreException, IOException {
+	protected void translateDocumentToCDTProject(Document doc)
+		throws CoreException, IOException {
 		ICDescriptor descriptor;
-		descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject());
+		descriptor =
+			CCorePlugin.getDefault().getCProjectDescription(getProject());
 
 		Element rootElement = descriptor.getProjectData(MAKE_TARGET_KEY);
 
@@ -245,7 +294,8 @@ public class ProjectTargets {
 		Node node = doc.getFirstChild();
 		if (node.hasChildNodes()) {
 			//Create a copy which is a part of the new document
-			Node appendNode = rootElement.getOwnerDocument().importNode(node, true);
+			Node appendNode =
+				rootElement.getOwnerDocument().importNode(node, true);
 			//Put the copy into the document in the appropriate location
 			rootElement.appendChild(appendNode);
 		}
@@ -264,23 +314,27 @@ public class ProjectTargets {
 		Document document = null;
 		Element rootElement = null;
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			document =
+				DocumentBuilderFactory
+					.newInstance()
+					.newDocumentBuilder()
+					.newDocument();
 			ICDescriptor descriptor;
-			descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject());
+			descriptor =
+				CCorePlugin.getDefault().getCProjectDescription(getProject());
 
 			rootElement = descriptor.getProjectData(MAKE_TARGET_KEY);
-		} catch ( ParserConfigurationException e) {
+		} catch (ParserConfigurationException e) {
 			return document;
-		} catch ( CoreException e) {
+		} catch (CoreException e) {
 			return document;
 		}
-		Element element = rootElement.getOwnerDocument().getDocumentElement();
 		NodeList list = rootElement.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
-			if ( list.item(i).getNodeType() == Node.ELEMENT_NODE) {
+			if (list.item(i).getNodeType() == Node.ELEMENT_NODE) {
 				Node appendNode = document.importNode(list.item(i), true);
 				document.appendChild(appendNode);
-				break; // show never have multiple <buildtargets>
+				break; // should never have multiple <buildtargets>
 			}
 		}
 		return document;
@@ -296,7 +350,12 @@ public class ProjectTargets {
 	protected Document translateInputStreamToDocument(InputStream input) {
 		Document document = null;
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
+			document =
+				DocumentBuilderFactory
+					.newInstance()
+					.newDocumentBuilder()
+					.parse(
+					input);
 		} catch (Exception e) {
 			MakeCorePlugin.log(e);
 		}
@@ -309,7 +368,9 @@ public class ProjectTargets {
 	 * 
 	 * @param document
 	 */
-	protected void extractMakeTargetsFromDocument(Document document, MakeTargetManager manager) {
+	protected void extractMakeTargetsFromDocument(
+		Document document,
+		MakeTargetManager manager) {
 		Node node = document.getFirstChild();
 		if (node != null && node.getNodeName().equals(BUILD_TARGET_ELEMENT)) {
 			NodeList list = node.getChildNodes();
@@ -318,23 +379,34 @@ public class ProjectTargets {
 				if (node.getNodeName().equals(TARGET_ELEMENT)) {
 					IContainer container = null;
 					NamedNodeMap attr = node.getAttributes();
-					String path = attr.getNamedItem(TARGET_ATTR_PATH).getNodeValue();
+					String path =
+						attr.getNamedItem(TARGET_ATTR_PATH).getNodeValue();
 					if (path != null && !path.equals("")) { //$NON-NLS-1$
 						container = project.getFolder(path);
 					} else {
 						container = project;
 					}
 					try {
-						MakeTarget target = new MakeTarget(manager, project, attr.getNamedItem(TARGET_ATTR_ID).getNodeValue(),
-								attr.getNamedItem(TARGET_ATTR_NAME).getNodeValue());
+						MakeTarget target =
+							new MakeTarget(
+								manager,
+								project,
+								attr
+									.getNamedItem(TARGET_ATTR_ID)
+									.getNodeValue(),
+								attr
+									.getNamedItem(TARGET_ATTR_NAME)
+									.getNodeValue());
 						target.setContainer(container);
 						String option = getString(node, TARGET_STOP_ON_ERROR);
 						if (option != null) {
-							target.setStopOnError(Boolean.valueOf(option).booleanValue());
+							target.setStopOnError(
+								Boolean.valueOf(option).booleanValue());
 						}
 						option = getString(node, TARGET_USE_DEFAULT_CMD);
 						if (option != null) {
-							target.setUseDefaultBuildCmd(Boolean.valueOf(option).booleanValue());
+							target.setUseDefaultBuildCmd(
+								Boolean.valueOf(option).booleanValue());
 						}
 						option = getString(node, TARGET_COMMAND);
 						if (option != null) {
@@ -343,6 +415,10 @@ public class ProjectTargets {
 						option = getString(node, TARGET_ARGUMENTS);
 						if (option != null) {
 							target.setBuildArguments(option);
+						}
+						option = getString(node, BAD_TARGET);
+						if (option != null) {
+							target.setBuildTarget(option);
 						}
 						option = getString(node, TARGET);
 						if (option != null) {

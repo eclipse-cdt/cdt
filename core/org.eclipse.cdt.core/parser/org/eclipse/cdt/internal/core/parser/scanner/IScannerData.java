@@ -10,11 +10,11 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionPars
  * @author jcamelon
  */
 public interface IScannerData {
+	public Map getFileCache();
 	/**
 	 * @return Returns the contextStack.
 	 */
@@ -60,10 +61,6 @@ public interface IScannerData {
 	 */
 	public abstract IProblemFactory getProblemFactory();
 	/**
-	 * @return Returns the filename.
-	 */
-	public abstract String getInitialFilename();
-	/**
 	 * @return Returns the language.
 	 */
 	public abstract ParserLanguage getLanguage();
@@ -74,7 +71,7 @@ public interface IScannerData {
 	/**
 	 * @return Returns the reader.
 	 */
-	public abstract Reader getInitialReader();
+	public abstract CodeReader getInitialReader();
 	/**
 	 * @return Returns the requestor.
 	 */

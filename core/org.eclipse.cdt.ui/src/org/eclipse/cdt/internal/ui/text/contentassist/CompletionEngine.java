@@ -10,9 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
-import java.io.BufferedReader;
-import java.io.CharArrayReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -25,6 +22,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -152,7 +150,7 @@ public class CompletionEngine implements RelevanceConstants {
 		IResource currentResource = sourceUnit.getResource();
 		IPath realPath = currentResource.getLocation(); 
 		IProject project = currentResource.getProject();
-		Reader reader = new BufferedReader( new CharArrayReader( sourceUnit.getContents() ));		
+		CodeReader reader = new CodeReader(realPath.toOSString(), sourceUnit.getContents()); 
 		
 		//Get the scanner info
 		IScannerInfo scanInfo = new ScannerInfo();
@@ -170,7 +168,7 @@ public class CompletionEngine implements RelevanceConstants {
 		IScanner scanner = null;
 		try
 		{
-			scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETION_PARSE, language, elementRequestor, ParserUtil.getScannerLogService(), Arrays.asList(CUIPlugin.getSharedWorkingCopies()) );
+			scanner = ParserFactory.createScanner( reader, scanInfo, ParserMode.COMPLETION_PARSE, language, elementRequestor, ParserUtil.getScannerLogService(), Arrays.asList(CUIPlugin.getSharedWorkingCopies()) );
 			parser  = ParserFactory.createParser( scanner, elementRequestor, ParserMode.COMPLETION_PARSE, language, ParserUtil.getParserLogService() );
 		}
 		catch( ParserFactoryError pfe )

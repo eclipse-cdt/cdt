@@ -6,10 +6,10 @@
  */
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.StringReader;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -67,7 +67,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
     {
     	callback = new CompilationUnitCallback(); 
     	IParser parser = ParserFactory.createParser( 
-    		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(), //$NON-NLS-1$
+    		ParserFactory.createScanner( new CodeReader(code.toCharArray()), new ScannerInfo(),
     			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
     	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$

@@ -16,14 +16,13 @@ package org.eclipse.cdt.internal.core.search.indexing;
 */
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -103,10 +102,10 @@ public class SourceIndexer extends AbstractIndexer {
 		
 		try
 		{
-			
+			CodeReader reader = new CodeReader(resourceFile.getLocation().toOSString(), resourceFile.getContents());
 			BufferedInputStream inStream = new BufferedInputStream(resourceFile.getContents());
 			parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( new BufferedReader(new InputStreamReader(inStream)), resourceFile.getLocation().toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getScannerLogService(), null ), 
+							ParserFactory.createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getScannerLogService(), null ), 
 							requestor, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
 		} catch( ParserFactoryError pfe )
 		{

@@ -89,6 +89,8 @@ public class IndexManagerTests extends TestCase {
 		//Delete project
 		if (testProject.exists()) {
 			try {
+				System.gc();
+				System.runFinalization();
 				testProject.delete(true, monitor);
 			} catch (CoreException e) {
 				fail(getMessage(e.getStatus()));
@@ -239,6 +241,8 @@ public class IndexManagerTests extends TestCase {
 	 * @param testProject
 	 */
 	private void safeDelete(IProject testProject) throws InterruptedException, CoreException {
+		System.gc();
+		System.runFinalization();
 		try {
 			testProject.delete(true, monitor);
 		} catch (CoreException e) {
@@ -277,6 +281,9 @@ public class IndexManagerTests extends TestCase {
 	 }
 	 //Delete mail.cpp from the project, give some time to remove index
 	 IResource resourceHdl = testProject.findMember("mail.cpp") ;
+	 // Cleaning up file handles before delete
+	 System.gc();
+	 System.runFinalization();
 	 resourceHdl.delete(true,monitor);
 	 Thread.sleep(10000);
 	 //See if the index is still there

@@ -1,19 +1,12 @@
-/*
- * Created on Jun 3, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -23,54 +16,43 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 
-/**
- * @author Doug Schaefer
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+// A test that just calculates the speed of the parser
+// Eventually, we'll peg a max time and fail the test if it exceeds it
 public class SpeedTest extends TestCase {
 
 	public static void main(String[] args) {
 		try {
-			new SpeedTest().runTest(1);
+			new SpeedTest().test();
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e);
 		}
 	}
 	
 	public void test() throws Exception {
-		runTest(1);
-	}
-	
-	public void runTest(int n) throws Exception {
-		for (int i = 0; i < n; ++i) {
-			System.gc();
-			String code =
-				"#include <windows.h>\n" +
-				"#include <stdio.h>\n" +
-				"#include <iostream>\n";
-			
-			Reader reader = new StringReader(code);
-			IScannerInfo info = mingwScannerInfo(false);
-			//IScannerInfo info = msvcScannerInfo(quick);
-			testParse(reader, "text", false, info, ParserLanguage.CPP);
-		}
+		String code =
+			"#include <windows.h>\n" +
+			"#include <stdio.h>\n" +
+			"#include <iostream>\n";
+		
+		CodeReader reader = new CodeReader(code.toCharArray());
+		IScannerInfo info = mingwScannerInfo(false);
+		//IScannerInfo info = msvcScannerInfo(quick);
+		testParse(reader, false, info, ParserLanguage.CPP);
 	}
 
 	/**
 	 * @param path
 	 * @param quick TODO
 	 */
-	protected void testParse(Reader reader, String path, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
+	protected void testParse(CodeReader reader, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE;
-		IScanner scanner = ParserFactory.createScanner(reader, path, info, mode, lang, CALLBACK, null, Collections.EMPTY_LIST ); 
+		IScanner scanner = ParserFactory.createScanner(reader, info, mode, lang, CALLBACK, null, Collections.EMPTY_LIST ); 
 		IParser parser = ParserFactory.createParser( scanner, CALLBACK, mode, lang, null);
 		long startTime = System.currentTimeMillis();
 		long totalTime;
 		parser.parse();
 		totalTime = System.currentTimeMillis() - startTime;
-		System.out.println( "Resulting parse for " + path + " took " + totalTime + " millisecs"); //$NON-NLS-1$ //$NON-NLS-2$
+		System.out.println( "Resulting parse took " + totalTime + " millisecs"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private static final QuickParseCallback CALLBACK = new QuickParseCallback();
@@ -93,6 +75,7 @@ public class SpeedTest extends TestCase {
 	}
 
 	protected IScannerInfo mingwScannerInfo(boolean quick) {
+		// TODO It would be easier and more flexible if we used discovery for this
 		if( quick )
 			return new ScannerInfo();
 		Map definitions = new Hashtable();

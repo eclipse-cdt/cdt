@@ -13,11 +13,11 @@
  */
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.StringReader;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -59,7 +59,7 @@ public class StructuralParseTest extends TestCase {
     {
     	callback = new StructuralParseCallback(); 
     	IParser parser = ParserFactory.createParser( 
-    		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(), //$NON-NLS-1$
+    		ParserFactory.createScanner( new CodeReader( code.toCharArray() ), new ScannerInfo(), //$NON-NLS-1$
     			                         ParserMode.STRUCTURAL_PARSE, language, callback, new NullLogService(), null ), 
 			callback, ParserMode.STRUCTURAL_PARSE, language, null 	
     	);

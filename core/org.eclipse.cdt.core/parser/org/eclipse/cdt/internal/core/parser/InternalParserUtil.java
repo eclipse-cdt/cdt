@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.IOException;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -43,16 +41,13 @@ public class InternalParserUtil extends ParserFactory {
 	 * @param finalPath
 	 * @return
 	 */
-	public static Reader createFileReader(String finalPath) {
+	public static CodeReader createFileReader(String finalPath) {
 		File includeFile = new File(finalPath);
 		if (includeFile.exists() && includeFile.isFile()) 
 		{
-			//check and see 
 			try {
-				
-				return new BufferedReader( new FileReader( includeFile) );
-			} catch (FileNotFoundException fnf) {
-				
+				return new CodeReader(finalPath);
+			} catch (IOException e) {
 			}
 		}
 		return null;

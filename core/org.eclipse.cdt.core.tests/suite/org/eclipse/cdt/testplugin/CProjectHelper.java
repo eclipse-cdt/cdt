@@ -110,6 +110,8 @@ public class CProjectHelper {
 			} catch (InterruptedException e1) {
 			} finally {
 				try {
+					System.gc();
+					System.runFinalization();
 					cproject.getProject().delete(true, true, null);
 				} catch (CoreException e2) {
 					Assert.fail(getMessage(e2.getStatus()));

@@ -10,10 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
@@ -36,9 +36,8 @@ public class PreprocessorConditionalTest extends BaseScannerTest
 
     protected void initializeScanner(String input, Map definitions ) throws Exception
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo( definitions ), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, nullSourceElementRequestor, null, null ); //$NON-NLS-1$
+		scanner= ParserFactory.createScanner( new CodeReader(input.toCharArray()), new ScannerInfo( definitions ), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, nullSourceElementRequestor, null, null );
 	}
-
 
 	protected void evaluateConditionalsPositive( String conditional, Map definitions ) throws Exception
 	{

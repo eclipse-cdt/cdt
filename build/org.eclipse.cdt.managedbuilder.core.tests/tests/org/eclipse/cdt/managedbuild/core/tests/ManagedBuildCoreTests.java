@@ -11,7 +11,6 @@
 package org.eclipse.cdt.managedbuild.core.tests;
 
 import java.io.ByteArrayInputStream;
-import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -1508,8 +1508,8 @@ public class ManagedBuildCoreTests extends TestCase {
 		IScannerInfo info = provider.getScannerInformation( project );
 		ISourceElementRequestor callback = new NullSourceElementRequestor();
 		
-		IScanner scanner = ParserFactory.createScanner( new StringReader( "#include <header.h>\n int A::i = 1;" ), 
-														"TEST", info, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback, new NullLogService(), null);
+		IScanner scanner = ParserFactory.createScanner( new CodeReader( "#include <header.h>\n int A::i = 1;".toCharArray() ), 
+														info, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback, new NullLogService(), null);
 		
 		IParser parser = ParserFactory.createParser( scanner, callback, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, null );
 		assertTrue( parser.parse() );

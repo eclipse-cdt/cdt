@@ -11,8 +11,7 @@
 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.io.Reader;
-
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -112,9 +111,9 @@ public class ContextStack {
 		scanner.setScannerContext(sentinel);
 	}
 
-    public void updateInclusionContext(Reader reader, String filename, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ContextException {
-    	addInclusionFilename( filename );
-    	ScannerContextInclusion context = new ScannerContextInclusion( reader, filename, inclusion, currentInclusionIndex - 1 );
+    public void updateInclusionContext(CodeReader code, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ContextException {
+    	addInclusionFilename( code.filename );
+    	ScannerContextInclusion context = new ScannerContextInclusion( code, inclusion, currentInclusionIndex - 1 );
     	
     	if( isCircularInclusion( context.getContextName() ) )
 			throw new ContextException( IProblem.PREPROCESSOR_CIRCULAR_INCLUSION );

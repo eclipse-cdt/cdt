@@ -175,6 +175,8 @@ public class BinaryTests extends TestCase {
      * Called after every test case method.
      */
     protected void tearDown() throws CoreException, InterruptedException {
+    	System.gc();
+    	System.runFinalization();
     	CProjectHelper.delete(testProject);
     }
     

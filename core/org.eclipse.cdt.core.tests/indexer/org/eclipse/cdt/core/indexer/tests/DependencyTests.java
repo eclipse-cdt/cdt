@@ -117,6 +117,8 @@ import org.eclipse.core.runtime.Platform;
 		//Delete project
 		if (testProject.exists()){
 			try {
+				System.gc();
+				System.runFinalization();
 				testProject.delete(true,monitor);
 			} catch (CoreException e) {
 				fail(getMessage(e.getStatus()));
@@ -470,8 +472,7 @@ import org.eclipse.core.runtime.Platform;
 		 j++;
 	 }
 
-	 if (postDepTestModelLocal.length != postDepTestIncludes.length)
-			 fail("Number of included files differs from model");
+	 assertEquals(postDepTestModelLocal.length, postDepTestIncludes.length);
 
 	 Arrays.sort(postDepTestModelLocal);
 	 Arrays.sort(postDepTestIncludes);

@@ -9,8 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.StringReader;
-
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -43,8 +42,7 @@ public class SelectionParseBaseTest extends CompleteParseBaseTest {
 		parser =
 			ParserFactory.createParser(
 					ParserFactory.createScanner(
-							new StringReader(code),
-							"completion-test", //$NON-NLS-1$
+							new CodeReader(code.toCharArray()),
 							new ScannerInfo(),
 							ParserMode.SELECTION_PARSE,
 							ParserLanguage.CPP,

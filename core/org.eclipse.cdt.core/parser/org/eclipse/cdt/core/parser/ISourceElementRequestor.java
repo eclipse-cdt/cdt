@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
-import java.io.Reader;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
@@ -114,7 +113,7 @@ public interface ISourceElementRequestor {
 	 * @param finalPath
 	 * @return
 	 */
-	public Reader createReader(String finalPath, Iterator workingCopies );
+	public CodeReader createReader(String finalPath, Iterator workingCopies );
 	/**
 	 * The parser asks the client if it wishes to time out 
 	 * in case it is taking more than the expected time.

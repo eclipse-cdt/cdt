@@ -10,8 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -22,6 +20,7 @@ import java.util.Stack;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
@@ -737,7 +736,7 @@ public class CompleteParseBaseTest extends TestCase
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
 		 */
-		public Reader createReader(String finalPath, Iterator workingCopies) {
+		public CodeReader createReader(String finalPath, Iterator workingCopies) {
 			return ParserUtil.createReader(finalPath,workingCopies);
 		}
 
@@ -796,7 +795,7 @@ public class CompleteParseBaseTest extends TestCase
     {
     	callback = new FullParseCallback(); 
     	IParser parser = ParserFactory.createParser( 
-    		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(), //$NON-NLS-1$
+    		ParserFactory.createScanner( new CodeReader( code.toCharArray() ), new ScannerInfo(), //$NON-NLS-1$
     			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
     	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$

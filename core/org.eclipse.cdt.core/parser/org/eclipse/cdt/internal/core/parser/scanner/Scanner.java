@@ -12,8 +12,6 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -88,8 +86,7 @@ public final class Scanner implements IScanner, IScannerData {
 	private IASTFactory astFactory = null;
 	private ISourceElementRequestor requestor;
 	private ParserMode parserMode;
-	private final String filename;
-	private final Reader reader;
+	private final CodeReader reader;
 	private final ParserLanguage language;
 	protected IParserLogService log;
 	private final IProblemFactory problemFactory = new ScannerProblemFactory();
@@ -108,6 +105,8 @@ public final class Scanner implements IScanner, IScannerData {
 	private int offsetLimit = NO_OFFSET_LIMIT;
 	private boolean limitReached = false; 
 	private IScannerContext currentContext;
+	
+	private final Map fileCache = new HashMap(100);
 	
 	public void setScannerContext(IScannerContext context) {
 		currentContext = context;
@@ -137,13 +136,12 @@ public final class Scanner implements IScanner, IScannerData {
 			throw new ScannerException( problem );
 	}
 
-	Scanner( Reader reader, String filename, Map definitions, List includePaths, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService log, IScannerExtension extension )
+	Scanner( CodeReader reader, Map definitions, List includePaths, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService log, IScannerExtension extension )
 	{
 		String [] incs = (String [])includePaths.toArray(STRING_ARRAY);
 		this.log = log;
 		this.requestor = requestor;
 		this.parserMode = mode;
-		this.filename = filename;
 		this.reader = reader;
 		this.language = language;
 		this.originalConfig = new ScannerInfo( definitions, incs );
@@ -152,15 +150,18 @@ public final class Scanner implements IScanner, IScannerData {
 		this.scannerExtension = extension;
 		this.definitions = definitions;
 		this.includePathNames = includePaths;
+		
+		if (reader.isFile())
+			fileCache.put(reader.filename, reader);
+		
 		setupBuiltInMacros();
 	}
 	
-    public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerExtension extension, List workingCopies ) {
+    public Scanner(CodeReader reader, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerExtension extension, List workingCopies ) {
     	
     	this.log = log;
     	this.requestor = requestor;
     	this.parserMode = parserMode;
-    	this.filename = filename;
     	this.reader = reader;
     	this.language = language;
     	this.originalConfig = info;
@@ -168,6 +169,9 @@ public final class Scanner implements IScanner, IScannerData {
     	this.workingCopies = workingCopies;
     	this.scannerExtension = extension;
 		this.astFactory = ParserFactory.createASTFactory( this, parserMode, language );
+		
+		if (reader.isFile())
+			fileCache.put(reader.filename, reader);
 		
 		TraceUtil.outputTrace(log, "Scanner constructed with the following configuration:"); //$NON-NLS-1$
 		TraceUtil.outputTrace(log, "\tPreprocessor definitions from IScannerInfo: "); //$NON-NLS-1$
@@ -351,14 +355,13 @@ public final class Scanner implements IScanner, IScannerData {
 
 	private void setupInitialContext()
     {
-    	String resolvedFilename = filename == null ? TEXT : filename;
     	IScannerContext context = null;
     	try
     	{
     		if( offsetLimit == NO_OFFSET_LIMIT )
-    			context = new ScannerContextTop(reader, resolvedFilename);
+    			context = new ScannerContextTop(reader);
     		else
-    			context = new LimitedScannerContext( this, reader, resolvedFilename, offsetLimit, 0 );
+    			context = new LimitedScannerContext( this, reader, offsetLimit, 0 );
     		contextStack.pushInitialContext( context ); 
     	} catch( ContextException  ce )
     	{
@@ -586,7 +589,13 @@ public final class Scanner implements IScanner, IScannerData {
 				while (iter.hasNext()) {
 		
 					String path = (String)iter.next();
-					duple = ScannerUtility.createReaderDuple( path, fileName, requestor, getWorkingCopies() );
+					String finalPath = ScannerUtility.createReconciledPath(path, fileName);
+					duple = (CodeReader)fileCache.get(finalPath);
+					if (duple == null) {
+						duple = ScannerUtility.createReaderDuple( finalPath, requestor, getWorkingCopies() );
+						if (duple != null && duple.isFile())
+							fileCache.put(duple.filename, duple);
+					}
 					if( duple != null )
 						break totalLoop;
 				}
@@ -597,7 +606,13 @@ public final class Scanner implements IScanner, IScannerData {
 			}
 			else // local inclusion
 			{
-				duple = ScannerUtility.createReaderDuple( new File( currentContext.getContextName() ).getParentFile().getAbsolutePath(), fileName, requestor, getWorkingCopies() );
+				String finalPath = ScannerUtility.createReconciledPath(new File( currentContext.getContextName() ).getParentFile().getAbsolutePath(), fileName);
+				duple = (CodeReader)fileCache.get(finalPath);
+				if (duple == null) {
+					duple = ScannerUtility.createReaderDuple( finalPath, requestor, getWorkingCopies() );
+					if (duple != null && duple.isFile())
+						fileCache.put(duple.filename, duple);
+				}
 				if( duple != null )
 					break totalLoop;
 				useIncludePaths = true;
@@ -612,7 +627,7 @@ public final class Scanner implements IScanner, IScannerData {
                 inclusion =
                 	getASTFactory().createInclusion(
                         fileName,
-                        duple.getFilename(),
+                        duple.filename,
                         !useIncludePaths,
                         beginOffset,
                         startLine,
@@ -627,8 +642,7 @@ public final class Scanner implements IScanner, IScannerData {
 			try
 			{
 				contextStack.updateInclusionContext(
-					duple.getUnderlyingReader(), 
-					duple.getFilename(),
+					duple,
 					inclusion, 
 					requestor);
 			}
@@ -1557,6 +1571,7 @@ public final class Scanner implements IScanner, IScannerData {
 					strbuff.append( next );
 					if( !processUniversalCharacterName() )	
 						return null;
+					c = getChar(false);
 					continue; // back to top of loop
 				}
 				ungetChar( next );
@@ -2140,9 +2155,8 @@ public final class Scanner implements IScanner, IScannerData {
 		
 		if( ! expression.trim().equals(EMPTY_STRING))
 		{	
-			IScanner subScanner = new Scanner( 
-					new StringReader(expression), 
-					SCRATCH, 
+			IScanner subScanner = new Scanner(
+					new CodeReader(expression.toCharArray()),
 					getTemporaryHashtable(), 
 					Collections.EMPTY_LIST, 
 					NULL_REQUESTOR, 
@@ -2588,9 +2602,8 @@ public final class Scanner implements IScanner, IScannerData {
 		strbuff.append(expression);
 		strbuff.append(';');
 		   
-		IScanner trial = new Scanner( 
-				new StringReader(strbuff.toString()), 
-				EXPRESSION, 
+		IScanner trial = new Scanner(
+				new CodeReader(strbuff.toString().toCharArray()), 
 				definitions,
 				includePathNames,
 				NULL_REQUESTOR,
@@ -3592,16 +3605,9 @@ public final class Scanner implements IScanner, IScannerData {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getInitialFilename()
-	 */
-	public String getInitialFilename() {
-		return filename;
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getInitialReader()
 	 */
-	public Reader getInitialReader() {
+	public CodeReader getInitialReader() {
 		return reader;
 	}
 
@@ -3638,5 +3644,9 @@ public final class Scanner implements IScanner, IScannerData {
 	 */
 	public void setIncludePathNames(List includePathNames) {
 		this.includePathNames = includePathNames;
+	}
+	
+	public Map getFileCache() {
+		return fileCache;
 	}
 }

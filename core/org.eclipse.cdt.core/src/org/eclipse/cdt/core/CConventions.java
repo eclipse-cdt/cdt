@@ -10,9 +10,9 @@
  ******************************************************************************/
 package org.eclipse.cdt.core;
 
-import java.io.StringReader;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -222,8 +222,7 @@ public class CConventions {
 		// assuming that you are given a valid identifier
 		IToken token = null;
 		IScanner scanner = ParserFactory.createScanner(
-				new StringReader( name ), 
-				"", 
+				new CodeReader(name.toCharArray()),
 				new ScannerInfo(), 
 				ParserMode.QUICK_PARSE, 
 				ParserLanguage.CPP, 

@@ -14,10 +14,10 @@
 package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -179,8 +179,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		try {
 			scanner =
 				ParserFactory.createScanner(
-					new StringReader(patternString),
-					"TEXT", //$NON-NLS-1$
+					new CodeReader(patternString.toCharArray()),
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
@@ -250,8 +249,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		try {
 			scanner =
 				ParserFactory.createScanner(
-					new StringReader(patternString),
-					"TEXT", //$NON-NLS-1$
+					new CodeReader(patternString.toCharArray()),
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
@@ -292,8 +290,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		try {
 			scanner =
 				ParserFactory.createScanner(
-					new StringReader(nameString),
-					"TEXT", //$NON-NLS-1$
+					new CodeReader(nameString.toCharArray()),
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
@@ -351,8 +348,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		try {
 			scanner =
 				ParserFactory.createScanner(
-					new StringReader(patternString),
-					"TEXT", //$NON-NLS-1$
+					new CodeReader(patternString.toCharArray()),
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
@@ -403,8 +399,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		try {
 			scanner =
 				ParserFactory.createScanner(
-					new StringReader(patternString),
-					"TEXT", //$NON-NLS-1$
+					new CodeReader(patternString.toCharArray()),
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
@@ -429,8 +424,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		try {
 			scanner =
 				ParserFactory.createScanner(
-					new StringReader(patternString),
-					"TEXT", //$NON-NLS-1$
+					new CodeReader(patternString.toCharArray()),
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
@@ -464,8 +458,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		try {
 			scanner =
 				ParserFactory.createScanner(
-					new StringReader(functionString),
-					"TEXT", //$NON-NLS-1$
+					new CodeReader(functionString.toCharArray()),
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,

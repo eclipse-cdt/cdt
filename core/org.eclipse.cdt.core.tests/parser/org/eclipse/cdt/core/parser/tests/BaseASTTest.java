@@ -10,11 +10,11 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.StringReader;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -51,7 +51,7 @@ public class BaseASTTest extends TestCase
 	{
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
 		quickParseCallback = ParserFactory.createQuickParseCallback(); 
-		parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, lang, quickParseCallback, new NullLogService(), null), quickParseCallback, mode, lang, null ); //$NON-NLS-1$
+		parser = ParserFactory.createParser( ParserFactory.createScanner( new CodeReader(code.toCharArray()), new ScannerInfo(), mode, lang, quickParseCallback, new NullLogService(), null), quickParseCallback, mode, lang, null ); //$NON-NLS-1$
 		if( ! parser.parse() && throwExceptionOnError )
 			throw new ParserException("Parse failure"); //$NON-NLS-1$
 		return quickParseCallback.getCompilationUnit(); 		

@@ -10,7 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
-import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Set;
@@ -97,21 +97,21 @@ public class ParserFactory {
      * @return
      * @throws ParserFactoryError - erroneous input provided
      */
-    public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError
+    public static IScanner createScanner( CodeReader code, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError
     {
-    	if( input == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_READER );
-    	Reader ourReader = input;
-    	if( !(input instanceof BufferedReader ))
-    		ourReader = new BufferedReader( input );
-    	if( fileName == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_FILENAME );
     	if( config == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_CONFIG );
     	if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
     	IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
 		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-		IScanner s = new Scanner( ourReader, fileName, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension(), workingCopies );
+		IScanner s = new Scanner( code, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension(), workingCopies );
 		return s; 
     }
+    
+    public static IScanner createScanner( String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError, IOException
+	{
+    	return createScanner(new CodeReader(fileName), config, mode, language, requestor, log, workingCopies);
+	}
     
 	public static ILineOffsetReconciler createLineOffsetReconciler( Reader input )
 	{

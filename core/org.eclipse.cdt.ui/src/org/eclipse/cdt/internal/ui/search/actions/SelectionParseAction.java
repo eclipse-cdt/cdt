@@ -11,14 +11,12 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import java.io.CharArrayReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -98,20 +96,20 @@ public class SelectionParseAction extends Action {
 		}
 		
 		IParser parser = null;
-		Reader reader = null;
+		CodeReader reader = null;
 		try {
 			if( workingCopy == null )
-				reader = new FileReader(resourceFile.getLocation().toFile());
+				reader = new CodeReader(resourceFile.getLocation().toOSString());
 			else 
-				reader = new CharArrayReader( workingCopy.getContents() );
-		} catch (FileNotFoundException e) {
+				reader = new CodeReader(resourceFile.getLocation().toOSString(), workingCopy.getContents());
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		try
 		{
 			parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( reader, resourceFile.getLocation().toOSString(), scanInfo, ParserMode.SELECTION_PARSE, language, new NullSourceElementRequestor(), ParserUtil.getScannerLogService(), null ), 
+							ParserFactory.createScanner( reader, scanInfo, ParserMode.SELECTION_PARSE, language, new NullSourceElementRequestor(), ParserUtil.getScannerLogService(), null ), 
 							new NullSourceElementRequestor(), ParserMode.SELECTION_PARSE, language, ParserUtil.getParserLogService() );
 			
 		} catch( ParserFactoryError pfe ){}

@@ -1156,7 +1156,7 @@ public class QuickParseASTTests extends BaseASTTest
 		
 		String code = "#include <stdio.h>\n#define DEF VALUE\n"; //$NON-NLS-1$
 		
-		IASTCompilationUnit tu = parse( code  );
+		IASTCompilationUnit tu = parse( code.toString()  );
 		assertFalse( tu.getDeclarations().hasNext());
 		Iterator inclusions = quickParseCallback.getInclusions();
 		Iterator macros = quickParseCallback.getMacros();
@@ -2243,10 +2243,5 @@ public class QuickParseASTTests extends BaseASTTest
 			Iterator iter = parse( "int k[][] = { {0, {1}, {2,3}};", true, false, language ).getDeclarations(); //$NON-NLS-1$
 			assertFalse( iter.hasNext() );
     	}
-	}
-    
-    public void testBug61972() throws Exception
-	{
-    	parse( "#define DEF1(A1) A1\n#define DEF2     DEF1(DEF2)\nDEF2;", true, false ); //$NON-NLS-1$
 	}
 }

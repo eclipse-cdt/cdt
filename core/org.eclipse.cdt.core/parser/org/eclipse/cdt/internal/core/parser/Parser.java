@@ -214,6 +214,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             	if( e instanceof Exception )
             		logException( "translationUnit", (Exception) e ); //$NON-NLS-1$
 				failParse();
+				break;
             }
         }
         compilationUnit.exitScope( requestor, astFactory.getReferenceManager() );

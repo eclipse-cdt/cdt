@@ -10,10 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.StringReader;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -51,8 +51,7 @@ public class CompletionParseBaseTest extends CompleteParseBaseTest {
 		parser =
 			ParserFactory.createParser(
 				ParserFactory.createScanner(
-					new StringReader(code),
-					"completion-test", //$NON-NLS-1$
+					new CodeReader(code.toCharArray()),
 					new ScannerInfo(),
 					ParserMode.COMPLETION_PARSE,
 					ParserLanguage.CPP,
@@ -73,8 +72,7 @@ public class CompletionParseBaseTest extends CompleteParseBaseTest {
 		parser =
 			ParserFactory.createParser(
 				ParserFactory.createScanner(
-					new StringReader(code),
-					"completion-test", //$NON-NLS-1$
+					new CodeReader(code.toCharArray()),
 					new ScannerInfo(),
 					ParserMode.COMPLETION_PARSE,
 					lang,

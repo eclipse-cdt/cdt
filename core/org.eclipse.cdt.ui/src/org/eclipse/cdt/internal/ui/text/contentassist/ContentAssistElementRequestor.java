@@ -10,9 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
-import java.io.Reader;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.utils.TimeOut;
@@ -32,7 +32,7 @@ public class ContentAssistElementRequestor extends NullSourceElementRequestor im
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
 	 */
-	public Reader createReader(String finalPath, Iterator workingCopies) {
+	public CodeReader createReader(String finalPath, Iterator workingCopies) {
 		return ParserUtil.createReader(finalPath, workingCopies	);
 	}
 	

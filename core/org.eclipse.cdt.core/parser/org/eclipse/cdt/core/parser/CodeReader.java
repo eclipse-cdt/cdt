@@ -10,29 +10,92 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
-import java.io.Reader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 
 /**
  * @author jcamelon
  */
 public class CodeReader {
-	
-	public CodeReader( String filename, Reader reader )
-	{
-		this.reader = reader;
-		this.filename = filename;
-	}
-	
-	private final Reader reader;
-	private final String filename;
 
-	public String getFilename()
-	{
-		return filename;
+	private static final String NOFILE = "<text>";
+	
+	public final char[] buffer;
+	public final String filename;
+	
+	// If you already have preloaded the buffer, e.g. working copy
+	public CodeReader(String filename, char[] buffer) {
+		this.filename = filename;
+		this.buffer = buffer;
+	}
+
+	// If you are just scanning a string
+	public CodeReader(char[] buffer) {
+		this(NOFILE, buffer);
 	}
 	
-	public Reader getUnderlyingReader()
+	// If you are loading up a file normally
+	public CodeReader(String filename) throws IOException
 	{
-		return reader;
+		this.filename = filename;
+		
+		FileInputStream stream = new FileInputStream(filename);
+		buffer = load(stream);
 	}
+	
+	// If you have a handle on a stream to the file, e.g. IFile.getContents()
+	public CodeReader(String filename, InputStream stream) throws IOException {
+		this.filename = filename;
+		
+		FileInputStream fstream = 
+			(stream instanceof FileInputStream)
+				? (FileInputStream)stream
+				: new FileInputStream(filename);
+		buffer = load(fstream);
+	}
+	
+	private char[] load(FileInputStream stream) throws IOException {
+		FileChannel channel = stream.getChannel();
+		ByteBuffer byteBuffer = ByteBuffer.allocateDirect((int)channel.size());
+		channel.read(byteBuffer);
+		byteBuffer.rewind();
+
+		// TODO use the real encoding
+		CharBuffer charBuffer = Charset.forName("UTF-8").decode(byteBuffer);
+		if (charBuffer.hasArray())
+			return charBuffer.array();
+		else {
+			// Got to copy it out
+			char[] buff = new char[charBuffer.length()];
+			charBuffer.get(buff);
+			return buff;
+		}
+	}
+	
+	private char[] xload(FileInputStream stream) throws IOException {
+		FileChannel channel = stream.getChannel();
+		MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+
+		// TODO use the real encoding
+		CharBuffer charBuffer = Charset.forName("UTF-8").decode(map);
+		if (charBuffer.hasArray())
+			return charBuffer.array();
+		else {
+			// Got to copy it out
+			char[] buff = new char[charBuffer.length()];
+			charBuffer.get(buff);
+			return buff;
+		}
+	}
+	
+	public boolean isFile() {
+		return filename != NOFILE;
+	}
+	
 }

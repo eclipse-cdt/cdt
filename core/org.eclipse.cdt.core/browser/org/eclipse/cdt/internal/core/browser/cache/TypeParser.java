@@ -11,13 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.browser.cache;
 
-import java.io.CharArrayReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,6 +33,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.DefaultProblemHandler;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -54,7 +50,6 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -86,6 +81,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
@@ -285,7 +281,7 @@ public class TypeParser implements ISourceElementRequestor {
 				return;	// not C or C++
 			}
 
-			Reader reader = null;
+			CodeReader reader = null;
 			Object stackObject = null;
 			
 			if (workingCopy != null) {
@@ -358,46 +354,44 @@ public class TypeParser implements ISourceElementRequestor {
 		return projectLanguage;
 	}
 
-	private Reader createWorkingCopyReader(IWorkingCopy workingCopy) {
-		Reader reader = null;
+	private CodeReader createWorkingCopyReader(IWorkingCopy workingCopy) {
+		CodeReader reader = null;
 		IResource resource = workingCopy.getResource();
 		if (resource != null && resource.isAccessible()) {
 			char[] contents = workingCopy.getContents();
 			if (contents != null)
-				reader = new CharArrayReader(contents);
+				reader = new CodeReader(resource.getLocation().toOSString(), contents);
 		}
 		return reader;
 	}
 
-	private Reader createResourceReader(IResource resource) {
-		Reader reader = null;
+	private CodeReader createResourceReader(IResource resource) {
+		CodeReader reader = null;
 		if (resource.isAccessible() && resource instanceof IFile) {
 			IFile file = (IFile) resource;
 			try {
 				InputStream contents = file.getContents();
 				if (contents != null)
-					reader = new InputStreamReader(contents);
+					reader = new CodeReader(resource.getLocation().toOSString(), contents);
 			} catch (CoreException ex) {
 				ex.printStackTrace();
+			} catch (IOException e) {
 			}
 		}
 		return reader;
 	}
 
-	private Reader createFileReader(IPath path) {
-		Reader reader = null;
-		File file = path.toFile();
-		if (file != null) {
-			try {
-				reader = new FileReader(file);
-			} catch (FileNotFoundException ex) {
-				ex.printStackTrace();
-			}
+	private CodeReader createFileReader(IPath path) {
+		CodeReader reader = null;
+		try {
+			reader = new CodeReader(path.toOSString());
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 		return reader;
 	}
 
-	private void parseContents(IPath realPath, IProject project, Reader reader, ParserLanguage language, IProgressMonitor progressMonitor) throws InterruptedException {
+	private void parseContents(IPath realPath, IProject project, CodeReader reader, ParserLanguage language, IProgressMonitor progressMonitor) throws InterruptedException {
 		IScannerInfo scanInfo = null;
 
 		if (project != null) {
@@ -418,7 +412,7 @@ public class TypeParser implements ISourceElementRequestor {
 
 		try {
 			fProgressMonitor = progressMonitor;
-			IScanner scanner = ParserFactory.createScanner(reader, realPath.toOSString(), scanInfo,
+			IScanner scanner = ParserFactory.createScanner(reader, scanInfo,
 					ParserMode.STRUCTURAL_PARSE, language, this, ParserUtil.getScannerLogService(), null);
 			IParser parser = ParserFactory.createParser(scanner, this, ParserMode.STRUCTURAL_PARSE, language, ParserUtil.getParserLogService());
 			parser.parse();
@@ -711,7 +705,7 @@ public class TypeParser implements ISourceElementRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
 	 */
-	public Reader createReader(String finalPath, Iterator workingCopies) {
+	public CodeReader createReader(String finalPath, Iterator workingCopies) {
 		return ParserUtil.createReader(finalPath, workingCopies);
 	}
 

@@ -1,11 +1,10 @@
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.StringReader;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -28,7 +27,7 @@ public class ExprEvalTest extends TestCase {
 	public void runTest(String code, int expectedValue) throws Exception {
 		
 		final NullSourceElementRequestor nullCallback = new NullSourceElementRequestor();
-        IExpressionParser parser = InternalParserUtil.createExpressionParser(ParserFactory.createScanner( new StringReader( code ), getClass().getName(), new ScannerInfo(), null, ParserLanguage.CPP, nullCallback, new NullLogService(), null ), ParserLanguage.CPP, null );
+        IExpressionParser parser = InternalParserUtil.createExpressionParser(ParserFactory.createScanner( new CodeReader( code.toCharArray() ), new ScannerInfo(), null, ParserLanguage.CPP, nullCallback, new NullLogService(), null ), ParserLanguage.CPP, null );
 		IASTExpression expression = parser.expression(null,null, null);
 		assertEquals(expectedValue, expression.evaluateExpression());
 	}

@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -23,6 +21,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ITemplate;
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
@@ -163,13 +162,14 @@ public class CModelBuilder {
 					scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
 				}
 			}
-			
+
+			CodeReader reader =
+				translationUnit.getUnderlyingResource() != null
+					? new CodeReader(translationUnit.getUnderlyingResource().getLocation().toOSString(), code.toCharArray())
+					: new CodeReader(code.toCharArray());
 			parser = ParserFactory.createParser( 
-				ParserFactory.createScanner( 
-					new BufferedReader( new StringReader( code ) ), 
-					(translationUnit.getUnderlyingResource() != null ? 
-					 translationUnit.getUnderlyingResource().getLocation().toOSString() :
-					 ""), //$NON-NLS-1$
+				ParserFactory.createScanner(
+					reader,
 					scanInfo, 
 					mode, 
 					language, 

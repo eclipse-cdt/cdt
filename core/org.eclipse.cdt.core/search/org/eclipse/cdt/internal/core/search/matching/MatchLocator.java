@@ -13,11 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.search.matching;
 
-import java.io.CharArrayReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +23,7 @@ import java.util.LinkedList;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -389,7 +386,7 @@ public class MatchLocator implements IMatchLocator{
 			
 			if  (!searchScope.encloses(pathString)) continue;
 			
-			Reader reader = null;
+			CodeReader reader = null;
 			
 			realPath = null; 
 			IProject project = null;
@@ -400,7 +397,7 @@ public class MatchLocator implements IMatchLocator{
 				if( workingCopy != null ){
 					currentResource = workingCopy.getResource();
 					if ( currentResource != null && currentResource.isAccessible() ) {
-						reader = new CharArrayReader( workingCopy.getContents() );
+						reader = new CodeReader(currentResource.getLocation().toOSString(), workingCopy.getContents()); 
 						realPath = currentResource.getLocation();
 						project = currentResource.getProject();
 					} else {
@@ -413,7 +410,7 @@ public class MatchLocator implements IMatchLocator{
 						if( currentResource != null ){
 							if (currentResource.isAccessible() && currentResource instanceof IFile) {
 								IFile file = (IFile) currentResource;
-								reader = new InputStreamReader( file.getContents() );
+								reader = new CodeReader(currentResource.getLocation().toOSString(),  file.getContents());
 								realPath = currentResource.getLocation();
 								project = file.getProject();
 							} else {
@@ -422,16 +419,18 @@ public class MatchLocator implements IMatchLocator{
 						}
 					} catch ( CoreException e ){
 						continue;
+					} catch ( IOException e ) {
+						continue;
 					}
 				}
 			}
 			if( currentResource == null ) {
-				IPath path = new Path( pathString );
 				try {
+					IPath path = new Path( pathString );
 					currentPath = path;
-					reader = new FileReader( path.toFile() );
+					reader = new CodeReader(pathString);
 					realPath = currentPath; 
-				} catch (FileNotFoundException e) {
+				} catch (IOException e) {
 					continue;
 				}
 			}
@@ -456,7 +455,7 @@ public class MatchLocator implements IMatchLocator{
 			IParser parser = null;
 			try
 			{
-				IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this, ParserUtil.getScannerLogService(), null );
+				IScanner scanner = ParserFactory.createScanner( reader, scanInfo, ParserMode.COMPLETE_PARSE, language, this, ParserUtil.getScannerLogService(), null );
 				parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
 			}
 			catch( ParserFactoryError pfe )
@@ -628,9 +627,10 @@ public class MatchLocator implements IMatchLocator{
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
 	 */
-	public Reader createReader(String finalPath, Iterator workingCopies) {
+	public CodeReader createReader(String finalPath, Iterator workingCopies) {
 		return ParserUtil.createReader(finalPath,workingCopies);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#parserTimeout()
 	 */

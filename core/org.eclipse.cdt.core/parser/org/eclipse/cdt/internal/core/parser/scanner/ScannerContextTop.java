@@ -11,12 +11,12 @@
 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.io.Reader;
+import org.eclipse.cdt.core.parser.CodeReader;
 
 public class ScannerContextTop extends ScannerContextInclusion
 {
-	ScannerContextTop(Reader r, String f) {
-		super(r,f,null, 0);
+	ScannerContextTop(CodeReader code) {
+		super(code, null, 0);
 	}
 	
 	public int getKind() {

@@ -11,10 +11,9 @@
 
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.StringReader;
-
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -47,7 +46,7 @@ public class BaseScannerTest extends TestCase {
 
 	protected void initializeScanner( String input, ParserMode mode, ISourceElementRequestor requestor ) throws ParserFactoryError
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, requestor, null, null ); //$NON-NLS-1$
+		scanner= ParserFactory.createScanner( new CodeReader(input.toCharArray()), new ScannerInfo(), mode, ParserLanguage.CPP, requestor, null, null ); //$NON-NLS-1$
 	}
 
 	protected void initializeScanner(String input) throws ParserFactoryError

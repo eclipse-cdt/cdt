@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.io.Reader;
+import org.eclipse.cdt.core.parser.CodeReader;
 
 /**
  * @author jcamelon
@@ -30,8 +30,8 @@ public class LimitedScannerContext
 	 * @param object
 	 * @param offsetLimit
 	 */
-	public LimitedScannerContext(Scanner scanner, Reader reader, String string, int offsetLimit, int index ) {
-		super( reader, string, null, index );
+	public LimitedScannerContext(Scanner scanner, CodeReader code, int offsetLimit, int index ) {
+		super( code, null, index );
 		this.scanner = scanner;
 		limit = offsetLimit;
 	}

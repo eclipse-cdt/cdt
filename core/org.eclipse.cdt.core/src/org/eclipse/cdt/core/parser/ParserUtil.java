@@ -10,11 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.CharArrayReader;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.IOException;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -51,7 +47,7 @@ public class ParserUtil
 		return scannerLogService;
 	}
 	
-	public static Reader createReader( String finalPath, Iterator workingCopies )
+	public static CodeReader createReader( String finalPath, Iterator workingCopies )
 	{
 		// check to see if the file which this path points to points to an 
 		// IResource in the workspace
@@ -65,25 +61,20 @@ public class ParserUtil
 				// check the working copy
 				if( workingCopies.hasNext() )
 				{
-					Reader r = findWorkingCopy( resultingResource, workingCopies );
-					if( r != null ) return r;
+					char[] buffer = findWorkingCopy( resultingResource, workingCopies );
+					if( buffer != null )
+						return new CodeReader(finalPath, buffer); 
 				}
-				return createResourceReader(resultingResource);
+				return new CodeReader(finalPath, ((IFile)resultingResource).getContents());
 			}
 		}
 		catch( CoreException ce )
 		{
 		}
+		catch( IOException e )
+		{
+		}
 		return InternalParserUtil.createFileReader(finalPath);
-	}
-
-	/**
-	 * @param resource
-	 * @return
-	 * @throws CoreException
-	 */
-	public static BufferedReader createResourceReader(IResource resource) throws CoreException {
-		return new BufferedReader( new InputStreamReader( new BufferedInputStream( ((IFile) resource).getContents() ) ) );
 	}
 
 	/**
@@ -106,7 +97,7 @@ public class ParserUtil
 	 * @param workingCopies
 	 * @return
 	 */
-	protected static Reader findWorkingCopy(IResource resultingResource, Iterator workingCopies) {
+	protected static char[] findWorkingCopy(IResource resultingResource, Iterator workingCopies) {
 		if( parserLogService.isTracing() )
 			parserLogService.traceLog( "Attempting to find the working copy for " + resultingResource.getName() ); //$NON-NLS-1$
 		while( workingCopies.hasNext() )
@@ -116,10 +107,9 @@ public class ParserUtil
 			IWorkingCopy copy = (IWorkingCopy) next;
 			if( copy.getResource().equals(resultingResource ))
 			{
-				CharArrayReader arrayReader = new CharArrayReader( copy.getContents() );
 				if( parserLogService.isTracing() )
 					parserLogService.traceLog( "Working copy found!!" ); //$NON-NLS-1$
-				return new BufferedReader( arrayReader );
+				return copy.getContents();
 			}
 		}
 		if( parserLogService.isTracing() )

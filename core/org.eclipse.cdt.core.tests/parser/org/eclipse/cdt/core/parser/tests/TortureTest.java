@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -281,7 +282,7 @@ public class TortureTest extends FractionalAutomatedTest {
 				ParserMode parserMode = quickParse ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE;
 				ParserLanguage language = cppNature ? ParserLanguage.CPP : ParserLanguage.C; 
 				parser = ParserFactory.createParser( 
-						ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), parserMode, language, nullCallback, new NullLogService(), null ), nullCallback, parserMode, language, null);
+						ParserFactory.createScanner( new CodeReader( code.toCharArray() ), new ScannerInfo(), parserMode, language, nullCallback, new NullLogService(), null ), nullCallback, parserMode, language, null);
 		
 				mapping = ParserFactory.createLineOffsetReconciler( new StringReader( code ) );
 	            

@@ -11,16 +11,13 @@
 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.io.IOException;
-import java.io.Reader;
-
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 
 public class ScannerContextInclusion implements IScannerContext
 {
 	public static final int UNDO_BUFFER_SIZE = 4;
-	protected Reader reader;
-	private String filename;
+	public CodeReader code;
 	private IASTInclusion inc;
 	private final int index;
 	private int line;
@@ -29,9 +26,8 @@ public class ScannerContextInclusion implements IScannerContext
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IScannerContext#initialize(Reader, String, int, IASTInclusion)
      */
-    public ScannerContextInclusion(Reader r, String f, IASTInclusion i, int index) {
-    	reader = r;
-		filename = f;
+    public ScannerContextInclusion(CodeReader code, IASTInclusion i, int index) {
+    	this.code = code;
 		line = 1;
 		inc = i;
         this.index = index;
@@ -41,39 +37,34 @@ public class ScannerContextInclusion implements IScannerContext
     
 	public final String getContextName()
 	{
-		return filename;
+		return code.filename;
 	}
+	
 	public int getOffset()
 	{
-		return offset - pos;
+		return offset;
 	}
+	
 	public void close() {
-		try {
-			reader.close();
-		}
-		catch (IOException ie) {
-		}
-	}
-	protected int pos = 0;
-	protected int undo[] = new int[UNDO_BUFFER_SIZE];  
-	public final void ungetChar(int c) {
-		undo[pos++] = c; 
+		//TODO remove close and replace by releasing from file cache
 	}
 	
 	public int getChar() {
-		if (pos > 0)
-			return undo[--pos];
-		try {
-			++offset;
-			int c = reader.read();
-			if ((char)c == '\n') line++;
-			return c;
-		}
-	   	catch (IOException e) {
-    		return -1;
-    	}
+		if (offset == code.buffer.length)
+			return -1;
+
+		int c = code.buffer[offset++];
+		if ((char)c == '\n') line++;
+		return c;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerContext#ungetChar(int)
+	 */
+	public void ungetChar(int undo) {
+		--offset;
+	}
+
 	/**
 	 * Returns the kind.
 	 * @return int

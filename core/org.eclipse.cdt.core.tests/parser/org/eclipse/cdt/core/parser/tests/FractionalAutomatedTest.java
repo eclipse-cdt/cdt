@@ -15,13 +15,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -242,7 +242,7 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 				result = null;
 				ParserLanguage language = cppNature ? ParserLanguage.CPP : ParserLanguage.C;
 				IParser parser = ParserFactory.createParser( 
-					ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), ParserMode.QUICK_PARSE, language, nullCallback,  new NullLogService(), null ), nullCallback, ParserMode.QUICK_PARSE, language, null );
+					ParserFactory.createScanner( new CodeReader( code.toCharArray() ), new ScannerInfo(), ParserMode.QUICK_PARSE, language, nullCallback,  new NullLogService(), null ), nullCallback, ParserMode.QUICK_PARSE, language, null );
 				
 				parser.parse();
 			} catch ( Exception e ){

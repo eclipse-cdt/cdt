@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.search.indexing;
 */
 
 
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,6 +25,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -566,7 +566,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
 	 */
-	public Reader createReader(String finalPath, Iterator workingCopies) {
+	public CodeReader createReader(String finalPath, Iterator workingCopies) {
 		return ParserUtil.createReader(finalPath,workingCopies);
 	}
 

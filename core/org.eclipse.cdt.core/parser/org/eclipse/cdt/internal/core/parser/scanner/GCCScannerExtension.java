@@ -189,7 +189,13 @@ public class GCCScannerExtension implements IScannerExtension {
 			// search through include paths
 			while (iter.hasNext()) {	
 				String path = (String)iter.next();
-				duple = ScannerUtility.createReaderDuple( path, parsedDirective.getFilename(), iscanner.getClientRequestor(), iscanner.getWorkingCopies() );
+				String finalPath = ScannerUtility.createReconciledPath(path, parsedDirective.getFilename());
+				duple = (CodeReader)iscanner.getFileCache().get(finalPath);
+				if (duple == null) {
+					duple = ScannerUtility.createReaderDuple( finalPath, iscanner.getClientRequestor(), iscanner.getWorkingCopies() );
+					if (duple != null && duple.isFile())
+						iscanner.getFileCache().put(duple.filename, duple);
+				}
 				if( duple != null )
 					break;
 			}
@@ -198,7 +204,7 @@ public class GCCScannerExtension implements IScannerExtension {
 			{
 				try			
 				{
-					iscanner.getContextStack().updateInclusionContext(duple.getUnderlyingReader(), duple.getFilename(), inclusion, iscanner.getClientRequestor() );
+					iscanner.getContextStack().updateInclusionContext(duple, inclusion, iscanner.getClientRequestor() );
 					TraceUtil.outputTrace( iscanner.getLogService(), "GCCScannerExtension handling #include_next directive successfully pushed on new include file" ); //$NON-NLS-1$
 				}
 				catch (ContextException e1)

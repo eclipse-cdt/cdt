@@ -58,7 +58,7 @@ public class AutomatedTest extends AutomatedFramework {
 
 			String filePath = file.getCanonicalPath();
 			ParserLanguage language = ((String)natures.get( filePath )).equalsIgnoreCase("cpp") ? ParserLanguage.CPP : ParserLanguage.C; //$NON-NLS-1$
-			parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader (stream), filePath, new ScannerInfo(), ParserMode.QUICK_PARSE, language, nullCallback, null, null ), nullCallback, ParserMode.QUICK_PARSE, language, null);
+			parser = ParserFactory.createParser( ParserFactory.createScanner(filePath, new ScannerInfo(), ParserMode.QUICK_PARSE, language, nullCallback, null, null ), nullCallback, ParserMode.QUICK_PARSE, language, null);
 						
 			mapping = ParserFactory.createLineOffsetReconciler( new InputStreamReader( stream ) );
 			

@@ -10,7 +10,6 @@
  ******************************************************************************/package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
-import java.io.Reader;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -67,13 +66,9 @@ public class ScannerUtility {
 	}
 
 
-	static CodeReader createReaderDuple( String path, String fileName, ISourceElementRequestor requestor, Iterator workingCopies )
+	static CodeReader createReaderDuple( String path, ISourceElementRequestor requestor, Iterator workingCopies )
 	{
-		String finalPath = createReconciledPath(path, fileName);
-		Reader r = requestor.createReader( finalPath, workingCopies	);
-		if( r != null )
-			return new CodeReader( finalPath, r );
-		return null;		
+		return requestor.createReader( path, workingCopies );
 	}
 	
 	/**

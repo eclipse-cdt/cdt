@@ -1,7 +1,6 @@
 package org.eclipse.cdt.core.parser;
 
 
-import java.io.Reader;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
@@ -460,7 +459,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
 	 */
-	public Reader createReader(String finalPath, Iterator workingCopies) {
+	public CodeReader createReader(String finalPath, Iterator workingCopies) {
 		return InternalParserUtil.createFileReader( finalPath );
 	}
 

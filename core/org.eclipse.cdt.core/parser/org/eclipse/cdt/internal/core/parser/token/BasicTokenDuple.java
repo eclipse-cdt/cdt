@@ -449,13 +449,12 @@ public class BasicTokenDuple implements ITokenDuple {
 		if( duple == null ) return false;
 		boolean foundFirst = false;
 		boolean foundLast = false;
-		Iterator i = iterator();
-		while( i.hasNext() )
+		for( IToken current = getFirstToken(); current != null; current = current.getNext() )
 		{
-			IToken current = (IToken) i.next();
-			if( current == firstToken ) foundFirst = true;
-			if( current == lastToken ) foundLast = true;
-			if( foundFirst && foundLast ) break;
+			if( current == duple.getFirstToken() ) foundFirst = true;
+			if( current == duple.getLastToken() ) foundLast = true;
+			if( foundFirst && foundLast )   break;
+			if( current == getLastToken() ) break;
 		}
 
 		return ( foundFirst && foundLast );

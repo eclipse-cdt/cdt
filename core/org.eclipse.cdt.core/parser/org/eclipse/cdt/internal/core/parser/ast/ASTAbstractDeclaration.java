@@ -129,9 +129,10 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
      */
     public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
     {
-    	Iterator arrayMods = getArrayModifiers();
-    	while( arrayMods.hasNext() )
-    		((IASTArrayModifier)arrayMods.next()).acceptElement(requestor, manager);
+    	List arrayMods = getArrayModifiersList();
+    	int size = arrayMods.size();
+    	for( int i = 0; i< size; i++ )
+    		((IASTArrayModifier)arrayMods.get(i)).acceptElement(requestor, manager);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

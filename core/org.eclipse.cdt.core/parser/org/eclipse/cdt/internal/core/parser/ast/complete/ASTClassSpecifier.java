@@ -128,6 +128,11 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     {
         return new BaseIterator( (IDerivableContainerSymbol)getSymbol() );
     }
+    
+    private List getBaseClausesList(){
+    	List clauses = ((IDerivableContainerSymbol)getSymbol()).getParents();
+    	return (clauses != null) ? clauses : Collections.EMPTY_LIST;
+    }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getCurrentVisibilityMode()
      */
@@ -175,10 +180,12 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
         {
             /* do nothing */
         } 
-        Iterator i = getBaseClauses();
-        while( i.hasNext() )
+        List bases = getBaseClausesList();
+        int size = bases.size();
+        for( int i = 0; i < size; i++ )
         {
-        	IASTBaseSpecifier baseSpec = (IASTBaseSpecifier)i.next();
+        	IParentSymbol pw = (IParentSymbol)bases.get(i); 
+    		IASTBaseSpecifier baseSpec = new ASTBaseSpecifier( pw.getParent(), pw.isVirtual(), pw.getAccess(), pw.getOffset(), pw.getReferences() );
         	baseSpec.acceptElement(requestor, manager);
         }
     }

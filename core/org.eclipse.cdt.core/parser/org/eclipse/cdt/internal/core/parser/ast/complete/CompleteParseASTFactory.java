@@ -1144,15 +1144,17 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		if( createConstructorReference( symbol, exp, duple, references ) ){
 			//if we have a constructor reference, get rid of the class reference.
-			Iterator i = ((ASTTypeId)typeId).getReferences().iterator();
-			while( i.hasNext() )
+			List refs = ((ASTTypeId)typeId).getReferences();
+			int size = refs.size();
+			for( int i = 0; i < size; i++ )
 			{
-				ReferenceCache.ASTReference ref = (ReferenceCache.ASTReference) i.next();
+				ReferenceCache.ASTReference ref = (ReferenceCache.ASTReference) refs.get(i);
 				if( CharArrayUtils.equals( ref.getNameCharArray(), duple.toCharArray() ) &&
 					ref.getOffset() == duple.getStartOffset() )
 				{
 					cache.returnReference( ref );
-					i.remove();
+					refs.remove( i-- );
+					size--;
 				}
 			}
 		}
@@ -1206,16 +1208,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			kind == Kind.POSTFIX_DOT_IDEXPRESSION || kind == Kind.POSTFIX_DOT_TEMPL_IDEXPRESS )
 		{
 			ASTExpression astExpression = (ASTExpression) rhs;
-			Iterator refs = astExpression.getReferences().iterator();
 			char[] idExpression = astExpression.getIdExpressionCharArray();
 			if( idExpression.length > 0 ) //$NON-NLS-1$
 			{
-				while( refs.hasNext() )
+				List refs = astExpression.getReferences();
+				int size = refs.size();
+				for( int i = 0; i < size; i++ )
 				{
-					IASTReference r = (IASTReference) refs.next();
+					IASTReference r = (IASTReference) refs.get(i);
 					if( CharArrayUtils.equals( r.getNameCharArray(), idExpression ) )
 					{
-						refs.remove();
+						refs.remove(i--);
+						size--;
 						cache.returnReference(r);
 					}
 				}
@@ -2151,7 +2155,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		symbol.prepareForParameters( parameters.size() );
 		setParameter( symbol, returnType, false, references );
-		setParameters( symbol, references, parameters.iterator() );
+		setParameters( symbol, references, parameters );
 		 
 		symbol.setIsForwardDeclaration(!isFunctionDefinition);
 		boolean previouslyDeclared = false;
@@ -2213,11 +2217,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      * @param symbol
      * @param iterator
      */
-    protected void setParameters(IParameterizedSymbol symbol, List references, Iterator iterator) throws ASTSemanticException
+    protected void setParameters(IParameterizedSymbol symbol, List references, List params) throws ASTSemanticException
     {
-        while( iterator.hasNext() )
+    	int size = params.size();
+    	for( int i = 0; i < size; i++)
         {
-        	setParameter( symbol, (IASTParameterDeclaration)iterator.next(), true, references );	
+        	setParameter( symbol, (IASTParameterDeclaration)params.get(i), true, references );	
         }
     }
 
@@ -2489,7 +2494,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		symbol.prepareForParameters( parameters.size() );
     	if( returnType.getTypeSpecifier() != null )
 			setParameter( symbol, returnType, false, references );
-		setParameters( symbol, references, parameters.iterator() );
+		setParameters( symbol, references, parameters );
 		
 		IASTClassSpecifier classifier = null; 
 		if( scope instanceof IASTTemplateDeclaration ){
@@ -2555,7 +2560,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			{
 				functionDeclaration.setForwardSymbol( symbol );
 				// set the definition visibility = declaration visibility
-//				ASTMethodReference reference = (ASTMethodReference) functionReferences.iterator().next();
 				visibility = ((IASTMethod)(functionDeclaration.getASTExtension().getPrimaryDeclaration())).getVisiblity();		
 			}
 		}
@@ -2963,8 +2967,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				{
 					previouslyDeclared = true;
 					fieldDeclaration.setForwardSymbol( newSymbol );
-//					// set the definition visibility = declaration visibility
-//					ASTReference reference = (ASTReference) fieldReferences.iterator().next();
+					// set the definition visibility = declaration visibility
 					visibility = ((IASTField)fieldDeclaration.getASTExtension().getPrimaryDeclaration()).getVisiblity();
 				}
 				provider.returnTypeInfo( newInfo );

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.parser;
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -250,12 +249,13 @@ public class SelectionParser extends ContextualParser {
 				return;
 			}
 			int tokensFound = 0;
-			Iterator i = tokenDuple.iterator();
-			while( i.hasNext() )
+
+			for( IToken token = tokenDuple.getFirstToken(); token != null; token = token.getNext() )
 			{
-				IToken token = (IToken) i.next();
 				if( token == firstTokenOfDuple ) ++tokensFound;
 				if( token == lastTokenOfDuple ) ++tokensFound;
+				if( token == tokenDuple.getLastToken() )
+					break;
 			}
 			if( tokensFound == 2 )
 			{

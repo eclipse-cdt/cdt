@@ -193,10 +193,10 @@ public class ASTFunction extends ASTScope implements IASTFunction
      */
     protected void processParameterInitializersAndArrayMods(ISourceElementRequestor requestor, IReferenceManager manager)
     {
-        Iterator i = parameters.iterator();
-        while( i.hasNext() )
+        int size = parameters.size();
+        for( int i = 0; i < size; i++ )
         {
-        	IASTParameterDeclaration parm = (IASTParameterDeclaration)i.next();
+        	IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.get(i);
         	if( parm.getDefaultValue() != null )
         		parm.getDefaultValue().acceptElement(requestor, manager);
         	Iterator arrays = parm.getArrayModifiers();

@@ -206,10 +206,11 @@ public class ASTTypeId implements IASTTypeId
    		if( tokenDuple != null )
    			tokenDuple.acceptElement( requestor, manager );
    		
-    	Iterator arrayMods = getArrayModifiers();
-    	while( arrayMods.hasNext() )
+    	List arrayMods = getArrayModifiersList();
+    	int size = arrayMods.size();
+    	for( int i = 0; i < size; i++ )
     	{
-    		((IASTArrayModifier)arrayMods.next()).acceptElement(requestor, manager);
+    		((IASTArrayModifier)arrayMods.get(i)).acceptElement(requestor, manager);
     	}
     }
 

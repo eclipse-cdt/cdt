@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -159,10 +160,10 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     {
         if( constructorChain != null )
         {
-        	Iterator i = getConstructorChainInitializers(); 
-        	while( i.hasNext() )
+        	List initializers = getConstructorChainInitializersList();
+        	for( int i = 0; i < initializers.size(); i++ )
         	{
-        		IASTConstructorMemberInitializer c = (IASTConstructorMemberInitializer)i.next();
+        		IASTConstructorMemberInitializer c = (IASTConstructorMemberInitializer)initializers.get(i);
         		c.acceptElement(requestor, manager);
         	}
         }
@@ -204,6 +205,11 @@ public class ASTMethod extends ASTFunction implements IASTMethod
 		if( constructorChain == null )
 			return EmptyIterator.EMPTY_ITERATOR; 
         return constructorChain.iterator();
+    }
+    public List getConstructorChainInitializersList(){
+        if( constructorChain == null)
+            return Collections.EMPTY_LIST;
+        return constructorChain;
     }
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTMethod#getOwnerClassSpecifier()

@@ -319,6 +319,9 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return declarators.iterator();
     }
+    private List getDeclaratorsList(){
+        return declarators;
+    }
     /**
      * @return
      */
@@ -397,10 +400,10 @@ public class DeclarationWrapper implements IDeclaratorOwner
         {
 
         	Declarator d = declarator.getOwnedDeclarator();
-        	Iterator i = d.getPointerOperators().iterator();
+        	List ptrOps = d.getPointerOperators();
         	boolean isWithinClass = scope instanceof IASTClassSpecifier;
 			boolean isFunction = (declarator.getParameters().size() != 0); 
-        	if( !i.hasNext() )
+        	if( ptrOps.size() == 0 )
         	{
                 
 				if (isTypedef())
@@ -427,7 +430,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         declarator.getPointerOperators(),
                         declarator.getArrayModifiers(),
                         convertedParms,
-                        (ASTPointerOperator)i.next());
+                        (ASTPointerOperator)ptrOps.get( 0 ));
             
         	ITokenDuple nameDuple = ( d.getPointerOperatorNameDuple() != null ) ? TokenFactory.createTokenDuple( d.getPointerOperatorNameDuple(), d.getNameDuple() ) : d.getNameDuple(); 
         	
@@ -548,10 +551,10 @@ public class DeclarationWrapper implements IDeclaratorOwner
         for( int i = 0; i < currentParameters.size(); ++i )
         {
             DeclarationWrapper wrapper = (DeclarationWrapper)currentParameters.get(i);
-            Iterator j = wrapper.getDeclarators();
-            while (j.hasNext())
+            List declarators = wrapper.getDeclaratorsList();
+            for( int j = 0; j < declarators.size(); j++ )
             {
-                Declarator declarator = (Declarator)j.next();
+                Declarator declarator = (Declarator)declarators.get(j);
 
                 result.add(
                     astFactory.createParameterDeclaration(

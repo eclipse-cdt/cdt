@@ -81,9 +81,10 @@ public class ASTInitializerClause implements IASTInitializerClause
 	 */
 	public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
 	{
-		Iterator i = getInitializers(); 
-		while( i.hasNext() )
-			((IASTInitializerClause)i.next()).acceptElement(requestor, manager);
+		List initializers = getInitializersList();
+		int size = initializers.size();
+		for( int i = 0; i < size; i++ )
+			((IASTInitializerClause)initializers.get(i)).acceptElement(requestor, manager);
     	
 		if( assignmentExpression != null )
 			assignmentExpression.acceptElement( requestor, manager );

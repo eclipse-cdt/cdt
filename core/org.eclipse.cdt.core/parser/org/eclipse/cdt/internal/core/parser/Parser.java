@@ -3707,6 +3707,11 @@ public class Parser implements IParser
                 consume(IToken.t_typename);
                 name();
             }
+            else if( LT(1) == IToken.t_struct || LT(1) == IToken.t_class || LT(1) == IToken.t_enum || LT(1) == IToken.t_union )
+            {
+            	consume();
+            	name(); 
+            }
             else
                 throw backtrack;
         }

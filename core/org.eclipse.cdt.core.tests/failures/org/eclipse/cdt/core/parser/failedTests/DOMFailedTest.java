@@ -23,5 +23,10 @@ public class DOMFailedTest extends BaseDOMTest  {
 
 	public void testBug36730()throws Exception {
 		failTest("FUNCTION_MACRO( 1, a )\n	int i;");
+	}
+	
+	public void testBug39349() throws Exception
+	{
+		failTest( "enum foo {  foo1   = 0,  foo2   = 0xffffffffffffffffULL,  foo3   = 0xf0fffffffffffffeULL };" ); 
 	}    
 }

@@ -1,4 +1,7 @@
 2003-06-25 John Camelon
+	Fixed bug39348 - sizeof elaborated types fail in parsing expression
+
+2003-06-25 John Camelon
 	Create new interface and support for calculating lineNumber/offset mapping.  
 	Updated IASTClassSpecifier for qualified name query.  
 	Began structuring expressions and declarators in Parser for ISourceElementRequestor.  

@@ -2234,4 +2234,10 @@ public class DOMTests extends BaseDOMTest {
 		assertNull( ((Declarator)((ParameterDeclaration)clause2.getDeclarations().get(0)).getDeclarators().get(0)).getName() );
 		assertEquals( ((ParameterDeclaration)clause2.getDeclarations().get(0)).getDeclSpecifier().getType(), DeclSpecifier.t_float );          
 	}
+	
+	public void testBug39348() throws Exception
+	{
+		parse("unsigned char a[sizeof (struct sss)];");
+	}
+	
 }

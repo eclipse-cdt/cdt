@@ -1,4 +1,8 @@
 2003-06-25 John Camelon
+	Added DOMFailedTest::testBug39349(). 
+	Added DOMTests::testBug39348().
+
+2003-06-25 John Camelon
 	Create new interface and support for calculating lineNumber/offset mapping.  
 	Updated IASTClassSpecifier for qualified name query.  
 	Began structuring expressions and declarators in Parser for ISourceElementRequestor.  

@@ -1,4 +1,10 @@
 2005-02-25 Alain Magloire
+	Fix for PR 45666: Adding Block comment mneu in the CEditor "/* */"
+	* src/org/eclipse/cdt/internal/ui/actions/RemoveBlockCommentAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* NEWS
+	
+2005-02-25 Alain Magloire
 	Fix PR 86647: remove the hyperlink preference page in the CEditor preference
 	Use the Text Editors
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java

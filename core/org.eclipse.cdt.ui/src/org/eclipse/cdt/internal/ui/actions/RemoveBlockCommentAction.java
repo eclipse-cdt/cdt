@@ -81,7 +81,7 @@ public class RemoveBlockCommentAction extends BlockCommentAction {
 	 * @see org.eclipse.jdt.internal.ui.actions.AddBlockCommentAction#validSelection(org.eclipse.jface.text.ITextSelection)
 	 */
 	protected boolean isValidSelection(ITextSelection selection) {
-		return selection != null && !selection.isEmpty();
+		return selection != null && !selection.isEmpty() && selection.getLength() > 0;
 	}
 
 

@@ -693,11 +693,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);
         setAction("OpenOutline", action); //$NON-NLS-1$*/
         
-        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoNextMemeber.", this, true);
+        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoNextMember.", this, true);
         action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_MEMBER);
         setAction("GotoNextMember", action); //$NON-NLS-1$*/
 
-        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoPrevMemeber.", this, false);
+        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoPrevMember.", this, false);
         action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_PREVIOUS_MEMBER);
         setAction("GotoPrevMember", action); //$NON-NLS-1$*/
 
@@ -719,8 +719,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		// Code formatting menu items -- only show in C perspective
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Comment"); //$NON-NLS-1$
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Uncomment"); //$NON-NLS-1$
-		// @@@ disabled for now until we get it to do something...
-		//addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Format"); //$NON-NLS-1$
+		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "AddBlockComment"); //$NON-NLS-1$
+		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "RemoveBlockComment"); //$NON-NLS-1$
 
 		addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenDeclarations"); //$NON-NLS-1$
 

@@ -1,5 +1,7 @@
 Release CDT-3.0
 
+	* Block Comment style(/* */) added in the CEditor context menu.
+
 	* All the CEditor text preference settings are now common with the text editors.
 	  To access use Window --> Preferences --> General --> Editors --> Text Editors
 

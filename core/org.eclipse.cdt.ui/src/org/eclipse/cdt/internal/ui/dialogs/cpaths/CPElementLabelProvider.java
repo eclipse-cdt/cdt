@@ -16,7 +16,6 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -29,7 +28,7 @@ import org.eclipse.ui.ide.IDE;
 class CPElementLabelProvider extends LabelProvider {
 
 	private String fNewLabel, fCreateLabel;
-	private ImageDescriptor fIncludeIcon, fMacroIcon, fLibWSrcIcon, fLibIcon, fExtLibIcon, fExtLibWSrcIcon;
+	private ImageDescriptor fIncludeIcon, fMacroIcon, fLibWSrcIcon, fLibIcon;
 	private ImageDescriptor fFolderImage, fOutputImage, fProjectImage, fContainerImage;
 
 	private ImageDescriptorRegistry fRegistry;
@@ -39,8 +38,8 @@ class CPElementLabelProvider extends LabelProvider {
 		fCreateLabel = CPathEntryMessages.getString("CPListLabelProvider.willbecreated"); //$NON-NLS-1$
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
 
-		fExtLibIcon = fLibIcon = CPluginImages.DESC_OBJS_ARCHIVE;
-		fExtLibWSrcIcon = fLibWSrcIcon = CPluginImages.DESC_OBJS_ARCHIVE_WSRC;
+		fLibIcon = CPluginImages.DESC_OBJS_ARCHIVE;
+		fLibWSrcIcon = CPluginImages.DESC_OBJS_ARCHIVE_WSRC;
 		fIncludeIcon = CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
 		fMacroIcon = CPluginImages.DESC_OBJS_MACRO;
 		fFolderImage = CPluginImages.DESC_OBJS_SOURCE_ROOT;
@@ -104,8 +103,19 @@ class CPElementLabelProvider extends LabelProvider {
 	public String getCPElementText(CPElement cpentry) {
 		IPath path = cpentry.getPath();
 		switch (cpentry.getEntryKind()) {
-			case IPathEntry.CDT_LIBRARY :
-				return path.makeRelative().toString();
+			case IPathEntry.CDT_LIBRARY : {
+				StringBuffer str = new StringBuffer( ((IPath)cpentry.getAttribute(CPElement.LIBRARY)).toOSString());
+				IPath base = (IPath)cpentry.getAttribute(CPElement.BASE_REF);
+				if (!base.isEmpty()) {
+					str.append(" - ("); //$NON-NLS-1$
+					str.append(base);
+					str.append(')');
+				} else {
+					path = ((IPath)cpentry.getAttribute(CPElement.BASE)).addTrailingSeparator();
+					str.insert(0, path.toOSString());
+				}
+				return str.toString();				
+			}
 			case IPathEntry.CDT_PROJECT :
 				return path.lastSegment();
 			case IPathEntry.CDT_INCLUDE :
@@ -193,23 +203,11 @@ class CPElementLabelProvider extends LabelProvider {
 					return fFolderImage;
 				}
 			case IPathEntry.CDT_LIBRARY :
-				IResource res = cpentry.getResource();
 				IPath path = (IPath)cpentry.getAttribute(CPElement.SOURCEATTACHMENT);
-				if (res == null) {
-					if (path == null || path.isEmpty()) {
-						return fExtLibIcon;
-					} else {
-						return fExtLibWSrcIcon;
-					}
-				} else if (res instanceof IFile) {
-					if (path == null || path.isEmpty()) {
-						return fLibIcon;
-					} else {
-						return fLibWSrcIcon;
-					}
-				} else {
-					return fFolderImage;
+				if (path == null || path.isEmpty()) {
+					return fLibIcon;
 				}
+				return fLibWSrcIcon;
 			case IPathEntry.CDT_PROJECT :
 				return fProjectImage;
 			case IPathEntry.CDT_CONTAINER :

@@ -281,8 +281,12 @@ public class CPElement {
 	}
 
 	public Object[] getChildren() {
-		if (fEntryKind == IPathEntry.CDT_OUTPUT || fEntryKind == IPathEntry.CDT_SOURCE) {
-			return new Object[] { findAttributeElement(EXCLUSION)};
+		switch(fEntryKind) {
+			case IPathEntry.CDT_OUTPUT:
+			case IPathEntry.CDT_SOURCE:
+				return new Object[] { findAttributeElement(EXCLUSION)};
+			case IPathEntry.CDT_LIBRARY:
+				return new Object[] { findAttributeElement(SOURCEATTACHMENT) };
 		}
 		return fChildren.toArray();
 	}
@@ -335,6 +339,7 @@ public class CPElement {
 		int hashCode = fPath.hashCode() + fEntryKind;
 		switch (fEntryKind) {
 			case IPathEntry.CDT_LIBRARY:
+				hashCode = hashCode * HASH_FACTOR + getAttribute(LIBRARY).hashCode();
 				hashCode = hashCode * HASH_FACTOR + getAttribute(BASE).hashCode();
 				hashCode = hashCode * HASH_FACTOR + getAttribute(BASE_REF).hashCode();
 				break;

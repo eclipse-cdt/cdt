@@ -5,6 +5,8 @@
 
 package org.eclipse.cdt.debug.mi.core.output;
 
+
+
 /**
  * GDB/MI stack list locals parsing.
  * -stack-list-locals 1

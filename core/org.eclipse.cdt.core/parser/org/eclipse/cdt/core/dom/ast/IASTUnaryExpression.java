@@ -25,7 +25,8 @@ public interface IASTUnaryExpression extends IASTExpression {
     public static final int op_sizeof     = 8;
     public static final int op_postFixIncr = 9;
     public static final int op_postFixDecr = 10;
-    public static final int op_last       = op_postFixDecr;
+    public static final int op_bracketedPrimary = 11;
+    public static final int op_last       = op_bracketedPrimary;
     
     public int getOperator();
     public void setOperator( int value );

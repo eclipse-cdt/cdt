@@ -1124,8 +1124,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 			t = consume();
 			//TODO - do we need to return a wrapper?
 			IASTExpression lhs = expression();
-			consume(IToken.tRPAREN);
-			return lhs;
+			int finalOffset = consume(IToken.tRPAREN).getEndOffset();
+			return buildUnaryExpression( IASTUnaryExpression.op_bracketedPrimary, lhs, t.getOffset(), finalOffset );
 		case IToken.tIDENTIFIER:
 
 			int startingOffset = LA(1).getOffset();
@@ -1694,6 +1694,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				d.setInitializer(i);
 				i.setParent(d);
 				i.setPropertyInParent(IASTDeclarator.INITIALIZER);
+				((ASTNode)d).setLength( calculateEndOffset( i ) - ((ASTNode)d).getOffset() );
 			}
 			return d;
 		} finally {

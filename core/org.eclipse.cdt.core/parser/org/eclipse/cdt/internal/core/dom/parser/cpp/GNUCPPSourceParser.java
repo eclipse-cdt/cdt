@@ -1675,13 +1675,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (templateIdScopes.size() > 0) {
                templateIdScopes.push(IToken.tLPAREN);
             }
-            //TODO We need to wrap this
             IASTExpression lhs = expression();
-            consume(IToken.tRPAREN).getEndOffset();
+            int finalOffset = consume(IToken.tRPAREN).getEndOffset();
             if (templateIdScopes.size() > 0) {
                templateIdScopes.pop();
             }
-            return lhs;
+            return buildUnaryExpression( IASTUnaryExpression.op_bracketedPrimary, lhs, t.getOffset(), finalOffset );
          case IToken.tIDENTIFIER:
          case IToken.tCOLONCOLON:
          case IToken.t_operator:
@@ -3317,6 +3316,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          d.setInitializer(initializer);
          initializer.setParent(d);
          initializer.setPropertyInParent(IASTDeclarator.INITIALIZER);
+         ((ASTNode)d).setLength( calculateEndOffset( initializer ) - ((ASTNode)d).getOffset() );
       }
 
       return d;

@@ -284,7 +284,11 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 			}
 			Session session = (Session) target.getSession();
 			SourceManager sourceMgr = session.getSourceManager();
-			fTypename = sourceMgr.getTypeNameFromVariable(frame, getQualifiedName());
+			if (frame != null) {
+				fTypename = sourceMgr.getTypeNameFromVariable(frame, getQualifiedName());
+			} else {
+				fTypename = sourceMgr.getTypeName(target, getQualifiedName());
+			}
 		}
 		return fTypename;
 	}

@@ -1,4 +1,10 @@
 2004-11-19 Alain Magloire
+	Protect agains possible NPE.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/SourceManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/VariableDescriptor.java
+
+2004-11-19 Alain Magloire
 	Use the qualified name when creating a register.
 	Destroy the corresponding gdb variable on register's disposal.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java

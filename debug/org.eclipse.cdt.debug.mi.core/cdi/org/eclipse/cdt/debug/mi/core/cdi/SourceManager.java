@@ -429,14 +429,19 @@ public class SourceManager extends Manager {
 
 	public String getTypeNameFromVariable(StackFrame frame, String variable) throws CDIException {
 		Target target = (Target)frame.getTarget();
-		Thread currentThread = null;
-		StackFrame currentFrame = null;
-		if (frame != null) {
-			currentThread = (Thread)target.getCurrentThread();
-			currentFrame = currentThread.getCurrentStackFrame();
-			target.setCurrentThread(frame.getThread(), false);
-			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+		Thread currentThread = (Thread)target.getCurrentThread();
+		StackFrame currentFrame = currentThread.getCurrentStackFrame();
+		target.setCurrentThread(frame.getThread(), false);
+		((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+		try {
+			return getTypeName(target, variable);
+		} finally {
+			target.setCurrentThread(currentThread, false);
+			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
+	}
+
+	public String getTypeName(Target target, String variable) throws CDIException {
 		try {
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
@@ -449,13 +454,6 @@ public class SourceManager extends Manager {
 			return info.getType();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
-		} finally {
-			if (currentThread != null) {
-				target.setCurrentThread(currentThread, false);
-			}
-			if (currentFrame != null) {
-				currentThread.setCurrentStackFrame(currentFrame, false);
-			}
 		}
 	}
 

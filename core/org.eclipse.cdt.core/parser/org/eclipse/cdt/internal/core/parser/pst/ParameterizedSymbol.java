@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
@@ -53,10 +53,46 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		else 
 			copy._parameterMap	= ( _parameterMap  != null ) ? (Map) ((HashMap) _parameterMap).clone() : null;
 			
-		copy._argumentList	  = ( _argumentList != null ) ? (LinkedList) _argumentList.clone() : null;
-		copy._specializations = ( _specializations != null ) ? (LinkedList) _specializations.clone() : null;
-		
 		return copy;	
+	}
+	
+	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+		if( !isTemplateMember() ){
+			return null;
+		}
+		
+		ParameterizedSymbol newParameterized = (ParameterizedSymbol) super.instantiate( template, argMap );
+
+		if( _returnType != null ){
+			if( _returnType.isType( TypeInfo.t_templateParameter ) ){
+				if( argMap.containsKey( _returnType ) ){
+					newParameterized.setReturnType( getSymbolTable().newSymbol( ParserSymbolTable.EMPTY_NAME ) );
+					newParameterized.getReturnType().setTypeInfo( (TypeInfo) argMap.get( _returnType ) );
+					newParameterized.getReturnType().setInstantiatedSymbol( _returnType );
+				}
+			} else {
+				newParameterized.setReturnType( _returnType.instantiate( template, argMap ) );
+			}
+		}
+		
+		Iterator iter = getParameterList().iterator();
+		
+		newParameterized.getParameterList().clear();
+		newParameterized.getParameterMap().clear();
+		
+		ISymbol param = null, newParam = null;
+		
+		while( iter.hasNext() ){
+			param = (ISymbol) iter.next();
+			newParam = param.instantiate( template, argMap );
+			
+			newParameterized.getParameterList().add( newParam );
+			if( !newParam.getName().equals( ParserSymbolTable.EMPTY_NAME ) ){
+				newParameterized.getParameterMap().put( newParam.getName(), newParam );
+			}
+		}
+		
+		return newParameterized;	
 	}
 	
 	/* (non-Javadoc)
@@ -112,36 +148,6 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 			
 		addParameter( param );
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addArgument(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
-	 */
-	public void addArgument( ISymbol arg ){
-		List argumentList = getArgumentList();
-		argumentList.add( arg );
-		
-		arg.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
-		
-		Command command = new AddArgumentCommand( this, arg );
-		getSymbolTable().pushCommand( command );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#getArgumentList()
-	 */
-	public List getArgumentList(){
-		if( _argumentList == null ){
-			_argumentList = new LinkedList();
-		}
-		return _argumentList;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#setArgumentList(java.util.List)
-	 */
-//	public void setArgumentList( List list ){
-//		_argumentList = new LinkedList( list );
-//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#getParameterMap()
@@ -222,33 +228,6 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		return _returnType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#hasSpecializations()
-	 */
-	public boolean hasSpecializations(){
-		return ( _specializations != null && !_specializations.isEmpty() );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addSpecialization(org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol)
-	 */
-	public void addSpecialization( IParameterizedSymbol spec ){
-		List specializationList = getSpecializations();
-		specializationList.add( spec );
-		
-		spec.setContainingSymbol( getContainingSymbol() );	
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#getSpecializations()
-	 */
-	public List getSpecializations() {
-		if( _specializations == null ){
-			_specializations = new LinkedList();
-		}
-		return _specializations;
-	}
-
 	public void setHasVariableArgs( boolean var ){
 		_hasVarArgs = var;
 	}
@@ -277,23 +256,9 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		private ISymbol _param;
 	}
 	
-	static private class AddArgumentCommand extends Command{
-		public AddArgumentCommand( IParameterizedSymbol container, ISymbol arg ){
-			_decl = container;
-			_arg = arg;
-		}
-		public void undoIt(){
-			_decl.getArgumentList().remove( _arg );
-		}
-
-		private IParameterizedSymbol _decl;
-		private ISymbol _arg;
-	}
 	
 	private 	LinkedList	_parameterList;			//have my cake
 	private 	Map			_parameterMap;			//and eat it too
-	private		LinkedList	_specializations;		//template specializations
-	private		LinkedList	_argumentList;			//template specialization arguments
 	private 	ISymbol		_returnType;
 	private 	boolean		_hasVarArgs = false;	//whether or not this function has variable arguments
 }

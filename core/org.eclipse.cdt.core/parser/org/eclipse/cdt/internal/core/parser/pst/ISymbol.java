@@ -21,6 +21,8 @@ public interface ISymbol extends Cloneable,  IExtensibleSymbol {
 
 	public Object clone();
 		
+	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException;
+
 	public void setName(String name);
 	public String getName();
 	
@@ -43,12 +45,12 @@ public interface ISymbol extends Cloneable,  IExtensibleSymbol {
 	public List getPtrOperators();
 	public void addPtrOperator( TypeInfo.PtrOp ptrOp );
 	
+	public boolean isTemplateInstance();
+	public ISymbol getInstantiatedSymbol();
+	public void setInstantiatedSymbol( ISymbol symbol );
 	public boolean isTemplateMember();
 	public void setIsTemplateMember( boolean isMember );
-	public ISymbol getTemplateInstance();
-	public Map getArgumentMap();
-	public void setTemplateInstance( TemplateInstance instance );
-
+	
 	public int getDepth();
 	public boolean getIsInvisible();
 	public void setIsInvisible( boolean invisible );

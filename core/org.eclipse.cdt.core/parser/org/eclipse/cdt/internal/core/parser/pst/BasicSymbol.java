@@ -1,8 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2003, 2004 Rational Software Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM Rational Software - Initial API and implementation
+***********************************************************************/
 /*
  * Created on Nov 4, 2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 package org.eclipse.cdt.internal.core.parser.pst;
 
@@ -52,6 +59,17 @@ public class BasicSymbol implements Cloneable, ISymbol
 		}
 		copy._object = null;
 		return copy;	
+	}
+	
+	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+		if( !isTemplateMember() &&  !getContainingSymbol().isTemplateMember() ){
+			return null;
+		}
+		ISymbol newSymbol = (ISymbol) clone();
+		newSymbol.setTypeInfo( TemplateEngine.instantiateTypeInfo( newSymbol.getTypeInfo(), template, argMap ) );
+		newSymbol.setInstantiatedSymbol( this );
+		
+		return newSymbol;	
 	}
 	
 	public String getName() { return _name; }
@@ -160,14 +178,14 @@ public class BasicSymbol implements Cloneable, ISymbol
 	public void setIsTemplateMember( boolean isMember ){
 		_isTemplateMember = isMember;
 	}
-	public ISymbol getTemplateInstance(){
-		return _templateInstance;
+	public boolean isTemplateInstance(){
+		return ( _instantiatedSymbol != null );
 	}
-	public void setTemplateInstance( TemplateInstance instance ){
-		_templateInstance = instance;
+	public ISymbol getInstantiatedSymbol(){
+		return _instantiatedSymbol;
 	}
-	public Map getArgumentMap(){
-		return null;
+	public void setInstantiatedSymbol( ISymbol symbol ){
+		_instantiatedSymbol = symbol;
 	}
 	
 	public boolean getIsInvisible(){
@@ -183,7 +201,8 @@ public class BasicSymbol implements Cloneable, ISymbol
 	private		IContainerSymbol	_containingScope;		//the scope that contains us
 	private		int 				_depth;					//how far down the scope stack we are
 	
-	private 	boolean				_isInvisible = false;	//used by friend declarations (11.4-9)	
-	private		boolean				_isTemplateMember = false;		
-	private		TemplateInstance	_templateInstance;		
+	private 	boolean				_isInvisible = false;	//used by friend declarations (11.4-9)
+	
+	private		boolean				_isTemplateMember = false;
+	private		ISymbol				_instantiatedSymbol = null;		
 }

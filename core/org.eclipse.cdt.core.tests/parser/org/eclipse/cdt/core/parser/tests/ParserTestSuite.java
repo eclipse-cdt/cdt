@@ -30,6 +30,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite(ExprEvalTest.class);
 		suite.addTestSuite(QuickParseASTTests.class);
 		suite.addTestSuite(ParserSymbolTableTest.class);
+		suite.addTestSuite(ParserSymbolTableTemplateTests.class );
 		suite.addTestSuite(CModelElementsTests.class);
 		suite.addTestSuite(CompletionParseTest.class);
 //		suite.addTestSuite(MacroTests.class);

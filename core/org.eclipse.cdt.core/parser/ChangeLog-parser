@@ -1,6 +1,17 @@
 2004-02-10 John Camelon
 	Workaround for Bug 51502 - Parser spins on particular file (Scalability)
 	
+2004-02-10 Andrew Niefer
+	Templates in the symbol table (org.eclipse.cdt.internal.core.parser.pst)
+			   ITemplateFactory.java
+			   ITemplateSymbol.java
+			   DeferredTemplateInstance.java
+			   ParserSymbolTableError.java
+			   TemplateEngine.java
+			   TemplateFactory.java
+			   TemplateSymbol.java
+	Most of the other main symbol table files (BasicSymbol, ContainerSymbol, etc) were modified
+	
 2004-02-10 John Camelon
 	Fixed Bug 51302 - Content Assist: No completion list available following namespace declaration. 
 

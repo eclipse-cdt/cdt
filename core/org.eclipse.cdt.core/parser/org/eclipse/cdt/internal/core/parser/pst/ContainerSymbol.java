@@ -60,8 +60,75 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			copy._containedSymbols = ( _containedSymbols != null )? (Map)((TreeMap) _containedSymbols).clone() : null;
 		else 
 			copy._containedSymbols = ( _containedSymbols != null )? (Map)((HashMap) _containedSymbols).clone() : null;
-			
+		
+		copy._contents = ( _contents != null )? (LinkedList) _contents.clone() : null;
+		
 		return copy;	
+	}
+	
+	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+		if( !isTemplateMember() || template == null ){
+			return null;
+		}
+		
+		ContainerSymbol newContainer = (ContainerSymbol) super.instantiate( template, argMap );
+
+		Iterator iter = getContentsIterator();
+	
+		newContainer.getContainedSymbols().clear();
+		if( newContainer._contents != null ){
+			newContainer._contents.clear();
+			
+			IExtensibleSymbol containedSymbol = null;
+			ISymbol newSymbol = null;
+			
+			while( iter.hasNext() ){
+				containedSymbol = (IExtensibleSymbol) iter.next();
+				
+				if( containedSymbol instanceof IUsingDirectiveSymbol ){
+					newContainer._contents.add( containedSymbol );
+				} else {
+					ISymbol symbol = (ISymbol) containedSymbol;
+					if( symbol.isForwardDeclaration() && symbol.getTypeSymbol() != null ){
+						continue;
+					}
+					
+					Map instanceMap = argMap;
+					if( template.getDefinitionParameterMap() != null && 
+						template.getDefinitionParameterMap().containsKey( containedSymbol ) )
+					{
+						Map defMap = (Map) template.getDefinitionParameterMap().get( containedSymbol );
+						instanceMap = new HashMap();
+						Iterator i = defMap.keySet().iterator();
+						while( i.hasNext() ){
+							ISymbol p = (ISymbol) i.next();
+							instanceMap.put( p, argMap.get( defMap.get( p ) ) );
+						}
+					}
+					
+					newSymbol = ((ISymbol)containedSymbol).instantiate( template, instanceMap );
+					
+					newSymbol.setContainingSymbol( newContainer );
+					newContainer._contents.add( newSymbol );
+									
+					if( newContainer.getContainedSymbols().containsKey( newSymbol.getName() ) ){
+						Object obj = newContainer.getContainedSymbols().get( newSymbol.getName() );
+						if( obj instanceof List ){
+							((List) obj).add( obj );
+						} else {
+							List list = new LinkedList();
+							list.add( obj );
+							list.add( newSymbol );
+							newContainer.getContainedSymbols().put( newSymbol.getName(), list );
+						}
+					} else {
+						newContainer.getContainedSymbols().put( newSymbol.getName(), newSymbol );
+					}
+				}
+			}
+		}
+		
+		return newContainer;	
 	}
 	
 	/* (non-Javadoc)
@@ -83,13 +150,16 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			}
 		}
 	
-		//Templates contain 1 declaration
-		if( getType() == TypeInfo.t_template ){
-			//declaration must be a class or a function
-			if( ( obj.getType() != TypeInfo.t_class && obj.getType() != TypeInfo.t_function ) ||
-				( getContainedSymbols() != null && getContainedSymbols().size() == 1 ) )
-			{
-				//throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
+		if( obj.isType( TypeInfo.t_template ) ){
+			if( ! TemplateEngine.canAddTemplate( containing, (ITemplateSymbol) obj ) ) {
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
+			}
+		}
+		
+		//14.6.1-4 A Template parameter shall not be redeclared within its scope.
+		if( isTemplateMember() || isType( TypeInfo.t_template ) ){
+			if( TemplateEngine.alreadyHasTemplateParameter( this, obj.getName() ) ){
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_RedeclaredTemplateParam );	
 			}
 		}
 		
@@ -114,7 +184,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			} else if( origObj.getClass() == LinkedList.class ){
 				origList = (LinkedList)origObj;
 			} else {
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_InternalError );
+				throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError );
 			}
 		
 			boolean validOverride = ((origList == null) ? ParserSymbolTable.isValidOverload( origDecl, obj ) : ParserSymbolTable.isValidOverload( origList, obj ) );
@@ -220,11 +290,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addUsingDeclaration(java.lang.String, org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol)
 	 */
 	public ISymbol addUsingDeclaration( String name, IContainerSymbol declContext ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_any, null );
+		LookupData data = new LookupData( name, TypeInfo.t_any );
 
 		if( declContext != null ){				
 			data.qualified = true;
-			data.templateInstance = declContext.getTemplateInstance();
 			ParserSymbolTable.lookup( data, declContext );
 		} else {
 			ParserSymbolTable.lookup( data, this );
@@ -291,22 +360,34 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#elaboratedLookup(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType, java.lang.String)
 	 */
 	public ISymbol elaboratedLookup( TypeInfo.eType type, String name ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, type, getTemplateInstance() );
+		LookupData data = new LookupData( name, type );
 	
 		ParserSymbolTable.lookup( data, this );
 	
-		return ParserSymbolTable.resolveAmbiguities( data ); 
+		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
+		
+		if( isTemplateMember() && found instanceof ITemplateSymbol ) {
+			return TemplateEngine.instantiateWithinTemplateScope( this, (ITemplateSymbol) found );
+		}
+		
+		return found;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookup(java.lang.String)
 	 */
 	public ISymbol lookup( String name ) throws ParserSymbolTableException {
-		LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
+		LookupData data = new LookupData( name, TypeInfo.t_any );
 	
 		ParserSymbolTable.lookup( data, this );
 	
-		return ParserSymbolTable.resolveAmbiguities( data ); 
+		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
+		
+		if( isTemplateMember() && found instanceof ITemplateSymbol ) {
+			return TemplateEngine.instantiateWithinTemplateScope( this, (ITemplateSymbol) found );
+		}
+		
+		return found;
 	}
 
 	/* (non-Javadoc)
@@ -341,7 +422,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * for a definition.
 	 */
 	public ISymbol lookupMemberForDefinition( String name ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
+		LookupData data = new LookupData( name, TypeInfo.t_any );
 		data.qualified = true;
 		
 		IContainerSymbol container = this;
@@ -360,7 +441,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	}
 
 	public IParameterizedSymbol lookupMethodForDefinition( String name, List parameters ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
+		LookupData data = new LookupData( name, TypeInfo.t_any );
 		data.qualified = true;
 		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
 		
@@ -398,7 +479,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	private IContainerSymbol lookupNestedNameSpecifier(String name, IContainerSymbol inSymbol ) throws ParserSymbolTableException{		
 		ISymbol foundSymbol = null;
 	
-		LookupData data = new LookupData( name, TypeInfo.t_namespace, getTemplateInstance() );
+		LookupData data = new LookupData( name, TypeInfo.t_namespace );
 		data.filter.addAcceptedType( TypeInfo.t_class );
 		data.filter.addAcceptedType( TypeInfo.t_struct );
 		data.filter.addAcceptedType( TypeInfo.t_union );
@@ -406,7 +487,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		data.foundItems = ParserSymbolTable.lookupInContained( data, inSymbol );
 	
 		if( data.foundItems != null ){
-			foundSymbol = ParserSymbolTable.resolveAmbiguities( data );//, data.foundItems );
+			foundSymbol = ParserSymbolTable.resolveAmbiguities( data );
 		}
 			
 		if( foundSymbol == null && inSymbol.getContainingSymbol() != null ){
@@ -431,7 +512,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedLookup(java.lang.String, org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType)
 	 */
 	public ISymbol qualifiedLookup( String name, TypeInfo.eType t ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, t, getTemplateInstance() );
+		LookupData data = new LookupData( name, t );
 		data.qualified = true;
 		ParserSymbolTable.lookup( data, this );
 	
@@ -496,7 +577,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			}
 		}
 	
-		LookupData data = new LookupData( name, TypeInfo.t_function, getTemplateInstance() );
+		LookupData data = new LookupData( name, TypeInfo.t_function );
 		//if parameters == null, thats no parameters, but we need to distinguish that from
 		//no parameter information at all, so make an empty list.
 		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
@@ -554,7 +635,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * include argument dependant scopes
 	 */
 	public IParameterizedSymbol memberFunctionLookup( String name, List parameters ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_function, getTemplateInstance() );
+		LookupData data = new LookupData( name, TypeInfo.t_function );
 		//if parameters == null, thats no parameters, but we need to distinguish that from
 		//no parameter information at all, so make an empty list.
 		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
@@ -567,7 +648,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedFunctionLookup(java.lang.String, java.util.List)
 	 */
 	public IParameterizedSymbol qualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_function, getTemplateInstance() );
+		LookupData data = new LookupData( name, TypeInfo.t_function );
 		data.qualified = true;
 		//if parameters == null, thats no parameters, but we need to distinguish that from
 		//no parameter information at all, so make an empty list.
@@ -581,21 +662,42 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#templateLookup(java.lang.String, java.util.List)
 	 */
-	public TemplateInstance templateLookup( String name, List arguments ) throws ParserSymbolTableException
+	public ISymbol lookupTemplate( String name, List arguments ) throws ParserSymbolTableException
 	{
-		LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
-		data.parameters = arguments;
+		LookupData data = new LookupData( name, TypeInfo.t_any );
 		
 		ParserSymbolTable.lookup( data, this );
 		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
-		if( found.isType( TypeInfo.t_template ) ){
-			return ((IParameterizedSymbol) found).instantiate( arguments );
+		
+		if( (found.isType( TypeInfo.t_templateParameter ) && found.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template) ||
+		     found.isType( TypeInfo.t_template ) )
+		{
+			return ((ITemplateSymbol) found).instantiate( arguments );
+		} else if( found.getContainingSymbol().isType( TypeInfo.t_template ) ){
+			return ((ITemplateSymbol) found.getContainingSymbol()).instantiate( arguments );
 		} 
+		
 		return null;
 	}
 
+	public ITemplateFactory lookupTemplateForMemberDefinition( String name, List parameters, List arguments ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( name, TypeInfo.t_any );
+		
+		ParserSymbolTable.lookup( data, this );
+		ISymbol look = ParserSymbolTable.resolveAmbiguities( data );
+		
+		if( look instanceof ITemplateSymbol ){
+			ITemplateSymbol template = TemplateEngine.selectTemplateOrSpecialization( (ITemplateSymbol) look, parameters, arguments );
+			if( template != null ){
+				return new TemplateFactory( template, parameters );
+			}
+		}
+		return null;
+	}
+	
+
 	public List prefixLookup( TypeFilter filter, String prefix, boolean qualified ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( prefix, filter, getTemplateInstance() );
+		LookupData data = new LookupData( prefix, filter );
 		data.qualified = qualified;
 		data.mode = ParserSymbolTable.LookupMode.PREFIX;
 		
@@ -640,11 +742,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		
 		if( node instanceof IASTMember ){
 			ASTAccessVisibility visibility;
-			try {
-				visibility = ParserSymbolTable.getVisibility( symbol, qualifyingSymbol );
-			} catch (ParserSymbolTableException e) {
-				return false;
-			}
+			
+			visibility = ParserSymbolTable.getVisibility( symbol, qualifyingSymbol );
+			
 			if( visibility == ASTAccessVisibility.PUBLIC ){
 				return true;
 			}
@@ -704,61 +804,6 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return false;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#instantiate(java.util.List)
-	 */
-	public TemplateInstance instantiate( List arguments ) throws ParserSymbolTableException{
-		if( getType() != TypeInfo.t_template ){
-			return null;
-		}
-			
-		//TODO uncomment when template specialization matching & ordering is working
-		//IParameterizedSymbol template = ParserSymbolTable.matchTemplatePartialSpecialization( this, arguments );
-		IParameterizedSymbol template = null;
-			
-		if( template == null ){
-			template = (IParameterizedSymbol) this;
-		}
-			
-		List paramList = template.getParameterList();
-		int numParams = ( paramList != null ) ? paramList.size() : 0;
-			
-		if( numParams == 0 ){
-			return null;				
-		}
-
-		HashMap map = new HashMap();
-		Iterator paramIter = paramList.iterator();
-		Iterator argIter = arguments.iterator();
-			
-		ISymbol param = null;
-		TypeInfo arg = null; 
-		for( int i = 0; i < numParams; i++ ){
-			param = (ISymbol) paramIter.next();
-				
-			if( argIter.hasNext() ){
-				arg = (TypeInfo) argIter.next();
-				map.put( param, arg );
-			} else {
-				Object obj = param.getTypeInfo().getDefault();
-				if( obj != null && obj instanceof TypeInfo ){
-					map.put( param, obj );
-				} else {
-					throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
-				}
-			}
-		}
-			
-		if( template.getContainedSymbols().size() != 1 ){
-			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
-		}
-			
-		Iterator iter = template.getContainedSymbols().keySet().iterator();
-		IContainerSymbol symbol = (IContainerSymbol) template.getContainedSymbols().get( iter.next() );
-			 
-		TemplateInstance instance = new TemplateInstance( getSymbolTable(), symbol, map );
-		return instance;
-	}
 
 	protected List getContents(){
 		if(_contents == null ){

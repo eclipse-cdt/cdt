@@ -10,9 +10,6 @@
  ******************************************************************************/
 /*
  * Created on May 9, 2003
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 package org.eclipse.cdt.internal.core.parser.pst;
 
@@ -52,8 +49,11 @@ public interface IContainerSymbol extends ISymbol {
 	public IParameterizedSymbol unqualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException;
 	public IParameterizedSymbol memberFunctionLookup( String name, List parameters ) throws ParserSymbolTableException;
 	public IParameterizedSymbol qualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException;
-	public TemplateInstance templateLookup( String name, List arguments ) throws ParserSymbolTableException;
-	public TemplateInstance instantiate( List arguments ) throws ParserSymbolTableException;
+	
+	public ISymbol lookupTemplate( String name, List arguments ) throws ParserSymbolTableException;
+	
+	public ITemplateFactory lookupTemplateForMemberDefinition( String name, List templateParameters, 
+			                                                                List templateArguments ) throws ParserSymbolTableException;
 	
 	public boolean isVisible( ISymbol symbol, IContainerSymbol qualifyingSymbol );
 	

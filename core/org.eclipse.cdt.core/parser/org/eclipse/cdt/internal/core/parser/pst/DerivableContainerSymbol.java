@@ -54,6 +54,44 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		return copy;	
 	}
 	
+	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+		if( !isTemplateMember() ){
+			return null;
+		}
+		
+		DerivableContainerSymbol newSymbol = (DerivableContainerSymbol) super.instantiate( template, argMap );
+		
+		Iterator parents = getParents().iterator();
+		
+		newSymbol.getParents().clear();
+		ParentWrapper wrapper = null, newWrapper = null;
+		while( parents.hasNext() ){
+			wrapper = (ParentWrapper) parents.next();
+			newWrapper = new ParentWrapper( wrapper.getParent(), wrapper.isVirtual(), wrapper.getAccess(), wrapper.getOffset(), wrapper.getReferences() );
+			ISymbol parent = newWrapper.getParent();
+			if( parent instanceof IDeferredTemplateInstance ){
+				newWrapper.setParent( ((IDeferredTemplateInstance)parent).instantiate( template, argMap ) );
+			} else 	if( parent.isType( TypeInfo.t_templateParameter ) && argMap.containsKey( parent ) ){
+				TypeInfo info = (TypeInfo) argMap.get( parent );
+				newWrapper.setParent( info.getTypeSymbol() );
+			}
+			
+			newSymbol.getParents().add( newWrapper );
+		}
+		
+		Iterator constructors = getConstructors().iterator();
+		newSymbol.getConstructors().clear();
+		IParameterizedSymbol constructor = null;
+		while( constructors.hasNext() ){
+			constructor = (IParameterizedSymbol) constructors.next();
+			newSymbol.getConstructors().add( constructor.instantiate( template, argMap ) );
+		}
+		
+		//TODO: friends
+		
+		return newSymbol;	
+	}
+	
 	public void addSymbol(ISymbol symbol) throws ParserSymbolTableException {
 		super.addSymbol( symbol );
 					
@@ -149,7 +187,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 */
 	public IParameterizedSymbol lookupConstructor( List parameters ) throws ParserSymbolTableException
 	{
-		LookupData data = new LookupData( ParserSymbolTable.EMPTY_NAME, TypeInfo.t_constructor, null );
+		LookupData data = new LookupData( ParserSymbolTable.EMPTY_NAME, TypeInfo.t_constructor );
 		data.parameters = parameters;
 		
 		List constructors = new LinkedList();
@@ -194,7 +232,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			//of function will have them from the original declaration
 			boolean foundThis = false;
 			
-			LookupData data = new LookupData( ParserSymbolTable.THIS, TypeInfo.t_any, null );
+			LookupData data = new LookupData( ParserSymbolTable.THIS, TypeInfo.t_any );
 			try {
 				Map map = ParserSymbolTable.lookupInContained( data, obj );
 				foundThis = map.containsKey( data.name );
@@ -274,7 +312,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * class scope.
 	 */
 	public ISymbol lookupForFriendship( String name ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
+		LookupData data = new LookupData( name, TypeInfo.t_any );
 		
 		IContainerSymbol enclosing = getContainingSymbol();
 		if( enclosing != null && enclosing.isType( TypeInfo.t_namespace, TypeInfo.t_union ) ){
@@ -290,7 +328,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	}
 	
 	public IParameterizedSymbol lookupFunctionForFriendship( String name, List parameters ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
+		LookupData data = new LookupData( name, TypeInfo.t_any );
 		
 		data.parameters = parameters;
 		
@@ -373,6 +411,15 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			this.references = r;
 		}
 	
+		public Object clone(){
+			try{
+				return super.clone();
+			} catch ( CloneNotSupportedException e ){
+				//should not happen
+				return null;
+			}
+		}
+		
 		public void setParent( ISymbol parent ){	this.parent = parent;	}
 		
 		public ISymbol getParent() {	return parent;		}
@@ -380,7 +427,6 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		
 		public void setVirtual( boolean virtual	){	isVirtual = virtual;	}
 		
-		public ASTAccessVisibility getVisibility(){	return access;	}
 		public ASTAccessVisibility getAccess() 	  {	return access;	}
 		
 		public int getOffset()		{	return offset;		}

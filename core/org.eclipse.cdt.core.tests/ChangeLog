@@ -1,3 +1,7 @@
+2004-02-10 Andrew Niefer
+	Added new File: ParserSymbolTableTemplateTests.java (contains 30 new tests)
+	Added new File: FailingTemplateTests.java (contains 5 test stubs for failing cases)
+
 2004-02-10 John Camelon
 	Added testBug47682() to QuickParseASTTests.java.  
 

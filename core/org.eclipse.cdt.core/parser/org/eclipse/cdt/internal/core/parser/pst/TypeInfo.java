@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2003, 2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class TypeInfo {
 		_typeDeclaration = info._typeDeclaration;
 		_ptrOperators = ( info._ptrOperators == null ) ? null : (LinkedList)info._ptrOperators.clone();
 		_hasDefaultValue = info._hasDefaultValue;
+		_defaultValue = info._defaultValue;
 	}
 
     public static final int typeMask   = 0x001f;
@@ -117,6 +118,8 @@ public class TypeInfo {
 	public static final TypeInfo.eType t_template    = new TypeInfo.eType( 19 );
 	public static final TypeInfo.eType t_asm         = new TypeInfo.eType( 20 );
 	public static final TypeInfo.eType t_linkage     = new TypeInfo.eType( 21 );
+	public static final TypeInfo.eType t_templateParameter = new TypeInfo.eType( 22 );
+	public static final TypeInfo.eType t_typeName    = new TypeInfo.eType( 23 );
 	
 	//public static final eType t_templateParameter = new eType( 18 );
 	
@@ -282,6 +285,14 @@ public class TypeInfo {
 		_typeInfo = typeInfo;
 	}
 
+	public eType getTemplateParameterType(){
+		return _templateParameterType;
+	}
+	
+	public void setTemplateParameterType( eType type ){
+		_templateParameterType = type;
+	}
+	
 	/**
 	 * 
 	 * @param type
@@ -476,19 +487,25 @@ public class TypeInfo {
 		boolean result = ( _typeInfo == type._typeInfo );
 		result &= ( _type == type._type );
 		
-		if( _typeDeclaration instanceof TemplateInstance ){
-			result &= _typeDeclaration.equals( type._typeDeclaration );
+		if( _typeDeclaration != null && type._typeDeclaration != null &&
+			_typeDeclaration.isType( TypeInfo.t__Bool, TypeInfo.t_void ) &&
+			type._typeDeclaration.isType( TypeInfo.t__Bool, TypeInfo.t_void ) )
+		{
+			//if typeDeclaration is a basic type, then only need the types the same
+			result &= ( _typeDeclaration.getType() == type._typeDeclaration.getType() );	
+		} else if( _typeDeclaration != null && type._typeDeclaration != null &&
+				  _typeDeclaration.isType( TypeInfo.t_function ) &&
+				  type._typeDeclaration.isType( TypeInfo.t_function ) )
+		{
+			//function pointers... functions must have same parameter lists and return types
+			IParameterizedSymbol f1 = (IParameterizedSymbol) _typeDeclaration;
+			IParameterizedSymbol f2 = (IParameterizedSymbol) type._typeDeclaration;
+			
+			result &= f1.hasSameParameters( f2 );
+			result &= f1.getReturnType().getTypeInfo().equals( f2.getReturnType().getTypeInfo() );
 		} else {
-			if( _typeDeclaration != null && type._typeDeclaration != null   &&
-				_typeDeclaration.isType( TypeInfo.t__Bool, TypeInfo.t_void ) &&
-				type._typeDeclaration.isType( TypeInfo.t__Bool, TypeInfo.t_void ) )
-			{
-				//if typeDeclaration is a basic type, then only need the types the same
-				result &= ( _typeDeclaration.getType() == type._typeDeclaration.getType() );		
-			} else {
-				//otherwise, its a user defined type, need the decls the same
-				result &= ( _typeDeclaration == type._typeDeclaration );
-			}
+			//otherwise, its a user defined type, need the decls the same
+			result &= ( _typeDeclaration == type._typeDeclaration );
 		}
 			
 		int size1 = (_ptrOperators == null) ? 0 : _ptrOperators.size();
@@ -524,7 +541,8 @@ public class TypeInfo {
 	}
 
 	private int 	_typeInfo = 0;
-	private TypeInfo.eType   _type = TypeInfo.t_undef;
+	private eType   _type = TypeInfo.t_undef;
+	private eType	_templateParameterType = t_typeName;
 	private ISymbol _typeDeclaration;	
 
 	private boolean	_hasDefaultValue = false;

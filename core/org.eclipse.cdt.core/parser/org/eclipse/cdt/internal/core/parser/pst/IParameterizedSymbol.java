@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
@@ -32,10 +32,6 @@ public interface IParameterizedSymbol extends IContainerSymbol {
 	public void addParameter( TypeInfo.eType type, int info, TypeInfo.PtrOp ptrOp, boolean hasDefault );
 	public void addParameter( ISymbol typeSymbol, TypeInfo.PtrOp ptrOp, boolean hasDefault );
 	
-	public void addArgument( ISymbol arg );
-	public List getArgumentList();
-	//public void setArgumentList( List list );
-	
 	public Map getParameterMap();
 	public List getParameterList();
 	//public void setParameterList( List list );
@@ -47,8 +43,4 @@ public interface IParameterizedSymbol extends IContainerSymbol {
 	
 	public void setHasVariableArgs( boolean var );
 	public boolean hasVariableArgs( );
-	
-	public boolean	hasSpecializations();
-	public void 	addSpecialization( IParameterizedSymbol spec );
-	public List 	getSpecializations();	
 }

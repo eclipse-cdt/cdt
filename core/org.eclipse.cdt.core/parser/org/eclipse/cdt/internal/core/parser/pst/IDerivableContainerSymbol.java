@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
@@ -44,13 +44,13 @@ public interface IDerivableContainerSymbol extends IContainerSymbol {
 	
 	public List getFriends();
 	
-	public interface IParentSymbol{
+	public interface IParentSymbol extends Cloneable {
+		public Object clone();
 		public void setParent( ISymbol parent );
 		public ISymbol getParent();
 		public boolean isVirtual();
 		public void setVirtual( boolean virtual );
 		
-		public ASTAccessVisibility  getVisibility();
 		public ASTAccessVisibility getAccess();
 		public int getOffset();
 		public List getReferences();

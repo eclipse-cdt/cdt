@@ -9,11 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -66,11 +64,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		Element[] elements = getElements();
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i].name.equals(name)) {
-				// For the Var object the register is always the same
-				// no need to check the stackframe.
-				if (elements[i].variable instanceof Register) {
-					return elements[i];
-				} else if (elements[i].stackframe.equals(stack)) {
+				if (elements[i].stackframe.equals(stack)) {
 					return elements[i];
 				}
 			}
@@ -116,8 +110,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 				}
 				if (! changes[i].isInScope()) {
 					// Only remove ICDIVariables.
-					if (! (element.variable instanceof Expression ||
-						element.variable instanceof Register)) {
+					if (! (element.variable instanceof Expression)) {
 						removeElement(changes[i]);
 					}
 				}
@@ -252,19 +245,6 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 			addElement(element);
 		}
 		return cexp;
-	}
-
-	ICDIRegister createRegister(StackFrame stack, String name) throws CDIException {
-		Element element = createElement(stack, "$" + name);
-		Register reg;
-		if (element.variable != null && element.variable instanceof Register) {
-			reg = (Register)element.variable;
-		} else {
-			reg = new Register(stack, name, element.miVar);
-			element.variable = reg;
-			addElement(element);
-		}
-		return reg;
 	}
 
 	/**

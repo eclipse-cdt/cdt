@@ -1,3 +1,9 @@
+2003-01-24 Alain Magloire
+
+	* src/org/eclipse/cdt/ui/wizards/SettingsBlock.java (doRung):
+	Check for program that are quoted.
+	This patch was base on previous proposed by Alex Chapiro.
+
 2003-01-21 Alain Magloire
 
 	* src/org/eclipse/cdt/internal/ui/cview/CViewSorter.java (category):

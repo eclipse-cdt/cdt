@@ -1,3 +1,9 @@
+2004-02-25 Alain Magloire
+
+	Path from Chris Wiebe to deal with PR 52128
+
+	* src/org/eclipse/cdt/core/resources/FileStorage.java
+
 2004-02-24 Alain Magloire
 
 	Fix for PR 52562 From Alex Chapiro

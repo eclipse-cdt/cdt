@@ -75,4 +75,16 @@ public class FileStorage extends PlatformObject implements IStorage {
 	public String toString() {
 		return path.toOSString();
 	}
+
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj instanceof IStorage) {
+			IPath path= getFullPath();
+			IPath objPath= ((IStorage)obj).getFullPath();
+			if (path != null && objPath != null)
+				return path.equals(objPath);
+		}
+		return super.equals(obj);
+	}
 }

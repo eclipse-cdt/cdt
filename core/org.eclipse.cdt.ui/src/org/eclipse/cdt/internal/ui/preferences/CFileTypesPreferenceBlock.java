@@ -228,7 +228,7 @@ public class CFileTypesPreferenceBlock {
 		gridData.heightHint	= SWTUtil.getButtonHeigthHint(fBtnNew);
 		
 		fBtnNew.setLayoutData(gridData);
-		fBtnNew.setText("New ..."); // TODO: get standard text
+		fBtnNew.setText(PreferencesMessages.getString("CFileTypesPreferenceBlock.New..."));  //$NON-NLS-1$
 		
 		fBtnNew.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -245,7 +245,7 @@ public class CFileTypesPreferenceBlock {
 		gridData.heightHint	= SWTUtil.getButtonHeigthHint(fBtnRemove);
 
 		fBtnRemove.setLayoutData(gridData);
-		fBtnRemove.setText("Remove"); // TODO: get standard text
+		fBtnRemove.setText(PreferencesMessages.getString("CFileTypesPreferenceBlock.Remove"));  //$NON-NLS-1$
 		
 		fBtnRemove.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {

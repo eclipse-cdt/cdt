@@ -1,3 +1,12 @@
+ChangeLog
+
+2004-06-08 Tanya Wolff
+	Fix for bug 66139 
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+	Fix for bug 66136
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferencesBlock.java
+
 2004-06-08 Tanya Wolff
 	Fix for Bug 63467 - choice format for displaying plural
 	

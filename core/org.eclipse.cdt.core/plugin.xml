@@ -220,31 +220,31 @@
    <extension
          point="org.eclipse.cdt.core.CFileType">
       <fileType
-            name="C Source File"
+            name="%fileTypeMapping.cSourceFile"
             type="source"
             id="org.eclipse.cdt.core.fileType.c_source"
             language="org.eclipse.cdt.core.language.c">
       </fileType>
       <fileType
-            name="C Header File"
+            name="%fileTypeMapping.cHeaderFile"
             type="header"
             id="org.eclipse.cdt.core.fileType.c_header"
             language="org.eclipse.cdt.core.language.c">
       </fileType>
       <fileType
-            name="C++ Source File"
+            name="%fileTypeMapping.cppSourceFile"
             type="source"
             id="org.eclipse.cdt.core.fileType.cxx_source"
             language="org.eclipse.cdt.core.language.cxx">
       </fileType>
       <fileType
-            name="C++ Header File"
+            name="%fileTypeMapping.cppHeaderFile"
             type="header"
             id="org.eclipse.cdt.core.fileType.cxx_header"
             language="org.eclipse.cdt.core.language.cxx">
       </fileType>
       <fileType
-            name="Assembly Source File"
+            name="%fileTypeMapping.assemblySourceFile"
             type="source"
             id="org.eclipse.cdt.core.fileType.asm_source"
             language="org.eclipse.cdt.core.language.asm">

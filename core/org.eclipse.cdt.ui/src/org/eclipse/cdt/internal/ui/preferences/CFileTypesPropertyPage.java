@@ -56,7 +56,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		radioPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fUseWorkspace = new Button(radioPane, SWT.RADIO);
-		fUseWorkspace.setText(PreferencesMessages.getString("CFileTypesPropertyPage.useWorkspaceSettings"));
+		fUseWorkspace.setText(PreferencesMessages.getString("CFileTypesPropertyPage.useWorkspaceSettings")); //$NON-NLS-1$
 		fUseWorkspace.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				fPrefsBlock.setEnabled(false);
@@ -64,7 +64,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		});
 		
 		fUseProject = new Button(radioPane, SWT.RADIO);
-		fUseProject.setText(PreferencesMessages.getString("CFileTypesPropertyPage.useProjectSettings"));
+		fUseProject.setText(PreferencesMessages.getString("CFileTypesPropertyPage.useProjectSettings")); //$NON-NLS-1$
 		fUseProject.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				fPrefsBlock.setEnabled(true);

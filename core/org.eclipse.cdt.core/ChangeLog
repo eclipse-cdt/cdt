@@ -1,3 +1,10 @@
+2004-06-08 Tanya Wolff
+
+	Fix for I18N defect 66136
+
+	* plugin.properties
+	* plugin.xml
+
 2004-0608 Alain Magloire
 
 	Quick workaround for PR 57287.

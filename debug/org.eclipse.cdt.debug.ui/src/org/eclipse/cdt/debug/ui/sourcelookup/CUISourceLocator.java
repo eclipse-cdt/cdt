@@ -207,7 +207,7 @@ public class CUISourceLocator implements IAdaptable
 		if ( res == null && fAllowedToAsk )
 		{
 			IStackFrameInfo frameInfo = (IStackFrameInfo)stackFrame.getAdapter( IStackFrameInfo.class );
-			if ( frameInfo != null )
+			if ( frameInfo != null && frameInfo.getFile() != null && frameInfo.getFile().length() > 0 )
 			{
 				showDebugSourcePage( frameInfo.getFile() );
 				if ( fNewLocationAttached )

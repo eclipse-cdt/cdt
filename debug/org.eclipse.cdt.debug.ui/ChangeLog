@@ -1,3 +1,7 @@
+2002-12-18 Mikhail Khodjaiants
+	Do not show the source lookup dialog if file name is not specified.
+	* CUISourceLocator.java
+
 2002-12-17 Mikhail Khodjaiants
 	Disable the association controls in the 'Attach Source Location" dialog if path is not absolute.
 	* AttachSourceLocationBlock.java

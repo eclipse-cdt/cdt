@@ -45,9 +45,11 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @author alain
@@ -108,7 +110,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				} else {
 					IPathEntry e = getExpandedPathEntry(entry, cproject);
 					if (e != null) {
-						list.add(entry);
+						list.add(e);
 					}
 				}
 			}
@@ -414,9 +416,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					Platform.run(new ISafeRunnable() {
 
 						public void handleException(Throwable exception) {
-							//Util.log(exception, "Exception occurred in
-							// container initializer: "+initializer);
-							// //$NON-NLS-1$
+							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR,
+									"Exception occurred in container initializer: "+initializer, exception); //$NON-NLS-1$
+							CCorePlugin.log(status);
 						}
 
 						public void run() throws Exception {
@@ -700,9 +702,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				storeMap.remove(project);
 				store.removePathEntryStoreListener(this);
 			}
+			CModelManager manager = CModelManager.getDefault();
+			ICProject cproject = manager.create(project);
 			if (project.isAccessible()) {
-				CModelManager manager = CModelManager.getDefault();
-				ICProject cproject = manager.create(project);
 				try {
 					IPathEntry[] oldResolvedEntries = getResolvedPathEntries(cproject);
 					// Clear the old cache entries.
@@ -718,6 +720,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					}
 				} catch (CModelException e) {
 				}
+			} else {
+				resolvedMap.remove(cproject);
 			}
 		}
 	}
@@ -746,6 +750,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
 				if (store != null) {
 					store.fireClosedEvent(project);
+				} else {
+					resolvedMap.remove(element.getCProject());
 				}
 			}
 		}

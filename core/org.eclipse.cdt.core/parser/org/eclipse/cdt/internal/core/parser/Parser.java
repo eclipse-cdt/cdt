@@ -79,6 +79,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.OffsetDuple;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
@@ -6594,8 +6595,16 @@ public class Parser implements IParserData, IParser
 			if( contextNode instanceof IASTQualifiedNameElement )
 			{
 				String [] elementQualifiedName = ((IASTQualifiedNameElement)contextNode).getFullyQualifiedName();
-				if( Arrays.equals( elementQualifiedName, finalDuple.toQualifiedName() ) )
-					return contextNode;
+				if( Arrays.equals( elementQualifiedName, finalDuple.toQualifiedName() ) ){
+				    IASTNode declNode = null;
+					if( contextNode instanceof ISymbolOwner ){
+					    ISymbolOwner owner = (ISymbolOwner) contextNode;
+					    if( owner.getSymbol() != null && owner.getSymbol().getASTExtension() != null ){
+					        declNode = owner.getSymbol().getASTExtension().getPrimaryDeclaration();
+					    }
+					}
+					return (declNode != null) ? declNode : contextNode;
+				}
 			}
 			try {
 				if( ourKind == IASTCompletionNode.CompletionKind.NEW_TYPE_REFERENCE )

@@ -50,7 +50,7 @@ public class Value extends CObject implements ICDIValue {
 			}
 			result = info.getValue();
 		} catch (MIException e) {
-			//throw new CDIException(e.getMessage());
+			throw new CDIException(e.getMessage());
 		}
 		return result;
 	}

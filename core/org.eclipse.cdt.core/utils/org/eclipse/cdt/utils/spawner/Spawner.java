@@ -33,16 +33,16 @@ public class Spawner extends Process {
 		for (int n = 0; tokenizer.hasMoreTokens(); n++)
 			cmdarray[n] = tokenizer.nextToken();
 		if (bNoRedirect)
-			exec_detached(cmdarray, new String[0], ".");
+			exec_detached(cmdarray, new String[0], "."); //$NON-NLS-1$
 		else
-			exec(cmdarray, new String[0], ".");
+			exec(cmdarray, new String[0], "."); //$NON-NLS-1$
 	}
 	/**
 	 * Executes the specified command and arguments in a separate process with the
 	 * specified environment and working directory.
 	 **/
 	protected Spawner(String[] cmdarray, String[] envp, File dir) throws IOException {
-		String dirpath = ".";
+		String dirpath = "."; //$NON-NLS-1$
 		if (dir != null)
 			dirpath = dir.getAbsolutePath();
 		exec(cmdarray, envp, dirpath);
@@ -87,7 +87,7 @@ public class Spawner extends Process {
 		String[] cmdarray = new String[tokenizer.countTokens()];
 		for (int n = 0; tokenizer.hasMoreTokens(); n++)
 			cmdarray[n] = tokenizer.nextToken();
-		String dirpath = ".";
+		String dirpath = "."; //$NON-NLS-1$
 		if (dir != null)
 			dirpath = dir.getAbsolutePath();
 		exec(cmdarray, envp, dirpath);
@@ -135,7 +135,7 @@ public class Spawner extends Process {
 	 **/
 	public synchronized int exitValue() {
 		if (!isDone) {
-			throw new IllegalThreadStateException("Process not Terminated");
+			throw new IllegalThreadStateException("Process not Terminated"); //$NON-NLS-1$
 		}
 		return status;
 	}
@@ -196,7 +196,7 @@ public class Spawner extends Process {
 		if (envp == null)
 			envp = new String[0];
 
-		Thread reaper = new Reaper(cmdarray, envp, dirpath);
+		Reaper reaper = new Reaper(cmdarray, envp, dirpath);
 		reaper.setDaemon(true);
 		reaper.start();
 
@@ -212,7 +212,7 @@ public class Spawner extends Process {
 
 		// Check for errors.
 		if (pid == -1) {
-			throw new IOException("Exec error");
+			throw new IOException("Exec error:" + reaper.getErrorMessage()); //$NON-NLS-1$
 		}
 		in = new SpawnerInputStream(channels[1]);
 		err = new SpawnerInputStream(channels[2]);
@@ -229,17 +229,17 @@ public class Spawner extends Process {
 			envp = new String[0];
 		pid = exec1(cmdarray, envp, dirpath);
 		if (pid == -1) {
-			throw new IOException("Exec error");
+			throw new IOException("Exec error"); //$NON-NLS-1$
 		}
 	}
 
-	native int exec0( String[] cmdarray, String[] envp, String dir, int[] chan);
-	native int exec1( String[] cmdarray, String[] envp, String dir);
+	native int exec0( String[] cmdarray, String[] envp, String dir, int[] chan) throws IOException;
+	native int exec1( String[] cmdarray, String[] envp, String dir) throws IOException;
 	native int raise(int pid, int sig);
 	native int waitFor(int pid);
 
 	static {
-		System.loadLibrary("spawner");
+		System.loadLibrary("spawner"); //$NON-NLS-1$
 	}
 
 	// Spawn a thread to handle the forking and waiting
@@ -250,26 +250,41 @@ public class Spawner extends Process {
 		String[] cmdarray;
 		String[] envp;
 		String dirpath;
+		String errMesg;
+
 		public Reaper(String[] array, String[] env, String dir) {
-			super("Spawner Reaper");
+			super("Spawner Reaper"); //$NON-NLS-1$
 			cmdarray = array;
 			envp = env;
 			dirpath = dir;
+			errMesg = new String();
 		}
 
 		public void run() {
-			pid = exec0(cmdarray, envp, dirpath, channels);
+			try {
+				pid = exec0(cmdarray, envp, dirpath, channels);
+			} catch (IOException e) {
+				pid = -1;
+				errMesg = e.getMessage();
+			}
+
 			// Tell spawner that the process started.
 			synchronized (Spawner.this) {
 				Spawner.this.notifyAll();
 			}
 
-			// Sync with spawner and notify when done.
-			status = waitFor(pid);
-			synchronized (Spawner.this) {
-				isDone = true;
-				Spawner.this.notifyAll();
+			if (pid != -1) {
+				// Sync with spawner and notify when done.
+				status = waitFor(pid);
+				synchronized (Spawner.this) {
+					isDone = true;
+					Spawner.this.notifyAll();
+				}
 			}
+		}
+
+		public String getErrorMessage() {
+			return errMesg;
 		}
 	}
 }

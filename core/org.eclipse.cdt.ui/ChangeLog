@@ -18,8 +18,6 @@
 	Fix for  Bug 66273 - Opening declaration causes stack overflow
 	
 	* src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
-	
-ChangeLog
 
 2004-06-08 Tanya Wolff
 	Fix for Bug 63467 - choice format for displaying plural

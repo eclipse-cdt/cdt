@@ -5883,48 +5883,50 @@ public class Parser implements IParserData, IParser
 				cleanupLastToken();
 				return;
 			case IToken.t_if :
-				consume(IToken.t_if);
-				consume(IToken.tLPAREN);
-				IToken start = LA(1);
-				boolean passedCondition = true;
-				try {
-					condition(scope);
-					consume(IToken.tRPAREN);
-				} catch (BacktrackException b) {
-				    //if the problem has no offset info, make a new one that does
-				    if( b.getProblem() != null && b.getProblem().getSourceLineNumber() == -1 ){
-				        IProblem p = b.getProblem();
-				        IProblem p2 = problemFactory.createProblem( p.getID(), start.getOffset(), 
-                                		   lastToken != null ? lastToken.getEndOffset() : start.getEndOffset(), 
-		                                   start.getLineNumber(), p.getOriginatingFileName(),
-		                                   p.getArguments() != null ? p.getArguments().toCharArray() : null,
-		                                   p.isWarning(), p.isError() );
-				        b.initialize( p2 );
-				    }
-					failParse(b);
-					failParseWithErrorHandling();
-					passedCondition = false;
-				}
-				
-				if( passedCondition ){
-					if (LT(1) != IToken.tLBRACE)
-						singleStatementScope(scope);
-					else
-						statement(scope);
-				}
-				
-				if (LT(1) == IToken.t_else) {
-					consume(IToken.t_else);
-					if (LT(1) == IToken.t_if) {
-						//an else if, return and get the rest of the else if as
-						// the next statement instead of recursing
-						cleanupLastToken();
-						return;
-					} else if (LT(1) != IToken.tLBRACE)
-						singleStatementScope(scope);
-					else
-						statement(scope);
-				}
+			    if_loop: while( true ){
+					consume(IToken.t_if);
+					consume(IToken.tLPAREN);
+					IToken start = LA(1);
+					boolean passedCondition = true;
+					try {
+						condition(scope);
+						consume(IToken.tRPAREN);
+					} catch (BacktrackException b) {
+					    //if the problem has no offset info, make a new one that does
+					    if( b.getProblem() != null && b.getProblem().getSourceLineNumber() == -1 ){
+					        IProblem p = b.getProblem();
+					        IProblem p2 = problemFactory.createProblem( p.getID(), start.getOffset(), 
+	                                		   lastToken != null ? lastToken.getEndOffset() : start.getEndOffset(), 
+			                                   start.getLineNumber(), p.getOriginatingFileName(),
+			                                   p.getArguments() != null ? p.getArguments().toCharArray() : null,
+			                                   p.isWarning(), p.isError() );
+					        b.initialize( p2 );
+					    }
+						failParse(b);
+						failParseWithErrorHandling();
+						passedCondition = false;
+					}
+					
+					if( passedCondition ){
+						if (LT(1) != IToken.tLBRACE)
+							singleStatementScope(scope);
+						else
+							statement(scope);
+					}
+					
+					if (LT(1) == IToken.t_else) {
+						consume(IToken.t_else);
+						if (LT(1) == IToken.t_if) {
+							//an else if, don't recurse, just loop and do another if
+							cleanupLastToken();
+							continue if_loop;
+						} else if (LT(1) != IToken.tLBRACE)
+							singleStatementScope(scope);
+						else
+							statement(scope);
+					}
+					break if_loop;
+			    }
 				cleanupLastToken();
 				return;
 			case IToken.t_switch :

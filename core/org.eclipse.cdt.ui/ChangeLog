@@ -1,3 +1,6 @@
+2004-04-04 John Camelon
+	Fix https://bugs.eclipse.org/bugs/show_bug.cgi?id=43215
+
 2004-04-02 David Inglis
 
 	Support selection of multiple binary parsers.

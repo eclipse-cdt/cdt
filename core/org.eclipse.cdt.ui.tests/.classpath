@@ -3,19 +3,9 @@
     <classpathentry kind="src" path="src/"/>
     <classpathentry kind="src" path="ui/"/>
     <classpathentry kind="src" path="core/"/>
-    <classpathentry kind="src" path="model/"/>
-    <classpathentry kind="src" path="build/"/>
-    <classpathentry kind="src" path="parser/"/>
-    <classpathentry kind="src" path="failures/"/>
-    <classpathentry kind="src" path="suite/"/>
     <classpathentry kind="src" path="/org.apache.xerces"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
-    <classpathentry kind="src" path="/org.eclipse.cdt.core"/>
-    <classpathentry kind="src" path="/org.eclipse.cdt.core.linux"/>
-    <classpathentry kind="src" path="/org.eclipse.cdt.core.qnx"/>
-    <classpathentry kind="src" path="/org.eclipse.cdt.core.solaris"/>
-    <classpathentry kind="src" path="/org.eclipse.cdt.core.win32"/>
     <classpathentry kind="src" path="/org.eclipse.cdt.ui"/>
     <classpathentry kind="src" path="/org.eclipse.swt"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>

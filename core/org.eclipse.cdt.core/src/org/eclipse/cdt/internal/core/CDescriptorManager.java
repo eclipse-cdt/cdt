@@ -181,7 +181,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 		}
 	}
 
-	public synchronized ICDescriptor getDescriptor(IProject project) throws CoreException {
+	public /*synchronized */ ICDescriptor getDescriptor(IProject project) throws CoreException {
 		CDescriptor descriptor = (CDescriptor) fDescriptorMap.get(project);
 		if (descriptor == null) {
 			descriptor = new CDescriptor(this, project);

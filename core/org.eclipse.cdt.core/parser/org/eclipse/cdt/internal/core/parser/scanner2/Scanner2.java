@@ -661,7 +661,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				
 				case ':':
 					if (pos + 1 < limit) {
-						if (buffer[pos + 1] == ':') {
+						if (buffer[pos + 1] == ':' && getLanguage() == ParserLanguage.CPP ) {
 							++bufferPos[bufferStackPos];
 							return newToken(IToken.tCOLONCOLON );
 						}

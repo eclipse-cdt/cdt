@@ -80,7 +80,7 @@ public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate
 			return;
 		}
 		
-		OpenTypeDialog dialog = new OpenTypeDialog(getShell());
+		OpenTypeInHierarchyDialog dialog = new OpenTypeInHierarchyDialog(getShell());
 		dialog.setElements(elements);
 		int result = dialog.open();
 		if (result != IDialogConstants.OK_ID)

@@ -1,3 +1,13 @@
+2005-02-01 Alain Magloire
+	Code From Chris:
+	PR 83866
+	PR 83868
+	PR 83869
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/OpenTypeHierarchyAction.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/OpentTypeInHierarchyAction.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/OpenTypoeInHierarchDialog.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/TypeHierarchyMessages.properties
+	
 2004-11-24 Chris Wiebe
 
 	fix exception in OpenTypeInHierarchyAction

@@ -59,14 +59,19 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	public ISymbol getSymbol(long addr) {
 		ISymbol[] syms = getSymbols();
 		int insertion = Arrays.binarySearch(syms, new Long(addr));
-		if (insertion > 0) {
+		if (insertion >= 0) {
 			return syms[insertion];
 		}
 		if (insertion == -1) {
 			return null;
 		}
 		insertion = -insertion - 1;
-		return syms[insertion - 1];
+		ISymbol symbol =  syms[insertion - 1];
+		if (addr < (symbol.getAddress() + symbol.getSize())) {
+			return syms[insertion - 1];
+		}
+		return null;
+		
 	}
 
 	/**

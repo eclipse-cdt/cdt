@@ -26,6 +26,7 @@ public class Symbol implements ISymbol {
 	public int startLine;
 	public int endLine;
 	public long addr;
+	public long size;
 	public String name;
 	public int type;
 
@@ -108,6 +109,13 @@ public class Symbol implements ISymbol {
 		return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getSize()
+	 */
+	public long getSize() {
+		return size;
+	}
+	
 	synchronized Addr2line startAddr2Line () {
 		if (addr2line == null) {
 			addr2line = binary.getAddr2Line();

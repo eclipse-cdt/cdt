@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICBreakpoint;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.ICSourceLocator;
+import org.eclipse.cdt.debug.core.ICWatchpoint;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.IRestart;
@@ -44,6 +45,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.internal.core.CSourceLocator;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -544,6 +546,10 @@ public class CDebugTarget extends CDebugElement
 				if ( breakpoint instanceof ICLineBreakpoint )
 				{
 					setLineBreakpoint( (ICLineBreakpoint)breakpoint );
+				}
+				else if ( breakpoint instanceof ICWatchpoint )
+				{
+					setWatchpoint( (ICWatchpoint)breakpoint );
 				}
 			}
 			catch( DebugException e )
@@ -1473,6 +1479,33 @@ public class CDebugTarget extends CDebugElement
 			{
 				getBreakpoints().put( breakpoint, cdiBreakpoint );
 				((CBreakpoint)breakpoint).incrementInstallCount();
+			}
+		}
+		catch( CoreException ce )
+		{
+			requestFailed( "Operation failed. Reason: ", ce );
+		}
+		catch( CDIException e )
+		{
+			requestFailed( "Operation failed. Reason: ", e );
+		}
+	}
+	
+	private void setWatchpoint( ICWatchpoint watchpoint ) throws DebugException
+	{
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		try
+		{
+			ICDICondition condition = bm.createCondition( watchpoint.getIgnoreCount(), watchpoint.getCondition() );
+			int accessType = 0;
+			accessType |= ( watchpoint.isWriteType() ) ? ICDIWatchpoint.WRITE : 0;
+			accessType |= ( watchpoint.isReadType() ) ? ICDIWatchpoint.READ : 0;
+			String expression = watchpoint.getExpression();
+			ICDIWatchpoint cdiWatchpoint = bm.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
+			if ( !getBreakpoints().containsKey( watchpoint ) )
+			{
+				getBreakpoints().put( watchpoint, cdiWatchpoint );
+				((CBreakpoint)watchpoint).incrementInstallCount();
 			}
 		}
 		catch( CoreException ce )

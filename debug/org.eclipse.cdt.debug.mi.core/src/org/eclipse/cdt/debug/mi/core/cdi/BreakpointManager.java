@@ -344,9 +344,10 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 	 */
 	public ICDIWatchpoint setWatchpoint( int type, int watchType, String expression,
 		ICDICondition condition) throws CDIException {
-		boolean access = (type == ICDIWatchpoint.WRITE);
-		boolean read = (type == ICDIWatchpoint.READ);
-
+		boolean access = ( (watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE && 
+						   (watchType & ICDIWatchpoint.READ) == ICDIWatchpoint.READ );
+		boolean read = ( !((watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE) && 
+						  (watchType & ICDIWatchpoint.READ) == ICDIWatchpoint.READ );
 		boolean state = suspendInferior();
 		CSession s = getCSession();
 		CommandFactory factory = s.getMISession().getCommandFactory();

@@ -244,7 +244,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	 */
 	protected ILaunchConfigurationTab getTabForCurrentDebugger() {
 		int selectedIndex = fDlist.getSelectionIndex();
-		if (selectedIndex > 0) {
+		if (selectedIndex >= 0) {
 			ICDebugConfiguration dbgCfg = (ICDebugConfiguration) fDinfo.get(selectedIndex);
 			return CDebugUIPlugin.getDefault().getDebuggerPage(dbgCfg.getID());
 		}

@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -113,7 +112,15 @@ public class AddGlobalsActionDelegate implements IViewActionDelegate,
 	{
 		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
 		{
-			update( getAction(), selection );
+			if ( selection instanceof IStructuredSelection )
+			{
+				setSelection( (IStructuredSelection)selection );
+			}
+			else
+			{
+				setSelection( null );
+			}
+			update( getAction() );
 		}
 	}
 
@@ -133,6 +140,7 @@ public class AddGlobalsActionDelegate implements IViewActionDelegate,
 											 try 
 											 {
 												 doAction( selection.getFirstElement() );
+												 setStatus( null );
 											 } 
 											 catch( DebugException e ) 
 											 {
@@ -162,22 +170,19 @@ public class AddGlobalsActionDelegate implements IViewActionDelegate,
 		setAction( action );
 		if ( getView() != null )
 		{
-			update( action, selection );
+			update( action );
 		}
 	}
 
-	protected void update( IAction action, ISelection s )
+	protected void update( IAction action )
 	{
-		if ( action != null && s instanceof IStructuredSelection )
+		if ( action != null )
 		{
-			IStructuredSelection ss = (IStructuredSelection)s;
-			action.setEnabled( getEnableStateForSelection( ss ) );
-			setSelection( ss );
+			action.setEnabled( getEnableStateForSelection( getSelection() ) );
 		}
 		else
 		{
 			action.setEnabled( false );
-			setSelection( StructuredSelection.EMPTY );
 		}
 	}
 
@@ -261,7 +266,7 @@ public class AddGlobalsActionDelegate implements IViewActionDelegate,
 
 	protected boolean getEnableStateForSelection( IStructuredSelection selection )
 	{
-		if ( selection.size() != 1 )
+		if ( selection == null || selection.size() != 1 )
 		{
 			return false;
 		}

@@ -1,3 +1,9 @@
+2002-11-18 Mikhail Khodjaiants
+	Fixes for the 'Add Global Variables' action's bugs.
+	The action disabled after 'Remove All'.
+	Error message after adding a valid expression. 
+	* AddGlobalsActionDelegate.java
+
 2002-11-15 Mikhail Khodjaiants
 	Added presentation for dummy stack frames.
 	* CDTDebugModelPresentation.java

@@ -96,13 +96,21 @@ public class CDIDebugModel {
 	 *            returned from <code>IDebugTarget.getProcess</code>
 	 * @param file
 	 *            the executable to debug.
+	 * @param allowTerminate
+	 *            allow terminate().
+	 * @param allowDisconnect
+	 *            allow disconnect().
+	 * @param stopInMain
+	 *            place temporary breakpoint at main()
+	 * @param resumeTarget
+	 *            resume target.
 	 * @return a debug target
 	 * @throws DebugException
 	 *  
 	 */
 	public static IDebugTarget newDebugTarget(final ILaunch launch, final IProject project, final ICDITarget cdiTarget,
 			final String name, final IProcess debuggeeProcess, final IBinaryExecutable file, final boolean allowTerminate,
-			final boolean allowDisconnect, final boolean stopInMain) throws DebugException {
+			final boolean allowDisconnect, final boolean stopInMain, final boolean resumeTarget) throws DebugException {
 		final IDebugTarget[] target = new IDebugTarget[1];
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
 
@@ -116,7 +124,7 @@ public class CDIDebugModel {
 				if (config.supportsBreakpoints() && stopInMain) {
 					stopInMain((CDebugTarget)target[0]);
 				}
-				if (config.supportsResume()) {
+				if (config.supportsResume() && resumeTarget) {
 					target[0].resume();
 				}
 			}
@@ -130,10 +138,39 @@ public class CDIDebugModel {
 		return target[0];
 	}
 
+	/**
+	 * Creates and returns a debug target for the given CDI target, with the
+	 * specified name, and associates it with the given process for console I/O.
+	 * The debug target is added to the given launch.
+	 * 
+	 * @param launch
+	 *            the launch the new debug target will be contained in
+	 * @param project
+	 *            the project to use to persist breakpoints.
+	 * @param cdiTarget
+	 *            the CDI target to create a debug target for
+	 * @param name
+	 *            the name to associate with this target, which will be returned
+	 *            from <code>IDebugTarget.getName</code>.
+	 * @param debuggeeProcess
+	 *            the process to associate with the debug target, which will be
+	 *            returned from <code>IDebugTarget.getProcess</code>
+	 * @param file
+	 *            the executable to debug.
+	 * @param allowTerminate
+	 *            allow terminate().
+	 * @param allowDisconnect
+	 *            allow disconnect().
+	 * @param resumeTarget
+	 *            resume target.
+	 * @return a debug target
+	 * @throws DebugException
+	 *  
+	 */
 	public static IDebugTarget newDebugTarget(ILaunch launch, IProject project, ICDITarget cdiTarget, final String name,
-			IProcess debuggeeProcess, IBinaryExecutable file, boolean allowTerminate, boolean allowDisconnect)
+			IProcess debuggeeProcess, IBinaryExecutable file, boolean allowTerminate, boolean allowDisconnect, boolean resumeTarget)
 			throws DebugException {
-		return newDebugTarget(launch, project, cdiTarget, name, debuggeeProcess, file, allowTerminate, allowDisconnect, false);
+		return newDebugTarget(launch, project, cdiTarget, name, debuggeeProcess, file, allowTerminate, allowDisconnect, false, resumeTarget);
 	}
 
 	/**
@@ -531,7 +568,7 @@ public class CDIDebugModel {
 			throws CoreException {
 		IBinaryExecutable exeFile = getBinary(file);
 		return newDebugTarget(launch, file.getProject(), target, name, iprocess, exeFile, allowTerminate, allowDisconnect,
-								stopInMain);
+								stopInMain, true);
 	}
 
 	/**
@@ -546,7 +583,7 @@ public class CDIDebugModel {
 	public static IDebugTarget newAttachDebugTarget(ILaunch launch, ICDITarget target, String name, IProcess debuggerProcess,
 			IFile file) throws CoreException {
 		IBinaryExecutable exeFile = getBinary(file);
-		return newDebugTarget(launch, file.getProject(), target, name, null, exeFile, false, true);
+		return newDebugTarget(launch, file.getProject(), target, name, null, exeFile, true, true, false);
 	}
 
 	/**
@@ -561,7 +598,7 @@ public class CDIDebugModel {
 	public static IDebugTarget newCoreFileDebugTarget(final ILaunch launch, final ICDITarget target, final String name,
 			final IProcess debuggerProcess, final IFile file) throws CoreException {
 		IBinaryExecutable exeFile = getBinary(file);
-		return newDebugTarget(launch, file.getProject(), target, name, null, exeFile, false, false);
+		return newDebugTarget(launch, file.getProject(), target, name, null, exeFile, true, false, false);
 	}
 
 	private static IBinaryExecutable getBinary(IFile file) throws CoreException {

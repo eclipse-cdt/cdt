@@ -1,3 +1,7 @@
+2002-11-27 Mikhail Khodjaiants
+	Render debug target as suspended if no reason is specified.
+	* CDTDebugModelPresentation.java
+
 2002-11-26 Mikhail Khodjaiants
 	Fix for evaluation of expression to address in the Memory view.
 	GDB evaluates the array of chars to a string not an address. 

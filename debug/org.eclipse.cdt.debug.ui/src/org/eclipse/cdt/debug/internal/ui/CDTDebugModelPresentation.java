@@ -362,6 +362,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 					{
 						return target.getName() + " (Breakpoint hit)";
 					}
+					if ( info == null )
+					{
+						return target.getName() + " (Suspended)";
+					}
 				}
 			}
 		}

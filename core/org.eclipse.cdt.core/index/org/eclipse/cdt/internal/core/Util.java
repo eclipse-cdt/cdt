@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -371,7 +371,31 @@ public class Util {
 	 * @return
 	 */
 	public static boolean isCCFileName(String fileName) {
-		return CoreModel.isValidTranslationUnitName(fileName);
+		String[] sourceExtensions = CModelManager.sourceExtensions;
+		String[] headerExtensions = CModelManager.headerExtensions;
+		
+		int dot =fileName.lastIndexOf("."); //$NON-NLS-1$
+		
+		//No extension, give benefit of doubt
+		if (dot == -1)
+		 return true;
+		 
+	    //Extract extension
+		String extension = ""; //$NON-NLS-1$
+	    if (dot + 1 <= fileName.length())
+	    	extension = fileName.substring(dot + 1);
+	    
+	    for (int i=0; i<sourceExtensions.length; i++){	
+	    	if (sourceExtensions[i].equals(extension))
+	    	  return true; 
+	    }
+	    
+	    for (int i=0; i<headerExtensions.length; i++){
+			if (headerExtensions[i].equals(extension))
+			 return true; 
+	    }
+	    
+		return false;
 	}	
 		
 }

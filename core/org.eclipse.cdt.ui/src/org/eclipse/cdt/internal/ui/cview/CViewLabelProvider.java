@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /*
  * CViewLabelProvider 

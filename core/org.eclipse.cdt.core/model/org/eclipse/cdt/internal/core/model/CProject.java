@@ -366,21 +366,21 @@ public class CProject extends Openable implements ICProject {
 	 * @see org.eclipse.cdt.core.model.ICProject#getResolvedCPathEntries()
 	 */
 	public IPathEntry[] getResolvedPathEntries() throws CModelException {
-		return CoreModel.getDefault().getResolvedPathEntries(this);
+		return CoreModel.getResolvedPathEntries(this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICProject#getRawCPathEntries()
 	 */
 	public IPathEntry[] getRawPathEntries() throws CModelException {
-		return CoreModel.getDefault().getRawPathEntries(this);
+		return CoreModel.getRawPathEntries(this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICProject#setRawCPathEntries(org.eclipse.cdt.core.model.IPathEntry[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void setRawPathEntries(IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
-		CoreModel.getDefault().setRawPathEntries(this, newEntries, monitor);
+		CoreModel.setRawPathEntries(this, newEntries, monitor);
 	}
 
 	/* (non-Javadoc)

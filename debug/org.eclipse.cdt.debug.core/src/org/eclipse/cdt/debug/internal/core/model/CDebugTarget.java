@@ -214,9 +214,8 @@ public class CDebugTarget extends CDebugElement
 		setCDITarget( cdiTarget );
 		setBreakpoints( new HashMap( 5 ) );
 		setTemporaryBreakpoints( new ArrayList() );
-// Temporary
-		getLaunch().setSourceLocator( createSourceLocator( project ) );
-
+		if ( getLaunch().getSourceLocator() == null )
+			getLaunch().setSourceLocator( createSourceLocator( project ) );
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
 		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
 		fSupportsDisconnect = allowsDisconnect & getConfiguration().supportsDisconnect();

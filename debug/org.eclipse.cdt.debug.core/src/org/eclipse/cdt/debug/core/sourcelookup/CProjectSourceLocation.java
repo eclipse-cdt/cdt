@@ -127,7 +127,8 @@ public class CProjectSourceLocation implements ICSourceLocation
 
 	private Object findFileByRelativePath( String fileName )
 	{
-		return getProject().getFile( fileName );
+		IPath path = getProject().getLocation().append( fileName );
+		return getProject().findMember( path );
 	}
 
 	/**

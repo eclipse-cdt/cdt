@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 
 /**
@@ -28,7 +30,7 @@ import org.eclipse.debug.core.model.IStackFrame;
  * 
  * @since Aug 19, 2002
  */
-public class CSourceLocator implements ICSourceLocator
+public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocator
 {
 	/**
 	 * The array of source locations associated with this locator.
@@ -41,6 +43,14 @@ public class CSourceLocator implements ICSourceLocator
 	private int fMode = ICSourceLocator.MODE_SOURCE;
 
 	private int fInternalMode = MODE_SOURCE;
+
+	/**
+	 * Constructor for CSourceLocator.
+	 */
+	public CSourceLocator()
+	{
+		setSourceLocations( new ICSourceLocation[0] );
+	}
 
 	/**
 	 * Constructor for CSourceLocator.
@@ -281,5 +291,27 @@ public class CSourceLocator implements ICSourceLocator
 			}
 		}
 		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
+	 */
+	public String getMemento() throws CoreException
+	{
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(ILaunchConfiguration)
+	 */
+	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException
+	{
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(String)
+	 */
+	public void initializeFromMemento( String memento ) throws CoreException
+	{
 	}
 }

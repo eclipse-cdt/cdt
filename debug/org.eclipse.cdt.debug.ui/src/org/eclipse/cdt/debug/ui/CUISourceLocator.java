@@ -46,7 +46,7 @@ public class CUISourceLocator implements IPersistableSourceLocator
 	/**
 	 * The project being debugged.
 	 */
-	private IProject fProject; 
+	private IProject fProject = null; 
 	
 	/**
 	 * Underlying source locator.
@@ -59,6 +59,16 @@ public class CUISourceLocator implements IPersistableSourceLocator
 	 * ask again' box.
 	 */
 	private boolean fAllowedToAsk;
+
+
+	/**
+	 * Constructor for CUISourceLocator.
+	 */
+	public CUISourceLocator()
+	{
+		fSourceLocator = new CSourceLocator();
+		fAllowedToAsk = true;
+	}
 
 	/**
 	 * Constructor for CUISourceLocator.
@@ -75,7 +85,7 @@ public class CUISourceLocator implements IPersistableSourceLocator
 	 */
 	public String getMemento() throws CoreException
 	{
-		return null;
+		return fSourceLocator.getMemento();
 	}
 
 	/* (non-Javadoc)
@@ -83,6 +93,7 @@ public class CUISourceLocator implements IPersistableSourceLocator
 	 */
 	public void initializeFromMemento( String memento ) throws CoreException
 	{
+		fSourceLocator.initializeFromMemento( memento );
 	}
 
 	/* (non-Javadoc)
@@ -90,6 +101,7 @@ public class CUISourceLocator implements IPersistableSourceLocator
 	 */
 	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException
 	{
+		fSourceLocator.initializeDefaults( configuration );
 	}
 
 	/* (non-Javadoc)

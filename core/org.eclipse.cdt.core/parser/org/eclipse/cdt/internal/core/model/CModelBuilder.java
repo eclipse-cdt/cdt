@@ -202,24 +202,18 @@ public class CModelBuilder {
 
 	}
 		
-	protected void createElement(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator){
-        ParameterDeclarationClause pdc = declarator.getParms();
+	protected void createElement(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator)
+    {
 		// typedef
 		if(simpleDeclaration.getDeclSpecifier().isTypedef()){
-			createTypeDef(parent, declarator, simpleDeclaration, pdc);
+			createTypeDef(parent, declarator, simpleDeclaration);
 		} else {
-			// variable or field
-			if (pdc == null){	
+			if (isFunctionSpecification(declarator)) {
+                // function or method 
+                createFunctionSpecification(parent, simpleDeclaration, declarator, false);
+            } else {
+                // variable or field	
 				createVariableSpecification(parent, simpleDeclaration, declarator, false); 
-			}
-			else{
-				// pointer to function 
-				if(declarator.getDeclarator() != null){
-					createPointerToFunction(parent, simpleDeclaration, declarator, pdc, false);				
-				}else {
-				// function or method 
-					createFunctionSpecification(parent, simpleDeclaration, declarator, pdc, false);
-				}
 			}
 		}				
 	}
@@ -232,7 +226,7 @@ public class CModelBuilder {
 		}
 		else{
 			// template of function or method
-			template = (ITemplate) createFunctionSpecification(parent, simpleDeclaration, declarator, pdc, true);
+			template = (ITemplate) createFunctionSpecification(parent, simpleDeclaration, declarator, true);
 		}
 
 		if(template != null){
@@ -400,39 +394,19 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	protected TypeDef createTypeDef(Parent parent, Declarator declarator, SimpleDeclaration simpleDeclaration, ParameterDeclarationClause pdc){
+	protected TypeDef createTypeDef(Parent parent, Declarator declarator, SimpleDeclaration simpleDeclaration){
 		// create the element
-		Name domName = ( declarator.getDeclarator() != null ) ? declarator.getDeclarator().getName() : 
-			declarator.getName(); 
+		Name domName = getDOMName(declarator);
+        if (domName == null) {
+            // Something is wrong, skip this element
+            return null;             
+        }
+        
 		String declaratorName = domName.toString();
         
         TypeDef element = new TypeDef( parent, declaratorName );
-        StringBuffer typeName = new StringBuffer(getType(simpleDeclaration, declarator));
-	
-        if (pdc != null) {
-            // getParameterTypes
-            List parameterList = pdc.getDeclarations();
-            String[] parameterTypes = new String[parameterList.size()];
-
-            for (int j = 0; j < parameterList.size(); ++j) {
-                ParameterDeclaration param = (ParameterDeclaration) parameterList.get(j);
-                parameterTypes[j] = new String(getType(param, (Declarator) param.getDeclarators().get(0)));
-            }
-
-            if (parameterTypes.length > 0) {
-                typeName.append("(");
-                int i = 0;
-                typeName.append(parameterTypes[i++]);
-                while (i < parameterTypes.length) {
-                    typeName.append(", ");
-                    typeName.append(parameterTypes[i++]);
-                }
-                typeName.append(")");
-            } else {
-                typeName.append("()");
-            }
-        }
         
+        StringBuffer typeName = new StringBuffer(getType(simpleDeclaration, declarator));
 		element.setTypeName(typeName.toString());
 		
 		// add to parent
@@ -448,11 +422,9 @@ public class CModelBuilder {
 		return element;	
 	}
 
-	protected VariableDeclaration createVariableSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, boolean isTemplate){
-		Name domName = ( declarator.getDeclarator() != null ) ? 
-			declarator.getDeclarator().getName() : 
-			declarator.getName(); 
-
+	protected VariableDeclaration createVariableSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, boolean isTemplate)
+    {
+		Name domName = getDOMName(declarator); 
 		if (domName == null) {
 			// TODO : improve errorhandling
 			// When parsing syntactically incorrect code, we might
@@ -519,22 +491,21 @@ public class CModelBuilder {
 		return element;
 	}
 
-	protected FunctionDeclaration createFunctionSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, ParameterDeclarationClause pdc, boolean isTemplate){
-		Name domName = ( declarator.getDeclarator() != null ) ? 
-			declarator.getDeclarator().getName() : 
-			declarator.getName(); 
+	protected FunctionDeclaration createFunctionSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, boolean isTemplate)
+    {
+		Name domName = getDOMName(declarator);
+        if (domName == null) {
+            // Something is wrong, skip this element
+            return null;             
+        } 
 
 		String declaratorName = domName.toString();
 		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
-		// getParameterTypes
-		List parameterList = pdc.getDeclarations();
-		String[] parameterTypes = new String[parameterList.size()];
+		
+		// get parameters types
+		String[] parameterTypes = getFunctionParameterTypes(declarator);
+		
 		FunctionDeclaration element = null;
-		for( int j = 0; j< parameterList.size(); ++j )
-		{
-			ParameterDeclaration param = (ParameterDeclaration )parameterList.get(j);
-			parameterTypes[j] = new String(getType(param, (Declarator)param.getDeclarators().get(0)));
-		}
 		
 		if( parent instanceof IStructure )
 		{
@@ -597,7 +568,7 @@ public class CModelBuilder {
 			}
 		}						
 		element.setParameterTypes(parameterTypes);
-		element.setReturnType( getType(simpleDeclaration, declarator) );
+		element.setReturnType( getFunctionReturnType(simpleDeclaration, declarator) );
 		element.setVolatile(declSpecifier.isVolatile());
 		element.setStatic(declSpecifier.isStatic());
 		element.setConst(declarator.isConst());				
@@ -618,60 +589,6 @@ public class CModelBuilder {
 		return element;
 	}
 
-	protected VariableDeclaration createPointerToFunction(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, ParameterDeclarationClause pdc, boolean isTemplate){
-		String declaratorName = declarator.getDeclarator().getName().toString();
-		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
-		// getParameterTypes
-		List parameterList = pdc.getDeclarations();
-		String[] parameterTypes = new String[parameterList.size()];
-		VariableDeclaration element = null;
-		for( int j = 0; j< parameterList.size(); ++j )
-		{
-			ParameterDeclaration param = (ParameterDeclaration )parameterList.get(j);
-			parameterTypes[j] = new String(getType(param, (Declarator)param.getDeclarators().get(0)));
-		}
-		if(( parent instanceof ITranslationUnit ) 
-			|| ( parent instanceof INamespace ))
-		{		
-			element = new VariableDeclaration(parent, declaratorName);
-		} else if( parent instanceof IStructure){
-			Field newElement = new Field(parent, declaratorName);
-			newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
-			element = newElement;
-		}
-							
-		StringBuffer typeName = new StringBuffer();
-		typeName.append(getType(simpleDeclaration, declarator));
-		if(parameterTypes.length > 0){
-			typeName.append("(");
-			int i = 0;
-			typeName.append(parameterTypes[i++]);
-			while (i < parameterTypes.length){
-				typeName.append(", ");
-				typeName.append(parameterTypes[i++]);
-			}
-			typeName.append(")");
-		}
-		else{
-			typeName.append("()");
-		}
-		element.setTypeName( typeName.toString() );
-		element.setVolatile(declSpecifier.isVolatile());
-		element.setStatic(declSpecifier.isStatic());
-		element.setConst(declarator.isConst());				
-
-		// add to parent
-		parent.addChild( element ); 	
-
-		// hook up the offsets
-		element.setIdPos( declarator.getDeclarator().getName().getStartOffset(), declarator.getDeclarator().getName().length() );
-		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
-		// set the element lines
-		element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
-
-		this.newElements.put(element, element.getElementInfo());
-		return element;
-	}	
 	
 	private String[] getTemplateParameters(ITemplateParameterListOwner templateDeclaration){
 		// add the parameters
@@ -720,33 +637,140 @@ public class CModelBuilder {
 		return parameterTypes;		
 	}
 	
-	private String getType(Declaration declaration, Declarator declarator){
+	private String getType(Declaration declaration, Declarator declarator)
+	{
 		StringBuffer type = new StringBuffer();
+			
 		// get type from declaration
 		type.append(getDeclarationType(declaration));
+		
+		type.append(getSubType(declarator, new SubTypeProcessingFlags(false)));
+		
+		return type.toString();
+	}
+	
+	private String getFunctionReturnType(Declaration declaration, Declarator declarator)
+	{
+		StringBuffer type = new StringBuffer();
+		
+		// get type from declaration
+		type.append(getDeclarationType(declaration));
+	
+		type.append(getSubType(declarator, new SubTypeProcessingFlags(true)));
+	
+		return type.toString();
+	}
+    
+    private class SubTypeProcessingFlags {
+        boolean returnTypeForFunction = false;
+        boolean processedInnermostParameterList = false;
+        
+        SubTypeProcessingFlags(boolean returnTypeForFunction) {
+            this.returnTypeForFunction = returnTypeForFunction;
+        }
+    }
+	
+	private String getSubType(Declarator declarator, SubTypeProcessingFlags flags) {
+		StringBuffer type = new StringBuffer();
+						
 		// add pointer or reference from declarator if any
-        String declaratorPointerOperation = getDeclaratorPointerOperation(declarator);
-        try  {
-            switch (declaratorPointerOperation.charAt(0)) {
-                case '*':
-                case '&':
-                    break; // pointer/reference
-                default:
-                    type.append(" "); // pointer to member
-            }
-        } catch (Exception e) {} // Empty/null strings
+		String declaratorPointerOperation = getDeclaratorPointerOperation(declarator);
+		try  {
+			switch (declaratorPointerOperation.charAt(0)) {
+				case '*':
+				case '&':
+					break; // pointer/reference
+				default:
+					type.append(" "); // pointer to member
+			}
+		} catch (Exception e) {} // Empty/null strings
 		type.append(declaratorPointerOperation);
-		if(declarator.getDeclarator() != null){
-			// pointer to function or array of functions
-			type.append("(");
-			// add pointer or reference from declarator if any
-			type.append(getDeclaratorPointerOperation(declarator.getDeclarator()));
-			type.append(")");
+        
+        String subType = null;
+						
+		if (declarator.getDeclarator() != null){
+			// process inner declarator
+			subType = getSubType(declarator.getDeclarator(), flags);
+			boolean appendParen = true;
+			
+			if (  (subType == null) || (subType.length() == 0)
+			    ||
+			    	((subType.charAt(0) == '(') 
+			      && 
+			        (subType.charAt(subType.length()-1) == ')'))) {
+			        	
+			        		// Additional () are not necessary
+			        		appendParen = false;
+	        }
+			
+			if (appendParen) type.append("(");
+			type.append(subType);
+			if (appendParen) type.append(")");
+		}			
+			
+		// parameters
+		if (declarator.getParms() != null) { 
+            // If we process return type for a function,
+            // skip innermost parameter list - it is a part
+            // of function's signature
+            if ( !flags.returnTypeForFunction 
+               || flags.processedInnermostParameterList) {
+                   
+                   if ((subType == null) || (subType.length() == 0)) {
+                       type.append("()");
+                   }
+
+                   type.append(getParametersString(declarator));
+            }
+            flags.processedInnermostParameterList = true;
 		}
+				 
 		// arrays
 		type.append(getDeclaratorArrayQualifiers(declarator));
-		return type.toString();		
+			
+		return type.toString();
 	}
+    
+    
+    /**
+     *  Here is a tricky one. Determines if a declarator represents a function
+     * specification, or a variable declaration (that includes pointers to functions).
+     * If none of the nested declarators contain parameter list, then it is obviously a variable.
+     * It is a function specification only if no declarators in (A..B] range
+     * contain any pointer/array specificators. A is the declarator containing 
+     * the innermost parameter list (which corresponds to parameters of the function),
+     * and B is the innermost declarator (should contain the name of the element).
+     * 
+     * @param declarator
+     * @return True, if the declarator represents a function specification
+     */
+    
+    private boolean isFunctionSpecification(Declarator declarator)
+    {
+        Declarator currentDeclarator = declarator;
+        boolean result = false;
+        
+        while (currentDeclarator != null) {
+            if (currentDeclarator.getParms() != null) {
+                result = true;
+            } else {          
+                List ptrOps = currentDeclarator.getPointerOperators();
+                List arrayQs = currentDeclarator.getArrayQualifiers();
+                
+                if (    ((ptrOps != null) && (ptrOps.size() > 0)) 
+                     || ((arrayQs != null) && (arrayQs.size() > 0)) 
+                   )  
+                   {
+                    result = false;
+                } 
+            }
+            
+            currentDeclarator = currentDeclarator.getDeclarator();
+        }
+        
+        return result;
+    }
+
 	
 	private String getDeclarationType(Declaration declaration){
 		StringBuffer type = new StringBuffer();
@@ -847,4 +871,83 @@ public class CModelBuilder {
 		}
 		return arrayString.toString();
 	}
+	
+	
+	private String[] getParameterTypes(Declarator declarator) 
+	{	
+		if (declarator == null) return null;
+		
+		ParameterDeclarationClause pdc = declarator.getParms();
+		String[] parameterTypes = null;
+		
+		if (pdc != null) {
+			List parameterList = pdc.getDeclarations();
+			parameterTypes = new String[parameterList.size()];
+
+			for (int j = 0; j < parameterList.size(); ++j) {
+				ParameterDeclaration param = (ParameterDeclaration) parameterList.get(j);
+				parameterTypes[j] =	getType(param, (Declarator) param.getDeclarators().get(0));
+			}
+		}
+		
+		return parameterTypes;
+	}
+    
+    private String[] getFunctionParameterTypes(Declarator declarator)
+    {
+        Declarator currentDeclarator = declarator;
+        Declarator innermostPDCDeclarator = null;
+
+        while (currentDeclarator != null) {
+            if (currentDeclarator.getParms() != null) {
+                innermostPDCDeclarator = currentDeclarator;
+            }
+            currentDeclarator = currentDeclarator.getDeclarator();
+        }
+
+        return getParameterTypes(innermostPDCDeclarator);
+    }
+	
+	private String getParametersString(String[] parameterTypes) 
+	{
+		StringBuffer parameters = new StringBuffer("");
+		
+		if ((parameterTypes != null) && (parameterTypes.length > 0)) {
+			parameters.append("(");
+			int i = 0;
+			parameters.append(parameterTypes[i++]);
+			while (i < parameterTypes.length) {
+				parameters.append(", ");
+				parameters.append(parameterTypes[i++]);
+			}
+			parameters.append(")");
+		} else {
+			if (parameterTypes != null) parameters.append("()");
+		}
+		
+		return parameters.toString();
+	}
+	
+	private String getParametersString(Declarator declarator) 
+	{
+		return getParametersString(getParameterTypes(declarator));
+	}
+    
+    private Name getDOMName(Declarator declarator) 
+    {
+        Declarator currentDeclarator = declarator;
+        Name name = null;
+        
+        if (currentDeclarator != null) {
+            while (currentDeclarator.getDeclarator() != null) {
+                currentDeclarator = currentDeclarator.getDeclarator();
+            }
+        }
+        // The innermost declarator must contain the name
+        if (currentDeclarator != null) {
+               name = currentDeclarator.getName();
+        }
+        
+        return name;
+    }
 }

@@ -8,6 +8,10 @@
 	Added class AISResultPrinter to format test results.  
 	Class AutomatedIntegrationSuite now implements IPlatformRunnable.
 
+2003-06-17 Victor Mozgin
+	Added DeclaratorsTests.java (invocation in AllCoreTests).
+	Added DeclaratorsTests.cpp to org.eclipse.cdt.core.model.tests.resources.
+
 2003-06-14 Victor Mozgin
 	Moved testBugSingleton192() from LokiFailures to DOMTests.
 	Added testPointersToMembers() and testPointersToMemberFunctions() to DOMTests.

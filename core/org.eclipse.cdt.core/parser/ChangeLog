@@ -1,3 +1,8 @@
+2003-06-17 Victor Mozgin
+	Implemented correct handling of nested declarators in CModelBuilder.
+	Added proper support for function pointers as parameters.
+	This fixes PR 38921 and 39002.
+
 2003-06-14 Victor Mozgin
 	Fixed handling of parameter lists for typedefs for functions.
 	More errorhandling in CModelBuilder.

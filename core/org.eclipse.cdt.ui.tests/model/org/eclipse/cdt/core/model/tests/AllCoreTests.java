@@ -35,6 +35,7 @@ public class AllCoreTests {
         suite.addTest(FlagTests.suite());
         suite.addTest(ArchiveTests.suite());
         suite.addTest(TranslationUnitTests.suite());
+        suite.addTest(DeclaratorsTests.suite());
 		
         return suite;
         

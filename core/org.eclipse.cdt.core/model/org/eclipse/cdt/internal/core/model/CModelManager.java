@@ -461,7 +461,7 @@ public class CModelManager implements IResourceChangeListener {
 	public boolean isSharedLib(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
-			IBinaryFile bin = parser.getBinary(file);
+			IBinaryFile bin = parser.getBinary(file.getLocation());
 			return (bin.getType() == IBinaryFile.SHARED);
 		} catch (IOException e) {
 			//e.printStackTrace();
@@ -472,7 +472,7 @@ public class CModelManager implements IResourceChangeListener {
 	public boolean isObject(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
-			IBinaryFile bin = parser.getBinary(file);
+			IBinaryFile bin = parser.getBinary(file.getLocation());
 			return (bin.getType() == IBinaryFile.OBJECT);
 		} catch (IOException e) {
 			//e.printStackTrace();
@@ -483,7 +483,7 @@ public class CModelManager implements IResourceChangeListener {
 	public boolean isExecutable(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
-			IBinaryFile bin = parser.getBinary(file);
+			IBinaryFile bin = parser.getBinary(file.getLocation());
 			return (bin.getType() == IBinaryFile.EXECUTABLE);
 		} catch (IOException e) {
 			//e.printStackTrace();
@@ -494,7 +494,7 @@ public class CModelManager implements IResourceChangeListener {
 	public boolean isBinary(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
-			IBinaryFile bin = parser.getBinary(file);
+			IBinaryFile bin = parser.getBinary(file.getLocation());
 			return (bin.getType() == IBinaryFile.EXECUTABLE
 				|| bin.getType() == IBinaryFile.OBJECT
 				|| bin.getType() == IBinaryFile.SHARED
@@ -508,7 +508,7 @@ public class CModelManager implements IResourceChangeListener {
 	public boolean isArchive(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
-			IBinaryFile bin = parser.getBinary(file);
+			IBinaryFile bin = parser.getBinary(file.getLocation());
 			return (bin.getType() == IBinaryFile.ARCHIVE);
 		} catch (IOException e) {
 			//e.printStackTrace();

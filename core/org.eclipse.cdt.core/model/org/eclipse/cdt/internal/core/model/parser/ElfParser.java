@@ -10,7 +10,7 @@ import java.io.IOException;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 
 /**
  */
@@ -19,17 +19,17 @@ public class ElfParser implements IBinaryParser {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IPath)
 	 */
-	public IBinaryFile getBinary(IFile file) throws IOException {
+	public IBinaryFile getBinary(IPath path) throws IOException {
 		try {
-			Elf e = new Elf(file.getLocation().toOSString());
+			Elf e = new Elf(path.toOSString());
 			e.dispose();
-			return new ElfBinaryFile(file);
+			return new ElfBinaryFile(path);
 		} catch (IOException e) {
 		}
 		// Is it an Archive.
-		AR ar = new AR(file.getLocation().toOSString()); 
+		AR ar = new AR(path.toOSString()); 
 		ar.dispose();
-		return new ElfBinaryArchive(file);
+		return new ElfBinaryArchive(path);
 	}
 
 	/**

@@ -4,8 +4,9 @@ package org.eclipse.cdt.internal.core.model.parser;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- 
+
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -20,33 +21,28 @@ import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
 import org.eclipse.cdt.utils.elf.ElfHelper.Sizes;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
  */
-public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
-	IBinaryObject, IBinaryExecutable, IBinaryShared {
-
-	IFile file;
-	String objectName;
+public class ElfBinaryFile extends PlatformObject implements IBinaryFile, IBinaryObject, IBinaryExecutable, IBinaryShared {
+	IPath path;
+	AR.ARHeader header;
 	long timestamp;
 	String soname;
 	String[] needed;
 	Sizes sizes;
 	Attribute attribute;
 	ArrayList symbols;
-	
-	public ElfBinaryFile(IFile f) throws IOException {
-		this(f, null);
+
+	public ElfBinaryFile(IPath p) throws IOException {
+		this(p, null);
 	}
 
-	public ElfBinaryFile(IFile f, String n) throws IOException {
-		file = f;
-		objectName = n;
+	public ElfBinaryFile(IPath p, AR.ARHeader h) throws IOException {
+		header = h;
+		path = p;
 		loadInformation();
 		hasChanged();
 	}
@@ -54,8 +50,8 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getFile()
 	 */
-	public IFile getFile() {
-		return  file;
+	public IPath getPath() {
+		return path;
 	}
 
 	/**
@@ -155,7 +151,7 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 		}
 		return new String[0];
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getType()
 	 */
@@ -164,21 +160,21 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 		Attribute attr = getAttribute();
 		if (attr != null) {
 			switch (attribute.getType()) {
-				case Attribute.ELF_TYPE_EXE:
+				case Attribute.ELF_TYPE_EXE :
 					type = IBinaryFile.EXECUTABLE;
-				break;
+					break;
 
-				case Attribute.ELF_TYPE_SHLIB:
+				case Attribute.ELF_TYPE_SHLIB :
 					type = IBinaryFile.SHARED;
-				break;
+					break;
 
-				case Attribute.ELF_TYPE_OBJ:
+				case Attribute.ELF_TYPE_OBJ :
 					type = IBinaryFile.OBJECT;
-				break;
-				
-				case Attribute.ELF_TYPE_CORE:
+					break;
+
+				case Attribute.ELF_TYPE_CORE :
 					type = IBinaryFile.CORE;
-				break;
+					break;
 			}
 		}
 		return type;
@@ -197,7 +193,7 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 			} catch (IOException e) {
 			}
 		}
-		return (ISymbol[])symbols.toArray(new ISymbol[0]);
+		return (ISymbol[]) symbols.toArray(new ISymbol[0]);
 	}
 
 	/**
@@ -206,29 +202,15 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 	public InputStream getContents() {
 		InputStream stream = null;
 		// Archive ?
-		if (file != null && objectName != null) {
-			IPath location = file.getLocation();
-			if (location != null) {
-				AR ar = null;
-				try {	
-					ar = new AR(file.getLocation().toOSString());
-					AR.ARHeader[] headers = ar.getHeaders();
-					for (int i = 0; i < headers.length; i++) {
-						if (objectName.equals(headers[i].getObjectName())) {
-							stream = new ByteArrayInputStream(headers[i].getObjectData());
-							break;
-						}
-					}
-				} catch (IOException e) {
-				}
-				if (ar != null) {
-					ar.dispose();
-				}
-			}
-		} else if (file != null && file.exists()) {
+		if (path != null && header != null) {
 			try {
-				stream = file.getContents();
-			} catch (CoreException e) {
+				stream = new ByteArrayInputStream(header.getObjectData());
+			} catch (IOException e) {
+			}
+		} else if (path != null) {
+			try {
+				stream = new FileInputStream(path.toFile());
+			} catch (IOException e) {
 			}
 		}
 		if (stream == null) {
@@ -241,11 +223,11 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getName()
 	 */
 	public String getName() {
-		if (objectName != null) {
-			return objectName;
+		if (header != null) {
+			return header.getObjectName();
 		}
-		if (file != null) {
-			return file.getName();
+		if (path != null) {
+			return path.lastSegment().toString();
 		}
 		return "";
 	}
@@ -273,9 +255,9 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 		}
 		return sizes;
 	}
-	
+
 	boolean hasChanged() {
-		long modification = file.getModificationStamp();
+		long modification = path.toFile().lastModified();
 		boolean changed = modification != timestamp;
 		timestamp = modification;
 		return changed;
@@ -283,35 +265,9 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 
 	protected ElfHelper getElfHelper() throws IOException {
 		// Archive ?
-		if (file != null && objectName != null) {
-			IPath location = file.getLocation();
-			if (location != null) {
-				ElfHelper helper = null;
-				AR ar = null;
-				try {	
-					ar = new AR(file.getLocation().toOSString());
-					AR.ARHeader[] headers = ar.getHeaders();
-					for (int i = 0; i < headers.length; i++) {
-						AR.ARHeader hdr = headers[i];
-						if (objectName.equals(hdr.getObjectName())) {
-							helper = new ElfHelper(hdr.getElf());
-							break;
-						}
-					}
-				} finally {
-					if (ar != null) {
-						ar.dispose();
-					}
-				}
-				if (helper != null) {
-					return helper;
-				}
-			}
-		} else if (file != null && file.exists()) {
-			IPath path = file.getLocation();
-			if (path == null) {
-				path = new Path("");
-			}
+		if (header != null) {
+			return new ElfHelper(header.getElf());
+		} else if (path != null) {
 			return new ElfHelper(path.toOSString());
 		}
 		throw new IOException("No file assiocated with Binary");
@@ -331,7 +287,7 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 			symbols.trimToSize();
 		}
 	}
-	
+
 	private void loadAttributes(ElfHelper helper) throws IOException {
 		Elf.Dynamic[] sharedlibs = helper.getNeeded();
 		needed = new String[sharedlibs.length];
@@ -368,8 +324,10 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 			try {
 				// This can fail if we use addr2line
 				// but we can safely ignore the error.
-				sym.filename = array[i].getFilename();
-				sym.lineno = array[i].getFuncLineNumber();
+				if (header == null) {
+					sym.filename = array[i].getFilename();
+					sym.lineno = array[i].getFuncLineNumber();
+				}
 			} catch (IOException e) {
 				//e.printStackTrace();
 			}

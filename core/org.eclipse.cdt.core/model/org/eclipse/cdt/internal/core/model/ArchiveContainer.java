@@ -15,8 +15,7 @@ import org.eclipse.core.resources.IProject;
 public class ArchiveContainer extends Parent implements IArchiveContainer {
 
 	CProject cProject;
-	private long modificationStamp;
-
+	
 	public ArchiveContainer (CProject cProject) {
 		super (cProject, null, "lib", CElement.C_CONTAINER);
 		this.cProject = cProject;

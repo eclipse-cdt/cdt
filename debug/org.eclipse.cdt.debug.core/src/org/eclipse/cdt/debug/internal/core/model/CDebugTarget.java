@@ -440,8 +440,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( !canTerminate() ) {
 			return;
 		}
-		final CDebugElementState oldState = getState();
-		setState( CDebugElementState.TERMINATING );
+		changeState( CDebugElementState.TERMINATING );
 		DebugPlugin.getDefault().asyncExec( new Runnable() {
 
 			public void run() {
@@ -449,7 +448,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 					getCDITarget().terminate();
 				}
 				catch( CDIException e ) {
-					setState( oldState );
+					restoreOldState();
 					try {
 						targetRequestFailed( e.getMessage(), e );
 					}
@@ -500,8 +499,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public void resume() throws DebugException {
 		if ( !canResume() )
 			return;
-		final CDebugElementState oldState = getState();
-		setState( CDebugElementState.RESUMING );
+		changeState( CDebugElementState.RESUMING );
 		DebugPlugin.getDefault().asyncExec( new Runnable() {
 
 			public void run() {
@@ -509,7 +507,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 					getCDITarget().resume( false );
 				}
 				catch( CDIException e ) {
-					setState( oldState );
+					restoreOldState();
 					try {
 						targetRequestFailed( e.getMessage(), e );
 					}
@@ -527,8 +525,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public void suspend() throws DebugException {
 		if ( !canSuspend() )
 			return;
-		final CDebugElementState oldState = getState();
-		setState( CDebugElementState.SUSPENDING );
+		changeState( CDebugElementState.SUSPENDING );
 		DebugPlugin.getDefault().asyncExec( new Runnable() {
 
 			public void run() {
@@ -536,7 +533,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 					getCDITarget().suspend();
 				}
 				catch( CDIException e ) {
-					setState( oldState );
+					restoreOldState();
 					try {
 						targetRequestFailed( e.getMessage(), e );
 					}
@@ -731,11 +728,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( isDisconnecting() ) {
 			return;
 		}
-		if ( !supportsDisconnect() ) {
-			notSupported( CoreModelMessages.getString( "CDebugTarget.0" ) ); //$NON-NLS-1$
-		}
-		final CDebugElementState oldState = getState();
-		setState( CDebugElementState.DISCONNECTING );
+		changeState( CDebugElementState.DISCONNECTING );
 		DebugPlugin.getDefault().asyncExec( new Runnable() {
 
 			public void run() {
@@ -743,7 +736,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 					getCDITarget().disconnect();
 				}
 				catch( CDIException e ) {
-					setState( oldState );
+					restoreOldState();
 					try {
 						targetRequestFailed( e.getMessage(), e );
 					}
@@ -949,8 +942,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( !canRestart() ) {
 			return;
 		}
-		final CDebugElementState oldState = getState();
-		setState( CDebugElementState.RESTARTING );
+		changeState( CDebugElementState.RESTARTING );
 		ICDILocation location = getCDITarget().createLocation( "", "main", 0 ); //$NON-NLS-1$ //$NON-NLS-2$
 		setInternalTemporaryBreakpoint( location );
 		DebugPlugin.getDefault().asyncExec( new Runnable() {
@@ -960,7 +952,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 					getCDITarget().restart();
 				}
 				catch( CDIException e ) {
-					setState( oldState );
+					restoreOldState();
 					try {
 						targetRequestFailed( e.getMessage(), e );
 					}
@@ -1540,8 +1532,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public void resumeWithoutSignal() throws DebugException {
 		if ( !canResume() )
 			return;
-		final CDebugElementState oldState = getState();
-		setState( CDebugElementState.RESUMING );
+		changeState( CDebugElementState.RESUMING );
 		DebugPlugin.getDefault().asyncExec( new Runnable() {
 
 			public void run() {
@@ -1549,7 +1540,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 					getCDITarget().resume( false );
 				}
 				catch( CDIException e ) {
-					setState( oldState );
+					restoreOldState();
 					try {
 						targetRequestFailed( e.getMessage(), e );
 					}
@@ -1876,5 +1867,21 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		MultiStatus ms = new MultiStatus( CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, message, null );
 		ms.add( new Status( IStatus.ERROR, CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
 		CDebugUtils.error( ms, this );
+	}
+
+	private void changeState( CDebugElementState state ) {
+		setState( state );
+		Iterator it = getThreadList().iterator();
+		while( it.hasNext() ) {
+			((CThread)it.next()).setState( state );
+		}
+	}
+
+	protected void restoreOldState() {
+		restoreState();
+		Iterator it = getThreadList().iterator();
+		while( it.hasNext() ) {
+			((CThread)it.next()).restoreState();
+		}
 	}
 }

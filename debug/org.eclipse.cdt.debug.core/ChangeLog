@@ -1,3 +1,10 @@
+2004-10-21 Mikhail Khodjaiants
+	Pass the target state to threads on terminate, disconnect, resume, suspend and restart.
+	* CoreModelMessages.properties
+	* CDebugElement.java
+	* CDebugTarget.java
+	* CThread.java
+
 2004-10-19 Mikhail Khodjaiants
 	Set the initial state of a thread according to the state of the underlying CDI thread.
 	* CThread.java

@@ -910,10 +910,6 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	}
 
 	protected void suspendByTarget( ICDISessionObject reason, ICDIThread suspensionThread ) {
-		if ( !(getState().equals( CDebugElementState.RESUMED ) || 
-				   getState().equals( CDebugElementState.STEPPED ) ||
-				   getState().equals( CDebugElementState.SUSPENDING )) )
-				return;
 		setState( CDebugElementState.SUSPENDED );
 		setCurrentStateInfo( null );
 		if ( getCDIThread().equals( suspensionThread ) ) {

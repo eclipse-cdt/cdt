@@ -52,9 +52,14 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	private String fMessage = null;
 
 	/**
-	 * The state of this element.
+	 * The current state of this element.
 	 */
 	private CDebugElementState fState = CDebugElementState.UNDEFINED;
+
+	/**
+	 * The previous state of this element.
+	 */
+	private CDebugElementState fOldState = CDebugElementState.UNDEFINED;
 
 	/**
 	 * The current state info.
@@ -336,8 +341,13 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 		return fState;
 	}
 
-	protected void setState( CDebugElementState state ) throws IllegalArgumentException {
+	protected synchronized void setState( CDebugElementState state ) throws IllegalArgumentException {
+		fOldState = fState;
 		fState = state;
+	}
+
+	protected synchronized void restoreState() {
+		fState = fOldState;
 	}
 
 	/* (non-Javadoc)

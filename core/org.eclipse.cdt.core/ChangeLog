@@ -1,3 +1,8 @@
+2003-04-08 Alain Magloire
+
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java:
+	Bug fix, deltas were not generated for non C-Resources.
+
 2003-04-02 Alain Magloire
 
 	First draft on implementing LibraryReference.

@@ -1,5 +1,10 @@
 2003-04-08 Alain Magloire
 
+	* src/org/eclipse/cdt/ui/CElementLabelProvider.java:
+	No need to refresh the container.
+
+2003-04-08 Alain Magloire
+
 	Fix the drag & drop.
 
 	* src/org/eclipse/cdt/internal/ui/cview/CViewDragAdapter.java:

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.cdt.testing"
+      label="%featureName"
+      version="2.1.0"
+      provider-name="%providerName"
+      image="eclipse_update_120.jpg">
+
+   <description>
+      %description
+   </description>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <url>
+      <update label="%updateSiteName" url="http://update.eclipse.org/tools/cdt/updates/release"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.junit"/>
+      <import plugin="org.eclipse.cdt.debug.core"/>
+      <import plugin="org.eclipse.cdt.debug.mi.core"/>
+      <import plugin="org.eclipse.cdt.core"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.cdt.ui"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.cdt.managedbuilder.core"/>
+      <import plugin="org.eclipse.cdt.make.core"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.cdt.debug.ui.tests"
+         download-size="0"
+         install-size="0"
+         version="2.1.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.ui.tests"
+         download-size="0"
+         install-size="0"
+         version="2.1.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.testing"
+         download-size="0"
+         install-size="0"
+         version="2.1.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.tests"
+         download-size="0"
+         install-size="0"
+         version="2.1.0"/>
+
+</feature>

@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.IDebugConfiguration;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.IInstructionStep;
@@ -134,7 +135,10 @@ public class CDebugTarget extends CDebugElement
 	public CDebugTarget( ILaunch launch, 
 						 ICTarget cdiTarget, 
 						 String name,
-						 IProcess process, 
+						 IProcess process,
+						 IDebugConfiguration config,
+						 boolean allowsTerminate,
+						 boolean allowsDisconnect, 
 						 boolean resume )
 	{
 		super( null );

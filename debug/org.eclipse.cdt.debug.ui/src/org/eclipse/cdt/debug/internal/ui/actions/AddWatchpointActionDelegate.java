@@ -12,9 +12,10 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -25,6 +26,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -33,11 +35,8 @@ import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * 
- * Action for adding/removing watchpoints at a selection in the active 
+ * Action for adding a watchpoint at a selection in the active 
  * C/C++ or assembly editor.
- * 
- * @since Sep 4, 2002
  */
 public class AddWatchpointActionDelegate extends ActionDelegate implements IWorkbenchWindowActionDelegate, IPartListener {
 
@@ -49,7 +48,9 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IWork
 
 	private IWorkbenchWindow fWorkbenchWindow = null;
 
-	private IProject fProject = null;
+	private IResource fResource = null;
+
+	private String fSourceHandle = ""; //$NON-NLS-1$
 
 	/**
 	 * Constructor for AddWatchpointActionDelegate.
@@ -128,8 +129,8 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IWork
 		fTextEditor = editor;
 		if ( fTextEditor != null ) {
 			IEditorInput input = fTextEditor.getEditorInput();
-			IFile file = (input != null && input instanceof IFileEditorInput) ? ((IFileEditorInput)input).getFile() : null;
-			setProject( (file != null) ? file.getProject() : null );
+			setSourceHandle( input );
+			setResource( input );
 		}
 		setEnabledState( editor );
 	}
@@ -164,22 +165,27 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IWork
 		}
 	}
 
-	protected IProject getProject() {
-		return fProject;
+	protected IResource getResource() {
+		return fResource;
 	}
 
-	protected void setProject( IProject project ) {
-		fProject = project;
+	protected void setResource( IEditorInput input ) {
+		if ( input instanceof IFileEditorInput ) {
+			fResource = ((IFileEditorInput)input).getFile().getProject();
+		}
+		else {
+			fResource = ResourcesPlugin.getWorkspace().getRoot();
+		}
 	}
 
 	protected void addWatchpoint( IEditorInput editorInput, boolean write, boolean read, String expression ) {
-		if ( getProject() == null )
+		if ( getResource() == null )
 			return;
 		IDocument document = getTextEditor().getDocumentProvider().getDocument( editorInput );
 		WatchpointExpressionVerifier wev = new WatchpointExpressionVerifier();
 		if ( wev.isValidExpression( document, expression ) ) {
 			try {
-				CDIDebugModel.createWatchpoint( "", getProject(), write, read, expression, true, 0, "", true ); //$NON-NLS-1$
+				CDIDebugModel.createWatchpoint( getSourceHandle(), getResource(), write, read, expression, true, 0, "", true ); //$NON-NLS-1$
 			}
 			catch( CoreException ce ) {
 				CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString( "internal.ui.actions.AddWatchpointActionDelegate.Cannot_add_watchpoint" ), ce ); //$NON-NLS-1$
@@ -227,6 +233,26 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IWork
 		if ( part instanceof ITextEditor ) {
 			if ( getTextEditor() == null ) {
 				setTextEditor( (ITextEditor)part );
+			}
+		}
+	}
+
+	private String getSourceHandle() {
+		return fSourceHandle;
+	}
+	
+	private void setSourceHandle( IEditorInput input ) {
+		fSourceHandle = ""; //$NON-NLS-1$
+		if ( input instanceof IFileEditorInput ) {
+			fSourceHandle = ((IFileEditorInput)input).getFile().getFullPath().toOSString();
+		}
+		else if ( input instanceof IStorageEditorInput ) {
+			try {
+				IPath path = ((IStorageEditorInput)input).getStorage().getFullPath();
+				if ( path != null )
+					fSourceHandle = path.toOSString();
+			}
+			catch( CoreException e ) {
 			}
 		}
 	}

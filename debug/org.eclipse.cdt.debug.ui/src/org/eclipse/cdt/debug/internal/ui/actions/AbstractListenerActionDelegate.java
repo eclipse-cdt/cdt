@@ -44,10 +44,6 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 		}
 		Runnable r= new Runnable() {
 			public void run() {
-				Shell shell= getWindow().getShell();
-				if (shell == null || shell.isDisposed()) {
-					return;
-				}
 				for (int i = 0; i < events.length; i++) {
 					if (events[i].getSource() != null) {
 						doHandleDebugEvent(events[i]);

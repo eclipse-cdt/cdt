@@ -50,24 +50,24 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		IEditorInput input = editorPart.getEditorInput();
 		String errorMessage = null;
 		if ( input == null ) {
-			errorMessage = "Empty editor";
+			errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Empty_editor_1" ); //$NON-NLS-1$
 		}
 		else {
-			final ITextEditor textEditor = (ITextEditor)editorPart;
-			final IDocument document = textEditor.getDocumentProvider().getDocument( input );
+			ITextEditor textEditor = (ITextEditor)editorPart;
+			IDocument document = textEditor.getDocumentProvider().getDocument( input );
 			if ( document == null ) {
-				errorMessage = "Missing document";
+				errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_document_1" ); //$NON-NLS-1$
 			}
 			else {
 				IResource resource = getResource( textEditor );
 				if ( resource == null ) {
-					errorMessage = "Missing resource";
+					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_resource_1" ); //$NON-NLS-1$
 				}
 				else {
 					BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
 					int lineNumber = bv.getValidLineBreakpointLocation( document, ((ITextSelection)selection).getStartLine() );
 					if ( lineNumber == -1 ) {
-						errorMessage = "Invalid line";
+						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$
 					}
 					else {
 						String sourceHandle = getSourceHandle( input );
@@ -121,18 +121,18 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		IEditorInput input = editorPart.getEditorInput();
 		String errorMessage = null;
 		if ( input == null ) {
-			errorMessage = "Empty editor";
+			errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Empty_editor_2" ); //$NON-NLS-1$
 		}
 		else {
-			final ITextEditor textEditor = (ITextEditor)editorPart;
-			final IDocument document = textEditor.getDocumentProvider().getDocument( input );
+			ITextEditor textEditor = (ITextEditor)editorPart;
+			IDocument document = textEditor.getDocumentProvider().getDocument( input );
 			if ( document == null ) {
-				errorMessage = "Missing document";
+				errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_document_2" ); //$NON-NLS-1$
 			}
 			else {
 				IResource resource = getResource( textEditor );
 				if ( resource == null ) {
-					errorMessage = "Missing resource";
+					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_resource_2" ); //$NON-NLS-1$
 				}
 				else {
 					if ( !(resource instanceof IWorkspaceRoot) )
@@ -141,9 +141,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					AddWatchpointDialog dlg = new AddWatchpointDialog( textEditor.getSite().getShell(), true, false, expression );
 					if ( dlg.open() != Window.OK )
 						return;
+					expression = dlg.getExpression();
 					WatchpointExpressionVerifier wev = new WatchpointExpressionVerifier();
 					if ( !wev.isValidExpression( document, expression ) ) {
-						errorMessage = "Invalid expression: " + expression;
+						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_expression_1" ) + expression; //$NON-NLS-1$
 					}
 					else {
 						String sourceHandle = getSourceHandle( input );
@@ -174,7 +175,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public boolean canToggleWatchpoints( IWorkbenchPart part, ISelection selection ) {
-		return ( selection instanceof ITextSelection );
+		return false;
 	}
 
 	protected void report( String message, IWorkbenchPart part ) {

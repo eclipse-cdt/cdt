@@ -18,6 +18,8 @@ import java.util.List;
 public class MIInfoSharedLibraryInfo extends MIInfo {
 
 	MIShared[] shared;
+	boolean isUnixFormat = true;
+	boolean hasProcessHeader = false;
 
 	public MIInfoSharedLibraryInfo(MIOutput out) {
 		super(out);
@@ -49,6 +51,20 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 	}
 
 	void parseShared(String str, List aList) {
+		if (!hasProcessHeader) {
+			// Process the header and choose a type.
+			if (str.startsWith("DLL")) {
+				isUnixFormat = false;
+			}
+			hasProcessHeader = true;
+		} else if (isUnixFormat) {
+			parseUnixShared(str, aList);
+		} else {
+			parseWinShared(str, aList);
+		}
+	}
+	
+	void parseUnixShared(String str, List aList) {
 		if (str.length() > 0) {
 			// Pass the header
 			if (Character.isDigit(str.charAt(0))) {
@@ -87,5 +103,27 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 				aList.add(s);
 			}
 		}
+	}
+	
+	void parseWinShared(String str, List aList) {
+		long from = 0;
+		long to = 0;
+		boolean syms = true;
+
+		int index = str.lastIndexOf(' ');
+		if (index > 0) {
+			String sub = str.substring(index).trim();
+			// Go figure they do not print the "0x" to indicate hexadicimal!!
+			if (!sub.startsWith("0x")) {
+				sub = "0x" + sub;
+			}
+			try {
+				from = Long.decode(sub).longValue();
+			} catch (NumberFormatException e) {
+			}
+			str = str.substring(0, index).trim();
+		}
+		MIShared s = new MIShared(from, to, syms, str.trim());
+		aList.add(s);
 	}
 }

@@ -191,10 +191,10 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 
 		// Test if we are in the right state?
 		if (inferior.isRunning()) {
-			if ( !((cmd instanceof MIExecInterrupt) ||
-					cmd instanceof MIExecAbort)) {
-				throw new MIException("Target running");
-			}
+			// REMINDER: if we support -exec-interrupt
+			// Let it throught:
+			// if (cmd instanceof MIExecInterrupt) { }
+			throw new MIException("Target running");
 		}
 
 		txQueue.addCommand(cmd);
@@ -241,7 +241,7 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 	 */
 	public void terminate() {
 
-		// Destroy any MI Inferior(Process)
+		// Destroy any MI Inferior(Process) and streams.
 		inferior.destroy();
 
 		// Tell the observers that the session
@@ -262,20 +262,6 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 			MIGDBExit exit = factory.createMIGDBExit();
 			postCommand(exit);
 		} catch (MIException e) {
-		}
-		
-		// Close the input GDB prompt
-		try {
-			if (inGDB != null)
-				inGDB.close();
-		} catch (IOException e) {
-		}
-
-		// Close the output GDB prompt
-		try {
-			if (outGDB != null)
-				outGDB.close();
-		} catch (IOException e) {
 		}
 		
 		// Kill the Transmition thread.
@@ -304,6 +290,27 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 			}
 		} catch (InterruptedException e) {
 		}
+		
+		// Make sure gdb is killed.
+		// FIX: Spawner will do the waitFor();
+		if (miProcess != null) {
+			miProcess.destroy();
+		}
+
+		// Close the input GDB prompt
+		try {
+			if (inGDB != null)
+				inGDB.close();
+		} catch (IOException e) {
+		}
+
+		// Close the output GDB prompt
+		try {
+			if (outGDB != null)
+				outGDB.close();
+		} catch (IOException e) {
+		}
+		
 
 		// Destroy the MI console stream.
 		try {
@@ -314,11 +321,6 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 		} catch (IOException e) {
 		}
 		
-		// Make sure gdb is killed.
-		// FIX: Spawner will do the waitFor();
-		if (miProcess != null) {
-			miProcess.destroy();
-		}
 	}
 
 	/**

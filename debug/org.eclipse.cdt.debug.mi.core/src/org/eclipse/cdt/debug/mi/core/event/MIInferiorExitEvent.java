@@ -23,8 +23,8 @@ public class MIInferiorExitEvent extends MIDestroyedEvent {
 
 	int code = 0;
 
-        MIExecAsyncOutput exec = null;
-        MIResultRecord rr = null;
+	MIExecAsyncOutput exec = null;
+	MIResultRecord rr = null;
 
 	public MIInferiorExitEvent(int token) {
 		super(token);

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -31,6 +32,7 @@ import org.eclipse.ui.IFileEditorInput;
 public class AddBuildTargetAction extends Action {
 
 	MakefileContentOutlinePage fOutliner;
+	static final ITargetRule[] EMPTY_TARGET_RULES = {}; 
 	
 	public AddBuildTargetAction(MakefileContentOutlinePage outliner) {
 		super("Add To Build Target");
@@ -45,11 +47,42 @@ public class AddBuildTargetAction extends Action {
 	public void run() {
 		IMakeTargetManager manager = MakeCorePlugin.getDefault().getTargetManager();
 		IFile file = getFile();
-		ITargetRule rule = getTargetRule(fOutliner.getSelection());
 		Shell shell = fOutliner.getControl().getShell();
-		if (file != null && rule != null && shell != null) {
-			String name = rule.getTarget().toString().trim();
-			IMakeTarget target = manager.findTarget(file.getParent(), name);
+		ITargetRule[] rules = getTargetRules(fOutliner.getSelection());
+		if (file != null && rules.length > 0 && shell != null) {
+			StringBuffer sbBuildName = new StringBuffer();
+			StringBuffer sbMakefileTarget = new StringBuffer();
+			for (int i = 0; i < rules.length; i++) {
+				String name = rules[i].getTarget().toString().trim();
+				if (sbBuildName.length() == 0) {
+					sbBuildName.append(name);
+				} else { 
+					sbBuildName.append('_').append(name);
+				}
+				if (sbMakefileTarget.length() == 0) {
+					sbMakefileTarget.append(name);
+				} else {
+					sbMakefileTarget.append(' ').append(name);
+				}
+			}
+			String buildName = sbBuildName.toString();
+			String makefileTarget = sbMakefileTarget.toString();
+			IMakeTarget target = manager.findTarget(file.getParent(), buildName);
+			if (target == null) {
+				try {
+					String[] ids = manager.getTargetBuilders(file.getProject());
+					if (ids.length > 0) {
+						target = manager.createTarget(file.getProject(), buildName, ids[0]);
+						target.setBuildTarget(makefileTarget);
+						manager.addTarget(file.getParent(), target);
+					}
+				} catch (CoreException e) {
+					MakeUIPlugin.errorDialog(shell, "Internal Error", "", e);
+					target = null;
+				}
+			}
+
+			// Always popup the dialog.
 			if (target != null) {
 				MakeTargetDialog dialog;
 				try {
@@ -58,30 +91,21 @@ public class AddBuildTargetAction extends Action {
 				} catch (CoreException e) {
 					MakeUIPlugin.errorDialog(shell, "Internal Error", "", e);
 				}
-			} else {
-				try {
-					String[] ids = manager.getTargetBuilders(file.getProject());
-					if (ids.length > 0) {
-						target = manager.createTarget(file.getProject(), name, ids[0]);
-						target.setBuildTarget(name);
-						manager.addTarget(file.getParent(), target);
-					}
-				} catch (CoreException e) {
-					MakeUIPlugin.errorDialog(shell, "Internal Error", "", e);
-				}
 			}
 		}
 	}
 
 	public boolean canActionBeAdded(ISelection selection) {
-		ITargetRule rule = getTargetRule(selection);
-		if (rule != null) {
+		ITargetRule[] rules = getTargetRules(selection);
+		boolean ok = false;
+		for (int i = 0; i < rules.length; i++) {
 			IFile file = getFile();
-			if (file != null) {
-				return MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(file.getProject());
-			}
+			if (file == null)
+				return false;
+			if (! MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(file.getProject()))
+				return false;
 		}
-		return false;
+		return true;
 	}
 
 	
@@ -93,17 +117,21 @@ public class AddBuildTargetAction extends Action {
 		return null;
 	}
 
-	private ITargetRule getTargetRule(ISelection sel) {
+	private ITargetRule[] getTargetRules(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 			List list= ((IStructuredSelection)sel).toList();
-			if (list.size() == 1) {
-				Object element= list.get(0);
-				if (element instanceof ITargetRule) {
-					return (ITargetRule)element;
+			if (list.size() > 0) {
+				List targets = new ArrayList(list.size());
+				Object[] elements = list.toArray();
+				for (int i = 0; i < elements.length; i++) {
+					if (elements[i] instanceof ITargetRule) {
+						targets.add(elements[i]);
+					}
 				}
+				return (ITargetRule[])list.toArray(EMPTY_TARGET_RULES);
 			}
 		}
-		return null;
+		return EMPTY_TARGET_RULES;
 	}
 
 }

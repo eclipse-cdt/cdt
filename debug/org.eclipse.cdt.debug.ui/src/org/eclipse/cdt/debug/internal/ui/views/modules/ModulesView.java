@@ -24,9 +24,6 @@ import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState;
-import org.eclipse.cdt.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
-import org.eclipse.cdt.debug.internal.ui.views.DebugViewInterimLabelProvider;
-import org.eclipse.cdt.debug.internal.ui.views.DebugViewLabelDecorator;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
@@ -507,7 +504,8 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 	}
 
 	protected IBaseLabelProvider createLabelProvider( StructuredViewer viewer ) {
-		return new DebugViewDecoratingLabelProvider( viewer, new DebugViewInterimLabelProvider( getModelPresentation() ), new DebugViewLabelDecorator( getModelPresentation() ) );
+//		return new DebugViewDecoratingLabelProvider( viewer, new DebugViewInterimLabelProvider( getModelPresentation() ), new DebugViewLabelDecorator( getModelPresentation() ) );
+		return getModelPresentation();
 	}
 
 	protected IDebugModelPresentation getModelPresentation() {

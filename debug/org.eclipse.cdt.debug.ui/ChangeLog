@@ -1,3 +1,8 @@
+2005-02-17 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
+	No need to compute the module's labels in background.
+	* ModulesView.java
+
 2005-02-16 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
 	Replaced the table viewer by text widgets.

@@ -1,3 +1,12 @@
+2003-12-17 Mikhail Khodjaiants
+
+	Fix for bug 49061: Different values are used as default for the "Load shared library symbols automatically" option.
+
+	* src/org/eclipse/cdt/debug/mi/core/GDBDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBServerDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/IMILaunchConfigurationConstants.java
+	* src/org/eclipse/cdt/debug/mi/core/CygwinGDBDebugger.java
+
 2003-12-16 Alain Magloire
 	In JDK-1.4.x a new method was added to StringBuffer
 	StringBuffer.append(StringBuffer).  This is not in

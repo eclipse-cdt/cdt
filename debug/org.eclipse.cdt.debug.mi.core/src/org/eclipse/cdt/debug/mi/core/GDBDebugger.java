@@ -27,8 +27,8 @@ public class GDBDebugger implements ICDebugger {
 			ICDISharedLibraryManager manager = session.getSharedLibraryManager();
 			if (manager instanceof SharedLibraryManager) {
 				SharedLibraryManager mgr = (SharedLibraryManager)manager;
-				boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, false);
-				boolean stopOnSolibEvents = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, false);
+				boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
+				boolean stopOnSolibEvents = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IMILaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT);
 				try {
 					mgr.setAutoLoadSymbols(autolib);
 					mgr.setStopOnSolibEvents(stopOnSolibEvents);

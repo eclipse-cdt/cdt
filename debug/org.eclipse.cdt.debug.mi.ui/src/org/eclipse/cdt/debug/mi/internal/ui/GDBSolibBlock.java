@@ -90,9 +90,9 @@ public class GDBSolibBlock extends Observable implements Observer
 		try
 		{
 			if ( fAutoSoLibButton != null )
-				fAutoSoLibButton.setSelection( configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, true ) );
+				fAutoSoLibButton.setSelection( configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT ) );
 			if ( fStopOnSolibEventsButton != null )
-				fStopOnSolibEventsButton.setSelection( configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, false ) );
+				fStopOnSolibEventsButton.setSelection( configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IMILaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT ) );
 			initializeButtons( configuration );
 			updateButtons();
 		}
@@ -124,8 +124,10 @@ public class GDBSolibBlock extends Observable implements Observer
 	{
 		if ( fSolibSearchPathBlock != null )
 			fSolibSearchPathBlock.setDefaults( configuration );
-		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, true );
-		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, false );
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, 
+									IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT );
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, 
+									IMILaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT );
 	}
 
 	protected void updateButtons()

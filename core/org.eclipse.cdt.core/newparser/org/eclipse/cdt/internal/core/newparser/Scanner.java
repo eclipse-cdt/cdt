@@ -37,9 +37,8 @@ public class Scanner implements IScanner {
 	
 	public IScanner initializeScanner( Reader reader, String filename )
 	{
-		Scanner scn = new Scanner(); 
-		scn.initialize( reader, filename );
-		return scn;
+		initialize( reader, filename );
+		return this;
 	}
 	
 	protected void initialize( Reader reader, String filename )

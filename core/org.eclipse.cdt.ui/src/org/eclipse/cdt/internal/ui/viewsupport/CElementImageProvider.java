@@ -181,7 +181,10 @@ public class CElementImageProvider {
 				
 			case ICElement.C_FUNCTION:
 				return CPluginImages.DESC_OBJS_FUNCTION;
-		
+
+			case ICElement.C_STRUCT_DECLARATION:
+			case ICElement.C_CLASS_DECLARATION:
+			case ICElement.C_UNION_DECLARATION:
 			case ICElement.C_VARIABLE_DECLARATION:
 				return CPluginImages.DESC_OBJS_VAR_DECLARARION;
 			
@@ -337,34 +340,37 @@ public class CElementImageProvider {
 				return getEnumeratorImageDescriptor();
 
 			case ICElement.C_FIELD:
-			try {
-				IField  field = (IField)celement;
-				ASTAccessVisibility visibility = field.getVisibility();
-				return getFieldImageDescriptor(visibility);
-			} catch (CModelException e) {
-				return null;
-			}
+				try {
+					IField  field = (IField)celement;
+					ASTAccessVisibility visibility = field.getVisibility();
+					return getFieldImageDescriptor(visibility);
+				} catch (CModelException e) {
+					return null;
+				}
 			
 			case ICElement.C_METHOD:  
 			case ICElement.C_METHOD_DECLARATION:
 			case ICElement.C_TEMPLATE_METHOD:
-			try {
-				
-				IMethodDeclaration  md= (IMethodDeclaration)celement;
-				ASTAccessVisibility visibility =md.getVisibility();
-				return getMethodImageDescriptor(visibility); 
-			} catch (CModelException e) {
-				return null;
-			}
+				try {
+					
+					IMethodDeclaration  md= (IMethodDeclaration)celement;
+					ASTAccessVisibility visibility =md.getVisibility();
+					return getMethodImageDescriptor(visibility); 
+				} catch (CModelException e) {
+					return null;
+				}
 			case ICElement.C_VARIABLE:
 			case ICElement.C_TEMPLATE_VARIABLE:
 				return getVariableImageDescriptor();
 				
 			case ICElement.C_FUNCTION:
 				return getFunctionImageDescriptor();
-		
+
+			case ICElement.C_STRUCT_DECLARATION:
+			case ICElement.C_CLASS_DECLARATION:
+			case ICElement.C_UNION_DECLARATION:
 			case ICElement.C_VARIABLE_DECLARATION:
-			return getVariableDeclarationImageDescriptor();
+				return getVariableDeclarationImageDescriptor();
 			
 			case ICElement.C_FUNCTION_DECLARATION:
 			case ICElement.C_TEMPLATE_FUNCTION:

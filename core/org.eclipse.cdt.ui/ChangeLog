@@ -1,5 +1,9 @@
-2005-01-20
-	PR 82964
+2005-01-22 Alain Magloire
+	PR 38958
+	* src/org/eclipse/cdt/internal/ui/viewsupport/CElementImageProvider.java
+
+2005-01-20 Alain Magloire
+	PR 82964 patch form Przemek
 	* icons/full/cview16/view_menu.gif
 	* src/org/eclipse/cdt/internal.ui/CPluginImages.java
 	* src/org/eclipse/cdt/internal/ui/actions/ActionMessages.properties

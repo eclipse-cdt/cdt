@@ -44,6 +44,7 @@ import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTInclusionSta
  * @author dsteffle
  */
 public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IPopulateDOMASTAction {
+	private static final int INITIAL_INCLUDE_STATEMENT_SIZE = 8;
 	{
 		processNames          = true;
 		processDeclarations   = true;
@@ -215,24 +216,17 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 			addRoot(((IASTPreprocessorMacroDefinition)node).getName());
 	}
 	
-	private void mergeMacros(IASTPreprocessorMacroDefinition[] macros) {
-		for(int i=0; i<macros.length; i++) {
-			if (macros[i] instanceof ASTNode)
-			mergeNode((ASTNode)macros[i]);
+	private void mergePreprocessorStatements(IASTPreprocessorStatement[] statements) {
+		for(int i=0; i<statements.length; i++) {
+			if (statements[i] instanceof ASTNode)
+				mergeNode((ASTNode)statements[i]);
 		}
 	}
 	
 	private void mergePreprocessorProblems(IASTProblem[] problems) {
 		for(int i=0; i<problems.length; i++) {
 			if (problems[i] instanceof ASTNode)
-			mergeNode((ASTNode)problems[i]);
-		}
-	}
-	
-	private void mergeIncludeDirectives(IASTPreprocessorIncludeStatement[] includes) {
-		for(int i=0; i<includes.length; i++) {
-			if (includes[i] instanceof ASTNode)
-			mergeNode((ASTNode)includes[i]);
+			   mergeNode((ASTNode)problems[i]);
 		}
 	}
 	
@@ -240,24 +234,37 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 		if (root.getNode() instanceof IASTTranslationUnit) {
 			IASTTranslationUnit tu = (IASTTranslationUnit)root.getNode();
 			
-			// merge macro definitions to the tree
-			mergeMacros(tu.getMacroDefinitions());
+			IASTPreprocessorStatement[] statements = tu.getAllPreprocessorStatements();
+			// merge preprocessor statements to the tree
+			mergePreprocessorStatements(statements);
 			
 			// merge preprocessor problems to the tree
 			mergePreprocessorProblems(tu.getPreprocesorProblems());
 			
-			// merge include directives
-			IASTPreprocessorIncludeStatement[] includes = tu.getIncludeDirectives();
-			mergeIncludeDirectives(includes);
-			
 			// group #includes
-			groupIncludes(includes);
+			groupIncludes(statements);
 		}
 		
 		return root;
 	}
 	
-	private void groupIncludes(IASTPreprocessorIncludeStatement[] includes) {
+	private void groupIncludes(IASTPreprocessorStatement[] statements) {
+		// get all of the includes from the preprocessor statements (need the object since .equals isn't implemented)
+		IASTPreprocessorIncludeStatement[] includes = new IASTPreprocessorIncludeStatement[INITIAL_INCLUDE_STATEMENT_SIZE];
+		int index = 0;
+		for(int i=0; i<statements.length; i++) {
+			if (index+1 > includes.length) {
+				IASTPreprocessorIncludeStatement[] newIncludes = new IASTPreprocessorIncludeStatement[includes.length * 2];
+				for (int j=0; j<includes.length; j++) {
+					newIncludes[j] = includes[j];
+				}
+				includes = newIncludes;
+			}
+			
+			if (statements[i] instanceof IASTPreprocessorIncludeStatement)
+				includes[index++] = (IASTPreprocessorIncludeStatement)statements[i];
+		}
+		
 		// get the tree model elements corresponding to the includes
 		TreeParent[] treeIncludes = new TreeParent[includes.length];
 		for (int i=0; i<treeIncludes.length; i++) {

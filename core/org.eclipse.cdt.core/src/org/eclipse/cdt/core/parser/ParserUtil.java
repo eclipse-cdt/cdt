@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
@@ -64,8 +65,8 @@ public class ParserUtil
 			if( result != null && result.getType() == IResource.FILE )
 			{
 				BufferedInputStream bufferedStream = new BufferedInputStream( ((IFile) result).getContents() );
-				InputStreamReader reader = new InputStreamReader( bufferedStream );
-				return reader;
+				InputStreamReader inputReader  = new InputStreamReader( bufferedStream );
+				return new BufferedReader( inputReader );
 			}
 		}
 		catch( CoreException ce )

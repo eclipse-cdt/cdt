@@ -10,10 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -28,7 +25,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.eclipse.cdt.core.parser.BacktrackException;import org.eclipse.cdt.core.parser.Directives;
+import org.eclipse.cdt.core.parser.BacktrackException;
+import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.Directives;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -506,7 +505,119 @@ public class Scanner implements IScanner {
 		return buffer.toString();
 	}
 
+	protected CodeReader createReaderDuple( String path, String fileName )
+	{
+		File pathFile = new File(path);
+		//TODO assert pathFile.isDirectory();	
+		StringBuffer newPathBuffer = new StringBuffer( pathFile.getPath() );
+		newPathBuffer.append( File.separatorChar );
+		newPathBuffer.append( fileName );
+		//remove ".." and "." segments
+		String finalPath = reconcilePath( newPathBuffer.toString() );
+		Reader r = scannerData.getClientRequestor().createReader( finalPath );
+		if( r != null )
+			return new CodeReader( finalPath, r );
+		return null;		
+
+	}
+	
+	/**
+	 * @param string
+	 * @return
+	 */
+	private String reconcilePath(String originalPath ) {
+		if( originalPath == null ) return null;
+		String [] segments = originalPath.split( "[/\\\\]" ); //$NON-NLS-1$
+		if( segments.length == 1 ) return originalPath;
+		Vector results = new Vector(); 
+		for( int i = 0; i < segments.length; ++i )
+		{
+			String segment = segments[i];
+			if( segment.equals( ".") ) continue; //$NON-NLS-1$
+			if( segment.equals("..") ) //$NON-NLS-1$
+			{
+				if( results.size() > 0 ) 
+					results.removeElementAt( results.size() - 1 );
+			}
+			else
+				results.add( segment );
+		}
+		StringBuffer buffer = new StringBuffer(); 
+		Iterator i = results.iterator();
+		while( i.hasNext() )
+		{
+			buffer.append( (String)i.next() );
+			if( i.hasNext() )
+				buffer.append( File.separatorChar );
+		}
+		scannerData.getLogService().traceLog( "Path has been reduced to " + buffer.toString()); //$NON-NLS-1$
+		return buffer.toString();
+	}
+
+	
 	protected void handleInclusion(String fileName, boolean useIncludePaths, int beginOffset, int startLine, int nameOffset, int nameLine, int endOffset, int endLine ) throws ScannerException {
+
+		CodeReader duple = null;
+		totalLoop:	for( int i = 0; i < 2; ++i )
+		{
+			if( useIncludePaths ) // search include paths for this file
+			{
+				// iterate through the include paths 
+				Iterator iter = scannerData.getIncludePathNames().iterator();
+		
+				while (iter.hasNext()) {
+		
+					String path = (String)iter.next();
+					duple = createReaderDuple( path, fileName );
+					if( duple != null )
+						break totalLoop;
+				}
+				
+				if (duple == null )
+					handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, fileName, beginOffset, false, true );
+	
+			}
+			else // local inclusion
+			{
+				duple = createReaderDuple( new File( scannerData.getContextStack().getCurrentContext().getFilename() ).getParentFile().getAbsolutePath(), fileName );
+				if( duple != null )
+					break totalLoop;
+				useIncludePaths = true;
+				continue totalLoop;
+			}
+		}
+		
+		if (duple!= null) {
+			IASTInclusion inclusion = null;
+            try
+            {
+                inclusion =
+                    scannerData.getASTFactory().createInclusion(
+                        fileName,
+                        duple.getFilename(),
+                        !useIncludePaths,
+                        beginOffset,
+                        startLine,
+                        nameOffset,
+                        nameOffset + fileName.length(), nameLine, endOffset, endLine);
+            }
+            catch (Exception e)
+            {
+                /* do nothing */
+            } 
+			
+			try
+			{
+				scannerData.getContextStack().updateContext(duple.getUnderlyingReader(), duple.getFilename(), ScannerContext.ContextKind.INCLUSION, inclusion, scannerData.getClientRequestor() );
+			}
+			catch (ContextException e1)
+			{
+				handleProblem( e1.getId(), fileName, beginOffset, false, true );
+			}
+		}
+	}
+
+/*	protected void handleInclusion(String fileName, boolean useIncludePaths, int beginOffset, int startLine, int nameOffset, int nameLine, int endOffset, int endLine ) throws ScannerException {
 // if useIncludePaths is true then 
 //     #include <foo.h>
 //  else
@@ -568,7 +679,7 @@ public class Scanner implements IScanner {
             }
             catch (Exception e)
             {
-                /* do nothing */
+                 do nothing 
             } 
 			
 			try
@@ -581,7 +692,7 @@ public class Scanner implements IScanner {
 			}
 		}
 	}
-
+*/
 	// constants
 	private static final int NOCHAR = -1;
 

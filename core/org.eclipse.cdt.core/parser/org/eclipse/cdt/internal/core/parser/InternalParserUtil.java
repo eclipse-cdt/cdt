@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -44,7 +45,8 @@ public class InternalParserUtil extends ParserFactory {
 		{
 			//check and see 
 			try {
-				return new FileReader( includeFile);
+				
+				return new BufferedReader( new FileReader( includeFile) );
 			} catch (FileNotFoundException fnf) {
 				
 			}

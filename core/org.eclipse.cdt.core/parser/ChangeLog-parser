@@ -1,3 +1,6 @@
+2004-03-09 John Camelon
+	Put back the work to reconcile relative paths w/IResource readers which was lost upon merge.  
+
 2004-03-09 Dave Daoust
 	Removed the Strings associated with constant value tokens and keywords  -- it looks cleaner, and reduces the number of objects created (only by 30 to 40 K) (about 2% quicker) 
 	Buffered the File I/O associated with reading inclusions.

@@ -95,7 +95,7 @@ public abstract class TabFolderOptionBlock {
 		setCurrentPage((ICOptionPage) pages.get(0));
 		initializingTabs = false;
 		String desc = ((ICOptionPage) pages.get(0)).getDescription();
-		if (desc != null) {
+		if (messageLabel != null && desc != null) {
 			messageLabel.setText(desc);
 		}
 		return composite;
@@ -186,7 +186,7 @@ public abstract class TabFolderOptionBlock {
 		if (ok) {
 			setErrorMessage(null);
 			ICOptionPage tab = getCurrentPage();
-			if (bShowMessageArea) {
+			if (messageLabel != null) {
 		        messageLabel.setText(tab.getDescription() != null ? tab.getDescription() : ""); //$NON-NLS-1$
 			}
 		}

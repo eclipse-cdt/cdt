@@ -78,7 +78,7 @@ public class CompletionEngine implements RelevanceConstants {
 	int completionStart = 0;
 	int completionLength = 0;
 	IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
-	private Map macroMap = new HashMap();
+	private Map macroMap = null;
 	
 	private static final String exceptionKeyword = "..."; //$NON-NLS-1$
 	// scope relevance element counters
@@ -175,7 +175,6 @@ public class CompletionEngine implements RelevanceConstants {
 	
 		IParser parser = null;
 		IScanner scanner = null;
-		macroMap.clear();
 		try
 		{
 			scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETION_PARSE, language, requestor, ParserUtil.getScannerLogService() );

@@ -1,3 +1,9 @@
+2004-05-27 Alain Magloire
+
+	Patch from Thomas Fletcher
+	- Restore bracket matching behaviour in the editor and use parent
+	class code for setting up the editor's OverviewRuler.
+
 2004-05-26 Andrew Niefer
 	Selection search: if searching on a function, use ASTUtil.getFunctionParameterTypes to create a
 	search pattern to find functions with the same parameters.  Also, for AST nodes that have a 

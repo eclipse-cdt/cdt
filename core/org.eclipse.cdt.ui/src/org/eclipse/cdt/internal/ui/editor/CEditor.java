@@ -53,7 +53,6 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -81,13 +80,11 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
-import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
@@ -117,14 +114,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
     /** The mouse listener */
     private MouseClickListener fMouseListener;
 
-	protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']' };
+	protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
 
 	protected CPairMatcher fBracketMatcher = new CPairMatcher(BRACKETS);
 
 	/** The editor's tab converter */
 	private TabConverter fTabConverter;
-
-	private MarkerAnnotationPreferences fAnnotationPreferences;
 
 	/** Listener to annotation model changes that updates the error tick in the tab image */
 	private CEditorErrorTickUpdater fCEditorErrorTickUpdater;
@@ -167,9 +162,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
 	 */
 	protected void initializeEditor() {
-		//@@@ We should be able to get this from our parent
-		fAnnotationPreferences = new MarkerAnnotationPreferences();
-
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 		setSourceViewerConfiguration(new CSourceViewerConfiguration(textTools, this));
 		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
@@ -485,8 +477,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		stopTabConversion();
 		disableBrowserLikeLinks();
 		
-		fAnnotationPreferences = null;
-       
 		super.dispose();
 	}
 
@@ -916,16 +906,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 		fAnnotationAccess = createAnnotationAccess();
 		
-		//TODO: TF NOTE: This can be greatly cleaned up using the parent createOverviewRuler method
-		//It will also totally get rid of the need for the fAnnotationPreferences in this object
 		ISharedTextColors sharedColors = CUIPlugin.getDefault().getSharedTextColors();
-		fOverviewRuler = new OverviewRuler(fAnnotationAccess, VERTICAL_RULER_WIDTH, sharedColors);
-		Iterator e = fAnnotationPreferences.getAnnotationPreferences().iterator();
-		while (e.hasNext()) {
-			AnnotationPreference preference = (AnnotationPreference) e.next();
-			if (preference.contributesToHeader())
-				fOverviewRuler.addHeaderAnnotationType(preference.getAnnotationType());
-		}
+		fOverviewRuler = createOverviewRuler(sharedColors);
 
 		ISourceViewer sourceViewer =
 			new AdaptedSourceViewer(
@@ -940,8 +922,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		
 		configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
 		
-		//TODO: TF NOTE: Add the bracket matching back in here!
-		
+		//Enhance the stock source viewer decorator with a bracket matcher
+		fSourceViewerDecorationSupport.setCharacterPairMatcher(fBracketMatcher);
+		fSourceViewerDecorationSupport.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR);
+
 		return sourceViewer;
 	}
 

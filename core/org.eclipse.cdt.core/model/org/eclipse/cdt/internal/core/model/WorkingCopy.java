@@ -212,6 +212,8 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 				} catch (CModelException e) {
 					current = null;
 				}
+			} else {
+				current = null;
 			}
 		}
 		return current;
@@ -282,15 +284,14 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	public void open(IProgressMonitor monitor) throws CModelException {
 		if (this.useCount == 0) { // was destroyed
 			throw newNotPresentException();
-		} else {
-			super.open(monitor);
-			//if (monitor != null && monitor.isCanceled()) return;
-			//if (this.problemRequestor != null && this.problemRequestor.isActive()){
-			//	this.problemRequestor.beginReporting();
-			//	TranslationUnitProblemFinder.process(this, this.problemRequestor, monitor); 
-			//	this.problemRequestor.endReporting();
-			//}
-		}
+		} 
+		super.open(monitor);
+		//if (monitor != null && monitor.isCanceled()) return;
+		//if (this.problemRequestor != null && this.problemRequestor.isActive()){
+		//	this.problemRequestor.beginReporting();
+		//	TranslationUnitProblemFinder.process(this, this.problemRequestor, monitor); 
+		//	this.problemRequestor.endReporting();
+		//}
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.CFile#openBuffer(IProgressMonitor)

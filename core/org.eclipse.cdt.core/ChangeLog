@@ -1,3 +1,9 @@
+2004-09-02 Alain Magloire
+
+	Fix to TranslationUnit.getElement(String).
+	* model/org/eclipse/cdt/internal/core/model/TranslationUnit.java
+	* model/org/eclipse/cdt/internal/core/model/WorkingCopy.java
+
 2004-09-01 Alain Magloire
 
 	Provide IWorkingCopy.getOriginal(ICElement)

@@ -101,16 +101,30 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public ICElement getElement(String name ) {
-		try {
-			ICElement[] celements = getChildren();
-			for (int i = 0; i < celements.length; i++) {
-				if (name.equals(celements[i].getElementName())) {
-					return celements[i];
-				}
-			}
-		} catch (CModelException e) {		
+		if (name == null || name.length() == 0) {
+			return null;
 		}
-		return null;
+		String[] names = name.split("::");
+		ICElement current = this;
+		for (int j = 0; j < names.length; ++j) {
+			if (current instanceof IParent) {
+				try {
+					ICElement[] celements = ((IParent)current).getChildren();
+					current = null;
+					for (int i = 0; i < celements.length; i++) {
+						if (names[j].equals(celements[i].getElementName())) {
+							current = celements[i];
+							break;
+						}
+					}
+				} catch (CModelException e) {		
+					current = null;
+				}
+			} else {
+				current = null;
+			}
+		}
+		return current;
 	}
 
 	public IInclude getInclude(String name) {
@@ -377,12 +391,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (workingCopy != null) {
 			workingCopy.useCount++;
 			return workingCopy;
-
-		} else {
-			CreateWorkingCopyOperation op = new CreateWorkingCopyOperation(this, perFactoryWorkingCopies, factory, requestor);
-			runOperation(op, monitor);
-			return (IWorkingCopy)op.getResultElements()[0];
 		}
+		CreateWorkingCopyOperation op = new CreateWorkingCopyOperation(this, perFactoryWorkingCopies, factory, requestor);
+		runOperation(op, monitor);
+		return (IWorkingCopy)op.getResultElements()[0];
 	}
 
 	/* (non-Javadoc)

@@ -28,12 +28,6 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 	private String fName;
 	private ICDIRegisterObject[] fRegisterObjects;
 	private List fRegisters;
-	private CStackFrame fCurrentStackFrame = null;
-
-	/**
-	 * Whether the registers need refreshing
-	 */
-	private boolean fRefresh = true;
 
 	/**
 	 * Constructor for CRegisterGroup.
@@ -83,13 +77,6 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 				fRegisters.add( new CRegister( this, regs[i] ) );
 			}
 		}
-/*
-		else if ( fRefresh )
-		{
-			updateRegisters();
-		}
-		fRefresh = false;
-*/
 		return fRegisters;
 	}
 	
@@ -102,39 +89,19 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 		}
 		fRegisters.clear();
 	}
-	
-	protected void refresh( CStackFrame stackFrame )
-	{
-		setCurrentStackFrame( stackFrame );
-		fRefresh = true;
-	}
-	
+
 	private ICDIRegister[] getCDIRegisters() throws DebugException
 	{
 		ICDIRegister[] result = new ICDIRegister[0];
-		CStackFrame currentFrame = getCurrentStackFrame();
-		if ( currentFrame != null )
+		try
 		{
-			try
-			{
-				result = getCurrentStackFrame().getCDIStackFrame().getRegisters( fRegisterObjects );
-			}
-			catch( CDIException e )
-			{
-				targetRequestFailed( e.getMessage(), null );
-			}
+			result = ((CDebugTarget)getDebugTarget()).getCDITarget().getRegisters( fRegisterObjects );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
 		}
 		return result;
-	}
-	
-	protected void setCurrentStackFrame( CStackFrame stackFrame )
-	{
-		fCurrentStackFrame = stackFrame;
-	}
-	
-	protected CStackFrame getCurrentStackFrame()
-	{
-		return fCurrentStackFrame;
 	}
 	
 	private void updateRegisters() throws DebugException

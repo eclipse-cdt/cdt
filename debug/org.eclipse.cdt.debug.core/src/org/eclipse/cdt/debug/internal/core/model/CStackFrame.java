@@ -222,7 +222,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public IRegisterGroup[] getRegisterGroups() throws DebugException
 	{
-		return ((CDebugTarget)getDebugTarget()).getRegisterGroups( this );
+		return ((CDebugTarget)getDebugTarget()).getRegisterGroups();
 	}
 
 	/* (non-Javadoc)
@@ -230,7 +230,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public boolean hasRegisterGroups() throws DebugException
 	{
-		return ((CDebugTarget)getDebugTarget()).getRegisterGroups( this ).length > 0;
+		return ((CDebugTarget)getDebugTarget()).getRegisterGroups().length > 0;
 	}
 
 	/* (non-Javadoc)
@@ -686,7 +686,6 @@ public class CStackFrame extends CDebugElement
 	protected synchronized void preserve()
 	{
 		preserveVariables();
-		preserveRegisters();
 	}
 
 	private void preserveVariables()
@@ -705,11 +704,6 @@ public class CStackFrame extends CDebugElement
 		{
 			CDebugCorePlugin.log( e );
 		}
-	}
-	
-	private void preserveRegisters()
-	{
-		((CDebugTarget)getDebugTarget()).preserveRegisters();
 	}
 	
 	// temporary solution

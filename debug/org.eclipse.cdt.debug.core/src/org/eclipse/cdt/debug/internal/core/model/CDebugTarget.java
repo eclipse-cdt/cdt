@@ -1681,13 +1681,13 @@ public class CDebugTarget extends CDebugElement
 		return isAvailable() && isSuspended();
 	}
 
+	protected IRegisterGroup[] getRegisterGroups() throws DebugException
+	{
+		return (IRegisterGroup[])fRegisterGroups.toArray( new IRegisterGroup[fRegisterGroups.size()] );
+	}
+
 	protected IRegisterGroup[] getRegisterGroups( CStackFrame stackFrame ) throws DebugException
 	{
-		Iterator it = fRegisterGroups.iterator();
-		while( it.hasNext() )
-		{
-			((CRegisterGroup)it.next()).refresh( stackFrame );
-		}
 		return (IRegisterGroup[])fRegisterGroups.toArray( new IRegisterGroup[fRegisterGroups.size()] );
 	}
 	
@@ -1714,15 +1714,6 @@ public class CDebugTarget extends CDebugElement
 		while( it.hasNext() )
 		{
 			((CRegisterGroup)it.next()).dispose();
-		}
-	}
-	
-	protected void preserveRegisters()
-	{
-		Iterator it = fRegisterGroups.iterator();
-		while( it.hasNext() )
-		{
-			((CRegisterGroup)it.next()).resetChangeFlags();
 		}
 	}
 
@@ -1851,6 +1842,15 @@ public class CDebugTarget extends CDebugElement
 		catch( CDIException e )
 		{
 			CDebugCorePlugin.log( e );
+		}
+	}
+
+	protected void resetRegisters()
+	{
+		Iterator it = fRegisterGroups.iterator();
+		while( it.hasNext() )
+		{
+			((CRegisterGroup)it.next()).resetChangeFlags();
 		}
 	}
 

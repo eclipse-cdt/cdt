@@ -963,6 +963,7 @@ public class CThread extends CDebugElement
 		{
 			return;
 		}
+//		((CDebugTarget)getDebugTarget()).resetRegisters();
 		try
 		{
 			getCDIThread().setCurrentStackFrame( ((CStackFrame)frame).getCDIStackFrame() );

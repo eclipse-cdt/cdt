@@ -1,5 +1,9 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
@@ -35,5 +39,32 @@ public class CGlobalVariable extends CModificationVariable
 			fValue = CValueFactory.createGlobalValue( this, getCurrentValue() );
 		}
 		return fValue;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
+	 */
+	public void handleDebugEvent( ICDIEvent event )
+	{
+		super.handleDebugEvent( event );
+	
+		ICDIObject source = event.getSource();
+		if (source == null)
+			return;
+	
+		if ( source.getTarget().equals( getCDITarget() ) )
+		{
+			if ( event instanceof ICDIResumedEvent )
+			{
+				try
+				{
+					setChanged( false );
+				}
+				catch( DebugException e )
+				{
+					CDebugCorePlugin.log( e );
+				}
+			}
+		}
 	}
 }

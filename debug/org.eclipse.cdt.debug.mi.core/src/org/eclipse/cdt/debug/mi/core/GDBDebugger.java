@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -24,8 +25,11 @@ public class GDBDebugger implements ICDebugger {
 	protected void initializeLibraries(ILaunchConfiguration config, Session session) throws CDIException {
 		try {
 			ICDISharedLibraryManager mgr = session.getSharedLibraryManager();
-			boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, true);
-			mgr.setAutoLoadSymbols(autolib);
+			if ( mgr instanceof SharedLibraryManager )
+			{
+				boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, false);
+				((SharedLibraryManager)mgr).setAutoLoadSymbols(autolib);
+			}
 			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_SOLIB_PATH, new ArrayList(1));
 			if (p.size() > 0) {
 				String[] paths = (String[])p.toArray(new String[0]);

@@ -127,7 +127,7 @@ public class OpenTypeHierarchyAction extends SelectionDispatchAction {
 	 * Method declared on SelectionDispatchAction.
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
-//		setEnabled(isEnabled(selection));
+		setEnabled(isEnabled(selection));
 	}
 	
 	private boolean isEnabled(IStructuredSelection selection) {

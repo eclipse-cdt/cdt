@@ -16,9 +16,7 @@ import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
-import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeDialog;
 import org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeMessages;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -81,7 +79,7 @@ public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate
 			return;
 		}
 		
-		OpenTypeDialog dialog = new OpenTypeDialog(getShell());
+		OpenTypeInHierarchyDialog dialog = new OpenTypeInHierarchyDialog(getShell());
 		dialog.setElements(elements);
 		int result = dialog.open();
 		if (result != IDialogConstants.OK_ID)

@@ -1766,12 +1766,12 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     public void test575513_qualified() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "namespace Foo{                     " );
-    	writer.write( "   class Bar{ public : Bar(); };   " );
-    	writer.write( "}                                  " );
-    	writer.write( "void main(){                       " );
-    	writer.write( "  Foo::Bar * bar = new Foo::Bar(); " );
-    	writer.write( "}                                  " );
+    	writer.write( "namespace Foo{                     " ); //$NON-NLS-1$
+    	writer.write( "   class Bar{ public : Bar(); };   " ); //$NON-NLS-1$
+    	writer.write( "}                                  " ); //$NON-NLS-1$
+    	writer.write( "void main(){                       " ); //$NON-NLS-1$
+    	writer.write( "  Foo::Bar * bar = new Foo::Bar(); " ); //$NON-NLS-1$
+    	writer.write( "}                                  " ); //$NON-NLS-1$
     	
     	Iterator i = parse( writer.toString() ).getDeclarations();
     	
@@ -1871,16 +1871,16 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     public void testBug64010() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( " #define ONE	else if (0) { } \n");
-    	writer.write( " #define TEN	ONE ONE ONE ONE ONE ONE ONE ONE ONE ONE \n ");
-    	writer.write( " #define HUN	TEN TEN TEN TEN TEN TEN TEN TEN TEN TEN \n ");
-    	writer.write( " #define THOU	HUN HUN HUN HUN HUN HUN HUN HUN HUN HUN \n");
-		writer.write("void foo()                                                ");
-		writer.write("{                                                         ");
-		writer.write("   if (0) { }                                             ");
-		writer.write("   /* 11,000 else if's.  */                               ");
-		writer.write("   THOU THOU THOU THOU THOU THOU THOU THOU THOU THOU THOU ");
-		writer.write("}                                                         ");
+    	writer.write( " #define ONE	else if (0) { } \n"); //$NON-NLS-1$
+    	writer.write( " #define TEN	ONE ONE ONE ONE ONE ONE ONE ONE ONE ONE \n "); //$NON-NLS-1$
+    	writer.write( " #define HUN	TEN TEN TEN TEN TEN TEN TEN TEN TEN TEN \n "); //$NON-NLS-1$
+    	writer.write( " #define THOU	HUN HUN HUN HUN HUN HUN HUN HUN HUN HUN \n"); //$NON-NLS-1$
+		writer.write("void foo()                                                "); //$NON-NLS-1$
+		writer.write("{                                                         "); //$NON-NLS-1$
+		writer.write("   if (0) { }                                             "); //$NON-NLS-1$
+		writer.write("   /* 11,000 else if's.  */                               "); //$NON-NLS-1$
+		writer.write("   THOU THOU THOU THOU THOU THOU THOU THOU THOU THOU THOU "); //$NON-NLS-1$
+		writer.write("}                                                         "); //$NON-NLS-1$
 		
 		Iterator d = parse( writer.toString() ).getDeclarations();
 	

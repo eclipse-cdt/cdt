@@ -55,27 +55,27 @@ public class TortureTest extends FractionalAutomatedTest {
 	}
 	
 	protected void loadProperties() throws Exception{
-		String resourcePath = org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
-		resourcePath += "resources/parser/TortureTest";
+		String resourcePath = org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+		resourcePath += "resources/parser/TortureTest"; //$NON-NLS-1$
 	
 		try {
-			FileInputStream propertiesIn = new FileInputStream(resourcePath + "/TortureTest.properties");
+			FileInputStream propertiesIn = new FileInputStream(resourcePath + "/TortureTest.properties"); //$NON-NLS-1$
 			properties.load (propertiesIn);
 		
-			isEnabled = properties.getProperty("enabled", "false").equalsIgnoreCase("true");
-			quickParse = properties.getProperty("quickParse", "true").equalsIgnoreCase("true");
+			isEnabled = properties.getProperty("enabled", "false").equalsIgnoreCase("true"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			quickParse = properties.getProperty("quickParse", "true").equalsIgnoreCase("true"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
-			String sourceInfo = properties.getProperty("source", "");
+			String sourceInfo = properties.getProperty("source", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			stepSize = Integer.parseInt(properties.getProperty("stepSize", "25000"));
-			outputFile = properties.getProperty("outputFile", "");
-			timeOut = Integer.parseInt(properties.getProperty("timeOut", "60000"));
-			outputDir = properties.getProperty("outDir", "");
+			stepSize = Integer.parseInt(properties.getProperty("stepSize", "25000")); //$NON-NLS-1$ //$NON-NLS-2$
+			outputFile = properties.getProperty("outputFile", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			timeOut = Integer.parseInt(properties.getProperty("timeOut", "60000")); //$NON-NLS-1$ //$NON-NLS-2$
+			outputDir = properties.getProperty("outDir", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			if (sourceInfo.equals(""))
+			if (sourceInfo.equals("")) //$NON-NLS-1$
 				throw new FileNotFoundException();
 			else {
-				StringTokenizer tokenizer = new StringTokenizer(sourceInfo, ",");
+				StringTokenizer tokenizer = new StringTokenizer(sourceInfo, ","); //$NON-NLS-1$
 				String str = null, val = null;
 				try {
 					while (tokenizer.hasMoreTokens()) {
@@ -86,12 +86,12 @@ public class TortureTest extends FractionalAutomatedTest {
 					}
 				} catch (NoSuchElementException e){
 					//only way to get here is to have a missing val, assume cpp for that str
-					testSources.put(str, "cpp");
+					testSources.put(str, "cpp"); //$NON-NLS-1$
 				}
 			
 			}
 		} catch (FileNotFoundException e){
-			testSources.put(resourcePath, "cpp");
+			testSources.put(resourcePath, "cpp"); //$NON-NLS-1$
 		}
 		
 		if (!isEnabled) testSources.clear();
@@ -114,11 +114,11 @@ public class TortureTest extends FractionalAutomatedTest {
 		} catch (Exception ex) {}
 		
 		if (e instanceof AssertionFailedError) {
-			output = file + ": Parse failed on line ";
-			output += lineNumber + "\n";
+			output = file + ": Parse failed on line "; //$NON-NLS-1$
+			output += lineNumber + "\n"; //$NON-NLS-1$
 		} else {
-			output = file + ": " + e.getClass().toString();
-			output += " on line " + lineNumber + "\n";
+			output = file + ": " + e.getClass().toString(); //$NON-NLS-1$
+			output += " on line " + lineNumber + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		try {
 		if (report != null) {
@@ -135,9 +135,9 @@ public class TortureTest extends FractionalAutomatedTest {
 		String fileName = file.getName();
 		
 		// Filter out gcc-specific tests that are not easy to detect automatically
-		if (   fileName.equals("init-2.c")
-			|| fileName.equals("init-3.c")
-			|| fileName.equals("struct-ini-4.c")) {
+		if (   fileName.equals("init-2.c") //$NON-NLS-1$
+			|| fileName.equals("init-3.c") //$NON-NLS-1$
+			|| fileName.equals("struct-ini-4.c")) { //$NON-NLS-1$
 				
 				// gcc-specific (and deprecated) designated initializers
 				// struct { int e1, e2; } v = { e2: 0 };
@@ -145,7 +145,7 @@ public class TortureTest extends FractionalAutomatedTest {
 				return false;
 		}
 		
-		if (   fileName.equals("stmtexpr3.C")) {
+		if (   fileName.equals("stmtexpr3.C")) { //$NON-NLS-1$
 		
 				// statements in expressions
 				// B() : a(({ 1; })) {}
@@ -153,7 +153,7 @@ public class TortureTest extends FractionalAutomatedTest {
 				return false;
 		}
 		
-		if (   fileName.equals("widechar-1.c")) {
+		if (   fileName.equals("widechar-1.c")) { //$NON-NLS-1$
 		
 				// concatenation of incompatible literals
 				// char *s = L"a" "b";
@@ -161,9 +161,9 @@ public class TortureTest extends FractionalAutomatedTest {
 				return false;
 		}
 		
-		if (   fileName.equals("bf-common.h")
-		    || fileName.equals("class-tests-1.h")
-			|| fileName.equals("unclaimed-category-1.h")) {
+		if (   fileName.equals("bf-common.h") //$NON-NLS-1$
+		    || fileName.equals("class-tests-1.h") //$NON-NLS-1$
+			|| fileName.equals("unclaimed-category-1.h")) { //$NON-NLS-1$
 		
 				// ObjectiveC header file
 
@@ -171,41 +171,41 @@ public class TortureTest extends FractionalAutomatedTest {
 		}
 		
 		// Process some DejaGNU instructions	
-		if (testCode.indexOf("{ dg-error") >= 0) return false;
-		if (testCode.indexOf("// ERROR") >= 0) return false;
-		if (testCode.indexOf("- ERROR") >= 0) return false;
-		if (testCode.indexOf("// XFAIL") >= 0) return false;
-		if (testCode.indexOf("- XFAIL") >= 0) return false;
-		if (testCode.indexOf("{ xfail") >= 0) return false;
-		if (testCode.indexOf("{ dg-preprocess") >= 0) return false;
-		if (testCode.indexOf("{ dg-do preprocess") >= 0) return false;
+		if (testCode.indexOf("{ dg-error") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("// ERROR") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("- ERROR") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("// XFAIL") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("- XFAIL") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("{ xfail") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("{ dg-preprocess") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("{ dg-do preprocess") >= 0) return false; //$NON-NLS-1$
 	
 		// gcc extensions
-		if (testCode.indexOf("__attribute") >= 0) return false;
-		if (testCode.indexOf("__extension") >= 0) return false;
-		if (testCode.indexOf("__restrict") >= 0) return false;
-		if (testCode.indexOf("__const") >= 0) return false;
-		if (testCode.indexOf("__declspec") >= 0) return false;
-		if (testCode.indexOf("__alignof") >= 0) return false;
-		if (testCode.indexOf("__label") >= 0) return false;
-		if (testCode.indexOf("__real") >= 0) return false;
-		if (testCode.indexOf("__imag") >= 0) return false;
-		if (testCode.indexOf("extern template") >= 0) return false;
-		if (testCode.indexOf("inline template") >= 0) return false;
-		if (testCode.indexOf("static template") >= 0) return false;
-		if (testCode.indexOf("typeof") >= 0) return false;
-		if (testCode.indexOf(" asm") >= 0) return false;
-		if (testCode.indexOf(") return") >= 0) return false;
-		if (testCode.indexOf("#ident") >= 0) return false;
+		if (testCode.indexOf("__attribute") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("__extension") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("__restrict") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("__const") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("__declspec") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("__alignof") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("__label") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("__real") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("__imag") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("extern template") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("inline template") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("static template") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("typeof") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf(" asm") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf(") return") >= 0) return false; //$NON-NLS-1$
+		if (testCode.indexOf("#ident") >= 0) return false; //$NON-NLS-1$
 		
 		// These are expected errors (not marked in the code)
-		if (testCode.indexOf("#include_next") >= 0) return false;
+		if (testCode.indexOf("#include_next") >= 0) return false; //$NON-NLS-1$
 		
 		// Long long literals are part of ANSI C99
 		// if (containsLongLongLiterals(testCode)) return false;
 	
-		if (testCode.indexOf("{ dg-do run") >= 0) return true;
-		if (testCode.indexOf("{ dg-do link") >= 0) return true;
+		if (testCode.indexOf("{ dg-do run") >= 0) return true; //$NON-NLS-1$
+		if (testCode.indexOf("{ dg-do link") >= 0) return true; //$NON-NLS-1$
 		
 		return true;
 	}
@@ -233,7 +233,7 @@ public class TortureTest extends FractionalAutomatedTest {
 		
 		String testCode = code.toString();
 		
-		if ( file.getName().equals("concat1.C")) {
+		if ( file.getName().equals("concat1.C")) { //$NON-NLS-1$
 			// This is a really time-consuming test,
 			// override timeout
 			timeOut = 600000;
@@ -244,7 +244,7 @@ public class TortureTest extends FractionalAutomatedTest {
 
 			thread.quickParse = quickParse;
 			thread.code = testCode;
-			thread.cppNature = nature.equalsIgnoreCase("cpp");
+			thread.cppNature = nature.equalsIgnoreCase("cpp"); //$NON-NLS-1$
 			thread.file = filePath;
 			
 			thread.start();

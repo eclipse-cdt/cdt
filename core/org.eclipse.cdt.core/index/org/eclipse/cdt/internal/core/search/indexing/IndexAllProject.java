@@ -12,30 +12,19 @@
 package org.eclipse.cdt.internal.core.search.indexing;
 
 import java.io.IOException;
-import java.util.HashSet;
 
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
-import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.model.CModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.core.model.SourceEntry;
 import org.eclipse.cdt.internal.core.model.SourceRoot;
 import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 
@@ -74,13 +63,11 @@ public class IndexAllProject extends IndexRequest {
 			IQueryResult[] results = index.queryInDocumentNames(""); // all file names //$NON-NLS-1$
 			int max = results == null ? 0 : results.length;
 			final SimpleLookupTable indexedFileNames = new SimpleLookupTable(max == 0 ? 33 : max + 11);
-			final String OK = "OK"; //$NON-NLS-1$
 			final String DELETED = "DELETED"; //$NON-NLS-1$
 			for (int i = 0; i < max; i++)
 				indexedFileNames.put(results[i].getPath(), DELETED);
-			final long indexLastModified = max == 0 ? 0L : index.getIndexFile().lastModified();
 
-			CModel model = (CModel) CModelManager.getDefault().getCModel();
+			CModel model = CModelManager.getDefault().getCModel();
 		
 			if (model == null)
 				return false;

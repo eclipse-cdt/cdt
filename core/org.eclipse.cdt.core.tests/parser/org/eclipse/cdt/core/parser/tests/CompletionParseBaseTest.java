@@ -52,7 +52,7 @@ public class CompletionParseBaseTest extends CompleteParseBaseTest {
 			ParserFactory.createParser(
 				ParserFactory.createScanner(
 					new StringReader(code),
-					"completion-test",
+					"completion-test", //$NON-NLS-1$
 					new ScannerInfo(),
 					ParserMode.COMPLETION_PARSE,
 					ParserLanguage.CPP,
@@ -74,7 +74,7 @@ public class CompletionParseBaseTest extends CompleteParseBaseTest {
 			ParserFactory.createParser(
 				ParserFactory.createScanner(
 					new StringReader(code),
-					"completion-test",
+					"completion-test", //$NON-NLS-1$
 					new ScannerInfo(),
 					ParserMode.COMPLETION_PARSE,
 					lang,

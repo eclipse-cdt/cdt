@@ -16,12 +16,10 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.filetype.ICFileType;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -57,10 +55,10 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	public static boolean VERBOSE = false;
 	
 	//IDs defined in plugin.xml for file types
-	private final static String C_SOURCE_ID = "org.eclipse.cdt.core.fileType.c_source";
-	private final static String C_HEADER_ID = "org.eclipse.cdt.core.fileType.c_header";
-	private final static String CPP_SOURCE_ID = "org.eclipse.cdt.core.fileType.cxx_source";
-	private final static String CPP_HEADER_ID = "org.eclipse.cdt.core.fileType.cxx_header";
+	private final static String C_SOURCE_ID = "org.eclipse.cdt.core.fileType.c_source"; //$NON-NLS-1$
+	private final static String C_HEADER_ID = "org.eclipse.cdt.core.fileType.c_header"; //$NON-NLS-1$
+	private final static String CPP_SOURCE_ID = "org.eclipse.cdt.core.fileType.cxx_source"; //$NON-NLS-1$
+	private final static String CPP_HEADER_ID = "org.eclipse.cdt.core.fileType.cxx_header"; //$NON-NLS-1$
 	
 	public AbstractIndexer() {
 		super();

@@ -34,58 +34,58 @@ public class ExprEvalTest extends TestCase {
 	}
 	
 	public void testInteger() throws Exception {
-		runTest("5;", 5);
-		runTest( "33;", 33 );
+		runTest("5;", 5); //$NON-NLS-1$
+		runTest( "33;", 33 ); //$NON-NLS-1$
 	}
 	
 	public void testNot() throws Exception
 	{
-		runTest( "!1;", 0 );
-		runTest( "!0;", 1 );
-		runTest( "!4;", 0 ); 
-		runTest( "!!4;", 1 );
+		runTest( "!1;", 0 ); //$NON-NLS-1$
+		runTest( "!0;", 1 ); //$NON-NLS-1$
+		runTest( "!4;", 0 );  //$NON-NLS-1$
+		runTest( "!!4;", 1 ); //$NON-NLS-1$
 	}
 	
 	public void testMultiplicational() throws Exception
 	{
-		runTest( "3 * 4;", 12 ); 
-		runTest( "55 * 2;", 110 );
-		runTest( "4 / 3;", 1 );
-		runTest( "100/4;", 25 );
-		runTest( "8 % 2;", 0 );
-		runTest( "8 % 3;", 2 );
+		runTest( "3 * 4;", 12 );  //$NON-NLS-1$
+		runTest( "55 * 2;", 110 ); //$NON-NLS-1$
+		runTest( "4 / 3;", 1 ); //$NON-NLS-1$
+		runTest( "100/4;", 25 ); //$NON-NLS-1$
+		runTest( "8 % 2;", 0 ); //$NON-NLS-1$
+		runTest( "8 % 3;", 2 ); //$NON-NLS-1$
 	}
 	
 	public void testAdditive() throws Exception
 	{
-		runTest( "4 + 4;", 8 );
-		runTest( "4 - 4;", 0 );
+		runTest( "4 + 4;", 8 ); //$NON-NLS-1$
+		runTest( "4 - 4;", 0 ); //$NON-NLS-1$
 	}
 	
 	public void testLogicalAnd() throws Exception
 	{
-		runTest( "4 && 5;", 1 );
-		runTest( "0 && 5;", 0 );
-		runTest( "5 && 0;", 0 );
-		runTest( "0 && 0;", 0 );
+		runTest( "4 && 5;", 1 ); //$NON-NLS-1$
+		runTest( "0 && 5;", 0 ); //$NON-NLS-1$
+		runTest( "5 && 0;", 0 ); //$NON-NLS-1$
+		runTest( "0 && 0;", 0 ); //$NON-NLS-1$
 	}
 	
 	public void testLogicalOr() throws Exception
 	{
-		runTest( "4 || 5;", 1 );
-		runTest( "0 || 5;", 1 );
-		runTest( "5 || 0;", 1 );
-		runTest( "0 || 0;", 0 );
+		runTest( "4 || 5;", 1 ); //$NON-NLS-1$
+		runTest( "0 || 5;", 1 ); //$NON-NLS-1$
+		runTest( "5 || 0;", 1 ); //$NON-NLS-1$
+		runTest( "0 || 0;", 0 ); //$NON-NLS-1$
 	}
 	
 	public void testRelational() throws Exception {
-		runTest("1 < 2;", 1);
-		runTest("2 < 1;", 0);
-		runTest("2 == 1 + 1;", 1);
-		runTest("2 != 1 + 1;", 0);
+		runTest("1 < 2;", 1); //$NON-NLS-1$
+		runTest("2 < 1;", 0); //$NON-NLS-1$
+		runTest("2 == 1 + 1;", 1); //$NON-NLS-1$
+		runTest("2 != 1 + 1;", 0); //$NON-NLS-1$
 	}
 	
 	public void testBracketed() throws Exception {
-		runTest("2 * (3 + 4);", 14);
+		runTest("2 * (3 + 4);", 14); //$NON-NLS-1$
 	}
 }

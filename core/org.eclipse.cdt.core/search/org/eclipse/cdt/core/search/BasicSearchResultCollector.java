@@ -144,7 +144,7 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 		
 		for( int i = 0; i < paramTypes.length; i++ ){
 			if( i != 0 )
-				paramString += ", ";
+				paramString += ", "; //$NON-NLS-1$
 			paramString += paramTypes[i];
 		}
 

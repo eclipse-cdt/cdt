@@ -14,8 +14,6 @@ import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.filetype.tests.ResolverTests;
 import org.eclipse.cdt.core.indexer.tests.DependencyTests;
 import org.eclipse.cdt.core.indexer.tests.IndexManagerTests;
-import org.eclipse.cdt.core.internal.errorparsers.tests.GCCErrorParserTests;
-import org.eclipse.cdt.core.internal.errorparsers.tests.GenericErrorParserTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.BinaryTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;

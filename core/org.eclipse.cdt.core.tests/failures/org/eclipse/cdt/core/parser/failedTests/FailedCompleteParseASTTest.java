@@ -12,8 +12,6 @@ package org.eclipse.cdt.core.parser.failedTests;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.tests.CompleteParseBaseTest;
@@ -43,9 +41,9 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 	{
 		//parse no longer passes
 		try{
-			parse ("class A { int m(int); }; \n A a; int A::*pm = &A::m; \n int f(){} \n int f(int); \n int x = f((a.*pm)(5));");
+			parse ("class A { int m(int); }; \n A a; int A::*pm = &A::m; \n int f(){} \n int f(int); \n int x = f((a.*pm)(5));"); //$NON-NLS-1$
 		} catch ( ParserException e ){
-			assertTrue( e.getMessage().equals( "FAILURE" ) );
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
 		}
 //		Iterator i = parse ("class A { int m(int); }; \n A a; int A::*pm = &A::m; \n int f(){} \n int f(int); \n int x = f((a.*pm)(5));").getDeclarations();
 //		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
@@ -65,9 +63,9 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 	{
 		//parse no longer passes
 		try{
-			parse ("class A { int m(int); }; \n A * a; int A::*pm = &A::m; \n int f(){} \n int f(int); \n int x = f((a->*pm)(5));");
+			parse ("class A { int m(int); }; \n A * a; int A::*pm = &A::m; \n int f(){} \n int f(int); \n int x = f((a->*pm)(5));"); //$NON-NLS-1$
 		} catch ( ParserException e ){
-			assertTrue( e.getMessage().equals( "FAILURE" ) );
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
 		}
 //		Iterator i = parse ("class A { int m(int); }; \n A * a; int A::*pm = &A::m; \n int f(){} \n int f(int); \n int x = f((a->*pm)(5));").getDeclarations();
 //		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
@@ -85,7 +83,7 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 	}  
 	public void testUnaryStarCastexpressionPointerToFunction_Bug43241() throws Exception
 	{
-		Iterator i = parse ("int m(int); \n int *pm = &m; \n int f(){} \n int f(int); \n int x = f((*pm)(5));").getDeclarations();
+		Iterator i = parse ("int m(int); \n int *pm = &m; \n int f(){} \n int f(int); \n int x = f((*pm)(5));").getDeclarations(); //$NON-NLS-1$
 		IASTFunction m = (IASTFunction) i.next();
 		IASTVariable pm  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
@@ -103,9 +101,9 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 	{
 		//parse no longer passes
 		try{
-			parse ( "class A { int m; }; \n A a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a.*pm);" );
+			parse ( "class A { int m; }; \n A a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a.*pm);" ); //$NON-NLS-1$
 		} catch ( ParserException e ){
-			assertTrue( e.getMessage().equals( "FAILURE" ) );
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
 		}
 //		Iterator i = parse ("class A { int m; }; \n A a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a.*pm);").getDeclarations();
 //		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
@@ -123,9 +121,9 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 	{
 		//parse no longer passes
 		try{
-			parse ("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);");
+			parse ("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);"); //$NON-NLS-1$
 		} catch ( ParserException e ){
-			assertTrue( e.getMessage().equals( "FAILURE" ) );
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
 		}
 //		Iterator i = parse ("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);").getDeclarations();
 //		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();

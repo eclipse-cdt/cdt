@@ -731,7 +731,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 					continue;
 			}
 			String jobName = INDEXER_MARKER_PROCESSING;
-			jobName += " (";
+			jobName += " ("; //$NON-NLS-1$
 			jobName += resource.getFullPath();
 			jobName += ')';
 			

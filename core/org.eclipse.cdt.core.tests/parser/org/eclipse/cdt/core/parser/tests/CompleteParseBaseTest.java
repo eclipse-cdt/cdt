@@ -753,10 +753,10 @@ public class CompleteParseBaseTest extends TestCase
     {
     	callback = new FullParseCallback(); 
     	IParser parser = ParserFactory.createParser( 
-    		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(),
+    		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(), //$NON-NLS-1$
     			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
-    	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE");
+    	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$
         return callback.getCompilationUnit();
     }
         
@@ -773,7 +773,7 @@ public class CompleteParseBaseTest extends TestCase
     		if( r.getReferencedElement() == element )
     		{
     			if( ! matches.add( r ) && ! allowDuplicates )
-    				fail( "Duplicate reference found for ISourceElementCallbackDelegate: " + element + " @ offset " + r.getOffset() );
+    				fail( "Duplicate reference found for ISourceElementCallbackDelegate: " + element + " @ offset " + r.getOffset() ); //$NON-NLS-1$ //$NON-NLS-2$
     		}
     		else
     		{
@@ -789,7 +789,7 @@ public class CompleteParseBaseTest extends TestCase
 					  { 
 					  
 						if( ! matches.add( r ) && ! allowDuplicates )
-							fail( "Duplicate reference found for ISourceElementCallbackDelegate: " + element + " @ offset " + r.getOffset() );
+							fail( "Duplicate reference found for ISourceElementCallbackDelegate: " + element + " @ offset " + r.getOffset() ); //$NON-NLS-1$ //$NON-NLS-2$
 					  }
 					
     			}

@@ -64,7 +64,7 @@ public class PreprocessorTest extends TestCase {
 	public void testSimpleExample()
 	{
 		Callback c = new Callback(); 
-		IPreprocessor p = setupPreprocessor( "#include <stdio.h>", 
+		IPreprocessor p = setupPreprocessor( "#include <stdio.h>",  //$NON-NLS-1$
 			null, 	// NOTE -- to demonstrate simple example, this should be set up with the info from the 
 					// build properties
 			null, c );
@@ -74,7 +74,7 @@ public class PreprocessorTest extends TestCase {
 	
 	public IPreprocessor setupPreprocessor( String text, List includePaths, Map defns, ISourceElementRequestor rq )
 	{
-		IPreprocessor p = ParserFactory.createPreprocessor( new StringReader( text ), "test", new ScannerInfo( defns, 
+		IPreprocessor p = ParserFactory.createPreprocessor( new StringReader( text ), "test", new ScannerInfo( defns,  //$NON-NLS-1$
 				includePaths == null ? null : (String [])includePaths.toArray()), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, rq, null, null );
 		return p; 
 	}

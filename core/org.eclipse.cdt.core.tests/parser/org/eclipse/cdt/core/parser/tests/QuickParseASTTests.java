@@ -1173,8 +1173,8 @@ public class QuickParseASTTests extends BaseASTTest
 		IASTMacro m = (IASTMacro)macros.next();
 		assertEquals( m.getName(), "DEF" );  //$NON-NLS-1$
 		assertEquals( m.getStartingOffset(), code.indexOf("#define") ); //$NON-NLS-1$
-		assertEquals( m.getNameOffset(), code.indexOf("DEF") );
-		assertEquals( m.getEndingOffset(), code.indexOf("VALUE") + 5);
+		assertEquals( m.getNameOffset(), code.indexOf("DEF") ); //$NON-NLS-1$
+		assertEquals( m.getEndingOffset(), code.indexOf("VALUE") + 5); //$NON-NLS-1$
 	}
 	
 	public void testTemplateDeclarationOfFunction() throws Exception

@@ -142,7 +142,7 @@ public class BranchTrackerTest extends TestCase {
 			assertTrue( bt.poundEndif() ); 
 			assertEquals(0, bt.getDepth());
 		} catch (EmptyStackException se) {
-				fail("Unexpected Scanner exception thrown");
+				fail("Unexpected Scanner exception thrown"); //$NON-NLS-1$
 			}
 		}
 	
@@ -199,7 +199,7 @@ public class BranchTrackerTest extends TestCase {
 		}
 		catch( EmptyStackException se )
 		{
-			fail( "Exception" ); 
+			fail( "Exception" );  //$NON-NLS-1$
 		}
 	}
 }

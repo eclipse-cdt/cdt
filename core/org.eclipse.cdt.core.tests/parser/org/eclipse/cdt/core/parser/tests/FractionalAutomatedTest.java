@@ -50,25 +50,25 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 		return new FractionalAutomatedTest( name );
 	}
 	protected void loadProperties() throws Exception{
-		String resourcePath = org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
-		resourcePath += "resources/parser/AutomatedTest";
+		String resourcePath = org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+		resourcePath += "resources/parser/AutomatedTest"; //$NON-NLS-1$
 	
 		try{
-			FileInputStream propertiesIn = new FileInputStream( resourcePath + "/FractionalAutomatedTest.properties");
+			FileInputStream propertiesIn = new FileInputStream( resourcePath + "/FractionalAutomatedTest.properties"); //$NON-NLS-1$
 			properties.load( propertiesIn );
 		
-			outputFile = properties.getProperty( "outputFile", "" );
-			String sourceInfo = properties.getProperty( "source", "" );
+			outputFile = properties.getProperty( "outputFile", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+			String sourceInfo = properties.getProperty( "source", "" ); //$NON-NLS-1$ //$NON-NLS-2$
 
-			stepSize = Integer.parseInt( properties.getProperty( "stepSize", "50" ) );
-			windowSize = Integer.parseInt( properties.getProperty( "windowSize", "200" ) );
-			timeOut = Integer.parseInt( properties.getProperty( "timeOut", "5000" ));
-			outputDir = properties.getProperty( "outDir", "" );
+			stepSize = Integer.parseInt( properties.getProperty( "stepSize", "50" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+			windowSize = Integer.parseInt( properties.getProperty( "windowSize", "200" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+			timeOut = Integer.parseInt( properties.getProperty( "timeOut", "5000" )); //$NON-NLS-1$ //$NON-NLS-2$
+			outputDir = properties.getProperty( "outDir", "" ); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			if( sourceInfo.equals("") )
+			if( sourceInfo.equals("") ) //$NON-NLS-1$
 				throw new FileNotFoundException();
 			else{
-				StringTokenizer tokenizer = new StringTokenizer( sourceInfo, "," );
+				StringTokenizer tokenizer = new StringTokenizer( sourceInfo, "," ); //$NON-NLS-1$
 				String str = null, val = null;
 				try{
 					while( tokenizer.hasMoreTokens() ){
@@ -79,13 +79,13 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 					}
 				} catch ( NoSuchElementException e ){
 					//only way to get here is to have a missing val, assume cpp for that str
-					testSources.put( str, "cpp" );
+					testSources.put( str, "cpp" ); //$NON-NLS-1$
 				}
 			
 			}
 		} catch ( FileNotFoundException e ){
-			testSources.put( resourcePath + "/defaultCpp", "cpp" );
-			testSources.put( resourcePath + "/defaultC", "c" );
+			testSources.put( resourcePath + "/defaultCpp", "cpp" ); //$NON-NLS-1$ //$NON-NLS-2$
+			testSources.put( resourcePath + "/defaultC", "c" ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -97,8 +97,8 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 	}
 	
 	static private String outputFile( String code ) {
-		if( outputDir == null || outputDir.equals("") )
-			return "";
+		if( outputDir == null || outputDir.equals("") ) //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 			
 		File output = new File( outputDir );
 				
@@ -116,7 +116,7 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 			} else {
 				output.mkdir();
 			}
-			File file = new File( outputDir + "/" + failures++ + ".tmp" );
+			File file = new File( outputDir + "/" + failures++ + ".tmp" ); //$NON-NLS-1$ //$NON-NLS-2$
 			if( file.exists() )
 				file.delete();
 			file.createNewFile();
@@ -129,15 +129,15 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 			
 		} catch ( Exception e )
 		{}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	static public void reportHang( String code, String file ){
 		String output = outputFile( code.toString() );
-		if( output.equals("") )
-			output = "Parser hang while parsing " + file + "\n";
+		if( output.equals("") ) //$NON-NLS-1$
+			output = "Parser hang while parsing " + file + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 		else 
-			output = "Parser hang while parsing " + output + "\n";
+			output = "Parser hang while parsing " + output + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 	 
 		if( report != null ){
 			try{
@@ -151,10 +151,10 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 	static public void reportException( String code, String file, String exception ){
 		String output = outputFile( code.toString() );
 
-		if( output.equals("") )
-			output = exception.getClass().toString() + " encountered in " + file + "\n";
+		if( output.equals("") ) //$NON-NLS-1$
+			output = exception.getClass().toString() + " encountered in " + file + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 		else 
-			output = exception.getClass().toString() + " encountered in " + output + "\n";
+			output = exception.getClass().toString() + " encountered in " + output + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 	 
 		if( report != null ){
 			try{
@@ -174,7 +174,7 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 		String filePath = file.getCanonicalPath();
 		String nature = (String)natures.get( filePath );
 
-		boolean cppNature = nature.equalsIgnoreCase("cpp");
+		boolean cppNature = nature.equalsIgnoreCase("cpp"); //$NON-NLS-1$
 		
 		StringWriter code = new StringWriter(); 
 		
@@ -211,7 +211,7 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 		
 		while( curPos + windowSize < length){
 			windowedCode = fullCode.substring( 0, curPos );
-			windowedCode += "\n" + fullCode.substring( curPos + windowSize, length );
+			windowedCode += "\n" + fullCode.substring( curPos + windowSize, length ); //$NON-NLS-1$
 			
 			thread.code = windowedCode;
 			thread.cppNature = cppNature;

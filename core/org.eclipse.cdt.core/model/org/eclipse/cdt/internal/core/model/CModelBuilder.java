@@ -405,10 +405,10 @@ public class CModelBuilder {
 	
 	private Include createInclusion(Parent parent, IASTInclusion inclusion) throws CModelException{
 		// create element
-		Include element = new Include((CElement)parent, inclusion.getName(), !inclusion.isLocal());
+		Include element = new Include(parent, inclusion.getName(), !inclusion.isLocal());
 		element.setFullPathName(inclusion.getFullFileName());
 		// add to parent
-		parent.addChild((CElement) element);
+		parent.addChild(element);
 		// set position
 		element.setIdPos(inclusion.getNameOffset(), inclusion.getNameEndOffset() - inclusion.getNameOffset());
 		element.setPos(inclusion.getStartingOffset(), inclusion.getEndingOffset() - inclusion.getStartingOffset());
@@ -421,7 +421,7 @@ public class CModelBuilder {
 		// create element
 		org.eclipse.cdt.internal.core.model.Macro element = new  Macro(parent, macro.getName());
 		// add to parent
-		parent.addChild((CElement) element);		
+		parent.addChild(element);		
 		// set position
 		element.setIdPos(macro.getNameOffset(), macro.getNameEndOffset() - macro.getNameOffset());
 		element.setPos(macro.getStartingOffset(), macro.getEndingOffset() - macro.getStartingOffset());
@@ -437,9 +437,9 @@ public class CModelBuilder {
 		String nsName = (nsDef.getName() == null )  
 						? ""  //$NON-NLS-1$
 						: nsDef.getName().toString();
-		Namespace element = new Namespace ((ICElement)parent, nsName );
+		Namespace element = new Namespace (parent, nsName );
 		// add to parent
-		parent.addChild((ICElement)element);
+		parent.addChild(element);
 		element.setIdPos(nsDef.getNameOffset(), 
 		(nsName.length() == 0) ? type.length() : (nsDef.getNameEndOffset() - nsDef.getNameOffset()));
 		element.setPos(nsDef.getStartingOffset(), nsDef.getEndingOffset() - nsDef.getStartingOffset());
@@ -456,9 +456,9 @@ public class CModelBuilder {
 		String enumName = (enumSpecifier.getName() == null )
 						  ? ""  //$NON-NLS-1$
 						  : enumSpecifier.getName().toString();
-		Enumeration element = new Enumeration ((ICElement)parent, enumName );
+		Enumeration element = new Enumeration (parent, enumName );
 		// add to parent
-		parent.addChild((ICElement)element);
+		parent.addChild(element);
 		Iterator i  = enumSpecifier.getEnumerators();
 		while (i.hasNext()){
 			// create sub element
@@ -534,10 +534,10 @@ public class CModelBuilder {
 		
 		Structure element;
 		if(!isTemplate){		
-			Structure classElement = new Structure( (CElement)parent, kind, className );
+			Structure classElement = new Structure( parent, kind, className );
 			element = classElement;
 		} else {
-			StructureTemplate classTemplate = new StructureTemplate( (CElement)parent, kind, className );
+			StructureTemplate classTemplate = new StructureTemplate( parent, kind, className );
 			element = classTemplate;
 		}
 		
@@ -549,7 +549,7 @@ public class CModelBuilder {
 		}
 
 		// add to parent
-		parent.addChild((ICElement) element);
+		parent.addChild(element);
 		// set element position 
 		element.setIdPos( classSpecifier.getNameOffset(), 
 		(className.length() == 0) ? type.length() : (classSpecifier.getNameEndOffset() - classSpecifier.getNameOffset() ));
@@ -574,7 +574,7 @@ public class CModelBuilder {
 		element.setTypeName(typeName.toString());
 		
 		// add to parent
-		parent.addChild((CElement)element);
+		parent.addChild(element);
 
 		// set positions
 		element.setIdPos(typeDefDeclaration.getNameOffset(), (typeDefDeclaration.getNameEndOffset() - typeDefDeclaration.getNameOffset()));	

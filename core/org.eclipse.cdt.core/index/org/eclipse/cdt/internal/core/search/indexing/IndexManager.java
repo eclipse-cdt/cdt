@@ -777,7 +777,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	};
 	
 	public void removeAllIndexerProblems( IProject project){
-		String jobName = "remove markers";
+		String jobName = "remove markers"; //$NON-NLS-1$
 		RemoveIndexMarkersJob job = new RemoveIndexMarkersJob( project, jobName );
 		job.setPriority( Job.DECORATE );
 		job.schedule();

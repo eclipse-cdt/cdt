@@ -70,20 +70,20 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void testTemplateParameterAsParent() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "A" );
-		ISymbol param = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol template = table.newTemplateSymbol( "A" ); //$NON-NLS-1$
+		ISymbol param = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( param );
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( A );
 		A.addParent( param );
 		
-		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
-		ISymbol i = table.newSymbol( "i", TypeInfo.t_int );
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class ); //$NON-NLS-1$
+		ISymbol i = table.newSymbol( "i", TypeInfo.t_int ); //$NON-NLS-1$
 		B.addSymbol( i );
 		table.getCompilationUnit().addSymbol( B );
 		
@@ -91,22 +91,22 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		ArrayList args = new ArrayList();
 		args.add( type );
 		
-		IContainerSymbol instance = (IContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args );
+		IContainerSymbol instance = (IContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 		assertEquals( instance.getInstantiatedSymbol(), A );
 		
-		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
+		ISymbol a = table.newSymbol( "a", TypeInfo.t_type ); //$NON-NLS-1$
 		a.setTypeSymbol( instance );
 		
 		table.getCompilationUnit().addSymbol( a );
 		
-		ISymbol look = table.getCompilationUnit().lookup( "a" );
+		ISymbol look = table.getCompilationUnit().lookup( "a" ); //$NON-NLS-1$
 		
 		assertEquals( look, a );
 		
 		ISymbol symbol = a.getTypeSymbol();
 		assertEquals( symbol, instance );
 
-		look = instance.lookup( "i" );
+		look = instance.lookup( "i" ); //$NON-NLS-1$
 		assertEquals( look, i );
 	}
 	
@@ -123,45 +123,45 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void testTemplateInstanceAsParent() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "A" );
+		ITemplateSymbol template = table.newTemplateSymbol( "A" ); //$NON-NLS-1$
 			
-		ISymbol param = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ISymbol param = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( param );
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( A );
 		
-		ISymbol t = table.newSymbol( "t", TypeInfo.t_type );
-		ISymbol look = template.lookup( "T" );
+		ISymbol t = table.newSymbol( "t", TypeInfo.t_type ); //$NON-NLS-1$
+		ISymbol look = template.lookup( "T" ); //$NON-NLS-1$
 		assertEquals( look, param );
 		t.setTypeSymbol( param );
 		A.addSymbol( t );
 		
-		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class ); //$NON-NLS-1$
 		table.getCompilationUnit().addSymbol( B );
 		
 		TypeInfo type = new TypeInfo( TypeInfo.t_int, 0 , null );
 		ArrayList args = new ArrayList();
 		args.add( type );
 		
-		look = table.getCompilationUnit().lookupTemplateId( "A", args );
+		look = table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), A );
 		
 		B.addParent( look );
 		
-		ISymbol b = table.newSymbol( "b", TypeInfo.t_type );
+		ISymbol b = table.newSymbol( "b", TypeInfo.t_type ); //$NON-NLS-1$
 		b.setTypeSymbol( B );
 		table.getCompilationUnit().addSymbol( b );
 		
-		look = table.getCompilationUnit().lookup( "b" );
+		look = table.getCompilationUnit().lookup( "b" ); //$NON-NLS-1$
 		assertEquals( look, b );
 		
-		look = ((IDerivableContainerSymbol) b.getTypeSymbol()).lookup( "t" );
+		look = ((IDerivableContainerSymbol) b.getTypeSymbol()).lookup( "t" ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), t );
 		assertTrue( look.isType( TypeInfo.t_int ) );
@@ -186,14 +186,14 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void testTemplateParameterDefaults() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "X" );
+		ITemplateSymbol template = table.newTemplateSymbol( "X" ); //$NON-NLS-1$
 		
-		ISymbol paramT = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ISymbol paramT = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( paramT );
 		
-		ISymbol look = template.lookup( "T" );
+		ISymbol look = template.lookup( "T" ); //$NON-NLS-1$
 		assertEquals( look, paramT );
-		ISymbol paramU = table.newSymbol( "U", TypeInfo.t_templateParameter );
+		ISymbol paramU = table.newSymbol( "U", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		paramU.getTypeInfo().setDefault( new TypeInfo( TypeInfo.t_type, 0, look ) );
 		template.addTemplateParameter( paramU );
 		
@@ -201,36 +201,36 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol X = table.newDerivableContainerSymbol( "X", TypeInfo.t_class );
+		IDerivableContainerSymbol X = table.newDerivableContainerSymbol( "X", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( X );
 		
-		look = X.lookup( "T" );
+		look = X.lookup( "T" ); //$NON-NLS-1$
 		assertEquals( look, paramT );
-		ISymbol t = table.newSymbol( "t", TypeInfo.t_type );
+		ISymbol t = table.newSymbol( "t", TypeInfo.t_type ); //$NON-NLS-1$
 		t.setTypeSymbol( look );
 		X.addSymbol( t );
 		
-		look = X.lookup( "U" );
+		look = X.lookup( "U" ); //$NON-NLS-1$
 		assertEquals( look, paramU );
-		ISymbol u = table.newSymbol( "u", TypeInfo.t_type );
+		ISymbol u = table.newSymbol( "u", TypeInfo.t_type ); //$NON-NLS-1$
 		u.setTypeSymbol( look );
 		X.addSymbol( u );
 		
 		TypeInfo type = new TypeInfo( TypeInfo.t_char, 0, null );
 		ArrayList args = new ArrayList();
 		args.add( type );
-		IDerivableContainerSymbol lookX = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "X", args );
+		IDerivableContainerSymbol lookX = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "X", args ); //$NON-NLS-1$
 		assertTrue( lookX.isTemplateInstance() );
 		assertEquals( lookX.getInstantiatedSymbol(), X );
 				
 		
-		look = lookX.lookup( "t" );
+		look = lookX.lookup( "t" ); //$NON-NLS-1$
 		
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), t );
 		assertTrue( look.isType( TypeInfo.t_char ) );
 		
-		look = lookX.lookup( "u" );
+		look = lookX.lookup( "u" ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), u );
 		assertTrue( look.isType( TypeInfo.t_char ) );	
@@ -254,58 +254,58 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void testTemplateParameterAsFunctionArgument() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "A" );
-		ISymbol paramT = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol template = table.newTemplateSymbol( "A" ); //$NON-NLS-1$
+		ISymbol paramT = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( paramT );
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( A );
 		
-		ISymbol t = table.newSymbol( "t", TypeInfo.t_type );
+		ISymbol t = table.newSymbol( "t", TypeInfo.t_type ); //$NON-NLS-1$
 		t.setTypeSymbol( paramT );
 		A.addSymbol( t );
 		
-		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class ); //$NON-NLS-1$
 		table.getCompilationUnit().addSymbol( B );
 		
 		ArrayList args = new ArrayList();
 		TypeInfo arg = new TypeInfo( TypeInfo.t_type, 0, B );
 		args.add( arg );
 		
-		IDerivableContainerSymbol lookA = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args );
+		IDerivableContainerSymbol lookA = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 		assertTrue( lookA.isTemplateInstance() );
 		assertEquals( lookA.getInstantiatedSymbol(), A );
 		
-		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f1.addParameter( TypeInfo.t_char, 0, null, false );
 		table.getCompilationUnit().addSymbol( f1 );
 		
-		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f2.addParameter( lookA, 0, null, false );
 		table.getCompilationUnit().addSymbol( f2 );
 		
-		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f3.addParameter( TypeInfo.t_int, 0, null, false );
 		table.getCompilationUnit().addSymbol( f3 );
 
 		args = new ArrayList();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, B ) );
-		IDerivableContainerSymbol lookA2 = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args );
+		IDerivableContainerSymbol lookA2 = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 		assertEquals( lookA2, lookA );
 		
 		
-		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
+		ISymbol a = table.newSymbol( "a", TypeInfo.t_type ); //$NON-NLS-1$
 		a.setTypeSymbol( lookA );
 		table.getCompilationUnit().addSymbol( a );
 
 		ArrayList params = new ArrayList();
 		params.add( new TypeInfo( TypeInfo.t_type, 0, a ) );
 		
-		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params ); //$NON-NLS-1$
 		assertEquals( look, f2 );		
 	}
 
@@ -322,41 +322,41 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_1__3_ParameterLookup() throws Exception{
 		newTable();
 		
-		IDerivableContainerSymbol T = table.newDerivableContainerSymbol( "T", TypeInfo.t_class );
+		IDerivableContainerSymbol T = table.newDerivableContainerSymbol( "T", TypeInfo.t_class ); //$NON-NLS-1$
 		table.getCompilationUnit().addSymbol( T );
 		
-		ISymbol i = table.newSymbol( "i", TypeInfo.t_int );
+		ISymbol i = table.newSymbol( "i", TypeInfo.t_int ); //$NON-NLS-1$
 		table.getCompilationUnit().addSymbol( i );
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "f" );
+		ITemplateSymbol template = table.newTemplateSymbol( "f" ); //$NON-NLS-1$
 				
-		ISymbol paramT = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ISymbol paramT = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( paramT );
 
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template );
 		
-		ISymbol parami = table.newSymbol( "i", TypeInfo.t_templateParameter );
+		ISymbol parami = table.newSymbol( "i", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		parami.getTypeInfo().setTemplateParameterType( TypeInfo.t_type );
 		
-		ISymbol look = factory.lookup( "T" );
+		ISymbol look = factory.lookup( "T" ); //$NON-NLS-1$
 
 		assertEquals( look, paramT );
 		parami.setTypeSymbol( look );
 		template.addTemplateParameter( parami );
 
-		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-		ISymbol fParam = table.newSymbol( "t", TypeInfo.t_type );
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
+		ISymbol fParam = table.newSymbol( "t", TypeInfo.t_type ); //$NON-NLS-1$
 		fParam.setTypeSymbol( paramT );
 		f.addParameter( fParam );
 		
 		factory.addSymbol( f );
 		
-		look = f.lookup( "T" );
+		look = f.lookup( "T" ); //$NON-NLS-1$
 		assertEquals( look, paramT );
 		
-		look = f.lookup( "i" );
+		look = f.lookup( "i" ); //$NON-NLS-1$
 		assertEquals( look, parami );
 	}
 	
@@ -378,9 +378,9 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_1__8_ParameterAdjustment() throws Exception{
 		newTable();
 		
-		ITemplateSymbol templateR = table.newTemplateSymbol( "R" );
+		ITemplateSymbol templateR = table.newTemplateSymbol( "R" ); //$NON-NLS-1$
 		
-		ISymbol paramA = table.newSymbol( "a", TypeInfo.t_templateParameter );
+		ISymbol paramA = table.newSymbol( "a", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		paramA.getTypeInfo().setTemplateParameterType( TypeInfo.t_int );
 		paramA.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
 		templateR.addTemplateParameter( paramA );
@@ -389,12 +389,12 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( templateR );
 		
-		IDerivableContainerSymbol R = table.newDerivableContainerSymbol( "R", TypeInfo.t_struct );
+		IDerivableContainerSymbol R = table.newDerivableContainerSymbol( "R", TypeInfo.t_struct ); //$NON-NLS-1$
 		factory.addSymbol( R );
 				
-		ITemplateSymbol templateS = table.newTemplateSymbol( "S" );
+		ITemplateSymbol templateS = table.newTemplateSymbol( "S" ); //$NON-NLS-1$
 				
-		ISymbol paramB = table.newSymbol( "b", TypeInfo.t_templateParameter );
+		ISymbol paramB = table.newSymbol( "b", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		paramB.getTypeInfo().setTemplateParameterType( TypeInfo.t_int );
 		paramB.addPtrOperator( new PtrOp( PtrOp.t_array ) );
 		templateS.addTemplateParameter( paramB );
@@ -403,10 +403,10 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( templateS ); 
 		
-		IDerivableContainerSymbol S = table.newDerivableContainerSymbol( "S", TypeInfo.t_struct );
+		IDerivableContainerSymbol S = table.newDerivableContainerSymbol( "S", TypeInfo.t_struct ); //$NON-NLS-1$
 		factory.addSymbol( S );
 				
-		ISymbol look = table.getCompilationUnit().lookup( "S" );
+		ISymbol look = table.getCompilationUnit().lookup( "S" ); //$NON-NLS-1$
 		assertEquals( look, templateS );
 		
 		Iterator iter = templateS.getParameterList().iterator();
@@ -417,33 +417,33 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		assertFalse( iter.hasNext() );
 		assertEquals( ptr.getType(), PtrOp.t_pointer );
 		
-		ISymbol p = table.newSymbol( "p", TypeInfo.t_int );
+		ISymbol p = table.newSymbol( "p", TypeInfo.t_int ); //$NON-NLS-1$
 		p.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
 		table.getCompilationUnit().addSymbol( p );
 		
 		List args = new ArrayList();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, p ) );
 		
-		look = table.getCompilationUnit().lookupTemplateId( "R", args );
+		look = table.getCompilationUnit().lookupTemplateId( "R", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), R );
 		
-		look = table.getCompilationUnit().lookupTemplateId( "S", args );
+		look = table.getCompilationUnit().lookupTemplateId( "S", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), S );
 		
-		ISymbol v = table.newSymbol( "v", TypeInfo.t_int );
+		ISymbol v = table.newSymbol( "v", TypeInfo.t_int ); //$NON-NLS-1$
 		v.addPtrOperator( new PtrOp( PtrOp.t_array ) );
 		table.getCompilationUnit().addSymbol( v );
 		
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, v ) );
 		
-		look = table.getCompilationUnit().lookupTemplateId( "R", args );
+		look = table.getCompilationUnit().lookupTemplateId( "R", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), R );
 
-		look = table.getCompilationUnit().lookupTemplateId( "S", args );
+		look = table.getCompilationUnit().lookupTemplateId( "S", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), S );
 	}
@@ -460,9 +460,9 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_3__4_ParameterDefaults() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "String" );
+		ITemplateSymbol template = table.newTemplateSymbol( "String" ); //$NON-NLS-1$
 		
-		ISymbol param = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ISymbol param = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		param.getTypeInfo().setDefault( new TypeInfo( TypeInfo.t_char, 0, null ) );
 		template.addTemplateParameter( param );
 
@@ -470,11 +470,11 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol string = table.newDerivableContainerSymbol( "String", TypeInfo.t_class );
+		IDerivableContainerSymbol string = table.newDerivableContainerSymbol( "String", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( string );
 		
 		List args = new ArrayList();
-		ISymbol look = table.getCompilationUnit().lookupTemplateId( "String", args );
+		ISymbol look = table.getCompilationUnit().lookupTemplateId( "String", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), string );
 	}	
@@ -495,25 +495,25 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_3_1__2_TypeArgumentRestrictions() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "X" );
-		template.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template = table.newTemplateSymbol( "X" ); //$NON-NLS-1$
+		template.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		factory.addSymbol( table.newDerivableContainerSymbol( "X", TypeInfo.t_class ) );
+		factory.addSymbol( table.newDerivableContainerSymbol( "X", TypeInfo.t_class ) ); //$NON-NLS-1$
 		
-		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		table.getCompilationUnit().addSymbol( f );
 		
-		IDerivableContainerSymbol S = table.newDerivableContainerSymbol( "S", TypeInfo.t_struct );
+		IDerivableContainerSymbol S = table.newDerivableContainerSymbol( "S", TypeInfo.t_struct ); //$NON-NLS-1$
 		f.addSymbol( S );
 		
 		List args = new ArrayList();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, S ) );
 		try{
-			f.lookupTemplateId( "X", args );
+			f.lookupTemplateId( "X", args ); //$NON-NLS-1$
 			assertTrue( false );
 		} catch( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplateArgument );
@@ -522,7 +522,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, S, new PtrOp( PtrOp.t_pointer ), false ) );
 		try{
-			f.lookupTemplateId( "X", args );
+			f.lookupTemplateId( "X", args ); //$NON-NLS-1$
 			assertTrue( false );
 		} catch( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplateArgument );
@@ -545,10 +545,10 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_3_2__2_NonTypeArgumentRestrictions() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "X" );
-		template.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template = table.newTemplateSymbol( "X" ); //$NON-NLS-1$
+		template.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
-		ISymbol param2 = table.newSymbol( "p", TypeInfo.t_templateParameter );
+		ISymbol param2 = table.newSymbol( "p", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		param2.getTypeInfo().setTemplateParameterType( TypeInfo.t_char );
 		param2.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
 		template.addTemplateParameter( param2 );
@@ -557,21 +557,21 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol X = table.newDerivableContainerSymbol( "X", TypeInfo.t_class );
+		IDerivableContainerSymbol X = table.newDerivableContainerSymbol( "X", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( X );
 		
 		List args = new ArrayList();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
-		args.add( new TypeInfo( TypeInfo.t_char, 0, null, new PtrOp( PtrOp.t_pointer ), "Studebaker" ) );
+		args.add( new TypeInfo( TypeInfo.t_char, 0, null, new PtrOp( PtrOp.t_pointer ), "Studebaker" ) ); //$NON-NLS-1$
 		
 		try{
-			table.getCompilationUnit().lookupTemplateId( "X", args );
+			table.getCompilationUnit().lookupTemplateId( "X", args ); //$NON-NLS-1$
 			assertTrue( false );
 		} catch( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplateArgument );
 		}
 		
-		ISymbol p = table.newSymbol( "p", TypeInfo.t_char );
+		ISymbol p = table.newSymbol( "p", TypeInfo.t_char ); //$NON-NLS-1$
 		p.addPtrOperator( new PtrOp( PtrOp.t_array ) );
 		table.getCompilationUnit().addSymbol( p );
 		
@@ -579,7 +579,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		args.add( new TypeInfo( TypeInfo.t_type, 0, p ) );
 		
-		ISymbol look = table.getCompilationUnit().lookupTemplateId( "X", args );
+		ISymbol look = table.getCompilationUnit().lookupTemplateId( "X", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), X );
 	}
@@ -605,9 +605,9 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_3_2__3_NonTypeArgumentRestrictions() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "X" );
+		ITemplateSymbol template = table.newTemplateSymbol( "X" ); //$NON-NLS-1$
 		
-		ISymbol param = table.newSymbol( "p", TypeInfo.t_templateParameter );
+		ISymbol param = table.newSymbol( "p", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		param.getTypeInfo().setTemplateParameterType( TypeInfo.t_int );
 		param.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
 		template.addTemplateParameter( param );
@@ -616,18 +616,18 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol X = table.newDerivableContainerSymbol( "X", TypeInfo.t_class );
+		IDerivableContainerSymbol X = table.newDerivableContainerSymbol( "X", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( X );
 		
-		IDerivableContainerSymbol S = table.newDerivableContainerSymbol( "S", TypeInfo.t_struct );
+		IDerivableContainerSymbol S = table.newDerivableContainerSymbol( "S", TypeInfo.t_struct ); //$NON-NLS-1$
 		table.getCompilationUnit().addSymbol( S );
 		
-		ISymbol m = table.newSymbol( "m", TypeInfo.t_int );
+		ISymbol m = table.newSymbol( "m", TypeInfo.t_int ); //$NON-NLS-1$
 		S.addSymbol( m );
-		ISymbol s = table.newSymbol( "s", TypeInfo.t_int );
+		ISymbol s = table.newSymbol( "s", TypeInfo.t_int ); //$NON-NLS-1$
 		s.getTypeInfo().setBit( true, TypeInfo.isStatic );
 		S.addSymbol( s );
-		ISymbol t = table.newSymbol( "t", TypeInfo.t_int );
+		ISymbol t = table.newSymbol( "t", TypeInfo.t_int ); //$NON-NLS-1$
 		t.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
 		S.addSymbol( t );
 				
@@ -638,7 +638,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		
 		try
 		{
-			table.getCompilationUnit().lookupTemplateId( "X", args );
+			table.getCompilationUnit().lookupTemplateId( "X", args ); //$NON-NLS-1$
 			assertTrue( false );
 		} catch ( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplateArgument );
@@ -649,7 +649,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 
 		try
 		{
-			table.getCompilationUnit().lookupTemplateId( "X", args );
+			table.getCompilationUnit().lookupTemplateId( "X", args ); //$NON-NLS-1$
 			assertTrue( false );
 		} catch ( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplateArgument );
@@ -660,7 +660,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		arg.addOperatorExpression( TypeInfo.OperatorExpression.addressof );
 		args.add( arg );
 		
-		assertNotNull( table.getCompilationUnit().lookupTemplateId( "X", args ) );
+		assertNotNull( table.getCompilationUnit().lookupTemplateId( "X", args ) ); //$NON-NLS-1$
 	}
 	
 	/**
@@ -678,9 +678,9 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_3_2__4_NonTypeArgumentRestrictions() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "B" );
+		ITemplateSymbol template = table.newTemplateSymbol( "B" ); //$NON-NLS-1$
 		
-		ISymbol I = table.newSymbol( "I", TypeInfo.t_templateParameter );
+		ISymbol I = table.newSymbol( "I", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		I.getTypeInfo().setTemplateParameterType( TypeInfo.t_int );
 		I.addPtrOperator( new PtrOp( PtrOp.t_reference, true, false ) );
 		template.addTemplateParameter( I );
@@ -689,25 +689,25 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_struct );
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_struct ); //$NON-NLS-1$
 		factory.addSymbol( B );
 		
 		List args = new ArrayList( );
-		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, "1" ) );
+		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, "1" ) ); //$NON-NLS-1$
 		
 		try{
-			table.getCompilationUnit().lookupTemplateId( "B", args );
+			table.getCompilationUnit().lookupTemplateId( "B", args ); //$NON-NLS-1$
 			assertTrue( false );
 		} catch ( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplateArgument );
 		}
 		
-		ISymbol c = table.newSymbol( "c", TypeInfo.t_int );
+		ISymbol c = table.newSymbol( "c", TypeInfo.t_int ); //$NON-NLS-1$
 		table.getCompilationUnit().addSymbol( c );
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, c ) );
 		
-		ISymbol look = table.getCompilationUnit().lookupTemplateId( "B", args );
+		ISymbol look = table.getCompilationUnit().lookupTemplateId( "B", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), B );
 	}
@@ -735,53 +735,53 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	//TODO
 		newTable();
 		
-		ITemplateSymbol templateA = table.newTemplateSymbol( "A" );
+		ITemplateSymbol templateA = table.newTemplateSymbol( "A" ); //$NON-NLS-1$
 		table.getCompilationUnit().addSymbol( templateA );
 		
-		templateA.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		templateA.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
-		IDerivableContainerSymbol A1 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol A1 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 		templateA.addSymbol( A1 );
 		
-		ISymbol x1 = table.newSymbol( "x", TypeInfo.t_int );
+		ISymbol x1 = table.newSymbol( "x", TypeInfo.t_int ); //$NON-NLS-1$
 		A1.addSymbol( x1 );
 		
-		ISpecializedSymbol specialization = table.newSpecializedSymbol( "A" );
+		ISpecializedSymbol specialization = table.newSpecializedSymbol( "A" ); //$NON-NLS-1$
 		templateA.addSpecialization( specialization );
 		
-		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		specialization.addTemplateParameter( T );
 		specialization.addArgument( new TypeInfo( TypeInfo.t_type, 0, T, new PtrOp( PtrOp.t_pointer ), false ) );
 		
-		IDerivableContainerSymbol A2 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol A2 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 		specialization.addSymbol( A2 );
 		
-		ISymbol x2 = table.newSymbol( "x", TypeInfo.t_int );
+		ISymbol x2 = table.newSymbol( "x", TypeInfo.t_int ); //$NON-NLS-1$
 		x2.getTypeInfo().setBit( true, TypeInfo.isLong );
 		A2.addSymbol( x2 );
 		
-		ITemplateSymbol templateC = table.newTemplateSymbol( "C" );
+		ITemplateSymbol templateC = table.newTemplateSymbol( "C" ); //$NON-NLS-1$
 		table.getCompilationUnit().addSymbol( templateC );
 		
-		ITemplateSymbol templateV = table.newTemplateSymbol( "V" );
+		ITemplateSymbol templateV = table.newTemplateSymbol( "V" ); //$NON-NLS-1$
 		templateV.setType( TypeInfo.t_templateParameter );
 		templateV.getTypeInfo().setTemplateParameterType( TypeInfo.t_template );
-		ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter );
+		ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		templateV.addTemplateParameter( U );
 		
 		templateC.addTemplateParameter( templateV );
 		
-		IDerivableContainerSymbol C	= table.newDerivableContainerSymbol( "C", TypeInfo.t_class );
+		IDerivableContainerSymbol C	= table.newDerivableContainerSymbol( "C", TypeInfo.t_class ); //$NON-NLS-1$
 		templateC.addSymbol( C );
 		
 		List args = new ArrayList();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		
-		ISymbol look = templateC.lookupTemplateId( "V", args );
+		ISymbol look = templateC.lookupTemplateId( "V", args ); //$NON-NLS-1$
 		assertTrue( look != null );
 		assertTrue( look instanceof IDeferredTemplateInstance );
 		
-		ISymbol y = table.newSymbol( "y", TypeInfo.t_type );
+		ISymbol y = table.newSymbol( "y", TypeInfo.t_type ); //$NON-NLS-1$
 		y.setTypeSymbol( look );
 		
 		C.addSymbol( y );
@@ -789,25 +789,25 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null, new PtrOp( PtrOp.t_pointer ), false ) );
 		
-		look = templateC.lookupTemplateId( "V", args );
+		look = templateC.lookupTemplateId( "V", args ); //$NON-NLS-1$
 		assertTrue( look != null );
 		assertTrue( look instanceof IDeferredTemplateInstance );
 		
-		ISymbol z = table.newSymbol( "z", TypeInfo.t_type );
+		ISymbol z = table.newSymbol( "z", TypeInfo.t_type ); //$NON-NLS-1$
 		z.setTypeSymbol( look );
 		C.addSymbol( z );
 		
-		look = table.getCompilationUnit().lookup( "A" );
+		look = table.getCompilationUnit().lookup( "A" ); //$NON-NLS-1$
 		assertEquals( look, templateA );
 		
 		args.clear();
 		args.add ( new TypeInfo( TypeInfo.t_type, 0, look ) );
-		look = table.getCompilationUnit().lookupTemplateId( "C", args );
+		look = table.getCompilationUnit().lookupTemplateId( "C", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), C );
 		
 		IDerivableContainerSymbol lookC = (IDerivableContainerSymbol)look;
-		look = lookC.lookup( "y" );
+		look = lookC.lookup( "y" ); //$NON-NLS-1$
 		
 		assertEquals( look.getType(), TypeInfo.t_type );
 		ISymbol symbol = look.getTypeSymbol();
@@ -815,18 +815,18 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		assertTrue( symbol.isTemplateInstance() );
 		assertEquals( symbol.getInstantiatedSymbol(), A1 );
 		
-		look = ((IContainerSymbol) symbol).lookup( "x" );
+		look = ((IContainerSymbol) symbol).lookup( "x" ); //$NON-NLS-1$
 		
 		assertEquals( look.getType(), TypeInfo.t_int );
 		assertEquals( look.getTypeInfo().checkBit( TypeInfo.isLong ), false );
 		
-		look = lookC.lookup( "z" );
+		look = lookC.lookup( "z" ); //$NON-NLS-1$
 		assertEquals( look.getType(), TypeInfo.t_type );
 		symbol = look.getTypeSymbol();
 		assertTrue( symbol instanceof IContainerSymbol );
 		assertTrue( symbol.isTemplateInstance() );
 		assertEquals( symbol.getInstantiatedSymbol(), A2 );
-		look = ((IContainerSymbol)symbol).lookup( "x" );
+		look = ((IContainerSymbol)symbol).lookup( "x" ); //$NON-NLS-1$
 		
 		assertEquals( look.getType(), TypeInfo.t_int );
 		assertEquals( look.getTypeInfo().checkBit( TypeInfo.isLong ), true );
@@ -849,8 +849,8 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		newTable();
 		
 		ITemplateSymbol template = table.newTemplateSymbol( ParserSymbolTable.EMPTY_NAME );
-		ISymbol primaryT1 = table.newSymbol( "T1", TypeInfo.t_templateParameter );
-		ISymbol primaryT2 = table.newSymbol( "T2", TypeInfo.t_templateParameter );
+		ISymbol primaryT1 = table.newSymbol( "T1", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+		ISymbol primaryT2 = table.newSymbol( "T2", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( primaryT1 );		
 		template.addTemplateParameter( primaryT2 );
 		
@@ -858,27 +858,27 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 		
 		factory.addSymbol( A );	
 		
-		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f1", TypeInfo.t_function );
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f1", TypeInfo.t_function ); //$NON-NLS-1$
 		
-		ISymbol look = A.lookup( "T1" );
+		ISymbol look = A.lookup( "T1" ); //$NON-NLS-1$
 		assertEquals( look, primaryT1 );
 		
 		f1.setIsForwardDeclaration( true );
 		f1.setReturnType( look );
 		
-		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f2", TypeInfo.t_function );
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f2", TypeInfo.t_function ); //$NON-NLS-1$
 		f2.setIsForwardDeclaration( true );
 		
 		A.addSymbol( f1 );
 		A.addSymbol( f2 );
 		
 		ITemplateSymbol temp = table.newTemplateSymbol( ParserSymbolTable.EMPTY_NAME );
-		ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter );
-		ISymbol V = table.newSymbol( "V", TypeInfo.t_templateParameter );
+		ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+		ISymbol V = table.newSymbol( "V", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		temp.addTemplateParameter( U );
 		temp.addTemplateParameter( V );
 		
@@ -886,22 +886,22 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( temp );
 		
-		ISymbol returnType = factory.lookup( "U" );
+		ISymbol returnType = factory.lookup( "U" ); //$NON-NLS-1$
 		assertEquals( returnType, U );
 		
 		List args  = new ArrayList();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, U ) ); 
 		args.add( new TypeInfo( TypeInfo.t_type, 0, V ) );
 		
-		look = factory.lookupTemplateIdForDefinition( "A", args );
+		look = factory.lookupTemplateIdForDefinition( "A", args ); //$NON-NLS-1$
 		assertEquals( look, A );
 		factory.pushTemplateId( look, args );
 		
-		IParameterizedSymbol lookF = factory.lookupMethodForDefinition( "f1", new ArrayList() );
+		IParameterizedSymbol lookF = factory.lookupMethodForDefinition( "f1", new ArrayList() ); //$NON-NLS-1$
 		assertEquals( lookF, f1 );
 		assertTrue( lookF.isForwardDeclaration() );
 		
-		IParameterizedSymbol defnd = table.newParameterizedSymbol( "f1", TypeInfo.t_function );
+		IParameterizedSymbol defnd = table.newParameterizedSymbol( "f1", TypeInfo.t_function ); //$NON-NLS-1$
 		f1.setTypeSymbol( defnd );
 		defnd.setReturnType( returnType );
 		factory.addSymbol( defnd );
@@ -911,12 +911,12 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
 		
-		IDerivableContainerSymbol lookA = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args );
+		IDerivableContainerSymbol lookA = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 		assertTrue( lookA.isTemplateInstance() );
 		assertEquals( lookA.getInstantiatedSymbol(), A );
 		
 		List params = new ArrayList();
-		look = lookA.qualifiedFunctionLookup( "f1", params );
+		look = lookA.qualifiedFunctionLookup( "f1", params ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), defnd );
 		assertTrue( ((IParameterizedSymbol)look).getReturnType().isType( TypeInfo.t_int ) );
@@ -925,8 +925,8 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.clear();
 		
 		temp = table.newTemplateSymbol( ParserSymbolTable.EMPTY_NAME );
-		ISymbol X = table.newSymbol( "X", TypeInfo.t_templateParameter );
-		ISymbol Y = table.newSymbol( "Y", TypeInfo.t_templateParameter );
+		ISymbol X = table.newSymbol( "X", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+		ISymbol Y = table.newSymbol( "Y", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		temp.addTemplateParameter( X );
 		temp.addTemplateParameter( Y );
 
@@ -938,7 +938,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.add( new TypeInfo( TypeInfo.t_type, 0, X ) ); 
 
 		try{
-			look = factory.lookupTemplateIdForDefinition( "A", args );
+			look = factory.lookupTemplateIdForDefinition( "A", args ); //$NON-NLS-1$
 			assertTrue( false );
 		} catch ( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplate );
@@ -957,23 +957,23 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  public void test_14_5_1_2_MemberClass() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "A" );
-		ISymbol primaryT = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol template = table.newTemplateSymbol( "A" ); //$NON-NLS-1$
+		ISymbol primaryT = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( primaryT );
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct );
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct ); //$NON-NLS-1$
 		factory.addSymbol( A );
 		
-		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class ); //$NON-NLS-1$
 		B.setIsForwardDeclaration( true );
 		A.addSymbol( B );
 		
-		ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter );
-		ITemplateSymbol temp = table.newTemplateSymbol( "" );
+		ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+		ITemplateSymbol temp = table.newTemplateSymbol( "" ); //$NON-NLS-1$
 		temp.addTemplateParameter( U );
 		
 		factory = table.newTemplateFactory();
@@ -983,20 +983,20 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		List args = new ArrayList();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, U ) );
 		
-		IContainerSymbol lookA = factory.lookupTemplateIdForDefinition( "A", args );
+		IContainerSymbol lookA = factory.lookupTemplateIdForDefinition( "A", args ); //$NON-NLS-1$
 		assertEquals( lookA, A );
 		factory.pushTemplateId( lookA, args );
 		
-		ISymbol look = lookA.lookupMemberForDefinition( "B" );
+		ISymbol look = lookA.lookupMemberForDefinition( "B" ); //$NON-NLS-1$
 		assertEquals( look, B );
 		
-		IDerivableContainerSymbol newB = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+		IDerivableContainerSymbol newB = table.newDerivableContainerSymbol( "B", TypeInfo.t_class ); //$NON-NLS-1$
 		look.setTypeSymbol( newB );
 		
 		factory.addSymbol( newB );
 		
-		ISymbol i = table.newSymbol( "i", TypeInfo.t_type );
-		look = newB.lookup( "U" );
+		ISymbol i = table.newSymbol( "i", TypeInfo.t_type ); //$NON-NLS-1$
+		look = newB.lookup( "U" ); //$NON-NLS-1$
 		assertEquals( look, U );
 		i.setTypeSymbol( U );
 		newB.addSymbol( i );
@@ -1004,18 +1004,18 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		
-		look = table.getCompilationUnit().lookupTemplateId( "A", args );
+		look = table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), A );
 		
 		assertTrue( look instanceof IDerivableContainerSymbol );
 		lookA = (IDerivableContainerSymbol) look;
-		look = lookA.qualifiedLookup( "B" );
+		look = lookA.qualifiedLookup( "B" ); //$NON-NLS-1$
 		
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), newB );
 		
-		look = ((IDerivableContainerSymbol) look).lookup( "i" );
+		look = ((IDerivableContainerSymbol) look).lookup( "i" ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), i );
 		assertEquals( look.getType(), TypeInfo.t_int );		
@@ -1033,28 +1033,28 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  public void test_14_5_1_3_StaticDataMember() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "X" );
-		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol template = table.newTemplateSymbol( "X" ); //$NON-NLS-1$
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( T );
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol X = table.newDerivableContainerSymbol( "X", TypeInfo.t_class );
+		IDerivableContainerSymbol X = table.newDerivableContainerSymbol( "X", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( X );
 		
-		ISymbol look = X.lookup( "T" );
+		ISymbol look = X.lookup( "T" ); //$NON-NLS-1$
 		assertEquals( look, T );
 		
-		ISymbol s = table.newSymbol( "s", TypeInfo.t_type );
+		ISymbol s = table.newSymbol( "s", TypeInfo.t_type ); //$NON-NLS-1$
 		s.setTypeSymbol( look );
 		s.getTypeInfo().setBit( true, TypeInfo.isStatic );
 		s.setIsForwardDeclaration( true );
 		X.addSymbol( s );
 		
-		ITemplateSymbol temp = table.newTemplateSymbol( "" );
-		ISymbol paramU = table.newSymbol( "U", TypeInfo.t_templateParameter );
+		ITemplateSymbol temp = table.newTemplateSymbol( "" ); //$NON-NLS-1$
+		ISymbol paramU = table.newSymbol( "U", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		temp.addTemplateParameter( paramU );
 		
 		factory = table.newTemplateFactory();
@@ -1064,15 +1064,15 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		List args = new ArrayList();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, paramU ) );
 		
-		look = factory.lookupTemplateIdForDefinition( "X", args );
+		look = factory.lookupTemplateIdForDefinition( "X", args ); //$NON-NLS-1$
 		assertEquals( look, X );
 		factory.pushTemplateId( X, args );
 		
-		look = ((IContainerSymbol)look).lookupMemberForDefinition("s" );
+		look = ((IContainerSymbol)look).lookupMemberForDefinition("s" ); //$NON-NLS-1$
 		assertEquals( look, s );
 		assertTrue( look.isForwardDeclaration() );
 		
-		ISymbol newS = table.newSymbol( "s", TypeInfo.t_type );
+		ISymbol newS = table.newSymbol( "s", TypeInfo.t_type ); //$NON-NLS-1$
 		newS.setTypeSymbol( paramU );
 		
 		look.setTypeSymbol( newS );
@@ -1082,12 +1082,12 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_float, 0, null ) );
 		
-		look = table.getCompilationUnit().lookupTemplateId( "X", args );
+		look = table.getCompilationUnit().lookupTemplateId( "X", args ); //$NON-NLS-1$
 		
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), X );
 		
-		look = ((IContainerSymbol)look).qualifiedLookup( "s" );
+		look = ((IContainerSymbol)look).qualifiedLookup( "s" ); //$NON-NLS-1$
 		
 		assertTrue( look.isType( TypeInfo.t_float ) );
 		assertTrue( look.isTemplateInstance() );
@@ -1108,74 +1108,74 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_5_2__1_MemberTemplates() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template1 = table.newTemplateSymbol( "string" );
-		template1.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template1 = table.newTemplateSymbol( "string" ); //$NON-NLS-1$
+		template1.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template1 );
 		
-		IDerivableContainerSymbol string = table.newDerivableContainerSymbol( "string", TypeInfo.t_class );
+		IDerivableContainerSymbol string = table.newDerivableContainerSymbol( "string", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( string );
 		
-		ITemplateSymbol template2 = table.newTemplateSymbol( "compare" );
-		ISymbol T2 = table.newSymbol( "T2", TypeInfo.t_templateParameter );
+		ITemplateSymbol template2 = table.newTemplateSymbol( "compare" ); //$NON-NLS-1$
+		ISymbol T2 = table.newSymbol( "T2", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template2.addTemplateParameter( T2 );
 		
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( string );
 		factory.pushTemplate( template2 );
 				
-		IParameterizedSymbol compare = table.newParameterizedSymbol( "compare", TypeInfo.t_function );
+		IParameterizedSymbol compare = table.newParameterizedSymbol( "compare", TypeInfo.t_function ); //$NON-NLS-1$
 		compare.setIsForwardDeclaration( true );
 		compare.addParameter( T2, 0, new PtrOp( PtrOp.t_reference, true, false ), false );
-		ISymbol returnType = table.newSymbol( "", TypeInfo.t_type );
+		ISymbol returnType = table.newSymbol( "", TypeInfo.t_type ); //$NON-NLS-1$
 		returnType.setTypeSymbol( T2 );
 		compare.setReturnType( returnType );
 		factory.addSymbol( compare );
 		
-		ITemplateSymbol temp = table.newTemplateSymbol( "" );
-		ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter );
+		ITemplateSymbol temp = table.newTemplateSymbol( "" ); //$NON-NLS-1$
+		ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		temp.addTemplateParameter( U );
 		
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( temp );
 		
-		ITemplateSymbol temp2 = table.newTemplateSymbol( "" );
-		ISymbol V = table.newSymbol( "V", TypeInfo.t_templateParameter );
+		ITemplateSymbol temp2 = table.newTemplateSymbol( "" ); //$NON-NLS-1$
+		ISymbol V = table.newSymbol( "V", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		temp2.addTemplateParameter( V );
 		
 		factory.pushTemplate( temp2 );
 
-		ISymbol lookV = factory.lookup( "V" );
+		ISymbol lookV = factory.lookup( "V" ); //$NON-NLS-1$
 		assertEquals( lookV, V );
 		
 		List args = new ArrayList();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, U ) );
 		
-		ISymbol look = factory.lookupTemplateIdForDefinition( "string", args );
+		ISymbol look = factory.lookupTemplateIdForDefinition( "string", args ); //$NON-NLS-1$
 		assertEquals( look, string );
 		factory.pushTemplateId( look, args );
 		
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, lookV,  new PtrOp( PtrOp.t_reference, true, false ), false ) );
 
-		look = ((IContainerSymbol)look).lookupMethodForDefinition( "compare", args );
+		look = ((IContainerSymbol)look).lookupMethodForDefinition( "compare", args ); //$NON-NLS-1$
 		assertEquals( look, compare );
 		
-		IParameterizedSymbol compareDef = table.newParameterizedSymbol( "compare", TypeInfo.t_function );
+		IParameterizedSymbol compareDef = table.newParameterizedSymbol( "compare", TypeInfo.t_function ); //$NON-NLS-1$
 		compareDef.addParameter( lookV, 0, new PtrOp( PtrOp.t_reference, true, false ), false );
-		ISymbol defReturn = table.newSymbol( "", TypeInfo.t_type );
+		ISymbol defReturn = table.newSymbol( "", TypeInfo.t_type ); //$NON-NLS-1$
 		defReturn.setTypeSymbol( lookV );
 		compareDef.setReturnType( defReturn );
 		compare.setTypeSymbol( compareDef );
 		factory.addSymbol( compareDef );
 		
-		look = compareDef.lookup( "U" );
+		look = compareDef.lookup( "U" ); //$NON-NLS-1$
 		assertEquals( look, U );
 		
-		ISymbol u = table.newSymbol( "u", TypeInfo.t_type );
+		ISymbol u = table.newSymbol( "u", TypeInfo.t_type ); //$NON-NLS-1$
 		u.setTypeSymbol( look );
 		
 		compareDef.addSymbol( u );
@@ -1183,18 +1183,18 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		
-		look = table.getCompilationUnit().lookupTemplateId( "string", args );
+		look = table.getCompilationUnit().lookupTemplateId( "string", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), string );
 		
-		look = ((IDerivableContainerSymbol)look).lookupTemplateId( "compare", args );
+		look = ((IDerivableContainerSymbol)look).lookupTemplateId( "compare", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertTrue( look.getInstantiatedSymbol().isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol().getInstantiatedSymbol(), compareDef );
 		
 		assertTrue( ((IParameterizedSymbol)look).getReturnType().isType( TypeInfo.t_int ) );
 		
-		look = ((IContainerSymbol)look).lookup( "u" );
+		look = ((IContainerSymbol)look).lookup( "u" ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertTrue( look.getInstantiatedSymbol().isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol().getInstantiatedSymbol(), u );
@@ -1213,25 +1213,25 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_5_2__3_VirtualMemberFunctionTemplate() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "A" );
-		template.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template = table.newTemplateSymbol( "A" ); //$NON-NLS-1$
+		template.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct );
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct ); //$NON-NLS-1$
 		factory.addSymbol( A );
 		
-		ITemplateSymbol memberTemplate = table.newTemplateSymbol( "g" );
-		ISymbol C = table.newSymbol( "C", TypeInfo.t_templateParameter );
+		ITemplateSymbol memberTemplate = table.newTemplateSymbol( "g" ); //$NON-NLS-1$
+		ISymbol C = table.newSymbol( "C", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		memberTemplate.addTemplateParameter( C );
 		
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( A );
 		factory.pushTemplate( memberTemplate );
 		
-		IParameterizedSymbol g = table.newParameterizedSymbol( "g", TypeInfo.t_function );
+		IParameterizedSymbol g = table.newParameterizedSymbol( "g", TypeInfo.t_function ); //$NON-NLS-1$
 		g.addParameter( C, 0, null, false );
 		g.getTypeInfo().setBit( true, TypeInfo.isVirtual );
 		
@@ -1242,7 +1242,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplate );
 		}
 		
-		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f.getTypeInfo().setBit( true, TypeInfo.isVirtual );
 		
 		A.addSymbol( f );
@@ -1273,30 +1273,30 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	//TODO
 		newTable();
 		
-		IContainerSymbol N = table.newContainerSymbol( "N", TypeInfo.t_namespace );
+		IContainerSymbol N = table.newContainerSymbol( "N", TypeInfo.t_namespace ); //$NON-NLS-1$
 		
 		table.getCompilationUnit().addSymbol( N );
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "A" );
+		ITemplateSymbol template = table.newTemplateSymbol( "A" ); //$NON-NLS-1$
 		
-		template.addTemplateParameter( table.newSymbol( "T1", TypeInfo.t_templateParameter ) );
-		template.addTemplateParameter( table.newSymbol( "T2", TypeInfo.t_templateParameter ) );
+		template.addTemplateParameter( table.newSymbol( "T1", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
+		template.addTemplateParameter( table.newSymbol( "T2", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
-		IDerivableContainerSymbol A1 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol A1 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 		
 		template.addSymbol( A1 );
 		
 		N.addSymbol( template );
 		
-		table.getCompilationUnit().addUsingDeclaration( "A", N );
+		table.getCompilationUnit().addUsingDeclaration( "A", N ); //$NON-NLS-1$
 		
-		ISpecializedSymbol spec = table.newSpecializedSymbol( "A" );
-		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ISpecializedSymbol spec = table.newSpecializedSymbol( "A" ); //$NON-NLS-1$
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		spec.addTemplateParameter( T );
 		spec.addArgument( new TypeInfo( TypeInfo.t_type, 0, T ) );
 		spec.addArgument( new TypeInfo( TypeInfo.t_type, 0, T, new PtrOp( PtrOp.t_pointer ), false ) );
 		
-		IDerivableContainerSymbol A2 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol A2 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 		spec.addSymbol( A2 );
 		template.addSpecialization( spec );
 		
@@ -1304,7 +1304,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null, new PtrOp( PtrOp.t_pointer ), false ) );
 		
-		ISymbol look = table.getCompilationUnit().lookupTemplateId( "A", args ); 
+		ISymbol look = table.getCompilationUnit().lookupTemplateId( "A", args );  //$NON-NLS-1$
 		assertTrue( look != null );
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), A2 );
@@ -1330,16 +1330,16 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	//TODO
 		newTable();
 		
-		IDerivableContainerSymbol cls1 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
-		IDerivableContainerSymbol cls2 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
-		IDerivableContainerSymbol cls3 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
-		IDerivableContainerSymbol cls4 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
-		IDerivableContainerSymbol cls5 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		IDerivableContainerSymbol cls1 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
+		IDerivableContainerSymbol cls2 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
+		IDerivableContainerSymbol cls3 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
+		IDerivableContainerSymbol cls4 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
+		IDerivableContainerSymbol cls5 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 		
-		ITemplateSymbol template1 = table.newTemplateSymbol( "A" );
-		ISymbol T1p1 = table.newSymbol( "T1", TypeInfo.t_templateParameter );
-		ISymbol T1p2 = table.newSymbol( "T2", TypeInfo.t_templateParameter );
-		ISymbol T1p3 = table.newSymbol( "I", TypeInfo.t_templateParameter );
+		ITemplateSymbol template1 = table.newTemplateSymbol( "A" ); //$NON-NLS-1$
+		ISymbol T1p1 = table.newSymbol( "T1", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+		ISymbol T1p2 = table.newSymbol( "T2", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+		ISymbol T1p3 = table.newSymbol( "I", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		T1p3.getTypeInfo().setTemplateParameterType( TypeInfo.t_int );
 		
 		template1.addTemplateParameter( T1p1 );
@@ -1348,9 +1348,9 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template1.addSymbol( cls1 );
 		table.getCompilationUnit().addSymbol( template1 );
 		
-		ISpecializedSymbol template2 = table.newSpecializedSymbol( "A" );
-		ISymbol T2p1 = table.newSymbol( "T", TypeInfo.t_templateParameter );
-		ISymbol T2p2 = table.newSymbol( "I", TypeInfo.t_templateParameter );
+		ISpecializedSymbol template2 = table.newSpecializedSymbol( "A" ); //$NON-NLS-1$
+		ISymbol T2p1 = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+		ISymbol T2p2 = table.newSymbol( "I", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		T2p2.getTypeInfo().setTemplateParameterType( TypeInfo.t_int );
 		
 		template2.addTemplateParameter( T2p1 );
@@ -1366,10 +1366,10 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template2.addSymbol( cls2 );
 		template1.addSpecialization( template2 );
 		
-		ISpecializedSymbol template3 = table.newSpecializedSymbol( "A" );
-		ISymbol T3p1 = table.newSymbol( "T1", TypeInfo.t_templateParameter );
-		ISymbol T3p2 = table.newSymbol( "T2", TypeInfo.t_templateParameter );
-		ISymbol T3p3 = table.newSymbol( "I", TypeInfo.t_templateParameter );
+		ISpecializedSymbol template3 = table.newSpecializedSymbol( "A" ); //$NON-NLS-1$
+		ISymbol T3p1 = table.newSymbol( "T1", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+		ISymbol T3p2 = table.newSymbol( "T2", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+		ISymbol T3p3 = table.newSymbol( "I", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		T3p3.getTypeInfo().setTemplateParameterType( TypeInfo.t_int );
 		
 		template3.addTemplateParameter( T3p1 );
@@ -1386,13 +1386,13 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template3.addSymbol( cls3 );
 		template1.addSpecialization( template3 );
 		
-		ISpecializedSymbol template4 = table.newSpecializedSymbol( "A" );
-		ISymbol T4p1 = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ISpecializedSymbol template4 = table.newSpecializedSymbol( "A" ); //$NON-NLS-1$
+		ISymbol T4p1 = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template4.addTemplateParameter( T4p1 );
 		
 		TypeInfo T4a1 = new TypeInfo( TypeInfo.t_int, 0, null );
 		TypeInfo T4a2 = new TypeInfo( TypeInfo.t_type, 0, T4p1, new PtrOp( PtrOp.t_pointer ), false );
-		TypeInfo T4a3 = new TypeInfo( TypeInfo.t_int, 0, null, null, "5" );
+		TypeInfo T4a3 = new TypeInfo( TypeInfo.t_int, 0, null, null, "5" ); //$NON-NLS-1$
 		//T4a3.setDefault( new Integer(5) );
 		
 		template4.addArgument( T4a1 );
@@ -1401,10 +1401,10 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template4.addSymbol( cls4 );
 		template1.addSpecialization( template4 );
 		
-		ISpecializedSymbol template5 = table.newSpecializedSymbol( "A" );
-		ISymbol T5p1 = table.newSymbol( "T1", TypeInfo.t_templateParameter );
-		ISymbol T5p2 = table.newSymbol( "T2", TypeInfo.t_templateParameter );
-		ISymbol T5p3 = table.newSymbol( "I", TypeInfo.t_templateParameter );
+		ISpecializedSymbol template5 = table.newSpecializedSymbol( "A" ); //$NON-NLS-1$
+		ISymbol T5p1 = table.newSymbol( "T1", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+		ISymbol T5p2 = table.newSymbol( "T2", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+		ISymbol T5p3 = table.newSymbol( "I", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		T5p3.getTypeInfo().setTemplateParameterType( TypeInfo.t_int );
 		
 		template5.addTemplateParameter( T5p1 );
@@ -1421,7 +1421,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template5.addSymbol( cls5 );
 		template1.addSpecialization( template5 );
 		
-		ITemplateSymbol a = (ITemplateSymbol) table.getCompilationUnit().lookup( "A" );
+		ITemplateSymbol a = (ITemplateSymbol) table.getCompilationUnit().lookup( "A" ); //$NON-NLS-1$
 		assertEquals( a, template1 );
 		
 		ArrayList args = new ArrayList();
@@ -1437,7 +1437,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null, new PtrOp( PtrOp.t_pointer ), false ) );
-		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, "1" ) );
+		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, "1" ) ); //$NON-NLS-1$
 		
 		IContainerSymbol a2 = (IContainerSymbol) a.instantiate( args );
 		assertTrue( a2.isTemplateInstance() );
@@ -1446,7 +1446,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		args.add( new TypeInfo( TypeInfo.t_char, 0, null, new PtrOp( PtrOp.t_pointer ), false ) );
-		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, "5" ) );
+		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, "5" ) ); //$NON-NLS-1$
 		IContainerSymbol a3 = (IContainerSymbol) a.instantiate( args );
 		assertTrue( a3.isTemplateInstance() );
 		assertEquals( a3.getInstantiatedSymbol(), cls4 );
@@ -1454,7 +1454,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		args.add( new TypeInfo( TypeInfo.t_char, 0, null, new PtrOp( PtrOp.t_pointer ), false ) );
-		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, "1" ) );
+		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, "1" ) ); //$NON-NLS-1$
 		IContainerSymbol a4 = (IContainerSymbol) a.instantiate( args );
 		assertTrue( a4.isTemplateInstance() );
 		assertEquals( a4.getInstantiatedSymbol(), cls5 );
@@ -1462,7 +1462,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null, new PtrOp( PtrOp.t_pointer ), false ) );
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null, new PtrOp( PtrOp.t_pointer ), false ) );
-		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, "2" ) );
+		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, "2" ) ); //$NON-NLS-1$
 		
 		try{
 			a.instantiate( args );
@@ -1486,43 +1486,43 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  public void test_14_5_5_2__5_OrderingFunctionTemplates_1() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template1 = table.newTemplateSymbol( "f" );
-		template1.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template1 = table.newTemplateSymbol( "f" ); //$NON-NLS-1$
+		template1.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template1 );
 		
-		ISymbol T = template1.lookup( "T" );
-		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		ISymbol T = template1.lookup( "T" ); //$NON-NLS-1$
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f1.addParameter( T, 0, null, false );
 		factory.addSymbol( f1 );
 		
-		ITemplateSymbol template2 = table.newTemplateSymbol( "f" );
-		template2.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template2 = table.newTemplateSymbol( "f" ); //$NON-NLS-1$
+		template2.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template2 );
 		
-		T = template2.lookup( "T" );
-		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		T = template2.lookup( "T" ); //$NON-NLS-1$
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f2.addParameter( T, 0, new PtrOp( PtrOp.t_pointer ), false );
 		factory.addSymbol( f2 );
 		
-		ITemplateSymbol template3 = table.newTemplateSymbol( "f" );
-		template3.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template3 = table.newTemplateSymbol( "f" ); //$NON-NLS-1$
+		template3.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template3 );
 		
-		T = template3.lookup( "T" );
-		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		T = template3.lookup( "T" ); //$NON-NLS-1$
+		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f3.addParameter( T, TypeInfo.isConst, new PtrOp( PtrOp.t_pointer, false, false ), false );
 		factory.addSymbol( f3 );
 		
-		ISymbol p = table.newSymbol( "p", TypeInfo.t_int );
+		ISymbol p = table.newSymbol( "p", TypeInfo.t_int ); //$NON-NLS-1$
 		p.getTypeInfo().setBit( true, TypeInfo.isConst );
 		p.addPtrOperator( new PtrOp( PtrOp.t_pointer, false, false ) );
 		table.getCompilationUnit().addSymbol( p );
@@ -1530,7 +1530,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		List params = new ArrayList();
 		params.add( new TypeInfo( TypeInfo.t_type, 0, p ) );
 		
-		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), f3 );
 	}
@@ -1547,35 +1547,35 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  public void test_14_5_5_2__5_OrderingFunctionTemplates_2() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template1 = table.newTemplateSymbol( "g" );
-		template1.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template1 = table.newTemplateSymbol( "g" ); //$NON-NLS-1$
+		template1.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template1 );
 		
-		ISymbol T = template1.lookup( "T" );
-		IParameterizedSymbol g1 = table.newParameterizedSymbol( "g", TypeInfo.t_function );
+		ISymbol T = template1.lookup( "T" ); //$NON-NLS-1$
+		IParameterizedSymbol g1 = table.newParameterizedSymbol( "g", TypeInfo.t_function ); //$NON-NLS-1$
 		g1.addParameter( T, 0, null, false );
 		factory.addSymbol( g1 );
 		
-		ITemplateSymbol template2 = table.newTemplateSymbol( "g" );
-		template2.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template2 = table.newTemplateSymbol( "g" ); //$NON-NLS-1$
+		template2.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template2 );
 		
-		T = template2.lookup( "T" );
-		IParameterizedSymbol g2 = table.newParameterizedSymbol( "g", TypeInfo.t_function );
+		T = template2.lookup( "T" ); //$NON-NLS-1$
+		IParameterizedSymbol g2 = table.newParameterizedSymbol( "g", TypeInfo.t_function ); //$NON-NLS-1$
 		g2.addParameter( T, 0, new PtrOp( PtrOp.t_reference ), false );
 		factory.addSymbol( g2 );
 		
-		ISymbol x = table.newSymbol( "x", TypeInfo.t_float );
+		ISymbol x = table.newSymbol( "x", TypeInfo.t_float ); //$NON-NLS-1$
 		List params = new ArrayList();
 		params.add( new TypeInfo( TypeInfo.t_type, 0, x ) );
 		try{
-			table.getCompilationUnit().unqualifiedFunctionLookup( "g", params );
+			table.getCompilationUnit().unqualifiedFunctionLookup( "g", params ); //$NON-NLS-1$
 			assertTrue( false );
 		} catch( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
@@ -1598,59 +1598,59 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  public void test_14_5_5_2__5_OrderingFunctionTemplates_3() throws Exception{
 		newTable();
 		
-		ITemplateSymbol templateA = table.newTemplateSymbol( "A" );
-		templateA.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol templateA = table.newTemplateSymbol( "A" ); //$NON-NLS-1$
+		templateA.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( templateA );
 		
-		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct );
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct ); //$NON-NLS-1$
 		factory.addSymbol( A );
 				
-		ITemplateSymbol template1 = table.newTemplateSymbol( "h" );
-		template1.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template1 = table.newTemplateSymbol( "h" ); //$NON-NLS-1$
+		template1.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template1 );
 		
-		ISymbol T = template1.lookup( "T" );
-		IParameterizedSymbol h1 = table.newParameterizedSymbol( "h", TypeInfo.t_function );
+		ISymbol T = template1.lookup( "T" ); //$NON-NLS-1$
+		IParameterizedSymbol h1 = table.newParameterizedSymbol( "h", TypeInfo.t_function ); //$NON-NLS-1$
 		h1.addParameter( T, TypeInfo.isConst, new PtrOp( PtrOp.t_reference, false, false ),false );
 		factory.addSymbol( h1 );
 		
-		ITemplateSymbol template2 = table.newTemplateSymbol( "h" );
-		template2.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template2 = table.newTemplateSymbol( "h" ); //$NON-NLS-1$
+		template2.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template2 );
 		
-		T = template2.lookup( "T" );
+		T = template2.lookup( "T" ); //$NON-NLS-1$
 		
-		IParameterizedSymbol h2 = table.newParameterizedSymbol( "h", TypeInfo.t_function );
+		IParameterizedSymbol h2 = table.newParameterizedSymbol( "h", TypeInfo.t_function ); //$NON-NLS-1$
 		List argList = new ArrayList();
 		argList.add( new TypeInfo( TypeInfo.t_type, 0, T ) );
 		h2.addParameter( templateA.instantiate( argList ), 0, new PtrOp( PtrOp.t_reference ), false );
 		factory.addSymbol( h2 );
 		
-		ISymbol z = table.newSymbol( "z", TypeInfo.t_type );
+		ISymbol z = table.newSymbol( "z", TypeInfo.t_type ); //$NON-NLS-1$
 		List args = new ArrayList();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
-		ISymbol look = table.getCompilationUnit().lookupTemplateId( "A", args );
+		ISymbol look = table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), A );
 		z.setTypeSymbol( look );
 		
 		List params = new ArrayList();
 		params.add( new TypeInfo( TypeInfo.t_type, 0, z ) );
-		look = table.getCompilationUnit().unqualifiedFunctionLookup( "h", params );
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "h", params ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), h2 );
 		
-		ISymbol z2 = table.newSymbol( "z2", TypeInfo.t_type );
-		look = table.getCompilationUnit().lookupTemplateId( "A", args );
+		ISymbol z2 = table.newSymbol( "z2", TypeInfo.t_type ); //$NON-NLS-1$
+		look = table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), A );
 		z2.setTypeSymbol( look );
@@ -1658,7 +1658,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		
 		params.clear();
 		params.add( new TypeInfo( TypeInfo.t_type, 0, z2 ) );
-		look = table.getCompilationUnit().unqualifiedFunctionLookup( "h", params );
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "h", params ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), h1 );
 	}
@@ -1677,18 +1677,18 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  public void test_14_6_1__1_TemplateName() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "X" );
-		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol template = table.newTemplateSymbol( "X" ); //$NON-NLS-1$
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( T );
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol X = table.newDerivableContainerSymbol( "X", TypeInfo.t_class );
+		IDerivableContainerSymbol X = table.newDerivableContainerSymbol( "X", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( X );
 		
-		ISymbol look = X.lookup( "X" );
+		ISymbol look = X.lookup( "X" ); //$NON-NLS-1$
 		
 		assertTrue( look != null );
 		assertTrue( look instanceof IDeferredTemplateInstance );
@@ -1716,23 +1716,23 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  public void test_14_6_1__2_SpecializationName() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "Y" );
-		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol template = table.newTemplateSymbol( "Y" ); //$NON-NLS-1$
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( T );
-		IDerivableContainerSymbol Y1 = table.newDerivableContainerSymbol( "Y", TypeInfo.t_class );
+		IDerivableContainerSymbol Y1 = table.newDerivableContainerSymbol( "Y", TypeInfo.t_class ); //$NON-NLS-1$
 		template.addSymbol( Y1 );
 		
 		table.getCompilationUnit().addSymbol( template );
 		
-		ISpecializedSymbol spec = table.newSpecializedSymbol( "Y" );
+		ISpecializedSymbol spec = table.newSpecializedSymbol( "Y" ); //$NON-NLS-1$
 		spec.addArgument( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		
 		template.addSpecialization( spec );
 		
-		IDerivableContainerSymbol Y2 = table.newDerivableContainerSymbol( "Y", TypeInfo.t_class );
+		IDerivableContainerSymbol Y2 = table.newDerivableContainerSymbol( "Y", TypeInfo.t_class ); //$NON-NLS-1$
 		spec.addSymbol( Y2 );
 		
-		ISymbol look = Y2.lookup( "Y" );
+		ISymbol look = Y2.lookup( "Y" ); //$NON-NLS-1$
 		assertTrue( look != null );
 		assertTrue( look instanceof IDeferredTemplateInstance );
 		IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) look;
@@ -1761,10 +1761,10 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_6_1__4_ParameterRedeclaration() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "Y" );
-		template.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol template = table.newTemplateSymbol( "Y" ); //$NON-NLS-1$
+		template.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
-		ISymbol i = table.newSymbol( "i", TypeInfo.t_templateParameter );
+		ISymbol i = table.newSymbol( "i", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		i.getTypeInfo().setTemplateParameterType( TypeInfo.t_int );
 		template.addTemplateParameter( i );
 		
@@ -1772,10 +1772,10 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol Y = table.newDerivableContainerSymbol( "Y", TypeInfo.t_class );
+		IDerivableContainerSymbol Y = table.newDerivableContainerSymbol( "Y", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( Y );
 		
-		ISymbol T = table.newSymbol( "T", TypeInfo.t_int );
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_int ); //$NON-NLS-1$
 		try{
 			Y.addSymbol( T );
 			assertTrue( false );
@@ -1783,19 +1783,19 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 			assertEquals( e.reason, ParserSymbolTableException.r_RedeclaredTemplateParam );
 		}
 		
-		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		Y.addSymbol( f );
 		
 		try{
-			f.addSymbol( table.newSymbol( "T", TypeInfo.t_char ) );
+			f.addSymbol( table.newSymbol( "T", TypeInfo.t_char ) ); //$NON-NLS-1$
 			assertTrue( false );
 		} catch ( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_RedeclaredTemplateParam );
 		}
 		
-		ITemplateSymbol template2 = table.newTemplateSymbol( "X" );
+		ITemplateSymbol template2 = table.newTemplateSymbol( "X" ); //$NON-NLS-1$
 		try{
-			template2.addTemplateParameter( table.newSymbol( "X", TypeInfo.t_templateParameter ) );
+			template2.addTemplateParameter( table.newSymbol( "X", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 			assertTrue( false );
 		} catch( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplateParameter );
@@ -1822,23 +1822,23 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_7_3__5_ExplicitSpecialization() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "A" );
-		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol template = table.newTemplateSymbol( "A" ); //$NON-NLS-1$
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( T );
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template );
 		
-		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct );
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct ); //$NON-NLS-1$
 		factory.addSymbol( A );
 		
-		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f.addParameter( T, 0, null, false );
 		
 		A.addSymbol( f );
 		
-		ITemplateSymbol temp = table.newTemplateSymbol( "" );
+		ITemplateSymbol temp = table.newTemplateSymbol( "" ); //$NON-NLS-1$
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( temp );
@@ -1850,31 +1850,31 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		ITemplateSymbol templateSpec = table.newTemplateSymbol( ParserSymbolTable.EMPTY_NAME );
 		factory.pushTemplate( templateSpec );
 		
-		IDerivableContainerSymbol ASpec = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct );
+		IDerivableContainerSymbol ASpec = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct ); //$NON-NLS-1$
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		factory.addTemplateId( ASpec, args );
 		
-		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f2.addParameter( TypeInfo.t_int, 0, null, false );
 		f2.setIsForwardDeclaration( true );
 		ASpec.addSymbol( f2 );
 
-		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f3.addParameter( TypeInfo.t_int, 0, null, false );
 		
-		IDerivableContainerSymbol look = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args );
+		IDerivableContainerSymbol look = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), ASpec );
 		
-		ISymbol flook = look.lookupMethodForDefinition( "f", args );
+		ISymbol flook = look.lookupMethodForDefinition( "f", args ); //$NON-NLS-1$
 		assertTrue( flook.isTemplateInstance() );
 		assertEquals( flook.getInstantiatedSymbol(), f2 );
 		flook.setTypeSymbol( f3 );
 		
 		look.addSymbol( f3 );
 		
-		look = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args );
-		flook = look.qualifiedFunctionLookup( "f", args );
+		look = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
+		flook = look.qualifiedFunctionLookup( "f", args ); //$NON-NLS-1$
 		
 		assertEquals( flook, f3 );
 	}
@@ -1890,57 +1890,57 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_7_3__11_ExplicitSpecializationArgumentDeduction() throws Exception{
 		newTable();
 		
-		ITemplateSymbol templateArray = table.newTemplateSymbol( "Array" );
-		templateArray.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol templateArray = table.newTemplateSymbol( "Array" ); //$NON-NLS-1$
+		templateArray.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( templateArray );
 		
-		IDerivableContainerSymbol array = table.newDerivableContainerSymbol( "Array", TypeInfo.t_class );
+		IDerivableContainerSymbol array = table.newDerivableContainerSymbol( "Array", TypeInfo.t_class ); //$NON-NLS-1$
 		factory.addSymbol( array );
 		
-		ITemplateSymbol templateSort = table.newTemplateSymbol( "sort" );
-		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol templateSort = table.newTemplateSymbol( "sort" ); //$NON-NLS-1$
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		templateSort.addTemplateParameter( T );
 		
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( templateSort );
 		
-		IParameterizedSymbol sort = table.newParameterizedSymbol( "sort", TypeInfo.t_function );
+		IParameterizedSymbol sort = table.newParameterizedSymbol( "sort", TypeInfo.t_function ); //$NON-NLS-1$
 		
 		List args = new ArrayList();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, T ) );
 
-		ISymbol arrayLook = factory.lookupTemplateId( "Array", args );
+		ISymbol arrayLook = factory.lookupTemplateId( "Array", args ); //$NON-NLS-1$
 		sort.addParameter( arrayLook, 0, new PtrOp( PtrOp.t_reference ), false );
 		
 		factory.addSymbol( sort );
 
-		ITemplateSymbol temp = table.newTemplateSymbol( "" );
+		ITemplateSymbol temp = table.newTemplateSymbol( "" ); //$NON-NLS-1$
 		factory = table.newTemplateFactory();
 		
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( temp );
 				
-		IParameterizedSymbol newSort = table.newParameterizedSymbol( "sort", TypeInfo.t_function );
+		IParameterizedSymbol newSort = table.newParameterizedSymbol( "sort", TypeInfo.t_function ); //$NON-NLS-1$
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
-		arrayLook = table.getCompilationUnit().lookupTemplateId( "Array", args );
+		arrayLook = table.getCompilationUnit().lookupTemplateId( "Array", args ); //$NON-NLS-1$
 		assertTrue( arrayLook.isTemplateInstance() );
 		assertEquals( arrayLook.getInstantiatedSymbol(), array );
 		newSort.addParameter( arrayLook, 0, new PtrOp( PtrOp.t_reference ), false );
 		
 		factory.addSymbol( newSort );
 		
-		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
+		ISymbol a = table.newSymbol( "a", TypeInfo.t_type ); //$NON-NLS-1$
 		a.setTypeSymbol( arrayLook );
 		
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, a ) );
 		
-		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "sort", args );
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "sort", args ); //$NON-NLS-1$
 		
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), newSort );
@@ -1963,28 +1963,28 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	public void test_14_7_3__12_ExplicitSpecializationOverloadedFunction() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template1 = table.newTemplateSymbol( "f" );
-		ISymbol T1 = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol template1 = table.newTemplateSymbol( "f" ); //$NON-NLS-1$
+		ISymbol T1 = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template1.addTemplateParameter( T1 );
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template1 );
 		
-		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f1.addParameter( T1, 0, null, false );
 		
 		factory.addSymbol( f1 );
 		
-		ITemplateSymbol template2 = table.newTemplateSymbol( "f" );
-		ISymbol T2 = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol template2 = table.newTemplateSymbol( "f" ); //$NON-NLS-1$
+		ISymbol T2 = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template2.addTemplateParameter( T2 );
 		
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template2 );
 		
-		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f2.addParameter( T2, 0, new PtrOp( PtrOp.t_pointer ), false );
 		
 		factory.addSymbol( f2 );
@@ -1994,7 +1994,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template );
 				
-		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f3.addParameter( TypeInfo.t_int, 0, new PtrOp( PtrOp.t_pointer ), false );
 		
 		List args = new ArrayList();
@@ -2009,7 +2009,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template );
 		
-		IParameterizedSymbol f4 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f4 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f4.addParameter( TypeInfo.t_int, 0, new PtrOp( PtrOp.t_pointer ), false );
 		factory.addTemplateId( f4, args );
 
@@ -2021,14 +2021,14 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		factory.setContainingSymbol( table.getCompilationUnit() );
 		factory.pushTemplate( template );
 		
-		IParameterizedSymbol f5 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f5 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f5.addParameter( TypeInfo.t_char, 0, null, false );
 		factory.addSymbol( f5 );
 
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
 		
-		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", args );
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), f5 );
 	}
@@ -2051,23 +2051,23 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	 public void test_14_8_2_4__5_ArgumentDeduction() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "f" );
-		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol template = table.newTemplateSymbol( "f" ); //$NON-NLS-1$
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( T );
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		
-		ISymbol lookT = template.lookup( "T" );
+		ISymbol lookT = template.lookup( "T" ); //$NON-NLS-1$
 		assertEquals( lookT, T );
 		
-		ISymbol paramX = table.newSymbol( "x", TypeInfo.t_type );
+		ISymbol paramX = table.newSymbol( "x", TypeInfo.t_type ); //$NON-NLS-1$
 		paramX.setTypeSymbol( lookT );
 		
-		ISymbol paramY = table.newSymbol( "y", TypeInfo.t_type );
+		ISymbol paramY = table.newSymbol( "y", TypeInfo.t_type ); //$NON-NLS-1$
 		paramY.setTypeSymbol( lookT );
 		
 		f.addParameter( paramX );
@@ -2075,17 +2075,17 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		
 		factory.addSymbol( f );
 		
-		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct );
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct ); //$NON-NLS-1$
 		table.getCompilationUnit().addSymbol( A );
 		
-		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_struct );
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_struct ); //$NON-NLS-1$
 		B.addParent( A );
 		table.getCompilationUnit().addSymbol( B );
 		
-		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
+		ISymbol a = table.newSymbol( "a", TypeInfo.t_type ); //$NON-NLS-1$
 		a.setTypeSymbol( A );
 		
-		ISymbol b = table.newSymbol( "b", TypeInfo.t_type );
+		ISymbol b = table.newSymbol( "b", TypeInfo.t_type ); //$NON-NLS-1$
 		b.setTypeSymbol( B );
 		
 		table.getCompilationUnit().addSymbol( a );
@@ -2097,26 +2097,26 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		
 		argList.add( aParam );
 		argList.add( bParam );
-		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList );
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList ); //$NON-NLS-1$
 		assertEquals( look, null );
 		
 		argList.clear();
 		argList.add( bParam );
 		argList.add( aParam );
-		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList );
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList ); //$NON-NLS-1$
 		assertEquals( look, null );
 		
 		argList.clear();
 		argList.add( aParam );
 		argList.add( aParam );
-		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList );
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), f );
 		
 		argList.clear();
 		argList.add( bParam );
 		argList.add( bParam );
-		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList );
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance());
 		assertEquals( look.getInstantiatedSymbol(), f );
 	}
@@ -2136,49 +2136,49 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  public void test_14_8_2_4__6_ArgumentDeduction() throws Exception{
 		newTable();
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "f" );
+		ITemplateSymbol template = table.newTemplateSymbol( "f" ); //$NON-NLS-1$
 		
-		template.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
-		template.addTemplateParameter( table.newSymbol( "U", TypeInfo.t_templateParameter ) );
+		template.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
+		template.addTemplateParameter( table.newSymbol( "U", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IParameterizedSymbol paramFunction = table.newParameterizedSymbol( "", TypeInfo.t_function );
+		IParameterizedSymbol paramFunction = table.newParameterizedSymbol( "", TypeInfo.t_function ); //$NON-NLS-1$
 		paramFunction.setIsTemplateMember( true );
 		
-		ISymbol T = template.lookup( "T" );
-		ISymbol U = template.lookup( "U" );
+		ISymbol T = template.lookup( "T" ); //$NON-NLS-1$
+		ISymbol U = template.lookup( "U" ); //$NON-NLS-1$
 		
 		paramFunction.setReturnType( T );
 		paramFunction.addParameter( T, 0, null, false );
 		paramFunction.addParameter( U, 0, null, false );
 		paramFunction.addParameter( U, 0, null, false );
 		
-		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f.addParameter( paramFunction, 0, null, false );
 		
 		factory.addSymbol( f );
 		
-		IParameterizedSymbol g1 = table.newParameterizedSymbol( "g1", TypeInfo.t_function );
-		g1.setReturnType( table.newSymbol( "", TypeInfo.t_int ) );
+		IParameterizedSymbol g1 = table.newParameterizedSymbol( "g1", TypeInfo.t_function ); //$NON-NLS-1$
+		g1.setReturnType( table.newSymbol( "", TypeInfo.t_int ) ); //$NON-NLS-1$
 		g1.addParameter( TypeInfo.t_int, 0, null, false );
 		g1.addParameter( TypeInfo.t_float, 0, null, false );
 		g1.addParameter( TypeInfo.t_float, 0, null, false );
 		
 		table.getCompilationUnit().addSymbol( g1 );
 		
-		IParameterizedSymbol g2 = table.newParameterizedSymbol( "g2", TypeInfo.t_function );
-		g2.setReturnType( table.newSymbol( "", TypeInfo.t_char ) );
+		IParameterizedSymbol g2 = table.newParameterizedSymbol( "g2", TypeInfo.t_function ); //$NON-NLS-1$
+		g2.setReturnType( table.newSymbol( "", TypeInfo.t_char ) ); //$NON-NLS-1$
 		g2.addParameter( TypeInfo.t_int, 0, null, false );
 		g2.addParameter( TypeInfo.t_float, 0, null, false );
 		g2.addParameter( TypeInfo.t_float, 0, null, false );
 		
 		table.getCompilationUnit().addSymbol( g2);
 		
-		IParameterizedSymbol g3 = table.newParameterizedSymbol( "g3", TypeInfo.t_function );
-		g3.setReturnType( table.newSymbol( "", TypeInfo.t_int ) );
+		IParameterizedSymbol g3 = table.newParameterizedSymbol( "g3", TypeInfo.t_function ); //$NON-NLS-1$
+		g3.setReturnType( table.newSymbol( "", TypeInfo.t_int ) ); //$NON-NLS-1$
 		g3.addParameter( TypeInfo.t_int, 0, null, false );
 		g3.addParameter( TypeInfo.t_char, 0, null, false );
 		g3.addParameter( TypeInfo.t_float, 0, null, false );
@@ -2189,16 +2189,16 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		List argList = new ArrayList();
 		argList.add( arg );
 		
-		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList );
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), f );
 		
 		arg.setTypeSymbol( g2 );
-		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList );
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList ); //$NON-NLS-1$
 		assertEquals( look, null );
 		
 		arg.setTypeSymbol( g3 );
-		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList );
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", argList ); //$NON-NLS-1$
 		assertEquals( look, null );	
 	}
 	/**
@@ -2213,24 +2213,24 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  public void test_14_8_2_4__7_ArgumentDeduction() throws Exception{
 		newTable(); 
 		
-		ITemplateSymbol template = table.newTemplateSymbol( "f" );
-		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol template = table.newTemplateSymbol( "f" ); //$NON-NLS-1$
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		template.addTemplateParameter( T );
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( template );
 		
-		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		f.addParameter( T, 0, new PtrOp( PtrOp.t_pointer, true, false ), false );
 		factory.addSymbol( f );
 		
-		ISymbol p = table.newSymbol( "p", TypeInfo.t_int );
+		ISymbol p = table.newSymbol( "p", TypeInfo.t_int ); //$NON-NLS-1$
 		p.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
 		
 		List params = new ArrayList();
 		params.add( new TypeInfo( TypeInfo.t_type, 0, p ) );
-		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params ); //$NON-NLS-1$
 		
 		assertTrue( look != null );
 		assertTrue( look.isTemplateInstance() );
@@ -2270,40 +2270,40 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  public void test_14_8_2_4__8_ArgumentDeduction() throws Exception{
 		newTable();
 		
-		ITemplateSymbol templateB = table.newTemplateSymbol( "B" );
-		templateB.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol templateB = table.newTemplateSymbol( "B" ); //$NON-NLS-1$
+		templateB.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 		
 		ITemplateFactory factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( templateB );
 		
-		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_struct );
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_struct ); //$NON-NLS-1$
 		factory.addSymbol( B );
 		
-		ITemplateSymbol templateD = table.newTemplateSymbol( "D" );
-		templateD.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		ITemplateSymbol templateD = table.newTemplateSymbol( "D" ); //$NON-NLS-1$
+		templateD.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) ); //$NON-NLS-1$
 
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( templateD );
 		
-		IDerivableContainerSymbol D = table.newDerivableContainerSymbol( "D", TypeInfo.t_struct );
+		IDerivableContainerSymbol D = table.newDerivableContainerSymbol( "D", TypeInfo.t_struct ); //$NON-NLS-1$
 		factory.addSymbol( D );
 		
-		ISymbol T = templateD.lookup( "T" );
+		ISymbol T = templateD.lookup( "T" ); //$NON-NLS-1$
 		List args = new ArrayList ();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, T ) );
-		ISymbol look = table.getCompilationUnit().lookupTemplateId( "B", args );
+		ISymbol look = table.getCompilationUnit().lookupTemplateId( "B", args ); //$NON-NLS-1$
 		assertTrue( look instanceof IDeferredTemplateInstance );
 		assertEquals( ((IDeferredTemplateInstance)look).getTemplate(), templateB );
 		
 		D.addParent( look );
 		
-		IDerivableContainerSymbol D2 = table.newDerivableContainerSymbol( "D2", TypeInfo.t_struct );
+		IDerivableContainerSymbol D2 = table.newDerivableContainerSymbol( "D2", TypeInfo.t_struct ); //$NON-NLS-1$
 
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
-		look = table.getCompilationUnit().lookupTemplateId( "B", args );
+		look = table.getCompilationUnit().lookupTemplateId( "B", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), B );
 		
@@ -2311,55 +2311,55 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		
 		table.getCompilationUnit().addSymbol( D2 );
 		
-		ITemplateSymbol templatef = table.newTemplateSymbol( "f" );
-		T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		ITemplateSymbol templatef = table.newTemplateSymbol( "f" ); //$NON-NLS-1$
+		T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 		templatef.addTemplateParameter( T );
 		
 		factory = table.newTemplateFactory();
 		factory.setContainingSymbol( table.getCompilationUnit() ); 
 		factory.pushTemplate( templatef );
 		
-		IParameterizedSymbol f  = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		IParameterizedSymbol f  = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 		
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, T ) );
 		
-		look = table.getCompilationUnit().lookupTemplateId( "B", args );
+		look = table.getCompilationUnit().lookupTemplateId( "B", args ); //$NON-NLS-1$
 		assertTrue( look instanceof IDeferredTemplateInstance );
 		assertEquals( ((IDeferredTemplateInstance)look).getTemplate(), templateB );
 		
-		ISymbol param = table.newSymbol( "", TypeInfo.t_type );
+		ISymbol param = table.newSymbol( "", TypeInfo.t_type ); //$NON-NLS-1$
 		param.setTypeSymbol( look );
 		param.addPtrOperator( new PtrOp( PtrOp.t_reference ) );
 		f.addParameter( param );
 		
 		factory.addSymbol( f );
 		
-		ISymbol d = table.newSymbol( "d", TypeInfo.t_type );
+		ISymbol d = table.newSymbol( "d", TypeInfo.t_type ); //$NON-NLS-1$
 		
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
-		look = table.getCompilationUnit().lookupTemplateId( "D", args );
+		look = table.getCompilationUnit().lookupTemplateId( "D", args ); //$NON-NLS-1$
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), D );
 		
 		d.setTypeSymbol( look );
 		table.getCompilationUnit().addSymbol( d );
 		
-		ISymbol d2 = table.newSymbol( "d2", TypeInfo.t_type );
+		ISymbol d2 = table.newSymbol( "d2", TypeInfo.t_type ); //$NON-NLS-1$
 		d2.setTypeSymbol( D2 );
 		table.getCompilationUnit().addSymbol( d2 );
 		
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, d ) );
-		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", args );
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", args ); //$NON-NLS-1$
 		assertTrue( look != null );
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), f );
 		
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, d2 ) );
-		ISymbol look2 = table.getCompilationUnit().unqualifiedFunctionLookup( "f", args );
+		ISymbol look2 = table.getCompilationUnit().unqualifiedFunctionLookup( "f", args ); //$NON-NLS-1$
 		assertTrue( look2 != null );
 		assertTrue( look2.isTemplateInstance() );
 		assertEquals( look2.getInstantiatedSymbol(), f );
@@ -2404,9 +2404,9 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	newTable();
 	  	
 	  	//template < class T1, class T2 > class A  { void f(); };
-	  	ITemplateSymbol template = table.newTemplateSymbol( "A" );
-	  	ISymbol T1 = table.newSymbol( "T1", TypeInfo.t_templateParameter );
-	  	ISymbol T2 = table.newSymbol( "T2", TypeInfo.t_templateParameter );
+	  	ITemplateSymbol template = table.newTemplateSymbol( "A" ); //$NON-NLS-1$
+	  	ISymbol T1 = table.newSymbol( "T1", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+	  	ISymbol T2 = table.newSymbol( "T2", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 	  	template.addTemplateParameter( T1 );
 	  	template.addTemplateParameter( T2 );
 	  	
@@ -2414,16 +2414,16 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	factory.setContainingSymbol( table.getCompilationUnit() );
 	  	factory.pushTemplate( template );
 	  	
-	  	IDerivableContainerSymbol A1 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+	  	IDerivableContainerSymbol A1 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 	  	factory.addSymbol( A1 );
 	  	
-	  	IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 	  	f1.setIsForwardDeclaration( true );
 	  	A1.addSymbol( f1 );
 	  	
 	  	//template < class T > class A < T, T >    { void f(); };
-	  	ITemplateSymbol spec1 = table.newTemplateSymbol("");
-	  	ISymbol spec1_T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+	  	ITemplateSymbol spec1 = table.newTemplateSymbol(""); //$NON-NLS-1$
+	  	ISymbol spec1_T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 	  	spec1.addTemplateParameter( spec1_T );
 	  	
 	  	factory = table.newTemplateFactory();
@@ -2434,16 +2434,16 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	args.add( new TypeInfo( TypeInfo.t_type, 0, spec1_T ) );
 	  	args.add( new TypeInfo( TypeInfo.t_type, 0, spec1_T ) );
 	  	
-	  	IDerivableContainerSymbol A2 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+	  	IDerivableContainerSymbol A2 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 	  	factory.addTemplateId( A2, args );
 	  	
-	  	IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 	  	f2.setIsForwardDeclaration( true );
 	  	A2.addSymbol( f2 );
 
 	  	//template < class T > class A < char, T > { void f(); };
-	  	ITemplateSymbol spec2 = table.newTemplateSymbol("");
-	  	ISymbol spec2_T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+	  	ITemplateSymbol spec2 = table.newTemplateSymbol(""); //$NON-NLS-1$
+	  	ISymbol spec2_T = table.newSymbol( "T", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 	  	spec2.addTemplateParameter( spec2_T );
 	  	
 	  	factory = table.newTemplateFactory();
@@ -2454,17 +2454,17 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
 	  	args.add( new TypeInfo( TypeInfo.t_type, 0, spec2_T ) );
 	  	
-	  	IDerivableContainerSymbol A3 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+	  	IDerivableContainerSymbol A3 = table.newDerivableContainerSymbol( "A", TypeInfo.t_class ); //$NON-NLS-1$
 	  	factory.addTemplateId( A3, args );
 	  	
-	  	IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 	  	f3.setIsForwardDeclaration( true );
 	  	A3.addSymbol( f3 );
 	  	
 	  	//template < class U, class V > void A<U, V>::f(){  int c; }
-	  	ITemplateSymbol templateDef = table.newTemplateSymbol("");
-	  	ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter );
-	  	ISymbol V = table.newSymbol( "V", TypeInfo.t_templateParameter );
+	  	ITemplateSymbol templateDef = table.newTemplateSymbol(""); //$NON-NLS-1$
+	  	ISymbol U = table.newSymbol( "U", TypeInfo.t_templateParameter ); //$NON-NLS-1$
+	  	ISymbol V = table.newSymbol( "V", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 	  	templateDef.addTemplateParameter( U );
 	  	templateDef.addTemplateParameter( V );
 	  	
@@ -2476,22 +2476,22 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	args.add( new TypeInfo( TypeInfo.t_type, 0, U ) );
 	  	args.add( new TypeInfo( TypeInfo.t_type, 0, V ) );
 	  	
-	  	ISymbol symbol = factory.lookupTemplateId( "A",  args );
+	  	ISymbol symbol = factory.lookupTemplateId( "A",  args ); //$NON-NLS-1$
 	  	assertEquals( ((IDeferredTemplateInstance)symbol).getTemplate(), template );
 		factory.pushTemplateId( symbol, args );
 	  	
-	  	ISymbol look = factory.lookupMethodForDefinition( "f", new ArrayList() );
+	  	ISymbol look = factory.lookupMethodForDefinition( "f", new ArrayList() ); //$NON-NLS-1$
 	  	assertEquals( look, f1 );
-	  	IParameterizedSymbol f1Def = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	IParameterizedSymbol f1Def = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 	  	f1.setTypeSymbol( f1Def );
 	  	factory.addSymbol( f1Def );
 	  	
-	  	ISymbol c1 = table.newSymbol( "c", TypeInfo.t_int );
+	  	ISymbol c1 = table.newSymbol( "c", TypeInfo.t_int ); //$NON-NLS-1$
 	  	f1Def.addSymbol( c1 );
 	  	
 	  	//template < class W > void A < W, W >::f(){  char c; }
-	  	ITemplateSymbol specDef1 = table.newTemplateSymbol("");
-	  	ISymbol W = table.newSymbol( "W", TypeInfo.t_templateParameter );
+	  	ITemplateSymbol specDef1 = table.newTemplateSymbol(""); //$NON-NLS-1$
+	  	ISymbol W = table.newSymbol( "W", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 	  	specDef1.addTemplateParameter( W );
 	  	
 	  	factory = table.newTemplateFactory();
@@ -2502,21 +2502,21 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	args.add( new TypeInfo( TypeInfo.t_type, 0, W ) );
 	  	args.add( new TypeInfo( TypeInfo.t_type, 0, W ) );
 	  	
-	  	symbol = factory.lookupTemplateId( "A",  args );
+	  	symbol = factory.lookupTemplateId( "A",  args ); //$NON-NLS-1$
 		factory.pushTemplateId( symbol, args );
 	  	
-	  	look = factory.lookupMethodForDefinition( "f", new ArrayList() );
+	  	look = factory.lookupMethodForDefinition( "f", new ArrayList() ); //$NON-NLS-1$
 	  	assertEquals( look, f2 );
-	  	IParameterizedSymbol f2Def = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	IParameterizedSymbol f2Def = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 	  	f2.setTypeSymbol( f2Def );
 	  	factory.addSymbol( f2Def );
 	  	
-	  	ISymbol c2 = table.newSymbol( "c", TypeInfo.t_char );
+	  	ISymbol c2 = table.newSymbol( "c", TypeInfo.t_char ); //$NON-NLS-1$
 	  	f2Def.addSymbol( c2 );
 	  	
 	  	//template < class X > void < char, X >::f(){ float c; }
-	  	ITemplateSymbol specDef2 = table.newTemplateSymbol("");
-	  	ISymbol X = table.newSymbol( "X", TypeInfo.t_templateParameter );
+	  	ITemplateSymbol specDef2 = table.newTemplateSymbol(""); //$NON-NLS-1$
+	  	ISymbol X = table.newSymbol( "X", TypeInfo.t_templateParameter ); //$NON-NLS-1$
 	  	specDef2.addTemplateParameter( X );
 	  	
 	  	factory = table.newTemplateFactory();
@@ -2527,16 +2527,16 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
 	  	args.add( new TypeInfo( TypeInfo.t_type, 0, X ) );
 	  	
-	  	symbol = factory.lookupTemplateId( "A",  args );
+	  	symbol = factory.lookupTemplateId( "A",  args ); //$NON-NLS-1$
 		factory.pushTemplateId( symbol, args );
 		
-		look = factory.lookupMethodForDefinition( "f", new ArrayList() );
+		look = factory.lookupMethodForDefinition( "f", new ArrayList() ); //$NON-NLS-1$
 	  	assertEquals( look, f3 );
-	  	IParameterizedSymbol f3Def = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+	  	IParameterizedSymbol f3Def = table.newParameterizedSymbol( "f", TypeInfo.t_function ); //$NON-NLS-1$
 	  	f3.setTypeSymbol( f3Def );
 	  	factory.addSymbol( f3Def );
 	  	
-	  	ISymbol c3 = table.newSymbol( "c", TypeInfo.t_float );
+	  	ISymbol c3 = table.newSymbol( "c", TypeInfo.t_float ); //$NON-NLS-1$
 	  	f3Def.addSymbol( c3 );
 	  	
 	  	//A< int, char > a1;
@@ -2544,15 +2544,15 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 	  	args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
 	  
-	  	look = table.getCompilationUnit().lookupTemplateId( "A", args );
+	  	look = table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 	  	assertTrue( look.isTemplateInstance() );
 	  	assertEquals( look.getInstantiatedSymbol(), A1 );
 	  	
-	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new ArrayList() );
+	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new ArrayList() ); //$NON-NLS-1$
 	  	assertTrue( look.isTemplateInstance() );
 	  	assertEquals( look.getInstantiatedSymbol(), f1Def );
 	  	
-	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" );
+	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" ); //$NON-NLS-1$
 	  	assertTrue( look.isTemplateInstance() );
 	  	assertEquals( look.getInstantiatedSymbol(), c1 );
 	  	assertTrue( look.isType( TypeInfo.t_int ) );
@@ -2562,15 +2562,15 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 	  	
-	  	look = table.getCompilationUnit().lookupTemplateId( "A", args );
+	  	look = table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 	  	assertTrue( look.isTemplateInstance() );
 	  	assertEquals( look.getInstantiatedSymbol(), A2 );
 	  	
-	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new ArrayList() );
+	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new ArrayList() ); //$NON-NLS-1$
 	  	assertTrue( look.isTemplateInstance() );
 	  	assertEquals( look.getInstantiatedSymbol(), f2Def );
 	  	
-	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" );
+	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" ); //$NON-NLS-1$
 	  	assertTrue( look.isTemplateInstance() );
 	  	assertEquals( look.getInstantiatedSymbol(), c2 );
 	  	assertTrue( look.isType( TypeInfo.t_char ) );
@@ -2580,15 +2580,15 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	  	args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
 	  	args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 	  	
-	  	look = table.getCompilationUnit().lookupTemplateId( "A", args );
+	  	look = table.getCompilationUnit().lookupTemplateId( "A", args ); //$NON-NLS-1$
 	  	assertTrue( look.isTemplateInstance() );
 	  	assertEquals( look.getInstantiatedSymbol(), A3 );
 	  	
-	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new ArrayList() );
+	  	look = ((IContainerSymbol)look).qualifiedFunctionLookup( "f", new ArrayList() ); //$NON-NLS-1$
 	  	assertTrue( look.isTemplateInstance() );
 	  	assertEquals( look.getInstantiatedSymbol(), f3Def );
 	  	
-	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" );
+	  	look = ((IContainerSymbol)look).qualifiedLookup( "c" ); //$NON-NLS-1$
 	  	assertTrue( look.isTemplateInstance() );
 	  	assertEquals( look.getInstantiatedSymbol(), c3 );
 	  	assertTrue( look.isType( TypeInfo.t_float ) );

@@ -82,7 +82,7 @@ public class InMemoryIndex {
 		 * If the include does not exist, it adds it to the tree.
 		 */
 		protected void addIncludeRef(char[] include, int fileNum) {
-			IncludeEntry entry= (IncludeEntry) this.includes.get(include);
+			IncludeEntry entry= this.includes.get(include);
 			if (entry == null) {
 				entry= new IncludeEntry(include, ++lastId);
 				entry.addRef(fileNum);
@@ -113,7 +113,7 @@ public class InMemoryIndex {
 	 * If the word does not exist, it adds it in the index.
 	 */
 	protected void addRef(char[] word, int fileNum) {
-		WordEntry entry= (WordEntry) this.words.get(word);
+		WordEntry entry= this.words.get(word);
 		if (entry == null) {
 			entry= new WordEntry(word);
 			entry.addRef(fileNum);
@@ -142,10 +142,10 @@ public class InMemoryIndex {
 		IncludeEntry parentEntry=null;
 		
 		if (inclusion != null)
-			childEntry= (IncludeEntry) this.includes.get(inclusion);
+			childEntry= this.includes.get(inclusion);
 	
 		if (parent != null)
-			parentEntry= (IncludeEntry) this.includes.get(parent);
+			parentEntry= this.includes.get(parent);
 		
 
 		childEntry.addParent(fileNumber,(parentEntry!=null) ? parentEntry.getID() : -1);
@@ -181,7 +181,7 @@ public class InMemoryIndex {
 	 * Returns the include entry corresponding to the given include.
 	 */
 	protected IncludeEntry getIncludeEntry(char[] include) {
-		return (IncludeEntry) includes.get(include);
+		return includes.get(include);
 	}
 	/**
 	 * @see IIndex#getNumDocuments()
@@ -237,7 +237,7 @@ public class InMemoryIndex {
 	 * Returns the word entry corresponding to the given word.
 	 */
 	protected WordEntry getWordEntry(char[] word) {
-		return (WordEntry) words.get(word);
+		return words.get(word);
 	}
 	/**
 	 * Initialises the fields of the index

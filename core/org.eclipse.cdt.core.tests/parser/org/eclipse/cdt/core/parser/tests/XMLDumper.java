@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
 public class XMLDumper {
 
 	public static class Test {
-		private String msg = "hi";
+		private String msg = "hi"; //$NON-NLS-1$
 		
 		public String getMsg() {
 			return msg;
@@ -45,7 +45,7 @@ public class XMLDumper {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.transform(new DOMSource(document), new StreamResult(writer));
 
-			System.out.println( "STRXML = " + writer.toString() ); //Spit out DOM as a String
+			System.out.println( "STRXML = " + writer.toString() ); //Spit out DOM as a String //$NON-NLS-1$
 		} catch (TransformerException e) {
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
@@ -74,7 +74,7 @@ public class XMLDumper {
 		
 		Element element = document.createElement(clsName);
 		map.put(obj, new Integer(id));
-		element.setAttribute("id",String.valueOf(id++));
+		element.setAttribute("id",String.valueOf(id++)); //$NON-NLS-1$
 		
 		Field [] fields = cls.getDeclaredFields();
 		for (int i = 0; i < fields.length; ++i) {
@@ -99,7 +99,7 @@ public class XMLDumper {
 					value = e;
 				}
 			} else {
-				String methodName = "get" +
+				String methodName = "get" + //$NON-NLS-1$
 					fieldName.substring(0, 1).toUpperCase() +
 					fieldName.substring(1);
 				
@@ -133,7 +133,7 @@ public class XMLDumper {
 			else {
 				Object v = map.get(value);
 				if (v != null)
-					fieldElement.setAttribute("refid", v.toString());
+					fieldElement.setAttribute("refid", v.toString()); //$NON-NLS-1$
 				else
 					fieldElement.appendChild(createObject(value));
 			}

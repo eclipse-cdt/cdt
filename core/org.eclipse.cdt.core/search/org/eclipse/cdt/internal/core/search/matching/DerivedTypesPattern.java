@@ -9,16 +9,10 @@ package org.eclipse.cdt.internal.core.search.matching;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
-import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
-import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
-import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 
 /**

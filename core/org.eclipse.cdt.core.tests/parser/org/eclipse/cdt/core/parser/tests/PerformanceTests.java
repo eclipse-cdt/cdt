@@ -31,13 +31,13 @@ public class PerformanceTests extends BaseASTTest
 	{
 		Writer code = new StringWriter();
 		try	{ 
-			code.write("#define e0	\"a\"\n");
-			code.write("#define e1	e0 e0 e0 e0 e0 e0 e0 e0 e0 e0\n");
-			code.write("#define e2	e1 e1 e1 e1 e1 e1 e1 e1 e1 e1\n");
-			code.write("#define e3	e2 e2 e2 e2 e2 e2 e2 e2 e2 e2\n");
-			code.write("#define e4	e3 e3 e3 e3 e3 e3 e3 e3 e3 e3\n");
-			code.write("#define e5	e4 e4 e4 e4 e4 e4 e4 e4 e4 e4\n");
-			code.write("void foo() { (void)(e5); }\n");
+			code.write("#define e0	\"a\"\n"); //$NON-NLS-1$
+			code.write("#define e1	e0 e0 e0 e0 e0 e0 e0 e0 e0 e0\n"); //$NON-NLS-1$
+			code.write("#define e2	e1 e1 e1 e1 e1 e1 e1 e1 e1 e1\n"); //$NON-NLS-1$
+			code.write("#define e3	e2 e2 e2 e2 e2 e2 e2 e2 e2 e2\n"); //$NON-NLS-1$
+			code.write("#define e4	e3 e3 e3 e3 e3 e3 e3 e3 e3 e3\n"); //$NON-NLS-1$
+			code.write("#define e5	e4 e4 e4 e4 e4 e4 e4 e4 e4 e4\n"); //$NON-NLS-1$
+			code.write("void foo() { (void)(e5); }\n"); //$NON-NLS-1$
 		} catch( IOException ioe ){}
 			
 		parse(code.toString());

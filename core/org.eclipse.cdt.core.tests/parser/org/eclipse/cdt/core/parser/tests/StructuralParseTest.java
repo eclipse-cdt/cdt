@@ -59,17 +59,17 @@ public class StructuralParseTest extends TestCase {
     {
     	callback = new StructuralParseCallback(); 
     	IParser parser = ParserFactory.createParser( 
-    		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(),
+    		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(), //$NON-NLS-1$
     			                         ParserMode.STRUCTURAL_PARSE, language, callback, new NullLogService(), null ), 
 			callback, ParserMode.STRUCTURAL_PARSE, language, null 	
     	);
-    	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE");
+    	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$
         return callback.getCompilationUnit();
     }
     
     public void testBug60149() throws Exception
 	{
-    	IASTCompilationUnit cu = parse( "extern \"C\" { int v; } " );
+    	IASTCompilationUnit cu = parse( "extern \"C\" { int v; } " ); //$NON-NLS-1$
     	
     	Iterator i = cu.getDeclarations();
     	
@@ -78,19 +78,19 @@ public class StructuralParseTest extends TestCase {
     	
     	i = ls.getDeclarations();
     	IASTVariable v = (IASTVariable) i.next();
-    	assertEquals( v.getName(), "v" );
+    	assertEquals( v.getName(), "v" ); //$NON-NLS-1$
     	assertFalse( i.hasNext() );
 	}
     
     public void testBug60480() throws Exception
 	{
-    	IASTCompilationUnit cu = parse( "template < int > void foo();" );
+    	IASTCompilationUnit cu = parse( "template < int > void foo();" ); //$NON-NLS-1$
     	Iterator i = cu.getDeclarations();
     	
     	IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
     	assertFalse( i.hasNext() );
     	
     	IASTFunction foo = (IASTFunction) template.getOwnedDeclaration();
-    	assertEquals( foo.getName(), "foo" );
+    	assertEquals( foo.getName(), "foo" ); //$NON-NLS-1$
 	}
 }

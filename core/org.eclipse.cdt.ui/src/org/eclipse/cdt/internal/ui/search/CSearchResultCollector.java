@@ -13,7 +13,6 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;

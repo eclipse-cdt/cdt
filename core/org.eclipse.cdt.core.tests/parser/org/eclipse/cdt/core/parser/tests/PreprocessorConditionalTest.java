@@ -36,7 +36,7 @@ public class PreprocessorConditionalTest extends BaseScannerTest
 
     protected void initializeScanner(String input, Map definitions ) throws Exception
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo( definitions ), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, nullSourceElementRequestor, null, null );
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo( definitions ), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, nullSourceElementRequestor, null, null ); //$NON-NLS-1$
 	}
 
 
@@ -44,9 +44,9 @@ public class PreprocessorConditionalTest extends BaseScannerTest
 	{
 		 
 		StringBuffer buff = new StringBuffer(); 
-		buff.append( "#if " );
+		buff.append( "#if " ); //$NON-NLS-1$
 		buff.append( conditional ); 
-		buff.append( "\n int x;\n#else\n#error NEVER\n#endif\n");
+		buff.append( "\n int x;\n#else\n#error NEVER\n#endif\n"); //$NON-NLS-1$
 		initializeScanner( buff.toString(), definitions );
 		evaluate(); 
 	}
@@ -55,9 +55,9 @@ public class PreprocessorConditionalTest extends BaseScannerTest
 	{
 		
 		StringBuffer buff = new StringBuffer(); 
-		buff.append( "#if " );
+		buff.append( "#if " ); //$NON-NLS-1$
 		buff.append( conditional ); 
-		buff.append( "\n#error NEVER\n#else\n int x;\n#endif\n");
+		buff.append( "\n#error NEVER\n#else\n int x;\n#endif\n"); //$NON-NLS-1$
 		initializeScanner( buff.toString(), definitions ); 
 		evaluate(); 
 	}
@@ -70,14 +70,14 @@ public class PreprocessorConditionalTest extends BaseScannerTest
         try
         {
         	validateToken( IToken.t_int );
-        	validateIdentifier( "x");
+        	validateIdentifier( "x"); //$NON-NLS-1$
         	validateToken( IToken.tSEMI );
         	scanner.nextToken();
-        	fail( "Should have hit EOF by now"); 	
+        	fail( "Should have hit EOF by now"); 	 //$NON-NLS-1$
         }
         catch( ScannerException se )
         {
-        	fail( "Got #error, should not have gotten that.");
+        	fail( "Got #error, should not have gotten that."); //$NON-NLS-1$
         }
         catch( EndOfFileException eof )
         {
@@ -97,17 +97,17 @@ public class PreprocessorConditionalTest extends BaseScannerTest
     public void testConditionals()throws Exception
     {
     	Map definitions = new HashMap();
-    	definitions.put( "DEFED", "" );
-    	definitions.put( "VALUE", "30 ");
+    	definitions.put( "DEFED", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+    	definitions.put( "VALUE", "30 "); //$NON-NLS-1$ //$NON-NLS-2$
     	
-    	evaluateConditionalsPositive( "defined( DEFED )", definitions );
-    	evaluateConditionalsNegative( "defined( NOTDEFED )", definitions );
+    	evaluateConditionalsPositive( "defined( DEFED )", definitions ); //$NON-NLS-1$
+    	evaluateConditionalsNegative( "defined( NOTDEFED )", definitions ); //$NON-NLS-1$
 
-		evaluateConditionalsNegative( "! defined( DEFED )", definitions );
-		evaluateConditionalsPositive( "! defined( NOTDEFED )", definitions );
+		evaluateConditionalsNegative( "! defined( DEFED )", definitions ); //$NON-NLS-1$
+		evaluateConditionalsPositive( "! defined( NOTDEFED )", definitions ); //$NON-NLS-1$
     	 
-    	evaluateConditionalsPositive( "defined( VALUE ) && VALUE == 30", definitions );
-		evaluateConditionalsNegative( "defined( VALUE ) && VALUE == 40", definitions );
+    	evaluateConditionalsPositive( "defined( VALUE ) && VALUE == 30", definitions ); //$NON-NLS-1$
+		evaluateConditionalsNegative( "defined( VALUE ) && VALUE == 40", definitions ); //$NON-NLS-1$
 		
 		
     }

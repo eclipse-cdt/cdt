@@ -34,7 +34,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind PRIMARY_EMPTY : void
 	public void testPrimaryEmpty() throws Exception
 	{
-		Iterator i = parse ("int f(char); \n int f(void); \n int x = f();").getDeclarations();
+		Iterator i = parse ("int f(char); \r\n int f(void); \r\n int x = f();").getDeclarations(); //$NON-NLS-1$
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
@@ -43,7 +43,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind PRIMARY_INTEGER_LITERAL : int 
 	public void testPrimaryIntegerLiteral() throws Exception
 	{
-		Iterator i = parse ("int f(int, int); \n int f(int); \n int x = f(1, 2+3);").getDeclarations();
+		Iterator i = parse ("int f(int, int); \n int f(int); \n int x = f(1, 2+3);").getDeclarations(); //$NON-NLS-1$
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
@@ -52,7 +52,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind PRIMARY_CHAR_LITERAL : char
 	public void testPrimaryCharLiteral() throws Exception
 	{
-		Iterator i = parse ("int f(char, int); \n int f(char); \n int x = f('c');").getDeclarations();
+		Iterator i = parse ("int f(char, int); \n int f(char); \n int x = f('c');").getDeclarations(); //$NON-NLS-1$
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
@@ -61,7 +61,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind PRIMARY_FLOAT_LITERAL : float
 	public void testPrimaryFloatLiteral() throws Exception
 	{
-		Iterator i = parse ("int f(char); \n int f(float); \n int x = f(1.13);").getDeclarations();
+		Iterator i = parse ("int f(char); \n int f(float); \n int x = f(1.13);").getDeclarations(); //$NON-NLS-1$
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
@@ -70,7 +70,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind PRIMARY_STRING_LITERAL : char*
 	public void testPrimaryStringLiteral() throws Exception
 	{
-		Iterator i = parse ("int f(char); \n int f(char*); \n int x = f(\"str\");").getDeclarations();
+		Iterator i = parse ("int f(char); \n int f(char*); \n int x = f(\"str\");").getDeclarations(); //$NON-NLS-1$
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
@@ -79,7 +79,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind PRIMARY_BOOLEAN_LITERAL : bool
 	public void testPrimaryBooleanLiteral() throws Exception
 	{
-		Iterator i = parse ("int f(bool); \n int f(float); \n int x = f(true);").getDeclarations();
+		Iterator i = parse ("int f(bool); \n int f(float); \n int x = f(true);").getDeclarations(); //$NON-NLS-1$
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
@@ -88,7 +88,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind PRIMARY_THIS : type of inner most enclosing structure scope
 	public void testPrimaryThis() throws Exception
 	{
-		Iterator i = parse ("class A{ int m(); }; A a;  \n int f(void); \n int f(A * a); \n int A::m(){ int x = f(this); }").getDeclarations();
+		Iterator i = parse ("class A{ int m(); }; A a;  \n int f(void); \n int f(A * a); \n int A::m(){ int x = f(this); }").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		Iterator members = getDeclarations(cl);
 		IASTMethod method = (IASTMethod)members.next();
@@ -102,7 +102,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind PRIMARY_BRACKETED_EXPRESSION : LHS
 	public void testPrimaryBracketedExpression() throws Exception
 	{
-		Iterator i = parse ("int f(int, int); \n int f(int); \n int x = f(1, (2+3));").getDeclarations();
+		Iterator i = parse ("int f(int, int); \n int f(int); \n int x = f(1, (2+3));").getDeclarations(); //$NON-NLS-1$
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
@@ -111,7 +111,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind ID_EXPRESSION : type of the ID
 	public void testIdExpression() throws Exception
 	{
-		Iterator i = parse ("class A{}a;  \n int f(A a); \n int f(void); \n int x = f(a);").getDeclarations();
+		Iterator i = parse ("class A{}a;  \n int f(A a); \n int f(void); \n int x = f(a);").getDeclarations(); //$NON-NLS-1$
 		
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTClassSpecifier cl = (IASTClassSpecifier)a.getAbstractDeclaration().getTypeSpecifier();
@@ -124,7 +124,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind ID_EXPRESSION ( refers to a pointer ) : pointer to type of ID
 	public void testIdExpressionToPointer() throws Exception
 	{
-		Iterator i = parse ("class A {}; \n A * pa; \n int f(A *ia){} \n int f(void); \n int x = f(pa);").getDeclarations();
+		Iterator i = parse ("class A {}; \n A * pa; \n int f(A *ia){} \n int f(void); \n int x = f(pa);").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
@@ -136,7 +136,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind POSTFIX_SUBSCRIPT	
 	public void testPostfixSubscript() throws Exception
 	{
-		Iterator i = parse ("int pa[10]; \n int f(int ia){} \n int f(void); \n int x = f(pa[1]);").getDeclarations();
+		Iterator i = parse ("int pa[10]; \n int f(int ia){} \n int f(void); \n int x = f(pa[1]);").getDeclarations(); //$NON-NLS-1$
 		IASTVariable pa  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
@@ -146,7 +146,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		
  	public void testPostfixSubscriptA() throws Exception
 	{
-		Iterator i = parse ("int pa[10][5] ; \n int f(int ia){} \n int f(void); \n int x = f(pa[1][2]);").getDeclarations();
+		Iterator i = parse ("int pa[10][5] ; \n int f(int ia){} \n int f(void); \n int x = f(pa[1][2]);").getDeclarations(); //$NON-NLS-1$
 		IASTVariable pa  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
@@ -156,7 +156,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
   
  	public void testPostfixSubscriptB() throws Exception
 	{
-		Iterator i = parse ("int* pa[10][5] ; \n int f(int* ia){} \n int f(void); \n int x = f(pa[1][2]);").getDeclarations();
+		Iterator i = parse ("int* pa[10][5] ; \n int f(int* ia){} \n int f(void); \n int x = f(pa[1][2]);").getDeclarations(); //$NON-NLS-1$
 		IASTVariable pa  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
@@ -166,7 +166,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	
 	public void testPostfixSubscriptWithReferences() throws Exception
 	{
-		Iterator i = parse ("class A{}; \n A *pa[10][5] ; \n int f(A* ia){} \n int f(void); \n int x = f(pa[1][2]);").getDeclarations();
+		Iterator i = parse ("class A{}; \n A *pa[10][5] ; \n int f(A* ia){} \n int f(void); \n int x = f(pa[1][2]);").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable pa  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
@@ -178,7 +178,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind POSTFIX_FUNCTIONCALL : return type of called function
 	public void testPostfixFunctioncallBug42822() throws Exception
 	{
-		Iterator i = parse( "int foo( float b );  int bar( int a, int b ); int test( void ) { int x = bar( foo( 3.0 ), foo( 5.0 ) ) ; }").getDeclarations();
+		Iterator i = parse( "int foo( float b );  int bar( int a, int b ); int test( void ) { int x = bar( foo( 3.0 ), foo( 5.0 ) ) ; }").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next(); 
 		IASTFunction bar = (IASTFunction)i.next(); 
 		i.next();
@@ -189,8 +189,8 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	public void testPostfixSimpletypesBug42823() throws Exception
 	{
 		StringBuffer buffer = new StringBuffer(); 
-		buffer.append( "void foo( int anInt, short aShort, double aDouble, float aFloat, char aChar, wchar_t aWchar, signed aSigned, unsigned anUnsigned, bool aBool, long aLong );");
-		buffer.append( "void test( void ) { int someInt = foo( int(3), short(4), double(3.0), float(4.0), char( 'a'), wchar_t( 'a' ), signed( 2 ), unsigned( 3 ), bool( false ), long( 3L ) ); }");
+		buffer.append( "void foo( int anInt, short aShort, double aDouble, float aFloat, char aChar, wchar_t aWchar, signed aSigned, unsigned anUnsigned, bool aBool, long aLong );"); //$NON-NLS-1$
+		buffer.append( "void test( void ) { int someInt = foo( int(3), short(4), double(3.0), float(4.0), char( 'a'), wchar_t( 'a' ), signed( 2 ), unsigned( 3 ), bool( false ), long( 3L ) ); }"); //$NON-NLS-1$
 		Iterator i = parse( buffer.toString() ).getDeclarations();
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction test = (IASTFunction)i.next();
@@ -200,7 +200,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	
 	// Kind POSTFIX_TYPENAME_IDENTIFIER
 	public void testPostfixTypenameIdentifier() throws Exception{
-		Iterator i = parse( "class A {}; \n int foo(); int foo( A a ); \n int x = foo( typename A() );").getDeclarations();
+		Iterator i = parse( "class A {}; \n int foo(); int foo( A a ); \n int x = foo( typename A() );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
@@ -212,7 +212,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	
 	// Kind POSTFIX_DOT_IDEXPRESSION : type of member in the scope of the container
 	public void testPostfixDotExpression() throws Exception{
-		Iterator i = parse( "class A {int m;}; \n A  a; \n int foo(char); int foo( int ); \n int x = foo( a.m );").getDeclarations();
+		Iterator i = parse( "class A {int m;}; \n A  a; \n int foo(char); int foo( int ); \n int x = foo( a.m );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
@@ -224,7 +224,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind POSTFIX_ARROW_IDEXPRESSION : type of member in the scope of the container
 	public void testPostfixArrowExpression() throws Exception{
-		Iterator i = parse( "class A {int m;}; \n A * a; \n int foo(char); int foo( int ); \n int x = foo( a->m );").getDeclarations();
+		Iterator i = parse( "class A {int m;}; \n A * a; \n int foo(char); int foo( int ); \n int x = foo( a->m );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
@@ -243,7 +243,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind POSTFIX_INCREMENT : LHS 
 	public void testPostfixIncrement() throws Exception
 	{
-		Iterator i = parse( "void foo(); int foo( int ); void test( void ) { int x = 5; int y = foo( x++ ); } ").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( int ); void test( void ) { int x = 5; int y = foo( x++ ); } ").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTFunction test = (IASTFunction)i.next();
@@ -257,7 +257,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind POSTFIX_DECREMENT : LHS
 	public void testPostfixDecrement() throws Exception
 	{
-		Iterator i = parse( "void foo(); int foo( int ); void test( void ) { int x = 5; int y = foo( x-- ); } ").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( int ); void test( void ) { int x = 5; int y = foo( x-- ); } ").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTFunction test = (IASTFunction)i.next();
@@ -270,7 +270,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind POSTFIX_DYNAMIC_CAST 
 	public void testPostfixDynamicCast() throws Exception{
-		Iterator i = parse( "class A {}; class B : public A{}; \n A *a; \n int foo(); int foo( B* ); \n int x = foo( dynamic_cast<B*>(a) );").getDeclarations();
+		Iterator i = parse( "class A {}; class B : public A{}; \n A *a; \n int foo(); int foo( B* ); \n int x = foo( dynamic_cast<B*>(a) );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cla = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTClassSpecifier clb = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable a  = (IASTVariable) i.next();
@@ -282,7 +282,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind POSTFIX_REINTERPRET_CAST
 	public void testPostfixReinterpretCast() throws Exception{
-		Iterator i = parse( "int *a; \n int foo(); int foo( double* ); \n int x = foo( reinterpret_cast<double*>(a) );").getDeclarations();
+		Iterator i = parse( "int *a; \n int foo(); int foo( double* ); \n int x = foo( reinterpret_cast<double*>(a) );").getDeclarations(); //$NON-NLS-1$
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
@@ -292,7 +292,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind POSTFIX_STATIC_CAST
 	public void testPostfixStaticCast() throws Exception{
-		Iterator i = parse( "int a; \n int foo(); int foo( char ); \n int x = foo( static_cast<char>(a) );").getDeclarations();
+		Iterator i = parse( "int a; \n int foo(); int foo( char ); \n int x = foo( static_cast<char>(a) );").getDeclarations(); //$NON-NLS-1$
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
@@ -302,7 +302,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind POSTFIX_CONST_CAST
 	public void testPostfixConstCast() throws Exception{
-		Iterator i = parse( "const int a; \n int foo(); int foo( int * ); \n int x = foo( const_cast<int *>(&a) );").getDeclarations();
+		Iterator i = parse( "const int a; \n int foo(); int foo( int * ); \n int x = foo( const_cast<int *>(&a) );").getDeclarations(); //$NON-NLS-1$
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
@@ -312,7 +312,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}	
 	// Kind POSTFIX_TYPEID_EXPRESSION : LHS
 	public void testPostfixTypeIdExpression() throws Exception{
-		Iterator i = parse( "int foo(char); int foo( int ); \n int x = foo( typeid(5) );").getDeclarations();
+		Iterator i = parse( "int foo(char); int foo( int ); \n int x = foo( typeid(5) );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
@@ -320,7 +320,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind POSTFIX_TYPEID_EXPRESSION : type of the ID
 	public void testPostfixTypeIdExpression2() throws Exception{
-		Iterator i = parse( "class A {}; \n A  a; \n int foo(A); int foo( int ); \n int x = foo( typeid(a) );").getDeclarations();
+		Iterator i = parse( "class A {}; \n A  a; \n int foo(A); int foo( int ); \n int x = foo( typeid(a) );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
@@ -330,7 +330,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind POSTFIX_TYPEID_TYPEID : type of the ID
 	public void testPostfixTypeIdTypeId() throws Exception{
-		Iterator i = parse( "class A {}; \n A  a; \n int foo(A); int foo( int ); \n int x = foo( typeid(A) );").getDeclarations();
+		Iterator i = parse( "class A {}; \n A  a; \n int foo(A); int foo( int ); \n int x = foo( typeid(A) );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
@@ -340,7 +340,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}	
 	// Kind POSTFIX_TYPEID_TYPEID : type of the ID
 	public void testPostfixTypeIdTypeId2() throws Exception{
-		Iterator i = parse( "class A {}; \n A  a; \n int foo(A); int foo( int ); \n int x = foo( typeid(const A) );").getDeclarations();
+		Iterator i = parse( "class A {}; \n A  a; \n int foo(A); int foo( int ); \n int x = foo( typeid(const A) );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
@@ -351,7 +351,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind UNARY_INCREMENT : LHS             
 	public void testUnaryIncrement() throws Exception
 	{
-		Iterator i = parse( "void foo(); int foo( int ); void test( void ) { int x = 5; int y = foo( ++x ); } ").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( int ); void test( void ) { int x = 5; int y = foo( ++x ); } ").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTFunction test = (IASTFunction)i.next();
@@ -365,7 +365,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind UNARY_DECREMENT : LHS             
 	public void testUnaryDecrement() throws Exception
 	{
-		Iterator i = parse( "void foo(); int foo( int ); void test( void ) { int x = 5; int y = foo( --x ); } ").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( int ); void test( void ) { int x = 5; int y = foo( --x ); } ").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTFunction test = (IASTFunction)i.next();
@@ -379,7 +379,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind UNARY_STAR_CASTEXPRESSION : LHS + t_pointer	
 	public void testUnaryStarCastExpression() throws Exception
 	{
-		Iterator i = parse ("class A {}; \n A * pa; \n int f(A ia){} \n int f(void); \n int x = f(*pa);").getDeclarations();
+		Iterator i = parse ("class A {}; \n A * pa; \n int f(A ia){} \n int f(void); \n int x = f(*pa);").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
@@ -390,7 +390,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind UNARY_AMPSND_CASTEXPRESSION : LHS + t_reference
 	public void testUnaryAmpersandCastExpression() throws Exception
 	{
-		Iterator i = parse ("class A {}; \n A * pa; \n int f(A ** ia){} \n int f(void); \n int x = f(&pa);").getDeclarations();
+		Iterator i = parse ("class A {}; \n A * pa; \n int f(A ** ia){} \n int f(void); \n int x = f(&pa);").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable a  = (IASTVariable) i.next();
 		IASTFunction f1 = (IASTFunction) i.next();
@@ -400,7 +400,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind UNARY_PLUS_CASTEXPRESSION  : LHS
 	public void testUnaryPlusCastExpression() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( int ); int x = foo( +5 );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( int ); int x = foo( +5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable x = (IASTVariable)i.next();
@@ -409,7 +409,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind UNARY_MINUS_CASTEXPRESSION : LHS
 	public void testUnaryMinusCastExpression() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( int ); int x = foo( -5 );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( int ); int x = foo( -5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable x = (IASTVariable)i.next();
@@ -418,7 +418,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind UNARY_NOT_CASTEXPRESSION : LHS   
 	public void testUnaryNotCastExpression() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( bool ); bool b=true; int x = foo( !b );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( bool ); bool b=true; int x = foo( !b );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable b = (IASTVariable)i.next();
@@ -428,7 +428,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind UNARY_TILDE_CASTEXPRESSION : LHS   
 	public void testTildeNotCastExpression() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( int ); int x = 5; int y = foo( ~x );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( int ); int x = 5; int y = foo( ~x );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable x = (IASTVariable)i.next();
@@ -438,7 +438,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind UNARY_SIZEOF_UNARYEXPRESSION : unsigned int 
 	public void testUnarySizeofUnaryExpression() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( int ); int x = 5; int y = foo( sizeof(5) );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( int ); int x = 5; int y = foo( sizeof(5) );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable x = (IASTVariable)i.next();
@@ -448,7 +448,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind UNARY_SIZEOF_TYPEID : unsigned int          
 	public void testUnarySizeofTypeId() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( int ); int x = 5; int y = foo( sizeof(x) );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( int ); int x = 5; int y = foo( sizeof(x) );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable x = (IASTVariable)i.next();
@@ -459,7 +459,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	// Kind NEW_NEWTYPEID                
 	// Kind NEW_TYPEID                   
 	public void testNewTypeId() throws Exception { 
-		Iterator i = parse( "class A{}; void foo(); int foo( A * a ); int x = foo( new A() );").getDeclarations();
+		Iterator i = parse( "class A{}; void foo(); int foo( A * a ); int x = foo( new A() );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();		
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
@@ -473,7 +473,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	  
 	// Kind CASTEXPRESSION      
 	public void testCastExpression() throws Exception{
-		Iterator i = parse( "class A {}; class B : public A{}; \n B *b; \n int foo(); int foo( A* ); \n int x = foo( (A*)b );").getDeclarations();
+		Iterator i = parse( "class A {}; class B : public A{}; \n B *b; \n int foo(); int foo( A* ); \n int x = foo( (A*)b );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cla = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTClassSpecifier clb = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTVariable b  = (IASTVariable) i.next();
@@ -492,7 +492,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	          
 	// Kind MULTIPLICATIVE_MULTIPLY : usual arithmetic conversions
 	public void testMultiplicativeMultiply() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( float ); int a = 3; float b=5.1 ; int x = foo( a * b );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( float ); int a = 3; float b=5.1 ; int x = foo( a * b );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -504,7 +504,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind MULTIPLICATIVE_DIVIDE : usual arithmetic conversions        
 	public void testMultiplicativeDivide() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( float ); int a = 3; float b=5.1 ; int x = foo( b / a );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( float ); int a = 3; float b=5.1 ; int x = foo( b / a );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -515,7 +515,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}	
 	// Kind MULTIPLICATIVE_MODULUS : usual arithmetic conversions      
 	public void testMultiplicativeModulus() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( float ); int a = 3; float b=5.1 ; int x = foo( b % a );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( float ); int a = 3; float b=5.1 ; int x = foo( b % a );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -526,7 +526,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}	
 	// Kind ADDITIVE_PLUS : usual arithmetic conversions              
 	public void testAdditivePlus() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( float ); int a = 3; float b=5.1 ; int x = foo( b + a );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( float ); int a = 3; float b=5.1 ; int x = foo( b + a );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -537,7 +537,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}	
 	// Kind ADDITIVE_MINUS : usual arithmetic conversions           
 	public void testAdditiveMinus() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( float ); int a = 3; float b=5.1 ; int x = foo( b - a );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( float ); int a = 3; float b=5.1 ; int x = foo( b - a );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -548,7 +548,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}	
 	// Kind SHIFT_LEFT : LHS
 	public void testShiftLeft() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a << 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a << 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -558,7 +558,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}              
 	// Kind SHIFT_RIGHT : LHS                  
 	public void testShiftRight() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a >> 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a >> 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -568,7 +568,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind RELATIONAL_LESSTHAN : bool          
 	public void testRelationalLessThan() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b < 3 );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b < 3 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable b = (IASTVariable)i.next();
@@ -578,7 +578,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind RELATIONAL_GREATERTHAN : bool      
 	public void testRelationalGreaterThan() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b > 3 );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b > 3 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable b = (IASTVariable)i.next();
@@ -588,7 +588,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind RELATIONAL_LESSTHANEQUALTO : bool  
 	public void testRelationalLessThanOrEqual() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b <= 3 );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b <= 3 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable b = (IASTVariable)i.next();
@@ -598,7 +598,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind RELATIONAL_GREATERTHANEQUALTO : bool
 	public void testRelationalGreaterThanOrEqual() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b >= 3 );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b >= 3 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable b = (IASTVariable)i.next();
@@ -608,7 +608,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind EQUALITY_EQUALS : bool         
 	public void testEqualityEquals() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b == 3 );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b == 3 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable b = (IASTVariable)i.next();
@@ -618,7 +618,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind EQUALITY_NOTEQUALS : bool      
 	public void testEqualityNotEquals() throws Exception { 
-		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b != 3 );").getDeclarations();
+		Iterator i = parse( "void foo(); int foo( bool ); int b=5; int x = foo( b != 3 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable b = (IASTVariable)i.next();
@@ -628,7 +628,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind ANDEXPRESSION  : usual arithmetic conversions          
 	public void testAndExpression() throws Exception { 
-		Iterator i = parse( "int foo(); int foo( int ); int a = 3; int b= 5; int x = foo( a & b );").getDeclarations();
+		Iterator i = parse( "int foo(); int foo( int ); int a = 3; int b= 5; int x = foo( a & b );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -639,7 +639,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind EXCLUSIVEOREXPRESSION : usual arithmetic conversions      
 	public void testExclusiveOrExpression() throws Exception { 
-		Iterator i = parse( "int foo(); int foo( int ); int a = 3; int b= 5; int x = foo( a ^ b );").getDeclarations();
+		Iterator i = parse( "int foo(); int foo( int ); int a = 3; int b= 5; int x = foo( a ^ b );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -650,7 +650,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind INCLUSIVEOREXPRESSION : : usual arithmetic conversions     
 	public void testInclusiveOrExpression() throws Exception { 
-		Iterator i = parse( "int foo(); int foo( int ); int a = 3; int b= 5; int x = foo( a | b );").getDeclarations();
+		Iterator i = parse( "int foo(); int foo( int ); int a = 3; int b= 5; int x = foo( a | b );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -661,7 +661,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind LOGICALANDEXPRESSION : bool      
 	public void testLogicalAndExpression() throws Exception { 
-		Iterator i = parse( "int foo(); int foo( bool ); bool a = true; bool b= false; int x = foo( a && b );").getDeclarations();
+		Iterator i = parse( "int foo(); int foo( bool ); bool a = true; bool b= false; int x = foo( a && b );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -672,7 +672,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind LOGICALOREXPRESSION  : bool      
 	public void testLogicalOrExpression() throws Exception { 
-		Iterator i = parse( "int foo(); int foo( bool ); bool a = true; bool b= false; int x = foo( a || b );").getDeclarations();
+		Iterator i = parse( "int foo(); int foo( bool ); bool a = true; bool b= false; int x = foo( a || b );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -683,7 +683,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind CONDITIONALEXPRESSION : conditional Expression Conversions     
 	public void testConditionalExpression() throws Exception { 
-		Iterator i = parse( "int foo(bool); int foo(int); int a = 10, b = 4, c = 2; int x = foo( a > 5 ? b : c );").getDeclarations();
+		Iterator i = parse( "int foo(bool); int foo(int); int a = 10, b = 4, c = 2; int x = foo( a > 5 ? b : c );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -695,7 +695,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind CONDITIONALEXPRESSION with references : conditional Expression Conversions      
 	public void testConditionalExpressionWithReferencesA() throws Exception { 
-		Iterator i = parse( "class A{}; class B : public A{}; int foo(); int foo(A*); A *a ; B *b; int c = 0; int x = foo( c > 5 ? b : a );").getDeclarations();
+		Iterator i = parse( "class A{}; class B : public A{}; int foo(); int foo(A*); A *a ; B *b; int c = 0; int x = foo( c > 5 ? b : a );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cla = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();		
 		IASTClassSpecifier clb = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();		
 		IASTFunction foo1 = (IASTFunction)i.next();
@@ -708,7 +708,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertAllReferences(8, createTaskList( new Task( cla, 3 ), new Task( clb ), new Task( c ), new Task( b ), new Task( a ), new Task( foo2 )) );
 	}
 	public void testConditionalExpressionWithReferencesB_Bug43106() throws Exception { 
-		Iterator i = parse( "class A{}; class B : public A{}; int foo(); int foo(A&); A a ; B b; int c = 0; int x = foo( c > 5 ? b : a );").getDeclarations();
+		Iterator i = parse( "class A{}; class B : public A{}; int foo(); int foo(A&); A a ; B b; int c = 0; int x = foo( c > 5 ? b : a );").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier cla = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();		
 		IASTClassSpecifier clb = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();		
 		IASTFunction foo1 = (IASTFunction)i.next();
@@ -725,7 +725,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	            
 	// Kind ASSIGNMENTEXPRESSION_NORMAL : LHS
 	public void testAssignmentExpressionNormal() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a = 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a = 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -735,7 +735,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind ASSIGNMENTEXPRESSION_PLUS : LHS  
 	public void testAssignmentExpressionPlus() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a += 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a += 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -745,7 +745,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind ASSIGNMENTEXPRESSION_MINUS : LHS 
 	public void testAssignmentExpressionMinus() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a -= 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a -= 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -755,7 +755,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind ASSIGNMENTEXPRESSION_MULT : LHS  
 	public void testAssignmentExpressionMulti() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a *= 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a *= 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -765,7 +765,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind ASSIGNMENTEXPRESSION_DIV : LHS   
 	public void testAssignmentExpressionDiv() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a /= 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a /= 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -775,7 +775,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind ASSIGNMENTEXPRESSION_MOD : LHS   
 	public void testAssignmentExpressionMod() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a %= 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a %= 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -785,7 +785,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind ASSIGNMENTEXPRESSION_LSHIFT : LHS
 	public void testAssignmentExpressionLShift() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a >>= 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a >>= 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -795,7 +795,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind ASSIGNMENTEXPRESSION_RSHIFT : LHS
 	public void testAssignmentExpressionRShift() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a <<= 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a <<= 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -805,7 +805,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind ASSIGNMENTEXPRESSION_AND : LHS
 	public void testAssignmentExpressionAnd() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a &= 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a &= 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -815,7 +815,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind ASSIGNMENTEXPRESSION_OR : LHS 
 	public void testAssignmentExpressionOr() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a |= 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a |= 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();
@@ -825,7 +825,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind ASSIGNMENTEXPRESSION_XOR : LHS
 	public void testAssignmentExpressionXOr() throws Exception { 
-		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a ^= 5 );").getDeclarations();
+		Iterator i = parse( "int foo(int); int foo( bool ); int a = 10; int x = foo( a ^= 5 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo1 = (IASTFunction)i.next();
 		IASTFunction foo2 = (IASTFunction)i.next(); 
 		IASTVariable a = (IASTVariable)i.next();

@@ -72,14 +72,14 @@ public abstract class AutomatedFramework extends TestCase {
 						continue;
 					}
 					
-					if(	filePath.endsWith(".cpp") || filePath.endsWith(".hpp") || 
-						filePath.endsWith(".cc") || filePath.endsWith(".CC") ||
-						filePath.endsWith(".C") ||
-						filePath.endsWith(".hxx") || filePath.endsWith(".hh") )
+					if(	filePath.endsWith(".cpp") || filePath.endsWith(".hpp") ||  //$NON-NLS-1$ //$NON-NLS-2$
+						filePath.endsWith(".cc") || filePath.endsWith(".CC") || //$NON-NLS-1$ //$NON-NLS-2$
+						filePath.endsWith(".C") || //$NON-NLS-1$
+						filePath.endsWith(".hxx") || filePath.endsWith(".hh") ) //$NON-NLS-1$ //$NON-NLS-2$
 					{
-						AutomatedTest.natures.put( filePath, "cpp" );
-					} else if( filePath.endsWith(".c") ){ 
-						AutomatedTest.natures.put( filePath, "c" );
+						AutomatedTest.natures.put( filePath, "cpp" ); //$NON-NLS-1$
+					} else if( filePath.endsWith(".c") ){  //$NON-NLS-1$
+						AutomatedTest.natures.put( filePath, "c" ); //$NON-NLS-1$
 					} else {
 						AutomatedTest.natures.put( filePath, AutomatedTest.defaultNature );
 					}
@@ -95,19 +95,19 @@ public abstract class AutomatedFramework extends TestCase {
 	}
 
 	public void reportFailed() {
-		fail( "Unable to open " + outputFile + "for output of results." );
+		fail( "Unable to open " + outputFile + "for output of results." ); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void propertiesFailed() {
-		fail( "Unable to load properties file." );
+		fail( "Unable to load properties file." ); //$NON-NLS-1$
 	}
 	
 	protected void runTest() throws Throwable {
 		String name = getName();
 		
-		if( name.equals("propertiesFailed") )
+		if( name.equals("propertiesFailed") ) //$NON-NLS-1$
 			propertiesFailed();
-		else if ( name.equals("reportFailed") )
+		else if ( name.equals("reportFailed") ) //$NON-NLS-1$
 			reportFailed();
 		else
 			doFile();
@@ -119,10 +119,10 @@ public abstract class AutomatedFramework extends TestCase {
 		try{
 			loadProperties();
 		} catch( Exception e ){
-			suite.addTest( newTest( "propertiesFailed") );
+			suite.addTest( newTest( "propertiesFailed") ); //$NON-NLS-1$
 		}
 		
-		if( outputFile != null && !outputFile.equals("") ){
+		if( outputFile != null && !outputFile.equals("") ){ //$NON-NLS-1$
 			try{
 				
 				File output = new File( outputFile );
@@ -136,7 +136,7 @@ public abstract class AutomatedFramework extends TestCase {
 				report = new FileOutputStream( output );
 			
 			} catch( Exception e ) {
-				suite.addTest( newTest( "reportFailed" ) );
+				suite.addTest( newTest( "reportFailed" ) ); //$NON-NLS-1$
 			}
 		}
 		
@@ -170,15 +170,15 @@ public abstract class AutomatedFramework extends TestCase {
 	static private class Filter implements FilenameFilter
 	{
 		public boolean accept(File dir, String name) {
-			if( name.endsWith(".cpp") 	|| 
-				name.endsWith(".c") 	|| 
-				name.endsWith(".cc") 	||
-				name.endsWith(".CC") 	||
-				name.endsWith(".C") 	|| 
-				name.endsWith(".h") 	||
-				name.endsWith(".hh")	||
-				name.endsWith(".hpp")	||
-				name.endsWith(".hxx"))
+			if( name.endsWith(".cpp") 	||  //$NON-NLS-1$
+				name.endsWith(".c") 	||  //$NON-NLS-1$
+				name.endsWith(".cc") 	|| //$NON-NLS-1$
+				name.endsWith(".CC") 	|| //$NON-NLS-1$
+				name.endsWith(".C") 	||  //$NON-NLS-1$
+				name.endsWith(".h") 	|| //$NON-NLS-1$
+				name.endsWith(".hh")	|| //$NON-NLS-1$
+				name.endsWith(".hpp")	|| //$NON-NLS-1$
+				name.endsWith(".hxx")) //$NON-NLS-1$
 			{
 				return true;
 			}

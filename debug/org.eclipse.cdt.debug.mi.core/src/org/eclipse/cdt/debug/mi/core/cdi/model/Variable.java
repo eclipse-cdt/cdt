@@ -10,11 +10,39 @@ import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIBoolType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIEnumType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFunctionType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongLongType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIWCharType;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.Format;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.BoolValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.CharValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.DoubleValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.EnumValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.FloatValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.IncompleteType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.IntValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.LongLongValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.LongValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.ShortValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.Type;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.WCharValue;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarAssign;
 import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;
@@ -34,6 +62,7 @@ public class Variable extends CObject implements ICDIVariable {
 	Value value;
 	VariableObject varObj;
 	ICDIVariable[] children = new ICDIVariable[0];
+	Type type;
 
 	public Variable(VariableObject obj, MIVar v) {
 		super(obj.getTarget());
@@ -115,7 +144,42 @@ public class Variable extends CObject implements ICDIVariable {
 	 */
 	public ICDIValue getValue() throws CDIException {
 		if (value == null) {
-			value = new Value(this);
+			ICDIType t = getType();
+			if (t instanceof ICDIBoolType) {
+				value = new BoolValue(this);
+			} else if (t instanceof ICDICharType) {
+				value = new CharValue(this);
+			} else if (t instanceof ICDIWCharType) {
+				value = new WCharValue(this);
+			} else if (t instanceof ICDIShortType) {
+				value = new ShortValue(this);
+			} else if (t instanceof ICDIIntType) {
+				value = new IntValue(this);
+			} else if (t instanceof ICDILongType) {
+				value = new LongValue(this);
+			} else if (t instanceof ICDILongLongType) {
+				value = new LongLongValue(this);
+			} else if (t instanceof ICDIEnumType) {
+				value = new EnumValue(this);
+			} else if (t instanceof ICDIFloatType) {
+				value = new FloatValue(this);
+			} else if (t instanceof ICDIDoubleType) {
+				value = new DoubleValue(this);
+			} else if (t instanceof ICDIFunctionType) {
+				//value = new FunctionValue(this);
+				value = new Value(this);
+			} else if (t instanceof ICDIPointerType) {
+				//value = new PointerValue(this);
+				value = new Value(this);
+			} else if (t instanceof ICDIArrayType) {
+				//value = new ArrayValue(this);
+				value = new Value(this);
+			} else if (t instanceof ICDIStructType) {
+				//value = new StructValue(this);	
+				value = new Value(this);
+			} else {
+				value = new Value(this);
+			}
 		}
 		return value;
 	}
@@ -214,4 +278,28 @@ public class Variable extends CObject implements ICDIVariable {
 		return varObj.getStackFrame();
 	}
 
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getType()
+	 */
+	public ICDIType getType() throws CDIException {
+		if (type == null) {
+			Session session = (Session)(getTarget().getSession());
+			SourceManager sourceMgr = (SourceManager)session.getSourceManager();
+			String typename = getTypeName();
+			try {
+				type = sourceMgr.getType(typename);
+			} catch (CDIException e) {
+				type = new IncompleteType(typename);
+//				// Try after ptype.
+//				String ptype = sourceMgr.getDetailTypeName(typename);
+//				try {
+//					type = sourceMgr.getType(ptype);
+//				} catch (CDIException ex) {
+//					type = new IncompleteType(typename);
+//				}
+			}
+		}
+		return type;
+	}
+	
 }

@@ -180,10 +180,6 @@ public class AddGlobalsActionDelegate implements IViewActionDelegate,
 		{
 			action.setEnabled( getEnableStateForSelection( getSelection() ) );
 		}
-		else
-		{
-			action.setEnabled( false );
-		}
 	}
 
 	/* (non-Javadoc)

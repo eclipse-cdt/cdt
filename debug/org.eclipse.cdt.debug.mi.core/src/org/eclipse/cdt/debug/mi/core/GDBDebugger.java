@@ -20,13 +20,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class GDBDebugger implements ICDebugger {
 
-	void initializeLibraries(ILaunchConfiguration config, CSession session) throws CDIException {
+	protected void initializeLibraries(ILaunchConfiguration config, CSession session) throws CDIException {
 		try {
 			SourceManager mgr = (SourceManager)session.getSourceManager();
-			boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, false);
-			if (autolib) {
-				mgr.setAutoSolib();
-			}
+			boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, true);
+			mgr.setAutoSolib(autolib);
 			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_SOLIB_PATH, new ArrayList(1));
 			if (p.size() > 0) {
 				String[] paths = (String[])p.toArray(new String[0]);

@@ -70,4 +70,10 @@
          install-size="0"
          version="1.1.0"/>
 
+   <plugin
+         id="org.eclipse.cdt.doc.user"
+         download-size="0"
+         install-size="0"
+         version="1.1.0"/>
+
 </feature>

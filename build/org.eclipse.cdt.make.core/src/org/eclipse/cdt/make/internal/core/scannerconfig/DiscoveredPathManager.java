@@ -31,6 +31,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
@@ -94,6 +96,10 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 		if (fDiscoveredMap.get(info.getProject()) != null) {
 			saveDiscoveredScannerInfoToState((DiscoveredPathInfo)info);
 			fireUpdate(INFO_CHANGED, info);
+			ICProject cProject = CoreModel.getDefault().create(info.getProject());
+			if (cProject != null) {
+				CoreModel.getDefault().setPathEntryContainer(new ICProject[]{cProject}, new DiscoveredPathContainer(info.getProject()), null);
+			}
 		}
 	}
 

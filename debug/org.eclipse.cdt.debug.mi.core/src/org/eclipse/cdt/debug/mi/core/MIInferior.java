@@ -265,4 +265,7 @@ public class MIInferior extends Process {
 		return errPiped;
 	}
 
+	public PTY getPTY() {
+		return pty;
+	}
 }

@@ -1,0 +1,8 @@
+<contexts>
+<context id ="default_cs_help">
+   <description>Click below to see help.</description>
+   <topic href="default_cs_help.htm"
+   	label="Default Context Sensitive Help"/>
+</context>
+
+</contexts>

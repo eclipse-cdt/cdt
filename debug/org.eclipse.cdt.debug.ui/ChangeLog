@@ -1,3 +1,7 @@
+2002-12-10 Mikhail Khodjaiants
+	Added new case in the 'getEditorInput' method of CDTDebugModelPresentation for FileStorage objects.
+	* CDTDebugModelPresentation.java
+
 2002-12-08 Mikhail Khodjaiants
 	Implementation of the status handler for core errors.
 	* ErrorStatusHandler.java

@@ -9,6 +9,7 @@ package org.eclipse.cdt.debug.internal.ui;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
+import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -137,12 +139,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 			file = (IFile)((ICLineBreakpoint)element).getMarker().getResource().getAdapter( IFile.class );
 		if ( file != null ) 
 			return new FileEditorInput( file );
-/*
-		if ( element instanceof IFileStorage )
+		if ( element instanceof FileStorage )
 		{
-			return new FileStorageEditorInput( (IFileStorage)element );
+			return new ExternalEditorInput( (IStorage)element );
 		}
-*/
 		if ( element instanceof IDisassemblyStorage )
 		{
 			return new DisassemblyEditorInput( (IStorage)element );

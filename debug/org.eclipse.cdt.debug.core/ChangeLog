@@ -1,4 +1,10 @@
 2004-08-05 Mikhail Khodjaiants
+	Display the error message in the array label, if the attempt to get array values fails.
+	* CArrayPartition.java
+	* CArrayPartitionValue.java
+	* CDebugElement.java: made the exception throwing methods static.
+
+2004-08-05 Mikhail Khodjaiants
 	Fixed the "resumed" event handler of the variable types.
 	* CExpression.java
 	* CGlobalVariable.java

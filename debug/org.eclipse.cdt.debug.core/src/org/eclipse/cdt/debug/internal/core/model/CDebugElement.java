@@ -11,8 +11,8 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -74,7 +74,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
 	public String getModelIdentifier() {
-		return CDebugModel.getPluginIdentifier();
+		return CDIDebugModel.getPluginIdentifier();
 	}
 
 	/*
@@ -217,7 +217,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * @param e Exception that has occurred (<code>can be null</code>)
 	 * @throws DebugException The exception with a status code of <code>REQUEST_FAILED</code>
 	 */
-	public void requestFailed( String message, Exception e ) throws DebugException {
+	public static void requestFailed( String message, Exception e ) throws DebugException {
 		requestFailed( message, e, DebugException.REQUEST_FAILED );
 	}
 
@@ -228,7 +228,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * @param e underlying exception that has occurred
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
-	public void targetRequestFailed( String message, CDIException e ) throws DebugException {
+	public static void targetRequestFailed( String message, CDIException e ) throws DebugException {
 		requestFailed( MessageFormat.format( "Target request failed: {0}.", new String[]{ message } ), e, DebugException.TARGET_REQUEST_FAILED ); //$NON-NLS-1$
 	}
 
@@ -240,7 +240,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * @param code status code
 	 * @throws DebugException a new exception with given status code
 	 */
-	public void requestFailed( String message, Throwable e, int code ) throws DebugException {
+	public static void requestFailed( String message, Throwable e, int code ) throws DebugException {
 		throwDebugException( message, code, e );
 	}
 
@@ -251,7 +251,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * @param e Throwable that has occurred
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
-	public void targetRequestFailed( String message, Throwable e ) throws DebugException {
+	public static void targetRequestFailed( String message, Throwable e ) throws DebugException {
 		throwDebugException( MessageFormat.format( "Target request failed: {0}.", new String[]{ message } ), DebugException.TARGET_REQUEST_FAILED, e ); //$NON-NLS-1$
 	}
 
@@ -261,15 +261,15 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * @param message Failure message
 	 * @throws DebugException The exception with a status code of <code>NOT_SUPPORTED</code>.
 	 */
-	public void notSupported( String message ) throws DebugException {
+	public static void notSupported( String message ) throws DebugException {
 		throwDebugException( message, DebugException.NOT_SUPPORTED, null );
 	}
 
 	/**
 	 * Throws a debug exception with the given message, error code, and underlying exception.
 	 */
-	protected void throwDebugException( String message, int code, Throwable exception ) throws DebugException {
-		throw new DebugException( new Status( IStatus.ERROR, CDebugModel.getPluginIdentifier(), code, message, exception ) );
+	protected static void throwDebugException( String message, int code, Throwable exception ) throws DebugException {
+		throw new DebugException( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), code, message, exception ) );
 	}
 
 	protected void infoMessage( Throwable e ) {

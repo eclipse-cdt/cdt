@@ -14,7 +14,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 
@@ -94,7 +96,13 @@ public class CArrayPartitionValue extends AbstractCValue {
 		if ( !isAllocated() || !hasVariables() )
 			return Collections.EMPTY_LIST;
 		if ( fVariables.size() == 0 ) {
-			fVariables = CArrayPartition.splitArray( this, getCDIVariable(), getStart(), getEnd() );
+			try {
+				fVariables = CArrayPartition.splitArray( this, getCDIVariable(), getStart(), getEnd() );
+			}
+			catch( DebugException e ) {
+				setStatus( ICDebugElementStatus.ERROR, e.getMessage() );
+				getParentVariable().fireChangeEvent( DebugEvent.STATE );
+			}
 		}
 		return fVariables;
 	}

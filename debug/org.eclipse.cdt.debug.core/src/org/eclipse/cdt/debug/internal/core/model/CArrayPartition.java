@@ -274,7 +274,7 @@ public class CArrayPartition extends AbstractCVariable {
 				}
 			}
 			catch( CDIException e ) {
-//				children.add( CVariableFactory.createVariableWithError( parent, e.getMessage() ) );
+				requestFailed( e.getMessage(), e );
 			}
 		}
 		else {

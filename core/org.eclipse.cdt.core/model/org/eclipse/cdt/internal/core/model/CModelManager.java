@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBinaryParser;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICFile;
@@ -24,8 +25,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.utils.elf.AR;
-import org.eclipse.cdt.utils.elf.Elf;
+import org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.internal.core.model.parser.ElfParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -44,6 +45,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class CModelManager implements IResourceChangeListener {
 
 	private HashMap fParsedResources =  new HashMap();	
+
+	private static IBinaryParser defaultBinaryParser = new ElfParser();
 
 	/**
 	 * Used to convert <code>IResourceDelta</code>s into <code>IJavaElementDelta</code>s.
@@ -303,7 +306,7 @@ public class CModelManager implements IResourceChangeListener {
 				container.removeChild(cfile);
 			} else if (cfile.isBinary()) {
 				if (! ((IBinary)celement).isObject()) {
-//System.out.println("RELEASE Binary " + cfile.getElementName());
+System.out.println("RELEASE Binary " + cfile.getElementName());
 					CProject cproj = (CProject)cfile.getCProject();
 					BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
 					container.removeChild(cfile);
@@ -315,7 +318,11 @@ public class CModelManager implements IResourceChangeListener {
 		if (parent != null) {
 			parent.removeChild(celement);
 		}
-		fParsedResources.remove(celement);
+		try {
+			IResource res = celement.getUnderlyingResource();
+			fParsedResources.remove(res);
+		} catch (CModelException e) {
+		}
 	}
 
 	public ICElement getCElement(IResource res) {
@@ -333,12 +340,17 @@ public class CModelManager implements IResourceChangeListener {
 		return null;
 	}
 
+	public static IBinaryParser getBinaryParser(IProject project) {
+		// For now the default is Elf.
+		// It is in the porperty of the project of the cdtproject
+		return defaultBinaryParser;
+	}
+
 	public static boolean isSharedLib(IFile file) {
 		try {
-			Elf.Attribute attribute = Elf.getAttributes(file.getLocation().toOSString());
-			if (attribute.getType() == Elf.Attribute.ELF_TYPE_SHLIB) {
-				return true;
-			}
+			IBinaryParser parser = getBinaryParser(file.getProject());
+			IBinaryFile bin = parser.getBinary(file);
+			return (bin.getType() == IBinaryFile.SHARED);
 		} catch (IOException e) {
 			//e.printStackTrace();
 		}
@@ -347,10 +359,9 @@ public class CModelManager implements IResourceChangeListener {
 
 	public static boolean isObject(IFile file) {
 		try {
-			Elf.Attribute attribute = Elf.getAttributes(file.getLocation().toOSString());
-			if (attribute.getType() == Elf.Attribute.ELF_TYPE_OBJ) {
-				return true;
-			}
+			IBinaryParser parser = getBinaryParser(file.getProject());
+			IBinaryFile bin = parser.getBinary(file);
+			return (bin.getType() == IBinaryFile.OBJECT);
 		} catch (IOException e) {
 			//e.printStackTrace();
 		}
@@ -359,10 +370,9 @@ public class CModelManager implements IResourceChangeListener {
 
 	public static boolean isExecutable(IFile file) {
 		try {
-			Elf.Attribute attribute = Elf.getAttributes(file.getLocation().toOSString());
-			if (attribute.getType() == Elf.Attribute.ELF_TYPE_EXE) {
-				return true;
-			}
+			IBinaryParser parser = getBinaryParser(file.getProject());
+			IBinaryFile bin = parser.getBinary(file);
+			return (bin.getType() == IBinaryFile.EXECUTABLE);
 		} catch (IOException e) {
 			//e.printStackTrace();
 		}
@@ -371,12 +381,11 @@ public class CModelManager implements IResourceChangeListener {
 
 	public static boolean isBinary(IFile file) {
 		try {
-			Elf.Attribute attribute = Elf.getAttributes(file.getLocation().toOSString());
-			if (attribute.getType() == Elf.Attribute.ELF_TYPE_EXE
-				|| attribute.getType() == Elf.Attribute.ELF_TYPE_OBJ
-				|| attribute.getType() == Elf.Attribute.ELF_TYPE_SHLIB) {
-				return true;
-			}
+			IBinaryParser parser = getBinaryParser(file.getProject());
+			IBinaryFile bin = parser.getBinary(file);
+			return (bin.getType() == IBinaryFile.EXECUTABLE
+				|| bin.getType() == IBinaryFile.OBJECT
+				|| bin.getType() == IBinaryFile.SHARED);
 		} catch (IOException e) {
 			//e.printStackTrace();
 		}
@@ -384,15 +393,12 @@ public class CModelManager implements IResourceChangeListener {
 	}
 
 	public static boolean isArchive(IFile file) {
-		AR ar = null;
 		try {
-			ar = new AR(file.getLocation().toOSString()); 
+			IBinaryParser parser = getBinaryParser(file.getProject());
+			IBinaryFile bin = parser.getBinary(file);
+			return (bin.getType() == IBinaryFile.ARCHIVE);
 		} catch (IOException e) {
 			//e.printStackTrace();
-		}
-		if (ar != null) {
-			ar.dispose();
-			return true;
 		}
 		return false;
 	}

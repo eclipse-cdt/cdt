@@ -655,23 +655,15 @@
             name="%CDTIndexerProperty.name"
             class="org.eclipse.cdt.ui.dialogs.IndexerOptionPropertyPage"
             id="org.eclipse.cdt.ui.indexer">
+			<filter
+               	name="nature"
+        		value="org.eclipse.cdt.core.cnature">
+    	     </filter>            
       </page>
    </extension>
 <!--
    <extension
          point="org.eclipse.ui.propertyPages">
-      <page
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
-            name="C/C++ Project Paths"
-            nameFilter="*"
-            class="org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathPropertyPage"
-            id="org.eclipse.cdt.internal.ui.dialogs.cpath.CPathPropertyPage">
-         <filter
-               name="nature"
-               value="org.eclipse.cdt.core.cnature">
-         </filter>
-      </page>
       <page
             objectClass="org.eclipse.cdt.core.model.ICContainer"
             adaptable="true"

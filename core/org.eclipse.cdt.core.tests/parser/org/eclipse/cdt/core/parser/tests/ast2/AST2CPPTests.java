@@ -13,9 +13,9 @@
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -1598,24 +1598,26 @@ public class AST2CPPTests extends AST2BaseTest {
                 "struct B; void f() { B * bp; }", ParserLanguage.CPP); //$NON-NLS-1$
         IASTCompoundStatement compound = (IASTCompoundStatement) ((IASTFunctionDefinition) tu
                 .getDeclarations()[1]).getBody();
-        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) ((IASTDeclarationStatement) compound
-                .getStatements()[0]).getDeclaration();
-        IBinding binding = CPPSemantics.findTypeBinding(compound,
-                ((ICPPASTNamedTypeSpecifier)decl.getDeclSpecifier()).getName());
+        IASTBinaryExpression b = (IASTBinaryExpression) ((IASTExpressionStatement)compound.getStatements()[0]).getExpression();
+        IBinding binding = ((IASTIdExpression)b.getOperand1()).getName().resolveBinding();
+//        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) ((IASTDeclarationStatement) compound
+//                .getStatements()[0]).getDeclaration();
+//        IBinding binding = CPPSemantics.findTypeBinding(compound,
+//                ((ICPPASTNamedTypeSpecifier)decl.getDeclSpecifier()).getName());
         assertNotNull(binding);
         assertTrue(binding instanceof ICPPClassType);
     }
 
-    public void testBug85049() throws Exception {
-        StringBuffer buffer = new StringBuffer( "struct B { };\n" ); //$NON-NLS-1$
-        buffer.append( "void g() {\n" ); //$NON-NLS-1$
-        buffer.append( "B * bp;  //1\n" ); //$NON-NLS-1$
-        buffer.append( "}\n" ); //$NON-NLS-1$
-        IASTTranslationUnit t = parse( buffer.toString(), ParserLanguage.CPP );
-        IASTFunctionDefinition g = (IASTFunctionDefinition) t.getDeclarations()[1];
-        IASTCompoundStatement body = (IASTCompoundStatement) g.getBody();
-        assertTrue( body.getStatements()[0] instanceof IASTDeclarationStatement );
-    }
+//    public void testBug85049() throws Exception {
+//        StringBuffer buffer = new StringBuffer( "struct B { };\n" ); //$NON-NLS-1$
+//        buffer.append( "void g() {\n" ); //$NON-NLS-1$
+//        buffer.append( "B * bp;  //1\n" ); //$NON-NLS-1$
+//        buffer.append( "}\n" ); //$NON-NLS-1$
+//        IASTTranslationUnit t = parse( buffer.toString(), ParserLanguage.CPP );
+//        IASTFunctionDefinition g = (IASTFunctionDefinition) t.getDeclarations()[1];
+//        IASTCompoundStatement body = (IASTCompoundStatement) g.getBody();
+//        assertTrue( body.getStatements()[0] instanceof IASTDeclarationStatement );
+//    }
     
 }
 

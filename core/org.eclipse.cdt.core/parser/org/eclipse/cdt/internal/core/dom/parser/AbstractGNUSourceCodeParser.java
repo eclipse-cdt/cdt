@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
-import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -1450,17 +1449,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             }
         }
 
-        // A*B
-        if (expressionStatement.getExpression() instanceof IASTBinaryExpression) {
-            IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement
-                    .getExpression();
-            if (exp.getOperator() == IASTBinaryExpression.op_multiply) {
-                IASTExpression lhs = exp.getOperand1();
-                if (lhs instanceof IASTIdExpression)
-                    if (queryIsTypeName(((IASTIdExpression) lhs).getName()))
-                        return ds;
-            }
-        }
+//        // A*B
+//        if (expressionStatement.getExpression() instanceof IASTBinaryExpression) {
+//            IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement
+//                    .getExpression();
+//            if (exp.getOperator() == IASTBinaryExpression.op_multiply) {
+//                IASTExpression lhs = exp.getOperand1();
+//                if (lhs instanceof IASTIdExpression)
+//                    if (queryIsTypeName(((IASTIdExpression) lhs).getName()))
+//                        return ds;
+//            }
+//        }
 
         // x = y; // default to int
         // valid @ Translation Unit scope
@@ -1489,14 +1488,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
 
         return expressionStatement;
-    }
-
-    /**
-     * @param name
-     * @return
-     */
-    protected boolean queryIsTypeName(IASTName name) {
-        return false;
     }
 
     /**

@@ -74,8 +74,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -4823,15 +4821,5 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       return super
             .resolveOtherAmbiguitiesAsDeclaration(ds, expressionStatement);
    }
-   
-   /* (non-Javadoc)
- * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#queryIsTypeName(org.eclipse.cdt.core.dom.ast.IASTName)
- */
-protected boolean queryIsTypeName(IASTName name) {
-    IBinding b = CPPSemantics.findTypeBinding( mostRelevantScopeNode, name );
-    if( b == null ) return false;
-    if( b instanceof IType ) return true;
-    return false;
-}
 
 }

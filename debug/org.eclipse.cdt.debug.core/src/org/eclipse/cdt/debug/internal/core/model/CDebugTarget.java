@@ -1886,6 +1886,7 @@ public class CDebugTarget extends CDebugElement
 			{
 				cdiBreakpoint.setEnabled( false );
 			}
+			setBreakpointCondition( breakpoint );
 		}
 		catch( CoreException ce )
 		{
@@ -1901,8 +1902,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
 		ICDILocation location = bm.createLocation( breakpoint.getMarker().getResource().getLocation().lastSegment(), null, breakpoint.getLineNumber() );
-		ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
-		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
+		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, null, null );
 		getBreakpoints().put( breakpoint, cdiBreakpoint );
 		return cdiBreakpoint;
 	}
@@ -1921,6 +1921,7 @@ public class CDebugTarget extends CDebugElement
 			{
 				cdiBreakpoint.setEnabled( false );
 			}
+			setBreakpointCondition( breakpoint );
 		}
 		catch( CoreException ce )
 		{
@@ -1940,8 +1941,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
 		ICDILocation location = bm.createLocation( Long.parseLong( breakpoint.getAddress() ) );
-		ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
-		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
+		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, null, null );
 		getBreakpoints().put( breakpoint, cdiBreakpoint );
 		return cdiBreakpoint;
 	}
@@ -1960,6 +1960,7 @@ public class CDebugTarget extends CDebugElement
 			{
 				cdiBreakpoint.setEnabled( false );
 			}
+			setBreakpointCondition( breakpoint );
 		}
 		catch( CoreException ce )
 		{
@@ -1981,8 +1982,7 @@ public class CDebugTarget extends CDebugElement
 		String function = breakpoint.getFunction();
 		String fileName = ( function != null && function.indexOf( "::" ) == -1  ) ? breakpoint.getFileName() : null;
 		ICDILocation location = bm.createLocation( fileName, function, -1 );
-		ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
-		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
+		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, null, null );
 		getBreakpoints().put( breakpoint, cdiBreakpoint );
 		return cdiBreakpoint;
 	}
@@ -2015,16 +2015,25 @@ public class CDebugTarget extends CDebugElement
 	private synchronized ICDIWatchpoint setWatchpoint0( ICWatchpoint watchpoint ) throws CDIException, CoreException
 	{
 		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
-		ICDICondition condition = bm.createCondition( watchpoint.getIgnoreCount(), watchpoint.getCondition() );
 		int accessType = 0;
 		accessType |= ( watchpoint.isWriteType() ) ? ICDIWatchpoint.WRITE : 0;
 		accessType |= ( watchpoint.isReadType() ) ? ICDIWatchpoint.READ : 0;
 		String expression = watchpoint.getExpression();
-		ICDIWatchpoint cdiWatchpoint = bm.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
+		ICDIWatchpoint cdiWatchpoint = bm.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, null );
 		getBreakpoints().put( watchpoint, cdiWatchpoint );
 		return cdiWatchpoint;
 	}
-	
+
+	private void setBreakpointCondition( ICBreakpoint breakpoint ) throws CoreException, CDIException
+	{
+		ICDIBreakpoint cdiBreakpoint = findCDIBreakpoint( breakpoint );
+		if ( cdiBreakpoint == null )
+			return;
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
+		cdiBreakpoint.setCondition( condition );
+	}
+
 	private ICDIBreakpoint findCDIBreakpoint( IBreakpoint breakpoint )
 	{
 		return (ICDIBreakpoint)getBreakpoints().get( breakpoint );

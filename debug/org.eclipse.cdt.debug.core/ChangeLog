@@ -1,4 +1,9 @@
 2003-07-17 Mikhail Khodjaiants
+	Fix for PR 39936: GDB hits modified conditional breakpoints when condition not satisfied.
+	This is a work around for GDB PR MI/1289.
+	* CDebugTarget.java
+
+2003-07-17 Mikhail Khodjaiants
 	Automatically update the list of source locations when the list of the referenced 
 	projects is modified.
 	* ICSourceLocator.java: added new method - 'getProject'

@@ -24,16 +24,21 @@
                <topic label="Comments" href="cdt_c_comments.htm"/>
                <topic label="Content assist" href="cdt_c_content_assist.htm"/>
                <topic label="Code Templates" href="cdt_c_code_temp.htm"/>
-               <topic label="Hover help" href="cdt_c_hov_help.htm"/>
+               <topic label="Function information" href="cdt_c_hov_help.htm"/>
+               <topic label="Search" href="cdt_c_search.htm"/>
+          </topic>
+          <topic label="Build" href="cdt_o_build_conc.htm">
                <topic label="Build overview" href="cdt_c_build_over.htm"/>
+          </topic>
+          <topic label="Debug" href="cdt_o_dbg_concepts.htm">
                <topic label="Debug overview" href="cdt_c_over_dbg.htm"/>
                <topic label="Debug information" href="cdt_c_dbg_view.htm"/>
           </topic>
      </topic>
-     <topic label="Tasks" href="topic_under_dev.htm">
+     <topic label="Tasks" href="cdt_o_tasks.htm">
           <topic label="Updating the CDT" href="cdt_t_update_man.htm"/>
           <topic label="Working with C/C++ project files" href="cdt_o_proj_files.htm">
-               <topic label="Displaying file members in C/C++ Project view" href="cdt_t_show_proj_files.htm"/>
+               <topic label="Displaying C/C++ file components" href="cdt_t_show_proj_files.htm"/>
                <topic label="Creating a project file" href="cdt_t_new_proj.htm"/>
                <topic label="Converting to a C or C++ Project" href="cdt_t_conv_proj.htm"/>
                <topic label="Creating a managed make C++ Project" href="cdt_t_man_proj.htm"/>
@@ -51,33 +56,23 @@
                <topic label="Inserting a code template" href="cdt_t_insert_codetemp.htm"/>
                <topic label="Shifting lines of code to the right or left" href="cdt_t_shift_code.htm"/>
           </topic>
-          <topic label="Building" href="topic_under_dev.htm">
-               <topic label="Setting a build order" href="topic_under_dev.htm"/>
-               <topic label="Automatically building open projects" href="topic_under_dev.htm"/>
-               <topic label="Manually building" href="topic_under_dev.htm"/>
-               <topic label="Autosaving on a manual build" href="topic_under_dev.htm"/>
-               <topic label="Viewing build information" href="topic_under_dev.htm"/>
-               <topic label="Stopping on error" href="topic_under_dev.htm"/>
-               <topic label="Specifying a build command" href="topic_under_dev.htm"/>
-               <topic label="Adding a make target" href="topic_under_dev.htm"/>
-               <topic label="Interpreting build messages" href="topic_under_dev.htm"/>
-               <topic label="Managing make output in the C-Build view" href="topic_under_dev.htm">
-                    <topic label="Customizing the C-Build view" href="topic_under_dev.htm"/>
-                    <topic label="Clearing the C-Build view before building" href="topic_under_dev.htm"/>
-                    <topic label="Opening the C-Build view when building" href="topic_under_dev.htm"/>
-                    <topic label="Displaying the C-Build view on top when building" href="topic_under_dev.htm"/>
-               </topic>
-               <topic label="Viewing and managing compile errors" href="topic_under_dev.htm">
-                    <topic label="Tracking remaining work" href="topic_under_dev.htm"/>
-                    <topic label="Jumping to errors" href="topic_under_dev.htm"/>
-                    <topic label="Filtering errors" href="topic_under_dev.htm"/>
-                    <topic label="Setting reminders" href="topic_under_dev.htm"/>
+          <topic label="Building" href="cdt_o_build_task.htm">
+               <topic label="Setting a build order" href="cdt_t_setbuildorder.htm"/>
+               <topic label="Automatically building open projects" href="cdt_t_autobuild.htm"/>
+               <topic label="Manually building" href="cdt_t_manualbuild.htm"/>
+               <topic label="Autosaving on a manual build" href="cdt_t_autosave.htm"/>
+               <topic label="Specifying build settings" href="cdt_t_build_set.htm"/>
+               <topic label="Adding a make target" href="cdt_t_addmaketarget.htm"/>
+               <topic label="Customizing the C-Build view" href="cdt_t_cbuild_pref.htm"/>
+               <topic label="Viewing and managing compile errors" href="cdt_o_tasksview.htm">
+                    <topic label="Jumping to errors" href="cdt_t_jumperror.htm"/>
+                    <topic label="Filtering errors" href="cdt_t_filtererror.htm"/>
+                    <topic label="Setting reminders" href="cdt_t_setreminder.htm"/>
                </topic>
           </topic>
-          <topic label="Running a program" href="topic_under_dev.htm"/>
+          <topic label="Running a program" href="cdt_t_run_prog.htm"/>
           <topic label="Debugging" href="topic_under_dev.htm">
-               <topic label="Building a debuggable executable" href="topic_under_dev.htm"/>
-               <topic label="Starting a debug session" href="topic_under_dev.htm"/>
+               <topic label="Debugging a program" href="topic_under_dev.htm"/>
                <topic label="Working with breakpoints and watchpoints" href="topic_under_dev.htm">
                     <topic label="Adding breakpoints" href="topic_under_dev.htm"/>
                     <topic label="Adding watchpoints" href="topic_under_dev.htm"/>
@@ -91,15 +86,6 @@
                <topic label="Evaluating expressions" href="topic_under_dev.htm"/>
                <topic label="Inspecting registers" href="topic_under_dev.htm"/>
                <topic label="Inspecting memory" href="topic_under_dev.htm"/>
-               <topic label="Viewing output" href="topic_under_dev.htm">
-                    <topic label="Running your application" href="topic_under_dev.htm"/>
-                    <topic label="Locally debugging" href="topic_under_dev.htm"/>
-                    <topic label="Remotely debugging" href="topic_under_dev.htm"/>
-               </topic>
-          </topic>
-          <topic label="Running" href="topic_under_dev.htm">
-               <topic label="Running and debugging the first time" href="topic_under_dev.htm"/>
-               <topic label="Running and debugging subsequent times" href="topic_under_dev.htm"/>
           </topic>
      </topic>
      <topic label="Reference" href="topic_under_dev.htm">

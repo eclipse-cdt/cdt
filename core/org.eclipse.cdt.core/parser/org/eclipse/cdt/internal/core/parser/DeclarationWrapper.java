@@ -363,7 +363,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
      * @param declarator
      * @return
      */
-    private IASTMethod createMethodASTNode(Declarator declarator)
+    private IASTMethod createMethodASTNode(Declarator declarator) throws ASTSemanticException
     {
         return astFactory
             .createMethod(
@@ -396,7 +396,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
      * @param declarator
      * @return
      */
-    private IASTFunction createFunctionASTNode(Declarator declarator)
+    private IASTFunction createFunctionASTNode(Declarator declarator) throws ASTSemanticException
     {
         return astFactory.createFunction(
             scope,

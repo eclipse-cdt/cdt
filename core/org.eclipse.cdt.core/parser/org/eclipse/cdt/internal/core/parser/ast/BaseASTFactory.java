@@ -10,8 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast;
 
+import java.util.List;
+
+import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 
 
 /**
@@ -41,6 +47,16 @@ public class BaseASTFactory  {
 		inclusion.setNameOffset( nameOffset );
 		return inclusion;
 	}
+
+    public IASTAbstractDeclaration createAbstractDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers)
+    {
+        return new ASTAbstractDeclaration( isConst, typeSpecifier, pointerOperators, arrayModifiers );
+    }
+
+    public IASTParameterDeclaration createParameterDeclaration(boolean isConst, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, String parameterName, IASTInitializerClause initializerClause)
+    {
+        return new ASTParameterDeclaration( isConst, typeSpecifier, pointerOperators, arrayModifiers, parameterName, initializerClause );
+    }
 
 
 }

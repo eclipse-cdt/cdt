@@ -15,95 +15,87 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.ast.Offsets;
+import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTLinkageSpecification implements IASTLinkageSpecification
+public class ASTLinkageSpecification extends ASTAnonymousDeclaration implements IASTLinkageSpecification
 {
+    private final String linkageString;
+    private Offsets offsets = new Offsets();
     /**
      * 
      */
-    public ASTLinkageSpecification()
+    public ASTLinkageSpecification( IContainerSymbol scope, String linkageString, int startingOffset )
     {
-        super();
-        // TODO Auto-generated constructor stub
+        super( scope );
+        this.linkageString = linkageString;
+        setStartingOffset(startingOffset);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification#getLinkageString()
      */
     public String getLinkageString()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return linkageString;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()
      */
     public Iterator getDeclarations() throws ASTNotImplementedException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	throw new ASTNotImplementedException();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
     public void setStartingOffset(int o)
     {
-        // TODO Auto-generated method stub
+        offsets.setStartingOffset(o);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
     public void setEndingOffset(int o)
     {
-        // TODO Auto-generated method stub
+        offsets.setEndingOffset(o);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
      */
     public int getStartingOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return offsets.getStartingOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
      */
     public int getEndingOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return offsets.getEndingOffset();
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTScopedElement#getOwnerScope()
-     */
-    public IASTScope getOwnerScope()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
+        requestor.enterLinkageSpecification(this);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
+        requestor.exitLinkageSpecification(this);
     }
 }

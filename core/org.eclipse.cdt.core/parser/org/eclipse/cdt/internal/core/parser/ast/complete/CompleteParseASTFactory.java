@@ -58,12 +58,12 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescripto
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
-import org.eclipse.cdt.internal.core.parser.ast.ASTAbstractDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.internal.core.parser.pst.ForewardDeclaredSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
@@ -150,7 +150,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     }
     protected IContainerSymbol scopeToSymbol(IASTScope currentScope)
     {
-        return ((ASTScope)currentScope).getContainerSymbol();
+    	if( currentScope instanceof ASTScope )
+        	return ((ASTScope)currentScope).getContainerSymbol();
+        else
+        	return scopeToSymbol(((ASTAnonymousDeclaration)currentScope).getOwnerScope());
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createUsingDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, boolean, org.eclipse.cdt.core.parser.ITokenDuple, int, int)
@@ -319,8 +322,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         String spec,
         int startingOffset)
     {
-        // TODO FIX THIS
-        return new ASTLinkageSpecification();
+        return new ASTLinkageSpecification( scopeToSymbol( scope ), spec, startingOffset );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ast.ASTClassKind, org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility, org.eclipse.cdt.core.parser.ast.IASTTemplate, int, int)
@@ -414,6 +416,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      */
     protected IASTReference createReference(ISymbol symbol, String string, int offset ) throws ASTSemanticException 
     {
+    	if( symbol == null )
+    		throw new ASTSemanticException(); 
+    		
         if( symbol.getType() == TypeInfo.t_namespace )
         {
         	return new ASTNamespaceReference( offset, string, (IASTNamespaceDefinition)symbol.getASTExtension().getPrimaryDeclaration());
@@ -426,6 +431,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		else if( symbol.getType() == TypeInfo.t_enumeration )
 			return new ASTEnumerationReference( offset, string,  (IASTEnumerationSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
+		else if( symbol.getType() == TypeInfo.t_function )
+		{
+			if( symbol.getContainingSymbol().getTypeInfo().isType( TypeInfo.t_class, TypeInfo.t_union ) )
+				return new ASTMethodReference( offset, string, (IASTMethod)symbol.getASTExtension().getPrimaryDeclaration() ); 
+			else
+				return new ASTFunctionReference( offset, string, (IASTFunction)symbol.getASTExtension().getPrimaryDeclaration() );
+		}
 		else if( ( symbol.getType() == TypeInfo.t_type ) || 
 				( symbol.getType() == TypeInfo.t_bool )||
 				( symbol.getType() == TypeInfo.t_char  ) ||     
@@ -645,17 +657,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			Iterator i = typeName.iterator();
 			IToken first = typeName.getFirstToken();
 			
-			ISymbol typeSymbol = null;
-			if( first.getType() == IToken.tCOLONCOLON  )
-			{
-				typeSymbol = pst.getCompilationUnit();
-				i.next(); // waste this token
-			}
-			else
-			{
-				typeSymbol = scopeToSymbol( scope );
-			}
-			
+			ISymbol typeSymbol = getScopeToSearchUpon( scope, first, i );
+						
 			while( i.hasNext() )
 			{
 				IToken current = (IToken)i.next(); 
@@ -700,22 +703,171 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isStatic,
         int startOffset,
         int nameOffset,
-        IASTTemplate ownerTemplate)
+        IASTTemplate ownerTemplate) throws ASTSemanticException
     {
-        // TODO Auto-generated method stub
-        return new ASTFunction();
+    	IContainerSymbol ownerScope = scopeToSymbol( scope );
+    	IParameterizedSymbol symbol = pst.newParameterizedSymbol( name, TypeInfo.t_function );
+        setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
+        List references = new ArrayList();
+    	
+    	try
+        {
+            ownerScope.addSymbol( symbol );
+        }
+        catch (ParserSymbolTableException e)
+        {
+         	throw new ASTSemanticException();   
+        }
+    	
+    	setParameter( symbol, returnType, false, references );
+    	setParameters( symbol, references, parameters.iterator() );
+    	
+        ASTFunction function = new ASTFunction( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references );
+        try
+        {
+            attachSymbolExtension(symbol, function);
+        }
+        catch (ExtensionException e1)
+        {
+            throw new ASTSemanticException();
+        } 
+        return function;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createAbstractDeclaration(boolean, org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier, java.util.List, java.util.List)
+    protected void setFunctionTypeInfoBits(
+        boolean isInline,
+        boolean isFriend,
+        boolean isStatic,
+        IParameterizedSymbol symbol)
+    {
+        symbol.getTypeInfo().setBit( isInline, TypeInfo.isInline );
+        symbol.getTypeInfo().setBit( isFriend, TypeInfo.isFriend );
+        symbol.getTypeInfo().setBit( isStatic, TypeInfo.isStatic );
+    }
+    
+    /**
+     * @param symbol
+     * @param iterator
      */
-    public IASTAbstractDeclaration createAbstractDeclaration(
-        boolean isConst,
-        IASTTypeSpecifier typeSpecifier,
-        List pointerOperators,
-        List arrayModifiers)
+    protected void setParameters(IParameterizedSymbol symbol, List references, Iterator iterator) throws ASTSemanticException
     {
-        return new ASTAbstractDeclaration( isConst, typeSpecifier, pointerOperators, arrayModifiers );
+        while( iterator.hasNext() )
+        {
+        	setParameter( symbol, (IASTParameterDeclaration)iterator.next(), true, references );	
+        }
     }
+
+    /**
+     * @param symbol
+     * @param returnType
+     */
+    protected void setParameter(IParameterizedSymbol symbol, IASTAbstractDeclaration absDecl, boolean isParameter, List references) throws ASTSemanticException
+    {
+    	TypeInfo.eType type = null;
+    	ISymbol xrefSymbol = null;
+    	List newReferences = null; 
+        if( absDecl.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ) 
+        {
+        	IASTSimpleTypeSpecifier.Type kind = ((IASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getType();
+        	if( kind == IASTSimpleTypeSpecifier.Type.BOOL )
+        		type = TypeInfo.t_bool;
+        	else if( kind == IASTSimpleTypeSpecifier.Type.CHAR )
+        		type = TypeInfo.t_char;
+        	else if( kind == IASTSimpleTypeSpecifier.Type.DOUBLE )
+        		type = TypeInfo.t_double;
+        	else if( kind == IASTSimpleTypeSpecifier.Type.FLOAT )
+        		type = TypeInfo.t_float; 
+        	else if( kind == IASTSimpleTypeSpecifier.Type.INT )
+        		type = TypeInfo.t_int;
+        	else if( kind == IASTSimpleTypeSpecifier.Type.VOID )
+        		type = TypeInfo.t_void;
+        	else if( kind == IASTSimpleTypeSpecifier.Type.WCHAR_T)
+        		type = TypeInfo.t_wchar_t;
+        	else if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
+        	{
+        		type = TypeInfo.t_type;
+        		xrefSymbol = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getSymbol(); 
+        		newReferences = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getReferences();
+        	}
+        	else
+        		throw new ASTSemanticException(); 
+        }
+        else if( absDecl.getTypeSpecifier() instanceof IASTClassSpecifier )
+        {
+        	ASTClassKind kind = ((IASTClassSpecifier)absDecl.getTypeSpecifier()).getClassKind();
+        	if( kind == ASTClassKind.CLASS )
+        		type = TypeInfo.t_class;
+        	else if( kind == ASTClassKind.STRUCT )
+				type = TypeInfo.t_struct;
+			else if( kind == ASTClassKind.UNION )
+				type = TypeInfo.t_union;
+			else
+				throw new ASTSemanticException();
+        }
+        else if( absDecl.getTypeSpecifier() instanceof IASTEnumerationSpecifier )
+        {
+        	type = TypeInfo.t_enumeration;
+        }
+        else if( absDecl.getTypeSpecifier() instanceof IASTElaboratedTypeSpecifier )
+        {
+			ASTClassKind kind = ((IASTElaboratedTypeSpecifier)absDecl.getTypeSpecifier()).getClassKind();
+			if( kind == ASTClassKind.CLASS )
+				type = TypeInfo.t_class;
+			else if( kind == ASTClassKind.STRUCT )
+				type = TypeInfo.t_struct;
+			else if( kind == ASTClassKind.UNION )
+				type = TypeInfo.t_union;
+			else if( kind == ASTClassKind.ENUM )
+				type = TypeInfo.t_enumeration;
+			else
+				throw new ASTSemanticException();
+        }
+        else
+        	throw new ASTSemanticException(); 
+        
+        ISymbol paramSymbol = pst.newSymbol( "", type );
+        if( xrefSymbol != null )
+        	paramSymbol.setTypeSymbol( xrefSymbol );
+        
+        setPointerOperators( paramSymbol, absDecl.getPointerOperators(), absDecl.getArrayModifiers() );
+
+        if( isParameter)
+        	symbol.addParameter( paramSymbol );
+        else
+			symbol.setReturnType( paramSymbol );
+			
+		if( newReferences != null )
+			references.addAll( newReferences );
+		
+    }
+
+    /**
+     * @param paramSymbol
+     * @param iterator
+     */
+    protected void setPointerOperators(ISymbol symbol, Iterator pointerOpsIterator, Iterator arrayModsIterator) throws ASTSemanticException
+    {
+        while( pointerOpsIterator.hasNext() )
+        {
+        	ASTPointerOperator pointerOperator = (ASTPointerOperator)pointerOpsIterator.next();
+        	if( pointerOperator == ASTPointerOperator.REFERENCE )
+        		symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference )); 
+        	else if( pointerOperator == ASTPointerOperator.POINTER )
+				symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_pointer ));
+			else if( pointerOperator == ASTPointerOperator.CONST_POINTER )
+				symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_pointer, true, false ));
+			else if( pointerOperator == ASTPointerOperator.VOLATILE_POINTER )
+				symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_pointer, false, true));
+			else
+				throw new ASTSemanticException();
+        }
+        
+        while( arrayModsIterator.hasNext() )
+        {
+        	IASTArrayModifier astArrayModifier = (IASTArrayModifier)arrayModsIterator.next();
+        	symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_array )); 
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createMethod(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplate, boolean, boolean, boolean, boolean, boolean, boolean, boolean, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility)
      */
@@ -738,11 +890,55 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isVirtual,
         boolean isExplicit,
         boolean isPureVirtual,
-        ASTAccessVisibility visibility)
+        ASTAccessVisibility visibility) throws ASTSemanticException
     {
-        // TODO Auto-generated method stub
-        return new ASTMethod();
+		IContainerSymbol ownerScope = scopeToSymbol( scope );
+		IParameterizedSymbol symbol = pst.newParameterizedSymbol( name, TypeInfo.t_function );
+		setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
+		setMethodTypeInfoBits( symbol, isConst, isVolatile, isVirtual, isExplicit );
+		List references = new ArrayList();
+    	
+		try
+		{
+			ownerScope.addSymbol( symbol );
+		}
+		catch (ParserSymbolTableException e)
+		{
+			throw new ASTSemanticException();   
+		}
+    	
+		setParameter( symbol, returnType, false, references );
+		setParameters( symbol, references, parameters.iterator() );
+        
+        ASTMethod method = new ASTMethod( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, isConstructor, isDestructor, isPureVirtual, visibility );
+        try
+        {
+            attachSymbolExtension( symbol, method );
+        }
+        catch (ExtensionException e1)
+        {
+            throw new ASTSemanticException();
+        }
+        return method;
     }
+    /**
+     * @param symbol
+     * @param isConst
+     * @param isVolatile
+     * @param isConstructor
+     * @param isDestructor
+     * @param isVirtual
+     * @param isExplicit
+     * @param isPureVirtual
+     */
+    protected void setMethodTypeInfoBits(IParameterizedSymbol symbol, boolean isConst, boolean isVolatile, boolean isVirtual, boolean isExplicit)
+    {
+        symbol.getTypeInfo().setBit( isConst, TypeInfo.isConst );
+		symbol.getTypeInfo().setBit( isVolatile, TypeInfo.isConst );
+		symbol.getTypeInfo().setBit( isVirtual, TypeInfo.isVirtual );
+		symbol.getTypeInfo().setBit( isExplicit, TypeInfo.isExplicit );
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createVariable(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, boolean, org.eclipse.cdt.core.parser.ast.IASTInitializerClause, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, boolean, boolean, boolean, boolean, int, int)
      */
@@ -761,8 +957,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int nameOffset) throws ASTSemanticException
     {
 		List references = new ArrayList(); 
-        ISymbol newSymbol = cloneSimpleTypeSymbol(scope, name, abstractDeclaration, references);
-        setSymbolBits(
+        ISymbol newSymbol = cloneSimpleTypeSymbol(name, abstractDeclaration, references);
+        setVariableTypeInfoBits(
             isAuto,
             abstractDeclaration,
             isMutable,
@@ -770,6 +966,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
             isRegister,
             isStatic,
             newSymbol);
+		setPointerOperators( newSymbol, abstractDeclaration.getPointerOperators(), abstractDeclaration.getArrayModifiers() );
+		try
+		{
+			scopeToSymbol(scope).addSymbol( newSymbol );
+		}
+		catch (ParserSymbolTableException e)
+		{
+			// TODO Auto-generated catch block
+		}
         
         ASTVariable variable = new ASTVariable( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, references );
         try
@@ -782,7 +987,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         }
         return variable;        
     }
-    private void setSymbolBits(
+    protected void setVariableTypeInfoBits(
         boolean isAuto,
         IASTAbstractDeclaration abstractDeclaration,
         boolean isMutable,
@@ -799,7 +1004,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         newSymbol.getTypeInfo().setBit( abstractDeclaration.isConst(), TypeInfo.isConst );
     }
     protected ISymbol cloneSimpleTypeSymbol(
-        IASTScope scope,
         String name,
         IASTAbstractDeclaration abstractDeclaration,
         List references)
@@ -810,15 +1014,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         	ISymbol symbolToBeCloned = ((ASTSimpleTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol();
         	newSymbol = (ISymbol)symbolToBeCloned.clone();
         	newSymbol.setName( name );
-        	IContainerSymbol containerSymbol = scopeToSymbol(scope);
-        	try
-            {
-                containerSymbol.addSymbol( newSymbol );
-            }
-            catch (ParserSymbolTableException e)
-            {
-                // TODO Auto-generated catch block
-            }
             references.addAll( ((ASTSimpleTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getReferences() );
         }
         return newSymbol;
@@ -842,8 +1037,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         ASTAccessVisibility visibility) throws ASTSemanticException
     {
 		List references = new ArrayList(); 
-		ISymbol newSymbol = cloneSimpleTypeSymbol(scope, name, abstractDeclaration, references);
-		setSymbolBits(
+		ISymbol newSymbol = cloneSimpleTypeSymbol(name, abstractDeclaration, references);
+		setVariableTypeInfoBits(
 			isAuto,
 			abstractDeclaration,
 			isMutable,
@@ -851,6 +1046,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			isRegister,
 			isStatic,
 			newSymbol);
+		setPointerOperators( newSymbol, abstractDeclaration.getPointerOperators(), abstractDeclaration.getArrayModifiers() );
+		
+		try
+		{
+			scopeToSymbol(scope).addSymbol( newSymbol );
+		}
+		catch (ParserSymbolTableException e)
+		{
+			// TODO Auto-generated catch block
+		}
 		ASTField field = new ASTField( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, references, visibility );
 		try
 		{
@@ -864,20 +1069,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createParameterDeclaration(boolean, org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier, java.util.List, java.util.List, java.lang.String, org.eclipse.cdt.core.parser.ast.IASTInitializerClause)
-     */
-    public IASTParameterDeclaration createParameterDeclaration(
-        boolean isConst,
-        IASTTypeSpecifier getTypeSpecifier,
-        List pointerOperators,
-        List arrayModifiers,
-        String parameterName,
-        IASTInitializerClause initializerClause)
-    {
-        // TODO Auto-generated method stub
-        return new ASTParameterDeclaration();
-    }
+ 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTemplateDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, java.util.List, boolean, int)
      */

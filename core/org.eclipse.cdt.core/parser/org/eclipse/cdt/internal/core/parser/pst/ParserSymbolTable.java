@@ -2117,7 +2117,10 @@ public class ParserSymbolTable {
 				
 			if( size != size2 ){
 				return size2 - size;
-			} else {
+			} else if( size == 0 ) 
+				return 0; 
+			else {
+				
 				Iterator iter1 = symbol.getTypeInfo().getPtrOperators().iterator();
 				Iterator iter2 = getTypeInfo().getPtrOperators().iterator();
 	
@@ -2560,7 +2563,9 @@ public class ParserSymbolTable {
 					throw new ParserSymbolTableException();
 				}
 			
-				if( unnamed || ((origList == null) ? isValidOverload( origDecl, obj ) : isValidOverload( origList, obj ) )){					
+				boolean validOverride = ((origList == null) ? isValidOverload( origDecl, obj ) : isValidOverload( origList, obj ) );
+				if( unnamed || validOverride )
+				{	
 					if( origList == null ){
 						origList = new LinkedList();
 						origList.add( origDecl );

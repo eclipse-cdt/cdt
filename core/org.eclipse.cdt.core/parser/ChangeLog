@@ -1,4 +1,9 @@
 2003-07-24 John Camelon
+	Added COMPLETE_PARSE support for Method and Field declarations and cross-references. 
+	Fixed some small ParserSymbolTable bugs.
+	Added support for linkage specification under COMPLETE_PARSE.
+
+2003-07-24 John Camelon
 	Added CompleteParse - UsingDirective & UsingDeclarations w/namespace/class/field variable references.
 	Added CompleteParse support for enumeration specifiers and references in variables & fields.  
 	Stubbed out other Scopes/Declarations for COMPLETE_PARSE mode to allow indexer team to switch over ASAP. 

@@ -10,262 +10,133 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
-import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
+import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTMethod implements IASTMethod
+public class ASTMethod extends ASTFunction implements IASTMethod
 {
+    private final boolean isConstructor;
+    private final boolean isPureVirtual;
+    private final ASTAccessVisibility visibility;
+    private final boolean isDestructor;
     /**
-     * 
+     * @param symbol
+     * @param parameters
+     * @param returnType
+     * @param exception
+     * @param startOffset
+     * @param nameOffset
+     * @param ownerTemplate
+     * @param references
      */
-    public ASTMethod()
+    public ASTMethod(IParameterizedSymbol symbol, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references, 
+	boolean isConstructor, boolean isDestructor, boolean isPureVirtual, ASTAccessVisibility visibility )
     {
-        super();
-        // TODO Auto-generated constructor stub
+        super(
+            symbol,
+            parameters,
+            returnType,
+            exception,
+            startOffset,
+            nameOffset,
+            ownerTemplate,
+            references);
+        this.visibility = visibility; 
+        this.isConstructor = isConstructor;
+        this.isDestructor = isDestructor;
+        this.isPureVirtual = isPureVirtual; 
+        
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isVirtual()
      */
     public boolean isVirtual()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return symbol.getTypeInfo().checkBit( TypeInfo.isVirtual );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isExplicit()
      */
     public boolean isExplicit()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return symbol.getTypeInfo().checkBit( TypeInfo.isExplicit);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isConstructor()
      */
     public boolean isConstructor()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return isConstructor;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isDestructor()
      */
     public boolean isDestructor()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return isDestructor;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isConst()
      */
     public boolean isConst()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return symbol.getTypeInfo().checkBit( TypeInfo.isConst);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isVolatile()
      */
     public boolean isVolatile()
     {
-        // TODO Auto-generated method stub
-        return false;
+        return symbol.getTypeInfo().checkBit( TypeInfo.isVolatile );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isPureVirtual()
      */
     public boolean isPureVirtual()
     {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#isInline()
-     */
-    public boolean isInline()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#isFriend()
-     */
-    public boolean isFriend()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#isStatic()
-     */
-    public boolean isStatic()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
-     */
-    public String getName()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#getReturnType()
-     */
-    public IASTAbstractDeclaration getReturnType()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#getParameters()
-     */
-    public Iterator getParameters()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#getExceptionSpec()
-     */
-    public IASTExceptionSpecification getExceptionSpec()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#setHasFunctionBody(boolean)
-     */
-    public void setHasFunctionBody(boolean b)
-    {
-        // TODO Auto-generated method stub
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#hasFunctionBody()
-     */
-    public boolean hasFunctionBody()
-    {
-        // TODO Auto-generated method stub
-        return false;
+        return isPureVirtual;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMember#getVisiblity()
      */
     public ASTAccessVisibility getVisiblity()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return visibility;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()
-     */
-    public Iterator getDeclarations() throws ASTNotImplementedException
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameOffset()
-     */
-    public int getNameOffset()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
-     */
-    public void setNameOffset(int o)
-    {
-        // TODO Auto-generated method stub
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplatedDeclaration#getOwnerTemplateDeclaration()
-     */
-    public IASTTemplate getOwnerTemplateDeclaration()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
-     */
-    public String[] getFullyQualifiedName()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
-     */
-    public void setStartingOffset(int o)
-    {
-        // TODO Auto-generated method stub
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
-     */
-    public void setEndingOffset(int o)
-    {
-        // TODO Auto-generated method stub
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
-     */
-    public int getStartingOffset()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
-     */
-    public int getEndingOffset()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTScopedElement#getOwnerScope()
-     */
-    public IASTScope getOwnerScope()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
+        requestor.acceptMethodDeclaration(this);
+        references.processReferences(requestor);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
+		requestor.enterMethodBody(this);
+		references.processReferences(requestor);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
+        requestor.exitMethodBody( this );
     }
 }

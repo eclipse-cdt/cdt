@@ -897,7 +897,7 @@ public class Parser implements IParser
     }
     protected void handleFunctionBody(Declarator d) throws Backtrack, EndOfFile
     {
-        if (mode == ParserMode.QUICK_PARSE)
+        if ( true ) // TODO - Enable parsing within function bodies i.e. mode == ParserMode.QUICK_PARSE)
         {
             // speed up the parser by skiping the body
             // simply look for matching brace and return

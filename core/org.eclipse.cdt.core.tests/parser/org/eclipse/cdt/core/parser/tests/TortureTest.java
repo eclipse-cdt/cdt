@@ -277,9 +277,10 @@ public class TortureTest extends FractionalAutomatedTest {
 	
 		public void run(){
 			try {           
-				DOMBuilder domBuilder = new DOMBuilder(); 
+				DOMBuilder domBuilder = new DOMBuilder();
+				ParserMode parserMode = quickParse ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
 				parser = ParserFactory.createParser( 
-						ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), ParserMode.QUICK_PARSE, nullCallback ), nullCallback, ParserMode.QUICK_PARSE);
+						ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), parserMode, nullCallback ), nullCallback, parserMode);
 		
 				parser.setCppNature(cppNature);
 				mapping = ParserFactory.createLineOffsetReconciler( new StringReader( code ) );

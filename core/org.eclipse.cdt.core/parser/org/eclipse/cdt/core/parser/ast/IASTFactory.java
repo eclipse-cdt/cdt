@@ -134,7 +134,7 @@ public interface IASTFactory
         boolean isStatic,
         int startOffset,
         int nameOffset,
-        IASTTemplate ownerTemplate);
+        IASTTemplate ownerTemplate) throws ASTSemanticException;
     public IASTAbstractDeclaration createAbstractDeclaration(
         boolean isConst,
         IASTTypeSpecifier typeSpecifier,
@@ -159,7 +159,7 @@ public interface IASTFactory
         boolean isVirtual,
         boolean isExplicit,
         boolean isPureVirtual,
-        ASTAccessVisibility visibility);
+        ASTAccessVisibility visibility) throws ASTSemanticException;
         
 	public IASTVariable createVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
 		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset ) throws ASTSemanticException;

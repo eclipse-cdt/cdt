@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
 import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
+import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
@@ -705,6 +706,65 @@ public class CompleteParseASTTest extends TestCase
 		assertEquals( ((IASTSimpleTypeSpecifier)varE.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), enumE );
 	}
 	
+	public void testSimpleFunction() throws Exception
+	{
+		Iterator declarations = parse( "void foo( void );").getDeclarations();
+		IASTFunction function = (IASTFunction)declarations.next();
+		assertEquals( function.getName(), "foo" );
+		assertEquals( callback.getReferences().size(), 0 );
+	}
+	
+	public void testSimpleFunctionWithTypes() throws Exception
+	{
+		Iterator declarations = parse( "class A { public: \n class B { }; }; const A::B &  foo( A * myParam );").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		IASTFunction function = (IASTFunction)declarations.next(); 
+		assertEquals( callback.getReferences().size(), 3 ); 
+	}
+	
+	public void testSimpleMethod() throws Exception
+	{
+		Iterator declarations = parse( "class A { void foo(); };").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		IASTMethod method = (IASTMethod)getDeclarations( classA ).next();
+		assertEquals( method.getName(), "foo" );
+	}
+	
+	public void testSimpleMethodWithTypes() throws Exception
+	{
+		Iterator declarations = parse( "class U { }; class A { U foo( U areDumb ); };").getDeclarations();
+		IASTClassSpecifier classU = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		IASTMethod method = (IASTMethod)getDeclarations( classA ).next();
+		assertEquals( method.getName(), "foo" );
+		assertEquals( callback.getReferences().size(), 2 );
+	}
+	
+	public void testUsingDeclarationWithFunctionsAndMethods() throws Exception
+	{
+		Iterator declarations = parse( "namespace N { int foo(void); } class A { static int bar(void); }; using N::foo; using ::A::bar;" ).getDeclarations();
+		IASTNamespaceDefinition namespaceN = (IASTNamespaceDefinition)declarations.next();
+		IASTFunction fooFunction = (IASTFunction)(getDeclarations(namespaceN).next()); 
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		IASTMethod methodM = (IASTMethod)(getDeclarations(classA).next());
+		IASTUsingDeclaration using1 = (IASTUsingDeclaration)declarations.next(); 
+		IASTUsingDeclaration using2 = (IASTUsingDeclaration)declarations.next();
+		assertEquals( callback.getReferences().size(), 4 );
+		Iterator references = callback.getReferences().iterator();
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), namespaceN );
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), fooFunction );
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), classA );
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), methodM ); 
+	}
+	
+	public void testLinkageSpec() throws Exception
+	{
+		IASTLinkageSpecification linkage = (IASTLinkageSpecification)parse( "extern \"C\" { int foo(); }").getDeclarations().next();
+		Iterator i = getDeclarations( linkage );
+		IASTFunction f = (IASTFunction)i.next();
+		assertEquals( f.getName(),"foo");
+	}
+	
 	protected void assertQualifiedName(String [] fromAST, String [] theTruth)
 	 {
 		 assertNotNull( fromAST );
@@ -715,4 +775,6 @@ public class CompleteParseASTTest extends TestCase
 			 assertEquals( fromAST[i], theTruth[i]);
 		 }
 	 }
+	 
+	 
 }

@@ -76,7 +76,6 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 	}
 
 	boolean hasBreakpointChanged(Breakpoint point, MIBreakpoint miBreakpoint) {
-		boolean changed = false;
 		MIBreakpoint miBreak = point.getMIBreakpoint();
 		return miBreak.isEnabled() != miBreakpoint.isEnabled() ||
 			!miBreak.getCondition().equals(miBreakpoint.getCondition()) ||

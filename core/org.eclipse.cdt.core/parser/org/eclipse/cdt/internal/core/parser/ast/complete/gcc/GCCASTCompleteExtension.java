@@ -40,6 +40,7 @@ import org.eclipse.cdt.internal.core.parser.DeclarationWrapper;
 import org.eclipse.cdt.internal.core.parser.Declarator;
 import org.eclipse.cdt.internal.core.parser.ast.GCCASTExtension;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTBinaryExpression;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTEmptyExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTypeIdExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTUnaryExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ExpressionFactory;
@@ -114,6 +115,8 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
 				}
 			};
 		}
+		else if( kind == IASTGCCExpression.Kind.STATEMENT_EXPRESSION )
+			return new ASTEmptyExpression( kind, references );
 		else if( lhs != null &&
 				(kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION ||
 				 kind == IASTGCCExpression.Kind.UNARY_TYPEOF_UNARYEXPRESSION) )

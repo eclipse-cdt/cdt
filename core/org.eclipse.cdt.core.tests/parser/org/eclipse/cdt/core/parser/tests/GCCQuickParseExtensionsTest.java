@@ -129,4 +129,25 @@ public class GCCQuickParseExtensionsTest extends BaseASTTest {
         code.write("}\n"); //$NON-NLS-1$
         parse(code.toString());
     }
+    
+    public void testBug39677() throws Exception
+    {
+        parse("B::B() : a(({ 1; })) {}"); //$NON-NLS-1$
+        Writer writer = new StringWriter();
+        writer.write( "B::B() : a(( { int y = foo (); int z;\n" ); //$NON-NLS-1$
+        writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
+        writer.write( "else z = - y;\n" );//$NON-NLS-1$
+        writer.write( "z; }))\n" );//$NON-NLS-1$
+        parse( writer.toString() );
+        writer = new StringWriter();
+        writer.write( "int x = ({ int y = foo (); int z;\n" ); //$NON-NLS-1$
+        writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
+        writer.write( "else z = - y;\n" );//$NON-NLS-1$
+        writer.write( "z; });\n" );//$NON-NLS-1$
+        writer = new StringWriter();
+        writer.write( "typeof({ int y = foo (); int z;\n" ); //$NON-NLS-1$
+        writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
+        writer.write( "else z = - y;\n" );//$NON-NLS-1$
+        writer.write( "z; }) zoot;\n" );//$NON-NLS-1$
+    }
 }

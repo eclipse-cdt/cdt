@@ -1761,7 +1761,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| (kind == IASTExpression.Kind.ASSIGNMENTEXPRESSION_XOR) 
 		){
 			ASTExpression left = (ASTExpression)lhs;  
-			if(left != null){
+			if(left != null && left.getResultType() != null ){
 				info =left.getResultType().getResult();   
 			} else 
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );

@@ -421,7 +421,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		for (int i = 0; i < celements.length; i++) {
 			if (celements[i] instanceof IBinary) {
 				IBinary bin = (IBinary)celements[i];
-				if (bin.isExecutable()) {
+				if (bin.isExecutable() || bin.isSharedLib()) {
 					list.add(bin);
 				}
 			}

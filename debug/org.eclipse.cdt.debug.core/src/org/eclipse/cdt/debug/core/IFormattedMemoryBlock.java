@@ -126,4 +126,6 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 	void setFrozen( boolean frozen );
 	
 	boolean isDirty();
+	
+	void saveChanges() throws DebugException;
 }

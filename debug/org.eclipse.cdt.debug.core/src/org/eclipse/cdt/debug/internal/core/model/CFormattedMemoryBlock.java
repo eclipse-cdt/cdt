@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -84,8 +85,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	private char fPaddingChar = '.';
 	private List fRows = null;
 	private Long[] fChangedAddresses = new Long[0];
-	// temporary
-	private boolean fIsDirty = false;
+	private boolean[] fDirtyBytes = null;
 
 	/**
 	 * Constructor for CFormattedMemoryBlock.
@@ -199,7 +199,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	private void resetBytes()
 	{
 		fBytes = null;
-		fIsDirty = false;
+		fDirtyBytes = null;
 	}
 
 	private void resetRows()
@@ -305,6 +305,8 @@ public class CFormattedMemoryBlock extends CDebugElement
 				try
 				{
 					fBytes = fCDIMemoryBlock.getBytes();
+					fDirtyBytes = new boolean[fBytes.length];
+					Arrays.fill( fDirtyBytes, false );
 				}
 				catch( CDIException e )
 				{
@@ -486,7 +488,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	{
 		byte[] bytes = itemToBytes( newValue.toCharArray() );
 		setBytes( index * getWordSize(), bytes );
-		fIsDirty = true;
+		Arrays.fill( fDirtyBytes, index * getWordSize(), index * getWordSize() + bytes.length, true );
 		resetRows();
 	}
 	
@@ -530,6 +532,56 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public boolean isDirty()
 	{
-		return fIsDirty;
+		if ( fDirtyBytes != null )
+		{
+			for ( int i = 0; i < fDirtyBytes.length; ++i )
+			{
+				if ( fDirtyBytes[i] )
+					return true;
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#saveChanges()
+	 */
+	public void saveChanges() throws DebugException
+	{
+		if ( getBytes() != null && fDirtyBytes != null && getCDIMemoryBlock() != null )
+		{
+			int startIndex = -1;
+			for ( int i = 0; i < fDirtyBytes.length; ++i )
+			{
+				if ( fDirtyBytes[i] )
+				{
+					if ( startIndex == -1 )
+					{
+						startIndex = i;
+					}
+				}
+				else
+				{
+					if ( startIndex != -1 )
+					{
+						byte[] bytes = new byte[i - startIndex];
+						for ( int j = startIndex; j < i; ++j )
+						{
+							bytes[j - startIndex] = getBytes()[j];
+						}
+						try
+						{
+							getCDIMemoryBlock().setValue( startIndex, bytes );
+							startIndex = -1;
+						}
+						catch( CDIException e )
+						{
+							targetRequestFailed( e.getMessage(), null );
+						}
+					}
+				}
+			}
+			Arrays.fill( fDirtyBytes, false );
+		}
 	}
 }

@@ -1,4 +1,9 @@
-2002-10-29 Mikhail Khodjaiants
+2002-10-30 Mikhail Khodjaiants
+	Implementation of the 'SaveMemoryChanges' action.
+	* IFormattedMemoryBlock.java: added the 'saveChanges' method.
+	* CFormattedMemoryBlock.java: implementation of the 'saveChanges' method.
+	
+2002-10-30 Mikhail Khodjaiants
 	Fix for bug 25283.
 	* CDebugTarget.java: in 'setCurrentThread' method set the 'isCurrent' flag to false for the currently current thread.
 

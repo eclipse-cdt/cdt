@@ -171,7 +171,10 @@ public class ASTMethod extends ASTFunction implements IASTMethod
 	{
 		try
         {
-            requestor.acceptMethodDeclaration( this );
+			if( isFriend() )
+				requestor.acceptFriendDeclaration(this);
+			else
+				requestor.acceptMethodDeclaration( this );
         }
         catch (Exception e)
         {

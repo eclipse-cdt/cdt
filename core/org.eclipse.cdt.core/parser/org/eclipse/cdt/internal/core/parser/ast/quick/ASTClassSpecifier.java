@@ -50,6 +50,7 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
     private final String name;
     private List declarations = new ArrayList();
     private List baseClauses = new ArrayList();
+    private List friends = new ArrayList();
     private ASTAccessVisibility access;
     private NamedOffsets offsets = new NamedOffsets();
     private final ClassNameType classNameType;
@@ -229,6 +230,20 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
 	 */
 	public int getNameLineNumber() {
 		return offsets.getNameLineNumber();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getFriends()
+	 */
+	public Iterator getFriends() {
+		return friends.iterator();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ast.quick.IASTQClassSpecifier#addFriendDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
+	 */
+	public void addFriendDeclaration(IASTDeclaration decl) {
+		friends.add( decl );
+		
 	}
 	
 }

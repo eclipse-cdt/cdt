@@ -2161,5 +2161,20 @@ public class QuickParseASTTests extends BaseASTTest
         IASTFunction func1 = (IASTFunction) assertSoleDeclaration("__declspec(dllexport) int func1 (int a) {}");
         assertEquals( func1.getName(), "func1");
     }
+    
+	public void testBug45235() throws Exception
+	{
+		Iterator i = parse( "class A { friend class B; friend void f(); }; " ).getDeclarations();
+		
+		IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		
+		i = A.getDeclarations();
+		
+		IASTAbstractTypeSpecifierDeclaration forewardDecl = (IASTAbstractTypeSpecifierDeclaration)i.next();
+		IASTFunction f = (IASTFunction) i.next();
+				
+		assertTrue( forewardDecl.isFriendDeclaration() );
+		assertTrue( f.isFriend() );
+	}
 
 }

@@ -218,7 +218,11 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      */
     public IASTFunction createFunction(IASTScope scope, ITokenDuple name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, IASTTemplate ownerTemplate, boolean isConst, boolean isVolatile, boolean isVirtual, boolean isExplicit, boolean isPureVirtual, List constructorChain, boolean isFunctionDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments )
     {
-        return new ASTFunction(scope, name.toString(), parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, startLine, nameOffset, nameEndOffset, ownerTemplate, hasFunctionTryBlock, hasVariableArguments, nameLine );
+    	ASTFunction function = new ASTFunction(scope, name.toString(), parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, startLine, nameOffset, nameEndOffset, ownerTemplate, hasFunctionTryBlock, hasVariableArguments, nameLine ); 
+    	if( isFriend && scope instanceof IASTQClassSpecifier ){
+    		((IASTQClassSpecifier)scope).addFriendDeclaration( function );
+    	}
+        return function;
     }
 
     /* (non-Javadoc)
@@ -226,7 +230,11 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      */
 	public IASTMethod createMethod(IASTScope scope, ITokenDuple name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, IASTTemplate ownerTemplate, boolean isConst, boolean isVolatile, boolean isVirtual, boolean isExplicit, boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isFunctionDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments )
 	{
-        return new ASTMethod(scope, name.toString(), parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, startLine, nameOffset, nameEndOffset, nameLine, ownerTemplate, isConst, isVolatile, false, false, isVirtual, isExplicit, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock, hasVariableArguments);
+		ASTMethod method = new ASTMethod(scope, name.toString(), parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, startLine, nameOffset, nameEndOffset, nameLine, ownerTemplate, isConst, isVolatile, false, false, isVirtual, isExplicit, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock, hasVariableArguments);
+    	if( isFriend && scope instanceof IASTQClassSpecifier ){
+    		((IASTQClassSpecifier)scope).addFriendDeclaration( method );
+    	}
+        return method;
     }
 
     /* (non-Javadoc)
@@ -288,9 +296,13 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTypeSpecDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, boolean, org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier, java.util.List, java.util.List)
      */
-    public IASTAbstractTypeSpecifierDeclaration createTypeSpecDeclaration(IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate template, int startingOffset, int startingLine, int endingOffset, int endingLine)
+    public IASTAbstractTypeSpecifierDeclaration createTypeSpecDeclaration(IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate template, int startingOffset, int startingLine, int endingOffset, int endingLine, boolean isFriend)
     {
-        return new ASTAbstractTypeSpecifierDeclaration( scope, typeSpecifier, template, startingOffset, endingOffset, startingLine, endingLine );
+    	ASTAbstractTypeSpecifierDeclaration abs = new ASTAbstractTypeSpecifierDeclaration( scope, typeSpecifier, template, startingOffset, endingOffset, startingLine, endingLine, isFriend );
+    	if( isFriend && scope instanceof IASTQClassSpecifier ){
+    		((IASTQClassSpecifier)scope).addFriendDeclaration( abs );
+    	}
+        return abs; 
     }
 
     public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, ITokenDuple typeName, int startingOffset, int startingLine, int endOffset, int endingLine, boolean isForewardDecl, boolean isFriend)

@@ -696,6 +696,13 @@ public class CompleteParseBaseTest extends TestCase
 			// TODO Auto-generated method stub
 			return false;
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFriendDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
+		 */
+		public void acceptFriendDeclaration(IASTDeclaration declaration) {
+			getCurrentScope().addDeclaration( declaration );
+		}
     }
     
     protected Iterator getNestedScopes( IASTCodeScope scope )

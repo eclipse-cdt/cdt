@@ -1472,4 +1472,19 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		
 		assertAllReferences( 2, createTaskList( new Task( A ), new Task( B ) ) );
 	}
+	
+	public void testBug45235() throws Exception
+	{
+		Iterator i = parse( "class A { friend class B; friend void f(); }; " ).getDeclarations();
+		
+		IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		
+		i = getDeclarations( A );
+		
+		IASTAbstractTypeSpecifierDeclaration forewardDecl = (IASTAbstractTypeSpecifierDeclaration)i.next();
+		IASTFunction f = (IASTFunction) i.next();
+				
+		assertTrue( forewardDecl.isFriendDeclaration() );
+		assertTrue( f.isFriend() );
+	}
 }

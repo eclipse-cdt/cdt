@@ -38,6 +38,8 @@ public interface IASTClassSpecifier extends IASTScope, IASTOffsetableNamedElemen
 
 	public Iterator getBaseClauses();
 	
+	public Iterator getFriends();
+	
 	public ASTAccessVisibility getCurrentVisibilityMode(); 
 	public void setCurrentVisibility( ASTAccessVisibility visibility );
 	 

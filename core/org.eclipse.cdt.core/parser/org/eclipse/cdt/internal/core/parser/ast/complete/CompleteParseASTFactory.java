@@ -1943,7 +1943,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			symbol = functionDeclaration;
 		}
 		
-		ASTFunction function = new ASTFunction( symbol, nameEndOffset, parameters, returnType, exception, startOffset, startLine, nameOffset, nameLine, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock );        
+		ASTFunction function = new ASTFunction( symbol, nameEndOffset, parameters, returnType, exception, startOffset, startLine, nameOffset, nameLine, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock, isFriend );        
 	    attachSymbolExtension(symbol, function, isFunctionDefinition); 
 	    return function;
 	}
@@ -2269,8 +2269,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					symbol.setTypeSymbol( functionDeclaration );
 					// friend declaration, has no real visibility, set private
 					visibility = ASTAccessVisibility.PRIVATE;		
-				} else
+				} else if( ownerScope.isType( TypeInfo.t_constructor ) ||
+						   ownerScope.isType( TypeInfo.t_function )    ||
+						   ownerScope.isType( TypeInfo.t_block ) )
 				{	
+					//only needs to be previously declared if we are in a local class
 					handleProblem( IProblem.SEMANTIC_ILLFORMED_FRIEND, nameDuple.toString(), nameDuple.getStartOffset(), nameDuple.getEndOffset(), nameDuple.getLineNumber() );
 				}
 				 
@@ -2287,7 +2290,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			if( isFriend )
 			{
-				((IDerivableContainerSymbol)ownerScope).addFriend( functionDeclaration );
+				if( functionDeclaration != null )
+					((IDerivableContainerSymbol)ownerScope).addFriend( functionDeclaration );
+				else
+					((IDerivableContainerSymbol)ownerScope).addFriend( symbol );
 			} else if( !isConstructor )
 				ownerScope.addSymbol( symbol );
 			else
@@ -2303,7 +2309,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 		resolveLeftoverConstructorInitializerMembers( symbol, constructorChain );
   
-        ASTMethod method = new ASTMethod( symbol, parameters, returnType, exception, startOffset, startingLine, nameOffset, nameEndOffset, nameLine, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock  );
+        ASTMethod method = new ASTMethod( symbol, parameters, returnType, exception, startOffset, startingLine, nameOffset, nameEndOffset, nameLine, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock, isFriend );
         attachSymbolExtension( symbol, method, isFunctionDefinition );
         return method;
     }
@@ -2815,9 +2821,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTTypeSpecifier typeSpecifier,
         IASTTemplate template,
         int startingOffset,
-        int startingLine, int endingOffset, int endingLine)
+        int startingLine, int endingOffset, int endingLine, boolean isFriend)
     {
-        return new ASTAbstractTypeSpecifierDeclaration( scopeToSymbol(scope), typeSpecifier, template, startingOffset, startingLine, endingOffset, endingLine);
+        return new ASTAbstractTypeSpecifierDeclaration( scopeToSymbol(scope), typeSpecifier, template, startingOffset, startingLine, endingOffset, endingLine, isFriend);
     }
 
     

@@ -1,3 +1,12 @@
+2004-04-14 Andrew Niefer
+	friends in the AST (bugs 45235 & 53759 )
+	- added acceptFriendDeclaration to ISourceElementRequestor
+	- added isFriendDeclaration to IASTAbstractTypeSpecifierDeclaration
+	- modified isFriend on IASTFunction
+	- functions, methods & abstractTypeSpecifierDeclarations callback with acceptFriendDeclaration
+	  instead of their normal accept* if isFriend() or isFriendDeclaration() is true.
+	- added getFriends to IASTClassSpecifier
+
 2004-04-13 Andrew Niefer
 	fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=46246
 	modified symbol table sorting to use a collator instead of String.compare()

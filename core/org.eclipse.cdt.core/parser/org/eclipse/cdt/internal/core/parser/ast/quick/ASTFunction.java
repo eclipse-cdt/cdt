@@ -188,7 +188,11 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     {
         try
         {
-            requestor.acceptFunctionDeclaration(this);
+        	if( isFriend() )
+        		requestor.acceptFriendDeclaration(this);
+        	else
+        		requestor.acceptFunctionDeclaration(this);
+        	
         }
         catch (Exception e)
         {

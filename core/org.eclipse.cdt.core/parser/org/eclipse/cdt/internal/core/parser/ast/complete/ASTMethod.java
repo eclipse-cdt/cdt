@@ -48,7 +48,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      * @param references
      */
     public ASTMethod(IParameterizedSymbol symbol, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, IASTTemplate ownerTemplate, 
-	List references, boolean previouslyDeclared, boolean isConstructor, boolean isDestructor, boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean hasFunctionTryBlock )
+	List references, boolean previouslyDeclared, boolean isConstructor, boolean isDestructor, boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean hasFunctionTryBlock, boolean isFriend )
     {
         super(
             symbol,
@@ -59,7 +59,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
             startOffset,
             startLine,
             nameOffset,
-            nameLine, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock );
+            nameLine, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock, isFriend );
         this.visibility = visibility; 
         this.isConstructor = isConstructor;
         this.isDestructor = isDestructor;
@@ -130,7 +130,10 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     {
         try
         {
-            requestor.acceptMethodDeclaration(this);
+        	if( isFriend() )
+        		requestor.acceptFriendDeclaration( this );
+        	else
+        		requestor.acceptMethodDeclaration(this);
         }
         catch (Exception e)
         {

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 
 /**
  * @author jcamelon
@@ -20,4 +21,6 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 public interface IASTQClassSpecifier extends IASTClassSpecifier {
 
 	public void addBaseClass( IASTBaseSpecifier baseSpecifier );
+	
+	public void addFriendDeclaration( IASTDeclaration decl );
 }

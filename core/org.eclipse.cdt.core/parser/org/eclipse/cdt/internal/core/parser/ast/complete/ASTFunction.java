@@ -36,6 +36,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
 {
 	private final boolean previouslyDeclared;
     private boolean hasFunctionBody = false;
+    private final boolean isFriendDeclaration;
     private final IASTTemplate ownerTemplate;
     private final IASTAbstractDeclaration returnType;
     private final IASTExceptionSpecification exception;
@@ -54,7 +55,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
      * @param ownerTemplate
      * @param references
      */
-    public ASTFunction(IParameterizedSymbol symbol, int nameEndOffset, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int startingLine, int nameOffset, int nameLine, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared, boolean hasFunctionTryBlock )
+    public ASTFunction(IParameterizedSymbol symbol, int nameEndOffset, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int startingLine, int nameOffset, int nameLine, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared, boolean hasFunctionTryBlock, boolean isFriend )
     {
     	super( symbol );
     	this.parameters = parameters;
@@ -68,6 +69,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     	qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
     	this.previouslyDeclared =previouslyDeclared;
     	this.hasFunctionTryBlock = hasFunctionTryBlock;
+    	this.isFriendDeclaration = isFriend;
     }
 
 
@@ -83,7 +85,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
      */
     public boolean isFriend()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isFriend );
+    	return isFriendDeclaration;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFunction#isStatic()
@@ -199,7 +201,10 @@ public class ASTFunction extends ASTScope implements IASTFunction
     {
         try
         {
-            requestor.acceptFunctionDeclaration(this);
+        	if( isFriend() )
+        		requestor.acceptFriendDeclaration(this);
+        	else
+        		requestor.acceptFunctionDeclaration(this);
         }
         catch (Exception e)
         {

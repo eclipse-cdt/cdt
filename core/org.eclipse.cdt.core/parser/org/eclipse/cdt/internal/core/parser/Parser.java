@@ -1095,11 +1095,12 @@ public abstract class Parser extends ExpressionParser implements IParser
             try
             {
            		astFactory.createTypeSpecDeclaration(
-                   sdw.getScope(),
-                      sdw.getTypeSpecifier(),
+                        sdw.getScope(),
+                        sdw.getTypeSpecifier(),
                         ownerTemplate,
                         sdw.getStartingOffset(),
-                        sdw.getStartingLine(), lastToken.getEndOffset(), lastToken.getLineNumber())
+                        sdw.getStartingLine(), lastToken.getEndOffset(), lastToken.getLineNumber(),
+						sdw.isFriend())
                     .acceptElement(requestor);
             }
             catch (Exception e1)

@@ -28,15 +28,17 @@ public class ASTAbstractTypeSpecifierDeclaration
 {
 	private final IASTTypeSpecifier typeSpec;
     private final IASTTemplate ownerTemplate;
+    private final boolean isFriendDeclaration;
     private Offsets offsets = new Offsets();
     /**
      * @param ownerScope
      */
-    public ASTAbstractTypeSpecifierDeclaration(IContainerSymbol ownerScope, IASTTypeSpecifier typeSpecifier, IASTTemplate ownerTemplate, int startingOffset, int startingLine, int endingOffset, int endingLine )
+    public ASTAbstractTypeSpecifierDeclaration(IContainerSymbol ownerScope, IASTTypeSpecifier typeSpecifier, IASTTemplate ownerTemplate, int startingOffset, int startingLine, int endingOffset, int endingLine, boolean isFriend )
     {
         super(ownerScope);
         this.typeSpec = typeSpecifier;
         this.ownerTemplate = ownerTemplate;
+        this.isFriendDeclaration = isFriend;
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
         setEndingOffsetAndLineNumber(endingOffset, endingLine);
     }
@@ -48,7 +50,10 @@ public class ASTAbstractTypeSpecifierDeclaration
     {
         try
         {
-            requestor.acceptAbstractTypeSpecDeclaration(this);
+        	if( isFriendDeclaration() )
+        		requestor.acceptFriendDeclaration( this );
+        	else
+        		requestor.acceptAbstractTypeSpecDeclaration(this);
         }
         catch (Exception e)
         {
@@ -131,5 +136,12 @@ public class ASTAbstractTypeSpecifierDeclaration
     public int getEndingLine() {
     	return offsets.getEndingLine();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration#isFriendDeclaration()
+	 */
+	public boolean isFriendDeclaration() {
+		return isFriendDeclaration;
+	}
     
 }

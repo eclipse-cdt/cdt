@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
@@ -517,6 +518,14 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
     	}
     }
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFriendDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
+	 */
+	public void acceptFriendDeclaration(IASTDeclaration declaration) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	private void pushInclude( IASTInclusion inclusion ){
 		includeStack.addFirst( currentInclude );
 		currentInclude = inclusion;

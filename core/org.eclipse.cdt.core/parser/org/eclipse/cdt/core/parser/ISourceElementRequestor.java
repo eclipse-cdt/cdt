@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
@@ -97,6 +98,7 @@ public interface ISourceElementRequestor {
 	public void acceptEnumeratorReference( IASTEnumeratorReference reference );
 	public void acceptParameterReference(IASTParameterReference reference);
 	public void acceptTemplateParameterReference( IASTTemplateParameterReference reference );
+	public void acceptFriendDeclaration( IASTDeclaration declaration );
 	
 	public void exitTemplateDeclaration( IASTTemplateDeclaration declaration );
 	public void exitTemplateSpecialization( IASTTemplateSpecialization specialization );

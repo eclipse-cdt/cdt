@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
+import org.eclipse.cdt.internal.core.parser.ast.SymbolIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
@@ -327,5 +328,12 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 	 */
 	public void setExtraReferences(List references) {
 		resolvedCrossReferences.addAll( references );
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getFriends()
+	 */
+	public Iterator getFriends() {
+		IDerivableContainerSymbol symbol = (IDerivableContainerSymbol) getSymbol();
+		return new SymbolIterator( symbol.getFriends().iterator() );
 	}
 }

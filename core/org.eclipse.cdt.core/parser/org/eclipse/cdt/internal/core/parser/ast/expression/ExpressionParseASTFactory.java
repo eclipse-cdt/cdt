@@ -826,7 +826,8 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int startingOffset,
 		int startingLine,
 		int endingOffset,
-		int endingLine) {
+		int endingLine,
+		boolean isFriend) {
 		// TODO Auto-generated method stub
 		return null;
 	}

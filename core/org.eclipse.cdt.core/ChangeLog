@@ -1,3 +1,6 @@
+2004-04-14 Andrew Niefer
+	updated clients of Parse to have a default implementation for ISourceElementRequestor.acceptFriendDeclaration
+
 2004-04-14 Alain Magloire
 
 	Fix PR 58082, with Patch from Jon Beniston

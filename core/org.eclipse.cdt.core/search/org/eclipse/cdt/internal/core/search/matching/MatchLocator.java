@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
@@ -591,12 +592,21 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	
 	private IASTScope				currentScope = null;
 	private LinkedList				scopeStack = new LinkedList();
-    /* (non-Javadoc)
+
+	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptElaboratedForewardDeclaration(org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier)
      */
     public void acceptElaboratedForewardDeclaration(IASTElaboratedTypeSpecifier elaboratedType){
 		check( DECLARATIONS, elaboratedType );	
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFriendDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
+	 */
+	public void acceptFriendDeclaration(IASTDeclaration declaration) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	public static void verbose(String log) {
 	  System.out.println("(" + Thread.currentThread() + ") " + log);  //$NON-NLS-1$ //$NON-NLS-2$

@@ -222,4 +222,17 @@ public class GCCCompleteParseExtensionsTest extends CompleteParseBaseTest {
         parse( writer.toString() );
     }
     
+    public void testBug73954B() throws Exception{
+        Writer writer = new StringWriter();
+        writer.write( "#define foo(x)                                            \\\n"); //$NON-NLS-1$
+        writer.write( "  __builtin_choose_expr( 1, foo_d(x), (void)0 )             \n"); //$NON-NLS-1$
+        writer.write( "int foo_d( int x );                                         \n"); //$NON-NLS-1$
+        writer.write( "int main() {                                                \n"); //$NON-NLS-1$
+        writer.write( "   if( __builtin_constant_p(1) &&                           \n"); //$NON-NLS-1$
+        writer.write( "      __builtin_types_compatible_p( 1, 'c') )               \n"); //$NON-NLS-1$
+        writer.write( "          foo(1);                                           \n"); //$NON-NLS-1$
+        writer.write( "}                                                           \n"); //$NON-NLS-1$
+        
+        parse( writer.toString(), true, ParserLanguage.C );
+    }
 }

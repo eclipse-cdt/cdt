@@ -4571,17 +4571,17 @@ public class Parser implements IParserData, IParser
 					sdw.setLong(true);
 					break;
 				case IToken.t__Complex :
-					consume(IToken.t__Complex);
 					if (typeNameBegin == null)
 						typeNameBegin = LA(1);
 					typeNameEnd = LA(1);
+					consume(IToken.t__Complex);
 					sdw.setComplex(true);
 					break;
 				case IToken.t__Imaginary :
-					consume(IToken.t__Imaginary);
 					if (typeNameBegin == null)
 						typeNameBegin = LA(1);
 					typeNameEnd = LA(1);
+					consume(IToken.t__Imaginary);
 					sdw.setImaginary(true);
 					break;
 				case IToken.t_char :

@@ -161,20 +161,22 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
                         
 		// this could be optimized by handling all the added children in the parent
 		if ((status & IResourceDelta.REMOVED) != 0) {
-			if (!(parent instanceof ICContainer)) {
-				// refresh one level above to deal with empty package filtering properly
-				postRefresh(internalGetParent(parent));
-			} else {
-				postRemove(resource);
-			}
+//			if (!(parent instanceof ICContainer)) {
+//				// refresh one level above to deal with empty package filtering properly
+//				postRefresh(internalGetParent(parent));
+//			} else {
+//				postRemove(resource);
+//			}
+			postRemove(resource);
 		}
 		if ((status & IResourceDelta.ADDED) != 0) {
-			if (!(parent instanceof ICContainer)) {
-				// refresh one level above to deal with empty package filtering properly
-				postRefresh(internalGetParent(parent));
-			} else {
-				postAdd(parent, resource);
-			}
+//			if (!(parent instanceof ICContainer)) {
+//				// refresh one level above to deal with empty package filtering properly
+//				postRefresh(internalGetParent(parent));
+//			} else {
+//				postAdd(parent, resource);
+//			}
+			postAdd(parent, resource);
 		}
 		IResourceDelta[] affectedChildren= delta.getAffectedChildren();
 

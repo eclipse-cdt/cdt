@@ -265,9 +265,8 @@ public class DeltaProcessor {
 			elementRemoved(element, delta);
 			CModelInfo rootInfo = (CModelInfo)CModelManager.getDefault().getCModel().getElementInfo();
 			rootInfo.setNonCResources(null);
-		} else {
-			fCurrentDelta.closed(element);
 		}
+		fCurrentDelta.closed(element);
 	}
 
 	/**
@@ -284,6 +283,7 @@ public class DeltaProcessor {
 			// treat project opening as addition
 			CModelInfo rootInfo = (CModelInfo)CModelManager.getDefault().getCModel().getElementInfo();
 			rootInfo.setNonCResources(null);
+			fCurrentDelta.added(element);
 		}
 		fCurrentDelta.opened(element);
 	}

@@ -14,8 +14,10 @@ import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
+import org.eclipse.cdt.debug.mi.core.command.MIInfoProgram;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIInfoProgramInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.Spawner;
 
@@ -42,6 +44,9 @@ public class MIInferior extends Process {
 	PipedInputStream err;
 	PipedOutputStream errPiped;
 	PTY pty;
+
+	int inferiorPid;
+
 
 	MIInferior(MISession mi, PTY p) {
 		session = mi;
@@ -182,7 +187,17 @@ public class MIInferior extends Process {
 			// Allow (5 secs) for the interrupt to propagate.
 			for (int i = 0; isRunning() && i < 5; i++) {
 				try {
-					java.lang.Thread.sleep(2000);
+					java.lang.Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
+			if (isRunning() && inferiorPid != 0) {
+				// lets try something else.
+				gdbSpawner.raise(inferiorPid, gdbSpawner.INT);
+			}
+			for (int i = 0; isRunning() && i < 5; i++) {
+				try {
+					java.lang.Thread.sleep(1000);
 				} catch (InterruptedException e) {
 				}
 			}
@@ -291,5 +306,20 @@ public class MIInferior extends Process {
 
 	public PTY getPTY() {
 		return pty;
+	}
+
+	public void update() {
+		if (inferiorPid == 0) {
+			// Try to discover the pid
+			CommandFactory factory = session.getCommandFactory();
+			MIInfoProgram prog = factory.createMIInfoProgram();
+			try {
+				session.postCommand(prog);
+				MIInfoProgramInfo info = prog.getMIInfoProgramInfo();
+				inferiorPid = info.getPID();
+			} catch (MIException e) {
+				// no rethrown.
+			}
+		}
 	}
 }

@@ -76,9 +76,9 @@ public class OpenOnSelectionAction extends Action {
 			if(element instanceof ITagEntry) {
 				ITagEntry entry = (ITagEntry) element;
 				if(entry.getIFile() != null) {
-					return entry.getIFile().getName() + " [" + entry.getLineNumber() + "] - " + entry.getIFile().getFullPath().toOSString();
+					return entry.getIFile().getName() + ":" + entry.getTagName() + ":" + entry.getLineNumber() + " - " + entry.getIFile().getFullPath().toOSString();
 				}
-				return entry.getFileName() + " [" + entry.getLineNumber() + "]";
+				return entry.getFileName() + ":" + entry.getTagName() + ":" + entry.getLineNumber();
 			} else {
 				return "";
 			}

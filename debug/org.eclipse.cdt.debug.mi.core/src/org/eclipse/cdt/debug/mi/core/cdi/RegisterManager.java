@@ -24,6 +24,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListChangedRegistersInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
@@ -136,11 +137,18 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 	/**
 	 * Use by the eventManager to find the Register;
 	 */
-	public Register getRegister(String name) throws CDIException {
+	public Register getRegister(String varName) {
 		Register[] regs = getRegisters();
 		for (int i = 0; i < regs.length; i++) {
-			if (regs[i].getName().equals(name)) {
+			if (regs[i].getMIVar().getVarName().equals(varName)) {
 				return regs[i];
+			}
+			try {
+				Register r = (Register)regs[i].getChild(varName);
+				if (r != null) {
+					return r;
+				}
+			} catch (ClassCastException e) {
 			}
 		}
 		return null;
@@ -149,7 +157,7 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 	/**
 	 * Use by the eventManager to find the Register;
 	 */
-	public Register getRegister(int regno) throws CDIException {
+	public Register getRegister(int regno) {
 		Register[] regs = getRegisters();
 		for (int i = 0; i < regs.length; i++) {
 			if (regs[i].getVariableObject().getPosition() == regno) {
@@ -158,6 +166,7 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 		}
 		return null;
 	}
+
 	/**
 	 * Call the by the EventManager when the target is suspended.
 	 */
@@ -195,10 +204,16 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 						//throw new MI2CDIException(e);
 						//eventList.add(new MIVarDeletedEvent(varName));
 					}
-					for (int j = 0 ; j < changes.length; j++) {
-						if (changes[j].isInScope()) {
-							eventList.add(new MIRegisterChangedEvent(update.getToken(), reg.getName(), regnos[i]));
+					if (changes.length != 0) {
+						for (int j = 0 ; j < changes.length; j++) {
+							String n = changes[j].getVarName();
+							if (changes[j].isInScope()) {
+								eventList.add(new MIVarChangedEvent(n));
+							}
 						}
+					} else {
+						// Fall back to the register number.
+						eventList.add(new MIRegisterChangedEvent(update.getToken(), reg.getName(), regnos[i]));
 					}
 				}
 			}

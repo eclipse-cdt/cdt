@@ -1,78 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="org.eclipse.cdt.core" default="plugin.zip" basedir=".">
-  <target name="init">
-    <initTemplate/>
-    <property name="plugin" value="org.eclipse.cdt.core"/>
-    <property name="version" value="0.5.4"/>
-  </target>
+<project name="org.eclipse.cdt.core" default="build.jars" basedir=".">
 
-  <target name="plugin.zip" depends="init">
-    <property name="destroot" value="${basedir}/_temp___"/>
-    <delete dir="${destroot}"/>
-    <mkdir dir="${destroot}"/>
-    <antcall target="jar"/>
-    <antcall target="bin"/>
-    <zip zipfile="${plugin}_${version}.zip" basedir="${destroot}"/>
-    <delete dir="${destroot}"/>
-  </target>
+	<property name="bootclasspath" value=""/>
+	<property name="ws" value="motif"/>
+	<property name="os" value="linux"/>
+	<property name="arch" value="x86"/>
 
-  <target name="cdt.jar" depends="init">
-    <property name="out" value="${basedir}/cdt.jar.bin"/>
-    <delete dir="${out}"/>
-    <mkdir dir="${out}"/>
-    <ant antfile="${template}" target="jar">
-      <property name="includes" value="CDTPlugin/"/>
-      <property name="excludes" value=""/>
-      <property name="compilePath" value="/export/WebSphere/eclipse/plugins/org.eclipse.core.boot/bin;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.debug/jdimodel.jar;/export/WebSphere/eclipse/plugins/org.eclipse.ui/workbench.jar;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.core/bin;/export/WebSphere/eclipse/plugins/org.eclipse.help/bin;/export/WebSphere/eclipse/plugins/org.eclipse.ui/bin;/export/WebSphere/eclipse/plugins/org.eclipse.debug.ui/dtui.jar;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.launching/bin;/export/WebSphere/eclipse/plugins/org.apache.xerces/bin;/export/WebSphere/eclipse/plugins/org.eclipse.compare/bin;/export/WebSphere/eclipse/plugins/org.eclipse.swt/bin;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.ui/bin;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.core/jdtcore.jar;/export/WebSphere/eclipse/plugins/org.eclipse.debug.core/dtcore.jar;/export/WebSphere/eclipse/plugins/org.apache.xerces/xerces.jar;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.debug/bin;/export/WebSphere/eclipse/plugins/org.eclipse.help/help.jar;/export/WebSphere/eclipse/plugins/org.eclipse.search/bin;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.ui/jdt.jar;/export/WebSphere/eclipse/plugins/org.eclipse.swt/swt.jar;/export/WebSphere/eclipse/plugins/org.eclipse.core.runtime/runtime.jar;/export/WebSphere/eclipse/plugins/org.eclipse.core.resources/resources.jar;/export/WebSphere/eclipse/plugins/org.eclipse.core.runtime/bin;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.debug/jdi.jar;/export/WebSphere/eclipse/plugins/org.eclipse.debug.core/bin;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.launching/launching.jar;/export/WebSphere/eclipse/plugins/org.eclipse.core.boot/boot.jar;/export/WebSphere/eclipse/plugins/org.eclipse.search/search.jar;/export/WebSphere/eclipse/plugins/org.eclipse.debug.ui/bin;/export/WebSphere/eclipse/plugins/org.eclipse.compare/compare.jar;/export/WebSphere/eclipse/plugins/org.eclipse.core.resources/bin"/>
-    </ant>
-    <copy todir="${out}">
-      <fileset dir="CDTPlugin">
-        <include name="**"/>
-        <exclude name="**/*.java"/>
-      </fileset>
-    </copy>
-    <property name="dest" value="${destroot}/plugins/${plugin}_${version}"/>
-    <jar jarfile="cdt.jar" basedir="${out}"/>
-    <delete dir="${out}"/>
-  </target>
+	<target name="init" depends="properties">
+		<property name="plugin" value="org.eclipse.cdt.core"/>
+		<property name="version.suffix" value="_1.0.0"/>
+		<property name="full.name" value="${plugin}${version.suffix}"/>
+		<property name="temp.folder" value="${basedir}/temp.folder"/>
+		<property name="plugin.destination" value="${basedir}"/>
+		<property name="build.result.folder" value="${basedir}"/>
+	</target>
 
-  <target name="jar" depends="init,cdt.jar">
-  </target>
+	<target name="properties" if="eclipse.running">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+	</target>
 
-  <target name="cdt.src" depends="init">
-    <property name="auto.includes" value="CDTPlugin/**/*.java"/>
-    <property name="auto.excludes" value=""/>
-    <ant antfile="${template}" target="src">
-      <property name="includes" value="${auto.includes}"/>
-      <property name="excludes" value="${auto.excludes}"/>
-      <property name="dest" value="${destroot}/plugins/${plugin}_${version}"/>
-    </ant>
-  </target>
+	<target name="build.update.jar" depends="init">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<zip zipfile="${plugin.destination}/${full.name}.jar" basedir="${temp.folder}/${full.name}" filesonly="false"/>
+		<delete dir="${temp.folder}"/>
+	</target>
 
-  <target name="src" depends="init,cdt.src">
-  </target>
+	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${build.result.folder}/cdtcore.jar" todir="${destination.temp.folder}/${full.name}"/>
+		<copy todir="${destination.temp.folder}/${full.name}">
+			<fileset dir="${basedir}" includes="plugin.xml,plugin.properties,about.html,*.jar,"/>
+		</copy>
+	</target>
 
-  <target name="bin" depends="init">
-    <property name="auto.includes" value="**"/>
-    <property name="auto.excludes" value="CDTPlugin/"/>
-    <ant antfile="${template}" target="bin">
-      <property name="includes" value="${auto.includes}"/>
-      <property name="excludes" value="${auto.excludes}"/>
-      <property name="dest" value="${destroot}/plugins/${plugin}_${version}"/>
-    </ant>
-  </target>
+	<target name="cdtcore.jar" depends="init" unless="cdtcore.jar">
+		<property name="destdir" value="${temp.folder}/cdtcore.jar.bin"/>
+		<delete dir="${temp.folder}/cdtcore.jar.bin"/>
+		<mkdir dir="${temp.folder}/cdtcore.jar.bin"/>
+		<!-- compile the source code -->
+		<javac destdir="${temp.folder}/cdtcore.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.swt/bin;../org.eclipse.debug.ui/bin;../org.eclipse.core.runtime/runtime.jar;../org.eclipse.search/search.jar;../org.eclipse.debug.core/bin;../org.eclipse.core.resources/resources.jar;../org.eclipse.ui/workbench.jar;../org.eclipse.core.runtime/bin;../org.eclipse.compare/compare.jar;../org.eclipse.search/bin;../org.eclipse.core.resources/bin;../org.eclipse.core.boot/bin;../org.eclipse.swt.motif/ws/${ws}/swt.jar;../org.apache.xerces/bin;../org.eclipse.ui/bin;../org.eclipse.debug.ui/dtui.jar;../org.eclipse.swt/ws/${ws}/swt.jar;../org.eclipse.core.resources.linux/resources.jar;../org.eclipse.core.boot/boot.jar;../org.apache.xerces/xercesImpl.jar;../org.eclipse.debug.core/dtcore.jar;../org.eclipse.compare/bin;../org.apache.xerces/xmlParserAPIs.jar">
+			<src path="builder/"/>
+			<src path="index/"/>
+			<src path="model/"/>
+			<src path="src/"/>
+			<src path="utils/"/>
+		</javac>
+		<!-- copy necessary resources -->
+		<copy todir="${temp.folder}/cdtcore.jar.bin">
+			<fileset dir="builder/" excludes="**/*.java"/>
+			<fileset dir="index/" excludes="**/*.java"/>
+			<fileset dir="model/" excludes="**/*.java"/>
+			<fileset dir="src/" excludes="**/*.java"/>
+			<fileset dir="utils/" excludes="**/*.java"/>
+		</copy>
+		<mkdir dir="${build.result.folder}"/>
+		<jar jarfile="${build.result.folder}/cdtcore.jar" basedir="${temp.folder}/cdtcore.jar.bin"/>
+		<delete dir="${temp.folder}/cdtcore.jar.bin"/>
+	</target>
 
-  <target name="log" depends="init">
-    <ant antfile="${template}" target="log">
-      <property name="dest" value="${destroot}/plugins/${plugin}_${version}"/>
-    </ant>
-  </target>
+	<target name="cdtcoresrc.zip" depends="init" unless="cdtcoresrc.zip">
+		<mkdir dir="${build.result.folder}"/>
+		<zip zipfile="${build.result.folder}/cdtcoresrc.zip" filesonly="false">
+			<fileset dir="builder/" includes="**/*.java"/>
+			<fileset dir="index/" includes="**/*.java"/>
+			<fileset dir="model/" includes="**/*.java"/>
+			<fileset dir="src/" includes="**/*.java"/>
+			<fileset dir="utils/" includes="**/*.java"/>
+		</zip>
+	</target>
 
-  <target name="clean" depends="init">
-    <ant antfile="${template}" target="clean">
-      <property name="jar" value="cdt.jar"/>
-      <property name="srczips" value="cdtsource.jar"/>
-    </ant>
-    <delete file="${plugin}_${version}.zip"/>
-  </target>
+	<target name="build.jars" depends="init">
+		<available property="cdtcore.jar" file="${build.result.folder}/cdtcore.jar"/>
+		<antcall target="cdtcore.jar"/>
+	</target>
+
+	<target name="build.sources" depends="init">
+		<available property="cdtcoresrc.zip" file="${build.result.folder}/cdtcoresrc.zip"/>
+		<antcall target="cdtcoresrc.zip"/>
+	</target>
+
+	<target name="build.zips" depends="init">
+	</target>
+
+	<target name="gather.sources" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${build.result.folder}/cdtcoresrc.zip" todir="${destination.temp.folder}/${full.name}"/>
+		<copy todir="${destination.temp.folder}/${full.name}">
+			<fileset dir="${basedir}" includes="about.html"/>
+		</copy>
+	</target>
+
+	<target name="gather.logs" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${temp.folder}/cdtcore.jar.bin.log" todir="${destination.temp.folder}/${full.name}"/>
+	</target>
+
+	<target name="clean" depends="init">
+		<delete file="${build.result.folder}/cdtcore.jar"/>
+		<delete file="${build.result.folder}/cdtcoresrc.zip"/>
+		<delete file="${plugin.destination}/${full.name}.jar"/>
+		<delete file="${plugin.destination}/${full.name}.zip"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+	<target name="refresh" depends="init" if="eclipse.running">
+		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
+	</target>
+
+	<target name="zip.plugin" depends="init">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="build.sources"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<antcall target="gather.sources">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<delete>
+			<fileset dir="${temp.folder}" includes="**/*.bin.log"/>
+		</delete>
+		<zip zipfile="${plugin.destination}/${full.name}.zip" basedir="${temp.folder}" filesonly="true"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
 </project>

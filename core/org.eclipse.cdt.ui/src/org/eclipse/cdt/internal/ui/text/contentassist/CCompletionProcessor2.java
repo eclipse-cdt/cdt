@@ -73,8 +73,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 					IConfigurationElement element = elements[j];
 					if (!"contributor".equals(element.getName())) //$NON-NLS-1$
 						continue;
-					Class contribClass = element.loadExtensionClass("class"); //$NON-NLS-1$
-					Object contribObject = contribClass.newInstance();
+					Object contribObject = element.createExecutableExtension("class"); //$NON-NLS-1$
 					if (!(contribObject instanceof ICompletionContributor))
 						continue;
 					ICompletionContributor contributor = (ICompletionContributor)contribObject;

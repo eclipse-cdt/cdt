@@ -1,3 +1,9 @@
+2004-01-20 Alain Magloire
+
+	Remove the hardcode "objdump" in the EditorUtility.
+
+	* src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
+	
 2004-01-19 Hoda Amer
 	Completed looking up macros with function style.
 	

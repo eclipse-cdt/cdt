@@ -5,10 +5,7 @@ package org.eclipse.cdt.internal.ui.util;
  * All Rights Reserved.
  */
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
@@ -19,11 +16,9 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -37,6 +32,11 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class EditorUtility {
+
+	/**
+	 * The ID of the default text editor
+	 */
+	public static final String DEFAULT_TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 
 	private EditorUtility () {
 	}
@@ -286,7 +286,7 @@ public class EditorUtility {
 			if (descriptor != null) {
 				return descriptor.getId();
 			} else {
-				return registry.getDefaultEditor().getId();
+				return registry.findEditor(DEFAULT_TEXT_EDITOR_ID).getId();
 			}
 		}
 		return null;
@@ -298,32 +298,10 @@ public class EditorUtility {
 	
 	public static IStorage getStorage(IBinary bin) {
 		IStorage store = null;
-		Process objdump = null;
-		IPath path;
-		IResource file = null;
-		file = bin.getResource();
-		if (file == null)
-			return store;
-		path = file.getLocation();
 		try {
-			String[] args = new String[] {"objdump", "-CxS", path.toOSString()};
-			objdump = ProcessFactory.getFactory().exec(args);
-			StringBuffer buffer = new StringBuffer();
-			BufferedReader stdout =
-				new BufferedReader(new InputStreamReader(objdump.getInputStream()));
-			char[] buf = new char[128];
-			while (stdout.read(buf, 0, buf.length) != -1) {
-				buffer.append(buf);
-			}
-			store = new FileStorage(new ByteArrayInputStream(buffer.toString().getBytes()), path);
-		} catch (SecurityException e) {
-		} catch (IndexOutOfBoundsException e) {
-		} catch (NullPointerException e) {
-		} catch (IOException e) {
-		} finally {
-			if (objdump != null) {
-				objdump.destroy();
-			}
+			store = new FileStorage (new ByteArrayInputStream(bin.getBuffer().getContents().getBytes()), bin.getPath());
+		} catch (CModelException e) {
+			// nothing;
 		}
 		return store;
 	}

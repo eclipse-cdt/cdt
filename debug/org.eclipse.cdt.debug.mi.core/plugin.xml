@@ -16,10 +16,10 @@
 
 
    <extension
-         id="gdb"
-         name="%GDBDebugger.name"
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger
+	    	id="org.eclipse.cdt.debug.mi.core.CDebugger"
+    		name="%GDBDebugger.name"
             class="org.eclipse.cdt.debug.mi.core.GDBDebugger">
       </debugger>
    </extension>

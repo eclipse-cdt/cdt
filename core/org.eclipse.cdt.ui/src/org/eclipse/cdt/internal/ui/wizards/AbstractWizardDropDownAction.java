@@ -29,6 +29,7 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 	private Menu fMenu;
 	private IAction[] fActions;
 	private IRegistryChangeListener fListener;
+	private Object fLock = new Object();
 	
 	public AbstractWizardDropDownAction() {
 		fMenu= null;
@@ -46,11 +47,14 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 	
 	public void refreshActions() {
         // force menu and actions to be created again
-        fActions = null;
-		if (fMenu != null) {
-			fMenu.dispose();
-			fMenu = null;
+		Menu oldMenu = null;
+		synchronized(fLock) {
+			oldMenu = fMenu;
+	        fActions = null;
+	        fMenu = null;
 		}
+		if (oldMenu != null)
+			oldMenu.dispose();
 	}
 
 	public void dispose() {
@@ -58,11 +62,7 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 			Platform.getExtensionRegistry().removeRegistryChangeListener(fListener);
 			fListener= null;
 		}
-		if (fMenu != null) {
-			fMenu.dispose();
-			fMenu= null;
-		}
-		fActions= null;
+		refreshActions();
 	}
 
 	public Menu getMenu(Menu parent) {
@@ -70,15 +70,17 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 	}
 
 	public Menu getMenu(Control parent) {
-		if (fMenu == null) {
-			fMenu= new Menu(parent);
-			IAction[] actions= getActions();
-			for (int i= 0; i < actions.length; i++) {
-				ActionContributionItem item= new ActionContributionItem(actions[i]);
-				item.fill(fMenu, -1);				
+		synchronized(fLock) {
+			if (fMenu == null) {
+				fMenu= new Menu(parent);
+				IAction[] actions= getActions();
+				for (int i= 0; i < actions.length; i++) {
+					ActionContributionItem item= new ActionContributionItem(actions[i]);
+					item.fill(fMenu, -1);				
+				}
 			}
+			return fMenu;
 		}
-		return fMenu;
 	}
 	
 	public void run() {
@@ -106,14 +108,16 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 	}
 	
 	private IAction[] getActions() {
-	    if (fActions == null) {
-	        fActions = getWizardActions();
-		    if (fActions == null)
-		        fActions = NO_ACTIONS;
-
-		    //TODO provide a way to sort the actions
-	    }
-	    return fActions;
+		synchronized(fLock) {
+		    if (fActions == null) {
+		        fActions = getWizardActions();
+			    if (fActions == null)
+			        fActions = NO_ACTIONS;
+	
+			    //TODO provide a way to sort the actions
+		    }
+		    return fActions;
+		}
 	}
 	
 	protected abstract IAction[] getWizardActions();

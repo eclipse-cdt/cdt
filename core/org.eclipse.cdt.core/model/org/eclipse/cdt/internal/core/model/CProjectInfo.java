@@ -70,7 +70,6 @@ class CProjectInfo extends OpenableInfo {
 			return nonCResources;
 
 		// determine if src == project
-		ISourceRoot root = null;
 		boolean srcIsProject = false;
 		IPathEntry[] entries = null;
 		ICProject cproject = getElement().getCProject();

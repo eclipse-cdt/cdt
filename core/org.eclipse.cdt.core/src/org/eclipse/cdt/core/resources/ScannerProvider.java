@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.resources;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.AbstractCExtension;
@@ -61,7 +60,6 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		if (listeners == null) {
 			return;
 		}
-		ListIterator iter = listeners.listIterator();
 		IScannerInfoChangeListener[] observers = new IScannerInfoChangeListener[listeners.size()];
 		listeners.toArray(observers);
 		for (int i = 0; i < observers.length; i++) {
@@ -210,8 +208,6 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 	 * Processes a delta recursively.
 	 */
 	protected void processDelta(ICElementDelta delta) throws CModelException {
-		int kind= delta.getKind();
-		int flags= delta.getFlags();
 		ICElement element= delta.getElement();
 
 		if (isPathEntryChange(delta)) {

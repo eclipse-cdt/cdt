@@ -345,7 +345,6 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 		if (event.getType() == CDescriptorEvent.CDTPROJECT_CHANGED) {
 			ICDescriptor cdesc = event.getDescriptor();
 			if (cdesc != null) {
-				CModelManager manager = CModelManager.getDefault();
 				IProject project = cdesc.getProject();
 				// Call the listeners.
 				fireContentChangedEvent(project);

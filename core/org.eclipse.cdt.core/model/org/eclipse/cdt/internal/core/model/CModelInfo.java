@@ -27,7 +27,6 @@ public class CModelInfo extends OpenableInfo {
 	 * Compute the non-C resources contained in this C project.
 	 */
 	private Object[] computeNonCResources() {
-		CModelManager mgr = CModelManager.getDefault();
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		int length = projects.length;
 		Object[] nonCProjects = null;

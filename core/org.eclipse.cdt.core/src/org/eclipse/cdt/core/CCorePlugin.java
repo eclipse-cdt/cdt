@@ -634,7 +634,6 @@ public class CCorePlugin extends Plugin {
 				ICDescriptor cdesc = getCProjectDescription(project);
 				ICExtensionReference[] cextensions = cdesc.get(PATHENTRY_STORE_UNIQ_ID, true);
 				if (cextensions.length > 0) {
-					ArrayList list = new ArrayList(cextensions.length);
 					for (int i = 0; i < cextensions.length; i++) {
 						try {
 							store = (IPathEntryStore) cextensions[i].createExtension();
@@ -929,7 +928,8 @@ public class CCorePlugin extends Plugin {
 	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
 	private static final String SCANNER = CCorePlugin.PLUGIN_ID + "/debug/scanner"; //$NON-NLS-1$
 	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor" ; //$NON-NLS-1$
-	private static final String CONTENTASSIST = CCorePlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
+	//private static final String CONTENTASSIST = CCorePlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
+
 	/**
 	 * Configure the plugin with respect to option settings defined in ".options" file
 	 */

@@ -67,7 +67,6 @@ public class CContainerInfo extends OpenableInfo {
 
 			IPathEntry[] entries = cproject.getResolvedPathEntries();
 			if (resources != null) {
-				ICElement[] children = getChildren();
 				for (int i = 0; i < resources.length; i++) {
 					IResource member = resources[i];
 					switch(member.getType()) {

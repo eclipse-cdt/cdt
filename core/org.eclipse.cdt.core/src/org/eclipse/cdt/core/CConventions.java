@@ -22,9 +22,6 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 /**
@@ -37,7 +34,7 @@ import org.eclipse.core.runtime.Status;
 public class CConventions {
 	private final static String scopeResolutionOperator= "::"; //$NON-NLS-1$
 	private final static char fgDot= '.';
-	private final static char fgColon= ':';
+	//private final static char fgColon= ':';
 	
 	private static boolean isLegalIdentifier(String name) {
 		if (name == null) {
@@ -146,7 +143,6 @@ public class CConventions {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.scope.nameWithBlanks"), null); //$NON-NLS-1$
 		}
 
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		StringTokenizer st = new StringTokenizer(name, scopeResolutionOperator);
 		boolean firstToken = true;
 		while (st.hasMoreTokens()) {

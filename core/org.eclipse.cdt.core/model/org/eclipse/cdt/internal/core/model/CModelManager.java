@@ -406,9 +406,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				IIncludeReference[] includeReferences = cproject.getIncludeReferences();
 				for (int i = 0; i < includeReferences.length; i++) {
 					IPath includePath = includeReferences[i].getPath().append(path);
-					File file = path.toFile();
+					File file = includePath.toFile();
 					if (file != null && file.isFile()) {
-						return new ExternalTranslationUnit(includeReferences[i], path);
+						return new ExternalTranslationUnit(includeReferences[i], includePath);
 					}
 				}
 			} catch (CModelException e) {

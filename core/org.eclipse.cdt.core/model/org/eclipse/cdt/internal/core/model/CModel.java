@@ -201,8 +201,6 @@ public class CModel extends Openable implements ICModel {
 	}
 
 	protected  boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
-		CModelManager factory = CModelManager.getDefault();
-
 		// determine my children
 		IWorkspaceRoot root = (IWorkspaceRoot)getResource();
 		IProject[] projects = root.getProjects();

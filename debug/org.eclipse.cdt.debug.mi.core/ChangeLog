@@ -1,3 +1,24 @@
+2003-01-16 Alain Magloire
+
+	* src/.../mi/core/event/MISharedLibCreatedEvent.java: New file.
+	* src/.../mi/core/event/MISharedLibChangedEvent.java: New file.
+	* src/.../mi/core/event/MISharedLibUndloadedEvent.java: New file.
+
+	* src/.../mi/core/cdi/event/CreatedEvent.java:
+	new constructors to deal with MISharedLibCreatedEvent.
+	* src/.../mi/core/cdi/event/ChangedEvent.java:
+	new constructors to deal with MISharedLibChangedEvent.
+	* src/.../mi/core/cdi/event/DestroyedEvent.java:
+	new constructors to deal with MISharedLibUnloadedEvent.
+
+	* src/.../mi/core/cdi/model/SharedLibrary.java: New file.
+
+	* src/.../mi/core/cdi/SharedLibraryManager.java: New file.
+	* src/.../mi/core/cdi/CSession.java (getSharedLibraryManager):
+	New method.
+	* src/.../mi/core/cdi/EventManager.java (update):
+	Deal with the new MISharedLibXXXEvents.
+
 2003-01-15 Alain Magloire
 
 	* src/.../mi/core/command/CommandFactory.java (createMIInfoSharedLibrary):

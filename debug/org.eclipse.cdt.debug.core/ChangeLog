@@ -1,3 +1,10 @@
+2003-01-16 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/ICDISession.java (getSharedLibraryManager):
+	New method.
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDISharedLibrary.java (areSymbolsLoaded):
+	Rename symbolsRead() to areSymbolsLoaded().
+
 2003-01-15 Mikhail Khodjaiants
 	Added the 'ICDISharedLibraryManager' interface.
 	* ICDISharedLibraryManager.java

@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
@@ -34,23 +35,26 @@ import org.eclipse.swt.widgets.Label;
 
 public class BinaryParserBlock extends AbstractCOptionPage {
 
-	private static String[][] radios;
+	private static final String PREFIX = "BinaryParserBlock"; // $NON-NLS-1$
+	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$
+	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$
 
+	private static String[][] radios;
 	protected Combo comboBox;
 	private HashMap idMap = new HashMap();
 	private String initial;
 	private Preferences fPrefs;
-	
+
 	public BinaryParserBlock(Preferences prefs) {
-		super("Binary Parser");
-		setDescription("Set required binary parser for this project");
+		super(CUIPlugin.getResourceString(LABEL));
+		setDescription(CUIPlugin.getResourceString(DESC));
 		fPrefs = prefs;
 	}
 
-	public void createControl(Composite parent) {		
+	public void createControl(Composite parent) {
 		Composite control = ControlFactory.createComposite(parent, 2);
-		((GridLayout)control.getLayout()).makeColumnsEqualWidth = false;
-		((GridLayout)control.getLayout()).marginWidth = 5;
+		((GridLayout) control.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout) control.getLayout()).marginWidth = 5;
 
 		ControlFactory.createEmptySpace(control, 2);
 
@@ -65,9 +69,9 @@ public class BinaryParserBlock extends AbstractCOptionPage {
 				getContainer().updateContainer();
 			}
 		});
-		Iterator items =  idMap.keySet().iterator();
-		while( items.hasNext()) {
-			comboBox.add((String)items.next());
+		Iterator items = idMap.keySet().iterator();
+		while (items.hasNext()) {
+			comboBox.add((String) items.next());
 		}
 
 		if (initial != null) {
@@ -87,13 +91,13 @@ public class BinaryParserBlock extends AbstractCOptionPage {
 			if (selected != null) {
 				if (initial == null || !selected.equals(initial)) {
 					desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-					desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, (String)idMap.get(initial));
+					desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, (String) idMap.get(initial));
 					CCorePlugin.getDefault().getCoreModel().resetBinaryParser(getContainer().getProject());
 					initial = selected;
 				}
 			}
 		} else {
-			fPrefs.setDefault(CCorePlugin.PREF_BINARY_PARSER, (String)idMap.get(initial));
+			fPrefs.setDefault(CCorePlugin.PREF_BINARY_PARSER, (String) idMap.get(initial));
 		}
 	}
 

@@ -44,7 +44,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 
 	private CheckboxTableViewer referenceProjectsViewer;
 
-	private static final int PROJECT_LIST_MULTIPLIER = 30;
+	private static final int PROJECT_LIST_MULTIPLIER = 10;
 	
 	public ReferenceBlock() {
 		super(CUIPlugin.getResourceString(LABEL));

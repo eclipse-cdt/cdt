@@ -49,7 +49,7 @@ public abstract class TabFolderOptionBlock {
 		fParent = parent;
 		bShowMessageArea = showMessageArea;
 	}
-	
+
 	public TabFolderOptionBlock(ICOptionContainer parent) {
 		this(parent, true);
 	}
@@ -66,7 +66,7 @@ public abstract class TabFolderOptionBlock {
 	protected List getOptionPages() {
 		return pages;
 	}
-	
+
 	public Control createContents(Composite parent) {
 
 		composite = new Composite(parent, SWT.NONE);
@@ -80,12 +80,12 @@ public abstract class TabFolderOptionBlock {
 			Label separator = new Label(composite, SWT.HORIZONTAL);
 			separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		}
-	
+
 		createFolder(composite);
 
 		addTabs();
 		setCurrentPage((ICOptionPage) pages.get(0));
-		initializingTabs = false;		
+		initializingTabs = false;
 		String desc = ((ICOptionPage) pages.get(0)).getDescription();
 		if (desc != null) {
 			messageLabel.setText(desc);
@@ -100,8 +100,10 @@ public abstract class TabFolderOptionBlock {
 
 		fFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				setCurrentPage((ICOptionPage) ((TabItem) e.item).getData());
-				fParent.updateContainer();
+				if (!initializingTabs) {
+					setCurrentPage((ICOptionPage) ((TabItem) e.item).getData());
+					fParent.updateContainer();
+				}
 			}
 		});
 	}
@@ -122,7 +124,7 @@ public abstract class TabFolderOptionBlock {
 	abstract protected void addTabs();
 
 	public boolean performApply(IProgressMonitor monitor) {
-		if ( initializingTabs ) 
+		if (initializingTabs)
 			return false;
 		Iterator iter = pages.iterator();
 		while (iter.hasNext()) {
@@ -141,18 +143,16 @@ public abstract class TabFolderOptionBlock {
 	 * @see DialogPage#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-		if ( initializingTabs ) 
+		if (initializingTabs)
 			return;
-		Iterator iter = pages.iterator();
-		while (iter.hasNext()) {
-			ICOptionPage tab = (ICOptionPage) iter.next();
-			tab.setVisible(visible);
+		if (fCurrentPage != null) {
+			fCurrentPage.setVisible(visible);
 		}
 		update();
 	}
 
 	public void update() {
-		if ( initializingTabs ) 
+		if (initializingTabs)
 			return;
 		boolean ok = true;
 		Iterator iter = pages.iterator();
@@ -190,7 +190,7 @@ public abstract class TabFolderOptionBlock {
 	}
 
 	public void performDefaults() {
-		if ( initializingTabs ) 
+		if (initializingTabs)
 			return;
 		getCurrentPage().performDefaults();
 	}
@@ -200,7 +200,11 @@ public abstract class TabFolderOptionBlock {
 	}
 
 	public void setCurrentPage(ICOptionPage page) {
+		//Make the new page visible
+		ICOptionPage oldPage = fCurrentPage;
 		fCurrentPage = page;
+		fCurrentPage.setVisible(true);
+		if (oldPage != null)
+			oldPage.setVisible(false);
 	}
-
 }

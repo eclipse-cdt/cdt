@@ -16,11 +16,13 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -139,6 +141,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
 		fCEditorErrorTickUpdater.setAnnotationModel(getDocumentProvider().getAnnotationModel(input));
+		setOutlinePageInput(fOutlinePage, input);
 	}
 
 	/**
@@ -418,6 +421,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ContentAssistProposal"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "AddIncludeOnSelection"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "OpenOnSelection"); //$NON-NLS-1$
+	}
+
+	public void setOutlinePageInput(CContentOutlinePage page, IEditorInput input) {
+		if (page != null) {
+			IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
+			page.setInput((IWorkingCopy)manager.getWorkingCopy(input));
+		}
 	}
 
 	/**

@@ -1,3 +1,9 @@
+2004-09-03 Alain Magloire
+
+	New spawner.dll from Alex Chapiro.
+	PR 71437
+	* os/win32/x86/spawner.dll
+
 2004-07-20 Alex Chapiro
 
 	Fix for PR 70359

@@ -10,7 +10,7 @@ import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class GDBDebugger implements ICDebugger {
@@ -33,9 +33,9 @@ public class GDBDebugger implements ICDebugger {
 		}
 	}
 
-	public ICDISession createCoreSession(ILaunchConfiguration config, IFile exe, IFile corefile) throws CDIException {
+	public ICDISession createCoreSession(ILaunchConfiguration config, IFile exe, IPath corefile) throws CDIException {
 		try {
-			return MIPlugin.getDefault().createCSession(exe.getLocation().toOSString(), corefile.getLocation().toOSString());
+			return MIPlugin.getDefault().createCSession(exe.getLocation().toOSString(), corefile.toOSString());
 		}
 		catch (IOException e) {
 			throw new CDIException("Error initializing");

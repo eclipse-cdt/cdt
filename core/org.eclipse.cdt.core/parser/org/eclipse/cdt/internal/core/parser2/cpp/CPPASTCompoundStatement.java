@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser2.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 
 /**
  * @author jcamelon
@@ -37,6 +38,7 @@ public class CPPASTCompoundStatement extends CPPASTNode implements
 
     
     private IASTStatement [] statements = null;
+    private ICPPScope scope = null;
     private static final int DEFAULT_STATEMENT_LIST_SIZE = 8;
 
 
@@ -72,8 +74,9 @@ public class CPPASTCompoundStatement extends CPPASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.IASTCompoundStatement#resolveScope()
      */
     public IScope getScope() {
-        // TODO Auto-generated method stub
-        return null;
+    	if( scope == null )
+    		scope = new CPPBlockScope( this );
+        return scope;
     }
 
 }

@@ -30,16 +30,12 @@ public class CFunction implements IFunction {
 	private IASTFunctionDeclarator [] declarators = null;
 	private IASTFunctionDeclarator definition;
 	
-	final private IScope functionScope;
-
 	public CFunction( IASTFunctionDeclarator declarator ){
 	    if( declarator.getParent() instanceof IASTFunctionDefinition )
 	        definition = declarator;
 	    else {
 	        declarators = new IASTFunctionDeclarator [] { declarator };
 	    }
-
-		this.functionScope = new CFunctionScope( this );
 	}
 	
     public IASTNode getPhysicalNode(){
@@ -118,7 +114,11 @@ public class CFunction implements IFunction {
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
 	 */
 	public IScope getFunctionScope() {
-		return functionScope;
+		if( definition != null ){
+			IASTFunctionDefinition def = (IASTFunctionDefinition) definition.getParent();
+			return def.getScope();
+		}
+		return null;
 	}
 	
 //	public IASTDeclaration getDeclaration(){

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
@@ -54,7 +55,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
-import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser2.c.CASTFunctionDeclarator;
 
 /**
@@ -67,17 +67,19 @@ public class CPPVisitor {
 	 */
 	public static IBinding createBinding(IASTName name) {
 		IASTNode parent = name.getParent();
-		if( parent instanceof ICPPASTCompositeTypeSpecifier ){
+		if( parent instanceof IASTNamedTypeSpecifier  ||
+		    parent instanceof ICPPASTQualifiedName  ) 
+		{
+			return resolveBinding( name );
+		} else if( parent instanceof IASTIdExpression ){
+			return resolveBinding( parent );
+		} else if( parent instanceof ICPPASTCompositeTypeSpecifier ){
 			return createBinding( (ICPPASTCompositeTypeSpecifier) parent );
 		} else if( parent instanceof IASTDeclarator ){
 			return createBinding( (IASTDeclarator) parent );
 		} else if( parent instanceof ICPPASTElaboratedTypeSpecifier ){
 			return createBinding( (ICPPASTElaboratedTypeSpecifier) parent );
-		} else if( parent instanceof IASTNamedTypeSpecifier  ||
-				   parent instanceof ICPPASTQualifiedName  ) 
-		{
-			return resolveBinding( name );
-		}
+		}  
 		return null;
 	}
 	
@@ -235,6 +237,9 @@ public class CPPVisitor {
 	
 	private static IASTNode getContainingBlockItem( IASTNode node ){
 		IASTNode parent = node.getParent();
+		if( parent == null )
+			return null;
+		
 		if( parent instanceof IASTDeclaration ){
 			IASTNode p = parent.getParent();
 			if( p instanceof IASTDeclarationStatement )
@@ -252,13 +257,19 @@ public class CPPVisitor {
 		return getContainingBlockItem( parent );
 	}
 	
+	static private IBinding resolveBinding( IASTNode node ){
+		if( node instanceof IASTIdExpression ){
+			return resolveBinding( ((IASTIdExpression)node).getName() );
+		}
+		return null;
+	}
+	
 	static protected class LookupData
 	{
 		public char[] name;
-		public ObjectMap usingDirectives; 
+		public ObjectMap usingDirectives = ObjectMap.EMPTY_MAP; 
 		public ObjectSet visited = ObjectSet.EMPTY_SET;	//used to ensure we don't visit things more than once
 		public ObjectSet inheritanceChain;	//used to detect circular inheritance
-		public ISymbol templateMember;  	//to assit with template member defs
 		
 		public boolean qualified = false;
 		public boolean ignoreUsingDirectives = false;
@@ -283,9 +294,23 @@ public class CPPVisitor {
 		//TODO
 		if( data.foundItems != null && data.foundItems.size() == 1 ){
 			IASTName found = (IASTName) data.foundItems.get(0);
-			return found.resolveBinding();
+			IBinding binding = found.resolveBinding();
+			if( data.forDefinition ){
+				addDefinition( binding, name );
+			}
+			return binding;
 		}
 		return null;
+	}
+	private static void addDefinition( IBinding binding, IASTName name ){
+		if( binding instanceof IFunction ){
+			IASTNode node =  name.getParent();
+			if( node instanceof ICPPASTQualifiedName )
+				node = node.getParent();
+			if( node instanceof IASTFunctionDeclarator ){
+				((CPPFunction)binding).addDefinition( (IASTFunctionDeclarator) node );
+			}
+		}
 	}
 	static private LookupData createLookupData( IASTName name ){
 		LookupData data = new LookupData( name.toCharArray() );
@@ -379,10 +404,9 @@ public class CPPVisitor {
 	static private void lookup( LookupData data, IASTName name ){
 		IASTNode node = name; 
 		
-		while( node != null ){
+		ICPPScope scope = (ICPPScope) getContainingScope( node );		
+		while( scope != null ){
 			IASTNode blockItem = getContainingBlockItem( node );
-			ICPPScope scope = (ICPPScope) getContainingScope( node );
-			
 			List directives = null;
 			if( !data.usingDirectivesOnly )
 				directives = lookupInScope( data, scope, blockItem );
@@ -396,7 +420,7 @@ public class CPPVisitor {
 					if( directives != null && directives.size() != 0 )
 						processDirectives( data, scope, directives );
 					
-					while( data.usingDirectives != null && data.usingDirectives.get( scope ) != null ){
+					while( !data.usingDirectives.isEmpty() && data.usingDirectives.get( scope ) != null ){
 						transitives = lookupInNominated( data, scope, null );
 		
 						if( !data.qualified || data.foundItems == null ){
@@ -420,6 +444,7 @@ public class CPPVisitor {
 			if( data.qualified && !data.usingDirectives.isEmpty() )
 				data.usingDirectivesOnly = true;
 			node = blockItem.getParent();
+			scope = (ICPPScope) scope.getParent();
 		}
 	}
 	
@@ -445,11 +470,10 @@ public class CPPVisitor {
 				
 				//data.usingDirectives is a map from enclosing scope to a list
 				//of namespaces to consider when we reach that enclosing scope
-				ICPPScope [] list = ( data.usingDirectives == null ) 
-									? null : (ICPPScope []) data.usingDirectives.get( enclosing );
+				ICPPScope [] list = data.usingDirectives.isEmpty() ? null : (ICPPScope []) data.usingDirectives.get( enclosing );
 				if( list == null ){
 					list = new ICPPScope [] { enclosing, null };
-					if( data.usingDirectives == null ){
+					if( data.usingDirectives == ObjectMap.EMPTY_MAP ){
 						data.usingDirectives = new ObjectMap(2);
 					}
 					data.usingDirectives.put( enclosing, list );
@@ -526,7 +550,7 @@ public class CPPVisitor {
 	}
 	
 	static private List lookupInNominated( LookupData data, ICPPScope scope, List transitives ){
-		if( data.usingDirectives == null )
+		if( data.usingDirectives.isEmpty() )
 			return transitives;
 		
 		List directives = null;

@@ -13,6 +13,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 
 /**
  * @author jcamelon
@@ -23,6 +25,7 @@ public class CASTFunctionDefinition extends CASTNode implements
     private IASTDeclSpecifier declSpecifier;
     private IASTFunctionDeclarator declarator;
     private IASTStatement bodyStatement;
+    private ICFunctionScope scope;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition#getDeclSpecifier()
@@ -65,5 +68,14 @@ public class CASTFunctionDefinition extends CASTNode implements
     public void setBody(IASTStatement statement) {
         bodyStatement = statement;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition#getScope()
+	 */
+	public IScope getScope() {
+		if( scope == null )
+			scope = new CFunctionScope( this );
+		return scope;
+	}
 
 }

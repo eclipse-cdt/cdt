@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
@@ -32,4 +33,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return 0;
 	}
 
+	public IScope getScope() {
+		return CPPVisitor.getContainingScope( declarations != null ? declarations[0] : definition  );
+	}
 }

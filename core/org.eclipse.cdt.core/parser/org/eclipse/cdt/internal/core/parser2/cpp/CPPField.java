@@ -14,13 +14,21 @@
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 
 /**
  * @author aniefer
  */
-public class CPPField extends CPPVariable implements IField {
+public class CPPField extends CPPVariable implements ICPPField {
 	public CPPField( IASTDeclarator declarator ){
 		super( declarator );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
+	 */
+	public int getVisibility() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

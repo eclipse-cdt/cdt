@@ -49,4 +49,6 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	
 	public void setBody( IASTStatement statement );
 	
+	public IScope getScope();
+	
 }

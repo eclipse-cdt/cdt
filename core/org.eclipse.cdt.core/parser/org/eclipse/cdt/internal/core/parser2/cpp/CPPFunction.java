@@ -36,6 +36,26 @@ public class CPPFunction implements IFunction {
 		else
 			declarations = new IASTFunctionDeclarator [] { declarator };
 	}
+	
+	public void addDefinition( IASTFunctionDeclarator dtor ){
+		definition = dtor;
+	}
+	public void addDeclaration( IASTFunctionDeclarator dtor ){
+		if( declarations == null ){
+			declarations = new IASTFunctionDeclarator [] { dtor };
+			return;
+		}
+		for( int i = 0; i < declarations.length; i++ ){
+			if( declarations[i] == null ){
+				declarations[i] = dtor;
+				return;
+			}
+		}
+		IASTFunctionDeclarator [] tmp = new IASTFunctionDeclarator[ declarations.length * 2 ];
+		System.arraycopy( declarations, 0, tmp, 0, declarations.length );
+		tmp[ declarations.length ] = dtor;
+		declarations = tmp;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */
@@ -48,8 +68,8 @@ public class CPPFunction implements IFunction {
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
 	 */
 	public IScope getFunctionScope() {
-		// TODO Auto-generated method stub
-		return null;
+		IASTFunctionDefinition def = (IASTFunctionDefinition) definition.getParent();
+		return def.getScope();
 	}
 
 	/* (non-Javadoc)

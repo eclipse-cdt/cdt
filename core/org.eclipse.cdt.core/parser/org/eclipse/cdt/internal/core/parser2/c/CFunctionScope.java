@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -33,10 +31,10 @@ import org.eclipse.cdt.internal.core.parser2.c.CVisitor.BaseVisitorAction;
  * @author aniefer
  */
 public class CFunctionScope implements ICFunctionScope {
-	private final CFunction function;
+	private final IASTFunctionDefinition function;
 	private CharArrayObjectMap bindings = CharArrayObjectMap.EMPTY_MAP;
 	
-	public CFunctionScope( CFunction function ){
+	public CFunctionScope( IASTFunctionDefinition function ){
 		this.function = function;
 	}
 	
@@ -66,9 +64,7 @@ public class CFunctionScope implements ICFunctionScope {
 
     
 	public IScope getBodyScope(){
-	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) function.getPhysicalNode();
-	    IASTFunctionDefinition fdef = (IASTFunctionDefinition) fdtor.getParent();
-	    IASTStatement statement = fdef.getBody();
+	    IASTStatement statement = function.getBody();
 	    if( statement instanceof IASTCompoundStatement ){
 	        return ((IASTCompoundStatement)statement).getScope();
 	    }
@@ -90,9 +86,7 @@ public class CFunctionScope implements ICFunctionScope {
 
 	public List getLabels(){
 	    FindLabelsAction action = new FindLabelsAction();
-	    IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) function.getPhysicalNode();
-	    if( dtor.getParent() instanceof IASTFunctionDefinition )
-	        CVisitor.visitDeclaration( (IASTDeclaration) dtor.getParent(), action );
+        CVisitor.visitDeclaration( function, action );
 	    
 	    List list = new ArrayList();
 	    for( int i = 0; i < action.labels.size(); i++ ){

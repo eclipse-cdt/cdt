@@ -101,6 +101,16 @@ public class Scanner2 implements IScanner, IScannerData {
 	private int[] bufferLimit = new int[bufferInitialSize];
 	private int[] bufferLineNums = new int[bufferInitialSize];
 	
+	//branch tracking
+	private int branchStackPos = -1;
+	private int[] branches = new int[bufferInitialSize];
+		//states
+		final static private int BRANCH_IF    = 1;
+		final static private int BRANCH_ELIF  = 2;
+		final static private int BRANCH_ELSE  = 3;
+		final static private int BRANCH_END   = 4;
+		
+	
 	// Utility
 	private static String[] emptyStringArray = new String[0];
 	private static char[] emptyCharArray = new char[0];
@@ -1113,6 +1123,42 @@ public class Scanner2 implements IScanner, IScannerData {
 		return newToken( tokenType, result );
 	}
 	
+	private boolean branchState( int state ){
+	    if( state != BRANCH_IF && branchStackPos == -1 )
+	        return false;
+	    
+	    switch( state ){
+        case BRANCH_IF:
+            if( ++branchStackPos == branches.length ){
+                int [] temp = new int [ branches.length << 1 ];
+                System.arraycopy( branches, 0, temp, 0, branches.length );
+            }
+            branches[branchStackPos] = BRANCH_IF;
+            return true;
+        case BRANCH_ELIF:
+        case BRANCH_ELSE:
+            switch( branches[branchStackPos] ){
+                case BRANCH_IF:
+                case BRANCH_ELIF:
+                    branches[branchStackPos] = state;
+                    return true;
+                default:
+                    return false;
+            }
+        case BRANCH_END:
+            switch( branches[branchStackPos] ){
+                case BRANCH_IF:
+                case BRANCH_ELSE:
+                case BRANCH_ELIF:
+                    --branchStackPos;
+                    return true;
+                default:
+                    return false;
+            }
+	    }
+	    return false;
+	}
+	
 	private void handlePPDirective(int pos) throws ScannerException, EndOfFileException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
@@ -1169,6 +1215,7 @@ public class Scanner2 implements IScanner, IScannerData {
 						len = bufferPos[bufferStackPos] - start;
 						if( isLimitReached() )
 							handleCompletionOnExpression( CharArrayUtils.extract( buffer, start, len ) );
+						branchState( BRANCH_IF );
 						if (expressionEvaluator.evaluate(buffer, start, len, definitions) == 0) {
 							if (dlog != null) dlog.println("#if <FALSE> " + new String(buffer,start+1,len-1)); //$NON-NLS-1$
 							skipOverConditionalCode(true);
@@ -1180,14 +1227,23 @@ public class Scanner2 implements IScanner, IScannerData {
 					case ppElse:
 					case ppElif:
 						// Condition must have been true, skip over the rest
-						skipToNewLine();
-						skipOverConditionalCode(false);
+						
+						if( branchState( type == ppElse ? BRANCH_ELSE : BRANCH_ELIF) ){
+						    skipToNewLine();
+							skipOverConditionalCode(false);
+						} else {
+						    handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, start, ppKeywords.findKey( buffer, start, len ) );
+						    skipToNewLine();
+						}
+						
 						if( isLimitReached() )
 							handleInvalidCompletion();
 						return;
 					case ppError:
 						throw new ScannerException(null);
 					case ppEndif:
+					    if( !branchState( BRANCH_END ) )
+					        handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, start, ppKeywords.findKey( buffer, start, len ) );
 					    break;
 					default:
 					    problem = true;
@@ -1649,6 +1705,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		skipToNewLine();
 
+		branchState( BRANCH_IF );
+		
 		if ((definitions.get(buffer, idstart, idlen) != null) == positive) {
 			if (dlog != null) dlog.println((positive ? "#ifdef" : "#ifndef") //$NON-NLS-1$ //$NON-NLS-2$
 					+ " <TRUE> " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
@@ -1705,31 +1763,50 @@ public class Scanner2 implements IScanner, IScannerData {
 							case ppIfndef:
 							case ppIf:
 								++nesting;
+								branchState( BRANCH_IF );
 								break;
 							case ppElse:
-								if (checkelse && nesting == 0) {
-									skipToNewLine();
-									return;
-								}
+							    if( branchState( BRANCH_ELSE ) ){
+									if (checkelse && nesting == 0) {
+										skipToNewLine();
+										return;
+									}
+							    } else {
+							        //problem, ignore this one. 
+							        handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, start, ppKeywords.findKey( buffer, start, len ) );
+							        skipToNewLine();
+							    }
 								break;
 							case ppElif:
-								if (checkelse && nesting == 0) {
-									// check the condition
-									start = bufferPos[bufferStackPos];
-									skipToNewLine();
-									len = bufferPos[bufferStackPos] - start;
-									if (expressionEvaluator.evaluate(buffer, start, len, definitions) != 0)
-										// condition passed, we're good
-										return;
-								}
+							    if( branchState( BRANCH_ELIF ) ){
+									if (checkelse && nesting == 0) {
+										// check the condition
+										start = bufferPos[bufferStackPos];
+										skipToNewLine();
+										len = bufferPos[bufferStackPos] - start;
+										if (expressionEvaluator.evaluate(buffer, start, len, definitions) != 0)
+											// condition passed, we're good
+											return;
+									}
+							    } else {
+							        //problem, ignore this one. 
+							        handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, start, ppKeywords.findKey( buffer, start, len ) );
+							        skipToNewLine();
+							    }
 								break;
 							case ppEndif:
-								if (nesting > 0) {
-									--nesting;
-								} else {
-									skipToNewLine();
-									return;
-								}
+							    if( branchState( BRANCH_END ) ){
+									if (nesting > 0) {
+										--nesting;
+									} else {
+										skipToNewLine();
+										return;
+									}
+							    } else {
+							        //problem, ignore this one. 
+							        handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, start, ppKeywords.findKey( buffer, start, len ) );
+							        skipToNewLine();
+							    }
 								break;
 						}
 					}

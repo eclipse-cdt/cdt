@@ -1822,4 +1822,20 @@ public class Scanner2Test extends BaseScanner2Test
     	assertTrue( callback.problems.isEmpty() );
 
 	}
+    
+    public void testBug70073() throws Exception
+    {
+        StringBuffer buffer = new StringBuffer( "#if CONST \n #endif \n #elif CONST \n int" ); //$NON-NLS-1$
+        final List problems = new ArrayList();
+        ISourceElementRequestor requestor = new NullSourceElementRequestor() {
+            public boolean acceptProblem(IProblem problem)
+            {
+                problems.add( problem );
+                return super.acceptProblem( problem );
+            }
+        };
+        initializeScanner( buffer.toString(), ParserMode.COMPLETE_PARSE, requestor );
+        validateToken( IToken.t_int );
+        assertEquals( problems.size(), 1 );
+    }
 }

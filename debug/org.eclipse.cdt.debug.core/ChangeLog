@@ -1,3 +1,7 @@
+2004-01-29 Mikhail Khodjaiants
+	Added DebugEvent factory methods to 'CDebugElement'.
+	CDebugElement.java
+
 2004-01-15 Mikhail Khodjaiants
 	Fix for bug 48682: IThread.getBreakpoints() stubbed out.
 	* CDebugTarget.java

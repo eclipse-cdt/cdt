@@ -133,6 +133,13 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						exeFile);
 				}
 			} catch (CDIException e) {
+				if (dsession != null) {
+					try {
+						dsession.terminate();
+					} catch (CDIException ex) {
+						// ignore
+					}
+				}
 				abort(LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Failed_Launching_CDI_Debugger"), e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 			}
 		} else {

@@ -1,3 +1,10 @@
+2004-06-08 Alain Magloire
+	Make sure when something goes wrong before
+	getting out the launch sequence to terminate the session.
+
+	* src/org/eclise/cdt/launch/internal/CoreFileLaunchDelegate.java
+	* src/org/eclise/cdt/launch/internal/LocalCLaunchConfigurationDelegate.java
+
 2004-04-23 David Inglis
 
 	fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=59680

@@ -249,7 +249,7 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 			MessageDialog.openError(shell, title, message);
 			CPlugin.log(th);
 			try {
-				getProjectHandle().delete(true, true, null);
+				getProjectHandle().delete(false, false, null);
 			}
 			catch (CoreException ignore) {
 			}

@@ -1,4 +1,8 @@
 2004-09-27 Mikhail Khodjaiants
+	Use the new "getValue" method of "IAddress" for address comparison.
+	* Disassembly.java
+
+2004-09-27 Mikhail Khodjaiants
 	Target filtering fixes for watchpoints.
 	* CBreakpointManager.java
 

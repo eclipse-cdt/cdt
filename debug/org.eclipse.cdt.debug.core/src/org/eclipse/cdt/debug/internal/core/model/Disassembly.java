@@ -98,9 +98,7 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 		for( int i = 0; i < mi.length; ++i ) {
 			ICDIInstruction[] instructions = mi[i].getInstructions();
 			for ( int j = 0; j < instructions.length; ++j ) {
-				// TODO: better comparison of IAddress and BigInteger
-				BigInteger a = new BigInteger( address.toString() );
-				if ( a.equals( instructions[j].getAdress() ) )
+				if ( address.getValue().equals( instructions[j].getAdress() ) )
 					return true;
 			}
 		}

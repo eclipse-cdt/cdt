@@ -1,3 +1,7 @@
+2003-04-17 Mikhail Khodjaiants
+	Check if the underlying cdi variable is not null before accessing it.
+	* CVariable.java
+ 
 2003-04-16 Mikhail Khodjaiants
 	Quick fix for variable values.
 	* CValue.java

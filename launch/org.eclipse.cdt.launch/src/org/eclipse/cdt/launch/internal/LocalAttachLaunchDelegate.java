@@ -95,7 +95,7 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 							ICDITarget[] targets = dsession.getTargets();
 							for (int i = 0; i < targets.length; i++) {
 								CDIDebugModel.newDebugTarget(launch, project.getProject(), targets[i],
-															renderTargetLabel(debugConfig), null, exeFile, true, true);
+															renderTargetLabel(debugConfig), null, exeFile, true, true, false);
 							}
 						} catch (CoreException e) {
 							try {

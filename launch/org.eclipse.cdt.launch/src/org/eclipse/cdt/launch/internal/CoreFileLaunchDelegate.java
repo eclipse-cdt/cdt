@@ -83,7 +83,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 							iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(exePath.toOSString()));
 						}
 						CDIDebugModel.newDebugTarget(launch, project.getProject(), targets[i], renderTargetLabel(debugConfig),
-														iprocess, exeFile, false, false, false);
+														iprocess, exeFile, true, false, false);
 					}
 				} catch (CoreException e) {
 					try {

@@ -74,7 +74,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				MIMemoryChangedEvent miMem = (MIMemoryChangedEvent)miEvent;
 				Long[] addresses = miMem.getAddresses();
 				for (int i = 0; i < blocks.length; i++) {
-					if (blocks[i].contains(addresses)) {
+					if (blocks[i].contains(addresses) && ! blocks[i].isFrozen()) {
 						cdiList.add(new MemoryChangedEvent(session, blocks[i], miMem));
 					}
 				}

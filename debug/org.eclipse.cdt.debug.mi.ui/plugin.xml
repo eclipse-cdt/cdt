@@ -52,5 +52,25 @@
             id="org.eclipse.cdt.debug.mi.ui.MIPreferencePage">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.cdt.debug.core.model.ICDebugTarget"
+            class="org.eclipse.cdt.debug.mi.internal.ui.propertypages.OptionsPropertyPage"
+            name="%TargetOptionsPage.label"
+            id="org.eclipse.cdt.debug.mi.ui.propertypages.target.options">
+         <filter
+               value="isGDBTarget"
+               name="GDBTargetActionFilter"/>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="org.eclipse.cdt.debug.mi.internal.ui.ActionFilterAdapterFactory"
+            adaptableType="org.eclipse.cdt.debug.core.model.ICDebugTarget">
+         <adapter type="org.eclipse.ui.IActionFilter"/>
+      </factory>
+   </extension>
 
 </plugin>

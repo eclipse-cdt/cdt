@@ -1,3 +1,17 @@
+2004-11-08 Mikhail Khodjaiants
+	Added the "Automatically refresh registers" and "Automatically refresh shared libraries"
+	preferences and properties.
+	* ActionFilterAdapterFactory.java: new
+	* GDBTargetActionFilter.java: new
+	* PreferenceMessages.properties
+	* MIPreferencePage.java
+	* org.eclipse.cdt.debug.mi.internal.ui.propertypages: new package
+	* PropertyMessages.properties
+	* OptionsPropertyPage.java
+	* PropertyMessages.java
+	* plugin.properties
+	* plugin.xml
+
 2004-10-29 Alain Magloire
 	Changes to the CDI interface
 	* SeAutoSolibActionDelegate.java

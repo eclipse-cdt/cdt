@@ -80,7 +80,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * Queue of deltas created explicily by the C Model that
 	 * have yet to be fired.
 	 */
-	private ArrayList fCModelDeltas = new ArrayList();
+	ArrayList fCModelDeltas = new ArrayList();
 
 	/**
 	 * Queue of reconcile deltas on working copies that have yet to be fired.

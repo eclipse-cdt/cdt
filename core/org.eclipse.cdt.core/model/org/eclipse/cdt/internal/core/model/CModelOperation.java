@@ -525,13 +525,15 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
 		CModelManager manager= CModelManager.getDefault();
+		int previousDeltaCount = manager.fCModelDeltas.size();
 		try {
 			fMonitor = monitor;
 			execute();
 		} finally {
 			registerDeltas();
 			// Fire if we change somethings
-			if (!hasModifiedResource() || manager.reconcileDeltas.isEmpty()) {
+			 if ((manager.fCModelDeltas.size() > previousDeltaCount || !manager.reconcileDeltas.isEmpty())
+			 		 && !this.hasModifiedResource()) {
 				manager.fire(ElementChangedEvent.POST_CHANGE);
 			}
 		}

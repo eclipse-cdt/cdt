@@ -414,7 +414,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
                 isSystemIncludePath = true;
             } else if (projectLocation.isPrefixOf(typeLocation)
                     && projectLocation.isPrefixOf(headerLocation)) {
-                includePath = PathUtil.makeRelativePath(typeLocation, headerLocation);
+                includePath = PathUtil.makeRelativePath(typeLocation, headerLocation.removeLastSegments(1));
             }
             if (includePath == null)
                 includePath = typeLocation;

@@ -926,7 +926,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			            systemIncludePath = true;
 				} else {
 					if (projectPath.isPrefixOf(location.getPath()) && projectPath.isPrefixOf(header.getPath()))
-						relativePath = location.getRelativePath(header.getPath());
+						relativePath = location.getRelativePath(header.getPath().removeLastSegments(1));
 				}
 				baseClassFileName = relativePath.toString();
 			}

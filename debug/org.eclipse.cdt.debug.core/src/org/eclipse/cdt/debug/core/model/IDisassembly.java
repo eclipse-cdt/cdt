@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -25,4 +26,11 @@ public interface IDisassembly extends ICDebugElement {
 	 * @throws DebugException if this method fails.
 	 */
 	IDisassemblyBlock getDisassemblyBlock( ICStackFrame frame ) throws DebugException;
+
+	/**
+	 * Returns the address factory associated with this element.
+	 * 
+	 * @return the address factory
+	 */
+	IAddressFactory getAddressFactory();
 }

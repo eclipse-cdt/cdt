@@ -1,3 +1,4 @@
+2004-11-15 Mikhail Khodjaiants
 	Fix for bug 78604: Disassembly causes Java exception when disassembling beyond fn(?).
 	Added the "getAddressFactory" method to the "IDisassembly" interface.
 	* IDisassembly.java

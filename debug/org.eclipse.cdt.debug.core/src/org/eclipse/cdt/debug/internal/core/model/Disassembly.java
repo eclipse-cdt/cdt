@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -139,5 +140,12 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 				fBlocks[i] = null;
 			}
 		fireChangeEvent( DebugEvent.CONTENT );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IDisassembly#getAddressFactory()
+	 */
+	public IAddressFactory getAddressFactory() {
+		return ((CDebugTarget)getDebugTarget()).getAddressFactory();
 	}
 }

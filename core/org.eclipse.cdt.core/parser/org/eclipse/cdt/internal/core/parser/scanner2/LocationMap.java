@@ -186,6 +186,13 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       public char[] toCharArray() {
          return name;
       }
+      
+      /* (non-Javadoc)
+       * @see java.lang.Object#toString()
+       */
+      public String toString() {
+         return new String( name );
+      }
    }
    /**
     * @author jcamelon

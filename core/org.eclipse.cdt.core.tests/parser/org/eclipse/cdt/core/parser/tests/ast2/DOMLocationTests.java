@@ -101,9 +101,12 @@ public class DOMLocationTests extends AST2BaseTest {
          assertNotNull( macros );
          assertEquals( macros.length, 1 );
          assertSoleLocation( macros[0], code.indexOf( "#"), code.indexOf( "0x01") + 4 - code.indexOf( "#")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+         assertEquals( macros[0].getName().toString(), "FOOT" ); //$NON-NLS-1$
+         assertEquals( macros[0].getExpansion(), "0x01"); //$NON-NLS-1$
       }
-      
    }
+   
+   
    /**
     * @param declarator
     * @param offset

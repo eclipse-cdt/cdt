@@ -1,3 +1,7 @@
+2004-11-24 Alain Magloire
+	Remove unused class, reduce confusion in code maintainance.
+	* src/org/eclipse/cdt/internal/ui/util/ProblemItemMapper.java
+
 2004-11-19 Alain Magloire
 	Fix for PR 39204
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java

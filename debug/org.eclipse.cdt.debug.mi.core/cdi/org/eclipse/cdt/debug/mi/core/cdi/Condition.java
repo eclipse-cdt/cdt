@@ -15,7 +15,7 @@ public class Condition implements ICDICondition {
 
 	public Condition(int ignore, String exp) {
 		ignoreCount = ignore;
-		expression = exp;
+		expression = (exp == null) ? new String() : exp;
 	}
 
 	/**

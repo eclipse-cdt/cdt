@@ -1,4 +1,11 @@
 2004-06-09 Alain Magloire
+	Fix for PR 66338
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Condition.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Breakpoint.java
+
+2004-06-09 Alain Magloire
 
 	Keep the breakpoint disable when doing
 	deffered breakpoint installation.

@@ -403,16 +403,15 @@ public class BreakpointManager extends Manager implements ICDIBreakpointManager 
 		} catch (CDIException e) {
 			if (!deferred) {
 				throw e;
-			} else {
-				Session session = (Session)getSession();
-				ICDISharedLibraryManager sharedMgr  = session.getSharedLibraryManager();
-				if (sharedMgr instanceof SharedLibraryManager) {
-					SharedLibraryManager mgr = (SharedLibraryManager)sharedMgr;
-					if (mgr.isDeferredBreakpoint()) {
-						deferredList.add(bkpt);
-					} else {
-						throw e;
-					}
+			}
+			Session session = (Session)getSession();
+			ICDISharedLibraryManager sharedMgr  = session.getSharedLibraryManager();
+			if (sharedMgr instanceof SharedLibraryManager) {
+				SharedLibraryManager mgr = (SharedLibraryManager)sharedMgr;
+				if (mgr.isDeferredBreakpoint()) {
+					deferredList.add(bkpt);
+				} else {
+					throw e;
 				}
 			}
 		}

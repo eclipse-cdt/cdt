@@ -54,7 +54,7 @@ public class CPathEntryTest extends TestCase {
 			int flags = delta.getFlags();
 			int kind = delta.getKind();
 			if (kind == ICElementDelta.CHANGED ) {
-				if ((flags & ICElementDelta.F_ADDED_PATHENTRY_INCLUDE) != 0) {
+				if ((flags & ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE) != 0) {
 					count++;
 				}
 			}

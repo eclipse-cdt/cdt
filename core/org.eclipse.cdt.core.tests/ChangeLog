@@ -1,5 +1,10 @@
+2004-02-26 Alain Magloire
+	Update the cpathtest
+
 2004-02-25 Bogdan Gheorghe
 	Added DependencyTests::testUpdateDependencyNPE
+
+	* model/org/eclipse/cdt/core/model/test/CPathEntryTest.java
 
 2004-02-25 John Camelon
 	Updates for new ISourceElementRequestor interface updates.  

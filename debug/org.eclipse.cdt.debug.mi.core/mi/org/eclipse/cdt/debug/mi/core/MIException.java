@@ -17,6 +17,10 @@ package org.eclipse.cdt.debug.mi.core;
  *
  */
 public class MIException extends Exception {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3257844402679724085L;
 	String log = ""; //$NON-NLS-1$
 
 	public MIException(String s) {

@@ -1534,7 +1534,7 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		CTextTools textTools= CPlugin.getDefault().getTextTools();
 		affects |= textTools.affectsBehavior(event);
 									
-		return affects; // ? affects : super.affectsTextPresentation(event);
+		return affects ? affects : super.affectsTextPresentation(event);
 	}
 
 	private ICEditorContextMenuAction[] getContextMenuActions()

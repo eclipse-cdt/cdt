@@ -21,6 +21,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	MIDataReadMemoryInfo mem;
 	String expression;
 	boolean frozen;
+	boolean dirty;
 
 	public MemoryBlock(CTarget target, String exp, MIDataReadMemoryInfo info) {
 		super(target);
@@ -75,6 +76,20 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	}
 
 	/**
+	 * Use by the EventManager to check fire events when doing refresh().
+	 */
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	/**
+	 * Use by the EventManager to check fire events when doing refresh().
+	 */
+	public void setDirty(boolean d) {
+		dirty = d;
+	}
+
+	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#getBytes()
 	 */
 	public byte[] getBytes() throws CDIException {
@@ -99,6 +114,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	 */
 	public void refresh() throws CDIException {
 		MemoryManager mgr = (MemoryManager)getCTarget().getCSession().getMemoryManager();
+		setDirty(true);
 		mgr.update(this, null);
 	}
 

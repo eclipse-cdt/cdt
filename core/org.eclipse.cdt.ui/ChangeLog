@@ -1,3 +1,8 @@
+2003-09-26 David Inglis
+	fixes: https://bugs.eclipse.org/bugs/show_bug.cgi?id=43776
+	
+	* src/org/eclipse/cdt/internal/ui/text/CWordFinder.java
+
 2003-09-25 Andrew Niefer
 	-bug43129 - Search: Cannot search for definitions of global variables
 		- modify UI to allow selecting Definitions for more items

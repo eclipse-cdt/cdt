@@ -175,6 +175,7 @@ public class CWordFinder
 			while(pos >= 0) {
 				c = document.getChar( pos );
 				if(functionend == -1 && c == ' ' ) {
+					pos--;
 					continue;
 				}
 				

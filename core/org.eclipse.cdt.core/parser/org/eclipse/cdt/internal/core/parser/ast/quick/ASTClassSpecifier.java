@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.core.parser.ast.IASTTemplate;
+import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 /**
  * @author jcamelon
@@ -34,8 +34,7 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
         String name,
         ASTClassKind kind,
         ClassNameType type,
-        ASTAccessVisibility access,
-        IASTTemplate ownerTemplate)
+        ASTAccessVisibility access)
     {
     	super( scope, name );
         this.scope = scope; 
@@ -99,14 +98,14 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
      */
-    public int getElementNameOffset()
+    public int getNameOffset()
     {
-        return offsets.getElementNameOffset();
+        return offsets.getNameOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
      */
-    public void setElementNameOffset(int o)
+    public void setNameOffset(int o)
     {
         offsets.setNameOffset(o);
     }
@@ -128,16 +127,16 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
      */
-    public int getElementStartingOffset()
+    public int getStartingOffset()
     {
-        return offsets.getElementStartingOffset();
+        return offsets.getStartingOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
      */
-    public int getElementEndingOffset()
+    public int getEndingOffset()
     {
-        return offsets.getElementEndingOffset();
+        return offsets.getEndingOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.ast.quick.IASTQScope#addDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)

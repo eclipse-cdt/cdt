@@ -2067,8 +2067,8 @@ public class ParserSymbolTable {
 		public String getName() { return _name; }
 		public void setName(String name) { _name = name; }
 
-		public ISymbolASTExtension getASTNode() { return _object; }
-		public void setASTNode( ISymbolASTExtension obj ) { _object = obj; }
+		public ISymbolASTExtension getASTExtension() { return _object; }
+		public void setASTExtension( ISymbolASTExtension obj ) { _object = obj; }
 			
 		public IContainerSymbol getContainingSymbol() { return _containingScope; }
 		public void setContainingSymbol( IContainerSymbol scope ){ 

@@ -8,40 +8,51 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.quick;
+package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
+import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTUsingDirective
-	extends ASTDeclaration
-	implements IASTUsingDirective {
+public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUsingDirective
+{
+	private final IASTNamespaceDefinition namespace; 
+	private Offsets offsets = new Offsets();
+    /**
+     * @param namespaceDefinition
+     * @param startingOffset
+     * @param endingOffset
+     */
+    public ASTUsingDirective(IContainerSymbol ownerSymbol, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int endingOffset)
+    {
+    	super( ownerSymbol );
+        namespace = namespaceDefinition;
+        setStartingOffset(startingOffset);
+        setEndingOffset(endingOffset);
+    }
 
-
-	public ASTUsingDirective( IASTScope scope, String name, int startingOffset, int endingOffset )
-	{
-		super( scope );
-		this.namespaceName = name;
-		setStartingOffset(startingOffset);
-		setEndingOffset(endingOffset);
-		
-	}
-	private final String namespaceName;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTUsingDirective#getNamespaceName()
-	 */
-	public String getNamespaceName() {
-		return namespaceName;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTUsingDirective#getNamespaceName()
+     */
+    public String getNamespaceName()
+    {
+        String [] fqn = namespace.getFullyQualifiedName();
+        StringBuffer buffer = new StringBuffer(); 
+        for( int i = 0; i < fqn.length; ++i )
+        {
+        	buffer.append( fqn[ i ] );
+        	if( i + 1 != fqn.length ) 
+        		buffer.append( "::");
+        }
+        return buffer.toString();
+    }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
@@ -54,7 +65,7 @@ public class ASTUsingDirective
      */
     public void setEndingOffset(int o)
     {
-        offsets.setEndingOffset(o);
+        offsets.setEndingOffset( o );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
@@ -70,31 +81,34 @@ public class ASTUsingDirective
     {
         return offsets.getEndingOffset();
     }
-	private Offsets offsets = new Offsets();
+
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#accept(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	requestor.acceptUsingDirective(this);
+        // TODO Auto-generated method stub
     }
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enter(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
+        // TODO Auto-generated method stub
     }
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exit(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+     * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
+        // TODO Auto-generated method stub
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTUsingDirective#getNamespaceDefinition()
      */
     public IASTNamespaceDefinition getNamespaceDefinition() throws ASTNotImplementedException
     {
-        throw new ASTNotImplementedException();
+        return namespace;
     }
 }

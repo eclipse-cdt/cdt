@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
@@ -60,4 +61,18 @@ public class ASTField extends ASTVariable implements IASTField
     {
         return visibility;
     }
+    
+	public void acceptElement( ISourceElementRequestor requestor )
+	{
+		requestor.acceptField( this );	
+	}
+	
+	public void enterScope( ISourceElementRequestor requestor )
+	{
+	}
+	
+	public void exitScope( ISourceElementRequestor requestor )
+	{
+	}
+    
 }

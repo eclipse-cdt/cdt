@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
+import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 /**
  * @author jcamelon
  *
@@ -155,4 +157,20 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMember#getOwnerClassSpecifier()
      */
+     
+     
+	public void acceptElement( ISourceElementRequestor requestor )
+	{
+		requestor.acceptMethodDeclaration( this );
+	}
+	
+	public void enterScope( ISourceElementRequestor requestor )
+	{
+		requestor.enterMethodBody(this);
+	}
+	
+	public void exitScope( ISourceElementRequestor requestor )
+	{
+		requestor.exitMethodBody(this);
+	}
 }

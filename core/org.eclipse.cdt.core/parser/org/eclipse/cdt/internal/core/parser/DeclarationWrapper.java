@@ -312,7 +312,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     private IASTDeclaration createASTNode(Declarator declarator)
     {
-        boolean isWithinClass = (getScope() instanceof IASTClassSpecifier);
+        boolean isWithinClass = (getScope() instanceof IASTClassSpecifier); //TODO fix this for COMPLETE_PARSE
         boolean isFunction = declarator.isFunction();
         boolean hasInnerDeclarator = ( declarator.getOwnedDeclarator() != null );
         

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
@@ -61,6 +62,8 @@ public class TokenDuple implements ITokenDuple {
 		 * @see java.util.Iterator#next()
 		 */
 		public Object next() {
+			if( ! hasNext() )
+				throw new NoSuchElementException();
 			IToken temp = iter;
 			iter = iter.getNext();
 			return temp;

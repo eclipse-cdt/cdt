@@ -48,25 +48,25 @@ public class ASTMacro implements IASTMacro {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IOffsetableElementRW#setNameOffset(int)
 	 */
-	public void setElementNameOffset(int o) {
+	public void setNameOffset(int o) {
 		nameOffset = o; 
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IOffsetableElement#getElementStartingOffset()
 	 */
-	public int getElementStartingOffset() {
+	public int getStartingOffset() {
 		return startingOffset;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IOffsetableElement#getElementEndingOffset()
 	 */
-	public int getElementEndingOffset() {
+	public int getEndingOffset() {
 		return endingOffset;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IOffsetableElement#getElementNameOffset()
 	 */
-	public int getElementNameOffset() {
+	public int getNameOffset() {
 		return nameOffset;
 	}
     /* (non-Javadoc)

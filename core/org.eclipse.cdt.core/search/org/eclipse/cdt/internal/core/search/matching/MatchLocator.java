@@ -328,9 +328,9 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				}
 			}
 			
-			int offset = node.getElementNameOffset();
+			int offset = node.getNameOffset();
 			if( offset == 0 )
-				offset = node.getElementStartingOffset();
+				offset = node.getStartingOffset();
 				
 			if( currentResource != null ){
 				

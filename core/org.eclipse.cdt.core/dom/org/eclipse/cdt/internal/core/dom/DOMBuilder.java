@@ -466,10 +466,10 @@ public class DOMBuilder implements ISourceElementRequestor
         Macro m =
             new Macro(
                 macro.getName(),
-                macro.getElementNameOffset(),
-                macro.getElementStartingOffset(),
-                macro.getElementEndingOffset()
-                    - macro.getElementStartingOffset());
+                macro.getNameOffset(),
+                macro.getStartingOffset(),
+                macro.getEndingOffset()
+                    - macro.getStartingOffset());
         translationUnit.addMacro(m);
     }
     /* (non-Javadoc)
@@ -488,11 +488,11 @@ public class DOMBuilder implements ISourceElementRequestor
         SimpleDeclaration declaration =
             getTypeSpecOwner(
                 getCurrentDOMScope(),
-                variable.getElementStartingOffset());
+                variable.getStartingOffset());
         if (declaration == null)
         {
             declaration =
-                startSimpleDeclaration(variable.getElementStartingOffset());
+                startSimpleDeclaration(variable.getStartingOffset());
             declaration.getDeclSpecifier().setConst(
                 variable.getAbstractDeclaration().isConst());
             declaration.getDeclSpecifier().setExtern(variable.isExtern());
@@ -579,7 +579,7 @@ public class DOMBuilder implements ISourceElementRequestor
         SimpleDeclaration simpleDeclaration =
             getTypeSpecOwner(
                 getCurrentDOMScope(),
-                function.getElementStartingOffset());
+                function.getStartingOffset());
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptUsageDirective(org.eclipse.cdt.core.parser.ast.IASTUsageDirective)
@@ -647,9 +647,9 @@ public class DOMBuilder implements ISourceElementRequestor
         Inclusion i =
             new Inclusion(
                 inclusion.getName(),
-                inclusion.getElementNameOffset(),
-                inclusion.getElementStartingOffset(),
-                inclusion.getElementEndingOffset(),
+                inclusion.getNameOffset(),
+                inclusion.getStartingOffset(),
+                inclusion.getEndingOffset(),
                 inclusion.isLocal());
         translationUnit.addInclusion(i);
     }
@@ -662,10 +662,10 @@ public class DOMBuilder implements ISourceElementRequestor
             new NamespaceDefinition(getCurrentDOMScope());
         namespaceDef.setName(namespaceDefinition.getName());
         ((IOffsetable)namespaceDef).setStartingOffset(
-            namespaceDefinition.getElementStartingOffset());
+            namespaceDefinition.getStartingOffset());
         if (!namespaceDefinition.getName().equals(""))
             namespaceDef.setNameOffset(
-                namespaceDefinition.getElementNameOffset());
+                namespaceDefinition.getNameOffset());
         this.domScopes.push(namespaceDef);
     }
     /* (non-Javadoc)
@@ -675,7 +675,7 @@ public class DOMBuilder implements ISourceElementRequestor
     {
         SimpleDeclaration decl =
             startSimpleDeclaration(
-                classSpecification.getElementStartingOffset());
+                classSpecification.getStartingOffset());
         int kind = ClassKey.t_struct;
         int visibility = AccessSpecifier.v_public;
         if (classSpecification.getClassKind() == ASTClassKind.CLASS)
@@ -694,10 +694,10 @@ public class DOMBuilder implements ISourceElementRequestor
         ClassSpecifier classSpecifier = new ClassSpecifier(kind, decl);
         classSpecifier.setVisibility(visibility);
         classSpecifier.setStartingOffset(
-            classSpecification.getElementStartingOffset());
+            classSpecification.getStartingOffset());
         decl.setTypeSpecifier(classSpecifier);
         classSpecifier.setName(classSpecification.getName());
-        classSpecifier.setNameOffset(classSpecification.getElementNameOffset());
+        classSpecifier.setNameOffset(classSpecification.getNameOffset());
         domScopes.push(classSpecifier);
     }
     protected SimpleDeclaration startSimpleDeclaration(int startingOffset)
@@ -810,9 +810,9 @@ public class DOMBuilder implements ISourceElementRequestor
     {
         ClassSpecifier c = (ClassSpecifier)getCurrentDOMScope();
         c.setTotalLength(
-            classSpecification.getElementEndingOffset()
+            classSpecification.getEndingOffset()
                 + 1
-                - classSpecification.getElementStartingOffset());
+                - classSpecification.getStartingOffset());
         domScopes.pop();
     }
     /* (non-Javadoc)
@@ -822,8 +822,8 @@ public class DOMBuilder implements ISourceElementRequestor
     {
         NamespaceDefinition definition = (NamespaceDefinition)domScopes.pop();
         definition.setTotalLength(
-            namespaceDefinition.getElementEndingOffset()
-                - namespaceDefinition.getElementStartingOffset());
+            namespaceDefinition.getEndingOffset()
+                - namespaceDefinition.getStartingOffset());
         getCurrentDOMScope().addDeclaration(definition);
     }
     /* (non-Javadoc)
@@ -851,16 +851,16 @@ public class DOMBuilder implements ISourceElementRequestor
     public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration)
     {
         SimpleDeclaration decl =
-            startSimpleDeclaration(enumeration.getElementStartingOffset());
+            startSimpleDeclaration(enumeration.getStartingOffset());
         EnumerationSpecifier es = new EnumerationSpecifier(decl);
-        es.setStartingOffset(enumeration.getElementStartingOffset());
+        es.setStartingOffset(enumeration.getStartingOffset());
         es.setStartImage("enum");
         decl.setTypeSpecifier(es);
         es.setName(enumeration.getName());
         es.setTotalLength(
-            enumeration.getElementEndingOffset()
+            enumeration.getEndingOffset()
                 + 1
-                - enumeration.getElementStartingOffset());
+                - enumeration.getStartingOffset());
         Iterator i = enumeration.getEnumerators();
         while (i.hasNext())
         {
@@ -869,11 +869,11 @@ public class DOMBuilder implements ISourceElementRequestor
             es.addEnumeratorDefinition(definition);
             definition.setName(enumerator.getName());
             ((IOffsetable)definition).setStartingOffset(
-                enumerator.getElementNameOffset());
+                enumerator.getNameOffset());
             definition.setTotalLength(
-                enumerator.getElementEndingOffset()
+                enumerator.getEndingOffset()
                     + 1
-                    - enumerator.getElementStartingOffset());
+                    - enumerator.getStartingOffset());
         }
     }
     /* (non-Javadoc)

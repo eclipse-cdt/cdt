@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.internal.core.parser.ast.*;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
@@ -37,7 +38,7 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
         this.name = name; 
         this.mapping = mapping;
         setStartingOffset(startingOffset);
-        setElementNameOffset(nameOffset);
+        setNameOffset(nameOffset);
         qualifiedName = new ASTQualifiedNamedElement( scope, name );
     }
     /* (non-Javadoc)
@@ -57,14 +58,14 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
      */
-    public int getElementNameOffset()
+    public int getNameOffset()
     {
-        return offsets.getElementNameOffset();
+        return offsets.getNameOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
      */
-    public void setElementNameOffset(int o)
+    public void setNameOffset(int o)
     {
         offsets.setNameOffset(o);
     }
@@ -86,16 +87,16 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
      */
-    public int getElementStartingOffset()
+    public int getStartingOffset()
     {
-        return offsets.getElementStartingOffset();
+        return offsets.getStartingOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
      */
-    public int getElementEndingOffset()
+    public int getEndingOffset()
     {
-        return offsets.getElementEndingOffset();
+        return offsets.getEndingOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()

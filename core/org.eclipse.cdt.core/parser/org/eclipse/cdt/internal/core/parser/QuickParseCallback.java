@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
@@ -63,7 +64,7 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 
 	public class OffsetableIterator implements Iterator 
 	{		
-		private final Iterator declarationIter; 
+		private Iterator declarationIter; 
 		private final Iterator inclusionIter; 
 		private final Iterator macroIter; 
 	
@@ -71,7 +72,14 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 	
 		public OffsetableIterator()
 		{
-			declarationIter = compilationUnit.getDeclarations();
+			try
+            {
+                declarationIter = compilationUnit.getDeclarations();
+            }
+            catch (ASTNotImplementedException ne )
+            {
+                
+            }
 			inclusionIter = inclusions.iterator();
 			macroIter = macros.iterator();		
 			updateInclusionIterator(); 
@@ -125,30 +133,30 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 		
 			// case 3: 1 is null
 			if( currentMacro == null )
-				if( currentDeclaration.getElementStartingOffset() < currentInclusion.getElementStartingOffset() )
+				if( currentDeclaration.getStartingOffset() < currentInclusion.getStartingOffset() )
 					return updateDeclarationIterator(); 
 				else
 					return updateInclusionIterator(); 
 
 			if( currentInclusion == null )
-				if( currentDeclaration.getElementStartingOffset() < currentMacro.getElementStartingOffset() )
+				if( currentDeclaration.getStartingOffset() < currentMacro.getStartingOffset() )
 					return updateDeclarationIterator(); 
 				else
 					return updateMacroIterator(); 
 
 			if( currentDeclaration == null )
-				if( currentInclusion.getElementStartingOffset() < currentMacro.getElementStartingOffset() )
+				if( currentInclusion.getStartingOffset() < currentMacro.getStartingOffset() )
 					return updateInclusionIterator(); 
 				else
 					return updateMacroIterator(); 
 		
 			// case 4: none are null 
-			if( currentInclusion.getElementStartingOffset() < currentMacro.getElementStartingOffset() && 
-				currentInclusion.getElementStartingOffset() < currentDeclaration.getElementStartingOffset() ) 
+			if( currentInclusion.getStartingOffset() < currentMacro.getStartingOffset() && 
+				currentInclusion.getStartingOffset() < currentDeclaration.getStartingOffset() ) 
 				return updateInclusionIterator(); 
 			
-			if( currentMacro.getElementStartingOffset() < currentInclusion.getElementStartingOffset() && 
-				currentMacro.getElementStartingOffset() < currentDeclaration.getElementStartingOffset() ) 
+			if( currentMacro.getStartingOffset() < currentInclusion.getStartingOffset() && 
+				currentMacro.getStartingOffset() < currentDeclaration.getStartingOffset() ) 
 				return updateMacroIterator();
 			// only remaining case
 			return updateDeclarationIterator();

@@ -16,5 +16,5 @@ package org.eclipse.cdt.core.parser.ast;
  */
 public interface IASTScopedElement
 {
-	IASTScope getOwnerScope(); 
+	IASTScope getOwnerScope();
 }

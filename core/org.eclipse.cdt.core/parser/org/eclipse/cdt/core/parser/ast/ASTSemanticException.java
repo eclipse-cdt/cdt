@@ -20,6 +20,12 @@ public class ASTSemanticException extends Exception
 {
     private final IProblem theProblem;
 
+	public ASTSemanticException()
+	{
+		theProblem = null;
+	}
+
+
     /**
      * 
      */
@@ -33,7 +39,7 @@ public class ASTSemanticException extends Exception
     /**
      * @return
      */
-    public IProblem getTheProblem()
+    public IProblem getProblem()
     {
         return theProblem;
     }

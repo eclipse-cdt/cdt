@@ -10,12 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
@@ -24,7 +25,6 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
-import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
@@ -58,7 +58,16 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
+import org.eclipse.cdt.internal.core.parser.pst.ForewardDeclaredSymbolExtension;
+import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
+import org.eclipse.cdt.internal.core.parser.pst.NamespaceSymbolExtension;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
+import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionException;
 
 /**
  * @author jcamelon
@@ -84,8 +93,62 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int endingOffset)
         throws ASTSemanticException
     {
-        // TODO Auto-generated method stub
-        return null;
+		Iterator iter = duple.iterator();
+		if( ! iter.hasNext() )
+			throw new ASTSemanticException(); 
+			
+		IToken t1 = (IToken)iter.next();
+		IContainerSymbol symbol = null; 
+		
+        symbol = getScopeToSearchUpon(scope, t1 );
+		
+		while( iter.hasNext() )
+		{
+			IToken t = (IToken)iter.next(); 
+			if( t.getType() == IToken.tCOLONCOLON ) continue; 
+			try
+			{
+				symbol = symbol.LookupNestedNameSpecifier( t.getImage() );
+			}
+			catch( ParserSymbolTableException pste )
+			{
+				throw new ASTSemanticException();
+			}
+		}
+		
+		try {
+			((ASTScope)scope).getContainerSymbol().addUsingDirective( symbol );
+		} catch (ParserSymbolTableException pste) {	
+		}
+		
+		IASTUsingDirective astUD = new ASTUsingDirective( scopeToSymbol(scope), ((IASTNamespaceDefinition)symbol.getASTExtension().getPrimaryDeclaration()), startingOffset, endingOffset );
+		return astUD;
+    }
+    
+
+    protected IContainerSymbol getScopeToSearchUpon(
+        IASTScope currentScope,
+        IToken firstToken )
+    {
+		IContainerSymbol symbol = null;
+        if( firstToken.getType() == IToken.tCOLONCOLON )
+        	symbol = pst.getCompilationUnit();
+        else
+        {
+        	try
+        	{
+        		symbol = (IContainerSymbol)scopeToSymbol(currentScope).Lookup( firstToken.getImage() );
+        	}
+        	catch( ParserSymbolTableException pste )
+        	{
+        		
+        	}
+        }
+        return symbol;
+    }
+    protected IContainerSymbol scopeToSymbol(IASTScope currentScope)
+    {
+        return ((ASTScope)currentScope).getContainerSymbol();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createUsingDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, boolean, org.eclipse.cdt.core.parser.ITokenDuple, int, int)
@@ -119,19 +182,99 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTScope scope,
         String identifier,
         int startingOffset,
-        int nameOffset)
+        int nameOffset) throws ASTSemanticException
     {
-        // TODO Auto-generated method stub
-        return null;
+    	// first we look up the symbol in the PST see if it already exists 
+    	// if not we create it 
+    	// TODO : handle the anonymous case
+    	
+    	IContainerSymbol pstScope = scopeToSymbol(scope);
+    	ISymbol namespaceSymbol  = null; 
+    	try
+        {
+            namespaceSymbol = pstScope.Lookup( identifier );
+        }
+        catch (ParserSymbolTableException e)
+        {
+            throw new ASTSemanticException();
+        }
+        
+        if( namespaceSymbol != null )
+        {
+        	if( namespaceSymbol.getType() != ParserSymbolTable.TypeInfo.t_namespace )
+        		throw new ASTSemanticException(); 
+        }
+        else
+        {
+        	namespaceSymbol = pst.newContainerSymbol( identifier, ParserSymbolTable.TypeInfo.t_namespace );
+        	try
+            {
+                pstScope.addSymbol( namespaceSymbol );
+            }
+            catch (ParserSymbolTableException e1)
+            {
+            	// not overloading, should never happen
+            }
+        }
+        
+        ASTNamespaceDefinition namespaceDef = new ASTNamespaceDefinition( namespaceSymbol, startingOffset, nameOffset );
+        try
+        {
+            attachSymbolExtension( namespaceSymbol, namespaceDef );
+        }
+        catch (ExtensionException e1)
+        {
+        	// will not happen with namespaces
+        }
+        return namespaceDef;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createCompilationUnit()
      */
     public IASTCompilationUnit createCompilationUnit()
     {
-        // TODO Auto-generated method stub
-        return null;
+    	ISymbol symbol = pst.getCompilationUnit();
+    	ASTCompilationUnit compilationUnit = new ASTCompilationUnit( symbol );
+        try
+        {
+            attachSymbolExtension(symbol, compilationUnit );
+        }
+        catch (ExtensionException e)
+        {
+			//should not happen with CompilationUnit
+        }
+    	return compilationUnit; 
     }
+    
+    
+	protected void attachSymbolExtension(
+		ISymbol symbol,
+		ASTSymbol astSymbol ) throws ExtensionException
+	{
+		ISymbolASTExtension extension = symbol.getASTExtension();
+		if( extension == null )
+		{
+			if( astSymbol instanceof IASTNamespaceDefinition )
+				extension = new NamespaceSymbolExtension( symbol, astSymbol );
+			else if( astSymbol instanceof IASTFunction ) // TODO : other foreward declare cases
+			{
+				extension = new ForewardDeclaredSymbolExtension( symbol, astSymbol );
+			}
+			else
+			{
+				extension = new StandardSymbolExtension( symbol, astSymbol );
+			}
+			symbol.setASTExtension( extension );
+		}
+		else
+		{
+			extension.addDefinition( astSymbol );
+		}
+		
+		
+
+	}
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createLinkageSpecification(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, int)
      */
@@ -152,12 +295,41 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         ASTClassKind kind,
         ClassNameType type,
         ASTAccessVisibility access,
-        IASTTemplate ownerTemplateDeclaration,
         int startingOffset,
-        int nameOffset)
+        int nameOffset) throws ASTSemanticException
     {
-        // TODO Auto-generated method stub
-        return null;
+        IContainerSymbol containerSymbol = scopeToSymbol(scope);
+		ParserSymbolTable.TypeInfo.eType pstType = null;
+		
+		if( kind == ASTClassKind.CLASS )
+			pstType = ParserSymbolTable.TypeInfo.t_class;
+		else if( kind == ASTClassKind.STRUCT )
+			pstType = ParserSymbolTable.TypeInfo.t_struct;
+		else if( kind == ASTClassKind.UNION )
+			pstType = ParserSymbolTable.TypeInfo.t_union;
+		else
+			throw new ASTSemanticException();
+			
+        IDerivableContainerSymbol classSymbol = pst.newDerivableContainerSymbol( name, pstType );
+        try
+        {
+            containerSymbol.addSymbol( classSymbol );
+        }
+        catch (ParserSymbolTableException e)
+        {
+			throw new ASTSemanticException();
+        }
+        
+        ASTClassSpecifier classSpecifier = new ASTClassSpecifier( classSymbol, kind, type, access, startingOffset, nameOffset );
+        try
+        {
+            attachSymbolExtension(classSymbol, classSpecifier );
+        }
+        catch (ExtensionException e1)
+        {
+            throw new ASTSemanticException();
+        }
+        return classSpecifier;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#addBaseSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier, boolean, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility, java.lang.String)
@@ -463,8 +635,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int startingOffset,
         int endingOffset)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return new ASTAbstractTypeSpecifierDeclaration( scopeToSymbol(scope), typeSpecifier, template, startingOffset, endingOffset);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createPointerToFunction(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplate, org.eclipse.cdt.core.parser.ast.ASTPointerOperator)
@@ -514,11 +685,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         // TODO Auto-generated method stub
         return null;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createSymbolTableDeclarationExtension(org.eclipse.cdt.core.parser.ast.IASTDeclaration, org.eclipse.cdt.core.parser.ast.IASTDeclaration)
-     */
-    public ISymbolASTExtension createSymbolTableDeclarationExtension(IASTDeclaration declaration, IASTDeclaration definition) throws ASTNotImplementedException
-    {
-        return new SymbolExtension( declaration, definition );
-    }
+    
+    protected ParserSymbolTable pst = new ParserSymbolTable();
 }

@@ -53,14 +53,14 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
      */
-    public int getElementNameOffset()
+    public int getNameOffset()
     {
-        return offsets.getElementNameOffset();
+        return offsets.getNameOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
      */
-    public void setElementNameOffset(int o)
+    public void setNameOffset(int o)
     {
         offsets.setNameOffset(o);
     }
@@ -81,16 +81,16 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
      */
-    public int getElementStartingOffset()
+    public int getStartingOffset()
     {
-        return offsets.getElementStartingOffset();
+        return offsets.getStartingOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
      */
-    public int getElementEndingOffset()
+    public int getEndingOffset()
     {
-        return offsets.getElementEndingOffset();
+        return offsets.getEndingOffset();
     }
     
     private List enumerators = new ArrayList(); 

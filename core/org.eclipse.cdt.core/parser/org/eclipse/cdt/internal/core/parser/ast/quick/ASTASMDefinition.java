@@ -57,15 +57,15 @@ public class ASTASMDefinition
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
 	 */
-	public int getElementStartingOffset() {
-		return offsets.getElementStartingOffset();
+	public int getStartingOffset() {
+		return offsets.getStartingOffset();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
 	 */
-	public int getElementEndingOffset() {
-		return offsets.getElementEndingOffset();
+	public int getEndingOffset() {
+		return offsets.getEndingOffset();
 	}
 
     /* (non-Javadoc)

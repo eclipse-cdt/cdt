@@ -19,8 +19,7 @@ public interface IASTOffsetableElement {
 	public void setStartingOffset( int o ); 
 	public void setEndingOffset( int o );
 
-	public int getElementStartingOffset();
-	public int getElementEndingOffset(); 
-
+	public int getStartingOffset();
+	public int getEndingOffset(); 
 
 }

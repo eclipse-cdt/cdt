@@ -28,11 +28,11 @@ public class Offsets {
 		endingOffset = o;
 	}
 
-	public int getElementStartingOffset() {
+	public int getStartingOffset() {
 		return startingOffset;
 	}
 
-	public int getElementEndingOffset() {
+	public int getEndingOffset() {
 		return endingOffset;
 	}
 

@@ -8,16 +8,30 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTOffsetableNamedElement extends IASTOffsetableElement {
-
-	public String getName(); 
-	public int getNameOffset(); 
-	public void setNameOffset( int o );
+public class ASTSymbolOwner implements ISymbolOwner
+{
+    protected final ISymbol symbol;
+    /**
+     * 
+     */
+    public ASTSymbolOwner( ISymbol symbol )
+    {
+    	this.symbol = symbol;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner#getSymbol()
+     */
+    public ISymbol getSymbol()
+    {
+        return symbol;
+    }
 }

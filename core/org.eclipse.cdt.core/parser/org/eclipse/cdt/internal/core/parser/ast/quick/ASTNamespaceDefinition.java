@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.ast.*;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
@@ -46,14 +47,14 @@ public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamesp
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
 	 */
-	public int getElementNameOffset() {
-		return offsets.getElementNameOffset();
+	public int getNameOffset() {
+		return offsets.getNameOffset();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
 	 */
-	public void setElementNameOffset(int o) {
+	public void setNameOffset(int o) {
 		offsets.setNameOffset( o );
 	}
 
@@ -75,15 +76,15 @@ public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamesp
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
 	 */
-	public int getElementStartingOffset() {
-		return offsets.getElementStartingOffset();
+	public int getStartingOffset() {
+		return offsets.getStartingOffset();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
 	 */
-	public int getElementEndingOffset() {
-		return offsets.getElementEndingOffset();
+	public int getEndingOffset() {
+		return offsets.getEndingOffset();
 	}
 
 	private List declarations = new ArrayList(); 

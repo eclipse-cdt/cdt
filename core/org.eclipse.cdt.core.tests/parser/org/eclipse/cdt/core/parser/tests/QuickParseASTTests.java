@@ -1156,16 +1156,16 @@ public class QuickParseASTTests extends BaseASTTest
 		assertFalse( inclusions.hasNext());
 		
 		assertEquals( i.getName(), "stdio.h");
-		assertEquals( i.getElementStartingOffset(), 0 ); 
-		assertEquals( i.getElementNameOffset(), 10 ); 
-		assertEquals( i.getElementEndingOffset(), 18 );
+		assertEquals( i.getStartingOffset(), 0 ); 
+		assertEquals( i.getNameOffset(), 10 ); 
+		assertEquals( i.getEndingOffset(), 18 );
 		
 		
 		IASTMacro m = (IASTMacro)macros.next();
 		assertEquals( m.getName(), "DEF" ); 
-		assertEquals( m.getElementStartingOffset(), 19 );
-		assertEquals( m.getElementNameOffset(), 27 );
-		assertEquals( m.getElementEndingOffset(), 18 + 19);
+		assertEquals( m.getStartingOffset(), 19 );
+		assertEquals( m.getNameOffset(), 27 );
+		assertEquals( m.getEndingOffset(), 18 + 19);
 	}
 	
 	public void testTemplateDeclarationOfFunction() throws Exception

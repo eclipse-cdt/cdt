@@ -17,4 +17,5 @@ package org.eclipse.cdt.core.parser.ast;
 public interface IASTUsingDirective extends IASTDeclaration, IASTOffsetableElement {
 
 	public String getNamespaceName(); 
+	public IASTNamespaceDefinition getNamespaceDefinition() throws ASTNotImplementedException;
 }

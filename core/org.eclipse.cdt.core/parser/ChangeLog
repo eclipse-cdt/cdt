@@ -1,3 +1,8 @@
+2003-07-21 John Camelon
+	Fleshed out basic declarations for FullParse AST.
+	Fixed Bug 40554  - Fields coming back as Vars 
+	Fixed Bug 40555  - Methods come back as Functions 
+
 2003-07-18 John Camelon
 	Added ISourceElementCallbackDelegate interface for AST constructs to allow the Parser to delegate callback's to the nodes themselves.  
 	Got rid of ParserMode.STRUCTURAL_PARSE for the time being. 

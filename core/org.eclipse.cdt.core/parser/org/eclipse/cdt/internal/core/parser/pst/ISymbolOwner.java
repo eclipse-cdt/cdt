@@ -17,6 +17,4 @@ package org.eclipse.cdt.internal.core.parser.pst;
 public interface ISymbolOwner
 {
 	public ISymbol		   getSymbol(); 
-	public void			   setSymbol( ISymbol s );
-
 }

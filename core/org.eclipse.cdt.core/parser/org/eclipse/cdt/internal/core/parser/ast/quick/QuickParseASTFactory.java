@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
@@ -25,7 +24,6 @@ import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
-import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -59,7 +57,6 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
-import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 
 /**
  * @author jcamelon
@@ -90,7 +87,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	public IASTNamespaceDefinition createNamespaceDefinition(IASTScope scope, String identifier, int first, int nameOffset) {
 		IASTNamespaceDefinition definition = new ASTNamespaceDefinition( scope, identifier );
 		definition.setStartingOffset( first );
-		definition.setElementNameOffset( nameOffset );
+		definition.setNameOffset( nameOffset );
 		return definition;
 	}
 
@@ -118,10 +115,10 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ast.ClassKind, org.eclipse.cdt.core.parser.ast.ClassNameType, org.eclipse.cdt.core.parser.ast.AccessVisibility, org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
 	 */
-	public IASTClassSpecifier createClassSpecifier(IASTScope scope, String name, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, IASTTemplate ownerTemplateDeclaration, int startingOffset, int nameOffset) {
-		IASTClassSpecifier spec = new ASTClassSpecifier( scope, name, kind, type, access, ownerTemplateDeclaration );
+	public IASTClassSpecifier createClassSpecifier(IASTScope scope, String name, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, int startingOffset, int nameOffset)  throws ASTSemanticException {
+		IASTClassSpecifier spec = new ASTClassSpecifier( scope, name, kind, type, access );
 		spec.setStartingOffset( startingOffset );
-		spec.setElementNameOffset( nameOffset );
+		spec.setNameOffset( nameOffset );
 		return spec;
 	}
 
@@ -321,14 +318,4 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     {
         return new ASTPointerToMethod(scope, name, parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, nameOffset, ownerTemplate, isConst, isVolatile, isConstructor, isDestructor, isVirtual, isExplicit, isPureVirtual, visibility, pointerOperator);
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createSymbolTableDeclarationExtension(org.eclipse.cdt.core.parser.ast.IASTDeclaration, org.eclipse.cdt.core.parser.ast.IASTDeclaration)
-     */
-    public ISymbolASTExtension createSymbolTableDeclarationExtension(IASTDeclaration declaration, IASTDeclaration definition) throws ASTNotImplementedException
-    {
-    	throw new ASTNotImplementedException(); 
-    }
-
-
 }

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.internal.core.parser.ast.*;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
@@ -141,28 +142,28 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
    /* (non-Javadoc)
 	* @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
 	*/
-   public int getElementStartingOffset()
+   public int getStartingOffset()
    {
-	   return offsets.getElementStartingOffset();
+	   return offsets.getStartingOffset();
    }
    /* (non-Javadoc)
 	* @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
 	*/
-   public int getElementEndingOffset()
+   public int getEndingOffset()
    {
-	   return offsets.getElementEndingOffset();
+	   return offsets.getEndingOffset();
    }
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
 	 */
-	public int getElementNameOffset()
+	public int getNameOffset()
 	{
-	    return offsets.getElementNameOffset();
+	    return offsets.getNameOffset();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
 	 */
-	public void setElementNameOffset(int o)
+	public void setNameOffset(int o)
 	{
 	    offsets.setNameOffset(o);
 	}

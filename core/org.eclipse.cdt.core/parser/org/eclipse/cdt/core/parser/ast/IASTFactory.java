@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
-import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 /**
  * @author jcamelon
  *
@@ -51,7 +50,7 @@ public interface IASTFactory
         IASTScope scope,
         String identifier,
         int startingOffset,
-        int nameOffset);
+        int nameOffset) throws ASTSemanticException;
     public IASTCompilationUnit createCompilationUnit();
     public IASTLinkageSpecification createLinkageSpecification(
         IASTScope scope,
@@ -62,9 +61,8 @@ public interface IASTFactory
         ASTClassKind kind,
         ClassNameType type,
         ASTAccessVisibility access,
-        IASTTemplate ownerTemplateDeclaration,
         int startingOffset,
-        int nameOffset);
+        int nameOffset) throws ASTSemanticException;
     /**
      * @param astClassSpec
      * @param isVirtual
@@ -216,5 +214,4 @@ public interface IASTFactory
 		boolean isPureVirtual,
 		ASTAccessVisibility visibility, ASTPointerOperator pointerOperator);
 		
-	public ISymbolASTExtension createSymbolTableDeclarationExtension( IASTDeclaration declaration, IASTDeclaration definition ) throws ASTNotImplementedException;
 }

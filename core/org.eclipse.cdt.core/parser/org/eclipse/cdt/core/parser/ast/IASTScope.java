@@ -18,5 +18,5 @@ import java.util.Iterator;
  */
 public interface IASTScope {
 
-	public Iterator getDeclarations(); 
+	public Iterator getDeclarations() throws ASTNotImplementedException; 
 }

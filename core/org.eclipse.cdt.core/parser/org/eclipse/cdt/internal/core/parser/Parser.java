@@ -684,12 +684,21 @@ public class Parser implements IParser
         if (LT(1) == IToken.tLBRACE)
         {
             consume();
-            IASTNamespaceDefinition namespaceDefinition =
-                astFactory.createNamespaceDefinition(
-                    scope,
-                    (identifier == null ? "" : identifier.getImage()),
-                    first.getOffset(),
-                    (identifier == null ? 0 : identifier.getOffset()));
+            IASTNamespaceDefinition namespaceDefinition = null;
+            try
+            {
+                namespaceDefinition = 
+                    astFactory.createNamespaceDefinition(
+                        scope,
+                        (identifier == null ? "" : identifier.getImage()),
+                        first.getOffset(),
+                        (identifier == null ? 0 : identifier.getOffset()));
+            }
+            catch (ASTSemanticException e)
+            {
+                // TODO Auto-generated catch block
+
+            }
             namespaceDefinition.enterScope( requestor );
             namepsaceDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
@@ -2215,17 +2224,25 @@ public class Parser implements IParser
             backup(mark);
             throw backtrack;
         }
-        IASTClassSpecifier astClassSpecifier =
-            astFactory
-                .createClassSpecifier(
-                    sdw.getScope(),
-                    duple == null ? "" : duple.toString(),
-                    classKind,
-                    nameType,
-                    access,
-                    null,            //TODO add TemplateDeclaration here
-    classKey.getOffset(),
-        duple == null ? 0 : duple.getFirstToken().getOffset());
+        IASTClassSpecifier astClassSpecifier = null;
+        
+        try
+        {
+            astClassSpecifier = 
+                astFactory
+                    .createClassSpecifier(
+                        sdw.getScope(),
+                        duple == null ? "" : duple.toString(),
+                        classKind,
+                        nameType,
+                        access,
+                        classKey.getOffset(),
+            			duple == null ? 0 : duple.getFirstToken().getOffset());
+        }
+        catch (ASTSemanticException e)
+        {
+            // TODO Auto-generated catch block`
+        }
         sdw.setTypeSpecifier(astClassSpecifier);
         // base clause
         if (LT(1) == IToken.tCOLON)

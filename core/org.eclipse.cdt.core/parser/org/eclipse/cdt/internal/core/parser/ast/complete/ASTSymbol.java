@@ -8,31 +8,31 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.quick;
+package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.core.parser.ast.IASTScopedTypeSpecifier;
-import org.eclipse.cdt.internal.core.parser.ast.*;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTScopedTypeSpecifier extends ASTQualifiedNamedElement implements IASTScopedTypeSpecifier
+public abstract class ASTSymbol extends ASTSymbolOwner implements ISymbolOwner, IASTDeclaration
 {
-    private final IASTScope scope;
-    
-    public ASTScopedTypeSpecifier( IASTScope scope, String name )
+	
+    public ASTSymbol( ISymbol symbol )
     {
-    	super( scope, name );
-    	this.scope = scope;
+        super(symbol);
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTScopedElement#getOwnerScope()
      */
     public IASTScope getOwnerScope()
     {
-        return scope;
+        return (IASTScope)symbol.getContainingSymbol().getASTExtension().getPrimaryDeclaration();
     }
 
 }

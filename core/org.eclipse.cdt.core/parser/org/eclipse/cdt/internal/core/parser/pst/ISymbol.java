@@ -25,8 +25,8 @@ public interface ISymbol {
 	
 	public Object clone();
 		
-	public ISymbolASTExtension getASTNode(); 
-	public void setASTNode( ISymbolASTExtension obj );
+	public ISymbolASTExtension getASTExtension(); 
+	public void setASTExtension( ISymbolASTExtension obj );
 
 	public String getName();
 	

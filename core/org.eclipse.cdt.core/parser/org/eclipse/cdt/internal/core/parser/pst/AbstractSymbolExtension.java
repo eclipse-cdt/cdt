@@ -10,23 +10,36 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.pst;
 
-import java.util.Iterator;
-
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTSymbol;
 
 /**
  * @author jcamelon
  *
  */
-public interface ISymbolASTExtension extends ISymbolOwner
+public abstract class AbstractSymbolExtension implements ISymbolASTExtension
 {
-	public class ExtensionException extends Exception
-	{
-	}
-	
-	
-	public ASTSymbol       getPrimaryDeclaration();
-	public Iterator        getAllDefinitions();
-	public void            addDefinition( ASTSymbol definition ) throws ExtensionException; 	
+    protected final ISymbol symbol;
+    protected final ASTSymbol primaryDeclaration;
 
+    /**
+     * 
+     */
+    public AbstractSymbolExtension( ISymbol symbol, ASTSymbol primaryDeclaration )
+    {
+    	this.symbol = symbol;
+    	this.primaryDeclaration = primaryDeclaration;
+    }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner#getSymbol()
+	 */
+	public ISymbol getSymbol()
+	{
+		return symbol;
+	}
+
+    public ASTSymbol getPrimaryDeclaration()
+    {
+        return primaryDeclaration;
+    }
 }

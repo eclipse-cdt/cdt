@@ -18,12 +18,12 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.parser.ast.complete.SymbolExtension;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
-import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Mark;
@@ -102,20 +102,60 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, null );
 	}
 	
+	protected class NullSymbolExtension implements ISymbolASTExtension
+	{
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension#getPrimaryDeclaration()
+         */
+        public ASTSymbol getPrimaryDeclaration()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension#getAllDefinitions()
+         */
+        public Iterator getAllDefinitions()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension#addDefinition(org.eclipse.cdt.internal.core.parser.ast.complete.ASTSymbol)
+         */
+        public void addDefinition(ASTSymbol definition) throws ExtensionException
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner#getSymbol()
+         */
+        public ISymbol getSymbol()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+	}
+	
 	public void testSimpleSetGetObject() throws Exception{
 		newTable();
 		
 		IContainerSymbol x = table.new Declaration("x");
 		
-		ISymbolASTExtension extension = new SymbolExtension( null, null ); // cheating! 
+		ISymbolASTExtension extension = new NullSymbolExtension ();  
 		
-		x.setASTNode( extension );
+		x.setASTExtension( extension );
 				
 		table.getCompilationUnit().addSymbol( x );
 		
 		ISymbol look = table.getCompilationUnit().Lookup( "x" );
 		
-		assertEquals( look.getASTNode(), extension );
+		assertEquals( look.getASTExtension(), extension );
 	}
 	
 	/**

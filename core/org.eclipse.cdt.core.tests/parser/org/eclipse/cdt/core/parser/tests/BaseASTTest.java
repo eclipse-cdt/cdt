@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -58,7 +59,23 @@ public class BaseASTTest extends TestCase
 	
 	protected IASTDeclaration assertSoleDeclaration( String code ) throws ParserException
 	{
-		Iterator declarationIter = parse( code ).getDeclarations();
+		Iterator declarationIter = null;
+        try
+        {
+            try
+            {
+                declarationIter = parse(code).getDeclarations();
+            }
+            catch (ASTNotImplementedException e1)
+            {
+                // TODO Auto-generated catch block
+            }
+        }
+        catch (ParserException e)
+        {
+            // TODO Auto-generated catch block
+        }
+        assertNotNull( declarationIter );
 		assertTrue( declarationIter.hasNext() );
 		IASTDeclaration returnValue = (IASTDeclaration)declarationIter.next();
 		assertFalse( declarationIter.hasNext() );

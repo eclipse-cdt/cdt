@@ -22,7 +22,7 @@ public class NamedOffsets extends Offsets  {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
 	 */
-	public int getElementNameOffset() {
+	public int getNameOffset() {
 		return nameOffset;
 	}
 

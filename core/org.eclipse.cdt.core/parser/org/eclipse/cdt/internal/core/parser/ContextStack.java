@@ -55,7 +55,9 @@ public class ContextStack {
         }
 
 		undoStack.clear();
-		push( new ScannerContext().initialize(reader, filename, type, null, macroOffset, macroLength, startLine ), requestor );	
+		IScannerContext context = new ScannerContext().initialize(reader, filename, type, null, macroOffset, macroLength, startLine );
+		context.setExtension(inclusion); 
+		push( context, requestor );	
 	}
 	
 	protected void push( IScannerContext context, ISourceElementRequestor requestor ) throws ScannerException

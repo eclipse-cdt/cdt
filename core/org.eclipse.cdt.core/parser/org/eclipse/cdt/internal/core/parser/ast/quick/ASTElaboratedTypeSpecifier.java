@@ -69,15 +69,15 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
      */
-    public int getElementStartingOffset()
+    public int getStartingOffset()
     {
-        return offsets.getElementStartingOffset();
+        return offsets.getStartingOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
      */
-    public int getElementEndingOffset()
+    public int getEndingOffset()
     {
-        return offsets.getElementEndingOffset();
+        return offsets.getEndingOffset();
     }
 }

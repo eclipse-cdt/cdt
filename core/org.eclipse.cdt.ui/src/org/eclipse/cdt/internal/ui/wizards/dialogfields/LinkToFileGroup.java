@@ -103,7 +103,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	 * @see DialogField#getNumberOfControls
 	 */		
 	public int getNumberOfControls() {
-		return 5;	
+		return 4;	
 	}
 	
 	public Button getLinkCheckButtonControl(Composite parent){

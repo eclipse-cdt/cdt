@@ -664,12 +664,12 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 					if(localSiblings){
 						String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.member_type_exists", //$NON-NLS-1$
 								new String[]{fNewElementName, fCElement.getParent().getElementName()});
-						result.addError(msg);
+						result.addFatalError(msg);
 						
 					}else {
 						String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.global_member_type_exists", //$NON-NLS-1$
 								new String[]{fNewElementName, fCElement.getParent().getElementName()});
-						result.addError(msg);
+						result.addFatalError(msg);
 					}
 				}
 			}

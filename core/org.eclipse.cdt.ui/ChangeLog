@@ -1,3 +1,6 @@
+2004-06-24 Hoda Amer
+	Changing Refactoring name collision from Error to FatalError
+	
 2004-06-25 Chris Wiebe
 	Fix for PR# 49849: [New Class Wizard] Able to add a new C++ Class with the same name (at same location) from  New C++ Class Wizard
 	

@@ -32,6 +32,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
@@ -46,6 +48,11 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	private static final String DOWN = "BuildPropertyCommon.label.down"; //$NON-NLS-1$
 	private static final String EDIT = "BuildPropertyCommon.label.editVar"; //$NON-NLS-1$
 	
+	// Browse strategy constants
+	public static final int BROWSE_NONE = 0;
+	public static final int BROWSE_FILE = 1;
+	public static final int BROWSE_DIR = 2;
+	
 	// The top-level control for the field editor.
 	private Composite top;
 	// The list of tags.
@@ -56,7 +63,8 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	
 	private String fieldName;
 	private SelectionListener selectionListener;
-
+	private int browseType;
+	
 	// The button for adding the contents of the text field to the list
 	private Button addButton;
 	// The button for swapping the currently-selected list item down
@@ -73,9 +81,10 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	* @param labelText the label text of the field editor
 	* @param parent the parent of the field editor's control
 	*/
-	public BuildOptionListFieldEditor (String name, String labelText, Composite parent) {
+	public BuildOptionListFieldEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent);
 		this.fieldName = labelText;
+		browseType = BROWSE_NONE;
 	}
 
 	/* (non-Javadoc)
@@ -338,15 +347,34 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 			getPreferenceStore().setValue(getPreferenceName(), s);
 	}
 
+	/* (non-Javadoc)
+	 * Answers a <code>String</code> containing the value the user entered, or 
+	 * <code>null</code> if the user cancelled the interaction.
+	 * 
+	 * @return 
+	 */
 	protected String getNewInputObject() {
-		// Create a dialog to prompt for a new symbol or path
-		InputDialog dialog = new InputDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(TITLE), fieldName, new String(), null);
-//		BrowseEntryDialog dialog = new BrowseEntryDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(TITLE), fieldName, new String());
-		String input = new String();
-		if (dialog.open() == InputDialog.OK) {
-//		if (dialog.open() == BrowseEntryDialog.OK) {
-				input = dialog.getValue();
+		// Create a dialog to prompt for a new list item
+		String input = null;
+
+		if (browseType == BROWSE_DIR) {
+			DirectoryDialog browseDialog = new DirectoryDialog(getShell());
+			if (browseDialog != null) {
+				input = browseDialog.open();
+			}
+		} else if (browseType == BROWSE_FILE) {
+//			dialog = new BrowseEntryDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(TITLE), fieldName, new String());
+			FileDialog browseDialog = new FileDialog(getShell());
+			if (browseDialog != null) {
+				input = browseDialog.open();
+			}
+		} else {
+			InputDialog basicDialog = new InputDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(TITLE), fieldName, new String(), null);
+			if (basicDialog != null && basicDialog.open() == InputDialog.OK) {
+				input = basicDialog.getValue();
+			}
 		}
+
 		return input;
 	}
 
@@ -424,6 +452,15 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		upButton.setEnabled(size > 1 && index > 0);
 		// Enable the down button IFF there is more than 1 item and selection index not last item
 		downButton.setEnabled(size > 1 && index >= 0 && index < size - 1);
+	}
+
+	/**
+	 * Set the behaviour of the field editor when the new button is pressed. 
+	 * 
+	 * @param browseType
+	 */
+	public void setBrowseStrategy(int browseType) {
+		this.browseType = browseType;
 	}
 
 	/* (non-Javadoc)

@@ -1,4 +1,8 @@
 2004-11-26 Mikhail Khodjaiants
+	Fix for bug 79377: "Mixed disassembly" should fall back to disassembly w/o source when mixed disassembly fails.
+	* Disassembly.java
+
+2004-11-26 Mikhail Khodjaiants
 	Fix for bug 79583: Deffered breakpoints and shared library events.
 	* CSharedLibraryManager.java
 

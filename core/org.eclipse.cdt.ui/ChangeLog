@@ -1,6 +1,7 @@
 2004-07-19 Vladimir Hirsl
 
-	Support for SOM/XCoff
+	Implementation of HP-UX SOM binary parser page.
+
 	* src/org/eclipse/cdt/ui/dialogs/AbstractGnuBinaryParserPage.java
 	* src/org/eclipse/cdt/ui/dialogs/CygwinPEBinaryParserPage.java
 	* src/org/eclipse/cdt/ui/dialogs/GNUElfinaryParserpage.java

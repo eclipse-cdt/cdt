@@ -16,4 +16,10 @@ public class CygwinCommandFactory extends CommandFactory {
 		return new CygwinMIEnvironmentDirectory(pathdirs);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.core.command.CommandFactory#createMIEnvironmentCD(java.lang.String)
+	 */
+	public MIEnvironmentCD createMIEnvironmentCD(String pathdir) {
+		return new CygwinMIEnvironmentCD(pathdir);
+	}
 }

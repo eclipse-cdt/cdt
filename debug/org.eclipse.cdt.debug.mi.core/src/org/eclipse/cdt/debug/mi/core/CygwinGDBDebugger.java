@@ -86,7 +86,6 @@ public class CygwinGDBDebugger extends GDBDebugger {
 				// We ignore this exception, for example
 				// on GNU/Linux the new-console is an error.
 			}
-			initializeLibraries(config, session);
 			return session;
 		} catch (CDIException e) {
 			failed = true;

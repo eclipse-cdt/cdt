@@ -1,3 +1,11 @@
+2004-06-08 Alain Magloire
+
+	Fix for PR 65077
+
+	* mi/org/eclipse/cdt/debug/mi/core/command/CygwinCommandFactory.java
+	* mi/org/eclipse/cdt/debug/mi/core/command/CygwinMIEnvironmentCD.jav
+	* src/org/eclipse/cdt/debug/mi/core/CygwinGDBDebugger.java
+
 2004-06-02 Mikhail Khodjaiants
 
 	Moved externalized strings to the right property file.

@@ -1,4 +1,13 @@
 2004-05-05 Bogdan Gheorghe
+	Moved the index enablement constants to IndexManager to allow the index manager
+	to load enablement settings if not done so by the property page
+	
+	* src/org/eclipse/cdt/ui/dialogs/IndexerBlock.java
+	* src/org/eclipse/cdt/ui/dialogs/IndexerOptionDialogPage.java
+	* src/org/eclipse/cdt/ui/dialogs/IndexerOptionPropertyPage.java
+	
+	
+2004-05-05 Bogdan Gheorghe
 	Got rid of the old search context menus in CEditor, COutlineView, CView.
 	
 	

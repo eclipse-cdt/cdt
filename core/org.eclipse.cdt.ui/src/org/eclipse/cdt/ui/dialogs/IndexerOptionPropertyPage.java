@@ -136,12 +136,12 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 	private Boolean loadIndexerEnabledromCDescriptor(IProject project) throws CoreException {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 		
-		Node child = descriptor.getProjectData(IndexerBlock.CDT_INDEXER).getFirstChild();
+		Node child = descriptor.getProjectData(IndexManager.CDT_INDEXER).getFirstChild();
 		Boolean strBool = null;
 		
 		while (child != null) {
-			if (child.getNodeName().equals(IndexerBlock.INDEXER_ENABLED)) 
-				 strBool = Boolean.valueOf(((Element)child).getAttribute(IndexerBlock.INDEXER_VALUE));
+			if (child.getNodeName().equals(IndexManager.INDEXER_ENABLED)) 
+				 strBool = Boolean.valueOf(((Element)child).getAttribute(IndexManager.INDEXER_VALUE));
 			
 			
 			child = child.getNextSibling();

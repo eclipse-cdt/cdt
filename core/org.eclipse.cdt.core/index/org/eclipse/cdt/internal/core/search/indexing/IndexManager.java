@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.CRC32;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -42,6 +43,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 
 public class IndexManager extends JobManager implements IIndexConstants {
@@ -77,6 +80,9 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	public final static String ACTIVATION = "enable"; //$NON-NLS-1$
 	public final static QualifiedName activationKey = new QualifiedName(INDEX_MODEL_ID, ACTIVATION);
 	
+	public static final String INDEXER_ENABLED = "indexEnabled"; //$NON-NLS-1$
+	public static final String CDT_INDEXER = "cdt_indexer"; //$NON-NLS-1$
+	public static final String INDEXER_VALUE = "indexValue"; //$NON-NLS-1$
 	
 	public synchronized void aboutToUpdateIndex(IPath path, Integer newIndexState) {
 		// newIndexState is either UPDATING_STATE or REBUILDING_STATE
@@ -294,6 +300,18 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		
 		if (indexValue != null)
 			return indexValue.booleanValue();
+		
+		try {
+			//Load value for project
+			indexValue = loadIndexerEnabledromCDescriptor(project);
+			if (indexValue != null){
+				project.setSessionProperty(IndexManager.activationKey, indexValue);
+				return indexValue.booleanValue();
+			}
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		return false;
 	}
@@ -652,6 +670,23 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			AddCompilationUnitToIndex tempJob = (AddCompilationUnitToIndex) job;
 			jobSet.remove(tempJob.resource.getLocation());
 		}
+	}
+	
+	private Boolean loadIndexerEnabledromCDescriptor(IProject project) throws CoreException {
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		
+		Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
+		Boolean strBool = null;
+		
+		while (child != null) {
+			if (child.getNodeName().equals(INDEXER_ENABLED)) 
+				 strBool = Boolean.valueOf(((Element)child).getAttribute(INDEXER_VALUE));
+			
+			
+			child = child.getNextSibling();
+		}
+		
+		return strBool;
 	}
 
 }

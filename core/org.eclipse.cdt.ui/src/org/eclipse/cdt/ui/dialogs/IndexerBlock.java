@@ -25,9 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 public class IndexerBlock extends AbstractCOptionPage {
 	
 	private IndexerOptionDialogPage optionPage;
-	public static final String INDEXER_ENABLED = "indexEnabled"; //$NON-NLS-1$
-	public static final String CDT_INDEXER = "cdt_indexer"; //$NON-NLS-1$
-	public static final String INDEXER_VALUE = "indexValue"; //$NON-NLS-1$
+
 
 	private static final String INDEXER_LABEL = "IndexerBlock.label"; //$NON-NLS-1$
 	private static final String INDEXER_DESC = "IndexerBlock.desc"; //$NON-NLS-1$

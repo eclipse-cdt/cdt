@@ -88,7 +88,7 @@ public class IndexerOptionDialogPage extends DialogPage {
 		try {
 			newProject = project;
 			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject);
-			rootElement = descriptor.getProjectData(IndexerBlock.CDT_INDEXER);
+			rootElement = descriptor.getProjectData(IndexManager.CDT_INDEXER);
 		
 		
 		// Clear out all current children
@@ -115,14 +115,14 @@ public class IndexerOptionDialogPage extends DialogPage {
 			e.printStackTrace();
 		}
 	}
-	
+	 
 	
 	private static void saveIndexerEnabled (boolean indexerEnabled, Element rootElement, Document doc ) {
 		
-		Element indexEnabled = doc.createElement(IndexerBlock.INDEXER_ENABLED);
+		Element indexEnabled = doc.createElement(IndexManager.INDEXER_ENABLED);
 		Boolean tempValue= new Boolean(indexerEnabled);
 		
-		indexEnabled.setAttribute(IndexerBlock.INDEXER_VALUE,tempValue.toString());
+		indexEnabled.setAttribute(IndexManager.INDEXER_VALUE,tempValue.toString());
 		rootElement.appendChild(indexEnabled);
 
 	}

@@ -931,6 +931,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         	 
         //Its possible that the parent is not an IContainerSymbol if its a template parameter or some kinds of template instances
 		ISymbol symbol = lookupQualifiedName( classSymbol, parentClassName, references, true );
+		
+		if( symbol == null )
+			handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND,parentClassName.toString(), parentClassName.getStartOffset(), parentClassName.getEndOffset(), parentClassName.getLineNumber(), true);
+		else if( symbol instanceof ITemplateSymbol )
+			handleProblem( IProblem.SEMANTIC_INVALID_TEMPLATE_ARGUMENT, parentClassName.toString(), parentClassName.getStartOffset(), parentClassName.getEndOffset(), parentClassName.getLineNumber(), true);
+			
 		List [] templateArgumentLists = parentClassName.getTemplateIdArgLists();
 		if( templateArgumentLists != null )
 		{

@@ -1947,4 +1947,24 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	{
     	parse( "const char * x = __FILE__;"); //$NON-NLS-1$
 	}
+    
+    public void testBug67680() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "template < class T> class Base {};                  \n" );
+    	writer.write( "class Derived : public Base, Base<int>, foo {};     \n" );
+    	
+    	Iterator i = parse( writer.toString(), false ).getDeclarations();
+    	
+    	IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+    	IASTClassSpecifier base = (IASTClassSpecifier) template.getOwnedDeclaration();
+    	IASTClassSpecifier derived = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+    	
+    	//only Base<int> is a valid parent, Base and foo are not expected to show up in the iterator.
+    	i = derived.getBaseClauses();
+    	IASTBaseSpecifier parent = (IASTBaseSpecifier) i.next();
+    	assertFalse( i.hasNext() );
+    	
+    	assertEquals( parent.getParentClassSpecifier(), base );
+	}
 }

@@ -2856,10 +2856,14 @@ public abstract class Parser extends ExpressionParser implements IParser
 	            	int size = bases.size();
 	            	for( int i = 0; i < size; i++ ){
 	            		Object [] data = (Object[]) bases.get( i );
-	            		astFactory.addBaseSpecifier( astClassSpec, 
-	            				                     ((Boolean)data[0]).booleanValue(),
-	            		                             (ASTAccessVisibility) data[1], 
-													 (ITokenDuple)data[2] );
+	            		try {
+							astFactory.addBaseSpecifier( astClassSpec, 
+									                     ((Boolean)data[0]).booleanValue(),
+							                             (ASTAccessVisibility) data[1], 
+														 (ITokenDuple)data[2] );
+						} catch (ASTSemanticException e1) {
+							failParse();
+						}
 	            	}
 	            }
 	            
@@ -2872,7 +2876,6 @@ public abstract class Parser extends ExpressionParser implements IParser
 	        catch (ASTSemanticException e)
 	        {
 				failParse();
-				throwBacktrack(e.getProblem());
 	        } catch (Exception e)
 	        {
 	        	logException( "baseSpecifier_2::addBaseSpecifier", e ); //$NON-NLS-1$

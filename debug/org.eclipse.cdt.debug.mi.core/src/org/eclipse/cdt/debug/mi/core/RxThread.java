@@ -255,6 +255,8 @@ MIPlugin.getDefault().debugLog(line);
 				}
 			}
 		} else if (stream instanceof MILogStreamOutput) {
+			/*
+			// This is meant for the gdb console.
 			OutputStream log = session.getMIInferior().getPipedErrorStream();
 			if (log != null) {
 				MILogStreamOutput out = (MILogStreamOutput)stream;
@@ -267,6 +269,7 @@ MIPlugin.getDefault().debugLog(line);
 					}
 				}
 			}
+			*/
 		}
 	}
 

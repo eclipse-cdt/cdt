@@ -1,3 +1,8 @@
+2004-11-26 Alain Magloire
+	Fix for PR 79582
+	* src/org/eclipse/cdt/debug/mi/core/CygwinGDBCDIDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBServerCDIDebugger.java
+
 2004-11-24 Alain Magloire
 	Make the terminate() more responsive when gdb is shuting down.
 	See long discussion part of the 77435 fixes and 40087.

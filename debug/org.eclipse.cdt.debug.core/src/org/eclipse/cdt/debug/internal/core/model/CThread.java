@@ -864,9 +864,11 @@ public class CThread extends CDebugElement
 
 	private void handleTerminatedEvent( ICDIDestroyedEvent event )
 	{
+/*
 		setCurrentStateId( IState.TERMINATED );
 		setCurrentStateInfo( null );
 		terminated();
+*/
 	}
 
 	private void handleDisconnectedEvent( ICDIDisconnectedEvent event )

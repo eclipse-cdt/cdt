@@ -1,4 +1,11 @@
 2004-06-03 Mikhail Khodjaiants
+	Added new images for the "Auto-Refresh" and "Refresh" actions.
+	* icons/full/dlcl16/auto_refresh_co.gif
+	* icons/full/dlcl16/refresh_co.gif
+	* icons/full/elcl16/auto_refresh_co.gif
+	* icons/full/elcl16/refresh_co.gif
+
+2004-06-03 Mikhail Khodjaiants
 	Changed the breakpoints and watchpoints label resources.
 	* CDebugUIPluginResources.properties
 	* CDTDebugModelPresentation.java

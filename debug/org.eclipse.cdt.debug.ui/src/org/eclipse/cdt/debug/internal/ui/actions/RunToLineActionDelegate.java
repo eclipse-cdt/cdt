@@ -104,18 +104,22 @@ public class RunToLineActionDelegate extends AbstractEditorActionDelegate
 
 	protected void runToLine( IResource resource, int lineNumber )
 	{
-		if ( !((IRunToLine)getDebugTarget()).canRunToLine( resource, lineNumber ) )
+		IRunToLine target = (IRunToLine)getDebugTarget().getAdapter( IRunToLine.class );
+		if ( target != null )
 		{
-			getTargetPart().getSite().getShell().getDisplay().beep();
-			return;
-		}
-		try
-		{
-			((IRunToLine)getDebugTarget()).runToLine( resource, lineNumber );
-		}
-		catch( DebugException e )
-		{
-			CDebugUIPlugin.errorDialog( e.getMessage(), e );
+			if ( !target.canRunToLine( resource, lineNumber ) )
+			{
+				getTargetPart().getSite().getShell().getDisplay().beep();
+				return;
+			}
+			try
+			{
+				target.runToLine( resource, lineNumber );
+			}
+			catch( DebugException e )
+			{
+				CDebugUIPlugin.errorDialog( e.getMessage(), e );
+			}
 		}
 	}
 }

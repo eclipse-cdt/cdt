@@ -1,4 +1,9 @@
 2002-11-28 Mikhail Khodjaiants
+	Fixes for 'Run to line' actions.
+	* RunToLineActionDelegate.java
+	* RunToLineRulerAction.java
+
+2002-11-28 Mikhail Khodjaiants
 	Live editing of the memory view.
 	* SaveMemoryChangesAction.java - removed
 	* MemoryPresentation.java

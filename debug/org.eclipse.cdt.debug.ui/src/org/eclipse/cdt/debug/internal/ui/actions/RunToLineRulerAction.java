@@ -10,8 +10,6 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
@@ -41,7 +39,7 @@ public class RunToLineRulerAction extends Action
 {
 	private IVerticalRulerInfo fInfo;
 	private ITextEditor fTextEditor;
-	private IDebugTarget fDebugTarget = null;
+	private IRunToLine fTarget = null;
 
 	/**
 	 * Constructor for RunToLineRulerAction.
@@ -51,7 +49,7 @@ public class RunToLineRulerAction extends Action
 		setInfo( info );
 		setTextEditor( editor );
 		setText( "Run To Line" );
-		initializeDebugTarget();
+		initializeTarget();
 		update();
 	}
 
@@ -67,7 +65,7 @@ public class RunToLineRulerAction extends Action
 		IDocument doc = provider.getDocument( getTextEditor().getEditorInput() );
 		if ( resource != null && lineNumber <= doc.getNumberOfLines() && lineNumber > 0 )
 		{
-			enabled = ( getDebugTarget() != null && ((IRunToLine)getDebugTarget()).canRunToLine( resource, lineNumber ) );
+			enabled = ( getTarget() != null && ((IRunToLine)getTarget()).canRunToLine( resource, lineNumber ) );
 		}
 		setEnabled( enabled );
 	}
@@ -85,48 +83,40 @@ public class RunToLineRulerAction extends Action
 	 */
 	public void selectionChanged( IWorkbenchPart part, ISelection selection )
 	{
-		IDebugTarget target = null;
+		IRunToLine target = null;
 		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
 		{
 			if ( selection != null && selection instanceof IStructuredSelection )
 			{
 				Object element = ((IStructuredSelection)selection).getFirstElement();
-				if ( element != null && element instanceof IDebugElement )
+				if ( element != null && element instanceof IRunToLine )
 				{
-					IDebugTarget target1 = ((IDebugElement)element).getDebugTarget();
-					if ( target1 != null && target1 instanceof IRunToLine )
-					{
-						target = target1;
-					}
+					target = (IRunToLine)element;
 				}
 			}
-			setDebugTarget( target );
+			setTarget( target );
 			update();
 		}
 	}
 	
-	protected void initializeDebugTarget()
+	protected void initializeTarget()
 	{
-		setDebugTarget( null );
+		setTarget( null );
 		IAdaptable context = DebugUITools.getDebugContext();
-		if ( context != null && context instanceof IDebugElement )
+		if ( context != null && context instanceof IRunToLine )
 		{
-			IDebugTarget target = ((IDebugElement)context).getDebugTarget();
-			if ( target != null && target instanceof IRunToLine )
-			{
-				setDebugTarget( target );
-			}			
+			setTarget( (IRunToLine)context );
 		}
 	}
 
-	protected void setDebugTarget( IDebugTarget target )
+	protected void setTarget( IRunToLine target )
 	{
-		fDebugTarget = target;
+		fTarget = target;
 	}
 	
-	protected IDebugTarget getDebugTarget()
+	protected IRunToLine getTarget()
 	{
-		return fDebugTarget;
+		return fTarget;
 	}
 
 	protected IVerticalRulerInfo getInfo()
@@ -166,14 +156,14 @@ public class RunToLineRulerAction extends Action
 
 	protected void runToLine( IResource resource, int lineNumber )
 	{
-		if ( !((IRunToLine)getDebugTarget()).canRunToLine( resource, lineNumber ) )
+		if ( !((IRunToLine)getTarget()).canRunToLine( resource, lineNumber ) )
 		{
 			getTextEditor().getSite().getShell().getDisplay().beep();
 			return;
 		}
 		try
 		{
-			((IRunToLine)getDebugTarget()).runToLine( resource, lineNumber );
+			((IRunToLine)getTarget()).runToLine( resource, lineNumber );
 		}
 		catch( DebugException e )
 		{

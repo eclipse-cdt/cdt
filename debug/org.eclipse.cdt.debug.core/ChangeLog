@@ -1,3 +1,10 @@
+2003-06-09 Mikhail Khodjaiants
+	Renamed the 'refresh' method of ICVariable to 'reset'. Added new method - 
+	'reset' to CValue instead of using the 'setChanged' method.
+	* ICVariable.java
+	* CValue.java
+	* CVariable.java
+
 2003-06-06 Mikhail Khodjaiants
 	Mark as changed parent variables.
 	* CVariable.java

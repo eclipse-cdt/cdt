@@ -411,11 +411,11 @@ public abstract class CVariable extends CDebugElement
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.model.ICVariable#refresh()
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#reset()
 	 */
-	public void refresh() throws DebugException
+	public void reset() throws DebugException
 	{
-		((ICValue)getValue()).setChanged( true );
+		((CValue)getValue()).reset();
 		fireChangeEvent( DebugEvent.STATE );
 	}
 

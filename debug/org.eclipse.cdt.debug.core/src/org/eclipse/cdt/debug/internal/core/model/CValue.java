@@ -557,4 +557,14 @@ public class CValue extends CDebugElement implements ICValue
 		}
 		return valueString;
 	}
+
+	protected void reset() throws DebugException
+	{
+		fValueString = null;
+		Iterator it = fVariables.iterator();
+		while( it.hasNext() )
+		{
+			((CVariable)it.next()).reset();
+		}
+	}
 }

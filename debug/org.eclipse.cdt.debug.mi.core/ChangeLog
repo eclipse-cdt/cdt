@@ -1,5 +1,9 @@
 2002-11-28 Alain Magloire
 
+	* src/.../mi/core/cdi/MemoryBlock.java (setValue):  Only get a byte.
+
+2002-11-28 Alain Magloire
+
 	* src/.../mi/core/cdi/CTarget.java (runUntil): new method implemented.
 	* src/.../mi/core/cdi/CThread.java (runUntil): new method implemented.
 

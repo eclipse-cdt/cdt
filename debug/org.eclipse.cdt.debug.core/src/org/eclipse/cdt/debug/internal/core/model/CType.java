@@ -70,9 +70,8 @@ public class CType implements ICType
 		}
 		int[] dims = new int[length];
 		type = getCDIType();
-		for ( int i = length; i > 0; --i )
-		{
-			dims[i - 1] = ((ICDIArrayType)type).getDimension();
+		for (int i = 0; i < length; i++) {
+			dims[i] = ((ICDIArrayType)type).getDimension();
 			type = ((ICDIDerivedType)type).getComponentType();
 		}
 		return dims;

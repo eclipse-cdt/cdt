@@ -1,3 +1,7 @@
+2004-08-14 Alain Magloire
+	Fix for 71992.
+	* CType.java
+
 2004-04-22 Mikhail Khodjaiants
 	Additional fix for bug 58711: Breakpoint race condition.
 	* CBreakpointManager.java

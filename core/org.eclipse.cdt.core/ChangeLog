@@ -1,3 +1,8 @@
+2003-12-04 David Inglis
+	Fixed bug# 48063
+	
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+
 2003-12-03 Hoda Amer
 	Content Assist work :Moved CompletionEngine out of CDT core
 	

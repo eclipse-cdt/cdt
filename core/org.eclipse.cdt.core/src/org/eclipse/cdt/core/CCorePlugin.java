@@ -698,7 +698,7 @@ public class CCorePlugin extends Plugin {
 		if (project != null) {
 			try {
 				ICDescriptor desc = (ICDescriptor) getCProjectDescription(project);
-				ICExtensionReference[] extensions = desc.get(BUILD_SCANNER_INFO_UNIQ_ID);
+				ICExtensionReference[] extensions = desc.get(BUILD_SCANNER_INFO_UNIQ_ID, true);
 				if (extensions.length > 0)
 					provider = (IScannerInfoProvider) extensions[0].createExtension();
 			} catch (CoreException e) {

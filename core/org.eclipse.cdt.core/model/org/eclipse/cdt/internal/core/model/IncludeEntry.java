@@ -52,5 +52,37 @@ public class IncludeEntry extends ACPathEntry implements IIncludeEntry {
 	public boolean isSystemInclude() {
 		return isSystemInclude;
 	}
+
+	public boolean equals(Object obj) {
+		if (obj instanceof IIncludeEntry) {
+			IIncludeEntry otherEntry = (IIncludeEntry)obj;
+			if (!super.equals(otherEntry)) {
+				return false;
+			}
+			if (resourcePath == null) {
+				if (otherEntry.getResourcePath() != null) {
+					return false;
+				}
+			} else {
+				if (!resourcePath.toString().equals(otherEntry.getResourcePath().toString())) {
+					return false;
+				}
+			}
+			if (includePath == null) {
+				if (otherEntry.getIncludePath() != null) {
+					return false;
+				}
+			} else {
+				if (!includePath.toString().equals(otherEntry.getIncludePath().toString())) {
+					return false;
+				}
+			}
+			if (isSystemInclude != otherEntry.isSystemInclude()) {
+				return false;
+			}
+			return true;
+		}
+		return super.equals(obj);
+	}
  
 }

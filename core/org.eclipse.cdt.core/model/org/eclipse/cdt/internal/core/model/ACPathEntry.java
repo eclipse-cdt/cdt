@@ -41,5 +41,34 @@ public abstract class ACPathEntry extends CPathEntry {
 	public boolean isRecursive() {
 		return isRecursive;
 	}
- 
+
+	public boolean equals(Object obj) {
+		if (obj instanceof ACPathEntry) {
+			ACPathEntry otherEntry = (ACPathEntry)obj;
+			if (!super.equals(otherEntry)) {
+				return false;
+			}
+			if (isRecursive != otherEntry.isRecursive()) {
+				return false;
+			}
+			IPath[] otherExcludes = otherEntry.getExclusionPatterns();
+			if (exclusionPatterns != otherExcludes) {
+				int excludeLength = (exclusionPatterns == null) ? 0 : exclusionPatterns.length;
+				if (otherExcludes.length != excludeLength) {
+					return false;
+				}
+				for (int i = 0; i < excludeLength; i++) {
+					// compare toStrings instead of IPaths
+					// since IPath.equals is specified to ignore trailing separators
+					String myPattern = exclusionPatterns[i].toString();
+					if (!myPattern.equals(otherExcludes[i].toString())) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		return super.equals(obj);
+	}
+
 }

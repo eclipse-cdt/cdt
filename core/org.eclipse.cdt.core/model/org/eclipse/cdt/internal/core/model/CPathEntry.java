@@ -39,15 +39,18 @@ public class CPathEntry implements ICPathEntry {
 		return isExported;
 	}
 
-	public boolean equals(ICPathEntry otherEntry) {
-		return entryKind == otherEntry.getEntryKind();
-	}
-
-	public boolean equals(Object object) {
-		if (object instanceof ICPathEntry) {
-			return equals((ICPathEntry) object);
+	public boolean equals(Object obj) {
+		if (obj instanceof ICPathEntry) {
+			ICPathEntry otherEntry = (ICPathEntry)obj;
+			if (entryKind != otherEntry.getEntryKind()) {
+				return false;
+			}
+			if (isExported != otherEntry.isExported()) {
+				return false;
+			}
+			return true;
 		}
-		return super.equals(object);
+		return super.equals(obj);
 	}
 
 	/**

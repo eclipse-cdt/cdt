@@ -44,4 +44,33 @@ public class SourceEntry extends ACPathEntry implements ISourceEntry {
 		return outputLocation;
 	}
 
+	public boolean equals (Object obj) {
+		if (obj instanceof ISourceEntry) {
+			ISourceEntry otherEntry = (ISourceEntry)obj;
+			if (!super.equals(otherEntry)) {
+				return false;
+			}
+			if (sourcePath == null) {
+				if (otherEntry.getSourcePath() != null) {
+					return false;
+				}
+			} else {
+				if (!sourcePath.toString().equals(otherEntry.getSourcePath().toString())) {
+					return false;
+				}
+			}
+			if (outputLocation == null) {
+				if (otherEntry.getOutputLocation() != null) {
+					return false;
+				}
+			} else {
+				if (!outputLocation.toString().equals(otherEntry.getOutputLocation().toString())) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return super.equals(obj);
+	}
+
 }

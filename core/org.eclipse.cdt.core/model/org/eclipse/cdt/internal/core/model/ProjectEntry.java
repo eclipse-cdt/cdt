@@ -33,4 +33,24 @@ public class ProjectEntry extends CPathEntry implements IProjectEntry {
 		return projectPath;
 	}
 
+	public boolean equals(Object obj) {
+		if (obj instanceof IProjectEntry) {
+			IProjectEntry otherEntry = (IProjectEntry)obj;
+			if (!super.equals(otherEntry)) {
+				return false;
+			}
+			if (projectPath == null) {
+				if (otherEntry.getProjectPath() != null) {
+					return false;
+				}
+			} else {
+				if (!projectPath.toString().equals(otherEntry.getProjectPath().toString())) {
+					return false;
+				} 
+			}
+			return true;
+		}
+		return super.equals(obj);
+	}
+
 }

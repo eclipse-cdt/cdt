@@ -31,4 +31,24 @@ public class ContainerEntry extends CPathEntry implements IContainerEntry {
 		return id;
 	}
 
+	public boolean equals(Object obj) {
+		if (obj instanceof IContainerEntry) {
+			IContainerEntry container = (IContainerEntry)obj;
+			if (!super.equals(container)) {
+				return false;
+			}
+			if (id == null) {
+				if (container.getId() != null) {
+					return false;
+				}
+			} else {
+				if (!id.equals(container.getId())) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return super.equals(obj);
+	}
+
 }

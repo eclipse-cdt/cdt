@@ -131,7 +131,18 @@ public interface ICProject extends ICContainer {
 	 * @exception CModelException if this element does not exist or if an
 	 *              exception occurs while accessing its corresponding resource
 	 */
-	ICPathEntry[] getCPathEntries() throws CModelException;
+	ICPathEntry[] getResolvedCPathEntries() throws CModelException;
+
+	/**
+	 * Returns the list of entries for the project. This corresponds to the exact set
+	 * of entries which were assigned using <code>setCPathEntries</code>.
+	 * <p>
+	 *
+	 * @return the list of entries for the project.
+	 * @exception CModelException if this element does not exist or if an
+	 *              exception occurs while accessing its corresponding resource
+	 */
+	ICPathEntry[] getRawCPathEntries() throws CModelException;
 
 	/**
 	 * Sets the entries for this project.
@@ -144,6 +155,6 @@ public interface ICProject extends ICContainer {
 	 * <li> The entries are being modified during resource change event notification (CORE_EXCEPTION)
 	 * </ul>
 	 */
-	void setCPathEntries(ICPathEntry[] entries, IProgressMonitor monitor) throws CModelException;
+	void setRawCPathEntries(ICPathEntry[] entries, IProgressMonitor monitor) throws CModelException;
 
 }

@@ -54,4 +54,33 @@ public class MacroEntry extends ACPathEntry implements IMacroEntry {
 		return macroName;
 	}
 
+	public boolean equals(Object obj) {
+		if (obj instanceof IMacroEntry) {
+			IMacroEntry otherEntry = (IMacroEntry)obj;
+			if (!super.equals(otherEntry)) {
+				return false;
+			}
+			if (macroName == null) {
+				if (otherEntry.getMacroName() != null) {
+					return false;
+				}
+			} else {
+				if (!macroName.equals(otherEntry.getMacroName())) {
+					return false;
+				}
+			}
+			if (macroValue == null) {
+				if (otherEntry.getMacroValue() != null) {
+					return false;
+				}
+			} else {
+				if (!macroValue.equals(otherEntry.getMacroValue())) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return super.equals(obj);
+	}
+
 }

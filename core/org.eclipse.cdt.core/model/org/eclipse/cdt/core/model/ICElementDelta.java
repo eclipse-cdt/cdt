@@ -100,8 +100,16 @@ public interface ICElementDelta {
 	 */
 	public int F_BINARY_PARSER_CHANGED = 0x0800;
 
-	//public int F_ADDED_TO_CLASSPATH = 0x0040;
-	//public int F_REMOVED_FROM_CLASSPATH = 0x0080;
+	/**
+	 * A cpathEntry was added for this resource.
+	 */
+	public int F_ADDED_TO_CPATHENTRY = 0x0040;
+
+	/**
+	 * A cpathEtnry was remove for this resource.
+	 */
+	public int F_REMOVED_FROM_CPATHENTRY = 0x0080;
+
 	//public int F_CLASSPATH_REORDER = 0x0100;
 	//public int F_SUPER_TYPES = 0x0800;
 

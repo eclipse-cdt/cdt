@@ -86,4 +86,35 @@ public class LibraryEntry extends CPathEntry implements ILibraryEntry {
 		return sourceAttachmentPrefixMapping;
 	}
 
+
+	public boolean equals(Object obj) {
+		if (obj instanceof ILibraryEntry) {
+			ILibraryEntry otherEntry = (ILibraryEntry)obj;
+			if (!super.equals(obj)) {
+				return false;
+			}
+			IPath otherPath = otherEntry.getSourceAttachmentPath();
+			if (sourceAttachmentPath == null) {
+				if (otherPath != null) {
+					return false;
+				}
+			} else {
+				if (!sourceAttachmentPath.equals(otherPath)) {
+					return false;
+				}
+			}
+			otherPath = otherEntry.getSourceAttachmentRootPath();
+			if (sourceAttachmentRootPath == null) {
+				if (otherPath != null) {
+					return false;
+				}
+			} else {
+				if (!sourceAttachmentRootPath.equals(otherPath)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return super.equals(obj);
+	}
 }

@@ -115,7 +115,7 @@ public class CProject extends CContainer implements ICProject {
 			binParser = CCorePlugin.getDefault().getBinaryParser(getProject());
 		} catch (CoreException e) {
 		}
-		ICPathEntry[] entries = getCPathEntries();
+		ICPathEntry[] entries = getResolvedCPathEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getEntryKind() == ICPathEntry.CDT_LIBRARY) {
 				ILibraryEntry entry = (ILibraryEntry) entries[i];
@@ -145,7 +145,7 @@ public class CProject extends CContainer implements ICProject {
 	 * @see ICProject#getRequiredProjectNames()
 	 */
 	public String[] getRequiredProjectNames() throws CModelException {
-		return projectPrerequisites(getCPathEntries());
+		return projectPrerequisites(getResolvedCPathEntries());
 	}
 
 	public String[] projectPrerequisites(ICPathEntry[] entries) throws CModelException {
@@ -336,9 +336,17 @@ public class CProject extends CContainer implements ICProject {
 	static String VALUE_TRUE = "true"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICProject#getCPathEntries()
+	 * @see org.eclipse.cdt.core.model.ICProject#getResolvedCPathEntries()
 	 */
-	public ICPathEntry[] getCPathEntries() throws CModelException {
+	public ICPathEntry[] getResolvedCPathEntries() throws CModelException {
+		// Not implemented
+		return getRawCPathEntries();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICProject#getRawCPathEntries()
+	 */
+	public ICPathEntry[] getRawCPathEntries() throws CModelException {
 		ArrayList pathEntries = new ArrayList();
 		try {
 			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(getProject());
@@ -359,11 +367,11 @@ public class CProject extends CContainer implements ICProject {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ICProject#setCPathEntries(org.eclipse.cdt.core.model.ICPathEntry[], org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.cdt.core.model.ICProject#setRawCPathEntries(org.eclipse.cdt.core.model.ICPathEntry[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void setCPathEntries(ICPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
+	public void setRawCPathEntries(ICPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
 		try {
-			SetCPathEntriesOperation op = new SetCPathEntriesOperation(this, getCPathEntries(), newEntries);
+			SetCPathEntriesOperation op = new SetCPathEntriesOperation(this, getRawCPathEntries(), newEntries);
 			runOperation(op, monitor);
 		} catch (CoreException e) {
 			throw new CModelException(e);
@@ -568,5 +576,4 @@ public class CProject extends CContainer implements ICProject {
 			}
 		}
 	}
-
 }

@@ -34,7 +34,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
      */
     String[] expectedStringList= {"stdio.h", "unistd.h", "func2p", 
         "globalvar", "myenum", "mystruct", "mystruct_t", "myunion", "mytype", 
-		"func1", "func2", "main", "func3", "KRFunction"};
+		"func1", "func2", "main", "func3" };
 	int[]  expectedLines={ 12,14,17,20,23,28,32,35,42,47,53,58,65,70};
     /* This is a list of that the types of the above list of elements is 
      * expected to be.

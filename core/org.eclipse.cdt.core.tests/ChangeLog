@@ -1,4 +1,7 @@
 2003-08-25 John Camelon
+	Updated TranslationUnitTests to not include K&R testing.  
+
+2003-08-25 John Camelon
 	Added QuickParseASTTests::testBug39530().
 
 2003-08-21 Hoda Amer

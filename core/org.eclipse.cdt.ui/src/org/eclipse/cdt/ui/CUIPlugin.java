@@ -250,9 +250,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
-		registerAdapters();
 		runUI(new Runnable() {
 			public void run() {
+				registerAdapters();
 				CPluginImages.initialize();
 			}
 		});

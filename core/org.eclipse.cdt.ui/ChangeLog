@@ -1,3 +1,9 @@
+2003-06-18 David Inglis	
+	
+	fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39053
+	
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+	
 2003-06-13 John Camelon
 	Merged ParserSymbolTable branch back into HEAD.
 

@@ -96,6 +96,7 @@ public class Elf {
 		public final static int EM_M32R = 88;
 		public final static int EM_MN10300 = 89;
 		public final static int EM_MN10200 = 90;
+		public final static int EM_EXCESS = 111;
 		public final static int EM_CYGNUS_POWERPC = 0x9025;
 		public final static int EM_CYGNUS_M32R = 0x9041;
 		public final static int EM_CYGNUS_V850 = 0x9080;
@@ -790,6 +791,9 @@ public class Elf {
 				break;
 			case Elf.ELFhdr.EM_IQ2000:
 				attrib.cpu = "iq2000"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_EXCESS:
+				attrib.cpu = "excess"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NONE:
 			default:

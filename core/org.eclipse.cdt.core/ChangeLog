@@ -1,3 +1,8 @@
+2004-04-14 Alain Magloire
+
+	Fix PR 58082, with Patch from Jon Beniston
+	* utils/org/eclipse/cdt/utils/elf/Elf.java
+
 2004-04-13 David Inglis
 
 	Since the binary runner and the CModelManager adds binarys we need to make sure

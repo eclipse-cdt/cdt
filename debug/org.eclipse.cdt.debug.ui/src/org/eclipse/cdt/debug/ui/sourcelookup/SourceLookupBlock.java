@@ -129,31 +129,25 @@ public class SourceLookupBlock implements Observer
 		IProject project = getProjectFromLaunchConfiguration( configuration );
 		if ( project != null )
 		{
-			IProject oldProject = getProject();
 			setProject( project );
-			if ( project.equals( oldProject ) )
+			try
 			{
-				try
+				String id = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, "" );
+				if ( isEmpty( id ) || 
+					 CDebugUIPlugin.getDefaultSourceLocatorID().equals( id ) || 
+					 CDebugUIPlugin.getDefaultSourceLocatorOldID().equals( id ) )
 				{
-					String id = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, "" );
-					if ( isEmpty( id ) || 
-						 CDebugUIPlugin.getDefaultSourceLocatorID().equals( id ) || 
-						 CDebugUIPlugin.getDefaultSourceLocatorOldID().equals( id ) )
-					{
-						String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" );
-						if ( !isEmpty( memento ) )
-							initializeFromMemento( memento );
-						else
-							initializeDefaults();
-					}
-				}
-				catch( CoreException e )
-				{
-					initializeDefaults();
+					String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" );
+					if ( !isEmpty( memento ) )
+						initializeFromMemento( memento );
+					else
+						initializeDefaults();
 				}
 			}
-			else
+			catch( CoreException e )
+			{
 				initializeDefaults();
+			}
 		}
 		else
 		{
@@ -177,7 +171,22 @@ public class SourceLookupBlock implements Observer
 
 	private void initializeDefaults()
 	{
-		initializeGeneratedLocations( getProject(), new ICSourceLocation[] { SourceLookupFactory.createProjectSourceLocation( getProject() ) } );
+		fGeneratedSourceListField.removeAllElements();
+		IProject project = getProject();
+		if ( project != null && project.exists() && project.isOpen() )
+		{
+			ICSourceLocation location = SourceLookupFactory.createProjectSourceLocation( project, true );
+			fGeneratedSourceListField.addElement( location );
+			fGeneratedSourceListField.setChecked( location, true );
+			List list = CDebugUtils.getReferencedProjects( project );
+			Iterator it = list.iterator();
+			while( it.hasNext() )
+			{
+				location = SourceLookupFactory.createProjectSourceLocation( (IProject)it.next(), true );
+				fGeneratedSourceListField.addElement( location );
+				fGeneratedSourceListField.setChecked( location, true );
+			}
+		}
 		resetAdditionalLocations( CDebugCorePlugin.getDefault().getCommonSourceLocations() );
 		fSearchForDuplicateFiles.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SEARCH_DUPLICATE_FILES ) );
 	}

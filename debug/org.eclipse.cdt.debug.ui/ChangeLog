@@ -1,3 +1,7 @@
+2003-11-26 Mikhail Khodjaiants
+	Fix for PR 47595: Referenced projects are not checked in the list of generic source locations.
+	* SourceLookupBlock.java
+ 
 2003-11-21 Mikhail Khodjaiants
 	Use "symbol not available" for empty function names when generating a stack frame label.
 	* CDTDebugModelPresentation.java 

@@ -1,3 +1,6 @@
+2004-05-18 Bogdan Gheorghe
+	Got rid of deprecated methods in CSearchResultPage and MouseClickListener.
+	
 2004-05-18 Alain Magloire
 
 	Fix PR 61498

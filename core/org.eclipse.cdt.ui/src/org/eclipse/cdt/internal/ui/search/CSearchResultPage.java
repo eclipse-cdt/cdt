@@ -86,11 +86,7 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		}
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#showMatch(org.eclipse.search.ui.text.Match, int, int)
-	 */
-	protected void showMatch(Match match, int currentOffset, int currentLength)
+	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activateEditor)
 			throws PartInitException {
 		// TODO Auto-generated method stub
 		IEditorPart editor= null;

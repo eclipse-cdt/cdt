@@ -9,15 +9,15 @@ public class DeclarativeRegion {
 
 	private Map declarations = new HashMap();
 	
-	public void addDeclaration(String name, Declaration decl) {
+	public void addDeclaration(String name, Object decl) {
 		declarations.put(name, decl);
 	}
 
 	// This is the general get method
-	public Declaration getDeclaration(String name) {
-		Declaration decl = null;
+	public Object getDeclaration(String name) {
+		Object decl = null;
 		
-		if ((decl = (Declaration)declarations.get(name)) != null)
+		if ((decl = declarations.get(name)) != null)
 			return decl;
 
 		return null;	

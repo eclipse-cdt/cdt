@@ -145,8 +145,14 @@ public class Parser2 {
 	public SimpleDeclaration simpleDeclaration() throws Backtrack {
 		SimpleDeclaration simpleDeclaration = new SimpleDeclaration();
 		
-		while (declSpecifier());
-		
+		for (;;) {
+			try {
+				declSpecifier();
+			} catch (Backtrack b) {
+				break;
+			}
+		}
+
 		try {
 			initDeclarator();
 			
@@ -194,56 +200,102 @@ public class Parser2 {
 	 * - folded elaboratedTypeSpecifier into classSpecifier and enumSpecifier
 	 * - find template names in name
 	 */
-	public boolean declSpecifier() throws Backtrack {
+	public DeclSpecifier declSpecifier() throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_auto:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_auto);
 			case Token.t_register:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_register);
 			case Token.t_static:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_static);
 			case Token.t_extern:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_extern);
 			case Token.t_mutable:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_mutable);
 			case Token.t_inline:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_inline);
 			case Token.t_virtual:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_virtual);
 			case Token.t_explicit:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_explicit);
 			case Token.t_char:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_char);
 			case Token.t_wchar_t:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_wchar_t);
 			case Token.t_bool:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_bool);
 			case Token.t_short:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_short);
 			case Token.t_int:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_int);
 			case Token.t_long:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_long);
 			case Token.t_signed:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_signed);
 			case Token.t_unsigned:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_unsigned);
 			case Token.t_float:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_float);
 			case Token.t_double:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_double);
 			case Token.t_void:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_void);
 			case Token.t_const:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_const);
 			case Token.t_volatile:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_volatile);
 			case Token.t_friend:
+				consume();
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_friend);
 			case Token.t_typedef:
 				consume();
-				return true;
+				return new SimpleDeclSpecifier(SimpleDeclSpecifier.t_typedef);
 			case Token.t_typename:
 				consume();
-				return name();
-			case Token.tCOLON:
+				name();
+				return new DeclSpecifier();
+			case Token.tCOLONCOLON:
+				consume();
 				// handle nested later:
-				return false;
 			case Token.tIDENTIFIER:
 				// handle nested later:
 				if (currRegion.getDeclaration(LA(1).getImage()) != null) {
 					consume();
-					return true;
+					return new DeclSpecifier();
 				}
 				else
-					return false;
+					throw backtrack;
 			case Token.t_class:
 			case Token.t_struct:
 			case Token.t_union:
-				return classSpecifier();
+				classSpecifier();
+				return null;
 			case Token.t_enum:
 				// enumSpecifier();
-				return true;
+				return null;
 			default:
-				return false;
+				throw backtrack;
 		}
 	}
 	
@@ -258,18 +310,16 @@ public class Parser2 {
 	 * - Handle template ids
 	 * - Handle unqualifiedId
 	 */
-	public boolean name() {
+	public boolean name() throws Backtrack {
 		if (LT(1) == Token.tCOLONCOLON)
 			consume();
 
-		if (!consume(Token.tIDENTIFIER))
-			return false;
+		consume(Token.tIDENTIFIER);
 
 		while (LT(1) == Token.tCOLONCOLON) {
 			consume();
 			
-			if (!consume(Token.tIDENTIFIER))
-				return false;
+			consume(Token.tIDENTIFIER);
 		}
 		
 		return true;
@@ -279,14 +329,14 @@ public class Parser2 {
 	 * cvQualifier
 	 * : "const" | "volatile"
 	 */
-	public boolean cvQualifier() {
+	public Object cvQualifier() throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_const:
 			case Token.t_volatile:
 				consume();
-				return true;
+				return null;
 			default:
-				return false;
+				throw backtrack;
 		}
 	}
 	
@@ -297,11 +347,10 @@ public class Parser2 {
 	 * To Do:
 	 * - handle initializers
 	 */
-	public boolean initDeclarator() throws Backtrack {
-		if (!declarator())
-			return false;
+	public Object initDeclarator() throws Backtrack {
+		declarator();
 			
-		return true;
+		return null;
 	}
 	
 	/**
@@ -318,41 +367,41 @@ public class Parser2 {
 	 * declaratorId
 	 * : name
 	 */
-	public boolean declarator() {
-		while (ptrOperator());
+	public Object declarator() throws Backtrack {
+		for (;;) {
+			try {
+				ptrOperator();
+			} catch (Backtrack b) {
+				break;
+			}
+		}
 		
 		if (LT(1) == Token.tLPAREN) {
 			consume();
-			if (!declarator())
-				return false;
-				
-			return consume(Token.tRPAREN);
+			declarator();
+			consume(Token.tRPAREN);
+			return null;
 		}
 		
-		if (!name())
-			return false;
+		name();
 		
 		for (;;) {
 			switch (LT(1)) {
 				case Token.tLPAREN:
 					consume();
 					// parameterDeclarationClause();
-					if (!consume(Token.tRPAREN))
-						return false;
-
+					consume(Token.tRPAREN);
 					continue;
 				case Token.tLBRACKET:
 					consume();
 					// constantExpression();
-					if (!consume(Token.tRBRACKET))
-						return false;
-					
+					consume(Token.tRBRACKET);
 					continue;
 			}
 			break;
 		}
 		
-		return true;
+		return null;
 	}
 	
 	/**
@@ -361,36 +410,41 @@ public class Parser2 {
 	 * | "&"
 	 * | name "*" (cvQualifier)*
 	 */
-	public boolean ptrOperator() {
+	public Object ptrOperator() throws Backtrack {
 		int t = LT(1);
 		
 		if (t == Token.tAMPER) {					
 			consume();
-			return true;
+			return null;
 		}
 		
 		Token mark = mark();
 		if (t == Token.tIDENTIFIER || t == Token.tCOLONCOLON)
-			if (!name())
-				return false;
-		
+		name();
+
 		if (t == Token.tSTAR) {
 			consume();
+
+			for (;;) {
+				try {
+					cvQualifier();
+				} catch (Backtrack b) {
+					break;
+				}
+			}			
 			
-			while (cvQualifier());
-			
-			return true;
+			return null;
 		}
 		
 		backup(mark);
-		return false;
+		throw backtrack;
 	}
 
 	/**
 	 * classSpecifier
 	 * : classKey name (baseClause)? "{" (memberSpecification)* "}"
 	 */
-	public boolean classSpecifier() {
+	public ClassSpecifier classSpecifier() throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_class:
 			case Token.t_struct:
@@ -398,27 +452,24 @@ public class Parser2 {
 				consume();
 				break;
 			default:
-				return false;
+				throw backtrack;
 		}
 		
-		Declaration decl = new Declaration();
+		ClassSpecifier classSpecifier = new ClassSpecifier();
 		
 		// Right now, just handle the case where the class name is
 		// being declared
 		if (LT(1) == Token.tIDENTIFIER) {
-			currRegion.addDeclaration(consume().getImage(), decl);
+			currRegion.addDeclaration(consume().getImage(), classSpecifier);
 		} // else it's an anonymous class
 		
 		// If we don't get a "{", assume elaborated type
-		if (LT(1) != Token.tLBRACE)
-			return true;
-		else
+		if (LT(1) == Token.tLBRACE) {
 			consume();
-
-		if (!consume(Token.tRBRACE))
-			return false;
-
-		return true;
+			consume(Token.tRBRACE);
+		}
+		
+		return classSpecifier;
 	}
 	
 	// Backtracking
@@ -470,12 +521,11 @@ public class Parser2 {
 		return retToken;
 	}
 	
-	protected boolean consume(int type) {
-		if (LT(1) == type) {
-			consume();
-			return true;
-		} else
-		 return false;
+	protected Token consume(int type) throws Backtrack {
+		if (LT(1) == type)
+			return consume();
+		else
+			throw backtrack;
 	}
 	
 	protected Token mark() {

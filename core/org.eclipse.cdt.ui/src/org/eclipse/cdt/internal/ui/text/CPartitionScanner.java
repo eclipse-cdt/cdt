@@ -21,7 +21,9 @@ import org.eclipse.jface.text.rules.WordRule;
 
 
 /**
- * This scanner recognizes comments
+ * This scanner is not actually use in the code it was relace by
+ * FastCPartitionScanner which was faster.  We keep this around
+ * as a reference.
  */
 public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPartitions {
 
@@ -85,6 +87,7 @@ public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPa
 		IToken comment= new Token(C_MULTILINE_COMMENT);
 		IToken single_comment= new Token(C_SINGLE_LINE_COMMENT);
 		IToken string= new Token(C_STRING);
+		IToken character = new Token(C_CHARACTER);
 		IToken skip= new Token(SKIP);
 
 
@@ -97,12 +100,13 @@ public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPa
 
 
 		// Add rule for single line comments.
-		rules.add(new EndOfLineRule("//", single_comment)); //$NON-NLS-1$
+		rules.add(new EndOfLineRule("//", single_comment, '\\', true)); //$NON-NLS-1$
 
 
-		// Add rule for strings and character constants.
-		rules.add(new SingleLineRule("\"", "\"", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
-		rules.add(new SingleLineRule("'", "'", skip, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
+		// Add rule for string constants.
+		rules.add(new SingleLineRule("\"", "\"", string, '\\', false, true)); //$NON-NLS-1$ //$NON-NLS-2$
+		// Add rule for character constants
+		rules.add(new SingleLineRule("'", "'", character, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Add special case word rule.
 		EmptyCommentRule wordRule= new EmptyCommentRule(comment);

@@ -6,7 +6,7 @@ package org.eclipse.cdt.internal.ui.text;
  */
  
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultAutoIndentStrategy;
+import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -14,7 +14,7 @@ import org.eclipse.jface.text.IRegion;
 /**
  * Auto indent strategy for java doc comments
  */
-public class CCommentAutoIndentStrategy extends DefaultAutoIndentStrategy {
+public class CCommentAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
 	public CCommentAutoIndentStrategy() {
 	}

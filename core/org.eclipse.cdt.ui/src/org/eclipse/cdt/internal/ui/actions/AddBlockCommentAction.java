@@ -109,44 +109,20 @@ public class AddBlockCommentAction extends BlockCommentAction {
 		int partEndOffset= partition.getOffset() + partition.getLength();
 		int tokenLength= getCommentStart().length();
 		
-		/*boolean wasJavadoc= false; // true if the previous partition is javadoc
-		
-		if (partType == IJavaPartitions.JAVA_DOC) {
-			
-			wasJavadoc= true;
-			
-		} else*/
-		if (partType == ICPartitions.C_MULTILINE_COMMENT) {
-			
+		if (partType == ICPartitions.C_MULTILINE_COMMENT) {	
 			// already in a comment - remove ending mark
-			edits.add(factory.createEdit(partEndOffset - tokenLength, tokenLength, "")); //$NON-NLS-1$
-			
+			edits.add(factory.createEdit(partEndOffset - tokenLength, tokenLength, "")); //$NON-NLS-1$	
 		}
 
 		// advance to next partition
 		partition= docExtension.getPartition(IDocumentExtension3.DEFAULT_PARTITIONING, partEndOffset, false);
 		partType= partition.getType();
 
-		// start of next partition
-//		if (wasJavadoc) {
-//			
-//			// if previous was javadoc, and the current one is not, then add block comment start
-//			if (partType == IDocument.DEFAULT_CONTENT_TYPE
-//					|| isSpecialPartition(partType)) {
-//				edits.add(factory.createEdit(partition.getOffset(), 0, getCommentStart()));
-//			}
-//			
-//		} else { // !wasJavadoc
-		
-			/*if (partType == IJavaPartitions.JAVA_DOC) {
-				// if next is javadoc, end block comment before
-				edits.add(factory.createEdit(partition.getOffset(), 0, getCommentEnd()));
-			}  else*/ if (partType == ICPartitions.C_MULTILINE_COMMENT) {
-				// already in a comment - remove startToken
-				edits.add(factory.createEdit(partition.getOffset(), getCommentStart().length(), "")); //$NON-NLS-1$
-			}
-//		}
-		
+		// start of next partition		
+		if (partType == ICPartitions.C_MULTILINE_COMMENT) {
+			// already in a comment - remove startToken
+			edits.add(factory.createEdit(partition.getOffset(), getCommentStart().length(), "")); //$NON-NLS-1$
+		}
 		return partition;
 	}
 
@@ -180,8 +156,8 @@ public class AddBlockCommentAction extends BlockCommentAction {
 	 * @return <code>true</code> if <code>partType</code> is special, <code>false</code> otherwise
 	 */
 	private boolean isSpecialPartition(String partType) {
-		return /*partType == IJavaPartitions.JAVA_CHARACTER
-				|| */partType == ICPartitions.C_STRING
+		return partType == ICPartitions.C_CHARACTER
+				|| partType == ICPartitions.C_STRING
 				|| partType == ICPartitions.C_SINGLE_LINE_COMMENT;
 	}
 

@@ -1,3 +1,14 @@
+2005-03-20 Alain Magloire
+	Fix for 77978.
+	* src/org/eclipse/cdt/internal/ui/actions/AddBlockCommentAction.java
+	* src/org/eclipse/cdt/internal/ui/text/CAutoIndentStrategy.java
+	* src/org/eclipse/cdt/internal/ui/text/CCommentAutoIndenStrategy.java
+	* src/org/eclipse/cdt/internal/ui/text/CPartitionScanner.java
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java
+	* src/org/eclipse/cdt/internal/ui/text/CTextTools.java
+	* src/org/eclipse/cdt/internal/ui/text/FastCPartionScanner.java
+	* src/org/eclipse/cdt/internal/ui/text/ICPartitions.java
+
 2005-03-18 David Inglis
 	
 	Fixed problem with error tick in CView not updateing properly.

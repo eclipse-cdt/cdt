@@ -14,7 +14,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -172,10 +172,11 @@ public class CTextTools {
 		String[] types= new String[] {
 			ICPartitions.C_MULTILINE_COMMENT,
 			ICPartitions.C_SINGLE_LINE_COMMENT,
-			ICPartitions.C_STRING
+			ICPartitions.C_STRING,
+			ICPartitions.C_CHARACTER
 		};
 		
-		return new DefaultPartitioner(getPartitionScanner(), types);
+		return new FastPartitioner(getPartitionScanner(), types);
 	}
 	
 	/**

@@ -6,7 +6,7 @@ package org.eclipse.cdt.internal.ui.text;
  */
 
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultAutoIndentStrategy;
+import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
 
@@ -16,7 +16,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 /**
  * Auto indent strategy sensitive to brackets.
  */
-public class CAutoIndentStrategy extends DefaultAutoIndentStrategy {
+public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
 
 	public CAutoIndentStrategy() {
@@ -114,9 +114,8 @@ public class CAutoIndentStrategy extends DefaultAutoIndentStrategy {
 			int end= start + d.getLineLength(line) - 1;
 			int whiteend= findEndOfWhiteSpace(d, start, end);
 			return d.get(start, whiteend - start);
-		} else {
-			return ""; //$NON-NLS-1$
 		}
+		return ""; //$NON-NLS-1$
 	}
 
 	private int getStringEnd(IDocument d, int pos, int end, char ch) throws BadLocationException {

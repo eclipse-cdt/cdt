@@ -19,7 +19,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IAutoIndentStrategy;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -121,6 +121,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return fEditor;
 	}
 
+	
     /**
      * Creates outline presenter. 
      * @param editor Editor.
@@ -171,14 +172,18 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		reconciler.setDamager(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 		reconciler.setRepairer(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 		
-		dr= new DefaultDamagerRepairer(getStringScanner());
-		reconciler.setDamager(dr, ICPartitions.C_STRING);
-		reconciler.setRepairer(dr, ICPartitions.C_STRING);
-		
 		dr= new DefaultDamagerRepairer(getMultilineCommentScanner());		
 		reconciler.setDamager(dr, ICPartitions.C_MULTILINE_COMMENT);
 		reconciler.setRepairer(dr, ICPartitions.C_MULTILINE_COMMENT);
 
+		dr= new DefaultDamagerRepairer(getStringScanner());
+		reconciler.setDamager(dr, ICPartitions.C_STRING);
+		reconciler.setRepairer(dr, ICPartitions.C_STRING);
+		
+		dr= new DefaultDamagerRepairer(getStringScanner());
+		reconciler.setDamager(dr, ICPartitions.C_CHARACTER);
+		reconciler.setRepairer(dr, ICPartitions.C_CHARACTER);
+		
 		return reconciler;
 	}
 
@@ -232,17 +237,15 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return null;
 	}
 
-
-	/**
-	 * @see SourceViewerConfiguration#getAutoIndentStrategy(ISourceViewer, String)
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoEditStrategies(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
-	public IAutoIndentStrategy getAutoIndentStrategy(ISourceViewer sourceViewer, String contentType) {
+	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		if(ICPartitions.C_MULTILINE_COMMENT.equals(contentType)) {
-			return new CCommentAutoIndentStrategy();
+			return new IAutoEditStrategy[] {new CCommentAutoIndentStrategy()};
 		}
-		return new CAutoIndentStrategy();
+		return new IAutoEditStrategy[] {new CAutoIndentStrategy()};
 	}
-
 
 	/**
 	 * @see SourceViewerConfiguration#getDoubleClickStrategy(ISourceViewer, String)
@@ -384,10 +387,12 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see SourceViewerConfiguration#getConfiguredContentTypes(ISourceViewer)
 	 */
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return new String[] { 	IDocument.DEFAULT_CONTENT_TYPE, 
-								ICPartitions.C_MULTILINE_COMMENT,
-								ICPartitions.C_SINGLE_LINE_COMMENT,
-								ICPartitions.C_STRING };
+		return new String[] { 	
+				IDocument.DEFAULT_CONTENT_TYPE, 
+				ICPartitions.C_MULTILINE_COMMENT,
+				ICPartitions.C_SINGLE_LINE_COMMENT,
+				ICPartitions.C_STRING,
+				ICPartitions.C_CHARACTER};
 	}
 	
 	/**
@@ -428,6 +433,10 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		};
 	}
 
+	/*
+	 * @see SourceViewerConfiguration#getInformationPresenter(ISourceViewer)
+	 * @since 2.0
+	 */
 	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
 		return super.getInformationPresenter(sourceViewer);
 	}

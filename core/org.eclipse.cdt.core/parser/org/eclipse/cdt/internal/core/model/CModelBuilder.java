@@ -372,75 +372,75 @@ public class CModelBuilder {
 	}
 	
 	private String getType(Declaration declaration, Declarator declarator){
-		String type = "";
+		StringBuffer type = new StringBuffer();
 		// get type from declaration
-		type = getDeclarationType(declaration);
+		type.append(getDeclarationType(declaration));
 		// add pointerr or reference from declarator if any
-		type += getDeclaratorPointerOperation(declarator);
-		return type;		
+		type.append(getDeclaratorPointerOperation(declarator));
+		return type.toString();		
 	}
 	
 	private String getDeclarationType(Declaration declaration){
-		String type = "";
+		StringBuffer type = new StringBuffer();
 		if(declaration instanceof ParameterDeclaration){
 			ParameterDeclaration paramDeclaration = (ParameterDeclaration) declaration;
 			if(paramDeclaration.getDeclSpecifier().isConst())
-				type += "const ";
+				type.append("const ");
 			if(paramDeclaration.getDeclSpecifier().isVolatile())
-				type += "volatile ";
+				type.append("volatile ");
 			TypeSpecifier typeSpecifier = paramDeclaration.getTypeSpecifier();
 			if(typeSpecifier == null){
-				type += paramDeclaration.getDeclSpecifier().getTypeName();
+				type.append(paramDeclaration.getDeclSpecifier().getTypeName());
 			}
 			else if(typeSpecifier instanceof ElaboratedTypeSpecifier){
 				ElaboratedTypeSpecifier elab = (ElaboratedTypeSpecifier) typeSpecifier;
-				type += getElaboratedTypeSignature(elab);
+				type.append(getElaboratedTypeSignature(elab));
 			}
 		}
 		
 		if(declaration instanceof SimpleDeclaration){
 			SimpleDeclaration simpleDeclaration = (SimpleDeclaration) declaration;
 			if(simpleDeclaration.getDeclSpecifier().isConst())
-				type += "const ";
+				type.append("const ");
 			if(simpleDeclaration.getDeclSpecifier().isVolatile())
-				type += "volatile ";
+				type.append("volatile ");
 			TypeSpecifier typeSpecifier = simpleDeclaration.getTypeSpecifier();
 			if(typeSpecifier == null){
-				type += simpleDeclaration.getDeclSpecifier().getTypeName(); 
+				type.append(simpleDeclaration.getDeclSpecifier().getTypeName()); 
 			} 
 			else if(typeSpecifier instanceof ElaboratedTypeSpecifier){
 				ElaboratedTypeSpecifier elab = (ElaboratedTypeSpecifier) typeSpecifier;
-				type += getElaboratedTypeSignature(elab);
+				type.append(getElaboratedTypeSignature(elab));
 			}
 		}
 		
-		return type;	
+		return type.toString();	
 	}
 	
 	private String getElaboratedTypeSignature(ElaboratedTypeSpecifier elab){
-		String type = "";
+		StringBuffer type = new StringBuffer();
 		int t = elab.getClassKey();
 		switch (t){
 			case ClassKey.t_class:
-				type = "class";
+				type.append("class");
 			break;
 			case ClassKey.t_struct:
-				type = "struct";
+				type.append("struct");
 			break;
 			case ClassKey.t_union:
-				type = "union";
+				type.append("union");
 			break;
 			case ClassKey.t_enum:
-				type = "enum";
+				type.append("enum");
 			break;
 		};
-		type += " ";
-		type += elab.getName().toString();
-		return type;
+		type.append(" ");
+		type.append(elab.getName().toString());
+		return type.toString();
 	}
 	
 	private String getDeclaratorPointerOperation(Declarator declarator){		
-		String pointerString = "";
+		StringBuffer pointerString = new StringBuffer();
 		List pointerOperators = declarator.getPointerOperators();
 		if(pointerOperators != null) {
 			Iterator i = pointerOperators.iterator();
@@ -448,19 +448,19 @@ public class CModelBuilder {
 				PointerOperator po = (PointerOperator) i.next();
 				switch (po.getType()){
 					case PointerOperator.t_pointer:
-						pointerString += "*";
+						pointerString.append("*");
 					break;
 					case PointerOperator.t_reference:
-						pointerString += "&";
+						pointerString.append("&");
 					break;									
 				}
 				
 				if(po.isConst())
-					pointerString += " const";
+					pointerString.append(" const");
 				if(po.isVolatile())
-					pointerString += " volatile";
+					pointerString.append(" volatile");
 			}
 		}
-		return pointerString;
+		return pointerString.toString();
 	}
 }

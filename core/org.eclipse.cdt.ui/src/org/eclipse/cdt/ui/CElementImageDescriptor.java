@@ -162,11 +162,11 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	private void drawTopRight() {		
 		int x= getSize().x;
 		ImageData data= null;
-		/* if ((fFlags & ABSTRACT) != 0) {
-			data= CPluginImages.DESC_OVR_ABSTRACT.getImageData();
+		if ((fFlags & VOLATILE) != 0) {
+			data= CPluginImages.DESC_OVR_VOLATILE.getImageData();
 			x-= data.width;
 			drawImage(data, x, 0);
-		}*/
+		}
 		if ((fFlags & CONSTANT) != 0) {
 			data= CPluginImages.DESC_OVR_CONSTANT.getImageData();
 			x-= data.width;

@@ -60,16 +60,16 @@ public class CElementLabelProvider extends LabelProvider {
 		if (element instanceof ICElement) {
 			ICElement celem= (ICElement)element;
 			
-			String name = "";
+			StringBuffer name = new StringBuffer();
 			switch(celem.getElementType()){
 				case ICElement.C_FIELD:
 				case ICElement.C_VARIABLE:
 				case ICElement.C_VARIABLE_DECLARATION:
 					IVariableDeclaration vDecl = (IVariableDeclaration) celem;
-					name =  vDecl.getElementName();
+					name.append(vDecl.getElementName());
 					if((vDecl.getTypeName() != null) &&(vDecl.getTypeName().length() > 0)){
-						name += " : ";
-						name += vDecl.getTypeName();
+						name.append(" : ");
+						name.append(vDecl.getTypeName());
 					}
 				break;
 				case ICElement.C_FUNCTION:
@@ -77,48 +77,48 @@ public class CElementLabelProvider extends LabelProvider {
 				case ICElement.C_METHOD:
 				case ICElement.C_METHOD_DECLARATION:
 					IFunctionDeclaration fDecl = (IFunctionDeclaration) celem;
-					name = fDecl.getSignature();
+					name.append(fDecl.getSignature());
 					if((fDecl.getReturnType() != null) &&(fDecl.getReturnType().length() > 0)){
-						name += " : ";
-						name += fDecl.getReturnType();
+						name.append(" : ");
+						name.append(fDecl.getReturnType());
 					}
 				break;
 				case ICElement.C_STRUCT:
 				case ICElement.C_UNION:
 				case ICElement.C_ENUMERATION:
 					if((celem.getElementName() != null) && (celem.getElementName().length() > 0)){
-						name = celem.getElementName();
+						name.append(celem.getElementName());
 					} else if (celem instanceof IVariableDeclaration) {
 						IVariableDeclaration varDecl = (IVariableDeclaration) celem;
-						name = varDecl.getTypeName();				
+						name.append(varDecl.getTypeName());				
 					}
 				break;
 				case ICElement.C_TYPEDEF:
 					ITypeDef tDecl = (ITypeDef) celem;
-					name = tDecl.getElementName();
+					name.append(tDecl.getElementName());
 					if((tDecl.getTypeName() != null) &&(tDecl.getTypeName().length() > 0)){
-						name += " : ";
-						name += tDecl.getTypeName();				
+						name.append(" : ");
+						name.append(tDecl.getTypeName());				
 					}
 				break;
 				case ICElement.C_NAMESPACE:
 					if((celem.getElementName() != null) && (celem.getElementName().length() > 0)){
-						name = celem.getElementName();
+						name.append(celem.getElementName());
 					} else if (celem instanceof INamespace) {
 						INamespace nDecl = (INamespace) celem;
-						name = nDecl.getTypeName();				
+						name.append(nDecl.getTypeName());				
 					}
 				break;
 				default:
-					name= celem.getElementName();
+					name.append(celem.getElementName());
 				break;				
 			}
 
 			if (celem instanceof IBinary) {
 				IBinary bin = (IBinary)celem;
-				name += " - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]";
+				name.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]");
 			}
-			return name;
+			return name.toString();
 		}
 		return fWorkbenchLabelProvider.getText(element);
 	}

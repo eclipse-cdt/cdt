@@ -124,6 +124,7 @@ public class CPluginImages {
 	
 	public static final ImageDescriptor DESC_OVR_STATIC= create(T_OVR, "static_co.gif");
 	public static final ImageDescriptor DESC_OVR_CONSTANT= create(T_OVR, "c_ovr.gif");
+	public static final ImageDescriptor DESC_OVR_VOLATILE= create(T_OVR, "volatile_co.gif");
 
 	public static final ImageDescriptor DESC_OVR_WARNING= create(T_OVR, "warning_co.gif");
 	public static final ImageDescriptor DESC_OVR_ERROR= create(T_OVR, "error_co.gif");

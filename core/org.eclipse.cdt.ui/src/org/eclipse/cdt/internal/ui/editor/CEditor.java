@@ -715,6 +715,8 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 			startTabConversion();
 		if (isBracketHighlightingEnabled())
 			startBracketHighlighting();
+		if (isOverviewRulerVisible())
+			showOverviewRuler();
 
 
 	}

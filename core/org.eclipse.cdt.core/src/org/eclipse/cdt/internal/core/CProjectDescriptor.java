@@ -49,7 +49,7 @@ public class CProjectDescriptor implements ICProjectDescriptor {
 
 	private String builderID;
 	
-	private static final String PROJECT_DESCRIPTION = "cdtProject";
+	private static final String PROJECT_DESCRIPTION = ".cdtproject";
 
 	private CProjectDescriptor(IProject project, String id) throws CoreException {
 		this.project = project;

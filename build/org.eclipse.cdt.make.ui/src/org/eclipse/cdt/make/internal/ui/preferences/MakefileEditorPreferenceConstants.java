@@ -54,9 +54,8 @@ public class MakefileEditorPreferenceConstants {
 
 	public static final String EDITOR_FOLDING_CONDITIONAL = "editor_folding_default_conditional"; //$NON-NLS-1$
 
-	public static final String EDITOR_FOLDING_ENABLED = "editor_folding_enabled"; //$NON-NLS-1$;
+	public static final String EDITOR_FOLDING_ENABLED = "editor_folding_enabled"; //$NON-NLS-1$
 	
-
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
@@ -65,6 +64,7 @@ public class MakefileEditorPreferenceConstants {
 		store.setDefault(MakefileEditorPreferenceConstants.EDITOR_FOLDING_MACRODEF, false);
 		store.setDefault(MakefileEditorPreferenceConstants.EDITOR_FOLDING_RULE, true);
 		store.setDefault(MakefileEditorPreferenceConstants.EDITOR_FOLDING_CONDITIONAL, true);
+
 	}
 
 }

@@ -284,10 +284,16 @@
             id="org.eclipse.cdt.make.ui.preferences.MakeTargetsPreferencePage">
       </page>
       <page
-            name="%PreferenceMakeFileEditor.name"
+            name="%PreferenceMakefileEditor.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.make.internal.ui.preferences.MakefileEditorPreferencePage"
             id="org.eclipse.cdt.make.ui.preferences.MakeFileEditorPreferencePage">
+      </page>
+      <page
+            name="%PreferenceMakefileSettings.name"
+            category="org.eclipse.cdt.make.ui.preferences.MakeFileEditorPreferencePage"
+            class="org.eclipse.cdt.make.internal.ui.preferences.MakefileSettingsPreferencePage"
+            id="org.eclipse.cdt.make.ui.preferences.MakePreferencePage">
       </page>
    </extension>
    <extension

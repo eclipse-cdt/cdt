@@ -58,6 +58,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			scInfo.setSIProblemGenerationEnabled(true);
 		} catch (CoreException e) {
 		}
+
+		// Store default for makefile
+		MakeCorePlugin.getDefault().getPluginPreferences().setDefault(MakeCorePlugin.MAKEFILE_STYLE, "GNU"); //$NON-NLS-1$
 	}
 
 }

@@ -10,11 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
@@ -24,6 +27,7 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
 import org.eclipse.cdt.make.internal.core.MakeTargetManager;
 import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefile;
+import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefile;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathManager;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigInfoFactory;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
@@ -56,7 +60,11 @@ public class MakeCorePlugin extends Plugin {
 
 	public static final String GCC_SPECS_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCSpecsConsoleParser"; //$NON-NLS-1$
 	public static final String GCC_SCANNER_INFO_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCScannerInfoConsoleParser"; //$NON-NLS-1$
-	
+
+	public static final String MAKEFILE_STYLE = PLUGIN_ID + "editor_makefile_style"; //$NON-NLS-1$
+	public static final String MAKEFILE_DIRS = PLUGIN_ID + "editor_makefile_dirs"; //$NON-NLS-1$
+
+
 	private MakeTargetManager fTargetManager;
 	private DiscoveredPathManager fDiscoveryPathManager;
 	//The shared instance.
@@ -122,22 +130,47 @@ public class MakeCorePlugin extends Plugin {
 		return fTargetManager;
 	}
 
-	public IMakefile createMakefile(IFile file) {
-		GNUMakefile gnu = new GNUMakefile();
-		try {
-			gnu.parse(file.getLocation().toOSString());
-			String[] dirs = gnu.getIncludeDirectories();
-			String[] includes = new String[dirs.length + 1];
-			System.arraycopy(dirs, 0, includes, 0, dirs.length);
-			String cwd = file.getLocation().removeLastSegments(1).toOSString();
-			includes[dirs.length] = cwd;
-			gnu.setIncludeDirectories(includes);
-		} catch (IOException e) {
+	public boolean isMakefileGNUStyle() {
+		String style = getPluginPreferences().getString(MAKEFILE_STYLE);
+		return (style != null && style.equalsIgnoreCase("GNU")); //$NON-NLS-1$
+	}
+
+	public String[] getMakefileDirs() {
+		String stringList = getPluginPreferences().getString(MAKEFILE_DIRS);
+		StringTokenizer st = new StringTokenizer(stringList, File.pathSeparator + "\n\r");//$NON-NLS-1$
+		ArrayList v = new ArrayList();
+		while (st.hasMoreElements()) {
+			v.add(st.nextElement());
 		}
-		return gnu;
+		return (String[])v.toArray(new String[v.size()]);		
+	}
+
+	public IMakefile createMakefile(IFile file) {
 		//
 		// base on a preference to chose GNU vs Posix 
-		//return PosixMakefile(file.getLocation);
+		IMakefile makefile;
+		if (isMakefileGNUStyle()) {
+			GNUMakefile gnu = new GNUMakefile();
+			ArrayList includeList = new ArrayList();
+			includeList.addAll(Arrays.asList(gnu.getIncludeDirectories()));
+			includeList.addAll(Arrays.asList(getMakefileDirs()));
+			includeList.add(file.getLocation().removeLastSegments(1).toOSString());
+			String[] includes = (String[]) includeList.toArray(new String[includeList.size()]);
+			gnu.setIncludeDirectories(includes);
+			try {
+				gnu.parse(file.getLocation().toOSString());
+			} catch (IOException e) {
+			}
+			makefile = gnu;
+		} else {
+			PosixMakefile posix = new PosixMakefile();
+			try {
+				posix.parse(file.getLocation().toOSString());
+			} catch (IOException e) {
+			}
+			makefile = posix;
+		}
+		return makefile;
 	}
 
 	public void stop(BundleContext context) throws Exception {

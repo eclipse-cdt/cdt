@@ -12,24 +12,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.index.ITagEntry;
+import org.eclipse.cdt.core.index.IndexModel;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICResource;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.cdt.core.index.ITagEntry;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICResource;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.core.runtime.IPath;
 
 public class IndexManager implements IElementChangedListener {
 
@@ -155,7 +155,7 @@ public class IndexManager implements IElementChangedListener {
 	}
 
 	public void addResource(IResource resource) {
-		switch(resource.getType()) {
+		switch (resource.getType()) {
 			case IResource.ROOT:
 			case IResource.PROJECT:
 			case IResource.FOLDER:
@@ -173,7 +173,8 @@ public class IndexManager implements IElementChangedListener {
 	 * Note: the actual operation is performed in background
 	 */
 	public void addFile(IFile file) {
-		if (CoreModel.getDefault().isTranslationUnit(file)) {
+		if (CoreModel.getDefault().isTranslationUnit(file) &&
+			IndexModel.getDefault().isEnabled(file.getProject())) {
 			requestList.addItem(file);
 		}
 	}
@@ -193,7 +194,8 @@ public class IndexManager implements IElementChangedListener {
 						break;
 
 						case IResource.PROJECT:
-							if (CoreModel.getDefault().hasCNature((IProject)res)) {
+							if (CoreModel.getDefault().hasCNature((IProject)res) &&
+								IndexModel.getDefault().isEnabled((IProject)res)) {
 								addContainer((IContainer)res);
 							}
 						break;
@@ -258,13 +260,13 @@ public class IndexManager implements IElementChangedListener {
 			}
 		}
 
-		if (kind == ICElementDelta.ADDED) {
-			try {
-				IResource resource = ((ICResource)element).getResource();
-				addResource(resource);
-			} catch (CModelException e) {
-			}
-		}
+//		if (kind == ICElementDelta.ADDED) {
+//			try {
+//				IResource resource = ((ICResource)element).getResource();
+//				addResource(resource);
+//			} catch (CModelException e) {
+//			}
+//		}
 
 		if (element instanceof ITranslationUnit) {
 			if (kind == ICElementDelta.CHANGED) {

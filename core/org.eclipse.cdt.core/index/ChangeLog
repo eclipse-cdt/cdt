@@ -1,3 +1,9 @@
+2004-08-25 Alain Magloire
+
+	Workaround for PR 72435, Patch From Bogdan
+	
+	* index/org/eclipse/cdt/internal/core/Util.java
+
 2004-08-19 Bogdan Gheorghe
 	Fix for Bug 71500: [Indexer] all headers get indexed on project open
 	

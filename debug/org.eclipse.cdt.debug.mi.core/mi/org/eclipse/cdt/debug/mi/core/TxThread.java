@@ -36,7 +36,6 @@ public class TxThread extends Thread {
 
 	public void run () {
 		try {
-			RxThread rxThread = session.getRxThread();
 
 			// signal by the session of time to die.
 			OutputStream out;

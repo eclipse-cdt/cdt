@@ -50,7 +50,7 @@ public class GDBServerCDIDebugger extends GDBCDIDebugger {
 				remote += ":"; //$NON-NLS-1$
 				remote += config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "invalid"); //$NON-NLS-1$
 				String[] args = new String[] {"remote", remote}; //$NON-NLS-1$
-				session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getPath().toFile(), 0, args, cwd, gdbinit, monitor);
+				session = MIPlugin.getDefault().createCSession(gdb, exe.getPath().toFile(), 0, args, cwd, gdbinit, monitor);
 			} else {
 				MIPlugin plugin = MIPlugin.getDefault();
 				Preferences prefs = plugin.getPluginPreferences();
@@ -58,7 +58,7 @@ public class GDBServerCDIDebugger extends GDBCDIDebugger {
 
 				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid"); //$NON-NLS-1$
 				String remoteBaud = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "invalid"); //$NON-NLS-1$
-				session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getPath().toFile(), -1, null, cwd, gdbinit, monitor);
+				session = MIPlugin.getDefault().createCSession(gdb, exe.getPath().toFile(), -1, null, cwd, gdbinit, monitor);
 				ICDITarget[] targets = session.getTargets();
 				for (int i = 0; i < targets.length; ++i) {
 					Target target = (Target)targets[i];

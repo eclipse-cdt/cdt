@@ -17,7 +17,6 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -110,7 +109,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws MIException
 	 */
-	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
+	public Session createCSession(String gdb, File program, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		IMITTY pty = null;
 		boolean failed = false;
 
@@ -155,7 +154,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit, IMITTY pty, IProgressMonitor monitor) throws IOException, MIException {
+	public Session createCSession(String gdb, File program, File cwd, String gdbinit, IMITTY pty, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
@@ -219,7 +218,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String gdb, File program, File core, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
+	public Session createCSession(String gdb, File program, File core, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
@@ -258,7 +257,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String gdb, File program, int pid, String[] targetParams, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
+	public Session createCSession(String gdb, File program, int pid, String[] targetParams, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}

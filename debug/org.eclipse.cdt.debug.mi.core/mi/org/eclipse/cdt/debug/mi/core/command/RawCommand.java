@@ -29,7 +29,7 @@ public class RawCommand extends Command {
 	public String toString() {
 		if (fRaw == null) {
 			fRaw = "\n"; //$NON-NLS-1$;
-		} else if (! fRaw.endsWith("\n")) {
+		} else if (! fRaw.endsWith("\n")) { //$NON-NLS-1$
 			fRaw += "\n"; //$NON-NLS-1$
 		}
 		return fRaw;

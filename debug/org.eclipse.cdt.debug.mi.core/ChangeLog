@@ -1,4 +1,11 @@
 2004-11-16 Alain Magloire
+	Remove some warnings and use the new Launch key
+	to decide whether or not to use pseudo tty.
+	* mi/org/eclipse/cdt/debug/mi/core/TxThread.java
+	* mi/org/eclipse/cdt/debug/mi/core/command/RawCommand.java
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+
+2004-11-16 Alain Magloire
 	NPE when watchpoints are set in the gdb console.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
 

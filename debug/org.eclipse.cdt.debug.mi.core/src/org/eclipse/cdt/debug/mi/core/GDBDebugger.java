@@ -75,7 +75,7 @@ public class GDBDebugger implements ICDebugger {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
-			session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), cwd, gdbinit, null);
+			session = MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), cwd, gdbinit, null);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
@@ -107,7 +107,7 @@ public class GDBDebugger implements ICDebugger {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
-			session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), pid, null, cwd, gdbinit, null);
+			session = MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), pid, null, cwd, gdbinit, null);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
@@ -139,7 +139,7 @@ public class GDBDebugger implements ICDebugger {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
-			session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), corefile.toFile(), cwd, gdbinit, null);
+			session = MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), corefile.toFile(), cwd, gdbinit, null);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {

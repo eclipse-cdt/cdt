@@ -45,7 +45,7 @@ public class CDIException extends Exception {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return super.toString() + "["+ getDetailMessage() + "]";
+		return super.toString() + '['+ getDetailMessage() + ']';
 	}
 
 }

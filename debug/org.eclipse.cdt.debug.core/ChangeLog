@@ -1,3 +1,7 @@
+2004-10-18 Mikhail Khodjaiants
+	Use characters instead of strings.
+	* CDIException.java
+
 2004-10-17 Alain Magloire
 	Remove deprecated method in CDI
 	* cdi/org/eclipse/cdt/debug/core/model/ICDITarget.java
@@ -14,7 +18,7 @@
 	* CBreakpointManager.java
 	* CDebugTarget.java
 
-2004-10-14 Mikhail Khodjaiants
+2004-10-14 
 	Partial fix for bug 39936 GDB hits modified conditional breakpoints when condition not satisfied.
 	Condition has to be set at the mi level.
 	* CBreakpointManager.java

@@ -1426,28 +1426,115 @@ public class Scanner implements IScanner {
 		}
 	}
 	
-	public IToken processKeywordOrLiteral(int c, boolean pasting) throws ScannerException, EndOfFileException
-	{       
+	// buff contains \\u or \\U
+	protected StringBuffer processUniversalCharacterName( StringBuffer buff ) throws ScannerException
+	{
+		// first octet is mandatory
+		for( int i = 0; i < 4; ++i )
+		{
+			int c = getChar();
+			if( ! isHex( c ))
+				return null;
+			buff.append( (char) c );
+		}
+		
+		Vector v = new Vector();
+		Overall: for( int i = 0; i < 4; ++i )
+		{
+			int c = getChar();
+			if( ! isHex( c ))
+			{
+				ungetChar( c );
+				break;
+			}	
+			v.add( new Character((char) c ));
+		}
+
+		if( v.size() == 4 )
+		{
+			for( int i = 0; i < 4; ++i )
+				buff.append( (char)((Character)v.get(i)).charValue());
+		}
+		else
+		{
+			for( int i = v.size() - 1; i >= 0; --i )
+				ungetChar( (char) ((Character)v.get(i)).charValue() );
+		}
+		return buff;
+	}
+	
+	/**
+	 * @param c
+	 * @return
+	 */
+	private boolean isHex(int c) {
+		switch( c )
+		{
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+			case 'a':
+			case 'b':
+			case 'c':
+			case 'd':
+			case 'e':
+			case 'f':
+			case 'A':
+			case 'B':
+			case 'C':
+			case 'D':
+			case 'E':
+			case 'F':
+				return true;
+			default:
+				return false;
+								
+		}
+	}
+
+	protected IToken processKeywordOrIdentifier(StringBuffer buff, boolean pasting) throws ScannerException, EndOfFileException
+	{ 
         int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
 				
 		// String buffer is slow, we need a better way such as memory mapped files
-		StringBuffer buff = new StringBuffer(); 
-		buff.append((char) c);
-
-		c = getChar();				
+		int c = getChar();				
 		
-		// do the least expensive tests first!
-		while (	( scannerExtension.offersDifferentIdentifierCharacters() && 
-				  scannerExtension.isValidIdentifierCharacter(c) ) || 
-				  isValidIdentifierCharacter(c) ) {
-			buff.append((char) c);
-			c = getChar();
-			if (c == '\\') {
-				c = consumeNewlineAfterSlash();
-
+		for( ; ; )
+		{
+			// do the least expensive tests first!
+			while (	( scannerExtension.offersDifferentIdentifierCharacters() && 
+					  scannerExtension.isValidIdentifierCharacter(c) ) || 
+					  isValidIdentifierCharacter(c) ) {
+				buff.append((char) c);
+				c = getChar();
+				if (c == '\\') {
+					c = consumeNewlineAfterSlash();
+				}
 			}
+			if( c == '\\')
+			{
+				int next = getChar();
+				if( next == 'u' || next == 'U')
+				{
+					buff.append( '\\');
+					buff.append( (char)next );
+					buff = processUniversalCharacterName(buff);
+					if( buff == null )	return null;
+					continue; // back to top of loop
+				}
+				else
+					ungetChar( next );
+			}
+			break;
 		}
-
+			
 		ungetChar(c);
 
 		String ident = buff. toString();
@@ -1822,7 +1909,7 @@ public class Scanner implements IScanner {
 					{
 						// This is not a wide literal -- it must be a token or keyword
 						ungetChar(c);
-						token = processKeywordOrLiteral('L', pasting);
+						token = processKeywordOrIdentifier(new StringBuffer( "L"), pasting);
 					}
 					if (token == null) 
 					{
@@ -1857,13 +1944,47 @@ public class Scanner implements IScanner {
 							  scannerExtension.isValidIdentifierStartCharacter(c) ) || 
 							 isValidIdentifierStartCharacter(c)  ) 
 					{
-						token = processKeywordOrLiteral(c, pasting);
+						StringBuffer startBuffer = new StringBuffer( );
+						startBuffer.append( (char) c );
+						token = processKeywordOrIdentifier(startBuffer, pasting);
 						if (token == null) 
 						{
 							c = getChar();
 							continue;
 						}
 						return token;
+					}
+					else if( c == '\\' )
+					{
+						int next = getChar();
+						StringBuffer ucnBuffer = new StringBuffer( "\\");
+						ucnBuffer.append( (char) next );
+
+						if( next == 'u' || next =='U' )
+						{
+							StringBuffer secondBuffer = processUniversalCharacterName(ucnBuffer);
+							if( secondBuffer == null )
+							{
+								handleProblem( IProblem.SCANNER_BAD_CHARACTER, ucnBuffer.toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead );
+								c = getChar();
+								continue;
+							}
+							else
+							{
+								token = processKeywordOrIdentifier( secondBuffer, pasting );
+								if (token == null) 
+								{
+									c = getChar();
+									continue;
+								}
+								return token;
+							}
+						}
+						else
+						{
+							ungetChar( next );
+							handleProblem( IProblem.SCANNER_BAD_CHARACTER, ucnBuffer.toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead );
+						}
 					}
 					
 					handleProblem( IProblem.SCANNER_BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead ); 

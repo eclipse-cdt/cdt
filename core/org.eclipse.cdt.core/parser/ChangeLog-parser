@@ -1,3 +1,6 @@
+2004-04-06 John Camelon
+		Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=47797
+
 2004-04-05 Andrew Niefer
 	- performance improvements originally from Dave Daoust:
 		- create new TraceUtil to handle logging trace messages

@@ -1605,4 +1605,16 @@ public class ScannerTestCase extends BaseScannerTest
     	validateDefinition( "bar", "" );
 
 	}
+    
+    public void testBug47797() throws Exception
+	{
+    	initializeScanner( "\"\\uABCD\" \'\\uABCD\' \\uABCD_ident \\u001A01BC_ident ident\\U01AF ident\\u01bc00AF");
+    	validateString( "\\uABCD");
+    	validateChar( "\\uABCD");
+    	validateIdentifier( "\\uABCD_ident");
+    	validateIdentifier( "\\u001A01BC_ident");
+    	validateIdentifier( "ident\\U01AF" );
+    	validateIdentifier( "ident\\u01bc00AF" );
+    	validateEOF();
+	}
 }

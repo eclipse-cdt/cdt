@@ -1,3 +1,6 @@
+2004-04-06 John Camelon
+	Added ScannerTestCase::testBug47797().  
+
 2004-04-05 Andrew Niefer
 	added search/org/eclipse/cdt/core/search/tests/ClassDeclarationPatternTests.testBug54169()
 

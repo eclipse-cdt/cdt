@@ -3,6 +3,10 @@
 	* library/pty/pty.c: New file.
 	* library/pty/ptyio.c: New file.
 	* library/pty/openpty.c: New file.
+	* library/pty/openpty.h: New file.
+	* library/pty/PTY.h: new File.
+	* library/pty/PTYInputStream.h: new File.
+	* library/pty/PTYOutputStream.h: new File.
 
 2002-10-17 Alain Magloire
 

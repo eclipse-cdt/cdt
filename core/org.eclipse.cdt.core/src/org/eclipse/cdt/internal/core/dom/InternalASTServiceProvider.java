@@ -37,9 +37,14 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GCCParserExtensionConfiguratio
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
+import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
+import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -50,7 +55,9 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class InternalASTServiceProvider implements IASTServiceProvider {
 
-    private static final String[] dialects = { "C99",  //$NON-NLS-1$
+    protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
+   protected static final GPPScannerExtensionConfiguration CPP_GNU_SCANNER_EXTENSION = new GPPScannerExtensionConfiguration();
+   private static final String[] dialects = { "C99",  //$NON-NLS-1$
             "C++98",  //$NON-NLS-1$
             "GNUC",  //$NON-NLS-1$
             "GNUC++" };  //$NON-NLS-1$
@@ -110,9 +117,14 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		if( configuration == null )
 		{
 		    ParserLanguage l = getLanguage(fileToParse);
-		    scanner = ParserFactory.createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
-	                l, NULL_REQUESTOR,
-	                ParserUtil.getScannerLogService(), Collections.EMPTY_LIST);
+		    IScannerExtensionConfiguration scannerExtensionConfiguration = null;
+		    if( l == ParserLanguage.CPP )
+		       scannerExtensionConfiguration = CPP_GNU_SCANNER_EXTENSION;
+		    else
+		       scannerExtensionConfiguration = C_GNU_SCANNER_EXTENSION;
+		    
+		    scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
+	                l, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, fileCreator );
 		    //assume GCC
 		    if( l == ParserLanguage.C )
 		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), new GCCParserExtensionConfiguration()  );

@@ -10,8 +10,10 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -57,6 +59,7 @@ public class TreeObject implements IAdaptable {
 	}
 	
 	public String toString() {
+	    if( node == null ) return ""; //$NON-NLS-1$ //TODO Devin is this the best way???
 		StringBuffer buffer = new StringBuffer();
 		
 		Class[] classes = node.getClass().getInterfaces();
@@ -80,17 +83,25 @@ public class TreeObject implements IAdaptable {
 		return null;
 	}
 	
+	public String getFilename()
+	{
+	   IASTNodeLocation [] location = node.getNodeLocations();
+	   if( location[0] instanceof IASTFileLocation )
+	      return ((IASTFileLocation)location[0]).getFileName();
+	   return ""; //$NON-NLS-1$
+	}
+	
 	public int getOffset() {
-		if (node instanceof ASTNode)
-			return ((ASTNode)node).getOffset();
-
-		return 0;
+	   IASTNodeLocation [] location = node.getNodeLocations();
+	   if( location.length == 1 )
+	      return location[0].getNodeOffset();
+	   return 0;
 	}
 	
 	public int getLength() {
-		if (node instanceof ASTNode)
-			return ((ASTNode)node).getLength();
-
-		return 0;
+	   IASTNodeLocation [] location = node.getNodeLocations();
+	   if( location.length == 1 )
+	      return location[0].getNodeLength();
+	   return 0;
 	}
 }

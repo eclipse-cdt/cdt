@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -165,5 +166,18 @@ public class DOMLocationTests extends AST2BaseTest {
        IASTIdExpression expression = (IASTIdExpression) returnStatement.getReturnValue();
        assertSoleLocation( expression, code.indexOf( "return ") + "return ".length(), 1 ); //$NON-NLS-1$ //$NON-NLS-2$
    }
+   
+
+   public void testElaboratedTypeSpecifier() throws ParserException {
+      String code = "/* blah */ struct A anA; /* blah */"; //$NON-NLS-1$
+      for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+            : null) {
+         IASTTranslationUnit tu = parse(code, p); 
+         IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+         IASTElaboratedTypeSpecifier elabType = (IASTElaboratedTypeSpecifier) declaration.getDeclSpecifier();
+         assertSoleLocation( elabType, code.indexOf( "struct"), "struct A".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+   }
+
 
 }

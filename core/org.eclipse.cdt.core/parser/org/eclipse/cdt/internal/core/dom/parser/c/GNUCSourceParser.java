@@ -1672,6 +1672,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		name.setParent(result);
 		name.setPropertyInParent(IASTElaboratedTypeSpecifier.TYPE_NAME);
 		result.setKind(eck);
+		((ASTNode)result).setOffsetAndLength( t.getOffset(), calculateEndOffset(name) - t.getOffset() );
 		return result;
 	}
 

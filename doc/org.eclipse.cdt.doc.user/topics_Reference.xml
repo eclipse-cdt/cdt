@@ -3,14 +3,6 @@
 <!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
 
      <toc label="Reference">
-          <topic label="CDT icons" href="reference/cdt_u_icons.htm"/>
-          <topic label="Project properties" href="reference/cdt_o_proj_prop_pages.htm">
-               <topic label="Make Builder page, C/C++ Properties window" href="reference/cdt_u_newproj_buildset.htm"/>
-               <topic label="Error Parsers, C/C++ Properties window" href="reference/cdt_u_newproj_parser_error.htm"/>
-               <topic label="Binary Parser page, C/C++ Properties window" href="reference/cdt_u_newproj_parser_binary.htm"/>
-               <topic label="Paths and Symbols page, C/C++ Properties window" href="reference/cdt_u_newproj_pathsymb.htm"/>
-               <topic label="Target platform, C/C++ Properties window" href="reference/cdt_u_newproj_platf.htm"/>
-          </topic>
           <topic label="Views" href="cdt_o_views.htm">
                <topic label="Outline view" href="reference/cdt_u_outlineview.htm"/>
                <topic label="Debug views" href="reference/cdt_o_dbg_view.htm">
@@ -22,7 +14,30 @@
                     <topic label="Debug view" href="reference/cdt_u_dbg_view.htm"/>
                     <topic label="Debug preferences" href="reference/cdt_u_dbg_pref.htm"/>
                </topic>
+			   <topic label="CDT icons" href="reference/cdt_u_icons.htm"/>
           </topic>
+		  <topic label="C/C++ Preferences" href="reference/cdt_u_c_pref.htm">
+		  	   <topic label="Build Console" href="reference/cdt_u_build_pref.htm"/>
+          	   <topic label="C/C++ editor preferences" href="reference/cdt_o_ceditor_pref.htm">
+              		<topic label="General page, Preferences window" href="reference/cdt_u_c_editor_gen.htm"/>
+               		<topic label="Annotations page, Preferences window" href="reference/cdt_u_c_editor_anno.htm"/>
+               		<topic label="Colors page, Preferences window" href="reference/cdt_u_c_editor_color.htm"/>
+               		<topic label="Content Assist page, Preferences window" href="reference/cdt_u_c_editor_con_assist.htm"/>
+					<topic label="Navigation page, Preferences window" href="reference/cdt_u_c_editor_navigation.htm"/>
+			   </topic>
+               <topic label="Code Templates page, Preferences window" href="reference/cdt_u_code_temp.htm"/>
+			   <topic label="Make Targets page, Preferences window" href="reference/cdt_u_make_targets_pref.htm"/>
+        	   <topic label="New Make Projects properties" href="reference/cdt_o_proj_prop_pages.htm">
+               		<topic label="Make Builder page, C/C++ Properties window" href="reference/cdt_u_newproj_buildset.htm"/>
+               		<topic label="Error Parsers, C/C++ Properties window" href="reference/cdt_u_newproj_parser_error.htm"/>
+               		<topic label="Binary Parser page, C/C++ Properties window" href="reference/cdt_u_newproj_parser_binary.htm"/>
+               		<topic label="Paths and Symbols page, C/C++ Properties window" href="reference/cdt_u_newproj_pathsymb.htm">
+	               		<topic label="Scanner Configuration Discovery dialog box" href="reference/cdt_u_scanner_cfg_disc.htm"/>
+	               		<topic label="Manage include paths dialog box" href="reference/cdt_u_newproj_incl_path.htm"/>
+	               		<topic label="Manage defined symbols dialog box" href="reference/cdt_u_newproj_def_symb.htm"/>
+					</topic>
+          	   </topic>
+          </topic>		  
           <topic label="Run and Debug dialog boxes" href="reference/cdt_o_run_dbg_pages.htm">
                <topic label="Main page, Run or Debug dialog box" href="reference/cdt_u_run_dbg_main.htm"/>
                <topic label="Arguments page, Run or Debug dialog box" href="reference/cdt_u_run_dbg_arg.htm"/>
@@ -31,12 +46,6 @@
                <topic label="Source page, Run or Debug dialog box" href="reference/cdt_u_run_dbg_srce.htm"/>
                <topic label="Common page, Run or Debug dialog box" href="reference/cdt_u_run_dbg_comm.htm"/>
           </topic>
-          <topic label="C/C++ editor, code templates and search preferences" href="reference/cdt_o_ceditor_pref.htm">
-               <topic label="General page, Preferences window" href="reference/cdt_u_c_editor_gen.htm"/>
-               <topic label="Annotations page, Preferences window" href="reference/cdt_u_c_editor_anno.htm"/>
-               <topic label="Colors page, Preferences window" href="reference/cdt_u_c_editor_color.htm"/>
-               <topic label="Content Assist page, Preferences window" href="reference/cdt_u_c_editor_con_assist.htm"/>
-               <topic label="Code Templates page, Preferences window" href="reference/cdt_u_code_temp.htm"/>
-               <topic label="C/C++ Search page, Search dialog box" href="reference/cdt_u_search.htm"/>
-          </topic>
-</toc>
+          <topic label="C/C++ Search page, Search dialog box" href="reference/cdt_u_search.htm"/>
+
+	</toc>

@@ -3,8 +3,6 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Make Builder page, C/C++ Properties window</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
@@ -15,35 +13,27 @@ END INFOPOP-->
 
 <body>
 
-<h1>Make Builder page, C/C++ Properties window</h1>
+<h1>Make Builder page, C/C++ Preferences window</h1>
 
-<p>The Make Builder page of the C/C++ Properties window lets you define build settings.</p>
-
+<p>You can define build settings on the Make Builder page of the C/C++ Preferences window.</p>
+<p><img src="../images/new_make-builder.png" border="0" width="732" height="611" alt="Make Builder Preferences Dialog Box"></p>
 <dl>
-  <dt>Stop on Error</dt>
-  <dd>Stops the build when an error is encountered.</dd>
-  <dt>Keep Going on Error</dt>
-  <dd>Continues the build even if an error is encountered.</dd>
-  <dt>Use Default</dt>
-  <dd>Use the default make command. Clear the check box to change the default make command.</dd>
-  <dt>Build Command</dt>
-  <dd>Type a build command.</dd>
+  <dt>Use default</dt>
+  <dd>Select this checkbox to use the default make command. Clear the check box to specify a new make command.</dd>
+  <dt>Build command</dt>
+  <dd>If you clear the <b>Use default</b> checkbox type a new make command in this field.</dd>
+  <dt>Stop on first build error</dt>
+  <dd>Stops the build when an error occurs.</dd>
   <dt>Build on resource save (Auto Build)</dt>
-  <dd>Changes the default build make target. By default, 
-  this option to stop the build when an error is encountered.<br>
-  <b>Note:</b> This option is only effective if it is enabled in the Workbench 
-  preferences.</dd>
+  <dd>Changes the target of the default build make. By default, this option stops the build when an error occurs.<br>
+  <b>Note:</b> This option is only available if you enable it in the workbench preferences.</dd>
   <dt>Build (Incremental Build)</dt>
-  <dd>Changes the default build make target. By default, 
-  this option builds only the components affected by modified files in that particular 
-  project.</dd>
+  <dd>Changes the default build make target. By default, this option builds only the components that are affected by the files which were modified in a project.</dd>
   <dt>Rebuild (Full Build)</dt>
-  <dd>Changes the default build make target. By default, 
-  this option builds every file in a project whether or not a file has been modified since 
-the last build. A Rebuild is a clean followed by a 
+  <dd>Changes the default build make target. By default, this option builds all files in a project, even if they have not been modified. A rebuild is a clean followed by a 
   build.</dd>
-  <dt>Make build target</dt>
-  <dd>Type a make build target.</dd>
+  <dt>Clean</dt>
+  <dd>Deletes intermediate files.</dd>
 </dl>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">

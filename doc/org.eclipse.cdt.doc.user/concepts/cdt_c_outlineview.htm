@@ -2,19 +2,20 @@
 <html lang="en">
 
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Outline view</title>
-<link rel="stylesheet" type="text/css" href="../help.css">
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Outline view</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 
 <body>
 
 <h1>Outline view </h1>
 
-<p>The Outline view gives you a language-based structural view of your C/C++ source code. </p>
+<p>The Outline view displays an outline of a structured C/C++ file that is currently 
+open in the editor area, by listing the structural elements. </p>
+
+<img src="../images/outlineView.png" border="0" width="838" height="312" alt="Outline View screen capture">
 
 <p>The Outline view shows the following elements in the source file in the order 
 in which they occur:</p>
@@ -33,7 +34,7 @@ in which they occur:</p>
   <li>Include</li>
   <li>Method private</li>
   <li>Method protected</li>
-  <li>Method public Struct</li>
+  <li>Method public struct</li>
   <li>Type definition</li>
   <li>Union</li>
   <li>Variable</li>
@@ -41,11 +42,11 @@ in which they occur:</p>
 
 <p>You can also sort the list 
 alphabetically. When you  select an element in the Outline view, the C/C++ 
-editor highlights both the selected item and the marker bar (left margin). For example, to jump 
+editor highlights both the selected item and the marker bar (left margin). For example, to move 
 to the start of main() in the C/C++ editor, click <samp>main()</samp> in the Outline 
 view.</p>
 
-<p>For more information on the marker bar, see <b>Workbench User Guide &gt; Reference &gt; User interface 
+<p>For more information about the marker bar, see <b>Workbench User Guide &gt; Reference &gt; User interface 
 information &gt; Views and editors &gt; Editor area</b>.</p>
 
 <p>You can filter the Outline view by choosing to display or hide the following 
@@ -57,20 +58,37 @@ items:</p>
   <li>Non-public members</li>
 </ul>
 
-<p>You can select an element in the Outline view, and do the following:</p>
+<p>You can select an element in the Outline view, and perform the following actions:</p>
 <ul>
-  <li>Open the C/C++ Search dialog box. The Search string box is populated and 
+  <li>Open the C/C++ Search window box. The Search string box is populated and 
   the element type is selected.</li>
   <li>Complete a text-based search, of a workspace or a specified working set for the 
   selected element.</li>
   <li>Open a selected .h file in the editor.</li>
 </ul>
 
-<p>For more information on:</p>
-<ul>
-  <li>The Eclipse workspace, see <b>Workbench User Guide &gt; Tasks &gt; Upgrading 
-Eclipse</b></li>
-  <li>Working sets, see <b>Workbench User Guide &gt; Concepts &gt; Working sets</b></li>
+<h2>Icons</h2>
+<p><table border="1" >
+	<tr>
+		<td><img src="../images/outlineView-hideFields.png" border="0" width="22" height="22" alt="Hide Fields Button"></td>
+		<td>Hide Fields </td>
+	</tr>
+	<tr>
+		<td><img src="../images/outlineView-hideStaticMembers.png" border="0" width="22" height="22" alt="Hide Static Members Button"></td>
+		<td>Hide Static Members </td>
+	</tr>
+	<tr>
+		<td><img src="../images/outlineView-hideNon-PublicMembers.png" border="0" width="22" height="22" alt="Hide Non Public Members Button"></td>
+		<td>Hide Non-Public Members </td>
+	</tr>
+	<tr>
+		<td><img src="../images/outlineView-Sort.png" border="0" width="22" height="22" alt="Sort Button"></td>
+		<td>Sort </td>
+	</tr>
+</table></p>
+
+<p>For more information about the Eclipse workbench, see <b>Workbench User Guide &gt; Tasks &gt; Upgrading Eclipse</b>.</p>
+<p>For more information about Working sets, see <b>Workbench User Guide &gt; Concepts &gt; Working sets</b>.</p>
 </ul>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">

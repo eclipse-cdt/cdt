@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
@@ -156,9 +157,42 @@ public class Util {
 			IStatus.ERROR, 
 			message, 
 			e); 
-			
-		CCorePlugin.getDefault().getLog().log(status);
+		Util.log(status);			
 	}	
+	
+	public static void log(IStatus status){
+		CCorePlugin.getDefault().getLog().log(status);
+	}
+	
+	public static void log(String message){
+		IStatus status = new Status(IStatus.INFO, 
+		CCorePlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
+		IStatus.INFO,
+		message,
+		null);
+		Util.log(status);
+	}
+	
+	public static void debugLog(String message) {
+		if (CCorePlugin.getDefault() != null && CCorePlugin.getDefault().isDebugging()) {			
+			// Time stamp
+			message = MessageFormat.format( "[{0}] {1}", new Object[] { new Long( System.currentTimeMillis() ), message } );
+			while (message.length() > 100) {
+				String partial = message.substring(0, 100);
+				message = message.substring(100);
+				System.out.println(partial + "\\");
+			}
+			if (message.endsWith("\n")) {
+				System.err.print(message);
+			} else {
+				System.out.println(message);
+			}
+		}
+	}
+	
+	public static void setDebugging(boolean value){
+		CCorePlugin.getDefault().setDebugging(value);
+	}
 	
 	/**
 	 * Combines two hash codes to make a new one.

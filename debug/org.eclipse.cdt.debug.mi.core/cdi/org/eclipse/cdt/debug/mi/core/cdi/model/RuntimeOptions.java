@@ -27,8 +27,6 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 /**
  */
 public class RuntimeOptions extends CObject implements ICDIRuntimeOptions {
-
-	Target target;
 	
 	public RuntimeOptions(Target t) {
 		super(t);

@@ -248,7 +248,6 @@ public class BreakpointManager extends Manager {
 			numbers[i] = miBreakpoints[i].getNumber();
 		}
 
-		Session session = (Session)target.getSession();
 		boolean state = suspendInferior(target);
 		MISession miSession = target.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();

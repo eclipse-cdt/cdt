@@ -25,7 +25,6 @@ import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Plugin;

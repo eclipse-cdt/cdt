@@ -103,11 +103,11 @@ public class SharedLibraryManager extends Manager {
 		MIShared[] miLibs = getMIShareds(miSession);
 		ArrayList eventList = new ArrayList(miLibs.length);
 		for (int i = 0; i < miLibs.length; i++) {
-			ICDISharedLibrary sharedlib = getSharedLibrary(target, miLibs[i].getName());
+			SharedLibrary sharedlib = getSharedLibrary(target, miLibs[i].getName());
 			if (sharedlib != null) {
 				if (hasSharedLibChanged(sharedlib, miLibs[i])) {
 					// Fire ChangedEvent
-					((SharedLibrary)sharedlib).setMIShared(miLibs[i]);
+					sharedlib.setMIShared(miLibs[i]);
 					eventList.add(new MISharedLibChangedEvent(miSession, miLibs[i].getName())); 
 				}
 			} else {
@@ -120,7 +120,7 @@ public class SharedLibraryManager extends Manager {
 		// Check if any libraries was unloaded.
 		List sharedList = (List)sharedMap.get(target);
 		if (sharedList != null) {
-			ICDISharedLibrary[] oldlibs = (ICDISharedLibrary[]) sharedList.toArray(new ICDISharedLibrary[sharedList.size()]);
+			SharedLibrary[] oldlibs = (SharedLibrary[]) sharedList.toArray(new SharedLibrary[sharedList.size()]);
 			for (int i = 0; i < oldlibs.length; i++) {
 				boolean found = false;
 				for (int j = 0; j < miLibs.length; j++) {
@@ -138,7 +138,7 @@ public class SharedLibraryManager extends Manager {
 		return eventList;
 	}
 
-	public boolean hasSharedLibChanged(ICDISharedLibrary lib, MIShared miLib) {
+	public boolean hasSharedLibChanged(SharedLibrary lib, MIShared miLib) {
 		return !miLib.getName().equals(lib.getFileName()) ||
 			!MIFormat.getBigInteger(miLib.getFrom()).equals(lib.getStartAddress())   ||
 		    !MIFormat.getBigInteger(miLib.getTo()).equals(lib.getEndAddress()) ||
@@ -148,7 +148,7 @@ public class SharedLibraryManager extends Manager {
 	/*
 	 * this for the events
 	 */
-	public void deleteSharedLibrary(MISession miSession, ICDISharedLibrary lib) {
+	public void deleteSharedLibrary(MISession miSession, SharedLibrary lib) {
 		Target target = ((Session)getSession()).getTarget(miSession);
 		List sharedList = (List)sharedMap.get(target);
 		if (sharedList != null) {
@@ -156,14 +156,14 @@ public class SharedLibraryManager extends Manager {
 		}
 	}
 
-	public ICDISharedLibrary getSharedLibrary(MISession miSession, String name) {
+	public SharedLibrary getSharedLibrary(MISession miSession, String name) {
 		Target target = ((Session)getSession()).getTarget(miSession);
 		return getSharedLibrary(target, name);
 	}
-	public ICDISharedLibrary getSharedLibrary(Target target, String name) {
+	public SharedLibrary getSharedLibrary(Target target, String name) {
 		List sharedList = (List)sharedMap.get(target);
 		if (sharedList != null) {
-			ICDISharedLibrary[] libs = (ICDISharedLibrary[]) sharedList.toArray(new ICDISharedLibrary[sharedList.size()]);
+			SharedLibrary[] libs = (SharedLibrary[]) sharedList.toArray(new SharedLibrary[sharedList.size()]);
 			for (int i = 0; i < libs.length; i++) {
 				if (name.equals(libs[i].getFileName())) {
 					return libs[i];

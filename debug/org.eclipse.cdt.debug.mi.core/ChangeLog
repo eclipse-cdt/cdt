@@ -1,3 +1,10 @@
+2004-11-08 Alain Magloire
+	Fix for 74496 ; we should destroy the global
+	variables if they are in the address range of a
+	shared library being unloaded.
+
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+
 2004-11-08 Mikhail Khodjaiants
 	Added support for refresh preferences and properties.
 	* IMIConstants.java

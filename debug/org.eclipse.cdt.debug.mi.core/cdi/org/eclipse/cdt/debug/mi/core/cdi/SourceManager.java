@@ -70,7 +70,6 @@ public class SourceManager extends Manager {
 	}
 
 	public void addSourcePaths(Target target, String[] dirs) throws CDIException {
-		Session session = (Session)getSession();
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIEnvironmentDirectory dir = factory.createMIEnvironmentDirectory(dirs);
@@ -400,7 +399,6 @@ public class SourceManager extends Manager {
 	}
 
 	public String getDetailTypeName(StackFrame frame, String typename) throws CDIException {
-		Session session = (Session)getSession();
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
@@ -425,7 +423,6 @@ public class SourceManager extends Manager {
 	}
 
 	public String getTypeName(StackFrame frame, String variable) throws CDIException {
-		Session session = (Session)getSession();
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = null;
 		StackFrame currentFrame = null;

@@ -12,7 +12,6 @@ package org.eclipse.cdt.debug.mi.core.cdi.event;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
@@ -21,6 +20,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
+import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
@@ -82,7 +82,7 @@ public class DestroyedEvent implements ICDIDestroyedEvent {
 		SharedLibraryManager mgr = session.getSharedLibraryManager();
 		MISession miSession = slib.getMISession();
 		String name = slib.getName();
-		ICDISharedLibrary lib = mgr.getSharedLibrary(miSession, name);
+		SharedLibrary lib = mgr.getSharedLibrary(miSession, name);
 		if (lib != null) {
 			mgr.deleteSharedLibrary(miSession, lib);
 			source = lib;

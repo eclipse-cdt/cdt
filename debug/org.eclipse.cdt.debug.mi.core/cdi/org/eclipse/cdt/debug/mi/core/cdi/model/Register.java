@@ -40,13 +40,13 @@ public class Register extends Variable implements ICDIRegister {
 	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.VariableDescriptor#getFullName()
 	 */
 	public String getFullName() {
-		if (fullName == null) {
+		if (fFullName == null) {
 			String n = getName();
 			if (!n.startsWith("$")) { //$NON-NLS-1$
-				fullName = "$" + n; //$NON-NLS-1$
+				fFullName = "$" + n; //$NON-NLS-1$
 			}
 		}
-		return fullName;
+		return fFullName;
 	}
 
 	protected Variable createVariable(Target target, Thread thread, StackFrame frame, String name, String fullName, int pos, int depth, MIVar miVar) {

@@ -634,7 +634,6 @@ public class Target extends SessionObject implements ICDITarget {
 	}
 
 	public String evaluateExpressionToString(ICDIStackFrame frame, String expressionText) throws CDIException {
-		Session session = (Session)getSession();
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();

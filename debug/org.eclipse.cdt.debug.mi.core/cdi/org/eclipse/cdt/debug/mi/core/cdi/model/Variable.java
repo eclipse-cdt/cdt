@@ -71,7 +71,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
  */
 public abstract class Variable extends VariableDescriptor implements ICDIVariable {
 
-	MIVar miVar;
+	MIVar fMiVar;
 	Value value;
 	ICDIVariable[] children = new ICDIVariable[0];
 	String editable = null;
@@ -80,16 +80,16 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 
 	public Variable(VariableDescriptor obj, MIVar v) {
 		super(obj);
-		miVar = v;
+		fMiVar = v;
 	}
 
 	public Variable(Target target, Thread thread, StackFrame frame, String n, String q, int pos, int depth, MIVar v) {
 		super(target, thread, frame, n, q, pos, depth);
-		miVar = v;
+		fMiVar = v;
 	}
 
 	public MIVar getMIVar() {
-		return miVar;
+		return fMiVar;
 	}
 
 	public Variable getChild(String name) {
@@ -179,7 +179,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 					if (subType instanceof ICDIStructType) {
 						if (isCPPLanguage()) {
 							if (!isFake()
-									|| (isFake() && !(name.equals("private") || name.equals("public") || name.equals("protected")))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+									|| (isFake() && !(fName.equals("private") || fName.equals("public") || fName.equals("protected")))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								childFake = true;
 								childType = t;
 							} else {
@@ -210,7 +210,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 						// So we choose to ignore the first set of children
 						// but carry over to those "fake" variables the typename and the qualified name
 						if (!isFake()
-							|| (isFake() && !(name.equals("private") || name.equals("public") || name.equals("protected")))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							|| (isFake() && !(fName.equals("private") || fName.equals("public") || fName.equals("protected")))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							childFake = true;
 							childType = t;
 						} else {
@@ -224,7 +224,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 						childName, fn, getPosition(), getStackDepth(), vars[i]);
 				if (childType != null) {
 					// Hack to reset the typename to a known value
-					v.type = childType;
+					v.fType = childType;
 				}
 				v.setIsFake(childFake);
 				children[i] = v;
@@ -239,7 +239,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			String name, String fullName, int pos, int depth, MIVar miVar);
 	
 	public int getChildrenNumber() throws CDIException {
-		return miVar.getNumChild();
+		return fMiVar.getNumChild();
 	}
 
 	/**
@@ -299,7 +299,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		Target target = (Target)getTarget();
 		MISession miSession = target.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
-		MIVarAssign var = factory.createMIVarAssign(miVar.getVarName(), expression);
+		MIVarAssign var = factory.createMIVarAssign(fMiVar.getVarName(), expression);
 		try {
 			miSession.postCommand(var);
 			MIInfo info = var.getMIInfo();
@@ -312,7 +312,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 
 		// If the assign was succesfull fire a MIVarChangedEvent() for the variable
 		// Note GDB will not fire an event for the changed variable we have to do it manually.
-		MIVarChangedEvent change = new MIVarChangedEvent(miSession, var.getToken(), miVar.getVarName());
+		MIVarChangedEvent change = new MIVarChangedEvent(miSession, var.getToken(), fMiVar.getVarName());
 		miSession.fireEvent(change);
 
 		// Changing values may have side effects i.e. affecting other variables
@@ -348,7 +348,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		if (editable == null) {
 			MISession mi = ((Target) getTarget()).getMISession();
 			CommandFactory factory = mi.getCommandFactory();
-			MIVarShowAttributes var = factory.createMIVarShowAttributes(miVar.getVarName());
+			MIVarShowAttributes var = factory.createMIVarShowAttributes(fMiVar.getVarName());
 			try {
 				mi.postCommand(var);
 				MIVarShowAttributesInfo info = var.getMIVarShowAttributesInfo();
@@ -370,7 +370,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		int fmt = Format.toMIFormat(format);
 		MISession mi = ((Target) getTarget()).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIVarSetFormat var = factory.createMIVarSetFormat(miVar.getVarName(), fmt);
+		MIVarSetFormat var = factory.createMIVarSetFormat(fMiVar.getVarName(), fmt);
 		try {
 			mi.postCommand(var);
 			MIInfo info = var.getMIInfo();
@@ -388,7 +388,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	public boolean equals(ICDIVariable var) {
 		if (var instanceof Variable) {
 			Variable variable = (Variable) var;
-			return miVar.getVarName().equals(variable.getMIVar().getVarName());
+			return fMiVar.getVarName().equals(variable.getMIVar().getVarName());
 		}
 		return super.equals(var);
 	}

@@ -133,7 +133,6 @@ public class MIProcessAdapter implements MIProcess {
 		if (fGDBProcess instanceof Spawner) {
 			Spawner gdbSpawner = (Spawner) fGDBProcess;
 			gdbSpawner.interrupt();
-			int state;
 			synchronized (inferior) {
 				// Allow (5 secs) for the interrupt to propagate.
 				for (int i = 0; inferior.isRunning() && i < 5; i++) {

@@ -34,6 +34,35 @@ public final class MIFormat {
 	private MIFormat() {
 	}
 
+	/**
+	 * We are assuming that GDB will print the address in hex format
+	 * like:
+	 *  0xbfffe5f0 "hello"
+	 *  (int *) 0xbfffe2b8
+	 * 
+	 * @param buffer
+	 * @return
+	 */
+	public static BigInteger decodeAdress(String buffer) {
+		int radix = 10;
+		int cursor = 0;
+		int offset = 0;
+		int len = buffer.length();
+
+		if ((offset = buffer.indexOf("0x")) != -1 || //$NON-NLS-1$
+			(offset = buffer.indexOf("0X")) != -1) { //$NON-NLS-1$
+			radix = 16;
+			cursor = offset + 2;
+		}
+
+		while (cursor < len && Character.digit(buffer.charAt(cursor), radix) != -1) {
+			cursor++;
+		}
+
+		String s = buffer.substring(offset, cursor);
+		return getBigInteger(s);
+	}
+
 	public static BigInteger getBigInteger(String address) {
 		int index = 0;
 		int radix = 10;

@@ -37,15 +37,15 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	int castingIndex;
 	int castingLength;
 
-	String name;
+	String fName;
 	int position;
 	StackFrame fStackFrame;
 	Thread fThread;
 	int stackdepth;
 
 	String qualifiedName = null;
-	String fullName = null;
-	ICDIType type = null;
+	String fFullName = null;
+	ICDIType fType = null;
 	String typename = null;
 	String sizeof = null;
 
@@ -55,10 +55,10 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	 */
 	public VariableDescriptor(VariableDescriptor desc) {
 		super((Target)desc.getTarget());
-		name = desc.getName();
-		fullName = desc.fullName;
+		fName = desc.getName();
+		fFullName = desc.fFullName;
 		sizeof = desc.sizeof;
-		type = desc.type;
+		fType = desc.fType;
 		try {
 			fStackFrame = (StackFrame)desc.getStackFrame();
 			fThread = (Thread)desc.getThread();
@@ -73,8 +73,8 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 
 	public VariableDescriptor(Target target, Thread thread, StackFrame stack, String n, String fn, int pos, int depth) {
 		super(target);
-		name = n;
-		fullName = fn;
+		fName = n;
+		fFullName = fn;
 		fStackFrame = stack;
 		fThread = thread;
 		position = pos;
@@ -150,24 +150,24 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	}
 
 	public String getFullName() {
-		if (fullName == null) {
-			fullName = getName();
+		if (fFullName == null) {
+			fFullName = getName();
 		}
-		return fullName;
+		return fFullName;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableDescriptor#getName()
 	 */
 	public String getName() {
-		return name;
+		return fName;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getType()
 	 */
 	public ICDIType getType() throws CDIException {
-		if (type == null) {
+		if (fType == null) {
 			Target target = (Target)getTarget();
 			Session session = (Session) (target.getSession());
 			StackFrame frame = (StackFrame)getStackFrame();
@@ -182,29 +182,29 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 			SourceManager sourceMgr = session.getSourceManager();
 			String nametype = sourceMgr.getTypeName(frame, getQualifiedName());
 			try {
-				type = sourceMgr.getType(frame, nametype);
+				fType = sourceMgr.getType(frame, nametype);
 			} catch (CDIException e) {
 				// Try with ptype.
 				try {
 					String ptype = sourceMgr.getDetailTypeName(frame, nametype);
-					type = sourceMgr.getType(frame, ptype);
+					fType = sourceMgr.getType(frame, ptype);
 				} catch (CDIException ex) {
 					// Some version of gdb does not work woth the name of the class
 					// ex: class data foo --> ptype data --> fails
 					// ex: class data foo --> ptype foo --> succeed
 					try {
 						String ptype = sourceMgr.getDetailTypeName(frame, getQualifiedName());
-						type = sourceMgr.getType(frame, ptype);
+						fType = sourceMgr.getType(frame, ptype);
 					} catch (CDIException e2) {
 						// give up.
 					}
 				}
 			}
-			if (type == null) {
-				type = new IncompleteType(frame, nametype);
+			if (fType == null) {
+				fType = new IncompleteType(frame, nametype);
 			}
 		}
-		return type;
+		return fType;
 	}
 
 	/* (non-Javadoc)
@@ -213,7 +213,6 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	public int sizeof() throws CDIException {
 		if (sizeof == null) {
 			Target target = (Target) getTarget();
-			Session session = (Session) (target.getSession());
 			Thread currentThread = (Thread)target.getCurrentThread();
 			StackFrame currentFrame = currentThread.getCurrentStackFrame();
 			StackFrame frame = (StackFrame)getStackFrame();

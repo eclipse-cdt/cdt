@@ -730,8 +730,12 @@ public abstract class CVariable extends CDebugElement
 
 	protected void reset() throws DebugException
 	{
-		((CValue)getValue()).reset();
-		fireChangeEvent( DebugEvent.STATE );
+		IValue value = getValue();
+		if ( value instanceof CValue )
+		{
+			((CValue)getValue()).reset();
+			fireChangeEvent( DebugEvent.STATE );
+		}
 	}
 
 	/* (non-Javadoc)

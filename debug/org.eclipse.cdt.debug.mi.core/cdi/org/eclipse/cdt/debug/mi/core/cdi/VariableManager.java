@@ -125,10 +125,7 @@ public class VariableManager extends Manager {
 			if (vars[i].getName().equals(name)
 				&& vars[i].getCastingArrayStart() == v.getCastingArrayStart()
 				&& vars[i].getCastingArrayEnd() == v.getCastingArrayEnd()
-				&& ((vars[i].getCastingType() == null && v.getCastingType() == null)
-					|| (vars[i].getCastingType() != null
-						&& v.getCastingType() != null
-						&& vars[i].getCastingType().equals(v.getCastingType())))) {
+				&& VariableDescriptor.equalsCasting(vars[i], v)) {
 				// check threads
 				ICDIThread thread = vars[i].getThread();
 				if ((vthread == null && thread == null) ||
@@ -291,11 +288,16 @@ public class VariableManager extends Manager {
 			throw new CDIException(CdiResources.getString("cdi.VariableManager.Unknown_variable_object")); //$NON-NLS-1$			
 		}
 
-		String casting = varDesc.getCastingType();
-		if (casting != null && casting.length() > 0) {
-			type = "(" + type + ")" + "(" + casting + " )"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		String[] castings = varDesc.getCastingTypes();
+		if (castings == null) {
+			castings = new String[] { type };
+		} else {
+			String[] temp = new String[castings.length + 1];
+			System.arraycopy(castings, 0, temp, 0, castings.length);
+			temp[castings.length] = type;
+			castings = temp;
 		}
-		vo.setCastingType(type);
+		vo.setCastingTypes(castings);
 		return vo;
 	}
 

@@ -33,7 +33,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 public abstract class VariableDescriptor extends CObject implements ICDIVariableDescriptor {
 
 	// Casting info.
-	String castingType;
+	String[] castingTypes;
 	int castingIndex;
 	int castingLength;
 
@@ -68,7 +68,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 		stackdepth = desc.getStackDepth();
 		castingIndex = desc.getCastingArrayStart();
 		castingLength = desc.getCastingArrayEnd();
-		castingType = desc.getCastingType();
+		castingTypes = desc.getCastingTypes();
 	}
 
 	public VariableDescriptor(Target target, Thread thread, StackFrame stack, String n, String fn, int pos, int depth) {
@@ -103,11 +103,11 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 		return castingLength;
 	}
 
-	public void setCastingType(String t) {
-		castingType = t;
+	public void setCastingTypes(String[] t) {
+		castingTypes = t;
 	}
-	public String getCastingType() {
-		return castingType;
+	public String[] getCastingTypes() {
+		return castingTypes;
 	}
 
 	/**
@@ -128,10 +128,22 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 			buffer.append(')');
 			buffer.append('@').append(castingLength);
 			fn = buffer.toString();
-		} else if (castingType != null && castingType.length() > 0) {
+		} else if (castingTypes != null && castingTypes.length > 0) {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("((").append(castingType).append(')'); //$NON-NLS-1$
-			buffer.append(fn).append(')');
+			for (int i = 0; i < castingTypes.length; ++i) {
+				if (castingTypes[i] != null && castingTypes[i].length() > 0) {
+					if (buffer.length() == 0) {
+						buffer.append('(').append(castingTypes[i]).append(')');
+						buffer.append(fn);
+					} else {
+						buffer.insert(0, '(');
+						buffer.append(')');
+						StringBuffer b = new StringBuffer();
+						b.append('(').append(castingTypes[i]).append(')');
+						buffer.insert(0, b.toString());
+					}
+				}
+			}
 			fn = buffer.toString();
 		}
 		return fn;
@@ -277,6 +289,21 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 		return qualifiedName;
 	}
 
+	public static boolean equalsCasting(VariableDescriptor var1, VariableDescriptor var2) {
+		String[] castings1 = var1.getCastingTypes();
+		String[] castings2 = var2.getCastingTypes();
+		if (castings1 == null && castings2 == null) {
+			return true;
+		} else if (castings1 != null && castings2 != null && castings1.length == castings2.length) {
+			for (int i = 0; i < castings1.length; ++i) {
+				if (!castings1[i].equals(castings2[i])) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#equals(ICDIVariableDescriptor)
 	 */
@@ -286,8 +313,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 			if (desc.getName().equals(getName())
 				&& desc.getCastingArrayStart() == getCastingArrayStart()
 				&& desc.getCastingArrayEnd() == getCastingArrayEnd()
-				&& ((desc.getCastingType() == null && getCastingType() == null)
-					|| (desc.getCastingType() != null && getCastingType() != null && desc.getCastingType().equals(getCastingType())))) {
+				&& equalsCasting(desc, this)) {
 
 				// Check the threads
 				ICDIThread varThread = null;

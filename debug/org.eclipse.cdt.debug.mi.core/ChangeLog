@@ -1,3 +1,8 @@
+2004-11-03 Alain Magloire
+	Partial fix for 77435
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/VariableDescriptor.java
+
 2004-11-02 Alain Magloire
 	Refactor ICDIConfiguratio --> ICDISessionConfiguration and ICDITargetConfiguration
 	* cdi/org/eclipse/cdt/debug/core/cdi/Session.java

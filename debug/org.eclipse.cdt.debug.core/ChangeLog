@@ -1,3 +1,10 @@
+2004-06-28 Mikhail Khodjaiants
+	Partial fix for bug 45535: Performance problems when debugging.
+	Cache the double and float presentations of the floating point types.
+	* CDebugUtils.java
+	* CFloatingPointValue.java: new
+	* CValueFactory.java
+
 2004-06-24 Mikhail Khodjaiants
 	Temporary fix for bug 56520: Debug Perspective doesn't get called when a breakpoint is hit.
 	* CThread.java

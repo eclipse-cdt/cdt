@@ -125,10 +125,7 @@ public class EditorUtility {
 		Process objdump = null;
 		IPath path;
 		IResource file = null;
-		try {
-			file = bin.getResource();
-		} catch (CModelException e1) {
-		}
+		file = bin.getResource();
 		if (file == null)
 			return store;
 		path = file.getLocation();

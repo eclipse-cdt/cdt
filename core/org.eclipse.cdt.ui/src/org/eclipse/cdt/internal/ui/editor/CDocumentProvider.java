@@ -112,34 +112,30 @@ public class CDocumentProvider extends FileDocumentProvider implements IWorkingC
 		}
 			
 		public IBuffer createBuffer(IOpenable owner) {
-			try {
-				if (owner instanceof IWorkingCopy) {
+			if (owner instanceof IWorkingCopy) {
 						
-					IWorkingCopy unit= (IWorkingCopy) owner;
-					ITranslationUnit original= (ITranslationUnit) unit.getOriginalElement();
-					IResource resource= original.getResource();
-					if (resource instanceof IFile) {
-						IFileEditorInput providerKey= new FileEditorInput((IFile) resource);
-							
-						IDocument document= null;
-						IStatus status= null;
-							
-						try {
-							document= internalGetDocument(providerKey);
-						} catch (CoreException x) {
-							status= x.getStatus();
-							document= new Document();
-							initializeDocument(document);
-						}
-							
-						DocumentAdapter adapter= new DocumentAdapter(unit, document, new DefaultLineTracker(), CDocumentProvider.this, providerKey);
-						adapter.setStatus(status);
-						return adapter;
+				IWorkingCopy unit= (IWorkingCopy) owner;
+				ITranslationUnit original= (ITranslationUnit) unit.getOriginalElement();
+				IResource resource= original.getResource();
+				if (resource instanceof IFile) {
+					IFileEditorInput providerKey= new FileEditorInput((IFile) resource);
+						
+					IDocument document= null;
+					IStatus status= null;
+						
+					try {
+						document= internalGetDocument(providerKey);
+					} catch (CoreException x) {
+						status= x.getStatus();
+						document= new Document();
+						initializeDocument(document);
 					}
 							
+					DocumentAdapter adapter= new DocumentAdapter(unit, document, new DefaultLineTracker(), CDocumentProvider.this, providerKey);
+					adapter.setStatus(status);
+					return adapter;
 				}
-			} catch (CModelException e) {
-				return DocumentAdapter.NULL;				
+							
 			}
 			return DocumentAdapter.NULL;
 		}

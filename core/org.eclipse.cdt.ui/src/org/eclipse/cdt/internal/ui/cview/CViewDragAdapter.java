@@ -102,10 +102,7 @@ class CViewDragAdapter extends DragSourceAdapter {
 			IResource res = null;
 			if (next instanceof ICElement) {
 				ICElement celement = (ICElement)next;
-				try {
-					res = celement.getResource();
-				} catch (CModelException e) {
-				}
+				res = celement.getResource();
 			}
 			if (res == null) {
 				event.doit = false;

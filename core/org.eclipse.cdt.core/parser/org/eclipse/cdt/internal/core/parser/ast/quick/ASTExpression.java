@@ -102,7 +102,22 @@ public class ASTExpression implements IASTExpression {
 	public int evaluateExpression() throws ExpressionEvaluationException {
 		// primary expressions
 		if( getExpressionKind() == IASTExpression.Kind.PRIMARY_INTEGER_LITERAL )
-			return Integer.parseInt( getLiteralString() );
+		{
+			try
+			{
+				if( getLiteralString().startsWith( "0x") || getLiteralString().startsWith( "0x") )
+				{
+                    return Integer.parseInt( getLiteralString().substring(2), 16 );
+				}
+				if( getLiteralString().startsWith( "0") && getLiteralString().length() > 1 )
+					return Integer.parseInt( getLiteralString().substring(1), 8 );
+				return Integer.parseInt( getLiteralString() );
+			}
+			catch( NumberFormatException nfe )
+			{
+				throw new ExpressionEvaluationException();
+			}
+		}	
 		if( getExpressionKind() == IASTExpression.Kind.PRIMARY_BRACKETED_EXPRESSION ) 
 			return getLHSExpression().evaluateExpression();
 		// unary not 

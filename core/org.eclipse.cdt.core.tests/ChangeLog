@@ -1,3 +1,17 @@
+2003-10-21 John Camelon
+	Moved testBug40007() from ASTFailedTests to QuickParseASTTests.  
+	Added QuickParseASTTests::testBug40759().  
+	Added QuickParseASTTests::testBug44633().  
+	Added ScannerTestCase::testBug44305().  
+	Added QuickParseASTTests::testBug41935(). 
+	Moved testBug39525() from ASTFailedTests to QuickParseASTTests.  
+	Added ScannerTestCase::testBug45287(). 
+	Moved testBug39528() from ASTFailedTests to QuickParseASTTests.  
+	Moved testBug39538() from ASTFailedTests to QuickParseASTTests.  
+	Added QuickParseASTTests::testBug39536().  
+	Moved testBug39536A() from ASTFailedTests to QuickParseASTTests.  
+	Moved testBug39536B() from ASTFailedTests to QuickParseASTTests.  
+
 2003-10-01 Andrew Niefer
 	added testBug43951 to CompleteParseASTTest
 

@@ -117,6 +117,7 @@ public class BaseScannerTest extends TestCase {
 			assertTrue(false);
 		}		
 	}
+
 	public void validateChar( String expected ) throws ScannerException
 	{
 		try {
@@ -205,6 +206,20 @@ public class BaseScannerTest extends TestCase {
 	public static final boolean verbose = false;
 
     protected NullSourceElementRequestor callback = new NullSourceElementRequestor();
+
+    /**
+         * @param string
+         */
+    protected void validateWideChar(String string) throws Exception
+    {
+		try {
+			IToken t= scanner.nextToken();
+			assertTrue(t.getType() == IToken.tLCHAR );
+			assertEquals( t.getImage(), string ); 
+		} catch (EndOfFile e) {
+			assertTrue(false);
+		}		
+    }
 	
 
 }

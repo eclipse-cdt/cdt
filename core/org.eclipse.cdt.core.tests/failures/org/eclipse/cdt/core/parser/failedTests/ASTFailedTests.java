@@ -16,9 +16,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.tests.BaseASTTest;
@@ -38,46 +36,7 @@ public class ASTFailedTests extends BaseASTTest
         assertCodeFailsParse("FUNCTION_MACRO( 1, a )\n	int i;");
     }
 
-   
-    public void testBug39525() throws Exception
-    {
-        assertCodeFailsParse("C &(C::*DD)(const C &x) = &C::operator=;");
-    }
 
-    public void testBug39528() throws Exception
-    {
-        Writer code = new StringWriter();
-        try
-        {
-            code.write("struct B: public A {\n");
-            code.write("  A a;\n");
-            code.write("  B() try : A(1), a(2)\n");
-            code.write("	{ throw 1; }\n");
-            code.write("  catch (...)\n");
-            code.write("	{ if (c != 3) r |= 1; }\n");
-            code.write("};\n");
-        }
-        catch (IOException ioe)
-        {
-        }
-        assertCodeFailsParse(code.toString());
-    }
-
-    public void testBug39536A() throws Exception
-    {
-        IASTTemplateDeclaration template = (IASTTemplateDeclaration)parse("template<class E> class X { X<E>(); };").getDeclarations().next();
-        IASTClassSpecifier classX = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)template.getOwnedDeclaration()).getTypeSpecifier();
-        IASTDeclaration d = (IASTDeclaration)classX.getDeclarations().next();
-        assertTrue( d instanceof IASTVariable ); // this is not right!   
-    }
-    public void testBug39536B() throws Exception
-    {
-		assertCodeFailsParse("template<class E> class X { inline X<E>(int); };");
-    }
-    public void testBug39538() throws Exception
-    {
-        assertCodeFailsParse("template C::operator int<float> ();");
-    }
     public void testBug39542() throws Exception
     {
         assertCodeFailsParse("void f(int a, struct {int b[a];} c) {}");
@@ -303,11 +262,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("#ident \"@(#)filename.c   1.3 90/02/12\"");
     }
-    //Here GCC-specific section ends
-    public void testBug40007() throws Exception
-    {
-        parse("int y = #;");
-    }
+
     
 	public void testBug40422() throws Exception {
 		// Parse and get the translaton unit

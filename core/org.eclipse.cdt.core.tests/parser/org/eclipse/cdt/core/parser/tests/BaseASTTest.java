@@ -76,19 +76,13 @@ public class BaseASTTest extends TestCase
 		Iterator declarationIter = null;
         try
         {
-            try
-            {
-                declarationIter = parse(code).getDeclarations();
-            }
-            catch (ASTNotImplementedException e1)
-            {
-                // TODO Auto-generated catch block
-            }
+            declarationIter = parse(code).getDeclarations();
         }
-        catch (ParserException e)
+        catch (ASTNotImplementedException e1)
         {
             // TODO Auto-generated catch block
         }
+
         assertNotNull( declarationIter );
 		assertTrue( declarationIter.hasNext() );
 		IASTDeclaration returnValue = (IASTDeclaration)declarationIter.next();

@@ -147,7 +147,7 @@ public interface IASTFactory
 		boolean isVolatile,
 		boolean isVirtual,
 		boolean isExplicit,
-		boolean isPureVirtual, List constructorChain, boolean isDefinition ) throws ASTSemanticException, Exception;
+		boolean isPureVirtual, List constructorChain, boolean isDefinition, boolean hasFunctionTryBlock ) throws ASTSemanticException, Exception;
     public IASTAbstractDeclaration createAbstractDeclaration(
         boolean isConst,
         boolean isVolatile,
@@ -170,7 +170,7 @@ public interface IASTFactory
         boolean isVolatile,
         boolean isVirtual,
         boolean isExplicit,
-        boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isDefinition) throws ASTSemanticException, Exception;
+        boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isDefinition, boolean hasFunctionTryBlock) throws ASTSemanticException, Exception;
         
 	public IASTVariable createVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
 		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, int nameEndOffset, IASTExpression constructorExpression ) throws ASTSemanticException, Exception;

@@ -33,6 +33,9 @@ public interface IASTFunction extends IASTCodeScope, IASTOffsetableNamedElement,
 	public void setHasFunctionBody(boolean b);
 	public boolean hasFunctionBody();
 	
+	public void setHasFunctionTryBlock( boolean b );
+	public boolean hasFunctionTryBlock();
+	
 	public boolean previouslyDeclared();
 
 }

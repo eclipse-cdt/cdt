@@ -1366,7 +1366,7 @@ public class ScannerTestCase extends BaseScannerTest
 			// if Scanner.throwExceptionOnBadCharacterRead == true
 			// we might end up with valid ScannerException "Invalid character ..."
 			// for '\'
-			assertTrue(se.getMessage().equals("Invalid character '\\' read @ offset 5 of file TEXT"));
+			assertTrue(se.getErrorCode() == ScannerException.ErrorCode.BAD_CHARACTER );
 		}
 	}
     
@@ -1391,4 +1391,25 @@ public class ScannerTestCase extends BaseScannerTest
         validateString("@ \\\\n hh \\\"aa\\\"");
         validateEOF();
     }
+    
+    public void testBug44305() throws Exception
+    {
+		StringWriter writer = new StringWriter(); 
+		writer.write( "#define WCHAR_MAX 0 \n");
+		writer.write( "#if WCHAR_MAX <= 0xff\n" );
+		writer.write( "bool\n");
+		writer.write( "#endif"); 
+		initializeScanner( writer.toString());
+		validateToken( IToken.t_bool );
+		validateEOF();
+    }
+
+	public void testBug45287() throws Exception
+	{
+		initializeScanner( "'abcdefg' L'hijklmnop'");
+		validateChar( "abcdefg" );
+		validateWideChar( "hijklmnop");
+		validateEOF();
+	}
+    
 }

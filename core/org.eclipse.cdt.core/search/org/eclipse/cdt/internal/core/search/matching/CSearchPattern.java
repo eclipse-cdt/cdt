@@ -484,7 +484,8 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					try{
 						token = scanner.nextToken();
 					} catch ( ScannerException e ){
-						if( e.getErrorCode() == ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE ){
+						if( e.getErrorCode() == ScannerException.ErrorCode.BAD_CHARACTER ){
+							//TODO : This may not //, it could be another bad character
 							if( !encounteredWild && !lastTokenWasOperator ) name += " ";
 							name += "\\";
 							encounteredWild = true;

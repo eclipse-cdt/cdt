@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
@@ -1871,5 +1872,108 @@ public class QuickParseASTTests extends BaseASTTest
 	{
 		parse("class AString { operator char const *() const; };");
 	}
+	
+	public void testBug40007() throws Exception
+	{
+		assertCodeFailsParse("int y = #;");
+	}
+	
+	public void testBug40759() throws Exception
+	{
+		IASTClassSpecifier classSpec = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)assertSoleDeclaration( "#define X SomeName \n class X {};" )).getTypeSpecifier();
+		assertEquals( classSpec.getNameOffset() + 1, classSpec.getNameEndOffset() );
+		assertEquals( classSpec.getName(), "SomeName");
+	}
+	
+	public void testBug44633() throws Exception
+	{
+		Writer writer = new StringWriter(); 
+		writer.write( "template <typename T> class A {};\n" ); 
+		writer.write( "class B {  template <typename T> friend class A;\n" ); 
+		writer.write( "void method();\n" ); 
+		writer.write( "};\n" ); 
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration templateDecl = (IASTTemplateDeclaration)i.next(); 
+		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		Iterator members = classB.getDeclarations(); 
+		IASTTemplateDeclaration friend = (IASTTemplateDeclaration)members.next(); 
+		IASTMethod method = (IASTMethod)members.next(); 
+		assertFalse( i.hasNext() );
+	}
+
+	public void testBug39525() throws Exception
+	{
+		parse("C &(C::*DD)(const C &x) = &C::operator=;");
+	}
+
+	public void testBug41935() throws Exception
+	{
+		Iterator i = parse( "namespace A	{  int x; } namespace B = A;" ).getDeclarations();
+		IASTNamespaceDefinition n = (IASTNamespaceDefinition)i.next(); 
+		IASTNamespaceAlias a = (IASTNamespaceAlias)i.next();
+		assertEquals( a.getName(), "B" );
+		assertFalse( i.hasNext() );
+	}
+
+	public void testBug39528() throws Exception
+	{
+		Writer code = new StringWriter();
+		try
+		{
+			code.write("struct B: public A {\n");
+			code.write("  A a;\n");
+			code.write("  B() try : A(1), a(2)\n");
+			code.write("	{ throw 1; }\n");
+			code.write("  catch (...)\n");
+			code.write("	{ if (c != 3) r |= 1; }\n");
+			code.write("};\n");
+		}
+		catch (IOException ioe)
+		{
+		}
+		IASTClassSpecifier structB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)assertSoleDeclaration(code.toString())).getTypeSpecifier();
+		Iterator members = structB.getDeclarations();
+		IASTField a = (IASTField)members.next();
+		IASTMethod b = (IASTMethod)members.next();
+		assertFalse( members.hasNext() );
+		assertTrue( b.hasFunctionTryBlock() );
+	}
+
+	public void testBug39538() throws Exception
+	{
+		parse("template C::operator int<float> ();");
+	}
+
+	public void testBug39536() throws Exception
+	{
+		Writer writer = new StringWriter(); 
+		writer.write( "template<class E>\n" );
+		writer.write( "class X {\n" );
+		writer.write( "X<E>();  // This fails \n" );
+		writer.write( "inline X<E>(int); // This also fails \n" );
+		writer.write( "inline ~X<E>(); // This works fine \n" );
+		writer.write( "};\n" );
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration)assertSoleDeclaration( writer.toString() );
+		IASTClassSpecifier X = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)template.getOwnedDeclaration()).getTypeSpecifier();
+		Iterator members = X.getDeclarations();
+		IASTMethod defaultCons = (IASTMethod)members.next();
+		IASTMethod inlinedCons = (IASTMethod)members.next();
+		IASTMethod destructor = (IASTMethod)members.next();
+		assertFalse( members.hasNext() );
+	}
+
+	public void testBug39536A() throws Exception
+	{
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration)parse("template<class E> class X { X<E>(); };").getDeclarations().next();
+		IASTClassSpecifier classX = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)template.getOwnedDeclaration()).getTypeSpecifier();
+		IASTDeclaration d = (IASTDeclaration)classX.getDeclarations().next();
+		assertTrue( d instanceof IASTMethod);    
+	}
+	public void testBug39536B() throws Exception
+	{
+		parse("template<class E> class X { inline X<E>(int); };");
+	}
+
 
 }

@@ -83,16 +83,14 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 	public static Shell getShell() {
 		if (getActiveWorkbenchShell() != null) {
 			return getActiveWorkbenchShell();
-		} else {
-			if (debugDialogShell != null) {
-				if (!debugDialogShell.isDisposed())
-					return debugDialogShell;
-				debugDialogShell = null;
-			}
-			IWorkbenchWindow[] windows = getDefault().getWorkbench()
-					.getWorkbenchWindows();
-			return windows[0].getShell();
 		}
+		if (debugDialogShell != null) {
+			if (!debugDialogShell.isDisposed())
+				return debugDialogShell;
+			debugDialogShell = null;
+		}
+		IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
+		return windows[0].getShell();
 	}
 
 	public static void setDialogShell(Shell shell) {

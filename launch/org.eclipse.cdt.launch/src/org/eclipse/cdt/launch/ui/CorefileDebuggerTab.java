@@ -109,7 +109,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		//The behaviour is undefined for if the callbacks should be triggered for this,
 		//so to avoid unnecessary confusion, we force an update.
 		handleDebuggerChanged();
-		fDCombo.getParent().layout(true);
+		getControl().getParent().layout(true);
 		initializingComboBox = false;
 	}
 

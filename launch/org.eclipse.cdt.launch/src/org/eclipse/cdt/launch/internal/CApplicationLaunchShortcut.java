@@ -107,8 +107,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		// user to choose one.
 		int candidateCount = candidateConfigs.size();
 		if (candidateCount < 1) {
-			// FIXME:  should probably have more filtering here base on
-			// the mode, arch, CPU.  For now we only support native.
+			String programCPU = bin.getCPU();
+
 			// Prompt the user if more then 1 debugger.
 			ICDebugConfiguration debugConfig = null;
 			ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
@@ -116,8 +116,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 			String os = Platform.getOS();
 			for (int i = 0; i < debugConfigs.length; i++) {
 				String platform = debugConfigs[i].getPlatform();
-				if (platform == null || platform.equals(ICDebugConfiguration.PLATFORM_NATIVE) || platform.equals(os)) {
-					debugList.add(debugConfigs[i]);
+				if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+					if (platform.equals("*") || platform.equals(os)) { //$NON-NLS-1$
+						if (debugConfigs[i].supportsCPU(programCPU)) 
+							debugList.add(debugConfigs[i]);
+					}
 				}
 			}
 			debugConfigs = (ICDebugConfiguration[]) debugList.toArray(new ICDebugConfiguration[0]);

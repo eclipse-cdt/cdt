@@ -45,7 +45,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	public String getPlatform() {
 		String platform = getConfigurationElement().getAttribute("platform"); //$NON-NLS-1$
 		if (platform == null) {
-			return PLATFORM_NATIVE;
+			return "*"; //$NON-NLS-1$
 		}
 		return platform;
 	}
@@ -66,9 +66,9 @@ public class DebugConfiguration implements ICDebugConfiguration {
 		String nativeCPU = Platform.getOSArch();
 		boolean ret = false;
 		if ( nativeCPU.startsWith(cpu) ) {
-			ret = getCPUs().contains(PLATFORM_NATIVE);
+			ret = getCPUs().contains(CPU_NATIVE);
 		}
-		return ret || getCPUs().contains(cpu);
+		return ret || getCPUs().contains(cpu) || getCPUs().contains("*"); //$NON-NLS-1$
 	}
 	/**
 	 * Returns the set of modes specified in the configuration data.
@@ -95,7 +95,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 			String cpus = getConfigurationElement().getAttribute("cpu"); //$NON-NLS-1$
 			if (cpus == null) {
 				fCPUs = new HashSet(1);
-				fCPUs.add(PLATFORM_NATIVE);
+				fCPUs.add(CPU_NATIVE);
 			}
 			else {
 				String nativeCPU = Platform.getOSArch();
@@ -105,7 +105,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 					String cpu = tokenizer.nextToken().trim();
 					fCPUs.add(cpu);
 					if (nativeCPU.startsWith(cpu)) { // os arch be cpu{le/be}
-						fCPUs.add(PLATFORM_NATIVE);
+						fCPUs.add(CPU_NATIVE);
 					}
 				}
 			}

@@ -24,7 +24,7 @@
    <extension
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger
-            platform="native"
+            platform="*"
             name="%GDBDebugger.name"
             modes="run,core,attach"
             cpu="native"

@@ -14,7 +14,6 @@ import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.SWT;
@@ -131,7 +130,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	protected void loadDebuggerComboBox(ILaunchConfiguration config, String selection) {
 		ICDebugConfiguration[] debugConfigs;
 		String configPlatform = getPlatform(config);
-		String programCPU = ICDebugConfiguration.PLATFORM_NATIVE;
+		String programCPU = ICDebugConfiguration.CPU_NATIVE;
 		ICElement ce = getContext(config, configPlatform);
 		if (ce instanceof IBinary) {
 			IBinary bin = (IBinary) ce;
@@ -153,9 +152,8 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)
 					|| debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
 				String debuggerPlatform = debugConfigs[i].getPlatform();
-				boolean isNative = configPlatform.equals(Platform.getOS());
 				if (debuggerPlatform.equalsIgnoreCase(configPlatform)
-						|| (isNative && debuggerPlatform.equalsIgnoreCase(ICDebugConfiguration.PLATFORM_NATIVE))) {
+						|| (debuggerPlatform.equalsIgnoreCase("*"))) { //$NON-NLS-1$
 					if (debugConfigs[i].supportsCPU(programCPU)) {
 						fDCombo.add(debugConfigs[i].getName());
 						fDCombo.setData(Integer.toString(x), debugConfigs[i]);
@@ -176,7 +174,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		//The behaviour is undefined for if the callbacks should be triggered for this,
 		//so to avoid unnecessary confusion, we force an update.
 		updateComboFromSelection();
-		fDCombo.getParent().layout(true);
+		getControl().getParent().layout(true);
 	}
 
 	protected void updateComboFromSelection() {
@@ -218,9 +216,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		super.activated(workingCopy);
 		try {
 			String id = workingCopy.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
-			if (getDebugConfig() == null || !getDebugConfig().getID().equals(id) || !validateDebuggerConfig(workingCopy)) {
-				loadDebuggerComboBox(workingCopy, id);
-			}
+			loadDebuggerComboBox(workingCopy, id);
 		} catch (CoreException e) {
 		}
 	}
@@ -283,10 +279,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	}
 
 	private boolean validateDebuggerConfig(ILaunchConfiguration config) {
-		String platform = getPlatform(config);
 		ICElement ce = getContext(config, null);
 		String projectPlatform = getPlatform(config);
-		String projectCPU = ICDebugConfiguration.PLATFORM_NATIVE;
+		String projectCPU = ICDebugConfiguration.CPU_NATIVE;
 		if (ce != null) {
 			if (ce instanceof IBinary) {
 				IBinary bin = (IBinary) ce;
@@ -298,9 +293,8 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			return false;
 		}
 		String debuggerPlatform = debugConfig.getPlatform();
-		boolean isNative = platform.equals(projectPlatform);
 		if (debuggerPlatform.equalsIgnoreCase(projectPlatform)
-				|| (isNative && debuggerPlatform.equalsIgnoreCase(ICDebugConfiguration.PLATFORM_NATIVE))) {
+				|| (debuggerPlatform.equalsIgnoreCase("*"))) { //$NON-NLS-1$
 			if (debugConfig.supportsCPU(projectCPU)) {
 				return true;
 			}

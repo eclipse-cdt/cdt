@@ -78,9 +78,8 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		ILaunchConfigurationTab tab = getDynamicTab();
 		if ((super.getErrorMessage() != null) || (tab == null)) {
 			return super.getErrorMessage();
-		} else {
-			return tab.getErrorMessage();
 		}
+		return tab.getErrorMessage();
 	}
 
 	/**

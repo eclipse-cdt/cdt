@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
@@ -29,7 +28,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -317,18 +315,17 @@ public class CMainTab extends CLaunchConfigurationTab {
 			public IStatus validate(Object [] selection) {
 				if(selection.length == 0 || !(selection[0] instanceof IFile)) {
 					return new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_file"), null); //$NON-NLS-1$
-				} else {
-					try {
-						ICElement celement = cproject.findElement(((IFile)selection[0]).getProjectRelativePath());
-						if(celement == null ||
-						   (celement.getElementType() != ICElement.C_BINARY && celement.getElementType() != ICElement.C_ARCHIVE)) {
-							return new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_binary_file"), null); //$NON-NLS-1$
-					   }
-					
-						return new Status(IStatus.OK, LaunchUIPlugin.getUniqueIdentifier(), IStatus.OK, celement.getResource().getName(), null);
-					} catch(Exception ex) {
-						return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_binary_file"), null); //$NON-NLS-1$
+				}
+				try {
+					ICElement celement = cproject.findElement(((IFile)selection[0]).getProjectRelativePath());
+					if(celement == null ||
+							(celement.getElementType() != ICElement.C_BINARY && celement.getElementType() != ICElement.C_ARCHIVE)) {
+						return new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_binary_file"), null); //$NON-NLS-1$
 					}
+					
+					return new Status(IStatus.OK, LaunchUIPlugin.getUniqueIdentifier(), IStatus.OK, celement.getResource().getName(), null);
+				} catch(Exception ex) {
+					return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_binary_file"), null); //$NON-NLS-1$
 				}
 			}
 		});
@@ -422,7 +419,6 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected ICProject[] getCProjects() throws CModelException {
 		ICProject cproject[] = CoreModel.getDefault().getCModel().getCProjects();
 		ArrayList list = new ArrayList(cproject.length);
-		boolean isNative = filterPlatform.equals(Platform.getOS());
 
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;
@@ -431,8 +427,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 				String projectPlatform = cdesciptor.getPlatform();
 				if (filterPlatform.equals("*") //$NON-NLS-1$
 					|| projectPlatform.equals("*") //$NON-NLS-1$
-					|| (isNative && cdesciptor.getPlatform().equalsIgnoreCase(ICDebugConfiguration.PLATFORM_NATIVE))
-					|| filterPlatform.equalsIgnoreCase(cdesciptor.getPlatform()) == true) {
+					|| filterPlatform.equalsIgnoreCase(projectPlatform) == true) {
 					list.add(cproject[i]);
 				}
 			} catch (CoreException e) {

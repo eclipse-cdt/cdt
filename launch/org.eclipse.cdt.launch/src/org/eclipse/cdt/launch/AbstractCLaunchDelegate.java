@@ -51,8 +51,6 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 
 abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegate {
 
-	protected static final IStatus complileErrorPromptStatus = new Status(IStatus.INFO, "org.eclipse.cdt.launch", 202, "", null); //$NON-NLS-1$ //$NON-NLS-2$
-
 	/**
 	 * The project containing the programs file being launched
 	 */
@@ -460,22 +458,20 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				File dir = new File(path.toOSString());
 				if (dir.isDirectory()) {
 					return dir;
-				} else {
-					abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
-							new FileNotFoundException(LaunchUIPlugin.getFormattedResourceString(
-									"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", path.toOSString())), //$NON-NLS-1$
-							ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 				}
+				abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
+						new FileNotFoundException(LaunchUIPlugin.getFormattedResourceString(
+								"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", path.toOSString())), //$NON-NLS-1$
+								ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			} else {
 				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 				if (res instanceof IContainer && res.exists()) {
 					return res.getLocation().toFile();
-				} else {
-					abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
-							new FileNotFoundException(LaunchUIPlugin.getFormattedResourceString(
-									"AbstractCLaunchDelegate.PROGRAM_PATH_does_not_exist", path.toOSString())), //$NON-NLS-1$
-							ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 				}
+				abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
+						new FileNotFoundException(LaunchUIPlugin.getFormattedResourceString(
+								"AbstractCLaunchDelegate.PROGRAM_PATH_does_not_exist", path.toOSString())), //$NON-NLS-1$
+								ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			}
 		}
 		return null;

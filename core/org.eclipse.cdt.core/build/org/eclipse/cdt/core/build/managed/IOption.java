@@ -16,36 +16,10 @@ package org.eclipse.cdt.core.build.managed;
 public interface IOption extends IBuildObject {
 
 	// Type for the value of the option
-	public static final int STRING = 0;
-	public static final int STRING_LIST = 1;
-	
-	/**
-	 * Returns the tool defining this option.
-	 * 
-	 * @return
-	 */
-	public ITool getTool();
-	
-	/**
-	 * Returns the category for this option.
-	 * 
-	 * @return
-	 */
-	public IOptionCategory getCategory();
-	
-	/**
-	 * Returns the name of this option.
-	 * 
-	 * @return
-	 */
-	public String getName();
-	
-	/**
-	 * Get the type for the value of the option.
-	 * 
-	 * @return
-	 */
-	public int getValueType();
+	public static final int BOOLEAN = 0;
+	public static final int ENUMERATED = 1;
+	public static final int STRING = 2;
+	public static final int STRING_LIST = 3;
 	
 	/**
 	 * If this option is defined as an enumeration, this function returns
@@ -57,11 +31,42 @@ public interface IOption extends IBuildObject {
 	public String [] getApplicableValues();
 
 	/**
-	 * Returns the current value for this option if it is a String
+	 * @return the value for a boolean option.
+	 */
+	public boolean getBooleanValue() throws BuildException;
+		
+	/**
+	 * Returns the category for this option.
 	 * 
 	 * @return
 	 */
-	public String getStringValue() throws BuildException;
+	public IOptionCategory getCategory();
+	
+	/**
+	 * @return a String containing the actual command line option 
+	 * associated with the <code>IOption</code> 
+	 */
+	public String getCommand();
+	
+	/**
+	 * @return a <code>String</code> containing the default value for the 
+	 * enumerated option.
+	 */
+	public String getDefaultEnumName ();	
+
+	
+	/**
+	 * @return <code>String</code> containing the command associated with the 
+	 * enumeration name.
+	 */
+	public String getEnumCommand (String name);
+	
+	/**
+	 * Returns the name of this option.
+	 * 
+	 * @return
+	 */
+	public String getName();
 	
 	/**
 	 * Returns the current value for this option if it is a List of Strings.
@@ -69,5 +74,25 @@ public interface IOption extends IBuildObject {
 	 * @return
 	 */
 	public String [] getStringListValue() throws BuildException;
+
+	/**
+	 * Returns the current value for this option if it is a String
+	 * 
+	 * @return
+	 */
+	public String getStringValue() throws BuildException;
 	
+	/**
+	 * Returns the tool defining this option.
+	 * 
+	 * @return
+	 */
+	public ITool getTool();
+	
+	/**
+	 * Get the type for the value of the option.
+	 * 
+	 * @return
+	 */
+	public int getValueType();
 }

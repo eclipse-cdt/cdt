@@ -11,7 +11,9 @@
 package org.eclipse.cdt.internal.core.build.managed;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
@@ -27,10 +29,12 @@ public class Option extends BuildObject implements IOption {
 
 	private ITool tool;
 	private IOptionCategory category;
-	private List enumValues;
 	
 	private int valueType;
 	private Object value;
+	private Map enumCommands;
+	private String defaultEnumName;
+	private String command;
 	
 	private static final String[] emptyStrings = new String[0];
 	 
@@ -55,25 +59,53 @@ public class Option extends BuildObject implements IOption {
 		if (categoryId != null)
 			setCategory(tool.getOptionCategory(categoryId));
 		
+		// command
+		command = element.getAttribute("command");
+		
 		// valueType
 		String valueTypeStr = element.getAttribute("valueType");
 		if (valueTypeStr == null || valueTypeStr.equals("string"))
 			valueType = IOption.STRING;
 		else if (valueTypeStr.equals("stringList"))
 			valueType = IOption.STRING_LIST;
+		else if (valueTypeStr.equals("boolean"))
+			valueType = IOption.BOOLEAN;
+		else
+			valueType = IOption.ENUMERATED;
 		
 		// value
+		enumCommands = new HashMap();
 		switch (valueType) {
+			case IOption.BOOLEAN:
+				// Convert the string to a boolean
+				value = new Boolean(element.getAttribute("defaultValue"));
+				break;
 			case IOption.STRING:
-				value = element.getAttribute("value");
+				// Just get the value out of the option directly
+				value = element.getAttribute("defaultValue");
+			break;
+			case IOption.ENUMERATED:
+				List enumList = new ArrayList();
+				IConfigurationElement[] enumElements = element.getChildren("optionEnum");
+				for (int i = 0; i < enumElements.length; ++i) {
+					String optName = enumElements[i].getAttribute("name");
+					String optCommand = enumElements[i].getAttribute("command"); 
+					enumList.add(optName);
+					enumCommands.put(optName, optCommand);
+					Boolean isDefault = new Boolean(enumElements[i].getAttribute("isDefault"));
+					if (isDefault.booleanValue()) {
+							defaultEnumName = optName; 
+					}
+				}
+				value = enumList;
 				break;
 			case IOption.STRING_LIST:
 				List valueList = new ArrayList();
-				value = valueList;
 				IConfigurationElement[] valueElements = element.getChildren("optionValue");
 				for (int i = 0; i < valueElements.length; ++i) {
 					valueList.add(valueElements[i].getAttribute("value"));
 				}
+				value = valueList;
 				break;
 		}
 	}
@@ -82,16 +114,43 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getApplicableValues()
 	 */
 	public String[] getApplicableValues() {
+		List enumValues = (List)value;
 		return enumValues != null
 			? (String[])enumValues.toArray(new String[enumValues.size()])
 			: emptyStrings;
 	}
 
+	public boolean getBooleanValue() {
+		Boolean bool = (Boolean) value;
+		return bool.booleanValue();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getCategory()
 	 */
 	public IOptionCategory getCategory() {
 		return category != null ? category : getTool().getTopOptionCategory();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getCommand()
+	 */
+	public String getCommand() {
+		return command;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefaultEnumValue()
+	 */
+	public String getDefaultEnumName() {
+		return defaultEnumName;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumCommand(java.lang.String)
+	 */
+	public String getEnumCommand(String name) {
+		return (String) enumCommands.get(name);
 	}
 
 	/* (non-Javadoc)
@@ -123,6 +182,13 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public int getValueType() {
 		return valueType;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#setCategory(org.eclipse.cdt.core.build.managed.IOptionCategory)
+	 */
+	public void setCategory(IOptionCategory category) {
+		this.category = category;
 	}
 
 	/* (non-Javadoc)
@@ -161,13 +227,6 @@ public class Option extends BuildObject implements IOption {
 			// More magic
 			return null;
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setCategory(org.eclipse.cdt.core.build.managed.IOptionCategory)
-	 */
-	public void setCategory(IOptionCategory category) {
-		this.category = category;
 	}
 
 }

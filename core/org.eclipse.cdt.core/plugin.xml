@@ -252,5 +252,29 @@
             pattern="*.exe">
       </ignore>
    </extension>
+   <extension
+         id="managedBuildNature"
+         name="%ManagedBuildNature.name"
+         point="org.eclipse.core.resources.natures">
+      <requires-nature
+            id="org.eclipse.cdt.core.cnature">
+      </requires-nature>
+      <runtime>
+         <run
+               class="org.eclipse.cdt.core.ManagedCProjectNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="generatedMakefileCBuilder"
+         name="%GeneratedMakefileCBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.cdt.internal.core.GeneratedMakefileCBuilder">
+         </run>
+      </builder>
+   </extension>
 
 </plugin>

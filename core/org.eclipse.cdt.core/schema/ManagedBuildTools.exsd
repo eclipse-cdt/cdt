@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.core" id="ManagedBuildTools" name="Managed Build Tools"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         Describes targets, configurations, and toolchains for the build system.
       </documentation>
    </annotation>
 
@@ -97,21 +97,21 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A unique identifier for the option.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A descriptive name for the option.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="valueType" use="default" value="string">
             <annotation>
                <documentation>
-                  
+                  An option can be one of the following types; &apos;string&apos; for catch-all entries for options that cannot be easily defined any other way, &apos;string list&apos; for entries that consist of a list of values such as defined symbols or paths, &apos;boolean&apos; for options that have two values, and &apos;enumerated&apos; for options that are one-of a list of values.
                </documentation>
             </annotation>
             <simpleType>
@@ -120,13 +120,17 @@
                   </enumeration>
                   <enumeration value="stringList">
                   </enumeration>
+                  <enumeration value="boolean">
+                  </enumeration>
+                  <enumeration value="enumerated">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>
          <attribute name="value" type="string">
             <annotation>
                <documentation>
-                  
+                  Overridden value assigned to the option by the end user.
                </documentation>
             </annotation>
          </attribute>
@@ -137,22 +141,55 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="defaultValue" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the default value for the option if the &apos;value&apos; field is blank. For enumerated options the optionEnums will be searched for the default. For string list options, all defined optionValues will be treated as defaults. For boolean values, specify truth using the string &apos;true&apos;. All other strings will be treated as false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  An optional value that specifies the actual command that will be passed to the tool on the command line.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
    <element name="optionEnum">
+      <annotation>
+         <documentation>
+            Defines a single value of an enumerated option.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Unique identifier for the option enumeration.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A descriptive name for the enumeration.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isDefault" type="boolean">
+            <annotation>
+               <documentation>
+                  Flags this enumerated value as the default to apply to the option if the user has not changed the setting.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  The command that the enumerated value translates to on the command line.
                </documentation>
             </annotation>
          </attribute>
@@ -205,7 +242,14 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="value" type="string">
+         <attribute name="defaultValue" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="command" type="string">
             <annotation>
                <documentation>
                   
@@ -258,6 +302,11 @@
    </element>
 
    <element name="optionCategory">
+      <annotation>
+         <documentation>
+            An optional, but useful, mechanism for grouping options together.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string">
             <annotation>
@@ -284,6 +333,11 @@
    </element>
 
    <element name="optionValue">
+      <annotation>
+         <documentation>
+            A value for defining individual elements of a string list option.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="value" type="string" use="required">
             <annotation>
@@ -300,7 +354,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         CDT 1.1
       </documentation>
    </annotation>
 

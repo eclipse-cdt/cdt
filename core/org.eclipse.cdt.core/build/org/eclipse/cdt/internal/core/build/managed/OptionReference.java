@@ -11,7 +11,10 @@
 package org.eclipse.cdt.internal.core.build.managed;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IOption;
@@ -30,6 +33,9 @@ public class OptionReference implements IOption {
 	private IOption option;
 	private ToolReference owner;
 	private Object value;
+	private String defaultEnumName;
+	private String command;
+	private Map enumCommands;
 
 	/**
 	 * Created internally.
@@ -57,9 +63,28 @@ public class OptionReference implements IOption {
 		owner.addOptionReference(this);
 
 		// value
+		enumCommands = new HashMap();
 		switch (option.getValueType()) {
+			case IOption.BOOLEAN:
+				value = new Boolean(element.getAttribute("defaultValue"));
+				break;
 			case IOption.STRING:
-				value = element.getAttribute("value");
+				value = element.getAttribute("defaultValue");
+				break;
+			case IOption.ENUMERATED:
+				List enumList = new ArrayList();
+				IConfigurationElement[] enumElements = element.getChildren("optionEnum");
+				for (int i = 0; i < enumElements.length; ++i) {
+					String optName = enumElements[i].getAttribute("name");
+					String optCommand = enumElements[i].getAttribute("command"); 
+					enumList.add(optName);
+					enumCommands.put(optName, optCommand);
+					Boolean isDefault = new Boolean(enumElements[i].getAttribute("isDefault"));
+					if (isDefault.booleanValue()) {
+							defaultEnumName = optName; 
+					}
+				}
+				value = enumList;
 				break;
 			case IOption.STRING_LIST:
 				List valueList = new ArrayList();
@@ -67,6 +92,7 @@ public class OptionReference implements IOption {
 				for (int i = 0; i < valueElements.length; ++i) {
 					valueList.add(valueElements[i].getAttribute("value"));
 				}
+				value = valueList;
 				break;
 		}
 	}
@@ -85,6 +111,7 @@ public class OptionReference implements IOption {
 
 		// value
 		switch (option.getValueType()) {
+			case IOption.BOOLEAN:
 			case IOption.STRING:
 				value = element.getAttribute("value");
 				break;
@@ -94,6 +121,7 @@ public class OptionReference implements IOption {
 				for (int i = 0; i < nodes.getLength(); ++i) {
 					valueList.add(((Element)nodes.item(i)).getAttribute("value"));
 				}
+				value = valueList;
 				break;
 		}
 
@@ -110,16 +138,26 @@ public class OptionReference implements IOption {
 		
 		// value
 		switch (option.getValueType()) {
+			case IOption.BOOLEAN:
 			case IOption.STRING:
 				element.setAttribute("value", (String)value);
 				break;
 			case IOption.STRING_LIST:
-				List valueList = (List)value;
-				for (int i = 0; i < valueList.size(); ++i) {
+				List stringList = (List)value;
+				for (int i = 0; i < stringList.size(); ++i) {
 					Element valueElement = doc.createElement("optionValue");
-					valueElement.setAttribute("value", (String)valueList.get(i));
+					valueElement.setAttribute("value", (String)stringList.get(i));
 					element.appendChild(valueElement);
 				}
+				break;
+			case IOption.ENUMERATED:
+				List enumList = (List)value;
+				for (int i = 0; i < enumList.size(); ++i) {
+					Element valueElement = doc.createElement("optionEnum");
+					valueElement.setAttribute("value", (String)enumList.get(i));
+					element.appendChild(valueElement);
+				}
+				break;
 		}
 	}
 	
@@ -138,12 +176,63 @@ public class OptionReference implements IOption {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getCommand()
+	 */
+	public String getCommand() {
+		return option.getCommand();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefaultEnumValue()
+	 */
+	public String getDefaultEnumName() {
+		if (value == null) {
+			return option.getDefaultEnumName();
+		} else {
+			return defaultEnumName;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumCommand(java.lang.String)
+	 */
+	public String getEnumCommand(String name) {
+		if (value == null) {
+			return option.getEnumCommand(name);
+		} else {
+			return (String)enumCommands.get(name);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getId()
+	 */
+	public String getId() {
+		return option.getId();
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getName()
 	 */
 	public String getName() {
 		return option.getName();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getBooleanValue()
+	 */
+	public boolean getBooleanValue() throws BuildException {
+		if (value == null){
+			return option.getBooleanValue();
+		} 
+		else if (getValueType() == IOption.BOOLEAN) {
+			Boolean bool = (Boolean) value;
+			return bool.booleanValue();
+		} else {
+			throw new BuildException("bad value type");
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getStringListValue()
 	 */
@@ -184,13 +273,6 @@ public class OptionReference implements IOption {
 	 */
 	public int getValueType() {
 		return option.getValueType();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getId()
-	 */
-	public String getId() {
-		return option.getId();
 	}
 
 	public boolean references(IOption target) {

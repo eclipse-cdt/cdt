@@ -172,27 +172,51 @@ public class AllBuildTests extends TestCase {
 		// Root Tool
 		ITool rootTool = tools[0];
 		assertEquals("Root Tool", rootTool.getName());
-		// Options
+		// 4 Options are defined in the root tool
 		IOption[] options = rootTool.getOptions();
-		assertEquals(2, options.length);
-		assertEquals("Option in Top", options[0].getName());
+		assertEquals(4, options.length);
+		// First option is a 2-element list
+		assertEquals("List Option in Top", options[0].getName());
+		assertEquals(IOption.STRING_LIST, options[0].getValueType());
 		String[] valueList = options[0].getStringListValue();
+		assertEquals(2, valueList.length);
 		assertEquals("a", valueList[0]);
 		assertEquals("b", valueList[1]);
-		assertEquals("Option in Category", options[1].getName());
-		assertEquals("x", options[1].getStringValue());
+		assertEquals(options[0].getCommand(), "-L");
+		// Next option is a boolean in top
+		assertEquals("Boolean Option in Top", options[1].getName());
+		assertEquals(IOption.BOOLEAN, options[1].getValueType());
+		assertEquals(false, options[1].getBooleanValue());
+		assertEquals("-b", options[1].getCommand());
+		// Next option is a string category
+		assertEquals("String Option in Category", options[2].getName());
+		assertEquals(IOption.STRING, options[2].getValueType());
+		assertEquals("x", options[2].getStringValue());
+		// Final option is an enumerated
+		assertEquals("Enumerated Option in Category", options[3].getName());
+		assertEquals(IOption.ENUMERATED, options[3].getValueType());
+		assertEquals("Default Enum", options[3].getDefaultEnumName());
+		valueList = options[3].getApplicableValues();
+		assertEquals(2, valueList.length);
+		assertEquals("Default Enum", valueList[0]);
+		assertEquals("Another Enum", valueList[1]);
+		assertEquals("-e1", options[3].getEnumCommand(valueList[0]));
+		assertEquals("-e2", options[3].getEnumCommand(valueList[1]));
+		
 		// Option Categories
 		IOptionCategory topCategory = rootTool.getTopOptionCategory();
 		assertEquals("Root Tool", topCategory.getName());
 		options = topCategory.getOptions(null);
-		assertEquals(1, options.length);
-		assertEquals("Option in Top", options[0].getName());
+		assertEquals(2, options.length);
+		assertEquals("List Option in Top", options[0].getName());
+		assertEquals("Boolean Option in Top", options[1].getName());
 		IOptionCategory[] categories = topCategory.getChildCategories();
 		assertEquals(1, categories.length);
 		assertEquals("Category", categories[0].getName());
 		options = categories[0].getOptions(null);
-		assertEquals(1, options.length);
-		assertEquals("Option in Category", options[0].getName());
+		assertEquals(2, options.length);
+		assertEquals("String Option in Category", options[0].getName());
+		assertEquals("Enumerated Option in Category", options[1].getName());
 
 		// Configs
 		IConfiguration[] configs = target.getConfigurations();
@@ -205,15 +229,18 @@ public class AllBuildTests extends TestCase {
 		assertEquals("Root Tool", tools[0].getName());
 		topCategory = tools[0].getTopOptionCategory();
 		options = topCategory.getOptions(configs[0]);
-		assertEquals(1, options.length);
-		assertEquals("Option in Top", options[0].getName());
+		assertEquals(2, options.length);
+		assertEquals("List Option in Top", options[0].getName());
 		valueList = options[0].getStringListValue();
 		assertEquals("a", valueList[0]);
 		assertEquals("b", valueList[1]);
+		assertEquals("Boolean Option in Top", options[1].getName());
 		categories = topCategory.getChildCategories();
 		options = categories[0].getOptions(configs[0]);
-		assertEquals("Option in Category", options[0].getName());
+		assertEquals(2, options.length);
+		assertEquals("String Option in Category", options[0].getName());
 		assertEquals(oicValue, options[0].getStringValue());
+		assertEquals("Enumerated Option in Category", options[1].getName());
 		// Root Override Config
 		assertEquals("Root Override Config", configs[1].getName());
 		tools = configs[1].getTools();
@@ -222,15 +249,24 @@ public class AllBuildTests extends TestCase {
 		assertEquals("Root Tool", tools[0].getName());
 		topCategory = tools[0].getTopOptionCategory();
 		options = topCategory.getOptions(configs[1]);
-		assertEquals(1, options.length);
-		assertEquals("Option in Top", options[0].getName());
+		assertEquals(2, options.length);
+		assertEquals("List Option in Top", options[0].getName());
 		valueList = options[0].getStringListValue();
 		assertEquals("a", valueList[0]);
 		assertEquals("b", valueList[1]);
+		assertEquals("Boolean Option in Top", options[1].getName());
 		categories = topCategory.getChildCategories();
 		options = categories[0].getOptions(configs[1]);
-		assertEquals("Option in Category", options[0].getName());
+		assertEquals(2, options.length);
+		assertEquals("String Option in Category", options[0].getName());
 		assertEquals("y", options[0].getStringValue());
+		assertEquals("Enumerated Option in Category", options[1].getName());
+		valueList = options[1].getApplicableValues();
+		assertEquals(2, valueList.length);
+		assertEquals("Default Enum", valueList[0]);
+		assertEquals("Another Enum", valueList[1]);
+		assertEquals("-e1", options[1].getEnumCommand(valueList[0]));
+		assertEquals("-e2", options[1].getEnumCommand(valueList[1]));
 	}
 
 }

@@ -32,13 +32,14 @@ import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
 import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
@@ -75,7 +76,6 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		String pluginRoot = Platform.asLocalURL(Platform.getPlugin(pluginName).getDescriptor().getInstallURL()).getFile();
 		
 		fCProject= CProjectHelper.createCProject(projectName, projectType);
 		fHeaderFile = fCProject.getProject().getFile(getHeaderFileName());
@@ -83,10 +83,11 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 		fCFile = fCProject.getProject().getFile(fileName);
 		if ( (!fCFile.exists()) &&( !fHeaderFile.exists() )) {
 			try{
-				FileInputStream headerFileIn = new FileInputStream(pluginRoot+ getHeaderFileFullPath()); 
+				FileInputStream headerFileIn = new FileInputStream(
+						CTestPlugin.getDefault().getFileInPlugin(new Path(getHeaderFileFullPath()))); 
 				fHeaderFile.create(headerFileIn,false, monitor);  
-				String fileFullPath = pluginRoot+ getFileFullPath();
-				FileInputStream bodyFileIn = new FileInputStream(fileFullPath); 
+				FileInputStream bodyFileIn = new FileInputStream(
+						CTestPlugin.getDefault().getFileInPlugin(new Path(getFileFullPath()))); 
 				fCFile.create(bodyFileIn,false, monitor);        
 			} catch (CoreException e) {
 				e.printStackTrace();

@@ -5,10 +5,8 @@ package org.eclipse.cdt.core;
  * All Rights Reserved.
  */
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -194,32 +192,6 @@ public class ErrorParserManager extends OutputStream {
 	/**
 	 * Parses the input and try to generate error or warning markers
 	 */
-	public void parse(String output) {
-		BufferedReader rd = new BufferedReader(new StringReader(output));
-		try {
-			String line = rd.readLine();
-			while (line != null) {
-				line = line.trim();
-				processLine(line);
-				previousLine = line;
-				line = rd.readLine();
-			}
-		}
-		catch (IOException e) {
-			CCorePlugin.log(e);
-		}
-		finally {
-			try {
-				rd.close();
-			}
-			catch (IOException e) {
-			}
-		}
-
-		fDirectoryStack.removeAllElements();
-		fBaseDirectory = null;
-	}
-
 	private void processLine(String line) {
 		int top = fErrorParsers.size() - 1;
 		int i = top;
@@ -369,6 +341,8 @@ public class ErrorParserManager extends OutputStream {
 	private void checkLine() {
 		String line = currentLine.toString();
 		if (line.endsWith("\n")) {
+			// Remove the training new lines.
+			line = line.trim();
 			processLine(line);
 			previousLine = line;
 			currentLine.setLength(0);

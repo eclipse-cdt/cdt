@@ -1,4 +1,8 @@
 2003-04-28 John Camelon
+	Fixed Bug 37019  - RTS: Parser fails on variable defn using constructor 
+	Fixed Bug 36767  - STL Testing: Parser is confused and goes into template function body 
+
+2003-04-28 John Camelon
 	Partial fix for Bug37002 - Order of Offsetables is wrong 
 
 2003-04-27 John Camelon

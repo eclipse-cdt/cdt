@@ -107,7 +107,7 @@ c, quick);
 				checkToken = LA(1);
 				declaration( translationUnit );
 				if( LA(1) == checkToken )
-					consumeToNextSemicolon();
+					errorHandling();
 			} catch (EndOfFile e) {
 				// Good
 				break;
@@ -119,7 +119,7 @@ c, quick);
 					if (lastBacktrack != null && lastBacktrack == LA(1)) {
 						// we haven't progressed from the last backtrack
 						// try and find tne next definition
-						consumeToNextSemicolon();
+						errorHandling();
 					} else {
 						// start again from here
 						lastBacktrack = LA(1);
@@ -136,12 +136,12 @@ c, quick);
 		try{ callback.translationUnitEnd(translationUnit);} catch( Exception e ) {}
 	}
 
-	protected void consumeToNextSemicolon() throws Backtrack {
+	protected void errorHandling() throws Backtrack {
 		failParse();
 		consume();
 		// TODO - we should really check for matching braces too
 		int depth = 0; 
-		while (LT(1) != Token.tSEMI || depth != 0 ) {
+		while ( ! ( (LT(1) == Token.tSEMI && depth == 0 ) || ( LT(1) == Token.tRBRACE && depth == 1 ) ) ){
 			switch( LT(1))
 			{
 				case Token.tLBRACE:
@@ -154,8 +154,8 @@ c, quick);
 			
 			consume();
 		}
-		// eat the SEMI as well
-		consume(Token.tSEMI);
+		// eat the SEMI/RBRACE as well
+		consume();
 	}
 	
 	/**
@@ -279,11 +279,11 @@ c, quick);
 						{
 							failParse(); 
 							if( checkToken == LA(1))
-								consumeToNextSemicolon();
+								errorHandling();
 						}
 				}
 				if (checkToken == LA(1))
-					consumeToNextSemicolon();
+					errorHandling();
 			}
 			// consume the }
 			consume();
@@ -548,11 +548,11 @@ c, quick);
 						{
 							failParse();
 							if (checkToken == LA(1))
-								consumeToNextSemicolon();							
+								errorHandling();							
 						}
 				}
 				if (checkToken == LA(1))
-					consumeToNextSemicolon();
+					errorHandling();
 			}
 			// consume the }
 			
@@ -1184,7 +1184,7 @@ c, quick);
 			try
 			{
 				try{ expression = callback.expressionBegin( declarator ); } catch( Exception e ) {}
-				constantExpression( expression );
+				expression( expression );
 				try{ callback.expressionEnd( expression );   } catch( Exception e ) {}
 			}
 			catch( Backtrack b )
@@ -1429,7 +1429,7 @@ c, quick);
 											break;
 										default: 
 											System.out.println( "Unexpected Token =" + LA(1).getImage() ); 
-											consumeToNextSemicolon(); 
+											errorHandling(); 
 											continue;
 									}
 								}
@@ -1685,11 +1685,11 @@ c, quick);
 						{
 							failParse();
 							if (checkToken == LA(1))
-								consumeToNextSemicolon();							
+								errorHandling();							
 						}
 				}
 				if (checkToken == LA(1))
-					consumeToNextSemicolon();
+					errorHandling();
 			}
 			// consume the }
 			try{ callback.classSpecifierEnd(classSpec, consume( Token.tRBRACE )); } catch( Exception e ) {}

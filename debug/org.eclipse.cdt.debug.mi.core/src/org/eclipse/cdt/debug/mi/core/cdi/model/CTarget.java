@@ -84,14 +84,18 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#setCurrentThread(ICDIThread)
 	 */
 	public void setCurrentThread(ICDIThread cthread) throws CDIException {
+		setCurrentThread(cthread, true);
+	}
+	
+	public void setCurrentThread(ICDIThread cthread, boolean doUpdate) throws CDIException {
 		if (cthread instanceof CThread) {
-			setCurrentThread((CThread)cthread);
+			setCurrentThread((CThread)cthread, doUpdate);
 		}
 	}
 
 	/**
 	 */
-	public void setCurrentThread(CThread cthread) throws CDIException {
+	public void setCurrentThread(CThread cthread, boolean doUpdate) throws CDIException {
 		session.setCurrentTarget(this);
 		int id = cthread.getId();
 		// No need to set thread id 0, it is a dummy thread.
@@ -117,8 +121,10 @@ public class CTarget  implements ICDITarget {
 			// Resetting threads may change the value of
 			// some variables like Register.  Send an update
 			// To generate changeEvents.
-			RegisterManager regMgr = session.getRegisterManager();
-			regMgr.update();
+			if (doUpdate) {
+				RegisterManager regMgr = session.getRegisterManager();
+				regMgr.update();
+			}
 		}
 
 		// We should be allright now.
@@ -126,7 +132,7 @@ public class CTarget  implements ICDITarget {
 			// thread is gone.  Generate a Thread destroyed.
 			MISession mi = session.getMISession();
 			mi.fireEvent(new MIThreadExitEvent(id));
-			throw new CDIException("Thread destroyed");
+			throw new CDIException("Can not swith to thread " + id);
 		}
 	}
 
@@ -151,7 +157,7 @@ public class CTarget  implements ICDITarget {
 			for (int i = 0; i < newThreads.length; i++) {
 				boolean found = false;
 				for (int j = 0; oldThreads != null && j < oldThreads.length; j++) {
-					if (newThreads[j].getId() == ((CThread)oldThreads[i]).getId()) {
+					if (newThreads[i].getId() == ((CThread)oldThreads[j]).getId()) {
 						found = true;
 						break;
 					}

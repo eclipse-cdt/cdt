@@ -10,15 +10,27 @@
  **********************************************************************/
 package org.eclipse.cdt.core.build.managed;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.core.build.managed.Configuration;
+import org.eclipse.cdt.internal.core.build.managed.ResourceBuildInfo;
 import org.eclipse.cdt.internal.core.build.managed.Target;
-import org.eclipse.cdt.internal.core.build.managed.Tool;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -26,6 +38,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.QualifiedName;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * This is the main entry point for getting at the build information
@@ -33,13 +48,16 @@ import org.eclipse.core.runtime.QualifiedName;
  */
 public class ManagedBuildManager {
 
-	private static final QualifiedName ownedTargetsProperty
-		= new QualifiedName(CCorePlugin.PLUGIN_ID, "ownedTargets");
-	private static final QualifiedName definedTargetsProperty
-		= new QualifiedName(CCorePlugin.PLUGIN_ID, "definedTargets"); 
+	private static final QualifiedName buildInfoProperty
+		= new QualifiedName(CCorePlugin.PLUGIN_ID, "buildInfo");
 
 	private static final ITarget[] emptyTargets = new ITarget[0];
-	
+
+	// Targets defined by extensions (i.e., not associated with a resource)
+	private static boolean extensionTargetsLoaded = false;
+	private static List extensionTargets;
+	private static Map extensionTargetMap;
+
 	/**
 	 * Returns the list of targets that are defined by this project,
 	 * projects referenced by this project, and by the extensions. 
@@ -53,13 +71,7 @@ public class ManagedBuildManager {
 
 		// Get the targets for this project and all referenced projects
 		List definedTargets = null;
-
-		if (project != null) {
-			try {
-				definedTargets = (List)project.getSessionProperty(definedTargetsProperty);
-			} catch (CoreException e) {
-			}
-		}
+		// To Do
 
 		// Create the array and copy the elements over
 		int size = extensionTargets.size()
@@ -86,13 +98,28 @@ public class ManagedBuildManager {
 	 * @return
 	 */
 	public static ITarget[] getTargets(IResource resource) {
-		List targets = getOwnedTargetsProperty(resource);
+		ResourceBuildInfo buildInfo = getBuildInfo(resource);
 		
-		if (targets != null) {
+		if (buildInfo != null) {
+			List targets = buildInfo.getTargets();
 			return (ITarget[])targets.toArray(new ITarget[targets.size()]);
 		} else {
 			return emptyTargets;
 		}
+	}
+
+	public static ITarget getTarget(IResource resource, String id) {
+		if (resource != null) {
+			ResourceBuildInfo buildInfo = getBuildInfo(resource);
+			if (buildInfo != null)
+				return buildInfo.getTarget(id);
+		}
+
+		ITarget target = (ITarget)extensionTargetMap.get(id);
+		if (target != null)
+			return target;
+			
+		return null;
 	}
 
 	/**
@@ -103,7 +130,7 @@ public class ManagedBuildManager {
 	 * @return
 	 * @throws BuildException
 	 */
-	public static ITarget addTarget(IResource resource, ITarget parentTarget)
+	public static ITarget createTarget(IResource resource, ITarget parentTarget)
 		throws BuildException
 	{
 		IResource owner = parentTarget.getOwner();
@@ -113,7 +140,7 @@ public class ManagedBuildManager {
 			return parentTarget; 
 			
 		if (resource instanceof IProject) {
-			// Owner must be null
+			// Must be an extension target (why?)
 			if (owner != null)
 				throw new BuildException("addTarget: owner not null");
 		} else {
@@ -125,19 +152,7 @@ public class ManagedBuildManager {
 		}
 		
 		// Passed validation
-		List targets = getOwnedTargetsProperty(resource);
-		if (targets == null) {
-			targets = new ArrayList();
-			try {
-				resource.setSessionProperty(ownedTargetsProperty, targets);
-			} catch (CoreException e) {
-				throw new BuildException("addTarget: could not add property");
-			}
-		}
-		
-		Target newTarget = new Target(resource, parentTarget);
-		targets.add(newTarget);
-		return newTarget;
+		return new Target(resource, parentTarget);
 	}
 	
 	/**
@@ -147,19 +162,65 @@ public class ManagedBuildManager {
 	 * @param project
 	 */
 	public static void saveBuildInfo(IProject project) {
+		// Create document
+		Document doc = new DocumentImpl();
+		Element rootElement = doc.createElement("buildInfo");
+		doc.appendChild(rootElement);
+
+		// Populate from buildInfo
+		// To do - find other resources also
+		ResourceBuildInfo buildInfo = getBuildInfo(project);
+		if (buildInfo != null)
+			buildInfo.serialize(doc, rootElement);
+		
+		// Save the document
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
+		String xml = null;
+		try {
+			Serializer serializer
+				= SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format);
+			serializer.asDOMSerializer().serialize(doc);
+			xml = s.toString("UTF8"); //$NON-NLS-1$		
+			IFile rscFile = project.getFile(".cdtbuild");
+			InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
+			// update the resource content
+			if (rscFile.exists()) {
+				rscFile.setContents(inputStream, IResource.FORCE, null);
+			} else {
+				rscFile.create(inputStream, IResource.FORCE, null);
+			}
+		} catch (Exception e) {
+			return;
+		}
+	}
+
+	public static void removeBuildInfo(IResource resource) {
+		try {
+			resource.setSessionProperty(buildInfoProperty, null);
+		} catch (CoreException e) {
+		}
 	}
 	
 	// Private stuff
-	
-	private static List extensionTargets;
-	
-	private static void loadExtensions() {
-		if (extensionTargets != null)
-			return;
-			
-		extensionTargets = new ArrayList();
-		Map targetMap = new HashMap(); 
+
+	public static void addExtensionTarget(Target target) {
+		if (extensionTargets == null) {
+			extensionTargets = new ArrayList();
+			extensionTargetMap = new HashMap();
+		}
 		
+		extensionTargets.add(target);
+		extensionTargetMap.put(target.getId(), target);
+	}
+		
+	private static void loadExtensions() {
+		if (extensionTargetsLoaded)
+			return;
+		extensionTargetsLoaded = true;
+
 		IExtensionPoint extensionPoint
 			= CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ManagedBuildInfo");
 		IExtension[] extensions = extensionPoint.getExtensions();
@@ -169,61 +230,58 @@ public class ManagedBuildManager {
 			for (int j = 0; j < elements.length; ++j) {
 				IConfigurationElement element = elements[j];
 				if (element.getName().equals("target")) {
-					String parentId = element.getAttribute("parent");
-					Target target = null;
-					if (parentId != null)
-						target  = new Target(null, (Target)targetMap.get(parentId));
-					else
-						target = new Target(null);
-					target.setName(element.getAttribute("name"));
-					extensionTargets.add(target);
-					targetMap.put(element.getAttribute("id"), target);
-					
-					IConfigurationElement[] targetElements = element.getChildren();
-					for (int k = 0; k < targetElements.length; ++k) {
-						IConfigurationElement targetElement = targetElements[k];
-						if (targetElement.getName().equals("tool")) {
-							ITool tool = target.createTool();
-							tool.setName(targetElement.getAttribute("name"));
-							
-							Map categoryMap = new HashMap();
-							categoryMap.put(targetElement.getAttribute("id"), tool.getTopOptionCategory());
-							IConfigurationElement[] toolElements = targetElement.getChildren();
-							for (int l = 0; l < toolElements.length; ++l) {
-								IConfigurationElement toolElement = toolElements[l];
-								if (toolElement.getName().equals("option")) {
-									IOption option = tool.createOption();
-									option.setName(toolElement.getAttribute("name"));
-									
-									String categoryId = toolElement.getAttribute("category");
-									if (categoryId != null)
-										option.setCategory((IOptionCategory)categoryMap.get(categoryId));
-								} else if (toolElement.getName().equals("optionCategory")) {
-									IOptionCategory owner = (IOptionCategory)categoryMap.get(toolElement.getAttribute("owner"));
-									IOptionCategory category = owner.createChildCategory();
-									category.setName(toolElement.getAttribute("name"));
-									categoryMap.put(toolElement.getAttribute("id"), category);
-								}
-							}
-						} else if (targetElement.getName().equals("configuration")) {
-							try {
-								IConfiguration config = target.createConfiguration();
-								config.setName(targetElement.getAttribute("name"));
-							} catch (BuildException e) {
-								// Not sure what to do here.
-							}
-						}
-					}
+					new Target(element);
 				}
 			}
 		}
 	}
-	
-	private static List getOwnedTargetsProperty(IResource resource) {
-		try {
-			return (List)resource.getSessionProperty(ownedTargetsProperty);
-		} catch (CoreException e) {
+
+	private static ResourceBuildInfo loadBuildInfo(IProject project) {
+		ResourceBuildInfo buildInfo = null;
+		IFile file = project.getFile(".cdtbuild");
+		if (!file.exists())
 			return null;
+	
+		try {
+			InputStream stream = file.getContents();
+			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document document = parser.parse(stream);
+			Node rootElement = document.getFirstChild();
+			if (rootElement.getNodeName().equals("buildInfo")) {
+				buildInfo = new ResourceBuildInfo(project, (Element)rootElement);
+				project.setSessionProperty(buildInfoProperty, buildInfo);
+			}
+		} catch (Exception e) {
+			buildInfo = null;
 		}
+
+		return buildInfo;
+	}
+
+	public static ResourceBuildInfo getBuildInfo(IResource resource, boolean create) {
+		ResourceBuildInfo buildInfo = null;
+		try {
+			buildInfo = (ResourceBuildInfo)resource.getSessionProperty(buildInfoProperty);
+		} catch (CoreException e) {
+		}
+		
+		if (buildInfo == null && resource instanceof IProject) {
+			buildInfo = loadBuildInfo((IProject)resource);
+		}
+		
+		if (buildInfo == null && create) {
+			try {
+				buildInfo = new ResourceBuildInfo();
+				resource.setSessionProperty(buildInfoProperty, buildInfo);
+			} catch (CoreException e) {
+				buildInfo = null;
+			}
+		}
+		
+		return buildInfo;
+	}
+	
+	public static ResourceBuildInfo getBuildInfo(IResource resource) {
+		return getBuildInfo(resource, false);
 	}
 }

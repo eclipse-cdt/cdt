@@ -19,6 +19,12 @@ import org.eclipse.core.resources.IResource;
 public interface ITarget extends IBuildObject {
 
 	/**
+	 * Returns whether this target is abstract
+	 * @return
+	 */
+	public boolean isAbstract();
+	
+	/**
 	 * Gets the resource that this target is applied to.
 	 * 
 	 * @return
@@ -34,33 +40,9 @@ public interface ITarget extends IBuildObject {
 	public ITool[] getTools();
 
 	/**
-	 * Creates a new tool.
-	 * 
-	 * @return
-	 */
-	public ITool createTool();
-	
-	/**
 	 * Returns all of the configurations defined by this target.
 	 * @return
 	 */
 	public IConfiguration[] getConfigurations();
-
-	/**
-	 * Creates a new configuration for this target.
-	 * 
-	 * @return
-	 */
-	public IConfiguration createConfiguration()
-		throws BuildException;
-	
-	/**
-	 * Creates a new configuration based on the parent config for this target.
-	 * 
-	 * @param parentConfig
-	 * @return
-	 */
-	public IConfiguration createConfiguration(IConfiguration parentConfig)
-		throws BuildException;
 
 }

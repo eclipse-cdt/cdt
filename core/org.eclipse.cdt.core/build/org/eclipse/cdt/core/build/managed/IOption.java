@@ -85,7 +85,8 @@ public interface IOption extends IBuildObject {
 	 * @param config
 	 * @param value
 	 */
-	public IOption setStringValue(IConfiguration config, String value);
+	public IOption setValue(IConfiguration config, String value)
+		throws BuildException;
 
 	/**
 	 * Sets the value for this option in a given configuration.
@@ -95,6 +96,7 @@ public interface IOption extends IBuildObject {
 	 * @param config
 	 * @param value
 	 */
-	public IOption setStringValue(IConfiguration config, String[] value);
+	public IOption setValue(IConfiguration config, String[] value)
+		throws BuildException;
 
 }

@@ -27,12 +27,12 @@ public interface ITool extends IBuildObject {
 	public IOption[] getOptions();
 	
 	/**
-	 * Creates a new option for this tool.  Generally, this should only be
-	 * done by the extension and project data loaders.
+	 * Get a particular option.
 	 * 
+	 * @param id
 	 * @return
 	 */
-	public IOption createOption();
+	public IOption getOption(String id);
 	
 	/**
 	 * Options are organized into categories for UI purposes.

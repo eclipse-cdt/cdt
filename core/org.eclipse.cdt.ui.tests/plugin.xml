@@ -94,11 +94,8 @@
       </target>
       <target
             name="Test Root"
+            isAbstract="false"
             id="test.root">
-         <configuration
-               name="Root Config"
-               id="root.config">
-         </configuration>
          <tool
                name="Root Tool"
                id="root.tool">
@@ -117,10 +114,26 @@
                   id="childOption">
             </option>
          </tool>
+         <configuration
+               name="Root Config"
+               id="root.config">
+         </configuration>
+         <configuration
+               name="Root Override Config"
+               id="root.override.config">
+            <toolRef
+                  id="root.tool">
+               <optionRef
+                     value="x"
+                     id="topOption">
+               </optionRef>
+            </toolRef>
+         </configuration>
       </target>
       <target
             name="Test Sub"
             parent="test.root"
+            isAbstract="false"
             id="test.sub">
          <configuration
                name="Sub Config"

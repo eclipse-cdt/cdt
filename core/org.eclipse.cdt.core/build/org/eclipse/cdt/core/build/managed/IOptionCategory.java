@@ -23,20 +23,13 @@ public interface IOptionCategory extends IBuildObject {
 	public IOptionCategory[] getChildCategories();
 	
 	/**
-	 * Returns a new child category for this category.
-	 * 
-	 * @return
-	 */
-	public IOptionCategory createChildCategory();
-	
-	/**
-	 * Returns the options in this category for a given tool.
+	 * Returns the options in this category for a given configuration.
 	 * 
 	 * @param tool
 	 * @return
 	 */
-	public IOption[] getOptions(ITool tool);
-	
+	public IOption[] getOptions(IConfiguration configuration);
+
 	/**
 	 * Returns the category that owns this category, or null if this is the
 	 * top category for a tool.

@@ -10,10 +10,14 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.build.managed;
 
+import java.util.List;
+
+import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
 import org.eclipse.cdt.core.build.managed.ITool;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
  * 
@@ -22,40 +26,66 @@ public class Option extends BuildObject implements IOption {
 
 	private ITool tool;
 	private IOptionCategory category;
+	private List enumValues;
 	
+	private int valueType;
+	private Object value;
+	
+	private static final String[] emptyStrings = new String[0];
+	 
 	public Option(ITool tool) {
 		this.tool = tool;
 	}
 	
+	public Option(Tool tool, IConfigurationElement element) {
+		this(tool);
+		
+		// id
+		setId(element.getAttribute("id"));
+		
+		// hook me up
+		tool.addOption(this);
+		
+		// name
+		setName(element.getAttribute("name"));
+
+		// category
+		String categoryId = element.getAttribute("category");
+		if (categoryId != null)
+			setCategory(tool.getOptionCategory(categoryId));
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getApplicableValues()
 	 */
 	public String[] getApplicableValues() {
-		// TODO Auto-generated method stub
-		return null;
+		return enumValues != null
+			? (String[])enumValues.toArray(new String[enumValues.size()])
+			: emptyStrings;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getCategory()
 	 */
 	public IOptionCategory getCategory() {
-		return (category != null) ? category : getTool().getTopOptionCategory();
+		return category != null ? category : getTool().getTopOptionCategory();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getStringListValue()
 	 */
 	public String[] getStringListValue() {
-		// TODO Auto-generated method stub
-		return null;
+		List v = (List)value;
+		return v != null
+			? (String[])v.toArray(new String[v.size()])
+			: emptyStrings;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getStringValue()
 	 */
 	public String getStringValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return (String)value;
 	}
 
 	/* (non-Javadoc)
@@ -69,24 +99,45 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getValueType()
 	 */
 	public int getValueType() {
-		// TODO Auto-generated method stub
-		return 0;
+		return valueType;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#setStringValue(org.eclipse.cdt.core.build.managed.IConfiguration, java.lang.String)
 	 */
-	public IOption setStringValue(IConfiguration config, String value) {
-		// TODO Auto-generated method stub
-		return null;
+	public IOption setValue(IConfiguration config, String value)
+		throws BuildException
+	{
+		if (valueType != IOption.STRING)
+			throw new BuildException("Bad value for type");
+
+		if (config == null) {
+			this.value = value;
+			return this;
+		} else {
+			
+			// Magic time
+			
+			return null;
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#setStringValue(org.eclipse.cdt.core.build.managed.IConfiguration, java.lang.String[])
 	 */
-	public IOption setStringValue(IConfiguration config, String[] value) {
-		// TODO Auto-generated method stub
-		return null;
+	public IOption setValue(IConfiguration config, String[] value)
+		throws BuildException
+	{
+		if (valueType != IOption.STRING_LIST)
+			throw new BuildException("Bad value for type");
+		
+		if (config == null) {
+			this.value = value;
+			return this;
+		} else {
+			// More magic
+			return null;
+		}
 	}
 
 	/* (non-Javadoc)

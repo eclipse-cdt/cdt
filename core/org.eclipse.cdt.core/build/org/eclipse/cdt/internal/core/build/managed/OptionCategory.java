@@ -13,9 +13,11 @@ package org.eclipse.cdt.internal.core.build.managed;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
 import org.eclipse.cdt.core.build.managed.ITool;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
  * 
@@ -31,6 +33,28 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		this.owner = owner;
 	}
 	
+	public OptionCategory(Tool tool, IConfigurationElement element) {
+		String parentId = element.getAttribute("parent");
+		if (parentId != null)
+			owner = tool.getOptionCategory(element.getAttribute("parent"));
+		else
+			owner = tool;
+		
+		// id
+		setId(element.getAttribute("id"));
+		
+		// Name
+		setName(element.getAttribute("name"));
+		
+		// Hook me in
+		if (owner instanceof Tool)
+			((Tool)owner).addChildCategory(this);
+		else
+			((OptionCategory)owner).addChildCategory(this);
+
+		tool.addOptionCategory(this);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getChildCategories()
 	 */
@@ -41,17 +65,10 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 			return emtpyCategories;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#createChildCategory()
-	 */
-	public IOptionCategory createChildCategory() {
-		IOptionCategory category = new OptionCategory(this);
-		
+	public void addChildCategory(OptionCategory category) {
 		if (children == null)
 			children = new ArrayList();
 		children.add(category);
-		
-		return category;
 	}
 
 	/* (non-Javadoc)
@@ -72,16 +89,31 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions(org.eclipse.cdt.core.build.managed.ITool)
 	 */
-	public IOption[] getOptions(ITool tool) {
-		List myOptions = new ArrayList();
+	public IOption[] getOptions(IConfiguration configuration) {
+		ITool tool = getTool();
+		if (configuration != null) {
+			// TODO don't like this much
+			ITool[] tools = configuration.getTools();
+			for (int i = 0; i < tools.length; ++i) {
+				if (tools[i] instanceof ToolReference) {
+					if (((ToolReference)tools[i]).references(tool)) {
+						tool = tools[i];
+						break;
+					}
+				} else if (tools[i].equals(tool))
+					break;
+			}
+		}
+
 		IOption[] allOptions = tool.getOptions();
-		
+		List myOptions = new ArrayList();
+			
 		for (int i = 0; i < allOptions.length; ++i) {
 			IOption option = allOptions[i];
 			if (option.getCategory().equals(this))
 				myOptions.add(option);
 		}
-		
+
 		return (IOption[])myOptions.toArray(new IOption[myOptions.size()]);
 	}
 

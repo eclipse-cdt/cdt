@@ -1,3 +1,8 @@
+2003-03-23 John Camelon
+	Added ptrOperator() test to DOMTests.  
+	Added testFunctionModifiers() test to DOMTests.
+	Added testArrays() test to DOMTests.
+
 2003-03-20 Alain Magloire
 
 	Patch from Amer Hoda, tests for the CElement deltas for Translation Units.

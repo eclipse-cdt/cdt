@@ -1264,7 +1264,7 @@ public class Scanner implements IScanner {
 						EXPRESSION,
 						definitions);
 				Parser parser = new Parser(trial, evaluator);
-				parser.expression(null);  //TODO should this be null?
+				parser.expression(null); 
 				
 				expressionEvalResult = evaluator.getResult();
 	

@@ -33,18 +33,31 @@ public interface IParserCallback {
 	public Object declaratorBegin(Object container);
 	public void declaratorId(Object declarator);
 	public void declaratorAbort( Object container, Object declarator ); 
+	public void declaratorCVModifier( Object declarator, Token modifier );
+	public void declaratorThrowsException( Object declarator ); 
+	public void declaratorThrowExceptionName( Object declarator );
 	public void declaratorEnd(Object declarator);
+		
+	public Object arrayDeclaratorBegin( Object declarator );
+	public void arrayDeclaratorEnd( Object arrayQualifier );
+	
+	public Object pointerOperatorBegin( Object container );
+	public void   pointerOperatorType( Object ptrOperator, Token type );
+	public void   pointerOperatorName( Object ptrOperator );
+	public void   pointerOperatorCVModifier( Object ptrOperator, Token modifier );
+	public void   pointerOperatorEnd( Object ptrOperator );
 		
 	public Object argumentsBegin( Object declarator );
 	public void argumentsEnd(Object parameterDeclarationClause);
 	
-	public void functionBodyBegin(Object declaration);
-	public void functionBodyEnd();
+	public Object functionBodyBegin(Object declaration);
+	public void functionBodyEnd(Object functionBody);
 	
 	public Object classSpecifierBegin(Object container, Token classKey);
 	public void classSpecifierName(Object classSpecifier);
 	public void classSpecifierAbort( Object classSpecifier ); 
 	public void classSpecifierSafe( Object classSpecifier );
+	public void classMemberVisibility( Object classSpecifier, Token visibility );
 	public void classSpecifierEnd(Object classSpecifier);
 	
 	public Object	baseSpecifierBegin( Object containingClassSpec );

@@ -206,12 +206,13 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#functionBodyBegin()
 	 */
-	public void functionBodyBegin(Object declaration) {
+	public Object functionBodyBegin(Object declaration) {
+		return null;
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#functionBodyEnd()
 	 */
-	public void functionBodyEnd() {
+	public void functionBodyEnd(Object functionBody) {
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
@@ -310,6 +311,93 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionAbort(java.lang.Object)
 	 */
 	public void expressionAbort(Object expression) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classMemberVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void classMemberVisibility(Object classSpecifier, Token visibility) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public Object pointerOperatorBegin(Object container) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorEnd(java.lang.Object)
+	 */
+	public void pointerOperatorEnd(Object ptrOperator) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorName(java.lang.Object)
+	 */
+	public void pointerOperatorName(Object ptrOperator) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorType(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void pointerOperatorType(Object ptrOperator, Token type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void declaratorCVModifier(Object declarator, Token modifier) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#arrayBegin(java.lang.Object)
+	 */
+	public Object arrayDeclaratorBegin(Object declarator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#arrayEnd(java.lang.Object)
+	 */
+	public void arrayDeclaratorEnd(Object arrayQualifier ) {
+		// TODO Auto-generated method stub;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#exceptionSpecificationTypename(java.lang.Object)
+	 */
+	public void declaratorThrowExceptionName(Object declarator) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorThrowsException(java.lang.Object)
+	 */
+	public void declaratorThrowsException(Object declarator) {
 		// TODO Auto-generated method stub
 		
 	}

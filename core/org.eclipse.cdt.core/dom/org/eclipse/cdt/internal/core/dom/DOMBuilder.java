@@ -1,6 +1,9 @@
 package org.eclipse.cdt.internal.core.dom;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
@@ -40,10 +43,12 @@ public class DOMBuilder implements IParserCallback
 		SimpleDeclaration decl = (SimpleDeclaration)container;
 		
 		int kind = ClassSpecifier.t_struct;
+		int visibility = ClassSpecifier.v_public; 
 		
 		switch (classKey.getType()) {
 			case Token.t_class:
 				kind = ClassSpecifier.t_class;
+				visibility = ClassSpecifier.v_private; 
 				break;
 			case Token.t_struct:
 				kind = ClassSpecifier.t_struct;
@@ -54,6 +59,7 @@ public class DOMBuilder implements IParserCallback
 		}
 		
 		ClassSpecifier classSpecifier = new ClassSpecifier(kind, decl);
+		classSpecifier.setCurrentVisibility( visibility );
 		decl.setTypeSpecifier(classSpecifier);
 		return classSpecifier;
 	}
@@ -130,13 +136,14 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#functionBodyBegin()
 	 */
-	public void functionBodyBegin(Object declaration) {
+	public Object functionBodyBegin(Object declaration) {
+		return null;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#functionBodyEnd()
 	 */
-	public void functionBodyEnd() {
+	public void functionBodyEnd(Object functionBody) {
 	}
 
 	/**
@@ -342,4 +349,137 @@ public class DOMBuilder implements IParserCallback
 	public void expressionAbort(Object expression) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classMemberVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void classMemberVisibility(Object classSpecifier, Token visibility) {
+		ClassSpecifier spec = (ClassSpecifier)classSpecifier;
+		switch( visibility.getType() )
+		{
+			case Token.t_public:
+				spec.setCurrentVisibility( ClassSpecifier.v_public );
+				break;
+			case Token.t_protected:
+				spec.setCurrentVisibility( ClassSpecifier.v_protected );
+				break;
+			case Token.t_private:
+				spec.setCurrentVisibility( ClassSpecifier.v_private );
+				break;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public Object pointerOperatorBegin(Object container) {
+		Declarator declarator = (Declarator)container;
+		PointerOperator ptrOp = new PointerOperator(declarator);
+		return ptrOp; 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorEnd(java.lang.Object)
+	 */
+	public void pointerOperatorEnd(Object ptrOperator) {
+		PointerOperator ptrOp = (PointerOperator)ptrOperator;
+		Declarator owner = ptrOp.getOwnerDeclarator();
+		owner.addPointerOperator( ptrOp );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorName(java.lang.Object)
+	 */
+	public void pointerOperatorName(Object ptrOperator) {
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorType(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void pointerOperatorType(Object ptrOperator, Token type) {
+		PointerOperator ptrOp = (PointerOperator)ptrOperator;
+		switch( type.getType() )
+		{
+			case Token.tSTAR:
+				ptrOp.setType( PointerOperator.t_pointer );
+				break;
+			case Token.tAMPER:
+				ptrOp.setType( PointerOperator.t_reference );
+				break;
+			default:
+				break;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
+		PointerOperator ptrOp = (PointerOperator)ptrOperator;
+		switch( modifier.getType() )
+		{
+			case Token.t_const:
+				ptrOp.setConst(true);
+				break; 
+			case Token.t_volatile:
+				ptrOp.setVolatile( true );
+				break;
+			default:
+				break;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
+	 */
+	public void declaratorCVModifier(Object declarator, Token modifier) {
+		Declarator decl = (Declarator)declarator;
+		switch( modifier.getType() )
+		{
+			case Token.t_const:
+				decl.setConst(true);
+				break; 
+			case Token.t_volatile:
+				decl.setVolatile( true );
+				break;
+			default:
+				break;
+		}
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#arrayBegin(java.lang.Object)
+	 */
+	public Object arrayDeclaratorBegin(Object declarator) {
+		Declarator decl = (Declarator)declarator;
+		ArrayQualifier qual = new ArrayQualifier( decl );
+		return qual;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#arrayEnd(java.lang.Object)
+	 */
+	public void arrayDeclaratorEnd(Object arrayQualifier ) {
+		ArrayQualifier qual = (ArrayQualifier)arrayQualifier; 
+		Declarator parent = qual.getOwnerDeclarator(); 
+		parent.addArrayQualifier(qual);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#exceptionSpecificationTypename(java.lang.Object)
+	 */
+	public void declaratorThrowExceptionName(Object declarator ) {
+		Declarator decl = (Declarator)declarator; 
+		decl.addExceptionSpecifierTypeName( currName ); 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorThrowsException(java.lang.Object)
+	 */
+	public void declaratorThrowsException(Object declarator) {
+		Declarator decl = (Declarator)declarator; 
+		decl.throwsExceptions(); 
+	}
 }

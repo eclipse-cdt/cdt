@@ -105,6 +105,7 @@ c, quick);
 	}
 
 	protected void consumeToNextSemicolon() throws EndOfFile {
+		parsePassed = false;
 		consume();
 		// TODO - we should really check for matching braces too
 		while (LT(1) != Token.tSEMI) {
@@ -210,7 +211,7 @@ c, quick);
 				}
 				// Falling through on purpose
 			case Token.tLBRACE:
-				callback.functionBodyBegin(simpleDecl );
+				Object function = callback.functionBodyBegin(simpleDecl );
 				if (quickParse) {
 					// speed up the parser by skiping the body
 					// simply look for matching brace and return
@@ -229,7 +230,7 @@ c, quick);
 				} else {
 					functionBody();
 				}
-				callback.functionBodyEnd();
+				callback.functionBodyEnd(function);
 				break;
 			default:
 				break;
@@ -408,12 +409,12 @@ c, quick);
 	 * cvQualifier
 	 * : "const" | "volatile"
 	 */
-	protected Object cvQualifier() throws Exception {
+	protected void cvQualifier( Object ptrOp ) throws Exception {
 		switch (LT(1)) {
 			case Token.t_const:
 			case Token.t_volatile:
-				consume();
-				return null;
+				callback.pointerOperatorCVModifier( ptrOp, consume() ); 
+				return;
 			default:
 				throw backtrack;
 		}
@@ -510,7 +511,7 @@ c, quick);
 			
 			for (;;) {
 				try {
-					ptrOperator();
+					ptrOperator(declarator);
 				} catch (Backtrack b) {
 					break;
 				}
@@ -557,12 +558,59 @@ c, quick);
 								}
 							}
 							callback.argumentsEnd(clause);
+							
+							// const-volatile marker on the method
+							if( LT(1) == Token.t_const || LT(1) == Token.t_volatile )
+							{
+								callback.declaratorCVModifier( declarator, consume() );
+							}
+							
+							//check for throws clause here 
+							if( LT(1) == Token.t_throw )
+							{
+								callback.declaratorThrowsException( declarator );
+								consume(); // throw
+								consume( Token.tLPAREN );// (
+								boolean done = false; 
+								while( ! done )
+								{	
+									switch( LT(1) )
+									{
+										case Token.tRPAREN:
+											consume();  
+											done = true; 
+											break; 
+										case Token.tIDENTIFIER: 
+											//TODO this is not exactly right - should be type-id rather than just a name
+											name(); 
+											callback.declaratorThrowExceptionName( declarator );
+											break;
+										case Token.tCOMMA: 
+											consume(); 
+											break;
+										default: 
+											System.out.println( "Unexpected Token =" + LA(1).getImage() ); 
+											consumeToNextSemicolon(); 
+											continue;
+									}
+								}
+							}
 						}
 						break;
 					case Token.tLBRACKET:
-						consume();
-						// constantExpression();
-						consume(Token.tRBRACKET);
+						while( LT(1) == Token.tLBRACKET )
+						{
+							consume(); // eat the '['
+							Object array = callback.arrayDeclaratorBegin( declarator ); 
+							if( LT(1) != Token.tRBRACKET )
+							{
+								Object expression = callback.expressionBegin( array ); 
+								constantExpression(expression);
+								callback.expressionEnd( expression ); 
+							}
+							consume(Token.tRBRACKET);
+							callback.arrayDeclaratorEnd( array );
+						}
 						continue;
 				}
 				break;
@@ -584,30 +632,37 @@ c, quick);
 	 * | "&"
 	 * | name "*" (cvQualifier)*
 	 */
-	protected Object ptrOperator() throws Exception {
+	protected void ptrOperator(Object owner) throws Exception {
 		int t = LT(1);
+		Object ptrOp = callback.pointerOperatorBegin( owner ); 
 		
-		if (t == Token.tAMPER) {					
-			consume();
-			return null;
+		if (t == Token.tAMPER) {
+			callback.pointerOperatorType( ptrOp, consume() ); 
+			callback.pointerOperatorEnd( ptrOp );
+			return;
 		}
 		
 		Token mark = mark();
 		if (t == Token.tIDENTIFIER || t == Token.tCOLONCOLON)
+		{
 			name();
+			callback.pointerOperatorName( ptrOp );
+		}
 
 		if (t == Token.tSTAR) {
-			consume();
+			callback.pointerOperatorType( ptrOp, consume());
 
 			for (;;) {
 				try {
-					cvQualifier();
+					cvQualifier( ptrOp );
 				} catch (Backtrack b) {
+					// expected at some point
 					break;
 				}
 			}			
 			
-			return null;
+			callback.pointerOperatorEnd( ptrOp );
+			return;
 		}
 		
 		backup(mark);
@@ -705,15 +760,9 @@ c, quick);
 			
 				switch (LT(1)) {
 					case Token.t_public:
-						consume();
-						consume(Token.tCOLON);
-						break;
 					case Token.t_protected:
-						consume();
-						consume(Token.tCOLON);
-						break;
 					case Token.t_private:
-						consume();
+						callback.classMemberVisibility( classSpec, consume() );
 						consume(Token.tCOLON);
 						break;
 					case Token.tRBRACE:

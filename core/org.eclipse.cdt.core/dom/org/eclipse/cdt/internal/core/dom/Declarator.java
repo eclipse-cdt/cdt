@@ -1,5 +1,8 @@
 package org.eclipse.cdt.internal.core.dom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
@@ -61,20 +64,107 @@ public class Declarator implements IExpressionOwner {
 		return parms;
 	}
 
-	private Expression expression = null; 
+	private Expression initialExpression = null; 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#getExpression()
 	 */
 	public Expression getExpression() {
-		return expression;
+		return initialExpression;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#setExpression(org.eclipse.cdt.internal.core.dom.Expression)
 	 */
 	public void setExpression(Expression exp) {
-		expression = exp;
+		initialExpression = exp;
+	}
+	
+	List pointerOperators = null;
+	List arrayQualifiers = null; 
+	
+	
+	
+	/**
+	 * @return List
+	 */
+	public List getPointerOperators() {
+		return pointerOperators;
 	}
 
+	public void addPointerOperator( PointerOperator po )
+	{
+		if( pointerOperators == null )
+		{
+			pointerOperators = new ArrayList(); 
+		}
+		pointerOperators.add(po);
+	}
+	
+	List exceptionSpecifier = null; 
+	
+	public List getExceptionSpecifier()
+	{
+		return exceptionSpecifier; 
+	}
+
+	public void throwsExceptions()
+	{
+		if( exceptionSpecifier == null )
+			exceptionSpecifier = new ArrayList(); 
+	}
+	
+	public void addExceptionSpecifierTypeName( Name name )
+	{
+		exceptionSpecifier.add( name ); 
+	}
+	
+	boolean isConst = false; 
+	boolean isVolatile = false; 
+	/**
+	 * @return boolean
+	 */
+	public boolean isConst() {
+		return isConst;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public boolean isVolatile() {
+		return isVolatile;
+	}
+
+	/**
+	 * Sets the isConst.
+	 * @param isConst The isConst to set
+	 */
+	public void setConst(boolean isConst) {
+		this.isConst = isConst;
+	}
+
+	/**
+	 * Sets the isVolatile.
+	 * @param isVolatile The isVolatile to set
+	 */
+	public void setVolatile(boolean isVolatile) {
+		this.isVolatile = isVolatile;
+	}
+
+	/**
+	 * @return List
+	 */
+	public List getArrayQualifiers() {
+		return arrayQualifiers;
+	}
+
+	public void addArrayQualifier( ArrayQualifier q )
+	{
+		if( arrayQualifiers == null )
+		{
+			arrayQualifiers = new ArrayList(); 
+		}
+		arrayQualifiers.add(q);
+	}
+	
 }

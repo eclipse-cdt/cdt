@@ -1,3 +1,9 @@
+2003-03-23 John Camelon
+	Added callback support for class member visibility.
+	Added callback support for pointer and reference operators on declarators.
+	Added callback support for throws clauses an const operations.  
+	Added callback support for array declarators. 
+	
 2003-03-20 Andrew Niefer
 	Parser Symbol Table updates for:
 	* friends

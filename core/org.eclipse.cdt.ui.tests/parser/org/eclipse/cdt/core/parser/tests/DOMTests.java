@@ -7,6 +7,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.internal.core.dom.ArrayQualifier;
 import org.eclipse.cdt.internal.core.dom.BaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
@@ -14,6 +15,7 @@ import org.eclipse.cdt.internal.core.dom.Declarator;
 import org.eclipse.cdt.internal.core.dom.Expression;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
+import org.eclipse.cdt.internal.core.dom.PointerOperator;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.parser.Parser;
@@ -341,6 +343,123 @@ public class DOMTests extends TestCase {
 		assertNull( integerDeclarator.getParms() ); 
 	}
 
+	public void testFunctionModifiers() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "void foo( void ) const throw ( yay, nay, we::dont::care );");
+		TranslationUnit translationUnit = parse( code.toString() );
+		List tudeclarations = translationUnit.getDeclarations(); 
+		assertEquals( 1, tudeclarations.size() ); 
+		SimpleDeclaration decl1 = (SimpleDeclaration)tudeclarations.get(0);
+		assertEquals( decl1.getDeclSpecifier().getType(), DeclSpecifier.t_void);
+		assertEquals( decl1.getDeclarators().size(), 1 );
+		Declarator declarator = (Declarator)decl1.getDeclarators().get(0);
+		assertEquals( declarator.getName().toString(), "foo");
+		assertTrue( declarator.isConst() ); 
+		assertFalse( declarator.isVolatile() );
+		List exceptions = declarator.getExceptionSpecifier(); 
+		assertEquals( exceptions.size(), 3 );
+		Name n = (Name)exceptions.get(0); 
+		assertEquals( n.toString(), "yay");
+		n = (Name)exceptions.get(1);
+		assertEquals( n.toString(), "nay");
+		n = (Name)exceptions.get(2);
+		assertEquals( n.toString(), "we::dont::care");
+	}
+
+
+	public void testArrays() throws Exception
+	{
+		// Parse and get the translaton unit
+		Writer code = new StringWriter();
+		code.write("int x [5][];");
+		TranslationUnit translationUnit = parse( code.toString() );
+		List tudeclarations = translationUnit.getDeclarations(); 
+		assertEquals( 1, tudeclarations.size() ); 
+		SimpleDeclaration decl1 = (SimpleDeclaration)tudeclarations.get(0);
+		assertEquals( decl1.getDeclSpecifier().getType(), DeclSpecifier.t_int);
+		assertEquals( decl1.getDeclarators().size(), 1 );
+		Declarator declarator = (Declarator)decl1.getDeclarators().get(0);
+		assertEquals( declarator.getName().toString(), "x");
+		List arrayQualifiers = declarator.getArrayQualifiers(); 
+		assertEquals( 2, arrayQualifiers.size() ); 
+		ArrayQualifier q1 =(ArrayQualifier)arrayQualifiers.get(0);
+		assertNotNull( q1.getExpression() ); 
+		List tokens = q1.getExpression().tokens();
+		assertEquals( tokens.size(), 1 ); 
+		ArrayQualifier q2 =(ArrayQualifier)arrayQualifiers.get(1);  
+		assertNull( q2.getExpression() ); 
+	}		
+
+	public void testPointerOperators() throws Exception
+	{
+		// Parse and get the translaton unit
+		Writer code = new StringWriter();
+		code.write("int * x = 0, & y, * const * const volatile * z;");
+		TranslationUnit translationUnit = parse(code.toString());
+		
+		List tudeclarations = translationUnit.getDeclarations(); 
+		assertEquals( 1, tudeclarations.size() ); 
+		SimpleDeclaration decl1 = (SimpleDeclaration)tudeclarations.get(0);
+		assertEquals( decl1.getDeclSpecifier().getType(), DeclSpecifier.t_int);
+		
+		assertEquals( 3, decl1.getDeclarators().size() ); 
+		
+		Declarator declarator1 = (Declarator)decl1.getDeclarators().get( 0 );
+		assertEquals( declarator1.getName().toString(), "x" );
+		Expression initValue1  = declarator1.getExpression();
+		assertEquals( initValue1.tokens().size(), 1 );
+		List ptrOps1 = declarator1.getPointerOperators();
+		assertNotNull( ptrOps1 );
+		assertEquals( 1, ptrOps1.size() );
+		PointerOperator po1 = (PointerOperator)ptrOps1.get(0);
+		assertNotNull( po1 ); 
+		assertFalse( po1.isConst() );
+		assertFalse( po1.isVolatile() );
+		assertEquals( po1.getType(), PointerOperator.t_pointer );
+		Token t1 = (Token)initValue1.tokens().get(0);
+		assertEquals( t1.getType(), Token.tINTEGER ); 
+		assertEquals( t1.getImage(), "0");
+
+		Declarator declarator2 = (Declarator)decl1.getDeclarators().get( 1 );
+		assertEquals( declarator2.getName().toString(), "y" );
+		assertNull( declarator2.getExpression() ); 
+		List ptrOps2 = declarator2.getPointerOperators();
+		assertNotNull( ptrOps2 );
+		assertEquals( 1, ptrOps2.size() );
+		PointerOperator po2 = (PointerOperator)ptrOps2.get(0);
+		assertNotNull( po2 ); 
+		assertFalse( po2.isConst() );
+		assertFalse( po2.isVolatile() );
+		assertEquals( po2.getType(), PointerOperator.t_reference );
+		
+		Declarator declarator3 = (Declarator)decl1.getDeclarators().get( 2 );
+		assertEquals( "z", declarator3.getName().toString() );
+		List ptrOps3 = declarator3.getPointerOperators();
+		assertNotNull( ptrOps3 );
+		assertEquals( 3, ptrOps3.size() );
+		
+		//* const  
+		PointerOperator po3 = (PointerOperator)ptrOps3.get(0);
+		assertNotNull( po3 );
+		assertTrue( po3.isConst() ); 
+		assertFalse( po3.isVolatile() ); 
+		assertEquals( po3.getType(), PointerOperator.t_pointer );
+		// * const volatile
+		PointerOperator po4 = (PointerOperator)ptrOps3.get(1);
+		assertNotNull( po4 );
+		assertEquals( po4.getType(), PointerOperator.t_pointer );
+		assertTrue( po4.isConst() ); 
+		assertTrue( po4.isVolatile() ); 
+		// *
+		PointerOperator po5 = (PointerOperator)ptrOps3.get(2);
+		assertNotNull( po5 );
+		assertFalse( po5.isConst() ); 
+		assertFalse( po5.isVolatile() ); 
+		assertEquals( po5.getType(), PointerOperator.t_pointer );
+	}
+	
+
 //	public void testErrors()
 //	{
 //		validateWeEncounterAnError( "void myFunc( int hey, flo );");
@@ -367,8 +486,7 @@ public class DOMTests extends TestCase {
 		}catch( IOException io )
 		{
 			fail( "IOException thrown");
-		}
-				
+		}				
 	}
 }
 

@@ -214,4 +214,24 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 		this.functionDefinition = functionDefinition;
 	}
 
+	public static final int v_public = 0; 
+	public static final int v_protected = 1; 
+	public static final int v_private = 3; 
+
+	private int currentVisibility; 
+	/**
+	 * @return int
+	 */
+	public int getCurrentVisibility() {
+		return currentVisibility;
+	}
+
+	/**
+	 * Sets the currentVisibility.
+	 * @param currentVisibility The currentVisibility to set
+	 */
+	public void setCurrentVisibility(int currentVisibility) {
+		this.currentVisibility = currentVisibility;
+	}
+
 }

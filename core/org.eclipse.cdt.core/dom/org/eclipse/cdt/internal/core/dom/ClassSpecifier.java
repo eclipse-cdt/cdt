@@ -11,6 +11,12 @@ public class ClassSpecifier extends TypeSpecifier implements IScope {
 	public static final int t_struct = 1;
 	public static final int t_union = 2;
 
+	public static final int v_public = 0; 
+	public static final int v_protected = 1; 
+	public static final int v_private = 3; 
+
+	private int currentVisibility;
+
 	private final int classKey;
 	public int getClassKey() { return classKey; }
 
@@ -38,4 +44,19 @@ public class ClassSpecifier extends TypeSpecifier implements IScope {
 	public List getDeclarations() {
 		return declarations;
 	}
+	/**
+	 * @return int
+	 */
+	public int getCurrentVisibility() {
+		return currentVisibility;
+	}
+
+	/**
+	 * Sets the currentVisiblity.
+	 * @param currentVisiblity The currentVisiblity to set
+	 */
+	public void setCurrentVisibility(int currentVisiblity) {
+		this.currentVisibility = currentVisiblity;
+	}
+
 }

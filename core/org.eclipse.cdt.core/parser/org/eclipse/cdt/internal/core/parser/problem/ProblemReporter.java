@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.problem;
 
-import  org.eclipse.cdt.core.parser.IProblem;
-import  org.eclipse.cdt.core.parser.IProblemReporter;
-import  org.eclipse.cdt.core.parser.IReferenceContext;
-import  org.eclipse.cdt.core.parser.ITranslationOptions;
-import  org.eclipse.cdt.core.parser.ITranslationResult;
-import  org.eclipse.cdt.internal.core.parser.IErrorHandlingPolicy;
-import  org.eclipse.cdt.internal.core.parser.IProblemFactory;
+import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.IProblemReporter;
+import org.eclipse.cdt.core.parser.IReferenceContext;
+import org.eclipse.cdt.core.parser.ITranslationOptions;
+import org.eclipse.cdt.core.parser.ITranslationResult;
+import org.eclipse.cdt.internal.core.parser.IErrorHandlingPolicy;
+import org.eclipse.cdt.internal.core.parser.IProblemFactory;
 
 
 public class ProblemReporter extends ProblemHandler implements IProblemReporter {

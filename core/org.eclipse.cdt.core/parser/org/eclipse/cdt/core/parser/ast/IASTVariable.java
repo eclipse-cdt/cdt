@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTVariable extends IASTDeclaration {
+public interface IASTVariable extends IASTDeclaration, IASTOffsetableNamedElement {
 
 	public boolean isAuto(); 
 	public boolean isRegister(); 

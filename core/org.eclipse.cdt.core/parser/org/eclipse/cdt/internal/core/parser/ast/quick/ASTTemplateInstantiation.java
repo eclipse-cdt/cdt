@@ -10,77 +10,35 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTemplateDeclaration
+public class ASTTemplateInstantiation extends ASTDeclaration implements IASTTemplateInstantiation
 {
-    private IASTDeclaration ownedDeclaration;
-    private List templateParameters;
-    private Offsets offsets = new Offsets(); 
-    private final boolean isExported; 
+    private IASTDeclaration declaration;
+    private Offsets offsets = new Offsets();
+
     /**
-     * @param templateParameters
+     * @param scope
      */
-    public ASTTemplateDeclaration(IASTScope scope, List templateParameters, int startingOffset, boolean isExported)
+    public ASTTemplateInstantiation(IASTScope scope, int startingOffset)
     {
         super( scope );
-        this.templateParameters = templateParameters;
         setStartingOffset(startingOffset);
-        this.isExported = isExported;
     }
-
+    
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration#getTemplateParameters()
-     */
-    public Iterator getTemplateParameters()
-    {
-        return templateParameters.iterator();
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration#getOwnedDeclaration()
+     * @see org.eclipse.cdt.core.parser.ast.IASTTemplate#getOwnedDeclaration()
      */
     public IASTDeclaration getOwnedDeclaration()
     {
-        return ownedDeclaration;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
-     */
-    public void setStartingOffset(int o)
-    {
-        offsets.setStartingOffset(o);
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
-     */
-    public void setEndingOffset(int o)
-    {
-		offsets.setEndingOffset(o);
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
-     */
-    public int getElementStartingOffset()
-    {
-        return offsets.getElementStartingOffset();
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
-     */
-    public int getElementEndingOffset()
-    {
-        return offsets.getElementEndingOffset();
+        return declaration;
     }
 
     /* (non-Javadoc)
@@ -88,14 +46,38 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
      */
     public void setOwnedDeclaration(IASTDeclaration declaration)
     {
-        ownedDeclaration = declaration;
+        this.declaration = declaration;        
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration#isExported()
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
-    public boolean isExported()
+    public void setStartingOffset(int o)
     {
-        return isExported;
+        offsets.setStartingOffset(o);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
+     */
+    public void setEndingOffset(int o)
+    {
+        offsets.setEndingOffset( o );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
+     */
+    public int getElementStartingOffset()
+    {
+        return offsets.getElementStartingOffset();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
+     */
+    public int getElementEndingOffset()
+    {
+        return offsets.getElementEndingOffset();
     }
 }

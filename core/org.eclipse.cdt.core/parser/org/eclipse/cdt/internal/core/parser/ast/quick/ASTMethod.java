@@ -10,12 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 import java.util.List;
+
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 /**
  * @author jcamelon
  *
@@ -54,7 +55,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         boolean isStatic,
         int startOffset,
         int nameOffset,
-        IASTTemplateDeclaration ownerTemplate,
+        IASTTemplate ownerTemplate,
         boolean isConst,
         boolean isVolatile,
         boolean isConstructor,

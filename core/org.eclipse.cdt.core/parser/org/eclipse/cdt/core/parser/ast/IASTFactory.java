@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 import java.util.List;
+
 import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
@@ -61,7 +62,7 @@ public interface IASTFactory
         ASTClassKind kind,
         ClassNameType type,
         ASTAccessVisibility access,
-        IASTTemplateDeclaration ownerTemplateDeclaration,
+        IASTTemplate ownerTemplateDeclaration,
         int startingOffset,
         int nameOffset);
     /**
@@ -135,7 +136,7 @@ public interface IASTFactory
         boolean isStatic,
         int startOffset,
         int nameOffset,
-        IASTTemplateDeclaration ownerTemplate);
+        IASTTemplate ownerTemplate);
     public IASTAbstractDeclaration createAbstractDeclaration(
         boolean isConst,
         IASTTypeSpecifier typeSpecifier,
@@ -152,7 +153,7 @@ public interface IASTFactory
         boolean isStatic,
         int startOffset,
         int nameOffset,
-        IASTTemplateDeclaration ownerTemplate,
+        IASTTemplate ownerTemplate,
         boolean isConst,
         boolean isVolatile,
         boolean isConstructor,
@@ -163,13 +164,20 @@ public interface IASTFactory
         ASTAccessVisibility visibility);
         
 	public IASTVariable createVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
-		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic );
+		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset );
 		   
-	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, ASTAccessVisibility visibility);
+	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, ASTAccessVisibility visibility);
 	
 	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, String parameterName, IASTInitializerClause initializerClause );
 	
-	public IASTTemplateDeclaration createTemplateDeclaration( IASTScope scope, List templateParameters ); 
+	public IASTTemplateDeclaration createTemplateDeclaration( IASTScope scope, List templateParameters, boolean exported, int startingOffset ); 
+
+	public IASTTemplateParameter createTemplateParameter( IASTTemplateParameter.ParameterKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List parms ); 
+
+	public IASTTemplateInstantiation createTemplateInstantiation(IASTScope scope, int startingOffset); 
 	
+	public IASTTemplateSpecialization createTemplateSpecialization(IASTScope scope, int startingOffset); 
+	
+	public IASTTypedef createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset );
 
 }

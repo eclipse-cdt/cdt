@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
@@ -92,7 +93,7 @@ public class ASTClassSpecifier implements IASTFClassSpecifier, IPSTSymbolExtensi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTTemplatedDeclaration#getOwnerTemplateDeclaration()
 	 */
-	public IASTTemplateDeclaration getOwnerTemplateDeclaration() {
+	public IASTTemplate getOwnerTemplateDeclaration() {
 		if( getSymbol().getContainingSymbol().getType() == ParserSymbolTable.TypeInfo.t_template )
 			return (IASTTemplateDeclaration)getSymbol().getContainingSymbol().getASTNode();
 		return null;

@@ -37,7 +37,7 @@ public class ASTField extends ASTVariable implements IASTField
      * @param isRegister
      * @param isStatic
      */
-    public ASTField(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, ASTAccessVisibility visibility)
+    public ASTField(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, ASTAccessVisibility visibility)
     {
         super(
             scope,
@@ -49,7 +49,7 @@ public class ASTField extends ASTVariable implements IASTField
             isMutable,
             isExtern,
             isRegister,
-            isStatic);
+            isStatic, startingOffset, nameOffset);
 		this.visibility = visibility; 
     }
 

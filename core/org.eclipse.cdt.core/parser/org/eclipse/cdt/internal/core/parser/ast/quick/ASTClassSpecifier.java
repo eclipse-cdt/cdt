@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 /**
  * @author jcamelon
@@ -34,17 +34,17 @@ public class ASTClassSpecifier
         ASTClassKind kind,
         ClassNameType type,
         ASTAccessVisibility access,
-        IASTTemplateDeclaration ownerTemplateDeclaration)
+        IASTTemplate ownerTemplate)
     {
         super(scope, name );
         classNameType = type;
         classKind = kind;
         this.access = access;
         this.name = name;
-        templateOwner = ownerTemplateDeclaration;
+        templateOwner = ownerTemplate;
     }
     
-    private IASTTemplateDeclaration templateOwner = null;
+    private IASTTemplate templateOwner = null;
     private final String name;
     private List declarations = new ArrayList();
     private List baseClauses = new ArrayList();
@@ -111,7 +111,7 @@ public class ASTClassSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTemplatedDeclaration#getOwnerTemplateDeclaration()
      */
-    public IASTTemplateDeclaration getOwnerTemplateDeclaration()
+    public IASTTemplate getOwnerTemplateDeclaration()
     {
         return templateOwner;
     }

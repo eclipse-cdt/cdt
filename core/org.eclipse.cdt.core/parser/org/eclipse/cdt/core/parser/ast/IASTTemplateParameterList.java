@@ -10,10 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import java.util.Iterator;
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTTemplateSpecialization extends IASTDeclaration, IASTTemplate, IASTOffsetableElement {
-
+public interface IASTTemplateParameterList
+{
+	public Iterator getTemplateParameters(); 
 }

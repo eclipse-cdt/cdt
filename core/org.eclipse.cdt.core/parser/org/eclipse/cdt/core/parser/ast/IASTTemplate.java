@@ -14,6 +14,8 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTTemplateSpecialization extends IASTDeclaration, IASTTemplate, IASTOffsetableElement {
-
+public interface IASTTemplate
+{
+	public IASTDeclaration getOwnedDeclaration();
+	public void   setOwnedDeclaration( IASTDeclaration declaration );
 }

@@ -10,10 +10,32 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import org.eclipse.cdt.core.parser.Enum;
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTTemplateParameter {
+public interface IASTTemplateParameter  extends IASTTemplateParameterList {
 
+	public class ParameterKind extends Enum
+	{
+		public static final ParameterKind CLASS = new ParameterKind( 1 );
+		public static final ParameterKind TYPENAME = new ParameterKind( 2 );
+		public static final ParameterKind TEMPLATE_LIST = new ParameterKind( 3 );
+		public static final ParameterKind PARAMETER = new ParameterKind( 4 );
+
+        /**
+         * @param enumValue
+         */
+        protected ParameterKind(int enumValue)
+        {
+            super(enumValue);
+        }
+	
+	}
+	
+	public ParameterKind getTemplateParameterKind(); 
+	public String        getIdentifier(); 
+	public String		 getDefaultValueIdExpression();
 }

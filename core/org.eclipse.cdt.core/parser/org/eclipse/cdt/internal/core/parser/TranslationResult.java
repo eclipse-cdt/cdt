@@ -19,8 +19,9 @@ package org.eclipse.cdt.internal.core.parser;
  * </ul>
  */
 
-import org.eclipse.cdt.core.parser.*;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.IReferenceContext;
+import org.eclipse.cdt.core.parser.ITranslationResult;
 //import org.eclipse.cdt.core.model.ITranslationUnit;
 
 public class TranslationResult implements ITranslationResult {

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
@@ -23,8 +22,9 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypedef;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.SimpleType;
 /**
@@ -34,12 +34,13 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.SimpleType;
 public class DeclarationWrapper implements IDeclaratorOwner
 {
     private ITokenDuple name;
-    private SimpleType simpleType = IASTSimpleTypeSpecifier.SimpleType.UNSPECIFIED;
+    private SimpleType simpleType =
+        IASTSimpleTypeSpecifier.SimpleType.UNSPECIFIED;
     private boolean isSigned;
     private boolean isLong;
     private boolean isShort;
     private boolean isUnsigned;
-    private final IASTTemplateDeclaration templateDeclaration;
+    private final IASTTemplate templateDeclaration;
     private final IASTScope scope;
     private IASTTypeSpecifier typeSpecifier;
     private List declarators = new ArrayList();
@@ -77,7 +78,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     public DeclarationWrapper(
         IASTScope scope,
         int startingOffset,
-        IASTTemplateDeclaration templateDeclaration)
+        IASTTemplate templateDeclaration)
     {
         this.scope = scope;
         this.startingOffset = startingOffset;
@@ -90,7 +91,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         typeNamed = b;
     }
-
     /**
      * @param b
      */
@@ -217,7 +217,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return mutable;
     }
-
     /**
      * @return
      */
@@ -239,7 +238,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return staticc;
     }
-
     /**
      * @return
      */
@@ -310,14 +308,33 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         boolean isWithinClass = (getScope() instanceof IASTClassSpecifier);
         boolean isFunction = declarator.isFunction();
+        if (isTypedef())
+            return createTypedef(declarator);
         if (isWithinClass && isFunction)
             return createMethodASTNode(declarator);
-        else if (isWithinClass)
+        else if (isWithinClass && !isFunction)
             return createFieldASTNode(declarator);
         else if ((!isWithinClass) && isFunction)
             return createFunctionASTNode(declarator);
-        else
+        else if (!isFunction && !isWithinClass)
             return createVariableASTNode(declarator);
+        else
+        	throw new Error("WTF");  //return IProblem?
+    }
+    /**
+     * @param declarator
+     * @return
+     */
+    private IASTTypedef createTypedef(Declarator declarator)
+    {
+        return astFactory.createTypedef(
+            scope,
+            declarator.getName(),
+            astFactory.createAbstractDeclaration(
+                constt,
+                getTypeSpecifier(),
+                declarator.getPtrOps(),
+                declarator.getArrayModifiers()), startingOffset, declarator.getNameStartOffset());
     }
     /**
      * @param declarator
@@ -329,7 +346,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             .createMethod(
                 scope,
                 declarator.getName(),
-				createParameterList( declarator.getParameters() ),
+                createParameterList(declarator.getParameters()),
                 astFactory.createAbstractDeclaration(
                     constt,
                     getTypeSpecifier(),
@@ -344,11 +361,12 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 templateDeclaration,
                 declarator.isConst(),
                 declarator.isVolatile(),
-                false, // isConstructor
-        		false, // isDestructor
-        		virtual,
-            	explicit,
-            	declarator.isPureVirtual(),
+                false,
+        // isConstructor
+        false, // isDestructor
+        virtual,
+            explicit,
+            declarator.isPureVirtual(),
             ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
     }
     /**
@@ -360,7 +378,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         return astFactory.createFunction(
             scope,
             declarator.getName(),
-            createParameterList( declarator.getParameters() ),
+            createParameterList(declarator.getParameters()),
             astFactory.createAbstractDeclaration(
                 constt,
                 getTypeSpecifier(),
@@ -380,30 +398,50 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     private IASTField createFieldASTNode(Declarator declarator)
     {
-        return astFactory.createField( scope, declarator.getName(), auto, declarator.getInitializerClause(), declarator.getBitFieldExpression(), 
-        	astFactory.createAbstractDeclaration( constt, getTypeSpecifier(), declarator.getPtrOps(), declarator.getArrayModifiers() ), 
-        	mutable, extern, register, staticc, ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
+        return astFactory.createField(
+            scope,
+            declarator.getName(),
+            auto,
+            declarator.getInitializerClause(),
+            declarator.getBitFieldExpression(),
+            astFactory.createAbstractDeclaration(
+                constt,
+                getTypeSpecifier(),
+                declarator.getPtrOps(),
+                declarator.getArrayModifiers()),
+            mutable,
+            extern,
+            register,
+            staticc,
+            startingOffset,
+            declarator.getNameEndOffset(),
+            ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
     }
-    
-    private List createParameterList( List currentParameters )
+    private List createParameterList(List currentParameters)
     {
-    	List result = new ArrayList();
-    	Iterator i = currentParameters.iterator();
-    	while( i.hasNext() )
-    	{
-    		DeclarationWrapper wrapper = (DeclarationWrapper)i.next();
-    		Iterator j = wrapper.getDeclarators();
-    		while( j.hasNext() )
-    		{
-    			Declarator declarator = (Declarator)j.next(); 
-    			result.add( astFactory.createParameterDeclaration( wrapper.isConst(), wrapper.getTypeSpecifier(), 
-    				declarator.getPtrOps(), declarator.getArrayModifiers(), 
-    				declarator.getName() == null ? "" : declarator.getName(), declarator.getInitializerClause() ) ); 
-    		}
-    	}
-    	return result; 
+        List result = new ArrayList();
+        Iterator i = currentParameters.iterator();
+        while (i.hasNext())
+        {
+            DeclarationWrapper wrapper = (DeclarationWrapper)i.next();
+            Iterator j = wrapper.getDeclarators();
+            while (j.hasNext())
+            {
+                Declarator declarator = (Declarator)j.next();
+                result.add(
+                    astFactory.createParameterDeclaration(
+                        wrapper.isConst(),
+                        wrapper.getTypeSpecifier(),
+                        declarator.getPtrOps(),
+                        declarator.getArrayModifiers(),
+                        declarator.getName() == null
+                            ? ""
+                            : declarator.getName(),
+                        declarator.getInitializerClause()));
+            }
+        }
+        return result;
     }
-    
     /**
      * @param declarator
      * @return
@@ -424,7 +462,9 @@ public class DeclarationWrapper implements IDeclaratorOwner
             mutable,
             extern,
             register,
-            staticc);
+            staticc,
+            getStartingOffset(),
+            declarator.getNameEndOffset());
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IDeclaratorOwner#getDeclarationWrapper()
@@ -433,7 +473,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return this;
     }
-
     /**
      * @return
      */
@@ -469,7 +508,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         isLong = b;
     }
-
     /**
      * @param b
      */
@@ -477,7 +515,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         isShort = b;
     }
-
     /**
      * @param b
      */
@@ -485,7 +522,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         isSigned = b;
     }
-
     /**
      * @param b
      */
@@ -500,7 +536,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return simpleType;
     }
-
     /**
      * @param type
      */
@@ -513,9 +548,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     public void setTypeName(ITokenDuple duple)
     {
-        name = duple; 
+        name = duple;
     }
-
     /**
      * @return
      */
@@ -523,7 +557,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return name;
     }
-
     /**
      * @param duple
      */
@@ -531,5 +564,11 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         name = duple;
     }
-
+    /**
+     * @return
+     */
+    public IASTTemplate getOwnerTemplate()
+    {
+        return templateDeclaration;
+    }
 }

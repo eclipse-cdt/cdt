@@ -10,44 +10,30 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTemplateDeclaration
+public class ASTTemplateSpecialization extends ASTDeclaration implements IASTTemplateSpecialization
 {
-    private IASTDeclaration ownedDeclaration;
-    private List templateParameters;
-    private Offsets offsets = new Offsets(); 
-    private final boolean isExported; 
+	private Offsets offsets = new Offsets(); 
+	private IASTDeclaration ownedDeclaration;
     /**
-     * @param templateParameters
+     * @param scope
      */
-    public ASTTemplateDeclaration(IASTScope scope, List templateParameters, int startingOffset, boolean isExported)
+    public ASTTemplateSpecialization(IASTScope scope, int startingOffset )
     {
-        super( scope );
-        this.templateParameters = templateParameters;
+        super(scope);
         setStartingOffset(startingOffset);
-        this.isExported = isExported;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration#getTemplateParameters()
-     */
-    public Iterator getTemplateParameters()
-    {
-        return templateParameters.iterator();
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration#getOwnedDeclaration()
+     * @see org.eclipse.cdt.core.parser.ast.IASTTemplate#getOwnedDeclaration()
      */
     public IASTDeclaration getOwnedDeclaration()
     {
@@ -59,14 +45,13 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
     public void setStartingOffset(int o)
     {
         offsets.setStartingOffset(o);
-        
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
     public void setEndingOffset(int o)
     {
-		offsets.setEndingOffset(o);
+        offsets.setEndingOffset(o);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
@@ -89,13 +74,5 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
     public void setOwnedDeclaration(IASTDeclaration declaration)
     {
         ownedDeclaration = declaration;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration#isExported()
-     */
-    public boolean isExported()
-    {
-        return isExported;
     }
 }

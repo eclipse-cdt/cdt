@@ -12,8 +12,8 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.parser.*;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ITokenDuple;
 
 /**
  * @author jcamelon

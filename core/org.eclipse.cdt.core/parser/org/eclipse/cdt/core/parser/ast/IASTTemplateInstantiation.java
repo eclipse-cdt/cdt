@@ -14,8 +14,6 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTTemplateInstantiation {
+public interface IASTTemplateInstantiation extends IASTTemplate, IASTDeclaration, IASTOffsetableElement {
 
-	public ASTTemplateDeclarationType getTemplateDeclarationType(); 
-	public IASTTemplateDeclaration getTemplateDeclaration(); 
 }

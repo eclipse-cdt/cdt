@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.Backtrack;
@@ -31,21 +32,31 @@ import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTemplate;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypedef;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.internal.core.model.Util;
-import org.eclipse.cdt.internal.core.parser.ast.*;
+import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 
 
 /**
@@ -171,7 +182,7 @@ public class Parser implements IParser
             try
             {
                 checkToken = LA(1);
-                declaration(translationUnit, compilationUnit);
+                declaration(translationUnit, compilationUnit, null);
                 if (LA(1) == checkToken)
                     errorHandling();
             }
@@ -436,7 +447,7 @@ public class Parser implements IParser
                     default :
                         try
                         {
-                            declaration(linkageSpec, linkage);
+                            declaration(linkageSpec, linkage, null);
                         }
                         catch (Backtrack bt)
                         {
@@ -464,7 +475,7 @@ public class Parser implements IParser
             IASTLinkageSpecification linkage =
                 astFactory.createLinkageSpecification(scope, spec.getImage());
             requestor.enterLinkageSpecification(linkage);
-            declaration(linkageSpec);
+            declaration(linkageSpec, linkage, null);
             try
             {
                 callback.linkageSpecificationEnd(linkageSpec);
@@ -487,7 +498,7 @@ public class Parser implements IParser
      * @param container			Callback object representing the scope these definitions fall into.
      * @throws Backtrack		request for a backtrack
      */
-    protected void templateDeclaration(Object container) throws Backtrack
+    protected void templateDeclaration(Object container, IASTScope scope) throws Backtrack
     {
         IToken firstToken = null;
         if (LT(1) == IToken.t_export)
@@ -508,7 +519,13 @@ public class Parser implements IParser
             catch (Exception e)
             {
             }
-            declaration(instantiation);
+            
+            IASTTemplateInstantiation templateInstantiation = astFactory.createTemplateInstantiation( scope, firstToken.getOffset() );
+            requestor.enterTemplateExplicitInstantiation( templateInstantiation );
+            declaration(instantiation, scope, templateInstantiation );
+            templateInstantiation.setEndingOffset( lastToken.getEndOffset() );
+			requestor.exitTemplateExplicitInstantiation( templateInstantiation );
+            
             try
             {
                 callback.explicitInstantiationEnd(instantiation);
@@ -534,7 +551,13 @@ public class Parser implements IParser
                 catch (Exception e)
                 {
                 }
-                declaration(specialization);
+                
+				IASTTemplateSpecialization  templateSpecialization = astFactory.createTemplateSpecialization( scope, firstToken.getOffset() );
+				requestor.enterTemplateSpecialization( templateSpecialization );
+				declaration(specialization, scope, templateSpecialization );
+				templateSpecialization.setEndingOffset( lastToken.getEndOffset() );
+				requestor.exitTemplateSpecialization( templateSpecialization );
+                
                 try
                 {
                     callback.explicitSpecializationEnd(specialization);
@@ -558,7 +581,7 @@ public class Parser implements IParser
             }
             templateParameterList(templateDeclaration);
             consume(IToken.tGT);
-            declaration(templateDeclaration);
+            declaration(templateDeclaration, scope, null);
             try
             {
                 callback.templateDeclarationEnd(
@@ -746,10 +769,7 @@ public class Parser implements IParser
             }
         }
     }
-    protected void declaration(Object container) throws Backtrack
-    {
-        declaration(container, null);
-    }
+
     /**
      * The most abstract construct within a translationUnit : a declaration.  
      * 
@@ -773,7 +793,7 @@ public class Parser implements IParser
      * @param container		IParserCallback object which serves as the owner scope for this declaration.  
      * @throws Backtrack	request a backtrack
      */
-    protected void declaration(Object container, IASTScope scope)
+    protected void declaration(Object container, IASTScope scope, IASTTemplate ownerTemplate)
         throws Backtrack
     {
         switch (LT(1))
@@ -809,7 +829,7 @@ public class Parser implements IParser
                 return;
             case IToken.t_export :
             case IToken.t_template :
-                templateDeclaration(container);
+                templateDeclaration(container, scope);
                 return;
             case IToken.t_extern :
                 if (LT(2) == IToken.tSTRING)
@@ -821,14 +841,14 @@ public class Parser implements IParser
                 IToken mark = mark();
                 try
                 {
-                    simpleDeclaration(container, true, false, scope);
+                    simpleDeclaration(container, true, false, scope, ownerTemplate);
                     // try it first with the original strategy
                 }
                 catch (Backtrack bt)
                 {
                     // did not work 
                     backup(mark);
-                    simpleDeclaration(container, false, false, scope);
+                    simpleDeclaration(container, false, false, scope, ownerTemplate);
                     // try it again with the second strategy
                 }
         }
@@ -890,7 +910,7 @@ public class Parser implements IParser
                     default :
                         try
                         {
-                            declaration(namespace, namespaceDefinition);
+                            declaration(namespace, namespaceDefinition, null);
                         }
                         catch (Backtrack bt)
                         {
@@ -949,11 +969,11 @@ public class Parser implements IParser
         Object container,
         boolean tryConstructor,
         boolean forKR,
-        IASTScope scope)
+        IASTScope scope, IASTTemplate ownerTemplate)
         throws Backtrack
     {
         Object simpleDecl = null;
-        DeclarationWrapper sdw = new DeclarationWrapper(scope, LA(1).getOffset(), null);
+        DeclarationWrapper sdw = new DeclarationWrapper(scope, LA(1).getOffset(), ownerTemplate);
         try
         {
             simpleDecl = callback.simpleDeclarationBegin(container, LA(1));
@@ -1015,29 +1035,82 @@ public class Parser implements IParser
         }
         
         List l = sdw.createASTNodes(astFactory);
-        
-		if( hasFunctionBody )
+		Iterator i = l.iterator(); 
+		if( hasFunctionBody && l.size() != 1 )
 		{
-//			if( l.size() != 1 )
-//				requestor.acceptProblem( ParserFactory.createProblem());
-			        
-			Object function = null;
-			try
-			{
-				function = callback.functionBodyBegin(simpleDecl);
-			}
-			catch (Exception e)
-			{
-			}
-			handleFunctionBody(d.getDeclarator());
-			try
-			{
-				callback.functionBodyEnd(function);
-			}
-			catch (Exception e)
-			{
-			}
+			failParse(); 
+			throw backtrack; //TODO Should be an IProblem
 		}
+		
+		if( i.hasNext() ) // no need to do this unless we have a declarator
+		{
+			if( ! hasFunctionBody )
+			{
+				
+				while( i.hasNext() )
+				{
+					IASTDeclaration declaration = (IASTDeclaration)i.next(); 
+					((IASTOffsetableElement)declaration).setEndingOffset( lastToken.getEndOffset() );
+					if( declaration instanceof IASTField )
+						requestor.acceptField( (IASTField)declaration );
+					else if( declaration instanceof IASTVariable )
+						requestor.acceptVariable( (IASTVariable)declaration );
+					else if( declaration instanceof IASTMethod )
+						requestor.acceptMethodDeclaration( (IASTMethod)declaration );
+					else if( declaration instanceof IASTFunction )
+						requestor.acceptFunctionDeclaration( (IASTFunction)declaration );
+					else if( declaration instanceof IASTTypedef )
+						requestor.acceptTypedef( (IASTTypedef)declaration);
+					else 
+					{
+						if( hasFunctionBody && l.size() != 1 )
+						{
+							failParse(); 
+							throw backtrack; //TODO Should be an IProblem
+						}
+					}
+				}		
+			}
+			else
+			{
+				IASTDeclaration declaration = (IASTDeclaration)i.next(); 
+				if( declaration instanceof IASTMethod )
+					requestor.enterMethodBody( (IASTMethod)declaration );
+				else if( declaration instanceof IASTFunction )
+					requestor.enterFunctionBody( (IASTFunction)declaration );
+				else 
+				{
+					if( hasFunctionBody && l.size() != 1 )
+					{
+						failParse(); 
+						throw backtrack; //TODO Should be an IProblem
+					}
+				}
+				
+				Object function = null;
+				try
+				{
+					function = callback.functionBodyBegin(simpleDecl);
+				}
+				catch (Exception e)
+				{
+				}
+				handleFunctionBody(d.getDeclarator());
+				try
+				{
+					callback.functionBodyEnd(function);
+				}
+				catch (Exception e)
+				{
+				}
+				
+				if( declaration instanceof IASTMethod )
+					requestor.exitMethodBody( (IASTMethod)declaration );
+				else if( declaration instanceof IASTFunction )
+					requestor.exitFunctionBody( (IASTFunction)declaration );
+			}
+		}		
+
         
         try
         {
@@ -2477,7 +2550,7 @@ public class Parser implements IParser
                                             oldKRParameterDeclarationClause,
                                             false,
                                             true,
-                                            sdw.getScope());
+                                            sdw.getScope(), sdw.getOwnerTemplate());
                                     }
                                     while (LT(1) != IToken.tLBRACE);
                                 }
@@ -3060,7 +3133,7 @@ public class Parser implements IParser
                     default :
                         try
                         {
-                            declaration(classSpec,astClassSpecifier);
+                            declaration(classSpec,astClassSpecifier, null);
                         }
                         catch (Backtrack bt)
                         {
@@ -3367,7 +3440,7 @@ public class Parser implements IParser
                 {
                     consume();
                     consume(IToken.tLPAREN);
-                    declaration(null); // was exceptionDeclaration
+                    declaration(null, null, null); // was exceptionDeclaration
                     consume(IToken.tRPAREN);
                     compoundStatement();
                 }
@@ -3413,7 +3486,7 @@ public class Parser implements IParser
                 {
                 }
                 // declarationStatement
-                declaration(null);
+                declaration(null,null, null);
         }
     }
     /**

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-import org.eclipse.cdt.core.parser.IProblem;
-
 import java.util.Locale;
+
+import org.eclipse.cdt.core.parser.IProblem;
 
 /**
  * Factory used during translation to build the actual problems

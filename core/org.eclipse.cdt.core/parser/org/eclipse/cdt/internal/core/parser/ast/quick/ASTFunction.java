@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
@@ -31,7 +31,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
      * @param scope
      */
     public ASTFunction(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, 
-    			boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int nameOffset, IASTTemplateDeclaration ownerTemplate )
+    			boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int nameOffset, IASTTemplate ownerTemplate )
     {
         super(scope);
         this.name = name; 
@@ -46,7 +46,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
         offsets.setNameOffset( nameOffset );
     }
     
-    private final IASTTemplateDeclaration ownerTemplateDeclaration;
+    private final IASTTemplate ownerTemplateDeclaration;
     private NamedOffsets offsets = new NamedOffsets();
     private List  declarations = new ArrayList(); 
     private final IASTExceptionSpecification exceptionSpec;
@@ -122,7 +122,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTemplatedDeclaration#getOwnerTemplateDeclaration()
      */
-    public IASTTemplateDeclaration getOwnerTemplateDeclaration()
+    public IASTTemplate getOwnerTemplateDeclaration()
     {
         return ownerTemplateDeclaration;
     }

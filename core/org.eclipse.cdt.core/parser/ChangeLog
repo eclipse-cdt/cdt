@@ -1,3 +1,9 @@
+2003-07-10 John Camelon
+	Added in template support to IAST hierarchy.
+	Updated instantiation & specialization hierarchy.  
+	Removed ASTTemplateDeclarationType.  
+	Added full requestor callbacks for fields, variables, functions, methods & typedefs.  
+
 2003-07-08 John Camelon
 	Filled out IASTMethod & IASTFunction & added implementations.
 	Updated IScanner, clients & implementations to use IScannerInfo.  

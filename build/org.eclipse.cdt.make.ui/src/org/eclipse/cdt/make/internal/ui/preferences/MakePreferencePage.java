@@ -42,7 +42,7 @@ public class MakePreferencePage extends PreferencePage implements IWorkbenchPref
 
 	public MakePreferencePage() {
 		setPreferenceStore(MakeUIPlugin.getDefault().getPreferenceStore());
-		setDescription("Make Project Preferences");
+		setDescription(MakeUIPlugin.getResourceString("MakePreferencePage.description")); //$NON-NLS-1$
 		fOptionBlock = new MakeProjectOptionBlock(this);
 	}
 

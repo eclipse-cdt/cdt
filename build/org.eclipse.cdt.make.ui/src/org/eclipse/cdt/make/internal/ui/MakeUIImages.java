@@ -43,7 +43,7 @@ public class MakeUIImages {
 	public static final String IMG_OBJS_BUILD_TARGET = NAME_PREFIX + "target_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_TARGET = createManaged(OBJ, IMG_OBJS_BUILD_TARGET);
 
-	public static final String IMG_OBJS_ERROR = NAME_PREFIX + "error_obj.gif";
+	public static final String IMG_OBJS_ERROR = NAME_PREFIX + "error_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJ_ERROR = createManaged(OBJ, IMG_OBJS_ERROR);
 
 
@@ -71,9 +71,9 @@ public class MakeUIImages {
 	public static final String IMG_OBJS_MAKEFILE_INCLUDE = NAME_PREFIX + "include_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MAKEFILE_INCLUDE = createManaged(OBJ, IMG_OBJS_MAKEFILE_INCLUDE);
 
-	public static final String IMG_TOOLS_ALPHA_SORTING= NAME_PREFIX + "alphab_sort_co.gif";
+	public static final String IMG_TOOLS_ALPHA_SORTING= NAME_PREFIX + "alphab_sort_co.gif"; //$NON-NLS-1$
 
-	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif";
+	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif"; //$NON-NLS-1$
 
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
@@ -109,9 +109,9 @@ public class MakeUIImages {
 	 */
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		relPath = relPath.substring(NAME_PREFIX_LENGTH);
-		action.setDisabledImageDescriptor(create("d" + type + "/", relPath)); //$NON-NLS-1$
-		action.setHoverImageDescriptor(create("c" + type + "/", relPath)); //$NON-NLS-1$
-		action.setImageDescriptor(create("e" + type + "/", relPath)); //$NON-NLS-1$
+		action.setDisabledImageDescriptor(create("d" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
+		action.setHoverImageDescriptor(create("c" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
+		action.setImageDescriptor(create("e" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

@@ -26,7 +26,7 @@ public class BuildTargetAction extends SelectionListenerAction {
 		this.shell = shell;
 
 		setToolTipText("Build Target");
-		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_BUILD);
+		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_BUILD); //$NON-NLS-1$
 	}
 
 	public void run() {

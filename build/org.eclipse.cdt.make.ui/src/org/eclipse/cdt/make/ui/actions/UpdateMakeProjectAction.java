@@ -162,7 +162,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 				}
 				IContainer container = (IContainer) proxy.requestResource();
 				monitor.subTask(container.getProjectRelativePath().toString());
-				QualifiedName qName = new QualifiedName("org.eclipse.cdt.make", "goals");
+				QualifiedName qName = new QualifiedName("org.eclipse.cdt.make", "goals"); //$NON-NLS-1$ //$NON-NLS-2$
 				String goal = container.getPersistentProperty(qName);
 				if (goal != null) {
 					goal = goal.trim();
@@ -213,11 +213,11 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 				IMakeBuilderInfo newInfo = MakeCorePlugin.createBuildInfo(project[i], MakeBuilder.BUILDER_ID);
 				final int LOCATION = 0, FULL_ARGS = 1, INC_ARGS = 2, STOP_ERORR = 3, USE_DEFAULT = 4;
 				QualifiedName[] qName = new QualifiedName[USE_DEFAULT + 1];
-				qName[LOCATION] = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildLocation");
-				qName[FULL_ARGS] = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildFullArguments");
-				qName[INC_ARGS] = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildIncrementalArguments");
-				qName[STOP_ERORR] = new QualifiedName(CCorePlugin.PLUGIN_ID, "stopOnError");
-				qName[USE_DEFAULT] = new QualifiedName(CCorePlugin.PLUGIN_ID, "useDefaultBuildCmd");
+				qName[LOCATION] = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildLocation"); //$NON-NLS-1$
+				qName[FULL_ARGS] = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildFullArguments"); //$NON-NLS-1$
+				qName[INC_ARGS] = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildIncrementalArguments"); //$NON-NLS-1$
+				qName[STOP_ERORR] = new QualifiedName(CCorePlugin.PLUGIN_ID, "stopOnError"); //$NON-NLS-1$
+				qName[USE_DEFAULT] = new QualifiedName(CCorePlugin.PLUGIN_ID, "useDefaultBuildCmd"); //$NON-NLS-1$
 
 				String property = project[i].getPersistentProperty(qName[LOCATION]);
 				if (property != null) {

@@ -17,7 +17,7 @@ import org.eclipse.jface.text.ITextViewer;
  * Used to scan and detect for SQL keywords  
  */
 public class WordPartDetector {
-	String wordPart = "";
+	String wordPart = ""; //$NON-NLS-1$
 	int offset;
 	
 	/**

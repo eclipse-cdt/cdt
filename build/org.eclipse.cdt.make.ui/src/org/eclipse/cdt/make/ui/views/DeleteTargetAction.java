@@ -31,7 +31,7 @@ public class DeleteTargetAction extends SelectionListenerAction {
 		this.shell = shell;
 
 		setToolTipText("Delete Build Target");
-		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_DELETE);
+		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_DELETE); //$NON-NLS-1$
 	}
 
 	/**

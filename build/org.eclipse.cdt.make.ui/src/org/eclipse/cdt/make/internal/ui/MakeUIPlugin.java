@@ -221,10 +221,8 @@ public class MakeUIPlugin extends AbstractUIPlugin implements IStartup {
 					if (MessageDialog
 						.openQuestion(
 							getShell(),
-							"Update make projects",
-							"Older 'make' projects have been detected in your workspace. \n"
-								+ "These projects are no longer supported, "
-								+ "would you like to convert these now?")
+							MakeUIPlugin.getResourceString("MakeUIPlugin.update_project"), //$NON-NLS-1$
+							MakeUIPlugin.getResourceString("MakeUIPlugin.update_project_message")) //$NON-NLS-1$
 						== true) {
 						ProgressMonitorDialog pd = new ProgressMonitorDialog(getShell());
 						UpdateMakeProjectAction.run(false, pd, oldProject);

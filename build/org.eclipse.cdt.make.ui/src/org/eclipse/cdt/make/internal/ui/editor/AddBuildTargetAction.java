@@ -32,16 +32,19 @@ import org.eclipse.ui.IFileEditorInput;
 public class AddBuildTargetAction extends Action {
 
 	MakefileContentOutlinePage fOutliner;
-	static final ITargetRule[] EMPTY_TARGET_RULES = {}; 
-	
+	static final ITargetRule[] EMPTY_TARGET_RULES = {
+	};
+
 	public AddBuildTargetAction(MakefileContentOutlinePage outliner) {
 		super("Add To Build Target");
 		setDescription("Add To Build Target");
-		setToolTipText("Add To Build Target");                 
+		setToolTipText("Add To Build Target");
 		fOutliner = outliner;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
@@ -56,7 +59,7 @@ public class AddBuildTargetAction extends Action {
 				String name = rules[i].getTarget().toString().trim();
 				if (sbBuildName.length() == 0) {
 					sbBuildName.append(name);
-				} else { 
+				} else {
 					sbBuildName.append('_').append(name);
 				}
 				if (sbMakefileTarget.length() == 0) {
@@ -67,19 +70,20 @@ public class AddBuildTargetAction extends Action {
 			}
 			String buildName = sbBuildName.toString();
 			String makefileTarget = sbMakefileTarget.toString();
-			IMakeTarget target = manager.findTarget(file.getParent(), buildName);
-			if (target == null) {
-				try {
+			IMakeTarget target;
+			try {
+				target = manager.findTarget(file.getParent(), buildName);
+				if (target == null) {
 					String[] ids = manager.getTargetBuilders(file.getProject());
 					if (ids.length > 0) {
 						target = manager.createTarget(file.getProject(), buildName, ids[0]);
 						target.setBuildTarget(makefileTarget);
 						manager.addTarget(file.getParent(), target);
 					}
-				} catch (CoreException e) {
-					MakeUIPlugin.errorDialog(shell, "Internal Error", "", e);
-					target = null;
 				}
+			} catch (CoreException e) {
+				MakeUIPlugin.errorDialog(shell, "Internal Error", "", e);
+				target = null;
 			}
 
 			// Always popup the dialog.
@@ -101,13 +105,12 @@ public class AddBuildTargetAction extends Action {
 			IFile file = getFile();
 			if (file == null)
 				return false;
-			if (! MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(file.getProject()))
+			if (!MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(file.getProject()))
 				return false;
 		}
 		return true;
 	}
 
-	
 	private IFile getFile() {
 		Object input = fOutliner.getInput();
 		if (input instanceof IFileEditorInput) {
@@ -118,7 +121,7 @@ public class AddBuildTargetAction extends Action {
 
 	private ITargetRule[] getTargetRules(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			List list= ((IStructuredSelection)sel).toList();
+			List list = ((IStructuredSelection)sel).toList();
 			if (list.size() > 0) {
 				List targets = new ArrayList(list.size());
 				Object[] elements = list.toArray();

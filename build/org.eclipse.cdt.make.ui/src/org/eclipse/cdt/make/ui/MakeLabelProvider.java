@@ -48,7 +48,7 @@ public class MakeLabelProvider extends LabelProvider implements ITableLabelProvi
 		} else if (obj instanceof IContainer) {
 			return fLableProvider.getText(obj);
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public void dispose() {
@@ -77,6 +77,6 @@ public class MakeLabelProvider extends LabelProvider implements ITableLabelProvi
 					}
 				}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 }

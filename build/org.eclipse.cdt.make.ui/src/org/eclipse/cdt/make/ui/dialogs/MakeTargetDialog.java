@@ -128,7 +128,7 @@ public class MakeTargetDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		Composite composite = (Composite) super.createDialogArea(parent);
+		Composite composite = (Composite)super.createDialogArea(parent);
 		initializeDialogUnits(composite);
 
 		String title;
@@ -154,8 +154,8 @@ public class MakeTargetDialog extends Dialog {
 
 	protected void createNameControl(Composite parent) {
 		Composite composite = ControlFactory.createComposite(parent, 2);
-		((GridLayout) composite.getLayout()).makeColumnsEqualWidth = false;
-		((GridLayout) composite.getLayout()).horizontalSpacing = 0;
+		((GridLayout)composite.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout)composite.getLayout()).horizontalSpacing = 0;
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Label label = ControlFactory.createLabel(composite, MakeUIPlugin.getResourceString(TARGET_NAME_LABEL));
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
@@ -169,16 +169,21 @@ public class MakeTargetDialog extends Dialog {
 				if (newName.equals("")) {
 					fStatusLine.setErrorMessage("Must specify a target name.");
 					getButton(IDialogConstants.OK_ID).setEnabled(false);
-				} else if (
-					fTarget != null
-						&& fTarget.getName().equals(newName)
-						|| fTargetManager.findTarget(fContainer, newName) == null) {
-					fStatusLine.setErrorMessage(null);
-					getButton(IDialogConstants.OK_ID).setEnabled(true);
-				} else {
-					fStatusLine.setErrorMessage("Target with that name already exits");
-					getButton(IDialogConstants.OK_ID).setEnabled(false);
-				}
+				} else
+					try {
+						if (fTarget != null
+							&& fTarget.getName().equals(newName)
+							|| fTargetManager.findTarget(fContainer, newName) == null) {
+							fStatusLine.setErrorMessage(null);
+							getButton(IDialogConstants.OK_ID).setEnabled(true);
+						} else {
+							fStatusLine.setErrorMessage("Target with that name already exits");
+							getButton(IDialogConstants.OK_ID).setEnabled(false);
+						}
+					} catch (CoreException ex) {
+						fStatusLine.setErrorMessage(ex.getLocalizedMessage());
+						getButton(IDialogConstants.OK_ID).setEnabled(false);
+					}
 			}
 		});
 	}
@@ -281,16 +286,19 @@ public class MakeTargetDialog extends Dialog {
 			targetNameText.setText(targetName);
 		} else {
 			targetNameText.setText(generateUniqueName(targetString));
-		}		
+		}
 		targetNameText.selectAll();
 	}
 
 	private String generateUniqueName(String targetString) {
 		String newName = targetString;
 		int i = 0;
-		while(fTargetManager.findTarget(fContainer, newName) != null) {
-			i++;
-			newName = targetString + " (" + Integer.toString(i) + ")";
+		try {
+			while (fTargetManager.findTarget(fContainer, newName) != null) {
+				i++;
+				newName = targetString + " (" + Integer.toString(i) + ")";
+			}
+		} catch (CoreException e) {
 		}
 		return newName;
 	}

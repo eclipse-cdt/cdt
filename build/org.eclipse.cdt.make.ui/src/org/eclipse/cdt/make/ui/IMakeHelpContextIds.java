@@ -13,8 +13,8 @@ package org.eclipse.cdt.make.ui;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 
 public interface IMakeHelpContextIds {
-	public static final String PREFIX = MakeUIPlugin.getUniqueIdentifier() + ".";
+	public static final String PREFIX = MakeUIPlugin.getUniqueIdentifier() + "."; //$NON-NLS-1$
 	
-	public static final String MAKE_PATH_SYMBOL_SETTINGS = PREFIX + "cdt_paths_symbols_page";
-	public static final String MAKE_BUILDER_SETTINGS = PREFIX + "cdt_make_builder_page";
+	public static final String MAKE_PATH_SYMBOL_SETTINGS = PREFIX + "cdt_paths_symbols_page"; //$NON-NLS-1$
+	public static final String MAKE_BUILDER_SETTINGS = PREFIX + "cdt_make_builder_page"; //$NON-NLS-1$
 }

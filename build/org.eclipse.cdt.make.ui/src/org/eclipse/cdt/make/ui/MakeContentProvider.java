@@ -47,6 +47,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			try {
 				return MakeCorePlugin.getDefault().getTargetManager().getTargetBuilderProjects();
 			} catch (CoreException e) {
+				// ignore
 			}
 		} else if (obj instanceof IContainer) {
 			ArrayList children = new ArrayList();
@@ -59,6 +60,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				}
 				children.addAll(Arrays.asList(MakeCorePlugin.getDefault().getTargetManager().getTargets((IContainer) obj)));
 			} catch (CoreException e) {
+				// ignore
 			}
 			return children.toArray();
 		}
@@ -164,8 +166,6 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			return;
 		}
 
-		// Get the affected resource
-		IResource resource = delta.getResource();
 		IResourceDelta[] affectedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED);
 
 		// Not interested in Content changes.
@@ -175,12 +175,15 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			}
 		}
 
-		//		Handle changed children recursively.
+		// Handle changed children recursively.
 		for (int i = 0; i < affectedChildren.length; i++) {
 			processDelta(affectedChildren[i]);
 		}
 
-		//		Handle removed children. Issue one update for all removals.
+		// Get the affected resource
+		IResource resource = delta.getResource();
+
+		// Handle removed children. Issue one update for all removals.
 		affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
 		if (affectedChildren.length > 0) {
 			ArrayList affected = new ArrayList(affectedChildren.length);

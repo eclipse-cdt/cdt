@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -46,8 +47,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class BuildPathInfoBlock extends AbstractCOptionPage {
 	private static final int PROJECT_LIST_MULTIPLIER = 10;
 
-	private static final String PREF_SYMBOLS = "ScannerSymbols";
-	private static final String PREF_INCLUDES = "ScannerIncludes";
+	private static final String PREF_SYMBOLS = "ScannerSymbols"; //$NON-NLS-1$
+	private static final String PREF_INCLUDES = "ScannerIncludes"; //$NON-NLS-1$
 	private static final String PREFIX = "BuildPathInfoBlock"; //$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
 	private static final String PATHS = PREFIX + ".paths"; //$NON-NLS-1$
@@ -330,7 +331,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 
 	private String[] parseStringToList(String syms) {
 		if (syms != null && syms.length() > 0) {
-			StringTokenizer tok = new StringTokenizer(syms, ";");
+			StringTokenizer tok = new StringTokenizer(syms, ";"); //$NON-NLS-1$
 			ArrayList list = new ArrayList(tok.countTokens());
 			while (tok.hasMoreElements()) {
 				list.add(tok.nextToken());
@@ -357,7 +358,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 						selItem,
 						null);
 				String newItem = null;
-				if (dialog.open() == InputDialog.OK) {
+				if (dialog.open() == Window.OK) {
 					newItem = dialog.getValue();
 					if (newItem != null && !newItem.equals(selItem)) {
 						pathList.setItem(index, newItem);
@@ -384,7 +385,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 						selItem,
 						null);
 				String newItem = null;
-				if (dialog.open() == InputDialog.OK) {
+				if (dialog.open() == Window.OK) {
 					newItem = dialog.getValue();
 					if (newItem != null && !newItem.equals(selItem)) {
 						symbolList.setItem(index, newItem);
@@ -490,7 +491,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		// Popup an entry dialog
 		InputDialog dialog = new InputDialog(shell, MakeUIPlugin.getResourceString(PATH_TITLE), MakeUIPlugin.getResourceString(PATH_LABEL), "", null); //$NON-NLS-1$
 		String path = null;
-		if (dialog.open() == InputDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			path = dialog.getValue();
 		}
 		if (path != null && path.length() > 0) {
@@ -504,7 +505,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		// Popup an entry dialog
 		InputDialog dialog = new InputDialog(shell, MakeUIPlugin.getResourceString(SYMBOL_TITLE), MakeUIPlugin.getResourceString(SYMBOL_LABEL), "", null); //$NON-NLS-1$
 		String symbol = null;
-		if (dialog.open() == InputDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			symbol = dialog.getValue();
 		}
 		if (symbol != null && symbol.length() > 0) {

@@ -72,7 +72,7 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 	 */
 	public boolean performOk() {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			public void run(IProgressMonitor monitor) {
 				fOptionBlock.performApply(monitor);
 			}
 		};

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -219,8 +220,8 @@ public class SettingsBlock extends AbstractCOptionPage {
 						getShell(),
 						getContainer().getProject(),
 						true,
-						"Selection Locations to build from.");
-				if (dialog.open() == ContainerSelectionDialog.OK) {
+						"Selection Location to build from.");
+				if (dialog.open() == Window.OK) {
 					Object[] selection = dialog.getResult();
 					if (selection.length > 0) {
 						buildLocation.setText(((IPath) selection[0]).toOSString());

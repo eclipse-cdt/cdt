@@ -96,7 +96,7 @@ public class TargetListViewerPart extends StructuredViewerPart {
 					break;
 			}
 		} catch (CoreException e) {
-			MakeUIPlugin.errorDialog(getControl().getShell(), "Error", "Error", e);
+			MakeUIPlugin.errorDialog(getControl().getShell(), "Error", "An error occurred performing the selected action", e);
 		}
 	}
 

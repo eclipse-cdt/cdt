@@ -27,7 +27,7 @@ public class AddTargetAction extends SelectionListenerAction {
 		this.shell = shell;
 
 		setToolTipText("Add Build Target");
-		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_ADD);
+		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_ADD); //$NON-NLS-1$
 	}
 
 	public void run() {
@@ -36,7 +36,7 @@ public class AddTargetAction extends SelectionListenerAction {
 				MakeTargetDialog dialog = new MakeTargetDialog(shell, (IContainer) getStructuredSelection().getFirstElement());
 				dialog.open();
 			} catch (CoreException e) {
-				MakeUIPlugin.errorDialog(shell, "Internal Error", "", e);
+				MakeUIPlugin.errorDialog(shell, "Internal Error", "Internal Error", e);
 			}
 		}
 

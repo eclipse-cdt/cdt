@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterValues;
 import org.eclipse.cdt.debug.mi.core.command.MIDataWriteRegisterValues;
+import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterValuesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIRegisterValue;
@@ -149,7 +150,7 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 		if (parent == null) {
 			MISession mi = getCTarget().getCSession().getMISession();
 			CommandFactory factory = mi.getCommandFactory();
-			int[] regno = new int[]{((RegisterObject)regObject).getId()};
+			int[] regno = new int[]{regObject.getId()};
 			MIDataListRegisterValues registers =
 				factory.createMIDataListRegisterValues(format, regno);
 			try {
@@ -202,7 +203,7 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	public void setValue(String expression) throws CDIException {
 		MISession mi = getCTarget().getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		int[] regnos = new int[]{((RegisterObject)regObject).getId()};
+		int[] regnos = new int[]{regObject.getId()};
 		String[] values = new String[]{expression};
 		MIDataWriteRegisterValues registers =
 				factory.createMIDataWriteRegisterValues(format, regnos, values);
@@ -215,6 +216,11 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
+		// If the assign was succesfull fire a MIRegisterChangedEvent()
+		MIRegisterChangedEvent change = new MIRegisterChangedEvent(registers.getToken(),
+			regObject.getName(), regObject.getId());
+		mi.fireEvent(change);
+
 	}
 
 	/**

@@ -1,3 +1,9 @@
+2004-03-09 Alain Magloire
+
+	Added the source folder refactor in the build
+
+	* build.properties
+
 2004-03-09 Hoda Amer
 	A new UI tool for renaming model elements. 
 	Mainly under the ui/refactor folder.

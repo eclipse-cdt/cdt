@@ -51,8 +51,10 @@ import org.eclipse.ui.PlatformUI;
  * conversion through the method convertProjects([]Object), which is also
  * defined by all subclasses.<br> Subclasses provide the methods that
  * determine what files are displayed and what action is performed on them as
- * well as the labels for the Wizard.
- * </p>
+ * well as the labels for the Wizard.</p>
+ * 
+ * Note: Only Projects that are open will be considered for conversion.
+ * 
  * 
  * @author Judy N. Green
  * @since Aug 6, 2002 <p>
@@ -330,7 +332,9 @@ public abstract class ConvertProjectWizardPage
 
     /**
      * Returns a list of open projects that are determined to be candidates
-     * through the method isCandidate().
+     * through the method isCandidate().<br>
+     * 
+     * Note: Only Projects that are open will be considered for conversion.
      * 
      * @return Object[] which may be null
      */
@@ -341,11 +345,13 @@ public abstract class ConvertProjectWizardPage
         Vector     candidates = new Vector(projects.length);
         IProject   next = null;
 
-        // ensure we only present valid candidates to the user
+        // ensure we only present open, valid candidates to the user
         for (int i = 0; i < projects.length; i++) {
             next = (IProject)projects[i];
 
-            if ((next != null) && isCandidate(next)) {
+            if ((next != null) 
+                    && next.isOpen() 
+                        && isCandidate(next)) {
                 candidates.addElement(next);
             }
 

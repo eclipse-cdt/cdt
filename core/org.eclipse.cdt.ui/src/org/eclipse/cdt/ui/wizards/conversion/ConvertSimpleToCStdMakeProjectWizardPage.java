@@ -67,17 +67,12 @@ public class ConvertSimpleToCStdMakeProjectWizardPage extends ConvertProjectWiza
      */
     protected boolean isCandidate(IProject project) {       
         boolean noCNature = false;
-       
-        // hasNature() throws a CoreException if the 
-        // project is not open and/or is not visible to this view
-        // which is what happens when a project does not have a 
-        // C nature
         try {
             noCNature =  !project.hasNature(CoreModel.C_NATURE_ID);
        } catch (CoreException e) {
            noCNature = true;
        }
-        return (noCNature);
+        return noCNature;
     }
    
     /**

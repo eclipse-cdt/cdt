@@ -66,14 +66,12 @@ public class ConvertCtoCCStdMakeProjectWizardPage extends ConvertProjectWizardPa
      * @return boolean
      */
     protected boolean isCandidate(IProject project) {
-        if (project.isOpen()) {
-            try {
-                if (project.hasNature(CoreModel.C_NATURE_ID) 
-                        && !project.hasNature(CoreModel.CC_NATURE_ID))
-                    return true;
-            } catch (CoreException e) {
-               CPlugin.log(e);
-            }
+        try {
+            if (project.hasNature(CoreModel.C_NATURE_ID) 
+                    && !project.hasNature(CoreModel.CC_NATURE_ID))
+                return true;
+        } catch (CoreException e) {
+           CPlugin.log(e);
         }
         return false;
     }

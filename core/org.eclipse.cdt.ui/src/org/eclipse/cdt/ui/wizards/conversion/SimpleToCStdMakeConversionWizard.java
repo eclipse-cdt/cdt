@@ -76,7 +76,7 @@ public class SimpleToCStdMakeConversionWizard extends ConversionWizard {
     }
     
     /**
-     * Method addPages adds our C to C++ conversion Wizard page.
+     * Method addPages adds our Simple to C conversion Wizard page.
      * 
      * @see Wizard#createPages
      */ 

@@ -145,7 +145,13 @@ public abstract class ConversionWizard
 
     /**
      * Method addPages allows subclasses to add as many pages as they need. Overwrite
-     * to create a conversion specific page.
+     * to create at least one conversion specific page. <p>
+     * 
+     * i.e. <br>
+     *<pre> 
+     *   mainPage = new ConvertSimpleToCStdMakeProjectWizardPage(getPrefix());
+     *   addPage(mainPage);
+     *</pre>
      * 
      * @see Wizard#createPages
      */

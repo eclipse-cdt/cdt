@@ -68,18 +68,13 @@ public class ConvertSimpleToCCStdMakeProjectWizardPage extends ConvertSimpleToCS
     protected boolean isCandidate(IProject project) {
         boolean noCNature = super.isCandidate(project);
         boolean noCCNature = false;
-        
-        // hasNature() throws a CoreException if the 
-        // project is not open and/or is not visible to this view
-        // which is what happens when a project does not have a 
-        // C nature
-       
+
        try {
             noCCNature = !project.hasNature(CoreModel.CC_NATURE_ID);
        } catch (CoreException e) {
            noCCNature = true;
         }
-        return (noCNature && noCCNature);
+        return noCNature && noCCNature;
     }
 
     /**

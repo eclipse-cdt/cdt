@@ -10,7 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -18,7 +18,7 @@ import org.eclipse.debug.core.DebugException;
  */
 public interface IExecFileInfo {
 
-	public IFile getExecFile();
+	public IBinaryExecutable getExecFile();
 
 	public boolean isLittleEndian();
 

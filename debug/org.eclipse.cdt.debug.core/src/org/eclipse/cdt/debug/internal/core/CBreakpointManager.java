@@ -50,6 +50,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -225,9 +226,9 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 				ICSourceLocator sl = getSourceLocator();
 				if ( sl != null )
 					return sl.contains( project );
-				if ( project.equals( getExecFile().getProject() ) )
+				if ( project.equals( getProject() ) )
 					return true;
-				return CDebugUtils.isReferencedProject( getExecFile().getProject(), project );
+				return CDebugUtils.isReferencedProject( getProject(), project );
 			}
 		}
 		return true;
@@ -239,7 +240,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 
 	public boolean supportsAddressBreakpoint( ICAddressBreakpoint breakpoint ) {
 		try {
-			return ( getExecFile() != null && getExecFile().getLocation().toOSString().equals( breakpoint.getSourceHandle() ) );
+			return ( getExecFilePath().toOSString().equals( breakpoint.getSourceHandle() ) );
 		}
 		catch( CoreException e ) {
 		}
@@ -606,10 +607,10 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	private ICFunctionBreakpoint createFunctionBreakpoint( ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException {
-		IFile execFile = getExecFile();
-		String sourceHandle = execFile.getFullPath().toOSString();
+		IPath execFile = getExecFilePath();
+		String sourceHandle = execFile.toOSString();
 		ICFunctionBreakpoint breakpoint = CDIDebugModel.createFunctionBreakpoint( sourceHandle, 
-																				  execFile, 
+																				  getProject(), 
 																				  cdiBreakpoint.getLocation().getFunction(),
 																				  -1,
 																				  -1,
@@ -624,11 +625,11 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	private ICAddressBreakpoint createAddressBreakpoint( ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException {
-		IFile execFile = getExecFile();
-		String sourceHandle = execFile.getFullPath().toOSString();
+		IPath execFile = getExecFilePath();
+		String sourceHandle = execFile.toOSString();
 		IAddress address = getDebugTarget().getAddressFactory().createAddress( cdiBreakpoint.getLocation().getAddress() );
 		ICAddressBreakpoint breakpoint = CDIDebugModel.createAddressBreakpoint( sourceHandle, 
-																				execFile, 
+																				getProject(), 
 																				address, 
 																				cdiBreakpoint.isEnabled(), 
 																				cdiBreakpoint.getCondition().getIgnoreCount(), 
@@ -640,10 +641,10 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	private ICWatchpoint createWatchpoint( ICDIWatchpoint cdiWatchpoint ) throws CDIException, CoreException {
-		IFile execFile = getExecFile();
-		String sourceHandle = execFile.getFullPath().toOSString();
+		IPath execFile = getExecFilePath();
+		String sourceHandle = execFile.toOSString();
 		ICWatchpoint watchpoint = CDIDebugModel.createWatchpoint( sourceHandle, 
-																  execFile.getProject(), 
+																  getProject(), 
 																  cdiWatchpoint.isWriteType(), 
 																  cdiWatchpoint.isReadType(), 
 																  cdiWatchpoint.getWatchExpression(), 
@@ -661,8 +662,12 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		return (locator instanceof IAdaptable) ? (ICSourceLocator)((IAdaptable)locator).getAdapter( ICSourceLocator.class ) : null;
 	}
 
-	private IFile getExecFile() {
-		return getDebugTarget().getExecFile();
+	private IProject getProject() {
+		return getDebugTarget().getProject();
+	}
+
+	private IPath getExecFilePath() {
+		return getDebugTarget().getExecFile().getPath();
 	}
 
 	private CBreakpointNotifier getBreakpointNotifier() {

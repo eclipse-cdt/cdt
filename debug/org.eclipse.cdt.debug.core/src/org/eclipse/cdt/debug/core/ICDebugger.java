@@ -16,6 +16,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
+/**
+ * 
+ * @deprecated - see ICDIDebugger
+ */
 public interface ICDebugger {
 	public ICDISession createLaunchSession(ILaunchConfiguration config, IFile exe) throws CDIException ;
 	public ICDISession createAttachSession(ILaunchConfiguration config, IFile exe, int pid) throws CDIException;

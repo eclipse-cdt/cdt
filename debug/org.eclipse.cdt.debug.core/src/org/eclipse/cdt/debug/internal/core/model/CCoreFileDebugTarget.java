@@ -10,39 +10,33 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
+import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 
 /**
  * A debug target for the postmortem debugging.
+ * @deprecated
  */
 public class CCoreFileDebugTarget extends CDebugTarget {
 
-	public CCoreFileDebugTarget( ILaunch launch, ICDITarget cdiTarget, String name, IProcess debuggerProcess, IFile file ) {
-		super( launch, cdiTarget, name, null, debuggerProcess, file, true, false );
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
+	/**
+	 * @param launch
+	 * @param project
+	 * @param cdiTarget
+	 * @param name
+	 * @param debuggeeProcess
+	 * @param file
+	 * @param allowsTerminate
+	 * @param allowsDisconnect
 	 */
-	public boolean canTerminate() {
-		return !isTerminated() || !isTerminating();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
-	 */
-	public void terminate() throws DebugException {
-		setState( CDebugElementState.TERMINATING );
-		terminated();
+	public CCoreFileDebugTarget(ILaunch launch, IProject project, ICDITarget cdiTarget, String name, IProcess debuggeeProcess, IBinaryExecutable file) {
+		super(launch, project, cdiTarget, name, debuggeeProcess, file, false, false);
+		setState(CDebugElementState.TERMINATED);
 	}
 
 	/* (non-Javadoc)

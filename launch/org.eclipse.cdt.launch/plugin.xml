@@ -32,42 +32,59 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             name="%LocalCDTLaunch.name"
-            delegate="org.eclipse.cdt.launch.internal.LocalCLaunchConfigurationDelegate"
+            delegate="org.eclipse.cdt.launch.internal.LocalRunLaunchDelegate"
             modes="run,debug"
             public="true"
-            id="org.eclipse.cdt.launch.localCLaunch">
+            id="org.eclipse.cdt.launch.localRunLaunch">
+      </launchConfigurationType>
+      <launchConfigurationType
+            name="%LocalAttachCDTLaunch.name"
+            delegate="org.eclipse.cdt.launch.internal.LocalAttachLaunchDelegate"
+            modes="debug"
+            public="true"
+            id="org.eclipse.cdt.launch.localAttachLaunch">
       </launchConfigurationType>
       <launchConfigurationType
             name="%CoreFileCDTLaunch.name"
             delegate="org.eclipse.cdt.launch.internal.CoreFileLaunchDelegate"
             modes="debug"
             public="true"
-            id="org.eclipse.cdt.launch.coreFileCLaunch">
+            id="org.eclipse.cdt.launch.coreFileLaunch">
       </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             icon="icons/c_app.gif"
-            configTypeID="org.eclipse.cdt.launch.localCLaunch"
-            id="org.eclipse.cdt.launch.localCLaunchImage">
+            configTypeID="org.eclipse.cdt.launch.localRunLaunch"
+            id="org.eclipse.cdt.launch.localRunLaunchImage">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
             icon="icons/c_app.gif"
-            configTypeID="org.eclipse.cdt.launch.coreFileCLaunch"
-            id="org.eclipse.cdt.launch.coreFileCLaunchImage">
+            configTypeID="org.eclipse.cdt.launch.localAttachLaunch"
+            id="org.eclipse.cdt.launch.localAttachLaunchImage">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/c_app.gif"
+            configTypeID="org.eclipse.cdt.launch.coreFileLaunch"
+            id="org.eclipse.cdt.launch.coreFileLaunchImage">
       </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="org.eclipse.cdt.launch.localCLaunch"
-            class="org.eclipse.cdt.launch.internal.ui.LocalCLaunchConfigurationTabGroup"
-            id="org.eclipse.cdt.launch.localClaunchConfigurationTabGroup">
+            type="org.eclipse.cdt.launch.localRunLaunch"
+            class="org.eclipse.cdt.launch.internal.ui.LocalRunLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.localRunLaunchTabGroup">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
-            type="org.eclipse.cdt.launch.coreFileCLaunch"
-            class="org.eclipse.cdt.launch.internal.ui.CoreFileCLaunchConfigurationTabGroup"
+            type="org.eclipse.cdt.launch.localAttachLaunch"
+            class="org.eclipse.cdt.launch.internal.ui.LocalAttachLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.localAttachLaunchTabGroup">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.cdt.launch.coreFileLaunch"
+            class="org.eclipse.cdt.launch.internal.ui.CoreFileLaunchConfigurationTabGroup"
             id="org.eclipse.cdt.launch.voreFileCLaunchTabGroup">
       </launchConfigurationTabGroup>
    </extension>

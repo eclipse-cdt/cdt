@@ -13,11 +13,16 @@ package org.eclipse.cdt.debug.internal.core;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDIDebugger;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 public class DebugConfiguration implements ICDebugConfiguration {
 	/**
@@ -36,7 +41,19 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	}
 
 	public ICDebugger getDebugger() throws CoreException {
-		return (ICDebugger) getConfigurationElement().createExecutableExtension("class"); //$NON-NLS-1$
+		Object debugger = getConfigurationElement().createExecutableExtension("class"); //$NON-NLS-1$
+		if (debugger instanceof ICDebugger) {
+			return (ICDebugger)debugger;
+		}
+		throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), -1, InternalDebugCoreMessages.getString("DebugConfiguration.0"), null)); //$NON-NLS-1$
+	}
+
+	public ICDIDebugger createDebugger() throws CoreException {
+		Object debugger = getConfigurationElement().createExecutableExtension("class"); //$NON-NLS-1$
+		if (debugger instanceof ICDIDebugger) {
+			return (ICDIDebugger)debugger;
+		}
+		return new CDebugAdapter((ICDebugger)debugger);
 	}
 
 	public String getName() {

@@ -1,18 +1,12 @@
-/**********************************************************************
- * Copyright (c) 2002 - 2004 QNX Software Systems and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+/*******************************************************************************
+ * Copyright (c) 2002 - 2004 QNX Software Systems and others. All rights
+ * reserved. This program and the accompanying materials are made available
+ * under the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.launch.internal.ui;
-
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
@@ -31,26 +25,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-public class LaunchUIPlugin extends AbstractUIPlugin
-		implements
-			IDebugEventSetListener {
+public class LaunchUIPlugin extends AbstractUIPlugin implements IDebugEventSetListener {
+
 	public static final String PLUGIN_ID = "org.eclipse.cdt.launch"; //$NON-NLS-1$
 
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.launch.internal.ui.LaunchUIPluginResources";//$NON-NLS-1$
-	private static ResourceBundle resourceBundle = null;
-
 	// -------- static methods --------
-
-	static {
-		if (resourceBundle == null) {
-			// Acquire a reference to the .properties file for this plug-in
-			try {
-				resourceBundle = ResourceBundle.getBundle(BUNDLE_NAME);
-			} catch (MissingResourceException e) {
-				resourceBundle = null;
-			}
-		}
-	}
 
 	/**
 	 * Launch UI plug-in instance
@@ -133,8 +112,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 	 *            the error message to log
 	 */
 	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR,
-				message, null));
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, message, null));
 	}
 
 	/**
@@ -144,8 +122,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 	 *            the exception to be logged
 	 */
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e
-				.getMessage(), e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e)); //$NON-NLS-1$
 	}
 
 	/**
@@ -182,11 +159,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 		log(status);
 		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
-			ErrorDialog
-					.openError(
-							shell,
-							LaunchUIPlugin
-									.getResourceString("LaunchUIPlugin.Error"), message, status); //$NON-NLS-1$
+			ErrorDialog.openError(shell, LaunchMessages.getString("LaunchUIPlugin.Error"), message, status); //$NON-NLS-1$
 		}
 	}
 
@@ -194,13 +167,8 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 		log(t);
 		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
-			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(),
-					1, t.getMessage(), null); //$NON-NLS-1$	
-			ErrorDialog
-					.openError(
-							shell,
-							LaunchUIPlugin
-									.getResourceString("LaunchUIPlugin.Error"), message, status); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 1, t.getMessage(), null); //$NON-NLS-1$	
+			ErrorDialog.openError(shell, LaunchMessages.getString("LaunchUIPlugin.Error"), message, status); //$NON-NLS-1$
 		}
 	}
 
@@ -237,17 +205,15 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 			if (events[i].getKind() == DebugEvent.TERMINATE) {
 				Object o = events[i].getSource();
 				if (o instanceof IProcess) {
-					IProcess proc = (IProcess) o;
+					IProcess proc = (IProcess)o;
 					ICProject cproject = null;
 					try {
-						cproject = AbstractCLaunchDelegate.getCProject(proc
-								.getLaunch().getLaunchConfiguration());
+						cproject = AbstractCLaunchDelegate.getCProject(proc.getLaunch().getLaunchConfiguration());
 					} catch (CoreException e) {
 					}
 					if (cproject != null) {
 						try {
-							cproject.getProject().refreshLocal(
-									IResource.DEPTH_INFINITE, null);
+							cproject.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
 						} catch (CoreException e) {
 						}
 					}
@@ -255,38 +221,4 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 			}
 		}
 	}
-
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
-	}
-
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = LaunchUIPlugin.getDefault().getResourceBundle();
-
-		// No point trying if bundle is null as exceptions are costly
-		if (bundle != null) {
-			try {
-				return bundle.getString(key);
-			} catch (MissingResourceException e) {
-				return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (NullPointerException e) {
-				return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-
-		// If we get here, then bundle is null.
-		return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	public static String getFormattedResourceString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), new String[]{arg});
-	}
-
-	public static String getFormattedResourceString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), args);
-	}
-
 }

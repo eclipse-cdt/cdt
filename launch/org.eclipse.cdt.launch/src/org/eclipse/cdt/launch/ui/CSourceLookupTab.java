@@ -14,7 +14,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.sourcelookup.SourceLookupBlock;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
-import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -83,7 +83,7 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 	 */
 	public String getName()
 	{
-		return LaunchUIPlugin.getResourceString("CSourceLookupTab.Source"); //$NON-NLS-1$
+		return LaunchMessages.getString("CSourceLookupTab.Source"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

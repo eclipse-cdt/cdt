@@ -1,3 +1,20 @@
+2004-10-18 David Inglis
+	Update to new ICDIDebugger interface deprecating old
+	
+	* src/org/eclipse/debug/core/CDebugModel.java
+	* src/org/eclipse/debug/core/CDIDebugModel.java
+	* src/org/eclipse/debug/core/ICDebugConfiguration.java 
+	* src/org/eclipse/debug/core/ICDebugger.java
+	* src/org/eclipse/debug/core/ICDIDebugger.java
+	* src/org/eclipse/debug/core/ICDILaunchCOnfiguration.java
+	* src/org/eclipse/debug/core/model/IExecFileInfo.java
+	* src/org/eclipse/debug/internal/core/CBreakpointManager.java
+	* src/org/eclipse/debug/internal/core/CDebugAdapter.java
+	* src/org/eclipse/debug/internal/core/DebugConfiguration.java
+	* src/org/eclipse/debug/internal/core/model/CDebugTarget.java
+	* src/org/eclipse/debug/internal/core/model/CVariableFactory.java
+	* src/org/eclipse/debug/internal/core/model/DisassemblyBlock.java
+		
 2004-10-18 Mikhail Khodjaiants
 	Use characters instead of strings.
 	* CDIException.java
@@ -18,7 +35,7 @@
 	* CBreakpointManager.java
 	* CDebugTarget.java
 
-2004-10-14 
+2004-10-14 Mikhail Khodjaiants
 	Partial fix for bug 39936 GDB hits modified conditional breakpoints when condition not satisfied.
 	Condition has to be set at the mi level.
 	* CBreakpointManager.java

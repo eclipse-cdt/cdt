@@ -15,7 +15,14 @@ import org.eclipse.core.runtime.CoreException;
 public interface ICDebugConfiguration {
 	final static String CPU_NATIVE = "native"; //$NON-NLS-1$
 	
+	/**
+	 * @return
+	 * @throws CoreException
+	 * @deprecated
+	 */
 	ICDebugger getDebugger() throws CoreException;
+	
+	ICDIDebugger createDebugger() throws CoreException;
 	String getName();
 	String getID();
 	String getPlatform();

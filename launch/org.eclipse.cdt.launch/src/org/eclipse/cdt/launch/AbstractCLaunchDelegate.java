@@ -1,17 +1,16 @@
-/**********************************************************************
- * Copyright (c) 2002 - 2004 QNX Software Systems and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+/*******************************************************************************
+ * Copyright (c) 2002 - 2004 QNX Software Systems and others. All rights
+ * reserved. This program and the accompanying materials are made available
+ * under the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.launch;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -26,12 +25,16 @@ import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.core.resources.IContainer;
@@ -306,6 +309,24 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
 	}
 
+	public static IPath getProgramPath(ILaunchConfiguration configuration) throws CoreException {
+		String path = getProgramName(configuration);
+		if (path == null) {
+			return null;
+		}
+		return new Path(path);
+	}
+
+	/**
+	 * @param launch
+	 * @param config
+	 * @throws CoreException
+	 * @deprecated
+	 */
+	protected void setSourceLocator(ILaunch launch, ILaunchConfiguration config) throws CoreException {
+		setDefaultSourceLocator(launch, config);
+	}
+
 	/**
 	 * Assigns a default source locator to the given launch if a source locator
 	 * has not yet been assigned to it, and the associated launch configuration
@@ -318,7 +339,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @exception CoreException
 	 *                if unable to set the source locator
 	 */
-	protected void setSourceLocator(ILaunch launch, ILaunchConfiguration configuration) throws CoreException {
+	protected void setDefaultSourceLocator(ILaunch launch, ILaunchConfiguration configuration) throws CoreException {
 		//  set default source locator if none specified
 		if (launch.getSourceLocator() == null) {
 			IPersistableSourceLocator sourceLocator;
@@ -326,7 +347,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			if (id == null) {
 				ICProject cProject = getCProject(configuration);
 				if (cProject == null) {
-					abort(LaunchUIPlugin.getResourceString("Launch.common.Project_does_not_exist"), null, //$NON-NLS-1$
+					abort(LaunchMessages.getString("Launch.common.Project_does_not_exist"), null, //$NON-NLS-1$
 							ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 				}
 				sourceLocator = CDebugUIPlugin.createDefaultSourceLocator();
@@ -375,11 +396,13 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		ICDebugConfiguration dbgCfg = null;
 		try {
 			dbgCfg = CDebugCorePlugin.getDefault().getDebugConfiguration(
-					config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, "")); //$NON-NLS-1$
+																			config.getAttribute(
+																								ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID,
+																								"")); //$NON-NLS-1$
 		} catch (CoreException e) {
 			IStatus status = new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(),
 					ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED,
-					LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Debugger_not_installed"), //$NON-NLS-1$
+					LaunchMessages.getString("AbstractCLaunchDelegate.Debugger_not_installed"), //$NON-NLS-1$
 					e);
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 
@@ -411,45 +434,78 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
 		return MessageFormat.format(format, new String[]{
-				LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Debugger_Process"), timestamp}); //$NON-NLS-1$
+				LaunchMessages.getString("AbstractCLaunchDelegate.Debugger_Process"), timestamp}); //$NON-NLS-1$
+	}
+
+	
+	/**
+	 * @param config
+	 * @return
+	 * @throws CoreException
+	 * @deprecated
+	 */
+	protected IFile getProgramFile(ILaunchConfiguration config) throws CoreException {
+		ICProject cproject = verifyCProject(config);
+		String fileName = getProgramName(config);
+		if (fileName == null) {
+			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
+		}
+
+		IFile programPath = ((IProject)cproject.getResource()).getFile(fileName);
+		if (programPath == null || !programPath.exists() || !programPath.getLocation().toFile().exists()) {
+			abort(
+					LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
+					new FileNotFoundException(
+							LaunchMessages.getFormattedString(
+																"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", programPath.getLocation().toOSString())), //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+		}
+		return programPath;
 	}
 
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
 		String name = getProjectName(config);
 		if (name == null) {
-			abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.C_Project_not_specified"), null, //$NON-NLS-1$
+			abort(LaunchMessages.getString("AbstractCLaunchDelegate.C_Project_not_specified"), null, //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
 		}
 		ICProject cproject = getCProject(config);
 		if (cproject == null) {
 			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!proj.exists()) {
-				abort(LaunchUIPlugin.getFormattedResourceString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), null, //$NON-NLS-1$
+				abort(
+						LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), null, //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			} else if (!proj.isOpen()) {
-				abort(LaunchUIPlugin.getFormattedResourceString("AbstractCLaunchDelegate.Project_NAME_is_closed", name), null, //$NON-NLS-1$
+				abort(LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_is_closed", name), null, //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			}
-			abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Not_a_C_CPP_project"), null, //$NON-NLS-1$
+			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Not_a_C_CPP_project"), null, //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 		}
 		return cproject;
 	}
 
-	protected IFile getProgramFile(ILaunchConfiguration config) throws CoreException {
+	protected IPath verifyProgramPath(ILaunchConfiguration config) throws CoreException {
 		ICProject cproject = verifyCProject(config);
-		String fileName = getProgramName(config);
-		if (fileName == null) {
-			abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
+		IPath programPath = getProgramPath(config);
+		if (programPath == null) {
+			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
-
-		IFile programPath = ((IProject)cproject.getResource()).getFile(fileName);
-		if (programPath == null || !programPath.exists() || !programPath.getLocation().toFile().exists()) {
-			abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
-					new FileNotFoundException(LaunchUIPlugin.getFormattedResourceString(
-							"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", programPath.getLocation().toOSString())), //$NON-NLS-1$
+		if (!programPath.isAbsolute()) {
+			IFile wsProgramPath = cproject.getProject().getFile(programPath);
+			programPath = wsProgramPath.getLocation();
+		}
+		if (!programPath.toFile().exists()) {
+			abort(
+					LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
+					new FileNotFoundException(
+							LaunchMessages.getFormattedString(
+																"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", programPath.toOSString())), //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+
 		}
 		return programPath;
 	}
@@ -485,18 +541,22 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				if (dir.isDirectory()) {
 					return dir;
 				}
-				abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
-						new FileNotFoundException(LaunchUIPlugin.getFormattedResourceString(
-								"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", path.toOSString())), //$NON-NLS-1$
+				abort(
+						LaunchMessages.getString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
+						new FileNotFoundException(
+								LaunchMessages.getFormattedString(
+																	"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", path.toOSString())), //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			} else {
 				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 				if (res instanceof IContainer && res.exists()) {
 					return res.getLocation().toFile();
 				}
-				abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
-						new FileNotFoundException(LaunchUIPlugin.getFormattedResourceString(
-								"AbstractCLaunchDelegate.PROGRAM_PATH_does_not_exist", path.toOSString())), //$NON-NLS-1$
+				abort(
+						LaunchMessages.getString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
+						new FileNotFoundException(
+								LaunchMessages.getFormattedString(
+																	"AbstractCLaunchDelegate.PROGRAM_PATH_does_not_exist", path.toOSString())), //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			}
 		}
@@ -669,16 +729,16 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 
 		if (orderedProjects != null) {
-			monitor.beginTask(LaunchUIPlugin.getResourceString("AbstractCLaunchConfigurationDelegate.building_projects"), //$NON-NLS-1$
-					orderedProjects.size() + 1);
+			monitor.beginTask(LaunchMessages.getString("AbstractCLaunchDelegate.building_projects"), //$NON-NLS-1$
+								orderedProjects.size() + 1);
 
 			for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
 				IProject proj = (IProject)i.next();
-				monitor.subTask(LaunchUIPlugin.getResourceString("AbstractCLaunchConfigurationDelegate.building") + proj.getName()); //$NON-NLS-1$
+				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.building") + proj.getName()); //$NON-NLS-1$
 				proj.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 			}
 
-			monitor.subTask(LaunchUIPlugin.getResourceString("AbstractLaunchConfigurationDelegate.building") + project.getName()); //$NON-NLS-1$
+			monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.building") + project.getName()); //$NON-NLS-1$
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 		}
 		monitor.done();
@@ -701,15 +761,15 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		try {
 			boolean continueLaunch = true;
 			if (orderedProjects != null) {
-				monitor.beginTask(LaunchUIPlugin.getResourceString("AbstractCLaunchConfigurationDelegate.searching_for_errors"), //$NON-NLS-1$
-						orderedProjects.size() + 1);
+				monitor.beginTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors"), //$NON-NLS-1$
+									orderedProjects.size() + 1);
 
 				boolean compileErrorsInProjs = false;
 
 				//check prerequisite projects for compile errors.
 				for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
 					IProject proj = (IProject)i.next();
-					monitor.subTask(LaunchUIPlugin.getResourceString("AbstractCLaunchConfigurationDelegate.searching_for_errors_in") //$NON-NLS-1$
+					monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in") //$NON-NLS-1$
 							+ proj.getName());
 					compileErrorsInProjs = existsErrors(proj);
 					if (compileErrorsInProjs) {
@@ -719,7 +779,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 				//check current project, if prerequite projects were ok
 				if (!compileErrorsInProjs) {
-					monitor.subTask(LaunchUIPlugin.getResourceString("AbstractCLaunchConfigurationDelegate.searching_for_errors_in") //$NON-NLS-1$
+					monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in") //$NON-NLS-1$
 							+ project.getName());
 					compileErrorsInProjs = existsErrors(project);
 				}
@@ -768,7 +828,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		// build project list
 		if (monitor != null) {
-			monitor.subTask(LaunchUIPlugin.getResourceString("AbstractCLaunchConfigurationDelegate.20")); //$NON-NLS-1$
+			monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.20")); //$NON-NLS-1$
 		}
 		orderedProjects = null;
 		ICProject cProject = getCProject(configuration);
@@ -780,6 +840,33 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		}
 		// do generic launch checks
 		return super.preLaunchCheck(configuration, mode, monitor);
+	}
+
+	/**
+	 * @param project
+	 * @param exePath
+	 * @return
+	 * @throws CoreException
+	 */
+	protected IBinaryExecutable createBinary(ICProject project, IPath exePath) throws CoreException {
+		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project.getProject());
+		for (int i = 0; i < parserRef.length; i++) {
+			try {
+				IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
+				IBinaryExecutable exe = (IBinaryExecutable)parser.getBinary(exePath);
+				if (exe != null) {
+					return exe;
+				}
+			} catch (ClassCastException e) {
+			} catch (IOException e) {
+			}
+		}
+		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
+		try {
+			return (IBinaryExecutable)parser.getBinary(exePath);
+		} catch (IOException e) {
+		}
+		return null;
 	}
 
 }

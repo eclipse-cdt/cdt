@@ -11,6 +11,9 @@
 package org.eclipse.cdt.debug.internal.core.model; 
 
 import java.text.MessageFormat;
+
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
@@ -58,6 +61,14 @@ public class CVariableFactory {
 		return createGlobalVariableDescriptor( var.getElementName(), path );
 	}
 
+	public static IGlobalVariableDescriptor createGlobalVariableDescriptor(ISymbol symbol) {
+		IPath path = new Path( "" ); //$NON-NLS-1$
+		IBinaryObject parent = symbol.getBinarObject();
+		path = parent.getPath();
+		return createGlobalVariableDescriptor( symbol.getName(), path );
+		
+	}
+	
 	public static CGlobalVariable createGlobalVariable( CDebugElement parent, IGlobalVariableDescriptor descriptor, ICDIVariableObject cdiVariableObject ) {
 		return new CGlobalVariable( parent, descriptor, cdiVariableObject );
 	}

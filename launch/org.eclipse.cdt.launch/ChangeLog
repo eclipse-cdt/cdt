@@ -1,3 +1,10 @@
+2004-10-18 David Inglis
+	
+	Update to new ICDIDebugger interface deprecating old
+	Added seperate launch configuration for attaching to pid
+	
+	* lots of files changed
+
 2004-10-17 Alain Magloire
 	Remove deprecated method in CDI adjust the implementation.
 	* src/org/eclipse/cdt/launch/internal/CoreFileLaunchDelegate.java

@@ -12,12 +12,14 @@ package org.eclipse.cdt.launch.ui;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
+import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.launch.internal.ui.WorkingDirectoryBlock;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -63,7 +65,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		createVerticalSpacer(comp, 1);
 
 		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
-		fPrgmArgumentsLabel.setText(LaunchUIPlugin.getResourceString("CArgumentsTab.C/C++_Program_Arguments")); //$NON-NLS-1$
+		fPrgmArgumentsLabel.setText(LaunchMessages.getString("CArgumentsTab.C/C++_Program_Arguments")); //$NON-NLS-1$
 		fPrgmArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 40;
@@ -111,7 +113,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 			fWorkingDirectoryBlock.initializeFrom(configuration);
 		}
 		catch (CoreException e) {
-			setErrorMessage(LaunchUIPlugin.getFormattedResourceString("Launch.common.Exception_occurred_reading_configuration_EXCEPTION", e.getStatus().getMessage())); //$NON-NLS-1$
+			setErrorMessage(LaunchMessages.getFormattedString("Launch.common.Exception_occurred_reading_configuration_EXCEPTION", e.getStatus().getMessage())); //$NON-NLS-1$
 			LaunchUIPlugin.log(e);
 		}
 	}
@@ -143,7 +145,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LaunchUIPlugin.getResourceString("CArgumentsTab.Arguments"); //$NON-NLS-1$
+		return LaunchMessages.getString("CArgumentsTab.Arguments"); //$NON-NLS-1$
 	}
 
 	/**

@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CFormattedMemoryBlock;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -50,26 +51,29 @@ public class CDebugModel {
 	}
 
 	/**
+	 * @throws CoreException
 	 * @deprecated
 	 * Use {@link CDIDebugModel#newDebugTarget(ILaunch, ICDITarget, String, IProcess, IProcess, IFile, boolean, boolean, boolean)}. 
 	 */
-	public static IDebugTarget newDebugTarget( final ILaunch launch, final ICDITarget cdiTarget, final String name, final IProcess debuggeeProcess, final IProcess debuggerProcess, final IFile file, final boolean allowTerminate, final boolean allowDisconnect, final boolean stopInMain ) throws DebugException {
+	public static IDebugTarget newDebugTarget( final ILaunch launch, final ICDITarget cdiTarget, final String name, final IProcess debuggeeProcess, final IProcess debuggerProcess, final IFile file, final boolean allowTerminate, final boolean allowDisconnect, final boolean stopInMain ) throws CoreException {
 		return CDIDebugModel.newDebugTarget( launch, cdiTarget, name, debuggeeProcess, debuggerProcess, file, allowTerminate, allowDisconnect, stopInMain );
 	}
 
 	/**
+	 * @throws CoreException
 	 * @deprecated
 	 * Use {@link CDIDebugModel#newAttachDebugTarget(ILaunch, ICDITarget, String, IProcess, IFile)}. 
 	 */
-	public static IDebugTarget newAttachDebugTarget( final ILaunch launch, final ICDITarget cdiTarget, final String name, final IProcess debuggerProcess, final IFile file ) throws DebugException {
+	public static IDebugTarget newAttachDebugTarget( final ILaunch launch, final ICDITarget cdiTarget, final String name, final IProcess debuggerProcess, final IFile file ) throws CoreException {
 		return CDIDebugModel.newAttachDebugTarget( launch, cdiTarget, name, debuggerProcess, file );
 	}
 
 	/**
+	 * @throws CoreException
 	 * @deprecated
 	 * Use {@link CDIDebugModel#newCoreFileDebugTarget(ILaunch, ICDITarget, String, IProcess, IFile)}. 
 	 */
-	public static IDebugTarget newCoreFileDebugTarget( final ILaunch launch, final ICDITarget cdiTarget, final String name, final IProcess debuggerProcess, final IFile file ) throws DebugException {
+	public static IDebugTarget newCoreFileDebugTarget( final ILaunch launch, final ICDITarget cdiTarget, final String name, final IProcess debuggerProcess, final IFile file ) throws CoreException {
 		return CDIDebugModel.newCoreFileDebugTarget( launch, cdiTarget, name, debuggerProcess, file );
 	}
 

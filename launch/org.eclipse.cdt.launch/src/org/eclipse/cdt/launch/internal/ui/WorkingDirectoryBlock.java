@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -85,13 +86,13 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 		setControl(workingDirComp);
 		
 		fWorkingDirLabel = new Label(workingDirComp, SWT.NONE);
-		fWorkingDirLabel.setText(LaunchUIPlugin.getResourceString("WorkingDirectoryBlock.Wor&king_directory")); //$NON-NLS-1$
+		fWorkingDirLabel.setText(LaunchMessages.getString("WorkingDirectoryBlock.Wor&king_directory")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fWorkingDirLabel.setLayoutData(gd);
 
 		fUseDefaultWorkingDirButton = new Button(workingDirComp,SWT.CHECK);
-		fUseDefaultWorkingDirButton.setText(LaunchUIPlugin.getResourceString("WorkingDirectoryBlock.Use_de&fault_working_directory")); //$NON-NLS-1$
+		fUseDefaultWorkingDirButton.setText(LaunchMessages.getString("WorkingDirectoryBlock.Use_de&fault_working_directory")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fUseDefaultWorkingDirButton.setLayoutData(gd);
@@ -101,7 +102,7 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fLocalDirButton = createRadioButton(workingDirComp, LaunchUIPlugin.getResourceString("WorkingDirectoryBlock.&Local_directory")); //$NON-NLS-1$
+		fLocalDirButton = createRadioButton(workingDirComp, LaunchMessages.getString("WorkingDirectoryBlock.&Local_directory")); //$NON-NLS-1$
 		fLocalDirButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleLocationButtonSelected();
@@ -117,14 +118,14 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fWorkingDirBrowseButton = createPushButton(workingDirComp, LaunchUIPlugin.getResourceString("Launch.common.Browse_1"), null); //$NON-NLS-1$
+		fWorkingDirBrowseButton = createPushButton(workingDirComp, LaunchMessages.getString("Launch.common.Browse_1"), null); //$NON-NLS-1$
 		fWorkingDirBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleWorkingDirBrowseButtonSelected();
 			}
 		});
 		
-		fWorkspaceDirButton = createRadioButton(workingDirComp, LaunchUIPlugin.getResourceString("WorkingDirectoryBlock.Works&pace")); //$NON-NLS-1$
+		fWorkspaceDirButton = createRadioButton(workingDirComp, LaunchMessages.getString("WorkingDirectoryBlock.Works&pace")); //$NON-NLS-1$
 		fWorkspaceDirButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleLocationButtonSelected();
@@ -140,7 +141,7 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fWorkspaceDirBrowseButton = createPushButton(workingDirComp, LaunchUIPlugin.getResourceString("Launch.common.Browse_2"), null); //$NON-NLS-1$
+		fWorkspaceDirBrowseButton = createPushButton(workingDirComp, LaunchMessages.getString("Launch.common.Browse_2"), null); //$NON-NLS-1$
 		fWorkspaceDirBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleWorkspaceDirBrowseButtonSelected();
@@ -160,7 +161,7 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 	 */
 	protected void handleWorkingDirBrowseButtonSelected() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage(LaunchUIPlugin.getResourceString("WorkingDirectoryBlock.Select_&working_directory_for_launch_configuration")); //$NON-NLS-1$
+		dialog.setMessage(LaunchMessages.getString("WorkingDirectoryBlock.Select_&working_directory_for_launch_configuration")); //$NON-NLS-1$
 		String currentWorkingDir = fWorkingDirText.getText();
 		if (!currentWorkingDir.trim().equals(EMPTY_STRING)) {
 			File path = new File(currentWorkingDir);
@@ -183,7 +184,7 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
 																	   ResourcesPlugin.getWorkspace().getRoot(),
 																	   false,
-																	   LaunchUIPlugin.getResourceString("WorkingDirectoryBlock.Select_&workspace_relative_working_directory")); //$NON-NLS-1$
+																	   LaunchMessages.getString("WorkingDirectoryBlock.Select_&workspace_relative_working_directory")); //$NON-NLS-1$
 		
 		IContainer currentContainer = getContainer();
 		if (currentContainer != null) {
@@ -291,17 +292,17 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 			if (workingDirPath.length() > 0) {
 				File dir = new File(workingDirPath);
 				if (!dir.exists()) {
-					setErrorMessage(LaunchUIPlugin.getResourceString("WorkingDirectoryBlock.Working_directory_does_not_exist")); //$NON-NLS-1$
+					setErrorMessage(LaunchMessages.getString("WorkingDirectoryBlock.Working_directory_does_not_exist")); //$NON-NLS-1$
 					return false;
 				}
 				if (!dir.isDirectory()) {
-					setErrorMessage(LaunchUIPlugin.getResourceString("WorkingDirectoryBlock.Working_directory_is_not_a_directory")); //$NON-NLS-1$
+					setErrorMessage(LaunchMessages.getString("WorkingDirectoryBlock.Working_directory_is_not_a_directory")); //$NON-NLS-1$
 					return false;
 				}
 			}
 		} else {
 			if (getContainer() == null) {
-				setErrorMessage(LaunchUIPlugin.getResourceString("WorkingDirectoryBlock.Project_or_folder_does_not_exist")); //$NON-NLS-1$
+				setErrorMessage(LaunchMessages.getString("WorkingDirectoryBlock.Project_or_folder_does_not_exist")); //$NON-NLS-1$
 				return false;
 			}
 		}
@@ -345,7 +346,7 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 			}
 			handleUseDefaultWorkingDirButtonSelected();
 		} catch (CoreException e) {
-			setErrorMessage(LaunchUIPlugin.getFormattedResourceString("Launch.common.Exception_occurred_reading_configuration_EXCEPTION", e.getStatus().getMessage())); //$NON-NLS-1$
+			setErrorMessage(LaunchMessages.getFormattedString("Launch.common.Exception_occurred_reading_configuration_EXCEPTION", e.getStatus().getMessage())); //$NON-NLS-1$
 			LaunchUIPlugin.log(e);
 		}
 	}
@@ -384,7 +385,7 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LaunchUIPlugin.getResourceString("WorkingDirectoryBlock.Working_Directory"); //$NON-NLS-1$
+		return LaunchMessages.getString("WorkingDirectoryBlock.Working_Directory"); //$NON-NLS-1$
 	}	
 	
 	/**

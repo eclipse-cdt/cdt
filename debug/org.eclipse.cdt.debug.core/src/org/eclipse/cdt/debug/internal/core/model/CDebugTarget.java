@@ -20,12 +20,9 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
-import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -93,6 +90,7 @@ import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -196,12 +194,17 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * The global variable manager for this target.
 	 */
 	private CGlobalVariableManager fGlobalVariableManager;
-
+	
 	/**
-	 * The executable file associated with this target.
+	 * The executable binary file associated with this target.
 	 */
-	private IFile fExecFile;
+	private IBinaryExecutable fBinaryFile;
 
+	/** 
+	 * The project associated with this target.
+	 */
+	private IProject fProject;
+	
 	/**
 	 * Whether the target is little endian.
 	 */
@@ -222,12 +225,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/**
 	 * Constructor for CDebugTarget.
 	 */
-	public CDebugTarget( ILaunch launch, ICDITarget cdiTarget, String name, IProcess debuggeeProcess, IProcess debuggerProcess, IFile file, boolean allowsTerminate, boolean allowsDisconnect ) {
+	public CDebugTarget( ILaunch launch, IProject project, ICDITarget cdiTarget, String name, IProcess debuggeeProcess, IBinaryExecutable file, boolean allowsTerminate, boolean allowsDisconnect) {
 		super( null );
 		setLaunch( launch );
 		setDebugTarget( this );
 		setName( name );
 		setProcess( debuggeeProcess );
+		setProject(project);
 		setExecFile( file );
 		setCDITarget( cdiTarget );
 		setState( CDebugElementState.SUSPENDED );
@@ -1401,53 +1405,58 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public boolean isLittleEndian() {
 		if ( fIsLittleEndian == null ) {
 			fIsLittleEndian = Boolean.TRUE;
-			if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) ) {
-				ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
-				if ( cFile instanceof IBinary ) {
-					fIsLittleEndian = new Boolean( ((IBinary)cFile).isLittleEndian() );
-				}
+			IBinaryObject file;
+			file = getBinaryFile();
+			if (file != null) {
+				return file.isLittleEndian();
 			}
 		}
 		return fIsLittleEndian.booleanValue();
 	}
 
-	public IFile getExecFile() {
-		return fExecFile;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IExecFileInfo#getExecFile()
+	 */
+	public IBinaryExecutable getExecFile() {
+		return getBinaryFile();
+	}
+	
+	public IBinaryExecutable getBinaryFile() {
+		return fBinaryFile;
 	}
 
-	private void setExecFile( IFile file ) {
-		fExecFile = file;
+	private void setExecFile( IBinaryExecutable file ) {
+		fBinaryFile = file;
 	}
-
+	
+	private void setProject(IProject project) {
+		fProject = project;
+	}
+	
+	public IProject getProject() {
+		return fProject;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IExecFileInfo#getGlobals()
 	 */
 	public IGlobalVariableDescriptor[] getGlobals() throws DebugException {
 		ArrayList list = new ArrayList();
-		if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) ) {
-			ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
-			if ( cFile instanceof IParent ) {
-				list.addAll( getCFileGlobals( (IParent)cFile ) );
-			}
+		IBinaryObject file = getBinaryFile();
+		if (file != null) {
+			list.addAll( getCFileGlobals( file ) );
 		}
 		return (IGlobalVariableDescriptor[])list.toArray( new IGlobalVariableDescriptor[list.size()] );
 	}
 
-	private List getCFileGlobals( IParent file ) throws DebugException {
+	private List getCFileGlobals( IBinaryObject file ) throws DebugException {
 		ArrayList list = new ArrayList();
-		try {
-			ICElement[] elements = file.getChildren();
-			for( int i = 0; i < elements.length; ++i ) {
-				if ( elements[i] instanceof org.eclipse.cdt.core.model.IVariable ) {
-					list.add( CVariableFactory.createGlobalVariableDescriptor( (org.eclipse.cdt.core.model.IVariable)elements[i] ) );
-				}
-				else if ( elements[i] instanceof org.eclipse.cdt.core.model.IParent ) {
-					list.addAll( getCFileGlobals( (org.eclipse.cdt.core.model.IParent)elements[i] ) );
-				}
+		ISymbol[] symbols = file.getSymbols();
+		for( int i = 0; i < symbols.length; ++i ) {
+			if (symbols[i].getType() == ISymbol.VARIABLE) {
+				list.add( CVariableFactory.createGlobalVariableDescriptor( symbols[i] ) );
 			}
-		}
-		catch( CModelException e ) {
-			requestFailed( CoreModelMessages.getString( "CDebugTarget.Unable_to_get_globals_1" ) + e.getMessage(), e ); //$NON-NLS-1$
 		}
 		return list;
 	}
@@ -1834,12 +1843,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	public IAddressFactory getAddressFactory() {
 		if ( fAddressFactory == null ) {
-			if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) ) {
-				ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
-				if ( cFile instanceof IBinary ) {
-					IBinaryParser.IBinaryObject obj;
-					obj = (IBinaryParser.IBinaryObject)cFile.getAdapter(IBinaryParser.IBinaryObject.class);
-					fAddressFactory = obj.getAddressFactory();
+			if ( getExecFile() != null && getProject() != null ) {
+				IBinaryObject file;
+				file = getBinaryFile();
+				if (file != null) {
+					fAddressFactory = file.getAddressFactory();
 				}
 			}
 		}

@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -99,7 +100,8 @@ public class CDebugModel
 		// Temporary
 		try
 		{
-			cdiTarget.getSession().addSearchPaths( new String[] { project.getLocation().toOSString() } );
+			ICDISourceManager mgr = cdiTarget.getSession().getSourceManager();
+			mgr.addSourcePaths( new String[] { project.getLocation().toOSString() });
 		}
 		catch( CDIException e )
 		{

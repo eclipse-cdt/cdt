@@ -16,6 +16,18 @@ import java.io.File;
 public interface ICDISourceManager extends ICDISessionObject
 {
 	/**
+	 * Set the source search paths for the debu session.
+	 * @param String
+	 */
+	void addSourcePaths(String[] srcPaths) throws CDIException;
+
+	/**
+	 * Return the array of source paths
+	 * @return String array of search paths.
+	 */
+	String[] getSourcePaths() throws CDIException;
+
+	/**
 	 * Returns an array of directories. Returns the empty array 
 	 * if the source path is empty.
 	 * 

@@ -110,9 +110,4 @@ public interface ICDISession {
 	 */
 	void terminate() throws CDIException;
 	
-	/**
-	 * Add directories to the begining of the search path
-	 * for source files.
-	 */
-	void addSearchPaths(String[] dirs) throws CDIException;
 }

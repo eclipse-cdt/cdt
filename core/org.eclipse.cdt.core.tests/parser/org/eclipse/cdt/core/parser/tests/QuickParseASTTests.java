@@ -2063,21 +2063,21 @@ public class QuickParseASTTests extends BaseASTTest
 //		validateToken( tokens[12], IToken.tSEMI );
 //		validateToken( tokens[13], IToken.tRBRACE );
 //	}
-	/**
-	 * @param token
-	 * @param string
-	 */
-	private void validateIdentifier(IToken token, String identifierName ) {
-		validateToken( token, IToken.tIDENTIFIER);
-		assertEquals( token.getImage(), identifierName  );
-	}
-	/**
-	 * @param token
-	 * @param i
-	 */
-	private void validateToken(IToken token, int signal) {
-		assertEquals( token.getType(), signal );
-	}
+//	/**
+//	 * @param token
+//	 * @param string
+//	 */
+//	private void validateIdentifier(IToken token, String identifierName ) {
+//		validateToken( token, IToken.tIDENTIFIER);
+//		assertEquals( token.getImage(), identifierName  );
+//	}
+//	/**
+//	 * @param token
+//	 * @param i
+//	 */
+//	private void validateToken(IToken token, int signal) {
+//		assertEquals( token.getType(), signal );
+//	}
 	
 	public void testBug47752() throws Exception
 	{

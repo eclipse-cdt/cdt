@@ -2583,17 +2583,21 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
  		}
  		
-		if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTClassSpecifier ||
-		    checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTEnumerationSpecifier 
-		)
-		{
-			ASTElaboratedTypeSpecifier elab = new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, startingLine, name.getFirstToken().getOffset(), name.getLastToken().getEndOffset(), name.getLastToken().getLineNumber(), endOffset, endingLine, references, isForewardDecl );
-			attachSymbolExtension( checkSymbol, elab, isForewardDecl );
-			return elab;
-		}
-		
-		if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTElaboratedTypeSpecifier )
-			return (IASTElaboratedTypeSpecifier)checkSymbol.getASTExtension().getPrimaryDeclaration();
+ 		if( checkSymbol != null ){
+			if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTClassSpecifier ||
+			    checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTEnumerationSpecifier 
+			)
+			{
+				ASTElaboratedTypeSpecifier elab = new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, startingLine, name.getFirstToken().getOffset(), name.getLastToken().getEndOffset(), name.getLastToken().getLineNumber(), endOffset, endingLine, references, isForewardDecl );
+				attachSymbolExtension( checkSymbol, elab, isForewardDecl );
+				return elab;
+			}
+			
+			if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTElaboratedTypeSpecifier )
+				return (IASTElaboratedTypeSpecifier)checkSymbol.getASTExtension().getPrimaryDeclaration();
+ 		} else {
+ 			handleProblem(IProblem.SEMANTIC_NAME_NOT_FOUND, lastToken.getImage(), lastToken.getOffset(), lastToken.getEndOffset(), lastToken.getLineNumber() );
+ 		}
 	
 		
 //		assert false : this;

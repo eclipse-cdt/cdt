@@ -1,4 +1,7 @@
 2004-03-12 Andrew Niefer
+	handle case causing NPE in CompleteParseASTFactory.createElaboratedTypeSpecifier
+
+2004-03-12 Andrew Niefer
 	bug 54639 fix NPE in CompleteParseASTFactory.cloneSimpleTypeSymbol 
 
 2004-03-11 John Camelon

@@ -69,7 +69,7 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 				callback,
 				ParserMode.COMPLETION_PARSE,
 				ParserLanguage.CPP,
-				ParserUtil.getParserLogService());
+				null);
 		
 		return parser.parse( offset );
 
@@ -827,6 +827,19 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 		assertTrue( i.next() instanceof IASTField );
 		assertTrue( i.next() instanceof IASTField );
 		assertFalse( i.hasNext() );
+	}
+	
+	public void testBug58178() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "#define GL_T 0x2001\n");
+		writer.write( "#define GL_TRUE 0x1\n");
+		writer.write( "typedef unsigned char   GLboolean;\n");
+		writer.write( "static GLboolean should_rotate = GL_T");
+		String code = writer.toString();
+		final String where = "= GL_T";
+		IASTCompletionNode node = parse( code, code.indexOf( where ) + where.length() );
+		assertEquals( node.getCompletionPrefix(), "GL_T");
 	}
 	
 }

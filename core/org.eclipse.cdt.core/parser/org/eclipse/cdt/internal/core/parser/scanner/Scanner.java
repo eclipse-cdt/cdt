@@ -1544,7 +1544,7 @@ public class Scanner implements IScanner {
 			
 		IMacroDescriptor mapping = getDefinition(ident);
 
-		if (mapping != null)
+		if (mapping != null && !isLimitReached())
 			if( scannerData.getContextStack().shouldExpandDefinition( ident ) ) {					
 				expandDefinition(ident, mapping, baseOffset);
 				return null;

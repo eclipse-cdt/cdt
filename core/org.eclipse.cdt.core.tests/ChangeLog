@@ -1,3 +1,6 @@
+2004-04-14 John Camelon
+	Added CompletionTest::testBug58178().
+
 2004-04-14 Andrew Niefer
 	updated FullParseCallback with acceptFriendDeclaration
 	added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testBug45235()

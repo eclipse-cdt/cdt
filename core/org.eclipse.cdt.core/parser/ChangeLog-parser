@@ -1,3 +1,7 @@
+2004-04-14 John Camelon
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=58500
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=58178
+
 2004-04-14 Andrew Niefer
 	friends in the AST (bugs 45235 & 53759 )
 	- added acceptFriendDeclaration to ISourceElementRequestor

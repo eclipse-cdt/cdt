@@ -961,6 +961,8 @@ public class ExpressionParser implements IExpressionParser {
 			buffer.append( "Parser: Unexpected exception in "); //$NON-NLS-1$
 			buffer.append( methodName );
 			buffer.append( ":"); //$NON-NLS-1$
+			buffer.append( e.getClass().getName() );
+			buffer.append( "::"); //$NON-NLS-1$
 			buffer.append( e.getMessage() );
 			buffer.append( ". w/"); //$NON-NLS-1$
 			buffer.append( scanner.toString() );
@@ -1300,7 +1302,7 @@ public class ExpressionParser implements IExpressionParser {
 	        // If this isn't a type name, then we shouldn't be here
 	        try
 	        {
-	            typeId = typeId(scope, false, CompletionKind.TYPE_REFERENCE);
+	            typeId = typeId(scope, false, ((kind == CompletionKind.SINGLE_NAME_REFERENCE )? kind : CompletionKind.TYPE_REFERENCE));
 	            consume(IToken.tRPAREN);
 	            if( templateIdScopes != null ){ templateIdScopes.pop();	popped = true;}
 	            IASTExpression castExpression = castExpression(scope,kind);

@@ -1,3 +1,7 @@
+2002-10-31 Mikhail Khodjaiants
+	Fixed the synchronization bug.
+	* CFormattedMemoryBlock.java: implementation of the 'refresh' method.
+
 2002-10-30 Mikhail Khodjaiants
 	Implementing the 'Refresh Memory' action.
 	* IFormattedMemoryBlock.java: added the 'refresh' method.

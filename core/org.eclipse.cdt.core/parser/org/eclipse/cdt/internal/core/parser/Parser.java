@@ -3346,7 +3346,15 @@ public class Parser implements IParserData, IParser
             consume(IToken.t_template);
         }
         else
-            firstToken = consume(IToken.t_template);
+        {
+        	if( extension.supportsExtendedTemplateInstantiationSyntax() && extension.isValidModifierForInstantiation(LA(1)))
+        	{
+        		firstToken = consume(); // consume the modifier
+        		consume( IToken.t_template );
+        	}
+        	else
+        		firstToken = consume(IToken.t_template);
+        }
         if (LT(1) != IToken.tLT)
         {
             // explicit-instantiation
@@ -3721,7 +3729,10 @@ public class Parser implements IParserData, IParser
                     break;
                 }
             default :
-                resultDeclaration = simpleDeclarationStrategyUnion(scope, ownerTemplate, overideKind, overideKey);
+            	if( extension.supportsExtendedTemplateInstantiationSyntax() && extension.isValidModifierForInstantiation(LA(1)) && LT(2) == IToken.t_template )
+            		resultDeclaration = templateDeclaration(scope);
+            	else
+            		resultDeclaration = simpleDeclarationStrategyUnion(scope, ownerTemplate, overideKind, overideKey);
         }
     	setCompletionValues(scope, kind, KeywordSetKey.DECLARATION );
     	endDeclaration( resultDeclaration );

@@ -150,4 +150,17 @@ public class GCCQuickParseExtensionsTest extends BaseASTTest {
         writer.write( "else z = - y;\n" );//$NON-NLS-1$
         writer.write( "z; }) zoot;\n" );//$NON-NLS-1$
     }
+    
+    public void testBug39701A() throws Exception
+    {
+    	parse("extern template int max (int, int);"); //$NON-NLS-1$
+    }
+    public void testBug39701B() throws Exception
+    {
+    	parse("inline template class Foo<int>;"); //$NON-NLS-1$
+    }
+    public void testBug39701C() throws Exception
+    {
+        parse("static template class Foo<int>;"); //$NON-NLS-1$
+    }
 }

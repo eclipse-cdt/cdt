@@ -463,4 +463,27 @@ public class GCCParserExtension implements IParserExtension {
 		return IASTGCCExpression.Kind.STATEMENT_EXPRESSION;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#supportsExtendedTemplateInstantiationSyntax()
+	 */
+	public boolean supportsExtendedTemplateInstantiationSyntax() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#isValidModifierForInstantiation(org.eclipse.cdt.core.parser.IToken)
+	 */
+	public boolean isValidModifierForInstantiation(IToken la) {
+		if( la == null ) return false;
+		switch( la.getType() )
+		{
+			case IToken.t_static:
+			case IToken.t_inline:
+			case IToken.t_extern: 
+				return true;
+			default:
+				return false;
+		}
+	}
+
 }

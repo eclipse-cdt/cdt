@@ -344,6 +344,10 @@ public class MatchLocator implements IMatchLocator{
 		
    
 	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies,ArrayList matches ) throws InterruptedException{
+		
+		if (!(paths.length > 0))
+			return;
+		
 		matchStorage = matches;
 		workspaceRoot = (workspace != null) ? workspace.getRoot() : null;
 		

@@ -210,13 +210,42 @@ public class SearchEngine implements ICSearchConstants{
 			if( progressMonitor != null )
 				progressMonitor.subTask( Util.bind( "engine.searching" ) );
 			
-			//TODO: BOG Filter Working Copies...
-			matchLocator.locateMatches( pathCollector.getPaths(), workspace, this.workingCopies, matches);
+			String[] indexerPaths = pathCollector.getPaths();
+			pathCollector = null; // release
+			
+			matchLocator.locateMatches( indexerPaths, workspace, filterWorkingCopies(this.workingCopies, scope), matches);
 		} finally {
 			AcceptMatchOperation acceptMatchOp = new AcceptMatchOperation(collector, matches);
 			try {
 				CCorePlugin.getWorkspace().run(acceptMatchOp,null);
 			} catch (CoreException e) {}
 		}
+	}
+
+	/**
+	 * @param copies
+	 * @param scope
+	 * @return
+	 */
+	private IWorkingCopy[] filterWorkingCopies(IWorkingCopy[] copies, ICSearchScope scope) {
+		
+		if (copies == null || 
+			copies.length == 0)
+			return copies;
+		
+		int length = copies.length;
+		IWorkingCopy[] results= new IWorkingCopy[length];
+		int index=0;
+
+		for (int i=0;i<length;i++){
+		  IWorkingCopy workingCopy = copies[i];
+		  if(scope.encloses(workingCopy.getPath().toOSString())){
+		  	results[index++]=workingCopy;
+		  }
+		}
+		
+		System.arraycopy(results,0,results= new IWorkingCopy[index],0,index);
+		
+		return results;
 	}
 }

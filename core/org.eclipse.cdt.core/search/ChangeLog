@@ -1,3 +1,9 @@
+2004-05-14 Bogdan Gheorghe
+	bug 60491 
+	Added working copy filtering to search engine
+	From now on only relevent working copies are considered for search
+	If no index paths are found then search will return no results regardless of any working copies passed in
+	
 2004-05-14 Andrew Niefer
 	bug 56411 - Added IndexingJob show that indexing shows up in the process view
       - this allows for the index job to be cancelled, which pauses indexing until someone requests something
